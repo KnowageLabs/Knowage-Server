@@ -1,9 +1,11 @@
 library("jsonlite")
 library("base64enc")
+source("D:/Knowage/Knowage-Server/Knowage-R/utils.R")
 
 #' @post /img
-function(dataset, dataset_name=NULL, script, output_variable){
+function(dataset, dataset_name=NULL, script, drivers, output_variable){
   env <- new.env()
+  script <- resolve_drivers(script, drivers)
   if (!is.null(dataset_name)) {
     script <- gsub(dataset_name,"df_",script)
     env$df_ <- as.data.frame(fromJSON(dataset))
@@ -16,7 +18,7 @@ function(dataset, dataset_name=NULL, script, output_variable){
 }
 
 #' @post /html
-function(dataset, dataset_name=NULL, script, output_variable){
+function(dataset, dataset_name=NULL, script, drivers, output_variable){
   env <- new.env()
   if (!is.null(dataset_name)) {
     script <- gsub(dataset_name,"df_",script)
@@ -31,8 +33,6 @@ function(dataset, dataset_name=NULL, script, output_variable){
 
 #' @get /libraries
 function(){
-  str(allPackages <- installed.packages(.Library, priority = "high"))
-  lib_matrix <- allPackages[, c(1,3:5)]
-  lib_info <- lib_matrix[,c(1,2)]
-  lib_info
+  lib <- get_libraries()
+  lib
 }

@@ -32,6 +32,23 @@ public class RUtils {
 		}
 	}
 
+	static HashMap<String, String> createDriversMap(String driversString) {
+		HashMap<String, String> driversMap = new HashMap<String, String>();
+		try {
+			JSONObject driversJSON = new JSONObject(driversString);
+			Iterator<String> keys = driversJSON.keys();
+			while (keys.hasNext()) {
+				String key = keys.next();
+				String value = driversJSON.getString(key);
+				driversMap.put(key, value);
+			}
+		} catch (Exception e) {
+			logger.error("error while creating parameters map");
+			throw new SpagoBIRuntimeException("error while creating parameters map", e);
+		}
+		return driversMap;
+	}
+
 	static String DataSet2DataFrame(String knowageDs) {
 		JSONObject oldDataset;
 		JSONArray newDataframe = new JSONArray();
@@ -75,13 +92,14 @@ public class RUtils {
 		throw new SpagoBIRuntimeException("Cannot retrieve R address from label [" + envLabel + "]");
 	}
 
-	static String createREngineRequestBody(String dataset, String dsLabel, String script, String outputVariable) {
+	static String createREngineRequestBody(String dataset, String dsLabel, String script, String driversAsString, String outputVariable) {
 		JSONObject jsonBody = new JSONObject();
 		try {
 			jsonBody.put("dataset", dataset);
 			jsonBody.put("script", script);
 			jsonBody.put("output_variable", outputVariable);
 			jsonBody.put("dataset_name", dsLabel);
+			jsonBody.put("drivers", driversAsString);
 		} catch (Exception e) {
 			logger.error("error while creating request body for R engine");
 			throw new SpagoBIRuntimeException("error while creating request body for R engine", e);
