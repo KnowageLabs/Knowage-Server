@@ -53,12 +53,9 @@ public class DataSetFactory {
 	/**
 	 * This method returns a dataset according to his configuration
 	 *
-	 * @param dataSetConfig
-	 *            dataset configuration
-	 * @param userId
-	 *            used in QBE dataset
-	 * @param session
-	 *            sd in QBE dataset
+	 * @param dataSetConfig dataset configuration
+	 * @param userId        used in QBE dataset
+	 * @param session       sd in QBE dataset
 	 * @return a dataset correctly configured
 	 */
 	public static IDataSet getDataSet(SpagoBiDataSet dataSetConfig, String userId, HttpSession session) {
@@ -108,6 +105,8 @@ public class DataSetFactory {
 				className = JDBCOrientDbDataSet.class.getName();
 			} else if (dialectToLowerCase.contains("vertica")) {
 				className = JDBCVerticaDataSet.class.getName();
+			} else if (dialectToLowerCase.contains("RedShift")) {
+				className = JDBCRedShiftDataSet.class.getName();
 			}
 		}
 		try {

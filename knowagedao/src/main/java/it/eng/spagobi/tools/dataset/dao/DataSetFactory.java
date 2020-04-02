@@ -58,6 +58,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCRedShiftDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
@@ -799,6 +800,8 @@ public class DataSetFactory {
 				ds = new JDBCOrientDbDataSet();
 			} else if (dialectToLowerCase.contains("vertica")) {
 				ds = new JDBCVerticaDataSet();
+			} else if (dialectToLowerCase.contains("RedShift")) {
+				ds = new JDBCRedShiftDataSet();
 			}
 		}
 		return (ds != null) ? ds : new JDBCDataSet();
