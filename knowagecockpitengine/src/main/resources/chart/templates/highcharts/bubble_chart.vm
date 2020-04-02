@@ -801,24 +801,31 @@
 			#if($yAxis.min==$yAxis.max)
 			#set ($minAndMaxAreSame= true)
 			#end
-			#if($yAxis.min && $yAxis.min != "auto"  && $yAxis.min!='' )
-				#set ($min = $yAxis.min)
-					min: $yAxis.min,
-					startOnTick:false,
+			#if($yAxis.min)
+				#if($yAxis.min != "auto"  && $yAxis.min!='')
+					#set ($min = $yAxis.min)
+						min: $yAxis.min,
+						startOnTick:false,
+				#elseif($yAxis.min == "auto" || $yAxis.min=='')
+					min: "$yAxis.min",
+				#end
 			#end
-			
-			#if($yAxis.max && $yAxis.max!='auto'  && $yAxis.max!='' )
-				#set ($max = $yAxis.max)
-				#if($min)
-					#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
+			#if($yAxis.max)
+				#if($yAxis.max!='auto'  && $yAxis.max!='')
+					#set ($max = $yAxis.max)
+					#if($min)
+						#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
+							max:$yAxis.max,
+							endOnTick: false,
+						#end
+					#else 
 						max:$yAxis.max,
 						endOnTick: false,
 					#end
-				#else 
-					max:$yAxis.max,
-					endOnTick: false,
+	       		 #elseif(($yAxis.max == "auto" || $yAxis.max=='') && $chartType != "radar")
+					max: "$yAxis.max",
 				#end
-	       		 #end
+			#end
 
 			
 			

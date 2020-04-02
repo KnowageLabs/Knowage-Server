@@ -112,15 +112,17 @@ angular.module('chartInitializer')
 					var finalMin = Math.min.apply(Math, [mapAxis.min[i], plotBands && plotBands[0].from != plotBands[0].to ? plotBands[0].from : mapAxis.min[i], plotLines && plotLines[0].width > 0 ? plotLines[0].value : mapAxis.min[i]].map(function(o) { return o; }));
 					var finalMax = Math.max.apply(Math, [mapAxis.max[i], plotBands && plotBands[0].to != plotBands[0].from ? plotBands[0].to : mapAxis.max[i],  plotLines && plotLines[0].width > 0 ? plotLines[0].value : mapAxis.max[i]].map(function(o) { return o; }));
 
-					if(chartConf.yAxis[i].min==undefined){
+					if(chartConf.yAxis[i].min==undefined || chartConf.yAxis[i].min=='auto'){
 						chartConf.yAxis[i].min = finalMin>=0 ? finalMin * 0.5 : finalMin * 1.5;
 					}
 					finalMin = chartConf.yAxis[i].min;
-					if(chartConf.yAxis[i].max==undefined){
+					if(chartConf.yAxis[i].min=="") delete chartConf.yAxis[i].min;
+					if(chartConf.yAxis[i].max==undefined || chartConf.yAxis[i].max=='auto') {
 						chartConf.yAxis[i].max = finalMax>=0 ? finalMax * 1.1 : finalMax * 0.9;
 
 					}
 					finalMax = chartConf.yAxis[i].max
+					if(chartConf.yAxis[i].max=="") delete chartConf.yAxis[i].max;
 					infoFroDrill.push({"min":finalMin,"max":finalMax,"plotBands":plotBands,"plotLines":plotLines})
 				}
 				isBasic = true;
@@ -129,7 +131,7 @@ angular.module('chartInitializer')
 			chartConfMergeService.addProperty(renderObj.chartTemplate.advanced,chartConf);
 
 			if(renderObj.chartTemplate.groupSeriesCateg && renderObj.chartTemplate.VALUES.CATEGORY.drillOrder!=undefined &&
-				renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby]!=undefined && 
+				renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby]!=undefined &&
 				renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby].orderColumn == renderObj.chartTemplate.VALUES.CATEGORY.groupby){
 					var  orderType = renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby].orderType == "desc" ? 'desc' : 'asc';
 					if(orderType=='asc') sortAsc(chartConf.series);
@@ -640,8 +642,8 @@ angular.module('chartInitializer')
 		if(chart.userOptions.chart.type!="pie"  && !chart.userOptions.plotOptions.column.stacking){
 			setTimeout(function () {
 	            chart.yAxis[indexOfAxis].update({
-	                max: chart.breadcrumb[chart.breadcrumb.length-1] ? storeMinAndMax[chart.breadcrumb[chart.breadcrumb.length-1].selectedName].max : chart.extremes[indexOfAxis].max,
-	            	min: chart.breadcrumb[chart.breadcrumb.length-1] ? storeMinAndMax[chart.breadcrumb[chart.breadcrumb.length-1].selectedName].min : chart.extremes[indexOfAxis].min,
+	                max: chart.breadcrumb[chart.breadcrumb.length-1] ? storeMinAndMax[chart.breadcrumb[chart.breadcrumb.length-1].selectedName].max : chart.extremes[indexOfAxis].max != "" ? chart.extremes[indexOfAxis].max : null,
+	            	min: chart.breadcrumb[chart.breadcrumb.length-1] ? storeMinAndMax[chart.breadcrumb[chart.breadcrumb.length-1].selectedName].min : chart.extremes[indexOfAxis].min != "" ? chart.extremes[indexOfAxis].min : null,
 	            });
 	           if(!chart.breadcrumb[chart.breadcrumb.length-1]) {
 	        	   delete chart.drilledSerie
