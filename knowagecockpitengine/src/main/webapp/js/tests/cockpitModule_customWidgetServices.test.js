@@ -80,6 +80,23 @@ describe("customWidgetAPI", function() {
 		    expect(temp[0]).toEqual('1')
 		});
 	})
+	
+	describe("hierarchy method", function() {
+		it('should return a data tree when not defining measures',function (){
+			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY']})
+		    expect(temp.tree).toBeDefined()
+		})
+		
+		it('should return a data tree when defining measures',function (){
+			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}})
+		    expect(temp.tree).toBeDefined()
+		})
+		
+		it('should return children aggregated measures',function (){
+			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}})
+		    expect(temp.tree[0].children[0].UNIT_SALES + temp.tree[0].children[1].UNIT_SALES).toEqual(temp.tree[0].UNIT_SALES)
+		})
+	})
 });
 
 
