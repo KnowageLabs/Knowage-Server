@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASOURCES>
+	<DATASOURCE descr="CACHE_DS" label="CACHE_DS"
+		jndi="java:comp/env/jdbc/ds_cache" urlConnection="" username="" pwd=""
+		driver="" multiSchema="false" attrSchema="" readOnly="false"
+		writeDefault="true" jdbcAdvancedConfiguration="" organization="DEFAULT_TENANT"/>
+</DATASOURCES>
