@@ -192,9 +192,7 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 				for (var property in datastore.rows[i]) {
 					if(property!='id' && args.levels.indexOf(property)>-1){
 						newArray.push(datastore.rows[i][property])
-					} /*else if(args.measures.indexOf(property)>-1){
-						newArray.push({property:datastore.rows[i][property]})
-					}*/
+					}
 					if(args.measures){
 						for (var prop in args.measures) {
 							if(!args.measures.hasOwnProperty('id') && prop==property){
@@ -240,25 +238,26 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		return node[measure];
 	}
 
-/*	hierarchy.prototype.getLevel = function (level, tree){
+	hierarchy.prototype.getLevel = function (level){
 		var nodes = []
 		var depth = 1
-		for (var j=0; j<tree.length; j++) {
+		for (var j=0; j<this.tree.length; j++) {
 			depth = 1
 			if(depth!=level){depth++
-				iterate(tree[j]);
+				iterate(this.tree[j]);
 			} else{
-				nodes.push(tree[j])
+				nodes.push(this.tree[j])
 			}
 
 			function iterate(tree) {
 				var children = tree.children;
-				for (var i = 0, len = children.length; i < len; i++) {
+				for (var i=0; i<children.length; i++) {
 					if(depth!=level){
 						depth++
 						iterate(children[i] )
 					} else{
 						nodes.push(children[i])
+						if(i==children.length-1)depth--
 					}
 				}
 			}
@@ -266,7 +265,7 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		}
 		return nodes;
 
-	}*/
+	}
 
 
 	return new datastore;
