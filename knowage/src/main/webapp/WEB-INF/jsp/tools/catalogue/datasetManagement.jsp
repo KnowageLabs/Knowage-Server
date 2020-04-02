@@ -1123,13 +1123,23 @@ div.lower i  {
 							<md-card layout-padding style="margin-top:0">
 								
 								<md-input-container class="md-block" style="width:100%"> 
+								
+									<md-radio-group ng-model="selectedDataSet.isRDataset" layout="row">
+								        <md-radio-button ng-value="false">Python</md-radio-button>
+								        <md-radio-button ng-value="true">R</md-radio-button>
+								    </md-radio-group>
+								    
+								</md-input-container>
+								  
+								  <md-input-container class="md-block" style="width:100%">
 								       	
-								       	<label>Python environment</label>
+								       	<label>Environment</label>
 								       	
-								       	<md-select 	placeholder ="Choose python environment"
+								       	<md-select 	placeholder ="Choose environment"
 								       	 			ng-required = "selectedDataSet.dsTypeCd=='Python'" ng-change="setFormDirty()"
-								        			ng-model="selectedDataSet.pythonEnvironment">   
-								        	<md-option ng-repeat="e in pythonEnvironments" value="{{e}}">{{e.label}}</md-option>
+								        			ng-model="selectedDataSet.environment">   
+								        	<md-option ng-if="!selectedDataSet.isRDataset" ng-repeat="e in pythonEnvironments" value="{{e}}">{{e.label}}</md-option>
+								        	<md-option ng-if="selectedDataSet.isRDataset" ng-repeat="e in rEnvironments" value="{{e}}">{{e.label}}</md-option>
 								       	</md-select>  
 								       	
 								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Ckan' && !selectedDataSet.ckanFileType">
@@ -1138,7 +1148,8 @@ div.lower i  {
 		       						 	
 						        	</md-input-container>
 						        	
-						        	<md-button ng-click="openPythonEnvironmentDialog()" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.ds.python.checkEnvironment")}}</md-button>
+						        	<md-button ng-if="!selectedDataSet.isRDataset" ng-click="openPythonEnvironmentDialog()" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.ds.python.checkEnvironment")}}</md-button>
+									<md-button ng-if="selectedDataSet.isRDataset" ng-click="openREnvironmentDialog()" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.ds.python.checkEnvironment")}}</md-button>
 								
 								<div flex=100>
 									<md-input-container class="md-block">

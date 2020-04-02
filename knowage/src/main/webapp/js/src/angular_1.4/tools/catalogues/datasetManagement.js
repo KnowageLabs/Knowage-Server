@@ -372,7 +372,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	.then(function(response){
 		$scope.pythonEnvironments = $scope.buildEnvironments(response.data);
 	}, function(error){
-		$scope.selectedDataSet.pythonEnvironment = {"label": "", "value": ""};
+		$scope.selectedDataSet.environment = {"label": "", "value": ""};
+	});
+
+	// R ENVIRONMENTS CONFIG
+	sbiModule_restServices.promiseGet('2.0/configs/category', 'R_CONFIGURATION')
+	.then(function(response){
+		$scope.rEnvironments = $scope.buildEnvironments(response.data);
+	}, function(error){
+		$scope.selectedDataSet.environment = {"label": "", "value": ""};
 	});
 
 	$scope.buildEnvironments = function (data) {
@@ -384,6 +392,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 		return toReturn;
 	}
+
 	/**
 	 * Static (fixed) values for three comboboxes that appear when the CSV file is uploaded.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -3060,9 +3069,42 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	 }
 
+	 $scope.openREnvironmentDialog = function () {
+			sbiModule_restServices.promiseGet('2.0/backendservices/widgets/RWidget/libraries', JSON.parse($scope.selectedDataSet.environment).label)
+			.then(function(response){
+				$scope.libraries = [];
+				var librariesArray = JSON.parse((response.data.result));
+				for (idx in librariesArray) {
+					lib = librariesArray[idx];
+					name = lib[0];
+					version = lib[1];
+					$scope.libraries.push({"name": name, "version": version})
+				}
+	            $scope.forceRefresh = false;
+				   $mdDialog
+				   .show({
+				    scope : $scope,
+				    preserveScope : true,
+				    parent : angular.element(document.body),
+				    controllerAs : 'openPythonEnvironmentDialogCtrl',
+				    templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/pythonEnvironment.html',
+				    clickOutsideToClose : false,
+				    hasBackdrop : false
+				   });
+			}, function(error){
+			});
+
+		   $timeout(function(){
+			   if(angular.element(document).find('md-dialog').length > 0){
+					 $scope.forceRefresh = true;
+				 }
+		   },1000)
+
+	 }
+
 	 $scope.openPythonEnvironmentDialog = function () {
 		 $http({
-		        url: "https://" + JSON.parse($scope.selectedDataSet.pythonEnvironment).value + "/dataset/libraries",
+		        url: "https://" + JSON.parse($scope.selectedDataSet.environment).value + "/dataset/libraries",
 		        method: "GET",
 		        headers: {'Content-Type': 'application/json',
 		        		  'Authorization': $scope.encodedUserId}
@@ -3427,7 +3469,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
 				//restAddress is set ONLY for debugging purposes
 				//the real python address used by the PythonDataProxy is retrieved BE side
-    			$scope.selectedDataSet.restAddress = "https://" + JSON.parse($scope.selectedDataSet.pythonEnvironment).value + '/dataset';
+    			$scope.selectedDataSet.restAddress = "https://" + JSON.parse($scope.selectedDataSet.environment).value + '/dataset';
     			$scope.selectedDataSet.restJsonPathItems = "$[*]";
     			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
     			$scope.selectedDataSet.parameters = true;
