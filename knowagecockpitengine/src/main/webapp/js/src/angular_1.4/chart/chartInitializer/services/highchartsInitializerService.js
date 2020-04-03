@@ -112,17 +112,17 @@ angular.module('chartInitializer')
 					var finalMin = Math.min.apply(Math, [mapAxis.min[i], plotBands && plotBands[0].from != plotBands[0].to ? plotBands[0].from : mapAxis.min[i], plotLines && plotLines[0].width > 0 ? plotLines[0].value : mapAxis.min[i]].map(function(o) { return o; }));
 					var finalMax = Math.max.apply(Math, [mapAxis.max[i], plotBands && plotBands[0].to != plotBands[0].from ? plotBands[0].to : mapAxis.max[i],  plotLines && plotLines[0].width > 0 ? plotLines[0].value : mapAxis.max[i]].map(function(o) { return o; }));
 
-					if(chartConf.yAxis[i].min==undefined || chartConf.yAxis[i].min=='auto'){
+					if(chartConf.yAxis[i].min===undefined || chartConf.yAxis[i].min=='auto'){
 						chartConf.yAxis[i].min = finalMin>=0 ? finalMin * 0.5 : finalMin * 1.5;
 					}
 					finalMin = chartConf.yAxis[i].min;
-					if(chartConf.yAxis[i].min=="") delete chartConf.yAxis[i].min;
-					if(chartConf.yAxis[i].max==undefined || chartConf.yAxis[i].max=='auto') {
+					if(chartConf.yAxis[i].min=="") chartConf.yAxis[i].min = null;
+					if(chartConf.yAxis[i].max===undefined || chartConf.yAxis[i].max=='auto') {
 						chartConf.yAxis[i].max = finalMax>=0 ? finalMax * 1.1 : finalMax * 0.9;
 
 					}
 					finalMax = chartConf.yAxis[i].max
-					if(chartConf.yAxis[i].max=="") delete chartConf.yAxis[i].max;
+					if(chartConf.yAxis[i].max=="") chartConf.yAxis[i].max = null;
 					infoFroDrill.push({"min":finalMin,"max":finalMax,"plotBands":plotBands,"plotLines":plotLines})
 				}
 				isBasic = true;
