@@ -36,15 +36,19 @@ import org.hibernate.cfg.Configuration;
 
 import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
 import it.eng.spagobi.commons.dao.DAOConfig;
-import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 
 public class HibernateSessionManager {
 
 	private static final String PROPERTY_DATASOURCE_JNDI = "hibernate.connection.datasource";
 	private static final String PROPERTY_DIALECT = "hibernate.dialect";
 
+	private static final String DIALECT_DB2 = "org.hibernate.dialect.DB2400Dialect";
 	private static final String DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect";
 	private static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
+	private static final String DIALECT_ORACLE = "org.hibernate.dialect.Oracle9Dialect";
+	private static final String DIALECT_POSTGRE = "org.hibernate.dialect.PostgreSQLDialect";
+	private static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
+	private static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLDialect";
 
 	private static final String JDBC_DB2 = "jdbc:db2";
 	private static final String JDBC_HSQLDB = "jdbc:hsqldb";
@@ -58,14 +62,14 @@ public class HibernateSessionManager {
 	public static final Map<String, String> JDBC_URL_PREFIX_2_DIALECT = new HashMap<String, String>();
 
 	static {
-		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_MYSQL, DatabaseDialect.MYSQL.getValue());
-		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_MARIADB, DatabaseDialect.MYSQL.getValue());
-		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_SQLSERVER, DatabaseDialect.SQLSERVER.getValue());
-		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_POSTGRESQL, DatabaseDialect.POSTGRESQL.getValue());
-		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_ORACLE, DatabaseDialect.ORACLE_9I10G.getValue());
+		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_MYSQL, DIALECT_MYSQL);
+		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_MARIADB, DIALECT_MYSQL);
+		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_SQLSERVER, DIALECT_SQLSERVER);
+		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_POSTGRESQL, DIALECT_POSTGRE);
+		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_ORACLE, DIALECT_ORACLE);
 		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_INGRES, DIALECT_INGRES);
 		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_HSQLDB, DIALECT_HSQL);
-		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_DB2, DatabaseDialect.DB2.getValue());
+		JDBC_URL_PREFIX_2_DIALECT.put(JDBC_DB2, DIALECT_DB2);
 	}
 
 	public static transient Logger logger = Logger.getLogger(HibernateSessionManager.class);
@@ -102,32 +106,12 @@ public class HibernateSessionManager {
 	 * @param conf Actual Hibernate configuration
 	 */
 	private static void determineDialect(Configuration conf) {
+		String figuredOutValue;
 		String datasourceJndi = conf.getProperty(PROPERTY_DATASOURCE_JNDI);
 
 		if (datasourceJndi == null) {
 			throw new IllegalStateException("The property hibernate.connection.datasource is not set in file");
 		}
-
-		String figuredOutValue = getDialect(datasourceJndi);
-		logger.warn("Property hibernate.dialect set to " + figuredOutValue);
-		conf.setProperty(PROPERTY_DIALECT, figuredOutValue);
-
-	}
-
-	public static String determineDialectFromJNDIResource(String datasourceJndi) {
-
-		if (datasourceJndi == null) {
-			throw new IllegalStateException("The property hibernate.connection.datasource is not set in file");
-		}
-
-		String figuredOutValue = getDialect(datasourceJndi);
-		logger.warn("Property hibernate.dialect set to " + figuredOutValue);
-
-		return figuredOutValue;
-	}
-
-	private static String getDialect(String datasourceJndi) {
-		String figuredOutValue = null;
 
 		Connection connection = null;
 		try {
@@ -147,6 +131,10 @@ public class HibernateSessionManager {
 			}
 
 			figuredOutValue = JDBC_URL_PREFIX_2_DIALECT.get(urlPrefix);
+
+			logger.warn("Property hibernate.dialect set to " + figuredOutValue);
+			conf.setProperty(PROPERTY_DIALECT, figuredOutValue);
+
 		} catch (Exception e) {
 			logger.error("Error determining Hibernate's dialect", e);
 		} finally {
@@ -158,8 +146,6 @@ public class HibernateSessionManager {
 				}
 			}
 		}
-		return figuredOutValue;
-
 	}
 
 	private synchronized static SessionFactory getSessionFactory() {
