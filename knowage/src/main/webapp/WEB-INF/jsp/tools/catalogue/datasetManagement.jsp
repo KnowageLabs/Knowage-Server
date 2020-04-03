@@ -91,6 +91,7 @@ div.lower i  {
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/python/python.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/r/r.js")%>"></script>
 		
 		<!-- CRON for Dataset Scheduling -->
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/prettyCron/prettycron.js")%>"></script>
@@ -1121,7 +1122,6 @@ div.lower i  {
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Python'">
 							
 							<md-card layout-padding style="margin-top:0">
-								
 								<md-input-container class="md-block" style="width:100%"> 
 								
 									<md-radio-group ng-model="selectedDataSet.isRDataset" layout="row">
@@ -1137,7 +1137,7 @@ div.lower i  {
 								       	
 								       	<md-select 	placeholder ="Choose environment"
 								       	 			ng-required = "selectedDataSet.dsTypeCd=='Python'" ng-change="setFormDirty()"
-								        			ng-model="selectedDataSet.environment">   
+								        			ng-model="selectedDataSet.pythonEnvironment">   
 								        	<md-option ng-if="!selectedDataSet.isRDataset" ng-repeat="e in pythonEnvironments" value="{{e}}">{{e.label}}</md-option>
 								        	<md-option ng-if="selectedDataSet.isRDataset" ng-repeat="e in rEnvironments" value="{{e}}">{{e.label}}</md-option>
 								       	</md-select>  

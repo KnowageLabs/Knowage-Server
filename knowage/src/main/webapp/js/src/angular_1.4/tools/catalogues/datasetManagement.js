@@ -367,12 +367,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 	{value:"csv",name:"CSV"}
  	];
 
+	if ($scope.selectedDataSet == undefined){
+		$scope.selectedDataSet = {}
+	}
+	$scope.selectedDataSet.isRDataset = false
+
 	// PYTHON ENVIRONMENTS CONFIG
 	sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
 	.then(function(response){
 		$scope.pythonEnvironments = $scope.buildEnvironments(response.data);
 	}, function(error){
-		$scope.selectedDataSet.environment = {"label": "", "value": ""};
+		$scope.selectedDataSet.pythonEnvironment = {"label": "", "value": ""};
 	});
 
 	// R ENVIRONMENTS CONFIG
@@ -380,7 +385,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	.then(function(response){
 		$scope.rEnvironments = $scope.buildEnvironments(response.data);
 	}, function(error){
-		$scope.selectedDataSet.environment = {"label": "", "value": ""};
+		$scope.selectedDataSet.pythonEnvironment = {"label": "", "value": ""};
 	});
 
 	$scope.buildEnvironments = function (data) {
@@ -3070,7 +3075,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 }
 
 	 $scope.openREnvironmentDialog = function () {
-			sbiModule_restServices.promiseGet('2.0/backendservices/widgets/RWidget/libraries', JSON.parse($scope.selectedDataSet.environment).label)
+			sbiModule_restServices.promiseGet('2.0/backendservices/widgets/RWidget/libraries', JSON.parse($scope.selectedDataSet.pythonEnvironment).label)
 			.then(function(response){
 				$scope.libraries = [];
 				var librariesArray = JSON.parse((response.data.result));
@@ -3104,7 +3109,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	 $scope.openPythonEnvironmentDialog = function () {
 		 $http({
-		        url: "https://" + JSON.parse($scope.selectedDataSet.environment).value + "/dataset/libraries",
+		        url: "https://" + JSON.parse($scope.selectedDataSet.pythonEnvironment).value + "/dataset/libraries",
 		        method: "GET",
 		        headers: {'Content-Type': 'application/json',
 		        		  'Authorization': $scope.encodedUserId}
@@ -3469,7 +3474,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
 				//restAddress is set ONLY for debugging purposes
 				//the real python address used by the PythonDataProxy is retrieved BE side
-    			$scope.selectedDataSet.restAddress = "https://" + JSON.parse($scope.selectedDataSet.environment).value + '/dataset';
+    			$scope.selectedDataSet.restAddress = "https://" + JSON.parse($scope.selectedDataSet.pythonEnvironment).value + '/dataset';
     			$scope.selectedDataSet.restJsonPathItems = "$[*]";
     			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
     			$scope.selectedDataSet.parameters = true;
