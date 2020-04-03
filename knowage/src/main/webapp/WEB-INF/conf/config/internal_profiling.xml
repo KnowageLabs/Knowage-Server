@@ -203,40 +203,4 @@
 		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
 	</DEFAULT_AUTHORIZATIONS>
-	
-	<DEFAULT_AUTHORIZATIONS_ROLES>
-		<AUTHORIZATION_ROLES authorizationName="SAVE_INTO_FOLDER" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="SAVE_SUBOBJECTS" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="SEE_VIEWPOINTS" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="SEND_MAIL" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="BUILD_QBE_QUERY" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="ENABLE_DATASET_PERSISTENCE" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="ENABLE_TO_RATE" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="ENABLE_TO_PRINT" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="ENABLE_TO_COPY_AND_EMBED" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="SEE_DOCUMENT_BROWSER" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="SEE_MY_DATA" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="SEE_MY_WORKSPACE" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="CREATE_DOCUMENTS" roleName="admin" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="CREATE_SELF_SERVICE_COCKPIT" roleName="admin" organization="DEFAULT_TENANT"/>
-		
-		
-		<AUTHORIZATION_ROLES authorizationName="SAVE_INTO_FOLDER" roleName="user" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="SAVE_SUBOBJECTS" roleName="user" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="SEE_VIEWPOINTS" roleName="user" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="BUILD_QBE_QUERY" roleName="user" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="ENABLE_TO_RATE" roleName="user" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="ENABLE_TO_PRINT" roleName="user" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="ENABLE_TO_COPY_AND_EMBED" roleName="user" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="SEE_DOCUMENT_BROWSER" roleName="user" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="SEE_MY_DATA" roleName="user" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="SEE_MY_WORKSPACE" roleName="user" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="CREATE_DOCUMENTS" roleName="user" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION_ROLES authorizationName="CREATE_SELF_SERVICE_COCKPIT" roleName="user" organization="DEFAULT_TENANT"/>
-	</DEFAULT_AUTHORIZATIONS_ROLES>
-	
-	<EXT_ROLES_CATEGORIES>
-		<EXT_ROLES_CATEGORY roleName="user" domainCd="BM_CATEGORY" organization="DEFAULT_TENANT"/>
-		<EXT_ROLES_CATEGORY roleName="user" domainCd="CATEGORY_TYPE" organization="DEFAULT_TENANT"/>
-	</EXT_ROLES_CATEGORIES>
 </INTERNAL_PROFILING_INITIALIZER>

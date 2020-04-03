@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -42,11 +41,6 @@ import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.initializers.metadata.SpagoBIInitializer;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
-import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
-import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
-import it.eng.spagobi.commons.metadata.SbiCommonInfo;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
@@ -85,10 +79,8 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 			List<SbiAttribute> attributesList = initProfileAttributes(config);
 			List<Role> rolesList = initRoles(config);
-			initExtRolesCategory(config);
 			Map<String, Integer> usersLookupMap = initUsers(config);
 			initDefaultAuthorizations(config);
-			initDefaultAuthorizationsRoles(config);
 
 			ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
 
@@ -575,139 +567,6 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 		}
 
 		return;
-	}
-
-	public void initDefaultAuthorizationsRoles(SourceBean config) {
-		List<SourceBean> defaultAuthorizationsRolesSB;
-		Session aSession = null;
-		logger.debug("IN");
-		try {
-			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
-			defaultAuthorizationsRolesSB = config.getAttributeAsList("DEFAULT_AUTHORIZATIONS_ROLES.AUTHORIZATION_ROLES");
-			logger.debug("Succesfully read from configuration [" + defaultAuthorizationsRolesSB.size() + "] defualt authorization(s) roles");
-
-			List<SbiAuthorizations> authorizations = null;
-			List<SbiProductType> productTypes = null;
-
-			aSession = this.getSession();
-
-			Map<String, String> roleNames = new HashMap<String, String>();
-			for (SourceBean defaultAuthorizationSB : defaultAuthorizationsRolesSB) {
-				roleNames.put((String) defaultAuthorizationSB.getAttribute("roleName"), (String) defaultAuthorizationSB.getAttribute("organization"));
-			}
-
-			for (String roleName : roleNames.keySet()) {
-
-				IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-				String organization = roleNames.get(roleName);
-				roleDAO.setTenant(organization);
-
-				SbiCommonInfo sbiCommonInfo = new SbiCommonInfo();
-				sbiCommonInfo.setOrganization(organization);
-
-				SbiExtRoles role = (SbiExtRoles) aSession.createCriteria(SbiExtRoles.class).add(Restrictions.eq("name", roleName))
-						.add(Restrictions.eq("commonInfo.organization", organization)).uniqueResult();
-				List<SbiAuthorizations> authorizationsAlreadyInserted = DAOFactory.getRoleDAO().LoadAuthorizationsAssociatedToRole(role.getExtRoleId());
-
-				if (authorizationsAlreadyInserted.size() == 0) {
-					List listOfAuthToInsertForRole = config.getFilteredSourceBeanAttributeAsList("DEFAULT_AUTHORIZATIONS_ROLES.AUTHORIZATION_ROLES", "roleName",
-							roleName);
-
-					for (Object defaultAuthorization : listOfAuthToInsertForRole) {
-						SourceBean defaultAuthorizationSB = (SourceBean) defaultAuthorization;
-
-						String authorizationName = (String) defaultAuthorizationSB.getAttribute("authorizationName");
-
-						if (productTypes == null)
-							productTypes = DAOFactory.getProductTypeDAO().loadAllProductType();
-
-						for (SbiProductType productType : productTypes) {
-							if (authorizations == null)
-								authorizations = DAOFactory.getRoleDAO().loadAllAuthorizations();
-
-							SbiAuthorizations sbiAuthorizations = getSbiAuthorizationToInsert(authorizations, authorizationName,
-									productType.getProductTypeId());
-
-							if (sbiAuthorizations != null) {
-								SbiAuthorizationsRoles sbiAuthorizationsRoles = new SbiAuthorizationsRoles();
-								sbiAuthorizationsRoles.setId(new SbiAuthorizationsRolesId(sbiAuthorizations.getId(), role.getExtRoleId()));
-								sbiAuthorizationsRoles.setSbiExtRoles(role);
-								sbiAuthorizationsRoles.setSbiAuthorizations(sbiAuthorizations);
-
-								sbiAuthorizationsRoles.setCommonInfo(sbiCommonInfo);
-								aSession.save(sbiAuthorizationsRoles);
-							}
-						}
-					}
-				}
-			}
-		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while reading defualt profile attibutes", t);
-		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
-		}
-
-	}
-
-	private SbiAuthorizations getSbiAuthorizationToInsert(List<SbiAuthorizations> l, String name, Integer productTypeId) {
-		SbiAuthorizations toReturn = null;
-
-		for (SbiAuthorizations object : l) {
-			if (object.getName().equals(name) && object.getProductType().getProductTypeId().equals(productTypeId)) {
-				toReturn = object;
-				break;
-			}
-		}
-
-		return toReturn;
-	}
-
-	public void initExtRolesCategory(SourceBean config) {
-		List<SourceBean> extRolesCategoriesSB;
-		Session aSession = null;
-		logger.debug("IN");
-		try {
-			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
-			extRolesCategoriesSB = config.getAttributeAsList("EXT_ROLES_CATEGORIES.EXT_ROLES_CATEGORY");
-			logger.debug("Succesfully read from configuration [" + extRolesCategoriesSB.size() + "] defualt ext roles category(s) roles");
-			aSession = this.getSession();
-
-			Map<String, String> roleNames = new HashMap<String, String>();
-			for (SourceBean defaultAuthorizationSB : extRolesCategoriesSB) {
-				roleNames.put((String) defaultAuthorizationSB.getAttribute("roleName"), (String) defaultAuthorizationSB.getAttribute("organization"));
-			}
-
-			for (String roleName : roleNames.keySet()) {
-
-				String organization = roleNames.get(roleName);
-				IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-				roleDAO.setTenant(organization);
-				SbiExtRoles role = (SbiExtRoles) aSession.createCriteria(SbiExtRoles.class).add(Restrictions.eq("name", roleName))
-						.add(Restrictions.eq("commonInfo.organization", organization)).uniqueResult();
-
-				if (DAOFactory.getRoleDAO().getMetaModelCategoriesForRole(role.getExtRoleId()).size() == 0) {
-					for (SourceBean extRolesCategorySB : extRolesCategoriesSB) {
-						SbiDomains category = (SbiDomains) aSession.createCriteria(SbiDomains.class)
-								.add(Restrictions.eq("domainCd", extRolesCategorySB.getAttribute("domainCd")))
-								.add(Restrictions.isNull("commonInfo.organization")).uniqueResult();
-
-						roleDAO.insertRoleMetaModelCategory(role.getExtRoleId(), category.getValueId());
-					}
-				}
-
-			}
-		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while reading defualt profile attibutes", t);
-		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
-		}
-
 	}
 
 	private Set<String> loadProductTypes() {
