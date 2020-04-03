@@ -350,6 +350,13 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 	@Override
 	public String getStatement() {
 
+		if (fetchSize == -1) {
+			if (!this.statement.isEmpty()) {
+				this.statement = this.statement.replaceAll(";", "");
+				return this.statement;
+			}
+		}
+
 		String newStatement = "";
 		if (!this.statement.isEmpty()) {
 			this.statement = this.statement.replaceAll(";", "");
