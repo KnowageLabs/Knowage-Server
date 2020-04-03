@@ -57,7 +57,7 @@ angular
              var pathForFolderLocation = [];
 
              var initializeDataset = function() {
-            	 if(self.document.hasOwnProperty('dataSetId') && self.document.dataSetId || self.document.datasetId) {
+            	 if(self.document.dataSetId) {
             	     crudService.get("1.0/datasets/dataset/id", self.document.dataSetId)
             		 	.then(function(response){
             		 		if(response.data.errors) {
