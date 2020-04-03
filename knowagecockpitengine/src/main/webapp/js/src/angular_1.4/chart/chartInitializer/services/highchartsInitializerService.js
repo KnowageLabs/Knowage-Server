@@ -103,7 +103,7 @@ angular.module('chartInitializer')
 			var plotLines = null;
 			var plotBands = null;
 			var infoFroDrill = []
-			if ((chartType == 'column' || chartType == 'bar' || chartType == 'line' || chartType == 'bubble') && !chartConf.chart.polar && (chartConf.plotOptions.column && chartConf.plotOptions.column.stacking!=undefined)) {
+			if ((chartType == 'column' || chartType == 'bar' || chartType == 'line' || chartType == 'bubble') && !chartConf.chart.polar && (chartConf.plotOptions.column && !chartConf.plotOptions.column.stacking)) {
 				var mapAxis = this.setExtremes(chartConf);
 				for (var i =0; i < chartConf.yAxis.length; i++){
 
@@ -127,7 +127,13 @@ angular.module('chartInitializer')
 				}
 				isBasic = true;
 			}
+			if(chartConf.plotOptions && chartConf.plotOptions.column && chartConf.plotOptions.column.stacking) {
+				for (var i =0; i < chartConf.yAxis.length; i++){
+					if(chartConf.yAxis[i].min !=undefined && (chartConf.yAxis[i].min == 'auto' || chartConf.yAxis[i].min=='')) delete chartConf.yAxis[i].min
 
+					if(chartConf.yAxis[i].max !=undefined && (chartConf.yAxis[i].max == 'auto' || chartConf.yAxis[i].max=='')) delete chartConf.yAxis[i].max
+				}
+			}
 			chartConfMergeService.addProperty(renderObj.chartTemplate.advanced,chartConf);
 
 			if(renderObj.chartTemplate.groupSeriesCateg && renderObj.chartTemplate.VALUES.CATEGORY.drillOrder!=undefined &&
