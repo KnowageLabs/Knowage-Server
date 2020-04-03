@@ -103,7 +103,7 @@ angular.module('chartInitializer')
 			var plotLines = null;
 			var plotBands = null;
 			var infoFroDrill = []
-			if ((chartType == 'column' || chartType == 'bar' || chartType == 'line' || chartType == 'bubble') && !chartConf.chart.polar && (chartConf.plotOptions.column && !chartConf.plotOptions.column.stacking)) {
+			if ((chartType == 'column' || chartType == 'bar' || chartType == 'line' || chartType == 'bubble') && !chartConf.chart.polar && (chartConf.plotOptions.column && chartConf.plotOptions.column.stacking!=undefined)) {
 				var mapAxis = this.setExtremes(chartConf);
 				for (var i =0; i < chartConf.yAxis.length; i++){
 
