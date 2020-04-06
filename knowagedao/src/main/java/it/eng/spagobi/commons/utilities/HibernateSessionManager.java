@@ -49,7 +49,7 @@ public class HibernateSessionManager {
 	private static final String DIALECT_POSTGRE = "org.hibernate.dialect.PostgreSQLDialect";
 	private static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	private static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLDialect";
-
+	
 	private static final String JDBC_DB2 = "jdbc:db2";
 	private static final String JDBC_HSQLDB = "jdbc:hsqldb";
 	private static final String JDBC_INGRES = "jdbc:ingres";
@@ -106,12 +106,32 @@ public class HibernateSessionManager {
 	 * @param conf Actual Hibernate configuration
 	 */
 	private static void determineDialect(Configuration conf) {
-		String figuredOutValue;
 		String datasourceJndi = conf.getProperty(PROPERTY_DATASOURCE_JNDI);
 
 		if (datasourceJndi == null) {
 			throw new IllegalStateException("The property hibernate.connection.datasource is not set in file");
 		}
+
+		String figuredOutValue = getDialect(datasourceJndi);
+		logger.warn("Property hibernate.dialect set to " + figuredOutValue);
+		conf.setProperty(PROPERTY_DIALECT, figuredOutValue);
+
+	}
+
+	public static String determineDialectFromJNDIResource(String datasourceJndi) {
+
+		if (datasourceJndi == null) {
+			throw new IllegalStateException("The property hibernate.connection.datasource is not set in file");
+		}
+
+		String figuredOutValue = getDialect(datasourceJndi);
+		logger.warn("Property hibernate.dialect set to " + figuredOutValue);
+
+		return figuredOutValue;
+	}
+
+	private static String getDialect(String datasourceJndi) {
+		String figuredOutValue = null;
 
 		Connection connection = null;
 		try {
@@ -131,10 +151,6 @@ public class HibernateSessionManager {
 			}
 
 			figuredOutValue = JDBC_URL_PREFIX_2_DIALECT.get(urlPrefix);
-
-			logger.warn("Property hibernate.dialect set to " + figuredOutValue);
-			conf.setProperty(PROPERTY_DIALECT, figuredOutValue);
-
 		} catch (Exception e) {
 			logger.error("Error determining Hibernate's dialect", e);
 		} finally {
@@ -146,6 +162,8 @@ public class HibernateSessionManager {
 				}
 			}
 		}
+		return figuredOutValue;
+
 	}
 
 	private synchronized static SessionFactory getSessionFactory() {
