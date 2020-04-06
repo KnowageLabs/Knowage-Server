@@ -89,12 +89,30 @@ describe("customWidgetAPI", function() {
 		
 		it('should return a data tree when defining measures',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}})
-		    expect(temp.tree).toBeDefined()
+		    expect(temp).toBeDefined()
 		})
 		
 		it('should return children aggregated measures',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}})
 		    expect(temp.tree[0].children[0].UNIT_SALES + temp.tree[0].children[1].UNIT_SALES).toEqual(temp.tree[0].UNIT_SALES)
+		})
+		
+		it('should return children aggregated measures',function (){
+			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}}).getChild(0)
+			expect(temp).toBeDefined()
+		    expect(temp.name).toEqual('Q1')
+		})
+		
+		it('should return children aggregated measures',function (){
+			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}}).getChild(0)
+			var tempValue = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}}).getValue(temp,'UNIT_SALES')
+			expect(tempValue).toBeDefined()
+		    expect(tempValue).toEqual(123)
+		})
+		
+		it('should return children aggregated measures',function (){
+			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}}).getLevel(0)
+		    expect(temp).toBeDefined()
 		})
 	})
 });

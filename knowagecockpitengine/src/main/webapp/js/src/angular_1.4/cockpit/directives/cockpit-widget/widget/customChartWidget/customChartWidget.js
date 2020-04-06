@@ -45,9 +45,11 @@ function cockpitCustomChartControllerFunction(
 		$sce,
 		$filter,
 		cockpitModule_generalServices,
+		sbiModule_translate,
 		datastore
 		){
 	$scope.datastore = datastore;
+	$scope.translate = sbiModule_translate;
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('customChartWidget',template);
 	}
@@ -70,6 +72,7 @@ function cockpitCustomChartControllerFunction(
 	}
 
 	$scope.refresh = function(element,width,height, datasetRecords,nature){
+		$scope.jsError = false;
 		$scope.showWidgetSpinner();
 		var thisElement = angular.element( document.querySelector( '#w'+$scope.ngModel.id+' .htmlRenderer' ) )[0];
 		thisElement.innerHTML = '';
@@ -77,11 +80,17 @@ function cockpitCustomChartControllerFunction(
 		if(datasetRecords){
 			try {
 				datastore.setData(datasetRecords);
-				if($scope.ngModel.js) eval($scope.ngModel.js.code);
+				if($scope.ngModel.js) {
+					var tempJS = $sce.trustAs($sce.JS, $scope.ngModel.js.code).$$unwrapTrustedValue();
+					if(!tempJS.match(/(\$scope|\$destroy)/g)) eval(tempJS);
+					else {
+						$scope.jsError = $scope.translate.load('kn.cockpit.custom.code.unsafe');
+					}
+				}
 				$scope.hideWidgetSpinner();
 			} catch(e){
 				$scope.hideWidgetSpinner();
-				console.log(e);
+				$scope.jsError = e;
 			}
 		}
 	}
