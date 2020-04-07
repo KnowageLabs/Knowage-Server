@@ -26,8 +26,11 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		this.data = data;
 	}
 
+
+	var globalTree = [];
 	function hierarchy(tree) {
 		this.tree = tree;
+		globalTree = tree;
 	}
 
 	function node (node){
@@ -323,12 +326,12 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		}
 	}
 
-	node.prototype.getParent = function (tree,child) {
+	node.prototype.getParent = function () {
 		var parent;
+		var child = this;
+		nodeExistingCheck(globalTree,child)
 
-		nodeExistingCheck(tree,child)
-
-		traverseDF(tree,function(node){
+		traverseDF(globalTree,function(node){
 
 
 			if(!Array.isArray(node)){
@@ -349,8 +352,8 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		return this.children
 	}
 
-	node.prototype.getSiblings = function (tree, node) {
-		return this.getParent(tree,node).children;
+	node.prototype.getSiblings = function () {
+		return this.getParent().children;
 	}
 
 	var findElementIndex = function(array,element){
