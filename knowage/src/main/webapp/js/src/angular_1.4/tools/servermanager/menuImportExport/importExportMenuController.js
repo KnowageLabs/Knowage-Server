@@ -2,6 +2,19 @@ var app = angular.module('importExportMenuModule',
 		['ngMaterial', 'sbiModule', 'angular_table',
 		 'document_tree', 'componentTreeModule', 'file_upload', 'bread_crumb', 'treeControl']);
 
+app.run(function($templateCache, sbiModule_config) {
+	$templateCache.put('knTreeControlTemplate.html', '<ul {{options.ulClass}} > '+
+			'<li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}"'+ 
+				'ng-class="headClass(node)" {{options.liClass}} set-node-to-data><div class="liContent"> '+
+				'<md-checkbox ng-model="node.checked" ng-change="selectNodeLabel(node)"></md-checkbox> '+
+				'<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i> '+
+				'<i class="tree-leaf-head {{options.iLeafClass}}"></i> '+
+				'<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)"   rcLabel  ctxMenuId   tree-transclude></div>'+ 
+				'</div><treeitem ng-if="nodeExpanded()"></treeitem> '+
+			'</li> '+
+		'</ul>');
+});
+
 app.factory('importExportMenuModule_importConf', function() {
 		 var current_data = {};
 		 var default_values = {
@@ -912,15 +925,24 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope,$
 	loadAllMenu();
 	
 	$scope.selectAll = function() {
-		var tmp = $scope.flatten($scope.tree, "menuId", "parentId");
-		$scope.selectedNodes = tmp;
-		$scope.expandedNodes = tmp;
+		var allNodes = $scope.flatten($scope.tree, "menuId", "parentId");
+		$scope.selectedNodes = allNodes;
+		$scope.expandedNodes = allNodes;
+		for (var i in allNodes) {
+			var tmp = allNodes[i];
+			tmp.checked = true;
+		}
 	}
 	
 	$scope.deselectAll = function() {
 
-		$scope.selectedNodes = [];		
+		$scope.selectedNodes = [];
 		$scope.expandedNodes = $scope.flatten($scope.tree, "menuId", "parentId");
+		var allNodes = $scope.flatten($scope.tree, "menuId", "parentId");
+		for (var i in allNodes) {
+			var tmp = allNodes[i];
+			tmp.checked = false;
+		}
 	}
 
 	$scope.submitDownForm = function(form){
@@ -965,7 +987,8 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope,$
 	$scope.treeOptions = {
 		    nodeChildren: "children",
 		    dirSelectable: true,
-		    multiSelection: true		  
+		    multiSelection: true,
+		    templateUrl: 'knTreeControlTemplate.html'
 		}
 
 		
@@ -984,6 +1007,12 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope,$
 			}
 	
 			$scope.openAndSelectUntilLeaf(node,selected, $scope.selectChildren);
+		}
+		
+		$scope.tmpNodes = $scope.flatten($scope.tree, "menuId", "parentId");
+		for (var i in $scope.tmpNodes) {
+			var tmp = $scope.tmpNodes[i];
+			tmp.checked = $scope.selectedNodes.indexOf(tmp) != -1;
 		}
 	}
 	

@@ -49,13 +49,11 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	/**
 	 * Load object's metadata by type
 	 *
-	 * @param type
-	 *            the type(SHORT_TEXT or LONG_TEXT)
+	 * @param type the type(SHORT_TEXT or LONG_TEXT)
 	 *
 	 * @return the metadata
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List loadObjMetaDataListByType(String type) throws EMFUserError {
@@ -103,13 +101,11 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	/**
 	 * Load object's metadata by id.
 	 *
-	 * @param id
-	 *            the identifier
+	 * @param id the identifier
 	 *
 	 * @return the metadata
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#loadObjMetaDataByID(java.lang.Integer)
 	 */
@@ -150,19 +146,16 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	/**
 	 * Load object's metadata by label.
 	 *
-	 * @param label
-	 *            the label
+	 * @param label the label
 	 *
 	 * @return the metadata
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#loadObjMetadataByLabel(java.lang.String)
 	 */
 	@Override
 	public ObjMetadata loadObjMetadataByLabel(String label) throws EMFUserError {
-
 		logger.debug("IN");
 		ObjMetadata toReturn = null;
 		Session tmpSession = null;
@@ -170,9 +163,10 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("label", label);
+			Criterion labelCriterion = null;
+			labelCriterion = Expression.eq("label", label);
 			Criteria criteria = tmpSession.createCriteria(SbiObjMetadata.class);
-			criteria.add(labelCriterrion);
+			criteria.add(labelCriterion);
 			SbiObjMetadata hibMeta = (SbiObjMetadata) criteria.uniqueResult();
 			if (hibMeta == null)
 				return null;
@@ -195,13 +189,55 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 
 	}
 
+	@Override
+	public List loadObjMetadataByBIObjectID(Integer biobjId) throws EMFUserError {
+
+		logger.debug("IN");
+		List toReturn = new ArrayList<SbiObjMetadata>();
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			StringBuilder sb = new StringBuilder();
+			sb.append(" select t1 ");
+			sb.append(" from SbiObjMetadata t1, SbiObjMetacontents t2");
+			sb.append(" where t1.objMetaId=t2.objmetaId");
+			sb.append(" and t2.sbiObjects.biobjId=" + biobjId);
+
+			List tmpList = aSession.createQuery(sb.toString()).list();
+			for (Object obj : tmpList) {
+				SbiObjMetadata som = (SbiObjMetadata) obj;
+				toReturn.add(toObjMetadata(som));
+			}
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the metadata with biobjId " + biobjId.toString(), he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
 	/**
 	 * Load all metadata.
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#loadAllObjMetadata()
 	 */
@@ -245,13 +281,64 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	}
 
 	/**
+	 * Load all metadata filtered by label comparison.
+	 *
+	 * @return the list
+	 *
+	 * @throws EMFUserError the EMF user error
+	 *
+	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#loadAllObjMetadata()
+	 */
+	@Override
+	public List loadAllObjMetadataByLabelAndCase(String label, boolean caseSensitive) throws EMFUserError {
+		logger.debug("IN");
+		List toReturn = new ArrayList<SbiObjMetadata>();
+		Session tmpSession = null;
+		Transaction tx = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			Criterion labelCriterion = null;
+			if (caseSensitive) {
+				labelCriterion = Expression.eq("label", label);
+			} else {
+				labelCriterion = Expression.eq("label", label).ignoreCase();
+
+			}
+			Criteria criteria = tmpSession.createCriteria(SbiObjMetadata.class);
+			criteria.add(labelCriterion);
+			List hibMeta = criteria.list();
+			if (hibMeta == null)
+				return null;
+
+			for (Object object : hibMeta) {
+
+				toReturn.add(toObjMetadata((SbiObjMetadata) object));
+			}
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("Error while loading the metadata with label " + label, he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+
+	}
+
+	/**
 	 * Modify metadata.
 	 *
-	 * @param aObjMetadata
-	 *            the metadata
+	 * @param aObjMetadata the metadata
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#modifyObjMetadata(it.eng.spagobi.tools.objmetadata.bo.ObjMetadata)
 	 */
@@ -300,11 +387,9 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	/**
 	 * Insert object's metadata.
 	 *
-	 * @param aObjMetadata
-	 *            the metadata
+	 * @param aObjMetadata the metadata
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#insertObjMetadata(it.eng.spagobi.tools.objmetadata.bo.ObjMetadata)
 	 */
@@ -356,11 +441,9 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	/**
 	 * Erase object's metadata
 	 *
-	 * @param aObjMetadata
-	 *            the metadata
+	 * @param aObjMetadata the metadata
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#eraseObjMetadata(it.eng.spagobi.tools.objmetadata.bo.ObjMetadata)
 	 */
@@ -409,13 +492,11 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	/**
 	 * Checks for bi obj associated.
 	 *
-	 * @param id
-	 *            the metadata id
+	 * @param id the metadata id
 	 *
 	 * @return true, if checks for bi obj associated
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#hasBIObjAssociated(java.lang.String)
 	 */
@@ -464,13 +545,11 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	/**
 	 * Checks for bi subobject associated.
 	 *
-	 * @param id
-	 *            the metadata id
+	 * @param id the metadata id
 	 *
 	 * @return true, if checks for bi subobjects associated
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#hasSubObjAssociated(java.lang.String)
 	 */
@@ -518,8 +597,7 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	/**
 	 * From the hibernate SbiObjMetadata at input, gives the corrispondent <code>ObjMetadata</code> object.
 	 *
-	 * @param hibObjMetadata
-	 *            The hybernate metadata
+	 * @param hibObjMetadata The hybernate metadata
 	 *
 	 * @return The corrispondent <code>ObjMetadata</code> object
 	 */

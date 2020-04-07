@@ -35,6 +35,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -113,9 +114,45 @@ public class ExcelExportJob extends AbstractExportJob {
 			decimalCellStyle.setBorderTop(CellStyle.BORDER_THIN);
 			decimalCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
 
-			// CREATE HEADER SHEET
+			String limitExp = SingletonConfig.getInstance().getConfigValue("dataset.export.xls.resultsLimit");
+			Integer limitExport;
+			try {
+				limitExport = Integer.parseInt(limitExp);
+			} catch (NumberFormatException e) {
+				String msg = "Export limit cannot be parsed, check if value set for dataset.export.xls.resultsLimit in Configuration Management is numeric";
+				logger.error(msg, e);
+				limitExport = 10000;
+			}
+
+			dataSet.loadData(0, limitExport, -1);
+			IDataStore dataStore = dataSet.getDataStore();
+
+			int resultNumber;
+			Object propertyRawValue;
+			propertyRawValue = dataStore.getMetaData().getProperty("resultNumber");
+			resultNumber = ((Integer) propertyRawValue).intValue();
+
 			IMetaData dataSetMetadata = dataSet.getMetadata();
-			XSSFRow header = sheet.createRow((short) 0); // first row
+			// CREATE MESSAGE ABOUT LIMIT
+			if (resultNumber > limitExport) {
+				String message = "Query results are exceeding configured threshold, therefore only " + limitExport + " were exported.";
+				XSSFRow messageRow = sheet.createRow((short) 0); // first row
+				XSSFCell cell = messageRow.createCell(0);
+				cell.setCellValue(message);
+				cell.setCellStyle(borderStyleHeader);
+			}
+
+			// if(resultNumber > limitExport) {
+			// "Query results are exceeding configured threshold, therefore only " + limitExport + " were exported.";
+			// }
+
+			// CREATE HEADER SHEET
+			XSSFRow header;
+			if (resultNumber > limitExport) {
+				header = sheet.createRow((short) 1); // second row
+			} else {
+				header = sheet.createRow((short) 0); // first row
+			}
 			if (dataSetMetadata != null && dataSetMetadata.getFieldCount() > 0) {
 				for (int i = 0; i <= dataSetMetadata.getFieldCount() - 1; i++) {
 					XSSFCell cell = header.createCell(i);
@@ -123,14 +160,18 @@ public class ExcelExportJob extends AbstractExportJob {
 					cell.setCellStyle(borderStyleHeader);
 				}
 			}
+
 			// FILL CELL RECORD
-			dataSet.loadData();
-			IDataStore dataStore = dataSet.getDataStore();
 			for (int i = 0; i < Integer.MAX_VALUE && i < dataStore.getRecordsCount(); i++) {
 				try {
 					IRecord dataSetRecord = dataStore.getRecordAt(i);
 
-					XSSFRow row = sheet.createRow(i + 1); // starting from 2nd row
+					XSSFRow row;
+					if (resultNumber > limitExport) {
+						row = sheet.createRow(i + 2); // starting from 3rd row
+					} else {
+						row = sheet.createRow(i + 1); // starting from 2nd row
+					}
 
 					for (int k = 0; k <= dataSetRecord.getFields().size() - 1; k++) {
 						Class<?> clazz = dataSetMetadata.getFieldType(k);
@@ -192,9 +233,9 @@ public class ExcelExportJob extends AbstractExportJob {
 			logger.error(msg, e);
 			throw new JobExecutionException(msg, e);
 		} finally {
-//			if (iterator != null) {
-//				iterator.close();
-//			}
+			// if (iterator != null) {
+			// iterator.close();
+			// }
 			if (exportFileOS != null) {
 				try {
 					exportFileOS.close();

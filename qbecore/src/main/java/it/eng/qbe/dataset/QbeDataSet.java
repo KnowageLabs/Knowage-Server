@@ -162,7 +162,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 	public Query filterQueryWithProfileAttributes(it.eng.qbe.datasource.IDataSource qbeDataSource, Query query) {
 		IModelAccessModality accessModality = qbeDataSource.getModelAccessModality();
-		Query filteredQuery = accessModality.getFilteredStatement(query, qbeDataSource, getUserProfile().getUserAttributes());
+		Query filteredQuery = accessModality.getFilteredStatement(query, qbeDataSource, attributes);
 		return filteredQuery;
 	}
 

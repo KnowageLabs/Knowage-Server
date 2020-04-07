@@ -19,7 +19,7 @@ angular
 	.module('cockpitModule')
 	.controller('htmlWidgetEditControllerFunction',htmlWidgetEditControllerFunction)
 
-function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,$timeout,cockpitModule_datasetServices,cockpitModule_analyticalDrivers,cockpitModule_helperDescriptors){
+function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,$timeout,cockpitModule_datasetServices,cockpitModule_analyticalDrivers,cockpitModule_helperDescriptors,cockpitModule_properties){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.helper = {'column' : {},'parameter':{}};
@@ -36,6 +36,11 @@ function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_tran
 		tag.opened = !tag.opened;
 	}
 	
+	for(var k in cockpitModule_properties.VARIABLES){
+		if($scope.availableVariables) $scope.availableVariables.push({name:k});
+		else $scope.availableVariables = [{name:k}];
+	}
+	
 	$scope.$watch('newModel.dataset.dsId',function(newValue,oldValue){
 		if(newValue){
 			$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
@@ -50,9 +55,10 @@ function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_tran
 		}else{
 			if($scope.newModel.content && $scope.newModel.content.columnSelectedOfDataset) $scope.newModel.content.columnSelectedOfDataset = [];
 		}
-		$scope.helper.tags = cockpitModule_helperDescriptors.htmlHelperJSON(newValue,$scope.dataset ? $scope.dataset.metadata.fieldsMeta : null,$scope.formattedAnalyticalDrivers,$scope.aggregations,$scope.newModel.cross,$scope.availableDatasets);
+		$scope.helper.tags = cockpitModule_helperDescriptors.htmlHelperJSON(newValue,$scope.dataset ? $scope.dataset.metadata.fieldsMeta : null,$scope.formattedAnalyticalDrivers,$scope.aggregations,$scope.newModel.cross,$scope.availableDatasets, $scope.availableVariables);
 		
 	})
+	
 	
 	$scope.insertCode = function(tag){
 		var tempString = tag.tag;

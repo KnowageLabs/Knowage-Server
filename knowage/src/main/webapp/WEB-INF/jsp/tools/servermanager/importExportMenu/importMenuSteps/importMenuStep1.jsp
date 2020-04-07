@@ -24,7 +24,8 @@
 		<p flex="50">{{translate.load('sbi.hierarchies.source');}}</p>
 		<p flex="50">{{translate.load('sbi.modelinstances.target');}}</p>
 	</md-whiteframe >
-	<md-subheader class="md-primary">{{translate.load('SBISet.impexp.exportedMenu','component_impexp_messages');}}</md-subheader>
+	<!-- <md-subheader class="md-primary">{{translate.load('SBISet.impexp.exportedMenu','component_impexp_messages');}}</md-subheader> -->
+	<md-subheader class="md-primary"></md-subheader>
 	<section>
 		<div layout="row"  layout-wrap>
 		   <span flex></span>

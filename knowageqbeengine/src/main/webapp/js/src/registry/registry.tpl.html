@@ -1,17 +1,19 @@
-<div ng-controller="RegistryController">
+<div ng-controller="RegistryController" layout-fill layout="column">
     <md-toolbar class="secondaryToolbar">
         <div class="md-toolbar-tools" layout="row">
             <h2>{{configuration.title}}</h2>
+            <span flex></span>
+            <md-button ng-click="updateRow()">
+            	Save
+            </md-button>
         </div>
     </md-toolbar>
-    <md-content flex ng-cloak>
-        <div ng-if="configuration.filters" class="registryFilters">
-            <div layout="row" layout-align="start center">              
- 			   <div class="filter-btns filter-clear">
- 			   		<md-tooltip>Clear</md-tooltip>
-               		<md-icon ng-click="deleteFilterValues()" md-font-icon="fa fa-recycle fa-2x"</md-icon>
-               </div>
-                <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in checkIfFilterColumnExists()">
+    <md-content flex ng-cloak layout="column" class="registryFilters">
+        <!--  div ng-if="configuration.filters" class="registryFilters"-->
+        	<md-card ng-if="configuration.filters">
+        		<md-subheader>Filters</md-subheader>
+            <div layout="row" layout-align="start center" style="padding:0 8px">              
+                <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in checkIfFilterColumnExists()" style="min-width:200px">
                     <label>{{filter.title}}</label>
                     <input  ng-model="filter.value" ng-if="filter.presentation === 'MANUAL'" ng-keyup="addToFilters(filter)" ng-keydown="$event.keyCode === 13 && getFilteredData(filters)">
                     <md-select md-on-open="addFilterOptions(filter.field)" ng-model="filter.value" ng-if="filter.presentation == 'COMBO'" ng-change="addToFilters(filter)">
@@ -19,18 +21,19 @@
                         <md-option ng-repeat="opt in filter.options track by $index" ng-value="opt.column_1">{{opt.column_1}}</md-option>
                     </md-select>
                 </md-input-container>
-               <div class="filter-btns filter">
-               <md-tooltip>Filter</md-tooltip>
-               		<md-icon ng-click="getFilteredData(filters)" md-font-icon="fa fa-filter fa-2x"></md-icon>
-               </div>              
-                <div class="filter-btns save-btn">
-                	<md-tooltip>Save</md-tooltip>
-                      <md-icon  ng-click="updateRow()" md-font-icon="fa fa-save fa-2x"></md-icon>
-                </div>
+                <span flex></span>
+                <md-button ng-click="deleteFilterValues()" class="md-raised" ng-if="checkIfFiltersHaveValues()">
+            		Clear
+            		<md-tooltip md-delay="500">Clear all filters</md-tooltip> 
+            	</md-button>
+                <md-button  class="md-raised md-primary" ng-click="getFilteredData(filters)">
+            		Filter
+            	</md-button>
             </div>
-        </div>
-        <div>
-            <table class="kn-table alternatedRows" ng-if="configuration.pivot == false">
+            </md-card>
+        <!--  /div-->
+        <md-card flex>
+            <table class="kn-table kn-table-alternated-rows" ng-if="configuration.pivot == false">
                 <thead>
                     <tr>
                     	<th class="recNo"><span>&nbsp;</span></th>
@@ -38,6 +41,7 @@
                             <div layout="row" layout-align="start center" ng-click="sortBy(col.field)">                            
                                 <span class="sortorder" ng-class="{reverse: reverse}" ng-if="configuration.pagination != 'true'">{{col.title}}</span>
                                 <span ng-if="configuration.pagination == 'true'">{{col.title}}</span>
+                                <span flex></span>
                                 <md-menu>
                                     <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdMenu.open()">
                                         <md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
@@ -60,8 +64,9 @@
                             </div>
                         </th>
                         <th class="tableAction">
-                          <md-button class="" ng-click="addRow()" ng-if="configuration.enableAddRecords || configuration.enableButtons">
-                               Add row
+                          <md-button class="md-fab md-mini" ng-click="addRow()" ng-if="configuration.enableAddRecords || configuration.enableButtons">
+                               <md-icon md-font-icon="fa fa-plus"></md-icon>
+                               <md-tooltip md-delay="500">Add Row</md-tooltip>
                           </md-button>  
                         </th> 
                     </tr>
@@ -74,7 +79,7 @@
                                 <span ng-if="!col.editable && col.dataType !== 'boolean'">{{row[col.field] }}</span>                               
                                 <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (!col.editable)" ng-checked="{{row[col.field]}}" disabled ng-click="setSelected(row)" >
                                 <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable)" ng-checked="{{row[col.field]}}" ng-click="setSelected(row)">                                                            
-                                <md-menu ng-if="col.editable && col.dataType !== 'boolean'">                                
+                                <md-menu ng-if="col.editable && col.dataType !== 'boolean'" ng-click="setSelected(row)">                                
                                     <div layout="row" class="clickable" ng-click="addColumnOptions(col, row, $mdOpenMenu)">  
 	                                    <span ng-if="col.dataType === 'int' && row[col.field] != ''">{{row[col.field] | number}}</span>
 	                                    <span ng-if="col.dataType === 'int' && row[col.field] == ''">{{row[col.field]}}</span>
@@ -83,7 +88,7 @@
 	                                    <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
 	                                    <span ng-if="col.dataType === 'float'"> {{row[col.field] | decimal:col.format}} </span>                                                                             
                                     </div>
-                                    <md-menu-content width="5" class="customContentMenu" ng-click="setSelected(row)">
+                                    <md-menu-content width="5" class="customContentMenu" >
                                         <md-menu-item layout="row" layout-align="start center">
                                             <md-input-container class="md-icon-float md-block">                                               
                                                	 <input type="{{setDataType(col.dataType)}}" step="{{getStep(col.dataType)}}" name="textField" ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null"  aria-label="data change"
@@ -160,9 +165,32 @@
                           </td>
             		</tr>
             	</tbody>
-            </table>                        
-            <nav ng-if="configuration.pagination == 'true'" aria-label="Page navigation" class="pagination" layout="row" layout-align="start center">
-               <!-- <span flex></span> -->
+            </table> 
+            <div layout="row" ng-if="configuration.pagination == 'true'">
+			    <div class="ag-theme-balham" flex>
+					<div class=" ag-paging-panel ag-noBorders ag-font-style">
+				   		<span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
+				       		<span ref="lbFirstRowOnPage">{{min}}</span> to <span ref="lbLastRowOnPage">{{max}}</span> of <span ref="lbRecordCount">{{resultsNumber}}</span>
+				   		</span>
+				   		<span class="ag-paging-page-summary-panel">
+				   			<div ref="btFirst" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-first" unselectable="on"></span>
+				       			<button type="button" ref="btFirst" ng-disabled="!hasPrevious" ng-click="first()">First</button>
+				      			</div>
+				      			<div ref="btPrevious" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
+				       			<button type="button" ref="btPrevious" ng-disabled="!hasPrevious" ng-click="previous()">Previous</button>
+				       		</div>
+				       		Page <span ref="lbCurrent">{{page}}</span> of <span ref="lbTotal">{{getTotalPages.length}}</span>
+				       		<div ref="btNext" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
+				       			<button type="button" ref="btNext" ng-click="next()" ng-disabled="!hasNext">Next</button>
+				       		</div>
+				       		<div ref="btLast" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-last" unselectable="on"></span>
+				       			<button type="button" ref="btLast" ng-disabled="!hasNext" ng-click="last()">Last</button>
+				       		</div>
+				   		</span>
+					</div>
+				</div>
+			</div>                       
+            <!-- nav ng-if="configuration.pagination == 'true'" aria-label="Page navigation" class="pagination" layout="row" layout-align="start center">
                 <label>Page</label>
                 <md-input-container class="noMargin">
                     <md-select aria-label="Page navigation" ng-model="page" ng-change="goToPage()">
@@ -176,7 +204,7 @@
                 <md-button class="md-icon-button next" aria-label="Next" ng-click="next()" ng-disabled="!hasNext">
                     <i class="fa fa-angle-right"></i>
                 </md-button>
-            </nav>
-        </div>
+            </nav-->
+        </md-card>
     </md-content>
 </div>

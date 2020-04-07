@@ -181,13 +181,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		if(!$scope.ngModel.style){
 			$scope.ngModel.style={};
 		}
-		if(!$scope.ngModel.settings.summary){
-			$scope.ngModel.settings.summary={
-					'enabled': false,
-					'forceDisabled': false,
-					'style': {}
-			};
-		}
 
 		$scope.init=function(element,width,height){
 			$scope.refreshWidget(null, 'init');

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 from app.services import create_app
 from app.utilities import constants

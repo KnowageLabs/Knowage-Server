@@ -464,10 +464,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				//set default indicator (first one) for each layer
 				for (l in $scope.ngModel.content.layers){
 					var columns = $scope.getColumnSelectedOfDataset($scope.ngModel.content.layers[l].dsId);
-					for ( c in columns){
+					for (var c in columns){
 						if (columns[c].properties && columns[c].properties.showMap){
 							$scope.ngModel.content.layers[l].defaultIndicator = columns[c].name;
 							break;
+						}
+					}
+					// all attributes that don't have aggregateBy properties need a default value to true
+					for (var c in columns) {
+						var currCol = columns[c];
+						if (currCol.fieldType == "ATTRIBUTE") {
+							if (!currCol.properties) {
+								currCol.properties = {};
+							}
+							if (!currCol.properties.hasOwnProperty("aggregateBy")) {
+								currCol.properties.aggregateBy = true;
+							}
 						}
 					}
 				}
@@ -700,17 +712,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			 });
 
-    		$scope.map.on('dblclick', function(evt) {
-    			for (l in $scope.ngModel.content.layers){
-    		    	var layerDef =  $scope.ngModel.content.layers[l];
-    		    	var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
-    		    	var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
-	    			if (isCluster || isHeatmap){
-	    				var values = $scope.values[layerDef.name];
-		        		$scope.createLayerWithData(layerDef.name, values, false, false);
-	    			}
-    			}
-    		});
+			$scope.exploded = {};
+			$scope.map.on('dblclick', function(evt) {
+				for (l in $scope.ngModel.content.layers){
+					var layerDef =  $scope.ngModel.content.layers[l];
+					var dsId = layerDef.dsId;
+					if (!(dsId in $scope.exploded)) {
+						$scope.exploded[dsId] = false;
+					}
+
+					$scope.exploded[dsId] = !$scope.exploded[dsId];
+
+					var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
+					var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
+					if (!$scope.exploded[dsId]) {
+						var values = $scope.values[layerDef.name];
+						$scope.createLayerWithData(layerDef.name, values, false, false);
+					} else {
+						var values = $scope.values[layerDef.name];
+						$scope.createLayerWithData(layerDef.name, values, isCluster, isHeatmap);
+					}
+				}
+			});
 
     		// change mouse cursor when over marker
     	      $scope.map.on('pointermove', function(e) {
@@ -745,6 +768,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
 
 			columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
+
+			// exclude from model all attributes that are not needed for aggregation
+			columnsForData = columnsForData.filter(function (elem) {
+				if (elem.fieldType == "ATTRIBUTE"
+						&& elem.properties
+						&& !elem.properties.aggregateBy) {
+					return false;
+				} else {
+					return true;
+				}
+			});
 
 			for (f in columnsForData){
 				var tmpField = columnsForData[f];

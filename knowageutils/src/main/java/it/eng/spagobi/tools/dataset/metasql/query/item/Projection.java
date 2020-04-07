@@ -9,7 +9,6 @@ import it.eng.spagobi.utilities.database.AbstractDataBase;
 public class Projection extends AbstractSelectionField {
 	private IAggregationFunction aggregationFunction;
 	private IDataSet dataSet;
-	private String name;
 	private String alias;
 	@SuppressWarnings("rawtypes")
 	private Class type;
@@ -70,7 +69,7 @@ public class Projection extends AbstractSelectionField {
 		return dataSet;
 	}
 
-	public boolean hasAlias(){
+	public boolean hasAlias() {
 		return alias != null;
 	}
 

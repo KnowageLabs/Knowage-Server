@@ -8,7 +8,6 @@ import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 public class DataStoreCalculatedField extends AbstractCalculatedField {
 
 	private IDataSet dataSet;
-	private String name;
 	private String alias;
 	private List<AbstractSelectionField> projectionsList;
 	private String formula;

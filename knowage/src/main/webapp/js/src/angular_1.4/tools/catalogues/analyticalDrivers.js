@@ -392,7 +392,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 
 		});
 	}
-	
+
 	$scope.canHaveMaxValue = function() {
 		return "DATE" == $scope.selectedDriver.type;
 	}
@@ -489,7 +489,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-					
+
 					if (response.data.warnings && response.data.warnings.length > 0)
 						sbiModule_messaging.showErrorMessage(response.data.warnings[0], 'Warning');
 
@@ -825,7 +825,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	}
 	// this function unchecks all roles
 	$scope.uncheckAllRoles = function() {
-		$scope.associatedRoles = [];
+		$scope.associatedRoles.length = 0;
 	}
 
 	// this function is called when clicking on plus button in use mode table

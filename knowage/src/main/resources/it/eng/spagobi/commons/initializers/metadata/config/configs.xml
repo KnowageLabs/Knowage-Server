@@ -545,7 +545,12 @@
     <CONFIG label="document.execution.startAutomatically" name="Document execution automatic start"
         description="If true, when opening a document, it will be executed automatically in case no mandatory drivers are missing"
         isActive="true" valueCheck="true" valueType="STRING"
-        category="GENERIC_CONFIGURATION" />
+        category="GENERIC_CONFIGURATION" />    
+        
+	<CONFIG label="dataset.export.xls.resultsLimit" name="Dataset XLS/XLSX export result limit"
+		description="Specify max number of rows as a dataset when exporting into XLS/XLSX"
+		isActive="true" valueCheck="10000" valueType="NUM"
+		category="GENERIC_CONFIGURATION" />
 
 	<CONFIG label="internal.security.login.checkForMaxFailedLoginAttempts" name="Max failed login attempts filter"
 		description="Enable filter for max value of failed login attempts" isActive="true"
@@ -576,6 +581,9 @@
 	<CONFIG label="python.virtualenv.0.frontend.url"      name="Default python address"
 		description="Default IP address and port for python engine." isActive="true"
 		valueCheck="localhost:5000" valueType="STRING" category="PYTHON_CONFIGURATION" />
+	<CONFIG label="r.env.0" name="Default R address"
+		description="Default IP address and port for R engine." isActive="true"
+		valueCheck="localhost:5001" valueType="STRING" category="R_CONFIGURATION" />
 	
 </CONFIGS>
 

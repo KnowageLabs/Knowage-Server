@@ -24,7 +24,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 	    }return true;
 	}
 
-	self.htmlHelperJSON = function(datasetId,meta,parameters,aggregations,cross,availableDatasets){
+	self.htmlHelperJSON = function(datasetId,meta,parameters,aggregations,cross,availableDatasets,variables){
 		return [
 			{
 				'label':sbiModule_translate.load('kn.cockpit.html.tag1'),
@@ -183,6 +183,19 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 						'type': 'select',
 						'options': !datasetId || meta,
 						'flex':'flex-100'}]
+				},
+			{
+				'label':sbiModule_translate.load('kn.cockpit.html.tag11'),
+				'name': 'active-selection',
+				'description': sbiModule_translate.load('kn.cockpit.html.tag11.desc'),
+				'hidden': !variables ? true : false,
+				'hiddenMessage': 'no variable present',
+				'tag':"[kn-variable='%%variable%%']",
+				'inputs': [
+					{	'name':'variable',
+						'type': 'select',
+						'flex':'flex-100',
+						'options': variables}]
 				}
 		]
 	}
@@ -206,6 +219,37 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'label':sbiModule_translate.load('kn.cockpit.python.tag2'),
 				'name': 'parameter',
 				'description':sbiModule_translate.load('kn.cockpit.python.tag2.desc'),
+				'hidden': self.isEmpty(cockpitModule_analyticalDrivers),
+				'hiddenMessage': 'no parameter available',
+				'inputs': [
+					{	'name':'parameter',
+						'type': 'select',
+						'options': parameters,
+						'flex':'flex-100'}
+				],
+				'tag':"$P{%%parameter%%}"}
+		]
+	}
+
+	self.rHelperJSON = function(datasetId,datasetLabel,meta,parameters,aggregations,cross,availableDatasets){
+		return [
+			{
+				'label':sbiModule_translate.load('kn.cockpit.R.tag1'),
+				'name': 'column',
+				'description': sbiModule_translate.load('kn.cockpit.R.tag1.desc'),
+				'hidden': !datasetId ? true : false,
+				'hiddenMessage': sbiModule_translate.load('kn.cockpit.R.nodataset'),
+				'inputs': [
+					{	'name':'column',
+						'type': 'select',
+						'options': !datasetId || meta,
+						'flex':'flex-100'}
+				],
+				'tag': datasetLabel + "[\"%%column%%\"]"},
+			{
+				'label':sbiModule_translate.load('kn.cockpit.R.tag2'),
+				'name': 'parameter',
+				'description':sbiModule_translate.load('kn.cockpit.R.tag2.desc'),
 				'hidden': self.isEmpty(cockpitModule_analyticalDrivers),
 				'hiddenMessage': 'no parameter available',
 				'inputs': [

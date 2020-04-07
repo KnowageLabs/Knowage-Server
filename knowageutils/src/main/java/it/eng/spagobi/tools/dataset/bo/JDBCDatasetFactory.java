@@ -57,6 +57,9 @@ public class JDBCDatasetFactory {
 		case VERTICA:
 			dataSet = new JDBCVerticaDataSet();
 			break;
+		case REDSHIFT:
+			dataSet = new JDBCRedShiftDataSet();
+			break;
 		default:
 			dataSet = new JDBCDataSet();
 		}

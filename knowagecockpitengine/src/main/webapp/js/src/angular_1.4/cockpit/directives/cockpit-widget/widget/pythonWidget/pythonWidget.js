@@ -152,8 +152,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.setPythonParameters = function () {
 			//get user_id from parameters and use it for authentication in python
-			url_string = window.location.href
-			url = new URL(url_string);
 			$scope.encodedUserId = sbiModule_user.userUniqueIdentifier;
 	        $scope.drivers = cockpitModule_analyticalDrivers;
 			//if there is a dataset selected save its label

@@ -26,7 +26,7 @@
 		exporters.push(new Exporter('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
 		var query = {};
 		var bodySend = {};
-
+		var exportLimit = '';
 
 		return {
 
@@ -53,6 +53,7 @@
 					exportResultAction.formParams.query = query;
 					exportResultAction.formParams.pars = bodySend.pars;
 					exportResultAction.conf.responseType = 'arraybuffer';
+					exportResultAction.queryParams.limit = exportLimit;
 					exportResultAction.executeAction().then(function(response){
 
 						sbiModuleDownloadService.getBlob(response);
@@ -75,7 +76,14 @@
 			},
 			setBody : function (b) {
 				bodySend = b;
-			}
+			},
+			setExportLimit : function (el) {
+				exportLimit = el;
+			},
+			getExportLimitation: function(){
+				sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
+	   			return sbiModule_restServices.promiseGet("2.0/configs","EXPORT.LIMITATION");
+	   		}
 		}
 
 	})

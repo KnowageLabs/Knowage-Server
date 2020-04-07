@@ -7,6 +7,9 @@
       border-radius: 2px;
       background-color: lighten($bordersColor,10%);
     }
+    span.cm-value {
+      color: blue;
+    }
   }
 }
 
@@ -47,6 +50,7 @@
     }
   .CodeMirror {
     width: 100%;
+    height: 200px;
     .CodeMirror-gutter {
       width: 29px !important;
     }

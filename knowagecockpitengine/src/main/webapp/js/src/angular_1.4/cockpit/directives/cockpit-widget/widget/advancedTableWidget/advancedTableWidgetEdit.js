@@ -16,7 +16,7 @@ angular
 	.module('cockpitModule')
 	.controller('advancedTableWidgetEditControllerFunction',advancedTableWidgetEditControllerFunction)
 
-function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,cockpitModule_datasetServices,cockpitModule_generalOptions, cockpitModule_analyticalDrivers){
+function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,cockpitModule_datasetServices,cockpitModule_generalOptions, cockpitModule_analyticalDrivers, sbiModule_restServices,cockpitModule_template){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
@@ -39,8 +39,26 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			if($scope.newModel.content.columnSelectedOfDataset[c].fieldType == 'MEASURE' && !$scope.newModel.content.columnSelectedOfDataset[c].aggregationSelected) $scope.newModel.content.columnSelectedOfDataset[c].aggregationSelected = 'SUM';
 			if($scope.newModel.content.columnSelectedOfDataset[c].fieldType == 'MEASURE' && !$scope.newModel.content.columnSelectedOfDataset[c].funcSummary) $scope.newModel.content.columnSelectedOfDataset[c].funcSummary = $scope.newModel.content.columnSelectedOfDataset[c].aggregationSelected;
 		}
+		$scope.getDatasetAdditionalInfo(id);
 		$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
 	}
+	
+	$scope.getDatasetAdditionalInfo = function(dsId){
+        for(var k in cockpitModule_template.configuration.datasets){
+        	if(cockpitModule_template.configuration.datasets[k].dsId == dsId) {
+        		$scope.localDataset = cockpitModule_template.configuration.datasets[k];
+        		break;
+        	}
+        
+        }
+        sbiModule_restServices.restToRootProject();
+        sbiModule_restServices.promiseGet('2.0/datasets', 'availableFunctions/' + dsId, "useCache=" + $scope.localDataset.useCache).then(function(response){
+        	$scope.datasetAdditionalInfos = response.data;
+        }, function(response) {
+        	$scope.showAction(response.data.errors[0].message);
+        });
+	}
+	if($scope.newModel.dataset && $scope.newModel.dataset.dsId) $scope.getDatasetAdditionalInfo($scope.newModel.dataset.dsId);
 
 	function moveInArray(arr, fromIndex, toIndex) {
         var element = arr[fromIndex];
@@ -94,7 +112,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	}
 
 	function rowDragEnter(event){
-		if($scope.startingDragRow) $scope.startingDragRow = event.overIndex;
+		if(!$scope.startingDragRow) $scope.startingDragRow = event.overIndex;
 	}
 	function onRowDragEnd(event){
 		moveInArray($scope.newModel.content.columnSelectedOfDataset, $scope.startingDragRow, event.overIndex);
@@ -115,6 +133,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		return typeof(params.data.name) !== 'undefined';
 	}
 	function isAggregationEditable(params) {
+		if (params.data.isCalculated) return false;
 		return params.data.fieldType == "MEASURE" ? true : false;
 	}
 
@@ -130,7 +149,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	function buttonRenderer(params){
 		var calculator = '';
 		if(params.data.isCalculated){
-			calculator = '<calculated-field ng-model="newModel" selected-item="'+params.rowIndex+'"></calculated-field>';
+			calculator = '<calculated-field ng-model="newModel" selected-item="'+params.rowIndex+'" additional-info="datasetAdditionalInfos"></calculated-field>';
 		}
 
 		return 	calculator +
@@ -449,14 +468,27 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	$scope.removeSummaryRow = function(i){
 		$scope.newModel.settings.summary.list.splice(i,1);
 	}
+	
+	$scope.checkForPinnedColumns = function(columns){
+		for(var k in columns){
+			if(columns[k].pinned) return false;
+		}
+		return true;
+	}
 
 	$scope.$watch('newModel.settings.summary.enabled',function(newValue,oldValue){
 		if(newValue){
+			if($scope.newModel.settings.summary.style && $scope.newModel.settings.summary.style.pinnedOnly){
+				$scope.showNoPinnedColumnWarning = $scope.checkForPinnedColumns($scope.newModel.content.columnSelectedOfDataset);
+			}
 			if(!$scope.newModel.settings.summary.list) $scope.newModel.settings.summary.list = [{}];
 		}
 	})
 
 	$scope.$watch('newModel.content.columnSelectedOfDataset',function(newValue,oldValue){
+		if($scope.newModel.settings.summary && $scope.newModel.settings.summary.style && $scope.newModel.settings.summary.style.pinnedOnly){
+			$scope.showNoPinnedColumnWarning = $scope.checkForPinnedColumns(newValue);
+		}
 		if($scope.columnsGrid.api && newValue){
 			$scope.columnsGrid.api.setRowData(newValue);
 			$scope.columnsGrid.api.sizeColumnsToFit();

@@ -53,7 +53,7 @@ angular.module('formulas')
 		getCustomFormulas: function(){
 			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
    			return sbiModule_restServices.promiseGet("2.0/configs","KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/"+dataSourceId);
-   		}
+   		}				
 	};
 });
 	

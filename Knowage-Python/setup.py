@@ -1,4 +1,11 @@
+#!/usr/bin/env python3
+
 import setuptools
+
+def parse_requirements(filename):
+    """ load requirements from a pip requirements file """
+    lineiter = (line.strip() for line in open(filename))
+    return [line for line in lineiter if line and not line.startswith("#")]
 
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -17,16 +24,7 @@ setuptools.setup(
     package_data={
         '': ['*.html'],
     },
-    install_requires=[
-          'flask',
-          'flask_cors',
-          'pybase64',
-          'bokeh',
-          'tornado',
-          'requests',
-          'pandas',
-          'pyjwt',
-      ],
+    install_requires = parse_requirements('requirements.txt'),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU Affero General Public License v3",

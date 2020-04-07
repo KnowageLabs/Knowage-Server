@@ -37,9 +37,12 @@ public class Node implements Cloneable, Comparable<Node> {
 	public static final String CROSSTAB_NODE_JSON_CHILDS = "node_childs";
 	public static final String CROSSTAB_NODE_JSON_KEY = "node_key";
 	public static final String CROSSTAB_NODE_JSON_DESCRIPTION = "node_description";
+	public static final String CROSSTAB_NODE_JSON_COLUMN = "node_column";
 
+	private String columnName = null;// column name
 	private final String value;// the value of the node
 	private final String description;// the description of the node
+	private final boolean measure;
 	private CellType cellType;// the type of the node
 	private List<Node> childs;// list of childs
 	private int leafPosition = -1;// position of the leafs in the tree.. If this
@@ -59,12 +62,30 @@ public class Node implements Cloneable, Comparable<Node> {
 	public Node(String value) {
 		this.value = value;
 		this.description = value;
+		measure = false;
 		childs = new ArrayList<Node>();
 	}
 
 	public Node(String value, String description) {
 		this.value = value;
 		this.description = description;
+		measure = false;
+		childs = new ArrayList<Node>();
+	}
+
+	public Node(String columnName, String value, String description) {
+		this.columnName = columnName;
+		this.value = value;
+		this.description = description;
+		measure = false;
+		childs = new ArrayList<Node>();
+	}
+
+	public Node(String columnName, String value, String description, boolean measure) {
+		this.columnName = columnName;
+		this.value = value;
+		this.description = description;
+		this.measure = measure;
 		childs = new ArrayList<Node>();
 	}
 
@@ -92,6 +113,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	public void addOrderedChild(Node child) {
 		childs.add(child);
+		child.fatherNode = this;
 		if (childs != null) {
 			Collections.sort(childs);
 		}
@@ -99,7 +121,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	public void addOrderedChild(Node child, Comparator<Node> comp) {
 		childs.add(child);
-
+		child.fatherNode = this;
 		if (childs != null) {
 			if (comp == null)
 				Collections.sort(childs);
@@ -110,6 +132,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	public void addChild(Node child) {
 		childs.add(child);
+		child.fatherNode = this;
 	}
 
 	public boolean isChild(Node child) {
@@ -142,6 +165,7 @@ public class Node implements Cloneable, Comparable<Node> {
 	public JSONObject toJSONObject() throws JSONException {
 		JSONObject thisNode = new JSONObject();
 
+		thisNode.put(CROSSTAB_NODE_JSON_COLUMN, this.columnName);
 		thisNode.put(CROSSTAB_NODE_JSON_KEY, this.value);
 		thisNode.put(CROSSTAB_NODE_JSON_DESCRIPTION, this.description);
 
@@ -285,15 +309,15 @@ public class Node implements Cloneable, Comparable<Node> {
 		return list;
 	}
 
-	/**
-	 * Update the fathers of this tree
-	 */
-	public void updateFathers() {
-		for (int i = 0; i < childs.size(); i++) {
-			childs.get(i).fatherNode = this;
-			childs.get(i).updateFathers();
-		}
-	}
+//	/**
+//	 * Update the fathers of this tree
+//	 */
+//	public void updateFathers() {
+//		for (int i = 0; i < childs.size(); i++) {
+//			childs.get(i).fatherNode = this;
+//			childs.get(i).updateFathers();
+//		}
+//	}
 
 	public int getSubTreeDepth() {
 		if (childs.size() == 0) {
@@ -333,7 +357,7 @@ public class Node implements Cloneable, Comparable<Node> {
 	 */
 	@Override
 	public Node clone() {
-		Node n = new Node(value, description);
+		Node n = new Node(columnName, value, description, measure);
 		if (childs.size() > 0) {
 			for (int j = 0; j < childs.size(); j++) {
 				n.addChild(childs.get(j).clone());
@@ -347,9 +371,9 @@ public class Node implements Cloneable, Comparable<Node> {
 		String string;
 
 		if (childs.size() == 0) {
-			return "[V:" + value.toString() + "-D:" + description + "]";
+			return "[C:" + String.valueOf(columnName) + "-V:" + value.toString() + "-D:" + description + "]";
 		} else {
-			string = "[V:" + value.toString() + "-D:" + description + ",[";
+			string = "[C:" + String.valueOf(columnName) + "-V:" + value.toString() + "-D:" + description + ",[";
 			for (int i = 0; i < childs.size() - 1; i++) {
 				string = string + childs.get(i).toString() + ",";
 			}
@@ -450,6 +474,31 @@ public class Node implements Cloneable, Comparable<Node> {
 		for (int i = 0; i < childs.size(); i++) {
 			childs.get(i).orderedSubtree(sortKeys);
 		}
+	}
+
+	public String getPath() {
+		return getPath(this);
+	}
+
+	private String getPath(Node node) {
+		StringBuilder sb = new StringBuilder();
+
+		if (node.fatherNode != null) {
+			sb.append(getPath(node.fatherNode))
+				.append("/");
+		}
+
+		sb.append("[C:" + String.valueOf(columnName) + "-V:" + node.value.toString() + "-D:" + node.description + "]");
+
+		return sb.toString();
+	}
+
+	public String getColumnName() {
+		return columnName;
+	}
+
+	public boolean isMeasure() {
+		return measure;
 	}
 
 }

@@ -48,11 +48,14 @@
                        		</md-tooltip>
 						</md-switch>
 	            	</div>
+	            	<div layout="row" layout-align="center center" ng-if="showWarning">
+		    			<div class="kn-warning" flex="60">{{showWarning}}</div> 
+		    		</div>
 		             <md-menu-bar>
 		                <md-menu ng-repeat="type in availableFormulaTypes track by $index">
 		                    <button ng-click="$mdOpenMenu()">{{type}}</button>
 		                    <md-menu-content>
-		                        <md-menu-item ng-repeat="formula in functions" ng-if="formula.type == type">
+		                        <md-menu-item ng-repeat="formula in functions" ng-if="formula.type == type && checkFormulaAvailability(formula)">
 		                            <md-button ng-click="addFormula(formula)" title="{{formula.description}}">
 		                                <span ng-if="formula.description" class="functionDescription">{{formula.syntax | limitTo:50}}</span>
 		                            </md-button>

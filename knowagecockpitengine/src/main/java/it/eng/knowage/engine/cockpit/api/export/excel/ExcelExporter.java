@@ -1387,7 +1387,10 @@ public class ExcelExporter {
 				}
 
 			}
-
+			for (int i = 0; i < parameters.length(); i++) {
+				if (!newParameters.has(parameters.names().getString(i)))
+					newParameters.put(parameters.names().getString(i), "");
+			}
 			return newParameters;
 		} else
 			return getReplacedParameters(parameters, datasetId);
@@ -1412,12 +1415,23 @@ public class ExcelExporter {
 				Object exists = oldParameters.get(parameterName);
 				if (exists != null) {
 					JSONArray value = (JSONArray) newParameters.get(parameter);
-					String regex2 = "\\(\\'(.*)\\'\\)";
-					Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(value.get(0).toString());
-					if (parameterMatcher2.matches()) {
-						String realValue = parameterMatcher2.group(1);
-						parameters.put(parameterName, realValue);
+					String regex2 = "\\((?:(?:,)?(?:\\'([a-zA-Z0-9\\-\\_\\s]+)\\')(?:,+)?)+\\)";
+					String valueToElaborate = value.get(0).toString();
+					Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(valueToElaborate);
+					String realValueToAdd = "";
+					String realValue = "";
+					while (parameterMatcher2.find()) {
+						if (realValue.isEmpty())
+							realValueToAdd = parameterMatcher2.group(1);
+						else
+							realValueToAdd = realValueToAdd + "," + parameterMatcher2.group(1);
+
+						realValue = parameterMatcher2.group(1);
+						valueToElaborate = valueToElaborate.replace("'" + realValue + "'", "");
+						parameterMatcher2 = Pattern.compile(regex2).matcher(valueToElaborate);
 					}
+					parameters.put(parameterName, realValueToAdd);
+
 				}
 			}
 		}

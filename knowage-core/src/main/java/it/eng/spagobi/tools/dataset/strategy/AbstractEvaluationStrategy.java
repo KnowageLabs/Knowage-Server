@@ -20,11 +20,15 @@
 package it.eng.spagobi.tools.dataset.strategy;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
@@ -60,17 +64,82 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 		if (isUnsatisfiedFilter(filter)) {
 			dataStore = new DataStore(dataSet.getMetadata());
 		} else {
-			dataStore = execute(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+			List<AbstractSelectionField> newProjections = applyTotalsFunctionsToFormulas(projections, filter, maxRowCount);
+//			List<AbstractSelectionField> newProjections = projections;
+			dataStore = execute(newProjections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 			IMetaData dataStoreToUseMeta = dataStore.getMetaData();
 			if (!isSummaryRowIncluded() && summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
 				for (List<AbstractSelectionField> listProj : summaryRowProjections) {
+					List<AbstractSelectionField> replacedSelectionFieldsList = applyTotalsFunctionsToFormulas(listProj, filter, maxRowCount);
 
-					IDataStore summaryRowDataStore = executeSummaryRow(listProj, dataStoreToUseMeta, filter, maxRowCount);
-					appendSummaryRowToPagedDataStore(projections, listProj, dataStore, summaryRowDataStore);
+					IDataStore summaryRowDataStore = executeSummaryRow(replacedSelectionFieldsList, dataStoreToUseMeta, filter, maxRowCount);
+					appendSummaryRowToPagedDataStore(newProjections, replacedSelectionFieldsList, dataStore, summaryRowDataStore);
 				}
 			}
 		}
 		return dataStore;
+	}
+
+	private List<AbstractSelectionField> applyTotalsFunctionsToFormulas(List<AbstractSelectionField> projections, Filter filter, int maxRowCount) {
+
+		List<AbstractSelectionField> toReturnList = new ArrayList<AbstractSelectionField>();
+		Set<String> totalFunctions = new HashSet<String>();
+		for (AbstractSelectionField abstractSelectionField : projections) {
+			if (abstractSelectionField instanceof DataStoreCalculatedField) {
+				String formula = ((DataStoreCalculatedField) abstractSelectionField).getFormula();
+				if (formula.contains("TOTAL_")) {
+
+					String pattern = "((?:TOTAL_SUM|TOTAL_AVG|TOTAL_MIN|TOTAL_MAX|TOTAL_COUNT)\\()(\\\"[a-zA-Z0-9\\-\\_\\s]*\\\")(\\))";
+
+					// Create a Pattern object
+					Pattern r = Pattern.compile(pattern);
+
+					// Now create matcher object.
+					Matcher m = r.matcher(formula);
+					while (m.find()) {
+						totalFunctions.add(m.group(0).replace("TOTAL_", ""));
+					}
+
+					pattern = "((?:TOTAL_SUM|TOTAL_AVG|TOTAL_MIN|TOTAL_MAX|TOTAL_COUNT)\\()([a-zA-Z0-9\\-\\+\\/\\*\\_\\s\\$\\{\\}\\\"]*)(\\))";
+					// Create a Pattern object
+					r = Pattern.compile(Pattern.quote(pattern));
+
+					// Now create matcher object.
+					m = r.matcher(formula);
+					while (m.find()) {
+						totalFunctions.add(m.group(0).replace("TOTAL_", ""));
+					}
+				}
+			}
+		}
+
+		if (!totalFunctions.isEmpty()) {
+			IDataStore totalsFunctionDataStore = executeTotalsFunctions(totalFunctions, filter, maxRowCount);
+
+			HashMap<String, String> totalsMap = new HashMap<String, String>();
+			int i = 0;
+			for (String function : totalFunctions) {
+				totalsMap.put(function, String.valueOf(totalsFunctionDataStore.getRecordAt(0).getFieldAt(i).getValue()));
+				i++;
+			}
+
+			for (AbstractSelectionField abstractSelectionField : projections) {
+				AbstractSelectionField tmp = abstractSelectionField;
+				if (tmp instanceof DataStoreCalculatedField) {
+					String formula = ((DataStoreCalculatedField) tmp).getFormula();
+					if (formula.contains("TOTAL_")) {
+						for (String totalFunction : totalsMap.keySet()) {
+							formula = formula.replace("TOTAL_" + totalFunction, totalsMap.get(totalFunction));
+						}
+						((DataStoreCalculatedField) tmp).setFormula(formula);
+					}
+				}
+				toReturnList.add(tmp);
+			}
+		} else {
+			toReturnList = projections;
+		}
+		return toReturnList;
 	}
 
 	@Override
@@ -81,8 +150,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 	protected abstract IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
 			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes);
 
-	protected abstract IDataStore executeSummaryRow(List<AbstractSelectionField> summaryRowProjections, IMetaData metaData, Filter filter,
-			int maxRowCount);
+	protected abstract IDataStore executeSummaryRow(List<AbstractSelectionField> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount);
 
 	protected boolean isSummaryRowIncluded() {
 		return false;
@@ -169,5 +237,10 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 				pagedMetaData.getFieldMeta(projectionIndex).setType(summaryRowMetaData.getFieldType(summaryRowIndex));
 		}
 
+	}
+
+	protected IDataStore executeTotalsFunctions(Set<String> summaryRowProjections, Filter filter, int maxRowCount) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

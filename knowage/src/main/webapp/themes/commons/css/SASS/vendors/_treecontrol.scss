@@ -6,36 +6,60 @@ treecontrol{
 			-moz-osx-font-smoothing: grayscale;
 			-webkit-font-smoothing: antialiased;
 			display: inline-block;
+			font-size: 1rem;
 			font-style: normal;
 			font-variant: normal;
 			text-rendering: auto;
 			line-height: 1; 
+			outline: none;
 		}
-		//File item icon
-		li.tree-leaf {
-			i.tree-leaf-head{
-				background: none;
-				font-weight: 400;
-				&::before {
-					content: "\f15b";
+		li {
+			.liContent{
+				padding: 0 4px;
+				height: 28px;
+    			position: relative;
+    			&:hover {
+    				background-color: $ternaryColor;
+    			}
+				md-checkbox {
+					margin: 0;
+					top: 4px;
+					._md-label {
+						display: none;
+					}
 				}
 			}
-		}
-		//Folder closed icon
-		li.tree-collapsed{
-			i.tree-branch-head{
-				background: none;
-				&::before {
-					content: "\f07b";
+			.tree-selected {
+				background-color: inherit;
+				font-weight: regular;
+				outline: none;
+			}
+			//File item icon
+			&.tree-leaf {
+				i.tree-leaf-head{
+					background: none;
+					font-weight: 400;
+					&::before {
+						content: "\f15b";
+					}
 				}
 			}
-		} 
-		//Folder opened icon
-		li.tree-expanded{
-			i.tree-branch-head{
-				background: none;
-				&::before {
-					content: "\f07c";
+			//Folder closed icon
+			&.tree-collapsed{
+				i.tree-branch-head{
+					background: none;
+					&::before {
+						content: "\f07b";
+					}
+				}
+			} 
+			//Folder opened icon
+			&.tree-expanded{
+				i.tree-branch-head{
+					background: none;
+					&::before {
+						content: "\f07c";
+					}
 				}
 			}
 		}

@@ -107,6 +107,13 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		}
 		Array.prototype.push.apply($scope.formulas, $scope.customTransformedFormulas);
 	});
+
+	exportService.getExportLimitation().then(function(response) {
+		if(response.data){
+			exportService.setExportLimit(response.data);
+		};
+	});
+
 	var queryHandler = function(newCatalogue,oldCatalogue){
 		$scope.meta.length = 0;
 		exportService.setQuery(newCatalogue);

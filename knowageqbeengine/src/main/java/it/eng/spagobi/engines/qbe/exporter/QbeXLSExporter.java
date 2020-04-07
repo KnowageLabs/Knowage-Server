@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.engines.qbe.exporter;
 
-import it.eng.spagobi.engines.qbe.bo.MeasureScaleFactorOption;
-import it.eng.spagobi.engines.qbe.query.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,6 +38,15 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+
+import it.eng.spagobi.engines.qbe.bo.MeasureScaleFactorOption;
+import it.eng.spagobi.engines.qbe.query.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class QbeXLSExporter {
 
@@ -117,25 +117,39 @@ public class QbeXLSExporter {
 		return this.properties.get(propertyName);
 	}
 
-	public Workbook export() {
+	public Workbook export(String exportLimit, boolean showLimitExportMessage) {
 		Workbook workbook = this.instantiateWorkbook();
 		CreationHelper createHelper = workbook.getCreationHelper();
 		Sheet sheet = workbook.createSheet("new sheet");
 		for (int j = 0; j < 50; j++) {
 			sheet.createRow(j);
 		}
-		fillSheet(sheet, workbook, createHelper, 0);
+		fillSheet(sheet, workbook, createHelper, 0, exportLimit, showLimitExportMessage);
 		return workbook;
 	}
 
-	public void fillSheet(Sheet sheet, Workbook wb, CreationHelper createHelper, int startRow) {
+	public void fillSheet(Sheet sheet, Workbook wb, CreationHelper createHelper, int startRow, String exportLimit, boolean showLimitExportMessage) {
 		// we enrich the JSON object putting every node the descendants_no
 		// property: it is useful when merging cell into rows/columns headers
 		// and when initializing the sheet
 		if (dataStore != null && !dataStore.isEmpty()) {
+			if (showLimitExportMessage) {
+				fillMessageHeader(sheet, exportLimit);
+				startRow = 1;
+			}
 			CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, startRow, DEFAULT_START_COLUMN);
 			fillSheetData(sheet, wb, createHelper, cellTypes, startRow + 1, DEFAULT_START_COLUMN);
 		}
+	}
+
+	private void fillMessageHeader(Sheet sheet, String exportLimit) {
+		int beginRowMessageData = 0;
+		String message = "Query results are exceeding configured threshold, therefore only " + exportLimit + " were exported.";
+		CellStyle messageCellStyle = buildHeaderCellStyle(sheet);
+		Row messageRow = sheet.getRow(beginRowMessageData);
+		Cell cell = messageRow.createCell(0);
+		cell.setCellValue(message);
+		cell.setCellStyle(messageCellStyle);
 	}
 
 	/**
@@ -222,8 +236,8 @@ public class QbeXLSExporter {
 
 		String headerBGColor = (String) this.getProperty(PROPERTY_HEADER_BACKGROUND_COLOR);
 		logger.debug("Header background color : " + headerBGColor);
-		short backgroundColorIndex = headerBGColor != null ? IndexedColors.valueOf(headerBGColor).getIndex() : IndexedColors.valueOf(
-				DEFAULT_HEADER_BACKGROUND_COLOR).getIndex();
+		short backgroundColorIndex = headerBGColor != null ? IndexedColors.valueOf(headerBGColor).getIndex()
+				: IndexedColors.valueOf(DEFAULT_HEADER_BACKGROUND_COLOR).getIndex();
 		cellStyle.setFillForegroundColor(backgroundColorIndex);
 
 		cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
@@ -235,8 +249,8 @@ public class QbeXLSExporter {
 
 		String bordeBorderColor = (String) this.getProperty(PROPERTY_HEADER_BORDER_COLOR);
 		logger.debug("Header border color : " + bordeBorderColor);
-		short borderColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(bordeBorderColor).getIndex() : IndexedColors.valueOf(
-				DEFAULT_HEADER_BORDER_COLOR).getIndex();
+		short borderColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(bordeBorderColor).getIndex()
+				: IndexedColors.valueOf(DEFAULT_HEADER_BORDER_COLOR).getIndex();
 
 		cellStyle.setLeftBorderColor(borderColorIndex);
 		cellStyle.setRightBorderColor(borderColorIndex);
@@ -257,8 +271,8 @@ public class QbeXLSExporter {
 
 		String headerColor = (String) this.getProperty(PROPERTY_HEADER_COLOR);
 		logger.debug("Header color : " + headerColor);
-		short headerColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(headerColor).getIndex() : IndexedColors.valueOf(DEFAULT_HEADER_COLOR)
-				.getIndex();
+		short headerColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(headerColor).getIndex()
+				: IndexedColors.valueOf(DEFAULT_HEADER_COLOR).getIndex();
 		font.setColor(headerColorIndex);
 
 		font.setBoldweight(Font.BOLDWEIGHT_BOLD);
@@ -274,8 +288,8 @@ public class QbeXLSExporter {
 
 		String cellBGColor = (String) this.getProperty(PROPERTY_CELL_BACKGROUND_COLOR);
 		logger.debug("Cell background color : " + cellBGColor);
-		short backgroundColorIndex = cellBGColor != null ? IndexedColors.valueOf(cellBGColor).getIndex() : IndexedColors.valueOf(DEFAULT_CELL_BACKGROUND_COLOR)
-				.getIndex();
+		short backgroundColorIndex = cellBGColor != null ? IndexedColors.valueOf(cellBGColor).getIndex()
+				: IndexedColors.valueOf(DEFAULT_CELL_BACKGROUND_COLOR).getIndex();
 		cellStyle.setFillForegroundColor(backgroundColorIndex);
 
 		cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
@@ -287,8 +301,8 @@ public class QbeXLSExporter {
 
 		String bordeBorderColor = (String) this.getProperty(PROPERTY_CELL_BORDER_COLOR);
 		logger.debug("Cell border color : " + bordeBorderColor);
-		short borderColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(bordeBorderColor).getIndex() : IndexedColors.valueOf(
-				DEFAULT_CELL_BORDER_COLOR).getIndex();
+		short borderColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(bordeBorderColor).getIndex()
+				: IndexedColors.valueOf(DEFAULT_CELL_BORDER_COLOR).getIndex();
 
 		cellStyle.setLeftBorderColor(borderColorIndex);
 		cellStyle.setRightBorderColor(borderColorIndex);

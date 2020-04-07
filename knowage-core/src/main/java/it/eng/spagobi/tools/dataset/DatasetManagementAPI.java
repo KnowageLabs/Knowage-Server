@@ -210,12 +210,16 @@ public class DatasetManagementAPI {
 
 			if (DataSetUtilities.isExecutableByUser(dataSet, getUserProfile()) == false) {
 				Integer dsCategoryId = dataSet.getCategoryId();
+				if (dsCategoryId == null) {
+					throw new RuntimeException("Dataset " + label + " doesn't have category set.");
+				}
 				// check categories of dataset
 				Set<Domain> categoryList = UserUtilities.getDataSetCategoriesByUser(getUserProfile());
 				if (categoryList != null && categoryList.size() > 0) {
 					for (Iterator iterator = categoryList.iterator(); iterator.hasNext();) {
 						Domain domain = (Domain) iterator.next();
 						Integer domainId = domain.getValueId();
+
 						if (dsCategoryId.equals(domainId))
 							return dataSet;
 					}
@@ -225,7 +229,7 @@ public class DatasetManagementAPI {
 			}
 			return dataSet;
 		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while executing method [getDataSet]", t);
+			throw new RuntimeException("An unexpected error occured while executing method [getDataSet]. " + t.getMessage(), t);
 		} finally {
 			logger.debug("OUT");
 		}

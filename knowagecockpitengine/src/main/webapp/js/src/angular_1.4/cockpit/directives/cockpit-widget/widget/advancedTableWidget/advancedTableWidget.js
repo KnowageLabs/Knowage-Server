@@ -92,6 +92,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
 						tempCol.headerTooltip = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
+						
+						if ($scope.ngModel.content.columnSelectedOfDataset[c].isCalculated){
+							tempCol.isCalculated = $scope.ngModel.content.columnSelectedOfDataset[c].isCalculated;
+						}
+						
 						if(sortedDefault && sortedDefault[0].colId == fields[f].name){
 							tempCol.sort = sortedDefault[0].sort;
 						}
@@ -187,7 +192,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if($scope.ngModel.content.columnSelectedOfDataset[c].group && $scope.ngModel.groups && $scope.ngModel.groups.length > 0) {
 							$scope.ngModel.groups.forEach(function(group){
 								if(group.name == $scope.ngModel.content.columnSelectedOfDataset[c].group){
-									if(columnGroups[group.name]) {
+									if(typeof columnGroups[group.name] != 'undefined') {
 										columns[columnGroups[group.name]].children.push(tempCol);
 									}else {
 										columnGroups[group.name] = columns.length;
@@ -331,8 +336,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LLL');
 		}
 
+		/*
+		 * The number formatter prepares the data to show the number correctly in the user locale format.
+		 * If a precision is set will use it, otherwise will set the precision to 2 if float, 0 if int.
+		 * In case of a returning empty string that one will be displayed.
+		 */
 		function numberFormatter(params){
-			if(params.value != "" && !params.colDef.style || (params.colDef.style && !params.colDef.style.asString)) {
+			if(params.value != "" && (!params.colDef.style || (params.colDef.style && !params.colDef.style.asString))) {
 				var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
 				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
 			}else return params.value;
@@ -453,13 +463,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             if(params.colDef.style && params.colDef.style.hideSummary) this.eGui.innerHTML = '';
             else {
             	var title = params.summaryRows[params.rowIndex].label;
-            	if(title && params.style && params.style['pinnedOnly'] && params.column.pinned && params.column.lastLeftPinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
+            	if(title && params.style && params.style['pinnedOnly'] && params.column.pinned && (params.column.lastLeftPinned || params.column.pinned == 'right')) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
             	if(params.valueFormatted || params.value){
-            		if(params.summaryRows[params.rowIndex].aggregation == 'COUNT' || params.summaryRows[params.rowIndex].aggregation == 'COUNT_DISTINCT') {
-            			var tempValue = $filter('number')(params.value,0);
-            		}else var tempValue = params.valueFormatted || params.value;
-            		if((!params.style || !params.style['pinnedOnly']) && title) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
-            		this.eGui.innerHTML += tempValue;
+            		if (params.rowIndex == 0 || !params.colDef.isCalculated) {
+	            		if(params.summaryRows[params.rowIndex].aggregation == 'COUNT' || params.summaryRows[params.rowIndex].aggregation == 'COUNT_DISTINCT') {
+	            			var tempValue = $filter('number')(params.value,0);
+	            		}else var tempValue = params.valueFormatted || params.value;
+	            		if((!params.style || !params.style['pinnedOnly']) && title) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
+	            		this.eGui.innerHTML += tempValue;
+            		}
 	    		}
             }
 		};
@@ -612,7 +624,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
 				$scope.showWidgetSpinner();
 				var sorting = $scope.advancedTableGrid.api.getSortModel();
-				sorting[0].colId = sorting[0].colId.replace(/(column_[0-9]+)(?:_[0-9]+)/gm, '$1');
+				if(sorting[0]) sorting[0].colId = sorting[0].colId.replace(/(column_[0-9]+)(?:_[0-9]+)/gm, '$1');
 				$scope.ngModel.settings.sortingColumn = sorting.length>0 ? getColumnName(sorting[0].colId) : '';
 				$scope.ngModel.settings.sortingOrder = sorting.length>0 ? sorting[0]['sort'].toUpperCase() : '';
 				$scope.refreshWidget(null, 'sorting');
