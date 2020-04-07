@@ -19,6 +19,8 @@
 <%@page import="it.eng.knowage.engines.svgviewer.SvgViewerEngineInstance"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
 <%@page import="java.util.Iterator"%>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="org.json.JSONObject"%>
@@ -58,6 +60,11 @@
 	engineInstance = (SvgViewerEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
 	locale = engineInstance.getLocale();
+	
+	// Dynamic Url Builder - Caching Management
+	String svgContext = request.getContextPath(); 	
+	String knowageContext = GeneralUtilities.getSpagoBiContext();			
+	UrlBuilder urlBuilder = new UrlBuilder(knowageContext, svgContext);
 
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
 	executionID = (String)env.get("SBI_EXECUTION_ID");

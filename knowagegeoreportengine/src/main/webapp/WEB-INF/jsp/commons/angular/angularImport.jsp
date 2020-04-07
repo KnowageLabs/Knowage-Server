@@ -15,6 +15,7 @@
 	<meta name="viewport" content="width=device-width">
 	
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(knowageContext, "/themes/commons/css/customStyle.css")%>">
 	
 	<!-- angular reference-->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js"></script>

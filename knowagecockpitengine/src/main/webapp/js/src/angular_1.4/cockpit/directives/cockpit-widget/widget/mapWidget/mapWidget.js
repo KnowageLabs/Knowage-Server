@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 					// Remove all cols except the one that we want
 					var newDs = angular.copy(ds);
-					
+
 					// TODO : to remove after version 7.2.0
 					if (!newDs.content) {
 						newDs.content = {};
@@ -709,17 +709,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
              });
 
-    		$scope.map.on('dblclick', function(evt) {
-    			for (l in $scope.ngModel.content.layers){
-    		    	var layerDef =  $scope.ngModel.content.layers[l];
-    		    	var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
-    		    	var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
-	    			if (isCluster || isHeatmap){
-	    				var values = $scope.values[layerDef.name];
-		        		$scope.createLayerWithData(layerDef.name, values, false, false);
-	    			}
-    			}
-    		});
+			$scope.exploded = {};
+			$scope.map.on('dblclick', function(evt) {
+				for (l in $scope.ngModel.content.layers){
+					var layerDef =  $scope.ngModel.content.layers[l];
+					var dsId = layerDef.dsId;
+					if (!(dsId in $scope.exploded)) {
+						$scope.exploded[dsId] = false;
+					}
+
+					$scope.exploded[dsId] = !$scope.exploded[dsId];
+
+					var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
+					var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
+					if (!$scope.exploded[dsId]) {
+						var values = $scope.values[layerDef.name];
+						$scope.createLayerWithData(layerDef.name, values, false, false);
+					} else {
+						var values = $scope.values[layerDef.name];
+						$scope.createLayerWithData(layerDef.name, values, isCluster, isHeatmap);
+					}
+				}
+			});
 
     		// change mouse cursor when over marker
     	      $scope.map.on('pointermove', function(e) {
@@ -1208,7 +1219,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					for (var i in filters) {
 						var currFilterVal = filters[i];
 						var propVal = feature.get(i).value;
-	
+
 						if (currFilterVal != undefined
 								&& currFilterVal.length > 0
 								&& currFilterVal.indexOf(propVal) == -1) {

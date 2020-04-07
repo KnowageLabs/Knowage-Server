@@ -877,6 +877,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 					var col = model.content.columnSelectedOfDataset[colIndex];
 					if(col.aliasToShow != undefined && col.name == crossSettings.column){
 						crossColumnOrAlias = col.aliasToShow;
+						break;
 					}
 				}
 				if(crossSettings.crossType == "icon" && columnValue && crossSettings.column) doCross = false;
