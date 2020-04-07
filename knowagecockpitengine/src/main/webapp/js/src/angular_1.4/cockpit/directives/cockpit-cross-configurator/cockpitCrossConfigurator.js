@@ -232,6 +232,8 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.crossText = $scope.localModel != undefined && $scope.localModel.type === 'text';
 
 	$scope.crossHtml = !$scope.localModel && $scope.$parent.newModel && $scope.$parent.newModel.type === 'html';
+	
+	$scope.crossCustom = !$scope.localModel && $scope.$parent.newModel && $scope.$parent.newModel.type === 'customchart';
 
 	$scope.crossPython = !$scope.localModel && $scope.$parent.newModel && $scope.$parent.newModel.type === 'python';
 
