@@ -5,7 +5,9 @@ source("D:/Knowage/Knowage-Server/Knowage-R/utils.R")
 #' @post /img
 function(dataset, dataset_name=NULL, script, drivers, output_variable){
   env <- new.env()
-  script <- resolve_drivers(script, drivers)
+  analytical_drivers <- fromJSON(drivers)
+  env$drivers_ <- analytical_drivers
+  script <- resolve_drivers(script, analytical_drivers)
   if (!is.null(dataset_name)) {
     script <- gsub(dataset_name,"df_",script)
     env$df_ <- as.data.frame(fromJSON(dataset))

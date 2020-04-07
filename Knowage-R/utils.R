@@ -6,5 +6,11 @@ get_libraries <- function(){
 }
 
 resolve_drivers <- function(script, drivers){
+  for(name in names(drivers)) {
+    value <- drivers[[name]]
+    original <- paste0('\\$P\\{', name , '\\}')
+    final <- paste0('drivers_[[\\"', name, '\\"]]')
+    script <- gsub(original,final,script)
+  }
   script
 }
