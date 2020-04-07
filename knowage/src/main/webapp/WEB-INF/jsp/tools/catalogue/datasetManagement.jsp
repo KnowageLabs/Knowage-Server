@@ -355,7 +355,7 @@ div.lower i  {
 									       	 			ng-required="true" 
 									        			ng-model="selectedDataSet.dsTypeCd"
 									        			ng-change="resetWhenChangeDSType(selectedDataSet.dsTypeCd);setFormDirty()">   
-									        	<md-option ng-repeat="l in datasetTypeList | filter: filterDatasetTypes" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
+									        	<md-option ng-repeat="l in datasetTypeList | filter: filterDatasetTypes" value="{{l.VALUE_CD}}">{{getDatasetName(l.VALUE_CD)}}</md-option>
 									       </md-select>  
 									       <div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dsTypeCd">
 				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>

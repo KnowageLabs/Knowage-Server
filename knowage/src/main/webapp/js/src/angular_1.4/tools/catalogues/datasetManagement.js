@@ -183,6 +183,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	    return item.VALUE_CD!='Custom' && item.VALUE_CD!='Federated';
 	};
 
+	$scope.getDatasetName = function (dsType) {
+	    if (dsType == "Python")
+	    	return "Python/R";
+	    else
+	    	return dsType;
+	};
+
 	// Flag that indicates if the Dataset form is dirty (changed)
 	$scope.dirtyForm = false;
 
