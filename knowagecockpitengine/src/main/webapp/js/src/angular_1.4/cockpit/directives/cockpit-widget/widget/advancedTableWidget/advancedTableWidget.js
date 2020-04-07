@@ -86,7 +86,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var columnGroups = {};
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
-					if(typeof fields[f] == 'object' && (dataset.type == "SbiSolrDataSet" && $scope.ngModel.content.columnSelectedOfDataset[c].name === fields[f].header || $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow === fields[f].header)  ){
+					var thisColumn = $scope.ngModel.content.columnSelectedOfDataset[c];
+					if(typeof fields[f] == 'object' && (dataset.type == "SbiSolrDataSet" && thisColumn.name.toLowerCase() === fields[f].header || ((thisColumn.aliasToShow || thisColumn.alias).toLowerCase() === fields[f].header))  ){
 						$scope.columnsNameArray.push(fields[f].name);
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,
 								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
@@ -463,7 +464,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             if(params.colDef.style && params.colDef.style.hideSummary) this.eGui.innerHTML = '';
             else {
             	var title = params.summaryRows[params.rowIndex].label;
-            	if(title && params.style && params.style['pinnedOnly'] && params.column.pinned && (params.column.lastLeftPinned || params.column.pinned == 'right')) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
+            	if(title && params.style && params.style['pinnedOnly'] && params.column.pinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
             	if(params.valueFormatted || params.value){
             		if (params.rowIndex == 0 || !params.colDef.isCalculated) {
 	            		if(params.summaryRows[params.rowIndex].aggregation == 'COUNT' || params.summaryRows[params.rowIndex].aggregation == 'COUNT_DISTINCT') {

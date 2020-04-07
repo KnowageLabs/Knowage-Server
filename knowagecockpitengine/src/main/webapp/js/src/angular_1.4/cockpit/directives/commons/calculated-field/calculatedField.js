@@ -308,7 +308,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$mdDialog.hide();
 
 				},function(error){
-					$scope.toastifyMsg('warning',error);
+					$scope.toastifyMsg('warning',$scope.translate.load(error));
 					return;
 				})
 			}else $scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.invalidalias"));
