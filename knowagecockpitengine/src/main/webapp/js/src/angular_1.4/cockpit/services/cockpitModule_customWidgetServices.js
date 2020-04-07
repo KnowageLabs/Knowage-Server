@@ -30,6 +30,12 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		this.tree = tree;
 	}
 
+	function node (node){
+		for (var property in node) {
+			this[property] = node[property];
+		}
+
+	}
 	datastore.prototype.setData = function (data) {
 		this.data = transformDataStore(data);
 	}
@@ -86,7 +92,7 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 
 	datastore.prototype.hierarchy = function(config){
 		var args = [];
-		var paths = getHierarchyList(arguments[0],this.data )
+		var paths = getHierarchyList(config,this.data )
 		var tree = [];
 
 		for (var i = 0; i < paths.length; i++) {
@@ -118,18 +124,19 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 							}
 
 						}
-						currentLevel.push(newPart);
+						var n =  new node(newPart);
+						currentLevel.push(n);
 						currentLevel = newPart.children;
 						if(path.length-j<2)break
 					} else {
 						for (var prop in part) {
-							if(arguments[0].measures[prop].toLowerCase()=='max'){
+							if(config.measures[prop].toLowerCase()=='max'){
 								newPart[prop] = getMaxValue(part[prop], newPart[prop]);
 							}
-							else if(arguments[0].measures[prop].toLowerCase()=='min'){
+							else if(config.measures[prop].toLowerCase()=='min'){
 								newPart[prop] = getMinValue(part[prop], newPart[prop]);
 							}
-							else if(arguments[0].measures[prop].toLowerCase()=='sum'){
+							else if(config.measures[prop].toLowerCase()=='sum'){
 								newPart[prop] = getSum(part[prop], newPart[prop]);
 							}
 						}
@@ -142,7 +149,7 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 			}
 		}
 
-		var measures = arguments[0].measures;
+		var measures = config.measures;
 		if(measures){
 			countLevelsTotal(tree, measures)
 
@@ -176,12 +183,18 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		function getHierarchyList (args,data) {
 			var array = [];
 
-			var datastore = data;
+			var datastore = angular.copy(data);
 			for(var i=0; i<datastore.rows.length; i++){
 				var obj = {};
 				for (var prop in datastore.rows[i]){
-					if(args.levels.indexOf(prop)==-1 && !args.measures.hasOwnProperty(prop)){
-						delete datastore.rows[i][prop]
+					if(args.measures!=undefined){
+						if(args.levels.indexOf(prop)==-1 && !args.measures.hasOwnProperty(prop)){
+							delete datastore.rows[i][prop]
+						}
+					} else {
+						if(args.levels.indexOf(prop)==-1){
+							delete datastore.rows[i][prop]
+						}
 					}
 				}
 			}
@@ -189,13 +202,19 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 				var obj = {};
 				var newArray =[]
 				var counter =0;
-				for (var property in datastore.rows[i]) {
-					if(property!='id' && args.levels.indexOf(property)>-1){
-						newArray.push(datastore.rows[i][property])
+
+				for(var j=0; j<args.levels.length; j++){
+					for (var property in datastore.rows[i]) {
+						if(args.levels[j]==property){
+							newArray.push(datastore.rows[i][property])
+						}
 					}
-					if(args.measures){
-						for (var prop in args.measures) {
-							if(!args.measures.hasOwnProperty('id') && prop==property){
+				}
+
+				if(args.measures){
+					for (var prop in args.measures) {
+						for (var property in datastore.rows[i]) {
+							if(prop==property){
 								if(counter ==0){
 									newArray.push({[property]:Number(datastore.rows[i][property])})
 									counter++
@@ -203,14 +222,10 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 									newArray[newArray.length-1][property] = Number(datastore.rows[i][property])
 								}
 							}
-
-
-
 						}
 					}
-
-
 				}
+
 				array.push(newArray);
 			}
 			return array;
@@ -230,12 +245,8 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 	}
 
 	hierarchy.prototype.getChild = function(index){
-		return this.tree[index]
+		return this.tree[index];
 	//	this.tree
-	}
-
-	hierarchy.prototype.getValue = function(node, measure){
-		return node[measure];
 	}
 
 	hierarchy.prototype.getLevel = function (level){
@@ -265,6 +276,89 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		}
 		return nodes;
 
+	}
+
+	node.prototype.getValue = function (measure) {
+		return this[measure];
+	}
+
+	node.prototype.getChild = function (index) {
+		return this.children[index];
+	}
+
+	var traverseDF = function(tree,callback){
+		(function recurse(currentNode){
+
+			callback(currentNode);
+			if(!Array.isArray(currentNode)){
+				for(var i = 0; i <currentNode.children.length;i++){
+					recurse(currentNode.children[i]);
+				}
+			} else {
+				for(var j = 0; j <currentNode.length;j++){
+					recurse(currentNode[j]);
+				}
+			}
+
+
+		})(tree)
+	}
+	var contains = function(tree,nodeToFind){
+		var contains = false;
+		traverseDF(tree,function(node){
+
+			if(node === nodeToFind){
+				contains = true
+			};
+		})
+
+		return contains;
+	}
+
+	var nodeExistingCheck = function(tree,node){
+
+		if(!contains(tree,node)){
+
+			throw new Error('Node does not exist.');
+		}
+	}
+
+	node.prototype.getParent = function (tree,child) {
+		var parent;
+
+		nodeExistingCheck(tree,child)
+
+		traverseDF(tree,function(node){
+
+
+			if(!Array.isArray(node)){
+				if(findElementIndex(node.children,child)>-1)parent = node;
+			} else {
+				for(var j = 0; j <node.length;j++){
+					if(findElementIndex(node[j],child)>-1)parent = node[j];
+				}
+			}
+
+
+		})
+//new node
+		return parent;
+	}
+
+	node.prototype.getChildren = function () {
+		return this.children
+	}
+
+	node.prototype.getSiblings = function (tree, node) {
+		return this.getParent(tree,node).children;
+	}
+
+	var findElementIndex = function(array,element){
+		for(var i =0;i<array.length;i++){
+			if(element===array[i]){
+				return i;
+			}
+		}
 	}
 
 
