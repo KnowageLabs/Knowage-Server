@@ -39,9 +39,7 @@ The following list of features is planned to be addressed in the short term, by 
 
 The following list of features is planned to be addressed in the medium term, by Q2 2020 (release 7.3):
 
-* from data exploration tool (QbE) to cockpit designer in a seamless way 
-
-* AWS S3 compatibility
+* from data exploration tool (QbE) to cockpit designer in a seamless way
 
 * NGSI-LD compatibility
 
