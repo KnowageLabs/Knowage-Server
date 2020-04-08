@@ -2,9 +2,17 @@
 	<list label="translate.load('sbi.meta.businessclass')+'/'+translate.load('sbi.meta.businessview')" layout="column"> 
 		 <md-content class="noMargin" >
 		 	<!-- BUSINESS CLASSES -->
+		 	
 			<div class="metaModelBusinessList" ng-if="meta.businessModels.length>0">
 				<md-subheader>{{translate.load('sbi.meta.businessclass')}}</md-subheader>
 				<div ag-grid="businessClassesGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage noPadding" style="width:100%;"></div>
+			</div>
+<!-- 				BUSINESS VIEWS -->
+			<div class="metaModelBusinessList" ng-if="meta.businessViews.length>0">
+				<md-subheader>{{translate.load('sbi.meta.businessview')}}</md-subheader>
+				<div ag-grid="businessViewsGrid" class="ag-theme-balham ag-noBorders ag-theme-knowage noPadding" style="width:100%;"></div>
+			</div>
+				
 		   		<!-- div class="md-dense" ng-repeat="bm in meta.businessModels" >
 			   		<div class="selectable" ng-click="selectBusinessModel(bm)" layout="row" layout-align="start center" ng-class="{'selected':bm == selectedBusinessModel}" style="padding-right: 8px;">
 			   			<span class="businessListName"><md-icon md-font-icon="{{::businesslModel_getlevelIcon(bm)}}"></md-icon> {{bm.name}}</span>
@@ -71,8 +79,7 @@
 		        	</md-card>
 		        	<md-divider></md-divider>
 		        </div>
-		      </div-->
-	      	</div>
+		      </div-->	      	
 		  </md-content>
 	</list>
 	

@@ -212,8 +212,31 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
     	rowData : $scope.meta.businessModels
 	};
 
+	//Ag-grid table business view
+	$scope.businessViewsGrid = {
+		angularCompileRows: true,
+		domLayout: 'autoHeight',
+		enableColResize: false,
+        enableSorting: false,
+        enableFilter: false,
+        rowDragManaged: true,
+        headerHeight: 0,
+        onRowDragEnter: rowDragEnter,
+        onRowDragEnd: onRowDragEnd,
+        onGridReady: resizeColumns,
+        onGridSizeChanged: resizeColumns,
+        rowSelection: 'single',
+        onRowClicked: rowSelection,
+        columnDefs: [{"headerName":sbiModule_translate.load("sbi.generic.name"),"field":"name",rowDrag: true,cellRenderer: fullWidthRow }],
+    	rowData : $scope.meta.businessViews
+	};
+
 	$scope.$on('updateBusinessClassesGrid',function(event,data){
 		$scope.businessClassesGrid.api.setRowData($scope.meta.businessModels);
+	})
+
+	$scope.$on('updateBusinessViewsGrid',function(event,data){
+		$scope.businessViewsGrid.api.setRowData($scope.meta.businessViews);
 	})
 
 
@@ -329,13 +352,13 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		$mdDialog.show({
 			controller: addBusinessViewController,
 			preserveScope: true,
-			locals: { originalPhysicalModel: $scope.meta.physicalModels,selectedBusinessModel: $scope.selectedBusinessModel,editMode:editMode},
+			locals: { originalPhysicalModel: $scope.meta.physicalModels,selectedBusinessModel: $scope.selectedBusinessModel,editMode:editMode, businessViewsGrid: $scope.businessViewsGrid},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addBusinessView.jsp',
 			clickOutsideToClose:false,
 			escapeToClose :false,
 			fullscreen: true
 		}).then(function(){
-			$scope.businessViewTreeInterceptor.refreshTree();
+			$scope.businessViewsGrid.api.setRowData($scope.meta.businessViews);
 		});
 	};
 
@@ -353,6 +376,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			   .then(function(response){
 					metaModelServices.applyPatch(response.data);
 					$scope.businessClassesGrid.api.setRowData($scope.meta.businessModels);
+					$scope.businessViewsGrid.api.setRowData($scope.meta.businessViews);
 					$scope.selectedBusinessModel=undefined;
 			   },function(response){
 				   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
