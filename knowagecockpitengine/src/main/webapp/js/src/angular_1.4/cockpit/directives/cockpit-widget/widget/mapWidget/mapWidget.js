@@ -779,7 +779,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     		}
 
-    		var model = {content: {columnSelectedOfDataset: columnsForData }};
+    		var model = { content: { columnSelectedOfDataset: columnsForData }, updateble: true };
     		var features = [];
     		var layer =  new ol.layer.Vector();
 
