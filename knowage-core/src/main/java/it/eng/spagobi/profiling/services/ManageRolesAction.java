@@ -69,6 +69,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 	private final String ROLE_TYPE_CD = "typeCd";
 	private final String CODE = "code";
 	private final String EDIT_PYTHON_SCRIPTS = "EditPythonScripts";
+	private final String CREATE_CUSTOM_CHART = "CreateCustomChart";
 	private final String SAVE_SUBOBJECTS = "saveSubobj";
 	private final String SEE_SUBOBJECTS = "seeSubobj";
 	private final String SEE_VIEWPOINTS = "seeViewpoints";
@@ -169,6 +170,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 			String description = getAttributeAsString(DESCRIPTION);
 
 			Boolean editPythonScripts = getAttributeAsBoolean(EDIT_PYTHON_SCRIPTS);
+			Boolean createCustomChart = getAttributeAsBoolean(CREATE_CUSTOM_CHART);
 			Boolean saveSubobjects = getAttributeAsBoolean(SAVE_SUBOBJECTS);
 			Boolean seeSubobjects = getAttributeAsBoolean(SEE_SUBOBJECTS);
 			Boolean seeViewpoints = getAttributeAsBoolean(SEE_VIEWPOINTS);
@@ -274,6 +276,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				role.setIsAbleToSaveMetadata(saveMetadata);
 				role.setIsAbleToSaveRememberMe(saveRememberMe);
 				role.setIsAbleToEditPythonScripts(editPythonScripts);
+				role.setIsAbleToCreateCustomChart(createCustomChart);
 				role.setIsAbleToSaveSubobjects(saveSubobjects);
 				role.setIsAbleToSeeMetadata(seeMetadata);
 				role.setIsAbleToSeeNotes(seeNotes);

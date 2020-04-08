@@ -494,6 +494,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		role.setAbleToManageCalendar(bo.isAbleToManageCalendar());
 		role.setAbleToUseFunctionsCatalog(bo.isAbleToUseFunctionsCatalog());
 		role.setIsAbleToEditPythonScripts(bo.isAbleToEditPythonScripts());
+		role.setIsAbleToCreateCustomChart(bo.isAbleToCreateCustomChart());
 		role.setIsAbleToSaveSubobjects(bo.isAbleToSaveSubobjects());
 		role.setIsAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
 		role.setIsAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());
@@ -560,9 +561,12 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	/**
 	 * Controls if the name of the ParameterUse is already in use.
 	 *
-	 * @param paruse    The paruse to check
-	 * @param operation Defines if the operation is of insertion or modify
-	 * @throws EMFUserError If any Exception occurred
+	 * @param paruse
+	 *            The paruse to check
+	 * @param operation
+	 *            Defines if the operation is of insertion or modify
+	 * @throws EMFUserError
+	 *             If any Exception occurred
 	 */
 	private boolean parameterUseLabelControl(ParameterUse paruse, String operation) {
 

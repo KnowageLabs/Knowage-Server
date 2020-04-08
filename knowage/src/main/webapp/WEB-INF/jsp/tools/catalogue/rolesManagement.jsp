@@ -421,7 +421,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.editPythonScripts")}}</label>
 			       </div> 
 			   </div>
-				
+				<div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('createCustomChart')">
+					<md-input-container class="small counter"> 
+						<md-checkbox
+							ng-change="setDirty()"  ng-model="selectedRole.ableToCreateCustomChart" aria-label="check" name="createCustomChart">
+						</md-checkbox> 
+					</md-input-container>
+					<div >
+						<label>{{translate.load("sbi.roles.createCustomChart")}}</label>
+					</div> 
+				</div>
 				 <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('ITEMS')"
 												 >
 										{{translate.load("sbi.roles.finalUserCan");}}

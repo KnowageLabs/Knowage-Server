@@ -42,6 +42,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	               {dbname:"CREATE_DOCUMENTS",label:"createDocument",visible:false, category:"ITEMS"},
 	               {dbname:"ENABLE_DATASET_PERSISTENCE",label:"enableDatasetPersistence",visible:false, category:"ENABLE"},
 	               {dbname:"EDIT_PYTHON_SCRIPTS",label:"editPythonScripts",visible:false, category:"ENABLE"},
+	               {dbname:"CREATE_CUSTOM_CHART",label:"createCustomChart",visible:false, category:"ENABLE"},
 	               {dbname:"ENABLE_FEDERATED_DATASET",label:"enableFederatedDataset",visible:false, category:"ENABLE"},
 	               {dbname: "ENABLE_TO_RATE", label: "enableToRate", visible: false, category: "ENABLE"},
 	               {dbname: "ENABLE_TO_PRINT", label: "enableToPrint", visible: false, category: "ENABLE"},
