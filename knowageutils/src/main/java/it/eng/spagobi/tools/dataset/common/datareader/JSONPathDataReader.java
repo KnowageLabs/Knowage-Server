@@ -404,7 +404,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		return value;
 	}
 
-	private static Object getJSONPathValue(Object o, String jsonPathValue) throws JSONException {
+	protected Object getJSONPathValue(Object o, String jsonPathValue) throws JSONException {
 		// can be an array with a single value, a single object or also null (not found)
 		Object res = null;
 		try {
@@ -489,7 +489,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 			String header = jpa.name;
 			boolean multiValue = jpa.multivalue;
 			fm.setAlias(getAlias(header));
-			fm.setName(header);
+			fm.setName(getName(header));
 			fm.setMultiValue(multiValue);
 			if (ID_NAME.equalsIgnoreCase(header)) {
 				if (idSet) {
@@ -517,6 +517,10 @@ public class JSONPathDataReader extends AbstractDataReader {
 	}
 
 	protected String getAlias(String name) {
+		return name;
+	}
+
+	protected String getName(String name) {
 		return name;
 	}
 
@@ -610,10 +614,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 			return Short.valueOf(value);
 		} else if (fieldType.equals(Integer.class)) {
 			/*
-			 * In Solr, an integer value like the number "7"
-			 * is returned as a value like "7.0": a good
-			 * way to prevent problems in this case is to
-			 * use the following.
+			 * In Solr, an integer value like the number "7" is returned as a value like "7.0": a good way to prevent problems in this case is to use the
+			 * following.
 			 */
 			return new BigDecimal(value).intValue();
 		} else if (fieldType.equals(BigInteger.class)) {

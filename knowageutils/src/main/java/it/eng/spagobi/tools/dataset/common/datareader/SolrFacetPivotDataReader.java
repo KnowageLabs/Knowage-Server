@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +33,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -272,8 +276,42 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 		jsonPathAttributes.addAll(newJsonPathAttributes);
 	}
 
+	public <K, V> K getKey(Map<K, V> map, V value) {
+		for (Entry<K, V> entry : map.entrySet()) {
+			if (entry.getValue().equals(value)) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+
 	@Override
 	protected String getAlias(String name) {
 		return nameToAliasMap.containsKey(name) ? nameToAliasMap.get(name) : name;
+	}
+
+	@Override
+	protected String getName(String name) {
+		return nameToAliasMap.containsValue(name) ? getKey(nameToAliasMap, name) : name;
+	}
+
+	@Override
+	protected Object getJSONPathValue(Object o, String jsonPathValue) throws JSONException {
+		// can be an array with a single value, a single object or also null (not found)
+		Object res = null;
+		try {
+			if (jsonPathValue.contains(" ")) {
+				String initial = "$.";
+				jsonPathValue = jsonPathValue.substring(jsonPathValue.indexOf("$") + 2);
+				jsonPathValue = "['" + jsonPathValue + "']";
+				res = JsonPath.read(o, initial.concat(jsonPathValue));
+			} else {
+				res = JsonPath.read(o, jsonPathValue);
+			}
+		} catch (PathNotFoundException e) {
+			logger.debug("JPath not found " + jsonPathValue);
+		}
+
+		return res;
 	}
 }
