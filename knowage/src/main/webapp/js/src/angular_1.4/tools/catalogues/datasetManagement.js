@@ -374,11 +374,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 	{value:"csv",name:"CSV"}
  	];
 
-	if ($scope.selectedDataSet == undefined){
-		$scope.selectedDataSet = {}
-	}
-	$scope.selectedDataSet.isRDataset = false
-
 	// PYTHON ENVIRONMENTS CONFIG
 	sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
 	.then(function(response){
@@ -4041,6 +4036,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     		}else{
     			$scope.selectedDataSet.restRequestBody="";
     		}
+    		$scope.selectedDataSet.isRDataset = false;
     	}
 
     	$scope.parameterItems = [];
