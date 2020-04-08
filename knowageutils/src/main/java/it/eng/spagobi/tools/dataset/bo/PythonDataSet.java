@@ -119,12 +119,17 @@ public class PythonDataSet extends ConfigurableDataSet {
 	private void initDataProxy(JSONObject jsonConf) {
 		String restAddress;
 		Map<String, String> requestHeaders;
+		String isRDataset = getProp(PythonDataSetConstants.IS_R_DATASET, jsonConf, true);
 		try {
 			requestHeaders = getRequestHeadersPropMap(PythonDataSetConstants.REST_REQUEST_HEADERS, jsonConf);
 			JSONObject pythonEnv = new JSONObject(getProp(PythonDataSetConstants.PYTHON_ENVIRONMENT, jsonConf, false));
 			String label = pythonEnv.get("label").toString();
 			String pythonAddress = SingletonConfig.getInstance().getConfigValue(label);
-			restAddress = "https://" + pythonAddress + "/dataset";
+			if (isRDataset != null && isRDataset.equals("true"))
+				restAddress = "http://" + pythonAddress + "/dataset"; // R engine does not support https
+			else
+				restAddress = "https://" + pythonAddress + "/dataset";
+//			restAddress = "https://" + pythonAddress + "/dataset";
 		} catch (Exception e) {
 			throw new ConfigurationException("Problems in configuration of data proxy", e);
 		}
