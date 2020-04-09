@@ -49,6 +49,7 @@ angular.module('cockpitModule')
 			$interval,
 			$mdPanel,
 			$q,
+			$sce,
 			$filter,
 			sbiModule_translate,
 			sbiModule_restServices,
@@ -65,8 +66,8 @@ angular.module('cockpitModule')
 			$rootScope){
 
 		$scope.getTemplateUrl = function(template){
-	  		return cockpitModule_generalServices.getTemplateUrl('selectorWidget',template);
-	  	}
+			return $sce.trustAsResourceUrl(cockpitModule_generalServices.getTemplateUrl('selectorWidget',template));
+		}
 
 		if(!$scope.ngModel.settings) $scope.ngModel.settings = {};
 		if($scope.ngModel.settings.modalityPresent == 'COMBOBOX' && !$scope.ngModel.settings.modalityValue) $scope.ngModel.settings.modalityValue = "dropdown";

@@ -76,10 +76,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_template){
 		
 		$scope.getTemplateUrl = function(template){
-	  		return cockpitModule_generalServices.getTemplateUrl('htmlWidget',template);
-	  	}		
-		
-		
+	  		return $sce.trustAsResourceUrl(cockpitModule_generalServices.getTemplateUrl('htmlWidget',template));
+	  	}
+
+
 		//Regular Expressions used
 		$scope.widgetIdRegex = /\[kn-widget-id\]/g;
 		$scope.activeSelectionsRegex = /(?:\[kn-active-selection(?:=\'([a-zA-Z0-9\_\-]+)\')?\s?\])/g;
