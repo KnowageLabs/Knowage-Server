@@ -33,7 +33,14 @@ function(dataset, dataset_name=NULL, script, drivers, output_variable){
   html
 }
 
+#' @post /dataset
+function(script, df_name, parameters){
+  decoded_script <- decode_jwt_token(script)
+  "prova"
+}
+
 #' @get /libraries
+#' @get /dataset/libraries
 function(){
   lib <- get_libraries()
   lib

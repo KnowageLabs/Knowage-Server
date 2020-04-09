@@ -1,3 +1,6 @@
+library(openssl)
+library(jose)
+
 get_libraries <- function(){
   str(allPackages <- installed.packages(.Library, priority = "high"))
   lib_matrix <- allPackages[, c(1,3:5)]
@@ -13,4 +16,14 @@ resolve_drivers <- function(script, drivers){
     script <- gsub(original,final,script)
   }
   script
+}
+
+decode_jwt_token <- function(script){
+  key <- charToRaw("abc123")
+  token <- jwt_decode_hmac(script, secret = key)
+  print('IN')
+  print(token[["exp"]])
+  print(token[["script"]])
+  print('OUT')
+  "prova"
 }
