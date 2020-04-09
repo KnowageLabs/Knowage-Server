@@ -49,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$interval,
 			$mdPanel,
 			$q,
+			$sce,
 			$filter,
 			sbiModule_translate,
 			sbiModule_restServices,
@@ -65,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$rootScope){
 
 		$scope.getTemplateUrl = function(template){
-			return cockpitModule_generalServices.getTemplateUrl('selectorWidget',template);
+			return $sce.trustAsResourceUrl(cockpitModule_generalServices.getTemplateUrl('selectorWidget',template));
 		}
 
 		if(!$scope.ngModel.settings) $scope.ngModel.settings = {};

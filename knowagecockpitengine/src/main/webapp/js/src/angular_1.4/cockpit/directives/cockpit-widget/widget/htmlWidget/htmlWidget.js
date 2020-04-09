@@ -76,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_template){
 
 		$scope.getTemplateUrl = function(template){
-	  		return cockpitModule_generalServices.getTemplateUrl('htmlWidget',template);
+	  		return $sce.trustAsResourceUrl(cockpitModule_generalServices.getTemplateUrl('htmlWidget',template));
 	  	}
 
 
