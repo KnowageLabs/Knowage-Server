@@ -388,6 +388,12 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			return cockpitModule_template.configuration.showScreenshot;
 		}else return $scope.ngModel.style.showScreenshot;
 	}
+	
+	$scope.showExcelExportButton = function(){
+		if(typeof($scope.ngModel.style.showExcelExport) == 'undefined' ) {
+			return cockpitModule_template.configuration.showExcelExport;
+		}else return $scope.ngModel.style.showExcelExport;
+	}
 
 	$rootScope.$on('DELETE_SELECTION',function(event,data){
 	    	cockpitModule_widgetSelection.removeTimestampedSelection(data.ds,data.columnName);

@@ -201,5 +201,7 @@
 		</md-input-container> 
 		<md-switch ng-if="screenAvailable() && isUndefined(ngModel.showScreenshot)" ng-model="cockpitModule_template.configuration.showScreenshot" ng-click="changeShowScreenshot()">{{::translate.load("sbi.cockpit.style.options.enablescreenshot")}}</md-switch>
 		<md-switch ng-if="screenAvailable() && !isUndefined(ngModel.showScreenshot)" ng-model="ngModel.showScreenshot">{{::translate.load("sbi.cockpit.style.options.enablescreenshot")}}</md-switch>
+		
+		<md-switch ng-model="ngModel.showExcelExport" >Enable show excel export(when available)</md-switch>
 	</md-card-content>
 </md-card>

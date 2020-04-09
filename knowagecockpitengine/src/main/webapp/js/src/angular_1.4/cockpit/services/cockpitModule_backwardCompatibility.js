@@ -59,6 +59,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(!self.compareVersion("6.3.0",template.knowageVersion)){
 				if(template.configuration && typeof(template.configuration.showScreenshot)=='undefined') template.configuration.showScreenshot = true;
 			}
+			if(!self.compareVersion("7.3.0",template.knowageVersion)){
+				if(template.configuration && typeof(template.configuration.showExcelExport)=='undefined') template.configuration.showExcelExport = true;
+			}
 
 			//Cycle trough all widgets
 			for(var sheet in template.sheets){

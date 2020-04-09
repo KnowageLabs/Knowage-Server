@@ -188,7 +188,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-icon md-font-icon="fa fa-camera-retro" ng-if="!ngModel.loadingScreen"></md-icon>
 				</md-button>
 				
-				<md-button class="md-fab md-raised md-mini" ng-click="exportToExcel($event,ngModel,options)" ng-disabled="ngModel.loadingScreen" ng-if="checkType(ngModel.type, ['table','chart','static-pivot-table', 'discovery'])">
+				<md-button class="md-fab md-raised md-mini" ng-click="exportToExcel($event,ngModel,options)" ng-disabled="ngModel.loadingScreen" ng-if="showExcelExportButton() && checkType(ngModel.type, ['table','chart','static-pivot-table', 'discovery'])">
 					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.widgets.tooltip.export")}}</md-tooltip>					
 					<md-icon md-font-icon="fa fa-file-excel-o" ng-if="!ngModel.loadingScreen"></md-icon>
 				</md-button>

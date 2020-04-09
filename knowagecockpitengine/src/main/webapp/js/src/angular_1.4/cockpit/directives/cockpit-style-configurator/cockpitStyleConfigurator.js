@@ -168,6 +168,10 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.changeShowScreenshot = function(){
 		$scope.ngModel.showScreenshot = !cockpitModule_template.configuration.showScreenshot;
 	}
+	
+	$scope.changeShowExcelExport = function(){
+		$scope.ngModel.showExcelExport = !cockpitModule_template.configuration.showExcelExport;
+	}
 
 	$scope.bordersWatcher = $scope.$watch('ngModel.borders',function(newValue,oldValue){
 		$scope.borderColorOptions.disabled = !newValue;
