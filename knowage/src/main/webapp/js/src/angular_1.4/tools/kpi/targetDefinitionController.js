@@ -45,6 +45,15 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 
 	$scope.targetsActions = [
 		{
+			label : sbiModule_translate.load('sbi.generic.clone'),
+			icon:'fa fa-copy' ,
+			backgroundColor:'transparent',
+			action : function(item,event) {
+				$scope.cloneTarget(item,event);
+			}
+
+		},
+		{
 			label: sbiModule_translate.load('sbi.generic.delete'),
 			icon: 'fa fa-trash',
 			action: function(removedTarget) {
@@ -76,15 +85,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				})
 			, function() {
 			};
-		}},{
-			label : sbiModule_translate.load('sbi.generic.clone'),
-			icon:'fa fa-copy' ,
-			backgroundColor:'transparent',
-			action : function(item,event) {
-				$scope.cloneTarget(item,event);
-			}
-
-		}/*,
+		}}/*,
 		{
 			label: sbiModule_translate.load('sbi.generic.edit'),
 			icon: 'fa fa-pencil',
@@ -330,13 +331,14 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				value: $scope.kpis[i].value
 			}
 		}
-		var errors = "";
-		if (newTarget.name == null) errors += sbiModule_translate.load('sbi.target.errorMissingName') + ". ";
-		if (newTarget.startValidity == null) errors += sbiModule_translate.load('sbi.target.errorMissingStartValidity') + ". ";
-		if (newTarget.endValidity == null) errors += sbiModule_translate.load('sbi.target.errorMissingEndValidity') + ". ";
-		if (newTarget.values.length == 0) errors += sbiModule_translate.load('sbi.target.errorMissingKPI') + ". ";
-		if (errors != "") {
-			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.savingItemError') + " - " + errors,"");
+		var tmp = [];
+		tmp.errors = [];
+		if (newTarget.name == null) tmp.errors.push({message: sbiModule_translate.load('sbi.target.errorMissingName') + ". "});
+		if (newTarget.startValidity == null) tmp.errors.push({message: sbiModule_translate.load('sbi.target.errorMissingStartValidity') + ". "});
+		if (newTarget.endValidity == null) tmp.errors.push({message:sbiModule_translate.load('sbi.target.errorMissingEndValidity') + ". "});
+		if (newTarget.values.length == 0) tmp.errors.push({message: sbiModule_translate.load('sbi.target.errorMissingKPI') + ". "});
+		if (tmp.errors.length > 0) {
+			sbiModule_messaging.showErrorMessage(tmp, sbiModule_translate.load('sbi.generic.savingItemError'));
 			return;
 		}
 		sbiModule_restServices

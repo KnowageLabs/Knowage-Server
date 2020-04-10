@@ -311,10 +311,11 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		event.preventDefault();
 		event.stopImmediatePropagation();
 		var confirm = $mdDialog.confirm()
-		.title($scope.translate.load("sbi.generic.confirmClone"))
-		.ariaLabel('clone measure') 
-		.ok($scope.translate.load("sbi.general.yes"))
-		.cancel($scope.translate.load("sbi.general.No"));
+			.title($scope.translate.load("sbi.generic.confirmClone"))
+			.ariaLabel('clone measure') 
+			.ok($scope.translate.load("sbi.general.yes"))
+			.cancel($scope.translate.load("sbi.general.No"));
+		
 		$mdDialog.show(confirm).then(function() {
 			sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/"+item.version+"/loadKpi")
 			.then(function(response){ 

@@ -585,21 +585,21 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 		});
 	};
 
-	$scope.measureMenuOption= [{
-		label : sbiModule_translate.load('sbi.generic.delete'),
-		icon:'fa fa-trash' ,
-		backgroundColor:'transparent',
-		action : function(item,event) {
-			$scope.deleteMeasure(item,event);
-		}
+	$scope.measureMenuOption= [
+		{
+			label : sbiModule_translate.load('sbi.generic.clone'),
+			icon:'fa fa-copy' ,
+			backgroundColor:'transparent',
+			action : function(item,event) {
+				$scope.cloneMeasure(item,event);
+			}
 
-	},
-	{
-		label : sbiModule_translate.load('sbi.generic.clone'),
-		icon:'fa fa-copy' ,
-		backgroundColor:'transparent',
-		action : function(item,event) {
-			$scope.cloneMeasure(item,event);
+		},{
+			label : sbiModule_translate.load('sbi.generic.delete'),
+			icon:'fa fa-trash' ,
+			backgroundColor:'transparent',
+			action : function(item,event) {
+				$scope.deleteMeasure(item,event);
 		}
 
 	}];
