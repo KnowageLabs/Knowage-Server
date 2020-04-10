@@ -96,8 +96,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						post: function postLink(scope, element, attrs, ctrl, transclud) {
 							element.ready(function () {
 								scope.initWidget();
-								scope.createMap();
-								scope.showWidgetSpinner();
 							});
 						}
 					};
@@ -168,6 +166,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.columnsConfig = {} 	//layers with just columns definition
 		$scope.optionSidenavId = "optionSidenav-" + Math.random(); // random id for sidenav id
 		$scope.layerVisibility = [];
+
+		$scope.init = function(element,width,height) {
+			$scope.refreshWidget(null, 'init');
+		};
 
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
 		//set a watcher on a variable that can contains the associative selections for realtime dataset
@@ -368,6 +370,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.map.updateSize();
 				}, 500);
 				return;
+			} else if (nature == "init") {
+				$scope.createMap();
+				$scope.addAllLayers();
 			}
 
 			if (!options) options = {};
@@ -451,41 +456,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    }
 
 		$scope.initializeTemplate = function (){
-			return $q(function(resolve, reject) {
-				if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
-				if (!$scope.ngModel.content.layers) $scope.ngModel.content.layers = [];
-				if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
-				if (!$scope.ngModel.content.columnSelectedOfDataset) $scope.ngModel.content.columnSelectedOfDataset = {} ;
+			if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
+			if (!$scope.ngModel.content.layers) $scope.ngModel.content.layers = [];
+			if (!$scope.ngModel.content.baseLayersConf) $scope.ngModel.content.baseLayersConf = [];
+			if (!$scope.ngModel.content.columnSelectedOfDataset) $scope.ngModel.content.columnSelectedOfDataset = {} ;
 
-				if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0];
-				if (!$scope.ngModel.content.mapId){
-					$scope.ngModel.content.mapId =  'map-' + $scope.ngModel.id;
-				}
-				//set default indicator (first one) for each layer
-				for (l in $scope.ngModel.content.layers){
-					var columns = $scope.getColumnSelectedOfDataset($scope.ngModel.content.layers[l].dsId);
-					for (var c in columns){
-						if (columns[c].properties && columns[c].properties.showMap){
-							$scope.ngModel.content.layers[l].defaultIndicator = columns[c].name;
-							break;
-						}
-					}
-					// all attributes that don't have aggregateBy properties need a default value to true
-					for (var c in columns) {
-						var currCol = columns[c];
-						if (currCol.fieldType == "ATTRIBUTE") {
-							if (!currCol.properties) {
-								currCol.properties = {};
-							}
-							if (!currCol.properties.hasOwnProperty("aggregateBy")) {
-								currCol.properties.aggregateBy = true;
-							}
-						}
+			if (!$scope.ngModel.content.currentView.center) $scope.ngModel.content.currentView.center = [0,0];
+			if (!$scope.ngModel.content.mapId){
+				$scope.ngModel.content.mapId =  'map-' + $scope.ngModel.id;
+			}
+			//set default indicator (first one) for each layer
+			for (l in $scope.ngModel.content.layers){
+				var columns = $scope.getColumnSelectedOfDataset($scope.ngModel.content.layers[l].dsId);
+				for (var c in columns){
+					if (columns[c].properties && columns[c].properties.showMap){
+						$scope.ngModel.content.layers[l].defaultIndicator = columns[c].name;
+						break;
 					}
 				}
-				if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) $scope.ngModel.content.enableBaseLayer = true;
-				resolve('initialized');
-			});
+				// all attributes that don't have aggregateBy properties need a default value to true
+				for (var c in columns) {
+					var currCol = columns[c];
+					if (currCol.fieldType == "ATTRIBUTE") {
+						if (!currCol.properties) {
+							currCol.properties = {};
+						}
+						if (!currCol.properties.hasOwnProperty("aggregateBy")) {
+							currCol.properties.aggregateBy = true;
+						}
+					}
+				}
+			}
+			if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) $scope.ngModel.content.enableBaseLayer = true;
 
 		}
 
@@ -725,12 +727,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 					var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
 					var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
-					if (!$scope.exploded[dsId]) {
-						var values = $scope.values[layerDef.name];
-						$scope.createLayerWithData(layerDef.name, values, false, false);
-					} else {
-						var values = $scope.values[layerDef.name];
-						$scope.createLayerWithData(layerDef.name, values, isCluster, isHeatmap);
+
+					// Don't recreate the map if it's not needed
+					if (isCluster || isHeatmap) {
+						if (!$scope.exploded[dsId]) {
+							var values = $scope.values[layerDef.name];
+							$scope.createLayerWithData(layerDef.name, values, false, false);
+						} else {
+							var values = $scope.values[layerDef.name];
+							$scope.createLayerWithData(layerDef.name, values, isCluster, isHeatmap);
+						}
 					}
 				}
 			});
@@ -816,75 +822,71 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.createMap = function (){
 
-			$scope.initializeTemplate().then(function(){
+			$scope.initializeTemplate();
 
-				var layers = [];
+			var layers = [];
 
-				if ($scope.needsBaseLayer()) {
-					layers.push($scope.createBaseLayer());
+			if ($scope.needsBaseLayer()) {
+				layers.push($scope.createBaseLayer());
+			}
+
+			if ($scope.needsBackgroundLayer()) {
+				layers.push($scope.createBackgroundLayer());
+			}
+
+			if (!$scope.popupContainer){
+				$scope.popupContainer = document.getElementById('popup-' + $scope.ngModel.id);
+				$scope.closer = document.getElementById('popup-closer-' +$scope.ngModel.id);
+			}
+
+			//create overlayers (popup..)
+			var overlay = new ol.Overlay({
+				element: $scope.popupContainer,
+				autoPan: true,
+				autoPanAnimation: {
+					duration: 250
 				}
-
-				if ($scope.needsBackgroundLayer()) {
-					layers.push($scope.createBackgroundLayer());
-				}
-
-				if (!$scope.popupContainer){
-					$scope.popupContainer = document.getElementById('popup-' + $scope.ngModel.id);
-					$scope.closer = document.getElementById('popup-closer-' +$scope.ngModel.id);
-				}
-
-				//create overlayers (popup..)
-				var overlay = new ol.Overlay({
-					element: $scope.popupContainer,
-					autoPan: true,
-					autoPanAnimation: {
-						duration: 250
-					}
-				});
-
-				//setting coordinates (from the first layer if they aren't set into the template)
-				if ($scope.ngModel.content.currentView.center[0] == 0 && $scope.ngModel.content.currentView.center[1] == 0 && $scope.layers.length > 0){
-					var tmpLayer = $scope.layers[0].layer;
-					cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
-				}
-
-				$scope.map = new ol.Map({
-					target: 'map-' + $scope.ngModel.id,
-					layers: layers,
-					overlays: [overlay],
-					view: new ol.View({
-						center: $scope.ngModel.content.currentView.center,
-						zoom: $scope.ngModel.content.currentView.zoom || 3
-					})
-				});
-				console.log("Created obj map with id [" + 'map-' + $scope.ngModel.id + "]", $scope.map);
-
-//				// get background layer
-//				$scope.addBackgroundLayer();
-
-				//just for refresh
-				if (!$scope.map.getSize()){
-					$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width,
-						cockpitModule_widgetConfigurator.map.initialDimension.height]);
-				}else{
-					$scope.map.setSize($scope.map.getSize());
-				}
-
-				$scope.map.renderSync();
-
-				//add events methods
-				$scope.addViewEvents();
-				$scope.addMapEvents(overlay);
-				$scope.loading = false;
-				$timeout(function(){
-					$scope.widgetIsInit=true;
-					cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
-				},1500);
-
-			}).then(function() {
-				$scope.addAllLayers();
-				$scope.map.renderSync();
 			});
+
+			//setting coordinates (from the first layer if they aren't set into the template)
+			if ($scope.ngModel.content.currentView.center[0] == 0 && $scope.ngModel.content.currentView.center[1] == 0 && $scope.layers.length > 0){
+				var tmpLayer = $scope.layers[0].layer;
+				cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
+			}
+
+			$scope.map = new ol.Map({
+				target: 'map-' + $scope.ngModel.id,
+				layers: layers,
+				overlays: [overlay],
+				view: new ol.View({
+					center: $scope.ngModel.content.currentView.center,
+					zoom: $scope.ngModel.content.currentView.zoom || 3
+				})
+			});
+			console.log("Created obj map with id [" + 'map-' + $scope.ngModel.id + "]", $scope.map);
+
+//			// get background layer
+//			$scope.addBackgroundLayer();
+
+			//just for refresh
+			if (!$scope.map.getSize()){
+				$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width,
+					cockpitModule_widgetConfigurator.map.initialDimension.height]);
+			}else{
+				$scope.map.setSize($scope.map.getSize());
+			}
+
+			$scope.map.renderSync();
+
+			//add events methods
+			$scope.addViewEvents();
+			$scope.addMapEvents(overlay);
+			$scope.loading = false;
+			$timeout(function(){
+				$scope.widgetIsInit=true;
+				cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
+			},1500);
+
 		}
 
 	    //control panel events
