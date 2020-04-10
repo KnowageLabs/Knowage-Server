@@ -324,6 +324,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 				angular.copy(response.data,$scope.kpi); 
 				$scope.kpi.id = undefined;
+				$scope.kpi.name = sbiModule_translate.load("sbi.generic.copyof") + " " + $scope.kpi.name;
 				$scope.flagActivateBrother('loadedEvent');
 
 			},function(response){
