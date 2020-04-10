@@ -1,5 +1,6 @@
 library(openssl)
 library(jose)
+source("D:/Knowage/Knowage-Server/Knowage-R/configs.R")
 
 get_libraries <- function(){
   str(allPackages <- installed.packages(.Library, priority = "high"))
@@ -18,12 +19,24 @@ resolve_drivers <- function(script, drivers){
   script
 }
 
+resolve_parameters <- function(script, parameters){
+  script
+}
+
 decode_jwt_token <- function(script){
-  key <- charToRaw("abc123")
-  token <- jwt_decode_hmac(script, secret = key)
-  print('IN')
-  print(token[["exp"]])
-  print(token[["script"]])
-  print('OUT')
-  "prova"
+  token <- jwt_decode_hmac(script, secret = hmac_key)
+  token
+}
+
+get_script_from_token <- function(token){
+  script <- token[["script"]]
+  script
+}
+
+is_dataset_request_authorized <- function(token){
+  expirationTime <- token[["exp"]]
+  now <- as.numeric(as.POSIXct(Sys.time()))
+  if (now > expirationTime)
+    FALSE
+  TRUE
 }
