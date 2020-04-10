@@ -13,3 +13,9 @@ ALTER TABLE SBI_CROSS_NAVIGATION ADD COLUMN POPUP_OPTIONS VARCHAR(4000) NULL DEF
 -- 14/02/2020 Alberto Nale
 ALTER TABLE SBI_MENU ADD ICON VARCHAR(1000) NULL;
 ALTER TABLE SBI_MENU ADD CUST_ICON VARCHAR(4000) NULL;
+
+-- 2020/04/10 Alberto Nale
+UPDATE SBI_ALERT_LISTENER SET TEMPLATE='angular_1.4/tools/alert/listeners/kpiListener/templates/kpiListener.html' WHERE NAME='KPI Listener';
+UPDATE SBI_ALERT_ACTION SET TEMPLATE='angular_1.4/tools/alert/actions/executeETL/templates/executeETL.html' WHERE NAME= 'Execute ETL Document';
+UPDATE SBI_ALERT_ACTION SET TEMPLATE='angular_1.4/tools/alert/actions/sendMail/templates/sendMail.html' WHERE NAME= 'Send mail';
+UPDATE SBI_ALERT_ACTION SET TEMPLATE='angular_1.4/tools/alert/actions/contextBroker/templates/contextBroker.html' WHERE NAME= 'Context Broker';
