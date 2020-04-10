@@ -2,7 +2,7 @@ angular.module('alertDefinitionManager').controller('sendMailController', functi
 	$scope.listUserEmail = []; 
 	
 	$scope.validate=function(){
-		  console.log("check mail valiity")
+		  console.log("check mail validity")
 		  var valid=true;
 		  
 		  if($scope.ngModel.subject== undefined || $scope.ngModel.subject.trim()=="")
