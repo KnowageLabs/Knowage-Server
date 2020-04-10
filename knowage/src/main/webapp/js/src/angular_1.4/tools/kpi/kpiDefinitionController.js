@@ -254,7 +254,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 					}
 
 				},function(response) {
-					$scope.errorHandler(response.data,"");
+					sbiModule_messaging.showErrorMessage(response.data,"ERROR");
 				})
 	}
 
