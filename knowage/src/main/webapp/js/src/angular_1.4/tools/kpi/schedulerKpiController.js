@@ -31,7 +31,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 
 	$scope.engineMenuOptionList = [	{
 		label : sbiModule_translate.load('sbi.generic.clone'),
-		icon:'fa fa-files-o' ,
+		icon:'fa fa-copy' ,
 		backgroundColor:'transparent',
 		action : function(item,event) {
 			sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadSchedulerKPI")
