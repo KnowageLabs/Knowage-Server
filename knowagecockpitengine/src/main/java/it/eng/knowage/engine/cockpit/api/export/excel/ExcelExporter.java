@@ -1049,7 +1049,28 @@ public class ExcelExporter {
 												}
 
 											}
-											newParameters.put(obj, jsnParam);
+											if (newParameters.has(obj)) {
+												JSONObject jsonobjectVals = newParameters.getJSONObject(obj);
+
+												if (jsonobjectVals != null) {
+													Iterator<String> keysJ = jsonobjectVals.keys();
+													while (keysJ.hasNext()) {
+														String keyToAdd = keysJ.next();
+														String newKeyToAdd = keyToAdd.replace("$P{", "").replace("}", "");
+														if (jsonobjectVals.has(newKeyToAdd) && !jsonobjectVals.getString(newKeyToAdd).isEmpty()
+																&& jsnParam.getString(datasetVals.getString(keyToAdd)).isEmpty()) {
+															if (jsnParam.has(datasetVals.getString(keyToAdd)))
+																jsnParam.remove(datasetVals.getString(keyToAdd));
+															jsnParam.put(newKeyToAdd, jsonobjectVals.getString(newKeyToAdd));
+														}
+													}
+
+													newParameters.put(obj, jsnParam);
+												}
+
+											} else {
+												newParameters.put(obj, jsnParam);
+											}
 										}
 									} else {
 										newParameters.put(obj, valuesToChange);
@@ -1121,8 +1142,8 @@ public class ExcelExporter {
 							associativeSelectionsPayload.toString());
 
 					JSONArray datasetLabels = aggregation.getJSONArray("datasets");
-					for (int j = 0; j < datasetLabels.length(); j++) {
-						String label = datasetLabels.getString(j);
+					for (int j3 = 0; j3 < datasetLabels.length(); j3++) {
+						String label = datasetLabels.getString(j3);
 						actualSelectionMap.put(label, associativeSelections.getJSONObject(label));
 					}
 				} catch (Exception e) {
@@ -1414,24 +1435,31 @@ public class ExcelExporter {
 				String parameterName = parameterMatcher.group(1);
 				Object exists = oldParameters.get(parameterName);
 				if (exists != null) {
+//					JSONArray value = (JSONArray) newParameters.get(parameter);
+//					String regex2 = "\\((?:(?:,)?(?:\\'([a-zA-Z0-9\\-\\_\\s]+)\\')(?:,+)?)+\\)";
+//					String valueToElaborate = value.get(0).toString();
+//					Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(valueToElaborate);
+//					String realValueToAdd = "";
+//					String realValue = "";
+//					while (parameterMatcher2.find()) {
+//						if (realValue.isEmpty())
+//							realValueToAdd = parameterMatcher2.group(1);
+//						else
+//							realValueToAdd = realValueToAdd + "," + parameterMatcher2.group(1);
+//
+//						realValue = parameterMatcher2.group(1);
+//						valueToElaborate = valueToElaborate.replace("'" + realValue + "'", "");
+//						parameterMatcher2 = Pattern.compile(regex2).matcher(valueToElaborate);
+//					}
+//					parameters.put(parameterName, realValueToAdd);
 					JSONArray value = (JSONArray) newParameters.get(parameter);
-					String regex2 = "\\((?:(?:,)?(?:\\'([a-zA-Z0-9\\-\\_\\s]+)\\')(?:,+)?)+\\)";
-					String valueToElaborate = value.get(0).toString();
-					Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(valueToElaborate);
-					String realValueToAdd = "";
-					String realValue = "";
-					while (parameterMatcher2.find()) {
-						if (realValue.isEmpty())
-							realValueToAdd = parameterMatcher2.group(1);
-						else
-							realValueToAdd = realValueToAdd + "," + parameterMatcher2.group(1);
-
-						realValue = parameterMatcher2.group(1);
-						valueToElaborate = valueToElaborate.replace("'" + realValue + "'", "");
-						parameterMatcher2 = Pattern.compile(regex2).matcher(valueToElaborate);
+					String regex2 = "\\(\\'(.*)\\'\\)";
+					Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(value.get(0).toString());
+					if (parameterMatcher2.matches()) {
+						String realValue = parameterMatcher2.group(1);
+						realValue = "'" + realValue + "'";
+						parameters.put(parameterName, realValue);
 					}
-					parameters.put(parameterName, realValueToAdd);
-
 				}
 			}
 		}
