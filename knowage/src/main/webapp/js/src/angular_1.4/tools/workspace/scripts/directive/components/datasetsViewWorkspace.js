@@ -37,7 +37,7 @@ angular
 	})
 
 function datasetsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window, $mdSidenav,
-		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex,driversExecutionService,sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download,$sce, tagsHandlerService){
+		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr, sbiModule_i18n, kn_regex,driversExecutionService,sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download,$sce, tagsHandlerService, driversDependencyService){
 
 	var urlBuilderService = sbiModule_urlBuilderService;
 	$scope.maxSizeStr = maxSizeStr;
@@ -93,6 +93,37 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.prevUploadedFile = null;
 	$scope.datasetSavedFromQbe = false;
 	$scope.datasetTemp = null;
+
+	/*
+	  * WATCH ON DATA DEPENDENCIES PARAMETER OBJECT
+	  */
+	$scope.$watch( function() {
+		return driversDependencyService.parametersWithDataDependency;
+	},
+	// new value and old Value are the whole parameters
+	function(newValue, oldValue) {
+		if (!angular.equals(newValue, oldValue)) {
+			for(var i=0; i<newValue.length; i++){
+
+				var oldValPar = oldValue[i];
+				var newValPar = newValue[i];
+
+				//only new value different old value
+				if(oldValPar && (!angular.equals(newValPar, oldValPar)) ){
+
+					var oldParValue = oldValPar.parameterValue;
+					var newParValue = newValPar.parameterValue;
+
+					if(oldParValue == undefined || oldParValue == "" ||
+							(oldParValue && (!angular.equals(newParValue, oldParValue)))
+							){
+						driversDependencyService.updateDependencyValues(newValPar,$scope.dataset);
+					}
+					break;
+				}
+			}
+		}
+	},true);
 
 	function createSourceNameOnDataset(datasetsArray) {
 		for(var i=0; i < datasetsArray.length; i++) {
@@ -1146,8 +1177,9 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataSet){
 		var promise = sbiModule_restServices.post("dataset","drivers/",selectedDataSet.qbeDatamarts).then(function(response){
-				$scope.drivers = response.data.filterStatus;
-				$scope.selectedDataSet.drivers = $scope.drivers;
+			driversDependencyService.buildCorrelation(response.data.filterStatus, selectedDataSet.qbeDatamarts);
+			$scope.drivers = response.data.filterStatus;
+			$scope.selectedDataSet.drivers = $scope.drivers;
 		})
 		return promise;
 	}
@@ -1173,6 +1205,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 //    	}else{
 //    		angular.copy($scope.datasetInPreview, $scope.dataset)
     		$scope.dataset = $scope.datasetInPreview;
+    		$scope.dataset.parametersData = {};
+    		$scope.dataset.parametersData.documentParameters = $scope.drivers;
     		$scope.previewDS = function() {
     			var config = { datasetLabel: $scope.dataset.label };
     	        if(typeof $scope.dataset.pars !== 'undefined' && $scope.dataset.pars.length > 0) {

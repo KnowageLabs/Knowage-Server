@@ -254,7 +254,11 @@
 
 			var createDependencyUpdatingObject = function(execProperties,dependenciesMap){
 				var objPost = {};
-				objPost.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
+				if(execProperties.qbeDatamarts) {
+					objPost.OBJECT_LABEL = execProperties.qbeDatamarts;
+				} else {
+					objPost.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
+                }
 				objPost.ROLE=execProperties.selectedRole.name;
 				objPost.PARAMETER_ID=dependenciesMap.parameterToChangeUrlName;
 				objPost.MODE='simple';
