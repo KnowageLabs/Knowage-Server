@@ -14,3 +14,9 @@ ALTER TABLE SBI_CROSS_NAVIGATION ADD CONSTRAINT FK_SBI_CROSS_NAVIGATION_2 FOREIG
 -- 25/02/2020 Radmila Selakovic
 ALTER TABLE SBI_MENU ADD ICON VARCHAR(255) NULL;
 ALTER TABLE SBI_MENU ADD CUST_ICON VARCHAR(4000) NULL; 
+
+--14/04/2020 Radmila Selakovic KNOWAGE-5009
+UPDATE SBI_ALERT_LISTENER SET TEMPLATE='angular_1.4/tools/alert/listeners/kpiListener/templates/kpiListener.html' WHERE NAME='KPI Listener';
+UPDATE SBI_ALERT_ACTION SET TEMPLATE='angular_1.4/tools/alert/actions/executeETL/templates/executeETL.html' WHERE NAME= 'Execute ETL Document';
+UPDATE SBI_ALERT_ACTION SET TEMPLATE='angular_1.4/tools/alert/actions/sendMail/templates/sendMail.html' WHERE NAME= 'Send mail';
+UPDATE SBI_ALERT_ACTION SET TEMPLATE='angular_1.4/tools/alert/actions/contextBroker/templates/contextBroker.html' WHERE NAME= 'Context Broker';
