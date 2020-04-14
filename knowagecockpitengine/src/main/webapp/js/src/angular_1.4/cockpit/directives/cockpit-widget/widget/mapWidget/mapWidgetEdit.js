@@ -227,8 +227,15 @@ function mapWidgetEditControllerFunction(
 							newLayer.dataset.dsId = tempLayer.id.dsId;
 
 							for(var i in tempLayer.metadata.fieldsMeta){
-								tempLayer.metadata.fieldsMeta[i].aliasToShow = tempLayer.metadata.fieldsMeta[i].alias;
-								columnSelected.push(tempLayer.metadata.fieldsMeta[i]);
+								var currCol = tempLayer.metadata.fieldsMeta[i];
+								currCol.aliasToShow = currCol.alias;
+
+								// Initialize columns
+								if (currCol.fieldType == 'ATTRIBUTE') {
+									currCol.properties.aggregateBy = true;
+								}
+
+								columnSelected.push(currCol);
 							}
 							$scope.newModel.content.layers.push(newLayer);
 							var availableDatasets = cockpitModule_datasetServices.getAvaiableDatasets();
