@@ -787,6 +787,10 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 	$scope.seriesItemRemove = function(seriesItem,seriesContainerName) {
 
+		if($scope.chartTemplate.groupedSerie!=undefined && $scope.chartTemplate.groupedSerie == seriesItem){
+			delete $scope.chartTemplate.groupedSerie;
+		}
+
 		if($scope.chartTemplate.VALUES.SERIE.length != undefined && $scope.chartTemplate.VALUES.SERIE.constructor == Array){
 			for (var i = 0; i < $scope.chartTemplate.VALUES.SERIE.length; i++) {
 				if($scope.chartTemplate.VALUES.SERIE[i].column == seriesItem && $scope.chartTemplate.VALUES.SERIE[i].axis == seriesContainerName){
