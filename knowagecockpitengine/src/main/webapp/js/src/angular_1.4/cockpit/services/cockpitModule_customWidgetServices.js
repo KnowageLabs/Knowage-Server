@@ -43,6 +43,9 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		this.data = transformDataStore(data);
 	}
 
+	datastore.prototype.getRecords = function () {
+		return angular.copy(this.data.rows);
+	}
 	datastore.prototype.getDataArray = function (getDataArrayFn){
 		var dataArray = [];
 		for(var i=0; i<this.data.rows.length; i++){
