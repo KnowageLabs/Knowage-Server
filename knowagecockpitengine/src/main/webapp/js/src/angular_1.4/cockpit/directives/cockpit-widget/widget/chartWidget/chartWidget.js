@@ -1301,7 +1301,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 			var chartSeries = chartTemplate.CHART.VALUES.SERIE;
 
 			for(var i = 0; i < chartSeries.length; i++){
-				var index = sbiModule_util.findInArray(wconf.columnSelectedOfDatasetAggregations, 'alias', chartSeries[i].name);
+				var index = sbiModule_util.findInArray(wconf.columnSelectedOfDatasetAggregations, 'alias', chartSeries[i].column);
 				var obj = {};
 				obj['name'] = chartSeries[i].column;
 				obj['aggregationSelected'] = wconf.columnSelectedOfDatasetAggregations[index].aggregationSelected;
