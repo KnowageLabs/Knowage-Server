@@ -43,11 +43,10 @@ function(script, df_name, parameters){
   if (!is_dataset_request_authorized(token))
     stop("Unauthorized")
   decoded_script <- get_script_from_token(token)
-  #decoded_script <- resolve_parameters(decoded_script, parameters)
+  decoded_script <- resolve_parameters(decoded_script, parameters)
   decoded_script <- gsub(df_name, "df_", decoded_script)
   env$df_ <- data.frame()
   eval(parse(text=decoded_script), envir = env)
-  print(env$df_)
   env$df_
 }
 

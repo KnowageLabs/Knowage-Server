@@ -4036,7 +4036,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     		}else{
     			$scope.selectedDataSet.restRequestBody="";
     		}
-    		$scope.selectedDataSet.isRDataset = false;
+    		$scope.selectedDataSet.pythonDatasetType = "python";
     	}
 
     	$scope.parameterItems = [];

@@ -20,6 +20,14 @@ resolve_drivers <- function(script, drivers){
 }
 
 resolve_parameters <- function(script, parameters){
+  parameters_df <- as.data.frame(parameters)
+  print("BEFORE")
+  for(i in 1:nrow(parameters_df)) {
+    row <- parameters_df[i,]
+    print("ROW")
+    print(parameters_df)
+  }
+  print("AFTER")
   script
 }
 
