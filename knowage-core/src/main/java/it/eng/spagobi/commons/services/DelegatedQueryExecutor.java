@@ -27,9 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.resolver.DialectResolver;
-import org.hibernate.dialect.resolver.StandardDialectResolver;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
@@ -48,6 +45,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.util.ContextScooping;
 import it.eng.spago.util.QueryExecutor;
 import it.eng.spago.util.StringUtils;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 
 public class DelegatedQueryExecutor extends QueryExecutor {
 	static private Logger logger = Logger.getLogger(DelegatedQueryExecutor.class);
@@ -60,12 +58,9 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 	/**
 	 * Creates the command to execute dependent on request type.
 	 *
-	 * @param dataConnection
-	 *            the data connection
-	 * @param type
-	 *            type of query to execute: CREATE, READ, UPDATE, DELETE
-	 * @param statement
-	 *            the statement
+	 * @param dataConnection the data connection
+	 * @param type           type of query to execute: CREATE, READ, UPDATE, DELETE
+	 * @param statement      the statement
 	 * @return the SQL command
 	 */
 	public static SQLCommand createStatementSql(final DataConnection dataConnection, final String statement, final String type) {
@@ -85,11 +80,9 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 	/**
 	 * Opens the pool connection.
 	 *
-	 * @param pool
-	 *            the pool
+	 * @param pool the pool
 	 * @return the data connection
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public static DataConnection openConnection(final String pool) throws EMFInternalError {
 		return DataConnectionManager.getInstance().getConnection(pool);
@@ -98,16 +91,11 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 	/**
 	 * Execs the commands: SQL SELECT, INSERT, DELETE, UPDATE. The connection is gone by the connection pool.
 	 *
-	 * @param requestContainer
-	 *            the request container
-	 * @param responseContainer
-	 *            the response container
-	 * @param pool
-	 *            pool's name
-	 * @param query
-	 *            the SourceBean that contains the configuration of the query
-	 * @param type
-	 *            type of query: CREATE, READ, UPDATE, DELETE
+	 * @param requestContainer  the request container
+	 * @param responseContainer the response container
+	 * @param pool              pool's name
+	 * @param query             the SourceBean that contains the configuration of the query
+	 * @param type              type of query: CREATE, READ, UPDATE, DELETE
 	 * @return the object
 	 */
 	public static Object executeQuery(final RequestContainer requestContainer, final ResponseContainer responseContainer, final String pool,
@@ -135,16 +123,11 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 	/**
 	 * Execs the commands: SQL SELECT, INSERT, DELETE, UPDATE. The connection is taken by parameter (for manually transactions)
 	 *
-	 * @param requestContainer
-	 *            the request container
-	 * @param responseContainer
-	 *            the response container
-	 * @param dataConnection
-	 *            connection on db
-	 * @param query
-	 *            the SourceBean that contains the configuration
-	 * @param type
-	 *            type of query: CREATE, READ, UPDATE, DELETE
+	 * @param requestContainer  the request container
+	 * @param responseContainer the response container
+	 * @param dataConnection    connection on db
+	 * @param query             the SourceBean that contains the configuration
+	 * @param type              type of query: CREATE, READ, UPDATE, DELETE
 	 * @return the object
 	 */
 	public static Object executeQuery(final RequestContainer requestContainer, final ResponseContainer responseContainer, DataConnection dataConnection,
@@ -217,17 +200,12 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 	/**
 	 * Execs statement SQL with explicit parameters.
 	 *
-	 * @param dataConnection
-	 *            connection on database:
-	 * @param type
-	 *            type of query: CREATE, READ, UPDATE, DELETE
-	 * @param query
-	 *            the SourceBean that contains the configuration of the query
-	 * @param parameters
-	 *            The parameters to add into statement
+	 * @param dataConnection connection on database:
+	 * @param type           type of query: CREATE, READ, UPDATE, DELETE
+	 * @param query          the SourceBean that contains the configuration of the query
+	 * @param parameters     The parameters to add into statement
 	 * @return the object
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public static Object executeQuery(DataConnection dataConnection, String type, SourceBean query, ArrayList parameters) throws Exception {
 		logger.debug("IN");
@@ -349,19 +327,8 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 		Object inParameterValue = null;
 		boolean skipParameterInsertion = false;
-		DialectResolver resolver = new StandardDialectResolver();
-		DatabaseMetaData dbMetadata = null;
 
-		try {
-			Connection connection = dataConnection.getInternalConnection();
-			if (connection != null) {
-				dbMetadata = connection.getMetaData();
-			}
-		} catch (SQLException e) {
-			logger.error("Error getting database metadata", e);
-		}
-		// DialectResolver resolver = new StandardDialectResolver();
-		Dialect dialect = resolver.resolveDialect(dbMetadata);
+		String dialect = HibernateSessionManager.getDialect();
 
 		// Set the TRUE value based on the database type
 		if (parameterType.equalsIgnoreCase("TRUE_VALUE")) {
@@ -379,7 +346,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 			if (dialect != null) {
 
-				String dialectName = dialect.toString();
+				String dialectName = dialect;
 				if (dialectName.contains("PostgreSQL")) {
 					// inParameterValue = "true";
 					// add parameter value as SQL TYPE BOOLEAN
@@ -391,6 +358,17 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 				}
 			} else {
 				try {
+					DatabaseMetaData dbMetadata = null;
+
+					try {
+						Connection connection = dataConnection.getInternalConnection();
+						if (connection != null) {
+							dbMetadata = connection.getMetaData();
+						}
+					} catch (SQLException e) {
+						logger.error("Error getting database metadata", e);
+					}
+
 					String productName = dbMetadata.getDatabaseProductName();
 					if (productName.equalsIgnoreCase("oracle")) {
 						inParameterValue = "1";
@@ -415,7 +393,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 		else {
 			Object parameterValueObject = ContextScooping.getScopedParameter(requestContainer, responseContainer, parameterValue, parameterScope, parameter);
 			if (parameterValueObject != null) {
-				if (dialect.toString().contains("PostgreSQL")) {
+				if (dialect.contains("PostgreSQL")) {
 					// just for Postgres manteins the original value type
 					inParameterValue = parameterValueObject;
 				} else
@@ -428,7 +406,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 		if (!skipParameterInsertion) {
 			if (!isFilterParameter) { // normal parameter
-				if (dialect.toString().contains("PostgreSQL")) {
+				if (dialect.contains("PostgreSQL")) {
 					if (inParameterValue instanceof String)
 						inputParameters.add(dataConnection.createDataField("", Types.VARCHAR, inParameterValue));
 					else if (inParameterValue instanceof Integer)

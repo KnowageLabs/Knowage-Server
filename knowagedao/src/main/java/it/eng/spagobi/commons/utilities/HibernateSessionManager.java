@@ -49,7 +49,7 @@ public class HibernateSessionManager {
 	private static final String DIALECT_POSTGRE = "org.hibernate.dialect.PostgreSQLDialect";
 	private static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	private static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLDialect";
-	
+
 	private static final String JDBC_DB2 = "jdbc:db2";
 	private static final String JDBC_HSQLDB = "jdbc:hsqldb";
 	private static final String JDBC_INGRES = "jdbc:ingres";
@@ -79,6 +79,13 @@ public class HibernateSessionManager {
 	private static void initSessionFactory() {
 		logger.info("Initializing hibernate Session Factory Described by [" + DAOConfig.getHibernateConfigurationFile() + "]");
 
+		Configuration conf = setDialectPropertyToConfiguration();
+
+		sessionFactory = conf.buildSessionFactory();
+
+	}
+
+	private static Configuration setDialectPropertyToConfiguration() {
 		Configuration conf = new Configuration();
 		File hibernateConfigurationFileFile = DAOConfig.getHibernateConfigurationFileFile();
 		if (hibernateConfigurationFileFile != null) {
@@ -96,8 +103,15 @@ public class HibernateSessionManager {
 			logger.warn("Property hibernate.dialect not set! Trying to figure out what dialect needs to be used...");
 			determineDialect(conf);
 		}
+		return conf;
+	}
 
-		sessionFactory = conf.buildSessionFactory();
+	public static String getDialect() {
+		logger.info("Initializing hibernate Session Factory Described by [" + DAOConfig.getHibernateConfigurationFile() + "]");
+
+		Configuration conf = setDialectPropertyToConfiguration();
+
+		return conf.getProperty(PROPERTY_DIALECT);
 	}
 
 	/**
