@@ -7,18 +7,18 @@ describe("customWidgetAPI", function() {
 	      });
 	  module('customWidgetAPI');
 	});
-	
+
 	beforeEach(inject(function(datastore){
 		customChartDatastore = datastore
 		customChartDatastore.setData(mockData)
 	}));
-	
+
 	it('should set data',function (){
 	    expect(customChartDatastore.data.results).toBeDefined()
 	});
-	
+
 	describe("getDataArray method", function() {
-	
+
 		it('should contain same number of datastore items',function (){
 		    expect(customChartDatastore.getDataArray(function(record){
 		        return {
@@ -28,20 +28,20 @@ describe("customWidgetAPI", function() {
 		    }).length).toBe(mockData.rows.length)
 		 });
 	});
-	
+
 	it('should contain columns "QUARTER" list',function (){
 	    expect(customChartDatastore.sort('QUARTER').getColumn('QUARTER')).toEqual(["Q1","Q2","Q3","Q4"])
 	});
-	
+
 	describe("filter method", function() {
 		it('should leave selected datastore objects with a single filter',function (){
 			var temp = customChartDatastore.filter({'QUARTER':'Q1'}).getDataArray(function(record){
-		        return record.QUARTER		        	
+		        return record.QUARTER
 			})
 			expect(temp.indexOf('Q1')).not.toEqual(-1)
 		    expect(temp.indexOf('Q2')).toEqual(-1)
 		});
-		
+
 		it('should leave selected datastore objects with multiple filters',function (){
 			var temp = customChartDatastore.filter({'QUARTER':'Q1','STORE_ID':'1'}).getDataArray(function(record){
 		        return {
@@ -53,7 +53,7 @@ describe("customWidgetAPI", function() {
 		    expect(temp[0].id).toEqual('1')
 		});
 	})
-	
+
 	describe("sort method", function() {
 		it('should sort datastore array of object correctly',function (){
 			var temp = customChartDatastore.sort('STORE_ID').getDataArray(function(record){
@@ -65,14 +65,25 @@ describe("customWidgetAPI", function() {
 		    })
 		    expect(temp[0].store).toEqual('1')
 		});
-		
+
+		it('should sort with object datastore array of object correctly',function (){
+			var temp = customChartDatastore.sort({'STORE_ID':'desc'}).getDataArray(function(record){
+		        return {
+		            store: record.STORE_ID,
+		            quarter: record.QUARTER,
+		            sales: record.UNIT_SALES
+		        }
+		    })
+		    expect(temp[0].store).toEqual('3');
+		});
+
 		it('should sort datastore array of array correctly',function (){
 			var temp = customChartDatastore.sort('STORE_ID').getDataArray(function(record){
 		        return [record.STORE_ID, record.QUARTER]
 		    })
 		    expect(temp[0][0]).toEqual('1')
 		});
-		
+
 		it('should sort datastore array correctly',function (){
 			var temp = customChartDatastore.sort('STORE_ID').getDataArray(function(record){
 		        return record.STORE_ID
@@ -80,78 +91,78 @@ describe("customWidgetAPI", function() {
 		    expect(temp[0]).toEqual('1')
 		});
 	})
-	
+
 	describe("hierarchy method", function() {
 		it('should return a data tree when not defining measures',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY']})
 		    expect(temp.tree).toBeDefined()
 		})
-		
+
 		it('should return a data tree when defining measures',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}})
 		    expect(temp).toBeDefined()
 		})
-		
+
 		it('should not return a two levels tree when just one is requested',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER'],'measures':{'UNIT_SALES':'SUM'}})
 		    expect(temp.tree[0].children[0]).not.toBeDefined()
 		})
-		
+
 		it('should return children aggregated measures',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}})
 		    expect(temp.tree[0].children[0].UNIT_SALES + temp.tree[0].children[1].UNIT_SALES).toEqual(temp.tree[0].UNIT_SALES)
 		})
-		
+
 		it('should return a specific hierarchy\'s child(node)',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}}).getChild(0)
 			expect(temp).toBeDefined()
 		    expect(temp.name).toEqual('Q1')
 		})
-		
+
 		it('should return a measure value for a specific hierarchy\'s child(node)',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}}).getChild(0).getValue('UNIT_SALES')
 			expect(temp).toBeDefined()
 		    expect(temp).toEqual(123)
 		})
-		
+
 		it('should return a specific node\'s child',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}}).getChild(0).getChild(0)
 			expect(temp).toBeDefined()
 		    expect(temp.name).toEqual('Drink')
 		    expect(temp.children.length).toEqual(0)
 		})
-		
+
 		it('should return an array of node\'s children',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}}).getChild(0).getChildren()
 			expect(temp).toBeDefined()
 		    expect(temp.length).toBeGreaterThan(0)
 		    expect(temp[0].name).toEqual('Drink')
 		})
-		
+
 		it('should return an array of nodes of a specific level',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}}).getLevel(0)
 		    expect(temp).toBeDefined()
 		    expect(temp.length).toBeGreaterThan(0)
 		    expect(temp[0].children[0].name).toEqual('Drink')
 		})
-		
+
 		it('should return an array of nodes of a different specific level',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}}).getLevel(1)
 		    expect(temp).toBeDefined()
 		    expect(temp.length).toBeGreaterThan(0)
 		    expect(temp[0].name).toEqual('Drink')
 		})
-		
+
 		it('should return a node parent of specific child',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}}).getChild(0).getChild(0).getParent();
 		    expect(temp.name).toEqual('Q1')
 		})
-		
+
 		it('should return an array of node siblings to a specific child',function (){
 			var temp = customChartDatastore.hierarchy({'levels':['QUARTER','PRODUCT_FAMILY'],'measures':{'UNIT_SALES':'SUM'}}).getChild(0).getChild(0).getSiblings();
 		    expect(temp.length).toEqual(2)
 		})
-		
+
 	})
 });
 

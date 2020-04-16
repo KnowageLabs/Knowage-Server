@@ -86,6 +86,9 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 
 	datastore.prototype.sort = function(sortingObject){
 		var newData = angular.copy(this.data);
+		if(typeof sortingObject == 'object'){
+			sortingObject = (sortingObject[Object.keys(sortingObject)[0]]=='desc' ? "-" : "") +Object.keys(sortingObject)[0];
+		}
 		newData.rows = $filter('orderBy')(newData.rows, sortingObject);
 		return new datastore(newData);
 	},
