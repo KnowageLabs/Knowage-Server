@@ -65,7 +65,7 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		return categArray;
 	}
 
-	datastore.prototype.getSeriesAndData = function (column,getDataArrayFn){
+	datastore.prototype.getSeriesAndData = function (column,getDataArrayFn,datalabel){
 		var seriesMap = {};
 		for(var i=0; i<this.data.rows.length; i++){
 			if(seriesMap[this.data.rows[i][column]]==undefined){
