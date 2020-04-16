@@ -355,6 +355,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/download/file")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@UserConstraint(functionalities = { SpagoBIConstants.DS_SCOPE_USER, SpagoBIConstants.DS_SCOPE_ENTERPRISE })
 	public Response downloadDataSetFile(@QueryParam("fileName") String fileName, @QueryParam("type") String type) {
 		File file = null;
 		ResponseBuilder response = null;
