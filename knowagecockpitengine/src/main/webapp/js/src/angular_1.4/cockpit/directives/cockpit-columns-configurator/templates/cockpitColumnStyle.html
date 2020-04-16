@@ -126,10 +126,12 @@
 									<input class="input_class" type="number" ng-model="range.value"> 
 								</md-input-container>
 								
-								<button flex="10" class="md-button md-raised md-button-empty" ng-click="chooseIcon(range)" ng-style="{'background-color':range['background-color']}">
+								<!-- button flex="10" class="md-button md-raised md-button-empty" ng-click="chooseIcon(range)" ng-style="{'background-color':range['background-color']}">
 									<span ng-if="!range.icon" ng-style="{'color':range.color}">Choose Icon</span>
 									<i ng-if="range.icon" ng-class="range.icon" ng-style="{'color':range.color}"></i>
-								</button>
+								</button-->
+								
+								<icon-selector selected-icon="range.icon" preview="true" icon-style="range.style"></icon-selector>
 								
 								<md-input-container flex=20 class="md-block"> 
 									<label>Text/icon color</label>
