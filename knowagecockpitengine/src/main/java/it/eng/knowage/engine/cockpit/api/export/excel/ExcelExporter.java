@@ -1042,7 +1042,7 @@ public class ExcelExporter {
 												String keyToAdd = keys.next();
 												if (jsonobject.getString("urlName").equals(keyToAdd)) {
 
-													jsnParam.put(jsonobject.getString("urlName"), jsonobject.getString("parameterValue"));
+													jsnParam.put(jsonobject.getString("urlName"), valuesToChange);
 
 												} else {
 													jsnParam.put(datasetVals.getString(keyToAdd), "");
@@ -1061,6 +1061,7 @@ public class ExcelExporter {
 																&& jsnParam.getString(datasetVals.getString(keyToAdd)).isEmpty()) {
 															if (jsnParam.has(datasetVals.getString(keyToAdd)))
 																jsnParam.remove(datasetVals.getString(keyToAdd));
+
 															jsnParam.put(newKeyToAdd, jsonobjectVals.getString(newKeyToAdd));
 														}
 													}
@@ -1133,11 +1134,13 @@ public class ExcelExporter {
 
 				}
 
+				// logger.debug("associativeSelectionsPayload newParameters: [" + newParameters.toString() + "]");
 				associativeSelectionsPayload.put("datasets", newParameters);
 				associativeSelectionsPayload.put("nearRealtime", nearRealArray);
 
 				AssociativeSelectionsClient client = new AssociativeSelectionsClient();
 				try {
+					logger.debug("associativeSelectionsPayload: [" + associativeSelectionsPayload.toString() + "]");
 					JSONObject associativeSelections = client.getAssociativeSelections(new HashMap<String, Object>(), userUniqueIdentifier,
 							associativeSelectionsPayload.toString());
 
