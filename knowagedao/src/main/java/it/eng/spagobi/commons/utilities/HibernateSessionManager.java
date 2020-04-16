@@ -79,6 +79,13 @@ public class HibernateSessionManager {
 	private static void initSessionFactory() {
 		logger.info("Initializing hibernate Session Factory Described by [" + DAOConfig.getHibernateConfigurationFile() + "]");
 
+		Configuration conf = setDialectPropertyToConfiguration();
+
+		sessionFactory = conf.buildSessionFactory();
+
+	}
+
+	private static Configuration setDialectPropertyToConfiguration() {
 		Configuration conf = new Configuration();
 		File hibernateConfigurationFileFile = DAOConfig.getHibernateConfigurationFileFile();
 		if (hibernateConfigurationFileFile != null) {
@@ -96,8 +103,15 @@ public class HibernateSessionManager {
 			logger.warn("Property hibernate.dialect not set! Trying to figure out what dialect needs to be used...");
 			determineDialect(conf);
 		}
+		return conf;
+	}
 
-		sessionFactory = conf.buildSessionFactory();
+	public static String getDialect() {
+		logger.info("Initializing hibernate Session Factory Described by [" + DAOConfig.getHibernateConfigurationFile() + "]");
+
+		Configuration conf = setDialectPropertyToConfiguration();
+
+		return conf.getProperty(PROPERTY_DIALECT);
 	}
 
 	/**
@@ -106,12 +120,32 @@ public class HibernateSessionManager {
 	 * @param conf Actual Hibernate configuration
 	 */
 	private static void determineDialect(Configuration conf) {
-		String figuredOutValue;
 		String datasourceJndi = conf.getProperty(PROPERTY_DATASOURCE_JNDI);
 
 		if (datasourceJndi == null) {
 			throw new IllegalStateException("The property hibernate.connection.datasource is not set in file");
 		}
+
+		String figuredOutValue = getDialect(datasourceJndi);
+		logger.warn("Property hibernate.dialect set to " + figuredOutValue);
+		conf.setProperty(PROPERTY_DIALECT, figuredOutValue);
+
+	}
+
+	public static String determineDialectFromJNDIResource(String datasourceJndi) {
+
+		if (datasourceJndi == null) {
+			throw new IllegalStateException("The property hibernate.connection.datasource is not set in file");
+		}
+
+		String figuredOutValue = getDialect(datasourceJndi);
+		logger.warn("Property hibernate.dialect set to " + figuredOutValue);
+
+		return figuredOutValue;
+	}
+
+	private static String getDialect(String datasourceJndi) {
+		String figuredOutValue = null;
 
 		Connection connection = null;
 		try {
@@ -131,10 +165,6 @@ public class HibernateSessionManager {
 			}
 
 			figuredOutValue = JDBC_URL_PREFIX_2_DIALECT.get(urlPrefix);
-
-			logger.warn("Property hibernate.dialect set to " + figuredOutValue);
-			conf.setProperty(PROPERTY_DIALECT, figuredOutValue);
-
 		} catch (Exception e) {
 			logger.error("Error determining Hibernate's dialect", e);
 		} finally {
@@ -146,6 +176,8 @@ public class HibernateSessionManager {
 				}
 			}
 		}
+		return figuredOutValue;
+
 	}
 
 	private synchronized static SessionFactory getSessionFactory() {
