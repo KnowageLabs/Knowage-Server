@@ -32,7 +32,6 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 			definition:"="
 		},
 		link: function(scope, element, attrs, ctrl, transclude) {
-			debugger;
 			scope.criterion;
 			scope.translate=sbiModule_translate;
 			scope.cp = 0;
@@ -101,7 +100,6 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 	               };
 
 				perspective.targets.push(scope.newTarget);
-				debugger;
 			}
 			
 			scope.parseDate = function(date){
@@ -183,7 +181,6 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 					var tempStatus 	= [];
 					var tempCount 	= [];
 					for(var i=0;i<data.length;i++){
-						debugger;
 						if(tempStatus.indexOf(data[i].status)==-1){
 							tempStatus.push(data[i].status);
 							tempCount.push(1);

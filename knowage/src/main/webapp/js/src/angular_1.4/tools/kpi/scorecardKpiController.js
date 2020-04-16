@@ -261,7 +261,6 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 
 
 	$scope.parseScorecardForBackend=function(scorecard){
-		debugger;
 		 var tmpScorecard={};
 		 angular.copy(scorecard,tmpScorecard);
 		for(var i=0;i<tmpScorecard.perspectives.length;i++){
