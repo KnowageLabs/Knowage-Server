@@ -604,7 +604,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.getOptions = function(){
-			var isSortinEnabled = $scope.ngModel.content.sortingOrder && $scope.ngModel.content.sortingOrder!='';
+			var isSortinEnabled = false;
+			if($scope.ngModel.content.sortingOrder){
+				if($scope.ngModel.content.sortingOrder === '') isSortinEnabled = false;
+				else isSortinEnabled = true;
+			} 
 
 			var obj = {};
 			obj["page"] = -1;
