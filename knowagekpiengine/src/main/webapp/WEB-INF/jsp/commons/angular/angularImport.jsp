@@ -20,7 +20,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-1.5.0/angular-messages.min.js"></script>
 
 <!-- angular-material-->
-<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(knowageContext, "/themes/commons/css/customStyle.css")%>">
 <link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
 
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
