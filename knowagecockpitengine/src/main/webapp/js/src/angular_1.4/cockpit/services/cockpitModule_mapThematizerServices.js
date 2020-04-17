@@ -60,13 +60,15 @@
 			}
 
 			if (!localFeature.get('isSimpleMarker')){
-				var userColor = (configMarker.style) ? configMarker.style.color : "grey";
+				var fillColor   = (configMarker.style && configMarker.style.color)       ? configMarker.style.color       : "grey";
+				var borderColor = (configMarker.style && configMarker.style.borderColor) ? configMarker.style.borderColor : "black";
+
 				if (props[mts.getActiveIndicator()]
 						&& props[mts.getActiveIndicator()].thresholdsConfig
 						&& props[mts.getActiveIndicator()].thresholdsConfig.length != 0) {
-					userColor = mts.getColorByThresholds(value, props);
+					fillColor = mts.getColorByThresholds(value, props);
 				}
-				style = mts.getChoroplethStyles(value, parentLayer, userColor);
+				style = mts.getChoroplethStyles(value, parentLayer, fillColor, borderColor);
 				thematized = true;
 			}
 
@@ -203,14 +205,12 @@
 		            });
 		}
 
-		mts.getChoroplethStyles=function(value, parentLayer, fixedColor){
-			var color =  mts.getChoroplethColor(value, parentLayer) || fixedColor;
-			var borderColor = "black";
+		mts.getChoroplethStyles = function(value, parentLayer, fillColor, borderColor) {
+			var color =  mts.getChoroplethColor(value, parentLayer) || fillColor;
 
 			return  [new ol.style.Style({
 				stroke: new ol.style.Stroke({
-//					color: (borderColor) ? borderColor : color,
-					color: color,
+					color: borderColor,
 					width: 2
 				}),
 				fill: new ol.style.Fill({
