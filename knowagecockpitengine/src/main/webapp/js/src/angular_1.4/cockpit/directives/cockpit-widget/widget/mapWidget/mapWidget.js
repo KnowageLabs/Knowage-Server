@@ -326,7 +326,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.reinit = function(){
 
-			var isNew = ($scope.layers.length == 0);
+			var isNew = $scope.map == undefined;
 			if (isNew) {
 				$scope.createMap();
 			} else {
@@ -337,14 +337,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			$scope.resetFilter();
 			$scope.addAllLayers();
+			$scope.setMapSize();
+		}
 
+		$scope.setMapSize = function() {
 			if (!$scope.map.getSize()){
 				$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width,
 									cockpitModule_widgetConfigurator.map.initialDimension.height]);
 			}else{
 				$scope.map.setSize($scope.map.getSize());
 			}
-			$scope.map.renderSync();
 		}
 
 		$mdSidenav($scope.optionSidenavId, true).then(
@@ -810,6 +812,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 					$scope.createLayerWithData(layerDef.name, allDatasetRecords, isCluster, isHeatmap);
 					$scope.hideWidgetSpinner();
+
+					$scope.map.render();
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.dsId+"] ");
 				sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.datasetLoadingError').replace("{0}",layerDef.dsId), 'Title', 3000);
@@ -869,14 +873,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //			$scope.addBackgroundLayer();
 
 			//just for refresh
-			if (!$scope.map.getSize()){
-				$scope.map.setSize([cockpitModule_widgetConfigurator.map.initialDimension.width,
-					cockpitModule_widgetConfigurator.map.initialDimension.height]);
-			}else{
-				$scope.map.setSize($scope.map.getSize());
-			}
-
-			$scope.map.renderSync();
+			$scope.setMapSize();
 
 			//add events methods
 			$scope.addViewEvents();
