@@ -13,7 +13,7 @@
 				</md-tab>
 				
 				<md-tab label="{{::translate.load('sbi.cockpit.style')}}">
-					<md-card>
+					<md-card ng-if="model.settings.modalityValue && model.settings.modalityValue!='multiDropdown'">
 						<md-toolbar class="ternaryToolbar" >
 							<div class="md-toolbar-tools" layout="row">
 								<h2>Label</h2>
