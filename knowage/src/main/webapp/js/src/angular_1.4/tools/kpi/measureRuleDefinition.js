@@ -6,7 +6,7 @@ measureRuleApp.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 measureRuleApp.controller('measureRuleMasterController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_config','sbiModule_restServices','$q','$angularListDetail','$timeout',measureRuleMasterControllerFunction ]);
 measureRuleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_restServices','$angularListDetail','$timeout','$mdToast' ,'sbiModule_messaging',measureListControllerFunction ]);
-measureRuleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'$mdDialog' ,'sbiModule_restServices','sbiModule_config','$q','$angularListDetail',measureDetailControllerFunction ]);
+measureRuleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'$mdDialog' ,'sbiModule_restServices','sbiModule_config','$q','$angularListDetail',"sbiModule_messaging",measureDetailControllerFunction ]);
 
 function measureRuleMasterControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_config,sbiModule_restServices,$q,$angularListDetail,$timeout){
 	$scope.translate=sbiModule_translate;
@@ -101,7 +101,7 @@ function DialogSaveController($scope, $mdDialog,$mdToast,currentRule,originalRul
 		});
 	};
 }
-function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,sbiModule_restServices,sbiModule_config,$q,$angularListDetail){
+function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,sbiModule_restServices,sbiModule_config,$q,$angularListDetail,sbiModule_messaging){
 	$scope.translate = sbiModule_translate;
 //	$scope.showCircular = false;
 	$scope.getLabelToBar = function (){
@@ -290,7 +290,8 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 			}
 
 			if(response.data.warnings){
-				deferred.reject({text:response.data,title:"sbi.generic.warning"});
+				sbiModule_messaging.showErrorMessage(response.data, sbiModule_translate.load('sbi.generic.warning'));
+//				deferred.reject({text:response.data,title:"sbi.generic.warning"});
 			}
 
 			deferred.resolve();
