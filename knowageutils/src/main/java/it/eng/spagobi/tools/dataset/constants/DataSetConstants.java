@@ -90,7 +90,7 @@ public class DataSetConstants {
 	public static final String FEDERATED = "Federated";
 	public static final String FLAT = "Flat";
 	public static final String DS_REST_NAME = "REST";
-	public static final String DS_PYTHON_NAME = "Python";
+	public static final String DS_PYTHON_NAME = "Python/R";
 	public static final String DS_SOLR_NAME = "Solr";
 	public static final String SPARQL = "SPARQL";
 

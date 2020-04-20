@@ -183,13 +183,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	    return item.VALUE_CD!='Custom' && item.VALUE_CD!='Federated';
 	};
 
-	$scope.getDatasetName = function (dsType) {
-	    if (dsType == "Python")
-	    	return "Python/R";
-	    else
-	    	return dsType;
-	};
-
 	// Flag that indicates if the Dataset form is dirty (changed)
 	$scope.dirtyForm = false;
 
@@ -2192,14 +2185,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		$scope.parameterItems = parameterItemsTemp;
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python/r") {
 			// Cast the REST NGSI (transform from the String)
 			if($scope.selectedDataSet.restNGSI){
 				$scope.selectedDataSet.restNGSI = JSON.parse($scope.selectedDataSet.restNGSI);
 			}
 		}
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python/r" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
 
 
 
@@ -2556,7 +2549,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.pivotRowName ? $scope.selectedDataSet.pivotRowName="" : null;
 		}
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python/r" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
 
 			//----------------------
 			// REQUEST HEADERS
@@ -3443,7 +3436,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		$scope.disableBack = true;
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python/r" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
 
 			//----------------------
 			// REQUEST HEADERS
@@ -3473,7 +3466,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			var restJsonPathAttributesTemp = {};
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
 
-			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
+			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python/r") {
 				//restAddress is set ONLY for debugging purposes
 				//the real python address used by the PythonDataProxy is retrieved BE side
     			$scope.selectedDataSet.restAddress = "https://" + JSON.parse($scope.selectedDataSet.pythonEnvironment).value + '/dataset';
@@ -4024,7 +4017,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         		}
     		}
     	}
-    	else if (dsType.toLowerCase()=="rest" || dsType.toLowerCase()=="python" || dsType.toLowerCase()=="solr") {
+    	else if (dsType.toLowerCase()=="rest" || dsType.toLowerCase()=="python/r" || dsType.toLowerCase()=="solr") {
     		$scope.restRequestHeaders = [];
     		$scope.restRequestAdditionalParameters = [];
     		$scope.restJsonPathAttributes = [];

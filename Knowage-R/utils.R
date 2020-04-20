@@ -21,19 +21,21 @@ resolve_drivers <- function(script, drivers){
 
 build_parameters <- function(parameters){
   to_return <- list()
-  parameters_df <- as.data.frame(parameters)
-  for(i in 1:nrow(parameters_df)) {
-    row <- parameters_df[i,]
-    name <- row[["name"]]
-    value <- row[["value"]]
-    type <- row[["type"]]
-    if(value == "") {
-      value <- row[["defaultValue"]]
+  if(length(parameters) > 0) {
+    parameters_df <- as.data.frame(parameters)
+    for(i in 1:nrow(parameters_df)) {
+      row <- parameters_df[i,]
+      name <- row[["name"]]
+      value <- row[["value"]]
+      type <- row[["type"]]
+      if(value == "") {
+        value <- row[["defaultValue"]]
+      }
+      if(type == "Number") {
+        value <- as.numeric(value)
+      }
+      to_return[[name]] <- value
     }
-    if(type == "Number") {
-      value <- as.numeric(value)
-    }
-    to_return[[name]] <- value
   }
   to_return
 }
