@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.engine.cockpit.api.engine;
 
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.CREATE_CUSTOM_CHART;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DISCOVERY_WIDGET_USE;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DOCUMENT_WIDGET_USE;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.EDIT_PYTHON_SCRIPTS;
@@ -170,6 +171,10 @@ public class EngineResource extends AbstractCockpitEngineResource {
 
 			ret.add(Widget.builder().withName("Discovery").withDescKey("sbi.cockpit.editor.newwidget.description.discovery")/* TODO : .withImg(???) */
 					.withCssClass("fa fa-rocket").withType("discovery").withTag("discovery").build());
+		}
+		if (functionalities.contains(CREATE_CUSTOM_CHART)) {
+			ret.add(Widget.builder().withName("Custom Chart").withDescKey("sbi.cockpit.editor.newwidget.description.custom.chart").withImg("4.png")
+					.withCssClass("fas fa-bezier-curve").withType("customchart").withTag("customChart").build());
 		}
 
 		return ret;

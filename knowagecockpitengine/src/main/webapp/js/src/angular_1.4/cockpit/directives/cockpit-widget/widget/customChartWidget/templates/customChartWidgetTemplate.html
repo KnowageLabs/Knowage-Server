@@ -1,0 +1,5 @@
+<style bind-html-compile="ngModel.css.code" ></style>
+<div class="htmlRenderer" bind-html-compile="trustedHtml" ng-show="!jsError"></div>
+<div class="errorContainer" ng-if="jsError" layout="row" layout-align="center center" layout-fill>
+	<div class="kn-infoerror" flex="60" bind-html-compile="jsError"></div>
+</div>

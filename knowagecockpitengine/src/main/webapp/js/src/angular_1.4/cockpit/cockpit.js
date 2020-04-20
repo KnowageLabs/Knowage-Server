@@ -19,9 +19,10 @@ var isIE = window.document.documentMode;
 var scripts = document.getElementsByTagName("script");
 var baseScriptPath  = scripts[scripts.length - 1].src;
 baseScriptPath =baseScriptPath .substring(0, baseScriptPath .lastIndexOf('/'));
+if(!agGrid) var agGrid = false;
 
 (function() {
-	agGrid.initialiseAgGridWithAngular1(angular);
+if(agGrid) agGrid.initialiseAgGridWithAngular1(angular);
 var cockpitApp= angular.module("cockpitModule",[
 	'ngMaterial',
 	'ngSanitize',
@@ -37,9 +38,9 @@ var cockpitApp= angular.module("cockpitModule",[
 	'chartRendererModule',
 	'jsonFormatter',
 	'ui.codemirror',
-	'knModule',
 	'agGrid',
-	'chartDesignerManager'
+	'chartDesignerManager',
+	'customWidgetAPI'
 	]);
 cockpitApp.config(function($mdThemingProvider,$mdGestureProvider,$compileProvider,$mdInkRippleProvider,$mdAriaProvider) {
     $mdThemingProvider.theme('knowage')

@@ -401,6 +401,7 @@ public class SpagoBIConstants {
 	public static final String READ_ROLES = "ReadRoles";
 
 	public static final String EDIT_PYTHON_SCRIPTS = "EditPythonScripts";
+	public static final String CREATE_CUSTOM_CHART = "CreateCustomChart";
 	public static final String SAVE_SUBOBJECT_FUNCTIONALITY = "SaveSubobjectFunctionality";
 	public static final String SEE_SUBOBJECTS_FUNCTIONALITY = "SeeSubobjectsFunctionality";
 	public static final String SEE_VIEWPOINTS_FUNCTIONALITY = "SeeViewpointsFunctionality";

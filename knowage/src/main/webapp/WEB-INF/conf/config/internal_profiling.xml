@@ -90,6 +90,7 @@
 		<AUTHORIZATION productType="KnowageBD" authorizationName="CREATE_SELF_SERVICE_GEOREPORT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="EDIT_PYTHON_SCRIPTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="CREATE_CUSTOM_CHART" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowageSI -->
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -117,6 +118,8 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_SELF_SERVICE_COCKPIT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="EDIT_PYTHON_SCRIPTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_CUSTOM_CHART" organization="DEFAULT_TENANT" />
+
 		
 		<!-- Authorizations for KnowageER -->
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
@@ -133,6 +136,7 @@
 		<AUTHORIZATION productType="KnowageER" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageER" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageER" authorizationName="CREATE_CUSTOM_CHART" organization="DEFAULT_TENANT" />
 	
 		
 		<!-- Authorizations for KnowagePM -->
@@ -155,6 +159,7 @@
 		<AUTHORIZATION productType="KnowagePM" authorizationName="CREATE_SELF_SERVICE_KPI" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePM" authorizationName="CREATE_SELF_SERVICE_COCKPIT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePM" authorizationName="CREATE_CUSTOM_CHART" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowageLI -->
 		<AUTHORIZATION productType="KnowageLI" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
@@ -180,12 +185,13 @@
 		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="CREATE_SELF_SERVICE_GEOREPORT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="CREATE_CUSTOM_CHART" organization="DEFAULT_TENANT" />
 		
 		<!-- Authorizations for KnowagePA -->
 		<AUTHORIZATION productType="KnowagePA" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_DATASET_PERSISTENCE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_CALENDAR" organization="DEFAULT_TENANT" />
-        <AUTHORIZATION productType="KnowagePA" authorizationName="FUNCTIONS_CATALOG_USAGE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="FUNCTIONS_CATALOG_USAGE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT" />
@@ -202,6 +208,7 @@
 		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="CREATE_CUSTOM_CHART" organization="DEFAULT_TENANT" />
 	</DEFAULT_AUTHORIZATIONS>
 	
 	<DEFAULT_AUTHORIZATIONS_ROLES>

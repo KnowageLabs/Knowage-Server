@@ -861,7 +861,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 			// enter cross navigation mode
 			var doCross = false;
-
 			var nameToCheckForCross = columnName;
 			if(columnName != undefined){
 				// check if selected column has been renamed by an alias, in that
@@ -963,7 +962,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 								var objToAdd = {};
 								objToAdd[par] = valToAdd;
 								otherOutputParameters.push(objToAdd);
-							}else if(model.type == 'text' || model.type == 'html'){
+							}else if(model.type == 'text' || model.type == 'html' || model.type == 'customchart'){
 								var OBJ = {};
 								OBJ[par] = columnValue;
 								otherOutputParameters.push(OBJ);

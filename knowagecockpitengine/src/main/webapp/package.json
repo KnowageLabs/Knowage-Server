@@ -1,0 +1,25 @@
+{
+  "name": "knowagecockpitengine",
+  "version": "7.2.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "karma start"
+  },
+  "author": "knowage labs <knowage@eng.it>",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/KnowageLabs/Knowage-Server/issues"
+  },
+  "devDependencies": {
+    "angular": "^1.7.9",
+    "angular-mocks": "^1.7.9",
+    "jasmine": "^3.5.0",
+    "jsonpath": "^1.0.2",
+    "karma": "^4.4.1",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-firefox-launcher": "^1.3.0",
+    "karma-ie-launcher": "^1.0.0",
+    "karma-jasmine": "^3.1.1"
+  }
+}

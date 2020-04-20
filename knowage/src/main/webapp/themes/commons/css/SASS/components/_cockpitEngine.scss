@@ -78,7 +78,7 @@
     	}
     }
 
-    cockpit-html-widget {
+    cockpit-html-widget, cockpit-customchart-widget {
     	height: 100%;
     	overflow: auto;
     	.trustedHtml {
@@ -1236,7 +1236,7 @@
         }
     }
 
-	.htmlWidgetConfiguration {
+	.htmlWidgetConfiguration, .customWidgetConfiguration {
 		section {
 			height: 100%;
 		}
@@ -1272,7 +1272,20 @@
 				}
 			}
 		}
+		.language {
+			margin-right: 8px;
+			font-size: $largeFontSize;
+		}
 	}    
+
+	.customWidgetConfiguration {
+		.htmlEditor, .cssEditor,.jsEditor {
+			.CodeMirror {
+				min-height: 300px;
+				height: calc(100% - 32px);
+			}
+		}
+	}
 	
 	cockpit-python-widget {
 		height: 100%;
