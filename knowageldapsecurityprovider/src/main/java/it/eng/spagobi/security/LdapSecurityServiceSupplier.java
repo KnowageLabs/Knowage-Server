@@ -66,7 +66,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 				SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
 				if (user != null) {
 					if (!bind(userId, psw)) {
-						logger.error("Impossible to bind user " + userId + ". Usernmae or password password not valid.");
+						logger.error("Impossible to bind user " + userId + ". Username or password not valid.");
 						return null;
 					}
 
@@ -97,8 +97,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 	/**
 	 * In this method you can find the authentication source code for LDAP bind process
 	 *
-	 * @param userId:
-	 *            ex: CN=angelo,OU=ADAM USERS,O=Microsoft,C=US
+	 * @param     userId: ex: CN=angelo,OU=ADAM USERS,O=Microsoft,C=US
 	 * @param psw
 	 * @return
 	 * @throws IOException
