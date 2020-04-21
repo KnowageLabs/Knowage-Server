@@ -457,7 +457,7 @@ angular
                  $scope.selectedDataCondition = selectedDataCondition;
                  $scope.useModeIds = {};
                  $scope.availableOperators = ['equal','greater','greaterequal','less','lessequal', 'contains','not contains','starts with','ends with'];
-      			 $scope.connectingOperators = ['AND','OR'];
+      			 $scope.connectingOperators = ['AND','OR',''];
 
                  if(columns.length > 0){
                 	 $scope.paruseColumns = columns;
