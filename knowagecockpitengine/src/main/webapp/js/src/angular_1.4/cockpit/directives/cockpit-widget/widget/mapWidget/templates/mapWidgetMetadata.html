@@ -125,8 +125,14 @@
 														<md-menu-content width="4">
 															<md-menu-item ng-if="column.fieldType === 'MEASURE'">
 																<md-button ng-click="getThresholds($event,column)">
-																	<md-icon md-font-icon="fa fa-sliders"></md-icon>
+																	<md-icon md-font-icon="fa fa-sliders" aria-label="Edit thresholds"></md-icon>
 																	{{translate.load('sbi.cockpit.map.edit.metadata.threshold')}}
+																</md-button>
+															</md-menu-item>
+															<md-menu-item ng-if="column.fieldType === 'MEASURE'">
+																<md-button ng-click="setColumnStyle($event,column)">
+																	<md-icon md-font-icon="fa fa-paint-brush" aria-label="Edit style"></md-icon>
+																	{{translate.load('sbi.cockpit.map.edit.metadata.style')}}
 																</md-button>
 															</md-menu-item>
 															<md-menu-item ng-if="column.isCalculated || !checkDs(column,false)" class="insideMenu">

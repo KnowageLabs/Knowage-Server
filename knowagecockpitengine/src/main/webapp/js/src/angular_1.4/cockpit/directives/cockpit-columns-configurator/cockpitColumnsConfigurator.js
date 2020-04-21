@@ -468,14 +468,40 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 	}
 }
 
-function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,$mdPanel,model,selectedColumn,cockpitModule_generalServices,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions,sbiModule_messaging,knModule_fontIconsService,	cockpitModule_properties){
+function cockpitStyleColumnFunction(
+		$scope,
+		sbiModule_translate,
+		$mdDialog,
+		$mdPanel,
+		model,
+		selectedColumn,
+		cockpitModule_generalServices,
+		cockpitModule_datasetServices,
+		$mdToast,
+		cockpitModule_generalOptions,
+		sbiModule_messaging,
+		knModule_fontIconsService,
+		cockpitModule_properties,
+		needsCommonPrefs,
+		needsVisualization,
+		needsThresholds,
+		needsFormat,
+		needsStyle,
+		needsTooltip) {
+
 	$scope.translate=sbiModule_translate;
 	$scope.generalServices=cockpitModule_generalServices;
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.cockpitModule_properties = cockpitModule_properties;
-
 	$scope.model = model;
 	$scope.selectedColumn = angular.copy(selectedColumn);
+	$scope.needsCommonPrefs   = (typeof needsCommonPrefs   == 'undefined' ? true : needsCommonPrefs);
+	$scope.needsVisualization = (typeof needsVisualization == 'undefined' ? true : needsVisualization);
+	$scope.needsThresholds    = (typeof needsThresholds    == 'undefined' ? true : needsThresholds);
+	$scope.needsFormat        = (typeof needsFormat        == 'undefined' ? true : needsFormat);
+	$scope.needsStyle         = (typeof needsStyle         == 'undefined' ? true : needsStyle);
+	$scope.needsTooltip       = (typeof needsTooltip       == 'undefined' ? true : needsTooltip);
+
 	$scope.modelTextAlign = {"flex-start":sbiModule_translate.load('sbi.cockpit.style.textAlign.left'),"center":sbiModule_translate.load('sbi.cockpit.style.textAlign.center'),"flex-end":sbiModule_translate.load('sbi.cockpit.style.textAlign.right')};
 	$scope.formatPattern = ['#.###','#,###','#.###,##','#,###.##'];
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}

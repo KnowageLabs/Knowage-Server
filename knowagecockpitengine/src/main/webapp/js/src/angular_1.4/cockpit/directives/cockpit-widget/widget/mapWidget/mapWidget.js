@@ -1370,6 +1370,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.filterLayerBy(currLayer)
 		}
 
+		$scope.getPropValue = function(prop) {
+			var currProp = $scope.props[prop.name];
+			var currPropValue = currProp.value;
+			var ret = "";
+			if (prop.style) {
+				var style = prop.style;
+				var prefix = style.prefix;
+				var suffix = style.suffix;
+				var precision = style.precision;
+				var asString = style.asString;
+
+				if (asString == undefined) {
+					asString = false;
+				}
+				if (precision == undefined) {
+					precision = 0;
+				}
+
+				if (prefix != undefined) {
+					ret += "" + prefix + "";
+				}
+
+				if (asString) {
+					ret += currPropValue;
+				} else {
+					ret += isNaN(currPropValue) ? currPropValue : $filter("number")(currPropValue, precision);
+				}
+
+				if (suffix != undefined) {
+					ret += "" + suffix;
+				}
+
+			} else {
+				ret = currPropValue;
+			}
+			return ret;
+		}
+
 		// $scope.reinit();
 
 		// In edit mode, if a remove dataset from cokpit it has to be deleted also from widget

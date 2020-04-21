@@ -519,6 +519,35 @@ function mapWidgetEditControllerFunction(
 		}
 	}
 
+	$scope.setColumnStyle = function(event,column) {
+
+		$mdDialog.show({
+			templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnStyle.html',
+			parent : angular.element(document.body),
+			clickOutsideToClose:true,
+			escapeToClose :true,
+			preserveScope: false,
+			autoWrap:false,
+			fullscreen: true,
+			locals: {
+					model: $scope.newModel,
+					selectedColumn: column,
+					needsCommonPrefs: false,
+					needsVisualization: false,
+					needsThresholds: false,
+					needsFormat: true,
+					needsStyle: false,
+					needsTooltip: false
+				},
+			controller: cockpitStyleColumnFunction
+		}).then(function(answer) {
+			console.log("Selected column:", column);
+		}, function() {
+			console.log("Selected column:", column);
+		});
+
+	}
+
 	function loadAvailableLayers() {
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.get(".", "layers")

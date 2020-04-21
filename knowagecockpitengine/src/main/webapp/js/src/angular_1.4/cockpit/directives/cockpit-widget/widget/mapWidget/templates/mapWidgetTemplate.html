@@ -1,33 +1,33 @@
 <div layout="row" class="cockpit-map-widget" layout-fill style="position: relative;">
-	 <div id="{{ngModel.content.mapId}}" class="map" style="width:100%">
-	 	<div class="optionsController" ng-click="toggleSidenav()" ng-class="{ 'sideNavOpened': sideNavOpened }">
-	 		<md-tooltip>{{translate.load('sbi.cockpit.map.togglemapoptions')}}</md-tooltip>
-	 		<i class="fa fa-cog"></i>
-	 	</div>
-	 	<ng-include src="getTemplateUrl('mapWidgetLegendPanel')"></ng-include>
- 	</div>
- 	
- 	<div id="popup-{{ngModel.id}}" class="ol-popup" > 
- 		 <div href="#" id="popup-closer-{{ngModel.id}}" class="ol-popup-closer">  
- 		 	<i class="fa fa-times"></i>
- 		 </div> 
- 		 <div id="popup-content-{{ngModel.id}}" class="popup-content" >
- 		 	<h2>{{translate.load('sbi.cockpit.map.details')}}</h2>
-    	    <ul>
-    	    	<li ng-repeat="prop in layerConfig track by $index" ng-if="prop.properties.showDetails">
+	<div id="{{ngModel.content.mapId}}" class="map" style="width:100%">
+		<div class="optionsController" ng-click="toggleSidenav()" ng-class="{ 'sideNavOpened': sideNavOpened }">
+			<md-tooltip>{{translate.load('sbi.cockpit.map.togglemapoptions')}}</md-tooltip>
+			<i class="fa fa-cog"></i>
+		</div>
+		<ng-include src="getTemplateUrl('mapWidgetLegendPanel')"></ng-include>
+	</div>
+	
+	<div id="popup-{{ngModel.id}}" class="ol-popup" > 
+		<div href="#" id="popup-closer-{{ngModel.id}}" class="ol-popup-closer">  
+			<i class="fa fa-times"></i>
+		</div> 
+		<div id="popup-content-{{ngModel.id}}" class="popup-content" >
+			<h2>{{translate.load('sbi.cockpit.map.details')}}</h2>
+			<ul>
+				<li ng-repeat="prop in layerConfig track by $index" ng-if="prop.properties.showDetails">
 					<p>
 						<strong>{{prop.aliasToShow}}:</strong>
-						<span  ng-class="{'clickable' : prop.fieldType=='ATTRIBUTE'}" ng-cloak ng-click="selectPropValue(layerConfig.dsId, prop, layerConfig.modalSelectionColumn)">{{props[prop.name].value}}</span>
+						<span  ng-class="{'clickable' : prop.fieldType=='ATTRIBUTE'}" ng-cloak ng-click="selectPropValue(layerConfig.dsId, prop, layerConfig.modalSelectionColumn)">{{ getPropValue(prop) }}</span>
 					</p>
-    	    		<p ng-if="props[prop.name].showWarning" class="warningMessage"><i class='fa fa-warning'></i> {{translate.load('sbi.cockpit.map.alarmrange')}}</p>
-    	    	</li>
-    	    	<li ng-if="checkCrossNavigation(layerConfig,props)">
-    	    		<span class="crossNavigationLink" ng-click="crossNavigate(layerConfig.dsId,layerConfig,props)">{{(ngModel.cross && ngModel.cross.cross && ngModel.cross.cross.label) || translate.load('sbi.cockpit.map.gotodetail')}}</span>
-    	    	</li>
-    	    </ul>
- 		 </div>
- 	</div>
-    
+					<p ng-if="props[prop.name].showWarning" class="warningMessage"><i class='fa fa-warning'></i> {{translate.load('sbi.cockpit.map.alarmrange')}}</p>
+				</li>
+				<li ng-if="checkCrossNavigation(layerConfig,props)">
+					<span class="crossNavigationLink" ng-click="crossNavigate(layerConfig.dsId,layerConfig,props)">{{(ngModel.cross && ngModel.cross.cross && ngModel.cross.cross.label) || translate.load('sbi.cockpit.map.gotodetail')}}</span>
+				</li>
+			</ul>
+		</div>
+	</div>
+
 	<ng-include src="getTemplateUrl('mapWidgetControlPanel')"></ng-include>
-	
+
 </div>

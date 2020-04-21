@@ -13,7 +13,7 @@
 			      <div layout-margin layout="column" flex class="relative"> 
 			       	
 					<div flex>
-					<div layout="row" ng-if="!selectedColumn.widgetType || (selectedColumn.widgetType == 'staticPivotTable' && selectedColumn.containerType!='COLUMNS') " >					
+					<div layout="row" ng-if="needsCommonPrefs && (!selectedColumn.widgetType || (selectedColumn.widgetType == 'staticPivotTable' && selectedColumn.containerType!='COLUMNS'))" >					
 						<md-input-container class="md-block" class="small counter" flex>
 							<label>{{::translate.load('sbi.cockpit.table.columnSize')}}</label>
 							<input class="input_class" type="text" ng-model="selectedColumn.style.width"> 
@@ -49,7 +49,7 @@
 					</md-switch>
 					</div>
 			       
-			       <div ng-if="selectedColumn.fieldType=='MEASURE'">
+			       <div ng-if="needsVisualization && (selectedColumn.fieldType=='MEASURE')">
 			       		<!-- both simple table and static pivot table -->
 			       		<div layout="column">
 			       		<md-input-container md-class="md-block">
@@ -100,7 +100,7 @@
 	
 		        	</div>
 	
-	       			<md-card>
+	       			<md-card ng-if="needsThresholds">
 		       			<md-toolbar class="ternaryToolbar ">
 					      <div class="md-toolbar-tools">
 					        <h2>{{::translate.load('sbi.cockpit.table.threshold')}}</h2>
@@ -152,7 +152,7 @@
 				  
 				  <cockpit-column-variables variables="selectedColumn.variables" ng-if="variablesExists()"></cockpit-column-variables>
 			       
-		       		<md-card ng-if="selectedColumn.fieldType == 'MEASURE' || hasPrecision(selectedColumn) || isDateColumn(selectedColumn.type)">
+		       		<md-card ng-if="needsFormat && (selectedColumn.fieldType == 'MEASURE' || hasPrecision(selectedColumn) || isDateColumn(selectedColumn.type))">
 						<md-toolbar class="ternaryToolbar">
 				      		<div class="md-toolbar-tools">
 					        	<h2>
@@ -189,7 +189,7 @@
 				       </md-card-content>
 			       	</md-card>
 					       
-		       		<md-card>
+		       		<md-card ng-if="needsStyle">
 						<md-toolbar class="ternaryToolbar ">
 				      		<div class="md-toolbar-tools">
 					        	<h2>
@@ -255,7 +255,7 @@
 						</md-card-content>
 					</md-card>
 					
-					<md-card>
+					<md-card ng-if="needsTooltip">
 						<md-toolbar class="ternaryToolbar" >
 							<div class="md-toolbar-tools" layout="row">
 								<md-switch ng-model="selectedColumn.hideTooltip">{{::translate.load('sbi.cockpit.table.hidetooltip')}}</md-switch>
