@@ -105,12 +105,22 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							// calc new date strings
 							for(var triggerIndex=0; triggerIndex<job.triggers.length; triggerIndex++){
 								var trigger = job.triggers[triggerIndex];
-								var triggerZonedStartTime = new Date(trigger.triggerZonedStartTime);
-								var triggerZonedEndTime = new Date(trigger.triggerZonedEndTime);
+
+								var triggerZonedStartTimeVal = trigger.triggerZonedStartTime;
+								var triggerZonedStartTime = new Date(triggerZonedStartTimeVal);
 								trigger.triggerStartDateTime = sbiModule_dateServices.formatDate(triggerZonedStartTime)
 									+ " " + sbiModule_dateServices.formatDate(triggerZonedStartTime,'HH:mm');
-								trigger.triggerEndDateTime = sbiModule_dateServices.formatDate(triggerZonedEndTime)
-									+ " " + sbiModule_dateServices.formatDate(triggerZonedEndTime,'HH:mm');
+
+								// End time is nullable
+								var triggerZonedEndTimeVal = trigger.triggerZonedEndTime;
+								if (triggerZonedEndTimeVal == undefined || triggerZonedEndTimeVal == "") {
+									trigger.triggerEndDateTime = "";
+								} else {
+									var triggerZonedEndTime = new Date(triggerZonedEndTimeVal);
+									trigger.triggerEndDateTime = sbiModule_dateServices.formatDate(triggerZonedEndTime)
+										+ " " + sbiModule_dateServices.formatDate(triggerZonedEndTime,'HH:mm');
+								}
+
 								trigger.triggerIsPausedString = (trigger.triggerIsPaused ? sbiModule_translate.load("sbi.general.yes") : sbiModule_translate.load("sbi.general.No"));
 							}
 							// update parameters

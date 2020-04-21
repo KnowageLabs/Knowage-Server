@@ -140,7 +140,11 @@ public class TriggerXMLDeserializer implements Deserializer {
 				startTime = deserializeStartTimeAttribute(xml);
 				endTime = deserializeEndTimeAttribute(xml);
 				zonedStartTime = deserializeZonedStartTimeAttribute(xml);
-				zonedEndTime = deserializeZonedEndTimeAttribute(xml);
+				try {
+					zonedEndTime = deserializeZonedEndTimeAttribute(xml);
+				} catch (NullPointerException e) {
+					// End time is nullable
+				}
 				cronString = (String) xml.getAttribute(CRON_STRING);
 
 				jobName = (String) xml.getAttribute(JOB_NAME);

@@ -245,7 +245,11 @@ public class SchedulerUtilitiesV2 {
 		}
 
 		jobTrigger.setZonedStartTime(jsonObject.optString(JobTrigger.ZONED_START_TIME));
-		jobTrigger.setZonedEndTime(jsonObject.optString(JobTrigger.ZONED_END_TIME));
+		try {
+			jobTrigger.setZonedEndTime(jsonObject.getString(JobTrigger.ZONED_END_TIME));
+		} catch (JSONException e) {
+			// End time can be optional
+		}
 
 		jobTrigger.setChrono(((JSONObject) jsonObject.opt(JobTrigger.CHRONO)).toString().replaceAll("\"", "'"));
 		JSONArray ja = (JSONArray) jsonObject.opt(JobTrigger.DOCUMENTS);
