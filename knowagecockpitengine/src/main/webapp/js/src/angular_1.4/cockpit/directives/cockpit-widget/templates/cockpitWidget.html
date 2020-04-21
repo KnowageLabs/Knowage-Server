@@ -57,12 +57,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-button>
 			
 				<!-- SEARCH BUTTON for table widget only -->
-				<md-button class="md-fab md-raised md-mini" aria-label="search button" ng-if="cockpitModule_properties.EDIT_MODE && checkType(ngModel.type, ['table'])" ng-click="openSearchBar($event);$event.stopPropagation();" >
+				<md-button class="md-fab md-raised md-mini" aria-label="search button" ng-class="{'md-primary':activeSearch}" ng-if="cockpitModule_properties.EDIT_MODE && checkType(ngModel.type, ['table'])" ng-click="openSearchBar($event);$event.stopPropagation();" >
 					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
-					<span class="fa-stack" style="transform:translateX(-10%) translateY(10%)">
-					  <md-icon md-font-icon="fa fa-search fa-stack-1x"></md-icon>
-					  <md-icon ng-if="activeSearch" md-font-icon="fa fa-check fa-stack-2x fa-positive"></md-icon>
-					</span>
+					<md-icon md-font-icon="fa fa-search"></md-icon>
 				</md-button>
 
 				<!-- CLONE BUTTON -->
@@ -82,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-tooltip md-direction="top" md-delay="1000">
 			          {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description")}}
 			        </md-tooltip>
-					<span class="fa-stack" style="transform:translateX(-10%) translateY(10%)">
+					<span class="fa-stack" style="transform:translateY(10%)">
 					  <md-icon md-font-icon="fa fa-refresh fa-stack-1x"></md-icon>
 					  <md-icon ng-if="ngModel.updateble==false" md-font-icon="fa fa-ban fa-stack-2x fa-negative"></md-icon>
 					</span>
