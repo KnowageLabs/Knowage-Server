@@ -15,7 +15,7 @@
 		<div class="kn-info" flex="60">No group defined</div>
 	</div>
 	
-	<md-card ng-repeat="group in model.groups track by $index">
+	<md-card ng-repeat="group in model.groups track by group.id">
 		<md-subheader class="noPadding">
 			<div layout="row" layout-align="start center">
 			 	<span layout-padding>{{group.name || 'New Group'}}</span>

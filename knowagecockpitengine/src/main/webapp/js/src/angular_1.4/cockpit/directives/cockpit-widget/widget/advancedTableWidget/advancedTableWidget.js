@@ -192,11 +192,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						//Columns group managament
 						if($scope.ngModel.content.columnSelectedOfDataset[c].group && $scope.ngModel.groups && $scope.ngModel.groups.length > 0) {
 							$scope.ngModel.groups.forEach(function(group){
-								if(group.name == $scope.ngModel.content.columnSelectedOfDataset[c].group){
-									if(typeof columnGroups[group.name] != 'undefined') {
-										columns[columnGroups[group.name]].children.push(tempCol);
+								var groupKey = group.id ? group.id : group.name;
+								if(groupKey == $scope.ngModel.content.columnSelectedOfDataset[c].group){
+									if(typeof columnGroups[groupKey] != 'undefined') {
+										columns[columnGroups[groupKey]].children.push(tempCol);
 									}else {
-										columnGroups[group.name] = columns.length;
+										columnGroups[groupKey] = columns.length;
 										columns.push({
 									        headerName: group.name,
 									        headerGroupComponent: CustomHeaderGroupRenderer,

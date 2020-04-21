@@ -31,6 +31,13 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			break;
 		}
 	}
+	
+	function uuidv4() {
+	  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+	    return v.toString(16);
+	  });
+	}
 
 	$scope.changeDS = function(id){
 	    $scope.newModel.content.columnSelectedOfDataset = cockpitModule_datasetServices.getDatasetById(id).metadata.fieldsMeta;
@@ -67,9 +74,10 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
     }
 
 	function getColumnsDefinition() {
-		$scope.availableGroups = [''];
+		$scope.availableGroups = {0:''};
 		for(var g in $scope.newModel.groups){
-			$scope.availableGroups.push($scope.newModel.groups[g].name);
+			if(!$scope.newModel.groups[g].id) $scope.newModel.groups[g].id = uuidv4();
+			$scope.availableGroups[$scope.newModel.groups[g].id] = $scope.newModel.groups[g].name;
 		}
 
 		$scope.columnsDefinition = [
@@ -83,7 +91,8 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	    			headerComponent: CustomHeader,headerClass:'header-cell-buttons'}];
 		if($scope.newModel.groups && $scope.newModel.groups.length > 0){
 			delete $scope.columnsDefinition[0].rowDrag;
-			$scope.columnsDefinition.unshift({headerName: 'Group', field:'group',"editable":isInputEditable,cellRenderer:groupRenderer, cellClass: 'editableCell',rowDrag: true,cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableGroups}});
+			$scope.columnsDefinition.unshift({headerName: 'Group', field:'group',"editable":isInputEditable,cellRenderer:groupRenderer, cellClass: 'editableCell',rowDrag: true,cellEditor:"agSelectCellEditor",
+				cellEditorParams: {values: Object.keys($scope.availableGroups)},valueFormatter: groupSelectFormatter, valueParser: groupSelectParser});
 		}
 		if($scope.columnsGrid && $scope.columnsGrid.api) {
 			$scope.columnsGrid.api.setColumnDefs($scope.columnsDefinition);
@@ -143,7 +152,24 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	}
 
 	function groupRenderer(params) {
-		return '<i class="fa fa-edit"></i> <i>'+ (typeof params.value != 'undefined' ? params.value : '') +'</i>';
+		var value = '';
+		if(typeof params.value != 'undefined') value = params.value;
+		if(typeof params.valueFormatted != 'undefined') value = params.valueFormatted;
+		return '<i class="fa fa-edit"></i> <i>'+ value +'</i>';
+	}
+	
+	function groupSelectFormatter(params) {
+		return $scope.availableGroups[params.value];
+	}
+	
+	function groupSelectParser(params) {
+		for (var key in $scope.availableGroups) {
+		    if ($scope.availableGroups.hasOwnProperty(key)) {
+		      if (params.newValue === $scope.availableGroups[key]) {
+		        return key;
+		      }
+		    }
+		}
 	}
 
 	function buttonRenderer(params){
@@ -296,10 +322,11 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		scope.translate=sbiModule_translate;
 		scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 		scope.model = angular.copy(model);
-
+		
 		scope.addGroup = function(){
-			if(scope.model.groups) scope.model.groups.push({});
-			else scope.model.groups = [{}];
+			var id = uuidv4();
+			if(scope.model.groups) scope.model.groups.push({id:id});
+			else scope.model.groups = [{id:id}];
 		}
 
 		scope.deleteGroup = function(i){
@@ -312,6 +339,9 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		}
 
 		scope.saveGroups = function(){
+			for(var k in scope.model.groups){
+				if(!scope.model.groups[k].id) scope.model.groups[k].id = uuidv4();
+			}
 			$mdDialog.hide(scope.model);
 		}
 
