@@ -90,12 +90,16 @@
 									<div class="kn-warning" flex="60">{{::translate.load('sbi.cockpit.widget.table.summary.noPinnedColumnsWarning')}}</div>
 								</div>
 								<div ng-repeat="summaryRow in newModel.settings.summary.list track by $index" layout="row" style="padding:8px;" layout-align="start center">
-									<md-input-container flex class="md-block">
+									<md-input-container flex="50" class="md-block">
 					       				<label>{{::translate.load('sbi.generic.label')}}</label>
 			          					<input type="text" ng-model="summaryRow.label"/>
 							    	</md-input-container>
+							    	<md-input-container  class="md-block flex" ng-if="$first">
+							    		<label>{{::translate.load('sbi.cockpit.widgets.table.column.summaryAggregation')}}</label>
+			          					<input disabled ng-value="translate.load('sbi.cockpit.widgets.table.column.summaryDefaultAggregation')"/>				       				
+							    	</md-input-container>
 									<md-input-container flex class="md-block" ng-if="!$first">
-					       				<label>{{::translate.load('sbi.cockpit.widgets.table.column.aggregation')}}</label>
+					       				<label>{{::translate.load('sbi.cockpit.widgets.table.column.summaryAggregation')}}</label>
 			          					<md-select ng-model="summaryRow.aggregation">
 			          						<md-option ng-repeat="func in availableSummaryAggregations" ng-value="func">{{func}}</md-option>
 				       					</md-select>

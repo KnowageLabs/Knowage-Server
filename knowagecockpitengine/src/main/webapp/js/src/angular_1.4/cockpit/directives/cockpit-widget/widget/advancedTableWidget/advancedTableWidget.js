@@ -87,7 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
 					var thisColumn = $scope.ngModel.content.columnSelectedOfDataset[c];
-					if(typeof fields[f] == 'object' && (dataset.type == "SbiSolrDataSet" && thisColumn.name.toLowerCase() === fields[f].header || ((thisColumn.aliasToShow || thisColumn.alias).toLowerCase() === fields[f].header))  ){
+					if(typeof fields[f] == 'object' && (dataset.type == "SbiSolrDataSet" && thisColumn.name.toLowerCase() === fields[f].header || ((thisColumn.aliasToShow || thisColumn.alias).toLowerCase() === fields[f].header.toLowerCase()))  ){
 						$scope.columnsNameArray.push(fields[f].name);
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,
 								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
