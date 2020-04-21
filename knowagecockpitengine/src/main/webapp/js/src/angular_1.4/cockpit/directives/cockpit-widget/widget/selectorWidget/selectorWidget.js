@@ -145,6 +145,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.datasetRecords = {};
 		$scope.cockpitModule_widgetSelection = cockpitModule_widgetSelection;
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
+		
 
 		// set a watcher on a variable that can contains the associative selections for realtime dataset
 		var realtimeSelectionsWatcher = $scope.$watchCollection('realTimeSelections',function(newValue,oldValue,scope){
@@ -726,6 +727,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.model = {};
 		angular.copy(originalModel,$scope.model);
+		$scope.tempSelectedColumn = $scope.model.content.selectedColumn && $scope.model.content.selectedColumn.alias;
+		
+		$scope.changeColumn = function(){
+			for(var k in $scope.model.content.columnSelectedOfDataset){
+				if($scope.model.content.columnSelectedOfDataset[k].alias == $scope.tempSelectedColumn){
+					$scope.model.content.selectedColumn = $scope.model.content.columnSelectedOfDataset[k];
+					break;
+				}
+			}
+		}
 
 		$scope.saveConfiguration=function(){
 			if($scope.model.dataset == undefined || $scope.model.dataset.dsId == undefined ){

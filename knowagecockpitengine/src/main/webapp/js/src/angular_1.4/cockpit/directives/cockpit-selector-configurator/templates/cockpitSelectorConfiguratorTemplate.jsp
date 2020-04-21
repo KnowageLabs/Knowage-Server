@@ -4,8 +4,8 @@
      		<dataset-selector flex ng-model=model.dataset.dsId on-change="resetValue(dsId);"></dataset-selector>
      		<md-input-container class="md-block" flex>
 				<label>{{::translate.load("sbi.cockpit.widgets.selector.column");}}</label>
-         		<md-select ng-model="model.content.selectedColumn" ng-model-options="{trackBy: '$value.alias'}" ng-disabled="!model.dataset.dsId">
-          			<md-option ng-repeat="column in model.content.columnSelectedOfDataset | filter : {fieldType:'ATTRIBUTE'}" ng-value="column" >
+         		<md-select ng-model="tempSelectedColumn" ng-change="changeColumn()" ng-disabled="!model.dataset.dsId">
+          			<md-option ng-repeat="column in model.content.columnSelectedOfDataset | filter : {fieldType:'ATTRIBUTE'}" ng-value="column.alias" >
                			{{column.alias}}
           			</md-option>
       			</md-select>
