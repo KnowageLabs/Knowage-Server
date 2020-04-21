@@ -399,14 +399,14 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					               "MAJORGRID":{
 					                  "interval":"",
 					                  "style":{
-					                	  "typeLine":"",
+					                	  "typeline":"",
 					                	  "color":""
 					                  }
 					               },
 					               "MINORGRID":{
 					            	  "interval":"",
 					                  "style":{
-					                	  "typeLine":"",
+					                	  "typeline":"",
 					                	  "color":""
 					                  }
 					               },
@@ -714,14 +714,14 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					               "MAJORGRID":{
 					                  "interval":"",
 					                  "style":{
-					                	  "typeLine":"",
+					                	  "typeline":"",
 					                	  "color":""
 					                  }
 					               },
 					               "MINORGRID":{
 					            	  "interval":"",
 					                  "style":{
-					                	  "typeLine":"",
+					                	  "typeline":"",
 					                	  "color":""
 					                  }
 					               },
@@ -1169,14 +1169,14 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			               "MAJORGRID":{
 			                  "interval":"",
 			                  "style":{
-			                	  "typeLine":"",
+			                	  "typeline":"",
 			                	  "color":""
 			                  }
 			               },
 			               "MINORGRID":{
 			            	  "interval":"",
 			                  "style":{
-			                	  "typeLine":"",
+			                	  "typeline":"",
 			                	  "color":""
 			                  }
 			               },
@@ -1418,14 +1418,14 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			               "MAJORGRID":{
 			                  "interval":"",
 			                  "style":{
-			                	  "typeLine":"",
+			                	  "typeline":"",
 			                	  "color":""
 			                  }
 			               },
 			               "MINORGRID":{
 			            	  "interval":"",
 			                  "style":{
-			                	  "typeLine":"",
+			                	  "typeline":"",
 			                	  "color":""
 			                  }
 			               },
@@ -1669,14 +1669,14 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			               "MAJORGRID":{
 			                  "interval":"",
 			                  "style":{
-			                	  "typeLine":"",
+			                	  "typeline":"",
 			                	  "color":""
 			                  }
 			               },
 			               "MINORGRID":{
 			            	  "interval":"",
 			                  "style":{
-			                	  "typeLine":"",
+			                	  "typeline":"",
 			                	  "color":""
 			                  }
 			               },
@@ -1922,14 +1922,14 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"MAJORGRID":{
 							"interval":"",
 							"style":{
-								"typeLine":"",
+								"typeline":"",
 								"color":""
 							}
 						},
 						"MINORGRID":{
 							"interval":"",
 							"style":{
-								"typeLine":"",
+								"typeline":"",
 								"color":""
 							}
 						},
@@ -2153,14 +2153,14 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			               "MAJORGRID":{
 			                  "interval":"",
 			                  "style":{
-			                	  "typeLine":"",
+			                	  "typeline":"",
 			                	  "color":""
 			                  }
 			               },
 			               "MINORGRID":{
 			            	  "interval":"",
 			                  "style":{
-			                	  "typeLine":"",
+			                	  "typeline":"",
 			                	  "color":""
 			                  }
 			               },
@@ -2390,14 +2390,14 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			               "MAJORGRID":{
 			                  "interval":"",
 			                  "style":{
-			                	  "typeLine":"",
+			                	  "typeline":"",
 			                	  "color":""
 			                  }
 			               },
 			               "MINORGRID":{
 			            	  "interval":"",
 			                  "style":{
-			                	  "typeLine":"",
+			                	  "typeline":"",
 			                	  "color":""
 			                  }
 			               },
@@ -2594,14 +2594,14 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			               "MAJORGRID":{
 			                  "interval":"",
 			                  "style":{
-			                	  "typeLine":"",
+			                	  "typeline":"",
 			                	  "color":""
 			                  }
 			               },
 			               "MINORGRID":{
 			            	  "interval":"",
 			                  "style":{
-			                	  "typeLine":"",
+			                	  "typeline":"",
 			                	  "color":""
 			                  }
 			               },

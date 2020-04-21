@@ -887,14 +887,14 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		               "MAJORGRID":{
 		                  "interval":"",
 		                  "style":{
-		                	  "typeLine":"",
+		                	  "typeline":"",
 		                	  "color":""
 		                  }
 		               },
 		               "MINORGRID":{
 		            	  "interval":"",
 		                  "style":{
-		                	  "typeLine":"",
+		                	  "typeline":"",
 		                	  "color":""
 		                  }
 		               },
@@ -922,11 +922,11 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	}
 
 	$scope.clearAxisMajorGridDetails = function () {
-		$scope.axisForDisplay.MAJORGRID = {"interval": "","style": {"typeLine": "","color": ""}}
+		$scope.axisForDisplay.MAJORGRID = {"interval": "","style": {"typeline": "","color": ""}}
 	}
 
 	$scope.clearAxisMinorGridDetails = function () {
-		$scope.axisForDisplay.MINORGRID = {"interval": "","style": {"typeLine": "","color": ""}}
+		$scope.axisForDisplay.MINORGRID = {"interval": "","style": {"typeline": "","color": ""}}
 	}
 
 	$scope.removeSeriesContainer = function(seriesContainer) {
