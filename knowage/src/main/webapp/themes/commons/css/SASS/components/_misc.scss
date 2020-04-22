@@ -453,6 +453,16 @@ md-datepicker.kn-custom-datepicker {
     }
 }
 
+.kn-mandatory {
+  &:not(.validValue){
+    color: red !important;
+    font-weight: bold;
+  }
+  &::after {
+    content: " *"; 
+  }
+}
+
 md-icon {
   text-align: center;
 }
