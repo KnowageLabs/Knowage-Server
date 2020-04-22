@@ -1438,23 +1438,23 @@ public class ExcelExporter {
 				String parameterName = parameterMatcher.group(1);
 				Object exists = oldParameters.get(parameterName);
 				if (exists != null) {
-//					JSONArray value = (JSONArray) newParameters.get(parameter);
-//					String regex2 = "\\((?:(?:,)?(?:\\'([a-zA-Z0-9\\-\\_\\s]+)\\')(?:,+)?)+\\)";
-//					String valueToElaborate = value.get(0).toString();
-//					Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(valueToElaborate);
-//					String realValueToAdd = "";
-//					String realValue = "";
-//					while (parameterMatcher2.find()) {
-//						if (realValue.isEmpty())
-//							realValueToAdd = parameterMatcher2.group(1);
-//						else
-//							realValueToAdd = realValueToAdd + "," + parameterMatcher2.group(1);
-//
-//						realValue = parameterMatcher2.group(1);
-//						valueToElaborate = valueToElaborate.replace("'" + realValue + "'", "");
-//						parameterMatcher2 = Pattern.compile(regex2).matcher(valueToElaborate);
-//					}
-//					parameters.put(parameterName, realValueToAdd);
+					// JSONArray value = (JSONArray) newParameters.get(parameter);
+					// String regex2 = "\\((?:(?:,)?(?:\\'([a-zA-Z0-9\\-\\_\\s]+)\\')(?:,+)?)+\\)";
+					// String valueToElaborate = value.get(0).toString();
+					// Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(valueToElaborate);
+					// String realValueToAdd = "";
+					// String realValue = "";
+					// while (parameterMatcher2.find()) {
+					// if (realValue.isEmpty())
+					// realValueToAdd = parameterMatcher2.group(1);
+					// else
+					// realValueToAdd = realValueToAdd + "," + parameterMatcher2.group(1);
+					//
+					// realValue = parameterMatcher2.group(1);
+					// valueToElaborate = valueToElaborate.replace("'" + realValue + "'", "");
+					// parameterMatcher2 = Pattern.compile(regex2).matcher(valueToElaborate);
+					// }
+					// parameters.put(parameterName, realValueToAdd);
 					JSONArray value = (JSONArray) newParameters.get(parameter);
 					String regex2 = "\\(\\'(.*)\\'\\)";
 					Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(value.get(0).toString());
@@ -1830,6 +1830,7 @@ public class ExcelExporter {
 	private JSONObject getSelectionsFromWidget(JSONObject widget, JSONObject configuration) throws JSONException {
 		JSONObject dataset = getDatasetFromWidget(widget, configuration);
 		String datasetName = dataset.getString("name");
+		String datasetLabel = dataset.getString("dsLabel");
 
 		JSONObject selections = new JSONObject();
 		JSONObject datasetFilters = new JSONObject();
@@ -1899,6 +1900,7 @@ public class ExcelExporter {
 			}
 		}
 
+		boolean useLabel = false;
 		if (actualSelectionMap.containsKey(datasetName)) {
 			JSONObject actualSelections = actualSelectionMap.get(datasetName);
 			Iterator<String> actualSelectionKeys = actualSelections.keys();
@@ -1909,9 +1911,24 @@ public class ExcelExporter {
 					datasetFilters.put(key, values);
 				}
 			}
+		} else if (actualSelectionMap.containsKey(datasetLabel)) {
+			useLabel = true;
+			JSONObject actualSelections = actualSelectionMap.get(datasetLabel);
+			Iterator<String> actualSelectionKeys = actualSelections.keys();
+			while (actualSelectionKeys.hasNext()) {
+				String key = actualSelectionKeys.next();
+				if (!key.contains("$")) {
+					Object values = actualSelections.get(key);
+					datasetFilters.put(key, values);
+				}
+			}
 		}
 
-		selections.put(datasetName, datasetFilters);
+		if (useLabel) {
+			selections.put(datasetLabel, datasetFilters);
+		} else {
+			selections.put(datasetName, datasetFilters);
+		}
 		return selections;
 	}
 
