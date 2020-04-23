@@ -65,37 +65,38 @@
 		<h2 class="md-toolbar-tools">{{translate.load('sbi.cockpit.map.section.filters')}}</h2>
 		<span flex></span>
 	</md-toolbar>
-	<div ng-repeat="currLayer in ngModel.content.layers | filter:hasPerLayerFilters">
+	<div ng-repeat="currLayer in ngModel.content.layers | filter:hasPerLayerFilters" ng-if="!isFilterDisabled(currLayer)">
+
 		<div class="indicatorOptions" layout="column">
 			<div class="indicatorLabel" layout="row" layout-align="start center">
-				<span flex class="truncated"><md-tooltip md-delay="500">{{currLayer.alias}}</md-tooltip>{{currLayer.alias}}</span>
+				<span flex class="truncated"><md-tooltip md-delay="500">{{currLayer.alias}}</md-tooltip>{{currLayer.alias}} {{isFilterDisabled(currLayer)}}</span>
 			</div>
 		</div>
 
-			<md-list flex
-					dnd-list="perLayerFilters[currLayer.name]"
-					dnd-allowed-types="[ currLayer.name ]"
-					dnd-drop="dropCallback(event, index, perLayerFilters[currLayer.name], item, external, type, currLayer)"
-					class="md-dense"
-					ng-class="{'dropZone': dragUtils.dragObjectType == currLayer.name }">
-					
-				<md-list-item ng-repeat="currCol in perLayerFilters[currLayer.name] track by $index" 
-						dnd-draggable="currCol"
-						dnd-effect-allowed="move"
-						dnd-type="currLayer.name"
-						dnd-dragstart="dragUtils.dragObjectType = currLayer.name"
-						dnd-dragend="dragUtils.dragObjectType = undefined">
-						
-					<md-input-container style="width:100%; font-size:.8rem; padding: .25rem;">
-						<label class="md-primary md-no-float">{{ currCol.aliasToShow }}</label>
-						<div class="kn-select">
-							<div ng-click="openMultiSelectFilterValueDialog($event, currLayer, currCol)" style="height:32px;padding-right:24px;" class="truncated fakeDialog"><span ng-repeat="value in getLayerByName(currLayer.name).filterBy[currCol.name]">{{value}}<b ng-if="!$last">,</b></span></div>
-						</div>
-					</md-input-container>
-					
-				</md-list-item>
+		<md-list flex
+				dnd-list="perLayerFilters[currLayer.name]"
+				dnd-allowed-types="[ currLayer.name ]"
+				dnd-drop="dropCallback(event, index, perLayerFilters[currLayer.name], item, external, type, currLayer)"
+				class="md-dense"
+				ng-class="{'dropZone': dragUtils.dragObjectType == currLayer.name }">
 				
-			</md-list>
+			<md-list-item ng-repeat="currCol in perLayerFilters[currLayer.name] track by $index" 
+					dnd-draggable="currCol"
+					dnd-effect-allowed="move"
+					dnd-type="currLayer.name"
+					dnd-dragstart="dragUtils.dragObjectType = currLayer.name"
+					dnd-dragend="dragUtils.dragObjectType = undefined">
+					
+				<md-input-container style="width:100%; font-size:.8rem; padding: .25rem;">
+					<label class="md-primary md-no-float">{{ currCol.aliasToShow }}</label>
+					<div class="kn-select">
+						<div ng-click="openMultiSelectFilterValueDialog($event, currLayer, currCol)" style="height:32px;padding-right:24px;" class="truncated fakeDialog"><span ng-repeat="value in getLayerByName(currLayer.name).filterBy[currCol.name]">{{value}}<b ng-if="!$last">,</b></span></div>
+					</div>
+				</md-input-container>
+				
+			</md-list-item>
+			
+		</md-list>
 
 	</div>
 

@@ -166,6 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.columnsConfig = {} 	//layers with just columns definition
 		$scope.optionSidenavId = "optionSidenav-" + Math.random(); // random id for sidenav id
 		$scope.layerVisibility = [];
+		$scope.exploded = {}; // is heatp/cluster exploded?
 
 		$scope.init = function(element,width,height) {
 			$scope.refreshWidget(null, 'init');
@@ -467,12 +468,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if (!$scope.ngModel.content.mapId){
 				$scope.ngModel.content.mapId =  'map-' + $scope.ngModel.id;
 			}
-			//set default indicator (first one) for each layer
-			for (l in $scope.ngModel.content.layers){
-				var columns = $scope.getColumnSelectedOfDataset($scope.ngModel.content.layers[l].dsId);
+			// Per-layer initialization
+			$scope.exploded = {};
+
+			var currLayers = $scope.ngModel.content.layers;
+			for (l in currLayers){
+				var currLayer = currLayers[l];
+				var currDsId = currLayer.dsId;
+				var isCluster = $scope.isCluster(currLayer);
+				var isHeatmap = $scope.isHeatmap(currLayer);
+
+				// set default indicator (first one) for each layer
+				var columns = $scope.getColumnSelectedOfDataset(currDsId);
 				for (var c in columns){
 					if (columns[c].properties && columns[c].properties.showMap){
-						$scope.ngModel.content.layers[l].defaultIndicator = columns[c].name;
+						currLayer.defaultIndicator = columns[c].name;
 						break;
 					}
 				}
@@ -487,6 +497,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							currCol.properties.aggregateBy = true;
 						}
 					}
+				}
+				// Set exploded flag for heatmap and cluster
+				if (isHeatmap || isCluster) {
+					$scope.exploded[currDsId] = false;
 				}
 			}
 			if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) $scope.ngModel.content.enableBaseLayer = true;
@@ -640,8 +654,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            	if (previousZoom > newZoom ){
 	            		for (l in $scope.ngModel.content.layers){
 		    		    	var layerDef =  $scope.ngModel.content.layers[l];
-		    		    	var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
-		    		    	var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
+		    		    	var isCluster = $scope.isCluster(layerDef);
+		    		    	var isHeatmap = $scope.isHeatmap(layerDef);
 		    		    	if (isCluster){
 			    				var values = $scope.values[layerDef.name];
 				        		$scope.createLayerWithData(layerDef.name, values, true, false); //return to cluster view
@@ -716,23 +730,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			 });
 
-			$scope.exploded = {};
 			$scope.map.on('dblclick', function(evt) {
-				for (l in $scope.ngModel.content.layers){
-					var layerDef =  $scope.ngModel.content.layers[l];
+				var currLayers = $scope.ngModel.content.layers;
+				for (l in currLayers){
+					var layerDef =  currLayers[l];
 					var dsId = layerDef.dsId;
-					if (!(dsId in $scope.exploded)) {
-						$scope.exploded[dsId] = false;
-					}
 
-					$scope.exploded[dsId] = !$scope.exploded[dsId];
-
-					var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
-					var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
+					var isCluster = $scope.isCluster(layerDef);
+					var isHeatmap = $scope.isHeatmap(layerDef);
 
 					// Don't recreate the map if it's not needed
 					if (isCluster || isHeatmap) {
-						if (!$scope.exploded[dsId]) {
+
+						$scope.exploded[dsId] = !$scope.exploded[dsId];
+
+						if ($scope.exploded[dsId]) {
 							var values = $scope.values[layerDef.name];
 							$scope.createLayerWithData(layerDef.name, values, false, false);
 						} else {
@@ -772,8 +784,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var geoColumn = null;
 			var selectedMeasure = null;
 			var columnsForData = [];
-			var isCluster = (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
-			var isHeatmap = (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
+			var isCluster = $scope.isCluster(layerDef);
+			var isHeatmap = $scope.isHeatmap(layerDef);
 
 			columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
 
@@ -1138,7 +1150,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var layers = $scope.ngModel.content.layers;
 				for (var currLayerIdx in layers) {
 					var currLayer = layers[currLayerIdx];
-					dsIds.push(currLayer.dsId);
+					if (!$scope.isFilterDisabled(currLayer)) {
+						dsIds.push(currLayer.dsId);
+					}
 				}
 			}
 
@@ -1406,6 +1420,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				ret = currPropValue;
 			}
 			return ret;
+		}
+
+		$scope.isFilterDisabled = function(layerDef) {
+			var dsId = layerDef.dsId;
+			var isCluster = $scope.isCluster(layerDef);
+			var isHeatmap = $scope.isHeatmap(layerDef);
+			var isExploded = $scope.exploded.hasOwnProperty(dsId) ? $scope.exploded[dsId] : true;
+
+			return (isCluster || isHeatmap) && !isExploded;
+		}
+
+		$scope.isHeatmap = function(layerDef) {
+			return (layerDef.heatmapConf && layerDef.heatmapConf.enabled) ? true : false;
+		}
+
+		$scope.isCluster = function(layerDef) {
+			return (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
 		}
 
 		// $scope.reinit();
