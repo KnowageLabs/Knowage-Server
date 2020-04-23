@@ -839,6 +839,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		for(var i=0;i<document.parameters.length;i++){
 			var param = document.parameters[i];
 			if(param.type=="fixed"){
+				if (condensedParameters.length > 0) condensedParameters += " | ";
 				condensedParameters += " " + param.name + " = ";
 				if(param.manualInput){
 					condensedParameters += param.value;
@@ -850,7 +851,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						condensedParameters += ";" + param.selectedValues[j];
 					}
 				}
-				condensedParameters += " | ";
+				
 			}
 		}
 		document.condensedParameters = condensedParameters;
