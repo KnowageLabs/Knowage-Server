@@ -323,12 +323,22 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				$scope.showAccessibilityDialog();
 			}
 
-			$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset').then(function(result){
+			function calculateNewDownloads(data){
+				var counter = 0;
+				for(var k in data){
+					if(data[k].alreadyDownloaded == false) counter ++;
+				}
+				return counter;
+			}
+			
+			$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset?showAll=true').then(function(result){
 				$scope.downloadsList = result.data;
+				$scope.newDownloadsNumber = calculateNewDownloads($scope.downloadsList);
 			})
 			$interval(function() {
-				$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset').then(function(result){
+				$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset?showAll=true').then(function(result){
 					$scope.downloadsList = result.data;
+					$scope.newDownloadsNumber = calculateNewDownloads($scope.downloadsList);
 				},function(error){})
 			}, 20000);
 
@@ -339,12 +349,14 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				$mdDialog.show({
 					parent: parentEl,
 					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/downloads.html',
-					controller: downloadsDialogController
+					controller: downloadsDialogController,
+					locals: {downloadsList:$scope.downloadsList}
 				});
 
 
-				function downloadsDialogController(scope, $mdDialog, sbiModule_translate) {
+				function downloadsDialogController(scope, $mdDialog, sbiModule_translate,downloadsList) {
 	        	    scope.translate = sbiModule_translate;
+	        	    scope.downloadsList = downloadsList;
 	        	    scope.closeDialog = function(){
 	        	    	$mdDialog.cancel();
 	        	    }
@@ -429,9 +441,6 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 //						    },
 						    onGridReady: function (params) {
 						        params.api.sizeColumnsToFit();
-						        $http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset?showAll=true').then(function(result){
-				    				scope.downloadsList = result.data;
-				    			})
 						    },
 						    onGridSizeChanged: function(params){
 						    	params.api.sizeColumnsToFit();
