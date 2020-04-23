@@ -1177,7 +1177,9 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataSet){
 		var promise = sbiModule_restServices.post("dataset","drivers/",selectedDataSet.qbeDatamarts).then(function(response){
-			driversDependencyService.buildCorrelation(response.data.filterStatus, selectedDataSet.qbeDatamarts);
+			if(response.data.filterStatus) {
+				driversDependencyService.buildCorrelation(response.data.filterStatus, selectedDataSet.qbeDatamarts);
+			}
 			$scope.drivers = response.data.filterStatus;
 			$scope.selectedDataSet.drivers = $scope.drivers;
 		})
