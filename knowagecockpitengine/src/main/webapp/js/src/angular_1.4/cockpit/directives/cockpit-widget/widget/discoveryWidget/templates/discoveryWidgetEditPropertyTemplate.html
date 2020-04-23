@@ -54,7 +54,8 @@
 		   					<md-card-content ng-if="newModel.settings.facets.enabled">
 		   						<div layout="row">
 		   							<div layout="row" flex="20" layout-align="start center">
-			   							<md-checkbox class="noMargin" ng-model="newModel.settings.facets.selection">{{::translate.load('kn.cockpit.discovery.facets.enable')}}</md-checkbox>
+		   								<md-tooltip md-delay="500">{{::translate.load('kn.cockpit.discovery.facets.enable.tooltip')}}</md-tooltip>
+			   							<md-checkbox class="noMargin" ng-model="newModel.settings.facets.selection">{{::translate.load('kn.cockpit.discovery.facets.enable')}}</md-checkbox>			   						
 			   						</div>
 			   						<div layout="row" flex="20" layout-align="start center">
 			   							<md-checkbox class="noMargin" ng-model="newModel.settings.facets.closed">Closed by default</md-checkbox>

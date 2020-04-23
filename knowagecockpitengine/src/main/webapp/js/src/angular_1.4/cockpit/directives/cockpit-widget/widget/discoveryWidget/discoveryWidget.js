@@ -74,8 +74,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					"enabled" : true
 				},
 				"facets" : {
-					"selection" : true
-				}
+					"selection" : true,
+					"enabled" : true
+				},
+				"textEnabled" : true
 			};
 		}else $scope.ngModel.settings.page = 1;
 
@@ -238,7 +240,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if($scope.ngModel.settings.table && $scope.ngModel.settings.table.enabled){
 					$scope.gridOptions.headerHeight = !$scope.ngModel.style.th.enabled && 0;
 					if(nature == 'init'){
-						if(typeof $scope.ngModel.settings.textEnabled == 'undefined') $scope.ngModel.settings.textEnabled = true;
 						$scope.columns = $scope.getColumns(datasetRecords.metaData.fields);
 						$scope.updateDates();
 						$scope.gridOptions.api.setColumnDefs($scope.columns);
@@ -434,7 +435,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.dimensions && $scope.dimensions.width<600){
 				$scope.toggleMenu();
 			}
-			if($scope.ngModel.settings.facets.selection){
+			if($scope.ngModel.settings.facets.selection == true){
 				$scope.ngModel.search.facets = {};
 				if($scope.template.configuration
 						&& (cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label] && cockpitModule_template.configuration.filters[$scope.ngModel.dataset.label][group]==item.column_1)
