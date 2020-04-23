@@ -45,7 +45,7 @@
 					<span>{{translate.load('sbi.generic.download')}}</span>
 					<md-tooltip md-delay="500">{{translate.load('sbi.generic.download')}}</md-tooltip>
 				</a>
-				<div class="tag" ng-if="downloadsList.length > 0">{{downloadsList.length}}</div>
+				<div class="tag" ng-if="downloadsList.length > 0 && newDownloadsNumber > 0">{{newDownloadsNumber}}</div>
 			</li>
 			
 			<li ng-repeat="custom in customs track by $index">
