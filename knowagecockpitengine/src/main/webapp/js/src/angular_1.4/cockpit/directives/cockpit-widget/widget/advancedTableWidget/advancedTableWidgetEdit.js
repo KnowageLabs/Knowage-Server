@@ -293,7 +293,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			preserveScope: false,
 			autoWrap:false,
 			fullscreen: true,
-			locals:{model:$scope.newModel, selectedColumn : $scope.selectedColumn},
+			locals:{model:$scope.newModel, selectedColumn : $scope.selectedColumn, dialogOptions: {}},
 			controller: cockpitStyleColumnFunction
 		}).then(function(answer) {
 			console.log("Selected column:", $scope.selectedColumn);

@@ -482,12 +482,7 @@ function cockpitStyleColumnFunction(
 		sbiModule_messaging,
 		knModule_fontIconsService,
 		cockpitModule_properties,
-		needsCommonPrefs,
-		needsVisualization,
-		needsThresholds,
-		needsFormat,
-		needsStyle,
-		needsTooltip) {
+		dialogOptions) {
 
 	$scope.translate=sbiModule_translate;
 	$scope.generalServices=cockpitModule_generalServices;
@@ -495,12 +490,13 @@ function cockpitStyleColumnFunction(
 	$scope.cockpitModule_properties = cockpitModule_properties;
 	$scope.model = model;
 	$scope.selectedColumn = angular.copy(selectedColumn);
-	$scope.needsCommonPrefs   = (typeof needsCommonPrefs   == 'undefined' ? true : needsCommonPrefs);
-	$scope.needsVisualization = (typeof needsVisualization == 'undefined' ? true : needsVisualization);
-	$scope.needsThresholds    = (typeof needsThresholds    == 'undefined' ? true : needsThresholds);
-	$scope.needsFormat        = (typeof needsFormat        == 'undefined' ? true : needsFormat);
-	$scope.needsStyle         = (typeof needsStyle         == 'undefined' ? true : needsStyle);
-	$scope.needsTooltip       = (typeof needsTooltip       == 'undefined' ? true : needsTooltip);
+	
+	$scope.needsCommonPrefs   = (typeof dialogOptions.needsCommonPrefs   == 'undefined' ? true : dialogOptions.needsCommonPrefs);
+	$scope.needsVisualization = (typeof dialogOptions.needsVisualization == 'undefined' ? true : dialogOptions.needsVisualization);
+	$scope.needsThresholds    = (typeof dialogOptions.needsThresholds    == 'undefined' ? true : dialogOptions.needsThresholds);
+	$scope.needsFormat        = (typeof dialogOptions.needsFormat        == 'undefined' ? true : dialogOptions.needsFormat);
+	$scope.needsStyle         = (typeof dialogOptions.needsStyle         == 'undefined' ? true : dialogOptions.needsStyle);
+	$scope.needsTooltip       = (typeof dialogOptions.needsTooltip       == 'undefined' ? true : dialogOptions.needsTooltip);
 
 	$scope.modelTextAlign = {"flex-start":sbiModule_translate.load('sbi.cockpit.style.textAlign.left'),"center":sbiModule_translate.load('sbi.cockpit.style.textAlign.center'),"flex-end":sbiModule_translate.load('sbi.cockpit.style.textAlign.right')};
 	$scope.formatPattern = ['#.###','#,###','#.###,##','#,###.##'];

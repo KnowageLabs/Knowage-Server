@@ -532,12 +532,14 @@ function mapWidgetEditControllerFunction(
 			locals: {
 					model: $scope.newModel,
 					selectedColumn: column,
-					needsCommonPrefs: false,
-					needsVisualization: false,
-					needsThresholds: false,
-					needsFormat: true,
-					needsStyle: false,
-					needsTooltip: false
+					dialogOptions: {
+						needsCommonPrefs: false,
+						needsVisualization: false,
+						needsThresholds: false,
+						needsFormat: true,
+						needsStyle: false,
+						needsTooltip: false
+					}
 				},
 			controller: cockpitStyleColumnFunction
 		}).then(function(answer) {

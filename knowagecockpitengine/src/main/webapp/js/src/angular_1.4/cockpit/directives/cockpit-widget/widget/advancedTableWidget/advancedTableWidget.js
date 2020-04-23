@@ -528,7 +528,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if($scope.ngModel.style && $scope.ngModel.style.tr && $scope.ngModel.style.tr.height){
 					_rowHeight = $scope.ngModel.style.tr.height;
 					$scope.advancedTableGrid.api.resetRowHeights();
-				}else delete _rowHeight;
+				}else {
+					_rowHeight = 0;
+					$scope.advancedTableGrid.api.resetRowHeights();
+				}
 				if($scope.ngModel.style && $scope.ngModel.style.th){
 					if($scope.ngModel.style.th.enabled) $scope.advancedTableGrid.api.setHeaderHeight($scope.ngModel.style.th.height || 32);
 					else $scope.advancedTableGrid.api.setHeaderHeight(0);
@@ -599,10 +602,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        agColumnHeader: CustomHeader
 			    },
 				onColumnResized: columnResized,
-				getRowHeight: function(params){
-					if(_rowHeight > 0) return parseInt(_rowHeight);
-					else return 28;
-				},
+				getRowHeight: getRowHeight,
 				getRowStyle: function(params) {
 					// TODO : make this a CSS rule with a custom class
 					if($scope.ngModel.settings.alternateRows && $scope.ngModel.settings.alternateRows.enabled){
@@ -618,6 +618,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		if($scope.ngModel.settings.norows && $scope.ngModel.settings.norows.message) $scope.advancedTableGrid.localeText.noRowsToShow = $scope.ngModel.settings.norows.message;
+		
 		function getRowHeight(params) {
 			if(_rowHeight > 0) return _rowHeight;
 			else return 28;
