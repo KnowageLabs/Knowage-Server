@@ -826,6 +826,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.hideWidgetSpinner();
 
 					$scope.map.render();
+					// Seams to fix invisible layer problem before the first map interaction
+					$scope.map.updateSize();
 			},function(error){
 				console.log("Error loading dataset with id [ "+layerDef.dsId+"] ");
 				sbiModule_messaging.showInfoMessage($scope.translate.load('sbi.cockpit.map.datasetLoadingError').replace("{0}",layerDef.dsId), 'Title', 3000);
