@@ -551,6 +551,7 @@ function cockpitChartWidgetControllerFunction(
 						  }else if(event=='openFilters'){
 							  $scope.somethingChanged = true;
 						  }else if(event=='save'){
+							  $scope.somethingChanged = true;
 							  if(checkChartSettings()==undefined){
 								  return
 							  }
