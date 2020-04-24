@@ -371,8 +371,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
 	.then(function(response){
 		$scope.pythonEnvironments = $scope.buildEnvironments(response.data);
-	}, function(error){
-		$scope.selectedDataSet.pythonEnvironment = {"label": "", "value": ""};
+	});
+
+	// R ENVIRONMENTS CONFIG
+	sbiModule_restServices.promiseGet('2.0/configs/category', 'R_CONFIGURATION')
+	.then(function(response){
+		$scope.rEnvironments = $scope.buildEnvironments(response.data);
 	});
 
 	$scope.buildEnvironments = function (data) {
@@ -384,6 +388,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 		return toReturn;
 	}
+
 	/**
 	 * Static (fixed) values for three comboboxes that appear when the CSV file is uploaded.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -2176,14 +2181,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		$scope.parameterItems = parameterItemsTemp;
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python/r") {
 			// Cast the REST NGSI (transform from the String)
 			if($scope.selectedDataSet.restNGSI){
 				$scope.selectedDataSet.restNGSI = JSON.parse($scope.selectedDataSet.restNGSI);
 			}
 		}
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python/r" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
 
 
 
@@ -2540,7 +2545,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.pivotRowName ? $scope.selectedDataSet.pivotRowName="" : null;
 		}
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python/r" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
 
 			//----------------------
 			// REQUEST HEADERS
@@ -3060,6 +3065,39 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	 }
 
+	 $scope.openREnvironmentDialog = function () {
+			sbiModule_restServices.promiseGet('2.0/backendservices/widgets/RWidget/libraries', JSON.parse($scope.selectedDataSet.pythonEnvironment).label)
+			.then(function(response){
+				$scope.libraries = [];
+				var librariesArray = JSON.parse((response.data.result));
+				for (idx in librariesArray) {
+					lib = librariesArray[idx];
+					name = lib[0];
+					version = lib[1];
+					$scope.libraries.push({"name": name, "version": version})
+				}
+	            $scope.forceRefresh = false;
+				   $mdDialog
+				   .show({
+				    scope : $scope,
+				    preserveScope : true,
+				    parent : angular.element(document.body),
+				    controllerAs : 'openPythonEnvironmentDialogCtrl',
+				    templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/pythonEnvironment.html',
+				    clickOutsideToClose : false,
+				    hasBackdrop : false
+				   });
+			}, function(error){
+			});
+
+		   $timeout(function(){
+			   if(angular.element(document).find('md-dialog').length > 0){
+					 $scope.forceRefresh = true;
+				 }
+		   },1000)
+
+	 }
+
 	 $scope.openPythonEnvironmentDialog = function () {
 		 $http({
 		        url: "https://" + JSON.parse($scope.selectedDataSet.pythonEnvironment).value + "/dataset/libraries",
@@ -3394,7 +3432,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		$scope.disableBack = true;
 
-		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="python/r" || $scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr") {
 
 			//----------------------
 			// REQUEST HEADERS
@@ -3424,7 +3462,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			var restJsonPathAttributesTemp = {};
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
 
-			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python") {
+			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python/r") {
 				//restAddress is set ONLY for debugging purposes
 				//the real python address used by the PythonDataProxy is retrieved BE side
     			$scope.selectedDataSet.restAddress = "https://" + JSON.parse($scope.selectedDataSet.pythonEnvironment).value + '/dataset';
@@ -3975,7 +4013,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         		}
     		}
     	}
-    	else if (dsType.toLowerCase()=="rest" || dsType.toLowerCase()=="python" || dsType.toLowerCase()=="solr") {
+    	else if (dsType.toLowerCase()=="rest" || dsType.toLowerCase()=="python/r" || dsType.toLowerCase()=="solr") {
     		$scope.restRequestHeaders = [];
     		$scope.restRequestAdditionalParameters = [];
     		$scope.restJsonPathAttributes = [];
@@ -3987,6 +4025,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     		}else{
     			$scope.selectedDataSet.restRequestBody="";
     		}
+    		$scope.selectedDataSet.pythonDatasetType = "python";
     	}
 
     	$scope.parameterItems = [];

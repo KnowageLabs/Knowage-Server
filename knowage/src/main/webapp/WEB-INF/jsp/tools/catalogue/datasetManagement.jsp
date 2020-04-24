@@ -91,6 +91,7 @@ div.lower i  {
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/python/python.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/r/r.js")%>"></script>
 		
 		<!-- CRON for Dataset Scheduling -->
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/prettyCron/prettycron.js")%>"></script>
@@ -1118,18 +1119,27 @@ div.lower i  {
 						</md-content>
 								
 						<!-- PYTHON DATASET -->
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Python'">
-							
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Python/R'">
+						
 							<md-card layout-padding style="margin-top:0">
-								
 								<md-input-container class="md-block" style="width:100%"> 
+								
+									<md-radio-group ng-model="selectedDataSet.pythonDatasetType" layout="row">
+								        <md-radio-button value="python">Python</md-radio-button>
+								        <md-radio-button value="r">R</md-radio-button>
+								    </md-radio-group>
+								    
+								</md-input-container>
+								  
+								  <md-input-container class="md-block" style="width:100%">
 								       	
-								       	<label>Python environment</label>
+								       	<label>Environment</label>
 								       	
-								       	<md-select 	placeholder ="Choose python environment"
-								       	 			ng-required = "selectedDataSet.dsTypeCd=='Python'" ng-change="setFormDirty()"
+								       	<md-select 	placeholder ="Choose environment"
+								       	 			ng-required = "selectedDataSet.dsTypeCd=='Python/R'" ng-change="setFormDirty()"
 								        			ng-model="selectedDataSet.pythonEnvironment">   
-								        	<md-option ng-repeat="e in pythonEnvironments" value="{{e}}">{{e.label}}</md-option>
+								        	<md-option ng-if="selectedDataSet.pythonDatasetType=='python'" ng-repeat="e in pythonEnvironments" value="{{e}}">{{e.label}}</md-option>
+								        	<md-option ng-if="selectedDataSet.pythonDatasetType=='r'" ng-repeat="e in rEnvironments" value="{{e}}">{{e.label}}</md-option>
 								       	</md-select>  
 								       	
 								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Ckan' && !selectedDataSet.ckanFileType">
@@ -1138,13 +1148,14 @@ div.lower i  {
 		       						 	
 						        	</md-input-container>
 						        	
-						        	<md-button ng-click="openPythonEnvironmentDialog()" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.ds.python.checkEnvironment")}}</md-button>
+						        	<md-button ng-if="selectedDataSet.pythonDatasetType=='python'" ng-click="openPythonEnvironmentDialog()" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.ds.python.checkEnvironment")}}</md-button>
+									<md-button ng-if="selectedDataSet.pythonDatasetType=='r'" ng-click="openREnvironmentDialog()" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.ds.python.checkEnvironment")}}</md-button>
 								
 								<div flex=100>
 									<md-input-container class="md-block">
 								    	<label>Dataframe variable name</label>
-										<input ng-model="selectedDataSet.dataframeName" ng-required ="selectedDataSet.dsTypeCd=='Python'" ng-change="setFormDirty()">
-										<div ng-messages="datasetForm.lbl.$error" ng-show="(selectedDataSet.dsTypeCd=='Python') && !selectedDataSet.dataframeName">
+										<input ng-model="selectedDataSet.dataframeName" ng-required ="selectedDataSet.dsTypeCd=='Python/R'" ng-change="setFormDirty()">
+										<div ng-messages="datasetForm.lbl.$error" ng-show="(selectedDataSet.dsTypeCd=='Python/R') && !selectedDataSet.dataframeName">
 			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 		       						 	</div>
 									</md-input-container>
@@ -1153,12 +1164,12 @@ div.lower i  {
 								<label>Script</label>
 							   	<md-input-container class="md-block">
 							    	
-									<textarea 	ng-required="selectedDataSet.dsTypeCd=='Python'" ng-model="selectedDataSet.pythonScript" ui-codemirror="{ onLoad : codemirrorLoaded }" 
+									<textarea 	ng-required="selectedDataSet.dsTypeCd=='Python/R'" ng-model="selectedDataSet.pythonScript" ui-codemirror="{ onLoad : codemirrorLoaded }" 
 												ui-codemirror-opts="editorOptionsPython" rows="8" md-select-on-focus
 											 	ng-change="setFormDirty()">
 								 	</textarea>
 									
-									<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Python' && !selectedDataSet.pythonScript">
+									<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Python/R' && !selectedDataSet.pythonScript">
        						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
    						 			</div> 
 									

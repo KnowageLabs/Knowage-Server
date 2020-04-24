@@ -65,8 +65,9 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String userId = (String) userProfile.getUserUniqueIdentifier();
 		ContentServiceImplSupplier supplier = new ContentServiceImplSupplier();
-		String script = null, documentId = null, outputVariable = null, dsLabel = null, parameters = null, drivers = null, aggregations = null,
-				selections = null, widgetId = null, envLabel = null;
+		HashMap drivers;
+		String script = null, documentId = null, outputVariable = null, dsLabel = null, parameters = null, aggregations = null, selections = null,
+				widgetId = null, envLabel = null, driversAsString = null;
 		try {
 			envLabel = requestBody.get("r_environment");
 			dsLabel = requestBody.get("dataset");
@@ -74,22 +75,23 @@ public class RWidgetProxy extends AbstractDataSetResource {
 			widgetId = requestBody.get("widget_id");
 			outputVariable = requestBody.get("output_variable");
 			parameters = requestBody.get("parameters");
-			drivers = requestBody.get("drivers");
+			driversAsString = requestBody.get("drivers");
+			drivers = RUtils.createDriversMap(driversAsString);
 			aggregations = requestBody.get("aggregations");
 			selections = requestBody.get("selections");
-			script = RUtils.getRCodeFromTemplate(supplier.readTemplate(userId, documentId, null).getContent(), widgetId);
+			script = RUtils.getRCodeFromTemplate(supplier.readTemplate(userId, documentId, drivers).getContent(), widgetId);
 		} catch (Exception e) {
 			logger.error("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]");
 			throw new SpagoBIRuntimeException("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]", e);
 		}
 		String rDataframe = null;
 		if (dsLabel != null) {
-			String knowageDs = getDataStore(dsLabel, parameters, null, selections, null, -1, aggregations, null, -1, -1, false, null, null);
+			String knowageDs = getDataStore(dsLabel, parameters, drivers, selections, null, -1, aggregations, null, -1, -1, false, null, null);
 			rDataframe = RUtils.DataSet2DataFrame(knowageDs);
 		}
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
-			String body = RUtils.createREngineRequestBody(rDataframe, dsLabel, script, outputVariable);
+			String body = RUtils.createREngineRequestBody(rDataframe, dsLabel, script, driversAsString, outputVariable);
 			String rAddress = RUtils.getRAddress(envLabel);
 			rEngineResponse = RestUtilities.makeRequest(methodPost, rAddress + outputType, headers, body);
 		} catch (Exception e) {
@@ -119,15 +121,17 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		logger.debug("IN");
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String userId = (String) userProfile.getUserUniqueIdentifier();
-		String script = null, documentId = null, outputVariable = null, dsLabel = null, parameters = null, drivers = null, aggregations = null,
-				selections = null, envLabel = null;
+		HashMap drivers;
+		String script = null, documentId = null, outputVariable = null, dsLabel = null, parameters = null, aggregations = null, selections = null,
+				envLabel = null, driversAsString = null;
 		try {
 			envLabel = requestBody.get("r_environment");
 			dsLabel = requestBody.get("dataset");
 			documentId = requestBody.get("document_id");
 			outputVariable = requestBody.get("output_variable");
 			parameters = requestBody.get("parameters");
-			drivers = requestBody.get("drivers");
+			driversAsString = requestBody.get("drivers");
+			drivers = RUtils.createDriversMap(driversAsString);
 			aggregations = requestBody.get("aggregations");
 			selections = requestBody.get("selections");
 			script = requestBody.get("script");
@@ -137,12 +141,12 @@ public class RWidgetProxy extends AbstractDataSetResource {
 		}
 		String rDataframe = null;
 		if (dsLabel != null) {
-			String knowageDs = getDataStore(dsLabel, parameters, null, selections, null, -1, aggregations, null, -1, -1, false, null, null);
+			String knowageDs = getDataStore(dsLabel, parameters, drivers, selections, null, -1, aggregations, null, -1, -1, false, null, null);
 			rDataframe = RUtils.DataSet2DataFrame(knowageDs);
 		}
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
-			String body = RUtils.createREngineRequestBody(rDataframe, dsLabel, script, outputVariable);
+			String body = RUtils.createREngineRequestBody(rDataframe, dsLabel, script, driversAsString, outputVariable);
 			String rAddress = RUtils.getRAddress(envLabel);
 			rEngineResponse = RestUtilities.makeRequest(methodPost, rAddress + outputType, headers, body);
 		} catch (Exception e) {

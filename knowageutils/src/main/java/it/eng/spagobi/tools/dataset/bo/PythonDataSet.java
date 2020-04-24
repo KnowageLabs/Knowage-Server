@@ -119,24 +119,27 @@ public class PythonDataSet extends ConfigurableDataSet {
 	private void initDataProxy(JSONObject jsonConf) {
 		String restAddress;
 		Map<String, String> requestHeaders;
+		String pythonDatasetType = getProp(PythonDataSetConstants.PYTHON_DATASET_TYPE, jsonConf, true);
 		try {
 			requestHeaders = getRequestHeadersPropMap(PythonDataSetConstants.REST_REQUEST_HEADERS, jsonConf);
 			JSONObject pythonEnv = new JSONObject(getProp(PythonDataSetConstants.PYTHON_ENVIRONMENT, jsonConf, false));
 			String label = pythonEnv.get("label").toString();
 			String pythonAddress = SingletonConfig.getInstance().getConfigValue(label);
-			restAddress = "https://" + pythonAddress + "/dataset";
+			if (pythonDatasetType != null && pythonDatasetType.equals("r"))
+				restAddress = "http://" + pythonAddress + "/dataset"; // R engine does not support https
+			else
+				restAddress = "https://" + pythonAddress + "/dataset";
+//			restAddress = "https://" + pythonAddress + "/dataset";
 		} catch (Exception e) {
 			throw new ConfigurationException("Problems in configuration of data proxy", e);
 		}
 		String pythonScript = getProp(PythonDataSetConstants.PYTHON_SCRIPT, jsonConf, true);
+		String parameters = getProp(PythonDataSetConstants.PYTHON_SCRIPT_PARAMETERS, jsonConf, true);
 		String dataframeName = getProp(PythonDataSetConstants.PYTHON_DATAFRAME_NAME, jsonConf, true);
-
 		// Pagination parameters
 		String offset = getProp(PythonDataSetConstants.REST_OFFSET, jsonConf, true);
 		String fetchSize = getProp(PythonDataSetConstants.REST_FETCH_SIZE, jsonConf, true);
 		String maxResults = getProp(PythonDataSetConstants.REST_MAX_RESULTS, jsonConf, true);
-
-		String parameters = getProp(PythonDataSetConstants.PYTHON_SCRIPT_PARAMETERS, jsonConf, true);
 
 		setDataProxy(new PythonDataProxy(restAddress, pythonScript, dataframeName, parameters, requestHeaders, offset, fetchSize, maxResults));
 	}
