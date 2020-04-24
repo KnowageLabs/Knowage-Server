@@ -20,6 +20,7 @@
 package it.eng.spagobi.tools.dataset.strategy;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
@@ -49,6 +51,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.solr.ExtendedSolrQuery;
+import it.eng.spagobi.tools.dataset.solr.SolrDataStore;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 class SolrEvaluationStrategy extends AbstractSolrStrategy {
@@ -74,6 +77,8 @@ class SolrEvaluationStrategy extends AbstractSolrStrategy {
 		solrDataSet.setSolrQuery(solrQuery, getFacetsWithAggregation(groups));
 		dataSet.loadData(offset, fetchSize, maxRowCount);
 		IDataStore dataStore = dataSet.getDataStore();
+
+		dataStore = checkIfItHasLikeID(dataStore, projections); // Coherence control since LikeSelection uses to add a new "ID" field
 		dataStore.setCacheDate(getDate());
 		return dataStore;
 	}
@@ -137,5 +142,49 @@ class SolrEvaluationStrategy extends AbstractSolrStrategy {
 			}
 		}
 		return facets;
+	}
+
+	private IDataStore checkIfItHasLikeID(IDataStore pagedDataStore, List<AbstractSelectionField> projections) {
+
+		SolrDataStore originalDTS = (SolrDataStore) pagedDataStore;
+		SolrDataStore datastoresToAdd = new SolrDataStore(originalDTS.getFacets());
+		IMetaData pagedMetaData = pagedDataStore.getMetaData();
+		Integer idIndex = null;
+		ArrayList<FieldMetadata> metas = (ArrayList<FieldMetadata>) pagedMetaData.getFieldsMeta();
+		boolean hasIdOnMeta = false;
+		for (int i = 0; i < metas.size(); i++) {
+
+			if (metas.get(i).getName().equalsIgnoreCase("id")) {
+				idIndex = new Integer(i);
+				hasIdOnMeta = true;
+			}
+		}
+
+		boolean hasId = false;
+
+		for (AbstractSelectionField abstractSelectionField : projections) {
+			if (abstractSelectionField.getName().equalsIgnoreCase("ID")) {
+				hasId = true;
+			}
+
+		}
+		if (!hasId && hasIdOnMeta) {
+
+			pagedMetaData.deleteFieldMetaDataAt(idIndex);
+
+			datastoresToAdd.setMetaData(pagedMetaData);
+
+			for (int projectionIndex = 0; projectionIndex < pagedDataStore.getRecordsCount(); projectionIndex++) {
+				Record newRecord = new Record();
+				newRecord = (Record) pagedDataStore.getRecordAt(projectionIndex);
+				newRecord.removeFieldAt(idIndex);
+
+				datastoresToAdd.appendRecord(newRecord);
+			}
+
+		} else {
+			datastoresToAdd = originalDTS;
+		}
+		return datastoresToAdd;
 	}
 }

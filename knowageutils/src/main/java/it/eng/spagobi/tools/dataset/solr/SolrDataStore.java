@@ -19,33 +19,39 @@
 
 package it.eng.spagobi.tools.dataset.solr;
 
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import org.apache.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+
 public class SolrDataStore extends DataStore {
 
-    private static final Logger logger = Logger.getLogger(SolrDataStore.class);
-    
-    private Map<String, IDataStore> facets = new HashMap<>();
+	private static final Logger logger = Logger.getLogger(SolrDataStore.class);
 
-    public SolrDataStore(IDataStore documentDataStore) {
-        records = documentDataStore.getRecords();
-        metaData = documentDataStore.getMetaData();
-    }
+	private Map<String, IDataStore> facets = new HashMap<>();
 
-    public  Map<String, IDataStore> getFacets() {
-        return facets;
-    }
+	public SolrDataStore(IDataStore documentDataStore) {
+		records = documentDataStore.getRecords();
+		metaData = documentDataStore.getMetaData();
+	}
 
-    public void setFacets(Map<String, IDataStore> facets) {
-        this.facets = facets;
-    }
+	public SolrDataStore(Map<String, IDataStore> facets) {
+		super();
+		this.facets = facets;
+	}
 
-    public void addFacetDataStore(String name, IDataStore dataStore) {
-        facets.put(name, dataStore);
-    }
+	public Map<String, IDataStore> getFacets() {
+		return facets;
+	}
+
+	public void setFacets(Map<String, IDataStore> facets) {
+		this.facets = facets;
+	}
+
+	public void addFacetDataStore(String name, IDataStore dataStore) {
+		facets.put(name, dataStore);
+	}
 }

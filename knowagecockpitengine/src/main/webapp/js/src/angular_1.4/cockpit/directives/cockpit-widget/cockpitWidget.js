@@ -467,7 +467,14 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		    }
 			break;
 		case "UPDATE_FROM_SHEET_CHANGE" :
-			 $scope.refreshWidget(null,$scope.ngModel.type=="document" ? "parameter_change" : null);
+			 var nature = null;
+			 if($scope.ngModel.type=="document") {
+				 nature = "parameter_change";
+			 }
+			 if($scope.ngModel.type=="discovery") {
+				 nature = "init";
+			 }
+			 $scope.refreshWidget(null,nature);
             break;
 		case "INIT" :
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);

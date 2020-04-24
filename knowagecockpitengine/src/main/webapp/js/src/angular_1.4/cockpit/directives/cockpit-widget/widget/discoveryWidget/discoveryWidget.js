@@ -93,6 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.ngModel.search = {};
 		}
 
+		function setDefaultTextSearch() {
 		if($scope.ngModel.settings && $scope.ngModel.settings.defaultTextSearch){
 			if($scope.ngModel.settings.defaultTextSearchType == 'static') $scope.ngModel.search.text = $scope.ngModel.settings.defaultTextSearchValue;
 			if($scope.ngModel.settings.defaultTextSearchType == 'driver') $scope.ngModel.search.text = cockpitModule_analyticalDrivers[$scope.ngModel.settings.defaultTextSearchValue];
@@ -105,6 +106,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		}
+		}
+		
+		setDefaultTextSearch();
+		
 		$scope.facets = [];
 
 		$scope.gridOptions = {
@@ -208,6 +213,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.reinit = function(){
+			setDefaultTextSearch();
 			$scope.refreshWidget(null, 'init');
 		}
 

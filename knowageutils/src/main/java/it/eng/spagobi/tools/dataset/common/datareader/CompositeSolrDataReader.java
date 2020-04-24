@@ -18,33 +18,36 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.solr.SolrDataStore;
-import org.apache.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.solr.SolrDataStore;
+
 public class CompositeSolrDataReader extends SolrDataReader {
 
-    static private Logger logger = Logger.getLogger(CompositeSolrDataReader.class);
+	static private Logger logger = Logger.getLogger(CompositeSolrDataReader.class);
 
-    private List<FacetSolrDataReader> facetSolrDataReaders = new ArrayList<>();
+	private List<FacetSolrDataReader> facetSolrDataReaders = new ArrayList<>();
 
-    public CompositeSolrDataReader(SolrDataReader dataReader) {
-        super(dataReader.getJsonPathItems(), dataReader.getJsonPathAttributes());
-    }
+	public CompositeSolrDataReader(SolrDataReader dataReader) {
+		super(dataReader.getJsonPathItems(), dataReader.getJsonPathAttributes());
+	}
 
-    @Override
-    public IDataStore read(Object data) {
-        SolrDataStore result = new SolrDataStore(super.read(data));
-        for (FacetSolrDataReader dataReader : facetSolrDataReaders) {
-            result.addFacetDataStore(dataReader.getFacetField(), dataReader.read(data));
-        }
-        return result;
-    }
+	@Override
+	public IDataStore read(Object data) {
+		SolrDataStore result = new SolrDataStore(super.read(data));
+		if (result.getRecordsCount() > 0) {
+			for (FacetSolrDataReader dataReader : facetSolrDataReaders) {
+				result.addFacetDataStore(dataReader.getFacetField(), dataReader.read(data));
+			}
+		}
+		return result;
+	}
 
-    public void addFacetSolrDataReader(FacetSolrDataReader dataReader) {
-        facetSolrDataReaders.add(dataReader);
-    }
+	public void addFacetSolrDataReader(FacetSolrDataReader dataReader) {
+		facetSolrDataReaders.add(dataReader);
+	}
 }
