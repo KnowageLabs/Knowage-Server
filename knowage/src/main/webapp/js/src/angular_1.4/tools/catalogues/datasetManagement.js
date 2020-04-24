@@ -371,16 +371,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
 	.then(function(response){
 		$scope.pythonEnvironments = $scope.buildEnvironments(response.data);
-	}, function(error){
-		$scope.selectedDataSet.pythonEnvironment = {"label": "", "value": ""};
 	});
 
 	// R ENVIRONMENTS CONFIG
 	sbiModule_restServices.promiseGet('2.0/configs/category', 'R_CONFIGURATION')
 	.then(function(response){
 		$scope.rEnvironments = $scope.buildEnvironments(response.data);
-	}, function(error){
-		$scope.selectedDataSet.pythonEnvironment = {"label": "", "value": ""};
 	});
 
 	$scope.buildEnvironments = function (data) {
