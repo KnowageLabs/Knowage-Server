@@ -128,7 +128,7 @@ public class DataSetConstants {
 	public static final String IS_PERSISTED_HDFS = "isPersistedHDFS";
 	public static final String IS_SCHEDULED = "isScheduled";
 	public static final String FLAT_TABLE_NAME = "flatTableName";
-	public static final String DATA_SOURCE_FLAT = "dataSource";
+	public static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 	public static final String IS_PUBLIC = "isPublic";
 	public static final String PERSIST_TABLE_NAME = "persistTableName";
 	public static final String FEDERATED_DATASET_NAMES = "federatedDatasets";
