@@ -793,7 +793,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			}).showToast();
 	}
 
-	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic){
+	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic,directInteraction){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
@@ -811,350 +811,352 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		if($scope.ngModel.cross != undefined  && $scope.ngModel.cross.cross != undefined) crossSettings = angular.copy($scope.ngModel.cross.cross);
 		else if($scope.ngModel.cross != undefined) crossSettings = angular.copy($scope.ngModel.cross);
 
-
-		if (previewSettings && previewSettings.enable) {
-			if((previewSettings.previewType != 'singleColumn' || (previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName)) &&
-				(previewSettings.previewType != 'icon' || (previewSettings.previewType == 'icon' && columnName == ""))){
-				$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
-
-				var previewDataset = cockpitModule_datasetServices.getDatasetById(previewSettings.dataset);
-
-				var config = {
-					datasetLabel: previewDataset.label
-				};
-
-				if (previewDataset.parameters && previewDataset.parameters.length > 0)
-					config.parameters = $scope.checkPreviewParameters(previewSettings,previewDataset, columnName, modalColumn, row,columnValue);
-
-				if(!previewSettings.background){
-					//showing exporters
-					config.options = {
-							exports: ['CSV', 'XLSX']
+		if(!directInteraction || directInteraction == 'cross'){
+			if (previewSettings && previewSettings.enable) {
+				if((previewSettings.previewType != 'singleColumn' || (previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName)) &&
+					(previewSettings.previewType != 'icon' || (previewSettings.previewType == 'icon' && columnName == ""))){
+					$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
+	
+					var previewDataset = cockpitModule_datasetServices.getDatasetById(previewSettings.dataset);
+	
+					var config = {
+						datasetLabel: previewDataset.label
 					};
-
-					$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
-
-						$mdDialog.show({
-							parent: angular.element(document.body),
-							templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
-							controller: function(scope) {
-								scope.previewUrl = $scope.iframeSrcUrl;
-
-								scope.closePreview = function() {
-									$mdDialog.hide();
-								}
-							},
-							clickOutsideToClose: true
-						}).then(function(response){}, function(response){});
-				}else{
-					var id = previewDataset.id;
-					var data = {};
-					if (config.parameters != null && typeof config.parameters != 'undefined') {
-						data.parameters = config.parameters;
-					};
-
-					$http.post(sbiModule_config.host + sbiModule_config.externalBasePath + PREVIEWBACKGROUND + id.dsId + '/csv', data)
-					.then(
-						function(response){
-							popupMessage(response)
-						},function(error){
-							popupMessage(error)
-						});
-				}
-				return;
-			}
-
-		}else if(crossSettings && crossSettings.enable){
-
-			// enter cross navigation mode
-			var doCross = false;
-			var nameToCheckForCross = columnName;
-			if(columnName != undefined){
-				// check if selected column has been renamed by an alias, in that
-				// case take the real name
-				for(var colIndex in model.content.columnSelectedOfDataset){
-					var col = model.content.columnSelectedOfDataset[colIndex];
-					if(col.aliasToShow != undefined && col.aliasToShow == columnName){
-						nameToCheckForCross = col.name;
-						break;
-					}
-				}
-			}
-
-			if(crossSettings.crossType == "allRow" || crossSettings.crossType == "icon"){
-				// case all columns are enabled for cross, get value for cross
-				// column (or alias if present)
-				var crossColumnOrAlias = crossSettings.column;
-
-				for(var colIndex in model.content.columnSelectedOfDataset){
-					var col = model.content.columnSelectedOfDataset[colIndex];
-					if(col.aliasToShow != undefined && col.name == crossSettings.column){
-						crossColumnOrAlias = col.aliasToShow;
-						break;
-					}
-				}
-				if(crossSettings.crossType == "icon" && columnValue && crossSettings.column) doCross = false;
-				else doCross = true;
-				// get value to pass to cross navigation
-				if(row){
-					if(row[crossColumnOrAlias]){
-						columnValue = row[crossColumnOrAlias];
+	
+					if (previewDataset.parameters && previewDataset.parameters.length > 0)
+						config.parameters = $scope.checkPreviewParameters(previewSettings,previewDataset, columnName, modalColumn, row,columnValue);
+	
+					if(!previewSettings.background){
+						//showing exporters
+						config.options = {
+								exports: ['CSV', 'XLSX']
+						};
+	
+						$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
+	
+							$mdDialog.show({
+								parent: angular.element(document.body),
+								templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
+								controller: function(scope) {
+									scope.previewUrl = $scope.iframeSrcUrl;
+	
+									scope.closePreview = function() {
+										$mdDialog.hide();
+									}
+								},
+								clickOutsideToClose: true
+							}).then(function(response){}, function(response){});
 					}else{
-						columnValue = [];
-						for(var j in row){
-							columnValue.push(row[j][crossColumnOrAlias]);
+						var id = previewDataset.id;
+						var data = {};
+						if (config.parameters != null && typeof config.parameters != 'undefined') {
+							data.parameters = config.parameters;
+						};
+	
+						$http.post(sbiModule_config.host + sbiModule_config.externalBasePath + PREVIEWBACKGROUND + id.dsId + '/csv', data)
+						.then(
+							function(response){
+								popupMessage(response)
+							},function(error){
+								popupMessage(error)
+							});
+					}
+					return;
+				}
+	
+			}else if(crossSettings && crossSettings.enable){
+	
+				// enter cross navigation mode
+				var doCross = false;
+				var nameToCheckForCross = columnName;
+				if(columnName != undefined){
+					// check if selected column has been renamed by an alias, in that
+					// case take the real name
+					for(var colIndex in model.content.columnSelectedOfDataset){
+						var col = model.content.columnSelectedOfDataset[colIndex];
+						if(col.aliasToShow != undefined && col.aliasToShow == columnName){
+							nameToCheckForCross = col.name;
+							break;
 						}
 					}
 				}
-			}else if(model.type == 'static-pivot-table'){
-				if(Array.isArray(columnName)) doCross = true;
-			}else{
-				// case a specific column is enabled for cross
-				// check if column clicked is the one for cross navigation
-				if(crossSettings.column == undefined || crossSettings.column === nameToCheckForCross){
-					doCross = true;
-				}
-			}
-
-			if(doCross === true){
-				var outputParameter = {};
-				if(crossSettings.outputParameter){
-					outputParameter[crossSettings.outputParameter] = columnValue;
-				}
-
-
-				// parse output parameters if enabled
-				var otherOutputParameters = [];
-				var passedOutputParametersList = crossSettings.outputParametersList;
-
-				// get Aliases for column
-				var columnAliasesMap = {};
-				if(model.content.columnSelectedOfDataset){
-					for(var i = 0; i<model.content.columnSelectedOfDataset.length; i++){
-						var colDataset = model.content.columnSelectedOfDataset[i];
-						if(colDataset.aliasToShow && colDataset.aliasToShow != ""){
-							if(colDataset.alias){
-								columnAliasesMap[colDataset.alias] = colDataset.aliasToShow;
+	
+				if(crossSettings.crossType == "allRow" || crossSettings.crossType == "icon"){
+					// case all columns are enabled for cross, get value for cross
+					// column (or alias if present)
+					var crossColumnOrAlias = crossSettings.column;
+	
+					for(var colIndex in model.content.columnSelectedOfDataset){
+						var col = model.content.columnSelectedOfDataset[colIndex];
+						if(col.aliasToShow != undefined && col.name == crossSettings.column){
+							crossColumnOrAlias = col.aliasToShow;
+							break;
+						}
+					}
+					if(crossSettings.crossType == "icon" && columnValue && crossSettings.column) doCross = false;
+					else doCross = true;
+					// get value to pass to cross navigation
+					if(row){
+						if(row[crossColumnOrAlias]){
+							columnValue = row[crossColumnOrAlias];
+						}else{
+							columnValue = [];
+							for(var j in row){
+								columnValue.push(row[j][crossColumnOrAlias]);
 							}
-						}else if(colDataset.alias) {
-							columnAliasesMap[colDataset.alias] = colDataset.alias;
 						}
 					}
+				}else if(model.type == 'static-pivot-table'){
+					if(Array.isArray(columnName)) doCross = true;
+				}else{
+					// case a specific column is enabled for cross
+					// check if column clicked is the one for cross navigation
+					if(crossSettings.column == undefined || crossSettings.column === nameToCheckForCross){
+						doCross = true;
+					}
 				}
-
-				for(var par in passedOutputParametersList){
-					var content = passedOutputParametersList[par];
-
-					if(content.enabled == true){
-
-						if(content.type == 'static'){
-							var objToAdd = {};
-							objToAdd[par] = content.value;
-							otherOutputParameters.push(objToAdd);
-						}
-						else if(content.type == 'dynamic'){
-							if(content.column){
-								if(model.type!='static-pivot-table'){
-									var valToAdd = '';
-									var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
-									if(row[columnNameToSearch]) valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
-								}else {
-									if(content.column == 'MEASURE_COLUMN_NAME' && modalColumn){
-										var valToAdd = modalColumn;
-									}else{
-										if(Array.isArray(columnName)) var valToAdd = columnValue[columnName.indexOf(content.column)];
-										else var valToAdd = columnValue;
-									}
+	
+				if(doCross === true){
+					var outputParameter = {};
+					if(crossSettings.outputParameter){
+						outputParameter[crossSettings.outputParameter] = columnValue;
+					}
+	
+	
+					// parse output parameters if enabled
+					var otherOutputParameters = [];
+					var passedOutputParametersList = crossSettings.outputParametersList;
+	
+					// get Aliases for column
+					var columnAliasesMap = {};
+					if(model.content.columnSelectedOfDataset){
+						for(var i = 0; i<model.content.columnSelectedOfDataset.length; i++){
+							var colDataset = model.content.columnSelectedOfDataset[i];
+							if(colDataset.aliasToShow && colDataset.aliasToShow != ""){
+								if(colDataset.alias){
+									columnAliasesMap[colDataset.alias] = colDataset.aliasToShow;
 								}
+							}else if(colDataset.alias) {
+								columnAliasesMap[colDataset.alias] = colDataset.alias;
+							}
+						}
+					}
+	
+					for(var par in passedOutputParametersList){
+						var content = passedOutputParametersList[par];
+	
+						if(content.enabled == true){
+	
+							if(content.type == 'static'){
 								var objToAdd = {};
-								objToAdd[par] = valToAdd;
+								objToAdd[par] = content.value;
 								otherOutputParameters.push(objToAdd);
-							}else if(model.type == 'text' || model.type == 'html' || model.type == 'customchart'){
-								var OBJ = {};
-								OBJ[par] = columnValue;
-								otherOutputParameters.push(OBJ);
 							}
-						}
-						else if(content.type == 'selection'){
-							var selectionsObj = cockpitModule_template.getSelections();
-							if(selectionsObj){
-								var found = false;
-								for(var i = 0; i < selectionsObj.length && found == false; i++){
-									if(selectionsObj[i].ds == content.dataset && selectionsObj[i].columnName == content.column){
-										var val = selectionsObj[i].value;
-										var objToAdd = {};
-										objToAdd[par] = val;
-										otherOutputParameters.push(objToAdd);
-										found = true;
+							else if(content.type == 'dynamic'){
+								if(content.column){
+									if(model.type!='static-pivot-table'){
+										var valToAdd = '';
+										var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
+										if(row[columnNameToSearch]) valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
+									}else {
+										if(content.column == 'MEASURE_COLUMN_NAME' && modalColumn){
+											var valToAdd = modalColumn;
+										}else{
+											if(Array.isArray(columnName)) var valToAdd = columnValue[columnName.indexOf(content.column)];
+											else var valToAdd = columnValue;
+										}
+									}
+									var objToAdd = {};
+									objToAdd[par] = valToAdd;
+									otherOutputParameters.push(objToAdd);
+								}else if(model.type == 'text' || model.type == 'html' || model.type == 'customchart'){
+									var OBJ = {};
+									OBJ[par] = columnValue;
+									otherOutputParameters.push(OBJ);
+								}
+							}
+							else if(content.type == 'selection'){
+								var selectionsObj = cockpitModule_template.getSelections();
+								if(selectionsObj){
+									var found = false;
+									for(var i = 0; i < selectionsObj.length && found == false; i++){
+										if(selectionsObj[i].ds == content.dataset && selectionsObj[i].columnName == content.column){
+											var val = selectionsObj[i].value;
+											var objToAdd = {};
+											objToAdd[par] = val;
+											otherOutputParameters.push(objToAdd);
+											found = true;
+										}
 									}
 								}
 							}
 						}
 					}
+	
+					// if destination document is specified don't ask
+					if(crossSettings.crossName != undefined){
+						parent.execExternalCrossNavigation(outputParameter,{},crossSettings.crossName,null,otherOutputParameters);
+					}
+					else{
+						parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
+					}
+					return;
 				}
-
-				// if destination document is specified don't ask
-				if(crossSettings.crossName != undefined){
-					parent.execExternalCrossNavigation(outputParameter,{},crossSettings.crossName,null,otherOutputParameters);
-				}
-				else{
-					parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
-				}
-				return;
 			}
 		}
-
-		if(dataset && columnName){
-
-			if(modalColumn!=undefined && modalColumn!= "" && modalValue!=undefined && modalValue!= "")
-			{
-				columnValue = modalValue;
-				columnName = modalColumn;
-			}
-
-			// check if all associated data
-			var dsLabel = dataset.label;
-			var originalColumnName;
-			if (!Array.isArray(columnName)){
-				//original management with simple value as parameters (not array, not multiselection)
-				originalColumnName = "";
-				if ($scope.ngModel.content.columnSelectedOfDataset){
-			        for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
-			        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow.toUpperCase() === columnName.toUpperCase()){
-			        		originalColumnName = $scope.ngModel.content.columnSelectedOfDataset[i].alias;
-							break;
-			        	}
-			        }
-
-					if(originalColumnName==undefined || originalColumnName==""){
-						for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
-							if($scope.ngModel.content.columnSelectedOfDataset[i].alias && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
-								originalColumnName = columnName;
-								break;
-							}
-						}
-					}
+		if(!directInteraction || directInteraction == 'selection'){
+			if(dataset && columnName){
+	
+				if(modalColumn!=undefined && modalColumn!= "" && modalValue!=undefined && modalValue!= "")
+				{
+					columnValue = modalValue;
+					columnName = modalColumn;
 				}
-
-				if ($scope.ngModel.content.crosstabDefinition){
-					//check on pivot table structure: rows and columns definition
-					if (originalColumnName == undefined || originalColumnName == ""){
-						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.columns.length; i++){
-							if(($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === columnName.toUpperCase()) ||
-									$scope.ngModel.content.crosstabDefinition.columns[i].id.toUpperCase() === columnName.toUpperCase()){
-									originalColumnName = $scope.ngModel.content.crosstabDefinition.columns[i].id;
+	
+				// check if all associated data
+				var dsLabel = dataset.label;
+				var originalColumnName;
+				if (!Array.isArray(columnName)){
+					//original management with simple value as parameters (not array, not multiselection)
+					originalColumnName = "";
+					if ($scope.ngModel.content.columnSelectedOfDataset){
+				        for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
+				        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow.toUpperCase() === columnName.toUpperCase()){
+				        		originalColumnName = $scope.ngModel.content.columnSelectedOfDataset[i].alias;
 								break;
-							}
-						}
-					}
-					if (originalColumnName == undefined || originalColumnName == ""){
-						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.rows.length; i++){
-							if(($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === columnName.toUpperCase()) ||
-									$scope.ngModel.content.crosstabDefinition.rows[i].id.toUpperCase() === columnName.toUpperCase()){
-								originalColumnName = $scope.ngModel.content.crosstabDefinition.rows[i].id;
-								break;
-							}
-						}
-					}
-				}
-
-			  //at last sets the input columnName like the original name
-				if (originalColumnName == undefined || originalColumnName == ""){
-					originalColumnName = columnName;
-				}
-
-			}else{
-				//multiple selection: only from pivot table widget (by measure selection)
-				originalColumnName = [];
-				if ($scope.ngModel.content.crosstabDefinition){
-					//check on pivot table structure: rows and columns definition
-					for (var k=0; k < columnName.length; k++){
-						var singleColumnName = columnName[k];
-						var foundInColumns = false;
-						var foundInRows = false;
-						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.columns.length; i++){
-							if(($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === singleColumnName.toUpperCase()) ||
-									$scope.ngModel.content.crosstabDefinition.columns[i].id.toUpperCase() === singleColumnName.toUpperCase()){
-								originalColumnName.push($scope.ngModel.content.crosstabDefinition.columns[i].id);
-								foundInColumns = true;
-								break;
-							}
-						}
-						if (!foundInColumns){
-							for(var i=0; i<$scope.ngModel.content.crosstabDefinition.rows.length; i++){
-								if(($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === singleColumnName.toUpperCase()) ||
-										$scope.ngModel.content.crosstabDefinition.rows[i].id.toUpperCase() === singleColumnName.toUpperCase()){
-									originalColumnName.push($scope.ngModel.content.crosstabDefinition.rows[i].id);
-									foundInRows = true;
+				        	}
+				        }
+	
+						if(originalColumnName==undefined || originalColumnName==""){
+							for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
+								if($scope.ngModel.content.columnSelectedOfDataset[i].alias && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
+									originalColumnName = columnName;
 									break;
 								}
 							}
 						}
 					}
-
-//					//at last sets the input columnName like the original name
-					if (!foundInColumns && !foundInRows){
-						originalColumnName.push(singleColumnName);
-					}
-				}
-			}
-		    cockpitModule_widgetSelection.addTimestampedSelection(dsLabel, columnName, columnValue, $scope.ngModel.id);
-			var sel = disableAssociativeLogic ? "noAssoc" : cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
-			if(sel!=undefined){
-
-
-				if(!cockpitModule_template.configuration.aliases){
-					cockpitModule_template.configuration.aliases = [];
-				}
-
-				if(!angular.equals("noAssoc",sel)){
-					sel.then(function(response) {
-						if(!skipRefresh){
-							cockpitModule_widgetSelection.refreshAllAssociatedWidget(false,response);
+	
+					if ($scope.ngModel.content.crosstabDefinition){
+						//check on pivot table structure: rows and columns definition
+						if (originalColumnName == undefined || originalColumnName == ""){
+							for(var i=0; i<$scope.ngModel.content.crosstabDefinition.columns.length; i++){
+								if(($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === columnName.toUpperCase()) ||
+										$scope.ngModel.content.crosstabDefinition.columns[i].id.toUpperCase() === columnName.toUpperCase()){
+										originalColumnName = $scope.ngModel.content.crosstabDefinition.columns[i].id;
+									break;
+								}
+							}
 						}
-					}, function(error) {
-						console.log(error)
-					});
+						if (originalColumnName == undefined || originalColumnName == ""){
+							for(var i=0; i<$scope.ngModel.content.crosstabDefinition.rows.length; i++){
+								if(($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === columnName.toUpperCase()) ||
+										$scope.ngModel.content.crosstabDefinition.rows[i].id.toUpperCase() === columnName.toUpperCase()){
+									originalColumnName = $scope.ngModel.content.crosstabDefinition.rows[i].id;
+									break;
+								}
+							}
+						}
+					}
+	
+				  //at last sets the input columnName like the original name
+					if (originalColumnName == undefined || originalColumnName == ""){
+						originalColumnName = columnName;
+					}
+	
 				}else{
-					if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
-						cockpitModule_template.configuration.filters[dsLabel]={};
-					} else{
-						if(Object.keys(cockpitModule_template.configuration.filters).length > 1){ // sort keys
-							var temp = cockpitModule_template.configuration.filters[dsLabel];
-							delete cockpitModule_template.configuration.filters[dsLabel];
-							cockpitModule_template.configuration.filters[dsLabel] = temp;
+					//multiple selection: only from pivot table widget (by measure selection)
+					originalColumnName = [];
+					if ($scope.ngModel.content.crosstabDefinition){
+						//check on pivot table structure: rows and columns definition
+						for (var k=0; k < columnName.length; k++){
+							var singleColumnName = columnName[k];
+							var foundInColumns = false;
+							var foundInRows = false;
+							for(var i=0; i<$scope.ngModel.content.crosstabDefinition.columns.length; i++){
+								if(($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === singleColumnName.toUpperCase()) ||
+										$scope.ngModel.content.crosstabDefinition.columns[i].id.toUpperCase() === singleColumnName.toUpperCase()){
+									originalColumnName.push($scope.ngModel.content.crosstabDefinition.columns[i].id);
+									foundInColumns = true;
+									break;
+								}
+							}
+							if (!foundInColumns){
+								for(var i=0; i<$scope.ngModel.content.crosstabDefinition.rows.length; i++){
+									if(($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === singleColumnName.toUpperCase()) ||
+											$scope.ngModel.content.crosstabDefinition.rows[i].id.toUpperCase() === singleColumnName.toUpperCase()){
+										originalColumnName.push($scope.ngModel.content.crosstabDefinition.rows[i].id);
+										foundInRows = true;
+										break;
+									}
+								}
+							}
+						}
+	
+	//					//at last sets the input columnName like the original name
+						if (!foundInColumns && !foundInRows){
+							originalColumnName.push(singleColumnName);
 						}
 					}
-					if (Array.isArray(originalColumnName)){
-						for (var o=0; o < originalColumnName.length; o++){
-							var singleOriginalColumnValue = originalColumnName[o];
-							if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(singleOriginalColumnValue)){ // sort keys
-								delete cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue];
+				}
+			    cockpitModule_widgetSelection.addTimestampedSelection(dsLabel, columnName, columnValue, $scope.ngModel.id);
+				var sel = disableAssociativeLogic ? "noAssoc" : cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
+				if(sel!=undefined){
+	
+	
+					if(!cockpitModule_template.configuration.aliases){
+						cockpitModule_template.configuration.aliases = [];
+					}
+	
+					if(!angular.equals("noAssoc",sel)){
+						sel.then(function(response) {
+							if(!skipRefresh){
+								cockpitModule_widgetSelection.refreshAllAssociatedWidget(false,response);
 							}
-							cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue]=columnValue[o];
-							cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':singleOriginalColumnValue,'alias':columnName[o]});
-						}
+						}, function(error) {
+							console.log(error)
+						});
 					}else{
-							if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(originalColumnName)){ // sort keys
-								delete cockpitModule_template.configuration.filters[dsLabel][originalColumnName];
+						if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
+							cockpitModule_template.configuration.filters[dsLabel]={};
+						} else{
+							if(Object.keys(cockpitModule_template.configuration.filters).length > 1){ // sort keys
+								var temp = cockpitModule_template.configuration.filters[dsLabel];
+								delete cockpitModule_template.configuration.filters[dsLabel];
+								cockpitModule_template.configuration.filters[dsLabel] = temp;
 							}
-							// 02/02/17 - davverna
-							// if columnvalue is an array, usually from a bulk selection, I use a copy to avoid the direct object binding.
-							// With the double click there is not the same issue because the binding is on a primitive value (string).
-							if(Object.prototype.toString.call( columnValue ) === '[object Array]'){
-								cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=[];
-								angular.copy(columnValue,cockpitModule_template.configuration.filters[dsLabel][originalColumnName]);
-							}else{
-								cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=columnValue;
+						}
+						if (Array.isArray(originalColumnName)){
+							for (var o=0; o < originalColumnName.length; o++){
+								var singleOriginalColumnValue = originalColumnName[o];
+								if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(singleOriginalColumnValue)){ // sort keys
+									delete cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue];
+								}
+								cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue]=columnValue[o];
+								cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':singleOriginalColumnValue,'alias':columnName[o]});
 							}
-							cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
+						}else{
+								if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(originalColumnName)){ // sort keys
+									delete cockpitModule_template.configuration.filters[dsLabel][originalColumnName];
+								}
+								// 02/02/17 - davverna
+								// if columnvalue is an array, usually from a bulk selection, I use a copy to avoid the direct object binding.
+								// With the double click there is not the same issue because the binding is on a primitive value (string).
+								if(Object.prototype.toString.call( columnValue ) === '[object Array]'){
+									cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=[];
+									angular.copy(columnValue,cockpitModule_template.configuration.filters[dsLabel][originalColumnName]);
+								}else{
+									cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=columnValue;
+								}
+								cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
+						}
+						cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
+	
+						if(!skipRefresh){
+							cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
+						}
+	
 					}
-					cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
-
-					if(!skipRefresh){
-						cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
-					}
-
 				}
 			}
 		}

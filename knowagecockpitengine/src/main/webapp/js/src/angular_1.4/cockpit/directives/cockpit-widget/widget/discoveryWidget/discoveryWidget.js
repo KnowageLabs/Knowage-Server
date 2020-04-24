@@ -448,7 +448,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						|| ($scope.template.configuration.aggregations &&  $scope.template.configuration.aggregations.length > 0 && $scope.template.configuration.aggregations[0].selection && $scope.template.configuration.aggregations[0].selection[$scope.ngModel.dataset.label+'.'+group] == item.column_1)){
 					$scope.deleteFilterSelection(group, item.column_1);
 				}else{
-					$scope.doSelection(group, item.column_1, null, null, item, null, undefined, !$scope.ngModel.settings.facets.selection);
+					$scope.doSelection(group, item.column_1, null, null, item, null, undefined, !$scope.ngModel.settings.facets.selection,'selection');
 				}
 			}else{
 				if(!$scope.ngModel.search.facets) $scope.ngModel.search.facets = {};
