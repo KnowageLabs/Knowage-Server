@@ -190,7 +190,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					}
 				}
 			}
-			dsId = dataset.id.dsId;
+			if(dataset) dsId = dataset.id.dsId;
+			else dsId = ngModel.dataset.dsId[0];
 
 			//if it's a realtime dataset don't use backend filter on charts
 			if (dataset && dataset.isRealtime && ngModel.content && ngModel.content.filters) {
@@ -200,7 +201,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 //				return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy);
 				return cockpitModule_datasetServices.loadDatasetRecordsById(dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy, nature);
 			}
-			return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues, nature);
+			return cockpitModule_datasetServices.loadDatasetRecordsById(dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues, nature);
 		}
 		return null;
 	}

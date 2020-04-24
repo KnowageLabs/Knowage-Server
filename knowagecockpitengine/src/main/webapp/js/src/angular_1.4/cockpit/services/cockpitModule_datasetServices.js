@@ -348,7 +348,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(widget.dataset && widget.dataset.dsId){
 					var actualDs=ds.getDatasetById(widget.dataset.dsId);
 					if(actualDs!=undefined){
-
+						if(Array.isArray(actualDs)) actualDs = actualDs[0];
 						var selectedColumnsDs = widget.content.columnSelectedOfDataset;
 						if(selectedColumnsDs !== undefined){
 							selectedColumnsDs = (selectedColumnsDs instanceof Array) ? widget.content.columnSelectedOfDataset : widget.content.columnSelectedOfDataset[widget.dataset.dsId];
@@ -388,7 +388,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	//return a COPY of dataset with specific id or null
 	this.getDatasetById=function(dsId){
-		return angular.copy(ds.datasetMapById[dsId]);
+		if(Array.isArray(dsId)){
+			var tempDatasets = [];
+			for(var k in dsId){
+				tempDatasets.push(ds.datasetMapById[dsId[k]]);
+			}
+			return tempDatasets;
+		}else return angular.copy(ds.datasetMapById[dsId]);
 	}
 
 	this.setDatasetById=function(dsIds){
@@ -785,7 +791,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			bodyString = bodyString + ",summaryRow:" + JSON.stringify(summaryRow);
 		}
 
-		if(dataset.useCache==false){
+		if(!dataset || (dataset && dataset.useCache==false)){
 			params+="&nearRealtime=true";
 		}
 
@@ -1566,8 +1572,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				var columnsToshowIndex = [];
 				var localModel = model;
 				var datasetId = dataset.id.dsId;
-				model.dataset = {}
-				model.dataset.dsId = datasetId;
+				//model.dataset = {}
+				//model.dataset.dsId = datasetId;
 
 				var regAggFunctions = 'AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT'
 

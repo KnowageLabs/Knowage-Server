@@ -187,11 +187,13 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 			    		  if(dsIdArray != undefined){
 			    			  // clean datasets
 			    			  $scope.localModel.datasets = {};
+			    			  $scope.localModel.dataset = {dsId : []};
 
 			    			  for(var i = 0; i< dsIdArray.length; i++){
 			    				  var dsId = dsIdArray[i];
 			    				  var ds = cockpitModule_datasetServices.getDatasetById(dsId);
 			    				  if(ds){
+			    					  $scope.localModel.dataset.dsId.push(dsId);
 			    					  $scope.localModel.datasets[ds.label] = ds.metadata.fieldsMeta;
 			    					  $scope.localModel.viewDatasetsDett = {};
 			    					  $scope.localModel.viewDatasetsDett[ds.label] = false;
@@ -240,7 +242,7 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 				clickOutsideToClose: false,
 				escapeToClose: false,
 				focusOnOpen: true,
-				preserveScope: true,
+				preserveScope: false,
 				locals: {finishEdit:finishEdit,model:$scope.ngModel},
 
 		};

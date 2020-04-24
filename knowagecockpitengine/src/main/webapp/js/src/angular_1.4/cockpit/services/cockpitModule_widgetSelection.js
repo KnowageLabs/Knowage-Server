@@ -34,7 +34,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	this.getAggregation = function(ngModel,dataset,columnOrdering, reverseOrdering){
 		var measures = [];
 		var categories = [];
-		var ds = dataset.label;
+		var ds = dataset && dataset.label;
 
 //		var columns = ngModel==undefined ? undefined : ngModel.content.columnSelectedOfDataset;
 		var columns = (ngModel==undefined || !ngModel.content.columnSelectedOfDataset) ? undefined :(Array.isArray(ngModel.content.columnSelectedOfDataset) ) ? ngModel.content.columnSelectedOfDataset : ngModel.content.columnSelectedOfDataset[dataset.id.dsId] ;
