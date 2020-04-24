@@ -354,6 +354,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.map.setSize($scope.map.getSize());
 			}
 			$scope.map.renderSync();
+			// Seams to fix invisible layer problem before the first map interaction
+			$scope.map.updateSize();
 		}
 
 		$mdSidenav($scope.optionSidenavId, true).then(
@@ -856,6 +858,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 
 				$scope.map.renderSync();
+				// Seams to fix invisible layer problem before the first map interaction
+				$scope.map.updateSize();
 
 				//add events methods
 				$scope.addViewEvents();
@@ -869,6 +873,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}).then(function() {
 				$scope.addAllLayers();
 				$scope.map.renderSync();
+				// Seams to fix invisible layer problem before the first map interaction
+				$scope.map.updateSize();
 			});
 		}
 
