@@ -87,17 +87,17 @@
 		   							</div>
 		   							<md-input-container flex style="margin-bottom: 4px;">
 							        	<label>{{::translate.load('kn.cockpit.discovery.defaultsearchtype')}}</label>
-								        <md-select ng-model="newModel.settings.defaultTextSearchType" >
+								        <md-select ng-model="newModel.settings.defaultTextSearchType" ng-disabled="!newModel.settings.defaultTextSearch">
 											<md-option ng-repeat="type in defaultTextSearchType" ng-value="type.value">{{type.label}}</md-option>
 										</md-select>
 							      	</md-input-container>
 							      	<md-input-container flex style="margin-bottom: 4px;" ng-if="newModel.settings.defaultTextSearchType == 'static'">
 							        	<label>{{::translate.load('kn.cockpit.discovery.defaultsearchstatic')}}</label>
-								        <input ng-model="newModel.settings.defaultTextSearchValue" type="text" />
+								        <input ng-disabled="!newModel.settings.defaultTextSearch" ng-model="newModel.settings.defaultTextSearchValue" type="text" />
 							      	</md-input-container>
 							      	<md-input-container flex style="margin-bottom: 4px;" ng-if="newModel.settings.defaultTextSearchType == 'driver'" class="md-block">
 										<label>{{::translate.load("sbi.cockpit.cross.analyticaldriver")}}</label>
-										<md-select ng-model="newModel.settings.defaultTextSearchValue">
+										<md-select ng-disabled="!newModel.settings.defaultTextSearch" ng-model="newModel.settings.defaultTextSearchValue">
 											<md-option></md-option>
 											<md-option ng-repeat="(key,val) in cockpitModule_analyticalDrivers" ng-value="key">{{key}}</md-option> 
 										</md-select>
