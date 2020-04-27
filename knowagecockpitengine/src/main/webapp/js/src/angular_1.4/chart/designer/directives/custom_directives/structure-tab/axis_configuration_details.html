@@ -10,13 +10,6 @@
 </md-subheader>
 
 <div layout="column">
-<div  layout="row" layout-margin ng-if="selectedChartType == 'radar'">
-
-	<label>{{translate.load("sbi.chartengine.designer.radar.showMeasures")}}</label>
-	<md-input-container class="small counter"> <md-checkbox
-		ng-model="axisForDisplay.labels.enabled" aria-label="Show legend" name="yAxis_names_show"></md-checkbox>
-	</md-input-container>
-</div>
 
 <div layout="column" layout-padding ng-if="selectedChartType == 'heatmap' || selectedChartType == 'line' || selectedChartType == 'bar' || selectedChartType == 'bubble' ">
 <md-input-container class="md-block">

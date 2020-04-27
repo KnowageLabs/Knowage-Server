@@ -5,14 +5,6 @@
 	Categories container alias: <strong>{{axisForDisplay.alias}}</strong>
 </md-subheader>
 
-<div  layout="row" layout-margin ng-if="selectedChartType =='radar'">
-
-	<label>{{translate.load("sbi.chartengine.designer.radar.showCategories")}}</label>
-	<md-input-container class="small counter"> <md-checkbox
-		ng-model="axisForDisplay.labels.enabled" aria-label="Show legend" name="xAxis_names_show"></md-checkbox>
-	</md-input-container>
-</div>
-
 <div layout="column" layout-padding>
 <!-- The rotation (in degrees) of axis labels -->
 <md-input-container class="md-block">
