@@ -278,14 +278,41 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 
 	$scope.addPlaceHolderMissing = function(){
 		var keys = Object.keys($scope.placeHolder);
-		for(var i=0;i<keys.length;i++){
-			if($scope.selectedScheduler.filters!=undefined){
-				var index = $scope.indexInList(keys[i],$scope.selectedScheduler.filters,"kpiName");
-				if(index !=-1){
-			}else{
-					var objType = {"valueCd":"FIXED_VALUE","valueId":355};
-					var array = JSON.parse($scope.placeHolder[keys[i]])
+		for(var i=0; i<keys.length; i++){
+			
+			if ($scope.selectedScheduler.filters!=undefined) {
+				var tmpPlaceholder = [];
+				for (var id in $scope.selectedScheduler.filters) {
+					if (angular.equals($scope.selectedScheduler.filters[id].kpiName, keys[i]))
+						tmpPlaceholder.push($scope.selectedScheduler.filters[id]);
+				}
+				
+				var array = JSON.parse($scope.placeHolder[keys[i]]);
+				for (var tmpPl in tmpPlaceholder) {
+					var tmp = null;
 					for(var v=0;v<array.length;v++){
+						if (angular.equals(Object.keys(array[v])[0], tmpPlaceholder[tmpPl].placeholderName)) {
+							tmp = tmpPl;
+							break;
+						}
+					}
+					if (tmp == null)
+						$scope.selectedScheduler.filters.splice(
+								$scope.indexInList(tmpPlaceholder[tmpPl].placeholderName,$scope.selectedScheduler.filters, "placeholderName"), 1);
+				}
+				
+				for (var v=0; v<array.length; v++) {
+					tmp = null;
+					for (var tmpPl in tmpPlaceholder) {
+						if (angular.equals(Object.keys(array[v])[0], tmpPlaceholder[tmpPl].placeholderName)) {
+							tmp = tmpPl;
+							break;
+						}
+					}
+				
+					if (tmp == null) {
+						var objType = {"valueCd":"FIXED_VALUE","valueId":355};
+						
 						var obj = {};
 						obj.kpiName = keys[i];
 						obj.placeholderName = Object.keys(array[v])[0];
@@ -294,15 +321,17 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 						var index2 = $scope.indexInList(keys[i],$scope.kpiAllList,"name");
 						obj.kpiId = $scope.kpiAllList[index2].id;
 						obj.kpiVersion = $scope.kpiAllList[index2].version;
-
+	
 						$scope.selectedScheduler.filters.push(obj);
 					}
 				}
+				
 				$scope.checkMissingType();
-			}else{
+				
+			} else {
 				$scope.selectedScheduler["filters"]=[];
 				var objType = {"valueCd":"FIXED_VALUE","valueId":355};
-				var array = JSON.parse($scope.placeHolder[keys[i]])
+				var array = JSON.parse($scope.placeHolder[keys[i]]);
 				for(var v=0;v<array.length;v++){
 					var obj = {};
 					obj.kpiName = keys[i];
@@ -312,7 +341,6 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 					var index2 = $scope.indexInList(keys[i],$scope.kpiSelected,"name");
 					obj.kpiId = $scope.kpiSelected[index2].id;
 					obj.kpiVersion = $scope.kpiSelected[index2].version;
-
 
 					$scope.selectedScheduler.filters.push(obj);
 				}
