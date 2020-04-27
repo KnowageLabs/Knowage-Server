@@ -435,7 +435,7 @@ public class DataSetJSONSerializer implements Serializer {
 						result.put(JCLASS_NAME, jClass);
 					}
 				} else if (type.equalsIgnoreCase(DataSetConstants.FLAT)) {
-					result.put(DATA_SOURCE_FLAT, jsonConf.getString(DataSetConstants.DATA_SOURCE));
+					result.put(DATA_SOURCE_FLAT, jsonConf.getString(DataSetConstants.DATA_SOURCE_FLAT));
 					result.put(FLAT_TABLE_NAME, jsonConf.getString(DataSetConstants.FLAT_TABLE_NAME));
 				} else if (DataSetConstants.DS_REST_NAME.equalsIgnoreCase(type)) {
 					manageRESTDataSet(jsonConf, result);
