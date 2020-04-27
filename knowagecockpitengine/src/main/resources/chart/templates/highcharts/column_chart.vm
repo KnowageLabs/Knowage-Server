@@ -802,12 +802,12 @@
     		#if($xAxis.plotBands.get(0).from=="")
     			from :0,
     		#else
-    			from : $xAxis.plotBands.get(0).from,
+    			from : '$xAxis.plotBands.get(0).from',
     		#end
     		#if($xAxis.plotBands.get(0).to=="")
     			to :0,
     		#else
-    			to : $xAxis.plotBands.get(0).to,
+    			to : '$xAxis.plotBands.get(0).to',
     		#end
     	},			
     	],
@@ -1103,12 +1103,12 @@
     		#if($yAxis.plotBands.get(0).from=="")
     			from :0,
     		#else
-    			from : $yAxis.plotBands.get(0).from,
+    			from : '$yAxis.plotBands.get(0).from',
     		#end
     		#if($yAxis.plotBands.get(0).to=="")
     			to :0,
     		#else
-    			to : $yAxis.plotBands.get(0).to,
+    			to : '$yAxis.plotBands.get(0).to',
     		#end
     	},			
     	],

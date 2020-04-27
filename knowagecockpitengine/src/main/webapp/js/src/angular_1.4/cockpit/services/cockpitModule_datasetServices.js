@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user,cockpitModule_templateServices){
+angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_util,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user,cockpitModule_templateServices){
 	var ds=this;
 
 	this.datasetList=[];
@@ -631,7 +631,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		var aggregations = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
 
+		if(ngModel.type=='chart'){
+			var template = this.getI18NTemplate(ngModel.content.chartTemplate);
+			this.addNewColumnToAggregations(template.CHART, aggregations, ngModel.content.columnSelectedOfDatasetAggregations)
 
+		}
 		// apply sorting column & order
 		if(ngModel.settings && ngModel.settings.sortingColumn && ngModel.settings.sortingColumn!=""){
 			var isSortingAlreadyDefined = false;
@@ -906,6 +910,33 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					})
 			} else {
 				this.repalceVariables(obj[attrname]);
+			}
+		}
+	}
+
+	this.addNewColumnToAggregations = function (obj, aggregations, columns){
+		for (var attrname in obj) {
+			if(!(typeof obj[attrname] == 'object')){
+				if(typeof obj[attrname] =='string')
+					obj[attrname]  =  obj[attrname].replace(/(\$F\{)([a-zA-Z0-9\-\_\s]*)(\})/g,function(match,p1,p2){
+						var columnIndex = sbiModule_util.findInArray(columns, 'alias', p2);
+						if(columnIndex>-1 && columns[columnIndex].fieldType.toUpperCase()=="MEASURE"){
+							var aggregationIndex = sbiModule_util.findInArray(aggregations.measures, 'columnName', p2);
+							if(aggregationIndex==-1){
+								aggregations.measures.push({
+									alias:columns[columnIndex].alias,
+									columnName:columns[columnIndex].name,
+									funct:columns[columnIndex].funcSummary,
+									id:columns[columnIndex].alias,
+									orderColumn:"",
+									orderType:""
+								})
+							}
+						}
+						//missing part for attributes
+					})
+			} else {
+				this.addNewColumnToAggregations(obj[attrname], aggregations, columns);
 			}
 		}
 	}

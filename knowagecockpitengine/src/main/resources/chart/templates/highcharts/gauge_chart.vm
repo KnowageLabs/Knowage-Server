@@ -550,7 +550,11 @@
 					   		{
 								color: "$yAxis.TARGET.get(0).color",
 					   			dashStyle: "$yAxis.TARGET.get(0).dashStyle",
-					   			value: $yAxis.TARGET.get(0).value,
+					   			#if($yAxis.TARGET.get(0).value=="")
+					    			value :0,
+					    		#else
+					    			value: '$yAxis.TARGET.get(0).value',
+					    		#end
 					   			width: $yAxis.TARGET.get(0).width,
 					   		},			
 					   	], 

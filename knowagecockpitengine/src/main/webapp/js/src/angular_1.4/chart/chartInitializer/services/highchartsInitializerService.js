@@ -23,9 +23,30 @@ angular.module('chartInitializer')
 
 	this.chart = null;
 	var chartConfConf = null;
+	this.changeDatasetColumns = function(chartConf, data){
+		for (var attrname in chartConf) {
+			if(!(typeof chartConf[attrname] == 'object')){
+				if(typeof chartConf[attrname] =='string')
+					chartConf[attrname]  =  chartConf[attrname].replace(/(\$F\{)([a-zA-Z0-9\-\_\s]*)(\})/g,function(match,p1,p2){
+						var column = "";
+						for (var j = 1; j < data.metaData.fields.length; j++) {
+							if(data.metaData.fields[j].header.startsWith(p2)){
+								column = data.metaData.fields[j].name
+							}
+						}
+						return data.rows[0][column];
+					})
+			} else {
+				this.changeDatasetColumns(chartConf[attrname],data);
+			}
+		}
+	}
 
 	this.renderChart = function(renderObj, jsonData){
-
+		var data = JSON.parse(jsonData.jsonData);
+		if(data.rows.length>0){
+			this.changeDatasetColumns(renderObj.chartConf,data);
+		}
 		var chartConf = renderObj.chartConf;
 		if(chartConf.chart.additionalData && chartConf.chart.additionalData.dateTime && chartConf.chart.additionalData.datetype!="string"){
 			for (var i = 0; i < chartConf.series.length; i++) {
