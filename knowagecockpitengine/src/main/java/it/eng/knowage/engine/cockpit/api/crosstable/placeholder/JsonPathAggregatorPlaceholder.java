@@ -97,15 +97,21 @@ public class JsonPathAggregatorPlaceholder implements Placeholder {
 
 				Object object = coll.get(i);
 
+				/*
+				 * This depends by the query.
+				 *
+				 *  If you select more than one field, you will get a map.
+				 *  See the attribute path.
+				 */
 				if (object instanceof String) {
-					value = (String) object;
+					value = String.valueOf(object);
 				} else if (object instanceof Map) {
 					Map<String, String> currObject = (Map<String, String>) object;
 
 					Iterator<Entry<String, String>> iterator = currObject.entrySet().iterator();
-					value = iterator.next().getValue();
+					value = String.valueOf(iterator.next().getValue());
 					if (iterator.hasNext()) {
-						weight = iterator.next().getValue();
+						weight = String.valueOf(iterator.next().getValue());
 					}
 				} else {
 					throw new IllegalStateException("Cannot manage type " + object.getClass());
