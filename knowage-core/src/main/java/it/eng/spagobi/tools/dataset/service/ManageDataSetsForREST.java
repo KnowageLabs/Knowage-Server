@@ -791,7 +791,7 @@ public class ManageDataSetsForREST {
 			String tableName = json.optString(DataSetConstants.FLAT_TABLE_NAME);
 			String dataSourceLabel = json.optString(DataSetConstants.DATA_SOURCE_FLAT);
 			jsonDsConfig.put(DataSetConstants.FLAT_TABLE_NAME, tableName);
-			jsonDsConfig.put(DataSetConstants.DATA_SOURCE, dataSourceLabel);
+			jsonDsConfig.put(DataSetConstants.DATA_SOURCE_FLAT, dataSourceLabel);
 			dataSet.setTableName(tableName);
 			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
 			dataSet.setDataSource(dataSource);
