@@ -726,7 +726,48 @@
         	#end
         	
 		},
-
+#if($xAxis.MAJORGRID.interval != '')
+        	tickInterval: $xAxis.MAJORGRID.interval,
+        	gridLineWidth: 1,
+		    #end
+		    
+	        #if($xAxis.MAJORGRID.style.color != '')
+        	gridLineColor: '$xAxis.MAJORGRID.style.color',
+		    #end
+        	
+        	#set($typeline = $xAxis.MAJORGRID.style.typeline)
+        	#if($xAxis.MAJORGRID.style.typeline != '')
+	        	#if($typeline == 'dashed')
+	        		#set($convertedTypeline = 'Dash')
+	        	#elseif($typeline == 'dotted')
+	        		#set($convertedTypeline = 'Dot')
+	    		#elseif($typeline == 'solid')
+	        		#set($convertedTypeline = 'Solid')
+				#else
+	        		#set($convertedTypeline = $typeline)
+	        	#end
+	        	gridLineDashStyle: '$convertedTypeline',
+        	#end
+        	
+	        #if($xAxis.MINORGRID.interval != '')
+        	minorTickInterval: $xAxis.MINORGRID.interval,
+		    #end
+		    
+	        #if($xAxis.MINORGRID.style.color != '')
+        	minorGridLineColor: '$xAxis.MINORGRID.style.color',
+		    #end
+        	
+        	#set($typeline = $xAxis.MINORGRID.style.typeline)
+        	#if($typeline == 'dashed')
+        		#set($convertedMinorTpeline = 'Dash')
+    		#elseif($typeline == 'dotted')
+        		#set($convertedMinorTpeline = 'Dot')
+    		#elseif($typeline == 'solid')
+        		#set($convertedMinorTpeline = 'Solid')
+        	#end
+        	minorGridLineDashStyle: '$convertedMinorTpeline',
+        	
+        	
 		#if($xAxis.position == 'top')
 		 	opposite: true,
 		#end
