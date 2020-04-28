@@ -658,6 +658,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 }
 
 function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo,exportWebApp) {
+
 	var start;
 	 var startDate;
 	 var endDate;
@@ -667,6 +668,19 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     }
     var points=[];
     var data=chartConf.data[0];
+    if(chartConf.chart.dateTime){
+    	for( i=0;i<data.length;i++ ){
+    		if(chartConf.chart.datetype=='string'){
+    			data[i][chartConf.chart.datecolumn] = Date.parse(data[i][chartConf.chart.datecolumn])
+    		}else if(chartConf.chart.datetype=='timestamp'){
+    			var dateSplit = data[i][chartConf.chart.datecolumn].replace('/', ":").replace('/', ":").replace(' ', ":").replace('.', ":").split(":");
+    			data[i][chartConf.chart.datecolumn] = (new Date(dateSplit[2], dateSplit[1]-1, dateSplit[0], dateSplit[3], dateSplit[4], dateSplit[5], dateSplit[6])).getTime();
+    		}else{
+    			var dateSplit = data[i][chartConf.chart.datecolumn].replace('/', ":").replace('/', ":").split(":");
+    			data[i][chartConf.chart.datecolumn] = (new Date(dateSplit[2], dateSplit[1]-1, dateSplit[0])).getTime();
+			}
+    	}
+	}
     var minValue=data.length >0 ? data[0][chartConf.additionalData.serie.value] : 0;
     var maxValue=data.length >0 ? data[0][chartConf.additionalData.serie.value] :0;
 
@@ -682,7 +696,8 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     	var xValue;
     	var xValueOriginal;
     	if(chartConf.chart.xAxisDate){
-    		xValue=new Date(data[i][chartConf.additionalData.columns[0].value]).getTime();
+    		xValue=data[i][chartConf.chart.datecolumn];
+
     		xValueOriginal =data[i][chartConf.additionalData.columns[0].value];
     	}else{
     		xValue=chartConf.additionalData.firstCategory.indexOf(data[i][chartConf.additionalData.columns[0].value]);
@@ -859,11 +874,11 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
 	var precision = chartConf.additionalData.precision ?  chartConf.additionalData.precision : "";
 
     if(chartConf.chart.xAxisDate){
-    	var dateF = checkDateFormat(chartConf.chart.dateF);
+    	var dateFormat = checkDateFormat(chartConf.chart.dateFormat);
     	xAxisObject={
             type: 'datetime', // the numbers are given in milliseconds
-            min: Date.UTC(startDate.getUTCFullYear(),startDate.getUTCMonth(),startDate.getUTCDate()),  // gets range from variables
-            max: Date.UTC(endDate.getUTCFullYear(),endDate.getUTCMonth(),endDate.getUTCDate()),
+          //  min: Date.UTC(startDate.getUTCFullYear(),startDate.getUTCMonth(),startDate.getUTCDate()),  // gets range from variables
+            //max: Date.UTC(endDate.getUTCFullYear(),endDate.getUTCMonth(),endDate.getUTCDate()),
 
             title:
         	{
@@ -884,7 +899,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
                 x: 5,
                 y: 15,
                 formatter: function() {
-                    return '' + Highcharts.dateFormat(dateF, this.value);
+                    return '' + Highcharts.dateFormat(dateFormat, this.value);
                 },
                 rotation: (chartConf.xaxis.labels.rotation!=undefined && chartConf.xaxis.labels.rotation!="") ? chartConf.xaxis.labels.rotation : 0,
                 align: (chartConf.xaxis.labels.align!=undefined && chartConf.xaxis.labels.align!="") ? chartConf.xaxis.labels.align : undefined,
@@ -903,7 +918,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     	tooltipFormatter= function () {
     		var val = this.point.value;
     		val = Highcharts.numberFormat(val,precision );
-    		var pointDate = Highcharts.dateFormat(dateF, this.point.x)
+    		var pointDate = Highcharts.dateFormat(dateFormat, this.point.x)
             return '<b>'+chartConf.additionalData.serie.value+'</b><br>' + pointDate + '| ' + this.series.yAxis.categories[this.point.y] + ': <b>' +
             prefix + " " +val + " " + postfix + ' </b> ';
     	};

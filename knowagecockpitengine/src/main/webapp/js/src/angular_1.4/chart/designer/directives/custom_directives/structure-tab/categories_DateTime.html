@@ -21,14 +21,14 @@
 		<md-input-container class="small counter"> <md-checkbox ng-disabled="chartTemplate.groupSeries || chartTemplate.groupCategories"
 			ng-model="chartTemplate.dateTime" style="margin:0 8px" aria-label="dateTime" name="generic_dateTime" ></md-checkbox>
 		</md-input-container>
-		<md-icon ng-show="chartTemplate.dateTime" md-menu-origin class="fa fa-question-circle" style="display:inline">
+		<md-icon ng-if="chartTemplate.dateTime" md-menu-origin class="fa fa-question-circle" style="display:inline">
 			<md-tooltip md-direction="bottom">
 				{{translate.load("sbi.chartengine.structure.categoryStyleConfig.categoryDate.info")}}
 			</md-tooltip>
 		</md-icon>
 	</div>
 
-	<div ng-show="chartTemplate.dateTime" layout="column" layout-padding ng-if="selectedChartType.toLowerCase()!='radar'">
+	<div ng-if="chartTemplate.dateTime" layout="column" layout-padding ng-if="selectedChartType.toLowerCase()!='radar'">
 	<md-input-container class="md-block">
 		 <label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.dateFormat")}}</label>
 			 <md-select ng-model="chartTemplate.dateFormat" name="categories_ordering_type"> <md-option
@@ -36,7 +36,7 @@
 		</md-select> </md-input-container>
 		
 	</div>
-	<div ng-show="chartTemplate.dateTime && (selectedChartType.toLowerCase()=='bar' || selectedChartType.toLowerCase()=='line')" layout="column" layout-padding>
+	<div ng-if="chartTemplate.dateTime && (selectedChartType.toLowerCase()=='bar' || selectedChartType.toLowerCase()=='line')" layout="column" layout-padding>
 	<md-input-container class="md-block">
 	 <label >{{translate.load("sbi.chartengine.structure.categoryStyleConfig.categoryDate")}}</label>
 		 <md-select ng-model="chartTemplate.categoryDate" name="categoryDate"  ng-required="chartTemplate.dateTime"> <md-option
