@@ -468,6 +468,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			// Per-layer initialization
 			$scope.exploded = {};
+			// Reset layer visibility
+			$scope.layerVisibility = [];
 
 			var currLayers = $scope.ngModel.content.layers;
 			for (l in currLayers){
