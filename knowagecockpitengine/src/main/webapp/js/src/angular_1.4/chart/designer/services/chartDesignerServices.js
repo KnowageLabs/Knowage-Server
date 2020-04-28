@@ -1349,7 +1349,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			        	 "align":"",
 			        	 "color":"",
 			        	 "fontFamily":"",
-			        	 "fontSize":"",
+			        	 "fontSize":"12px",
 			        	 "fontWeight":""
 			         },
 			         "text":""
@@ -1553,7 +1553,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 	                	  "color":"",
 	                	  "fontFamily":"",
 	                	  "fontWeight":"",
-	                	  "fontSize":""
+	                	  "fontSize":"11px"
 	                  },
 			         "text":""
 			      },
@@ -2764,7 +2764,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"color": "",
 						"fontFamily": "",
 						"fontWeight": "",
-						"fontSize": ""
+						"fontSize": "12px"
 					},
 					"text": ""
 				},
@@ -2928,7 +2928,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"color": "",
 						"fontFamily": "",
 						"fontWeight": "",
-						"fontSize": ""
+						"fontSize": "11px"
 					},
 					"text": ""
 				},
