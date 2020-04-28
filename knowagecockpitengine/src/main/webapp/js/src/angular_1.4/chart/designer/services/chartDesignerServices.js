@@ -741,7 +741,10 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						            	   "fontWeight":""
 						               },"plotBands":[{"label":{"text": "","align": "center"},"color":"","from":"","to":""}],
 							    		"plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":"","width":0}],
-
+							    		"labels":{
+											   "precision":0,
+												"scaleFactor": "empty",
+							               },
 						               "TITLE":{
 							                  "text":"",
 							                  "style":{

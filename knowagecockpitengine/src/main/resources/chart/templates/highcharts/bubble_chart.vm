@@ -679,7 +679,59 @@
 			step: $xAxis.step,
 			#end
 		#end
-		
+		formatter: function () {
+			                    var value = this.value;	
+			                    var newValue = "";	
+		                      	var scaleFactor =  $isCockpit ? '${xAxis.labels.scaleFactor}' : '${xAxis.LABELS.scaleFactor}'
+		                      	if(scaleFactor.indexOf("xAxis")!=-1){
+		                      		scaleFactor = "empty"
+		                      	}
+		                      	var prefixValue = '';
+		                      	var sufixValue = '';
+		                      	
+		                      	
+		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+		                      	
+		                      	var precision =  $isCockpit ? '${xAxis.labels.precision}' : '${xAxis.LABELS.precision}'
+		                      	if(precision.indexOf("xAxis")!=-1){
+		                      		precision = 0
+		                      	}
+		                      	
+		                      	switch(scaleFactor.toUpperCase()) {
+		                      	
+		                      		case "EMPTY":
+		                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+		                      			newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+		                      			break;
+		                      		case "K":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";	
+		                      			break;
+		                      		case "M":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+		                      			break;
+		                      		case "G":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+		                      			break;
+	                      			case "T":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+		                      			break;
+		                      		case "P":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+		                      			break;
+	                      			case "E":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+		                      			break;
+	                      			default:
+	                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+	                      				template does not contain the scale factor for current serie */
+	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+		                      			break;
+		                      	
+		                      	}						
+	                        		                       
+	                          	return  newValue ;
+			            	}	,
 		#if( $xAxis.style != '' )
         	style:{
 	        	#foreach($styleName in $xAxis.style.keySet())
@@ -1524,10 +1576,17 @@
         formatter: function() { 
         	var prepareResult = function(point, result,key){
         		var chartTemplateSeries = point.series.chart.widgetData.chartTemplate.CHART.VALUES.SERIE;
-        		var series = [];
+        		var series = {};
+        		var seriesXZ = {};
         		for (var i=0; i<chartTemplateSeries.length; i++) {
 				    if (chartTemplateSeries[i].axis!='X' && chartTemplateSeries[i].axis!='Z') {
-				    	series.push(chartTemplateSeries[i].column.toLowerCase())
+				    	series[chartTemplateSeries[i].column.toLowerCase()] = {};
+				    	series[chartTemplateSeries[i].column.toLowerCase()].precision = chartTemplateSeries[i].precision
+				    	series[chartTemplateSeries[i].column.toLowerCase()].scaleFactor = chartTemplateSeries[i].scaleFactor
+				    } else {
+				    	seriesXZ[chartTemplateSeries[i].column.toLowerCase()] = {};				    
+				    	seriesXZ[chartTemplateSeries[i].column.toLowerCase()].precision = chartTemplateSeries[i].precision
+				    	seriesXZ[chartTemplateSeries[i].column.toLowerCase()].scaleFactor = chartTemplateSeries[i].scaleFactor
 				    }
 				}
        			var ttColor = point.series.tooltipOptions.ttColor ? point.series.tooltipOptions.ttColor : '';
@@ -1679,11 +1738,45 @@
 						+ tooltipFontStyle + " font-size: " + ttFontSize + ';text-align:' + ttAlign + ';">'; 
 						result += '<span>' + key +'</span><br/>';
 					for(prop in point.tooltipConf){
-						if(series.indexOf(prop)>-1 && point.series.name.toLowerCase().indexOf(prop)==-1){
+						if(series.hasOwnProperty(prop) && point.series.name.toLowerCase().indexOf(prop)==-1){
 							delete point.tooltipConf[prop]
 						}
 						if(point.tooltipConf[prop] && point.tooltipConf[prop]!=key){
-							result +=  prop + ': ' + point.tooltipConf[prop]+ '<br/>';
+							var scale = series.hasOwnProperty(prop) ? series[prop].scaleFactor : seriesXZ[prop].scaleFactor
+							var precision = series.hasOwnProperty(prop) ? series[prop].precision : seriesXZ[prop].precision
+							var valueWithPrecisionAndScale = point.tooltipConf[prop];
+						switch(scale.toUpperCase()) {
+									
+						case "EMPTY":
+							   
+						   valueWithPrecisionAndScale = Highcharts.numberFormat(valueWithPrecisionAndScale,precision,decimalPoint,thousandsSep);		                      			
+						   break;
+						case "K":
+						   valueWithPrecisionAndScale = Highcharts.numberFormat(valueWithPrecisionAndScale/Math.pow(10,3),precision,decimalPoint,thousandsSep) + "k";	
+						   break;
+						case "M":
+						   valueWithPrecisionAndScale = Highcharts.numberFormat(valueWithPrecisionAndScale/Math.pow(10,6),precision,decimalPoint,thousandsSep) + "M";	
+						   break;
+						case "G":
+						   valueWithPrecisionAndScale = Highcharts.numberFormat(valueWithPrecisionAndScale/Math.pow(10,9),precision,decimalPoint,thousandsSep) + "G";
+						   break;
+						case "T":
+						   valueWithPrecisionAndScale = Highcharts.numberFormat(valueWithPrecisionAndScale/Math.pow(10,12),precision,decimalPoint,thousandsSep) + "T";
+						   break;
+						case "P":
+						   valueWithPrecisionAndScale = Highcharts.numberFormat(valueWithPrecisionAndScale/Math.pow(10,15),precision,decimalPoint,thousandsSep) + "P";
+						   break;
+						case "E":
+						   valueWithPrecisionAndScale = Highcharts.numberFormat(valueWithPrecisionAndScale/Math.pow(10,18),precision,decimalPoint,thousandsSep) + "E";
+						   break;
+						default:
+						   /* The same as for the case when user picked "no selection" - in case when the chart 
+						   template does not contain the scale factor for current serie */
+						   valueWithPrecisionAndScale = Highcharts.numberFormat(valueWithPrecisionAndScale,precision,decimalPoint,thousandsSep);	
+						   break;
+										
+					}
+							result +=  prop + ': ' + valueWithPrecisionAndScale + '<br/>';
 						}
 					}
 					'</div>'
