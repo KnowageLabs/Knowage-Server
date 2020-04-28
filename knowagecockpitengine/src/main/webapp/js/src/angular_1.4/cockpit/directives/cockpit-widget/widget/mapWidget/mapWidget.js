@@ -169,7 +169,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.exploded = {}; // is heatp/cluster exploded?
 
 		$scope.init = function(element,width,height) {
-			$scope.refreshWidget(null, 'init');
+
+			// Prevent errors about $digest
+			$timeout(function() {
+				$scope.refreshWidget(null, 'init');
+			});
 		};
 
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
@@ -327,18 +331,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.reinit = function(){
 
-			var isNew = $scope.map == undefined;
-			if (isNew) {
-				$scope.createMap();
-			} else {
-				// Delete all layers
-				$scope.map.getLayers().clear();
-				$scope.clearInternalData();
-			}
-
-			$scope.resetFilter();
-			$scope.addAllLayers();
-			$scope.setMapSize();
+			// Prevent errors about $digest
+			$timeout(function() {
+				$scope.refreshWidget(null, 'init');
+			});
 		}
 
 		$scope.setMapSize = function() {
@@ -374,8 +370,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}, 500);
 				return;
 			} else if (nature == "init") {
+				$scope.initializeTemplate();
 				$scope.createMap();
 				$scope.addAllLayers();
+				$scope.setMapSize();
 			}
 
 			if (!options) options = {};
@@ -839,8 +837,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.createMap = function (){
-
-			$scope.initializeTemplate();
 
 			var layers = [];
 
