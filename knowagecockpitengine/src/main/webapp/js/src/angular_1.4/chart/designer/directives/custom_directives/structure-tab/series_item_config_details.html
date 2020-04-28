@@ -53,8 +53,7 @@
 	in ascending order for this series item if this type of ordering is set and vice versa.
 -->
 <div layout="row" flex layout-margin
-ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap'
-&& selectedChartType != 'parallel' && selectedChartType != 'sunburst' && selectedChartType != 'wordcloud'">
+ng-if="seriesOrderColumnExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
 	<md-input-container class="md-block" flex> 
 		<label>{{translate.load('sbi.chartengine.designer.seriesordertype')}}</label>
 		<md-select ng-model="detailsForSeriesItem.orderType"> 

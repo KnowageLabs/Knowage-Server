@@ -994,7 +994,8 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
     // TODO: Check if these chart types are the only one that for which we should exclude the Ordering column option in the categories drop-down menu
     $scope.categoriesContainerConfigDropDownExcludeTypes = ["wordcloud","treemap","parallel"];
 
-    $scope.categoriesOrderColumnExcludeTypes = ["parallel","chord"];
+    $scope.categoriesOrderColumnExcludeTypes = ["parallel","chord","bubble"];
+    $scope.seriesOrderColumnExcludeTypes = ['chord', 'heatmap', 'treemap', 'parallel', 'sunburst', 'wordcloud', 'bubble'];
     $scope.categoriesConfigExcludeTypes = ["pie","sunburst", "bubble"];
     $scope.categoriesTitleConfigExcludeTypes = ["parallel","pie","sunburst","chord", "bubble"];
     $scope.categoriesDateTimeIncludedTypes = ["bar","line","radar","scatter"];
