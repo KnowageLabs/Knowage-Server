@@ -43,6 +43,7 @@ function manageConfigFunction($angularListDetail,sbiModule_messaging, sbiModule_
 		{"headerName":"Name","field":"name"},
 		{"headerName":"Value Check","field":"valueCheck"},
 		{"headerName":"Category","field":"category"},
+		{"headerName":"Active","field":"active"},
 		{"headerName":"",cellRenderer: buttonRenderer,"field":"id","cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"flex-end","border":"none"},
 			suppressSorting:true,suppressFilter:true,width: 100,suppressSizeToFit:true, tooltip: false}];
 	
