@@ -18,26 +18,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 	angular.module("chartBackwardCompatibilityModule")
 
-	.service("chartBackwardCompatibilityService", function ($injector){
-		var chartBackwardCompatibilityServices = []
-		chartBackwardCompatibilityServices.push($injector.get('gaugeBackwardCompatibilityService'));
-		chartBackwardCompatibilityServices.push($injector.get('scatterBackwardCompatibilityService'));
-		chartBackwardCompatibilityServices.push($injector.get('sunburstBackwardCompatibilityService'));
-		chartBackwardCompatibilityServices.push($injector.get('parallelBackwardCompatibilityService'));
+	.service("parallelBackwardCompatibilityService", function (){
 
-		var updateTemplate = function(chartTemplate,enterpriseEdition){
-			for(var i in chartBackwardCompatibilityServices){
-				chartTemplate = chartBackwardCompatibilityServices[i].updateTemplate.apply(null,arguments)
+		var updateTemplate = function(chartTemplate){
+			if(chartTemplate.type.toLowerCase() == 'parallel' && chartTemplate.PARALLEL_TOOLTIP){
+				chartTemplate.PARALLEL_TOOLTIP.maxNumberOfRecords = 50
 			}
 
 			return chartTemplate;
-		}
+		};
 		return {
-			updateTemplate:updateTemplate,
-
+			updateTemplate:updateTemplate
 		}
-
-
 	});
 
 

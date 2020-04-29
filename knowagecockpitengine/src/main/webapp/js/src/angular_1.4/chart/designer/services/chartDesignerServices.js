@@ -1594,7 +1594,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"border":0,
 						"borderRadius":0,
 						"fontWeight":""
-					}
+					},
+					"maxNumberOfRecords":50
 				}
 			}
 

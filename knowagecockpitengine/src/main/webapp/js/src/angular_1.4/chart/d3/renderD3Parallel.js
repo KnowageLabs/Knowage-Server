@@ -469,7 +469,7 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 		 * 									chart is bigger than this value, TOOLTIP
 		 * 									will not be rendered).
 		 */
-		var maxNumOfRecsForDispTooltip = 20;
+		var maxNumOfRecsForDispTooltip = data.tooltip.maxNumberOfRecords;
 
 		if (records.length <= maxNumOfRecsForDispTooltip){
 
