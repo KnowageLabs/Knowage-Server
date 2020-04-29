@@ -1059,4 +1059,24 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.getMetadata();
 	$scope.checkCategories();
 
+	$scope.getFilteredSeries = function(){
+
+		var filteredSeries = [];
+		for(var i = 0; i < $scope.chartTemplate.VALUES.SERIE.length; i++) {
+
+			var indexSeriesContainer_X = sbiModule_util.findInArray($scope.seriesContainers,'name',"X");
+			var indexSeriesContainer_Z = sbiModule_util.findInArray($scope.seriesContainers,'name',"Z");
+
+			if(indexSeriesContainer_X>-1){
+				var indexSeries_X = $scope.seriesContainers[indexSeriesContainer_X].series.indexOf($scope.chartTemplate.VALUES.SERIE[i].column);
+			}
+			if(indexSeriesContainer_Z>-1){
+				var indexSeries_Z = $scope.seriesContainers[indexSeriesContainer_Z].series.indexOf($scope.chartTemplate.VALUES.SERIE[i].column);
+			}
+
+			if(indexSeries_X==-1 && indexSeries_Z==-1) filteredSeries.push($scope.chartTemplate.VALUES.SERIE[i])
+		}
+		return filteredSeries
+	}
+
 }

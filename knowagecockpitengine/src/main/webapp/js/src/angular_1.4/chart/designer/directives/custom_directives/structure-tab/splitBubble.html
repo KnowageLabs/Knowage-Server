@@ -37,7 +37,7 @@
 		<md-input-container class="md-block">
 			<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeriesCateg.seriesToUse")}}</label>
 			<md-select ng-model="chartTemplate.groupedSerie" >
-				<md-option ng-repeat="seriesItem in chartTemplate.VALUES.SERIE " value="{{seriesItem.column}}">{{seriesItem.column}}</md-option>
+				<md-option ng-repeat="seriesItem in getFilteredSeries()" value="{{seriesItem.column}}">{{seriesItem.column}}</md-option>
 			</md-select> 
 		</md-input-container>
 
