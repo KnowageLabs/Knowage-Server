@@ -19,7 +19,7 @@
 
 angular.module('ChartDesignerService', ['chartRendererModule'])
 .service('ChartDesignerData',function(sbiModule_restServices, sbiModule_messaging,sbiModule_translate,sbiModule_config, $http,chartDesignerBasePath){
-
+	this.enterpriseEdition = false;
 	this.getFontSizeOptions = function(){
 		var data = [
 			{name:"",value:""},
@@ -303,8 +303,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
  */
 .service("StructureTabService", function(sbiModule_restServices,sbiModule_messaging,sbiModule_translate,sbiModule_config,chartDesignerBasePath){
 
-		var translate = sbiModule_translate;
-
+	var translate = sbiModule_translate;
+	this.enterpriseEdition = false;
 	this.getBaseTemplate = function(type) {
 		var barLine  = {
 				   "CHART":{
@@ -2285,17 +2285,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 	                  },
 					"text": ""
 				},
-				"TOOLBAR": {
-					"style":{
-						"position":"top",
-						"spacing":5,
-						"tail":10,
-						"percFontColor":"#000000",
-						"fontFamily":"",
-						"fontWeight":"normal",
-						"fontSize":"12px",
-					}
-				},
 				"EMPTYMESSAGE":{
 					"style":{
 	                	  "align":"",
@@ -2323,7 +2312,19 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"seriesStacking": false,
 				"percAbsolSliceValue": ""
 			};
-
+		if(!this.enterpriseEdition){
+			sunburstTemp.TOOLBAR = {
+				"style":{
+					"position":"top",
+					"spacing":5,
+					"tail":10,
+					"percFontColor":"#000000",
+					"fontFamily":"",
+					"fontWeight":"normal",
+					"fontSize":"12px",
+				}
+			}
+		}
 		return sunburstTemp;
 	}
 

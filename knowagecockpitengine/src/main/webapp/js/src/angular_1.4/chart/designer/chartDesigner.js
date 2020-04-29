@@ -36,13 +36,14 @@ app.directive("chartDesigner" ,function(chartDesignerBasePath){
 	}
 });
 
-function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,sbiModule_util,$scope,sbiModule_config, sbiModule_restServices, cockpitModule_widgetServices,sbiModule_messaging,sbiModule_logger,$mdToast,$mdDialog,sbiModule_user,$httpParamSerializer) {
+function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,sbiModule_util,$scope,sbiModule_config, sbiModule_restServices,StructureTabService, cockpitModule_widgetServices,sbiModule_messaging,sbiModule_logger,$mdToast,$mdDialog,sbiModule_user,$httpParamSerializer) {
 	$scope.translate = sbiModule_translate;
 	$scope.httpParamSerializer = $httpParamSerializer;
 	$scope.selectedChartType = "";
 	$scope.selectedTab = {'tab' : 0};
 	var urlForDataset="";
 	$scope.enterpriseEdition = sbiModule_user.functionalities.indexOf("SeeAdvancedTab")>-1;
+	StructureTabService.enterpriseEdition = $scope.enterpriseEdition;
 
 	if($scope.isCockpitEng){
 		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset/"+$scope.datasetId;

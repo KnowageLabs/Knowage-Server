@@ -22,18 +22,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		var chartBackwardCompatibilityServices = []
 		chartBackwardCompatibilityServices.push($injector.get('gaugeBackwardCompatibilityService'));
 		chartBackwardCompatibilityServices.push($injector.get('scatterBackwardCompatibilityService'));
+		chartBackwardCompatibilityServices.push($injector.get('sunburstBackwardCompatibilityService'));
 
-
-		var updateTemplate = function(chartTemplate){
+		var updateTemplate = function(chartTemplate,enterpriseEdition){
 			for(var i in chartBackwardCompatibilityServices){
 				chartTemplate = chartBackwardCompatibilityServices[i].updateTemplate.apply(null,arguments)
 			}
 
 			return chartTemplate;
 		}
-
 		return {
-			updateTemplate:updateTemplate
+			updateTemplate:updateTemplate,
+
 		}
 
 

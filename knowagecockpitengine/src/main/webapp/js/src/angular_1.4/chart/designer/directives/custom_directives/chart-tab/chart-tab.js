@@ -161,7 +161,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				$scope.localMod.chartTemplate = $scope.chartTemplate;
 
 				$scope.selectedChartType = $scope.chartTemplate.type.toLowerCase();
-				chartBackwardCompatibilityService.updateTemplate($scope.chartTemplate);
+				chartBackwardCompatibilityService.updateTemplate($scope.chartTemplate,$scope.enterpriseEdition);
 				setConfigurationButtons($scope.chartTemplate.type.toLowerCase());
 			} else {
 
