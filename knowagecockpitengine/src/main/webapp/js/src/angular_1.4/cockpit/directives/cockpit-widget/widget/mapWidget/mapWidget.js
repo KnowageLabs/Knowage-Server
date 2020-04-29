@@ -172,7 +172,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			// Prevent errors about $digest
 			$timeout(function() {
-				$scope.refreshWidget(null, 'init');
+				$scope.refreshWidget(null, "init");
 			});
 		};
 
@@ -333,7 +333,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			// Prevent errors about $digest
 			$timeout(function() {
-				$scope.refreshWidget(null, 'init');
+				$scope.refreshWidget(null, "refresh");
 			});
 		}
 
@@ -372,6 +372,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			} else if (nature == "init") {
 				$scope.initializeTemplate();
 				$scope.createMap();
+				$scope.addAllLayers();
+				$scope.setMapSize();
+			} else if (nature == "refresh") {
+				debugger;
+
+				// Delete all layers
+				$scope.map.getLayers().clear();
+				$scope.clearInternalData();
+
+				$scope.resetFilter();
+
 				$scope.addAllLayers();
 				$scope.setMapSize();
 			}
@@ -466,10 +477,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if (!$scope.ngModel.content.mapId){
 				$scope.ngModel.content.mapId =  'map-' + $scope.ngModel.id;
 			}
-			// Per-layer initialization
-			$scope.exploded = {};
-			// Reset layer visibility
-			$scope.layerVisibility = [];
 
 			var currLayers = $scope.ngModel.content.layers;
 			for (l in currLayers){
@@ -1008,15 +1015,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    }
 
-	    $scope.clearInternalData = function(){
-	    	$scope.layers = [];
-	    	$scope.values = {};
-	    	$scope.savedValues = {};
+		$scope.clearInternalData = function(){
+			$scope.layers = [];
+			$scope.values = {};
+			$scope.savedValues = {};
 			$scope.configs = {};
 			$scope.legend = [];
 			cockpitModule_mapThematizerServices.removeLegends();
-
-	    }
+			$scope.exploded = {};
+			$scope.layerVisibility = [];
+		}
 
 	    $scope.setLayerProperty = function(l, p, v){
 	    	for (o in $scope.layers){
