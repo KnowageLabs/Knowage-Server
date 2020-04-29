@@ -180,7 +180,7 @@
 						          		</md-button>
 						        	</md-menu-item>							        	
 									<md-menu-item ng-if="(categoriesDateTimeIncludedTypes.indexOf(selectedChartType.toLowerCase())>-1) && 
-									disableHtmlElementForChartJs() ">
+									disableHtmlElementForChartJs() && selectedChartType.toLowerCase()!='scatter'">
 						          		<md-button ng-click="showStructureDetails('categoriesDateTime',categoriesAxis.alias)">
 						          			<md-icon class="fa fa-object-group " style="display:inline"></md-icon>
 						            		<span>Datetime and grouping</span>
