@@ -58,12 +58,14 @@ public class Node implements Cloneable, Comparable<Node> {
 	private Node fatherNode; // != from null only if we need the value
 
 	private Integer distanceFromRoot;
+	private final JSONObject jsonObject;
 
 	public Node(String value) {
 		this.value = value;
 		this.description = value;
 		measure = false;
 		childs = new ArrayList<Node>();
+		jsonObject = null;
 	}
 
 	public Node(String value, String description) {
@@ -71,6 +73,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.description = description;
 		measure = false;
 		childs = new ArrayList<Node>();
+		jsonObject = null;
 	}
 
 	public Node(String columnName, String value, String description) {
@@ -79,6 +82,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.description = description;
 		measure = false;
 		childs = new ArrayList<Node>();
+		jsonObject = null;
 	}
 
 	public Node(String columnName, String value, String description, boolean measure) {
@@ -87,6 +91,16 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.description = description;
 		this.measure = measure;
 		childs = new ArrayList<Node>();
+		jsonObject = null;
+	}
+
+	public Node(String columnName, String value, String description, JSONObject jsonObject) {
+		this.columnName = columnName;
+		this.value = value;
+		this.description = description;
+		this.measure = false;
+		childs = new ArrayList<Node>();
+		this.jsonObject = jsonObject;
 	}
 
 	public String getValue() {
@@ -95,6 +109,13 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	public String getDescription() {
 		return description;
+	}
+
+	/**
+	 * @return the jsonObject
+	 */
+	public JSONObject getJsonObject() {
+		return jsonObject;
 	}
 
 	public Node getParentNode() {

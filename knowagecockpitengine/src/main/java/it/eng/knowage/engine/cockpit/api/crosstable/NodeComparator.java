@@ -17,7 +17,11 @@
  */
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
+
+import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -55,15 +59,34 @@ public class NodeComparator implements Comparator<Node> {
 
 	@Override
 	public int compare(Node arg0, Node arg1) {
+		String value0 = arg0.getValue();
+		String value1 = arg1.getValue();
 		try {
-			// compares only on values
-			Float arg0Value = new Float(arg0.getValue());
-			Float arg1Value = new Float(arg1.getValue());
-			return direction * arg0Value.compareTo(arg1Value);
+			/*
+			 * Here we can consider only one node
+			 * because the second one has the same
+			 * configuration, obviously.
+			 */
+			JSONObject jsonObject = arg0.getJsonObject();
+			String type = jsonObject.getString("type");
+			if ("string".equals(type)) {
+				return direction * value0.compareTo(value1);
+			} else if ("date".equals(type)) {
+				String pattern = jsonObject.getString("dateFormatJava");
+				SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+				Date date0 = sdf.parse(value0);
+				Date date1 = sdf.parse(value1);
+				return direction * date0.compareTo(date1);
+			} else {
+				// compares only on values
+				Float arg0Value = new Float(value0);
+				Float arg1Value = new Float(value1);
+				return direction * arg0Value.compareTo(arg1Value);
+			}
 		} catch (Exception e) {
 			// if its not possible to convert the values in float, consider them
 			// as strings
-			return direction * arg0.getValue().compareTo(arg1.getValue());
+			return direction * value0.compareTo(value1);
 		}
 	}
 

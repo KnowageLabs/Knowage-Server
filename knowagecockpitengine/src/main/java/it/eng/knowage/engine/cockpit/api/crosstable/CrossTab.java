@@ -127,6 +127,14 @@ public class CrossTab {
 	 */
 	@Deprecated
 	private Map<String, String> alias2DsColumnName = new HashMap<String, String>();
+	/**
+	 * Store the metadata related to the column name.
+	 */
+	private Map<String, JSONObject> dsColumnName2Metadata = new HashMap<String, JSONObject>();
+	/**
+	 * Store the metadata related to the column alias.
+	 */
+	private Map<String, JSONObject> alias2Metadata = new HashMap<String, JSONObject>();
 
 	private static final Placeholder NOT_AVAILABLE_PLACEHOLDER = new NotAvailablePlaceholder();
 
@@ -445,6 +453,8 @@ public class CrossTab {
 
 				dsColumnName2Alias.put(name, header);
 				alias2DsColumnName.put(header, name);
+				dsColumnName2Metadata.put(name, jsonObject);
+				alias2Metadata.put(header, jsonObject);
 
 				if (columnsHeaderList.contains(header) || columnsHeaderIdList.contains(header)) {
 					columnsNameList.add(addNumberToColumnName(name));
@@ -1080,7 +1090,8 @@ public class CrossTab {
 				logger.error("Error getting the values from the dataset");
 				throw new SpagoBIEngineRuntimeException("Error getting the values from the dataset");
 			}
-			node = new Node(columnName, valueField, descriptionField);
+			JSONObject jsonObject = dsColumnName2Metadata.get(columnName);
+			node = new Node(columnName, valueField, descriptionField, jsonObject);
 
 			nodePosition = nodeToCheck.getChilds().indexOf(node);
 			if (nodePosition < 0) {
