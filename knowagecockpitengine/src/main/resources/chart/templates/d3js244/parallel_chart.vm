@@ -345,8 +345,8 @@
 		##padding: '$chart.PARALLEL_TOOLTIP.style.padding',
 		border: '$chart.PARALLEL_TOOLTIP.style.border',
 	 	borderRadius: '$chart.PARALLEL_TOOLTIP.style.borderRadius',
-	 	#if($chart.PARALLEL_TOOLTIP.style.maxNumberOfRecords)
-	 	maxNumberOfRecords: $chart.PARALLEL_TOOLTIP.style.maxNumberOfRecords
+	 	#if($chart.PARALLEL_TOOLTIP.maxNumberOfRecords)
+	 	maxNumberOfRecords: $chart.PARALLEL_TOOLTIP.maxNumberOfRecords
 	 	#else
 	 	maxNumberOfRecords: 50
 	 	#end
