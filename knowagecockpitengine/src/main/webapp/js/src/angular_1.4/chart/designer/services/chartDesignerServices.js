@@ -739,7 +739,24 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						            	   "fontFamily":"",
 						            	   "fontSize":"",
 						            	   "fontWeight":""
-						               },"plotBands":[{"label":{"text": "","align": "center"},"color":"","from":"","to":""}],
+						               },
+						               "min":'auto',
+						               "max":'auto',
+						               "MAJORGRID":{
+							                  "interval":"",
+							                  "style":{
+							                	  "typeline":"",
+							                	  "color":""
+							                  }
+							               },
+							               "MINORGRID":{
+							            	  "interval":"",
+							                  "style":{
+							                	  "typeline":"",
+							                	  "color":""
+							                  }
+							               },
+							               "plotBands":[{"label":{"text": "","align": "center"},"color":"","from":"","to":""}],
 							    		"plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":"","width":0}],
 							    		"labels":{
 											   "precision":0,
