@@ -43,9 +43,11 @@ angular.module('chartInitializer')
 	}
 
 	this.renderChart = function(renderObj, jsonData){
-		var data = JSON.parse(jsonData.jsonData);
-		if(data.rows.length>0){
-			this.changeDatasetColumns(renderObj.chartConf,data);
+		if(jsonData){
+			var data = JSON.parse(jsonData.jsonData);
+			if(data.rows.length>0){
+				this.changeDatasetColumns(renderObj.chartConf,data);
+			}
 		}
 		var chartConf = renderObj.chartConf;
 		if(chartConf.chart.additionalData && chartConf.chart.additionalData.dateTime && chartConf.chart.additionalData.datetype!="string"){
