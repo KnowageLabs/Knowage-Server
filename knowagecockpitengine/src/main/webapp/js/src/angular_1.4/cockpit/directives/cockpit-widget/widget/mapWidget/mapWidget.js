@@ -167,6 +167,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.optionSidenavId = "optionSidenav-" + Math.random(); // random id for sidenav id
 		$scope.layerVisibility = [];
 		$scope.exploded = {}; // is heatp/cluster exploded?
+		$scope.zoomControl = undefined; // Zoom control on map
+		$scope.mouseWheelZoomInteraction = undefined; // Manage the mouse wheel on map
 
 		$scope.init = function(element,width,height) {
 
@@ -386,6 +388,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.resetFilter();
 
 				$scope.addAllLayers();
+				$scope.setZoomControl();
+				$scope.setMouseWheelZoomInteraction();
 				$scope.setMapSize();
 			}
 
@@ -879,19 +883,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
 			}
 
+			$scope.zoomControl = $scope.createZoomControl();
+			$scope.mouseWheelZoomInteraction = $scope.createMouseWheelZoomInteraction();
+
 			$scope.map = new ol.Map({
 				target: 'map-' + $scope.ngModel.id,
 				layers: layers,
 				overlays: [overlay],
-				view: new ol.View({
-					center: $scope.ngModel.content.currentView.center,
-					zoom: $scope.ngModel.content.currentView.zoom || 3
-				})
+				controls: [$scope.zoomControl],
+				interactions: [
+					new ol.interaction.DragPan(),
+					new ol.interaction.PinchRotate(),
+					new ol.interaction.PinchZoom(),
+					$scope.mouseWheelZoomInteraction
+				]
 			});
 			console.log("Created obj map with id [" + 'map-' + $scope.ngModel.id + "]", $scope.map);
 
-//			// get background layer
-//			$scope.addBackgroundLayer();
+			$scope.setMapView();
 
 			//just for refresh
 			$scope.setMapSize();
@@ -1447,6 +1456,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.isCluster = function(layerDef) {
 			return (layerDef.clusterConf && layerDef.clusterConf.enabled) ? true : false;
+		}
+
+		$scope.setMapView = function() {
+			var newView = new ol.View({
+				center: $scope.ngModel.content.currentView.center,
+				zoom: $scope.ngModel.content.currentView.zoom || 3
+			});
+
+			$scope.map.setView(newView);
+		}
+
+		$scope.getZoomFactor = function() {
+			return ($scope.ngModel.content.zoomFactor || 1);
+		}
+
+		$scope.createZoomControl = function() {
+			var delta = $scope.getZoomFactor();
+
+			return new ol.control.Zoom({
+				delta: delta
+			});
+		}
+
+		$scope.createMouseWheelZoomInteraction = function() {
+			var delta = $scope.getZoomFactor();
+
+			return new ol.interaction.MouseWheelZoom({
+				maxDelta: delta
+			});
+		}
+
+		$scope.setZoomControl = function() {
+
+			$scope.map.removeControl($scope.zoomControl);
+
+			$scope.zoomControl = $scope.createZoomControl();
+
+			$scope.map.addControl($scope.zoomControl);
+		}
+
+		$scope.setMouseWheelZoomInteraction = function() {
+
+			$scope.map.removeInteraction($scope.mouseWheelZoomInteraction);
+
+			$scope.mouseWheelZoomInteraction = $scope.createMouseWheelZoomInteraction();
+
+			$scope.map.addInteraction($scope.mouseWheelZoomInteraction);
 		}
 
 		// $scope.reinit();

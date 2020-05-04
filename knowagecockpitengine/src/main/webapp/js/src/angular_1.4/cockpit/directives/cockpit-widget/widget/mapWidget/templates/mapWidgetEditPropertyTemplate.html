@@ -17,7 +17,7 @@
 						<md-card class="cockpit-map-widget-edit">
 							<md-toolbar class="secondaryToolbar"> 
 								<div class="md-toolbar-tools">
-									<h2>{{translate.load('sbi.cockpit.map.backgroundLayers')}}</h2>
+									<h2>{{translate.load('sbi.cockpit.map.genericConfiguration')}}</h2>
 									<span flex></span>
 								</div>
 							</md-toolbar>
@@ -28,6 +28,21 @@
 									<md-select ng-model="newModel.content.backgroundLayerId">
 										<md-option value=""></md-option>
 										<md-option ng-repeat="layer in availableBackgroundLayers  | orderBy:'value' " ng-value="layer.key">{{ layer.value }}</md-option>
+									</md-select>
+								</md-input-container>
+								<md-input-container style="width: 33%;">
+									<label>{{translate.load('sbi.cockpit.map.zoomFactor')}}</label>
+									<md-select ng-model="newModel.content.zoomFactor">
+										<md-option ng-value="0.1">10%</md-option>
+										<md-option ng-value="0.2">20%</md-option>
+										<md-option ng-value="0.3">30%</md-option>
+										<md-option ng-value="0.4">40%</md-option>
+										<md-option ng-value="0.5">50%</md-option>
+										<md-option ng-value="0.6">60%</md-option>
+										<md-option ng-value="0.7">70%</md-option>
+										<md-option ng-value="0.8">80%</md-option>
+										<md-option ng-value="0.9">90%</md-option>
+										<md-option ng-value="1.0">100%</md-option>
 									</md-select>
 								</md-input-container>
 							</md-card-content>
