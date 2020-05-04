@@ -183,9 +183,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		case 'sunburst':
 			var options =[
 				{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"},
-                {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.sequence"),value:"sequence"},
                 {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.exlpanation"),value:"explanation"}
                                              ]
+			if(!this.enterpriseEdition) options.push({name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.sequence"),value:"sequence"})
 			Array.prototype.push.apply(data, options);
 			return data;
 			break;

@@ -44,7 +44,7 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,sbiM
 	var urlForDataset="";
 	$scope.enterpriseEdition = sbiModule_user.functionalities.indexOf("SeeAdvancedTab")>-1;
 	StructureTabService.enterpriseEdition = $scope.enterpriseEdition;
-
+	ChartDesignerData.enterpriseEdition = $scope.enterpriseEdition;
 	if($scope.isCockpitEng){
 		urlForDataset = "../api/1.0/chart/jsonChartTemplate/usedDataset/"+$scope.datasetId;
 	}else{
