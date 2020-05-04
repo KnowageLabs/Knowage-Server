@@ -333,7 +333,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			// Prevent errors about $digest
 			$timeout(function() {
-				$scope.refreshWidget(null, "refresh");
+				var nature = "refresh";
+				if (typeof $scope.map == "undefined") {
+					nature = "init";
+				}
+				$scope.refreshWidget(null, nature);
 			});
 		}
 
@@ -375,8 +379,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.addAllLayers();
 				$scope.setMapSize();
 			} else if (nature == "refresh") {
-				debugger;
-
 				// Delete all layers
 				$scope.map.getLayers().clear();
 				$scope.clearInternalData();
