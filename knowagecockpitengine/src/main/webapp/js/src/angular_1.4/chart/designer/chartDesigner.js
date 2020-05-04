@@ -36,7 +36,7 @@ app.directive("chartDesigner" ,function(chartDesignerBasePath){
 	}
 });
 
-function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,sbiModule_util,$scope,sbiModule_config, sbiModule_restServices,StructureTabService, cockpitModule_widgetServices,sbiModule_messaging,sbiModule_logger,$mdToast,$mdDialog,sbiModule_user,$httpParamSerializer) {
+function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,sbiModule_util,$scope,sbiModule_config, sbiModule_restServices,StructureTabService, ChartDesignerData,cockpitModule_widgetServices,sbiModule_messaging,sbiModule_logger,$mdToast,$mdDialog,sbiModule_user,$httpParamSerializer) {
 	$scope.translate = sbiModule_translate;
 	$scope.httpParamSerializer = $httpParamSerializer;
 	$scope.selectedChartType = "";

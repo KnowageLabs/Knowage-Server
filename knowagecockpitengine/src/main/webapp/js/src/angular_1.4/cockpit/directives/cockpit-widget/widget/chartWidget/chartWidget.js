@@ -1314,6 +1314,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 				if(wconf.columnSelectedOfDatasetAggregations[index].isCalculated) {
 					obj['isCalculated'] = wconf.columnSelectedOfDatasetAggregations[index].isCalculated;
 					obj['formula'] = wconf.columnSelectedOfDatasetAggregations[index].formula;
+					obj['datasetOrTableFlag'] = wconf.columnSelectedOfDatasetAggregations[index].datasetOrTableFlag;
 				}
 				aggregations.push(obj);
 			}
