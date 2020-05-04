@@ -2568,8 +2568,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		while (it.hasNext()) {
 			SbiDataSet ds = it.next();
 			JSONObject jsonConf = ObjectUtils.toJSONObject(ds.getConfiguration());
-			if (!dataSourceLabel.equals(jsonConf.get(getDataSource(ds.getType())))) {
-				jsonConf.put(getDataSource(ds.getType()), dataSourceLabel);
+			String dataSourceFieldName = getDataSource(ds.getType());
+			if (!dataSourceLabel.equals(jsonConf.get(dataSourceFieldName))) {
+				jsonConf.put(dataSourceFieldName, dataSourceLabel);
 				ds.setConfiguration(JSONUtils.escapeJsonString(jsonConf.toString()));
 				updateDataset(ds, getSession());
 			}
