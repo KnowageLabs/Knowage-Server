@@ -1446,7 +1446,7 @@
 			name: "$escapeTool.javascript($relatedSerie.name)",
 
 			#foreach($customColor in $customColors)
-			#if($customColor.customName.equalsIgnoreCase($relatedSerie.name))
+			#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($relatedSerie.name))
 				color:'$customColor.customValue',
 			#end
 			#end
@@ -1530,7 +1530,7 @@
 							#end
 							#end
            					#foreach($customColor in $customColors)
-							#if($customColor.customName.equalsIgnoreCase($serieCategoryName))
+							#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($serieCategoryName))
 								color:'$customColor.customValue',
 							#end
 							#end
@@ -1772,7 +1772,7 @@
 		    #end
 				 #* #set ($counter = $counter+1) *#
 				#foreach($customColor in $customColors)
-           		#if($customColor.customName.equalsIgnoreCase($escapeTool.javascript($valueKey)))
+           		#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($escapeTool.javascript($valueKey)))
                 color:'$customColor.customValue',
 	            #end
 	            #end
@@ -1794,7 +1794,7 @@
 					#end
 					#end
 					#foreach($customColor in $customColors)
-					#if($customColor.customName.equalsIgnoreCase($el.name))
+					#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($el.name))
 						color:'$customColor.customValue',
 					#end
 					#end

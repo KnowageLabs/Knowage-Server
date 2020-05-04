@@ -1185,7 +1185,7 @@
 			name: "$escapeTool.javascript($relatedSerie.name)",
 			
 			#foreach($customColor in $customColors)
-			#if($customColor.customName.equalsIgnoreCase($relatedSerie.name))
+			#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($relatedSerie.name))
 				color:'$customColor.customValue',
 			#end
 			#end
@@ -1224,7 +1224,7 @@
 							name: "$serieCategoryName",
 							
 							#foreach($customColor in $customColors)
-							#if($customColor.customName.equalsIgnoreCase($serieCategoryName))
+							#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($serieCategoryName))
 								color:'$customColor.customValue',
 							#end
 							#end
@@ -1428,8 +1428,8 @@
 			    	yAxis: $yAxisPositions[$referencedAxis],
 					#end
 					#foreach($customColor in $customColors)
-	           		#if($customColor.customName.equalsIgnoreCase($escapeTool.javascript($valueKey)))
-	                color:'$customColor.customValue',
+	           		#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($escapeTool.javascript($valueKey)))
+	           		color:'$customColor.customValue',
 		            #end
 		            #end
 			       	
@@ -1452,7 +1452,7 @@
 								name: "$escapeTool.javascript($el.name)",
 							#end
 							#foreach($customColor in $customColors)
-							#if($customColor.customName.equalsIgnoreCase($el.name))
+							#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($el.name))
 								color:'$customColor.customValue',
 							#end
 							#end	
