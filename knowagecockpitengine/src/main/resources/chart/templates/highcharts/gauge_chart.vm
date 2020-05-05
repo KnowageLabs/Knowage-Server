@@ -872,6 +872,12 @@
 					#if($seriePostfix)
 						valueSuffix: '$seriePostfix',
 					#end				
+					
+					#set($serieScaleFactor = $relatedSerie.scaleFactor)
+					
+					#if($serieScaleFactor)
+						valueScaleFactor: '$serieScaleFactor',
+					#end
 						
 					#if ($relatedSerie.precision)
 						valueDecimals: '$relatedSerie.precision',
@@ -989,6 +995,7 @@
         	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : 0;
         	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
         	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
+        	var scaleFactor = this.series.tooltipOptions.valueScaleFactor ? this.series.tooltipOptions.valueScaleFactor : 'empty';
         	
         	var thisValue = this.y;
         	
@@ -1001,12 +1008,39 @@
         		
         		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
         	*/
-        	var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
-        			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
-        			
-    		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
         	
-        	thisValue = valuePrefix + thisValue + valueSuffix;
+    		var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
+				thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+				switch(scaleFactor.toUpperCase()) {
+										
+					case "EMPTY":
+					   thisValue = Highcharts.numberFormat(thisValue,valueDecimals,decimalPoint,thousandsSep);		                      			
+					   break;
+					case "K":
+					   thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,3),valueDecimals,decimalPoint,thousandsSep) + "k";	
+					   break;
+					case "M":
+					   thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,6),valueDecimals,decimalPoint,thousandsSep) + "M";	
+					   break;
+					case "G":
+					   thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,9),valueDecimals,decimalPoint,thousandsSep) + "G";
+					   break;
+					case "T":
+					   thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,12),valueDecimals,decimalPoint,thousandsSep) + "T";
+					   break;
+					case "P":
+					   thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,15),valueDecimals,decimalPoint,thousandsSep) + "P";
+					   break;
+					case "E":
+					   thisValue = Highcharts.numberFormat(thisValue/Math.pow(10,18),valueDecimals,decimalPoint,thousandsSep) + "E";
+					   break;
+					default:
+					   thisValue = Highcharts.numberFormat(thisValue,valueDecimals,decimalPoint,thousandsSep);	
+					   break;
+										
+				}
+				thisValue = valuePrefix + thisValue + valueSuffix;  
+        	
 	        
         	/*
         		Separate font elements (family, size and weight (style)) so the tooltip
