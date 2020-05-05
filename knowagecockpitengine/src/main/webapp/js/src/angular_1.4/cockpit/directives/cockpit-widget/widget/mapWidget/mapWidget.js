@@ -1032,9 +1032,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.savedValues = {};
 			$scope.configs = {};
 			$scope.legend = [];
-			cockpitModule_mapThematizerServices.removeLegends();
 			$scope.exploded = {};
 			$scope.layerVisibility = [];
+			cockpitModule_mapThematizerServices.removeLegends();
+			cockpitModule_mapThematizerServices.clearDefaultMarkerCache();
 		}
 
 	    $scope.setLayerProperty = function(l, p, v){

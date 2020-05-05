@@ -120,7 +120,7 @@
 				<input ng-model="layer.markerConf.scale" type="number" min="0" max="500">
 			</md-input-container>
 
-			<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'icon'">
+			<md-input-container class="md-block flex" ng-if="layer.markerConf.type == 'icon' || layer.markerConf.type == 'default'">
 				<label>{{translate.load('sbi.cockpit.map.edit.visualization.marker.size')}}</label>
 				<input ng-model="layer.markerConf.size" type="number" min="0" max="500">
 			</md-input-container>

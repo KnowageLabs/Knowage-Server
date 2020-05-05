@@ -230,20 +230,21 @@
 //			if (!color)	color =  (config.style && config.style.color) ? mts.rgbaToHex(config.style.color) : 'grey';
 			if (!alpha) alpha = (config.style && config.style.color) ?  mts.rgbaToAlpha(config.style.color) : 1;
 
+
 			switch(config.type) {
 
 			case "icon":
 				//font-awesome
 				var size = config.size || 100;
 				style = new ol.style.Style({
-					  text: new ol.style.Text({
-						  	text: config.icon.unicode,
-						    font: '' + config.icon.fontWeight + ' ' + ((2*size) + '% ') + '"' + config.icon.fontFamily + '"',
-						    fill: new ol.style.Fill({
-						    	 color: color,
-						    	 opacity: alpha
-						    })
-						  })
+					text: new ol.style.Text({
+							text: config.icon.unicode,
+							font: '' + config.icon.fontWeight + ' ' + ((2*size) + '% ') + '"' + config.icon.fontFamily + '"',
+							fill: new ol.style.Fill({
+								color: color,
+								opacity: alpha
+							})
+						})
 					});
 				break;
 
@@ -259,15 +260,16 @@
 					}),
 					scale: (config.scale) ? (config.scale/100) : 1,
 					opacity: 1,
-				    crossOrigin: null,
-				    src: config[config.type]
+					crossOrigin: null,
+					src: config[config.type]
 					}))
-		          });
+				});
 				break;
 
 			default:
-				var defaultImg = new Image(12,12);
-				defaultImg.src = 'data:image/svg+xml,' + escape('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svg4505" width="12" height="12"> <circle r="5.1254177" style="fill: ' + color + ';opacity:1;fill-opacity:1;stroke:#000000;stroke-width:1.74916482;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke" id="path826" cx="5.9999995" cy="6" /></svg>');
+				var size = (config.size || 12);
+				var scale = size / 100;
+				var defaultImg = mts.getDefaultMarker(props, config);
 
 				style =  new ol.style.Style({
 				image: new ol.style.Icon(
@@ -276,13 +278,34 @@
 						crossOrigin: 'anonymous',
 						opacity: alpha,
 						img: defaultImg,
-						imgSize: [12, 12]
+						imgSize: [100, 100],
+						scale: scale
 					})
 				)});
 				break;
 
 			}
 			return style;
+		}
+
+		mts.defaultMarkerCache = {};
+
+		mts.clearDefaultMarkerCache = function() {
+			mts.defaultMarkerCache = {};
+		}
+
+		mts.getDefaultMarker = function(props, config) {
+			var color;
+			var layerName = props.parentLayer
+			if (!(layerName in mts.defaultMarkerCache)) {
+				if (!color)	color =  (config.style && config.style.color) ? config.style.color : 'grey';
+
+				var defaultImg = new Image();
+				defaultImg.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="120" height="120"><circle r="42.711815" cy="50" cx="50" style="opacity:1;fill:' + color + ';fill-opacity:1;stroke:#000000;stroke-width:14.5763731;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke" /></svg>');
+				mts.defaultMarkerCache[layerName] = defaultImg;
+			}
+
+			return mts.defaultMarkerCache[layerName];
 		}
 
 		mts.getColorByThresholds = function(value, props){
