@@ -309,7 +309,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			SbiUser user = getSbiUserByUserId(userId);
 			return user;
 		} catch (HibernateException he) {
-			throw new SpagoBIDAOException("Error while loading user by id" + userId, he);
+			throw new SpagoBIDAOException("Error while loading user by id " + userId, he);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -341,7 +341,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while loading user attribute with id" + id, he);
+			throw new SpagoBIDAOException("Error while loading user attribute with id " + id, he);
 		} finally {
 			logger.debug("OUT");
 			if (aSession != null) {
@@ -369,7 +369,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while loading user role with id" + id, he);
+			throw new SpagoBIDAOException("Error while loading user role with id " + id, he);
 		} finally {
 			logger.debug("OUT");
 			if (aSession != null) {
@@ -396,7 +396,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while loading users", he);
+			throw new SpagoBIDAOException("Error while loading users ", he);
 		} finally {
 			logger.debug("OUT");
 			if (aSession != null) {
@@ -456,7 +456,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while deleting user with id" + id, he);
+			throw new SpagoBIDAOException("Error while deleting user with id " + id, he);
 		} finally {
 			logger.debug("OUT");
 			if (aSession != null) {
@@ -723,7 +723,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while loading users", he);
+			throw new SpagoBIDAOException("Error while loading users ", he);
 		} finally {
 			logger.debug("OUT");
 			if (aSession != null) {
@@ -869,7 +869,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw new SpagoBIDAOException("Error while loading the list of users", he);
+			throw new SpagoBIDAOException("Error while loading the list of users ", he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())

@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.security.init;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
@@ -42,17 +53,6 @@ import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.security.Password;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Session;
 
 public class InternalSecurityInitializer extends SpagoBIInitializer {
 
@@ -100,8 +100,8 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 						String value = (String) attribute.getAttribute("value");
 						logger.debug("Setting attribute [" + name + "] of user [" + userId + "] to value [" + value + "]");
 						if (usersLookupMap.get(userId) == null) {
-							logger.debug("User [" + userId + "] was already stored in the database. The value of attribute [" + name
-									+ "] will not be overwritten");
+							logger.debug(
+									"User [" + userId + "] was already stored in the database. The value of attribute [" + name + "] will not be overwritten");
 							continue;
 						}
 
@@ -128,8 +128,8 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 						String name = (String) role.getAttribute("name");
 						logger.debug("Creating association beetween user [" + userId + "] and role [" + name + "]");
 						if (usersLookupMap.get(userId) == null) {
-							logger.debug("User [" + userId + "] was already stored in the database. The associatino with role [" + name
-									+ "] will not be created");
+							logger.debug(
+									"User [" + userId + "] was already stored in the database. The associatino with role [" + name + "] will not be created");
 							continue;
 						}
 
@@ -227,7 +227,7 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				}
 			}
 		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while initializieng default users", t);
+			logger.error("An unexpected error occurred while initializing default users", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -336,7 +336,7 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 			}
 
 		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while initializieng default roles", t);
+			logger.error("An unexpected error occurred while initializing default roles", t);
 		} finally {
 			logger.debug("OUT");
 		}
