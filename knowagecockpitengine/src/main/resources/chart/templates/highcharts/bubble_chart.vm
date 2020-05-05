@@ -823,27 +823,20 @@
 		#if($xAxis.min==$xAxis.max)
 		#set ($minAndMaxAreSame= true)
 		#end
-		#if($xAxis.min)
-			#if($xAxis.min != "auto"  && $xAxis.min!='')
-				#set ($min = $xAxis.min)
-					min: $xAxis.min,
-			#elseif($xAxis.min == "auto" || $xAxis.min=='')
-				min: "$xAxis.min",
-			#end
+		#if($xAxis.min && $xAxis.min != "auto"  && $xAxis.min!='')
+			 #set ($min = $xAxis.min)
+			min: $xAxis.min, 
 		#end
-		#if($xAxis.max)
-			#if($xAxis.max!='auto'  && $xAxis.max!='')
-				#set ($max = $xAxis.max)
-				#if($min)
-					#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
-						max:$xAxis.max,
-					#end
-				#else 
+		#if($xAxis.max && $xAxis.max!='auto'  && $xAxis.max!='')
+			#set ($max = $xAxis.max)
+			#if($min)
+				#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
 					max:$xAxis.max,
 				#end
-       		 #elseif(($xAxis.max == "auto" || $xAxis.max=='') && $chartType != "radar")
-				max: "$xAxis.max",
+			#else 
+				max:$xAxis.max,
 			#end
+       		 
 		#end
         	
         	
