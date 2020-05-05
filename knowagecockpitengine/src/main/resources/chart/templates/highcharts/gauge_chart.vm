@@ -814,7 +814,9 @@
 			                     
 	                    var value = this.y;	
 	                    var newValue = "";	                  
-	                    
+	                    var prefixChar = '${relatedSerie.prefixChar}';
+	                    var postfixChar = '${relatedSerie.postfixChar}';
+
                       	var scaleFactor = '${relatedSerie.scaleFactor}';
                       	
                       	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
@@ -854,7 +856,8 @@
                       	
                       	}						
                     		                       
-                      	return newValue;
+                      	return prefixChar + ' ' + newValue + ' ' + postfixChar;
+                      	
 	            	}
 			    	
 		    	},
