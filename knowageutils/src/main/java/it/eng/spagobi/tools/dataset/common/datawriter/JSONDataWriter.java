@@ -17,8 +17,10 @@
  */
 package it.eng.spagobi.tools.dataset.common.datawriter;
 
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Clob;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -348,6 +350,22 @@ public class JSONDataWriter implements IDataWriter {
 
 					String fieldName = adjust ? fieldMetaData.getName() : getFieldName(fieldMetaData, j++);
 					Object fieldValue = getFieldValue(field, fieldMetaData);
+
+					try {
+						if (oracle.jdbc.OracleClob.class.isAssignableFrom(fieldMetaData.getType())
+								|| oracle.sql.CLOB.class.isAssignableFrom(fieldMetaData.getType())) { // Can we add a limit?
+							Reader r = ((Clob) field.getValue()).getCharacterStream();
+							StringBuffer buffer = new StringBuffer();
+							int ch;
+							while ((ch = r.read()) != -1) {
+								buffer.append("" + (char) ch);
+							}
+							fieldValue = buffer.toString();
+						} // provided
+					} catch (Throwable t) {
+						throw new RuntimeException("An unpredicted error occurred at recno [" + recNo + "] while serializing dataStore", t);
+					}
+
 					if (fieldValue == null) {
 						recordJSON.put(fieldName, "");
 					} else {
@@ -356,6 +374,7 @@ public class JSONDataWriter implements IDataWriter {
 				}
 
 				recordsJSON.put(recordJSON);
+
 			}
 
 		} catch (Throwable t) {
@@ -433,6 +452,7 @@ public class JSONDataWriter implements IDataWriter {
 				} else {
 					logger.debug("Column [" + (i + 1) + "] class is equal to [" + clazz.getName() + "]");
 				}
+
 				if (Number.class.isAssignableFrom(clazz)) {
 					// BigInteger, Integer, Long, Short, Byte
 					if (Integer.class.isAssignableFrom(clazz) || BigInteger.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)
