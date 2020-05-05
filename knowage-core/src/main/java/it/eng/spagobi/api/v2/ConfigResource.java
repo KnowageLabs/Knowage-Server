@@ -86,7 +86,6 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/category/{category}")
-	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Config> getConfigsByCategory(@PathParam("category") String category) {
 		logger.debug("IN");
