@@ -949,9 +949,17 @@
     
     
     tooltip: {
+	    #if($chart.TOOLTIP && $chart.TOOLTIP.borderWidth)
+	    	borderWidth: $chart.TOOLTIP.borderWidth,
+	    #end
+	    
+	    #if($chart.TOOLTIP && $chart.TOOLTIP.borderRadius)
+	    	borderRadius: $chart.TOOLTIP.borderRadius,
+	    #end
+	    
         useHTML: true,
         backgroundColor: null,
-        borderWidth: 2,
+        
         style: {
             padding: 0
         },

@@ -24,6 +24,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(chartTemplate.type.toLowerCase()=='gauge' && !chartTemplate.AXES_LIST.AXIS[0].TARGET){
 				chartTemplate.AXES_LIST.AXIS[0].TARGET = [{"color": "","dashStyle": "Solid","value":0,"width":2}]
 			}
+			if(chartTemplate.type.toLowerCase()=='gauge'){
+				//adding new
+				if(!chartTemplate.AXES_LIST.AXIS[0].TARGET){
+					chartTemplate.AXES_LIST.AXIS[0].TARGET = [{"color": "","dashStyle": "Solid","value":0,"width":2}]
+				}
+				if(!chartTemplate.TOOLTIP){
+					chartTemplate.TOOLTIP = {"borderWidth": 0,"borderRadius":0}
+				}
+			}
+
 			return chartTemplate;
 		};
 		return {
