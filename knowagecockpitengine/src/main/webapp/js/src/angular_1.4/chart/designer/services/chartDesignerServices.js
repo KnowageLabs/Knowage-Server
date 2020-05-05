@@ -320,8 +320,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						  },
 						  "TOOLTIP":{
 							  "borderWidth":0,
-							  "borderRadius":0,
-							  "backgroundColor":"#D6D6D6"
+							  "borderRadius":0
 						  },
 					      "VALUES":{
 					         "CATEGORY":{
@@ -359,7 +358,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					                 	},
 					                 },
 					                 "TOOLTIP":{
-					                    "backgroundColor":"",
+					                    "backgroundColor":"#D6D6D6",
 					                    "showAbsValueTooltip":false,
 						                "showPercentageTooltip":true,
 					                    "style":{
@@ -924,6 +923,10 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						},
 						"text": ""
 					},
+					"TOOLTIP":{
+						  "borderWidth":0,
+						  "borderRadius":0
+					},
 					"VALUES": {
 						"SERIE": [{
 							"axis": "",
@@ -941,7 +944,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 							"showValue": true,
 							"type": "",
 							"TOOLTIP": {
-								"backgroundColor": "",
+								"backgroundColor": "#D6D6D6",
 								"style": {
 									"align":"",
 									"color":"",
@@ -1157,7 +1160,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"showValue": true,
 						"type": "",
 						"TOOLTIP": {
-							"backgroundColor": "",
+							"backgroundColor": "#D6D6D6",
 							"style": {
 								"align":"",
 								"color":"",
@@ -1347,15 +1350,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"text": ""
 					}
 				},
-				"TOOLTIP": {
-					"backgroundColor":"#D6D6D6",
-					"style":{
-	                	  "align":"",
-	                	  "color":"",
-	                	  "fontFamily":"",
-	                	  "fontWeight":"",
-	                	  "fontSize":""
-	                  }
+				"TOOLTIP":{
+					  "borderWidth":0,
+					  "borderRadius":0
 				}
 			}
 
@@ -1399,18 +1396,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			                 "showAbsValue":false,
 			                 "showPercentage":false,
 			                 "scaleFactor":"empty",
-			                 "type":"",
-			                 "TOOLTIP":{
-			                    "backgroundColor":"",
-			                    "style":{
-					            	   "rotate":"",
-					            	   "align":"",
-					            	   "color":"",
-					            	   "fontFamily":"",
-					            	   "fontSize":"",
-					            	   "fontWeight":""
-					               },
-			                 }
+			                 "type":""
 			              }
 			         ]
 				},
@@ -1632,7 +1618,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			         "text":""
 				  },
 				"TOOLTIP":{
-					"backgroundColor":"#D6D6D6",
 					"borderWidth":0,
 					"borderRadius":0,
 				  },
@@ -1661,7 +1646,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"scaleFactor": "empty",
 						"type": "",
 						"TOOLTIP":{
-		                    "backgroundColor":"",
+		                    "backgroundColor":"#D6D6D6",
 		                    "style":{
 				            	   "rotate":"",
 				            	   "align":"",
@@ -1868,7 +1853,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			         "text":""
 				  },
 				"TOOLTIP":{
-					"backgroundColor":"#D6D6D6",
 					"borderWidth":0,
 					"borderRadius":0,
 				  },
@@ -1906,7 +1890,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 	                	},
 						},
 						"TOOLTIP":{
-		                    "backgroundColor":"",
+		                    "backgroundColor":"#D6D6D6",
 		                    "style":{
 				            	   "rotate":"",
 				            	   "align":"",
@@ -2130,6 +2114,10 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			         },
 			         "text":""
 			      },
+			      "TOOLTIP":{
+					  "borderWidth":0,
+					  "borderRadius":0
+				  },
 				"VALUES": {
 					"CATEGORY": [{
 						"column": "",
@@ -2153,7 +2141,18 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"type": "",
 						"showAbsValue": false,
 						"showPercentage": false,
-						"scaleFactor": "empty"
+						"scaleFactor": "empty",
+						"TOOLTIP":{
+		                    "backgroundColor":"#D6D6D6",
+		                    "style":{
+				            	   "rotate":"",
+				            	   "align":"",
+				            	   "color":"",
+				            	   "fontFamily":"",
+				            	   "fontSize":"",
+				            	   "fontWeight":""
+				            }
+			             },
 					}]
 				},
 				"type": "SUNBURST",
@@ -2358,6 +2357,10 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			         },
 			         "text":""
 			      },
+			      "TOOLTIP":{
+					  "borderWidth":0,
+					  "borderRadius":0
+				  },
 				"VALUES": {
 					"CATEGORY": [{
 						"column": "",
@@ -2380,7 +2383,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"showValue": "",
 						"type": "",
 						"TOOLTIP":{
-		                    "backgroundColor":"",
+		                    "backgroundColor":"#D6D6D6",
 		                    "style":{
 				            	   "rotate":"",
 				            	   "align":"",
@@ -2585,7 +2588,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"showValue": true,
 						"type": "",
 						"TOOLTIP": {
-							"backgroundColor": "",
+							"backgroundColor": "#D6D6D6",
 							"borderRadius": 0,
 							"borderWidth": 0,
 							"style":{
@@ -2811,7 +2814,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				               "showValue":true,
 				               "type":"",
 				               "TOOLTIP":{
-				                  "backgroundColor":"",
+				                  "backgroundColor":"#D6D6D6",
 				                  "borderRadius":0,
 				                  "borderWidth":0,
 				                  "style": {
@@ -2964,12 +2967,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 	                  },
 			         "text":""
 			      },
-				"TOOLTIP": {
-					"backgroundColor":"#D6D6D6",
-					"style": {
-						"color": ""
-					}
-				},
 				"TOOLBAR": {
 					"style": {
 						"percFontColor": ""
