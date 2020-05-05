@@ -337,6 +337,8 @@
 	        	
 	        	#if($yAxis.lineColor && $yAxis.lineColor!="")
 	        		lineColor: '$yAxis.lineColor', ##'#339',
+	            #else
+		            lineColor: '#000000',
 	            #end
 	            
 	        	#if($yAxis.tickPosition && $yAxis.tickPosition!="")
@@ -359,8 +361,10 @@
     			
     			offset: $offsetValue, 
     			
-    			 #if ($yAxis.lineWidth && $yAxis.lineWidth!="")  
-    					lineWidth: $yAxis.lineWidth, 				
+    			#if ($yAxis.lineWidth && $yAxis.lineWidth!="" && $yAxis.lineWidth!=0)  
+    				lineWidth: $yAxis.lineWidth, 				
+    			#else
+	    			lineWidth: 1, 
     			#end
     			
     			 #if ($yAxis.minorTickLength && $yAxis.minorTickLength!="") 
