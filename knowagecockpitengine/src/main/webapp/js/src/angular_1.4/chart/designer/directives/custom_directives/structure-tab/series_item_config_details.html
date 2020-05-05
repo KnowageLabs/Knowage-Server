@@ -53,7 +53,7 @@
 	in ascending order for this series item if this type of ordering is set and vice versa.
 -->
 <div layout="row" flex layout-margin
-ng-if="seriesOrderColumnExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
+ng-if="seriesOrderColumnExcludeTypes.indexOf(selectedChartType.toLowerCase())<0 && selectedChartType != 'gauge'">
 	<md-input-container class="md-block" flex> 
 		<label>{{translate.load('sbi.chartengine.designer.seriesordertype')}}</label>
 		<md-select ng-model="detailsForSeriesItem.orderType"> 
