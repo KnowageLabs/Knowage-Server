@@ -187,27 +187,33 @@
 				
 			}
 		}
-    	.map {
-    		position: relative;
-    		.optionsController {
-			    position: absolute;
-			    right: 7px;
-			    top: 40px;
-			    padding: 5px;
-			    background-color: #6690B9;
-			    border: 3px solid rgba(white,.7);
-			    color: white;
-			    border-radius:2px;
-			    z-index: 99;
-			    transition: right .3s linear;
-			    &.sideNavOpened {
-			    	right: 327px;
-			    }
-			    &:hover {
-			    	background-color: darken(#6690B9,15%);
-			    }
-	    	}
-    	}
+		.map {
+			position: relative;
+			.ol-scale-line {
+				position: absolute;
+				left: unset;
+				right: 7px;
+				bottom: 8px;
+			}
+			.optionsController {
+				position: absolute;
+				right: 7px;
+				top: 40px;
+				padding: 5px;
+				background-color: #6690B9;
+				border: 3px solid rgba(white,.7);
+				color: white;
+				border-radius:2px;
+				z-index: 99;
+				transition: right .3s linear;
+				&.sideNavOpened {
+					right: 327px;
+				}
+				&:hover {
+					background-color: darken(#6690B9,15%);
+				}
+			}
+		}
 		
 		.mapWidgetLegend{
 			position:absolute;

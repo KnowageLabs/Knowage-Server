@@ -168,7 +168,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.layerVisibility = [];
 		$scope.exploded = {}; // is heatp/cluster exploded?
 		$scope.zoomControl = undefined; // Zoom control on map
+		$scope.scaleControl = undefined; // Scale indicator
 		$scope.mouseWheelZoomInteraction = undefined; // Manage the mouse wheel on map
+
 
 		$scope.init = function(element,width,height) {
 
@@ -389,6 +391,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 				$scope.addAllLayers();
 				$scope.setZoomControl();
+				$scope.setScaleControl();
 				$scope.setMouseWheelZoomInteraction();
 				$scope.setMapSize();
 			}
@@ -883,22 +886,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				cockpitModule_mapServices.updateCoordinatesAndZoom($scope.ngModel, $scope.map, tmpLayer, false);
 			}
 
-			$scope.zoomControl = $scope.createZoomControl();
-			$scope.mouseWheelZoomInteraction = $scope.createMouseWheelZoomInteraction();
-
 			$scope.map = new ol.Map({
 				target: 'map-' + $scope.ngModel.id,
 				layers: layers,
 				overlays: [overlay],
-				controls: [$scope.zoomControl],
+				controls: [],
 				interactions: [
 					new ol.interaction.DragPan(),
 					new ol.interaction.PinchRotate(),
-					new ol.interaction.PinchZoom(),
-					$scope.mouseWheelZoomInteraction
+					new ol.interaction.PinchZoom()
 				]
 			});
 			console.log("Created obj map with id [" + 'map-' + $scope.ngModel.id + "]", $scope.map);
+
+			$scope.setZoomControl();
+			$scope.setScaleControl();
+			$scope.setMouseWheelZoomInteraction();
 
 			$scope.setMapView();
 
@@ -1480,6 +1483,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			});
 		}
 
+		$scope.createScaleControl = function() {
+			return new ol.control.ScaleLine();
+		}
+
 		$scope.createMouseWheelZoomInteraction = function() {
 			var delta = $scope.getZoomFactor();
 
@@ -1490,11 +1497,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.setZoomControl = function() {
 
-			$scope.map.removeControl($scope.zoomControl);
+			if (!(typeof $scope.zoomControl == "undefined")) {
+				$scope.map.removeControl($scope.zoomControl);
+			}
 
 			$scope.zoomControl = $scope.createZoomControl();
 
 			$scope.map.addControl($scope.zoomControl);
+		}
+
+		$scope.setScaleControl = function() {
+
+			if (!(typeof $scope.scaleControl == "undefined")) {
+				$scope.map.removeControl($scope.scaleControl);
+			}
+
+			if ($scope.ngModel.content.showScale) {
+				$scope.scaleControl = $scope.createScaleControl();
+
+				$scope.map.addControl($scope.scaleControl);
+			} else {
+				$scope.scaleControl = undefined;
+			}
 		}
 
 		$scope.setMouseWheelZoomInteraction = function() {
