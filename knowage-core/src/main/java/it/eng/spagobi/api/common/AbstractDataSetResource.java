@@ -666,18 +666,33 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			IAggregationFunction function = AggregationFunctions.get(jsonObject.optString("funct"));
 			String orderColumn = (String) jsonObject.opt("orderColumn");
 
-			Projection projection;
-			if (orderColumn != null && !orderColumn.isEmpty() && !orderType.isEmpty()) {
-				String alias = jsonObject.optString("alias");
-				projection = new Projection(function, dataSet, orderColumn, alias);
+			if (jsonObject.has("formula")) {
+				DataStoreCalculatedField projection;
+				if (orderColumn != null && !orderColumn.isEmpty() && !orderType.isEmpty()) {
+					String alias = jsonObject.optString("alias");
+					projection = new DataStoreCalculatedField(function, dataSet, orderColumn, alias, jsonObject.getString("formula"));
+				} else {
+					String columnName = getColumnName(jsonObject, columnAliasToName);
+					projection = new DataStoreCalculatedField(function, dataSet, columnName, orderColumn);
+				}
+
+				boolean isAscending = "ASC".equalsIgnoreCase(orderType);
+
+				sorting = new Sorting(projection, isAscending);
 			} else {
-				String columnName = getColumnName(jsonObject, columnAliasToName);
-				projection = new Projection(function, dataSet, columnName, orderColumn);
+				Projection projection;
+				if (orderColumn != null && !orderColumn.isEmpty() && !orderType.isEmpty()) {
+					String alias = jsonObject.optString("alias");
+					projection = new Projection(function, dataSet, orderColumn, alias);
+				} else {
+					String columnName = getColumnName(jsonObject, columnAliasToName);
+					projection = new Projection(function, dataSet, columnName, orderColumn);
+				}
+
+				boolean isAscending = "ASC".equalsIgnoreCase(orderType);
+
+				sorting = new Sorting(projection, isAscending);
 			}
-
-			boolean isAscending = "ASC".equalsIgnoreCase(orderType);
-
-			sorting = new Sorting(projection, isAscending);
 		}
 
 		return sorting;

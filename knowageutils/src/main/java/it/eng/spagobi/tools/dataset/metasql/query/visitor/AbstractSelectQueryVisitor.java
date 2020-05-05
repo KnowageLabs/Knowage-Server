@@ -393,20 +393,39 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 
 	protected void append(Sorting item) {
 		String aliasDelimiter = database.getAliasDelimiter();
-		Projection projection = item.getProjection();
-		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+		AbstractSelectionField projs = item.getProjection();
 
-		String name = projection.getName();
-		String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
-				: aliasDelimiter + name + aliasDelimiter;
+		if (!projs.getClass().equals(DataStoreCalculatedField.class)) {
+			Projection projection = (Projection) projs;
+			IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
-		if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
-			queryBuilder.append(columnName);
+			String name = projection.getName();
+			String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
+					: aliasDelimiter + name + aliasDelimiter;
+
+			if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+				queryBuilder.append(columnName);
+			} else {
+				queryBuilder.append(aggregationFunction.apply(columnName));
+			}
+
+			queryBuilder.append(item.isAscending() ? " ASC" : " DESC");
 		} else {
-			queryBuilder.append(aggregationFunction.apply(columnName));
-		}
+			DataStoreCalculatedField projection = (DataStoreCalculatedField) projs;
+			IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
-		queryBuilder.append(item.isAscending() ? " ASC" : " DESC");
+			String name = projection.getAlias();
+			String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
+					: aliasDelimiter + name + aliasDelimiter;
+
+			if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+				queryBuilder.append(columnName);
+			} else {
+				queryBuilder.append(aggregationFunction.apply(columnName));
+			}
+
+			queryBuilder.append(item.isAscending() ? " ASC" : " DESC");
+		}
 	}
 
 	@Override
@@ -481,20 +500,41 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			List<Sorting> sortings = query.getSortings();
 			if (groups != null && !groups.isEmpty() && sortings != null && !sortings.isEmpty()) {
 				for (Sorting sorting : sortings) {
-					Projection projection = sorting.getProjection();
+					AbstractSelectionField projs = sorting.getProjection();
 					boolean projectionAlreadyDefined = false;
-					for (Projection p : projections) {
-						if (p.getDataset().equals(projection.getDataset()) && p.getName().equals(projection.getName())) {
-							projectionAlreadyDefined = true;
-							break;
+					if (!projs.getClass().equals(DataStoreCalculatedField.class)) {
+						Projection projection = (Projection) projs;
+
+						for (Projection p : projections) {
+							if (p.getDataset().equals(projection.getDataset()) && p.getName().equals(projection.getName())) {
+								projectionAlreadyDefined = true;
+								break;
+							}
 						}
-					}
-					if (!projectionAlreadyDefined) {
-						IAggregationFunction aggregationFunction = projection.getAggregationFunction();
-						if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
-							queryBuilder.append(",");
-							append(projection, false);
+						if (!projectionAlreadyDefined) {
+							IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+							if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+								queryBuilder.append(",");
+								append(projection, false);
+							}
 						}
+
+					} else {
+						DataStoreCalculatedField projection = (DataStoreCalculatedField) projs;
+						for (DataStoreCalculatedField p : projectionsCalcFields) {
+							if (p.getDataset().equals(projection.getDataset()) && p.getName().equals(projection.getName())) {
+								projectionAlreadyDefined = true;
+								break;
+							}
+						}
+						if (!projectionAlreadyDefined) {
+							IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+							if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+								queryBuilder.append(",");
+								append(projection, false);
+							}
+						}
+
 					}
 				}
 			}
@@ -556,30 +596,63 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		List<Sorting> sortings = query.getSortings();
 		if (sortings != null && !sortings.isEmpty()) {
 			for (Sorting sorting : sortings) {
-				Projection projection = sorting.getProjection();
-				boolean projectionAlreadyDefined = false;
-				for (AbstractSelectionField g : groups) {
-					if (g instanceof Projection) {
-						Projection proj = (Projection) g;
-						if (proj.getDataset().equals(projection.getDataset()) && proj.getName().equals(projection.getName())) {
-							projectionAlreadyDefined = true;
-							break;
-						}
-					} else {
-						DataStoreCalculatedField calc = (DataStoreCalculatedField) g;
-						if (calc.getDataset().equals(projection.getDataset()) && calc.getName().equals(projection.getName())) {
-							projectionAlreadyDefined = true;
-							break;
+				AbstractSelectionField projs = sorting.getProjection();
+
+				if (!projs.getClass().equals(DataStoreCalculatedField.class)) {
+					Projection projection = (Projection) projs;
+					boolean projectionAlreadyDefined = false;
+					for (AbstractSelectionField g : groups) {
+						if (g instanceof Projection) {
+							Projection proj = (Projection) g;
+							if (proj.getDataset().equals(projection.getDataset()) && proj.getName().equals(projection.getName())) {
+								projectionAlreadyDefined = true;
+								break;
+							}
+						} else {
+							DataStoreCalculatedField calc = (DataStoreCalculatedField) g;
+							if (calc.getDataset().equals(projection.getDataset()) && calc.getName().equals(projection.getName())) {
+								projectionAlreadyDefined = true;
+								break;
+							}
 						}
 					}
-				}
-				if (!projectionAlreadyDefined) {
-					IAggregationFunction aggregationFunction = projection.getAggregationFunction();
-					if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
-						queryBuilder.append(",");
-						append(projection, false);
+					if (!projectionAlreadyDefined) {
+						IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+						if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+							queryBuilder.append(",");
+							append(projection, false);
+						}
 					}
+
+				} else {
+
+					DataStoreCalculatedField projection = (DataStoreCalculatedField) projs;
+					boolean projectionAlreadyDefined = false;
+					for (AbstractSelectionField g : groups) {
+						if (g instanceof Projection) {
+							Projection proj = (Projection) g;
+							if (proj.getDataset().equals(projection.getDataset()) && proj.getName().equals(projection.getName())) {
+								projectionAlreadyDefined = true;
+								break;
+							}
+						} else {
+							DataStoreCalculatedField calc = (DataStoreCalculatedField) g;
+							if (calc.getDataset().equals(projection.getDataset()) && calc.getName().equals(projection.getName())) {
+								projectionAlreadyDefined = true;
+								break;
+							}
+						}
+					}
+					if (!projectionAlreadyDefined) {
+						IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+						if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+							// queryBuilder.append(",");
+							// append(projection, false);
+						}
+					}
+
 				}
+
 			}
 		}
 	}

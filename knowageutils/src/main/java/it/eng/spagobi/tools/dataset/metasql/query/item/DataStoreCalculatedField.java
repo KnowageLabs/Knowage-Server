@@ -35,10 +35,16 @@ public class DataStoreCalculatedField extends AbstractCalculatedField {
 		this(aggregationFunction, dataSet, columnName, columnName, null);
 	}
 
+	public DataStoreCalculatedField(IAggregationFunction aggregationFunction, IDataSet dataSet, String columnName, String alias) {
+		this(aggregationFunction, dataSet, columnName, alias, null);
+	}
+
 	public DataStoreCalculatedField(IAggregationFunction aggregationFunction, IDataSet dataSet, String columnName, String alias, String formula) {
 		this.aggregationFunction = aggregationFunction;
 
 		this.dataSet = dataSet;
+
+		this.name = columnName;
 
 //		IFieldMetaData fieldMetaData = DataSetUtilities.getFieldMetaData(dataSet, columnName);
 
@@ -68,10 +74,12 @@ public class DataStoreCalculatedField extends AbstractCalculatedField {
 		this.dataSet = dataSet;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}

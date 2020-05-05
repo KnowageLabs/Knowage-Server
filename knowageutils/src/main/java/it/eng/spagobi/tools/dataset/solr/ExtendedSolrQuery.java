@@ -283,11 +283,22 @@ public class ExtendedSolrQuery extends SolrQuery {
 	}
 
 	private JSONObject getJsonFacet(Sorting sorting, JSONObject jsonFacet) throws JSONException {
-		Projection projection = sorting.getProjection();
-		JSONObject outerFacet = getJsonFacet(projection, jsonFacet);
-		JSONObject innerFacet = outerFacet.getJSONObject(projection.getAliasOrName() + FACET_PIVOT_CATEGORY_ALIAS_POSTFIX);
-		innerFacet.put("sort", "index " + (sorting.isAscending() ? "asc" : "desc"));
-		return outerFacet;
+
+		AbstractSelectionField projs = sorting.getProjection();
+
+		if (projs instanceof Projection) {
+			Projection projection = (Projection) projs;
+			JSONObject outerFacet = getJsonFacet(projection, jsonFacet);
+			JSONObject innerFacet = outerFacet.getJSONObject(projection.getAliasOrName() + FACET_PIVOT_CATEGORY_ALIAS_POSTFIX);
+			innerFacet.put("sort", "index " + (sorting.isAscending() ? "asc" : "desc"));
+			return outerFacet;
+		} else {
+			DataStoreCalculatedField projection = (DataStoreCalculatedField) projs;
+			JSONObject outerFacet = getJsonFacet(projection, jsonFacet);
+			JSONObject innerFacet = outerFacet.getJSONObject(projection.getAliasOrName() + FACET_PIVOT_CATEGORY_ALIAS_POSTFIX);
+			innerFacet.put("sort", "index " + (sorting.isAscending() ? "asc" : "desc"));
+			return outerFacet;
+		}
 	}
 
 	public ExtendedSolrQuery facets(List<Projection> groups) {

@@ -142,7 +142,7 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 	@Override
 	protected void append(Sorting item) {
 		String aliasDelimiter = database.getAliasDelimiter();
-		Projection projection = item.getProjection();
+		Projection projection = (Projection) item.getProjection();
 		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
 		String name = aliasDelimiter + projection.getName() + aliasDelimiter;

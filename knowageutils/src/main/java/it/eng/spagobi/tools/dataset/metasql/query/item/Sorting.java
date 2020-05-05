@@ -23,7 +23,7 @@ import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 
 public class Sorting {
 
-	private Projection projection;
+	private AbstractSelectionField projection;
 	private boolean isAscending;
 
 	public Sorting(IDataSet dataSet, String columnAliasOrName, boolean isAscending) {
@@ -39,7 +39,12 @@ public class Sorting {
 		this.isAscending = isAscending;
 	}
 
-	public Projection getProjection() {
+	public Sorting(AbstractSelectionField projection, boolean isAscending) {
+		this.projection = projection;
+		this.isAscending = isAscending;
+	}
+
+	public AbstractSelectionField getProjection() {
 		return projection;
 	}
 
