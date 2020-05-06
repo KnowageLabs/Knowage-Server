@@ -49,8 +49,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				if(col.isCalculated == true){
 					obj["formula"] = col.formula;
 				}
-					obj["columnName"] = col.name;
-
+				obj["columnName"] = col.name;
 
 				obj["orderType"] = "";
 				if(columnOrdering !=undefined){
@@ -71,8 +70,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 									newCategArray.push(obj)
 								}
 							}
-						}else{
-
+						} else {
 							obj["orderColumn"] = col.orderColumn ? col.orderColumn : "";
 							obj["orderType"] = col.orderType ? col.orderType : "";
 						}
@@ -171,11 +169,18 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			// create aggregations from measures
 			for(var i=0;i<crosstabDef.measures.length;i++){
 				var measure = crosstabDef.measures[i];
+
 				var obj = {};
 				obj["id"] = measure.id;
 				obj["alias"] = measure.alias;
 				obj["columnName"] = measure.id;
 				obj["funct"] = measure.funct;
+
+				if(measure.isCalculated == true){
+					obj["formula"] = measure.formula;
+					obj["datasetOrTableFlag"] = measure.datasetOrTableFlag ? true : false;
+					obj["orderColumn"] = measure.id;
+				}
 
 				obj["orderType"] = "";
 				if(columnOrdering !=undefined){

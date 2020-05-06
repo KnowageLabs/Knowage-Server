@@ -235,6 +235,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(model.type == 'discovery'){
 					if(model.settings.hideTextSearch) model.settings.textEnabled = !model.settings.hideTextSearch;
 				}
+				if(model.type == "static-pivot-table"){
+
+					model.content
+						.crosstabDefinition
+						.measures
+						.forEach(function(item) {
+							// For calculated fields
+							if(!item.hasOwnProperty("isCalculated")) {
+								item.isCalculated = false;
+							}
+							if(!item.isCalculated && !item.hasOwnProperty("aggregationSelected")) {
+								item.aggregationSelected = item.funct;
+							}
+							if(!item.isCalculated && !item.hasOwnProperty("name")) {
+								item.name = item.id;
+							}
+						});
+				}
 			}
 
 			if(model.content.name.match(/new[a-zA-Z\s\-]*Widget/g)) model.content.name = model.type + '_' + model.id;
