@@ -104,8 +104,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             obj.multivalue = $scope.usersAttributes[i].multivalue;
             obj.allowUser = $scope.usersAttributes[i].allowUser;
             obj.syntax = $scope.usersAttributes[i].syntax;
-
-
+            
             if($scope.usersAttributes[i].lovId){
             	$scope.getLovsValues(obj)
             }
@@ -247,6 +246,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         }
         $scope.selectedUser.sbiUserAttributeses = tmpA;
         delete $scope.selectedUser.confirm;
+        delete $scope.selectedUser.warningIcon;
     }
 
     /*
@@ -363,17 +363,54 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     		});
 		}
     }
+    
+    $scope.angularTableColumns = [{"label":"User ID","name":"userId"},	{"label":"Full Name","name":"fullName"}];
 
     $scope.getUsers = function () { // service that gets list of users GET
     	sbiModule_restServices.promiseGet("2.0", "users")
 		.then(function(response) {
 			$scope.usersList = response.data;
+			
+			$scope.addWarnings();
+			
             $scope.addConfirmPwdProp();
 
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 
 		});
+    }
+    
+    $scope.addWarnings = function() {
+    	var warningColumn = {"label":" ","name":"warningIcon", "size":"8%;" };
+		var warningColumnIdx = $scope.findColumn(warningColumn, $scope.angularTableColumns);
+		
+		if (warningColumnIdx != -1)
+			$scope.angularTableColumns.splice(warningColumnIdx, 1);
+		
+
+		for (var idx in $scope.usersList) {
+			if ($scope.usersList[idx].blockedByFailedLoginAttempts) {
+				$scope.usersList[idx].warningIcon = "<md-icon class='ng-scope md-knowage-theme material-icons fa fa-exclamation-triangle' style='color: red;'></md-icon>";
+				$scope.angularTableColumns.push(warningColumn);
+				break;
+			}
+		}
+    }
+    
+    $scope.findColumn = function (columnToFind, list) {
+    	for (var i in list) {
+    		if (angular.equals(list[i].label, columnToFind.label) && angular.equals(list[i].name, columnToFind.name)) {
+    			return i;
+    		}
+    	}
+    	
+    	return -1;
+    }
+    
+    $scope.unlockUser = function() {
+    	$scope.selectedUser.failedLoginAttempts=0;
+    	$scope.saveUser();
     }
 
     $scope.columns = [{"headerName":"Name","field":"name","headerCheckboxSelection":true,"checkboxSelection":true},{"headerName":"Value","field":"description"}]

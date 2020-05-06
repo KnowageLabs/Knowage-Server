@@ -64,6 +64,8 @@ public class UserBO implements Serializable {
 	private Date dtLastAccess;
 	private Boolean isSuperadmin;
 	private Integer defaultRoleId;
+	private Integer failedLoginAttempts;
+	private boolean blockedByFailedLoginAttempts;
 
 	private List sbiExtUserRoleses = new ArrayList();
 	private HashMap<Integer, HashMap<String, String>> sbiUserAttributeses = new HashMap<Integer, HashMap<String, String>>();
@@ -162,6 +164,22 @@ public class UserBO implements Serializable {
 
 	public void setDefaultRoleId(Integer defaultRoleId) {
 		this.defaultRoleId = defaultRoleId;
+	}
+
+	public Integer getFailedLoginAttempts() {
+		return failedLoginAttempts;
+	}
+
+	public void setFailedLoginAttempts(Integer failedLoginAttempts) {
+		this.failedLoginAttempts = failedLoginAttempts;
+	}
+
+	public boolean getBlockedByFailedLoginAttempts() {
+		return blockedByFailedLoginAttempts;
+	}
+
+	public void setBlockedByFailedLoginAttempts(boolean blockedByFailedLoginAttempts) {
+		this.blockedByFailedLoginAttempts = blockedByFailedLoginAttempts;
 	}
 
 }
