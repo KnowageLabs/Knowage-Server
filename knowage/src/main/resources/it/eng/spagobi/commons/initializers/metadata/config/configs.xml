@@ -23,16 +23,16 @@
 		valueCheck="abcdefghjklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 		valueType="STRING" category="SECURITY" />
 	<CONFIG label="changepwdmodule.change" name="Change from last"
-		description="The new pwd must be different from the lastest" isActive="false"
+		description="The new pwd must be different from the latest" isActive="false"
 		valueCheck="" valueType="" category="SECURITY" />
 	<CONFIG label="changepwd.change_first" name="Change at first login "
 		description="The pwd must be changed at first login" isActive="false"
 		valueCheck="" valueType="" category="SECURITY" />
 	<CONFIG label="changepwd.disactivation_time" name="Disactivation time"
-		description="Number of months before disactivation" isActive="false"
+		description="Number of months before deactivation" isActive="false"
 		valueCheck="6" valueType="NUM" category="SECURITY" />
 	<CONFIG label="changepwd.expired_time" name="Expired time"
-		description="Number of days fo the expiration" isActive="false"
+		description="Number of days for the expiration" isActive="false"
 		valueCheck="90" valueType="NUM" category="SECURITY" />
 
 	<CONFIG label="SPAGOBI.SPAGOBI-MODE.mode" name="SpagoBI mode"
@@ -459,7 +459,7 @@
 
 	<CONFIG label="SPAGOBI.SECURITY.MY_ACCOUNT_MENU"
 			name="SPAGOBI.SECURITY.MY_ACCOUNT_MENU" description="Enables the My Account menu for the final user"
-			isActive="false" valueCheck="true" valueType="STRING" category="SECURITY" />
+			isActive="true" valueCheck="true" valueType="STRING" category="SECURITY" />
 
 	<CONFIG label="SPAGOBI.CACHE.NAMEPREFIX" name="SPAGOBI.CACHE.NAMEPREFIX" description="Prefix for cache tables name" isActive="true" valueCheck="sbicache" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 	<CONFIG label="SPAGOBI.CACHE.SPACE_AVAILABLE" name="SPAGOBI.CACHE.SPACE_AVAILABLE" description="Bytes of dimension available for cache management" isActive="true" valueCheck="1073741824" valueType="NUM" category="GENERIC_CONFIGURATION"/>
@@ -557,7 +557,7 @@
 		valueCheck="true" valueType="STRING" category="SECURITY" />
 	<CONFIG label="internal.security.login.maxFailedLoginAttempts" name="Max failed login attempts"
 		description="Specify max value of failed login attempts before account locking" isActive="true"
-		valueCheck="3" valueType="NUM" category="SECURITY" />
+		valueCheck="5" valueType="NUM" category="SECURITY" />
 	
 	<CONFIG label="internal.nodejs.chromium.export.path" name="NodeJS Export script path"
 		description="Path of the export script for NodeJS" isActive="true"
