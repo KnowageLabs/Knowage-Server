@@ -31,7 +31,7 @@
 	the type of individual series item can be any of: BAR, LINE, AREA.
 -->
 <div layout="row" flex layout-margin
- ng-if="(selectedChartType =='bar' || selectedChartType =='line') && disableHtmlElementForChartJs()">  
+ ng-if="(selectedChartType =='bar' || selectedChartType =='line' || (selectedChartType =='radar' && !chartTemplate.groupSeriesCateg)) && disableHtmlElementForChartJs()">  
 	<md-input-container class="md-block" flex> 
 		<label>{{translate.load('sbi.chartengine.designer.seriestype')}}</label>
 		<md-select ng-model="detailsForSeriesItem.type" > 
@@ -41,10 +41,10 @@
 </div>
 
 <div layout="row" flex layout-margin
- ng-if="(selectedChartType =='radar') && disableHtmlElementForChartJs()">  
+ ng-if="selectedChartType =='radar' && chartTemplate.groupSeriesCateg && disableHtmlElementForChartJs()">  
 		<md-input-container class="md-block" flex>
 		<label>{{translate.load('sbi.chartengine.designer.seriestype')}}</label>
-		<input name="serie_name" ng-model="detailsForSeriesItem.serieTypeRadar"/> 
+		<input name="serie_name" ng-model="detailsForSeriesItem.type"/> 
 	</md-input-container>	
 </div>
 

@@ -1063,9 +1063,11 @@
 			#set($relatedSerie = $chart.VALUES.SERIE.get(0))
 				#if($chart.type.toUpperCase() == 'RADAR' && $chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
 		 
-				
+				#if($chart.VALUES.SERIE.get(0).serieTypeRadar && $chart.VALUES.SERIE.get(0).serieTypeRadar!="")
 				#set($relatedSerieTypes = $chart.VALUES.SERIE.get(0).serieTypeRadar.split(", "))
-			 
+			 	#else
+			 	#set($relatedSerieTypes = $chart.VALUES.SERIE.get(0).type.split(", "))
+			 	#end
 				#set($count = $chart.VALUES.SERIE.get(0).serieTypeRadar.length() - $chart.VALUES.SERIE.get(0).serieTypeRadar.replace(",", "").length())
 				#end
 			#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
@@ -1478,6 +1480,18 @@
 				#end		
 		    	type: '$relatedSerieType',
 		    #end
+		    
+		    #if($chartType == 'radar')
+			    #if($relatedSerieType == '')
+			    	#if($relatedSerie.serieTypeRadar!='')
+				    	#set($relatedSerieType = $relatedSerie.serieTypeRadar)
+				    	type: '$relatedSerieType',
+			    	#end
+			    #else
+			    	type: '$relatedSerieType',
+			    #end
+			#end
+				
 	       	#set($styleOfDataLabels = $relatedSerie.dataLabels.style)
 	    	## makes the datalabels overlapping
 	    	
