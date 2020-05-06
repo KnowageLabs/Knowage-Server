@@ -32,6 +32,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(!chartTemplate.TOOLTIP){
 					chartTemplate.TOOLTIP = {"borderWidth": 0,"borderRadius":0}
 				}
+				if(chartTemplate.VALUES.SERIE[0].TOOLTIP){
+					delete chartTemplate.VALUES.SERIE[0].TOOLTIP.borderWidth;
+					delete chartTemplate.VALUES.SERIE[0].TOOLTIP.borderRadius;
+					chartTemplate.VALUES.SERIE[0].TOOLTIP = {
+							backgroundColor: "#D6D6D6",
+							style: {align: "", color: "", fontFamily: "", fontWeight: "", fontSize: ""},
+							align: "",
+							color: "",
+							fontFamily: "",
+							fontSize: "",
+							fontWeight: "",
+					}
+				}
 			}
 
 			return chartTemplate;
