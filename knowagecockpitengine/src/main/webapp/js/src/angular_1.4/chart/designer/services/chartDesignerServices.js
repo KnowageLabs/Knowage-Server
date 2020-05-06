@@ -1158,17 +1158,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"showAbsValue": false,
 						"showPercentage": false,
 						"showValue": true,
-						"type": "",
-						"TOOLTIP": {
-							"backgroundColor": "#D6D6D6",
-							"style": {
-								"align":"",
-								"color":"",
-								"fontFamily":"",
-								"fontWeight":"",
-								"fontSize":""
-							}
-						}
+						"type": ""
 					}]
 				},
 				"type": "HEATMAP",
@@ -1352,8 +1342,17 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				},
 				"TOOLTIP":{
 					  "borderWidth":0,
-					  "borderRadius":0
+					  "borderRadius":0,
+					  "backgroundColor": "#D6D6D6",
+						"style": {
+							"align":"",
+							"color":"",
+							"fontFamily":"",
+							"fontWeight":"",
+							"fontSize":""
+					  }
 				}
+
 			}
 
 		return heatTemp;

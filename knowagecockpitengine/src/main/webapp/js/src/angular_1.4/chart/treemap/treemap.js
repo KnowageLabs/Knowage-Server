@@ -404,6 +404,32 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 
    	tooltipFormatter= function () {
 
+   		var ttColor = chartConf.additionalData.tooltip.ttColor ? chartConf.additionalData.tooltip.ttColor : '';
+
+		var ttAlign = chartConf.additionalData.tooltip.ttAlign ? chartConf.additionalData.tooltip.ttAlign : '';
+		var ttFont = chartConf.additionalData.tooltip.ttFont ? ' ' + chartConf.additionalData.tooltip.ttFont : '';
+		var ttFontSize = chartConf.additionalData.tooltip.ttFontSize ? ' ' + chartConf.additionalData.tooltip.ttFontSize : '';
+		var ttFontWeight = chartConf.additionalData.tooltip.ttFontWeight ? ' ' + chartConf.additionalData.tooltip.ttFontWeight : '';
+		var tooltipFontStyle = "";
+
+		if (ttFontWeight == " underline")
+		{
+			tooltipFontStyle = " text-decoration: underline;";
+		}
+		else if (ttFontWeight == " italic")
+		{
+			tooltipFontStyle = "font-style: italic;";
+		}
+		else if (ttFontWeight == " bold")
+		{
+			tooltipFontStyle = "font-weight: bold;";
+		}
+		else
+		{
+			tooltipFontStyle = "font-weight: normal;";
+		}
+
+
    		var point = this.point,
 
    		group = this.series.data.filter(function (x) {
@@ -417,22 +443,28 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 		}, 0);
 
         percentage = 100 * point.value/groupTotal;
+        var result = "";
+        result +=
+			'<div style="padding:10px;color:' + ttColor + '; opacity: 0.9; font-family: ' + ttFont + '; '
+				+ tooltipFontStyle + " font-size: " + ttFontSize + ';text-align:' + ttAlign + ';">';
 
 		if(!chartConf.additionalData.showAbsValue && !chartConf.additionalData.showPercentage){
-			return point.name + '<br>';
+			result += '<span>' + point.name + '</span><br/></div>';
 		} else if (!chartConf.additionalData.showAbsValue && chartConf.additionalData.showPercentage){
-			return point.name + '<br>' + percentage.toFixed(precision) + '%';
-
+			result += '<span>' + point.name + '</span><br/>'+ percentage.toFixed(precision) + '%</div>';
 		} else if (chartConf.additionalData.showAbsValue && !chartConf.additionalData.showPercentage ){
-			return point.name + '<br>'+ prefix +" "+  point.value.toFixed(precision) +" "+ postfix;
-
+			result += '<span>' + point.name + '</span><br/>'+ point.value.toFixed(precision) +" "+ postfix + '</div>';
 		} else if(chartConf.additionalData.showAbsValue && chartConf.additionalData.showPercentage){
-			return point.name + '<br>' + percentage.toFixed(precision) + '%' + '<br>'+prefix +" "+  point.value.toFixed(precision) +" "+ postfix;
+			result += '<span>' + point.name + '</span><br/>'+ percentage.toFixed(precision) + '%' + '<br>'+prefix +" "+ point.value.toFixed(precision) +" "+ postfix +'</div>';
 		}
-
+		return result;
 	};
 
 	tooltipObject={
+    	borderWidth: chartConf.tooltip.borderWidth,
+    	borderRadius: chartConf.tooltip.borderRadius,
+    	useHTML: true,
+    	backgroundColor: chartConf.additionalData.tooltip.ttBackColor,
 		formatter:tooltipFormatter,
 
 	};
@@ -971,20 +1003,55 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     	};
     	serieColSize=1;
     	tooltipFormatter= function () {
-    		var val = this.point.value;
-    		val = Highcharts.numberFormat(val,precision );
-            return '<b>'+chartConf.additionalData.serie.value+'</b><br>' + this.series.xAxis.categories[this.point.x] + ' | ' + this.series.yAxis.categories[this.point.y] + ': <b>' +
-            prefix + " " +val + " " + postfix + ' </b>';
+
+    		var color = chartConf.tooltip.color ? chartConf.tooltip.color : '';
+    		var align = chartConf.tooltip.align ? chartConf.tooltip.align : '';
+    		var fontFamily = chartConf.tooltip.fontFamily ? ' ' + chartConf.tooltip.fontFamily : '';
+    		var fontSize = chartConf.tooltip.fontSize ? ' ' + chartConf.tooltip.fontSize : '';
+    		var fontWeight = chartConf.tooltip.fontWeight ? ' ' + chartConf.tooltip.fontWeight : '';
+    		var tooltipFontStyle = "";
+
+    		if (fontWeight == " underline")
+    		{
+    			tooltipFontStyle = " text-decoration: underline;";
+    		}
+    		else if (fontWeight == " italic")
+    		{
+    			tooltipFontStyle = "font-style: italic;";
+    		}
+    		else if (fontWeight == " bold")
+    		{
+    			tooltipFontStyle = "font-weight: bold;";
+    		}
+    		else
+    		{
+    			tooltipFontStyle = "font-weight: normal;";
+    		}
+
+
+            var val = this.point.value;
+            var result = "";
+            result +=
+    			'<div style="padding:10px;color:' + color + '; opacity: 0.9; font-family: ' + fontFamily + '; '
+    				+ tooltipFontStyle + " font-size: " + fontSize + ';text-align:' + align + ';">';
+
+            result += '<b>'+chartConf.additionalData.serie.value+'</b><br>' + this.series.xAxis.categories[this.point.x] + ' | ' + this.series.yAxis.categories[this.point.y] + ': <b>' +
+            	prefix + " " +val + " " + postfix + ' </b></div>';
+
+
+    		return result;
+
     	};
 
     	tooltipObject={
     		formatter:tooltipFormatter,
-    		style:{
-    			color: chartConf.tooltip.style.fontColor,
-    			fontSize: chartConf.tooltip.style.fontSize,
-    			fontFamily: chartConf.tooltip.style.fontFamily
-    		}
+    		useHTML: true,
+        	borderWidth: chartConf.tooltip.borderWidth,
+        	borderRadius: chartConf.tooltip.borderRadius,
+	    	backgroundColor: chartConf.tooltip.backgroundColor ? chartConf.tooltip.backgroundColor: "",
+
     	};
+
     }
 
     var toReturn = {

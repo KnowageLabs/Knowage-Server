@@ -210,6 +210,17 @@
     		#end		
 		}
 	},
+	tooltip: {
+
+    #if($chart.TOOLTIP.borderWidth)
+    	borderWidth: $chart.TOOLTIP.borderWidth,
+    #end
+    
+    #if($chart.TOOLTIP.borderRadius)
+    	borderRadius: $chart.TOOLTIP.borderRadius,
+    #end
+    
+    },
 	
 	#*
 		Remove credits from the TREEMAP chart (the "Highcharts.com" link at the 
@@ -322,7 +333,33 @@
   		#else
   		showPercentage:false,
   		#end
-  		  		
+  		tooltip: {
+  		  	#if ($serie.TOOLTIP.backgroundColor!="")
+                ttBackColor: '$serie.TOOLTIP.backgroundColor',
+            #else
+            	ttBackColor: '#FCFFC5',	## default background color for the serie tooltip
+			#end
+				
+			#if ($serie.TOOLTIP.style.color != '')
+				ttColor: '$serie.TOOLTIP.style.color' ,
+			#end
+				
+			#if ($serie.TOOLTIP.style.align != '')
+				ttAlign: '$serie.TOOLTIP.style.align' ,
+			#end
+				
+			#if ($serie.TOOLTIP.style.fontFamily && $serie.TOOLTIP.style.fontFamily != '')
+				ttFont: '$serie.TOOLTIP.style.fontFamily' ,
+			#end
+				
+			#if ($serie.TOOLTIP.style.fontWeight != '')
+				ttFontWeight: '$serie.TOOLTIP.style.fontWeight' ,
+			#end
+				
+			#if ($serie.TOOLTIP.style.fontSize != '')
+				ttFontSize: '$serie.TOOLTIP.style.fontSize' ,
+			#end
+		},
 	},
 	plotOptions:
 	{
