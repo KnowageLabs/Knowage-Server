@@ -41,7 +41,10 @@ import org.hibernate.criterion.SimpleExpression;
 import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.qbe.statement.hibernate.HQLStatement.IConditionalOperator;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.dao.PagedList;
@@ -96,7 +99,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while loading user by id" + id, he);
+			throw new SpagoBIDAOException("Error while loading user by id " + id, he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -144,7 +147,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while loading users", he);
+			throw new SpagoBIDAOException("Error while loading users ", he);
 		} finally {
 			logger.debug("OUT");
 			if (aSession != null) {
@@ -220,7 +223,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while inserting user" + user, he);
+			throw new SpagoBIDAOException("Error while inserting user " + user, he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -271,7 +274,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while update user attribute" + attribute, he);
+			throw new SpagoBIDAOException("Error while update user attribute " + attribute, he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -293,7 +296,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while updating user with role" + role, he);
+			throw new SpagoBIDAOException("Error while updating user with role " + role, he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -309,7 +312,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			SbiUser user = getSbiUserByUserId(userId);
 			return user;
 		} catch (HibernateException he) {
-			throw new SpagoBIDAOException("Error while loading user by id" + userId, he);
+			throw new SpagoBIDAOException("Error while loading user by id " + userId, he);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -341,7 +344,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while loading user attribute with id" + id, he);
+			throw new SpagoBIDAOException("Error while loading user attribute with id " + id, he);
 		} finally {
 			logger.debug("OUT");
 			if (aSession != null) {
@@ -369,7 +372,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while loading user role with id" + id, he);
+			throw new SpagoBIDAOException("Error while loading user role with id " + id, he);
 		} finally {
 			logger.debug("OUT");
 			if (aSession != null) {
@@ -456,7 +459,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error while deleting user with id" + id, he);
+			throw new SpagoBIDAOException("Error while deleting user with id " + id, he);
 		} finally {
 			logger.debug("OUT");
 			if (aSession != null) {
@@ -754,6 +757,20 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		userBO.setUserId(sbiUser.getUserId());
 		userBO.setIsSuperadmin(sbiUser.getIsSuperadmin());
 		userBO.setDefaultRoleId(sbiUser.getDefaultRoleId());
+
+		IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+		configsDao.setUserProfile(getUserProfile());
+
+		Integer maxFailedLoginAttempts = null;
+		try {
+			maxFailedLoginAttempts = Integer.valueOf(SingletonConfig.getInstance().getConfigValue("internal.security.login.maxFailedLoginAttempts"));
+		} catch (NumberFormatException e) {
+			throw new SpagoBIRuntimeException("Error while retrieving maxFailedLoginAttempts for user ", e);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while retrieving maxFailedLoginAttempts for user ", e);
+		}
+		userBO.setFailedLoginAttempts(sbiUser.getFailedLoginAttempts());
+		userBO.setBlockedByFailedLoginAttempts(sbiUser.getFailedLoginAttempts() > maxFailedLoginAttempts);
 
 		List<Integer> userRoles = new ArrayList<>();
 		Set roles = sbiUser.getSbiExtUserRoleses();

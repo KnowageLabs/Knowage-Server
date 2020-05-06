@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  <%
  String baseUrl = urlBuilder.getResourceLink(request, "restful-services/signup/active");
+ String getURL=request.getRequestURL().toString().substring(0, request.getRequestURL().toString().indexOf("knowage")) + "knowage/";
 %>
 	
 <html>
@@ -81,18 +82,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   		</div>
   		<div class="activation" ng-if="activation" >
   			<p>{{activation}}</p>
-			<button class="md-button md-raised md-primary md-knowage-theme">{{translate.load('sbi.execution.sendmail.login')}}</button>
+			<button class="md-button md-raised md-primary md-knowage-theme" onclick="location.href='<%=getURL%>'">{{translate.load('sbi.execution.sendmail.login')}}</button>
   		</div>
   		<div class="error" ng-if="error">
   			<p>{{error}}</p>
-  			<button class="md-button md-raised md-primary md-knowage-theme" ng-if="!expired">{{translate.load('sbi.generic.back')}}</button>
-  			<button class="md-button md-raised md-primary md-knowage-theme" ng-if="expired">{{translate.load('signup.active.resend')}}</button>
+  			<!-- <button class="md-button md-raised md-primary md-knowage-theme" ng-if="!expired">{{translate.load('sbi.generic.back')}}</button>
+  			<button class="md-button md-raised md-primary md-knowage-theme" ng-if="expired">{{translate.load('signup.active.resend')}}</button> -->
   		</div>
   		<div class="colorOverlay" ng-class="{'warning':error, 'success': !error}"></div>
   	</div>
   	<div class="bottom layout-row layout-xs-column">
   		<div class="third flex-33 flex-xs-100">
-  			<a href="https://knowage-suite.readthedocs.io/en/6.4/" target="_blank"> 
+  			<a href="https://knowage-suite.readthedocs.io/en/{{version}}/" target="_blank"> 
   				<img align="center" alt="Image" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2019/10/book.png" style="text-decoration:none;height:auto;border:none;width:100%;max-width:58px;display:block" title="Image" width="58"/>
   			</a>
   			<p>
@@ -100,7 +101,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   			</p>
   		</div>
   		<div class="third flex-33 flex-xs-100">
-  			<a href="https://knowage-suite.readthedocs.io/en/6.4/" target="_blank"> 
+  			<a href="https://www.knowage-suite.com/qa/" target="_blank"> 
   				<img align="center" alt="Image" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2019/10/question-sign.png" style="text-decoration:none;height:auto;border:none;width:100%;max-width:58px;display:block" title="Image" width="58"/>
   			</a>
   			<p>
@@ -108,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   			</p>
   		</div>
   		<div class="third flex-33 flex-xs-100">
-  			<a href="https://knowage-suite.readthedocs.io/en/6.4/" target="_blank"> 
+  			<a href="https://github.com/KnowageLabs/Knowage-Server" target="_blank"> 
   				<img align="center" alt="Image" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2019/10/data-graphic.png" style="text-decoration:none;height:auto;border:none;width:100%;max-width:58px;display:block" title="Image" width="58"/>
   			</a>
   			<p>
@@ -117,7 +118,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   		</div>
   	</div>
     <script>
-    var baseUrl = "<%= baseUrl %>";
+   var baseUrl = "<%= baseUrl %>";
     
     angular.module('userActivation',[])
     	.config(['$locationProvider', function($locationProvider) { 
@@ -154,9 +155,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	
     	function userActivationController($scope, $location, $http, sbiModule_translate){
     		$scope.translate = sbiModule_translate;
-    		 $scope.loading = true;
+    		$scope.loading = true;
+    		$scope.location = $location;
+    		debugger;
+    		$scope.version = $location.search().version.match(/^[0-9]{1,2}\.[0-9]{1,2}$/) ? $location.search().version : "master";
     		
-    		 $http.get(baseUrl + "?token="+$location.search().token+"&locale="+$location.search().locale)
+    		 $http.get(baseUrl + "?token="+$location.search().token+"&locale="+$location.search().locale+"&version="+$scope.version)
 	    		 .then(function(response){
 	    			 $scope.loading = false;
 	    			 if(response.data.errors){
@@ -168,9 +172,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        	}, function(error){
 	        		$scope.loading = false;
 	        		$scope.error = 'connection error';
-	        	});    	
+	        	});
     	}
-    
+
 	</script>
   </body>
 </html>

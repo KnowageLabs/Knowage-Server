@@ -273,7 +273,7 @@ public class Signup {
 			SbiUser user = userDao.loadSbiUserByUserId((String) profile.getUserId());
 
 			try {
-				PasswordChecker.getInstance().isValid(user, user.getPassword(), password, password);
+				PasswordChecker.getInstance().isValid(user, user.getPassword(), true, password, password);
 			} catch (Exception e) {
 				logger.error("Password is not valid", e);
 				String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
@@ -406,7 +406,7 @@ public class Signup {
 			return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActivationOK", "messages", locale) + "'}").toString();
 		} catch (TokenExpiredException te) {
 			logger.error("Expired Token [" + token + "]", te);
-			return new JSONObject("{errors: '" + msgBuilder.getMessage("signup.msg.expiredToken", "messages", locale) + "',expired:true}").toString();
+			return new JSONObject("{errors: '" + msgBuilder.getMessage("signup.msg.userActiveKO", "messages", locale) + "',expired:true}").toString();
 		} catch (Exception e) {
 			logger.error("Generic token validation error [" + token + "]", e);
 			return new JSONObject("{errors: '" + msgBuilder.getMessage("signup.msg.userActiveKO", "messages", locale) + "'}").toString();
@@ -510,10 +510,32 @@ public class Signup {
 			}
 
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
-			if (userDao.isUserIdAlreadyInUse(username) != null) {
-				logger.error("Username already in use");
-				JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.userInUse");
-				return Response.ok(errObj.toString()).build();
+			Integer existingUserId = userDao.isUserIdAlreadyInUse(username);
+			boolean userRegistrationFromExpiredToken = false;
+			/* Match with the username */
+			if (existingUserId != null) {
+
+				SbiUser sbiUser = userDao.loadSbiUserById(existingUserId);
+				/* Check if sbiUser has */
+				boolean matchingEmailAddress = false;
+				if (sbiUser != null) {
+					Set<SbiUserAttributes> userAttributes = sbiUser.getSbiUserAttributeses();
+					for (SbiUserAttributes sbiUserAttributes : userAttributes) {
+						if (sbiUserAttributes.getSbiAttribute().getAttributeName().equals("email") && sbiUserAttributes.getAttributeValue().equals(email)) {
+							matchingEmailAddress = true;
+							break;
+						}
+					}
+				}
+
+				/* Match with the email address and date from last access */
+				userRegistrationFromExpiredToken = matchingEmailAddress && sbiUser.getDtLastAccess() == null;
+
+				if (!userRegistrationFromExpiredToken) {
+					logger.error("Username already in use");
+					JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.userInUse");
+					return Response.ok(errObj.toString()).build();
+				}
 			}
 
 			SbiUser user = new SbiUser();
@@ -525,7 +547,7 @@ public class Signup {
 			user.setFlgPwdBlocked(true);
 
 			String defaultTenant = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.DEFAULT_TENANT_ON_SIGNUP");
-			// if config is not defined, because it is a new configurationm do not therow error and put a default value
+			// if config is not defined, because it is a new configuration do not throw error and put a default value
 			if (defaultTenant == null) {
 				defaultTenant = "DEFAULT_TENANT";
 			}
@@ -569,6 +591,9 @@ public class Signup {
 				addAttribute(attributes, attrDao.loadSbiAttributeByName("language").getAttributeId(), language);
 
 			user.setSbiUserAttributeses(attributes);
+			if (userRegistrationFromExpiredToken)
+				user.setId(existingUserId);
+
 			int id = userDao.fullSaveOrUpdateSbiUser(user);
 
 			logger.debug("User [" + username + "] succesfuly created with id [" + id + "]");
@@ -593,8 +618,9 @@ public class Signup {
 			logger.debug("Activation mail's subject set to [" + subject + "]");
 
 			String token = SignupJWTTokenManager.createJWTToken(user.getUserId());
+			String version = SbiCommonInfo.getVersion().substring(0, SbiCommonInfo.getVersion().lastIndexOf("."));
 
-			String urlString = req.getContextPath() + "/restful-services/signup/prepareActive?token=" + token + "&locale=" + locale;
+			String urlString = req.getContextPath() + "/restful-services/signup/prepareActive?token=" + token + "&locale=" + locale + "&version=" + version;
 			URL url = new URL(req.getScheme(), host, port, urlString);
 
 			// Replacing all placeholder occurencies in template with dynamic user values
