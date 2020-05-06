@@ -678,7 +678,7 @@
 															
 					#foreach($row in $rows)
 						#set ($serieValue = $row.get($serieColumnsMapped))						
-																															
+							#if($serieValue!="")																								
 							{
 								#if($subtype == 'activity')
 				        			
@@ -690,9 +690,10 @@
 				        			#set($outer = $innerRadius)
 				        			innerRadius: $innerRadius +"%",				        			
 		        				#end
-								y:$serieValue								
-							},
-						
+		        				
+								y:$serieValue				        			
+		        			},
+							#end	
 					#end
 		    	],
 		    	
@@ -1093,8 +1094,10 @@
         noData: "$chart.EMPTYMESSAGE.text"
     },
     noData: {
+		attr: {
+			zIndex: 10
+		},
     	style:{
-    		#foreach($styleName in $chart.EMPTYMESSAGE.style.keySet())
     		fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',		
 			fontSize: '$chart.EMPTYMESSAGE.style.fontSize',
 			color: '$chart.EMPTYMESSAGE.style.color',
@@ -1108,7 +1111,6 @@
 			#elseif($chart.EMPTYMESSAGE.style.fontWeight == 'bold')		        			
     			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
     		#end
-    	#end
 		},
 		position: {
 			#set ($positionAlign = $chart.EMPTYMESSAGE.position.align)
