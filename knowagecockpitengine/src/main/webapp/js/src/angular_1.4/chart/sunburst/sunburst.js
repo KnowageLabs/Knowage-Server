@@ -99,7 +99,8 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 		parent: '',
 		name: centerText
 	}
-	points.push(center);
+	if(Object.keys(chartConf.data[0]).length)
+		points.push(center);
 
 	var counter=0;
 
@@ -343,7 +344,7 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 				fontWeight: chartConf.emptymessage.style.fontWeight ? chartConf.emptymessage.style.fontWeight : "none"
             },
             position: {
-            	align:  chartConf.emptymessage.style.textAlign,
+            	align:  chartConf.emptymessage.style.align,
     			verticalAlign: 'middle'
             }
 		},
