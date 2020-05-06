@@ -89,13 +89,10 @@ public class LoginModule extends AbstractHttpModule {
 	/**
 	 * Service.
 	 *
-	 * @param request
-	 *            the request
-	 * @param response
-	 *            the response
+	 * @param request  the request
+	 * @param response the response
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 *
 	 * @see it.eng.spago.dispatching.action.AbstractHttpAction#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
@@ -215,9 +212,9 @@ public class LoginModule extends AbstractHttpModule {
 		// any authentication, just creates the user profile object and puts it into Spago permanent container
 		if (!activeSoo && !isPublicUser) {
 			String pwd = (String) request.getAttribute("password");
+			SpagoBIUserProfile userProfile = null;
 			try {
 
-				SpagoBIUserProfile userProfile = null;
 				userProfile = supplier.checkAuthentication(userId, pwd);
 				if (userProfile == null) {
 					logger.error("userName/pwd uncorrect");
@@ -235,9 +232,6 @@ public class LoginModule extends AbstractHttpModule {
 						return;
 					}
 				}
-
-				userIdForDefaultProfile = userId;
-				userId = userProfile.getUniqueIdentifier();
 
 			} catch (Exception e) {
 				logger.error("Reading user information... ERROR", e);
@@ -293,6 +287,10 @@ public class LoginModule extends AbstractHttpModule {
 					}
 				}
 			}
+
+			userIdForDefaultProfile = userId;
+			userId = userProfile.getUniqueIdentifier();
+
 		}
 
 		try {
@@ -313,37 +311,43 @@ public class LoginModule extends AbstractHttpModule {
 
 			// checks if the input role is valid with SpagoBI's role list
 			boolean isRoleValid = true;
-			String checkRoleLogin = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.CHECK_ROLE_LOGIN");
-			if (("true").equals(checkRoleLogin)) {
-				String roleToCheck = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN");
-				String valueRoleToCheck = "";
-				if (!("").equals(roleToCheck)) {
-					valueRoleToCheck = (request.getAttribute(roleToCheck) != null) ? (String) request.getAttribute(roleToCheck) : "";
-					if (!("").equals(valueRoleToCheck)) {
-						Collection lstRoles = profile.getRoles();
-						isRoleValid = false;
-						Iterator iterRoles = lstRoles.iterator();
-						while (iterRoles.hasNext()) {
-							String iterRoleName = (String) iterRoles.next();
-							if (iterRoleName.equals(valueRoleToCheck)) {
-								isRoleValid = true;
-								logger.debug("Role in input " + valueRoleToCheck + " is valid. ");
-								break;
+			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
+			List checkRoleLoginList = configDao.loadConfigParametersByProperties("SPAGOBI.SECURITY.CHECK_ROLE_LOGIN");
+
+			if (!checkRoleLoginList.isEmpty()) {
+				String checkRoleLogin = ((Config) checkRoleLoginList.get(0)).getValueCheck();
+
+				if (("true").equals(checkRoleLogin)) {
+					String roleToCheck = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN");
+					String valueRoleToCheck = "";
+					if (!("").equals(roleToCheck)) {
+						valueRoleToCheck = (request.getAttribute(roleToCheck) != null) ? (String) request.getAttribute(roleToCheck) : "";
+						if (!("").equals(valueRoleToCheck)) {
+							Collection lstRoles = profile.getRoles();
+							isRoleValid = false;
+							Iterator iterRoles = lstRoles.iterator();
+							while (iterRoles.hasNext()) {
+								String iterRoleName = (String) iterRoles.next();
+								if (iterRoleName.equals(valueRoleToCheck)) {
+									isRoleValid = true;
+									logger.debug("Role in input " + valueRoleToCheck + " is valid. ");
+									break;
+								}
 							}
+						} else {
+							logger.debug("Role " + roleToCheck + " is not passed into the request. Check on the role is not applied. ");
 						}
-					} else {
-						logger.debug("Role " + roleToCheck + " is not passed into the request. Check on the role is not applied. ");
 					}
-				}
-				if (!isRoleValid) {
-					logger.error("role uncorrect");
-					EMFUserError emfu = new EMFUserError(EMFErrorSeverity.ERROR, 501);
-					errorHandler.addError(emfu);
-					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
-					// put user role into session
-					httpSession.setAttribute(roleToCheck, valueRoleToCheck);
-					response.setAttribute(roleToCheck, valueRoleToCheck);
-					return;
+					if (!isRoleValid) {
+						logger.error("role uncorrect");
+						EMFUserError emfu = new EMFUserError(EMFErrorSeverity.ERROR, 501);
+						errorHandler.addError(emfu);
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
+						// put user role into session
+						httpSession.setAttribute(roleToCheck, valueRoleToCheck);
+						response.setAttribute(roleToCheck, valueRoleToCheck);
+						return;
+					}
 				}
 			}
 
