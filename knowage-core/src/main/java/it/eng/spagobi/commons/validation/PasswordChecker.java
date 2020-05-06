@@ -1,5 +1,11 @@
 package it.eng.spagobi.commons.validation;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
@@ -9,11 +15,6 @@ import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.security.Password;
-import org.apache.log4j.Logger;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
 
 /**
  * Password checker singleton.
@@ -24,14 +25,14 @@ public class PasswordChecker {
 	private static final String PROP_NODE = "changepwdmodule.";
 
 	private static final PasswordChecker INSTANCE = new PasswordChecker();
-	
+
 	private PasswordChecker() {
 	}
 
 	public static PasswordChecker getInstance() {
 		return INSTANCE;
 	}
-	
+
 	/**
 	 * This method checks the syntax of new pwd.
 	 *
@@ -54,7 +55,7 @@ public class PasswordChecker {
 
 		for (Object lstConfigCheck : configChecks) {
 			Config check = (Config) lstConfigCheck;
-			
+
 			if (check.getValueTypeId() != null && check.getValueCheck() == null) {
 				logger.debug("The value configuration on db isn't valorized.");
 				Vector v = new Vector();
@@ -157,32 +158,33 @@ public class PasswordChecker {
 		}
 
 		return true;
-	}	
+	}
+
 	/**
 	 * This method checks the syntax of new pwd.
 	 *
 	 * @return <code>true</code> if the new password is correct, exception otherwise
 	 */
-	public boolean isValid(final SbiUser tmpUser, String oldPwd, String newPwd, String newPwd2) throws Exception {
+	public boolean isValid(final SbiUser tmpUser, String oldPwd, boolean isEncrypted, String newPwd, String newPwd2) throws Exception {
 		IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
 		List configChecks = configDao.loadConfigParametersByProperties(PROP_NODE);
 		logger.debug("checks found on db: " + configChecks.size());
 
 		if (isValid(newPwd, newPwd2)) {
-			if(oldPwd != null && StringUtilities.isEmpty(oldPwd)) {
+			if (oldPwd != null && StringUtilities.isEmpty(oldPwd)) {
 				logger.debug("The old password is empty.");
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 14011);
 			}
-	
-			if (tmpUser == null || tmpUser != null
-					&& !Password.encriptPassword(oldPwd).equals(tmpUser.getPassword())) {
+
+			String oldPwdEnc = !isEncrypted ? Password.encriptPassword(oldPwd) : oldPwd;
+			if (tmpUser == null || tmpUser != null && !oldPwdEnc.equals(tmpUser.getPassword())) {
 				logger.debug("The old pwd is uncorrect.");
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 14010);
 			}
-			
+
 			for (Object lstConfigCheck : configChecks) {
 				Config check = (Config) lstConfigCheck;
-				
+
 				if (check.getLabel().equals(SpagoBIConstants.CHANGEPWDMOD_CHANGE)) {
 					if (oldPwd != null && oldPwd.equalsIgnoreCase(newPwd)) {
 						logger.debug("The password's doesn't be equal the lastest.");
@@ -191,7 +193,11 @@ public class PasswordChecker {
 				}
 			}
 		}
-		
+
 		return true;
+	}
+
+	public boolean isValid(final SbiUser tmpUser, String oldPwd, String newPwd, String newPwd2) throws Exception {
+		return isValid(tmpUser, oldPwd, false, newPwd, newPwd2);
 	}
 }
