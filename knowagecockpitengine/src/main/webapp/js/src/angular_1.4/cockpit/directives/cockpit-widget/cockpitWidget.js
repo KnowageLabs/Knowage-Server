@@ -895,17 +895,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 					}
 					if(crossSettings.crossType == "icon" && columnValue && crossSettings.column) doCross = false;
 					else doCross = true;
-					// get value to pass to cross navigation
-					if(row){
-						if(row[crossColumnOrAlias]){
-							columnValue = row[crossColumnOrAlias];
-						}else{
-							columnValue = [];
-							for(var j in row){
-								columnValue.push(row[j][crossColumnOrAlias]);
-							}
-						}
-					}
+
 				}else if(model.type == 'static-pivot-table'){
 					if(Array.isArray(columnName)) doCross = true;
 				}else{
@@ -917,6 +907,18 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				}
 	
 				if(doCross === true){
+					// get value to pass to cross navigation
+					
+					if((crossSettings.crossType == "icon" || crossSettings.crossType == "allRow") && row){
+						if(row[crossColumnOrAlias]){
+							columnValue = row[crossColumnOrAlias];
+						}else{
+							columnValue = [];
+							for(var j in row){
+								columnValue.push(row[j][crossColumnOrAlias]);
+							}
+						}
+					}
 					var outputParameter = {};
 					if(crossSettings.outputParameter){
 						outputParameter[crossSettings.outputParameter] = columnValue;
