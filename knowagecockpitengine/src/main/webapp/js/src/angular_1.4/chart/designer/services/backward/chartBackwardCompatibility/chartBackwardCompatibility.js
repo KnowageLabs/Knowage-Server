@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		chartBackwardCompatibilityServices.push($injector.get('scatterBackwardCompatibilityService'));
 		chartBackwardCompatibilityServices.push($injector.get('sunburstBackwardCompatibilityService'));
 		chartBackwardCompatibilityServices.push($injector.get('parallelBackwardCompatibilityService'));
+		chartBackwardCompatibilityServices.push($injector.get('treemapBackwardCompatibilityService'));
+		chartBackwardCompatibilityServices.push($injector.get('heatmapBackwardCompatibilityService'));
 
 		var updateTemplate = function(chartTemplate,enterpriseEdition){
 			for(var i in chartBackwardCompatibilityServices){

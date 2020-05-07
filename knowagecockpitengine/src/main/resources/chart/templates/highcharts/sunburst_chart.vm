@@ -35,6 +35,7 @@
 #end
 
 #set($serieName = $chart.VALUES.SERIE.name)
+#set($serie = $chart.VALUES.SERIE)
 #set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
 
 #set($result = $datasettransformer.createTreeChart($columnsNeeded,$serieName,$dataColumnsMapper,$dataRows,$groupingFunction.toLowerCase()))
@@ -183,6 +184,43 @@
     			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
     		#end	
 		}
+	},
+	tooltip: {
+		#if($chart.TOOLTIP)
+		    #if($chart.TOOLTIP.borderWidth)
+		    	borderWidth: $chart.TOOLTIP.borderWidth,
+		    #end
+		    
+		    #if($chart.TOOLTIP.borderRadius)
+		    	borderRadius: $chart.TOOLTIP.borderRadius,
+		    #end
+		   
+		  	#if ($serie.TOOLTIP.backgroundColor!="")
+		        backgroundColor: '$serie.TOOLTIP.backgroundColor',
+		    #else
+		    	backgroundColor: '#FCFFC5',	## default background color for the serie tooltip
+			#end
+				
+			#if ($serie.TOOLTIP.style.color != '')
+				color: '$serie.TOOLTIP.style.color' ,
+			#end
+				
+			#if ($serie.TOOLTIP.style.align != '')
+				align: '$serie.TOOLTIP.style.align' ,
+			#end
+				
+			#if ($serie.TOOLTIP.style.fontFamily && $serie.TOOLTIP.style.fontFamily != '')
+				fontFamily: '$serie.TOOLTIP.style.fontFamily' ,
+			#end
+				
+			#if ($serie.TOOLTIP.style.fontWeight != '')
+				fontWeight: '$serie.TOOLTIP.style.fontWeight' ,
+			#end
+				
+			#if ($serie.TOOLTIP.style.fontSize != '')
+				fontSize: '$serie.TOOLTIP.style.fontSize' ,
+			#end
+		#end	
 	},
 	
 	title:

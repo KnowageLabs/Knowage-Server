@@ -220,8 +220,8 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 				fontSize: chartConf.chart.style.fontSize,
 				fontWeight: chartConf.chart.style.fontWeight,
 				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
-						textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
-								fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
+				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
+				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
 			}
 		};
 
@@ -247,8 +247,8 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 						fontSize: chartConf.chart.style.fontSize,
 						fontWeight: chartConf.chart.style.fontWeight,
 						fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
-								textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
-										fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
+						textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
+						fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
 					}
 		};
 		if(!exportWebApp){
@@ -266,13 +266,50 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 	postfix = chartConf.series.postfixChar ?  chartConf.series.postfixChar : "";
 
    	tooltipFormatter = function () {
-		var val = this.point.value.toFixed(precision);
-        return this.point.name +  ': <b>' +
-        prefix + " " +val + " " + postfix;
+
+   		var color = chartConf.tooltip.color ? chartConf.tooltip.color : '';
+		var align = chartConf.tooltip.align ? chartConf.tooltip.align : '';
+		var fontFamily = chartConf.tooltip.fontFamily ? ' ' + chartConf.tooltip.fontFamily : '';
+		var fontSize = chartConf.tooltip.fontSize ? ' ' + chartConf.tooltip.fontSize : '';
+		var fontWeight = chartConf.tooltip.fontWeight ? ' ' + chartConf.tooltip.fontWeight : '';
+		var tooltipFontStyle = "";
+
+		if (fontWeight == " underline")
+		{
+			tooltipFontStyle = " text-decoration: underline;";
+		}
+		else if (fontWeight == " italic")
+		{
+			tooltipFontStyle = "font-style: italic;";
+		}
+		else if (fontWeight == " bold")
+		{
+			tooltipFontStyle = "font-weight: bold;";
+		}
+		else
+		{
+			tooltipFontStyle = "font-weight: normal;";
+		}
+
+
+        var val = this.point.value.toFixed(precision);
+        var result = "";
+        result +=
+			'<div style="padding:10px;color:' + color + '; opacity: 0.9; font-family: ' + fontFamily + '; '
+				+ tooltipFontStyle + " font-size: " + fontSize + ';text-align:' + align + ';">';
+
+        result += '<b>' + this.point.name +  '</b><br> <b>' + prefix + " " + val + " " + postfix + '</b></div>';
+
+		return result;
+
 	};
 
 	tooltipObject = {
-		formatter: tooltipFormatter,
+			formatter:tooltipFormatter,
+    		useHTML: true,
+        	borderWidth: chartConf.tooltip.borderWidth,
+        	borderRadius: chartConf.tooltip.borderRadius,
+	    	backgroundColor: chartConf.tooltip.backgroundColor ? chartConf.tooltip.backgroundColor: "",
 	};
 
 	var chart = {

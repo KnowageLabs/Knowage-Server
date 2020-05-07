@@ -21,8 +21,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	.service("sunburstBackwardCompatibilityService", function (){
 
 		var updateTemplate = function(chartTemplate,enterpriseEdition){
-			if(chartTemplate.type.toLowerCase()=='sunburst' && enterpriseEdition){
-				delete chartTemplate.TOOLBAR;
+			if(chartTemplate.type.toLowerCase()=='sunburst'){
+				if(enterpriseEdition) {
+					delete chartTemplate.TOOLBAR;
+					if(!chartTemplate.TOOLTIP) {
+						 chartTemplate.TOOLTIP = {};
+						 chartTemplate.TOOLTIP.borderWidth= 0;
+						 chartTemplate.TOOLTIP.borderRadius= 0;
+					}
+					if(!chartTemplate.VALUES.SERIE[0].TOOLTIP) {
+						chartTemplate.VALUES.SERIE[0].TOOLTIP =	{
+							"backgroundColor":"#D6D6D6",
+		                    "style":{
+				            	   "align":"",
+				            	   "color":"",
+				            	   "fontFamily":"",
+				            	   "fontSize":"",
+				            	   "fontWeight":""
+				            }
+			            }
+					}
+				}
 			}
 			return chartTemplate;
 		};

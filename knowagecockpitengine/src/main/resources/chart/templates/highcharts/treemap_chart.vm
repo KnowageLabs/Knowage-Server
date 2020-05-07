@@ -211,15 +211,15 @@
 		}
 	},
 	tooltip: {
-
-    #if($chart.TOOLTIP.borderWidth)
-    	borderWidth: $chart.TOOLTIP.borderWidth,
-    #end
-    
-    #if($chart.TOOLTIP.borderRadius)
-    	borderRadius: $chart.TOOLTIP.borderRadius,
-    #end
-    
+		#if($chart.TOOLTIP)
+		    #if($chart.TOOLTIP.borderWidth)
+		    	borderWidth: $chart.TOOLTIP.borderWidth,
+		    #end
+		    
+		    #if($chart.TOOLTIP.borderRadius)
+		    	borderRadius: $chart.TOOLTIP.borderRadius,
+		    #end
+    	#end
     },
 	
 	#*

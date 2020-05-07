@@ -318,41 +318,41 @@
 		}
 	},
 	tooltip: {
-$datasettransformer.print($chart.TOOLTIP)
-    #if($chart.TOOLTIP.borderWidth)
-    	borderWidth: $chart.TOOLTIP.borderWidth,
-    #end
-    
-    #if($chart.TOOLTIP.borderRadius)
-    	borderRadius: $chart.TOOLTIP.borderRadius,
-    #end
-   
-  	#if ($chart.TOOLTIP.backgroundColor!="")
-        backgroundColor: '$chart.TOOLTIP.backgroundColor',
-    #else
-    	backgroundColor: '#FCFFC5',	## default background color for the serie tooltip
-	#end
-		
-	#if ($chart.TOOLTIP.style.color != '')
-		color: '$chart.TOOLTIP.style.color' ,
-	#end
-		
-	#if ($chart.TOOLTIP.style.align != '')
-		align: '$chart.TOOLTIP.style.align' ,
-	#end
-		
-	#if ($chart.TOOLTIP.style.fontFamily && $chart.TOOLTIP.style.fontFamily != '')
-		fontFamily: '$chart.TOOLTIP.style.fontFamily' ,
-	#end
-		
-	#if ($chart.TOOLTIP.style.fontWeight != '')
-		fontWeight: '$chart.TOOLTIP.style.fontWeight' ,
-	#end
-		
-	#if ($chart.TOOLTIP.style.fontSize != '')
-		fontSize: '$chart.TOOLTIP.style.fontSize' ,
-	#end
-	
+		#if($chart.TOOLTIP)
+		    #if($chart.TOOLTIP.borderWidth)
+		    	borderWidth: $chart.TOOLTIP.borderWidth,
+		    #end
+		    
+		    #if($chart.TOOLTIP.borderRadius)
+		    	borderRadius: $chart.TOOLTIP.borderRadius,
+		    #end
+		   
+		  	#if ($chart.TOOLTIP.backgroundColor!="")
+		        backgroundColor: '$chart.TOOLTIP.backgroundColor',
+		    #else
+		    	backgroundColor: '#FCFFC5',	## default background color for the serie tooltip
+			#end
+				
+			#if ($chart.TOOLTIP.style.color != '')
+				color: '$chart.TOOLTIP.style.color' ,
+			#end
+				
+			#if ($chart.TOOLTIP.style.align != '')
+				align: '$chart.TOOLTIP.style.align' ,
+			#end
+				
+			#if ($chart.TOOLTIP.style.fontFamily && $chart.TOOLTIP.style.fontFamily != '')
+				fontFamily: '$chart.TOOLTIP.style.fontFamily' ,
+			#end
+				
+			#if ($chart.TOOLTIP.style.fontWeight != '')
+				fontWeight: '$chart.TOOLTIP.style.fontWeight' ,
+			#end
+				
+			#if ($chart.TOOLTIP.style.fontSize != '')
+				fontSize: '$chart.TOOLTIP.style.fontSize' ,
+			#end
+		#end
 	},
 	
 	#*

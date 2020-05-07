@@ -45,7 +45,7 @@
 			</md-toolbar>
 			
 			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element" style="overflow:auto">	
-			<div id="generic" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.generic')">
+			<div id="generic" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.generic')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.genericDetailsURL" layout-margin></div>
@@ -53,7 +53,7 @@
 				</md-content>
 			</div>
 			
-			<div id="titleandsubtitle" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.titlesubtitle')">
+			<div id="titleandsubtitle" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.titlesubtitle')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.titleSubtitleDetailsURL"></div>
@@ -61,7 +61,7 @@
 				</md-content>
 			</div>
 			
-			<div id="nodata" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.nodata')">
+			<div id="nodata" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.nodata')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.noDataDetailsURL" layout-margin></div>
@@ -69,7 +69,7 @@
 				</md-content>
 			</div>
 			
-			<div id="legentitle" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.legendtitle')">
+			<div id="legentitle" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.legendtitle')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.legendTitleURL" layout-margin></div>
@@ -77,7 +77,7 @@
 				</md-content>
 			</div>
 			
-			<div id="legenditems" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.legenditems')">
+			<div id="legenditems" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.legenditems')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.legendItemsURL" layout-margin></div>
@@ -85,7 +85,7 @@
 				</md-content>
 			</div>
 			
-			<div id="colorpalette" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.palette')">
+			<div id="colorpalette" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.palette')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.colorPaletteURL"></div>
@@ -93,7 +93,7 @@
 				</md-content>
 			</div>
 			
-			<div id="pane" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.configuration.gauge.panelTitle')">
+			<div id="pane" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.configuration.gauge.panelTitle')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.paneURL"></div>
@@ -101,7 +101,7 @@
 				</md-content>
 			</div>
 			
-			<div id="ticks" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.configuration.scatter.ticksandlabels')">
+			<div id="ticks" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.configuration.scatter.ticksandlabels')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.ticksURL"></div>
@@ -109,7 +109,7 @@
 				</md-content>
 			</div>
 			
-			<div id="word_setings" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.wordsettings')">
+			<div id="word_setings" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.wordsettings')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.wordSettingsURL"></div>
@@ -117,7 +117,7 @@
 				</md-content>
 			</div>
 			
-			<div id="limit" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.limit')">
+			<div id="limit" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.limit')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.limitURL" layout-margin></div>
@@ -125,7 +125,7 @@
 				</md-content>
 			</div>
 			
-			<div id="axisLines" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.axislines')">
+			<div id="axisLines" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.axislines')">
 				<md-content flex layout="column">
 				
 				<div ng-include layout-margin src="templateUrls.axisLinesURL" ></div>
@@ -133,7 +133,7 @@
 				</md-content>
 			</div>
 			
-			<div id="tooltip" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.tooltip')">
+			<div id="tooltip" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.tooltip')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.tooltipURL" layout-margin></div>
@@ -141,7 +141,7 @@
 				</md-content>
 			</div>
 			
-			<div id="sequence" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.sequence')">
+			<div id="sequence" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.sequence')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.sequenceURL" layout-margin></div>
@@ -149,7 +149,7 @@
 				</md-content>
 			</div>
 			
-			<div id="explanation" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.exlpanation')">
+			<div id="explanation" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.exlpanation')">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.explanationURL" layout-margin></div>
@@ -157,7 +157,7 @@
 				</md-content>
 			</div>
 			
-			<div  id="advancedSerieConfBar" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.advancedSerieBar') ">
+			<div  id="advancedSerieConfBar" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.advancedSerieBar') ">
 				<md-content flex layout="column">
 				
 				<div ng-include src="templateUrls.advancedSerieBarURL" layout-margin></div>
@@ -165,13 +165,13 @@
 				</md-content>
 			</div>							
 				
-			<div  id="customColors" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.customColors') ">
+			<div  id="customColors" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.customColors') ">
 
 				<div ng-include src="templateUrls.customColorsURL" layout-margin></div>
 
 			</div>	
 			
-			<div  id="accessibility" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.accessibility') ">
+			<div  id="accessibility" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.accessibility') ">
 
 				<div ng-include src="templateUrls.accessibilityURL" layout-margin></div>
 

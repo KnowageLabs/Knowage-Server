@@ -2144,7 +2144,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 						"TOOLTIP":{
 		                    "backgroundColor":"#D6D6D6",
 		                    "style":{
-				            	   "rotate":"",
 				            	   "align":"",
 				            	   "color":"",
 				            	   "fontFamily":"",
