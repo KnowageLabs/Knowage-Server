@@ -313,6 +313,11 @@
   		#else
   		precision: "",
   		#end
+  		#if($serie.scaleFactor)
+  		scaleFactor: "$serie.scaleFactor",
+  		#else
+  		scaleFactor: "empty",
+  		#end
   		#if($serie.prefixChar)
   		prefixChar: "$serie.prefixChar",
   		#else

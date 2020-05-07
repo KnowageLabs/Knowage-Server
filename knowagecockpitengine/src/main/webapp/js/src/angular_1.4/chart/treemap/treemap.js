@@ -264,6 +264,8 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 
 	var counter=0;
 	precision = chartConf.additionalData.precision ?  chartConf.additionalData.precision : "";
+	scaleFactor = chartConf.additionalData.scaleFactor ?  chartConf.additionalData.scaleFactor : "empty";
+
 	for (var dataset in chartConf.data[0]){
 		level = {
 				id: "id_" + counter,
@@ -434,6 +436,41 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 		}, 0);
 
         percentage = 100 * point.value/groupTotal;
+        var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+        var value = this.point.value;
+        var newValue = "";
+    	switch(scaleFactor.toUpperCase()) {
+
+	  		case "EMPTY":
+	  			/* No selection is provided for the number to be displayed as the data label (pure value). */
+	  			newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);
+	  			break;
+	  		case "K":
+	  			newValue += Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";
+	  			break;
+	  		case "M":
+	  			newValue += Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";
+	  			break;
+	  		case "G":
+	  			newValue += Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+	  			break;
+				case "T":
+	  			newValue += Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+	  			break;
+	  		case "P":
+	  			newValue += Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+	  			break;
+			case "E":
+	  			newValue += Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+	  			break;
+			default:
+					/* The same as for the case when user picked "no selection" - in case when the chart
+					template does not contain the scale factor for current serie */
+					newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);
+	  		break;
+
+    	}
         var result = "";
         result +=
 			'<div style="padding:10px;color:' + ttColor + '; opacity: 0.9; font-family: ' + ttFont + '; '
@@ -444,9 +481,9 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 		} else if (!chartConf.additionalData.showAbsValue && chartConf.additionalData.showPercentage){
 			result += '<span>' + point.name + '</span><br/>'+ percentage.toFixed(precision) + '%</div>';
 		} else if (chartConf.additionalData.showAbsValue && !chartConf.additionalData.showPercentage ){
-			result += '<span>' + point.name + '</span><br/>'+ point.value.toFixed(precision) +" "+ postfix + '</div>';
+			result += '<span>' + point.name + '</span><br/>'+ newValue +" "+ postfix + '</div>';
 		} else if(chartConf.additionalData.showAbsValue && chartConf.additionalData.showPercentage){
-			result += '<span>' + point.name + '</span><br/>'+ percentage.toFixed(precision) + '%' + '<br>'+prefix +" "+ point.value.toFixed(precision) +" "+ postfix +'</div>';
+			result += '<span>' + point.name + '</span><br/>'+ percentage.toFixed(precision) + '%' + '<br>'+prefix +" "+newValue +" "+ postfix +'</div>';
 		}
 		return result;
 	};
@@ -540,11 +577,47 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 					enabled: true,
 					formatter: function() {
 
-						var point = this.point,
+						var point = this.point
 
 						group = this.series.data.filter(function (x) {
 	                    	  return x.parent === point.parent;
 	                    });
+
+						var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+			          	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+			            var value = this.point.value;
+			            var newValue = "";
+			        	switch(scaleFactor.toUpperCase()) {
+
+			    	  		case "EMPTY":
+			    	  			/* No selection is provided for the number to be displayed as the data label (pure value). */
+			    	  			newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);
+			    	  			break;
+			    	  		case "K":
+			    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";
+			    	  			break;
+			    	  		case "M":
+			    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";
+			    	  			break;
+			    	  		case "G":
+			    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+			    	  			break;
+			    				case "T":
+			    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+			    	  			break;
+			    	  		case "P":
+			    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+			    	  			break;
+			    			case "E":
+			    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+			    	  			break;
+			    			default:
+			    					/* The same as for the case when user picked "no selection" - in case when the chart
+			    					template does not contain the scale factor for current serie */
+			    					newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);
+			    	  		break;
+
+			        	}
 
 						var groupTotal = group.map(function (x) {
 							  return x.value;
@@ -560,10 +633,10 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 							return point.name + '<br>' + percentage.toFixed(precision) + '%';
 
 						} else if (chartConf.additionalData.showAbsValue && !chartConf.additionalData.showPercentage ){
-							return point.name + '<br>'+ prefix +" "+  point.value.toFixed(precision) +" "+ postfix;
+							return point.name + '<br>'+ prefix +" "+  newValue +" "+ postfix;
 
 						} else if(chartConf.additionalData.showAbsValue && chartConf.additionalData.showPercentage){
-							return point.name + '<br>' + percentage.toFixed(precision) + '%' + '<br>'+prefix +" "+  point.value.toFixed(precision) +" "+ postfix;
+							return point.name + '<br>' + percentage.toFixed(precision) + '%' + '<br>'+prefix +" "+  newValue +" "+ postfix;
 						}
 
 						/*	for(var i = 0 ; i < this.point.node.children.length;i++){
@@ -901,6 +974,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
 	var prefix = chartConf.additionalData.prefixChar ? chartConf.additionalData.prefixChar : "";
 	var postfix = chartConf.additionalData.postfixChar ?  chartConf.additionalData.postfixChar : "";
 	var precision = chartConf.additionalData.precision ?  chartConf.additionalData.precision : "";
+	var scaleFactor = chartConf.additionalData.scaleFactor ?  chartConf.additionalData.scaleFactor : "empty";
 
     if(chartConf.chart.xAxisDate){
     	var dateFormat = checkDateFormat(chartConf.chart.dateFormat);
@@ -945,11 +1019,45 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
         };
     	serieColSize=24 * 36e5;
     	tooltipFormatter= function () {
-    		var val = this.point.value;
-    		val = Highcharts.numberFormat(val,precision );
+    		var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+          	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+            var value = this.point.value;
+            var newValue = "";
+        	switch(scaleFactor.toUpperCase()) {
+
+    	  		case "EMPTY":
+    	  			/* No selection is provided for the number to be displayed as the data label (pure value). */
+    	  			newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);
+    	  			break;
+    	  		case "K":
+    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";
+    	  			break;
+    	  		case "M":
+    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";
+    	  			break;
+    	  		case "G":
+    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+    	  			break;
+    				case "T":
+    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+    	  			break;
+    	  		case "P":
+    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+    	  			break;
+    			case "E":
+    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+    	  			break;
+    			default:
+    					/* The same as for the case when user picked "no selection" - in case when the chart
+    					template does not contain the scale factor for current serie */
+    					newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);
+    	  		break;
+
+        	}
+
     		var pointDate = Highcharts.dateFormat(dateFormat, this.point.x)
             return '<b>'+chartConf.additionalData.serie.value+'</b><br>' + pointDate + '| ' + this.series.yAxis.categories[this.point.y] + ': <b>' +
-            prefix + " " +val + " " + postfix + ' </b> ';
+            prefix + " " +newValue + " " + postfix + ' </b> ';
     	};
     	tooltipObject={
     		formatter:tooltipFormatter,
@@ -1026,14 +1134,48 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     		}
 
 
-            var val = this.point.value;
+            var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+          	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+            var value = this.point.value;
+            var newValue = "";
+        	switch(scaleFactor.toUpperCase()) {
+
+    	  		case "EMPTY":
+    	  			/* No selection is provided for the number to be displayed as the data label (pure value). */
+    	  			newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);
+    	  			break;
+    	  		case "K":
+    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";
+    	  			break;
+    	  		case "M":
+    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";
+    	  			break;
+    	  		case "G":
+    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+    	  			break;
+    				case "T":
+    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+    	  			break;
+    	  		case "P":
+    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+    	  			break;
+    			case "E":
+    	  			newValue += Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+    	  			break;
+    			default:
+    					/* The same as for the case when user picked "no selection" - in case when the chart
+    					template does not contain the scale factor for current serie */
+    					newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);
+    	  		break;
+
+        	}
             var result = "";
             result +=
     			'<div style="padding:10px;color:' + color + '; opacity: 0.9; font-family: ' + fontFamily + '; '
     				+ tooltipFontStyle + " font-size: " + fontSize + ';text-align:' + align + ';">';
 
             result += '<b>'+chartConf.additionalData.serie.value+'</b><br>' + this.series.xAxis.categories[this.point.x] + ' | ' + this.series.yAxis.categories[this.point.y] + ': <b>' +
-            	prefix + " " +val + " " + postfix + ' </b></div>';
+            	prefix + " " +newValue + " " + postfix + ' </b></div>';
 
 
     		return result;

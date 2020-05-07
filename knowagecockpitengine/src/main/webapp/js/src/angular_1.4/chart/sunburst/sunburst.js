@@ -86,6 +86,7 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 	var legendCategories = [];
 
 	precision = chartConf.series.precision ?  chartConf.series.precision : "";
+	scaleFactor = chartConf.series.scaleFactor ?  chartConf.series.scaleFactor : "empty";
 	var center = {
 		id: '0.0',
 		parent: '',
@@ -242,7 +243,7 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 		};
 		if(!exportWebApp){
 			chartObject.height = chartConf.chart.height ? Number(chartConf.chart.height) : undefined;
-			chartObject.width: chartConf.chart.width ? Number(chartConf.chart.width) : undefined;
+			chartObject.width = chartConf.chart.width ? Number(chartConf.chart.width) : undefined;
 		}
 		if (chartConf.chart.style.backgroundColor!=undefined && chartConf.chart.style.backgroundColor!="")
 			chartObject.backgroundColor = chartConf.chart.style.backgroundColor;
@@ -280,14 +281,47 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 			tooltipFontStyle = "font-weight: normal;";
 		}
 
+		var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+        var value = this.point.value;
+        var newValue = "";
+    	switch(scaleFactor.toUpperCase()) {
 
-        var val = this.point.value.toFixed(precision);
+	  		case "EMPTY":
+	  			/* No selection is provided for the number to be displayed as the data label (pure value). */
+	  			newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);
+	  			break;
+	  		case "K":
+	  			newValue += Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";
+	  			break;
+	  		case "M":
+	  			newValue += Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";
+	  			break;
+	  		case "G":
+	  			newValue += Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+	  			break;
+				case "T":
+	  			newValue += Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+	  			break;
+	  		case "P":
+	  			newValue += Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+	  			break;
+			case "E":
+	  			newValue += Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+	  			break;
+			default:
+					/* The same as for the case when user picked "no selection" - in case when the chart
+					template does not contain the scale factor for current serie */
+					newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);
+	  		break;
+
+    	}
         var result = "";
         result +=
 			'<div style="padding:10px;color:' + color + '; opacity: 0.9; font-family: ' + fontFamily + '; '
 				+ tooltipFontStyle + " font-size: " + fontSize + ';text-align:' + align + ';">';
 
-        result += '<b>' + this.point.name +  '</b><br> <b>' + prefix + " " + val + " " + postfix + '</b></div>';
+        result += '<b>' + this.point.name +  '</b><br> <b>' + prefix + " " + newValue + " " + postfix + '</b></div>';
 
 		return result;
 

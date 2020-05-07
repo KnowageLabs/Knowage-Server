@@ -600,6 +600,11 @@
   		#else
   		precision: "",
   		#end
+  		#if($serieObj.scaleFactor)
+  		scaleFactor: "$serieObj.scaleFactor",
+  		#else
+  		scaleFactor: "empty",
+  		#end
   		#if($serieObj.prefixChar)
   		prefixChar: "$serieObj.prefixChar",
   		#else
