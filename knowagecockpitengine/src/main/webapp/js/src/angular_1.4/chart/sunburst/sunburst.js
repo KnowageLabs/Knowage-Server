@@ -225,8 +225,11 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 			}
 		};
 
-		if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
-			chartObject.backgroundColor = chartConf.chart.backgroundColor;
+		if (chartConf.chart.style.backgroundColor!=undefined && chartConf.chart.style.backgroundColor!="")
+			chartObject.backgroundColor = chartConf.chart.style.backgroundColor;
+			/*chartObject.plotBorderWidth = 0;
+			chartObject.plotBackgroundColor = chartConf.chart.style.backgroundColor;
+			chartObject.plotShadow = false;*/
 	}
 	else if (chartConf.chart.height!=""
 		&& chartConf.chart.width!="")
@@ -258,8 +261,11 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 				width: chartConf.chart.width ? Number(chartConf.chart.width) : undefined,
 			};
 		}
-		if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
-			chartObject.backgroundColor = chartConf.chart.backgroundColor;
+		if (chartConf.chart.style.backgroundColor!=undefined && chartConf.chart.style.backgroundColor!="")
+			chartObject.backgroundColor = chartConf.chart.style.backgroundColor;
+			/*chartObject.plotBorderWidth = 0;
+			chartObject.plotBackgroundColor = chartConf.chart.style.backgroundColor;
+			chartObject.plotShadow = false;*/
 	}
 	var tooltipObject={};
 	prefix = chartConf.series.prefixChar ? chartConf.series.prefixChar : "";
