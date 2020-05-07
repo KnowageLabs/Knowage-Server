@@ -586,10 +586,27 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					console.log("unable to get document parameters");
 					ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 				} else {
+					var selectedJob = ctrl.selectedJob;
+					var selectedDocumentIndex = ctrl.selectedDocumentIndex;
+					var selectedDocument = selectedJob.documents[selectedDocumentIndex];
+					var selectedDocumentParameters = selectedDocument.parameters;
 					ctrl.selectedDocumentParameters = data;
-					for(var i=0; i<ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].parameters.length; i++){
-						var parameter = ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].parameters[i];
+					var newParams = angular.copy(data);
+					var deletedParams = [];
+					for(var i=0; i<selectedDocumentParameters.length; i++){
+						var parameter = selectedDocumentParameters[i];
 						var selectedDocumentParameter = ctrl.getParameterByName(parameter.name);
+
+						if (typeof selectedDocumentParameter == "undefined") {
+							// TODO : the param is not present in the document
+							deletedParams.push(parameter);
+							continue;
+						} else {
+							newParams = newParams.filter(function(e) {
+								return e.id != selectedDocumentParameter.id;
+							});
+						}
+
 						if(selectedDocumentParameter != null){
 							parameter.temporal = selectedDocumentParameter.parameter.temporal;
 						}else{
@@ -607,6 +624,21 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							}
 						}
 					}
+					// Add the new params
+					newParams.forEach(function(e) {
+						ctrl.addNewParam(selectedDocument, e);
+						ctrl.loadSelectedDocumentRolesAndParameters();
+					});
+
+					// Extract the ids of the deleted params
+					var deletedParamsId = deletedParams.map(function(e) { return e.name; });
+
+					// Filter the deleted params
+					selectedDocument.parameters = selectedDocument.parameters
+						.filter(function(e) { return deletedParamsId.indexOf(e.name) == -1; });
+
+					// To display an info
+					ctrl.deletedParams = deletedParams;
 				}
 			})
 			.error(function(data, status, headers, config) {
@@ -649,21 +681,11 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							var newDocument = {};
 							newDocument.name = docCtrl.selectedDocument.label;
 							newDocument.parameters = [];
-							for(var i=0;i<data.length;i++){
-								var newParam = {};
-								newParam.name = data[i].parameterUrlName;
-								newParam.value = "";
-								newParam.type = "fixed";
-								newParam.iterative = false;
-								newDocument.parameters.push(newParam);
+							for(var i=0; i<data.length; i++){
+								var currParam = data[i];
+								ctrl.addNewParam(newDocument, currParam);
 							}
-							newDocument.condensedParameters = "";
-							for(var i=0;i<newDocument.parameters.length;i++){
-								var param = newDocument.parameters[i];
-								if(param.type=="fixed"){
-									newDocument.condensedParameters += " " + param.name + " = " + param.value + " | ";
-								}
-							}
+							ctrl.updateCondensedParamsForNewDoc(newDocument);
 							ctrl.selectedJob.documents.push(newDocument);
 							ctrl.selectDocument(ctrl.selectedJob.documents.length - 1);
 						})
@@ -678,6 +700,25 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			},
 			templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/scheduler/templates/dialog-document-selection.html'
 		});
+	}
+
+	ctrl.addNewParam = function(newDocument, currParam) {
+		var newParam = {};
+		newParam.name = currParam.parameterUrlName;
+		newParam.value = "";
+		newParam.type = "fixed";
+		newParam.iterative = false;
+		newDocument.parameters.push(newParam);
+	}
+
+	ctrl.updateCondensedParamsForNewDoc = function(newDocument) {
+		newDocument.condensedParameters = "";
+		for(var i=0; i<newDocument.parameters.length; i++){
+			var param = newDocument.parameters[i];
+			if(param.type=="fixed"){
+				newDocument.condensedParameters += " " + param.name + " = " + param.value + " | ";
+			}
+		}
 	}
 
 	ctrl.deleteDocument = function(){
@@ -851,7 +892,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						condensedParameters += ";" + param.selectedValues[j];
 					}
 				}
-				
+
 			}
 		}
 		document.condensedParameters = condensedParameters;
