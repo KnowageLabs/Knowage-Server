@@ -193,11 +193,8 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 
 	var chartObject = null;
 
-	if (chartConf.chart.height==""
-		|| chartConf.chart.width=="")
-	{
-		chartObject =
-		{
+	if (chartConf.chart.height=="" || chartConf.chart.width=="") {
+		chartObject = {
 			//zoomType: 'xy', // Causes problems when zooming out (Zoom reset) (danristo)
 			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
 
@@ -223,11 +220,8 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 			chartObject.plotBackgroundColor = chartConf.chart.style.backgroundColor;
 			chartObject.plotShadow = false;*/
 	}
-	else if (chartConf.chart.height!=""
-		&& chartConf.chart.width!="")
-	{
-		chartObject =
-		{
+	else if (chartConf.chart.height!="" && chartConf.chart.width!="") {
+		chartObject = {
 			//zoomType: 'xy', // Causes problems when zooming out (Zoom reset) (danristo)
 			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
 
@@ -247,11 +241,8 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 					}
 		};
 		if(!exportWebApp){
-			chartObject =
-			{
-				height: chartConf.chart.height ? Number(chartConf.chart.height) : undefined,
-				width: chartConf.chart.width ? Number(chartConf.chart.width) : undefined,
-			};
+			chartObject.height = chartConf.chart.height ? Number(chartConf.chart.height) : undefined;
+			chartObject.width: chartConf.chart.width ? Number(chartConf.chart.width) : undefined;
 		}
 		if (chartConf.chart.style.backgroundColor!=undefined && chartConf.chart.style.backgroundColor!="")
 			chartObject.backgroundColor = chartConf.chart.style.backgroundColor;

@@ -338,11 +338,8 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 
 	var chartObject = null;
 
-	if (chartConf.chart.height==""
-		|| chartConf.chart.width=="")
-	{
-		chartObject =
-		{
+	if (chartConf.chart.height=="" || chartConf.chart.width=="") {
+		chartObject = {
 			//zoomType: 'xy', // Causes problems when zooming out (Zoom reset) (danristo)
 			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
 
@@ -365,11 +362,8 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 		if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
 			chartObject.backgroundColor = chartConf.chart.backgroundColor;
 	}
-	else if (chartConf.chart.height!=""
-		&& chartConf.chart.width!="")
-	{
-		chartObject =
-		{
+	else if (chartConf.chart.height!="" && chartConf.chart.width!="") {
+		chartObject = {
 			//zoomType: 'xy', // Causes problems when zooming out (Zoom reset) (danristo)
 			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
 
@@ -389,11 +383,8 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 					}
 		};
 		if(!exportWebApp){
-			chartObject =
-			{
-				height: chartConf.chart.height ? Number(chartConf.chart.height) : undefined,
-				width: chartConf.chart.width ? Number(chartConf.chart.width) : undefined,
-			};
+			chartObject.height = chartConf.chart.height ? Number(chartConf.chart.height) : undefined;
+			chartObject.width = chartConf.chart.width ? Number(chartConf.chart.width) : undefined;
 		}
 		if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
 			chartObject.backgroundColor = chartConf.chart.backgroundColor;
@@ -715,6 +706,12 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
 	}
     var minValue=data.length >0 ? data[0][chartConf.additionalData.serie.value] : 0;
     var maxValue=data.length >0 ? data[0][chartConf.additionalData.serie.value] :0;
+
+    /*if(chartConf.additionalData.orderColumnSecondColumn!=""){
+    	chartConf.additionalData.storeresult.sort();
+    	if( chartConf.additionalData.orderTypeSecondColumn.toLowerCase()=="desc")
+    		chartConf.additionalData.storeresult.reverse();
+    }*/
 
     for( i=0;i<data.length;i++ ){
     	if(data[i][chartConf.additionalData.serie.value]< minValue){
