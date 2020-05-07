@@ -156,8 +156,8 @@
 			</md-icon>
 		 
 		</div>
-		<div ng-repeat="defaultParameter in parameter.defaultValues">
-			<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled"
+		<div ng-repeat="defaultParameter in parameter.defaultValues" ng-if="defaultParameter.isEnabled">
+			<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" 
 					ng-checked="checkboxParameterExists(defaultParameter.value, parameter)" ng-click="toggleCheckboxParameter(defaultParameter.value, defaultParameter.description, parameter)" >
 				{{::defaultParameter.label}}
 			</md-checkbox>
