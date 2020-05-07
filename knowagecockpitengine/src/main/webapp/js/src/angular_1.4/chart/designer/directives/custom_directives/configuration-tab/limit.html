@@ -14,8 +14,7 @@
 
 	<md-input-container class="md-block"> 
 	<label>{{translate.load("sbi.chartengine.configuration.parallel.limit.orderTopMinBottomMax")}}</label>
-		 <md-select ng-model="chartTemplate.LIMIT.style.orderTopMinBottomMax" name ="limit_order"
-		 ng-required="chartTemplate.type.toLowerCase()=='parallel'"> <md-option
+		 <md-select ng-model="chartTemplate.LIMIT.style.orderTopMinBottomMax" name ="limit_order"> <md-option
 		ng-repeat="option in orderParallelOptions" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 

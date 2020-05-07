@@ -274,18 +274,17 @@
 				
 		style:
 		{	
-			fontFamily: '$chart.TIP.style.fontFamily',		
-			fontSize: '$chart.TIP.style.fontSize',			
-			color: '$chart.TIP.style.color',
-			width: '$chart.TIP.style.width',
+			#foreach($styleName in $chart.TIP.style.keySet())
+				#set ($styleValue = $chart.TIP.style[$styleName])
+    			#if ($styleName == 'fontWeight' && ($styleValue == 'italic' || $styleValue == 'normal')) 
+        			fontStyle: '$styleValue',
+				#elseif($styleName == 'fontWeight' && $styleValue == 'underline')
+        			textDecoration: 'underline',
+				#else		        			
+        			$styleName: '$styleValue',
+        		#end
+			#end
 			
-			#if($chart.TIP.style.fontWeight == 'italic' || $chart.TIP.style.fontWeight == 'normal')
-    			fontStyle: '$chart.TIP.style.fontWeight',
-			#elseif($chart.TIP.style.fontWeight == 'underline')
-    			textDecoration: '$chart.TIP.style.fontWeight',
-			#elseif($chart.TIP.style.fontWeight == 'bold')		        			
-    			fontWeight: '$chart.TIP.style.fontWeight',
-    		#end
 		},
 		
 	},

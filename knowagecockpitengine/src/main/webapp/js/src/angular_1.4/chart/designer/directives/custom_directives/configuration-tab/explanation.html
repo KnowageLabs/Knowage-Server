@@ -2,8 +2,7 @@
 
 	<md-input-container class="md-block">
 	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label>
-		 <md-select ng-model="chartTemplate.TIP.style.fontWeight" name="explanation_fstyle"
-		 ng-required="chartTemplate.type.toLowerCase()=='sunburst'"> <md-option
+		 <md-select ng-model="chartTemplate.TIP.style.fontWeight" name="explanation_fstyle"> <md-option
 		ng-repeat="option in fontStyleOptionsNS" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 
@@ -16,15 +15,13 @@
 
 	<md-input-container class="md-block" > 
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
-		 <md-select ng-model="chartTemplate.TIP.style.fontSize" name="explanation_fsize"
-		 ng-required="chartTemplate.type.toLowerCase()=='sunburst'"> <md-option
+		 <md-select ng-model="chartTemplate.TIP.style.fontSize" name="explanation_fsize"> <md-option
 		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 
 	<md-input-container class="md-block" >
 	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
-		 <md-select ng-model="chartTemplate.TIP.style.fontFamily" name="explanation_ffamily"
-		 ng-required="chartTemplate.type.toLowerCase()=='sunburst'"> <md-option
+		 <md-select ng-model="chartTemplate.TIP.style.fontFamily" name="explanation_ffamily"> <md-option
 		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 
