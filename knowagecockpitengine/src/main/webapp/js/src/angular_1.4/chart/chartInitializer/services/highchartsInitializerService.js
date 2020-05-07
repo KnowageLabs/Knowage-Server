@@ -150,6 +150,20 @@ angular.module('chartInitializer')
 				}
 				isBasic = true;
 			}
+
+			if( chartType == 'gauge'){
+				for (var i =0; i < chartConf.yAxis.length; i++){
+					var mapAxis = this.setExtremes(chartConf);
+					var finalMin = mapAxis.min[i];
+					var finalMax = mapAxis.max[i];
+					if(chartConf.yAxis[i].min == chartConf.yAxis[i].max){
+						chartConf.yAxis[i].min = finalMin>=0 ? Math.round(finalMin * 0.5) : Math.round(finalMin * 1.5)
+						chartConf.yAxis[i].max = finalMax>=0 ? Math.round(finalMax * 1.1) : Math.round(finalMax * 0.9);
+					}
+
+				}
+
+			}
 			if(chartConf.plotOptions && chartConf.plotOptions.column && chartConf.plotOptions.column.stacking) {
 				for (var i =0; i < chartConf.yAxis.length; i++){
 					if(chartConf.yAxis[i].min !=undefined && (chartConf.yAxis[i].min == 'auto' || chartConf.yAxis[i].min=='')) delete chartConf.yAxis[i].min
@@ -166,6 +180,7 @@ angular.module('chartInitializer')
 					if(orderType=='asc') sortAsc(chartConf.series);
 					else sortDesc(chartConf.series);
 				}
+
 			this.chart =  new Highcharts.Chart(chartConf);
 			if(isBasic){
 				this.chart.extremes = infoFroDrill;
