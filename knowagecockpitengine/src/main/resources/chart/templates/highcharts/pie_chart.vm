@@ -532,7 +532,7 @@
 	    	{
 	    	
 			#foreach($customColor in $customColors)
-			#if($customColor.customName.equalsIgnoreCase($relatedSerie.name))
+			#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($relatedSerie.name))
 				color:'$customColor.customValue',
 			#end
 			#end
@@ -1114,7 +1114,7 @@
 							y:null,
 						#end
 						#foreach($customColor in $customColors)
-						#if($customColor.customName.equalsIgnoreCase($serieName))
+						#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($serieName))
 							color:'$customColor.customValue',
 						#end
 						#end
