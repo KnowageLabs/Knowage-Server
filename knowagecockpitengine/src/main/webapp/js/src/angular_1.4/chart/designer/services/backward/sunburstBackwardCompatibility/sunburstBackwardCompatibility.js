@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(chartTemplate.type.toLowerCase()=='sunburst'){
 				if(enterpriseEdition) {
 					delete chartTemplate.TOOLBAR;
+					delete chartTemplate.opacMouseOver;
+					delete chartTemplate.percAbsolSliceValue;
 					if(!chartTemplate.TOOLTIP) {
 						 chartTemplate.TOOLTIP = {};
 						 chartTemplate.TOOLTIP.borderWidth= 0;
