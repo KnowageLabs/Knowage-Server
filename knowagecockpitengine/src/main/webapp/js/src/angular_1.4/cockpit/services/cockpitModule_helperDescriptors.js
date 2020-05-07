@@ -200,7 +200,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 		]
 	}
 
-	self.pythonHelperJSON = function(datasetId,datasetLabel,meta,parameters,aggregations,cross,availableDatasets){
+	self.pythonHelperJSON = function(datasetId,datasetLabel,meta,drivers,aggregations,cross,availableDatasets){
 		return [
 			{
 				'label':sbiModule_translate.load('kn.cockpit.python.tag1'),
@@ -217,21 +217,21 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'tag': datasetLabel + "[\"%%column%%\"]"},
 			{
 				'label':sbiModule_translate.load('kn.cockpit.python.tag2'),
-				'name': 'parameter',
+				'name': 'driver',
 				'description':sbiModule_translate.load('kn.cockpit.python.tag2.desc'),
 				'hidden': self.isEmpty(cockpitModule_analyticalDrivers),
-				'hiddenMessage': 'no parameter available',
+				'hiddenMessage': 'no analytical driver available',
 				'inputs': [
-					{	'name':'parameter',
+					{	'name':'driver',
 						'type': 'select',
-						'options': parameters,
+						'options': drivers,
 						'flex':'flex-100'}
 				],
-				'tag':"$P{%%parameter%%}"}
+				'tag':"$P{%%driver%%}"}
 		]
 	}
 
-	self.rHelperJSON = function(datasetId,datasetLabel,meta,parameters,aggregations,cross,availableDatasets){
+	self.rHelperJSON = function(datasetId,datasetLabel,meta,drivers,aggregations,cross,availableDatasets){
 		return [
 			{
 				'label':sbiModule_translate.load('kn.cockpit.R.tag1'),
@@ -248,17 +248,17 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'tag': datasetLabel + "[\"%%column%%\"]"},
 			{
 				'label':sbiModule_translate.load('kn.cockpit.R.tag2'),
-				'name': 'parameter',
+				'name': 'driver',
 				'description':sbiModule_translate.load('kn.cockpit.R.tag2.desc'),
 				'hidden': self.isEmpty(cockpitModule_analyticalDrivers),
-				'hiddenMessage': 'no parameter available',
+				'hiddenMessage': 'no analytical driver available',
 				'inputs': [
-					{	'name':'parameter',
+					{	'name':'driver',
 						'type': 'select',
-						'options': parameters,
+						'options': drivers,
 						'flex':'flex-100'}
 				],
-				'tag':"$P{%%parameter%%}"}
+				'tag':"$P{%%driver%%}"}
 		]
 	}
 });
