@@ -1321,7 +1321,7 @@
 		    }
         	if(showAbsValueTooltip && showPercentageTooltip){
     			thisValuePercentage = Highcharts.numberFormat(thisValuePercentage, valueDecimals, decimalPoint, thousandsSep);
-    			thisValue = valuePrefix + thisValuePercentage +"%"+ valueSuffix+ " ("+thisValue+")"
+    			thisValue = valuePrefix + thisValue + valueSuffix+ " ("+thisValuePercentage+"%)"
         	} else if(!showAbsValueTooltip && showPercentageTooltip){
         		thisValue = "";
     			thisValuePercentage = Highcharts.numberFormat(thisValuePercentage, valueDecimals, decimalPoint, thousandsSep);
@@ -1452,7 +1452,7 @@
 	        	
 	        	if(showAbsValueTooltip && showPercentageTooltip){
 	    			thisValuePercentage = Highcharts.numberFormat(this.percentage, precision, decimalPoint, separatorOfThousands);
-	    			thisValue = valuePrefix + thisValuePercentage +"%"+ valueSuffix+ " ("+thisValue+")"
+	    			thisValue = valuePrefix + thisValue + valueSuffix+ " ("+thisValuePercentage+ "%)"
 	        	} else if(!showAbsValueTooltip && showPercentageTooltip){
 	        		thisValue = "";
 	    			thisValuePercentage = Highcharts.numberFormat(this.percentage, precision, decimalPoint, separatorOfThousands);
