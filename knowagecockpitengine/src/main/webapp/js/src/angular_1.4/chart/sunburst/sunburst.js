@@ -57,21 +57,13 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 
 	var colors = [];
 	var defaultColors = Highcharts.getOptions().colors;
-
-	if (chartConf.colors.length == Object.keys(chartConf.data[0]).length) {
-		colors = chartConf.colors;
-	} else if (chartConf.colors.length > Object.keys(chartConf.data[0]).length) {
-		chartConf.colors.length = Object.keys(chartConf.data[0]).length;
-		colors = chartConf.colors;
+	if(chartConf.colors.length ==0) {
+		colors = Highcharts.getOptions().colors;
 	} else {
-		for (var i = 0; i < defaultColors.length; i++) {
-			if(defaultColors[i] != 'transparent') {
-				colors.push(defaultColors[i])
-			}
-			if(colors.length == Object.keys(chartConf.data[0]).length){
-				break;
-			}
-		}
+		colors = chartConf.colors;
+	}
+	while(chartConf.colors.length < Object.keys(chartConf.data[0]).length) {
+		colors = colors.concat(defaultColors)
 	}
 
 	/**
