@@ -626,8 +626,8 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 				.append("div").attr("id","main"+randomId)
 				.attr("class","d3-container")
 				.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
-				.style("height",heightNormalized)
-				.style("width",widthNormalized-widthCorrection)
+				.style("height",heightNormalized-10)
+				.style("width",widthNormalized-widthCorrection-10)
 				.style("font-family", chartConf.chart.style.fontFamily)
 				.style("font-style", chartConf.chart.style.fontStyle)
 	    		.style("font-weight", chartConf.chart.style.fontWeight)
@@ -746,8 +746,8 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 		var bacground=d3.select("#main"+randomId)
 			.append("div").attr("id","chart"+randomId).attr("class","d3chartclass")
 			.append("svg")
-            .attr("width", widthNormalized-widthCorrection)
-			.attr("height", heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
+            .attr("width", widthNormalized-widthCorrection-10)
+			.attr("height", heightNormalized-10-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6);
 
 
