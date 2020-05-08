@@ -39,7 +39,7 @@
 				<md-input-container class="md-block" flex ng-if="variable.type == 'driver'">
 					<label>{{::translate.load('kn.variables.driver')}}</label>
 					<md-select ng-model="variable.driver">
-						<md-option ng-repeat="(key,val) in cockpitModule_analyticalDrivers" ng-value="key">{{key}}</md-option> 
+						<md-option ng-repeat="(key,val) in variablesAnalyticalDrivers" ng-value="val">{{key}}</md-option> 
 					</md-select>
 				</md-input-container>
 				

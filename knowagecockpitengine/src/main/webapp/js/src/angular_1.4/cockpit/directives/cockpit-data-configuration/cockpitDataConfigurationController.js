@@ -32,7 +32,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	 }
 
 	$scope.cockpitModule_analyticalDriversUrls = cockpitModule_analyticalDriversUrls;
-
+	
 	$scope.datasetTableActions=[{
 			label : 'delete',
 			 icon:'fa fa-trash' ,
@@ -642,12 +642,25 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	}
 };
 
-function variablesController($scope, sbiModule_translate, cockpitModule_template, cockpitModule_analyticalDrivers){
+function variablesController($scope, sbiModule_translate, cockpitModule_template, cockpitModule_analyticalDrivers,cockpitModule_analyticalDriversUrls){
 
 	$scope.variables = cockpitModule_template.configuration.variables;
 	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.translate = sbiModule_translate;
 	$scope.cockpitModule_analyticalDrivers = cockpitModule_analyticalDrivers;
+	
+	function getVariablesAnalyticalDrivers(){
+		var tempVariablesAnalyticalDrivers = {};
+		for(var k in cockpitModule_analyticalDriversUrls){
+			var url = cockpitModule_analyticalDriversUrls[k].url;
+			if(cockpitModule_analyticalDrivers[url]) {
+				tempVariablesAnalyticalDrivers[cockpitModule_analyticalDriversUrls[k].label] = url;
+			}
+		}
+		return tempVariablesAnalyticalDrivers;
+	}
+	
+	$scope.variablesAnalyticalDrivers = getVariablesAnalyticalDrivers();
 
 	$scope.$watch('cockpitModule_template.configuration.datasets',function(newValue, oldValue){
 		$scope.availableDatasets = newValue;
