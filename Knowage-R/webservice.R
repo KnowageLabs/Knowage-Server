@@ -1,6 +1,6 @@
 library("jsonlite")
 library("base64enc")
-source("D:/Knowage/Knowage-Server/Knowage-R/utils.R")
+source("utils.R")
 
 #' @post /img
 function(dataset, dataset_name=NULL, script, drivers, output_variable){

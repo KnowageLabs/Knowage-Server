@@ -1,6 +1,6 @@
 library(openssl)
 library(jose)
-source("D:/Knowage/Knowage-Server/Knowage-R/configs.R")
+source("configs.R")
 
 get_libraries <- function(){
   str(allPackages <- installed.packages(.Library, priority = "high"))
