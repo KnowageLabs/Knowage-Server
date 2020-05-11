@@ -563,13 +563,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						var role = userAndRole[1];
 						ctrl.selectedDocumentRoles.push({userAndRole:data[i],user:user,role:role});
 					}
-					if(ctrl.selectedDocumentRoles.length > 0){
-						var doc = ctrl.selectedJob.documents[ctrl.selectedDocumentIndex];
-						for(var i=0; i<doc.parameters.length; i++){
-							var parameter = doc.parameters[i];
-							parameter.role = ctrl.selectedDocumentRoles[0].role;
-						}
-					}
+					ctrl.setParametersRole();
 					ctrl.loadSelectedDocumentParameters();
 				}
 			})
@@ -577,6 +571,16 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				console.log("unable to get document roles " + status);
 				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 			})
+	}
+
+	ctrl.setParametersRole = function() {
+		if(ctrl.selectedDocumentRoles.length > 0){
+			var doc = ctrl.selectedJob.documents[ctrl.selectedDocumentIndex];
+			for(var i=0; i<doc.parameters.length; i++){
+				var parameter = doc.parameters[i];
+				parameter.role = ctrl.selectedDocumentRoles[0].role;
+			}
+		}
 	}
 
 	ctrl.loadSelectedDocumentParameters = function(){
@@ -607,27 +611,13 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							});
 						}
 
-						if(selectedDocumentParameter != null){
-							parameter.temporal = selectedDocumentParameter.parameter.temporal;
-						}else{
-							parameter.temporal = false;
-						}
-						if(parameter.type == "fixed"){
-							ctrl.loadParameterValues(parameter);
-						}else if(parameter.type == "loadAtRuntime"){
-							for(var j in ctrl.selectedDocumentRoles){
-								var role = ctrl.selectedDocumentRoles[j];
-								if(parameter.value.endsWith(role.role)){
-									parameter.value = role.userAndRole;
-									break;
-								}
-							}
-						}
+						ctrl.loadParameterDomain(selectedDocumentParameter, parameter);
 					}
 					// Add the new params
-					newParams.forEach(function(e) {
-						ctrl.addNewParam(selectedDocument, e);
-						ctrl.loadSelectedDocumentRolesAndParameters();
+					newParams.forEach(function(selectedDocumentParameter) {
+						var parameter = ctrl.addNewParam(selectedDocument, selectedDocumentParameter);
+						ctrl.setParametersRole();
+						ctrl.loadParameterDomain(selectedDocumentParameter, parameter);
 					});
 
 					// Extract the ids of the deleted params
@@ -645,6 +635,26 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				console.log("unable to get document parameters " + status);
 				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 			})
+	}
+
+	ctrl.loadParameterDomain = function(selectedDocumentParameter, parameter) {
+		if(selectedDocumentParameter != null){
+			parameter.temporal = selectedDocumentParameter.parameter.temporal;
+		}else{
+			parameter.temporal = false;
+		}
+
+		if(parameter.type == "fixed"){
+			ctrl.loadParameterValues(parameter);
+		}else if(parameter.type == "loadAtRuntime"){
+			for(var j in ctrl.selectedDocumentRoles){
+				var role = ctrl.selectedDocumentRoles[j];
+				if(parameter.value.endsWith(role.role)){
+					parameter.value = role.userAndRole;
+					break;
+				}
+			}
+		}
 	}
 
 	ctrl.addDocument = function(){
@@ -709,6 +719,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		newParam.type = "fixed";
 		newParam.iterative = false;
 		newDocument.parameters.push(newParam);
+		return newParam;
 	}
 
 	ctrl.updateCondensedParamsForNewDoc = function(newDocument) {
