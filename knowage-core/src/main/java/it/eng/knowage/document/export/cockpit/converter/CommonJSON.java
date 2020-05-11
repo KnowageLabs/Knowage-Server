@@ -102,7 +102,7 @@ public class CommonJSON {
 			return getColumnAlias(jsonObject, columnAliasToName);
 		} else {
 
-			if (jsonObject.has("datasetOrTableFlag")) {
+			if (jsonObject.has("formula")) {
 				// it is a calculated field
 				return jsonObject.getString("columnName");
 			}
@@ -137,8 +137,6 @@ public class CommonJSON {
 		IAggregationFunction function = AggregationFunctions.get(functName);
 		String functionColumnName = jsonObject.optString("functColumn");
 		Projection projection;
-		if (jsonObject.has("datasetOrTableFlag") && !jsonObject.getBoolean("datasetOrTableFlag"))
-			function = AggregationFunctions.get("NONE");
 		if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
 			Projection aggregatedProjection = new Projection(dataSet, functionColumnName);
 			projection = new CoupledProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);

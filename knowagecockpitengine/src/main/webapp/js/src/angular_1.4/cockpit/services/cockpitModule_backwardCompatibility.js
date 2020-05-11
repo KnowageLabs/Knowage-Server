@@ -218,7 +218,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					delete model.content.columnSelectedOfDataset;
 				}
 			}
-
+			
+			if(!self.compareVersion("7.2.0",version)){
+				if(model.type=='table'){
+					if(model.content && model.content.columnSelectedOfDataset){
+						for(var k in model.content.columnSelectedOfDataset){
+							if (model.content.columnSelectedOfDataset[k].isCalculated && model.content.columnSelectedOfDataset[k].datasetOrTableFlag) {
+								delete model.content.columnSelectedOfDataset[k].datasetOrTableFlag;
+							}
+						}
+					}
+				}
+			}
+			
 			if(!self.compareVersion("7.3.0",version)){
 				if(model.type=='table' || model.type=='discovery'){
 					for(var k in model.content.columnSelectedOfDataset){

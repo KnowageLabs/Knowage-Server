@@ -420,12 +420,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		IAggregationFunction function = AggregationFunctions.get(functName);
 		String functionColumnName = jsonObject.optString("functColumn");
 		AbstractSelectionField projection = null;
-		if (jsonObject.has("datasetOrTableFlag") && !jsonObject.getBoolean("datasetOrTableFlag"))
-			function = AggregationFunctions.get("NONE");
 		if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
-			if (jsonObject.has("datasetOrTableFlag")) {
+			if (jsonObject.has("formula")) {
 				String formula = jsonObject.optString("formula");
-//				String response = validateFormula(formula);
 				DataStoreCalculatedField aggregatedProjection = new DataStoreCalculatedField(dataSet, functionColumnName, formula);
 				projection = new CoupledCalculatedFieldProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);
 			} else {
@@ -433,10 +430,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				projection = new CoupledProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);
 			}
 		} else {
-			if (jsonObject.has("datasetOrTableFlag")) {
+			if (jsonObject.has("formula")) {
 				String formula = jsonObject.optString("formula");
-//				String response = validateFormula(formula);
-
 				projection = new DataStoreCalculatedField(function, dataSet, columnAlias, columnAlias, formula);
 			} else {
 				projection = new Projection(function, dataSet, columnName, columnAlias);
@@ -538,7 +533,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			return getColumnAlias(jsonObject, columnAliasToName);
 		} else {
 
-			if (jsonObject.has("datasetOrTableFlag")) {
+			if (jsonObject.has("formula")) {
 				// it is a calculated field
 				return jsonObject.getString("formula");
 			}

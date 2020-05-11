@@ -33,20 +33,20 @@
 		                    	<input name="alias" type="text" ng-model="calculatedField.alias" ng-pattern="/^[a-zA-Z0-9\_\-]*$/" required>
 	                    	</form>
 	                	</md-input-container>
-	                	<md-input-container flex="30" ng-if="calculatedField.datasetOrTableFlag">
-                        	<label>{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.aggrfunctions')}}</label>
-                         	<md-select ng-model="calculatedField.aggregationSelected">
-                            	<md-option ng-repeat="func in cockpitModule_generalOptions.aggregationFunctions" ng-value="func.value">
-                            		{{func.label}}
-                            	</md-option>
-                         	</md-select>
-                   		</md-input-container> 
-	                	<md-switch ng-model="calculatedField.datasetOrTableFlag"   ng-disabled="isSolrDataset()" aria-label="Enabled Dataset calculated fields" ng-change="resetFormula()">
-                         	{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.datasetOrTableFlag')}}
-                          	<md-tooltip md-delay=500>
-                           		{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.datasetOrTableFlag.hint')}}
-                       		</md-tooltip>
-						</md-switch>
+<!-- 	                	<md-input-container flex="30" ng-if="calculatedField.datasetOrTableFlag"> -->
+<!--                         	<label>{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.aggrfunctions')}}</label> -->
+<!--                          	<md-select ng-model="calculatedField.aggregationSelected"> -->
+<!--                             	<md-option ng-repeat="func in cockpitModule_generalOptions.aggregationFunctions" ng-value="func.value"> -->
+<!--                             		{{func.label}} -->
+<!--                             	</md-option> -->
+<!--                          	</md-select> -->
+<!--                    		</md-input-container>  -->
+<!-- 	                	<md-switch ng-model="calculatedField.datasetOrTableFlag"   ng-disabled="isSolrDataset()" aria-label="Enabled Dataset calculated fields" ng-change="resetFormula()"> -->
+<!--                          	{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.datasetOrTableFlag')}} -->
+<!--                           	<md-tooltip md-delay=500> -->
+<!--                            		{{::translate.load('sbi.cockpit.widgets.table.calculatedFields.datasetOrTableFlag.hint')}} -->
+<!--                        		</md-tooltip> -->
+<!-- 						</md-switch> -->
 	            	</div>
 	            	<div layout="row" layout-align="center center" ng-if="showWarning">
 		    			<div class="kn-warning" flex="60">{{showWarning}}</div> 

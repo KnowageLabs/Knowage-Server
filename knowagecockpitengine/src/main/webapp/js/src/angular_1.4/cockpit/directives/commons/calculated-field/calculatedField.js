@@ -96,7 +96,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.currentRow.formulaEditor = result.formulaEditor;
 						$scope.currentRow.aggregationSelected = result.aggregationSelected;
 						$scope.currentRow.funcSummary = result.funcSummary;
-						$scope.currentRow.datasetOrTableFlag = result.datasetOrTableFlag;
 						$scope.currentRow.alias = result.alias;
 					}else{
 						if ($scope.callbackAddTo != undefined) {
@@ -257,13 +256,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			var text = field.name;
 
-			var prefix = $scope.calculatedField.datasetOrTableFlag  ? '"' : field.aggregationSelected+'("';
-			var suffix = $scope.calculatedField.datasetOrTableFlag  ? '"' : '") ';
-
-			if ($scope.isSolrDataset()) {
-				prefix = '"';
-				suffix = '"';
-			}
+			var	prefix = '"';
+			var	suffix = '"';
+	
 
 			$scope._editor.focus();
 			if ($scope._editor.somethingSelected()) {
@@ -347,7 +342,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.resetFormula = function(){
 			$scope.calculatedField.formulaEditor = '';
-			$scope.calculatedField.aggregationSelected = $scope.calculatedField.datasetOrTableFlag ? 'SUM' : 'NONE';
+			$scope.calculatedField.aggregationSelected = 'NONE';
 		}
 
 		$scope.isSolrDataset = function() {

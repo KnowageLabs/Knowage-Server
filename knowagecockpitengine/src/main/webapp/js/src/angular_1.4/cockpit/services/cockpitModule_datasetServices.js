@@ -1142,7 +1142,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 					if(ngModel.type == "table"){
 						if(col.isCalculated) {
-							obj.datasetOrTableFlag =  col.datasetOrTableFlag ? true : false;
 							obj["formula"] = col.formula;
 
 						}else obj["columnName"] = col.name;

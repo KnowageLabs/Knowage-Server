@@ -108,7 +108,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}else if (col.fieldType=="MEASURE"){
 					//it is measure
 					if(col.aggregationColumn) obj.functColumn = col.aggregationColumn;
-					if(col.isCalculated) obj.datasetOrTableFlag =  col.datasetOrTableFlag ? true : false;
 					obj["orderColumn"] = col.name;
 					if(obj.orderType!=undefined){
 						obj.orderType  = col.orderType;
