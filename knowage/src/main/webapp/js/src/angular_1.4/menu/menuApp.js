@@ -330,7 +330,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				}
 				return counter;
 			}
-			
+
 			$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset?showAll=true').then(function(result){
 				$scope.downloadsList = result.data;
 				$scope.newDownloadsNumber = calculateNewDownloads($scope.downloadsList);
@@ -369,11 +369,13 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 
 					scope.deleteAllDownload = function(){
 						$http.delete(Sbi.config.contextName + '/restful-services/2.0/export').then(function(result){
+							// Clear both lists
 							$scope.downloadsList = [];
+							scope.downloadsList = [];
 						})
 					}
 
-	        	    scope.$watch('downloadsList', function(newValue,oldValue){
+					scope.$watch('downloadsList', function(newValue,oldValue){
 						if(newValue && scope.downloadGridOptions.api) {
 							scope.downloadGridOptions.api.setRowData(newValue);
 						}
