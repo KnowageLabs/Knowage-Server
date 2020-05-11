@@ -153,7 +153,10 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,sbiM
 	})
 
 	$scope.$on('updateMeasuresWithCF', function(event,data) {
-		$scope.getMetadata();
+		$scope.getMetadata();if ($scope.getMetadata){
+			$scope.numberOfSeriesContainers = 0;
+			$scope.getMetadata();
+		}
 	})
 
 	$scope.refreshJsonTree = function() {
