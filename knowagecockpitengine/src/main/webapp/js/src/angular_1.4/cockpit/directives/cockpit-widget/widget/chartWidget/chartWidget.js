@@ -989,6 +989,7 @@ function cockpitChartWidgetControllerFunction(
 
 
 	$scope.reloadWidgetsByChartEvent = function(item){
+		if($scope.ngModel.cliccable == false) return
 		var event= item.select != undefined ? item.select : item;
 		var crossParameters= createCrossParameters(item);
 		var chartType = $scope.ngModel.content.chartTemplate.CHART.type;
