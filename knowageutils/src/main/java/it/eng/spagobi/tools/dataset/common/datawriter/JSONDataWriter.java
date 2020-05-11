@@ -362,8 +362,10 @@ public class JSONDataWriter implements IDataWriter {
 							}
 							fieldValue = buffer.toString();
 						} // provided
+					} catch (NoClassDefFoundError t) {
+						logger.error("Class not found error", t);
 					} catch (Throwable t) {
-						throw new RuntimeException("An unpredicted error occurred at recno [" + recNo + "] while serializing dataStore", t);
+						logger.error("An unpredicted error occurred at recno [" + recNo + "] while serializing dataStore", t);
 					}
 
 					if (fieldValue == null) {
