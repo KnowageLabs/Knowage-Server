@@ -1221,7 +1221,12 @@ public class ExcelExporter {
 
 		String sortingColumn = null;
 		String sortingOrder = null;
-		JSONObject settings = widget.optJSONObject("content");
+		JSONObject contents = widget.optJSONObject("content");
+		if (contents != null) {
+			sortingColumn = contents.optString("sortingColumn");
+			sortingOrder = contents.optString("sortingOrder");
+		}
+		JSONObject settings = widget.optJSONObject("settings");
 		if (settings != null) {
 			sortingColumn = settings.optString("sortingColumn");
 			sortingOrder = settings.optString("sortingOrder");

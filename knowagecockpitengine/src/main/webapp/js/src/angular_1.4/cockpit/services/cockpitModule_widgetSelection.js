@@ -53,8 +53,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 				obj["orderType"] = "";
 				if(columnOrdering !=undefined){
-					if(columnOrdering.name == (ngModel.type == "table" ? col.aliasToShow : col.name)){
-						obj["orderType"] = reverseOrdering==true ? 'ASC' : 'DESC';
+					if (typeof columnOrdering == "string") {
+						obj["orderColumn"] = columnOrdering;
+						obj["orderType"] = reverseOrdering;
 					}
 				}
 				var newCategArray = [];
