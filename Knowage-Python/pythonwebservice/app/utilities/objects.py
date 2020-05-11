@@ -65,6 +65,10 @@ class PythonWidgetExecution:
     def script(self):
         return self._script
 
+    @property
+    def output_variable(self):
+        return self._output_variable
+
     @script.setter
     def script(self, value):
         self._script = value
