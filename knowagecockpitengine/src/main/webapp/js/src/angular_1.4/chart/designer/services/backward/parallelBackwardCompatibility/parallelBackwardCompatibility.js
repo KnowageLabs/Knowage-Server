@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 
 				for(serie in chartTemplate.VALUES.SERIE){
-					delete serie.scaleFactor
+					delete chartTemplate.VALUES.SERIE[serie].scaleFactor
 				}
 			}
 
