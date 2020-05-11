@@ -21,8 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	.service("parallelBackwardCompatibilityService", function (){
 
 		var updateTemplate = function(chartTemplate){
-			if(chartTemplate.type.toLowerCase() == 'parallel' && chartTemplate.PARALLEL_TOOLTIP){
-				chartTemplate.PARALLEL_TOOLTIP.maxNumberOfRecords = 50
+			if(chartTemplate.type.toLowerCase() == 'parallel'){
+				if(chartTemplate.PARALLEL_TOOLTIP) {
+					chartTemplate.PARALLEL_TOOLTIP.maxNumberOfRecords = 50
+				}
+
+				for(serie in chartTemplate.VALUES.SERIE){
+					delete serie.scaleFactor
+				}
 			}
 
 			return chartTemplate;

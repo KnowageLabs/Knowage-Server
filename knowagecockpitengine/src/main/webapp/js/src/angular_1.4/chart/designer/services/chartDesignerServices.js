@@ -1394,7 +1394,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 			                 "showValue":true,
 			                 "showAbsValue":false,
 			                 "showPercentage":false,
-			                 "scaleFactor":"empty",
 			                 "type":""
 			              }
 			         ]
