@@ -457,15 +457,19 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
             	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
         	        						}
         	        						else {
-        	        							scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+        	        							if (response.data.errors){
+                	        						scope.messaging.showErrorMessage(scope.translate.load('kn.license.error'),response.data.errors[0].message);
+                	        					}else{
+                	        						scope.messaging.showErrorMessage(scope.translate.load('kn.license.error'),scope.translate.load('kn.license.errormessage'));
+                	        					}
         	        						}
         	        					}
         	        				},
         	        				function(response,status,headers,config){
         	        					if (response.data.errors){
-        	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+        	        						scope.messaging.showErrorMessage(scope.translate.load('kn.license.error'),response.data.errors[0].message);
         	        					}else{
-        	        						scope.messaging.showErrorMessage(scope.translate.load('sbi.generic.genericError'),scope.translate.load('sbi.generic.error'));
+        	        						scope.messaging.showErrorMessage(scope.translate.load('kn.license.error'),scope.translate.load('kn.license.errormessage'));
         	        					}
         	        			});
 	        	        }
