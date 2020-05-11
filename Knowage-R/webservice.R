@@ -29,10 +29,9 @@ function(dataset, dataset_name=NULL, script, drivers, output_variable){
     script <- gsub(dataset_name,"df_",script)
     env$df_ <- as.data.frame(fromJSON(dataset))
   }
+  script <- gsub(output_variable,"env$output_variable_",script)
   eval(parse(text=script), envir = env)
-  html  <- read.file(output_variable)
-  if (file.exists(output_variable))
-    file.remove(output_variable)
+  html <- env$output_variable_
   html
 }
 
