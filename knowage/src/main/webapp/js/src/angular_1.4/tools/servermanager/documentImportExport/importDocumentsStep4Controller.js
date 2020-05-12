@@ -31,7 +31,7 @@ function importStep4FuncController($scope,importExportDocumentModule_importConf,
 					importExportDocumentModule_importConf.folderName=response.data.folderName;
 					var warnings = response.data.warnings;
 					
-					if (warnings.length > 0) {
+					if (warnings && warnings.length > 0) {
 						
 						var text = "";
 						var tmpType = "";
