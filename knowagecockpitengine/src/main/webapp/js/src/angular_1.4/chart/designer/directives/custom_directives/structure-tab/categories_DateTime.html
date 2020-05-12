@@ -39,7 +39,7 @@
 	<div ng-if="chartTemplate.dateTime && (selectedChartType.toLowerCase()=='bar' || selectedChartType.toLowerCase()=='line')" layout="column" layout-padding>
 	<md-input-container class="md-block">
 	 <label >{{translate.load("sbi.chartengine.structure.categoryStyleConfig.categoryDate")}}</label>
-		 <md-select ng-model="chartTemplate.categoryDate" name="categoryDate"  ng-required="chartTemplate.dateTime"> <md-option
+		 <md-select ng-model="chartTemplate.categoryDate" name="categoryDate" > <md-option
 		ng-repeat="option in categories" value="{{option.name}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 		
