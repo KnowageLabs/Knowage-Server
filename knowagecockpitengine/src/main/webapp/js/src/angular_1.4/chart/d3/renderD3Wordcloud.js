@@ -661,13 +661,12 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 
 				emptyMsgTextDecoration = (chartConf.emptymessage.style.textDecoration == "underline" || chartConf.chart.style.textDecoration == "underline") ? "underline" : "none";
 
-				// Set title
-				d3.select("#main"+randomId).append("div")
-					.style("height",emptyMsgTotal)
-					.style("position",chartConf.emptymessage.position)
-					.style("left",chartConf.emptymessage.paddingLeft)
+				// Set empty message
+				d3.select(panel)
+					.style("display","flex")
+					.style("align-items","center")
+					.style("justify-content",chartConf.emptymessage.style.align)
 					.style("color",chartConf.emptymessage.style.color)
-					.style("text-align",chartConf.emptymessage.style.align)
 		    		.style("font-family",chartConf.emptymessage.style.fontFamily)
 		    		.style("font-style", emptyMsgFontStyle)
 		    		.style("font-weight", emptyMsgFontWeight)

@@ -637,9 +637,11 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 		//var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
 		var emptyMsgTotal = emptyMsgFontSize;
 		// Set empty message
-		d3.select(panel).append("div")
-		.style("color",data.emptymessage.style.color)
-			.style("text-align",data.emptymessage.style.align)
+		d3.select(panel)
+			.style("color",data.emptymessage.style.color)
+			.style("display","flex")
+			.style("align-items","center")
+			.style("justify-content",data.emptymessage.style.align)
     		.style("font-family",data.emptymessage.style.fontFamily)
     		.style("font-style",data.emptymessage.style.fontStyle)
     		.style("font-weight",data.emptymessage.style.fontWeight)

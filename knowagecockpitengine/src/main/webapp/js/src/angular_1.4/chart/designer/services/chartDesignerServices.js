@@ -62,9 +62,9 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 	this.getAlignTypeOptions = function(){
 		var data = [
 			  {name:"",value:""},
-			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.left"),value:"left"},
+			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.left"),value:"flex-start"},
 			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.center"),value:"center"},
-			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.right"),value:"right"},
+			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.right"),value:"flex-end"},
 			                               ]
 		return data;
 	};
