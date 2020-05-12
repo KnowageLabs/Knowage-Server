@@ -661,11 +661,20 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 
 				emptyMsgTextDecoration = (chartConf.emptymessage.style.textDecoration == "underline" || chartConf.chart.style.textDecoration == "underline") ? "underline" : "none";
 
+				var emptyMsgAlignment = null;
+				if(chartConf.emptymessage.style.align == "left") {
+					emptyMsgAlignment = "flex-start";
+				} else if (chartConf.emptymessage.style.align == "right") {
+					emptyMsgAlignment = "flex-end";
+				} else {
+					emptyMsgAlignment = "center";
+				}
+
 				// Set empty message
 				d3.select(panel)
 					.style("display","flex")
 					.style("align-items","center")
-					.style("justify-content",chartConf.emptymessage.style.align)
+					.style("justify-content",emptyMsgAlignment)
 					.style("color",chartConf.emptymessage.style.color)
 		    		.style("font-family",chartConf.emptymessage.style.fontFamily)
 		    		.style("font-style", emptyMsgFontStyle)

@@ -661,12 +661,21 @@ function renderChordChart(jsonData,panel,handleCockpitSelection,locale,handleCro
 		//var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
 		var emptyMsgTotal = emptyMsgFontSize;
 
+		var emptyMsgAlignment = null;
+		if(jsonData.emptymessage.style.align == "left") {
+			emptyMsgAlignment = "flex-start";
+		} else if (jsonData.emptymessage.style.align == "right") {
+			emptyMsgAlignment = "flex-end";
+		} else {
+			emptyMsgAlignment = "center";
+		}
+
 		// Set empty text on the chart
 		d3.select(panel)
 			.style("color",jsonData.emptymessage.style.color)
 			.style("display","flex")
 			.style("align-items","center")
-			.style("justify-content",jsonData.emptymessage.style.align)
+			.style("justify-content",emptyMsgAlignment)
     		.style("font-family",jsonData.emptymessage.style.fontFamily)
     		.style("font-style",jsonData.emptymessage.style.fontStyle)
     		.style("font-weight",jsonData.emptymessage.style.fontWeight)

@@ -636,12 +636,22 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 		var emptyMsgFontSize = parseInt(data.emptymessage.style.fontSize);
 		//var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
 		var emptyMsgTotal = emptyMsgFontSize;
+
+		var emptyMsgAlignment = null;
+		if(data.emptymessage.style.align == "left") {
+			emptyMsgAlignment = "flex-start";
+		} else if (data.emptymessage.style.align == "right") {
+			emptyMsgAlignment = "flex-end";
+		} else {
+			emptyMsgAlignment = "center";
+		}
+
 		// Set empty message
 		d3.select(panel)
 			.style("color",data.emptymessage.style.color)
 			.style("display","flex")
 			.style("align-items","center")
-			.style("justify-content",data.emptymessage.style.align)
+			.style("justify-content",emptyMsgAlignment)
     		.style("font-family",data.emptymessage.style.fontFamily)
     		.style("font-style",data.emptymessage.style.fontStyle)
     		.style("font-weight",data.emptymessage.style.fontWeight)
