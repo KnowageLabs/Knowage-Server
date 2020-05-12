@@ -18,8 +18,9 @@ function createChart() {
 
     function serviceGetData() {
         var jqxhr = $.ajax({
-            url: '/knowagesvgviewerengine/api/1.0/svgviewer/getCustomizedConfiguration?'+requestQueryString,
-            type: 'get',
+            url: '/knowagesvgviewerengine/api/1.0/svgviewer/getCustomizedConfiguration',
+            type: 'post',
+            body: _requestParameterMap
         })
         .done(function(response) {
         	serviceResponse = response.data;

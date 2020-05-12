@@ -28,6 +28,45 @@
 app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSidenav','sbiModule_logger','$window','sbiModule_config','$rootScope','$sce','$timeout',SvgViewerControllerFunction] );
 
 function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window,sbiModule_config,$rootScope,$sce,$timeout)	{
+	
+	//hidden Iframe initialization
+	$scope.requestParameterMap = _requestParameterMap;
+	function createForm(){
+
+		var svgForm = document.createElement("form");
+		svgForm.id="svgForm";
+		svgForm.action = sbiModule_config.contextName + "/api/1.0/svgviewer/drawMap";
+		svgForm.method = "post";
+	    svgForm.target = "svgContainer";
+	    document.body.appendChild(svgForm);
+		
+	    for (var k in $scope.requestParameterMap) {
+			var element = document.createElement("input");
+	        element.type = "hidden";
+	        element.id= 'svgForm_' + k;
+	        element.name = k;
+	        element.value = $scope.requestParameterMap[k];
+	        svgForm.appendChild(element);
+		}
+		svgForm.submit();
+	}
+	createForm();
+	
+	function submitForm(){
+		document.getElementById("svgForm").submit();
+	}
+	
+	function updateForm(property,value){
+		var inputElement = document.getElementById("svgForm_" + property);
+		if(!inputElement) {
+			inputElement = document.createElement("input");
+			inputElement.type = "hidden";
+			inputElement.id= 'svgForm_' + property;
+			inputElement.name = property;
+			document.getElementById("svgForm").appendChild(inputElement);
+		}
+		inputElement.value = value;
+	}
 
   $scope.showBackButton 		= false;
   //initialize for the first level
@@ -69,14 +108,17 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  $scope.env = pathElement.env;
 
 	  if (pathElement.level == 1){
-		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?document="+pathElement.document+"&level="+pathElement.level+pathElement.env;
+		  updateForm('level',pathElement.level+pathElement.env);
+		  updateForm('document',pathElement.document);
 	  } else {
-		  var urlToCall = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?document="+pathElement.document+"&member="+pathElement.member+"&level="+pathElement.level+pathElement.env;
+		  updateForm('level',pathElement.level+pathElement.env);
+		  updateForm('member',pathElement.member);
+		  updateForm('document',pathElement.document);
 		  if (pathElement.parent != undefined && pathElement.parent != null){
-			  urlToCall = urlToCall + "&parent=" + pathElement.parent;
+			  updateForm('parent',pathElement.parent);
 		  }
-		  document.getElementById('svgContainer').src = urlToCall;
 	  }
+	  submitForm();
 
 	  if($scope.currentLevel == 1){
 		  $scope.showBackButton = false;
@@ -122,8 +164,11 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  $scope.currentParent = e.detail.idElement;
 	  $scope.document = e.detail.document;
 	  $scope.env = e.detail.env;
-	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?"+$scope.requestQueryString+"&member="+$scope.currentMember+"&level="+$scope.currentLevel+"&parent="+$scope.currentParent+"&document="+$scope.document+$scope.env;
-
+	  updateForm('level',$scope.currentLevel);
+	  updateForm('document',$scope.document+$scope.env);
+	  updateForm('member',$scope.currentMember);
+	  updateForm('parent',$scope.currentParent);
+	  submitForm();
 
 	  if  ($scope.currentLevel > 1){
 		  $scope.showBackButton = true;
@@ -222,22 +267,24 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
    * Loads the measures list with a REST service
    * */
   $scope.getMeasures = function(){
-	  sbiModule_restServices.get("1.0/svgviewer", 'getMeasures',$scope.requestQueryString+'&level='+$scope.currentLevel).success(
-			  function(data, status, headers, config) {
-				  if (data.hasOwnProperty("errors")) {
+	  var parametersClone = angular.copy($scope.requestParameterMap);
+	  parametersClone.level = $scope.currentLevel;
+	  sbiModule_restServices.post("1.0/svgviewer", 'getMeasures', parametersClone).then(
+			  function(response) {
+				  if (response.data.hasOwnProperty("errors")) {
 					  sbiModule_logger.log("measures not retrivied");
 				  } else {
-					  $scope.measures = data;
+					  $scope.measures = response.data;
 					  for (var propt in $scope.measures){
 						  if ($scope.measures[propt].selected){
 							  //set default selected measure
 							  $scope.measureValue = $scope.measures[propt].columnId;
 						  }
 					  }
-					  sbiModule_logger.trace("measures correctly retrivied",data);
+					  sbiModule_logger.trace("measures correctly retrieved",response.data);
 				  }
-			  }).error(function(data, status, headers, config) {
-				  sbiModule_logger.log("measures not retrivied");
+			  },function(error) {
+				  sbiModule_logger.log("measures not retrieved");
 			  });
   };
 
@@ -253,22 +300,24 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
    * Loads the measures list with a REST service
    * */
   $scope.getLayers = function(){
-	  sbiModule_restServices.get("1.0/svgviewer", 'getLayers',$scope.requestQueryString+'&level='+$scope.currentLevel).success(
-			  function(data, status, headers, config) {
-				  if (data.hasOwnProperty("errors")) {
-					  sbiModule_logger.log("layers not retrivied");
+	  var parametersClone = angular.copy($scope.requestParameterMap);
+	  parametersClone.level = $scope.currentLevel;
+	  sbiModule_restServices.post("1.0/svgviewer", 'getLayers',parametersClone).then(
+			  function(response) {
+				  if (response.data.hasOwnProperty("errors")) {
+					  sbiModule_logger.log("layers not retrieved");
 				  } else {
 
-					  for (var key in data) {
+					  for (var key in response.data) {
 						  //force all layers to be selected by default
 						  data[key].selected = true;
 					  }
-					  $scope.layers = data;
-					  sbiModule_logger.trace("layers correctly retrivied",data);
+					  $scope.layers = response.data;
+					  sbiModule_logger.trace("layers correctly retrieved",response.data);
 
 				  }
-			  }).error(function(data, status, headers, config) {
-				  sbiModule_logger.log("layers not retrivied");
+			  },function(error) {
+				  sbiModule_logger.log("layers not retrieved");
 			  });
   };
 

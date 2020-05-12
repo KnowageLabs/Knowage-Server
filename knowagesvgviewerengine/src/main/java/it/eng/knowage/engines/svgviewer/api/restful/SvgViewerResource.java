@@ -48,7 +48,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -69,9 +71,9 @@ import org.json.JSONObject;
 public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 
 	@Path("/drawMap")
-	@GET
+	@POST
 	@Produces({ MediaType.APPLICATION_SVG_XML, MediaType.APPLICATION_JSON })
-	public Response drawMap(@QueryParam("level") String level) {
+	public Response drawMap(@FormParam("level") String level) {
 		logger.debug("IN");
 		try {
 			// SourceBean savedTemplate = getTemplateAsSourceBean();
@@ -107,9 +109,9 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	 * @return
 	 */
 	@Path("/getMeasures")
-	@GET
+	@POST
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getMeasures(@QueryParam("level") String level) {
+	public Response getMeasures(@FormParam("level") String level) {
 		logger.debug("IN");
 		try {
 			SourceBean memberSB = getActiveMemberSB(level);
@@ -135,9 +137,9 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	 * @return
 	 */
 	@Path("/getLayers")
-	@GET
+	@POST
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getLayers(@QueryParam("level") String level) {
+	public Response getLayers(@FormParam("level") String level) {
 		logger.debug("IN");
 		try {
 			SourceBean memberSB = getActiveMemberSB(level);
@@ -157,10 +159,10 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	}
 
 	@Path("/drillMap")
-	@GET
+	@POST
 	@Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
-	public Response drillMap(@QueryParam("document") String documentId, @QueryParam("level") String level, @QueryParam("member") String member,
-			@QueryParam("parent") String parent) {
+	public Response drillMap(@FormParam("document") String documentId, @FormParam("level") String level, @FormParam("member") String member,
+			@FormParam("parent") String parent) {
 		logger.debug("IN");
 		try {
 			// 0. Define internal objects
@@ -236,9 +238,9 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	 * @return
 	 */
 	@Path("/getCustomizedConfiguration")
-	@GET
+	@POST
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getCustomizedConfiguration(@QueryParam("level") String level) {
+	public Response getCustomizedConfiguration(@FormParam("level") String level) {
 		logger.debug("IN");
 		try {
 			// SourceBean savedTemplate = getTemplateAsSourceBean();

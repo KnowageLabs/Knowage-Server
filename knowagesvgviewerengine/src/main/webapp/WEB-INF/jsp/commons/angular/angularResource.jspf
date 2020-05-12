@@ -25,6 +25,7 @@
 <%@page import="org.json.JSONObject"%>
 <%@page import="org.json.JSONArray"%>
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
+<%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>

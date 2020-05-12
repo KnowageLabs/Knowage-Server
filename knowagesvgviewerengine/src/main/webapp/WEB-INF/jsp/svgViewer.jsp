@@ -31,21 +31,18 @@
 		<%@include file="/WEB-INF/jsp/commons/angular/svgViewerImport.jsp"%>
 	
 		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/svgViewerController.js"></script>
+		<script>var _requestParameterMap = <%=new ObjectMapper().writeValueAsString(request.getParameterMap())%>;</script>
 		<% if (isCustomizedSVG) {%>
 			<%-- This is because dynamicSvg.js is plain javascript, and it is impossible to get the angular scope ---------------- --%>
-			<script type="text/javascript">
-				var requestQueryString = '<%=(request.getQueryString())%>';
-			</script>
 			<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/directives/dynamicSvg.js"></script>
 		<% } %>
-	
 		<title>SVG Viewer</title>
 	</head>
 
 	
 	<body class="kn-svgviewer">    
 	          	
-			<div ng-init="requestQueryString='<%=(request.getQueryString())%>';" ng-app="svgViewerApp" class="svgMainContainer">
+			<div ng-app="svgViewerApp" class="svgMainContainer">
 			     <div  class="divFlex" ng-controller="SvgViewerController" ng-scope> 
 			     <% if (isCustomizedSVG) {%><md-sidenav layout="column"  id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  ><% }else{ %>
 			      <md-sidenav layout="column" ng-class="{'_md-locked-open':sidenavOpened}" id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  ><% } %>
@@ -121,10 +118,7 @@
 				              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
 				        </md-button>					 		
    					   <div id="container" layout-fill>   		             
-							<iframe id="svgContainer" 
-							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap?<%=(request.getQueryString())%>'  
-								width='100%'; height='100%'; frameborder="0" > 
-							</iframe>  			
+							<iframe id="svgContainer" width='100%'; height='100%'; frameborder="0" name="svgContainer"> </iframe>  			
 							<% if (isCustomizedSVG) {%>
 								<div id="dynamic-svg"></div> 
 								<div id="graphLegend"></div>
