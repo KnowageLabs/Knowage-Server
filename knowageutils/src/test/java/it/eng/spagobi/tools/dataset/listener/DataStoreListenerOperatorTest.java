@@ -760,14 +760,12 @@ public class DataStoreListenerOperatorTest extends TestCase {
 
 		@Override
 		public Map<String, Object> getDrivers() {
-
-			return getDrivers();
+			throw new UnsupportedOperationException("Not implemented");
 		}
 
 		@Override
 		public void setDrivers(Map<String, Object> drivers) {
-
-			setDrivers(drivers);
+			throw new UnsupportedOperationException("Not implemented");
 		}
 
 		@Override
