@@ -1345,13 +1345,13 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 				obj['name'] = chartCategory.column;
 				obj['alias'] = chartCategory.name;
 				obj['aliasToShow'] = chartCategory.alias;
-				obj['orderType'] = chartCategory.orderType;
-				obj['orderColumn'] = chartCategory.orderColumn;
+				obj['orderType'] = chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderType : chartCategory.orderType ;
+				obj['orderColumn'] = chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderColumn : chartCategory.orderColumn ;
 				obj['fieldType'] = "ATTRIBUTE";
 
 				aggregations.push(obj);
 
-				if(chartTemplate.CHART.type.toLowerCase()=="bubble" || (chartsForGrouping.indexOf(chartTemplate.CHART.type.toLowerCase() )>-1) && ( chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!=""){
+				if((chartsForGrouping.indexOf(chartTemplate.CHART.type.toLowerCase() )>-1) && ( chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!=""){
 					var subs = "";
 					if (chartCategory.groupby.indexOf(',') == -1) {
 						subs = chartCategory.groupby
@@ -1370,8 +1370,8 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 							groupby['orderType'] = chartCategory.drillOrder[subs] ? chartCategory.drillOrder[subs].orderType : obj.orderType ;
 							groupby['orderColumn'] = chartCategory.drillOrder[subs] ? chartCategory.drillOrder[subs].orderColumn : obj.orderColumn;
 						} else {
-							groupby['orderType'] = chartCategory.orderType;
-							groupby['orderColumn'] = chartCategory.orderColumn;
+							groupby['orderType'] = chartCategory.orderType ? chartCategory.orderType : "";
+							groupby['orderColumn'] = chartCategory.orderColumn ? chartCategory.orderColumn : "";
 						}
 						aggregations.push(groupby);
 					}

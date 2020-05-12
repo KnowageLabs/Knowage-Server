@@ -326,8 +326,6 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					         "CATEGORY":{
 					            "name":"",
 					            "column":"",
-					            "orderColumn":"",
-					            "orderType":"",
 					            "groupby":"",
 					            "groupbyNames":""
 					         },
@@ -551,14 +549,18 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
               }
            }
 
-           var chartType = type.toUpperCase();
+		var chartType = type.toUpperCase();
 
-		   var tempPlots = {
+		if(chartType!='BAR' && chartType!='LINE') {
+			barLine.CHART.VALUES.CATEGORY.orderColumn="";
+			barLine.CHART.VALUES.CATEGORY.orderType="";
+		}
+		var tempPlots = {
 			   "plotBands":[{"label":{"text": "","align": "center"},"color":"","from":"","to":""}],
 	    	   "plotLines": [{"label":{"text": "","align": "center"},"color": "","dashStyle": "","value":"","width":0}]
-			}
+		}
 
-           var tempXAxis = {
+		var tempXAxis = {
 	               "plotBands":tempPlots.plotBands,
 		    	   "plotLines": tempPlots.plotLines,
 	               "id":"X",
@@ -586,7 +588,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		               }
 	            }
 
-           var axisTitle = {
+		var axisTitle = {
 
 	                  "text":"",
 	                  "style":{
@@ -599,11 +601,11 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		               };
 
 
-			if(chartType == 'PIE'){
+		if(chartType == 'PIE'){
 
 				barLine.CHART.AXES_LIST.AXIS[0].TITLESERIE = titleSerie;
 				barLine.CHART.type = chartType;
-			}else {
+		}else {
 
 				barLine.CHART.type = chartType;
 				barLine.CHART.alignAxis = {"alignAxis": true};
@@ -618,7 +620,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				barLine.CHART.dateFormat = "day";
 				barLine.CHART.hideAxisTitleSerie = true;
 				barLine.CHART.hideAxisTitleCategory = true;
-			}
+		}
 
 		return barLine.CHART;
 	}

@@ -218,26 +218,24 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,sbiM
 							groupby:"",
 							groupbyNames:"",
 							name:"",
-							orderColumn:"",
-							orderType:"",
 					};
+			if(chartType.toUpperCase()!='BAR' && chartType.toUpperCase()!='LINE') {
+				$scope.chartTemplate.VALUES.CATEGORY.orderColumn="";
+				$scope.chartTemplate.VALUES.CATEGORY.orderType="";
+			}
 			for (var i = 0; i < $scope.categories.length; i++) {
 				if(i==0){
 					$scope.chartTemplate.VALUES.CATEGORY.column = $scope.categories[i].column;
 					$scope.chartTemplate.VALUES.CATEGORY.name = $scope.categories[i].name;
 					if($scope.chartTemplate.VALUES.CATEGORY.orderColumn==""){
-						if(tempDrillOrder && chartType.toUpperCase() !="PIE" && chartType.toUpperCase() !="RADAR"){
-							$scope.chartTemplate.VALUES.CATEGORY.orderColumn = tempDrillOrder[$scope.categories[i].column] ? tempDrillOrder[$scope.categories[i].column].orderColumn : $scope.categories[i].orderColumn;
-						} else {
+						if(!(tempDrillOrder && chartType.toUpperCase() !="PIE" && chartType.toUpperCase() !="RADAR")){
 							$scope.chartTemplate.VALUES.CATEGORY.orderColumn = $scope.categories[i].orderColumn;
 						}
 
 					}
 
 					if($scope.chartTemplate.VALUES.CATEGORY.orderType==""){
-						if(tempDrillOrder && chartType.toUpperCase() !="PIE" && chartType.toUpperCase() !="RADAR"){
-							$scope.chartTemplate.VALUES.CATEGORY.orderType =  tempDrillOrder[$scope.categories[i].column] ? tempDrillOrder[$scope.categories[i].column].orderType : $scope.categories[i].orderType;
-						} else {
+						if(!(tempDrillOrder && chartType.toUpperCase() !="PIE" && chartType.toUpperCase() !="RADAR")){
 							$scope.chartTemplate.VALUES.CATEGORY.orderType = $scope.categories[i].orderType;
 						}
 					}

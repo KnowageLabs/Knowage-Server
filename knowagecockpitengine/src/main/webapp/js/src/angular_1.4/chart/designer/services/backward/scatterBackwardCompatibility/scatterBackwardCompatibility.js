@@ -21,8 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	.service("scatterBackwardCompatibilityService", function (){
 
 		var updateTemplate = function(chartTemplate){
-			if(chartTemplate.type.toLowerCase() == 'scatter' && !chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression){
-				chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression = ""
+			if(chartTemplate.type.toLowerCase() == 'scatter'){
+				if(!chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression){
+					chartTemplate.VALUES.SERIE[0].TOOLTIP.tooltipExpression = ""
+				}
 			}
 
 			return chartTemplate;

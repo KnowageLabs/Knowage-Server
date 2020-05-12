@@ -30,7 +30,7 @@
 
 
 <!--  -->
-<div layout="row" ng-repeat="category in categories track by $index" ng-if="selectedChartType.toLowerCase()=='bar' || selectedChartType.toLowerCase()=='line' || selectedChartType.toLowerCase()=='bubble'">
+<div layout="row" ng-repeat="category in categories track by $index" ng-if="selectedChartType.toLowerCase()=='bar' || selectedChartType.toLowerCase()=='line'">
 
 <div layout="column" flex=50>
 	<label>{{category.column}}</label>
