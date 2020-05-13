@@ -20,6 +20,7 @@ package org.json;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -538,6 +539,8 @@ public class JSONObject extends AbstractJSONObject implements Serializable {
 				rootNode.put(key, (Float) wrappedValue);
 			} else if (wrappedValue instanceof Double) {
 				rootNode.put(key, (Double) wrappedValue);
+			} else if (wrappedValue instanceof BigDecimal) {
+				rootNode.put(key, (BigDecimal) wrappedValue);
 			} else if (wrappedValue instanceof String) {
 				rootNode.put(key, (String) wrappedValue);
 			} else if (wrappedValue instanceof JSONObject) {

@@ -263,10 +263,29 @@ public class JSONDataWriter implements IDataWriter {
 					result = CACHE_TIMEONLY_FORMATTER.format(field.getValue());
 				} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = DATE_FORMATTER.format(field.getValue());
+				} else if (Boolean.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = Boolean.valueOf(field.getValue().toString());
+				} else if (Byte.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = Byte.valueOf(field.getValue().toString());
+				} else if (Short.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = Short.valueOf(field.getValue().toString());
+				} else if (Integer.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = Integer.valueOf(field.getValue().toString());
+				} else if (Long.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = Long.valueOf(field.getValue().toString());
+				} else if (BigInteger.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = new BigInteger(field.getValue().toString());
+				} else if (Float.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = Float.valueOf(field.getValue().toString());
+				} else if (Double.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = Double.valueOf(field.getValue().toString());
+				} else if (BigDecimal.class.isAssignableFrom(fieldMetaData.getType())) {
+					result = new BigDecimal(field.getValue().toString());
 				} else {
 					result = field.getValue().toString();
 				}
 			}
+
 			return result;
 
 		}
@@ -550,7 +569,8 @@ public class JSONDataWriter implements IDataWriter {
 	}
 
 	/**
-	 * @param setRenderer the setRenderer to set
+	 * @param setRenderer
+	 *            the setRenderer to set
 	 */
 	public void setSetRenderer(boolean setRenderer) {
 		this.setRenderer = setRenderer;
