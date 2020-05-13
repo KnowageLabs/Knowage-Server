@@ -443,6 +443,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		try {
 			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+			setProfileDialectThreadLocal(model);
 			JSONObject oldJsonModel = createJson(model);
 
 			applyDiff(jsonRoot, model);
@@ -916,6 +917,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		setProfileDialectThreadLocal(model);
 		JSONObject oldJsonModel = createJson(model);
 
 		applyDiff(jsonRoot, model);
@@ -980,6 +982,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	public Response deleteBusinessView(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		setProfileDialectThreadLocal(model);
 		JSONObject oldJsonModel = createJson(model);
 
 		applyDiff(jsonRoot, model);
@@ -1001,6 +1004,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			throws ClassNotFoundException, NamingException, SQLException, JSONException, EMFUserError {
 		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		setProfileDialectThreadLocal(model);
 		if (model.eAdapters().isEmpty())
 			model.eAdapters().add(new ECrossReferenceAdapter());
 		ECrossReferenceAdapter crossReferenceAdapter = (ECrossReferenceAdapter) model.eAdapters().get(0); // req.getSession().getAttribute(EMF_MODEL_CROSS_REFERENCE);
