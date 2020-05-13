@@ -39,16 +39,29 @@
 					</div>
 				</div>
 		    
-		    <md-subheader ng-if="model.settings.modalityValue!='dropdown' && model.settings.modalityValue!='multiDropdown'">{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.alignment')}}</md-subheader>
-		    <md-input-container class="md-block radioContainer" ng-if="model.settings.modalityValue!='dropdown' && model.settings.modalityValue!='multiDropdown'" layout-padding>
-	      		<md-radio-group  layout="row" ng-model="model.settings.modalityView" layout="row" layout-align="start center"> 
-	       			<md-radio-button ng-repeat="button in modalityView" ng-value="button.value">
-	            		<md-icon md-font-icon="{{button.icon}}" style="text-align:center"></md-icon> {{button.name}}
-	       			</md-radio-button>
-	   			</md-radio-group>
-		    </md-input-container>
+		    <div ng-if="model.settings.modalityValue!='dropdown' && model.settings.modalityValue!='multiDropdown' && !(isSelectedColumnTemporal() && model.settings.modalityValue == 'singleValue' )">
+			    <md-subheader >{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.alignment')}}</md-subheader>
+			    <md-input-container class="md-block radioContainer" layout-padding>
+		      		<md-radio-group  layout="row" ng-model="model.settings.modalityView" layout="row" layout-align="start center"> 
+		       			<md-radio-button ng-repeat="button in modalityView" ng-value="button.value">
+		            		<md-icon md-font-icon="{{button.icon}}" style="text-align:center"></md-icon> {{button.name}}
+		       			</md-radio-button>
+		   			</md-radio-group>
+			    </md-input-container>
+		    </div>
 		    
 		    <md-subheader>{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.options')}}</md-subheader>
+		    <div layout="row" layout-align="start center" ng-show="isSelectedColumnTemporal()">
+				<md-input-container>
+					<label>{{::translate.load("sbi.cockpit.widgets.selector.startdate")}}</label>
+					<md-datepicker name="startDate" ng-change="setToDate('start')" ng-model="model.settings.defaultStartDate" md-max-date="model.settings.defaultEndDate"></md-datepicker>
+				</md-input-container>
+				<md-input-container>
+					<label>{{::translate.load("sbi.cockpit.widgets.selector.enddate")}}</label>
+					<md-datepicker name="endDate" ng-change="setToDate('end')" ng-model="model.settings.defaultEndDate" md-min-date="model.settings.defaultStartDate"></md-datepicker>
+				</md-input-container>
+			</div>
+			
 		    <div layout="row" style="padding:8px;">
 		    	<md-input-container class="md-block" flex ng-if="!isSelectedColumnTemporal()">
 					<label>{{::translate.load("sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.select.default.value")}}</label>

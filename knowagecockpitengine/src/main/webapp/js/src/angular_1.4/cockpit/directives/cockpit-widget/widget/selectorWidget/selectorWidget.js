@@ -86,6 +86,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.isSelected = function(p){
 			return $scope.selectedValues && $scope.selectedValues.indexOf(p) > -1;
 		}
+		
+		$scope.isSelectedColumnTemporal = function(){
+			if($scope.ngModel.content.selectedColumn){
+				var datesFormat = ['java.sql.Date','java.util.Date','java.sql.Timestamp','oracle.sql.TIMESTAMP'];
+				return (datesFormat.indexOf($scope.ngModel.content.selectedColumn.type) != -1);
+			}else return false;
+		}
 
 		$scope.mapToColumn = function(x){
 			return x.column_1;
@@ -101,6 +108,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.parentNode.attributes.value.value));
 				else $scope.prepareParameter(getValueFromString(e.target.parentNode.attributes.value.value));
 			}
+		}
+		
+		$scope.selectDate = function(){
+			var tempDates = [];
+			if($scope.ngModel.settings.modalityValue=='multiValue'){
+				if(!$scope.startDate || !$scope.endDate) return;
+				var from = $scope.startDate.getTime();
+				var to = $scope.endDate.getTime();
+				var values = $scope.ngModel.activeValues || $scope.datasetRecords.rows;
+				for(var k in values){
+					var value = values[k].column_1 || values[k];
+					var dateToCheck = new Date(value).getTime();
+					if(dateToCheck >= from && dateToCheck <= to) tempDates.push(value);
+				}
+			}else tempDates.push($filter('date')($scope.startDate,'dd/MM/yyyy HH:mm:ss.sss'));
+			$scope.toggleParameter(tempDates);
 		}
 
 		var getValueFromString = function(s){
@@ -193,6 +216,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.showUnlock = false;
 			$scope.showWidgetSpinner();
 			$scope.ngModel.activeValues = null;
+			
+			if($scope.ngModel.settings.defaultStartDate) $scope.ngModel.settings.defaultStartDate = new Date($scope.ngModel.settings.defaultStartDate);
+			if($scope.ngModel.settings.defaultEndDate) $scope.ngModel.settings.defaultEndDate = new Date($scope.ngModel.settings.defaultEndDate);
 
 			if(!$scope.ngModel.dataset.label){
 				$scope.ngModel.dataset.label = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).label;
@@ -593,7 +619,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 					}
 				}else{ // COMBOBOX
-					if(parVal  && parVal.length>0){
+					if(parVal && parVal.length>0){
 						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, angular.copy(parVal));
 					}else{
 						item.value=angular.copy(parVal);
@@ -628,6 +654,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					"columnName" : $scope.ngModel.content.selectedColumn.name
 			}
 			$scope.deleteSelections(tempItem);
+		}
+		
+		$scope.clearStartDate = function(){
+			$scope.startDate = '';
 		}
 
 		$scope.deleteSelections = function(item){

@@ -750,15 +750,6 @@
 			background-color: lighten($ternaryColor,10%);
 		}
 	}
-	cockpit-selector-widget {
-		.infoBar {
-			position: relative;
-			.md-icon-button {
-				position:absolute;
-				right:0;
-			}
-		}
-	}
 
 	cockpit-chart-widget {
 		/* d3 binded classes for the chart widgets */
@@ -792,6 +783,18 @@
 	}
 
 	cockpit-selector-widget {
+		.infoBar {
+			position: relative;
+			.md-icon-button {
+				position:absolute;
+				right:0;
+			}
+		}
+		.datePickers {
+			md-input-container {
+				margin-bottom: 0;
+			}
+		}
 		md-input-container {
 			&.multipleSelect{
 				height: 100%;

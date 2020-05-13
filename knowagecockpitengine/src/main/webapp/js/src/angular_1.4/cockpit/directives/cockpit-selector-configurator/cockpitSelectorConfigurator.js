@@ -38,6 +38,13 @@
 		$scope.setSelectorType = function(type){
 			$scope.model.settings.modalityValue = type;
 		}
+		
+		if($scope.model.settings.defaultStartDate) $scope.model.settings.defaultStartDate = new Date($scope.model.settings.defaultStartDate);
+		if($scope.model.settings.defaultEndDate) $scope.model.settings.defaultEndDate = new Date($scope.model.settings.defaultEndDate);
+		$scope.setToDate = function(type){
+			if(type == 'start') $scope.model.settings.defaultStartDate = new Date($scope.model.settings.defaultStartDate);
+			if(type == 'end') $scope.model.settings.defaultEndDate = new Date($scope.model.settings.defaultEndDate);
+		}
 
 		$scope.showCircularcolumns = {value :false};
 		$scope.modalityValue = [
