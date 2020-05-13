@@ -431,9 +431,9 @@
 				// every locale
 				if (value == undefined) {
 					value = defaultValue || key;
+				} else {
+					value = value.replace("\\:", ":").replace("\\!", "!").replace("\\#", "#");
 				}
-
-				value = value.replace("\\:", ":").replace("\\!", "!").replace("\\#", "#");
 
 				return convertUnicodeString(value);
 			}
