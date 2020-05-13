@@ -398,6 +398,11 @@
 			 */
 			get : function(key, module, locale, defaultValue){
 
+				if (typeof key == "undefined") {
+					console.log("Requested a translation for an undefined key");
+					return "";
+				}
+
 				var validModule,
 					validLocale,
 					moduleObj,
@@ -431,9 +436,9 @@
 				// every locale
 				if (value == undefined) {
 					value = defaultValue || key;
-				} else {
-					value = value.replace("\\:", ":").replace("\\!", "!").replace("\\#", "#");
 				}
+
+				value = value.replace("\\:", ":").replace("\\!", "!").replace("\\#", "#");
 
 				return convertUnicodeString(value);
 			}
