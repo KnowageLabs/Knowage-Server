@@ -136,6 +136,9 @@ public class CommonJSON {
 		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
 		IAggregationFunction function = AggregationFunctions.get(functName);
 		String functionColumnName = jsonObject.optString("functColumn");
+		if (jsonObject.has("formula")) {
+			function = AggregationFunctions.get("NONE");
+		}
 		Projection projection;
 		if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
 			Projection aggregatedProjection = new Projection(dataSet, functionColumnName);

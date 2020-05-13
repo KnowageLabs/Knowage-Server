@@ -1558,22 +1558,14 @@ public class ExcelExporter {
 												JSONObject measure = new JSONObject();
 												measure.put("id", column.getString("alias"));
 												measure.put("alias", column.getString("aliasToShow"));
-												if (column.has("datasetOrTableFlag")) {
-													// calculated field case
-													measure.put("datasetOrTableFlag", column.getBoolean("datasetOrTableFlag"));
-												}
-												if (column.has("datasetOrTableFlag") && !column.getBoolean("datasetOrTableFlag")) {
-													// in case of table-level calculaated field and the measures have no aggregation set, on summary row it must
-													// be
-													// changed to
-													// be SUM instead
-													String formula = getSummaryRowFormula(column);
-													measure.put("columnName", formula);
-												} else {
-													String formula = column.optString("formula");
-													String name = formula.isEmpty() ? column.optString("name") : formula;
+
+												String formula = column.optString("formula");
+												String name = formula.isEmpty() ? column.optString("name") : formula;
+												if (column.has("formula")) {
+													measure.put("formula", name);
+												} else
 													measure.put("columnName", name);
-												}
+
 												measure.put("funct", column.getString("funcSummary"));
 
 												boolean hidden = false;
@@ -1622,22 +1614,14 @@ public class ExcelExporter {
 												JSONObject measure = new JSONObject();
 												measure.put("id", column.getString("alias"));
 												measure.put("alias", column.getString("aliasToShow"));
-												if (column.has("datasetOrTableFlag")) {
-													// calculated field case
-													measure.put("datasetOrTableFlag", column.getBoolean("datasetOrTableFlag"));
-												}
-												if (column.has("datasetOrTableFlag") && !column.getBoolean("datasetOrTableFlag")) {
-													// in case of table-level calculaated field and the measures have no aggregation set, on summary row it must
-													// be
-													// changed to
-													// be SUM instead
-													String formula = getSummaryRowFormula(column);
-													measure.put("columnName", formula);
-												} else {
-													String formula = column.optString("formula");
-													String name = formula.isEmpty() ? column.optString("name") : formula;
+
+												String formula = column.optString("formula");
+												String name = formula.isEmpty() ? column.optString("name") : formula;
+												if (column.has("formula")) {
+													measure.put("formula", name);
+												} else
 													measure.put("columnName", name);
-												}
+
 												measure.put("funct", aggrObj.get("aggregation"));
 
 												boolean hidden = false;
@@ -1688,22 +1672,14 @@ public class ExcelExporter {
 										JSONObject measure = new JSONObject();
 										measure.put("id", column.getString("alias"));
 										measure.put("alias", column.getString("aliasToShow"));
-										if (column.has("datasetOrTableFlag")) {
-											// calculated field case
-											measure.put("datasetOrTableFlag", column.getBoolean("datasetOrTableFlag"));
-										}
-										if (column.has("datasetOrTableFlag") && !column.getBoolean("datasetOrTableFlag")) {
-											// in case of table-level calculaated field and the measures have no aggregation set, on summary row it must be
-											// changed
-											// to
-											// be SUM instead
-											String formula = getSummaryRowFormula(column);
-											measure.put("columnName", formula);
-										} else {
-											String formula = column.optString("formula");
-											String name = formula.isEmpty() ? column.optString("name") : formula;
+
+										String formula = column.optString("formula");
+										String name = formula.isEmpty() ? column.optString("name") : formula;
+										if (column.has("formula")) {
+											measure.put("formula", name);
+										} else
 											measure.put("columnName", name);
-										}
+
 										measure.put("funct", column.getString("funcSummary"));
 
 										boolean hidden = false;

@@ -44,6 +44,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.solr.SolrDataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -382,9 +383,10 @@ public class JSONDataWriter implements IDataWriter {
 							fieldValue = buffer.toString();
 						} // provided
 					} catch (NoClassDefFoundError t) {
-						logger.error("Class not found error", t);
-					} catch (Throwable t) {
-						logger.error("An unpredicted error occurred at recno [" + recNo + "] while serializing dataStore", t);
+						logger.debug("Class not found error", t);
+					} catch (Exception e) {
+						logger.error("An unpredicted error occurred at recno [" + recNo + "] while serializing dataStore", e);
+						throw new SpagoBIRuntimeException("An unpredicted error occurred at recno [" + recNo + "] while serializing dataStore", e);
 					}
 
 					if (fieldValue == null) {

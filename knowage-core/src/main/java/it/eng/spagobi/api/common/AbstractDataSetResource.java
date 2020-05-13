@@ -420,6 +420,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		IAggregationFunction function = AggregationFunctions.get(functName);
 		String functionColumnName = jsonObject.optString("functColumn");
 		AbstractSelectionField projection = null;
+		if (jsonObject.has("formula")) {
+			function = AggregationFunctions.get("NONE");
+		}
 		if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
 			if (jsonObject.has("formula")) {
 				String formula = jsonObject.optString("formula");
