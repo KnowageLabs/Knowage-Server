@@ -38,6 +38,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.LogMF;
@@ -409,16 +410,25 @@ public class LovResource extends AbstractSpagoBIResource {
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			ModalitiesValue modVal = toModality(requestBodyJSON);
-			if (labelControl(modVal.getLabel())) {
+
+			Integer lovId = null;
+			if (requestBodyJSON.has("id"))
+				lovId = requestBodyJSON.getInt("id");
+
+			if (labelControl(lovId, modVal.getLabel())) {
 				logger.error("LOV with same label already exists");
-				throw new SpagoBIRestServiceException("", getLocale(), "LOV with same label already exists");
+//				throw new SpagoBIRestServiceException("LOV with same label already exists", getLocale(), "LOV with same label already exists");
+
+				return Response.status(Status.CONFLICT).build();
+			} else {
+				id = modalitiesValueDAO.insertModalitiesValue(modVal);
+
+				logger.debug("OUT: Posting the LOV - done successfully");
+
+				// int newID =
+				// modalitiesValueDAO.loadModalitiesValueByLabel(modValue.getLabel()).getId();
+
 			}
-			id = modalitiesValueDAO.insertModalitiesValue(modVal);
-
-			logger.debug("OUT: Posting the LOV - done successfully");
-
-			// int newID =
-			// modalitiesValueDAO.loadModalitiesValueByLabel(modValue.getLabel()).getId();
 
 			return Response.ok(id).build();
 
@@ -474,11 +484,22 @@ public class LovResource extends AbstractSpagoBIResource {
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			ModalitiesValue modVal = toModality(requestBodyJSON);
 
-			modalitiesValueDAO.modifyModalitiesValue(modVal);
-			logger.debug("OUT: Putting the LOV - done successfully");
+			Integer lovId = null;
+			if (requestBodyJSON.has("id"))
+				lovId = requestBodyJSON.getInt("id");
 
-			return Response.ok().build();
+			if (labelControl(lovId, modVal.getLabel())) {
+				logger.error("LOV with same label already exists");
+//				throw new SpagoBIRestServiceException("LOV with same label already exists", getLocale(), "LOV with same label already exists");
 
+				return Response.status(Status.CONFLICT).build();
+			} else {
+				modalitiesValueDAO.modifyModalitiesValue(modVal);
+				logger.debug("OUT: Putting the LOV - done successfully");
+
+				return Response.ok().build();
+
+			}
 		} catch (Exception exception) {
 
 			logger.error("Error while putting LOV", exception);
@@ -600,7 +621,7 @@ public class LovResource extends AbstractSpagoBIResource {
 
 	}
 
-	public boolean labelControl(String newLabel) {
+	public boolean labelControl(Integer lovId, String newLabel) {
 		List<ModalitiesValue> modalitiesValues = null;
 		IModalitiesValueDAO modalitiesValueDAO = null;
 
@@ -608,7 +629,7 @@ public class LovResource extends AbstractSpagoBIResource {
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValues = modalitiesValueDAO.loadAllModalitiesValue();
 			for (ModalitiesValue lov : modalitiesValues) {
-				if (lov.getLabel().equalsIgnoreCase(newLabel)) {
+				if ((lovId == null || (lovId != null && !lovId.equals(lov.getId()))) && lov.getLabel().equalsIgnoreCase(newLabel)) {
 					return true;
 				}
 			}
