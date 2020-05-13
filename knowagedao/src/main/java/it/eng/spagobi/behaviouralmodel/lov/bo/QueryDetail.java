@@ -381,7 +381,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 				if (op.getPostCondition() != null) {
 					buffer.append(" " + op.getPostCondition() + " ");
 				}
-				if (op.getLogicOperator() != null) {
+				if (iterOps.hasNext() && op.getLogicOperator() != null) {
 					buffer.append(" " + op.getLogicOperator() + " ");
 				}
 			}
