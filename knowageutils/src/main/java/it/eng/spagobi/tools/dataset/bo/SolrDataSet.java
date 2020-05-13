@@ -216,13 +216,7 @@ public class SolrDataSet extends RESTDataSet {
 	}
 
 	private List<JSONPathDataReader.JSONPathAttribute> getJsonPathAttributes(JSONArray solrFields) {
-		SolrQuery solrQuery = solrConfiguration.getSolrQuery();
-		List<String> fields = Collections.EMPTY_LIST;
-		String fieldsFromQuery = solrQuery.getFields();
-		if (fieldsFromQuery != null) {
-			String[] fieldsAsArray = fieldsFromQuery.split(",");
-			fields = Arrays.asList(fieldsAsArray);
-		}
+		List<String> fields = Arrays.asList(solrConfiguration.getSolrQuery().getFields().split(","));
 		List<JSONPathDataReader.JSONPathAttribute> jsonPathAttributes = new ArrayList<>(fields.size());
 		for (int i = 0; i < solrFields.length(); i++) {
 
@@ -233,15 +227,8 @@ public class SolrDataSet extends RESTDataSet {
 				String name = solrField.optString("name");
 				String type = solrField.optString("type", "string");
 				boolean multiValued = solrField.optBoolean("multiValued", false);
-				boolean stored = solrField.getBoolean("stored");
 
-				// If the fields are not stored, we can ignore it
-				// becasue we don't have any value to show
-				if (!stored) {
-					continue;
-				}
-
-				if (!fields.isEmpty() && !fields.contains(name)) {
+				if (!fields.contains(name)) {
 					continue;
 				}
 
