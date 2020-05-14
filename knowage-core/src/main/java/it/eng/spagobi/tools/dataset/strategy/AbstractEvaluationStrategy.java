@@ -69,11 +69,13 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 			dataStore = execute(newProjections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 			IMetaData dataStoreToUseMeta = dataStore.getMetaData();
 			if (!isSummaryRowIncluded() && summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
+				int i = 0;
 				for (List<AbstractSelectionField> listProj : summaryRowProjections) {
 					List<AbstractSelectionField> replacedSelectionFieldsList = applyTotalsFunctionsToFormulas(listProj, filter, maxRowCount);
 
 					IDataStore summaryRowDataStore = executeSummaryRow(replacedSelectionFieldsList, dataStoreToUseMeta, filter, maxRowCount);
-					appendSummaryRowToPagedDataStore(newProjections, replacedSelectionFieldsList, dataStore, summaryRowDataStore);
+					appendSummaryRowToPagedDataStore(newProjections, replacedSelectionFieldsList, dataStore, summaryRowDataStore, i);
+					i++;
 				}
 			}
 		}
@@ -169,7 +171,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 	}
 
 	private void appendSummaryRowToPagedDataStore(List<AbstractSelectionField> projections, List<AbstractSelectionField> summaryRowProjections,
-			IDataStore pagedDataStore, IDataStore summaryRowDataStore) {
+			IDataStore pagedDataStore, IDataStore summaryRowDataStore, int row) {
 		IMetaData pagedMetaData = pagedDataStore.getMetaData();
 		IMetaData summaryRowMetaData = summaryRowDataStore.getMetaData();
 
@@ -199,7 +201,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 					}
 				} else {
 
-					if (selections instanceof DataStoreCalculatedField) {
+					if (row == 0 && selections instanceof DataStoreCalculatedField) {
 						DataStoreCalculatedField calcs = (DataStoreCalculatedField) selections;
 						String projectionAlias = calcs.getAlias();
 						if (summaryRowCalculatedField != null && (summaryRowCalculatedField.getAlias().equals(projectionAlias)

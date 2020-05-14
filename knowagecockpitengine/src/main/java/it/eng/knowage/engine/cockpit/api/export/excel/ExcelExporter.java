@@ -1300,6 +1300,9 @@ public class ExcelExporter {
 
 						String formula = column.optString("formula");
 						String name = formula.isEmpty() ? column.optString("name") : formula;
+						if (column.has("formula")) {
+							categoryOrMeasure.put("formula", formula);
+						}
 						categoryOrMeasure.put("columnName", name);
 						if (isSortingDefined && column.has("name") && sortingColumn.equals(name)) {
 							categoryOrMeasure.put("orderType", sortingOrder);
