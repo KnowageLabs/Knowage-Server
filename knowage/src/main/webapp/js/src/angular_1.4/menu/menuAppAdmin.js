@@ -222,16 +222,15 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 		        	          $mdDialog.hide();
 		        	        }
 		        	        scope.save = function() {
-		        	        	$http.get(scope.serviceUrl,{
-		        	        	    params: {
-		        	        	    		SELECTED_ROLE: scope.sessionRole,
-		        	        	    	}
-		        	        	}).then(function(data){
+		        	        	$http.post(scope.serviceUrl, 
+		        	        			$httpParamSerializer({ACTION_NAME: "SET_SESSION_ROLE_ACTION", SELECTED_ROLE: scope.sessionRole}),
+		        	        			{headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}})
+		        	        	.success(function(data){
 		        	        		console.log("default role set correcty");
 		        	        		 //call again the home page
 		        	        		var homeUrl = Sbi.config.contextName+"/servlet/AdapterHTTP?PAGE=LoginPage"
 		        	        		window.location.href=homeUrl;
-		        	        	},function(error){
+	        	        		}).error(function(error){
 		        	        		console.log("Error: default role NOT set");
 		        	        		$scope.showAlert('Attention, ' + $scope.userName,"Error setting default role. Please check if the server or connection is working.")
 		        	        	});
