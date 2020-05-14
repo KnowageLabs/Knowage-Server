@@ -237,6 +237,20 @@ function mapWidgetEditControllerFunction(
 
 								columnSelected.push(currCol);
 							}
+							// The spatial attribute must be the first attribute
+							// when all the logics for the aggregations will take
+							// place.
+							columnSelected.sort(function(el1, el2) {
+
+								if (el1.fieldType == 'SPATIAL_ATTRIBUTE') {
+									return -1;
+								} else if (el2.fieldType == 'SPATIAL_ATTRIBUTE') {
+									return +1;
+								} else {
+									return 0;
+								}
+
+							});
 							$scope.newModel.content.layers.push(newLayer);
 							var availableDatasets = cockpitModule_datasetServices.getAvaiableDatasets();
 							var exists = false;
