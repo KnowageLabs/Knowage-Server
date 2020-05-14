@@ -130,7 +130,6 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
         						newGroups.iconCls = value.menu[i].iconCls ? value.menu[i].iconCls : "";
         						newGroups.title = value.menu[i].title ? value.menu[i].title : value.menu[i].text;
         						newGroups.items = value.menu[i].items ? value.menu[i].items : value.menu[i].menu;
-        						newGroups.icon = value.menu[i].icon ? value.menu[i].icon : "";
         						newJson.push(newGroups);
 
         					}
@@ -221,7 +220,6 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 		        	        scope.closeDialog = function() {
 		        	          $mdDialog.hide();
 		        	        }
-
 		        	        scope.save = function() {
 
 		        	        	$http.post(scope.serviceUrl,
