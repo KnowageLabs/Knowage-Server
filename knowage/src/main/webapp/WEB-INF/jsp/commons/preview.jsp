@@ -19,12 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!DOCTYPE html>
     <head>
+    
     	<link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/reset_2018.css">
+    	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/reset_2018.css")%>">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/styles/ag-grid.css">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/styles/ag-theme-balham.css">
     	<link rel="stylesheet" type="text/css"  href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.css">
-    	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">
+    	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>">
     	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
     	<!-- POLYFILLS -->
     	<script>if (!Array.isArray) {
