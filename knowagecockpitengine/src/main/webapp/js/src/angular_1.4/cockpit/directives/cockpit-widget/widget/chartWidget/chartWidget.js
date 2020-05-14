@@ -1325,9 +1325,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 		if(chartTemplate.CHART.VALUES.CATEGORY){
 
 			var chartCategory= chartTemplate.CHART.VALUES.CATEGORY;
-			if(chartCategory.name=="" || chartCategory.name==null || chartCategory.name==undefined){
-				chartCategory.name=chartCategory.column
-			}
+
 			if(Array.isArray(chartCategory)){
 				for(var i = 0; i < chartCategory.length; i++){
 
@@ -1341,12 +1339,15 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					aggregations.push(obj);
 				}
 			} else {
+				if(chartCategory.name=="" || chartCategory.name==null || chartCategory.name==undefined){
+					chartCategory.name=chartCategory.column
+				}
 				var obj = {};
 				obj['name'] = chartCategory.column;
 				obj['alias'] = chartCategory.name;
 				obj['aliasToShow'] = chartCategory.alias;
-				obj['orderType'] = chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderType : chartCategory.orderType ;
-				obj['orderColumn'] = chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderColumn : chartCategory.orderColumn ;
+				obj['orderType'] = chartCategory.drillOrder && chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderType : chartCategory.orderType ;
+				obj['orderColumn'] =  chartCategory.drillOrder && chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderColumn : chartCategory.orderColumn ;
 				obj['fieldType'] = "ATTRIBUTE";
 
 				aggregations.push(obj);

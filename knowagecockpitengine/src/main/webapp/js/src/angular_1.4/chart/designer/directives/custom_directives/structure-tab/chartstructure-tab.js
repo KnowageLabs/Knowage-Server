@@ -52,8 +52,8 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 	$scope.$watch('chartTemplate.dateTime',function(newValue,oldValue){
 		if($scope.chartTemplate && newValue!=oldValue){
-			if(!newValue) $scope.chartTemplate.categoryDate = "";
-			else $scope.chartTemplate.categoryDate = $scope.categories[0].column;
+			if(newValue==false) $scope.chartTemplate.CHART ? $scope.chartTemplate.CHART.categoryDate = "" : $scope.chartTemplate.categoryDate = "" ;
+			else $scope.chartTemplate.CHART ? $scope.chartTemplate.CHART.categoryDate = $scope.categories[0].column : $scope.chartTemplate.categoryDate = $scope.categories[0].column;;
 		}
 
 	},true)
