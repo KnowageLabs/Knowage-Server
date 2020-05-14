@@ -78,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										<div layout="row" layout-align="center center">
 										<md-input-container flex>
 										 	<label>{{translate.load("sbi.generic.name")}}</label>
-										 	<input type="text" ng-model="tenant.MULTITENANT_NAME" md-maxlength="200" required ng-disabled = "tenant.MULTITENANT_ID">
+										 	<input type="text" ng-model="tenant.MULTITENANT_NAME" md-maxlength="20" required ng-disabled = "tenant.MULTITENANT_ID">
 									 	</md-input-container>
 									 	</div>
 									 	<div layout="row" layout-align="start center">
