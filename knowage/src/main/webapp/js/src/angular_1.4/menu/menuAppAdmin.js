@@ -40,8 +40,8 @@ myApp.config(function($mdThemingProvider,ScrollBarsProvider) {
         };
 });
 
-myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n','sbiModule_user', '$interval',
-	function($window,$http, $mdDialog, $timeout, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config, sbiModule_i18n, sbiModule_user, $interval) {
+myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n','sbiModule_user', '$interval', '$httpParamSerializer',
+	function($window,$http, $mdDialog, $timeout, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config, sbiModule_i18n, sbiModule_user, $interval, $httpParamSerializer) {
     return {
 
         restrict: 'E',
@@ -130,6 +130,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
         						newGroups.iconCls = value.menu[i].iconCls ? value.menu[i].iconCls : "";
         						newGroups.title = value.menu[i].title ? value.menu[i].title : value.menu[i].text;
         						newGroups.items = value.menu[i].items ? value.menu[i].items : value.menu[i].menu;
+        						newGroups.icon = value.menu[i].icon ? value.menu[i].icon : "";
         						newJson.push(newGroups);
 
         					}
@@ -194,7 +195,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 			$scope.roleSelection = function roleSelection(){
 				if(Sbi.user.roles && Sbi.user.roles.length > 1){
 					$scope.toggleMenu();
-					$scope.serviceUrl = Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=SET_SESSION_ROLE_ACTION";
+					$scope.serviceUrl = Sbi.config.contextName+"/servlet/AdapterHTTP";
 					var parentEl = angular.element(document.body);
 					$mdDialog.show({
 						parent: parentEl,
@@ -220,17 +221,18 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 		        	        scope.closeDialog = function() {
 		        	          $mdDialog.hide();
 		        	        }
+
 		        	        scope.save = function() {
-		        	        	$http.get(scope.serviceUrl,{
-		        	        	    params: {
-		        	        	    		SELECTED_ROLE: scope.sessionRole,
-		        	        	    	}
-		        	        	}).then(function(data){
+
+		        	        	$http.post(scope.serviceUrl,
+		        	        			$httpParamSerializer({ACTION_NAME: "SET_SESSION_ROLE_ACTION", SELECTED_ROLE: scope.sessionRole}),
+		        	        			{headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}})
+		        	        	.success(function(data){
 		        	        		console.log("default role set correcty");
 		        	        		 //call again the home page
 		        	        		var homeUrl = Sbi.config.contextName+"/servlet/AdapterHTTP?PAGE=LoginPage"
 		        	        		window.location.href=homeUrl;
-		        	        	},function(error){
+	        	        		}).error(function(error){
 		        	        		console.log("Error: default role NOT set");
 		        	        		$scope.showAlert('Attention, ' + $scope.userName,"Error setting default role. Please check if the server or connection is working.")
 		        	        	});
@@ -571,7 +573,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 				$scope.toggleMenu();
 				$scope.showAccessibilityDialog();
 			}
-			
+
 			function calculateNewDownloads(data){
 				var counter = 0;
 				for(var k in data){
