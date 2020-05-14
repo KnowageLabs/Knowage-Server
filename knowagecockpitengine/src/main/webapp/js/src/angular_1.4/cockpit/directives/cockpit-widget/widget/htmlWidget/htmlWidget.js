@@ -86,7 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.columnRegex = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d*)\')?(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g;
 		$scope.rowsRegex   = /(?:\[kn-column=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+row=\'(\d+)\'){1}(?:\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\s?\])/g;
 		$scope.noAggregationsExistRegex = /\[kn-column=\'[a-zA-Z0-9\_\-\s]+\'(?:\s+row=\'\d+\')?(?!\s+aggregation=\'(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\')(?:\s+precision=\'(?:\d)\')?(?:\s+format)?\s?\]/g;
-		$scope.limitRegex = /<[\s\w\=\"\'\-\[\]]*(?!limit=)"([\d]+)"[\s\w\=\"\'\-\[\]]*>/g;
+		$scope.limitRegex = /<[\s\w\=\"\'\-\[\]]*(?!limit=)"([\-\d]+)"[\s\w\=\"\'\-\[\]]*>/g;
 		$scope.aggregationsRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
 		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/;
 		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-\s]+)[\'\"]{1}\])/g;
@@ -179,7 +179,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var str = $scope.ngModel.cssToRender + $scope.ngModel.htmlToRender;
 			var tempMaxRow = 1;
 			var repeaters = str.replace($scope.limitRegex, function(match, p1){
-				if(p1>tempMaxRow) tempMaxRow = parseInt(p1)+1;
+				if(parseInt(p1) == -1) tempMaxRow = -1; 
+				else if(p1>tempMaxRow) tempMaxRow = parseInt(p1)+1;
 			})
 			var occurrencies = str.replace($scope.rowsRegex,function(match,p1,p2){
 				if(p2>=tempMaxRow) tempMaxRow = parseInt(p2)+1;
@@ -298,6 +299,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(eval($scope.checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))){
 						allElements[i].removeAttribute("kn-repeat");
 						var limit = allElements[i].hasAttribute("limit") && (allElements[i].hasAttribute("limit") <= $scope.htmlDataset.rows.length) ? allElements[i].getAttribute('limit') : $scope.htmlDataset.rows.length;
+						if(allElements[i].hasAttribute("limit") && allElements[i].getAttribute('limit') == -1) limit = $scope.htmlDataset.rows.length;
 						if(allElements[i].hasAttribute("limit")) allElements[i].removeAttribute("limit");
 				    	var repeatedElement = angular.copy(allElements[i]);
 				    	var tempElement;
