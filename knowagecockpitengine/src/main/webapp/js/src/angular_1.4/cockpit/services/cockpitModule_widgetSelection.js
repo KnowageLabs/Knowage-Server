@@ -66,9 +66,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 				obj["orderType"] = "";
 				if(columnOrdering !=undefined){
-					if (typeof columnOrdering == "string") {
-						obj["orderColumn"] = columnOrdering;
-						obj["orderType"] = reverseOrdering;
+					if (typeof columnOrdering == "string" || columnOrdering.name) {
+						//custom selector ordering check
+						if(columnOrdering.name) obj["orderColumn"] = columnOrdering.name;
+						else obj["orderColumn"] = columnOrdering;
+						if(columnOrdering.name) obj["orderType"] = ngModel.settings.sortingOrder;
+						else obj["orderType"] = reverseOrdering;
 					}
 				}
 				var newCategArray = [];

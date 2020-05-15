@@ -247,6 +247,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(model.type == 'discovery'){
 					if(model.settings.hideTextSearch) model.settings.textEnabled = !model.settings.hideTextSearch;
 				}
+				if(model.type=='selector'){
+					if(model.content.selectedColumn) model.settings.sortingColumn = model.content.selectedColumn.name;
+					if(model.content.sortingOrder) model.settings.sortingOrder = model.content.sortingOrder;
+				}
 				if(model.type == "static-pivot-table"){
 
 					model.content
@@ -273,3 +277,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	}
 })();
+
+$scope.$watch('model.content.selectedColumn',function(newValue,oldValue){
+	if(newValue){
+		$scope.model.settings.sortingColumn = newValue.name;
+	}
+})
+
+$scope.$watch('model.content.sortingOrder',function(newValue,oldValue){
+	if(newValue){
+		$scope.model.settings.sortingOrder = newValue;
+	}
+})
