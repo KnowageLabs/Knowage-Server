@@ -653,9 +653,7 @@ function variablesController($scope, sbiModule_translate, cockpitModule_template
 		var tempVariablesAnalyticalDrivers = {};
 		for(var k in cockpitModule_analyticalDriversUrls){
 			var url = cockpitModule_analyticalDriversUrls[k].url;
-			if(cockpitModule_analyticalDrivers[url]) {
-				tempVariablesAnalyticalDrivers[cockpitModule_analyticalDriversUrls[k].label] = url;
-			}
+			tempVariablesAnalyticalDrivers[cockpitModule_analyticalDriversUrls[k].label] = url;
 		}
 		return tempVariablesAnalyticalDrivers;
 	}

@@ -63,7 +63,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				'label':sbiModule_translate.load('kn.cockpit.html.tag2'),
 				'name': 'parameter',
 				'description':sbiModule_translate.load('kn.cockpit.html.tag2.desc'),
-				'hidden': self.isEmpty(cockpitModule_analyticalDrivers),
+				'hidden': self.isEmpty(parameters),
 				'hiddenMessage': 'no parameter available',
 				'inputs': [
 					{	'name':'parameter',

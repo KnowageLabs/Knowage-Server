@@ -63,7 +63,7 @@
 					  				<md-input-container ng-repeat="input in tag.inputs" class="md-block" ng-class="input.flex">
 										<label ng-if="input.type != 'check'">{{input.label || input.name}}</label>
 										<md-select ng-if="input.type == 'select'" ng-model="helper[tag.name][input.name]" >
-											<md-option ng-repeat="opt in input.options" ng-value="opt.name">{{opt.name}}</md-option>
+											<md-option ng-repeat="opt in input.options" ng-value="opt.value || opt.name">{{opt.name}}</md-option>
 										</md-select>
 										<input ng-if="input.type == 'number'" type="number" ng-model="helper[tag.name][input.name]"/>
 										<input ng-if="input.type == 'text'" type="text" ng-model="helper[tag.name][input.name]"/>

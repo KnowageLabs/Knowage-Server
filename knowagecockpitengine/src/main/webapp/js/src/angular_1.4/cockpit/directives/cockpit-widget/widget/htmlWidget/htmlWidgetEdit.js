@@ -19,16 +19,23 @@ angular
 	.module('cockpitModule')
 	.controller('htmlWidgetEditControllerFunction',htmlWidgetEditControllerFunction)
 
-function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,$timeout,cockpitModule_datasetServices,cockpitModule_analyticalDrivers,cockpitModule_helperDescriptors,cockpitModule_properties){
+function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,$timeout,cockpitModule_datasetServices,cockpitModule_analyticalDrivers,cockpitModule_analyticalDriversUrls,cockpitModule_helperDescriptors,cockpitModule_properties){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.helper = {'column' : {},'parameter':{}};
 	$scope.formattedAnalyticalDrivers = [];
 	$scope.aggregations = [{'name':'SUM'},{'name':'AVG'},{'name':'MIN'},{'name':'MAX'},{'name':'COUNT'},{'name':'COUNT_DISTINCT'}];
 	
-	for(var a in cockpitModule_analyticalDrivers){
-		$scope.formattedAnalyticalDrivers.push({'name':a});
+	function getAnalyticalDrivers(){
+		var tempAnalyticalDrivers = [];
+		for(var k in cockpitModule_analyticalDriversUrls){
+			var url = cockpitModule_analyticalDriversUrls[k].url;
+			tempAnalyticalDrivers.push({name:k, value:url});
+		}
+		return tempAnalyticalDrivers;
 	}
+	
+	$scope.formattedAnalyticalDrivers = getAnalyticalDrivers();
 
 	if($scope.newModel.cssOpened) $scope.newModel.cssOpened = false;
 	
