@@ -60,18 +60,18 @@
 	</div>
 	
 	<!-- date pickers -->
-	<div ng-show="isSelectedColumnTemporal()" layout="column" class="cSelWScroller datePickers" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}" ng-cloak>
+	<div ng-if="isSelectedColumnTemporal()" layout="column" class="cSelWScroller datePickers" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}" ng-cloak>
 		<div layout="row" layout-align="start center">
 			<md-input-container>
-				<label ng-if="ngModel.settings.modalityValue=='multiValue'">{{translate.load("sbi.cockpit.widgets.selector.startdate")}}</label>
-				<label ng-if="ngModel.settings.modalityValue!='multiValue'">{{translate.load("sbi.cockpit.widgets.selector.singledate")}}</label>
+				<label aria-label="Start Date" ng-if="ngModel.settings.modalityValue=='multiValue'">{{translate.load("sbi.cockpit.widgets.selector.startdate")}}</label>
+				<label aria-label="Date" ng-if="ngModel.settings.modalityValue!='multiValue'">{{translate.load("sbi.cockpit.widgets.selector.singledate")}}</label>
 				<md-datepicker ng-change="selectDate()"  name="startDate" ng-model="startDate" md-min-date="ngModel.settings.defaultStartDate" md-max-date="ngModel.settings.defaultEndDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
 			</md-input-container>
 		</div>
 		
 		<div layout="row" layout-align="start center" ng-show="ngModel.settings.modalityValue=='multiValue'">
 			<md-input-container>
-				<label>{{::translate.load("sbi.cockpit.widgets.selector.enddate")}}</label>
+				<label aria-label="End Date">{{::translate.load("sbi.cockpit.widgets.selector.enddate")}}</label>
 				<md-datepicker ng-change="selectDate()" name="endDate" ng-model="endDate" md-min-date="startDate || ngModel.settings.defaultStartDate" md-max-date="ngModel.settings.defaultEndDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
 			</md-input-container>
 		</div>
