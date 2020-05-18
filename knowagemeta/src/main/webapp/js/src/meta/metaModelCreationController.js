@@ -236,7 +236,9 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 	})
 
 	$scope.$on('updateBusinessViewsGrid',function(event,data){
-		$scope.businessViewsGrid.api.setRowData($scope.meta.businessViews);
+		if($scope.businessViewsGrid.api) {
+			$scope.businessViewsGrid.api.setRowData($scope.meta.businessViews);
+		}
 	})
 
 

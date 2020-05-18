@@ -1041,7 +1041,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req)
 			throws ClassNotFoundException, NamingException, SQLException, JSONException, IOException, EMFUserError {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
-
+		setProfileDialectThreadLocal(model);
 		JSONObject oldJsonModel = createJson(model);
 
 		String modelName = model.getName();
