@@ -277,15 +277,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	}
 })();
-
-$scope.$watch('model.content.selectedColumn',function(newValue,oldValue){
-	if(newValue){
-		$scope.model.settings.sortingColumn = newValue.name;
-	}
-})
-
-$scope.$watch('model.content.sortingOrder',function(newValue,oldValue){
-	if(newValue){
-		$scope.model.settings.sortingOrder = newValue;
-	}
-})
