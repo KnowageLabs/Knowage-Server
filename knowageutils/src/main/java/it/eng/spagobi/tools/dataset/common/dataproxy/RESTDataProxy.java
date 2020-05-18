@@ -48,7 +48,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 	private static final int FETCH_SIZE_NOT_DEFINED = -1;
 	private static final int MAX_RESULT_NOT_DEFINED = -1;
 
-	protected final String requestBody;
+	protected String requestBody;
 	protected String address;
 	protected final Map<String, String> requestHeaders;
 	protected final HttpMethod method;
@@ -169,10 +169,6 @@ public class RESTDataProxy extends AbstractDataProxy {
 		}
 		// =========
 		return res;
-	}
-
-	protected String setPaginationParameters(String address, IDataReader dataReader) {
-		return address;
 	}
 
 	public String getRequestBody() {

@@ -22,59 +22,74 @@ import org.apache.solr.client.solrj.SolrQuery;
 
 public class SolrConfiguration {
 
-    private String url;
-    private String collection;
-    private SolrQuery solrQuery;
-    private String solrFields;
-    private static final String WRITER_TYPE = "json"; //wt
-    private static final String DEFAULT_REQUEST_HANDLER = "select";
+	private String url;
+	private String collection;
+	private SolrQuery solrQuery;
+	private String solrFields;
+	private static final String WRITER_TYPE = "json"; // wt
+	private static final String DEFAULT_REQUEST_HANDLER = "select";
 
-    public String getUrl() {
-        return url;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public void setUrl(String url) {
-        if(!url.endsWith("/"))
-            url += "/";
-        this.url = url;
-    }
+	public void setUrl(String url) {
+		if (!url.endsWith("/"))
+			url += "/";
+		this.url = url;
+	}
 
-    public String getCollection() {
-        return collection;
-    }
+	public String getCollection() {
+		return collection;
+	}
 
-    public void setCollection(String collection) {
-        this.collection = collection;
-    }
+	public void setCollection(String collection) {
+		this.collection = collection;
+	}
 
-    public SolrQuery getSolrQuery() {
-        return solrQuery;
-    }
+	public String getQueryParameters() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(solrQuery);
+		sb.append("&");
+		sb.append("wt=" + WRITER_TYPE);
+		return sb.toString();
+	}
 
-    public void setSolrQuery(SolrQuery solrQuery) {
-        this.solrQuery = solrQuery;
-    }
+	public SolrQuery getSolrQuery() {
+		return solrQuery;
+	}
 
-    public String getSolrFields() {
-        return solrFields;
-    }
+	public void setSolrQuery(SolrQuery solrQuery) {
+		this.solrQuery = solrQuery;
+	}
 
-    public void setSolrFields(String solrFields) {
-        this.solrFields = solrFields;
-    }
+	public String getSolrFields() {
+		return solrFields;
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(url);
-        if(!url.endsWith("/")) sb.append("/");
-        sb.append(collection);
-        sb.append("/");
-        sb.append(DEFAULT_REQUEST_HANDLER);
-        sb.append("?");
-        sb.append(solrQuery);
-        sb.append("&");
-        sb.append("wt=" + WRITER_TYPE);
-        return sb.toString();
-    }
+	public void setSolrFields(String solrFields) {
+		this.solrFields = solrFields;
+	}
+
+	@Override
+	public String toString() {
+		return toString(true);
+	}
+
+	public String toString(boolean withParameters) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(url);
+		if (!url.endsWith("/")) {
+			sb.append("/");
+		}
+		sb.append(collection);
+		sb.append("/");
+		sb.append(DEFAULT_REQUEST_HANDLER);
+		if (withParameters) {
+			sb.append("?");
+			sb.append(getQueryParameters());
+		}
+		return sb.toString();
+	}
+
 }

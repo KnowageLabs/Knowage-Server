@@ -258,7 +258,7 @@ public class SolrDataSet extends RESTDataSet {
 			}
 
 			if (force || solrFields.length() == 0) {
-				RestUtilities.Response response = RestUtilities.makeRequest(dataProxy.getRequestMethod(),
+				RestUtilities.Response response = RestUtilities.makeRequest(HttpMethod.Get,
 						solrConfiguration.getUrl() + solrConfiguration.getCollection() + "/schema/fields?wt=json", dataProxy.getRequestHeaders(), null, null);
 				logger.debug(response.getStatusCode());
 				Assert.assertTrue(response.getStatusCode() == HttpStatus.SC_OK, "Response status is not ok");
@@ -285,7 +285,22 @@ public class SolrDataSet extends RESTDataSet {
 		String maxResults = getProp(RESTDataSetConstants.REST_MAX_RESULTS, jsonConf, true, resolveParams);
 
 		String facetField = getSolrFacetField(jsonConf, resolveParams);
-		setDataProxy(new SolrDataProxy(solrConfiguration.toString(), HttpMethod.Get, facetField, requestHeaders, offset, fetchSize, maxResults, isFacet()));
+
+		String body = null;
+		String address = null;
+		/*
+		 * In case in the future we will let the user to choose
+		 * between GET and POST...
+		 */
+		HttpMethod method = HttpMethod.Post;
+		if (method == HttpMethod.Get) {
+			address = solrConfiguration.toString();
+		} else if (method == HttpMethod.Post) {
+			address = solrConfiguration.toString(false);
+			body = solrConfiguration.getQueryParameters();
+			requestHeaders.put("Content-Type", "application/x-www-form-urlencoded");
+		}
+		setDataProxy(new SolrDataProxy(address, method, body, facetField, requestHeaders, offset, fetchSize, maxResults, isFacet()));
 	}
 
 	protected String getSolrFacetField(JSONObject jsonConf, boolean resolveParams) {

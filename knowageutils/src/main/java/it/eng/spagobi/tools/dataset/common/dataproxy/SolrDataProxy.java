@@ -43,38 +43,50 @@ public class SolrDataProxy extends RESTDataProxy {
 	private static final Logger logger = Logger.getLogger(SolrDataProxy.class);
 	private int maxRestConf = 999999;
 
-	public SolrDataProxy(String address, HttpMethod method, String facetField, Map<String, String> requestHeaders, String offsetParam, String fetchSizeParam,
+	public SolrDataProxy(String address, HttpMethod method, String body, String facetField, Map<String, String> requestHeaders, String offsetParam, String fetchSizeParam,
 			String maxResultsParam, boolean facets) {
-		super(address, method, null, requestHeaders, offsetParam, fetchSizeParam, maxResultsParam, false);
+		super(address, method, body, requestHeaders, offsetParam, fetchSizeParam, maxResultsParam, false);
 		this.facetField = facetField;
 		this.facets = facets;
 	}
 
-	@Override
-	protected String setPaginationParameters(String address, IDataReader dataReader) {
+	private String createPaginationParameters(IDataReader dataReader) {
+		StringBuilder paginationParam = new StringBuilder();
 		if (this.facets) {
 			if (dataReader.isOffsetSupported() && dataReader.getOffset() > 0) {
-				address = address + "&facet.offset=" + dataReader.getOffset();
+				paginationParam.append("&facet.offset=" + dataReader.getOffset());
 			}
 
 			if (dataReader.isFetchSizeSupported() && dataReader.getFetchSize() > 0) {
-				address = address + "&facet.limit=" + dataReader.getFetchSize();
+				paginationParam.append("&facet.limit=" + dataReader.getFetchSize());
 			}
 		} else {
 			if (dataReader.isOffsetSupported() && dataReader.getOffset() > 0) {
-				address = address + "&start=" + dataReader.getOffset();
+				paginationParam.append("&start=" + dataReader.getOffset());
 			}
 
+			paginationParam.append("&rows=");
 			if (dataReader.isFetchSizeSupported() && dataReader.getFetchSize() > 0) {
-				address = address + "&rows=" + dataReader.getFetchSize();
+				paginationParam.append(dataReader.getFetchSize());
 			} else if (dataReader.isMaxResultsSupported() && dataReader.getMaxResults() > 0) {
-				address = address + "&rows=" + dataReader.getMaxResults();
+				paginationParam.append(dataReader.getMaxResults());
 			} else {
-				address = address + "&rows=" + maxRestConf;
+				paginationParam.append(maxRestConf);
 			}
 
 		}
-		return address;
+
+		return paginationParam.toString();
+
+	}
+
+	private void addPaginationParams(IDataReader dataReader) {
+		String paginationParam = createPaginationParameters(dataReader);
+		if (method == HttpMethod.Get) {
+			this.address += paginationParam;
+		} else if (method == HttpMethod.Post) {
+			this.requestBody += paginationParam;
+		}
 
 	}
 
@@ -82,8 +94,8 @@ public class SolrDataProxy extends RESTDataProxy {
 	public IDataStore load(IDataReader dataReader) {
 		if (!facets) {
 			this.address = this.address.replaceAll(" ", "%20");
-			logger.info("SOLR QUERY TO EXECUTE [" + setPaginationParameters(address, dataReader) + "]");
-			this.address = setPaginationParameters(address, dataReader);
+			addPaginationParams(dataReader);
+			logger.info("Solr query to execute has address [" + address + "] and body [" + requestBody + "]");
 			return super.load(dataReader);
 		} else {
 			try {
@@ -92,10 +104,16 @@ public class SolrDataProxy extends RESTDataProxy {
 				List<NameValuePair> query = getQuery();
 
 				String tempAddress = this.address.replaceAll(" ", "%20");
-				logger.debug("SOLR QUERY TO EXECUTE [" + setPaginationParameters(tempAddress, dataReader) + "]");
+				String tempBody = this.requestBody;
+				if (method == HttpMethod.Get) {
+					tempAddress += createPaginationParameters(dataReader);
+				} else if (method == HttpMethod.Post) {
+					tempBody += createPaginationParameters(dataReader);
+				}
+				logger.info("Solr query to execute has address [" + tempAddress + "] and body [" + tempBody + "]");
 
-				Response response = RestUtilities.makeRequest(this.method, setPaginationParameters(tempAddress, dataReader), this.requestHeaders,
-						this.requestBody, query);
+				Response response = RestUtilities.makeRequest(this.method, tempAddress, this.requestHeaders,
+						tempBody, query);
 				String responseBody = response.getResponseBody();
 				if (response.getStatusCode() != HttpStatus.SC_OK) {
 					throw new RESTDataProxyException(
