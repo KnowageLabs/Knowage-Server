@@ -585,5 +585,11 @@
 		description="Default IP address and port for R engine." isActive="true"
 		valueCheck="localhost:5001" valueType="STRING" category="R_CONFIGURATION" />
 	
+	<CONFIG label="KNOWAGE.RESOURCE.EXPORT.FOLDER.CLEANING_PERCENTAGE" name="KNOWAGE.RESOURCE.EXPORT.FOLDER.CLEANING_PERCENTAGE"
+		description="Resource export folder cleaning percentage (0 - 100). Default 30." isActive="true"
+		valueCheck="30" valueType="NUM" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="KNOWAGE.RESOURCE.EXPORT.FOLDER.MAX_FOLDER_SIZE" name="KNOWAGE.RESOURCE.EXPORT.FOLDER.MAX_FOLDER_SIZE"
+		description="Resource export folder cleaning max folder size (byte). Default 10737418240." isActive="true"
+		valueCheck="10737418240" valueType="NUM" category="GENERIC_CONFIGURATION" />
 </CONFIGS>
 
