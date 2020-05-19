@@ -39,7 +39,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 //		var columns = ngModel==undefined ? undefined : ngModel.content.columnSelectedOfDataset;
 		var columns = (ngModel==undefined || !ngModel.content.columnSelectedOfDataset) ? undefined :(Array.isArray(ngModel.content.columnSelectedOfDataset) ) ? ngModel.content.columnSelectedOfDataset : ngModel.content.columnSelectedOfDataset[dataset.id.dsId] ;
 
-		if (ngModel.type == "map") {
+		if (ngModel && ngModel.type == "map") {
 			var dsId = dataset.id.dsId;
 			var allLayers = ngModel.content.layers;
 			for (var layerIdx in allLayers) {
