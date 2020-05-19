@@ -30,7 +30,7 @@
 		      						</div>
 		      					</md-toolbar>
 		      					<md-content flex layout="column" ng-class="{'dropZone': (sbiModule_device.browser.name=='chrome' && dragUtils.dragObjectType=='MEASURE-PT')}">
-		      						<md-list flex dnd-list="currentDataset.metadata.fieldsMeta" dnd-allowed-types="['MEASURE-PT']" dnd-drop="dropCallback(event, index,currentDataset.metadata.fieldsMeta, item, external, type, 'MEASURE')" class="md-dense">
+		      						<md-list flex dnd-list="currentDataset.metadata.fieldsMeta" dnd-allowed-types="['MEASURE-PT']" dnd-drop="dropCallback(event, index,currentDataset.metadata.fieldsMeta, item, external, type, ['MEASURE'])" class="md-dense">
 		      							<md-list-item ng-repeat="item in currentDataset.metadata.fieldsMeta"
 			      							ng-if="item.fieldType=='MEASURE'"
 			      							dnd-draggable="item"
@@ -55,7 +55,7 @@
 		      					</md-toolbar>
 		      					<md-content flex layout="column"ng-class="{'dropZone': (sbiModule_device.browser.name=='chrome' && (dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS'))}">
 		      						<md-list flex dnd-list="currentDataset.metadata.fieldsMeta" dnd-allowed-types="['COLUMNS','ROWS']" 
-		      							dnd-drop="dropCallback(event, index,currentDataset.metadata.fieldsMeta, item, external, type, 'ATTRIBUTE')" class="md-dense">
+		      							dnd-drop="dropCallback(event, index,currentDataset.metadata.fieldsMeta, item, external, type, ['ATTRIBUTE'])" class="md-dense">
 		      							<md-list-item ng-repeat="item in currentDataset.metadata.fieldsMeta" 
 			      							ng-if="item.fieldType=='ATTRIBUTE'"
 											dnd-draggable="item"
@@ -84,7 +84,7 @@
 			      					<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='ATTRIBUTE' || dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS')  }" >
 			      						<md-list flex dnd-list="localModel.content.crosstabDefinition.columns"  
 			      							dnd-allowed-types="['ATTRIBUTE','ROWS','COLUMNS']" 
-			      							dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.columns, item, external, type, 'COLUMNS')">
+			      							dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.columns, item, external, type, ['COLUMNS'])">
 			      							<md-list-item  class="noright" ng-repeat="item in localModel.content.crosstabDefinition.columns"
 				      							dnd-draggable="item"
 				      							dnd-moved="localModel.content.crosstabDefinition.columns.splice($index, 1)"
@@ -113,7 +113,7 @@
 			      						</div>
 			      					</md-toolbar>
 			      					<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='ATTRIBUTE' || dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS')  }">
-			      						<md-list flex dnd-list="localModel.content.crosstabDefinition.rows"  dnd-allowed-types="['ATTRIBUTE','COLUMNS','ROWS']" dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.rows, item, external, type, 'ROWS')">
+			      						<md-list flex dnd-list="localModel.content.crosstabDefinition.rows"  dnd-allowed-types="['ATTRIBUTE','COLUMNS','ROWS']" dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.rows, item, external, type, ['ROWS'])">
 			      							<md-list-item  class="noright" ng-repeat="item in localModel.content.crosstabDefinition.rows"
 			      							dnd-draggable="item"
 			      							dnd-moved="localModel.content.crosstabDefinition.rows.splice($index, 1)"
