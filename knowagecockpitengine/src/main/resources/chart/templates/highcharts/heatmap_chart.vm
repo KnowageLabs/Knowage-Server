@@ -13,13 +13,21 @@
 #end
 
 #set($columnsNeeded = {})
+#set($columnsNeededOrderType = {})
+#set($columnsNeededOrderColumn = {})
+#set($differentOrdering = false)
 
 #set($columnCouter = 0)
 
 #foreach($value in $category) 
- #set($columnsNeeded[$columnCouter] = $value.name)
+#set($columnsNeeded[$columnCouter] = $value.name)
+#if($value.orderColumn!='' && $value.orderColumn != $value.name)
+	#set($differentOrdering = true)
+	#set($columnsNeededOrderColumn[$columnCouter] = $value.orderColumn)
+#end
+#set($columnsNeededOrderType[$columnCouter] = $value.orderType)
  
- #set($columnCouter = $columnCouter + 1)
+#set($columnCouter = $columnCouter + 1)
 #end
 
 ## class java.util.LinkedHashMap - collection when rendering the chart
@@ -48,7 +56,7 @@
 
 #set($columnNames = $datasettransformer.getColumnNames($columnsNeeded))
 #set($firstresult = $datasettransformer.getData($dataRows,$serie,$columnsNeeded,$dataColumnsMapper, $groupingFunction.toLowerCase()))
-
+#set($firstresultOrdering = $datasettransformer.getData($dataRows,$serie,$columnsNeededOrderColumn,$dataColumnsMapper, $groupingFunction.toLowerCase()))
 
 #set($firstCategory='')
 
@@ -65,13 +73,23 @@
 #else
 
 #set($firstCategory = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[0]))
-
-
 #end
 
 ##set($dateresult = $datasettransformer.getDateResult($firstresult,$columnsNeeded[0]))
 ##set($dummy = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[0]))
 #set($storeresult = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[1]))
+
+
+$datasettransformer.print($storeresult)
+$datasettransformer.print($columnsNeededOrderColumn)
+#if($columnsNeededOrderColumn[1])
+$datasettransformer.print("sssss")
+
+	#set($storeresultOrder = $datasettransformer.getStoreResult($firstresultOrdering,$columnsNeededOrderColumn[1]))
+	
+$datasettransformer.print($storeresultOrder)
+#end
+##set($sort = $datasettransformer.sort($storeresult, $columnsNeededOrderType[1]))
 
 #set($result = $datasettransformer.getResult($firstresult, $serie, $columnsNeeded,$isFirstDate))
 
@@ -592,8 +610,17 @@
 	{
 		categoryColumn: '$category[0].column',
 		categoryGroupBy: '$category[1].column',
+		orderColumnFirstColumn: '$category[0].orderColumn',
+		orderColumnSecondColumn: '$category[1].orderColumn',
+		orderTypeFirstColumn: '$category[0].orderType',
+		orderTypeSecondColumn: '$category[1].orderType',
 		firstCategory: $firstCategory,
   		storeresult: $storeresult,
+  		#if($storeresultOrder)
+  		storeresultOrder: $storeresultOrder,
+  		#end
+  		differentOrdering: $differentOrdering,
+		secondColumnOrder: '$columnsNeededOrderType[1]',
   		serie: $serieName,
   		#if($serieObj.precision)
   		precision: "$serieObj.precision",

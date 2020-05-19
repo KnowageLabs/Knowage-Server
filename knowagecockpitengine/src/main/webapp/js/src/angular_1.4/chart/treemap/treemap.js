@@ -780,11 +780,25 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     var minValue=data.length >0 ? data[0][chartConf.additionalData.serie.value] : 0;
     var maxValue=data.length >0 ? data[0][chartConf.additionalData.serie.value] :0;
 
-    /*if(chartConf.additionalData.orderColumnSecondColumn!=""){
+    //ordering yaxis starts
+    if(chartConf.additionalData.differentOrdering==false){
     	chartConf.additionalData.storeresult.sort();
-    	if( chartConf.additionalData.orderTypeSecondColumn.toLowerCase()=="desc")
+    	if( chartConf.additionalData.secondColumnOrder.toLowerCase()=="desc")
     		chartConf.additionalData.storeresult.reverse();
-    }*/
+    } else{
+    	var map = {};
+    	 for( i=0;i<chartConf.additionalData.storeresult.length;i++ ){
+    		 //orig:order
+    		 map[chartConf.additionalData.storeresult[i]] = chartConf.additionalData.storeresultOrder[i]
+
+    	 }
+	    chartConf.additionalData.storeresultOrder.sort();
+		if( chartConf.additionalData.orderTypeSecondColumn.toLowerCase()=="desc")
+			chartConf.additionalData.storeresultOrder.reverse();
+    }
+
+    // ordering yaxis ends
+
 
     for( i=0;i<data.length;i++ ){
     	if(data[i][chartConf.additionalData.serie.value]< minValue){
@@ -807,10 +821,16 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     	var point={
     		"x":xValue,
     		"original":xValueOriginal,
-    		"y":chartConf.additionalData.storeresult.indexOf(data[i][chartConf.additionalData.columns[1].value]),
+    		//"y":chartConf.additionalData.storeresult.indexOf(data[i][chartConf.additionalData.columns[1].value]),
     		"value":data[i][chartConf.additionalData.serie.value],
     		"label":data[i][chartConf.additionalData.columns[1].value]
     	};
+
+		if(chartConf.additionalData.differentOrdering){
+			point.y = chartConf.additionalData.storeresultOrder.indexOf(map[data[i][chartConf.additionalData.columns[1].value]])
+		} else {
+			point.y = chartConf.additionalData.storeresult.indexOf(data[i][chartConf.additionalData.columns[1].value])
+		}
 
     	points.push(point);
     }
@@ -1392,6 +1412,18 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
                format: '{value}'
            }
        };
+	}
+
+
+    if(chartConf.additionalData.differentOrdering){
+    	var categories = []
+    	for(i=0;i<chartConf.additionalData.storeresultOrder.length;i++){
+    		for (key in map){
+        		if(map[key]==chartConf.additionalData.storeresultOrder[i]) categories.push(key)
+        	}
+        }
+
+		toReturn.yAxis.categories = categories
 	}
 
     return toReturn;
