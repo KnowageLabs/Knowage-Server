@@ -79,18 +79,9 @@
 ##set($dummy = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[0]))
 #set($storeresult = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[1]))
 
-
-$datasettransformer.print($storeresult)
-$datasettransformer.print($columnsNeededOrderColumn)
 #if($columnsNeededOrderColumn[1])
-$datasettransformer.print("sssss")
-
 	#set($storeresultOrder = $datasettransformer.getStoreResult($firstresultOrdering,$columnsNeededOrderColumn[1]))
-	
-$datasettransformer.print($storeresultOrder)
 #end
-##set($sort = $datasettransformer.sort($storeresult, $columnsNeededOrderType[1]))
-
 #set($result = $datasettransformer.getResult($firstresult, $serie, $columnsNeeded,$isFirstDate))
 
 #set($datetype = "string")
@@ -610,10 +601,6 @@ $datasettransformer.print($storeresultOrder)
 	{
 		categoryColumn: '$category[0].column',
 		categoryGroupBy: '$category[1].column',
-		orderColumnFirstColumn: '$category[0].orderColumn',
-		orderColumnSecondColumn: '$category[1].orderColumn',
-		orderTypeFirstColumn: '$category[0].orderType',
-		orderTypeSecondColumn: '$category[1].orderType',
 		firstCategory: $firstCategory,
   		storeresult: $storeresult,
   		#if($storeresultOrder)

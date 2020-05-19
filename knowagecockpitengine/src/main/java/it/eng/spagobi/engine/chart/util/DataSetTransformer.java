@@ -1334,15 +1334,15 @@ public class DataSetTransformer {
 
 		for (int i = 0; i < dataRows.size(); i++) {
 			Map<String, Object> row = (Map<String, Object>) dataRows.get(i);
-			HashMap<String, String> record = new HashMap<>();
+			HashMap<String, Object> record = new HashMap<>();
 
 			/* For every record take these columns */
 			for (int j = 0; j < listColumns.size(); j++) {
 				Object x = row.get(listColumns.get(j));
-				record.put(columns.get(j).toString(), x.toString());
+				record.put(columns.get(j).toString(), x);
 			}
 
-			record.put(serie.toString(), row.get(serieRawColumn).toString());
+			record.put(serie.toString(), row.get(serieRawColumn));
 
 			firstresult.put(new Integer(i), record);
 		}
@@ -1437,7 +1437,7 @@ public class DataSetTransformer {
 
 		JSONArray storeResult = new JSONArray();
 
-		HashMap<Integer, String> storeResultMap = new HashMap<>();
+		HashMap<Integer, Object> storeResultMap = new HashMap<>();
 
 		int value = 0;
 
@@ -1445,7 +1445,7 @@ public class DataSetTransformer {
 
 			if (!storeResultMap.containsValue(firstresult.get(i).get(column.toString()))) {
 
-				storeResultMap.put(value, (String) (firstresult.get(i).get(column.toString())));
+				storeResultMap.put(value, (firstresult.get(i).get(column.toString())));
 
 				value++;
 
@@ -1472,7 +1472,7 @@ public class DataSetTransformer {
 
 			JSONObject jo = new JSONObject();
 
-			Double serieValue = Double.valueOf((String) firstresult.get(i).get(serie.toString()));
+			Double serieValue = Double.valueOf(firstresult.get(i).get(serie).toString());
 
 			jo.put(serie.toString(), serieValue);
 

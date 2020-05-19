@@ -82,9 +82,15 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 						if(Array.isArray(category)){
 							for (var j = 0; j < category.length; j++) {
 								if(category[j].column == col.name){
-									obj["orderType"] = col.orderType;
+									obj["orderType"] = col.orderType ? col.orderType : 'asc';
 									obj["orderColumn"] = col.orderColumn;
+									if(ngModel.content.chartTemplate.CHART.type.toLowerCase()=='heatmap'){
+										if(col.orderColumn!= "" && obj.columnName!=col.orderColumn){
+											var newColumn = {"id":col.orderColumn,"alias":col.orderColumn,"columnName":col.orderColumn,"orderType":col.orderType ? col.orderType : "asc","orderColumn":col.orderColumn,"funct":"NONE"}
+										}
+									}
 									newCategArray.push(obj)
+									if(newColumn)newCategArray.push(newColumn)
 								}
 							}
 						} else {
