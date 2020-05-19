@@ -781,20 +781,20 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     var maxValue=data.length >0 ? data[0][chartConf.additionalData.serie.value] :0;
 
     //ordering yaxis starts
-    if(chartConf.additionalData.differentOrdering==false){
-    	chartConf.additionalData.storeresult.sort();
-    	if( chartConf.additionalData.secondColumnOrder.toLowerCase()=="desc")
-    		chartConf.additionalData.storeresult.reverse();
-    } else{
+    if(chartConf.additionalData.differentOrdering==true && chartConf.additionalData.storeresultOrder){
     	var map = {};
-    	 for( i=0;i<chartConf.additionalData.storeresult.length;i++ ){
-    		 //orig:order
-    		 map[chartConf.additionalData.storeresult[i]] = chartConf.additionalData.storeresultOrder[i]
+	   	 for( i=0;i<chartConf.additionalData.storeresult.length;i++ ){
+	   		 //orig:order
+	   		 map[chartConf.additionalData.storeresult[i]] = chartConf.additionalData.storeresultOrder[i]
 
-    	 }
+	   	 }
 	    chartConf.additionalData.storeresultOrder.sort();
 		if( chartConf.additionalData.orderTypeSecondColumn.toLowerCase()=="desc")
 			chartConf.additionalData.storeresultOrder.reverse();
+    } else{
+    	chartConf.additionalData.storeresult.sort();
+    	if( chartConf.additionalData.secondColumnOrder.toLowerCase()=="desc")
+    		chartConf.additionalData.storeresult.reverse();
     }
 
     // ordering yaxis ends
@@ -826,7 +826,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
     		"label":data[i][chartConf.additionalData.columns[1].value]
     	};
 
-		if(chartConf.additionalData.differentOrdering){
+		if(chartConf.additionalData.differentOrdering && chartConf.additionalData.storeresultOrder){
 			point.y = chartConf.additionalData.storeresultOrder.indexOf(map[data[i][chartConf.additionalData.columns[1].value]])
 		} else {
 			point.y = chartConf.additionalData.storeresult.indexOf(data[i][chartConf.additionalData.columns[1].value])
@@ -1415,7 +1415,7 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
 	}
 
 
-    if(chartConf.additionalData.differentOrdering){
+    if(chartConf.additionalData.differentOrdering && chartConf.additionalData.storeresultOrder){
     	var categories = []
     	for(i=0;i<chartConf.additionalData.storeresultOrder.length;i++){
     		for (key in map){
