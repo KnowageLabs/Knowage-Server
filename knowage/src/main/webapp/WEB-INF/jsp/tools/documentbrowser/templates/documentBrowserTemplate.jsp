@@ -221,7 +221,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 		</md-toolbar> 
 		<md-content layout-margin>
-			<div class="selectedDocumentPreview" ng-if="selectedDocument.previewFile" layout-padding>
+			<div class="selectedDocumentPreview" ng-if="selectedDocument.previewFile && selectedDocument.previewFile != ''" layout-padding>
 				<img ng-src="{{tempPreviewSrc}}" />
 			</div>
 			<md-list> 
