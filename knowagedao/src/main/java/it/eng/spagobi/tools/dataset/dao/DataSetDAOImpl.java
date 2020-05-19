@@ -2463,7 +2463,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 * @param type
 	 * @return
 	 */
-	public String getDataSource(String type) {
+	public String getDataSource(SbiDataSet ds) {
+		String type = ds.getType();
 		String dataSource = "";
 		switch (type) {
 		case DataSetConstants.DS_QUERY:
@@ -2476,7 +2477,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			break;
 		case DataSetConstants.DS_FLAT:
 
-			dataSource = DataSetConstants.DATA_SOURCE_FLAT;
+			JSONObject jsonConf = ObjectUtils.toJSONObject(ds.getConfiguration());
+
+			// Old flat dataset has stored the data source to a different attribute
+			dataSource = jsonConf.has(DataSetConstants.DATA_SOURCE_FLAT) ? DataSetConstants.DATA_SOURCE_FLAT : DataSetConstants.DATA_SOURCE;
 			break;
 		default:
 			logger.debug("Dataset type is [" + type + "], so no need to update older versions cause Datasource can not be ambiguous.");
@@ -2496,7 +2500,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		while (it.hasNext()) {
 			SbiDataSet ds = it.next();
 			JSONObject jsonConf = ObjectUtils.toJSONObject(ds.getConfiguration());
-			String dataSourceFieldName = getDataSource(ds.getType());
+			String dataSourceFieldName = getDataSource(ds);
 			if (!dataSourceLabel.equals(jsonConf.get(dataSourceFieldName))) {
 				jsonConf.put(dataSourceFieldName, dataSourceLabel);
 				ds.setConfiguration(JSONUtils.escapeJsonString(jsonConf.toString()));
