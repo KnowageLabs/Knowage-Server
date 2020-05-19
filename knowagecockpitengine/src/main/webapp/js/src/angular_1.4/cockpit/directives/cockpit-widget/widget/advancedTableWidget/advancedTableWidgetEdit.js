@@ -62,7 +62,8 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
         sbiModule_restServices.promiseGet('2.0/datasets', 'availableFunctions/' + dsId, "useCache=" + $scope.localDataset.useCache).then(function(response){
         	$scope.datasetAdditionalInfos = response.data;
         }, function(response) {
-        	$scope.showAction(response.data.errors[0].message);
+        	if(response.data && response.data.errors && response.data.errors[0]) $scope.showAction(response.data.errors[0].message);
+        	else $scope.showAction($scope.translate.load('sbi.generic.error'));
         });
 	}
 	if($scope.newModel.dataset && $scope.newModel.dataset.dsId) $scope.getDatasetAdditionalInfo($scope.newModel.dataset.dsId);
