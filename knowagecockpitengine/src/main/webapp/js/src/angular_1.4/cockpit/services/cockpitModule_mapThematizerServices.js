@@ -295,17 +295,18 @@
 		}
 
 		mts.getDefaultMarker = function(props, config) {
-			var color;
-			var layerName = props.parentLayer
-			if (!(layerName in mts.defaultMarkerCache)) {
-				if (!color)	color =  (config.style && config.style.color) ? config.style.color : 'grey';
+			var color = (config.style && config.style.color) ? config.style.color : 'grey';
+			var layerName = props.parentLayer;
+			var key = "" + layerName + "|" + color;
 
+			// A cache to maintaing styles for the marker
+			if (!(key in mts.defaultMarkerCache)) {
 				var defaultImg = new Image();
 				defaultImg.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="120" height="120"><circle r="42.711815" cy="50" cx="50" style="opacity:1;fill:' + color + ';fill-opacity:1;stroke:#000000;stroke-width:14.5763731;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke" /></svg>');
-				mts.defaultMarkerCache[layerName] = defaultImg;
+				mts.defaultMarkerCache[key] = defaultImg;
 			}
 
-			return mts.defaultMarkerCache[layerName];
+			return mts.defaultMarkerCache[key];
 		}
 
 		mts.getColorByThresholds = function(value, props){
