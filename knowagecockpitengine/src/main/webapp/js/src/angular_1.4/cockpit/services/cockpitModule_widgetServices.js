@@ -73,6 +73,37 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	}
 
 	this.items=[];
+	
+	this.checkForUpdatedDataset = function(modelColumns, dsId) {
+		
+		var dsColumns = cockpitModule_datasetServices.getDatasetById(dsId).metadata.fieldsMeta;
+		var tempColumns = [];
+		var columnsMap = {};
+		var columnsNameArray = [];
+		// generating a dataset column map in order to avoid nested for
+		for (var k in dsColumns) {
+			columnsMap[dsColumns[k].name] = dsColumns[k];
+			columnsNameArray.push(dsColumns[k].name);
+		}
+		// cycles for already preset values
+		for (var j in modelColumns) {
+			
+			if (columnsMap[modelColumns[j].name]) {
+				tempColumns.push(modelColumns[j]);           // already present fields, ignores deleted ones
+				columnsNameArray.splice(columnsNameArray.indexOf(modelColumns[j].name),1);
+			}
+						
+		}		
+		
+		if (columnsNameArray.length > 0) {			
+			for (var y in columnsNameArray) {				
+				tempColumns.push(columnsMap[columnsNameArray[y]]);   // pushes values not present into model
+				
+			}			
+		}
+	
+		return tempColumns;		
+	}
 
 	this.getAllWidgets=function(){
 		var ret = [];

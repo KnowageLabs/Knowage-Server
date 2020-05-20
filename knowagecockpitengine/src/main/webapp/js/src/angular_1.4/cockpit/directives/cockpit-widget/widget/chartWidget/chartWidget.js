@@ -121,7 +121,8 @@ function cockpitChartWidgetControllerFunction(
 	$scope.isIE = window.document.documentMode;
 	$scope.model = $scope.ngModel;
 	$scope.local = {};
-	  if($scope.model.dataset != undefined && $scope.model.dataset.dsId !=-1 && !$scope.model.content.columnSelectedOfDatasetAggregations ){
+	
+    if($scope.model.dataset != undefined && $scope.model.dataset.dsId !=-1 && !$scope.model.content.columnSelectedOfDatasetAggregations ){
 			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.local);
 			$scope.model.content.columnSelectedOfDatasetAggregations  = [];
 			for(var i=0;i<$scope.local.metadata.fieldsMeta.length;i++){
@@ -131,6 +132,7 @@ function cockpitChartWidgetControllerFunction(
 			$scope.safeApply();
 	  }
 	 if($scope.model.content.columnSelectedOfDatasetAggregations) {
+		 $scope.model.content.columnSelectedOfDatasetAggregations = cockpitModule_widgetServices.checkForUpdatedDataset($scope.model.content.columnSelectedOfDatasetAggregations,$scope.model.dataset.dsId);
 		 for(var c in $scope.model.content.columnSelectedOfDatasetAggregations){
 			if(!$scope.model.content.columnSelectedOfDatasetAggregations[c].aliasToShow) $scope.model.content.columnSelectedOfDatasetAggregations[c].aliasToShow = $scope.model.content.columnSelectedOfDatasetAggregations[c].alias;
 			if($scope.model.content.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected) $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected = 'SUM';
