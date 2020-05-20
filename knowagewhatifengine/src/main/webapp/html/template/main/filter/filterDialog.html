@@ -15,14 +15,14 @@
 				<md-tooltip md-delay="500" md-direction="top">
          				{{translate.load("sbi.common.unselect.all");}}
        			</md-tooltip>
-				{{translate.load("sbi.common.unselect.all");}}
+				{{::translate.load("sbi.common.unselect.all");}}
 			</md-button>
 			<md-button  ng-show="isSlicer&&!selectView&&isAnySelected()" ng-click="setSelectedView()"  aria-label="Select only view" class="md-raised">
-			Show selected only
+				{{::translate.load('sbi.olap.filter.showselected')}}
 			</md-button>
 			
-			<md-button  ng-show="isSlicer&&selectView&&isAnySelected()" ng-click="setAllView()"  aria-label="Show All view" class="md-raised">
-			Show All
+			<md-button  ng-show="isSlicer&&selectView&&isAnySelected()" ng-class="{'md-warning':showTreeError}" ng-click="setAllView()"  aria-label="Show All view" class="md-raised">
+				{{::translate.load('sbi.olap.filter.showall')}}
 			</md-button>
 			
 			<span flex layout="row">
@@ -38,7 +38,7 @@
         			
 				</md-input-container>
 				<md-button ng-disabled="minNumOfLetters > searchText.length" ng-click="searchFilter()">
-	         			Search
+	         		{{::translate.load('sbi.generic.search')}}
 	       		</md-button>
        		</span>	
 						
@@ -47,6 +47,9 @@
 					{{showSiblings?'Show siblings':'Hide siblings'}}
 				</md-checkbox>	
 			</md-input-container>
+    	</div>
+    	<div layout="row" flex ng-if="showTreeError" layout-align="center center">
+    		<div class="kn-warning" flex="60">{{::translate.load('sbi.olap.filter.lockedhierarchies')}}</div>
     	</div>
 		<div layout="row" flex>
 			<div ui-tree>
