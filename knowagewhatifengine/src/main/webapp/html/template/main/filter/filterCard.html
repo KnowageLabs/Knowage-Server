@@ -9,11 +9,16 @@
 		<md-button ng-click="showMultiHierDialog(e,filter);$event.stopPropagation();" class="md-icon-button noMargin" ng-show="filter.hierarchies.length > 1">
 			<md-icon md-font-icon="fa fa-sitemap" ></md-icon>
 		</md-button>
-		<span flex>{{filter.caption}}</span>
+		<span flex>
+			{{filter.caption}}
+			<md-tooltip md-delay="1000">{{translate.load('sbi.olap.drag.filter')}}</md-tooltip>
+		</span>
 		<md-button class="md-icon-button noMargin" ng-class="{'activeFilters' : FiltersService.getSlicerNamesString(filter.selectedHierarchyUniqueName) != ''}" aria-label="filter" ng-click="openFiltersDialogAsync(e, filter, null, $index);$event.stopPropagation();" id="{{filter.name}}-filter">
 			<md-icon md-font-icon="fa fa-filter"></md-icon>
 			<md-tooltip>{{FiltersService.getSlicerNamesString(filter.selectedHierarchyUniqueName)}}</md-tooltip>
 		</md-button>
 
 	</div>
+	
+	<span flex class="axisDropzone">{{translate.load('sbi.olap.drop.filter')}}</span>
 </div>

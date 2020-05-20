@@ -7,7 +7,7 @@
 			</md-button>
 		</div>	
 		
-		<div class="left-axis">
+		<div class="left-axis" layout="column">
 			<div  ng-repeat="row in rows|limitTo:maxRows:leftStart">
 				<div class="filter-toolbar-element-left"  
 					 ng-drag="true" 
@@ -37,6 +37,7 @@
 					</md-button>
 				</div>
 			</div>
+			<div flex class="axisDropzone">{{translate.load('sbi.olap.drop.dimension')}}</div>
 		</div>
 	
 		<div class="left-axis-shift" ng-if="leftSliderNeeded">

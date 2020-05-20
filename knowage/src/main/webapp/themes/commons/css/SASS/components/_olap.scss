@@ -4,8 +4,28 @@
 			display: none;
 		}
 	}
+	.axisDropzone{
+		border: 2px dashed $baseColor;
+		text-transform: uppercase;
+		font-size: $smallFontSize;
+		color: $baseColor;
+		justify-content: center;
+		align-items: center;
+		display: none;
+	}
 	#filterPanel {
 		min-height: 45px;
+		&.drag-enter{
+			.axisDropzone {
+				display: flex;
+			}
+			& + div {
+				.axisDropzone {
+					border: 2px dashed $lightTextColor;
+					margin: 0 2px;
+				}
+			}
+		}
 	}
 	.md-toolbar-tools {
 		.md-icon-button {
@@ -813,8 +833,25 @@ md-dialog.fullscreen-dialog {
 	background-color:inherit!important;	
 }
 
-#topaxis {
+#topaxis, #leftaxis{
 	padding: 0;
+	&.drag-enter{
+		.axisDropzone {
+			border: 2px dashed $lightTextColor;
+			color: $lightTextColor;
+			margin: 0 2px;
+			display: flex;
+		}
+	}
+
+}
+
+#leftaxis {
+	&.drag-enter {
+		.axisDropzone {
+			writing-mode: vertical-lr;
+		}
+	}
 }
 
 .top-axis{
