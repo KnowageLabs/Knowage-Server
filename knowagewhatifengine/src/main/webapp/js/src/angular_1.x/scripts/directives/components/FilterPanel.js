@@ -254,10 +254,10 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 **/
 	$scope.expandTreeAsync = function(item){
 
-		if($scope.selectView ){
-			item.collapsed = true;
-			return;
-		}
+//		if($scope.selectView ){
+//			item.collapsed = true;
+//			return;
+//		}
 
 		if($scope.bindMode){
 			sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.attributeBinding.warning'), 'Warning');
