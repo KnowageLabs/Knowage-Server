@@ -664,7 +664,7 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
   		$scope.translate=sbiModule_translate;
   		$scope.physicalColumn = attribute.physicalColumn;
   		$scope.sbiModule_config = sbiModule_config;
-  		$scope.selectedAttribute = angular.copy(attribute);
+  		$scope.selectedAttribute = attribute;
   		var utilityMap = [];
   		$scope.properties = {};
   		for(var k in $scope.selectedAttribute.properties){
@@ -689,6 +689,16 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
   		}
   		$scope.save = function(){
   			$mdDialog.hide($scope.selectedAttribute);
+  		}
+
+  		$scope.initRoleVisibility=function(rv,val){
+  			if(!angular.equals("",val)){
+  				angular.copy(val.split(";"),rv );
+  			}
+  		}
+
+  		$scope.buildRoleVisibility=function(rv,val){
+  			val.value=rv.join(";");
   		}
 
   		$scope.delete = function(selectedAttribute){

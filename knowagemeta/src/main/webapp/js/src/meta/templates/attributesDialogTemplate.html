@@ -50,7 +50,9 @@
 						</md-input-container>
 						<md-input-container flex="50" class="noPadding md-block"> 
 							<label>{{properties['behavioural.notEnabledRoles'].propertyType.name}}</label>
-							<md-select ng-model="properties['behavioural.notEnabledRoles'].value" multiple>
+							<md-select ng-model="tmpRoleVisibility" multiple
+							ng-init="tmpRoleVisibility=[];initRoleVisibility(tmpRoleVisibility,properties['behavioural.notEnabledRoles'].value)"  
+							md-on-close="buildRoleVisibility(tmpRoleVisibility,properties['behavioural.notEnabledRoles'])">
 								<md-option ng-repeat="option in sbiModule_config.avaiableRoles track by $index" ng-value="option">
 									{{option}}
 								</md-option>
