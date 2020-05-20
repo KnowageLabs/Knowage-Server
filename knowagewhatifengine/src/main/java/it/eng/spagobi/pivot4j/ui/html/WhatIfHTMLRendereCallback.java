@@ -558,6 +558,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	}
 
 	private void setSortingCommand(TableRenderContext context) {
+		String pathToImages = "../../../../knowage/themes/commons/img/olap/";
 		int axis = 0;
 		if (context.getAxis() != null) {
 			axis = context.getAxis().axisOrdinal();
@@ -577,9 +578,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				if (context.getModel().getSortCriteria().equals(SortCriteria.ASC) || context.getModel().getSortCriteria().equals(SortCriteria.BASC)
 						|| context.getModel().getSortCriteria().equals(SortCriteria.TOPCOUNT)) {
 					if (axisToSort == Axis.ROWS.axisOrdinal()) {
-						attributes.put("src", "../../img/DESC-rows.png");
+						attributes.put("src", pathToImages + "DESC-rows.png");
 					} else {
-						attributes.put("src", "../../img/DESC-columns.png");
+						attributes.put("src", pathToImages + "DESC-columns.png");
 					}
 
 					attributes.put("ng-click",
@@ -592,9 +593,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						|| context.getModel().getSortCriteria().equals(SortCriteria.BOTTOMCOUNT)) {
 
 					if (axisToSort == Axis.ROWS.axisOrdinal()) {
-						attributes.put("src", "../../img/ASC-rows.png");
+						attributes.put("src", pathToImages + "ASC-rows.png");
 					} else {
-						attributes.put("src", "../../img/ASC-columns.png");
+						attributes.put("src", pathToImages + "ASC-columns.png");
 					}
 
 					attributes.put("ng-click",
@@ -607,9 +608,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			} else {
 				context.getModel().setSorting(false);
 				if (axisToSort == Axis.ROWS.axisOrdinal()) {
-					attributes.put("src", "../../img/noSortRows.png");
+					attributes.put("src", pathToImages + "noSortRows.png");
 				} else {
-					attributes.put("src", "../../img/noSortColumns.png");
+					attributes.put("src", pathToImages + "noSortColumns.png");
 				}
 
 				attributes.put("ng-click",
