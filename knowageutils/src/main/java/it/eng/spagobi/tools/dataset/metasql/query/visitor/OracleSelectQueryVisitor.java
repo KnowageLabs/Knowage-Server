@@ -25,6 +25,8 @@ import java.util.List;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -245,22 +247,47 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 	@Override
 	protected void append(Sorting item) {
 		String aliasDelimiter = database.getAliasDelimiter();
-		Projection projection = (Projection) item.getProjection();
-		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+		AbstractSelectionField proj = item.getProjection();
 
-		String name = aliasDelimiter + projection.getName() + aliasDelimiter;
-		if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
-			queryBuilder.append(name);
-		} else {
-			String alias = projection.getAlias();
-			if (alias != null && name.equals(aliasDelimiter + alias + aliasDelimiter)) {
-				queryBuilder.append(aliasDelimiter + alias + aliasDelimiter);
+		if (proj instanceof Projection) {
+
+			Projection projection = (Projection) proj;
+			IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+
+			String name = aliasDelimiter + projection.getName() + aliasDelimiter;
+			if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+				queryBuilder.append(name);
 			} else {
-				queryBuilder.append(aggregationFunction.apply(name));
+				String alias = projection.getAlias();
+				if (alias != null && name.equals(aliasDelimiter + alias + aliasDelimiter)) {
+					queryBuilder.append(aliasDelimiter + alias + aliasDelimiter);
+				} else {
+					queryBuilder.append(aggregationFunction.apply(name));
+				}
 			}
+
+			queryBuilder.append(item.isAscending() ? " ASC" : " DESC");
+		} else {
+
+			DataStoreCalculatedField projection = (DataStoreCalculatedField) proj;
+			IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+
+			String name = aliasDelimiter + projection.getAlias() + aliasDelimiter;
+			if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+				queryBuilder.append(name);
+			} else {
+				String alias = projection.getAlias();
+				if (alias != null && name.equals(aliasDelimiter + alias + aliasDelimiter)) {
+					queryBuilder.append(aliasDelimiter + alias + aliasDelimiter);
+				} else {
+					queryBuilder.append(aggregationFunction.apply(name));
+				}
+			}
+
+			queryBuilder.append(item.isAscending() ? " ASC" : " DESC");
+
 		}
 
-		queryBuilder.append(item.isAscending() ? " ASC" : " DESC");
 	}
 
 }
