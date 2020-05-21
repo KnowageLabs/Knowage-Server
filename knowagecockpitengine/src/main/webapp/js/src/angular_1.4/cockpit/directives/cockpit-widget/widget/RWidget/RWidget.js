@@ -105,12 +105,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.doSelection(null, null, null, null, null, null, $scope.ngModel.dataset.dsId, null);
 		}
 
-		$scope.buildAggregations = function (meta, dataset_label) {
+		$scope.buildAggregations = function (columnSelectedOfDataset, dataset_label) {
 			aggregations = {"measures": [], "categories": [], "dataset": dataset_label};
-			for (i=0; i<meta.length; i++) {
-				x = meta[i];
+			for (i=0; i<columnSelectedOfDataset.length; i++) {
+				x = columnSelectedOfDataset[i];
 				if (x.fieldType == "MEASURE") {
-					item = {"id": x.name, "alias": x.alias, "columnName": x.name, "orderType": "", "funct": "SUM", "orderColumn": x.name}
+					item = {"id": x.name, "alias": x.alias, "columnName": x.name, "orderType": "", "funct": x.aggregationSelected, "orderColumn": x.name}
+					if (x.isCalculated) item.formula = x.formula
 					aggregations.measures.push(item)
 				}
 				else if (x.fieldType == "ATTRIBUTE") {
@@ -139,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 				$scope.selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters($scope.ngModel, $scope.dataset);
 				$scope.dataset_label = $scope.dataset.label;
-				$scope.aggregations = $scope.buildAggregations($scope.dataset.metadata.fieldsMeta, $scope.dataset_label);
+				$scope.aggregations = $scope.buildAggregations($scope.ngModel.content.columnSelectedOfDataset, $scope.dataset_label);
 				$scope.parameters = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
 			}
 			else { //no dataset selected

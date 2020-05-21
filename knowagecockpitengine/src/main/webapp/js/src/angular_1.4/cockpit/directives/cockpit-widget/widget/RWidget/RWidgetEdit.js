@@ -27,6 +27,7 @@ angular
 function RWidgetEditControllerFunction(
 		$scope,
 		$http,
+		$mdToast,
 		finishEdit,
 		model,
 		sbiModule_translate,
@@ -35,6 +36,7 @@ function RWidgetEditControllerFunction(
 		cockpitModule_datasetServices,
 		cockpitModule_analyticalDrivers,
 		cockpitModule_helperDescriptors,
+		cockpitModule_generalOptions,
 		sbiModule_restServices) {
 
 	$scope.translate = sbiModule_translate;
@@ -97,9 +99,17 @@ function RWidgetEditControllerFunction(
 			for(var d in $scope.availableDatasets){
 				if($scope.availableDatasets[d].id.dsId == newValue) dsIndex = d;
 			}
-			if(!newValue || typeof dsIndex != 'undefined'){
+			if(typeof dsIndex != 'undefined'){
 				$scope.dataset = $scope.availableDatasets[dsIndex];
-				$scope.newModel.content.columnSelectedOfDataset = $scope.dataset.metadata.fieldsMeta;
+				if (newValue != oldValue) $scope.newModel.content.columnSelectedOfDataset = $scope.dataset.metadata.fieldsMeta;
+				for (i in $scope.newModel.content.columnSelectedOfDataset) {
+					obj = $scope.newModel.content.columnSelectedOfDataset[i];
+					if(obj.fieldType == "MEASURE" && !obj.value) obj.aggregationSelected = "SUM";
+				}
+				if ($scope.columnsGrid && $scope.columnsGrid.api) {
+					$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
+					resizeColumns();
+				}
 			}
 		}else{
 			if($scope.newModel.content && $scope.newModel.content.columnSelectedOfDataset) $scope.newModel.content.columnSelectedOfDataset = [];
@@ -132,6 +142,10 @@ function RWidgetEditControllerFunction(
 	};
 
 	$scope.saveConfiguration = function () {
+		if(!$scope.checkAliases()){
+            $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
+            return;
+        }
 		mdPanelRef.close();
 		angular.copy($scope.newModel,model);
 		$scope.$destroy();
@@ -144,4 +158,201 @@ function RWidgetEditControllerFunction(
 		finishEdit.reject();
 	};
 
+	// aggregations on dataset
+
+	if (!$scope.newModel.settings) $scope.newModel.settings = {};
+	if (!$scope.newModel.content) $scope.newModel.content = {name: $scope.newModel.type + '_' + $scope.newModel.id};
+	$scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
+
+	if($scope.newModel.dataset && $scope.newModel.dataset.dsId){
+		$scope.local = cockpitModule_datasetServices.getDatasetById($scope.newModel.dataset.dsId);
+	}
+
+	$scope.showCircularcolumns = {value :false};
+
+	$scope.colorPickerProperty={format:'rgb'}
+
+	$scope.columnsGrid = {
+		angularCompileRows: true,
+		domLayout :'autoHeight',
+        enableColResize: false,
+        enableFilter: false,
+        enableSorting: false,
+        onGridReady : resizeColumns,
+        onCellEditingStopped: refreshRow,
+        singleClickEdit: true,
+        stopEditingWhenGridLosesFocus: true,
+        columnDefs: [
+        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.name'), field:'name'},
+        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'alias',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},
+        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.type'), field: 'fieldType'},
+        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.aggregation'), field: 'aggregationSelected', cellRenderer: aggregationRenderer,"editable":isAggregationEditable, cellClass: 'editableCell',
+        		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
+        	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 150,suppressSizeToFit:true, tooltip: false}],
+        rowData: $scope.newModel.content.columnSelectedOfDataset
+	}
+
+	function resizeColumns(){
+		$scope.columnsGrid.api.sizeColumnsToFit();
+	}
+
+	function editableCell(params){
+		return typeof(params.value) !== 'undefined' ? '<i class="fa fa-edit"></i> <i>'+params.value+'<md-tooltip>'+params.value+'</md-tooltip></i>' : '';
+	}
+	function isInputEditable(params) {
+		return typeof(params.data.name) !== 'undefined';
+	}
+	function isAggregationEditable(params) {
+		if (params.data.isCalculated) return false;
+		return params.data.fieldType == "MEASURE" ? true : false;
+	}
+
+	function aggregationRenderer(params) {
+		var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
+		if (!params.data.isCalculated && params.data.fieldType == "MEASURE") {
+			return aggregation;
+		} else return "";
+	}
+
+	function buttonRenderer(params){
+		var calculator = '';
+		if(params.data.isCalculated){
+			calculator = '<calculated-field ng-model="newModel" selected-item="'+params.rowIndex+'"></calculated-field>';
+		}
+		return 	calculator + '<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.name+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
+	}
+
+	function refreshRow(cell){
+		$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
+	}
+
+	$scope.deleteColumn = function(rowName,event) {
+		for(var k in $scope.newModel.content.columnSelectedOfDataset){
+			if($scope.newModel.content.columnSelectedOfDataset[k].name == rowName) var item = $scope.newModel.content.columnSelectedOfDataset[k];
+		}
+  		  var index=$scope.newModel.content.columnSelectedOfDataset.indexOf(item);
+		  $scope.newModel.content.columnSelectedOfDataset.splice(index,1);
+	  }
+
+	$scope.checkAliases = function(){
+        var columns = $scope.newModel.content.columnSelectedOfDataset;
+        for(var i = 0; i < columns.length - 1; i++){
+            for(var j = i + 1; j < columns.length; j++){
+                if(columns[i].alias == columns[j].alias){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+	$scope.$watchCollection('newModel.content.columnSelectedOfDataset',function(newValue,oldValue){
+		if($scope.columnsGrid.api && newValue){
+			$scope.columnsGrid.api.setRowData(newValue);
+			$scope.columnsGrid.api.sizeColumnsToFit();
+		}
+	})
+
+	$scope.openListColumn = function(){
+		if($scope.newModel.dataset == undefined || $scope.newModel.dataset.dsId == undefined){
+			$scope.showAction($scope.translate.load("sbi.cockpit.table.missingdataset"));
+		}else{
+			$mdDialog.show({
+				templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnsOfDataset.html',
+				parent : angular.element(document.body),
+				clickOutsideToClose:true,
+				escapeToClose :true,
+				preserveScope: true,
+				autoWrap:false,
+				locals: {model:$scope.newModel, getMetadata : $scope.getMetadata},
+				fullscreen: true,
+				controller: addColumnController
+			}).then(function(returnModel) {
+				$scope.newModel.content.columnSelectedOfDataset = returnModel;
+			}, function() {
+			});
+		}
+	}
+
+	$scope.showAction = function(text) {
+		var toast = $mdToast.simple()
+		.content(text)
+		.action('OK')
+		.highlightAction(false)
+		.hideDelay(3000)
+		.position('top')
+
+		$mdToast.show(toast).then(function(response) {
+
+			if ( response == 'ok' ) {
+
+
+			}
+		});
+	}
+
 }
+
+
+function addColumnController($scope,sbiModule_translate,$mdDialog,model,getMetadata,cockpitModule_datasetServices,cockpitModule_generalOptions){
+	$scope.translate=sbiModule_translate;
+	$scope.model = angular.copy(model);
+	$scope.columnSelected = [];
+	$scope.localDataset = {};
+	if($scope.model.dataset && $scope.model.dataset.dsId){
+		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
+	} else{
+		$scope.model.dataset= {};
+		angular.copy([], $scope.model.dataset.metadata.fieldsMeta);
+	}
+
+	$scope.filterColumns = function(){
+		var tempColumnsList = $filter('filter')($scope.localDataset.metadata.fieldsMeta,$scope.columnsSearchText);
+		$scope.columnsGridOptions.api.setRowData(tempColumnsList);
+	}
+
+	$scope.columnsGridOptions = {
+            enableColResize: false,
+            enableFilter: true,
+            enableSorting: true,
+            pagination: true,
+            paginationAutoPageSize: true,
+            onGridSizeChanged: resizeColumns,
+            rowSelection: 'multiple',
+			rowMultiSelectWithClick: true,
+            defaultColDef: {
+            	suppressMovable: true,
+            	tooltip: function (params) {
+                    return params.value;
+                },
+            },
+            columnDefs :[{"headerName":"Column","field":"alias",headerCheckboxSelection: true, checkboxSelection: true},
+        		{"headerName":"Field Type","field":"fieldType"},
+        		{"headerName":"Type","field":"type"}],
+        	rowData : $scope.localDataset.metadata.fieldsMeta
+	};
+
+	function resizeColumns(){
+		$scope.columnsGridOptions.api.sizeColumnsToFit();
+	}
+
+	$scope.saveColumnConfiguration=function(){
+		if($scope.model.content.columnSelectedOfDataset == undefined){
+			$scope.model.content.columnSelectedOfDataset = [];
+		}
+
+		for(var i in $scope.columnsGridOptions.api.getSelectedRows()){
+			var obj = $scope.columnsGridOptions.api.getSelectedRows()[i];
+			obj.aggregationSelected = 'SUM';
+			obj.typeSelected = obj.type;
+			$scope.model.content.columnSelectedOfDataset.push(obj);
+		}
+		$mdDialog.hide($scope.model.content.columnSelectedOfDataset);
+	}
+
+	$scope.cancelConfiguration=function(){
+		$mdDialog.cancel();
+	}
+
+}
+

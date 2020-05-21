@@ -10,15 +10,33 @@
 	    <md-content flex layout="column">
 			<md-tabs flex md-border-bottom md-selected="1">
 			
+			<!-- DATASET TAB -->
+			
 			<md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
 		        	<md-card>
-		        		<md-card-content>
-		   					<dataset-selector ng-model="newModel.dataset.dsId" dataset-settings="newModel.settings" extended="true" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>  
-		   				</md-card-content>
-		   			</md-card>	
+				     	<md-card-content layout="row" layout-align="space-around center">
+				     		<dataset-selector flex ng-model=newModel.dataset.dsId dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-content class="noPadding" layout="column" layout-align="center none" style="height:auto">
+							<md-subheader ng-show="newModel.dataset" class="noPadding" style="margin-bottom:8px;">
+								<div layout="row" layout-align="start center" style="height:48px; padding-left:8px">
+									<span>{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.tablecolumns')}}</span>
+									<span flex></span>
+									<md-button ng-click="openListColumn()">{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.addcolumn')}} </md-button>
+		        			        <calculated-field ng-model="newModel"></calculated-field>
+				                </div>
+							</md-subheader>
+				     		<div layout="row" ng-if="showCircularcolumns.value" layout-sm="column" layout-align="space-around">
+				      			<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+				   			 </div>
+				   			 <div ng-show="newModel.content.columnSelectedOfDataset.length>0" ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary" style="padding:8px"></div>
+				     	</md-card-content>
+				    </md-card>
 			</md-tab>
 		
-				<!-- INIZIO EDITOR -->
+				<!-- EDITOR TAB -->
 			
 				<md-tab label="R Editor">
 					
@@ -90,7 +108,7 @@
 
 		        </md-tab>
 		        
-		        <!-- FINE EDITOR -->
+		        <!-- ENVIRONMENT TAB -->
 		        
 		        <md-tab label="{{translate.load('sbi.cockpit.widget.R.environment')}}">
 		        	<md-card>
