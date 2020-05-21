@@ -136,52 +136,45 @@
 			      						</md-list>
 			      					</md-content>
 			     				</div>
-								<div flex class="contentElementBox" layout="column">
-									<md-toolbar class="md-hue-2 ternaryToolbar">  
-										<div class="md-toolbar-tools">
-											<h2 flex>{{::translate.load("sbi.cockpit.pivot.measures")}}</h2>
-											<span flex></span>
-											<calculated-field ng-model="localModel"
-												measures-list-func="getAvailableMeasures()"
-												callback-add-to="addCalculatedField(newItem)" ></calculated-field>
-										</div>
-									</md-toolbar>
-									<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='MEASURE' || dragUtils.dragObjectType=='MEASURE-PT' || dragUtils.dragObjectType=='CALCULATED_FIELD') }">
-										<md-list flex dnd-list="localModel.content.crosstabDefinition.measures"  dnd-allowed-types="['MEASURE','MEASURE-PT','CALCULATED_FIELD']"  dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.measures, item, external, type, ['MEASURE-PT','CALCULATED_FIELD'])">
-											<md-list-item  class="noright" ng-repeat="item in localModel.content.crosstabDefinition.measures"
-													dnd-draggable="item"
-													dnd-moved="localModel.content.crosstabDefinition.measures.splice($index,1)"
-													dnd-type="item.isCalculated ? 'CALCULATED_FIELD' : 'MEASURE-PT'"
-													dnd-dragstart="dragUtils.dragObjectType=(item.isCalculated ? 'CALCULATED_FIELD' : 'MEASURE-PT')"
-													dnd-dragend="dragUtils.dragObjectType=undefined"
-													>
-												<md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
-												<span>{{item.alias}}</span>
-												<span flex></span>
-												<md-icon md-font-icon="fa fa-cog" aria-label="Column style" class="md-secondary" ng-click="editFieldsProperty(item)"></md-icon>
-												<calculated-field ng-if="item.isCalculated" ng-model="localModel" measures-list-func="getAvailableMeasures()" selected-item="$index"></calculated-field>
-												<md-icon ng-if="item.isCalculated" md-font-icon="fa fa-trash" aria-label="Delete calculated field" class="md-secondary" ng-click="deleteCalculatedField($index)"></md-icon>
-											</md-list-item>
-											<md-list-item class="dndPlaceholder" >
-												{{::translate.load("sbi.cockpit.pivot.messages.drop.measure")}}
-											</md-list-item>
-											<div flex layout-align="center center" layout="row" ng-if="!localModel.content.crosstabDefinition.measures || localModel.content.crosstabDefinition.measures == 0">
-												<div class="kn-noItems" flex="60">
-													{{::translate.load("sbi.cockpit.pivot.messages.measures.info")}}
-												</div>
-											</div>
-										</md-list>
-									</md-content>
-								</div>
-						</div>
-					
-					
+			     				<div flex class="contentElementBox" layout="column">
+				     				<md-toolbar class="md-hue-2 ternaryToolbar">  
+			      						<div class="md-toolbar-tools">
+				      						<h2 flex>{{::translate.load("sbi.cockpit.pivot.measures")}}</h2>
+			      						</div>
+			      					</md-toolbar>
+			      					<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='MEASURE' ||dragUtils.dragObjectType=='MEASURE-PT')  }">
+			      						<md-list flex dnd-list="localModel.content.crosstabDefinition.measures"  dnd-allowed-types="['MEASURE','MEASURE-PT']"  dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.measures, item, external, type, 'MEASURE-PT')">
+			      							<md-list-item  class="noright" ng-repeat="item in localModel.content.crosstabDefinition.measures"
+			      							dnd-draggable="item"
+			      							dnd-moved="localModel.content.crosstabDefinition.measures.splice($index,1)"
+			      							dnd-type="'MEASURE-PT'"
+			      							dnd-dragstart="dragUtils.dragObjectType='MEASURE-PT'"
+		      								dnd-dragend="dragUtils.dragObjectType=undefined"
+			      							 >
+			      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
+			      							{{item.alias}}
+			      							 <md-icon md-font-icon="fa fa-cog" aria-label="Checkbox 1" class="md-secondary" ng-click="editFieldsProperty(item)"></md-icon>
+			      							</md-list-item>
+			      							<md-list-item class="dndPlaceholder" >
+										       {{::translate.load("sbi.cockpit.pivot.messages.drop.measure")}}
+										    </md-list-item>
+										    <div flex layout-align="center center" layout="row" ng-if="!localModel.content.crosstabDefinition.measures || localModel.content.crosstabDefinition.measures == 0">
+				      							<div class="kn-noItems" flex="60">
+				      								{{::translate.load("sbi.cockpit.pivot.messages.measures.info")}}
+				      							</div>
+				      						</div>
+			      						</md-list>
+			      					</md-content>
+			     				</div>
+			     		</div>
+			     	
+			     	
 	
-				 	</md-card-content>
-				</md-card>
-				</div>
-				</md-tab-body>
-			 </md-tab>
+			     	</md-card-content>
+			    </md-card>
+			    </div>
+			    </md-tab-body>
+		     </md-tab>
 		  
 		  	<md-tab label="{{::translate.load('sbi.cockpit.pivot.config')}}">
 		  	

@@ -763,8 +763,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 			    	 $scope.dropCallback=function(event, index, list,item, external, type, containerType){
 
-			    		  if((Array.isArray(containerType) && containerType.indexOf(type) != -1)
-			    				  || angular.equals(type,containerType)){
+			    		  if(angular.equals(type,containerType)){
 			    			  var eleIndex=-1;
 			    			  angular.forEach(list,function(ele,ind){
 			    				  var tmp=angular.copy(ele);
@@ -796,8 +795,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    							  width: 0
 			    					  };
 			    					   if(angular.equals(containerType,"MEASURE-PT")){
-			    						   tmpItem.funct = "SUM";
-			    						   tmpItem.isCalculated = false;
+			    						   tmpItem.funct="SUM";
 			    					   }
 
 			    				  }
@@ -917,44 +915,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 								console.log("Selected column:", $scope.selectedColumn);
 							});
 			    	  }
-
-					$scope.addCalculatedField = function(item) {
-
-						item.nature = "calculated_field";
-						item.id = item.alias;
-						item.iconCls = "measure";
-						item.funct = "NONE";
-
-						$scope.localModel.content.crosstabDefinition.measures.push(item);
-
-					}
-
-					$scope.getAvailableMeasures = function() {
-
-						var tmpList = $scope.localModel
-							.content
-							.crosstabDefinition
-							.measures;
-						var ret = [];
-						for(var i in tmpList) {
-							var obj = tmpList[i];
-							var currObj = angular.copy(obj);
-							currObj.fieldType = "MEASURE";
-							ret.push(currObj);
-						}
-
-						return ret;
-					}
-
-					$scope.deleteCalculatedField = function(index) {
-
-						$scope.localModel
-							.content
-							.crosstabDefinition
-							.measures
-							.splice(index, 1);
-					}
-
 			      },
 				disableParentScroll: true,
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/staticPivotTableWidget/templates/staticPivotTableWidgetEditPropertyTemplate.html',
@@ -1316,7 +1276,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				axisConf[c].direction = direction;
 		}
 	}
-
 };
 
 

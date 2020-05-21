@@ -219,18 +219,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 			
-			if(!self.compareVersion("7.2.0",version)){
-				if(model.type=='table'){
-					if(model.content && model.content.columnSelectedOfDataset){
-						for(var k in model.content.columnSelectedOfDataset){
-							if (model.content.columnSelectedOfDataset[k].isCalculated && model.content.columnSelectedOfDataset[k].datasetOrTableFlag) {
-								delete model.content.columnSelectedOfDataset[k].datasetOrTableFlag;
-							}
-						}
-					}
-				}
-			}
-			
 			if(!self.compareVersion("7.3.0",version)){
 				if(model.type=='table' || model.type=='discovery'){
 					for(var k in model.content.columnSelectedOfDataset){
@@ -246,28 +234,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				if(model.type == 'discovery'){
 					if(model.settings.hideTextSearch) model.settings.textEnabled = !model.settings.hideTextSearch;
-				}
-				if(model.type=='selector'){
-					if(model.content.selectedColumn) model.settings.sortingColumn = model.content.selectedColumn.name;
-					if(model.content.sortingOrder) model.settings.sortingOrder = model.content.sortingOrder;
-				}
-				if(model.type == "static-pivot-table"){
-
-					model.content
-						.crosstabDefinition
-						.measures
-						.forEach(function(item) {
-							// For calculated fields
-							if(!item.hasOwnProperty("isCalculated")) {
-								item.isCalculated = false;
-							}
-							if(!item.isCalculated && !item.hasOwnProperty("aggregationSelected")) {
-								item.aggregationSelected = item.funct;
-							}
-							if(!item.isCalculated && !item.hasOwnProperty("name")) {
-								item.name = item.id;
-							}
-						});
 				}
 			}
 
