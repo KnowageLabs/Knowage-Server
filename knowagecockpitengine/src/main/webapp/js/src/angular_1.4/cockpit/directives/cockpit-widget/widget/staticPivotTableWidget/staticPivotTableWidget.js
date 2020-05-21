@@ -779,9 +779,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    			  return false
 			    		  }else{
 			    			  var tmpItem;
-			    			  if(containerType.indexOf(containerType,"MEASURE-PT") != -1 || containerType.indexOf(containerType,"COLUMNS")  != -1 || containerType.indexOf(containerType,"ROWS") != -1){
+			    			  if(angular.equals(containerType,"MEASURE-PT") || angular.equals(containerType,"COLUMNS") || angular.equals(containerType,"ROWS")){
 
-			    				  if( (containerType.indexOf(containerType,"COLUMNS")  != -1 &&  angular.equals(type,"ROWS")) || (containerType.indexOf(containerType,"ROWS")  != -1 &&  angular.equals(type,"COLUMNS"))){
+			    				  if( (angular.equals(containerType,"COLUMNS") &&  angular.equals(type,"ROWS")) || (angular.equals(containerType,"ROWS") &&  angular.equals(type,"COLUMNS"))){
 			    					  tmpItem=item;
 			    				  }else{
 			    					  //convert item in specific format
@@ -795,7 +795,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 //			    							  sortable: false,
 			    							  width: 0
 			    					  };
-			    					   if(containerType.indexOf(containerType,"MEASURE-PT") != -1){
+			    					   if(angular.equals(containerType,"MEASURE-PT")){
 			    						   tmpItem.funct = "SUM";
 			    						   tmpItem.isCalculated = false;
 			    					   }
@@ -805,9 +805,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    				  //containerType == MEASURE or ATTRIBUTE
 			    				  //load element from dataset field
 			    				  for(var i=0;i<$scope.originalCurrentDataset.metadata.fieldsMeta.length;i++){
-			    					  if(angular.equals($scope.originalCurrentDataset.metadata.fieldsMeta[i].name,item.name || item.id)){
+			    					  if(angular.equals($scope.originalCurrentDataset.metadata.fieldsMeta[i].name,item.id)){
 			    						  tmpItem=angular.copy($scope.originalCurrentDataset.metadata.fieldsMeta[i]);
-			    						  tmpItem.nature = item.fieldType.toLowerCase();
 			    						  break;
 			    					  }
 			    				  }
