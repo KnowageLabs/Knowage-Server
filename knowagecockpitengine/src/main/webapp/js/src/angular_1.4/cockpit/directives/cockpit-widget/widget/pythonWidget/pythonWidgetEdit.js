@@ -27,6 +27,7 @@ angular
 function pythonWidgetEditControllerFunction(
 		$scope,
 		$http,
+		$mdToast,
 		finishEdit,
 		model,
 		sbiModule_translate,
@@ -105,7 +106,7 @@ function pythonWidgetEditControllerFunction(
 			}
 			if(typeof dsIndex != 'undefined'){
 				$scope.dataset = $scope.availableDatasets[dsIndex];
-				$scope.newModel.content.columnSelectedOfDataset = $scope.dataset.metadata.fieldsMeta;
+				if (newValue != oldValue) $scope.newModel.content.columnSelectedOfDataset = $scope.dataset.metadata.fieldsMeta;
 				for (i in $scope.newModel.content.columnSelectedOfDataset) {
 					obj = $scope.newModel.content.columnSelectedOfDataset[i];
 					if(obj.fieldType == "MEASURE" && !obj.value) obj.aggregationSelected = "SUM";
@@ -161,6 +162,10 @@ function pythonWidgetEditControllerFunction(
 	};
 
 	$scope.saveConfiguration = function () {
+		if(!$scope.checkAliases()){
+            $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
+            return;
+        }
 		mdPanelRef.close();
 		angular.copy($scope.newModel,model);
 		$scope.$destroy();
@@ -185,11 +190,6 @@ function pythonWidgetEditControllerFunction(
 
 	$scope.showCircularcolumns = {value :false};
 
-	$scope.safeApply=function(){
-		if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase !='$digest') {
-			$scope.$apply();
-		}
-	}
 	$scope.colorPickerProperty={format:'rgb'}
 
 	$scope.columnsGrid = {
@@ -254,6 +254,18 @@ function pythonWidgetEditControllerFunction(
 		  $scope.newModel.content.columnSelectedOfDataset.splice(index,1);
 	  }
 
+	$scope.checkAliases = function(){
+        var columns = $scope.newModel.content.columnSelectedOfDataset;
+        for(var i = 0; i < columns.length - 1; i++){
+            for(var j = i + 1; j < columns.length; j++){
+                if(columns[i].alias == columns[j].alias){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 	$scope.$watchCollection('newModel.content.columnSelectedOfDataset',function(newValue,oldValue){
 		if($scope.columnsGrid.api && newValue){
 			$scope.columnsGrid.api.setRowData(newValue);
@@ -304,7 +316,7 @@ function pythonWidgetEditControllerFunction(
 
 function addColumnController($scope,sbiModule_translate,$mdDialog,model,getMetadata,cockpitModule_datasetServices,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
-	$scope.model = model;
+	$scope.model = angular.copy(model);
 	$scope.columnSelected = [];
 	$scope.localDataset = {};
 	if($scope.model.dataset && $scope.model.dataset.dsId){
@@ -345,22 +357,21 @@ function addColumnController($scope,sbiModule_translate,$mdDialog,model,getMetad
 	}
 
 	$scope.saveColumnConfiguration=function(){
-		model = $scope.model;
-
-		if(model.content.columnSelectedOfDataset == undefined){
-			model.content.columnSelectedOfDataset = [];
+		if($scope.model.content.columnSelectedOfDataset == undefined){
+			$scope.model.content.columnSelectedOfDataset = [];
 		}
 
 		for(var i in $scope.columnsGridOptions.api.getSelectedRows()){
 			var obj = $scope.columnsGridOptions.api.getSelectedRows()[i];
 			obj.aggregationSelected = 'SUM';
 			obj.typeSelected = obj.type;
-			model.content.columnSelectedOfDataset.push(obj);
+			$scope.model.content.columnSelectedOfDataset.push(obj);
 		}
-		$mdDialog.hide(model.content.columnSelectedOfDataset);
+		$mdDialog.hide($scope.model.content.columnSelectedOfDataset);
 	}
 
 	$scope.cancelConfiguration=function(){
 		$mdDialog.cancel();
 	}
+
 }
