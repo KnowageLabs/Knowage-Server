@@ -1179,6 +1179,14 @@ md-list.kn-smallList{
     }
 }
 
+.kn-treePath{
+  padding: 8px;
+  span{
+    margin-right: 4px;
+    font-size: $baseFontSize;
+  }
+}
+
 span.functionDescription {
     font-size: .7rem;
 }

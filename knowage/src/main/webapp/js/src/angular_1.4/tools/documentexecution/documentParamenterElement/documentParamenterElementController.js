@@ -393,7 +393,15 @@
 							paramDialogCtrl.tempParameter.parameterValue = node.value;
 							paramDialogCtrl.tempParameter.parameterDescription = {};
 							paramDialogCtrl.tempParameter.parameterDescription[node.value] = node.description;
+							paramDialogCtrl.tempParameter.parameterDescription.id = node.id;
 						}
+						if(paramDialogCtrl.tempParameter.treePath) {
+							if(paramDialogCtrl.tempParameter.treePath[node.id.slice(-1)] && paramDialogCtrl.tempParameter.treePath[node.id.slice(-1)] != node.label){
+								paramDialogCtrl.tempParameter.treePath = [node.label];
+							}
+							paramDialogCtrl.tempParameter.treePath[node.id.slice(-1)] = node.label;
+						}
+						else paramDialogCtrl.tempParameter.treePath = [node.label];
 
 						// in case the node is not a leaf the rest service is invoked in order
 						// to retrieve sub node items

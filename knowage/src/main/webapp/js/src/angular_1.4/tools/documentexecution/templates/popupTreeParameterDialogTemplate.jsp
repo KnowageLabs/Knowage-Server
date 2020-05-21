@@ -1,19 +1,17 @@
 <md-dialog md-theme="{{::paramDialogCtrl.theme}}" style="height:95%; width:95%; max-width: 100%; max-height: 100%;" ng-cloak
 		aria-label="{{::paramDialogCtrl.dialogTitle}}" ng-class="dialog.css" layout="column">
 	<md-toolbar>
-		<div class="md-title" layout-fill>
-			<h2 class="md-title" layout-margin>
-				{{ ::paramDialogCtrl.dialogTitle }}
-			</h2>
+		<div class="md-toolbar-tools">
+			<h2>{{ ::paramDialogCtrl.dialogTitle }}</h2>
 		</div>
 	</md-toolbar>
 	
-	<!--
-	<md-content style="font-size:8px;">{{paramDialogCtrl.tempParameter|json}}</md-content>
-	-->
-	
 	<md-dialog-content class="md-dialog-content" role="document" tabIndex="-1" flex>
 		<div class="md-dialog-content-body"	md-template="::paramDialogCtrl.mdContent"></div>
+		
+		<div layout="row" layout-align="start center" class="kn-treePath">
+			<span ng-repeat="path in paramDialogCtrl.tempParameter.treePath">{{path}} <i class="fa fa-chevron-right" ng-if="!$last"></i></span>
+		</div>
 		
 		<component-tree ng-model="paramDialogCtrl.tempParameter.children" subnode-key="children" 
 				text-to-show-key="description" drag-enabled="false"
@@ -28,15 +26,16 @@
 				open-folder-icon-fn="paramDialogCtrl.getOpenFolderIconClass(node)"
 				show-node-checkbox-fn="paramDialogCtrl.showNodeCheckBoxFn(node)"
 				is-internal-selection-allowed="paramDialogCtrl.allowInternalNodeSelection"
+				selected-item="paramDialogCtrl.tempParameter.parameterDescription"
 				dynamic-tree
 				/>
 	</md-dialog-content>
 	
 	<div class="md-actions">
-		<md-button ng-click="paramDialogCtrl.abort()" class="md-primary">
+		<md-button ng-click="paramDialogCtrl.abort()" class="md-raised">
 			{{ paramDialogCtrl.dialogCancelLabel }}</md-button>
 				
-		<md-button ng-click="paramDialogCtrl.save()" class="md-primary">
+		<md-button ng-click="paramDialogCtrl.save()" class="md-raised md-primary">
 			{{ paramDialogCtrl.dialogSaveLabel }}</md-button>
 	</div>
 </md-dialog>
