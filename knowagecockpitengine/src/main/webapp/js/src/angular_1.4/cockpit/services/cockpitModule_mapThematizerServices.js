@@ -269,7 +269,7 @@
 			default:
 				var size = (config.size || 12);
 				var scale = size / 100;
-				var defaultImg = mts.getDefaultMarker(props, config);
+				var defaultImg = mts.getDefaultMarker(value, props, config);
 
 				style =  new ol.style.Style({
 				image: new ol.style.Icon(
@@ -294,8 +294,12 @@
 			mts.defaultMarkerCache = {};
 		}
 
-		mts.getDefaultMarker = function(props, config) {
-			var color = (config.style && config.style.color) ? config.style.color : 'grey';
+		mts.getDefaultMarker = function(value, props, config) {
+			var color;
+
+			if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
+			if (!color)	color =  (config.style && config.style.color) ? config.style.color : 'grey';
+
 			var layerName = props.parentLayer;
 			var key = "" + layerName + "|" + color;
 
