@@ -38,7 +38,11 @@ public class DefaultValuesList extends ArrayList<LovValue> {
 		Iterator<LovValue> it = this.iterator();
 		while (it.hasNext()) {
 			LovValue defaultValue = it.next();
-			if (defaultValue.toString().equalsIgnoreCase("LovValue [value=, description=]") || defaultValue.getValue().equals(value)) {
+			if (value == null && defaultValue.getValue() == null) {
+				logger.debug("Value null is a default value");
+				return true;
+			}
+			if (defaultValue.getValue() != null && defaultValue.getValue().equals(value)) {
 				logger.debug("Value [" + value + "] is a default value");
 				return true;
 			}
