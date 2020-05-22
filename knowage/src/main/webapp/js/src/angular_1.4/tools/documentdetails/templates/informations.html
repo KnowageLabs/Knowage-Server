@@ -4,6 +4,8 @@
         <md-toolbar class="secondaryToolbar">
             <div class="md-toolbar-tools" layout="row">
                 <h2>{{di.translate.load("sbi.documentdetails.informations")}}</h2>
+                <span flex></span>
+                <md-button ng-click="di.openTemplateDesigner(di.typeDocument)" ng-if="(di.typeDocument=='OLAP' || di.typeDocument=='KPI') && di.document.engine != 'knowagesvgviewerengine'">{{di.translate.load('sbi.documentdetails.opendesigner')}}</md-button>
             </div>
         </md-toolbar>
         <div layout="column " ng-if="di.template == undefined">            

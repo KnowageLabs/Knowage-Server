@@ -79,7 +79,7 @@
             <div class="md-toolbar-tools" layout="row">
                 <h2>{{translate.load("sbi.documentdetails.templates")}}</h2>
                 <span flex></span>
-                <md-button ng-click="dh.openTemplateDesigner(dh.typeDocument)" ng-if="dh.typeDocument=='OLAP' || dh.typeDocument=='KPI' || dh.document.engine != 'knowagesvgviewerengine'">Open Designer</md-button>
+                <md-button ng-click="dh.openTemplateDesigner(dh.typeDocument)" ng-if="(dh.typeDocument=='OLAP' || dh.typeDocument=='KPI') && dh.document.engine != 'knowagesvgviewerengine'">{{translate.load('sbi.documentdetails.opendesigner')}}</md-button>
             </div>
         </md-toolbar>
         

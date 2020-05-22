@@ -115,13 +115,12 @@ angular
 //    		}
 
     		self.openTemplateDesigner = function(type) {
-			$mdDialog.show({
-				controller: DialogNewTemplateController,
-				templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
-				fullscreen:true,
-				locals: {typeDocument: type}
-			}).then(function() {
-
+				$mdDialog.show({
+					controller: DialogNewTemplateController,
+					templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
+					fullscreen:true,
+					locals: {typeDocument: type}
+				}).then(function() {
 			})
 
 

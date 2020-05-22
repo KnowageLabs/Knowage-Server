@@ -18,12 +18,14 @@
 (function () {
 angular
         .module('DocumentDetails')
-        .controller('DocumentDetailsInformationsController',['$scope','$location','resourceService','DocumentService','sbiModule_translate','templateService', '$mdPanel', '$filter', 'sbiModule_config', 'sbiModule_messaging',
-        											 function($scope,$location, resourceService, DocumentService,sbiModule_translate,templateService, $mdPanel, $filter, sbiModule_config, sbiModule_messaging){
+        .controller('DocumentDetailsInformationsController',['$scope','$location','resourceService','DocumentService','sbiModule_translate','templateService', '$mdPanel', '$filter', '$mdDialog','sbiModule_config', 'sbiModule_messaging',
+        											 function($scope,$location, resourceService, DocumentService,sbiModule_translate,templateService, $mdPanel, $filter, $mdDialog, sbiModule_config, sbiModule_messaging){
 
         	 var self = this;
         	 self.documentService = DocumentService;
+        	 self.typeDocument = DocumentService.document.typeCode;
         	 self.translate = sbiModule_translate;
+        	 self.templateService = templateService;
              self.documentInfoObject =$location.search();
              var basePath = self.documentInfoObject.OBJECT_ID;
              var resourceName = self.documentService.requiredPath;
@@ -40,6 +42,7 @@ angular
              self.datasets1 = documentAndInfo.datasets;
              self.datasets =[];
              self.document = self.documentService.document;
+             self.id = self.document.id;
              self.selectedDataset = {};
 
              if(self.document.visible != false )self.document.visible = true;
@@ -283,6 +286,24 @@ angular
                	});
              }
              self.getFunctionalities(functionalitiesPath);
+             
+             self.openTemplateDesigner = function(type) {
+            	 $mdDialog.show({
+ 					controller: DialogNewTemplateController,
+ 					templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',
+ 					fullscreen:true,
+ 					locals: {typeDocument: type}
+ 				}).then(function() {
+ 				})
+             }
+             
+             function DialogNewTemplateController($scope, sbiModule_config) {
+     			if(self.templateService.listOfTemplates && self.templateService.listOfTemplates.length > 0) {
+     				$scope.iframeUrl = sbiModule_config.contextName + "/servlet/AdapterHTTP?OBJECT_ID="+self.id+"&PAGE=DocumentTemplateBuildPage&MESSAGEDET=EDIT_DOCUMENT_TEMPLATE";
+     			} else {
+     				$scope.iframeUrl = sbiModule_config.contextName + "/servlet/AdapterHTTP?OBJECT_ID="+self.id+"&PAGE=DocumentTemplateBuildPage&MESSAGEDET=NEW_DOCUMENT_TEMPLATE";
+     			}
+     		};
 
 
         }]);
