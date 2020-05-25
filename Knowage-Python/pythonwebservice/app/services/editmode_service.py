@@ -47,7 +47,7 @@ def python_html():
         python_widget.script = python_widget.script.replace("$P{" + d + "}", "drivers_.get(\'" + d + "\')")
     #retrieve dataset
     if python_widget.dataset_name != None:
-        dataset_file = "tmp/" + python_widget.dataset_name + ".pckl"
+        dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
         df = utils.getDatasetAsDataframe(python_widget)
         df.to_pickle(dataset_file)
         python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
