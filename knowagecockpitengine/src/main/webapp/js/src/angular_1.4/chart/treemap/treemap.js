@@ -1039,6 +1039,32 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
         };
     	serieColSize=24 * 36e5;
     	tooltipFormatter= function () {
+
+    		var color = chartConf.tooltip.color ? chartConf.tooltip.color : '';
+    		var align = chartConf.tooltip.align ? chartConf.tooltip.align : '';
+    		var fontFamily = chartConf.tooltip.fontFamily ? ' ' + chartConf.tooltip.fontFamily : '';
+    		var fontSize = chartConf.tooltip.fontSize ? ' ' + chartConf.tooltip.fontSize : '';
+    		var fontWeight = chartConf.tooltip.fontWeight ? ' ' + chartConf.tooltip.fontWeight : '';
+    		var tooltipFontStyle = "";
+
+    		if (fontWeight == " underline")
+    		{
+    			tooltipFontStyle = " text-decoration: underline;";
+    		}
+    		else if (fontWeight == " italic")
+    		{
+    			tooltipFontStyle = "font-style: italic;";
+    		}
+    		else if (fontWeight == " bold")
+    		{
+    			tooltipFontStyle = "font-weight: bold;";
+    		}
+    		else
+    		{
+    			tooltipFontStyle = "font-weight: normal;";
+    		}
+
+
     		var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
           	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
             var value = this.point.value;
@@ -1075,17 +1101,25 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
 
         	}
 
-    		var pointDate = Highcharts.dateFormat(dateFormat, this.point.x)
-            return '<b>'+chartConf.additionalData.serie.value+'</b><br>' + pointDate + '| ' + this.series.yAxis.categories[this.point.y] + ': <b>' +
+
+			var pointDate = Highcharts.dateFormat(dateFormat, this.point.x)
+			var result = "";
+            result +=
+    			'<div style="padding:10px;color:' + color + '; opacity: 0.9; font-family: ' + fontFamily + '; '
+    				+ tooltipFontStyle + " font-size: " + fontSize + ';text-align:' + align + ';">';
+
+            result+= '<b>'+chartConf.additionalData.serie.value+'</b><br>' + pointDate + '| ' + this.series.yAxis.categories[this.point.y] + ': <b>' +
             prefix + " " +newValue + " " + postfix + ' </b> ';
+
+            return result;
     	};
     	tooltipObject={
     		formatter:tooltipFormatter,
-            style:{
-            	color: chartConf.tooltip.style.fontColor,
-            	fontSize: chartConf.tooltip.style.fontSize,
-            	fontFamily: chartConf.tooltip.style.fontFamily
-            }
+    		useHTML: true,
+        	borderWidth: chartConf.tooltip.borderWidth,
+        	borderRadius: chartConf.tooltip.borderRadius,
+	    	backgroundColor: chartConf.tooltip.backgroundColor ? chartConf.tooltip.backgroundColor: "",
+
     	};
 
     } else {
