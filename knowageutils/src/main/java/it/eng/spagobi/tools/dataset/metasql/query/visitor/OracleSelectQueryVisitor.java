@@ -184,6 +184,9 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 				}
 				String queryTemp = queryBuilder.toString().trim();
+				queryTemp = queryTemp.replaceAll("TO_TIMESTAMP\\([^)]+\\)", "");
+				queryTemp = queryTemp.replaceAll("TO_DATE\\([^)]+\\)", "");
+
 				if (!queryTemp.isEmpty()
 						&& !(queryTemp.substring(queryTemp.length() - 1).equals(")") && queryTemp.substring(queryTemp.length() - 2).equals("))")))
 					queryBuilder.append(")");
