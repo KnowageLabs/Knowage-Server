@@ -79,6 +79,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		if(!$scope.ngModel.style) $scope.ngModel.style = cockpitModule_defaultTheme.table.style;
 		function getColumns(fields,sortedDefault) {
 			var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
+			if($scope.ngModel.cross) {
+				for(var c in $scope.ngModel.cross){
+					if($scope.ngModel.cross[c].enable) $scope.interaction = angular.copy($scope.ngModel.cross[c]);
+				}
+			}
 			var columns = [];
 
 			$scope.columnsNameArray = [];
@@ -136,7 +141,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) {
 							tempCol.tooltipValueGetter = TooltipValue;
 						}
-						if(crossEnabled && $scope.ngModel.cross.cross.crossType == 'singleColumn' && $scope.ngModel.cross.cross.column == $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow) {
+						if($scope.interaction.column == $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow && ($scope.interaction.crossType == 'singleColumn' || $scope.interaction.interactionType == 'singleColumn')) {
 							tempCol.cellClass = 'cross-cell';
 							delete tempCol.tooltipField;
 							tempCol.tooltipValueGetter = function(params) {
@@ -213,9 +218,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
-			if((crossEnabled &&  $scope.ngModel.cross.cross.crossType == "icon") || ($scope.ngModel.cross && $scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.previewType == "icon")){
+			if($scope.interaction.crossType == "icon" || $scope.interaction.previewType == "icon" || $scope.interaction.interactionType == "icon"){
 				columns.push({headerName:"",field:(crossEnabled && $scope.ngModel.cross.cross.column) || "",
-					crossIcon: (crossEnabled && $scope.ngModel.cross.cross.icon) || ($scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.icon),
+					crossIcon: $scope.interaction.icon,
 					cellRenderer:crossIconRenderer,"cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"center","border":"none"},
 					sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false});
 			}
@@ -417,7 +422,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		cellRenderer.prototype.refresh = function(params) {
 			this.eGui.parentNode.style.backgroundColor = params.colDef.style && params.colDef.style['background-color'] || 'inherit';
 			if($scope.bulkSelection){
-				if($scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'allRow'){
+				if($scope.interaction && ($scope.interaction.crossType == 'allRow' || $scope.interaction.interactionType == 'allRow')){
 					if($scope.selectedCells.indexOf(params.data[$scope.bulkSelection]) > -1) this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
 				}else if(params.colDef.field == $scope.bulkSelection && $scope.selectedCells.indexOf(params.value) > -1){
 					this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
@@ -728,20 +733,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		function onCellClicked(node){
-			var allRowEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'allRow';
-			var allRowEnabledPreview = $scope.ngModel.cross && $scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.previewType == 'allRow';
-			var iconEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable && $scope.ngModel.cross.cross.crossType == 'icon';
-			var previewIconEnabled = $scope.ngModel.cross && $scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable && $scope.ngModel.cross.preview.previewType == 'icon';
+			var interactionType = $scope.interaction && ($scope.interaction.crossType || $scope.interaction.previewType || $scope.interaction.interactionType);
 			if($scope.cliccable==false) return;
-			if(node.colDef.measure=='MEASURE' && !$scope.ngModel.settings.modalSelectionColumn && !allRowEnabled && !allRowEnabledPreview) return;
-			if(!previewIconEnabled && !iconEnabled && (node.value == "" || node.value == undefined)) return;
+			if(node.colDef.measure=='MEASURE' && !$scope.ngModel.settings.modalSelectionColumn && interactionType != 'allRow') return;
+			if(interactionType != "icon" && (node.value == "" || node.value == undefined)) return;
 			if(node.rowPinned) return;
-			if(iconEnabled && node.colDef.crossIcon) {
+			if(interactionType == "icon" && node.colDef.crossIcon) {
 				$scope.doSelection(node.colDef.field || null, null, null, null, mapRow(node.data));
 				return;
 			}
-			if ($scope.ngModel.cross && $scope.ngModel.cross.preview && $scope.ngModel.cross.preview.enable) {
-				switch ($scope.ngModel.cross.preview.previewType) {
+			if ($scope.interaction && $scope.interaction.previewType && $scope.interaction.enable) {
+				switch (interactionType) {
 				case 'allRow':
 					previewDataset(mapRow(node.data), node.colDef.headerName);
 					return;
@@ -763,12 +765,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			if($scope.ngModel.settings.multiselectable) {
 				//first check to see it the column selected is the same, if not clear the past selections
-				if(!$scope.bulkSelection || ($scope.bulkSelection!=node.colDef.field && !allRowEnabled)){
+				if(!$scope.bulkSelection || ($scope.bulkSelection!=node.colDef.field && interactionType != 'allRow')){
 					$scope.selectedCells.splice(0,$scope.selectedCells.length);
 					$scope.selectedRows.splice(0,$scope.selectedRows.length);
-					if($scope.ngModel.cross && allRowEnabled){
+					if($scope.interaction && interactionType == 'allRow'){
 						for(var f in $scope.metadata.fields){
-							if($scope.metadata.fields[f].header && $scope.metadata.fields[f].header == $scope.ngModel.cross.cross.column){
+							if($scope.metadata.fields[f].header && $scope.metadata.fields[f].header == $scope.interaction.column){
 								$scope.bulkSelection = $scope.metadata.fields[f].name;
 								break;
 							}
@@ -776,7 +778,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}else $scope.bulkSelection = node.colDef.field;
 					$scope.$apply();
 				}
-				if($scope.ngModel.cross && allRowEnabled){
+				if($scope.interaction && interactionType == 'allRow'){
 					if(($scope.selectedCells.indexOf(node.data[$scope.bulkSelection])==-1)){
 						$scope.selectedCells.push(node.data[$scope.bulkSelection]);
 						$scope.selectedRows.push(node.data);

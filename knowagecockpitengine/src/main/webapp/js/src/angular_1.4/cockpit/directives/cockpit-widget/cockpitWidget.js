@@ -793,6 +793,26 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			}).showToast();
 	}
 
+	var replacePlaceholders = function(json, row){
+		function adaptToType(value) {
+			return isNaN(value) ? '"'+value+'"' : value;
+		}
+		var jsonToReplace = json;
+		// variables
+		jsonToReplace = jsonToReplace.replace(/\$V\{([a-zA-Z0-9\_\-\.]+)\}/g, function(match,variable){
+			return adaptToType(cockpitModule_properties.VARIABLES[variable]);
+		});
+		// fields
+		jsonToReplace = jsonToReplace.replace(/\$F\{([a-zA-Z0-9\_\-\.]+)\}/g, function(match,field){
+			return adaptToType(row[field]);
+		});
+		// parameters
+		jsonToReplace = jsonToReplace.replace(/\$P\{([a-zA-Z0-9\_\-\.]+)\}/g, function(match,parameter){
+			return adaptToType(cockpitModule_analyticalDrivers[parameter]);
+		});
+		return JSON.stringify(JSON.parse(jsonToReplace));
+	}
+	
 	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic,directInteraction){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
@@ -810,6 +830,10 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		var crossSettings;
 		if($scope.ngModel.cross != undefined  && $scope.ngModel.cross.cross != undefined) crossSettings = angular.copy($scope.ngModel.cross.cross);
 		else if($scope.ngModel.cross != undefined) crossSettings = angular.copy($scope.ngModel.cross);
+		
+		var linkSettings;
+		if($scope.ngModel.cross != undefined  && $scope.ngModel.cross.link != undefined) linkSettings = angular.copy($scope.ngModel.cross.link);
+		if($scope.ngModel.content && $scope.ngModel.content.link) linkSettings = angular.copy($scope.ngModel.content.link);
 
 		if(!directInteraction || directInteraction == 'cross'){
 			if (previewSettings && previewSettings.enable) {
@@ -1009,6 +1033,44 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				}
 			}
 		}
+		if(!directInteraction || directInteraction == 'link'){
+			if(linkSettings && linkSettings.enable){
+				if(linkSettings.interactionType == 'allRow' || (linkSettings.interactionType == 'icon' && !columnName) || (linkSettings.interactionType == 'singleColumn' && linkSettings.column == columnName)){
+					var linkUrl = linkSettings.baseurl;
+					// parameters replacement
+					for(var k in linkSettings.parameters){
+						var parameter = linkSettings.parameters[k];
+						var paramValue = '';
+						if(parameter.bindType == 'static') paramValue = parameter.value;
+						if(parameter.bindType == 'dynamic') {
+							if(parameter.column && parameter.column != 'column_name_mode') paramValue = row[parameter.column];
+							else paramValue = columnName;
+						}
+						if(parameter.bindType == 'selection') {
+							var selectionsObj = cockpitModule_template.getSelections();
+							if(selectionsObj){
+								var found = false;
+								for(var i = 0; i < selectionsObj.length && found == false; i++){
+									if(selectionsObj[i].ds == parameter.dataset && selectionsObj[i].columnName == parameter.column){
+										paramValue = selectionsObj[i].value;
+										found = true;
+									}
+								}
+							}
+						}
+						if(parameter.bindType == 'json') {
+							var tempJson = replacePlaceholders(parameter.json, row);
+							paramValue = encodeURIComponent(tempJson);
+						}
+						linkUrl += (k == 0 ? "?" : "&" ) +  parameter.name + "=" + paramValue;
+					}
+					if(linkSettings.type == 'replace') window.location.href = linkUrl;
+					if(linkSettings.type == 'blank') window.open(linkUrl);
+					return;
+				}
+			}
+		}
+		
 		if(!directInteraction || directInteraction == 'selection'){
 			if(dataset && columnName){
 	

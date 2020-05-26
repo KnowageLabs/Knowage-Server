@@ -135,6 +135,33 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 	}
+	
+	$scope.addLinkParameter = function(){
+		if($scope.ngModel.link.parameters) $scope.ngModel.link.parameters.push({});
+		else $scope.ngModel.link.parameters = [{}];
+	}
+	
+	$scope.deleteLinkParameter = function(index){
+		$scope.ngModel.link.parameters.splice(index,1);
+	}
+	
+	$scope.codemirrorLoaded = function(_editor) {
+        $scope._doc = _editor.getDoc();
+        $scope._editor = _editor;
+        _editor.focus();
+        $scope._doc.markClean()
+        _editor.on("beforeChange", function() {});
+        _editor.on("change", function() {});
+    };
+
+    //codemirror options
+    $scope.editorOptionsJSON = {
+        theme: 'eclipse',
+        lineWrapping: true,
+        lineNumbers: true,
+        mode: {name:"javascript"},
+        onLoad: $scope.codemirrorLoaded
+    };
 
 	$scope.chooseIcon = function(type){
 		if($scope.iconOpened == type) $scope.iconOpened = false;
@@ -240,23 +267,12 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.crossImage = !$scope.localModel && !$scope.$parent.newModel;
 
 	$scope.toggleEnabled = function(type){
-
-		if($scope.crossTable){
-			if(type=='preview' && $scope.ngModel.cross && $scope.ngModel.cross.enable) {
-				$scope.$parent.newModel.cross.enable = $scope.ngModel.cross.enable = false;
-			}
-			if(type=='cross' && $scope.ngModel.preview && $scope.ngModel.preview.enable) {
-				$scope.$parent.newModel.preview.enable = $scope.ngModel.preview.enable = false;
-			}
-		}else{
-			if(type=='preview' && $scope.ngModel.cross && $scope.ngModel.cross.enable) {
-				$scope.localModel.cross.enable = $scope.ngModel.cross.enable = false;
-			}
-			if(type=='cross' && $scope.ngModel.preview && $scope.ngModel.preview.enable) {
-				$scope.localModel.preview.enable = $scope.ngModel.preview.enable = false;
-			}
+		var toggleArray = ['cross','preview','link'];
+		if($scope.localModel) var crossModels = $scope.localModel;
+		if($scope.$parent && $scope.$parent.newModel) var crossModels = $scope.$parent.newModel.cross;
+		for(var k in toggleArray){
+			if(toggleArray[k] != type && crossModels[toggleArray[k]]) crossModels[toggleArray[k]].enable = false;
 		}
-
 	}
 
 	$scope.$watchCollection('ngModel.preview.dataset',function(newValue,oldValue){

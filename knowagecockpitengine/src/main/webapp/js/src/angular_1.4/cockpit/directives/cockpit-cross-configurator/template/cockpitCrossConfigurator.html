@@ -5,7 +5,7 @@
 	<div layout="column" flex ng-hide="localModel && !localModel.wtype && !crossPivot && !crossText">
 	<md-card>
 		<md-subheader class="switchSubheader"><md-switch ng-model="ngModel.cross.enable" ng-change="toggleEnabled('cross')"></md-switch> {{::translate.load('kn.crossconfigurator.crossnavigation')}}</md-subheader>
-		<md-card-content >
+		<md-card-content ng-if="ngModel.cross.enable">
 			<div layout="row" layout-align="space-around center">
 			
 			<md-input-container ng-show="crossTable" class="md-block" flex>
@@ -192,7 +192,7 @@
 	
 	<md-card  ng-if="!crossImage && !crossMap && !crossPivot && !crossText">
 		<md-subheader class="switchSubheader"><md-switch ng-model="ngModel.preview.enable" ng-change="toggleEnabled('preview')"></md-switch> {{::translate.load('kn.crossconfigurator.previewnavigation')}}</md-subheader>
-		<md-card-content layout="row" layout-align="space-around center">
+		<md-card-content layout="row" layout-align="space-around center" ng-if="ngModel.preview.enable">
 			
 			<md-input-container ng-show="crossTable" class="md-block" flex>
 				<label>{{::translate.load('kn.crossconfigurator.interactiontype')}}</label>
@@ -304,6 +304,134 @@
 
           	</div>
           </md-card-content>
+	</md-card>
+	<md-card ng-if="crossTable">
+		<md-subheader class="switchSubheader"><md-switch ng-model="ngModel.link.enable" ng-change="toggleEnabled('link')"></md-switch> Link</md-subheader>
+		<md-card-content layout="row" layout-align="space-around center" ng-if="ngModel.link.enable">
+			
+			<md-input-container ng-show="crossTable" class="md-block" flex>
+				<label>{{::translate.load('kn.crossconfigurator.interactiontype')}}</label>
+				<md-select ng-model="ngModel.link.interactionType">
+					<md-option></md-option>
+					<md-option value="allRow">{{::translate.load('kn.crossconfigurator.interactiontype.wholerow')}}</md-option>
+					<md-option value="singleColumn">{{::translate.load('kn.crossconfigurator.interactiontype.singlecolumn')}}</md-option>
+					<md-option value="icon">{{::translate.load('kn.crossconfigurator.interactiontype.icon')}}</md-option>
+				</md-select>
+			</md-input-container>
+			
+			<div layout="row" flex="70" ng-if="!ngModel.link.interactionType && crossTable" layout-align="center center">
+				<div class="kn-info"  flex="60">
+					{{::translate.load('kn.crossconfigurator.interactiontype.choose')}}
+				</div>
+			</div>
+			
+			<md-input-container ng-if="ngModel.link.interactionType && ngModel.link.interactionType !='allRow' && ngModel.link.interactionType !='icon'" ng-show="crossTable" class="md-block" flex>
+				<label>{{translate.load("sbi.cockpit.cross.column")}}</label>
+				<md-select ng-model="ngModel.link.column" ng-disabled="!ngModel.link.enable">
+					<md-option></md-option>
+					<md-option ng-repeat="c in $parent.newModel.content.columnSelectedOfDataset" ng-value="c.name">{{c.name}}</md-option>
+				</md-select>
+				<div class="hint" ng-if="ngModel.link.previewType != 'singleColumn'">{{::translate.load('kn.crossconfigurator.hint.column')}}</div>
+			</md-input-container>
+			
+			<button class="md-button md-raised md-button-empty" ng-if="crossTable && ngModel.link.interactionType == 'icon'" ng-click="chooseIcon('link')" ng-disabled="!ngModel.link.enable">
+				<span ng-if="!ngModel.link.icon">{{::translate.load('kn.crossconfigurator.chooseicon')}}</span>
+				<i ng-if="ngModel.link.icon" ng-class="ngModel.link.icon"></i>
+			</button>
+			
+			<md-input-container ng-if="crossTable && ngModel.link.interactionType" class="md-block" flex>
+				<label>Base url</label>
+				<input type="text" ng-model="ngModel.link.baseurl"/>
+				<div class="hint">The url of the page that will be opened</div>
+			</md-input-container>
+			
+			<md-input-container ng-if="crossTable && ngModel.link.interactionType" class="md-block" flex>
+				<label>Link type</label>
+				<md-select ng-model="ngModel.link.type">
+					<md-option value="replace">Open in the same page</md-option>
+					<md-option value="blank">Open in new page</md-option>
+				</md-select>
+			</md-input-container>
+		</md-card-content>
+		<md-subheader class="noPadding" ng-if="ngModel.link.enable" layout="row">
+			<div layout="row" layout-align="start center" style="height:48px;padding-left:16px;width:100%;">
+				<span>Url parameters</span>
+				<span flex></span>
+				<md-button ng-click="addLinkParameter()">Add</md-button>
+			</div>
+		</md-subheader>
+		<md-card-content ng-if="ngModel.link.enable && (!ngModel.link.parameters || ngModel.link.parameters.length == 0)" layout="row" layout-align="center center">
+        	<div class="kn-info">No parameters set, the link will be opened using the baseUrl only</div>
+        </md-card-content>
+        <md-card-content ng-if="ngModel.link.enable && ngModel.link.parameters.length > 0">
+          	<div ng-repeat="parameter in ngModel.link.parameters track by $index" layout="row" layout-align="start center" layout-wrap ng-class="{'even':$even}">
+          	
+          		<md-input-container class="md-block" flex>
+					<label>Parameter key</label>
+					<input type="text" ng-model="parameter.name"/>
+				</md-input-container>
+				
+				<md-input-container class="md-block" flex>
+					<label>Parameter type</label>
+					<md-select ng-model="parameter.bindType">
+						<md-option value="static">Static</md-option>
+						<md-option value="dynamic">Dynamic</md-option>
+						<md-option value="driver">Analytical Driver</md-option>
+						<md-option value="json">JSON</md-option>
+						<md-option value="selection">Selection</md-option>
+					</md-select>
+				</md-input-container>
+				
+				<!-- value if static -->
+				<md-input-container class="md-block" ng-if="parameter.bindType == 'static'" flex>
+					<label>{{::translate.load("sbi.cockpit.cross.outputParameter.value")}}</label>
+					<input ng-model="parameter.value" type="text" />
+				</md-input-container>
+	
+				<!-- column if dynamic -->
+				<md-input-container class="md-block" ng-if="parameter.bindType == 'dynamic'" flex>
+					<label>{{::translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
+					<md-select ng-model="parameter.column" >
+						<md-option value="column_name_mode"><i>{{::translate.load('sbi.cockpit.cross.outputParameter.selectedcolumnname')}}</i></md-option>
+						<md-option ng-repeat="c in crossTableModel.content.columnSelectedOfDataset" ng-value="c.name">{{c.name}}</md-option>
+					</md-select>
+				</md-input-container>
+				
+				<!-- driver -->
+				<md-input-container ng-if="parameter.bindType == 'driver'" class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.cross.analyticaldriver")}}</label>
+					<md-select ng-model="parameter.driver">
+						<md-option></md-option>
+						<md-option ng-repeat="(key,val) in cockpitModule_analyticalDrivers" ng-value="val.url">{{val.label}}</md-option> 
+					</md-select>
+				</md-input-container>
+				
+				<!--  selection  -->
+				<md-input-container class="md-block" ng-if="parameter.bindType == 'selection'" flex>
+					<label>{{translate.load("sbi.cockpit.cross.outputParameter.dataset")}}</label>
+					<md-select ng-model="parameter.dataset" >
+						<md-option ng-repeat="c in cockpitDatasets" ng-value="c.label">{{c.label}}</md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container class="md-block" ng-if="parameter.bindType == 'selection' && parameter.dataset" flex>
+					<label>{{translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
+					<md-select ng-model="parameter.column" >
+						<md-option ng-repeat="c in allCockpitDatasetsColumns[parameter.dataset]" ng-value="c.name">{{c.name}}</md-option>
+					</md-select>
+				</md-input-container>
+				
+				<md-button class="md-icon-button" ng-click="deleteLinkParameter($index)">
+					<md-icon md-font-icon="fa fa-trash"></md-font-icon>
+				</md-button>
+				
+				<!-- JSON -->
+				<div flex="100" ng-if="parameter.bindType == 'json'" class="smallCodeMirror">
+					<textarea id="json" ui-codemirror="editorOptionsJSON" ng-model="parameter.json" ui-refresh="reloadCodemirror"></textarea>
+				</div>
+          	
+          	</div>
+		</div>
+		</md-card-content>
 	</md-card>
 	</div>
 	<ng-include src="getTemplateUrl('tableWidgetAddIconDialog')" flex="20" ng-if="crossTable && iconOpened"></ng-include>
