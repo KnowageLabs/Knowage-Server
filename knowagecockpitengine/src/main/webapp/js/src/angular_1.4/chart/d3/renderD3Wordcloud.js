@@ -589,6 +589,7 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 		layout.start();
 
 		function draw(words,e) {
+			panel.innerText = '';
 			var randomId= Math.round((Math.random())*10000);
 
 			/**
