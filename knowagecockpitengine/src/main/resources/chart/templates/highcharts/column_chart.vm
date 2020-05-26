@@ -1438,7 +1438,9 @@
 			#end
 		#end
 		{	
-			
+			label: {
+		      enabled: false
+		    },
 			#set($relatedSerieColor = false)
 			#set($relatedSerieColor = $relatedSerie.color)
 			#if($relatedSerieColor && $relatedSerieColor != '')
@@ -1755,6 +1757,9 @@
     	
     	
 		{	
+			 label: {
+			      enabled: false
+			    },
 			selected: $selectedValue,
 			initiallySelected: $selectedValue,
 			name: "$escapeTool.javascript($valueKey)",
