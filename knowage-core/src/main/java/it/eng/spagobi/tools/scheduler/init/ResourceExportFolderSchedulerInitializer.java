@@ -72,8 +72,7 @@ public class ResourceExportFolderSchedulerInitializer implements InitializerIFac
 				valueCheck = configValue.getValueCheck();
 			}
 
-//			String cronExpression = getCronExpression(valueCheck);
-			String cronExpression = "0 0/5 * * * ? *";
+			String cronExpression = getCronExpression(valueCheck);
 			schedulerDAO.deleteTrigger(DEFAULT_TRIGGER_NAME, Scheduler.DEFAULT_GROUP);
 			if (cronExpression != null) {
 				String nameTrig = DEFAULT_TRIGGER_NAME;
