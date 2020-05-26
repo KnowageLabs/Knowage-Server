@@ -210,10 +210,6 @@
 				</div>
 			</div>
 			
-			<!-- md-checkbox ng-show="crossTable" ng-model="ngModel.preview.allRow" flex ng-disabled="!ngModel.preview.enable">
-				Enable click on whole row
-			</md-checkbox-->
-			
 			<dataset-selector ng-show="ngModel.preview.previewType || crossChart || crossHtml || crossPython" flex ng-model="ngModel.preview.dataset" no-parameters="true" on-change="changePreviewDataset(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]" is-disabled="!ngModel.preview.enable"></dataset-selector>
 			
 			<md-input-container ng-if="ngModel.preview.previewType && ngModel.preview.previewType !='allRow' && ngModel.preview.previewType !='icon'" ng-show="crossTable" class="md-block" flex>
@@ -340,45 +336,46 @@
 			</button>
 			
 			<md-input-container ng-if="crossTable && ngModel.link.interactionType" class="md-block" flex>
-				<label>Base url</label>
+				<label>{{::translate.load('kn.crossconfigurator.link.baseurl')}}</label>
 				<input type="text" ng-model="ngModel.link.baseurl"/>
-				<div class="hint">The url of the page that will be opened</div>
+				<div class="hint">{{::translate.load('kn.crossconfigurator.link.baseurl.hint')}}</div>
 			</md-input-container>
 			
 			<md-input-container ng-if="crossTable && ngModel.link.interactionType" class="md-block" flex>
-				<label>Link type</label>
+				<label>{{::translate.load('kn.crossconfigurator.link.type')}}</label>
 				<md-select ng-model="ngModel.link.type">
-					<md-option value="replace">Open in the same page</md-option>
-					<md-option value="blank">Open in new page</md-option>
+					<md-option value="replace">{{::translate.load('kn.crossconfigurator.link.type.samepage')}}</md-option>
+					<md-option value="blank">{{::translate.load('kn.crossconfigurator.link.type.blank')}}</md-option>
 				</md-select>
 			</md-input-container>
 		</md-card-content>
-		<md-subheader class="noPadding" ng-if="ngModel.link.enable" layout="row">
+		<md-subheader class="noPadding buttonSubheader" ng-if="ngModel.link.enable" layout="row">
 			<div layout="row" layout-align="start center" style="height:48px;padding-left:16px;width:100%;">
-				<span>Url parameters</span>
+				<span>{{::translate.load('kn.crossconfigurator.link.urlparameters')}}</span>
 				<span flex></span>
-				<md-button ng-click="addLinkParameter()">Add</md-button>
+				<md-button ng-click="addLinkParameter()">{{::translate.load('sbi.cockpit.widget.table.summary.add')}}</md-button>
 			</div>
 		</md-subheader>
 		<md-card-content ng-if="ngModel.link.enable && (!ngModel.link.parameters || ngModel.link.parameters.length == 0)" layout="row" layout-align="center center">
-        	<div class="kn-info">No parameters set, the link will be opened using the baseUrl only</div>
+        	<div class="kn-info">{{::translate.load('kn.crossconfigurator.link.noparameters')}}</div>
         </md-card-content>
         <md-card-content ng-if="ngModel.link.enable && ngModel.link.parameters.length > 0">
           	<div ng-repeat="parameter in ngModel.link.parameters track by $index" layout="row" layout-align="start center" layout-wrap ng-class="{'even':$even}">
           	
-          		<md-input-container class="md-block" flex>
-					<label>Parameter key</label>
+          		<md-input-container class="md-block" flex="25">
+					<label>{{::translate.load('kn.crossconfigurator.link.parameter.key')}}</label>
 					<input type="text" ng-model="parameter.name"/>
 				</md-input-container>
 				
 				<md-input-container class="md-block" flex>
-					<label>Parameter type</label>
+					<label>{{::translate.load('kn.crossconfigurator.link.parameter.type')}}</label>
 					<md-select ng-model="parameter.bindType">
-						<md-option value="static">Static</md-option>
-						<md-option value="dynamic">Dynamic</md-option>
-						<md-option value="driver">Analytical Driver</md-option>
-						<md-option value="json">JSON</md-option>
-						<md-option value="selection">Selection</md-option>
+						<md-option value="static">{{::translate.load('sbi.cockpit.cross.outputParameters.type.static')}}</md-option>
+						<md-option value="dynamic">{{::translate.load('sbi.cockpit.cross.outputParameters.type.dynamic')}}</md-option>
+						<md-option value="driver">{{::translate.load('kn.crossconfigurator.link.parameter.type.analyticaldriver')}}</md-option>
+						<md-option value="json">{{::translate.load('kn.crossconfigurator.link.parameter.type.json')}}</md-option>
+						<md-option value="selection">{{::translate.load('sbi.cockpit.cross.outputParameters.type.selection')}}</md-option>
+						<md-option value="jwt">{{::translate.load('sbi.cockpit.cross.parameter.type.jwt')}}</md-option>
 					</md-select>
 				</md-input-container>
 				

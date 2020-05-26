@@ -1042,6 +1042,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						var parameter = linkSettings.parameters[k];
 						var paramValue = '';
 						if(parameter.bindType == 'static') paramValue = parameter.value;
+						if(parameter.bindType == 'driver') paramValue = cockpitModule_analyticalDrivers[parameter.driver];
+						if(parameter.bindType == 'jwt') paramValue = sbiModule_user.userUniqueIdentifier;
 						if(parameter.bindType == 'dynamic') {
 							if(parameter.column && parameter.column != 'column_name_mode') paramValue = row[parameter.column];
 							else paramValue = columnName;

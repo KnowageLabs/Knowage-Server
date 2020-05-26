@@ -1218,6 +1218,12 @@ filter-by-tags {
   }
 }
 
+.buttonSubheader {
+    ._md-subheader-inner {
+      width: 100%;
+    }
+  }
+
 .iconGallery {
   md-grid-tile {
     transition: background .3s linear;
