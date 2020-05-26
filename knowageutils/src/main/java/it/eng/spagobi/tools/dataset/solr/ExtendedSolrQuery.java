@@ -35,6 +35,7 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
@@ -52,15 +53,27 @@ public class ExtendedSolrQuery extends SolrQuery {
 
 	private static final Logger logger = Logger.getLogger(ExtendedSolrQuery.class);
 
+	private int facetLimit = -1;
+
 	public ExtendedSolrQuery(SolrQuery initialQuery) {
-		if (initialQuery.getQuery() != null)
+		if (initialQuery.getQuery() != null) {
 			setQuery(initialQuery.getQuery());
-		if (initialQuery.getFilterQueries() != null)
+		}
+		if (initialQuery.getFilterQueries() != null) {
 			setFilterQueries(initialQuery.getFilterQueries());
-		if (initialQuery.getFields() != null)
+		}
+		if (initialQuery.getFields() != null) {
 			setFields(initialQuery.getFields());
-		if (initialQuery.getSorts() != null)
+		}
+		if (initialQuery.getSorts() != null) {
 			setSorts(initialQuery.getSorts());
+		}
+
+		String facetLimitStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATASET.SOLR.FACET_LIMIT");
+		if (facetLimitStr != null) {
+			facetLimit = Integer.valueOf(facetLimitStr);
+		}
+		logger.debug("Limiting the number of buckets for facet query to " + facetLimitStr + " buckets");
 	}
 
 	public ExtendedSolrQuery filter(Filter filter) {
@@ -271,7 +284,7 @@ public class ExtendedSolrQuery extends SolrQuery {
 		JSONObject innerFacet = new JSONObject();
 		innerFacet.put("type", "terms");
 		innerFacet.put("field", field);
-		innerFacet.put("limit", 10);
+		innerFacet.put("limit", facetLimit);
 		innerFacet.put("missing", true);
 		if (jsonFacet.length() > 0) {
 			innerFacet.put("facet", jsonFacet);
