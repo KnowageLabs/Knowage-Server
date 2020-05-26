@@ -99,7 +99,6 @@
 	#*
 		Provide enough space for the "Back" button.		
 	*# 
-	marginBottom: 40,
   
 	## I think this is necessary when title and subtitle are not provided (danristo)
 	#if ($chart.TITLE.text == "" && $chart.SUBTITLE.text == "")
