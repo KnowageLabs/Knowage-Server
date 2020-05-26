@@ -61,6 +61,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
@@ -83,10 +84,6 @@ public class RestUtilities {
 	private static final String HTTP_TIMEOUT_PROPERTY = "http.timeout";
 	private static final int HTTP_TIMEOUT_DEFAULT_VALUE = 30 * 1000;
 
-	static {
-		loadHttpTimeout();
-	}
-
 	private static void loadHttpTimeout() {
 		timeout = HTTP_TIMEOUT_DEFAULT_VALUE;
 
@@ -102,6 +99,12 @@ public class RestUtilities {
 				logger.error("Unable to set HTTP timeout to value [" + timeoutProp + "]. It must be a number.", e);
 			}
 		}
+		String timeoutStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATASET.REST.TIMEOUT");
+		if (timeoutStr != null) {
+			timeout = Integer.valueOf(timeoutStr);
+			logger.debug("The SPAGOBI.DATASET.REST.TIMEOUT configuration overwrire the timeout with the value  " + timeout);
+		}
+
 	}
 
 	/**
@@ -120,15 +123,6 @@ public class RestUtilities {
 	 */
 	public static void setProxyPort(int proxyPort) {
 		RestUtilities.proxyPort = proxyPort;
-	}
-
-	/**
-	 * For testing purpose
-	 *
-	 * @param timeout
-	 */
-	public static void setTimeout(int timeout) {
-		RestUtilities.timeout = timeout;
 	}
 
 	/**
@@ -400,6 +394,7 @@ public class RestUtilities {
 
 	protected static HttpClient getHttpClient(String address) {
 		HttpClient client = new HttpClient();
+		loadHttpTimeout();
 		client.setTimeout(timeout);
 		setHttpClientProxy(client, address);
 		return client;

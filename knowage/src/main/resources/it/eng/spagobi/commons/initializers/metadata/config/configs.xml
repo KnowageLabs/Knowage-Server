@@ -595,6 +595,9 @@
 	<CONFIG label="SPAGOBI.DATASET.SOLR.FACET_LIMIT" name="SPAGOBI.DATASET.SOLR.FACET_LIMIT"
 		description="Limit the buckets count when Solr dataset execute facet query (-1 for unlimited)" isActive="true"
 		valueCheck="-1" valueType="NUM" category="SOLR_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.DATASET.REST.TIMEOUT" name="SPAGOBI.DATASET.REST.TIMEOUT"
+		description="Timeout in milliseconds of a REST call using the REST client" isActive="true"
+		valueCheck="180000" valueType="NUM" category="REST_CONFIGURATION" />
 	
 </CONFIGS>
 
