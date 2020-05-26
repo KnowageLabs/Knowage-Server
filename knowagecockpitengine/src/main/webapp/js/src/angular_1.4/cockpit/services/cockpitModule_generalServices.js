@@ -202,16 +202,14 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 
 	//get templates location
 	gs.getTemplateUrl = function(widget,template,format){
-		var basePath = sbiModule_config.host;
 		var templatesUrl = sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/cockpit/directives/cockpit-widget/widget/'+widget+'/templates/';
-  		return basePath + templatesUrl + template + (format || '.html');
-  	}
+		return window.location.origin + templatesUrl + template + (format || '.html');
+	}
 
 	//get tools location
 	gs.getToolsUrl = function(){
-		var basePath = sbiModule_config.host;
 		return sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/cockpit/tools/commons/';
-  	}
+	}
 
 	function saveCockpitController($scope, $mdDialog, sbiModule_translate, kn_regex){
 		$scope.translate = sbiModule_translate;
