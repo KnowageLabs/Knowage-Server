@@ -19,6 +19,13 @@
   }
 }
 
+.smallCodeMirror {
+  .CodeMirror {
+    min-height: 100px;
+    height: 100px;
+  }
+}
+
 .codeMirrorScriptEditor {
   pre {
     white-space: pre-wrap;
