@@ -288,8 +288,13 @@ public class JSONPathDataReader extends AbstractDataReader {
 					}
 					Assert.assertNotNull(type != null, "type!=null");
 
-					IField field = new Field(getValue(value, fm));
-					record.appendField(field);
+					try {
+						IField field = new Field(getValue(value, fm));
+						record.appendField(field);
+					} catch (Exception e) {
+						String msg = String.format("Error getting value for field %s", fm.getName());
+						throw new IllegalStateException(msg, e);
+					}
 				}
 				if (useDirectlyAttributes) {
 					manageDirectlyAttributes(o, record, dataStoreMeta, dataStore);
