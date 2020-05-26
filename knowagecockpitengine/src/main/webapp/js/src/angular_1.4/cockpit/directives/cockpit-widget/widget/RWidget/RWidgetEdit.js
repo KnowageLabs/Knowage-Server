@@ -142,8 +142,16 @@ function RWidgetEditControllerFunction(
 	};
 
 	$scope.saveConfiguration = function () {
+		if(!$scope.checkDataset()){
+            $scope.showAction($scope.translate.load('kn.cockpit.R.errordataset'));
+            return;
+        }
 		if(!$scope.checkAliases()){
             $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
+            return;
+        }
+		if(!$scope.checkEnvironment()){
+            $scope.showAction($scope.translate.load('kn.cockpit.R.errorenvironment'));
             return;
         }
 		mdPanelRef.close();
@@ -233,6 +241,16 @@ function RWidgetEditControllerFunction(
   		  var index=$scope.newModel.content.columnSelectedOfDataset.indexOf(item);
 		  $scope.newModel.content.columnSelectedOfDataset.splice(index,1);
 	  }
+
+	$scope.checkEnvironment = function(){
+        if (!$scope.newModel.pythonAddress) return false;
+        else return true;
+    }
+
+	$scope.checkDataset = function(){
+        if (!$scope.newModel.dataset || !$scope.newModel.dataset.dsId) return false;
+        else return true;
+    }
 
 	$scope.checkAliases = function(){
         var columns = $scope.newModel.content.columnSelectedOfDataset;
