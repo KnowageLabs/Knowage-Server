@@ -403,10 +403,10 @@ angular.module('chartInitializer')
 							top;
  							if (checkbox) {
 							top = translateY + titleHeight + checkbox.y +
-								(this.scrollOffset || 0) + 3;
+								(this.scrollOffset || 0) ;
 							css(checkbox, {
-								left: (alignAttr.translateX + item.checkboxOffset +
-								checkbox.x - groupW) + 'px',
+								left: (alignAttr.translateX + item.checkboxOffset -
+								checkbox.x - groupW - 24) + 'px',
 								top: top + 'px',
 								display: this.proximate || (
 									top > translateY - 6 &&
