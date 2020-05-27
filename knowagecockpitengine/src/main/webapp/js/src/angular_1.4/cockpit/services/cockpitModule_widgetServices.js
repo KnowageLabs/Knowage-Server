@@ -73,9 +73,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	}
 
 	this.items=[];
-	
+
 	this.checkForUpdatedDataset = function(modelColumns, dsId) {
-		
+
 		var dsColumns = cockpitModule_datasetServices.getDatasetById(dsId).metadata.fieldsMeta;
 		var tempColumns = [];
 		var columnsMap = {};
@@ -87,22 +87,24 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		}
 		// cycles for already preset values
 		for (var j in modelColumns) {
-			
+			if(modelColumns[j].isCalculated){
+				columnsMap[modelColumns[j].name] = modelColumns[j]
+			}
 			if (columnsMap[modelColumns[j].name]) {
 				tempColumns.push(modelColumns[j]);           // already present fields, ignores deleted ones
 				columnsNameArray.splice(columnsNameArray.indexOf(modelColumns[j].name),1);
 			}
-						
-		}		
-		
-		if (columnsNameArray.length > 0) {			
-			for (var y in columnsNameArray) {				
-				tempColumns.push(columnsMap[columnsNameArray[y]]);   // pushes values not present into model
-				
-			}			
+
 		}
-	
-		return tempColumns;		
+
+		if (columnsNameArray.length > 0) {
+			for (var y in columnsNameArray) {
+				tempColumns.push(columnsMap[columnsNameArray[y]]);   // pushes values not present into model
+
+			}
+		}
+
+		return tempColumns;
 	}
 
 	this.getAllWidgets=function(){
@@ -427,7 +429,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
                     }else{
                         var data = {};
                      	data.activeValues = wi.loadDatasetRecords(config, options, false);
-                        
+
                         $rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
                     }
                 }
