@@ -35,8 +35,10 @@ public class SimpleSelectField extends AbstractSelectField {
 	private String temporalOperand;
 	private String temporalOperandParameter;
 
+	private Class javaClass;
+
 	public SimpleSelectField(String uniqueName, String function, String alias, boolean include, boolean visible, boolean groupByField, String orderType,
-			String pattern, String temporalOperand, String temporalOperandParameter) {
+			String pattern, String temporalOperand, String temporalOperandParameter, Class javaClass) {
 
 		super(alias, ISelectField.SIMPLE_FIELD, include, visible);
 
@@ -47,10 +49,11 @@ public class SimpleSelectField extends AbstractSelectField {
 		setPattern(pattern);
 		setTemporalOperand(temporalOperand);
 		setTemporalOperandParameter(temporalOperandParameter);
+		setJavaClass(javaClass);
 	}
 
 	public SimpleSelectField(String uniqueName, String function, String alias, boolean include, boolean visible, boolean groupByField, String orderType,
-			String pattern, String temporalOperand, String temporalOperandParameter, String orderColumn) {
+			String pattern, String temporalOperand, String temporalOperandParameter, String orderColumn, Class javaClass) {
 
 		super(alias, ISelectField.SIMPLE_FIELD, include, visible);
 
@@ -70,12 +73,14 @@ public class SimpleSelectField extends AbstractSelectField {
 		setPattern(pattern);
 		setTemporalOperand(temporalOperand);
 		setTemporalOperandParameter(temporalOperandParameter);
+		setJavaClass(javaClass);
 	}
 
 	public SimpleSelectField(SimpleSelectField field) {
 
-		this(field.getUniqueName(), field.getFunction().getName(), field.getAlias(), field.isIncluded(), field.isVisible(), field.isGroupByField(), field
-				.getOrderType(), field.getPattern(), field.getTemporalOperand(), field.getTemporalOperandParameter(), field.getOrderColumn());
+		this(field.getUniqueName(), field.getFunction().getName(), field.getAlias(), field.isIncluded(), field.isVisible(), field.isGroupByField(),
+				field.getOrderType(), field.getPattern(), field.getTemporalOperand(), field.getTemporalOperandParameter(), field.getOrderColumn(),
+				field.getJavaClass());
 	}
 
 	public IAggregationFunction getFunction() {
@@ -173,6 +178,14 @@ public class SimpleSelectField extends AbstractSelectField {
 
 	private String getIdForEquals() {
 		return this.getAlias() + '|' + this.getName();
+	}
+
+	public Class getJavaClass() {
+		return javaClass;
+	}
+
+	public void setJavaClass(Class javaClass) {
+		this.javaClass = javaClass;
 	}
 
 }

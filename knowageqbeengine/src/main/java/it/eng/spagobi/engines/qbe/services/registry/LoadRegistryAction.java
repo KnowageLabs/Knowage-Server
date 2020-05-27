@@ -671,7 +671,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 							? column.getSorter().toUpperCase()
 							: null;
 
-					query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, sorter, field.getPropertyAsString("format"));
+					query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, sorter, field.getPropertyAsString("format"), null,
+							field.getJavaClass());
 					fieldNameIdMap.put(column.getField(), field.getUniqueName());
 				}
 			}

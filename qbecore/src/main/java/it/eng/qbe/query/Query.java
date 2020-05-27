@@ -254,7 +254,7 @@ public class Query implements IQuery {
 	@Override
 	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
 			String orderType, String pattern) {
-		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, null, null));
+		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, null, null, null));
 	}
 
 	/**
@@ -266,8 +266,14 @@ public class Query implements IQuery {
 	@Override
 	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
 			String orderType, String pattern, String orderColumn) {
-		selectFields
-				.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, null, null, orderColumn));
+		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, null, null,
+				orderColumn, null));
+	}
+
+	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
+			String orderType, String pattern, String orderColumn, Class javaClass) {
+		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, null, null,
+				orderColumn, javaClass));
 	}
 
 	/**
@@ -276,10 +282,10 @@ public class Query implements IQuery {
 	 *
 	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
-			String orderType, String pattern, String temporalOperand, String temporalOperandParameter) {
+	public void addSelectField(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
+			String orderType, String pattern, String temporalOperand, String temporalOperandParameter, Class javaClass) {
 		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, temporalOperand,
-				temporalOperandParameter));
+				temporalOperandParameter, javaClass));
 	}
 
 	public void addSelectFiled(SimpleSelectField timeIdField) {
@@ -367,9 +373,8 @@ public class Query implements IQuery {
 	}
 
 	/**
-	 * @param onlyIncluded
-	 *            true to return all the select fields. false to include only the select fields actually included in the select clause of the generated statemet
-	 *            (i.e it is possible for a select field to be used only in 'order by' or in 'group by' clause of the statement)
+	 * @param onlyIncluded true to return all the select fields. false to include only the select fields actually included in the select clause of the generated
+	 *                     statemet (i.e it is possible for a select field to be used only in 'order by' or in 'group by' clause of the statement)
 	 *
 	 * @return a List of all selected fields (ISelectField). All the field types are included (i.e. simple fields, calculated fields and inline calculated
 	 *         fields). Never returns null. If there are no selected fields in the query it returns an empty list.
@@ -472,9 +477,8 @@ public class Query implements IQuery {
 	/**
 	 * Returns a list of of simple select fields (no inlineCalculatedSelectField & calculatedSelectField)
 	 *
-	 * @param onlyIncluded
-	 *            if true the returned list will include only the simple select fields actually included in the select statement. All the simple select fields
-	 *            will be returned otherwise.
+	 * @param onlyIncluded if true the returned list will include only the simple select fields actually included in the select statement. All the simple select
+	 *                     fields will be returned otherwise.
 	 *
 	 * @return a list of SimpleSelectField. It never returns null. If there are not fields in select clause it will return an empty list.
 	 */
@@ -515,9 +519,8 @@ public class Query implements IQuery {
 	/**
 	 * Returns the list of inline calculated fields included in select clause (no simpleSelectField & calculatedSelectField)
 	 *
-	 * @param onlyIncluded
-	 *            if true the returned list will include only the inline calculated fields actually included in the select statement. All the inline calculated
-	 *            fields will be returned otherwise.
+	 * @param onlyIncluded if true the returned list will include only the inline calculated fields actually included in the select statement. All the inline
+	 *                     calculated fields will be returned otherwise.
 	 *
 	 * @return a list of InLineCalculatedSelectField. It never returns null. If there are not inline calculated fields in select clause it will return an empty
 	 *         list.

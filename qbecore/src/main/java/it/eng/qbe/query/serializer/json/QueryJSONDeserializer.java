@@ -213,8 +213,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 						}
 
 						// if (StringUtilities.isEmpty(temporalOperand)) {
-						query.addSelectFiled(field.getUniqueName(), funct, alias, included, visible, group.equalsIgnoreCase("true"), order, pattern,
-								temporalOperand, temporalOperandParameter);
+						query.addSelectField(field.getUniqueName(), funct, alias, included, visible, group.equalsIgnoreCase("true"), order, pattern,
+								temporalOperand, temporalOperandParameter, field.getJavaClass() != null ? field.getJavaClass() : null);
 						// }
 						// Handle temporal operands
 						// else {

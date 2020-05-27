@@ -739,8 +739,8 @@ public class TimeAggregationHandler {
 		String pattern = null;
 		String temporalOperand = null;
 		String temporalOperandParameter = null;
-		query.addSelectFiled(fieldUniqueName, function, temporalDimensionId, include, visible, groupByField, orderType,
-				pattern, temporalOperand, temporalOperandParameter);
+		query.addSelectField(fieldUniqueName, function, temporalDimensionId, include, visible, groupByField, orderType,
+				pattern, temporalOperand, temporalOperandParameter, null);
 	}
 
 	private void addYearToQuery(Query query, IModelEntity temporalDimension,
@@ -754,8 +754,8 @@ public class TimeAggregationHandler {
 		String pattern = null;
 		String temporalOperand = null;
 		String temporalOperandParameter = null;
-		query.addSelectFiled(fieldUniqueName, function, "YEAR", include, visible, groupByField, orderType, pattern,
-				temporalOperand, temporalOperandParameter);
+		query.addSelectField(fieldUniqueName, function, "YEAR", include, visible, groupByField, orderType, pattern,
+				temporalOperand, temporalOperandParameter, null);
 	}
 
 	private void addSumFunctionToAllMeasureInSelect(List<ISelectField> selectFields) {
@@ -805,8 +805,8 @@ public class TimeAggregationHandler {
 				String pattern = null;
 				String temporalOperand = null;
 				String temporalOperandParameter = null;
-				query.addSelectFiled(fieldUniqueName, null, inlineFilterType, include, visible, groupByField, orderType,
-						pattern, temporalOperand, temporalOperandParameter);
+				query.addSelectField(fieldUniqueName, null, inlineFilterType, include, visible, groupByField, orderType,
+						pattern, temporalOperand, temporalOperandParameter, null);
 
 				aliasesToBeRemovedAfterExecution.add(fieldUniqueName);
 			}

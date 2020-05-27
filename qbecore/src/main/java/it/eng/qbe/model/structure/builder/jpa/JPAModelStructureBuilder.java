@@ -69,8 +69,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	/**
 	 * Constructor
 	 *
-	 * @param dataSource
-	 *            the JPA DataSource
+	 * @param dataSource the JPA DataSource
 	 */
 	public JPAModelStructureBuilder(JPADataSource dataSource) {
 		if (dataSource == null) {
@@ -330,8 +329,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	/**
 	 * This method adds the normal fields to the model entry structure
 	 *
-	 * @param modelEntity:
-	 *            the model entity to complete adding normal fields
+	 * @param modelEntity: the model entity to complete adding normal fields
 	 *
 	 * @return a list of entities in ONE_TO_MANY relationship with the entity passed in as parameter (i.e. entities whose input entity is related to by means of
 	 *         e foreign key - MANY_TO_ONE relatioship)
@@ -402,10 +400,8 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	/**
 	 * Add an attribute to the model
 	 *
-	 * @param attr
-	 *            the attribute
-	 * @param dataMartEntity
-	 *            the parent entity
+	 * @param attr           the attribute
+	 * @param dataMartEntity the parent entity
 	 */
 	private void addField(Attribute attr, IModelEntity dataMartEntity, String keyPrefix) {
 		String n = attr.getName();
@@ -421,6 +417,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 		modelField.setType(type);
 		modelField.setPrecision(precision);
 		modelField.setLength(scale);
+		modelField.setJavaClass(c);
 		propertiesInitializer.addProperties(modelField);
 	}
 
@@ -509,8 +506,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	}
 
 	/**
-	 * @param JPADataSource
-	 *            the datasource to set
+	 * @param JPADataSource the datasource to set
 	 */
 	public void setDataSource(JPADataSource dataSource) {
 		this.dataSource = dataSource;
@@ -524,8 +520,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	}
 
 	/**
-	 * @param entityManager
-	 *            the entityManager to set
+	 * @param entityManager the entityManager to set
 	 */
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;

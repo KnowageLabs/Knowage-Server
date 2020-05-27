@@ -26,7 +26,7 @@
     	return {
     	 'responseError': function(rejection) {
     		 var sbiMsg = $injector.get('sbiModule_messaging');
-    		 var msg = sbiMsg.showErrorMessage(rejection.data.errors[0].message, 'Failure!!!');
+    		 var msg = sbiMsg.showErrorMessage(rejection.data.errors[0].message, 'Error');
     	     return $q.reject(msg);
     	  }
     	}

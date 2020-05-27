@@ -45,7 +45,11 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.IPersistenceManager;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -208,7 +212,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 					logger.debug("Column [" + attributeName + "] is a foreign key");
 					if (aRecord.get(attributeName) != null && !aRecord.get(attributeName).equals("")) {
 						logger.debug("search foreign reference for value " + aRecord.get(attributeName));
-						manageForeignKey(targetEntity, column, newObj, attributeName, aRecord, columnDepends, entityManager);
+						manageForeignKey(targetEntity, column, newObj, attributeName, aRecord, columnDepends, entityManager, registryConf.getColumns());
 					} else {
 						// no value in column, insert null
 						logger.debug("No value for " + attributeName + ": keep it null");
@@ -330,7 +334,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				if (!column.isInfoColumn()) {
 					if (column.getSubEntity() != null) {
 						logger.debug("Column [" + attributeName + "] is a foreign key");
-						manageForeignKey(targetEntity, column, obj, attributeName, aRecord, columnDepends, entityManager);
+						manageForeignKey(targetEntity, column, obj, attributeName, aRecord, columnDepends, entityManager, registryConf.getColumns());
 					} else {
 						logger.debug("Column [" + attributeName + "] is a normal column");
 						manageProperty(targetEntity, obj, attributeName, aRecord);
@@ -471,9 +475,18 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		return keyName;
 	}
 
+	private void addRecursiveDependenciesTo(LinkedHashMap filtersForRef, List<Column> columns, Column c, JSONObject aRecord) throws JSONException {
+		for (Column column : columns) {
+			if (!column.getField().equals(c.getField()) && column.getDependences() != null && column.getDependences().equals(c.getField())) {
+				addRecursiveDependenciesTo(filtersForRef, columns, column, aRecord);
+				filtersForRef.put(column.getField(), aRecord.get(column.getField()));
+			}
+		}
+	}
+
 	// case of foreign key
 	private void manageForeignKey(EntityType targetEntity, Column c, Object obj, String aKey, JSONObject aRecord, List lstDependences,
-			EntityManager entityManager) {
+			EntityManager entityManager, List<Column> columns) {
 
 		logger.debug("column " + aKey + " is a FK");
 
@@ -489,16 +502,17 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			try {
 				LinkedHashMap filtersForRef = new LinkedHashMap();
 				filtersForRef.put(c.getField(), (aRecord.get(aKey)));
-				// add dependences if they are
-				if (lstDependences != null) {
+
+				addRecursiveDependenciesTo(filtersForRef, columns, c, aRecord);
+
+				// add dependences FROM if they are
+				if (lstDependences == null || lstDependences != null) {
 					for (int i = 0; i < lstDependences.size(); i++) {
 						Column tmpDep = (Column) lstDependences.get(i);
-						if (!tmpDep.isInfoColumn() && tmpDep.getSubEntity() != null)
-							filtersForRef.put(tmpDep.getSubEntity() + "." + tmpDep.getField(), (aRecord.get(tmpDep.getField())));
-						else if (!tmpDep.isInfoColumn() && tmpDep.getSubEntity() == null)
-							filtersForRef.put(tmpDep.getField(), (aRecord.get(tmpDep.getField())));
+						addRecursiveDependenciesFrom(targetEntity, aRecord, entityType, filtersForRef, tmpDep, c, columns);
 					}
 				}
+
 				Object referenced = getReferencedObjectJPA(entityManager, entityNameNoPkgSub, filtersForRef);
 
 				Class clas = targetEntity.getJavaType();
@@ -515,6 +529,54 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		} else {
 			throw new SpagoBIRuntimeException("Property " + c.getSubEntity() + " is not a many-to-one relation");
 		}
+	}
+
+	private void addRecursiveDependenciesFrom(EntityType targetEntity, JSONObject aRecord, String entityType, LinkedHashMap filtersForRef, Column tmpDep,
+			Column c, List<Column> columns) throws JSONException {
+		if (!tmpDep.isInfoColumn() && tmpDep.getSubEntity() != null) {
+			IDataSource model = getDataSource();
+			IModelStructure structure = model.getModelStructure();
+			String targetEntityName = targetEntity.getJavaType().getName();
+			IModelField selectField = structure
+					.getField(targetEntityName + "::" + tmpDep.getSubEntity() + "(" + tmpDep.getForeignKey() + "):" + tmpDep.getField());
+			IModelEntity parentEntity = selectField.getParent();
+			logger.debug("Parent entity is " + parentEntity.getUniqueName());
+			IModelEntity rootEntity = structure.getRootEntity(parentEntity);
+			logger.debug("Relevant root entity is " + rootEntity.getUniqueName());
+			List fields = rootEntity.getAllFields();
+			Iterator it = fields.iterator();
+			String dependencyEntityId = null;
+			EntityType dependencyEntityType = null;
+			while (it.hasNext()) {
+				IModelField aField = (IModelField) it.next();
+				if (aField.getName().equals(selectField.getName())) {
+					dependencyEntityId = aField.getUniqueName();
+					break;
+				}
+			}
+
+			if (dependencyEntityId.startsWith(entityType)) {
+				dependencyEntityId = dependencyEntityId.substring(dependencyEntityId.indexOf(entityType) + entityType.length() + 1);
+			} else {
+				dependencyEntityId = tmpDep.getSubEntity() + "." + dependencyEntityId;
+			}
+
+			addRecursiveDependenciesTo(filtersForRef, columns, getColumn(columns, dependencyEntityId), aRecord);
+
+			filtersForRef.put(dependencyEntityId, aRecord.get(tmpDep.getField()));
+
+		} else if (!tmpDep.isInfoColumn() && tmpDep.getSubEntity() == null) {
+			filtersForRef.put(tmpDep.getField(), (aRecord.get(tmpDep.getField())));
+		}
+	}
+
+	private Column getColumn(List<Column> columns, String columnName) {
+		for (Column column : columns) {
+			if (column.getField().equals(columnName)) {
+				return column;
+			}
+		}
+		return null;
 	}
 
 	private void manageProperty(EntityType targetEntity, Object obj, String aKey, JSONObject aRecord) {
@@ -613,6 +675,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			SimpleDateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 			// SimpleDateFormat sdf = new
 			// SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+			if (value.equals("") || value.toLowerCase().equals("null")) {
+				return null;
+			}
 			if (!value.equals("") && !value.contains(":")) {
 				value += " 00:00:00";
 			}
@@ -629,11 +694,15 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			}
 
 		} else if (Date.class.isAssignableFrom(clazz)) {
-			// TODO manage dates
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+			if (value.equals("") || value.toLowerCase().equals("null")) {
+				return null;
+			}
+
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
 			try {
-				toReturn = sdf.parse(value);
+				toReturn = new java.sql.Date(sdf.parse(value).getTime());
 			} catch (ParseException e) {
 				logger.error("Unparsable date", e);
 			}

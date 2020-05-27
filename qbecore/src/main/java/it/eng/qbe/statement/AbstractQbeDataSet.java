@@ -93,25 +93,30 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 	protected IMetaData getDataStoreMeta(Query query) {
 		IMetaData dataStoreMeta;
-		ISelectField queryFiled;
+		ISelectField queryField;
 		FieldMetadata dataStoreFieldMeta;
 
 		Map<String, String> aliasSelectedFields = QueryJSONSerializer.getFieldsNature(query, statement.getDataSource());
-
 		dataStoreMeta = new MetaData();
 
 		Iterator fieldsIterator = query.getSelectFields(true).iterator();
 		while (fieldsIterator.hasNext()) {
-			queryFiled = (ISelectField) fieldsIterator.next();
+			queryField = (ISelectField) fieldsIterator.next();
 
 			dataStoreFieldMeta = new FieldMetadata();
-			dataStoreFieldMeta.setAlias(queryFiled.getAlias());
-			if (queryFiled.isSimpleField()) {
-				SimpleSelectField dataMartSelectField = (SimpleSelectField) queryFiled;
-				dataStoreFieldMeta.setName(((SimpleSelectField) queryFiled).getAlias());
+			dataStoreFieldMeta.setAlias(queryField.getAlias());
+			if (queryField.isSimpleField()) {
+				SimpleSelectField dataMartSelectField = (SimpleSelectField) queryField;
+				dataStoreFieldMeta.setName(((SimpleSelectField) queryField).getAlias());
 				dataStoreFieldMeta.setProperty("calculated", new Boolean(false));
 				dataStoreFieldMeta.setProperty("uniqueName", dataMartSelectField.getUniqueName());
-				dataStoreFieldMeta.setType(Object.class);
+
+				if (dataMartSelectField.getFunction().getName().equals("NONE") && dataMartSelectField.getJavaClass() != null) {
+					dataStoreFieldMeta.setType(dataMartSelectField.getJavaClass());
+				} else {
+					dataStoreFieldMeta.setType(Object.class);
+				}
+
 				String format = dataMartSelectField.getPattern();
 				if (format != null && !format.trim().equals("")) {
 					dataStoreFieldMeta.setProperty("format", format);
@@ -136,34 +141,34 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 					dataStoreFieldMeta.setFieldType(FieldType.ATTRIBUTE);
 				}
 
-			} else if (queryFiled.isCalculatedField()) {
-				CalculatedSelectField claculatedQueryField = (CalculatedSelectField) queryFiled;
-				dataStoreFieldMeta.setName(claculatedQueryField.getAlias());
+			} else if (queryField.isCalculatedField()) {
+				CalculatedSelectField calculatedQueryField = (CalculatedSelectField) queryField;
+				dataStoreFieldMeta.setName(calculatedQueryField.getAlias());
 				dataStoreFieldMeta.setProperty("calculated", new Boolean(true));
 				dataStoreFieldMeta.setProperty("calculatedExpert", new Boolean(true));
 				// FIXME also calculated field must have uniquename for
 				// uniformity
-				dataStoreFieldMeta.setProperty("uniqueName", claculatedQueryField.getAlias());
-				DataSetVariable variable = new DataSetVariable(claculatedQueryField.getAlias(), claculatedQueryField.getType(),
-						claculatedQueryField.getExpression());
+				dataStoreFieldMeta.setProperty("uniqueName", calculatedQueryField.getAlias());
+				DataSetVariable variable = new DataSetVariable(calculatedQueryField.getAlias(), calculatedQueryField.getType(),
+						calculatedQueryField.getExpression());
 				dataStoreFieldMeta.setProperty("variable", variable);
 				dataStoreFieldMeta.setType(variable.getTypeClass());
 
-			} else if (queryFiled.isInLineCalculatedField()) {
-				InLineCalculatedSelectField claculatedQueryField = (InLineCalculatedSelectField) queryFiled;
-				dataStoreFieldMeta.setName(claculatedQueryField.getAlias());
+			} else if (queryField.isInLineCalculatedField()) {
+				InLineCalculatedSelectField calculatedQueryField = (InLineCalculatedSelectField) queryField;
+				dataStoreFieldMeta.setName(calculatedQueryField.getAlias());
 				dataStoreFieldMeta.setProperty("calculated", new Boolean(false));
 				// FIXME also calculated field must have uniquename for
 				// uniformity
-				dataStoreFieldMeta.setProperty("uniqueName", claculatedQueryField.getAlias());
-				DataSetVariable variable = new DataSetVariable(claculatedQueryField.getAlias(), claculatedQueryField.getType(),
-						claculatedQueryField.getExpression());
+				dataStoreFieldMeta.setProperty("uniqueName", calculatedQueryField.getAlias());
+				DataSetVariable variable = new DataSetVariable(calculatedQueryField.getAlias(), calculatedQueryField.getType(),
+						calculatedQueryField.getExpression());
 				dataStoreFieldMeta.setProperty("variable", variable);
 				dataStoreFieldMeta.setType(variable.getTypeClass());
 
-				String nature = queryFiled.getNature();
+				String nature = queryField.getNature();
 				if (nature == null) {
-					nature = QueryJSONSerializer.getInLinecalculatedFieldNature(claculatedQueryField.getExpression(), aliasSelectedFields);
+					nature = QueryJSONSerializer.getInLinecalculatedFieldNature(calculatedQueryField.getExpression(), aliasSelectedFields);
 				}
 				dataStoreFieldMeta.setProperty("nature", nature);
 				if (nature.equalsIgnoreCase(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE)
@@ -173,7 +178,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 					dataStoreFieldMeta.setFieldType(FieldType.ATTRIBUTE);
 				}
 			}
-			dataStoreFieldMeta.setProperty("visible", new Boolean(queryFiled.isVisible()));
+			dataStoreFieldMeta.setProperty("visible", new Boolean(queryField.isVisible()));
 
 			dataStoreMeta.addFiedMeta(dataStoreFieldMeta);
 		}

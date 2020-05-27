@@ -401,20 +401,35 @@
 					 }, function(result){
 						 $scope.stopShow = result;
 					 });
+        		$scope.emptyDependentColumns($scope.dependentColumns);
         	}
         };
-
+        
         var fillDependencyColumns = function(column) {
         	for(var i = 0; i < $scope.columns.length; i++) {
         		var col = $scope.columns[i];
         		if(col.dependsFrom === column.field) {
-        			var dependent = col.title;
+        			var dependent = [];
+        			dependent.title = col.title;
+        			dependent.field = col.field;
         			$scope.dependentColumns.push(dependent);
+        			fillDependencyColumns(col);
         		}
         	}
+        	
         };
 
         var createDialog = function(dependentColumns) {
+        	$scope.joinedFields = "";
+        	var i = 0;
+        	for (var k in $scope.dependentColumns) {
+        		if (i > 0)
+        			$scope.joinedFields += ", ";
+        		
+        		$scope.joinedFields += $scope.dependentColumns[k].title
+        		i++;
+        	}
+        	
         	$scope.confirm = $mdDialog.prompt(
         			{
     					controller: DialogController,
@@ -422,7 +437,7 @@
     					templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/registry/dependentColumnsDialog.tpl.html',
     					locals: {
     						dontShowAgain: $scope.stopShow,
-    						columns: $scope.dependentColumns
+    						columns: $scope.joinedFields
     					},
     					targetEvent: event,
     				    clickOutsideToClose: false,
@@ -430,8 +445,24 @@
     				    fullscreen: true
         			}
         	);
+        	
         };
-
+        
+        $scope.emptyDependentColumns = function (dependentColumns) {
+        	
+        	for (var i = 0; i < $scope.selectedRow.length; i++) {
+        		
+				for(var property in $scope.selectedRow[i]) {
+					
+		        	for (var k in dependentColumns) {
+		        		if (angular.equals(dependentColumns[k].field, property)) {
+		        			$scope.selectedRow[i][property] = '';
+		        		}
+		        	}
+				}
+			}
+        }
+        
         function DialogController($scope, $mdDialog, dontShowAgain, columns, sbiModule_translate) {
         	 $scope.dontShowAgain = dontShowAgain;
         	 $scope.dependentColumns = columns;
