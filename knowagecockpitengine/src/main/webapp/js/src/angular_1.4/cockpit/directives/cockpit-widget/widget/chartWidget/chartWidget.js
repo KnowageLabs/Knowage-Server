@@ -121,7 +121,7 @@ function cockpitChartWidgetControllerFunction(
 	$scope.isIE = window.document.documentMode;
 	$scope.model = $scope.ngModel;
 	$scope.local = {};
-	
+
     if($scope.model.dataset != undefined && $scope.model.dataset.dsId !=-1 && !$scope.model.content.columnSelectedOfDatasetAggregations ){
 			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.local);
 			$scope.model.content.columnSelectedOfDatasetAggregations  = [];
@@ -1354,7 +1354,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 
 				aggregations.push(obj);
 
-				if((chartsForGrouping.indexOf(chartTemplate.CHART.type.toLowerCase() )>-1) && ( chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!=""){
+				if(chartTemplate.CHART.type.toLowerCase()=="bubble" || (chartsForGrouping.indexOf(chartTemplate.CHART.type.toLowerCase() )>-1) && ( chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries || chartTemplate.CHART.groupSeriesCateg) && chartCategory.groupby!=""){
 					var subs = "";
 					if (chartCategory.groupby.indexOf(',') == -1) {
 						subs = chartCategory.groupby
