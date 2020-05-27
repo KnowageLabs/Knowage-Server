@@ -684,6 +684,7 @@ function renderChordChart(jsonData,panel,handleCockpitSelection,locale,handleCro
 			.text(jsonData.emptymessage.text);
 	}
 	else {
+	panel.innerText = '';
 	d3.select(panel)
 		.append("form").attr("id","export-chart-form").style("margin","0px")
 		.append("input").attr("type","hidden").attr("name","options")

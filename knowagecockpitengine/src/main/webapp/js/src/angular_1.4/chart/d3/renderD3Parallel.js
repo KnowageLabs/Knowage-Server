@@ -9,7 +9,7 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 	var records = data.data[0];
 	var chartEngineSharedSettings = chartEngineSettings;
 	if(records.length>0){
-
+		panel.innerText = '';
 		if (records.length>data.limit.maxNumberOfLines){
 
 			var limitcolumn = data.limit.serieFilterColumn;
