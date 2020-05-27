@@ -465,8 +465,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 		minMaxCategoriesSeries.categ.min.parallel = 1;
 		minMaxCategoriesSeries.categ.min.sunburst = 2;
-		minMaxCategoriesSeries.categ.min.scatter = 1;
-		minMaxCategoriesSeries.categ.max.scatter = 1;
 		minMaxCategoriesSeries.categ.min.treemap = 2;
 		minMaxCategoriesSeries.categ.min.wordcloud = 1;
 		minMaxCategoriesSeries.categ.max.wordcloud = 1;
@@ -475,13 +473,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		minMaxCategoriesSeries.categ.max.heatmap = 2;
 		minMaxCategoriesSeries.categ.min.radar = 1;
 		minMaxCategoriesSeries.categ.min.bar = 1;
-		minMaxCategoriesSeries.categ.max.bubble = 1;
-		minMaxCategoriesSeries.categ.min.bubble = 1;
 		minMaxCategoriesSeries.categ.min.pie = 1;
 
 		minMaxCategoriesSeries.serie.min.parallel = 2;
 		minMaxCategoriesSeries.serie.min.sunburst = 1;
-		minMaxCategoriesSeries.serie.min.scatter = 1;
 		minMaxCategoriesSeries.serie.min.treemap = 1;
 		minMaxCategoriesSeries.serie.max.treemap = 1;
 		minMaxCategoriesSeries.serie.min.wordcloud = 1;
@@ -491,7 +486,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		minMaxCategoriesSeries.serie.max.heatmap = 1;
 		minMaxCategoriesSeries.serie.min.radar = 1;
 		minMaxCategoriesSeries.serie.min.bar = 1;
-		minMaxCategoriesSeries.serie.min.bubble = 1;
 		minMaxCategoriesSeries.serie.min.pie = 1;
 
 		return minMaxCategoriesSeries;
