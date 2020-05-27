@@ -61,7 +61,7 @@
 
 			if (!localFeature.get('isSimpleMarker')){
 				var fillColor   = (configMarker.style && configMarker.style.color)       ? configMarker.style.color       : "grey";
-				var borderColor = (configMarker.style && configMarker.style.borderColor) ? configMarker.style.borderColor : "black";
+				var borderColor = (configMarker.style && configMarker.style.borderColor) ? configMarker.style.borderColor : "rgba(0,0,0,0.0)";
 
 				if (props[mts.getActiveIndicator()]
 						&& props[mts.getActiveIndicator()].thresholdsConfig
