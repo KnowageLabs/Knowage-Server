@@ -95,8 +95,8 @@ public class JDBCDataProxy extends AbstractDataProxy {
 
 		try {
 
-			Monitor timeToGetConnection = MonitorFactory.start("Knowage.JDBCDataProxy.getJDBCConnection");
-			logger.debug("Retieving JDBC connection...");
+			Monitor timeToGetConnection = MonitorFactory.start("Knowage.JDBCDataProxy.gettingJDBCConnection");
+			logger.debug("Retrieving JDBC connection...");
 			try {
 				connection = getDataSource().getConnection();
 			} catch (Exception t) {
