@@ -1017,6 +1017,11 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 											found = true;
 										}
 									}
+									if (!found){
+										var objToAdd = {};
+										objToAdd[par] = '';
+										otherOutputParameters.push(objToAdd);
+									} 
 								}
 							}
 						}
