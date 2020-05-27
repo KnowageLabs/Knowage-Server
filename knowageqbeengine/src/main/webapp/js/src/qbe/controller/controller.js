@@ -231,14 +231,13 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		if(query.fields.length>0){
 			queryModel.length = 0;
      		for (var i = 0; i < query.fields.length; i++) {
-     			var key = "column_"+(i+1);
      			var queryObject = {
          		    	"id":query.fields[i].id,
+         		    	"key": "column_" + (i+1),
          		    	"name":query.fields[i].field,
          		    	"alias":query.fields[i].alias,
          		    	"entity":query.fields[i].entity,
          		    	"color":query.fields[i].color,
-         		    	"data":[],
          		    	"type":query.fields[i].type,
          		    	"funct":query.fields[i].funct,
          		    	"fieldType" : query.fields[i].fieldType,

@@ -77,6 +77,88 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	$scope.previewModel = [];
 
+	$scope.qbeTableGrid = {
+		angularCompileRows: true,
+		pagination : false,
+		domLayout:'autoHeight',
+		rowHeight: 20,
+		defaultColDef: {
+			resizable: true
+		},
+		components: {
+			agColumnHeader: CustomHeader
+		}
+	}
+
+	function CustomHeader() {}
+	CustomHeader.prototype.init = function(params) {
+
+		this.params = params;
+		this.properties = params.column.colDef.properties;
+
+		this.eGui = document.createElement("div");
+		this.eGui.innerHTML = '<div class="qbeCustomTopColor" style="background-color: ' + this.properties.color + '"></div>' +
+			'<md-icon class="fa fa-sort sort-button"></md-icon>' +
+			'<span>' + params.displayName + '</span>' +
+			'<md-icon class="fa fa-times remove-button"></md-icon>';
+
+		this.onRemoveButtonClick = this.removeColumn.bind(this);
+		this.onSortButtonClick = this.sortColumn.bind(this);
+
+		this.removeButton = this.eGui.querySelector(".remove-button");
+		this.removeButton.addEventListener("click", this.onRemoveButtonClick);
+
+		this.sortButton = this.eGui.querySelector(".sort-button");
+		this.sortButton.addEventListener("click", this.onSortButtonClick);
+
+
+	}
+	CustomHeader.prototype.getGui = function() {
+		return this.eGui;
+	}
+	CustomHeader.prototype.removeColumn = function() {
+		$scope.removeColumns([{"id" : this.properties.id,"entity" : this.properties.entity }]);
+	}
+	CustomHeader.prototype.sortColumn = function() {
+		var realColumn = $scope.getColumnById(this.properties.id)
+		$scope.toggleOrder(realColumn);
+	}
+
+	function getAgGridColumns() {
+		return $scope.ngModel
+			.map(function(el) {
+				return {
+					"field":        el.key,
+					"headerName":   el.alias,
+					"properties": {
+						"entity": el.entity,
+						"id":     el.id,
+						"color":  el.color
+					}
+				};
+			});
+	}
+
+	$scope.getColumnById = function(id) {
+		return $scope.ngModel
+			.find(function(el) {
+				return el.id == id;
+			})
+	}
+
+	$scope.updateQbeTableGridColDef = function() {
+		$scope.qbeTableGrid.api.setColumnDefs(getAgGridColumns());
+	}
+
+	$scope.updateQbeTableGridData = function() {
+		$scope.qbeTableGrid.api.setRowData($scope.previewModel);
+	}
+
+	$scope.updateQbeTable = function() {
+		$scope.updateQbeTableGridColDef();
+		$scope.updateQbeTableGridData();
+	}
+
 	// PAGINATION METHODS
 	$scope.pageChanged = function(newPageNumber){
 		$rootScope.$broadcast('start',{"itemsPerPage":$scope.itemsPerPage, "currentPageNumber":newPageNumber});
@@ -237,6 +319,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			toRemove.push({"id" : fields[i].id,"entity" : fields[i].entity
 			})
 		}
+		$scope.updateQbeTable();
 		$rootScope.$emit('removeColumns', toRemove);
 	};
 
@@ -277,6 +360,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			$scope.openPreviewTemplate(true, $scope.completeResultsColumns, $scope.previewModel, data.results);
 			$scope.firstExecution = false;
 		}
+		$scope.updateQbeTable();
 	});
 
 	$scope.$on('start', function (event, data) {

@@ -31,14 +31,13 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 
      		for (var i = 0; i < query.fields.length; i++) {
 
-
          			var queryObject = {
              		    	"id":query.fields[i].id,
+             		    	"key": "column_" + (i+1),
              		    	"name":query.fields[i].field,
              		    	"alias":query.fields[i].alias,
              		    	"entity":query.fields[i].entity,
              		    	"color":query.fields[i].color,
-             		    	"data":getRows(query.fields[i].alias,response.data),
              		    	"funct":query.fields[i].funct,
         					"fieldType" : query.fields[i].fieldType,
         					"dataType": query.fields[i].dataType,
