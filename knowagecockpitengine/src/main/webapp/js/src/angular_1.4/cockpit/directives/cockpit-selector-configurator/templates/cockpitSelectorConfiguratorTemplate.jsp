@@ -63,31 +63,31 @@
 			</div>
 			
 		    <div layout="row" style="padding:8px;">
-		    	<md-input-container class="md-block" flex ng-if="!isSelectedColumnTemporal()">
-					<label>{{::translate.load("sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.select.default.value")}}</label>
-					<md-select  ng-model="model.settings.defaultValue">
-						<md-option></md-option>
-						<md-option ng-repeat="v in defaultValues" value="{{v.value}}">{{v.name}} </md-option>
-					</md-select>
-			    </md-input-container>
-			    <md-input-container class="md-block" flex ng-if="model.settings.modalityView == 'grid'">
-					<label>{{::translate.load('kn.cockpit.selector.designer.columnsWidth')}}</label>
-					<input ng-model="model.settings.gridColumnsWidth" />
-						
-			    </md-input-container>
-			    <md-input-container class="md-block" ng-if="model.settings.defaultValue=='STATIC' && !isSelectedColumnTemporal()">
-					<label>{{::translate.load("sbi.cockpit.core.selections.list.columnValues")}}</label>
-					<input ng-model="model.settings.staticValues" />
-				</md-input-container>
-			    <md-checkbox ng-model="model.settings.wrapText" flex="20" layout-align="start center" layout="row">
-	            	{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.wraptext')}}
-	         	</md-checkbox>
-	         	<md-checkbox ng-model="model.settings.hideDisabled" flex="20" layout-align="start center" layout="row">
-	            	{{::translate.load('kn.cockpit.selector.designer.hideDisabled')}}
-	         	</md-checkbox>
-	         	 <md-checkbox ng-disabled="model.settings.hideDisabled" ng-model="model.settings.enableAll" flex="20" layout-align="start center" layout="row">
-	            	{{::translate.load('kn.cockpit.selector.designer.enableAll')}}
-	         	</md-checkbox>
+			    	<md-input-container class="md-block" flex ng-if="!isSelectedColumnTemporal()">
+						<label>{{::translate.load("sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.select.default.value")}}</label>
+						<md-select  ng-model="model.settings.defaultValue">
+							<md-option></md-option>
+							<md-option ng-repeat="v in defaultValues" value="{{v.value}}">{{v.name}} </md-option>
+						</md-select>
+				    </md-input-container>
+				    <md-input-container class="md-block" flex ng-if="model.settings.modalityView == 'grid'">
+						<label>{{::translate.load('kn.cockpit.selector.designer.columnsWidth')}}</label>
+						<input ng-model="model.settings.gridColumnsWidth" />
+							
+				    </md-input-container>
+				    <md-input-container class="md-block" ng-if="model.settings.defaultValue=='STATIC' && !isSelectedColumnTemporal()">
+						<label>{{::translate.load("sbi.cockpit.core.selections.list.columnValues")}}</label>
+						<input ng-model="model.settings.staticValues" ng-required="model.settings.defaultValue=='STATIC'"/>
+					</md-input-container>
+				    <md-checkbox ng-model="model.settings.wrapText" flex="20" layout-align="start center" layout="row">
+		            	{{::translate.load('sbi.cockpit.widgets.selector.selectordesignerpanel.selectoroptions.wraptext')}}
+		         	</md-checkbox>
+		         	<md-checkbox ng-model="model.settings.hideDisabled" flex="20" layout-align="start center" layout="row">
+		            	{{::translate.load('kn.cockpit.selector.designer.hideDisabled')}}
+		         	</md-checkbox>
+		         	 <md-checkbox ng-disabled="model.settings.hideDisabled" ng-model="model.settings.enableAll" flex="20" layout-align="start center" layout="row">
+		            	{{::translate.load('kn.cockpit.selector.designer.enableAll')}}
+		         	</md-checkbox>
 		    </div>
 			
 	    </md-card-content>

@@ -464,7 +464,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						applyDefaultValues = true;
 						break;
 					case 'STATIC':
-						$scope.defaultValues = $scope.ngModel.settings.staticValues.split(",");
+						if($scope.ngModel.settings.staticValues) $scope.defaultValues = $scope.ngModel.settings.staticValues.split(",");
+						else $scope.defaultValues.push('');
 						applyDefaultValues = true;
 						break;
 					}
@@ -788,6 +789,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			if($scope.model.content.selectedColumn == undefined || $scope.model.content.selectedColumn.length==0){
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
+				return;
+			}
+			
+			if($scope.model.settings.defaultValue=='STATIC' && !$scope.model.settings.staticValues){
+				$scope.showAction($scope.translate.load('sbi.cockpit.table.nodefault'));
 				return;
 			}
 

@@ -218,7 +218,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
-			if($scope.interaction.crossType == "icon" || $scope.interaction.previewType == "icon" || $scope.interaction.interactionType == "icon"){
+			if($scope.interaction && ($scope.interaction.crossType == "icon" || $scope.interaction.previewType == "icon" || $scope.interaction.interactionType == "icon")){
 				columns.push({headerName:"",field:(crossEnabled && $scope.ngModel.cross.cross.column) || "",
 					crossIcon: $scope.interaction.icon,
 					cellRenderer:crossIconRenderer,"cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"center","border":"none"},
