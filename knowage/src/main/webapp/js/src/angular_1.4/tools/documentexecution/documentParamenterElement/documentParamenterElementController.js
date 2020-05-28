@@ -556,8 +556,25 @@
 				            		return params.value;
 				                },
 				            },
-				            columnDefs: paramDialogCtrl.columns
+				            columnDefs: paramDialogCtrl.columns,
+				            postSort: postSort
 						}
+
+						function postSort(nodes){
+
+						    function move(toIndex, fromIndex) {
+						    	nodes.splice(toIndex, 0, nodes.splice(fromIndex, 1)[0]);
+						    }
+
+						    var nextInsertPos = 0;
+						    for (var i = 0; i < nodes.length; i++) {
+						        if (nodes[i].selected) {
+						            move(nextInsertPos, i)
+						            nextInsertPos++;
+						        }
+						    }
+						}
+
 
 						paramDialogCtrl.filterDataset = function(){
 							paramDialogCtrl.lookoutGridOptions.api.setQuickFilter(paramDialogCtrl.paramSearchText);
@@ -598,7 +615,9 @@
 									paramDialogCtrl.lookoutGridOptions.api.setRowData(response.data.result.root);
 									if(parameter.parameterValue && parameter.parameterValue.length>0){
 										paramDialogCtrl.lookoutGridOptions.api.forEachNode( function(rowNode, index) {
-											if(parameter.parameterValue.indexOf(rowNode.data.value) > -1 ) rowNode.setSelected(true);
+											if(paramDialogCtrl.initSelectedTableItems() == rowNode.data) {
+												rowNode.setSelected(true);
+											}
 										});
 									}
 									paramDialogCtrl.lookoutGridOptions.api.refreshClientSideRowModel('sort');
