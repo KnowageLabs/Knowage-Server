@@ -660,7 +660,7 @@
 				 readData($scope.formParams);
 			};
 			$scope.last = function() {
-				 $scope.page= $scope.getTotalPages.length + 1;
+				 $scope.page= $scope.getTotalPages.length;
 				 $scope.formParams = pagination.previous($scope.page,$scope.formParams,$scope.configuration.itemsPerPage,$scope.filters);
 				 readData($scope.formParams);
 			};
