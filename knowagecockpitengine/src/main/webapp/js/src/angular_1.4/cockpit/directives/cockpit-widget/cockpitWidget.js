@@ -837,8 +837,9 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 		if(!directInteraction || directInteraction == 'cross'){
 			if (previewSettings && previewSettings.enable) {
-				if((previewSettings.previewType != 'singleColumn' || (previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName)) &&
-					(previewSettings.previewType != 'icon' || (previewSettings.previewType == 'icon' && columnName == ""))){
+				if(previewSettings.previewType == 'allRow' || 
+				(previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName) || 
+				(previewSettings.previewType == 'icon' && (!columnName || columnName == ""))){
 					$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
 	
 					var previewDataset = cockpitModule_datasetServices.getDatasetById(previewSettings.dataset);
