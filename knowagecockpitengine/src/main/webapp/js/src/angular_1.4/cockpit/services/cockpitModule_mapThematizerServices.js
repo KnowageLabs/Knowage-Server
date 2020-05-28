@@ -61,12 +61,12 @@
 
 			if (!localFeature.get('isSimpleMarker')){
 				var fillColor   = (configMarker.style && configMarker.style.color)       ? configMarker.style.color       : "grey";
-				var borderColor = (configMarker.style && configMarker.style.borderColor) ? configMarker.style.borderColor : "rgba(0,0,0,0.0)";
+				var borderColor = (configMarker.style && configMarker.style.borderColor) ? configMarker.style.borderColor : undefined;
 
 				if (props[mts.getActiveIndicator()]
 						&& props[mts.getActiveIndicator()].thresholdsConfig
 						&& props[mts.getActiveIndicator()].thresholdsConfig.length != 0) {
-					fillColor = mts.getColorByThresholds(value, props);
+					fillColor = mts.getColorByThresholds(value, props) || fillColor;
 				}
 				style = mts.getChoroplethStyles(value, parentLayer, fillColor, borderColor);
 				thematized = true;
@@ -210,7 +210,7 @@
 
 			return  [new ol.style.Style({
 				stroke: new ol.style.Stroke({
-					color: borderColor,
+					color: borderColor || color,
 					width: 2
 				}),
 				fill: new ol.style.Fill({
@@ -315,7 +315,7 @@
 
 		mts.getColorByThresholds = function(value, props){
 			var config = props[mts.getActiveIndicator()].thresholdsConfig;
-			var toReturn = null;
+			var toReturn = undefined;
 			var isEqualOp = false;
 
 			for (c in config){
