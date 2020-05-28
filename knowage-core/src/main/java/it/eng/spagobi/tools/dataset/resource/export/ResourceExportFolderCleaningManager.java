@@ -9,17 +9,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.api.v2.export.ExportPathBuilder;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
 public class ResourceExportFolderCleaningManager {
 
@@ -36,40 +33,32 @@ public class ResourceExportFolderCleaningManager {
 	private Double cleaningPrecentage = DEFAULT_CLEANING_PERCENTAGE;
 	private List<String> allowedFilesNames = new ArrayList<String>();
 
+	public void executeCleaning(String resourceExportPath, Long maxResourceFolderSize, Double cleaningPrecentage) throws Exception {
+		this.resourceExportPath = resourceExportPath;
+		this.maxResourceFolderSize = maxResourceFolderSize;
+		this.cleaningPrecentage = cleaningPrecentage;
+
+		executeCleaning(false);
+	}
+
 	public void executeCleaning() throws Exception {
+		executeCleaning(true);
+	}
+
+	public void executeCleaning(boolean readPropertiesFromConfig) throws Exception {
 		logger.debug("IN - executeCleaning");
 
 		init();
 
-		IConfigDAO sbiConfigDAO = DAOFactory.getSbiConfigDAO();
-
-		resourceExportPath = getExportTempFolderPath();
+		if (readPropertiesFromConfig)
+			resourceExportPath = getExportTempFolderPath();
 
 		if (resourceExportPath != null && new File(resourceExportPath).exists()) {
 
-			Config configValue = sbiConfigDAO.loadConfigParametersByLabel(RESOURCE_EXPORT_FOLDER_SCHED_FULL_CLEAN_MAX_FOLDER_SIZE);
-			if (configValue != null && configValue.isActive()) {
+			if (readPropertiesFromConfig) {
+				setMaxResourceFolderSize();
 
-				Long tmpMaxResourceFolderSize = Long.valueOf(configValue.getValueCheck());
-				if (tmpMaxResourceFolderSize < 0)
-					throw new RuntimeException(String.format("maxResourceFolderSize [%s] not valid", tmpMaxResourceFolderSize));
-
-				maxResourceFolderSize = tmpMaxResourceFolderSize;
-				logger.debug("Set maxResourceFolderSize parameter with value " + maxResourceFolderSize);
-			} else {
-				logger.debug("Set maxResourceFolderSize parameter with DEFAULT value " + maxResourceFolderSize);
-			}
-
-			configValue = sbiConfigDAO.loadConfigParametersByLabel(RESOURCE_EXPORT_FOLDER_SCHED_FULL_CLEAN_CLEANING_PERCENTAGE);
-			if (configValue != null && configValue.isActive()) {
-				Double tmpPercentage = Double.valueOf(configValue.getValueCheck());
-				if (tmpPercentage < 0)
-					throw new RuntimeException(String.format("cleaningPercentage [%s] not valid", tmpPercentage));
-
-				cleaningPrecentage = tmpPercentage;
-				logger.debug("Set cleaningPrecentage parameter with value " + cleaningPrecentage);
-			} else {
-				logger.debug("Set cleaningPrecentage parameter with DEFAULT value " + cleaningPrecentage);
+				setCleaningPrecentage();
 			}
 
 			File fileResourceExport = new File(resourceExportPath);
@@ -85,11 +74,42 @@ public class ResourceExportFolderCleaningManager {
 			}
 		} else {
 			String message = "resourceExportPath does not exists";
-			logger.error(message);
-			throw new RuntimeException(message);
+			logger.info(message);
 		}
 
 		logger.debug("OUT - executeCleaning");
+	}
+
+	private void setCleaningPrecentage() throws Exception {
+		IConfigDAO sbiConfigDAO = DAOFactory.getSbiConfigDAO();
+		Config configValue;
+		configValue = sbiConfigDAO.loadConfigParametersByLabel(RESOURCE_EXPORT_FOLDER_SCHED_FULL_CLEAN_CLEANING_PERCENTAGE);
+		if (configValue != null && configValue.isActive()) {
+			Double tmpPercentage = Double.valueOf(configValue.getValueCheck());
+			if (tmpPercentage < 0)
+				throw new RuntimeException(String.format("cleaningPercentage [%s] not valid", tmpPercentage));
+
+			cleaningPrecentage = tmpPercentage;
+			logger.info("Set cleaningPrecentage parameter with value " + cleaningPrecentage);
+		} else {
+			logger.info("Set cleaningPrecentage parameter with DEFAULT value " + cleaningPrecentage);
+		}
+	}
+
+	private void setMaxResourceFolderSize() throws Exception {
+		IConfigDAO sbiConfigDAO = DAOFactory.getSbiConfigDAO();
+		Config configValue = sbiConfigDAO.loadConfigParametersByLabel(RESOURCE_EXPORT_FOLDER_SCHED_FULL_CLEAN_MAX_FOLDER_SIZE);
+		if (configValue != null && configValue.isActive()) {
+
+			Long tmpMaxResourceFolderSize = Long.valueOf(configValue.getValueCheck());
+			if (tmpMaxResourceFolderSize < 0)
+				throw new RuntimeException(String.format("maxResourceFolderSize [%s] not valid", tmpMaxResourceFolderSize));
+
+			maxResourceFolderSize = tmpMaxResourceFolderSize;
+			logger.info("Set maxResourceFolderSize parameter with value " + maxResourceFolderSize);
+		} else {
+			logger.info("Set maxResourceFolderSize parameter with DEFAULT value " + maxResourceFolderSize);
+		}
 	}
 
 	private void init() {
@@ -127,15 +147,25 @@ public class ResourceExportFolderCleaningManager {
 			}
 		};
 
+		/* Inside folders are one for every user. We have to bypass them to access to folders eligible for removal */
 		File[] files = folder.listFiles();
-		Arrays.sort(files, creationTimeComparator);
+		List<File> filesInUserFolders = new ArrayList<File>();
+		for (File tmpFile1 : files) {
+			File[] tmpArray = tmpFile1.listFiles();
+			for (File tmpFile2 : tmpArray) {
+				filesInUserFolders.add(tmpFile2);
+			}
+		}
+
+		File[] listToArray = filesInUserFolders.toArray(new File[0]);
+		Arrays.sort(listToArray, creationTimeComparator);
 		logger.debug("cleanToQuota: Files sorted by creation time");
 
 		Long desiredFolderSize = Math.round(maxResourceFolderSize * (1 - (cleaningPrecentage / 100)));
 		Double toRemoveFilesSize = 0.0;
 		List<String> fileOrFolderToRemove = new ArrayList<String>();
-		if (files != null) {
-			for (File f : files) {
+		if (listToArray != null) {
+			for (File f : listToArray) {
 				if (actualFolderSize - toRemoveFilesSize > desiredFolderSize) {
 					logger.debug("cleanToQuota: desiredFolderSize dimension NOT reached");
 
@@ -158,7 +188,7 @@ public class ResourceExportFolderCleaningManager {
 
 		if (actualFolderSize - toRemoveFilesSize > desiredFolderSize) {
 			String message = String.format("Impossible to reach desired size of " + desiredFolderSize + " Bytes for resource export folder", desiredFolderSize);
-			logger.error(message);
+			logger.info(message);
 		}
 
 		logger.debug("OUT - cleanToQuota");
@@ -166,16 +196,34 @@ public class ResourceExportFolderCleaningManager {
 
 	private void deleteFiles(List<String> fileToRemove) {
 		logger.debug("IN - deleteFiles");
+		BasicFileAttributes attrFile1 = null;
+		Path pathFile = null;
 		for (String filePath : fileToRemove) {
 			File f = new File(filePath);
 			if (f.isDirectory()) {
 				for (File fileToDelete : f.listFiles()) {
 					fileToDelete.delete();
-					logger.debug(String.format("deleteFiles: %s deleted", fileToDelete.getAbsolutePath()));
+
+					pathFile = fileToDelete.toPath();
+
+					try {
+						attrFile1 = Files.readAttributes(pathFile, BasicFileAttributes.class);
+					} catch (IOException e) {
+						throw new Error("Error while retrieving creation date for file " + fileToDelete.getAbsolutePath());
+					}
+					logger.info(String.format("deleteFiles: %s with creation time %s deleted", fileToDelete.getAbsolutePath(),
+							attrFile1.creationTime().toString()));
 				}
 			}
 			f.delete();
-			logger.debug(String.format("deleteFiles: %s deleted", filePath));
+			pathFile = f.toPath();
+
+			try {
+				attrFile1 = Files.readAttributes(pathFile, BasicFileAttributes.class);
+			} catch (IOException e) {
+				throw new Error("Error while retrieving creation date for file " + f.getAbsolutePath());
+			}
+			logger.info(String.format("deleteFiles: %s with creation time %s deleted", f.getAbsolutePath(), attrFile1.creationTime().toString()));
 		}
 		logger.debug("OUT - deleteFiles");
 	}
@@ -242,23 +290,8 @@ public class ResourceExportFolderCleaningManager {
 
 	public String getExportTempFolderPath() {
 		logger.debug("IN");
-		String toReturn = null;
-		try {
-			ConfigSingleton conf = ConfigSingleton.getInstance();
-			SourceBean importerSB = (SourceBean) conf.getAttribute("IMPORTEXPORT.EXPORTER");
-			toReturn = (String) importerSB.getAttribute("exportFolder");
-			toReturn = toReturn.replaceAll("/", Matcher.quoteReplacement(File.separator)).replaceAll("\\\\", Matcher.quoteReplacement(File.separator));
-			toReturn = GeneralUtilities.checkForSystemProperty(toReturn);
-			if (!toReturn.startsWith("/") && toReturn.charAt(1) != ':') {
-				String root = ConfigSingleton.getRootPath();
-				toReturn = new File(root, toReturn).getAbsolutePath();
-			}
-		} catch (Exception e) {
-			logger.error("Error while retrieving export temporary folder path", e);
-		} finally {
-			logger.debug("OUT: export temporary folder path = " + toReturn);
-		}
-		return toReturn;
+		String resourcePath = SpagoBIUtilities.getResourcePath();
+		return ExportPathBuilder.getInstance().getExportResourcePath(resourcePath).toString();
 	}
 
 }

@@ -1,15 +1,11 @@
 package it.eng.spagobi.tools.scheduler.init;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
-import org.quartz.Scheduler;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
@@ -31,11 +27,7 @@ public class ResourceExportFolderSchedulerInitializer implements InitializerIFac
 	public void init(SourceBean config) {
 		logger.debug("IN");
 		try {
-			// just to check if a cache is available
-			List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
-			for (SbiTenant tenant : tenants) {
-				initCleanForTenant(tenant);
-			}
+			initCleanForDefaultTenant();
 		} catch (Exception e) {
 		} finally {
 			logger.debug("OUT");
@@ -43,13 +35,14 @@ public class ResourceExportFolderSchedulerInitializer implements InitializerIFac
 
 	}
 
-	public void initCleanForTenant(SbiTenant tenant) {
+	public void initCleanForDefaultTenant() {
 
 		ISchedulerDAO schedulerDAO = null;
 		try {
 			logger.debug("IN");
 			schedulerDAO = DAOFactory.getSchedulerDAO();
-			schedulerDAO.setTenant(tenant.getName());
+			/* Tenant is mandatory. Set DEFAULT_TENANT but job is for all the tenants */
+			schedulerDAO.setTenant("DEFAULT_TENANT");
 			Job jobDetail = schedulerDAO.loadJob(DEFAULT_JOB_NAME, DEFAULT_JOB_NAME);
 			if (jobDetail == null) {
 				// CREATE JOB DETAIL
@@ -73,12 +66,13 @@ public class ResourceExportFolderSchedulerInitializer implements InitializerIFac
 			}
 
 			String cronExpression = getCronExpression(valueCheck);
-			schedulerDAO.deleteTrigger(DEFAULT_TRIGGER_NAME, Scheduler.DEFAULT_GROUP);
+			schedulerDAO.deleteTrigger(DEFAULT_TRIGGER_NAME, DEFAULT_JOB_NAME);
 			if (cronExpression != null) {
 				String nameTrig = DEFAULT_TRIGGER_NAME;
 
 				Trigger simpleTrigger = new Trigger();
 				simpleTrigger.setName(nameTrig);
+				simpleTrigger.setGroupName(DEFAULT_JOB_NAME);
 				simpleTrigger.setJob(jobDetail);
 				simpleTrigger.getChronExpression().setExpression(cronExpression);
 				simpleTrigger.setRunImmediately(false);

@@ -17,11 +17,17 @@
  */
 package it.eng.spagobi.tools.scheduler.jobs;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.resource.export.ResourceExportFolderCleaningManager;
 
 public class ResourceExportFolderCleaningJob extends AbstractSpagoBIJob implements Job {
@@ -32,10 +38,8 @@ public class ResourceExportFolderCleaningJob extends AbstractSpagoBIJob implemen
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		logger.debug("IN");
 		try {
-			this.setTenant(jobExecutionContext);
 			executeInternal();
 		} finally {
-			this.unsetTenant();
 			logger.debug("OUT");
 		}
 	}
@@ -45,7 +49,14 @@ public class ResourceExportFolderCleaningJob extends AbstractSpagoBIJob implemen
 		logger.debug("IN");
 		try {
 			ResourceExportFolderCleaningManager resourceExportFolderCleaningManager = new ResourceExportFolderCleaningManager();
-			resourceExportFolderCleaningManager.executeCleaning();
+			List<SbiTenant> allTenants = DAOFactory.getTenantsDAO().loadAllTenants();
+			for (SbiTenant sbiTenant : allTenants) {
+
+				TenantManager.setTenant(new Tenant(sbiTenant.getName()));
+				resourceExportFolderCleaningManager.executeCleaning();
+				this.unsetTenant();
+			}
+
 			logger.debug("Resource export folder cleaning ended succesfully!");
 		} catch (Exception e) {
 			logger.error("Error while executiong job ", e);
