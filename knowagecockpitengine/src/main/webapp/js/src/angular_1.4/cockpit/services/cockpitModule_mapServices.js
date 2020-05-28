@@ -346,6 +346,16 @@
 										return array[index] / length;
 									});
 
+							} else if (geometry instanceof ol.geom.LineString) {
+
+								var coordsMatrix = geometry.getCoordinates();
+								var length = coordsMatrix.length;
+
+								coord = coordsMatrix.reduce(toSum)
+									.map(function(element, index, array) {
+										return array[index] / length;
+									});
+
 							} else if (geometry instanceof ol.geom.Polygon) {
 
 								var coordsMatrix = geometry.getCoordinates();
@@ -372,31 +382,31 @@
 								console.log("Cannot determine the center of geomerty: " + geometry);
 							}
 
-		    			} else {
-		    				//string && json
-			    			if (source.getFeatures()[0].getGeometry().getType().toUpperCase() == 'POINT')
-			    				coord = source.getFeatures()[0].getGeometry().getCoordinates();
+						} else {
+							//string && json
+							if (source.getFeatures()[0].getGeometry().getType().toUpperCase() == 'POINT')
+								coord = source.getFeatures()[0].getGeometry().getCoordinates();
 							else if (source.getFeatures()[0].getGeometry().getType().toUpperCase() == 'MULTIPOLYGON')
 								coord = source.getFeatures()[0].getGeometry().getCoordinates()[0][0][0];
 							else
 								coord = source.getFeatures()[0].getGeometry().getCoordinates()[0][0];
-		    			}
-		    		}
-			    	if(source.getFeatures().length>35){
-		    			zoom = 4;
+						}
+					}
+					if(source.getFeatures().length>35){
+						zoom = 4;
 					}else{
 						zoom = 5;
 					}
 
-			    	//update coordinates and zoom within the template
-			    	model.content.currentView.center = coord;
-			    	model.content.currentView.zoom = zoom;
+					//update coordinates and zoom within the template
+					model.content.currentView.center = coord;
+					model.content.currentView.zoom = zoom;
 
-			    	if (setValues){
-			    		map.getView().setCenter(coord);
-			    		map.getView().setZoom(zoom);
-			    	}
-		    	}
+					if (setValues){
+						map.getView().setCenter(coord);
+						map.getView().setZoom(zoom);
+					}
+				}
 		}
 
 
