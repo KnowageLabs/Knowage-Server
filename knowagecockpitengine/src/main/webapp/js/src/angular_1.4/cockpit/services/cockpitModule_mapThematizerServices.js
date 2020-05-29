@@ -68,6 +68,13 @@
 						&& props[mts.getActiveIndicator()].thresholdsConfig.length != 0) {
 					fillColor = mts.getColorByThresholds(value, props) || fillColor;
 				}
+
+				// To keep consistency with previous versions, in case of choropleth
+				// we don't use the border color
+				if (config.visualizationType == 'choropleth') {
+					borderColor = undefined;
+				}
+
 				style = mts.getChoroplethStyles(value, parentLayer, fillColor, borderColor);
 				thematized = true;
 			}
