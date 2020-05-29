@@ -1,210 +1,208 @@
 <div ng-controller="RegistryController" layout-fill layout="column">
-    <md-toolbar class="secondaryToolbar">
-        <div class="md-toolbar-tools" layout="row">
-            <h2>{{configuration.title}}</h2>
+   <md-toolbar class="secondaryToolbar">
+      <div class="md-toolbar-tools" layout="row">
+         <h2>{{configuration.title}}</h2>
+         <span flex></span>
+         <md-button ng-click="updateRow()">
+            Save
+         </md-button>
+      </div>
+   </md-toolbar>
+   <md-content flex ng-cloak layout="column" class="registryFilters">
+      <!--  div ng-if="configuration.filters" class="registryFilters"-->
+      <md-card ng-if="configuration.filters">
+         <md-subheader>Filters</md-subheader>
+         <div layout="row" layout-align="start center" style="padding:0 8px">
+            <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in checkIfFilterColumnExists()" style="min-width:200px">
+               <label>{{filter.title}}</label>
+               <input  ng-model="filter.value" ng-if="filter.presentation === 'MANUAL'" ng-keyup="addToFilters(filter)" ng-keydown="$event.keyCode === 13 && getFilteredData(filters)">
+               <md-select md-on-open="addFilterOptions(filter.field)" ng-model="filter.value" ng-if="filter.presentation == 'COMBO'" ng-change="addToFilters(filter)">
+                  <md-option value=""></md-option>
+                  <md-option ng-repeat="opt in filter.options track by $index" ng-value="opt.column_1">{{opt.column_1}}</md-option>
+               </md-select>
+            </md-input-container>
             <span flex></span>
-            <md-button ng-click="updateRow()">
-            	Save
+            <md-button ng-click="deleteFilterValues()" class="md-raised" ng-if="checkIfFiltersHaveValues()">
+               Clear
+               <md-tooltip md-delay="500">Clear all filters</md-tooltip>
             </md-button>
-        </div>
-    </md-toolbar>
-    <md-content flex ng-cloak layout="column" class="registryFilters">
-        <!--  div ng-if="configuration.filters" class="registryFilters"-->
-        	<md-card ng-if="configuration.filters">
-        		<md-subheader>Filters</md-subheader>
-            <div layout="row" layout-align="start center" style="padding:0 8px">              
-                <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in checkIfFilterColumnExists()" style="min-width:200px">
-                    <label>{{filter.title}}</label>
-                    <input  ng-model="filter.value" ng-if="filter.presentation === 'MANUAL'" ng-keyup="addToFilters(filter)" ng-keydown="$event.keyCode === 13 && getFilteredData(filters)">
-                    <md-select md-on-open="addFilterOptions(filter.field)" ng-model="filter.value" ng-if="filter.presentation == 'COMBO'" ng-change="addToFilters(filter)">
-                        <md-option value=""></md-option>
-                        <md-option ng-repeat="opt in filter.options track by $index" ng-value="opt.column_1">{{opt.column_1}}</md-option>
-                    </md-select>
-                </md-input-container>
-                <span flex></span>
-                <md-button ng-click="deleteFilterValues()" class="md-raised" ng-if="checkIfFiltersHaveValues()">
-            		Clear
-            		<md-tooltip md-delay="500">Clear all filters</md-tooltip> 
-            	</md-button>
-                <md-button  class="md-raised md-primary" ng-click="getFilteredData(filters)">
-            		Filter
-            	</md-button>
+            <md-button  class="md-raised md-primary" ng-click="getFilteredData(filters)">
+               Filter
+            </md-button>
+         </div>
+      </md-card>
+      <!--  /div-->
+      <md-card flex>
+         <table class="kn-table kn-table-alternated-rows" ng-if="configuration.pivot == false">
+            <thead>
+               <tr>
+                  <th class="recNo"><span>&nbsp;</span></th>
+                  <th ng-repeat="col in columns | orderBy: 'position' track by $index" ng-if="col.visible" width="{{col.size}}">
+                     <div layout="row" layout-align="start center" ng-click="sortBy(col.field)">
+                        <span class="sortorder" ng-class="{reverse: reverse}" ng-if="configuration.pagination != 'true'">{{col.title}}</span>
+                        <span ng-if="configuration.pagination == 'true'">{{col.title}}</span>
+                        <span flex></span>
+                        <md-menu>
+                           <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdMenu.open()">
+                              <md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
+                           </md-button>
+                           <md-menu-content width="3">
+                              <md-menu-item ng-if="!$first">
+                                 <md-button ng-click="move(col.position,'left')">
+                                    <md-icon md-font-icon="fa fa-outdent"></md-icon>
+                                    Move Left
+                                 </md-button>
+                              </md-menu-item>
+                              <md-menu-item ng-if="!$last">
+                                 <md-button ng-click="move(col.position,'right')">
+                                    <md-icon md-font-icon="fa fa-indent"></md-icon>
+                                    Move Right
+                                 </md-button>
+                              </md-menu-item>
+                           </md-menu-content>
+                        </md-menu>
+                     </div>
+                  </th>
+                  <th class="tableAction">
+                     <md-button class="md-fab md-mini" ng-click="addRow()" ng-if="configuration.enableAddRecords || configuration.enableButtons">
+                        <md-icon md-font-icon="fa fa-plus"></md-icon>
+                        <md-tooltip md-delay="500">Add Row</md-tooltip>
+                     </md-button>
+                  </th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr ng-repeat="row in data">
+                  <td class="recNo"> <span ng-if="!col.editable">{{$index+1}}</span> </td>
+                  <td ng-repeat="col in columns | orderBy: 'position' track by $index " ng-if="col.visible"  ng-class='checkIfSelected(row)' ng-style="{{ {'background-color':col.color} }}">
+                     <div>
+                        <span ng-if="!col.editable && col.dataType !== 'boolean'">{{row[col.field] }}</span>                               
+                        <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (!col.editable)" ng-checked="{{row[col.field]}}" disabled ng-click="setSelected(row)" >
+                        <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable)" ng-checked="{{row[col.field]}}" ng-click="setSelected(row)">                                                            
+                        <md-menu ng-if="col.editable && col.dataType !== 'boolean'" ng-click="setSelected(row)">
+                           <div layout="row" class="clickable" ng-click="addColumnOptions(col, row, $mdOpenMenu)">  
+                              <span ng-if="col.dataType === 'int' && row[col.field] != ''">{{row[col.field] | number}}</span>
+                              <span ng-if="col.dataType === 'int' && row[col.field] == ''">{{row[col.field]}}</span>
+                              <span ng-if="col.dataType === 'date' && row[col.field] != ''"> {{row[col.field] | momentDate:currLanguage}} </span>                                  	
+                              <span ng-if="col.dataType === 'date' && row[col.field] == ''"> {{row[col.field]}} </span>
+                              <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
+                              <span ng-if="col.dataType === 'float'"> {{row[col.field] | decimal:col.format}} </span>                                                                             
+                           </div>
+                           <md-menu-content width="5" class="customContentMenu" >
+                              <md-menu-item layout="row" layout-align="start center">
+                                 <md-input-container class="md-icon-float md-block">
+                                    <div ng-if="col.dataType !== 'date'">
+                                       <input type="{{setDataType(col.dataType)}}" step="{{getStep(col.dataType)}}" name="textField" ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null"  aria-label="data change"
+                                          ng-if="col.editor=='TEXT' && col.dataType !== 'boolean'">                                              	                                                	                                                                                                 	                                                  	                                                                                                                                                                                                                                      
+                                       <div ng-if="row.selected && !isDependentColumn(col)">
+                                          <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" ng-change="notifyAboutDependency(col, $event)">
+                                             <md-option ng-repeat="opt in comboColumnOptions[col.field] track by $index" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
+                                          </md-select>
+                                       </div>
+                                       <div ng-if="row.selected && isDependentColumn(col)">
+                                          <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">
+                                             <md-option ng-repeat="opt in comboColumnOptions[col.field][row[col.dependsFrom]] track by $index" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
+                                          </md-select>
+                                       </div>
+                                    </div>
+                                    <div ng-if="col.dataType === 'date'" style="display: inline-flex;">
+                                       <md-datepicker ng-model="row[col.field]"  step="{{getStep(col.dataType)}}"
+                                          name="dateField"  ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"> </md-datepicker>
+                                       <md-icon md-font-icon="fa fa-times" ng-click="resetDateField($event, row, col);"></md-icon>
+                                    </div>
+                                 </md-input-container>
+                              </md-menu-item>
+                           </md-menu-content>
+                        </md-menu>
+                     </div>
+                  </td>
+                  <td style="text-align:center">
+                     <md-icon md-font-icon="fa fa-trash" class="delete-row" ng-click="deleteRowFromDB(row, $event)" ng-if="configuration.enableDeleteRecords || configuration.enableButtons"></md-icon>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <table class="kn-table pivot-table" ng-if="configuration.pivot == true">
+            <thead>
+               <tr>
+                  <th ng-repeat="col in columns | orderBy: 'position' track by $index" ng-if="col.visible" width="{{col.size}}">
+                     <div layout="row" layout-align="start center">
+                        <span>{{col.title}}</span>
+                        <span flex></span>
+                     </div>
+                  </th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr ng-repeat="(indexF, row) in data" ng-class="setSummaryRowColor(data,indexF,columns)">
+                  <td ng-repeat="col in columns | orderBy: 'position' track by $index" rowspan="{{setRowspan(data,indexF,$index,columns)}}"  ng-if="compareRowsForRowspanPrint(data,indexF,$index,columns)" ng-class="checkIfSelected(row)">
+                     <div>
+                        <span ng-if="!col.editable && col.dataType !== 'boolean' ">{{row[col.field] }}</span>  
+                        <span ng-if= "isItSummaryRow(data,indexF,$index,columns)">{{row[col.field] | number:getDecimalPlaces(col.field) }}</span>                   
+                        <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean' ) && (!col.editable) && row[col.field] !== '      '" ng-checked="{{row[col.field]}}" disabled >
+                        <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable) && row[col.field] !== '      '" ng-checked="{{row[col.field]}}" ng-click="setSelected(row)">                                                            
+                        <md-menu ng-if="col.editable && col.dataType !== 'boolean' && row[col.field] !== '      ' && !isItSummaryRow(data,indexF,$index,columns)">
+                           <div layout="row" class="clickable" ng-click="addColumnOptions(col, row, $mdOpenMenu)">                                    	
+                              <span ng-if="col.dataType === 'int'">{{row[col.field] | number}}</span>  
+                              <span ng-if="col.dataType === 'date'">  {{row[col.field] | momentDate:currLanguage}}  </span>                                  	
+                              <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
+                              <span ng-if="col.dataType === 'float'">   {{row[col.field] |  decimal:col.format}}  </span>                                                                        
+                           </div>
+                           <md-menu-content width="5" class="customContentMenu" ng-click="setSelected(row)">
+                              <md-menu-item layout="row" layout-align="start center">
+                                 <md-input-container class="md-icon-float md-block">
+                                    <div ng-if="col.dataType !== 'date'">
+                                       <input type="{{setDataType(col.dataType)}}" step="{{getStep(col.dataType)}}" name="textField" ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"
+                                          ng-if="col.editor=='TEXT' && col.dataType !== 'boolean'"> 
+                                       <div ng-if="row.selected && !isDependentColumn(col)">
+                                          <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" ng-change="notifyAboutDependency(col, $event)">
+                                             <md-option ng-repeat="opt in comboColumnOptions[col.field] track by $index" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
+                                          </md-select>
+                                       </div>
+                                       <div ng-if="row.selected && isDependentColumn(col)">
+                                          <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">
+                                             <md-option ng-repeat="opt in comboColumnOptions[col.field][row[col.dependsFrom]] track by $index" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
+                                          </md-select>
+                                       </div>
+                                    </div>
+                                    <div ng-if="col.dataType === 'date'" style="display: inline-flex;">
+                                       <md-datepicker ng-model="row[col.field]"  step="{{getStep(col.dataType)}}"
+                                          name="dateField"  ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"> </md-datepicker>
+                                       <md-icon md-font-icon="fa fa-times" ng-click="resetDateField($event, row, col);"></md-icon>
+                                    </div>
+                                 </md-input-container>
+                              </md-menu-item>
+                           </md-menu-content>
+                        </md-menu>
+                     </div>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <div layout="row" ng-if="configuration.pagination == 'true'">
+            <div class="ag-theme-balham" flex>
+               <div class=" ag-paging-panel ag-noBorders ag-font-style">
+                  <span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
+                  <span ref="lbFirstRowOnPage">{{min}}</span> to <span ref="lbLastRowOnPage">{{max}}</span> of <span ref="lbRecordCount">{{resultsNumber}}</span>
+                  </span>
+                  <span class="ag-paging-page-summary-panel">
+                     <div ref="btFirst" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-first" unselectable="on"></span>
+                        <button type="button" ref="btFirst" ng-disabled="!hasPrevious" ng-click="first()">First</button>
+                     </div>
+                     <div ref="btPrevious" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
+                        <button type="button" ref="btPrevious" ng-disabled="!hasPrevious" ng-click="previous()">Previous</button>
+                     </div>
+                     Page <span ref="lbCurrent">{{page}}</span> of <span ref="lbTotal">{{getTotalPages.length}}</span>
+                     <div ref="btNext" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
+                        <button type="button" ref="btNext" ng-click="next()" ng-disabled="!hasNext">Next</button>
+                     </div>
+                     <div ref="btLast" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-last" unselectable="on"></span>
+                        <button type="button" ref="btLast" ng-disabled="!hasNext" ng-click="last()">Last</button>
+                     </div>
+                  </span>
+               </div>
             </div>
-            </md-card>
-        <!--  /div-->
-        <md-card flex>
-            <table class="kn-table kn-table-alternated-rows" ng-if="configuration.pivot == false">
-                <thead>
-                    <tr>
-                    	<th class="recNo"><span>&nbsp;</span></th>
-                        <th ng-repeat="col in columns | orderBy: 'position' track by $index" ng-if="col.visible" width="{{col.size}}">
-                            <div layout="row" layout-align="start center" ng-click="sortBy(col.field)">                            
-                                <span class="sortorder" ng-class="{reverse: reverse}" ng-if="configuration.pagination != 'true'">{{col.title}}</span>
-                                <span ng-if="configuration.pagination == 'true'">{{col.title}}</span>
-                                <span flex></span>
-                                <md-menu>
-                                    <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdMenu.open()">
-                                        <md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
-                                    </md-button>
-                                    <md-menu-content width="3">
-                                        <md-menu-item ng-if="!$first">
-                                            <md-button ng-click="move(col.position,'left')">
-                                                <md-icon md-font-icon="fa fa-outdent"></md-icon>
-                                                Move Left
-                                            </md-button>
-                                        </md-menu-item>
-                                        <md-menu-item ng-if="!$last">
-                                            <md-button ng-click="move(col.position,'right')">
-                                                <md-icon md-font-icon="fa fa-indent"></md-icon>
-                                                Move Right
-                                            </md-button>
-                                        </md-menu-item>
-                                    </md-menu-content>
-                                </md-menu>
-                            </div>
-                        </th>
-                        <th class="tableAction">
-                          <md-button class="md-fab md-mini" ng-click="addRow()" ng-if="configuration.enableAddRecords || configuration.enableButtons">
-                               <md-icon md-font-icon="fa fa-plus"></md-icon>
-                               <md-tooltip md-delay="500">Add Row</md-tooltip>
-                          </md-button>  
-                        </th> 
-                    </tr>
-                </thead>                
-                <tbody>                
-                    <tr ng-repeat="row in data">
-                    	<td class="recNo"> <span ng-if="!col.editable">{{$index+1}}</span> </td>
-                          <td ng-repeat="col in columns | orderBy: 'position' track by $index " ng-if="col.visible"  ng-class='checkIfSelected(row)' ng-style="{{ {'background-color':col.color} }}">                           
-                            <div>                     	                                                          
-                                <span ng-if="!col.editable && col.dataType !== 'boolean'">{{row[col.field] }}</span>                               
-                                <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (!col.editable)" ng-checked="{{row[col.field]}}" disabled ng-click="setSelected(row)" >
-                                <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable)" ng-checked="{{row[col.field]}}" ng-click="setSelected(row)">                                                            
-                                <md-menu ng-if="col.editable && col.dataType !== 'boolean'" ng-click="setSelected(row)">                                
-                                    <div layout="row" class="clickable" ng-click="addColumnOptions(col, row, $mdOpenMenu)">  
-	                                    <span ng-if="col.dataType === 'int' && row[col.field] != ''">{{row[col.field] | number}}</span>
-	                                    <span ng-if="col.dataType === 'int' && row[col.field] == ''">{{row[col.field]}}</span>
-	                                    <span ng-if="col.dataType === 'date' && row[col.field] != ''"> {{row[col.field] | date:"MM/dd/yyyy"}} </span>                                  	
-	                                    <span ng-if="col.dataType === 'date' && row[col.field] == ''"> {{row[col.field]}} </span>
-	                                    <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
-	                                    <span ng-if="col.dataType === 'float'"> {{row[col.field] | decimal:col.format}} </span>                                                                             
-                                    </div>
-                                    <md-menu-content width="5" class="customContentMenu" >
-                                        <md-menu-item layout="row" layout-align="start center">
-                                            <md-input-container class="md-icon-float md-block">                                               
-                                               	 <input type="{{setDataType(col.dataType)}}" step="{{getStep(col.dataType)}}" name="textField" ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null"  aria-label="data change"
-                                                   ng-if="col.editor=='TEXT' && col.dataType !== 'boolean'">                                              	                                                	                                                                                                 	                                                  	                                                                                                                                                                                                                                      
-                                                 <div ng-if="row.selected && !isDependentColumn(col)">
-                                                	<md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" ng-change="notifyAboutDependency(col, $event)">                                                 
-                                                    	<md-option ng-repeat="opt in comboColumnOptions[col.field] track by $index" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
-                                                	</md-select>
-                                                </div>
-                                                <div ng-if="row.selected && isDependentColumn(col)">
-                                                	<md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">                                                 
-                                                    	<md-option ng-repeat="opt in comboColumnOptions[col.field][row[col.dependsFrom]] track by $index" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
-                                                	</md-select>
-                                                </div>                                                
-                                            </md-input-container>
-                                        </md-menu-item>
-                                    </md-menu-content>
-                                </md-menu>
-                            </div>                                            
-                        </td>
-                     <td style="text-align:center">
-                            <md-icon md-font-icon="fa fa-trash" class="delete-row" ng-click="deleteRowFromDB(row, $event)" ng-if="configuration.enableDeleteRecords || configuration.enableButtons"></md-icon>
-                        </td>    
-                    </tr>               	
-                </tbody>
-            </table>
-            
-            <table class="kn-table pivot-table" ng-if="configuration.pivot == true">
-            	<thead>
-            		<tr>
-            			<th ng-repeat="col in columns | orderBy: 'position' track by $index" ng-if="col.visible" width="{{col.size}}">
-            				<div layout="row" layout-align="start center">
-            					<span>{{col.title}}</span>
-                                <span flex></span>
-            				</div>
-           				</th>
-            		</tr>
-            	</thead>
-            	<tbody>
-            		<tr ng-repeat="(indexF, row) in data" ng-class="setSummaryRowColor(data,indexF,columns)">
-            			 <td ng-repeat="col in columns | orderBy: 'position' track by $index" rowspan="{{setRowspan(data,indexF,$index,columns)}}"  ng-if="compareRowsForRowspanPrint(data,indexF,$index,columns)" ng-class="checkIfSelected(row)">    
-                               <div>                     	                                                          
-                                 	<span ng-if="!col.editable && col.dataType !== 'boolean' ">{{row[col.field] }}</span>  
-                                          <span ng-if= "isItSummaryRow(data,indexF,$index,columns)">{{row[col.field] | number:getDecimalPlaces(col.field) }}</span>                   
-                                <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean' ) && (!col.editable) && row[col.field] !== '      '" ng-checked="{{row[col.field]}}" disabled >
-                                <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable) && row[col.field] !== '      '" ng-checked="{{row[col.field]}}" ng-click="setSelected(row)">                                                            
-                                <md-menu ng-if="col.editable && col.dataType !== 'boolean' && row[col.field] !== '      ' && !isItSummaryRow(data,indexF,$index,columns)">                                
-                                    <div layout="row" class="clickable" ng-click="addColumnOptions(col, row, $mdOpenMenu)">                                    	
-                                     <span ng-if="col.dataType === 'int'">{{row[col.field] | number}}</span>  
-                                     		<span ng-if="col.dataType === 'date'">  {{row[col.field] | date:"MM/dd/yyyy"}}  </span>                                  	
-                                          <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
-                                        <span ng-if="col.dataType === 'float'">   {{row[col.field] |  decimal:col.format}}  </span>                                                                        
-                                    </div>
-                                    <md-menu-content width="5" class="customContentMenu" ng-click="setSelected(row)">
-                                        <md-menu-item layout="row" layout-align="start center">
-                                            <md-input-container class="md-icon-float md-block">                                               
-                                               	 <input type="{{setDataType(col.dataType)}}" step="{{getStep(col.dataType)}}" name="textField" ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"
-                                                   ng-if="col.editor=='TEXT' && col.dataType !== 'boolean'">                                                	                                                	  
-                                                  <div ng-if="row.selected && !isDependentColumn(col)">
-                                                	<md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" ng-change="notifyAboutDependency(col, $event)">                                                 
-                                                    	<md-option ng-repeat="opt in comboColumnOptions[col.field] track by $index" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
-                                                	</md-select>
-                                                </div>
-                                                <div ng-if="row.selected && isDependentColumn(col)">
-                                                	<md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'">                                                 
-                                                    	<md-option ng-repeat="opt in comboColumnOptions[col.field][row[col.dependsFrom]] track by $index" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
-                                                	</md-select>
-                                                </div>                                             
-                                            </md-input-container>
-                                        </md-menu-item>
-                                    </md-menu-content>
-                                </md-menu>
-                            </div>                                            
-                          </td>
-            		</tr>
-            	</tbody>
-            </table> 
-            <div layout="row" ng-if="configuration.pagination == 'true'">
-			    <div class="ag-theme-balham" flex>
-					<div class=" ag-paging-panel ag-noBorders ag-font-style">
-				   		<span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
-				       		<span ref="lbFirstRowOnPage">{{min}}</span> to <span ref="lbLastRowOnPage">{{max}}</span> of <span ref="lbRecordCount">{{resultsNumber}}</span>
-				   		</span>
-				   		<span class="ag-paging-page-summary-panel">
-				   			<div ref="btFirst" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-first" unselectable="on"></span>
-				       			<button type="button" ref="btFirst" ng-disabled="!hasPrevious" ng-click="first()">First</button>
-				      			</div>
-				      			<div ref="btPrevious" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
-				       			<button type="button" ref="btPrevious" ng-disabled="!hasPrevious" ng-click="previous()">Previous</button>
-				       		</div>
-				       		Page <span ref="lbCurrent">{{page}}</span> of <span ref="lbTotal">{{getTotalPages.length}}</span>
-				       		<div ref="btNext" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
-				       			<button type="button" ref="btNext" ng-click="next()" ng-disabled="!hasNext">Next</button>
-				       		</div>
-				       		<div ref="btLast" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-last" unselectable="on"></span>
-				       			<button type="button" ref="btLast" ng-disabled="!hasNext" ng-click="last()">Last</button>
-				       		</div>
-				   		</span>
-					</div>
-				</div>
-			</div>                       
-            <!-- nav ng-if="configuration.pagination == 'true'" aria-label="Page navigation" class="pagination" layout="row" layout-align="start center">
-                <label>Page</label>
-                <md-input-container class="noMargin">
-                    <md-select aria-label="Page navigation" ng-model="page" ng-change="goToPage()">
-                        <md-option ng-repeat="pages in getTotalPages track by $index" value="{{$index+1}}">{{$index+1}}</md-option>
-                    </md-select>
-                </md-input-container>
-                <div class="label page-position">{{min}} - {{max}} of {{resultsNumber}}</div>
-                <md-button class="md-icon-button prev" aria-label="Previous" ng-click="previous()" ng-disabled="!hasPrevious">
-                    <i class="fa fa-angle-left"></i>
-                </md-button>
-                <md-button class="md-icon-button next" aria-label="Next" ng-click="next()" ng-disabled="!hasNext">
-                    <i class="fa fa-angle-right"></i>
-                </md-button>
-            </nav-->
-        </md-card>
-    </md-content>
+         </div>
+      </md-card>
+   </md-content>
 </div>

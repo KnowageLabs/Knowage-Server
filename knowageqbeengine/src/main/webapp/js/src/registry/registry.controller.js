@@ -29,7 +29,13 @@
 								$httpProvider.interceptors
 										.push('httpInterceptor');
 
-							} ]).controller('RegistryController', ['$scope','registryConfigService', 'registryCRUDService',
+							} ])
+			.filter('momentDate', function() {
+				  return function(input, currLanguage) {
+					return input ? moment(input).locale(currLanguage).format("L") : '';
+			  };
+			})
+			.controller('RegistryController', ['$scope','registryConfigService', 'registryCRUDService',
 								'regFilterGetData', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_config', '$mdDialog', '$filter', 'orderByFilter','registryPaginationService',
 					RegistryController])
 
@@ -90,6 +96,7 @@
         	} else {
         		$scope.formParams.start = 0;
         	}
+        	$scope.currLanguage = sbiModule_config.curr_language;
         	readData($scope.formParams);
         };
 
@@ -545,7 +552,12 @@
 			}
 			loadInitialData($scope.formParams);
 		};
-
+		
+		$scope.resetDateField = function (e, row, col) {
+			e.preventDefault();
+			row[col.field] = '';
+		}
+		
 		// Update
 		$scope.setSelected = function(selectedRow) {
 

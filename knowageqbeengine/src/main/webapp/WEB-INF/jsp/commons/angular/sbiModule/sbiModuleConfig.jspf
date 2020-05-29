@@ -23,6 +23,8 @@ angular.module('sbiModule')
 			protocol: '<%= request.getScheme()%>' ,
 			host: '<%= request.getServerName()%>',
 		    port: '<%= request.getServerPort()%>',
+		    curr_language: '<%= locale.getLanguage()%>',
+		    curr_country: '<%=locale.getCountry()%>',
 			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
 	    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>",
 	    	sbiExecutionID:'<%=request.getParameter(SpagoBIConstants.SBI_EXECUTION_ID)%>',
