@@ -637,7 +637,11 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 	}
 
 	$scope.toggleAttributeVisibility = function(index){
-		$scope.selectedBusinessModel.columns[index].properties[0]['structural.visible']['value'] = !$scope.selectedBusinessModel.columns[index].properties[0]['structural.visible']['value'];
+		if($scope.selectedBusinessModel.columns[index].properties[0]['structural.visible']['value']=='true'){
+			$scope.selectedBusinessModel.columns[index].properties[0]['structural.visible']['value'] = false;
+		} else {
+			$scope.selectedBusinessModel.columns[index].properties[0]['structural.visible']['value'] = true;
+		}
 	}
 
 	$scope.openDetails = function(index, ev){
