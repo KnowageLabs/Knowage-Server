@@ -770,7 +770,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			throw new SpagoBIRuntimeException("Error while retrieving maxFailedLoginAttempts for user ", e);
 		}
 		userBO.setFailedLoginAttempts(sbiUser.getFailedLoginAttempts());
-		userBO.setBlockedByFailedLoginAttempts(sbiUser.getFailedLoginAttempts() > maxFailedLoginAttempts);
+		userBO.setBlockedByFailedLoginAttempts(sbiUser.getFailedLoginAttempts() >= maxFailedLoginAttempts);
 
 		List<Integer> userRoles = new ArrayList<>();
 		Set roles = sbiUser.getSbiExtUserRoleses();
