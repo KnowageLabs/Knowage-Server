@@ -31,7 +31,7 @@ public class ValuePlaceholder implements Placeholder {
 	private MeasureInfo measureInfo;
 
 	public ValuePlaceholder(final String value, final MeasureInfo measureInfo) {
-		this.value = Double.valueOf(value);
+		this.value = value != null && !"".equals(value) ? Double.valueOf(value) : null;
 		this.measureInfo = measureInfo;
 	}
 
@@ -52,7 +52,7 @@ public class ValuePlaceholder implements Placeholder {
 
 	@Override
 	public String getValueAsString() {
-		return value.toString();
+		return value != null ? value.toString() : "";
 	}
 
 	@Override
