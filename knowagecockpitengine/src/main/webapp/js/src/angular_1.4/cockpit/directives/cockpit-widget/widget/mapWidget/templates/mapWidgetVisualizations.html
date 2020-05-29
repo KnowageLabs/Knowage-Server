@@ -110,7 +110,7 @@
 				<color-picker options="colorPickerOptions" ng-model="layer.markerConf.style.color"></color-picker> 
 			</md-input-container>
 
-			<md-input-container class="md-block flex" ng-if="layer.markerConf.type != 'img' && layer.markerConf.type != 'url'">
+			<md-input-container class="md-block flex" ng-if="layer.markerConf.type != 'img' && layer.markerConf.type != 'url'" ng-show="needsBorderColor(layer)">
 				<label>{{translate.load('sbi.cockpit.map.edit.visualization.marker.borderColor')}}</label>
 				<color-picker options="colorPickerOptions" ng-model="layer.markerConf.style.borderColor"></color-picker> 
 			</md-input-container>

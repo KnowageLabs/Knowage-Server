@@ -24,7 +24,7 @@
 												<td>  {{column.name}}</td>
 												<td>
 													<md-input-container >
-														<md-select ng-model="column.properties.coordType" ng-init="column.properties.coordType = column.properties.coordType || 'string'">
+														<md-select ng-model="column.properties.coordType" ng-init="column.properties.coordType = column.properties.coordType || 'string'" ng-change="changeCoordType(layer)">
 															<md-option value="string">string</md-option>
 															<md-option value="json">JSON</md-option>
 															<md-option value="wkt">WKT Format</md-option>

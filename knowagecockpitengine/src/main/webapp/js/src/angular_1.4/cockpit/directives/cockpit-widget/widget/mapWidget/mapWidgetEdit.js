@@ -564,6 +564,26 @@ function mapWidgetEditControllerFunction(
 
 	}
 
+	$scope.needsBorderColor = function(layer) {
+		return layer.content
+			.columnSelectedOfDataset
+			.find(function(e) {
+					return e.fieldType == "SPATIAL_ATTRIBUTE";
+				})
+			.properties
+			.coordType != "string";
+	}
+
+	$scope.changeCoordType = function(layer) {
+		if (!$scope.needsBorderColor(layer)) {
+			$scope.resetBorderColor(layer);
+		}
+	}
+
+	$scope.resetBorderColor = function(layer) {
+		layer.markerConf.style.borderColor = undefined;
+	}
+
 	function loadAvailableLayers() {
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.get(".", "layers")
