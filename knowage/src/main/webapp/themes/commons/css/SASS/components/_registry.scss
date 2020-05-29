@@ -1,133 +1,123 @@
 .kn-registry {
-	.clickable {
-	   cursor: pointer;
-	   min-width: 100px;
-	   min-height: 20px;
-	}
-
-	.md-scroll-mask {
-		z-index: 1 !important;
-	}
-
-	.md-open-menu-container {
-	    z-index: 80;
-	}
-
-	md-backdrop {
-    	z-index: 10;
-	}
-
-.kn-registry .registryFilters {
-	.registryFilter {
-	    min-width: 200px;
-	    margin-bottom: 4px;
-	}
-}
-
-
-.kn-table tbody tr md-icon {
-    line-height: 20px;
-    height: 20px;
-    min-height: 20px;
-    max-height: 20px;
-}
-
-.recNo {
-	width: 50px;
-}
-
-.kn-table {
-	td {
-		md-menu div, md-menu span{
-			line-height: 20px;
-			vertical-align: middle;
-		}
-	}
-	thead {
-		tr {
-			height: 1.5rem;
-		}
-		th {
-			&:last-child {
-				padding-left: 0;
-			}
-			border-right: 1px solid $bordersColor;
-			padding-left: 8px;
-			.md-button {
-				&.md-fab {
-					top: 0;
-				}
-			}
-			&>div {
-				outline: none;
-				.md-button {
-					margin: 0;
-
-				}
-			}
-			&.tableAction {
-			    width: 50px;
-			}
-		}
-	}
-}
-
-.kn-table .innerTable {
-    width: 100%;
-}
-
-.kn-table .innerTable tr {
-    background-color: transparent !important;
-}
-
-.customContentMenu .check {
-    width: 46px;
-}
-
-.blue {
-	background-color: #dbe6f0 !important;
-}
-
-.pivot-table th, .pivot-table tr, .pivot-table td {
-	border: 3px solid #A9C3DB;
-}
-
-.pivot-table thead {
-	border: 3px solid #81a7ca;
-}
-
-.pagination {
-	margin-top: 20px;
-}
-.label {
-	color: black;
-}
-
-md-select {
-	margin: 0;
-}
-
-.filter-btns, .delete-row {
-	cursor: pointer;
-}
-
-.sortorder:hover:after {
-  content: '\25b2';   /* BLACK UP-POINTING TRIANGLE */
-}
-.sortorder.reverse:hover:after {
-  content: '\25bc';   /* BLACK DOWN-POINTING TRIANGLE */
-}
-
-.customDialog {
-	padding: 20px;
-    max-width: 600px;
-}
-
-.customDialog .button {
-	padding: 8px 28px;
-    background-color: #A9C3DB;
-    font-weight: bold;
-    border: none;
-    float: right;
-}
+    .clickable {
+       cursor: pointer;
+       min-width: 100px;
+       min-height: 20px;
+    }
+    .md-scroll-mask {
+        z-index: 1 !important;
+    }
+    .md-open-menu-container {
+        z-index: 80;
+    }
+    md-backdrop {
+        z-index: 10;
+    }
+    .registryFilters {
+        .registryFilter {
+            min-width: 200px;
+            margin-bottom: 4px;
+        }
+    }
+    .recNo {
+        width: 50px;
+    }
+    .kn-table {
+        td {
+            md-menu div, md-menu span{
+                line-height: 20px;
+                vertical-align: middle;
+            }
+        }
+        thead {
+            tr {
+                height: 1.5rem;
+            }
+            th {
+                &:last-child {
+                    padding-left: 0;
+                }
+                border-right: 1px solid $bordersColor;
+                padding-left: 8px;
+                .md-button {
+                    &.md-fab {
+                        top: 0;
+                    }
+                }
+                &>div {
+                    outline: none;
+                    .md-button {
+                        margin: 0;
+                    }
+                }
+                &.tableAction {
+                    width: 50px;
+                }
+            }
+        }
+        tbody {
+            tr {
+                md-icon {
+                    line-height: 20px;
+                    height: 20px;
+                    min-height: 20px;
+                    max-height: 20px;
+                }
+            }
+        }
+        .innerTable {
+            width: 100%;
+            tr {
+                background-color: transparent !important;
+            }
+        }
+    }
+    .customContentMenu .check {
+        width: 46px;
+    }
+    .blue {
+        background-color: #dbe6f0 !important;
+    }
+    .pivot-table {
+        th,  tr, td {
+            border: 3px solid $secondaryColor;
+        }
+        thead {
+            border: 3px solid darken(#81a7ca,10%);
+        }
+        tr {
+            td {
+                padding-left: 10px;
+            }
+        }
+    }
+    .pagination {
+        margin-top: 20px;
+    }
+    .label {
+        color: black;
+    }
+    md-select {
+        margin: 0;
+    }
+    .filter-btns, .delete-row {
+        cursor: pointer;
+    }
+    .sortorder:hover:after {
+      content: '\25b2';   /* BLACK UP-POINTING TRIANGLE */
+    }
+    .sortorder.reverse:hover:after {
+      content: '\25bc';   /* BLACK DOWN-POINTING TRIANGLE */
+    }
+    .customDialog {
+        padding: 20px;
+        max-width: 600px;
+        .button {
+            padding: 8px 28px;
+            background-color: #A9C3DB;
+            font-weight: bold;
+            border: none;
+            float: right;
+        }
+    }
 }
