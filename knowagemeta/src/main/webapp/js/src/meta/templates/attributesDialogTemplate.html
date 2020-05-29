@@ -62,6 +62,7 @@
 						<md-input-container flex="50" class="noPadding md-block"> 
 							<label>{{properties['structural.attribute'].propertyType.name}}</label>
 							<md-select ng-model="properties['structural.attribute'].value">
+							 	<md-option value=""></md-option>
 								<md-option ng-repeat="option in sbiModule_config.profileAttributes" ng-value="option">
 									{{option}}
 								</md-option>
