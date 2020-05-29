@@ -69,10 +69,23 @@ public class JsonPathAggregatorPlaceholder implements Placeholder {
 		return /* path + " - " + */ (currValue != null ? getValue().toString() : "");
 	}
 
+	private void filterNullValues(List<ValueWithWeightPlaceholder> values) {
+		Iterator<ValueWithWeightPlaceholder> iterator = values.iterator();
+		while (iterator.hasNext()) {
+			ValueWithWeightPlaceholder next = iterator.next();
+			if (next.getValue() == null) {
+				iterator.remove();
+			}
+		}
+	}
+
+
 	@Override
 	public final Double getValue() {
 		try {
 			final List<ValueWithWeightPlaceholder> values = selectValues();
+
+			filterNullValues(values);
 
 			return delegate.aggregate(values);
 		} catch (Exception e) {
