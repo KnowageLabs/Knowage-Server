@@ -105,8 +105,8 @@
                                           </md-select>
                                        </div>
                                     </div>
-                                    <div ng-if="col.dataType === 'date'" style="display: inline-flex;">
-                                       <md-datepicker ng-model="row[col.field]"  step="{{getStep(col.dataType)}}"
+                                    <div ng-if="col.dataType === 'date'" layout="row">
+                                       <md-datepicker ng-model="row[col.field] !== '' ? row[col.field] : null"  step="{{getStep(col.dataType)}}"
                                           name="dateField"  ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"> </md-datepicker>
                                        <md-icon md-font-icon="fa fa-times" ng-click="resetDateField($event, row, col);"></md-icon>
                                     </div>
@@ -165,8 +165,8 @@
                                           </md-select>
                                        </div>
                                     </div>
-                                    <div ng-if="col.dataType === 'date'" style="display: inline-flex;">
-                                       <md-datepicker ng-model="row[col.field]"  step="{{getStep(col.dataType)}}"
+                                    <div ng-if="col.dataType === 'date'" layout="row">
+                                       <md-datepicker ng-model="row[col.field] !== '' ? row[col.field] : null"  step="{{getStep(col.dataType)}}"
                                           name="dateField"  ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"> </md-datepicker>
                                        <md-icon md-font-icon="fa fa-times" ng-click="resetDateField($event, row, col);"></md-icon>
                                     </div>

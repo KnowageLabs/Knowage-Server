@@ -555,7 +555,7 @@
 		
 		$scope.resetDateField = function (e, row, col) {
 			e.preventDefault();
-			row[col.field] = '';
+			row[col.field] = null;
 		}
 		
 		// Update
