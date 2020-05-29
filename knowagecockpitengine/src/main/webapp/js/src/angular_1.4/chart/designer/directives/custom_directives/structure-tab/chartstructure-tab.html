@@ -43,7 +43,7 @@
 							
 							<md-list flex style="padding-top:0; padding-bottom:0" ng-if="numberOfSeriesContainers<=1">
 								<md-list-item ng-repeat="measure in allMeasures" ng-click="moveMeasureToSeries(measure)" class="noright">
-								    <span ><b>{{measure.alias || measure.id}}</b></span>
+								    <span ><b>{{measure.alias || measure.id}} ({{measure.aggregationSelected}})</b></span>
 							  	</md-list-item>
 						  	</md-list>
 						  	
@@ -51,7 +51,7 @@
 								
 								<md-list-item ng-repeat="measure in allMeasures">
 								   
-								    <span class="noright"><b>{{measure.alias || measure.id}}</b></span>
+								    <span class="noright"><b>{{measure.alias || measure.id}} ({{measure.aggregationSelected}})</b></span>
 								     
 								    <md-menu style="padding:0px;">
 							      
@@ -456,7 +456,7 @@
 						<!-- If the series container has at least one series item inside of it. -->		
 						<md-list-item ng-if="seriesContainer.series.length>0" ng-repeat="seriesItem in seriesContainer.series track by $index" class="noright" style="padding:0 8 0 16">
 						    
-						    <span><b>{{seriesItem}}</b></span>
+						    <span><b>{{seriesItem}} ({{getAggregationFunction(seriesItem)}})</b></span>
 						   
 						    <span flex></span>
 						 

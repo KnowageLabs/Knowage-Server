@@ -296,6 +296,13 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 		}
 
+	$scope.getAggregationFunction = function(serieName) {		
+		for (i=0; i<$scope.chartTemplate.VALUES.SERIE.length; i++) {			
+			if ($scope.chartTemplate.VALUES.SERIE[i].column == serieName) {
+				return $scope.chartTemplate.VALUES.SERIE[i].groupingFunction;
+			}			
+		}		
+	}
 
 	// Called when the user clicks on the measure in its container, so the measure can be used as a series item in the chart.
 	$scope.moveMeasureToSeries = function(item,seriesContainer) {
