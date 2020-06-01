@@ -54,6 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					  {"label":"Name","name":"name"},
 					  {"label":"Type","name":"type"}
 					]'
+			columns-search='["label","name"]'
 			show-search-bar=true
 			highlights-selected-item=true
 			speed-menu-option="adSpeedMenu"
