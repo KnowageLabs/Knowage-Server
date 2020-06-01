@@ -139,7 +139,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				} finally {
 					timeToExecuteStatement.stop();
 				}
-				LogMF.info(logger, "Query has been executed:\n{0}", sqlQuery);
+				LogMF.debug(logger, "Query has been executed:\n{0}", sqlQuery);
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
 			}
@@ -182,7 +182,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 
 			dataStore = null;
 			Monitor timeToGetDataStore = MonitorFactory.start("Knowage.JDBCDataProxy.getDataStore:" + sqlQuery);
-			LogMF.info(logger, "Getting datastore for SQL query:\n{0}", sqlQuery);
+			LogMF.debug(logger, "Getting datastore for SQL query:\n{0}", sqlQuery);
 			try {
 				// read data
 				dataStore = dataReader.read(resultSet);
@@ -191,7 +191,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			} finally {
 				timeToGetDataStore.stop();
 			}
-			LogMF.info(logger, "Got datastore for SQL query:\n{0}", sqlQuery);
+			LogMF.debug(logger, "Got datastore for SQL query:\n{0}", sqlQuery);
 
 			if (resultNumber > -1) { // it means that resultNumber was successfully calculated by this data proxy
 				int limitedResultNumber = getMaxResults() > 0 && resultNumber > getMaxResults() ? getMaxResults() : resultNumber;
@@ -240,7 +240,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			} finally {
 				timeToExecuteStatement.stop();
 			}
-			LogMF.info(logger, "Query has been executed:\n{0}", sqlQuery);
+			LogMF.debug(logger, "Query has been executed:\n{0}", sqlQuery);
 			rs.next();
 			resultNumber = rs.getInt(1);
 		} catch (Throwable t) {
@@ -359,8 +359,9 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				stmt.setMaxRows(getMaxResults());
 			}
 			String sqlQuery = getStatement();
-			logger.info("Executing query " + sqlQuery + " ...");
+			LogMF.info(logger, "Executing query:\n{0}", sqlQuery);
 			resultSet = stmt.executeQuery(sqlQuery);
+			LogMF.debug(logger, "Query has been executed:\n{0}", sqlQuery);
 			return resultSet;
 		} catch (SQLException e) {
 			throw new SpagoBIRuntimeException(e);
