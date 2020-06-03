@@ -120,7 +120,7 @@
          	if(documentService.document.id || document.id){
          		resourceService.put(documentService.requiredPath,documentService.document.id,documentService.document).then(function(response){
          			if(response.data.errors){
-         				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
+         				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
          			}else
          			sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.documentupdated"), 'Success!');
          			documentService.document = response.data;
@@ -131,7 +131,7 @@
          	} else{
          		resourceService.post(documentService.requiredPath,"",document).then(function(response){
          			if(response.data.errors){
-         				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Failure!!!');
+         				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
          			}else
          			sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.documentcreated"), 'Success!');
          			documentService.document = response.data;

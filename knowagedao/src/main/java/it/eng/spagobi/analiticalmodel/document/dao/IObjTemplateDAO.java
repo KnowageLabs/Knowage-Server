@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,6 +27,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 public interface IObjTemplateDAO extends ISpagoBIDao {
@@ -34,78 +35,66 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	/**
 	 * Gets the bI object active template.
 	 *
-	 * @param biobjId
-	 *            the biobj id
+	 * @param biobjId the biobj id
 	 *
 	 * @return the bI object active template
 	 *
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public ObjTemplate getBIObjectActiveTemplate(Integer biobjId) throws EMFInternalError;
 
 	/**
 	 * Gets the bI object active template starting by document label
 	 *
-	 * @param biobjLabel
-	 *            the BiObject label
+	 * @param biobjLabel the BiObject label
 	 *
 	 * @return the bI object active template
 	 *
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public ObjTemplate getBIObjectActiveTemplateByLabel(String label) throws EMFInternalError;
 
 	/**
 	 * Gets the bI object template list.
 	 *
-	 * @param biobjId
-	 *            the biobj id
+	 * @param biobjId the biobj id
 	 *
 	 * @return the bI object template list
 	 *
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public List getBIObjectTemplateList(Integer biobjId) throws EMFInternalError;
 
 	/**
 	 * Gets the bI object template list.
 	 *
-	 * @param biobjLabel
-	 *            the biobj label
+	 * @param biobjLabel the biobj label
 	 *
 	 * @return the bI object template list
 	 *
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
-	//public List getBIObjectTemplateListByDocLabel(String biobjLabel) throws EMFInternalError;
+	// public List getBIObjectTemplateListByDocLabel(String biobjLabel) throws EMFInternalError;
 
 	/**
 	 * Load bi object template.
 	 *
-	 * @param tempId
-	 *            the temp id
+	 * @param tempId the temp id
 	 *
 	 * @return the obj template
 	 *
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public ObjTemplate loadBIObjectTemplate(Integer tempId) throws EMFInternalError;
 
 	/**
 	 * Gets the next prog for template.
 	 *
-	 * @param biobjId
-	 *            the biobj id
+	 * @param biobjId the biobj id
 	 *
 	 * @return the next prog for template
 	 *
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public List getAllTemplateWithoutActive(String data) throws EMFInternalError, ParseException;
 
@@ -116,47 +105,40 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	/**
 	 * Delete bi object template.
 	 *
-	 * @param tempId
-	 *            the temp id
+	 * @param tempId the temp id
 	 *
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public void deleteBIObjectTemplate(Integer tempId) throws EMFInternalError;
 
 	/**
 	 * Setting active bi object template.
 	 *
-	 * @param objTemplate
-	 *            the new template
+	 * @param objTemplate the new template
 	 *
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public void setTemplateActive(ObjTemplate objTemplate, BIObject biObject) throws EMFUserError, EMFInternalError;
 
 	/**
 	 * Insert a new bi object template.
 	 *
-	 * @param objTemplate
-	 *            the new template
+	 * @param objTemplate the new template
 	 *
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public void insertBIObjectTemplate(ObjTemplate objTemplate, BIObject biObject);
 
 	/**
 	 * Change activity of doc's template.
 	 *
-	 * @param biObjId
-	 *            biobj id
-	 * @param tempId
-	 *            temp id
+	 * @param biObjId biobj id
+	 * @param tempId  temp id
 	 *
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public void setPreviousTemplateActive(Integer biObjId, Integer tempId) throws EMFInternalError;
+
+	public ObjTemplate toObjTemplate(SbiObjTemplates hibObjTemp);
 
 }

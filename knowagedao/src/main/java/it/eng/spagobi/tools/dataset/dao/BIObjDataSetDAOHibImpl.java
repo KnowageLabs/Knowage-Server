@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,23 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.dao;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiObjDataSet;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,9 +28,23 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.engines.drivers.IEngineDriver;
+import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiObjDataSet;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 /**
  * Defines the Hibernate implementations for all DAO methods, for a BI Object Dataset.
- * 
+ *
  * @author Gavardi
  */
 public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIObjDataSetDAO {
@@ -426,6 +428,61 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		}
 
 		logger.debug("IN");
+	}
+
+	@Override
+	public void insertOrUpdateDatasetDependencies(BIObject biObject, ObjTemplate template) {
+
+		logger.debug("IN");
+
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSession();
+			Assert.assertNotNull(session, "session cannot be null");
+			transaction = session.beginTransaction();
+			Assert.assertNotNull(transaction, "transaction cannot be null");
+
+			byte[] documentTemplate = template.getContent();
+			String driverName = biObject.getEngine().getDriverName();
+			if (driverName != null && !"".equals(driverName)) {
+				try {
+					IEngineDriver driver = (IEngineDriver) Class.forName(driverName).newInstance();
+					ArrayList<String> datasetsAssociated = driver.getDatasetAssociated(documentTemplate);
+					if (datasetsAssociated != null && !datasetsAssociated.isEmpty()) {
+
+						DAOFactory.getSbiObjDsDAO().deleteObjDsbyObjId(biObject.getId());
+
+						for (Iterator iterator = datasetsAssociated.iterator(); iterator.hasNext();) {
+							String string = (String) iterator.next();
+							logger.debug("Dataset associated to biObject with label " + biObject.getLabel() + ": " + string);
+						}
+
+						IBIObjDataSetDAO biObjDatasetDAO = DAOFactory.getBIObjDataSetDAO();
+						biObjDatasetDAO.updateObjectNotDetailDatasets(biObject, datasetsAssociated, session);
+					} else {
+						logger.debug("No dataset associated to template");
+					}
+				} catch (Exception e) {
+					logger.error("Error while inserting dataset dependencies; check template format", e);
+					throw new RuntimeException("Impossible to add template [" + template.getName() + "] to document [" + template.getBiobjId()
+							+ "]; error while recovering dataset associations; check template format.");
+				}
+			}
+
+			transaction.commit();
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("Error while deleting the objDataset associated with object" + biObject.getId(), t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+		logger.debug("OUT");
+
 	}
 
 }

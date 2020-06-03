@@ -352,10 +352,10 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 	/**
 	 * To obj template.
 	 *
-	 * @param hibObjTemp
-	 *            the hib obj temp
+	 * @param hibObjTemp the hib obj temp
 	 * @return the obj template
 	 */
+	@Override
 	public ObjTemplate toObjTemplate(SbiObjTemplates hibObjTemp) {
 		ObjTemplate objTemp = new ObjTemplate();
 		objTemp.setActive(hibObjTemp.getActive());
