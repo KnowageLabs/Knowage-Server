@@ -18,6 +18,7 @@
 
 package it.eng.knowage.engine.cockpit.api.crosstable.placeholder;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -118,6 +119,8 @@ public class JsonPathAggregatorPlaceholder implements Placeholder {
 				 */
 				if (object instanceof String) {
 					value = String.valueOf(object);
+				} else if (object instanceof Number) {
+					value = object instanceof BigDecimal ? ((BigDecimal) object).toPlainString() : String.valueOf(object);
 				} else if (object instanceof Map) {
 					Map<String, String> currObject = (Map<String, String>) object;
 
