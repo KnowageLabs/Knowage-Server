@@ -100,16 +100,21 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		this.eGui.innerHTML = '<div class="qbeCustomTopColor" style="background-color: ' + this.properties.color + '"></div>' +
 			'<md-icon class="fa fa-sort sort-button"></md-icon>' +
 			'<span>' + params.displayName + '</span>' +
+			'<md-icon class="fa fa-cog settings-button"></md-icon>'+
 			'<md-icon class="fa fa-times remove-button"></md-icon>';
 
 		this.onRemoveButtonClick = this.removeColumn.bind(this);
 		this.onSortButtonClick = this.sortColumn.bind(this);
+		this.onSettingsButtonClick = this.openColumnSettings.bind(this);
 
 		this.removeButton = this.eGui.querySelector(".remove-button");
 		this.removeButton.addEventListener("click", this.onRemoveButtonClick);
 
 		this.sortButton = this.eGui.querySelector(".sort-button");
 		this.sortButton.addEventListener("click", this.onSortButtonClick);
+		
+		this.settingsButton = this.eGui.querySelector(".settings-button");
+		this.settingsButton.addEventListener("click", this.onSettingsButtonClick);
 
 
 	}
@@ -122,6 +127,21 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	CustomHeader.prototype.sortColumn = function() {
 		var realColumn = $scope.getColumnById(this.properties.id)
 		$scope.toggleOrder(realColumn);
+	}
+	
+	CustomHeader.prototype.openColumnSettings = function(event){
+		for(var k in $scope.ngModel){
+			if($scope.ngModel[k].id == this.properties.id) $scope.field = $scope.ngModel[k];
+		}
+		document.getElementById('ag-popup-child').style.left = event.clientX;
+		document.getElementById('ag-popup-child').style.top = event.clientY;
+		$scope.$apply();
+		togglePopupVisibility();
+		
+	}
+	
+	function togglePopupVisibility(){
+		document.getElementById('ag-popup').style.display =  document.getElementById('ag-popup').style.display == 'block' ? 'none' : 'block';
 	}
 
 	function getAgGridColumns() {
@@ -228,42 +248,42 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		expression_service.generateExpressions($scope.filters,$scope.expression,$scope.advancedFilters)
 	}
 
-	$scope.moveRight = function(currentOrder, column) {
-
-		var newOrder = currentOrder + 1;
-		var index = $scope.ngModel.indexOf(column);
-		var indexOfNext = index + 1;
-
-		if(index!=undefined && indexOfNext!=-1 && newOrder <= $scope.ngModel.length){
-			$scope.ngModel[index] = $scope.ngModel[indexOfNext];
-			$scope.ngModel[index].order = currentOrder;
-
-			$scope.ngModel[indexOfNext] = column;
-			$scope.ngModel[indexOfNext].order = newOrder;
-		}
-
-		$rootScope.$broadcast('move', {index:index,direction:+1});
-
-	};
-
-	$scope.moveLeft = function(currentOrder, column) {
-
-		var newOrder = currentOrder - 1;
-		var index = $scope.ngModel.indexOf(column);
-		var indexOfBefore = index - 1;
-
-		if(index!=undefined && indexOfBefore!=undefined && indexOfBefore!=-1){
-
-			$scope.ngModel[index] = $scope.ngModel[indexOfBefore];
-			$scope.ngModel[index].order = currentOrder;
-
-			$scope.ngModel[indexOfBefore] = column;
-			$scope.ngModel[indexOfBefore].order = newOrder;
-		}
-
-		$rootScope.$broadcast('move', {index:index,direction:-1});
-
-	};
+//	$scope.moveRight = function(currentOrder, column) {
+//
+//		var newOrder = currentOrder + 1;
+//		var index = $scope.ngModel.indexOf(column);
+//		var indexOfNext = index + 1;
+//
+//		if(index!=undefined && indexOfNext!=-1 && newOrder <= $scope.ngModel.length){
+//			$scope.ngModel[index] = $scope.ngModel[indexOfNext];
+//			$scope.ngModel[index].order = currentOrder;
+//
+//			$scope.ngModel[indexOfNext] = column;
+//			$scope.ngModel[indexOfNext].order = newOrder;
+//		}
+//
+//		$rootScope.$broadcast('move', {index:index,direction:+1});
+//
+//	};
+//
+//	$scope.moveLeft = function(currentOrder, column) {
+//
+//		var newOrder = currentOrder - 1;
+//		var index = $scope.ngModel.indexOf(column);
+//		var indexOfBefore = index - 1;
+//
+//		if(index!=undefined && indexOfBefore!=undefined && indexOfBefore!=-1){
+//
+//			$scope.ngModel[index] = $scope.ngModel[indexOfBefore];
+//			$scope.ngModel[index].order = currentOrder;
+//
+//			$scope.ngModel[indexOfBefore] = column;
+//			$scope.ngModel[indexOfBefore].order = newOrder;
+//		}
+//
+//		$rootScope.$broadcast('move', {index:index,direction:-1});
+//
+//	};
 
 	$scope.changeAlias = function(field){
 		$mdDialog.show({

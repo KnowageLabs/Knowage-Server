@@ -130,5 +130,126 @@
 	 	<qbe-pagination total-count="results" on-page-change='pageChanged(newPageNumber)'></qbe-pagination>
 	 	<div flex="5"></div>
 	</md-whiteframe-->
+	<div class="ag-theme-balham ag-popup" id="ag-popup" >
+		<div class="ag-menu ag-popup-child" id="ag-popup-child" style="min-width: 242px;">
+        	<div ref="eBody" class="ag-menu-body">
+        		<div class="ag-menu-list" tabindex="-1">
+			        <div class="ag-menu-option" tabindex="-1" >
+			            <span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part">
+			            	<input type="checkbox" ng-model="field.visible" ng-click="setVisible(field.id,field.entity, field.visible)"/>
+				        </span>
+			            <span ref="eName" class="ag-menu-option-text ag-menu-option-part">{{::translate.load("kn.qbe.custom.table.show.field")}}</span>
+			            <span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+			            <span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part">&nbsp;</span>
+			        </div>
+			        
+			        <div class="ag-menu-option" tabindex="-1" ng-show="field.iconCls=='measure'" ng-if="isTemporal">
+			            <span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part">&nbsp;</span>
+			            <span ref="eName" class="ag-menu-option-text ag-menu-option-part">{{::translate.load("kn.qbe.selectgridpanel.name.temporalOperand.parameter")}}</span>
+			            <span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+			            <span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part">&nbsp;</span>
+			        </div>
+			        
+			        
+			        <div class="ag-menu-option" tabindex="-1" ng-show="field.iconCls=='measure'" ng-if="isTemporal">
+			            <span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part"><span class="fa fa-puzzle-piece"></span></span>
+			            <span ref="eName" class="ag-menu-option-text ag-menu-option-part">{{::translate.load("kn.qbe.custom.table.function.temporal")}}</span>
+			            <span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+			            <md-menu >
+			            	<span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part" ng-click="openMenu($mdMenu.open, $event)"><span class="ag-icon ag-icon-small-right" unselectable="on"></span></span>
+				            <md-menu-content class="qbeMenuContent"> 
+					        	<md-menu-item>
+									<md-button ng-click="applyFuntion('YTD',field.id,field.entity)">
+										<span>YTD</span> 
+									</md-button> 
+								</md-menu-item> 
+								<md-menu-item> 
+									<md-button ng-click="applyFuntion('LAST_YEAR',field.id,field.entity)">
+										<span>LAST_YEAR</span> 
+									</md-button> 
+								</md-menu-item> 
+								<md-menu-item> 
+									<md-button ng-click="applyFuntion('PARALLEL_YEAR',field.id,field.entity)">
+										<span>PARALLEL_YEAR</span> 
+									</md-button> 
+								</md-menu-item> 
+								<md-menu-item> 
+									<md-button ng-click="applyFuntion('MTD',field.id,field.entity)"> 
+										<span>MTD</span>
+									</md-button> 
+								</md-menu-item> 
+								<md-menu-item> 
+									<md-button ng-click="applyFuntion('LAST_MONTH',field.id,field.entity)">
+										<span>LAST_MONTH</span> 
+									</md-button>
+								</md-menu-item> 
+							</md-menu-content>
+						</md-menu>
+			        </div>
+				       
+	        		<div class="ag-menu-option" tabindex="-1" ng-show="field.iconCls=='attribute' || (field.iconCls=='calculation' && field.attributes.formState.nature.toLowerCase()=='attribute')">
+			            <span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part">
+			            	<input type="checkbox" ng-model="field.group" ng-click="group(field.id, field.entity, field.group)"/>
+				        </span>
+			            <span ref="eName" class="ag-menu-option-text ag-menu-option-part">{{::translate.load("kn.qbe.custom.table.group")}}</span>
+			            <span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+			            <span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part">&nbsp;</span>
+			        </div>
+			        
+			        <div class="ag-menu-option" tabindex="-1" ng-show="field.iconCls=='measure'  || (field.iconCls=='calculation' && field.attributes.formState.nature.toLowerCase()=='measure')">
+			            <span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part"><span class="kni kni-sum"></span></span>
+			            <span ref="eName" class="ag-menu-option-text ag-menu-option-part">{{::translate.load("kn.qbe.custom.table.aggregation")}}</span>
+			            <span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+			            <md-menu >
+			            	<span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part" ng-click="openMenu($mdMenu.open, $event)"><span class="ag-icon ag-icon-small-right" unselectable="on"></span></span>
+				            <md-menu-content class="qbeMenuContent"> 
+					        	<md-menu-item>
+									<md-button ng-click="applyFuntion('none',field.id,field.entity)" ng-class="{'md-raised':field.funct=='NONE'}">
+										<span>{{::translate.load("kn.qbe.custom.table.none")}}</span> 
+									</md-button> 
+								</md-menu-item> 
+								<md-menu-item> 
+									<md-button ng-click="applyFuntion('sum',field.id,field.entity)" ng-class="{'md-raised':field.funct=='SUM'}">
+										<span>{{::translate.load("kn.qbe.custom.table.sum")}}</span> 
+									</md-button> 
+								</md-menu-item> 
+								<md-menu-item> 
+									<md-button ng-click="applyFuntion('min',field.id,field.entity)" ng-class="{'md-raised':field.funct=='MIN'}">
+										<span>{{::translate.load("kn.qbe.custom.table.min")}}</span> 
+									</md-button> 
+								</md-menu-item> 
+								<md-menu-item> 
+									<md-button ng-click="applyFuntion('max',field.id,field.entity)" ng-class="{'md-raised':field.funct=='MAX'}"> 
+										<span>{{::translate.load("kn.qbe.custom.table.max")}}</span>
+									</md-button> 
+								</md-menu-item> 
+								<md-menu-item> 
+									<md-button ng-click="applyFuntion('avg',field.id,field.entity)" ng-class="{'md-raised':field.funct=='AVG'}"> 
+										<span>{{::translate.load("kn.qbe.custom.table.avg")}}</span>
+									</md-button> 
+								</md-menu-item>
+								<md-menu-item> 
+									<md-button ng-click="applyFuntion('count',field.id,field.entity)" ng-class="{'md-raised':field.funct=='COUNT'}"> 
+										<span>{{::translate.load("kn.qbe.custom.table.count")}}</span>
+									</md-button> 
+								</md-menu-item>
+								<md-menu-item> 
+									<md-button ng-click="applyFuntion('count_distinct',field.id,field.entity)" ng-class="{'md-raised':field.funct=='COUNT_DISTINCT'}"> 
+										<span>{{::translate.load("kn.qbe.custom.table.count.distinct")}}</span>
+									</md-button> 
+								</md-menu-item>
+							</md-menu-content>
+						</md-menu>
+			        </div>
+			        
+			        <div class="ag-menu-option" tabindex="-1" ng-click="changeAlias(field)">
+			            <span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part"><span class="fa fa-tag"></span></span>
+			            <span ref="eName" class="ag-menu-option-text ag-menu-option-part">Rename alias</span>
+			            <span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+			            <span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part">&nbsp;</span>
+			        </div>
+				</div>
+        	</div>
+        </div>
 
 </div>

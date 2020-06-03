@@ -442,3 +442,19 @@ $exportBarHeight : 36px;
 		margin-top: 16px;
 	}
 }
+
+#ag-popup {
+	#ag-popup-child {
+		.ag-menu-option-icon {
+			text-align: center;
+		}
+		.ag-menu-option-popup-pointer {
+			line-height: 28px;
+		}
+		.ag-menu-option {
+			&:hover {
+				background-color: $secondaryColor;
+			}
+		}
+	}
+}
