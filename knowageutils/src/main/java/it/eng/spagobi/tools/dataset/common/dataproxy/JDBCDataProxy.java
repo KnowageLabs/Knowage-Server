@@ -233,14 +233,14 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			}
 			String sqlQuery = "SELECT COUNT(*) FROM (" + statement + ") " + tableAlias;
 			stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			LogMF.info(logger, "Executing query:\n{0}", sqlQuery);
-			Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeStatement:" + sqlQuery);
+			LogMF.info(logger, "Executing count statement, SQL query:\n{0}", sqlQuery);
+			Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeCountStatement:" + sqlQuery);
 			try {
 				rs = stmt.executeQuery(sqlQuery);
 			} finally {
 				timeToExecuteStatement.stop();
 			}
-			LogMF.debug(logger, "Query has been executed:\n{0}", sqlQuery);
+			LogMF.debug(logger, "Executed count statement, SQL query:\n{0}", sqlQuery);
 			rs.next();
 			resultNumber = rs.getInt(1);
 		} catch (Throwable t) {
@@ -360,8 +360,13 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			}
 			String sqlQuery = getStatement();
 			LogMF.info(logger, "Executing query:\n{0}", sqlQuery);
-			resultSet = stmt.executeQuery(sqlQuery);
-			LogMF.debug(logger, "Query has been executed:\n{0}", sqlQuery);
+			Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeStatement:" + sqlQuery);
+			try {
+				resultSet = stmt.executeQuery(sqlQuery);
+			} finally {
+				timeToExecuteStatement.stop();
+			}
+			LogMF.debug(logger, "Executed query:\n{0}", sqlQuery);
 			return resultSet;
 		} catch (SQLException e) {
 			throw new SpagoBIRuntimeException(e);
