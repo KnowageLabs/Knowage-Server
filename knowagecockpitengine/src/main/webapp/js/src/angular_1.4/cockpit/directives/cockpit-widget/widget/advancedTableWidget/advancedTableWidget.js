@@ -412,6 +412,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					tempValue = tempValue.toString().substring(0,params.colDef.style.maxChars);
 				}
 			}
+			params.eParentOfValue.style.backgroundColor = (params.colDef.style && params.colDef.style['background-color']) || 'inherit';
+			if($scope.bulkSelection){
+				this.manageMultiSelection(params);
+			}
 			if(tempValue != "" && this.eGui.innerHTML == '') this.eGui.innerHTML = ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
 		}
 
@@ -420,13 +424,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 
 		cellRenderer.prototype.refresh = function(params) {
-			this.eGui.parentNode.style.backgroundColor = params.colDef.style && params.colDef.style['background-color'] || 'inherit';
 			if($scope.bulkSelection){
-				if($scope.interaction && ($scope.interaction.crossType == 'allRow' || $scope.interaction.interactionType == 'allRow')){
-					if($scope.selectedCells.indexOf(params.data[$scope.bulkSelection]) > -1) this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
-				}else if(params.colDef.field == $scope.bulkSelection && $scope.selectedCells.indexOf(params.value) > -1){
-					this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
+				this.manageMultiSelection(params);
+			}
+		}
+		
+		cellRenderer.prototype.manageMultiSelection = function(params) {
+			params.eParentOfValue.style.backgroundColor = (params.colDef.style && params.colDef.style['background-color']) || 'inherit';
+			if($scope.interaction && ($scope.interaction.crossType == 'allRow' || $scope.interaction.interactionType == 'allRow')){
+				if($scope.selectedCells.indexOf(params.data[$scope.bulkSelection]) > -1) {
+					if(this.eGui.parentNode) this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
+					else params.eParentOfValue.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
 				}
+			}else if(params.colDef.field == $scope.bulkSelection && $scope.selectedCells.indexOf(params.value) > -1){
+				if(this.eGui.parentNode) this.eGui.parentNode.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
+				else params.eParentOfValue.style.backgroundColor = $scope.ngModel.settings.multiselectablecolor || '#ccc';
 			}
 		}
 
