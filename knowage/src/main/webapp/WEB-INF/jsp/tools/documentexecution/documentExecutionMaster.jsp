@@ -84,6 +84,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			String cockpitParameters = request.getParameter("COCKPIT_PARAMETER") != null ? request.getParameter("COCKPIT_PARAMETER") : "null";
 			
 %>
+        /*
+        * Validation check for exec_from variable for security reasons
+        */
+		var execFrom = '<%=request.getParameter("EXEC_FROM")%>';
+		if (execFrom !='WORKSPACE_ORGANIZER') {
+			execFrom = null;
+		}
 		
 		var obj = { 
 				'OBJECT_ID' : 			'<%=request.getParameter("OBJECT_ID") != null
@@ -101,7 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'EDIT_MODE': '<%=request.getParameter("EDIT_MODE") != null
 					? request.getParameter("EDIT_MODE")
 					: aRequestContainer.getServiceRequest().getAttribute("EDIT_MODE")%>',
-				'EXEC_FROM': '<%=request.getParameter("EXEC_FROM")%>',
+				'EXEC_FROM': execFrom,
 				'COCKPIT_PARAMETER' : '<%=cockpitParameters.replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\'"))%>',
 				'IS_FROM_DOCUMENT_WIDGET' : '<%=request.getParameter("IS_FROM_DOCUMENT_WIDGET")%>',
                 'TOOLBAR_VISIBLE' : '<%=request.getParameter("TOOLBAR_VISIBLE")%>',
@@ -109,7 +116,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                
 
 		};
-		
 		
 		<%
 		if (request.getParameter("SELECTED_ROLE") != null

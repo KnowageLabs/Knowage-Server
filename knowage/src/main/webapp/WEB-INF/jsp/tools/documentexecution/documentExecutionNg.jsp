@@ -76,7 +76,15 @@ try{
         @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     */
     executedFrom = (String)(request.getParameter("EXEC_FROM"));
-    
+     
+    /*
+     * Validation check for exec_from variable for security reasons
+     */
+     
+     if (!executedFrom.equals("WORKSPACE_ORGANIZER")) {
+    	 executedFrom = null;
+     }
+   
     isFromDocumentWidget = (String)(request.getParameter("IS_FROM_DOCUMENT_WIDGET"));
     isForExport = (String)(request.getParameter(SpagoBIConstants.IS_FOR_EXPORT));
     if(isForExport == null) {
