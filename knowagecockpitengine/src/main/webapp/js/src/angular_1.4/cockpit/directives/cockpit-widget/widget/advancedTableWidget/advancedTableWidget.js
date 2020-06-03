@@ -412,7 +412,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					tempValue = tempValue.toString().substring(0,params.colDef.style.maxChars);
 				}
 			}
-			if(this.eGui.innerHTML == '') this.eGui.innerHTML = ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
+			if(tempValue != "" && this.eGui.innerHTML == '') this.eGui.innerHTML = ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
 		}
 
 		cellRenderer.prototype.getGui = function() {

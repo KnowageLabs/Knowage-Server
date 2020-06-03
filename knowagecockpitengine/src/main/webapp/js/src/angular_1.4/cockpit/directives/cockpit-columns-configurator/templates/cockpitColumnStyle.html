@@ -152,7 +152,7 @@
 				  
 				  <cockpit-column-variables variables="selectedColumn.variables" ng-if="variablesExists()"></cockpit-column-variables>
 			       
-		       		<md-card ng-if="needsFormat && (selectedColumn.fieldType == 'MEASURE' || hasPrecision(selectedColumn) || isDateColumn(selectedColumn.type))">
+		       		<md-card>
 						<md-toolbar class="ternaryToolbar">
 				      		<div class="md-toolbar-tools">
 					        	<h2>
@@ -162,11 +162,11 @@
 				       </md-toolbar>
 				       <md-card-content>
 					       <div flex layout="row" >
-								<md-input-container flex class="md-block" class="small counter" ng-if="selectedColumn.fieldType == 'MEASURE'">
+								<md-input-container flex class="md-block" class="small counter">
 									<label> {{::translate.load('sbi.cockpit.style.prefix')}}</label>
 									<input class="input_class" ng-trim="false" ng-model="selectedColumn.style.prefix"> 
 								</md-input-container>
-								<md-input-container flex class="md-block" class="small counter" ng-if="selectedColumn.fieldType == 'MEASURE'">
+								<md-input-container flex class="md-block" class="small counter">
 									<label>{{::translate.load('sbi.cockpit.style.suffix')}}</label>
 									<input class="input_class" ng-trim="false" ng-model="selectedColumn.style.suffix"> 
 								</md-input-container>
