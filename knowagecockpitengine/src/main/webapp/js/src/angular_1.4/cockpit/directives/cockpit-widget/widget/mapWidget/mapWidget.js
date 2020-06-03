@@ -807,14 +807,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
 
 			// exclude from model all attributes that are not needed for aggregation
-			columnsForData = columnsForData.filter(function (elem) {
-				if (elem.fieldType == "ATTRIBUTE"
-						&& elem.properties
-						&& !elem.properties.aggregateBy) {
-					return false;
-				} else {
-					return true;
-				}
+			columnsForData = columnsForData.filter(function(el) {
+					var type = el.fieldType;
+					return !(type == "ATTRIBUTE" && el.properties.aggregateBy);
 			});
 
 			for (f in columnsForData){

@@ -45,8 +45,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			for (var layerIdx in allLayers) {
 				var currLayer = allLayers[layerIdx];
 				if (currLayer.dsId == dsId) {
-					columns = currLayer.content.columnSelectedOfDataset;
-					break;
+					columns = currLayer.content
+					.columnSelectedOfDataset
+					.filter(function(el) {
+						var type = el.fieldType;
+						return !(type == "ATTRIBUTE" && el.properties.aggregateBy);
+					});
+				break;
 				}
 			}
 		}
