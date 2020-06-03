@@ -191,6 +191,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			}
 
 			// create aggregations from measures
+			var hasAnAVG = false;
 			for(var i=0;i<crosstabDef.measures.length;i++){
 				var measure = crosstabDef.measures[i];
 				var obj = {};
@@ -198,6 +199,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				obj["alias"] = measure.alias;
 				obj["columnName"] = measure.id;
 				obj["funct"] = measure.funct;
+
+				if (obj["funct"] == 'AVG') {
+					hasAnAVG = true;
+				}
 
 				obj["orderType"] = "";
 				if(columnOrdering !=undefined){
@@ -210,7 +215,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			}
 
 			// add a count for the weighted arithmetic mean
-			if (crosstabDef.measures.length > 0) {
+			if (hasAnAVG) {
 				var currMeasure = crosstabDef.measures[0];
 				var obj = {};
 				obj["id"] = "___COUNT";
