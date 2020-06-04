@@ -334,12 +334,25 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		String result = getQueryDefinition();
 		if (dependencies != null && dependencies.size() > 0 && drivers != null) {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("SELECT * FROM (" + getQueryDefinition() + ") LovTableForCache ");
-			buildWhereClause(buffer, dependencies, drivers);
+			if (result.contains("order by")) {
+				int index = result.indexOf("order");
+				String queryWithoutOrderBy = result.substring(0, index - 1);
+				buffer.append("SELECT * FROM (" + queryWithoutOrderBy + ") LovTableForCache ");
+				buildWhereClause(buffer, dependencies, drivers);
+				buildOrderByClause(buffer, result, index);
+			} else {
+				buffer.append("SELECT * FROM (" + getQueryDefinition() + ") LovTableForCache ");
+				buildWhereClause(buffer, dependencies, drivers);
+			}
 			result = buffer.toString();
 		}
 		logger.debug("OUT.result=" + result);
 		return result;
+	}
+
+	private void buildOrderByClause(StringBuffer buffer, String result, int index) {
+		String orderByClause = result.substring(index);
+		buffer.append(orderByClause);
 	}
 
 	private String getRandomAlias() {
