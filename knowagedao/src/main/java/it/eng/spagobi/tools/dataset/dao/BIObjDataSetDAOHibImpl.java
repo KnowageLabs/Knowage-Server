@@ -431,17 +431,12 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 	}
 
 	@Override
-	public void insertOrUpdateDatasetDependencies(BIObject biObject, ObjTemplate template) {
+	public void insertOrUpdateDatasetDependencies(BIObject biObject, ObjTemplate template, Session session) {
 
 		logger.debug("IN");
 
-		Session session = null;
-		Transaction transaction = null;
 		try {
-			session = getSession();
 			Assert.assertNotNull(session, "session cannot be null");
-			transaction = session.beginTransaction();
-			Assert.assertNotNull(transaction, "transaction cannot be null");
 
 			byte[] documentTemplate = template.getContent();
 			String driverName = biObject.getEngine().getDriverName();
@@ -469,17 +464,10 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 							+ "]; error while recovering dataset associations; check template format.");
 				}
 			}
-
-			transaction.commit();
+			session.flush();
 		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
 			throw new SpagoBIDAOException("Error while deleting the objDataset associated with object" + biObject.getId(), t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
 		}
 		logger.debug("OUT");
 

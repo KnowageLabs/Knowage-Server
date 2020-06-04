@@ -360,6 +360,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 		ObjTemplate objTemp = new ObjTemplate();
 		objTemp.setActive(hibObjTemp.getActive());
 		objTemp.setBinId(hibObjTemp.getSbiBinContents().getId());
+		objTemp.setContent(hibObjTemp.getSbiBinContents().getContent());
 		objTemp.setBiobjId(hibObjTemp.getSbiObject().getBiobjId());
 		objTemp.setCreationDate(hibObjTemp.getCreationDate());
 		objTemp.setId(hibObjTemp.getObjTempId());
