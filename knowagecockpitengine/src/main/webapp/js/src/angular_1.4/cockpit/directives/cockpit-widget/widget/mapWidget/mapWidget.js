@@ -809,7 +809,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			// exclude from model all attributes that are not needed for aggregation
 			columnsForData = columnsForData.filter(function(el) {
 					var type = el.fieldType;
-					return !(type == "ATTRIBUTE" && el.properties.aggregateBy);
+					return !(type == "ATTRIBUTE" && !el.properties.aggregateBy);
 			});
 
 			for (f in columnsForData){

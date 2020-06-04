@@ -49,7 +49,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					.columnSelectedOfDataset
 					.filter(function(el) {
 						var type = el.fieldType;
-						return !(type == "ATTRIBUTE" && el.properties.aggregateBy);
+						return !(type == "ATTRIBUTE" && !el.properties.aggregateBy);
 					});
 				break;
 				}
