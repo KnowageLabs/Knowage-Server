@@ -23,6 +23,9 @@ $aggrid-border-color: #d9dcde;
     		display: inline-block;
 		}
 	}
+	.ag-root-wrapper{
+		border: none;
+	}
 	.ag-body-viewport.ag-layout-auto-height{
 		height: auto;
 	}

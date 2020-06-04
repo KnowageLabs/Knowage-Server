@@ -399,6 +399,9 @@
 			.documentBrowserGrid {
 				height: 100%;
 				width: 100%;
+				.ag-header-row {
+					color: $lightTextColor;
+				}
 				.ag-body-viewport {
 					overflow-x: hidden;
 				}
