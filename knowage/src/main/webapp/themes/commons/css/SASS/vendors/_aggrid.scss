@@ -24,7 +24,7 @@ $aggrid-border-color: #d9dcde;
 		}
 	}
 	.ag-root-wrapper{
-		border: none;
+		border: none !important;
 	}
 	.ag-body-viewport.ag-layout-auto-height{
 		height: auto;
