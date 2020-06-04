@@ -177,7 +177,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			// Prevent errors about $digest
 			$timeout(function() {
-				$scope.refreshWidget(null, "init");
+				$scope.initializeTemplate();
+				$scope.createMap();
+				$scope.addAllLayers();
+				$scope.setMapSize();
 			});
 		};
 
@@ -339,9 +342,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			// Prevent errors about $digest
 			$timeout(function() {
 				var nature = "refresh";
-				if (typeof $scope.map == "undefined") {
-					nature = "init";
-				}
 				$scope.refreshWidget(null, nature);
 			});
 		}
@@ -372,20 +372,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.sideNavOpened = optionSidenav.isOpen();
 		}
 
+		$scope.clearAllLayers = function() {
+			$scope.map.setLayerGroup(new ol.layer.Group());
+		}
+
 		$scope.refresh = function(element,width,height, data, nature, associativeSelection, changedChartType, chartConf, options) {
 			if (nature == 'fullExpand' || nature == 'resize'){
 				$timeout(function() {
 					$scope.map.updateSize();
 				}, 500);
 				return;
-			} else if (nature == "init") {
-				$scope.initializeTemplate();
-				$scope.createMap();
-				$scope.addAllLayers();
-				$scope.setMapSize();
 			} else if (nature == "refresh") {
 				// Delete all layers
-				$scope.map.getLayers().clear();
+				$scope.clearAllLayers();
 				$scope.clearInternalData();
 
 				$scope.resetFilter();
@@ -810,7 +809,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			columnsForData = columnsForData.filter(function(el) {
 					var type = el.fieldType;
 					return !(type == "ATTRIBUTE" && !el.properties.aggregateBy);
-			});
+				});
 
 			for (f in columnsForData){
 				var tmpField = columnsForData[f];
@@ -853,14 +852,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.createMap = function (){
 
 			var layers = [];
-
-			if ($scope.needsBaseLayer()) {
-				layers.push($scope.createBaseLayer());
-			}
-
-			if ($scope.needsBackgroundLayer()) {
-				layers.push($scope.createBackgroundLayer());
-			}
 
 			if (!$scope.popupContainer){
 				$scope.popupContainer = document.getElementById('popup-' + $scope.ngModel.id);
