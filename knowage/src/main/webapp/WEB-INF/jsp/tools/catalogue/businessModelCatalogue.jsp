@@ -261,47 +261,99 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		      	</md-card>
 			      
 		 		<%} %>   
-			      </md-tab>
+			      </md-tab>			      
+			      
 			      <md-tab label='{{translate.load("sbi.widgets.catalogueversionsgridpanel.title");}}'>
 			      <md-card layout="column">
-			      	<md-toolbar class="secondaryToolbar">
-				      <div class="md-toolbar-tools">
-				        <h2>
-				          <span>{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}</span>
-				        </h2>
-				   
-				      </div>
-				    </md-toolbar>
-		
-			      <md-card-content layout="column">
-			      	
-						<md-radio-group ng-model="bmVersionsActive" >
-						
-						<angular-table
-							ng-show="!versionLoadingShow"
-							id="bmVersions_id"
-							ng-model="bmVersions"
-							columns='[
-								{"label":"ACTIVE","name":"ACTION", "size":"100px"},
-								{"label":"FILE NAME","name":"fileName"},
-								{"label":"CREATOR","name":"creationUser"},
-								{"label":"CREATION DATE","name":"creationDate"}
-								]'
-							columns-search='["creationUser","creationDate"]'
-							show-search-bar=false
-							selected-item="selectedVersions"
-							highlights-selected-item=true
-							speed-menu-option="bmSpeedMenu2"	
-							no-pagination=false	
-							click-function="clickRightTable(item)"
-							layout-fill							
-						>						
-						</angular-table>
-						</md-radio-group>
-								
-			      </md-card-content>
+			      	  <md-toolbar class="secondaryToolbar">
+					      <div class="md-toolbar-tools">
+						      <h2>
+						      	<span>{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}</span>
+						      </h2>			   
+					      </div>
+				      </md-toolbar>				
+					      
+					<md-content layout="column">
+			            <div ng-if="!bmVersions || bmVersions==0">
+			                <div class="kn-noItems" layout-align="center center ">
+			                    {{translate.load("sbi.bm.versions.noversions")}}
+			                </div>
+			            </div>
+			            <div class="kn-custom-list h42" class="tabContainer">
+			                <div class="kn-list-item selectable" ng-repeat="version in bmVersions track by $index" ng-class="{'selected':version.$$hashKey == selectedVersions}" ng-style="{'background-color': version.active ? '#cddcea' : ''}">
+			                    <md-icon ng-if="version.active == false" md-font-icon="kn-list-preicon fa fa-history"></md-icon>
+			                    <md-icon ng-if="version.active == true" md-font-icon="kn-list-preicon fa fa-check"></md-icon>
+			                    <div layout="row" flex>
+				                    <div class="kn-list-text" layout="column">                        
+				                        <h3>{{ version.fileName }}</h3>
+				                        <p>{{ version.creationDate | date:'yyyy-MM-dd HH:mm:ss Z'}}</p>	                        
+				                    </div>
+				                    <div class="kn-list-text">  
+				                    	<h3>{{version.creationUser}}</h3>
+				                    </div>
+			                    </div>                    	
+			                    <md-menu class="kn-list-menu-button">
+			                    	<md-button class="kn-list-action-button md-icon-button" ng-click="openMenu($mdOpenMenu,$event)" aria-label="open menu" >
+			                        	<md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
+			                    	</md-button>
+			                    	<md-menu-content width="4">
+			                    	
+			                    		<md-menu-item ng-if="!version.active"> 
+			                    			<md-button ng-click="clickRightTable(version)">
+						                  		<div layout="row" flex>
+						                  			<md-icon md-menu-align-target md-font-icon="fa fa-check-circle" class="md-secondary md-icon-button"  aria-label="set active version"></md-icon>
+							                    	<p flex>{{translate.load("sbi.bm.versions.setactive")}}</p>
+							                  	</div>
+							              	</md-button>          
+			                        	</md-menu-item>
+			                        	
+			                    		<md-menu-item ng-if="version.hasContent && !version.hasLog"> 
+			                    			<md-button ng-click="downloadFile(version,event,'JAR')">
+						                  		<div layout="row" flex>
+						                  			<md-icon md-menu-align-target md-font-icon="fa fa-file-archive-o" class="md-secondary md-icon-button"  aria-label="download jar"></md-icon>
+							                    	<p flex>{{translate.load("sbi.bm.download.jar")}}</p>
+							                  	</div>
+							              	</md-button>
+							            </md-menu-item>
+							            
+							            <md-menu-item ng-if="version.hasLog"> 
+			                    			<md-button ng-click="downloadFile(version,event,'LOG')">
+						                  		<div layout="row" flex>
+						                  			<md-icon md-menu-align-target md-font-icon="fa fa-file-text-o" class="md-secondary md-icon-button"  aria-label="download log"></md-icon>
+							                    	<p flex>{{translate.load("sbi.bm.download.log")}}</p>
+							                  	</div>
+							              	</md-button>
+							            </md-menu-item>
+			                        	
+			                        	<md-menu-item ng-if="version.hasFileModel"> 
+			                    			<md-button ng-click="downloadFile(version,event,'SBIMODEL')">
+						                  		<div layout="row" flex>
+						                  			<md-icon md-menu-align-target md-font-icon="fa fa-file-code-o" class="md-secondary md-icon-button"  aria-label="download sbimodel"></md-icon>
+							                    	<p flex>{{translate.load("sbi.bm.download.model")}}</p>
+							                  	</div>
+							              	</md-button>
+							            </md-menu-item>
+			                        	
+			                    		<md-menu-item>      
+			                    			<md-button ng-click="deleteItemVersion(version,event)">
+						                  		<div layout="row" flex>
+						                  			<md-icon md-menu-align-target md-font-icon="fa fa-trash" class="md-secondary md-icon-button"  aria-label="delete version"></md-icon>
+							                    	<p flex>{{translate.load("sbi.generic.delete")}}</p>
+							                  	</div>
+							              	</md-button>              			
+			                        	</md-menu-item>
+			                    		
+			                    	</md-menu-content>
+			                    </md-menu>
+			                </div>
+			            </div>
+			            
+			        </md-content>
+					       
 			      </md-card>
 			      </md-tab>
+			      
+			      
 			      <md-tab label="Drivers" ng-if="selectedBusinessModel.id">			  	
 				  	<md-tab-body>
 				  		<ng-include src="'<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/templates/drivers.html")%>'" />

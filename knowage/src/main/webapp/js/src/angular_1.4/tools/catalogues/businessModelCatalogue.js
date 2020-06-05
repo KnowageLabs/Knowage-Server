@@ -57,6 +57,11 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
         $scope.getData();
     });
 
+	$scope.openMenu = function(menu, e) {
+		e.stopPropagation();
+		menu(e);
+	}
+
 	 $scope.getData = function(){
 		 $scope.getBusinessModels();
 		 $scope.getDataSources();
@@ -207,9 +212,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 				$scope.bmCWMProcessingShow = false;
-
 			});
-
 	}
 	*/
 
@@ -222,47 +225,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		                    	  }
 		                      	}
 		                     ];
-
-	 $scope.bmSpeedMenu2= [
-	                       {
-	                    	   label:sbiModule_translate.load("sbi.bm.download.jar"),
-		                       icon:'fa fa-file-archive-o',
-		                       visible : function (a,b){
-		                    	   return a.hasContent && !a.hasLog;
-		                       },
-		                       action:function(item,event){
-		                    	   $scope.downloadFile(item,event,'JAR');
-		                       }
-	                       },
-	                       {
-	                    	   label:sbiModule_translate.load("sbi.bm.download.log"),
-		                       icon:'fa fa-file-text-o',
-		                       visible : function (a,b){
-		                    	   return a.hasLog;
-		                       },
-		                       action:function(item,event){
-		                    	   $scope.downloadFile(item,event,'LOG');
-		                       }
-	                       },
-	                       {
-	                    	   label:sbiModule_translate.load("sbi.bm.download.model"),
-		                       icon:'fa fa-file-code-o',
-		                       visible : function (a,b){
-		                    	   return a.hasFileModel;
-		                       },
-		                       action:function(item,event){
-		                    	   $scope.downloadFile(item,event,'SBIMODEL');
-		                       }
-	                       },
-	                       {
-	                    	   label:sbiModule_translate.load("sbi.generic.delete"),
-	                    	   icon:'fa fa-trash',
-	                    	   action:function(item,event){
-		                    		  $scope.deleteItemVersion(item,event);
-		                       }
-		                   }
-	                      ];
-
 
 	 //functions that use services
 
@@ -701,7 +663,13 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 }
 
 		 $scope.clickRightTable = function(item){
+			 for(var i=0; i<$scope.bmVersions.length;i++){
+				 if($scope.bmVersions[i].id == $scope.bmVersionsActive) {
+					 $scope.bmVersions[i].active = false;
+				 }
+			 }
 			 $scope.bmVersionsActive = item.id;
+			 item.active = true;
 		 }
 
 
@@ -846,9 +814,7 @@ app.directive('fileModel',['$parse',function($parse){
 			}
 		}
 
-
 	}]);
-
 
 app.service('multipartForm',['$http',function($http){
 
