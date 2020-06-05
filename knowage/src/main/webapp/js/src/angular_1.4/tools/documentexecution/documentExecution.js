@@ -438,6 +438,7 @@
 				controllerAs : 'sendMailCtrl',
 				controller : function($mdDialog) {
 					var sendmailctl = this;
+					sendmailctl.loaded = true;
 					sendmailctl.mail = {};
 					sendmailctl.mail.label = $scope.executionInstance.OBJECT_LABEL;
 					sendmailctl.mail.docId = $scope.executionInstance.OBJECT_ID;
