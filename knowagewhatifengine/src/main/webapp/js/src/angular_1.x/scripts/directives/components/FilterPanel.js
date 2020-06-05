@@ -110,7 +110,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.hierarchyTreeService = hierarchyTreeService;
 	$scope.FiltersService = FiltersService;
 	var cutArray = [12, 11, 10, 9, 6]; //array with maximum lengths for card
-	$scope.selectView = true;
+	$scope.selectView = false;
 
 
 
