@@ -67,74 +67,78 @@
 					var lon;
 					var lat;
 					var isSimpleMarker = true;
-					for(var r=0; r < values.rows.length; r++){
-						//get coordinates
-						var geometry;
-						var feature;
-						var row = values.rows[r];
-						geoFieldValue = row[geoFieldName].trim();
-						if (!geoFieldConfig.properties.coordType){
-							//retrocompatibility management (just string type)
-							geoFieldConfig.properties.coordType = 'string';
-							geoFieldConfig.properties.coordFormat = 'lon lat';
-						}
-						if (geoFieldConfig.properties.coordType == 'json'){
+					for(var r=0; r < values.rows.length; r++) {
+						try {
+							//get coordinates
+							var geometry;
+							var feature;
+							var row = values.rows[r];
+							geoFieldValue = row[geoFieldName].trim();
+							if (!geoFieldConfig.properties.coordType){
+								//retrocompatibility management (just string type)
+								geoFieldConfig.properties.coordType = 'string';
+								geoFieldConfig.properties.coordFormat = 'lon lat';
+							}
+							if (geoFieldConfig.properties.coordType == 'json'){
 
-							feature = new ol.format.GeoJSON().readFeatures(geoFieldValue, {
-								dataProjection: 'EPSG:4326',
-								featureProjection: 'EPSG:3857'
-							});
+								feature = new ol.format.GeoJSON().readFeatures(geoFieldValue, {
+									dataProjection: 'EPSG:4326',
+									featureProjection: 'EPSG:3857'
+								});
 
-							if (Array.isArray(feature)) {
-								for (var i in feature) {
-									var currFeature = feature[i];
+								if (Array.isArray(feature)) {
+									for (var i in feature) {
+										var currFeature = feature[i];
 
-									ms.setUpGeoJSONFeature(currFeature, config, row, configColumns, values);
+										ms.setUpGeoJSONFeature(currFeature, config, row, configColumns, values);
+										ms.setUpSelectedMeasure(selectedMeasure, config, values);
+
+										featuresSource.addFeature(currFeature);
+									}
+								} else {
+
+									ms.setUpGeoJSONFeature(feature, config, row, configColumns, values);
 									ms.setUpSelectedMeasure(selectedMeasure, config, values);
 
-									featuresSource.addFeature(currFeature);
+									featuresSource.addFeature(feature);
 								}
-							} else {
 
-								ms.setUpGeoJSONFeature(feature, config, row, configColumns, values);
+
+							} else if (geoFieldConfig.properties.coordType == 'wkt') {
+
+								feature = new ol.format.WKT().readFeature(geoFieldValue, {
+									dataProjection: 'EPSG:4326',
+									featureProjection: 'EPSG:3857'
+								});
+
+								ms.setUpWKTFeature(feature, config, row, configColumns, values);
 								ms.setUpSelectedMeasure(selectedMeasure, config, values);
 
 								featuresSource.addFeature(feature);
+							} else if (geoFieldConfig.properties.coordType == 'string') {
+								if (geoFieldConfig.properties.coordType == 'string' && IsJsonString(geoFieldValue)){
+									console.log("Location is set as STRING but its value has a JSON format. Please check the configuration: ["+geoFieldValue+"]");
+									sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.stringInvalid').replace("{0}",geoColumn).replace("{1}",geoFieldValue.substring(0,20)+'...'), 'Title', 0);
+									return null;
+								}
+								isSimpleMarker = true;
+								geometry = ms.getGeometry(geoColumn, geoFieldConfig, geoFieldValue);
+
+								//set ol objects
+								feature = new ol.Feature(geometry);
+
+								//at least add the layer owner
+								feature.set("parentLayer",  config.layerID);
+								feature.set("isSimpleMarker", isSimpleMarker);
+								feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
+								ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
+								ms.setUpSelectedMeasure(selectedMeasure, config, values);
+
+								featuresSource.addFeature(feature);
+
 							}
-
-
-						} else if (geoFieldConfig.properties.coordType == 'wkt') {
-
-							feature = new ol.format.WKT().readFeature(geoFieldValue, {
-								dataProjection: 'EPSG:4326',
-								featureProjection: 'EPSG:3857'
-							});
-
-							ms.setUpWKTFeature(feature, config, row, configColumns, values);
-							ms.setUpSelectedMeasure(selectedMeasure, config, values);
-
-							featuresSource.addFeature(feature);
-						} else if (geoFieldConfig.properties.coordType == 'string') {
-							if (geoFieldConfig.properties.coordType == 'string' && IsJsonString(geoFieldValue)){
-								console.log("Location is set as STRING but its value has a JSON format. Please check the configuration: ["+geoFieldValue+"]");
-								sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.stringInvalid').replace("{0}",geoColumn).replace("{1}",geoFieldValue.substring(0,20)+'...'), 'Title', 0);
-								return null;
-							}
-							isSimpleMarker = true;
-							geometry = ms.getGeometry(geoColumn, geoFieldConfig, geoFieldValue);
-
-							//set ol objects
-							feature = new ol.Feature(geometry);
-
-							//at least add the layer owner
-							feature.set("parentLayer",  config.layerID);
-							feature.set("isSimpleMarker", isSimpleMarker);
-							feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
-							ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
-							ms.setUpSelectedMeasure(selectedMeasure, config, values);
-
-							featuresSource.addFeature(feature);
-
+						} catch(err) {
+							console.log("Error getting feature from row " + r + ". The original error was: " + err + ". Skipping to the next row...");
 						}
 					}
 
@@ -158,11 +162,11 @@
 			if (Array.isArray(value))
 				coord = value;
 			else{
-				if (value.indexOf(" ") > 0){
+				if (value.indexOf(" ") > 0) {
 					coord = value.split(" ");
-				}else if (value.indexOf(",")){
+				} else if (value.indexOf(",")) {
 					coord = value.split(",");
-				}else{
+				} else{
 					sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.lonLatError').replace("{0}",geocol).replace("{1}",value.substring(0,20)+'...'), 'Title', 0);
 					console.log("Error getting longitude and latitude from column value ["+ geocol +"]. Check the dataset and its metadata.");
 					return null;
@@ -175,18 +179,16 @@
 			}
 
 			//setting lon, lat values with correct order (LON, LAT)
+			var lat, lon;
 			switch(config.properties.coordFormat) {
-		    case "lon lat":
-		    	lon = (typeof coord[0]  === 'string') ? parseFloat(coord[0].trim()) : coord[0];
-		    	lat = (typeof coord[1]  === 'string') ? parseFloat(coord[1].trim()) : coord[1];
-		        break;
-		    case "lat lon":
-		    	lon = (typeof coord[1]  === 'string') ? parseFloat(coord[1].trim()) : coord[1];
-		    	lat = (typeof coord[0]  === 'string') ? parseFloat(coord[0].trim()) : coord[0];
-		    	break;
-		    default:
-		    	lon = (typeof coord[0]  === 'string') ? parseFloat(coord[0].trim()) : coord[0];
-		    	lat = (typeof coord[1]  === 'string') ? parseFloat(coord[1].trim()) : coord[1];
+			case "lat lon":
+				lon = (typeof coord[1]  === 'string') ? parseFloat(coord[1].trim()) : coord[1];
+				lat = (typeof coord[0]  === 'string') ? parseFloat(coord[0].trim()) : coord[0];
+				break;
+			case "lon lat":
+			default:
+				lon = (typeof coord[0]  === 'string') ? parseFloat(coord[0].trim()) : coord[0];
+				lat = (typeof coord[1]  === 'string') ? parseFloat(coord[1].trim()) : coord[1];
 			}
 
 			return [lon, lat];
