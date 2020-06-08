@@ -112,7 +112,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 		this.sortButton = this.eGui.querySelector(".sort-button");
 		this.sortButton.addEventListener("click", this.onSortButtonClick);
-		
+
 		this.settingsButton = this.eGui.querySelector(".settings-button");
 		this.settingsButton.addEventListener("click", this.onSettingsButtonClick);
 
@@ -128,7 +128,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		var realColumn = $scope.getColumnById(this.properties.id)
 		$scope.toggleOrder(realColumn);
 	}
-	
+
 	CustomHeader.prototype.openColumnSettings = function(event){
 		for(var k in $scope.ngModel){
 			if($scope.ngModel[k].id == this.properties.id) $scope.field = $scope.ngModel[k];
@@ -137,11 +137,15 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		document.getElementById('ag-popup-child').style.top = event.clientY;
 		$scope.$apply();
 		togglePopupVisibility();
-		
+
 	}
-	
+
 	function togglePopupVisibility(){
-		document.getElementById('ag-popup').style.display =  document.getElementById('ag-popup').style.display == 'block' ? 'none' : 'block';
+		var agPopUpEl = document.getElementById('ag-popup');
+		var agPopUpCloseAreaEl = document.getElementById('ag-popup-close-area');
+
+		agPopUpEl.style.display = agPopUpEl.style.display == 'block' ? 'none' : 'block';
+		agPopUpCloseAreaEl.style.display = agPopUpEl.style.display;
 	}
 
 	function getAgGridColumns() {
@@ -157,6 +161,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 					}
 				};
 			});
+	}
+
+	$scope.closePopup = function() {
+		togglePopupVisibility();
 	}
 
 	$scope.getColumnById = function(id) {
