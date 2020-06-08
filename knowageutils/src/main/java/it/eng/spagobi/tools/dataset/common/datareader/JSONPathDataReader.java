@@ -27,10 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
@@ -38,8 +36,6 @@ import org.joda.time.Instant;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 
@@ -469,8 +465,9 @@ public class JSONPathDataReader extends AbstractDataReader {
 	protected void addFieldMetadata(IMetaData dataStoreMeta, List<Object> parsedData) {
 		boolean idSet = false;
 
-		if(ngsiDefaultItems)manageNGSI(parsedData);
-		else manageNonNGSIObject(parsedData);
+		if (ngsiDefaultItems) {
+			manageNGSI(parsedData);
+		}
 
 		for (int index = 0; index < jsonPathAttributes.size(); index++) {
 			JSONPathAttribute jpa = jsonPathAttributes.get(index);
@@ -511,32 +508,6 @@ public class JSONPathDataReader extends AbstractDataReader {
 		if (ngsiDefaultItems && !dataReadFirstTime) {
 			List<JSONPathAttribute> ngsiAttributes = getNGSIAttributes(parsedData);
 			updateAttributes(ngsiAttributes);
-		}
-		dataReadFirstTime = true;
-	}
-
-	private void manageNonNGSIObject(List<Object> parsedData) {
-		if (!ngsiDefaultItems && !dataReadFirstTime) {
-			//If a column contains an Object then cast to a JSON string
-
-			for(Object r : parsedData) {
-				LinkedHashMap<Object, Object> record = (LinkedHashMap<Object, Object>)r;
-				Set<Object> columnNames =  record.keySet();
-				for(Object column : columnNames) {
-						Object obj = record.get(column);
-						if(obj instanceof Map) {
-							ObjectMapper mapper = new ObjectMapper();
-							try {
-								obj = mapper.writeValueAsString(obj);
-							} catch (JsonProcessingException e) {
-								System.out.println("Impossible to parse JSON");
-								e.printStackTrace();
-							}
-							//obj = new Gson().toJson(obj,LinkedHashMap.class);
-							record.put(column, obj);
-						}
-				}
-			}
 		}
 		dataReadFirstTime = true;
 	}
