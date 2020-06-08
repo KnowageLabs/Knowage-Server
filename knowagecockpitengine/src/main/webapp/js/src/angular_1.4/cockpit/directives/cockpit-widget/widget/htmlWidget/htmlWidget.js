@@ -334,6 +334,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			do {
 				  if (allElements[j] && allElements[j].hasAttribute("kn-if")){
 				    	var condition = allElements[j].getAttribute("kn-if").replace($scope.columnRegex, $scope.ifConditionReplacer);
+				    	condition = condition.replace($scope.activeSelectionsRegex, $scope.activeSelectionsReplacer);
 				    	condition = condition.replace($scope.paramsRegex, $scope.ifConditionParamsReplacer);
 				    	condition = condition.replace($scope.calcRegex, $scope.calcReplacer);
 				    	if(eval(condition)){
@@ -408,9 +409,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		//Replacers
 		$scope.activeSelectionsReplacer = function(match,column){
-			if(cockpitModule_template.configuration.filters[$scope.datasetLabel] && cockpitModule_template.configuration.filters[$scope.datasetLabel][column]){
-				return cockpitModule_template.configuration.filters[$scope.datasetLabel][column];
-			}else return null;
+			if(cockpitModule_template.getSelections() && cockpitModule_template.getSelections().length > 0){
+				var selections = cockpitModule_template.getSelections();
+				for(var k in selections){
+					if(selections[k].ds == $scope.datasetLabel && selections[k].columnName == column) return selections[k].value;
+				}
+			}
+			return null;
 		}
 		
 		$scope.calcReplacer = function(match,p1,min,max,precision,format){
