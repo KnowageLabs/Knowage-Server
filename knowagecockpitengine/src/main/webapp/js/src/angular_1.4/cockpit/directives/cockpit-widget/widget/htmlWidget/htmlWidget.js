@@ -339,6 +339,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			do {
 				  if (allElements[j] && allElements[j].hasAttribute("kn-if")){
 				    	var condition = allElements[j].getAttribute("kn-if").replace($scope.columnRegex, $scope.ifConditionReplacer);
+				    	condition = condition.replace($scope.activeSelectionsRegex, $scope.activeSelectionsReplacer);
 				    	condition = condition.replace($scope.paramsRegex, $scope.ifConditionParamsReplacer);
 				    	condition = condition.replace($scope.calcRegex, $scope.calcReplacer);
 				    	if(eval(condition)){
