@@ -81,7 +81,7 @@ try{
      * Validation check for exec_from variable for security reasons
      */
      
-     if (!executedFrom.equals("WORKSPACE_ORGANIZER")) {
+     if (!"WORKSPACE_ORGANIZER".equals(executedFrom)) {
     	 executedFrom = null;
      }
    
