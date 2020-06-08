@@ -193,7 +193,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	}
 
 	@Override
-	public synchronized IDataStore read(Object data) {
+	public IDataStore read(Object data) {
 		Helper.checkNotNull(data, "data");
 		if (!(data instanceof String)) {
 			throw new IllegalArgumentException("data must be a string");
@@ -453,7 +453,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		return res;
 	}
 
-	public synchronized int getIdFieldIndex() {
+	public int getIdFieldIndex() {
 		if (idFieldIndex == -2) { // not set
 
 			if (ngsiDefaultItems && !dataReadFirstTime) {
@@ -766,7 +766,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		return jsonPathItems;
 	}
 
-	public synchronized List<JSONPathAttribute> getJsonPathAttributes() {
+	public List<JSONPathAttribute> getJsonPathAttributes() {
 		if (ngsiDefaultItems && !dataReadFirstTime) {
 			throw new IllegalStateException("NGSI Rest Data Reader needs a first read of data");
 		}
