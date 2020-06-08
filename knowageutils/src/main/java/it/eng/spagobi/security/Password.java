@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.security;
 
+import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -31,6 +32,8 @@ import it.eng.spagobi.commons.SingletonConfig;
  */
 public class Password {
 
+	private static final String PREFIX_V2_SHA_PWD_ENCRIPTING = "v2#SHA#";
+	public static final String PREFIX_SHA_PWD_ENCRIPTING = "#SHA#";
 	private String value = "";
 	private String encValue = "";
 
@@ -57,10 +60,11 @@ public class Password {
 
 		for (int i = 0; i < value.length(); i++) {
 			int c = value.charAt(i);
-			if ((c >= 'A') && (c <= 'Z') ) {
+			if ((c >= 'A') && (c <= 'Z')) {
 				contaAlfaUpperCase++;
-			}if ( (c >= 'a') && (c <= 'z')) {
-					contaAlfaLowerCase++;
+			}
+			if ((c >= 'a') && (c <= 'z')) {
+				contaAlfaLowerCase++;
 			} else if ((c >= '0') && (c <= '9')) {
 				contaNum++;
 			} else {
@@ -77,28 +81,29 @@ public class Password {
 	}
 
 	public boolean hasAltenateCase() {
-		return ( (contaAlfaUpperCase>=1 )  && (contaAlfaLowerCase>=1) );
-		}
+		return ((contaAlfaUpperCase >= 1) && (contaAlfaLowerCase >= 1));
+	}
 
 	public boolean hasDigits() {
 
-		return (contaNum>0);
+		return (contaNum > 0);
 	}
 
 	public boolean isEnoughLong() {
-		return (value.length() >=8);
+		return (value.length() >= 8);
 	}
 
 	/**
 	 * @return
 	 * @throws NoSuchAlgorithmException
 	 * @throws InvalidKeyException
+	 * @throws IOException
 	 */
-	public String getEncValue() throws InvalidKeyException, NoSuchAlgorithmException{
+	public String getEncValue(boolean oldWay) throws InvalidKeyException, NoSuchAlgorithmException, IOException {
 
 		if (encValue != null) {
 			AsymmetricProviderSingleton bs = AsymmetricProviderSingleton.getInstance();
-			encValue = "#SHA#" + bs.enCrypt(value);
+			encValue = (oldWay ? PREFIX_SHA_PWD_ENCRIPTING : PREFIX_V2_SHA_PWD_ENCRIPTING) + bs.enCrypt(value);
 		}
 		return encValue;
 	}
@@ -110,7 +115,6 @@ public class Password {
 		return value;
 	}
 
-
 	/**
 	 * @param string
 	 */
@@ -118,6 +122,7 @@ public class Password {
 		value = string;
 		validate();
 	}
+
 	/**
 	 * public method used to store passwords on DB.
 	 *
@@ -125,22 +130,26 @@ public class Password {
 	 * @return encrypted password
 	 * @throws Exception wrapping InvalidKeyException and NoSuchAlgorithmException
 	 */
-	public static String encriptPassword(String password) throws Exception {
-		if (password != null){
-			String enable=SingletonConfig.getInstance().getConfigValue("internal.security.encript.password");
-			if ("true".equalsIgnoreCase(enable)){
+	public static String encriptPassword(String password, boolean oldWay) throws Exception {
+		if (password != null) {
+			String enable = SingletonConfig.getInstance().getConfigValue("internal.security.encript.password");
+			if ("true".equalsIgnoreCase(enable)) {
 				Password hashPass = new Password(password);
 				try {
-					password = (hashPass.getEncValue());
+					password = (hashPass.getEncValue(oldWay));
 				} catch (InvalidKeyException e) {
-					logger.error("HASH not valid", e);
-					throw new Exception("HASH not valid",e);
+					logger.error("not valid HASH", e);
+					throw new Exception("not valid HASH", e);
 				} catch (NoSuchAlgorithmException e) {
-					logger.error("Impossibile to calcolate l'HASH", e);
-					throw new Exception("Impossibile to calcolate l'HASH",e);
+					logger.error("Impossible to calcolate HASH", e);
+					throw new Exception("Impossible to calcolate HASH", e);
 				}
 			}
 		}
 		return password;
+	}
+
+	public static String encriptPassword(String password) throws Exception {
+		return encriptPassword(password, false);
 	}
 }

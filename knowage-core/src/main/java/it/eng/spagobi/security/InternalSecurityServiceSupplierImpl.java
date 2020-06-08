@@ -55,7 +55,7 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		try {
 
 			String password = user.getPassword();
-			String encrPass = Password.encriptPassword(psw);
+			String encrPass = Password.encriptPassword(psw, password.startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING));
 			if (password == null || password.length() == 0) {
 				logger.error("UserName/pws not defined into database");
 				return null;

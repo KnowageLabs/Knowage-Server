@@ -176,7 +176,7 @@ public class PasswordChecker {
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 14011);
 			}
 
-			String oldPwdEnc = !isEncrypted ? Password.encriptPassword(oldPwd) : oldPwd;
+			String oldPwdEnc = !isEncrypted ? Password.encriptPassword(oldPwd, tmpUser.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING)) : oldPwd;
 			if (tmpUser == null || tmpUser != null && !oldPwdEnc.equals(tmpUser.getPassword())) {
 				logger.debug("The old pwd is uncorrect.");
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 14010);

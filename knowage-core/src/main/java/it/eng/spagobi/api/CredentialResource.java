@@ -52,7 +52,7 @@ import it.eng.spagobi.services.rest.annotations.PublicService;
 
 /**
  * Bean of the data needed to change the password of an user.
- * 
+ *
  * @author Marco Libanori
  */
 class ChangePasswordData {
@@ -104,21 +104,20 @@ class ChangePasswordData {
 
 /**
  * Credential resource controller.
- * 
- * Manage login and password change procedure to an unauthenticated
- * user.
- * 
+ *
+ * Manage login and password change procedure to an unauthenticated user.
+ *
  * @author Marco Libanori
  */
 @Path("/credential")
 public class CredentialResource {
-	
+
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	private static final Logger logger = Logger.getLogger(CredentialResource.class);
-	
+
 	/**
 	 * Change password of an user.
-	 * 
+	 *
 	 * @param data Data needed to change the password
 	 * @return HTTP response
 	 */
@@ -129,40 +128,34 @@ public class CredentialResource {
 	@PublicService
 	public Response change(final ChangePasswordData data) {
 
-		Response response = Response.ok()
-				.entity(MessageBundle.getMessage("changePwd.pwdChanged"))
-				.build();
+		Response response = Response.ok().entity(MessageBundle.getMessage("changePwd.pwdChanged")).build();
 
 		final String userId = data.getUserId();
 		final String oldPassword = data.getOldPassword();
 		final String newPassword = data.getNewPassword();
 		final String newPasswordConfirm = data.getNewPasswordConfirm();
-		
+
 		if (StringUtils.isEmpty(userId)) {
 			logger.error("Trying to change password with userId");
-			response = Response.status(Response.Status.BAD_REQUEST)
-					.build();
+			response = Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			SbiUser tmpUser = userDao.loadSbiUserByUserId(userId);
 
-
-
 			try {
-				if (PasswordChecker.getInstance()
-						.isValid(tmpUser, oldPassword, newPassword, newPasswordConfirm)) {
-					//getting days number for calculate new expiration date
+				if (PasswordChecker.getInstance().isValid(tmpUser, oldPassword, newPassword, newPasswordConfirm)) {
+					// getting days number for calculate new expiration date
 					IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
 					List lstConfigChecks = configDao.loadConfigParametersByProperties(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME);
 					Date beginDate = new Date();
 					if (lstConfigChecks.size() > 0) {
 						Config check = (Config) lstConfigChecks.get(0);
 						if (check.isActive()) {
-							//define the new expired date							
+							// define the new expired date
 							SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 							Calendar cal = Calendar.getInstance();
 							cal.set(beginDate.getYear() + 1900, beginDate.getMonth(), beginDate.getDate());
-							//adds n days (getted from db)
+							// adds n days (getted from db)
 							cal.add(Calendar.DATE, Integer.parseInt(check.getValueCheck()));
 							try {
 								Date endDate = StringUtilities.stringToDate(sdf.format(cal.getTime()), DATE_FORMAT);
@@ -175,27 +168,24 @@ public class CredentialResource {
 							}
 						}
 					}
-					tmpUser.setDtLastAccess(beginDate); //reset last access date
-					tmpUser.setPassword(Password.encriptPassword(newPassword));//SHA encrypt
-					tmpUser.setFlgPwdBlocked(false); //reset blocking flag
+					tmpUser.setDtLastAccess(beginDate); // reset last access date
+					tmpUser.setPassword(Password.encriptPassword(newPassword));// SHA encrypt
+					tmpUser.setFlgPwdBlocked(false); // reset blocking flag
 					userDao.updateSbiUser(tmpUser, tmpUser.getId());
 					logger.debug("Updated properties for user with id " + tmpUser.getId() + " - DtLastAccess: " + tmpUser.getDtLastAccess().toString());
 				}
 			} catch (EMFUserError e) {
 				logger.error("Error during retrieving of user " + userId, e);
-				response = Response.status(Response.Status.NOT_FOUND)
-						.entity(e.getDescription())
-						.build();
+				response = Response.status(Response.Status.NOT_FOUND).entity(e.getDescription()).build();
 			} catch (Exception e) {
 				logger.error("Error during password change", e);
-				response = Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-						.build();
+				response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 			}
-			
+
 		}
-		
+
 		return response;
-		
+
 	}
-	
+
 }

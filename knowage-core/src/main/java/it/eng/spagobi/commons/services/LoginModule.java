@@ -62,6 +62,7 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.security.Password;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -112,6 +113,9 @@ public class LoginModule extends AbstractHttpModule {
 		String currTheme = manageTheme(request, reqCont, permSess);
 
 		manageLocale(permSess);
+
+		MessageBuilder msgBuilder = new MessageBuilder();
+		Locale locale = msgBuilder.getLocale(servletRequest);
 
 		boolean activeSoo = isSSOActive();
 
@@ -231,6 +235,7 @@ public class LoginModule extends AbstractHttpModule {
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
 						return;
 					}
+
 				}
 
 			} catch (Exception e) {
@@ -268,6 +273,10 @@ public class LoginModule extends AbstractHttpModule {
 
 					boolean goToChangePwd = checkPwd(user);
 					if (goToChangePwd) {
+						if (user.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING)) {
+							logger.info("Old encrypting method. Change password required.");
+							response.setAttribute("old_enc_method_message", msgBuilder.getMessage("old_enc_method_message", "messages", locale));
+						}
 						response.setAttribute("user_id", user.getUserId());
 						String url = GeneralUtilities.getSpagoBiHost() + servletRequest.getContextPath();
 						response.setAttribute("start_url", url);
@@ -497,6 +506,12 @@ public class LoginModule extends AbstractHttpModule {
 		boolean toReturn = false;
 		if (user == null)
 			return toReturn;
+
+		if (user.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING)) {
+			logger.info("Old encrypting method. Change password required.");
+			return true;
+		}
+
 		Date currentDate = new Date();
 
 		// gets the active controls to applicate:
@@ -542,6 +557,7 @@ public class LoginModule extends AbstractHttpModule {
 					break;
 				}
 			}
+
 		} // for
 
 		// general controls: check if the account is already blocked, otherwise update dtLastAccess field
@@ -553,5 +569,4 @@ public class LoginModule extends AbstractHttpModule {
 		logger.debug("OUT");
 		return toReturn;
 	}
-
 }
