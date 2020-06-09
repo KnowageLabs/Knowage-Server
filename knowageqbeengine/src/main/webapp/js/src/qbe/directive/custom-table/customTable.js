@@ -127,8 +127,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	CustomHeader.prototype.sortColumn = function() {
 		var realColumn = $scope.getColumnById(this.properties.id)
 		$scope.toggleOrder(realColumn);
+		$scope.executeRequest();
 	}
-
 	CustomHeader.prototype.openColumnSettings = function(event){
 		for(var k in $scope.ngModel){
 			if($scope.ngModel[k].id == this.properties.id) $scope.field = $scope.ngModel[k];
@@ -137,7 +137,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		document.getElementById('ag-popup-child').style.top = event.clientY;
 		$scope.$apply();
 		togglePopupVisibility();
-
 	}
 
 	function togglePopupVisibility(){
