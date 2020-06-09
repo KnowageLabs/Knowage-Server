@@ -42,7 +42,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.inputTypes = [ "Simple Input", "Dataset Input" ];
 	$scope.functionTypesList = [];
 	$scope.simpleInputs = []; // =Input variables
-	$scope.inputDatasets = [];
+	$scope.inputColumns = [];
 	$scope.inputFiles = [];
 	$scope.varIndex = 0;
 	$scope.datasetsIndex = 0;
@@ -60,7 +60,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.newFunction = {
 		"id" : "",
 		"name" : "",
-		"inputDatasets" : [],
+		"inputColumns" : [],
 		"inputVariables" : [],
 		"inputUrls" : [],
 		"inputFiles" : [],
@@ -80,7 +80,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.newFunction = {
 			"id" : "",
 			"name" : "",
-			"inputDatasets" : [],
+			"inputColumns" : [],
 			"inputVariables" : [],
 			"inputUrls" : [],
 			"inputFiles" : [],
@@ -97,7 +97,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			"url" : ""
 		};
 	}
-	$scope.datasetLabelsList = [];
+	$scope.columnTypesList = ['STRING', 'DATE', 'NUMBER', 'LIST'];
 	$scope.saveOrUpdateFlag = "";
 	$scope.userId = "";
 	$scope.isAdmin = "";
@@ -305,7 +305,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 								$scope.newFunction = {
 									"id" : "",
 									"name" : "",
-									"inputDatasets" : [],
+									"inputColumns" : [],
 									"inputVariables" : [],
 									"inputUrls" : [],
 									"inputFiles" : [],
@@ -378,12 +378,19 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		var correctArguments = true;
 		$scope.missingFields = [];
 
-		for (var i = 0; i < $scope.shownFunction.inputDatasets.length; i++) {
-			if ($scope.shownFunction.inputDatasets[i].label == undefined) {
+		for (var i = 0; i < $scope.shownFunction.inputColumns.length; i++) {
+			if ($scope.shownFunction.inputColumns[i].name == undefined
+					|| $scope.shownFunction.inputColumns[i].type == undefined) {
 				correctArguments = false;
 				var index = i + 1;
-				$scope.missingFields
-						.push("Input dataset " + index + " missing");
+
+				if ($scope.shownFunction.inputColumns[i].name == undefined) {
+					$scope.missingFields.push("Input variable  " + index + " name missing");
+				}
+				if ($scope.shownFunction.inputColumns[i].type == undefined) {
+					$scope.missingFields.push("Input variable  " + index + " type missing");
+
+				}
 			}
 		}
 		for (var i = 0; i < $scope.shownFunction.inputVariables.length; i++) {
@@ -542,15 +549,15 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 	}
 
-	$scope.addInputDataset = function() {
+	$scope.addInputColumn = function() {
 		$scope.cleanNewFunction();
-		var inputDataset = {};
+		var inputColumn = {};
 
-		$scope.shownFunction.inputDatasets.push(inputDataset);
+		$scope.shownFunction.inputColumns.push(inputColumn);
 		$log
-				.info("Added an input Dataset ",
-						$scope.shownFunction.inputDatasets);
-		return inputDataset;
+				.info("Added an input Column ",
+						$scope.shownFunction.inputColumns);
+		return inputColumn;
 	}
 
 	$scope.addInputVariable = function() {
@@ -572,11 +579,11 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		return inputFile;
 	}
 
-	$scope.removeInputDataset = function(inputDataset) {
-		var index = $scope.shownFunction.inputDatasets.indexOf(inputDataset);
-		$scope.shownFunction.inputDatasets.splice(index, 1);
-		$log.info("Removed an input Dataset ",
-				$scope.shownFunction.inputDatasets);
+	$scope.removeInputColumn = function(inputColumn) {
+		var index = $scope.shownFunction.inputColumns.indexOf(inputColumn);
+		$scope.shownFunction.inputColumns.splice(index, 1);
+		$log.info("Removed an input Column ",
+				$scope.shownFunction.inputColumns);
 	}
 
 	$scope.removeInputVariable = function(inputVariable) {
