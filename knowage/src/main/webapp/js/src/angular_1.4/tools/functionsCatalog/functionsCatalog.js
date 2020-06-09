@@ -38,7 +38,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.tableSelectedFunction = {};
 	$scope.tableSelectedFunction.language = "Python";
 	$scope.languages = [ "Python", "R" ];
-	$scope.outputTypes = [ "Dataset", "Text", "Image", "File" ];
+	$scope.inputColumnTypes = ['STRING', 'DATE', 'NUMBER', 'LIST'];
+	$scope.outputColumnTypes = ['STRING', 'DATE', 'NUMBER'];
 	$scope.inputTypes = [ "Simple Input", "Dataset Input" ];
 	$scope.functionTypesList = [];
 	$scope.simpleInputs = []; // =Input variables
@@ -64,7 +65,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		"inputVariables" : [],
 		"inputUrls" : [],
 		"inputFiles" : [],
-		"outputItems" : [],
+		"outputColumns" : [],
 		"language" : "Python",
 		"script" : "",
 		"description" : "",
@@ -74,6 +75,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		"keywords" : [], // keywords and type added
 		"type" : "",
 		"remote" : false,
+		"functionFamily": "online",
 		"url" : ""
 	};
 	$scope.cleanNewFunction = function() {
@@ -84,7 +86,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			"inputVariables" : [],
 			"inputUrls" : [],
 			"inputFiles" : [],
-			"outputItems" : [],
+			"outputColumns" : [],
 			"language" : "Python",
 			"script" : "",
 			"description" : "",
@@ -94,10 +96,10 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			"keywords" : [], // keywords and type added
 			"type" : "",
 			"remote" : false,
+			"functionFamily": "online",
 			"url" : ""
 		};
 	}
-	$scope.columnTypesList = ['STRING', 'DATE', 'NUMBER', 'LIST'];
 	$scope.saveOrUpdateFlag = "";
 	$scope.userId = "";
 	$scope.isAdmin = "";
@@ -217,15 +219,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		return true;
 	}
 
-	$scope.radioButtonRemoteLocalPush = function(localOrRemoteStr) {
-		if (localOrRemoteStr == "local") {
-			$scope.shownFunction.url = "";
-			$scope.languageHidden = true;
-
-		} else if (localOrRemoteStr == "remote") {
-			$scope.shownFunction.script = "";
-			$scope.languageHidden = false;
-		}
+	$scope.radioButtonOnlineOfflinePush = function(onlineOrOfflineStr) {
+		$scope.shownFunction.functionFamily = onlineOrOfflineStr;
 	}
 
 	$scope.obtainCatalogFunctionsRESTcall = function() {
@@ -309,7 +304,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 									"inputVariables" : [],
 									"inputUrls" : [],
 									"inputFiles" : [],
-									"outputItems" : [],
+									"outputColumns" : [],
 									"language" : "Python",
 									"script" : "",
 									"description" : "",
@@ -599,17 +594,17 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$log.info("Removed an input File ", $scope.shownFunction.inputFile);
 	}
 
-	$scope.addOutputItem = function() {
-		var output = {};
-		$scope.shownFunction.outputItems.push(output);
-		$log.info("Added an outputItem ", $scope.shownFunction.outputItems);
-		return output;
+	$scope.addOutputColumn = function() {
+		var outputColumn = {};
+		$scope.shownFunction.outputColumns.push(outputColumn);
+		$log.info("Added an output Column ", $scope.shownFunction.outputColumns);
+		return outputColumn;
 	}
 
-	$scope.removeOutputItem = function(output) {
-		var index = $scope.shownFunction.outputItems.indexOf(output);
-		$scope.shownFunction.outputItems.splice(index, 1);
-		$log.info("Removed an output Item ", $scope.shownFunction.output);
+	$scope.removeOutputColumn = function(outputColumn) {
+		var index = $scope.shownFunction.outputColumns.indexOf(outputColumn);
+		$scope.shownFunction.outputColumns.splice(index, 1);
+		$log.info("Removed an output Column ", $scope.shownFunction.outputColumns);
 
 	}
 

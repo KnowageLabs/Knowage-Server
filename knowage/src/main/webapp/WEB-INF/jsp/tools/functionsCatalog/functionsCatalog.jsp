@@ -263,12 +263,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	   								<md-input-container class="md-block" flex>
 	  									<label>{{translate.load("sbi.functionscatalog.columntype");}}</label>
 	  									<md-select ng-model="c.type" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-		    								<md-option ng-repeat="columnType in columnTypesList" value="{{columnType}}">
+		    								<md-option ng-repeat="columnType in inputColumnTypes" value="{{columnType}}">
 		      								{{columnType}}
 		    								</md-option>
 	 									</md-select>
 									</md-input-container>
-	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeInputColumn(i)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
+	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeInputColumn(c)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
 								</md-list-item>
 						  	</md-list>
 						</md-card-content>
@@ -306,12 +306,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab label='{{translate.load("sbi.functionscatalog.script");}}' ng-if="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
 					<md-card>
 						<md-card-content>
-	  					 	<md-radio-group ng-model="shownFunction.remote" >
-	      						<md-radio-button ng-value=false class="md-primary" ng-click="radioButtonRemoteLocalPush('local')" style="outline: none; border: 0; ">{{translate.load("sbi.functionscatalog.local");}}</md-radio-button>
-	      						<md-radio-button ng-value=true ng-click="radioButtonRemoteLocalPush('remote')" style="outline: none; border: 0; "> {{translate.load("sbi.functionscatalog.remote");}} </md-radio-button>
+	  					 	<md-radio-group>
+	      						<md-radio-button class="md-primary" ng-click="radioButtonOnlineOfflinePush('online')" style="outline: none; border: 0; ">On-line</md-radio-button>
 	    					</md-radio-group>	
 	    					
-	    					<md-input-container class="md-block" ng-if='languageHidden && shownFunction.remote==false'>
+	    					<md-input-container class="md-block">
 	            				<label>{{translate.load("sbi.functionscatalog.language");}}</label>
 	            				<md-select ng-model="shownFunction.language">
 	              					<md-option ng-repeat="language in languages" value="{{language}}">
@@ -320,17 +319,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	           					</md-select>
 	          				</md-input-container>
 	      						
-	  						<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.remote==false">
+	  						<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.functionFamily=='online'">
 	          					<label class="customCodeMirrorLabel">{{translate.load("sbi.functionscatalog.script");}}</label>
-	          					<textarea flex ui-refresh="true" ng-model="shownFunction.script" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
+	          					<textarea flex ui-refresh="true" ng-model="shownFunction.onlineScript" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
 	        				</md-input-container>
-										
-							<md-input-container class="md-block" flex ng-if="shownFunction.remote==true">
-		 						<label>{{translate.load("sbi.functionscatalog.url");}}</label>  
-		 						<input ng-model="shownFunction.url" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-							</md-input-container>			
-										
-										
+	        				
+	        				<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.functionFamily=='offline'">
+	          					<label class="customCodeMirrorLabel">{{translate.load("sbi.functionscatalog.trainmodel");}}</label>
+	          					<textarea flex ui-refresh="true" ng-model="shownFunction.offlineScriptTrainModel" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
+	        				</md-input-container>
+	        				
+	        				<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.functionFamily=='offline'">
+	          					<label class="customCodeMirrorLabel">{{translate.load("sbi.functionscatalog.usemodel");}}</label>
+	          					<textarea flex ui-refresh="true" ng-model="shownFunction.offlineScriptUseModel" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
+	        				</md-input-container>
+						
 	        			</md-card-content>
 	        		</md-card>			    					
 				</md-tab>
@@ -340,28 +343,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<div class="md-toolbar-tools">
 								<h2>{{translate.load("sbi.functionscatalog.output");}}</h2>
 								<div flex></div>
-								<md-button class="md-secondary" ng-click="output=addOutputItem()" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">{{translate.load("sbi.functionscatalog.addoutput");}}</md-button> 		
+								<md-button class="md-secondary" ng-click="output=addOutputColumn()" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">{{translate.load("sbi.functionscatalog.addoutputcolumn");}}</md-button> 		
 							</div>
 						</md-toolbar>	
 						<md-card-content>
 							<md-list>
-								<md-list-item ng-if="shownFunction.outputItems.length==0" class="messageItem" layout-align="center center">
+								<md-list-item ng-if="shownFunction.outputColumns.length==0" class="messageItem" layout-align="center center">
 									&emsp;&emsp;{{translate.load("sbi.functionscatalog.nooutputexpected");}}
 								</md-list-item>
-								<md-list-item ng-repeat="o in shownFunction.outputItems">
+								<md-list-item ng-repeat="o in shownFunction.outputColumns">
 									<md-input-container class="md-block" flex>
-	        							<label>{{translate.load("sbi.functionscatalog.label");}}</label>
-	        							<input ng-model="o.label" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+	        							<label>{{translate.load("sbi.functionscatalog.columnname");}}</label>
+	        							<input ng-model="o.name" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
 	      							</md-input-container>
 	   								<md-input-container aria-hidden="true" class="md-block" flex>
-		      							<label>{{translate.load("sbi.functionscatalog.type");}}</label>
+		      							<label>{{translate.load("sbi.functionscatalog.columntype");}}</label>
 		        						<md-select ng-model="o.type" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-	              							<md-option ng-repeat="type in outputTypes" value="{{type}}">
+	              							<md-option ng-repeat="type in outputColumnTypes" value="{{type}}">
 	                							{{type}}
 	              							</md-option>
 	           							</md-select>
 	      							</md-input-container>
-	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="removeOutputItem(o)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
+	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="removeOutputColumn(o)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
 								</md-list-item>
 							</md-list>
 						</md-card-content>
