@@ -615,7 +615,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 	// glossary
 
-	ctr.CloneGloss = function(gl) {
+	ctr.CloneGloss = function(ev,gl) {
 		$mdDialog
 		.show({
 			controllerAs : 'gloCtrl',
@@ -734,7 +734,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 		});
 	};
 
-	ctr.createNewGlossary = function(gl) {
+	ctr.createNewGlossary = function(event,gl) {
 		$mdDialog.show({
 			scope : $scope,
 			preserveScope : true,
