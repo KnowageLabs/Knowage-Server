@@ -10,7 +10,7 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 app.controller('ControllerDataSet', [ "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_dataset ]);
 app.controller('Controller', [ "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_documenti ]);
-app.controller('Controller_navigation', [ "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast","$window","sbiModule_config",'$documentViewer', funzione_navigazione ]);
+app.controller('Controller_navigation', [ "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast","$window",'$documentViewer', funzione_navigazione ]);
 app.controller('Controller_tec', [ "$scope", "sbiModule_config", "sbiModule_translate","sbiModule_restServices","$mdToast","$timeout","sbiModule_messaging", funzione_tec ]);
 
 
