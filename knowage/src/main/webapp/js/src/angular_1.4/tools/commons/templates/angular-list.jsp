@@ -1,12 +1,12 @@
 <div  layout="column"  layout-fill class="angularListTemplate kn-list-tree"> 
 		<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>	
-		<div layout="row" layout-align="start end">
+		<div ng-show="showSearchBar" layout="row" layout-align="start end">
 			<md-icon md-font-icon="fa fa-search"></md-icon> 
-			<md-input-container ng-show="showSearchBar==true" class="searchBarList" flex>
+			<md-input-container class="searchBarList" flex>
 				<input ng-if="!localSearch" ng-model="searchVal" ng-keyup="searchItem(searchVal)" type="text" placeholder="Search ">
 				<input ng-if="localSearch" ng-model="searchVal" ng-keyup="searchItem(searchVal)" type="text" placeholder="Search here "> 
 			</md-input-container> 
-			<md-icon md-font-icon="fa fa-filter" ng-click="searchVal='';searchItem(searchVal);" class="filter-icon" ng-class="{ 'not_empty' : (searchVal.length !== 0 && searchVal!=undefined)  }"></md-icon>
+			<md-icon md-font-icon="fa fa-filter"  ng-click="searchVal='';searchItem(searchVal);" class="filter-icon" ng-class="{ 'not_empty' : (searchVal.length !== 0 && searchVal!=undefined)  }"></md-icon>
 		</div>
 		<md-progress-circular md-diameter="20" ng-show="showSearchPreloader==true" class="md-hue-2" md-mode="indeterminate"></md-progress-circular>
 		<p ng-if="ngModel.length==0 || ngModel==undefined">

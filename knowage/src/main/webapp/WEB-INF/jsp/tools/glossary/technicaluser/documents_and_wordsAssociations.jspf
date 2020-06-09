@@ -54,6 +54,7 @@
 						drag-drop-options=ctrl.TreeOptionsWord
 						show-empty-placeholder=true
 						speed-menu-option=ctrl.docWordSpeedMenuOpt
+						show-search-bar=false
                ></angular-list>
 	        </md-content>
 		

@@ -114,13 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		<detail remove-no-flicker label="ctrl.selectedGloss.GLOSSARY_NM==undefined ? translate.load('sbi.glossary.select.messages') :  ctrl.selectedGloss.GLOSSARY_NM" ng-if="ctrl.activeTab=='Glossari'">
 			  
-			<md-checkbox ng-model="ctrl.safeMode"
-				aria-label='{{translate.load("sbi.generic.safeMode");}}'
-				class="safeModeCheckBox"
-				ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined ">
-				{{translate.load("sbi.generic.safeMode");}} 
-			</md-checkbox> 
-		
+	
 			<glossary-tree
 				tree-id="GlossTree" tree-options=ctrl.TreeOptions
 				glossary=ctrl.selectedGloss add-child="ctrl.newSubItem(scope,parent)"
