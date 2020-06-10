@@ -268,7 +268,9 @@
 						postObject.url = documentUrl.split('?')[0];
 						var paramsFromUrl = documentUrl.split('?')[1].split('&');
 						for(var i in paramsFromUrl){
-							if(typeof paramsFromUrl[i] != 'function')postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1];
+							if(typeof paramsFromUrl[i] != 'function') {
+								postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1];
+							}
 						}
 						if(cockpitEditing.documentMode) postObject.params.documentMode = cockpitEditing.documentMode;
 						var postForm = document.getElementById("postForm_"+postObject.params.document);
@@ -279,7 +281,7 @@
 							postForm.method = "post";
 						    postForm.target = "documentFrame";
 						    document.body.appendChild(postForm);
-						} 
+						}
 						for (var k in postObject.params) {
 							inputElement = document.getElementById("postForm_"+k);
 							if(inputElement) {
@@ -294,9 +296,15 @@
 						        element.value = element.value.replace(/\+/g,' ');
 						        postForm.appendChild(element);
 							}
-						        
 						}
-						    
+
+						for(var i = 0; i < postForm.elements.length; i++) {
+							var postFormElement = postForm.elements[i].id.replace("postForm_", "");
+							if(!postObject.params.hasOwnProperty(postFormElement)) {
+								postForm.elements[i].value = "";
+							}
+						}
+
 //						}else{
 //							for (var k in postObject.params) {
 //								inputElement = document.getElementById("postForm_"+k);
