@@ -77,13 +77,47 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	$scope.previewModel = [];
 
+	function CustomPinnedRowRenderer() {}
+	CustomPinnedRowRenderer.prototype.init = function(params) {
+		var fieldName = params.colDef.field;
+		var infoIconId   = 'info-'   + fieldName;
+		var filterIconId = 'filter-' + fieldName;
+		var data = params.data[fieldName];
+
+		this.eGui = document.createElement('div');
+
+		this.eGui.innerHTML = '<md-icon id="' + infoIconId + '" class="fa fa-info info-button"></md-icon>'+
+			'<md-icon id="' + filterIconId + '" class="fa fa-filter filter-button"></md-icon>';
+
+		var onInfoButtonClick   = this.infoColumn.bind(data);
+		var onFilterButtonClick = this.filterColumn.bind(data);
+
+		var infoIconEl   = this.eGui.querySelector("#" + infoIconId);
+		infoIconEl.addEventListener("click", onInfoButtonClick);
+
+		var filterIconEl = this.eGui.querySelector("#" + filterIconId);
+		filterIconEl.addEventListener("click", onFilterButtonClick);
+
+
+	};
+	CustomPinnedRowRenderer.prototype.getGui = function() {
+		return this.eGui;
+	};
+	CustomPinnedRowRenderer.prototype.infoColumn = function() {
+		$scope.showFilters(this);
+	};
+	CustomPinnedRowRenderer.prototype.filterColumn = function() {
+		$scope.openFilters(this);
+	};
+
 	$scope.qbeTableGrid = {
 		angularCompileRows: true,
 		pagination : false,
 		domLayout:'autoHeight',
 		rowHeight: 20,
 		defaultColDef: {
-			resizable: true
+			resizable: true,
+			pinnedRowCellRenderer: CustomPinnedRowRenderer
 		},
 		components: {
 			agColumnHeader: CustomHeader
@@ -179,6 +213,13 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	$scope.updateQbeTableGridData = function() {
 		$scope.qbeTableGrid.api.setRowData($scope.previewModel);
+
+		var pinnedBottomRowData = $scope.ngModel.reduce(function(accumulator, currentValue, index) {
+			accumulator["column_" + index] = currentValue;
+			return accumulator;
+		}, {});
+
+		$scope.qbeTableGrid.api.setPinnedBottomRowData([pinnedBottomRowData]);
 	}
 
 	$scope.updateQbeTable = function() {
