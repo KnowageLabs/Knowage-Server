@@ -263,18 +263,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            '</span>'+
 			            '<span class="ag-paging-page-summary-panel">'+
 			            
-			            '	<div ref="btFirst" class="ag-paging-button '+disableFirstClass()+'"><span class="ag-icon ag-icon-first" unselectable="on"></span>'+
-		       			'		<button type="button" ref="btFirst" '+disableFirst()+' onclick="first()">First</button>'+
+			            '	<div ref="btFirst" class="ag-paging-button-wrapper '+disableFirstClass()+'"><span class="ag-icon ag-icon-first" unselectable="on"></span>'+
+		       			'		<button type="button" class="ag-paging-button" ref="btFirst" '+disableFirst()+' onclick="first()">First</button>'+
 		      			'	</div>'+
-		      			'	<div ref="btPrevious" class="ag-paging-button '+disableFirstClass()+'"><span class="ag-icon ag-icon-previous" unselectable="on"></span>'+
-		       			'		<button type="button" ref="btPrevious" '+disableFirst()+' onclick="prev()">Previous</button>'+
+		      			'	<div ref="btPrevious" class="ag-paging-button-wrapper '+disableFirstClass()+'"><span class="ag-icon ag-icon-previous" unselectable="on"></span>'+
+		       			'		<button type="button" class="ag-paging-button" ref="btPrevious" '+disableFirst()+' onclick="prev()">Previous</button>'+
 		       			'	</div>'+
 		       			'page <span ref="lbCurrent">'+backEndPagination.page+'</span> of <span ref="lbTotal">'+backEndPagination.totalPages+'</span>'+
-		       			'	<div ref="btNext" class="ag-paging-button '+disableLastClass()+'" ><span class="ag-icon ag-icon-next" unselectable="on"></span>'+
-		       			'   	<button type="button" ref="btNext" onclick="next()" '+disableLast()+'">Next</button>'+
+		       			'	<div ref="btNext" class="ag-paging-button-wrapper '+disableLastClass()+'" ><span class="ag-icon ag-icon-next" unselectable="on"></span>'+
+		       			'   	<button type="button" class="ag-paging-button" ref="btNext" onclick="next()" '+disableLast()+'">Next</button>'+
 		       			'	</div>'+
-		       			'	<div ref="btLast" class="ag-paging-button '+disableLastClass()+'" ><span class="ag-icon ag-icon-next" unselectable="on"></span>'+
-		       			'   	<button type="button" ref="btNext" onclick="last()" '+disableLast()+'">Last</button>'+
+		       			'	<div ref="btLast" class="ag-paging-button-wrapper '+disableLastClass()+'" ><span class="ag-icon ag-icon-next" unselectable="on"></span>'+
+		       			'   	<button type="button" class="ag-paging-button" ref="btLast" onclick="last()" '+disableLast()+'">Last</button>'+
 		       			'	</div>'+
 						'</span>';
 		  	}

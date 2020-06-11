@@ -19,7 +19,7 @@
       			<div ref="btPrevious" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
        			<button type="button" ref="btPrevious" class="ag-paging-button" ng-disabled="disableFirst()" ng-click="prev()">{{::translate.load('sbi.cockpit.widgets.table.pagination.previous')}}</button>
        		</div>
-       		{{::translate.load('sbi.cockpit.widgets.table.pagination.page')}} <span ref="lbCurrent">{{ngModel.settings.page}}</span> {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} <span ref="lbTotal">{{totalPages}}</span>
+       		{{::translate.load('sbi.cockpit.widgets.table.pagination.page')}} <span ref="lbCurrent"> {{ngModel.settings.page}} </span> {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} <span ref="lbTotal">{{totalPages}}</span>
        		<div ref="btNext" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
        			<button type="button" ref="btNext" class="ag-paging-button" ng-click="next()" ng-disabled="disableLast()">{{::translate.load('sbi.cockpit.widgets.table.pagination.next')}}</button>
        		</div>

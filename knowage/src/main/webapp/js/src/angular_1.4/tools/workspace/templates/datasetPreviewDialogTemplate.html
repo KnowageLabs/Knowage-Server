@@ -27,13 +27,16 @@
 	                   		<span ref="lbFirstRowOnPage">{{startPreviewIndex+1}}</span> to <span ref="lbLastRowOnPage">{{endPreviewIndex}}</span> of <span ref="lbRecordCount">{{totalItemsInPreview}}</span>
 	               		</span>
 	               		<span class="ag-paging-page-summary-panel">
-	                   		<button type="button" class="ag-paging-button" ref="btPrevious" ng-disabled="disableBack" ng-click="getBackPreviewSet()">Previous</button>
-	                   		<button type="button" class="ag-paging-button" ref="btNext" ng-click="getNextPreviewSet()" ng-disabled="disableNext">Next</button>
+		               		<div ref="btPrevious" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableBack}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
+				       			<button type="button" ref="btPrevious" class="ag-paging-button" ng-disabled="disableBack" ng-click="getBackPreviewSet()">Previous</button>
+				       		</div>
+				       		<div ref="btPrevious" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableNext}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
+				       			<button type="button" ref="btNext" class="ag-paging-button" ng-disabled="disableNext" ng-click="getNextPreviewSet()">Previous</button>
+				       		</div>
 	               		</span>
 	           		</div>
 	           	</div>
-	          </div>
-	   		
+	         </div>
 	   </md-dialog-content>
 
 </md-dialog>
