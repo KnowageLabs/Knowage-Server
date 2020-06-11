@@ -377,6 +377,9 @@ $aggrid-border-color: #d9dcde;
 				&:hover{
 					color: $secondaryColor;
 				}
+				&.filter-color {
+					color: $fabPrimaryColor;
+				}
 			}
 		}
 	}

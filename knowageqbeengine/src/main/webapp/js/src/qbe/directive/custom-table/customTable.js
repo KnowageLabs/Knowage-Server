@@ -80,15 +80,17 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	function CustomPinnedRowRenderer() {}
 	CustomPinnedRowRenderer.prototype.init = function(params) {
 		var fieldName = params.colDef.field;
-		var infoIconId   = 'info-'   + fieldName;
-		var filterIconId = 'filter-' + fieldName;
 		this.data = params.data[fieldName];
 
 		this.eGui = document.createElement('div');
 		this.eGui.classList.add("customFooter");
-
-		this.eGui.innerHTML = '<md-icon id="' + infoIconId + '" class="fa fa-info info-button" title="'+$scope.translate.load('kn.qbe.custom.table.info')+'"></md-icon>'+
-			'<md-icon id="' + filterIconId + '" class="fa fa-filter filter-button" title="'+$scope.translate.load('kn.qbe.custom.table.filters')+'"></md-icon>';
+		
+		var filterClass = '';
+		if(params.value.filters && params.value.filters.length > 0){
+			filterClass = 'filter-color';
+		}
+		this.eGui.innerHTML = '<md-icon class="fa fa-info info-button" title="'+$scope.translate.load('kn.qbe.custom.table.info')+'"></md-icon>'+
+			'<md-icon class="fa fa-filter filter-button '+filterClass+'" title="'+$scope.translate.load('kn.qbe.custom.table.filters')+'"></md-icon>';
 
 		var onInfoButtonClick   = this.infoColumn.bind(this);
 		var onFilterButtonClick = this.filterColumn.bind(this);
@@ -190,6 +192,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 					"field":        el.key,
 					"tooltipField": el.key,
 					"headerName":   el.alias,
+					"hide": !el.visible,
 					"properties": {
 						"entity": el.entity,
 						"id":     el.id,
@@ -218,7 +221,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		$scope.qbeTableGrid.api.setRowData($scope.previewModel);
 
 		var pinnedBottomRowData = $scope.ngModel.reduce(function(accumulator, currentValue, index) {
-			accumulator["column_" + index] = currentValue;
+			accumulator["column_" + (index + 1)] = currentValue;
 			return accumulator;
 		}, {});
 
