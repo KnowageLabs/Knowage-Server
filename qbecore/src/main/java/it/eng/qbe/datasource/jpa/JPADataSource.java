@@ -103,16 +103,6 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang .String)
-	 */
-	@Override
-	public EntityManagerFactory getEntityManagerFactory(String dmName) {
-		return getEntityManagerFactory();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see it.eng.qbe.datasource.jpa.IJPAataSource#getEntityManagerFactory()
 	 */
 	@Override

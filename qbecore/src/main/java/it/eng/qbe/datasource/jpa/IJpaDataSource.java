@@ -17,10 +17,10 @@
  */
 package it.eng.qbe.datasource.jpa;
 
-import it.eng.qbe.datasource.IDataSource;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+
+import it.eng.qbe.datasource.IDataSource;
 
 /**
  * @author giachino
@@ -30,7 +30,4 @@ public interface IJpaDataSource  extends IDataSource {
 	it.eng.spagobi.tools.datasource.bo.IDataSource getToolsDataSource();
 	EntityManager getEntityManager();
 	EntityManagerFactory getEntityManagerFactory();
-	EntityManagerFactory getEntityManagerFactory(String dmName);
-
-		
 }
