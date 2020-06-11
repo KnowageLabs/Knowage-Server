@@ -127,7 +127,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							for(var k in $scope.ngModel.content.columnSelectedOfDataset[c].variables){
 								var variableUsage = $scope.ngModel.content.columnSelectedOfDataset[c].variables[k];
 								var variableValue = cockpitModule_properties.VARIABLES[variableUsage.variable];
-								if(typeof cockpitModule_properties.VARIABLES[variableUsage.variable] == 'object' && cockpitModule_properties.VARIABLES[variableUsage.variable][variableUsage.key]) {
+								if(typeof cockpitModule_properties.VARIABLES[variableUsage.variable] == 'object' && typeof cockpitModule_properties.VARIABLES[variableUsage.variable][variableUsage.key] != 'undefined') {
 									variableValue = cockpitModule_properties.VARIABLES[variableUsage.variable][variableUsage.key];
 								}
 								if(variableUsage.action == 'hide' && eval(escapeIfString(variableValue) + variableUsage.condition + escapeIfString(variableUsage.value))) tempCol.hide = true;
