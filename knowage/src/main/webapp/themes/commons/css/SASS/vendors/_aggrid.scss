@@ -335,6 +335,51 @@ $aggrid-border-color: #d9dcde;
 			}
 		}
 	}
+	&.ag-qbe-table {
+		.customHeader {
+			width: 100%;
+			flex-direction: column;
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			.qbeCustomTopColor {
+				width: 100%;
+				height: 5px;
+			}
+			.qbeHeaderContainer {
+				width: 100%;
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+			}
+			md-icon {
+				transition: color .3s ease-out;
+				line-height: 24px;
+				cursor: pointer;
+				margin: 0;
+				&:hover{
+					color: $secondaryColor;
+				}
+			}
+		}
+		.customFooter {
+			background-color: $baseColor;
+			color: $lightTextColor;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			md-icon {
+				transition: color .3s ease-out;
+				cursor: pointer;
+				line-height: 24px;
+				color: $lightTextColor;
+				margin: 0;
+				&:hover{
+					color: $secondaryColor;
+				}
+			}
+		}
+	}
 	.ag-header-cell {
 		.ag-cell-label-container{
 			height: 100%;

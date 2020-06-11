@@ -82,20 +82,21 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		var fieldName = params.colDef.field;
 		var infoIconId   = 'info-'   + fieldName;
 		var filterIconId = 'filter-' + fieldName;
-		var data = params.data[fieldName];
+		this.data = params.data[fieldName];
 
 		this.eGui = document.createElement('div');
+		this.eGui.classList.add("customFooter");
 
-		this.eGui.innerHTML = '<md-icon id="' + infoIconId + '" class="fa fa-info info-button"></md-icon>'+
-			'<md-icon id="' + filterIconId + '" class="fa fa-filter filter-button"></md-icon>';
+		this.eGui.innerHTML = '<md-icon id="' + infoIconId + '" class="fa fa-info info-button" title="'+$scope.translate.load('kn.qbe.custom.table.info')+'"></md-icon>'+
+			'<md-icon id="' + filterIconId + '" class="fa fa-filter filter-button" title="'+$scope.translate.load('kn.qbe.custom.table.filters')+'"></md-icon>';
 
-		var onInfoButtonClick   = this.infoColumn.bind(data);
-		var onFilterButtonClick = this.filterColumn.bind(data);
+		var onInfoButtonClick   = this.infoColumn.bind(this);
+		var onFilterButtonClick = this.filterColumn.bind(this);
 
-		var infoIconEl   = this.eGui.querySelector("#" + infoIconId);
+		var infoIconEl   = this.eGui.querySelector(".info-button");
 		infoIconEl.addEventListener("click", onInfoButtonClick);
 
-		var filterIconEl = this.eGui.querySelector("#" + filterIconId);
+		var filterIconEl = this.eGui.querySelector(".filter-button");
 		filterIconEl.addEventListener("click", onFilterButtonClick);
 
 
@@ -104,10 +105,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		return this.eGui;
 	};
 	CustomPinnedRowRenderer.prototype.infoColumn = function() {
-		$scope.showFilters(this);
+		$scope.showFilters(this.data);
 	};
 	CustomPinnedRowRenderer.prototype.filterColumn = function() {
-		$scope.openFilters(this);
+		$scope.openFilters(this.data);
 	};
 
 	$scope.qbeTableGrid = {
@@ -131,11 +132,12 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		this.properties = params.column.colDef.properties;
 
 		this.eGui = document.createElement("div");
-		this.eGui.innerHTML = '<div class="qbeCustomTopColor" style="background-color: ' + this.properties.color + '"></div>' +
-			'<md-icon class="fa fa-sort sort-button"></md-icon>' +
-			'<span>' + params.displayName + '</span>' +
-			'<md-icon class="fa fa-cog settings-button"></md-icon>'+
-			'<md-icon class="fa fa-times remove-button"></md-icon>';
+		this.eGui.classList.add("customHeader");
+		this.eGui.innerHTML = '<div class="qbeCustomTopColor" style="background-color: ' + this.properties.color + '" title="'+ this.properties.entity +'"></div>' +
+			'<div class="qbeHeaderContainer"><md-icon class="fa fa-sort sort-button" title="'+$scope.translate.load('kn.qbe.custom.table.sorting')+'"></md-icon>' +
+			'<span class="flex truncated" title="'+params.displayName+'">' + params.displayName + '</span>' +
+			'<md-icon class="fa fa-cog settings-button" title="'+$scope.translate.load('kn.qbe.custom.table.column.settings')+'"></md-icon>'+
+			'<md-icon class="fa fa-times remove-button" title="'+$scope.translate.load('kn.qbe.custom.table.delete.column')+'"></md-icon></div>';
 
 		this.onRemoveButtonClick = this.removeColumn.bind(this);
 		this.onSortButtonClick = this.sortColumn.bind(this);
@@ -186,6 +188,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			.map(function(el) {
 				return {
 					"field":        el.key,
+					"tooltipField": el.key,
 					"headerName":   el.alias,
 					"properties": {
 						"entity": el.entity,
