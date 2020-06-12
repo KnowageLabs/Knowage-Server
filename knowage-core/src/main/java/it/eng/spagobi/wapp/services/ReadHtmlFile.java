@@ -17,6 +17,16 @@
  */
 package it.eng.spagobi.wapp.services;
 
+import java.io.FileInputStream;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+
+import it.eng.knowage.menu.api.MenuManagementAPI;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -27,15 +37,6 @@ import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.wapp.bo.Menu;
-
-import java.io.FileInputStream;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
 public class ReadHtmlFile extends AbstractHttpAction {
 
@@ -70,6 +71,12 @@ public class ReadHtmlFile extends AbstractHttpAction {
 		logger.debug("menuId=" + menuId);
 		if (menuId != null) {
 			Menu menu = DAOFactory.getMenuDAO().loadMenuByID(Integer.valueOf(menuId));
+			boolean accessible = new MenuManagementAPI(UserUtilities.getUserProfile()).isAccessibleMenu(menu);
+			if (!accessible) {
+				logger.error("No role found for menu with id = " + menu.getMenuId() + ". Not allowed menu.");
+				throw new Exception("No role found for menu with id = " + menu.getMenuId() + ". Not allowed menu.");
+			}
+
 			String fileName = menu.getStaticPage();
 
 			if (fileName == null) {
