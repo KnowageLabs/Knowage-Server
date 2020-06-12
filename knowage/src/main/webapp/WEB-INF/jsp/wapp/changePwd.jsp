@@ -90,9 +90,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <title>Knowage</title>
       <link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico",currTheme)%>" />
       <!-- Bootstrap -->
-      <!-- Latest compiled and minified CSS -->
-      <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
-      <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
+      <link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
+		   <!-- Bootstrap -->
       <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular.js")%>"></script> 
       <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-animate.min.js")%>"></script> 
       <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-aria.min.js")%>"></script> 
@@ -101,12 +100,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-cookies.js")%>"></script> 
       <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/prettyCron/moment-with-locales.min.js")%>"></script> 
       <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.js")%>"></script> 
+      <link rel='StyleSheet' href='<%=urlBuilder.getResourceLink(request, "themes/commons/css/reset_2018.css")%>' type='text/css' />
       <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
-      <!-- Optional theme -->
-      <!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"-->
-      <LINK rel='StyleSheet' 
-         href='<%=urlBuilder.getResourceLinkByTheme(request, "css/knowageHome/style.css",currTheme)%>' 
-         type='text/css' />
+      <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
+	  <link rel='StyleSheet' href='<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>' type='text/css' />
       <script>
          var app = angular.module('changePwdApp', ['ngMaterial']);
          
@@ -140,34 +137,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          }]);
       </script>
    </head>
-   <body ng-app="changePwdApp" ng-controller="changePwdController">
+   <body ng-app="changePwdApp" class="kn-changePassword" ng-controller="changePwdController">
       <!-- NEW FORM -->
-      <div class="container">
-      <div class="card card-container">
-         <div id="oldEncMethodMessage"><label><%=oldEncMethodMessage%></label></div>
-         <img id="profile-img" class="logoHeader" src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>' />
-         <p id="profile-name" class="profile-name-card"></p>
-         <%--             <form class="form-signin"  role="form" action="<%=contextName%>/ChangePwdServlet" method="POST"> --%>
-         <form class="form-signin"  role="form" ng-submit="changePwd()">
-            <fieldset ng-disabled="isCalling">
-               <input type="hidden" id="MESSAGE" name="MESSAGE" value="CHANGE_PWD" />
-               <input type="hidden" id="user_id" name="user_id" value="<%=userId%>" />
-               <label><%=msgBuilder.getMessage("change_password_here")%></label>
-               <input id="username" type="text" size="30"  class="form-control" placeholder="<%=msgBuilder.getMessage("username")%>" required autofocus ng-model="changePwdData.userId">
-               <input id="oldPassword" type="password" size="30"  class="form-control" placeholder="<%=msgBuilder.getMessage("old_password")%>" required ng-model="changePwdData.oldPassword">
-               <input id="NewPassword" type="password" size="30"  class="form-control" placeholder="<%=msgBuilder.getMessage("new_password")%>" required ng-model="changePwdData.newPassword">
-               <input id="NewPassword2" type="password" size="30" class="form-control" placeholder="<%=msgBuilder.getMessage("retype_new_password")%>" required ng-model="changePwdData.newPasswordConfirm">
-               <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Change Password</button> 	
-               <button data-toggle="tooltip" data-placement="bottom" title="Clear form" type="reset" class="btn btn-lg btn-primary btn-block btn-signup" >
-               <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Clear
-               </button>
-               <button class="btn btn-lg btn-primary btn-block btn-signin" type="button" onclick="window.location.href='<%=urlBuilder.getResourceLink(request, "")%>'">Login</button>
-            </fieldset>
-            <div><label>{{authFailed}}</label></div>
-
-         </form>
-         <!-- /form -->
-         </div><!-- /card-container -->
+      <div layout="row" style="width:100%" layout-align="center center">
+	      <md-card flex="60" layout-padding>
+	         <div id="oldEncMethodMessage" layout="row" layout-align="center center" >
+	         	<div class="kn-info" flex><%=oldEncMethodMessage%></div>
+	         </div>
+	         <div layout="row" layout-align="center center" class="noPadding" >
+	         	<img id="profile-img" class="logoHeader" src='<%=urlBuilder.getResourceLink(request, "themes/commons/img/defaultTheme/logoCover.svg")%>' flex="60" flex-xs="100" aria-hidden="true"/>
+	         </div>
+	         <p id="profile-name" class="profile-name-card"></p>
+	         <%--             <form class="form-signin"  role="form" action="<%=contextName%>/ChangePwdServlet" method="POST"> --%>
+	         <div layout="row" layout-align="center center">
+		         <form class="form-signin"  role="form" ng-submit="changePwd()" flex>
+		            <fieldset ng-disabled="isCalling">
+		               <input type="hidden" id="MESSAGE" name="MESSAGE" value="CHANGE_PWD" />
+		               <input type="hidden" id="user_id" name="user_id" value="<%=userId%>" />
+		               <label><%=msgBuilder.getMessage("change_password_here")%></label>
+		               <input id="username" type="text" size="30"  class="form-control" placeholder="<%=msgBuilder.getMessage("username")%>" required autofocus ng-model="changePwdData.userId">
+		               <input id="oldPassword" type="password" size="30"  class="form-control" placeholder="<%=msgBuilder.getMessage("old_password")%>" required ng-model="changePwdData.oldPassword">
+		               <input id="NewPassword" type="password" size="30"  class="form-control" placeholder="<%=msgBuilder.getMessage("new_password")%>" required ng-model="changePwdData.newPassword">
+		               <input id="NewPassword2" type="password" size="30" class="form-control" placeholder="<%=msgBuilder.getMessage("retype_new_password")%>" required ng-model="changePwdData.newPasswordConfirm">
+		               <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Change Password</button> 	
+		               <button class="btn btn-lg btn-primary btn-block btn-signup" type="button" onclick="window.location.href='<%=urlBuilder.getResourceLink(request, "")%>'">Login</button>
+		            </fieldset>
+		            <div><label>{{authFailed}}</label></div>
+		
+		         </form>
+	         </div>
+	         <!-- /form -->
+	         </md-card><!-- /card-container -->
          <spagobi:error/>
       </div>
       <!-- /container -->
