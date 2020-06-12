@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -245,7 +246,8 @@ public class ExcelExportJob extends AbstractExportJob {
 			}
 		}
 
-		logger.debug("End Excel export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
+		LogMF.info(logger, "XLSX export completed for user {0}. DataSet is {1}. Final file: dimension (in bytes): {2,number}, path: [{3}], ",
+				this.getUserProfile().getUserId(), this.getDataSet().getLabel(), getDataFile().toFile().length(), getDataFile().toString());
 
 	}
 
