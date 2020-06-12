@@ -66,6 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		function escapeIfString(value){
 			if(typeof value != 'number') return "\""+value+"\"";
+			else return value;
 		}
 
 		var _rowHeight;
