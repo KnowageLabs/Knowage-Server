@@ -584,7 +584,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	// --------------------------------------------Application
 	// Logic---------------------------------------
 
-	$scope.obtainDatasetLabelsRESTcall();
 	$scope.obtainCatalogFunctionsRESTcall();
 	$scope.obtainFunctionTypesRESTcall();
 

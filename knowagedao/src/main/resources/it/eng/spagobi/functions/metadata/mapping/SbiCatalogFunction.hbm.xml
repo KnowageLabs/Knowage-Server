@@ -93,13 +93,13 @@
             </key>
             <one-to-many class="it.eng.spagobi.functions.metadata.SbiFunctionInputVariable" />
         </set>
-        <set name="sbiFunctionOutputColumns" cascade="all" table="SBI_FUNCTION_OUTPUT_COLUMNS" inverse="true" lazy="false" fetch="join">
+        <set name="sbiFunctionOutputColumns" cascade="all" table="SBI_FUNCTION_OUTPUT_COLUMN" inverse="true" lazy="false" fetch="join">
             <key>
                 <column name="FUNCTION_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.functions.metadata.SbiFunctionOutputColumn" />
         </set>
-        <set name="sbiFunctionInputColumns" cascade="all" table="SBI_FUNCTION_INPUT_COLUMNS" inverse="true" lazy="false" fetch="join">
+        <set name="sbiFunctionInputColumns" cascade="all" table="SBI_FUNCTION_INPUT_COLUMN" inverse="true" lazy="false" fetch="join">
             <key>
                 <column name="FUNCTION_ID" not-null="true" />
             </key>
