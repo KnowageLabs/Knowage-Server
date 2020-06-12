@@ -22,6 +22,7 @@ import java.io.OutputStream;
 
 import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -71,7 +72,8 @@ public class CSVExportJob extends AbstractExportJob {
 			throw new JobExecutionException(e);
 		}
 
-		logger.debug("End CSV export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
+		LogMF.info(logger, "CSV export completed for user {0}. DataSet is {1}. Final file: dimension (in bytes): {2,number}, path: [{3}], ",
+				this.getUserProfile().getUserId(), this.getDataSet().getLabel(), getDataFile().toFile().length(), getDataFile().toString());
 
 	}
 
