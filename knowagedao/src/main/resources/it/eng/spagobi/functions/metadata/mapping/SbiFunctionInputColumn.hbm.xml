@@ -3,26 +3,22 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 10-mag-2016 14.47.58 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.functions.metadata.SbiFunctionInputFile" table="SBI_FUNCTION_INPUT_FILE">
-        <composite-id name="id" class="it.eng.spagobi.functions.metadata.SbiFunctionInputFileId">
+    <class name="it.eng.spagobi.functions.metadata.SbiFunctionInputColumn" table="SBI_FUNCTION_INPUT_COLUMN">
+        <composite-id name="id" class="it.eng.spagobi.functions.metadata.SbiFunctionInputColumnId">
             <key-property name="functionId" type="int">
                 <column name="FUNCTION_ID" />
             </key-property>
-            <key-property name="fileName" type="string">
-                <column name="FILE_NAME" length="100" />
+            <key-property name="colName" type="string">
+                <column name="COL_NAME" length="100" />
             </key-property>
         </composite-id>
         <many-to-one name="sbiCatalogFunction" class="it.eng.spagobi.functions.metadata.SbiCatalogFunction" update="false" insert="false" fetch="select">
             <column name="FUNCTION_ID" not-null="true" />
         </many-to-one>
         
-	    <property name="content" type="binary">
-			<column name="FILE_CONTENT" />
-		</property>
-		
-		<property name="alias" type="string">
-		    <column name="ALIAS" length="45" not-null="false" />
-		</property>  
+        <property name="colType" type="string">
+	      <column name="COL_TYPE" length="100" not-null="true" />
+	    </property>
         
  		<component name="commonInfo" insert="true" update="true" 
 		      class="it.eng.spagobi.commons.metadata.SbiCommonInfo">

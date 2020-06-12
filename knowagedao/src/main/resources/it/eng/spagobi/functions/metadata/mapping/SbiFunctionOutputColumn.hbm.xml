@@ -3,21 +3,24 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 10-mag-2016 14.47.58 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.functions.metadata.SbiFunctionOutput" table="SBI_FUNCTION_OUTPUT">
-        <composite-id name="id" class="it.eng.spagobi.functions.metadata.SbiFunctionOutputId">
+    <class name="it.eng.spagobi.functions.metadata.SbiFunctionOutputColumn" table="SBI_FUNCTION_OUTPUT_COLUMN">
+        <composite-id name="id" class="it.eng.spagobi.functions.metadata.SbiFunctionOutputColumnId">
             <key-property name="functionId" type="int">
                 <column name="FUNCTION_ID" />
             </key-property>
-            <key-property name="label" type="string">
-                <column name="LABEL" length="100" />
+            <key-property name="colName" type="string">
+                <column name="COL_NAME" length="100" />
             </key-property>
         </composite-id>
-        <many-to-one name="sbiCatalogFunction" class="it.eng.spagobi.functions.metadata.SbiCatalogFunction" update="false" insert="false" fetch="join">
+        <many-to-one name="sbiCatalogFunction" class="it.eng.spagobi.functions.metadata.SbiCatalogFunction" update="false" insert="false" fetch="select">
             <column name="FUNCTION_ID" not-null="true" />
         </many-to-one>
-
-
-		<component name="commonInfo" insert="true" update="true" 
+        
+        <property name="colType" type="string">
+	      <column name="COL_TYPE" length="100" not-null="true" />
+	    </property>
+        
+ 		<component name="commonInfo" insert="true" update="true" 
 		      class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 		        <property name="userIn" type="string">
 		            <column name="USER_IN" length="100" not-null="true" />
@@ -50,10 +53,6 @@
 		            <column name="ORGANIZATION" length="20" not-null="false" />
 		        </property>      
 		</component>
-		<property name="outType" type="int">
-            <column name="OUT_TYPE"/>
-        </property>
-		
 		<filter name="tenantFilter" condition="organization=:tenant" />  
 	</class>
  	<filter-def name="tenantFilter">
