@@ -99,11 +99,14 @@ public class Password {
 	 * @throws InvalidKeyException
 	 * @throws IOException
 	 */
-	public String getEncValue(boolean oldWay) throws InvalidKeyException, NoSuchAlgorithmException, IOException {
+	public String getEncValue(boolean before72) throws InvalidKeyException, NoSuchAlgorithmException, IOException {
 
 		if (encValue != null) {
-			AsymmetricProviderSingleton bs = AsymmetricProviderSingleton.getInstance();
-			encValue = (oldWay ? PREFIX_SHA_PWD_ENCRIPTING : PREFIX_V2_SHA_PWD_ENCRIPTING) + bs.enCrypt(value);
+			if (before72) {
+				encValue = PREFIX_SHA_PWD_ENCRIPTING + AsymmetricProvider.OLD_INSTANCE.enCrypt(value);
+			} else {
+				encValue = PREFIX_V2_SHA_PWD_ENCRIPTING + AsymmetricProvider.INSTANCE.enCrypt(value);
+			}
 		}
 		return encValue;
 	}
@@ -130,13 +133,13 @@ public class Password {
 	 * @return encrypted password
 	 * @throws Exception wrapping InvalidKeyException and NoSuchAlgorithmException
 	 */
-	public static String encriptPassword(String password, boolean oldWay) throws Exception {
+	public static String encriptPassword(String password, boolean before72) throws Exception {
 		if (password != null) {
 			String enable = SingletonConfig.getInstance().getConfigValue("internal.security.encript.password");
 			if ("true".equalsIgnoreCase(enable)) {
 				Password hashPass = new Password(password);
 				try {
-					password = (hashPass.getEncValue(oldWay));
+					password = (hashPass.getEncValue(before72));
 				} catch (InvalidKeyException e) {
 					logger.error("not valid HASH", e);
 					throw new Exception("not valid HASH", e);

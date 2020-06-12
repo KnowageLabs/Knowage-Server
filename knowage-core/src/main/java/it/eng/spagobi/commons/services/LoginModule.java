@@ -507,7 +507,7 @@ public class LoginModule extends AbstractHttpModule {
 		if (user == null)
 			return toReturn;
 
-		if (user.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING)) {
+		if (encriptedBefore72(user)) {
 			logger.info("Old encrypting method. Change password required.");
 			return true;
 		}
@@ -568,5 +568,9 @@ public class LoginModule extends AbstractHttpModule {
 		}
 		logger.debug("OUT");
 		return toReturn;
+	}
+
+	private boolean encriptedBefore72(SbiUser user) {
+		return user.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING);
 	}
 }
