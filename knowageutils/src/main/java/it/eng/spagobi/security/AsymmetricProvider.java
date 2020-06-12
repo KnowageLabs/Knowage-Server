@@ -38,31 +38,27 @@ import sun.misc.BASE64Encoder;
  * @author Alessandro Pegoraro (alessandro.pegoraro@eng.it)
  *
  */
-public class AsymmetricProviderSingleton {
-	private static final String PROVIDER = "HmacSHA1";
+public enum AsymmetricProvider {
+	INSTANCE(getKeyBytes()), OLD_INSTANCE(getOldKeyBytes());
 
-	private static AsymmetricProviderSingleton _instance = null;
+	private String PROVIDER = "HmacSHA1";
+
 	private Mac mac = null;
 
-	public static AsymmetricProviderSingleton getInstance() throws InvalidKeyException, NoSuchAlgorithmException, IOException {
-		if (_instance == null) {
-			synchronized (AsymmetricProviderSingleton.class) {
-				if (_instance == null)
-					_instance = new AsymmetricProviderSingleton();
-			}
-		}
-		return _instance;
-	}
-
-	private AsymmetricProviderSingleton() throws InvalidKeyException, NoSuchAlgorithmException, IOException {
+	private AsymmetricProvider(byte[] keyBytes) {
 		Provider sunJce = new com.sun.crypto.provider.SunJCE();
 		Security.addProvider(sunJce);
 
-		SecretKey key = new SecretKeySpec(getKeyBytes(), PROVIDER);
+		SecretKey key = new SecretKeySpec(keyBytes, PROVIDER);
 
-		mac = Mac.getInstance(PROVIDER);
-		mac.init(key);
-
+		try {
+			mac = Mac.getInstance(PROVIDER);
+			mac.init(key);
+		} catch (NoSuchAlgorithmException e) {
+			throw new Error("Unable to find algorithm for security initialization", e);
+		} catch (InvalidKeyException e) {
+			throw new Error("Unable to find a valid key for security initialization", e);
+		}
 	}
 
 	public String enCrypt(String value) {
@@ -74,7 +70,7 @@ public class AsymmetricProviderSingleton {
 		return encoded;
 	}
 
-	private byte[] getKeyBytes() throws IOException {
+	private static byte[] getKeyBytes() {
 		byte[] fileContent = null;
 		try {
 			String fileLocation = (String) new InitialContext().lookup("java:/comp/env/password_encryption_secret");
@@ -83,12 +79,18 @@ public class AsymmetricProviderSingleton {
 			fileContent = Files.readAllBytes(file.toPath());
 
 		} catch (NamingException e) {
-			throw new Error("Unable to find resource needed for security initialization", e);
+			throw new Error("Unable to find resource for security initialization", e);
 		} catch (IOException e) {
-			throw new Error("Unable to find file needed for security initialization", e);
+			throw new Error("Unable to find file for security initialization", e);
 		}
 
 		return fileContent;
 	}
 
+	private static byte[] getOldKeyBytes() {
+		byte[] keyBytes = { (byte) 0x06, (byte) 0xAB, (byte) 0x12, (byte) 0xE4, (byte) 0xE4, (byte) 0xE4, (byte) 0xE4, (byte) 0x12, (byte) 0x13, (byte) 0xE4,
+				(byte) 0x12, (byte) 0xCC, (byte) 0xEF, (byte) 0xE4, (byte) 0x06, (byte) 0x07, (byte) 0xE4, (byte) 0x07, (byte) 0x12, (byte) 0xCD, (byte) 0xE4,
+				(byte) 0x07, (byte) 0xFE, (byte) 0xFF, (byte) 0x07, (byte) 0xE4, (byte) 0x08 };
+		return keyBytes;
+	}
 }
