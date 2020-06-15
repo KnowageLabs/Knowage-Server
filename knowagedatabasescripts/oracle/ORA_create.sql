@@ -1295,6 +1295,7 @@ CREATE TABLE SBI_META_MODELS (
        DESCR                VARCHAR2(500) NULL,
        MODEL_LOCKED         SMALLINT NULL,
        MODEL_LOCKER         VARCHAR2(100) NULL,
+       SMART_VIEW 			SMALLINT DEFAULT 1,
        USER_IN              VARCHAR2(100) NOT NULL,
        USER_UP              VARCHAR2(100),
        USER_DE              VARCHAR2(100),

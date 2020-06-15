@@ -91,6 +91,9 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	    	$scope.fromDataset = true
 	    	$scope.editQueryObj = qbeJsonObj.catalogue.queries[0];
 		}
+		if(message.smartView != undefined) {
+			query_service.smartView = message.smartView;
+		}
 
 		console.log(message)
 	}

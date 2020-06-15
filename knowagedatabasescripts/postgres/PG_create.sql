@@ -1231,6 +1231,7 @@ CREATE TABLE SBI_META_MODELS (
        DESCR                VARCHAR(500) NULL,
        MODEL_LOCKED         BOOLEAN NULL,
        MODEL_LOCKER         VARCHAR(100) NULL,
+       SMART_VIEW           BOOLEAN DEFAULT TRUE,
        USER_IN              VARCHAR(100) NOT NULL,
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),

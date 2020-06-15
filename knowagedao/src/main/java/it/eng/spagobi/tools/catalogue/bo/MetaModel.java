@@ -53,6 +53,8 @@ public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 	@Size(max = 100)
 	private String modelLocker;
 
+	private Boolean smartView;
+
 	private List<BIMetaModelParameter> biMetaModelParameters = null;
 
 	@ExtendedAlphanumeric
@@ -95,7 +97,8 @@ public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 	}
 
 	/**
-	 * @param category the category to set
+	 * @param category
+	 *            the category to set
 	 */
 	public void setCategory(Integer category) {
 		this.category = category;
@@ -133,7 +136,8 @@ public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 	}
 
 	/**
-	 * @param modelLocked the modelLocked to set
+	 * @param modelLocked
+	 *            the modelLocked to set
 	 */
 	public void setModelLocked(Boolean modelLocked) {
 		this.modelLocked = modelLocked;
@@ -147,19 +151,38 @@ public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 	}
 
 	/**
-	 * @param modelLocker the modelLocker to set
+	 * @param modelLocker
+	 *            the modelLocker to set
 	 */
 	public void setModelLocker(String modelLocker) {
 		this.modelLocker = modelLocker;
 	}
 
-//	public List<BIMetaModelParameter> getBiMetaModelParameters() {
-//		return biMetaModelParameters;
-//	}
-//
-//	public void setBiMetaModelParameters(List<BIMetaModelParameter> biMetaModelParameters) {
-//		this.biMetaModelParameters = biMetaModelParameters;
-//	}
+	// public List<BIMetaModelParameter> getBiMetaModelParameters() {
+	// return biMetaModelParameters;
+	// }
+	//
+	// public void setBiMetaModelParameters(List<BIMetaModelParameter> biMetaModelParameters) {
+	// this.biMetaModelParameters = biMetaModelParameters;
+	// }
+
+	/**
+	 * @return the smartView
+	 */
+	public Boolean getSmartView() {
+		if (smartView == null) {
+			return false;
+		}
+		return smartView;
+	}
+
+	/**
+	 * @param smartView
+	 *            the smartView to set
+	 */
+	public void setSmartView(Boolean smartView) {
+		this.smartView = smartView;
+	}
 
 	@Override
 	public List<BIMetaModelParameter> getDrivers() {

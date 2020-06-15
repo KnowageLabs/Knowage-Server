@@ -161,6 +161,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							          <md-switch ng-model="selectedBusinessModel.modelLocked" ng-change="businessModelLock()">{{ selectedBusinessModel.modelLocked ? translate.load("sbi.bm.unlockModel") : translate.load("sbi.bm.lockModel")}}</md-switch>
 							        </md-input-container>
 									<%} %>
+									
+									<md-switch ng-model="selectedBusinessModel.smartView" aria-label="Switch smart preview">
+										{{selectedBusinessModel.smartView ? translate.load("sbi.bm.smart.view") : translate.load("sbi.bm.advanced.view")}}									   
+									</md-switch>
+									
 								</div>
 								<md-card-content ng-if="metaWebFunctionality" layout="column">
 						      		<md-toolbar class="secondaryToolbar">

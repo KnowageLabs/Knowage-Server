@@ -29,6 +29,7 @@ angular
 		var comunicator = windowCommunicationService;
 		var urlBuilderService = sbiModule_urlBuilderService;
 
+
 		this.openQbeInterfaceFromModel = function($scope,url,driverableObject) {
 
 			$scope.editQbeDset = false;
@@ -474,7 +475,7 @@ angular
 										})})
 			}
 
-			var messagingHandler = qbeViewerMessagingHandler.initalizeHandler($scope.selectedDataSet,$scope.parameterItems, openPanelForSavingQbeDataset);
+			var messagingHandler = qbeViewerMessagingHandler.initalizeHandler(driverableObject,$scope.parameterItems, openPanelForSavingQbeDataset);
 			qbeViewerMessagingHandler.registerHandler(messagingHandler);
 
 		}

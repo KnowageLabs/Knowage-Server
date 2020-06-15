@@ -18,9 +18,12 @@ angular
 						if(message.message=="close") comunicator.removeMessageHandler(this);
 					}else if(isFromWorkspace(message)){
 						workspaceDSUpdateProces(message, dataset, openPanelForSavingQbeDataset);
-					} else if(message == "qbeJSONQuery"){
+					} else if(message == "qbeJSONQuery" && dataset.qbeJSONQuery){
 						comunicator.sendMessage({qbeJSONQuery:dataset.qbeJSONQuery})
+					} else if(dataset.smartView != undefined){
+						comunicator.sendMessage({smartView:dataset.smartView})
 					}
+
 				}
 
 				return saveHandler;

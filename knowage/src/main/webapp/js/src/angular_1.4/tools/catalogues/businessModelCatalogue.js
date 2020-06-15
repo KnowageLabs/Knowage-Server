@@ -46,6 +46,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	$scope.togenerate = false;
 
+	$scope.selectedBusinessModel.smartView = true;
+
 	$scope.varTablePrefixLikeValue;
 	$scope.varTablePrefixNotLikeValue;
 
