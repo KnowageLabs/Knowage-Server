@@ -660,6 +660,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 					$scope.unreadNewsNumber = response.data;
 				})
 			}
+			$scope.setNewsBadge();
 
 			$scope.showNewsButton = function(){
 				sbiModule_restServices.promiseGet("2.0", "newsRead/total").then(function(response){
