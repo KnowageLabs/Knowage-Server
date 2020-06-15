@@ -46,8 +46,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	$scope.togenerate = false;
 
-	$scope.selectedBusinessModel.smartView = true;
-
 	$scope.varTablePrefixLikeValue;
 	$scope.varTablePrefixNotLikeValue;
 
@@ -86,6 +84,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			$scope.metaWebFunctionality=false;
 			$scope.businessModelForm.$setPristine();
 			$scope.businessModelForm.$setUntouched();
+			$scope.selectedBusinessModel.smartView = true;
 		}else{
 			$mdDialog.show($scope.confirm).then(function(){
 				angular.copy({},$scope.selectedBusinessModel);
