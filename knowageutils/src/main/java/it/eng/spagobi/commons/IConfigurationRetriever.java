@@ -17,6 +17,6 @@
  */
 package it.eng.spagobi.commons;
 
-public interface ISingletonConfigCache {
+public interface IConfigurationRetriever {
 	String get(String key);
 }

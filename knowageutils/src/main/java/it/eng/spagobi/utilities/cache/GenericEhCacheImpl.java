@@ -19,12 +19,13 @@ package it.eng.spagobi.utilities.cache;
 
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-
-import org.apache.log4j.Logger;
 
 /**
  * Implementation of the cache that uses the EhCache library (http://www.ehcache.org/)
@@ -37,30 +38,28 @@ public class GenericEhCacheImpl implements CacheInterface {
 
 	private static transient Logger logger = Logger.getLogger(GenericEhCacheImpl.class);
 
-	private static GenericEhCacheImpl instance;
-
 	private Cache cache = null;
 
-	private CacheManager manager;
+	private static CacheManager manager;
+
+	static {
+		try {
+			manager = CacheManager.create();
+		} catch (Exception e) {
+			logger.error("Error while initialization CacheManager instance", e);
+		}
+	}
 
 	public GenericEhCacheImpl(String cacheName) {
 		super();
 		try {
-			manager = CacheManager.create();
+			if (manager == null) {
+				throw new SpagoBIRuntimeException("Cache manager was not initialized properly");
+			}
 			cache = manager.getCache(cacheName);
-		} catch (CacheException e) {
-			logger.error("CacheException in inizialization", e);
+		} catch (Exception e) {
+			logger.error("Exception when inizializating cache", e);
 		}
-
-	}
-
-	public synchronized static CacheInterface getInstance(String cacheName) {
-		if (instance == null) {
-			logger.debug("Creating cache for[" + cacheName + "]");
-			instance = new GenericEhCacheImpl(cacheName);
-		}
-		logger.debug("Cache for[" + cacheName + "] already found");
-		return instance;
 	}
 
 	@Override
@@ -101,7 +100,7 @@ public class GenericEhCacheImpl implements CacheInterface {
 			try {
 				Element el = cache.get(code);
 				logger.debug("Retrieving element with code [" + code + "] from the cache");
-				return el.getValue();
+				return el != null ? el.getValue() : null;
 			} catch (IllegalStateException e) {
 				logger.error("IllegalStateException", e);
 			} catch (CacheException e) {

@@ -18,9 +18,9 @@
 
 package it.eng.spagobi.commons;
 
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Defines the Singleton SpagoBI implementations.
@@ -30,54 +30,38 @@ import org.apache.log4j.Logger;
 
 public class SingletonConfig {
 
-	private static String CONFIG_CACHE_CLASS_NAME = "it.eng.spagobi.commons.SingletonConfigCache";
+	private static final String CONFIG_RETRIEVER_CLASS_NAME = "it.eng.spagobi.commons.MetadataDatabaseConfigurationRetriever";
 
-	private static SingletonConfig instance = null;
-	private static transient Logger logger = Logger.getLogger(SingletonConfig.class);
+	private static Logger logger = Logger.getLogger(SingletonConfig.class);
 
-	private ISingletonConfigCache cache;
+	private static final SingletonConfig instance = new SingletonConfig();
 
-	public synchronized static SingletonConfig getInstance() {
-		try {
-			if (instance == null)
-				instance = new SingletonConfig();
-		} catch (Exception e) {
-			logger.debug("Impossible to load configuration", e);
-		}
+	private IConfigurationRetriever retriever;
+
+	public static SingletonConfig getInstance() {
 		return instance;
 	}
 
-	private SingletonConfig() throws Exception {
+	private SingletonConfig() {
 		logger.debug("IN");
 		try {
-			cache = (ISingletonConfigCache) Class.forName(CONFIG_CACHE_CLASS_NAME).newInstance();
+			retriever = (IConfigurationRetriever) Class.forName(CONFIG_RETRIEVER_CLASS_NAME).newInstance();
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Impossible to create " + CONFIG_CACHE_CLASS_NAME, e);
+			throw new SpagoBIRuntimeException("Impossible to instantiate " + CONFIG_RETRIEVER_CLASS_NAME, e);
 		}
+		logger.debug("OUT");
 	}
 
 	/**
-	 * Gets the config.
+	 * Gets the configuration corresponding to the input key.
 	 *
-	 * @return SourceBean contain the configuration
-	 *
-	 *         QUESTO METODO LO UTILIZZI PER LEGGERE LA CONFIGURAZIONE DEI SINGOLI ELEMENTI: ES: String configurazione=
-	 *         SingletonConfig.getInstance().getConfigValue("home.banner");
+	 * @return Returns the value of configuration by its key
 	 */
-	public synchronized String getConfigValue(String key) {
-		return cache.get(key);
-
-	}
-
-	/**
-	 * QUESTO METODO LO UTILIZZI ALL'INTERNO DEL SERVIZIO DI SALVATAGGIO CONFIGURAZIONE OGNI VOLTA CHE SALVIAMO UNA RIGA SVUOTIAMO LA CACHE
-	 */
-	public synchronized void clearCache() {
-		try {
-			instance = null;
-		} catch (Exception e) {
-			logger.debug("Impossible to create a new istance", e);
-		}
+	public String getConfigValue(String key) {
+		logger.debug("Retrieving configuration parameter with key [" + key + "]");
+		String toReturn = retriever.get(key);
+		logger.debug("Retrieved configuration parameter with key [" + key + "]: [" + toReturn + "]");
+		return toReturn;
 	}
 
 	/**
@@ -85,17 +69,17 @@ public class SingletonConfig {
 	 *
 	 * @return
 	 */
-	public ISingletonConfigCache getCache() {
-		return cache;
+	public IConfigurationRetriever getConfigurationRetriever() {
+		return retriever;
 	}
 
 	/**
 	 * for testing
 	 *
-	 * @param cache
+	 * @param retriever
 	 */
-	public void setCache(ISingletonConfigCache cache) {
-		this.cache = cache;
+	public void setConfigurationRetriever(IConfigurationRetriever retriever) {
+		this.retriever = retriever;
 	}
 
 }
