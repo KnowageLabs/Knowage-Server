@@ -15,22 +15,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.utilities.cache;
+package it.eng.spagobi.commons;
 
-/**
- * A factory for cache objects implementing the CacheInterface
- *
- * @author Marco Cortella (marco.cortella@eng.it)
- *
- */
-public class GenericCacheFactory {
+import java.util.HashMap;
+import java.util.Map;
 
-	/**
-	 * @return a specific cache with the passed cache name
-	 */
-	public CacheInterface getCache(String cacheName) {
-		CacheInterface cache = new GenericEhCacheImpl(cacheName);
-		return cache;
+public class SimpleConfigurationRetriever implements IConfigurationRetriever {
+
+	private final Map<String, String> properties = new HashMap<>();
+
+	public void setProperty(String key, String value) {
+		properties.put(key, value);
+	}
+
+	@Override
+	public String get(String key) {
+		return properties.get(key);
 	}
 
 }

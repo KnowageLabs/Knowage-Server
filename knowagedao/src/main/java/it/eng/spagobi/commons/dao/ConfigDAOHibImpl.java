@@ -32,7 +32,6 @@ import org.hibernate.criterion.Expression;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.metadata.SbiConfig;
 import it.eng.spagobi.commons.metadata.SbiDomains;
@@ -95,13 +94,11 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	/**
 	 * Load configuration by id.
 	 *
-	 * @param id
-	 *            the configuration id
+	 * @param id the configuration id
 	 *
 	 * @return the config object
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.common.bo.dao.ISbiConfigDAO#loadConfigParametersById(integer)
 	 */
@@ -141,13 +138,11 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	/**
 	 * Load configuration by complete label.
 	 *
-	 * @param label
-	 *            the configuration label
+	 * @param label the configuration label
 	 *
 	 * @return the config object
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.common.bo.dao.ISbiConfigDAO#loadConfigParametersById(string)
 	 */
@@ -188,13 +183,11 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	/**
 	 * Load configuration by a property node.
 	 *
-	 * @param prop
-	 *            the configuration label
+	 * @param prop the configuration label
 	 *
 	 * @return a list with all children of the property node
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.common.bo.dao.ISbiConfigDAO#loadConfigParametersByProperties(string)
 	 */
@@ -229,13 +222,11 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	/**
 	 * Save config by id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
 	 * @return void
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 */
 	@Override
@@ -297,20 +288,17 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 					aSession.close();
 			}
 		}
-		SingletonConfig.getInstance().clearCache();
 		logger.debug("OUT");
 	}
 
 	/**
 	 * Delete config by id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
 	 * @return void
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 */
 	@Override
@@ -345,7 +333,6 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 					sess.close();
 			}
 		}
-		SingletonConfig.getInstance().clearCache();
 		logger.debug("OUT");
 	}
 

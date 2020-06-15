@@ -17,14 +17,6 @@
  */
 package it.eng.spagobi;
 
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.configuration.FileCreatorConfiguration;
-import it.eng.spagobi.commons.SimpleSingletonConfigCache;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.utilities.MockContext;
-import it.eng.spagobi.utilities.MockFactory;
-import it.eng.spagobi.utilities.MockHttpSession;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,6 +32,14 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
+
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.configuration.FileCreatorConfiguration;
+import it.eng.spagobi.commons.SimpleConfigurationRetriever;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.utilities.MockContext;
+import it.eng.spagobi.utilities.MockFactory;
+import it.eng.spagobi.utilities.MockHttpSession;
 
 public class UtilitiesForTest {
 
@@ -74,21 +74,21 @@ public class UtilitiesForTest {
 		ic.bind("java://comp/env/sso_class", "it.eng.spagobi.services.common.FakeSsoService");
 		ic.bind("java:/comp/env/jdbc/hdfs_url", "hdfs://192.168.56.1:8020");
 
-		SimpleSingletonConfigCache cache = new SimpleSingletonConfigCache();
-		cache.setProperty("SPAGOBI.ORGANIZATIONAL-UNIT.hdfsResource", "java:/comp/env/jdbc/hdfs_url");
-		cache.setProperty("SPAGOBI_SSO.INTEGRATION_CLASS_JNDI", "java:/comp/env/sso_class");
-		SingletonConfig.getInstance().setCache(cache);
+		SimpleConfigurationRetriever configuration = new SimpleConfigurationRetriever();
+		configuration.setProperty("SPAGOBI.ORGANIZATIONAL-UNIT.hdfsResource", "java:/comp/env/jdbc/hdfs_url");
+		configuration.setProperty("SPAGOBI_SSO.INTEGRATION_CLASS_JNDI", "java:/comp/env/sso_class");
+		SingletonConfig.getInstance().setConfigurationRetriever(configuration);
 	}
 
 	public static void writeSessionOfWebApp() throws IOException, InterruptedException {
 		Runtime runtime = Runtime.getRuntime();
 		// call login page of knowage to write JSESSION COOKIE
-		Process exec = runtime
-				.exec("curl http://localhost:8080/knowage/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE -H 'Host: localhost:8080' -c ./resources-test/cookies.txt");
+		Process exec = runtime.exec(
+				"curl http://localhost:8080/knowage/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE -H 'Host: localhost:8080' -c ./resources-test/cookies.txt");
 		exec.waitFor();
 		String jsessionId = getJSessionId();
-		exec = runtime
-				.exec("curl http://localhost:8080/knowage/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE -H 'Host: localhost:8080' -H 'Cookie: JSESSIONID=%J' --data 'isInternalSecurity=true&userID=biadmin&password=biadmin'"
+		exec = runtime.exec(
+				"curl http://localhost:8080/knowage/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE -H 'Host: localhost:8080' -H 'Cookie: JSESSIONID=%J' --data 'isInternalSecurity=true&userID=biadmin&password=biadmin'"
 						.replace("%J", jsessionId));
 		exec.waitFor();
 	}
