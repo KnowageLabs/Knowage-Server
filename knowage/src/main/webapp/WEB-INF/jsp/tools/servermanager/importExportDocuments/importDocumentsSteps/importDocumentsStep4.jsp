@@ -23,7 +23,7 @@
          </md-switch> -->
       <md-button ng-click="saveMetaDataAssociation()" class="md-raised md-primary">{{translate.load('SBISet.start.import','component_impexp_messages');}} </md-button>
    </div>
-   <div class="importDocWithoutLicense kn-warningContainer" layout="column" layout-wrap ng-if="IEDConf.objects.notImportable.length!=0">
+   <div class="importDocWithoutLicense kn-warningContainer" layout="column" layout-wrap ng-if="IEDConf.objects && IEDConf.objects.notImportable.length!=0">
       <md-subheader class="md-primary">{{translate.load('SBISet.importexport.notImportableDocuments','component_impexp_messages');}}</md-subheader>
       <div layout="row" layout-align="center center">
          <div class="kn-warning" flex="60">
