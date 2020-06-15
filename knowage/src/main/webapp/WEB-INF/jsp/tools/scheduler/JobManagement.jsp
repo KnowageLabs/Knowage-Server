@@ -156,9 +156,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 										<div layout="column" flex layout-align="center center" ng-hide="ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].loaded" layout-padding>
 											<span class="kn-info">{{::translate.load('scheduler.jobhasnodocument')}}</span>
 										</div>
-										<div layout="row" layout-align="center center">
+										<div ng-show="ctrl.deletedParams.length > 0" layout="row" layout-align="center center">
 											<div class="kn-warning" flex="80" layout="row">
-												<div ng-if="ctrl.deletedParams.length > 0">
+												<div>
 													<span>The following parameters are not present anymore in the original document and will be removed from this scheduled document:</span>
 													<div ng-repeat="param in ctrl.deletedParams">{{param.name}}</div>
 												</div>
