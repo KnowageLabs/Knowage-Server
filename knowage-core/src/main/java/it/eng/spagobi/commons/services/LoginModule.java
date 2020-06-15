@@ -38,6 +38,7 @@ import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -273,10 +274,7 @@ public class LoginModule extends AbstractHttpModule {
 
 					boolean goToChangePwd = checkPwd(user);
 					if (goToChangePwd) {
-						if (user.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING)) {
-							logger.info("Old encrypting method. Change password required.");
-							response.setAttribute("old_enc_method_message", msgBuilder.getMessage("old_enc_method_message", "messages", locale));
-						}
+						checkIfIsBefore72AuthMethod(response, msgBuilder, locale, user);
 						response.setAttribute("user_id", user.getUserId());
 						String url = GeneralUtilities.getSpagoBiHost() + servletRequest.getContextPath();
 						response.setAttribute("start_url", url);
@@ -419,6 +417,13 @@ public class LoginModule extends AbstractHttpModule {
 		}
 
 		logger.debug("OUT");
+	}
+
+	private void checkIfIsBefore72AuthMethod(SourceBean response, MessageBuilder msgBuilder, Locale locale, SbiUser user) throws SourceBeanException {
+		if (user.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING)) {
+			logger.info("Old encrypting method. Change password required.");
+			response.setAttribute("old_enc_method_message", msgBuilder.getMessage("old_enc_method_message", "messages", locale));
+		}
 	}
 
 	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer, HttpSession httpSession) {
