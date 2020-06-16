@@ -97,11 +97,19 @@ public class MailSessionBuilder {
 		private final Session session;
 		private final InternetAddress from;
 		private final SecurityMode securityMode;
+		private final String host;
+		private final int port;
+		private final String user;
+		private final String password;
 
-		private SessionFacade(Session session, InternetAddress from, SecurityMode securityMode) {
+		private SessionFacade(Session session, InternetAddress from, SecurityMode securityMode, String host, int port, String user, String password) {
 			this.session = session;
 			this.from = from;
 			this.securityMode = securityMode;
+			this.host = host;
+			this.port = port;
+			this.user = user;
+			this.password = password;
 		}
 
 		public Transport getTransport() throws NoSuchProviderException {
@@ -125,11 +133,15 @@ public class MailSessionBuilder {
 				allRecipients = message.getAllRecipients();
 
 				transport = getTransport();
-				transport.connect();
+				if (securityMode == SecurityMode.SSL) {
+					transport.connect(host, port, user, password);
+				} else {
+					transport.connect();
+				}
 				transport.sendMessage(message, allRecipients);
 			} catch (Exception e) {
 				Properties properties = session.getProperties();
-				LogMF.error(logger, e, "Error sending email from {0} to {1} with session having properties {2}", new String[] { from.toString(), String.valueOf(allRecipients), String.valueOf(properties) });
+				LogMF.error(logger, e, "Error sending email with a session having properties {0}", new String[] { String.valueOf(properties) });
 				throw e;
 			} finally {
 				if (transport != null) {
@@ -338,7 +350,7 @@ public class MailSessionBuilder {
 		LogMF.debug(logger, "Session created using properties {0}", props);
 		LogMF.info(logger, "End creating a new SessionFacade for profile name {0}", profileName);
 
-		return new SessionFacade(session, fromValueInternetAddress, securityValueEnum);
+		return new SessionFacade(session, fromValueInternetAddress, securityValueEnum, smtpHostValue, Integer.parseInt(smtpPortValue), userValue, passwordValue);
 	}
 
 	public MailSessionBuilder withTimeout(int timeout) {
