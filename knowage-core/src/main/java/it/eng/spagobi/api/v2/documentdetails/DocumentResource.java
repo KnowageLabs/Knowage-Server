@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.api.v2.documentdetails;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -47,6 +48,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/2.0/documents1")
 public class DocumentResource extends AbstractSpagoBIResource {
@@ -82,8 +84,12 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
 		Assert.assertNotNull(document, "Document can not be null");
-
 		document.setCreationUser((String) getUserProfile().getUserId());
+
+		if (documentLabelControl(document, "INSERT")) {
+			logger.error("Error while inserting document. Document with the same label already exists!");
+			throw new SpagoBIRuntimeException("Error while inserting document. Document with the label " + document.getLabel() + " already exists!");
+		}
 
 		try {
 			documentDao = DAOFactory.getBIObjectDAO();
@@ -163,6 +169,39 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		}
 		logger.debug("OUT");
 		return id;
+	}
+
+	private boolean documentLabelControl(BIObject document, String operation) {
+		String labelToCheck = document.getLabel();
+		List<BIObject> allDocuments = null;
+		try {
+			allDocuments = DAOFactory.getBIObjectDAO().loadAllBIObjects();
+		} catch (EMFUserError e) {
+			logger.error("Error loading documents for label testing");
+			throw new SpagoBIRestServiceException(getLocale(), e);
+		}
+		if (operation.equalsIgnoreCase("INSERT")) {
+			Iterator it = allDocuments.iterator();
+			while (it.hasNext()) {
+				BIObject aDocument = (BIObject) it.next();
+				String label = aDocument.getLabel();
+				if (label.equals(labelToCheck)) {
+					return true;
+				}
+			}
+		} else {
+			Integer currentId = document.getId();
+			Iterator it = allDocuments.iterator();
+			while (it.hasNext()) {
+				BIObject aDocument = (BIObject) it.next();
+				String label = aDocument.getLabel();
+				Integer id = aDocument.getId();
+				if (label.equals(labelToCheck) && (!id.equals(currentId))) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Path("/{id}/drivers")
