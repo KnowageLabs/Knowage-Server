@@ -35,6 +35,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.metadata.SbiConfig;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.utilities.cache.ConfigurationCache;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a domain.
@@ -288,6 +289,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 					aSession.close();
 			}
 		}
+		ConfigurationCache.getCache().clear();
 		logger.debug("OUT");
 	}
 

@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.utilities.cache;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
@@ -109,4 +110,16 @@ public class GenericEhCacheImpl implements CacheInterface {
 		}
 		return null;
 	}
+
+	@Override
+	public void clear() {
+		if (cache != null) {
+			try {
+				cache.removeAll();
+			} catch (IllegalStateException | IOException e) {
+				logger.error("An error occurred while clearing cache", e);
+			}
+		}
+	}
+
 }

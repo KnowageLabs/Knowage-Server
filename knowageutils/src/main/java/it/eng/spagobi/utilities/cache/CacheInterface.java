@@ -33,4 +33,6 @@ public interface CacheInterface {
 	Serializable get(String code);
 
 	boolean contains(String code);
+
+	void clear();
 }
