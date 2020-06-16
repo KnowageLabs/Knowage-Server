@@ -48,7 +48,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 	static private Logger logger = Logger.getLogger(LdapSecurityServiceSupplier.class);
 
-	static private String LDAP_AUTHENTICATION_CONFIG = "ldap.config";
+	static protected String LDAP_AUTHENTICATION_CONFIG = "ldap.config";
 
 	private static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 
@@ -91,7 +91,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 	/**
 	 * In this method you can find the authentication source code for LDAP bind process
 	 *
-	 * @param     userId: ex: CN=angelo,OU=ADAM USERS,O=Microsoft,C=US
+	 * @param userId: ex: CN=angelo,OU=ADAM USERS,O=Microsoft,C=US
 	 * @param psw
 	 * @return
 	 * @throws IOException
