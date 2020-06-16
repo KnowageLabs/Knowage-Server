@@ -199,6 +199,7 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 								&& (!checkMaxResults || (rowFetched - offset < maxResults)))) {
 					// Create Datastore data
 					IRecord record = new Record(dataStore);
+					FieldMetadata meta;
 
 					for (int i = 0; i < header.length; i++) {
 						logger.debug(header[i] + " = " + contentsMap.get(header[i]));
@@ -209,36 +210,48 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 							field = new Field(contentsMap.get(header[i]));
 							// update metadata type in order with the real value's type (default was string)
 							if (NumberUtils.isNumber((String) field.getValue())) {
-								((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(BigDecimal.class);
+								meta = ((FieldMetadata) dataStore.getMetaData().getFieldMeta(i));
+								meta.setType(getNewMetaType(meta.getType(), BigDecimal.class));
 								field.setValue(new BigDecimal(String.valueOf(field.getValue())));
 							}
 							// check if it's a number using comma decimal separator
 							else if (NumberUtils.isNumber(((String) field.getValue()).replace(",", "."))) {
-								((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(BigDecimal.class);
+								meta = ((FieldMetadata) dataStore.getMetaData().getFieldMeta(i));
+								meta.setType(getNewMetaType(meta.getType(), BigDecimal.class));
 								field.setValue(new BigDecimal(((String) field.getValue()).replace(",", ".")));
 							}
 							// check if it's a Date
 							else {
+								boolean isDate = false;
+								boolean isTimestamp = false;
 								try {
 									DateTimeFormatter formatter = DateTimeFormat.forPattern(dateFormat);
 									LocalDate localDate = LocalDate.parse((String) field.getValue(), formatter);
 									// Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 									Date date = localDate.toDate();
-									((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(Date.class);
+									meta = ((FieldMetadata) dataStore.getMetaData().getFieldMeta(i));
+									meta.setType(getNewMetaType(meta.getType(), Date.class));
 									field.setValue(date);
+									isDate = true;
 								} catch (Exception ex) {
 									logger.debug((String) field.getValue() + " is not a date");
 								}
-
+								// check if it's a Timestamp
 								try {
 									DateTimeFormatter formatter = DateTimeFormat.forPattern(timestampFormat);
 									LocalDateTime localDateTime = LocalDateTime.parse(field.getValue().toString(), formatter);
 									DateTime datetime = localDateTime.toDateTime();
 									Timestamp timestamp = new Timestamp(datetime.getMillis());
-									dataStore.getMetaData().getFieldMeta(i).setType(Timestamp.class);
+									meta = ((FieldMetadata) dataStore.getMetaData().getFieldMeta(i));
+									meta.setType(getNewMetaType(meta.getType(), Timestamp.class));
 									field.setValue(timestamp);
+									isTimestamp = true;
 								} catch (Exception e) {
 									logger.debug(field.getValue().toString() + " is not a timestamp");
+								}
+								// if it's nothing of the previous then it's a string
+								if (!isDate && !isTimestamp) {
+									((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(String.class);
 								}
 							}
 						}
@@ -264,6 +277,13 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 			}
 		}
 		return dataStore;
+	}
+
+	private Class getNewMetaType(Class oldType, Class newType) {
+		if (oldType == String.class)
+			return String.class;
+		else
+			return newType;
 	}
 
 	@Override

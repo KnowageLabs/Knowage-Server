@@ -240,7 +240,7 @@ public class JSONDataWriter implements IDataWriter {
 
 		if (preserveOriginalDataTypes) {
 			Object toReturn;
-			if (BigDecimal.class.isAssignableFrom(fieldMetaData.getType())) {
+			if (BigDecimal.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != null) {
 				toReturn = Float.parseFloat(field.getValue().toString());
 			} else {
 				toReturn = field.getValue();
@@ -571,8 +571,7 @@ public class JSONDataWriter implements IDataWriter {
 	}
 
 	/**
-	 * @param setRenderer
-	 *            the setRenderer to set
+	 * @param setRenderer the setRenderer to set
 	 */
 	public void setSetRenderer(boolean setRenderer) {
 		this.setRenderer = setRenderer;
