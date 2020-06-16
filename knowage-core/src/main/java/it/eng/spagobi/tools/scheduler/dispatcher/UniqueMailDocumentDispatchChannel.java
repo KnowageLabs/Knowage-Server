@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,16 +11,47 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.scheduler.dispatcher;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
+
+import org.apache.commons.validator.GenericValidator;
+import org.apache.log4j.Logger;
+
+import it.eng.knowage.mail.MailSessionBuilder;
+import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -31,42 +62,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.Security;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
-
-import org.apache.commons.validator.GenericValidator;
-import org.apache.log4j.Logger;
-
 /**
  * @author Giulio Gavardi
  *
@@ -76,7 +71,7 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 	private DispatchContext dispatchContext;
 
 	// logger component
-	private static Logger logger = Logger.getLogger(UniqueMailDocumentDispatchChannel.class); 
+	private static Logger logger = Logger.getLogger(UniqueMailDocumentDispatchChannel.class);
 
 
 	// COnfigurations stored in mailOptions Map
@@ -95,8 +90,8 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 	public static final String DOCUMENT_STATE_CODE = "DOCUMENT_STATE_CODE";
 	public static final String PARAMETERS_MAP = "PARAMETERS_MAP";
 	public static final String REPORT_NAME_IN_SUBJECT = "REPORT_NAME_IN_SUBJECT";
-	public static final String DOCUMENT_LABELS = "DOCUMENT_LABELS";    
-	public static final String IS_ZIP_DOCUMENT = "IS_ZIP_DOCUMENT";    
+	public static final String DOCUMENT_LABELS = "DOCUMENT_LABELS";
+	public static final String IS_ZIP_DOCUMENT = "IS_ZIP_DOCUMENT";
 
 
 
@@ -122,31 +117,35 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 		}
 	}
 
+	@Override
 	public void setDispatchContext(DispatchContext dispatchContext) {
 		this.dispatchContext = dispatchContext;
 	}
 
+	@Override
 	public void close() {
 
 	}
 
+	@Override
 	public boolean canDispatch(BIObject document)  {
 		return canDispatch(dispatchContext, document, dispatchContext.getEmailDispatchDataStore() );
 	}
 
-	
+
 	/**
 	 *  dispatch in this case does not send mail, but store files in temporar folder
 	 */
-	
+
+	@Override
 	public boolean dispatch(BIObject document, byte[] executionOutput) {
-		String fileExtension; 
+		String fileExtension;
 		String nameSuffix;
 		String containedFileName;
 
 		logger.debug("IN");
 		try{
-			fileExtension = dispatchContext.getFileExtension(); 
+			fileExtension = dispatchContext.getFileExtension();
 			nameSuffix = dispatchContext.getNameSuffix();
 			containedFileName = dispatchContext.getContainedFileName() != null && !dispatchContext.getContainedFileName().equals("")?
 					dispatchContext.getContainedFileName() : document.getName();
@@ -158,7 +157,7 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 			File folder  = new File(tempFolderPath);
 
 			if(!folder.exists()){
-				logger.debug("Temporary Folder not retrieved: "+folder.getAbsolutePath());	
+				logger.debug("Temporary Folder not retrieved: "+folder.getAbsolutePath());
 				throw new Exception("Temporary Folder not retrieved: "+folder.getAbsolutePath());
 			}
 
@@ -170,7 +169,7 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 			logger.debug("File to store in temporary folder: "+fileToCreate);
 			String pathToCreate = folder.getAbsolutePath()+File.separator+fileToCreate;
 
-			FileOutputStream fileOuputStream = new FileOutputStream(pathToCreate); 
+			FileOutputStream fileOuputStream = new FileOutputStream(pathToCreate);
 			fileOuputStream.write(executionOutput);
 			fileOuputStream.close();
 
@@ -188,7 +187,7 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 
 
 /** AFter all files are stored in temporary tabe takes them and sens as zip or as separate attachments
- * 
+ *
  * @param mailOptions
  * @return
  */
@@ -197,9 +196,6 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 
 		logger.debug("IN");
 		try{
-			final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-			final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
-
 			String tempFolderPath =  (String)mailOptions.get(TEMP_FOLDER_PATH);
 
 			File tempFolder = new File(tempFolderPath);
@@ -209,52 +205,9 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 				return false;
 			}
 
-			String smtphost = null;
-			String pass = null;
-			String smtpssl = null;
-			String trustedStorePath = null;
-			String user = null;
-			String from = null;
-			int smtpPort = 25;
-
-			try{
-
-				smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtphost");
-				String smtpportS = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtpport");
-				smtpssl = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.useSSL"); 
-				logger.debug(smtphost+" "+smtpportS+" use SSL: "+smtpssl);
-				//Custom Trusted Store Certificate Options
-				trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file"); 
-
-
-				if( (smtphost==null) || smtphost.trim().equals(""))
-					throw new Exception("Smtp host not configured");
-				if( (smtpportS==null) || smtpportS.trim().equals("")){
-					throw new Exception("Smtp host not configured");
-				}else{
-					smtpPort=Integer.parseInt(smtpportS);
-				}
-
-				from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.from");
-				if( (from==null) || from.trim().equals(""))
-					from = "spagobi.scheduler@eng.it";
-				user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.user");
-				if( (user==null) || user.trim().equals("")){
-					logger.debug("Smtp user not configured");	
-					user=null;
-				}
-				//	throw new Exception("Smtp user not configured");
-				pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.password");
-				if( (pass==null) || pass.trim().equals("")){
-					logger.debug("Smtp password not configured");	
-				}
-				//	throw new Exception("Smtp password not configured");
-			}
-			catch(Exception e){
-				logger.error("Some E-mail configuration not set in table sbi_config: check you have all settings.", e);
-				throw new Exception("Some E-mail configuration not set in table sbi_config: check you have all settings.");
-			}
-
+			SessionFacade facade = MailSessionBuilder.newInstance()
+				.usingSchedulerProfile()
+				.build();
 
 			String mailSubj = mailOptions.get(MAIL_SUBJECT) != null ? (String)mailOptions.get(MAIL_SUBJECT) : null;
 			Map parametersMap = mailOptions.get(PARAMETERS_MAP) != null ? (Map)mailOptions.get(PARAMETERS_MAP) : null;
@@ -263,60 +216,9 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 			String mailTxt = mailOptions.get(MAIL_TXT) != null ? (String)mailOptions.get(MAIL_TXT) : null;
 			String[] recipients = mailOptions.get(RECIPIENTS) != null ? (String[])mailOptions.get(RECIPIENTS) : null;
 
-
-			//Set the host smtp address
-			Properties props = new Properties();
-			props.put("mail.smtp.host", smtphost);
-			props.put("mail.smtp.p	ort", Integer.toString(smtpPort));
-
-			// open session
-			Session session=null;
-
-			// create autheticator object
-			Authenticator auth = null;
-			if (user!=null) {
-				auth = new SMTPAuthenticator(user, pass);
-				props.put("mail.smtp.auth", "true");
-				//SSL Connection
-				if (smtpssl.equals("true")){
-					Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());	            
-					//props.put("mail.smtp.debug", "true");          
-					props.put("mail.smtps.auth", "true");
-					props.put("mail.smtps.socketFactory.port", Integer.toString(smtpPort));
-					if ((!StringUtilities.isEmpty(trustedStorePath)) ) {            	
-						/* Dynamic configuration of trustedstore for CA
-						 * Using Custom SSLSocketFactory to inject certificates directly from specified files
-						 */
-						//System.setProperty("java.security.debug","certpath");
-						//System.setProperty("javax.net.debug","ssl ");
-						props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
-
-					} else {
-						//System.setProperty("java.security.debug","certpath");
-						//System.setProperty("javax.net.debug","ssl ");
-						props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
-					}
-					props.put("mail.smtp.socketFactory.fallback", "false"); 
-				}
-
-				//session = Session.getDefaultInstance(props, auth);
-				session = Session.getInstance(props, auth);
-				//session.setDebug(true);
-				//session.setDebugOut(null);
-				logger.info("Session.getInstance(props, auth)");
-
-			}else{
-				//session = Session.getDefaultInstance(props);
-				session = Session.getInstance(props);
-				logger.info("Session.getInstance(props)");
-			}
-
-
 			// create a message
-			Message msg = new MimeMessage(session);
-			// set the from and to address
-			InternetAddress addressFrom = new InternetAddress(from);
-			msg.setFrom(addressFrom);
+			Message msg = facade.createNewMimeMessage();
+
 			InternetAddress[] addressTo = new InternetAddress[recipients.length];
 			for (int i = 0; i < recipients.length; i++)  {
 				addressTo[i] = new InternetAddress(recipients[i]);
@@ -352,12 +254,12 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 
 			mp.addBodyPart(mbp1);
 
-			if(isZipDocument){		
+			if(isZipDocument){
 				logger.debug("Make zip");
 				// create the second message part
 				MimeBodyPart mbp2 = new MimeBodyPart();
 				mbp2 = zipAttachment(zipFileName, mailOptions, tempFolder);
-				mp.addBodyPart(mbp2);				
+				mp.addBodyPart(mbp2);
 			}
 			else{
 				logger.debug("Attach single files");
@@ -372,7 +274,7 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 						logger.debug("Attach file "+entries[i]);
 						File f = new File(tempFolder+File.separator+entries[i]);
 
-						byte[] content = getBytesFromFile(f);		                
+						byte[] content = getBytesFromFile(f);
 
 						bodyPart = new MimeBodyPart();
 
@@ -396,27 +298,16 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 			// add the Multipart to the message
 			msg.setContent(mp);
 			logger.debug("Preparing to send mail");
+
 			// send message
-			if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(user)) &&  (!StringUtilities.isEmpty(pass))){
-				logger.debug("Smtps mode active user "+user);
-				//USE SSL Transport comunication with SMTPS
-				Transport transport = session.getTransport("smtps");
-				transport.connect(smtphost,smtpPort,user,pass);
-				transport.sendMessage(msg, msg.getAllRecipients());
-				transport.close(); 
-			}
-			else {
-				logger.debug("Smtp mode");
-				//Use normal SMTP
-				Transport.send(msg);
-			}
-			
-	    	logger.info("Mail sent for documents with labels ["+allDocumentLabels+"]");
-			
+			facade.sendMessage(msg);
+
+			logger.info("Mail sent for documents with labels ["+allDocumentLabels+"]");
+
 //			logger.debug("delete tempFolder path "+tempFolder.getPath());
 //			boolean deleted = tempFolder.delete();
 //			logger.debug("Temp folder deleted "+deleted);
-			
+
 		} catch (Exception e) {
 			logger.error("Error while sending schedule result mail",e);
 			return false;
@@ -431,7 +322,7 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 
 
 	public static MimeBodyPart zipAttachment( String zipFileName, Map mailOptions, File tempFolder)
-	{	
+	{
 		logger.debug("IN");
 		MimeBodyPart messageBodyPart = null;
 		try
@@ -466,7 +357,7 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 				out.putNextEntry(entry); // Store entry
 				while ((bytesRead = in.read(buffer)) != -1)
 					out.write(buffer, 0, bytesRead);
-				in.close(); 
+				in.close();
 			}
 			out.close();
 
@@ -490,7 +381,7 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 	}
 
 	private byte[] zipDocument(String fileZipName, byte[] content) {
-		logger.debug("IN");  
+		logger.debug("IN");
 
 		ByteArrayOutputStream bos=null;
 		ZipOutputStream zos=null;
@@ -515,21 +406,21 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 			return null;
 		}finally{
 			if (bos != null) {
-				try {		
+				try {
 					bos.close();
 				} catch (IOException e) {
 					logger.error("Error closing output stream", e);
 				}
 			}
 			if (zos != null) {
-				try {		
+				try {
 					zos.close();
 				} catch (IOException e) {
 					logger.error("Error closing output stream", e);
 				}
 			}
 			if (in != null) {
-				try {		
+				try {
 					in.close();
 				} catch (IOException e) {
 					logger.error("Error closing output stream", e);
@@ -674,15 +565,15 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 				String recipient = null;
 				IRecord record = (IRecord)it.next();
 				// the parameter value is used to filter on the first dataset field
-				IField valueField = (IField) record.getFieldAt(0);
+				IField valueField = record.getFieldAt(0);
 				Object valueObj = valueField.getValue();
 				String value = null;
-				if (valueObj != null) 
+				if (valueObj != null)
 					value = valueObj.toString();
 				if (codeValue.equals(value)) {
 					logger.debug("Found value [" + codeValue + "] on the first field of a record of the dataset.");
 					// recipient address is on the second dataset field
-					IField recipientField = (IField) record.getFieldAt(1);
+					IField recipientField = record.getFieldAt(1);
 					Object recipientFieldObj = recipientField.getValue();
 					if (recipientFieldObj != null) {
 						recipient = recipientFieldObj.toString();
@@ -706,42 +597,29 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 		return recipients;
 	}
 
-	private class SMTPAuthenticator extends javax.mail.Authenticator
-	{
-		private String username = "";
-		private String password = "";
-
-		public PasswordAuthentication getPasswordAuthentication()
-		{
-			return new PasswordAuthentication(username, password);
-		}
-
-		public SMTPAuthenticator(String user, String pass) {
-			this.username = user;
-			this.password = pass;
-		}
-	}
-
-
 	private class SchedulerDataSource implements DataSource {
 
 		byte[] content = null;
 		String name = null;
 		String contentType = null;
 
+		@Override
 		public String getContentType() {
 			return contentType;
 		}
 
+		@Override
 		public InputStream getInputStream() throws IOException {
 			ByteArrayInputStream bais = new ByteArrayInputStream(content);
 			return bais;
 		}
 
+		@Override
 		public String getName() {
 			return name;
 		}
 
+		@Override
 		public OutputStream getOutputStream() throws IOException {
 			return null;
 		}
@@ -757,7 +635,7 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 
 
 	// Returns the contents of the file in a byte array.
-	public static byte[] getBytesFromFile(File file) throws IOException {        
+	public static byte[] getBytesFromFile(File file) throws IOException {
 		// Get the size of the file
 		long length = file.length();
 

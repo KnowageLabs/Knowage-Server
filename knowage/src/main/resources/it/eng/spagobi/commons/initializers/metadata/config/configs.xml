@@ -353,9 +353,9 @@
 	<CONFIG label="MAIL.PROFILES.scheduler.password" name="Scheduler Password"
 		description="" isActive="true" valueCheck="" valueType="STRING"
 		category="MAIL" />
-	<CONFIG label="MAIL.PROFILES.scheduler.useSSL" name="Use SSL Connection"
-		description="" isActive="true" valueCheck="false" valueType="STRING"
-		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.scheduler.security" name="Security connection mode"
+		description="Choose between NONE, SSL and STARTTLS" isActive="true"
+		valueCheck="NONE" valueType="STRING" category="MAIL" />
 
 	<CONFIG label="MAIL.PROFILES.user.smtphost" name="Scheduler Smtp Host"
 		description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING"
@@ -372,9 +372,9 @@
 	<CONFIG label="MAIL.PROFILES.user.password" name="Scheduler Password"
 		description="" isActive="true" valueCheck="" valueType="STRING"
 		category="MAIL" />
-	<CONFIG label="MAIL.PROFILES.user.useSSL" name="Use SSL Connection"
-		description="" isActive="true" valueCheck="false" valueType="STRING"
-		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.user.security" name="Security connection mode"
+		description="Choose between NONE, SSL and STARTTLS" isActive="true"
+		valueCheck="NONE" valueType="STRING" category="MAIL" />
 
 
 	<CONFIG label="MAIL.PROFILES.kpi_alarm.smtphost" name="Scheduler Smtp Host"
@@ -392,9 +392,10 @@
 	<CONFIG label="MAIL.PROFILES.kpi_alarm.password" name="Scheduler Password"
 		description="" isActive="true" valueCheck="" valueType="STRING"
 		category="MAIL" />
-	<CONFIG label="MAIL.PROFILES.kpi_alarm.useSSL" name="Use SSL Connection"
-		description="" isActive="true" valueCheck="false" valueType="STRING"
-		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.kpi_alarm.security" name="Security connection mode"
+		description="Choose between NONE, SSL and STARTTLS" isActive="true"
+		valueCheck="NONE" valueType="STRING" category="MAIL" />
+
 	<CONFIG label="DATA_SET_NULL_VALUE" name="DATA_SET_NULL_VALUE"
 		description="Default value to replace null dataset values" isActive="true"
 		valueCheck="%" valueType="STRING" category="MAIL" />

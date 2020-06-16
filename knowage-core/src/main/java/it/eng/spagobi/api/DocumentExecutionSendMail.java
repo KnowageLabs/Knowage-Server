@@ -1,41 +1,21 @@
 package it.eng.spagobi.api;
 
-import it.eng.spago.base.SourceBeanAttribute;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionController;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.ExecutionProxy;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.StringTokenizer;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
@@ -48,6 +28,19 @@ import javax.ws.rs.core.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.knowage.mail.MailSessionBuilder;
+import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
+import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionController;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.ExecutionProxy;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/documentexecutionmail")
 @ManageAuthorization
@@ -80,8 +73,6 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 		String ERROR = "Error. Mail not sent";
 		final String TONOTFOUND = "90";
 		// String retCode = "";
-		final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-		final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
 
 		try {
 
@@ -151,82 +142,15 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 			// } end if (execCtrl.directExecution()) {
 			// SEND MAIL
 
-			String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtphost");
-			String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtpport");
-			String smtpssl = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.useSSL");
-			logger.debug(smtphost + " " + smtpport + " use SSL: " + smtpssl);
-
-			// Custom Trusted Store Certificate Options
-			String trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file");
-			String trustedStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.password");
-
-			int smptPort = 25;
-
-			if ((smtphost == null) || smtphost.trim().equals(""))
-				throw new Exception("Smtp host not configured");
-			if ((smtpport == null) || smtpport.trim().equals("")) {
-				throw new Exception("Smtp PORT not configured");
-			} else {
-				smptPort = Integer.parseInt(smtpport);
-			}
-			if ((from == null) || from.trim().equals(""))
-				from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.from");
-			if (login == null || login.trim().equals(""))
-				login = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.user");
-			if (pass == null || pass.trim().equals(""))
-				pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.password");
-
-			if ((from == null) || from.trim().equals(""))
-				throw new Exception("From field missing from input form or not configured");
-
-			// Set the host smtp address
-			Properties props = new Properties();
-			props.put("mail.smtp.host", smtphost);
-			props.put("mail.smtp.port", Integer.toString(smptPort));
-
-			Session session = null;
-			if (StringUtilities.isEmpty(login) || StringUtilities.isEmpty(pass)) {
-				props.put("mail.smtp.auth", "false");
-				session = Session.getInstance(props);
-				logger.debug("Connecting to mail server without authentication");
-			} else {
-				props.put("mail.smtp.auth", "true");
-				Authenticator auth = new SMTPAuthenticator(login, pass);
-				// SSL Connection
-				if (smtpssl.equals("true")) {
-					Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-					// props.put("mail.smtp.debug", "true");
-					props.put("mail.smtps.auth", "true");
-					props.put("mail.smtps.socketFactory.port", Integer.toString(smptPort));
-					if ((!StringUtilities.isEmpty(trustedStorePath))) {
-						/*
-						 * Dynamic configuration of trustedstore for CA Using Custom SSLSocketFactory to inject certificates directly from specified files
-						 */
-						// System.setProperty("java.security.debug","certpath");
-						// System.setProperty("javax.net.debug","ssl ");
-						props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
-
-					} else {
-						// System.setProperty("java.security.debug","certpath");
-						// System.setProperty("javax.net.debug","ssl ");
-						props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
-					}
-					props.put("mail.smtp.socketFactory.fallback", "false");
-				}
-
-				session = Session.getInstance(props, auth);
-				// session.setDebug(true);
-				// session.setDebugOut(null);
-				logger.debug("Connecting to mail server with authentication");
-			}
-
-			logger.debug("properties: mail.smtp.host:" + smtphost + " mail.smtp.port:" + smtpport);
+			SessionFacade facade = MailSessionBuilder.newInstance()
+				.usingUserProfile()
+				.overwritingFromAddress(from)
+				.overwritingUser(login)
+				.overwritingPassword(pass)
+				.build();
 
 			// create a message
-			Message msg = new MimeMessage(session);
-			// set the from / to / cc address
-			InternetAddress addressFrom = new InternetAddress(from);
-			msg.setFrom(addressFrom);
+			Message msg = facade.createNewMimeMessage();
 
 			InternetAddress[] addressTo = new InternetAddress[recipients.length];
 			for (int i = 0; i < recipients.length; i++) {
@@ -264,16 +188,8 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 			msg.setContent(mp);
 
 			// send message
-			if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(login)) && (!StringUtilities.isEmpty(pass))) {
-				// USE SSL Transport comunication with SMTPS
-				Transport transport = session.getTransport("smtps");
-				transport.connect(smtphost, smptPort, login, pass);
-				transport.sendMessage(msg, msg.getAllRecipients());
-				transport.close();
-			} else {
-				// Use normal SMTP
-				Transport.send(msg);
-			}
+			facade.sendMessage(msg);
+
 			// retCode = OK;
 			resultAsMap.put("success", "Mail Sent");
 
@@ -291,21 +207,6 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 		logger.debug("OUT");
 
 		return Response.ok(resultAsMap).build();
-	}
-
-	private class SMTPAuthenticator extends javax.mail.Authenticator {
-		private String username = "";
-		private String password = "";
-
-		@Override
-		public PasswordAuthentication getPasswordAuthentication() {
-			return new PasswordAuthentication(username, password);
-		}
-
-		public SMTPAuthenticator(String user, String pass) {
-			this.username = user;
-			this.password = pass;
-		}
 	}
 
 	private class SchedulerDataSource implements DataSource {
