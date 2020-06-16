@@ -17,11 +17,19 @@
  */
 package it.eng.spagobi.commons;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.utilities.cache.CacheInterface;
+import it.eng.spagobi.utilities.cache.ConfigurationCache;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -35,28 +43,57 @@ public class MetadataDatabaseConfigurationRetriever implements IConfigurationRet
 
 	private static Logger logger = Logger.getLogger(MetadataDatabaseConfigurationRetriever.class);
 
+	private static final String CONFIGURATION_MAP = "CONFIGURATION_MAP";
+
+	private final Lock lock = new ReentrantLock();
+
 	public MetadataDatabaseConfigurationRetriever() {
 	}
 
 	@Override
 	public String get(String key) {
-		String toReturn = null;
+		CacheInterface cache = ConfigurationCache.getCache();
+		HashMap<String, String> configurations = (HashMap<String, String>) cache.get(CONFIGURATION_MAP);
+		if (configurations == null) {
+			lock.lock();
+			try {
+				configurations = (HashMap<String, String>) cache.get(CONFIGURATION_MAP);
+				if (configurations == null) {
+					HashMap<String, String> newConfiguration = loadConfigurations();
+					cache.put(CONFIGURATION_MAP, newConfiguration);
+					configurations = newConfiguration;
+				}
+			} finally {
+				lock.unlock();
+			}
+		}
+		String toReturn = configurations.get(key);
+		LogMF.debug(logger, "GET : [{0}] = [{01]", key, toReturn);
+		return toReturn;
+	}
+
+	private HashMap<String, String> loadConfigurations() {
+		logger.debug("IN");
+		IConfigDAO dao = null;
+		HashMap<String, String> configurations = null;
 		try {
-			IConfigDAO dao = DAOFactory.getSbiConfigDAO();
-			Config config = dao.loadConfigParametersByLabel(key);
-			if (config != null) {
-				toReturn = config.getValueCheck();
+			configurations = new HashMap<String, String>();
+			dao = DAOFactory.getSbiConfigDAO();
+			List<Config> allConfig = dao.loadAllConfigParameters();
+			if (allConfig.isEmpty()) {
+				logger.error("The table sbi_config is EMPTY");
+			}
+			for (Config config : allConfig) {
+				configurations.put(config.getLabel(), config.getValueCheck() != null ? config.getValueCheck() : "");
+				logger.info("Retrieved configuration: " + config.getLabel() + " / " + config.getValueCheck());
 			}
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("An error occurred while getting configuration with label [" + key + "]", e);
+			logger.error("Impossible to get configuration", e);
+			throw new SpagoBIRuntimeException("Impossible to get configuration", e);
+		} finally {
+			logger.debug("OUT");
 		}
-
-		if (toReturn == null) {
-			logger.info("The property '" + key + "' doens't have any value assigned, check SBI_CONFIG table");
-			return null;
-		}
-		logger.debug("GET :" + key + "=" + toReturn);
-		return toReturn;
+		return configurations;
 	}
 
 }
