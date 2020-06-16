@@ -19,22 +19,15 @@ package it.eng.spagobi.signup.service.rest;
 
 import java.io.IOException;
 import java.net.URL;
-import java.security.Security;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
-import javax.mail.Authenticator;
 import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +49,8 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.hazelcast.core.IMap;
 
+import it.eng.knowage.mail.MailSessionBuilder;
+import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -710,88 +705,15 @@ public class Signup {
 
 	private void sendMail(String emailAddress, String subject, String emailContent) throws Exception {
 
-		final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-		final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
-
-		String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtphost");
-		String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtpport");
-		String smtpssl = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.useSSL");
-		logger.debug(smtphost + " " + smtpport + " use SSL: " + smtpssl);
-
-		// Custom Trusted Store Certificate Options
-		String trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file");
-		String trustedStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.password");
-
-		int smptPort = 25;
-
-		if ((smtphost == null) || smtphost.trim().equals(""))
-			throw new Exception("Smtp host not configured");
-		if ((smtpport == null) || smtpport.trim().equals("")) {
-			throw new Exception("Smtp host not configured");
-		} else {
-			smptPort = Integer.parseInt(smtpport);
-		}
-
-		String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.from");
-		if ((from == null) || from.trim().equals(""))
-			from = "spagobi@eng.it";
-		String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.user");
-		if ((user == null) || user.trim().equals("")) {
-			logger.debug("Smtp user not configured");
-			user = null;
-		}
-		String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.password");
-		if ((pass == null) || pass.trim().equals("")) {
-			logger.debug("Smtp password not configured");
-		}
-
-		// Set the host smtp address
-		Properties props = new Properties();
-		props.put("mail.smtp.host", smtphost);
-		props.put("mail.smtp.port", Integer.toString(smptPort));
-		// Set timeout limit for mail server to respond
-		props.put("mail.smtp.timeout", "5000");
-		props.put("mail.smtp.connectiontimeout", "5000");
-
-		// open session
-		Session session = null;
-		// create autheticator object
-		Authenticator auth = null;
-		if (user != null) {
-			auth = new SMTPAuthenticator(user, pass);
-			props.put("mail.smtp.auth", "true");
-			// SSL Connection
-			if (smtpssl.equals("true")) {
-				Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-				props.put("mail.smtps.auth", "true");
-				props.put("mail.smtps.socketFactory.port", Integer.toString(smptPort));
-				if ((!StringUtilities.isEmpty(trustedStorePath))) {
-					/*
-					 * Dynamic configuration of trustedstore for CA Using Custom SSLSocketFactory to inject certificates directly from specified files
-					 */
-
-					props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
-
-				} else {
-
-					props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
-				}
-				props.put("mail.smtp.socketFactory.fallback", "false");
-			}
-
-			session = Session.getInstance(props, auth);
-			logger.info("Session.getInstance(props, auth)");
-
-		} else {
-			session = Session.getInstance(props);
-			logger.info("Session.getInstance(props)");
-		}
+		SessionFacade facade = MailSessionBuilder.newInstance()
+			.usingUserProfile()
+			.withTimeout(5000)
+			.withConnectionTimeout(5000)
+			.build();
 
 		// create a message
-		Message msg = new MimeMessage(session);
-		// set the from and to address
-		InternetAddress addressFrom = new InternetAddress(from);
-		msg.setFrom(addressFrom);
+		Message msg = facade.createNewMimeMessage();
+
 		InternetAddress addressTo = new InternetAddress(emailAddress);
 
 		msg.setRecipient(Message.RecipientType.TO, addressTo);
@@ -807,33 +729,10 @@ public class Signup {
 		// // add the Multipart to the message
 		// msg.setContent(mp);
 		msg.setContent(emailContent, "text/html");
+
 		// send message
-		if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(user)) && (!StringUtilities.isEmpty(pass))) {
-			// USE SSL Transport comunication with SMTPS
-			Transport transport = session.getTransport("smtps");
-			transport.connect(smtphost, smptPort, user, pass);
-			transport.sendMessage(msg, msg.getAllRecipients());
-			transport.close();
-		} else {
-			// Use normal SMTP
-			Transport.send(msg);
-		}
+		facade.sendMessage(msg);
 
-	}
-
-	private class SMTPAuthenticator extends javax.mail.Authenticator {
-		private String username = "";
-		private String password = "";
-
-		@Override
-		public PasswordAuthentication getPasswordAuthentication() {
-			return new PasswordAuthentication(username, password);
-		}
-
-		public SMTPAuthenticator(String user, String pass) {
-			this.username = user;
-			this.password = pass;
-		}
 	}
 
 }
