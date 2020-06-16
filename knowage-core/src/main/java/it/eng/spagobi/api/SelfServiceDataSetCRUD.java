@@ -1819,7 +1819,7 @@ public class SelfServiceDataSetCRUD {
 			JSONArray columnsMetadataArray = new JSONArray();
 			JSONArray datasetMetadataArray = new JSONArray();
 
-			if ((!metadata.equals("")) && (!metadata.equals("[]"))) {
+			if ((!metadata.equals("")) && (!metadata.equals("[]")) && (!metadata.equals("undefined"))) {
 				metadataObject = JSONUtils.toJSONObject(metadata);
 				columnsMetadataArray = metadataObject.getJSONArray("columns");
 				datasetMetadataArray = metadataObject.getJSONArray("dataset");
@@ -1963,10 +1963,8 @@ public class SelfServiceDataSetCRUD {
 	 * This is an heuristic to guess the column type of a column in a datastore created with a file dataset. The method analyses just a portion of the entire
 	 * datastore so the result is not guaranteed at 100%.
 	 *
-	 * @param dataStore
-	 *            the datastore to scan
-	 * @param columnIndex
-	 *            the index of the column to check
+	 * @param dataStore   the datastore to scan
+	 * @param columnIndex the index of the column to check
 	 * @return the guessed type of the column
 	 */
 	private String guessColumnType(IDataStore dataStore, int columnIndex) {
