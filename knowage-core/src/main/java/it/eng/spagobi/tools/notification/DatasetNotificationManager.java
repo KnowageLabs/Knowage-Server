@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,35 +11,27 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.notification;
 
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-
-import java.security.Security;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
-import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
+
+import it.eng.knowage.mail.MailSessionBuilder;
+import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -47,21 +39,22 @@ import org.apache.log4j.Logger;
  */
 public class DatasetNotificationManager implements INotificationManager {
 
-	
+
 	static private Logger logger = Logger.getLogger(DatasetNotificationManager.class);
 	private IMessageBuilder msgBuilder = null;
 
 	public DatasetNotificationManager(){}
-	
+
 	public DatasetNotificationManager(IMessageBuilder msgBuilder){
 		this.msgBuilder  = msgBuilder;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.tools.notification.INotificationManager#handleEvent(it.eng.spagobi.tools.notification.AbstractEvent)
 	 */
+	@Override
 	public void handleEvent(AbstractEvent event) {
-		
+
 		try {
 			if (event instanceof DatasetNotificationEvent){
 				String eventName = event.getEventName();
@@ -83,7 +76,7 @@ public class DatasetNotificationManager implements INotificationManager {
 				} else if(eventName.equals(EventConstants.DATASET_EVENT_SCOPE_CHANGED)){
 					notifyDatasetScopeChanged(datasetEvent);
 				}
-				
+
 			} else {
 				logger.debug("Dataset Notification Manager cannot handle the event "+event.getEventName());
 			}
@@ -92,7 +85,8 @@ public class DatasetNotificationManager implements INotificationManager {
 		}
 
 	}
-	
+
+	@Override
 	public void handleMultipleEvents(List<AbstractEvent> events){
 		try {
 			notifyDatasetChanges(events);
@@ -101,11 +95,11 @@ public class DatasetNotificationManager implements INotificationManager {
 			logger.error("Error handling multiple events in DatasetNotification Manager", ex);
 		}
 	}
-	
+
 	private void notifyDatasetChanges(List<AbstractEvent> events) throws Exception{
 		String information = "";
 		DatasetNotificationEvent datasetEvent = null;
-		
+
 		for (AbstractEvent event : events){
 			if (event instanceof DatasetNotificationEvent){
 				String datasetName = "";
@@ -114,7 +108,7 @@ public class DatasetNotificationManager implements INotificationManager {
 					IDataSet dataset = (IDataSet)event.getArgument();
 					datasetName = dataset.getName();
 				}
-				
+
 				String eventName = event.getEventName();
 				information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +datasetName+ "' " +
 						msgBuilder.getMessage("SBIDev.DataSet.notify.msg.2", "messages")+ " "  ;
@@ -137,7 +131,7 @@ public class DatasetNotificationManager implements INotificationManager {
 				} else if(eventName.equals(EventConstants.DATASET_EVENT_NAME_CHANGED)){
 //					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his name. \n";
 					information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.name", "messages");
-					
+
 				} else if(eventName.equals(EventConstants.DATASET_EVENT_DESCRIPTION_CHANGED)){
 //					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his description. \n";
 					information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.descr", "messages");
@@ -145,7 +139,7 @@ public class DatasetNotificationManager implements INotificationManager {
 				} else if(eventName.equals(EventConstants.DATASET_EVENT_CATEGORY_CHANGED)){
 //					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his category. \n";
 					information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.cat", "messages");
-				
+
 				} else if(eventName.equals(EventConstants.DATASET_EVENT_SCOPE_CHANGED)){
 //					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his scope. \n";
 					information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.scope", "messages");
@@ -153,19 +147,19 @@ public class DatasetNotificationManager implements INotificationManager {
 				}
 			}
 		}
-		
+
 		if ((datasetEvent != null) &&(!information.isEmpty() )){
 			notifyMapAuthorsMail(datasetEvent, msgBuilder.getMessage("SBIDev.DataSet.notify.msg.title"),information );
 		}
 	}
-	
+
 	private void notifyMapAuthorsMail(DatasetNotificationEvent datasetEvent, String subject, String emailContent) throws Exception{
-		
+
 		Set<String> emailsAddressOfAuthors = datasetEvent.retrieveEmailAddressesOfMapAuthors();
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			if (!emailsAddressOfAuthors.isEmpty()){
 		    	String[] recipients = emailsAddressOfAuthors.toArray(new String[0]);
-		    		    	
+
 		    	//send mail
 		    	try {
 			    	sendMail(recipients, subject, emailContent);
@@ -178,13 +172,13 @@ public class DatasetNotificationManager implements INotificationManager {
 			}
 		}
 	}
-	
+
 	private void notifyDatasetNameChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
 //			String subject = "The dataset "+dataset.getName()+" has changed the name";
 //	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the name";
-			
+
 			String subject = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
 					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.name", "messages") ;
 
@@ -198,7 +192,7 @@ public class DatasetNotificationManager implements INotificationManager {
 	    	}
 		}
 	}
-	
+
 	private void notifyDatasetDescriptionChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
@@ -217,7 +211,7 @@ public class DatasetNotificationManager implements INotificationManager {
 	    	}
 		}
 	}
-	
+
 	private void notifyDatasetCategoryChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
@@ -236,7 +230,7 @@ public class DatasetNotificationManager implements INotificationManager {
 	    	}
 		}
 	}
-	
+
 	private void notifyDatasetScopeChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
@@ -255,7 +249,7 @@ public class DatasetNotificationManager implements INotificationManager {
 	    	}
 		}
 	}
-	
+
 	private void notifyDatasetMetadataChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
@@ -274,8 +268,8 @@ public class DatasetNotificationManager implements INotificationManager {
 	    	}
 		}
 	}
-	
-	
+
+
 	private void notifyDatasetFileChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
@@ -295,7 +289,7 @@ public class DatasetNotificationManager implements INotificationManager {
 		}
 	}
 
-	
+
 	private void notifyDatasetDeleted(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
@@ -313,9 +307,9 @@ public class DatasetNotificationManager implements INotificationManager {
 				logger.error("Error notifying map authors about dataset deletion with email", e);
 	    	}
 	    }
-		
-	}	
-	
+
+	}
+
 	private void notifyLicenceChange(DatasetNotificationEvent datasetEvent) throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
@@ -335,97 +329,24 @@ public class DatasetNotificationManager implements INotificationManager {
 		}
 
 	}
-	
+
 
 	private void sendMail(String[] emailAddresses, String subject, String emailContent) throws Exception{
 
-		final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-		final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
-
-		String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtphost");
-		String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtpport");
-		String smtpssl = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.useSSL"); 
-		logger.debug(smtphost+" "+smtpport+" use SSL: "+smtpssl);
-
-		//Custom Trusted Store Certificate Options
-		String trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file"); 
-		String trustedStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.password"); 
-
-		int smptPort=25;
-
-		if( (smtphost==null) || smtphost.trim().equals(""))
-			throw new Exception("Smtp host not configured");
-		if( (smtpport==null) || smtpport.trim().equals("")){
-			throw new Exception("Smtp host not configured");
-		}else{
-			smptPort=Integer.parseInt(smtpport);
-		}
-
-		String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.from");
-		if( (from==null) || from.trim().equals(""))
-			from = "spagobi@eng.it";
-		String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.user");
-		if( (user==null) || user.trim().equals("")){
-			logger.debug("Smtp user not configured");	
-			user=null;
-		}
-		String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.password");
-		if( (pass==null) || pass.trim().equals("")){
-			logger.debug("Smtp password not configured");	
-		}
-
-		//Set the host smtp address
-		Properties props = new Properties();
-		props.put("mail.smtp.host", smtphost);
-		props.put("mail.smtp.port", Integer.toString(smptPort));
-		//Set timeout limit for mail server to respond
-		props.put("mail.smtp.timeout", "5000");             
-        props.put("mail.smtp.connectiontimeout", "5000"); 
-
-		// open session
-		Session session=null;
-		// create autheticator object
-		Authenticator auth = null;
-		if (user!=null) {
-			auth = new SMTPAuthenticator(user, pass);
-			props.put("mail.smtp.auth", "true");
-			//SSL Connection
-			if (smtpssl.equals("true")){
-				Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());	            
-				props.put("mail.smtps.auth", "true");
-				props.put("mail.smtps.socketFactory.port", Integer.toString(smptPort));
-				if ((!StringUtilities.isEmpty(trustedStorePath)) ) {            	
-					/* Dynamic configuration of trustedstore for CA
-					 * Using Custom SSLSocketFactory to inject certificates directly from specified files
-					 */
-
-					props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
-
-				} else {
-
-					props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
-				}
-				props.put("mail.smtp.socketFactory.fallback", "false"); 
-			}
-
-			session = Session.getInstance(props, auth);
-			logger.info("Session.getInstance(props, auth)");
-
-		}else{
-			session = Session.getInstance(props);
-			logger.info("Session.getInstance(props)");
-		}
+		SessionFacade facade = MailSessionBuilder.newInstance()
+			.usingUserProfile()
+			.withTimeout(5000)
+			.withConnectionTimeout(5000)
+			.build();
 
 		// create a message
-		Message msg = new MimeMessage(session);
-		// set the from and to address
-		InternetAddress addressFrom = new InternetAddress(from);
-		msg.setFrom(addressFrom);
+		Message msg = facade.createNewMimeMessage();
+
 		InternetAddress[] addressTo = new InternetAddress[emailAddresses.length];
 		for (int i = 0; i < emailAddresses.length; i++)  {
 			addressTo[i] = new InternetAddress(emailAddresses[i]);
 		}
-		msg.setRecipients(Message.RecipientType.BCC, addressTo);  
+		msg.setRecipients(Message.RecipientType.BCC, addressTo);
 
 		// Setting the Subject and Content Type
 		msg.setSubject(subject);
@@ -437,37 +358,9 @@ public class DatasetNotificationManager implements INotificationManager {
 		mp.addBodyPart(mbp1);
 		// add the Multipart to the message
 		msg.setContent(mp);
+
 		// send message
-		if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(user)) &&  (!StringUtilities.isEmpty(pass))){
-			//USE SSL Transport comunication with SMTPS
-			Transport transport = session.getTransport("smtps");
-			transport.connect(smtphost,smptPort,user,pass);
-			transport.sendMessage(msg, msg.getAllRecipients());
-			transport.close(); 
-		}
-		else {
-			//Use normal SMTP
-			Transport.send(msg);
-		}
-
-
-	}
-	// Private Classes ----------------------------------------------------------------------------
-	
-	private class SMTPAuthenticator extends javax.mail.Authenticator
-	{
-		private String username = "";
-		private String password = "";
-
-		public PasswordAuthentication getPasswordAuthentication()
-		{
-			return new PasswordAuthentication(username, password);
-		}
-
-		public SMTPAuthenticator(String user, String pass) {
-			this.username = user;
-			this.password = pass;
-		}
+		facade.sendMessage(msg);
 	}
 
 }
