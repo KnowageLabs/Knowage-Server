@@ -516,7 +516,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.showMe = true;
 					$scope.enableTest = false;
 					$scope.label = "";
-
+					$scope.validateAndSetDirty();
+					$scope.validateNameAndSetDirty();
 				}, function () {
 
 					$scope.showMe = true;
