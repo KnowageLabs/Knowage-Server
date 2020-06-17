@@ -454,7 +454,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.validateAndSetDirty = function () {
-			
+
 			var valid = true;
 			if ($scope.selectedLov.hasOwnProperty("id")) {
 				for (var i in $scope.listOfLovs) {
@@ -472,9 +472,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
-			
+
 			$scope.attributeForm.lovLbl.$setValidity("labelNotValid", valid);
 
+			$scope.setDirty();
+		}
+
+		$scope.validateNameAndSetDirty = function () {
+			var valid = true;
+			if ($scope.selectedLov.hasOwnProperty("id")) {
+				for (var i in $scope.listOfLovs) {
+					if ($scope.selectedLov.id != $scope.listOfLovs[i].id &&
+						angular.equals($scope.selectedLov.name, $scope.listOfLovs[i].name)) {
+						valid = false;
+						break;
+					}
+				}
+			} else {
+				for (var i in $scope.listOfLovs) {
+					if (angular.equals($scope.selectedLov.name, $scope.listOfLovs[i].name)) {
+						valid = false;
+						break;
+					}
+				}
+			}
+			$scope.attributeForm.lovName.$setValidity("nameNotValid", valid);
 			$scope.setDirty();
 		}
 
@@ -869,6 +891,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.selectedLov = angular.copy(item);
 			console.log($scope.selectedLov);
 			$scope.changeLovType($scope.selectedLov.itypeCd);
+
+			$scope.validateAndSetDirty();
+			$scope.validateNameAndSetDirty();
 
 			if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.SCRIPT)) {
 				if ($scope.selectedLov.lovProvider.SCRIPTLOV.LANGUAGE != null) {

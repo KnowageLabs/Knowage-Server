@@ -101,7 +101,7 @@
                            <input name="lovLbl" ng-model="selectedLov.label" 
                               ng-required="true"
                               maxlength="20" ng-change="validateAndSetDirty()">
-                           <div  ng-messages="attributeForm.lovLbl.$error" ng-show="attributeForm.lovLbl.$error">
+                           <div ng-messages="attributeForm.lovLbl.$error" ng-show="attributeForm.lovLbl.$error">
                               <div ng-message="required" ng-if="attributeForm.lovLbl.$error.required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
                               <div ng-message="labelNotValid" ng-if="attributeForm.lovLbl.$error.labelNotValid">{{translate.load("sbi.behavioural.lov.errorLabelNotValid");}}</div>
                            </div>
@@ -112,10 +112,11 @@
                      <div flex=100>
                         <md-input-container class="md-block">
                            <label>{{translate.load("sbi.ds.name")}}</label>
-                           <input name="lovName" ng-model="selectedLov.name"  ng-required = "true"
-                              maxlength="40" ng-change="setDirty()">
-                           <div  ng-messages="attributeForm.lovName.$error" ng-show="selectedLov.name== null">
-                              <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+                           <input name="lovName" ng-model="selectedLov.name" ng-required="true"
+                              maxlength="40" ng-change="validateNameAndSetDirty()">
+                           <div ng-messages="attributeForm.lovName.$error" ng-show="attributeForm.lovName.$error">
+                              <div ng-message="required" ng-if="attributeForm.lovName.$error.required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+                              <div ng-message="nameNotValid" ng-if="attributeForm.lovName.$error.nameNotValid">{{translate.load("sbi.behavioural.lov.errorNameNotValid");}}</div>
                            </div>
                         </md-input-container>
                      </div>
