@@ -18,9 +18,9 @@
 
 (function(){
 	angular.module("cockpitModule")
-		.service("cockpitModule_exportWidgetService", ['$q', '$httpParamSerializer', '$mdToast', 'sbiModule_config', 'sbiModule_user', 'sbiModule_download', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_messaging', 'sbiModule_cockpitDocument', 'cockpitModule_datasetServices', 'cockpitModule_widgetSelection', exportWidgetService]);
+		.service("cockpitModule_exportWidgetService", ['$q', '$httpParamSerializer', '$mdToast', 'sbiModule_config', 'sbiModule_user', 'sbiModule_download', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_messaging', 'sbiModule_cockpitDocument', 'cockpitModule_datasetServices', 'cockpitModule_widgetSelection','cockpitModule_properties', exportWidgetService]);
 
-	function exportWidgetService ($q, $httpParamSerializer, $mdToast, sbiModule_config, sbiModule_user, sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_cockpitDocument, cockpitModule_datasetServices, cockpitModule_widgetSelection) {
+	function exportWidgetService ($q, $httpParamSerializer, $mdToast, sbiModule_config, sbiModule_user, sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_cockpitDocument, cockpitModule_datasetServices, cockpitModule_widgetSelection, cockpitModule_properties) {
 		var objToReturn = {};
 
 		objToReturn.exportWidgetToExcel = function (type, widget, options) {
@@ -69,10 +69,30 @@
 				requestUrl.exportWidget = exportWidget;
 			}
 
+			if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
+				for (var k in widget.content.columnSelectedOfDataset) {
+					if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length) {
+						if (widget.type == "table" && widget.content.columnSelectedOfDataset[k].variables[0].action == 'header') {
+							for (var j in cockpitModule_properties.VARIABLES) {
+								if (j == widget.content.columnSelectedOfDataset[k].variables[0].variable){
+									widget.content.columnSelectedOfDataset[k].aliasToShow = cockpitModule_properties.VARIABLES[j];
+								}
+							}
+						}
+					
+					}						
+				}
+			}
+			
 			var dsId = widget.dataset.dsId;
 			var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
-
-			var aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset, widget.settings.sortingColumn,widget.settings.sortingOrder);
+			var aggregation;
+			if (widget.settings) {
+			 aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset, widget.settings.sortingColumn,widget.settings.sortingOrder);
+			}
+			else {
+				aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
+			}
 			// cleanAggregation(widget, aggregation);
 
 			var loadDomainValues = widget.type == "selector" ? true : false;

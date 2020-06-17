@@ -465,6 +465,7 @@ public class ExcelExporter {
 			}
 
 			datastore.put("widgetData", widget);
+			datastore.put("cocpitSelectionAggregations", cockpitSelections.get("aggregations"));
 			JSONObject content = widget.optJSONObject("content");
 			String widgetName = null;
 			if (widget.has("style")) {
@@ -490,6 +491,10 @@ public class ExcelExporter {
 
 	private void createExcelFile(JSONObject dataStore, Workbook wb, String widgetName) throws JSONException, SerializationException {
 		CreationHelper createHelper = wb.getCreationHelper();
+		JSONArray widgetsMapAggregations = new JSONArray();
+		if (body.has("widgetsMapAggregations")) {
+			widgetsMapAggregations = body.getJSONArray("widgetsMapAggregations");
+		}
 
 		if (dataStore.has("widgetType") && dataStore.getString("widgetType").equalsIgnoreCase("[\"static-pivot-table\"]")) {
 
@@ -546,33 +551,14 @@ public class ExcelExporter {
 				JSONArray columns = metadata.getJSONArray("fields");
 				columns = filterDataStoreColumns(columns);
 				JSONArray rows = dataStore.getJSONArray("rows");
+				JSONObject columnsAggregations = new JSONObject();
+				if (dataStore.has("cocpitSelectionAggregations")) {
+					columnsAggregations = dataStore.getJSONObject("cocpitSelectionAggregations");
+				}
+
+				HashMap<String, String> mapColumnsAggregations = getMapFromAggregations(columnsAggregations);
 
 				Sheet sheet;
-				Row header = null;
-				if (exportWidget) {
-					widgetName = WorkbookUtil.createSafeSheetName(widgetName);
-					sheet = wb.createSheet(widgetName);
-
-					// Create HEADER - Column Names
-					header = sheet.createRow((short) 0); // first row
-				} else {
-					String sheetName = "empty";
-					if (dataStore.has("widgetName") && dataStore.getString("widgetName") != null && !dataStore.getString("widgetName").isEmpty()) {
-						if (dataStore.has("sheetInfo")) {
-							sheetName = dataStore.getString("sheetInfo").concat(".").concat(widgetName);
-						} else {
-							sheetName = widgetName;
-						}
-					}
-
-					sheetName = WorkbookUtil.createSafeSheetName(sheetName);
-					sheet = wb.createSheet(sheetName);
-					// First row for Widget name in case exporting whole Cockpit document
-					Row firstRow = sheet.createRow((short) 0);
-					Cell firstCell = firstRow.createCell(0);
-					firstCell.setCellValue(widgetName);
-					header = sheet.createRow((short) 1);
-				}
 
 				JSONObject widgetData = dataStore.getJSONObject("widgetData");
 
@@ -611,9 +597,24 @@ public class ExcelExporter {
 
 				}
 
+				if (widgetsMapAggregations != null && !widgetsMapAggregations.isNull(0)) {
+
+					JSONArray aggrNewVar = (JSONArray) widgetsMapAggregations.getJSONObject(0).get("columnSelectedOfDataset");
+					mapColumnsAggregations = getMapFromAggregationsFromArray(aggrNewVar);
+
+				}
+
 				// column.header matches with name or alias
 				// Fill Header
 				JSONArray columnsOrdered = new JSONArray();
+				JSONArray groupsArray = new JSONArray();
+				if (widgetData.has("groups")) {
+					groupsArray = widgetData.getJSONArray("groups");
+				}
+				HashMap<String, String> mapGroupsAndColumns = new HashMap<String, String>();
+
+				HashMap<String, String> headerToAlias = new HashMap<String, String>();
+
 				if ((widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table"))
 						&& widgetContent.has("columnSelectedOfDataset")) {
 					for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
@@ -635,18 +636,25 @@ public class ExcelExporter {
 								JSONObject columnOld = columns.getJSONObject(j);
 								if (column.has("name")) {
 									if (columnOld.getString("header").equals(column.getString("name"))) {
-
+										headerToAlias.put(columnOld.getString("header"), column.getString("name"));
 										columnsOrdered.put(columnOld);
 										break;
 									} else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
+										headerToAlias.put(columnOld.getString("header"), column.getString("name"));
+										columnsOrdered.put(columnOld);
+										break;
+									} else if (columnOld.getString("header").equals(mapColumnsAggregations.get(column.getString("aliasToShow")))) {
+										headerToAlias.put(columnOld.getString("header"), column.getString("name"));
 										columnsOrdered.put(columnOld);
 										break;
 									}
 								} else {
 									if (columnOld.getString("header").equals(column.getString("alias"))) {
+										headerToAlias.put(columnOld.getString("header"), column.getString("alias"));
 										columnsOrdered.put(columnOld);
 										break;
 									} else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
+										headerToAlias.put(columnOld.getString("header"), column.getString("aliasToShow"));
 										columnsOrdered.put(columnOld);
 										break;
 									}
@@ -656,6 +664,65 @@ public class ExcelExporter {
 					}
 				} else {
 					columnsOrdered = columns;
+				}
+				int isGroup = 0;
+				if (widgetContent.has("columnSelectedOfDataset"))
+					mapGroupsAndColumns = getMapFromGroupsArray(groupsArray, widgetContent.getJSONArray("columnSelectedOfDataset"));
+
+				Row header = null;
+				Row newheader = null;
+				if (exportWidget) {
+					widgetName = WorkbookUtil.createSafeSheetName(widgetName);
+					sheet = wb.createSheet(widgetName);
+
+					// Create HEADER - Column Names
+					if (!mapGroupsAndColumns.isEmpty()) {
+						isGroup = 1;
+						newheader = sheet.createRow((short) 0);
+						for (int i = 0; i < columnsOrdered.length(); i++) {
+							JSONObject column = columnsOrdered.getJSONObject(i);
+							String groupName = mapGroupsAndColumns.get(headerToAlias.get(column.get("header")));
+							if (groupName != null) {
+								Cell cell = newheader.createCell(i);
+								cell.setCellValue(groupName);
+							}
+
+						}
+						header = sheet.createRow((short) 1);
+					} else
+						header = sheet.createRow((short) 0); // first row
+				} else {
+					String sheetName = "empty";
+					if (dataStore.has("widgetName") && dataStore.getString("widgetName") != null && !dataStore.getString("widgetName").isEmpty()) {
+						if (dataStore.has("sheetInfo")) {
+							sheetName = dataStore.getString("sheetInfo").concat(".").concat(widgetName);
+						} else {
+							sheetName = widgetName;
+						}
+					}
+
+					sheetName = WorkbookUtil.createSafeSheetName(sheetName);
+					sheet = wb.createSheet(sheetName);
+					// First row for Widget name in case exporting whole Cockpit document
+					Row firstRow = sheet.createRow((short) 0);
+					Cell firstCell = firstRow.createCell(0);
+					firstCell.setCellValue(widgetName);
+					// Create HEADER - Column Names
+					if (!mapGroupsAndColumns.isEmpty()) {
+						isGroup = 1;
+						newheader = sheet.createRow((short) 1);
+						for (int i = 0; i < columnsOrdered.length(); i++) {
+							JSONObject column = columnsOrdered.getJSONObject(i);
+							String groupName = mapGroupsAndColumns.get(headerToAlias.get(column.get("header")));
+							if (groupName != null) {
+								Cell cell = newheader.createCell(i);
+								cell.setCellValue(groupName);
+							}
+
+						}
+						header = sheet.createRow((short) 2);
+					} else
+						header = sheet.createRow((short) 1);
 				}
 
 				for (int i = 0; i < columnsOrdered.length(); i++) {
@@ -684,9 +751,9 @@ public class ExcelExporter {
 					JSONObject rowObject = rows.getJSONObject(r);
 					Row row;
 					if (exportWidget)
-						row = sheet.createRow(r + 1); // starting from second row, because the 0th (first) is Header
+						row = sheet.createRow((r + isGroup) + 1); // starting from second row, because the 0th (first) is Header
 					else
-						row = sheet.createRow(r + 2);
+						row = sheet.createRow((r + isGroup) + 2);
 
 					for (int c = 0; c < columnsOrdered.length(); c++) {
 						JSONObject column = columnsOrdered.getJSONObject(c);
@@ -725,6 +792,76 @@ public class ExcelExporter {
 				logger.error("Cannot write data to Excel file", e);
 			}
 		}
+	}
+
+	private HashMap<String, String> getMapFromGroupsArray(JSONArray groupsArray, JSONArray aggr) throws JSONException {
+		HashMap<String, String> returnMap = new HashMap<String, String>();
+		if (aggr != null && groupsArray != null) {
+
+			for (int i = 0; i < groupsArray.length(); i++) {
+
+				String id = groupsArray.getJSONObject(i).getString("id");
+				String groupName = groupsArray.getJSONObject(i).getString("name");
+
+				for (int ii = 0; ii < aggr.length(); ii++) {
+					JSONObject column = aggr.getJSONObject(ii);
+
+					if (column.has("group") && column.getString("group").equals(id)) {
+						String nameToInsert = "";
+						if (!column.has("name"))
+							nameToInsert = column.getString("alias");
+						else
+							nameToInsert = column.getString("name");
+
+						returnMap.put(nameToInsert, groupName);
+					}
+
+				}
+			}
+		}
+
+		return returnMap;
+
+	}
+
+	private HashMap<String, String> getMapFromAggregationsFromArray(JSONArray aggr) throws JSONException {
+		HashMap<String, String> returnMap = new HashMap<String, String>();
+		if (aggr != null) {
+			for (int i = 0; i < aggr.length(); i++) {
+				JSONObject column = aggr.getJSONObject(i);
+				String nameToInsert = "";
+				if (!column.has("name"))
+					nameToInsert = column.getString("alias");
+				else
+					nameToInsert = column.getString("name");
+				returnMap.put(nameToInsert, column.getString("aliasToShow"));
+
+			}
+
+		}
+
+		return returnMap;
+
+	}
+
+	private HashMap<String, String> getMapFromAggregations(JSONObject aggr) throws JSONException {
+
+		HashMap<String, String> returnMap = new HashMap<String, String>();
+		if (aggr.has("measures")) {
+			JSONArray measures = aggr.getJSONArray("measures");
+
+			for (int i = 0; i < measures.length(); i++) {
+				returnMap.put(measures.getJSONObject(i).getString("id"), measures.getJSONObject(i).getString("alias"));
+			}
+		}
+		if (aggr.has("categories")) {
+			JSONArray categories = aggr.getJSONArray("categories");
+
+			for (int i = 0; i < categories.length(); i++) {
+				returnMap.put(categories.getJSONObject(i).getString("id"), categories.getJSONObject(i).getString("alias"));
+			}
+		}
+		return returnMap;
 	}
 
 	private JSONArray filterDataStoreColumns(JSONArray columns) {
@@ -914,6 +1051,7 @@ public class ExcelExporter {
 					if (body != null) {
 						logger.debug("Export cockpit body.toString(): " + body.toString());
 					}
+
 					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
 
 					if (datastoreObj != null) {
@@ -1212,6 +1350,19 @@ public class ExcelExporter {
 
 	private JSONObject getAggregationsFromWidget(JSONObject widget, JSONObject configuration, String widgetType) throws JSONException {
 		JSONObject aggregations = new JSONObject();
+		JSONArray widgetsMapAggregations = new JSONArray();
+		if (body.has("widgetsMapAggregations"))
+			widgetsMapAggregations = body.getJSONArray("widgetsMapAggregations");
+		JSONObject content = widget.optJSONObject("content");
+		JSONArray aggrNewVar = new JSONArray();
+		HashMap<String, String> mapColumnsAggregations = new HashMap<String, String>();
+		if (widgetsMapAggregations != null && !widgetsMapAggregations.isNull(0)) {
+
+			if (widgetsMapAggregations.getJSONObject(0).has("columnSelectedOfDataset"))
+				aggrNewVar = (JSONArray) widgetsMapAggregations.getJSONObject(0).get("columnSelectedOfDataset");
+			mapColumnsAggregations = getMapFromAggregationsFromArray(aggrNewVar);
+
+		}
 
 		JSONArray measures = new JSONArray();
 		aggregations.put("measures", measures);
@@ -1240,7 +1391,7 @@ public class ExcelExporter {
 		boolean isSortingUsed = false;
 
 		boolean isSolrDataset = isSolrDataset(dataset);
-		JSONObject content = widget.optJSONObject("content");
+
 		if (content != null) {
 
 			widgetType = widget.getString("type");
@@ -1292,6 +1443,11 @@ public class ExcelExporter {
 						String aliasToShow = column.optString("aliasToShow");
 						if (aliasToShow != null && aliasToShow.isEmpty()) {
 							aliasToShow = column.getString("alias");
+
+						}
+
+						if (!mapColumnsAggregations.isEmpty()) {
+							aliasToShow = mapColumnsAggregations.get(column.getString("name"));
 						}
 
 						JSONObject categoryOrMeasure = new JSONObject();

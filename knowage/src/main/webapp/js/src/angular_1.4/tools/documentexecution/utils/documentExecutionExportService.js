@@ -531,12 +531,16 @@
 
 		var buildRequestConfiguration = function(exportType, parameters, options) {
 			var deferred = $q.defer();
+			
+			var cockpitModule_properties = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_properties;
 
 			var cockpitContext = execProperties.documentUrl.substr(0, execProperties.documentUrl.search("/api/"));
 
 			var requestUrl = sbiModule_config.host + cockpitContext + '/api/1.0/cockpit/export/excel';
 			var widgetsPivot = [];
 			var sheets = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.sheets;
+			
+			var widgetsMapAggregations = [];
 
 			for (i = 0; i < sheets.length; i++) {
 				var widgets = sheets[i].widgets;
@@ -544,6 +548,29 @@
 
 					if( widgets[j].type=='static-pivot-table') {
 						widgetsPivot.push(widgets[j].id);
+					}
+					if ( widgets[j].type=='table') {
+						
+						if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
+							for (var k in widgets[j].content.columnSelectedOfDataset) {
+								if(Array.isArray(widgets[j].content.columnSelectedOfDataset[k].variables) && widgets[j].content.columnSelectedOfDataset[k].variables.length) {
+									if (widgets[j].type == "table" && widgets[j].content.columnSelectedOfDataset[k].variables[0].action == 'header') {
+										for (var value in cockpitModule_properties.VARIABLES) {
+											if (value == widgets[j].content.columnSelectedOfDataset[k].variables[0].variable){
+												widgets[j].content.columnSelectedOfDataset[k].aliasToShow = cockpitModule_properties.VARIABLES[value];
+											}
+										}
+									}
+								
+								}						
+							}
+						}
+						var map = {};
+						map.id = widgets[j].id;
+						map.columnSelectedOfDataset = widgets[j].content.columnSelectedOfDataset;
+						widgetsMapAggregations.push(map)
+						
+						
 					}
 				}
 
@@ -558,7 +585,8 @@
 					SBI_COUNTRY: sbiModule_config.curr_country,
 					SBI_LANGUAGE: sbiModule_config.curr_language,
 					parametersDataArray : angular.copy(execProperties.parametersData.documentParameters),
-					widgetsPivot : widgetsPivot
+					widgetsPivot : widgetsPivot,
+					widgetsMapAggregations : widgetsMapAggregations
 
 			};
 
