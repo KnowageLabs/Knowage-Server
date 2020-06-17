@@ -241,11 +241,14 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			logger.error("Error paramters. New check should not have ID value");
 			throw new SpagoBIRuntimeException("Error paramters. New check should not have ID value");
 		}
-		if (parameterLabelControl(driver, "INSERT")) {
-			logger.error("Error inserting parameter.Same nqame already exists");
-			throw new SpagoBIRuntimeException("Error inserting parameter.Same name already exists");
+		if (parameterLabelNameControl(driver, "INSERT", "label")) {
+			logger.error("Error while inserting AD. Analytical Driver with the same label already exists.");
+			throw new SpagoBIRuntimeException("Error while inserting AD. Analytical Driver with the same label already exists.");
 		}
-
+		if (parameterLabelNameControl(driver, "INSERT", "name")) {
+			logger.error("Error while inserting AD. Analytical Driver with the same name already exists.");
+			throw new SpagoBIRuntimeException("Error while inserting AD. Analytical Driver with the same name already exists.");
+		}
 		try {
 			driversDao = DAOFactory.getParameterDAO();
 			driversDao.setUserProfile(getUserProfile());
@@ -525,8 +528,9 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		return role;
 	}
 
-	private boolean parameterLabelControl(Parameter parameter, String operation) {
+	private boolean parameterLabelNameControl(Parameter parameter, String operation, String comparator) {
 		String labelToCheck = parameter.getLabel();
+		String nameToCheck = parameter.getName();
 		List allparameters = null;
 		try {
 			allparameters = DAOFactory.getParameterDAO().loadAllParameters();
@@ -538,9 +542,16 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			Iterator i = allparameters.iterator();
 			while (i.hasNext()) {
 				Parameter aParameter = (Parameter) i.next();
-				String label = aParameter.getLabel();
-				if (label.equals(labelToCheck)) {
-					return true;
+				if (comparator.equalsIgnoreCase("label")) {
+					String label = aParameter.getLabel();
+					if (label.equals(labelToCheck)) {
+						return true;
+					}
+				} else if (comparator.equalsIgnoreCase("name")) {
+					String name = aParameter.getName();
+					if (name.equals(nameToCheck)) {
+						return true;
+					}
 				}
 			}
 		} else {
@@ -548,10 +559,17 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			Iterator i = allparameters.iterator();
 			while (i.hasNext()) {
 				Parameter aParameter = (Parameter) i.next();
-				String label = aParameter.getLabel();
 				Integer id = aParameter.getId();
-				if (label.equals(labelToCheck) && (!id.equals(currentId))) {
-					return true;
+				if (comparator.equalsIgnoreCase("label")) {
+					String label = aParameter.getLabel();
+					if (label.equals(labelToCheck) && (!id.equals(currentId))) {
+						return true;
+					}
+				} else if (comparator.equalsIgnoreCase("name")) {
+					String name = aParameter.getName();
+					if (name.equals(nameToCheck) && (!id.equals(currentId))) {
+						return true;
+					}
 				}
 			}
 		}
