@@ -50,7 +50,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 	static protected String LDAP_AUTHENTICATION_CONFIG = "ldap.config";
 
-	private static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
+	protected static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 
 	@Override
 	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
@@ -59,7 +59,8 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 			if (userId != null) {
 				SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
 				if (user != null) {
-					if (!bind(userId, psw)) {
+					boolean bound = bind(userId, psw) != null;
+					if (!bound) {
 						logger.error("Impossible to bind user " + userId + ". Username or password not valid.");
 						return null;
 					}
@@ -98,7 +99,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 	 * @throws FileNotFoundException
 	 */
 
-	protected boolean bind(String userId, String psw) throws FileNotFoundException, IOException {
+	protected InitialDirContext bind(String userId, String psw) throws FileNotFoundException, IOException {
 
 		String filename = System.getProperty(LDAP_AUTHENTICATION_CONFIG);
 		Assert.assertNotNull(filename, "System property " + LDAP_AUTHENTICATION_CONFIG + " has not been configured. Please add it while starting your JVM.");
@@ -110,22 +111,31 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 		env.put(Context.PROVIDER_URL, properties.getProperty("PROVIDER_URL"));
 
 		env.put(Context.SECURITY_AUTHENTICATION, properties.getProperty("SECURITY_AUTHENTICATION"));
-		env.put(Context.SECURITY_PRINCIPAL, properties.getProperty("DN_PREFIX") + userId + properties.getProperty("DN_POSTFIX"));
-		logger.debug("User ID=" + properties.getProperty("DN_PREFIX") + userId + properties.getProperty("DN_POSTFIX"));
-		env.put(Context.SECURITY_CREDENTIALS, psw);
+		if (userId != null) {
+			String distinguishName = null;
+			if (!userId.startsWith(properties.getProperty("DN_PREFIX")) && !userId.endsWith(properties.getProperty("DN_POSTFIX"))) {
+				distinguishName = properties.getProperty("DN_PREFIX") + userId + properties.getProperty("DN_POSTFIX");
 
+				logger.debug("User ID=" + properties.getProperty("DN_PREFIX") + userId + properties.getProperty("DN_POSTFIX"));
+			} else {
+				distinguishName = userId;
+			}
+			env.put(Context.SECURITY_PRINCIPAL, distinguishName);
+			env.put(Context.SECURITY_CREDENTIALS, psw);
+		}
 		env.put("javax.security.sasl.qop", "auth-conf");
 		env.put("javax.security.sasl.strength", "high");
 
+		InitialDirContext ctx = null;
 		try {
-			new InitialDirContext(env);
+			ctx = new InitialDirContext(env);
 			logger.debug("Authentication successfull.");
-			return true;
+			return ctx;
 		} catch (NamingException e) {
 			logger.error("Authentication NOT successfull. Reason: ", e);
+			return null;
 
 		}
-		return false;
 	}
 
 	@Override
