@@ -86,9 +86,14 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		Assert.assertNotNull(document, "Document can not be null");
 		document.setCreationUser((String) getUserProfile().getUserId());
 
-		if (documentLabelControl(document, "INSERT")) {
+		if (documentLabelNameControl(document, "INSERT", "label")) {
 			logger.error("Error while inserting document. Document with the same label already exists!");
-			throw new SpagoBIRuntimeException("Error while inserting document. Document with the label " + document.getLabel() + " already exists!");
+			throw new SpagoBIRuntimeException("Error while inserting document. Document with the same label already exists!");
+		}
+
+		if (documentLabelNameControl(document, "INSERT", "name")) {
+			logger.error("Error while inserting document. Document with the same name already exists!");
+			throw new SpagoBIRuntimeException("Error while inserting document. Document with the same name already exists!");
 		}
 
 		try {
@@ -171,8 +176,9 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		return id;
 	}
 
-	private boolean documentLabelControl(BIObject document, String operation) {
+	private boolean documentLabelNameControl(BIObject document, String operation, String comparator) {
 		String labelToCheck = document.getLabel();
+		String nameToCheck = document.getName();
 		List<BIObject> allDocuments = null;
 		try {
 			allDocuments = DAOFactory.getBIObjectDAO().loadAllBIObjects();
@@ -184,9 +190,16 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			Iterator it = allDocuments.iterator();
 			while (it.hasNext()) {
 				BIObject aDocument = (BIObject) it.next();
-				String label = aDocument.getLabel();
-				if (label.equals(labelToCheck)) {
-					return true;
+				if (comparator.equalsIgnoreCase("label")) {
+					String label = aDocument.getLabel();
+					if (label.equals(labelToCheck)) {
+						return true;
+					}
+				} else if (comparator.equalsIgnoreCase("name")) {
+					String name = aDocument.getName();
+					if (name.equals(nameToCheck)) {
+						return true;
+					}
 				}
 			}
 		} else {
@@ -194,10 +207,17 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			Iterator it = allDocuments.iterator();
 			while (it.hasNext()) {
 				BIObject aDocument = (BIObject) it.next();
-				String label = aDocument.getLabel();
 				Integer id = aDocument.getId();
-				if (label.equals(labelToCheck) && (!id.equals(currentId))) {
-					return true;
+				if (comparator.equalsIgnoreCase("label")) {
+					String label = aDocument.getLabel();
+					if (label.equals(labelToCheck) && (!id.equals(currentId))) {
+						return true;
+					}
+				} else if (comparator.equalsIgnoreCase("name")) {
+					String name = aDocument.getName();
+					if (name.equals(nameToCheck) && (!id.equals(currentId))) {
+						return true;
+					}
 				}
 			}
 		}
