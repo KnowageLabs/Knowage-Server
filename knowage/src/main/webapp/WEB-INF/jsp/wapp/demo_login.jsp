@@ -45,8 +45,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	//RequestContainer requestContainer = RequestContainerAccess.getRequestContainer(request); 
 	
 	SingletonConfig serverConfig = SingletonConfig.getInstance();
-	String strInternalSecurity = serverConfig.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className");
-	boolean isInternalSecurity = (strInternalSecurity.indexOf("InternalSecurity")>0)?true:false;
 	
 	RequestContainer requestContainer = RequestContainer.getRequestContainer();
 	
@@ -133,7 +131,6 @@ else {
 
 	<jsp:include page='<%=url%>' />
         <form name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
-        	<input type="hidden" id="isInternalSecurity" name="isInternalSecurity" value="<%=isInternalSecurity %>" />
         	<%
         	// propagates parameters (if any) for document execution
         	if (request.getParameter(ObjectsTreeConstants.OBJECT_LABEL) != null) {

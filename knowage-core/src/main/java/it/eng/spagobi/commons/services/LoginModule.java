@@ -208,7 +208,9 @@ public class LoginModule extends AbstractHttpModule {
 
 		}
 
-		boolean isInternalSecurity = ("true".equalsIgnoreCase((String) request.getAttribute("isInternalSecurity"))) ? true : false;
+//		boolean isInternalSecurity = ("true".equalsIgnoreCase((String) request.getAttribute("isInternalSecurity"))) ? true : false;
+		String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+		boolean isInternalSecurity = securityServiceSupplier.equalsIgnoreCase("it.eng.spagobi.security.InternalSecurityServiceSupplierImpl");
 		logger.debug("isInternalSecurity: " + isInternalSecurity);
 
 		ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();

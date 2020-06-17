@@ -55,10 +55,6 @@
 			.getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
 	boolean activeSignup = (strActiveSignup.equalsIgnoreCase("true"))?true:false;
 
-	String strInternalSecurity = serverConfig
-			.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className");
-	boolean isInternalSecurity = (strInternalSecurity
-			.indexOf("InternalSecurity") > 0) ? true : false;
 	String roleToCheckLbl = 
 			(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN") == null)?"" :
 			 SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN");
@@ -152,7 +148,6 @@
             	<p id="profile-name" class="profile-name-card"></p>
             	<div class="col-xs-8">
            			<form class="form-signin"  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
-		                <input type="hidden" id="isInternalSecurity" name="isInternalSecurity" value="<%=isInternalSecurity %>" />        	
 		        		<input type="hidden" id="<%=roleToCheckLbl%>" name="<%=roleToCheckLbl%>" value="<%=roleToCheckVal%>" />
 		        		<%	
 				        	// propagates parameters (if any) for document execution
