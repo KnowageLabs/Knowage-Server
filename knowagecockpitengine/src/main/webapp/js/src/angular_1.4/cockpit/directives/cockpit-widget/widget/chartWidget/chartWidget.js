@@ -920,7 +920,6 @@ function cockpitChartWidgetControllerFunction(
 			  		        enableFilter: false,
 			  		        enableSorting: false,
 			  		        onGridReady : resizeColumns,
-			  		        onCellEditingStopped: refreshRow,
 			  		        singleClickEdit: true,
 			  		        stopEditingWhenGridLosesFocus: true,
 			  		        columnDefs: $scope.columnsDefition,
