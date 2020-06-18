@@ -38,6 +38,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -522,7 +523,8 @@ public class CrossTab {
 					String column = columnsNameList.get(i);
 					Object value = valueRecord.get(column);
 					String valueStr = null;
-					if (value == null) {
+					// String.valueOf() instead of toString() is used also to prevent NullPointerException
+					if (StringUtils.isEmpty(String.valueOf(value))) {
 						valueStr = "null";
 					} else {
 						valueStr = value.toString();
@@ -536,7 +538,8 @@ public class CrossTab {
 					String row = rowsNameList.get(i);
 					Object value = valueRecord.get(row);
 					String valueStr = null;
-					if (value == null) {
+					// String.valueOf() instead of toString() is used also to prevent NullPointerException
+					if (StringUtils.isEmpty(String.valueOf(value))) {
 						valueStr = "null";
 					} else {
 						valueStr = value.toString();
@@ -1179,23 +1182,23 @@ public class CrossTab {
 
 	private List<String> visit(Node n, String prefix) {
 		List<String> toReturn = new ArrayList<String>();
-		if (n.getChilds().size() == 0) {
+		String description = n.getDescription();
+		if (StringUtils.isEmpty(description)) {
+			description = "null";
+		}
+		if (n.getChilds().isEmpty()) {
 			if (prefix.equals(PATH_SEPARATOR)) {
-//				toReturn.add(prefix + (n.getValue()));
-				toReturn.add(prefix + (n.getDescription()));
+				toReturn.add(prefix + description);
 			} else {
-//				toReturn.add(prefix + PATH_SEPARATOR + (n.getValue()));
-				toReturn.add(prefix + PATH_SEPARATOR + (n.getDescription()));
+				toReturn.add(prefix + PATH_SEPARATOR + description);
 			}
 			return toReturn;
 		} else {
 			for (int i = 0; i < n.getChilds().size(); i++) {
 				if (prefix.equals(PATH_SEPARATOR)) {
-//					toReturn.addAll(visit(n.getChilds().get(i), prefix + (n.getValue())));
-					toReturn.addAll(visit(n.getChilds().get(i), prefix + (n.getDescription())));
+					toReturn.addAll(visit(n.getChilds().get(i), prefix + description));
 				} else {
-//					toReturn.addAll(visit(n.getChilds().get(i), prefix + PATH_SEPARATOR + (n.getValue())));
-					toReturn.addAll(visit(n.getChilds().get(i), prefix + PATH_SEPARATOR + (n.getDescription())));
+					toReturn.addAll(visit(n.getChilds().get(i), prefix + PATH_SEPARATOR + description));
 				}
 			}
 			return toReturn;
