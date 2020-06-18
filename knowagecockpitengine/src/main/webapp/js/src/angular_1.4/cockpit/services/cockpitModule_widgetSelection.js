@@ -68,7 +68,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					obj["formula"] = col.formula;
 				}
 					obj["columnName"] = col.name;
-
+					obj["orderType"] = "";
 				if(columnOrdering !=undefined){
 					if (typeof columnOrdering == "string" || columnOrdering.name) {
 						var tempOrder = columnOrdering.name ? columnOrdering.name : columnOrdering;
