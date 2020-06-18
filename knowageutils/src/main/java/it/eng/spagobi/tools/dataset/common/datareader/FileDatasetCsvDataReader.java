@@ -171,7 +171,6 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 				FieldMetadata fieldMeta = new FieldMetadata();
 				String fieldName = StringUtils.escapeForSQLColumnName(header[i]);
 				fieldMeta.setName(fieldName);
-				fieldMeta.setType(String.class);
 				dataStoreMeta.addFiedMeta(fieldMeta);
 			}
 
