@@ -528,7 +528,8 @@ public class LoginModule extends AbstractHttpModule {
 
 		for (int i = 0; i < lstConfigChecks.size(); i++) {
 			Config check = (Config) lstConfigChecks.get(i);
-			if ((SpagoBIConstants.CHANGEPWD_CHANGE_FIRST).equals(check.getLabel()) && user.getDtLastAccess() == null) {
+			if ((SpagoBIConstants.CHANGEPWD_CHANGE_FIRST).equals(check.getLabel()) && new Boolean(check.getValueCheck()) == true
+					&& user.getDtLastAccess() == null) {
 				// if dtLastAccess isn't enhanced it represents the first login, so is necessary change the pwd
 				logger.info("The pwd needs to activate!");
 				toReturn = true;
