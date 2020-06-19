@@ -1360,7 +1360,9 @@ public class ExcelExporter {
 
 			if (widgetsMapAggregations.getJSONObject(0).has("columnSelectedOfDataset"))
 				aggrNewVar = (JSONArray) widgetsMapAggregations.getJSONObject(0).get("columnSelectedOfDataset");
-			mapColumnsAggregations = getMapFromAggregationsFromArray(aggrNewVar);
+
+			if (widget.has("id") && widget.getInt("id") == widgetsMapAggregations.getJSONObject(0).getInt("id"))
+				mapColumnsAggregations = getMapFromAggregationsFromArray(aggrNewVar);
 
 		}
 
@@ -1560,8 +1562,13 @@ public class ExcelExporter {
 								valuesToChange = valuesToChange.replaceAll("\\[", "").replaceAll("\\]", "");
 								valuesToChange = valuesToChange.replaceAll("\"", ""); // single value parameter
 							}
-							if (!(newParameters.length() != 0 && newParameters.has(key) && newParameters.getString(key).length() != 0))
+							if (!(newParameters.length() != 0 && newParameters.has(key) && newParameters.getString(key).length() != 0)) {
+//								if (!valuesToChange.startsWith("'") && !valuesToChange.endsWith("'") && !valuesToChange.contains(","))
+//									newParameters.put(obj, "'" + valuesToChange + "'");
+//								else
 								newParameters.put(obj, valuesToChange);
+							}
+
 						} else {
 
 							if (!(newParameters.has(obj) && !newParameters.getString(obj).isEmpty()))
