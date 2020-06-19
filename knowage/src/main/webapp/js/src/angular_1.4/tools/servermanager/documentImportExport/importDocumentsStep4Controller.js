@@ -75,4 +75,54 @@ function importStep4FuncController($scope,importExportDocumentModule_importConf,
 		);
 	}
 	
+	$scope.stopImportWithDownloadAss=function(text, folderAss, fileAss){
+		var folder = folderAss;
+		var file = fileAss;
+
+		var confirm = $mdDialog.confirm()
+		.title('')
+		.content(text)
+		.ariaLabel('error import')
+		.ok($scope.translate.load("sbi.general.yes"))
+		.cancel($scope.translate.load("sbi.general.No"));
+
+		$mdDialog.show(confirm).then(function() {
+			// choose to download association xml
+			var data={"FILE_NAME":file, "FOLDER_NAME":folder};
+			var config={"responseType": "arraybuffer"};
+
+			sbiModule_restServices.promisePost("1.0/serverManager/importExport/document","downloadAssociationsFile",data,config)
+			.then(function(response) {
+				if (response.data.hasOwnProperty("errors")) {
+				sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
+
+				$scope.stepControl.resetBreadCrumb();
+				$scope.stepControl.insertBread({name: $scope.translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+				$scope.finishImport();
+			}else {
+				// download association file
+				$scope.download.getBlob(response.data,file,'text/xml','xml');
+
+				$scope.stepControl.resetBreadCrumb();
+				$scope.stepControl.insertBread({name: $scope.translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+				$scope.finishImport();
+
+			}
+	}, function(response) {
+		sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
+	});
+
+
+
+
+},
+	function() {
+	$scope.stepControl.resetBreadCrumb();
+		$scope.stepControl.insertBread({name: $scope.translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+		$scope.finishImport();
+});
+	
+	}
+
+
 }
