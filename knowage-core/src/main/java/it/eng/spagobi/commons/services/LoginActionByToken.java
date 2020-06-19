@@ -161,11 +161,7 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 				throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
 			}
 		} catch (Exception t) {
-			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "LOGIN", null, "KO");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "LOGIN", null, "KO");
 			throw SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
 		} finally {
 			logger.debug("OUT");
