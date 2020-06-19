@@ -30,6 +30,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
@@ -154,9 +155,10 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			String userId = (String) ((UserProfile) profile).getUserId();
 			logger.info("User [" + ((UserProfile) profile).getUserId() + "] profile has been loaded succesfully");
 
-			// Propagate user profile
-			getSessionContainer().getPermanentContainer().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-			getHttpRequest().getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+			// in case user has a default role, we get his default user profile object
+			profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
+			// put user profile into session
+			storeProfileInSession((UserProfile) profile, getSessionContainer().getPermanentContainer(), getHttpRequest().getSession());
 
 			// Propagate THEME if present
 			if (theme != null && theme.length() > 0) {
@@ -198,4 +200,5 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			logger.debug("OUT");
 		}
 	}
+
 }
