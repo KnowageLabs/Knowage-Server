@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -280,6 +281,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			toReturn = (SbiAttribute) aSession.load(SbiAttribute.class, id);
+			Hibernate.initialize(toReturn);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
