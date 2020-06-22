@@ -1257,7 +1257,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 								function() {
 
-									sbiModule_restServices.promiseDelete("1.0/datasets", item.label, "/")
+									var escapedLabel = encodeURIComponent(item.label);
+									sbiModule_restServices.promiseDelete("1.0/datasets", escapedLabel, "/")
 										.then(
 												function(response) {
 
