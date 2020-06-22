@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<body ng-controller="qbeController" class="kn-qbe md-knowage-theme" layout="column">
 	<rest-loading></rest-loading>
 	<div ng-if="show" layout="row" flex>
-		<div flex=30 layout="column" >
+		<div flex=30 layout="column" ng-show="!hideList">
 		
 			<qbe-expander-list 
 			class="qbeList"

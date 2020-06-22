@@ -139,7 +139,11 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			query_service.count++;
 			var finalPromise = 	$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
 			if(finalPromise) {
-				finalPromise.then(function(){},function(){
+				finalPromise.then(function(response){
+					$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
+					exportService.setBody($scope.bodySend);
+					window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
+				},function(){
 					angular.copy(oldCatalogue,$scope.editQueryObj);
 					for(var i in $scope.previousVersionRelations){
 						var relationship = $scope.previousVersionRelations[i]
@@ -152,15 +156,18 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 						$rootScope.$emit('smartView');
 						query_service.count = 0;
 					}
-
-
 				});
+			}else{
+				$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
+				exportService.setBody($scope.bodySend);
+				window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 			}
 		} else {
 			$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
+			exportService.setBody($scope.bodySend);
+			window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 		}
-		exportService.setBody($scope.bodySend);
-		window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
+		
 
 	}
 	$scope.$watch('bodySend',function(newValue,oldValue){

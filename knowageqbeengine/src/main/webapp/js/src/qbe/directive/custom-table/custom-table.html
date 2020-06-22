@@ -2,7 +2,12 @@
 	<div style="padding-bottom:5px">
 		<md-toolbar>
 			<div class="md-toolbar-tools secondaryToolbar">
-				
+				<i class="md-icon-button" ng-click="toggleEntitiesList()">
+					<md-tooltip ng-if="!hideList" md-delay="500">Hide List</md-tooltip>
+					<md-tooltip ng-if="hideList" md-delay="500">Show List</md-tooltip>
+					<i ng-if="!hideList" class="fas fa-chevron-left"></i>
+					<i ng-if="hideList" class="fas fa-chevron-right"></i>
+				</i>
 				<ng-transclude></ng-transclude>
 				
 				<span flex></span>

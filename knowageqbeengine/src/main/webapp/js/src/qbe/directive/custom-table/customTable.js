@@ -72,6 +72,11 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	//$scope.smartPreview = query_service.smartView;
 	$scope.query_service = query_service;
 	$scope.completeResult = false;
+	$scope.hideList = $scope.$parent.hideList;
+	$scope.toggleEntitiesList = function(){
+		$scope.hideList = !$scope.hideList;
+		$scope.$parent.hideList = !$scope.$parent.hideList;
+	}
 
 	$scope.completeResultsColumns = [];
 
@@ -86,7 +91,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		this.eGui.classList.add("customFooter");
 		
 		var filterClass = '';
-		if(params.value.filters && params.value.filters.length > 0){
+		if(params.value && params.value.filters && params.value.filters.length > 0){
 			filterClass = 'filter-color';
 		}
 		this.eGui.innerHTML = '<md-icon class="fa fa-info info-button" title="'+$scope.translate.load('kn.qbe.custom.table.info')+'"></md-icon>'+
@@ -100,8 +105,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 		var filterIconEl = this.eGui.querySelector(".filter-button");
 		filterIconEl.addEventListener("click", onFilterButtonClick);
-
-
 	};
 	CustomPinnedRowRenderer.prototype.getGui = function() {
 		return this.eGui;
@@ -127,6 +130,29 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		}
 	}
 
+	//VALUE FORMATTERS
+	function dateFormatter(params){
+		return isNaN(moment(params.value,'DD/MM/YYYY')) ? params.value : moment(params.value,'DD/MM/YYYY').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LL');
+	}
+
+	function dateTimeFormatter(params){
+		return isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format(params.colDef.properties.format || 'LLL');
+	}
+
+	/*
+	 * The number formatter prepares the data to show the number correctly in the user locale format.
+	 * If a precision is set will use it, otherwise will set the precision to 2 if float, 0 if int.
+	 * In case of a returning empty string that one will be displayed.
+	 */
+	function numberFormatter(params){
+		if(params.value != "" && (!params.colDef.style || (params.colDef.style && !params.colDef.style.asString))) {
+			var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
+			return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
+		}else return params.value;
+	}
+	
+	
+	//CUSTOM RENDERERS
 	function CustomHeader() {}
 	CustomHeader.prototype.init = function(params) {
 
@@ -185,11 +211,20 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		agPopUpCloseAreaEl.style.display = agPopUpEl.style.display;
 	}
 
+	function isTemporal(type){
+		if(['oracle.sql.TIMESTAMP','java.sql.Timestamp','java.util.Date','java.sql.Date','java.sql.Time'].indexOf(type) > -1) return true;
+		else return false;
+	}
+	
+	function isNumeric(type){
+		if(["java.lang.Double","java.lang.Float"].indexOf(type) > -1) return true;
+		else return false;
+	}
+	
 	function getAgGridColumns() {
 		return $scope.ngModel
 			.map(function(el) {
-				return {
-					"field":        el.key,
+				var tempObj = {"field": el.key,
 					"tooltipField": el.key,
 					"headerName":   el.alias,
 					"hide": !el.visible,
@@ -198,7 +233,16 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 						"id":     el.id,
 						"color":  el.color
 					}
-				};
+				}
+				if(isTemporal(el.dataType)) {
+					tempObj.valueFormatter = dateTimeFormatter;
+					tempObj.properties.format = el.format;
+				}
+				if(isNumeric(el.dataType)) {
+					tempObj.valueFormatter = dateTimeFormatter;
+					tempObj.properties.precision = el.precision;
+				}
+				return tempObj;
 			});
 	}
 
