@@ -578,6 +578,7 @@
 
 			}
 			registryCRUD.update($scope.selectedRow).then(function(response) {
+	     	   	readData($scope.formParams);
 				sbiMessaging.showInfoMessage( $scope.sbiTranslate.load("kn.registry.registryDocument.update.success")
 						+' '+ ($scope.selectedRow.length) + ' ' + $scope.sbiTranslate.load("kn.registry.registryDocument.row"), $scope.sbiTranslate.load("kn.registry.registryDocument.success"));
 				$scope.selectedRow.length = 0;
