@@ -97,15 +97,15 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 			if (!isSSOActive) {
 				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 
-				Assert.assertNotNull(token, "User identifier not spicified");
+				Assert.assertNotNull(token, "Missing authentication token");
 
 				SpagoBIUserProfile userProfile = null;
 				userProfile = supplier.checkAuthenticationToken(token);
 
 				if (userProfile == null) {
-					logger.warn("An attempt to authenticate with wrong credential has made [" + token + "]");
+					logger.error("An attempt to authenticate with token failed: input token is [" + token + "]");
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "LOGIN", null, "KO");
-					throw new SpagoBIServiceException(SERVICE_NAME, "An attempt to authenticate with wrong credential has made [" + token + "]");
+					throw new SpagoBIServiceException(SERVICE_NAME, "Authentication by token failed");
 				}
 
 				// authentication was successful, we get the user unique identifier
