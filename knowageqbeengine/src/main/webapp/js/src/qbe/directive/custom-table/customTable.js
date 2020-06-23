@@ -138,27 +138,25 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	function numberFormatter(params){
 		switch(params.colDef.properties.format) {
 		  case '#,###':
-			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0 }).format(params.value)
+			  return new Intl.NumberFormat(sbiModule_config.curr_language + '-' + sbiModule_config.curr_country, { minimumFractionDigits: 0 }).format(params.value)
 		  case '#,###.0':
-			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 1 }).format(params.value)
+			  return new Intl.NumberFormat(sbiModule_config.curr_language + '-' + sbiModule_config.curr_country, { minimumFractionDigits: 1 }).format(params.value)
 		  case '#,###.00':
-			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2 }).format(params.value)
+			  return new Intl.NumberFormat(sbiModule_config.curr_language + '-' + sbiModule_config.curr_country, { minimumFractionDigits: 2 }).format(params.value)
 		  case '#,###.000':
-			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 3 }).format(params.value)
+			  return new Intl.NumberFormat(sbiModule_config.curr_language + '-' + sbiModule_config.curr_country, { minimumFractionDigits: 3 }).format(params.value)
 		  case '#,###.0000':
-			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 4 }).format(params.value)
+			  return new Intl.NumberFormat(sbiModule_config.curr_language + '-' + sbiModule_config.curr_country, { minimumFractionDigits: 4 }).format(params.value)
 		  case '#,###.00000':
-			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 5 }).format(params.value)
-		  case '#.###':
-			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0 }).format(params.value)
+			  return new Intl.NumberFormat(sbiModule_config.curr_language + '-' + sbiModule_config.curr_country, { minimumFractionDigits: 5 }).format(params.value)
 		  case '€#.##0.00':
-			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2 , style: 'currency', currency: 'EUR' }).format(params.value)
+			  return new Intl.NumberFormat(sbiModule_config.curr_language + '-' + sbiModule_config.curr_country, { minimumFractionDigits: 2 , style: 'currency', currency: 'EUR' }).format(params.value)
 		  case "â¬#,##0.00":
-			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2 , style: 'currency', currency: 'EUR' }).format(params.value)
+			  return new Intl.NumberFormat(sbiModule_config.curr_language + '-' + sbiModule_config.curr_country, { minimumFractionDigits: 2 , style: 'currency', currency: 'EUR' }).format(params.value)
 		  case '$#,##0.00':
 			  return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 , style: 'currency', currency: 'USD' }).format(params.value)
 		  default:
-			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0 }).format(params.value)
+			  return new Intl.NumberFormat(sbiModule_config.curr_language + '-' + sbiModule_config.curr_country, { minimumFractionDigits: 0 }).format(params.value)
 		}
 	}
 	
