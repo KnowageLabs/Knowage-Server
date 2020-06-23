@@ -148,24 +148,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											{{translate.load("sbi.bm.generate")}}
 										</md-button>
 									</div>
-									<md-input-container ng-show="selectedBusinessModel.id!=undefined" flex>
-							          <md-switch ng-model="metaWebFunctionality" ng-change="resetLikeConditions()">{{translate.load("sbi.bm.metaweb.enable")}}</md-switch>
-							        </md-input-container>
-								        
 									<%} %>
-				      				
-				      				<!-- ng-click="fileChange();checkChange()"  -->
-				      				<%
-									if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_LIFECYCLE_MANAGEMENT)) {%>
-				      				<md-input-container flex>
-							          <md-switch ng-model="selectedBusinessModel.modelLocked" ng-change="businessModelLock()">{{ selectedBusinessModel.modelLocked ? translate.load("sbi.bm.unlockModel") : translate.load("sbi.bm.lockModel")}}</md-switch>
-							        </md-input-container>
-									<%} %>
-									<md-input-container flex>
-										<md-switch ng-model="selectedBusinessModel.smartView" aria-label="Switch smart preview">
-											{{selectedBusinessModel.smartView ? translate.load("sbi.bm.smart.view") : translate.load("sbi.bm.advanced.view")}}									   
-										</md-switch>
-									</md-input-container>
+									
+									<div flex layout="row" layout-wrap layout-align="start center">
+										<% if(isAdmin || isTec){ %>
+										<md-input-container ng-show="selectedBusinessModel.id!=undefined" flex="50" class="noMargin">
+								          <md-switch class="lowMarginSwitch" ng-model="metaWebFunctionality" ng-change="resetLikeConditions()">{{translate.load("sbi.bm.metaweb.enable")}}</md-switch>
+								        </md-input-container>
+								        <%} %>
+									        
+										
+					      				
+					      				<!-- ng-click="fileChange();checkChange()"  -->
+					      				<%
+										if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_LIFECYCLE_MANAGEMENT)) {%>
+					      				<md-input-container flex="50" class="noMargin">
+								          <md-switch class="lowMarginSwitch" ng-model="selectedBusinessModel.modelLocked" ng-change="businessModelLock()">{{ selectedBusinessModel.modelLocked ? translate.load("sbi.bm.unlockModel") : translate.load("sbi.bm.lockModel")}}</md-switch>
+								        </md-input-container>
+										<%} %>
+										<md-input-container flex="100" class="noMargin">
+											<md-switch class="lowMarginSwitch" ng-model="selectedBusinessModel.smartView" aria-label="Switch smart preview">
+												{{selectedBusinessModel.smartView ? translate.load("sbi.bm.smart.view") : translate.load("sbi.bm.advanced.view")}}	
+												<md-tooltip>{{::translate.load("sbi.bm.smart.view.tooltip")}}</md-tooltip>								   
+											</md-switch>
+										</md-input-container>
+									</div>
 								</div>
 								<md-card-content ng-if="metaWebFunctionality" layout="column">
 						      		<md-toolbar class="secondaryToolbar">
