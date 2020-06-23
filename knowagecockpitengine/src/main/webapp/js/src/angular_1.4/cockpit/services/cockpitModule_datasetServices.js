@@ -605,44 +605,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.getFiltersWithoutParams=function(){
 		return savedFilters;
 	}
-
-	this.cache = {};
-	this.putInCache = function(dsId, widgetId, token, data) {
-		if (!(widgetId in ds.cache)) {
-			ds.cache[widgetId] = {};
-		}
-
-		if (!(dsId in ds.cache[widgetId])) {
-			ds.cache[widgetId][dsId] = {};
-		}
-
-		ds.cache[widgetId][dsId][token] = data;
-
-		// Clean old calls
-		var keys = Object.keys(ds.cache[widgetId][dsId])
-			.sort()
-			.slice(0, -1);
-		keys.forEach(function(el) {
-			delete ds.cache[widgetId][dsId][el];
-		});
-
-		return ds.getFromCache(dsId, widgetId);
-	}
-
-	this.getFromCache = function(dsId, widgetId) {
-		if (ds.cache) {
-			if (ds.cache[widgetId] && ds.cache[widgetId][dsId]) {
-				var keys = Object.keys(ds.cache[widgetId][dsId]).sort();
-				var lastEl = keys[keys.length - 1];
-				return ds.cache[widgetId][dsId][lastEl];
-			} else {
-				return undefined;
-			}
-		} else {
-			return undefined;
-		}
-	}
-
 	//TODO missing maxRows
 	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues, nature){
 
@@ -652,7 +614,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		//after retry LabelDataset by Id call service for data
 		var dataset = this.getAvaiableDatasetById(dsId);
-		var token = new Date().getTime();
 		var deferred = $q.defer();
 
 		var params="?";
@@ -897,10 +858,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 					cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
 				}
-				response.data.dsId = dsId;
-				response.data.token = token;
-				var cahedData = ds.putInCache(dsId, ngModel.id, token, response.data);
-				deferred.resolve(cahedData);
+				deferred.resolve(response.data);
 			},function(response){
 				var regex = /(.*)1.0\/chart\/jsonChartTemplate\/(.*)\/getDataAndConf(.*)widgetName=(.*)/g;
 				var array = regex.exec(decodeURIComponent(response.config.url));
@@ -924,10 +882,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 					cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
 				}
-				response.data.dsId = dsId;
-				response.data.token = token;
-				var cahedData = ds.putInCache(dsId, ngModel.id, token, response.data);
-				deferred.resolve(cahedData);
+				deferred.resolve(response.data);
 			},function(response){
 				var regex = /(.*)2.0\/datasets\/(.*)\/data(.*)widgetName=(.*)/g;
 				var array = regex.exec(decodeURIComponent(response.config.url));
