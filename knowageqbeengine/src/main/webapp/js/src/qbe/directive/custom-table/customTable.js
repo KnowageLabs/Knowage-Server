@@ -131,24 +131,35 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	}
 
 	//VALUE FORMATTERS
-	function dateFormatter(params){
-		return isNaN(moment(params.value,'DD/MM/YYYY')) ? params.value : moment(params.value,'DD/MM/YYYY').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LL');
-	}
-
 	function dateTimeFormatter(params){
 		return isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format(params.colDef.properties.format || 'LLL');
 	}
 
-	/*
-	 * The number formatter prepares the data to show the number correctly in the user locale format.
-	 * If a precision is set will use it, otherwise will set the precision to 2 if float, 0 if int.
-	 * In case of a returning empty string that one will be displayed.
-	 */
 	function numberFormatter(params){
-		if(params.value != "" && (!params.colDef.style || (params.colDef.style && !params.colDef.style.asString))) {
-			var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
-			return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
-		}else return params.value;
+		switch(params.colDef.properties.format) {
+		  case '#,###':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0 }).format(params.value)
+		  case '#,###.0':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 1 }).format(params.value)
+		  case '#,###.00':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2 }).format(params.value)
+		  case '#,###.000':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 3 }).format(params.value)
+		  case '#,###.0000':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 4 }).format(params.value)
+		  case '#,###.00000':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 5 }).format(params.value)
+		  case '#.###':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0 }).format(params.value)
+		  case '€#.##0.00':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2 , style: 'currency', currency: 'EUR' }).format(params.value)
+		  case "â¬#,##0.00":
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2 , style: 'currency', currency: 'EUR' }).format(params.value)
+		  case '$#,##0.00':
+			  return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 , style: 'currency', currency: 'USD' }).format(params.value)
+		  default:
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0 }).format(params.value)
+		}
 	}
 	
 	
@@ -217,7 +228,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	}
 	
 	function isNumeric(type){
-		if(["java.lang.Double","java.lang.Float"].indexOf(type) > -1) return true;
+		if(["java.lang.Byte","java.lang.Long","java.lang.Short","java.lang.Integer","java.math.BigInteger","java.lang.Double","java.lang.Float","java.math.BigDecimal","java.math.Decimal" ].indexOf(type) > -1) return true;
 		else return false;
 	}
 	
@@ -239,8 +250,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 					tempObj.properties.format = el.format;
 				}
 				if(isNumeric(el.dataType)) {
-					tempObj.valueFormatter = dateTimeFormatter;
-					tempObj.properties.precision = el.precision;
+					tempObj.valueFormatter = numberFormatter;
+					tempObj.properties.format = el.format;
 				}
 				return tempObj;
 			});
