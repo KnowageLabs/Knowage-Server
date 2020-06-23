@@ -921,7 +921,7 @@ function cockpitChartWidgetControllerFunction(
 			  		        enableSorting: false,
 			  		        onGridReady : resizeColumns,
 			  		        singleClickEdit: true,
-			  		        stopEditingWhenGridLosesFocus: true,
+			  		        onCellEditingStopped: refreshRow,
 			  		        columnDefs: $scope.columnsDefition,
 			  				rowData: $scope.localModel.columnSelectedOfDatasetAggregations
 			  			}
