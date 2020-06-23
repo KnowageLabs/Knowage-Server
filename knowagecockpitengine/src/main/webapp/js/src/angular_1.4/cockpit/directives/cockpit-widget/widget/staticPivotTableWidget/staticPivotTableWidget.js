@@ -173,7 +173,11 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$scope.applyI18N(dataToSend);
 		$scope.options = dataToSend;
 
-		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
+		$scope.oldUpdateExecutions = $scope.oldUpdateExecutions || [];
+
+		var newUpdateExecution = sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend);
+		$q.all($scope.oldUpdateExecutions).then(function() {
+			newUpdateExecution.then(
 				function(response){
 					var fatherElement = angular.element($scope.subCockpitWidget);
 					$scope.subCockpitWidget.html(response.data.htmlTable);
@@ -187,8 +191,11 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				function(response){
 					sbiModule_restServices.errorHandler(response.data,"Pivot Table Error")
 					$scope.hideWidgetSpinner();
-					}
-				)
+				}
+			);
+		});
+
+		$scope.oldUpdateExecutions.push(newUpdateExecution)
 
 		if(nature == 'init'){
 			$timeout(function(){
