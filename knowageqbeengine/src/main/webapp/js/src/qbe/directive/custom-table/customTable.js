@@ -72,10 +72,221 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	//$scope.smartPreview = query_service.smartView;
 	$scope.query_service = query_service;
 	$scope.completeResult = false;
+	$scope.hideList = $scope.$parent.hideList;
+	$scope.toggleEntitiesList = function(){
+		$scope.hideList = !$scope.hideList;
+		$scope.$parent.hideList = !$scope.$parent.hideList;
+	}
 
 	$scope.completeResultsColumns = [];
 
 	$scope.previewModel = [];
+
+	function CustomPinnedRowRenderer() {}
+	CustomPinnedRowRenderer.prototype.init = function(params) {
+		var fieldName = params.colDef.field;
+		this.data = params.data[fieldName];
+
+		this.eGui = document.createElement('div');
+		this.eGui.classList.add("customFooter");
+		
+		var filterClass = '';
+		if(params.value && params.value.filters && params.value.filters.length > 0){
+			filterClass = 'filter-color';
+		}
+		this.eGui.innerHTML = '<md-icon class="fa fa-info info-button" title="'+$scope.translate.load('kn.qbe.custom.table.info')+'"></md-icon>'+
+			'<md-icon class="fa fa-filter filter-button '+filterClass+'" title="'+$scope.translate.load('kn.qbe.custom.table.filters')+'"></md-icon>';
+
+		var onInfoButtonClick   = this.infoColumn.bind(this);
+		var onFilterButtonClick = this.filterColumn.bind(this);
+
+		var infoIconEl   = this.eGui.querySelector(".info-button");
+		infoIconEl.addEventListener("click", onInfoButtonClick);
+
+		var filterIconEl = this.eGui.querySelector(".filter-button");
+		filterIconEl.addEventListener("click", onFilterButtonClick);
+	};
+	CustomPinnedRowRenderer.prototype.getGui = function() {
+		return this.eGui;
+	};
+	CustomPinnedRowRenderer.prototype.infoColumn = function() {
+		$scope.showFilters(this.data);
+	};
+	CustomPinnedRowRenderer.prototype.filterColumn = function() {
+		$scope.openFilters(this.data);
+	};
+
+	$scope.qbeTableGrid = {
+		angularCompileRows: true,
+		pagination : false,
+		domLayout:'autoHeight',
+		rowHeight: 20,
+		defaultColDef: {
+			resizable: true,
+			pinnedRowCellRenderer: CustomPinnedRowRenderer
+		},
+		components: {
+			agColumnHeader: CustomHeader
+		}
+	}
+
+	//VALUE FORMATTERS
+	function dateTimeFormatter(params){
+		return isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format(params.colDef.properties.format || 'LLL');
+	}
+
+	function numberFormatter(params){
+		switch(params.colDef.properties.format) {
+		  case '#,###':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0 }).format(params.value)
+		  case '#,###.0':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 1 }).format(params.value)
+		  case '#,###.00':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2 }).format(params.value)
+		  case '#,###.000':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 3 }).format(params.value)
+		  case '#,###.0000':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 4 }).format(params.value)
+		  case '#,###.00000':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 5 }).format(params.value)
+		  case '#.###':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0 }).format(params.value)
+		  case '€#.##0.00':
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2 , style: 'currency', currency: 'EUR' }).format(params.value)
+		  case "â¬#,##0.00":
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2 , style: 'currency', currency: 'EUR' }).format(params.value)
+		  case '$#,##0.00':
+			  return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 , style: 'currency', currency: 'USD' }).format(params.value)
+		  default:
+			  return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0 }).format(params.value)
+		}
+	}
+	
+	
+	//CUSTOM RENDERERS
+	function CustomHeader() {}
+	CustomHeader.prototype.init = function(params) {
+
+		this.params = params;
+		this.properties = params.column.colDef.properties;
+
+		this.eGui = document.createElement("div");
+		this.eGui.classList.add("customHeader");
+		this.eGui.innerHTML = '<div class="qbeCustomTopColor" style="background-color: ' + this.properties.color + '" title="'+ this.properties.entity +'"></div>' +
+			'<div class="qbeHeaderContainer"><md-icon class="fa fa-sort sort-button" title="'+$scope.translate.load('kn.qbe.custom.table.sorting')+'"></md-icon>' +
+			'<span class="flex truncated" title="'+params.displayName+'">' + params.displayName + '</span>' +
+			'<md-icon class="fa fa-cog settings-button" title="'+$scope.translate.load('kn.qbe.custom.table.column.settings')+'"></md-icon>'+
+			'<md-icon class="fa fa-times remove-button" title="'+$scope.translate.load('kn.qbe.custom.table.delete.column')+'"></md-icon></div>';
+
+		this.onRemoveButtonClick = this.removeColumn.bind(this);
+		this.onSortButtonClick = this.sortColumn.bind(this);
+		this.onSettingsButtonClick = this.openColumnSettings.bind(this);
+
+		this.removeButton = this.eGui.querySelector(".remove-button");
+		this.removeButton.addEventListener("click", this.onRemoveButtonClick);
+
+		this.sortButton = this.eGui.querySelector(".sort-button");
+		this.sortButton.addEventListener("click", this.onSortButtonClick);
+
+		this.settingsButton = this.eGui.querySelector(".settings-button");
+		this.settingsButton.addEventListener("click", this.onSettingsButtonClick);
+
+
+	}
+	CustomHeader.prototype.getGui = function() {
+		return this.eGui;
+	}
+	CustomHeader.prototype.removeColumn = function() {
+		$scope.removeColumns([{"id" : this.properties.id,"entity" : this.properties.entity }]);
+	}
+	CustomHeader.prototype.sortColumn = function() {
+		var realColumn = $scope.getColumnById(this.properties.id)
+		$scope.toggleOrder(realColumn);
+		$scope.executeRequest();
+	}
+	CustomHeader.prototype.openColumnSettings = function(event){
+		for(var k in $scope.ngModel){
+			if($scope.ngModel[k].id == this.properties.id) $scope.field = $scope.ngModel[k];
+		}
+		document.getElementById('ag-popup-child').style.left = event.clientX;
+		document.getElementById('ag-popup-child').style.top = event.clientY;
+		$scope.$apply();
+		togglePopupVisibility();
+	}
+
+	function togglePopupVisibility(){
+		var agPopUpEl = document.getElementById('ag-popup');
+		var agPopUpCloseAreaEl = document.getElementById('ag-popup-close-area');
+
+		agPopUpEl.style.display = agPopUpEl.style.display == 'block' ? 'none' : 'block';
+		agPopUpCloseAreaEl.style.display = agPopUpEl.style.display;
+	}
+
+	function isTemporal(type){
+		if(['oracle.sql.TIMESTAMP','java.sql.Timestamp','java.util.Date','java.sql.Date','java.sql.Time'].indexOf(type) > -1) return true;
+		else return false;
+	}
+	
+	function isNumeric(type){
+		if(["java.lang.Byte","java.lang.Long","java.lang.Short","java.lang.Integer","java.math.BigInteger","java.lang.Double","java.lang.Float","java.math.BigDecimal","java.math.Decimal" ].indexOf(type) > -1) return true;
+		else return false;
+	}
+	
+	function getAgGridColumns() {
+		return $scope.ngModel
+			.map(function(el) {
+				var tempObj = {"field": el.key,
+					"tooltipField": el.key,
+					"headerName":   el.alias,
+					"hide": !el.visible,
+					"properties": {
+						"entity": el.entity,
+						"id":     el.id,
+						"color":  el.color
+					}
+				}
+				if(isTemporal(el.dataType)) {
+					tempObj.valueFormatter = dateTimeFormatter;
+					tempObj.properties.format = el.format;
+				}
+				if(isNumeric(el.dataType)) {
+					tempObj.valueFormatter = numberFormatter;
+					tempObj.properties.format = el.format;
+				}
+				return tempObj;
+			});
+	}
+
+	$scope.closePopup = function() {
+		togglePopupVisibility();
+	}
+
+	$scope.getColumnById = function(id) {
+		return $scope.ngModel
+			.find(function(el) {
+				return el.id == id;
+			})
+	}
+
+	$scope.updateQbeTableGridColDef = function() {
+		$scope.qbeTableGrid.api.setColumnDefs(getAgGridColumns());
+	}
+
+	$scope.updateQbeTableGridData = function() {
+		$scope.qbeTableGrid.api.setRowData($scope.previewModel);
+
+		var pinnedBottomRowData = $scope.ngModel.reduce(function(accumulator, currentValue, index) {
+			accumulator["column_" + (index + 1)] = currentValue;
+			return accumulator;
+		}, {});
+
+		$scope.qbeTableGrid.api.setPinnedBottomRowData([pinnedBottomRowData]);
+	}
+
+	$scope.updateQbeTable = function() {
+		$scope.updateQbeTableGridColDef();
+		$scope.updateQbeTableGridData();
+	}
 
 	// PAGINATION METHODS
 	$scope.pageChanged = function(newPageNumber){
@@ -146,42 +357,42 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		expression_service.generateExpressions($scope.filters,$scope.expression,$scope.advancedFilters)
 	}
 
-	$scope.moveRight = function(currentOrder, column) {
-
-		var newOrder = currentOrder + 1;
-		var index = $scope.ngModel.indexOf(column);
-		var indexOfNext = index + 1;
-
-		if(index!=undefined && indexOfNext!=-1 && newOrder <= $scope.ngModel.length){
-			$scope.ngModel[index] = $scope.ngModel[indexOfNext];
-			$scope.ngModel[index].order = currentOrder;
-
-			$scope.ngModel[indexOfNext] = column;
-			$scope.ngModel[indexOfNext].order = newOrder;
-		}
-
-		$rootScope.$broadcast('move', {index:index,direction:+1});
-
-	};
-
-	$scope.moveLeft = function(currentOrder, column) {
-
-		var newOrder = currentOrder - 1;
-		var index = $scope.ngModel.indexOf(column);
-		var indexOfBefore = index - 1;
-
-		if(index!=undefined && indexOfBefore!=undefined && indexOfBefore!=-1){
-
-			$scope.ngModel[index] = $scope.ngModel[indexOfBefore];
-			$scope.ngModel[index].order = currentOrder;
-
-			$scope.ngModel[indexOfBefore] = column;
-			$scope.ngModel[indexOfBefore].order = newOrder;
-		}
-
-		$rootScope.$broadcast('move', {index:index,direction:-1});
-
-	};
+//	$scope.moveRight = function(currentOrder, column) {
+//
+//		var newOrder = currentOrder + 1;
+//		var index = $scope.ngModel.indexOf(column);
+//		var indexOfNext = index + 1;
+//
+//		if(index!=undefined && indexOfNext!=-1 && newOrder <= $scope.ngModel.length){
+//			$scope.ngModel[index] = $scope.ngModel[indexOfNext];
+//			$scope.ngModel[index].order = currentOrder;
+//
+//			$scope.ngModel[indexOfNext] = column;
+//			$scope.ngModel[indexOfNext].order = newOrder;
+//		}
+//
+//		$rootScope.$broadcast('move', {index:index,direction:+1});
+//
+//	};
+//
+//	$scope.moveLeft = function(currentOrder, column) {
+//
+//		var newOrder = currentOrder - 1;
+//		var index = $scope.ngModel.indexOf(column);
+//		var indexOfBefore = index - 1;
+//
+//		if(index!=undefined && indexOfBefore!=undefined && indexOfBefore!=-1){
+//
+//			$scope.ngModel[index] = $scope.ngModel[indexOfBefore];
+//			$scope.ngModel[index].order = currentOrder;
+//
+//			$scope.ngModel[indexOfBefore] = column;
+//			$scope.ngModel[indexOfBefore].order = newOrder;
+//		}
+//
+//		$rootScope.$broadcast('move', {index:index,direction:-1});
+//
+//	};
 
 	$scope.changeAlias = function(field){
 		$mdDialog.show({
@@ -237,6 +448,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			toRemove.push({"id" : fields[i].id,"entity" : fields[i].entity
 			})
 		}
+		$scope.updateQbeTable();
 		$rootScope.$emit('removeColumns', toRemove);
 	};
 
@@ -277,6 +489,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			$scope.openPreviewTemplate(true, $scope.completeResultsColumns, $scope.previewModel, data.results);
 			$scope.firstExecution = false;
 		}
+		$scope.updateQbeTable();
 	});
 
 	$scope.$on('start', function (event, data) {
@@ -299,7 +512,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				panelClass :"layout-row",
 				fullscreen :true,
 				controller: function($scope,mdPanelRef,sbiModule_translate,$mdDateLocale){
-
 
 					var gridOptions = {
 					        enableColResize: true,
@@ -340,12 +552,46 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 							gridOptions.api.sizeColumnsToFit();
 						}
 					$scope.model ={"gridOptions":gridOptions, "completeresult": completeResult, "completeResultsColumns": completeResultsColumns, "previewModel": previewModel, "totalNumberOfItems": totalNumberOfItems, "mdPanelRef":mdPanelRef};
-					$scope.$watch('model.previewModel',function(){
-						console.log($scope.model)
-						gridOptions.api.setRowData($scope.model.previewModel);
+					$scope.$watch('model.previewModel',function(newValue,oldValue){
+						console.log(newValue)
+						gridOptions.api.setRowData(newValue);
+						$scope.totalPages = Math.ceil($scope.model.totalNumberOfItems / $scope.itemsPerPage);
 					},true)
 					$scope.itemsPerPage = 20;
+					
 					$scope.currentPageNumber = 0;
+					$scope.maxPageNumber = function(){
+						if(($scope.currentPageNumber + 1) * $scope.itemsPerPage < $scope.model.totalNumberOfItems) return ($scope.currentPageNumber + 1) * $scope.itemsPerPage;
+						else return $scope.model.totalNumberOfItems;
+					}
+
+				  	$scope.disableFirst = function(){
+				  		return $scope.currentPageNumber == 0;
+				  	}
+
+				  	$scope.disableLast = function(){
+				  		return ($scope.currentPageNumber + 1) == $scope.totalPages;
+				  	}
+
+				  	$scope.first = function(){
+				  		$scope.currentPageNumber = 0;
+				  		$scope.changeDatasetPage($scope.itemsPerPage,1);
+					}
+
+				  	$scope.prev = function(){
+				  		$scope.currentPageNumber--;
+				  		$scope.changeDatasetPage($scope.itemsPerPage,$scope.currentPageNumber);
+					}
+
+				  	$scope.next = function(){
+				  		$scope.currentPageNumber++;
+				  		$scope.changeDatasetPage($scope.itemsPerPage,$scope.currentPageNumber + 2);
+					}
+
+				  	$scope.last = function(){
+				  		$scope.currentPageNumber = $scope.totalPages -1;
+				  		$scope.changeDatasetPage($scope.itemsPerPage,$scope.totalPages -1);
+					}
 					$scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
 
 							$rootScope.$broadcast('start',{"itemsPerPage":itemsPerPage, "currentPageNumber":currentPageNumber});

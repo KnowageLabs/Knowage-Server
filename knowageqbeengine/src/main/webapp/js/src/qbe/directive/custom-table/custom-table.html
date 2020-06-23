@@ -1,34 +1,39 @@
 <div layout="column" class="qbeCustomTable" flex>
 	<div style="padding-bottom:5px">
 		<md-toolbar>
-	   		<div class="md-toolbar-tools secondaryToolbar">
-	   			
-	   			<ng-transclude></ng-transclude>
-	   			
-	   			<span flex></span>
-	   			<i ng-if="ngModel.length > 0" class="md-icon-button" ng-click="removeColumns(ngModel)">
-	   				<md-tooltip md-delay="500">{{::translate.load("kn.qbe.selectgridpanel.buttons.tt.deleteall")}}</md-tooltip>
-	   				<span class="fa-stack">
-					  <i class="fas fa-ban fa-stack-2x"></i>
-					  <i class="fas fa-columns fa-stack-1x"></i>
+			<div class="md-toolbar-tools secondaryToolbar">
+				<i class="md-icon-button" ng-click="toggleEntitiesList()">
+					<md-tooltip ng-if="!hideList" md-delay="500">Hide List</md-tooltip>
+					<md-tooltip ng-if="hideList" md-delay="500">Show List</md-tooltip>
+					<i ng-if="!hideList" class="fas fa-chevron-left"></i>
+					<i ng-if="hideList" class="fas fa-chevron-right"></i>
+				</i>
+				<ng-transclude></ng-transclude>
+				
+				<span flex></span>
+				<i ng-if="ngModel.length > 0" class="md-icon-button" ng-click="removeColumns(ngModel)">
+					<md-tooltip md-delay="500">{{::translate.load("kn.qbe.selectgridpanel.buttons.tt.deleteall")}}</md-tooltip>
+					<span class="fa-stack">
+						<i class="fas fa-ban fa-stack-2x"></i>
+						<i class="fas fa-columns fa-stack-1x"></i>
 					</span>
-	   			</i>
-	   			<i class="md-icon-button" ng-if="filters.length>0" ng-click="deleteAllFilters()">
-	   				<md-tooltip md-delay="500">{{::translate.load("kn.qbe.filtergridpanel.buttons.tt.delete")}}</md-tooltip>
-	   				<span class="fa-stack">
-					  <i class="fas fa-ban fa-stack-2x"></i>
-					  <i class="fas fa-filter fa-stack-1x"></i>
+				</i>
+				<i class="md-icon-button" ng-if="filters.length>0" ng-click="deleteAllFilters()">
+					<md-tooltip md-delay="500">{{::translate.load("kn.qbe.filtergridpanel.buttons.tt.delete")}}</md-tooltip>
+					<span class="fa-stack">
+						<i class="fas fa-ban fa-stack-2x"></i>
+						<i class="fas fa-filter fa-stack-1x"></i>
 					</span>
-	   			</i>
+				</i>
 
 				<md-button class="md-icon-button" ng-click="showHiddenColumns()" ng-if="hiddenColumns()">
 					<md-tooltip md-delay="500"> {{::translate.load("kn.qbe.custom.table.show.hidden.columns.tooltip")}}</md-tooltip>
 					<md-icon md-font-icon="fa fa-eye"></md-icon>
 				</md-button>
-	   			<md-switch ng-model="query_service.smartView" aria-label="Switch smart preview">
-				    {{::translate.load("kn.qbe.custom.table.smartdata")}}
+				<md-switch ng-model="query_service.smartView" aria-label="Switch smart preview">
+					{{::translate.load("kn.qbe.custom.table.smartdata")}}
 				</md-switch>
-				 
+				
 				<md-button ng-if="selectedVisualization=='previewData' && !query_service.smartView" class="md-icon-button"  ng-click="executeRequest()">
 					<md-icon md-font-icon="fa fa-play">
 						<md-tooltip md-delay="500">{{::translate.load('kn.qbe.execute')}}</md-tooltip>
@@ -65,8 +70,8 @@
 							</md-menu-item>
 						</md-menu-content>		
 				</md-menu>
-	   		</div>
-	   	</md-toolbar>
+			</div>
+		</md-toolbar>
    	</div>
    	<md-whiteframe flex>
    		<md-content >
@@ -89,213 +94,37 @@
 			</div>
 
 	<div layout="row" ng-if="selectedVisualization=='previewData' && query_service.smartView">
-		<div ng-repeat="field in ngModel | orderBy: 'order' track by $index" ng-if="field.visible" class="qbeCustomColumn" layout-column>
-	   		<div class="qbeCustomTopColor" ng-style="{'background-color' : field.color}"><md-tooltip md-direction="top">{{field.entity}}</md-tooltip></div>
-	   		<md-toolbar>
-	   		<div class="md-toolbar-tools" >
-	   		<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="toggleOrder(field)">
-	      		<md-tooltip md-direction="top">{{field.name}}</md-tooltip>
-	        	<md-icon md-menu-origin class="fa fa-sort"></md-icon>
-	      	</md-button>
-
-			<p style="min-width:60px">
-				{{field.alias}}
-				<md-tooltip md-direction="top">{{field.alias}}</md-tooltip>
-			</p>
-
-	   		<md-menu>
-	      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event)">
-	      		<md-tooltip md-direction="top">{{::translate.load("kn.qbe.custom.table.column.settings")}}</md-tooltip>
-	        	<md-icon md-menu-origin class="fa fa-cog"></md-icon>
-	      	</md-button>
-	      	<md-menu-content class="qbeMenuContent">
-		      
-	       		<md-menu-item>
-	          		<md-checkbox ng-model="field.visible" ng-click="setVisible(field.id,field.entity, field.visible)" class="menuCheckbox" aria-label="show column">
-	            	<span>{{::translate.load("kn.qbe.custom.table.show.field")}}</span>
-	          </md-checkbox>
-	       		</md-menu-item>
-	       		<md-menu-item ng-show="field.iconCls=='measure'" ng-if="isTemporal">
-	       			<md-button ng-click="addTemporalParameter(field)">
-							<md-icon class="fa fa-terminal" ></md-icon>
-		            		<span>{{::translate.load("kn.qbe.selectgridpanel.name.temporalOperand.parameter")}}</span>
-		          		</md-button>
-	       		</md-menu-item>
-	       		<md-menu-item ng-show="field.iconCls=='measure'" ng-if="isTemporal">
-         			<md-menu>		
-	         			<md-button ng-click="openMenu($mdMenu.open, $event)">
-							<md-icon class="fa fa-puzzle-piece" ></md-icon>
-		            		<span>{{::translate.load("kn.qbe.custom.table.function.temporal")}}</span>
-		          		</md-button>
-
-			      		<md-menu-content class="qbeMenuContent">
-				      
-					      	<md-menu-item>
-				          		<md-button ng-click="applyFuntion('YTD',field.id,field.entity)">
-				            		<span>YTD</span>
-				            		</md-button>
-				       		</md-menu-item>
-				       		
-				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('LAST_YEAR',field.id,field.entity)">
-				            		<span>LAST_YEAR</span>
-				            		</md-button>
-				       		</md-menu-item>
-				       		
-				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('PARALLEL_YEAR',field.id,field.entity)">
-				            		<span>PARALLEL_YEAR</span>
-				            		</md-button>
-				       		</md-menu-item>
-				       		
-				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('MTD',field.id,field.entity)">
-				            		<span>MTD</span>
-				            		</md-button>
-				       		</md-menu-item>
-				       		
-				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('LAST_MONTH',field.id,field.entity)">
-				            		<span>LAST_MONTH</span>
-				            		</md-button>
-				       		</md-menu-item>
-				
-			       		</md-menu-content>
-       				</md-menu>
-	       		</md-menu-item>
-	       		
-	       		<md-menu-item ng-show="field.iconCls=='attribute' || (field.iconCls=='calculation' && field.attributes.formState.nature.toLowerCase()=='attribute')">
-	          		<md-checkbox ng-model="field.group" ng-click="group(field.id, field.entity, field.group)" class="menuCheckbox" aria-label="hide column">
-	          <span>  {{::translate.load("kn.qbe.custom.table.group")}}</span>
-	          </md-checkbox>
-	       		</md-menu-item>
-	       		
-	       		<md-menu-item ng-show="field.iconCls=='measure'  || (field.iconCls=='calculation' && field.attributes.formState.nature.toLowerCase()=='measure')">
-         			<md-menu>		
-	         			<md-button ng-click="openMenu($mdMenu.open, $event)">
-							 <md-icon md-font-icon="kni kni-sum"></md-icon>
-		            		<span>{{::translate.load("kn.qbe.custom.table.aggregation")}}</span>
-		          		</md-button>
-		          			      
-			      		<md-menu-content class="qbeMenuContent">
-				      
-					      	<md-menu-item>
-				          		<md-button ng-click="applyFuntion('none',field.id,field.entity)" ng-class="{'md-raised':field.funct=='NONE'}">
-				            		<span>{{::translate.load("kn.qbe.custom.table.none")}}</span>
-				            		</md-button>
-				       		</md-menu-item>
-				       		
-				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('sum',field.id,field.entity)"  ng-class="{'md-raised':field.funct=='SUM'}">
-				            		<span>{{::translate.load("kn.qbe.custom.table.sum")}}</span>
-				            		</md-button>
-				       		</md-menu-item>
-				       		
-				       		<md-menu-item>
-				       			<md-button ng-click="applyFuntion('min',field.id,field.entity)" ng-class="{'md-raised':field.funct=='MIN'}">
-				            		<span>{{::translate.load("kn.qbe.custom.table.min")}}</span></md-button>
-				       		</md-menu-item>
-				       		
-				       		<md-menu-item>
-				       			<md-button ng-click="applyFuntion('max',field.id,field.entity)" ng-class="{'md-raised':field.funct=='MAX'}">
-				            		<span>{{::translate.load("kn.qbe.custom.table.max")}}</span>
-				            	</md-button>
-				       		</md-menu-item>    
-				       		
-				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('avg',field.id,field.entity)" ng-class="{'md-raised':field.funct=='AVG'}">
-				            		<span>{{::translate.load("kn.qbe.custom.table.avg")}}</span>
-				            	</md-button>
-				       		</md-menu-item>
-				       		
-				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('count',field.id,field.entity)" ng-class="{'md-raised':field.funct=='COUNT'}">
-				            		<span>{{::translate.load("kn.qbe.custom.table.count")}}</span>
-				            	</md-button>
-				       		</md-menu-item>
-				       		
-				       		<md-menu-item>
-				          		<md-button ng-click="applyFuntion('count_distinct',field.id,field.entity)" ng-class="{'md-raised':field.funct=='COUNT_DISTINCT'}">
-				            		<span>{{::translate.load("kn.qbe.custom.table.count.distinct")}}</span>
-				            	</md-button>
-				       		</md-menu-item>      		
-				
-			       		</md-menu-content>
-       				</md-menu>
-	       		</md-menu-item>
-	       		
-	       		<md-menu-item>
-	       		  
-	         			<md-button ng-click="moveLeft(field.order, field)">
-							<md-icon class="fa fa-angle-left" ></md-icon>
-	            		<span>{{::translate.load("kn.qbe.custom.table.move.left")}}</span>
-	          		</md-button>
-	       		</md-menu-item>
-	       		<md-menu-item>
-	         			<md-button ng-click="moveRight(field.order, field)">
-							<md-icon class="fa fa-angle-right" ></md-icon>
-	            		<span>{{::translate.load("kn.qbe.custom.table.move.right")}}</span>
-	          		</md-button>
-	       		</md-menu-item>
-	       		
-	       		<md-menu-item>
-	         			<md-button ng-click="changeAlias(field)">
-							<md-icon class="fa fa-tag" ></md-icon>
-	            		<span>{{::translate.load("kn.qbe.general.alias")}}</span>
-	          		</md-button>
-	       		</md-menu-item>
-	        			        
-		      </md-menu-content>
-		      
-	    	</md-menu>
-	    	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="removeColumns([field])">
-	    		<md-tooltip md-direction="top">{{::translate.load("kn.qbe.custom.table.delete.column")}}</md-tooltip>
-	        	<md-icon md-menu-origin class="fa fa-times"></md-icon>
-	      	</md-button>
-	   		</div>   		
-	    	</md-toolbar>
-	    
-   		<div dir-paginate="row in field.data | itemsPerPage: itemsPerPage "  total-items="results" current-page="start" class="qbeCustomRow">
-			<md-tooltip md-delay="500">{{row.value |format:field:row }}</md-tooltip>
-			{{row.value |format:field:row }}&nbsp;
+		
+		<div
+			ag-grid="qbeTableGrid"
+			class="ag-theme-balham ag-theme-knowage-advanced ag-noBorders ag-qbe-table"
+			style="width: 100%"
+			ng-show="ngModel && ngModel.length > 0">
 		</div>
-	    
-	   	<md-toolbar class="secondaryToolbar">
-	   		<div class="md-toolbar-tools">
-		   		<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="showFilters(field)">
-		        	<md-icon md-menu-origin class="fa fa-info"></md-icon>
-		      	</md-button>
-		      	<span flex></span>
-		      	<label ng-show="countFilters(field)" style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">{{field.filters.length + field.havings.length}} {{::translate.load("kn.qbe.filters") | uppercase}}</label>
-		      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openFilters(field)">
-		        	<md-icon md-menu-origin class="fa fa-filter"></md-icon>
-		      	</md-button> 
-	      	</div>  	
-      	</md-toolbar>
-     </div>  
-   </div>
+		
+	</div>
   </md-content>
   <div layout="row" ng-if="query_service.smartView && ngModel.length > 0 && results > 0">
-     <div class="ag-theme-balham" flex>
+	<div class="ag-theme-balham" flex>
 			<div class=" ag-paging-panel ag-noBorders ag-font-style">
-		   		<span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
-		       		<span ref="lbFirstRowOnPage">{{(start * itemsPerPage) + 1}}</span> to <span ref="lbLastRowOnPage">{{maxPageNumber()}}</span> of <span ref="lbRecordCount">{{results}}</span>
-		   		</span>
-		   		<span class="ag-paging-page-summary-panel">
-		   			<div ref="btFirst" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-first" unselectable="on"></span>
-		       			<button type="button" ref="btFirst" ng-disabled="disableFirst()" ng-click="first()">First</button>
-		      			</div>
-		      			<div ref="btPrevious" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
-		       			<button type="button" ref="btPrevious" ng-disabled="disableFirst()" ng-click="prev()">Previous</button>
-		       		</div>
-		       		Page <span ref="lbCurrent">{{start + 1}}</span> of <span ref="lbTotal">{{totalPages}}</span>
-		       		<div ref="btNext" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
-		       			<button type="button" ref="btNext" ng-click="next()" ng-disabled="disableLast()">Next</button>
-		       		</div>
-		       		<div ref="btLast" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-last" unselectable="on"></span>
-		       			<button type="button" ref="btLast" ng-disabled="disableLast()" ng-click="last()">Last</button>
-		       		</div>
-		   		</span>
+				<span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
+					<span ref="lbFirstRowOnPage">{{(start * itemsPerPage) + 1}}</span> to <span ref="lbLastRowOnPage">{{maxPageNumber()}}</span> of <span ref="lbRecordCount">{{results}}</span>
+				</span>
+				<span class="ag-paging-page-summary-panel">
+					<div ref="btFirst" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-first" unselectable="on"></span>
+						<button type="button" ref="btFirst" ng-disabled="disableFirst()" ng-click="first()">First</button>
+						</div>
+						<div ref="btPrevious" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
+						<button type="button" ref="btPrevious" ng-disabled="disableFirst()" ng-click="prev()">Previous</button>
+					</div>
+					Page <span ref="lbCurrent">{{start + 1}}</span> of <span ref="lbTotal">{{totalPages}}</span>
+					<div ref="btNext" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
+						<button type="button" ref="btNext" ng-click="next()" ng-disabled="disableLast()">Next</button>
+					</div>
+					<div ref="btLast" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-last" unselectable="on"></span>
+						<button type="button" ref="btLast" ng-disabled="disableLast()" ng-click="last()">Last</button>
+					</div>
+				</span>
 			</div>
 		</div>
 	</div>
@@ -303,8 +132,131 @@
   	
 	<!--  md-whiteframe ng-if="query_service.smartView && ngModel.length > 0 && results > 0" class="md-whiteframe-3dp" layout="row">
 		<span flex></span>
-	 	<qbe-pagination total-count="results" on-page-change='pageChanged(newPageNumber)'></qbe-pagination>
-	 	<div flex="5"></div>
+		<qbe-pagination total-count="results" on-page-change='pageChanged(newPageNumber)'></qbe-pagination>
+		<div flex="5"></div>
 	</md-whiteframe-->
+	<div id="ag-popup-close-area" style="position: absolute; display: none; top: 0; left:0; width: 100%; height: 100%;" ng-click="closePopup()">
+		<div class="ag-theme-balham ag-popup" id="ag-popup" >
+			<div class="ag-menu ag-popup-child" id="ag-popup-child" style="min-width: 242px;">
+				<div ref="eBody" class="ag-menu-body">
+					<div class="ag-menu-list" tabindex="-1">
+						<div class="ag-menu-option" tabindex="-1" >
+							<span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part">
+								<input type="checkbox" ng-model="field.visible" ng-click="setVisible(field.id,field.entity, field.visible)"/>
+							</span>
+							<span ref="eName" class="ag-menu-option-text ag-menu-option-part">{{::translate.load("kn.qbe.custom.table.show.field")}}</span>
+							<span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+							<span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part">&nbsp;</span>
+						</div>
+						
+						<div class="ag-menu-option" tabindex="-1" ng-show="field.iconCls=='measure'" ng-if="isTemporal">
+							<span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part">&nbsp;</span>
+							<span ref="eName" class="ag-menu-option-text ag-menu-option-part">{{::translate.load("kn.qbe.selectgridpanel.name.temporalOperand.parameter")}}</span>
+							<span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+							<span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part">&nbsp;</span>
+						</div>
+						
+						
+						<div class="ag-menu-option" tabindex="-1" ng-show="field.iconCls=='measure'" ng-if="isTemporal">
+							<span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part"><span class="fa fa-puzzle-piece"></span></span>
+							<span ref="eName" class="ag-menu-option-text ag-menu-option-part">{{::translate.load("kn.qbe.custom.table.function.temporal")}}</span>
+							<span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+							<md-menu >
+								<span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part" ng-click="openMenu($mdMenu.open, $event)"><span class="ag-icon ag-icon-small-right" unselectable="on"></span></span>
+								<md-menu-content class="qbeMenuContent"> 
+									<md-menu-item>
+										<md-button ng-click="applyFuntion('YTD',field.id,field.entity)">
+											<span>YTD</span> 
+										</md-button> 
+									</md-menu-item> 
+									<md-menu-item> 
+										<md-button ng-click="applyFuntion('LAST_YEAR',field.id,field.entity)">
+											<span>LAST_YEAR</span> 
+										</md-button> 
+									</md-menu-item> 
+									<md-menu-item> 
+										<md-button ng-click="applyFuntion('PARALLEL_YEAR',field.id,field.entity)">
+											<span>PARALLEL_YEAR</span> 
+										</md-button> 
+									</md-menu-item> 
+									<md-menu-item> 
+										<md-button ng-click="applyFuntion('MTD',field.id,field.entity)"> 
+											<span>MTD</span>
+										</md-button> 
+									</md-menu-item> 
+									<md-menu-item> 
+										<md-button ng-click="applyFuntion('LAST_MONTH',field.id,field.entity)">
+											<span>LAST_MONTH</span> 
+										</md-button>
+									</md-menu-item> 
+								</md-menu-content>
+							</md-menu>
+						</div>
+						
+						<div class="ag-menu-option" tabindex="-1" ng-show="field.iconCls=='attribute' || (field.iconCls=='calculation' && field.attributes.formState.nature.toLowerCase()=='attribute')">
+							<span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part">
+								<input type="checkbox" ng-model="field.group" ng-click="group(field.id, field.entity, field.group)"/>
+							</span>
+							<span ref="eName" class="ag-menu-option-text ag-menu-option-part">{{::translate.load("kn.qbe.custom.table.group")}}</span>
+							<span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+							<span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part">&nbsp;</span>
+						</div>
+						
+						<div class="ag-menu-option" tabindex="-1" ng-show="field.iconCls=='measure'  || (field.iconCls=='calculation' && field.attributes.formState.nature.toLowerCase()=='measure')">
+							<span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part"><span class="kni kni-sum"></span></span>
+							<span ref="eName" class="ag-menu-option-text ag-menu-option-part">{{::translate.load("kn.qbe.custom.table.aggregation")}}</span>
+							<span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+							<md-menu >
+								<span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part" ng-click="openMenu($mdMenu.open, $event)"><span class="ag-icon ag-icon-small-right" unselectable="on"></span></span>
+								<md-menu-content class="qbeMenuContent"> 
+									<md-menu-item>
+										<md-button ng-click="applyFuntion('none',field.id,field.entity)" ng-class="{'md-raised':field.funct=='NONE'}">
+											<span>{{::translate.load("kn.qbe.custom.table.none")}}</span> 
+										</md-button> 
+									</md-menu-item> 
+									<md-menu-item> 
+										<md-button ng-click="applyFuntion('sum',field.id,field.entity)" ng-class="{'md-raised':field.funct=='SUM'}">
+											<span>{{::translate.load("kn.qbe.custom.table.sum")}}</span> 
+										</md-button> 
+									</md-menu-item> 
+									<md-menu-item> 
+										<md-button ng-click="applyFuntion('min',field.id,field.entity)" ng-class="{'md-raised':field.funct=='MIN'}">
+											<span>{{::translate.load("kn.qbe.custom.table.min")}}</span> 
+										</md-button> 
+									</md-menu-item> 
+									<md-menu-item> 
+										<md-button ng-click="applyFuntion('max',field.id,field.entity)" ng-class="{'md-raised':field.funct=='MAX'}"> 
+											<span>{{::translate.load("kn.qbe.custom.table.max")}}</span>
+										</md-button> 
+									</md-menu-item> 
+									<md-menu-item> 
+										<md-button ng-click="applyFuntion('avg',field.id,field.entity)" ng-class="{'md-raised':field.funct=='AVG'}"> 
+											<span>{{::translate.load("kn.qbe.custom.table.avg")}}</span>
+										</md-button> 
+									</md-menu-item>
+									<md-menu-item> 
+										<md-button ng-click="applyFuntion('count',field.id,field.entity)" ng-class="{'md-raised':field.funct=='COUNT'}"> 
+											<span>{{::translate.load("kn.qbe.custom.table.count")}}</span>
+										</md-button> 
+									</md-menu-item>
+									<md-menu-item> 
+										<md-button ng-click="applyFuntion('count_distinct',field.id,field.entity)" ng-class="{'md-raised':field.funct=='COUNT_DISTINCT'}"> 
+											<span>{{::translate.load("kn.qbe.custom.table.count.distinct")}}</span>
+										</md-button> 
+									</md-menu-item>
+								</md-menu-content>
+							</md-menu>
+						</div>
 
+						<div class="ag-menu-option" tabindex="-1" ng-click="changeAlias(field)">
+							<span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part"><span class="fa fa-tag"></span></span>
+							<span ref="eName" class="ag-menu-option-text ag-menu-option-part">Rename alias</span>
+							<span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+							<span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part">&nbsp;</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

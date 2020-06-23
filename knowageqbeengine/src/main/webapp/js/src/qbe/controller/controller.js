@@ -142,7 +142,11 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			query_service.count++;
 			var finalPromise = 	$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
 			if(finalPromise) {
-				finalPromise.then(function(){},function(){
+				finalPromise.then(function(response){
+					$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
+					exportService.setBody($scope.bodySend);
+					window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
+				},function(){
 					angular.copy(oldCatalogue,$scope.editQueryObj);
 					for(var i in $scope.previousVersionRelations){
 						var relationship = $scope.previousVersionRelations[i]
@@ -155,15 +159,18 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 						$rootScope.$emit('smartView');
 						query_service.count = 0;
 					}
-
-
 				});
+			}else{
+				$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
+				exportService.setBody($scope.bodySend);
+				window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 			}
 		} else {
 			$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
+			exportService.setBody($scope.bodySend);
+			window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 		}
-		exportService.setBody($scope.bodySend);
-		window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
+		
 
 	}
 	$scope.$watch('bodySend',function(newValue,oldValue){
@@ -234,14 +241,13 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		if(query.fields.length>0){
 			queryModel.length = 0;
      		for (var i = 0; i < query.fields.length; i++) {
-     			var key = "column_"+(i+1);
      			var queryObject = {
          		    	"id":query.fields[i].id,
+         		    	"key": "column_" + (i+1),
          		    	"name":query.fields[i].field,
          		    	"alias":query.fields[i].alias,
          		    	"entity":query.fields[i].entity,
          		    	"color":query.fields[i].color,
-         		    	"data":[],
          		    	"type":query.fields[i].type,
          		    	"funct":query.fields[i].funct,
          		    	"fieldType" : query.fields[i].fieldType,
