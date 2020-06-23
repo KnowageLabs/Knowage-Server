@@ -111,18 +111,18 @@
 					<span ref="lbFirstRowOnPage">{{(start * itemsPerPage) + 1}}</span> to <span ref="lbLastRowOnPage">{{maxPageNumber()}}</span> of <span ref="lbRecordCount">{{results}}</span>
 				</span>
 				<span class="ag-paging-page-summary-panel">
-					<div ref="btFirst" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-first" unselectable="on"></span>
-						<button type="button" ref="btFirst" ng-disabled="disableFirst()" ng-click="first()">First</button>
+					<div ref="btFirst" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-first" unselectable="on"></span>
+						<button type="button" class="ag-paging-button" ref="btFirst" ng-disabled="disableFirst()" ng-click="first()">First</button>
 						</div>
-						<div ref="btPrevious" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
-						<button type="button" ref="btPrevious" ng-disabled="disableFirst()" ng-click="prev()">Previous</button>
+						<div ref="btPrevious" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
+						<button type="button" class="ag-paging-button" ref="btPrevious" ng-disabled="disableFirst()" ng-click="prev()">Previous</button>
 					</div>
 					Page <span ref="lbCurrent">{{start + 1}}</span> of <span ref="lbTotal">{{totalPages}}</span>
-					<div ref="btNext" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
-						<button type="button" ref="btNext" ng-click="next()" ng-disabled="disableLast()">Next</button>
+					<div ref="btNext" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
+						<button type="button" class="ag-paging-button" ref="btNext" ng-click="next()" ng-disabled="disableLast()">Next</button>
 					</div>
-					<div ref="btLast" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-last" unselectable="on"></span>
-						<button type="button" ref="btLast" ng-disabled="disableLast()" ng-click="last()">Last</button>
+					<div ref="btLast" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-last" unselectable="on"></span>
+						<button type="button" class="ag-paging-button" ref="btLast" ng-disabled="disableLast()" ng-click="last()">Last</button>
 					</div>
 				</span>
 			</div>

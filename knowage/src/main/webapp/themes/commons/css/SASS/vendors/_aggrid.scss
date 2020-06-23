@@ -143,6 +143,9 @@ $aggrid-border-color: #d9dcde;
 		.ag-header {
 		    background-color: $baseColor;
 		    color: $lightTextColor;
+		    .ag-header-cell-label {
+		    	color: $lightTextColor;
+		    }
 		    .ag-icon {
 				color: $lightTextColor;
 			}
