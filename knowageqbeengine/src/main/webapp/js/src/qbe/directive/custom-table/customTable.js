@@ -513,7 +513,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				fullscreen :true,
 				controller: function($scope,mdPanelRef,sbiModule_translate,$mdDateLocale){
 
-
 					var gridOptions = {
 					        enableColResize: true,
 					        enableSorting: false,
@@ -553,12 +552,46 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 							gridOptions.api.sizeColumnsToFit();
 						}
 					$scope.model ={"gridOptions":gridOptions, "completeresult": completeResult, "completeResultsColumns": completeResultsColumns, "previewModel": previewModel, "totalNumberOfItems": totalNumberOfItems, "mdPanelRef":mdPanelRef};
-					$scope.$watch('model.previewModel',function(){
-						console.log($scope.model)
-						gridOptions.api.setRowData($scope.model.previewModel);
+					$scope.$watch('model.previewModel',function(newValue,oldValue){
+						console.log(newValue)
+						gridOptions.api.setRowData(newValue);
+						$scope.totalPages = Math.ceil($scope.model.totalNumberOfItems / $scope.itemsPerPage);
 					},true)
 					$scope.itemsPerPage = 20;
+					
 					$scope.currentPageNumber = 0;
+					$scope.maxPageNumber = function(){
+						if(($scope.currentPageNumber + 1) * $scope.itemsPerPage < $scope.model.totalNumberOfItems) return ($scope.currentPageNumber + 1) * $scope.itemsPerPage;
+						else return $scope.model.totalNumberOfItems;
+					}
+
+				  	$scope.disableFirst = function(){
+				  		return $scope.currentPageNumber == 0;
+				  	}
+
+				  	$scope.disableLast = function(){
+				  		return ($scope.currentPageNumber + 1) == $scope.totalPages;
+				  	}
+
+				  	$scope.first = function(){
+				  		$scope.currentPageNumber = 0;
+				  		$scope.changeDatasetPage($scope.itemsPerPage,1);
+					}
+
+				  	$scope.prev = function(){
+				  		$scope.currentPageNumber--;
+				  		$scope.changeDatasetPage($scope.itemsPerPage,$scope.currentPageNumber);
+					}
+
+				  	$scope.next = function(){
+				  		$scope.currentPageNumber++;
+				  		$scope.changeDatasetPage($scope.itemsPerPage,$scope.currentPageNumber + 2);
+					}
+
+				  	$scope.last = function(){
+				  		$scope.currentPageNumber = $scope.totalPages -1;
+				  		$scope.changeDatasetPage($scope.itemsPerPage,$scope.totalPages -1);
+					}
 					$scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
 
 							$rootScope.$broadcast('start',{"itemsPerPage":itemsPerPage, "currentPageNumber":currentPageNumber});
