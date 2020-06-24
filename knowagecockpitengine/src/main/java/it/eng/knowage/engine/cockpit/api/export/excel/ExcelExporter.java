@@ -1101,7 +1101,6 @@ public class ExcelExporter {
 	}
 
 	private void loadCockpitSelections(JSONObject configuration) throws JSONException {
-		// String[] cockpitSelections = parameterMap.get("COCKPIT_SELECTIONS");
 		JSONObject cockpitSelections = body.optJSONObject("COCKPIT_SELECTIONS");
 		if (cockpitSelections != null) {
 			JSONArray configDatasets = configuration.getJSONArray("datasets");
@@ -1183,7 +1182,9 @@ public class ExcelExporter {
 													jsnParam.put(jsonobject.getString("urlName"), valuesToChange);
 
 												} else {
-													jsnParam.put(datasetVals.getString(keyToAdd), "");
+													if (datasetVals.getString(keyToAdd) != null && !datasetVals.getString(keyToAdd).isEmpty()) {
+														jsnParam.put(keyToAdd, "");
+													}
 												}
 
 											}
@@ -1265,6 +1266,20 @@ public class ExcelExporter {
 							found = true;
 							nearRealArray.put(paramss[j]);
 						}
+						JSONObject paramDataset = paramDatasets.getJSONObject(stringToCheck);
+						JSONObject newParametersData = newParameters.getJSONObject(stringToCheck);
+						Iterator<?> keys = paramDataset.keys();
+
+						while (keys.hasNext()) {
+							String key = (String) keys.next();
+
+							if (!newParametersData.has(key)) {
+								newParametersData.put(key, paramDataset.get(key));
+							}
+
+						}
+						newParameters.remove(stringToCheck);
+						newParameters.put(stringToCheck, newParametersData);
 					}
 					if (!found) {
 						newParameters.remove(paramss[j]);
@@ -1464,6 +1479,7 @@ public class ExcelExporter {
 						categoryOrMeasure.put("columnName", name);
 						if (isSortingDefined && column.has("name") && sortingColumn.equals(name)) {
 							categoryOrMeasure.put("orderType", sortingOrder);
+							categoryOrMeasure.put("orderColumn", sortingColumn);
 							isSortingUsed = true;
 						} else {
 							categoryOrMeasure.put("orderType", "");
@@ -1532,7 +1548,10 @@ public class ExcelExporter {
 					newParameters.put(key, values);
 				}
 			}
-			JSONObject params = getReplacedAssociativeParameters(parameters, newParameters);
+			JSONArray associationsJSON = new JSONArray();
+			if (configuration.has("associations"))
+				associationsJSON = configuration.getJSONArray("associations");
+			JSONObject params = getReplacedAssociativeParameters(parameters, newParameters, associationsJSON);
 			newParameters = getReplacedParameters(params, datasetId);
 		}
 		if (cockpitSelectionsDatasetParameters != null && cockpitSelectionsDatasetParameters.length() > 0 && parameters.length() != 0) {
@@ -1563,9 +1582,9 @@ public class ExcelExporter {
 								valuesToChange = valuesToChange.replaceAll("\"", ""); // single value parameter
 							}
 							if (!(newParameters.length() != 0 && newParameters.has(key) && newParameters.getString(key).length() != 0)) {
-//								if (!valuesToChange.startsWith("'") && !valuesToChange.endsWith("'") && !valuesToChange.contains(","))
-//									newParameters.put(obj, "'" + valuesToChange + "'");
-//								else
+								// if (!valuesToChange.startsWith("'") && !valuesToChange.endsWith("'") && !valuesToChange.contains(","))
+								// newParameters.put(obj, "'" + valuesToChange + "'");
+								// else
 								newParameters.put(obj, valuesToChange);
 							}
 
@@ -1598,7 +1617,7 @@ public class ExcelExporter {
 		return dataSet instanceof SolrDataSet;
 	}
 
-	private JSONObject getReplacedAssociativeParameters(JSONObject oldParameters, JSONObject newParameters) throws JSONException {
+	private JSONObject getReplacedAssociativeParameters(JSONObject oldParameters, JSONObject newParameters, JSONArray associationsJSON) throws JSONException {
 		JSONObject parameters = new JSONObject();
 		Iterator<String> newParameterKeys = newParameters.keys();
 		while (newParameterKeys.hasNext()) {
@@ -1628,12 +1647,28 @@ public class ExcelExporter {
 					// parameters.put(parameterName, realValueToAdd);
 					JSONArray value = (JSONArray) newParameters.get(parameter);
 					String regex2 = "\\(\\'(.*)\\'\\)";
-					Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(value.get(0).toString());
-					if (parameterMatcher2.matches()) {
-						String realValue = parameterMatcher2.group(1);
-						realValue = "'" + realValue + "'";
-						parameters.put(parameterName, realValue);
+					String[] valueToPut = new String[value.length()];
+					for (int i = 0; i < value.length(); i++) {
+
+						Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(value.get(i).toString());
+						if (parameterMatcher2.matches()) {
+							String realValue = parameterMatcher2.group(1);
+							if (realValue.contains("','")) {
+								realValue = realValue.replaceAll("','", ",");
+							}
+							if (oldParameters.getString(parameterName).isEmpty() && associationsJSON.toString().contains(parameterName)) {
+								valueToPut[i] = realValue;
+							} else if (!oldParameters.getString(parameterName).isEmpty() && associationsJSON.toString().contains(parameterName)) {
+								valueToPut[i] = realValue;
+							} else {
+								realValue = "'" + realValue + "'";
+								valueToPut[i] = realValue;
+							}
+						}
+
 					}
+					String parToPut = StringUtils.join(valueToPut, ",");
+					parameters.put(parameterName, parToPut);
 				}
 			}
 		}
