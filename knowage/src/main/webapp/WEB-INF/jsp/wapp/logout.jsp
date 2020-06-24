@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.spagobi.security.google.config.GoogleSignInConfig"%>
 
 <iframe id='invalidSessionJasper'
                  name='invalidSessionJasper'
@@ -176,18 +177,58 @@ else if (active != null && active.equalsIgnoreCase("true")) {
 	redirectUrl = urlLogout;
 
 } %>
- 
 
 <script>
 
-var myVar=setTimeout(function(){redirect()},1000);
+function redirect() {
+    window.location = "<%= redirectUrl %>";
+};
 
-function redirect()
-{
-    window.location = "<%=redirectUrl%>"
-}
+function setTimeoutToRedirect() {
+	setTimeout(function(){
+		redirect()
+	}, 1000);
+};
 
 </script>
 
+
+<% if (GoogleSignInConfig.isEnabled()) { %>
+
+	<%-- Resources for Google Sign-In authentication --%>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<meta name="google-signin-client_id" content="<%= GoogleSignInConfig.getClientId() %>">
+	<script>
+	function googleSignOut(callback, fail) {
+		var auth2 = gapi.auth2.getAuthInstance();
+		auth2.signOut().then(function() {
+				auth2.disconnect();
+				callback();
+			}, 
+			fail
+		);
+	};
+
+	function onLoad() {
+		gapi.load('auth2', function() {
+			gapi.auth2.init().then(function () {
+			
+				googleSignOut(setTimeoutToRedirect, function () {
+					alert("An error occurred during Google logout");
+				});
+			
+			});
+		});
+	};
+
+	</script>
+	
+<% }  else { %>
+
+	<script>
+	setTimeoutToRedirect();
+	</script>
+	
+<% } %>
 
 

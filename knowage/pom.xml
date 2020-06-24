@@ -240,6 +240,10 @@
 					<groupId>xalan</groupId>
 					<artifactId>xalan</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		
@@ -284,6 +288,13 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowageldapsecurityprovider</artifactId>
+			<version>7.2.0-SNAPSHOT</version>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowagegooglesecurityprovider</artifactId>
 			<version>7.2.0-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>

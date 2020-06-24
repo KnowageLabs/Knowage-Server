@@ -17,6 +17,7 @@
 --%>
 
   
+<%@page import="it.eng.spagobi.security.google.config.GoogleSignInConfig"%>
 <%@ page language="java"
          extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"
          contentType="text/html; charset=UTF-8"
@@ -138,6 +139,29 @@
 		   <!-- Bootstrap -->
 		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
 		<link rel='StyleSheet' href='<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>' type='text/css' />
+		
+		<% if (GoogleSignInConfig.isEnabled()) {%>
+		<%-- Resources for Google Sign-In authentication --%>
+		<script>
+			function onSignIn(googleUser) {
+			  var profile = googleUser.getBasicProfile();
+			  var id_token = googleUser.getAuthResponse().id_token;
+			  $.post("/knowage/servlet/AdapterHTTP", {
+				  "ACTION_NAME": "LOGIN_ACTION_BY_TOKEN",
+				  "NEW_SESSION" : true,
+				  "token" : id_token
+			  }).done(function( data ) {
+				  // reload current page, in order to keep input GET parameters (such as required document and so on)
+				  location.reload();
+			  }).fail(function (error) {
+				  $("#kn-infoerror-message").show();
+				  $(".kn-infoerror").html("Authentication failed. Please check if you are to allowed to enter this application.");
+			  });
+			}
+		</script>
+		<script src="https://apis.google.com/js/platform.js" async defer></script>
+		<meta name="google-signin-client_id" content="<%= GoogleSignInConfig.getClientId() %>">
+		<% } %>
 	</head>
 
   	<body class="kn-login">
@@ -146,6 +170,15 @@
         	<div class="col-sm-5 col-sm-offset-7" style="height:100%;background-color:white;display:flex;flex-direction:column;padding:20px;justify-content:center;align-items:center">
             	<img id="profile-img" class="col-xs-8" src='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/img/defaultTheme/logoCover.svg", currTheme)%>' />
             	<p id="profile-name" class="profile-name-card"></p>
+            	
+            	
+            	<% if (GoogleSignInConfig.isEnabled()) { %>
+            		<%-- Google button for authentication --%>
+	           		<div class="g-signin2" data-onsuccess="onSignIn"></div>
+	           	
+                <% } else { %>
+            	
+            	
             	<div class="col-xs-8">
            			<form class="form-signin"  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
 		        		<input type="hidden" id="<%=roleToCheckLbl%>" name="<%=roleToCheckLbl%>" value="<%=roleToCheckVal%>" />
@@ -202,8 +235,15 @@
 					<%} %> 
             	</div>
             	
-	           	
-                
+            	<% } %>
+            	
+            	
+            	<%-- Box that can be reused to display error messages, initially empty --%>
+            	<div class="row" id="kn-infoerror-message" style="display:none">
+            		<div class="kn-infoerror">
+            		</div>
+            	</div>
+            	
 				<div>
 					<div class="row">
 						<!--
@@ -246,6 +286,7 @@
 				// Select a specified element
 				$('#myTooltip').tooltip();
 			});
-		</script>  
+		</script>
+		
 	</body>
 </html>
