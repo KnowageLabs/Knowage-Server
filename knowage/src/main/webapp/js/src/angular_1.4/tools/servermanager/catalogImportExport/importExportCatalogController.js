@@ -124,8 +124,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			$scope.stepControl.resetBreadCrumb();
 			$scope.stepControl.insertBread({
 				name : sbiModule_translate.load(
-						'sbi.impexp.catalog.upload',
-						'component_impexp_messages')
+						'sbi.impexp.catalog.upload')
 			});
 			$scope.finishImport();
 		});
