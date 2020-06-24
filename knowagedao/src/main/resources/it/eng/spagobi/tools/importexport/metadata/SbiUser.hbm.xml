@@ -23,9 +23,9 @@
         <property name="userId" type="string">
             <column name="USER_ID" length="100" not-null="true" unique="true" />
         </property>
-        <property name="password" type="string">
+<!--         <property name="password" type="string">
             <column name="PASSWORD" length="150" />
-        </property>
+        </property> -->
         <property name="fullName" type="string">
             <column name="FULL_NAME" />
         </property>
