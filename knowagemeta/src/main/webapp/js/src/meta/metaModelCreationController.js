@@ -241,6 +241,12 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		}
 	})
 
+	$scope.$watch('selectedBusinessModel.name',function(newValue,oldValue){
+		if($scope.selectedBusinessModel && newValue!=oldValue){
+			$scope.businessClassesGrid.api.setRowData($scope.meta.businessModels);
+		}
+
+	},true)
 
 	function moveInArray(arr, fromIndex, toIndex) {
         var element = arr[fromIndex];
