@@ -31,6 +31,9 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.log4j.Logger;
+
+import it.eng.knowage.wapp.Version;
 import sun.misc.BASE64Encoder;
 
 /**
@@ -42,7 +45,6 @@ public enum AsymmetricProvider {
 	INSTANCE(getKeyBytes()), OLD_INSTANCE(getOldKeyBytes());
 
 	private String PROVIDER = "HmacSHA1";
-
 	private Mac mac = null;
 
 	private AsymmetricProvider(byte[] keyBytes) {
@@ -71,6 +73,7 @@ public enum AsymmetricProvider {
 	}
 
 	private static byte[] getKeyBytes() {
+		Logger logger = Logger.getLogger(AsymmetricProvider.class);
 		byte[] fileContent = null;
 		try {
 			String fileLocation = (String) new InitialContext().lookup("java:/comp/env/password_encryption_secret");
@@ -79,9 +82,17 @@ public enum AsymmetricProvider {
 			fileContent = Files.readAllBytes(file.toPath());
 
 		} catch (NamingException e) {
-			throw new Error("Unable to find resource for security initialization", e);
+			String message = "Unable to find resource for security initialization";
+			logger.error(String.format(
+					"Unable to find resource for security initialization. Please, read the documentation for the configuration. https://knowage-suite.readthedocs.io/en/%s.%s/installation-guide/manual-installation.html?highlight=server.xml#environment-variables-definition",
+					Version.getMajorVersion(), Version.getMinorVersion()));
+			throw new Error(message, e);
 		} catch (IOException e) {
-			throw new Error("Unable to find file for security initialization", e);
+			String message = "Unable to find file for security initialization";
+			logger.error(String.format(
+					"Unable to find file for security initialization. Please, read the documentation for the configuration. https://knowage-suite.readthedocs.io/en/%s.%s/installation-guide/manual-installation.html?highlight=server.xml#environment-variables-definition",
+					Version.getMajorVersion(), Version.getMinorVersion()));
+			throw new Error(message, e);
 		}
 
 		return fileContent;
