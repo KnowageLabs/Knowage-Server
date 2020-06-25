@@ -859,7 +859,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				.replace(/"/g, '"')
 				.replace(/>/g, '>')
 				.replace(/</g, '<')
-				.replace(/&/g, '&');
+				.replace(/&/g, '&')
+				.replace(/&apos;/g, "'");
 		}
 
 
@@ -872,10 +873,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 				}
 				if (item.lovProvider.QUERY) {
-					item.lovProvider.QUERY.STMT = base64.decode(item.lovProvider.QUERY.STMT);
-					item.lovProvider.QUERY.STMT = escapeXml(item.lovProvider.QUERY.STMT);
+					item.lovProvider.QUERY.decoded_STMT = base64.decode(item.lovProvider.QUERY.STMT);
+					item.lovProvider.QUERY.decoded_STMT = escapeXml(item.lovProvider.QUERY.decoded_STMT);
 				}
-			} catch (err) {}
+			} catch (err) {
+				console.log("Error during decoding of the script/statement: " + err);
+			}
 
 		};
 
@@ -924,7 +927,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			} else if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.QUERY)) {
 
 				$scope.selectedQuery.datasource = $scope.selectedLov.lovProvider.QUERY.CONNECTION;
-				$scope.selectedQuery.query = $scope.selectedLov.lovProvider.QUERY.STMT;
+				$scope.selectedQuery.query = $scope.selectedLov.lovProvider.QUERY.decoded_STMT;
 
 			} else if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.FIX_LOV)) {
 
