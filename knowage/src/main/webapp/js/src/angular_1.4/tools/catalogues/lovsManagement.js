@@ -889,13 +889,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			item.lovProvider = angular.fromJson(item.lovProvider);
 			decode(item);
+
+			if ($scope.dirtyForm) {
+				$mdDialog.show($scope.confirm).then(function () {
+					$scope.selectLov(item);
+					$scope.dirtyForm = false;
+					$scope.showMe = true;
+				}, function () {
+					$scope.showMe = true;
+				});
+			} else {
+				$scope.selectLov(item);
+				$scope.showMe = true;
+			}
+		}
+
+		$scope.selectLov = function(item) {
 			$scope.selectedLov = angular.copy(item);
 			console.log($scope.selectedLov);
 			$scope.changeLovType($scope.selectedLov.itypeCd);
-
-			$scope.validateAndSetDirty();
-			$scope.validateNameAndSetDirty();
-
+			if ($scope.dirtyForm) {
+				$scope.validateAndSetDirty();
+				$scope.validateNameAndSetDirty();
+			}
 			if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.SCRIPT)) {
 				if ($scope.selectedLov.lovProvider.SCRIPTLOV.LANGUAGE != null) {
 					$scope.selectedScriptType.language = $scope.selectedLov.lovProvider.SCRIPTLOV.LANGUAGE;
@@ -937,23 +953,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}, function (response) {
 						sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
 					});
-			}
-
-			if ($scope.dirtyForm) {
-				$mdDialog.show($scope.confirm).then(function () {
-					$scope.dirtyForm = false;
-					$scope.selectedLov = angular.copy(item);
-					$scope.showMe = true;
-
-				}, function () {
-
-					$scope.showMe = true;
-				});
-
-			} else {
-
-				$scope.selectedLov = angular.copy(item);
-				$scope.showMe = true;
 			}
 		}
 
