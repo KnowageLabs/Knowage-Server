@@ -236,7 +236,7 @@ function userExportFuncController(sbiModule_download,sbiModule_translate,sbiModu
 					$scope.viewDownload = false;
 					$scope.wait = false;
 					//$scope.showAction(sbiModule_translate.load("sbi.importusers.downloadOK"));
-					sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpusers.downloadOK"),"");
+					sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importusers.downloadOK"),"");
 				 
 			},function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"");
