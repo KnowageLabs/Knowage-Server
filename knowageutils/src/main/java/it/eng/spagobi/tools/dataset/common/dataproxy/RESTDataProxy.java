@@ -133,7 +133,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 	}
 
 	protected List<NameValuePair> getQuery() {
-		List<NameValuePair> res = new ArrayList<NameValuePair>(3);
+		List<NameValuePair> res = new ArrayList<NameValuePair>();
 		if (offsetParam != null) {
 			if (offset != OFFSET_NOT_DEFINED) {
 				res.add(new NameValuePair(offsetParam, Integer.toString(offset)));
@@ -153,7 +153,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 		}
 
 		// ========= CREDIT: https://github.com/VivekKumar856
-		if (this.parameters != null & this.parameters.size() > 0) {
+		if (this.parameters != null && this.parameters.size() > 0) {
 			Iterator keys = this.parameters.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();

@@ -1746,27 +1746,22 @@ div.lower i  {
 						<!-- OLD ADVANCED TAB (Persist) -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
 							
-							<md-card layout-padding style="margin-top:0">
+							<md-card layout-padding style="margin-top:0" ng-show="selectedDataSet.dsTypeCd!='Flat'">
 							
 								<div flex=100 style="display:flex;">
-								
 									<div flex=50 layout="row" layout-align="start center">
-						           	
 				                  		<label>
 				                  			{{translate.load('sbi.ds.isPersisted')}}: 
 			                  			</label> 
 				                  		
-				                  		
 				                  		<md-input-container class="small counter" style="padding-left:8px;">
-				                     		<md-checkbox 	aria-label="Persisted" 
+				                     		<md-checkbox 	aria-label="Persisted"
 					                     					ng-model="selectedDataSet.isPersisted" ng-checked="" 
 					                     					ng-change="setFormDirty()"
 					                     					ng-disabled="disablePersisting">
 											</md-checkbox>
-				                  		</md-input-container>
-				                  		
+				                  		</md-input-container>    		
 									</div>
-									
 								</div>
 								
 								<div ng-show="selectedDataSet.isPersisted">
