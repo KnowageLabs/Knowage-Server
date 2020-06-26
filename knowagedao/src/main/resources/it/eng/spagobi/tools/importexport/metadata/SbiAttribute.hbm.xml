@@ -25,13 +25,13 @@
 		<property name="syntax" type="short">
 			<column name="SYNTAX" not-null="false" />
 		</property>
-		<!-- <property name="value">
+		<property name="value">
 			<column name="VALUE_TYPE" not-null="false" />
 			<type name="org.hibernate.type.EnumType">
 				<param name="enumClass">it.eng.spagobi.profiling.bo.ProfileAttributesValueTypes</param>
 				<param name="type">12</param>
 			</type>
-		</property> -->
+		</property>
 		<set name="sbiUserAttributeses" inverse="true" lazy="true"
 			table="SBI_USER_ATTRIBUTES" fetch="select">
 			<key>

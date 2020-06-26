@@ -27,6 +27,7 @@
 		<!-- <property name="hibernate.connection.zeroDateTimeBehavior">convertToNull</property>  -->
         
  		<property name="hibernate.show_sql">false</property>
+ 		<property name="hibernate.jdbc.factory_class">org.hibernate.jdbc.NonBatchingBatcherFactory</property>
         <!--
        
 		<property name="hibernate.cache.use_minimal_puts">true</property>                
