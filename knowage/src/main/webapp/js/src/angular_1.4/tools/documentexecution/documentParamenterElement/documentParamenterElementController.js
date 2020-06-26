@@ -414,6 +414,12 @@
 						$mdDialog.hide();
 					};
 
+					paramDialogCtrl.disableButton = function() {
+						if(!paramDialogCtrl.tempParameter.parameterValue || paramDialogCtrl.tempParameter.parameterValue && Array.isArray(paramDialogCtrl.tempParameter.parameterValue) && paramDialogCtrl.tempParameter.parameterValue.length==0) {
+							return true;
+						} else return false;
+					}
+
 					paramDialogCtrl.save = function() {
 						// Lov parameters NON tree
 						if(paramDialogCtrl.tempParameter.defaultValues && paramDialogCtrl.tempParameter.defaultValuesMeta) {

@@ -35,7 +35,7 @@
 		<md-button ng-click="paramDialogCtrl.abort()" class="md-raised">
 			{{ paramDialogCtrl.dialogCancelLabel }}</md-button>
 				
-		<md-button ng-click="paramDialogCtrl.save()" class="md-raised md-primary">
+		<md-button ng-disabled="paramDialogCtrl.disableButton()" ng-click="paramDialogCtrl.save()" class="md-raised md-primary">
 			{{ paramDialogCtrl.dialogSaveLabel }}</md-button>
 	</div>
 </md-dialog>
