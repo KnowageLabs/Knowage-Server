@@ -152,11 +152,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Counts number of BIObj associated.
 	 *
-	 * @param dsId
-	 *            the ds id
+	 * @param dsId the ds id
 	 * @return Integer, number of BIObj associated
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public Integer countBIObjAssociated(Integer dsId) {
@@ -192,8 +190,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 * Counts number of existent DataSets
 	 *
 	 * @return Integer, number of existent DataSets
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public Integer countDatasets() {
@@ -339,8 +336,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Delete all inactive versions of dataset whose id is equal to <code>datasetId</code>
 	 *
-	 * @param datasetId
-	 *            the id of the of the dataset whose incative version must be deleted
+	 * @param datasetId the id of the of the dataset whose incative version must be deleted
 	 * @return true if the incative versions of dataset whose id is equal to <code>datasetId</code> have been succesfully deleted from database. false otherwise
 	 *         (i.e. the dtaset does not have any inactive versions)
 	 */
@@ -406,10 +402,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Delete data set whose ID is equal to <code>datasetId</code> if it is not referenced by some analytical documents.
 	 *
-	 * @param datasetId
-	 *            the ID of the dataset to delete. Cannot be null.
-	 * @throws SpagoBIDAOException
-	 *             if the dataset is referenced by at least one analytical document
+	 * @param datasetId the ID of the dataset to delete. Cannot be null.
+	 * @throws SpagoBIDAOException if the dataset is referenced by at least one analytical document
 	 */
 	@Override
 	public void deleteDataSet(Integer datasetId) {
@@ -554,8 +548,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Delete data set whose ID is equal to <code>datasetId</code> ALSO if is referenced by some analytical documents.
 	 *
-	 * @param datasetId
-	 *            the ID of the dataset to delete. Cannot be null.
+	 * @param datasetId the ID of the dataset to delete. Cannot be null.
 	 */
 	@Override
 	public void deleteDataSetNoChecks(Integer datasetId) {
@@ -613,8 +606,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Delete the dataset version whose id is equal to <code>datasetVersionId</code> if and only if it is inactive.
 	 *
-	 * @param datasetVersionId
-	 *            the id of the version of the dataset to delete. Cannot be null.
+	 * @param datasetVersionId the id of the version of the dataset to delete. Cannot be null.
 	 * @return true if the version whose id is equal to <code>datasetVersionId</code> is deleted from database. false otherwise (the version does not exist or
 	 *         it exists but it is active).
 	 */
@@ -676,10 +668,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Returns the Higher Version Number of a selected DS
 	 *
-	 * @param dsId
-	 *            the a data set ID
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param dsId the a data set ID
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public Integer getHigherVersionNumForDS(Integer dsId) {
@@ -712,11 +702,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Checks for bi lovs associated.
 	 *
-	 * @param dsId
-	 *            the ds id
+	 * @param dsId the ds id
 	 * @return true, if checks for lovs associated
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.dataSet.dao.IDataSetDAO#hasBIObjAssociated(java.lang.String)
 	 */
 	@Override
@@ -757,11 +745,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Checks for bi obj associated.
 	 *
-	 * @param dsId
-	 *            the ds id
+	 * @param dsId the ds id
 	 * @return true, if checks for bi obj associated
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.dataSet.dao.IDataSetDAO#hasBIObjAssociated(java.lang.String)
 	 */
 	// @Override
@@ -845,8 +831,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Insert data set.
 	 *
-	 * @param dataSet
-	 *            the a data set
+	 * @param dataSet the a data set
 	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#insertDataSet(it.eng.spagobi.tools.dataset.bo.AbstractDataSet)
 	 */
 	@Override
@@ -1359,7 +1344,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			session = getSession();
 			toReturn = session.createQuery(
-					"select new it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo(ds.id.dsId, ds.label, ds.name, ds.description, ds.owner, ds.scope.valueCd) from SbiDataSet ds where ds.active = ? and ds.parameters is null")
+					"select new it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo(ds.id.dsId, ds.label, ds.name, ds.description, ds.owner, ds.scope.valueCd) "
+							+ " from SbiDataSet ds where ds.active = ? "
+							+ " and (ds.parameters is null or (ds.parameters is not null and ds.parameters like '%<ROWS/>%'))")
 					.setBoolean(0, true).list();
 		} catch (Exception e) {
 			throw new SpagoBIDAOException("An unexpected error occured while loading datasets basic info for LOV", e);
@@ -1380,9 +1367,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	/**
-	 * @param scope
-	 *            Sent from DatasetResource <br>
-	 *            Can be: "all", "owned", "enterprise" and "shared", depends on Tab from Workspace/Datasets (MyDataset, Shared, Enterprise, All)
+	 * @param scope Sent from DatasetResource <br>
+	 *              Can be: "all", "owned", "enterprise" and "shared", depends on Tab from Workspace/Datasets (MyDataset, Shared, Enterprise, All)
 	 */
 	@Override
 	public List<IDataSet> loadDatasetsByTags(UserProfile user, List<Integer> tagIds, String scope) {
@@ -1995,13 +1981,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Returns List of all existent IDataSets with current active version
 	 *
-	 * @param offset
-	 *            starting element
-	 * @param fetchSize
-	 *            number of elements to retrieve
+	 * @param offset    starting element
+	 * @param fetchSize number of elements to retrieve
 	 * @return List of all existent IDataSets with current active version
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize) {
@@ -2135,13 +2118,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Returns List of all existent IDataSets with current active version for the owner
 	 *
-	 * @param offset
-	 *            starting element
-	 * @param fetchSize
-	 *            number of elements to retrieve
+	 * @param offset    starting element
+	 * @param fetchSize number of elements to retrieve
 	 * @return List of all existent IDataSets with current active version
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize, String owner) {
@@ -2241,13 +2221,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Returns List of all existent SbiDataSet elements (NO DETAIL, only name, label, descr...).
 	 *
-	 * @param offset
-	 *            starting element
-	 * @param fetchSize
-	 *            number of elements to retrieve
+	 * @param offset    starting element
+	 * @param fetchSize number of elements to retrieve
 	 * @return List of all existent SbiDataSet
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List<SbiDataSet> loadPagedSbiDatasetConfigList(Integer offset, Integer fetchSize) {
@@ -2340,10 +2317,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Modify data set.
 	 *
-	 * @param aDataSet
-	 *            the a data set
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param aDataSet the a data set
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#modifyDataSet(it.eng.spagobi.tools.dataset.bo.AbstractDataSet)
 	 */
 	@Override
@@ -2584,12 +2559,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	/**
 	 * Restore an Older Version of the dataset
 	 *
-	 * @param dsId
-	 *            the a data set ID
-	 * @param dsVersion
-	 *            the a data set Version
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param dsId      the a data set ID
+	 * @param dsVersion the a data set Version
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public IDataSet restoreOlderDataSetVersion(Integer dsId, Integer dsVersion) {
