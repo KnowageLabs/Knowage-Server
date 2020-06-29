@@ -5,7 +5,7 @@
 		  </div> 
 	</md-toolbar>
 	<md-card-content class="noPadding">
-		<div layout="row" layout-align="start center" ng-if="ngModelShared.viewDatasets && ngModelShared.cross && ngModelShared.cross.enable">
+		<div layout="row" layout-align="center center" ng-if="ngModelShared.viewDatasets && ngModelShared.cross && ngModelShared.cross.enable">
 			<div class="chip" ng-class="{'active':ngModelShared.selectedClickFunct==clickFunct}" ng-repeat="clickFunct in ngModelShared.clickFunctions" ng-click="selectClickFunction(clickFunct)">
 			{{clickFunct}}		
 			</div>
