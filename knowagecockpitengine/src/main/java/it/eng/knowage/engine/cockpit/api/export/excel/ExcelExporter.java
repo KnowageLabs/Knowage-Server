@@ -85,6 +85,7 @@ public class ExcelExporter {
 	private final Map<String, String> i18nMessages;
 
 	private final Map<String, JSONObject> actualSelectionMap;
+	private final Map<String, String> associativeToDatasetParametersMap;
 
 	private final boolean exportWidget;
 
@@ -109,6 +110,7 @@ public class ExcelExporter {
 		}
 
 		this.actualSelectionMap = new HashMap<>();
+		this.associativeToDatasetParametersMap = new HashMap<>();
 	}
 
 	public ExcelExporter(String outputType, String userUniqueIdentifier, JSONObject body) {
@@ -128,6 +130,7 @@ public class ExcelExporter {
 
 		this.actualSelectionMap = new HashMap<>();
 		this.parameterMap = new HashMap<>();
+		this.associativeToDatasetParametersMap = new HashMap<>();
 	}
 
 	private boolean setExportWidget(JSONObject body) {
@@ -1239,7 +1242,10 @@ public class ExcelExporter {
 
 							}
 						} else if ((val != null && val.length() > 0) && (!val.contains("$P{"))) { // parameter already set in data configuration
-							newParameters.put(obj, val);
+							if (paramDatasets.has(obj))
+								newParameters.put(obj, paramDatasets.getJSONObject(obj));
+							else
+								newParameters.put(obj, val);
 						}
 
 					}
@@ -1297,6 +1303,30 @@ public class ExcelExporter {
 					JSONObject associativeSelections = client.getAssociativeSelections(new HashMap<String, Object>(), userUniqueIdentifier,
 							associativeSelectionsPayload.toString());
 
+					// I have to update parameters with ASSOCIATIONS PARAMETERS that could have different names (!!!)
+
+					if (associativeSelectionsPayload.has("associationGroup")) {
+						JSONObject associationGroup = associativeSelectionsPayload.getJSONObject("associationGroup");
+						if (associationGroup.has("associations") && associationGroup.getJSONArray("associations").length() != 0) {
+							JSONArray associationGroupArray = associationGroup.getJSONArray("associations");
+							for (int j = 0; j < associationGroupArray.length(); j++) {
+
+								JSONObject association = associationGroupArray.getJSONObject(j);
+								JSONArray fields = association.getJSONArray("fields");
+								String dataValue = "";
+								String dataAssValue = "";
+								for (int k = 0; k < fields.length(); k++) {
+									if (fields.getJSONObject(k).getString("column").contains("$P")) {
+										dataValue = fields.getJSONObject(k).getString("column").replace("$P{", "").replace("}", "");
+									} else {
+										dataAssValue = fields.getJSONObject(k).getString("column");
+									}
+								}
+								associativeToDatasetParametersMap.put(dataAssValue, dataValue);
+
+							}
+						}
+					}
 					JSONArray datasetLabels = aggregation.getJSONArray("datasets");
 					for (int j3 = 0; j3 < datasetLabels.length(); j3++) {
 						String label = datasetLabels.getString(j3);
@@ -1523,12 +1553,15 @@ public class ExcelExporter {
 	private JSONObject getParametersFromWidget(JSONObject widget, JSONObject configuration) throws JSONException {
 
 		JSONArray cockpitSelectionsDatasetParameters = null;
+		JSONArray associationsJSON = new JSONArray();
+		if (configuration.has("associations")) {
+			associationsJSON = configuration.getJSONArray("associations");
+		}
 		try {
 			cockpitSelectionsDatasetParameters = body.getJSONArray("parametersDataArray");
 		} catch (JSONException e) {
 			logger.warn("No cockpit selections specified");
 		}
-
 		JSONObject dataset = getDatasetFromWidget(widget, configuration);
 		JSONObject parameters = dataset.getJSONObject("parameters");
 		String datasetName = dataset.getString("name");
@@ -1545,12 +1578,33 @@ public class ExcelExporter {
 				String key = actualSelectionKeys.next();
 				if (key.contains("$")) {
 					Object values = actualSelections.get(key);
+					if (values != null && !String.valueOf(values).isEmpty()) {
+						String cleanPar = key.replace("$P{", "");
+						cleanPar = cleanPar.replace("}", "");
+						if (newParameters.has(cleanPar)) {
+							newParameters.remove(cleanPar);
+						}
+					}
 					newParameters.put(key, values);
 				}
+
 			}
-			JSONArray associationsJSON = new JSONArray();
-			if (configuration.has("associations"))
-				associationsJSON = configuration.getJSONArray("associations");
+
+			for (String keys : actualSelectionMap.keySet()) {
+				if (!keys.equals(datasetName)) {
+					JSONObject actualSelectionsOther = actualSelectionMap.get(keys);
+					Iterator<String> actualSelectionKeys2 = actualSelectionsOther.keys();
+					while (actualSelectionKeys2.hasNext()) {
+						String key = actualSelectionKeys2.next();
+						if (parameters.has(associativeToDatasetParametersMap.get(key)) && newParameters.has(associativeToDatasetParametersMap.get(key))
+								&& !actualSelectionsOther.getString(key).isEmpty()) {
+							newParameters.put("$P{" + associativeToDatasetParametersMap.get(key) + "}", actualSelectionsOther.get(key));
+
+						}
+					}
+				}
+			}
+
 			JSONObject params = getReplacedAssociativeParameters(parameters, newParameters, associationsJSON);
 			newParameters = getReplacedParameters(params, datasetId);
 		}
@@ -1582,10 +1636,9 @@ public class ExcelExporter {
 								valuesToChange = valuesToChange.replaceAll("\"", ""); // single value parameter
 							}
 							if (!(newParameters.length() != 0 && newParameters.has(key) && newParameters.getString(key).length() != 0)) {
-								// if (!valuesToChange.startsWith("'") && !valuesToChange.endsWith("'") && !valuesToChange.contains(","))
-								// newParameters.put(obj, "'" + valuesToChange + "'");
-								// else
-								newParameters.put(obj, valuesToChange);
+								if (!(associationsJSON.toString().contains(obj) && newParameters.has(obj) && !newParameters.getString(obj).isEmpty()
+										&& !newParameters.getString(obj).contains("$P")))
+									newParameters.put(obj, valuesToChange);
 							}
 
 						} else {
@@ -1626,8 +1679,7 @@ public class ExcelExporter {
 			Matcher parameterMatcher = Pattern.compile(regex).matcher(parameter);
 			if (parameterMatcher.matches()) {
 				String parameterName = parameterMatcher.group(1);
-				Object exists = oldParameters.get(parameterName);
-				if (exists != null) {
+				if (oldParameters.has(parameterName)) {
 					// JSONArray value = (JSONArray) newParameters.get(parameter);
 					// String regex2 = "\\((?:(?:,)?(?:\\'([a-zA-Z0-9\\-\\_\\s]+)\\')(?:,+)?)+\\)";
 					// String valueToElaborate = value.get(0).toString();
@@ -1671,6 +1723,21 @@ public class ExcelExporter {
 					parameters.put(parameterName, parToPut);
 				}
 			}
+//			else if (associationsJSON.toString().contains(parameter) && newParameters.has(parameter)) {
+//
+//				Object obj = newParameters.get("$P{" + parameter + "}");
+//				if (obj instanceof JSONArray && newParameters.getString(parameter).isEmpty()) {
+//
+//					JSONArray value = (JSONArray) newParameters.get(parameter);
+//					String regex2 = "\\(\\'(.*)\\'\\)";
+//					Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(value.get(0).toString());
+//					if (parameterMatcher2.matches()) {
+//						String realValue = parameterMatcher2.group(1);
+//						parameters.put(parameter, realValue);
+//					}
+//				}
+//			}
+
 		}
 		return parameters;
 	}
