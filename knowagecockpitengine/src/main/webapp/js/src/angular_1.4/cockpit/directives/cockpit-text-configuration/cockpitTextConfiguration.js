@@ -69,6 +69,7 @@ function cockpitTextControllerFunction($scope,cockpitModule_widgetServices,
 	//set datasets references to ngModel
 	$scope.datasetColumns=[];
 	$scope.ngModelShared.datasets = {};
+	$scope.ngModelShared.clickFunctions = ['CROSS-NAVIGATION'];
 	if ($scope.cockpitModule_template.configuration && $scope.cockpitModule_template.configuration.datasets){
 		for(var ds in $scope.cockpitModule_template.configuration.datasets){
 			// don't add all the datasets but only those who are selected by user
@@ -81,7 +82,6 @@ function cockpitTextControllerFunction($scope,cockpitModule_widgetServices,
 				$scope.ngModelShared.viewDatasetsDett[tmpDs.label] = false;
 				$scope.ngModelShared.viewDatasets = true;
 				$scope.ngModelShared.functions=['SUM', 'AVG', 'MIN', 'MAX','COUNT'];
-				$scope.ngModelShared.clickFunctions = ['CROSS-NAVIGATION'];
 			}
 
 		}
