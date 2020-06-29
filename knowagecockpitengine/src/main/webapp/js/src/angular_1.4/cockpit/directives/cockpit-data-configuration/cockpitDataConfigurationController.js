@@ -660,10 +660,6 @@ function variablesController($scope, sbiModule_translate, cockpitModule_template
 	
 	$scope.variablesAnalyticalDrivers = getVariablesAnalyticalDrivers();
 
-	$scope.$watch('cockpitModule_template.configuration.datasets',function(newValue, oldValue){
-		$scope.availableDatasets = newValue;
-	})
-
 	$scope.availableColumns = function(id){
 		for(var k in $scope.tmpAvaiableDataset){
 			if($scope.tmpAvaiableDataset[k].id.dsId == id){

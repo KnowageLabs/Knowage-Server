@@ -46,7 +46,7 @@
 				<md-input-container class="md-block" flex ng-if="variable.type == 'dataset'">
 					<label>{{::translate.load('sbi.cockpit.cross.outputParameter.dataset')}}</label>
 					<md-select ng-model="variable.dataset">
-						<md-option ng-repeat="ds in availableDatasets" ng-value="ds.dsId">{{ds.name}}</md-option> 
+						<md-option ng-repeat="ds in tmpAvaiableDataset" ng-value="ds.id.dsId">{{ds.name}}</md-option> 
 					</md-select>
 				</md-input-container>
 				
