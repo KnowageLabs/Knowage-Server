@@ -24,7 +24,7 @@ import java.util.Properties;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class GoogleSignInConfig {
@@ -38,23 +38,26 @@ public class GoogleSignInConfig {
 	static protected Properties properties = new Properties();
 
 	static {
-		String filename = System.getProperty(GOOGLE_AUTHENTICATION_CONFIG);
-		if (filename != null) {
-			logger.info("Retrieved " + GOOGLE_AUTHENTICATION_CONFIG + " system property. Google SignIn configuration file is: [" + filename + "]");
-			try {
-				properties.load(new FileInputStream(filename));
-			} catch (FileNotFoundException e) {
-				logger.error("Could not find file with Google Sign-In config: file [" + filename + "] not found");
-				throw new SpagoBIRuntimeException("Could not find file with Google Sign-In config: file [" + filename + "] not found", e);
-			} catch (Exception e) {
-				logger.error("Could not read file with Google Sign-In config [" + filename + "]");
-				throw new SpagoBIRuntimeException("Could not read file with Google Sign-In config [" + filename + "] not found", e);
+		try {
+			String filename = System.getProperty(GOOGLE_AUTHENTICATION_CONFIG);
+			if (filename != null) {
+				logger.info("Retrieved " + GOOGLE_AUTHENTICATION_CONFIG + " system property. Google SignIn configuration file is: [" + filename + "]");
+				try {
+					properties.load(new FileInputStream(filename));
+				} catch (FileNotFoundException e) {
+					logger.error("Could not find file with Google Sign-In config: file [" + filename + "] not found");
+					throw new SpagoBIRuntimeException("Could not find file with Google Sign-In config: file [" + filename + "] not found", e);
+				} catch (Exception e) {
+					logger.error("Could not read file with Google Sign-In config [" + filename + "]");
+					throw new SpagoBIRuntimeException("Could not read file with Google Sign-In config [" + filename + "] not found", e);
+				}
+				String clientId = properties.getProperty(GOOGLE_CLIENT_ID);
+				logger.debug("Google Sign-In Client ID is [" + clientId + "]");
+				Assert.assertNotBlank(clientId, "Google Sing-In Client ID was not found!");
 			}
-			String clientId = properties.getProperty(GOOGLE_CLIENT_ID);
-			logger.debug("Google Sign-In Client ID is [" + clientId + "]");
-			if (StringUtilities.isEmpty(clientId)) {
-				throw new SpagoBIRuntimeException("Google Sing-In Client ID was not found!");
-			}
+		} catch (Exception e) {
+			logger.error("Error while loading Google Sing-In configuration file", e);
+			throw new SpagoBIRuntimeException("Error while loading Google Sing-In configuration file", e);
 		}
 	}
 
