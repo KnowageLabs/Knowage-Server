@@ -142,7 +142,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) {
 							tempCol.tooltipValueGetter = TooltipValue;
 						}
-						if($scope.interaction && $scope.interaction.column == $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow && ($scope.interaction.crossType == 'singleColumn' || $scope.interaction.interactionType == 'singleColumn')) {
+						if($scope.interaction && $scope.interaction.column == $scope.ngModel.content.columnSelectedOfDataset[c].name && ($scope.interaction.crossType == 'singleColumn' || $scope.interaction.interactionType == 'singleColumn')) {
 							tempCol.cellClass = 'cross-cell';
 							delete tempCol.tooltipField;
 							tempCol.tooltipValueGetter = function(params) {

@@ -1051,7 +1051,14 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						if(parameter.bindType == 'driver') paramValue = cockpitModule_analyticalDrivers[parameter.driver];
 						if(parameter.bindType == 'jwt') paramValue = sbiModule_user.userUniqueIdentifier;
 						if(parameter.bindType == 'dynamic') {
-							if(parameter.column && parameter.column != 'column_name_mode') paramValue = row[parameter.column];
+							if(parameter.column && parameter.column != 'column_name_mode') {
+								for(var c in $scope.ngModel.content.columnSelectedOfDataset){
+									if($scope.ngModel.content.columnSelectedOfDataset[c].name == parameter.column) {
+										paramValue = row[$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow];
+										break;
+									}
+								}
+							}
 							else paramValue = columnName;
 						}
 						if(parameter.bindType == 'selection') {
