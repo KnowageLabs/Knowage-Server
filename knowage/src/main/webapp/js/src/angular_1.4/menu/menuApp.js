@@ -45,7 +45,7 @@ myApp.config(function($mdThemingProvider,ScrollBarsProvider) {
         };
 });
 
-myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_i18n', '$interval'
+myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_i18n', '$interval', '$httpParamSerializer'
   				, function(
   						$http,
   						$mdDialog,
@@ -55,7 +55,8 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
   						sbiModule_messaging,
   						sbiModule_translate,
   						sbiModule_i18n,
-  						$interval
+  						$interval,
+  						$httpParamSerializer
   						) {
     return {
         restrict: 'E',
@@ -173,7 +174,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 			$scope.roleSelection = function roleSelection(){
 				if(Sbi.user.roles && Sbi.user.roles.length > 1){
 					$scope.toggleMenu();
-					$scope.serviceUrl = Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=SET_SESSION_ROLE_ACTION";
+					$scope.serviceUrl = Sbi.config.contextName+"/servlet/AdapterHTTP";
 					var parentEl = angular.element(document.body);
 					$mdDialog.show({
 						parent: parentEl,
@@ -200,7 +201,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 		        	          $mdDialog.hide();
 		        	        }
 		        	        scope.save = function() {
-		        	        	$http.post(scope.serviceUrl, 
+		        	        	$http.post(scope.serviceUrl,
 		        	        			$httpParamSerializer({ACTION_NAME: "SET_SESSION_ROLE_ACTION", SELECTED_ROLE: scope.sessionRole}),
 		        	        			{headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}})
 		        	        	.success(function(data){
@@ -306,7 +307,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
     	 		$scope.languages = languages;
 
     	 		$scope.showDialog();
-				//$scope.showAlert("Select Language",languageTemplate)
+				// $scope.showAlert("Select Language",languageTemplate)
 			}
 
 			$scope.getLanguageUrl = function getLanguageUrl(config){
@@ -405,7 +406,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 						var encodedUri = encodeURI(Sbi.config.contextName+'/restful-services/2.0/export/dataset/'+id);
 						var link = document.createElement("a");
 						link.setAttribute("href", encodedUri);
-						//link.setAttribute("download", "my_data.csv");
+						// link.setAttribute("download", "my_data.csv");
 						document.body.appendChild(link); // Required for FF
 						link.click();
 					}
@@ -420,7 +421,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 					};
 
 					FullWidthCellRenderer.prototype.getTemplate = function(params) {
-					    //var data = params.node.data;
+					    // var data = params.node.data;
 					    return '<div class="full-width-panel" style="padding:8px">ciao</div>';
 					};
 
@@ -429,16 +430,16 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 					};
 					scope.downloadGridOptions = {
 							angularCompileRows: true,
-							//domLayout:'autoHeight',
+							// domLayout:'autoHeight',
 						    defaultColDef: {
 						        sortable: true,
 						        filter: true
 						    },
 						    columnDefs: columnDefs,
 						    rowData: scope.downloadList || [],
-//						    getRowHeight: function (params) {
-//						        return isFullWidth(params.data) ? 100 : 25;
-//						    },
+// getRowHeight: function (params) {
+// return isFullWidth(params.data) ? 100 : 25;
+// },
 						    onGridReady: function (params) {
 						        params.api.sizeColumnsToFit();
 						    },
@@ -518,17 +519,18 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 					var PARAMETER_STATE_OBJECT_KEY = sbiModule_config.sessionParametersStateKey;
 
 
-					//if (sbiModule_config.isStatePersistenceEnabled) {
+					// if (sbiModule_config.isStatePersistenceEnabled) {
 
 						var store = new Persist.Store(STORE_NAME, {
 							swf_path: sbiModule_config.contextName + '/js/lib/persist-0.1.0/persist.swf'
 							});
 
 						store.set(PARAMETER_STATE_OBJECT_KEY, angular.toJson({}));
-					//}
+					// }
 
 				} catch (err) {
-					//console.error("Error in deleting parameters data from session");
+					// console.error("Error in deleting parameters data from
+					// session");
 				}
 			}
 
@@ -538,12 +540,13 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				}
 				if (type == 'execDirectUrl'){
 					// this is the case linked document would not be executable
-//					if(url == 'noExecutableDoc'){
-//						sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.execution.menu.noclickable"), sbiModule_translate.load('sbi.generic.genericWarning'));
-//						}
-//					else{
+// if(url == 'noExecutableDoc'){
+// sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.execution.menu.noclickable"),
+// sbiModule_translate.load('sbi.generic.genericWarning'));
+// }
+// else{
 						$scope.redirectIframe(url);
-//					}
+// }
 				} else if (type == 'roleSelection'){
 					$scope.roleSelection();
 				} else if (type =="execUrl"){

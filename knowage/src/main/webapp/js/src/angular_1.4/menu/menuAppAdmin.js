@@ -40,8 +40,8 @@ myApp.config(function($mdThemingProvider,ScrollBarsProvider) {
         };
 });
 
-myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n','sbiModule_user', '$interval',
-	function($window,$http, $mdDialog, $timeout, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config, sbiModule_i18n, sbiModule_user, $interval) {
+myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', 'sbiModule_i18n','sbiModule_user', '$interval', '$httpParamSerializer',
+	function($window,$http, $mdDialog, $timeout, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config, sbiModule_i18n, sbiModule_user, $interval, $httpParamSerializer) {
     return {
 
         restrict: 'E',
@@ -195,7 +195,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 			$scope.roleSelection = function roleSelection(){
 				if(Sbi.user.roles && Sbi.user.roles.length > 1){
 					$scope.toggleMenu();
-					$scope.serviceUrl = Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=SET_SESSION_ROLE_ACTION";
+					$scope.serviceUrl = Sbi.config.contextName+"/servlet/AdapterHTTP";
 					var parentEl = angular.element(document.body);
 					$mdDialog.show({
 						parent: parentEl,
@@ -222,7 +222,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$timeout','$mdToast
 		        	          $mdDialog.hide();
 		        	        }
 		        	        scope.save = function() {
-		        	        	$http.post(scope.serviceUrl, 
+		        	        	$http.post(scope.serviceUrl,
 		        	        			$httpParamSerializer({ACTION_NAME: "SET_SESSION_ROLE_ACTION", SELECTED_ROLE: scope.sessionRole}),
 		        	        			{headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}})
 		        	        	.success(function(data){
