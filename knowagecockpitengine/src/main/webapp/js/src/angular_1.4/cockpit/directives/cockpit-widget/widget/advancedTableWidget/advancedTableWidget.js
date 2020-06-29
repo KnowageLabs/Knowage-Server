@@ -739,7 +739,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
-		function getColumnNameFromTableMetadata(colAlias){
+		function getColumnNameFromTableMetadata(colAlias, colId){
+			if(colId){
+				for(var m in $scope.metadata.fields){
+					if($scope.metadata.fields[m].name && $scope.metadata.fields[m].name == colId) return $scope.metadata.fields[m].header;
+				}
+			}
 			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
 				if($scope.ngModel.content.columnSelectedOfDataset[k].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[k].aliasToShow == colAlias) return $scope.ngModel.content.columnSelectedOfDataset[k].name;
 			}
