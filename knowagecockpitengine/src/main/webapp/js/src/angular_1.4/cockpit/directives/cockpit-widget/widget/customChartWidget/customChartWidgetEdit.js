@@ -101,7 +101,6 @@ function customChartWidgetEditControllerFunction(
         onViewportChanged: resizeColumns,
         onCellEditingStopped: refreshRow,
         singleClickEdit: true,
-        stopEditingWhenGridLosesFocus: true,
         columnDefs: $scope.columnsDefinition,
 		rowData: $scope.newModel.content.columnSelectedOfDataset
 	}

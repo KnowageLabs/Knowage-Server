@@ -189,7 +189,6 @@ function RWidgetEditControllerFunction(
         onGridReady : resizeColumns,
         onCellEditingStopped: refreshRow,
         singleClickEdit: true,
-        stopEditingWhenGridLosesFocus: true,
         columnDefs: [
         	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.name'), field:'name'},
         	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.alias'), field:'alias',"editable":true,cellRenderer:editableCell, cellClass: 'editableCell'},

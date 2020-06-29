@@ -95,7 +95,6 @@
 	        onGridReady : resizeColumns,
 	        onCellEditingStopped: refreshRow,
 	        singleClickEdit: true,
-	        stopEditingWhenGridLosesFocus: true,
 	        columnDefs: [
 	        	//{headerName:'Order', cellRenderer: orderRenderer, field:'order',width: 100,suppressSizeToFit:true,sort: 'asc',"cellStyle":{"border":"none !important","display":"inline-flex","justify-content":"center"}},
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.name'), field:'name',"editable":isInputEditable,cellRenderer:editableCell, cellClass: 'editableCell',rowDrag: true},

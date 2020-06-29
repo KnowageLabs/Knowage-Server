@@ -121,8 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             onSortChanged: changeSorting,
             onCellClicked: handleClick,
             onColumnResized: columnResized,
-            getRowHeight: getRowHeight,
-            stopEditingWhenGridLosesFocus:true
+            getRowHeight: getRowHeight
 		};
 
 		function getRowHeight(params){
