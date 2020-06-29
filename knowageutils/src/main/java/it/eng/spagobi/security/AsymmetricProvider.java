@@ -73,6 +73,9 @@ public enum AsymmetricProvider {
 	}
 
 	private static byte[] getKeyBytes() {
+		String documentationLink = String.format(
+				"Please, read the documentation https://knowage-suite.readthedocs.io/en/%s.%s/installation-guide/manual-installation.html?highlight=server.xml#environment-variables-definition",
+				Version.getMajorVersion(), Version.getMinorVersion());
 		Logger logger = Logger.getLogger(AsymmetricProvider.class);
 		byte[] fileContent = null;
 		try {
@@ -82,16 +85,12 @@ public enum AsymmetricProvider {
 			fileContent = Files.readAllBytes(file.toPath());
 
 		} catch (NamingException e) {
-			String message = "Unable to find resource for security initialization";
-			logger.error(String.format(
-					"Unable to find resource for security initialization. Please, read the documentation for the configuration. https://knowage-suite.readthedocs.io/en/%s.%s/installation-guide/manual-installation.html?highlight=server.xml#environment-variables-definition",
-					Version.getMajorVersion(), Version.getMinorVersion()));
+			String message = "Unable to find resource for security initialization. [password_encryption_secret] envinronment variable is missing.";
+			logger.error(String.format("%s %s", message, documentationLink));
 			throw new Error(message, e);
 		} catch (IOException e) {
-			String message = "Unable to find file for security initialization";
-			logger.error(String.format(
-					"Unable to find file for security initialization. Please, read the documentation for the configuration. https://knowage-suite.readthedocs.io/en/%s.%s/installation-guide/manual-installation.html?highlight=server.xml#environment-variables-definition",
-					Version.getMajorVersion(), Version.getMinorVersion()));
+			String message = "Unable to find file for security initialization.";
+			logger.error(String.format("%s %s", message, documentationLink));
 			throw new Error(message, e);
 		}
 
