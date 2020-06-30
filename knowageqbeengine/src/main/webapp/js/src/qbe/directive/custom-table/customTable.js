@@ -354,43 +354,47 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 		expression_service.generateExpressions($scope.filters,$scope.expression,$scope.advancedFilters)
 	}
+	
+	$scope.deleteColumn = function(column){
+		$scope.ngModel.splice($scope.ngModel.indexOf(column),1);
+	}
 
-//	$scope.moveRight = function(currentOrder, column) {
-//
-//		var newOrder = currentOrder + 1;
-//		var index = $scope.ngModel.indexOf(column);
-//		var indexOfNext = index + 1;
-//
-//		if(index!=undefined && indexOfNext!=-1 && newOrder <= $scope.ngModel.length){
-//			$scope.ngModel[index] = $scope.ngModel[indexOfNext];
-//			$scope.ngModel[index].order = currentOrder;
-//
-//			$scope.ngModel[indexOfNext] = column;
-//			$scope.ngModel[indexOfNext].order = newOrder;
-//		}
-//
-//		$rootScope.$broadcast('move', {index:index,direction:+1});
-//
-//	};
-//
-//	$scope.moveLeft = function(currentOrder, column) {
-//
-//		var newOrder = currentOrder - 1;
-//		var index = $scope.ngModel.indexOf(column);
-//		var indexOfBefore = index - 1;
-//
-//		if(index!=undefined && indexOfBefore!=undefined && indexOfBefore!=-1){
-//
-//			$scope.ngModel[index] = $scope.ngModel[indexOfBefore];
-//			$scope.ngModel[index].order = currentOrder;
-//
-//			$scope.ngModel[indexOfBefore] = column;
-//			$scope.ngModel[indexOfBefore].order = newOrder;
-//		}
-//
-//		$rootScope.$broadcast('move', {index:index,direction:-1});
-//
-//	};
+	$scope.moveRight = function(currentOrder, column) {
+
+		var newOrder = currentOrder + 1;
+		var index = $scope.ngModel.indexOf(column);
+		var indexOfNext = index + 1;
+
+		if(index!=undefined && indexOfNext!=-1 && newOrder <= $scope.ngModel.length){
+			$scope.ngModel[index] = $scope.ngModel[indexOfNext];
+			$scope.ngModel[index].order = currentOrder;
+
+			$scope.ngModel[indexOfNext] = column;
+			$scope.ngModel[indexOfNext].order = newOrder;
+		}
+
+		$rootScope.$broadcast('move', {index:index,direction:+1});
+
+	};
+
+	$scope.moveLeft = function(currentOrder, column) {
+
+		var newOrder = currentOrder - 1;
+		var index = $scope.ngModel.indexOf(column);
+		var indexOfBefore = index - 1;
+
+		if(index!=undefined && indexOfBefore!=undefined && indexOfBefore!=-1){
+
+			$scope.ngModel[index] = $scope.ngModel[indexOfBefore];
+			$scope.ngModel[index].order = currentOrder;
+
+			$scope.ngModel[indexOfBefore] = column;
+			$scope.ngModel[indexOfBefore].order = newOrder;
+		}
+
+		$rootScope.$broadcast('move', {index:index,direction:-1});
+
+	};
 
 	$scope.changeAlias = function(field){
 		$mdDialog.show({
@@ -440,13 +444,13 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		$rootScope.$broadcast('showCalculatedField',row);
 	}
 
-	$scope.removeColumns = function(fields) {
+	$scope.removeColumns = function(fields,standardTable) {
 		var toRemove = [];
 		for(var i in fields){
 			toRemove.push({"id" : fields[i].id,"entity" : fields[i].entity
 			})
 		}
-		$scope.updateQbeTable();
+		if(!standardTable) $scope.updateQbeTable();
 		$rootScope.$emit('removeColumns', toRemove);
 	};
 
@@ -838,7 +842,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		orderingValues: ["NONE", "ASC", "DESC"],
 		temporalFunctions: $scope.tmpFunctions,
 		deleteField : function (row) {
-			$scope.removeColumns([row]);
+			$scope.removeColumns([row],true);
 		},
 		moveUp : function (row) {
 			$scope.moveLeft(row.order, row);
