@@ -620,9 +620,12 @@
 									paramDialogCtrl.tableData = response.data.result.root;
 									paramDialogCtrl.lookoutGridOptions.api.setRowData(response.data.result.root);
 									if(parameter.parameterValue && parameter.parameterValue.length>0){
+										var initSelectedItems = paramDialogCtrl.initSelectedTableItems();
 										paramDialogCtrl.lookoutGridOptions.api.forEachNode( function(rowNode, index) {
-											if(paramDialogCtrl.initSelectedTableItems() == rowNode.data) {
-												rowNode.setSelected(true);
+											for(var i in initSelectedItems){
+												if(initSelectedItems[i] == rowNode.data) {
+													rowNode.setSelected(true);
+												}
 											}
 										});
 									}
@@ -636,8 +639,7 @@
 							var isMultivalue = paramDialogCtrl.tempParameter.multivalue;
 							var defaultValues = paramDialogCtrl.tableData;
 
-							if(paramDialogCtrl.tempParameter.parameterValue
-									&& paramDialogCtrl.tempParameter.parameterValue != null) {
+							if(paramDialogCtrl.tempParameter.parameterValue && paramDialogCtrl.tempParameter.parameterValue != null) {
 
 								var parameterValue = paramDialogCtrl.tempParameter.parameterValue;
 
