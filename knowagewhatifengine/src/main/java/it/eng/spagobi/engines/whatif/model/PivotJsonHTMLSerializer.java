@@ -27,7 +27,6 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.jdbc.util.BasicFormatterImpl;
 import org.json.JSONException;
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
@@ -460,17 +459,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	 */
 
 	public String formatQueryString(String queryString) {
-		String formattedQuery;
-		BasicFormatterImpl fromatter;
-
 		if (queryString == null || queryString.equals("")) {
 			logger.error("Impossible to get the query string because the query is null");
 			return "";
 		}
-
-		fromatter = new BasicFormatterImpl();
-		formattedQuery = fromatter.format(queryString);
-		return StringUtilities.fromStringToHTML(formattedQuery);
+		return StringUtilities.fromStringToHTML(queryString);
 	}
 
 	private void doPagination(boolean condition, ModelConfig modelConfig, SpagoBIPivotModel model, WhatIfHTMLRendereCallback callback, StringWriter writer,
