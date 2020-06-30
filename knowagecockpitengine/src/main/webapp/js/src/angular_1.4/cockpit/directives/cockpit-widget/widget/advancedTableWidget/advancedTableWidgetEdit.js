@@ -568,7 +568,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
         var columns = $scope.newModel.content.columnSelectedOfDataset;
         for(var i = 0; i < columns.length - 1; i++){
             for(var j = i + 1; j < columns.length; j++){
-                if(columns[i].aliasToShow == columns[j].aliasToShow){
+                if(columns[i].aliasToShow.toLowerCase() == columns[j].aliasToShow.toLowerCase()){
                     return false;
                 }
             }
