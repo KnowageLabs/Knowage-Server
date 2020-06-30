@@ -179,7 +179,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		}
 
 		return 	calculator +
-				'<md-button class="md-icon-button noMargin" ng-click="draw(\''+params.data.alias+'\')" ng-style="{\'background-color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
+				'<md-button class="md-icon-button noMargin" ng-click="draw('+params.rowIndex+')" ng-style="{\'background-color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
 				'   <md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.columnstyle.icon")}}</md-tooltip>'+
 				'	<md-icon ng-style="{\'color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style.color}" md-font-icon="fa fa-paint-brush" aria-label="Paint brush"></md-icon>'+
 				'</md-button>'+
@@ -280,10 +280,8 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
   		else $scope.newModel.content.columnSelectedOfDataset[rowIndex].style = {'hiddenColumn': true};
   	}
 
-	$scope.draw = function(rowName) {
-		for(var k in $scope.newModel.content.columnSelectedOfDataset){
-			if($scope.newModel.content.columnSelectedOfDataset[k].alias == rowName) $scope.selectedColumn = $scope.newModel.content.columnSelectedOfDataset[k];
-		}
+	$scope.draw = function(rowIndex) {
+		$scope.selectedColumn = $scope.newModel.content.columnSelectedOfDataset[rowIndex];
 
 		$mdDialog.show({
 			templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnStyle.html',
