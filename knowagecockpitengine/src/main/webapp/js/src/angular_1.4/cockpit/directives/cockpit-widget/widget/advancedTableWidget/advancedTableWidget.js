@@ -417,7 +417,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.bulkSelection){
 				this.manageMultiSelection(params);
 			}
-			if(tempValue != "" && this.eGui.innerHTML == '') this.eGui.innerHTML = ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
+			if(typeof tempValue != "undefined" && this.eGui.innerHTML == '') this.eGui.innerHTML = ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
 		}
 
 		cellRenderer.prototype.getGui = function() {
