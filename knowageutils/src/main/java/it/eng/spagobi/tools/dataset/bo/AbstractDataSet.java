@@ -449,9 +449,30 @@ public abstract class AbstractDataSet implements IDataSet {
 			String value = values[j].trim();
 			if (!value.isEmpty()) {
 				if (value.startsWith(delim) && value.endsWith(delim)) {
-					value = value.substring(1, value.length() - 1);
-					value = value.replaceAll("'", "''");
-					newValues.add(delim + value + delim);
+					if (value.contains("','")) {
+						String[] valuesArray = value.split("','");
+						String newValuesFromArray = "";
+						for (int i = 0; i < valuesArray.length; i++) {
+							String temp = valuesArray[i];
+							if (i == 0)
+								temp = temp + delim;
+							else
+								temp = delim + temp;
+							if (temp.startsWith(delim) && temp.endsWith(delim))
+								temp = temp.substring(1, temp.length() - 1);
+							temp = temp.replaceAll("'", "''");
+							if (i == 0)
+								newValuesFromArray = (delim + temp + delim);
+							else
+								newValuesFromArray = newValuesFromArray + "," + (delim + temp + delim);
+
+						}
+						newValues.add(newValuesFromArray);
+					} else {
+						value = value.substring(1, value.length() - 1);
+						value = value.replaceAll("'", "''");
+						newValues.add(delim + value + delim);
+					}
 				} else {
 					if (isString) {
 						// Duplicate single quote to transform it into an escaped SQL single quote
