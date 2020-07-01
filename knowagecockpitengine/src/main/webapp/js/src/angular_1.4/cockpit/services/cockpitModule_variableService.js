@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		this.getVariableValue = function(variable){
 			return $q(function(resolve, reject) {
 				if(variable.type == 'static') resolve( variable.value );
-				if(variable.type == 'driver') resolve( cockpitModule_analyticalDrivers[variable.driver] );
+				if(variable.type == 'driver') resolve( self.parseOldStyleDriver(cockpitModule_analyticalDrivers[variable.driver]) );
 				if(variable.type == 'profile') resolve( sbiModule_user.profileAttributes[variable.attribute] );
 				if(variable.type == 'dataset') {
 					var tempDataset = cockpitModule_datasetServices.getDatasetById(variable.dataset);
@@ -70,6 +70,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					})
 				}
 			})
+		}
+		
+		this.parseOldStyleDriver = function(oldDriver){
+			var newDriver = oldDriver.replace(/\{([\;\,\_\s\-]{1})\{([^\}]*)\}([A-Z]*)\}/g,function(match, divider, params, type){
+				newDriver = params.split(divider);
+				return newDriver.join(",");
+			})
+			return newDriver;
 		}
 
 		this.getVariablePlaceholders = function(textToParse){
