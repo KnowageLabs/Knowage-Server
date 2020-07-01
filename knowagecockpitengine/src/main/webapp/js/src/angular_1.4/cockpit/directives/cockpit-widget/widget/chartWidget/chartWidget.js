@@ -538,6 +538,25 @@ function cockpitChartWidgetControllerFunction(
 					  $scope.localDataset = {};
 					  $scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
 					  $scope.typesMap = cockpitModule_generalOptions.typesMap;
+					  
+					  $scope.getDatasetAdditionalInfo = function(dsId){
+					        for(var k in cockpitModule_template.configuration.datasets){
+					        	if(cockpitModule_template.configuration.datasets[k].dsId == dsId) {
+					        		$scope.tempDataset = cockpitModule_template.configuration.datasets[k];
+					        		break;
+					        	}
+					        }
+					        sbiModule_restServices.restToRootProject();
+					        sbiModule_restServices.promiseGet('2.0/datasets', 'availableFunctions/' + dsId, "useCache=" + $scope.tempDataset.useCache).then(function(response){
+					        	$scope.datasetAdditionalInfos = response.data;
+					        }, function(response) {
+					        	if(response.data && response.data.errors && response.data.errors[0]) $scope.showAction(response.data.errors[0].message);
+					        	else $scope.showAction($scope.translate.load('sbi.generic.error'));
+					        });
+						}
+					  
+						if($scope.localModel.dataset && $scope.localModel.dataset.dsId) $scope.getDatasetAdditionalInfo($scope.localModel.dataset.dsId);
+						
 					  $scope.handleEvent=function(event, arg1){
 						  if(event=='init'){
 							  if($scope.localModel.datasetId != undefined){
@@ -595,7 +614,7 @@ function cockpitChartWidgetControllerFunction(
 			    		    if($scope.localModel.datasetId){
 			    		         $scope.localModel.datasetId=null
 			    		    }
-
+			    		    $scope.getDatasetAdditionalInfo(dsId);
 			    		  var ds = cockpitModule_datasetServices.getDatasetById(dsId);
 			    		  if(ds){
 			    			  if(ds.id.dsId != $scope.localModel.datasetId && ds.id.dsLabel != $scope.localModel.datasetLabel){
@@ -928,7 +947,7 @@ function cockpitChartWidgetControllerFunction(
 			  		function buttonRenderer(params){
 			  			if(params.data.isCalculated){
 
-			  				return '<calculated-field ng-model="localModel"  callback-update-grid="updateGrid()" callback-update-alias="updateAliasOnSerie(newAlias, oldAlias)" selected-item="'+params.rowIndex+'"></calculated-field>' +
+			  				return '<calculated-field ng-model="localModel"  callback-update-grid="updateGrid()" callback-update-alias="updateAliasOnSerie(newAlias, oldAlias)" selected-item="'+params.rowIndex+'" additional-info="datasetAdditionalInfos"></calculated-field>' +
 			  				'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.alias+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
 			  			}
 
