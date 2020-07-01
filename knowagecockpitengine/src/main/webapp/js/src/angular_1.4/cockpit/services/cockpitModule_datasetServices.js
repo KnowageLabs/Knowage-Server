@@ -581,7 +581,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 							var finalValues = []; // all values to be replaced (flattened tuples)
 							angular.forEach(parValue,function(item){
-								angular.forEach(item.match(new RegExp("'(.*?)'",'g')),function(value){
+								var nowrapping = item.substring(1,item.length - 1);
+								var items = nowrapping.split(",");
+								angular.forEach(items,function(value){
 									this.push(value.substring(1, value.length - 1));
 								},finalValues);
 							}, finalValues);
