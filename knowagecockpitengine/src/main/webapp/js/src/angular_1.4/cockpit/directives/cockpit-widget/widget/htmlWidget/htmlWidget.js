@@ -342,6 +342,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    	condition = condition.replace($scope.activeSelectionsRegex, $scope.activeSelectionsReplacer);
 				    	condition = condition.replace($scope.paramsRegex, $scope.ifConditionParamsReplacer);
 				    	condition = condition.replace($scope.calcRegex, $scope.calcReplacer);
+				    	condition = condition.replace($scope.variablesRegex, $scope.variablesReplacer);
 				    	if(eval(condition)){
 				    		allElements[j].removeAttribute("kn-if");
 				    	}else{
