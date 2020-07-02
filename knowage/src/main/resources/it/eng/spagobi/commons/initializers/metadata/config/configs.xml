@@ -339,13 +339,13 @@
 
 
 	<CONFIG label="MAIL.PROFILES.scheduler.smtphost" name="Scheduler Smtp Host"
-		description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING"
+		description="" isActive="true" valueCheck="" valueType="STRING"
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.scheduler.smtpport" name="Scheduler Smtp Port"
-		description="" isActive="true" valueCheck="465" valueType="STRING"
+		description="" isActive="true" valueCheck="" valueType="STRING"
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.scheduler.from" name="Scheduler From"
-		description="" isActive="true" valueCheck="knowage@knowagedomain.com"
+		description="" isActive="true" valueCheck=""
 		valueType="STRING" category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.scheduler.user" name="Scheduler User"
 		description="" isActive="true" valueCheck="" valueType="STRING"
@@ -358,13 +358,13 @@
 		valueCheck="NONE" valueType="STRING" category="MAIL" />
 
 	<CONFIG label="MAIL.PROFILES.user.smtphost" name="Scheduler Smtp Host"
-		description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING"
+		description="" isActive="true" valueCheck="" valueType="STRING"
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.user.smtpport" name="Scheduler Smtp Port"
-		description="" isActive="true" valueCheck="465" valueType="STRING"
+		description="" isActive="true" valueCheck="" valueType="STRING"
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.user.from" name="Scheduler From"
-		description="" isActive="true" valueCheck="knowage@knowagedomain.com"
+		description="" isActive="true" valueCheck=""
 		valueType="STRING" category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.user.user" name="Scheduler User"
 		description="" isActive="true" valueCheck="" valueType="STRING"
@@ -378,13 +378,13 @@
 
 
 	<CONFIG label="MAIL.PROFILES.kpi_alarm.smtphost" name="Scheduler Smtp Host"
-		description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING"
+		description="" isActive="true" valueCheck="" valueType="STRING"
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.kpi_alarm.smtpport" name="Scheduler Smtp Port"
-		description="" isActive="true" valueCheck="465" valueType="STRING"
+		description="" isActive="true" valueCheck="" valueType="STRING"
 		category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.kpi_alarm.from" name="Scheduler From"
-		description="" isActive="true" valueCheck="knowage@knowagedomain.com"
+		description="" isActive="true" valueCheck=""
 		valueType="STRING" category="MAIL" />
 	<CONFIG label="MAIL.PROFILES.kpi_alarm.user" name="Scheduler User"
 		description="" isActive="true" valueCheck="" valueType="STRING"
