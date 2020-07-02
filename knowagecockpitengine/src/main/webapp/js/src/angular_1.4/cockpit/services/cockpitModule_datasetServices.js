@@ -1084,7 +1084,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if (parameters[parameter] == null || parameters[parameter] == undefined) {
 					output += delim + "\"" + parameter + "\":null";
 				}else{
-					output += delim + "\"" + parameter + "\":" + JSON.stringify(parameters[parameter]).replace("[","").replace("]","").replace(/\",\"/g,",");
+					var tempJSN = JSON.stringify(parameters[parameter]);
+					if(Array.isArray(parameters[parameter])) {
+						tempJSN = tempJSN.substring(1,tempJSN.length-1);
+					}					 
+					tempJSN = tempJSN.replace(/\",\"/g,","); 
+					
+					output += delim + "\"" + parameter + "\":" + tempJSN;
 				}
 			}
 			delim = ",";
