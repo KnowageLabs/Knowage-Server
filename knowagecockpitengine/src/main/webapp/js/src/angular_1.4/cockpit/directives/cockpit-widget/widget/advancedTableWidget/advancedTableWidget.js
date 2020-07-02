@@ -261,7 +261,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var properties = ["justify-content","color","background-color","font-style","font-weight","font-size"];
 				properties.forEach(function(property){
 					if(!headerStyle[property] && params.column.colDef.style[property]) headerStyle[property] = params.column.colDef.style[property];
-					if(property == "justify-content" && headerStyle[property] && params.column.colDef.style[property]) headerStyle[property] = params.column.colDef.style[property];
+					if(property == "justify-content" && params.column.colDef.style.overrideHeader) headerStyle[property] = params.column.colDef.style[property];
 				})
 			}
 		    this.eGui = document.createElement('div');

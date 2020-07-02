@@ -223,6 +223,13 @@
 										<md-option ng-repeat="fs in cockpitModule_generalOptions.flexAlignItems" ng-value="fs.value">{{fs.label}}</md-option>
 									</md-select>
 								</md-input-container>
+								<md-checkbox class="noMargin" ng-model="selectedColumn.style.overrideHeader" aria-label="override header" layout="row" layout-align="start center">
+					            	{{::translate.load('sbi.cockpit.table.overrideheader')}}
+					            	<md-tooltip md-delay="500">{{::translate.load('sbi.cockpit.table.overrideheader.tooltip')}}</md-tooltip>
+					          	</md-checkbox>
+							</div>
+							
+							<div layout="row">
 								<md-input-container class="md-block" flex>
 									<label>{{::translate.load("sbi.cockpit.table.fontsize")}}</label>
 									<input ng-model="selectedColumn.style['font-size']" type="text"/>
@@ -234,10 +241,6 @@
 										<md-option ng-repeat="fs in cockpitModule_generalOptions.fontFamily" ng-value="fs.value"><span ng-style="{'font-family':fs.value}">{{fs.label}}</span></md-option>
 									</md-select>
 								</md-input-container>
-							</div>
-							
-							<div layout="row">
-								
 								<md-input-container class="md-block" flex>
 									<label>{{::translate.load("sbi.cockpit.style.font.style")}}</label>
 									<md-select ng-model="selectedColumn.style['font-style']">
