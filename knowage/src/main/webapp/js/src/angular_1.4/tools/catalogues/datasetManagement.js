@@ -3100,28 +3100,23 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 }
 
 	 $scope.openPythonEnvironmentDialog = function () {
-		 $http({
-		        url: "https://" + JSON.parse($scope.selectedDataSet.pythonEnvironment).value + "/dataset/libraries",
-		        method: "GET",
-		        headers: {'Content-Type': 'application/json',
-		        		  'Authorization': $scope.encodedUserId}
-		    })
-		    .then(function(response) { //success
-		            $scope.libraries = response.data;
-		            $scope.forceRefresh = false;
-					   $mdDialog
-					   .show({
-					    scope : $scope,
-					    preserveScope : true,
-					    parent : angular.element(document.body),
-					    controllerAs : 'openPythonEnvironmentDialogCtrl',
-					    templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/pythonEnvironment.html',
-					    clickOutsideToClose : false,
-					    hasBackdrop : false
-					   });
-		    },
-		    function(response) { //failed
-		    });
+
+		 sbiModule_restServices.promiseGet('2.0/backendservices/widgets/python/libraries', JSON.parse($scope.selectedDataSet.pythonEnvironment).label)
+			.then(function(response) { //success
+				$scope.libraries = JSON.parse(response.data.result);
+	            $scope.forceRefresh = false;
+				   $mdDialog
+				   .show({
+				    scope : $scope,
+				    preserveScope : true,
+				    parent : angular.element(document.body),
+				    controllerAs : 'openPythonEnvironmentDialogCtrl',
+				    templateUrl : sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/catalogues/templates/pythonEnvironment.html',
+				    clickOutsideToClose : false,
+				    hasBackdrop : false
+				   });
+			},function(response){ //failed
+			});
 
 		   $timeout(function(){
 			   if(angular.element(document).find('md-dialog').length > 0){

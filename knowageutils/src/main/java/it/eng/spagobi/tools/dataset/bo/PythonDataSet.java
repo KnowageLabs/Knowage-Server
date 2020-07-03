@@ -129,7 +129,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 				restAddress = "http://" + pythonAddress + "/dataset"; // R engine does not support https
 			else
 				restAddress = "https://" + pythonAddress + "/dataset";
-//			restAddress = "https://" + pythonAddress + "/dataset";
+
 		} catch (Exception e) {
 			throw new ConfigurationException("Problems in configuration of data proxy", e);
 		}
