@@ -103,9 +103,9 @@ public class Password {
 
 		if (encValue != null) {
 			if (before72) {
-				encValue = PREFIX_SHA_PWD_ENCRIPTING + AsymmetricProvider.OLD_INSTANCE.enCrypt(value);
+				encValue = PREFIX_SHA_PWD_ENCRIPTING + PasswordEncrypterHolder.OLD_INSTANCE.enCrypt(value);
 			} else {
-				encValue = PREFIX_V2_SHA_PWD_ENCRIPTING + AsymmetricProvider.INSTANCE.enCrypt(value);
+				encValue = PREFIX_V2_SHA_PWD_ENCRIPTING + PasswordEncrypterHolder.INSTANCE.enCrypt(value);
 			}
 		}
 		return encValue;
