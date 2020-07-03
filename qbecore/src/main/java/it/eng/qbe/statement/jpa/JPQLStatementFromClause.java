@@ -18,12 +18,17 @@
 package it.eng.qbe.statement.jpa;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import javax.persistence.criteria.JoinType;
 
 import org.apache.log4j.Logger;
-import org.jgrapht.traverse.GraphIterator;
-import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.query.Query;
@@ -59,33 +64,112 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 
 	}
 
-	public String buildClause(QueryGraph queryGraph, Map<String, String> queryEntityAliases, Map entityAliasesMaps) {
-
-		GraphIterator<IModelEntity, Relationship> iterator = new TopologicalOrderIterator<>(queryGraph);
-		GraphIteratorListener listener = new GraphIteratorListener(entityAliasesMaps, queryEntityAliases);
-		iterator.addTraversalListener(listener);
-		IModelEntity firstEntity = null;
-		if (iterator.hasNext()) {
-			firstEntity = iterator.next();
-		}
-
-		while (iterator.hasNext()) {
-			iterator.next();
-		}
+	public String buildClause(final QueryGraph queryGraph, Map<String, String> queryEntityAliases, Map entityAliasesMaps) {
 
 		List<String> fromClauseElements = new ArrayList<>();
+		List<String> joinStatments = new ArrayList<String>();
 
-		String fistEntityName = firstEntity.getName();
-		String firtEntityAlias = getAlias(entityAliasesMaps, queryEntityAliases, firstEntity);
-		List<String> joinStatments = listener.getJoinStatments();
+		Set<IModelEntity> vertexSet = queryGraph.vertexSet();
+		List<IModelEntity> vertexList = new ArrayList<IModelEntity>(vertexSet);
 
-		fromClauseElements.add(FROM);
-		fromClauseElements.add(fistEntityName);
-		fromClauseElements.add(firtEntityAlias);
+		/*
+		 * Order vertex by counting the in and out relationships, where the vertex with
+		 * more out relationship and minor in relationship is first.
+		 */
+		Collections.sort(vertexList, new Comparator<IModelEntity>() {
+
+			@Override
+			public int compare(IModelEntity o1, IModelEntity o2) {
+				int o1Index = (1 * queryGraph.inDegreeOf(o1)) +  (-1 * queryGraph.outDegreeOf(o1));
+				int o2Index = (1 * queryGraph.inDegreeOf(o2)) +  (-1 * queryGraph.outDegreeOf(o2));
+				return o1Index - o2Index;
+			}
+
+		});
+		joinStatments.addAll(recursionEntryPoint(queryGraph, vertexList, queryEntityAliases, entityAliasesMaps));
 		fromClauseElements.addAll(joinStatments);
 
 		return StringUtils.join(fromClauseElements, " ");
 
+	}
+
+	List<String> recursionEntryPoint(QueryGraph queryGraph, List<IModelEntity> vertexList, Map<String, String> queryEntityAliases, Map entityAliasesMaps) {
+
+		List<String> ret = new ArrayList<String>();
+		Set<Relationship> traversedRelationships = new HashSet<Relationship>();
+		IModelEntity iModelEntity = vertexList.get(0);
+		String name = iModelEntity.getName();
+		String alias = getAlias(entityAliasesMaps, queryEntityAliases, iModelEntity);
+
+		// The first vertex is the FROM-clause table
+		ret.add(FROM);
+		ret.add(name);
+		ret.add(alias);
+		ret.addAll(recursion(queryGraph, traversedRelationships, iModelEntity, queryEntityAliases, entityAliasesMaps));
+
+		return ret;
+	}
+
+	private List<String> recursion(QueryGraph queryGraph, Set<Relationship> traversedRelationships, IModelEntity previousEntity, Map<String, String> queryEntityAliases, Map entityAliasesMaps) {
+		List<String> ret = new ArrayList<String>();
+
+		// edgesOf() return an unmodifiable set
+		Set<Relationship> edgesOf = new HashSet<Relationship>(queryGraph.edgesOf(previousEntity));
+
+		// Remove already traversed relationship
+		edgesOf.removeAll(traversedRelationships);
+
+		for (Relationship currEdge : edgesOf) {
+
+			boolean invert = false;
+			IModelEntity sourceEntity = currEdge.getSourceEntity();
+			IModelEntity targetEntity = currEdge.getTargetEntity();
+			JoinType joinType = currEdge.getJoinType();
+			String entityJoinPath = currEdge.getTargetJoinPath();
+
+			/*
+			 * If the source of the relationship is not the current vertex, we have
+			 * changed the direction of the path.
+			 */
+			if (sourceEntity != previousEntity) {
+				invert = true;
+			}
+
+			if (invert) {
+				IModelEntity tmp = targetEntity;
+				targetEntity = sourceEntity;
+				sourceEntity = tmp;
+
+				entityJoinPath = currEdge.getSourceJoinPath();
+			}
+
+			// In case of OUTER, invert if necessary
+			if (invert && joinType == JoinType.RIGHT) {
+				joinType = JoinType.LEFT;
+			} else if (invert && joinType == JoinType.LEFT) {
+				joinType = JoinType.RIGHT;
+			}
+
+			String sourceEntityAlias = getAlias(entityAliasesMaps, queryEntityAliases, sourceEntity);
+			String targetEntityAlias = getAlias(entityAliasesMaps, queryEntityAliases, targetEntity);
+			StringTokenizer st1 = new StringTokenizer(entityJoinPath, ".");
+			st1.nextToken();
+			String targetPropertyName = st1.nextToken();
+			JPQLJoinPath joinPath = new JPQLJoinPath(sourceEntityAlias, targetPropertyName);
+			JPQLJoin join = new JPQLJoin();
+
+			join.setJoinType(joinType);
+			join.setJoinPath(joinPath);
+			join.setTargetEntityAllias(targetEntityAlias);
+			ret.add(join.toString());
+
+			// Remember to exclude the current relationship: we don't want to traverse it again
+			traversedRelationships.add(currEdge);
+
+			ret.addAll(recursion(queryGraph, traversedRelationships, targetEntity, queryEntityAliases, entityAliasesMaps));
+		}
+
+		return ret;
 	}
 
 	private String getAlias(Map entityAliasesMaps, Map<String, String> queryEntityAliases, IModelEntity entity) {
