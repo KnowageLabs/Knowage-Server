@@ -634,7 +634,8 @@ public class DatasetManagementAPI {
 									}
 								}
 							}
-							paramValues.put(paramName, StringUtils.join(newValues, ","));
+							String newValuesString = StringUtils.join(newValues, ",");
+							paramValues.put(paramName, newValuesString);
 							break;
 						}
 					}

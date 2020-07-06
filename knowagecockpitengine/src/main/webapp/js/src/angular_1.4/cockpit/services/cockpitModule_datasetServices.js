@@ -581,11 +581,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 							var finalValues = []; // all values to be replaced (flattened tuples)
 							angular.forEach(parValue,function(item){
-								var nowrapping = item.substring(1,item.length - 1);
-								var items = nowrapping.split(",");
-								angular.forEach(items,function(value){
-									this.push(value.substring(1, value.length - 1));
-								},finalValues);
+								var nowrapping = item.substring(2,item.length - 2);
+								this.push(nowrapping.split("','"));
+//								angular.forEach(items,function(value){
+//									this.push(value.substring(1, value.length - 1));
+//								},finalValues);
 							}, finalValues);
 
 							for(var i=0; i<finalParams.length; i++){
@@ -1087,10 +1087,15 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					var tempJSN = JSON.stringify(parameters[parameter]);
 					if(Array.isArray(parameters[parameter])) {
 						tempJSN = tempJSN.substring(1,tempJSN.length-1);
-					}					 
-					tempJSN = tempJSN.replace(/\",\"/g,","); 
+					}				
+//					tempJSN = tempJSN.replace(/(?<!\')\,/g,function (match){
+//						debugger
+//						return "comma";
+//					});	
 					
-					output += delim + "\"" + parameter + "\":" + tempJSN;
+		//			tempJSN = tempJSN.replace(/\",\"/g,","); 
+					
+					output += delim + "\"" + parameter + "\":" + tempJSN ;
 				}
 			}
 			delim = ",";

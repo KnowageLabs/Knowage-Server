@@ -111,7 +111,8 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 		initGraph(config);
 		initDocuments(config);
 		selections = config.getSelections();
-		// initExcludedDatasets raccogliere set dataset label dalle selezione, set datasetlabel dal grafo e fare il primo - il secondo (sottrazione) il risultato va messo nella collezione documentsAndExcludedDatasets
+		// initExcludedDatasets raccogliere set dataset label dalle selezione, set datasetlabel dal grafo e fare il primo - il secondo (sottrazione) il
+		// risultato va messo nella collezione documentsAndExcludedDatasets
 		initDatasets(config);
 	}
 
@@ -126,19 +127,18 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 		String datasetFilter = null;
 		datasetParameters = config.getDatasetParameters();
 		for (SimpleFilter fil : filters) {
-		     datasetFilter = fil.getDataset().getLabel();
+			datasetFilter = fil.getDataset().getLabel();
 
-		     if (datasetFilters.get(datasetFilter)!=null) {
-		    	 List<SimpleFilter> listaTemp = datasetFilters.get(datasetFilter);
-		    	 listaTemp.add(fil);
-		    	 datasetFilters.put(datasetFilter, listaTemp);
+			if (datasetFilters.get(datasetFilter) != null) {
+				List<SimpleFilter> listaTemp = datasetFilters.get(datasetFilter);
+				listaTemp.add(fil);
+				datasetFilters.put(datasetFilter, listaTemp);
 
-		     }
-		     else {
-		    	 List<SimpleFilter> listaTemp = new ArrayList();
-		    	 listaTemp.add(fil);
-		    	 datasetFilters.put(datasetFilter, listaTemp);
-		     }
+			} else {
+				List<SimpleFilter> listaTemp = new ArrayList();
+				listaTemp.add(fil);
+				datasetFilters.put(datasetFilter, listaTemp);
+			}
 
 		}
 
@@ -154,7 +154,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 				Assert.assertNotNull(dataSet, "Unable to get metadata for dataset [" + v1 + "]");
 
 				Map<String, String> parametersValues = config.getDatasetParameters().get(v1);
-				new DatasetManagementAPI().setDataSetParameters(dataSet,parametersValues);
+				new DatasetManagementAPI().setDataSetParameters(dataSet, parametersValues);
 
 				boolean isNearRealtime = config.getNearRealtimeDatasets().contains(v1);
 				DatasetEvaluationStrategyType evaluationStrategyType = dataSet.getEvaluationStrategy(isNearRealtime);
@@ -231,52 +231,58 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 						if (ParametersUtilities.isParameter(missingColumn)) {
 							String missingParameter = ParametersUtilities.getParameterName(missingColumn);
 
-							if (associativeDatasetContainers.get(dataset)!=null) {  // dataset case
+							if (associativeDatasetContainers.get(dataset) != null) { // dataset case
 
 								String value = associativeDatasetContainers.get(dataset).getParameters().get(missingParameter);
 								HashSet<Tuple> tuples = new HashSet<Tuple>();
-								if (value!=null) {
-								String[] valueArray = value.split("','");
+								if (value != null) {
+									String[] valueArray = value.split("','");
 
-								if (valueArray.length == 1) {
-									if (value.startsWith("'") && value.endsWith("'")) {
-										value = value.substring(1, value.length() - 1);
+									if (valueArray.length == 1) {
+										if (value.startsWith("'") && value.endsWith("'")) {
+											value = value.substring(1, value.length() - 1);
+
+										}
 									}
+
+									Tuple tuple = new Tuple(value);
+									List<String> vals = (List<String>) tuple.getValues();
+									List<String> finalVals = new ArrayList<String>();
+									for (int i = 0; i < vals.size(); i++) {
+
+										String val = vals.get(i).replaceAll("&comma;", ",");
+										finalVals.add(val);
+									}
+
+									Tuple tupleToAdd = new Tuple(finalVals);
+									tuples.add(tupleToAdd);
+									groupToValues.put(missingColumn, tuples);
 								}
 
-								Tuple tuple = new Tuple(value);
-								tuples.add(tuple);
-								groupToValues.put(missingColumn, tuples);
-								}
+							} else { // document case
 
-							}
-							else {      // document case
-
-								if (datasetToAssociations.get(dataset)!=null) {
+								if (datasetToAssociations.get(dataset) != null) {
 
 									Map<String, String> parametersByEdgeGroup = datasetToAssociations.get(dataset);
 
 									for (String param : parametersByEdgeGroup.keySet()) {
 
-										if(parametersByEdgeGroup.get(param).equals(missingColumn)){
+										if (parametersByEdgeGroup.get(param).equals(missingColumn)) {
 
-											if(edgeName.equals(param)) {
+											if (edgeName.equals(param)) {
 												for (EdgeGroup edgeGr : groups) {
 
-													if(edgeGr.getEdgeNames().contains(edgeName)) {
+													if (edgeGr.getEdgeNames().contains(edgeName)) {
 
-
-														Set<Tuple> tuples =	result.getEdgeGroupValues().get(edgeGr);  // set of associative values linked to a param and edgegroup
+														Set<Tuple> tuples = result.getEdgeGroupValues().get(edgeGr); // set of associative values linked to a
+																														// param and edgegroup
 
 														groupToValues.put(missingColumn, tuples);
 													}
 
 												}
 
-
 											}
-
-
 
 										}
 

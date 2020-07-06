@@ -68,6 +68,10 @@ public final class Tuple {
 		return toString(prefix, suffix, VALUE_DELIMITER, stringDelimiter);
 	}
 
+	public String toStringEncoding(String prefix, String suffix, String stringDelimiter) {
+		return toStringEncoding(prefix, suffix, VALUE_DELIMITER, stringDelimiter);
+	}
+
 	public String toString(String prefix, String suffix, String valueDelimiter, String stringDelimiter) {
 		Assert.assertNotNull(prefix, "Prefix must be provided");
 		Assert.assertNotNull(suffix, "Suffix must be provided");
@@ -81,6 +85,29 @@ public final class Tuple {
 				tuple.append(valueDelimiter);
 			}
 			String value = values.get(i) == null ? null : getProperValueString(values.get(i));
+			String delimiter = value != null && value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter) ? "" : stringDelimiter;
+			tuple.append(delimiter);
+			tuple.append(value != null ? value : "NULL");
+			tuple.append(delimiter);
+		}
+		tuple.append(suffix);
+		return tuple.toString();
+	}
+
+	public String toStringEncoding(String prefix, String suffix, String valueDelimiter, String stringDelimiter) {
+		Assert.assertNotNull(prefix, "Prefix must be provided");
+		Assert.assertNotNull(suffix, "Suffix must be provided");
+		Assert.assertNotNull(valueDelimiter, "Value delimiter must be provided");
+		Assert.assertNotNull(stringDelimiter, "String delimiter must be provided");
+
+		StringBuilder tuple = new StringBuilder();
+		tuple.append(prefix);
+		for (int i = 0; i < values.size(); i++) {
+			if (i != 0) {
+				tuple.append(valueDelimiter);
+			}
+			String value = values.get(i) == null ? null : getProperValueString(values.get(i));
+			value = value.replaceAll(",", "&comma;");
 			String delimiter = value != null && value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter) ? "" : stringDelimiter;
 			tuple.append(delimiter);
 			tuple.append(value != null ? value : "NULL");
@@ -113,10 +140,10 @@ public final class Tuple {
 		} else {
 			if (other.values == null)
 				return false;
-			if(values.size() != other.values.size())
+			if (values.size() != other.values.size())
 				return false;
 			for (int i = 0; i < values.size(); i++) {
-				if(!values.get(i).equals(other.values.get(i)))
+				if (!values.get(i).equals(other.values.get(i)))
 					return false;
 			}
 		}
