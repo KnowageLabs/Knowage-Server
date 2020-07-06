@@ -15,7 +15,7 @@ Knowage evolves to meet the latest analytical needs thanks to the innovation and
 
 The following list of features is planned to be addressed in the short term, by Q1 2020 (release 7.2):
 
-* new dataset type Python
+* new dataset type Python / R
 
 * AWS Redshift compatibility
 
@@ -31,7 +31,7 @@ The following list of features is planned to be addressed in the short term, by 
 	
 	- new custom chart, where developer can exploit JS libraries
 	
-	- new Python widget
+	- new Python / R widget
  
 
 
@@ -66,10 +66,6 @@ In the following, Knowage will grow on other topics, such as:
 * Azure Synapse compatibility
 
 * Elasticsearch dataset
-
-* new dataset type R (similarly to Python dataset)
-
-* new cockpit widget type R (similarly to Python widget)
 
 
 
