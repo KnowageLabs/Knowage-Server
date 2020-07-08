@@ -18,10 +18,12 @@ package it.eng.knowage.engine.cockpit.api.crosstable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.LogMF;
@@ -73,6 +75,7 @@ public class CrossTabHTMLSerializer {
 	private static String DEFAULT_CENTER_ALIGN = "text-align:center;";
 
 	private Map<String, String> customStylesMap = new HashMap<String, String>();
+	private List<Integer> rowsToBeHidden;
 
 	private Locale locale = null;
 	private final Integer myGlobalId;
@@ -119,6 +122,7 @@ public class CrossTabHTMLSerializer {
 
 	private SourceBean getSourceBean(CrossTab crossTab) throws SourceBeanException, JSONException {
 		SourceBean toReturn = new SourceBean(COLUMN_DIV);
+		rowsToBeHidden = getNullRowsIndexList(crossTab);
 
 		Monitor htmlserializeTopLeftCornerMonitor = null;
 		Monitor htmlserializeRowsHeaderssMonitor = null;
@@ -173,12 +177,14 @@ public class CrossTabHTMLSerializer {
 
 	private SourceBean serializeRowsMembers(CrossTab crossTab) throws SourceBeanException, JSONException {
 		SourceBean table = new SourceBean(TABLE_TAG);
-		int leaves = crossTab.getRowsRoot().getLeafsNumber();
+		List<Node> nodes = crossTab.getRowsRoot().getLeafs();
+		int leaves = nodes.size();
 		JSONObject config = crossTab.getCrosstabDefinition().getConfig();
 		Boolean columnsTotals = config.optBoolean("calculatetotalsonrows");
 		Boolean noSelectedColumn = crossTab.getCrosstabDefinition().getRows().isEmpty();
 		String labelTotal = (!config.optString("rowtotalLabel").equals("")) ? config.optString("rowtotalLabel") : CrossTab.TOTAL;
 		String labelSubTotal = (!config.optString("rowsubtotalLabel").equals("")) ? config.optString("rowsubtotalLabel") : CrossTab.SUBTOTAL;
+		Set<Node> nodesToBeIgnored = new HashSet<Node>();
 
 		List<SourceBean> rows = new ArrayList<SourceBean>();
 		int levels = crossTab.getRowsRoot().getDistanceFromLeaves();
@@ -187,6 +193,11 @@ public class CrossTabHTMLSerializer {
 		}
 		// initialize all rows (without columns)
 		for (int i = 0; i < leaves; i++) {
+			Node n = nodes.get(i);
+			if (rowsToBeHidden.contains(i)) {
+				nodesToBeIgnored.add(n);
+				continue;
+			}
 			SourceBean aRow = new SourceBean(ROW_TAG);
 			if (columnsTotals && noSelectedColumn) {
 				SourceBean aColumn = new SourceBean(COLUMN_TAG);
@@ -215,6 +226,9 @@ public class CrossTabHTMLSerializer {
 			for (int j = 0; j < levelNodes.size(); j++) {
 				SourceBean aRow = rows.get(counter);
 				Node aNode = levelNodes.get(j);
+				if (nodesToBeIgnored.contains(aNode)) {
+					continue;
+				}
 				SourceBean aColumn = new SourceBean(COLUMN_TAG);
 
 				String text = null;
@@ -266,7 +280,10 @@ public class CrossTabHTMLSerializer {
 					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','"
 							+ StringEscapeUtils.escapeJavaScript(text) + "')");
 				aColumn.setCharacters(text);
-				int rowSpan = aNode.getLeafsNumber();
+
+				List<Node> allChildren = new ArrayList<Node>(aNode.getLeafs());
+				allChildren.removeAll(nodesToBeIgnored);
+				int rowSpan = allChildren.size();
 
 				if (rowSpan > 1) {
 					aColumn.setAttribute(ROWSPAN_ATTRIBUTE, rowSpan);
@@ -380,8 +397,7 @@ public class CrossTabHTMLSerializer {
 								Column columnObj = ((Column) getCategoryConfByLabel(crossTab, crossTab.getColumnsRoot().getLevel(i).get(0).getValue(),
 										"columns"));
 								String columnName = (columnObj != null) ? columnObj.getEntityId() : "";
-								aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + columnName + "','"
-										+ StringEscapeUtils.escapeJavaScript(text) + "')");
+								aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + columnName + "','" + StringEscapeUtils.escapeJavaScript(text) + "')");
 							}
 							if (crossTab.getCrosstabDefinition().isMeasuresOnColumns() && i + 2 == levels) {
 								String completeText = CrossTab.PATH_SEPARATOR;
@@ -536,6 +552,30 @@ public class CrossTabHTMLSerializer {
 		return toReturn;
 	}
 
+	private List<Integer> getNullRowsIndexList(CrossTab crossTab) {
+		List<Integer> nullRows = new ArrayList<Integer>();
+		String[][] data = crossTab.getDataMatrix();
+		for (int i = 0; i < data.length; i++) {
+			String[] values = data[i];
+			if (isNullOrZeroRow(values)) {
+				nullRows.add(i);
+			}
+		}
+		return nullRows;
+	}
+
+	private boolean isNullOrZeroRow(String[] values) {
+		for (int i = 0; i < values.length; i++) {
+			String curVal = values[i];
+			if (curVal != null && !curVal.equals("")) {
+				Double doubleVal = Double.parseDouble(curVal);
+				if (doubleVal != 0)
+					return false;
+			}
+		}
+		return true;
+	}
+
 	private SourceBean serializeData(CrossTab crossTab) throws SourceBeanException, JSONException {
 		SourceBean table = new SourceBean(TABLE_TAG);
 		String[][] data = crossTab.getDataMatrix();
@@ -621,12 +661,17 @@ public class CrossTabHTMLSerializer {
 
 		int nPartialSumRow = 0;
 		int nPartialLevels = 0;
+		boolean nullRow;
 		for (int i = 0; i < data.length; i++) {
 			SourceBean aRow = new SourceBean(ROW_TAG);
 
 			if (crossTab.isMeasureOnRow() && measureHeaders.size() > 0) {
 				aRow.setAttribute(measureHeaders.get(i % measureHeaderSize));
 			}
+
+			if (rowsToBeHidden.contains(i))
+				continue;
+
 			String[] values = data[i];
 			int pos;
 			for (int j = 0; j < values.length; j++) {
@@ -694,7 +739,7 @@ public class CrossTabHTMLSerializer {
 								// bgColorApplied = true;
 							}
 						}
-//						if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
+						// if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
 						if (!dataStyle.equals(DEFAULT_STYLE)) {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, dataStyle);
 							classType += "NoStandardStyle";
@@ -789,14 +834,15 @@ public class CrossTabHTMLSerializer {
 								int posRow = i - nPartialSumRow;
 								Integer levels = new Integer(0);
 								if (posRow < crossTab.getRowsSpecification().size()) {
-//									rowCord = (crossTab.getRowsSpecification().get(posRow) != null)
-//											? StringEscapeUtils.escapeJavaScript(crossTab.getRowsSpecification().get(posRow))
-//											: null;
+									// rowCord = (crossTab.getRowsSpecification().get(posRow) != null)
+									// ? StringEscapeUtils.escapeJavaScript(crossTab.getRowsSpecification().get(posRow))
+									// : null;
 									if (cellTypeValue.equalsIgnoreCase("data")) {
 										nPartialLevels = 0; // reset partialLevels count for new row
 									}
 									rowCord = getRowCordContent(crossTab, nPartialLevels, Integer.valueOf(posRow));
-									// System.out.println("*** i: [" +i + "] - posrow: [" +posRow+ "] - j: ["+j +"] - levels: ["+ nPartialLevels +"] - rowCord:
+									// System.out.println("*** i: [" +i + "] - posrow: [" +posRow+ "] - j: ["+j +"] - levels: ["+ nPartialLevels +"] -
+									// rowCord:
 									// ["+rowCord+ "]");
 								}
 
