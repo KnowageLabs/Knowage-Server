@@ -75,7 +75,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 						if (tempOrder == col.name) {
 						//custom selector ordering check
 						obj["orderColumn"] = tempOrder;					
-						if(columnOrdering.name) obj["orderType"] = ngModel.settings.sortingOrder;
+						if(columnOrdering.name) obj["orderType"] = ngModel.settings.sortingOrder || ngModel.content.sortingOrder;
 						else obj["orderType"] = reverseOrdering;
 						}
 					}
