@@ -475,7 +475,7 @@ angular
 										})})
 			}
 
-			var messagingHandler = qbeViewerMessagingHandler.initalizeHandler(driverableObject,$scope.parameterItems, openPanelForSavingQbeDataset);
+			var messagingHandler = qbeViewerMessagingHandler.initalizeHandler(driverableObject,$scope.selectedDataSet,$scope.parameterItems, openPanelForSavingQbeDataset);
 			qbeViewerMessagingHandler.registerHandler(messagingHandler);
 
 		}

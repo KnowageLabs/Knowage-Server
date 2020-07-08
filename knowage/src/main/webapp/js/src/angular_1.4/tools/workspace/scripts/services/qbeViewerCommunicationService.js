@@ -4,10 +4,12 @@ angular
 			var comunicator = windowCommunicationService;
 			var crudHandler = {}
 			var dataset;
+			var driverableObject;
 			var parameters;
 
-			crudHandler.initalizeHandler = function(dataset,parameters, openPanelForSavingQbeDataset){
+			crudHandler.initalizeHandler = function(driverableObject,dataset,parameters, openPanelForSavingQbeDataset){
 				setDataset(dataset);
+				setDriverableObject(driverableObject);
 				setParameters(parameters);
 				var saveHandler = {};
 				saveHandler.name = "save";
@@ -21,7 +23,7 @@ angular
 					} else if(message == "qbeJSONQuery" && dataset.qbeJSONQuery){
 						comunicator.sendMessage({qbeJSONQuery:dataset.qbeJSONQuery})
 					} else if(dataset.smartView != undefined){
-						comunicator.sendMessage({smartView:dataset.smartView})
+						comunicator.sendMessage({smartView:driverableObject.smartView})
 					}
 
 				}
@@ -53,6 +55,10 @@ angular
 
 			var setDataset = function(originalDataset){
 				dataset = originalDataset;
+			}
+
+			var setDriverableObject = function(originalDriverableObject){
+				driverableObject = originalDriverableObject;
 			}
 
 			var setParameters = function(parametersList){
