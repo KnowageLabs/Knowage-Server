@@ -236,21 +236,16 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 								String value = associativeDatasetContainers.get(dataset).getParameters().get(missingParameter);
 								HashSet<Tuple> tuples = new HashSet<Tuple>();
 								if (value != null) {
-									String[] valueArray = value.split("','");
 
-									if (valueArray.length == 1) {
-										if (value.startsWith("'") && value.endsWith("'")) {
-											value = value.substring(1, value.length() - 1);
+									if (value.startsWith("'") && value.endsWith("'")) {
+										value = value.substring(1, value.length() - 1);
 
-										}
 									}
-
-									Tuple tuple = new Tuple(value);
-									List<String> vals = (List<String>) tuple.getValues();
+									String[] valueArray = value.split("','");
 									List<String> finalVals = new ArrayList<String>();
-									for (int i = 0; i < vals.size(); i++) {
-
-										String val = vals.get(i).replaceAll("&comma;", ",");
+									for (int i = 0; i < valueArray.length; i++) {
+										String val = valueArray[i];
+										val = val.replaceAll("''", "\'");
 										finalVals.add(val);
 									}
 

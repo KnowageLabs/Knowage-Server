@@ -628,13 +628,25 @@ public class DatasetManagementAPI {
 								String value = values[j].trim();
 								if (!value.isEmpty()) {
 									if (!value.startsWith(delim) && !value.endsWith(delim)) {
+										value = value.replaceAll("\'", "\'\'");
 										newValues.add(delim + value + delim);
 									} else {
-										newValues.add(value);
+										if (value.startsWith(delim) && value.endsWith(delim)) {
+											value = value.substring(1, value.length() - 1);
+											value = value.replaceAll("\'", "\'\'");
+											newValues.add(delim + value + delim);
+										} else {
+											value = value.replaceAll("\'", "\'\'");
+											newValues.add(value);
+										}
+
 									}
+
+//									}
 								}
 							}
 							String newValuesString = StringUtils.join(newValues, ",");
+							newValuesString = newValuesString.replaceAll("&comma;", ",");
 							paramValues.put(paramName, newValuesString);
 							break;
 						}
