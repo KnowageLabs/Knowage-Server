@@ -469,8 +469,10 @@ public abstract class AbstractDataSet implements IDataSet {
 						}
 						newValues.add(newValuesFromArray);
 					} else {
-						value = value.substring(1, value.length() - 1);
-						value = value.replaceAll("'", "''");
+						if (isString) {
+							value = value.substring(1, value.length() - 1);
+							value = value.replaceAll("'", "''");
+						}
 						newValues.add(delim + value + delim);
 					}
 				} else {
