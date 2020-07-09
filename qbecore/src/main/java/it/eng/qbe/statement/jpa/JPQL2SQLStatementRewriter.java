@@ -17,9 +17,17 @@
  */
 package it.eng.qbe.statement.jpa;
 
-import it.eng.qbe.statement.hibernate.HQL2SQLStatementRewriter;
-
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -30,6 +38,18 @@ import org.eclipse.persistence.jpa.JpaEntityManager;
 import org.eclipse.persistence.queries.DatabaseQuery;
 import org.eclipse.persistence.sessions.DatabaseRecord;
 import org.eclipse.persistence.sessions.Session;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.Oracle8iDialect;
+import org.hibernate.dialect.Oracle9iDialect;
+import org.hibernate.engine.query.HQLQueryPlan;
+import org.hibernate.hql.QueryTranslator;
+import org.hibernate.hql.ast.QueryTranslatorImpl;
+import org.hibernate.impl.SessionFactoryImpl;
+import org.hibernate.impl.SessionImpl;
+import org.hibernate.param.DynamicFilterParameterSpecification;
+
+import it.eng.qbe.statement.hibernate.HQL2SQLStatementRewriter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * The Class HqlToSqlQueryRewriter.
@@ -56,7 +76,7 @@ public class JPQL2SQLStatementRewriter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.qbe.export.IQueryRewriter#rewrite(java.lang.String)
 	 */
 	public String rewrite(String query) {
@@ -77,7 +97,7 @@ public class JPQL2SQLStatementRewriter {
 
 	/**
 	 * Rewrite the JPQL query string in a SQL String (The persistence provider implementation in use is EclipseLink)
-	 * 
+	 *
 	 * @param query
 	 *            The String of the JPQL query
 	 * @return the string of the JPQL query translated in SQL
@@ -89,7 +109,7 @@ public class JPQL2SQLStatementRewriter {
 
 	/**
 	 * Rewrite the JPQL query in a SQL String (The persistence provider implementation in use is EclipseLink)
-	 * 
+	 *
 	 * @param query
 	 *            The JPQL query
 	 * @return the string of the JPQL query translated in SQL
@@ -124,19 +144,122 @@ public class JPQL2SQLStatementRewriter {
 
 	/**
 	 * Rewrite the JPQL query string in a SQL String (The persistence provider implementation in use is Hibernate)
-	 * 
+	 *
 	 * @param query
 	 *            The String of the JPQL query
 	 * @return the string of the JPQL query translated in SQL
 	 */
 	private String rewriteHibernate(String query) {
-		org.hibernate.ejb.HibernateQuery qi = (org.hibernate.ejb.HibernateQuery) this.entityManager.createQuery(query);
-		return rewriteHibernate(qi);
+
+		/*
+		 * Extract generated query from em with filters enabled.
+		 */
+		org.hibernate.ejb.HibernateEntityManager em = (org.hibernate.ejb.HibernateEntityManager) this.entityManager;
+		SessionImpl session = (SessionImpl) em.getSession();
+		Map<Object, Object> enabledFilters = session.getEnabledFilters();
+		SessionFactoryImpl sessionFactory = (SessionFactoryImpl) session.getSessionFactory();
+		HQLQueryPlan hqlQueryPlan = sessionFactory.getQueryPlanCache().getHQLQueryPlan(query, false, enabledFilters);
+		QueryTranslator[] queryTranslators = hqlQueryPlan.getTranslators();
+		QueryTranslatorImpl queryTranslator = (QueryTranslatorImpl) queryTranslators[0];
+		List<?> collectedParameterSpecifications = queryTranslator.getCollectedParameterSpecifications();
+		String sqlString = queryTranslator.getSQLString();
+		StringBuilder finalSqlStringBuilder = new StringBuilder(sqlString);
+
+		/*
+		 * Replace parameters in query
+		 */
+		List<Object> values = new ArrayList<Object>();
+		getFiltersValues(session, collectedParameterSpecifications, values);
+		fixQueryParameters(sessionFactory, values);
+		replaceQueryParameters(finalSqlStringBuilder, values);
+
+		return finalSqlStringBuilder.toString();
+	}
+
+	private void replaceQueryParameters(StringBuilder finalSqlStringBuilder, List<Object> values) {
+		int indexOf;
+		Iterator<Object> iterator = values.iterator();
+		while ((indexOf = finalSqlStringBuilder.indexOf("?")) != -1) {
+			Object value = iterator.next();
+			finalSqlStringBuilder.replace(indexOf, indexOf+1, value.toString());
+		}
+	}
+
+	private void getFiltersValues(SessionImpl session, List<?> collectedParameterSpecifications, List<Object> values) {
+		/*
+		 * Get access to private fields of DynamicFilterParameterSpecification
+		 */
+		Field filterNameField = null;
+		Field parameterNameField = null;
+		try {
+			filterNameField = DynamicFilterParameterSpecification.class.getDeclaredField("filterName");
+			parameterNameField = DynamicFilterParameterSpecification.class.getDeclaredField("parameterName");
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException(e);
+		}
+		filterNameField.setAccessible(true);
+		parameterNameField.setAccessible(true);
+
+		/*
+		 * Get values of parameters managing multivalues value
+		 */
+		for (Object currParameter : collectedParameterSpecifications) {
+			try {
+				String filterName = (String) filterNameField.get(currParameter);
+				String parameterName = (String) parameterNameField.get(currParameter);
+				Object value = session.getLoadQueryInfluencers().getFilterParameterValue( filterName + '.' + parameterName );
+				if (value instanceof Collection) {
+					values.addAll((Collection<Object>) value);
+				} else {
+					values.add(value);
+				}
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException(e);
+			}
+		}
+	}
+
+	private void fixQueryParameters(SessionFactoryImpl sessionFactory, List<Object> values) {
+		Dialect dialect = sessionFactory.getDialect();
+		boolean isOracle = isOracle(dialect);
+
+		for (int i = 0; i < values.size(); i++) {
+			Object value = values.get(i);
+			if (value instanceof Date) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				sdf.setTimeZone(TimeZone.getDefault());
+				Date valueAsDate = (Date) value;
+				String valueAsString = sdf.format(valueAsDate);
+				if (isOracle) {
+					value = String.format("TO_DATE('%s', 'YYYY-MM-DD')", valueAsString);
+				} else {
+					value = String.format("CAST('%s' AS DATE)", valueAsString);
+				}
+			} else if (value instanceof String) {
+
+				value = String.format("'%s'", value);
+			} else if (value instanceof BigDecimal) {
+				value = ((BigDecimal) value).toPlainString();
+			} else {
+				value = value.toString();
+			}
+			values.set(i, value);
+		}
+	}
+
+	private boolean isOracle(Dialect dialect) {
+		if (dialect instanceof Oracle8iDialect) {
+			return true;
+		} else if (dialect instanceof Oracle9iDialect) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
 	 * Rewrite the JPQL query in a SQL String (The persistence provider implementation in use is Hibernate)
-	 * 
+	 *
 	 * @param query
 	 *            The JPQL query
 	 * @return the string of the JPQL query translated in SQL
@@ -144,8 +267,8 @@ public class JPQL2SQLStatementRewriter {
 	private String rewriteHibernate(Query query) {
 		org.hibernate.ejb.HibernateEntityManager em = (org.hibernate.ejb.HibernateEntityManager) this.entityManager;
 		org.hibernate.ejb.HibernateQuery qi = (org.hibernate.ejb.HibernateQuery) (query);
-		em.getSession();
-		HQL2SQLStatementRewriter queryRewriter = new HQL2SQLStatementRewriter(em.getSession());
+		org.hibernate.Session session = em.getSession();
+		HQL2SQLStatementRewriter queryRewriter = new HQL2SQLStatementRewriter(session);
 		String sqlQueryString = queryRewriter.rewrite(qi.getHibernateQuery().getQueryString());
 		return sqlQueryString;
 	}

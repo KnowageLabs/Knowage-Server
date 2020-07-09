@@ -17,10 +17,16 @@
  */
 package it.eng.qbe.statement.jpa;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -29,16 +35,19 @@ import javax.persistence.Query;
 import org.apache.log4j.Logger;
 import org.hibernate.Filter;
 import org.hibernate.Session;
+import org.hibernate.type.Type;
 
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.iterator.JpaQueryIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
@@ -145,31 +154,75 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 				Filter filter = null;
 				Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
 				Iterator<String> it = filterNames.iterator();
-				String driverName = null;
 
 				while (it.hasNext()) {
 					String filterName = it.next();
 					filter = session.enableFilter(filterName);
-					Map<String, String> driverUrlNames = filter.getFilterDefinition().getParameterTypes();
-					for (String key : driverUrlNames.keySet()) {
-						driverName = key.toString();
-						List valueList = (List) drivers.get(driverName);
-						if (valueList.size() == 1) {
-							Map valueDescriptionMap = (Map) valueList.get(0);
-							filter.setParameter(driverName, valueDescriptionMap.get("value"));
-						}
-						if (valueList.size() > 1) {
-							List multivalueList = new ArrayList();
-							for (int i = 0; i < valueList.size(); i++) {
-								Map valueDescriptionMap = (Map) valueList.get(i);
-								multivalueList.add(valueDescriptionMap.get("value"));
+					Map<String, Type> parametersTypes = filter.getFilterDefinition().getParameterTypes();
+					for (Entry<String, Type> entry : parametersTypes.entrySet()) {
+						String parameterName = entry.getKey();
+						Type parameterType = entry.getValue();
+						String driverName = parameterName.toString();
+						Object value = null;
+						Object valueAfterConversion = null;
+						Class<?> wantedClass = parameterType.getReturnedClass();
+						try {
+							List<?> valueList = (List<?>) drivers.get(driverName);
+							if (valueList.size() == 1) {
+								Map<?, ?> valueDescriptionMap = (Map<?, ?>) valueList.get(0);
+								value = valueDescriptionMap.get("value");
+								valueAfterConversion = mapValueToRequiredType(wantedClass, value);
+								filter.setParameter(driverName, valueAfterConversion);
 							}
-							filter.setParameterList(driverName, multivalueList);
+							if (valueList.size() > 1) {
+								List<Object> multivalueList = new ArrayList<Object>();
+								for (int i = 0; i < valueList.size(); i++) {
+									Map<?, ?> valueDescriptionMap = (Map<?, ?>) valueList.get(i);
+									value = valueDescriptionMap.get("value");
+									valueAfterConversion = mapValueToRequiredType(wantedClass, value);
+									multivalueList.add(valueAfterConversion);
+								}
+								filter.setParameterList(driverName, multivalueList);
+							}
+							value = null;
+							valueAfterConversion = null;
+						} catch (Exception e) {
+							String msg = String.format("Error during conversion for driver %s from value %s of class %s to %s of class %s", driverName, value, value != null ? value.getClass().getName() : "N.D.", valueAfterConversion, wantedClass.getName());
+							logger.error(msg, e);
+							throw new SpagoBIRuntimeException(msg, e);
 						}
 					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * Map value from driver to the required value from Hibernate's filter.
+	 *
+	 * @param wantedClass Type wanted by Hibernate
+	 * @param value Actual value
+	 * @return The mapped value
+	 *
+	 * @throws NoSuchMethodException When the wanted class has no constructor with only one string as parameter
+	 * @throws SecurityException When constructor with only one string as parameter is private
+	 * @throws InstantiationException When you can't instantiate the required class
+	 * @throws IllegalAccessException When you can't access the required constructor
+	 * @throws IllegalArgumentException Shouldn't happen
+	 * @throws InvocationTargetException Shouldn't happen
+	 * @throws ParseException When the date string is invalid
+	 */
+	private Object mapValueToRequiredType(Class<?> wantedClass, Object value) throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
+		Object ret = null;
+		if (Date.class.equals(wantedClass)) {
+			String configValue = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(configValue);
+			ret = simpleDateFormat.parse(value.toString());
+		} else {
+			Constructor<?> constructor = wantedClass.getConstructor(String.class);
+			ret = constructor.newInstance(value.toString());
+		}
+		return ret;
 	}
 
 	private int getResultNumber(Query jpqlQuery) {
@@ -265,6 +318,10 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	@Override
 	public void setDrivers(Map<String, Object> drivers) {
 		super.setDrivers(drivers);
+
+		EntityManager entityManager = getEntityMananger();
+		Session session = (Session) entityManager.getDelegate();
+		enableFilters(session);
 	}
 
 }
