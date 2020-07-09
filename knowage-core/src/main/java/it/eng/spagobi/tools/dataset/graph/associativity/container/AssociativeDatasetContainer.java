@@ -92,8 +92,10 @@ public abstract class AssociativeDatasetContainer implements IAssociativeDataset
 					for (Tuple tuple : tuples) {
 						values.add(tuple.toStringEncoding("", "", ""));
 					}
+
 					parameters.put(ParametersUtilities.getParameterName(parameter), StringUtils.join(values, ","));
-					new DatasetManagementAPI().setDataSetParameters(dataSet, parameters);
+//					new DatasetManagementAPI().setDataSetParameter(dataSet, ParametersUtilities.getParameterName(parameter),StringUtils.join(values, ","));
+					new DatasetManagementAPI().setDataSetParameters(dataSet, parameters, ParametersUtilities.getParameterName(parameter));
 					return true;
 				} else {
 					throw new IllegalEdgeGroupException("Columns " + columnNames

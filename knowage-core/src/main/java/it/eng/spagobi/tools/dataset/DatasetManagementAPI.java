@@ -657,6 +657,65 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	public void setDataSetParameters(IDataSet dataSet, Map<String, String> paramValues, String currentParameterName) {
+		if (paramValues != null) {
+			List<JSONObject> parameters = getDataSetParameters(dataSet.getLabel());
+			if (parameters.size() > paramValues.size()) {
+				String parameterNotValorizedStr = getParametersNotValorized(parameters, paramValues);
+				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+			}
+
+			if (paramValues.size() > 0) {
+				for (String paramName : paramValues.keySet()) {
+					for (int i = 0; i < parameters.size(); i++) {
+						JSONObject parameter = parameters.get(i);
+						if (paramName.equals(parameter.optString("namePar")) && paramName.equals(currentParameterName)) {
+							boolean isMultiValue = parameter.optBoolean("multiValuePar");
+							String paramValue = paramValues.get(paramName);
+							String[] values = null;
+							if (paramValue == null) {
+								values = new String[0];
+							} else {
+								values = isMultiValue ? paramValue.split(",") : Arrays.asList(paramValue).toArray(new String[0]);
+							}
+
+							String typePar = parameter.optString("typePar");
+							String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
+
+							List<String> newValues = new ArrayList<>();
+							for (int j = 0; j < values.length; j++) {
+								String value = values[j].trim();
+								if (!value.isEmpty()) {
+									if (!value.startsWith(delim) && !value.endsWith(delim)) {
+										value = value.replaceAll("\'", "\'\'");
+										newValues.add(delim + value + delim);
+									} else {
+										if (value.startsWith(delim) && value.endsWith(delim)) {
+											value = value.substring(1, value.length() - 1);
+											value = value.replaceAll("\'", "\'\'");
+											newValues.add(delim + value + delim);
+										} else {
+											value = value.replaceAll("\'", "\'\'");
+											newValues.add(value);
+										}
+
+									}
+
+//									}
+								}
+							}
+							String newValuesString = StringUtils.join(newValues, ",");
+							newValuesString = newValuesString.replaceAll("&comma;", ",");
+							paramValues.put(paramName, newValuesString);
+							break;
+						}
+					}
+				}
+				dataSet.setParamsMap(paramValues);
+			}
+		}
+	}
+
 	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues, boolean wait)
 			throws NamingException, InterruptedException, JSONException {
 		logger.debug("IN");
