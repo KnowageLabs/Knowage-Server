@@ -18,12 +18,10 @@ package it.eng.knowage.engine.cockpit.api.crosstable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.LogMF;
@@ -184,7 +182,7 @@ public class CrossTabHTMLSerializer {
 		Boolean noSelectedColumn = crossTab.getCrosstabDefinition().getRows().isEmpty();
 		String labelTotal = (!config.optString("rowtotalLabel").equals("")) ? config.optString("rowtotalLabel") : CrossTab.TOTAL;
 		String labelSubTotal = (!config.optString("rowsubtotalLabel").equals("")) ? config.optString("rowsubtotalLabel") : CrossTab.SUBTOTAL;
-		Set<Node> nodesToBeIgnored = new HashSet<Node>();
+		List<Node> nodesToBeIgnored = new ArrayList<Node>();
 
 		List<SourceBean> rows = new ArrayList<SourceBean>();
 		int levels = crossTab.getRowsRoot().getDistanceFromLeaves();
@@ -222,6 +220,7 @@ public class CrossTabHTMLSerializer {
 		boolean addedLabelTotal = false;
 		for (int i = 0; i < levels; i++) {
 			List<Node> levelNodes = crossTab.getRowsRoot().getLevel(i + 1);
+			levelNodes.removeAll(nodesToBeIgnored);
 			int counter = 0;
 			for (int j = 0; j < levelNodes.size(); j++) {
 				SourceBean aRow = rows.get(counter);
