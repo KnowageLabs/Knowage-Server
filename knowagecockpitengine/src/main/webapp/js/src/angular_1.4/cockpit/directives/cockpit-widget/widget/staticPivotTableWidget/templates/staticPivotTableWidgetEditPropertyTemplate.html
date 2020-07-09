@@ -231,6 +231,9 @@
 					          <label>{{::translate.load("sbi.crosstab.crosstabdetailswizard.subtotalLabel")}}</label>
 					          <input  size="40" ng-model="localModel.content.crosstabDefinition.config.rowsubtotalLabel" ng-disabled="!localModel.content.crosstabDefinition.config.calculatesubtotalsonrows">
 					    </md-input-container>
+					    <md-checkbox ng-model="localModel.content.crosstabDefinition.config.hideZeroRows">
+				        	{{::translate.load("sbi.crosstab.crosstabdetailswizard.hidezerorows")}}
+				        </md-checkbox>
 					</md-card-content>
 				</md-card>
 				
