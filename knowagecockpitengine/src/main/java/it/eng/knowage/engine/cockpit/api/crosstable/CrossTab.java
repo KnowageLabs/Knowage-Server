@@ -118,14 +118,14 @@ public class CrossTab {
 
 	/**
 	 * Relates something like "column_1" into datastore to "Field A" in the crosstab.
-	 * 
+	 *
 	 * @deprecated Alias can be duplicated
 	 */
 	@Deprecated
 	private Map<String, String> dsColumnName2Alias = new HashMap<String, String>();
 	/**
 	 * Relates something like "Field A" in the crosstab to "column_1" into datastore.
-	 * 
+	 *
 	 * @deprecated Alias can be duplicated
 	 */
 	@Deprecated
@@ -256,6 +256,7 @@ public class CrossTab {
 	private List<String[]> columnsSum; // sum calculate for the rows (summ the
 										// row 1.. )
 	private boolean measuresOnRow;
+	private boolean hideZeroRows;
 
 	// The client has a global variable
 	// (Sbi.cockpit.widgets.crosstab.globalConfigs) with the list of the active
@@ -380,6 +381,7 @@ public class CrossTab {
 											// total number of cells
 		boolean measuresOnColumns = crosstabDefinition.isMeasuresOnColumns();
 		measuresOnRow = config.getString("measureson").equals("rows");
+		hideZeroRows = config.optBoolean("hideZeroRows");
 		int rowsCount = crosstabDefinition.getRows().size();
 		int columnsCount = crosstabDefinition.getColumns().size();
 		int measuresCount = crosstabDefinition.getMeasures().size();
@@ -2943,6 +2945,10 @@ public class CrossTab {
 			logger.error("Error reading the configuration of the crosstab", e);
 			throw new SpagoBIRuntimeException("Error reading the configuration of the crosstab", e);
 		}
+	}
+
+	public boolean isHideZeroRows() {
+		return hideZeroRows;
 	}
 
 	public String getHTMLCrossTab(Locale locale) {

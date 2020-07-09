@@ -120,7 +120,10 @@ public class CrossTabHTMLSerializer {
 
 	private SourceBean getSourceBean(CrossTab crossTab) throws SourceBeanException, JSONException {
 		SourceBean toReturn = new SourceBean(COLUMN_DIV);
-		rowsToBeHidden = getNullRowsIndexList(crossTab);
+		if (crossTab.isHideZeroRows())
+			rowsToBeHidden = getNullRowsIndexList(crossTab);
+		else
+			rowsToBeHidden = new ArrayList<Integer>();
 
 		Monitor htmlserializeTopLeftCornerMonitor = null;
 		Monitor htmlserializeRowsHeaderssMonitor = null;
