@@ -358,8 +358,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					fetchParams.body.pars = parameters;
 				}				
 				if(!isEmpty(drivers)){
-					drivers = JSON.parse(drivers);
-					fetchParams.body.drivers = drivers;
+					var parsedDrivers = JSON.parse(drivers);
+					fetchParams.body.drivers = parsedDrivers;
 				}
 				fetchParams.body = JSON.stringify(fetchParams.body);
 				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets/' + datasetLabel + '/preview', fetchParams)
