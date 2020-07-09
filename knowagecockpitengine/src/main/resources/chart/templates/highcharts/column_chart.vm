@@ -916,7 +916,6 @@
 		                      	switch(scaleFactor.toUpperCase()) {
 		                      	
 		                      		case "EMPTY":
-		                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
 		                      			newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
 		                      			break;
 		                      		case "K":
@@ -938,8 +937,6 @@
 		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
 		                      			break;
 	                      			default:
-	                      				/* The same as for the case when user picked "no selection" - in case when the chart 
-	                      				template does not contain the scale factor for current serie */
 	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
 		                      			break;
 		                      	
@@ -1268,7 +1265,6 @@
 		                      	switch(scaleFactor.toUpperCase()) {
 		                      	
 		                      		case "EMPTY":
-		                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
 		                      			newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
 		                      			break;
 		                      		case "K":
@@ -1290,8 +1286,6 @@
 		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
 		                      			break;
 	                      			default:
-	                      				/* The same as for the case when user picked "no selection" - in case when the chart 
-	                      				template does not contain the scale factor for current serie */
 	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
 		                      			break;
 		                      	
@@ -1611,13 +1605,6 @@
 		                   
 		                   labelFormat: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}',			                  
                             		             
-                           	/* 
-		                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
-		                    	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
-		                    	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
-		                    	is included into the formatting of the number that is going to be displayed, as well as precision.
-		                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-                     		*/                		                    
 			               	formatter: function() {
 			                    var value = this.y;
 			                    var newValue = "";		                    
@@ -1637,7 +1624,6 @@
 		                      	switch(scaleFactor.toUpperCase()) {
 		                      	
 		                      		case "EMPTY":
-		                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
 		                      			newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
 		                      			break;
 		                      		case "K":
@@ -1659,8 +1645,6 @@
 		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
 		                      			break;
 	                      			default:
-	                      				/* The same as for the case when user picked "no selection" - in case when the chart 
-	                      				template does not contain the scale factor for current serie */
 	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
 		                      			break;
 		                      	
@@ -1851,13 +1835,6 @@
 		                   
 		                   labelFormat: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}',			                  
                             		             
-                           	/* 
-		                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
-		                    	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
-		                    	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
-		                    	is included into the formatting of the number that is going to be displayed, as well as precision.
-		                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-                     		*/                		                    
 			               	formatter: function() {
 			                     
 			                    var value = this.y;	
@@ -1876,7 +1853,6 @@
 		                      	switch(scaleFactor.toUpperCase()) {
 		                      	
 		                      		case "EMPTY":
-		                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
 		                      			newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
 		                      			break;
 		                      		case "K":
@@ -1898,8 +1874,6 @@
 		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
 		                      			break;
 	                      			default:
-	                      				/* The same as for the case when user picked "no selection" - in case when the chart 
-	                      				template does not contain the scale factor for current serie */
 	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
 		                      			break;
 		                      	
@@ -2151,8 +2125,6 @@
 						   thisValue = Highcharts.numberFormat(point.y/Math.pow(10,18),valueDecimals,decimalPoint,thousandsSep) + "E";
 						   break;
 						default:
-						   /* The same as for the case when user picked "no selection" - in case when the chart 
-						   template does not contain the scale factor for current serie */
 						   thisValue = Highcharts.numberFormat(point.y,valueDecimals,decimalPoint,thousandsSep);	
 						   break;
 										
