@@ -192,11 +192,29 @@ public class CrossTabHTMLSerializer {
 		if (crossTab.isMeasureOnRow()) {
 			levels--;
 		}
-		// initialize all rows (without columns)
+
+		// nodes to be ignored at last level (leaves)
 		for (int i = 0; i < leaves; i++) {
 			Node n = nodes.get(i);
 			if (rowsToBeHidden.contains(i)) {
 				nodesToBeIgnored.add(n);
+			}
+		}
+		// nodes to be ignored at upper levels
+		for (int i = levels - 2; i >= 0; i--) {
+			List<Node> levelNodes = crossTab.getRowsRoot().getLevel(i + 1);
+			for (int j = 0; j < levelNodes.size(); j++) {
+				Node node = levelNodes.get(j);
+				List<Node> children = new ArrayList<Node>(node.getLeafs());
+				if (nodesToBeIgnored.containsAll(children)) {
+					nodesToBeIgnored.add(node);
+				}
+			}
+		}
+
+		// initialize all rows (without columns)
+		for (int i = 0; i < leaves; i++) {
+			if (rowsToBeHidden.contains(i)) {
 				continue;
 			}
 			SourceBean aRow = new SourceBean(ROW_TAG);
@@ -222,13 +240,13 @@ public class CrossTabHTMLSerializer {
 
 		boolean addedLabelTotal = false;
 		for (int i = 0; i < levels; i++) {
-			List<Node> levelNodes = crossTab.getRowsRoot().getLevel(i + 1);
-			levelNodes.removeAll(nodesToBeIgnored);
+			List<Node> allLevelNodes = crossTab.getRowsRoot().getLevel(i + 1);
+			List<Node> filteredLevelNodes = filterNodes(allLevelNodes, nodesToBeIgnored);
 			int counter = 0;
-			for (int j = 0; j < levelNodes.size(); j++) {
+			for (int j = 0; j < filteredLevelNodes.size(); j++) {
 				SourceBean aRow = rows.get(counter);
-				Node aNode = levelNodes.get(j);
-				if (nodesToBeIgnored.contains(aNode)) {
+				Node aNode = filteredLevelNodes.get(j);
+				if (isNodeToBeIgnored(aNode, nodesToBeIgnored)) {
 					continue;
 				}
 				SourceBean aColumn = new SourceBean(COLUMN_TAG);
@@ -284,8 +302,8 @@ public class CrossTabHTMLSerializer {
 				aColumn.setCharacters(text);
 
 				List<Node> allChildren = new ArrayList<Node>(aNode.getLeafs());
-				allChildren.removeAll(nodesToBeIgnored);
-				int rowSpan = allChildren.size();
+				List<Node> filteredChildren = filterNodes(allChildren, nodesToBeIgnored);
+				int rowSpan = filteredChildren.size();
 
 				if (rowSpan > 1) {
 					aColumn.setAttribute(ROWSPAN_ATTRIBUTE, rowSpan);
@@ -298,6 +316,33 @@ public class CrossTabHTMLSerializer {
 		}
 
 		return table;
+	}
+
+	private boolean isNodeToBeIgnored(Node node, List<Node> nodesToBeIgnored) {
+		for (Node toBeIgnored : nodesToBeIgnored) {
+			if (node == toBeIgnored) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private List<Node> filterNodes(List<Node> allNodes, List<Node> nodesToBeRemoved) {
+		List<Node> filteredNodes = new ArrayList<>();
+		boolean remove;
+		for (Node n1 : allNodes) {
+			remove = false;
+			for (Node n2 : nodesToBeRemoved) {
+				if (n1 == n2) {
+					remove = true;
+					break;
+				}
+			}
+			if (!remove) {
+				filteredNodes.add(n1);
+			}
+		}
+		return filteredNodes;
 	}
 
 	private SourceBean serializeColumnsHeaders(CrossTab crossTab) throws SourceBeanException, JSONException {
