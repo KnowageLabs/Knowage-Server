@@ -309,6 +309,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 $scope.passwordRequired = true;
                 $scope.setAttributes();
                 $scope.oldItem = angular.copy($scope.selectedUser);
+                $scope.rolesGridOptions.api.deselectAll();
 
             }, function () {
 
@@ -323,6 +324,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 $scope.passwordRequired = true;
 	            $scope.setAttributes();
 	            $scope.oldItem = angular.copy($scope.selectedUser);
+	            $scope.rolesGridOptions.api.deselectAll();
         }
 
     }
