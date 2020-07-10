@@ -633,7 +633,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
-				controller: function($scope,finishEdit,sbiModule_translate,model,fnOrder,mdPanelRef,cockpitModule_datasetServices,cockpitModule_generalOptions,$mdDialog,$mdToast,sbiModule_device){
+				controller: function($scope,finishEdit,sbiModule_translate,model,fnOrder,mdPanelRef,cockpitModule_datasetServices,cockpitModule_template,cockpitModule_generalOptions,$mdDialog,$mdToast,sbiModule_device){
 			    	  $scope.translate=sbiModule_translate;
 			    	  $scope.sbiModule_device=sbiModule_device;
 			    	  $scope.localModel={};
@@ -724,7 +724,26 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    			  $scope.localModel.content.crosstabDefinition.rows=[];
 			    			  $scope.localModel.content.crosstabDefinition.columns=[];
 			    		  }
+			    		  $scope.getDatasetAdditionalInfo(dsId);
 			    	  }
+
+			    	  $scope.getDatasetAdditionalInfo = function(dsId){
+			    	        for(var k in cockpitModule_template.configuration.datasets){
+			    	        	if(cockpitModule_template.configuration.datasets[k].dsId == dsId) {
+			    	        		$scope.localDataset = cockpitModule_template.configuration.datasets[k];
+			    	        		break;
+			    	        	}
+
+			    	        }
+			    	        sbiModule_restServices.restToRootProject();
+			    	        sbiModule_restServices.promiseGet('2.0/datasets', 'availableFunctions/' + dsId, "useCache=" + $scope.localDataset.useCache).then(function(response){
+			    	        	$scope.datasetAdditionalInfos = response.data;
+			    	        }, function(response) {
+			    	        	if(response.data && response.data.errors && response.data.errors[0]) $scope.showAction(response.data.errors[0].message);
+			    	        	else $scope.showAction($scope.translate.load('sbi.generic.error'));
+			    	        });
+			    		}
+			    		if($scope.localModel.dataset && $scope.localModel.dataset.dsId) $scope.getDatasetAdditionalInfo($scope.localModel.dataset.dsId);
 
 			    	  if($scope.localModel.dataset!=undefined && $scope.localModel.dataset.dsId!=undefined){
 			    		  $scope.changeDatasetFunction($scope.localModel.dataset.dsId,true)

@@ -140,7 +140,7 @@
 				     				<md-toolbar class="md-hue-2 ternaryToolbar">  
 			      						<div class="md-toolbar-tools">
 				      						<h2 flex>{{::translate.load("sbi.cockpit.pivot.measures")}}</h2>
-				      						<calculated-field ng-model="localModel" measures-list-func="getAvailableMeasures()" callback-add-to="addCalculatedField(newItem)"></calculated-field>
+				      						<calculated-field ng-model="localModel" measures-list-func="getAvailableMeasures()" additional-info="datasetAdditionalInfos" callback-add-to="addCalculatedField(newItem)"></calculated-field>
 			      						</div>
 			      					</md-toolbar>
 			      					<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='MEASURE' ||dragUtils.dragObjectType=='MEASURE-PT'|| dragUtils.dragObjectType=='CALCULATED-FIELD')  }">
@@ -154,7 +154,7 @@
 			      							 >
 			      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
 			      							<span flex> {{item.alias}} </span>
-			      							 <calculated-field ng-if="item.nature=='calculated_field'" ng-model="localModel" selected-item="item" measures-list-func="getAvailableMeasures()" callback-add-to="addCalculatedField(newItem)"></calculated-field>
+			      							 <calculated-field ng-if="item.nature=='calculated_field'" ng-model="localModel" selected-item="item" measures-list-func="getAvailableMeasures()" additional-info="datasetAdditionalInfos" callback-add-to="addCalculatedField(newItem)"></calculated-field>
 			      							 <md-icon md-font-icon="fa fa-trash" ng-if="item.nature=='calculated_field'" aria-label="Checkbox 1" class="md-secondary" ng-click="deleteCalculatedField($index)"></md-icon>
 			      							 <md-icon md-font-icon="fa fa-cog" aria-label="Checkbox 1" class="md-secondary" ng-click="editFieldsProperty(item)"></md-icon> 
 			      							</md-list-item>
