@@ -365,7 +365,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    	allElements[j].setAttribute("ng-click", "showPreview('" + datasetPreviewLabel + "')");
 				    }
 				  if (allElements[j] && allElements[j].hasAttribute("kn-cross")){
-				    	allElements[j].setAttribute("ng-click", "doSelection()");
+				    	allElements[j].setAttribute("ng-click", "doSelection(null,'"+allElements[j].getAttribute("kn-cross")+"')");
 				    }
 				  if (allElements[j] && allElements[j].hasAttribute("kn-selection-column")){
 					  	var columnSelectionLabel = allElements[j].getAttribute("kn-selection-column");
