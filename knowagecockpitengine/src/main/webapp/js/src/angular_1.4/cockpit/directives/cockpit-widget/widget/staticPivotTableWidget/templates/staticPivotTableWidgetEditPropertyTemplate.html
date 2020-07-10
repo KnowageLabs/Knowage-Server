@@ -53,7 +53,7 @@
 			      						<h2 flex>{{::translate.load("sbi.cockpit.pivot.attributes")}}</h2>
 		      						</div>
 		      					</md-toolbar>
-		      					<md-content flex layout="column"ng-class="{'dropZone': (sbiModule_device.browser.name=='chrome' && (dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS'))}">
+		      					<md-content flex layout="column" ng-class="{'dropZone': (sbiModule_device.browser.name=='chrome' && (dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS'))}">
 		      						<md-list flex dnd-list="currentDataset.metadata.fieldsMeta" dnd-allowed-types="['COLUMNS','ROWS']" 
 		      							dnd-drop="dropCallback(event, index,currentDataset.metadata.fieldsMeta, item, external, type, 'ATTRIBUTE')" class="md-dense">
 		      							<md-list-item ng-repeat="item in currentDataset.metadata.fieldsMeta" 
@@ -140,15 +140,16 @@
 				     				<md-toolbar class="md-hue-2 ternaryToolbar">  
 			      						<div class="md-toolbar-tools">
 				      						<h2 flex>{{::translate.load("sbi.cockpit.pivot.measures")}}</h2>
+				      						<calculated-field ng-model="localModel" measures-list-func="getAvailableMeasures()" callback-add-to="addCalculatedField(newItem)"></calculated-field>
 			      						</div>
 			      					</md-toolbar>
-			      					<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='MEASURE' ||dragUtils.dragObjectType=='MEASURE-PT')  }">
-			      						<md-list flex dnd-list="localModel.content.crosstabDefinition.measures"  dnd-allowed-types="['MEASURE','MEASURE-PT']"  dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.measures, item, external, type, 'MEASURE-PT')">
+			      					<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='MEASURE' ||dragUtils.dragObjectType=='MEASURE-PT'|| dragUtils.dragObjectType=='CALCULATED-FIELD')  }">
+			      						<md-list flex dnd-list="localModel.content.crosstabDefinition.measures"  dnd-allowed-types="['MEASURE','MEASURE-PT','CALCULATED-FIELD']"  dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.measures, item, external, type, 'MEASURE-PT')">
 			      							<md-list-item  class="noright" ng-repeat="item in localModel.content.crosstabDefinition.measures"
 			      							dnd-draggable="item"
 			      							dnd-moved="localModel.content.crosstabDefinition.measures.splice($index,1)"
-			      							dnd-type="'MEASURE-PT'"
-			      							dnd-dragstart="dragUtils.dragObjectType='MEASURE-PT'"
+			      							dnd-type="{{getMeasureType(item)}}"
+			      							dnd-dragstart="dragUtils.dragObjectType=getMeasureType(item)"
 		      								dnd-dragend="dragUtils.dragObjectType=undefined"
 			      							 >
 			      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>

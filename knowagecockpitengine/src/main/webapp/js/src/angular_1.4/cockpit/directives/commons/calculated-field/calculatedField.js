@@ -28,7 +28,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				callbackUpdateGrid : "&?",
 				callbackUpdateAlias : "&?",
 				insideMenu : "=?",
-				additionalInfo: "=?"
+				additionalInfo: "=?",
+				// A function with no params that return the list
+				// of available features
+				measuresListFunc : "&?",
+				// A function with the new CF to add to the list
+				// of fields
+				callbackAddTo : "&?"
 			},
 			controller: calculatedFieldController,
 		}
@@ -39,13 +45,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.translate = sbiModule_translate;
 		if($scope.selectedItem){
 
-			if ( $scope.ngModel.content == undefined) {  // case when coming from chart widget
+			if ($scope.measuresListFunc != undefined) {
 
+				var tmpList = $scope.measuresListFunc();
+				$scope.currentRow = tmpList[$scope.selectedItem];
+
+			} else if ( $scope.ngModel.content == undefined) {  // case when coming from chart widget
 				$scope.currentRow = $scope.ngModel.columnSelectedOfDatasetAggregations[$scope.selectedItem];
-
-			}
-			else {
-
+			} else {
 				$scope.currentRow = $scope.ngModel.content.columnSelectedOfDataset[$scope.selectedItem]
 			}
 
@@ -68,7 +75,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					actualItem : $scope.currentRow,
 					callbackUpdateGrid: $scope.callbackUpdateGrid,
 					callbackUpdateAlias: $scope.callbackUpdateAlias,
-					additionalInfo: $scope.additionalInfo
+					additionalInfo: $scope.additionalInfo,
+					measuresListFunc: $scope.measuresListFunc,
+					callbackAddTo: $scope.callbackAddTo
 				},
 				//fullscreen: true,
 				controller: calculatedFieldDialogController
@@ -86,10 +95,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.currentRow.funcSummary = result.funcSummary;
 						$scope.currentRow.alias = result.alias;
 					}else{
-						if ($scope.ngModel.content == undefined) {
+						if ($scope.callbackAddTo != undefined) {
+							$scope.callbackAddTo({newItem: result});
+						} else if ($scope.ngModel.content == undefined) {
 							$scope.ngModel.columnSelectedOfDatasetAggregations.push(result);
-						}
-						else {
+						} else {
 							$scope.ngModel.content.columnSelectedOfDataset.push(result);
 						}
 					}
@@ -104,12 +114,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	}
 
-	function calculatedFieldDialogController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
+	function calculatedFieldDialogController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
 		$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 		$scope.model = model;
 		$scope.callbackUpdateGrid = callbackUpdateGrid;
 		$scope.callbackUpdateAlias = callbackUpdateAlias;
+		$scope.callbackAddTo = callbackAddTo;
 		$scope.localDataset = {};
 		$scope.calculatedField = actualItem ? angular.copy(actualItem) : {};
 		if(!$scope.calculatedField.aggregationSelected) $scope.calculatedField.aggregationSelected = 'NONE';
@@ -151,8 +162,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return true;
 		}
 	
-		
-
 		//codemirror initializer
 		$scope.reloadCodemirror = false;
 		$scope.codemirrorLoaded = function(_editor) {
@@ -266,7 +275,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
-		if ($scope.model.content == undefined) {
+		if (measuresListFunc != undefined) {
+
+			var tmpList = measuresListFunc();
+			for (var i in tmpList) {
+				var obj = tmpList[i];
+				if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
+					$scope.measuresList.push(obj);
+				}
+			}
+		} else if ($scope.model.content == undefined) {
 
 			for(var i in $scope.model.columnSelectedOfDatasetAggregations){
 				var obj = $scope.model.columnSelectedOfDatasetAggregations[i];
@@ -274,8 +292,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.measuresList.push(obj);
 				}
 			}
-		}
-		else {
+		} else {
 			for(var i in $scope.model.content.columnSelectedOfDataset){
 				var obj = $scope.model.content.columnSelectedOfDataset[i];
 				if(obj.fieldType == 'MEASURE' && !obj.isCalculated){

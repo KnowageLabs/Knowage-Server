@@ -785,7 +785,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    			  return false
 			    		  }else{
 			    			  var tmpItem;
-			    			  if(angular.equals(containerType,"MEASURE-PT") || angular.equals(containerType,"COLUMNS") || angular.equals(containerType,"ROWS")){
+			    			  if(["MEASURE-PT","COLUMNS","ROWS"].indexOf(containerType) != -1){
 
 			    				  if( (angular.equals(containerType,"COLUMNS") &&  angular.equals(type,"ROWS")) || (angular.equals(containerType,"ROWS") &&  angular.equals(type,"COLUMNS"))){
 			    					  tmpItem=item;
@@ -821,6 +821,38 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    		  }
 
 			    	  }
+			    	 
+			    	 $scope.getMeasureType = function(item){
+			    		 return item.nature == 'calculated_field' ? 'CALCULATED-FIELD':'MEASURE-PT';
+			    	 }
+			    	 
+			    	 $scope.addCalculatedField = function(item) {
+
+							item.nature = "calculated_field";
+							item.id = item.alias;
+							item.iconCls = "measure";
+							item.funct = "NONE";
+
+							$scope.localModel.content.crosstabDefinition.measures.push(item);
+
+						}
+
+						$scope.getAvailableMeasures = function() {
+							var ret = [];
+							for(var i in $scope.originalCurrentDataset.metadata.fieldsMeta) {
+								if($scope.originalCurrentDataset.metadata.fieldsMeta[i].fieldType == "MEASURE") ret.push(angular.copy($scope.originalCurrentDataset.metadata.fieldsMeta[i]));
+							}
+							return ret;
+						}
+
+						$scope.deleteCalculatedField = function(index) {
+
+							$scope.localModel
+								.content
+								.crosstabDefinition
+								.measures
+								.splice(index, 1);
+						}
 
 		    	    $scope.saveConfiguration=function(){
 		    		  if($scope.localModel.dataset == undefined){
