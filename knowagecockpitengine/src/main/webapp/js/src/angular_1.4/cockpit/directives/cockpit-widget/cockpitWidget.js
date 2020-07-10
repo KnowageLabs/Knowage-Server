@@ -702,6 +702,11 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 	    	}
 	    });
 	}
+	
+	$scope.removeEmptyRows = function(event){
+		$scope.ngModel.content.crosstabDefinition.config.hideZeroRows = !$scope.ngModel.content.crosstabDefinition.config.hideZeroRows;
+		$scope.refreshWidget();
+	}
 
 	$scope.openSearchBar = function(ev,widgetName){
 		//$scope.widgetSearchBar == false ? $scope.widgetSearchBar = true : $scope.widgetSearchBar = false;
