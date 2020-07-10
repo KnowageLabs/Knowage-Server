@@ -54,7 +54,7 @@
 							</md-select>
 						</md-input-container>
 					</div>			
-					<md-input-container ng-if="selectedColumn.fieldType=='MEASURE'">
+					<md-input-container ng-if="selectedColumn.fieldType=='MEASURE' || selectedColumn.fieldType=='CALCULATED_FIELD'">
 						<label>{{translate.load('sbi.cockpit.aggregationwindow.selectAggregation')}}</label>
 						<md-select ng-model="selectedColumn.funct">
 							<md-option ng-repeat="agF in cockpitModule_generalOptions.aggregationFunctions" ng-value="agF.value" >

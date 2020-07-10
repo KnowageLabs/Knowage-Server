@@ -74,7 +74,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 						var tempOrder = columnOrdering.name ? columnOrdering.name : columnOrdering;
 						if (tempOrder == col.name) {
 						//custom selector ordering check
-						obj["orderColumn"] = tempOrder;					
+						obj["orderColumn"] = tempOrder;
 						if(columnOrdering.name) obj["orderType"] = ngModel.settings.sortingOrder;
 						else obj["orderType"] = reverseOrdering;
 						}
@@ -207,6 +207,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 				if (obj["funct"] == 'AVG') {
 					hasAnAVG = true;
+				}
+
+				if (measure.isCalculated) {
+					obj.formula = measure.formula;
 				}
 
 				obj["orderType"] = "";
