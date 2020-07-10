@@ -89,7 +89,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 		this.eGui = document.createElement('div');
 		this.eGui.classList.add("customFooter");
-		
+
 		var filterClass = '';
 		if(params.value && params.value.filters && params.value.filters.length > 0){
 			filterClass = 'filter-color';
@@ -159,8 +159,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			  return new Intl.NumberFormat(sbiModule_config.curr_language + '-' + sbiModule_config.curr_country, { minimumFractionDigits: 0 }).format(params.value)
 		}
 	}
-	
-	
+
+
 	//CUSTOM RENDERERS
 	function CustomHeader() {}
 	CustomHeader.prototype.init = function(params) {
@@ -224,14 +224,22 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		if(['oracle.sql.TIMESTAMP','java.sql.Timestamp','java.util.Date','java.sql.Date','java.sql.Time'].indexOf(type) > -1) return true;
 		else return false;
 	}
-	
+
 	function isNumeric(type){
 		if(["java.lang.Byte","java.lang.Long","java.lang.Short","java.lang.Integer","java.math.BigInteger","java.lang.Double","java.lang.Float","java.math.BigDecimal","java.math.Decimal" ].indexOf(type) > -1) return true;
 		else return false;
 	}
-	
+
 	function getAgGridColumns() {
 		return $scope.ngModel
+			.filter(function(el) {
+				/*
+				 * Skip invisible columns.
+				 *
+				 * See pinned row data function.
+				 */
+				return el.visible;
+			})
 			.map(function(el) {
 				var tempObj = {"field": el.key,
 					"tooltipField": el.key,
@@ -252,7 +260,16 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 					tempObj.properties.format = el.format;
 				}
 				return tempObj;
-			});
+			})
+			.reduce(function(accumulator, currentValue, index) {
+				/*
+				 * In case of hidden cols, we have to fix the column name because a
+				 * dataset always has consecutive column names.
+				 */
+				currentValue.field = currentValue.tooltipField = "column_" + (index + 1);
+				accumulator.push(currentValue);
+				return accumulator;
+			}, []);
 	}
 
 	$scope.closePopup = function() {
@@ -273,10 +290,19 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	$scope.updateQbeTableGridData = function() {
 		$scope.qbeTableGrid.api.setRowData($scope.previewModel);
 
-		var pinnedBottomRowData = $scope.ngModel.reduce(function(accumulator, currentValue, index) {
-			accumulator["column_" + (index + 1)] = currentValue;
-			return accumulator;
-		}, {});
+		var pinnedBottomRowData = $scope.ngModel
+			.filter(function(el) {
+				/*
+				 * Skip invisible columns.
+				 *
+				 * See column defs function.
+				 */
+				return el.visible;
+			})
+			.reduce(function(accumulator, currentValue, index) {
+				accumulator["column_" + (index + 1)] = currentValue;
+				return accumulator;
+			}, {});
 
 		$scope.qbeTableGrid.api.setPinnedBottomRowData([pinnedBottomRowData]);
 	}
@@ -354,7 +380,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 		expression_service.generateExpressions($scope.filters,$scope.expression,$scope.advancedFilters)
 	}
-	
+
 	$scope.deleteColumn = function(column){
 		$scope.ngModel.splice($scope.ngModel.indexOf(column),1);
 	}
@@ -560,7 +586,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 						$scope.totalPages = Math.ceil($scope.model.totalNumberOfItems / $scope.itemsPerPage);
 					},true)
 					$scope.itemsPerPage = 20;
-					
+
 					$scope.currentPageNumber = 0;
 					$scope.maxPageNumber = function(){
 						if(($scope.currentPageNumber + 1) * $scope.itemsPerPage < $scope.model.totalNumberOfItems) return ($scope.currentPageNumber + 1) * $scope.itemsPerPage;
