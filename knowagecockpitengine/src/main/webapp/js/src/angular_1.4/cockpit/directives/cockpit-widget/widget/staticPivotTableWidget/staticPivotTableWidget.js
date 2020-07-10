@@ -821,11 +821,11 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    		  }
 
 			    	  }
-			    	 
+
 			    	 $scope.getMeasureType = function(item){
 			    		 return item.nature == 'calculated_field' ? 'CALCULATED-FIELD':'MEASURE-PT';
 			    	 }
-			    	 
+
 			    	 $scope.addCalculatedField = function(item) {
 
 							item.nature = "calculated_field";
@@ -840,7 +840,11 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 						$scope.getAvailableMeasures = function() {
 							var ret = [];
 							for(var i in $scope.originalCurrentDataset.metadata.fieldsMeta) {
-								if($scope.originalCurrentDataset.metadata.fieldsMeta[i].fieldType == "MEASURE") ret.push(angular.copy($scope.originalCurrentDataset.metadata.fieldsMeta[i]));
+								if($scope.originalCurrentDataset.metadata.fieldsMeta[i].fieldType == "MEASURE") {
+									var tmpField = angular.copy($scope.originalCurrentDataset.metadata.fieldsMeta[i]);
+									tmpField.aliasToShow = tmpField.alias;
+									ret.push(tmpField);
+								}
 							}
 							return ret;
 						}

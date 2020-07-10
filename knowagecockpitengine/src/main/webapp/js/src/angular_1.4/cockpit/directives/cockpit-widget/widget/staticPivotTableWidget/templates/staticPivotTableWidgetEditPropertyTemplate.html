@@ -153,8 +153,10 @@
 		      								dnd-dragend="dragUtils.dragObjectType=undefined"
 			      							 >
 			      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
-			      							{{item.alias}}
-			      							 <md-icon md-font-icon="fa fa-cog" aria-label="Checkbox 1" class="md-secondary" ng-click="editFieldsProperty(item)"></md-icon>
+			      							<span flex> {{item.alias}} </span>
+			      							 <md-icon md-font-icon="fa fa-cog" aria-label="Checkbox 1" class="md-secondary" ng-click="editFieldsProperty(item)"></md-icon> 
+			      							 <md-icon md-font-icon="fa fa-trash" ng-if="item.nature=='calculated_field'" aria-label="Checkbox 1" class="md-secondary" ng-click="deleteCalculatedField($index)"></md-icon>
+			      							 <calculated-field ng-if="item.nature=='calculated_field'" ng-model="localModel" selected-item="item" measures-list-func="getAvailableMeasures()" callback-add-to="addCalculatedField(newItem)"></calculated-field>
 			      							</md-list-item>
 			      							<md-list-item class="dndPlaceholder" >
 										       {{::translate.load("sbi.cockpit.pivot.messages.drop.measure")}}
