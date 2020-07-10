@@ -183,38 +183,14 @@
            			<form class="form-signin"  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
 		        		<input type="hidden" id="<%=roleToCheckLbl%>" name="<%=roleToCheckLbl%>" value="<%=roleToCheckVal%>" />
 		        		<%	
-				        	// propagates parameters (if any) for document execution
-				        	if (request.getParameter(ObjectsTreeConstants.OBJECT_LABEL) != null) {
-				        		String label = request.getParameter(ObjectsTreeConstants.OBJECT_LABEL);
-								%>
-								<input type="hidden" name="<%= SpagoBIConstants.OBJECT_LABEL %>" value="<%= label %>" />
-								<%
-				        	    String subobjectName = request.getParameter(SpagoBIConstants.SUBOBJECT_NAME);
-				        	    %>
-				        	    <% if (subobjectName != null && !subobjectName.trim().equals("")) { %>
-				        	    	<input type="hidden" name="<%= SpagoBIConstants.SUBOBJECT_NAME %>" value="<%= StringEscapeUtils.escapeHtml(subobjectName) %>" />
-				        	    <% } %>
-				        	    <%
-				        	    // propagates other request parameters than PAGE, NEW_SESSION, OBJECT_LABEL and SUBOBJECT_NAME
-				        	    Enumeration parameters = request.getParameterNames();
-				        	    while (parameters.hasMoreElements()) {
-				        	    	String aParameterName = (String) parameters.nextElement();
-				        	    	if (aParameterName != null 
-				        	    			&& !aParameterName.equalsIgnoreCase("PAGE") && !aParameterName.equalsIgnoreCase("NEW_SESSION") 
-				        	    			&& !aParameterName.equalsIgnoreCase(ObjectsTreeConstants.OBJECT_LABEL)
-				        	    			&& !aParameterName.equalsIgnoreCase(SpagoBIConstants.SUBOBJECT_NAME) 
-				        	    			&& request.getParameterValues(aParameterName) != null) {
-				        	    		String[] values = request.getParameterValues(aParameterName);
-				        	    		for (int i = 0; i < values.length; i++) {
-				        	    			%>
-				        	    			<input type="hidden" name="<%= StringEscapeUtils.escapeHtml(aParameterName) %>" 
-				        	    								 value="<%= StringEscapeUtils.escapeHtml(values[i]) %>" />
-				        	    			<%
-				        	    		}
-				        	    	}
-				        	    }
-				        	} 
-		        		%>				
+		        		
+		        		if(request.getParameter("targetService") != null) {
+		        			%>
+							<input type="hidden" name="<%= "targetService" %>" value="<%= request.getParameter("targetService") %>" />
+							<%
+		        		}
+		        		%>	
+				        	
 		                <input type="text" id="userID" name="userID" class="form-control" placeholder="<%=msgBuilder.getMessage("username")%>" required autofocus>
 		                <input type="password" id="password" name="password" class="form-control" placeholder="<%=msgBuilder.getMessage("password")%>" required>
 					

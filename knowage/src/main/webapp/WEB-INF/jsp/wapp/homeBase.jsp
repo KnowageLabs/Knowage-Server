@@ -178,52 +178,9 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 	}
     String firstUrlToCall = "";
     boolean isFirstUrlToCallEqualsToDefaultPage = false;
-    
-	// if a document or a dataset execution is required, execute it
- 	if (aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL) != null || aServiceRequest.getAttribute(ObjectsTreeConstants.DATASET_LABEL) != null) {
-        StringBuffer temp = new StringBuffer();	
-		// dcument execution case
-		if(aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL) != null){
-			String label = (String) aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL);
-			   String subobjectName = (String) aServiceRequest.getAttribute(SpagoBIConstants.SUBOBJECT_NAME);
 		
-
-			   temp.append(contextName + "/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&");
-			   temp.append(ObjectsTreeConstants.OBJECT_LABEL + "=" + label);
-			   if (subobjectName != null && !subobjectName.trim().equals("")) {
-				   temp.append("&" + SpagoBIConstants.SUBOBJECT_NAME + "=" + URLEncoder.encode(subobjectName, characterEncoding));
-				   }
-		}
-	    // dataset execution case
-		else{  
-	         String datasetLabel = (String) aServiceRequest.getAttribute(ObjectsTreeConstants.DATASET_LABEL);
-             String engine = (String) aServiceRequest.getAttribute(ObjectsTreeConstants.ENGINE);
-             temp.append(contextName + "/servlet/AdapterHTTP?ACTION_NAME=SELECT_DATASET_ACTION&");
-             temp.append(ObjectsTreeConstants.DATASET_LABEL + "=" + datasetLabel+"&");
-             temp.append(ObjectsTreeConstants.ENGINE + "=" + engine);
-		}
-	    
-	    // propagates other request parameters than PAGE, NEW_SESSION, OBJECT_LABEL and SUBOBJECT_NAME
-	    Enumeration parameters = request.getParameterNames();
-	    while (parameters.hasMoreElements()) {
-	    	String aParameterName = (String) parameters.nextElement();
-	    	if (aParameterName != null 
-	    			&& !aParameterName.equalsIgnoreCase("PAGE") && !aParameterName.equalsIgnoreCase("NEW_SESSION") 
-	    			&& !aParameterName.equalsIgnoreCase(ObjectsTreeConstants.OBJECT_LABEL)
-        	    	&& !aParameterName.equalsIgnoreCase(SpagoBIConstants.SUBOBJECT_NAME) 
-                    && !aParameterName.equalsIgnoreCase(ObjectsTreeConstants.DATASET_LABEL) 
-                    && !aParameterName.equalsIgnoreCase(ObjectsTreeConstants.ENGINE) 
-        	    	&& request.getParameterValues(aParameterName) != null) {
-	    		String[] values = request.getParameterValues(aParameterName);
-	    		
-	    		for (int i = 0; i < values.length; i++) {
-	    			temp.append("&" + URLEncoder.encode(aParameterName, characterEncoding) + "=" 
-	    					+ URLEncoder.encode(values[i], characterEncoding));
-	    		}
-	    	}
-	    }
-	    
-		firstUrlToCall = temp.toString();
+	if(request.getParameter("targetService") != null) {
+		firstUrlToCall = request.getParameter("targetService");
 		
 	} else {
 	

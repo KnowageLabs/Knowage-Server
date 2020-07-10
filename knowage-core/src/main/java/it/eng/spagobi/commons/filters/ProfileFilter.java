@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.filters;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -78,6 +79,7 @@ public class ProfileFilter implements Filter {
 		try {
 			if (request instanceof HttpServletRequest) {
 				HttpServletRequest httpRequest = (HttpServletRequest) request;
+				HttpServletResponse httpResponse = (HttpServletResponse) response;
 				HttpSession session = httpRequest.getSession();
 
 				RequestContainer requestContainer = (RequestContainer) session.getAttribute(Constants.REQUEST_CONTAINER);
@@ -157,6 +159,15 @@ public class ProfileFilter implements Filter {
 				if (profile != null) {
 					manageTenant(profile);
 					UserProfileManager.setProfile((UserProfile) profile);
+				} else {
+					String contextName = ChannelUtilities.getSpagoBIContextName(httpRequest);
+					if (!httpRequest.getQueryString().contains("PAGE=LoginPage&NEW_SESSION=TRUE")) {
+						String targetService = httpRequest.getRequestURI() + "?" + httpRequest.getQueryString();
+						String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&targetService="
+								+ URLEncoder.encode(targetService, "UTF-8");
+						httpResponse.sendRedirect(redirectURL);
+					}
+
 				}
 
 				chain.doFilter(request, response);
@@ -278,11 +289,13 @@ public class ProfileFilter implements Filter {
 	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
 	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
 	 *
-	 * @param httpRequest The http request
+	 * @param httpRequest
+	 *            The http request
 	 *
 	 * @return the current user unique identified
 	 *
-	 * @throws Exception in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
+	 * @throws Exception
+	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */
 	private String getUserIdWithSSO(HttpServletRequest request) {
 		logger.debug("IN");
