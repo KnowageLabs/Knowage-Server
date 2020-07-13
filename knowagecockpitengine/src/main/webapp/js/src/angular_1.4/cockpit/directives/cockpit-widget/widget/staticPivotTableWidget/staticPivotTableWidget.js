@@ -877,7 +877,27 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 								.splice(index, 1);
 						}
 
+					$scope.checkAggregation = function(){
+						var isAggregated;
+						var firstColumn = $scope.localModel.content.crosstabDefinition.measures[0];
+						if(firstColumn.funct != 'NONE') {
+							isAggregated = true;
+						} else {
+							isAggregated = false;
+						}
+						for(var i in $scope.localModel.content.crosstabDefinition.measures){
+							var column = $scope.localModel.content.crosstabDefinition.measures[i];
+							if (!isAggregated && column.funct != "NONE") return false;
+							if (isAggregated && column.funct == "NONE") return false;
+						}
+						return true;
+					}
+
 		    	    $scope.saveConfiguration=function(){
+		    	    	if(!$scope.checkAggregation()) {
+		    	    		$scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.incoherentaggregations'));
+			    			  return;
+		    	    	}
 		    		  if($scope.localModel.dataset == undefined){
 		  				$scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
 		    			return;
