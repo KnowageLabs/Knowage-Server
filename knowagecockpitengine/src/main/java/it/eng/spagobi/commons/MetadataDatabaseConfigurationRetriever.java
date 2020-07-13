@@ -60,7 +60,9 @@ public class MetadataDatabaseConfigurationRetriever implements IConfigurationRet
 				configurations = (HashMap<String, String>) cache.get(CONFIGURATION_MAP);
 				if (configurations == null) {
 					HashMap<String, String> newConfiguration = loadConfigurations();
-					cache.put(CONFIGURATION_MAP, newConfiguration);
+					if (newConfiguration.size() > 0) {
+						cache.put(CONFIGURATION_MAP, newConfiguration);
+					}
 					configurations = newConfiguration;
 				}
 			} finally {
