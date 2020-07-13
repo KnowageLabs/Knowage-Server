@@ -43,11 +43,11 @@ public class FolderResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getFolders(@DefaultValue("false") @QueryParam("includeDocs") Boolean recoverBIObjects, @QueryParam("perm") String permissionOnFolder,
-			@QueryParam("dateFilter") String dateFilter) {
+			@QueryParam("dateFilter") String dateFilter, @QueryParam("status") String status) {
 		logger.debug("IN");
 		FolderManagementAPI folderManagementUtilities = new FolderManagementAPI();
 
-		String jsonObjects = folderManagementUtilities.getFoldersAsString(recoverBIObjects, permissionOnFolder, dateFilter);
+		String jsonObjects = folderManagementUtilities.getFoldersAsString(recoverBIObjects, permissionOnFolder, dateFilter, status);
 
 		return Response.ok(jsonObjects).build();
 	}

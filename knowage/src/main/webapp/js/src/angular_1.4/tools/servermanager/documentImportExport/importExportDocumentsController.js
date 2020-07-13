@@ -184,33 +184,36 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			exportScheduler : false,
 			exportSelFunc: false
 	};
-
+	
+	$scope.filterByStatus = [];
+	$scope.filterByStatus.push('TEST');
+	$scope.filterByStatus.push('DEV');
+	$scope.filterByStatus.push('REL');
+	
 	$scope.filterDocuments = function(){
-		if($scope.filterDate!=undefined){
 //			$scope.restServices.get("2.0", "folders","dateFilter="+$scope.filterDate)
-			$scope.restServices.get("1.0/serverManager/importExport/folders", "","dateFilter="+$scope.filterDate)
-			.success(function(data){
-				//if not errors in response, copy the data
-				if (data.errors === undefined){
-					$scope.folders=angular.copy(data);
-				}else{
-					$scope.folders=[];
-				}
-			})
-			.error(function(data, status){
-				$scope.folders=angular.copy(foldersJson);
-				$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
-			});
-
-		}else{
-			$scope.removeFilter();
-
-		}
+		$scope.restServices.get("1.0/serverManager/importExport/folders", "","dateFilter="+$scope.filterDate+"&status="+filteringDocuments($scope.filterByStatus))
+		.success(function(data){
+			//if not errors in response, copy the data
+			if (data.errors === undefined){
+				$scope.folders=angular.copy(data);
+			}else{
+				$scope.folders=[];
+			}
+		})
+		.error(function(data, status){
+			$scope.folders=angular.copy(foldersJson);
+			$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
+		});
 	}
 
 	$scope.removeFilter = function(){
 		$scope.filterDate = undefined;
 		$scope.selected=[];
+		$scope.filterByStatus = [];
+		$scope.filterByStatus.push('TEST');
+		$scope.filterByStatus.push('DEV');
+		$scope.filterByStatus.push('REL');
 		$scope.restServices.get("1.0/serverManager/importExport/folders", "","includeDocs=true")
 //		$scope.restServices.get("2.0", "folders","includeDocs=true")
 		.success(function(data){
@@ -225,6 +228,10 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			$scope.folders=angular.copy(foldersJson);
 			$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
 		});
+	}
+	
+	$scope.removeDateFilter = function(){
+		delete $scope.filterDate;
 	}
 
 	$scope.restServices.get("1.0/serverManager/importExport/folders", "","includeDocs=true")
@@ -253,11 +260,17 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 		$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
 	});
 
-	$scope.filterByStatus = {
-			development: "",
-			test: "",
-			released: ""
-	};
+	$scope.find = function() {
+		$scope.filterDocuments();
+	}
+	
+	$scope.clear = function() {
+		$scope.filterByStatus.test = 'TEST';
+		$scope.filterByStatus.dev = 'DEV';
+		$scope.filterByStatus.released = 'REL';
+		
+		delete $scope.filterDate;
+	}
 	
 	$scope.setShowWarningRequiredLicenses = function (data) {
 		var tmp = false;
@@ -285,8 +298,14 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 	function filteringDocuments(object) {
 
 		var value = "";
-		for(var key in object)
+		var i = 0;
+		for(var key in object) {
+			if (i > 0) {
+				value += ",";
+			}
 			value += object[key];
+			i++;
+		}
 		return value;
 	}
 

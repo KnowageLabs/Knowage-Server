@@ -18,7 +18,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class FolderManagementAPI extends AbstractSpagoBIResource {
 	static protected Logger logger = Logger.getLogger(FolderManagementAPI.class);
 
-	public List<LowFunctionality> getFolders(Boolean recoverBIObjects, String permissionOnFolder, String dateFilter) {
+	public List<LowFunctionality> getFolders(Boolean recoverBIObjects, String permissionOnFolder, String dateFilter, String status) {
 
 		List<LowFunctionality> folders = new ArrayList<LowFunctionality>();
 		try {
@@ -26,11 +26,14 @@ public class FolderManagementAPI extends AbstractSpagoBIResource {
 			ILowFunctionalityDAO dao = DAOFactory.getLowFunctionalityDAO();
 			dao.setUserProfile(profile);
 			List<LowFunctionality> allFolders = new ArrayList<>();
-			if (dateFilter != null) {
-				allFolders = dao.loadAllLowFunctionalities(dateFilter);
-			} else {
-				allFolders = dao.loadAllLowFunctionalities(recoverBIObjects);
-			}
+			String filterByDate = dateFilter != null && !dateFilter.equals("undefined") ? dateFilter : null;
+			String filterByStatus = status != null && !status.equals("undefined") ? status : null;
+
+//			if (filterByDate) {
+			allFolders = dao.loadAllLowFunctionalities(true, null, filterByDate, filterByStatus);
+//			} else {
+//				allFolders = dao.loadAllLowFunctionalities(recoverBIObjects);
+//			}
 
 			if (permissionOnFolder != null && !permissionOnFolder.isEmpty()) {
 				for (LowFunctionality lf : allFolders) {
@@ -45,6 +48,7 @@ public class FolderManagementAPI extends AbstractSpagoBIResource {
 					}
 				}
 			}
+
 		} catch (Exception e) {
 			String errorString = "Error while getting the list of folders";
 			logger.error(errorString, e);
@@ -55,8 +59,8 @@ public class FolderManagementAPI extends AbstractSpagoBIResource {
 		return folders;
 	}
 
-	public String getFoldersAsString(Boolean recoverBIObjects, String permissionOnFolder, String dateFilter) {
-		List<LowFunctionality> folders = getFolders(recoverBIObjects, permissionOnFolder, dateFilter);
+	public String getFoldersAsString(Boolean recoverBIObjects, String permissionOnFolder, String dateFilter, String status) {
+		List<LowFunctionality> folders = getFolders(recoverBIObjects, permissionOnFolder, dateFilter, status);
 		return JsonConverter.objectToJson(folders, folders.getClass());
 	}
 
