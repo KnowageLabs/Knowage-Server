@@ -1,4 +1,32 @@
 .kn-importExportDocument {
+
+	.documentsFilter{
+		background-color: lighten($ternaryColor, 15%);
+	}
+
+	#filterDatepicker {
+		margin: 0;
+		.md-datepicker-input-container {
+			width: calc(100% - 60px);
+			padding-bottom: 4px;
+			border-bottom-color: #ccc;
+			.md-datepicker-input{
+				width: 100%;
+			}
+		}
+
+	}
+	.exportOptions {
+		background-color: lighten($ternaryColor, 15%);
+		.layout-column {
+			padding: 16px;
+			md-checkbox {
+				._md-label {
+					font-size: $baseFontSize;
+				}
+			}
+		}
+	}
 	.absolute {
 		position:absolute;
 	}

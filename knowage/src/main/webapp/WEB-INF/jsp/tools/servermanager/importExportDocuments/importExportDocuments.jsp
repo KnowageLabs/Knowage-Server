@@ -55,7 +55,7 @@
                <md-tab id="exportTab">
                   <md-tab-label>{{translate.load("SBISet.export","component_impexp_messages");}}</md-tab-label>
                   <md-tab-body>
-                     <md-card>
+                     
                         <md-content ng-controller="exportController">
                            <div ng-if="flags.viewDownload" class="md-body-2 kn-info">
                               <span><i class="fa fa-file-archive-o"></i>&nbsp; {{downloadedFileName}}.zip </span>
@@ -68,23 +68,24 @@
                               <!-- 							<p >{{translate.load("SBISet.importexport.exportCompleteResourcesWarning","component_impexp_messages");}}</p> -->
                            </div>
                            <div layout="column" layout-padding layout-wrap>
-                              <div layout="row" layout-wrap class="w100" >
-                                 <md-input-container flex class="md-block"> <label>{{translate.load("SBISet.importexport.nameExp","component_impexp_messages");}}</label>
+                              <md-card layout="row" class="w100" style="display:flex">
+                                 <md-input-container flex class="md-block"> 
+                                 	<label>{{translate.load("SBISet.importexport.nameExp","component_impexp_messages");}}</label>
                                     <input type="text" ng-model="exportName" required> 
                                  </md-input-container>
-                                 <md-button class="md-fab md-mini"
+                                 <md-button class="md-fab"
                                     ng-click="exportFiles(selected)"
                                     ng-disabled="selected.length==0 || exportName===undefined || exportName.length == 0"
                                     aria-label="{{translate.load('SBISet.importexport.fileArchive','component_impexp_messages')}}">
-                                    <md-icon class="fa fa-download fa-2x"></md-icon>
+                                    <md-icon class="fa fa-download"></md-icon>
                                  </md-button>
-                              </div>
-                              <div layout="row">
-                                 <div flex="70">
+                              </md-card>
+                              <div layout="row" class="noPadding">
+                                 <md-card flex="70">
                                        <div layout="column"> 
-                                    <h3>Filter documents</h3>
-                                    <div layout="row" layout-align="start center">
-                                       <md-datepicker flex ng-model="filterDate" md-placeholder="{{translate.load('sbi.impexpdoc.filterdoc')}}"></md-datepicker>
+                                    <md-subheader>Filter documents</md-subheader>
+                                    <div layout="row" layout-align="start center" class="documentsFilter">
+                                       <md-datepicker id="filterDatepicker" flex ng-model="filterDate" md-placeholder="{{translate.load('sbi.impexpdoc.filterdoc')}}"></md-datepicker>
 
                                        <md-input-container flex>
                                           <label>{{translate.load("sbi.impexpdoc.filterByStatus")}}</label>
@@ -102,9 +103,11 @@
                                        
                                			<md-button class="md-icon-button" ng-click="find()">
                                           <md-icon md-font-icon="fa fa-search"></md-icon> 
+                                          <md-tooltip md-delay="500">Filter</md-tooltip>
                                        </md-button>
                                        <md-button class="md-icon-button" ng-click="removeFilter()">
                                           <md-icon md-font-icon="fa fa-eraser"></md-icon> 
+                                          <md-tooltip md-delay="500">Clear Filter</md-tooltip>
                                        </md-button>
                                       </div> 
                                        <div layout-padding>
@@ -126,9 +129,9 @@
                                  </component-tree>
                               </div>
                                     </div>
-                                 </div>
-                                 <div flex="30">
-                                    <h3>Export options</h3>
+                                 </md-card>
+                                 <md-card flex="30" class="exportOptions">
+                                    <md-subheader>Export Options</md-subheader>
            							<div layout="column">
 	                                    <md-checkbox class="little-check" ng-model="checkboxs.exportSubObj"
 	                                       aria-label="Export sub views">{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</md-checkbox>
@@ -141,7 +144,7 @@
 	                                    <md-checkbox class="little-check" 
 	                                       ng-model="checkboxs.exportSelFunc" aria-label="Export in sel fun">{{translate.load("SBISet.importexport.expSelFun", "component_impexp_messages")}}</md-checkbox>
                                  	</div>
-                                 </div>
+                                 </md-card>
                               </div>
                               
                            </div>

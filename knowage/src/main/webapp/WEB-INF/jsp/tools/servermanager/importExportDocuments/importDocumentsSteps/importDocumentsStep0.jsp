@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <div layout="row" layout-wrap layout-align="center center">
 	<file-upload flex id="fileUploadImport" ng-model="IEDConf.fileImport" file-max-size="<%=importFileMaxSizeMB%>" ></file-upload>
-	<md-button class="md-fab md-mini"  ng-disabled="isInvalidImportStep0Form();" aria-label="{{translate.load('SBISet.import','component_impexp_messages');}} {{translate.load('sbi.ds.wizard.file');}}" ng-click="importFile()">
-       			<md-icon class="fa fa-upload fa-2x"></md-icon>
+	<md-button class="md-fab"  ng-disabled="isInvalidImportStep0Form();" aria-label="{{translate.load('SBISet.import','component_impexp_messages');}} {{translate.load('sbi.ds.wizard.file');}}" ng-click="importFile()">
+       			<md-icon class="fa fa-upload"></md-icon>
    			 </md-button>	 
 </div>
 <div layout-padding class="associations-container">
@@ -36,8 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<input type="text" ng-model="IEDConf.fileAssociation.name" ng-disabled="true" aria-label="{{translate.load('impexp.savedAss','component_impexp_messages');}}">
 			</md-input-container>
     	
-			<md-button class="md-fab md-mini" ng-click="listAssociation()" aria-label="{{translate.load('impexp.listAssFile','component_impexp_messages')}}" >
-         				<md-icon class="fa fa-search fa-2x"></md-icon>
+			<md-button class="md-fab" ng-click="listAssociation()" aria-label="{{translate.load('impexp.listAssFile','component_impexp_messages')}}" >
+         				<md-icon class="fa fa-search"></md-icon>
      				</md-button>
 		</div>
 
