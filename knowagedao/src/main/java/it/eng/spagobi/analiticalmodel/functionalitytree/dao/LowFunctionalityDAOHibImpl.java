@@ -941,15 +941,15 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		Role[] devRoles = new Role[devRolesList.size()];
 		Role[] testRoles = new Role[testRolesList.size()];
 		Role[] createRoles = new Role[createRolesList.size()];
-//
-//		for (int i = 0; i < execRolesList.size(); i++)
-//			execRoles[i] = (Role) execRolesList.get(i);
-//		for (int i = 0; i < testRolesList.size(); i++)
-//			testRoles[i] = (Role) testRolesList.get(i);
-//		for (int i = 0; i < devRolesList.size(); i++)
-//			devRoles[i] = (Role) devRolesList.get(i);
-//		for (int i = 0; i < createRolesList.size(); i++)
-//			createRoles[i] = (Role) createRolesList.get(i);
+
+		for (int i = 0; i < execRolesList.size(); i++)
+			execRoles[i] = (Role) execRolesList.get(i);
+		for (int i = 0; i < testRolesList.size(); i++)
+			testRoles[i] = (Role) testRolesList.get(i);
+		for (int i = 0; i < devRolesList.size(); i++)
+			devRoles[i] = (Role) devRolesList.get(i);
+		for (int i = 0; i < createRolesList.size(); i++)
+			createRoles[i] = (Role) createRolesList.get(i);
 
 		lowFunct.setDevRoles(devRoles);
 		lowFunct.setTestRoles(testRoles);
