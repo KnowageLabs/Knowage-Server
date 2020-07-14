@@ -59,6 +59,7 @@ public class CrossTabHTMLSerializer {
 	private static final String NG_CLICK_ATTRIBUTE = "ng-click";
 
 	private static String MEMBER_CLASS = "member";
+	private static String HIDDEN_CLASS = "hidden";
 	private static String LEVEL_CLASS = "level";
 	private static String NA_CLASS = "na";
 	private static String EMPTY_CLASS = "empty";
@@ -218,11 +219,14 @@ public class CrossTabHTMLSerializer {
 				continue;
 			}
 			SourceBean aRow = new SourceBean(ROW_TAG);
+
 			Node node = nodes.get(i);
-			Map<String, String> hierarchicalAttributes = getHierarchicalAttributes(crossTab, node);
+			boolean isSubtotal = node.getValue().equals(CrossTab.SUBTOTAL);
+			Map<String, String> hierarchicalAttributes = getHierarchicalAttributes(crossTab, node, isSubtotal);
 			for (String key : hierarchicalAttributes.keySet()) {
 				aRow.setAttribute(key, hierarchicalAttributes.get(key));
 			}
+
 			if (columnsTotals && noSelectedColumn) {
 				SourceBean aColumn = new SourceBean(COLUMN_TAG);
 				aRow.setAttribute(aColumn);
@@ -315,6 +319,17 @@ public class CrossTabHTMLSerializer {
 				}
 				aColumn.setAttribute(TITLE_ATTRIBUTE, text);
 				aColumn.setAttribute(ID_ATTRIBUTE, aNode.getValue());
+				boolean isSubtotal = aNode.getValue().equals(CrossTab.SUBTOTAL);
+				if (isSubtotal) {
+					SourceBean subtotalHiddenColumn = new SourceBean(COLUMN_TAG);
+					subtotalHiddenColumn.setAttribute(CLASS_ATTRIBUTE, HIDDEN_CLASS);
+					Row row = rowsDef.get(i);
+					JSONObject rowConfig = row.getConfig();
+					style = customStylesMap.get(rowConfig.get("id"));
+					subtotalHiddenColumn.setAttribute(STYLE_ATTRIBUTE, style);
+					subtotalHiddenColumn.setCharacters(aNode.getParentNode().getValue());
+					aRow.setAttribute(subtotalHiddenColumn);
+				}
 				aRow.setAttribute(aColumn);
 				counter = counter + rowSpan;
 			}
@@ -350,11 +365,14 @@ public class CrossTabHTMLSerializer {
 		return filteredNodes;
 	}
 
-	private Map<String, String> getHierarchicalAttributes(CrossTab crossTab, Node aNode) {
+	private Map<String, String> getHierarchicalAttributes(CrossTab crossTab, Node aNode, boolean isSubtotal) {
 		Map<String, String> hierarchicalAttributes = new HashMap<String, String>();
 		Node curNode = aNode;
-		if (curNode.getValue().equals(CrossTab.SUBTOTAL)) {
-			return getHierarchicalAttributes(crossTab, curNode.getParentNode());
+		if (isSubtotal) {
+			Map<String, String> toReturn = new HashMap<String, String>();
+			toReturn.put(CrossTab.SUBTOTAL, "true");
+			toReturn.putAll(getHierarchicalAttributes(crossTab, curNode.getParentNode(), false));
+			return toReturn;
 		} else {
 			while (curNode.getColumnName() != null && !curNode.getColumnName().equals("null")) {
 				String attribute = crossTab.getColumnAliasFromName(curNode.getColumnName());
