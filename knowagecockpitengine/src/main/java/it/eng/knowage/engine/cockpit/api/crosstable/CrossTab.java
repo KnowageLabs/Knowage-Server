@@ -2951,6 +2951,10 @@ public class CrossTab {
 		return hideZeroRows;
 	}
 
+	public String getColumnAliasFromName(String columnName) {
+		return dsColumnName2Alias.get(columnName);
+	}
+
 	public String getHTMLCrossTab(Locale locale) {
 		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap);
 		String html = serializer.serialize(this);

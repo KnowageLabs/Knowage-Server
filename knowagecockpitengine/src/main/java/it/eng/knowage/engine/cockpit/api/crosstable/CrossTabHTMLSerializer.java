@@ -218,6 +218,11 @@ public class CrossTabHTMLSerializer {
 				continue;
 			}
 			SourceBean aRow = new SourceBean(ROW_TAG);
+			Node node = nodes.get(i);
+			Map<String, String> hierarchicalAttributes = getHierarchicalAttributes(crossTab, node);
+			for (String key : hierarchicalAttributes.keySet()) {
+				aRow.setAttribute(key, hierarchicalAttributes.get(key));
+			}
 			if (columnsTotals && noSelectedColumn) {
 				SourceBean aColumn = new SourceBean(COLUMN_TAG);
 				aRow.setAttribute(aColumn);
@@ -343,6 +348,22 @@ public class CrossTabHTMLSerializer {
 			}
 		}
 		return filteredNodes;
+	}
+
+	private Map<String, String> getHierarchicalAttributes(CrossTab crossTab, Node aNode) {
+		Map<String, String> hierarchicalAttributes = new HashMap<String, String>();
+		Node curNode = aNode;
+		if (curNode.getValue().equals(CrossTab.SUBTOTAL)) {
+			return getHierarchicalAttributes(crossTab, curNode.getParentNode());
+		} else {
+			while (curNode.getColumnName() != null && !curNode.getColumnName().equals("null")) {
+				String attribute = crossTab.getColumnAliasFromName(curNode.getColumnName());
+				String value = curNode.getValue();
+				hierarchicalAttributes.put(attribute, value);
+				curNode = curNode.getParentNode();
+			}
+		}
+		return hierarchicalAttributes;
 	}
 
 	private SourceBean serializeColumnsHeaders(CrossTab crossTab) throws SourceBeanException, JSONException {
@@ -1311,7 +1332,8 @@ public class CrossTabHTMLSerializer {
 		for (int i = 0; i < leftRows.size(); i++) {
 			SourceBean aLeftRow = (SourceBean) leftRows.get(i);
 			SourceBean aRightRow = (SourceBean) rightRows.get(i);
-			SourceBean merge = new SourceBean(ROW_TAG);
+			SourceBean merge = new SourceBean(aLeftRow);
+			merge.delAttribute(COLUMN_TAG);
 			List aLeftRowColumns = aLeftRow.getAttributeAsList(COLUMN_TAG);
 			for (int j = 0; j < aLeftRowColumns.size(); j++) {
 				SourceBean aColumn = (SourceBean) aLeftRowColumns.get(j);
