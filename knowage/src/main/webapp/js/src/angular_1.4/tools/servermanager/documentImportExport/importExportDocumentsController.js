@@ -214,8 +214,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 		$scope.filterByStatus.push('TEST');
 		$scope.filterByStatus.push('DEV');
 		$scope.filterByStatus.push('REL');
-		$scope.restServices.get("1.0/serverManager/importExport/folders", "","includeDocs=true")
-//		$scope.restServices.get("2.0", "folders","includeDocs=true")
+		$scope.restServices.get("1.0/serverManager/importExport/folders", "","includeDocs=true&status="+filteringDocuments($scope.filterByStatus))
 		.success(function(data){
 			//if not errors in response, copy the data
 			if (data.errors === undefined){
@@ -234,7 +233,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 		delete $scope.filterDate;
 	}
 
-	$scope.restServices.get("1.0/serverManager/importExport/folders", "","includeDocs=true")
+	$scope.restServices.get("1.0/serverManager/importExport/folders", "","includeDocs=true&status="+filteringDocuments($scope.filterByStatus))
 	.success(function(data){
 
 		//if not errors in response, copy the data

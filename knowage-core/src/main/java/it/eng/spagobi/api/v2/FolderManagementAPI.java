@@ -29,11 +29,11 @@ public class FolderManagementAPI extends AbstractSpagoBIResource {
 			String filterByDate = dateFilter != null && !dateFilter.equals("undefined") ? dateFilter : null;
 			String filterByStatus = status != null && !status.equals("undefined") ? status : null;
 
-//			if (filterByDate) {
-			allFolders = dao.loadAllLowFunctionalities(true, null, filterByDate, filterByStatus);
-//			} else {
-//				allFolders = dao.loadAllLowFunctionalities(recoverBIObjects);
-//			}
+			if (filterByDate != null || filterByStatus != null) {
+				allFolders = dao.loadAllLowFunctionalities(true, null, filterByDate, filterByStatus);
+			} else {
+				allFolders = dao.loadAllLowFunctionalities(recoverBIObjects);
+			}
 
 			if (permissionOnFolder != null && !permissionOnFolder.isEmpty()) {
 				for (LowFunctionality lf : allFolders) {
