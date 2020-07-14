@@ -1041,47 +1041,50 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		}
 		if(!directInteraction || directInteraction == 'link'){
 			if(linkSettings && linkSettings.enable){
-				if(linkSettings.interactionType == 'allRow' || (linkSettings.interactionType == 'icon' && !columnName) || (linkSettings.interactionType == 'singleColumn' && linkSettings.column == columnName)){
-					var linkUrl = linkSettings.baseurl;
-					// parameters replacement
-					for(var k in linkSettings.parameters){
-						var parameter = linkSettings.parameters[k];
-						var paramValue = '';
-						if(parameter.bindType == 'static') paramValue = parameter.value;
-						if(parameter.bindType == 'driver') paramValue = cockpitModule_analyticalDrivers[parameter.driver];
-						if(parameter.bindType == 'jwt') paramValue = sbiModule_user.userUniqueIdentifier;
-						if(parameter.bindType == 'dynamic') {
-							if(parameter.column && parameter.column != 'column_name_mode') {
-								for(var c in $scope.ngModel.content.columnSelectedOfDataset){
-									if($scope.ngModel.content.columnSelectedOfDataset[c].name == parameter.column) {
-										paramValue = row[$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow];
-										break;
+				for(var l in linkSettings.links){
+					var currentLink = linkSettings.links[l];
+					if(currentLink.interactionType == 'allRow' || (currentLink.interactionType == 'icon' && !columnName) || (currentLink.interactionType == 'singleColumn' && currentLink.column == columnName)){
+						var linkUrl = currentLink.baseurl;
+						// parameters replacement
+						for(var k in currentLink.parameters){
+							var parameter = currentLink.parameters[k];
+							var paramValue = '';
+							if(parameter.bindType == 'static') paramValue = parameter.value;
+							if(parameter.bindType == 'driver') paramValue = cockpitModule_analyticalDrivers[parameter.driver];
+							if(parameter.bindType == 'jwt') paramValue = sbiModule_user.userUniqueIdentifier;
+							if(parameter.bindType == 'dynamic') {
+								if(parameter.column && parameter.column != 'column_name_mode') {
+									for(var c in $scope.ngModel.content.columnSelectedOfDataset){
+										if($scope.ngModel.content.columnSelectedOfDataset[c].name == parameter.column) {
+											paramValue = row[$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow];
+											break;
+										}
+									}
+								}
+								else paramValue = columnName;
+							}
+							if(parameter.bindType == 'selection') {
+								var selectionsObj = cockpitModule_template.getSelections();
+								if(selectionsObj){
+									var found = false;
+									for(var i = 0; i < selectionsObj.length && found == false; i++){
+										if(selectionsObj[i].ds == parameter.dataset && selectionsObj[i].columnName == parameter.column){
+											paramValue = selectionsObj[i].value;
+											found = true;
+										}
 									}
 								}
 							}
-							else paramValue = columnName;
-						}
-						if(parameter.bindType == 'selection') {
-							var selectionsObj = cockpitModule_template.getSelections();
-							if(selectionsObj){
-								var found = false;
-								for(var i = 0; i < selectionsObj.length && found == false; i++){
-									if(selectionsObj[i].ds == parameter.dataset && selectionsObj[i].columnName == parameter.column){
-										paramValue = selectionsObj[i].value;
-										found = true;
-									}
-								}
+							if(parameter.bindType == 'json') {
+								var tempJson = replacePlaceholders(parameter.json, row);
+								paramValue = encodeURIComponent(tempJson);
 							}
+							linkUrl += (k == 0 ? "?" : "&" ) +  parameter.name + "=" + paramValue;
 						}
-						if(parameter.bindType == 'json') {
-							var tempJson = replacePlaceholders(parameter.json, row);
-							paramValue = encodeURIComponent(tempJson);
-						}
-						linkUrl += (k == 0 ? "?" : "&" ) +  parameter.name + "=" + paramValue;
+						if(currentLink.type == 'replace') window.location.href = linkUrl;
+						if(currentLink.type == 'blank') window.open(linkUrl);
+						return;
 					}
-					if(linkSettings.type == 'replace') window.location.href = linkUrl;
-					if(linkSettings.type == 'blank') window.open(linkUrl);
-					return;
 				}
 			}
 		}
