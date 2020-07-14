@@ -136,13 +136,22 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 	}
 	
-	$scope.addLinkParameter = function(){
-		if($scope.ngModel.link.parameters) $scope.ngModel.link.parameters.push({});
-		else $scope.ngModel.link.parameters = [{}];
+	$scope.addLink = function(){
+		if($scope.ngModel.link.links) $scope.ngModel.link.links.push({});
+		else $scope.ngModel.link.links = [{}];
 	}
 	
-	$scope.deleteLinkParameter = function(index){
-		$scope.ngModel.link.parameters.splice(index,1);
+	$scope.deleteLink = function($index){
+		$scope.ngModel.link.links.splice($index,1);
+	}
+	
+	$scope.addLinkParameter = function(link){
+		if(link.parameters) link.parameters.push({});
+		else link.parameters = [{}];
+	}
+	
+	$scope.deleteLinkParameter = function(link,index){
+		link.parameters.splice(index,1);
 	}
 	
 	$scope.codemirrorLoaded = function(_editor) {
