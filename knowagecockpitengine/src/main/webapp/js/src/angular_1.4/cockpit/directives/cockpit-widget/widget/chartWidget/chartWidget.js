@@ -555,7 +555,7 @@ function cockpitChartWidgetControllerFunction(
 					        });
 						}
 					  
-						if($scope.localModel.dataset && $scope.localModel.dataset.dsId) $scope.getDatasetAdditionalInfo($scope.localModel.dataset.dsId);
+						if($scope.localModel.datasetId) $scope.getDatasetAdditionalInfo($scope.localModel.datasetId);
 						
 					  $scope.handleEvent=function(event, arg1){
 						  if(event=='init'){

@@ -450,14 +450,11 @@ public abstract class AbstractDataSet implements IDataSet {
 			if (!value.isEmpty()) {
 				if (value.startsWith(delim) && value.endsWith(delim)) {
 					if (value.contains("','")) {
+						value = value.substring(1, value.length() - 1);
 						String[] valuesArray = value.split("','");
 						String newValuesFromArray = "";
 						for (int i = 0; i < valuesArray.length; i++) {
 							String temp = valuesArray[i];
-							if (i == 0)
-								temp = temp + delim;
-							else
-								temp = delim + temp;
 							if (temp.startsWith(delim) && temp.endsWith(delim))
 								temp = temp.substring(1, temp.length() - 1);
 							temp = temp.replaceAll("'", "''");

@@ -584,7 +584,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								var nowrapping = item.substring(2,item.length - 2);
 								this.push(nowrapping.split("','"));
 //								angular.forEach(items,function(value){
-//									this.push(value.substring(1, value.length - 1));
+//								this.push(value.substring(1, value.length - 1));
 //								},finalValues);
 							}, finalValues);
 
@@ -1084,17 +1084,50 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if (parameters[parameter] == null || parameters[parameter] == undefined) {
 					output += delim + "\"" + parameter + "\":null";
 				}else{
-					var tempJSN = JSON.stringify(parameters[parameter]);
-					if(Array.isArray(parameters[parameter])) {
-						tempJSN = tempJSN.substring(1,tempJSN.length-1);
+//					var tempJSN = JSON.stringify(parameters[parameter]);
+					var tempJSN = '"';
+					if(Array.isArray(parameters[parameter])) { 
+						var splittedValues = parameters[parameter];
+						if(Array.isArray(parameters[parameter][0])) {
+							splittedValues = [];
+							if (parameters[parameter][0].length > 1) {
+								for (var i in parameters[parameter][0]) {
+									splittedValues.push(parameters[parameter][0][i]);
+								}
+							}
+							else {
+								for (var y in parameters[parameter]) {
+									splittedValues.push(parameters[parameter][y][0]);
+								}	
+							}
+						}
+						if (typeof parameters[parameter][0] == "string" ) {
+							splittedValues = parameters[parameter][0].split(',');
+						}
+
+						// CASE 1 [pippo , pluto]
+						// CASE 2 [""]
+						// CASE 3 ['pippo'],['pluto']
+						// CASE 4 [[pippo],[pluto]]
+
+						for (var j in splittedValues) {
+							if (splittedValues[j] != "") {
+								if (j!=0) {
+									tempJSN  +=",";
+								}
+								
+								tempJSN  +=  (splittedValues[j].charAt(0) == "'" ? "" : "'") + splittedValues[j] + (splittedValues[j].charAt(splittedValues[j].length - 1) == "'" ? "" : "'") ;
+							}
+							else tempJSN += "";
+						}							
+
+//						tempJSN = JSON.stringify(tempJSN);
+//						tempJSN = tempJSN.substring(1,tempJSN.length-1);
 					}				
-//					tempJSN = tempJSN.replace(/(?<!\')\,/g,function (match){
-//						debugger
-//						return "comma";
-//					});	
-					
-		//			tempJSN = tempJSN.replace(/\",\"/g,","); 
-					
+
+//					tempJSN = tempJSN.replace(/[\[\]]/g,""); 
+					tempJSN += '"';
+
 					output += delim + "\"" + parameter + "\":" + tempJSN ;
 				}
 			}
@@ -1153,15 +1186,15 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						}
 
 
-					if(ngModel.type == "table"){
-						if(col.isCalculated) {
-							obj["formula"] = col.formula;
+						if(ngModel.type == "table"){
+							if(col.isCalculated) {
+								obj["formula"] = col.formula;
 
-						}else obj["columnName"] = col.name;
-					}else obj["columnName"] = col.alias;
+							}else obj["columnName"] = col.name;
+						}else obj["columnName"] = col.alias;
 
-					measures.push(obj);
-				}
+						measures.push(obj);
+					}
 				}
 			}
 			var result = {};
