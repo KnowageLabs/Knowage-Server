@@ -1587,10 +1587,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					},
 				{"name":"Appliances","className":"ai",
 					"icons":[
-						{"label":"boiler","className":"ai-boiler","unicode":"\6d"},{"label":"aways on","className":"ai-alwayson","unicode":"\6e"},{"label":"home","className":"ai-home","unicode":"\6f"},
-						{"label":"conditioning","className":"ai-conditioning","unicode":"\70"},{"label":"fan","className":"ai-fan","unicode":"\71"},{"label":"vacuum","className":"ai-vacuum","unicode":"\72"},
-						{"label":"dishwasher","className":"ai-dishwasher","unicode":"\73"},{"label":"mixer","className":"ai-mixer","unicode":"\74"},{"label":"mixedwasher","className":"ai-mixedwasher","unicode":"\75"},
-						{"label":"magnet","className":"ai-magnet","unicode":"\76"},{"label":"battery","className":"ai-battery","unicode":"\77"},{"label":"resistor","className":"ai-resistor","unicode":"\78"}]
+						{"label":"boiler","className":"ai-boiler","unicode":"\6d","category":"ai-solid","visible":true,"id":1557},{"label":"aways on","className":"ai-alwayson","unicode":"\6e","category":"ai-solid","visible":true,"id":1558},{"label":"home","className":"ai-home","unicode":"\6f","category":"ai-solid","visible":true,"id":1559},
+						{"label":"conditioning","className":"ai-conditioning","unicode":"\70","category":"ai-solid","visible":true,"id":1560},{"label":"fan","className":"ai-fan","unicode":"\71","category":"ai-solid","visible":true,"id":1561},{"label":"vacuum","className":"ai-vacuum","unicode":"\72","category":"ai-solid","visible":true,"id":1562},
+						{"label":"dishwasher","className":"ai-dishwasher","unicode":"\73","category":"ai-solid","visible":true,"id":1563},{"label":"mixer","className":"ai-mixer","unicode":"\74","category":"ai-solid","visible":true,"id":1564},{"label":"mixedwasher","className":"ai-mixedwasher","unicode":"\75","category":"ai-solid","visible":true,"id":1565},
+						{"label":"magnet","className":"ai-magnet","unicode":"\76","category":"ai-solid","visible":true,"id":1566},{"label":"battery","className":"ai-battery","unicode":"\77","category":"ai-solid","visible":true,"id":1567},{"label":"resistor","className":"ai-resistor","unicode":"\78","category":"ai-solid","visible":true,"id":1568}]
 				}
 			];
 		}
