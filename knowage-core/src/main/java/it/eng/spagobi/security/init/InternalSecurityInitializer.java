@@ -636,6 +636,7 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 								sbiAuthorizationsRoles.setCommonInfo(sbiCommonInfo);
 								aSession.save(sbiAuthorizationsRoles);
+								aSession.flush();
 							}
 						}
 					}
