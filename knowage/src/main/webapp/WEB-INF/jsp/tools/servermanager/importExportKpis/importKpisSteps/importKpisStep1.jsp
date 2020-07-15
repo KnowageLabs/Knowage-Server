@@ -21,9 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <div  layout="column">
 	<div layout-padding layout-gt-sm="row" layout-align-gt-sm="start center" layout-sm="column">
 			<md-checkbox class="little-check" ng-model="IEDConf.overwriteMode" aria-label="Overwrite">{{translate.load("sbi.impexpkpis.importkpi");}}</md-checkbox>
-			<md-checkbox class="little-check" ng-model="IEDConf.targetsAndRelatedKpis" aria-label="Import targets and related KPIs">{{translate.load("sbi.impexpkpis.importTarget");}}</md-checkbox>
-			<md-checkbox class="little-check" ng-model="IEDConf.scorecardsAndRelatedKpis" aria-label="Import scorecards and related KPIs">{{translate.load("sbi.impexpkpis.importscorecard");}}</md-checkbox>
-			<md-checkbox class="little-check" ng-model="IEDConf.schedulersAndRelatedKpis" aria-label="Import KPI schedulers and related KPIs">{{translate.load("sbi.impexpkpis.importkpiSched");}}</md-checkbox>
+			<md-checkbox class="little-check" ng-model="IEDConf.targetsAndRelatedKpis" aria-label="{{translate.load('sbi.impexpkpis.importTarget');}}">{{translate.load("sbi.impexpkpis.importTarget");}}</md-checkbox>
+			<md-checkbox class="little-check" ng-model="IEDConf.scorecardsAndRelatedKpis" aria-label="{{translate.load('sbi.impexpkpis.importscorecard');}}">{{translate.load("sbi.impexpkpis.importscorecard");}}</md-checkbox>
+			<md-checkbox class="little-check" ng-model="IEDConf.schedulersAndRelatedKpis" aria-label="{{translate.load('sbi.impexpkpis.importkpiSched');}}">{{translate.load("sbi.impexpkpis.importkpiSched");}}</md-checkbox>
 	</div>
 	<div layout="row" layout-wrap layout-align="end center" >
 		<md-input-container class="small counter"> 

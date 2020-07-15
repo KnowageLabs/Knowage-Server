@@ -90,9 +90,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								layout-align-gt-sm="start center" layout-sm="column"
 								layuout-align-sm="start start">
 						
-							<md-checkbox class="little-check"   ng-model="targetsAndRelatedKpis" aria-label="Include targets and related KPIs">Include targets and related KPIs</md-checkbox>
-							<md-checkbox class="little-check"  ng-model="scorecardsAndRelatedKpis" aria-label="Include scorecards and related KPIs">Include scoreacards and related KPIs</md-checkbox>
-							<md-checkbox class="little-check"   ng-model="schedulersAndRelatedKpis" aria-label="Include KPI schedulers and related KPIs">Include KPI schedulers and related KPIs</md-checkbox>
+							<md-checkbox class="little-check"   ng-model="targetsAndRelatedKpis" aria-label="{{translate.load('sbi.importkpis.targetsAndRelatedKpis');}}">{{translate.load('sbi.importkpis.targetsAndRelatedKpis');}}</md-checkbox>
+							<md-checkbox class="little-check"  ng-model="scorecardsAndRelatedKpis" aria-label="{{translate.load('sbi.importkpis.scorecardsAndRelatedKpis');}}">{{translate.load('sbi.importkpis.scorecardsAndRelatedKpis');}}</md-checkbox>
+							<md-checkbox class="little-check"   ng-model="schedulersAndRelatedKpis" aria-label="{{translate.load('sbi.importkpis.schedulersAndRelatedKpis');}}">{{translate.load('sbi.importkpis.schedulersAndRelatedKpis');}}</md-checkbox>
 					</div>
 						<div layout="row" flex>
 			
