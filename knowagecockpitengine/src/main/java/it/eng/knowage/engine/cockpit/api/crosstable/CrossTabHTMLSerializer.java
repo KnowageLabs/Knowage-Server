@@ -49,6 +49,7 @@ public class CrossTabHTMLSerializer {
 	private static String COLUMN_TAG = "TD";
 	private static String ICON_TAG = "I";
 	private static String COLUMN_DIV = "DIV";
+	private static String BUTTON_TAG = "BUTTON";
 	private static String CLASS_ATTRIBUTE = "class";
 	private static String STYLE_ATTRIBUTE = "style";
 	private static String TITLE_ATTRIBUTE = "title";
@@ -65,6 +66,9 @@ public class CrossTabHTMLSerializer {
 	private static String EMPTY_CLASS = "empty";
 	private static String HEADER_CLASS = "crosstab-header-text";
 	private static String MEASURES_CLASS = "measures-header-text";
+
+	private static String MINUS_BUTTON_ICON = "far fa-minus-square";
+	private static String PLUS_BUTTON_ICON = "far fa-plus-square";
 
 	private static String DEFAULT_BG_TOTALS = "background:rgba(59, 103, 140, 0.8);";
 	private static String DEFAULT_BG_SUBTOTALS = "background:rgba(59, 103, 140, 0.45);";
@@ -316,20 +320,40 @@ public class CrossTabHTMLSerializer {
 
 				if (rowSpan > 1) {
 					aColumn.setAttribute(ROWSPAN_ATTRIBUTE, rowSpan);
+					if (i < levels - 1) { // attach collapse button
+						SourceBean aButton = new SourceBean(ICON_TAG);
+						aButton.setAttribute(CLASS_ATTRIBUTE, MINUS_BUTTON_ICON);
+						aButton.setAttribute(NG_CLICK_ATTRIBUTE, "collapse('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','"
+								+ StringEscapeUtils.escapeJavaScript(text) + "')");
+						aColumn.setAttribute(aButton);
+					}
 				}
 				aColumn.setAttribute(TITLE_ATTRIBUTE, text);
 				aColumn.setAttribute(ID_ATTRIBUTE, aNode.getValue());
+
 				boolean isSubtotal = aNode.getValue().equals(CrossTab.SUBTOTAL);
-				if (isSubtotal) {
+				if (isSubtotal) { // create subtotal hidden row (used when collapsing aggregations)
 					SourceBean subtotalHiddenColumn = new SourceBean(COLUMN_TAG);
 					subtotalHiddenColumn.setAttribute(CLASS_ATTRIBUTE, HIDDEN_CLASS);
 					Row row = rowsDef.get(i);
 					JSONObject rowConfig = row.getConfig();
 					style = customStylesMap.get(rowConfig.get("id"));
 					subtotalHiddenColumn.setAttribute(STYLE_ATTRIBUTE, style);
-					subtotalHiddenColumn.setCharacters(aNode.getParentNode().getValue());
+					text = aNode.getParentNode().getValue();
+					subtotalHiddenColumn.setAttribute(TITLE_ATTRIBUTE, text);
+					subtotalHiddenColumn.setAttribute(ID_ATTRIBUTE, text);
+					String parentEntityId = crossTab.getColumnAliasFromName(aNode.getParentNode().getColumnName());
+					subtotalHiddenColumn.setAttribute(NG_CLICK_ATTRIBUTE,
+							"selectRow('" + parentEntityId + "','" + StringEscapeUtils.escapeJavaScript(text) + "')");
+					subtotalHiddenColumn.setCharacters(text);
+					// attach expand button
+					SourceBean aButton = new SourceBean(ICON_TAG);
+					aButton.setAttribute(CLASS_ATTRIBUTE, PLUS_BUTTON_ICON);
+					aButton.setAttribute(NG_CLICK_ATTRIBUTE, "expand('" + parentEntityId + "','" + StringEscapeUtils.escapeJavaScript(text) + "')");
+					subtotalHiddenColumn.setAttribute(aButton);
 					aRow.setAttribute(subtotalHiddenColumn);
 				}
+
 				aRow.setAttribute(aColumn);
 				counter = counter + rowSpan;
 			}
