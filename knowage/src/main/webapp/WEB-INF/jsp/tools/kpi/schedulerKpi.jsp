@@ -137,10 +137,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</list>
 		<detail label="getNameForBar()" save-function="saveSc" cancel-function="cancel">
 		
-		<md-whiteframe class="md-whiteframe-4dp" layout="row"  ng-if="expired">
-		   <p flex>{{translate.load("sbi.kbi.scheduler.error.expired.cron.interval")}}</p>
-		   <md-button    ng-click="closeExpired()"  > {{translate.load("sbi.general.ok")}} </md-button>
- 	 	</md-whiteframe>
+		<div layout="row" layout-align="center center" ng-if="expired">
+			<div class="kn-warning" layout="row" layout-align="center center" flex="80">
+				<span flex>{{translate.load("sbi.kbi.scheduler.error.expired.cron.interval")}}</span>
+				<i ng-click="closeExpired()" class="fa fa-times-circle"></i>
+	        </div>
+        </div>
+        
 		<md-tabs flex md-selected='selectedTab.tab'>
 				<md-tab id="tab1" >
        				<md-tab-label>{{translate.load("sbi.generic.kpi")}}</md-tab-label>
