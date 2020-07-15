@@ -36,7 +36,7 @@ function importKpiStep2FuncController(sbiModule_download, sbiModule_device,
 					if (data.hasOwnProperty("errors")) {
 						$scope.stopImport(data.errors[0].message);
 					} else if (data.success == false) {
-						$scope.stopImport(data.submessage, $scope.translate.load(data.error,'component_impexp_messages'));
+						$scope.stopImport($scope.translate.load(data.error,'component_impexp_messages'), 'Error');
 					} else if (data.success == true) {
 						$scope.stopImport($scope.translate.load("sbi.importkpis.importkpiok"));
 					}
