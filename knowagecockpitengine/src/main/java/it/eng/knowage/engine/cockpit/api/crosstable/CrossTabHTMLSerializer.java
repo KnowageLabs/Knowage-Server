@@ -323,8 +323,9 @@ public class CrossTabHTMLSerializer {
 					if (i < levels - 1) { // attach collapse button
 						SourceBean aButton = new SourceBean(ICON_TAG);
 						aButton.setAttribute(CLASS_ATTRIBUTE, MINUS_BUTTON_ICON);
-						aButton.setAttribute(NG_CLICK_ATTRIBUTE, "collapse('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','"
-								+ StringEscapeUtils.escapeJavaScript(text) + "')");
+						JSONObject hierarchyJson = new JSONObject(getHierarchicalAttributes(crossTab, aNode.getParentNode(), false));
+						aButton.setAttribute(NG_CLICK_ATTRIBUTE, "collapse($event,'" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','"
+								+ StringEscapeUtils.escapeJavaScript(text) + "'," + hierarchyJson + ")");
 						aColumn.setAttribute(aButton);
 					}
 				}
@@ -349,7 +350,9 @@ public class CrossTabHTMLSerializer {
 					// attach expand button
 					SourceBean aButton = new SourceBean(ICON_TAG);
 					aButton.setAttribute(CLASS_ATTRIBUTE, PLUS_BUTTON_ICON);
-					aButton.setAttribute(NG_CLICK_ATTRIBUTE, "expand('" + parentEntityId + "','" + StringEscapeUtils.escapeJavaScript(text) + "')");
+					JSONObject hierarchyJson = new JSONObject(getHierarchicalAttributes(crossTab, aNode.getParentNode().getParentNode(), false));
+					aButton.setAttribute(NG_CLICK_ATTRIBUTE,
+							"expand($event,'" + parentEntityId + "','" + StringEscapeUtils.escapeJavaScript(text) + "'," + hierarchyJson + ")");
 					subtotalHiddenColumn.setAttribute(aButton);
 					aRow.setAttribute(subtotalHiddenColumn);
 				}

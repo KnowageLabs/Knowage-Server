@@ -227,6 +227,33 @@ function cockpitStaticPivotTableWidgetControllerFunction(
     	return clone;
 	};
 
+	$scope.collapse = function(e, column, value) {
+		e.stopImmediatePropagation();
+		e.preventDefault();
+		var widgetEl = document.getElementById($scope.ngModel.id);
+		var rowQuery = "tr[" + column + "='" + value + "']:not([SubTotal])";
+		var fatherQuery = "tr[" + column + "='" + value + "']:not([SubTotal])";
+		var rowsToHide = widgetEl.querySelectorAll(rowQuery);
+		rowsToHide.forEach(function(row){
+			row.style.display = 'none';
+		});
+		var cellQuery = "tr[" + column + "='" + value + "'][SubTotal] td.hidden";
+		widgetEl.querySelectorAll(cellQuery)[0].classList.remove('hidden');
+	}
+
+	$scope.expand = function(e, column, value) {
+		e.stopImmediatePropagation();
+		e.preventDefault();
+		var widgetEl = document.getElementById($scope.ngModel.id);
+		var rowQuery = "tr[" + column + "='" + value + "']:not([SubTotal])";
+		var rowsToShow = widgetEl.querySelectorAll(rowQuery);
+		rowsToShow.forEach(function(row){
+			row.style.display = 'table-row';
+		});
+		var cellQuery = "tr[" + column + "='" + value + "'][SubTotal] td:first-child";
+		widgetEl.querySelectorAll(cellQuery)[0].classList.add('hidden');
+	}
+
 	$scope.traverse = function(o, func) {
 	    for (var i in o) {
 	        if (o[i] !== null && typeof(o[i])=="object") {
