@@ -620,6 +620,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		var params="?";
 		var bodyString = "{";
+		
+		var bodyJSON = {};
 
 
 		var newModel = angular.copy(ngModel);
@@ -785,6 +787,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		bodyString = bodyString + "aggregations:" + JSON.stringify(aggregations) + ",parameters:" + parametersString;
+		
+		bodyJSON.aggregations = aggregations;
+		bodyJSON.parameters = JSON.parse(parametersString);
 
 		if(page!=undefined && page>-1 && itemPerPage!=undefined && itemPerPage>-1){
 			params = params + "offset=" + (page * itemPerPage) + "&size=" + itemPerPage;
@@ -795,6 +800,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		if(ngModel.settings && ngModel.settings.summary && ngModel.settings.summary.enabled){
 			var summaryRow = ds.getSummaryRow(ngModel);
 			bodyString = bodyString + ",summaryRow:" + JSON.stringify(summaryRow);
+			bodyJSON.summaryRow = summaryRow;
 		}
 
 		if(!dataset || (dataset && dataset.useCache==false)){
@@ -828,6 +834,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			if(Object.keys(searchData).length > 0){
 				likeSelections[dataset.label] = searchData;
 				bodyString = bodyString + ",likeSelections:" + JSON.stringify(likeSelections);
+				bodyJSON.likeSelections = likeSelections;
 			}
 		}
 
@@ -835,18 +842,23 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		if(dataset.type == "SbiSolrDataSet" && ngModel.type != "discovery"){
 			bodyString = bodyString + ",options:{solrFacetPivot:true}";
+			bodyJSON.options = {solrFacetPivot:true};
 		}
 		if(dataset.type == "SbiSolrDataSet" && ngModel.type == "discovery"){
 			if(ngModel.settings.facets.limit) {
 				bodyString += ",options:{'facetsLimit':"+ngModel.settings.facets.limit+"}";
+				bodyJSON.options = {'facetsLimit':ngModel.settings.facets.limit};
 			}
 		}
 
 		bodyString = bodyString + ",selections:" + JSON.stringify(filtersToSendWithoutParams);
+		bodyJSON.selections = filtersToSendWithoutParams;
 
 		var indexes = cockpitModule_template.configuration.indexes == undefined ? [] : cockpitModule_template.configuration.indexes;
 		bodyString = bodyString + ",indexes:" + JSON.stringify(indexes)  + "}";
-
+		bodyJSON.indexes = indexes;
+		
+		
 		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);
 		if(ngModel.content.wtype=="chart"){
 			var chartTemplate = this.getI18NTemplate(ngModel.content.chartTemplate);
@@ -854,7 +866,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			chartTemplate.CHART.cliccable = ngModel.cliccable;
 			chartTemplate.CHART.drillable = ngModel.drillable;
 			this.repalceVariables(chartTemplate.CHART);
-			var body = {"aggregations":bodyString, "chartTemp":chartTemplate, "exportWebData":false}
+			var body = {"aggregations":bodyJSON, "chartTemp":chartTemplate, "exportWebData":false}
 			sbiModule_restServices.promisePost("1.0/chart/jsonChartTemplate", encodeURIComponent(dataset.label) + "/getDataAndConf" + params, body)
 			.then(function(response){
 				if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
