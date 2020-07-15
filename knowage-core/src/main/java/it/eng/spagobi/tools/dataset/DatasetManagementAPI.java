@@ -622,7 +622,7 @@ public class DatasetManagementAPI {
 
 							String typePar = parameter.optString("typePar");
 							String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
-
+							boolean isString = "string".equalsIgnoreCase(typePar);
 							List<String> newValues = new ArrayList<>();
 							for (int j = 0; j < values.length; j++) {
 								String value = values[j].trim();
@@ -631,12 +631,13 @@ public class DatasetManagementAPI {
 										value = value.replaceAll("\'", "\'\'");
 										newValues.add(delim + value + delim);
 									} else {
-										if (value.startsWith(delim) && value.endsWith(delim)) {
+										if (isString && value.startsWith(delim) && value.endsWith(delim)) {
 											value = value.substring(1, value.length() - 1);
 											value = value.replaceAll("\'", "\'\'");
 											newValues.add(delim + value + delim);
 										} else {
-											value = value.replaceAll("\'", "\'\'");
+											if (isString)
+												value = value.replaceAll("\'", "\'\'");
 											newValues.add(value);
 										}
 
@@ -681,7 +682,7 @@ public class DatasetManagementAPI {
 
 							String typePar = parameter.optString("typePar");
 							String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
-
+							boolean isString = "string".equalsIgnoreCase(typePar);
 							List<String> newValues = new ArrayList<>();
 							for (int j = 0; j < values.length; j++) {
 								String value = values[j].trim();
@@ -690,12 +691,13 @@ public class DatasetManagementAPI {
 										value = value.replaceAll("\'", "\'\'");
 										newValues.add(delim + value + delim);
 									} else {
-										if (value.startsWith(delim) && value.endsWith(delim)) {
+										if (isString && value.startsWith(delim) && value.endsWith(delim)) {
 											value = value.substring(1, value.length() - 1);
 											value = value.replaceAll("\'", "\'\'");
 											newValues.add(delim + value + delim);
 										} else {
-											value = value.replaceAll("\'", "\'\'");
+											if (isString)
+												value = value.replaceAll("\'", "\'\'");
 											newValues.add(value);
 										}
 
