@@ -398,7 +398,9 @@ public class CrossTabHTMLSerializer {
 		if (isSubtotal) {
 			Map<String, String> toReturn = new HashMap<String, String>();
 			toReturn.put(CrossTab.SUBTOTAL, "true");
-			toReturn.putAll(getHierarchicalAttributes(crossTab, curNode.getParentNode(), false));
+			Node parentNode = curNode.getParentNode();
+			boolean isParentSubtotal = parentNode.getValue().equals(CrossTab.SUBTOTAL);
+			toReturn.putAll(getHierarchicalAttributes(crossTab, parentNode, isParentSubtotal));
 			return toReturn;
 		} else {
 			while (curNode.getColumnName() != null && !curNode.getColumnName().equals("null")) {
