@@ -2092,6 +2092,10 @@
 						&.sortIcon {
 							border-top: none;
 						}
+						&[ng-click] i.far {
+							padding-left: 8px;
+							outline: none;
+						}
 					}
 				}
 			}
