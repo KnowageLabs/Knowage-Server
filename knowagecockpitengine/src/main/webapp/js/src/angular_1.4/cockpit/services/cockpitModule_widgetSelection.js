@@ -869,6 +869,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 							columns.concat(widget.content.crosstabDefinition.measures);
 							columnNameProp = "id";
 							columnAliasProp = "alias";
+						}
+						else if(widget.type!="text" && widget.type!="map"){
+							columns = widget.content.columnSelectedOfDataset ;
+							columnNameProp = "name";
+							columnAliasProp = "aliasToShow";
+							
 						}else{
 							columns = (Array.isArray(widget.content.columnSelectedOfDataset) && widget.content.columnSelectedOfDataset[widget.dataset.dsId]) ?  widget.content.columnSelectedOfDataset[widget.dataset.dsId] : widget.content.columnSelectedOfDataset ;
 							columnNameProp = "name";

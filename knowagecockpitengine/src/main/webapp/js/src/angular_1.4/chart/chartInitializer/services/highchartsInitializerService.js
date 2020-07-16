@@ -19,7 +19,7 @@
 
 angular.module('chartInitializer')
 
-.service('highcharts',['highchartsDrilldownHelper','jsonChartTemplate','chartConfMergeService',function(highchartsDrilldownHelper,jsonChartTemplate,chartConfMergeService){//izmena
+.service('highcharts',['highchartsDrilldownHelper','jsonChartTemplate','chartConfMergeService','cockpitModule_datasetServices',function(highchartsDrilldownHelper,jsonChartTemplate,chartConfMergeService,cockpitModule_datasetServices){
 
 	this.chart = null;
 	var chartConfConf = null;
@@ -572,7 +572,7 @@ angular.module('chartInitializer')
 					params.breadcrumb = JSON.stringify(chart.breadcrumb);
 					var forQueryParam= "";
 					if(chart.selectionsAndParams && chart.selectionsAndParams.parameters){
-						params.parameters = getParametersAsString(chart.selectionsAndParams.parameters);
+						params.parameters = cockpitModule_datasetServices.getParametersAsString(chart.selectionsAndParams.parameters);
 					}
 					if(chart.selectionsAndParams && chart.selectionsAndParams.selections){
 						params.selections = chart.selectionsAndParams.selections;
@@ -908,23 +908,6 @@ angular.module('chartInitializer')
 			chartConf.chart.width = container.clientWidth*(chartConf.chart.width/100);
 		}
 	}
-	var getParametersAsString = function(parameters){
-		var delim = "";
-		var output = "{";
-		for (var parameter in parameters) {
-			if (parameters.hasOwnProperty(parameter)){
-				if (parameters[parameter] == null || parameters[parameter] == undefined) {
-					output += delim + "\"" + parameter + "\":null";
-				}else{
-					output += delim + "\"" + parameter + "\":" + JSON.stringify(parameters[parameter]).replace("[","").replace("]","").replace("\",\"",",");
-				}
-			}
-			delim = ",";
-		}
-		output += "}";
-
-		return output;
-	};
 
 
 
