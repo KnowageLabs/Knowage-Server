@@ -257,6 +257,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var allSubTotals = widgetEl.querySelectorAll(subTotalQuery);
 		widgetEl.querySelectorAll(subTotalQuery)[allSubTotals.length - 1].style.display = "table-row";
 		var cellQuery = "tr[" + column + "='" + value + "'][SubTotal] td#" + value + ".hidden";
+		widgetEl.querySelectorAll(cellQuery)[0].classList.add('cell-visible');
 		widgetEl.querySelectorAll(cellQuery)[0].classList.remove('hidden');
 		//if not the first level change the parent rowspan to avoid fat rows
 		if (parent) {
@@ -272,19 +273,31 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		e.stopImmediatePropagation();
 		e.preventDefault();
 		var widgetEl = document.getElementById($scope.ngModel.id);
-		var rowQuery = "tr[" + column + "='" + value + "']:not([SubTotal])";
+		var rowQuery = "tr[" + column + "='" + value + "']";
 		var rowsToShow = widgetEl.querySelectorAll(rowQuery);
-		rowsToShow.forEach(function(row){
-			row.style.display = 'table-row';
+		var rowSpanModifier = -1;
+		rowsToShow.forEach(function(row, index){
+			if(index == 0 && row.children[0].id != value) {
+				rowSpanModifier--;
+			}
+			row.style.display = "table-row";
+			row.querySelectorAll('td').forEach(function(cell) {
+				if (cell.classList.contains("cell-visible")) {
+					cell.classList.add('hidden');
+					rowSpanModifier++;
+				}
+				else cell.style.display = "table-cell";
+			});
 		});
-		var cellQuery = "tr[" + column + "='" + value + "'][SubTotal] td:first-child";
-		widgetEl.querySelectorAll(cellQuery)[0].classList.add('hidden');
-		//if not the first level change the parent rowspan to avoid thin rows
+		var subTotalQuery = "tr[" + column + "='" + value + "'][SubTotal]";
+		var allSubTotals = widgetEl.querySelectorAll(subTotalQuery);
+		e.currentTarget.parentElement.classList.add('hidden');
+		//if not the first level change the parent rowspan to avoid fat rows
 		if (parent) {
 			for (var p in parent) {
 				var parentQuery = "tr[" + p + "='" + parent[p] + "']";
-				var rowspan= widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[0].getAttribute('rowspan');
-				widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[0].setAttribute('rowspan', parseInt(rowspan) + rowsToShow.length);
+				var rowspan = widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[0].getAttribute('rowspan');
+				widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[0].setAttribute('rowspan',parseInt(rowspan) + rowsToShow.length - 1 + rowSpanModifier);
 			}
 		}
 	}
