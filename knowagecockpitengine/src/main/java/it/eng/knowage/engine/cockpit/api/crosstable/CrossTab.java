@@ -257,6 +257,7 @@ public class CrossTab {
 										// row 1.. )
 	private boolean measuresOnRow;
 	private boolean hideZeroRows;
+	private boolean expandCollapseRows;
 
 	// The client has a global variable
 	// (Sbi.cockpit.widgets.crosstab.globalConfigs) with the list of the active
@@ -382,6 +383,7 @@ public class CrossTab {
 		boolean measuresOnColumns = crosstabDefinition.isMeasuresOnColumns();
 		measuresOnRow = config.getString("measureson").equals("rows");
 		hideZeroRows = config.optBoolean("hideZeroRows");
+		expandCollapseRows = config.optBoolean("expandCollapseRows");
 		int rowsCount = crosstabDefinition.getRows().size();
 		int columnsCount = crosstabDefinition.getColumns().size();
 		int measuresCount = crosstabDefinition.getMeasures().size();
@@ -2949,6 +2951,10 @@ public class CrossTab {
 
 	public boolean isHideZeroRows() {
 		return hideZeroRows;
+	}
+
+	public boolean isExpandCollapseRows() {
+		return expandCollapseRows;
 	}
 
 	public String getColumnAliasFromName(String columnName) {

@@ -256,7 +256,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var subTotalQuery = "tr[" + column + "='" + value + "'][SubTotal]";
 		var allSubTotals = widgetEl.querySelectorAll(subTotalQuery);
 		widgetEl.querySelectorAll(subTotalQuery)[allSubTotals.length - 1].style.display = "table-row";
-		var cellQuery = "tr[" + column + "='" + value + "'][SubTotal] td#" + value + ".hidden";
+		var cellQuery = "tr[" + column + "='" + value + "'][SubTotal] td[id='"+ value +"'].hidden";
 		widgetEl.querySelectorAll(cellQuery)[0].classList.add('cell-visible');
 		widgetEl.querySelectorAll(cellQuery)[0].classList.remove('hidden');
 		//if not the first level change the parent rowspan to avoid fat rows
@@ -265,6 +265,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				var parentQuery = "tr[" + p + "='" + parent[p] + "']";
 				var rowspan = widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[0].getAttribute('rowspan');
 				widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[0].setAttribute('rowspan',parseInt(rowspan) - rowsToHide.length + 1);
+
 			}
 		}
 	}
@@ -293,12 +294,15 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var allSubTotals = widgetEl.querySelectorAll(subTotalQuery);
 		e.currentTarget.parentElement.classList.add('hidden');
 		//if not the first level change the parent rowspan to avoid fat rows
-		if (parent) {
+		if (parent && Object.keys(parent).length > 0) {
 			for (var p in parent) {
 				var parentQuery = "tr[" + p + "='" + parent[p] + "']";
 				var rowspan = widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[0].getAttribute('rowspan');
 				widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[0].setAttribute('rowspan',parseInt(rowspan) + rowsToShow.length - 1 + rowSpanModifier);
 			}
+		}else {
+			var cellQuery = "tr[" + column + "='" + value + "'] td[id='"+ value +"']";
+			widgetEl.querySelectorAll(cellQuery)[0].setAttribute('rowspan', rowsToShow.length);
 		}
 	}
 

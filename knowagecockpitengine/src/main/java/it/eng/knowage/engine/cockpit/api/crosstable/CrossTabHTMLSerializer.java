@@ -226,9 +226,11 @@ public class CrossTabHTMLSerializer {
 
 			Node node = nodes.get(i);
 			boolean isSubtotal = node.getValue().equals(CrossTab.SUBTOTAL);
-			Map<String, String> hierarchicalAttributes = getHierarchicalAttributes(crossTab, node, isSubtotal);
-			for (String key : hierarchicalAttributes.keySet()) {
-				aRow.setAttribute(key, hierarchicalAttributes.get(key));
+			if (crossTab.isExpandCollapseRows()) {
+				Map<String, String> hierarchicalAttributes = getHierarchicalAttributes(crossTab, node, isSubtotal);
+				for (String key : hierarchicalAttributes.keySet()) {
+					aRow.setAttribute(key, hierarchicalAttributes.get(key));
+				}
 			}
 
 			if (columnsTotals && noSelectedColumn) {
@@ -320,7 +322,7 @@ public class CrossTabHTMLSerializer {
 
 				if (rowSpan > 1) {
 					aColumn.setAttribute(ROWSPAN_ATTRIBUTE, rowSpan);
-					if (i < levels - 1) { // attach collapse button
+					if (i < levels - 1 && crossTab.isExpandCollapseRows()) { // attach collapse button
 						SourceBean aButton = new SourceBean(ICON_TAG);
 						aButton.setAttribute(CLASS_ATTRIBUTE, MINUS_BUTTON_ICON);
 						JSONObject hierarchyJson = new JSONObject(getHierarchicalAttributes(crossTab, aNode.getParentNode(), false));
@@ -333,7 +335,7 @@ public class CrossTabHTMLSerializer {
 				aColumn.setAttribute(ID_ATTRIBUTE, aNode.getValue());
 
 				boolean isSubtotal = aNode.getValue().equals(CrossTab.SUBTOTAL);
-				if (isSubtotal) { // create subtotal hidden row (used when collapsing aggregations)
+				if (isSubtotal && crossTab.isExpandCollapseRows()) { // create subtotal hidden row (used when collapsing aggregations)
 					SourceBean subtotalHiddenColumn = new SourceBean(COLUMN_TAG);
 					subtotalHiddenColumn.setAttribute(CLASS_ATTRIBUTE, HIDDEN_CLASS);
 					Row row = rowsDef.get(i);
