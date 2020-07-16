@@ -296,12 +296,12 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 		}
 
-	$scope.getAggregationFunction = function(serieName) {		
-		for (i=0; i<$scope.chartTemplate.VALUES.SERIE.length; i++) {			
+	$scope.getAggregationFunction = function(serieName) {
+		for (i=0; i<$scope.chartTemplate.VALUES.SERIE.length; i++) {
 			if ($scope.chartTemplate.VALUES.SERIE[i].column == serieName) {
 				return $scope.chartTemplate.VALUES.SERIE[i].groupingFunction;
-			}			
-		}		
+			}
+		}
 	}
 
 	// Called when the user clicks on the measure in its container, so the measure can be used as a series item in the chart.
@@ -700,7 +700,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		}
 		var sflag = 0;
 		 for (var i = $scope.fieldsMetadata.length-1; i>=0; i--) {
-			if($scope.fieldsMetadata[i].fieldType == 'MEASURE'){
+			if($scope.fieldsMetadata[i].fieldType == 'MEASURE' || ($scope.fieldsMetadata[i].fieldType == 'ATTRIBUTE' && $scope.fieldsMetadata[i].aggregationSelected)){
 				for (var j = 0; j < $scope.chartTemplate.VALUES.SERIE.length; j++) {
 					if($scope.chartTemplate.VALUES.SERIE[j].column == $scope.fieldsMetadata[i].alias){
 						sflag++;
