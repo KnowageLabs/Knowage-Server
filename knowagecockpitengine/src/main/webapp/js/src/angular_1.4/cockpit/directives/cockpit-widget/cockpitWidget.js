@@ -1043,7 +1043,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			if(linkSettings && linkSettings.enable){
 				for(var l in linkSettings.links){
 					var currentLink = linkSettings.links[l];
-					if(currentLink.interactionType == 'allRow' || (currentLink.interactionType == 'icon' && !columnName) || (currentLink.interactionType == 'singleColumn' && currentLink.column == columnName)){
+					if(currentLink.interactionType == 'allRow' || (currentLink.interactionType == 'icon' && !columnName) || (currentLink.interactionType == 'singleColumn' && currentLink.column.toLowerCase() == columnName.toLowerCase())){
 						var linkUrl = currentLink.baseurl;
 						// parameters replacement
 						for(var k in currentLink.parameters){
