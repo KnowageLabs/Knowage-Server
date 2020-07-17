@@ -146,45 +146,50 @@ class SolrEvaluationStrategy extends AbstractSolrStrategy {
 
 	private IDataStore checkIfItHasLikeID(IDataStore pagedDataStore, List<AbstractSelectionField> projections) {
 
-		SolrDataStore originalDTS = (SolrDataStore) pagedDataStore;
-		SolrDataStore datastoresToAdd = new SolrDataStore(originalDTS.getFacets());
-		IMetaData pagedMetaData = pagedDataStore.getMetaData();
-		Integer idIndex = null;
-		ArrayList<FieldMetadata> metas = (ArrayList<FieldMetadata>) pagedMetaData.getFieldsMeta();
-		boolean hasIdOnMeta = false;
-		for (int i = 0; i < metas.size(); i++) {
+		if (pagedDataStore instanceof SolrDataStore) {
 
-			if (metas.get(i).getName().equalsIgnoreCase("id")) {
-				idIndex = new Integer(i);
-				hasIdOnMeta = true;
-			}
-		}
+			SolrDataStore originalDTS = (SolrDataStore) pagedDataStore;
+			SolrDataStore datastoresToAdd = new SolrDataStore(originalDTS.getFacets());
+			IMetaData pagedMetaData = pagedDataStore.getMetaData();
+			Integer idIndex = null;
+			ArrayList<FieldMetadata> metas = (ArrayList<FieldMetadata>) pagedMetaData.getFieldsMeta();
+			boolean hasIdOnMeta = false;
+			for (int i = 0; i < metas.size(); i++) {
 
-		boolean hasId = false;
-
-		for (AbstractSelectionField abstractSelectionField : projections) {
-			if (abstractSelectionField.getName().equalsIgnoreCase("ID")) {
-				hasId = true;
+				if (metas.get(i).getName().equalsIgnoreCase("id")) {
+					idIndex = new Integer(i);
+					hasIdOnMeta = true;
+				}
 			}
 
-		}
-		if (!hasId && hasIdOnMeta) {
+			boolean hasId = false;
 
-			pagedMetaData.deleteFieldMetaDataAt(idIndex);
+			for (AbstractSelectionField abstractSelectionField : projections) {
+				if (abstractSelectionField.getName().equalsIgnoreCase("ID")) {
+					hasId = true;
+				}
 
-			datastoresToAdd.setMetaData(pagedMetaData);
-
-			for (int projectionIndex = 0; projectionIndex < pagedDataStore.getRecordsCount(); projectionIndex++) {
-				Record newRecord = new Record();
-				newRecord = (Record) pagedDataStore.getRecordAt(projectionIndex);
-				newRecord.removeFieldAt(idIndex);
-
-				datastoresToAdd.appendRecord(newRecord);
 			}
+			if (!hasId && hasIdOnMeta) {
 
-		} else {
-			datastoresToAdd = originalDTS;
+				pagedMetaData.deleteFieldMetaDataAt(idIndex);
+
+				datastoresToAdd.setMetaData(pagedMetaData);
+
+				for (int projectionIndex = 0; projectionIndex < pagedDataStore.getRecordsCount(); projectionIndex++) {
+					Record newRecord = new Record();
+					newRecord = (Record) pagedDataStore.getRecordAt(projectionIndex);
+					newRecord.removeFieldAt(idIndex);
+
+					datastoresToAdd.appendRecord(newRecord);
+				}
+
+			} else {
+				datastoresToAdd = originalDTS;
+			}
+			return datastoresToAdd;
 		}
-		return datastoresToAdd;
+		return pagedDataStore;
+
 	}
 }
