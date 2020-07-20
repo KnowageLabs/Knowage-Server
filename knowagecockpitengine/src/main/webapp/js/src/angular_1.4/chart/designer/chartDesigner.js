@@ -92,11 +92,6 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,sbiM
 		channelMessaging.sendMessage();
 	}
 
-	$scope.openMenu = function(menu, e) {
- 	   e.stopPropagation();
- 	   menu(e);
-    }
-
 	$scope.allMeasures = [];
 	$scope.allAttributes = [];
 

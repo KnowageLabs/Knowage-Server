@@ -700,7 +700,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		}
 		var sflag = 0;
 		 for (var i = $scope.fieldsMetadata.length-1; i>=0; i--) {
-			if($scope.fieldsMetadata[i].fieldType == 'MEASURE' || ($scope.fieldsMetadata[i].fieldType == 'ATTRIBUTE' && $scope.fieldsMetadata[i].aggregationSelected)){
+			if($scope.fieldsMetadata[i].fieldType == 'MEASURE'){
 				for (var j = 0; j < $scope.chartTemplate.VALUES.SERIE.length; j++) {
 					if($scope.chartTemplate.VALUES.SERIE[j].column == $scope.fieldsMetadata[i].alias){
 						sflag++;

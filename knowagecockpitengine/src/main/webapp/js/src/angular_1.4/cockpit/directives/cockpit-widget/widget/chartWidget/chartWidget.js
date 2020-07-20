@@ -136,8 +136,8 @@ function cockpitChartWidgetControllerFunction(
 		 for(var c in $scope.model.content.columnSelectedOfDatasetAggregations){
 			if(!$scope.model.content.columnSelectedOfDatasetAggregations[c].aliasToShow) $scope.model.content.columnSelectedOfDatasetAggregations[c].aliasToShow = $scope.model.content.columnSelectedOfDatasetAggregations[c].alias;
 			if($scope.model.content.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected) $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected = 'SUM';
-			if($scope.model.content.columnSelectedOfDatasetAggregations[c].fieldType == 'ATTRIBUTE' && !$scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected) $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected = '';
-			if($scope.model.content.columnSelectedOfDatasetAggregations[c].fieldType && !$scope.model.content.columnSelectedOfDatasetAggregations[c].funcSummary) $scope.model.content.columnSelectedOfDatasetAggregations[c].funcSummary = $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected;
+			if($scope.model.content.columnSelectedOfDatasetAggregations[c].fieldType == 'ATTRIBUTE') $scope.model.content.columnSelectedOfDatasetAggregations[c].isAttribute = true;
+			if($scope.model.content.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.model.content.columnSelectedOfDatasetAggregations[c].funcSummary) $scope.model.content.columnSelectedOfDatasetAggregations[c].funcSummary = $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected;
 		}
 	 }
 
@@ -641,8 +641,8 @@ function cockpitChartWidgetControllerFunction(
 			    			for(var c in $scope.localModel.columnSelectedOfDatasetAggregations){
 			    				if(!$scope.localModel.columnSelectedOfDatasetAggregations[c].aliasToShow) $scope.localModel.columnSelectedOfDatasetAggregations[c].aliasToShow = $scope.localModel.columnSelectedOfDatasetAggregations[c].alias;
 			    				if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected) $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected = 'SUM';
-			    				if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'ATTRIBUTE' && !$scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected) $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected = '';
-			    				if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType && !$scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary) $scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary = $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected;
+			    				if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'ATTRIBUTE') $scope.localModel.columnSelectedOfDatasetAggregations[c].isAttribute = true;
+			    				if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE'  && !$scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary) $scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary = $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected;
 			    			}
 
 			    	  }
@@ -874,12 +874,12 @@ function cockpitChartWidgetControllerFunction(
 			  			return typeof(params.data.name) !== 'undefined';
 			  		}
 			  		function isAggregationEditable(params) {
-			  			return params.data.fieldType && !params.data.isCalculated ? true : false;
+			  			return params.data.fieldType == "MEASURE"  && !params.data.isCalculated ? true : false;
 			  		}
 			  		function aggregationRenderer(params) {
 			  			var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
 			  			changeAggregationOnSerie(params.data.alias, params.value);
-			  	        return params.data.fieldType && !params.data.isCalculated ? aggregation : '';
+			  	        return params.data.fieldType == "MEASURE"  && !params.data.isCalculated ? aggregation : '';
 
 			  		}
 			  		function changeAggregationOnSerie(alias, aggFunc) {
@@ -916,10 +916,10 @@ function cockpitChartWidgetControllerFunction(
 			  			$scope.columnsGrid.api.sizeColumnsToFit();
 			  		}
 			  		function refreshRow(cell){
-			  			if(cell.data.fieldType == 'MEASURE' && !cell.data.aggregationSelected) cell.data.aggregationSelected = 'SUM';
-			  			if(cell.data.fieldType == 'ATTRIBUTE' && !cell.data.aggregationSelected) cell.data.aggregationSelected = '';
-			  			if(cell.data.fieldType == 'MEASURE' && cell.data.aggregationSelected) cell.data.funcSummary = cell.data.aggregationSelected == 'NONE' ? 'SUM' : cell.data.aggregationSelected;
-			  			if(cell.data.fieldType == 'ATTRIBUTE' && cell.data.aggregationSelected) cell.data.funcSummary = cell.data.aggregationSelected;
+			  			if(cell.data.fieldType == 'MEASURE' && !cell.data.isAttribute && !cell.data.aggregationSelected) cell.data.aggregationSelected = 'SUM';
+			  			if(cell.data.fieldType == 'MEASURE' && cell.data.isAttribute && !cell.data.aggregationSelected) cell.data.aggregationSelected = '';
+			  			if(cell.data.fieldType == 'MEASURE' && !cell.data.isAttribute && cell.data.aggregationSelected) cell.data.funcSummary = cell.data.aggregationSelected == 'NONE' ? 'SUM' : cell.data.aggregationSelected;
+			  			if(cell.data.fieldType == 'MEASURE' && cell.data.isAttribute && cell.data.aggregationSelected) cell.data.funcSummary = cell.data.aggregationSelected;
 
 			  			if(cell.data.isCalculated) cell.data.alias = cell.data.aliasToShow;
 			  			$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
@@ -927,7 +927,7 @@ function cockpitChartWidgetControllerFunction(
 
 			  		function fieldTypeToAggregationMap(match) {
 			  		  var map = {
-			  		    ATTRIBUTE: ["COUNT","COUNT_DISTINCT"],
+			  		    ATTRIBUTE: ["","COUNT","COUNT_DISTINCT"],
 			  		    MEASURE: ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"],
 			  		  };
 
@@ -946,6 +946,8 @@ function cockpitChartWidgetControllerFunction(
 			  	    	{
 			  	    		headerName: $scope.translate.load('sbi.cockpit.widgets.table.column.type'),
 			  	    		field: 'fieldType',
+			  	    		editable: true,
+			  	    		cellEditor: "agSelectCellEditor",
 			  	    		cellEditorParams: {values: ['ATTRIBUTE','MEASURE']}
 			  	    	},
 			  	    	{
@@ -961,7 +963,12 @@ function cockpitChartWidgetControllerFunction(
 			  	    		cellClass: 'editableCell',
 			  	    		cellEditor: "agSelectCellEditor",
 			  	    		cellEditorParams: function(params) {
-			  	    	        var selectedFieldType = params.data.fieldType;
+			  	    			 var selectedFieldType = null;
+			  	    			if(params.data.fieldType == 'ATTRIBUTE' || params.data.fieldType == 'MEASURE' && params.data.isAttribute) {
+			  	    				 selectedFieldType = 'ATTRIBUTE';
+			  	    			} else {
+			  	    				 selectedFieldType = params.data.fieldType;
+			  	    			}
 			  	    	        var allowedAggregations = fieldTypeToAggregationMap(selectedFieldType);
 			  	    	        return {
 			  	    	          values: allowedAggregations,

@@ -29,26 +29,9 @@
 						<expander-box color="white" expanded="true" title="{{translate.load('sbi.chartengine.designer.structureTab.attributemeasures.attributes.title')}}">
 							<md-list flex style="padding-top:0; padding-bottom:0">
 								<md-list-item ng-repeat="attribute in allAttributes" ng-disabled="disableUsingAttributeIfRealtimeDSisUsed(attribute)" ng-click="moveAttributeToCategories(attribute)" class="noright">
-								   	<div layout="row" flex ng-if="attribute.aggregationSelected">	
-								   		<span><b>{{attribute.alias || attribute.name}} ({{attribute.aggregationSelected}})</b></span>
-								   	</div>
-								   	<div layout="row" flex ng-if="!attribute.aggregationSelected">	
-								   		<span><b>{{attribute.alias || attribute.name}}</b></span>
-								   	</div>
-								   	<md-menu class="kn-list-menu-button" ng-if="attribute.aggregationSelected">
-				                    	<md-button class="kn-list-action-button md-icon-button" ng-click="openMenu($mdOpenMenu,$event)" aria-label="open menu" >
-				                        	<md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
-				                    	</md-button>
-				                    	<md-menu-content width="4">                    	
-				                    		<md-menu-item> 
-				                    			<md-button ng-click="moveMeasureToSeries(attribute)">					                    			
-									            	<p flex>{{translate.load("sbi.chartengine.designer.structureTab.addAttributeToSerie")}}</p>									              	
-								              	</md-button>								              	  
-				                        	</md-menu-item>
-				                    	</md-menu-content>
-				                    </md-menu>
-							  	</md-list-item>							  	
-						  	</md-list>						  	
+								   	<span><b>{{attribute.alias || attribute.name}}</b></span>
+							  	</md-list-item>
+						  	</md-list>					  	
 					  	</expander-box>
 						  
 					</md-card>
