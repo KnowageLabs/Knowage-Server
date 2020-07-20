@@ -813,6 +813,12 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		return JSON.stringify(JSON.parse(jsonToReplace));
 	}
 	
+	function nameFromAlias(alias){
+		for(var k in $scope.ngModel.content.columnSelectedOfDataset){
+			if($scope.ngModel.content.columnSelectedOfDataset[k].aliasToShow == alias) return $scope.ngModel.content.columnSelectedOfDataset[k].name;
+		}
+	}
+	
 	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic,directInteraction){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
@@ -1043,7 +1049,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			if(linkSettings && linkSettings.enable){
 				for(var l in linkSettings.links){
 					var currentLink = linkSettings.links[l];
-					if(currentLink.interactionType == 'allRow' || (currentLink.interactionType == 'icon' && !columnName) || (currentLink.interactionType == 'singleColumn' && currentLink.column.toLowerCase() == columnName.toLowerCase())){
+					if(currentLink.interactionType == 'allRow' || (currentLink.interactionType == 'icon' && !columnName) || (currentLink.interactionType == 'singleColumn' && currentLink.column.toLowerCase() == nameFromAlias(columnName).toLowerCase())){
 						var linkUrl = currentLink.baseurl;
 						// parameters replacement
 						for(var k in currentLink.parameters){

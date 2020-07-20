@@ -149,6 +149,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								return $scope.translate.load('sbi.cockpit.table.cross.tooltip');
 							};
 						}
+						if($scope.interaction.links && $scope.interaction.links.length > 0){
+							for(var link in $scope.interaction.links){
+								if($scope.interaction.links[link].interactionType == 'singleColumn' && $scope.interaction.links[link].column == $scope.ngModel.content.columnSelectedOfDataset[c].name){
+									tempCol.cellClass = 'cross-cell';
+									delete tempCol.tooltipField;
+									tempCol.tooltipValueGetter = function(params) {
+										return $scope.translate.load('sbi.cockpit.table.cross.tooltip');
+									};
+								}
+							}
+						}
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style) {
 							tempCol.style = $scope.ngModel.content.columnSelectedOfDataset[c].style;
 							if($scope.ngModel.content.columnSelectedOfDataset[c].style.hiddenColumn) tempCol.hide = true;
