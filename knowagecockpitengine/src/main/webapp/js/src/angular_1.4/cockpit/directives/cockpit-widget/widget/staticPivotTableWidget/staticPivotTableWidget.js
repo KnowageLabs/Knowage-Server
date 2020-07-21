@@ -84,7 +84,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		cockpitModule_defaultTheme){
 
 
-
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget(null, 'init');
 	};
@@ -233,21 +232,29 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var widgetEl = document.getElementById($scope.ngModel.id);
 		var rowQuery = "tr[" + column + "='" + value + "']";
 		var rowsToHide = widgetEl.querySelectorAll(rowQuery);
+		var hiddenRows = 0;
 		rowsToHide.forEach(function(row, index){
-			if (index > 0) row.style.display = 'none';
-			else {
-				if (row.children[0] == e.currentTarget.parentElement) row.style.display = 'none';
+			if (row.style.display == 'none') hiddenRows++; // count rows that have already been hidden
+			if (index > 0) {
+				row.style.display = 'none';
+			}
+			else { // first row
+				if (row.children[0] == e.currentTarget.parentElement) { // hide first cell to show hidden one
+					row.style.display = 'none';
+				}
 				else {
 					var finished = false;
-					for (var c=0; c < row.children.length && !finished; c++) {
-						if (row.children[c] == e.currentTarget.parentElement) {
+					e.currentTarget.parentElement.setAttribute('firstrow', true);
+					for (var c=0; c < row.children.length && !finished; c++) { // loop on all row elements
+						if (row.children[c] == e.currentTarget.parentElement ) { // children elements
 							for (var i=c; i<row.children.length; i++) {
 								row.children[i].style.display = 'none';
 							}
 							finished = true;
-						} else {
+						} else { // parent elements in the same row
 							var rowspan = row.children[c].getAttribute('rowspan');
-							row.children[c].setAttribute('rowspan', parseInt(rowspan) + 1);
+//							row.children[c].setAttribute('rowspan', parseInt(rowspan) + 1);
+							row.children[c].setAttribute('normalizedRowspan', true);
 						}
 					}
 				}
@@ -261,11 +268,25 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		widgetEl.querySelectorAll(cellQuery)[0].classList.remove('hidden');
 		//if not the first level change the parent rowspan to avoid fat rows
 		if (parent) {
-			for (var p in parent) {
+			for (var p in parent) { // loop on all parents
 				var parentQuery = "tr[" + p + "='" + parent[p] + "']";
-				var rowspan = widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[0].getAttribute('rowspan');
-				widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[0].setAttribute('rowspan',parseInt(rowspan) - rowsToHide.length + 1);
+				for (var k in widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')) { // loop on all parent cells
+					var currentParentEl = widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[k];
+					if (currentParentEl.id == parent[p]) { // apply rowspan normalization only to current cell
+						var rowspan = currentParentEl.getAttribute('rowspan');
 
+						if (currentParentEl.getAttribute('normalizedRowspan')) { // check if normalization has been performed
+							currentParentEl.setAttribute('rowspan', parseInt(rowspan) - (rowsToHide.length - hiddenRows) + 2);
+							currentParentEl.removeAttribute('normalizedRowspan');
+						}
+						else if(e.currentTarget.parentElement.getAttribute('firstrow')){ // first record has empty row
+							currentParentEl.setAttribute('rowspan', parseInt(rowspan) - (rowsToHide.length - hiddenRows) + 2);
+							currentParentEl.removeAttribute('firstrow');
+						}else {
+							currentParentEl.setAttribute('rowspan', parseInt(rowspan) - (rowsToHide.length - hiddenRows) + 1);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -277,9 +298,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var rowQuery = "tr[" + column + "='" + value + "']";
 		var rowsToShow = widgetEl.querySelectorAll(rowQuery);
 		var rowSpanModifier = -1;
-		rowsToShow.forEach(function(row, index){
+		var firstRowSpanModifier = 0;
+		if(rowsToShow[0].children[0].id != value) firstRowSpanModifier++;
+			rowsToShow.forEach(function(row, index){
 			if(index == 0 && row.children[0].id != value) {
 				rowSpanModifier--;
+			} else {
+				if(index == 0) row.children[0].setAttribute('rowspan', rowsToShow.length);
 			}
 			row.style.display = "table-row";
 			row.querySelectorAll('td').forEach(function(cell) {
@@ -295,15 +320,20 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		e.currentTarget.parentElement.classList.add('hidden');
 		//if not the first level change the parent rowspan to avoid fat rows
 		if (parent && Object.keys(parent).length > 0) {
-			for (var p in parent) {
+			for (var p in parent) { // loop on all parents
 				var parentQuery = "tr[" + p + "='" + parent[p] + "']";
-				var rowspan = widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[0].getAttribute('rowspan');
-				widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[0].setAttribute('rowspan',parseInt(rowspan) + rowsToShow.length - 1 + rowSpanModifier);
+				for (var k in widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')) { // loop on all cells
+					if (widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[k].id == parent[p]) { // if current cell
+						var rowspan = widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[k].getAttribute('rowspan');
+						widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[k].setAttribute('rowspan', parseInt(rowspan) + rowsToShow.length - 1 + rowSpanModifier);
+						break;
+					}
+				}
 			}
-		}else {
-			var cellQuery = "tr[" + column + "='" + value + "'] td[id='"+ value +"']";
-			widgetEl.querySelectorAll(cellQuery)[0].setAttribute('rowspan', rowsToShow.length);
 		}
+		var cellQuery = "tr[" + column + "='" + value + "'] td[id='"+ value +"']";
+		var originalRowspan = widgetEl.querySelectorAll(cellQuery)[0].getAttribute('start-span');
+		widgetEl.querySelectorAll(cellQuery)[0].setAttribute('rowspan', originalRowspan);
 	}
 
 	$scope.traverse = function(o, func) {
@@ -787,6 +817,18 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    	  $scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'};
 			    	  $scope.colorPickerPropertyGrid={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:$scope.localModel.content.style && $scope.localModel.content.style.showGrid ? false : true};
 			    	  $scope.colorPickerAlternateGrid={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:$scope.localModel.content.style && $scope.localModel.content.style.showAlternateRows ? false : true};
+
+			    		$scope.$watch('localModel.content.crosstabDefinition.config.expandCollapseRows',function(newValue,oldValue){
+			    			if (newValue) {
+			    				$scope.localModel.content.crosstabDefinition.config.calculatesubtotalsoncolumns = true;
+			    			}
+			    		})
+
+			    		$scope.$watch('localModel.content.crosstabDefinition.config.calculatesubtotalsoncolumns',function(newValue,oldValue){
+			    			if (!newValue) {
+			    				$scope.localModel.content.crosstabDefinition.config.expandCollapseRows = false;
+			    			}
+			    		})
 
 			    	  $scope.enableAlternate = function() {
 			    		  $scope.colorPickerAlternateGrid.disabled=!$scope.localModel.content.style.showAlternateRows;

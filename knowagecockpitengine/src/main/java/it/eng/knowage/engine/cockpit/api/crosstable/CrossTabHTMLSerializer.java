@@ -55,6 +55,7 @@ public class CrossTabHTMLSerializer {
 	private static String TITLE_ATTRIBUTE = "title";
 	private static String ID_ATTRIBUTE = "id";
 	private static String ROWSPAN_ATTRIBUTE = "rowspan";
+	private static String STARTING_ROWSPAN_ATTRIBUTE = "start-span";
 	private static String COLSPAN_ATTRIBUTE = "colspan";
 	private static final String ON_CLICK_ATTRIBUTE = "onClick";
 	private static final String NG_CLICK_ATTRIBUTE = "ng-click";
@@ -322,6 +323,7 @@ public class CrossTabHTMLSerializer {
 
 				if (rowSpan > 1) {
 					aColumn.setAttribute(ROWSPAN_ATTRIBUTE, rowSpan);
+					aColumn.setAttribute(STARTING_ROWSPAN_ATTRIBUTE, rowSpan);
 					if (i < levels - 1 && crossTab.isExpandCollapseRows()) { // attach collapse button
 						SourceBean aButton = new SourceBean(ICON_TAG);
 						aButton.setAttribute(CLASS_ATTRIBUTE, MINUS_BUTTON_ICON);
