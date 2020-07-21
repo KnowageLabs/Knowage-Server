@@ -305,6 +305,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 			}, {});
 
 		$scope.qbeTableGrid.api.setPinnedBottomRowData([pinnedBottomRowData]);
+		if($scope.start + 1 > $scope.totalPages) $scope.start = $scope.totalPages - 1;
 	}
 
 	$scope.updateQbeTable = function() {
