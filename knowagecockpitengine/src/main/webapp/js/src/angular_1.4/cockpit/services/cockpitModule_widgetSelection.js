@@ -209,6 +209,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					hasAnAVG = true;
 				}
 
+				if (measure.isCalculated) {
+					obj.formula = measure.formula;
+				}
+
 				obj["orderType"] = "";
 				if(columnOrdering !=undefined){
 					if(columnOrdering.name == measure.name){
