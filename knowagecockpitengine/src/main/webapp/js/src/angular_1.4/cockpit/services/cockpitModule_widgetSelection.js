@@ -74,7 +74,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 						var tempOrder = columnOrdering.name ? columnOrdering.name : columnOrdering;
 						if (tempOrder == col.name) {
 						//custom selector ordering check
-						obj["orderColumn"] = tempOrder;					
+						obj["orderColumn"] = tempOrder;
 						if(columnOrdering.name) obj["orderType"] = ngModel.settings.sortingOrder || ngModel.content.sortingOrder;
 						else obj["orderType"] = reverseOrdering;
 						}
@@ -211,6 +211,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 				if (measure.isCalculated) {
 					obj.formula = measure.formula;
+					if (measure.funct && measure.funct != 'NONE') obj.formula = measure.funct + "(" + measure.formula + ")";
 				}
 
 				obj["orderType"] = "";
@@ -878,7 +879,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 							columns = widget.content.columnSelectedOfDataset ;
 							columnNameProp = "name";
 							columnAliasProp = "aliasToShow";
-							
+
 						}else{
 							columns = (Array.isArray(widget.content.columnSelectedOfDataset) && widget.content.columnSelectedOfDataset[widget.dataset.dsId]) ?  widget.content.columnSelectedOfDataset[widget.dataset.dsId] : widget.content.columnSelectedOfDataset ;
 							columnNameProp = "name";

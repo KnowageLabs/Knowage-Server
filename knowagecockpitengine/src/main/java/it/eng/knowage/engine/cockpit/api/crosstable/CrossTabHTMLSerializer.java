@@ -328,8 +328,9 @@ public class CrossTabHTMLSerializer {
 						SourceBean aButton = new SourceBean(ICON_TAG);
 						aButton.setAttribute(CLASS_ATTRIBUTE, MINUS_BUTTON_ICON);
 						JSONObject hierarchyJson = new JSONObject(getHierarchicalAttributes(crossTab, aNode.getParentNode(), false));
-						aButton.setAttribute(NG_CLICK_ATTRIBUTE, "collapse($event,'" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','"
-								+ StringEscapeUtils.escapeJavaScript(text) + "'," + hierarchyJson + ")");
+						aButton.setAttribute(NG_CLICK_ATTRIBUTE,
+								"collapse($event,'" + StringEscapeUtils.escapeHtml(crossTab.getCrosstabDefinition().getRows().get(i).getEntityId()) + "','"
+										+ StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(text)) + "'," + hierarchyJson + ")");
 						aColumn.setAttribute(aButton);
 					}
 				}
@@ -355,8 +356,8 @@ public class CrossTabHTMLSerializer {
 					SourceBean aButton = new SourceBean(ICON_TAG);
 					aButton.setAttribute(CLASS_ATTRIBUTE, PLUS_BUTTON_ICON);
 					JSONObject hierarchyJson = new JSONObject(getHierarchicalAttributes(crossTab, aNode.getParentNode().getParentNode(), false));
-					aButton.setAttribute(NG_CLICK_ATTRIBUTE,
-							"expand($event,'" + parentEntityId + "','" + StringEscapeUtils.escapeJavaScript(text) + "'," + hierarchyJson + ")");
+					aButton.setAttribute(NG_CLICK_ATTRIBUTE, "expand($event,'" + StringEscapeUtils.escapeHtml(parentEntityId) + "','"
+							+ StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(text)) + "'," + hierarchyJson + ")");
 					subtotalHiddenColumn.setAttribute(aButton);
 					aRow.setAttribute(subtotalHiddenColumn);
 				}
@@ -410,7 +411,7 @@ public class CrossTabHTMLSerializer {
 			while (curNode.getColumnName() != null && !curNode.getColumnName().equals("null")) {
 				String attribute = crossTab.getColumnAliasFromName(curNode.getColumnName());
 				String value = curNode.getValue();
-				hierarchicalAttributes.put(attribute, value);
+				hierarchicalAttributes.put(StringEscapeUtils.escapeHtml(attribute), StringEscapeUtils.escapeHtml(value));
 				curNode = curNode.getParentNode();
 			}
 		}
