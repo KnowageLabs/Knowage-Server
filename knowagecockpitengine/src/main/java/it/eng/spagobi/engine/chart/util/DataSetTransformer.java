@@ -226,15 +226,11 @@ public class DataSetTransformer {
 	/**
 	 * Method that serves for preparing the data that JS code will use for rendering the CHORD chart
 	 *
-	 * @param dataRows
-	 *            List of objects that represent the result of the query based on the result of the dataset linked to the chart (document) and on the query
-	 *            formed upon the XML of the document (VALUES tag, particularly CATEGORY and SERIE subtags)
-	 * @param columnsNeeded
-	 *            Categories (columns of the resulting table) that are needed by the request formulated through the XML tag CATEGORY
-	 * @param serie
-	 *            Column of the resulting table that is specified as the SERIE column through the XML tag SERIE
-	 * @param dataColumnsMapper
-	 *            Mapping between the name of the columns (categories and serie) and their ordinal (raw value: column_1, column_2, ...)
+	 * @param dataRows          List of objects that represent the result of the query based on the result of the dataset linked to the chart (document) and on
+	 *                          the query formed upon the XML of the document (VALUES tag, particularly CATEGORY and SERIE subtags)
+	 * @param columnsNeeded     Categories (columns of the resulting table) that are needed by the request formulated through the XML tag CATEGORY
+	 * @param serie             Column of the resulting table that is specified as the SERIE column through the XML tag SERIE
+	 * @param dataColumnsMapper Mapping between the name of the columns (categories and serie) and their ordinal (raw value: column_1, column_2, ...)
 	 * @throws JSONException
 	 *
 	 * @author Danilo Ristovski (danilo.ristovski@mht.net)
@@ -702,9 +698,8 @@ public class DataSetTransformer {
 	/**
 	 * Method that serves for preparing the data that JS code will use for rendering the BAR chart when order by some column is needed
 	 *
-	 * @param dataRows
-	 *            List of objects that represent the result of the query based on the result of the dataset linked to the chart (document) and on the query
-	 *            formed upon the XML of the document (VALUES tag, particularly CATEGORY and SERIE subtags) author rselakov, radmila.selakovic@mht.net
+	 * @param dataRows List of objects that represent the result of the query based on the result of the dataset linked to the chart (document) and on the query
+	 *                 formed upon the XML of the document (VALUES tag, particularly CATEGORY and SERIE subtags) author rselakov, radmila.selakovic@mht.net
 	 *
 	 */
 
@@ -735,6 +730,40 @@ public class DataSetTransformer {
 		}
 
 		return map;
+
+	}
+
+	public ArrayList<String> prepareDataForOrderingColumnForBar(List<Object> dataRows, List<Object> metadataRows, Map<String, Object> drillOrder) {
+		String orderColumn = "";
+		ArrayList<String> listToRet = new ArrayList<String>();
+		if (drillOrder != null) {
+			for (String key : drillOrder.keySet()) {
+				LinkedHashMap<String, String> obj = (LinkedHashMap<String, String>) drillOrder.get(key);
+				System.out.println(drillOrder.get(key));
+				orderColumn = obj.get("orderColumn");
+			}
+
+		}
+		String columnIndex = "";
+		for (Object object : metadataRows) {
+			if (object instanceof LinkedHashMap) {
+				LinkedHashMap<String, String> obj = (LinkedHashMap<String, String>) object;
+				String objHeader = obj.get("header");
+				if (objHeader.equals(orderColumn)) {
+					columnIndex = obj.get("dataIndex");
+				}
+			}
+		}
+		for (Object object : dataRows) {
+			if (object instanceof LinkedHashMap) {
+				LinkedHashMap<String, String> obj = (LinkedHashMap<String, String>) object;
+
+				listToRet.add(obj.get(columnIndex));
+
+			}
+		}
+
+		return listToRet;
 
 	}
 
@@ -996,13 +1025,10 @@ public class DataSetTransformer {
 	/**
 	 * Method that serves for preparing the data that JS code will use for rendering the SCATTER chart
 	 *
-	 * @param dataRows
-	 *            List of objects that represent the result of the query based on the result of the dataset linked to the chart (document) and on the query
-	 *            formed upon the XML of the document (VALUES tag, particularly CATEGORY and SERIE subtags)
-	 * @param columnCategorie
-	 *            column_x that is category
-	 * @param columnSerie
-	 *            column_y,z that is serie
+	 * @param dataRows        List of objects that represent the result of the query based on the result of the dataset linked to the chart (document) and on
+	 *                        the query formed upon the XML of the document (VALUES tag, particularly CATEGORY and SERIE subtags)
+	 * @param columnCategorie column_x that is category
+	 * @param columnSerie     column_y,z that is serie
 	 * @author rselakov, radmila.selakovic@mht.net
 	 *
 	 */
@@ -1145,10 +1171,9 @@ public class DataSetTransformer {
 	}
 
 	/**
-	 * @param serieScaleFactor
-	 *            The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), "G" (giga), "T"
-	 *            (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display these abbreviations (number suffix)
-	 *            along with the scaled number.
+	 * @param serieScaleFactor The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), "G"
+	 *                         (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display these
+	 *                         abbreviations (number suffix) along with the scaled number.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	public JSONArray getSeriesForParallelChart(Object serieNeeded, Object groupingFunction, Object seriePrefix, Object seriePostfix, Object seriePrecision,
