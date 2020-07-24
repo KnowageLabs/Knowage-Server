@@ -600,9 +600,19 @@ public class ExcelExporter {
 
 				}
 
-				if (widgetsMapAggregations != null && !widgetsMapAggregations.isNull(0)) {
+				JSONArray aggrNewVar = new JSONArray();
+				JSONObject currentWidgetMapAggregations = new JSONObject();
+				if (widgetsMapAggregations != null && widgetData.has("id")) {
+					for (int i = 0; i < widgetsMapAggregations.length(); i++) {
+						if (widgetsMapAggregations.getJSONObject(i).getInt("id") == widgetData.getInt("id")) {
+							currentWidgetMapAggregations = widgetsMapAggregations.getJSONObject(i);
+							break;
+						}
+					}
 
-					JSONArray aggrNewVar = (JSONArray) widgetsMapAggregations.getJSONObject(0).get("columnSelectedOfDataset");
+					if (currentWidgetMapAggregations.has("columnSelectedOfDataset"))
+						aggrNewVar = (JSONArray) currentWidgetMapAggregations.get("columnSelectedOfDataset");
+
 					mapColumnsAggregations = getMapFromAggregationsFromArray(aggrNewVar);
 
 				}
@@ -650,6 +660,10 @@ public class ExcelExporter {
 										headerToAlias.put(columnOld.getString("header"), column.getString("name"));
 										columnsOrdered.put(columnOld);
 										break;
+									} else if (columnOld.getString("header").equals(mapColumnsAggregations.get(column.getString("name")))) {
+										headerToAlias.put(columnOld.getString("header"), column.getString("name"));
+										columnsOrdered.put(columnOld);
+										break;
 									}
 								} else {
 									if (columnOld.getString("header").equals(column.getString("alias"))) {
@@ -674,7 +688,7 @@ public class ExcelExporter {
 
 				Row header = null;
 				Row newheader = null;
-				if (exportWidget) {
+				if (exportWidget) { // export single widget
 					widgetName = WorkbookUtil.createSafeSheetName(widgetName);
 					sheet = wb.createSheet(widgetName);
 
@@ -694,7 +708,7 @@ public class ExcelExporter {
 						header = sheet.createRow((short) 1);
 					} else
 						header = sheet.createRow((short) 0); // first row
-				} else {
+				} else { // export whole cockpit
 					String sheetName = "empty";
 					if (dataStore.has("widgetName") && dataStore.getString("widgetName") != null && !dataStore.getString("widgetName").isEmpty()) {
 						if (dataStore.has("sheetInfo")) {
@@ -1399,15 +1413,21 @@ public class ExcelExporter {
 		if (body.has("widgetsMapAggregations"))
 			widgetsMapAggregations = body.getJSONArray("widgetsMapAggregations");
 		JSONObject content = widget.optJSONObject("content");
+		JSONObject currentWidgetMapAggregations = new JSONObject();
 		JSONArray aggrNewVar = new JSONArray();
 		HashMap<String, String> mapColumnsAggregations = new HashMap<String, String>();
-		if (widgetsMapAggregations != null && !widgetsMapAggregations.isNull(0)) {
+		if (widgetsMapAggregations != null && widget.has("id")) {
+			for (int i = 0; i < widgetsMapAggregations.length(); i++) {
+				if (widgetsMapAggregations.getJSONObject(i).getInt("id") == widget.getInt("id")) {
+					currentWidgetMapAggregations = widgetsMapAggregations.getJSONObject(i);
+					break;
+				}
+			}
 
-			if (widgetsMapAggregations.getJSONObject(0).has("columnSelectedOfDataset"))
-				aggrNewVar = (JSONArray) widgetsMapAggregations.getJSONObject(0).get("columnSelectedOfDataset");
+			if (currentWidgetMapAggregations.has("columnSelectedOfDataset"))
+				aggrNewVar = (JSONArray) currentWidgetMapAggregations.get("columnSelectedOfDataset");
 
-			if (widget.has("id") && widget.getInt("id") == widgetsMapAggregations.getJSONObject(0).getInt("id"))
-				mapColumnsAggregations = getMapFromAggregationsFromArray(aggrNewVar);
+			mapColumnsAggregations = getMapFromAggregationsFromArray(aggrNewVar);
 
 		}
 
