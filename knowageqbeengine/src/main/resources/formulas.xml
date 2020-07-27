@@ -42,7 +42,7 @@
 	
 	<formula >
 		<name>Max</name>
-		<syntax>MAx( Field )</syntax>
+		<syntax>Max( Field )</syntax>
 			<body>Max(field)</body>
 			<argument>
 				<name>Field</name>
