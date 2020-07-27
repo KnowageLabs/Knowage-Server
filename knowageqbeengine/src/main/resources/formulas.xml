@@ -145,7 +145,7 @@
 				<default_value></default_value>
 				<argument_description>Substring to search in a string</argument_description>
 				<placeholder>substring</placeholder>
-				<type>string</type>
+				<type>field</type>
 			</argument>
 			<argument>
 				<name>String</name>
@@ -239,6 +239,7 @@
 				<default_value></default_value>
 				<argument_description>String to extract from</argument_description>
 				<placeholder>string</placeholder>
+				<type>field</type>
 			</argument>
 			<argument>
 				<name>Start positions</name>
