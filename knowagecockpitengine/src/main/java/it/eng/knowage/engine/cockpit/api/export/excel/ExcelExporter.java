@@ -602,7 +602,7 @@ public class ExcelExporter {
 
 				JSONArray aggrNewVar = new JSONArray();
 				JSONObject currentWidgetMapAggregations = new JSONObject();
-				if (widgetsMapAggregations != null && widgetData.has("id")) {
+				if (widgetsMapAggregations != null && !widgetsMapAggregations.isNull(0) && widgetData.has("id")) {
 					for (int i = 0; i < widgetsMapAggregations.length(); i++) {
 						if (widgetsMapAggregations.getJSONObject(i).getInt("id") == widgetData.getInt("id")) {
 							currentWidgetMapAggregations = widgetsMapAggregations.getJSONObject(i);
