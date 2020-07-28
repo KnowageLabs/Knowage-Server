@@ -16,8 +16,9 @@
 #end
 #if($categorieColumns.get("drillOrder"))
 #set($drillOrder = $categorieColumns.get("drillOrder")) ## metadata related to categories
-#set($orderColumnDataValues = $datasettransformer.prepareDataForOrderingColumnForBar($rows,$dataFields,$drillOrder))
-$datasettransformer.print($orderColumnDataValues)
+	#if($drillOrder[$categorieColumns.groupby].orderColumn != $categorieColumns.groupby)
+	#set($orderColumnDataValues = $datasettransformer.prepareDataForOrderingColumnForBar($rows,$dataFields,$drillOrder,$categorieColumns.groupby))
+	#end
 #end
 #if($categorieColumns.name=="")
 #set($categorieColumns.name = $categorieColumns.column)
@@ -98,8 +99,7 @@ $datasettransformer.print($orderColumnDataValues)
 	#end
 #else
 	#set($serieKeyFeed = 0)
-	#foreach($serie in $series)
-	$datasettransformer.print($serie)
+	#foreach($serie in $series)	
 		#set($serieMapKey = $serie.column + '_' + $serieKeyFeed)
 		#set($workAroundNoPrint = $seriesMap.put($serieMapKey , $serie))
 		
@@ -167,7 +167,9 @@ $datasettransformer.print($orderColumnDataValues)
 			categoryName: '$categorieColumns.name',
 			categoryOrderColumn: '$categorieColumns.orderColumn',
 			categoryOrderType: '$categorieColumns.orderType',
+			#if($orderColumnDataValues)
 			orderColumnDataValues: '$orderColumnDataValues',
+			#end
 			 
 		},
     
