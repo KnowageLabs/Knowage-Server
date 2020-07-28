@@ -409,43 +409,43 @@ public class CrossTab {
 			Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap)
 			throws JSONException {
 
-			JSONObject valueRecord;
-			String rowPath;
-			String columnPath;
-			this.config = crosstabDefinition.getConfig();
-			this.crosstabDefinition = crosstabDefinition;
-			int cellLimit = crosstabDefinition.getCellLimit();
-			boolean columnsOverflow = false; // true if the number of cell shown in
-												// the crosstab is less than the
-												// total number of cells
-			boolean measuresOnColumns = crosstabDefinition.isMeasuresOnColumns();
-			measuresOnRow = config.getString("measureson").equals("rows");
-			int rowsCount = crosstabDefinition.getRows().size();
-			int columnsCount = crosstabDefinition.getColumns().size();
-			int measuresCount = crosstabDefinition.getMeasures().size();
-			int index;
+		JSONObject valueRecord;
+		String rowPath;
+		String columnPath;
+		this.config = crosstabDefinition.getConfig();
+		this.crosstabDefinition = crosstabDefinition;
+		int cellLimit = crosstabDefinition.getCellLimit();
+		boolean columnsOverflow = false; // true if the number of cell shown in
+											// the crosstab is less than the
+											// total number of cells
+		boolean measuresOnColumns = crosstabDefinition.isMeasuresOnColumns();
+		measuresOnRow = config.getString("measureson").equals("rows");
 		List<Row> rows = crosstabDefinition.getRows();
+		int rowsCount = rows.size();
 		List<Column> columns = crosstabDefinition.getColumns();
+		int columnsCount = columns.size();
+		int measuresCount = crosstabDefinition.getMeasures().size();
+		int index;
 
-			this.columnsSortKeysMap = columnsSortKeysMap;
-			this.rowsSortKeysMap = rowsSortKeysMap;
-			this.measuresSortKeysMap = measuresSortKeysMap;
+		this.columnsSortKeysMap = columnsSortKeysMap;
+		this.rowsSortKeysMap = rowsSortKeysMap;
+		this.measuresSortKeysMap = measuresSortKeysMap;
 
-			rowCordinates = new LinkedList<String>();
-			columnCordinates = new LinkedList<String>();
-			measuresCordinates = new LinkedList<String>();
+		rowCordinates = new LinkedList<String>();
+		columnCordinates = new LinkedList<String>();
+		measuresCordinates = new LinkedList<String>();
 
-			List<String> data = new ArrayList<String>();
+		List<String> data = new ArrayList<String>();
 
-			columnsRoot = new Node("rootC");
-			rowsRoot = new Node("rootR");
+		columnsRoot = new Node("rootC");
+		rowsRoot = new Node("rootR");
 
-			JSONArray dataStoreMetadataFields = datastoreMetadata.getJSONArray("fields");
+		JSONArray dataStoreMetadataFields = datastoreMetadata.getJSONArray("fields");
 
-			List<String> columnsNameList = new ArrayList<String>();
-			List<String> rowsNameList = new ArrayList<String>();
-			List<String> measuresNameList = new ArrayList<String>();
-			List<String> orderingNameList = new ArrayList<String>(); //list with external sorting columns (just associated column)
+		List<String> columnsNameList = new ArrayList<String>();
+		List<String> rowsNameList = new ArrayList<String>();
+		List<String> measuresNameList = new ArrayList<String>();
+		List<String> orderingNameList = new ArrayList<String>(); // list with external sorting columns (just associated column)
 
 		for (int i = 0; i < crosstabDefinition.getMeasures().size(); i++) {
 			measuresHeaderList.add(crosstabDefinition.getMeasures().get(i).getAlias());
@@ -463,6 +463,7 @@ public class CrossTab {
 				// dsAliasSortingReferenceBiMap.put(column.getSortingId(), column.getAlias());
 				dsColumnNameSortingReferenceBiMap.put(alias2DsColumnName.get(column.getSortingId()), alias2DsColumnName.get(column.getAlias()));
 			}
+		}
 
 		for (int i = 0; i < rows.size(); i++) {
 			Row row = rows.get(i);
@@ -473,15 +474,16 @@ public class CrossTab {
 				// dsAliasSortingReferenceBiMap.put(row.getSortingId(), row.getAlias());
 				dsColumnNameSortingReferenceBiMap.put(alias2DsColumnName.get(row.getSortingId()), alias2DsColumnName.get(row.getAlias()));
 			}
-
-			for (int i = 0; i < crosstabDefinition.getRows().size(); i++) {
-				rowsHeaderList.add(crosstabDefinition.getRows().get(i).getAlias());
-				rowsHeaderIdList.add(crosstabDefinition.getRows().get(i).getEntityId());
-				if (crosstabDefinition.getRows().get(i).getSortingId() != null && !crosstabDefinition.getRows().get(i).getSortingId().equals("")) {
-					orderingHeaderList.add(crosstabDefinition.getRows().get(i).getSortingId()  + "|" + crosstabDefinition.getRows().get(i).getAlias());
-				}
+		}
+		
+		for (int i = 0; i < dataStoreMetadataFields.length(); i++) {
+			if (dataStoreMetadataFields.get(i) instanceof String) {
+				continue;
 			}
-
+			JSONObject jsonObject = dataStoreMetadataFields.getJSONObject(i);
+			String name = jsonObject.getString("name");
+			String header = jsonObject.getString("header");
+			
 			if (columnsHeaderList.contains(header) || columnsHeaderIdList.contains(header)) {
 				columnsNameList.add(addNumberToColumnName(name));
 			} else if (rowsHeaderList.contains(header) || rowsHeaderIdList.contains(header)) {
@@ -489,224 +491,224 @@ public class CrossTab {
 			} else if (measuresHeaderList.contains(header) || measuresHeaderIdList.contains(header)) {
 				measuresNameList.add(addNumberToColumnName(name));
 			}
-				if ("___COUNT".equals(header)) {
-					countMeasures.add(name);
+			if ("___COUNT".equals(header)) {
+				countMeasures.add(name);
+			}
+		}
+
+		//check association for external field sorting
+		if (orderingHeaderList != null && orderingHeaderList.size() > 0) {
+			String orderingHeadersNames = "";
+			for (int i=0; i < orderingHeaderList.size(); i++) {
+				String orderingHeader = orderingHeaderList.get(i);
+				String[] orderingHeaderEl = orderingHeader.split("\\|");
+				if (orderingHeaderEl.length == 2) {
+					orderingHeadersNames = getMetaColumnName(dataStoreMetadataFields, orderingHeaderEl[0]) + "|" + getMetaColumnName(dataStoreMetadataFields, orderingHeaderEl[1]) ;
+					orderingNameList.add(orderingHeadersNames);
 				}
 			}
+		}
 
-			//check association for external field sorting
-			if (orderingHeaderList != null && orderingHeaderList.size() > 0) {
-				String orderingHeadersNames = "";
-				for (int i=0; i < orderingHeaderList.size(); i++) {
-					String orderingHeader = orderingHeaderList.get(i);
-					String[] orderingHeaderEl = orderingHeader.split("\\|");
-					if (orderingHeaderEl.length == 2) {
-						orderingHeadersNames = getMetaColumnName(dataStoreMetadataFields, orderingHeaderEl[0]) + "|" + getMetaColumnName(dataStoreMetadataFields, orderingHeaderEl[1]) ;
-						orderingNameList.add(orderingHeadersNames);
-					}
-				}
-			}
+		int cellCount = 0;
+		int actualRows = 0;
+		int actualColumns = 0;
+		// counts the cell number
+		for (index = 0; index < dataStoredata.length() && (cellLimit <= 0 || cellCount < cellLimit); index++) {
+			valueRecord = dataStoredata.getJSONObject(index);
 
-			int cellCount = 0;
-			int actualRows = 0;
-			int actualColumns = 0;
-			// counts the cell number
-			for (index = 0; index < dataStoredata.length() && (cellLimit <= 0 || cellCount < cellLimit); index++) {
-				valueRecord = dataStoredata.getJSONObject(index);
-
-				boolean columnInserted = addRecord(columnsRoot, valueRecord, columnsNameList, orderingNameList);
-				boolean rowInserted = addRecord(rowsRoot, valueRecord, rowsNameList, orderingNameList);
-				actualRows += rowInserted ? 1 : 0;
-				actualColumns += columnInserted ? 1 : 0;
-				cellCount = actualRows * actualColumns * measuresCount;
-			}
+			boolean columnInserted = addRecord(columnsRoot, valueRecord, columnsNameList, orderingNameList);
+			boolean rowInserted = addRecord(rowsRoot, valueRecord, rowsNameList, orderingNameList);
+			actualRows += rowInserted ? 1 : 0;
+			actualColumns += columnInserted ? 1 : 0;
+			cellCount = actualRows * actualColumns * measuresCount;
+		}
 
 //			columnsRoot.updateFathers();
 //			rowsRoot.updateFathers();
 
-			if (index < dataStoredata.length()) {
-				logger.debug("Crosstab cells number limit exceeded");
-				Node completeColumnsRoot = new Node("rootCompleteC");
-				for (index = 0; index < dataStoredata.length(); index++) {
-					valueRecord = dataStoredata.getJSONObject(index);
-
-					addRecord(completeColumnsRoot, valueRecord, columnsNameList, orderingNameList);
-				}
-				columnsOverflow = columnsRoot.getLeafsNumber() < completeColumnsRoot.getLeafsNumber();
-			}
-			Map measureToOrderMap = new LinkedHashMap();
-
+		if (index < dataStoredata.length()) {
+			logger.debug("Crosstab cells number limit exceeded");
+			Node completeColumnsRoot = new Node("rootCompleteC");
 			for (index = 0; index < dataStoredata.length(); index++) {
 				valueRecord = dataStoredata.getJSONObject(index);
 
-				List<String> rowPathList = new ArrayList<String>();
-				List<String> colPathList = new ArrayList<String>();
+				addRecord(completeColumnsRoot, valueRecord, columnsNameList, orderingNameList);
+			}
+			columnsOverflow = columnsRoot.getLeafsNumber() < completeColumnsRoot.getLeafsNumber();
+		}
+		Map measureToOrderMap = new LinkedHashMap();
+
+		for (index = 0; index < dataStoredata.length(); index++) {
+			valueRecord = dataStoredata.getJSONObject(index);
+
+			List<String> rowPathList = new ArrayList<String>();
+			List<String> colPathList = new ArrayList<String>();
 
 
-				columnPath = "";
-				for (int i = 0; i < columnsCount; i++) {
-					String column = columnsNameList.get(i);
-					Object value = valueRecord.get(column);
-					String valueStr = null;
-					// String.valueOf() instead of toString() is used also to prevent NullPointerException
-					if (StringUtils.isEmpty(String.valueOf(value))) {
-						valueStr = "null";
-					} else {
-						valueStr = value.toString();
-					}
-					columnPath = columnPath + PATH_SEPARATOR + valueStr;
-					colPathList.add(valueStr);
+			columnPath = "";
+			for (int i = 0; i < columnsCount; i++) {
+				String column = columnsNameList.get(i);
+				Object value = valueRecord.get(column);
+				String valueStr = null;
+				// String.valueOf() instead of toString() is used also to prevent NullPointerException
+				if (StringUtils.isEmpty(String.valueOf(value))) {
+					valueStr = "null";
+				} else {
+					valueStr = value.toString();
 				}
-
-				rowPath = "";
-				for (int i = 0; i < rowsCount; i++) {
-					String row = rowsNameList.get(i);
-					Object value = valueRecord.get(row);
-					String valueStr = null;
-					// String.valueOf() instead of toString() is used also to prevent NullPointerException
-					if (StringUtils.isEmpty(String.valueOf(value))) {
-						valueStr = "null";
-					} else {
-						valueStr = value.toString();
-					}
-					rowPath = rowPath + PATH_SEPARATOR + valueStr;
-					rowPathList.add(valueStr);
-				}
-				// defines array of data in according to coordinate:
-				for (int i = 0; i < measuresNameList.size(); i++) {
-					// apply logic for measure ordering if it's required
-					if (measuresSortKeysMap.size() > 0) {
-						for (Map.Entry<Integer, NodeComparator> entry : measuresSortKeysMap.entrySet()) {
-							NodeComparator nodeComparator = entry.getValue();
-							String measureLabel = nodeComparator.getMeasureLabel();
-							int direction = nodeComparator.getDirection();
-							Integer idx = getColumnIndex(measureLabel, measuresHeaderList);
-							if (idx >= 0) {
-								String colName = measuresNameList.get(idx);
-								Double value = (valueRecord.get(colName).equals("")) ? 0 : Double.valueOf(String.valueOf(valueRecord.get(colName)));
-								String[] columnPathArray = columnPath.trim().split(PATH_SEPARATOR);
-								String[] entryParents = measuresSortKeysMap.get(entry.getKey()).getParentValue().split(PATH_SEPARATOR);
-								// add value to order only if parents are correct (useful for deep levels)
-								String valueLbl = rowPath + columnPath + PATH_SEPARATOR + colName;
-								/*
-								 * WARNING : in fact the following causes some sort of filtering when a record doesn't match the measure
-								 * a user sorts for. The else-branch adds a dummy value to records that don't match to let them appear
-								 * on the crosstable.
-								 */
-								if (columnPathArray != null && entryParents != null && Arrays.deepEquals(columnPathArray, entryParents)) {
-									measureToOrderMap.put(valueLbl, value);
-								} else {
-									double dummyValue = direction == -1 ? Double.MIN_VALUE : Double.MAX_VALUE;
-									measureToOrderMap.put(valueLbl, dummyValue);
-								}
-							}
-						}
-					}
-					String measure = measuresNameList.get(i);
-					columnCordinates.add(columnPath);
-					rowCordinates.add(rowPath);
-					measuresCordinates.add(rowPath + columnPath + PATH_SEPARATOR + getStringValue(valueRecord.get(measure)));
-					data.add("" + getStringValue(valueRecord.get(measure)));
-				}
+				columnPath = columnPath + PATH_SEPARATOR + valueStr;
+				colPathList.add(valueStr);
 			}
 
-			// measure sort has priority on columns and rows
-			if (measuresSortKeysMap.size() > 0) {
-				Node orderedColumnsRoot = new Node("rootC");
-				Node orderedRowsRoot = new Node("rootR");
-
-				Map<String, Double> orderedMeasures = sortMeasures(measuresSortKeysMap, measureToOrderMap, rowsCount, columnsCount, actualRows, actualColumns);
-				for (String key : orderedMeasures.keySet()) {
-
-					int nodePosition;
-					Object[] measureInfo = key.split(PATH_SEPARATOR);
-					if (measuresOnColumns) {
-						Node nodeToCheck = orderedRowsRoot;
-						// update paths order and coordinates for rows
-						for (int r = 0; r < rowsCount; r++) {
-							Node node = new Node(measureInfo[r + 1].toString());
-
-							nodePosition = nodeToCheck.getChilds().indexOf(node);
-							if (nodePosition < 0) {
-								nodeToCheck.addChild(node);
-								nodeToCheck = node;
+			rowPath = "";
+			for (int i = 0; i < rowsCount; i++) {
+				String row = rowsNameList.get(i);
+				Object value = valueRecord.get(row);
+				String valueStr = null;
+				// String.valueOf() instead of toString() is used also to prevent NullPointerException
+				if (StringUtils.isEmpty(String.valueOf(value))) {
+					valueStr = "null";
+				} else {
+					valueStr = value.toString();
+				}
+				rowPath = rowPath + PATH_SEPARATOR + valueStr;
+				rowPathList.add(valueStr);
+			}
+			// defines array of data in according to coordinate:
+			for (int i = 0; i < measuresNameList.size(); i++) {
+				// apply logic for measure ordering if it's required
+				if (measuresSortKeysMap.size() > 0) {
+					for (Map.Entry<Integer, NodeComparator> entry : measuresSortKeysMap.entrySet()) {
+						NodeComparator nodeComparator = entry.getValue();
+						String measureLabel = nodeComparator.getMeasureLabel();
+						int direction = nodeComparator.getDirection();
+						Integer idx = getColumnIndex(measureLabel, measuresHeaderList);
+						if (idx >= 0) {
+							String colName = measuresNameList.get(idx);
+							Double value = (valueRecord.get(colName).equals("")) ? 0 : Double.valueOf(String.valueOf(valueRecord.get(colName)));
+							String[] columnPathArray = columnPath.trim().split(PATH_SEPARATOR);
+							String[] entryParents = measuresSortKeysMap.get(entry.getKey()).getParentValue().split(PATH_SEPARATOR);
+							// add value to order only if parents are correct (useful for deep levels)
+							String valueLbl = rowPath + columnPath + PATH_SEPARATOR + colName;
+							/*
+							 * WARNING : in fact the following causes some sort of filtering when a record doesn't match the measure
+							 * a user sorts for. The else-branch adds a dummy value to records that don't match to let them appear
+							 * on the crosstable.
+							 */
+							if (columnPathArray != null && entryParents != null && Arrays.deepEquals(columnPathArray, entryParents)) {
+								measureToOrderMap.put(valueLbl, value);
 							} else {
-								nodeToCheck = nodeToCheck.getChilds().get(nodePosition);
+								double dummyValue = direction == -1 ? Double.MIN_VALUE : Double.MAX_VALUE;
+								measureToOrderMap.put(valueLbl, dummyValue);
 							}
 						}
-
-					} else {
-						// update paths order and coordinates for columns
-						Node n = new Node(measureInfo[2].toString(), measureInfo[2].toString());
-						orderedColumnsRoot.addChild(n);
 					}
 				}
-				if (orderedRowsRoot.getChilds().size() > 0)
-					rowsRoot = orderedRowsRoot;
-				else
-					rowsRoot.orderedSubtree(rowsSortKeysMap);
-
-				if (orderedColumnsRoot.getChilds().size() > 0)
-					columnsRoot = orderedColumnsRoot;
-				else
-					columnsRoot.orderedSubtree(columnsSortKeysMap);
-			} else {
-				columnsRoot.orderedSubtree(columnsSortKeysMap);
-				rowsRoot.orderedSubtree(rowsSortKeysMap);
+				String measure = measuresNameList.get(i);
+				columnCordinates.add(columnPath);
+				rowCordinates.add(rowPath);
+				measuresCordinates.add(rowPath + columnPath + PATH_SEPARATOR + getStringValue(valueRecord.get(measure)));
+				data.add("" + getStringValue(valueRecord.get(measure)));
 			}
+		}
 
-			columnsSpecification = getLeafsPathList(columnsRoot);
-			rowsSpecification = getLeafsPathList(rowsRoot);
+		// measure sort has priority on columns and rows
+		if (measuresSortKeysMap.size() > 0) {
+			Node orderedColumnsRoot = new Node("rootC");
+			Node orderedRowsRoot = new Node("rootR");
 
-			if (measuresOnColumns) {
-				addMeasuresToTree(columnsRoot, crosstabDefinition.getMeasures());
-			} else {
-				addMeasuresToTree(rowsRoot, crosstabDefinition.getMeasures());
-			}
-			config.put("columnsOverflow", columnsOverflow);
+			Map<String, Double> orderedMeasures = sortMeasures(measuresSortKeysMap, measureToOrderMap, rowsCount, columnsCount, actualRows, actualColumns);
+			for (String key : orderedMeasures.keySet()) {
 
-			// put measures' info into measures variable
-			for (int i = 0; i < crosstabDefinition.getMeasures().size(); i++) {
-				// the field number i contains the measure number (i - <number of
-				// dimensions>)
-				// but <number of dimension> is <total fields count> - <total
-				// measures count>
-				IFieldMetaData fieldMeta = new FieldMetadata();
-				Measure relevantMeasure = crosstabDefinition.getMeasures().get(i);
-				MeasureInfo measureInfo = getMeasureInfo(fieldMeta, relevantMeasure);
-				measures.add(measureInfo);
-				if (!measureInfo.excludeFromTotalAndSubtotal) {
-					measuresToShowOnTotalsOrSubTotals.add(measureInfo);
+				int nodePosition;
+				Object[] measureInfo = key.split(PATH_SEPARATOR);
+				if (measuresOnColumns) {
+					Node nodeToCheck = orderedRowsRoot;
+					// update paths order and coordinates for rows
+					for (int r = 0; r < rowsCount; r++) {
+						Node node = new Node(measureInfo[r + 1].toString());
+
+						nodePosition = nodeToCheck.getChilds().indexOf(node);
+						if (nodePosition < 0) {
+							nodeToCheck.addChild(node);
+							nodeToCheck = node;
+						} else {
+							nodeToCheck = nodeToCheck.getChilds().get(nodePosition);
+						}
+					}
+
+				} else {
+					// update paths order and coordinates for columns
+					Node n = new Node(measureInfo[2].toString(), measureInfo[2].toString());
+					orderedColumnsRoot.addChild(n);
 				}
 			}
+			if (orderedRowsRoot.getChilds().size() > 0)
+				rowsRoot = orderedRowsRoot;
+			else
+				rowsRoot.orderedSubtree(rowsSortKeysMap);
 
-			/**
-			 * !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
-			 * If you think that:
-			 *
-			 *   dataStoredata.toString()
-			 *
-			 * Is useless think at the poor guy who lost 4 hours to understand
-			 * that jsonpath works better with String than
-			 * JSONObject/JSONArray.
-			 *
-			 * !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
-			 */
-			parsedValuesDataStore = JsonPath.parse(dataStoredata.toString());
+			if (orderedColumnsRoot.getChilds().size() > 0)
+				columnsRoot = orderedColumnsRoot;
+			else
+				columnsRoot.orderedSubtree(columnsSortKeysMap);
+		} else {
+			columnsRoot.orderedSubtree(columnsSortKeysMap);
+			rowsRoot.orderedSubtree(rowsSortKeysMap);
+		}
 
-			dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, measuresCordinates, data, measuresOnColumns,
-					measuresCount, columnsRoot.getLeafsNumber());
+		columnsSpecification = getLeafsPathList(columnsRoot);
+		rowsSpecification = getLeafsPathList(rowsRoot);
 
-			celltypeOfColumns = new ArrayList<CrossTab.CellType>();
-			celltypeOfRows = new ArrayList<CrossTab.CellType>();
+		if (measuresOnColumns) {
+			addMeasuresToTree(columnsRoot, crosstabDefinition.getMeasures());
+		} else {
+			addMeasuresToTree(rowsRoot, crosstabDefinition.getMeasures());
+		}
+		config.put("columnsOverflow", columnsOverflow);
 
-			for (int i = 0; i < dataMatrix.length; i++) {
-				celltypeOfRows.add(CellType.DATA);
+		// put measures' info into measures variable
+		for (int i = 0; i < crosstabDefinition.getMeasures().size(); i++) {
+			// the field number i contains the measure number (i - <number of
+			// dimensions>)
+			// but <number of dimension> is <total fields count> - <total
+			// measures count>
+			IFieldMetaData fieldMeta = new FieldMetadata();
+			Measure relevantMeasure = crosstabDefinition.getMeasures().get(i);
+			MeasureInfo measureInfo = getMeasureInfo(fieldMeta, relevantMeasure);
+			measures.add(measureInfo);
+			if (!measureInfo.excludeFromTotalAndSubtotal) {
+				measuresToShowOnTotalsOrSubTotals.add(measureInfo);
 			}
+		}
 
-			for (int i = 0; i < dataMatrix[0].length; i++) {
-				celltypeOfColumns.add(CellType.DATA);
-			}
+		/**
+		 * !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
+		 * If you think that:
+		 *
+		 *   dataStoredata.toString()
+		 *
+		 * Is useless think at the poor guy who lost 4 hours to understand
+		 * that jsonpath works better with String than
+		 * JSONObject/JSONArray.
+		 *
+		 * !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!!
+		 */
+		parsedValuesDataStore = JsonPath.parse(dataStoredata.toString());
+
+		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, measuresCordinates, data, measuresOnColumns,
+				measuresCount, columnsRoot.getLeafsNumber());
+
+		celltypeOfColumns = new ArrayList<CrossTab.CellType>();
+		celltypeOfRows = new ArrayList<CrossTab.CellType>();
+
+		for (int i = 0; i < dataMatrix.length; i++) {
+			celltypeOfRows.add(CellType.DATA);
+		}
+
+		for (int i = 0; i < dataMatrix[0].length; i++) {
+			celltypeOfColumns.add(CellType.DATA);
+		}
 	}
 
 	private void initReferencesMaps(JSONArray dataStoreMetadataFields) throws JSONException {
