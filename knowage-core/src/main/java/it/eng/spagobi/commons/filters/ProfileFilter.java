@@ -161,7 +161,7 @@ public class ProfileFilter implements Filter {
 					UserProfileManager.setProfile((UserProfile) profile);
 				} else {
 					String contextName = ChannelUtilities.getSpagoBIContextName(httpRequest);
-					if (!httpRequest.getQueryString().contains("PAGE=LoginPage&NEW_SESSION=TRUE")) {
+					if (!requestIsForHomePage(httpRequest)) {
 						String targetService = httpRequest.getRequestURI() + "?" + httpRequest.getQueryString();
 						String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&targetService="
 								+ URLEncoder.encode(targetService, "UTF-8");
@@ -289,13 +289,11 @@ public class ProfileFilter implements Filter {
 	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
 	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
 	 *
-	 * @param httpRequest
-	 *            The http request
+	 * @param httpRequest The http request
 	 *
 	 * @return the current user unique identified
 	 *
-	 * @throws Exception
-	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
+	 * @throws Exception in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */
 	private String getUserIdWithSSO(HttpServletRequest request) {
 		logger.debug("IN");
