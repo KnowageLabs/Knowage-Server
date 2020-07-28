@@ -488,7 +488,6 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	}
 
 	$scope.filterByColumnName = function(item) {
-		debugger;
 		return item.leftOperandAlias == $scope.field.name;
 	}
 
