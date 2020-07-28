@@ -37,6 +37,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.collections.BidiMap;
+import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -47,6 +49,8 @@ import org.json.JSONObject;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
+import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabDefinition.Column;
+import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabDefinition.Row;
 import it.eng.knowage.engine.cockpit.api.crosstable.placeholder.AggregatorDelegate;
 import it.eng.knowage.engine.cockpit.api.crosstable.placeholder.AverageAggregator;
 import it.eng.knowage.engine.cockpit.api.crosstable.placeholder.CountAggregator;
@@ -207,6 +211,12 @@ public class CrossTab {
 		Node currRowParent = currNode;
 		while (currRowParent != null) {
 			String columnName = currRowParent.getColumnName();
+			/*
+			 * CurrNode is set to have ordering on a different column
+			 */
+			if (dsColumnNameSortingReferenceBiMap.getKey(columnName) != null) {
+				columnName = (String) dsColumnNameSortingReferenceBiMap.getKey(columnName);
+			}
 			if (!currRowParent.isMeasure() && columnName != null) {
 				String value = currRowParent.getValue();
 				colsValues.put(columnName, value);
@@ -289,7 +299,19 @@ public class CrossTab {
 	private List<String> columnsHeaderIdList = new ArrayList<String>();
 	private List<String> rowsHeaderIdList = new ArrayList<String>();
 	private List<String> measuresHeaderIdList = new ArrayList<String>();
+	/**
+	 * @deprecated This list has been overridden by {@link #dsAliasSortingReferenceBiMap} and {@link #dsColumnNameSortingReferenceBiMap}
+	 */
+	@Deprecated
 	private List<String> orderingHeaderList = new ArrayList<String>();
+	/**
+	 * Contains mapping between current column ALIAS and external referenced column ALIAS for sorting
+	 */
+	private BidiMap dsAliasSortingReferenceBiMap = new DualHashBidiMap();
+	/**
+	 * Contains mapping between current column NAME and external referenced column NAME for sorting
+	 */
+	private BidiMap dsColumnNameSortingReferenceBiMap = new DualHashBidiMap();
 
 
 	public enum CellType {
@@ -402,6 +424,8 @@ public class CrossTab {
 			int columnsCount = crosstabDefinition.getColumns().size();
 			int measuresCount = crosstabDefinition.getMeasures().size();
 			int index;
+		List<Row> rows = crosstabDefinition.getRows();
+		List<Column> columns = crosstabDefinition.getColumns();
 
 			this.columnsSortKeysMap = columnsSortKeysMap;
 			this.rowsSortKeysMap = rowsSortKeysMap;
@@ -423,17 +447,31 @@ public class CrossTab {
 			List<String> measuresNameList = new ArrayList<String>();
 			List<String> orderingNameList = new ArrayList<String>(); //list with external sorting columns (just associated column)
 
-			for (int i = 0; i < crosstabDefinition.getMeasures().size(); i++) {
-				measuresHeaderList.add(crosstabDefinition.getMeasures().get(i).getAlias());
-				measuresHeaderIdList.add(crosstabDefinition.getMeasures().get(i).getEntityId());
+		for (int i = 0; i < crosstabDefinition.getMeasures().size(); i++) {
+			measuresHeaderList.add(crosstabDefinition.getMeasures().get(i).getAlias());
+			measuresHeaderIdList.add(crosstabDefinition.getMeasures().get(i).getEntityId());
+		}
+
+		initReferencesMaps(dataStoreMetadataFields);
+
+		for (int i = 0; i < columns.size(); i++) {
+			Column column = columns.get(i);
+			columnsHeaderList.add(column.getAlias());
+			columnsHeaderIdList.add(column.getEntityId());
+			if (column.getSortingId() != null && !column.getSortingId().equals("")) {
+				orderingHeaderList.add(column.getSortingId() + "|" + column.getAlias());
+				// dsAliasSortingReferenceBiMap.put(column.getSortingId(), column.getAlias());
+				dsColumnNameSortingReferenceBiMap.put(alias2DsColumnName.get(column.getSortingId()), alias2DsColumnName.get(column.getAlias()));
 			}
 
-			for (int i = 0; i < crosstabDefinition.getColumns().size(); i++) {
-				columnsHeaderList.add(crosstabDefinition.getColumns().get(i).getAlias());
-				columnsHeaderIdList.add(crosstabDefinition.getColumns().get(i).getEntityId());
-				if (crosstabDefinition.getColumns().get(i).getSortingId() != null && !crosstabDefinition.getColumns().get(i).getSortingId().equals("")) {
-					orderingHeaderList.add(crosstabDefinition.getColumns().get(i).getSortingId()  + "|" + crosstabDefinition.getColumns().get(i).getAlias());
-				}
+		for (int i = 0; i < rows.size(); i++) {
+			Row row = rows.get(i);
+			rowsHeaderList.add(row.getAlias());
+			rowsHeaderIdList.add(row.getEntityId());
+			if (row.getSortingId() != null && !row.getSortingId().equals("")) {
+				orderingHeaderList.add(row.getSortingId() + "|" + row.getAlias());
+				// dsAliasSortingReferenceBiMap.put(row.getSortingId(), row.getAlias());
+				dsColumnNameSortingReferenceBiMap.put(alias2DsColumnName.get(row.getSortingId()), alias2DsColumnName.get(row.getAlias()));
 			}
 
 			for (int i = 0; i < crosstabDefinition.getRows().size(); i++) {
@@ -444,26 +482,13 @@ public class CrossTab {
 				}
 			}
 
-			for (int i = 0; i < dataStoreMetadataFields.length(); i++) {
-				if (dataStoreMetadataFields.get(i) instanceof String) {
-					continue;
-				}
-				JSONObject jsonObject = dataStoreMetadataFields.getJSONObject(i);
-				String name = jsonObject.getString("name");
-				String header = jsonObject.getString("header");
-
-				dsColumnName2Alias.put(name, header);
-				alias2DsColumnName.put(header, name);
-				dsColumnName2Metadata.put(name, jsonObject);
-				alias2Metadata.put(header, jsonObject);
-
-				if (columnsHeaderList.contains(header) || columnsHeaderIdList.contains(header)) {
-					columnsNameList.add(addNumberToColumnName(name));
-				} else if (rowsHeaderList.contains(header) || rowsHeaderIdList.contains(header)) {
-					rowsNameList.add(addNumberToColumnName(name));
-				} else if (measuresHeaderList.contains(header) || measuresHeaderIdList.contains(header)) {
-					measuresNameList.add(addNumberToColumnName(name));
-				}
+			if (columnsHeaderList.contains(header) || columnsHeaderIdList.contains(header)) {
+				columnsNameList.add(addNumberToColumnName(name));
+			} else if (rowsHeaderList.contains(header) || rowsHeaderIdList.contains(header)) {
+				rowsNameList.add(addNumberToColumnName(name));
+			} else if (measuresHeaderList.contains(header) || measuresHeaderIdList.contains(header)) {
+				measuresNameList.add(addNumberToColumnName(name));
+			}
 				if ("___COUNT".equals(header)) {
 					countMeasures.add(name);
 				}
@@ -682,6 +707,22 @@ public class CrossTab {
 			for (int i = 0; i < dataMatrix[0].length; i++) {
 				celltypeOfColumns.add(CellType.DATA);
 			}
+	}
+
+	private void initReferencesMaps(JSONArray dataStoreMetadataFields) throws JSONException {
+		for (int i = 0; i < dataStoreMetadataFields.length(); i++) {
+			if (dataStoreMetadataFields.get(i) instanceof String) {
+				continue;
+			}
+			JSONObject jsonObject = dataStoreMetadataFields.getJSONObject(i);
+			String name = jsonObject.getString("name");
+			String header = jsonObject.getString("header");
+
+			dsColumnName2Alias.put(name, header);
+			alias2DsColumnName.put(header, name);
+			dsColumnName2Metadata.put(name, jsonObject);
+			alias2Metadata.put(header, jsonObject);
+		}
 	}
 
 	public String addNumberToColumnName(String columnName) {
