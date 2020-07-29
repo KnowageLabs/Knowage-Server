@@ -173,7 +173,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.sendDataEditMode = function () { //send code and data to python and retrieve result as img or html/js
 			$scope.setPythonParameters();
 		    $http({
-		        url: "https://" + $scope.ngModel.pythonAddress + "/widget/edit/" + $scope.ngModel.pythonOutputType,
+		        url: $scope.ngModel.pythonAddress + "/widget/edit/" + $scope.ngModel.pythonOutputType,
 		        method: "POST",
 		        headers: {'Content-Type': 'application/json',
 		        		  'Authorization': $scope.encodedUserId},
@@ -201,7 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.sendDataViewMode = function () { //send code and data to python and retrieve result as img or html/js
 			$scope.setPythonParameters();
 		    $http({
-		        url: "https://" + $scope.ngModel.pythonAddress + "/widget/view/" + $scope.ngModel.pythonOutputType,
+		        url: $scope.ngModel.pythonAddress + "/widget/view/" + $scope.ngModel.pythonOutputType,
 		        method: "POST",
 		        headers: {'Content-Type': 'application/json',
 		        		  'Authorization': $scope.encodedUserId},

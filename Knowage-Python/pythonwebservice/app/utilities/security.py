@@ -29,7 +29,7 @@ def buildAuthToken(user_id):
     return "Direct " + encoded_uid
 
 def getUserFunctionalities(widget):
-    address = "http://" + widget.knowage_address + "/knowage/restful-services/2.0/backendservices/userprofile/"
+    address = widget.knowage_address + "/knowage/restful-services/2.0/backendservices/userprofile/"
     auth_token = buildAuthToken(widget.user_id)
     headers = {'Authorization': auth_token}
     r = requests.get(address, headers=headers)
@@ -50,7 +50,7 @@ def loadScriptFromDB(python_widget):
     return ""
 
 def getDocumentTemplate(python_widget):
-    address = "http://" + python_widget.knowage_address + "/knowage/restful-services/2.0/backendservices/documenttemplate/" + str(python_widget.document_id)
+    address = python_widget.knowage_address + "/knowage/restful-services/2.0/backendservices/documenttemplate/" + str(python_widget.document_id)
     auth_token = buildAuthToken(python_widget.user_id)
     headers = {'Authorization': auth_token, "Content-Type": "application/json"}
     r = requests.post(address, headers=headers, data=json.dumps(python_widget.analytical_drivers))

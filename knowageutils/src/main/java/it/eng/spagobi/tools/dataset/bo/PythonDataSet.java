@@ -125,10 +125,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 			JSONObject pythonEnv = new JSONObject(getProp(PythonDataSetConstants.PYTHON_ENVIRONMENT, jsonConf, false));
 			String label = pythonEnv.get("label").toString();
 			String pythonAddress = SingletonConfig.getInstance().getConfigValue(label);
-			if (pythonDatasetType != null && pythonDatasetType.equals("r"))
-				restAddress = "http://" + pythonAddress + "/dataset"; // R engine does not support https
-			else
-				restAddress = "https://" + pythonAddress + "/dataset";
+			restAddress = pythonAddress + "/dataset";
 
 		} catch (Exception e) {
 			throw new ConfigurationException("Problems in configuration of data proxy", e);
