@@ -634,10 +634,19 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 					}
 				}
 
-				boolean multivalue = false;
-				if (tempVal != null && tempVal.contains(",")) {
-					multivalue = true;
-				}
+				/**
+				 * This block of code:
+				 *
+				 * boolean multivalue = false;
+				 * if (tempVal != null && tempVal.contains(",")) {
+				 * 	multivalue = true;
+				 * }
+				 *
+				 * Was replaced by the following because the user has the ability
+				 * to say if the value is multivalue or not, we don't need to do
+				 * any logic.
+				 */
+				boolean multivalue = obj.optBoolean(MULTI_PARAM);
 
 				String value = "";
 				if (multivalue) {
