@@ -44,6 +44,7 @@ import it.eng.spago.security.DefaultCipher;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.services.LoginActionByToken;
 import it.eng.spagobi.commons.services.LoginModule;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -161,7 +162,7 @@ public class ProfileFilter implements Filter {
 					UserProfileManager.setProfile((UserProfile) profile);
 				} else {
 					String contextName = ChannelUtilities.getSpagoBIContextName(httpRequest);
-					if (!requestIsForHomePage(httpRequest)) {
+					if (!requestIsForHomePage(httpRequest) && !requestIsForLoginByToken(httpRequest)) {
 						String targetService = httpRequest.getRequestURI() + "?" + httpRequest.getQueryString();
 						String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&targetService="
 								+ URLEncoder.encode(targetService, "UTF-8");
@@ -187,6 +188,12 @@ public class ProfileFilter implements Filter {
 	private boolean requestIsForHomePage(HttpServletRequest request) {
 		// returns true in case request has PAGE=LoginPage parameter, false otherwise
 		return request.getParameter(Constants.PAGE) != null && request.getParameter(Constants.PAGE).equalsIgnoreCase(LoginModule.PAGE_NAME);
+	}
+
+	private boolean requestIsForLoginByToken(HttpServletRequest request) {
+		// returns true in case request has ACTION_NAME=LOGIN_ACTION_BY_TOKEN parameter, false otherwise
+		return request.getParameter(Constants.ACTION_NAME) != null
+				&& request.getParameter(Constants.ACTION_NAME).equalsIgnoreCase(LoginActionByToken.SERVICE_NAME);
 	}
 
 	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer, HttpSession httpSession) {
