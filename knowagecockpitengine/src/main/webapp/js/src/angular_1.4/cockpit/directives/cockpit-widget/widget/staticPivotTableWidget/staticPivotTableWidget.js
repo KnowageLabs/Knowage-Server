@@ -289,6 +289,15 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			var subtotalHiddenCellQuery = "td[id=" + parent + "]";
 			var subtotalHiddenCell = widgetEl.querySelectorAll(subtotalHiddenCellQuery);
 			subtotalHiddenCell[1].classList.add('hidden');
+			//hide all children hidden cells
+			var childrenHiddenCellsQuery = "td.cell-visible";
+			var childrenHiddenCells = widgetEl.querySelectorAll(childrenHiddenCellsQuery);
+			childrenHiddenCells.forEach(function(cell, index){
+				cell.classList.remove('cell-visible');
+				cell.classList.add('hidden');
+			});
+			//reset rowspans
+			$scope.resetParentsRowspan(parentKey, parent, widgetEl);
 		}
 		$scope.isExpanded = true;
 	}
@@ -398,8 +407,12 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 			}
 		}
+		$scope.resetParentsRowspan(column, value, widgetEl);
+	}
+
+	$scope.resetParentsRowspan = function(key, value, widgetEl) {
 		//reset all parents rowspan to initial value
-		var allParentsQuery = "tr[" + column + "='" + value + "'] td[start-span]";
+		var allParentsQuery = "tr[" + key + "='" + value + "'] td[start-span]";
 		var allParents = widgetEl.querySelectorAll(allParentsQuery);
 		allParents.forEach(function(element){
 			var originalRowspan = element.getAttribute('start-span');
