@@ -169,6 +169,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		dataToSend.crosstabDefinition.rows = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.rows, 'style', false);
 		dataToSend.crosstabDefinition.columns = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.columns, 'style', false);
 
+		$scope.sentData = dataToSend;	//used for expand/collapse all
+
 		$scope.applyI18N(dataToSend);
 		$scope.options = dataToSend;
 
@@ -227,19 +229,43 @@ function cockpitStaticPivotTableWidgetControllerFunction(
     	return clone;
 	};
 
+	$scope.getParentValues = function(key) {
+		var values = [];
+		for (i in $scope.sentData.metadata.fields) {
+			var field = $scope.sentData.metadata.fields[i];
+			if (field.header == key) {
+				var colName = field.name;
+				break;
+			}
+		}
+		for (i in $scope.sentData.jsonData) {
+			var value = $scope.sentData.jsonData[i][colName];
+			if (values.indexOf(value) == -1) values.push(value);
+		}
+		return values;
+	}
+
 	$scope.collapseAll = function(e) {
 		e.stopImmediatePropagation();
 		e.preventDefault();
-		var parentValues = ['France', 'Germany', 'Italy'];
-		var parentKey = "Country";
+		var parentKey = $scope.sentData.crosstabDefinition.rows[0].alias;
+		var parentValues = $scope.getParentValues(parentKey);
 		var widgetEl = document.getElementById($scope.ngModel.id);
+
 		for (p in parentValues) {
 			var parent = parentValues[p];
+			//hide all rows
 			var rowsToHideQuery = "tr[" + parentKey + "='" + parent + "']";
 			var rowsToHide = widgetEl.querySelectorAll(rowsToHideQuery);
 			rowsToHide.forEach(function(row, index){
 				row.style.display = 'none';
 			});
+			//show only subtotal row
+			var subtotalHiddenCellQuery = "td[id=" + parent + "]";
+			var subtotalHiddenCell = widgetEl.querySelectorAll(subtotalHiddenCellQuery);
+			subtotalHiddenCell[1].parentElement.style.display = "table-row";
+			//show hidden cell in subtotal row
+			subtotalHiddenCell[1].classList.remove('hidden');
 		}
 		$scope.isExpanded = false;
 	}
@@ -247,8 +273,23 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 	$scope.expandAll = function(e) {
 		e.stopImmediatePropagation();
 		e.preventDefault();
-		var parentValues = ['France', 'Germany', 'Italy'];
-		var parentKey = "Country";
+		var parentKey = $scope.sentData.crosstabDefinition.rows[0].alias;
+		var parentValues = $scope.getParentValues(parentKey);
+		var widgetEl = document.getElementById($scope.ngModel.id);
+
+		//show all rows
+		var rowsToShowQuery = "tr";
+		var rowsToShow = widgetEl.querySelectorAll(rowsToShowQuery);
+		rowsToShow.forEach(function(row, index){
+			row.style.display = 'table-row';
+		});
+		for (p in parentValues) {
+			var parent = parentValues[p];
+			//hide cell in subtotal row
+			var subtotalHiddenCellQuery = "td[id=" + parent + "]";
+			var subtotalHiddenCell = widgetEl.querySelectorAll(subtotalHiddenCellQuery);
+			subtotalHiddenCell[1].classList.add('hidden');
+		}
 		$scope.isExpanded = true;
 	}
 

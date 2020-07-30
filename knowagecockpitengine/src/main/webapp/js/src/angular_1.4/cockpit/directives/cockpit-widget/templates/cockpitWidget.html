@@ -156,9 +156,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-button>
 				
 				<!-- REMOVE EMPTY FIELDS for static pivot table widget only -->
-				<md-button class="md-fab md-raised md-mini" aria-label="search button" ng-class="{'md-primary':activeSearch}" ng-if="checkType(ngModel.type, ['static-pivot-table'])" ng-click="removeEmptyRows($event);$event.stopPropagation();" >
+				<md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['static-pivot-table'])" ng-click="removeEmptyRows($event);$event.stopPropagation();" >
 					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.removeemptyfields")}}</md-tooltip>
-					<md-icon md-font-icon="fas fa-align-left"></md-icon>
+					<md-icon md-font-icon="fas fa-align-left"></md-icon>		
+				</md-button>
+				
+				<!-- COLLAPSE ALL ROWS for static pivot table widget only -->
+				<md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['static-pivot-table']) && ngModel.content.crosstabDefinition.config.expandCollapseRows" ng-click="collapseAll($event);$event.stopPropagation();" >
+					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.collapseallrows")}}</md-tooltip>
+					<md-icon md-font-icon="fas fa-minus-square"></md-icon>
+				</md-button>
+				
+				<!-- EXPAND ALL ROWS for static pivot table widget only -->
+				<md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['static-pivot-table']) && ngModel.content.crosstabDefinition.config.expandCollapseRows" ng-click="expandAll($event);$event.stopPropagation();" >
+					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandallrows")}}</md-tooltip>
+					<md-icon md-font-icon="fas fa-plus-square"></md-icon>
 				</md-button>
 			
 				<md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['table']) && !widExp" ng-class="{'activeSearch':activeSearch}" ng-click="openSearchBar($event);$event.stopPropagation();">
