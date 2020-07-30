@@ -178,6 +178,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$q.all($scope.oldUpdateExecutions).then(function() {
 			newUpdateExecution.then(
 				function(response){
+					$scope.isExpanded = true;
 					var fatherElement = angular.element($scope.subCockpitWidget);
 					$scope.subCockpitWidget.html(response.data.htmlTable);
 					$scope.addPivotTableStyle();
@@ -225,6 +226,31 @@ function cockpitStaticPivotTableWidgetControllerFunction(
     	this.traverse(clone, func);
     	return clone;
 	};
+
+	$scope.collapseAll = function(e) {
+		e.stopImmediatePropagation();
+		e.preventDefault();
+		var parentValues = ['France', 'Germany', 'Italy'];
+		var parentKey = "Country";
+		var widgetEl = document.getElementById($scope.ngModel.id);
+		for (p in parentValues) {
+			var parent = parentValues[p];
+			var rowsToHideQuery = "tr[" + parentKey + "='" + parent + "']";
+			var rowsToHide = widgetEl.querySelectorAll(rowsToHideQuery);
+			rowsToHide.forEach(function(row, index){
+				row.style.display = 'none';
+			});
+		}
+		$scope.isExpanded = false;
+	}
+
+	$scope.expandAll = function(e) {
+		e.stopImmediatePropagation();
+		e.preventDefault();
+		var parentValues = ['France', 'Germany', 'Italy'];
+		var parentKey = "Country";
+		$scope.isExpanded = true;
+	}
 
 	$scope.collapse = function(e, column, value, parent) {
 		e.stopImmediatePropagation();
@@ -300,7 +326,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var rowSpanModifier = -1;
 		var firstRowSpanModifier = 0;
 		if(rowsToShow[0].children[0].id != value) firstRowSpanModifier++;
-			rowsToShow.forEach(function(row, index){
+		rowsToShow.forEach(function(row, index){
 			if(index == 0 && row.children[0].id != value) {
 				rowSpanModifier--;
 			} else {
@@ -331,9 +357,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 			}
 		}
-		var cellQuery = "tr[" + column + "='" + value + "'] td[id='"+ value +"']";
-		var originalRowspan = widgetEl.querySelectorAll(cellQuery)[0].getAttribute('start-span');
-		widgetEl.querySelectorAll(cellQuery)[0].setAttribute('rowspan', originalRowspan);
+		//reset all parents rowspan to initial value
+		var allParentsQuery = "tr[" + column + "='" + value + "'] td[start-span]";
+		var allParents = widgetEl.querySelectorAll(allParentsQuery);
+		allParents.forEach(function(element){
+			var originalRowspan = element.getAttribute('start-span');
+			element.setAttribute('rowspan', originalRowspan);
+		});
 	}
 
 	$scope.traverse = function(o, func) {
