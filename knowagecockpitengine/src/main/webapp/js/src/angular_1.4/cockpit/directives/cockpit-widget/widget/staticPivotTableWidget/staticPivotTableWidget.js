@@ -302,13 +302,48 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$scope.isExpanded = true;
 	}
 
+	$scope.getCorrectElement = function(allElements, parent) {
+		for (var i=0; i<allElements.length; i++) {
+			var rightElement = true;
+			for (var key in parent) {
+				var val = parent[key];
+				var attrVal = allElements[i].parentElement.getAttribute(key);
+				if (!attrVal || attrVal != val) {
+					rightElement = false;
+					break;
+				}
+			}
+			if (rightElement) {
+				var element = allElements[i];
+				break;
+			}
+		}
+		return element;
+	}
+
+	$scope.getCorrectRows = function(allElements, parent) {
+		var subtotals = [];
+		if (Object.keys(parent).length > 0) { //filter only rows related to current parent, don't hide rows of other parents
+			for (var i=0; i<allElements.length; i++) {
+				for (var key in parent) {
+					var val = parent[key];
+					var attrVal = allElements[i].getAttribute(key);
+					if (attrVal && attrVal == val) {
+						subtotals.push(allElements[i]);
+					}
+				}
+			}
+			return subtotals;
+		} else return allElements;
+	}
+
 	$scope.collapse = function(e, column, value, parent) {
 		e.stopImmediatePropagation();
 		e.preventDefault();
 		var widgetEl = document.getElementById($scope.ngModel.id);
 		var rowQuery = "tr[" + column + "='" + value + "']";
-		var rowsToHide = widgetEl.querySelectorAll(rowQuery);
 		var hiddenRows = 0;
+		var rowsToHide = $scope.getCorrectRows(widgetEl.querySelectorAll(rowQuery), parent);
 		rowsToHide.forEach(function(row, index){
 			if (row.style.display == 'none') hiddenRows++; // count rows that have already been hidden
 			if (index > 0) {
@@ -329,7 +364,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 							finished = true;
 						} else { // parent elements in the same row
 							var rowspan = row.children[c].getAttribute('rowspan');
-//							row.children[c].setAttribute('rowspan', parseInt(rowspan) + 1);
 							row.children[c].setAttribute('normalizedRowspan', true);
 						}
 					}
@@ -338,10 +372,14 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		});
 		var subTotalQuery = "tr[" + column + "='" + value + "'][SubTotal]";
 		var allSubTotals = widgetEl.querySelectorAll(subTotalQuery);
-		widgetEl.querySelectorAll(subTotalQuery)[allSubTotals.length - 1].style.display = "table-row";
+		var subTotals = $scope.getCorrectRows(allSubTotals, parent);
+		subTotals[subTotals.length - 1].style.display = "table-row";
+//		widgetEl.querySelectorAll(subTotalQuery)[allSubTotals.length - 1].style.display = "table-row";
 		var cellQuery = "tr[" + column + "='" + value + "'][SubTotal] td[id='"+ value +"'].hidden";
-		widgetEl.querySelectorAll(cellQuery)[0].classList.add('cell-visible');
-		widgetEl.querySelectorAll(cellQuery)[0].classList.remove('hidden');
+		var allCells = widgetEl.querySelectorAll(cellQuery);
+		var cell = $scope.getCorrectElement(allCells, parent);
+		cell.classList.add('cell-visible');
+		cell.classList.remove('hidden');
 		//if not the first level change the parent rowspan to avoid fat rows
 		if (parent) {
 			for (var p in parent) { // loop on all parents
@@ -372,7 +410,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		e.preventDefault();
 		var widgetEl = document.getElementById($scope.ngModel.id);
 		var rowQuery = "tr[" + column + "='" + value + "']";
-		var rowsToShow = widgetEl.querySelectorAll(rowQuery);
+		var rowsToShow = $scope.getCorrectRows(widgetEl.querySelectorAll(rowQuery), parent);
 		var rowSpanModifier = -1;
 		var firstRowSpanModifier = 0;
 		if(rowsToShow[0].children[0].id != value) firstRowSpanModifier++;
@@ -385,6 +423,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			row.style.display = "table-row";
 			row.querySelectorAll('td').forEach(function(cell) {
 				if (cell.classList.contains("cell-visible")) {
+					cell.classList.remove("cell-visible");
 					cell.classList.add('hidden');
 					rowSpanModifier++;
 				}
