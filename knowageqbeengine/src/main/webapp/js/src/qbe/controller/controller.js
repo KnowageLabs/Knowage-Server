@@ -170,7 +170,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			exportService.setBody($scope.bodySend);
 			window.parent.queryCatalogue = {catalogue: {queries: [$scope.editQueryObj]}};
 		}
-		
+
 
 	}
 	$scope.$watch('bodySend',function(newValue,oldValue){
@@ -869,15 +869,19 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
     	return lastcount +1;
     }
-    $scope.createSubquery = function(){
-    	var subquery = new Query($scope.createQueryName());
-    	$scope.query.subqueries.push(subquery);
-    	$scope.editQueryObj = subquery;
-    }
-    $scope.stopEditingSubqueries = function(){
-    	$scope.editQueryObj = $scope.query;
-    }
-    comunicator.sendMessage("qbeJSONQuery");
+	$scope.createSubquery = function(){
+		var subquery = new Query($scope.createQueryName());
+		$scope.query.subqueries.push(subquery);
+		$scope.editQueryObj = subquery;
+	}
+	$scope.stopEditingSubqueries = function(){
+		if ($scope.editQueryObj.fields.length != 1) {
+			sbiModule_messaging.showErrorMessage($scope.translate.load("kn.qbe.subquery.onefielderror"), $scope.translate.load("kn.qbe.general.error"));
+		} else {
+			$scope.editQueryObj = $scope.query;
+		}
+	}
+	comunicator.sendMessage("qbeJSONQuery");
 
     $scope.relationsListColumns = [
     	{"label": $scope.translate.load("kn.qbe.dialog.table.column.relation.name"), "name": "relationName"},
