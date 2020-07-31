@@ -762,18 +762,21 @@ public class DataSetTransformer {
 			}
 		}
 		LinkedHashMap<String, String> pair = new LinkedHashMap<String, String>();
-		for (Object object : dataRows) {
-			if (object instanceof LinkedHashMap) {
-				LinkedHashMap<String, String> obj = (LinkedHashMap<String, String>) object;
-				pair.put(obj.get(groupByIndex), obj.get(columnIndex));
+		JSONObject jsonPair = null;
+		if (!columnIndex.equals("") && !groupByIndex.equals("")) {
+			for (Object object : dataRows) {
+				if (object instanceof LinkedHashMap) {
+					LinkedHashMap<String, String> obj = (LinkedHashMap<String, String>) object;
+					pair.put(obj.get(groupByIndex), obj.get(columnIndex));
+				}
+			}
+			try {
+				jsonPair = new JSONObject(pair);
+			} catch (JSONException e) {
+				throw new SpagoBIServiceException("Error while creating JSONObject for column ordering", e);
 			}
 		}
-		JSONObject jsonPair = null;
-		try {
-			jsonPair = new JSONObject(pair);
-		} catch (JSONException e) {
-			throw new SpagoBIServiceException("Error while creating JSONObject for column ordering", e);
-		}
+
 		return jsonPair;
 
 	}
