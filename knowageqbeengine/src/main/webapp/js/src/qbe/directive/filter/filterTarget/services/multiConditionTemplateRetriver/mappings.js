@@ -23,7 +23,7 @@
 		var init = function(){
 			register(['manual'],'manual',mappings)
 			register(['parameter'],'parameter',mappings)
-			register(['valueofthefield'],'manual',mappings)
+			register(['valueoffield'],'valueoffield',mappings)
 			register(['anotherentity'],'anotherentity',mappings)
 			register(['subquery'],'subqueries',mappings)
 			register(['java.sql.date','manual'],'date',mappings)
