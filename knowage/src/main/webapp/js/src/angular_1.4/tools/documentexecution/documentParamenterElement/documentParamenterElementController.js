@@ -415,7 +415,7 @@
 					};
 
 					paramDialogCtrl.disableButton = function() {
-						if(!paramDialogCtrl.tempParameter.parameterValue || paramDialogCtrl.tempParameter.parameterValue && Array.isArray(paramDialogCtrl.tempParameter.parameterValue) && paramDialogCtrl.tempParameter.parameterValue.length==0) {
+						if(!paramDialogCtrl.tempParameter.multivalue && (!paramDialogCtrl.tempParameter.parameterValue || paramDialogCtrl.tempParameter.parameterValue && Array.isArray(paramDialogCtrl.tempParameter.parameterValue) && paramDialogCtrl.tempParameter.parameterValue.length==0)) {
 							return true;
 						} else return false;
 					}
