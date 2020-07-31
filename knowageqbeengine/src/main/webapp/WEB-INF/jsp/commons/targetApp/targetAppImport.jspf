@@ -18,6 +18,7 @@
 <script type="text/javascript" src="<%= directivesPath + "/anotherentity/anotherentity.js"%>"></script>
 <script type="text/javascript" src="<%= directivesPath + "/date/date.js"%>"></script>
 <script type="text/javascript" src="<%= directivesPath + "/manual/manual.js"%>"></script>
+<script type="text/javascript" src="<%= directivesPath + "/valueoffield/valueoffield.js"%>"></script>
 <script type="text/javascript" src="<%= directivesPath + "/parameter/parameter.js"%>"></script>
 <script type="text/javascript" src="<%= directivesPath + "/multidate/multidate.js"%>"></script>
 <script type="text/javascript" src="<%= directivesPath + "/multitime/multitime.js"%>"></script>

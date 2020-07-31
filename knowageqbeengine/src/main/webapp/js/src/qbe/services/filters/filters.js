@@ -26,11 +26,14 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate)
 		return response;
 	};
 
-	this.getTargetTypes = [
-		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.manual"),value:"manual"},
-		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.field"),value:"valueOfField"},
-		  {name:sbiModule_translate.load("kn.qbe.filters.target.types.anotherEntity"),value:"anotherEntity"},
+	this.TARGET_TYPE_MANUAL         = {name:sbiModule_translate.load("kn.qbe.filters.target.types.manual"),value:"manual"};
+	this.TARGET_TYPE_VALUE_OF_FIELD = {name:sbiModule_translate.load("kn.qbe.filters.target.types.field"),value:"valueOfField"};
+	this.TARGET_TYPE_ANOTHER_ENTITY = {name:sbiModule_translate.load("kn.qbe.filters.target.types.anotherEntity"),value:"anotherEntity"};
 
+	this.getTargetTypes = [
+		this.TARGET_TYPE_MANUAL,
+		this.TARGET_TYPE_VALUE_OF_FIELD,
+		this.TARGET_TYPE_ANOTHER_ENTITY
 	];
 
 	this.getHavingTargetTypes = [

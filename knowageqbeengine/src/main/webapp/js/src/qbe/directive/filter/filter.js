@@ -37,6 +37,7 @@ angular.module('qbe_filter', ['ngMaterial','angular_table','targetApp' ])
 });
 
 function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule_inputParams, sbiModule_translate, $http, sbiModule_config,$mdPanel, $mdDialog, $httpParamSerializer, sbiModule_restServices, entity_service){
+	$scope.showTable = new Map();
 	$scope.spatial = sbiModule_user.functionalities.indexOf("SpatialFilter")>-1;
 	$scope.filters=angular.copy($scope.ngModel.queryFilters);
 	$scope.advancedFilters=angular.copy($scope.ngModel.advancedFilters);
@@ -121,39 +122,38 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		var entities = [];
 		var temporalFilter = {};
 
-
-		$scope.showTable = false;
 		$scope.targetOption = "default";
 		for(var i =0; i< $scope.selectedTemporalFilter.definition.length;i++){
 			$scope.filterIndex = checkForIndex();
 
-		var object = {
-				"filterId": "Filter"+$scope.filterIndex,
-				"filterDescripion": "Filter"+$scope.filterIndex,
-				"filterInd": $scope.filterIndex,
-				"promptable": false,
-				"leftOperandValue": $scope.ngModel.field.id,
-				"leftOperandDescription": $scope.ngModel.field.longDescription,
-				"leftOperandLongDescription": $scope.ngModel.field.longDescription,
-				"leftOperandType": "Field Content",
-				"leftOperandDefaultValue": null,
-				"leftOperandLastValue": null,
-				"leftOperandAlias": $scope.ngModel.field.name,
-				"leftOperandDataType": "",
-				"operator": "BETWEEN",
-				"rightType" : "manual",
-				"rightOperandValue": [$scope.selectedTemporalFilter.definition[i].from, $scope.selectedTemporalFilter.definition[i].to],
-				"rightOperandDescription": $scope.createRightOperandDescription($scope.selectedTemporalFilter.definition[i].from,$scope.selectedTemporalFilter.definition[i].to,$scope.ngModel.field.dataType),
-				"rightOperandLongDescription": $scope.createRightOperandDescription($scope.selectedTemporalFilter.definition[i].from,$scope.selectedTemporalFilter.definition[i].to,$scope.ngModel.field.dataType),
-				"rightOperandType": "Static Content",
-				"rightOperandDefaultValue": [""],
-				"rightOperandLastValue": [""],
-				"rightOperandAlias": null,
-				"rightOperandDataType": "",
-				"booleanConnector": "OR",
-				"deleteButton": false
-			}
-		$scope.filters.push(object);
+			var object = {
+					"filterId": "Filter"+$scope.filterIndex,
+					"filterDescripion": "Filter"+$scope.filterIndex,
+					"filterInd": $scope.filterIndex,
+					"promptable": false,
+					"leftOperandValue": $scope.ngModel.field.id,
+					"leftOperandDescription": $scope.ngModel.field.longDescription,
+					"leftOperandLongDescription": $scope.ngModel.field.longDescription,
+					"leftOperandType": "Field Content",
+					"leftOperandDefaultValue": null,
+					"leftOperandLastValue": null,
+					"leftOperandAlias": $scope.ngModel.field.name,
+					"leftOperandDataType": "",
+					"operator": "BETWEEN",
+					"rightType" : "manual",
+					"rightOperandValue": [$scope.selectedTemporalFilter.definition[i].from, $scope.selectedTemporalFilter.definition[i].to],
+					"rightOperandDescription": $scope.createRightOperandDescription($scope.selectedTemporalFilter.definition[i].from,$scope.selectedTemporalFilter.definition[i].to,$scope.ngModel.field.dataType),
+					"rightOperandLongDescription": $scope.createRightOperandDescription($scope.selectedTemporalFilter.definition[i].from,$scope.selectedTemporalFilter.definition[i].to,$scope.ngModel.field.dataType),
+					"rightOperandType": "Static Content",
+					"rightOperandDefaultValue": [""],
+					"rightOperandLastValue": [""],
+					"rightOperandAlias": null,
+					"rightOperandDataType": "",
+					"booleanConnector": "OR",
+					"deleteButton": false
+				}
+			$scope.filters.push(object);
+			$scope.showTable.set(object.filterId, false);
 		}
 		console.log($scope.filters);
 		$mdDialog.cancel();
@@ -172,7 +172,6 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 
 	$scope.addNewFilter= function (){
 		$scope.filterIndex = checkForIndex();
-		$scope.showTable = false;
 		$scope.targetOption = "default";
 		var object = {
 				"filterId": "Filter"+$scope.filterIndex,
@@ -203,6 +202,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 				"entity": $scope.ngModel.field.entity
 			}
 		$scope.filters.push(object);
+		$scope.showTable.set(object.filterId, false);
 	}
 
 	$scope.deleteFilter = function (filter){
@@ -294,13 +294,17 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 
 	};
 	$scope.changeTarget = function (option, filter){
-		$scope.showTable = false;
+		$scope.currentFilter = filter;
+		/*
+		 * Destroy all tables
+		 */
+		$scope.showTable.forEach(function(value, key, map) {
+			map.set(key, false);
+		});
 		switch (option) {
 		case "valueOfField":
 			filter.rightOperandType="Static Content";
-			$scope.currentFilter = filter;
-			$scope.showTable = true;
-			openTableWithValues($scope.currentFilter);
+			openTableWithValues(filter);
 			break;
 		case "anotherEntity":
 			filter.rightOperandType="Field Content";
@@ -316,26 +320,13 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 			break;
 		}
 	}
-	$scope.showTable = false;
 	$scope.listOfValues = [];
 	var openTableWithValues = function (filter){
-		//$scope.selected.length=filter.rightOperandValue.length;
-		$scope.showTable = true;
-		filters_service.getFieldsValue($scope.ngModel.field).then(function(response){
-			$scope.listOfValues = response.data.rows;
-			$scope.valuesGrid.api.setRowData($scope.listOfValues);
-			$scope.valuesGrid.api.forEachNode( function (node) {
-				for (var i = 0; i < filter.rightOperandValue.length; i++) {
-					if (node.data.column_1 === filter.rightOperandValue[i]) {
-						$scope.valuesGrid.api.selectNode(node, true);
-
-			        }
-
-				}
-
-		    });
-
-		});
+		filters_service.getFieldsValue($scope.ngModel.field)
+			.then(function(response) {
+				$scope.listOfValues = response.data.rows;
+				$scope.showTable.set(filter.filterId, true);
+			});
 
 	}
 
@@ -421,74 +412,99 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	};
 
 	$scope.columns = [
-		{"headerName":"Valori","field":"column_1",checkboxSelection:true,rowMultiSelectWithClick:true}
+		{"headerName":"Valori","field":"column_1",checkboxSelection:true,rowMultiSelectWithClick:"checkboxSelection"}
 	];
 
 	$scope.valuesGrid = {
 			rowData: null,
 			angularCompileRows: true,
-	        enableColResize: false,
-	        enableFilter: true,
-	        enableSorting: true,
-	        pagination: true,
-	        suppressRowClickSelection: true,
-	        paginationAutoPageSize: true,
-	        columnDefs:$scope.columns,
-	        rowSelection:"multiple",
-	        onRowSelected: rowSelected,
-	        onGridSizeChanged: resizeColumns,
-	        onGridReady: resizeColumns
-
+			enableColResize: false,
+			enableFilter: true,
+			enableSorting: true,
+			pagination: true,
+			suppressRowClickSelection: true,
+			paginationAutoPageSize: true,
+			columnDefs:$scope.columns,
+			rowSelection: "multiple",
+			onRowSelected: rowSelected,
+			onGridSizeChanged: resizeColumns,
+			onGridReady: tableReady
 	};
+
+	function tableReady() {
+
+		$scope.valuesGrid.api.setRowData($scope.listOfValues);
+		$scope.valuesGrid.api.forEachNode( function (node) {
+			for (var i = 0; i < $scope.currentFilter.rightOperandValue.length; i++) {
+				if (node.data.column_1 === $scope.currentFilter.rightOperandValue[i]) {
+					$scope.valuesGrid.api.selectNode(node, true);
+
+				}
+
+			}
+
+		});
+
+		resizeColumns();
+	}
 	function resizeColumns(){
-	    $scope.valuesGrid.api.sizeColumnsToFit();
+		if ($scope.valuesGrid.api != null) {
+			$scope.valuesGrid.api.sizeColumnsToFit();
+		}
 	};
 	function rowSelected(){
-	    $scope.selected = $scope.valuesGrid.api.getSelectedRows();
-	    $scope.forInput = '';
+		var currentFilter = $scope.currentFilter;
+
+		$scope.selected = $scope.valuesGrid.api.getSelectedRows();
+		$scope.forInput = '';
 		for (var i = 0; i < $scope.selected.length; i++) {
 			$scope.forInput += $scope.selected[i].column_1;
 			if(i+1!=$scope.selected.length) 	$scope.forInput += " ---- "
 		}
-		if($scope.currentFilter) {
-			$scope.currentFilter.rightOperandDescription = angular.copy($scope.forInput);
-			/*$scope.currentFilter.rightOperandValue=[];
+		if(currentFilter) {
+			currentFilter.rightOperandDescription = angular.copy($scope.forInput);
+			currentFilter.rightOperandValue.splice(0, currentFilter.rightOperandValue.length);
 			for (var i = 0; i < $scope.selected.length; i++) {
-				$scope.currentFilter.rightOperandValue.push($scope.selected[i].column_1)
-			}*/
-			$scope.currentFilter.rightOperandType="Static Content";
-			$scope.currentFilter.rightOperandLongDescription=$scope.currentFilter.rightOperandDescription;
+				currentFilter.rightOperandValue.push($scope.selected[i].column_1)
+			}
+			currentFilter.rightOperandType = "Static Content";
+			currentFilter.rightOperandLongDescription = currentFilter.rightOperandDescription;
 		}
+
+		$scope.$apply();
 	};
 
 	$scope.paramsPreviewGrid = {
 			rowData: $scope.pars,
 			angularCompileRows: true,
-	        enableColResize: false,
-	        enableFilter: true,
-	        enableSorting: true,
-	        pagination: true,
-	        suppressRowClickSelection: true,
-	        paginationAutoPageSize: true,
-	        columnDefs:$scope.parametersPreviewColumns,
-	        onGridSizeChanged: resizeColumnsParams,
-	        onGridReady: resizeColumnsParams,
-	        editType: 'fullRow',
-	        onRowValueChanged: function(event,a) {
-	        	if(!event.data.value) {
-	        		event.data["value"] = event.data.defaultValue;
-	        	}
+			enableColResize: false,
+			enableFilter: true,
+			enableSorting: true,
+			pagination: true,
+			suppressRowClickSelection: true,
+			paginationAutoPageSize: true,
+			columnDefs:$scope.parametersPreviewColumns,
+			onGridSizeChanged: resizeColumnsParams,
+			onGridReady: resizeColumnsParams,
+			editType: 'fullRow',
+			onRowValueChanged: function(event,a) {
+				if(!event.data.value) {
+					event.data["value"] = event.data.defaultValue;
+				}
 
-	        },
-
+			},
 	};
 
 	function resizeColumnsParams(){
-	    $scope.paramsPreviewGrid.api.sizeColumnsToFit();
+		$scope.paramsPreviewGrid.api.sizeColumnsToFit();
 	}
 
 	$scope.filterByColumnName = function(item) {
 		return item.leftOperandAlias == $scope.field.name;
+	}
+
+	$scope.isTableVisible = function(filter) {
+		return $scope.showTable.get(filter.filterId);
 	}
 
 }
