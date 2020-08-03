@@ -166,6 +166,29 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:sbiModule_translate.load('kn.variables.setheader'),value:'header'}
 		 ],
 		 conditions : ['>','<','==','>=','<=','!='],
+		 htmlRegex : /[&<>"'àáâãäèéêëìíòóùú]/g,
+		 htmlEscapes:{
+		        '&': '&amp;',
+		        '<': '&lt;',
+		        '>': '&gt;',
+		        '"': '&quot;',
+		        "'": '&apos;',
+		        'à': '&agrave;',
+		        'á': '&aacute;',
+		        'â': '&acirc;',
+		        'ã': '&atilde;',
+		        'ä': '&auml;',
+		        'è': '&egrave;',
+		        'é': '&eacute;',
+		        'ê': '&ecirc;',
+		        'ë': '&euml;',
+		        'ì': '&igrave;',
+		        'í': '&iacute;',
+		        'ò': '&ograve;',
+		        'ó': '&oacute;',
+		        'ù': '&ugrave;',
+		        'ú': '&uacute;'
+		    },
 		 calculatedFieldsFunctions: [
 			   {
 				      "syntax":"SUM( "+sbiModule_translate.load("kn.generic.field")+" )",

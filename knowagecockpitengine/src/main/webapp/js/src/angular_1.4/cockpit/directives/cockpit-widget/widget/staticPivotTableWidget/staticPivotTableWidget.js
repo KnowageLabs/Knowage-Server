@@ -228,6 +228,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
     	this.traverse(clone, func);
     	return clone;
 	};
+	
+	$scope.escapeHtmlString = function(customString){
+		 var map = cockpitModule_generalOptions.htmlEscapes;
+		 return customString.replace(cockpitModule_generalOptions.htmlRegex, function(m) {
+			 return map[m];
+			 });
+	}
 
 	$scope.getParentValues = function(key) {
 		var values = [];
@@ -240,7 +247,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		}
 		for (i in $scope.sentData.jsonData) {
 			var value = $scope.sentData.jsonData[i][colName];
-			if (values.indexOf(value) == -1) values.push(value);
+			if (values.indexOf(value) == -1) values.push($scope.escapeHtmlString(value));
 		}
 		return values;
 	}
