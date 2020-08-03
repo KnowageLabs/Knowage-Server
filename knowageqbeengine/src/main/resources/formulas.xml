@@ -1112,29 +1112,35 @@
 	<formula>
 		<name>Case</name>
 		<syntax>Case  when condition then true_expression else false_expression end </syntax>
-		<body>Case when ${condition}  then ${true_expression} else ${false_expression} end</body>
+		<!--
+			TODO : template temporarily disabled beacause the wizard doesn't have the functionality
+			to autocomplete column names in the condition field; this workaround insert the template
+			body as is and let the user to edit it by himself.
+		 -->
+		<!-- <body>Case when ${condition}  then ${true_expression} else ${false_expression} end</body> -->
+		<body>Case when condition  then true_expression else false_expression end</body>
 		
-		<argument>
-			<name>condition</name>
-			<expected_value/>
-			<default_value/>
-			<argument_description>condition</argument_description>
-			<placeholder>condition</placeholder>
-		</argument>
-		<argument>
-			<name>true_expression</name>
-			<expected_value/>
-			<default_value/>
-			<argument_description>true_expression</argument_description>
-			<placeholder>true_expression</placeholder>
-		</argument>
-		<argument>
-			<name>false_expression</name>
-			<expected_value/>
-			<default_value/>
-			<argument_description>false_expression</argument_description>
-			<placeholder>false_expression</placeholder>
-		</argument>
+<!-- 		<argument> -->
+<!-- 			<name>condition</name> -->
+<!-- 			<expected_value/> -->
+<!-- 			<default_value/> -->
+<!-- 			<argument_description>condition</argument_description> -->
+<!-- 			<placeholder>condition</placeholder> -->
+<!-- 		</argument> -->
+<!-- 		<argument> -->
+<!-- 			<name>true_expression</name> -->
+<!-- 			<expected_value/> -->
+<!-- 			<default_value/> -->
+<!-- 			<argument_description>true_expression</argument_description> -->
+<!-- 			<placeholder>true_expression</placeholder> -->
+<!-- 		</argument> -->
+<!-- 		<argument> -->
+<!-- 			<name>false_expression</name> -->
+<!-- 			<expected_value/> -->
+<!-- 			<default_value/> -->
+<!-- 			<argument_description>false_expression</argument_description> -->
+<!-- 			<placeholder>false_expression</placeholder> -->
+<!-- 		</argument> -->
 		<output>Object</output>
 		<description>Returns the result if condition is true.</description>
 		<type>sql</type>
