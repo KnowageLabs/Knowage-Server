@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <md-card flex=50 flex-xs=100>
       <form name="signUpForm">
         <md-card-content layout="column" layout-align="start center">
-        	<img class="headerLogoImg" src="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/img/wapp/logo.png")%>">
+        	<img class="headerLogoImg" src="<%=urlBuilder.getResourceLink(request, "themes/commons/img/defaultTheme/logotipo.svg")%>" width="300px">
         	<h3>Modify profile</h3>
         	<div layout="row" layout-wrap>
         		<md-input-container class="md-block" flex=50 flex-xs=100>
