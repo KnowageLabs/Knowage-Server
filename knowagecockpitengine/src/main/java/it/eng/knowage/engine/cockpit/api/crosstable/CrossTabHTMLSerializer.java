@@ -183,6 +183,10 @@ public class CrossTabHTMLSerializer {
 	}
 
 	private String escapeAll(String text) {
+		if (text == null) {
+			return null;
+		}
+
 		return StringEscapeUtils.escapeHtml(text).replaceAll("'", "&apos;");
 	}
 
