@@ -183,7 +183,7 @@ public class CrossTabHTMLSerializer {
 	}
 
 	private String escapeAll(String text) {
-		return StringEscapeUtils.escapeHtml(text);
+		return StringEscapeUtils.escapeHtml(text).replaceAll("'", "&apos;");
 	}
 
 	private SourceBean serializeRowsMembers(CrossTab crossTab) throws SourceBeanException, JSONException {
