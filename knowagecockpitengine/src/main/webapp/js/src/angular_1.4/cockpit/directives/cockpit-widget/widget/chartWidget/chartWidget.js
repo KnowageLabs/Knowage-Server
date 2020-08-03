@@ -1443,7 +1443,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 						groupby['fieldType'] = "ATTRIBUTE";
 						if(chartCategory.drillOrder){
 							groupby['orderType'] = chartCategory.drillOrder[subs] ? chartCategory.drillOrder[subs].orderType : obj.orderType ;
-							groupby['orderColumn'] = chartCategory.drillOrder[subs] ? chartCategory.drillOrder[subs].orderColumn : obj.orderColumn;
+							groupby['orderColumn'] = chartCategory.drillOrder[subs] ? chartCategory.drillOrder[subs].orderColumn : (chartCategory.groupby || obj.orderColumn);
 						} else {
 							groupby['orderType'] = chartCategory.orderType ? chartCategory.orderType : "";
 							groupby['orderColumn'] = chartCategory.orderColumn ? chartCategory.orderColumn : "";
