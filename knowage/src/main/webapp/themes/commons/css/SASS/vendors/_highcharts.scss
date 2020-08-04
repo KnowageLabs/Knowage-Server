@@ -1,3 +1,6 @@
 .highcharts-xaxis-labels text {
 
 }
+cockpit-chart-widget chart-renderer div[style="position: relative;"] {
+	overflow: hidden;
+}
