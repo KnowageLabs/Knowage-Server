@@ -419,8 +419,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var rowQuery = "tr[" + column + "='" + value + "']";
 		var rowsToShow = $scope.getCorrectRows(widgetEl.querySelectorAll(rowQuery), parent);
 		var rowSpanModifier = -1;
-		var firstRowSpanModifier = 0;
-		if(rowsToShow[0].children[0].id != value) firstRowSpanModifier++;
 		rowsToShow.forEach(function(row, index){
 			if(index == 0 && row.children[0].id != value) {
 				rowSpanModifier--;
@@ -453,7 +451,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 			}
 		}
-		$scope.resetParentsRowspan(column, value, widgetEl);
 	}
 
 	$scope.resetParentsRowspan = function(key, value, widgetEl) {
