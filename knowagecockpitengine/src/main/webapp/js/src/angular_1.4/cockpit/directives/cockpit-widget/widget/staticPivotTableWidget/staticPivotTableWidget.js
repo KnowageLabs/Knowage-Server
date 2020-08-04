@@ -268,7 +268,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				row.style.display = 'none';
 			});
 			//show only subtotal row
-			var subtotalHiddenCellQuery = "td[id=" + parent + "]";
+			var subtotalHiddenCellQuery = "td[id='" + parent + "']";
 			var subtotalHiddenCell = widgetEl.querySelectorAll(subtotalHiddenCellQuery);
 			subtotalHiddenCell[1].parentElement.style.display = "table-row";
 			//show hidden cell in subtotal row
@@ -293,7 +293,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		for (p in parentValues) {
 			var parent = parentValues[p];
 			//hide cell in subtotal row
-			var subtotalHiddenCellQuery = "td[id=" + parent + "]";
+			var subtotalHiddenCellQuery = "td[id='" + parent + "']";
 			var subtotalHiddenCell = widgetEl.querySelectorAll(subtotalHiddenCellQuery);
 			subtotalHiddenCell[1].classList.add('hidden');
 			//hide all children hidden cells
