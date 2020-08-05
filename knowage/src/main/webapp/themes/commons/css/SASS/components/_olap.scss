@@ -602,15 +602,20 @@
   	margin-right: 10px;
   	line-height: 1.5;
   	max-height:28px;
-  	max-width: 160px;
-  	min-width: 140px;
-	.action{
-	  	width:20%;
-	}
 	.name {
 		line-height: 24px;
 		border-right:2px solid white;
-		min-width: 80%;
+		min-width: 80px;
+		max-width: 140px;
+		text-overflow: ellipsis;
+		padding-right: 5px;
+	}
+	.md-button {
+	    width: 28px;
+	    min-width: 28px;
+	    margin: 0;
+	    height: 28px;
+	    padding: 0;
 	}
 }
 
