@@ -589,7 +589,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.setZIndex(
 					/* a little offset to get space for background */
 					10 + /* then */ layerDef.order*1000);
-			layer.modalSelectionColumn = layerDef.modalSelectionColumn;
+			layer.modalSelectionColumn = layerDef.modalSelectionColumn || getDefaultModalSelectionColumn(layerDef);
 			layer.hasShownDetails = layerDef.hasShownDetails;
 			layer.isHeatmap = isHeatmap;
 			layer.isCluster = isCluster;
@@ -1517,7 +1517,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.map.addInteraction($scope.mouseWheelZoomInteraction);
 		}
 
-		// $scope.reinit();
+		function getDefaultModalSelectionColumn(layerDef) {
+			return layerDef.dataset
+				.metadata
+				.fieldsMeta
+				.find(function(field) {
+						return field.fieldType == 'SPATIAL_ATTRIBUTE';
+					})
+				.name;
+		}
 
 		// In edit mode, if a remove dataset from cokpit it has to be deleted also from widget
 		if (cockpitModule_properties.EDIT_MODE) {
