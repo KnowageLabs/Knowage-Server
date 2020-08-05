@@ -114,7 +114,7 @@
 													<md-checkbox ng-model="column.properties.showFilter" aria-label="Show column on filter" ng-if="column.fieldType=='ATTRIBUTE'" ng-disabled="!column.properties.aggregateBy"/>
 												</td>
 												<td style="display: flex;justify-content: center;">
-													<md-switch ng-if="column.fieldType == 'ATTRIBUTE'" ng-model="column.properties.modal" class="noMargin" ng-change="setModalColumn(column,layer)" aria-label="modal"></md-switch>
+													<md-switch ng-if="column.fieldType == 'ATTRIBUTE'" ng-model="column.properties.modal" class="noMargin" ng-change="setModalColumn(column,layer)" aria-label="modal" ng-disabled="!column.properties.aggregateBy"></md-switch>
 												</td>
 												<td style="text-align:center" class="multiTableAction">
 
