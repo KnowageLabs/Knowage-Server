@@ -237,8 +237,8 @@ public class CrossTabHTMLSerializer {
 			boolean isSubtotal = node.getValue().equals(CrossTab.SUBTOTAL);
 			if (crossTab.isExpandCollapseRows()) {
 				Map<String, String> hierarchicalAttributes = getHierarchicalAttributes(crossTab, node, isSubtotal);
-				for (String key : hierarchicalAttributes.keySet()) {
-					aRow.setAttribute(key, hierarchicalAttributes.get(key));
+				for (Map.Entry<String, String> entry : hierarchicalAttributes.entrySet()) {
+					aRow.setAttribute(entry.getKey(), entry.getValue());
 				}
 			}
 
@@ -418,12 +418,20 @@ public class CrossTabHTMLSerializer {
 		} else {
 			while (curNode.getColumnName() != null && !curNode.getColumnName().equals("null")) {
 				String attribute = crossTab.getColumnAliasFromName(curNode.getColumnName());
+				attribute = fixAttributeName(attribute);
 				String value = curNode.getValue();
 				hierarchicalAttributes.put(escapeAll(attribute), escapeAll(value));
 				curNode = curNode.getParentNode();
 			}
 		}
 		return hierarchicalAttributes;
+	}
+
+	private String fixAttributeName(String attribute) {
+		String ret = attribute;
+		// Replace all non alphanumeric characters
+		ret = ret.replaceAll("[^\\w]", "_");
+		return ret;
 	}
 
 	private SourceBean serializeColumnsHeaders(CrossTab crossTab) throws SourceBeanException, JSONException {
