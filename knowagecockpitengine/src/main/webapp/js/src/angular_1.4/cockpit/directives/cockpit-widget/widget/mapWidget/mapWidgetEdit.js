@@ -36,6 +36,7 @@ function mapWidgetEditControllerFunction(
 
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
+	$scope.datasetsAdditionalInfos = {};
 	$scope.availableAggregationFunctions = ['SUM','AVG','MIN','MAX','COUNT'];
 	$scope.availableBackgroundLayers = [];
 	$scope.availableOperators = [{'label':'==','value':'=='},{'label':'!=','value':'!='},{'label':'<','value':'<','range':true},{'label':'>','value':'>','range':true},{'label':'<=','value':'<=','range':true},{'label':'>=','value':'>=','range':true}];
@@ -609,5 +610,24 @@ function mapWidgetEditControllerFunction(
 
 	}
 
+	function getDatasetAdditionalInfo(dsId){
+		sbiModule_restServices.restToRootProject();
+		sbiModule_restServices.promiseGet('2.0/datasets', 'availableFunctions/' + dsId, "").then(function(response){
+			$scope.datasetsAdditionalInfos[dsId] = response.data;
+		}, function(response) {
+			if(response.data && response.data.errors && response.data.errors[0]) $scope.showAction(response.data.errors[0].message);
+			else $scope.showAction($scope.translate.load('sbi.generic.error'));
+		});
+	}
+
+	function loadLayersAdditionalInfos() {
+		$scope.newModel
+			.content
+			.layers
+			.map(function(layer) { return layer.dsId; })
+			.forEach(getDatasetAdditionalInfo);
+	}
+
 	loadAvailableLayers();
+	loadLayersAdditionalInfos();
 }
