@@ -772,7 +772,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				temp2.put(HREF, finalUrl);
 				temp2.put(LINK_TYPE, "execDirectUrl");
 				temp2.put(SRC, DetailMenuModule.findFunctionalityUrl(childElem, contextName));
-			} else if (childElem.getExternalApplicationUrl() != null) {
+			} else if (childElem.getExternalApplicationUrl() != null && !childElem.getExternalApplicationUrl().isEmpty()) {
 				temp2.put(HREF,
 						"javascript:callExternalApp('" + StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '" + path + "')");
 				temp2.put(LINK_TYPE, "callExternalApp");
