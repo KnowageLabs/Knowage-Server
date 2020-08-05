@@ -508,6 +508,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				return {'width':$scope.ngModel.settings.facets.width};
 			}return false;
 		}
+		
+		$scope.customFacetPrecision = function(){
+			if($scope.ngModel.settings.facets && $scope.ngModel.settings.facets.precision) {
+				return $scope.ngModel.settings.facets.precision;
+			}
+			return 2;
+		}
 
 		$scope.isFacetSelected = function(group,item){
 			if($scope.template.configuration.filters && $scope.template.configuration.filters[$scope.ngModel.dataset.label] && $scope.template.configuration.filters[$scope.ngModel.dataset.label][group] == item.column_1) return true;
@@ -592,6 +599,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.reinit();
+		
+	
+	$scope.getDecimalPlaces = function(colName, itemValue, metadataFields){
+            var decimalPlaces = 0;
+            var floatColumns = $filter('filter')(metadataFields, {type: 'float'}, true);
+            floatColumns.forEach(function(col){
+                if(col.name == colName) {
+                	decimalPlaces = $scope.customFacetPrecision();
+                }
+            });
+            
+            return decimalPlaces;
+        };
 
 	}
 

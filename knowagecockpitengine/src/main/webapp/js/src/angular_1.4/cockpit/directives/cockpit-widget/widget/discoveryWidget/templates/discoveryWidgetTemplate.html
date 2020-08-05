@@ -51,7 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 	          				{{ item.column_1 }}
 	          			</span>
 	          			<span flex></span>
-	          			<div class="chip">{{item.column_2}}</div>
+	          			<div class="chip">{{item.column_2 | number:getDecimalPlaces("column_2", item.column_2, facet.metaData.fields)}}</div>
 	          			<md-tooltip md-delay="500">{{item.column_1}}</md-tooltip>
 	        		</div>
         		</div>
