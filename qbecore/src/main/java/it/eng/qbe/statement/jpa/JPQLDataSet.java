@@ -93,7 +93,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		int resultNumber = -1;
 
 		EntityManager entityManager = getEntityMananger();
-		Session session = (Session) entityManager.getDelegate();
+		Session session = entityManager.unwrap(Session.class);
 		enableFilters(session);
 
 		IStatement filteredStatement = this.getStatement();
@@ -276,7 +276,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 			EntityManager entityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager();
 
-			Session session = (Session) entityManager.getDelegate();
+			Session session = entityManager.unwrap(Session.class);
 			enableFilters(session);
 
 			IStatement filteredStatement = getStatement();
@@ -320,7 +320,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		super.setDrivers(drivers);
 
 		EntityManager entityManager = getEntityMananger();
-		Session session = (Session) entityManager.getDelegate();
+		Session session = entityManager.unwrap(Session.class);
 		enableFilters(session);
 	}
 
