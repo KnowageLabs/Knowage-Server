@@ -761,8 +761,9 @@ public class DataSetTransformer {
 		if (!columnIndex.equals("") && !groupByIndex.equals("")) {
 			for (Object object : dataRows) {
 				if (object instanceof LinkedHashMap) {
-					LinkedHashMap<String, String> obj = (LinkedHashMap<String, String>) object;
-					pair.put(obj.get(groupByIndex), obj.get(columnIndex));
+					LinkedHashMap<Object, Object> obj = (LinkedHashMap<Object, Object>) object;
+					String value = "" + obj.get(columnIndex);
+					pair.put("" + obj.get(groupByIndex), value);
 				}
 			}
 			try {
