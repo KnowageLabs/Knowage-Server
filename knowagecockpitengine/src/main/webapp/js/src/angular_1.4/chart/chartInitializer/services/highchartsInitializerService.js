@@ -178,13 +178,31 @@ angular.module('chartInitializer')
 			}
 			chartConfMergeService.addProperty(renderObj.chartTemplate.advanced,chartConf);
 
-			if(renderObj.chartTemplate.groupSeriesCateg && renderObj.chartTemplate.VALUES.CATEGORY.drillOrder!=undefined &&
-				renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby]!=undefined &&
-				renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby].orderColumn == renderObj.chartTemplate.VALUES.CATEGORY.groupby){
-					var  orderType = renderObj.chartTemplate.VALUES.CATEGORY.drillOrder[renderObj.chartTemplate.VALUES.CATEGORY.groupby].orderType == "desc" ? 'desc' : 'asc';
-					if(orderType=='asc') sortAsc(chartConf.series);
-					else sortDesc(chartConf.series);
+			if(chartConf.chart.additionalData.orderColumnDataValues) {
+				var orderColumnValues = JSON.parse(chartConf.chart.additionalData.orderColumnDataValues);
+				var orderKeys = Object.keys(orderColumnValues);
+				for(var i = 0; i < chartConf.series.length; i++) {
+					for(var j = 0; j < orderKeys.length; j++) {
+						if(chartConf.series[i].name == orderKeys[j]) {
+							chartConf.series[i].orderValue = orderColumnValues[orderKeys[j]];
+						}
+					}
 				}
+			}
+
+			var groupBy = renderObj.chartTemplate.VALUES.CATEGORY.groupby;
+			var drillOrder = renderObj.chartTemplate.VALUES.CATEGORY.drillOrder;
+			if(renderObj.chartTemplate.groupSeriesCateg && drillOrder && drillOrder[groupBy] && drillOrder[groupBy].orderColumn) {
+				var orderType = drillOrder[groupBy].orderType == "desc" ? 'desc' : 'asc';
+				if(drillOrder[groupBy].orderColumn == groupBy){
+					if(orderType=='asc') sortAsc(chartConf.series, 'name');
+					else sortDesc(chartConf.series, 'name');
+				}else {
+					if(orderType=='asc') sortAsc(chartConf.series, 'orderValue');
+					else sortDesc(chartConf.series, 'orderValue');
+				}
+			}
+
 
 			this.chart =  new Highcharts.Chart(chartConf);
 			if(isBasic){
@@ -422,9 +440,9 @@ angular.module('chartInitializer')
 
 	}
 
-	var sortAsc = function (array){
+	var sortAsc = function (array, comparator){
 		array.sort(function(a, b){
-		    var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+		    var nameA=a[comparator].toLowerCase(), nameB=b[comparator].toLowerCase()
 		    if (nameA < nameB) //sort string ascending
 		        return -1
 		    if (nameA > nameB)
@@ -433,10 +451,10 @@ angular.module('chartInitializer')
 		})
 	}
 
-	var sortDesc = function (array){
+	var sortDesc = function (array, comparator){
 		array.sort(function(a, b){
-		    var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
-		    if (nameA > nameB) //sort string ascending
+		    var nameA=a[comparator].toLowerCase(), nameB=b[comparator].toLowerCase()
+		    if (nameA > nameB) //sort string descending
 		        return -1
 		    if (nameA < nameB)
 		        return 1

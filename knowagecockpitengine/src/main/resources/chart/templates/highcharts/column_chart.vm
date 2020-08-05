@@ -16,6 +16,9 @@
 #end
 #if($categorieColumns.get("drillOrder"))
 #set($drillOrder = $categorieColumns.get("drillOrder")) ## metadata related to categories
+	#if($drillOrder[$categorieColumns.groupby].orderColumn && $categorieColumns.groupby && $drillOrder[$categorieColumns.groupby].orderColumn != $categorieColumns.groupby)
+	#set($orderColumnDataValues = $datasettransformer.prepareDataForOrderingColumnForBar($rows,$dataFields,$drillOrder,$categorieColumns.groupby))
+	#end
 #end
 #if($categorieColumns.name=="")
 #set($categorieColumns.name = $categorieColumns.column)
@@ -96,8 +99,7 @@
 	#end
 #else
 	#set($serieKeyFeed = 0)
-	#foreach($serie in $series)
-	
+	#foreach($serie in $series)	
 		#set($serieMapKey = $serie.column + '_' + $serieKeyFeed)
 		#set($workAroundNoPrint = $seriesMap.put($serieMapKey , $serie))
 		
@@ -165,6 +167,9 @@
 			categoryName: '$categorieColumns.name',
 			categoryOrderColumn: '$categorieColumns.orderColumn',
 			categoryOrderType: '$categorieColumns.orderType',
+			#if($orderColumnDataValues)
+			orderColumnDataValues: '$orderColumnDataValues',
+			#end
 			 
 		},
     
@@ -1053,7 +1058,7 @@
 				#end
             ]
 		#end
-		#if(($chart.groupSeries && $chart.groupSeries =='true') || ($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true'))	
+		#if(($chart.groupSeries && $chart.groupSeries =='true') || ($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true'))
 		
 		#set($enableValues = $chart.VALUES.SERIE.showValue)
 		
