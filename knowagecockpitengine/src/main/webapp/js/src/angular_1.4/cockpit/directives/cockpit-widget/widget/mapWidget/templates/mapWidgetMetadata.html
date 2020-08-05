@@ -3,7 +3,7 @@
 								<div class="md-toolbar-tools">
 									<h2>{{layer.expanded}}</h2>
 									<span flex></span>
-									<calculated-field ng-model="layer"></calculated-field>
+									<calculated-field ng-model="layer" additional-info="datasetsAdditionalInfos[layer.dsId]"></calculated-field>
 								</div>
 							</md-toolbar>
 							<md-card-content flex layout="column" class="noPadding">
@@ -136,7 +136,7 @@
 																</md-button>
 															</md-menu-item>
 															<md-menu-item ng-if="column.isCalculated || !checkDs(column,false)" class="insideMenu">
-																<calculated-field ng-model="layer" selected-item="$index" inside-menu="true"></calculated-field><!--{{translate.load('sbi.cockpit.map.edit.metadata.upate')}}-->
+																<calculated-field ng-model="layer" selected-item="$index" inside-menu="true" additional-info="datasetsAdditionalInfos[layer.dsId]"></calculated-field><!--{{translate.load('sbi.cockpit.map.edit.metadata.upate')}}-->
 															</md-menu-item>
 															<md-menu-divider ng-if="isDeletable(column)"></md-menu-divider>
 															<md-menu-item ng-if="isDeletable(column)">
