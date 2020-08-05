@@ -10,9 +10,6 @@
 		<meta charset="UTF-8">
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 		<%@include file="/WEB-INF/jsp/commons/olap/olapImport.jsp"%>
-		<!-- link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/css/olap.css">
-		<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/css/whatIf.css">
-		<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/css/customStyle.css"-->
 		<title>OLAP</title>
 		<script>
 			var JSsbiExecutionID = '<%= sbiExecutionID %>'
