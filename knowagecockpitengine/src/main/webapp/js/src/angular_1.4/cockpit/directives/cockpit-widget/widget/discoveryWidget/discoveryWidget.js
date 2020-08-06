@@ -510,7 +510,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.customFacetPrecision = function(){
-			if($scope.ngModel.settings.facets && $scope.ngModel.settings.facets.precision) {
+			if($scope.ngModel.settings.facets && $scope.ngModel.settings.facets.precision != null) {
 				return $scope.ngModel.settings.facets.precision;
 			}
 			return 2;
