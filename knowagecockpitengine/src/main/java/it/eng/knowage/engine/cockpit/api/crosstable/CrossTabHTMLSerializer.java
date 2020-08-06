@@ -336,8 +336,9 @@ public class CrossTabHTMLSerializer {
 						SourceBean aButton = new SourceBean(ICON_TAG);
 						aButton.setAttribute(CLASS_ATTRIBUTE, MINUS_BUTTON_ICON);
 						JSONObject hierarchyJson = new JSONObject(getHierarchicalAttributes(crossTab, aNode.getParentNode(), false));
+						String columnName = crossTab.getColumnNameFromAlias(crossTab.getCrosstabDefinition().getRows().get(i).getAlias());
 						aButton.setAttribute(NG_CLICK_ATTRIBUTE,
-								"collapse($event,'" + escapeAll(crossTab.getCrosstabDefinition().getRows().get(i).getEntityId()) + "','" + escapeAll(text)
+								"collapse($event,'" + escapeAll(columnName) + "','" + escapeAll(text)
 										+ "'," + hierarchyJson + ")");
 						aColumn.setAttribute(aButton);
 					}
@@ -365,7 +366,7 @@ public class CrossTabHTMLSerializer {
 					aButton.setAttribute(CLASS_ATTRIBUTE, PLUS_BUTTON_ICON);
 					JSONObject hierarchyJson = new JSONObject(getHierarchicalAttributes(crossTab, aNode.getParentNode().getParentNode(), false));
 					aButton.setAttribute(NG_CLICK_ATTRIBUTE,
-							"expand($event,'" + escapeAll(parentEntityId) + "','" + escapeAll(text) + "'," + hierarchyJson + ")");
+							"expand($event,'" + escapeAll(aNode.getParentNode().getColumnName()) + "','" + escapeAll(text) + "'," + hierarchyJson + ")");
 					subtotalHiddenColumn.setAttribute(aButton);
 					aRow.setAttribute(subtotalHiddenColumn);
 				}
@@ -417,21 +418,13 @@ public class CrossTabHTMLSerializer {
 			return toReturn;
 		} else {
 			while (curNode.getColumnName() != null && !curNode.getColumnName().equals("null")) {
-				String attribute = crossTab.getColumnAliasFromName(curNode.getColumnName());
-				attribute = fixAttributeName(attribute);
+				String attribute = curNode.getColumnName();
 				String value = curNode.getValue();
 				hierarchicalAttributes.put(escapeAll(attribute), escapeAll(value));
 				curNode = curNode.getParentNode();
 			}
 		}
 		return hierarchicalAttributes;
-	}
-
-	private String fixAttributeName(String attribute) {
-		String ret = attribute;
-		// Replace all non alphanumeric characters
-		ret = ret.replaceAll("[^\\w]", "_");
-		return ret;
 	}
 
 	private SourceBean serializeColumnsHeaders(CrossTab crossTab) throws SourceBeanException, JSONException {

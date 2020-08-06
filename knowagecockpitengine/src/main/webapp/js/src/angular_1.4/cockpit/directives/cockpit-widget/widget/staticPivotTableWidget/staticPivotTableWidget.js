@@ -228,12 +228,23 @@ function cockpitStaticPivotTableWidgetControllerFunction(
     	this.traverse(clone, func);
     	return clone;
 	};
-	
+
 	$scope.escapeHtmlString = function(customString){
 		 var map = cockpitModule_generalOptions.htmlEscapes;
 		 return customString.replace(cockpitModule_generalOptions.htmlRegex, function(m) {
 			 return map[m];
 			 });
+	}
+
+	$scope.getParentKey = function(key) {
+		var values = [];
+		for (i in $scope.sentData.metadata.fields) {
+			var field = $scope.sentData.metadata.fields[i];
+			if (field.header == key) {
+				return field.name;
+			}
+		}
+		return null;
 	}
 
 	$scope.getParentValues = function(key) {
@@ -255,8 +266,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 	$scope.collapseAll = function(e) {
 		e.stopImmediatePropagation();
 		e.preventDefault();
-		var parentKey = $scope.sentData.crosstabDefinition.rows[0].alias;
-		var parentValues = $scope.getParentValues(parentKey);
+		var alias = $scope.sentData.crosstabDefinition.rows[0].alias;
+		var parentKey = $scope.getParentKey(alias);
+		var parentValues = $scope.getParentValues(alias);
 		var widgetEl = document.getElementById($scope.ngModel.id);
 
 		for (p in parentValues) {
@@ -280,8 +292,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 	$scope.expandAll = function(e) {
 		e.stopImmediatePropagation();
 		e.preventDefault();
-		var parentKey = $scope.sentData.crosstabDefinition.rows[0].alias;
-		var parentValues = $scope.getParentValues(parentKey);
+		var alias = $scope.sentData.crosstabDefinition.rows[0].alias;
+		var parentKey = $scope.getParentKey(alias);
+		var parentValues = $scope.getParentValues(alias);
 		var widgetEl = document.getElementById($scope.ngModel.id);
 
 		//show all rows

@@ -3004,6 +3004,10 @@ public class CrossTab {
 		return dsColumnName2Alias.get(columnName);
 	}
 
+	public String getColumnNameFromAlias(String columnName) {
+		return alias2DsColumnName.get(columnName);
+	}
+
 	public String getHTMLCrossTab(Locale locale) {
 		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap);
 		String html = serializer.serialize(this);
