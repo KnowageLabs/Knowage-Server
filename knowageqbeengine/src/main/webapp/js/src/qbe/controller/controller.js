@@ -596,7 +596,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
         "action": function(item, $event) {
         	var index = $scope.subqueriesModel.subqueries.indexOf(item);
         	  $scope.subqueriesModel.subqueries.splice(index, 1);
-        	  $scope.stopEditingSubqueries();
+        	  $scope.stopEditingSubqueries(false);
         }
     }];
 
@@ -874,8 +874,11 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		$scope.query.subqueries.push(subquery);
 		$scope.editQueryObj = subquery;
 	}
-	$scope.stopEditingSubqueries = function(){
-		if ($scope.editQueryObj.fields.length != 1) {
+	$scope.stopEditingSubqueries = function(check){
+		if (typeof check == "undefined") {
+			check = true;
+		}
+		if (check && $scope.editQueryObj.fields.length != 1) {
 			sbiModule_messaging.showErrorMessage($scope.translate.load("kn.qbe.subquery.onefielderror"), $scope.translate.load("kn.qbe.general.error"));
 		} else {
 			$scope.editQueryObj = $scope.query;
