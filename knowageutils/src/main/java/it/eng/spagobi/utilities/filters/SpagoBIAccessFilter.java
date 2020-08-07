@@ -166,6 +166,8 @@ public class SpagoBIAccessFilter implements Filter {
 						logger.error("SecurityException while reeding user profile", e);
 						throw new ServletException("Message: " + e.getMessage() + "; Cause: " + (e.getCause() != null ? e.getCause().getMessage() : "none"));
 					}
+				} else {
+					profile = (IEngUserProfile) ioManager.getFromSession(IEngUserProfile.ENG_USER_PROFILE);
 				}
 
 				if (auditId != null) {
