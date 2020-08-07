@@ -166,29 +166,31 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:sbiModule_translate.load('kn.variables.setheader'),value:'header'}
 		 ],
 		 conditions : ['>','<','==','>=','<=','!='],
-		 htmlRegex : /[&<>"'àáâãäèéêëìíòóùú]/g,
+		 htmlRegex : /[&<>"'àáâãäèéêëìíòóùú\\/]/g,
 		 htmlEscapes:{
-		        '&': '&amp;',
-		        '<': '&lt;',
-		        '>': '&gt;',
-		        '"': '&quot;',
-		        "'": '&apos;',
-		        'à': '&agrave;',
-		        'á': '&aacute;',
-		        'â': '&acirc;',
-		        'ã': '&atilde;',
-		        'ä': '&auml;',
-		        'è': '&egrave;',
-		        'é': '&eacute;',
-		        'ê': '&ecirc;',
-		        'ë': '&euml;',
-		        'ì': '&igrave;',
-		        'í': '&iacute;',
-		        'ò': '&ograve;',
-		        'ó': '&oacute;',
-		        'ù': '&ugrave;',
-		        'ú': '&uacute;'
-		    },
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&quot;',
+				"'": '&apos;',
+				'à': '&agrave;',
+				'á': '&aacute;',
+				'â': '&acirc;',
+				'ã': '&atilde;',
+				'ä': '&auml;',
+				'è': '&egrave;',
+				'é': '&eacute;',
+				'ê': '&ecirc;',
+				'ë': '&euml;',
+				'ì': '&igrave;',
+				'í': '&iacute;',
+				'ò': '&ograve;',
+				'ó': '&oacute;',
+				'ù': '&ugrave;',
+				'ú': '&uacute;',
+				'\\': '&#92;',
+				'/':  '&#47;'
+			},
 		 calculatedFieldsFunctions: [
 			   {
 				      "syntax":"SUM( "+sbiModule_translate.load("kn.generic.field")+" )",
@@ -302,7 +304,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					         }
 					      ],
 					      "output":"Number",
-					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals")
 				   },{
 					   "syntax":"TOTAL_AVG( "+sbiModule_translate.load("kn.generic.field")+" )",
 					      "description":sbiModule_translate.load("kn.cockpit.functions.total.avg"),
@@ -320,7 +322,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					         }
 					      ],
 					      "output":"Number",
-					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals")
 				   },{
 					   "syntax":"TOTAL_MIN( "+sbiModule_translate.load("kn.generic.field")+" )",
 					      "description":sbiModule_translate.load("kn.cockpit.functions.total.min"),
@@ -338,7 +340,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					         }
 					      ],
 					      "output":"Number",
-					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals")
 				   },{
 					   "syntax":"TOTAL_MAX( "+sbiModule_translate.load("kn.generic.field")+" )",
 					      "description":sbiModule_translate.load("kn.cockpit.functions.total.max"),
@@ -356,7 +358,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					         }
 					      ],
 					      "output":"Number",
-					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals")
 				   },{
 					   "syntax":"TOTAL_COUNT( "+sbiModule_translate.load("kn.generic.field")+" )",
 					      "description":sbiModule_translate.load("kn.cockpit.functions.total.count"),
@@ -374,7 +376,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					         }
 					      ],
 					      "output":"Number",
-					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals") 
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals")
 				   },{
 					   "syntax":"NULLIF( "+sbiModule_translate.load("kn.generic.field")+" , "+sbiModule_translate.load("kn.generic.expression")+")",
 					      "description":sbiModule_translate.load("kn.cockpit.functions.nullif"),
@@ -400,9 +402,9 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					         }
 					      ],
 					      "output":"Number",
-					      "type":sbiModule_translate.load("kn.cockpit.functions.type.functions") 
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.functions")
 				   }
-				   
+
 				   /*
 				   {
 				      "syntax":"Concat(expression1, expression2, expression3,...)",

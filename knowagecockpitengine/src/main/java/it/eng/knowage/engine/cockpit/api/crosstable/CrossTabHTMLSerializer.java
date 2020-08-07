@@ -187,7 +187,10 @@ public class CrossTabHTMLSerializer {
 			return null;
 		}
 
-		return StringEscapeUtils.escapeHtml(text).replaceAll("'", "&apos;");
+		return StringEscapeUtils.escapeHtml(text)
+				.replaceAll("'", "&apos;")
+				.replaceAll("\\\\", "&#92;")
+				.replaceAll("/", "&#47;");
 	}
 
 	private SourceBean serializeRowsMembers(CrossTab crossTab) throws SourceBeanException, JSONException {
