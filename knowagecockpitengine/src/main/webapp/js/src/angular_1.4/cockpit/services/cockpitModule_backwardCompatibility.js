@@ -253,7 +253,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								delete model.content.crosstabDefinition.measures[k].scopeFunc;
 							}
 							if(model.content.crosstabDefinition.measures[k].colorThresholdOptions){
-								if(Object.keys(model.content.crosstabDefinition.measures[k].colorThresholdOptions.conditionValue).length != 0 ){
+								if(model.content.crosstabDefinition.measures[k].colorThresholdOptions.conditionValue){
 									for(var j = 0; j<3 ; j++){
 										if(model.content.crosstabDefinition.measures[k].colorThresholdOptions.conditionValue[j]){
 											var tempObj = {

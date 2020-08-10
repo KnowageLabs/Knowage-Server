@@ -445,7 +445,7 @@ public class CrossTabHTMLSerializer {
 		JSONObject crossConfig = crossTab.getCrosstabDefinition().getConfig();
 		String labelTotal = (!crossConfig.optString("columntotalLabel").equals("")) ? crossConfig.optString("columntotalLabel") : CrossTab.TOTAL;
 		String labelSubTotal = (!crossConfig.optString("columnsubtotalLabel").equals("")) ? crossConfig.optString("columnsubtotalLabel") : CrossTab.SUBTOTAL;
-
+		
 		int levels = crossTab.getColumnsRoot().getDistanceFromLeaves();
 		if (levels == 0) {
 			// nothing on columns
@@ -479,11 +479,22 @@ public class CrossTabHTMLSerializer {
 					String text = null;
 					String textVariable = null;
 					String style = "";
+					
 					if (crossTab.getCrosstabDefinition().isMeasuresOnColumns() && i + 1 == levels) {
 						String measureAlias = aNode.getDescription();
 						text = MeasureScaleFactorOption.getScaledName(measureAlias, crossTab.getMeasureScaleFactor(measureAlias), this.locale);
 						// check header visibility for measures
 						showHeader = isMeasureHeaderVisible(crossTab);
+						if( this.variables != null) {
+							List<Measure> measures = crossTab.getCrosstabDefinition().getMeasures();
+							for (int c = 0; c < measures.size(); c++) {
+								Measure col = measures.get(c);
+								if (col.getAlias().equals(text)) {
+									textVariable = col.getVariable();
+								}
+							
+							}
+						}
 					} else {
 						// categories headers
 						text = aNode.getDescription();
@@ -514,7 +525,7 @@ public class CrossTabHTMLSerializer {
 							}
 						}
 					}
-
+					
 					if (isLevel) {
 						int idxEl = i / 2; // just for columns headers divide the position of cell in couple (name + value)
 						aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + idxEl + "','1'," + myGlobalId + ")");
@@ -571,14 +582,34 @@ public class CrossTabHTMLSerializer {
 									aColumn.setAttribute(STYLE_ATTRIBUTE, measureStyle);
 									// ONLY in this case (unique measure without header) add a div to force width if it's defined
 									SourceBean divEl = new SourceBean(COLUMN_DIV);
-									divEl.setCharacters(text);
+									if(StringUtils.isNotBlank(textVariable)) {
+										if(this.variables.has(textVariable)) {
+											divEl.setCharacters(this.variables.getString(textVariable));
+										}
+									}else {
+										divEl.setCharacters(text);
+									}
 									divEl.setAttribute(TITLE_ATTRIBUTE, text);
 									divEl.setAttribute(STYLE_ATTRIBUTE, measureStyle);
 									aColumn.setAttribute(divEl);
-								} else
+								} else {
+									if(StringUtils.isNotBlank(textVariable)) {
+										if(this.variables.has(textVariable)) {
+											aColumn.setCharacters(this.variables.getString(textVariable));
+										}
+									}else {
+										aColumn.setCharacters(text);
+									}
+								}
+							} {
+								if(StringUtils.isNotBlank(textVariable)) {
+									if(this.variables.has(textVariable)) {
+										aColumn.setCharacters(this.variables.getString(textVariable));
+									}
+								}else {
 									aColumn.setCharacters(text);
-							} else
-								aColumn.setCharacters(text);
+								}
+							}
 
 							if (parentStyle != null) {
 								// add default color for header
@@ -778,8 +809,8 @@ public class CrossTabHTMLSerializer {
 				List<Measure> measures = crossTab.getCrosstabDefinition().getMeasures();
 				boolean showHeader = true;
 				aMeasureHeader.setAttribute(CLASS_ATTRIBUTE, MEASURES_CLASS);
-				if (showHeader)
-					aMeasureHeader.setCharacters(measureInfo.getName());
+				aMeasureHeader.setCharacters(measureInfo.getName());
+				
 				measureHeaders.add(aMeasureHeader);
 			}
 		}
