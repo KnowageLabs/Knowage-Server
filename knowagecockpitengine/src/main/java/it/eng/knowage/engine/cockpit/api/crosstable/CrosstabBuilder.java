@@ -26,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.gson.JsonObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
@@ -50,16 +51,18 @@ public class CrosstabBuilder {
 	private final JSONArray jsonDataSource;
 	private final JSONObject jsonMetaData;
 	private final JSONObject jsonStyle;
+	private final JSONObject variables;
 	private final JSONArray jsonConfigMeasure;
 	private final JSONArray jsonConfigRows;
 	private final JSONArray jsonConfigColumns;
 
-	public CrosstabBuilder(Locale locale, JSONObject crosstabDefinition, JSONArray jsonDataSource, JSONObject metadata, JSONObject style) {
+	public CrosstabBuilder(Locale locale, JSONObject crosstabDefinition, JSONArray jsonDataSource, JSONObject metadata, JSONObject style, JSONObject variables) {
 		this.locale = locale;
 		this.crosstabDefinition = crosstabDefinition.toString();
 		this.jsonDataSource = jsonDataSource;
 		this.jsonMetaData = metadata;
 		this.jsonStyle = style;
+		this.variables = variables;
 		try {
 			this.jsonConfigMeasure = crosstabDefinition.getJSONArray(CrosstabSerializationConstants.MEASURES);
 			this.jsonConfigColumns = crosstabDefinition.getJSONArray(CrosstabSerializationConstants.COLUMNS);
@@ -73,7 +76,7 @@ public class CrosstabBuilder {
 			Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) throws JSONException {
 		logger.debug("IN");
 
-		return createCrossTable(crosstabDefinition, jsonDataSource, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
+		return createCrossTable(crosstabDefinition, jsonDataSource, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId, variables);
 
 	}
 
@@ -87,7 +90,7 @@ public class CrosstabBuilder {
 
 
 	private String createCrossTable(String jsonData, JSONArray jsonDataSource, Map<Integer, NodeComparator> columnsSortKeysMap,
-			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) {
+			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId, JSONObject variables) {
 
 		CrossTab crossTab;
 		CrosstabDefinition crosstabDefinition = null;
@@ -124,7 +127,7 @@ public class CrosstabBuilder {
 			crossTabDefTimeMonitor.stop();
 
 			htmlTimeMonitor = MonitorFactory.start("CockpitEngine.loadCrosstabAction.getHTMLCrossTab");
-			htmlCode = crossTab.getHTMLCrossTab(locale);//
+			htmlCode = crossTab.getHTMLCrossTab(locale, variables);//
 			htmlTimeMonitor.stop();
 
 		} catch (Exception e) {

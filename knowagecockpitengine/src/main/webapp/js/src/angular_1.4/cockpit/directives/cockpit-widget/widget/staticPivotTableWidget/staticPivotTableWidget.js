@@ -164,6 +164,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		dataToSend.crosstabDefinition.measures = $scope.initializeStyleFormat(dataToSend.crosstabDefinition.measures);
 		dataToSend.crosstabDefinition.rows = $scope.initializeStyleFormat(dataToSend.crosstabDefinition.rows);
 		dataToSend.crosstabDefinition.columns = $scope.initializeStyleFormat(dataToSend.crosstabDefinition.columns);
+		if(cockpitModule_properties.VARIABLES) dataToSend.variables = cockpitModule_properties.VARIABLES;
 
 		dataToSend.crosstabDefinition.measures = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.measures, 'style', false);
 		dataToSend.crosstabDefinition.rows = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.rows, 'style', false);
@@ -1280,7 +1281,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 	}
 
 
-	function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,cockpitModule_generalOptions,$mdToast,sbiModule_messaging){
+	function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,cockpitModule_generalOptions,cockpitModule_properties, $mdToast,sbiModule_messaging){
 		$scope.translate=sbiModule_translate;
 //		$scope.localModel = angular.copy(model);
 		$scope.selectedColumn = angular.copy(selectedColumn);
@@ -1288,7 +1289,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$scope.selectedColumn.widgetType = "staticPivotTable";
 		$scope.selectedColumn.showHeader = (selectedColumn.showHeader==undefined)?true:selectedColumn.showHeader;
 		$scope.selectedColumn.excludeFromTotalAndSubtotal = (selectedColumn.excludeFromTotalAndSubtotal==undefined)?false:selectedColumn.excludeFromTotalAndSubtotal;
-
+		if(cockpitModule_properties.VARIABLES &&  Object.keys(cockpitModule_properties.VARIABLES).length > 0) $scope.variables = cockpitModule_properties.VARIABLES;
 
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 		$scope.formatPattern = ['','#.###','#,###','#.###,##','#,###.##'];
@@ -1343,12 +1344,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			$scope.selectedColumn.chartLength=200;
 		}
 
-
-		$scope.conditions=['none','>','<','=','>=','<=','!='];
-		if($scope.selectedColumn.scopeFunc==undefined)
-		{
-			$scope.selectedColumn.scopeFunc={conditions:$scope.conditions, condition:[{condition:'none'},{condition:'none'},{condition:'none'},{condition:'none'}]};
-		}
 		//------------------------- Threshold icon table -----------------------------
 		var conditionString0="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[0].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
 		var conditionString1="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[1].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
@@ -1460,16 +1455,16 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				return true;
 			}
 
-			for(var i=0;i<$scope.selectedColumn.scopeFunc.condition.length;i++)
-			{
-				if($scope.selectedColumn.scopeFunc.condition[i].condition!=undefined && $scope.selectedColumn.scopeFunc.condition[i].condition!="none")
-				{
-					if($scope.selectedColumn.scopeFunc.condition[i].value==="" || $scope.selectedColumn.scopeFunc.condition[i].value==undefined)
-					{
-						return true;
-					}
-				}
-			}
+//			for(var i=0;i<$scope.selectedColumn.scopeFunc.condition.length;i++)
+//			{
+//				if($scope.selectedColumn.scopeFunc.condition[i].condition!=undefined && $scope.selectedColumn.scopeFunc.condition[i].condition!="none")
+//				{
+//					if($scope.selectedColumn.scopeFunc.condition[i].value==="" || $scope.selectedColumn.scopeFunc.condition[i].value==undefined)
+//					{
+//						return true;
+//					}
+//				}
+//			}
 			return false;
 		}
 

@@ -3009,7 +3009,13 @@ public class CrossTab {
 	}
 
 	public String getHTMLCrossTab(Locale locale) {
-		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap);
+		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, null);
+		String html = serializer.serialize(this);
+		return html;
+	}
+	
+	public String getHTMLCrossTab(Locale locale, JSONObject variables) {
+		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, variables);
 		String html = serializer.serialize(this);
 		return html;
 	}

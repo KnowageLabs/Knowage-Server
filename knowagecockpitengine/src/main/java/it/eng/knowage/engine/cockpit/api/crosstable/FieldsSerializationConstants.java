@@ -41,5 +41,6 @@ public class FieldsSerializationConstants {
 	public static final String SELECTION_MULTIVALUE = "multivalue";
 	public static final String SELECTION_SINGLEVALUE = "singlevalue";
 	public static final String SPLITTING_FILTER = "splittingFilter";
+	public static final String VARIABLE = "variable";
 
 }

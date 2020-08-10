@@ -219,7 +219,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 			
-			if(!self.compareVersion("7.3.0",version)){
+			if(!self.compareVersion("7.3.1",version)){
 				if(model.type=='table' || model.type=='discovery'){
 					for(var k in model.content.columnSelectedOfDataset){
 						if(model.content.columnSelectedOfDataset[k].momentDateFormat){
@@ -234,6 +234,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				if(model.type == 'discovery'){
 					if(model.settings.hideTextSearch) model.settings.textEnabled = !model.settings.hideTextSearch;
+				}
+				if(model.type=='static-pivot-table'){
+					if(model.content.crosstabDefinition.measures){
+						for(var k in model.content.crosstabDefinition.measures){
+							if(model.content.crosstabDefinition.measures[k].scopeFunc && model.content.crosstabDefinition.measures[k].scopeFunc.condition){
+								for(var c in model.content.crosstabDefinition.measures[k].scopeFunc.condition){
+									if(model.content.crosstabDefinition.measures[k].scopeFunc.condition[c].condition) {
+										model.content.crosstabDefinition.measures[k].scopeFunc.condition[c].operator = model.content.crosstabDefinition.measures[k].scopeFunc.condition[c].condition;
+										delete model.content.crosstabDefinition.measures[k].scopeFunc.condition[c].condition;
+										if(model.content.crosstabDefinition.measures[k].scopeFunc.condition[c].iconColor) {
+											model.content.crosstabDefinition.measures[k].scopeFunc.condition[c].color = model.content.crosstabDefinition.measures[k].scopeFunc.condition[c].iconColor;
+											delete model.content.crosstabDefinition.measures[k].scopeFunc.condition[c].iconColor;
+										} 
+									}
+								}
+								model.content.crosstabDefinition.measures[k].ranges = model.content.crosstabDefinition.measures[k].scopeFunc.condition;
+								delete model.content.crosstabDefinition.measures[k].scopeFunc;
+							}
+							if(model.content.crosstabDefinition.measures[k].colorThresholdOptions){
+								if(Object.keys(model.content.crosstabDefinition.measures[k].colorThresholdOptions.conditionValue).length != 0 ){
+									for(var j = 0; j<3 ; j++){
+										if(model.content.crosstabDefinition.measures[k].colorThresholdOptions.conditionValue[j]){
+											var tempObj = {
+													"operator": model.content.crosstabDefinition.measures[k].colorThresholdOptions.condition[j],
+													"value": model.content.crosstabDefinition.measures[k].colorThresholdOptions.conditionValue[j],
+													"background-color": model.content.crosstabDefinition.measures[k].colorThresholdOptions.color[j]
+											}
+											model.content.crosstabDefinition.measures[k].ranges.push(tempObj)
+										}
+									}
+									delete model.content.crosstabDefinition.measures[k].colorThresholdOptions;
+								}
+							}
+						}
+					}
 				}
 			}
 

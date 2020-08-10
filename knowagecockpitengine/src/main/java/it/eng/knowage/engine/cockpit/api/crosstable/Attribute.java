@@ -31,15 +31,21 @@ public class Attribute extends Field {
 	/**
 	 * contains an array of selected values encoded into a string
 	 */
-	String values = null;
+	private String values = null;
+	private String variable = null;
 
 	public String getValues() {
 		return values;
 	}
 
-	public Attribute(String entityId, String alias, String sortingId, String iconCls, String nature, String values, JSONObject config) {
+	public String getVariable() {
+		return variable;
+	}
+
+	public Attribute(String entityId, String alias, String sortingId, String iconCls, String nature, String values, String variable, JSONObject config) {
 		super(entityId, alias, sortingId, iconCls, nature, config);
 		this.values = values;
+		this.variable = variable;
 	}
 
 	public List<String> getValuesAsList() {
@@ -62,7 +68,7 @@ public class Attribute extends Field {
 
 	@Override
 	public Attribute clone() {
-		return new Attribute(entityId, alias, sortingId, iconCls, nature, values, config);
+		return new Attribute(entityId, alias, sortingId, iconCls, nature, values, variable, config);
 	}
 
 	public void setValues(List<String> values) {
@@ -79,5 +85,9 @@ public class Attribute extends Field {
 
 	private void setValues(String values) {
 		this.values = values;
+	}
+	
+	public void setVariable(String variable) {
+		this.variable = variable;
 	}
 }
