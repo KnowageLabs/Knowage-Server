@@ -18,24 +18,33 @@
 package it.eng.spagobi.tools.dataset.bo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
 import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
+import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.listener.DataSetListenerManager;
 import it.eng.spagobi.tools.dataset.listener.DataSetListenerManagerFactory;
 import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
@@ -47,6 +56,7 @@ import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.ConfigurationException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 
@@ -101,7 +111,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 		super.loadData(offset, fetchSize, maxResults);
 
-		if(isNgsi()) {
+		if (isNgsi()) {
 			// notify for all listeners
 			notifyListeners();
 
@@ -287,8 +297,8 @@ public class RESTDataSet extends ConfigurableDataSet {
 			String key = it.next();
 			String value = r.getString(key);
 			if (resolveParams) {
-				key = parametersResolver.resolveAll(key, this);
-				value = parametersResolver.resolveAll(value, this);
+				key = resolveAll(key, this);
+				value = resolveAll(value, this);
 			}
 			res.put(key, value);
 		}
@@ -314,8 +324,8 @@ public class RESTDataSet extends ConfigurableDataSet {
 			String key = jo.getString("name");
 			String value = jo.getString("value");
 			if (resolveParams) {
-				key = parametersResolver.resolveAll(key, this);
-				value = parametersResolver.resolveAll(value, this);
+				key = resolveAll(key, this);
+				value = resolveAll(value, this);
 				res.add(new Couple<String, String>(key, value));
 			}
 		}
@@ -343,8 +353,8 @@ public class RESTDataSet extends ConfigurableDataSet {
 			String key = jo.getString("name");
 			String value = jo.getString("value");
 			if (resolveParams) {
-				key = parametersResolver.resolveAll(key, this);
-				value = parametersResolver.resolveAll(value, this);
+				key = resolveAll(key, this);
+				value = resolveAll(value, this);
 				res.add(new Couple<String, String>(key, value));
 			}
 		}
@@ -444,5 +454,610 @@ public class RESTDataSet extends ConfigurableDataSet {
 	@Override
 	public boolean isRealtime() {
 		return isNgsi();
+	}
+
+	/*
+	 * These snippets of code come from a common utilities logic, now the logic behind parameters handling is inside each type of dataset
+	 */
+	@Override
+	public void setParametersMap(Map<String, String> paramValues) throws JSONException {
+		List<JSONObject> parameters = getDataSetParameters();
+		if (parameters.size() > paramValues.size()) {
+			String parameterNotValorizedStr = getParametersNotValorized(parameters, paramValues);
+			throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+		}
+
+		if (paramValues.size() > 0) {
+			for (String paramName : paramValues.keySet()) {
+				for (int i = 0; i < parameters.size(); i++) {
+					JSONObject parameter = parameters.get(i);
+					if (paramName.equals(parameter.optString("namePar"))) {
+						String[] values = getValuesAsArray(paramValues, paramName, parameter);
+						List<String> encapsulatedValues = encapsulateValues(parameter, values);
+						paramValues.put(paramName, org.apache.commons.lang3.StringUtils.join(encapsulatedValues, ","));
+						break;
+					}
+				}
+			}
+			setParamsMap(paramValues);
+		}
+	}
+
+	private String[] getValuesAsArray(Map<String, String> paramValues, String paramName, JSONObject parameter) {
+		boolean isMultiValue = parameter.optBoolean("multiValuePar");
+		String paramValue = paramValues.get(paramName);
+		String[] values = null;
+		if (isMultiValue) {
+			List<String> list = new ArrayList<String>();
+			boolean paramValueConsumed = false;
+			try {
+				JSONArray jsonArray = new JSONArray(paramValue);
+				for (int j = 0; j < jsonArray.length(); j++) {
+					list.add(jsonArray.getString(j));
+				}
+				paramValueConsumed = true;
+			} catch (JSONException e) {
+				paramValueConsumed = false;
+			}
+			if (!paramValueConsumed) {
+				list.add(paramValue);
+			}
+			values = list.toArray(new String[0]);
+			if (values != null && values.length == 1 && !values[0].isEmpty()) {
+				String valuesString = values[0];
+//				if (valuesString.startsWith("'") && valuesString.endsWith("'")) {
+//					// patch for KNOWAGE-4600: An error occurs when propagating a driver value with commas through cross navigation.
+//					// Do nothing, keep values as it is
+//				} else {
+//					values = valuesString.split(",");
+//				}
+			}
+		} else {
+			values = Arrays.asList(paramValue).toArray(new String[0]);
+		}
+		return values;
+	}
+
+	private static String getParametersNotValorized(List<JSONObject> parameters, Map<String, String> parametersValues) throws JSONException {
+		String toReturn = "";
+
+		for (Iterator<JSONObject> iterator = parameters.iterator(); iterator.hasNext();) {
+			JSONObject parameter = iterator.next();
+			String parameterName = parameter.getString("namePar");
+			if (parametersValues.get(parameterName) == null) {
+				toReturn += parameterName;
+				if (iterator.hasNext()) {
+					toReturn += ", ";
+				}
+			}
+		}
+		return toReturn;
+	}
+
+	/**
+	 * Encapsulate values into SQL values.
+	 *
+	 * For every type of data except string, the method convert the values to strings.
+	 *
+	 * With strings we can have two case:
+	 * <ul>
+	 * <li>String that starts and ends with single quote</li>
+	 * <li>String that doesn't start and end with single quote</li>
+	 * </ul>
+	 *
+	 * In the first case, FE are sending us SQL values that probably contain JSON escape (e.g., a JSON value like 'this string contains a \' in it').
+	 *
+	 * In the second case, FE are sending us standard not-SQL-escaded string ( e.g., a string like "this string contains a ' in it"). In this second case this
+	 * method escapes single quote and duplicates them as requested by SQL.
+	 *
+	 * @param parameter Original parameter JSON metadata
+	 * @param values    Actual values of parameters
+	 * @return List of encapsulated values as strings
+	 */
+	private List<String> encapsulateValues(JSONObject parameter, String[] values) {
+		String typePar = parameter.optString("typePar");
+		boolean isString = "string".equalsIgnoreCase(typePar);
+		String delim = isString ? "'" : "";
+
+		List<String> newValues = new ArrayList<>();
+		for (int j = 0; j < values.length; j++) {
+			String value = values[j].trim();
+			if (!value.isEmpty()) {
+				if (value.startsWith(delim) && value.endsWith(delim)) {
+					if (value.contains("','")) {
+						value = value.substring(1, value.length() - 1);
+						String[] valuesArray = value.split("','");
+						String newValuesFromArray = "";
+						for (int i = 0; i < valuesArray.length; i++) {
+							String temp = valuesArray[i];
+							if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim))
+								temp = temp.substring(1, temp.length() - 1);
+							temp = temp.replaceAll("'", "''");
+							if (i == 0) {
+								if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim)) {
+									temp = temp.substring(1, temp.length() - 1);
+								}
+								newValuesFromArray = (temp);
+							}
+
+							else {
+								if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim)) {
+									temp = temp.substring(1, temp.length() - 1);
+								}
+								newValuesFromArray = newValuesFromArray + "," + (temp);
+							}
+
+						}
+						newValues.add(newValuesFromArray);
+					} else {
+						if (isString) {
+							value = value.substring(1, value.length() - 1);
+							value = value.replaceAll("'", "''");
+						}
+						if (!delim.isEmpty() && value.startsWith(delim) && value.endsWith(delim)) {
+							value = value.substring(1, value.length() - 1);
+						}
+						newValues.add(value);
+					}
+				} else {
+					if (isString) {
+						// Duplicate single quote to transform it into an escaped SQL single quote
+						value = value.replaceAll("'", "''");
+					}
+					newValues.add(value);
+				}
+			}
+		}
+		return newValues;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public String resolveParameters(String statement, IDataSet targetDataSet) {
+
+		String newStatement = statement;
+
+		logger.debug("Dataset paramMap [" + targetDataSet.getParamsMap() + "]");
+
+		if (targetDataSet.getParamsMap() != null) {
+			logger.debug("Dataset paramMap contains [" + targetDataSet.getParamsMap().size() + "] parameters");
+
+			// if a parameter has value '' put null!
+			Map parameterValues = targetDataSet.getParamsMap();
+			Vector<String> parsToChange = new Vector<String>();
+
+			for (Iterator iterator = parameterValues.keySet().iterator(); iterator.hasNext();) {
+				String parName = (String) iterator.next();
+				Object val = parameterValues.get(parName);
+				if (val != null && val.equals("")) {
+					val = null;
+					parsToChange.add(parName);
+				}
+			}
+			for (Iterator iterator = parsToChange.iterator(); iterator.hasNext();) {
+				String parName = (String) iterator.next();
+				parameterValues.remove(parName);
+				parameterValues.put(parName, null);
+			}
+
+			try {
+				Map parTypeMap = getParTypeMap(targetDataSet);
+				newStatement = substituteDatasetParametersInString(newStatement, targetDataSet, parTypeMap, false);
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("An error occurred while settin up parameters", e);
+			}
+		}
+
+		// after having substituted all parameters check there are not other
+		// parameters unfilled otherwise throw an exception;
+		List<String> parsUnfilled = checkParametersUnfilled(newStatement);
+		if (parsUnfilled != null) {
+			// means there are parameters not valorized, throw exception
+			logger.error("there are parameters without values");
+			String pars = "";
+			for (Iterator iterator = parsUnfilled.iterator(); iterator.hasNext();) {
+				String string = (String) iterator.next();
+				pars += string;
+				if (iterator.hasNext()) {
+					pars += ", ";
+				}
+			}
+			pars += " have no value specified";
+			throw new ParametersNotValorizedException("The folowing parameters have no value [" + pars + "]");
+
+		}
+
+		return newStatement;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static List checkParametersUnfilled(String statement) {
+		List toReturn = null;
+		int index = statement.indexOf("$P{");
+		while (index != -1) {
+			int endIndex = statement.indexOf('}', index);
+			if (endIndex != -1) {
+				String nameAttr = statement.substring(index, endIndex + 1);
+				if (toReturn == null) {
+					toReturn = new ArrayList<String>();
+				}
+				toReturn.add(nameAttr);
+				index = statement.indexOf("$P{", endIndex);
+			}
+		}
+		return toReturn;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static Map getParTypeMap(IDataSet dataSet) throws SourceBeanException {
+
+		Map parTypeMap;
+		String parametersXML;
+		List parameters;
+
+		logger.debug("IN");
+
+		try {
+			parTypeMap = new HashMap();
+			parametersXML = dataSet.getParameters();
+
+			logger.debug("Dataset parameters string is equals to [" + parametersXML + "]");
+
+			if (!StringUtilities.isEmpty(parametersXML)) {
+				parameters = DataSetParametersList.fromXML(parametersXML).getItems();
+				logger.debug("Dataset have  [" + parameters.size() + "] parameters");
+
+				for (int i = 0; i < parameters.size(); i++) {
+					DataSetParameterItem dsDet = (DataSetParameterItem) parameters.get(i);
+					String name = dsDet.getName();
+					String type = dsDet.getType();
+					logger.debug("Paremeter [" + (i + 1) + "] name is equals to  [" + name + "]");
+					logger.debug("Paremeter [" + (i + 1) + "] type is equals to  [" + type + "]");
+					parTypeMap.put(name, type);
+				}
+			}
+
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return parTypeMap;
+	}
+
+	/**
+	 * Substitutes parameters with sintax "$P{parameter_name}" whose value is set in the map. This is only for dataset, had to duplicate to handle null values,
+	 * in case ogf null does not throw an exception but substitute null!
+	 *
+	 * @param statement          The string to be modified (tipically a query)
+	 * @param valuesMap          Map name-value
+	 * @param surroundWithQuotes flag: if true, the replacement will be surrounded by quotes if they are missing
+	 *
+	 * @return The statement with profile attributes replaced by their values.
+	 *
+	 * @throws Exception the exception
+	 */
+	public static String substituteDatasetParametersInString(String statement, IDataSet dataset, Map parType, boolean surroundWithQuotes) throws Exception {
+		logger.debug("IN");
+
+		boolean changePars = true;
+		while (changePars) {
+			// int profileAttributeStartIndex = statement.indexOf("$P{");
+			int profileAttributeStartIndex = statement.indexOf("$P{");
+			if (profileAttributeStartIndex != -1)
+				statement = substituteDatasetParametersInString(statement, dataset, parType, profileAttributeStartIndex, surroundWithQuotes);
+			else
+				changePars = false;
+
+		}
+		logger.debug("OUT");
+		return statement;
+	}
+
+	/**
+	 * Substitutes the parameters with sintax "$P{attribute_name}" with the correspondent value in the string passed at input. Only for dataset parameters, had
+	 * to duplicate to handle null values, not throw an exception but put null!
+	 *
+	 * @param statement                  The string to be modified (tipically a query)
+	 * @param userProfile                The IEngUserProfile object
+	 * @param profileAttributeStartIndex The start index for query parsing (useful for recursive calling)
+	 * @param surroundWithQuotes         Flag: if true, the replacement will be surrounded by quotes if they are missing
+	 *
+	 * @return The statement with parameters replaced by their values.
+	 * @throws Exception
+	 */
+	private static String substituteDatasetParametersInString(String statement, IDataSet dataset, Map parTypeMap, int profileAttributeStartIndex,
+			boolean surroundWithQuotes) throws Exception {
+		logger.debug("IN");
+		Map valuesMap = dataset.getParamsMap();
+		int profileAttributeEndIndex = statement.indexOf("}", profileAttributeStartIndex);
+		if (profileAttributeEndIndex == -1)
+			throw new Exception("Not closed profile attribute: '}' expected.");
+		if (profileAttributeEndIndex < profileAttributeEndIndex)
+			throw new Exception("Not opened profile attribute: '$P{' expected.");
+		String attribute = statement.substring(profileAttributeStartIndex + 3, profileAttributeEndIndex).trim();
+
+		String dequotePrefix = "_dequoted";
+		if (attribute.endsWith(dequotePrefix)) {
+			surroundWithQuotes = false;
+		}
+
+		int startConfigIndex = attribute.indexOf("(");
+		String attributeName = "";
+		String prefix = "";
+		String split = "";
+		String suffix = "";
+		boolean attributeExcpetedToBeMultiValue = false;
+
+		if (startConfigIndex != -1) {
+			// the parameter is expected to be multivalue
+			attributeExcpetedToBeMultiValue = true;
+			int endConfigIndex = attribute.length() - 1;
+			if (attribute.charAt(endConfigIndex) != ')')
+				throw new Exception("Sintax error: \")\" missing. The expected sintax for " + "parameter is  $P{parameters} for singlevalue parameters. ");
+			String configuration = attribute.substring(startConfigIndex + 1, endConfigIndex);
+			// check the configuration content and add empty prefix/suffix as default if they are null
+			if (configuration.equals(";,;"))
+				configuration = " ;,; ";
+			String[] configSplitted = configuration.split(";");
+			if (configSplitted == null || configSplitted.length != 3)
+				throw new Exception("Sintax error. The expected sintax for parameters"
+						+ "or $P{parameter} for singlevalue parameter. 'parameterName' must not contain '(' characters. "
+						+ "The (prefix;split;suffix) is not properly configured");
+			prefix = configSplitted[0];
+			split = configSplitted[1];
+			suffix = configSplitted[2];
+			logger.debug("Multi-value parameter configuration found: prefix: '" + prefix + "'; split: '" + split + "'; suffix: '" + suffix + "'.");
+			attributeName = attribute.substring(0, startConfigIndex);
+			logger.debug("Expected multi-value parameter name: '" + attributeName + "'");
+		} else {
+			attributeName = attribute;
+			logger.debug("Expected single-value parameter name: '" + attributeName + "'");
+		}
+
+		String value = (String) valuesMap.get(attributeName);
+		boolean isNullValue = false;
+		if (value == null) {
+			isNullValue = true;
+			value = "null";
+		}
+
+		if (value.startsWith("' {"))
+			value = value.substring(1);
+		if (value.endsWith("}'"))
+			value = value.substring(0, value.indexOf("}'") + 1);
+		value = value.trim();
+		logger.debug("Parameter value found: " + value);
+		String replacement = null;
+		String newListOfValues = null;
+
+		// if is specified a particular type for the parameter can add '' in case of String or Date
+		String parType = null;
+		if (parTypeMap != null) {
+			parType = (String) parTypeMap.get(attributeName);
+		}
+		if (parType == null)
+			parType = new String("");
+
+		if (attributeExcpetedToBeMultiValue) {
+			if (value.startsWith("{")) {
+				// the parameter is multi-value
+				String[] values = findAttributeValues(value);
+				logger.debug("N. " + values.length + " parameter values found: '" + values + "'");
+				// newListOfValues = values[0];
+				newListOfValues = ((values[0].startsWith(prefix))) ? "" : prefix + values[0] + ((values[0].endsWith(suffix)) ? "" : suffix);
+				for (int i = 1; i < values.length; i++) {
+					// newListOfValues = newListOfValues + split + values[i];
+					String singleValue = ((values[i].startsWith(prefix))) ? "" : prefix + values[i] + ((values[i].endsWith(suffix)) ? "" : suffix);
+					singleValue = checkParType(singleValue, parType, attribute);
+					newListOfValues = newListOfValues + split + singleValue;
+				}
+			} else {
+				logger.warn("The attribute value has not the sintax of a multi value parameter; considering it as a single value.");
+				newListOfValues = value;
+			}
+
+		} else {
+			if (value.startsWith("{")) {
+				// the profile attribute is multi-value
+				logger.warn(
+						"The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
+				try {
+					// checks the sintax
+					String[] values = findAttributeValues(value);
+					newListOfValues = values[0];
+					for (int i = 1; i < values.length; i++) {
+						newListOfValues = newListOfValues + value.charAt(1) + values[i];
+					}
+				} catch (Exception e) {
+					logger.error("The attribute value does not respect the sintax of a multi value attribute; considering it as a single value.", e);
+					newListOfValues = value;
+				}
+			} else {
+				newListOfValues = value;
+			}
+		}
+		String nullValueString = null;
+		if (newListOfValues.equals("") || newListOfValues.equals("''") || newListOfValues.equals("null")) {
+			try {
+				nullValueString = SingletonConfig.getInstance().getConfigValue("DATA_SET_NULL_VALUE");
+				if (nullValueString != null) {
+					newListOfValues = "'" + nullValueString + "'";
+				}
+			} catch (Throwable e) {
+				// try to read engine_config settings
+				if ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE") != null) {
+					nullValueString = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE")).getCharacters();
+				}
+				if (nullValueString != null) {
+					newListOfValues = "'" + nullValueString + "'";
+
+				}
+			}
+
+		}
+		replacement = ((newListOfValues.startsWith(prefix)) ? "" : prefix) + newListOfValues + ((newListOfValues.endsWith(suffix)) ? "" : suffix);
+
+		if (!attributeExcpetedToBeMultiValue)
+			replacement = checkParType(replacement, parType, attribute);
+
+		if (surroundWithQuotes || parType.equalsIgnoreCase("DATE")) {
+			if (!isNullValue) {
+				if (!replacement.startsWith("'"))
+					replacement = "'" + replacement;
+				if (!replacement.endsWith("'"))
+					replacement = replacement + "'";
+			}
+		}
+
+		attribute = quote(attribute);
+		statement = statement.replaceAll("\\$P\\{" + attribute + "\\}", replaceSpecials(replacement));
+
+		/*
+		 * profileAttributeStartIndex = statement.indexOf("$P{", profileAttributeEndIndex-1); if (profileAttributeStartIndex != -1) statement =
+		 * substituteParametersInString(statement, valuesMap, profileAttributeStartIndex);
+		 */
+		logger.debug("OUT");
+
+		return statement;
+
+	}
+
+	/**
+	 * Find the attribute values in case of multi value attribute. The sintax is: {splitter character{list of values separated by the splitter}}. Examples:
+	 * {;{value1;value2;value3....}} {|{value1|value2|value3....}}
+	 *
+	 * @param attributeValue The String representing the list of attribute values
+	 * @return The array of attribute values
+	 * @throws Exception in case of sintax error
+	 */
+	public static String[] findAttributeValues(String attributeValue) throws Exception {
+		logger.debug("IN");
+		String sintaxErrorMsg = "Multi value attribute sintax error.";
+		// Clean specification of type (STRING, NUM..) from values (if exists!!)
+		int lastBrace = attributeValue.lastIndexOf("}");
+		int previousLastBrace = attributeValue.indexOf("}");
+		String type = attributeValue.substring(previousLastBrace + 1, lastBrace);
+		if (type.length() > 0) {
+			attributeValue = attributeValue.substring(0, previousLastBrace + 1) + "}";
+		}
+		if (attributeValue.length() < 6)
+			throw new Exception(sintaxErrorMsg);
+		if (!attributeValue.endsWith("}}"))
+			throw new Exception(sintaxErrorMsg);
+		if (attributeValue.charAt(2) != '{')
+			throw new Exception(sintaxErrorMsg);
+		char splitter = attributeValue.charAt(1);
+		String valuesList = attributeValue.substring(3, attributeValue.length() - 2);
+		String[] values = valuesList.split(String.valueOf(splitter));
+		logger.debug("OUT");
+		return values;
+	}
+
+	/*
+	 * This method exists since jdk 1.5 (java.util.regexp.Patter.quote())
+	 */
+	/**
+	 * Quote.
+	 *
+	 * @param s the s
+	 *
+	 * @return the string
+	 */
+	public static String quote(String s) {
+		logger.debug("IN");
+		int slashEIndex = s.indexOf("\\E");
+		if (slashEIndex == -1)
+			return "\\Q" + s + "\\E";
+
+		StringBuffer sb = new StringBuffer(s.length() * 2);
+		sb.append("\\Q");
+		slashEIndex = 0;
+		int current = 0;
+		while ((slashEIndex = s.indexOf("\\E", current)) != -1) {
+			sb.append(s.substring(current, slashEIndex));
+			current = slashEIndex + 2;
+			sb.append("\\E\\\\E\\Q");
+		}
+		sb.append(s.substring(current, s.length()));
+		sb.append("\\E");
+		logger.debug("OUT");
+		return sb.toString();
+	}
+
+	/**
+	 * Check the correct validity of the parameter value
+	 *
+	 * @param replacement : the parameter
+	 * @param parType     : the parameter type
+	 * @param attribute   : the attribute
+	 * @return
+	 */
+	private static String checkParType(String replacement, String parType, String attribute) throws NumberFormatException {
+		logger.debug("IN");
+		String toReturn = replacement;
+		// check if numbers are number otherwise throw exception
+		try {
+			if (parType.equalsIgnoreCase("NUMBER")) {
+				toReturn = toReturn.replaceAll("'", "").replaceAll(";", ",");
+				if (toReturn.indexOf(",") >= 0) {
+					// multivalues management
+					String[] values = toReturn.split(",");
+					for (int i = 0; i < values.length; i++) {
+						Double double1 = Double.valueOf(values[i]);
+					}
+				} else {
+					Double double1 = Double.valueOf(toReturn);
+				}
+			}
+		} catch (NumberFormatException e) {
+			String me = e.getMessage();
+			me += " - attribute " + attribute + " should be of number type";
+			NumberFormatException numberFormatException = new NumberFormatException(attribute);
+			numberFormatException.setStackTrace(e.getStackTrace());
+			throw numberFormatException;
+		}
+
+		// check when type is RAW that there are not '' surrounding values (in case remove them)
+		// remotion done here in order to not modify SpagoBI Analytical driver of type string handling
+		try {
+			if (parType.equalsIgnoreCase("RAW")) {
+				logger.debug("Parmaeter is Raw type, check if there are '' and remove them");
+				if (toReturn.length() > 2) {
+					if (toReturn.startsWith("'")) {
+						logger.debug("first character is ', remove");
+						toReturn = toReturn.substring(1);
+					}
+					if (toReturn.endsWith("'")) {
+						logger.debug("last character is ', remove");
+						toReturn = toReturn.substring(0, replacement.length() - 1);
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error in removing the '' in value " + toReturn + " do not substitute them");
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	/**
+	 * Parse special characters with String replacement
+	 */
+	public static String replaceSpecials(String replacement) {
+
+		return Matcher.quoteReplacement(replacement);
+	}
+
+	/**
+	 * Resolve profile attributes and parameters
+	 *
+	 * @param statement
+	 * @param dataSet
+	 * @return
+	 */
+	public String resolveAll(String statement, IDataSet dataSet) {
+		String res = parametersResolver.resolveProfileAttributes(statement, dataSet);
+		res = resolveParameters(res, dataSet);
+		return res;
 	}
 }

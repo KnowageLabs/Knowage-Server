@@ -455,7 +455,7 @@ public abstract class AbstractDataSet implements IDataSet {
 						String newValuesFromArray = "";
 						for (int i = 0; i < valuesArray.length; i++) {
 							String temp = valuesArray[i];
-							if (temp.startsWith(delim) && temp.endsWith(delim))
+							if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim))
 								temp = temp.substring(1, temp.length() - 1);
 							temp = temp.replaceAll("'", "''");
 							if (i == 0)

@@ -1127,8 +1127,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								if (j!=0) {
 									tempJSN  +=",";
 								}
-								
+								if(isNaN(splittedValues[j])){
 								tempJSN  +=  (splittedValues[j].charAt(0) == "'" ? "" : "'") + splittedValues[j] + (splittedValues[j].charAt(splittedValues[j].length - 1) == "'" ? "" : "'") ;
+								}
+								else {
+									tempJSN  += splittedValues[j];
+								}
 							}
 							else tempJSN += "";
 						}							

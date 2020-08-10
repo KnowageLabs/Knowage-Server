@@ -22,12 +22,17 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spagobi.container.ObjectUtils;
@@ -42,6 +47,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
@@ -287,4 +293,147 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 	}
 
 	protected abstract AbstractDataReader createDataReader();
+
+	/*
+	 * These snippets of code come from a common utilities logic, now the logic behind parameters handling is inside each type of dataset
+	 */
+	@Override
+	public void setParametersMap(Map<String, String> paramValues) throws JSONException {
+		List<JSONObject> parameters = getDataSetParameters();
+		if (parameters.size() > paramValues.size()) {
+			String parameterNotValorizedStr = getParametersNotValorized(parameters, paramValues);
+			throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+		}
+
+		if (paramValues.size() > 0) {
+			for (String paramName : paramValues.keySet()) {
+				for (int i = 0; i < parameters.size(); i++) {
+					JSONObject parameter = parameters.get(i);
+					if (paramName.equals(parameter.optString("namePar"))) {
+						String[] values = getValuesAsArray(paramValues, paramName, parameter);
+						List<String> encapsulatedValues = encapsulateValues(parameter, values);
+						paramValues.put(paramName, org.apache.commons.lang3.StringUtils.join(encapsulatedValues, ","));
+						break;
+					}
+				}
+			}
+			setParamsMap(paramValues);
+		}
+	}
+
+	private String[] getValuesAsArray(Map<String, String> paramValues, String paramName, JSONObject parameter) {
+		boolean isMultiValue = parameter.optBoolean("multiValuePar");
+		String paramValue = paramValues.get(paramName);
+		String[] values = null;
+		if (isMultiValue) {
+			List<String> list = new ArrayList<String>();
+			boolean paramValueConsumed = false;
+			try {
+				JSONArray jsonArray = new JSONArray(paramValue);
+				for (int j = 0; j < jsonArray.length(); j++) {
+					list.add(jsonArray.getString(j));
+				}
+				paramValueConsumed = true;
+			} catch (JSONException e) {
+				paramValueConsumed = false;
+			}
+			if (!paramValueConsumed) {
+				list.add(paramValue);
+			}
+			values = list.toArray(new String[0]);
+			if (values != null && values.length == 1 && !values[0].isEmpty()) {
+				String valuesString = values[0];
+//				if (valuesString.startsWith("'") && valuesString.endsWith("'")) {
+//					// patch for KNOWAGE-4600: An error occurs when propagating a driver value with commas through cross navigation.
+//					// Do nothing, keep values as it is
+//				} else {
+//					values = valuesString.split(",");
+//				}
+			}
+		} else {
+			values = Arrays.asList(paramValue).toArray(new String[0]);
+		}
+		return values;
+	}
+
+	private static String getParametersNotValorized(List<JSONObject> parameters, Map<String, String> parametersValues) throws JSONException {
+		String toReturn = "";
+
+		for (Iterator<JSONObject> iterator = parameters.iterator(); iterator.hasNext();) {
+			JSONObject parameter = iterator.next();
+			String parameterName = parameter.getString("namePar");
+			if (parametersValues.get(parameterName) == null) {
+				toReturn += parameterName;
+				if (iterator.hasNext()) {
+					toReturn += ", ";
+				}
+			}
+		}
+		return toReturn;
+	}
+
+	/**
+	 * Encapsulate values into SQL values.
+	 *
+	 * For every type of data except string, the method convert the values to strings.
+	 *
+	 * With strings we can have two case:
+	 * <ul>
+	 * <li>String that starts and ends with single quote</li>
+	 * <li>String that doesn't start and end with single quote</li>
+	 * </ul>
+	 *
+	 * In the first case, FE are sending us SQL values that probably contain JSON escape (e.g., a JSON value like 'this string contains a \' in it').
+	 *
+	 * In the second case, FE are sending us standard not-SQL-escaded string ( e.g., a string like "this string contains a ' in it"). In this second case this
+	 * method escapes single quote and duplicates them as requested by SQL.
+	 *
+	 * @param parameter Original parameter JSON metadata
+	 * @param values    Actual values of parameters
+	 * @return List of encapsulated values as strings
+	 */
+	private List<String> encapsulateValues(JSONObject parameter, String[] values) {
+		String typePar = parameter.optString("typePar");
+		boolean isString = "string".equalsIgnoreCase(typePar);
+		String delim = isString ? "'" : "";
+
+		List<String> newValues = new ArrayList<>();
+		for (int j = 0; j < values.length; j++) {
+			String value = values[j].trim();
+			if (!value.isEmpty()) {
+				if (value.startsWith(delim) && value.endsWith(delim)) {
+					if (value.contains("','")) {
+						value = value.substring(1, value.length() - 1);
+						String[] valuesArray = value.split("','");
+						String newValuesFromArray = "";
+						for (int i = 0; i < valuesArray.length; i++) {
+							String temp = valuesArray[i];
+							if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim))
+								temp = temp.substring(1, temp.length() - 1);
+							temp = temp.replaceAll("'", "''");
+							if (i == 0)
+								newValuesFromArray = (delim + temp + delim);
+							else
+								newValuesFromArray = newValuesFromArray + "," + (delim + temp + delim);
+
+						}
+						newValues.add(newValuesFromArray);
+					} else {
+						if (isString) {
+							value = value.substring(1, value.length() - 1);
+							value = value.replaceAll("'", "''");
+						}
+						newValues.add(delim + value + delim);
+					}
+				} else {
+					if (isString) {
+						// Duplicate single quote to transform it into an escaped SQL single quote
+						value = value.replaceAll("'", "''");
+					}
+					newValues.add(delim + value + delim);
+				}
+			}
+		}
+		return newValues;
+	}
 }

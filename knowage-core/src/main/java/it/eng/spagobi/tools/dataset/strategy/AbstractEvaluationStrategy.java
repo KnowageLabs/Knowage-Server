@@ -65,7 +65,6 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 			dataStore = new DataStore(dataSet.getMetadata());
 		} else {
 			List<AbstractSelectionField> newProjections = applyTotalsFunctionsToFormulas(projections, filter, maxRowCount);
-//			List<AbstractSelectionField> newProjections = projections;
 			dataStore = execute(newProjections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 			IMetaData dataStoreToUseMeta = dataStore.getMetaData();
 			if (!isSummaryRowIncluded() && summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
