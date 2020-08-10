@@ -47,6 +47,9 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -780,6 +783,13 @@ public class StringUtilities {
 		} else {
 			return "";
 		}
+	}
+
+	private static boolean isRestDataset(IDataSet dataSet) {
+		if (dataSet instanceof VersionedDataSet) {
+			dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
+		}
+		return dataSet instanceof RESTDataSet;
 	}
 
 	static public String[] convertCollectionInArray(Collection coll) {
