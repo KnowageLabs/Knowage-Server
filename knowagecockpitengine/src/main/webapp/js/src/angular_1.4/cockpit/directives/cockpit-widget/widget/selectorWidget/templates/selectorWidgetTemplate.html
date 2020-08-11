@@ -65,14 +65,14 @@
 			<md-input-container>
 				<label aria-label="Start Date" ng-if="ngModel.settings.modalityValue=='multiValue'">{{translate.load("sbi.cockpit.widgets.selector.startdate")}}</label>
 				<label aria-label="Date" ng-if="ngModel.settings.modalityValue!='multiValue'">{{translate.load("sbi.cockpit.widgets.selector.singledate")}}</label>
-				<md-datepicker ng-change="selectDate()"  name="startDate" ng-model="startDate" md-min-date="ngModel.settings.defaultStartDate" md-max-date="ngModel.settings.defaultEndDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
+				<md-datepicker  name="startDate" ng-change="selectDate()" ng-model="selectedDate.startDate" md-min-date="ngModel.settings.defaultStartDate" md-max-date="ngModel.settings.defaultEndDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
 			</md-input-container>
 		</div>
 		
 		<div layout="row" layout-align="start center" ng-show="ngModel.settings.modalityValue=='multiValue'">
 			<md-input-container>
 				<label aria-label="End Date">{{::translate.load("sbi.cockpit.widgets.selector.enddate")}}</label>
-				<md-datepicker ng-change="selectDate()" name="endDate" ng-model="endDate" md-min-date="startDate || ngModel.settings.defaultStartDate" md-max-date="ngModel.settings.defaultEndDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
+				<md-datepicker  name="endDate"  ng-change="selectDate()" ng-model="selectedDate.endDate" md-min-date="startDate || ngModel.settings.defaultStartDate" md-max-date="ngModel.settings.defaultEndDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
 			</md-input-container>
 		</div>
 		

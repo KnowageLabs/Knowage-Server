@@ -108,21 +108,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.parentNode.attributes.value.value));
 				else $scope.prepareParameter(getValueFromString(e.target.parentNode.attributes.value.value));
 			}
+			else if(e.target.parentNode.querySelectorAll("input")[0].value){
+				 $scope.toggleParameter(getValueFromString(e.target.parentNode.querySelectorAll("input")[0].value)); 
+			}
+			
 		}
+		
+//		$scope.$watch("selectedDate.startDate",function(newValue,oldValue){
+//			if (newValue){
+//				$scope.selectDate();
+//			}
+//		})
+//		
+//		$scope.$watch("selectedDate.endDate",function(newValue,oldValue){
+//			if (newValue){
+//				$scope.selectDate();
+//			}
+//		})
 		
 		$scope.selectDate = function(){
 			var tempDates = [];
 			if($scope.ngModel.settings.modalityValue=='multiValue'){
-				if(!$scope.startDate || !$scope.endDate) return;
-				var from = $scope.startDate.getTime();
-				var to = $scope.endDate.getTime();
+				if(!$scope.selectedDate.startDate || !$scope.selectedDate.endDate) return;
+				var from = $scope.selectedDate.startDate.getTime();
+				var to = $scope.selectedDate.endDate.getTime();
 				var values = $scope.ngModel.activeValues || $scope.datasetRecords.rows;
 				for(var k in values){
 					var value = values[k].column_1 || values[k];
 					var dateToCheck = new Date(value).getTime();
 					if(dateToCheck >= from && dateToCheck <= to) tempDates.push(value);
 				}
-			}else tempDates.push($filter('date')($scope.startDate,'dd/MM/yyyy HH:mm:ss.sss'));
+			}else tempDates.push($filter('date')($scope.selectedDate.startDate,'dd/MM/yyyy HH:mm:ss.sss'));
 			$scope.toggleParameter(tempDates);
 		}
 
@@ -597,9 +613,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.deleteSelections(item);
 				}
 			} else { // singleValue
-				if($scope.ngModel.settings.modalityPresent=="LIST"){
+				if($scope.ngModel.settings.modalityValue!="dropdown"){
 					if($scope.selectedValues[0] != parVal){
-						if (parVal.length == 0) {
+						if (!parVal || parVal.length == 0) {
 							item.value=angular.copy($scope.selectedValues[0]);
 							$rootScope.$broadcast('DELETE_SELECTION',item);
 							$scope.deleteSelections(item);
@@ -620,7 +636,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 					}
 				}else{ // COMBOBOX
-					if(parVal && parVal.length>0){
+					if(parVal && (parVal.length>0 || !isNaN(parVal))){
 						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, angular.copy(parVal));
 					}else{
 						item.value=angular.copy(parVal);
@@ -658,9 +674,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.clearStartDate = function(){
-			$scope.startDate = '';
+			$scope.selectedDate = {};
 		}
-
+		
+		$scope.clearStartDate();
+		
 		$scope.deleteSelections = function(item){
 			var reloadAss=false;
 			var associatedDatasets = [];
