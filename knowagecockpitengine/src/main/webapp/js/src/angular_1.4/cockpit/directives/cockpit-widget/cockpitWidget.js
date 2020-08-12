@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it) v0.0.1
- *
+ * 
  */
 (function(){
 	var scripts = document.getElementsByTagName("script");
@@ -317,7 +317,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 	$scope.editingWidgetName= false;
 	$scope.extendedStyle	= {};
 
-	$scope.isOriginal = false;//for previewing different types of chart
+	$scope.isOriginal = false;// for previewing different types of chart
 
 	$scope.borderShadowStyle= {};
 	$scope.paddingStyle		= {};
@@ -356,7 +356,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		$scope.ngModel.content.name = $scope.ngModel.style.title.label;
 	}
 
-	// davverna - initializing search object to give all the columns to the user searchbar
+	// davverna - initializing search object to give all the columns to the user
+	// searchbar
 	if($scope.ngModel.type.toLowerCase() == "table" && (!$scope.ngModel.search || $scope.ngModel.search.columns == [])){
 		$scope.ngModel.search ={"columns" : []};
 		for(var k in $scope.ngModel.content.columnSelectedOfDataset){
@@ -367,7 +368,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		}
 	}
 
-	// davverna - method to set the actual model and search parameters to refresh the widget table
+	// davverna - method to set the actual model and search parameters to
+	// refresh the widget table
 	$scope.searchColumns = function(){
 		if($scope.ngModel.search.text != "" && $scope.ngModel.search.columns.length > 0){
 			$scope.activeSearch = true;
@@ -672,7 +674,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		prepareChartWidget(newModel);
 		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,newModel);
 	}
-	//dialog to choose the sheet where to move the widget
+	// dialog to choose the sheet where to move the widget
 	$scope.moveWidget = function(ev){
 		$scope.targetSheet = new Object();
 		$scope.targetSheet = cockpitModule_template.sheets[cockpitModule_widgetServices.getCokpitIndexFromProperty(cockpitModule_properties.CURRENT_SHEET)];
@@ -709,7 +711,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 	}
 
 	$scope.openSearchBar = function(ev,widgetName){
-		//$scope.widgetSearchBar == false ? $scope.widgetSearchBar = true : $scope.widgetSearchBar = false;
+		// $scope.widgetSearchBar == false ? $scope.widgetSearchBar = true :
+		// $scope.widgetSearchBar = false;
 		$mdDialog.show({
 			controller: function ($scope,$mdDialog,ngModel) {
 				$scope.widgetName = widgetName;
@@ -863,7 +866,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						config.parameters = $scope.checkPreviewParameters(previewSettings,previewDataset, columnName, modalColumn, row,columnValue);
 	
 					if(!previewSettings.background){
-						//showing exporters
+						// showing exporters
 						config.options = {
 								exports: ['CSV', 'XLSX']
 						};
@@ -906,7 +909,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				var doCross = false;
 				var nameToCheckForCross = columnName;
 				if(columnName != undefined){
-					// check if selected column has been renamed by an alias, in that
+					// check if selected column has been renamed by an alias, in
+					// that
 					// case take the real name
 					for(var colIndex in model.content.columnSelectedOfDataset){
 						var col = model.content.columnSelectedOfDataset[colIndex];
@@ -918,7 +922,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				}
 	
 				if(crossSettings.crossType == "allRow" || crossSettings.crossType == "icon"){
-					// case all columns are enabled for cross, get value for cross
+					// case all columns are enabled for cross, get value for
+					// cross
 					// column (or alias if present)
 					var crossColumnOrAlias = crossSettings.column;
 	
@@ -1113,7 +1118,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				var dsLabel = dataset.label;
 				var originalColumnName;
 				if (!Array.isArray(columnName)){
-					//original management with simple value as parameters (not array, not multiselection)
+					// original management with simple value as parameters (not
+					// array, not multiselection)
 					originalColumnName = "";
 					if ($scope.ngModel.content.columnSelectedOfDataset){
 				        for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
@@ -1134,7 +1140,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 					}
 	
 					if ($scope.ngModel.content.crosstabDefinition){
-						//check on pivot table structure: rows and columns definition
+						// check on pivot table structure: rows and columns
+						// definition
 						if (originalColumnName == undefined || originalColumnName == ""){
 							for(var i=0; i<$scope.ngModel.content.crosstabDefinition.columns.length; i++){
 								if(($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === columnName.toUpperCase()) ||
@@ -1155,16 +1162,18 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						}
 					}
 	
-				  //at last sets the input columnName like the original name
+				  // at last sets the input columnName like the original name
 					if (originalColumnName == undefined || originalColumnName == ""){
 						originalColumnName = columnName;
 					}
 	
 				}else{
-					//multiple selection: only from pivot table widget (by measure selection)
+					// multiple selection: only from pivot table widget (by
+					// measure selection)
 					originalColumnName = [];
 					if ($scope.ngModel.content.crosstabDefinition){
-						//check on pivot table structure: rows and columns definition
+						// check on pivot table structure: rows and columns
+						// definition
 						for (var k=0; k < columnName.length; k++){
 							var singleColumnName = columnName[k];
 							var foundInColumns = false;
@@ -1189,7 +1198,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 							}
 						}
 	
-	//					//at last sets the input columnName like the original name
+	// //at last sets the input columnName like the original name
 						if (!foundInColumns && !foundInRows){
 							originalColumnName.push(singleColumnName);
 						}
@@ -1216,7 +1225,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
 							cockpitModule_template.configuration.filters[dsLabel]={};
 						} else{
-							if(Object.keys(cockpitModule_template.configuration.filters).length > 1){ // sort keys
+							if(Object.keys(cockpitModule_template.configuration.filters).length > 1){ // sort
+																										// keys
 								var temp = cockpitModule_template.configuration.filters[dsLabel];
 								delete cockpitModule_template.configuration.filters[dsLabel];
 								cockpitModule_template.configuration.filters[dsLabel] = temp;
@@ -1225,19 +1235,25 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						if (Array.isArray(originalColumnName)){
 							for (var o=0; o < originalColumnName.length; o++){
 								var singleOriginalColumnValue = originalColumnName[o];
-								if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(singleOriginalColumnValue)){ // sort keys
+								if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(singleOriginalColumnValue)){ // sort
+																																		// keys
 									delete cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue];
 								}
 								cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue]=columnValue[o];
 								cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':singleOriginalColumnValue,'alias':columnName[o]});
 							}
 						}else{
-								if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(originalColumnName)){ // sort keys
+								if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(originalColumnName)){ // sort
+																																// keys
 									delete cockpitModule_template.configuration.filters[dsLabel][originalColumnName];
 								}
 								// 02/02/17 - davverna
-								// if columnvalue is an array, usually from a bulk selection, I use a copy to avoid the direct object binding.
-								// With the double click there is not the same issue because the binding is on a primitive value (string).
+								// if columnvalue is an array, usually from a
+								// bulk selection, I use a copy to avoid the
+								// direct object binding.
+								// With the double click there is not the same
+								// issue because the binding is on a primitive
+								// value (string).
 								if(Object.prototype.toString.call( columnValue ) === '[object Array]'){
 									cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=[];
 									angular.copy(columnValue,cockpitModule_template.configuration.filters[dsLabel][originalColumnName]);
@@ -1343,7 +1359,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				delete $scope.borderShadowStyle['box-shadow'];
 			}
 		}
-//		// update title style
+// // update title style
 		if($scope.extendedStyle.titles!=undefined && $scope.extendedStyle.titles==true){
 			if($scope.extendedStyle.title && !$scope.extendedStyle.title.font){
 				$scope.extendedStyle.title.font = {};
@@ -1464,8 +1480,13 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 	};
 
 	$scope.getProperties = function(propertyPath) {
-		propertyPath = propertyPath.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-		propertyPath = propertyPath.replace(/^\./, '');           // strip a leading dot
+		propertyPath = propertyPath.replace(/\[(\w+)\]/g, '.$1'); // convert
+																	// indexes
+																	// to
+																	// properties
+		propertyPath = propertyPath.replace(/^\./, '');           // strip a
+																	// leading
+																	// dot
 	    return propertyPath.split('.');
 	}
 
@@ -1526,20 +1547,20 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		console.log($scope.ngModel.mutualExclusion);
 		if($scope.ngModel.mutualExclusion !== undefined) {
 			var l = $scope.getLayerByName($scope.ngModel.content.layers[0].name);
-			if (!l) return; //do nothing
+			if (!l) return; // do nothing
 			l.setVisible(true);
 			if( $scope.ngModel.mutualExclusion === true) {
-				//By default select only the first layer
+				// By default select only the first layer
 				for(var i = 1; i < $scope.ngModel.content.layers.length ; i++) {
 					var l = $scope.getLayerByName($scope.ngModel.content.layers[i].name);
-					if (!l) return; //do nothing
+					if (!l) return; // do nothing
 					l.setVisible(false);
 				}
 			} else {
-				//By  default select all layers
+				// By default select all layers
 				for(var i = 1; i < $scope.ngModel.content.layers.length ; i++) {
 					var l = $scope.getLayerByName($scope.ngModel.content.layers[i].name);
-					if (!l) return; //do nothing
+					if (!l) return; // do nothing
 					l.setVisible(true);
 				}
 			}

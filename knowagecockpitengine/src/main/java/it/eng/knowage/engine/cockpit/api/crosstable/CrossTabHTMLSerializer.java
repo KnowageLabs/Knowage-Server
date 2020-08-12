@@ -1117,11 +1117,6 @@ public class CrossTabHTMLSerializer {
 	private JSONObject getThreshold(Double value, JSONArray colorThrJ) throws JSONException {
 		JSONObject toReturn = new JSONObject();
 		if (value == null) return toReturn;
-//		JSONArray thresholdConditions = colorThrJ.getJSONArray("condition");
-//		JSONObject thresholdConditionValues = (colorThrJ.isNull("conditionValue")) ? null : colorThrJ.getJSONObject("conditionValue");
-//		JSONArray thresholdConditions2 = colorThrJ.optJSONArray("condition2");
-//		JSONObject thresholdConditionValues2 = (colorThrJ.isNull("conditionValue2")) ? null : colorThrJ.getJSONObject("conditionValue2");
-//		JSONObject thresholdColors = (colorThrJ.isNull("color")) ? null : colorThrJ.getJSONObject("color");
 		boolean isConditionVerified = false;
 
 		for (int c = 0; c < colorThrJ.length(); c++) {
@@ -1131,19 +1126,6 @@ public class CrossTabHTMLSerializer {
 			Double conditionValue = thrCond.getDouble("value");
 			isConditionVerified = verifyThresholdCondition(condition, conditionValue, value);
 			
-//			if (!thrCond.equalsIgnoreCase("none")) {
-//				double thrCondValue = colorThrJ.getDouble(String.valueOf(c));
-//				isConditionVerified = verifyThresholdCondition(thrCond, thrCondValue, value);
-//				if (isConditionVerified && colorThrJ != null) {
-//					// check if there is also a second condition that MUST be true
-//					String thrCond2 = (String) colorThrJ.get(c);
-//					if (!thrCond2.equalsIgnoreCase("none")) {
-//						double thrCondValue2 = colorThrJ.getDouble(String.valueOf(c));
-//						boolean isCondition2Verified = verifyThresholdCondition(thrCond2, thrCondValue2, value);
-//						isConditionVerified = isConditionVerified && isCondition2Verified;
-//					}
-//				}
-//			}
 			if (isConditionVerified)
 				return thrCond;
 		}
@@ -1154,16 +1136,20 @@ public class CrossTabHTMLSerializer {
 		boolean isConditionVerified = false;
 
 		switch (condition) {
+		case "=":
+			if (valueToTest == value)
+				isConditionVerified = true;
+			break;
+		case "==":
+			if (valueToTest == value)
+				isConditionVerified = true;
+			break;
 		case "<":
 			if (valueToTest < value)
 				isConditionVerified = true;
 			break;
 		case ">":
 			if (valueToTest > value)
-				isConditionVerified = true;
-			break;
-		case "=":
-			if (valueToTest == value)
 				isConditionVerified = true;
 			break;
 		case ">=":
