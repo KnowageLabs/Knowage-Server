@@ -124,7 +124,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.oneOperandOperators = ['=', '!=', 'like', '<','>','<=','>=','IN'];
 		$scope.twoOperandsOperators = ['range'];
 
-
+		
+		$scope.updateFiltersDatasetNames = function(){
+			for(var k in $scope.ngModelShared.filters){
+				if ($scope.ngModelShared.filters[k].dataset == 'string') {
+					$scope.ngModelShared.filters[k].dataset = {"label": $scope.ngModelShared.filters[k].dataset}
+					if(cockpitModule_datasetServices.getDatasetByLabel($scope.ngModelShared.filters[k].dataset)) $scope.ngModelShared.filters[k].dataset.dsId=cockpitModule_datasetServices.getDatasetByLabel($scope.ngModelShared.filters[k].dataset).id.dsId;
+					else $scope.ngModelShared.filters[k].dataset.dsId = $scope.ngModelShared.dataset.dsId;
+				}
+				if(!cockpitModule_datasetServices.getDatasetByLabel($scope.ngModelShared.filters[k].dataset.label)){
+					$scope.ngModelShared.filters[k].dataset.label = cockpitModule_datasetServices.getDatasetLabelById($scope.ngModelShared.filters[k].dataset.dsId)
+				}
+			}
+		}
+		$scope.updateFiltersDatasetNames();
 
 
 		/*
