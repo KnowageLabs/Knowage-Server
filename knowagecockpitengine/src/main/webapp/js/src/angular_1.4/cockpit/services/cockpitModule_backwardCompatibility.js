@@ -220,6 +220,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			
 			if(!self.compareVersion("7.3.1",version)){
+				// changing filter object in order to update on dataset label changes
+				if(model.filters && model.filters.length > 0) {
+					for(var k in model.filters){
+						if(typeof model.filters[k].dataset == 'string') {
+							var dsLabel = model.filters[k].dataset;
+							model.filters[k].dataset = {"label":dsLabel,"dsId":cockpitModule_datasetServices.getDatasetByLabel(dsLabel).id.dsId}
+						}
+					}
+				}
 				if(model.type=='table' || model.type=='discovery'){
 					for(var k in model.content.columnSelectedOfDataset){
 						if(model.content.columnSelectedOfDataset[k].momentDateFormat){

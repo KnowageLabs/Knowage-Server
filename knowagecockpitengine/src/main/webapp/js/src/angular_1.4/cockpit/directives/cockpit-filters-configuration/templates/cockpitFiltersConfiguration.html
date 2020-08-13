@@ -30,7 +30,7 @@
 	                <label>{{translate.load("sbi.cockpit.dataset")}}</label>
 
 	             	<md-select ng-model="newFilter.dataset" ng-change=newFilterChangeDatasetUpdateColumns() ng-disabled="newFilterAddMode == false" >
-	                    <md-option ng-repeat="ds in newFilterAllWidgetDS" ng-value="ds.label">{{ds.label}}</md-option>
+	                    <md-option ng-repeat="ds in newFilterAllWidgetDS" ng-value="ds">{{ds.label}}</md-option>
 	                </md-select>   
 
 	            </md-input-container>

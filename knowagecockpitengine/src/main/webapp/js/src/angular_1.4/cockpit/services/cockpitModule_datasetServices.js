@@ -1007,12 +1007,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				var filterElement=filters[i];
 
 				// if filter.dataset is not defined means filter coming from old interface and then set it to current dataset
-				if(filterElement.dataset == undefined){
-					filterElement.dataset = datasetLabel;
+				if(!filterElement.dataset || !filterElement.dataset.dsId){
+					filterElement.dataset = {"label":datasetLabel, "dsId":dataset.id.dsId};
 				}
 
 				// if filter.dataset is defined check dataset is current one
-				if(filterElement.dataset != undefined && filterElement.dataset == datasetLabel){
+				if(filterElement.dataset != undefined && filterElement.dataset.dsId == dataset.id.dsId){
 
 					var colName=filterElement.colName;
 					var type=filterElement.type;
