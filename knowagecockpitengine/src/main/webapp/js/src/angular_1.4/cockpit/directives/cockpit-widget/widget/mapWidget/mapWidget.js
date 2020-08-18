@@ -455,26 +455,60 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId);
 	    }
 
+		function syncDatasetMetadata(layerDef) {
 
-	    $scope.getLayers = function () {
-		    for (l in $scope.ngModel.content.layers){
+			var toNames = function(el) { return el.name; };
+
+			var dsId = layerDef.dsId;
+			var ds = cockpitModule_datasetServices.getDatasetById(dsId);
+
+			var currMetadata = ds.metadata.fieldsMeta;
+
+			var currMetadataNames     = currMetadata.map(toNames);
+			var deletedCols = [];
+
+			layerDef.dataset.metadata.fieldsMeta = layerDef.dataset
+				.metadata
+				.fieldsMeta
+				.reduce(function(acc, el1) {
+					if (currMetadataNames.some(function(el2) { return el2 == el1.name; })) {
+						acc.push(el1);
+					} else {
+						deletedCols.push(el1);
+					}
+					return acc;
+				}, []);
+
+			deletedCols.forEach(function(el1) {
+				layerDef.content
+					.columnSelectedOfDataset = layerDef.content
+						.columnSelectedOfDataset
+						.filter(function(el2) {
+							return !(el1.alias == el2.alias);
+						});
+			});
+		}
+
+		$scope.getLayers = function () {
+			for (var l in $scope.ngModel.content.layers){
 				var currLayer = $scope.ngModel.content.layers[l];
 				var layerDef =  currLayer;
-		    	var layerID = $scope.ngModel.id + "|" + layerDef.name;
-		    	$scope.configs[layerID] = layerDef;
-	    		if (layerDef.type === 'DATASET'){
-	    			$scope.getFeaturesFromDataset(layerDef);
-	    		}else if (layerDef.type === 'CATALOG'){
-	    			//TODO implementare recupero layer da catalogo
-	    		}else{
-	    			sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.typeLayerNotManaged'), 'Title', 3000);
-	    			console.log("Layer with type ["+layerDef.type+"] not managed! ");
-	    			$timeout(function() {
+				var layerID = $scope.ngModel.id + "|" + layerDef.name;
+				$scope.configs[layerID] = layerDef;
+				if (layerDef.type === 'DATASET') {
+					syncDatasetMetadata(layerDef);
+					$scope.getFeaturesFromDataset(layerDef);
+				} else if (layerDef.type === 'CATALOG') {
+					//TODO implementare recupero layer da catalogo
+				} else {
+					sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.typeLayerNotManaged'), 'Title', 3000);
+					console.log("Layer with type ["+layerDef.type+"] not managed! ");
+					$timeout(function() {
 						$scope.hideWidgetSpinner();
 					}, 3000);
-	    		}
-	    	}
-	    }
+				}
+			}
+		}
 
 		$scope.initializeTemplate = function (){
 			if (!$scope.ngModel.content.currentView)  $scope.ngModel.content.currentView = {};
@@ -697,17 +731,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 			$scope.map.on('singleclick', function(evt) {
+				var featureFounded = false;
 				$scope.selectedLayer = undefined;
 				$scope.selectedFeature = undefined;
 				$scope.props = {};
 				$scope.clickOnFeature = false;
 
+				/*
+				 * This function does exactly what it says: it cycles
+				 * through EVERY feature of EVERY layer at specific
+				 * pixel. If the z-index value of the layer is correct
+				 * we can just stop at the first layer (first call).
+				 */
 				evt.map.forEachFeatureAtPixel(evt.pixel,
 					function(feature, layer) {
-						$scope.selectedLayer = layer;
-						$scope.selectedFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
-						$scope.props = $scope.selectedFeature.getProperties();
-						$scope.clickOnFeature = true;
+						if (!featureFounded) {
+							$scope.selectedLayer = layer;
+							$scope.selectedFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
+							$scope.props = $scope.selectedFeature.getProperties();
+							$scope.clickOnFeature = true;
+							featureFounded = true;
+						}
 				});
 
 				//modal selection management
