@@ -662,6 +662,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            }
 	    	}
             $scope.map.on('singleclick', function(evt) {
+				var featureFounded = false;
 				$scope.selectedLayer = undefined;
 				$scope.selectedFeature = undefined;
     			$scope.props = {};
@@ -669,10 +670,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
             	evt.map.forEachFeatureAtPixel(evt.pixel,
 		            function(feature, layer) {
-						$scope.selectedLayer = layer;
-						$scope.selectedFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
-						$scope.props = $scope.selectedFeature.getProperties();
-		                $scope.clickOnFeature = true;
+						if (!featureFounded) {
+							$scope.selectedLayer = layer;
+							$scope.selectedFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
+							$scope.props = $scope.selectedFeature.getProperties();
+							$scope.clickOnFeature = true;
+							featureFounded = true;
+						}
 	            });
 
             	//modal selection management
