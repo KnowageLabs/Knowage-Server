@@ -469,12 +469,12 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
                             logger.info("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName + "] and parameters [" + descriptionSuffix
                                     + "] was not executed because only unique mail dispatcher is set but with no recipients specified in unique mail tab");
                             continue;
-                        } else if (documentDispatcher.canDispatch(document) == false && onlyMailDispatchCase == true) {
+                        } else if (!uniqueMailForAll && documentDispatcher.canDispatch(document) == false && onlyMailDispatchCase == true) {
                             logger.info("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName + "] and parameters [" + descriptionSuffix
                                     + "] was not executed because only mail dispatcher is set but with no recipients specified");
                             suspendExecutionInUniqueMailCase = true;
                             continue;
-                        } else if (documentDispatcher.canDispatch(document) == false && onlyMailDispatchCase == false) {
+                        } else if (!uniqueMailForAll && documentDispatcher.canDispatch(document) == false && onlyMailDispatchCase == false) {
                             logger.debug("No valid dispatch target for document [" + (documentIndex + 1) + "] with label [" + documentInstanceName
                                     + "] and parameters [" + descriptionSuffix + "]");
                             logger.warn("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName + "] and parameters [" + descriptionSuffix
