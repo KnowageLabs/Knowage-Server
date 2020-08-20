@@ -17,13 +17,13 @@
  */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
-import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
-
 import java.util.Map;
+
+import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 
 public abstract class AbstractDataProxy implements IDataProxy {
 
-	Map parameters;
+	Map<String, String> parameters;
 	Map profile;
 	int offset;
 	int fetchSize;
@@ -43,12 +43,12 @@ public abstract class AbstractDataProxy implements IDataProxy {
 	}
 
 	@Override
-	public Map getParameters() {
+	public Map<String, String> getParameters() {
 		return parameters;
 	}
 
 	@Override
-	public void setParameters(Map parameters) {
+	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
 	}
 
