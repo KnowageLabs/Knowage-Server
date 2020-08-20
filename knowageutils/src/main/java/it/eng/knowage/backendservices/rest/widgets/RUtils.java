@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.spagobi.api.v2.ConfigResource;
-import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.IConfiguration;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
@@ -81,10 +81,9 @@ public class RUtils {
 		return newDataframe.toString();
 	}
 
-	static String getRAddress(String envLabel) {
-		ConfigResource configResource = new ConfigResource();
-		List<Config> allRConfigs = configResource.getConfigsByCategory("R_CONFIGURATION");
-		for (Config cfg : allRConfigs) {
+	public static String getRAddress(String envLabel) {
+		List<IConfiguration> allRConfigs = SingletonConfig.getInstance().getConfigsValueByCategory("R_CONFIGURATION");
+		for (IConfiguration cfg : allRConfigs) {
 			if (cfg.getLabel().equals(envLabel)) {
 				return "http://" + cfg.getValueCheck() + "/";
 			}

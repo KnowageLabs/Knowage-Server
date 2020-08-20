@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.api.v2.ConfigResource;
-import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.IConfiguration;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class PythonUtils {
@@ -15,10 +15,9 @@ public class PythonUtils {
 	private PythonUtils() {
 	}
 
-	static String getPythonAddress(String envLabel) {
-		ConfigResource configResource = new ConfigResource();
-		List<Config> allPythonConfigs = configResource.getConfigsByCategory("PYTHON_CONFIGURATION");
-		for (Config cfg : allPythonConfigs) {
+	public static String getPythonAddress(String envLabel) {
+		List<IConfiguration> allRConfigs = SingletonConfig.getInstance().getConfigsValueByCategory("PYTHON_CONFIGURATION");
+		for (IConfiguration cfg : allRConfigs) {
 			if (cfg.getLabel().equals(envLabel)) {
 				return "https://" + cfg.getValueCheck() + "/";
 			}
