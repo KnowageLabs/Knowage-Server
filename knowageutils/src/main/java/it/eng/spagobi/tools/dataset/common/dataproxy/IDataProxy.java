@@ -17,10 +17,10 @@
  */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
+import java.util.Map;
+
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-
-import java.util.Map;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -74,9 +74,9 @@ public interface IDataProxy {
 	long getResultNumber();
 
 	// profilation ...
-	Map getParameters();
+	Map<String, String> getParameters();
 
-	void setParameters(Map parameters);
+	void setParameters(Map<String, String> parameters);
 
 	Map getProfile();
 
