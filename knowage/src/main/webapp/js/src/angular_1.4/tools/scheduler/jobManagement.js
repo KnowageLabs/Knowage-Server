@@ -1284,9 +1284,13 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 //						}
 					}
 
+					var uniqueMail = false;
 					var definedActionCount = 0;
 					for(var i in cloneData.documents){
 						var doc = cloneData.documents[i];
+						if (doc.uniqueMail && doc.uniqueMail == true) {
+							uniqueMail = true;
+						}
 						if(doc.engine == "knowagetalendengine"){
 							definedActionCount++;
 						}else if(doc.saveassnapshot
@@ -1297,7 +1301,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							definedActionCount++;
 						}
 					}
-					if(definedActionCount < cloneData.documents.length){
+					if(!uniqueMail && definedActionCount < cloneData.documents.length){
 						ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.documents.atLeastAnAction", "component_scheduler_messages"));
 						return false;
 					}
