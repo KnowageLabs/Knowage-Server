@@ -1011,7 +1011,9 @@
         	formData.template= JSON.stringify(template);
         	formData.dataset_label=datasetLabel;
 
-            var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.adapterPath;
+        	debugger;
+
+            var url= sbiModule_config.adapterPath;
         	url=url+"?ACTION_NAME=SAVE_DOCUMENT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&standardUrl=true&MESSAGE_DET=DOC_SAVE";
         	url=url+"&user_id="+sbiModule_config.userId;
             $http({
