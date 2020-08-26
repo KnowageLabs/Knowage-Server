@@ -394,8 +394,6 @@ public class CrossTab {
 			throws JSONException {
 
 		JSONObject valueRecord;
-		String rowPath;
-		String columnPath;
 		this.config = crosstabDefinition.getConfig();
 		this.crosstabDefinition = crosstabDefinition;
 		int cellLimit = crosstabDefinition.getCellLimit();
@@ -528,10 +526,14 @@ public class CrossTab {
 		for (index = 0; index < dataStoredata.length(); index++) {
 			valueRecord = dataStoredata.getJSONObject(index);
 
+			String rowPath;
+			String columnPath;
+			String enrichedColumnPath;
 			List<String> rowPathList = new ArrayList<String>();
 			List<String> colPathList = new ArrayList<String>();
 
 			columnPath = "";
+			enrichedColumnPath = "";
 			for (int i = 0; i < columnsCount; i++) {
 				String column = columnsNameList.get(i);
 				Object value = valueRecord.get(column);
@@ -542,6 +544,7 @@ public class CrossTab {
 				} else {
 					valueStr = value.toString();
 				}
+				enrichedColumnPath = enrichedColumnPath + PATH_SEPARATOR + dsColumnName2Alias.get(column) + PATH_SEPARATOR + valueStr;
 				columnPath = columnPath + PATH_SEPARATOR + valueStr;
 				colPathList.add(valueStr);
 			}
@@ -570,9 +573,9 @@ public class CrossTab {
 						int direction = nodeComparator.getDirection();
 						Integer idx = getColumnIndex(measureLabel, measuresHeaderList);
 						if (idx >= 0) {
-							String colName = measuresNameList.get(idx);
+							String colName = measuresNameList.get(i);
 							Double value = (valueRecord.get(colName).equals("")) ? 0 : Double.valueOf(String.valueOf(valueRecord.get(colName)));
-							String[] columnPathArray = columnPath.trim().split(PATH_SEPARATOR);
+							String[] columnPathArray = enrichedColumnPath.trim().split(PATH_SEPARATOR);
 							String[] entryParents = measuresSortKeysMap.get(entry.getKey()).getParentValue().split(PATH_SEPARATOR);
 							// add value to order only if parents are correct (useful for deep levels)
 							String valueLbl = rowPath + columnPath + PATH_SEPARATOR + colName;
@@ -611,8 +614,9 @@ public class CrossTab {
 					Node nodeToCheck = orderedRowsRoot;
 					// update paths order and coordinates for rows
 					for (int r = 0; r < rowsCount; r++) {
-						Node node = new Node(measureInfo[r + 1].toString());
-
+						// Node constructor needs columnName, value, description
+						// we use rowsNameList to retrieve columnName and measureInfo to retrieve value and description
+						Node node = new Node(rowsNameList.get(r), measureInfo[r + 1].toString(), measureInfo[r + 1].toString());
 						nodePosition = nodeToCheck.getChilds().indexOf(node);
 						if (nodePosition < 0) {
 							nodeToCheck.addChild(node);
@@ -3013,7 +3017,7 @@ public class CrossTab {
 		String html = serializer.serialize(this);
 		return html;
 	}
-	
+
 	public String getHTMLCrossTab(Locale locale, JSONObject variables) {
 		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, variables);
 		String html = serializer.serialize(this);
@@ -3026,7 +3030,7 @@ public class CrossTab {
 
 	private Map<String, Double> sortMeasures(Map<Integer, NodeComparator> sortKeys, Map<String, Double> values, int rowsCount, int columnsCount, int totRows,
 			int totColumns) {
-		Map<String, Double> valuesCopy = (Map<String, Double>) ((HashMap<String, Double>) values).clone();
+		Map<String, Double> valuesCopy = new HashMap<String, Double>(values);
 		Map toReturn = new LinkedHashMap<String, Double>();
 		List valuesToOrder = new ArrayList();
 
@@ -3043,7 +3047,7 @@ public class CrossTab {
 		}
 
 		// sort measure on rows
-		for (int c = 0; c < totRows; c++) {
+		for (int c = 0; c < values.size(); c++) {
 			List valuesForCategory = getRowsCategoryValues(valuesCopy, rowsCount);
 			if (valuesForCategory.size() == 0) {
 //				valuesToOrder.add(new Double("0")); //no value to order
