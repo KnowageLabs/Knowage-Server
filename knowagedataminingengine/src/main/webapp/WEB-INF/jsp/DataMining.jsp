@@ -56,7 +56,6 @@ author:...
 	UserProfile profile;
 	Locale locale;
 	String isFromCross;
-	String spagobiServerHost;
 	String spagobiContext;
 	String spagobiSpagoController;
 	String executionOutput;
@@ -76,7 +75,6 @@ author:...
 		isFromCross = "false";
 	}
     
-    spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
     spagobiContext = KnowageSystemConfiguration.getKnowageContext();
     spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
     

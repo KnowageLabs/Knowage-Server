@@ -1017,6 +1017,6 @@ var isNull = function(value){
 <!-- sbiModule_jsonServices -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/sbiModule_services/sbiModule_jsonServices.js")%>"></script>
 
-<script type="text/javascript" src="<%=request.getParameter(SpagoBIConstants.SBI_HOST)+KnowageSystemConfiguration.getKnowageContext()%>/js/lib/angular-localization/<%=curr_language%>-<%=curr_country%>.js"></script>
+<script type="text/javascript" src="<%=KnowageSystemConfiguration.getKnowageContext()%>/js/lib/angular-localization/<%=curr_language%>-<%=curr_country%>.js"></script>
 
 	 

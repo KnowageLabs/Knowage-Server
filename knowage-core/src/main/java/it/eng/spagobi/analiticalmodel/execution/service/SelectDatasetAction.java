@@ -29,7 +29,6 @@ import org.safehaus.uuid.UUIDGenerator;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -193,8 +192,6 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 
 		parametersMap.put("ACTION_NAME", actionToCall);
 		parametersMap.put("NEW_SESSION", "TRUE");
-
-		parametersMap.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 
 		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, getLocale().getLanguage());
 		parametersMap.put(SpagoBIConstants.SBI_COUNTRY, getLocale().getCountry());

@@ -426,8 +426,6 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 
 		parametersMap.put("NEW_SESSION", "TRUE");
 
-		parametersMap.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
-
 		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, getLocale().getLanguage());
 		parametersMap.put(SpagoBIConstants.SBI_COUNTRY, getLocale().getCountry());
 

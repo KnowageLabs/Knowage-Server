@@ -249,14 +249,6 @@ public class ExecutionProxy {
 
 			// TODO merge with ExecutionInstance.addSystemParametersForExternalEngines for SBI_CONTEXT, locale parameters, etc...
 
-			// set spagobi host
-			if (!mapPars.containsKey(SpagoBIConstants.SBI_HOST)) {
-				String sbiHost = GeneralUtilities.getSpagoBiHost();
-				if (sbiHost != null) {
-					mapPars.put(SpagoBIConstants.SBI_HOST, sbiHost);
-				}
-			}
-
 			// set country and language (locale)
 			Locale locale = GeneralUtilities.getDefaultLocale();
 			if (!mapPars.containsKey(SpagoBIConstants.SBI_COUNTRY)) {
@@ -375,13 +367,6 @@ public class ExecutionProxy {
 
 	private String resolveRelativeUrls(String url) {
 		logger.debug("IN: url = " + url);
-		if (url.startsWith("/")) {
-			logger.debug("Url is relative");
-			String domain = GeneralUtilities.getSpagoBiHost();
-			logger.debug("SpagoBI domain is " + domain);
-			url = domain + url;
-			logger.debug("Absolute url is " + url);
-		}
 		logger.debug("OUT: returning " + url);
 		return url;
 	}

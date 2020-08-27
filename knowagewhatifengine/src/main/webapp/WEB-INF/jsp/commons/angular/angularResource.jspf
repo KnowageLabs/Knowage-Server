@@ -62,7 +62,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        //UserProfile profile;
        Locale locale =null;
        String isFromCross;
-       String spagobiServerHost = null;
        String spagobiContext = null;
        String documentLabel = null;
        String documentId = null;
@@ -120,7 +119,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        
 	   // if server Host anc context are null means we are in standalone version
 	   if(!whatIfEngineInstance.isStandalone())  {
-	          spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
 	          spagobiContext = KnowageSystemConfiguration.getKnowageContext();
 	          } 
 	  

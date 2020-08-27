@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,17 +11,26 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engine.chart;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -35,17 +44,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
 /**
  * @author
  */
@@ -55,10 +53,9 @@ public class ChartEngineInstance extends AbstractEngineInstance {
 	AssociationManager associationManager;
 
 	// ENVIRONMENT VARIABLES
-	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
-			"SBI_HOST", COUNTRY, LANGUAGE, "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES",
-			"DOCUMENT_DESCRIPTION", "SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES",
-			"DOCUMENT_VERSION", };
+	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE", COUNTRY,
+			LANGUAGE, "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES", "DOCUMENT_DESCRIPTION",
+			"SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES", "DOCUMENT_VERSION", };
 
 	public ChartEngineInstance(String template, Map env) {
 		super(env);
@@ -68,7 +65,7 @@ public class ChartEngineInstance extends AbstractEngineInstance {
 			}
 			this.template = new JSONObject(Xml.xml2json(template));
 			this.template = parseTemplate(this.template);
-	
+
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Impossible to parse template", e);
 		}
@@ -204,80 +201,75 @@ public class ChartEngineInstance extends AbstractEngineInstance {
 		}
 		return true;
 	}
-	
-	
+
 	private static JSONObject parseTemplate(JSONObject jsonObj) throws JSONException {
 
-		 Iterator keys = jsonObj.keys();
-         while (keys.hasNext()) {
-             String key= (String) keys.next();
-             Object keyValue = jsonObj.get(key);
-             if(key.equalsIgnoreCase("style")){
-            	 
-            	 String value = keyValue.toString(); 
-              	String[] result = value.split(";");
-              	JSONObject obj = new JSONObject();
-              	for (int i = 0; i < result.length; i++) {
-  					String[] temp = result[i].split(":");
-  					if(temp.length>1){
-  						
-  						if(isNumeric(temp[1])){
-  						   int num = Integer.parseInt(temp[1]);
-  							obj.put(temp[0], num);							
-  						}else if(temp[1].equals("true") || temp[1].equals("false")){
-  							boolean bool = Boolean.parseBoolean(temp[1]);
-  							obj.put(temp[0], bool);
-  						}else{
-  							obj.put(temp[0],temp[1]);
-  						}	
-  						
-  					}else{
-  						obj.put(temp[0], "");
-  					}
-  			
-  				}
-              	jsonObj.put(key, obj);
-         
-             }
-             
-             if(isNumeric(keyValue.toString())){
-            	 jsonObj.put(key, Integer.parseInt(keyValue.toString()));
-             }
-             
-             if(keyValue.toString().equals("true") || keyValue.toString().equals("false")){
-            	 jsonObj.put(key, Boolean.parseBoolean(keyValue.toString()));
-             }
-             
-             if(keyValue instanceof JSONArray){
-            	 
-            	 JSONArray array = (JSONArray)keyValue;
-            	 for (int i = 0; i < array.length(); i++) {
-            		 JSONObject obj = array.getJSONObject(i);
-            		 parseTemplate(obj);
+		Iterator keys = jsonObj.keys();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			Object keyValue = jsonObj.get(key);
+			if (key.equalsIgnoreCase("style")) {
+
+				String value = keyValue.toString();
+				String[] result = value.split(";");
+				JSONObject obj = new JSONObject();
+				for (int i = 0; i < result.length; i++) {
+					String[] temp = result[i].split(":");
+					if (temp.length > 1) {
+
+						if (isNumeric(temp[1])) {
+							int num = Integer.parseInt(temp[1]);
+							obj.put(temp[0], num);
+						} else if (temp[1].equals("true") || temp[1].equals("false")) {
+							boolean bool = Boolean.parseBoolean(temp[1]);
+							obj.put(temp[0], bool);
+						} else {
+							obj.put(temp[0], temp[1]);
+						}
+
+					} else {
+						obj.put(temp[0], "");
+					}
+
 				}
-            	 
-             }
-             
-             if(keyValue instanceof JSONObject){
-            	 
-            	 parseTemplate((JSONObject)keyValue);
-             }
-     
-         }
-         return jsonObj;
+				jsonObj.put(key, obj);
+
+			}
+
+			if (isNumeric(keyValue.toString())) {
+				jsonObj.put(key, Integer.parseInt(keyValue.toString()));
+			}
+
+			if (keyValue.toString().equals("true") || keyValue.toString().equals("false")) {
+				jsonObj.put(key, Boolean.parseBoolean(keyValue.toString()));
+			}
+
+			if (keyValue instanceof JSONArray) {
+
+				JSONArray array = (JSONArray) keyValue;
+				for (int i = 0; i < array.length(); i++) {
+					JSONObject obj = array.getJSONObject(i);
+					parseTemplate(obj);
+				}
+
+			}
+
+			if (keyValue instanceof JSONObject) {
+
+				parseTemplate((JSONObject) keyValue);
+			}
+
+		}
+		return jsonObj;
 	}
-	
-	private static boolean isNumeric(String str)  
-	{  
-	  try  
-	  {  
-	    int num = Integer.parseInt(str);  
-	  }  
-	  catch(NumberFormatException nfe)  
-	  {  
-	    return false;  
-	  }  
-	  return true;  
+
+	private static boolean isNumeric(String str) {
+		try {
+			int num = Integer.parseInt(str);
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+		return true;
 	}
 
 	// -- unimplemented methods ----------------------------------

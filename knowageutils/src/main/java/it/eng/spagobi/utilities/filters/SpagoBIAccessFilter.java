@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.proxy.SecurityServiceProxy;
@@ -121,15 +120,6 @@ public class SpagoBIAccessFilter implements Filter {
 					}
 				} else {
 					userId = getUserWithSSO(httpRequest);
-				}
-
-				String spagoUrl = request.getParameter(SpagoBIConstants.SBI_HOST);
-				if (spagoUrl != null) {
-					logger.debug("spagoUrl:" + spagoUrl);
-					ioManager.setInSession(SpagoBIConstants.SBI_HOST, spagoUrl);
-					ioManager.contextManager.set(SpagoBIConstants.SBI_HOST, spagoUrl);
-				} else {
-					logger.warn("spagoUrl is null.");
 				}
 
 				if (userId != null) {

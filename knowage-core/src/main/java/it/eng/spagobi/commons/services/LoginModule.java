@@ -223,7 +223,7 @@ public class LoginModule extends AbstractHttpModule {
 					if (goToChangePwd) {
 						checkIfIsBefore72AuthMethod(response, msgBuilder, locale, user);
 						response.setAttribute("user_id", user.getUserId());
-						String url = GeneralUtilities.getSpagoBiHost() + servletRequest.getContextPath();
+						String url = servletRequest.getContextPath();
 						response.setAttribute("start_url", url);
 						response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ChangePwdPublisher");
 						return;

@@ -134,8 +134,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	/**
 	 * Executes the mdx query. If the mdx is null it executes the query of the model
 	 *
-	 * @param mdx
-	 *            the query to execute
+	 * @param mdx the query to execute
 	 * @return the htm table representing the cellset
 	 * @throws OlapException
 	 */
@@ -634,7 +633,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		map.put("MDX", model.getMdx());
 		map.put("document", getEnv().get("DOCUMENT_ID").toString());
 
-		String url = map.get("SBI_HOST") + context.getContextPath() + "/restful/olap/startwhatif/editxls/?";
+		String url = context.getContextPath() + "/restful/olap/startwhatif/editxls/?";
 		String mdx = "";
 		int axisRows = model.getCellSet().getAxes().get(1).getPositionCount();
 		int axisColumns = model.getCellSet().getAxes().get(0).getPositionCount();

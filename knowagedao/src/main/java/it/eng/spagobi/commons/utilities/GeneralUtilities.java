@@ -253,7 +253,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		String adapUrlStr = "";
 		try {
 			adapUrlStr = getSpagoAdapterHttpUrl();
-			path = getSpagoBiHost() + getSpagoBiContext();
+			path = getSpagoBiContext();
 			if (isSSOEnabled()) {
 				url = path + adapUrlStr + "?NEW_SESSION=TRUE";
 			} else {

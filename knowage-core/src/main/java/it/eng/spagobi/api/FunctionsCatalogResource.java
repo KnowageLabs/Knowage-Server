@@ -49,7 +49,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
@@ -1425,7 +1424,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		String queryParams = request.getQueryString();
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(GeneralUtilities.getSpagoBiHost());
 		sb.append(resourceUri);
 		if (queryParams != null) {
 			sb.append("?");

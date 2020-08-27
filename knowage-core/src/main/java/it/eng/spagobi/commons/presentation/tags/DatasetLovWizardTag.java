@@ -78,7 +78,7 @@ public class DatasetLovWizardTag extends CommonWizardLovTag {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.jsp.tagext.TagSupport#doEndTag()
 	 */
 	@Override
@@ -89,7 +89,7 @@ public class DatasetLovWizardTag extends CommonWizardLovTag {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
 	 */
 	@Override
@@ -159,7 +159,7 @@ public class DatasetLovWizardTag extends CommonWizardLovTag {
 
 		output.append("				</div>\n");
 		output.append("				\n");
-		String url = GeneralUtilities.getSpagoBiHost() + KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() + "?"
+		String url = KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() + "?"
 				+ "PAGE=SelectDatasetLookupPage&NEW_SESSION=TRUE&" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
 
 		String currDataSetLabel = "";

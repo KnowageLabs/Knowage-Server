@@ -512,8 +512,6 @@ public class SelfServiceDatasetAction {
 
 		parametersMap.put("NEW_SESSION", "TRUE");
 
-		parametersMap.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
-
 		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, locale.getLanguage());
 		parametersMap.put(SpagoBIConstants.SBI_COUNTRY, locale.getCountry());
 

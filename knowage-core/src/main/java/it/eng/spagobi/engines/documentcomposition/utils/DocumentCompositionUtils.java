@@ -191,7 +191,6 @@ public class DocumentCompositionUtils {
 						}
 					}
 				}
-				mapPars.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 				UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 				UUID uuidObj = uuidGen.generateRandomBasedUUID();
 				String executionId = uuidObj.toString();

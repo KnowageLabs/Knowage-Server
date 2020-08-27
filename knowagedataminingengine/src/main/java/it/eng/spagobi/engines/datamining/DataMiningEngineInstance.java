@@ -17,6 +17,14 @@
  */
 package it.eng.spagobi.engines.datamining;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.DataMiningFile;
@@ -31,14 +39,6 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 /**
  * @author Monica Franceschini
  */
@@ -46,10 +46,10 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 
 	private final List<String> includes;
 	// ENVIRONMENT VARIABLES
-	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
-			"SBI_HOST", COUNTRY, LANGUAGE, "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES",
-			"DOCUMENT_DESCRIPTION", "SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES",
-			"DOCUMENT_VERSION", "IS_TECHNICAL_USER", "PASS_TICKET" };
+	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE", COUNTRY,
+			LANGUAGE, "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES", "DOCUMENT_DESCRIPTION",
+			"SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES", "DOCUMENT_VERSION", "IS_TECHNICAL_USER",
+			"PASS_TICKET" };
 	private final List<DataMiningCommand> commands;
 	private List<DataMiningDataset> datasets;
 	private final List<DataMiningScript> scripts;
@@ -125,14 +125,17 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 	// -- unimplemented methods
 	// ------------------------------------------------------------
 
+	@Override
 	public IEngineAnalysisState getAnalysisState() {
 		throw new DataMiningEngineRuntimeException("Unsupported method [getAnalysisState]");
 	}
 
+	@Override
 	public void setAnalysisState(IEngineAnalysisState analysisState) {
 		throw new DataMiningEngineRuntimeException("Unsupported method [setAnalysisState]");
 	}
 
+	@Override
 	public void validate() throws SpagoBIEngineException {
 		throw new DataMiningEngineRuntimeException("Unsupported method [validate]");
 	}
