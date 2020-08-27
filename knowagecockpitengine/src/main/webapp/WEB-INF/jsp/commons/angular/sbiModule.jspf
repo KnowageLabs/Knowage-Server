@@ -30,7 +30,7 @@ var sbiM=angular.module('sbiModule',["ngSanitize"]);
 sbiM.factory('sbiModule_config',function(){ 
 	return {
     	contextName: '${pageContext.request.contextPath}',
-    	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
+    	adapterPath: '<%= KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	adapterPathNoContext : '<%= GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	host: '<%= GeneralUtilities.getSpagoBiHost() %>',
     	curr_country: '<%= curr_country %>',
@@ -39,7 +39,7 @@ sbiM.factory('sbiModule_config',function(){
         dec: '<%= GeneralUtilities.getDecimalSeparator(locale)%>',
 		clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server
 		clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',   // the timestamp format to be used when communicating with server
-		externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>",
+		externalBasePath:"<%= KnowageSystemConfiguration.getKnowageContext()%>",
 		chartEngineContextName:"<%=chartEngineContextName%>",
 		dynamicResourcesBasePath: "<%=dynamicResourcesBasePath%>",  	//  /knowage/js/src
 		dynamicResourcesEnginePath: "<%=dynamicResourcesEnginePath%>"   //  /cockpitengine/js/src
@@ -144,7 +144,7 @@ sbiM.config(['$httpProvider',function ($httpProvider) {
 			};
 		}]);
 
-	var loginUrl = '<%= GeneralUtilities.getSpagoBiContext() %>'; // login url, used when session is expired
+	var loginUrl = '<%= KnowageSystemConfiguration.getKnowageContext() %>'; // login url, used when session is expired
 
 	var redirectToLoginUrl = function() {
     	var sessionExpiredSpagoBIJSFound = false;
@@ -185,7 +185,7 @@ sbiM.config(['$httpProvider',function ($httpProvider) {
 			};
 		}]);
 
-	var loginUrl = '<%= GeneralUtilities.getSpagoBiContext() %>'; // login url, used when session is expired
+	var loginUrl = '<%= KnowageSystemConfiguration.getKnowageContext() %>'; // login url, used when session is expired
 
 	var redirectToLoginUrl = function() {
     	var sessionExpiredSpagoBIJSFound = false;

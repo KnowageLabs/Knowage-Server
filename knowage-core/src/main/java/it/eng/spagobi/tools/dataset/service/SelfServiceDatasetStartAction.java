@@ -17,6 +17,18 @@
  */
 package it.eng.spagobi.tools.dataset.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -33,7 +45,9 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.tools.dataset.cache.*;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.ckan.CKANConfig;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -41,11 +55,6 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -55,7 +64,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	private static final long serialVersionUID = 1L;
 
 	public static final String SERVICE_NAME = "SELF_SERVICE_DATASET_ACTION";
-	public static final String LANGUAGE = "LANGUAGE";
+	public static final String LANGUAGE = "LANGUAGE";;
 	public static final String COUNTRY = "COUNTRY";
 	public static final String OUTPUT_PARAMETER_EXECUTION_ID = "executionId";
 
@@ -418,7 +427,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 
 		parametersMap.put("NEW_SESSION", "TRUE");
 
-		parametersMap.put(SpagoBIConstants.SBI_CONTEXT, GeneralUtilities.getSpagoBiContext());
+		parametersMap.put(SpagoBIConstants.SBI_CONTEXT, KnowageSystemConfiguration.getKnowageContext());
 		parametersMap.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 
 		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, getLocale().getLanguage());

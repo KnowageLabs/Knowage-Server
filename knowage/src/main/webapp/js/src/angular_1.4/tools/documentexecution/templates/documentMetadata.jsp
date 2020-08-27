@@ -7,7 +7,7 @@
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
-<% String contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); %>
+<% String contextName = KnowageSystemConfiguration.getKnowageContext(); %>
 
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 

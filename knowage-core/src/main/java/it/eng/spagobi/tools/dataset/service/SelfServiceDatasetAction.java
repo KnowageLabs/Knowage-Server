@@ -18,7 +18,16 @@
 
 package it.eng.spagobi.tools.dataset.service;
 
-import it.eng.spago.error.EMFErrorSeverity;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
@@ -33,7 +42,9 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.tools.dataset.cache.*;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.ckan.CKANConfig;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -41,10 +52,6 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-
-import java.util.*;
 
 public class SelfServiceDatasetAction {
 
@@ -506,7 +513,7 @@ public class SelfServiceDatasetAction {
 
 		parametersMap.put("NEW_SESSION", "TRUE");
 
-		parametersMap.put(SpagoBIConstants.SBI_CONTEXT, GeneralUtilities.getSpagoBiContext());
+		parametersMap.put(SpagoBIConstants.SBI_CONTEXT, KnowageSystemConfiguration.getKnowageContext());
 		parametersMap.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 
 		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, locale.getLanguage());

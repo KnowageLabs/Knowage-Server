@@ -53,6 +53,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.engines.drivers.EngineURL"%>
 <%@page import="java.util.Map" %>
 <%@page import="java.util.HashMap" %>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 
@@ -83,15 +84,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     
 	//String backEndContext=GeneralUtilities.getSpagoBiHostBackEnd();
 	//String param1="?"+SpagoBIConstants.SBI_BACK_END_HOST+"="+backEndContext;
-	String context=GeneralUtilities.getSpagoBiContext();
-	String param2="?"+SpagoBIConstants.SBI_CONTEXT+"="+context;
-	String host=GeneralUtilities.getSpagoBiHost();
-	String param3="&"+SpagoBIConstants.SBI_HOST+"="+host;
 
 	StringBuffer urlToCall= new StringBuffer(engineurl.getMainURL());
 	//urlToCall+=param1;
-	urlToCall.append(param2);
-	urlToCall.append(param3);
 	urlToCall.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
 	urlToCall.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
 

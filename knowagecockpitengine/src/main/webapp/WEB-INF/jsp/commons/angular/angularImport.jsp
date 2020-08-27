@@ -113,53 +113,53 @@ END-PRODUCTION -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/themes/commons/css/customStyle.css")%>"/>	
 
 <!--  angular JSON FORMATTER -->
-<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/jsonformatter/dist/json-formatter.min.css">
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/jsonformatter/dist/json-formatter.min.js"></script>	
+<link rel="stylesheet" type="text/css" href="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/jsonformatter/dist/json-formatter.min.css">
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/jsonformatter/dist/json-formatter.min.js"></script>	
 
 <!-- UI.Codemirror  -->
-<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/lib/codemirror.css">
-<link type="text/css" rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/theme/eclipse.css">
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/lib/codemirror.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/addon/mode/simple.js"></script>
+<link rel="stylesheet" type="text/css" href="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/lib/codemirror.css">
+<link type="text/css" rel="stylesheet" href="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/theme/eclipse.css">
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/lib/codemirror.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/addon/mode/simple.js"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/commons/calculated-field/calculatedFieldMode.js")%>"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/mode/xml/xml.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/mode/css/css.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/mode/r/r.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/codemirror/mode/javascript/javascript.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/angular-ui-codemirror/src/ui-codemirror.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/mode/xml/xml.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/mode/css/css.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/mode/r/r.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/mode/javascript/javascript.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/angular-ui-codemirror/src/ui-codemirror.js"></script>
 
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/ag-grid-community.min.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/ag-grid-community/dist/ag-grid-community.min.js"></script>
 
 <!-- angular json tree -->
 <link rel="stylesheet" 	href="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.css">
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.js"></script>
 
 <!-- Open Layers 6.1.1 -->
-<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/6.1.1/ol.css">
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/6.1.1/ol.js"></script>
+<link rel="stylesheet" type="text/css" href="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/openlayers/6.1.1/ol.css">
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/openlayers/6.1.1/ol.js"></script>
 
-<link rel="stylesheet" type="text/css"  href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.css">
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.js"></script>		
+<link rel="stylesheet" type="text/css"  href="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/toastify-js/src/toastify.css">
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/toastify-js/src/toastify.js"></script>		
 
 <!-- MOMENT.JS -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/moment/min/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/moment/min/moment-with-locales.min.js"></script>
 <script type="text/javascript">
     if(/MSIE \d|Trident.*rv:/.test(navigator.userAgent))
-        document.write('<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/rgbcolor/rgbcolor.js"><\/script>');
+        document.write('<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/rgbcolor/rgbcolor.js"><\/script>');
 </script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/canvg/dist/browser/canvg.min.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/canvg/dist/browser/canvg.min.js"></script>
 
 <!-- mathjs for quantil thematization -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/mathjs/4.0.1/math.min.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/mathjs/4.0.1/math.min.js"></script>
 
 <!-- html2canvas -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/html2canvas/dist/html2canvas.min.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/html2canvas/dist/html2canvas.min.js"></script>
 
 <!--  JSPDF -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/jspdf/dist/jspdf.min.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/jspdf/dist/jspdf.min.js"></script>
 
 <!-- FILESAVER -->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/file-saver/dist/FileSaver.min.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/file-saver/dist/FileSaver.min.js"></script>
 
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
 

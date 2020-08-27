@@ -16,6 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="it.eng.spago.base.*"%>
@@ -47,20 +48,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <head>
     	<link rel="icon" href="data:;base64,iVBORw0KGgo=">
     	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/reset_2018.css")%>">
-    	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/styles/ag-grid.css">
-    	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/styles/ag-theme-balham.css">
-    	<link rel="stylesheet" type="text/css"  href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.css">
+    	<link rel="stylesheet" href="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/ag-grid-community/dist/styles/ag-grid.css">
+    	<link rel="stylesheet" href="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/ag-grid-community/dist/styles/ag-theme-balham.css">
+    	<link rel="stylesheet" type="text/css"  href="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/toastify-js/src/toastify.css">
     	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>">
-    	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
+    	<script src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
     	<!-- POLYFILLS -->
     	<script>if (!Array.isArray) {
 		  Array.isArray = function(arg) {
 		    return Object.prototype.toString.call(arg) === '[object Array]';
 		  };
 		}</script>
-    	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/promise-polyfill/promise-polyfill.js"></script>
-    	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/fetch-polyfill/fetch-polyfill.js"></script>
-    	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/polyfills/url-polyfill/url-polyfill.min.js"></script>
+    	<script src="<%= KnowageSystemConfiguration.getKnowageContext() %>/polyfills/promise-polyfill/promise-polyfill.js"></script>
+    	<script src="<%= KnowageSystemConfiguration.getKnowageContext() %>/polyfills/fetch-polyfill/fetch-polyfill.js"></script>
+    	<script src="<%= KnowageSystemConfiguration.getKnowageContext() %>/polyfills/url-polyfill/url-polyfill.min.js"></script>
     	<style>
     		html, body {height: 100%;}
     	</style>
@@ -77,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			const 	MAX_ROWS_EXCEL_EXPORT = 20000;
 			const 	SEARCH_WAIT_TIMEOUT = 500;
 			const 	DEFAULT_MAX_ITEMS_PER_PAGE = 15;
-			const 	KNOWAGE_BASEURL = '<%= GeneralUtilities.getSpagoBiContext() %>';
+			const 	KNOWAGE_BASEURL = '<%= KnowageSystemConfiguration.getKnowageContext() %>';
 			const 	KNOWAGE_SERVICESURL = '/restful-services';
 			var 	FIELDS;
 			var		DATASET;
@@ -450,6 +451,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			new agGrid.Grid(eGridDiv, gridOptions);
 	
 	  </script>
-	  <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.js"></script>
+	  <script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/toastify-js/src/toastify.js"></script>
     </body>
 </html>

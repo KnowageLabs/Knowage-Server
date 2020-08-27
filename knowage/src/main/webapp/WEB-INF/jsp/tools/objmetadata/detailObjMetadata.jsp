@@ -27,7 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 				         it.eng.spagobi.tools.objmetadata.service.DetailObjMetadataModule" %>
 	 				         
 	<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
-<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+	<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 	
 	<%@page import="it.eng.spago.util.JavaScript"%>
 <script type="text/javascript" src="<%=linkProto%>"></script>

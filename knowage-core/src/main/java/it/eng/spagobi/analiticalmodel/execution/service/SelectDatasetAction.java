@@ -17,6 +17,16 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -28,15 +38,6 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 /**
  * Action that gets a dataset id and prepare the url to call (depending on TARGET parameter value)
@@ -194,7 +195,7 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 		parametersMap.put("ACTION_NAME", actionToCall);
 		parametersMap.put("NEW_SESSION", "TRUE");
 
-		parametersMap.put(SpagoBIConstants.SBI_CONTEXT, GeneralUtilities.getSpagoBiContext());
+		parametersMap.put(SpagoBIConstants.SBI_CONTEXT, KnowageSystemConfiguration.getKnowageContext());
 		parametersMap.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 
 		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, getLocale().getLanguage());

@@ -1,5 +1,6 @@
 <%-- this is part of sbiModule.js --%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.spago.message.MessageBundle"%>
 <script>
 (function() {
@@ -20,7 +21,7 @@
 		 	docDatasetName: "<%=docDatasetName%>",
 		 	visibleDataSet: "<%=visibleDataSet%>",
 		 	--%>
-		 	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"
+		 	externalBasePath:"<%= KnowageSystemConfiguration.getKnowageContext()%>"
 		};
 	});
 

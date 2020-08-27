@@ -554,7 +554,7 @@ private String constructChartUrl(KpiLine line, String requestIdentity,boolean sh
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		urlChartPng=GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() + 
+		urlChartPng=KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() + 
 		"?ACTION_NAME=GET_PNG2&NEW_SESSION=TRUE&path="+path_param+"&LIGHT_NAVIGATOR_DISABLED=TRUE";
     }
 	return urlChartPng;
@@ -565,7 +565,7 @@ private String constructImgUrl(ThresholdValue tOfVal){
 	String urlImagePng = "";
 	String fileName ="position_"+tOfVal.getPosition().intValue();
 	String dirName = tOfVal.getThresholdCode();
-	urlImagePng=GeneralUtilities.getSpagoBiHost()+GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() + 
+	urlImagePng=GeneralUtilities.getSpagoBiHost()+KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() + 
 	"?ACTION_NAME=GET_THR_IMAGE&NEW_SESSION=TRUE&fileName="+fileName+"&dirName="+dirName+"&LIGHT_NAVIGATOR_DISABLED=TRUE";
 	return urlImagePng;
 }

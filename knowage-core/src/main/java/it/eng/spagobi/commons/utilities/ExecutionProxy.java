@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -87,8 +88,7 @@ public class ExecutionProxy {
 	/**
 	 * Sets the bi object.
 	 *
-	 * @param biObject
-	 *            the new bi object
+	 * @param biObject the new bi object
 	 */
 	public void setBiObject(BIObject biObject) {
 		this.biObject = biObject;
@@ -97,12 +97,9 @@ public class ExecutionProxy {
 	/**
 	 * Executes a document in background with the given profile.
 	 *
-	 * @param profile
-	 *            The user profile
-	 * @param modality
-	 *            The execution modality (for auditing)
-	 * @param defaultOutputFormat
-	 *            The default output format (optional) , considered if the document has no output format parameter set
+	 * @param profile             The user profile
+	 * @param modality            The execution modality (for auditing)
+	 * @param defaultOutputFormat The default output format (optional) , considered if the document has no output format parameter set
 	 *
 	 * @return the byte[]
 	 */
@@ -263,7 +260,7 @@ public class ExecutionProxy {
 
 			// set spagobi context
 			if (!mapPars.containsKey(SpagoBIConstants.SBI_CONTEXT)) {
-				String sbicontext = GeneralUtilities.getSpagoBiContext();
+				String sbicontext = KnowageSystemConfiguration.getKnowageContext();
 				if (sbicontext != null) {
 					mapPars.put(SpagoBIConstants.SBI_CONTEXT, sbicontext);
 				}
@@ -410,8 +407,7 @@ public class ExecutionProxy {
 	/**
 	 * Sets the returned content type.
 	 *
-	 * @param returnedContentType
-	 *            the new returned content type
+	 * @param returnedContentType the new returned content type
 	 */
 	public void setReturnedContentType(String returnedContentType) {
 		this.returnedContentType = returnedContentType;
@@ -420,8 +416,7 @@ public class ExecutionProxy {
 	/**
 	 * Gets the file extension from cont type.
 	 *
-	 * @param contentType
-	 *            the content type
+	 * @param contentType the content type
 	 *
 	 * @return the file extension from cont type
 	 */

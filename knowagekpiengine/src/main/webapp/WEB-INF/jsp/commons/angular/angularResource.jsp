@@ -56,7 +56,7 @@ String widgetId = "";
 String metaData = "";
 
 // Dynamic Url Builder - Caching Management
-String knowageContext = GeneralUtilities.getSpagoBiContext();							//  /knowage
+String knowageContext = KnowageSystemConfiguration.getKnowageContext();							//  /knowage
 String kpiEngineContext = request.getContextPath(); 									//  /kpiengine
 UrlBuilder urlBuilder = new UrlBuilder(knowageContext, kpiEngineContext);
 String dynamicResourcesBasePath = urlBuilder.getDynamicResorucesBasePath();  			//  /knowage/js/src

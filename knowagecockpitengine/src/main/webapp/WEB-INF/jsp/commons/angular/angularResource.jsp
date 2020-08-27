@@ -28,6 +28,7 @@
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
@@ -46,7 +47,7 @@
 <%-- ---------------------------------------------------------------------- --%>
 
 <%
-	String spagoBiContext = GeneralUtilities.getSpagoBiContext();							//  /knowage
+	String spagoBiContext = KnowageSystemConfiguration.getKnowageContext();							//  /knowage
 	String cockpitEngineContext = request.getContextPath(); 								//  /cockpitengine
 	UrlBuilder urlBuilder = new UrlBuilder(spagoBiContext, cockpitEngineContext);
 	String dynamicResourcesBasePath = urlBuilder.getDynamicResorucesBasePath();  			//  /knowage/js/src

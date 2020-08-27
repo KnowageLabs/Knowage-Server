@@ -54,8 +54,8 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 	}
 
 	private void addSystemParametersForExternalEngines(Map mapPars, Locale locale, BIObject obj, String executionModality, String role) {
-		mapPars.put(SpagoBIConstants.SBI_CONTEXT, GeneralUtilities.getSpagoBiContext());
-		mapPars.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
+//		mapPars.put(SpagoBIConstants.SBI_CONTEXT, KnowageSystemConfiguration.getKnowageContext());
+//		mapPars.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 		mapPars.put(SpagoBIConstants.SBI_SPAGO_CONTROLLER, GeneralUtilities.getSpagoAdapterHttpUrl());
 		// mapPars.put("SBI_EXECUTION_ID", this.executionId);
 		mapPars.put(SpagoBIConstants.EXECUTION_ROLE, role);
@@ -194,11 +194,9 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 		return biParameterExecDependencies;
 	}
 
-
 	public ILovDetail getLovDetailForDefault(BIObjectParameter driver) {
 		return super.getLovDetailForDefault(driver);
 	}
-
 
 //	validateInputs
 //	getDefaultValues

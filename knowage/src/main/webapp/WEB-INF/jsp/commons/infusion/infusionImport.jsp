@@ -4,6 +4,7 @@
 <%-- ---------------------------------------------------------------------- --%>
 <%-- INFUSION																--%>
 <%-- ---------------------------------------------------------------------- --%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
 <%@page import="it.eng.spagobi.commons.bo.AccessibilityPreferences" %>
@@ -27,7 +28,7 @@
 
 %>
 <script>
-   var contextName= '<%= GeneralUtilities.getSpagoBiContext() %>';
+   var contextName= '<%= KnowageSystemConfiguration.getKnowageContext() %>';
    var host= '<%= GeneralUtilities.getSpagoBiHost() %>';
    var baseUrl= ''+host +''+ contextName + '/restful-services';
    var preferences = '<%= preferences %>';

@@ -28,10 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
 import it.eng.LightNavigationConstants;
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.wapp.Environment;
 import it.eng.knowage.wapp.Version;
 import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 
 /**
  * The implementation of IUrlBuilder used when SpagoBI is used as a STANDALONE WEB APPLICATION
@@ -50,12 +50,11 @@ public class WebUrlBuilder implements IUrlBuilder {
 	/**
 	 * Inits the.
 	 *
-	 * @param aHttpServletRequest
-	 *            the a http servlet request
+	 * @param aHttpServletRequest the a http servlet request
 	 */
 	public void init(HttpServletRequest aHttpServletRequest) {
 		logger.debug("IN");
-		baseResourceURL = GeneralUtilities.getSpagoBiContext() + "/";
+		baseResourceURL = KnowageSystemConfiguration.getKnowageContext() + "/";
 		logger.debug("baseResourceURL" + baseResourceURL);
 		baseURL = baseResourceURL + "servlet/AdapterHTTP";
 		logger.debug("OUT.baseURL=" + baseURL);

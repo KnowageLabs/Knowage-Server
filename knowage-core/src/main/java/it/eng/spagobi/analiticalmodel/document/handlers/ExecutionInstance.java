@@ -116,14 +116,10 @@ public class ExecutionInstance implements Serializable {
 	/**
 	 * Instantiates a new execution instance.
 	 *
-	 * @param flowId
-	 *            the flow id
-	 * @param executionId
-	 *            the execution id
-	 * @param obj
-	 *            the obj
-	 * @param executionRole
-	 *            the execution role
+	 * @param flowId        the flow id
+	 * @param executionId   the execution id
+	 * @param obj           the obj
+	 * @param executionRole the execution role
 	 * @throws Exception
 	 */
 	public ExecutionInstance(IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole, String executionModality,
@@ -609,8 +605,7 @@ public class ExecutionInstance implements Serializable {
 	/**
 	 * Checks if is single value.
 	 *
-	 * @param biparam
-	 *            the biparam
+	 * @param biparam the biparam
 	 *
 	 * @return true, if is single value
 	 */
@@ -1142,10 +1137,8 @@ public class ExecutionInstance implements Serializable {
 	 * This method is called by SDK to execute a document; it takes as input a list of SDK parameters, each with its own set of values and fill the BiObject
 	 * object
 	 *
-	 * @param obj
-	 *            The Bi Object
-	 * @param parameters
-	 *            an array of SDKDocumentParameter
+	 * @param obj        The Bi Object
+	 * @param parameters an array of SDKDocumentParameter
 	 */
 
 	public void refreshBIObjectWithSDKParameters(SDKDocumentParameter[] parameters) {
@@ -1216,6 +1209,7 @@ public class ExecutionInstance implements Serializable {
 
 	/**
 	 * Get lov detail for max.
+	 * 
 	 * @param parameter
 	 * @return
 	 * @author Marco Libanori
@@ -1345,8 +1339,8 @@ public class ExecutionInstance implements Serializable {
 	}
 
 	private void addSystemParametersForExternalEngines(Map mapPars, Locale locale) {
-		mapPars.put(SpagoBIConstants.SBI_CONTEXT, GeneralUtilities.getSpagoBiContext());
-		mapPars.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
+//		mapPars.put(SpagoBIConstants.SBI_CONTEXT, KnowageSystemConfiguration.getKnowageContext());
+//		mapPars.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 		mapPars.put(SpagoBIConstants.SBI_SPAGO_CONTROLLER, GeneralUtilities.getSpagoAdapterHttpUrl());
 		mapPars.put("SBI_EXECUTION_ID", this.executionId);
 		mapPars.put(SpagoBIConstants.EXECUTION_ROLE, this.getExecutionRole());

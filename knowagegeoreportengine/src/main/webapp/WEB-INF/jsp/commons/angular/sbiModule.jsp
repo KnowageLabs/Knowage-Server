@@ -1,5 +1,6 @@
 <%-- this is part of sbiModule.js --%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <script>
 var sbiM=angular.module('sbiModule');
 
@@ -25,7 +26,7 @@ sbiM.factory('sbiModule_config',function(){
 		 docDatasetName: "<%=docDatasetName%>",
 		 visibleDataSet: "<%=visibleDataSet%>",
 		 externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>/",
-		 adapterPath:'<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>'
+		 adapterPath:'<%= KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>'
 	};
 });
 

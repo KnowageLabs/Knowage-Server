@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@page import="it.eng.spagobi.commons.utilities.SpagoBIUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="org.json.JSONArray"%>
 <%
@@ -58,7 +59,7 @@ if (header != null && header.equals("Ext")) {
 		var parentWindow = parent;
 		while (parentWindow != currentWindow) {
 			if (parentWindow.sessionExpiredSpagoBIJS) {
-				parentWindow.location = '<%= GeneralUtilities.getSpagoBiContext() %>';
+				parentWindow.location = '<%= KnowageSystemConfiguration.getKnowageContext() %>';
 				sessionExpiredSpagoBIJSFound = true;
 				break;
 			} else {
@@ -69,7 +70,7 @@ if (header != null && header.equals("Ext")) {
 	} catch (err) {}
 	
 	if (!sessionExpiredSpagoBIJSFound) {
-		window.location = '<%= GeneralUtilities.getSpagoBiContext() %>';
+		window.location = '<%= KnowageSystemConfiguration.getKnowageContext() %>';
 	}
 	</script>
 	<%

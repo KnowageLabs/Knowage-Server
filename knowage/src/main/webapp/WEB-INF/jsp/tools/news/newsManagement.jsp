@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
-<% String contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); %>
+<% String contextName = KnowageSystemConfiguration.getKnowageContext(); %>
 
 <%
 		//TODO check for user profile autorization

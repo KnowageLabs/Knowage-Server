@@ -21,9 +21,9 @@
 
 <!-- angular-material-->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(knowageContext, "/themes/commons/css/customStyle.css")%>">
-<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
+<link rel="stylesheet" href="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
 
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
 
 
 <!-- context menu -->
@@ -45,8 +45,8 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinycolor-min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinygradient.min.js"></script>
 
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
-<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/angularjs-color-picker.min.css">
+<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
+<link rel="stylesheet" href="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/angular/color-picker/angularjs-color-picker.min.css">
 
 <!--  r-linear-gauge  -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/gaugeNgDirective/rLinearGauge/rLinearGauge.js"></script>

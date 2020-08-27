@@ -10,7 +10,7 @@ var sbiM=angular.module('sbiModule',["ngSanitize"]);
 sbiM.factory('sbiModule_config',function(){
 	var conf= {
 		contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',    
-		externalBasePath: '<%= GeneralUtilities.getSpagoBiContext() %>',
+		externalBasePath: '<%= KnowageSystemConfiguration.getKnowageContext() %>',
  		clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server
 		clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',   // the timestamp format to be used when communicating with server
 		serverDateFormat: '<%= GeneralUtilities.getServerDateFormat() %>',

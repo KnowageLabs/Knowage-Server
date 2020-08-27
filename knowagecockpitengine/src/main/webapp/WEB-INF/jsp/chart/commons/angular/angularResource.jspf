@@ -49,13 +49,13 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="org.json.JSONObject"%>
-<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
 
 <%
-	String spagoBiContext = GeneralUtilities.getSpagoBiContext(); 							//  /knowage
+	String spagoBiContext = KnowageSystemConfiguration.getKnowageContext(); 							//  /knowage
 	String cockpitEngineContext = request.getContextPath(); 	    						//  /cockpitengine
 	UrlBuilder urlBuilder = new UrlBuilder(spagoBiContext, cockpitEngineContext);
 	String dynamicResourcesBasePath = urlBuilder.getDynamicResorucesBasePath();  			//  /knowage/js/src

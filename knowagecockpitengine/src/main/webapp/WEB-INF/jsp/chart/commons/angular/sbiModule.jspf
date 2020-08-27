@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    curr_country: '<%= curr_country %>',
 	    	curr_language: '<%= curr_language%>',
 			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
-	    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"	,
+	    	externalBasePath:"<%= KnowageSystemConfiguration.getKnowageContext()%>"	,
 	    	thous: '<%= GeneralUtilities.getGroupingSeparator(locale)%>',
 	        dec: '<%= GeneralUtilities.getDecimalSeparator(locale)%>',
 			dynamicResourcesBasePath: "<%=dynamicResourcesBasePath%>",		//  /knowage/js/src

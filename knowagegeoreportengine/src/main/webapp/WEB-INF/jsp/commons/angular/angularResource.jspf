@@ -35,7 +35,7 @@
 <% 
  
 	//Dynamic Url Builder - Caching Management
-	String knowageContext = GeneralUtilities.getSpagoBiContext();       			//  /knowage
+	String knowageContext = KnowageSystemConfiguration.getKnowageContext();       			//  /knowage
 	String georeportEngineContext = request.getContextPath();         				//  /georeportengine
 	UrlBuilder urlBuilder = new UrlBuilder(knowageContext, georeportEngineContext);
 	String dynamicResourcesBasePath = urlBuilder.getDynamicResorucesBasePath();     //  /knowage/js/src

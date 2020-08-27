@@ -12,7 +12,7 @@
 <%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
 <%@page import="it.eng.spago.security.IEngUserProfile" %>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
-<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="java.util.List"%>
@@ -22,7 +22,7 @@
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
 
 <%
-	String spagoBiContext = GeneralUtilities.getSpagoBiContext();						//  /knowage
+	String spagoBiContext = KnowageSystemConfiguration.getKnowageContext();						//  /knowage
 	String metaEngineContext = request.getContextPath(); 								//  /knowagemetaengine
 	UrlBuilder urlBuilder = new UrlBuilder(spagoBiContext, metaEngineContext);
 	String dynamicResourcesBasePath = urlBuilder.getDynamicResorucesBasePath();  		//  /knowage/js/src

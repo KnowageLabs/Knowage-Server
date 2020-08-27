@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
@@ -81,8 +82,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 * Substitutes the substrings with sintax "${code,bundle}" or "${code}" (in the second case bundle is assumed to be the default value "messages") with the
 	 * correspondent internationalized messages in the input String. This method calls <code>PortletUtilities.getMessage(key, bundle)</code>.
 	 *
-	 * @param message
-	 *            The string to be modified
+	 * @param message The string to be modified
 	 *
 	 * @return The message with the internationalized substrings replaced.
 	 */
@@ -145,15 +145,11 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	/**
 	 * Subsitute bi object parameters lov profile attributes.
 	 *
-	 * @param obj
-	 *            the obj
-	 * @param session
-	 *            the session
+	 * @param obj     the obj
+	 * @param session the session
 	 *
-	 * @throws Exception
-	 *             the exception
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws Exception        the exception
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public static void subsituteBIObjectParametersLovProfileAttributes(BIObject obj, SessionContainer session) throws Exception, EMFInternalError {
 		logger.trace("IN");
@@ -181,8 +177,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	/**
 	 * Gets the lov map result.
 	 *
-	 * @param lovs
-	 *            the lovs
+	 * @param lovs the lovs
 	 *
 	 * @return the lov map result
 	 */
@@ -197,13 +192,11 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	/**
 	 * Gets the lov result.
 	 *
-	 * @param lovLabel
-	 *            the lov label
+	 * @param lovLabel the lov label
 	 *
 	 * @return the lov result
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	/*
 	 * public static String getLovResult(String lovLabel) throws Exception { logger.debug("IN"); IModalitiesValueDAO lovDAO =
@@ -214,15 +207,12 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	/**
 	 * Gets the lov result.
 	 *
-	 * @param lovLabel
-	 *            the lov label
-	 * @param profile
-	 *            the profile
+	 * @param lovLabel the lov label
+	 * @param profile  the profile
 	 *
 	 * @return the lov result
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	/*
 	 * public static String getLovResult(String lovLabel, IEngUserProfile profile) throws Exception { logger.debug("IN"); IModalitiesValueDAO lovDAO =
@@ -239,13 +229,11 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	/**
 	 * Creates a new user profile, given his identifier.
 	 *
-	 * @param userId
-	 *            The user identifier
+	 * @param userId The user identifier
 	 *
 	 * @return The newly created user profile
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public static IEngUserProfile createNewUserProfile(String userId) throws Exception {
 		return UserUtilities.getUserProfile(userId);
@@ -254,8 +242,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	/**
 	 * Returns the complete HTTP URL and puts it into a string.
 	 *
-	 * @param userId
-	 *            the user id
+	 * @param userId the user id
 	 *
 	 * @return A String with complete HTTP Url
 	 */
@@ -719,21 +706,24 @@ public class GeneralUtilities extends SpagoBIUtilities {
 
 	public static String getSpagoBiContext() {
 		logger.debug("IN");
-		String path = "";
-		try {
-			logger.debug("Trying to recover spagobi context from ConfigSingleton");
-			SingletonConfig spagoConfig = SingletonConfig.getInstance();
-			path = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_CONTEXT");
-			if (path == null) {
-				logger.debug("SPAGOBI_CONTEXT not set, using the default value ");
-				path = "/knowage";
-			}
-			logger.debug("SPAGOBI_CONTEXT: " + path);
-		} catch (Exception e) {
-			logger.error("Error while recovering SpagoBI context address", e);
-		}
-		logger.debug("OUT:" + path);
-		return path;
+//		String path = "";
+//		try {
+//			logger.debug("Trying to recover spagobi context from ConfigSingleton");
+//			SingletonConfig spagoConfig = SingletonConfig.getInstance();
+//			path = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_CONTEXT");
+//			if (path == null) {
+//				logger.debug("SPAGOBI_CONTEXT not set, using the default value ");
+//				path = "/knowage";
+//			}
+//			logger.debug("SPAGOBI_CONTEXT: " + path);
+//		} catch (Exception e) {
+//			logger.error("Error while recovering SpagoBI context address", e);
+//		}
+//		logger.debug("OUT:" + path);
+//		return path;
+
+		logger.debug("OUT");
+		return KnowageSystemConfiguration.getKnowageContext();
 	}
 
 	public static String getSessionExpiredURL() {
@@ -754,10 +744,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 * Returns an url starting with the given base url and adding parameters retrieved by the input parameters map. Each parameter value is encoded using
 	 * URLEncoder.encode(value, "UTF-8");
 	 *
-	 * @param baseUrl
-	 *            The base url
-	 * @param mapPars
-	 *            The parameters map; those parameters will be added to the base url (values will be encoded using UTF-8 encoding)
+	 * @param baseUrl The base url
+	 * @param mapPars The parameters map; those parameters will be added to the base url (values will be encoded using UTF-8 encoding)
 	 * @return an url starting with the given base url and adding parameters retrieved by the input parameters map
 	 */
 	public static String getUrl(String baseUrl, Map mapPars) {

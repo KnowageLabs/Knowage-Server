@@ -26,7 +26,7 @@ angular.module('sbiModule')
 		    curr_country: '<%=locale.getCountry()%>',
 	    	curr_language: '<%=locale.getLanguage()%>',
 			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
-	    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>",
+	    	externalBasePath:"<%= KnowageSystemConfiguration.getKnowageContext()%>",
 	    	sbiExecutionID:'<%=request.getParameter(SpagoBIConstants.SBI_EXECUTION_ID)%>',
 	    	formulas: '<%= formulasJson%>',
 	    	dynamicResourcesBasePath: "<%=dynamicResourcesBasePath%>",  	//  /knowage/js/src

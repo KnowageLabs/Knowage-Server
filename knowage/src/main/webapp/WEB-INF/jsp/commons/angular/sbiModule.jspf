@@ -12,16 +12,16 @@ var sbiM=angular.module('sbiModule',["toastr","ngSanitize"]);
 // 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
 // });
 <%	
-	String contextNameForEngineComposition = GeneralUtilities.getSpagoBiContext().replaceAll("^/", "");
-	String spagoBiContext = GeneralUtilities.getSpagoBiContext();	//  /knowage
+	String contextNameForEngineComposition = KnowageSystemConfiguration.getKnowageContext().replaceAll("^/", "");
+	String spagoBiContext = KnowageSystemConfiguration.getKnowageContext();	//  /knowage
 	UrlBuilder dynamicUrlBuilder = new UrlBuilder(spagoBiContext);
 	String dynamicResourcesBasePath = dynamicUrlBuilder.getDynamicResorucesBasePath();  //  /knowage/js/src/
 %>
 sbiM.factory('sbiModule_config',function(){ 
 	return {
-    	contextName: '<%= GeneralUtilities.getSpagoBiContext() %>',
+    	contextName: '<%= KnowageSystemConfiguration.getKnowageContext() %>',
     	contextLogo: '<%= urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>',
-    	contextMetaName: '<%= GeneralUtilities.getSpagoBiContext() %>meta',
+    	contextMetaName: '<%= KnowageSystemConfiguration.getKnowageContext() %>meta',
     	
     	// Engines
     	qbeEngineContextName: '<%= contextNameForEngineComposition %>qbeengine',
@@ -31,7 +31,7 @@ sbiM.factory('sbiModule_config',function(){
     	whatIfEngineContextName: '<%= contextNameForEngineComposition %>whatifengine',
     	olapEngineContextName: '<%= contextNameForEngineComposition %>olapengine',
     	
-    	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
+    	adapterPath: '<%= KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	adapterPathNoContext : '<%= GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	host: '<%= GeneralUtilities.getSpagoBiHost() %>',
     	curr_country: '<%= curr_country %>',
@@ -388,7 +388,7 @@ sbiM.service('sbiModule_translate', function() {
 
 sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, sbiModule_config, sbiModule_logger, $mdDialog, $sanitize,$mdPanel, sbiModule_user) {
 	
-	var loginUrl = '<%= GeneralUtilities.getSpagoBiContext() %>'; // login url, used when session is expired
+	var loginUrl = '<%= KnowageSystemConfiguration.getKnowageContext() %>'; // login url, used when session is expired
 	
 	var alteredContextPath=null;
 

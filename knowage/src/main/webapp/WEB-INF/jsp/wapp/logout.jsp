@@ -23,11 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.spagobi.security.google.config.GoogleSignInConfig"%>
 
 <iframe id='invalidSessionJasper'
                  name='invalidSessionJasper'
-                 src='<%=GeneralUtilities.getSpagoBiHost()%><%=GeneralUtilities.getSpagoBiContext()%>jasperreportengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()%><%=KnowageSystemConfiguration.getKnowageContext()%>jasperreportengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -37,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionQbe'
                  name='invalidSessionQbe'
-                 src='<%=GeneralUtilities.getSpagoBiHost()%><%=GeneralUtilities.getSpagoBiContext()%>qbeengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()%><%=KnowageSystemConfiguration.getKnowageContext()%>qbeengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -45,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionBirt'
                  name='invalidSessionBirt'
-                 src='<%=GeneralUtilities.getSpagoBiHost()%><%=GeneralUtilities.getSpagoBiContext()%>birtreportengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()%><%=KnowageSystemConfiguration.getKnowageContext()%>birtreportengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -53,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionTalend'
                  name='invalidSessionTalend'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>talendengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=KnowageSystemConfiguration.getKnowageContext()%>talendengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -61,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionChart'
                  name='invalidSessionChart'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>chartengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=KnowageSystemConfiguration.getKnowageContext()%>chartengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -69,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionWhatIf'
                  name='invalidSessionChart'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>whatifengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=KnowageSystemConfiguration.getKnowageContext()%>whatifengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -77,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionCockpit'
                  name='invalidSessionCockpit'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>cockpitengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=KnowageSystemConfiguration.getKnowageContext()%>cockpitengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -85,7 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionGis'
                  name='invalidSessionGis'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>georeportengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=KnowageSystemConfiguration.getKnowageContext()%>georeportengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -93,7 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionKpi'
                  name='invalidSessionKpi'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>kpiengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=KnowageSystemConfiguration.getKnowageContext()%>kpiengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -101,7 +102,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionMeta'
                  name='invalidSessionMeta'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>meta/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=KnowageSystemConfiguration.getKnowageContext()%>meta/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -109,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionSvg'
                  name='invalidSessionSvg'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>svgengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=KnowageSystemConfiguration.getKnowageContext()%>svgengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -117,7 +118,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionCommonj'
                  name='invalidSessionCommonj'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>commonjengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=KnowageSystemConfiguration.getKnowageContext()%>commonjengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -125,7 +126,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionNetwork'
                  name='invalidSessionNetwork'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>networkengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=KnowageSystemConfiguration.getKnowageContext()%>networkengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -133,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionDataMining'
                  name='invalidSessionDataMining'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>dataminingengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=KnowageSystemConfiguration.getKnowageContext()%>dataminingengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >

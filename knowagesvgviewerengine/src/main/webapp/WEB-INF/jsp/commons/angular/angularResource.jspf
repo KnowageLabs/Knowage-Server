@@ -17,7 +17,7 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Map"%>
 <%@page import="it.eng.knowage.engines.svgviewer.SvgViewerEngineInstance"%>
-<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
@@ -62,7 +62,7 @@
 	env = engineInstance.getEnv();
 	locale = engineInstance.getLocale();
 	
-	String spagoBiContext = GeneralUtilities.getSpagoBiContext();							//  /knowage
+	String spagoBiContext = KnowageSystemConfiguration.getKnowageContext();							//  /knowage
 	String svgEngineContext = request.getContextPath(); 	
 	UrlBuilder urlBuilder = new UrlBuilder(spagoBiContext, svgEngineContext);	
 

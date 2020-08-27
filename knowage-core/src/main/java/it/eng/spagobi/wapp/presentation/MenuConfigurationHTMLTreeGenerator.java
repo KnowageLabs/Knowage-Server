@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.security.IEngUserProfile;
@@ -61,7 +62,6 @@ import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.utilities.urls.IUrlBuilder;
@@ -150,7 +150,7 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 		htmlStream.append("			<script language=\"JavaScript1.2\">\n");
 		htmlStream.append("				var nameTree = 'treeFunct';\n");
 		// String context=httpRequest.getContextPath();
-		String context = GeneralUtilities.getSpagoBiContext();
+		String context = KnowageSystemConfiguration.getKnowageContext();
 		if (!(context.charAt(context.length() - 1) == '/')) {
 			context += '/';
 		}

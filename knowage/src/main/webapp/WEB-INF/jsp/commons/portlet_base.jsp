@@ -45,13 +45,14 @@ The following directive catches exceptions thrown by jsps, must be commented in 
 <%@page
 	import="it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy"%>
 <%@page import="java.util.Iterator"%>
-<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 <%@page import="it.eng.spagobi.commons.bo.SessionUserProfile"%>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
@@ -237,12 +238,12 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
     Sbi.config = function () {
         return {
        		// login url, used when session is expired
-        	loginUrl: '<%= GeneralUtilities.getSpagoBiContext() %>',
+        	loginUrl: '<%= KnowageSystemConfiguration.getKnowageContext() %>',
         	currTheme: '<%= currTheme %>',
         	curr_country: '<%= curr_country %>',
         	curr_language: '<%= curr_language%>',
-        	contextName: '<%= GeneralUtilities.getSpagoBiContext() %>',
-        	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
+        	contextName: '<%= KnowageSystemConfiguration.getKnowageContext() %>',
+        	adapterPath: '<%= KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
         	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>,
             // the date format localized according to user language and country
             localizedDateFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>',

@@ -33,6 +33,7 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.LightNavigationConstants;
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -74,12 +75,9 @@ public class DocumentCompositionUtils {
 	/**
 	 * Returns an url for execute the document with the engine associated. It calls relative driver.
 	 *
-	 * @param objLabel
-	 *            the logical label of the document (gets from the template file)
-	 * @param sessionContainer
-	 *            session object
-	 * @param requestSB
-	 *            request object
+	 * @param objLabel         the logical label of the document (gets from the template file)
+	 * @param sessionContainer session object
+	 * @param requestSB        request object
 	 *
 	 * @return String the complete url. It use this format: <code_error>|<url>. If there is an error during the execution <code_error> is valorized and url is
 	 *         null, else it is null and the url is complete.
@@ -194,7 +192,7 @@ public class DocumentCompositionUtils {
 						}
 					}
 				}
-				mapPars.put(SpagoBIConstants.SBI_CONTEXT, GeneralUtilities.getSpagoBiContext());
+				mapPars.put(SpagoBIConstants.SBI_CONTEXT, KnowageSystemConfiguration.getKnowageContext());
 				mapPars.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 				UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 				UUID uuidObj = uuidGen.generateRandomBasedUUID();
@@ -289,12 +287,9 @@ public class DocumentCompositionUtils {
 	/**
 	 * Returns an url for the test of the EXTERNAL engine.
 	 *
-	 * @param objLabel
-	 *            the logical label of the document (gets from the template file)
-	 * @param sessionContainer
-	 *            session object
-	 * @param requestSB
-	 *            request object
+	 * @param objLabel         the logical label of the document (gets from the template file)
+	 * @param sessionContainer session object
+	 * @param requestSB        request object
 	 *
 	 * @return String the complete url. It use this format: <code_error>|<url>. If there is an error during the execution <code_error> is valorized and url is
 	 *         null, else it is null and the url is complete.
@@ -352,12 +347,9 @@ public class DocumentCompositionUtils {
 	/**
 	 * Return a string representative an url with all parameters set with a request value (if it is present) or with the default's value.
 	 *
-	 * @param doc
-	 *            the document object that is managed
-	 * @param document
-	 *            the document configurator
-	 * @param requestSB
-	 *            the request object
+	 * @param doc       the document object that is managed
+	 * @param document  the document configurator
+	 * @param requestSB the request object
 	 * @return a string with the url completed
 	 */
 	private static String getParametersUrl(BIObject obj, Document document, SourceBean requestSB, ExecutionInstance instance) {
@@ -455,8 +447,7 @@ public class DocumentCompositionUtils {
 	/**
 	 * Return an hashmap of all parameters for the document managed
 	 *
-	 * @param urlReturn
-	 *            String with url and parameters
+	 * @param urlReturn String with url and parameters
 	 * @return HashMap
 	 */
 	private static HashMap getAllParamsValue(String urlReturn) {
@@ -491,8 +482,7 @@ public class DocumentCompositionUtils {
 	/**
 	 * Return the BIObjectParameter with the key passed
 	 *
-	 * @param key
-	 *            String with url (identifier) of parameter
+	 * @param key String with url (identifier) of parameter
 	 * @return BIObjectParameter
 	 */
 	private static BIObjectParameter getBIObjectParameter(BIObject obj, String urlKey) {

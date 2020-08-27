@@ -58,6 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	import="it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
@@ -278,12 +279,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Sbi.config = function () {
         return {
        		// login url, used when session is expired
-        	loginUrl: '<%= GeneralUtilities.getSpagoBiContext() %>',
+        	loginUrl: '<%= KnowageSystemConfiguration.getKnowageContext() %>',
         	currTheme: '<%= currTheme %>',
         	curr_country: '<%= curr_country %>',
         	curr_language: '<%= curr_language%>',
-        	contextName: '<%= GeneralUtilities.getSpagoBiContext() %>',
-        	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
+        	contextName: '<%= KnowageSystemConfiguration.getKnowageContext() %>',
+        	adapterPath: '<%= KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
         	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>,
             // the date format localized according to user language and country
             localizedDateFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>',

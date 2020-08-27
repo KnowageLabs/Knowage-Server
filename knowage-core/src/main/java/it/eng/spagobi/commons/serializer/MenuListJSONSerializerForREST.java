@@ -27,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -145,7 +146,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
-		contextName = GeneralUtilities.getSpagoBiContext();
+		contextName = KnowageSystemConfiguration.getKnowageContext();
 		if (!(o instanceof List)) {
 			throw new SerializationException("MenuListJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
