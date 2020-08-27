@@ -91,6 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.aggregationRegex = /(?:\[kn-column=[\']{1}([a-zA-Z0-9\_\-\s]+)[\']{1}(?:\s+aggregation=[\']{1}(AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)[\']{1}){1}(?:\s+precision=\'(\d)\')?(\s+format)?\])/;
 		$scope.paramsRegex = /(?:\[kn-parameter=[\'\"]{1}([a-zA-Z0-9\_\-\s]+)[\'\"]{1}\])/g;
 		$scope.calcRegex = /(?:\[kn-calc=\(([\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\)(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
+		$scope.advancedCalcRegex = /(?:\[kn-calc=\{([\(\)\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\}(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
 		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
 		$scope.variablesRegex = /(?:\[kn-variable=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+key=\'([a-zA-Z0-9\_\-\s]+)\')?\s?\])/g;
 		$scope.gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g;
@@ -382,7 +383,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 * Function to replace kn-calc placeholders
 		 */
 		$scope.parseCalc = function(rawHtml) {
-			return rawHtml.replace($scope.calcRegex, $scope.calcReplacer);
+			if(rawHtml.match($scope.advancedCalcRegex)){
+				return rawHtml.replace($scope.advancedCalcRegex, $scope.calcReplacer);
+			}else {
+				return rawHtml.replace($scope.calcRegex, $scope.calcReplacer);
+			}
+			
 		}
 
 		/**
@@ -440,7 +446,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				p1 = $scope.aggregationDataset && $scope.aggregationDataset.rows[0] && $scope.aggregationDataset.rows[0][columnInfo.name] !== "" && typeof($scope.aggregationDataset.rows[0][columnInfo.name])!='undefined' ? $scope.aggregationDataset.rows[0][columnInfo.name] : null;
 			}
 			else if($scope.htmlDataset && $scope.htmlDataset.rows[row||0] && typeof($scope.htmlDataset.rows[row||0][columnInfo.name])!='undefined' && $scope.htmlDataset.rows[row||0][columnInfo.name] != ""){
-				p1 = columnInfo.type == 'string' ? '\''+$scope.htmlDataset.rows[row||0][columnInfo.name]+'\'' : $scope.htmlDataset.rows[row||0][columnInfo.name];
+				var columnValue = $scope.htmlDataset.rows[row||0][columnInfo.name].replace("'","\\'");
+				p1 = columnInfo.type == 'string' ? '\''+columnValue+'\'' : columnValue;
 			}else {
 				p1 = null;
 			}
@@ -448,7 +455,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.ifConditionParamsReplacer = function(match, p1){
-			return typeof(cockpitModule_analyticalDrivers[p1]) == 'string' ? '\''+cockpitModule_analyticalDrivers[p1]+'\'' : (cockpitModule_analyticalDrivers[p1] || null);
+			var textToReturn = (cockpitModule_analyticalDrivers[p1] || null);
+			if(typeof(cockpitModule_analyticalDrivers[p1]) == 'string'){
+				textToReturn = '\''+cockpitModule_analyticalDrivers[p1].replace("'","\\'")+'\''
+			}
+			return textToReturn;
 		}
 
 		$scope.replacer = function(match, p1, row, aggr, precision,format) {

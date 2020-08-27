@@ -17,11 +17,15 @@
  */
 package it.eng.spagobi.commons;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -57,6 +61,19 @@ public class MetadataDatabaseConfigurationRetriever implements IConfigurationRet
 		}
 		logger.debug("GET :" + key + "=" + toReturn);
 		return toReturn;
+	}
+
+	@Override
+	public List<IConfiguration> getByCategory(String category) {
+		try {
+			IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+			configsDao.setUserProfile(UserProfileManager.getProfile());
+			List<Config> returnedVals = configsDao.loadConfigParametersByCategory(category);
+			return new ArrayList<IConfiguration>(returnedVals);
+		} catch (Exception e) {
+			logger.error("Error while getting the list of configs", e);
+			throw new SpagoBIRuntimeException("Error while getting the list of configs", e);
+		}
 	}
 
 }

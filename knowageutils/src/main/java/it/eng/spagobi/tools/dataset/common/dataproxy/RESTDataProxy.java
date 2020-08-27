@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
@@ -51,6 +53,11 @@ public class RESTDataProxy extends AbstractDataProxy {
 	protected String requestBody;
 	protected String address;
 	protected final Map<String, String> requestHeaders;
+
+	private String unparametrizedRequestBody;
+	private String unparametrizedAddress;
+	private final Map<String, String> unparametrizedRequestHeaders = new HashMap<String, String>();
+
 	protected final HttpMethod method;
 
 	private final String offsetParam;
@@ -83,10 +90,19 @@ public class RESTDataProxy extends AbstractDataProxy {
 			Helper.checkNotEmpty(maxResultsParam, "maxResultsParam");
 		}
 
-		this.address = address;
-		this.method = method;
-		this.requestHeaders = new HashMap<String, String>(requestHeaders);
 		this.requestBody = requestBody;
+		this.address = address;
+		this.requestHeaders = new HashMap<String, String>(requestHeaders);
+
+		/*
+		 * Initialize with same values. The parameters replacement will happen
+		 * when parameters will be set.
+		 */
+		this.unparametrizedRequestBody = this.requestBody;
+		this.unparametrizedAddress = this.address;
+		this.unparametrizedRequestHeaders.putAll(this.requestHeaders);
+
+		this.method = method;
 		this.offsetParam = offsetParam;
 		this.fetchSizeParam = fetchSizeParam;
 		this.maxResultsParam = maxResultsParam;
@@ -114,7 +130,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 			Helper.checkNotNull(dataReader, "dataReader");
 
 			List<NameValuePair> query = getQuery();
-			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody, query);
+			Response response = RestUtilities.makeRequest(this.method, this.unparametrizedAddress, this.unparametrizedRequestHeaders, this.unparametrizedRequestBody, query);
 			String responseBody = response.getResponseBody();
 			if (response.getStatusCode() != HttpStatus.SC_OK) {
 				throw new RESTDataProxyException(
@@ -172,15 +188,15 @@ public class RESTDataProxy extends AbstractDataProxy {
 	}
 
 	public String getRequestBody() {
-		return requestBody;
+		return unparametrizedRequestBody;
 	}
 
 	public String getAddress() {
-		return address;
+		return unparametrizedAddress;
 	}
 
 	public Map<String, String> getRequestHeaders() {
-		return requestHeaders;
+		return unparametrizedRequestHeaders;
 	}
 
 	public HttpMethod getRequestMethod() {
@@ -219,6 +235,38 @@ public class RESTDataProxy extends AbstractDataProxy {
 
 	public String getMaxResultsParam() {
 		return maxResultsParam;
+	}
+
+	@Override
+	public void setParameters(Map<String, String> parameters) {
+		super.setParameters(parameters);
+		replaceParameters();
+	}
+
+	private void replaceParameters() {
+
+		// Replace all values with the original values
+		unparametrizedRequestBody = requestBody;
+		unparametrizedAddress = address;
+		unparametrizedRequestHeaders.clear();
+		unparametrizedRequestHeaders.putAll(requestHeaders);
+
+		Set<Entry<String, String>> entrySet = getParameters().entrySet();
+		for (Entry<String, String> entry : entrySet) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+			value = value.replaceAll("^'", "").replaceAll("'$", "");
+			String keyPlaceholderRegex = "\\$P\\{" + key  + "\\}";
+
+			unparametrizedAddress = unparametrizedAddress.replaceAll(keyPlaceholderRegex, /* TODO : needs some escapes? */ value);
+			unparametrizedRequestBody = unparametrizedRequestBody.replaceAll(keyPlaceholderRegex, value);
+
+			Set<Entry<String, String>> headersEntrySet = unparametrizedRequestHeaders.entrySet();
+			for (Entry<String, String> headerEntry : headersEntrySet) {
+				headerEntry.setValue(headerEntry.getValue().replaceAll(keyPlaceholderRegex, value));
+			}
+		}
+
 	}
 
 }

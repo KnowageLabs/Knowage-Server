@@ -37,6 +37,8 @@ public interface IConfigDAO extends ISpagoBIDao {
 
 	public List<Config> loadConfigParametersByProperties(String prop) throws Exception;
 
+	public List<Config> loadConfigParametersByCategory(String category) throws Exception;
+
 	/**
 	 * Save a Config
 	 *

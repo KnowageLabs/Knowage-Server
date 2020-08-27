@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -336,6 +337,46 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 			}
 		}
 		logger.debug("OUT");
+	}
+
+	@Override
+	public List<Config> loadConfigParametersByCategory(String category) throws Exception {
+		logger.debug("IN");
+
+		if (StringUtils.isEmpty(category)) {
+			throw new IllegalArgumentException("Category cannot be null");
+		}
+
+		List<Config> ret = new ArrayList<Config>();
+		Config toReturn = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			Criterion labelCriterrion = Expression.eq("category", category);
+			Criteria criteria = tmpSession.createCriteria(SbiConfig.class);
+			criteria.add(labelCriterrion);
+
+			List<SbiConfig> matchinConfigs = criteria.list();
+			for (SbiConfig currConf : matchinConfigs) {
+				ret.add(currConf.toConfig());
+			}
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+			logger.debug("OUT");
+		}
+		return ret;
 	}
 
 }

@@ -74,7 +74,7 @@ public class MeasureJSONDeserializer implements IDeserializer {
 	private Measure deserializeMeasure(JSONObject obj) throws JSONException {
 		return new Measure(obj.getString(FieldsSerializationConstants.ID), obj.getString(FieldsSerializationConstants.ALIAS), null,
 				obj.getString(FieldsSerializationConstants.ICON_CLS), obj.getString(FieldsSerializationConstants.NATURE),
-				obj.getString(FieldsSerializationConstants.FUNCTION), obj.optBoolean(FieldsSerializationConstants.EXCLUDE_FROM_TOTAL_AND_SUBTOTAL), obj);
+				obj.getString(FieldsSerializationConstants.FUNCTION), obj.optString("variable"), obj.optBoolean(FieldsSerializationConstants.EXCLUDE_FROM_TOTAL_AND_SUBTOTAL), obj);
 	}
 
 }

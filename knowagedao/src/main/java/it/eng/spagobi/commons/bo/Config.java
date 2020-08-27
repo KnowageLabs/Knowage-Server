@@ -24,18 +24,14 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
+import it.eng.spagobi.commons.IConfiguration;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 import it.eng.spagobi.services.validation.Xss;
 
 /**
  * Defines a Config object.
  */
-
-@JsonInclude(Include.NON_NULL)
-public class Config implements Serializable {
+public class Config implements IConfiguration, Serializable {
 
 	private Integer id;
 
@@ -73,6 +69,7 @@ public class Config implements Serializable {
 	/**
 	 * @return the id
 	 */
+	@Override
 	public Integer getId() {
 		return id;
 	}
@@ -88,6 +85,7 @@ public class Config implements Serializable {
 	/**
 	 * @return the label
 	 */
+	@Override
 	public String getLabel() {
 		return label;
 	}
@@ -103,6 +101,7 @@ public class Config implements Serializable {
 	/**
 	 * @return the name
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -118,6 +117,7 @@ public class Config implements Serializable {
 	/**
 	 * @return the description
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -133,6 +133,7 @@ public class Config implements Serializable {
 	/**
 	 * @return the isActive
 	 */
+	@Override
 	public boolean isActive() {
 		return isActive;
 	}
@@ -148,6 +149,7 @@ public class Config implements Serializable {
 	/**
 	 * @return the valueCheck
 	 */
+	@Override
 	public String getValueCheck() {
 		return valueCheck;
 	}
@@ -163,6 +165,7 @@ public class Config implements Serializable {
 	/**
 	 * @return the valueTypeId
 	 */
+	@Override
 	public Integer getValueTypeId() {
 		return valueTypeId;
 	}
@@ -178,6 +181,7 @@ public class Config implements Serializable {
 	/**
 	 * @return the category to get
 	 */
+	@Override
 	public String getCategory() {
 		return category;
 	}

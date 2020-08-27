@@ -19,7 +19,6 @@ package it.eng.spagobi.api.v2;
 
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -92,8 +91,8 @@ public class ConfigResource extends AbstractSpagoBIResource {
 		try {
 			IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
-			List<Config> allConfigs = configsDao.loadAllConfigParameters();
-			return filterConfigsByCategory(allConfigs, category);
+			List<Config> allConfigs = configsDao.loadConfigParametersByCategory(category);
+			return allConfigs;
 
 		} catch (Exception e) {
 			logger.error("Error while getting the list of configs", e);
@@ -101,16 +100,6 @@ public class ConfigResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
-	}
-
-	private List<Config> filterConfigsByCategory(List<Config> allConfigs, String category) {
-		ArrayList<Config> filteredConfigs = new ArrayList<>();
-		for (Config cfg : allConfigs) {
-			if (cfg.getCategory().equals(category)) {
-				filteredConfigs.add(cfg);
-			}
-		}
-		return filteredConfigs;
 	}
 
 	@GET

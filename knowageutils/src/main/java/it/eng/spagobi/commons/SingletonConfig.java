@@ -18,6 +18,8 @@
 
 package it.eng.spagobi.commons;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -61,6 +63,19 @@ public class SingletonConfig {
 		logger.debug("Retrieving configuration parameter with key [" + key + "]");
 		String toReturn = retriever.get(key);
 		logger.debug("Retrieved configuration parameter with key [" + key + "]: [" + toReturn + "]");
+		return toReturn;
+	}
+
+	/**
+	 * Gets the configuration corresponding to the input key.
+	 * @return
+	 *
+	 * @return Returns the value of configuration by its key
+	 */
+	public List<IConfiguration> getConfigsValueByCategory(String category) {
+		logger.debug("Retrieving configuration parameters for category [" + category + "]");
+		List<IConfiguration> toReturn = retriever.getByCategory(category);
+		logger.debug("Retrieved configuration parameter for category [" + category + "]: [" + toReturn + "]");
 		return toReturn;
 	}
 

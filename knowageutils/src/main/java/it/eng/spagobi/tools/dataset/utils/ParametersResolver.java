@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,20 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.utils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -28,18 +37,9 @@ import it.eng.spagobi.tools.dataset.exceptions.ProfileAttributeDsException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import org.apache.log4j.Logger;
-
 /**
- *  Resolve profile attributes and parameters
- *  
+ * Resolve profile attributes and parameters
+ *
  * @author fabrizio
  *
  */
@@ -49,7 +49,7 @@ public class ParametersResolver {
 
 	/**
 	 * Resolve profile attributes and parameters
-	 * 
+	 *
 	 * @param statement
 	 * @param dataSet
 	 * @return
@@ -74,8 +74,8 @@ public class ParametersResolver {
 				throw new ProfileAttributeDsException("Error during substitution of profile attributes", e);
 			}
 		}
-		
-		Assert.assertTrue(targetDataSet instanceof JDBCDataSet,"targetDataSet instanceof JDBCDataSet");
+
+		Assert.assertTrue(targetDataSet instanceof JDBCDataSet, "targetDataSet instanceof JDBCDataSet");
 		try {
 			return StringUtilities.substituteParametersInString(newStatement, userProfileAttributes);
 		} catch (Exception e) {
@@ -202,7 +202,7 @@ public class ParametersResolver {
 
 	/**
 	 * search if there are parameters unfilled and return their names
-	 * 
+	 *
 	 * @param statement
 	 * @return
 	 */

@@ -25,16 +25,26 @@ import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 public class Measure extends Field {
 	Boolean excludeFromTotalAndSubtotal;
 	IAggregationFunction function = null;
+	String variable = null;
 
-	public Measure(String entityId, String alias, String sortingId, String iconCls, String nature, String function, Boolean excludeFromTotalAndSubtotal,
+	public Measure(String entityId, String alias, String sortingId, String iconCls, String nature, String function, String variable, Boolean excludeFromTotalAndSubtotal,
 			JSONObject config) {
 		super(entityId, alias, sortingId, iconCls, nature, config);
 		this.function = AggregationFunctions.get(function);
 		this.excludeFromTotalAndSubtotal = excludeFromTotalAndSubtotal;
+		this.variable = variable;
 	}
 
 	public IAggregationFunction getAggregationFunction() {
 		return function;
+	}
+	
+	public JSONObject getConfig () {
+		return config;
+	}
+	
+	public String getVariable() {
+		return variable;
 	}
 
 	public Boolean getExcludeFromTotalAndSubtotal() {

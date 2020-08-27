@@ -97,7 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.newFilterEditMode=false;
 
 		$scope.filtersTableColumns=[
-			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.dataset"),"name":"dataset"},
+			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.dataset"),"name":"dataset.label"},
 			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.column"),"name":"colName"},
 			{"label": $scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.operator"),"name":"filterOperator"},
 			{"label":$scope.translate.load("sbi.cockpit.widgets.filtersConfiguration.at.val")+'1',"name":"filterVal1"},
@@ -124,20 +124,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.oneOperandOperators = ['=', '!=', 'like', '<','>','<=','>=','IN'];
 		$scope.twoOperandsOperators = ['range'];
 
-
+		
+		$scope.updateFiltersDatasetNames = function(){
+			for(var k in $scope.ngModelShared.filters){
+				if ($scope.ngModelShared.filters[k].dataset == 'string') {
+					$scope.ngModelShared.filters[k].dataset = {"label": $scope.ngModelShared.filters[k].dataset}
+					if(cockpitModule_datasetServices.getDatasetByLabel($scope.ngModelShared.filters[k].dataset)) $scope.ngModelShared.filters[k].dataset.dsId=cockpitModule_datasetServices.getDatasetByLabel($scope.ngModelShared.filters[k].dataset).id.dsId;
+					else $scope.ngModelShared.filters[k].dataset.dsId = $scope.ngModelShared.dataset.dsId;
+				}
+				if(!cockpitModule_datasetServices.getDatasetByLabel($scope.ngModelShared.filters[k].dataset.label)){
+					$scope.ngModelShared.filters[k].dataset.label = cockpitModule_datasetServices.getDatasetLabelById($scope.ngModelShared.filters[k].dataset.dsId)
+				}
+			}
+		}
+		$scope.updateFiltersDatasetNames();
 
 
 		/*
-		 *  if dataset changes some filters referring to old dataset could be no more valid
+		 *  if dataset changes some filters referring to old dataset could be no longer valid
 		 */
 		$scope.cleanFilters=function(dsIdArray){
 			if($scope.ngModelShared.filters != undefined){
 				var currentFilters = $scope.ngModelShared.filters
 				var indexToDelete = [];
 				for(var i = 0; i< currentFilters.length; i++){
-					var filDataset = currentFilters[i].dataset;
-					var ds = cockpitModule_datasetServices.getDatasetByLabel(filDataset);
-					if(dsIdArray.indexOf(ds.id.dsId) == -1){
+					if(dsIdArray.indexOf(currentFilters[i].dataset.dsId) == -1){
 						indexToDelete.push(i);
 					}
 				}
@@ -471,10 +482,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 */
 		$scope.newFilterChangeDatasetUpdateColumns=function(){
 			$scope.newFilterColumnDS = [];
-			//$scope.newFilterColumnDS.push("");
 
-			var dsLabel = $scope.newFilter.dataset;
-			var ds = cockpitModule_datasetServices.getDatasetByLabel(dsLabel);
+			var ds = cockpitModule_datasetServices.getDatasetById($scope.newFilter.dataset.dsId);
 			$scope.datasetIsRealTime = ds.isRealtime;
 			$scope.newFilterCurrenteSelectedDS = ds;
 			// now dataset is only one localDSforFilters

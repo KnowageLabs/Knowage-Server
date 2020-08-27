@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SimpleConfigurationRetriever implements IConfigurationRetriever {
@@ -31,6 +32,11 @@ public class SimpleConfigurationRetriever implements IConfigurationRetriever {
 	@Override
 	public String get(String key) {
 		return properties.get(key);
+	}
+
+	@Override
+	public List<IConfiguration> getByCategory(String category) {
+		throw new UnsupportedOperationException("Not implemented");
 	}
 
 }

@@ -99,7 +99,29 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.crossNavigations = cockpitModule_crossServices.getCrossList();
 	$scope.chartProperties=[];
 	$scope.widgetAvailableColumns = [];
-	$scope.availableIcons = knModule_fontIconsService.icons;
+	function setChunks(array, dimension){
+		var newArray = [];
+		for(var f in array){
+			var familyArray = {"name":array[f].name,"className":array[f].className,icons:[]};
+			var iterator = 0;
+			for(var k in array[f].icons){
+				if (iterator == 0) var tempArray = [];
+				if (iterator < dimension) {
+					tempArray.push(array[f].icons[k]);
+					iterator ++;
+				}
+				if (iterator == dimension) {
+					familyArray.icons.push(tempArray);
+					iterator = 0;
+				}
+			}
+			newArray.push(familyArray);
+		}
+		
+		return newArray;
+	}
+	
+	$scope.availableIcons = setChunks(knModule_fontIconsService.icons,4);
 	$scope.outputParametersType=
 		[{"value": "static", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.static")},
 		{"value": "dynamic", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.dynamic")},
@@ -175,11 +197,17 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.chooseIcon = function(type){
 		if($scope.iconOpened == type) $scope.iconOpened = false;
 		else $scope.iconOpened = type;
+		$scope.iconFamily = $scope.availableIcons[0].name;
 	}
 
 	$scope.setIcon = function(family,icon){
 		$scope.ngModel[$scope.iconOpened].icon = family.className+' '+icon.className;
 		$scope.iconOpened = false;
+	}
+	
+	$scope.openFamily = function(familyName){
+		if($scope.iconFamily == familyName) $scope.iconFamily = "";
+		else $scope.iconFamily = familyName;
 	}
 
 	$scope.changePreviewDataset = function(dsId){

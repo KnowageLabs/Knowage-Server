@@ -74,7 +74,7 @@ public class AttributeJSONDeserializer implements IDeserializer {
 		return new Attribute(obj.optString(FieldsSerializationConstants.ID), obj.optString(FieldsSerializationConstants.ALIAS),
 				obj.optString(FieldsSerializationConstants.SORTING_ID),
 				obj.optString(FieldsSerializationConstants.ICON_CLS), obj.optString(FieldsSerializationConstants.NATURE),
-				obj.optString(FieldsSerializationConstants.VALUES), obj);
+				obj.optString(FieldsSerializationConstants.VALUES), obj.optString(FieldsSerializationConstants.VARIABLE), obj);
 	}
 
 }

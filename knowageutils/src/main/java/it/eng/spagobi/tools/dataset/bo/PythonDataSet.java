@@ -29,7 +29,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.knowage.backendservices.rest.widgets.PythonUtils;
+import it.eng.knowage.backendservices.rest.widgets.RUtils;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -122,10 +123,17 @@ public class PythonDataSet extends ConfigurableDataSet {
 		String pythonDatasetType = getProp(PythonDataSetConstants.PYTHON_DATASET_TYPE, jsonConf, true);
 		try {
 			requestHeaders = getRequestHeadersPropMap(PythonDataSetConstants.REST_REQUEST_HEADERS, jsonConf);
+			String pythonAddress = null;
 			JSONObject pythonEnv = new JSONObject(getProp(PythonDataSetConstants.PYTHON_ENVIRONMENT, jsonConf, false));
 			String label = pythonEnv.get("label").toString();
-			String pythonAddress = SingletonConfig.getInstance().getConfigValue(label);
-			restAddress = pythonAddress + "/dataset";
+			if ("python".equals(pythonDatasetType)) {
+				pythonAddress = PythonUtils.getPythonAddress(label);
+			} else if("r".equals(pythonDatasetType)) {
+				pythonAddress = RUtils.getRAddress(label);
+			} else {
+				throw new IllegalStateException("Invalid Python Dataset Type: " + pythonDatasetType);
+			}
+			restAddress = pythonAddress.replaceAll("/+$", "") + "/dataset";
 
 		} catch (Exception e) {
 			throw new ConfigurationException("Problems in configuration of data proxy", e);

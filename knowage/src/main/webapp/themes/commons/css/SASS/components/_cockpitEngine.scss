@@ -9,6 +9,17 @@
     padding: 0;
     height: 100%;
     background-color: $tabBackground;
+
+    .expandableSubheader {
+		outline: none;
+		cursor: pointer;
+		._md-subheader-inner {
+			width: 100%;
+			i {
+				float: right;
+			}
+		}
+	}
     
     .calculatedField {
     	.md-2-line {
@@ -1278,16 +1289,6 @@
 			.description {
 				font-size: $mediumFontSize;
 			}
-			.expandableSubheader {
-				outline: none;
-				cursor: pointer;
-				._md-subheader-inner {
-					width: 100%;
-					i {
-						float: right;
-					}
-				}
-			}
 		}
 		.language {
 			margin-right: 8px;
@@ -2142,16 +2143,26 @@
 	box-shadow: -3px 0 3px $shadowsColor;
 	md-content.md-knowage-theme {
 		background-color: $tabBackground;
-		height: 635px;
-		h3 {
-			font-size: $headerFontSize;
-			text-transform: uppercase;
-			font-weight: 100;
-			margin: 4px 0;
+		min-height: 635px;
+		#vertical-container {
+			height: 200px; 
+			display: flex; 
+			flex-wrap: wrap;
 		}
-		md-grid-tile {
-			border: 1px solid $bordersColor;
-		}
+		.iconsContainer{
+			width:100%;
+			height: 40px;
+			display: flex; 
+			justify-content: start; 
+			align-items: center;
+			.selectable {
+				display: flex; 
+				justify-content: center; 
+				align-items: center; 
+				width: 25%;
+				height: 40px;
+			}
+		} 
 	}
 }
 

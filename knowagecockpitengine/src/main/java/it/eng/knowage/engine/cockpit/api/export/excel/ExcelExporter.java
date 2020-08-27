@@ -389,7 +389,7 @@ public class ExcelExporter {
 				Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
 				JSONObject styleJSON = (!optionsObj.isNull("style") ? optionsObj.getJSONObject("style") : new JSONObject());
 				CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinition, optionsObj.getJSONArray("jsonData"),
-						optionsObj.getJSONObject("metadata"), styleJSON);
+						optionsObj.getJSONObject("metadata"), styleJSON, null);
 
 				CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 
@@ -537,7 +537,7 @@ public class ExcelExporter {
 			}
 
 			CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinitionJo, datastoreObjData.getJSONArray("rows"),
-					datastoreObjData.getJSONObject("metaData"), styleJSON);
+					datastoreObjData.getJSONObject("metaData"), styleJSON, null);
 
 			CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 

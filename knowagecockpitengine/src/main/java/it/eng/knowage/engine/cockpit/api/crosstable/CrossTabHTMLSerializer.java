@@ -16,6 +16,7 @@
  */
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -89,16 +91,22 @@ public class CrossTabHTMLSerializer {
 
 	Monitor serializeTimeMonitor = null;
 	Monitor errorHitsMonitor = null;
+	private final JSONObject variables;
 
 	private static Logger logger = Logger.getLogger(CrossTabHTMLSerializer.class);
 
 	public CrossTabHTMLSerializer(Locale locale, Integer myGlobalId, Map<Integer, NodeComparator> columnsSortKeysMap,
-			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap) {
+			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap, JSONObject variables) {
 		this.columnsSortKeysMap = columnsSortKeysMap;
 		this.rowsSortKeysMap = rowsSortKeysMap;
 		this.measuresSortKeysMap = measuresSortKeysMap;
 		this.locale = locale;
 		this.myGlobalId = myGlobalId;
+		if(variables == null) { 
+			this.variables = new JSONObject();
+		}else {
+			this.variables = variables;
+		}
 	}
 
 	public Locale getLocale() {
@@ -187,7 +195,10 @@ public class CrossTabHTMLSerializer {
 			return null;
 		}
 
-		return StringEscapeUtils.escapeHtml(text).replaceAll("'", "&apos;");
+		return StringEscapeUtils.escapeHtml(text)
+				.replaceAll("'", "&apos;")
+				.replaceAll("\\\\", "&#92;")
+				.replaceAll("/", "&#47;");
 	}
 
 	private SourceBean serializeRowsMembers(CrossTab crossTab) throws SourceBeanException, JSONException {
@@ -434,7 +445,7 @@ public class CrossTabHTMLSerializer {
 		JSONObject crossConfig = crossTab.getCrosstabDefinition().getConfig();
 		String labelTotal = (!crossConfig.optString("columntotalLabel").equals("")) ? crossConfig.optString("columntotalLabel") : CrossTab.TOTAL;
 		String labelSubTotal = (!crossConfig.optString("columnsubtotalLabel").equals("")) ? crossConfig.optString("columnsubtotalLabel") : CrossTab.SUBTOTAL;
-
+		
 		int levels = crossTab.getColumnsRoot().getDistanceFromLeaves();
 		if (levels == 0) {
 			// nothing on columns
@@ -466,12 +477,24 @@ public class CrossTabHTMLSerializer {
 					aColumn.setAttribute(CLASS_ATTRIBUTE, className);
 
 					String text = null;
+					String textVariable = null;
 					String style = "";
+					
 					if (crossTab.getCrosstabDefinition().isMeasuresOnColumns() && i + 1 == levels) {
 						String measureAlias = aNode.getDescription();
 						text = MeasureScaleFactorOption.getScaledName(measureAlias, crossTab.getMeasureScaleFactor(measureAlias), this.locale);
 						// check header visibility for measures
 						showHeader = isMeasureHeaderVisible(crossTab);
+						if( this.variables != null) {
+							List<Measure> measures = crossTab.getCrosstabDefinition().getMeasures();
+							for (int c = 0; c < measures.size(); c++) {
+								Measure col = measures.get(c);
+								if (col.getAlias().equals(text)) {
+									textVariable = col.getVariable();
+								}
+							
+							}
+						}
 					} else {
 						// categories headers
 						text = aNode.getDescription();
@@ -484,6 +507,7 @@ public class CrossTabHTMLSerializer {
 								if (isLevel && !columnConfig.isNull("showHeader"))
 									showHeader = columnConfig.getBoolean("showHeader");
 
+								textVariable = col.getVariable();
 								style = customStylesMap.get(columnConfig.get("id"));
 								if (style == null || style.equals("")) {
 									// loading and caching style
@@ -501,7 +525,7 @@ public class CrossTabHTMLSerializer {
 							}
 						}
 					}
-
+					
 					if (isLevel) {
 						int idxEl = i / 2; // just for columns headers divide the position of cell in couple (name + value)
 						aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + idxEl + "','1'," + myGlobalId + ")");
@@ -514,7 +538,7 @@ public class CrossTabHTMLSerializer {
 						if (parentStyle != null)
 							style = parentStyle;
 						if (!text.equalsIgnoreCase(labelTotal) && !text.equalsIgnoreCase(labelSubTotal)) {
-							aColumn.setAttribute(addSortArrow(aRow, text, style, null, direction, false));
+							aColumn.setAttribute(addSortArrow(aRow, text, style, null, direction, false, textVariable));
 						}
 						aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 						aColumn.setAttribute(CLASS_ATTRIBUTE, HEADER_CLASS);
@@ -558,14 +582,34 @@ public class CrossTabHTMLSerializer {
 									aColumn.setAttribute(STYLE_ATTRIBUTE, measureStyle);
 									// ONLY in this case (unique measure without header) add a div to force width if it's defined
 									SourceBean divEl = new SourceBean(COLUMN_DIV);
-									divEl.setCharacters(text);
+									if(StringUtils.isNotBlank(textVariable)) {
+										if(this.variables.has(textVariable)) {
+											divEl.setCharacters(this.variables.getString(textVariable));
+										}
+									}else {
+										divEl.setCharacters(text);
+									}
 									divEl.setAttribute(TITLE_ATTRIBUTE, text);
 									divEl.setAttribute(STYLE_ATTRIBUTE, measureStyle);
 									aColumn.setAttribute(divEl);
-								} else
+								} else {
+									if(StringUtils.isNotBlank(textVariable)) {
+										if(this.variables.has(textVariable)) {
+											aColumn.setCharacters(this.variables.getString(textVariable));
+										}
+									}else {
+										aColumn.setCharacters(text);
+									}
+								}
+							} {
+								if(StringUtils.isNotBlank(textVariable)) {
+									if(this.variables.has(textVariable)) {
+										aColumn.setCharacters(this.variables.getString(textVariable));
+									}
+								}else {
 									aColumn.setCharacters(text);
-							} else
-								aColumn.setCharacters(text);
+								}
+							}
 
 							if (parentStyle != null) {
 								// add default color for header
@@ -592,7 +636,7 @@ public class CrossTabHTMLSerializer {
 								}
 							}
 							if (levels == 1 || (!text.equalsIgnoreCase(labelTotal) && !text.equalsIgnoreCase(labelSubTotal))) {
-								aColumn.setAttribute(addSortArrow(aRow, text, parentStyle, measureStyle, direction, true));
+								aColumn.setAttribute(addSortArrow(aRow, text, parentStyle, measureStyle, direction, true, textVariable));
 								aColumn.setAttribute(NG_CLICK_ATTRIBUTE,
 										"orderPivotTable('" + j + "','1'," + myGlobalId + ", '" + text + "' , '" + measureParentValue + "')");
 							}
@@ -765,8 +809,8 @@ public class CrossTabHTMLSerializer {
 				List<Measure> measures = crossTab.getCrosstabDefinition().getMeasures();
 				boolean showHeader = true;
 				aMeasureHeader.setAttribute(CLASS_ATTRIBUTE, MEASURES_CLASS);
-				if (showHeader)
-					aMeasureHeader.setCharacters(measureInfo.getName());
+				aMeasureHeader.setCharacters(measureInfo.getName());
+				
 				measureHeaders.add(aMeasureHeader);
 			}
 		}
@@ -825,28 +869,33 @@ public class CrossTabHTMLSerializer {
 					}
 					measureConfig = crossTab.getCrosstabDefinition().getMeasures().get(pos).getConfig();
 					String visType = (measureConfig.isNull("visType")) ? "Text" : measureConfig.getString("visType");
-					boolean showIcon = false;
 					SourceBean iconSB = null;
 
-					if (cellType.getValue().equalsIgnoreCase("data") && !measureConfig.isNull("scopeFunc")) {
+					Double value = (!text.equals("")) ? Double.parseDouble(text) : null;
+					JSONObject threshold = getThreshold(value, measureConfig.optJSONArray("ranges"));
+					
+					if (cellType.getValue().equalsIgnoreCase("data") && threshold.has("icon")) {
 						// check indicator configuration (optional)
-						JSONObject indicatorJ = measureConfig.getJSONObject("scopeFunc");
-						JSONArray indicatorConditionsJ = indicatorJ.getJSONArray("condition");
-						if (!text.equals("")) {
-							for (int c = 0; c < indicatorConditionsJ.length(); c++) {
-								JSONObject condition = indicatorConditionsJ.getJSONObject(c);
-								if (iconSB == null && !condition.isNull("value")) {
-									// gets icon html
-									showIcon = true;
-									iconSB = getIconSB(Double.parseDouble(text), condition);
-								}
-							}
-						}
+						//JSONObject indicatorJ = measureConfig.getJSONObject("scopeFunc");
+//						JSONArray indicatorConditionsJ = measureConfig.getJSONArray("ranges");
+//						if (StringUtils.isNotEmpty(text)) {
+//							for (int c = 0; c < indicatorConditionsJ.length(); c++) {
+//								JSONObject condition = indicatorConditionsJ.getJSONObject(c);
+//								if (iconSB == null && !condition.isNull("value")) {
+//									// gets icon html
+//									showIcon = true;
+//									iconSB = getIconSB(Double.parseDouble(text), condition);
+//								}
+//							}
+//						}
+						iconSB = new SourceBean(ICON_TAG);
+						iconSB.setAttribute(CLASS_ATTRIBUTE, threshold.getString("icon"));
+						iconSB.setAttribute(STYLE_ATTRIBUTE, "color:" + threshold.optString("color", "black"));
 					}
 					internalserializeData2.stop();
 
 					classType = cellType.getValue();
-					Double value = (!text.equals("")) ? Double.parseDouble(text) : null;
+					
 
 					internalserializeData3 = MonitorFactory.start("CockpitEngine.serializeData.setStyle");
 					// 2. style and alignment management
@@ -857,16 +906,15 @@ public class CrossTabHTMLSerializer {
 							// load and caching data style
 							customStylesMap.put((String) measureConfig.get("id"), dataStyle);
 						}
-						JSONObject colorThrJ = null;
-						if (value != null && cellTypeValue.equalsIgnoreCase("data") && !measureConfig.isNull("colorThresholdOptions")) {
+						JSONArray colorThrJ = null;
+						if (value != null && cellTypeValue.equalsIgnoreCase("data") && !measureConfig.isNull("ranges")) {
 							// background management through threshold (optional)
 							double dValue = value.doubleValue();
-							colorThrJ = measureConfig.getJSONObject("colorThresholdOptions");
-							String bgThrColor = getThresholdColor(dValue, colorThrJ);
-							if (bgThrColor != null && !bgThrColor.equals("")) {
-								dataStyle += "background-color:" + bgThrColor + ";";
-								// bgColorApplied = true;
-							}
+							colorThrJ = measureConfig.getJSONArray("ranges");
+							dataStyle += "background-color:" + threshold.optString("background-color", "white") + ";";
+							dataStyle += "color:" + threshold.optString("color", "black") + ";";
+							// bgColorApplied = true;
+							
 						}
 						// if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
 						if (!dataStyle.equals(DEFAULT_STYLE)) {
@@ -939,7 +987,7 @@ public class CrossTabHTMLSerializer {
 					}
 					internalserializeData4.stop();
 					// add icon html if required
-					if (showIcon && iconSB != null) {
+					if (iconSB != null) {
 						actualText += " ";
 						aColumn.setAttribute(iconSB);
 					}
@@ -1066,32 +1114,20 @@ public class CrossTabHTMLSerializer {
 		return toReturn;
 	}
 
-	private String getThresholdColor(double value, JSONObject colorThrJ) throws JSONException {
-		String toReturn = "";
-		JSONArray thresholdConditions = colorThrJ.getJSONArray("condition");
-		JSONObject thresholdConditionValues = (colorThrJ.isNull("conditionValue")) ? null : colorThrJ.getJSONObject("conditionValue");
-		JSONArray thresholdConditions2 = colorThrJ.optJSONArray("condition2");
-		JSONObject thresholdConditionValues2 = (colorThrJ.isNull("conditionValue2")) ? null : colorThrJ.getJSONObject("conditionValue2");
-		JSONObject thresholdColors = (colorThrJ.isNull("color")) ? null : colorThrJ.getJSONObject("color");
+	private JSONObject getThreshold(Double value, JSONArray colorThrJ) throws JSONException {
+		JSONObject toReturn = new JSONObject();
+		if (value == null) return toReturn;
 		boolean isConditionVerified = false;
 
-		for (int c = 0; c < thresholdConditions.length(); c++) {
-			String thrCond = (String) thresholdConditions.get(c);
-			if (!thrCond.equalsIgnoreCase("none")) {
-				double thrCondValue = thresholdConditionValues.getDouble(String.valueOf(c));
-				isConditionVerified = verifyThresholdCondition(thrCond, thrCondValue, value);
-				if (isConditionVerified && thresholdConditions2 != null) {
-					// check if there is also a second condition that MUST be true
-					String thrCond2 = (String) thresholdConditions2.get(c);
-					if (!thrCond2.equalsIgnoreCase("none")) {
-						double thrCondValue2 = thresholdConditionValues2.getDouble(String.valueOf(c));
-						boolean isCondition2Verified = verifyThresholdCondition(thrCond2, thrCondValue2, value);
-						isConditionVerified = isConditionVerified && isCondition2Verified;
-					}
-				}
-			}
+		for (int c = 0; c < colorThrJ.length(); c++) {
+			JSONObject thrCond = (JSONObject) colorThrJ.get(c);
+			if(!thrCond.has("value")) { continue; }
+			String condition = thrCond.getString("operator");
+			Double conditionValue = thrCond.getDouble("value");
+			isConditionVerified = verifyThresholdCondition(condition, conditionValue, value);
+			
 			if (isConditionVerified)
-				return thresholdColors.getString(String.valueOf(c));
+				return thrCond;
 		}
 		return toReturn;
 	}
@@ -1100,16 +1136,20 @@ public class CrossTabHTMLSerializer {
 		boolean isConditionVerified = false;
 
 		switch (condition) {
+		case "=":
+			if (valueToTest == value)
+				isConditionVerified = true;
+			break;
+		case "==":
+			if (valueToTest == value)
+				isConditionVerified = true;
+			break;
 		case "<":
 			if (valueToTest < value)
 				isConditionVerified = true;
 			break;
 		case ">":
 			if (valueToTest > value)
-				isConditionVerified = true;
-			break;
-		case "=":
-			if (valueToTest == value)
 				isConditionVerified = true;
 			break;
 		case ">=":
@@ -1285,51 +1325,51 @@ public class CrossTabHTMLSerializer {
 		return toReturn;
 	}
 
-	private SourceBean getIconSB(double value, JSONObject condition) throws JSONException, SourceBeanException {
-		SourceBean toReturn = null;
-		double condValue = Double.parseDouble(condition.getString("value"));
-		String condType = condition.getString("condition");
-		boolean isConditionVerified = false;
-
-		switch (condType) {
-		case "<":
-			if (value < condValue)
-				isConditionVerified = true;
-			break;
-		case ">":
-			if (value > condValue)
-				isConditionVerified = true;
-			break;
-		case "=":
-			if (value == condValue)
-				isConditionVerified = true;
-			break;
-		case ">=":
-			if (value >= condValue)
-				isConditionVerified = true;
-			break;
-		case "<=":
-			if (value <= condValue)
-				isConditionVerified = true;
-			break;
-		case "!=":
-			if (value != condValue)
-				isConditionVerified = true;
-			break;
-		case "none":
-			break;
-		default:
-			toReturn = null;
-		}
-
-		if (isConditionVerified) {
-			toReturn = new SourceBean(ICON_TAG);
-			toReturn.setAttribute(CLASS_ATTRIBUTE, condition.getString("icon"));
-			toReturn.setAttribute(STYLE_ATTRIBUTE, "color:" + condition.getString("iconColor"));
-		}
-
-		return toReturn;
-	}
+//	private SourceBean getIconSB(double value, JSONObject condition) throws JSONException, SourceBeanException {
+//		SourceBean toReturn = null;
+//		double condValue = Double.parseDouble(condition.getString("value"));
+//		String condType = condition.getString("condition");
+//		boolean isConditionVerified = false;
+//
+//		switch (condType) {
+//		case "<":
+//			if (value < condValue)
+//				isConditionVerified = true;
+//			break;
+//		case ">":
+//			if (value > condValue)
+//				isConditionVerified = true;
+//			break;
+//		case "=":
+//			if (value == condValue)
+//				isConditionVerified = true;
+//			break;
+//		case ">=":
+//			if (value >= condValue)
+//				isConditionVerified = true;
+//			break;
+//		case "<=":
+//			if (value <= condValue)
+//				isConditionVerified = true;
+//			break;
+//		case "!=":
+//			if (value != condValue)
+//				isConditionVerified = true;
+//			break;
+//		case "none":
+//			break;
+//		default:
+//			toReturn = null;
+//		}
+//
+//		if (isConditionVerified) {
+//			toReturn = new SourceBean(ICON_TAG);
+//			toReturn.setAttribute(CLASS_ATTRIBUTE, condition.getString("icon"));
+//			toReturn.setAttribute(STYLE_ATTRIBUTE, "color:" + condition.getString("color"));
+//		}
+//
+//		return toReturn;
+//	}
 
 	private Double calculatePercent(double value, int i, int j, String percentOn, CrossTab crossTab) {
 		String[][] entries = crossTab.getDataMatrix();
@@ -1407,7 +1447,6 @@ public class CrossTabHTMLSerializer {
 			}
 			table.setAttribute(merge);
 		}
-
 		return table;
 	}
 
@@ -1430,20 +1469,24 @@ public class CrossTabHTMLSerializer {
 		return table;
 	}
 
-	private SourceBean addSortArrow(SourceBean aRow, String alias, String parentStyle, String divStyle, Integer direction, boolean isMeasureHeader)
-			throws SourceBeanException {
+	private SourceBean addSortArrow(SourceBean aRow, String alias, String parentStyle, String divStyle, Integer direction, boolean isMeasureHeader, String variable)
+			throws SourceBeanException, JSONException {
 
+		String headerText = alias;
+		if(this.variables.has(variable)) {
+			headerText = this.variables.getString(variable);
+		}
 		SourceBean div1 = new SourceBean(COLUMN_DIV);
 		if (divStyle != null && !divStyle.equals("")) {
 			div1.setAttribute(STYLE_ATTRIBUTE, divStyle);
 		}
-		div1.setAttribute(TITLE_ATTRIBUTE, alias);
+		div1.setAttribute(TITLE_ATTRIBUTE, headerText);
 
 		SourceBean icon = new SourceBean("i");
 		SourceBean text = new SourceBean("span");
 
 		// Defining text...
-		text.setCharacters(alias);
+		text.setCharacters(headerText);
 		if (isMeasureHeader) {
 			text.setAttribute(CLASS_ATTRIBUTE, MEASURES_CLASS);
 		} else {
@@ -1500,7 +1543,7 @@ public class CrossTabHTMLSerializer {
 			aColumn.setAttribute(CLASS_ATTRIBUTE, HEADER_CLASS);
 
 			aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + i + "','0'," + myGlobalId + ")");
-			aColumn.setAttribute(addSortArrow(aRow, aRowDef.getAlias(), style, widthStyle, direction, false));
+			aColumn.setAttribute(addSortArrow(aRow, aRowDef.getAlias(), style, widthStyle, direction, false, aRowDef.getVariable()));
 			aRow.setAttribute(aColumn);
 		}
 		if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
@@ -1529,8 +1572,9 @@ public class CrossTabHTMLSerializer {
 			aRow.setAttribute(aColumn);
 		}
 
-		if (addRow)
+		if (addRow) {
 			table.setAttribute(aRow);
+		}
 		return table;
 	}
 
