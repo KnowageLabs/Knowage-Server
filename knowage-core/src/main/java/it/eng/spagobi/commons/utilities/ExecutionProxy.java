@@ -39,7 +39,6 @@ import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
-import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -255,14 +254,6 @@ public class ExecutionProxy {
 				String sbiHost = GeneralUtilities.getSpagoBiHost();
 				if (sbiHost != null) {
 					mapPars.put(SpagoBIConstants.SBI_HOST, sbiHost);
-				}
-			}
-
-			// set spagobi context
-			if (!mapPars.containsKey(SpagoBIConstants.SBI_CONTEXT)) {
-				String sbicontext = KnowageSystemConfiguration.getKnowageContext();
-				if (sbicontext != null) {
-					mapPars.put(SpagoBIConstants.SBI_CONTEXT, sbicontext);
 				}
 			}
 

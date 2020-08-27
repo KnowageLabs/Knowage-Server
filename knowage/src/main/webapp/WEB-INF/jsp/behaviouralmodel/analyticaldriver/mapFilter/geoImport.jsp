@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- openlayer import -->
 
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/openlayers/3.x.x/ol.js")%>"></script> 
 
 
@@ -62,7 +63,7 @@ sbiModule.factory('sbiModule_config',function(){
 	 	userId : "<%=userId%>",
 	 	docAuthor :"<%=docAuthor%>",
 	    --%>
-	 	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>/"
+	 	externalBasePath:"<%=KnowageSystemConfiguration.getKnowageContext()%>/"
 	};
 });
 </script>

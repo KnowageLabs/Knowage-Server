@@ -8,7 +8,7 @@
 /*${disable.console.logging}*/
 </script>
 <%
-	String knowageCoreContext = request.getParameter(SpagoBIConstants.SBI_HOST)+request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+	String knowageCoreContext = request.getParameter(SpagoBIConstants.SBI_HOST)+KnowageSystemConfiguration.getKnowageContext();
 %>
 
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />

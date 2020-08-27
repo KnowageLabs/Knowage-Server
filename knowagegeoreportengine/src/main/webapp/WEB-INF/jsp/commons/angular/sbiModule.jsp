@@ -25,7 +25,7 @@ sbiM.factory('sbiModule_config',function(){
 		 docDatasetLabel: "<%=docDatasetLabel%>",
 		 docDatasetName: "<%=docDatasetName%>",
 		 visibleDataSet: "<%=visibleDataSet%>",
-		 externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>/",
+		 externalBasePath:"<%=KnowageSystemConfiguration.getKnowageContext()%>/",
 		 adapterPath:'<%= KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>'
 	};
 });

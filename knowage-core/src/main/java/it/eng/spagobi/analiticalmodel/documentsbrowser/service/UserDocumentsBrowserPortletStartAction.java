@@ -32,7 +32,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.json.JSONObject;
 
-import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -260,7 +259,6 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 
 		parametersMap.put("NEW_SESSION", "TRUE");
 
-		parametersMap.put(SpagoBIConstants.SBI_CONTEXT, KnowageSystemConfiguration.getKnowageContext());
 		parametersMap.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 
 		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, locale.getLanguage());

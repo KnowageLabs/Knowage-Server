@@ -54,7 +54,6 @@
 					urlService = sbiModule_config.host + actionPath+'?';
 				}
 
-				var sbiContext = 'SBICONTEXT='+sbiModule_config.contextName
 				var docName = '&documentName='+execProperties.executionInstance.OBJECT_LABEL;
 				var sbiExeRole = '&SBI_EXECUTION_ROLE='+execProperties.selectedRole.name;
 				var country = '&SBI_COUNTRY='+sbiModule_config.curr_country;
@@ -112,7 +111,7 @@
 						}
 					}
 				}
-				var exportationUrl =  sbiContext + docName + sbiExeRole + country + idDocument + language + host + dateFormat + controller + userUniqueIdentifier + sbiExeId + isFromCross + sbiEnv + outputType + paramsFilter + paramsExportType;
+				var exportationUrl =  docName + sbiExeRole + country + idDocument + language + host + dateFormat + controller + userUniqueIdentifier + sbiExeId + isFromCross + sbiEnv + outputType + paramsFilter + paramsExportType;
 				var url = encodeURIComponent(exportationUrl).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 				exportUrl = urlService + url;
 			}

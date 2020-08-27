@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 author:...
 --%>
 
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="org.json.JSONObject"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
@@ -76,7 +77,7 @@ author:...
 	}
     
     spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
-    spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+    spagobiContext = KnowageSystemConfiguration.getKnowageContext();
     spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
     
     Map analyticalDriversMap=dataMiningEngineInstance.getAnalyticalDrivers();

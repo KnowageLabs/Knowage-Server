@@ -138,7 +138,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	locale = engineInstance.getLocale(); // e.g. en_US
 	String curr_language=locale.getLanguage();
 	String curr_country=locale.getCountry();
-	contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); // e.g. '/knowage', '/knowagechartengine'
+	contextName = KnowageSystemConfiguration.getKnowageContext(); // e.g. '/knowage', '/knowagechartengine'
 	environment = request.getParameter("SBI_ENVIRONMENT"); // e.g. DOCBROWSER
 	executionRole = (String) env.get(EngineConstants.ENV_EXECUTION_ROLE); // e.g. admin
 	if (profile!=null){

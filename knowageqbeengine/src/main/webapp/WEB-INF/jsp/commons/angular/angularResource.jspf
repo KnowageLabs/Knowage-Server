@@ -20,6 +20,7 @@ author:...
 --%>
 
 
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import= "java.util.Enumeration" %>
 <%@ page language="java"
             contentType="text/html; charset=UTF-8"
@@ -56,7 +57,7 @@ author:...
 <%-- ---------------------------------------------------------------------- --%>
 
 <%
-	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);		   //  /knowage
+	String spagoBiContext = KnowageSystemConfiguration.getKnowageContext();		   //  /knowage
 	String qbeEngineContext = request.getContextPath(); 							   //  /qbeengine
 	UrlBuilder urlBuilder = new UrlBuilder(spagoBiContext, qbeEngineContext);
 	String dynamicResourcesBasePath = urlBuilder.getDynamicResorucesBasePath();  	   //  /knowage/js/src

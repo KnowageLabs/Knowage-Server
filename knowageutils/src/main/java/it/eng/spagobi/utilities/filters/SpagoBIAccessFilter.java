@@ -123,16 +123,7 @@ public class SpagoBIAccessFilter implements Filter {
 					userId = getUserWithSSO(httpRequest);
 				}
 
-				String spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
 				String spagoUrl = request.getParameter(SpagoBIConstants.SBI_HOST);
-				if (spagobiContext != null) {
-					logger.debug("spagobiContext:" + spagobiContext);
-					ioManager.setInSession(SpagoBIConstants.SBI_CONTEXT, spagobiContext);
-					ioManager.contextManager.set(SpagoBIConstants.SBI_CONTEXT, spagobiContext);
-				} else {
-					logger.warn("spagobiContext is null.");
-				}
-
 				if (spagoUrl != null) {
 					logger.debug("spagoUrl:" + spagoUrl);
 					ioManager.setInSession(SpagoBIConstants.SBI_HOST, spagoUrl);

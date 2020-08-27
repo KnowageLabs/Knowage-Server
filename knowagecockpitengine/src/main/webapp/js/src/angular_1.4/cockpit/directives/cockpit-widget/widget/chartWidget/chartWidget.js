@@ -48,8 +48,7 @@ angular.module('cockpitModule')
 		return {url: '/' + sbiModule_config.chartEngineContextName
 		+ "/api/1.0/chart/pages/" + service // changed by Dragan was
 											// /api/1.0/pages/
-		+ "?SBICONTEXT=" + sbiModule_config.externalBasePath
-		+ "&SBI_HOST=localhost"
+		+ "?SBI_HOST=localhost"
 		+ "&SBI_LANGUAGE=" + sbiModule_config.curr_language
 		+ "&SBI_COUNTRY=" + sbiModule_config.curr_country
 		+ "&user_id=" + sbiModule_user.userId

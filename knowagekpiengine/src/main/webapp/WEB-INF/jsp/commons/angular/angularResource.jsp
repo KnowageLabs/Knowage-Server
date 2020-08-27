@@ -3,6 +3,7 @@
 <%-- ---------------------------------------------------------------------- --%>
 
 <!-- this imports are used for language controls  -->
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.knowage.engine.kpi.KpiEngineInstance"%>
 <%@page import="java.util.Locale"%>
 <%@page import="java.util.List"%>
@@ -71,7 +72,7 @@ profile = engineInstance.getUserProfile();
 profileJSONStr = new ObjectMapper().writeValueAsString(profile);
 // locale = engineInstance.getLocale();
 
-contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); 
+contextName = KnowageSystemConfiguration.getKnowageContext(); 
 environment = request.getParameter("SBI_ENVIRONMENT"); 
 executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
 userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();

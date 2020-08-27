@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -427,7 +426,6 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 
 		parametersMap.put("NEW_SESSION", "TRUE");
 
-		parametersMap.put(SpagoBIConstants.SBI_CONTEXT, KnowageSystemConfiguration.getKnowageContext());
 		parametersMap.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 
 		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, getLocale().getLanguage());

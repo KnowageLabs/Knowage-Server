@@ -15,7 +15,7 @@
 		    controllerPath: null ,// no cotroller just servlets   
 			dateFormat: '<%= GeneralUtilities.getLocaleDateFormat(MessageBundle.getUserLocale()) %>', 
 		 	timestampFormat: '<%= GeneralUtilities.getServerTimeStampFormat() %>',
-			contextLogo: "<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>/themes/sbi_default/img/wapp/logo.png", 
+			contextLogo: "<%=KnowageSystemConfiguration.getKnowageContext()%>/themes/sbi_default/img/wapp/logo.png", 
 		 	<%--
 			docDatasetLabel: "<%=docDatasetLabel%>",
 		 	docDatasetName: "<%=docDatasetName%>",

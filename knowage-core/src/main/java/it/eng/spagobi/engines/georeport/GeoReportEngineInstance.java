@@ -43,7 +43,7 @@ import org.json.JSONObject;
  */
 public class GeoReportEngineInstance extends AbstractEngineInstance {
 	// ENVIRONMENT VARIABLES
-	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
+	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
 			"SBI_HOST", "DOCUMENT_ID", COUNTRY, LANGUAGE, "user_id" };
 	private JSONObject guiSettings;
 	private JSONObject docProperties;

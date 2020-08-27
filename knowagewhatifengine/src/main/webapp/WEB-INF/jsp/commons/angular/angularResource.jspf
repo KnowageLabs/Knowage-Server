@@ -16,6 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import= "it.eng.spagobi.engines.whatif.common.WhatIfConstants" %>
 <%@page import= "java.util.Enumeration" %>
 <%@ page language="java"
@@ -53,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- ---------------------------------------------------------------------- --%>
 
 <%
-	   String spagoBiContext = request.getParameter("SBICONTEXT");			
+	   String spagoBiContext = KnowageSystemConfiguration.getKnowageContext();
 	   String thisContext = request.getContextPath();
 	   UrlBuilder urlBuilder = new UrlBuilder(spagoBiContext, thisContext);
 	   
@@ -120,7 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	   // if server Host anc context are null means we are in standalone version
 	   if(!whatIfEngineInstance.isStandalone())  {
 	          spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
-	          spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+	          spagobiContext = KnowageSystemConfiguration.getKnowageContext();
 	          } 
 	  
 	   // spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);

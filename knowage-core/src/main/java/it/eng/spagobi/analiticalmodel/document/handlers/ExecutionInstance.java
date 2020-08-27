@@ -1209,7 +1209,7 @@ public class ExecutionInstance implements Serializable {
 
 	/**
 	 * Get lov detail for max.
-	 * 
+	 *
 	 * @param parameter
 	 * @return
 	 * @author Marco Libanori
@@ -1339,8 +1339,7 @@ public class ExecutionInstance implements Serializable {
 	}
 
 	private void addSystemParametersForExternalEngines(Map mapPars, Locale locale) {
-//		mapPars.put(SpagoBIConstants.SBI_CONTEXT, KnowageSystemConfiguration.getKnowageContext());
-//		mapPars.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
+		mapPars.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 		mapPars.put(SpagoBIConstants.SBI_SPAGO_CONTROLLER, GeneralUtilities.getSpagoAdapterHttpUrl());
 		mapPars.put("SBI_EXECUTION_ID", this.executionId);
 		mapPars.put(SpagoBIConstants.EXECUTION_ROLE, this.getExecutionRole());

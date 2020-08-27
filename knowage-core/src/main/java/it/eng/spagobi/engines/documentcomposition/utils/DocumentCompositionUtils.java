@@ -33,7 +33,6 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.LightNavigationConstants;
-import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -192,7 +191,6 @@ public class DocumentCompositionUtils {
 						}
 					}
 				}
-				mapPars.put(SpagoBIConstants.SBI_CONTEXT, KnowageSystemConfiguration.getKnowageContext());
 				mapPars.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 				UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 				UUID uuidObj = uuidGen.generateRandomBasedUUID();

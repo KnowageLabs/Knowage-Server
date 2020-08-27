@@ -42,7 +42,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	CommonjEngineConfig qcommonJEngineConfig = CommonjEngineConfig.getInstance();
 
     spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
-    spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+    spagobiContext = KnowageSystemConfiguration.getKnowageContext();
     spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
     docId = request.getParameter("document");
     

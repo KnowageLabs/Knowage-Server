@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 author: 
 --%>
 
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.spagobi.engine.chart.model.conf.ChartConfig"%>
 <%@page import="it.eng.spagobi.engine.chart.ChartEngineConfig"%>
 <%@page import="it.eng.spagobi.engine.util.ChartEngineUtil"%>
@@ -97,7 +98,7 @@ author:
 	profileJSONStr = new ObjectMapper().writeValueAsString(profile);
 	locale = engineInstance.getLocale();
 	
-	contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); 
+	contextName = KnowageSystemConfiguration.getKnowageContext(); 
 	environment = request.getParameter("SBI_ENVIRONMENT"); 
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
 	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();

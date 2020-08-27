@@ -26,7 +26,7 @@
 		 	docCommunities: "<%=docCommunity%>",
 		 	docFunctionalities: "<%=docFunctionalities%>",
 // 		 	contextLogo: "/knowage/themes/sbi_default/img/wapp/logo.png",
-		 	contextLogo: "<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>/themes/sbi_default/img/wapp/logo.png", 
+		 	contextLogo: "<%=KnowageSystemConfiguration.getKnowageContext()%>/themes/sbi_default/img/wapp/logo.png", 
 		 	<%--
 			docDatasetLabel: "<%=docDatasetLabel%>",
 		 	docDatasetName: "<%=docDatasetName%>",

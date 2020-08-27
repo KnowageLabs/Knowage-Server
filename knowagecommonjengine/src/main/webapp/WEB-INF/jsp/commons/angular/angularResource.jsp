@@ -3,6 +3,7 @@
 <%-- ---------------------------------------------------------------------- --%>
 
 <!-- this imports are used for language controls  -->
+<%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="java.util.Locale"%>
 <%@page import="it.eng.spagobi.engines.commonj.CommonjEngine"%>
 <%@page import="java.util.List"%>
@@ -33,7 +34,7 @@ String associations = "";
 String widgetId = "";
 String metaData = "";
 
-contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); 
+contextName = KnowageSystemConfiguration.getKnowageContext(); 
 environment = request.getParameter("SBI_ENVIRONMENT"); 
 
 String country = request.getParameter(SpagoBIConstants.SBI_COUNTRY); 
