@@ -249,7 +249,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		this.getCompleteBaseUrl = function(endP_path) {		
 			var burl= alteredContextPath==null? sbiModule_config.contextName +'/api/'+ endP_path  : alteredContextPath+ "/api/" + endP_path 
 			alteredContextPath=null;
-			burl = sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+burl;
 			return burl ;
 		};	
 		

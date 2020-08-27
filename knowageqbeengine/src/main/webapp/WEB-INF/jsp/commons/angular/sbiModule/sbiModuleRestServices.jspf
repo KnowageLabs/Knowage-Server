@@ -36,7 +36,6 @@ angular.module('sbiModule')
 	this.getCompleteBaseUrl = function(endP_path) {		
 		var burl= alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path  : alteredContextPath+ "/restful-services/" + endP_path 
 		alteredContextPath=null;
-		burl = sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+burl;
 		return burl ;
 	};	
 	

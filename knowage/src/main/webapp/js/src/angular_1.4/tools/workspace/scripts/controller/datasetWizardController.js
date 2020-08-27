@@ -177,9 +177,12 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 			$scope.changedFileName = $scope.dataset.fileName;
 		}
 		$scope.dataset.meta = JSON.stringify($scope.dataset.meta);
+
+		debugger;
+
 		$http({
 			method: 'POST',
-			url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/testDataSet',
+			url: sbiModule_config.contextName + '/restful-services/selfservicedataset/testDataSet',
 			data: $scope.dataset,
 			params: params,
 			headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -271,9 +274,12 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		// If User changes provided DataTypes on UI, go for Validation of Dataset, otherwise go for Preview of Dataset
 		if (isDirty) {
 			// Validation
+
+			debugger;
+
 			$http({
 				method: 'POST',
-				url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/getDataStore',
+				url: sbiModule_config.contextName + '/restful-services/selfservicedataset/getDataStore',
 				data: $scope.dataset,
 				params: params,
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -391,9 +397,11 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		params.isTech = false;
 		params.showOnlyOwner=true;
 
+		debugger;
+
 		$http({
 			method: 'POST',
-			url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/save',
+			url: sbiModule_config.contextName + '/restful-services/selfservicedataset/save',
 			data: $scope.dataset,
 			params: params,
 			headers: {'Content-Type': 'application/x-www-form-urlencoded'},

@@ -4294,11 +4294,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.dataset.type = $scope.selectedDataSet.dsTypeCd;
 			$scope.dataset.xslSheetNumber = $scope.selectedDataSet.xslSheetNumber;
 
-			$http
-			(
+			$http(
 				{
 					method: 'POST',
-					url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/testDataSet',
+					url: sbiModule_config.contextName + '/restful-services/selfservicedataset/testDataSet',
 					data: $scope.dataset,
 					params: params,
 					headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -4315,8 +4314,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					},
 				}
 			)
-			.then
-			(
+			.then(
 				function successCallback(response) {
 
 					if (!response.data.errors) {
@@ -4487,11 +4485,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	var params = {};
 		params.SBI_EXECUTION_ID = -1;
 
-		$http
-		(
+		$http(
 			{
 				method: 'POST',
-				url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/getDataStore',
+				url: sbiModule_config.contextName + '/restful-services/selfservicedataset/getDataStore',
 				data: $scope.dataset,
 				params: params,
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -4508,8 +4505,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				},
 			}
 		)
-		.then
-		(
+		.then(
 			function successCallback(response) {
 
 				if (!response.data.validationErrors) {

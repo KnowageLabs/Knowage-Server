@@ -43,8 +43,6 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 			if(ds.isRealtime){
 				console.log("Dataset " + label + " is realtime");
 				var cometdConfig = {
-					host: sbiModule_config.host,
-					//contextPath: sbiModule_config.contextName,
 					contextPath: sbiModule_config.externalBasePath,
 					userId:sbiModule_user.userId,
 					//listenerId:sbiModule_util.uuid(),
@@ -70,7 +68,6 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 	 *
 	 * @method cockpitModule_realtimeServices.subscribe
 	 * @param {Object} config - the configuration
-	 * @param {String} config.host - the host of engine
 	 * @param {String} config.contextPath - the context path of engine
 	 * @param {String} config.userId - the unique id of the user
 	 * @param {String} config.listenerId - the unique id of listener
@@ -123,7 +120,7 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 	     //   cometd.disconnect(true);
 	     //});
 
-	    var cometURL = config.host + config.contextPath + "/cometd";
+	    var cometURL = config.contextPath + "/cometd";
 	    cometd.configure({
 	        url: cometURL,
 	        logLevel: 'debug'
