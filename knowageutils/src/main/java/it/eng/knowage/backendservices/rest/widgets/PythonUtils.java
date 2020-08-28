@@ -19,7 +19,7 @@ public class PythonUtils {
 		List<IConfiguration> allRConfigs = SingletonConfig.getInstance().getConfigsValueByCategory("PYTHON_CONFIGURATION");
 		for (IConfiguration cfg : allRConfigs) {
 			if (cfg.getLabel().equals(envLabel)) {
-				return "https://" + cfg.getValueCheck() + "/";
+				return cfg.getValueCheck() + "/";
 			}
 		}
 		throw new SpagoBIRuntimeException("Cannot retrieve Python address from label [" + envLabel + "]");
