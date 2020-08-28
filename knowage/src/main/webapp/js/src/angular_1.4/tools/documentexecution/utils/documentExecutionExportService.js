@@ -289,7 +289,9 @@
 		dee.exportCockpitTo = function(exportType, mimeType){
 			if(exportType.toLowerCase() == 'pdf'){
 				windowCommunicationService.sendMessage('pdfExport');
-			}else{
+			} else if(exportType.toLowerCase() == 'xls' || exportType.toLowerCase() == 'xlsx') {
+				windowCommunicationService.sendMessage(exportType.toLowerCase() + 'Export');
+			} else {
 				documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope();
 				dee.exporting = true;
 
@@ -531,7 +533,7 @@
 
 		var buildRequestConfiguration = function(exportType, parameters, options) {
 			var deferred = $q.defer();
-			
+
 			var cockpitModule_properties = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_properties;
 
 			var cockpitContext = execProperties.documentUrl.substr(0, execProperties.documentUrl.search("/api/"));
@@ -539,7 +541,7 @@
 			var requestUrl = sbiModule_config.host + cockpitContext + '/api/1.0/cockpit/export/excel';
 			var widgetsPivot = [];
 			var sheets = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.sheets;
-			
+
 			var widgetsMapAggregations = [];
 
 			for (i = 0; i < sheets.length; i++) {
@@ -550,7 +552,7 @@
 						widgetsPivot.push(widgets[j].id);
 					}
 					if ( widgets[j].type=='table') {
-						
+
 						if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
 							for (var k in widgets[j].content.columnSelectedOfDataset) {
 								if(Array.isArray(widgets[j].content.columnSelectedOfDataset[k].variables) && widgets[j].content.columnSelectedOfDataset[k].variables.length) {
@@ -561,16 +563,16 @@
 											}
 										}
 									}
-								
-								}						
+
+								}
 							}
 						}
 						var map = {};
 						map.id = widgets[j].id;
 						map.columnSelectedOfDataset = widgets[j].content.columnSelectedOfDataset;
 						widgetsMapAggregations.push(map)
-						
-						
+
+
 					}
 				}
 

@@ -37,7 +37,7 @@ angular.module('cockpitModule')
 	}
 });
 
-function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunicationService,cockpitModule_datasetServices,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,sbiModule_user,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
+function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunicationService,cockpitModule_datasetServices,cockpitModule_widgetServices,cockpitModule_templateServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,sbiModule_messaging,sbiModule_download,sbiModule_user,sbiModule_cockpitDocument,sbiModule_config,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
 	$scope.translate = sbiModule_translate;
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
@@ -204,9 +204,120 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 						.ok('Close')
 					);
 		});
+		if(message == 'xlsExport' || message == 'xlsxExport') {
+			$scope.exportExcel(message).then(function(){},
+					function(error){
+						$mdDialog.show(
+						  $mdDialog.alert()
+							.parent(angular.element(document.body))
+							.clickOutsideToClose(true)
+							.title('Error during export')
+							.textContent(error)
+							.ok('Close')
+						);
+					});
+		}
 	}
 
 	windowCommunicationService.addMessageHandler(handler);
+
+	$scope.exportExcel = function(message){
+
+		$scope.excelType = message == 'xlsExport' ? 'xls' : 'xlsx';
+
+		return $q(function(resolve, reject) {
+
+			$mdDialog.show({
+				controller: function($scope,cockpitModule_properties,cockpitModule_template, sbiModule_translate){
+					$scope.translate = sbiModule_translate;
+					$scope.cockpitModule_properties = cockpitModule_properties;
+					$scope.cockpitModule_template = cockpitModule_template;
+				 },
+				 templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/exportExcelDialogTemplate.html',
+				 parent: angular.element(document.body),
+				 hasBackdrop: false,
+				 clickOutsideToClose:false
+			})
+
+			var abortTimeout;
+			function resetTimeout(){
+				if(abortTimeout) clearTimeout(abortTimeout);
+				abortTimeout = setTimeout(function(){
+					$mdDialog.hide();
+					$scope.$destroy();
+	 				reject($scope.translate.load('kn.error.export.timeout'));
+				},30000);
+			}
+
+			var cockpitWidgets = cockpitModule_templateServices.getAllCockpitWidgets();
+			var requestUrl = {
+					user_id: sbiModule_user.userUniqueIdentifier,
+					outputType: $scope.excelType,
+					document: sbiModule_cockpitDocument.docId,
+					widget: [],
+					DOCUMENT_LABEL: sbiModule_cockpitDocument.docLabel,
+					SBI_COUNTRY: sbiModule_config.curr_country,
+					SBI_LANGUAGE: sbiModule_config.curr_language,
+					COCKPIT_SELECTIONS: [],
+//					options: options // looks like it's used only in ExcelExporter.getBinaryDataPivot() - WHY?
+			}
+			for(i=0; i<cockpitWidgets.length; i++) {
+				var widget = cockpitWidgets[i];
+				requestUrl.widget[i] = widget;
+
+				if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
+					for (var k in widget.content.columnSelectedOfDataset) {
+						if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length) {
+							if (widget.type == "table" && widget.content.columnSelectedOfDataset[k].variables[0].action == 'header') {
+								for (var j in cockpitModule_properties.VARIABLES) {
+									if (j == widget.content.columnSelectedOfDataset[k].variables[0].variable){
+										widget.content.columnSelectedOfDataset[k].aliasToShow = cockpitModule_properties.VARIABLES[j];
+									}
+								}
+							}
+
+						}
+					}
+				}
+
+				var dsId = widget.dataset.dsId;
+				var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
+				var aggregation;
+				if (widget.settings) {
+					aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset, widget.settings.sortingColumn,widget.settings.sortingOrder);
+				}
+				else {
+					aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
+				}
+				var loadDomainValues = widget.type == "selector" ? true : false;
+				var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
+				var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
+				var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
+				var paramsToSend = angular.fromJson(parametersString);
+				requestUrl.COCKPIT_SELECTIONS[i] = {};
+				requestUrl.COCKPIT_SELECTIONS[i].aggregations = aggregation;
+				requestUrl.COCKPIT_SELECTIONS[i].parameters = paramsToSend;
+				requestUrl.COCKPIT_SELECTIONS[i].selections = selections;
+			}
+
+			var config = {"responseType": "arraybuffer"};
+			var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting"), 'Success!', 0);
+			var documentLabel = requestUrl.DOCUMENT_LABEL;
+			sbiModule_restServices.promisePost('1.0/cockpit/export', 'excel', requestUrl, config)
+			.then(function(response){
+				var mimeType = response.headers("Content-type");
+				var fileName = 'exported_widget';
+				if (documentLabel != undefined) {
+					fileName = documentLabel;
+				}
+				$mdToast.hide(exportingToast);
+				sbiModule_download.getBlob(response.data, fileName, mimeType, $scope.excelType);
+			}, function(error){
+				$mdToast.cancel(exportingToast);
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting.error"), 'Error');
+			});
+		})
+	}
 
 	$scope.exportPdf = function(){
 

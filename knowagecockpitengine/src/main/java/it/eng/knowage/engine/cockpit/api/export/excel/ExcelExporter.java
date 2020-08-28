@@ -61,7 +61,6 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -291,21 +290,12 @@ public class ExcelExporter {
 			}
 		} else {
 			// TODO: Implement logic for DataReader, now everything stays in memory - bad when widget have large number of Data
-			List<JSONObject> excelSheets = getExcelSheetsList(templateString);
-			if (!excelSheets.isEmpty()) {
-				exportWidgetsToExcel(excelSheets, wb);
-			}
-		}
-
-		if (wb.getNumberOfSheets() == 0) {
-			MessageBuilder msgBuilder = new MessageBuilder();
-			String message = msgBuilder.getMessage("exporter.dataset.excel.noWidgets");
-
-			Sheet warningSheet = wb.createSheet();
-			Row warningRow = warningSheet.createRow(0);
-			Cell warningCell = warningRow.createCell(0);
-
-			warningCell.setCellValue(message);
+//			List<JSONObject> excelSheets = getExcelSheetsList(templateString);
+//			if (!excelSheets.isEmpty()) {
+//				exportWidgetsToExcel(excelSheets, wb);
+//			}
+			JSONArray widgetsJson = body.getJSONArray("widget");
+			exportCockpit(templateString, widgetsJson, wb);
 		}
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -342,6 +332,38 @@ public class ExcelExporter {
 				JSONObject dataStore = getDataStoreForWidget(template, widget);
 				if (dataStore != null) {
 					createExcelFile(dataStore, wb, widgetName);
+				}
+			}
+		} catch (JSONException e) {
+			logger.error("Unable to load template", e);
+		}
+	}
+
+	private void exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb) throws SerializationException {
+		try {
+			JSONObject template = new JSONObject(templateString);
+			for (int i = 0; i < widgetsJson.length(); i++) {
+				String widgetId = widgetsJson.getJSONObject(i).getString("id");
+				JSONObject widget = getWidgetById(template, widgetId);
+				if (widget != null) {
+					String widgetName = null;
+					JSONObject style = widget.optJSONObject("style");
+					if (style != null) {
+						JSONObject title = style.optJSONObject("title");
+						if (title != null) {
+							widgetName = title.optString("label");
+						} else {
+							JSONObject content = widget.optJSONObject("content");
+							if (content != null) {
+								widgetName = content.getString("name");
+							}
+						}
+					}
+
+					JSONObject dataStore = getDataStoreForWidget(template, widget);
+					if (dataStore != null) {
+						createExcelFile(dataStore, wb, widgetName);
+					}
 				}
 			}
 		} catch (JSONException e) {
@@ -448,6 +470,7 @@ public class ExcelExporter {
 		try {
 			JSONObject configuration = template.getJSONObject("configuration");
 			JSONObject datasetObj = widget.getJSONObject("dataset");
+
 			int datasetId = datasetObj.getInt("dsId");
 			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 			String datasetLabel = dataset.getLabel();
@@ -457,7 +480,18 @@ public class ExcelExporter {
 				map.put("nearRealtime", true);
 			}
 
-			JSONObject cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
+			JSONObject cockpitSelections;
+			if (body.get("widget") instanceof JSONArray) {
+				JSONArray allWidgets = body.getJSONArray("widget");
+				int i;
+				for (i = 0; i < allWidgets.length(); i++) {
+					JSONObject curWidget = allWidgets.getJSONObject(i);
+					if (curWidget.getString("id").equals(widget.getString("id")))
+						break;
+				}
+				cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS").getJSONObject(i);
+			} else
+				cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
 			JSONArray summaryRow = getSummaryRowFromWidget(widget);
 			if (summaryRow != null) {
 				logger.debug("summaryRow = " + summaryRow);
@@ -1053,79 +1087,6 @@ public class ExcelExporter {
 						logger.debug("likeSelections = " + likeSelections);
 						body.put("likeSelections", likeSelections);
 					}
-
-					JSONObject selections = getSelectionsFromWidget(widget, configuration);
-					logger.debug("selections = " + selections);
-					body.put("selections", selections);
-
-					Map<String, Object> map = new java.util.HashMap<String, Object>();
-
-					if (getRealtimeFromTableWidget(datasetId, configuration)) {
-						logger.debug("nearRealtime = true");
-						map.put("nearRealtime", true);
-					}
-
-					int limit = getLimitFromTableWidget(widget);
-					if (limit > 0) {
-						logger.debug("limit = " + limit);
-						map.put("limit", limit);
-					}
-
-					if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
-
-						JSONObject jsOptions = new JSONObject();
-						jsOptions.put("solrFacetPivot", true);
-						body.put("options", jsOptions);
-					}
-					if (body != null) {
-						logger.debug("Export cockpit body.toString(): " + body.toString());
-					}
-
-					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
-
-					if (datastoreObj != null) {
-						logger.debug("datasetLabel: " + datasetLabel + " datastoreObj = " + datastoreObj.toString());
-					}
-
-					String sheetName = getI18NMessage("Widget") + " " + (sheetIndex + 1) + "." + (++widgetCounter);
-					datastoreObj.put("sheetName", sheetName);
-					datastoreObj.put("widgetData", widget);
-					JSONObject content = widget.optJSONObject("content");
-					String widgetName = null;
-					if (widget.has("style")) {
-						JSONObject style = widget.optJSONObject("style");
-						if (style.has("title")) {
-							JSONObject title = style.optJSONObject("title");
-							if (title.has("label")) {
-								widgetName = title.getString("label") + "_" + widget.getString("id");
-							}
-						}
-
-					}
-					if (widgetName == null && content != null) {
-
-						widgetName = content.getString("name");
-					}
-					datastoreObj.put("widgetName", widgetName);
-					datastoreObj.put("sheetInfo", sheet.getString("label"));
-					excelSheets.add(datastoreObj);
-				} else if("html".equals(widgetType)) {
-					JSONObject datasetObj = widget.getJSONObject("dataset");
-
-					if (!datasetObj.has("dsId")) {
-						continue;
-					}
-
-					int datasetId = datasetObj.getInt("dsId");
-					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
-					String datasetLabel = dataset.getLabel();
-
-					JSONObject body = new JSONObject();
-
-					JSONObject parameters = getParametersFromWidget(widget, configuration);
-
-					logger.debug("parameters = " + parameters);
-					body.put("parameters", parameters);
 
 					JSONObject selections = getSelectionsFromWidget(widget, configuration);
 					logger.debug("selections = " + selections);
