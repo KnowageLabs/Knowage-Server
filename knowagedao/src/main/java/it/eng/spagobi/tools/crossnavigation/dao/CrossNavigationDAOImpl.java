@@ -370,7 +370,13 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					// from cross navigation item get the document with input params like cross navigation toKeyId value in input params
 					Integer crossId = cnParam.getSbiCrossNavigation().getId();
 
-					if (!validCrossNavIdToCrossNavJSON.containsKey(crossId) && !nonValidCrossNavIds.contains(crossId)) {
+					if (nonValidCrossNavIds.contains(crossId)) {
+						// cross navigation already examined and found to be invalid, skip it
+						continue;
+					}
+
+					if (!validCrossNavIdToCrossNavJSON.containsKey(crossId)) {
+						// we don't know if this cross navigation is valid or not, let's discover it...
 						SbiObjects sbiObj = cnParam.getToKey().getSbiObject();
 						BIObject biObject = DAOFactory.getBIObjectDAO().toBIObject(sbiObj, session);
 						UserProfile userProfile = UserProfileManager.getProfile();
