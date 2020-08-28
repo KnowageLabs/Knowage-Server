@@ -152,7 +152,10 @@ public class PythonDataProxy extends AbstractDataProxy {
 				Iterator keys = this.parameters.keySet().iterator();
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
-					Object val = this.parameters.get(key);
+					String val = this.parameters.get(key);
+					if (val.startsWith("'") || val.startsWith("\"")) {
+						val = val.substring(1, val.length() - 1); // remove ''
+					}
 					JSONArray parameters = jsonBody.getJSONArray("parameters");
 					for (int i = 0; i < parameters.length(); i++) {
 						JSONObject param = parameters.getJSONObject(i);
