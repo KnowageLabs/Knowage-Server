@@ -331,7 +331,7 @@ public class ExcelExporter {
 
 				JSONObject dataStore = getDataStoreForWidget(template, widget);
 				if (dataStore != null) {
-					createExcelFile(dataStore, wb, widgetName);
+					createExcelFile(dataStore, wb, widgetName, widget.getString("id"));
 				}
 			}
 		} catch (JSONException e) {
@@ -362,7 +362,7 @@ public class ExcelExporter {
 
 					JSONObject dataStore = getDataStoreForWidget(template, widget);
 					if (dataStore != null) {
-						createExcelFile(dataStore, wb, widgetName);
+						createExcelFile(dataStore, wb, widgetName, widget.getString("id"));
 					}
 				}
 			}
@@ -538,7 +538,7 @@ public class ExcelExporter {
 		return datastore;
 	}
 
-	private void createExcelFile(JSONObject dataStore, Workbook wb, String widgetName) throws JSONException, SerializationException {
+	private void createExcelFile(JSONObject dataStore, Workbook wb, String widgetName, String widgetId) throws JSONException, SerializationException {
 		CreationHelper createHelper = wb.getCreationHelper();
 		JSONArray widgetsMapAggregations = new JSONArray();
 		if (body.has("widgetsMapAggregations")) {
@@ -763,7 +763,7 @@ public class ExcelExporter {
 							sheetName = widgetName;
 						}
 					}
-
+					sheetName = sheetName.concat("_").concat(widgetId);
 					sheetName = WorkbookUtil.createSafeSheetName(sheetName);
 					sheet = wb.createSheet(sheetName);
 					// First row for Widget name in case exporting whole Cockpit document
@@ -1159,7 +1159,7 @@ public class ExcelExporter {
 			if (widgetName == null || widgetName.isEmpty()) {
 				widgetName = "Widget";
 			}
-			createExcelFile(widgetDatastore, wb, widgetName);
+			createExcelFile(widgetDatastore, wb, widgetName, null);
 		}
 	}
 
