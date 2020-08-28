@@ -20,7 +20,7 @@ public class PythonUtils {
 		List<Config> allPythonConfigs = configResource.getConfigsByCategory("PYTHON_CONFIGURATION");
 		for (Config cfg : allPythonConfigs) {
 			if (cfg.getLabel().equals(envLabel)) {
-				return "https://" + cfg.getValueCheck() + "/";
+				return cfg.getValueCheck() + "/";
 			}
 		}
 		throw new SpagoBIRuntimeException("Cannot retrieve Python address from label [" + envLabel + "]");
