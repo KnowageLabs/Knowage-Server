@@ -28,7 +28,7 @@
 			else{
 				newUrl+="&outputType="+format;
 			}
-			return sbiModule_config.host + newUrl;
+			return newUrl;
 		}
 
 		dee.getExportationUrl = function(format,paramsExportType,actionPath){
@@ -48,10 +48,10 @@
 
 				var urlService = null;
 				if(actionPath.indexOf('?') >=0 ){
-					urlService = sbiModule_config.host + actionPath+'&';
+					urlService = actionPath+'&';
 				}
 				else{
-					urlService = sbiModule_config.host + actionPath+'?';
+					urlService = actionPath+'?';
 				}
 
 				var docName = '&documentName='+execProperties.executionInstance.OBJECT_LABEL;
@@ -426,7 +426,7 @@
 
 			var config={"responseType": "arraybuffer"};
 
-			var requestUrl = sbiModule_config.host;
+			var requestUrl = "";
 
 			if(exportType.toLowerCase() == 'xlsx') {
 				requestUrl += '/highcharts-export-web/capture';
@@ -478,7 +478,7 @@
 		dee.buildBackendRequestConf = function(exportType, mimeType, parameters){
 			var deferred = $q.defer();
 
-			var requestUrl = sbiModule_config.host;
+			var requestUrl = "";
 			requestUrl += execProperties.documentUrl;
 			requestUrl += '&outputType=' + encodeURIComponent(exportType);
 
@@ -534,7 +534,7 @@
 
 			var cockpitContext = execProperties.documentUrl.substr(0, execProperties.documentUrl.search("/api/"));
 
-			var requestUrl = sbiModule_config.host + cockpitContext + '/api/1.0/cockpit/export/excel';
+			var requestUrl = cockpitContext + '/api/1.0/cockpit/export/excel';
 			var widgetsPivot = [];
 			var sheets = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.sheets;
 			

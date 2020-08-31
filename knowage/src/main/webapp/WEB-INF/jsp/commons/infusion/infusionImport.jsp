@@ -29,7 +29,7 @@
 %>
 <script>
    var contextName= '<%= KnowageSystemConfiguration.getKnowageContext() %>';
-   var host= '<%= GeneralUtilities.getSpagoBiHost() %>';
+   var host= window.location.origin;
    var baseUrl= ''+host +''+ contextName + '/restful-services';
    var preferences = '<%= preferences %>';
 </script>

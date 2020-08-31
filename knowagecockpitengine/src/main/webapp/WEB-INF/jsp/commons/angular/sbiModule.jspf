@@ -33,7 +33,7 @@ sbiM.factory('sbiModule_config',function(){
     	contextName: '${pageContext.request.contextPath}',
     	adapterPath: '<%= KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	adapterPathNoContext : '<%= GeneralUtilities.getSpagoAdapterHttpUrl() %>',
-    	host: '<%= GeneralUtilities.getSpagoBiHost() %>',
+    	host: window.location.origin,
     	curr_country: '<%= curr_country %>',
     	curr_language: '<%= curr_language%>',
     	thous: '<%= GeneralUtilities.getGroupingSeparator(locale)%>',

@@ -854,7 +854,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				if(previewSettings.previewType == 'allRow' ||
 				(previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName) ||
 				(previewSettings.previewType == 'icon' && (!columnName || columnName == ""))){
-					$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
+					$scope.iframeSrcUrl = sbiModule_config.externalBasePath + SERVICE;
 
 					var previewDataset = cockpitModule_datasetServices.getDatasetById(previewSettings.dataset);
 

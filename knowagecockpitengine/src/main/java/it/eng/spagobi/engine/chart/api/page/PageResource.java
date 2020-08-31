@@ -41,11 +41,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
 import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engine.chart.ChartEngine;
 import it.eng.spagobi.engine.chart.ChartEngineInstance;
@@ -280,7 +280,9 @@ public class PageResource extends AbstractChartEngineResource {
 
 	private String getRequestUrlForPdfExport(HttpServletRequest request) throws UnsupportedEncodingException {
 		String requestURL = request.getRequestURL().toString();
-		String hostURL = GeneralUtilities.getSpagoBiHost();
+
+		// ALBNALE202008 - CAPIRE
+		String hostURL = KnowageSystemConfiguration.getSpagoBiHost();
 		String serviceURL = getServiceHostUrl();
 		StringBuilder sb = new StringBuilder(requestURL.replace(hostURL, serviceURL));
 		String sep = "?";
@@ -306,33 +308,33 @@ public class PageResource extends AbstractChartEngineResource {
 		return sb.toString();
 	}
 
-	private String getRequestUrlForJpgExport(HttpServletRequest request) throws UnsupportedEncodingException {
-		String requestURL = request.getRequestURL().toString();
-		String hostURL = GeneralUtilities.getSpagoBiHost();
-		String serviceURL = getServiceHostUrl();
-		StringBuilder sb = new StringBuilder(requestURL.replace(hostURL, serviceURL));
-		String sep = "?";
-		Map<String, String[]> parameterMap = request.getParameterMap();
-
-		for (String parameter : parameterMap.keySet()) {
-			if (!JPG_PARAMETERS.contains(parameter)) {
-				String[] values = parameterMap.get(parameter);
-				if (values != null && values.length > 0) {
-					sb.append(sep);
-					sb.append(URLEncoder.encode(parameter, "UTF-8"));
-					sb.append("=");
-					if (parameter.equals(SpagoBIConstants.SBI_HOST)) {
-						sb.append(URLEncoder.encode(getServiceHostUrl(), "UTF-8"));
-					} else {
-						sb.append(URLEncoder.encode(values[0], "UTF-8"));
-					}
-					sep = "&";
-				}
-			}
-		}
-		sb.append("&export=true");
-		return sb.toString();
-	}
+//	private String getRequestUrlForJpgExport(HttpServletRequest request) throws UnsupportedEncodingException {
+//		String requestURL = request.getRequestURL().toString();
+//		String hostURL = GeneralUtilities.getSpagoBiHost();
+//		String serviceURL = getServiceHostUrl();
+//		StringBuilder sb = new StringBuilder(requestURL.replace(hostURL, serviceURL));
+//		String sep = "?";
+//		Map<String, String[]> parameterMap = request.getParameterMap();
+//
+//		for (String parameter : parameterMap.keySet()) {
+//			if (!JPG_PARAMETERS.contains(parameter)) {
+//				String[] values = parameterMap.get(parameter);
+//				if (values != null && values.length > 0) {
+//					sb.append(sep);
+//					sb.append(URLEncoder.encode(parameter, "UTF-8"));
+//					sb.append("=");
+//					if (parameter.equals(SpagoBIConstants.SBI_HOST)) {
+//						sb.append(URLEncoder.encode(getServiceHostUrl(), "UTF-8"));
+//					} else {
+//						sb.append(URLEncoder.encode(values[0], "UTF-8"));
+//					}
+//					sep = "&";
+//				}
+//			}
+//		}
+//		sb.append("&export=true");
+//		return sb.toString();
+//	}
 
 	@GET
 	@Path("/executeTest")
@@ -358,125 +360,125 @@ public class PageResource extends AbstractChartEngineResource {
 
 	/*
 	 * @SuppressWarnings("unchecked")
-	 * 
+	 *
 	 * @POST
-	 * 
+	 *
 	 * @Path("/{pagename}")
-	 * 
+	 *
 	 * @Produces("text/html")
-	 * 
+	 *
 	 * @UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY }) public void openPageFromCockpit(@PathParam("pagename") String
 	 * pageName, @FormParam("widgetData") String widgetData) { ChartEngineInstance engineInstance; String dispatchUrl = urls.get(pageName);
-	 * 
+	 *
 	 * try {
-	 * 
+	 *
 	 * JSONObject jsonWidgetDataOut = new JSONObject(widgetData);
-	 * 
+	 *
 	 * Assert.assertTrue(!jsonWidgetDataOut.isNull("widgetData"),
 	 * "It's impossible instantiate a Chart Designer from the Cockpit Engine without a valid [widgetData] param!");
-	 * 
+	 *
 	 * JSONObject jsonWidgetDataIn = jsonWidgetDataOut.getJSONObject("widgetData");
-	 * 
+	 *
 	 * String datasetLabel = jsonWidgetDataIn.getString("datasetLabel"); String chartTemplate;
-	 * 
+	 *
 	 * if (!jsonWidgetDataIn.isNull("chartTemplate")) { chartTemplate = jsonWidgetDataIn.getJSONObject("chartTemplate").toString(); } else { chartTemplate =
 	 * buildBaseTemplate().toString(); }
-	 * 
+	 *
 	 * switch (pageName) {
-	 * 
+	 *
 	 * case "execute_cockpit":
-	 * 
+	 *
 	 * engineInstance = ChartEngine.createInstance(chartTemplate, getIOManager().getEnvForWidget());
 	 * engineInstance.getEnv().put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
-	 * 
+	 *
 	 * if (!jsonWidgetDataIn.isNull("jsonData") && jsonWidgetDataIn.get("jsonData") != null) {
-	 * 
+	 *
 	 * String jsonData = null;
-	 * 
+	 *
 	 * if (jsonWidgetDataIn.get("jsonData") instanceof String) { jsonData = jsonWidgetDataIn.getString("jsonData"); } else if (jsonWidgetDataIn.get("jsonData")
 	 * instanceof JSONObject) { jsonData = jsonWidgetDataIn.getJSONObject("jsonData").toString(); }
-	 * 
+	 *
 	 * engineInstance.getEnv().put("METADATA", jsonData); }
-	 * 
+	 *
 	 * if (!jsonWidgetDataIn.isNull("aggregations") && jsonWidgetDataIn.get("aggregations") != null) {
-	 * 
+	 *
 	 * String aggregations = null;
-	 * 
+	 *
 	 * if (jsonWidgetDataIn.get("aggregations") instanceof String) { aggregations = jsonWidgetDataIn.getString("aggregations"); } else if
 	 * (jsonWidgetDataIn.get("aggregations") instanceof JSONObject) { aggregations = jsonWidgetDataIn.getJSONObject("aggregations").toString(); }
-	 * 
+	 *
 	 * engineInstance.getEnv().put("AGGREGATIONS", aggregations); }
-	 * 
+	 *
 	 * if (!jsonWidgetDataIn.isNull("selections") && jsonWidgetDataIn.get("selections") != null) { String selections = null;
-	 * 
+	 *
 	 * if (jsonWidgetDataIn.get("selections") instanceof String) { selections = jsonWidgetDataIn.getString("selections"); } else if
 	 * (jsonWidgetDataIn.get("selections") instanceof JSONObject) { selections = jsonWidgetDataIn.getJSONObject("selections").toString(); }
-	 * 
+	 *
 	 * if (!selections.equals("")) { if (!jsonWidgetDataIn.isNull("associations") && jsonWidgetDataIn.get("associations") != null) { String associations = null;
-	 * 
+	 *
 	 * if (jsonWidgetDataIn.get("associations") instanceof String) { associations = jsonWidgetDataIn.getString("associations"); } else if
 	 * (jsonWidgetDataIn.get("associations") instanceof JSONObject) { associations = jsonWidgetDataIn.getJSONObject("associations").toString(); }
-	 * 
+	 *
 	 * JSONObject jsonSelections = ChartEngineUtil.cockpitSelectionsFromAssociations(request, selections, associations, datasetLabel);
 	 * Assert.assertNotNull(jsonSelections, "Invalid values for [selections] param"); engineInstance.getEnv().put("SELECTIONS", jsonSelections.toString()); }
 	 * else { engineInstance.getEnv().put("SELECTIONS", selections); }
-	 * 
+	 *
 	 * } }
-	 * 
+	 *
 	 * if (!jsonWidgetDataIn.isNull("widgetId") && jsonWidgetDataIn.getString("widgetId") != null) { engineInstance.getEnv().put("WIDGETID",
 	 * jsonWidgetDataIn.getString("widgetId")); }
-	 * 
+	 *
 	 * // engineInstance.getEnv().put("IFRAMEID", getIOManager().getRequest().getParameter("iFrameId")); engineInstance.getEnv().put("EXECUTE_COCKPIT", true);
-	 * 
+	 *
 	 * /* The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
 	 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive the engine
 	 * instance, otherwise concurrency issues are raised.
 	 *
 	 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
-	 * 
+	 *
 	 * // getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 	 * getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance); break;
-	 * 
+	 *
 	 * case "edit_cockpit":
-	 * 
+	 *
 	 * // create a new engine instance engineInstance = ChartEngine.createInstance(chartTemplate, getIOManager().getEnvForWidget());
 	 * engineInstance.getEnv().put(EngineConstants.ENV_DATASET_LABEL, datasetLabel); engineInstance.getEnv().put("EDIT_COCKPIT", true);
-	 * 
+	 *
 	 * /* The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
 	 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive the engine
 	 * instance, otherwise concurrency issues are raised.
 	 *
 	 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
-	 * 
+	 *
 	 * // getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 	 * getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
-	 * 
+	 *
 	 * /** These two lines are called when the Cockpit engine is initializing (creating, calling) the Designer (not the Chart engine). They are important for
 	 * setting all chart types available on the server (inside of XML files) into the session through which we will forward this data to the Designer.js. This
 	 * one will use the data and put it inside of the chart style combo box on the top left of the Designer page.
 	 *
 	 * @author: atomic (ana.tomic@mht.net)
-	 * 
+	 *
 	 * @addedBy: danristo (danilo.ristovski@mht.net)
-	 * 
+	 *
 	 * JSONArray styles = new JSONArray(new StyleResource().getStyles()); getIOManager().getHttpSession().setAttribute(EngineConstants.DEFAULT_CHART_STYLES,
 	 * styles);
-	 * 
+	 *
 	 * break;
-	 * 
+	 *
 	 * default: dispatchUrl = "/WEB-INF/jsp/error.jsp"; break; }
-	 * 
+	 *
 	 * /** Setting the encoding type to the response object, so the Cockpit engine when calling the rendering of the chart (chart.jsp) can display the real
 	 * content of the chart template. If this is not set, specific Italian letters, such as Ã¹ and Ã  are going to be displayed as black squared question marks
 	 * - they will not be displayed as they are specified by the user.
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	 * 
+	 *
 	 * response.setContentType("text/html"); response.setCharacterEncoding("UTF-8");
-	 * 
+	 *
 	 * if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) { request.getRequestDispatcher(dispatchUrl).include(request, response); } else {
 	 * request.getRequestDispatcher(dispatchUrl).forward(request, response); }
-	 * 
+	 *
 	 * } catch (Exception e) { // This causes a java.util.ConcurrentModificationException under cockpit // throw
 	 * SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e); throw new SpagoBIRuntimeException(e); } finally {
 	 * logger.debug("OUT"); } }

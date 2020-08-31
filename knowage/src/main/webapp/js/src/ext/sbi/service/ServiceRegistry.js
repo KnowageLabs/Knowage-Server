@@ -158,14 +158,9 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
     , getBaseUrlStr: function(s) {
     	var baseUrlStr;
     	
-    	var isAbsolute = s.isAbsolute || this.defaultAbsolute;
     	var url = Ext.apply({}, s.baseUrl || {}, this.baseUrl);
     	
-    	if(isAbsolute) {
-    		baseUrlStr = url.protocol + '://' + url.host + ":" + url.port + '/' + url.contextPath + '/' + url.controllerPath;
-    	} else {
-    		baseUrlStr = '/' + url.contextPath+ '/' + url.controllerPath;
-    	}
+		baseUrlStr = '/' + url.contextPath+ '/' + url.controllerPath;
     	
     	return  baseUrlStr;
     }
@@ -175,12 +170,8 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
     	
     	var isAbsolute = s.isAbsolute || this.defaultAbsolute;
     	var url = Ext.apply({}, s.baseUrl || {}, this.baseUrl);
-    	
-    	if(isAbsolute) {
-    		baseUrlStr = url.protocol + '://' + url.host + ":" + url.port + '/' + url.contextPath;
-    	} else {
-    		baseUrlStr = '/' + url.contextPath;
-    	}
+
+		baseUrlStr = '/' + url.contextPath;
     	
     	if (url.restServicesPath != undefined && url.restServicesPath.length > 0){
     		baseUrlStr = baseUrlStr + '/' + url.restServicesPath;
@@ -191,14 +182,9 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
     , getContextUrlStr: function(s) {
     	var baseUrlStr;
     	
-    	var isAbsolute = s.isAbsolute || this.defaultAbsolute;
     	var url = Ext.apply({}, s.baseUrl || {}, this.baseUrl);
     	
-    	if(isAbsolute) {
-    		baseUrlStr = url.protocol + '://' + url.host + ":" + url.port + '/' + url.contextPath;
-    	} else {
-    		baseUrlStr = '/' + url.contextPath;
-    	}
+		baseUrlStr = '/' + url.contextPath;
     	
     	return  baseUrlStr;
     }    

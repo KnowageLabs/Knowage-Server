@@ -42,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
@@ -49,7 +50,6 @@ import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
 import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -235,7 +235,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	private String getRequestUrlForPdfExport(HttpServletRequest request) throws UnsupportedEncodingException {
 		String requestURL = request.getRequestURL().toString();
-		String hostURL = GeneralUtilities.getSpagoBiHost();
+		// ALBNALE202008 - CAPIRE
+		String hostURL = KnowageSystemConfiguration.getSpagoBiHost();
 		String serviceURL = getServiceHostUrl();
 
 		StringBuilder sb = new StringBuilder(requestURL.replace(hostURL, serviceURL));

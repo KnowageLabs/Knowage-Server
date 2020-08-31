@@ -565,7 +565,7 @@ private String constructImgUrl(ThresholdValue tOfVal){
 	String urlImagePng = "";
 	String fileName ="position_"+tOfVal.getPosition().intValue();
 	String dirName = tOfVal.getThresholdCode();
-	urlImagePng=GeneralUtilities.getSpagoBiHost()+KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() + 
+	urlImagePng=KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() + 
 	"?ACTION_NAME=GET_THR_IMAGE&NEW_SESSION=TRUE&fileName="+fileName+"&dirName="+dirName+"&LIGHT_NAVIGATOR_DISABLED=TRUE";
 	return urlImagePng;
 }

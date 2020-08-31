@@ -74,7 +74,6 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	static DecimalFormatSymbols decSymbols = decFormat.getDecimalFormatSymbols();
 	public static final int MAX_DEFAULT_FILE_5M_SIZE = 5242880;
 	public static final int MAX_DEFAULT_FILE_10M_SIZE = 10485760; // 10 mega byte
-	private static String SPAGOBI_HOST = null;
 
 	// private static String SPAGOBI_DOMAIN = null;
 
@@ -297,49 +296,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	public static String getSpagoBiHost() {
-		logger.debug("IN");
-		if (SPAGOBI_HOST == null) {
-			String tmp = null;
-			try {
-				logger.debug("Trying to recover SpagoBiHost from ConfigSingleton");
-				SingletonConfig spagoConfig = SingletonConfig.getInstance();
-
-				String systemHostVar = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_HOST_SYSTEMVAR_JNDI");
-				if (systemHostVar == null || systemHostVar.length() == 0) {
-					String sbTmp = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_HOST_JNDI");
-					if (sbTmp != null) {
-						tmp = readJndiResource(sbTmp);
-					}
-					if (tmp == null) {
-						logger.debug("SPAGOBI_HOST not set, using the default value ");
-						tmp = "http://localhost:8080";
-					}
-				} else {
-					logger.debug("load the host url from the db");
-					if (systemHostVar != null) {
-						tmp = System.getProperty(systemHostVar);
-					}
-					if (tmp == null) {
-						logger.debug("Using directly value from the db");
-						tmp = systemHostVar;
-					}
-				}
-
-			} catch (Exception e) {
-				logger.error("Error while recovering SpagoBI host url", e);
-				throw new SpagoBIRuntimeException("Error while recovering SpagoBI host url", e);
-			}
-			try {
-				new URL(tmp);
-			} catch (MalformedURLException e) {
-				SpagoBIRuntimeException sre = new SpagoBIRuntimeException("SpagoBI host URL is malformed!!", e);
-				sre.addHint("Check configuration for host_url environment variable");
-				throw sre;
-			}
-			SPAGOBI_HOST = tmp;
-		}
-		logger.debug("OUT:" + SPAGOBI_HOST);
-		return SPAGOBI_HOST;
+		return KnowageSystemConfiguration.getSpagoBiHost();
 	}
 
 	/*
@@ -366,7 +323,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	/**
-	 * Gets the default locale from SpagoBI configuraiton file, the behaviours is the same of getDefaultLocale() function, with difference that if not finds
+	 * Gets the default locale from SpagoBI configuration file, the behaviors is the same of getDefaultLocale() function, with difference that if not finds
 	 * returns null
 	 *
 	 * TODO : merge its behaviour with GetDefaultLocale (not done know cause today is release date). Gets the default locale.
