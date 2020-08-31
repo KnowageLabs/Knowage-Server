@@ -61,6 +61,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -294,6 +295,17 @@ public class ExcelExporter {
 			if (!excelSheets.isEmpty()) {
 				exportWidgetsToExcel(excelSheets, wb);
 			}
+		}
+
+		if (wb.getNumberOfSheets() == 0) {
+			MessageBuilder msgBuilder = new MessageBuilder();
+			String message = msgBuilder.getMessage("exporter.dataset.excel.noWidgets");
+
+			Sheet warningSheet = wb.createSheet();
+			Row warningRow = warningSheet.createRow(0);
+			Cell warningCell = warningRow.createCell(0);
+
+			warningCell.setCellValue(message);
 		}
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1041,6 +1053,79 @@ public class ExcelExporter {
 						logger.debug("likeSelections = " + likeSelections);
 						body.put("likeSelections", likeSelections);
 					}
+
+					JSONObject selections = getSelectionsFromWidget(widget, configuration);
+					logger.debug("selections = " + selections);
+					body.put("selections", selections);
+
+					Map<String, Object> map = new java.util.HashMap<String, Object>();
+
+					if (getRealtimeFromTableWidget(datasetId, configuration)) {
+						logger.debug("nearRealtime = true");
+						map.put("nearRealtime", true);
+					}
+
+					int limit = getLimitFromTableWidget(widget);
+					if (limit > 0) {
+						logger.debug("limit = " + limit);
+						map.put("limit", limit);
+					}
+
+					if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
+
+						JSONObject jsOptions = new JSONObject();
+						jsOptions.put("solrFacetPivot", true);
+						body.put("options", jsOptions);
+					}
+					if (body != null) {
+						logger.debug("Export cockpit body.toString(): " + body.toString());
+					}
+
+					JSONObject datastoreObj = getDatastore(datasetLabel, map, body.toString());
+
+					if (datastoreObj != null) {
+						logger.debug("datasetLabel: " + datasetLabel + " datastoreObj = " + datastoreObj.toString());
+					}
+
+					String sheetName = getI18NMessage("Widget") + " " + (sheetIndex + 1) + "." + (++widgetCounter);
+					datastoreObj.put("sheetName", sheetName);
+					datastoreObj.put("widgetData", widget);
+					JSONObject content = widget.optJSONObject("content");
+					String widgetName = null;
+					if (widget.has("style")) {
+						JSONObject style = widget.optJSONObject("style");
+						if (style.has("title")) {
+							JSONObject title = style.optJSONObject("title");
+							if (title.has("label")) {
+								widgetName = title.getString("label") + "_" + widget.getString("id");
+							}
+						}
+
+					}
+					if (widgetName == null && content != null) {
+
+						widgetName = content.getString("name");
+					}
+					datastoreObj.put("widgetName", widgetName);
+					datastoreObj.put("sheetInfo", sheet.getString("label"));
+					excelSheets.add(datastoreObj);
+				} else if("html".equals(widgetType)) {
+					JSONObject datasetObj = widget.getJSONObject("dataset");
+
+					if (!datasetObj.has("dsId")) {
+						continue;
+					}
+
+					int datasetId = datasetObj.getInt("dsId");
+					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
+					String datasetLabel = dataset.getLabel();
+
+					JSONObject body = new JSONObject();
+
+					JSONObject parameters = getParametersFromWidget(widget, configuration);
+
+					logger.debug("parameters = " + parameters);
+					body.put("parameters", parameters);
 
 					JSONObject selections = getSelectionsFromWidget(widget, configuration);
 					logger.debug("selections = " + selections);

@@ -21,11 +21,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spagobi.services.common.JWTSsoService;
@@ -44,7 +46,7 @@ public class PythonDataProxy extends AbstractDataProxy {
 	private static final int FETCH_SIZE_NOT_DEFINED = -1;
 	private static final int MAX_RESULT_NOT_DEFINED = -1;
 
-	protected final String requestBody;
+	protected String requestBody;
 	protected String address;
 	protected final Map<String, String> requestHeaders;
 	protected final HttpMethod method;
@@ -124,6 +126,7 @@ public class PythonDataProxy extends AbstractDataProxy {
 			Helper.checkNotNull(dataReader, "dataReader");
 
 			List<NameValuePair> query = getQuery();
+			putParameterValuesInRequestBody();
 			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody, query);
 			String responseBody = response.getResponseBody();
 			if (response.getStatusCode() != HttpStatus.SC_OK) {
@@ -139,6 +142,32 @@ public class PythonDataProxy extends AbstractDataProxy {
 			throw e;
 		} catch (Exception e) {
 			throw new RESTDataProxyException(e);
+		}
+	}
+
+	private void putParameterValuesInRequestBody() {
+		try {
+			if (this.parameters != null && this.parameters.size() > 0) {
+				JSONObject jsonBody = new JSONObject(this.requestBody);
+				Iterator keys = this.parameters.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					String val = this.parameters.get(key);
+					if (val.startsWith("'") || val.startsWith("\"")) {
+						val = val.substring(1, val.length() - 1); // remove ''
+					}
+					JSONArray parameters = jsonBody.getJSONArray("parameters");
+					for (int i = 0; i < parameters.length(); i++) {
+						JSONObject param = parameters.getJSONObject(i);
+						if (param.getString("name").equals(key)) {
+							param.put("value", val);
+						}
+					}
+				}
+				this.requestBody = jsonBody.toString();
+			}
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Cannot insert runtime parameter value in request body", t);
 		}
 	}
 
