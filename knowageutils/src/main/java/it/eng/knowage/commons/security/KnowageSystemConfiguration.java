@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 
 public class KnowageSystemConfiguration {
 
-	private static final String KNOWAGE_DEFAULT_CONTEXT = "/knowage";
-	private static final String KNOWAGE_CONTEXT = "KNOWAGE.CONTEXT";
+	private static final String KNOWAGE_CORE_FRONTEND_DEFAULT_CONTEXT = "/knowage";
+	private static final String KNOWAGE_CORE_FRONTEND_CONTEXT = "knowage.core.frontend.context";
 
 	private static transient Logger logger = Logger.getLogger(KnowageSystemConfiguration.class);
 
@@ -23,12 +23,12 @@ public class KnowageSystemConfiguration {
 		try {
 			logger.debug("Trying to recover Knowage context from system properties");
 
-			path = System.getProperty(KNOWAGE_CONTEXT);
+			path = System.getProperty(KNOWAGE_CORE_FRONTEND_CONTEXT);
 			if (path == null) {
-				logger.debug(KNOWAGE_CONTEXT + " not set, using the default value ");
-				path = KNOWAGE_DEFAULT_CONTEXT;
+				logger.debug(KNOWAGE_CORE_FRONTEND_CONTEXT + " not set, using the default value ");
+				path = KNOWAGE_CORE_FRONTEND_DEFAULT_CONTEXT;
 			}
-			logger.debug(KNOWAGE_CONTEXT + ": " + path);
+			logger.debug(KNOWAGE_CORE_FRONTEND_CONTEXT + ": " + path);
 		} catch (Exception e) {
 			logger.error("Error while recovering Knowage context address", e);
 		}
