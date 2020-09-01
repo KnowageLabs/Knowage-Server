@@ -313,34 +313,6 @@ public class PageResource extends AbstractChartEngineResource {
 		return sb.toString();
 	}
 
-//	private String getRequestUrlForJpgExport(HttpServletRequest request) throws UnsupportedEncodingException {
-//		String requestURL = request.getRequestURL().toString();
-//		String hostURL = GeneralUtilities.getSpagoBiHost();
-//		String serviceURL = getServiceHostUrl();
-//		StringBuilder sb = new StringBuilder(requestURL.replace(hostURL, serviceURL));
-//		String sep = "?";
-//		Map<String, String[]> parameterMap = request.getParameterMap();
-//
-//		for (String parameter : parameterMap.keySet()) {
-//			if (!JPG_PARAMETERS.contains(parameter)) {
-//				String[] values = parameterMap.get(parameter);
-//				if (values != null && values.length > 0) {
-//					sb.append(sep);
-//					sb.append(URLEncoder.encode(parameter, "UTF-8"));
-//					sb.append("=");
-//					if (parameter.equals(SpagoBIConstants.SBI_HOST)) {
-//						sb.append(URLEncoder.encode(getServiceHostUrl(), "UTF-8"));
-//					} else {
-//						sb.append(URLEncoder.encode(values[0], "UTF-8"));
-//					}
-//					sep = "&";
-//				}
-//			}
-//		}
-//		sb.append("&export=true");
-//		return sb.toString();
-//	}
-
 	@GET
 	@Path("/executeTest")
 	@Produces(MediaType.APPLICATION_JSON)
