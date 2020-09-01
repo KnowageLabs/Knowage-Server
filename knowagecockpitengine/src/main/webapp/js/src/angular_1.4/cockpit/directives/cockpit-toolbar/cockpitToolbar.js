@@ -259,12 +259,11 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 					SBI_COUNTRY: sbiModule_config.curr_country,
 					SBI_LANGUAGE: sbiModule_config.curr_language,
 					COCKPIT_SELECTIONS: [],
-//					options: options // looks like it's used only in ExcelExporter.getBinaryDataPivot() - WHY?
+//					options: options // needed for CrossTab export
 			}
 			for(i=0; i<cockpitWidgets.length; i++) {
 				var widget = cockpitWidgets[i];
 				requestUrl.widget[i] = widget;
-
 				if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
 					for (var k in widget.content.columnSelectedOfDataset) {
 						if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length) {
@@ -280,24 +279,26 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 					}
 				}
 
-				var dsId = widget.dataset.dsId;
-				var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
-				var aggregation;
-				if (widget.settings) {
-					aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset, widget.settings.sortingColumn,widget.settings.sortingOrder);
-				}
-				else {
-					aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
-				}
-				var loadDomainValues = widget.type == "selector" ? true : false;
-				var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
-				var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
-				var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
-				var paramsToSend = angular.fromJson(parametersString);
 				requestUrl.COCKPIT_SELECTIONS[i] = {};
-				requestUrl.COCKPIT_SELECTIONS[i].aggregations = aggregation;
-				requestUrl.COCKPIT_SELECTIONS[i].parameters = paramsToSend;
-				requestUrl.COCKPIT_SELECTIONS[i].selections = selections;
+				if (widget.dataset && Object.keys(widget.dataset).length != 0) {
+					var dsId = widget.dataset.dsId
+					var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
+					var aggregation;
+					if (widget.settings) {
+						aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset, widget.settings.sortingColumn,widget.settings.sortingOrder);
+					}
+					else {
+						aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
+					}
+					var loadDomainValues = widget.type == "selector" ? true : false;
+					var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
+					var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
+					var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
+					var paramsToSend = angular.fromJson(parametersString);
+					requestUrl.COCKPIT_SELECTIONS[i].aggregations = aggregation;
+					requestUrl.COCKPIT_SELECTIONS[i].parameters = paramsToSend;
+					requestUrl.COCKPIT_SELECTIONS[i].selections = selections;
+				}
 			}
 
 			var config = {"responseType": "arraybuffer"};
@@ -305,6 +306,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 			var documentLabel = requestUrl.DOCUMENT_LABEL;
 			sbiModule_restServices.promisePost('1.0/cockpit/export', 'excel', requestUrl, config)
 			.then(function(response){
+				$mdDialog.hide();
 				var mimeType = response.headers("Content-type");
 				var fileName = 'exported_widget';
 				if (documentLabel != undefined) {
@@ -313,6 +315,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 				$mdToast.hide(exportingToast);
 				sbiModule_download.getBlob(response.data, fileName, mimeType, $scope.excelType);
 			}, function(error){
+				$mdDialog.hide();
 				$mdToast.cancel(exportingToast);
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting.error"), 'Error');
 			});

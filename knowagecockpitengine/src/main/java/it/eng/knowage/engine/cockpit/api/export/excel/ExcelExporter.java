@@ -19,6 +19,7 @@ package it.eng.knowage.engine.cockpit.api.export.excel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -71,6 +72,8 @@ public class ExcelExporter {
 	private final JSONObject body;
 	private Locale locale;
 	private int uniqueId = 0;
+
+	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "python", "r" };
 
 	// Old implementation with parameterMap
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap) {
@@ -218,7 +221,10 @@ public class ExcelExporter {
 			for (int i = 0; i < widgetsJson.length(); i++) {
 				JSONObject currWidget = widgetsJson.getJSONObject(i);
 				String widgetId = currWidget.getString("id");
-				if (currWidget.has("type") && currWidget.getString("type").equalsIgnoreCase("[\"static-pivot-table\"]"))
+				String widgetType = currWidget.getString("type");
+				if (Arrays.asList(WIDGETS_TO_IGNORE).contains(widgetType.toLowerCase()))
+					continue;
+				else if (widgetType.equalsIgnoreCase("static-pivot-table"))
 					exportWidgetCrossTab(templateString, widgetId, wb, null);
 				else
 					exportWidget(templateString, widgetId, wb);
