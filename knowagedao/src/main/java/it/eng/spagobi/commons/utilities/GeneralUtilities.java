@@ -53,6 +53,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -70,6 +71,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	private static transient Logger logger = Logger.getLogger(GeneralUtilities.class);
 
 	private static final String PREVIEW_FILE_STORAGE_DIRECTORY = "preview" + File.separatorChar + "images";
+	static private String backEndExtension = "BackEnd";
 	static DecimalFormat decFormat = new DecimalFormat();
 	static DecimalFormatSymbols decSymbols = decFormat.getDecimalFormatSymbols();
 	public static final int MAX_DEFAULT_FILE_5M_SIZE = 5242880;
@@ -284,19 +286,6 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		}
 		logger.debug("returning " + toReturn);
 		return toReturn;
-	}
-
-	/**
-	 * Gets the spagoBI's dashboards servlet information as a string.
-	 *
-	 * @return A string containing spagoBI's dashboards servlet information
-	 */
-	public static String getSpagoBiDashboardServlet() {
-		return getSpagoBiHost() + getSpagoBiContext() + "/DashboardService";
-	}
-
-	public static String getSpagoBiHost() {
-		return KnowageSystemConfiguration.getSpagoBiHost();
 	}
 
 	/*
@@ -662,24 +651,6 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	public static String getSpagoBiContext() {
-		logger.debug("IN");
-//		String path = "";
-//		try {
-//			logger.debug("Trying to recover spagobi context from ConfigSingleton");
-//			SingletonConfig spagoConfig = SingletonConfig.getInstance();
-//			path = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_CONTEXT");
-//			if (path == null) {
-//				logger.debug("SPAGOBI_CONTEXT not set, using the default value ");
-//				path = "/knowage";
-//			}
-//			logger.debug("SPAGOBI_CONTEXT: " + path);
-//		} catch (Exception e) {
-//			logger.error("Error while recovering SpagoBI context address", e);
-//		}
-//		logger.debug("OUT:" + path);
-//		return path;
-
-		logger.debug("OUT");
 		return KnowageSystemConfiguration.getKnowageContext();
 	}
 
@@ -890,6 +861,49 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
 		}
+	}
+
+	public static String getExternalEngineUrl(Engine eng) {
+		logger.debug("IN");
+		// in case there is a Secondary URL, use it
+		String urlEngine = eng.getSecondaryUrl();
+		if (urlEngine == null || urlEngine.trim().equals("")) {
+			logger.debug("Secondary url is not defined for engine " + eng.getLabel() + "; main url will be used.");
+			// in case there is not a Secondary URL, use the main url
+			urlEngine = eng.getUrl();
+		}
+		logger.debug("Engine url is " + urlEngine);
+		Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
+		urlEngine = resolveRelativeUrls(urlEngine);
+
+		if (!"it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(eng.getDriverName())
+				&& !"it.eng.spagobi.engines.drivers.chart.ChartDriver".equals(eng.getDriverName())
+
+		) {
+			// ADD this extension because this is a BackEnd engine invocation
+			urlEngine = urlEngine + backEndExtension;
+		}
+		logger.debug("OUT: returning " + urlEngine);
+		return urlEngine;
+	}
+
+	private static String resolveRelativeUrls(String url) {
+		logger.debug("IN: url = " + url);
+		if (url.startsWith("/")) {
+			logger.debug("Url is relative");
+			String domain = getServiceHostUrl();
+			logger.debug("SpagoBI domain is " + domain);
+			url = domain + url;
+			logger.debug("Absolute url is " + url);
+		}
+		logger.debug("OUT: returning " + url);
+		return url;
+	}
+
+	public static String getServiceHostUrl() {
+		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
+		return serviceURL;
 	}
 
 }

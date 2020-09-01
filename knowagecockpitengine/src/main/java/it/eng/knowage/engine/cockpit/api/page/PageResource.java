@@ -42,15 +42,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
-import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
 import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
 import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -234,12 +237,18 @@ public class PageResource extends AbstractCockpitEngineResource {
 	}
 
 	private String getRequestUrlForPdfExport(HttpServletRequest request) throws UnsupportedEncodingException {
-		String requestURL = request.getRequestURL().toString();
-		// ALBNALE202008 - CAPIRE
-		String hostURL = KnowageSystemConfiguration.getSpagoBiHost();
-		String serviceURL = getServiceHostUrl();
 
-		StringBuilder sb = new StringBuilder(requestURL.replace(hostURL, serviceURL));
+		String documentLabel = request.getParameter("DOCUMENT_LABEL");
+		BIObject biObject = null;
+		try {
+			biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(documentLabel);
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Error retrieving document with label " + documentLabel, e);
+		}
+		Engine eng = biObject.getEngine();
+		String externalUrl = GeneralUtilities.getExternalEngineUrl(eng);
+
+		StringBuilder sb = new StringBuilder(externalUrl);
 		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		for (String parameter : parameterMap.keySet()) {
@@ -249,11 +258,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 					sb.append(sep);
 					sb.append(URLEncoder.encode(parameter, "UTF-8"));
 					sb.append("=");
-					if (parameter.equals(SpagoBIConstants.SBI_HOST)) {
-						sb.append(URLEncoder.encode(getServiceHostUrl(), "UTF-8"));
-					} else {
-						sb.append(URLEncoder.encode(values[0], "UTF-8"));
-					}
+					sb.append(URLEncoder.encode(values[0], "UTF-8"));
 					sep = "&";
 				}
 			}

@@ -51,6 +51,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.InternalEngineIFace;
@@ -367,8 +368,21 @@ public class ExecutionProxy {
 
 	private String resolveRelativeUrls(String url) {
 		logger.debug("IN: url = " + url);
+		if (url.startsWith("/")) {
+			logger.debug("Url is relative");
+			String domain = getServiceHostUrl();
+			logger.debug("SpagoBI domain is " + domain);
+			url = domain + url;
+			logger.debug("Absolute url is " + url);
+		}
 		logger.debug("OUT: returning " + url);
 		return url;
+	}
+
+	public String getServiceHostUrl() {
+		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
+		return serviceURL;
 	}
 
 	/**
