@@ -732,18 +732,21 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	$scope.basicViewColumns = [
 								{
 	                            	"label":$scope.translate.load("kn.qbe.custom.table.entity"),
-	                            	"name":"entity"
+	                            	"name":"entity",
+	                            	"size": "10%"
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.general.field"),
-	                            	"name":"name"
+	                            	"name":"name",
+	                            	"size": "33%"
 	                        	},{
 	                        		"label":$scope.translate.load("kn.qbe.general.alias"),
 	                            	"name":"alias",
 	                            	hideTooltip:true,
 	                            	transformer: function() {
 	                   	    		 return '<md-input-container class="md-block" style="margin:0"><input  ng-model="row.alias" ng-click="scopeFunctions.setAlias(row)"></md-input-container>';
-	                   	    	 }
+	                   	    	 	},
+	                            	"size": "16%"
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.group"),
@@ -751,7 +754,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                    			hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-checkbox  ng-model="row.group"  ng-change="scopeFunctions.groupChanged(row)" aria-label="Checkbox"></md-checkbox>';
-	                            	}
+	                            	},
+	                            	"size": "8%"
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.selectgridpanel.headers.order"),
@@ -759,7 +763,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-select  ng-model=row.ordering class="noMargin" ><md-option ng-repeat="col in scopeFunctions.orderingValues" value="{{col}}">{{col}}</md-option></md-select>';
-	                            	}
+	                            	},
+	                            	"size": "9%"
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.aggregation"),
@@ -767,7 +772,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-select ng-disabled="row.group" ng-model=row.funct class="noMargin" ><md-option ng-repeat="col in scopeFunctions.filterAggreagtionFunctions(row)" value="{{col}}">{{col}}</md-option></md-select>';
-	                            	}
+	                            	},
+	                            	"size": "9%"
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.show.field"),
@@ -775,7 +781,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                    			hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-checkbox  ng-model="row.visible"  aria-label="Checkbox"></md-checkbox>';
-	                            	}
+	                            	},
+	                            	"size": "9%"
 	                        	}
 	]
 
