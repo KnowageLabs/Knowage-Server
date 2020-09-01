@@ -254,7 +254,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		String adapUrlStr = "";
 		try {
 			adapUrlStr = getSpagoAdapterHttpUrl();
-			path = getSpagoBiContext();
+			path = KnowageSystemConfiguration.getKnowageContext();
 			if (isSSOEnabled()) {
 				url = path + adapUrlStr + "?NEW_SESSION=TRUE";
 			} else {
@@ -648,10 +648,6 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		}
 		logger.debug("OUT: max size = " + toReturn);
 		return toReturn;
-	}
-
-	public static String getSpagoBiContext() {
-		return KnowageSystemConfiguration.getKnowageContext();
 	}
 
 	public static String getSessionExpiredURL() {
