@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,16 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.qbe.datasource.hibernate;
-
-import it.eng.qbe.datasource.IPersistenceManager;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -46,17 +41,22 @@ import org.hibernate.type.ManyToOneType;
 import org.hibernate.type.Type;
 import org.json.JSONObject;
 
+import it.eng.qbe.datasource.IPersistenceManager;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 public class HibernatePersistenceManager implements IPersistenceManager {
-	
+
 	public HibernatePersistenceManager(HibernateDataSource dataSource) {
 		super();
 		this.dataSource = dataSource;
 	}
 
 	private HibernateDataSource dataSource;
-	
+
 	public static transient Logger logger = Logger.getLogger(HibernatePersistenceManager.class);
-	
+
 	public HibernateDataSource getDataSource() {
 		return dataSource;
 	}
@@ -65,11 +65,9 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 		this.dataSource = dataSource;
 	}
 
-	
-	
-	public void updateRecord(JSONObject aRecord,
-			RegistryConfiguration registryConf) {
-		
+	@Override
+	public void updateRecord(JSONObject aRecord, RegistryConfiguration registryConf) {
+
 		SessionFactory sf = dataSource.getHibernateSessionFactory();
 		Configuration cfg = dataSource.getHibernateConfiguration();
 		Session aSession = null;
@@ -84,10 +82,9 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 			Object key = aRecord.get(keyName);
 			Property propertyId = classMapping.getProperty(keyName);
 
-			//casts the id to the appropriate java type
+			// casts the id to the appropriate java type
 			Object keyConverted = this.convertValue(key, propertyId);
-			
-			
+
 			Object obj = aSession.load(entityName, (Serializable) keyConverted);
 			Iterator it = aRecord.keys();
 			while (it.hasNext()) {
@@ -99,10 +96,10 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 				if (c.getSubEntity() != null) {
 					// case of foreign key
 					Property property = classMapping.getProperty(c.getSubEntity());
-					Type propertyType = property.getType();	
-					if (propertyType instanceof ManyToOneType) { 
-				 		ManyToOneType manyToOnePropertyType = (ManyToOneType) propertyType; 
-				 		String entityType = manyToOnePropertyType.getAssociatedEntityName();
+					Type propertyType = property.getType();
+					if (propertyType instanceof ManyToOneType) {
+						ManyToOneType manyToOnePropertyType = (ManyToOneType) propertyType;
+						String entityType = manyToOnePropertyType.getAssociatedEntityName();
 						Object referenced = getReferencedObject(aSession, entityType, c.getField(), aRecord.get(aKey));
 						Setter setter = property.getSetter(obj.getClass());
 						setter.getMethod().invoke(obj, referenced);
@@ -114,7 +111,7 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 					Property property = classMapping.getProperty(aKey);
 					Setter setter = property.getSetter(obj.getClass());
 					Object valueObj = aRecord.get(aKey);
-					if(valueObj != null && !valueObj.equals("")){
+					if (valueObj != null && !valueObj.equals("")) {
 						Object valueConverted = this.convertValue(valueObj, property);
 						setter.getMethod().invoke(obj, valueConverted);
 					}
@@ -124,16 +121,17 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 			}
 			aSession.saveOrUpdate(obj);
 			tx.commit();
-			
+
 		} catch (Exception e) {
 
-			if ( tx != null ) {
+			if (tx != null) {
 				tx.rollback();
 			}
 			throw new RuntimeException(e);
 		} finally {
-			if ( aSession != null ) {
-				if ( aSession.isOpen() ) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 	}
@@ -146,10 +144,10 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 		Object toReturn = null;
 		Type type = property.getType();
 		Class clazz = type.getReturnedClass();
-		
-		if( Number.class.isAssignableFrom(clazz) ) {
-			//BigInteger, Integer, Long, Short, Byte
-			if(value.equals("NaN") || value.equals("null")){
+
+		if (Number.class.isAssignableFrom(clazz)) {
+			// BigInteger, Integer, Long, Short, Byte
+			if (value.equals("NaN") || value.equals("null")) {
 				toReturn = null;
 				return toReturn;
 			}
@@ -168,9 +166,9 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 			} else {
 				toReturn = new Float(value);
 			}
-		} else if( String.class.isAssignableFrom(clazz) ) {
+		} else if (String.class.isAssignableFrom(clazz)) {
 			toReturn = value;
-		} else if( Timestamp.class.isAssignableFrom(clazz) ) {
+		} else if (Timestamp.class.isAssignableFrom(clazz)) {
 			// TODO manage dates
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 			try {
@@ -179,27 +177,26 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 				logger.error("Unparsable timestamp", e);
 			}
 
-		} else if( Date.class.isAssignableFrom(clazz) ) {
+		} else if (Date.class.isAssignableFrom(clazz)) {
 			// TODO manage dates
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			
+
 			try {
 				toReturn = sdf.parse(value);
 			} catch (ParseException e) {
 				logger.error("Unparsable date", e);
 			}
 
-		} else if( Boolean.class.isAssignableFrom(clazz) ) {
+		} else if (Boolean.class.isAssignableFrom(clazz)) {
 			toReturn = Boolean.parseBoolean(value);
 		} else {
 			toReturn = value;
 		}
-		
+
 		return toReturn;
 	}
 
-	private Object getReferencedObject(Session aSession, String entityType,
-			String field, Object value) {
+	private Object getReferencedObject(Session aSession, String entityType, String field, Object value) {
 		Query query = aSession.createQuery(" from " + entityType + " where " + field + " = ?");
 		query.setParameter(0, value);
 		List result = query.list();
@@ -212,20 +209,20 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 		return result.get(0);
 	}
 
-	public Integer insertRecord(JSONObject aRecord,
-			RegistryConfiguration registryConf, boolean autoLoadPK, String tableForPkMax, String columnForPkMax) {
+	@Override
+	public Integer insertRecord(JSONObject aRecord, RegistryConfiguration registryConf, boolean autoLoadPK, String tableForPkMax, String columnForPkMax) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void deleteRecord(JSONObject aRecord,
-			RegistryConfiguration registryConf) {
+	@Override
+	public void deleteRecord(JSONObject aRecord, RegistryConfiguration registryConf) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public String getKeyColumn(JSONObject aRecord,
-			RegistryConfiguration registryConf) {
+	@Override
+	public String getKeyColumn(RegistryConfiguration registryConf) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -75,16 +75,14 @@ public class JPAPersistenceManager implements IPersistenceManager {
 	}
 
 	@Override
-	public String getKeyColumn(JSONObject aRecord, RegistryConfiguration registryConf) {
+	public String getKeyColumn(RegistryConfiguration registryConf) {
 		String toReturn = null;
 
 		logger.debug("IN");
 		EntityManager entityManager = null;
 		try {
-			Assert.assertNotNull(aRecord, "Input parameter [record] cannot be null");
-			Assert.assertNotNull(aRecord, "Input parameter [registryConf] cannot be null");
+			Assert.assertNotNull(registryConf, "Input parameter [registryConf] cannot be null");
 
-			logger.debug("New record: " + aRecord.toString(3));
 			logger.debug("Target entity: " + registryConf.getEntity());
 
 			entityManager = dataSource.getEntityManager();
@@ -230,7 +228,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				Integer pkValue = null;
 				// check if an alternative table and column has been specified
 				// to retrieve PK
-				String keyColumn = getKeyColumn(aRecord, registryConf);
+				String keyColumn = getKeyColumn(registryConf);
 				if (tableForPkMax != null && columnForPkMax != null) {
 					logger.debug("Retrieve PK as max+1 from table: " + tableForPkMax + " / column: " + columnForPkMax);
 					pkValue = getPKValueFromTemplateTable(tableForPkMax, columnForPkMax, entityManager);
