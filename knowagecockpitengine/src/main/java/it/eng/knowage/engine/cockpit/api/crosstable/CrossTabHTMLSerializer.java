@@ -16,7 +16,6 @@
  */
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -102,9 +101,9 @@ public class CrossTabHTMLSerializer {
 		this.measuresSortKeysMap = measuresSortKeysMap;
 		this.locale = locale;
 		this.myGlobalId = myGlobalId;
-		if(variables == null) { 
+		if (variables == null) {
 			this.variables = new JSONObject();
-		}else {
+		} else {
 			this.variables = variables;
 		}
 	}
@@ -195,10 +194,7 @@ public class CrossTabHTMLSerializer {
 			return null;
 		}
 
-		return StringEscapeUtils.escapeHtml(text)
-				.replaceAll("'", "&apos;")
-				.replaceAll("\\\\", "&#92;")
-				.replaceAll("/", "&#47;");
+		return StringEscapeUtils.escapeHtml(text).replaceAll("'", "&apos;").replaceAll("\\\\", "&#92;").replaceAll("/", "&#47;");
 	}
 
 	private SourceBean serializeRowsMembers(CrossTab crossTab) throws SourceBeanException, JSONException {
@@ -349,8 +345,7 @@ public class CrossTabHTMLSerializer {
 						JSONObject hierarchyJson = new JSONObject(getHierarchicalAttributes(crossTab, aNode.getParentNode(), false));
 						String columnName = crossTab.getColumnNameFromAlias(crossTab.getCrosstabDefinition().getRows().get(i).getAlias());
 						aButton.setAttribute(NG_CLICK_ATTRIBUTE,
-								"collapse($event,'" + escapeAll(columnName) + "','" + escapeAll(text)
-										+ "'," + hierarchyJson + ")");
+								"collapse($event,'" + escapeAll(columnName) + "','" + escapeAll(text) + "'," + hierarchyJson + ")");
 						aColumn.setAttribute(aButton);
 					}
 				}
@@ -445,7 +440,7 @@ public class CrossTabHTMLSerializer {
 		JSONObject crossConfig = crossTab.getCrosstabDefinition().getConfig();
 		String labelTotal = (!crossConfig.optString("columntotalLabel").equals("")) ? crossConfig.optString("columntotalLabel") : CrossTab.TOTAL;
 		String labelSubTotal = (!crossConfig.optString("columnsubtotalLabel").equals("")) ? crossConfig.optString("columnsubtotalLabel") : CrossTab.SUBTOTAL;
-		
+
 		int levels = crossTab.getColumnsRoot().getDistanceFromLeaves();
 		if (levels == 0) {
 			// nothing on columns
@@ -479,20 +474,20 @@ public class CrossTabHTMLSerializer {
 					String text = null;
 					String textVariable = null;
 					String style = "";
-					
+
 					if (crossTab.getCrosstabDefinition().isMeasuresOnColumns() && i + 1 == levels) {
 						String measureAlias = aNode.getDescription();
 						text = MeasureScaleFactorOption.getScaledName(measureAlias, crossTab.getMeasureScaleFactor(measureAlias), this.locale);
 						// check header visibility for measures
 						showHeader = isMeasureHeaderVisible(crossTab);
-						if( this.variables != null) {
+						if (this.variables != null) {
 							List<Measure> measures = crossTab.getCrosstabDefinition().getMeasures();
 							for (int c = 0; c < measures.size(); c++) {
 								Measure col = measures.get(c);
 								if (col.getAlias().equals(text)) {
 									textVariable = col.getVariable();
 								}
-							
+
 							}
 						}
 					} else {
@@ -525,7 +520,7 @@ public class CrossTabHTMLSerializer {
 							}
 						}
 					}
-					
+
 					if (isLevel) {
 						int idxEl = i / 2; // just for columns headers divide the position of cell in couple (name + value)
 						aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + idxEl + "','1'," + myGlobalId + ")");
@@ -582,31 +577,32 @@ public class CrossTabHTMLSerializer {
 									aColumn.setAttribute(STYLE_ATTRIBUTE, measureStyle);
 									// ONLY in this case (unique measure without header) add a div to force width if it's defined
 									SourceBean divEl = new SourceBean(COLUMN_DIV);
-									if(StringUtils.isNotBlank(textVariable)) {
-										if(this.variables.has(textVariable)) {
+									if (StringUtils.isNotBlank(textVariable)) {
+										if (this.variables.has(textVariable)) {
 											divEl.setCharacters(this.variables.getString(textVariable));
 										}
-									}else {
+									} else {
 										divEl.setCharacters(text);
 									}
 									divEl.setAttribute(TITLE_ATTRIBUTE, text);
 									divEl.setAttribute(STYLE_ATTRIBUTE, measureStyle);
 									aColumn.setAttribute(divEl);
 								} else {
-									if(StringUtils.isNotBlank(textVariable)) {
-										if(this.variables.has(textVariable)) {
+									if (StringUtils.isNotBlank(textVariable)) {
+										if (this.variables.has(textVariable)) {
 											aColumn.setCharacters(this.variables.getString(textVariable));
 										}
-									}else {
+									} else {
 										aColumn.setCharacters(text);
 									}
 								}
-							} {
-								if(StringUtils.isNotBlank(textVariable)) {
-									if(this.variables.has(textVariable)) {
+							}
+							{
+								if (StringUtils.isNotBlank(textVariable)) {
+									if (this.variables.has(textVariable)) {
 										aColumn.setCharacters(this.variables.getString(textVariable));
 									}
-								}else {
+								} else {
 									aColumn.setCharacters(text);
 								}
 							}
@@ -810,7 +806,7 @@ public class CrossTabHTMLSerializer {
 				boolean showHeader = true;
 				aMeasureHeader.setAttribute(CLASS_ATTRIBUTE, MEASURES_CLASS);
 				aMeasureHeader.setCharacters(measureInfo.getName());
-				
+
 				measureHeaders.add(aMeasureHeader);
 			}
 		}
@@ -873,10 +869,10 @@ public class CrossTabHTMLSerializer {
 
 					Double value = (!text.equals("")) ? Double.parseDouble(text) : null;
 					JSONObject threshold = getThreshold(value, measureConfig.optJSONArray("ranges"));
-					
+
 					if (cellType.getValue().equalsIgnoreCase("data") && threshold.has("icon")) {
 						// check indicator configuration (optional)
-						//JSONObject indicatorJ = measureConfig.getJSONObject("scopeFunc");
+						// JSONObject indicatorJ = measureConfig.getJSONObject("scopeFunc");
 //						JSONArray indicatorConditionsJ = measureConfig.getJSONArray("ranges");
 //						if (StringUtils.isNotEmpty(text)) {
 //							for (int c = 0; c < indicatorConditionsJ.length(); c++) {
@@ -895,7 +891,6 @@ public class CrossTabHTMLSerializer {
 					internalserializeData2.stop();
 
 					classType = cellType.getValue();
-					
 
 					internalserializeData3 = MonitorFactory.start("CockpitEngine.serializeData.setStyle");
 					// 2. style and alignment management
@@ -914,7 +909,7 @@ public class CrossTabHTMLSerializer {
 							dataStyle += "background-color:" + threshold.optString("background-color", "white") + ";";
 							dataStyle += "color:" + threshold.optString("color", "black") + ";";
 							// bgColorApplied = true;
-							
+
 						}
 						// if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
 						if (!dataStyle.equals(DEFAULT_STYLE)) {
@@ -1116,16 +1111,19 @@ public class CrossTabHTMLSerializer {
 
 	private JSONObject getThreshold(Double value, JSONArray colorThrJ) throws JSONException {
 		JSONObject toReturn = new JSONObject();
-		if (value == null) return toReturn;
+		if (value == null || colorThrJ == null)
+			return toReturn;
 		boolean isConditionVerified = false;
 
 		for (int c = 0; c < colorThrJ.length(); c++) {
 			JSONObject thrCond = (JSONObject) colorThrJ.get(c);
-			if(!thrCond.has("value")) { continue; }
+			if (!thrCond.has("value")) {
+				continue;
+			}
 			String condition = thrCond.getString("operator");
 			Double conditionValue = thrCond.getDouble("value");
 			isConditionVerified = verifyThresholdCondition(condition, conditionValue, value);
-			
+
 			if (isConditionVerified)
 				return thrCond;
 		}
@@ -1469,11 +1467,11 @@ public class CrossTabHTMLSerializer {
 		return table;
 	}
 
-	private SourceBean addSortArrow(SourceBean aRow, String alias, String parentStyle, String divStyle, Integer direction, boolean isMeasureHeader, String variable)
-			throws SourceBeanException, JSONException {
+	private SourceBean addSortArrow(SourceBean aRow, String alias, String parentStyle, String divStyle, Integer direction, boolean isMeasureHeader,
+			String variable) throws SourceBeanException, JSONException {
 
 		String headerText = alias;
-		if(this.variables.has(variable)) {
+		if (this.variables.has(variable)) {
 			headerText = this.variables.getString(variable);
 		}
 		SourceBean div1 = new SourceBean(COLUMN_DIV);
