@@ -10,7 +10,7 @@
    </md-toolbar>
    <md-content flex ng-cloak layout="column" class="registryFilters">
       <!--  div ng-if="configuration.filters" class="registryFilters"-->
-      <md-card ng-if="configuration.filters">
+      <md-card ng-if="configuration.filters && configuration.filters.size > 0">
          <md-subheader>Filters</md-subheader>
          <div layout="row" layout-align="start center" style="padding:0 8px">
             <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in checkIfFilterColumnExists()" style="min-width:200px">
