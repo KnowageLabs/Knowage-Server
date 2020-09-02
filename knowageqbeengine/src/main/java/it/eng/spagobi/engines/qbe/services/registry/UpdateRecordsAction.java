@@ -137,7 +137,7 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 
 			// if id field is null have to inserts
 			IDataSource genericDatasource = qbeEngineInstance.getDataSource();
-			keyColumn = genericDatasource.getPersistenceManager().getKeyColumn(aRecord, registryConf);
+			keyColumn = genericDatasource.getPersistenceManager().getKeyColumn(registryConf);
 
 			Object keyValueObject = null;
 			if (aRecord.has(keyColumn))

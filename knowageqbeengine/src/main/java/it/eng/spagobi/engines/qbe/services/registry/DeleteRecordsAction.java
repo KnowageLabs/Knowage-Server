@@ -147,7 +147,7 @@ public class DeleteRecordsAction extends AbstractQbeEngineAction {
 
 			// if id field is null have to inserts
 			IDataSource genericDatasource = qbeEngineInstance.getDataSource();
-			keyColumn = genericDatasource.getPersistenceManager().getKeyColumn(aRecord, registryConf);
+			keyColumn = genericDatasource.getPersistenceManager().getKeyColumn(registryConf);
 
 			Object keyValueObject = aRecord.get(keyColumn);
 			logger.debug(keyColumn + " to delete is " + keyValueObject);

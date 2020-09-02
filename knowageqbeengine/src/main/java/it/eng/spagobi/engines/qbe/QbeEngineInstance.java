@@ -18,6 +18,7 @@
 package it.eng.spagobi.engines.qbe;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -35,8 +36,10 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
+import it.eng.spagobi.engines.qbe.template.QbeTemplateValidationException;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
@@ -133,27 +136,27 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 				dataSource.setDataMartModelAccessModality(template.getDatamartModelAccessModality());
 			}
 
-			if (template.getProperty("query") != null) {
-				loadQueryDefinition((JSONObject) template.getProperty("query"));
-			}
-
-			if (template.getProperty("formJSONTemplate") != null) {
-				loadFormDefinition((JSONObject) template.getProperty("formJSONTemplate"));
-			}
-
-			if (template.getProperty("formValuesJSONTemplate") != null) {
-				loadFormValuesDefinition((JSONObject) template.getProperty("formValuesJSONTemplate"));
-			}
-			//
-			// if( template.getProperty("worksheetJSONTemplate") != null ) {
-			// loadWorksheetDefinition((JSONObject) template.getProperty("worksheetJSONTemplate"));
-			// }
-
+			validateTemplate(template, dataSource);
 		}
 
 		validate();
 
 		logger.debug("OUT");
+	}
+
+	private void validateTemplate(QbeTemplate template, IDataSource dataSource2) {
+
+		String keyColumn = dataSource2.getPersistenceManager().getKeyColumn(getRegistryConfiguration());
+
+		List<Column> columns = getRegistryConfiguration().getColumns();
+		for (Column column : columns) {
+			if (keyColumn.equals(column.getField()) && column.isEditable()) {
+				throw new QbeTemplateValidationException(String.format(
+						"Primary Key Column [%s] cannot be editable. Please modify the template adding editable=\"false\" to [%s] column configuration.",
+						keyColumn, keyColumn));
+			}
+		}
+
 	}
 
 	// private void loadWorksheetDefinition(JSONObject worksheetDefinition) {
