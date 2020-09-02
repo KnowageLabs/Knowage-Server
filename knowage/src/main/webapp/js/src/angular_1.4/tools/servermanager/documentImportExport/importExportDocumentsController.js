@@ -182,7 +182,8 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			exportCrossNav : true,
 			exportBirt : false,
 			exportScheduler : false,
-			exportSelFunc: false
+			exportSelFunc: false,
+			exportRelatedDocs: false
 	};
 	
 	$scope.filterByStatus = [];
@@ -347,7 +348,8 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 				"EXPORT_CROSSNAV":true,
 				"EXPORT_BIRT": $scope.checkboxs.exportBirt,
 				"EXPORT_SCHEDULER": $scope.checkboxs.exportScheduler,
-				"EXPORT_SELECTED_FUNCTIONALITY": $scope.checkboxs.exportSelFunc
+				"EXPORT_SELECTED_FUNCTIONALITY": $scope.checkboxs.exportSelFunc,
+				"EXPORT_RELATED_DOCS": $scope.checkboxs.exportRelatedDocs,
 		};
 
 		goingThroughTree($scope.folders);

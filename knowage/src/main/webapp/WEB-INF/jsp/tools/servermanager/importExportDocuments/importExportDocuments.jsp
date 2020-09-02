@@ -143,10 +143,11 @@
 	                                       ng-model="checkboxs.exportScheduler" aria-label="Export sched">{{translate.load("SBISet.importexport.expScheduler","component_impexp_messages");}}</md-checkbox>
 	                                    <md-checkbox class="little-check" 
 	                                       ng-model="checkboxs.exportSelFunc" aria-label="Export in sel fun">{{translate.load("SBISet.importexport.expSelFun", "component_impexp_messages")}}</md-checkbox>
+	                                    <md-checkbox class="little-check"
+	                                       ng-model="checkboxs.exportRelatedDocs" aria-label="Export related documents">{{translate.load("SBISet.importexport.exportRelatedDocs","component_impexp_messages");}}</md-checkbox>	                                       
                                  	</div>
                                  </md-card>
                               </div>
-                              
                            </div>
                         </md-content>
                      </md-card>
