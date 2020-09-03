@@ -607,7 +607,9 @@
 							}
 							return temp;
 						}
-
+						if(sbiModule_config.contextName != "/knowage") {
+							sbiModule_restServices.restToRootProject();
+						}
 						sbiModule_restServices.post($scope.executionParameters,$scope.parametersPath, objPost)
 						  .then(function(response) {
 								if(response.data.errors && response.data.errors[0]){
@@ -824,10 +826,13 @@
 			$scope.execProperties.returnFromVisualViewpoint.status = false;
 
 			if($scope.execProperties.dsTypeCd){
-				$scope.execProperties.executionInstance.OBJECT_NAME = $scope.execProperties.qbeDatamarts
-			}else{
-			$scope.execProperties.executionInstance.OBJECT_NAME = $scope.execProperties.name;
+				$scope.execProperties.executionInstance.OBJECT_NAME = $scope.execProperties.qbeDatamarts;
+			} else if ($scope.execProperties.type == "SbiQbeDataSet") {
+				$scope.execProperties.executionInstance.OBJECT_NAME = $scope.execProperties.configuration.qbeDatamarts;
+			} else {
+				$scope.execProperties.executionInstance.OBJECT_NAME = $scope.execProperties.name;
 			}
+
 			$scope.execProperties.selectedRole.name = sbiModule_user.roles[0];
 
 			if($scope.execProperties.parametersData == null){

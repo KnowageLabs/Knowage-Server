@@ -271,6 +271,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	$scope.cockpitModule_properties = cockpitModule_properties;
 
+	$scope.parametersMessage = false;
+
 	$scope.enter = function(e){
 		if($scope.widgetExitTimeout) $timeout.cancel($scope.widgetExitTimeout);
 		$timeout(function(){
@@ -388,7 +390,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			return cockpitModule_template.configuration.showScreenshot;
 		}else return $scope.ngModel.style.showScreenshot;
 	}
-	
+
 	$scope.showExcelExportButton = function(){
 		if(typeof($scope.ngModel.style.showExcelExport) == 'undefined' ) {
 			return cockpitModule_template.configuration.showExcelExport;
@@ -430,6 +432,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			}
 			break;
 		case "PARAMETER_CHANGE":
+			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue || cockpitModule_datasetServices.driverHasValue);
 			var ds=$scope.getDataset();
 			if(ds!=undefined && config.dsList.hasOwnProperty(ds.label)){
 				$scope.refreshWidget(undefined,"parameter_change");
@@ -447,6 +450,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 		switch(eventType){
 		case "REFRESH"  :
+			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue || cockpitModule_datasetServices.driverHasValue);
 		    var dirtyIndex = $scope.cockpitModule_properties.DIRTY_WIDGETS.indexOf($scope.ngModel.id);
 		    if($scope.$parent.$parent.sheet.index == $scope.cockpitModule_properties.CURRENT_SHEET){
                 if(dirtyIndex > -1){
@@ -478,6 +482,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
             break;
 		case "INIT" :
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
+			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue || cockpitModule_datasetServices.driverHasValue);
 			break;
 		case "RESIZE" :
 			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map" || $scope.ngModel.type=="static-pivot-table") {
@@ -812,13 +817,13 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		});
 		return JSON.stringify(JSON.parse(jsonToReplace));
 	}
-	
+
 	function nameFromAlias(alias){
 		for(var k in $scope.ngModel.content.columnSelectedOfDataset){
 			if($scope.ngModel.content.columnSelectedOfDataset[k].aliasToShow == alias) return $scope.ngModel.content.columnSelectedOfDataset[k].name;
 		}
 	}
-	
+
 	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic,directInteraction){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
@@ -836,41 +841,41 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		var crossSettings;
 		if($scope.ngModel.cross != undefined  && $scope.ngModel.cross.cross != undefined) crossSettings = angular.copy($scope.ngModel.cross.cross);
 		else if($scope.ngModel.cross != undefined) crossSettings = angular.copy($scope.ngModel.cross);
-		
+
 		var linkSettings;
 		if($scope.ngModel.cross != undefined  && $scope.ngModel.cross.link != undefined) linkSettings = angular.copy($scope.ngModel.cross.link);
 		if($scope.ngModel.content && $scope.ngModel.content.link) linkSettings = angular.copy($scope.ngModel.content.link);
 
 		if(!directInteraction || directInteraction == 'cross'){
 			if (previewSettings && previewSettings.enable) {
-				if(previewSettings.previewType == 'allRow' || 
-				(previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName) || 
+				if(previewSettings.previewType == 'allRow' ||
+				(previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName) ||
 				(previewSettings.previewType == 'icon' && (!columnName || columnName == ""))){
 					$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
-	
+
 					var previewDataset = cockpitModule_datasetServices.getDatasetById(previewSettings.dataset);
-	
+
 					var config = {
 						datasetLabel: previewDataset.label
 					};
-	
+
 					if (previewDataset.parameters && previewDataset.parameters.length > 0)
 						config.parameters = $scope.checkPreviewParameters(previewSettings,previewDataset, columnName, modalColumn, row,columnValue);
-	
+
 					if(!previewSettings.background){
 						//showing exporters
 						config.options = {
 								exports: ['CSV', 'XLSX']
 						};
-	
+
 						$scope.iframeSrcUrl += '?' + $httpParamSerializer(config);
-	
+
 							$mdDialog.show({
 								parent: angular.element(document.body),
 								templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
 								controller: function(scope) {
 									scope.previewUrl = $scope.iframeSrcUrl;
-	
+
 									scope.closePreview = function() {
 										$mdDialog.hide();
 									}
@@ -883,7 +888,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						if (config.parameters != null && typeof config.parameters != 'undefined') {
 							data.parameters = config.parameters;
 						};
-	
+
 						$http.post(sbiModule_config.host + sbiModule_config.externalBasePath + PREVIEWBACKGROUND + id.dsId + '/csv', data)
 						.then(
 							function(response){
@@ -894,9 +899,9 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 					}
 					return;
 				}
-	
+
 			}else if(crossSettings && crossSettings.enable){
-	
+
 				// enter cross navigation mode
 				var doCross = false;
 				var nameToCheckForCross = columnName;
@@ -911,12 +916,12 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						}
 					}
 				}
-	
+
 				if(crossSettings.crossType == "allRow" || crossSettings.crossType == "icon"){
 					// case all columns are enabled for cross, get value for cross
 					// column (or alias if present)
 					var crossColumnOrAlias = crossSettings.column;
-	
+
 					for(var colIndex in model.content.columnSelectedOfDataset){
 						var col = model.content.columnSelectedOfDataset[colIndex];
 						if(col.aliasToShow != undefined && col.name == crossSettings.column){
@@ -936,10 +941,10 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						doCross = true;
 					}
 				}
-	
+
 				if(doCross === true){
 					// get value to pass to cross navigation
-					
+
 					if((crossSettings.crossType == "icon" || crossSettings.crossType == "allRow") && row){
 						if(row[crossColumnOrAlias]){
 							columnValue = row[crossColumnOrAlias];
@@ -954,12 +959,12 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 					if(crossSettings.outputParameter){
 						outputParameter[crossSettings.outputParameter] = columnValue;
 					}
-	
-	
+
+
 					// parse output parameters if enabled
 					var otherOutputParameters = [];
 					var passedOutputParametersList = crossSettings.outputParametersList;
-	
+
 					// get Aliases for column
 					var columnAliasesMap = {};
 					if(model.content.columnSelectedOfDataset){
@@ -974,12 +979,12 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 							}
 						}
 					}
-	
+
 					for(var par in passedOutputParametersList){
 						var content = passedOutputParametersList[par];
-	
+
 						if(content.enabled == true){
-	
+
 							if(content.type == 'static'){
 								var objToAdd = {};
 								objToAdd[par] = content.value;
@@ -1028,12 +1033,12 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 										var objToAdd = {};
 										objToAdd[par] = '';
 										otherOutputParameters.push(objToAdd);
-									} 
+									}
 								}
 							}
 						}
 					}
-	
+
 					// if destination document is specified don't ask
 					if(crossSettings.crossName != undefined){
 						parent.execExternalCrossNavigation(outputParameter,{},crossSettings.crossName,null,otherOutputParameters);
@@ -1094,16 +1099,16 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				}
 			}
 		}
-		
+
 		if(!directInteraction || directInteraction == 'selection'){
 			if(dataset && columnName){
-	
+
 				if(modalColumn!=undefined && modalColumn!= "" && modalValue!=undefined && modalValue!= "")
 				{
 					columnValue = modalValue;
 					columnName = modalColumn;
 				}
-	
+
 				// check if all associated data
 				var dsLabel = dataset.label;
 				var originalColumnName;
@@ -1117,7 +1122,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 								break;
 				        	}
 				        }
-	
+
 						if(originalColumnName==undefined || originalColumnName==""){
 							for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
 								if($scope.ngModel.content.columnSelectedOfDataset[i].alias && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
@@ -1127,7 +1132,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 							}
 						}
 					}
-	
+
 					if ($scope.ngModel.content.crosstabDefinition){
 						//check on pivot table structure: rows and columns definition
 						if (originalColumnName == undefined || originalColumnName == ""){
@@ -1149,12 +1154,12 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 							}
 						}
 					}
-	
+
 				  //at last sets the input columnName like the original name
 					if (originalColumnName == undefined || originalColumnName == ""){
 						originalColumnName = columnName;
 					}
-	
+
 				}else{
 					//multiple selection: only from pivot table widget (by measure selection)
 					originalColumnName = [];
@@ -1183,7 +1188,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 								}
 							}
 						}
-	
+
 	//					//at last sets the input columnName like the original name
 						if (!foundInColumns && !foundInRows){
 							originalColumnName.push(singleColumnName);
@@ -1193,12 +1198,12 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			    cockpitModule_widgetSelection.addTimestampedSelection(dsLabel, columnName, columnValue, $scope.ngModel.id);
 				var sel = disableAssociativeLogic ? "noAssoc" : cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
 				if(sel!=undefined){
-	
-	
+
+
 					if(!cockpitModule_template.configuration.aliases){
 						cockpitModule_template.configuration.aliases = [];
 					}
-	
+
 					if(!angular.equals("noAssoc",sel)){
 						sel.then(function(response) {
 							if(!skipRefresh){
@@ -1242,11 +1247,11 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 								cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
 						}
 						cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
-	
+
 						if(!skipRefresh){
 							cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
 						}
-	
+
 					}
 				}
 			}

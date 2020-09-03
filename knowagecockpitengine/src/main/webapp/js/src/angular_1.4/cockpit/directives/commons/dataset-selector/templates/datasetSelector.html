@@ -10,14 +10,17 @@
 					<md-option ng-value="item.id.dsId" ng-repeat="item in availableDatasets | filter:searchTerm | filter:availableDatasetsFilter">{{item.name}} ({{item.label}})</md-option>
 				</md-optgroup>
 			</md-select>
+			<div ng-if="(dataset.drivers && dataset.drivers.length > 0) || (dataset.parameters && dataset.parameters.length > 0)" class="kn-warning">	
+				{{translate.load('sbi.cockpit.parameter.and.driver')}}	
+			</div>
 		</md-input-container>	
 		<md-button class="md-icon-button" ng-click="addNewDataset()" ng-disabled="isDisabled">
 			<md-icon md-font-icon="fa fa-plus"></md-icon>
-		</md-button>
+		</md-button>		
 		<md-button ng-if="extended && ngModel" class="md-icon-button" ng-click="cancelDataset()" ng-disabled="isDisabled">
 		<md-icon md-font-icon="fa fa-eraser"></md-icon>
 	</md-button>
-	</div>
+	</div>		
 		<md-progress-linear ng-if="loadingMetadata" md-mode="indeterminate"></md-progress-linear>
 	<div ng-if="extended && dataset.metadata.fieldsMeta.length > 0">
 		<table class="kn-table kn-table-alternated-rows kn-table-medium-rows">

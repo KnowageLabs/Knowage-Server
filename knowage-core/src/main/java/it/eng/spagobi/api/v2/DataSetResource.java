@@ -630,6 +630,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
 
 			String parameters = null;
+			Map<String, Object> driversRuntimeMap = null;
 			String selections = null;
 			String likeSelections = null;
 			String aggregations = null;
@@ -642,6 +643,9 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				JSONObject jsonParameters = jsonBody.optJSONObject("parameters");
 				parameters = jsonParameters != null ? jsonParameters.toString() : null;
+
+				JSONObject jsonDrivers = jsonBody.optJSONObject("drivers");
+				driversRuntimeMap = DataSetUtilities.getDriversMap(jsonDrivers);
 
 				JSONObject jsonSelections = jsonBody.optJSONObject("selections");
 				selections = jsonSelections != null ? jsonSelections.toString() : null;
@@ -682,8 +686,8 @@ public class DataSetResource extends AbstractDataSetResource {
 				}
 			}
 			timing.stop();
-			return getDataStore(label, parameters, null, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
-					options, columns);
+			return getDataStore(label, parameters, driversRuntimeMap, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize,
+					isNearRealtime, options, columns);
 		} catch (Exception e) {
 			logger.error("Error loading dataset data from " + label, e);
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);

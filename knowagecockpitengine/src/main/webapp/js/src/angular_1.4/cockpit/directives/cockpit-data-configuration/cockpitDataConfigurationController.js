@@ -32,7 +32,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	 }
 
 	$scope.cockpitModule_analyticalDriversUrls = cockpitModule_analyticalDriversUrls;
-	
+
 	$scope.datasetTableActions=[{
 			label : 'delete',
 			 icon:'fa fa-trash' ,
@@ -479,8 +479,23 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 			    			}
 		    	  }
 
+		    	  $scope.parametersAreSet = function() {
+		    		  var newDs = $scope.tmpAvaiableDataset;
+		    		  for(var i = 0; i < newDs[0].parameters.length; i++) {
+		    			  if(newDs[0].parameters[i].value) {
+		    				  cockpitModule_datasetServices.parameterHasValue = true;
+		    			  } else {
+		    				  cockpitModule_datasetServices.parameterHasValue = false;
+		    			  }
+		    		  }
+		    		  return cockpitModule_datasetServices.parameterHasValue;
+		    	  }
+
 		    	  $scope.doSave=function(){
+		    		  cockpitModule_datasetServices.newDataSet = {};
+		    		  angular.copy($scope.tmpAvaiableDataset[0], cockpitModule_datasetServices.newDataSet);
 		    		  if($scope.checkDataConfiguration()){
+		    			$scope.parametersAreSet();
 		    	  		var datasetParChange=false;
 		    	  		var datasetParameterChanged={};
 		    	  		var oldDs=cockpitModule_datasetServices.getAvaiableDatasets();
@@ -648,7 +663,7 @@ function variablesController($scope, sbiModule_translate, cockpitModule_template
 	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.translate = sbiModule_translate;
 	$scope.cockpitModule_analyticalDrivers = cockpitModule_analyticalDrivers;
-	
+
 	function getVariablesAnalyticalDrivers(){
 		var tempVariablesAnalyticalDrivers = {};
 		for(var k in cockpitModule_analyticalDriversUrls){
@@ -657,7 +672,7 @@ function variablesController($scope, sbiModule_translate, cockpitModule_template
 		}
 		return tempVariablesAnalyticalDrivers;
 	}
-	
+
 	$scope.variablesAnalyticalDrivers = getVariablesAnalyticalDrivers();
 
 	$scope.availableColumns = function(id){
