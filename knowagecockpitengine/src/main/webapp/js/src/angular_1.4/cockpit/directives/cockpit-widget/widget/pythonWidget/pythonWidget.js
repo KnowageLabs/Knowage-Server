@@ -176,7 +176,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        url: $scope.ngModel.pythonAddress + "/widget/edit/" + $scope.ngModel.pythonOutputType,
 		        method: "POST",
 		        headers: {'Content-Type': 'application/json',
-		        		  'Authorization': $scope.encodedUserId},
+		        		  'Knowage-Authorization': $scope.encodedUserId},
 
 		        data: { 'dataset': $scope.dataset_label,
 		        		'script' : $scope.ngModel.pythonCode,
@@ -204,7 +204,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        url: $scope.ngModel.pythonAddress + "/widget/view/" + $scope.ngModel.pythonOutputType,
 		        method: "POST",
 		        headers: {'Content-Type': 'application/json',
-		        		  'Authorization': $scope.encodedUserId},
+		        		  'Knowage-Authorization': $scope.encodedUserId},
 
 		        data: { 'dataset': $scope.dataset_label,
 		        		'output_variable' : $scope.ngModel.pythonOutput,

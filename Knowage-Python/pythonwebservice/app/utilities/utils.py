@@ -49,7 +49,7 @@ def retrieveScriptInfo(data):
     return script, output_variable
 
 def retrieveKnowageInfo(headers):
-    user_id = headers['Authorization']
+    user_id = headers['Knowage-Authorization']
     return user_id
 
 def retrieveDatasetInfo(data):
