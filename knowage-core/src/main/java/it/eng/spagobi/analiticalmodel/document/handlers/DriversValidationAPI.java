@@ -76,10 +76,11 @@ public class DriversValidationAPI {
 		logger.debug("IN");
 		List toReturn = new ArrayList();
 		List drivers = object.getDrivers();
-		if (drivers.size() == 0)
+		if (drivers.isEmpty()) {
 			return toReturn;
+		}
 		Iterator iterParams = drivers.iterator();
-		while (iterParams.hasNext()) {
+		while (toReturn.isEmpty() && iterParams.hasNext()) {
 			AbstractDriver driver = (AbstractDriver) iterParams.next();
 			// internalization of the label for display
 			// String viewLabel = biparam.getLabel();
@@ -96,13 +97,13 @@ public class DriversValidationAPI {
 						null);
 				errorsOnChecks.add(error);
 			}
-			if (errorsOnChecks != null && errorsOnChecks.size() > 0) {
+			if (errorsOnChecks != null && !errorsOnChecks.isEmpty()) {
 				logger.warn("Found " + errorsOnChecks.size() + " errors on checks for driver " + driver.getLabel());
 			}
 			toReturn.addAll(errorsOnChecks);
 			if (values != null && values.size() >= 1 && !(values.size() == 1 && (values.get(0) == null || values.get(0).toString().trim().equals("")))) {
 				List errorsOnValues = getValidationErrorsOnValues(driver, object, role, dum);
-				if (errorsOnValues != null && errorsOnValues.size() > 0) {
+				if (errorsOnValues != null && !errorsOnValues.isEmpty()) {
 					logger.warn("Found " + errorsOnValues.size() + " errors on values for driver " + driver.getLabel());
 				}
 				toReturn.addAll(errorsOnValues);
