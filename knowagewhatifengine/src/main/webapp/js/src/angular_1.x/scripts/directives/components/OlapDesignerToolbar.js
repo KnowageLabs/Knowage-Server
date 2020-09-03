@@ -940,7 +940,6 @@ $scope.setAndLoadCN = function(num) {
 	 	}
 		 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port
 		 url+= 	"/"+sbiModule_config.contextName+"/restful-services/olap/startwhatif/edit?" +
-		 		//"&SBI_HOST="+url +
 		 		"&DOCUMENT_LABEL="+sbiModule_docInfo.label +
 		 		"&mode=edit" +
 		 		"&user_id=" + sbiModule_user.userId +

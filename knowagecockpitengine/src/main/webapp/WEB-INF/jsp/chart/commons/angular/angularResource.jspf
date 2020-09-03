@@ -122,7 +122,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	
 	/*
 		This instance contains is a JSON object with various configuration options, such as SBI_COUNTRY=US, SBI_EXECUTION_ID, 
-		DOCUMENT_USER=biadmin, IS_TECHNICAL_USER, SBI_HOST=http://localhost:8080, SBI_EXECUTION_ROLE=admin, DOCUMENT_LABEL=BAR, 
+		DOCUMENT_USER=biadmin, IS_TECHNICAL_USER, SBI_EXECUTION_ROLE=admin, DOCUMENT_LABEL=BAR, 
 		DOCUMENT_IS_PUBLIC etc.
 		@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	*/
