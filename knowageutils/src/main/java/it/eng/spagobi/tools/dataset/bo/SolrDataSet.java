@@ -298,7 +298,7 @@ public class SolrDataSet extends RESTDataSet {
 		} else if (method == HttpMethod.Post) {
 			address = solrConfiguration.toString(false);
 			body = solrConfiguration.getQueryParameters();
-			requestHeaders.put("Content-Type", "application/x-www-form-urlencoded");
+			requestHeaders.put("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"); 
 		}
 		setDataProxy(new SolrDataProxy(address, method, body, facetField, requestHeaders, offset, fetchSize, maxResults, isFacet()));
 	}
