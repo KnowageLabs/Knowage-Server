@@ -76,7 +76,7 @@ author:...
 	}
     
     spagobiContext = KnowageSystemConfiguration.getKnowageContext();
-    spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
+    spagobiSpagoController = "/servlet/AdapterHTTP";
     
     Map analyticalDriversMap=dataMiningEngineInstance.getAnalyticalDrivers();
     analyticalDriversMap.toString();

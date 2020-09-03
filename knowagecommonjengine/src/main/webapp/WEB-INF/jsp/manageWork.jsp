@@ -41,7 +41,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	CommonjEngineConfig qcommonJEngineConfig = CommonjEngineConfig.getInstance();
 
     spagobiContext = KnowageSystemConfiguration.getKnowageContext();
-    spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
+    spagobiSpagoController = "/servlet/AdapterHTTP";
     docId = request.getParameter("document");
     
 	Map parsMap=request.getParameterMap();

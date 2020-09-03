@@ -331,7 +331,6 @@ public class SpagoBIConstants {
 
 //	public static final String SBI_CONTEXT = "SBICONTEXT";
 	public static final String SBI_HOST = "SBI_HOST";
-	public static final String SBI_SPAGO_CONTROLLER = "SBI_SPAGO_CONTROLLER";
 	public static final String SBI_BACK_END_HOST = "BACK_END_HOST";
 	public static final String SBI_EXECUTION_ID = "SBI_EXECUTION_ID";
 

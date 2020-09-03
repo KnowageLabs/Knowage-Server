@@ -122,8 +122,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	          spagobiContext = KnowageSystemConfiguration.getKnowageContext();
 	          } 
 	  
-	   // spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
-	   
 	   sbiExecutionID = request.getParameter("SBI_EXECUTION_ID" );
 	   if(request.getParameter("mode") != null){
           mode = request.getParameter("mode");
