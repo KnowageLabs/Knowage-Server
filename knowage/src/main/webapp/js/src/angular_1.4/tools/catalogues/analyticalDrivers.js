@@ -1,13 +1,14 @@
-var app = angular.module("AnalyticalDriversModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col","angular-list-detail"]);
+var app = angular.module("AnalyticalDriversModule",["ngMaterial", "ngMessages", "angular_list","angular_table","sbiModule","angular_2_col","angular-list-detail", 'angularXRegExp']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller("AnalyticalDriversController",["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging","sbiModule_config","sbiModule_user",AnalyticalDriversFunction]);
+app.controller("AnalyticalDriversController",["sbiModule_translate","sbiModule_restServices", "kn_regex", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging","sbiModule_config","sbiModule_user",AnalyticalDriversFunction]);
 
-function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging,sbiModule_config,sbiModule_user){
+function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, kn_regex, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging,sbiModule_config,sbiModule_user){
 
 	//VARIABLES
+	$scope.regex = kn_regex;
 	$scope.showme = false; // flag for showing right side
 	$scope.showadMode = false; // flag that shows use mode details
 	$scope.dirtyForm = false; // flag to check for modification

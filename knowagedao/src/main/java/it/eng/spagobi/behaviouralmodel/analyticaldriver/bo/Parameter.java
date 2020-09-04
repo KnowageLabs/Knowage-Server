@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,13 +20,16 @@ package it.eng.spagobi.behaviouralmodel.analyticaldriver.bo;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.services.validation.Alphanumeric;
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 import it.eng.spagobi.services.validation.Xss;
 
 /**
@@ -37,41 +40,36 @@ import it.eng.spagobi.services.validation.Xss;
 
 public class Parameter implements Serializable {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -5755926354664490196L;
 
-	@Xss
-	@NotNull
-	@Max(value = 11)
 	private Integer id;
+
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 20)
+	private String label = "";
+
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 40)
+	private String name = "";
+
 	@Xss
 	@Size(max = 160)
 	private String description = "";
-	@Xss
-	@NotNull
-	@Max(value = 6)
-	private Integer length;
-	@Xss
-	@NotNull
-	@Size(max = 20)
-	private String label = "";
-	@Xss
-	@NotNull
-	@Size(max = 40)
-	private String name = "";
-	@Xss
-	@NotNull
+
+	@NotEmpty
+	@Alphanumeric
 	@Size(max = 20)
 	private String type = "";
-	@Xss
-	@Size(max = 20)
-	private String mask = "";
-	@Xss
+
 	@NotNull
-	@Max(value = 11)
 	private Integer typeId;
+
+	private Integer length;
+
+	private String mask = "";
+
 	private String modality = "";
 	private boolean isFunctional;
 	private boolean isTemporal;
@@ -100,8 +98,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the description.
 	 *
-	 * @param description
-	 *            The description to set.
+	 * @param description The description to set.
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -119,8 +116,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the id.
 	 *
-	 * @param id
-	 *            The id to set.
+	 * @param id The id to set.
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -138,8 +134,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the label.
 	 *
-	 * @param label
-	 *            The label to set.
+	 * @param label The label to set.
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -157,8 +152,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the length.
 	 *
-	 * @param length
-	 *            The length to set.
+	 * @param length The length to set.
 	 */
 	public void setLength(Integer length) {
 		this.length = length;
@@ -176,8 +170,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the mask.
 	 *
-	 * @param mask
-	 *            The mask to set.
+	 * @param mask The mask to set.
 	 */
 	public void setMask(String mask) {
 		this.mask = mask;
@@ -195,8 +188,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the type.
 	 *
-	 * @param type
-	 *            The type to set.
+	 * @param type The type to set.
 	 */
 	public void setType(String type) {
 		this.type = type;
@@ -214,8 +206,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the type id.
 	 *
-	 * @param typeId
-	 *            The typeId to set.
+	 * @param typeId The typeId to set.
 	 */
 	public void setTypeId(Integer typeId) {
 		this.typeId = typeId;
@@ -233,8 +224,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the modality value.
 	 *
-	 * @param modalityValue
-	 *            The modalityValue to set.
+	 * @param modalityValue The modalityValue to set.
 	 */
 	public void setModalityValue(ModalitiesValue modalityValue) {
 		this.modalityValue = modalityValue;
@@ -252,8 +242,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the modality.
 	 *
-	 * @param modality
-	 *            The modality to set.
+	 * @param modality The modality to set.
 	 */
 	public void setModality(String modality) {
 		this.modality = modality;
@@ -271,8 +260,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the checks.
 	 *
-	 * @param checks
-	 *            The checks to set.
+	 * @param checks The checks to set.
 	 */
 	public void setChecks(List checks) {
 		this.checks = checks;
@@ -290,8 +278,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            the new name
+	 * @param name the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -309,8 +296,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the checks if is functional.
 	 *
-	 * @param isFunctional
-	 *            the new checks if is functional
+	 * @param isFunctional the new checks if is functional
 	 */
 	@JsonProperty(value = "functional")
 	public void setIsFunctional(boolean isFunctional) {
@@ -329,8 +315,7 @@ public class Parameter implements Serializable {
 	/**
 	 * Sets the checks if the parameter is temporal.
 	 *
-	 * @param isTemporal
-	 *            the new checks if is temporal
+	 * @param isTemporal the new checks if is temporal
 	 */
 	@JsonProperty(value = "temporal")
 	public void setIsTemporal(boolean isTemporal) {
@@ -384,17 +369,24 @@ public class Parameter implements Serializable {
 	public void setSelectedLayerProp(String selectedLayerProp) {
 		this.selectedLayerProp = selectedLayerProp;
 	}
-	
+
 	@Override
-	  public boolean equals(Object v) {
-	        boolean retVal = false;
+	public boolean equals(Object v) {
+		if (this == v)
+			return true;
 
-	        if (v instanceof Parameter){
-	        	Parameter ptr = (Parameter) v;
-	            retVal = ptr.id.longValue() == this.id;
-	        }
+		boolean toReturn = false;
 
-	     return retVal;
-	  }
+		if (v instanceof Parameter) {
+			Parameter ptr = (Parameter) v;
+			if (ptr.id != null) {
+				toReturn = ptr.id.longValue() == this.id;
+			} else {
+				toReturn = ptr.label.equals(this.label);
+			}
+		}
+
+		return toReturn;
+	}
 
 }

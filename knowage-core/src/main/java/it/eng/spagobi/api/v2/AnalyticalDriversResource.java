@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -225,17 +226,8 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response insertDriver(String body) {
+	public Response insertDriver(@Valid Parameter driver) {
 
-		IParameterDAO driversDao = null;
-		Parameter driver = null;
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			driver = mapper.readValue(body, Parameter.class);
-		} catch (Exception e1) {
-			logger.error(e1);
-			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
-		}
 		driver.setModality(driver.getType() + "," + driver.getTypeId().toString());
 		if (driver.getId() != null) {
 			logger.error("Error paramters. New check should not have ID value");
@@ -250,7 +242,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Error while inserting AD. Analytical Driver with the same name already exists.");
 		}
 		try {
-			driversDao = DAOFactory.getParameterDAO();
+			IParameterDAO driversDao = DAOFactory.getParameterDAO();
 			driversDao.setUserProfile(getUserProfile());
 			Parameter toReturn = driversDao.insertParameter(driver);
 			return Response.ok(toReturn).build();
@@ -314,17 +306,8 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateDriver(@PathParam("id") Integer id, String body) {
+	public Response updateDriver(@PathParam("id") Integer id, @Valid Parameter driver) {
 
-		IParameterDAO driversDao = null;
-		Parameter driver = null;
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			driver = mapper.readValue(body, Parameter.class);
-		} catch (Exception e1) {
-			logger.error(e1);
-			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
-		}
 		driver.setModality(driver.getType() + "," + driver.getTypeId().toString());
 		if (driver.getId() == null) {
 			logger.error("The check with ID " + id + " doesn't exist");
@@ -335,7 +318,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			JSONObject response = new JSONObject();
 			JSONArray warnings = new JSONArray();
 
-			driversDao = DAOFactory.getParameterDAO();
+			IParameterDAO driversDao = DAOFactory.getParameterDAO();
 			driversDao.setUserProfile(getUserProfile());
 
 			Parameter oldDriver = driversDao.loadForDetailByParameterID(driver.getId());
@@ -579,12 +562,9 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	/**
 	 * Controls if the name of the ParameterUse is already in use.
 	 *
-	 * @param paruse
-	 *            The paruse to check
-	 * @param operation
-	 *            Defines if the operation is of insertion or modify
-	 * @throws EMFUserError
-	 *             If any Exception occurred
+	 * @param paruse    The paruse to check
+	 * @param operation Defines if the operation is of insertion or modify
+	 * @throws EMFUserError If any Exception occurred
 	 */
 	private boolean parameterUseLabelControl(ParameterUse paruse, String operation) {
 
