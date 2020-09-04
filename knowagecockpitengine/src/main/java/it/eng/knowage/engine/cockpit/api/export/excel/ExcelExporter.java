@@ -19,6 +19,7 @@ package it.eng.knowage.engine.cockpit.api.export.excel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -217,6 +218,7 @@ public class ExcelExporter {
 	}
 
 	private void exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb) throws SerializationException {
+		JSONObject options = new JSONObject();
 		try {
 			for (int i = 0; i < widgetsJson.length(); i++) {
 				JSONObject currWidget = widgetsJson.getJSONObject(i);
@@ -225,7 +227,7 @@ public class ExcelExporter {
 				if (Arrays.asList(WIDGETS_TO_IGNORE).contains(widgetType.toLowerCase()))
 					continue;
 				else if (widgetType.equalsIgnoreCase("static-pivot-table"))
-					exportWidgetCrossTab(templateString, widgetId, wb, null);
+					exportWidgetCrossTab(templateString, widgetId, wb, options);
 				else
 					exportWidget(templateString, widgetId, wb);
 			}
@@ -282,14 +284,16 @@ public class ExcelExporter {
 					}
 				}
 
-				CrosstabXLSXExporter exporter = new CrosstabXLSXExporter(null);
+				JSONObject crosstabDefinition = optionsObj.getJSONObject("crosstabDefinition");
+				JSONArray measures = crosstabDefinition.optJSONArray("measures");
+				Map<String, List<Threshold>> thresholdColorsMap = getThresholdColorsMap(measures);
+
+				CrosstabXLSXExporter exporter = new CrosstabXLSXExporter(null, thresholdColorsMap);
 
 				JSONObject crosstabDefinitionJo = optionsObj.getJSONObject("crosstabDefinition");
 				JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
 				JSONObject crosstabStyleJo = (optionsObj.isNull("style")) ? new JSONObject() : optionsObj.getJSONObject("style");
 				crosstabDefinitionConfigJo.put("style", crosstabStyleJo);
-
-				JSONObject crosstabDefinition = optionsObj.getJSONObject("crosstabDefinition");
 
 				JSONObject sortOptions = optionsObj.getJSONObject("sortOptions");
 
@@ -332,6 +336,34 @@ public class ExcelExporter {
 		} catch (JSONException e) {
 			logger.error("Unable to load template", e);
 		}
+	}
+
+	private Map<String, List<Threshold>> getThresholdColorsMap(JSONArray measures) {
+		Map<String, List<Threshold>> toReturn = new HashMap<String, List<Threshold>>();
+		try {
+			for (int i = 0; i < measures.length(); i++) {
+				JSONObject measure = measures.getJSONObject(i);
+				String id = measure.getString("id");
+				JSONArray ranges = measure.getJSONArray("ranges");
+				List<Threshold> allThresholds = new ArrayList<Threshold>();
+				for (int j = 0; j < ranges.length(); j++) {
+					JSONObject range = ranges.getJSONObject(j);
+					String operator = range.getString("operator");
+					if (!operator.equals("none")) {
+						Double value = range.getDouble("value");
+						String color = range.getString("background-color");
+						Threshold threshold = new Threshold(operator, value, color);
+						allThresholds.add(threshold);
+					}
+				}
+				toReturn.put(id, allThresholds);
+			}
+		} catch (Exception e) {
+			logger.error("Unable to build threshold color map", e);
+			Map<String, List<Threshold>> emptyMap = new HashMap<String, List<Threshold>>();
+			return emptyMap;
+		}
+		return toReturn;
 	}
 
 	private JSONObject getWidgetById(JSONObject template, String widgetId) {
