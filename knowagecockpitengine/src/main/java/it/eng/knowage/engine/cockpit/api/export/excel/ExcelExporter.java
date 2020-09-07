@@ -344,6 +344,8 @@ public class ExcelExporter {
 			for (int i = 0; i < measures.length(); i++) {
 				JSONObject measure = measures.getJSONObject(i);
 				String id = measure.getString("id");
+				if (!measure.has("ranges"))
+					continue;
 				JSONArray ranges = measure.getJSONArray("ranges");
 				List<Threshold> allThresholds = new ArrayList<Threshold>();
 				for (int j = 0; j < ranges.length(); j++) {

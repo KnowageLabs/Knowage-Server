@@ -196,9 +196,8 @@ public class CrosstabXLSExporter {
 					cell.setCellType(this.getCellTypeNumeric());
 					int measureIdx = j % cs.getMeasures().size();
 					String measureId = getMeasureId(cs, measureIdx);
-					CellStyle style = getNumberFormat(decimals, decimalFormats, sheet, createHelper, cs.getCellType(i, j));
-					XSSFCellStyle styleWithBackgroundColor = getStyleWithBackgroundColor(cs.getCellType(i, j), style, measureId, value);
-					cell.setCellStyle(styleWithBackgroundColor);
+					CellStyle style = getNumberFormat(decimals, decimalFormats, sheet, createHelper, cs.getCellType(i, j), measureId, value);
+					cell.setCellStyle(style);
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
 					cell.setCellValue(createHelper.createRichTextString(text));
@@ -534,15 +533,8 @@ public class CrosstabXLSExporter {
 		}
 	}
 
-	private XSSFCellStyle getStyleWithBackgroundColor(CellType celltype, CellStyle style, String measureId, Double value) {
-		XSSFCellStyle colorStyle = (XSSFCellStyle) style;
-		if (celltype.equals(CellType.DATA)) {
-			colorStyle.setFillForegroundColor(getThresholdColor(measureId, value));
-		}
-		return colorStyle;
-	}
-
-	public CellStyle getNumberFormat(int j, Map<Integer, CellStyle> decimalFormats, Sheet sheet, CreationHelper createHelper, CellType celltype) {
+	public CellStyle getNumberFormat(int j, Map<Integer, CellStyle> decimalFormats, Sheet sheet, CreationHelper createHelper, CellType celltype,
+			String measureId, Double value) {
 
 		int mapPosition = j;
 
@@ -554,7 +546,7 @@ public class CrosstabXLSExporter {
 			mapPosition = j + 60000;
 		}
 
-		if (decimalFormats.get(mapPosition) != null)
+		if (decimalFormats.get(mapPosition) != null && !celltype.equals(CellType.DATA))
 			return decimalFormats.get(mapPosition);
 
 		if (celltype.equals(CellType.CF)) {
@@ -584,22 +576,28 @@ public class CrosstabXLSExporter {
 		if (celltype.equals(CellType.SUBTOTAL)) {
 			cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
 		}
+		if (celltype.equals(CellType.DATA)) {
+			XSSFCellStyle coloredCellStyle = (XSSFCellStyle) cellStyle;
+			coloredCellStyle.setFillForegroundColor(getThresholdColor(measureId, value));
+			return coloredCellStyle;
+		}
 
 		decimalFormats.put(mapPosition, cellStyle);
 		return cellStyle;
 	}
 
 	private XSSFColor getThresholdColor(String measureId, Double value) {
+		Color white = new Color(255, 255, 255);
 		List<Threshold> thresholds = thresholdColorsMap.get(measureId);
 		if (thresholds == null || thresholds.isEmpty())
-			return new XSSFColor(new Color(255, 255, 255));
+			return new XSSFColor(white);
 		for (Threshold t : thresholds) {
 			if (t.isConstraintSatisfied(value)) {
 				XSSFColor backgroundColor = t.getXSSFColor();
 				return backgroundColor;
 			}
 		}
-		return new XSSFColor(new Color(255, 255, 255));
+		return new XSSFColor(white);
 	}
 
 	public int getCalculatedFieldDecimals() {
