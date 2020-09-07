@@ -346,12 +346,18 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var subtotals = [];
 		if (Object.keys(parent).length > 0) { //filter only rows related to current parent, don't hide rows of other parents
 			for (var i=0; i<allElements.length; i++) {
+				var valid = false;
 				for (var key in parent) {
 					var val = parent[key];
 					var attrVal = allElements[i].getAttribute(key);
-					if (attrVal && attrVal == val) {
-						subtotals.push(allElements[i]);
+					if(attrVal && attrVal == val) valid = true;
+					else {
+						valid = false;
+						break;
 					}
+				}
+				if (valid) {
+					subtotals.push(allElements[i]);
 				}
 			}
 			return subtotals;
@@ -403,10 +409,18 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		cell.classList.remove('hidden');
 		//if not the first level change the parent rowspan to avoid fat rows
 		if (parent) {
-			for (var p in parent) { // loop on all parents
+			var tempParents = {};
+			var orderedParents = {};
+			Object.keys(parent).sort().forEach(function(key) {
+				orderedParents[key] = parent[key];
+				});
+			for (var p in orderedParents) { // loop on all parents
+				tempParents[p] = orderedParents[p];
 				var parentQuery = "tr[" + p + "='" + parent[p] + "']";
-				for (var k in widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')) { // loop on all parent cells
-					var currentParentEl = widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[k];
+				var parentRows = widgetEl.querySelectorAll(parentQuery);
+				var correctParentRows = $scope.getCorrectRows(parentRows, tempParents);
+				for (var k in correctParentRows[0].querySelectorAll('td')) { // loop on all parent cells
+					var currentParentEl = correctParentRows[0].querySelectorAll('td')[k];
 					if (currentParentEl.id == parent[p]) { // apply rowspan normalization only to current cell
 						var rowspan = currentParentEl.getAttribute('rowspan');
 
@@ -435,9 +449,25 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var rowSpanModifier = -1;
 		rowsToShow.forEach(function(row, index){
 			if(index == 0 && row.children[0].id != value) {
-				rowSpanModifier--;
+				var modifyRowSpan = true;
+				for(var c in row.children){
+					if(row.children[c].id == value && row.children[c].getAttribute('start-span')) {
+						row.children[c].setAttribute('rowspan', row.children[c].getAttribute('start-span'));
+						rowSpanModifier += row.children[c].getAttribute('start-span') - row.children[c].getAttribute('rowspan');
+						modifyRowSpan = false;
+					}
+				}
+				if(modifyRowSpan){
+					rowSpanModifier--;
+				}
+				
 			} else {
-				if(index == 0) row.children[0].setAttribute('rowspan', rowsToShow.length);
+				if(index == 0) {
+					if(row.children[0].getAttribute('start-span')) {
+						row.children[0].setAttribute('rowspan', row.children[0].getAttribute('start-span'));
+					}
+					else row.children[0].setAttribute('rowspan', rowsToShow.length);
+				}
 			}
 			row.style.display = "table-row";
 			row.querySelectorAll('td').forEach(function(cell) {
@@ -454,12 +484,24 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		e.currentTarget.parentElement.classList.add('hidden');
 		//if not the first level change the parent rowspan to avoid fat rows
 		if (parent && Object.keys(parent).length > 0) {
-			for (var p in parent) { // loop on all parents
+			var tempParents = {};
+			var orderedParents = {};
+			Object.keys(parent).sort().forEach(function(key) {
+				orderedParents[key] = parent[key];
+				});
+			for (var p in orderedParents) { // loop on all parents
+				tempParents[p] = orderedParents[p];
 				var parentQuery = "tr[" + p + "='" + parent[p] + "']";
-				for (var k in widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')) { // loop on all cells
-					if (widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[k].id == parent[p]) { // if current cell
-						var rowspan = widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[k].getAttribute('rowspan');
-						widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[k].setAttribute('rowspan', parseInt(rowspan) + rowsToShow.length - 1 + rowSpanModifier);
+				var parentRows = widgetEl.querySelectorAll(parentQuery);
+				var correctParentRows = $scope.getCorrectRows(parentRows, tempParents);
+				
+				for (var k in correctParentRows[0].querySelectorAll('td')) { // loop on all cells
+					if (correctParentRows[0].querySelectorAll('td')[k].id == parent[p]) { // if current cell
+						var rowspan = correctParentRows[0].querySelectorAll('td')[k].getAttribute('rowspan');
+						var currentCell = correctParentRows[0].querySelectorAll('td')[k];
+						currentCell.setAttribute('rowspan', parseInt(rowspan) + rowsToShow.length - 1 + rowSpanModifier);
+						// if the rowspan is bigger that start-span it is normalized
+						if(currentCell.getAttribute('start-span') && currentCell.getAttribute('rowspan') > currentCell.getAttribute('start-span')) currentCell.setAttribute('rowspan', currentCell.getAttribute('start-span'));
 						break;
 					}
 				}
