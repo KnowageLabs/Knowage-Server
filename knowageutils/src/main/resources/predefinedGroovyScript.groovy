@@ -62,3 +62,7 @@ public String split(String attrName, String splitter) {
 public String NULLIF(BigDecimal expression1, Integer expression2) {
 	return expression1.compareTo(expression2)==0 ? null : expression1;
 };
+
+public Boolean isValid(String key) {
+	return key != null && parameters.get(key) != null && !parameters.get(key).equals("") && !parameters.get(key).equals("''");
+}
