@@ -39,8 +39,8 @@
 	<md-input-container class="md-block">
 		 <label >{{translate.load("sbi.chartengine.structure.categoryStyleConfig.orderByColumn.labelText")}}</label>
 			 <md-select ng-model="chartTemplate.VALUES.CATEGORY.drillOrder[category.column].orderColumn" name="drill_category_ordering_column">
-			 <md-option
-			ng-repeat="option in allAttributes track by $index" value="{{option.name}}">{{option.alias}}</md-option>
+			 <md-option></md-option>
+			 <md-option	ng-repeat="option in allAttributes track by $index" value="{{option.name}}">{{option.alias}}</md-option>
 		</md-select>
 	</md-input-container>
 	<md-input-container class="md-block">
