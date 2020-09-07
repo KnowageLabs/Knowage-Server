@@ -78,3 +78,10 @@ function getInClauseForNullableValues(colName, parName){
         return colName+" IN ($P{"+parName+"}) ";
     }
 }
+
+parameters.isValid = function(key) {
+	return key != null
+		&& parameters.get(key) != null
+		&& parameters.get(key) != ''
+		&& parameters.get(key) != "''";
+}
