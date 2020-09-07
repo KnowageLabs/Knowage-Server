@@ -17,14 +17,14 @@
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
 			 '$timeout', '$interval', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window', '$httpParamSerializer', '$mdMenu','sbiModule_i18n','sbiModule_device',
-			 'driversExecutionService','driversDependencyService', 'datasetPreview_service' ,documentExecutionControllerFn]);
+			 'driversExecutionService','driversDependencyService','datasetDriversService', 'datasetPreview_service' ,documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav, $mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine, documentExecuteServices,
 			docExecute_urlViewPointService, docExecute_paramRolePanelService, infoMetadataService, sbiModule_download, $crossNavigationScope,
 			$timeout, $interval, docExecute_exportService, $filter, sbiModule_dateServices,
-			cockpitEditing, $window, $httpParamSerializer, $mdMenu,sbiModule_i18n, sbiModule_device,driversExecutionService,driversDependencyService, datasetPreview_service) {
+			cockpitEditing, $window, $httpParamSerializer, $mdMenu,sbiModule_i18n, sbiModule_device,driversExecutionService,driversDependencyService,datasetDriversService, datasetPreview_service) {
 
 		console.log("documentExecutionControllerFn IN ");
 
@@ -174,6 +174,9 @@
 					//loads parameters if role is selected
 					execProperties.isParameterRolePanelDisabled.status = true;
 					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name, driversDependencyService.buildCorrelation,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
+					if(execProperties.executionInstance.DATASET_ID) {
+						datasetDriversService.getDatasetById(execProperties.executionInstance.DATASET_ID);
+                    }
 				}else{
 					docExecute_paramRolePanelService.toggleParametersPanel(true);
 				}
