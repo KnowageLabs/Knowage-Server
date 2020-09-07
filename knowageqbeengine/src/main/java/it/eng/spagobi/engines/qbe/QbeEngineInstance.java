@@ -146,17 +146,19 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 
 	private void validateTemplate(QbeTemplate template, IDataSource dataSource2) {
 
-		String keyColumn = dataSource2.getPersistenceManager().getKeyColumn(getRegistryConfiguration());
+		if (template.hasRegistryConfiguration()) {
+			RegistryConfiguration registryConfiguration = getRegistryConfiguration();
+			String keyColumn = dataSource2.getPersistenceManager().getKeyColumn(registryConfiguration);
 
-		List<Column> columns = getRegistryConfiguration().getColumns();
-		for (Column column : columns) {
-			if (keyColumn.equals(column.getField()) && column.isEditable()) {
-				throw new QbeTemplateValidationException(String.format(
-						"Primary Key Column [%s] cannot be editable. Please modify the template adding editable=\"false\" to [%s] column configuration.",
-						keyColumn, keyColumn));
+			List<Column> columns = registryConfiguration.getColumns();
+			for (Column column : columns) {
+				if (keyColumn.equals(column.getField()) && column.isEditable()) {
+					throw new QbeTemplateValidationException(String.format(
+							"Primary Key Column [%s] cannot be editable. Please modify the template adding editable=\"false\" to [%s] column configuration.",
+							keyColumn, keyColumn));
+				}
 			}
 		}
-
 	}
 
 	// private void loadWorksheetDefinition(JSONObject worksheetDefinition) {
