@@ -35,7 +35,7 @@ String template = (String) request.getAttribute("template");
 ExcelExporter excelExporter = new ExcelExporter(outputType, userId, parameterMap);
 String mimeType = excelExporter.getMimeType();
 if(mimeType != null){
-	byte[] data = excelExporter.getBinaryData(documentId, documentLabel, template, "");
+	byte[] data = excelExporter.getBinaryData(documentId, documentLabel, template);
 	
 	response.setHeader("Content-length", Integer.toString(data.length));
 	response.setHeader("Content-Type", mimeType);

@@ -59,18 +59,6 @@ angular.module("cockpitModule").service("cockpitModule_templateServices",functio
 		return total;
 	}
 
-	this.getAllCockpitWidgets = function(){
-		var widgets = [];
-		for(var i=0; i<cockpitModule_template.sheets.length; i++){
-			var sheetWidgets = cockpitModule_template.sheets[i].widgets;
-			for(var j=0; j<sheetWidgets.length; j++){
-				var w = sheetWidgets[j];
-				widgets.push(w);
-			}
-		}
-		return widgets;
-	}
-
 	this.getDatasetAssociatedNotUsedByWidget = function(){
 		var dsNotInCache = [];
 		var dsUsed = ts.getLabelDatasetsUsed();
@@ -105,15 +93,15 @@ angular.module("cockpitModule").service("cockpitModule_templateServices",functio
 
 	this.getDatasetUsetByWidgetWithParams = function(){
 		var taintedColumns = {};
-		for (var k in cockpitModule_template.configuration.associations) {
+		for (var k in cockpitModule_template.configuration.associations) {		
 			var tempFields = {};
 			var taintedAssociations = false;
 			for (var j in cockpitModule_template.configuration.associations[k].fields) {
 				if (cockpitModule_template.configuration.associations[k].fields[j].column.match(/\$P\{/g)) {
-					taintedAssociations = true;
+					taintedAssociations = true;		
 				}
-				else {
-					tempFields[cockpitModule_template.configuration.associations[k].fields[j].store] = cockpitModule_template.configuration.associations[k].fields[j].column;
+				else {					
+					tempFields[cockpitModule_template.configuration.associations[k].fields[j].store] = cockpitModule_template.configuration.associations[k].fields[j].column;					
 				}
 			}
 			if (taintedAssociations) {
@@ -128,7 +116,7 @@ angular.module("cockpitModule").service("cockpitModule_templateServices",functio
 					}
 				}
 			}
-		}
+		}		
 		cockpitModule_properties.TAINTED_ASSOCIATIONS = taintedColumns;
 	}
 

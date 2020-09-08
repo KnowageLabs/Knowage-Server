@@ -68,7 +68,11 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 				String documentLabel = body.optString(DOCUMENT_LABEL);
 				String options = body.optString("options");
 				byte[] data;
-				data = excelExporter.getBinaryData(documentId, documentLabel, template, options);
+				if (!options.isEmpty()) {
+					data = excelExporter.getBinaryDataPivot(documentId, documentLabel, template, options);
+				}
+				else
+				data = excelExporter.getBinaryData(documentId, documentLabel, template);
 
 				response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				response.setHeader("Content-length", Integer.toString(data.length));

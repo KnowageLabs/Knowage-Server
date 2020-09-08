@@ -82,7 +82,7 @@ def getDatasetAsDataframe(widget):
             column_names.append(x['header'])
             if x["type"] == "float":
                 column_types.update({x['name']: "float64"})
-            elif x["type"] == "int":
+            elif x["type"] == "float":
                 column_types.update({x['name']: "int64"})
     #save data as dataframe
     df = pd.DataFrame(r.json()["rows"])
