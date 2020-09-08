@@ -460,7 +460,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				if(modifyRowSpan){
 					rowSpanModifier--;
 				}
-				
+
 			} else {
 				if(index == 0) {
 					if(row.children[0].getAttribute('start-span')) {
@@ -494,7 +494,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				var parentQuery = "tr[" + p + "='" + parent[p] + "']";
 				var parentRows = widgetEl.querySelectorAll(parentQuery);
 				var correctParentRows = $scope.getCorrectRows(parentRows, tempParents);
-				
+
 				for (var k in correctParentRows[0].querySelectorAll('td')) { // loop on all cells
 					if (correctParentRows[0].querySelectorAll('td')[k].id == parent[p]) { // if current cell
 						var rowspan = correctParentRows[0].querySelectorAll('td')[k].getAttribute('rowspan');
@@ -1198,10 +1198,10 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					}
 
 		    	    $scope.saveConfiguration=function(){
-		    	    	if(!$scope.checkAggregation()) {
-		    	    		$scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.incoherentaggregations'));
-			    			  return;
-		    	    	}
+//		    	    	if(!$scope.checkAggregation()) {
+//		    	    		$scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.incoherentaggregations'));
+//			    			  return;
+//		    	    	}
 		    		  if($scope.localModel.dataset == undefined){
 		  				$scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
 		    			return;
@@ -1283,6 +1283,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				    		  }
 			    		  }
 			    		  selectedColumn.fnOrder = fnOrder;
+//			    		  selectedColumn.funct = "SUM";
 			    		  $mdDialog.show({
 								templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/staticPivotTableWidget/templates/staticPivotTableColumnStyle.html',
 								parent : angular.element(document.body),
@@ -1355,13 +1356,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 				newArray.push(familyArray);
 			}
-			
+
 			return newArray;
 		}
-		
+
 		$scope.availableIcons = setChunks(knModule_fontIconsService.icons,4);
 		$scope.conditions=['>','<','==','>=','<=','!='];
-		
+
 		$scope.getTemplateUrl = function(template){
 			return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 		}
@@ -1415,7 +1416,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		}
 
 		//Ranges Management
-		
+
 		$scope.addRange = function(){
 			if(!$scope.selectedColumn.ranges) $scope.selectedColumn.ranges = [];
 			$scope.selectedColumn.ranges.push({});
@@ -1429,12 +1430,12 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 			}
 		}
-		
+
 		$scope.openFamily = function(familyName){
 			if($scope.iconFamily == familyName) $scope.iconFamily = "";
 			else $scope.iconFamily = familyName;
 		}
-		
+
 		$scope.chooseIcon = function(range) {
 			$scope.tempVar = !$scope.tempVar;
 			$scope.currentRange=range;
@@ -1445,7 +1446,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			$scope.currentRange.icon = family.className+' '+icon.className;
 			$scope.tempVar = !$scope.tempVar;
 		}
-		
+
 
 		$scope.cleanStyleColumn = function(){
 			$scope.selectedColumn.style = undefined;
