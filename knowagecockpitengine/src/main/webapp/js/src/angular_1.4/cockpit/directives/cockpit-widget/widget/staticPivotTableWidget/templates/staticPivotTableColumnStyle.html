@@ -36,6 +36,7 @@
 						<md-input-container flex=30 ng-if="variables">
 						  	<label>{{translate.load('sbi.cockpit.widgets.staticpivot.variables')}} <small>{{translate.load('sbi.generic.optional')}}</small></label>
 						  	<md-select ng-model="selectedColumn.variable">
+						  		<md-option></md-option>
 								<md-option ng-repeat="(key, value) in variables" ng-value="key" >							
 									{{key}}
 								</md-option>
