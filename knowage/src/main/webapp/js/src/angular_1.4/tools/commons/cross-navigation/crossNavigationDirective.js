@@ -56,14 +56,14 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					}
 					navObj = navObjTemp; //update final object
 				}else{
-					if (targetDocument && navObj.length==1 && !objectIsRequired(new Array(targetDocument), navObj[0].crossName)){
+					if (targetDocument && !isCrossNavigationAvailable(targetDocument, navObj)){
 						//show dialog with error for wrong configuration
 						$mdDialog.show(
 								  $mdDialog
 								    .alert({
-								        title: 'Attention',
-								        textContent: 'The cross definition with label [\''+ targetDocument +'\'] doesn\'t exists for the document !',
-								        ok: 'Close'
+								        title: sbiModule_translate.load("sbi.generic.warning"),
+								        textContent: sbiModule_translate.load("sbi.crossnavigation.runtime.targetIsNotAvailable"),
+								        ok: sbiModule_translate.load("sbi.general.close")
 								      })
 								);
 						return;
@@ -210,6 +210,15 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			})
 
 		};
+
+
+		function isCrossNavigationAvailable(crossNavigationName, availableCrossNavigationsArray) {
+			for (var t in availableCrossNavigationsArray){
+				if (availableCrossNavigationsArray[t].crossName.trim() == crossNavigationName.trim())
+					return true;
+			}
+			return false;
+		}
 
 		function objectIsRequired(targetDocs, crossName){
 			for (var t in targetDocs){
