@@ -205,7 +205,6 @@ public class CrossTabHTMLSerializer {
 		Boolean columnsTotals = config.optBoolean("calculatetotalsonrows");
 		Boolean noSelectedColumn = crossTab.getCrosstabDefinition().getRows().isEmpty();
 		String labelTotal = (!config.optString("rowtotalLabel").equals("")) ? config.optString("rowtotalLabel") : CrossTab.TOTAL;
-		String labelSubTotal = (!config.optString("rowsubtotalLabel").equals("")) ? config.optString("rowsubtotalLabel") : CrossTab.SUBTOTAL;
 		List<Node> nodesToBeIgnored = new ArrayList<Node>();
 
 		List<SourceBean> rows = new ArrayList<SourceBean>();
@@ -312,7 +311,7 @@ public class CrossTabHTMLSerializer {
 					}
 
 					if (!style.equals(DEFAULT_STYLE) && !style.equals(DEFAULT_HEADER_STYLE)) {
-						if (!text.equalsIgnoreCase(labelTotal) && !text.equalsIgnoreCase(labelSubTotal)) {
+						if (!aNode.isTotal() && !aNode.isSubTotal()) {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 							appliedStyle = true;
 						} else {
