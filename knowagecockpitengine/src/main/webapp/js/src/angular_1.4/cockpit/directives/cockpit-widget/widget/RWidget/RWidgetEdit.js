@@ -242,7 +242,7 @@ function RWidgetEditControllerFunction(
 	  }
 
 	$scope.checkEnvironment = function(){
-        if (!$scope.newModel.pythonAddress) return false;
+        if (!$scope.newModel.RAddress) return false;
         else return true;
     }
 
