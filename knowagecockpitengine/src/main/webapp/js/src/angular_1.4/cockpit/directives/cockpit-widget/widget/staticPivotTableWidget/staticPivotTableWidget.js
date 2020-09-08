@@ -456,7 +456,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				for(var c in row.children){
 					if(row.children[c].id == value && row.children[c].getAttribute('start-span')) {
 						row.children[c].setAttribute('rowspan', row.children[c].getAttribute('start-span'));
-						rowSpanModifier += row.children[c].getAttribute('start-span') - row.children[c].getAttribute('rowspan');
+						rowSpanModifier = row.children[c].getAttribute('start-span') - row.children[c].getAttribute('rowspan');
 						modifyRowSpan = false;
 					}
 				}
@@ -1209,6 +1209,18 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		  				$scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
 		    			return;
 		    		  }
+		    		  
+		    		  if($scope.localModel.content.crosstabDefinition.config && $scope.localModel.content.crosstabDefinition.config.expandCollapseRows){
+		    			 var exclusionCounter = 0;
+		    			 for(var k in $scope.localModel.content.crosstabDefinition.measures){
+		    				if($scope.localModel.content.crosstabDefinition.measures[k].excludeFromTotalAndSubtotal) exclusionCounter++;
+		    			 }
+		    			 if(exclusionCounter == $scope.localModel.content.crosstabDefinition.measures.length) {
+		    				 $scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.missingSubtotals'))
+		    				 return;
+		    			 }
+		    		  }
+		    		  
 		    		  if($scope.localModel.content.crosstabDefinition.measures.length == 0 ||
 		    			($scope.localModel.content.crosstabDefinition.rows.length == 0 &&
 		    			$scope.localModel.content.crosstabDefinition.columns.length ==0)
