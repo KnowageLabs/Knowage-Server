@@ -259,7 +259,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 					SBI_COUNTRY: sbiModule_config.curr_country,
 					SBI_LANGUAGE: sbiModule_config.curr_language,
 					COCKPIT_SELECTIONS: [],
-//					options: options // needed for CrossTab export
+					options: cockpitModule_properties.CROSSTABLE_OPTIONS
 			}
 			for(i=0; i<cockpitWidgets.length; i++) {
 				var widget = cockpitWidgets[i];

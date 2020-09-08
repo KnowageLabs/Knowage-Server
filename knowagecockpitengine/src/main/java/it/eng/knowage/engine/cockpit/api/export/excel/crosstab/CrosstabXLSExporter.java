@@ -196,7 +196,7 @@ public class CrosstabXLSExporter {
 					cell.setCellType(this.getCellTypeNumeric());
 					int measureIdx = j % cs.getMeasures().size();
 					String measureId = getMeasureId(cs, measureIdx);
-					CellStyle style = getNumberFormat(decimals, decimalFormats, sheet, createHelper, cs.getCellType(i, j), measureId, value);
+					CellStyle style = getStyle(decimals, decimalFormats, sheet, createHelper, cs.getCellType(i, j), measureId, value);
 					cell.setCellStyle(style);
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
@@ -533,8 +533,52 @@ public class CrosstabXLSExporter {
 		}
 	}
 
-	public CellStyle getNumberFormat(int j, Map<Integer, CellStyle> decimalFormats, Sheet sheet, CreationHelper createHelper, CellType celltype,
-			String measureId, Double value) {
+	public CellStyle getStyle(int j, Map<Integer, CellStyle> decimalFormats, Sheet sheet, CreationHelper createHelper, CellType celltype, String measureId,
+			Double value) {
+		// XLSX manages thresholds background colours, XLS does not
+		if (this instanceof CrosstabXLSXExporter)
+			return getStyleForXLSX(j, sheet, createHelper, celltype, measureId, value);
+		else
+			return getStyleForXLS(j, decimalFormats, sheet, createHelper, celltype);
+	}
+
+	public CellStyle getStyleForXLSX(int j, Sheet sheet, CreationHelper createHelper, CellType celltype, String measureId, Double value) {
+
+		if (celltype.equals(CellType.CF)) {
+			j = this.getCalculatedFieldDecimals();
+		}
+
+		String decimals = "";
+
+		for (int i = 0; i < j; i++) {
+			decimals += "0";
+		}
+
+		XSSFCellStyle cellStyle = (XSSFCellStyle) this.buildDataCellStyle(sheet);
+		DataFormat df = createHelper.createDataFormat();
+		String format = "#,##0";
+		if (decimals.length() > 0) {
+			format += "." + decimals;
+		}
+		cellStyle.setDataFormat(df.getFormat(format));
+
+		if (celltype.equals(CellType.TOTAL)) {
+			cellStyle.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
+		}
+		if (celltype.equals(CellType.CF)) {
+			cellStyle.setFillForegroundColor(IndexedColors.DARK_YELLOW.getIndex());
+		}
+		if (celltype.equals(CellType.SUBTOTAL)) {
+			cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		}
+		if (celltype.equals(CellType.DATA)) {
+			cellStyle.setFillForegroundColor(getThresholdColor(measureId, value));
+		}
+
+		return cellStyle;
+	}
+
+	public CellStyle getStyleForXLS(int j, Map<Integer, CellStyle> decimalFormats, Sheet sheet, CreationHelper createHelper, CellType celltype) {
 
 		int mapPosition = j;
 
@@ -546,7 +590,7 @@ public class CrosstabXLSExporter {
 			mapPosition = j + 60000;
 		}
 
-		if (decimalFormats.get(mapPosition) != null && !celltype.equals(CellType.DATA))
+		if (decimalFormats.get(mapPosition) != null)
 			return decimalFormats.get(mapPosition);
 
 		if (celltype.equals(CellType.CF)) {
@@ -575,11 +619,6 @@ public class CrosstabXLSExporter {
 		}
 		if (celltype.equals(CellType.SUBTOTAL)) {
 			cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-		}
-		if (celltype.equals(CellType.DATA)) {
-			XSSFCellStyle coloredCellStyle = (XSSFCellStyle) cellStyle;
-			coloredCellStyle.setFillForegroundColor(getThresholdColor(measureId, value));
-			return coloredCellStyle;
 		}
 
 		decimalFormats.put(mapPosition, cellStyle);

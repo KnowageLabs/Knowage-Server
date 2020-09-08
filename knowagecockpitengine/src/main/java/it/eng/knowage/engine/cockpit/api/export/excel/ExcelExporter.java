@@ -45,6 +45,7 @@ import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabBuilder;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabSerializationConstants;
 import it.eng.knowage.engine.cockpit.api.crosstable.NodeComparator;
+import it.eng.knowage.engine.cockpit.api.export.excel.crosstab.CrosstabXLSExporter;
 import it.eng.knowage.engine.cockpit.api.export.excel.crosstab.CrosstabXLSXExporter;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.spago.error.EMFAbstractError;
@@ -189,17 +190,17 @@ public class ExcelExporter {
 		}
 
 		try {
+			JSONObject optionsObj = new JSONObject(options);
 			if (exportWidget) {
 				String widgetId = String.valueOf(body.get("widget"));
 				if (options.isEmpty()) // check if exporting crosstab
 					exportWidget(templateString, widgetId, wb);
 				else {
-					JSONObject optionsObj = new JSONObject(options);
 					exportWidgetCrossTab(templateString, widgetId, wb, optionsObj);
 				}
 			} else {
 				JSONArray widgetsJson = body.getJSONArray("widget");
-				exportCockpit(templateString, widgetsJson, wb);
+				exportCockpit(templateString, widgetsJson, wb, optionsObj);
 			}
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot export data to excel", e);
@@ -217,8 +218,7 @@ public class ExcelExporter {
 		return out.toByteArray();
 	}
 
-	private void exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb) throws SerializationException {
-		JSONObject options = new JSONObject();
+	private void exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj) throws SerializationException {
 		try {
 			for (int i = 0; i < widgetsJson.length(); i++) {
 				JSONObject currWidget = widgetsJson.getJSONObject(i);
@@ -226,9 +226,10 @@ public class ExcelExporter {
 				String widgetType = currWidget.getString("type");
 				if (Arrays.asList(WIDGETS_TO_IGNORE).contains(widgetType.toLowerCase()))
 					continue;
-				else if (widgetType.equalsIgnoreCase("static-pivot-table"))
+				else if (widgetType.equalsIgnoreCase("static-pivot-table") && optionsObj.has(widgetId)) {
+					JSONObject options = optionsObj.getJSONObject(widgetId);
 					exportWidgetCrossTab(templateString, widgetId, wb, options);
-				else
+				} else
 					exportWidget(templateString, widgetId, wb);
 			}
 		} catch (JSONException e) {
@@ -288,7 +289,11 @@ public class ExcelExporter {
 				JSONArray measures = crosstabDefinition.optJSONArray("measures");
 				Map<String, List<Threshold>> thresholdColorsMap = getThresholdColorsMap(measures);
 
-				CrosstabXLSXExporter exporter = new CrosstabXLSXExporter(null, thresholdColorsMap);
+				CrosstabXLSExporter exporter;
+				if (outputType != null && outputType.toLowerCase().equals("xlsx"))
+					exporter = new CrosstabXLSXExporter(null, thresholdColorsMap);
+				else
+					exporter = new CrosstabXLSExporter(null);
 
 				JSONObject crosstabDefinitionJo = optionsObj.getJSONObject("crosstabDefinition");
 				JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);

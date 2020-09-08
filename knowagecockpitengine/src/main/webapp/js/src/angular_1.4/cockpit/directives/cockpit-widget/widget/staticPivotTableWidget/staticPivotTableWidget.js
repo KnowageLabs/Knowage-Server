@@ -174,6 +174,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 		$scope.applyI18N(dataToSend);
 		$scope.options = dataToSend;
+		if (!cockpitModule_properties.CROSSTABLE_OPTIONS)
+			cockpitModule_properties.CROSSTABLE_OPTIONS = {};
+		cockpitModule_properties.CROSSTABLE_OPTIONS[$scope.ngModel.id] = $scope.options;
 
 		$scope.oldUpdateExecutions = $scope.oldUpdateExecutions || [];
 
@@ -1313,13 +1316,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 				newArray.push(familyArray);
 			}
-			
+
 			return newArray;
 		}
-		
+
 		$scope.availableIcons = setChunks(knModule_fontIconsService.icons,4);
 		$scope.conditions=['>','<','==','>=','<=','!='];
-		
+
 		$scope.getTemplateUrl = function(template){
 			return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 		}
@@ -1373,7 +1376,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		}
 
 		//Ranges Management
-		
+
 		$scope.addRange = function(){
 			if(!$scope.selectedColumn.ranges) $scope.selectedColumn.ranges = [];
 			$scope.selectedColumn.ranges.push({});
@@ -1387,12 +1390,12 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 			}
 		}
-		
+
 		$scope.openFamily = function(familyName){
 			if($scope.iconFamily == familyName) $scope.iconFamily = "";
 			else $scope.iconFamily = familyName;
 		}
-		
+
 		$scope.chooseIcon = function(range) {
 			$scope.tempVar = !$scope.tempVar;
 			$scope.currentRange=range;
@@ -1403,7 +1406,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			$scope.currentRange.icon = family.className+' '+icon.className;
 			$scope.tempVar = !$scope.tempVar;
 		}
-		
+
 
 		$scope.cleanStyleColumn = function(){
 			$scope.selectedColumn.style = undefined;
