@@ -174,6 +174,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 		$scope.applyI18N(dataToSend);
 		$scope.options = dataToSend;
+		if (!cockpitModule_properties.CROSSTABLE_OPTIONS)
+			cockpitModule_properties.CROSSTABLE_OPTIONS = {};
+		cockpitModule_properties.CROSSTABLE_OPTIONS[$scope.ngModel.id] = $scope.options;
 
 		$scope.oldUpdateExecutions = $scope.oldUpdateExecutions || [];
 

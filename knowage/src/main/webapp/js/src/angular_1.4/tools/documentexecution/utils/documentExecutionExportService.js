@@ -289,16 +289,14 @@
 		dee.exportCockpitTo = function(exportType, mimeType){
 			if(exportType.toLowerCase() == 'pdf'){
 				windowCommunicationService.sendMessage('pdfExport');
-			}else{
+			} else if(exportType.toLowerCase() == 'xls' || exportType.toLowerCase() == 'xlsx') {
+				windowCommunicationService.sendMessage(exportType.toLowerCase() + 'Export');
+			} else {
 				documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope();
 				dee.exporting = true;
 
 				dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
-					var promise;
-					if (exportType.toLowerCase() == 'xls' || exportType.toLowerCase() == 'xlsx')
-						promise = buildRequestConfiguration(exportType, parameters);
-					else
-						promise = dee.buildBackendRequestConf(exportType, mimeType, parameters);
+					var promise = dee.buildBackendRequestConf(exportType, mimeType, parameters);
 
 					promise.then(function(requestConf){
 						var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.execution.executionpage.toolbar.export.exporting"), 'Success!', 0);
@@ -388,95 +386,6 @@
 			return deferred.promise;
 		};
 
-		dee.buildRequestConf = function(exportType, mimeType){
-			var deferred = $q.defer();
-			var data = {};
-			var hostArr = sbiModule_config.host.split(":");
-			data.username = sbiModule_user.userId;
-			data.documentId = execProperties.executionInstance.OBJECT_ID;
-			data.documentLabel = execProperties.executionInstance.OBJECT_LABEL;
-			data.type= mimeType;
-			data.port = hostArr[2];//8080
-			data.ip=hostArr[1].replace("//" , ""); //localhost
-			data.protocol= hostArr[0]; //http
-			data.context=sbiModule_config.contextName.replace("/", ""); //sbiModule_config.contextName 'knowage'
-			data.loginUrl= sbiModule_config.contextName;
-			data.role= execProperties.selectedRole.name;
-
-			// getting cockpit selections
-			var documentFrame = document.getElementById("documentFrame"); // document iframe reference
-
-			var cockpitSelectionsContainer = null;
-			if(documentFrame.contentWindow && documentFrame.contentWindow.document) {
-				cockpitSelectionsContainer =
-					documentFrame.contentWindow.document.getElementById("cockpitSelectionsContainer")
-			}
-
-			if ( cockpitSelectionsContainer ) {
-				var cockpitSelections = cockpitSelectionsContainer.innerHTML;
-
-				var testCockpitSelections = null;
-				try {
-					testCockpitSelections = JSON.parse(cockpitSelections);
-				}
-				catch(err) {
-					cockpitSelections = '';
-				}
-
-				data.cockpitSelections = cockpitSelections;
-			}
-
-			var config={"responseType": "arraybuffer"};
-
-			var requestUrl = sbiModule_config.host;
-
-			if(exportType.toLowerCase() == 'xlsx') {
-				requestUrl += '/highcharts-export-web/capture';
-			} else {
-				requestUrl += '/highcharts-export-web/capturepdf';
-			}
-
-			var requestConf = {
-					method: 'POST',
-					url: requestUrl,
-					data: data,
-//					config:config,
-					responseType: 'arraybuffer',
-					headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-					transformRequest: function(obj) {
-						var str = [];
-						for(var p in obj)
-							str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-						return str.join("&");
-					}
-			};
-
-			if(exportType.toLowerCase() != 'xlsx') {
-				requestConf.transformResponse = function (data) {
-					var blob;
-					if (data) {
-						blob = new Blob([data], {
-							type: mimeType
-						});
-					}
-					return blob;
-				};
-			}
-			if(exportType.toLowerCase() == 'xls' || exportType.toLowerCase() == 'xlsx') {
-				dee.getCockpitCsvData(documentFrame).then(function(csvData){
-					if(csvData != null) {
-						data.csvData = csvData;
-					}
-					deferred.resolve(requestConf);
-				},function(e){
-					deferred.reject(e);
-				});
-			}else{
-				deferred.resolve(requestConf);
-			}
-			return deferred.promise;
-		};
-
 		dee.buildBackendRequestConf = function(exportType, mimeType, parameters){
 			var deferred = $q.defer();
 
@@ -503,123 +412,9 @@
 					responseType: 'arraybuffer'
 			};
 
-			if(exportType.toLowerCase() != 'xlsx') {
-				requestConf.transformResponse = function (data) {
-					var blob;
-					if (data) {
-						blob = new Blob([data], {
-							type: mimeType
-						});
-					}
-					return blob;
-				};
-			}
-			if(exportType.toLowerCase() == 'xls' || exportType.toLowerCase() == 'xlsx') {
-				dee.getCockpitCsvData(documentFrame).then(function(csvData){
-					if(csvData != null) {
-						data.csvData = csvData;
-					}
-					deferred.resolve(requestConf);
-				},function(e){
-					deferred.reject(e);
-				});
-			}else{
-				deferred.resolve(requestConf);
-			}
-			return deferred.promise;
-		};
-
-		var buildRequestConfiguration = function(exportType, parameters, options) {
-			var deferred = $q.defer();
-			
-			var cockpitModule_properties = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_properties;
-
-			var cockpitContext = execProperties.documentUrl.substr(0, execProperties.documentUrl.search("/api/"));
-
-			var requestUrl = sbiModule_config.host + cockpitContext + '/api/1.0/cockpit/export/excel';
-			var widgetsPivot = [];
-			var sheets = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.sheets;
-			
-			var widgetsMapAggregations = [];
-
-			for (i = 0; i < sheets.length; i++) {
-				var widgets = sheets[i].widgets;
-				for (j = 0; j < widgets.length; j++) {
-
-					if( widgets[j].type=='static-pivot-table') {
-						widgetsPivot.push(widgets[j].id);
-					}
-					if ( widgets[j].type=='table') {
-						
-						if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
-							for (var k in widgets[j].content.columnSelectedOfDataset) {
-								if(Array.isArray(widgets[j].content.columnSelectedOfDataset[k].variables) && widgets[j].content.columnSelectedOfDataset[k].variables.length) {
-									if (widgets[j].type == "table" && widgets[j].content.columnSelectedOfDataset[k].variables[0].action == 'header') {
-										for (var value in cockpitModule_properties.VARIABLES) {
-											if (value == widgets[j].content.columnSelectedOfDataset[k].variables[0].variable){
-												widgets[j].content.columnSelectedOfDataset[k].aliasToShow = cockpitModule_properties.VARIABLES[value];
-											}
-										}
-									}
-								
-								}						
-							}
-						}
-						var map = {};
-						map.id = widgets[j].id;
-						map.columnSelectedOfDataset = widgets[j].content.columnSelectedOfDataset;
-						widgetsMapAggregations.push(map)
-						
-						
-					}
-				}
-
-
-			}
-
-			var body = {
-					user_id: sbiModule_user.userUniqueIdentifier,
-					outputType: exportType,
-					document: execProperties.executionInstance.OBJECT_ID,
-					DOCUMENT_LABEL: execProperties.executionInstance.OBJECT_LABEL,
-					SBI_COUNTRY: sbiModule_config.curr_country,
-					SBI_LANGUAGE: sbiModule_config.curr_language,
-					parametersDataArray : angular.copy(execProperties.parametersData.documentParameters),
-					widgetsPivot : widgetsPivot,
-					widgetsMapAggregations : widgetsMapAggregations
-
-			};
-
-
-			for (var i = 0; i < body.parametersDataArray.length; i++){
-				if(body.parametersDataArray[i].children)
-					delete body.parametersDataArray[i].children;
-			}
-
-			for (var parameter in parameters) {
-				if (parameters.hasOwnProperty(parameter)) {
-					body.parameter = parameters[parameter];
-				}
-			}
-
-
-			var aggregations = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.aggregations;
-			var filters = documentFrame.window.angular.element(document).find('iframe').contents().find('body').scope().cockpitModule_template.configuration.filters;
-			var cockpitSelections = {};
-			cockpitSelections.aggregations = angular.copy(aggregations);
-			cockpitSelections.filters = filters;
-			body.COCKPIT_SELECTIONS = cockpitSelections;
-
-			var requestConf = {
-					method: 'POST',
-					url: requestUrl,
-					responseType: 'arraybuffer',
-					data: body
-			};
-
 			deferred.resolve(requestConf);
 			return deferred.promise;
-		}
+		};
 
 		dee.getExporters = function(engine, type) {
 			return $q(function(resolve, reject) {
