@@ -456,8 +456,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				for(var c in row.children){
 					if(row.children[c].id == value && row.children[c].getAttribute('start-span')) {
 						row.children[c].setAttribute('rowspan', row.children[c].getAttribute('start-span'));
-						rowSpanModifier = row.children[c].getAttribute('start-span') - row.children[c].getAttribute('rowspan');
-						modifyRowSpan = false;
+						//rowSpanModifier = - (row.children[c].getAttribute('start-span') - row.children[c].getAttribute('rowspan'));
+						//modifyRowSpan = false;
 					}
 				}
 				if(modifyRowSpan){
@@ -497,14 +497,16 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				var parentQuery = "tr[" + p + "='" + parent[p] + "']";
 				var parentRows = widgetEl.querySelectorAll(parentQuery);
 				var correctParentRows = $scope.getCorrectRows(parentRows, tempParents);
-
+				
+				//rowSpanModifier = rowSpanModifier + (Object.keys(tempParents).length - Object.keys(parent).length);
+				
 				for (var k in correctParentRows[0].querySelectorAll('td')) { // loop on all cells
 					if (correctParentRows[0].querySelectorAll('td')[k].id == parent[p]) { // if current cell
 						var rowspan = correctParentRows[0].querySelectorAll('td')[k].getAttribute('rowspan');
 						var currentCell = correctParentRows[0].querySelectorAll('td')[k];
 						currentCell.setAttribute('rowspan', parseInt(rowspan) + rowsToShow.length - 1 + rowSpanModifier);
 						// if the rowspan is bigger that start-span it is normalized
-						if(currentCell.getAttribute('start-span') && currentCell.getAttribute('rowspan') > currentCell.getAttribute('start-span')) currentCell.setAttribute('rowspan', currentCell.getAttribute('start-span'));
+						if(currentCell.getAttribute('start-span') && (parseInt(currentCell.getAttribute('rowspan')) > parseInt(currentCell.getAttribute('start-span')))) currentCell.setAttribute('rowspan', currentCell.getAttribute('start-span'));
 						break;
 					}
 				}
