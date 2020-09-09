@@ -83,7 +83,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		cockpitModule_properties,
 		cockpitModule_defaultTheme){
 
-
+	var _EMPTYFIELDPLACEHOLDER = 'empty_field';
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget(null, 'init');
 	};
@@ -274,6 +274,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 		for (p in parentValues) {
 			var parent = parentValues[p];
+			if(parent == '') parent = _EMPTYFIELDPLACEHOLDER;
 			//hide all rows
 			var rowsToHideQuery = "tr[" + parentKey + "='" + parent + "']";
 			var rowsToHide = widgetEl.querySelectorAll(rowsToHideQuery);
@@ -306,6 +307,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		});
 		for (p in parentValues) {
 			var parent = parentValues[p];
+			if(parent == '') parent = _EMPTYFIELDPLACEHOLDER;
 			//hide cell in subtotal row
 			var subtotalHiddenCellQuery = "td[id='" + parent + "']";
 			var subtotalHiddenCell = widgetEl.querySelectorAll(subtotalHiddenCellQuery);

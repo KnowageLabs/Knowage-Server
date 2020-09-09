@@ -351,7 +351,8 @@ public class CrossTabHTMLSerializer {
 					}
 				}
 				aColumn.setAttribute(TITLE_ATTRIBUTE, escapeAll(text));
-				aColumn.setAttribute(ID_ATTRIBUTE, escapeAll(aNode.getValue()));
+				String idLabel = aNode.getValue().equals("") ? EMPTY_FIELD_PLACEHOLDER : aNode.getValue();
+				aColumn.setAttribute(ID_ATTRIBUTE, escapeAll(idLabel));
 
 				boolean isSubtotal = aNode.getValue().equals(CrossTab.SUBTOTAL);
 				if (isSubtotal && crossTab.isExpandCollapseRows()) { // create subtotal hidden row (used when collapsing aggregations)
@@ -363,7 +364,8 @@ public class CrossTabHTMLSerializer {
 					subtotalHiddenColumn.setAttribute(STYLE_ATTRIBUTE, style);
 					text = aNode.getParentNode().getValue();
 					subtotalHiddenColumn.setAttribute(TITLE_ATTRIBUTE, escapeAll(text));
-					subtotalHiddenColumn.setAttribute(ID_ATTRIBUTE, escapeAll(text));
+					String hiddenIdLabel = text.equals("") ? EMPTY_FIELD_PLACEHOLDER : text;
+					subtotalHiddenColumn.setAttribute(ID_ATTRIBUTE, escapeAll(hiddenIdLabel));
 					String parentEntityId = crossTab.getColumnAliasFromName(aNode.getParentNode().getColumnName());
 					subtotalHiddenColumn.setAttribute(NG_CLICK_ATTRIBUTE,
 							"selectRow('" + parentEntityId + "','" + StringEscapeUtils.escapeJavaScript(text) + "')");
