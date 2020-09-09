@@ -190,7 +190,11 @@ public class ExcelExporter {
 		}
 
 		try {
-			JSONObject optionsObj = new JSONObject(options);
+			JSONObject optionsObj;
+			if (options == null || options.equals(""))
+				optionsObj = new JSONObject();
+			else
+				optionsObj = new JSONObject(options);
 			if (exportWidget) {
 				String widgetId = String.valueOf(body.get("widget"));
 				if (options.isEmpty()) // check if exporting crosstab
@@ -199,7 +203,7 @@ public class ExcelExporter {
 					exportWidgetCrossTab(templateString, widgetId, wb, optionsObj);
 				}
 			} else {
-				JSONArray widgetsJson = body.getJSONArray("widget");
+				JSONArray widgetsJson = getWidgetsJson(templateString);
 				exportCockpit(templateString, widgetsJson, wb, optionsObj);
 			}
 		} catch (Exception e) {
@@ -216,6 +220,29 @@ public class ExcelExporter {
 		}
 
 		return out.toByteArray();
+	}
+
+	JSONArray getWidgetsJson(String templateString) {
+		try {
+			if (body != null && body.has("widget"))
+				return body.getJSONArray("widget");
+			else {
+				JSONArray toReturn = new JSONArray();
+				JSONObject template = new JSONObject(templateString);
+				JSONArray sheets = template.getJSONArray("sheets");
+				for (int i = 0; i < sheets.length(); i++) {
+					JSONObject sheet = sheets.getJSONObject(i);
+					JSONArray sheetWidgets = sheet.getJSONArray("widgets");
+					for (int j = 0; j < sheetWidgets.length(); j++) {
+						JSONObject widget = sheetWidgets.getJSONObject(j);
+						toReturn.put(widget);
+					}
+				}
+				return toReturn;
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot retrieve widgets list", e);
+		}
 	}
 
 	private void exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj) throws SerializationException {
