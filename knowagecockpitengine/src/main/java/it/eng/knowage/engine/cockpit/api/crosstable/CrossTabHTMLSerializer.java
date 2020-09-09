@@ -427,7 +427,7 @@ public class CrossTabHTMLSerializer {
 		} else {
 			while (curNode.getColumnName() != null && !curNode.getColumnName().equals("null")) {
 				String attribute = curNode.getColumnName();
-				String value = curNode.getValue();
+				String value = curNode.getValue().equals("") ? EMPTY_FIELD_PLACEHOLDER : curNode.getValue();
 				hierarchicalAttributes.put(escapeAll(attribute), escapeAll(value));
 				curNode = curNode.getParentNode();
 			}
