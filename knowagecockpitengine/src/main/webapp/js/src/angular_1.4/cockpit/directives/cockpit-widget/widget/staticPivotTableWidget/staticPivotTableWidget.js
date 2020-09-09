@@ -259,7 +259,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		}
 		for (i in $scope.sentData.jsonData) {
 			var value = $scope.sentData.jsonData[i][colName];
-			if (values.indexOf(value) == -1) values.push($scope.escapeHtmlString(value));
+			if (values.indexOf($scope.escapeHtmlString(value)) == -1) values.push($scope.escapeHtmlString(value));
 		}
 		return values;
 	}
@@ -311,13 +311,18 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			//hide cell in subtotal row
 			var subtotalHiddenCellQuery = "td[id='" + parent + "']";
 			var subtotalHiddenCell = widgetEl.querySelectorAll(subtotalHiddenCellQuery);
-			subtotalHiddenCell[1].classList.add('hidden');
+			if(subtotalHiddenCell[1]) subtotalHiddenCell[1].classList.add('hidden');
 			//hide all children hidden cells
 			var childrenHiddenCellsQuery = "td.cell-visible";
 			var childrenHiddenCells = widgetEl.querySelectorAll(childrenHiddenCellsQuery);
 			childrenHiddenCells.forEach(function(cell, index){
-				cell.classList.remove('cell-visible');
+				cell.classList.remove("cell-visible");
 				cell.classList.add('hidden');
+			});
+			var collapsedCellsQuery = "td[style*='display: none;']";
+			var collapsedCells = widgetEl.querySelectorAll(collapsedCellsQuery);
+			collapsedCells.forEach(function(cell, index){
+				cell.style.display = 'table-cell';
 			});
 			//reset rowspans
 			$scope.resetParentsRowspan(parentKey, parent, widgetEl);
