@@ -26,71 +26,74 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 
 		promise.then(function(response) {
 			_this.count = 0;
-     		queryModel.length = 0;
-     		console.log("[POST]: SUCCESS!");
+			queryModel.length = 0;
+			console.log("[POST]: SUCCESS!");
 
-     		for (var i = 0; i < query.fields.length; i++) {
+			for (var i = 0; i < query.fields.length; i++) {
 
-         			var queryObject = {
-             		    	"id":query.fields[i].id,
-             		    	"key": "column_" + (i+1),
-             		    	"name":query.fields[i].field,
-             		    	"alias":query.fields[i].alias,
-             		    	"entity":query.fields[i].entity,
-             		    	"color":query.fields[i].color,
-             		    	"funct":query.fields[i].funct,
-        					"fieldType" : query.fields[i].fieldType,
-        					"dataType": query.fields[i].dataType,
-        					"format": query.fields[i].format,
-             		    	"visible":query.fields[i].visible,
-             		    	"distinct":query.distinct,
-             		    	"group":query.fields[i].group,
-             		    	"order":i+1,
-             		    	"ordering":query.fields[i].order,
-             		    	"temporal":query.fields[i].temporal,
-             		    	"type":query.fields[i].type,
-             		    	"iconCls":query.fields[i].iconCls ? query.fields[i].iconCls : query.fields[i].fieldType,
-             		    	"longDescription":query.fields[i].longDescription,
-             		    	"filters": [],
-             		    	"havings": []
-             		    }
+				var currField = query.fields[i];
 
-        			queryModel.push(queryObject);
+				var queryObject = {
+						"id":currField.id,
+						"key": "column_" + (i+1),
+						"name":currField.field,
+						"alias":currField.alias,
+						"entity":currField.entity,
+						"color":currField.color,
+						"funct":currField.funct,
+						"fieldType" : currField.fieldType,
+						"dataType": currField.dataType,
+						"format": currField.format,
+						"visible":currField.visible,
+						"distinct":query.distinct,
+						"group":currField.group,
+						"order":i+1,
+						"ordering":currField.order,
+						"temporal":currField.temporal,
+						"type":currField.type,
+						"iconCls":currField.iconCls ? currField.iconCls : currField.fieldType,
+						"longDescription":currField.longDescription,
+						"filters": [],
+						"havings": [],
+						"inUse": currField.inUse
+					}
+
+				queryModel.push(queryObject);
 
 			}
 
-     		if(query.filters.length > 0) {
-     			for(var i = 0; i < queryModel.length; i++) {
-     				for(var j = 0; j < query.filters.length; j++) {
-     					if(queryModel[i].id == query.filters[j].leftOperandValue) {
-     						queryModel[i].filters.push(query.filters[j]);
-     					}
-     				}
-     			}
-     		}
+			if(query.filters.length > 0) {
+				for(var i = 0; i < queryModel.length; i++) {
+					for(var j = 0; j < query.filters.length; j++) {
+						if(queryModel[i].id == query.filters[j].leftOperandValue) {
+							queryModel[i].filters.push(query.filters[j]);
+						}
+					}
+				}
+			}
 
-     		if(query.havings.length > 0) {
-     			for(var i = 0; i < queryModel.length; i++) {
-     				for(var j = 0; j < query.havings.length; j++) {
-     					if(queryModel[i].id == query.havings[j].leftOperandValue) {
-     						queryModel[i].havings.push(query.havings[j]);
-     					}
-     				}
-     			}
-     		}
+			if(query.havings.length > 0) {
+				for(var i = 0; i < queryModel.length; i++) {
+					for(var j = 0; j < query.havings.length; j++) {
+						if(queryModel[i].id == query.havings[j].leftOperandValue) {
+							queryModel[i].havings.push(query.havings[j]);
+						}
+					}
+				}
+			}
 
-     		if(isCompleteResult){
-     			var columns = [];
-     			var data = [];
-     			angular.copy(response.data.rows,data);
-     			createColumnsForPreview(columns, response.data.metaData.fields,queryModel);
-     			$rootScope.$broadcast('queryExecuted', {"columns":columns, "data":data, "results":response.data.results});
-     		}
+			if(isCompleteResult){
+				var columns = [];
+				var data = [];
+				angular.copy(response.data.rows,data);
+				createColumnsForPreview(columns, response.data.metaData.fields,queryModel);
+				$rootScope.$broadcast('queryExecuted', {"columns":columns, "data":data, "results":response.data.results});
+			}
 
-     	}, function(response) {
+		}, function(response) {
 
-     		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-     	});
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		});
 
 		return promise;
 	}

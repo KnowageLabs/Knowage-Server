@@ -240,6 +240,12 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				 */
 				return el.visible;
 			})
+			.filter(function(el) {
+				/*
+				 * Skip columns not in use.
+				 */
+				return el.hasOwnProperty("inUse") ? el.inUse : true;
+			})
 			.map(function(el) {
 				var tempObj = {"field": el.key,
 					"tooltipField": el.key,
@@ -781,6 +787,15 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                    			hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-checkbox  ng-model="row.visible"  aria-label="Checkbox"></md-checkbox>';
+	                            	},
+	                            	"size": "9%"
+	                        	},
+	                        	{
+	                        		"label":$scope.translate.load("kn.qbe.custom.table.inUse"),
+	                            	"name":"inUse",
+	                    			hideTooltip:true,
+	                            	transformer: function() {
+	                            		return '<md-checkbox  ng-model="row.inUse" aria-label="Checkbox"></md-checkbox>';
 	                            	},
 	                            	"size": "9%"
 	                        	}
