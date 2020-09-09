@@ -83,7 +83,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		cockpitModule_properties,
 		cockpitModule_defaultTheme){
 
-	var _EMPTYFIELDPLACEHOLDER = 'empty_field';
+	var _EMPTYFIELDPLACEHOLDER = 'empty_field1';
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget(null, 'init');
 	};
