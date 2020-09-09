@@ -164,6 +164,7 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 		String entity;
 
 		boolean visible;
+		boolean inUse;
 		boolean included;
 		boolean editable;
 
@@ -182,6 +183,11 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 
 					included = fieldJSON.getBoolean(QuerySerializationConstants.FIELD_INCLUDE);
 					visible = fieldJSON.getBoolean(QuerySerializationConstants.FIELD_VISIBLE);
+					inUse = fieldJSON.getBoolean(QuerySerializationConstants.FIELD_IN_USE);
+
+					if (!inUse) {
+						continue;
+					}
 
 					temporalOperand = fieldJSON.optString(QuerySerializationConstants.TEMPORAL_OPERAND);
 					temporalOperandParameter = fieldJSON.optString(QuerySerializationConstants.TEMPORAL_OPERAND_PARAMETER);
