@@ -501,9 +501,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				var parentQuery = "tr[" + p + "='" + parent[p] + "']";
 				var parentRows = widgetEl.querySelectorAll(parentQuery);
 				var correctParentRows = $scope.getCorrectRows(parentRows, tempParents);
-				
+
 				//rowSpanModifier = rowSpanModifier + (Object.keys(tempParents).length - Object.keys(parent).length);
-				
+
 				for (var k in correctParentRows[0].querySelectorAll('td')) { // loop on all cells
 					if (correctParentRows[0].querySelectorAll('td')[k].id == parent[p]) { // if current cell
 						var rowspan = correctParentRows[0].querySelectorAll('td')[k].getAttribute('rowspan');
@@ -1215,7 +1215,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		  				$scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
 		    			return;
 		    		  }
-		    		  
+
 		    		  if($scope.localModel.content.crosstabDefinition.config && $scope.localModel.content.crosstabDefinition.config.expandCollapseRows){
 		    			 var exclusionCounter = 0;
 		    			 for(var k in $scope.localModel.content.crosstabDefinition.measures){
@@ -1226,7 +1226,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		    				 return;
 		    			 }
 		    		  }
-		    		  
+
 		    		  if($scope.localModel.content.crosstabDefinition.measures.length == 0 ||
 		    			($scope.localModel.content.crosstabDefinition.rows.length == 0 &&
 		    			$scope.localModel.content.crosstabDefinition.columns.length ==0)
@@ -1356,7 +1356,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		if(cockpitModule_properties.VARIABLES &&  Object.keys(cockpitModule_properties.VARIABLES).length > 0) $scope.variables = cockpitModule_properties.VARIABLES;
 
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
-		$scope.formatPattern = ['','#.###','#,###','#.###,##','#,###.##'];
+		$scope.formatPattern = ['','#.###,##','#,###.##'];
 		$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 		$scope.visTypes=['Text','Icon only'];
 		function setChunks(array, dimension){
@@ -1480,7 +1480,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		}
 
 		$scope.isPrecisionEnabled = function(){
-			return $scope.selectedColumn.style && $scope.selectedColumn.style.format != $scope.formatPattern[0] && $scope.selectedColumn.style.format != $scope.formatPattern[1];
+			return $scope.selectedColumn.style && $scope.selectedColumn.style.format != $scope.formatPattern[0];
 		}
 
 		$scope.saveColumnStyleConfiguration = function(){
