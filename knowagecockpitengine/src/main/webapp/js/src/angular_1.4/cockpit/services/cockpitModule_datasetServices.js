@@ -492,6 +492,16 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						item.value=dataset.parameters[item.name];
 					})
 				}
+				if(dataset.drivers) {
+					for(var i = 0; i < dataset.drivers.length; i++) {
+						for(var j = 0; j < dsIl.drivers.length; j++) {
+							if(dataset.drivers[i].id == dsIl.drivers[j].id) {
+								dsIl.drivers[j].parameterValue = dataset.drivers[i].parameterValue;
+								dsIl.drivers[j].parameterDescription = dataset.drivers[i].parameterDescription;
+							}
+						}
+					}
+				}
 				fad.push(dsIl);
 			}else{
 				console.error("ds with id "+dataset.dsId +" not found;")
@@ -790,6 +800,15 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		bodyString = bodyString + "aggregations:" + JSON.stringify(aggregations) + ",parameters:" + parametersString;
 
+		if(this.newDataSet && this.newDataSet.drivers) {
+			bodyJSON.drivers =  driversExecutionService.prepareDriversForSending(this.newDataSet.drivers);
+			this.driversAreSet(this.newDataSet.drivers);
+		} else {
+			bodyJSON.drivers = driversExecutionService.prepareDriversForSending(dataset.drivers);
+			this.driversAreSet(dataset.drivers);
+		}
+		bodyString = bodyString + ",drivers:" + JSON.stringify(bodyJSON.drivers);
+
 		bodyJSON.aggregations = aggregations;
 		bodyJSON.parameters = JSON.parse(parametersString);
 
@@ -859,14 +878,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var indexes = cockpitModule_template.configuration.indexes == undefined ? [] : cockpitModule_template.configuration.indexes;
 		bodyString = bodyString + ",indexes:" + JSON.stringify(indexes)  + "}";
 		bodyJSON.indexes = indexes;
-
-		if(this.newDataSet && this.newDataSet.drivers) {
-			bodyJSON.drivers =  driversExecutionService.prepareDriversForSending(this.newDataSet.drivers);
-			this.driversAreSet(this.newDataSet.drivers);
-		} else {
-			bodyJSON.drivers = driversExecutionService.prepareDriversForSending(dataset.drivers);
-			this.driversAreSet(dataset.drivers);
-		}
 
 		this.parametersAreSet(dataset.parameters);
 
@@ -1287,8 +1298,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					$scope.cockpitDatasetColumn = [
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.label'),"field":"label",headerCheckboxSelection: multiple, checkboxSelection: multiple},
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.name'),"field":"name"},
-						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.type'),"field":"type",cellRenderer:typeRenderer,width: 250,suppressSizeToFit:true,suppressMovable:true},
+						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.type'),"field":"type",cellRenderer:typeRenderer,width: 150,suppressSizeToFit:true,suppressMovable:true},
 						{"headerName": "Tags","field":"tags", cellRenderer:tagsRenderer},
+						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.hasDrivers'),"field":"drivers","cellStyle":
+						{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasDriversRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true},
 						{"headerName": sbiModule_translate.load('kn.cockpit.dataset.hasParameters'),"field":"parameters","cellStyle":
 						{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}];
 
@@ -1306,6 +1319,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 					function resizeColumns(){
 						$scope.cockpitDatasetGrid.api.sizeColumnsToFit();
+					}
+					function hasDriversRenderer(params){
+						return (params.data.type=='SbiQbeDataSet' && params.data.drivers.length > 0) ? '<i class="fa fa-check"></i>' : '';
 					}
 
 					function hasParametersRenderer(params){
@@ -1395,65 +1411,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						deferred.reject();
 					}
 
-					$scope.loadAllDatamarts = function() {
-						sbiModule_restServices.restToRootProject();
-						sbiModule_restServices.promiseGet("2.0","businessmodels")
-							.then(function(response) {
-								$scope.datamartList = angular.copy(response.data);
-							},function(response) {
-								sbiModule_messaging.showErrorMessage(response.data);
-							});
-					}
-
-					$scope.loadAllDatamarts();
-
-					$scope.updateDataSetListWithDrivers = function(dataset) {
-						if(dataset.drivers) {
-							var id = dataset.id.dsId;
-							for(var i = 0; i < ds.datasetList.length; i++) {
-								if(ds.datasetList[i].id.dsId == id) {
-									ds.datasetList[i].drivers = dataset.drivers;
-								}
-							}
-						}
-					}
-
-					$scope.updateDataSetListWithParameters = function() {
-						if($scope.tmpCurrentAvaiableDataset.parameters) {
-							var id = $scope.tmpCurrentAvaiableDataset.id.dsId;
-							for(var i = 0; i < ds.datasetList.length; i++) {
-								if(ds.datasetList[i].id.dsId == id) {
-									ds.datasetList[i].parameters = $scope.tmpCurrentAvaiableDataset.parameters;
-								}
-							}
-						}
-					}
-
-					$scope.getDatasetParametersFromBusinessModel = function (selectedDataset){
-						var promise = null;
-						sbiModule_restServices.restToRootProject();
-						promise = sbiModule_restServices.post("dataset","drivers/",selectedDataset.configuration.qbeDatamarts);
-						promise.then(function(response){
-							if(multiple) {
-								$scope.tmpCurrentAvaiableDataset[0].drivers = angular.copy(response.data.filterStatus);
-								var selectedModel = $filter('filter')($scope.datamartList, {name: $scope.tmpCurrentAvaiableDataset[0].configuration.qbeDatamarts},true)[0];
-								if (!selectedModel) delete $scope.tmpCurrentAvaiableDataset[0].configuration.qbeJSONQuery;
-								$scope.updateDataSetListWithDrivers($scope.tmpCurrentAvaiableDataset[0]);
-							} else {
-								$scope.tmpCurrentAvaiableDataset.drivers = angular.copy(response.data.filterStatus);
-								var selectedModel = $filter('filter')($scope.datamartList, {name: $scope.tmpCurrentAvaiableDataset.configuration.qbeDatamarts},true)[0];
-								if (!selectedModel) delete $scope.tmpCurrentAvaiableDataset.configuration.qbeJSONQuery;
-								$scope.updateDataSetListWithDrivers($scope.tmpCurrentAvaiableDataset);
-							}
-							if(cockpitModule_datasetServices.selectedDSWithDrivers.length==1 && response.data.filterStatus && response.data.filterStatus.length > 0) {
-								sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.parameter.error.one.dataset"), 'Error');
-							} else {
-								$scope.addDataset();
-							}
-						});
-						return promise;
-					}
-
 					$scope.addDataset = function() {
 						if(multiple) {
 							for(var i=0;i<$scope.tmpCurrentAvaiableDataset.length;i++){
@@ -1496,7 +1453,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								})
 								.then(function(data) {
 									angular.copy(data,$scope.tmpCurrentAvaiableDataset.parameters);
-									$scope.updateDataSetListWithParameters();
 									$scope.tmpCurrentAvaiableDataset.expanded = true;
 									if(autoAdd){
 										ds.addAvaiableDataset($scope.tmpCurrentAvaiableDataset)
@@ -1528,14 +1484,22 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							$scope.tmpCurrentAvaiableDataset = $scope.cockpitDatasetGrid.api.getSelectedRows();
 							for(var i=0; i < $scope.tmpCurrentAvaiableDataset.length; i++) {
 								if($scope.tmpCurrentAvaiableDataset[i].type == "SbiQbeDataSet") {
-									$scope.getDatasetParametersFromBusinessModel($scope.tmpCurrentAvaiableDataset[i]);
+									if(cockpitModule_datasetServices.selectedDSWithDrivers.length==1 && $scope.tmpCurrentAvaiableDataset[i].drivers && $scope.tmpCurrentAvaiableDataset[i].drivers.length > 0) {
+										sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.parameter.error.one.dataset"), 'Error');
+									} else {
+										$scope.addDataset();
+									}
 								} else {
 									$scope.addDataset();
 								}
 							}
 						}else{
 							$scope.tmpCurrentAvaiableDataset = $scope.cockpitDatasetGrid.api.getSelectedRows()[0];
-							$scope.getDatasetParametersFromBusinessModel($scope.tmpCurrentAvaiableDataset);
+							if(cockpitModule_datasetServices.selectedDSWithDrivers.length==1 && $scope.tmpCurrentAvaiableDataset.drivers && $scope.tmpCurrentAvaiableDataset.drivers.length > 0) {
+								sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.parameter.error.one.dataset"), 'Error');
+							} else {
+								$scope.addDataset();
+							}
 						}
 					}
 				},

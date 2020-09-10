@@ -170,9 +170,11 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 							List<?> valueList = (List<?>) drivers.get(driverName);
 							if (valueList.size() == 1) {
 								Map<?, ?> valueDescriptionMap = (Map<?, ?>) valueList.get(0);
-								value = valueDescriptionMap.get("value");
-								valueAfterConversion = mapValueToRequiredType(wantedClass, value);
-								filter.setParameter(driverName, valueAfterConversion);
+								if (!valueDescriptionMap.isEmpty()) {
+									value = valueDescriptionMap.get("value");
+									valueAfterConversion = mapValueToRequiredType(wantedClass, value);
+									filter.setParameter(driverName, valueAfterConversion);
+								}
 							}
 							if (valueList.size() > 1) {
 								List<Object> multivalueList = new ArrayList<Object>();
@@ -187,7 +189,8 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 							value = null;
 							valueAfterConversion = null;
 						} catch (Exception e) {
-							String msg = String.format("Error during conversion for driver %s from value %s of class %s to %s of class %s", driverName, value, value != null ? value.getClass().getName() : "N.D.", valueAfterConversion, wantedClass.getName());
+							String msg = String.format("Error during conversion for driver %s from value %s of class %s to %s of class %s", driverName, value,
+									value != null ? value.getClass().getName() : "N.D.", valueAfterConversion, wantedClass.getName());
 							logger.error(msg, e);
 							throw new SpagoBIRuntimeException(msg, e);
 						}
@@ -200,19 +203,29 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	/**
 	 * Map value from driver to the required value from Hibernate's filter.
 	 *
-	 * @param wantedClass Type wanted by Hibernate
-	 * @param value Actual value
+	 * @param wantedClass
+	 *            Type wanted by Hibernate
+	 * @param value
+	 *            Actual value
 	 * @return The mapped value
 	 *
-	 * @throws NoSuchMethodException When the wanted class has no constructor with only one string as parameter
-	 * @throws SecurityException When constructor with only one string as parameter is private
-	 * @throws InstantiationException When you can't instantiate the required class
-	 * @throws IllegalAccessException When you can't access the required constructor
-	 * @throws IllegalArgumentException Shouldn't happen
-	 * @throws InvocationTargetException Shouldn't happen
-	 * @throws ParseException When the date string is invalid
+	 * @throws NoSuchMethodException
+	 *             When the wanted class has no constructor with only one string as parameter
+	 * @throws SecurityException
+	 *             When constructor with only one string as parameter is private
+	 * @throws InstantiationException
+	 *             When you can't instantiate the required class
+	 * @throws IllegalAccessException
+	 *             When you can't access the required constructor
+	 * @throws IllegalArgumentException
+	 *             Shouldn't happen
+	 * @throws InvocationTargetException
+	 *             Shouldn't happen
+	 * @throws ParseException
+	 *             When the date string is invalid
 	 */
-	private Object mapValueToRequiredType(Class<?> wantedClass, Object value) throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
+	private Object mapValueToRequiredType(Class<?> wantedClass, Object value) throws NoSuchMethodException, SecurityException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
 		Object ret = null;
 		if (Date.class.equals(wantedClass)) {
 			String configValue = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
