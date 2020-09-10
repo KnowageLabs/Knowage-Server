@@ -46,6 +46,8 @@ import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 public class CrossTabHTMLSerializer {
 
 	private static String TABLE_TAG = "TABLE";
+	private static String THEAD_TAG = "THEAD";
+	private static String TBODY_TAG = "TBODY";
 	private static String ROW_TAG = "TR";
 	private static String COLUMN_TAG = "TD";
 	private static String ICON_TAG = "I";
@@ -182,7 +184,7 @@ public class CrossTabHTMLSerializer {
 		htmlmergeHorizontallyBodyMonitor.stop();
 
 		htmlmergeVerticallyFinalCTMonitor = MonitorFactory.start("CockpitEngine.CrossTabHTMLSerializer.htmlmergeVerticallyFinalCTMonitor");
-		SourceBean crossTabSB = this.mergeVertically(head, body);
+		SourceBean crossTabSB = this.mergeHeadWithBody(head, body);
 		htmlmergeVerticallyFinalCTMonitor.stop();
 
 		toReturn.setAttribute(crossTabSB);
@@ -197,11 +199,12 @@ public class CrossTabHTMLSerializer {
 
 		return StringEscapeUtils.escapeHtml(text).replaceAll("'", "&apos;").replaceAll("\\\\", "&#92;").replaceAll("/", "&#47;");
 	}
-	
+
 	private String getLevelEmptyFieldPlaceholder(Node node) {
-		if(node.isSubTotal()) {
+		if (node.isSubTotal()) {
 			return EMPTY_FIELD_PLACEHOLDER + (node.getDistanceFromRoot() - 1);
-		}else return EMPTY_FIELD_PLACEHOLDER + node.getDistanceFromRoot();
+		} else
+			return EMPTY_FIELD_PLACEHOLDER + node.getDistanceFromRoot();
 	}
 
 	private SourceBean serializeRowsMembers(CrossTab crossTab) throws SourceBeanException, JSONException {
@@ -1473,6 +1476,36 @@ public class CrossTabHTMLSerializer {
 			SourceBean aRow = (SourceBean) topRows.get(i);
 			table.setAttribute(aRow);
 		}
+
+		return table;
+	}
+
+	private SourceBean mergeHeadWithBody(SourceBean head, SourceBean body) throws SourceBeanException {
+		SourceBean table = new SourceBean(TABLE_TAG);
+		List topRows = head.getAttributeAsList(ROW_TAG);
+		List bottomRows = body.getAttributeAsList(ROW_TAG);
+
+		if (topRows == null) {
+			topRows = new ArrayList();
+		}
+		if (bottomRows == null) {
+			bottomRows = new ArrayList();
+		}
+
+		SourceBean tableHeaders = new SourceBean(THEAD_TAG);
+		for (int i = 0; i < topRows.size(); i++) {
+			SourceBean aRow = (SourceBean) topRows.get(i);
+			tableHeaders.setAttribute(aRow);
+		}
+
+		SourceBean tableBody = new SourceBean(TBODY_TAG);
+		for (int i = 0; i < bottomRows.size(); i++) {
+			SourceBean aRow = (SourceBean) bottomRows.get(i);
+			tableBody.setAttribute(aRow);
+		}
+
+		table.setAttribute(tableHeaders);
+		table.setAttribute(tableBody);
 
 		return table;
 	}
