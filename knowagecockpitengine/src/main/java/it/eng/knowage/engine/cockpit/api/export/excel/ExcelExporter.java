@@ -190,20 +190,17 @@ public class ExcelExporter {
 		}
 
 		try {
-			JSONObject optionsObj;
-			if (options == null || options.equals(""))
-				optionsObj = buildOptionsForCrosstab(templateString);
-			else
-				optionsObj = new JSONObject(options);
 			if (exportWidget) {
 				String widgetId = String.valueOf(body.get("widget"));
 				if (options.isEmpty()) // check if exporting crosstab
 					exportWidget(templateString, widgetId, wb);
 				else {
+					JSONObject optionsObj = new JSONObject(options);
 					exportWidgetCrossTab(templateString, widgetId, wb, optionsObj);
 				}
 			} else {
 				JSONArray widgetsJson = getWidgetsJson(templateString);
+				JSONObject optionsObj = buildOptionsForCrosstab(templateString);
 				exportCockpit(templateString, widgetsJson, wb, optionsObj);
 			}
 		} catch (Exception e) {
