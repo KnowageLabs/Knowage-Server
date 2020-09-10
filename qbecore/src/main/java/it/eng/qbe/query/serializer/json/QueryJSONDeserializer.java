@@ -183,7 +183,7 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 
 					included = fieldJSON.getBoolean(QuerySerializationConstants.FIELD_INCLUDE);
 					visible = fieldJSON.getBoolean(QuerySerializationConstants.FIELD_VISIBLE);
-					inUse = fieldJSON.getBoolean(QuerySerializationConstants.FIELD_IN_USE);
+					inUse = fieldJSON.optBoolean(QuerySerializationConstants.FIELD_IN_USE, true);
 
 					if (!inUse) {
 						continue;
