@@ -246,7 +246,7 @@ public class ExcelExporter {
 					String dsLabel = getDatasetLabel(template, widget.getJSONObject("dataset").getString("dsId"));
 					String selections = getCockpitSelectionsFromBody(widget).toString();
 					JSONObject datastore = client.getDataStore(new HashMap<String, Object>(), dsLabel, userUniqueIdentifier, selections);
-					options.put("metaData", datastore.getJSONObject("metaData"));
+					options.put("metadata", datastore.getJSONObject("metaData"));
 					options.put("jsonData", datastore.getJSONArray("rows"));
 					toReturn.put(widgetId, options);
 				}
