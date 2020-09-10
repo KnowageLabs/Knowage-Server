@@ -561,314 +561,263 @@ public class ExcelExporter {
 			widgetsMapAggregations = body.getJSONArray("widgetsMapAggregations");
 		}
 
-		if (dataStore.has("widgetType") && dataStore.getString("widgetType").equalsIgnoreCase("[\"static-pivot-table\"]")) {
-
-			CrosstabXLSXExporter exporter = new CrosstabXLSXExporter(null);
-
-			JSONObject content = dataStore.getJSONArray("widget").getJSONObject(0).getJSONObject("content");
-			JSONObject crosstabDefinitionJo = content.getJSONObject("crosstabDefinition");
-			JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
-			JSONObject crosstabStyleJo = (content.isNull("style")) ? new JSONObject() : content.getJSONObject("style");
-			crosstabDefinitionConfigJo.put("style", crosstabStyleJo);
-
-			JSONObject sortOptions = content.getJSONObject("sortOptions");
-
-			List<Map<String, Object>> columnsSortKeys;
-			List<Map<String, Object>> rowsSortKeys;
-			List<Map<String, Object>> measuresSortKeys;
-
-			// the id of the crosstab in the client configuration array
-			Integer myGlobalId;
-			JSONArray columnsSortKeysJo = sortOptions.optJSONArray("columnsSortKeys");
-			JSONArray rowsSortKeysJo = sortOptions.optJSONArray("rowsSortKeys");
-			JSONArray measuresSortKeysJo = sortOptions.optJSONArray("measuresSortKeys");
-			myGlobalId = sortOptions.optInt("myGlobalId");
-			columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
-			rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
-			measuresSortKeys = JSONUtils.toMap(measuresSortKeysJo);
-
-			Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
-			Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
-			Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
-			JSONObject styleJSON = (!content.isNull("style") ? content.getJSONObject("style") : new JSONObject());
-
-			JSONObject datastoreObjData = dataStore.getJSONObject("datastoreObjData");
-
-			if (datastoreObjData != null) {
-				logger.debug("Export cockpit crosstab datastoreObjData.toString(): " + datastoreObjData.toString());
+		try {
+			JSONObject metadata = dataStore.getJSONObject("metaData");
+			JSONArray columns = metadata.getJSONArray("fields");
+			columns = filterDataStoreColumns(columns);
+			JSONArray rows = dataStore.getJSONArray("rows");
+			JSONObject columnsAggregations = new JSONObject();
+			if (dataStore.has("cocpitSelectionAggregations")) {
+				columnsAggregations = dataStore.getJSONObject("cocpitSelectionAggregations");
 			}
 
-			CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinitionJo, datastoreObjData.getJSONArray("rows"),
-					datastoreObjData.getJSONObject("metaData"), styleJSON, null);
-
-			CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
+			HashMap<String, String> mapColumnsAggregations = getMapFromAggregations(columnsAggregations);
 
 			Sheet sheet;
 
-			widgetName = WorkbookUtil.createSafeSheetName(widgetName);
-			sheet = createUniqueSheet(wb, widgetName);
+			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 
-			exporter.fillAlreadyCreatedSheet(sheet, cs, createHelper, 0, locale);
+			if (widgetData != null)
+				logger.debug("widgetData: " + widgetData.toString());
 
-		} else {
-			try {
-				JSONObject metadata = dataStore.getJSONObject("metaData");
-				JSONArray columns = metadata.getJSONArray("fields");
-				columns = filterDataStoreColumns(columns);
-				JSONArray rows = dataStore.getJSONArray("rows");
-				JSONObject columnsAggregations = new JSONObject();
-				if (dataStore.has("cocpitSelectionAggregations")) {
-					columnsAggregations = dataStore.getJSONObject("cocpitSelectionAggregations");
-				}
+			JSONObject widgetContent = widgetData.getJSONObject("content");
+			HashMap<String, String> arrayHeader = new HashMap<String, String>();
 
-				HashMap<String, String> mapColumnsAggregations = getMapFromAggregations(columnsAggregations);
+			if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")) {
 
-				Sheet sheet;
+				if (widgetContent.has("columnSelectedOfDataset") && widgetContent.getJSONArray("columnSelectedOfDataset").length() > 0) {
 
-				JSONObject widgetData = dataStore.getJSONObject("widgetData");
+					if (widgetContent.has("columnSelectedOfDataset"))
+						logger.debug("columnSelectedOfDataset: " + widgetContent.getJSONArray("columnSelectedOfDataset").toString());
 
-				if (widgetData != null)
-					logger.debug("widgetData: " + widgetData.toString());
-
-				JSONObject widgetContent = widgetData.getJSONObject("content");
-				HashMap<String, String> arrayHeader = new HashMap<String, String>();
-
-				if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")) {
-
-					if (widgetContent.has("columnSelectedOfDataset") && widgetContent.getJSONArray("columnSelectedOfDataset").length() > 0) {
-
-						if (widgetContent.has("columnSelectedOfDataset"))
-							logger.debug("columnSelectedOfDataset: " + widgetContent.getJSONArray("columnSelectedOfDataset").toString());
-
-						for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
-
-							JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-
-							if (column.has("name")) {
-
-								arrayHeader.put(column.getString("name"), column.getString("aliasToShow"));
-
-							} else {
-
-								if (column.has("aliasToShow")) {
-									arrayHeader.put(column.getString("alias"), column.getString("aliasToShow"));
-								} else {
-
-									arrayHeader.put(column.getString("alias"), column.getString("alias"));
-								}
-							}
-						}
-					}
-
-				}
-
-				JSONArray aggrNewVar = new JSONArray();
-				JSONObject currentWidgetMapAggregations = new JSONObject();
-				if (widgetsMapAggregations != null && !widgetsMapAggregations.isNull(0) && widgetData.has("id")) {
-					for (int i = 0; i < widgetsMapAggregations.length(); i++) {
-						if (widgetsMapAggregations.getJSONObject(i).getInt("id") == widgetData.getInt("id")) {
-							currentWidgetMapAggregations = widgetsMapAggregations.getJSONObject(i);
-							break;
-						}
-					}
-
-					if (currentWidgetMapAggregations.has("columnSelectedOfDataset"))
-						aggrNewVar = (JSONArray) currentWidgetMapAggregations.get("columnSelectedOfDataset");
-
-					mapColumnsAggregations = getMapFromAggregationsFromArray(aggrNewVar);
-
-				}
-
-				// column.header matches with name or alias
-				// Fill Header
-				JSONArray columnsOrdered = new JSONArray();
-				JSONArray groupsArray = new JSONArray();
-				if (widgetData.has("groups")) {
-					groupsArray = widgetData.getJSONArray("groups");
-				}
-				HashMap<String, String> mapGroupsAndColumns = new HashMap<String, String>();
-
-				HashMap<String, String> headerToAlias = new HashMap<String, String>();
-
-				if ((widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table"))
-						&& widgetContent.has("columnSelectedOfDataset")) {
 					for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 
 						JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-						boolean hidden = false;
-						if (column.has("style")) {
-							JSONObject style = column.optJSONObject("style");
-							if (style.has("hiddenColumn")) {
-								if (style.getString("hiddenColumn").equals("true")) {
-									hidden = true;
-								}
 
-							}
-						}
-						if (!hidden) {
+						if (column.has("name")) {
 
-							for (int j = 0; j < columns.length(); j++) {
-								JSONObject columnOld = columns.getJSONObject(j);
-								if (column.has("name")) {
-									if (columnOld.getString("header").equals(column.getString("name"))) {
-										headerToAlias.put(columnOld.getString("header"), column.getString("name"));
-										columnsOrdered.put(columnOld);
-										break;
-									} else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
-										headerToAlias.put(columnOld.getString("header"), column.getString("name"));
-										columnsOrdered.put(columnOld);
-										break;
-									} else if (columnOld.getString("header").equals(mapColumnsAggregations.get(column.getString("aliasToShow")))) {
-										headerToAlias.put(columnOld.getString("header"), column.getString("name"));
-										columnsOrdered.put(columnOld);
-										break;
-									} else if (columnOld.getString("header").equals(mapColumnsAggregations.get(column.getString("name")))) {
-										headerToAlias.put(columnOld.getString("header"), column.getString("name"));
-										columnsOrdered.put(columnOld);
-										break;
-									}
-								} else {
-									if (columnOld.getString("header").equals(column.getString("alias"))) {
-										headerToAlias.put(columnOld.getString("header"), column.getString("alias"));
-										columnsOrdered.put(columnOld);
-										break;
-									} else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
-										headerToAlias.put(columnOld.getString("header"), column.getString("aliasToShow"));
-										columnsOrdered.put(columnOld);
-										break;
-									}
-								}
-							}
-						}
-					}
-				} else {
-					columnsOrdered = columns;
-				}
-				int isGroup = 0;
-				if (widgetContent.has("columnSelectedOfDataset"))
-					mapGroupsAndColumns = getMapFromGroupsArray(groupsArray, widgetContent.getJSONArray("columnSelectedOfDataset"));
+							arrayHeader.put(column.getString("name"), column.getString("aliasToShow"));
 
-				Row header = null;
-				Row newheader = null;
-				if (exportWidget) { // export single widget
-					widgetName = WorkbookUtil.createSafeSheetName(widgetName);
-					sheet = createUniqueSheet(wb, widgetName);
-
-					// Create HEADER - Column Names
-					if (!mapGroupsAndColumns.isEmpty()) {
-						isGroup = 1;
-						newheader = sheet.createRow((short) 0);
-						for (int i = 0; i < columnsOrdered.length(); i++) {
-							JSONObject column = columnsOrdered.getJSONObject(i);
-							String groupName = mapGroupsAndColumns.get(headerToAlias.get(column.get("header")));
-							if (groupName != null) {
-								Cell cell = newheader.createCell(i);
-								cell.setCellValue(groupName);
-							}
-
-						}
-						header = sheet.createRow((short) 1);
-					} else
-						header = sheet.createRow((short) 0); // first row
-				} else { // export whole cockpit
-					String sheetName = "empty";
-					if (dataStore.has("widgetName") && dataStore.getString("widgetName") != null && !dataStore.getString("widgetName").isEmpty()) {
-						if (dataStore.has("sheetInfo")) {
-							sheetName = dataStore.getString("sheetInfo").concat(".").concat(widgetName);
 						} else {
-							sheetName = widgetName;
-						}
-					}
-					sheetName = WorkbookUtil.createSafeSheetName(sheetName);
-					sheet = createUniqueSheet(wb, sheetName);
-					// First row for Widget name in case exporting whole Cockpit document
-					Row firstRow = sheet.createRow((short) 0);
-					Cell firstCell = firstRow.createCell(0);
-					firstCell.setCellValue(widgetName);
-					// Create HEADER - Column Names
-					if (!mapGroupsAndColumns.isEmpty()) {
-						isGroup = 1;
-						newheader = sheet.createRow((short) 1);
-						for (int i = 0; i < columnsOrdered.length(); i++) {
-							JSONObject column = columnsOrdered.getJSONObject(i);
-							String groupName = mapGroupsAndColumns.get(headerToAlias.get(column.get("header")));
-							if (groupName != null) {
-								Cell cell = newheader.createCell(i);
-								cell.setCellValue(groupName);
-							}
 
-						}
-						header = sheet.createRow((short) 2);
-					} else
-						header = sheet.createRow((short) 1);
-				}
+							if (column.has("aliasToShow")) {
+								arrayHeader.put(column.getString("alias"), column.getString("aliasToShow"));
+							} else {
 
-				for (int i = 0; i < columnsOrdered.length(); i++) {
-					JSONObject column = columnsOrdered.getJSONObject(i);
-					String columnName = column.getString("header");
-					if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")
-							|| widgetData.getString("type").equalsIgnoreCase("discovery")) {
-						if (arrayHeader.get(columnName) != null) {
-							columnName = arrayHeader.get(columnName);
-						}
-					}
-
-					Cell cell = header.createCell(i);
-					cell.setCellValue(columnName);
-				}
-
-				// Cell styles for int and float
-				CellStyle intCellStyle = wb.createCellStyle();
-				intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
-
-				CellStyle floatCellStyle = wb.createCellStyle();
-				floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
-
-				// FILL RECORDS
-				for (int r = 0; r < rows.length(); r++) {
-					JSONObject rowObject = rows.getJSONObject(r);
-					Row row;
-					if (exportWidget)
-						row = sheet.createRow((r + isGroup) + 1); // starting from second row, because the 0th (first) is Header
-					else
-						row = sheet.createRow((r + isGroup) + 2);
-
-					for (int c = 0; c < columnsOrdered.length(); c++) {
-						JSONObject column = columnsOrdered.getJSONObject(c);
-						String type = column.getString("type");
-						String colIndex = column.getString("name"); // column_1, column_2, column_3...
-
-						Cell cell = row.createCell(c);
-						Object value = rowObject.get(colIndex);
-
-						if (value != null) {
-							String s = value.toString();
-							switch (type) {
-							case "string":
-								cell.setCellValue(s);
-								break;
-							case "int":
-								if (!s.trim().isEmpty()) {
-									cell.setCellValue(Double.parseDouble(s));
-								}
-								cell.setCellStyle(intCellStyle);
-								break;
-							case "float":
-								if (!s.trim().isEmpty()) {
-									cell.setCellValue(Double.parseDouble(s));
-								}
-								cell.setCellStyle(floatCellStyle);
-								break;
-							default:
-								cell.setCellValue(s);
-								break;
+								arrayHeader.put(column.getString("alias"), column.getString("alias"));
 							}
 						}
 					}
 				}
-			} catch (Exception e) {
-				logger.error("Cannot write data to Excel file", e);
+
 			}
+
+			JSONArray aggrNewVar = new JSONArray();
+			JSONObject currentWidgetMapAggregations = new JSONObject();
+			if (widgetsMapAggregations != null && !widgetsMapAggregations.isNull(0) && widgetData.has("id")) {
+				for (int i = 0; i < widgetsMapAggregations.length(); i++) {
+					if (widgetsMapAggregations.getJSONObject(i).getInt("id") == widgetData.getInt("id")) {
+						currentWidgetMapAggregations = widgetsMapAggregations.getJSONObject(i);
+						break;
+					}
+				}
+
+				if (currentWidgetMapAggregations.has("columnSelectedOfDataset"))
+					aggrNewVar = (JSONArray) currentWidgetMapAggregations.get("columnSelectedOfDataset");
+
+				mapColumnsAggregations = getMapFromAggregationsFromArray(aggrNewVar);
+
+			}
+
+			// column.header matches with name or alias
+			// Fill Header
+			JSONArray columnsOrdered = new JSONArray();
+			JSONArray groupsArray = new JSONArray();
+			if (widgetData.has("groups")) {
+				groupsArray = widgetData.getJSONArray("groups");
+			}
+			HashMap<String, String> mapGroupsAndColumns = new HashMap<String, String>();
+
+			HashMap<String, String> headerToAlias = new HashMap<String, String>();
+
+			if ((widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table"))
+					&& widgetContent.has("columnSelectedOfDataset")) {
+				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
+
+					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
+					boolean hidden = false;
+					if (column.has("style")) {
+						JSONObject style = column.optJSONObject("style");
+						if (style.has("hiddenColumn")) {
+							if (style.getString("hiddenColumn").equals("true")) {
+								hidden = true;
+							}
+
+						}
+					}
+					if (!hidden) {
+
+						for (int j = 0; j < columns.length(); j++) {
+							JSONObject columnOld = columns.getJSONObject(j);
+							if (column.has("name")) {
+								if (columnOld.getString("header").equals(column.getString("name"))) {
+									headerToAlias.put(columnOld.getString("header"), column.getString("name"));
+									columnsOrdered.put(columnOld);
+									break;
+								} else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
+									headerToAlias.put(columnOld.getString("header"), column.getString("name"));
+									columnsOrdered.put(columnOld);
+									break;
+								} else if (columnOld.getString("header").equals(mapColumnsAggregations.get(column.getString("aliasToShow")))) {
+									headerToAlias.put(columnOld.getString("header"), column.getString("name"));
+									columnsOrdered.put(columnOld);
+									break;
+								} else if (columnOld.getString("header").equals(mapColumnsAggregations.get(column.getString("name")))) {
+									headerToAlias.put(columnOld.getString("header"), column.getString("name"));
+									columnsOrdered.put(columnOld);
+									break;
+								}
+							} else {
+								if (columnOld.getString("header").equals(column.getString("alias"))) {
+									headerToAlias.put(columnOld.getString("header"), column.getString("alias"));
+									columnsOrdered.put(columnOld);
+									break;
+								} else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
+									headerToAlias.put(columnOld.getString("header"), column.getString("aliasToShow"));
+									columnsOrdered.put(columnOld);
+									break;
+								}
+							}
+						}
+					}
+				}
+			} else {
+				columnsOrdered = columns;
+			}
+			int isGroup = 0;
+			if (widgetContent.has("columnSelectedOfDataset"))
+				mapGroupsAndColumns = getMapFromGroupsArray(groupsArray, widgetContent.getJSONArray("columnSelectedOfDataset"));
+
+			Row header = null;
+			Row newheader = null;
+			if (exportWidget) { // export single widget
+				widgetName = WorkbookUtil.createSafeSheetName(widgetName);
+				sheet = createUniqueSheet(wb, widgetName);
+
+				// Create HEADER - Column Names
+				if (!mapGroupsAndColumns.isEmpty()) {
+					isGroup = 1;
+					newheader = sheet.createRow((short) 0);
+					for (int i = 0; i < columnsOrdered.length(); i++) {
+						JSONObject column = columnsOrdered.getJSONObject(i);
+						String groupName = mapGroupsAndColumns.get(headerToAlias.get(column.get("header")));
+						if (groupName != null) {
+							Cell cell = newheader.createCell(i);
+							cell.setCellValue(groupName);
+						}
+
+					}
+					header = sheet.createRow((short) 1);
+				} else
+					header = sheet.createRow((short) 0); // first row
+			} else { // export whole cockpit
+				String sheetName = "empty";
+				if (dataStore.has("widgetName") && dataStore.getString("widgetName") != null && !dataStore.getString("widgetName").isEmpty()) {
+					if (dataStore.has("sheetInfo")) {
+						sheetName = dataStore.getString("sheetInfo").concat(".").concat(widgetName);
+					} else {
+						sheetName = widgetName;
+					}
+				}
+				sheetName = WorkbookUtil.createSafeSheetName(sheetName);
+				sheet = createUniqueSheet(wb, sheetName);
+				// First row for Widget name in case exporting whole Cockpit document
+				Row firstRow = sheet.createRow((short) 0);
+				Cell firstCell = firstRow.createCell(0);
+				firstCell.setCellValue(widgetName);
+				// Create HEADER - Column Names
+				if (!mapGroupsAndColumns.isEmpty()) {
+					isGroup = 1;
+					newheader = sheet.createRow((short) 1);
+					for (int i = 0; i < columnsOrdered.length(); i++) {
+						JSONObject column = columnsOrdered.getJSONObject(i);
+						String groupName = mapGroupsAndColumns.get(headerToAlias.get(column.get("header")));
+						if (groupName != null) {
+							Cell cell = newheader.createCell(i);
+							cell.setCellValue(groupName);
+						}
+
+					}
+					header = sheet.createRow((short) 2);
+				} else
+					header = sheet.createRow((short) 1);
+			}
+
+			for (int i = 0; i < columnsOrdered.length(); i++) {
+				JSONObject column = columnsOrdered.getJSONObject(i);
+				String columnName = column.getString("header");
+				if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")
+						|| widgetData.getString("type").equalsIgnoreCase("discovery")) {
+					if (arrayHeader.get(columnName) != null) {
+						columnName = arrayHeader.get(columnName);
+					}
+				}
+
+				Cell cell = header.createCell(i);
+				cell.setCellValue(columnName);
+			}
+
+			// Cell styles for int and float
+			CellStyle intCellStyle = wb.createCellStyle();
+			intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
+
+			CellStyle floatCellStyle = wb.createCellStyle();
+			floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+
+			// FILL RECORDS
+			for (int r = 0; r < rows.length(); r++) {
+				JSONObject rowObject = rows.getJSONObject(r);
+				Row row;
+				if (exportWidget)
+					row = sheet.createRow((r + isGroup) + 1); // starting from second row, because the 0th (first) is Header
+				else
+					row = sheet.createRow((r + isGroup) + 2);
+
+				for (int c = 0; c < columnsOrdered.length(); c++) {
+					JSONObject column = columnsOrdered.getJSONObject(c);
+					String type = column.getString("type");
+					String colIndex = column.getString("name"); // column_1, column_2, column_3...
+
+					Cell cell = row.createCell(c);
+					Object value = rowObject.get(colIndex);
+
+					if (value != null) {
+						String s = value.toString();
+						switch (type) {
+						case "string":
+							cell.setCellValue(s);
+							break;
+						case "int":
+							if (!s.trim().isEmpty()) {
+								cell.setCellValue(Double.parseDouble(s));
+							}
+							cell.setCellStyle(intCellStyle);
+							break;
+						case "float":
+							if (!s.trim().isEmpty()) {
+								cell.setCellValue(Double.parseDouble(s));
+							}
+							cell.setCellStyle(floatCellStyle);
+							break;
+						default:
+							cell.setCellValue(s);
+							break;
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Cannot write data to Excel file", e);
 		}
 	}
 
