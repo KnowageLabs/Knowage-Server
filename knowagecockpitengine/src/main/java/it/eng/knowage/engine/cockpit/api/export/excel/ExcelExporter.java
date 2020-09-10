@@ -192,7 +192,7 @@ public class ExcelExporter {
 		try {
 			JSONObject optionsObj;
 			if (options == null || options.equals(""))
-				optionsObj = new JSONObject();
+				optionsObj = buildOptionsForCrosstab(templateString);
 			else
 				optionsObj = new JSONObject(options);
 			if (exportWidget) {
@@ -222,7 +222,56 @@ public class ExcelExporter {
 		return out.toByteArray();
 	}
 
-	JSONArray getWidgetsJson(String templateString) {
+	private JSONObject buildOptionsForCrosstab(String templateString) {
+		try {
+			JSONObject template = new JSONObject(templateString);
+			JSONArray sheets = template.getJSONArray("sheets");
+			JSONObject toReturn = new JSONObject();
+			for (int i = 0; i < sheets.length(); i++) {
+				JSONObject sheet = sheets.getJSONObject(i);
+				JSONArray sheetWidgets = sheet.getJSONArray("widgets");
+				for (int j = 0; j < sheetWidgets.length(); j++) {
+					JSONObject widget = sheetWidgets.getJSONObject(j);
+					if (!widget.getString("type").equals("static-pivot-table"))
+						continue;
+					String widgetId = widget.getString("id");
+					JSONObject options = new JSONObject();
+					options.put("config", new JSONObject().put("type", "pivot"));
+					options.put("sortOptions", widget.getJSONObject("content").getJSONObject("sortOptions"));
+					options.put("name", widget.getJSONObject("content").getString("name"));
+					options.put("crosstabDefinition", widget.getJSONObject("content").getJSONObject("crosstabDefinition"));
+					options.put("style", widget.getJSONObject("content").getJSONObject("style"));
+					options.put("variables", template.getJSONObject("configuration").getJSONArray("variables"));
+					ExcelExporterClient client = new ExcelExporterClient();
+					String dsLabel = getDatasetLabel(template, widget.getJSONObject("dataset").getString("dsId"));
+					String selections = getCockpitSelectionsFromBody(widget).toString();
+					JSONObject datastore = client.getDataStore(new HashMap<String, Object>(), dsLabel, userUniqueIdentifier, selections);
+					options.put("metaData", datastore.getJSONObject("metaData"));
+					options.put("jsonData", datastore.getJSONArray("rows"));
+					toReturn.put(widgetId, options);
+				}
+			}
+			return toReturn;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot retrieve cross table options from data service", e);
+		}
+	}
+
+	private String getDatasetLabel(JSONObject template, String dsId) {
+		try {
+			JSONArray cockpitDatasets = template.getJSONObject("configuration").getJSONArray("datasets");
+			for (int i = 0; i < cockpitDatasets.length(); i++) {
+				String currDsId = cockpitDatasets.getJSONObject(i).getString("dsId");
+				if (currDsId.equals(dsId))
+					return cockpitDatasets.getJSONObject(i).getString("dsLabel");
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot retrieve dataset label for dsId: " + dsId, e);
+		}
+		throw new SpagoBIRuntimeException("No dataset found with dsId: " + dsId);
+	}
+
+	private JSONArray getWidgetsJson(String templateString) {
 		try {
 			if (body != null && body.has("widget"))
 				return body.getJSONArray("widget");
@@ -487,6 +536,8 @@ public class ExcelExporter {
 
 	private JSONObject getCockpitSelectionsFromBody(JSONObject widget) {
 		JSONObject cockpitSelections = new JSONObject();
+		if (body == null || body.length() == 0)
+			return cockpitSelections;
 		try {
 			if (exportWidget) // export single widget
 				cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
