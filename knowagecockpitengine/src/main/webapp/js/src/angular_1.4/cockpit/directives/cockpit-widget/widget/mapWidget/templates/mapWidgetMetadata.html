@@ -74,7 +74,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-repeat="column in layer.content.columnSelectedOfDataset track by $index" ng-if="column.fieldType != 'SPATIAL_ATTRIBUTE'">
+											<tr ng-repeat="column in layer.content.columnSelectedOfDataset | orderBy: '{ fieldType: fieldType, name: name}':false:columnsComparator  track by $index">
 												
 												<td>
 													<md-input-container ng-if="!column.isCalculated && !checkDs(column)" layout="row" layout-align="start center">
@@ -96,13 +96,33 @@
 												<td>{{column.fieldType}}</td>
 												<td>
 													<md-input-container ng-if="column.fieldType === 'MEASURE' && !column.isCalculated">
-														<md-select ng-model="column.aggregationSelected" ng-init="column.aggregationSelected=column.aggregationSelected||availableAggregationFunctions[0]" aria-label="column aggregation">
-															<md-option ng-repeat="func in availableAggregationFunctions" ng-value="func">{{func}}</md-option>
+														<md-select
+																ng-model="column.aggregationSelected"
+																ng-init="column.aggregationSelected = column.aggregationSelected || availableAggregationFunctionsForMeasures[0]"
+																aria-label="column aggregation">
+															<md-option
+																	ng-repeat="func in availableAggregationFunctionsForMeasures"
+																	ng-value="func">
+																{{func}}
+															</md-option>
+														</md-select>
+													</md-input-container>
+													<md-input-container ng-if="column.fieldType === 'SPATIAL_ATTRIBUTE'">
+														<md-select
+																ng-model="column.aggregationSelected"
+																ng-init="column.aggregationSelected = column.aggregationSelected || availableAggregationFunctionsForSpatialAttribute[0]"
+																ng-disabled="column.properties.aggregateBy"
+																aria-label="column aggregation">
+															<md-option
+																	ng-repeat="func in availableAggregationFunctionsForSpatialAttribute"
+																	ng-value="func">
+																{{func}}
+															</md-option>
 														</md-select>
 													</md-input-container>
 												</td>
 												<td style="text-align:center">
-													<md-checkbox ng-model="column.properties.aggregateBy" aria-label="Aggregate by this attribute" ng-if="column.fieldType=='ATTRIBUTE'" ng-change="setAggregateBy(column,layer)"/>
+													<md-checkbox ng-model="column.properties.aggregateBy" aria-label="Aggregate by this attribute" ng-if="column.fieldType=='ATTRIBUTE' || column.fieldType=='SPATIAL_ATTRIBUTE'" ng-change="setAggregateBy(column,layer)"/>
 												</td>
 												<td style="text-align:center">
 													<md-checkbox ng-model="column.properties.showDetails" aria-label="Show column on details" ng-if="column.fieldType=='MEASURE' || column.fieldType=='ATTRIBUTE'"  ng-disabled="column.fieldType=='ATTRIBUTE' && !column.properties.aggregateBy"/>

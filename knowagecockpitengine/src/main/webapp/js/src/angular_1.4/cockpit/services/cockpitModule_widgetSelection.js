@@ -50,6 +50,37 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					.filter(function(el) {
 						var type = el.fieldType;
 						return !(type == "ATTRIBUTE" && !el.properties.aggregateBy);
+					})
+					.map(function(el) {
+						/*
+						 * The following step can edit the objs and
+						 * we don't want that.
+						 */
+						return angular.copy(el);
+					})
+					.map(function(el) {
+						/*
+						 * Reset aggregation function because the backend service
+						 * expects this.
+						 */
+						if (el.properties.aggregateBy) {
+							el.aggregationSelected = 'NONE';
+						}
+
+						return el;
+					})
+					.map(function(el) {
+						var type = el.fieldType;
+
+						/*
+						 * Convert spatial attribute to measure when the aggregation
+						 * is disabled..
+						 */
+						if (type == "SPATIAL_ATTRIBUTE" && !el.properties.aggregateBy) {
+							el.fieldType = "MEASURE";
+						}
+
+						return el;
 					});
 				break;
 				}
