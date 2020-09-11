@@ -57,6 +57,7 @@ public class CrossTabHTMLSerializer {
 	private static String STYLE_ATTRIBUTE = "style";
 	private static String TITLE_ATTRIBUTE = "title";
 	private static String ID_ATTRIBUTE = "id";
+	private static String FIXED_HEADERS_ATTRIBUTE = "pivot";
 	private static String ROWSPAN_ATTRIBUTE = "rowspan";
 	private static String STARTING_ROWSPAN_ATTRIBUTE = "start-span";
 	private static String COLSPAN_ATTRIBUTE = "colspan";
@@ -362,6 +363,8 @@ public class CrossTabHTMLSerializer {
 				aColumn.setAttribute(TITLE_ATTRIBUTE, escapeAll(text));
 				String idLabel = aNode.getValue().equals("") ? getLevelEmptyFieldPlaceholder(aNode) : aNode.getValue();
 				aColumn.setAttribute(ID_ATTRIBUTE, escapeAll(idLabel));
+				if (crossTab.isFixedColumn())
+					aColumn.setAttribute(FIXED_HEADERS_ATTRIBUTE, true);
 
 				boolean isSubtotal = aNode.getValue().equals(CrossTab.SUBTOTAL);
 				if (isSubtotal && crossTab.isExpandCollapseRows()) { // create subtotal hidden row (used when collapsing aggregations)
