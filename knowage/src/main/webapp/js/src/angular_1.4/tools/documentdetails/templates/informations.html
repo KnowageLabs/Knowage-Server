@@ -5,7 +5,7 @@
             <div class="md-toolbar-tools" layout="row">
                 <h2>{{di.translate.load("sbi.documentdetails.informations")}}</h2>
                 <span flex></span>
-                <md-button ng-click="di.openTemplateDesigner(di.typeDocument)" ng-if="(di.typeDocument=='OLAP' || di.typeDocument=='KPI') && di.document.engine != 'knowagesvgviewerengine'">{{di.translate.load('sbi.documentdetails.opendesigner')}}</md-button>
+                <md-button ng-click="di.openTemplateDesigner(di.document.typeCode)" ng-if="di.document.typeCode=='OLAP' || di.document.typeCode=='KPI' || (di.document.typeCode=='MAP' && di.document.engine=='knowagegisengine')">{{di.translate.load('sbi.documentdetails.opendesigner')}}</md-button>
             </div>
         </md-toolbar>
         <div layout="column " ng-if="di.template == undefined">            
