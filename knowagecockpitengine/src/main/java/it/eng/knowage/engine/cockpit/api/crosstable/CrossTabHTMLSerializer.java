@@ -57,7 +57,7 @@ public class CrossTabHTMLSerializer {
 	private static String STYLE_ATTRIBUTE = "style";
 	private static String TITLE_ATTRIBUTE = "title";
 	private static String ID_ATTRIBUTE = "id";
-	private static String FIXED_HEADERS_ATTRIBUTE = "pivot";
+	private static String FIXED_COLUMN_ATTRIBUTE = "pivot";
 	private static String ROWSPAN_ATTRIBUTE = "rowspan";
 	private static String STARTING_ROWSPAN_ATTRIBUTE = "start-span";
 	private static String COLSPAN_ATTRIBUTE = "colspan";
@@ -364,7 +364,7 @@ public class CrossTabHTMLSerializer {
 				String idLabel = aNode.getValue().equals("") ? getLevelEmptyFieldPlaceholder(aNode) : aNode.getValue();
 				aColumn.setAttribute(ID_ATTRIBUTE, escapeAll(idLabel));
 				if (crossTab.isFixedColumn())
-					aColumn.setAttribute(FIXED_HEADERS_ATTRIBUTE, true);
+					aColumn.setAttribute(FIXED_COLUMN_ATTRIBUTE, aNode.getDistanceFromRoot() - 1);
 
 				boolean isSubtotal = aNode.getValue().equals(CrossTab.SUBTOTAL);
 				if (isSubtotal && crossTab.isExpandCollapseRows()) { // create subtotal hidden row (used when collapsing aggregations)
@@ -1585,7 +1585,8 @@ public class CrossTabHTMLSerializer {
 				continue; // skips header if not required
 			}
 			aColumn.setAttribute(CLASS_ATTRIBUTE, HEADER_CLASS);
-
+			if (crossTab.isFixedColumn())
+				aColumn.setAttribute(FIXED_COLUMN_ATTRIBUTE, i);
 			aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + i + "','0'," + myGlobalId + ")");
 			aColumn.setAttribute(addSortArrow(aRow, aRowDef.getAlias(), style, widthStyle, direction, false, aRowDef.getVariable()));
 			aRow.setAttribute(aColumn);
@@ -1661,6 +1662,8 @@ public class CrossTabHTMLSerializer {
 			SourceBean emptyRow = new SourceBean(ROW_TAG);
 			SourceBean emptyColumn = new SourceBean(COLUMN_TAG);
 			emptyColumn.setAttribute(CLASS_ATTRIBUTE, EMPTY_CLASS);
+			if (crossTab.isFixedColumn())
+				emptyColumn.setAttribute(FIXED_COLUMN_ATTRIBUTE, 0);
 //			emptyColumn.setAttribute(STYLE_ATTRIBUTE, "border:0;");
 			if (!crossTab.isMeasureOnRow()) {
 				if (crossTab.getCrosstabDefinition().getRows().size() == 0 && !crossTab.getCrosstabDefinition().getConfig().optBoolean("calculatetotalsonrows"))
