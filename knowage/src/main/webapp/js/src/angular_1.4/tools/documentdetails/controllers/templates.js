@@ -32,7 +32,6 @@ angular
                var basePath = id + "/" + 'templates';
                var resourceName = DocumentService.requiredPath;
                self.showIndented = false;
-               self.typeDocument = DocumentService.document.typeCode;
 
                self.selectTemplate = function(template) {
                    self.selectedTemplate = template;
