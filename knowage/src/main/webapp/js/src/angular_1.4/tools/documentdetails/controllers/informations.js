@@ -23,7 +23,6 @@ angular
 
         	 var self = this;
         	 self.documentService = DocumentService;
-        	 self.typeDocument = DocumentService.document.typeCode;
         	 self.translate = sbiModule_translate;
         	 self.templateService = templateService;
              self.documentInfoObject =$location.search();
@@ -286,7 +285,7 @@ angular
                	});
              }
              self.getFunctionalities(functionalitiesPath);
-             
+
              self.openTemplateDesigner = function(type) {
             	 $mdDialog.show({
  					controller: DialogNewTemplateController,
@@ -296,7 +295,7 @@ angular
  				}).then(function() {
  				})
              }
-             
+
              function DialogNewTemplateController($scope, sbiModule_config) {
      			if(self.templateService.listOfTemplates && self.templateService.listOfTemplates.length > 0) {
      				$scope.iframeUrl = sbiModule_config.contextName + "/servlet/AdapterHTTP?OBJECT_ID="+self.id+"&PAGE=DocumentTemplateBuildPage&MESSAGEDET=EDIT_DOCUMENT_TEMPLATE";
