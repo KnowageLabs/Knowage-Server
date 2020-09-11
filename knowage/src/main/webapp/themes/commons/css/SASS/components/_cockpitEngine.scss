@@ -2033,78 +2033,120 @@
 		 	&.crosstab-fill-width{
 			 	width:100%;
 			}
-			border-collapse: collapse;
+			border-collapse: separate;
+			border-spacing: 0;
 			width:auto;
 			border-bottom: 1px solid $tableLineSeparator;
-			tbody{
-				tr{
-					height: $angularTableDenseTRHeight;
-					td{
-						&.level{
-							text-align: center;
-							font-size: 16px;
-							color: #3b678c;
-							font-weight: 600;
-							table{
-								table-layout:auto;
-								display: initial;
-							}
-							.crosstab-header-text{
-								text-align: center;
-								font-family: Roboto,"Helvetica Neue",sans-serif;
-								text-align: center;
-								font-size: $headerFontSize;
-								color: #3b678c;
-								font-weight: 600;								
-							}
-							.sortIcon{
-								line-height: 33px;
-								padding: 0!important;
-							}
-							/*}*/
-						}
-						&.member{
-							text-align: center;
-							font-size: $baseFontSize;
-							color: $baseColor;
-							font-weight: 600;
-							.crosstab-header-text{
-								font-family: Roboto,"Helvetica Neue",sans-serif;
-								text-align: center;
-								font-size: $headerFontSize;
-								font-weight: 600;
-								font-style:normal !important;								
-							}
-						}
-						&.data{
-							text-align: center;
-						}
-						&.partialsum{
-							text-align: center;
-							background-color: rgba(59, 103, 140, 0.45);
-							color:white;
-						}
-						&.totals{
-							text-align: center;
-							background-color: rgba(59, 103, 140, 0.8);
-							color:white;
-						}
-						&.crosstab-header-text {
+			thead {
+				tr {
+					height: 30px;
+					td {
+						padding: 0 !important;
+						margin: 0 !important;
+						text-overflow: ellipsis;
+						overflow: hidden;
+						white-space: nowrap;
+						background-color: inherit;
+							&.crosstab-header-text {
 							/*border-top:none;	*/
+							cursor: pointer;
+							text-align: center;
+							font-family: Roboto,"Helvetica Neue",sans-serif;
+							text-align: center;
+							font-size: $headerFontSize;
+							color: $baseColor;
+							font-weight: 600;									
+						}
+					}
+				}
+				tr:first-child {
+					td {
+						position: sticky;
+						top: 0;
+					}
+				}
+				tr:nth-child(2){
+					td {
+						position: sticky;
+						top: 30px;
+					}
+				}
+				tr:nth-child(3){
+					td {
+						position: sticky;
+						top: 60px;
+					}
+				}
+				tr:nth-child(4){
+					td {
+						position: sticky;
+						top: 90px;
+					}
+				}
+			}
+			tbody {
+				tr {
+					height: $angularTableDenseTRHeight;
+				}
+			}
+			tr{
+				height: $angularTableDenseTRHeight;
+				td{
+					&.level{
+						text-align: center;
+						font-size: 16px;
+						color: #3b678c;
+						font-weight: 600;
+						table{
+							table-layout:auto;
+							display: initial;
+						}
+						.crosstab-header-text{
 							text-align: center;
 							font-family: Roboto,"Helvetica Neue",sans-serif;
 							text-align: center;
 							font-size: $headerFontSize;
 							color: #3b678c;
-							font-weight: 600;									
+							font-weight: 600;								
 						}
-						&.sortIcon {
-							border-top: none;
+						.sortIcon{
+							line-height: 33px;
+							padding: 0!important;
 						}
-						&[ng-click] i.far {
-							padding-left: 8px;
-							outline: none;
+						/*}*/
+					}
+					&.member{
+						text-align: center;
+						font-size: $baseFontSize;
+						color: $baseColor;
+						font-weight: 600;
+						.crosstab-header-text{
+							font-family: Roboto,"Helvetica Neue",sans-serif;
+							text-align: center;
+							font-size: $headerFontSize;
+							font-weight: 600;
+							font-style:normal !important;								
 						}
+					}
+					&.data{
+						text-align: center;
+					}
+					&.partialsum{
+						text-align: center;
+						background-color: rgba(59, 103, 140, 0.45);
+						color:white;
+					}
+					&.totals{
+						text-align: center;
+						background-color: rgba(59, 103, 140, 0.8);
+						color:white;
+					}
+					&.sortIcon {
+						border-top: none;
+					}
+					&[ng-click] i.far {
+						padding-left: 8px;
+						outline: none;
 					}
 				}
 			}
