@@ -1185,9 +1185,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    	  }
 
 			    	 $scope.getMeasureType = function(item){
-			    		 return item.nature == 'calculated_field' ? 'CALCULATED-FIELD':'MEASURE-PT';
+			    		 return item.nature == 'calculated_field' ? "'CALCULATED-FIELD'":"'MEASURE-PT'";
 			    	 }
-
+			    	 
 			    	 $scope.addCalculatedField = function(item) {
 
 							item.nature = "calculated_field";
