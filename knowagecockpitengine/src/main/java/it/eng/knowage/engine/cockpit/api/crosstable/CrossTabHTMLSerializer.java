@@ -389,6 +389,9 @@ public class CrossTabHTMLSerializer {
 					String expandLabel = text.equals("") ? getLevelEmptyFieldPlaceholder(aNode) : text;
 					aButton.setAttribute(NG_CLICK_ATTRIBUTE,
 							"expand($event,'" + escapeAll(aNode.getParentNode().getColumnName()) + "','" + escapeAll(expandLabel) + "'," + hierarchyJson + ")");
+					if (crossTab.isFixedColumn()) {
+						subtotalHiddenColumn.setAttribute(FIXED_COLUMN_ATTRIBUTE, aNode.getDistanceFromRoot() - 2);
+					}
 					subtotalHiddenColumn.setAttribute(aButton);
 					aRow.setAttribute(subtotalHiddenColumn);
 				}
@@ -1586,7 +1589,7 @@ public class CrossTabHTMLSerializer {
 			}
 			aColumn.setAttribute(CLASS_ATTRIBUTE, HEADER_CLASS);
 			if (crossTab.isFixedColumn())
-				aColumn.setAttribute(FIXED_COLUMN_ATTRIBUTE, i);
+				aColumn.setAttribute(FIXED_COLUMN_ATTRIBUTE, "header" + i);
 			aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + i + "','0'," + myGlobalId + ")");
 			aColumn.setAttribute(addSortArrow(aRow, aRowDef.getAlias(), style, widthStyle, direction, false, aRowDef.getVariable()));
 			aRow.setAttribute(aColumn);
@@ -1663,7 +1666,7 @@ public class CrossTabHTMLSerializer {
 			SourceBean emptyColumn = new SourceBean(COLUMN_TAG);
 			emptyColumn.setAttribute(CLASS_ATTRIBUTE, EMPTY_CLASS);
 			if (crossTab.isFixedColumn())
-				emptyColumn.setAttribute(FIXED_COLUMN_ATTRIBUTE, 0);
+				emptyColumn.setAttribute(FIXED_COLUMN_ATTRIBUTE, "header0");
 //			emptyColumn.setAttribute(STYLE_ATTRIBUTE, "border:0;");
 			if (!crossTab.isMeasureOnRow()) {
 				if (crossTab.getCrosstabDefinition().getRows().size() == 0 && !crossTab.getCrosstabDefinition().getConfig().optBoolean("calculatetotalsonrows"))

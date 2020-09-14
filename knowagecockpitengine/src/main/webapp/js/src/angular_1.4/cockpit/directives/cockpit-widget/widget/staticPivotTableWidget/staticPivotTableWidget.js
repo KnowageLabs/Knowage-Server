@@ -118,16 +118,41 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		elem.classList.add('crosstab-fill-width');
 		elem.style['table-layout'] = 'fixed';
 	}
+	
+	$scope.evaluatePivotedCells = function(elem){
+		var offsetArray = [];
+		var pivotedHeaders = elem.querySelectorAll("td[pivot*='header']");
+		for(var h = 0; h < pivotedHeaders.length; h++){
+			pivotedHeaders[h].style.left = "";
+			var headerName = pivotedHeaders[h].getAttribute('pivot');
+			headerIndex = headerName.substr(headerName.length - 1);
+			if(!offsetArray[headerIndex]){
+				offsetArray.splice(headerIndex, 0 , pivotedHeaders[h].offsetLeft - 10);
+			}
+			pivotedHeaders[h].style.left = offsetArray[headerIndex];
+		}
+		var pivotedCells = elem.querySelectorAll('td[pivot]');
+		if(pivotedCells.length > 0){
+			for(var k in pivotedCells){
+				if(pivotedCells[k] && pivotedCells[k].style){
+					pivotedCells[k].style.left = offsetArray[pivotedCells[k].getAttribute('pivot')];
+					if(!pivotedCells[k].style.backgroundColor && pivotedCells[k].getAttribute('pivot')[0]!= 'h') pivotedCells[k].style.backgroundColor = 'white';
+				}
+			}
+		}
+	}
 
 	$scope.removeDynamicWidthClass = function(elem){
 		elem.classList.remove("crosstab-fill-width");
 	}
 
 	$scope.refresh=function(element,width,height, datasetRecords,nature){
+		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
+			$scope.evaluatePivotedCells(element[0]);
+		}
 		if(datasetRecords==undefined){
 			return;
 		}
-
 		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
 			var fatherElement = angular.element($scope.subCockpitWidget);
 			if($scope.ngModel.content.style.generic.layout == 'auto') {
@@ -190,6 +215,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					if(fatherElement[0].children[0] && (fatherElement[0].children[0].clientWidth < fatherElement[0].clientWidth)) {
 						$scope.addDynamicWidthClass(fatherElement[0].children[0]);
 					}
+					$scope.evaluatePivotedCells(element[0]);
 				},
 				function(response){
 					sbiModule_restServices.errorHandler(response.data,"Pivot Table Error")
@@ -288,6 +314,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			//show hidden cell in subtotal row
 			subtotalHiddenCell[1].classList.remove('hidden');
 		}
+		$scope.evaluatePivotedCells(widgetEl);
 		$scope.isExpanded = false;
 	}
 
@@ -327,6 +354,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			//reset rowspans
 			$scope.resetParentsRowspan(parentKey, parent, widgetEl);
 		}
+		$scope.evaluatePivotedCells(widgetEl);
 		$scope.isExpanded = true;
 	}
 
@@ -445,6 +473,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 			}
 		}
+		$scope.evaluatePivotedCells(widgetEl);
 	}
 
 	$scope.expand = function(e, column, value, parent) {
@@ -516,6 +545,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 			}
 		}
+		$scope.evaluatePivotedCells(widgetEl);
 	}
 
 	$scope.resetParentsRowspan = function(key, value, widgetEl) {
