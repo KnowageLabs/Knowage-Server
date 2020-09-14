@@ -298,7 +298,7 @@
                   </md-select>
                   <div class="hint" ng-if="link.interactionType != 'singleColumn'">{{::translate.load('kn.crossconfigurator.hint.column')}}</div>
                </md-input-container>
-               <button class="md-button md-raised md-button-empty" ng-if="link.interactionType == 'icon'" ng-click="chooseIcon('link')" ng-disabled="!ngModel.link.enable">
+               <button class="md-button md-raised md-button-empty" ng-if="link.interactionType == 'icon'" ng-click="chooseIcon('link', link)" ng-disabled="!ngModel.link.enable">
 	               <span ng-if="!link.icon">{{::translate.load('kn.crossconfigurator.chooseicon')}}</span>
 	               <i ng-if="link.icon" ng-class="link.icon"></i>
                </button>

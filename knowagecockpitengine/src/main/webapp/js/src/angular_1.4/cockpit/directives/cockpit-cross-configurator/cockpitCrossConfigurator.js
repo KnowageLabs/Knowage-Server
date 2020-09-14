@@ -194,14 +194,16 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
         onLoad: $scope.codemirrorLoaded
     };
 
-	$scope.chooseIcon = function(type){
+	$scope.chooseIcon = function(type, link){
 		if($scope.iconOpened == type) $scope.iconOpened = false;
 		else $scope.iconOpened = type;
+		$scope.tempLink = link;
 		$scope.iconFamily = $scope.availableIcons[0].name;
 	}
 
 	$scope.setIcon = function(family,icon){
-		$scope.ngModel[$scope.iconOpened].icon = family.className+' '+icon.className;
+		if($scope.iconOpened != 'link') $scope.ngModel[$scope.iconOpened].icon = family.className+' '+icon.className;
+		else $scope.tempLink.icon = family.className+' '+icon.className;
 		$scope.iconOpened = false;
 	}
 	

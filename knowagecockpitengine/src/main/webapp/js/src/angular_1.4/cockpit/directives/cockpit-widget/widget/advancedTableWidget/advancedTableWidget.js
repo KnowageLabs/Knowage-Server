@@ -69,6 +69,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			else return value;
 		}
 
+		function crossHasType(type){
+			if($scope.interaction && $scope.interaction.crossType && $scope.interaction.crossType[type]) return true;
+			if($scope.interaction && $scope.interaction.previewType && $scope.interaction.previewType[type]) return true;
+			if($scope.interaction && $scope.interaction.links){
+				for(var l in $scope.interaction.links) {
+					if($scope.interaction.links[l].interactionType == type) return true;
+				}
+			}
+			return false;
+		}
+		
+		function returnCrossIcon(){
+			if($scope.interaction.icon) return $scope.interaction.icon;
+			if($scope.interaction.links){
+				for(var l in $scope.interaction.links) {
+					if($scope.interaction.links[l].interactionType == 'icon') return $scope.interaction.links[l].icon;
+				}
+			}
+		}
+		
 		var _rowHeight;
 		if(!$scope.ngModel.settings){
 			$scope.ngModel.settings = cockpitModule_defaultTheme.table.settings;
@@ -82,7 +102,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var crossEnabled = $scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable;
 			if($scope.ngModel.cross) {
 				for(var c in $scope.ngModel.cross){
-					if($scope.ngModel.cross[c].enable) $scope.interaction = angular.copy($scope.ngModel.cross[c]);
+					if($scope.ngModel.cross[c].enable) {
+						$scope.interaction = angular.copy($scope.ngModel.cross[c]);
+						$scope.interaction.type = c;
+					}
 				}
 			}
 			var columns = [];
@@ -142,7 +165,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(!$scope.ngModel.content.columnSelectedOfDataset[c].hideTooltip) {
 							tempCol.tooltipValueGetter = TooltipValue;
 						}
-						if($scope.interaction && $scope.interaction.column == $scope.ngModel.content.columnSelectedOfDataset[c].name && ($scope.interaction.crossType == 'singleColumn' || $scope.interaction.interactionType == 'singleColumn')) {
+						if($scope.interaction && $scope.interaction.column == $scope.ngModel.content.columnSelectedOfDataset[c].name && crossHasType('singleColumn')) {
 							tempCol.cellClass = 'cross-cell';
 							delete tempCol.tooltipField;
 							tempCol.tooltipValueGetter = function(params) {
@@ -230,9 +253,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
-			if($scope.interaction && ($scope.interaction.crossType == "icon" || $scope.interaction.previewType == "icon" || $scope.interaction.interactionType == "icon")){
+			if($scope.interaction && crossHasType('icon')){
 				columns.push({headerName:"",field:(crossEnabled && $scope.ngModel.cross.cross.column) || "",
-					crossIcon: $scope.interaction.icon,
+					crossIcon: returnCrossIcon(),
 					cellRenderer:crossIconRenderer,"cellStyle":{"text-align": "right","display":"inline-flex","justify-content":"center","border":"none"},
 					sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false});
 			}
@@ -764,10 +787,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function onCellClicked(node){
 			var interactionType = $scope.interaction && ($scope.interaction.crossType || $scope.interaction.previewType || $scope.interaction.interactionType);
 			if($scope.cliccable==false) return;
-			if(node.colDef.measure=='MEASURE' && !$scope.ngModel.settings.modalSelectionColumn && interactionType != 'allRow') return;
-			if(interactionType != "icon" && (node.value == "" || node.value == undefined)) return;
+			if(node.colDef.measure=='MEASURE' && !$scope.ngModel.settings.modalSelectionColumn && !crossHasType('allRow')) return;
+			if(!crossHasType('icon') && (node.value == "" || node.value == undefined)) return;
 			if(node.rowPinned) return;
-			if(interactionType == "icon" && node.colDef.crossIcon) {
+			if(crossHasType('icon') && node.colDef.crossIcon) {
 				$scope.doSelection(node.colDef.field || null, null, null, null, mapRow(node.data));
 				return;
 			}
