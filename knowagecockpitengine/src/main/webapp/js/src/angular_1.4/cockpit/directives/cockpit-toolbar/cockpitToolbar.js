@@ -258,7 +258,8 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 					DOCUMENT_LABEL: sbiModule_cockpitDocument.docLabel,
 					SBI_COUNTRY: sbiModule_config.curr_country,
 					SBI_LANGUAGE: sbiModule_config.curr_language,
-					COCKPIT_SELECTIONS: []
+					COCKPIT_SELECTIONS: [],
+					COCKPIT_VARIABLES: []
 			}
 			for(i=0; i<cockpitWidgets.length; i++) {
 				var widget = cockpitWidgets[i];
@@ -297,6 +298,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunication
 					requestUrl.COCKPIT_SELECTIONS[i].aggregations = aggregation;
 					requestUrl.COCKPIT_SELECTIONS[i].parameters = paramsToSend;
 					requestUrl.COCKPIT_SELECTIONS[i].selections = selections;
+					requestUrl.COCKPIT_VARIABLES[i] = cockpitModule_properties.VARIABLES;
 				}
 			}
 

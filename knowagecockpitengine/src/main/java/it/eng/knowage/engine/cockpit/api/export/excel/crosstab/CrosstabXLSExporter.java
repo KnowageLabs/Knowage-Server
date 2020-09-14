@@ -28,6 +28,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.CellType;
@@ -81,18 +82,19 @@ public class CrosstabXLSExporter {
 
 	private Properties properties;
 	private Map<String, List<Threshold>> thresholdColorsMap;
+	private JSONObject variables = new JSONObject();
 
-	public CrosstabXLSExporter(Properties properties) {
+	public CrosstabXLSExporter(Properties properties, JSONObject variables) {
 		super();
 		if (properties == null) {
 			this.properties = new Properties();
 		} else {
 			this.properties = properties;
 		}
-
+		this.variables = variables;
 	}
 
-	public CrosstabXLSExporter(Properties properties, Map<String, List<Threshold>> thresholdColorsMap) {
+	public CrosstabXLSExporter(Properties properties, JSONObject variables, Map<String, List<Threshold>> thresholdColorsMap) {
 		super();
 		if (properties == null) {
 			this.properties = new Properties();
@@ -104,6 +106,7 @@ public class CrosstabXLSExporter {
 		} else {
 			this.thresholdColorsMap = thresholdColorsMap;
 		}
+		this.variables = variables;
 	}
 
 	public void setProperty(String propertyName, Object propertyValue) {
@@ -140,7 +143,7 @@ public class CrosstabXLSExporter {
 		CellStyle dimensionCellStyle = this.buildDimensionCellStyle(sheet);
 
 		// build headers for column first ...
-		buildColumnsHeader(sheet, cs, cs.getColumnsRoot().getChilds(), startRow, rowsDepth - 1, createHelper, locale, memberCellStyle, dimensionCellStyle);
+		buildColumnsHeader(sheet, cs, cs.getColumnsRoot().getChilds(), startRow, rowsDepth - 1, createHelper, locale, memberCellStyle, dimensionCellStyle, 0);
 		// ... then build headers for rows ....
 		buildRowsHeaders(sheet, cs, cs.getRowsRoot().getChilds(), columnsDepth - 1 + startRow, 0, createHelper, locale, memberCellStyle);
 		// then put the matrix data
@@ -300,7 +303,14 @@ public class CrosstabXLSExporter {
 			for (int i = 0; i < titles.size(); i++) {
 
 				Cell cell = row.createCell(startColumn + i);
+				it.eng.knowage.engine.cockpit.api.crosstable.CrosstabDefinition.Row aRowDef = cs.getCrosstabDefinition().getRows().get(i);
+
 				String text = titles.get(i);
+				String variable = aRowDef.getVariable();
+				if (variables.has(variable)) {
+					text = variables.getString(variable);
+				}
+
 				cell.setCellValue(createHelper.createRichTextString(text));
 				cell.setCellType(this.getCellTypeString());
 				cell.setCellStyle(cellStyle);
@@ -484,7 +494,7 @@ public class CrosstabXLSExporter {
 	 * @throws JSONException
 	 */
 	protected void buildColumnsHeader(Sheet sheet, CrossTab cs, List<Node> siblings, int rowNum, int columnNum, CreationHelper createHelper, Locale locale,
-			CellStyle memberCellStyle, CellStyle dimensionCellStyle) throws JSONException {
+			CellStyle memberCellStyle, CellStyle dimensionCellStyle, int recursionLevel) throws JSONException {
 		int columnCounter = columnNum;
 
 		for (int i = 0; i < siblings.size(); i++) {
@@ -492,7 +502,18 @@ public class CrosstabXLSExporter {
 			List<Node> childs = aNode.getChilds();
 			Row row = sheet.getRow(rowNum);
 			Cell cell = row.createCell(columnCounter);
+
 			String text = aNode.getDescription();
+			// only odd levels are levels (except the last one, since it contains measures' names)
+			boolean isLevel = isLevel(recursionLevel, aNode);
+			if (isLevel) {
+				it.eng.knowage.engine.cockpit.api.crosstable.CrosstabDefinition.Column aColDef = cs.getCrosstabDefinition().getColumns()
+						.get(recursionLevel / 2);
+				String variable = aColDef.getVariable();
+				if (variables.has(variable)) {
+					text = variables.getString(variable);
+				}
+			}
 			if (!cs.isMeasureOnRow() && (childs == null || childs.size() <= 0)) {
 				// apply the measure scale factor
 				text = MeasureScaleFactorOption.getScaledName(text, cs.getMeasureScaleFactor(text), locale);
@@ -526,11 +547,20 @@ public class CrosstabXLSExporter {
 			}
 
 			if (childs != null && childs.size() > 0) {
-				buildColumnsHeader(sheet, cs, childs, rowNum + 1, columnCounter, createHelper, locale, memberCellStyle, dimensionCellStyle);
+				buildColumnsHeader(sheet, cs, childs, rowNum + 1, columnCounter, createHelper, locale, memberCellStyle, dimensionCellStyle, recursionLevel + 1);
 			}
 			int increment = descendants > 1 ? descendants : 1;
 			columnCounter = columnCounter + increment;
 		}
+	}
+
+	private boolean isLevel(int level, Node node) {
+		if (level % 2 == 0) // only odd levels
+			if (node.getDistanceFromLeaves() == 0) // discard measures
+				return false;
+			else
+				return true;
+		return false;
 	}
 
 	public CellStyle getStyle(int j, Map<Integer, CellStyle> decimalFormats, Sheet sheet, CreationHelper createHelper, CellType celltype, String measureId,

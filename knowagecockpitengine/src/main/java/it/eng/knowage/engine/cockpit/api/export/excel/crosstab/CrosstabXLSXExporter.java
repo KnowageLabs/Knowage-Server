@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.json.JSONObject;
 
 import it.eng.knowage.engine.cockpit.api.export.excel.Threshold;
 
@@ -32,12 +33,12 @@ public class CrosstabXLSXExporter extends CrosstabXLSExporter {
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(CrosstabXLSExporter.class);
 
-	public CrosstabXLSXExporter(Properties properties) {
-		super(properties);
+	public CrosstabXLSXExporter(Properties properties, JSONObject variables) {
+		super(properties, variables);
 	}
 
-	public CrosstabXLSXExporter(Properties properties, Map<String, List<Threshold>> thresholdColorsMap) {
-		super(properties, thresholdColorsMap);
+	public CrosstabXLSXExporter(Properties properties, JSONObject variables, Map<String, List<Threshold>> thresholdColorsMap) {
+		super(properties, variables, thresholdColorsMap);
 	}
 
 	@Override
