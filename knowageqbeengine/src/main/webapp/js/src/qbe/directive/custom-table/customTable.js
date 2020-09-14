@@ -200,7 +200,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	CustomHeader.prototype.sortColumn = function() {
 		var realColumn = $scope.getColumnById(this.properties.id)
 		$scope.toggleOrder(realColumn);
-		$scope.executeRequest();
+		$scope.$apply();
 	}
 	CustomHeader.prototype.openColumnSettings = function(event){
 		for(var k in $scope.ngModel){
