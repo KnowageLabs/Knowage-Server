@@ -525,7 +525,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		if(data.currentPageNumber>1){
 			start = (data.currentPageNumber - 1) * data.itemsPerPage;
 		}
-		$scope.start = (data.currentPageNumber - 1);
+		$scope.start = data.currentPageNumber == 0 ? 0 : (data.currentPageNumber - 1);
 		//$scope.currentPage = (data.currentPageNumber - 1);
 		$rootScope.$broadcast('executeQuery', {"start":start, "itemsPerPage":data.itemsPerPage});
 	});
