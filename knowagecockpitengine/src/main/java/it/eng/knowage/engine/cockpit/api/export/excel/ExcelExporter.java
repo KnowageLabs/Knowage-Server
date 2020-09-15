@@ -675,8 +675,8 @@ public class ExcelExporter {
 									headerToAlias.put(columnOld.getString("header"), column.getString("name"));
 									columnsOrdered.put(columnOld);
 									break;
-								} else if (columnOld.getString("header").equals(mapColumnsAggregations.get(column.getString("name")))) {
-									headerToAlias.put(columnOld.getString("header"), column.getString("name"));
+								} else if (columnOld.getString("header").equals(mapColumnsAggregations.get(column.getString("alias")))) {
+									headerToAlias.put(columnOld.getString("header"), column.getString("alias"));
 									columnsOrdered.put(columnOld);
 									break;
 								}
