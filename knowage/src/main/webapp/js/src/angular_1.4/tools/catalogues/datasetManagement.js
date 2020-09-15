@@ -900,7 +900,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.selectedDataSet.isPersisted = false;
 						$scope.selectedDataSet.persistTableName = '';
 						$scope.disablePersisting = true;
-						$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":false,"index":$scope.parametersCounter++});
+						$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
 
 						$timeout(
 									function() {
@@ -915,7 +915,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			);
 		} else {
 			$scope.disablePersisting = true;
-			$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":false,"index":$scope.parametersCounter++});
+			$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
 
 			$timeout(
 						function() {

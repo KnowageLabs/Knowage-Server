@@ -118,7 +118,6 @@ public class ManageDataSetsForREST {
 
 	private static final String PARAM_VALUE_NAME = "value";
 	public static final String DEFAULT_VALUE_PARAM = "defaultValue";
-	public static final String PARAM_MULTIVALUE = "multiValue";
 	public static final String JOB_GROUP = "PersistDatasetExecutions";
 	public static final String SERVICE_NAME = "ManageDatasets";
 	public static final String DRIVERS = "DRIVERS";
@@ -876,7 +875,7 @@ public class ManageDataSetsForREST {
 				JSONObject obj = (JSONObject) parsListJSON.get(i);
 				String name = obj.optString("name");
 				String type = obj.optString("type");
-				Boolean multiValue = obj.optBoolean("multiValue");
+				String multiValue = obj.optString("multiValue");
 				String defaultValue = obj.optString(DEFAULT_VALUE_PARAM);
 
 				SourceBean b = new SourceBean("ROW");
@@ -975,7 +974,10 @@ public class ManageDataSetsForREST {
 					}
 				}
 
-				boolean multivalue = obj.getBoolean(PARAM_MULTIVALUE);
+				boolean multivalue = false;
+				if (tempVal != null && tempVal.contains(",")) {
+					multivalue = true;
+				}
 
 				String value = "";
 				if (multivalue) {
@@ -993,9 +995,10 @@ public class ManageDataSetsForREST {
 				logger.error("duplicated parameter names");
 				throw new SpagoBIServiceException(SERVICE_NAME, "duplicated parameter names");
 			}
-		} catch (SpagoBIServiceException t) {
-			throw t;
 		} catch (Throwable t) {
+			if (t instanceof SpagoBIServiceException) {
+				throw (SpagoBIServiceException) t;
+			}
 			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while deserializing dataset parameters", t);
 		}
 		return parametersMap;
@@ -1344,7 +1347,11 @@ public class ManageDataSetsForREST {
 		String toReturn = "";
 		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
 
-			toReturn = value;
+			if ((!(value.startsWith("'") && value.endsWith("'")))) {
+				toReturn = "'" + value + "'";
+			} else {
+				toReturn = value;
+			}
 
 		} else if (type.equalsIgnoreCase(DataSetUtilities.NUMBER_TYPE)) {
 

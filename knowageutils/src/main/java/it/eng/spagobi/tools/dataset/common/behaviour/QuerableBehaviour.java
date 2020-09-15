@@ -230,7 +230,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 
 			try {
 				Map parTypeMap = getParTypeMap(getTargetDataSet());
-				newStatement = StringUtilities.substituteDatasetParametersInString(newStatement, getTargetDataSet().getParamsMap(), parTypeMap, true);
+				newStatement = StringUtilities.substituteDatasetParametersInString(newStatement, getTargetDataSet().getParamsMap(), parTypeMap, false);
 			} catch (Throwable e) {
 				throw new SpagoBIRuntimeException("An error occurred while settin up parameters", e);
 			}
