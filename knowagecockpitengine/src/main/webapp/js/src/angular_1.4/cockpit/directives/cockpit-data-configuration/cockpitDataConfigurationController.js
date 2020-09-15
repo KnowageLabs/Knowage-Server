@@ -373,6 +373,7 @@ function associationGroupController($scope,sbiModule_translate,cockpitModule_nea
 function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translate,cockpitModule_template,cockpitModule_datasetServices,sbiModule_restServices,$mdPanel,$mdDialog,mdPanelRef,cockpitModule_variableService,
 		cockpitModule_widgetSelection,cockpitModule_documentServices,cockpitModule_widgetServices,cockpitModule_widgetSelectionUtils,cockpitModule_templateServices,cockpitModule_properties,sbiModule_user,cockpitModule_generalServices){
 
+	$scope.cockpitModule_properties = cockpitModule_properties;
 	// see if smart detection is enabled
 	$scope.showSmartDetection = (sbiModule_user.functionalities.indexOf("DatasetAssociationSmartDetection")>-1)? true:false;
 

@@ -29,6 +29,7 @@
 			scope: {
 				parameter: '=',
 				execproperties: '=',
+				datasetSettings: '=?',
 			}
 		};
 	}]);
@@ -101,6 +102,9 @@
 
 //				treeLovNode = 'lovroot';
 
+				if(sbiModule_config.contextName == "/knowagecockpitengine") {
+					sbiModule_restServices.restToRootProject();
+				}
 				sbiModule_restServices.post($scope.executionPath,$scope.valuesPath , params)
 				.success(function(response, status, headers, config) {
 					console.log('parametervalues response OK -> ', response);
