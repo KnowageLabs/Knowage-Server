@@ -20,6 +20,7 @@ package it.eng.spagobi.api.v2.documentdetails;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -80,7 +81,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
-	public BIObject insertDocument(BIObject document) {
+	public BIObject insertDocument(@Valid BIObject document) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
 		Assert.assertNotNull(document, "Document can not be null");
@@ -113,7 +114,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
-	public BIObject updateDocument(@PathParam("id") Integer id, BIObject document) {
+	public BIObject updateDocument(@PathParam("id") Integer id, @Valid BIObject document) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
 

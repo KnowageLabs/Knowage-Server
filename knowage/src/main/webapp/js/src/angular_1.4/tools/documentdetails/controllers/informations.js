@@ -18,10 +18,11 @@
 (function () {
 angular
         .module('DocumentDetails')
-        .controller('DocumentDetailsInformationsController',['$scope','$location','resourceService','DocumentService','sbiModule_translate','templateService', '$mdPanel', '$filter', '$mdDialog','sbiModule_config', 'sbiModule_messaging',
-        											 function($scope,$location, resourceService, DocumentService,sbiModule_translate,templateService, $mdPanel, $filter, $mdDialog, sbiModule_config, sbiModule_messaging){
+        .controller('DocumentDetailsInformationsController',['$scope','$location','resourceService','DocumentService','sbiModule_translate','templateService', '$mdPanel', '$filter', '$mdDialog','sbiModule_config', 'sbiModule_messaging', 'kn_regex',
+        											 function($scope,$location, resourceService, DocumentService,sbiModule_translate,templateService, $mdPanel, $filter, $mdDialog, sbiModule_config, sbiModule_messaging, kn_regex){
 
         	 var self = this;
+        	 self.regex = kn_regex
         	 self.documentService = DocumentService;
         	 self.translate = sbiModule_translate;
         	 self.templateService = templateService;
