@@ -239,7 +239,7 @@ public class ExcelExporter {
 					options.put("crosstabDefinition", widget.getJSONObject("content").getJSONObject("crosstabDefinition"));
 					options.put("style", widget.getJSONObject("content").getJSONObject("style"));
 					// variables cannot be retrieved from template so we must recover them from request body
-					options.put("variables", body.getJSONArray("COCKPIT_VARIABLES").getJSONObject(0));
+					options.put("variables", getCockpitVariables());
 					ExcelExporterClient client = new ExcelExporterClient();
 					String dsLabel = getDatasetLabel(template, widget.getJSONObject("dataset").getString("dsId"));
 					String selections = getCockpitSelectionsFromBody(widget).toString();
@@ -252,6 +252,15 @@ public class ExcelExporter {
 			return toReturn;
 		} catch (Exception e) {
 			logger.error("Cannot retrieve cross table options from data service", e);
+			return new JSONObject();
+		}
+	}
+
+	private JSONObject getCockpitVariables() {
+		try {
+			return body.getJSONArray("COCKPIT_VARIABLES").getJSONObject(0);
+		} catch (JSONException e) {
+			logger.error("Cannot retrieve cockpit variables", e);
 			return new JSONObject();
 		}
 	}
