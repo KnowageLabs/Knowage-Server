@@ -238,7 +238,8 @@ public class ExcelExporter {
 					options.put("name", widget.getJSONObject("content").getString("name"));
 					options.put("crosstabDefinition", widget.getJSONObject("content").getJSONObject("crosstabDefinition"));
 					options.put("style", widget.getJSONObject("content").getJSONObject("style"));
-					options.put("variables", buildVariablesForCrosstab(template.getJSONObject("configuration").getJSONArray("variables")));
+					// variables cannot be retrieved from template so we must recover them from request body
+					options.put("variables", body.getJSONArray("COCKPIT_VARIABLES").getJSONObject(0));
 					ExcelExporterClient client = new ExcelExporterClient();
 					String dsLabel = getDatasetLabel(template, widget.getJSONObject("dataset").getString("dsId"));
 					String selections = getCockpitSelectionsFromBody(widget).toString();
@@ -250,30 +251,8 @@ public class ExcelExporter {
 			}
 			return toReturn;
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Cannot retrieve cross table options from data service", e);
-		}
-	}
-
-	private JSONObject buildVariablesForCrosstab(JSONArray variables) {
-		JSONObject toReturn = new JSONObject();
-		try {
-			for (int i = 0; i < variables.length(); i++) {
-				String variableName = variables.getJSONObject(i).getString("name");
-				String variableType = variables.getJSONObject(i).getString("type").toLowerCase();
-				String variableValue = "";
-				if (variableType.equals("static"))
-					variableValue = variables.getJSONObject(i).getString("value");
-				else if (variableType.equals("profile"))
-					variableValue = variables.getJSONObject(i).getString("attribute");
-				else if (variableType.equals("driver"))
-					variableValue = variables.getJSONObject(i).getString("driver");
-				toReturn.put(variableName, variableValue);
-			}
-			return toReturn;
-		} catch (Exception e) {
-			logger.error("Unable to retrieve cockpit variables for crosstab", e);
-			JSONObject emptyVariables = new JSONObject();
-			return emptyVariables;
+			logger.error("Cannot retrieve cross table options from data service", e);
+			return new JSONObject();
 		}
 	}
 
