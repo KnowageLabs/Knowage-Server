@@ -22,7 +22,7 @@ angular
         											 function($scope,$location, resourceService, DocumentService,sbiModule_translate,templateService, $mdPanel, $filter, $mdDialog, sbiModule_config, sbiModule_messaging, kn_regex){
 
         	 var self = this;
-        	 self.regex = kn_regex
+        	 self.regex = kn_regex;
         	 self.documentService = DocumentService;
         	 self.translate = sbiModule_translate;
         	 self.templateService = templateService;

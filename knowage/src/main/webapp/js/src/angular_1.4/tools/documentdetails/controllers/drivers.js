@@ -52,10 +52,11 @@ angular
 				}
 			};
         })
-        .controller('DocumentDetailsDriversController',['$scope','$location','DriversService','resourceService','$httpParamSerializer', '$mdDialog','sbiModule_translate','sbiModule_messaging','$filter', 'sbiModule_config',
-        										function($scope,$location,DriversService,resourceService,$httpParamSerializer, $mdDialog,sbiModule_translate,sbiModule_messaging,$filter, sbiModule_config){
+        .controller('DocumentDetailsDriversController',['$scope','$location','DriversService','resourceService','$httpParamSerializer', '$mdDialog','sbiModule_translate','sbiModule_messaging','$filter', 'sbiModule_config', 'kn_regex',
+        										function($scope,$location,DriversService,resourceService,$httpParamSerializer, $mdDialog,sbiModule_translate,sbiModule_messaging,$filter, sbiModule_config, kn_regex){
 
         	 var self = this;
+        	 self.regex = kn_regex;
         	 var driversService = DriversService;
         	 self.translate = sbiModule_translate;
              self.driverRelatedObject = driversService.driverRelatedObject;

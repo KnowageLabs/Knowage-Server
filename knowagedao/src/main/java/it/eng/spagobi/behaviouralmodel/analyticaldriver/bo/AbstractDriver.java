@@ -13,9 +13,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import it.eng.spagobi.services.validation.Alphanumeric;
+import it.eng.spagobi.services.validation.AlphanumericNoSpaces;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
-import it.eng.spagobi.services.validation.NoSpaces;
 
 public abstract class AbstractDriver {
 
@@ -52,8 +51,7 @@ public abstract class AbstractDriver {
 
 	/* PARURL_NM VARCHAR2(18) Y Parameter name in HTTP request. */
 	@NotEmpty
-	@Alphanumeric
-	@NoSpaces
+	@AlphanumericNoSpaces
 	@Size(max = 20)
 	private String parameterUrlName = null;
 
@@ -61,7 +59,7 @@ public abstract class AbstractDriver {
 	private List parameterValues = null;
 
 	private List parameterValuesDescription = null;
-	
+
 	/* transient flag. set to true for parameters buil on the fly */
 	private boolean transientParmeters = false;
 
@@ -94,15 +92,15 @@ public abstract class AbstractDriver {
 
 	/* MULT_FL NUMBER Y Multivalue parameter. */
 	private Integer multivalue = null;
-	
+
 	public Object getMaxValue() {
 		return maxValue;
 	}
-	
+
 	public void setMaxValue(Object maxValue) {
 		this.maxValue = maxValue;
 	}
-	
+
 	public Integer getModifiable() {
 		return modifiable;
 	}
@@ -110,8 +108,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the modifiable.
 	 *
-	 * @param modifiable
-	 *            The modifiable to set.
+	 * @param modifiable The modifiable to set.
 	 */
 	public void setModifiable(Integer modifiable) {
 		this.modifiable = modifiable;
@@ -137,8 +134,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the multivalue.
 	 *
-	 * @param multivalue
-	 *            The multivalue to set.
+	 * @param multivalue The multivalue to set.
 	 */
 	@JsonIgnore
 	public void setMultivalue(Integer multivalue) {
@@ -173,8 +169,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the required.
 	 *
-	 * @param required
-	 *            The required to set.
+	 * @param required The required to set.
 	 */
 	@JsonIgnore
 	public void setRequired(Integer required) {
@@ -200,8 +195,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the visible.
 	 *
-	 * @param visible
-	 *            The visible to set.
+	 * @param visible The visible to set.
 	 */
 	public void setVisible(Integer visible) {
 		this.visible = visible;
@@ -219,8 +213,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the label.
 	 *
-	 * @param label
-	 *            The label to set.
+	 * @param label The label to set.
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -244,8 +237,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the parameter url name.
 	 *
-	 * @param parameterUrlName
-	 *            The parameterUrlName to set.
+	 * @param parameterUrlName The parameterUrlName to set.
 	 */
 	public void setParameterUrlName(String parameterUrlName) {
 		this.parameterUrlName = parameterUrlName;
@@ -285,8 +277,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the parameter values.
 	 *
-	 * @param parameterValues
-	 *            The parameterValues to set.
+	 * @param parameterValues The parameterValues to set.
 	 */
 	public void setParameterValues(List parameterValues) {
 		this.parameterValues = parameterValues;
@@ -304,8 +295,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the par id.
 	 *
-	 * @param parID
-	 *            The parID to set.
+	 * @param parID The parID to set.
 	 */
 	public void setParID(Integer parID) {
 		this.parID = parID;
@@ -323,8 +313,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the prog.
 	 *
-	 * @param prog
-	 *            The prog to set.
+	 * @param prog The prog to set.
 	 */
 	public void setProg(Integer prog) {
 		this.prog = prog;
@@ -348,8 +337,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the parameter.
 	 *
-	 * @param parameter
-	 *            The Parameter to set
+	 * @param parameter The Parameter to set
 	 */
 	public void setParameter(Parameter parameter) {
 		this.parameter = parameter;
@@ -367,8 +355,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the priority.
 	 *
-	 * @param priority
-	 *            The priority to set
+	 * @param priority The priority to set
 	 */
 	public void setPriority(Integer priority) {
 		this.priority = priority;
@@ -386,8 +373,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the transient parmeters.
 	 *
-	 * @param transientParmeters
-	 *            the new transient parmeters
+	 * @param transientParmeters the new transient parmeters
 	 */
 	public void setTransientParmeters(boolean transientParmeters) {
 		this.transientParmeters = transientParmeters;
@@ -405,8 +391,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the checks for valid values.
 	 *
-	 * @param hasValidValues
-	 *            the new checks for valid values
+	 * @param hasValidValues the new checks for valid values
 	 */
 	public void setHasValidValues(boolean hasValidValues) {
 		this.hasValidValues = hasValidValues;
@@ -424,8 +409,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Sets the parameter values description.
 	 *
-	 * @param parameterValuesDescription
-	 *            the new parameter values description
+	 * @param parameterValuesDescription the new parameter values description
 	 */
 	public void setParameterValuesDescription(List parameterValuesDescription) {
 		this.parameterValuesDescription = parameterValuesDescription;
