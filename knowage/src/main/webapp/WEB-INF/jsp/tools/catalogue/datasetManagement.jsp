@@ -204,7 +204,7 @@ div.lower i  {
 	       
 	       <!-- DATASET DETAIL PANEL -->
 	       
-	       <detail 	preview-function="checkIfDataSetHasParameters" save-function="saveDataset" cancel-function="closeDatasetDetails" 
+	       <detail 	preview-function="continueToRestExecutionOfPreview" save-function="saveDataset" cancel-function="closeDatasetDetails" 
 	       			show-save-button="showSaveAndCancelButtons" show-cancel-button="showSaveAndCancelButtons" 
 	       			disable-save-button="!datasetForm.$valid" 
 	       			disable-preview-button="!datasetForm.$valid"

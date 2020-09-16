@@ -3301,11 +3301,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 */
 
 	function DatasetPreviewController($scope,$mdDialog,$http,$sce) {
-			if($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == "Qbe"){
+			if($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd != "File"){
+				$scope.drivers = [];
 				$scope.dataset = $scope.selectedDataSet;
 				if($scope.dataset.drivers) {
 					$scope.drivers = $scope.dataset.drivers;
 					$scope.showDrivers = $scope.drivers.length > 0 || $scope.selectedDataSet.pars.length > 0;
+				} else {
+					$scope.showDrivers = $scope.selectedDataSet.pars.length > 0;
 				}
 				$scope.dataset.executed = !$scope.showDrivers;
 
@@ -3336,7 +3339,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				$scope.toggleDrivers =function(){
 					$scope.showDrivers = !$scope.showDrivers;
 				}
-			} else if ($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == 'File') {
+			} else {
 				if (!$scope.dataset) {
 					// If we click on dataset for the first time
 					$scope.dataset = {}
@@ -3344,12 +3347,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				$scope.dataset.executed = true;
 				$scope.drivers = [];
 				$scope.showDrivers = false;
-			} else {
-				$scope.dataset = {}
-				$scope.dataset.executed = true;
-				$scope.drivers = [];
-				$scope.showDrivers = false;
 			}
+
 		$scope.closeDatasetPreviewDialog=function(){
 			 $scope.previewDatasetModel=[];
 			 $scope.previewDatasetColumns=[];
@@ -3386,42 +3385,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
    ];
 
-	$scope.checkIfDataSetHasParameters = function () {
-		$scope.selectedDataSet.pars = $scope.parameterItems;
-		if($scope.selectedDataSet){
-			var hasParameters = $scope.selectedDataSet.pars != undefined && $scope.selectedDataSet.pars.length>0
-		}
-		$scope.selectedDataSet.parametersData = {};
-		$scope.selectedDataSet.parametersData.documentParameters = {};
+	$scope.parameterHasValue = false;
 
-		if(hasParameters){
-			$scope.parameterPreviewItems = $scope.parameterItems;
-			for (var i = 0; i < $scope.parameterPreviewItems.length; i++) {
-				$scope.parameterPreviewItems[i].value = "";
-			}
-			$mdDialog
-			.show
-			(
-				{
-					scope:$scope,
-					preserveScope: true,
-					templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/catalogues/templates/checkDatasetParamsBeforePreviewDialog.html'
-				}
-			)
-		} else {
-			//if the data set has no parameters continue to preview execution
-			$scope.continueToRestExecutionOfPreview();
-		}
-
-	}
-
-
-
-	$scope.applyValueOfParameterAndContinuePreviewExecution = function () {
-		//apply entered values for parameters
-		$scope.selectedDataSet.pars = $scope.parameterPreviewItems;
-		//continue to preview execution
-		$scope.continueToRestExecutionOfPreview();
+	$scope.parametersAreSet = function(parameters) {
+		  for(var i = 0; i < parameters.length; i++) {
+			  if(parameters[i].value) {
+				  $scope.parameterHasValue = true;
+			  } else {
+				  $scope.parameterHasValue = false;
+			  }
+		  }
+		  return $scope.parameterHasValue;
 	}
 
 	$scope.continueToRestExecutionOfPreview = function() {
@@ -3480,7 +3454,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && driversExecutionService.driversAreSet($scope.selectedDataSet.drivers)) {
 			$scope.selectedDataSet["DRIVERS"] = driversExecutionService.prepareDriversForSending($scope.selectedDataSet.drivers);
-		} else if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && !driversExecutionService.driversAreSet($scope.selectedDataSet.drivers)) {
+		} else if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && !driversExecutionService.driversAreSet($scope.selectedDataSet.drivers) ||
+				($scope.selectedDataSet.pars && $scope.selectedDataSet.pars.length > 0 && !$scope.parametersAreSet($scope.selectedDataSet.pars))) {
 			$mdDialog.show({
 				  scope:$scope,
 				  preserveScope: true,
@@ -3516,16 +3491,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						return columns;
 					}
 					$scope.getPreviewSet(response.data);
-					if(response.data.rows.length==0){
-						 $mdDialog.show(
-							      $mdDialog.alert()
-							        .clickOutsideToClose(true)
-							        .title($scope.translate.load('sbi.federationdefinition.info'))
-							        .textContent($scope.translate.load('sbi.widgets.datastorepanel.grid.emptywarningmsg'))
-							        .ariaLabel('Info Dialog No Data Returned Dataset Preview')
-							        .ok($scope.translate.load('sbi.federationdefinition.template.button.gotIt'))
-							    );
-					} else if(!$scope.selectedDataSet.drivers || $scope.selectedDataSet.drivers.length == 0) {
+					if((!$scope.selectedDataSet.drivers || $scope.selectedDataSet.drivers.length == 0) && (!$scope.selectedDataSet.pars || $scope.selectedDataSet.pars.length == 0)) {
 						$mdDialog.show({
 							  scope:$scope,
 							  preserveScope: true,
