@@ -958,75 +958,82 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 
 	$scope.showCalculatedField = function(cf,ev){
-    	$scope.cfSelectedField= angular.copy(cf);
-    	$scope.originalCFname = "";
-    	$scope.filteredFormulas = $scope.getFilteredFormulas($scope.formulas,$scope.editQueryObj.fields)
-    	$mdDialog.show({
-            controller: function ($scope, $mdDialog) {
+		$scope.cfSelectedField= angular.copy(cf);
+		$scope.originalCFname = "";
+		$scope.filteredFormulas = $scope.getFilteredFormulas($scope.formulas,$scope.editQueryObj.fields)
+		$mdDialog.show({
+				controller: function ($scope, $mdDialog) {
 
-            	$scope.calculatedFieldOutput = new Object;
-            	if($scope.cfSelectedField){
-            		$scope.modifyCF = true;
-            		$scope.originalCFname = angular.copy($scope.cfSelectedField.name);
-            		$scope.calculatedFieldOutput.alias = $scope.cfSelectedField.name;
-                   	angular.copy($scope.cfSelectedField.id.expression,$scope.calculatedFieldOutput.formula) ;
-                   	$scope.calculatedFieldOutput.expression = $scope.cfSelectedField.id.expressionSimple;
-                	$scope.calculatedFieldOutput.type =$scope.cfSelectedField.id.type;
-                	$scope.calculatedFieldOutput.format =$scope.cfSelectedField.id.format;
-                	$scope.calculatedFieldOutput.nature= $scope.cfSelectedField.id.nature;
-                	$scope.calculatedFieldOutput.formula = $scope.cfSelectedField.id.expression;
-            	}
-				$scope.hide = function() {
-					if($scope.originalCFname!=""){
-						for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
-							if($scope.editQueryObj.fields[i].alias==$scope.originalCFname){
-								$scope.editQueryObj.fields.splice(i,1);
-								$scope.queryModel.splice(i,1);
+					function cleanExpression(expression) {
+						// Replace non-breaking space
+						expression = expression.replaceAll(/\u00a0/g, " ");
+
+						return expression;
+					}
+
+					$scope.calculatedFieldOutput = new Object;
+					if($scope.cfSelectedField){
+						$scope.modifyCF = true;
+						$scope.originalCFname = angular.copy($scope.cfSelectedField.name);
+						$scope.calculatedFieldOutput.alias = $scope.cfSelectedField.name;
+						angular.copy($scope.cfSelectedField.id.expression,$scope.calculatedFieldOutput.formula) ;
+						$scope.calculatedFieldOutput.expression = $scope.cfSelectedField.id.expressionSimple;
+						$scope.calculatedFieldOutput.type =$scope.cfSelectedField.id.type;
+						$scope.calculatedFieldOutput.format =$scope.cfSelectedField.id.format;
+						$scope.calculatedFieldOutput.nature= $scope.cfSelectedField.id.nature;
+						$scope.calculatedFieldOutput.formula = $scope.cfSelectedField.id.expression;
+					}
+
+					$scope.hide = function() {
+						if($scope.originalCFname!=""){
+							for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
+								if($scope.editQueryObj.fields[i].alias==$scope.originalCFname){
+									$scope.editQueryObj.fields.splice(i,1);
+									$scope.queryModel.splice(i,1);
+								}
 							}
 						}
-					}
-					//parameters to add in the calculatedFieldOutput object to prepare it for the sending
-					$scope.addedParameters = {
-						"alias":$scope.calculatedFieldOutput.alias,
-						"type":angular.copy($scope.calculatedFieldOutput.type),
-						"nature":angular.copy($scope.calculatedFieldOutput.nature),
-						"expression":$scope.calculatedFieldOutput.formula,
-						"expressionSimple":$scope.calculatedFieldOutput.expression,
-						"format": $scope.calculatedFieldOutput.format
-					}
+						//parameters to add in the calculatedFieldOutput object to prepare it for the sending
+						$scope.addedParameters = {
+							"alias":$scope.calculatedFieldOutput.alias,
+							"type":angular.copy($scope.calculatedFieldOutput.type),
+							"nature":angular.copy($scope.calculatedFieldOutput.nature),
+							"expression":$scope.calculatedFieldOutput.formula,
+							"expressionSimple":$scope.calculatedFieldOutput.expression,
+							"format": $scope.calculatedFieldOutput.format
+						}
 
-					$scope.calculatedFieldOutput.id = $scope.addedParameters;
-					$scope.calculatedFieldOutput.type = $scope.calculatedFieldOutput.fieldType;
-					$scope.calculatedFieldOutput.format = $scope.calculatedFieldOutput.format;
-					$scope.calculatedFieldOutput.fieldType = $scope.calculatedFieldOutput.nature.toLowerCase();
-					$scope.calculatedFieldOutput.entity = $scope.calculatedFieldOutput.alias;
-					$scope.calculatedFieldOutput.field = $scope.calculatedFieldOutput.alias;
-					$scope.calculatedFieldOutput.funct = $scope.calculatedFieldOutput.nature=="MEASURE" ? "SUM" : "";
-					$scope.calculatedFieldOutput.group = $scope.calculatedFieldOutput.nature=="ATTRIBUTE" ? true : false;
-					$scope.calculatedFieldOutput.order = "";
-					$scope.calculatedFieldOutput.include = true;
-					$scope.calculatedFieldOutput.inUse = true;
-					$scope.calculatedFieldOutput.visible = true;
-					$scope.calculatedFieldOutput.longDescription = $scope.addedParameters.expression;
-					$scope.editQueryObj.fields.push($scope.calculatedFieldOutput);
-					$scope.addField($scope.calculatedFieldOutput, true);
+						$scope.calculatedFieldOutput.id = $scope.addedParameters;
+						$scope.calculatedFieldOutput.type = $scope.calculatedFieldOutput.fieldType;
+						$scope.calculatedFieldOutput.format = $scope.calculatedFieldOutput.format;
+						$scope.calculatedFieldOutput.fieldType = $scope.calculatedFieldOutput.nature.toLowerCase();
+						$scope.calculatedFieldOutput.entity = $scope.calculatedFieldOutput.alias;
+						$scope.calculatedFieldOutput.field = $scope.calculatedFieldOutput.alias;
+						$scope.calculatedFieldOutput.funct = $scope.calculatedFieldOutput.nature=="MEASURE" ? "SUM" : "";
+						$scope.calculatedFieldOutput.group = $scope.calculatedFieldOutput.nature=="ATTRIBUTE" ? true : false;
+						$scope.calculatedFieldOutput.order = "";
+						$scope.calculatedFieldOutput.include = true;
+						$scope.calculatedFieldOutput.inUse = true;
+						$scope.calculatedFieldOutput.visible = true;
+						$scope.calculatedFieldOutput.longDescription = cleanExpression($scope.addedParameters.expression);
+						$scope.editQueryObj.fields.push($scope.calculatedFieldOutput);
+						$scope.addField($scope.calculatedFieldOutput, true);
 
-					$mdDialog.hide()
-                };
-                $scope.cancel = function() {$mdDialog.cancel()};
-            },
-            templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/calculatedFieldsDialog.html',
-            targetEvent: ev,
-            clickOutsideToClose: true,
-            scope: $scope,
-            preserveScope: true
-        })
-        .then(function() {
-
-        },function() {
-        	$scope.calculatedFieldOutput={};
-        });
-    };
+						$mdDialog.hide()
+					};
+					$scope.cancel = function() {$mdDialog.cancel()};
+				},
+				templateUrl: sbiModule_config.dynamicResourcesEnginePath +'/qbe/templates/calculatedFieldsDialog.html',
+				targetEvent: ev,
+				clickOutsideToClose: true,
+				scope: $scope,
+				preserveScope: true
+			})
+		.then(function() {},
+			function() {
+				$scope.calculatedFieldOutput={};
+			});
+	};
 
     $scope.getEntityTree = function(){
     	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
