@@ -83,7 +83,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		cockpitModule_properties,
 		cockpitModule_defaultTheme){
 
-	var _EMPTYFIELDPLACEHOLDER = 'empty_field1';
+	var _EMPTYFIELDPLACEHOLDER = 'empty_field';
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget(null, 'init');
 	};
@@ -301,6 +301,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		for (p in parentValues) {
 			var parent = parentValues[p];
 			if(parent == '') parent = _EMPTYFIELDPLACEHOLDER;
+			//suffix to avoid issues with same name in different column levels
+			parent = parent + '1';
 			//hide all rows
 			var rowsToHideQuery = "tr[" + parentKey + "='" + parent + "']";
 			var rowsToHide = widgetEl.querySelectorAll(rowsToHideQuery);
@@ -310,9 +312,11 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			//show only subtotal row
 			var subtotalHiddenCellQuery = "td[id='" + parent + "']";
 			var subtotalHiddenCell = widgetEl.querySelectorAll(subtotalHiddenCellQuery);
-			subtotalHiddenCell[1].parentElement.style.display = "table-row";
-			//show hidden cell in subtotal row
-			subtotalHiddenCell[1].classList.remove('hidden');
+			if(subtotalHiddenCell[1]){
+				subtotalHiddenCell[1].parentElement.style.display = "table-row";
+				//show hidden cell in subtotal row
+				subtotalHiddenCell[1].classList.remove('hidden');
+			}
 		}
 		$scope.evaluatePivotedCells(widgetEl);
 		$scope.isExpanded = false;
@@ -335,6 +339,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		for (p in parentValues) {
 			var parent = parentValues[p];
 			if(parent == '') parent = _EMPTYFIELDPLACEHOLDER;
+			//suffix to avoid issues with same name in different column levels
+			parent = parent + '1';
 			//hide cell in subtotal row
 			var subtotalHiddenCellQuery = "td[id='" + parent + "']";
 			var subtotalHiddenCell = widgetEl.querySelectorAll(subtotalHiddenCellQuery);
