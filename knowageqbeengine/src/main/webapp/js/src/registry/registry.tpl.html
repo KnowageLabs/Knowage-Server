@@ -106,7 +106,7 @@
                                        </div>
                                     </div>
                                     <div ng-if="col.dataType === 'date'" layout="row">
-                                       <md-datepicker ng-model="row[col.field] !== '' ? row[col.field] : null"  step="{{getStep(col.dataType)}}"
+                                       <md-datepicker ng-init="row[col.field] = row[col.field] || null" ng-model="row[col.field]"  step="{{getStep(col.dataType)}}"
                                           name="dateField"  ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"> </md-datepicker>
                                        <md-icon md-font-icon="fa fa-times" ng-click="resetDateField($event, row, col);"></md-icon>
                                     </div>
@@ -166,7 +166,7 @@
                                        </div>
                                     </div>
                                     <div ng-if="col.dataType === 'date'" layout="row">
-                                       <md-datepicker ng-model="row[col.field] !== '' ? row[col.field] : null"  step="{{getStep(col.dataType)}}"
+                                       <md-datepicker ng-init="row[col.field] = row[col.field] || null" ng-model="row[col.field]" step="{{getStep(col.dataType)}}"
                                           name="dateField"  ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"> </md-datepicker>
                                        <md-icon md-font-icon="fa fa-times" ng-click="resetDateField($event, row, col);"></md-icon>
                                     </div>
