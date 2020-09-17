@@ -97,12 +97,6 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		} catch (Throwable t) {
 			logger.error(t);
 			throw new SpagoBIRuntimeException("Error searching for key column", t);
-		} finally {
-			if (entityManager != null) {
-				if (entityManager.isOpen()) {
-					entityManager.close();
-				}
-			}
 		}
 
 		logger.debug("OUT");
@@ -262,11 +256,6 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			logger.error(t);
 			throw new SpagoBIRuntimeException("Error saving entity", t);
 		} finally {
-			if (entityManager != null) {
-				if (entityManager.isOpen()) {
-					entityManager.close();
-				}
-			}
 			logger.debug("OUT");
 		}
 		return toReturn;
@@ -355,11 +344,6 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			logger.error(t);
 			throw new SpagoBIRuntimeException("Error saving entity", t);
 		} finally {
-			if (entityManager != null) {
-				if (entityManager.isOpen()) {
-					entityManager.close();
-				}
-			}
 			logger.debug("OUT");
 		}
 
@@ -420,11 +404,6 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			logger.error(t);
 			throw new SpagoBIRuntimeException("Error deleting entity", t);
 		} finally {
-			if (entityManager != null) {
-				if (entityManager.isOpen()) {
-					entityManager.close();
-				}
-			}
 			logger.debug("OUT");
 		}
 
