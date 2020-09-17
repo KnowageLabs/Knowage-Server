@@ -1011,7 +1011,11 @@ public class CrossTabHTMLSerializer {
 					}
 
 					// 6. set value
-					aColumn.setCharacters(actualText);
+					if (measureConfig.has("excludeFromTotalAndSubtotal") && measureConfig.getBoolean("excludeFromTotalAndSubtotal")
+							&& (cellTypeValue.equalsIgnoreCase("partialsum") || cellTypeValue.equalsIgnoreCase("totals")))
+						aColumn.setCharacters("");
+					else
+						aColumn.setCharacters(actualText);
 					aColumn.setAttribute(TITLE_ATTRIBUTE, actualText);
 
 					// 7. set selection function with the parent references (on row and column)
