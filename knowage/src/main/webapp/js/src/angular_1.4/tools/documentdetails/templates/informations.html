@@ -5,7 +5,7 @@
             <div class="md-toolbar-tools" layout="row">
                 <h2>{{di.translate.load("sbi.documentdetails.informations")}}</h2>
                 <span flex></span>
-                <md-button ng-click="di.openTemplateDesigner(di.typeDocument)" ng-if="(di.typeDocument=='OLAP' || di.typeDocument=='KPI') && di.document.engine != 'knowagesvgviewerengine'">{{di.translate.load('sbi.documentdetails.opendesigner')}}</md-button>
+                <md-button ng-click="di.openTemplateDesigner(di.document.typeCode)" ng-if="di.document.typeCode=='OLAP' || di.document.typeCode=='KPI' || (di.document.typeCode=='MAP' && di.document.engine=='knowagegisengine')">{{di.translate.load('sbi.documentdetails.opendesigner')}}</md-button>
             </div>
         </md-toolbar>
         <div layout="column " ng-if="di.template == undefined">            
@@ -19,13 +19,23 @@
                 <div layout="row">
                     <md-input-container class="md-block" flex>
                         <label>{{di.translate.load("sbi.documentdetails.informations.label")}}</label>
-                        <input ng-required="true"  name="label" placeholder="{{sbi.documentdetails.informations.label}}" ng-model="di.document.label" type="text">
-                         <span style="color:red" ng-if="informations.label.$error.required">{{di.translate.load("sbi.documentdetails.drivers.required")}}</span>
+                        <input name="label" placeholder="{{sbi.documentdetails.informations.label}}" ng-model="di.document.label" type="text" 
+                        		ng-required="true" ng-maxlength="20" ng-pattern="di.regex.alphanumeric" />
+                      	<div ng-messages="informations.label.$error" role="alert" ng-messages-multiple>
+							<div ng-message="required">{{di.translate.load("sbi.catalogues.generic.reqired")}}</div>
+							<div ng-message="pattern">{{di.translate.load("sbi.config.manage.fields.validation.alphanumericRegex")}}</div>
+							<div ng-message="maxlength">{{di.translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 20</div>
+  						</div>
                     </md-input-container>
                     <md-input-container flex>
                         <label>{{di.translate.load("sbi.documentdetails.informations.name")}}</label>
-                        <input ng-required="true"  name="name" placeholder="{{sbi.documentdetails.informations.name}}" ng-model="di.document.name" type="text">
-                     <span style="color:red" ng-if="informations.name.$error.required">{{di.translate.load("sbi.documentdetails.drivers.required")}}</span>
+                        <input name="name" placeholder="{{sbi.documentdetails.informations.name}}" ng-model="di.document.name" type="text"
+                        		ng-required="true" ng-maxlength="200" ng-pattern="di.regex.extendedAlphanumeric" />
+                      	<div ng-messages="informations.name.$error" role="alert" ng-messages-multiple>
+							<div ng-message="required">{{di.translate.load("sbi.catalogues.generic.reqired")}}</div>
+							<div ng-message="pattern">{{di.translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+							<div ng-message="maxlength">{{di.translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 200</div>
+  						</div>
                     </md-input-container>
                 </div>
                 <div layout="row">
@@ -41,16 +51,24 @@
                     </div>
                     <md-input-container flex>
                         <label>{{di.translate.load("sbi.documentdetails.informations.description")}}</label>
-                        <textarea ng-model="di.document.description" md-maxlength="250" rows="6" md-select-on-focus></textarea>
+                        <textarea name="description" ng-model="di.document.description" rows="6" md-select-on-focus
+                        		md-maxlength="400" ng-pattern="di.regex.extendedAlphanumeric"></textarea>
+                        <div ng-messages="informations.description.$error" role="alert" ng-messages-multiple>
+							<div ng-message="pattern">{{di.translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+							<div ng-message="maxlength">{{di.translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 400</div>
+  						</div>
                     </md-input-container>
                 </div>
                 <div layout="row">
                     <md-input-container class="md-block" flex>
                         <label>{{di.translate.load("sbi.documentdetails.informations.type")}}</label>
-                        <md-select  ng-required="!documentDetailsForm.informations.$pristine" name="type" ng-model="di.document.typeCode">
+                        <md-select name="type" ng-required="!documentDetailsForm.informations.$pristine" ng-model="di.document.typeCode">
                             <md-option ng-repeat="type in di.types " ng-value="type.valueCd" >{{type.translatedValueName}}</md-option>
                         </md-select>
-                          <span style="color:red" ng-if="informations.type.$error.required">{{di.translate.load("sbi.documentdetails.drivers.required")}}</span>
+                        <div ng-messages="informations.type.$error" role="alert" ng-messages-multiple>
+							<div ng-message="required">{{di.translate.load("sbi.catalogues.generic.reqired")}}</div>
+  						</div>
+                          <!-- <span style="color:red" ng-if="informations.type.$error.required">{{di.translate.load("sbi.documentdetails.drivers.required")}}</span>  -->
                     </md-input-container>
                     <md-input-container flex>
                         <label>{{di.translate.load("sbi.documentdetails.informations.engine")}}</label>
@@ -82,10 +100,13 @@
                 <div layout="row ">
                     <md-input-container class="md-block " flex>
                         <label>{{di.translate.load("sbi.documentdetails.informations.state")}}</label>
-                        <md-select  ng-required="!documentDetailsForm.informations.$pristine" name="state" ng-model="di.document.stateCode ">  
+                        <md-select name="state" ng-required="!documentDetailsForm.informations.$pristine" ng-model="di.document.stateCode ">  
                             <md-option ng-repeat="status in di.availableStatuses track by $index " ng-value="status.valueCd">{{status.translatedValueName}}</md-option>
                         </md-select>
-                         <span style="color:red" ng-if="informations.state.$error.required">{{di.translate.load("sbi.documentdetails.drivers.required")}}</span>
+                        <div ng-messages="informations.state.$error" role="alert" ng-messages-multiple>
+							<div ng-message="required">{{di.translate.load("sbi.catalogues.generic.reqired")}}</div>
+  						</div>
+                        <!--  <span style="color:red" ng-if="informations.state.$error.required">{{di.translate.load("sbi.documentdetails.drivers.required")}}</span> -->
                     </md-input-container>
                     <md-input-container flex>
                         <label>{{di.translate.load("sbi.documentdetails.informations.refresh")}}</label>

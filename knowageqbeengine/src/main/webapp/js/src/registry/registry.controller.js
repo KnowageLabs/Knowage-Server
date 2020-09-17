@@ -558,6 +558,17 @@
 			row[col.field] = null;
 		}
 		
+		$scope.allADFilters = function() {
+			var found = true;
+			for(var i = 0 ; i<($scope.configuration.filters).length; i++){
+	            	if ($scope.configuration.filters[i].presentation != 'DRIVER') {
+	            		return false;
+	            	}
+				}
+				
+			return found;
+		}
+		
 		// Update
 		$scope.setSelected = function(selectedRow) {
 

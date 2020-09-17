@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.engines.qbe.template;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.qbe.externalservices.ExternalServiceConfiguration;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
-import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +24,13 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.qbe.externalservices.ExternalServiceConfiguration;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
+import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * The Class QbeTemplate.
@@ -124,8 +124,8 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 					if (qbeSB.containsAttribute(TAG_DATAMART)) {
 						datamartSB = (SourceBean) qbeSB.getAttribute(TAG_DATAMART);
 						dmName = (String) datamartSB.getAttribute(PROP_DATAMART_NAME);
-						Assert.assertTrue(!StringUtilities.isEmpty(dmName), "Attribute [" + PROP_DATAMART_NAME + "] in tag [" + TAG_DATAMART
-								+ "] must be properly defined");
+						Assert.assertTrue(!StringUtilities.isEmpty(dmName),
+								"Attribute [" + PROP_DATAMART_NAME + "] in tag [" + TAG_DATAMART + "] must be properly defined");
 
 						qbeTemplate.addDatamartName(dmName);
 
@@ -148,8 +148,8 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 						modalitySB = (SourceBean) qbeSB.getAttribute(TAG_MODALITY);
 						modalities.add(modalitySB);
 					} else {
-						logger.debug("Qbe template associated to datamart [" + dmName + "] does not contain tag [" + TAG_MODALITY
-								+ "] so it will be not profiled");
+						logger.debug(
+								"Qbe template associated to datamart [" + dmName + "] does not contain tag [" + TAG_MODALITY + "] so it will be not profiled");
 					}
 				}
 
@@ -169,17 +169,17 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 				if (template.containsAttribute(TAG_DATAMART)) {
 					datamartSB = (SourceBean) template.getAttribute(TAG_DATAMART);
 					dmName = (String) datamartSB.getAttribute(PROP_DATAMART_NAME);
-					Assert.assertTrue(!StringUtilities.isEmpty(dmName), "Attribute [" + PROP_DATAMART_NAME + "] in tag [" + TAG_DATAMART
-							+ "] must be properly defined");
+					Assert.assertTrue(!StringUtilities.isEmpty(dmName),
+							"Attribute [" + PROP_DATAMART_NAME + "] in tag [" + TAG_DATAMART + "] must be properly defined");
 					qbeTemplate.addDatamartName(dmName);
 
 					String maxRecursionLevel = (String) datamartSB.getAttribute(PROP_DATAMART_MAXRECURSIONLEVEL);
 					if (maxRecursionLevel != null) {
 						qbeTemplate.setProperty("maxRecursionLevel", maxRecursionLevel);
 					}
-				}// else {
+				} // else {
 					// Assert.assertUnreachable("Missing compolsury tag [" + TAG_DATAMART + "]");
-				// }
+					// }
 
 				// MODALITY block
 				if (template.containsAttribute(TAG_MODALITY)) {
@@ -293,7 +293,7 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 				logger.debug("Qbe template does not contain tag [" + TAG_REGISTRY + "]");
 			}
 
-			logger.debug("Templete parsed succesfully");
+			logger.debug("Template parsed succesfully");
 		} catch (Throwable t) {
 			throw new QbeTemplateParseException("Impossible to parse template [" + template.toString() + "]", t);
 		} finally {

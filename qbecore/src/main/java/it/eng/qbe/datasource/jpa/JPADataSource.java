@@ -64,6 +64,7 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 public class JPADataSource extends AbstractDataSource implements IJpaDataSource {
 
 	private EntityManagerFactory factory;
+	private EntityManager entityManager;
 	private final boolean classLoaderExtended = false;
 
 	private UserProfile userProfile = null;
@@ -123,7 +124,6 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		if (factory == null) {
 			open();
 		}
-		EntityManager entityManager = factory.createEntityManager();
 		return entityManager;
 	}
 
@@ -143,7 +143,12 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		}
 
 		initEntityManagerFactory(getConfiguration().getModelName());
+		initEntityManager();
 
+	}
+
+	private void initEntityManager() {
+		entityManager = factory.createEntityManager();
 	}
 
 	@Override

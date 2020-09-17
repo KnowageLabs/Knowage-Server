@@ -39,6 +39,7 @@ public class QuerySerializationConstants {
 	public static final String FIELD_CUSTOM_FUNCTION = "customFunct";
 	public static final String FIELD_VISIBLE = "visible";
 	public static final String FIELD_INCLUDE = "include";
+	public static final String FIELD_IN_USE = "inUse";
 	public static final String FIELD_INITIAL_VALUE = "initialValue";
 	public static final String FIELD_EXPRESSION = "expression";
 	public static final String FIELD_SLOTS = "slots";

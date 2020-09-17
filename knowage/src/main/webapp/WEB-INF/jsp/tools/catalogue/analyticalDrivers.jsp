@@ -81,40 +81,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="md-block">
-							<label>{{translate.load("sbi.ds.label")}}</label>
-							<input name="lbl" ng-model="selectedDriver.label" ng-required="true"
-							ng-maxlength="20" ng-change="setDirty()">
-							
-							<div  ng-messages="attributeForm.lbl.$error" ng-show="selectedDriver.label== null">
-				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-				      </div>
-							
-							 </md-input-container>
+								<label>{{translate.load("sbi.ds.label")}}</label>
+								<input name="lbl" ng-model="selectedDriver.label" ng-required="true"
+								ng-maxlength="20" ng-change="setDirty()" ng-pattern="regex.extendedAlphanumeric">
+								<div ng-messages="attributeForm.lbl.$error" role="alert" ng-messages-multiple>
+									<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+									<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+									<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 20</div>
+		  						</div>
+							</md-input-container>
 						</div>
 					</div>
 					
 					<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="md-block">
-							<label>{{translate.load("sbi.ds.name")}}</label>
-							<input name="name" ng-model="selectedDriver.name"  ng-required = "true"
-						    ng-maxlength="40" ng-change="setDirty()">
-						    
-						    <div  ng-messages="attributeForm.name.$error" ng-show="selectedDriver.name== null">
-				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-				      </div>
-						    
-						    
-						     </md-input-container>
+								<label>{{translate.load("sbi.ds.name")}}</label>
+								<input name="name" ng-model="selectedDriver.name"  ng-required = "true"
+							    ng-maxlength="40" ng-change="setDirty()" ng-pattern="regex.extendedAlphanumeric">
+								<div ng-messages="attributeForm.name.$error" role="alert" ng-messages-multiple>
+									<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+									<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+									<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 40</div>
+		  						</div>
+						    </md-input-container>
 						</div>
 					</div>
 					
 					<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="md-block">
-							<label>{{translate.load("sbi.ds.description")}}</label>
-							<input ng-model="selectedDriver.description"
-					        ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
+								<label>{{translate.load("sbi.ds.description")}}</label>
+								<input name="description" ng-model="selectedDriver.description"
+						        ng-maxlength="160" ng-change="setDirty()" ng-pattern="regex.xss">
+					        	<div ng-messages="attributeForm.description.$error" role="alert" ng-messages-multiple>
+									<div ng-message="pattern">{{translate.load("sbi.config.manage.fields.validation.xssRegex")}}</div>
+									<div ng-message="maxlength">{{translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 160</div>
+		  						</div>
+		  					</md-input-container>
 						</div>
 					</div>
 					

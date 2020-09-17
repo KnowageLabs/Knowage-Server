@@ -3,7 +3,6 @@ function editTemporalHierarchyController($scope,sbiModule_translate,sbiModule_re
 	var olapModels=angular.copy(originalOlapModels);
 
 	$scope.hierarchyList=[];
-	debugger;
 	//load the hierarchy of the selected model if present
 	if(olapModels.length>0){
 

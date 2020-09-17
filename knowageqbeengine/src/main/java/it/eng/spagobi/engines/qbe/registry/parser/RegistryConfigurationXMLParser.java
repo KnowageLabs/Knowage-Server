@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,17 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.qbe.registry.parser;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
@@ -23,12 +29,6 @@ import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Configuration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Filter;
 import it.eng.spagobi.utilities.assertion.Assert;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -105,8 +105,8 @@ public class RegistryConfigurationXMLParser {
 			toReturn.setColumns(columns);
 			toReturn.setConfigurations(configurations);
 
-			toReturn.setSummaryColor(registryConf.getAttribute(ATTRIBUTE_SUMMARY_COLOR) != null ? registryConf.getAttribute(ATTRIBUTE_SUMMARY_COLOR).toString()
-					: null);
+			toReturn.setSummaryColor(
+					registryConf.getAttribute(ATTRIBUTE_SUMMARY_COLOR) != null ? registryConf.getAttribute(ATTRIBUTE_SUMMARY_COLOR).toString() : null);
 
 			// default
 			toReturn.setPagination(true);
@@ -133,7 +133,8 @@ public class RegistryConfigurationXMLParser {
 				RegistryConfiguration.Filter filter = toReturn.new Filter();
 				String field = (String) aFilter.getAttribute(ATTRIBUTE_FIELD);
 				String title = (String) aFilter.getAttribute(ATTRIBUTE_TITLE);
-				String presentationType = PRESENTATION_TYPE_COMBO.equalsIgnoreCase((String) aFilter.getAttribute(ATTRIBUTE_PRESENTATION)) ? Filter.PRESENTATION_TYPE_COMBO
+				String presentationType = PRESENTATION_TYPE_COMBO.equalsIgnoreCase((String) aFilter.getAttribute(ATTRIBUTE_PRESENTATION))
+						? Filter.PRESENTATION_TYPE_COMBO
 						: (PRESENTATION_TYPE_DRIVER.equalsIgnoreCase((String) aFilter.getAttribute(ATTRIBUTE_PRESENTATION)) ? Filter.PRESENTATION_TYPE_DRIVER
 								: Filter.PRESENTATION_TYPE_MANUAL);
 
@@ -194,6 +195,7 @@ public class RegistryConfigurationXMLParser {
 
 				String foreignKey = (String) aColumn.getAttribute(ATTRIBUTE_FOREIGNKEY);
 				boolean isEditable = !"false".equalsIgnoreCase((String) aColumn.getAttribute(ATTRIBUTE_EDITABLE));
+
 				boolean isVisible = !"false".equalsIgnoreCase((String) aColumn.getAttribute(ATTRIBUTE_VISIBLE));
 
 				String format = aColumn.getAttribute(ATTRIBUTE_FORMAT) != null ? (String) aColumn.getAttribute(ATTRIBUTE_FORMAT) : null;
@@ -209,9 +211,8 @@ public class RegistryConfigurationXMLParser {
 						&& aColumn.getAttribute(ATTRIBUTE_INFO_COLUMN).toString().equalsIgnoreCase("true") ? true : false;
 
 				String type = aColumn.getAttribute(ATTRIBUTE_TYPE) != null ? (String) aColumn.getAttribute(ATTRIBUTE_TYPE) : null;
-				if (type != null
-						&& (type.equalsIgnoreCase(RegistryConfiguration.Column.COLUMN_TYPE_MERGE) || type
-								.equalsIgnoreCase(RegistryConfiguration.Column.COLUMN_TYPE_MEASURE))) {
+				if (type != null && (type.equalsIgnoreCase(RegistryConfiguration.Column.COLUMN_TYPE_MERGE)
+						|| type.equalsIgnoreCase(RegistryConfiguration.Column.COLUMN_TYPE_MEASURE))) {
 					if (type.equalsIgnoreCase("merge")) {
 						// if is merge column set it is not editable and set
 						// default color if not specified to white
@@ -241,8 +242,8 @@ public class RegistryConfigurationXMLParser {
 						+ editorType + ", dependsFrom " + dependences + ", dependsFromEntity " + dependencesEntity);
 
 				Assert.assertTrue(field != null, "A column must contain at least attributes " + ATTRIBUTE_FIELD);
-				Assert.assertTrue(subEntity == null || foreignKey != null, "If a " + ATTRIBUTE_SUBENTITY + " attribute is specified, the attribute "
-						+ ATTRIBUTE_FOREIGNKEY + " is also requested.");
+				Assert.assertTrue(subEntity == null || foreignKey != null,
+						"If a " + ATTRIBUTE_SUBENTITY + " attribute is specified, the attribute " + ATTRIBUTE_FOREIGNKEY + " is also requested.");
 				column.setField(field);
 				column.setSize(intSize);
 				column.setTitle(title);

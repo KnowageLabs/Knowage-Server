@@ -52,9 +52,13 @@
             <md-card-content layout="column">
                 <md-input-container class="md-block">
                     <label>{{dd.translate.load("sbi.documentdetails.visualdependency.title")}}</label>
-                    <input ng-required="true" name="label" ng-model="dd.selectedDriver.label" ng-change="dd.addToChangedDrivers(dd.selectedDriver)" type="text">
-                      <span ng-if="drivers.label.$error.required">{{dd.translate.load("sbi.documentdetails.drivers.required")}}</span>
-                      <span style="color:red" ng-if="drivers.label.$dirty && drivers.label.$invalid">
+                    <input name="label" ng-required="true" ng-model="dd.selectedDriver.label" ng-change="dd.addToChangedDrivers(dd.selectedDriver)" type="text"
+                    		ng-required="true" ng-maxlength="40" ng-pattern="dd.regex.extendedAlphanumeric" />
+                    <div ng-messages="drivers.label.$error" role="alert" ng-messages-multiple>
+						<div ng-message="required">{{dd.translate.load("sbi.catalogues.generic.reqired")}}</div>
+						<div ng-message="pattern">{{dd.translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+						<div ng-message="maxlength">{{dd.translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 40</div>
+ 					</div>
                 </md-input-container>
                 <md-input-container class="md-block">               
                     <label>{{dd.translate.load("sbi.documentdetails.drivers.analyticaldriver")}}</label>
@@ -73,11 +77,15 @@
                 </md-input-container>
 
                 <md-input-container>
-                    <label>{{dd.translate.load("sbi.documentdetails.drivers.url")}}</label>
-                    <input ng-required="true" name="url" ng-model="dd.selectedDriver.parameterUrlName" ng-change="dd.addToChangedDrivers(dd.selectedDriver)" type="text" unique-url-name>
-                      <span ng-if="drivers.url.$error.required">{{dd.translate.load("sbi.documentdetails.drivers.required")}}</span>
-                      <span ng-if="drivers.url.$error.notUnique">{{dd.translate.load("sbi.documentdetails.drivers.notUnique")}}</span>
-                      <span style="color:red" ng-if="drivers.url.$dirty && drivers.url.$invalid">
+                    <label>{{dd.translate.load("sbi.documentdetails.drivers.url")}}</label> 
+                    <input name="url" ng-model="dd.selectedDriver.parameterUrlName" ng-change="dd.addToChangedDrivers(dd.selectedDriver)" type="text" 
+                    		ng-required="true" ng-maxlength="20" ng-pattern="dd.regex.alphanumericNoSpaces" unique-url-name />
+                    <div ng-messages="drivers.url.$error" role="alert" ng-messages-multiple>
+						<div ng-message="required">{{dd.translate.load("sbi.catalogues.generic.reqired")}}</div>
+						<div ng-message="pattern">{{dd.translate.load("sbi.config.manage.fields.validation.alphanumericNoSpacesRegex")}}</div>
+						<div ng-message="maxlength">{{dd.translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 20</div>
+						<div ng-message="notUnique">{{dd.translate.load("sbi.documentdetails.drivers.notUnique")}}</div>
+ 					</div>
                 </md-input-container>
 
                 <div layout="row ">

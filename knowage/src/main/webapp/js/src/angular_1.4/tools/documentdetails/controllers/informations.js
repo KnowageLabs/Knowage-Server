@@ -18,12 +18,12 @@
 (function () {
 angular
         .module('DocumentDetails')
-        .controller('DocumentDetailsInformationsController',['$scope','$location','resourceService','DocumentService','sbiModule_translate','templateService', '$mdPanel', '$filter', '$mdDialog','sbiModule_config', 'sbiModule_messaging',
-        											 function($scope,$location, resourceService, DocumentService,sbiModule_translate,templateService, $mdPanel, $filter, $mdDialog, sbiModule_config, sbiModule_messaging){
+        .controller('DocumentDetailsInformationsController',['$scope','$location','resourceService','DocumentService','sbiModule_translate','templateService', '$mdPanel', '$filter', '$mdDialog','sbiModule_config', 'sbiModule_messaging', 'kn_regex',
+        											 function($scope,$location, resourceService, DocumentService,sbiModule_translate,templateService, $mdPanel, $filter, $mdDialog, sbiModule_config, sbiModule_messaging, kn_regex){
 
         	 var self = this;
+        	 self.regex = kn_regex;
         	 self.documentService = DocumentService;
-        	 self.typeDocument = DocumentService.document.typeCode;
         	 self.translate = sbiModule_translate;
         	 self.templateService = templateService;
              self.documentInfoObject =$location.search();
@@ -286,7 +286,7 @@ angular
                	});
              }
              self.getFunctionalities(functionalitiesPath);
-             
+
              self.openTemplateDesigner = function(type) {
             	 $mdDialog.show({
  					controller: DialogNewTemplateController,
@@ -296,7 +296,7 @@ angular
  				}).then(function() {
  				})
              }
-             
+
              function DialogNewTemplateController($scope, sbiModule_config) {
      			if(self.templateService.listOfTemplates && self.templateService.listOfTemplates.length > 0) {
      				$scope.iframeUrl = sbiModule_config.contextName + "/servlet/AdapterHTTP?OBJECT_ID="+self.id+"&PAGE=DocumentTemplateBuildPage&MESSAGEDET=EDIT_DOCUMENT_TEMPLATE";

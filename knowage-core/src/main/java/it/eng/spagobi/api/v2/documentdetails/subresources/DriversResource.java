@@ -19,6 +19,7 @@ package it.eng.spagobi.api.v2.documentdetails.subresources;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -70,7 +71,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
-	public BIObjectParameter addDocumentParameter(@PathParam("id") Integer id, BIObjectParameter biObjectParameter) {
+	public BIObjectParameter addDocumentParameter(@PathParam("id") Integer id, @Valid BIObjectParameter biObjectParameter) {
 		logger.debug("IN");
 		Assert.assertNotNull(biObjectParameter, "Driver can not be null");
 		IBIObjectParameterDAO parameterDAO = null;
@@ -91,7 +92,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
-	public BIObjectParameter modifyDocumentParameter(@PathParam("id") Integer id, BIObjectParameter biObjectParameter) {
+	public BIObjectParameter modifyDocumentParameter(@PathParam("id") Integer id, @Valid BIObjectParameter biObjectParameter) {
 		logger.debug("IN");
 		Assert.assertNotNull(biObjectParameter, "Driver can not be null");
 

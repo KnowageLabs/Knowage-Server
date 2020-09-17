@@ -505,8 +505,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		StringBuilder sb = new StringBuilder();
 
 		if (node.fatherNode != null) {
-			sb.append(getPath(node.fatherNode))
-				.append("/");
+			sb.append(getPath(node.fatherNode)).append("/");
 		}
 
 		sb.append("[C:" + String.valueOf(columnName) + "-V:" + node.value.toString() + "-D:" + node.description + "]");
@@ -520,6 +519,20 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	public boolean isMeasure() {
 		return measure;
+	}
+
+	public boolean isTotal() {
+		boolean total = false;
+		if (value != null && value.equals("Total"))
+			total = true;
+		return total;
+	}
+
+	public boolean isSubTotal() {
+		boolean subTotal = false;
+		if (value != null && value.equals("SubTotal"))
+			subTotal = true;
+		return subTotal;
 	}
 
 }

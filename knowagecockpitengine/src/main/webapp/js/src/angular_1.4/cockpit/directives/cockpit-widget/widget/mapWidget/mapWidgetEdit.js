@@ -37,7 +37,8 @@ function mapWidgetEditControllerFunction(
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.datasetsAdditionalInfos = {};
-	$scope.availableAggregationFunctions = ['SUM','AVG','MIN','MAX','COUNT'];
+	$scope.availableAggregationFunctionsForMeasures = ['SUM','AVG','MIN','MAX','COUNT'];
+	$scope.availableAggregationFunctionsForSpatialAttribute = ['MIN','MAX','COUNT'];
 	$scope.availableBackgroundLayers = [];
 	$scope.availableOperators = [{'label':'==','value':'=='},{'label':'!=','value':'!='},{'label':'<','value':'<','range':true},{'label':'>','value':'>','range':true},{'label':'<=','value':'<=','range':true},{'label':'>=','value':'>=','range':true}];
 	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},{"name":"choropleth","enabled":true,"class":"choropleth"}];
@@ -232,7 +233,7 @@ function mapWidgetEditControllerFunction(
 								currCol.aliasToShow = currCol.alias;
 
 								// Initialize columns
-								if (currCol.fieldType == 'ATTRIBUTE') {
+								if (currCol.fieldType == 'ATTRIBUTE' && currCol.fieldType == 'SPATIAL_ATTRIBUTE') {
 									currCol.properties.aggregateBy = true;
 								}
 
@@ -583,6 +584,30 @@ function mapWidgetEditControllerFunction(
 
 	$scope.resetBorderColor = function(layer) {
 		layer.markerConf.style.borderColor = undefined;
+	}
+
+	$scope.columnsComparator = function(c1, c2) {
+		var sizeC1 = getSizeFromFieldType(c1);
+		var sizeC2 = getSizeFromFieldType(c2);
+
+		if (sizeC1 != sizeC2) {
+			return sizeC1 - sizeC2;
+		}
+
+		return c1.value.name.localeCompare(c2.value.name);
+	}
+
+	function getSizeFromFieldType(column) {
+		var fieldType = column.value.fieldType;
+
+		if (fieldType == 'SPATIAL_ATTRIBUTE') {
+			return -100;
+		} else if (fieldType == 'ATTRIBUTE') {
+			return -10;
+		} else if (fieldType == 'MEASURE') {
+			return -1;
+		}
+		return 0;
 	}
 
 	function loadAvailableLayers() {

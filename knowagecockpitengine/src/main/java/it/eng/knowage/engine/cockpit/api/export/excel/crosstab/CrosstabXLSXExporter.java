@@ -1,9 +1,14 @@
 package it.eng.knowage.engine.cockpit.api.export.excel.crosstab;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.json.JSONObject;
+
+import it.eng.knowage.engine.cockpit.api.export.excel.Threshold;
 
 /* SpagoBI, the Open Source Business Intelligence suite
 
@@ -26,19 +31,23 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 public class CrosstabXLSXExporter extends CrosstabXLSExporter {
 
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(CrosstabXLSExporter.class);
+	public static transient Logger logger = Logger.getLogger(CrosstabXLSExporter.class);
 
-	public CrosstabXLSXExporter(Properties properties) {
-		super(properties);
+	public CrosstabXLSXExporter(Properties properties, JSONObject variables) {
+		super(properties, variables);
+	}
+
+	public CrosstabXLSXExporter(Properties properties, JSONObject variables, Map<String, List<Threshold>> thresholdColorsMap) {
+		super(properties, variables, thresholdColorsMap);
 	}
 
 	@Override
-	protected int getCellTypeNumeric () {
+	protected int getCellTypeNumeric() {
 		return XSSFCell.CELL_TYPE_NUMERIC;
 	}
 
 	@Override
-	protected int getCellTypeString () {
+	protected int getCellTypeString() {
 		return XSSFCell.CELL_TYPE_STRING;
 	}
 

@@ -36,13 +36,14 @@
 						<md-input-container flex=30 ng-if="variables">
 						  	<label>{{translate.load('sbi.cockpit.widgets.staticpivot.variables')}} <small>{{translate.load('sbi.generic.optional')}}</small></label>
 						  	<md-select ng-model="selectedColumn.variable">
+						  		<md-option></md-option>
 								<md-option ng-repeat="(key, value) in variables" ng-value="key" >							
 									{{key}}
 								</md-option>
 							</md-select>
 						  	<div class="hint">{{translate.load('sbi.cockpit.widgets.staticpivot.variables.hint')}}</div>
 						</md-input-container>
-						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE'" flex="20" class="md-block" >
+						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE' && selectedColumn.fieldType!='CALCULATED_FIELD'" flex="20" class="md-block" >
 								<md-checkbox ng-model="selectedColumn.sorting" aria-label="Checkbox Order" ng-disabled="selectedColumn.showSortingAlert">
 										{{translate.load("sbi.cockpit.widgets.table.sorting.column")}}
 								</md-checkbox>
@@ -78,7 +79,7 @@
 			   
 			   <!-- ----------------- -->
 			
-			   <div ng-if="selectedColumn.fieldType=='MEASURE'">
+			   <div ng-if="selectedColumn.fieldType=='MEASURE' || selectedColumn.fieldType=='CALCULATED_FIELD'">
 					<!-- both simple table and static pivot table -->
 					<div layout="column">
 					<md-input-container md-class="md-block">

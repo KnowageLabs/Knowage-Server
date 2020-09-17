@@ -154,8 +154,7 @@ public class JPQL2SQLStatementRewriter {
 		/*
 		 * Extract generated query from em with filters enabled.
 		 */
-		org.hibernate.ejb.HibernateEntityManager em = (org.hibernate.ejb.HibernateEntityManager) this.entityManager;
-		SessionImpl session = (SessionImpl) em.getSession();
+		SessionImpl session = entityManager.unwrap(SessionImpl.class);
 		Map<Object, Object> enabledFilters = session.getEnabledFilters();
 		SessionFactoryImpl sessionFactory = (SessionFactoryImpl) session.getSessionFactory();
 		HQLQueryPlan hqlQueryPlan = sessionFactory.getQueryPlanCache().getHQLQueryPlan(query, false, enabledFilters);

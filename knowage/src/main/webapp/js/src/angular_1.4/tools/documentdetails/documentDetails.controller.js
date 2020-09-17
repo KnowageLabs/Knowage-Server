@@ -20,7 +20,7 @@
     'use strict';
 
     angular
-        .module('DocumentDetails', ['ngMaterial', 'jsonFormatter','sbiModule', 'componentTreeModule', 'file_upload','DriversModule','TemplateModule', 'OutputParametersModule', 'DataLineageModule', 'SubreportsModule', 'agGrid'])
+        .module('DocumentDetails', ['ngMaterial', 'jsonFormatter','sbiModule', 'componentTreeModule', 'file_upload','DriversModule','TemplateModule', 'OutputParametersModule', 'DataLineageModule', 'SubreportsModule', 'agGrid', 'ngMessages', 'angularXRegExp'])
         .config(['$mdThemingProvider','$locationProvider','$httpProvider', function($mdThemingProvider,$locationProvider,$httpProvider) {
             $mdThemingProvider.theme('knowage')
             $mdThemingProvider.setDefaultTheme('knowage');

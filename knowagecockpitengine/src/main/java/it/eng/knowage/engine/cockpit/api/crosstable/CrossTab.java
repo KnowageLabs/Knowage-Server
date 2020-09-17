@@ -267,6 +267,7 @@ public class CrossTab {
 										// row 1.. )
 	private boolean measuresOnRow;
 	private boolean hideZeroRows;
+	private boolean fixedColumn;
 	private boolean expandCollapseRows;
 
 	// The client has a global variable
@@ -403,6 +404,7 @@ public class CrossTab {
 		boolean measuresOnColumns = crosstabDefinition.isMeasuresOnColumns();
 		measuresOnRow = config.getString("measureson").equals("rows");
 		hideZeroRows = config.optBoolean("hideZeroRows");
+		fixedColumn = config.optBoolean("fixedColumn");
 		expandCollapseRows = config.optBoolean("expandCollapseRows");
 		List<Row> rows = crosstabDefinition.getRows();
 		int rowsCount = rows.size();
@@ -2998,6 +3000,10 @@ public class CrossTab {
 
 	public boolean isHideZeroRows() {
 		return hideZeroRows;
+	}
+
+	public boolean isFixedColumn() {
+		return fixedColumn;
 	}
 
 	public boolean isExpandCollapseRows() {

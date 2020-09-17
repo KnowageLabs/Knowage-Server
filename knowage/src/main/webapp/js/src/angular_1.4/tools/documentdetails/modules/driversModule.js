@@ -1,5 +1,5 @@
 (function() {
-	angular.module('DriversModule',['ResourceModule'])
+	angular.module('DriversModule',['ResourceModule', 'ngMessages', 'angularXRegExp'])
     		.service('DriversService',['sbiModule_translate','resourceService','sbiModule_messaging',
     			function(sbiModule_translate,resourceService,sbiModule_messaging){
 

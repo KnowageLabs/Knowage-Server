@@ -200,7 +200,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	CustomHeader.prototype.sortColumn = function() {
 		var realColumn = $scope.getColumnById(this.properties.id)
 		$scope.toggleOrder(realColumn);
-		$scope.executeRequest();
+		$scope.$apply();
 	}
 	CustomHeader.prototype.openColumnSettings = function(event){
 		for(var k in $scope.ngModel){
@@ -220,9 +220,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		agPopUpCloseAreaEl.style.display = agPopUpEl.style.display;
 	}
 
-	function isTemporal(type){
-		if(['oracle.sql.TIMESTAMP','java.sql.Timestamp','java.util.Date','java.sql.Date','java.sql.Time'].indexOf(type) > -1) return true;
-		else return false;
+	function isTemporal(el){
+		var type = el.dataType;
+		var allowedTypes = ['oracle.sql.TIMESTAMP','java.sql.Timestamp','java.util.Date','java.sql.Date','java.sql.Time'];
+		return allowedTypes.indexOf(type) > -1 || (el.type == "inline.calculated.field" && el.id.type == "DATE");
 	}
 
 	function isNumeric(type){
@@ -240,6 +241,12 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				 */
 				return el.visible;
 			})
+			.filter(function(el) {
+				/*
+				 * Skip columns not in use.
+				 */
+				return el.hasOwnProperty("inUse") ? el.inUse : true;
+			})
 			.map(function(el) {
 				var tempObj = {"field": el.key,
 					"tooltipField": el.key,
@@ -251,7 +258,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 						"color":  el.color
 					}
 				}
-				if(isTemporal(el.dataType)) {
+				if(isTemporal(el)) {
 					tempObj.valueFormatter = dateTimeFormatter;
 					tempObj.properties.format = el.format;
 				}
@@ -526,7 +533,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		if(data.currentPageNumber>1){
 			start = (data.currentPageNumber - 1) * data.itemsPerPage;
 		}
-		$scope.start = (data.currentPageNumber - 1);
+		$scope.start = data.currentPageNumber == 0 ? 0 : (data.currentPageNumber - 1);
 		//$scope.currentPage = (data.currentPageNumber - 1);
 		$rootScope.$broadcast('executeQuery', {"start":start, "itemsPerPage":data.itemsPerPage});
 	});
@@ -733,18 +740,21 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	$scope.basicViewColumns = [
 								{
 	                            	"label":$scope.translate.load("kn.qbe.custom.table.entity"),
-	                            	"name":"entity"
+	                            	"name":"entity",
+	                            	"size": "10%"
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.general.field"),
-	                            	"name":"name"
+	                            	"name":"name",
+	                            	"size": "33%"
 	                        	},{
 	                        		"label":$scope.translate.load("kn.qbe.general.alias"),
 	                            	"name":"alias",
 	                            	hideTooltip:true,
 	                            	transformer: function() {
 	                   	    		 return '<md-input-container class="md-block" style="margin:0"><input  ng-model="row.alias" ng-click="scopeFunctions.setAlias(row)"></md-input-container>';
-	                   	    	 }
+	                   	    	 	},
+	                            	"size": "16%"
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.group"),
@@ -752,7 +762,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                    			hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-checkbox  ng-model="row.group"  ng-change="scopeFunctions.groupChanged(row)" aria-label="Checkbox"></md-checkbox>';
-	                            	}
+	                            	},
+	                            	"size": "8%"
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.selectgridpanel.headers.order"),
@@ -760,7 +771,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-select  ng-model=row.ordering class="noMargin" ><md-option ng-repeat="col in scopeFunctions.orderingValues" value="{{col}}">{{col}}</md-option></md-select>';
-	                            	}
+	                            	},
+	                            	"size": "9%"
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.aggregation"),
@@ -768,7 +780,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-select ng-disabled="row.group" ng-model=row.funct class="noMargin" ><md-option ng-repeat="col in scopeFunctions.filterAggreagtionFunctions(row)" value="{{col}}">{{col}}</md-option></md-select>';
-	                            	}
+	                            	},
+	                            	"size": "9%"
 	                        	},
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.show.field"),
@@ -776,7 +789,17 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                    			hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-checkbox  ng-model="row.visible"  aria-label="Checkbox"></md-checkbox>';
-	                            	}
+	                            	},
+	                            	"size": "9%"
+	                        	},
+	                        	{
+	                        		"label":$scope.translate.load("kn.qbe.custom.table.inUse"),
+	                            	"name":"inUse",
+	                    			hideTooltip:true,
+	                            	transformer: function() {
+	                            		return '<md-checkbox  ng-model="row.inUse" aria-label="Checkbox"></md-checkbox>';
+	                            	},
+	                            	"size": "9%"
 	                        	}
 	]
 

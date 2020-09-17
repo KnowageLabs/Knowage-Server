@@ -83,7 +83,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		cockpitModule_properties,
 		cockpitModule_defaultTheme){
 
-
+	var _EMPTYFIELDPLACEHOLDER = 'empty_field';
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget(null, 'init');
 	};
@@ -118,16 +118,41 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		elem.classList.add('crosstab-fill-width');
 		elem.style['table-layout'] = 'fixed';
 	}
+	
+	$scope.evaluatePivotedCells = function(elem){
+		var offsetArray = [];
+		var pivotedHeaders = elem.querySelectorAll("td[pivot*='header']");
+		for(var h = 0; h < pivotedHeaders.length; h++){
+			pivotedHeaders[h].style.left = "";
+			var headerName = pivotedHeaders[h].getAttribute('pivot');
+			headerIndex = headerName.substr(headerName.length - 1);
+			if(!offsetArray[headerIndex]){
+				offsetArray.splice(headerIndex, 0 , pivotedHeaders[h].offsetLeft - 10);
+			}
+			pivotedHeaders[h].style.left = offsetArray[headerIndex];
+		}
+		var pivotedCells = elem.querySelectorAll('td[pivot]');
+		if(pivotedCells.length > 0){
+			for(var k in pivotedCells){
+				if(pivotedCells[k] && pivotedCells[k].style){
+					pivotedCells[k].style.left = offsetArray[pivotedCells[k].getAttribute('pivot')];
+					if(!pivotedCells[k].style.backgroundColor && pivotedCells[k].getAttribute('pivot')[0]!= 'h') pivotedCells[k].style.backgroundColor = 'white';
+				}
+			}
+		}
+	}
 
 	$scope.removeDynamicWidthClass = function(elem){
 		elem.classList.remove("crosstab-fill-width");
 	}
 
 	$scope.refresh=function(element,width,height, datasetRecords,nature){
+		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
+			$scope.evaluatePivotedCells(element[0]);
+		}
 		if(datasetRecords==undefined){
 			return;
 		}
-
 		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
 			var fatherElement = angular.element($scope.subCockpitWidget);
 			if($scope.ngModel.content.style.generic.layout == 'auto') {
@@ -190,6 +215,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					if(fatherElement[0].children[0] && (fatherElement[0].children[0].clientWidth < fatherElement[0].clientWidth)) {
 						$scope.addDynamicWidthClass(fatherElement[0].children[0]);
 					}
+					$scope.evaluatePivotedCells(element[0]);
 				},
 				function(response){
 					sbiModule_restServices.errorHandler(response.data,"Pivot Table Error")
@@ -259,7 +285,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		}
 		for (i in $scope.sentData.jsonData) {
 			var value = $scope.sentData.jsonData[i][colName];
-			if (values.indexOf(value) == -1) values.push($scope.escapeHtmlString(value));
+			if (values.indexOf($scope.escapeHtmlString(value)) == -1) values.push($scope.escapeHtmlString(value));
 		}
 		return values;
 	}
@@ -274,6 +300,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
 		for (p in parentValues) {
 			var parent = parentValues[p];
+			if(parent == '') parent = _EMPTYFIELDPLACEHOLDER;
+			//suffix to avoid issues with same name in different column levels
+			parent = parent + '1';
 			//hide all rows
 			var rowsToHideQuery = "tr[" + parentKey + "='" + parent + "']";
 			var rowsToHide = widgetEl.querySelectorAll(rowsToHideQuery);
@@ -283,10 +312,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			//show only subtotal row
 			var subtotalHiddenCellQuery = "td[id='" + parent + "']";
 			var subtotalHiddenCell = widgetEl.querySelectorAll(subtotalHiddenCellQuery);
-			subtotalHiddenCell[1].parentElement.style.display = "table-row";
-			//show hidden cell in subtotal row
-			subtotalHiddenCell[1].classList.remove('hidden');
+			if(subtotalHiddenCell[1]){
+				subtotalHiddenCell[1].parentElement.style.display = "table-row";
+				//show hidden cell in subtotal row
+				subtotalHiddenCell[1].classList.remove('hidden');
+			}
 		}
+		$scope.evaluatePivotedCells(widgetEl);
 		$scope.isExpanded = false;
 	}
 
@@ -306,20 +338,29 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		});
 		for (p in parentValues) {
 			var parent = parentValues[p];
+			if(parent == '') parent = _EMPTYFIELDPLACEHOLDER;
+			//suffix to avoid issues with same name in different column levels
+			parent = parent + '1';
 			//hide cell in subtotal row
 			var subtotalHiddenCellQuery = "td[id='" + parent + "']";
 			var subtotalHiddenCell = widgetEl.querySelectorAll(subtotalHiddenCellQuery);
-			subtotalHiddenCell[1].classList.add('hidden');
+			if(subtotalHiddenCell[1]) subtotalHiddenCell[1].classList.add('hidden');
 			//hide all children hidden cells
 			var childrenHiddenCellsQuery = "td.cell-visible";
 			var childrenHiddenCells = widgetEl.querySelectorAll(childrenHiddenCellsQuery);
 			childrenHiddenCells.forEach(function(cell, index){
-				cell.classList.remove('cell-visible');
+				cell.classList.remove("cell-visible");
 				cell.classList.add('hidden');
+			});
+			var collapsedCellsQuery = "td[style*='display: none;']";
+			var collapsedCells = widgetEl.querySelectorAll(collapsedCellsQuery);
+			collapsedCells.forEach(function(cell, index){
+				cell.style.display = 'table-cell';
 			});
 			//reset rowspans
 			$scope.resetParentsRowspan(parentKey, parent, widgetEl);
 		}
+		$scope.evaluatePivotedCells(widgetEl);
 		$scope.isExpanded = true;
 	}
 
@@ -346,12 +387,18 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var subtotals = [];
 		if (Object.keys(parent).length > 0) { //filter only rows related to current parent, don't hide rows of other parents
 			for (var i=0; i<allElements.length; i++) {
+				var valid = false;
 				for (var key in parent) {
 					var val = parent[key];
 					var attrVal = allElements[i].getAttribute(key);
-					if (attrVal && attrVal == val) {
-						subtotals.push(allElements[i]);
+					if(attrVal && attrVal == val) valid = true;
+					else {
+						valid = false;
+						break;
 					}
+				}
+				if (valid) {
+					subtotals.push(allElements[i]);
 				}
 			}
 			return subtotals;
@@ -403,10 +450,18 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		cell.classList.remove('hidden');
 		//if not the first level change the parent rowspan to avoid fat rows
 		if (parent) {
-			for (var p in parent) { // loop on all parents
+			var tempParents = {};
+			var orderedParents = {};
+			Object.keys(parent).sort().forEach(function(key) {
+				orderedParents[key] = parent[key];
+				});
+			for (var p in orderedParents) { // loop on all parents
+				tempParents[p] = orderedParents[p];
 				var parentQuery = "tr[" + p + "='" + parent[p] + "']";
-				for (var k in widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')) { // loop on all parent cells
-					var currentParentEl = widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[k];
+				var parentRows = widgetEl.querySelectorAll(parentQuery);
+				var correctParentRows = $scope.getCorrectRows(parentRows, tempParents);
+				for (var k in correctParentRows[0].querySelectorAll('td')) { // loop on all parent cells
+					var currentParentEl = correctParentRows[0].querySelectorAll('td')[k];
 					if (currentParentEl.id == parent[p]) { // apply rowspan normalization only to current cell
 						var rowspan = currentParentEl.getAttribute('rowspan');
 
@@ -424,6 +479,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 			}
 		}
+		$scope.evaluatePivotedCells(widgetEl);
 	}
 
 	$scope.expand = function(e, column, value, parent) {
@@ -435,9 +491,25 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		var rowSpanModifier = -1;
 		rowsToShow.forEach(function(row, index){
 			if(index == 0 && row.children[0].id != value) {
-				rowSpanModifier--;
+				var modifyRowSpan = true;
+				for(var c in row.children){
+					if(row.children[c].id == value && row.children[c].getAttribute('start-span')) {
+						row.children[c].setAttribute('rowspan', row.children[c].getAttribute('start-span'));
+						//rowSpanModifier = - (row.children[c].getAttribute('start-span') - row.children[c].getAttribute('rowspan'));
+						//modifyRowSpan = false;
+					}
+				}
+				if(modifyRowSpan){
+					rowSpanModifier--;
+				}
+
 			} else {
-				if(index == 0) row.children[0].setAttribute('rowspan', rowsToShow.length);
+				if(index == 0) {
+					if(row.children[0].getAttribute('start-span')) {
+						row.children[0].setAttribute('rowspan', row.children[0].getAttribute('start-span'));
+					}
+					else row.children[0].setAttribute('rowspan', rowsToShow.length);
+				}
 			}
 			row.style.display = "table-row";
 			row.querySelectorAll('td').forEach(function(cell) {
@@ -454,17 +526,32 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		e.currentTarget.parentElement.classList.add('hidden');
 		//if not the first level change the parent rowspan to avoid fat rows
 		if (parent && Object.keys(parent).length > 0) {
-			for (var p in parent) { // loop on all parents
+			var tempParents = {};
+			var orderedParents = {};
+			Object.keys(parent).sort().forEach(function(key) {
+				orderedParents[key] = parent[key];
+				});
+			for (var p in orderedParents) { // loop on all parents
+				tempParents[p] = orderedParents[p];
 				var parentQuery = "tr[" + p + "='" + parent[p] + "']";
-				for (var k in widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')) { // loop on all cells
-					if (widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[k].id == parent[p]) { // if current cell
-						var rowspan = widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[k].getAttribute('rowspan');
-						widgetEl.querySelectorAll(parentQuery)[0].querySelectorAll('td')[k].setAttribute('rowspan', parseInt(rowspan) + rowsToShow.length - 1 + rowSpanModifier);
+				var parentRows = widgetEl.querySelectorAll(parentQuery);
+				var correctParentRows = $scope.getCorrectRows(parentRows, tempParents);
+
+				//rowSpanModifier = rowSpanModifier + (Object.keys(tempParents).length - Object.keys(parent).length);
+
+				for (var k in correctParentRows[0].querySelectorAll('td')) { // loop on all cells
+					if (correctParentRows[0].querySelectorAll('td')[k].id == parent[p]) { // if current cell
+						var rowspan = correctParentRows[0].querySelectorAll('td')[k].getAttribute('rowspan');
+						var currentCell = correctParentRows[0].querySelectorAll('td')[k];
+						currentCell.setAttribute('rowspan', parseInt(rowspan) + rowsToShow.length - 1 + rowSpanModifier);
+						// if the rowspan is bigger that start-span it is normalized
+						if(currentCell.getAttribute('start-span') && (parseInt(currentCell.getAttribute('rowspan')) > parseInt(currentCell.getAttribute('start-span')))) currentCell.setAttribute('rowspan', currentCell.getAttribute('start-span'));
 						break;
 					}
 				}
 			}
 		}
+		$scope.evaluatePivotedCells(widgetEl);
 	}
 
 	$scope.resetParentsRowspan = function(key, value, widgetEl) {
@@ -1104,9 +1191,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    	  }
 
 			    	 $scope.getMeasureType = function(item){
-			    		 return item.nature == 'calculated_field' ? 'CALCULATED-FIELD':'MEASURE-PT';
+			    		 return item.nature == 'calculated_field' ? "'CALCULATED-FIELD'":"'MEASURE-PT'";
 			    	 }
-
+			    	 
 			    	 $scope.addCalculatedField = function(item) {
 
 							item.nature = "calculated_field";
@@ -1156,14 +1243,26 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					}
 
 		    	    $scope.saveConfiguration=function(){
-		    	    	if(!$scope.checkAggregation()) {
-		    	    		$scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.incoherentaggregations'));
-			    			  return;
-		    	    	}
+//		    	    	if(!$scope.checkAggregation()) {
+//		    	    		$scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.incoherentaggregations'));
+//			    			  return;
+//		    	    	}
 		    		  if($scope.localModel.dataset == undefined){
 		  				$scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
 		    			return;
 		    		  }
+
+		    		  if($scope.localModel.content.crosstabDefinition.config && $scope.localModel.content.crosstabDefinition.config.expandCollapseRows){
+		    			 var exclusionCounter = 0;
+		    			 for(var k in $scope.localModel.content.crosstabDefinition.measures){
+		    				if($scope.localModel.content.crosstabDefinition.measures[k].excludeFromTotalAndSubtotal) exclusionCounter++;
+		    			 }
+		    			 if(exclusionCounter == $scope.localModel.content.crosstabDefinition.measures.length) {
+		    				 $scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.missingSubtotals'))
+		    				 return;
+		    			 }
+		    		  }
+
 		    		  if($scope.localModel.content.crosstabDefinition.measures.length == 0 ||
 		    			($scope.localModel.content.crosstabDefinition.rows.length == 0 &&
 		    			$scope.localModel.content.crosstabDefinition.columns.length ==0)
@@ -1241,6 +1340,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				    		  }
 			    		  }
 			    		  selectedColumn.fnOrder = fnOrder;
+//			    		  selectedColumn.funct = "SUM";
 			    		  $mdDialog.show({
 								templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/staticPivotTableWidget/templates/staticPivotTableColumnStyle.html',
 								parent : angular.element(document.body),
@@ -1292,9 +1392,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		if(cockpitModule_properties.VARIABLES &&  Object.keys(cockpitModule_properties.VARIABLES).length > 0) $scope.variables = cockpitModule_properties.VARIABLES;
 
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
-		$scope.formatPattern = ['','#.###','#,###','#.###,##','#,###.##'];
+		$scope.formatPattern = ['','#.###,##','#,###.##'];
 		$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
-		$scope.visTypes=['Text','Icon only'];
+		$scope.visTypes=[$scope.translate.load('kn.generic.visualization.text'),$scope.translate.load('kn.generic.visualization.texticon')];
 		function setChunks(array, dimension){
 			var newArray = [];
 			for(var f in array){
@@ -1313,13 +1413,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 				newArray.push(familyArray);
 			}
-			
+
 			return newArray;
 		}
-		
+
 		$scope.availableIcons = setChunks(knModule_fontIconsService.icons,4);
 		$scope.conditions=['>','<','==','>=','<=','!='];
-		
+
 		$scope.getTemplateUrl = function(template){
 			return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 		}
@@ -1373,7 +1473,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		}
 
 		//Ranges Management
-		
+
 		$scope.addRange = function(){
 			if(!$scope.selectedColumn.ranges) $scope.selectedColumn.ranges = [];
 			$scope.selectedColumn.ranges.push({});
@@ -1387,12 +1487,12 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 			}
 		}
-		
+
 		$scope.openFamily = function(familyName){
 			if($scope.iconFamily == familyName) $scope.iconFamily = "";
 			else $scope.iconFamily = familyName;
 		}
-		
+
 		$scope.chooseIcon = function(range) {
 			$scope.tempVar = !$scope.tempVar;
 			$scope.currentRange=range;
@@ -1403,7 +1503,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			$scope.currentRange.icon = family.className+' '+icon.className;
 			$scope.tempVar = !$scope.tempVar;
 		}
-		
+
 
 		$scope.cleanStyleColumn = function(){
 			$scope.selectedColumn.style = undefined;
@@ -1416,7 +1516,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		}
 
 		$scope.isPrecisionEnabled = function(){
-			return $scope.selectedColumn.style && $scope.selectedColumn.style.format != $scope.formatPattern[0] && $scope.selectedColumn.style.format != $scope.formatPattern[1];
+			return $scope.selectedColumn.style && $scope.selectedColumn.style.format != $scope.formatPattern[0];
 		}
 
 		$scope.saveColumnStyleConfiguration = function(){
