@@ -567,12 +567,24 @@
 
 		};
 
+		$scope.allADFilters = function() {
+			var found = true;
+			for(var i = 0 ; i<($scope.configuration.filters).length; i++){
+	            	if ($scope.configuration.filters[i].presentation != 'DRIVER') {
+	            		return false;
+	            	}
+				}
+				
+			return found;
+		}
+		
         $scope.updateRow = function() {
 			for (var i = 0; i < $scope.selectedRow.length; i++) {
 				for(var property in $scope.selectedRow[i]) {
 	        		if(!$scope.selectedRow[i].id && $scope.selectedRow[i][property] && typeof $scope.selectedRow[i][property].getMonth === 'function') {
 	        			$scope.selectedRow[i][property].setTime($scope.selectedRow[i][property].getTime() - new Date().getTimezoneOffset()*60*1000);
 	    	        }
+	        		if($scope.selectedRow[i].$newRow) delete $scope.selectedRow[i].$newRow;
 	        	}
 
 
@@ -595,7 +607,12 @@
             .targetEvent(event)
             .ok(sbiModule_translate.load('kn.qbe.general.yes'))
             .cancel(sbiModule_translate.load('kn.qbe.general.no'));
-
+			
+			if(row.$newRow){
+				$scope.deleteRow(row.$$hashKey)
+				return;
+			}
+			
 			$mdDialog.show(confirm).then(function() {
 					registryCRUD.delete(row).then(function(response) {
 						sbiMessaging.showInfoMessage($scope.sbiTranslate.load("kn.registry.registryDocument.delete.success"), $scope.sbiTranslate.load("kn.registry.registryDocument.success"));
@@ -622,6 +639,7 @@
 			for ( var i in tmpRow) {
 				tmpRow[i] = "";
 			};
+			tmpRow.$newRow = true;
 			$scope.data.unshift(tmpRow);
 		};
 

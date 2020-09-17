@@ -10,7 +10,7 @@
    </md-toolbar>
    <md-content flex ng-cloak layout="column" class="registryFilters">
       <!--  div ng-if="configuration.filters" class="registryFilters"-->
-      <md-card ng-if="configuration.filters">
+      <md-card ng-if="configuration.filters && (configuration.filters.length > 0) && !allADFilters()">
          <md-subheader>Filters</md-subheader>
          <div layout="row" layout-align="start center" style="padding:0 8px">
             <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in checkIfFilterColumnExists()" style="min-width:200px">
@@ -32,8 +32,8 @@
          </div>
       </md-card>
       <!--  /div-->
-      <md-card flex>
-         <table class="kn-table kn-table-alternated-rows" ng-if="configuration.pivot == false">
+      <md-card flex style="overflow:auto;">
+         <table class="kn-table kn-table-alternated-rows" ng-if="configuration.pivot == false" flex>
             <thead>
                <tr>
                   <th class="recNo"><span>&nbsp;</span></th>
@@ -122,7 +122,7 @@
                </tr>
             </tbody>
          </table>
-         <table class="kn-table pivot-table" ng-if="configuration.pivot == true">
+         <table class="kn-table pivot-table" ng-if="configuration.pivot == true" flex>
             <thead>
                <tr>
                   <th ng-repeat="col in columns | orderBy: 'position' track by $index" ng-if="col.visible" width="{{col.size}}">
@@ -179,25 +179,25 @@
                </tr>
             </tbody>
          </table>
-         <div layout="row" ng-if="configuration.pagination == 'true'">
+         <div layout="row" ng-if="configuration.pagination == 'true'" style="position: sticky; left:0;">
             <div class="ag-theme-balham" flex>
                <div class=" ag-paging-panel ag-noBorders ag-font-style">
                   <span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
                   <span ref="lbFirstRowOnPage">{{min}}</span> to <span ref="lbLastRowOnPage">{{max}}</span> of <span ref="lbRecordCount">{{resultsNumber}}</span>
                   </span>
                   <span class="ag-paging-page-summary-panel">
-                     <div ref="btFirst" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-first" unselectable="on"></span>
-                        <button type="button" ref="btFirst" ng-disabled="!hasPrevious" ng-click="first()">First</button>
+                     <div ref="btFirst" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-first" unselectable="on"></span>
+                        <button type="button" ref="btFirst" class="ag-paging-button" ng-disabled="!hasPrevious" ng-click="first()">First</button>
                      </div>
-                     <div ref="btPrevious" class="ag-paging-button" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
-                        <button type="button" ref="btPrevious" ng-disabled="!hasPrevious" ng-click="previous()">Previous</button>
+                     <div ref="btPrevious" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
+                        <button type="button" ref="btPrevious" class="ag-paging-button" ng-disabled="!hasPrevious" ng-click="previous()">Previous</button>
                      </div>
-                     Page <span ref="lbCurrent">{{page}}</span> of <span ref="lbTotal">{{getTotalPages.length}}</span>
-                     <div ref="btNext" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
-                        <button type="button" ref="btNext" ng-click="next()" ng-disabled="!hasNext">Next</button>
+                     Page <span ref="lbCurrent" style="padding:0 4px;">{{page}}</span> of <span ref="lbTotal" style="padding-left: 4px;">{{getTotalPages.length}}</span>
+                     <div ref="btNext" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
+                        <button type="button" ref="btNext" class="ag-paging-button" ng-click="next()" ng-disabled="!hasNext">Next</button>
                      </div>
-                     <div ref="btLast" class="ag-paging-button" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-last" unselectable="on"></span>
-                        <button type="button" ref="btLast" ng-disabled="!hasNext" ng-click="last()">Last</button>
+                     <div ref="btLast" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-last" unselectable="on"></span>
+                        <button type="button" ref="btLast" class="ag-paging-button" ng-disabled="!hasNext" ng-click="last()">Last</button>
                      </div>
                   </span>
                </div>
