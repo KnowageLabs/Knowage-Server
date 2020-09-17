@@ -1015,6 +1015,10 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 						$scope.calculatedFieldOutput.include = true;
 						$scope.calculatedFieldOutput.inUse = true;
 						$scope.calculatedFieldOutput.visible = true;
+						$scope.calculatedFieldOutput.id.expression = cleanExpression($scope.calculatedFieldOutput.id.expression);
+						$scope.calculatedFieldOutput.id.expressionSimple = cleanExpression($scope.calculatedFieldOutput.id.expressionSimple);
+						$scope.calculatedFieldOutput.formula = cleanExpression($scope.calculatedFieldOutput.formula);
+						$scope.calculatedFieldOutput.expression = cleanExpression($scope.calculatedFieldOutput.expression);
 						$scope.calculatedFieldOutput.longDescription = cleanExpression($scope.addedParameters.expression);
 						$scope.editQueryObj.fields.push($scope.calculatedFieldOutput);
 						$scope.addField($scope.calculatedFieldOutput, true);
