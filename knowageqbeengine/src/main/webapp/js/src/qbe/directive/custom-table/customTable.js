@@ -220,9 +220,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		agPopUpCloseAreaEl.style.display = agPopUpEl.style.display;
 	}
 
-	function isTemporal(type){
-		if(['oracle.sql.TIMESTAMP','java.sql.Timestamp','java.util.Date','java.sql.Date','java.sql.Time'].indexOf(type) > -1) return true;
-		else return false;
+	function isTemporal(el){
+		var type = el.dataType;
+		var allowedTypes = ['oracle.sql.TIMESTAMP','java.sql.Timestamp','java.util.Date','java.sql.Date','java.sql.Time'];
+		return allowedTypes.indexOf(type) > -1 || (el.type == "inline.calculated.field" && el.id.type == "DATE");
 	}
 
 	function isNumeric(type){
@@ -257,7 +258,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 						"color":  el.color
 					}
 				}
-				if(isTemporal(el.dataType)) {
+				if(isTemporal(el)) {
 					tempObj.valueFormatter = dateTimeFormatter;
 					tempObj.properties.format = el.format;
 				}
