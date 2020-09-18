@@ -13,6 +13,7 @@
 <%@page import="it.eng.spago.security.IEngUserProfile" %>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
 <%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="java.util.List"%>
