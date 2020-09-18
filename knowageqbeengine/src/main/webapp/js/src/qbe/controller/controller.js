@@ -257,6 +257,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 						"inUse":currField.inUse,
 						"visible":currField.visible,
 						"distinct":$scope.editQueryObj.distinct,
+						"iconCls":currField.iconCls,
 						"group":currField.group,
 						"order":i+1,
 						"ordering":currField.order,
