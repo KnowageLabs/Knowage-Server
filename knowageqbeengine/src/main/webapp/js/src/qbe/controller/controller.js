@@ -447,18 +447,19 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 	$rootScope.$on('removeColumns', function (event, data) {
 		for(var i in data){
+			// Remove columns
 			var indexOfFieldInQuery = findWithAttr($scope.editQueryObj.fields,'id', data[i].id);
-			  var indexOfFieldInModel = findWithAttr($scope.queryModel,'id', data[i].id);
-			  if (indexOfFieldInQuery > -1 && indexOfFieldInModel > -1) {
-				  $scope.editQueryObj.fields.splice(indexOfFieldInQuery, 1);
-				  $scope.queryModel.splice(indexOfFieldInModel, 1);
-				}
-
+			var indexOfFieldInModel = findWithAttr($scope.queryModel,'id', data[i].id);
+			if (indexOfFieldInQuery > -1 && indexOfFieldInModel > -1) {
+				$scope.editQueryObj.fields.splice(indexOfFieldInQuery, 1);
+				$scope.queryModel.splice(indexOfFieldInModel, 1);
+			}
+			// Remove having conditions
+			var indexOfHavingCondInQuery = findWithAttr($scope.editQueryObj.havings,'leftOperandValue', data[i].id);
+			if (indexOfHavingCondInQuery > -1) {
+				$scope.editQueryObj.havings.splice(indexOfHavingCondInQuery, 1);
+			}
 		}
-
-
-
-
 
 	});
 
