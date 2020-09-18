@@ -36,11 +36,11 @@
 							<div layout="row" flex ng-cloak layout-wrap>
 					           	<md-input-container flex=25 class="md-block"> 
 									<label>Prefix</label>
-									<input class="input_class" ng-model="localModel.numbers.prefix" /> 
+									<input class="input_class" ng-model="localModel.numbers.prefix" ng-trim="false"/> 
 								</md-input-container>
 								<md-input-container flex=25 class="md-block"> 
 									<label>Suffix</label>
-									<input class="input_class" ng-model="localModel.numbers.suffix" />
+									<input class="input_class" ng-model="localModel.numbers.suffix" ng-trim="false"/>
 								</md-input-container>
 					           	<md-input-container flex=25 class="md-block"> 
 									<label>Precision</label>
