@@ -134,7 +134,7 @@
                         <!-- <md-icon ng-if="isForUpdate" ng-click="uploadFile(host.hostName, license, isForUpdate)"   md-font-set="fa" md-font-icon="fa fa-upload"></md-icon>-->
                         <md-icon md-font-set="fa" md-font-icon="fa fa-trash"
                             md-menu-align-target
-                            ng-click="deleteFile(event, license, host.hostName)">
+                            ng-click="openDeletingDialog(event, license, host.hostName)">
                             <md-tooltip
                                 md-delay="1000"> {{translate.load('kn.license.delete')}} </md-tooltip>
                         </md-icon>
@@ -154,4 +154,27 @@
             {{okMessage}} 
         </md-button>
     </md-dialog-actions>
+    
+<md-card class="innerDialog" ng-if="isDeletingLicense" style="background-color: #fafafa">
+ <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>
+	{{translate.load('kn.license.delete')}} - {{fileToDelete.license.product}}
+	</h2>
+	</div>
+	</md-toolbar>
+	<md-card-content>
+		{{fileToDelete.message}}
+    </md-card-content>
+    <md-dialog-actions layout="row">
+    <md-button class="md-raised" ng-click="cancelDeletingOperation()">
+        {{translate.load('sbi.general.cancel')}} 
+    </md-button>
+    <md-button class="md-raised md-primary" ng-click="deleteLicense()">
+        {{translate.load('kn.license.delete')}}
+    </md-button>
+		</md-dialog-actions>    
+   </md-card>
+
+<div class="innerDialogBackdrop" ng-if="isDeletingLicense" layout-fill> </div>
 </md-dialog>

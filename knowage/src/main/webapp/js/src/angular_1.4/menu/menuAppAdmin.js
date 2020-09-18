@@ -324,6 +324,7 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 						scope.download = $scope.download;
 						scope.dialog = $mdDialog;
 						scope.hosts = hosts;
+						scope.logoutUrl = "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE";
 						scope.trimExpirationDate = function (date) {
 							return moment(date).format("YYYY-MM-DD");
 						}
@@ -457,20 +458,30 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 						}
 
 
+						scope.cancelDeletingOperation = function () {
+							delete scope.isDeletingLicense;
+							delete scope.fileToDelete;
+						}
+						
+						scope.openDeletingDialog = function (event, license, hostName) {
+							scope.isDeletingLicense = true;
+							scope.fileToDelete = { event: event,
+							  license: license,
+							  hostName: hostName,
+							  message: translate.load('kn.license.warningBeforeDeletion').replace("{0}", license.product)
+							  }
+						}
+						
+						scope.deleteLicense = function() {
+							scope.deleteFile(scope.fileToDelete.event, scope.fileToDelete.license, scope.fileToDelete.hostName);
+							delete scope.isDeletingLicense;
+							
+							$scope.menuCall(scope.fileToDelete.event, Sbi.config.contextName + logoutUrl, "execUrl");
+						}
+						
 						scope.deleteFile = function (event, license, hostName) {
-
-//							var confirm = $mdDialog.confirm()
-//								.title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
-//								.content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
-//								.ariaLabel("confirm_delete")
-//								.targetEvent(event)
-//								.ok(sbiModule_translate.load("sbi.general.continue"))
-//								.cancel(sbiModule_translate.load("sbi.general.cancel"))
-//								;
-//							$mdDialog.show(confirm)
-//								.then(function (result) {
-
-									var currentHostName = hostName;
+							
+							var currentHostName = hostName;
 									var urlToCall = restLicense.base + '/delete' + '/' + hostName + '/' + license.product;
 									$http
 										.get(urlToCall)
@@ -488,7 +499,8 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 														var index = $scope.licenseData[currentHostName].indexOf(obj);
 														$scope.licenseData[currentHostName].splice(index, 1);
 														scope.file = undefined;
-														scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'), scope.translate.load('sbi.generic.info'));
+														
+														// scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'), scope.translate.load('sbi.generic.info'));
 													} else {
 														if (response.data.errors) {
 															scope.messaging.showErrorMessage(scope.translate.load('kn.license.error'), response.data.errors[0].message);
@@ -505,8 +517,9 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 													scope.messaging.showErrorMessage(scope.translate.load('kn.license.error'), scope.translate.load('kn.license.errormessage'));
 												}
 											});
-
-//								}, function () {});
+							
+							
+							
 
 
 						}
