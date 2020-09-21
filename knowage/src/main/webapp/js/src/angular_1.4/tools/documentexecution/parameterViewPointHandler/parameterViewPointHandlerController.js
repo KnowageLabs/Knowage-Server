@@ -21,89 +21,114 @@
 		$scope.driversExecutionService = driversExecutionService;
 		$scope.execProperties = $scope.execproperties;
 		$scope.translate = sbiModule_translate;
+		
+		$scope.columns = [
+			{"headerName":sbiModule_translate.load('sbi.generic.name'),"field":"vpName"},
+			{"headerName":sbiModule_translate.load('sbi.generic.descr'),"field":"vpDesc"},
+			{"headerName":sbiModule_translate.load('sbi.generic.visibility'),"field":"vpScope"},
+			{"headerName":"",cellRenderer: buttonRenderer,"field":"valueId","cellClass":"singlePinnedButton","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"center"},
+				sortable:false,filter:false,width: 150,suppressSizeToFit:true,suppressMovable:true,pinned: 'right',resizable: false}];
 
-		$scope.gvpCtrlVpSpeedMenuOpt =
-			[
-			 { // Fill Form
-				 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.fill.tooltip"),
-				 icon:"fa fa-check",
-				 color:'#222222',
-				 action : function(item) {
-					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
-					 //console.log('item ' , item);
-					 var params = decodeRequestStringToJson(item.vpValueParams);
-					 //disable visual correlation
-					 $scope.execProperties.initResetFunctionVisualDependency.status=false;
-					 $scope.execProperties.initResetFunctionDataDependency.status=false;
-					 $scope.execProperties.initResetFunctionLovDependency.status=false;
-					 $scope.execProperties.returnFromDataDepenViewpoint.status = true;
-					 $scope.execProperties.returnFromLovDepenViewpoint.status = true;
-					 fillParametersPanel(params);
-					 $scope.returnToDocument();
-				 }
-			 },
-			 { //Execute Url
-				 label: sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.message"),
-				 icon:"fa fa-play",
-				 color:'#222222',
-				 action : function(item) {
-					 //decodeURIComponent
-					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
-					 var params = decodeRequestStringToJson(item.vpValueParams);
-					//disable visual correlation
-					 $scope.execProperties.initResetFunctionVisualDependency.status=false;
-					 $scope.execProperties.initResetFunctionDataDependency.status=false;
-					 $scope.execProperties.initResetFunctionLovDependency.status=false;
-					 $scope.execProperties.returnFromDataDepenViewpoint.status = true;
-					 $scope.execProperties.returnFromLovDepenViewpoint.status = true;
-					 fillParametersPanel(params);
-//					 docExecute_urlViewPointService.frameLoaded = false;
-					 $scope.execute($scope.execProperties.selectedRole.name, stringfyFromGetUrlParameters(params));
-					 $scope.returnToDocument();
-				 }
-			 }
-			 ,{   //Delete Action
-				 label: sbiModule_translate.load("sbi.generic.delete"),
-				 icon:"fa fa-trash-o",
-				 color:'#222222',
-				 action : function(item) {
-					 var confirm = $mdDialog
-						.confirm({skipHide: true})
-						.title(sbiModule_translate.load("sbi.execution.parametersselection.delete.filters.title"))
-						.content(
-							sbiModule_translate
-							.load("sbi.execution.parametersselection.delete.filters.message"))
-							.ok(sbiModule_translate.load("sbi.general.continue"))
-							.cancel(sbiModule_translate.load("sbi.general.cancel")
-						);
-					$mdDialog.show(confirm).then(function() {
-						var index = driversExecutionService.gvpCtrlViewpoints.indexOf(item);
-						if($scope.execProperties.executionInstance.OBJECT_TYPE_CODE){
-							var deletePath = "1.0/documentviewpoint";
-						} else {
-							var deletePath = "1.0/metamodelviewpoint";
-						}
-
-						 var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ item.vpId +'"}');
-							sbiModule_restServices.post(deletePath,	"deleteViewpoint", objViewpoint)
-							   .success(function(data, status, headers, config) {
-								   if(data.errors && data.errors.length > 0 ){
-									   showToast(data.errors[0].message);
-									 }else{
-										 driversExecutionService.gvpCtrlViewpoints.splice(index, 1);
-									 }
-								   //gvpctl.selectedParametersFilter = [];
-							})
-							.error(function(data, status, headers, config) {});
-//							$scope.getViewpoints();
-					}, function() {
-						console.log('Annulla');
-						//docExecute_urlViewPointService.getViewpoints();
-					});
-				 }
-			 }
-		 ];
-
+		function buttonRenderer(params){
+			return '<md-button class="md-icon-button" ng-click="fillParams(\''+params.data.vpId+'\')">'+
+			'	<md-tooltip md-delay="500">'+sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.fill.tooltip")+'</md-tooltip>'+
+			'	<md-icon md-font-icon="fas fa-file-signature"></md-icon>'+
+			'</md-button>'+
+			'<md-button class="md-icon-button" ng-click="executeParams(\''+params.data.vpId+'\')">'+
+			'	<md-tooltip md-delay="500">'+sbiModule_translate.load("sbi.execution.parametersselection.executionbutton.message")+'</md-tooltip>'+
+			'	<md-icon md-font-icon="fa fa-play-circle"></md-icon>'+
+			'</md-button>'+
+			'<md-button class="md-icon-button" ng-click="deleteParams(\''+params.data.vpId+'\')">'+
+			'	<md-tooltip md-delay="500">'+sbiModule_translate.load("sbi.generic.delete")+'</md-tooltip>'+
+			'	<md-icon md-font-icon="fa fa-trash-o"></md-icon>'+
+			'</md-button>';
+		}
+		
+		$scope.savedParametersGrid = {
+				angularCompileRows: true,
+				pagination : true,
+				paginationAutoPageSize: true,
+		        onGridSizeChanged: resizeColumns,
+		        defaultColDef: {
+		        	sortable: true,
+		        	filter: true,
+		        	resizable: false
+		        },
+				columnDefs: $scope.columns,
+				rowData: driversExecutionService.gvpCtrlViewpoints
+		}
+		
+		function resizeColumns(){
+			$scope.savedParametersGrid.api.sizeColumnsToFit();
+		}
+		
+		function getItemFromId(id){
+			for(var k in $scope.driversExecutionService.gvpCtrlViewpoints){
+				if($scope.driversExecutionService.gvpCtrlViewpoints[k].vpId == id) return $scope.driversExecutionService.gvpCtrlViewpoints[k];
+			}
+		}
+		
+		$scope.fillParams = function(id){
+			var item = getItemFromId(id);
+			var params = decodeRequestStringToJson(item.vpValueParams);
+			 //disable visual correlation
+			 $scope.execProperties.initResetFunctionVisualDependency.status=false;
+			 $scope.execProperties.initResetFunctionDataDependency.status=false;
+			 $scope.execProperties.initResetFunctionLovDependency.status=false;
+			 $scope.execProperties.returnFromDataDepenViewpoint.status = true;
+			 $scope.execProperties.returnFromLovDepenViewpoint.status = true;
+			 fillParametersPanel(params);
+			 $scope.returnToDocument();
+		}
+		
+		$scope.executeParams = function(id){
+			var item = getItemFromId(id);
+			var params = decodeRequestStringToJson(item.vpValueParams);
+			//disable visual correlation
+			 $scope.execProperties.initResetFunctionVisualDependency.status=false;
+			 $scope.execProperties.initResetFunctionDataDependency.status=false;
+			 $scope.execProperties.initResetFunctionLovDependency.status=false;
+			 $scope.execProperties.returnFromDataDepenViewpoint.status = true;
+			 $scope.execProperties.returnFromLovDepenViewpoint.status = true;
+			 fillParametersPanel(params);
+//			 docExecute_urlViewPointService.frameLoaded = false;
+			 $scope.execute($scope.execProperties.selectedRole.name, stringfyFromGetUrlParameters(params));
+			 $scope.returnToDocument();
+		}
+		
+		$scope.deleteParams = function(id){
+			var item = getItemFromId(id);
+			var confirm = $mdDialog
+				.confirm({skipHide: true})
+				.title(sbiModule_translate.load("sbi.execution.parametersselection.delete.filters.title"))
+				.content(
+					sbiModule_translate
+					.load("sbi.execution.parametersselection.delete.filters.message"))
+					.ok(sbiModule_translate.load("sbi.general.continue"))
+					.cancel(sbiModule_translate.load("sbi.general.cancel")
+				);
+			
+			$mdDialog.show(confirm).then(function() {
+				var index = driversExecutionService.gvpCtrlViewpoints.indexOf(item);
+				if($scope.execProperties.executionInstance.OBJECT_TYPE_CODE){
+					var deletePath = "1.0/documentviewpoint";
+				} else {
+					var deletePath = "1.0/metamodelviewpoint";
+				}
+	
+				 var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ item.vpId +'"}');
+					sbiModule_restServices.post(deletePath,	"deleteViewpoint", objViewpoint)
+					   .success(function(data, status, headers, config) {
+						   if(data.errors && data.errors.length > 0 ){
+							   showToast(data.errors[0].message);
+							 }else{
+								 driversExecutionService.gvpCtrlViewpoints.splice(index, 1);
+								 $scope.savedParametersGrid.api.setRowData(driversExecutionService.gvpCtrlViewpoints)
+							 }
+					})
+					.error(function(data, status, headers, config) {});
+			}, function() {});
+		}
 
 		function stringfyFromGetUrlParameters(params){
 			 var prm = {};
