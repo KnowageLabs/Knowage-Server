@@ -31,6 +31,7 @@
 
 				var init = function(){
 
+					$scope.filter.rightOperandValue = $scope.filter.rightOperandDescription.split(" ---- ").filter(function(el) { return el != ""; });
 					$scope.filter.rightOperandType="Static Content";
 
 				}
