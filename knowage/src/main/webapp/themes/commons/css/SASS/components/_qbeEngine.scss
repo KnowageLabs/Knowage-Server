@@ -647,4 +647,44 @@
             font-size: 14px;
         }
     }
+    qbe-filter {
+        md-input-container {
+            padding-right: 4px;
+        }
+        target {
+            md-chips-wrap {
+                padding-bottom: 4px;
+                min-height: 28px;
+                .md-chip-input-container {
+                    margin: 0;
+                    font-size: $mediumFontSize;
+                    height: 22px;
+                    input {
+                        height: 22px;
+                    }
+                    &:not(:first-child) {
+                        margin: 0;
+                    }
+                }
+                md-chip {
+                    margin-top: 2px;
+                    margin-right: 4px;
+                    font-size: $smallFontSize;
+                    line-height: 22px;
+                    height: 22px;
+                    .md-chip-remove {
+                        width: 22px;
+                        height: 22px;
+                        md-icon {
+                            min-height: 16px;
+                            min-width: 16px;
+                            height: 16px;
+                            width: 16px;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
+
