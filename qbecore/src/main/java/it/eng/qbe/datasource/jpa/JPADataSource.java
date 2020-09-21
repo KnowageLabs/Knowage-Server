@@ -324,9 +324,10 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		String dialect = dataSource.getHibDialectClass();
 
 		// to solve http://spagoworld.org/jira/browse/SPAGOBI-1934
-		if (dialect != null && dialect.contains("SQLServerDialect")) {
+		// KNOWAGE-XXXX : Removed because the class was deleted at some point
+		/* TODO : Check if (dialect != null && dialect.contains("SQLServerDialect")) {
 			dialect = "org.hibernate.dialect.ExtendedSQLServerDialect";
-		} else if (dialect != null && dialect.contains("MySQL")) {
+		} else */ if (dialect != null && dialect.contains("MySQL")) {
 			dialect = "org.hibernate.dialect.ExtendedMySQLDialect";
 		} else if (dialect != null && dialect.contains("CustomOracleSpatialDialect")) {
 			dialect = "org.hibernatespatial.oracle.CustomOracleSpatialDialect";
