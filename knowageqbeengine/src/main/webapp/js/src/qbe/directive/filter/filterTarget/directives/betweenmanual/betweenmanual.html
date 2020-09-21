@@ -1,0 +1,11 @@
+<div layout="row" layout-align="between center">
+	<md-input-container>
+		<label class="filterLabel">{{translate.load("kn.qbe.filters.targetLowLimit")}}</label>
+		<input name="firstOperand" ng-model="firstOperand" ng-change="edit()">
+	</md-input-container>
+	<span layout-padding>{{translate.load("kn.qbe.filters.targetAnd")}}</span>
+	<md-input-container>
+		<label class="filterLabel">{{translate.load("kn.qbe.filters.targetHighLimit")}}</label>
+		<input name="secondOperand" ng-model="secondOperand" ng-change="edit()">
+	</md-input-container>
+</div>

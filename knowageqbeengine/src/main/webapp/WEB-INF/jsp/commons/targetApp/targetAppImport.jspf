@@ -28,5 +28,6 @@
 <script type="text/javascript" src="<%= directivesPath + "/timestamp/timestamp.js"%>"></script>
 <script type="text/javascript" src="<%= directivesPath + "/target.js"%>"></script>
 <script type="text/javascript" src="<%= directivesPath + "/multimanual/multimanual.js"%>"></script>
+<script type="text/javascript" src="<%= directivesPath + "/betweenmanual/betweenmanual.js"%>"></script>
 
 
