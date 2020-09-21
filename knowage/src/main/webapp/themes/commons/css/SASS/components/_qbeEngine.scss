@@ -658,9 +658,12 @@
                 .md-chip-input-container {
                     margin: 0;
                     font-size: $mediumFontSize;
-                    height: 22px;
+                    height: 24px;
                     input {
-                        height: 22px;
+                        height: 24px;
+                        &:not([type]) {
+                            height: 24px;
+                        }
                     }
                     &:not(:first-child) {
                         margin: 0;
