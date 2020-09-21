@@ -1,4 +1,4 @@
-<md-toolbar layout="row">
+<md-toolbar class="secondaryToolbar" layout="row">
     <div class="md-toolbar-tools" flex layout-align="center center">
       	<h2 class="md-flex" >{{translate.load("sbi.execution.viewpoints.title")}}</h2>
      	<span flex></span>
@@ -7,11 +7,4 @@
 	 	</md-button>
 	</div>
 </md-toolbar>
-<angular-table    flex
-	id="tableViewpoints" ng-model="driversExecutionService.gvpCtrlViewpoints" 
-	columns='[{"label":"Name","name":"vpName"},{"label":"Description","name":"vpDesc"},{"label":"Visibility","name":"vpScope"}]'
-	columns-search='["vpName","vpDesc", "vpScope"]'
-	highlights-selected-item = "true"
-	show-search-bar="true"
-	speed-menu-option=gvpCtrlVpSpeedMenuOpt	>
-</angular-table>
+<div ag-grid="savedParametersGrid" class="ag-theme-balham ag-theme-knowage-advanced ag-noBorders"></div>
