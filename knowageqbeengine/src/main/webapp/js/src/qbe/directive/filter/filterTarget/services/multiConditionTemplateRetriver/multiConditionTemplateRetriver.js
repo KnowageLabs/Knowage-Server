@@ -55,8 +55,9 @@
 
 			var combinations = getCombinations([this.operator,this.fieldType,this.targetType]);
 
+			var currMaps = mappings.get();
 			for(var i = combinations.length-1; i >= 0;i--){
-				var template = parsingHelper.get(combinations[i],mappings.get());
+				var template = parsingHelper.get(combinations[i], currMaps);
 				if(isString(template)){
 					return template;
 				}
