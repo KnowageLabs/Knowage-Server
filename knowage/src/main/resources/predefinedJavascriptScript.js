@@ -79,7 +79,7 @@ function getInClauseForNullableValues(colName, parName){
     }
 }
 
-parameters.isValid = function(key) {
+function isValid(key) {
 	return key != null
 		&& parameters.get(key) != null
 		&& parameters.get(key) != ''
@@ -87,3 +87,6 @@ parameters.isValid = function(key) {
 		&& parameters.get(key) != "null"
 		&& parameters.get(key) != "%";
 }
+
+parameters.isValid = isValid;
+
