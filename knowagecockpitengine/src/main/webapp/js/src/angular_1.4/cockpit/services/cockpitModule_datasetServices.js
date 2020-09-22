@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_util,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user,cockpitModule_templateServices,driversExecutionService){
+angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_util,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user,cockpitModule_templateServices,driversExecutionService,cockpitModule_analyticalDrivers){
 	var ds=this;
 
 	this.datasetList=[];
@@ -804,6 +804,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			bodyJSON.drivers =  driversExecutionService.prepareDriversForSending(this.newDataSet.drivers);
 			this.driversAreSet(this.newDataSet.drivers);
 		} else {
+			if(cockpitModule_analyticalDrivers) {
+				var urlName = dataset.drivers[0].urlName;
+				var driverValue = cockpitModule_analyticalDrivers[urlName];
+				var driverDescription = cockpitModule_analyticalDrivers[urlName+"_description"];
+				dataset.drivers[0].parameterValue = driverValue;
+				dataset.drivers[0].parameterDescription = driverDescription;
+			}
 			bodyJSON.drivers = driversExecutionService.prepareDriversForSending(dataset.drivers);
 			this.driversAreSet(dataset.drivers);
 		}
