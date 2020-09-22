@@ -533,6 +533,7 @@ function mapWidgetEditControllerFunction(
 			column.properties.showFilter = false;
 			column.properties.modal = false;
 		}
+		$scope.onAttributeAggregationChange(layer);
 	}
 
 	$scope.setColumnStyle = function(event,column) {
@@ -595,6 +596,34 @@ function mapWidgetEditControllerFunction(
 		}
 
 		return c1.value.name.localeCompare(c2.value.name);
+	}
+
+	$scope.disableAggregationForMeasures = false;
+
+	$scope.onAttributeAggregationChange = function(layer) {
+		$scope.disableAggregationForMeasures = layer.content
+			.columnSelectedOfDataset
+			.filter(function(el) {
+				var fieldType = el.fieldType;
+
+				return fieldType == 'SPATIAL_ATTRIBUTE' || fieldType == 'ATTRIBUTE';
+			})
+			.every(function(el) {
+				return el.properties.aggregateBy == false;
+			});
+
+		if ($scope.disableAggregationForMeasures) {
+			layer.content
+				.columnSelectedOfDataset
+				.filter(function(el) {
+					var fieldType = el.fieldType;
+
+					return fieldType == 'MEASURE';
+				})
+				.forEach(function(el) {
+					el.aggregationSelected = undefined;
+				});
+		}
 	}
 
 	function getSizeFromFieldType(column) {
