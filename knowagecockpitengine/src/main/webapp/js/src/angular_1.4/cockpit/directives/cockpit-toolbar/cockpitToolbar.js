@@ -37,11 +37,16 @@ angular.module('cockpitModule')
 	}
 });
 
-function cockpitToolbarControllerFunction($scope,$timeout,$q,windowCommunicationService,cockpitModule_datasetServices,cockpitModule_widgetServices,cockpitModule_templateServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,sbiModule_messaging,sbiModule_download,sbiModule_user,sbiModule_cockpitDocument,sbiModule_config,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
+function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCommunicationService,cockpitModule_datasetServices,cockpitModule_widgetServices,cockpitModule_templateServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,sbiModule_messaging,sbiModule_download,sbiModule_user,sbiModule_cockpitDocument,sbiModule_config,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
 	$scope.translate = sbiModule_translate;
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
+
+	if ($location.search()['scheduledexport'])
+		$scope.isScheduledExcelExport = true;
+	else
+		$scope.isScheduledExcelExport = false;
 
 	$scope.openGeneralConfigurationDialog=function(){
 		cockpitModule_generalServices.openGeneralConfiguration();

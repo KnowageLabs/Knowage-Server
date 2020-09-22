@@ -57,10 +57,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-button>
       		</md-fab-actions>
       	</md-fab-speed-dial>
-      
+          		
 		<md-button aria-label="data" class="md-fab md-raised md-mini fixedSelectionButton animation shrink-down" ng-click="openSelections()" title = "Selections" ng-if="cockpitModule_template.configuration.showSelectionButton && cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS==true">
 			<md-icon md-font-icon="fa fa-check-square-o"></md-icon>
 			<md-tooltip md-direction="bottom">Selections</md-tooltip>
 		</md-button>
+		
+		<!-- This button is used only for scheduled excel export with chromium -->
+		<md-button id="scheduledExcelExportButton" ng-hide="!isScheduledExcelExport" aria-label="menu" class="md-fab md-warn" ng-click="exportExcel('xlsExport')" ><md-button>
+		
     </div>
 </div>

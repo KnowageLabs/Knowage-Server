@@ -24,18 +24,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@ page contentType="applicaton/octet-stream" %>
 <%
+
 String outputType = request.getParameter("outputType");
 String userId = request.getParameter("user_id");
 Map<String,String[]> parameterMap = request.getParameterMap();
 
 Integer documentId = Integer.valueOf(request.getParameter("document"));
 String documentLabel = request.getParameter("DOCUMENT_LABEL");
-String template = (String) request.getAttribute("template");
+String requestURL = (String) request.getAttribute("requestURL");
 
-ExcelExporter excelExporter = new ExcelExporter(outputType, userId, parameterMap);
+ExcelExporter excelExporter = new ExcelExporter(outputType, userId, parameterMap, requestURL);
 String mimeType = excelExporter.getMimeType();
 if(mimeType != null){
-	byte[] data = excelExporter.getBinaryData(documentId, documentLabel, template, "");
+	byte[] data = excelExporter.getBinaryData(documentLabel);
 	
 	response.setHeader("Content-length", Integer.toString(data.length));
 	response.setHeader("Content-Type", mimeType);

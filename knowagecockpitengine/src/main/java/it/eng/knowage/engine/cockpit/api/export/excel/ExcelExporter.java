@@ -18,7 +18,12 @@
 package it.eng.knowage.engine.cockpit.api.export.excel;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,6 +31,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -49,7 +57,9 @@ import it.eng.knowage.engine.cockpit.api.export.excel.crosstab.CrosstabXLSExport
 import it.eng.knowage.engine.cockpit.api.export.excel.crosstab.CrosstabXLSXExporter;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.spago.error.EMFAbstractError;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -74,14 +84,18 @@ public class ExcelExporter {
 	private final JSONObject body;
 	private Locale locale;
 	private int uniqueId = 0;
+	private String requestURL = "";
 
 	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "python", "r" };
+	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
+	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
 
 	// Old implementation with parameterMap
-	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap) {
+	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap, String requestURL) {
 		this.outputType = outputType;
 		this.userUniqueIdentifier = userUniqueIdentifier;
 		this.exportWidget = false;
+		this.requestURL = requestURL;
 		this.body = new JSONObject();
 
 		Locale locale = getLocale(parameterMap);
@@ -157,6 +171,61 @@ public class ExcelExporter {
 			throw new SpagoBIRuntimeException("Unsupported output type [" + outputType + "]");
 		}
 		return mimeType;
+	}
+
+	// used only for scheduled exports
+	// leverages on an external script that uses chromium to open the cockpit and click on the export button
+	public byte[] getBinaryData(String documentLabel) throws IOException, InterruptedException, EMFUserError {
+
+		final Path outputDir = Files.createTempDirectory("knowage-xls-exporter-");
+
+		String encodedUserId = Base64.encodeBase64String(userUniqueIdentifier.getBytes("UTF-8"));
+
+		// Script
+		String cockpitExportScriptPath = SingletonConfig.getInstance().getConfigValue(CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
+		Path exportScriptFullPath = Paths.get(cockpitExportScriptPath, SCRIPT_NAME);
+
+		if (!Files.isRegularFile(exportScriptFullPath)) {
+			String msg = String.format("Cannot find export script at \"%s\": did you set the correct value for %s configuration?", exportScriptFullPath,
+					CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
+			IllegalStateException ex = new IllegalStateException(msg);
+			logger.error(msg, ex);
+			throw ex;
+		}
+
+		URI url = UriBuilder.fromUri(requestURL).replaceQueryParam("outputType_description", "HTML").replaceQueryParam("outputType", "HTML").build();
+
+		ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), encodedUserId, outputDir.toString(), url.toString());
+		Process exec = processBuilder.start();
+		exec.waitFor();
+		// the script creates the resulting xls and saves it to outputFile
+		Path outputFile = outputDir.resolve(documentLabel + "." + outputType.toLowerCase());
+		return getByteArrayFromFile(outputFile, outputDir);
+	}
+
+	private byte[] getByteArrayFromFile(Path excelFile, Path outputDir) {
+		try {
+			FileInputStream fis = new FileInputStream(excelFile.toString());
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			byte[] buf = new byte[1024];
+			for (int readNum; (readNum = fis.read(buf)) != -1;) {
+				// Writes len bytes from the specified byte array starting at offset off to this byte array output stream
+				bos.write(buf, 0, readNum); // no doubt here is 0
+			}
+			fis.close();
+			return bos.toByteArray();
+		} catch (Exception e) {
+			logger.error("Cannot serialize excel file", e);
+			throw new SpagoBIRuntimeException("Cannot serialize excel file", e);
+		} finally {
+			try {
+				if (Files.isRegularFile(excelFile))
+					Files.delete(excelFile);
+				Files.delete(outputDir);
+			} catch (Exception e) {
+				logger.error("Cannot delete temp file", e);
+			}
+		}
 	}
 
 	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString, String options) throws JSONException, SerializationException {

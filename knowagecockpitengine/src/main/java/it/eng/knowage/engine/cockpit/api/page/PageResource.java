@@ -161,6 +161,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 				String outputType = request.getParameter(OUTPUT_TYPE);
 				if ("xls".equalsIgnoreCase(outputType) || "xlsx".equalsIgnoreCase(outputType)) {
 					request.setAttribute("template", getIOManager().getTemplateAsString());
+					String requestURL = getRequestUrlForExcelExport(request);
+					request.setAttribute("requestURL", requestURL);
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportExcel.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				} else if ("pdf".equalsIgnoreCase(outputType)) {
@@ -264,6 +266,35 @@ public class PageResource extends AbstractCockpitEngineResource {
 			}
 		}
 		sb.append("&export=true");
+		return sb.toString();
+	}
+
+	private String getRequestUrlForExcelExport(HttpServletRequest request) throws UnsupportedEncodingException {
+
+		String documentLabel = request.getParameter("DOCUMENT_LABEL");
+		BIObject biObject = null;
+		try {
+			biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(documentLabel);
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Error retrieving document with label " + documentLabel, e);
+		}
+		Engine eng = biObject.getEngine();
+		String externalUrl = GeneralUtilities.getExternalEngineUrl(eng);
+
+		StringBuilder sb = new StringBuilder(externalUrl);
+		String sep = "?";
+		Map<String, String[]> parameterMap = request.getParameterMap();
+		for (String parameter : parameterMap.keySet()) {
+			String[] values = parameterMap.get(parameter);
+			if (values != null && values.length > 0) {
+				sb.append(sep);
+				sb.append(URLEncoder.encode(parameter, "UTF-8"));
+				sb.append("=");
+				sb.append(URLEncoder.encode(values[0], "UTF-8"));
+				sep = "&";
+			}
+		}
+		sb.append("&scheduledexport=true");
 		return sb.toString();
 	}
 
