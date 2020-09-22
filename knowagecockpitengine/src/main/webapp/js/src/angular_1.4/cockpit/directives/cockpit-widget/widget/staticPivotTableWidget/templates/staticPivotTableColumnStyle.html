@@ -12,7 +12,7 @@
 			  <div layout-margin layout="column" flex class="relative"> 
 			   	
 				<div flex>
-				 <div class="md-dialog-content" layout="column"  ng-if="selectedColumn.widgetType=='staticPivotTable'">
+				 <div layout="column" ng-if="selectedColumn.widgetType=='staticPivotTable'">
 					<div flex layout="row" layout-align="start center">
 						<md-checkbox ng-disabled="selectedColumn.disableShowHeader" flex ng-model="selectedColumn.showHeader" >
 									{{translate.load("sbi.cockpit.table.showHeader")}}
@@ -24,16 +24,16 @@
 							<md-tooltip md-direction="top">Revert configuration</md-tooltip>
 						 </md-icon>
 					</div>
-					<div layout-margin layout="row" flex class="relative"> 
-						<md-input-container flex=30>
+					<div layout="row" flex> 
+						<md-input-container flex>
 						  <label>{{translate.load('sbi.cockpit.table.columnname')}}</label>
 						  <input ng-model="selectedColumn.id"  ng-disabled="true">
 						</md-input-container>
-						<md-input-container flex=30>
+						<md-input-container flex>
 						  <label>{{translate.load('sbi.cockpit.table.title')}}</label>
 						  <input ng-model="selectedColumn.alias">
 						</md-input-container>	
-						<md-input-container flex=30 ng-if="variables">
+						<md-input-container flex ng-if="variables">
 						  	<label>{{translate.load('sbi.cockpit.widgets.staticpivot.variables')}} <small>{{translate.load('sbi.generic.optional')}}</small></label>
 						  	<md-select ng-model="selectedColumn.variable">
 						  		<md-option></md-option>
@@ -43,12 +43,14 @@
 							</md-select>
 						  	<div class="hint">{{translate.load('sbi.cockpit.widgets.staticpivot.variables.hint')}}</div>
 						</md-input-container>
-						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE' && selectedColumn.fieldType!='CALCULATED_FIELD'" flex="20" class="md-block" >
+					</div>
+					<div layout="row">
+						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE' && selectedColumn.fieldType!='CALCULATED_FIELD'" class="md-block" flex>
 								<md-checkbox ng-model="selectedColumn.sorting" aria-label="Checkbox Order" ng-disabled="selectedColumn.showSortingAlert">
 										{{translate.load("sbi.cockpit.widgets.table.sorting.column")}}
 								</md-checkbox>
 						</md-input-container>
-						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE'" flex="20" class="md-block">
+						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE' selectedColumn.fieldType!='CALCULATED_FIELD'" class="md-block" flex>
 							<label>{{translate.load("sbi.cockpit.widgets.table.sorting.orderByColumnValue");}}</label>
 							<md-select ng-model="selectedColumn.sortingId" ng-disabled="!selectedColumn.sorting || selectedColumn.sorting=='' || selectedColumn.showSortingAlert" data-ng-change="updateSortOptions(selectedColumn)">
 								<md-option ng-repeat="sortCol in selectedColumn.sorterByColumns" ng-value="sortCol" >							
@@ -56,25 +58,26 @@
 								</md-option>
 							</md-select>
 						</md-input-container>
-						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE'" flex="20" class="md-block">
+						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE' && selectedColumn.fieldType!='CALCULATED_FIELD'" class="md-block" flex>
 							<label>{{translate.load("sbi.cockpit.widgets.table.sorting.order");}}</label>
 							<md-select ng-model="selectedColumn.sortingOrder" ng-disabled="!selectedColumn.sorting || selectedColumn.sorting=='' || selectedColumn.showSortingAlert" data-ng-change="updateSortOptions(selectedColumn)">
 								<md-option value="ASC">{{translate.load("sbi.cockpit.widgets.table.sorting.asc");}}</md-option>
 								<md-option value="DESC">{{translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
 							</md-select>
 						</md-input-container>
+						<md-input-container ng-if="selectedColumn.fieldType=='MEASURE' || selectedColumn.fieldType=='CALCULATED_FIELD'" flex>
+							<label>{{translate.load('sbi.cockpit.aggregationwindow.selectAggregation')}}</label>
+							<md-select ng-model="selectedColumn.funct">
+								<md-option ng-repeat="agF in cockpitModule_generalOptions.aggregationFunctions" ng-value="agF.value" >
+								{{agF.label}}
+								</md-option>
+							</md-select>
+						</md-input-container>
+						<md-input-container ng-if="selectedColumn.fieldType=='MEASURE' || selectedColumn.fieldType=='CALCULATED_FIELD'" flex>
+							<md-checkbox flex ng-model="selectedColumn.excludeFromTotalAndSubtotal">{{translate.load("sbi.cockpit.aggregationwindow.excludeFromTotalAndSubtotal")}}</md-checkbox>
+						</md-input-container>
 					</div>			
-					<md-input-container ng-if="selectedColumn.fieldType=='MEASURE' || selectedColumn.fieldType=='CALCULATED_FIELD'">
-						<label>{{translate.load('sbi.cockpit.aggregationwindow.selectAggregation')}}</label>
-						<md-select ng-model="selectedColumn.funct">
-							<md-option ng-repeat="agF in cockpitModule_generalOptions.aggregationFunctions" ng-value="agF.value" >
-							{{agF.label}}
-							</md-option>
-						</md-select>
-					</md-input-container>
-					<md-input-container ng-if="selectedColumn.fieldType=='MEASURE'">
-						<md-checkbox flex ng-model="selectedColumn.excludeFromTotalAndSubtotal">{{translate.load("sbi.cockpit.aggregationwindow.excludeFromTotalAndSubtotal")}}</md-checkbox>
-					</md-input-container>
+					
 				</div>
 			   
 			   <!-- ----------------- -->

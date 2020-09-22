@@ -121,13 +121,26 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 	
 	$scope.evaluatePivotedCells = function(elem){
 		var offsetArray = [];
+		var staticThead = elem.querySelectorAll("thead tr");
+		for(var j = 0; j < staticThead.length; j++){
+			if(!staticThead[j].style.backgroundColor){
+				for(var c = 0 ; c < staticThead[j].children.length; c++){
+					if(!staticThead[j].children[c].style.backgroundColor) staticThead[j].children[c].style.backgroundColor = 'white';
+				}
+			}
+		}
+		
 		var pivotedHeaders = elem.querySelectorAll("td[pivot*='header']");
 		for(var h = 0; h < pivotedHeaders.length; h++){
 			pivotedHeaders[h].style.left = "";
 			var headerName = pivotedHeaders[h].getAttribute('pivot');
 			headerIndex = headerName.substr(headerName.length - 1);
 			if(!offsetArray[headerIndex]){
-				offsetArray.splice(headerIndex, 0 , pivotedHeaders[h].offsetLeft - 10);
+				var leftPadding = 0;
+				if($scope.ngModel.style && $scope.ngModel.style.padding && $scope.ngModel.style.padding.enabled){
+					leftPadding = parseInt($scope.ngModel.style.padding["padding-left"]) || 0;
+				}
+				offsetArray.splice(headerIndex, 0 , pivotedHeaders[h].offsetLeft - leftPadding);
 			}
 			pivotedHeaders[h].style.left = offsetArray[headerIndex];
 		}
