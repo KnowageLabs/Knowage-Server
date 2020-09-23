@@ -90,7 +90,7 @@ public class ExcelExporter {
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
 	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
 
-	// Old implementation with parameterMap
+	// used only for scheduled export
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap, String requestURL) {
 		this.outputType = outputType;
 		this.userUniqueIdentifier = userUniqueIdentifier;
@@ -176,31 +176,35 @@ public class ExcelExporter {
 	// used only for scheduled exports
 	// leverages on an external script that uses chromium to open the cockpit and click on the export button
 	public byte[] getBinaryData(String documentLabel) throws IOException, InterruptedException, EMFUserError {
+		try {
+			final Path outputDir = Files.createTempDirectory("knowage-xls-exporter-");
 
-		final Path outputDir = Files.createTempDirectory("knowage-xls-exporter-");
+			String encodedUserId = Base64.encodeBase64String(userUniqueIdentifier.getBytes("UTF-8"));
 
-		String encodedUserId = Base64.encodeBase64String(userUniqueIdentifier.getBytes("UTF-8"));
+			// Script
+			String cockpitExportScriptPath = SingletonConfig.getInstance().getConfigValue(CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
+			Path exportScriptFullPath = Paths.get(cockpitExportScriptPath, SCRIPT_NAME);
 
-		// Script
-		String cockpitExportScriptPath = SingletonConfig.getInstance().getConfigValue(CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
-		Path exportScriptFullPath = Paths.get(cockpitExportScriptPath, SCRIPT_NAME);
+			if (!Files.isRegularFile(exportScriptFullPath)) {
+				String msg = String.format("Cannot find export script at \"%s\": did you set the correct value for %s configuration?", exportScriptFullPath,
+						CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
+				IllegalStateException ex = new IllegalStateException(msg);
+				logger.error(msg, ex);
+				throw ex;
+			}
 
-		if (!Files.isRegularFile(exportScriptFullPath)) {
-			String msg = String.format("Cannot find export script at \"%s\": did you set the correct value for %s configuration?", exportScriptFullPath,
-					CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
-			IllegalStateException ex = new IllegalStateException(msg);
-			logger.error(msg, ex);
-			throw ex;
+			URI url = UriBuilder.fromUri(requestURL).replaceQueryParam("outputType_description", "HTML").replaceQueryParam("outputType", "HTML").build();
+
+			ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), encodedUserId, outputDir.toString(), url.toString());
+			Process exec = processBuilder.start();
+			exec.waitFor();
+			// the script creates the resulting xls and saves it to outputFile
+			Path outputFile = outputDir.resolve(documentLabel + "." + outputType.toLowerCase());
+			return getByteArrayFromFile(outputFile, outputDir);
+		} catch (Exception e) {
+			logger.error("Error during scheduled export execution", e);
+			throw e;
 		}
-
-		URI url = UriBuilder.fromUri(requestURL).replaceQueryParam("outputType_description", "HTML").replaceQueryParam("outputType", "HTML").build();
-
-		ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), encodedUserId, outputDir.toString(), url.toString());
-		Process exec = processBuilder.start();
-		exec.waitFor();
-		// the script creates the resulting xls and saves it to outputFile
-		Path outputFile = outputDir.resolve(documentLabel + "." + outputType.toLowerCase());
-		return getByteArrayFromFile(outputFile, outputDir);
 	}
 
 	private byte[] getByteArrayFromFile(Path excelFile, Path outputDir) {
