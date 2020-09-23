@@ -211,11 +211,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	}
 
 	this.loadDatasetRecords = function(ngModel, options, loadDomainValues,nature){
-		this.addDSWithDrivers(ngModel);
 		if(loadDomainValues == undefined){
 			loadDomainValues = false;
 		}
-
 		if (!options) options = {};
 		var page = options.page;
 		var itemPerPage = options.itemPerPage;
@@ -225,6 +223,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		var dsId;
 
 		if(ngModel.dataset!=undefined && ngModel.dataset.dsId!=undefined){
+			this.addDSWithDrivers(ngModel);
 //			var dataset = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
 			var dataset;
 			if (!Array.isArray(ngModel.dataset.dsId)){

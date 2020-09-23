@@ -45,10 +45,6 @@ String objLabel = null;
 
 List<String> executionRoleNames = new ArrayList();
 
-ArrayList<BIObjDataSet> biObjDataSetList = null;
-IBIObjDataSetDAO biObjDataSetDAO = null;
-BIObjDataSet biObjDataSet = null;
-
 Engine executingEngine = null;
 String engineName = null;
 String isFromDocumentWidget = null;
@@ -71,11 +67,7 @@ try{
     if(obj == null){
         obj = biObjectDAO.loadBIObjectById(Integer.valueOf(objId));
     }    
-    		
-	biObjDataSetDAO = DAOFactory.getBIObjDataSetDAO();
-	biObjDataSetList = biObjDataSetDAO.getBiObjDataSets(Integer.valueOf(objId));
-	biObjDataSet = biObjDataSetList.get(0);
-    
+
     /*
         This request parameter is sent from the controller of the document execution application (documentViewer.js) and it
         serves as indicator of the previous page, i.e. the starting point of the document execution - from where the execution
@@ -537,7 +529,6 @@ if(executionRoleNames.size() > 0) {
                         'CAN_RESET_PARAMETERS' : canResetParameters,     
                         'SidenavOri': '<%=obj.getParametersRegion() %>',
                         'IS_FOR_EXPORT' : <%= isForExport %>,
-                        'DATASET_ID' : <%=biObjDataSet.getDataSetId()%>                        	
                         <%
                         if(cockpitSelections != null && !cockpitSelections.equalsIgnoreCase("")) {
                         %>

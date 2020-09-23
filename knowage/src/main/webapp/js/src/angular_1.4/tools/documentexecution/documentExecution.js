@@ -174,9 +174,7 @@
 					//loads parameters if role is selected
 					execProperties.isParameterRolePanelDisabled.status = true;
 					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name, driversDependencyService.buildCorrelation,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
-					if(execProperties.executionInstance.DATASET_ID) {
-						datasetDriversService.getDatasetById(execProperties.executionInstance.DATASET_ID);
-                    }
+					datasetDriversService.getDatasetDriversByDocumentId(execProperties.executionInstance.OBJECT_ID);
 				}else{
 					docExecute_paramRolePanelService.toggleParametersPanel(true);
 				}

@@ -71,6 +71,7 @@ import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesLi
 import it.eng.spagobi.api.BusinessModelOpenParameters;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIMetaModelParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -88,6 +89,7 @@ import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -102,6 +104,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DatasetFunctionsConfig;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -1180,6 +1183,56 @@ public class DataSetResource extends AbstractDataSetResource {
 		parameters = BusinessModelOpenUtils.getParameters(businessModel, role, request.getLocale(), null, true, dum);
 		parametersArrList = transformRuntimeDrivers(parameters, parameterUseDAO, role, businessModel, BMOP);
 
+		return parametersArrList;
+	}
+
+	@GET
+	@Path("/documentDrivers/{docId}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public ArrayList<HashMap<String, Object>> getDatasetDriversByDocumentId(@PathParam("docId") Integer docId) {
+		IDataSet dataset = null;
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+		IBIObjDataSetDAO biObjDataSetDAO = DAOFactory.getBIObjDataSetDAO();
+		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+		IBIMetaModelParameterDAO driversDao = DAOFactory.getBIMetaModelParameterDAO();
+		String businessModelName = null;
+		MetaModel businessModel = null;
+		ArrayList<HashMap<String, Object>> parametersArrList = new ArrayList<>();
+		ArrayList<BIObjDataSet> biObjDataSetList = null;
+		try {
+			biObjDataSetList = biObjDataSetDAO.getBiObjDataSets(docId);
+		} catch (EMFUserError e1) {
+			e1.printStackTrace();
+		}
+		ArrayList datasetList = null;
+		BIObjDataSet biObjDataSet = null;
+		Integer dsId = null;
+		List docDrivers = null;
+
+		if (biObjDataSetList.size() == 1) {
+			biObjDataSet = biObjDataSetList.get(0);
+			dsId = biObjDataSet.getDataSetId();
+			dataset = datasetDao.loadDataSetById(dsId);
+		} else {
+			Iterator itDs = biObjDataSetList.iterator();
+			while (itDs.hasNext()) {
+				biObjDataSet = (BIObjDataSet) itDs.next();
+				dsId = biObjDataSet.getDataSetId();
+				dataset = datasetDao.loadDataSetById(dsId);
+			}
+		}
+		dataset = dataset instanceof VersionedDataSet ? ((VersionedDataSet) dataset).getWrappedDataset() : dataset;
+		if (dataset != null && dataset.getDsType() == "SbiQbeDataSet") {
+			String config = dataset.getConfiguration();
+			try {
+				JSONObject jsonConfig = new JSONObject(dataset.getConfiguration());
+				businessModelName = (String) jsonConfig.get("qbeDatamarts");
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			parametersArrList = getDatasetDriversByModelName(businessModelName);
+		}
 		return parametersArrList;
 	}
 

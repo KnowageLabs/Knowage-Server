@@ -616,7 +616,7 @@
 			buildCorrelation(execProperties.parametersData.documentParameters, execProperties);
 
 			//setting default value
-			serviceScope.buildObjForFillParameterPanel(data.filterStatus);
+			serviceScope.buildObjForFillParameterPanel(data);
 			// Enable visualcorrelation
 			execProperties.initResetFunctionVisualDependency.status=true;
 			execProperties.initResetFunctionDataDependency.status=true;

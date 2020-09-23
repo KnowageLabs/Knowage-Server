@@ -432,7 +432,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			}
 			break;
 		case "PARAMETER_CHANGE":
-			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue || cockpitModule_datasetServices.driverHasValue);
+			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue) || !(cockpitModule_datasetServices.driverHasValue);
 			var ds=$scope.getDataset();
 			if(ds!=undefined && config.dsList.hasOwnProperty(ds.label)){
 				$scope.refreshWidget(undefined,"parameter_change");
@@ -450,7 +450,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 		switch(eventType){
 		case "REFRESH"  :
-			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue || cockpitModule_datasetServices.driverHasValue);
+			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue) || !(cockpitModule_datasetServices.driverHasValue);
 		    var dirtyIndex = $scope.cockpitModule_properties.DIRTY_WIDGETS.indexOf($scope.ngModel.id);
 		    if($scope.$parent.$parent.sheet.index == $scope.cockpitModule_properties.CURRENT_SHEET){
                 if(dirtyIndex > -1){
@@ -482,7 +482,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
             break;
 		case "INIT" :
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
-			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue || cockpitModule_datasetServices.driverHasValue);
+			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue) || !(cockpitModule_datasetServices.driverHasValue);
 			break;
 		case "RESIZE" :
 			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map" || $scope.ngModel.type=="static-pivot-table") {
