@@ -167,7 +167,7 @@ public class MailSessionBuilder {
 
 	private final String trustedStoreFileKey = "MAIL.PROFILES.trustedStore.file";
 
-	private final String trustedStoreFileValue;
+	private String trustedStoreFileValue;
 	private String smtpHostValue;
 	private String smtpPortValue;
 	private String fromValue;
@@ -177,11 +177,9 @@ public class MailSessionBuilder {
 	private String profileName;
 	private Integer timeout;
 	private Integer connectionTimeout;
+	private boolean debug = false;
 
 	private MailSessionBuilder() {
-		SingletonConfig config = SingletonConfig.getInstance();
-
-		trustedStoreFileValue = config.getConfigValue(trustedStoreFileKey);
 	}
 
 	/**
@@ -258,6 +256,8 @@ public class MailSessionBuilder {
 		LogMF.debug(logger, "\tuserValue     = {0}", userValue    );
 		LogMF.debug(logger, "\tpasswordValue = {0}", passwordValue);
 		LogMF.debug(logger, "\tsecurityValue = {0}", securityValue);
+
+		trustedStoreFileValue = config.getConfigValue(trustedStoreFileKey);
 
 		return this;
 	}
@@ -342,9 +342,10 @@ public class MailSessionBuilder {
 		}
 
 
-		// TODO Debug???
-		// session.setDebug(true);
-		// session.setDebugOut(System.out);
+		if (debug) {
+			session.setDebug(true);
+			session.setDebugOut(System.out);
+		}
 
 
 		LogMF.debug(logger, "Session created using properties {0}", props);
@@ -365,7 +366,7 @@ public class MailSessionBuilder {
 		return this;
 	}
 
-	public MailSessionBuilder overwritingFromAddress(String fromValue) {
+	public MailSessionBuilder setFromAddress(String fromValue) {
 		if (StringUtils.isNotEmpty(fromValue)) {
 			logger.warn("Overwriting the from address...");
 			LogMF.debug(logger, "... with {0} replacing {1}", fromValue, this.fromValue);
@@ -375,7 +376,7 @@ public class MailSessionBuilder {
 		return this;
 	}
 
-	public MailSessionBuilder overwritingUser(String userValue) {
+	public MailSessionBuilder setUser(String userValue) {
 		if (StringUtils.isNotEmpty(userValue)) {
 			logger.warn("Overwriting the username...");
 			LogMF.debug(logger, "... with {0} replacing {1}", userValue, this.userValue);
@@ -385,7 +386,7 @@ public class MailSessionBuilder {
 		return this;
 	}
 
-	public MailSessionBuilder overwritingPassword(String passwordValue) {
+	public MailSessionBuilder setPassword(String passwordValue) {
 		if (StringUtils.isNotEmpty(passwordValue)) {
 			logger.warn("Overwriting the password...");
 			LogMF.debug(logger, "... with {0} replacing {1}", passwordValue, this.passwordValue);
@@ -394,4 +395,40 @@ public class MailSessionBuilder {
 
 		return this;
 	}
+
+	public MailSessionBuilder setHost(String smtpHostValue) {
+		if (StringUtils.isNotEmpty(smtpHostValue)) {
+			logger.warn("Overwriting the host...");
+			LogMF.debug(logger, "... with {0} replacing {1}", smtpHostValue, this.smtpHostValue);
+			this.smtpHostValue = smtpHostValue;
+		}
+
+		return this;
+	}
+
+	public MailSessionBuilder setPort(String smtpPortValue) {
+		if (StringUtils.isNotEmpty(smtpPortValue)) {
+			logger.warn("Overwriting the port...");
+			LogMF.debug(logger, "... with {0} replacing {1}", smtpPortValue, this.smtpPortValue);
+			this.smtpPortValue = smtpPortValue;
+		}
+
+		return this;
+	}
+
+	public MailSessionBuilder setSecurityMode(String securityValue) {
+		if (StringUtils.isNotEmpty(securityValue)) {
+			logger.warn("Overwriting the security mode...");
+			LogMF.debug(logger, "... with {0} replacing {1}", securityValue, this.securityValue);
+			this.securityValue = securityValue;
+		}
+
+		return this;
+	}
+
+	public MailSessionBuilder enableDebug() {
+		debug = true;
+		return this;
+	}
+
 }

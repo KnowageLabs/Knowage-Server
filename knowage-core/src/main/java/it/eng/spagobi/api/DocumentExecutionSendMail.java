@@ -144,9 +144,9 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 
 			SessionFacade facade = MailSessionBuilder.newInstance()
 				.usingUserProfile()
-				.overwritingFromAddress(from)
-				.overwritingUser(login)
-				.overwritingPassword(pass)
+				.setFromAddress(from)
+				.setUser(login)
+				.setPassword(pass)
 				.build();
 
 			// create a message
