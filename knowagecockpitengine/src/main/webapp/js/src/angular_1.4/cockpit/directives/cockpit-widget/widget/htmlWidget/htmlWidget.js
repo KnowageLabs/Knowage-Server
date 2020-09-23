@@ -446,7 +446,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				p1 = $scope.aggregationDataset && $scope.aggregationDataset.rows[0] && $scope.aggregationDataset.rows[0][columnInfo.name] !== "" && typeof($scope.aggregationDataset.rows[0][columnInfo.name])!='undefined' ? $scope.aggregationDataset.rows[0][columnInfo.name] : null;
 			}
 			else if($scope.htmlDataset && $scope.htmlDataset.rows[row||0] && typeof($scope.htmlDataset.rows[row||0][columnInfo.name])!='undefined' && $scope.htmlDataset.rows[row||0][columnInfo.name] != ""){
-				var columnValue = $scope.htmlDataset.rows[row||0][columnInfo.name].replace("'","\\'");
+				var columnValue = $scope.htmlDataset.rows[row||0][columnInfo.name];
+				if(typeof columnValue == 'string') columnValue = columnValue.replace("'","\\'");
 				p1 = columnInfo.type == 'string' ? '\''+columnValue+'\'' : columnValue;
 			}else {
 				p1 = null;
