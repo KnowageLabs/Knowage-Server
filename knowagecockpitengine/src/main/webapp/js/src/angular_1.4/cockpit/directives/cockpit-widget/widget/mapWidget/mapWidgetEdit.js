@@ -483,7 +483,10 @@ function mapWidgetEditControllerFunction(
 
 
 	//MAIN DIALOG BUTTONS
-	$scope.saveConfiguration=function(){
+	$scope.saveConfiguration = function(){
+
+
+
 		for(var c in $scope.newModel.content.layers){
 			$scope.hasShownDetails($scope.newModel.content.layers[c])
 			if($scope.newModel.content.layers[c].expanded) delete $scope.newModel.content.layers[c].expanded;
@@ -533,7 +536,6 @@ function mapWidgetEditControllerFunction(
 			column.properties.showFilter = false;
 			column.properties.modal = false;
 		}
-		$scope.onAttributeAggregationChange(layer);
 	}
 
 	$scope.setColumnStyle = function(event,column) {
@@ -598,10 +600,8 @@ function mapWidgetEditControllerFunction(
 		return c1.value.name.localeCompare(c2.value.name);
 	}
 
-	$scope.disableAggregationForMeasures = false;
-
-	$scope.onAttributeAggregationChange = function(layer) {
-		$scope.disableAggregationForMeasures = layer.content
+	$scope.disableAggregationForMeasures = function(layer) {
+		var ret = layer.content
 			.columnSelectedOfDataset
 			.filter(function(el) {
 				var fieldType = el.fieldType;
@@ -612,18 +612,20 @@ function mapWidgetEditControllerFunction(
 				return el.properties.aggregateBy == false;
 			});
 
-		if ($scope.disableAggregationForMeasures) {
+		if (ret) {
 			layer.content
 				.columnSelectedOfDataset
 				.filter(function(el) {
 					var fieldType = el.fieldType;
 
-					return fieldType == 'MEASURE';
+					return fieldType == 'SPATIAL_ATTRIBUTE' || fieldType == 'MEASURE';
 				})
 				.forEach(function(el) {
 					el.aggregationSelected = undefined;
 				});
 		}
+
+		return ret;
 	}
 
 	function getSizeFromFieldType(column) {

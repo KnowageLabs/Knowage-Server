@@ -98,7 +98,7 @@
 													<md-input-container ng-if="column.fieldType === 'MEASURE' && !column.isCalculated">
 														<md-select
 																ng-model="column.aggregationSelected"
-																ng-disabled="disableAggregationForMeasures"
+																ng-disabled="disableAggregationForMeasures(layer)"
 																aria-label="column aggregation">
 															<md-option md-option-empty="true"></md-option>
 															<md-option
@@ -111,7 +111,7 @@
 													<md-input-container ng-if="column.fieldType === 'SPATIAL_ATTRIBUTE'">
 														<md-select
 																ng-model="column.aggregationSelected"
-																ng-disabled="column.properties.aggregateBy"
+																ng-disabled="column.properties.aggregateBy || disableAggregationForMeasures(layer)"
 																aria-label="column aggregation">
 															<md-option md-option-empty="true"></md-option>
 															<md-option
