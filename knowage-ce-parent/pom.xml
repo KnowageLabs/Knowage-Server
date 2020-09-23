@@ -117,6 +117,7 @@
 		<module>../knowagejasperreportengine</module>
 		<module>../spagobi.birt.oda</module>
 		<module>../knowagebirtreportengine</module>
+		<module>../knowagedatabasescripts</module>
 	</modules>
 
 	<build>
