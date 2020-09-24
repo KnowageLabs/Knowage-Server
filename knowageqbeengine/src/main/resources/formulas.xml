@@ -135,6 +135,11 @@
 		<type>string</type>
 	</formula>
 	
+	<!-- 
+		
+		KNOWAGE-5334 : temporary removed because it's not compatible with
+		Oracle anymore.
+		
 	<formula >
 		<name>Locate</name>
 		<syntax>Locate(substring, string, start)</syntax>
@@ -170,7 +175,7 @@
 		</description>
 		<type>string</type>
 	</formula>
-	
+	 -->
 	
 	
 	<formula >
