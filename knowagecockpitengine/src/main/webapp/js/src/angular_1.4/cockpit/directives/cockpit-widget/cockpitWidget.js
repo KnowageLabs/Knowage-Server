@@ -851,8 +851,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 		if(!directInteraction || directInteraction == 'cross'){
 			if (previewSettings && previewSettings.enable) {
-				if(previewSettings.previewType == 'allRow' ||
-				(previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName) ||
+				if(!previewSettings.previewType || previewSettings.previewType == 'allRow' || 
+				(previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName) || 
 				(previewSettings.previewType == 'icon' && (!columnName || columnName == ""))){
 					$scope.iframeSrcUrl = sbiModule_config.externalBasePath + SERVICE;
 
