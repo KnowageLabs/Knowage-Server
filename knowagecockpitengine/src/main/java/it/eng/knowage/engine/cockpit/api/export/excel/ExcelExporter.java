@@ -89,6 +89,7 @@ public class ExcelExporter {
 	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "python", "r" };
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
 	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
+	private static final int SHEET_NAME_MAX_LEN = 31;
 
 	// used only for scheduled export
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap, String requestURL) {
@@ -415,7 +416,8 @@ public class ExcelExporter {
 
 				JSONObject dataStore = getDataStoreForWidget(template, widget);
 				if (dataStore != null) {
-					createExcelFile(dataStore, wb, widgetName);
+					String cockpitSheetName = getCockpitSheetName(template, widgetId);
+					createExcelFile(dataStore, wb, widgetName, cockpitSheetName);
 				}
 			}
 		} catch (JSONException e) {
@@ -488,8 +490,8 @@ public class ExcelExporter {
 
 				Sheet sheet;
 
-				widgetName = WorkbookUtil.createSafeSheetName(widgetName);
-				sheet = createUniqueSheet(wb, widgetName);
+				String cockpitSheetName = getCockpitSheetName(template, widgetId);
+				sheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 
 				CreationHelper createHelper = wb.getCreationHelper();
 
@@ -498,6 +500,27 @@ public class ExcelExporter {
 			}
 		} catch (JSONException e) {
 			logger.error("Unable to load template", e);
+		}
+	}
+
+	private String getCockpitSheetName(JSONObject template, String widgetId) {
+		try {
+			JSONArray sheets = template.getJSONArray("sheets");
+			if (sheets.length() == 1)
+				return "";
+			for (int i = 0; i < sheets.length(); i++) {
+				JSONObject sheet = sheets.getJSONObject(i);
+				JSONArray widgets = sheet.getJSONArray("widgets");
+				for (int j = 0; j < widgets.length(); j++) {
+					JSONObject widget = widgets.getJSONObject(j);
+					if (widgetId.equals(widget.getString("id")))
+						return sheet.getString("label");
+				}
+			}
+			return "";
+		} catch (Exception e) {
+			logger.error("Unable to retrieve cockpit sheet name from template", e);
+			return "";
 		}
 	}
 
@@ -639,7 +662,7 @@ public class ExcelExporter {
 		return cockpitSelections;
 	}
 
-	private void createExcelFile(JSONObject dataStore, Workbook wb, String widgetName) throws JSONException, SerializationException {
+	private void createExcelFile(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) throws JSONException, SerializationException {
 		CreationHelper createHelper = wb.getCreationHelper();
 		JSONArray widgetsMapAggregations = new JSONArray();
 		if (body.has("widgetsMapAggregations")) {
@@ -779,63 +802,20 @@ public class ExcelExporter {
 			} else {
 				columnsOrdered = columns;
 			}
-			int isGroup = 0;
 			if (widgetContent.has("columnSelectedOfDataset"))
 				mapGroupsAndColumns = getMapFromGroupsArray(groupsArray, widgetContent.getJSONArray("columnSelectedOfDataset"));
 
 			Row header = null;
-			Row newheader = null;
 			if (exportWidget) { // export single widget
-				widgetName = WorkbookUtil.createSafeSheetName(widgetName);
-				sheet = createUniqueSheet(wb, widgetName);
-
-				// Create HEADER - Column Names
-				if (!mapGroupsAndColumns.isEmpty()) {
-					isGroup = 1;
-					newheader = sheet.createRow((short) 0);
-					for (int i = 0; i < columnsOrdered.length(); i++) {
-						JSONObject column = columnsOrdered.getJSONObject(i);
-						String groupName = mapGroupsAndColumns.get(headerToAlias.get(column.get("header")));
-						if (groupName != null) {
-							Cell cell = newheader.createCell(i);
-							cell.setCellValue(groupName);
-						}
-
-					}
-					header = sheet.createRow((short) 1);
-				} else
-					header = sheet.createRow((short) 0); // first row
+				sheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+				header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, headerToAlias, 0);
 			} else { // export whole cockpit
-				String sheetName = "empty";
-				if (dataStore.has("widgetName") && dataStore.getString("widgetName") != null && !dataStore.getString("widgetName").isEmpty()) {
-					if (dataStore.has("sheetInfo")) {
-						sheetName = dataStore.getString("sheetInfo").concat(".").concat(widgetName);
-					} else {
-						sheetName = widgetName;
-					}
-				}
-				sheetName = WorkbookUtil.createSafeSheetName(sheetName);
-				sheet = createUniqueSheet(wb, sheetName);
-				// First row for Widget name in case exporting whole Cockpit document
+				sheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+				// First row is for Widget name in case exporting whole Cockpit document
 				Row firstRow = sheet.createRow((short) 0);
 				Cell firstCell = firstRow.createCell(0);
 				firstCell.setCellValue(widgetName);
-				// Create HEADER - Column Names
-				if (!mapGroupsAndColumns.isEmpty()) {
-					isGroup = 1;
-					newheader = sheet.createRow((short) 1);
-					for (int i = 0; i < columnsOrdered.length(); i++) {
-						JSONObject column = columnsOrdered.getJSONObject(i);
-						String groupName = mapGroupsAndColumns.get(headerToAlias.get(column.get("header")));
-						if (groupName != null) {
-							Cell cell = newheader.createCell(i);
-							cell.setCellValue(groupName);
-						}
-
-					}
-					header = sheet.createRow((short) 2);
-				} else
-					header = sheet.createRow((short) 1);
+				header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, headerToAlias, 1);
 			}
 
 			for (int i = 0; i < columnsOrdered.length(); i++) {
@@ -860,6 +840,7 @@ public class ExcelExporter {
 			floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
 
 			// FILL RECORDS
+			int isGroup = mapGroupsAndColumns.isEmpty() ? 0 : 1;
 			for (int r = 0; r < rows.length(); r++) {
 				JSONObject rowObject = rows.getJSONObject(r);
 				Row row;
@@ -906,10 +887,42 @@ public class ExcelExporter {
 		}
 	}
 
-	private Sheet createUniqueSheet(Workbook wb, String sheetName) {
+	private Row createHeaderColumnNames(Sheet sheet, Map<String, String> mapGroupsAndColumns, JSONArray columnsOrdered, Map<String, String> headerToAlias,
+			int startRowOffset) {
+		try {
+			Row header = null;
+			if (!mapGroupsAndColumns.isEmpty()) {
+				Row newheader = sheet.createRow((short) startRowOffset);
+				for (int i = 0; i < columnsOrdered.length(); i++) {
+					JSONObject column = columnsOrdered.getJSONObject(i);
+					String groupName = mapGroupsAndColumns.get(headerToAlias.get(column.get("header")));
+					if (groupName != null) {
+						Cell cell = newheader.createCell(i);
+						cell.setCellValue(groupName);
+					}
+
+				}
+				header = sheet.createRow((short) (startRowOffset + 1));
+			} else
+				header = sheet.createRow((short) startRowOffset); // first row
+			return header;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException(e);
+		}
+	}
+
+	private Sheet createUniqueSafeSheet(Workbook wb, String widgetName, String cockpitSheetName) {
 		Sheet sheet;
-		sheetName = sheetName.concat("_").concat(String.valueOf(uniqueId));
-		sheet = wb.createSheet(sheetName);
+		String sheetName;
+		if (!exportWidget && cockpitSheetName != null && !cockpitSheetName.equals(""))
+			sheetName = cockpitSheetName.concat(".").concat(widgetName);
+		else
+			sheetName = widgetName;
+		String safeSheetName = WorkbookUtil.createSafeSheetName(sheetName);
+		if (safeSheetName.length() + String.valueOf(uniqueId).length() > SHEET_NAME_MAX_LEN)
+			safeSheetName = safeSheetName.substring(0, safeSheetName.length() - String.valueOf(uniqueId).length());
+		String uniqueSafeSheetName = safeSheetName + String.valueOf(uniqueId);
+		sheet = wb.createSheet(uniqueSafeSheetName);
 		uniqueId++;
 		return sheet;
 	}
@@ -928,7 +941,7 @@ public class ExcelExporter {
 
 					if (column.has("group") && column.getString("group").equals(id)) {
 						String nameToInsert = "";
-						if (!column.has("name"))
+						if (column.has("alias"))
 							nameToInsert = column.getString("alias");
 						else
 							nameToInsert = column.getString("name");
