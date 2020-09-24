@@ -228,6 +228,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-list-item class="md-2-line">
 					<div class="md-list-item-text">
 						<h3>
+							<b>{{translate.load("sbi.generic.name")}}</b>
+						</h3>
+						<p>{{selectedDocument.name}}</p>
+					</div>
+				</md-list-item>
+				<md-list-item class="md-2-line">
+					<div class="md-list-item-text">
+						<h3>
+							<b>{{translate.load("sbi.generic.label")}}</b>
+						</h3>
+						<p>{{selectedDocument.label}}</p>
+					</div>
+				</md-list-item>
+				<md-list-item class="md-2-line">
+					<div class="md-list-item-text">
+						<h3>
 							<b>{{translate.load("sbi.generic.author")}}</b>
 						</h3>
 						<p>{{selectedDocument.creationUser}}</p>
