@@ -245,6 +245,9 @@ $aggrid-border-color: #d9dcde;
 			div.ag-paging-panel.ag-unselectable {
 				display: none;
 			}
+			span[ref='lbCurrent'], span[ref='lbTotal'] {
+				padding: 0 4px;
+			}
 		}
 		.ag-header-group-cell {
 			padding: 0;

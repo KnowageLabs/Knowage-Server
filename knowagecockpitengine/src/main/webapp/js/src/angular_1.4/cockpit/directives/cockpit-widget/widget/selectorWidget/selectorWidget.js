@@ -135,7 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var values = $scope.ngModel.activeValues || $scope.datasetRecords.rows;
 				for(var k in values){
 					var value = values[k].column_1 || values[k];
-					var dateToCheck = new Date(value).getTime();
+					var dateToCheck = moment(value,'DD/MM/YYYY HH:mm:ss.SSS').valueOf();
 					if(dateToCheck >= from && dateToCheck <= to) tempDates.push(value);
 				}
 			}else tempDates.push($filter('date')($scope.selectedDate.startDate,'dd/MM/yyyy HH:mm:ss.sss'));
