@@ -620,10 +620,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		return savedFilters;
 	}
 
-	this.formatDriverValueForPopUpDriver = function(driverValue) {
+	this.formatDriverValueForExecution = function(driverValue) {
 		 var a = driverValue.lastIndexOf("{");
 		 var b = driverValue.indexOf("}");
 		 var newDriverValue = driverValue.slice(a+1, b);
+		 if(newDriverValue.includes(";")) {
+			 newDriverValue = newDriverValue.split(";");
+		 }
 		 return newDriverValue;
 	}
 
@@ -818,7 +821,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					var urlName = dataset.drivers[i].urlName;
 					var driverValue = null;
 					if(cockpitModule_analyticalDrivers[urlName].includes("{")) {
-						driverValue = this.formatDriverValueForPopUpDriver(cockpitModule_analyticalDrivers[urlName]);
+						driverValue = this.formatDriverValueForExecution(cockpitModule_analyticalDrivers[urlName]);
 					} else {
 						driverValue = cockpitModule_analyticalDrivers[urlName];
 					}
