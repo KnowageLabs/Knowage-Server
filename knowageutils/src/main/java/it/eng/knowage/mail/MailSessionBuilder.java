@@ -274,16 +274,23 @@ public class MailSessionBuilder {
 		if (securityValueEnum == null) {
 			securityValueEnum = SecurityMode.NONE;
 		}
+
+		String prefix = "mail.smtp";
+
+		if (securityValueEnum == SecurityMode.SSL) {
+			prefix = "mail.smtps";
+		}
+
 		if (securityValueEnum == SecurityMode.NONE) {
-			props.put("mail.smtp.starttls.enable", "false");
+			props.put(prefix + ".starttls.enable", "false");
 		} else if (securityValueEnum == SecurityMode.SSL) {
-			props.put("mail.smtp.starttls.enable", "false");
+			props.put(prefix + ".starttls.enable", "false");
 		} else if (securityValueEnum == SecurityMode.STARTTLS) {
-			props.put("mail.smtp.starttls.enable", "true");
+			props.put(prefix + ".starttls.enable", "true");
 		}
 
 
-		props.put("mail.smtp.host", smtpHostValue);
+		props.put(prefix + ".host", smtpHostValue);
 
 
 		if (StringUtils.isEmpty(smtpPortValue)) {
@@ -292,13 +299,13 @@ public class MailSessionBuilder {
 			LogMF.warn(logger, "SMTP port is empty: using the default port {0}", defaultPort);
 			smtpPortValue = Integer.toString(defaultPort);
 		}
-		props.put("mail.smtp.port", smtpPortValue);
+		props.put(prefix + ".port", smtpPortValue);
 
 
 		Authenticator auth = null;
 		if (StringUtils.isNotEmpty(userValue)) {
-			props.put("mail.smtp.user", userValue);
-			props.put("mail.smtp.password", passwordValue);
+			props.put(prefix + ".user", userValue);
+			props.put(prefix + ".password", passwordValue);
 		}
 
 
@@ -306,35 +313,35 @@ public class MailSessionBuilder {
 			fromValue = "spagobi.scheduler@eng.it";
 		}
 		InternetAddress fromValueInternetAddress = new InternetAddress(fromValue);
-		props.put("mail.smtp.from", fromValue);
+		props.put(prefix + ".from", fromValue);
 
 
 		if (timeout != null) {
-			props.put("mail.smtp.timeout", timeout.toString());
+			props.put(prefix + ".timeout", timeout.toString());
 		}
 
 
 		if (connectionTimeout != null) {
-			props.put("mail.smtp.connectiontimeout", connectionTimeout.toString());
+			props.put(prefix + ".connectiontimeout", connectionTimeout.toString());
 		}
 
 
 		// create autheticator object
 		if (StringUtils.isNotEmpty(userValue)) {
 			auth = new SMTPAuthenticator(userValue, passwordValue);
-			props.put("mail.smtp.auth", "true");
+			props.put(prefix + ".auth", "true");
 			// SSL Connection
 			if (securityValueEnum == SecurityMode.SSL) {
 				Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-				props.put("mail.smtps.auth", "true");
-				props.put("mail.smtps.socketFactory.port", smtpPortValue);
+				props.put(prefix + ".auth", "true");
+				props.put(prefix + ".socketFactory.port", smtpPortValue);
 				if ((!StringUtilities.isEmpty(trustedStoreFileValue))) {
-					props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
+					props.put(prefix + ".socketFactory.class", CUSTOM_SSL_FACTORY);
 
 				} else {
-					props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
+					props.put(prefix + ".socketFactory.class", DEFAULT_SSL_FACTORY);
 				}
-				props.put("mail.smtp.socketFactory.fallback", "false");
+				props.put(prefix + ".socketFactory.fallback", "false");
 			}
 			session = Session.getInstance(props, auth);
 		} else {
