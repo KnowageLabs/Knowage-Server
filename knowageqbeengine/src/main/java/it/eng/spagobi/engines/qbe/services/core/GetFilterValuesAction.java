@@ -31,6 +31,7 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
@@ -275,6 +276,8 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 			}
 		}
 		Query query = new Query();
+		// id is mandatory
+		query.setId("q1000");
 		query.addSelectFiled(entityId, "NONE", "Valori", true, true, false, (orderEntity != null && !orderEntity.trim().equals("")) ? null : orderType,
 				entityPattern);
 		query.setDistinctClauseEnabled(setDistinctClause);
@@ -319,6 +322,13 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 				// true, true, false, null, null);
 			}
 		}
+
+		/* Profile attributes handling */
+		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		IModelAccessModality accessModality = getDataSource().getModelAccessModality();
+		Query filteredQuery = accessModality.getFilteredStatement(query, getDataSource(), userProfile.getUserAttributes());
+
+		query = filteredQuery;
 		logger.debug("OUT");
 		return query;
 	}

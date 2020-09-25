@@ -17,6 +17,13 @@
  */
 package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn;
 import it.eng.knowage.meta.generator.utils.JavaKeywordsUtils;
 import it.eng.knowage.meta.generator.utils.StringUtils;
@@ -29,13 +36,6 @@ import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -152,11 +152,9 @@ public class JpaRelationship extends AbstractJpaRelationship {
 
 	/**
 	 * return the destination Physical table of the relationship
-	 * 
-	 * @param bv
-	 *            the destination BV of the relationship
-	 * @param columns
-	 *            ...
+	 *
+	 * @param bv      the destination BV of the relationship
+	 * @param columns ...
 	 * @return
 	 */
 	private PhysicalTable findPhysicalTable(BusinessView bv, List<SimpleBusinessColumn> columns) {
@@ -181,7 +179,7 @@ public class JpaRelationship extends AbstractJpaRelationship {
 
 	/**
 	 * return true if the BC is included into the Physical column list
-	 * 
+	 *
 	 * @param phy
 	 * @param column
 	 * @return
@@ -230,8 +228,8 @@ public class JpaRelationship extends AbstractJpaRelationship {
 	@Override
 	public String getPropertyName() {
 		if (getBusinessRelationship().getSourceColumns() != null) {
-			return JavaKeywordsUtils.transformToJavaPropertyName("rel_" + getBusinessRelationship().getSourceColumns().get(0).getUniqueName() + "_in_"
-					+ getBusinessRelationship().getDestinationTable().getUniqueName());
+			return JavaKeywordsUtils.transformToJavaPropertyName("rel_" + getBusinessRelationship().getSourceColumns().get(0).getUniqueName()
+					+ "_in_" + getBusinessRelationship().getDestinationTable().getUniqueName());
 		} else
 			return "";
 	}
@@ -244,8 +242,8 @@ public class JpaRelationship extends AbstractJpaRelationship {
 
 	@Override
 	public String getBidirectionalPropertyName() {
-		return StringUtils.pluralise(JavaKeywordsUtils.transformToJavaPropertyName(getBusinessRelationship().getName() + "_"
-				+ getBusinessRelationship().getSourceTable().getName()));
+		return StringUtils.pluralise(JavaKeywordsUtils
+				.transformToJavaPropertyName(getBusinessRelationship().getName() + "_" + getBusinessRelationship().getSourceTable().getName()));
 	}
 
 	@Override
