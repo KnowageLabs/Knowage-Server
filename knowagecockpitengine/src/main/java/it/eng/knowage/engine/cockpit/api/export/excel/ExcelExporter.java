@@ -85,6 +85,7 @@ public class ExcelExporter {
 	private Locale locale;
 	private int uniqueId = 0;
 	private String requestURL = "";
+	private List<Integer> hiddenColumns;
 
 	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "python", "r" };
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
@@ -332,7 +333,10 @@ public class ExcelExporter {
 
 	private JSONObject getCockpitVariables() {
 		try {
-			return body.getJSONArray("COCKPIT_VARIABLES").getJSONObject(0);
+			if (body.get("COCKPIT_VARIABLES") instanceof JSONObject)
+				return body.getJSONObject("COCKPIT_VARIABLES");
+			else
+				return body.getJSONArray("COCKPIT_VARIABLES").getJSONObject(0);
 		} catch (JSONException e) {
 			logger.error("Cannot retrieve cockpit variables", e);
 			return new JSONObject();
@@ -582,56 +586,27 @@ public class ExcelExporter {
 		try {
 			JSONObject configuration = template.getJSONObject("configuration");
 			JSONObject datasetObj = widget.getJSONObject("dataset");
-
 			int datasetId = datasetObj.getInt("dsId");
 			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 			String datasetLabel = dataset.getLabel();
 
-			if (getRealtimeFromTableWidget(datasetId, configuration)) {
-				logger.debug("nearRealtime = true");
+			if (getRealtimeFromTableWidget(datasetId, configuration))
 				map.put("nearRealtime", true);
-			}
 
 			JSONObject cockpitSelections = getCockpitSelectionsFromBody(widget);
+
 			JSONArray summaryRow = getSummaryRowFromWidget(widget);
-			if (summaryRow != null) {
-				logger.debug("summaryRow = " + summaryRow);
+			if (summaryRow != null)
 				cockpitSelections.put("summaryRow", summaryRow);
-			}
 
 			if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
-
 				JSONObject jsOptions = new JSONObject();
 				jsOptions.put("solrFacetPivot", true);
 				cockpitSelections.put("options", jsOptions);
 			}
-			if (body != null) {
-				logger.debug("Export single widget cockpitSelections.toString(): " + cockpitSelections.toString());
-			}
+
 			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString());
-
-			if (datastore != null) {
-				logger.debug("datasetLabel: " + datasetLabel + " datastoreObj = " + datastore.toString());
-			}
-
 			datastore.put("widgetData", widget);
-			datastore.put("cocpitSelectionAggregations", cockpitSelections.get("aggregations"));
-			JSONObject content = widget.optJSONObject("content");
-			String widgetName = null;
-			if (widget.has("style")) {
-				JSONObject style = widget.optJSONObject("style");
-				if (style.has("title")) {
-					JSONObject title = style.optJSONObject("title");
-					if (title.has("label")) {
-						widgetName = title.getString("label");
-					}
-				}
-
-			}
-			if (widgetName == null && content != null) {
-				widgetName = content.getString("name");
-			}
-			datastore.put("widgetName", widgetName);
 
 		} catch (Exception e) {
 			logger.error("Cannot get Datastore for widget", e);
@@ -663,166 +638,58 @@ public class ExcelExporter {
 	}
 
 	private void createExcelFile(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) throws JSONException, SerializationException {
-		CreationHelper createHelper = wb.getCreationHelper();
-		JSONArray widgetsMapAggregations = new JSONArray();
-		if (body.has("widgetsMapAggregations")) {
-			widgetsMapAggregations = body.getJSONArray("widgetsMapAggregations");
-		}
-
 		try {
 			JSONObject metadata = dataStore.getJSONObject("metaData");
 			JSONArray columns = metadata.getJSONArray("fields");
 			columns = filterDataStoreColumns(columns);
 			JSONArray rows = dataStore.getJSONArray("rows");
-			JSONObject columnsAggregations = new JSONObject();
-			if (dataStore.has("cocpitSelectionAggregations")) {
-				columnsAggregations = dataStore.getJSONObject("cocpitSelectionAggregations");
-			}
-
-			HashMap<String, String> mapColumnsAggregations = getMapFromAggregations(columnsAggregations);
-
-			Sheet sheet;
 
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
-
-			if (widgetData != null)
-				logger.debug("widgetData: " + widgetData.toString());
-
 			JSONObject widgetContent = widgetData.getJSONObject("content");
 			HashMap<String, String> arrayHeader = new HashMap<String, String>();
-
-			if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")) {
-
-				if (widgetContent.has("columnSelectedOfDataset") && widgetContent.getJSONArray("columnSelectedOfDataset").length() > 0) {
-
-					if (widgetContent.has("columnSelectedOfDataset"))
-						logger.debug("columnSelectedOfDataset: " + widgetContent.getJSONArray("columnSelectedOfDataset").toString());
-
-					for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
-
-						JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-
-						if (column.has("name")) {
-
-							arrayHeader.put(column.getString("name"), column.getString("aliasToShow"));
-
-						} else {
-
-							if (column.has("aliasToShow")) {
-								arrayHeader.put(column.getString("alias"), column.getString("aliasToShow"));
-							} else {
-
-								arrayHeader.put(column.getString("alias"), column.getString("alias"));
-							}
-						}
-					}
+			if (widgetData.getString("type").equalsIgnoreCase("table")) {
+				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
+					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
+					arrayHeader.put(column.getString("name"), column.getString("aliasToShow"));
 				}
-
-			}
-
-			JSONArray aggrNewVar = new JSONArray();
-			JSONObject currentWidgetMapAggregations = new JSONObject();
-			if (widgetsMapAggregations != null && !widgetsMapAggregations.isNull(0) && widgetData.has("id")) {
-				for (int i = 0; i < widgetsMapAggregations.length(); i++) {
-					if (widgetsMapAggregations.getJSONObject(i).getInt("id") == widgetData.getInt("id")) {
-						currentWidgetMapAggregations = widgetsMapAggregations.getJSONObject(i);
-						break;
-					}
-				}
-
-				if (currentWidgetMapAggregations.has("columnSelectedOfDataset"))
-					aggrNewVar = (JSONArray) currentWidgetMapAggregations.get("columnSelectedOfDataset");
-
-				mapColumnsAggregations = getMapFromAggregationsFromArray(aggrNewVar);
-
 			}
 
 			// column.header matches with name or alias
 			// Fill Header
-			JSONArray columnsOrdered = new JSONArray();
 			JSONArray groupsArray = new JSONArray();
 			if (widgetData.has("groups")) {
 				groupsArray = widgetData.getJSONArray("groups");
 			}
+
 			HashMap<String, String> mapGroupsAndColumns = new HashMap<String, String>();
-
-			HashMap<String, String> headerToAlias = new HashMap<String, String>();
-
-			if ((widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table"))
-					&& widgetContent.has("columnSelectedOfDataset")) {
-				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
-
-					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-					boolean hidden = false;
-					if (column.has("style")) {
-						JSONObject style = column.optJSONObject("style");
-						if (style.has("hiddenColumn")) {
-							if (style.getString("hiddenColumn").equals("true")) {
-								hidden = true;
-							}
-
-						}
-					}
-					if (!hidden) {
-
-						for (int j = 0; j < columns.length(); j++) {
-							JSONObject columnOld = columns.getJSONObject(j);
-							if (column.has("name")) {
-								if (columnOld.getString("header").equals(column.getString("name"))) {
-									headerToAlias.put(columnOld.getString("header"), column.getString("name"));
-									columnsOrdered.put(columnOld);
-									break;
-								} else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
-									headerToAlias.put(columnOld.getString("header"), column.getString("name"));
-									columnsOrdered.put(columnOld);
-									break;
-								} else if (columnOld.getString("header").equals(mapColumnsAggregations.get(column.getString("aliasToShow")))) {
-									headerToAlias.put(columnOld.getString("header"), column.getString("name"));
-									columnsOrdered.put(columnOld);
-									break;
-								} else if (columnOld.getString("header").equals(mapColumnsAggregations.get(column.getString("alias")))) {
-									headerToAlias.put(columnOld.getString("header"), column.getString("alias"));
-									columnsOrdered.put(columnOld);
-									break;
-								}
-							} else {
-								if (columnOld.getString("header").equals(column.getString("alias"))) {
-									headerToAlias.put(columnOld.getString("header"), column.getString("alias"));
-									columnsOrdered.put(columnOld);
-									break;
-								} else if (columnOld.getString("header").equals(column.getString("aliasToShow"))) {
-									headerToAlias.put(columnOld.getString("header"), column.getString("aliasToShow"));
-									columnsOrdered.put(columnOld);
-									break;
-								}
-							}
-						}
-					}
-				}
+			JSONArray columnsOrdered;
+			if (widgetData.getString("type").equalsIgnoreCase("table") && widgetContent.has("columnSelectedOfDataset")) {
+				hiddenColumns = getHiddenColumnsList(widgetContent.getJSONArray("columnSelectedOfDataset"));
+				columnsOrdered = getTableOrderedColumns(widgetContent.getJSONArray("columnSelectedOfDataset"), columns);
 			} else {
 				columnsOrdered = columns;
 			}
 			if (widgetContent.has("columnSelectedOfDataset"))
 				mapGroupsAndColumns = getMapFromGroupsArray(groupsArray, widgetContent.getJSONArray("columnSelectedOfDataset"));
 
+			Sheet sheet;
 			Row header = null;
 			if (exportWidget) { // export single widget
 				sheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
-				header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, headerToAlias, 0);
+				header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, 0);
 			} else { // export whole cockpit
 				sheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 				// First row is for Widget name in case exporting whole Cockpit document
 				Row firstRow = sheet.createRow((short) 0);
 				Cell firstCell = firstRow.createCell(0);
 				firstCell.setCellValue(widgetName);
-				header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, headerToAlias, 1);
+				header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, 1);
 			}
 
 			for (int i = 0; i < columnsOrdered.length(); i++) {
 				JSONObject column = columnsOrdered.getJSONObject(i);
 				String columnName = column.getString("header");
-				if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("advanced-table")
-						|| widgetData.getString("type").equalsIgnoreCase("discovery")) {
+				if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("discovery")) {
 					if (arrayHeader.get(columnName) != null) {
 						columnName = arrayHeader.get(columnName);
 					}
@@ -833,6 +700,8 @@ public class ExcelExporter {
 			}
 
 			// Cell styles for int and float
+			CreationHelper createHelper = wb.getCreationHelper();
+
 			CellStyle intCellStyle = wb.createCellStyle();
 			intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
 
@@ -887,15 +756,81 @@ public class ExcelExporter {
 		}
 	}
 
-	private Row createHeaderColumnNames(Sheet sheet, Map<String, String> mapGroupsAndColumns, JSONArray columnsOrdered, Map<String, String> headerToAlias,
-			int startRowOffset) {
+	private List<Integer> getHiddenColumnsList(JSONArray columns) {
+		List<Integer> hiddenColumns = new ArrayList<Integer>();
+		try {
+			for (int i = 0; i < columns.length(); i++) {
+				JSONObject column = columns.getJSONObject(i);
+				if (column.has("style")) {
+					JSONObject style = column.optJSONObject("style");
+					if (style.has("hiddenColumn")) {
+						if (style.getString("hiddenColumn").equals("true")) {
+							hiddenColumns.add(i);
+						}
+					}
+				}
+			}
+			return hiddenColumns;
+		} catch (Exception e) {
+			logger.error("Error while getting hidden columns list");
+			return new ArrayList<Integer>();
+		}
+	}
+
+	private JSONArray getTableOrderedColumns(JSONArray columnsNew, JSONArray columnsOld) {
+		JSONArray columnsOrdered = new JSONArray();
+		// new columns are in the correct order
+		// for each of them we have to find the correspondent old column and push it into columnsOrdered
+		try {
+			for (int i = 0; i < columnsNew.length(); i++) {
+
+				if (hiddenColumns.contains(i))
+					continue;
+
+				JSONObject columnNew = columnsNew.getJSONObject(i);
+				String newHeader = getTableColumnHeaderValue(columnNew);
+
+				for (int j = 0; j < columnsOld.length(); j++) {
+					JSONObject columnOld = columnsOld.getJSONObject(j);
+					if (columnOld.getString("header").equals(newHeader)) {
+						columnsOrdered.put(columnOld);
+						break;
+					}
+				}
+			}
+			return columnsOrdered;
+		} catch (Exception e) {
+			logger.error("Error retrieving ordered columns");
+			return new JSONArray();
+		}
+	}
+
+	private String getTableColumnHeaderValue(JSONObject column) {
+		String header = null;
+		try {
+			if (column.has("variables")) {
+				JSONArray variables = column.getJSONArray("variables");
+				for (int i = 0; i < variables.length(); i++) {
+					JSONObject variable = variables.getJSONObject(i);
+					if (variable.getString("action").equalsIgnoreCase("header"))
+						header = getCockpitVariables().getString(variable.getString("variable"));
+				}
+			} else
+				header = column.getString("aliasToShow");
+			return header;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException(e);
+		}
+	}
+
+	private Row createHeaderColumnNames(Sheet sheet, Map<String, String> mapGroupsAndColumns, JSONArray columnsOrdered, int startRowOffset) {
 		try {
 			Row header = null;
 			if (!mapGroupsAndColumns.isEmpty()) {
 				Row newheader = sheet.createRow((short) startRowOffset);
 				for (int i = 0; i < columnsOrdered.length(); i++) {
 					JSONObject column = columnsOrdered.getJSONObject(i);
-					String groupName = mapGroupsAndColumns.get(headerToAlias.get(column.get("header")));
+					String groupName = mapGroupsAndColumns.get(column.get("header"));
 					if (groupName != null) {
 						Cell cell = newheader.createCell(i);
 						cell.setCellValue(groupName);
@@ -940,12 +875,7 @@ public class ExcelExporter {
 					JSONObject column = aggr.getJSONObject(ii);
 
 					if (column.has("group") && column.getString("group").equals(id)) {
-						String nameToInsert = "";
-						if (column.has("alias"))
-							nameToInsert = column.getString("alias");
-						else
-							nameToInsert = column.getString("name");
-
+						String nameToInsert = getTableColumnHeaderValue(column);
 						returnMap.put(nameToInsert, groupName);
 					}
 
@@ -955,46 +885,6 @@ public class ExcelExporter {
 
 		return returnMap;
 
-	}
-
-	private HashMap<String, String> getMapFromAggregationsFromArray(JSONArray aggr) throws JSONException {
-		HashMap<String, String> returnMap = new HashMap<String, String>();
-		if (aggr != null) {
-			for (int i = 0; i < aggr.length(); i++) {
-				JSONObject column = aggr.getJSONObject(i);
-				String nameToInsert = "";
-				if (!column.has("name"))
-					nameToInsert = column.getString("alias");
-				else
-					nameToInsert = column.getString("name");
-				returnMap.put(nameToInsert, column.getString("aliasToShow"));
-
-			}
-
-		}
-
-		return returnMap;
-
-	}
-
-	private HashMap<String, String> getMapFromAggregations(JSONObject aggr) throws JSONException {
-
-		HashMap<String, String> returnMap = new HashMap<String, String>();
-		if (aggr.has("measures")) {
-			JSONArray measures = aggr.getJSONArray("measures");
-
-			for (int i = 0; i < measures.length(); i++) {
-				returnMap.put(measures.getJSONObject(i).getString("id"), measures.getJSONObject(i).getString("alias"));
-			}
-		}
-		if (aggr.has("categories")) {
-			JSONArray categories = aggr.getJSONArray("categories");
-
-			for (int i = 0; i < categories.length(); i++) {
-				returnMap.put(categories.getJSONObject(i).getString("id"), categories.getJSONObject(i).getString("alias"));
-			}
-		}
-		return returnMap;
 	}
 
 	private JSONArray filterDataStoreColumns(JSONArray columns) {

@@ -24,8 +24,8 @@
 		var objToReturn = {};
 
 		objToReturn.exportWidgetToExcel = function (type, widget, options) {
-			 
-			 
+
+
 			/**
 			 * Last parameter is set to TRUE for exporting only one widget, rather than whole document (all table and chart widgets in cockpit)
 			 */
@@ -34,7 +34,7 @@
 					var config = {"responseType": "arraybuffer"};
 					var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting"), 'Success!', 0);
 					var documentLabel = requestConfig.DOCUMENT_LABEL;
-					
+
 					sbiModule_restServices.promisePost('1.0/cockpit/export', 'excel', requestConfig, config)
 						.then(function(response){
 							var mimeType = response.headers("Content-type");
@@ -51,7 +51,7 @@
 				});
 		}
 
-		
+
 		var createRequest = function (type, widget, exportWidget, options) {
 			var deferred = $q.defer();
 			var requestUrl = {
@@ -79,11 +79,11 @@
 								}
 							}
 						}
-					
-					}						
+
+					}
 				}
 			}
-			
+
 			var dsId = widget.dataset.dsId;
 			var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
 			var aggregation;
@@ -105,6 +105,7 @@
 			requestUrl.COCKPIT_SELECTIONS.aggregations = aggregation;
 			requestUrl.COCKPIT_SELECTIONS.parameters = paramsToSend;
 			requestUrl.COCKPIT_SELECTIONS.selections = selections;
+			requestUrl.COCKPIT_VARIABLES = cockpitModule_properties.VARIABLES;
 			requestUrl.options = options;
 			deferred.resolve(requestUrl);
 
@@ -146,8 +147,8 @@
                 }
 		    }
         }
-		
-		return objToReturn;		
-	}	
+
+		return objToReturn;
+	}
 
 })();

@@ -544,10 +544,11 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 	protected void appendSelectDistinct(SelectQuery query) {
 
 		/*
-		 * WORKAROUND - KNOWAGE-5361 : exclude DISTINCT clause for all the dataset
-		 * that contains a CLOB.
+		 * WORKAROUND - KNOWAGE-5361 : exclude DISTINCT clause for all the dataset that contains a CLOB.
 		 */
-		boolean containsCLOB = query.getDataSet().getDsMetadata().contains("CLOB");
+		boolean containsCLOB = false;
+		if (query.getDataSet().getDsMetadata() != null && query.getDataSet().getDsMetadata().contains("CLOB"))
+			containsCLOB = true;
 
 		if (query.isSelectDistinct() && query.getGroups().isEmpty() && !query.hasAggregationFunction() && !containsCLOB) {
 			queryBuilder.append("DISTINCT ");
