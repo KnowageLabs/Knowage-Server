@@ -109,7 +109,7 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <meta name="apple-mobile-web-app-capable" content="yes">
 	    <meta name="apple-mobile-web-app-title" content="Knowage">
-	    <link rel="manifest" href="<%=urlBuilder.getResourceLink(request, "manifest.json")%>" />
+	    <link rel="manifest" href="<%=urlBuilder.getResourceLink(request, "manifest.json")%>" crossorigin="use-credentials"/>
 	    
 	    <title>Knowage</title>
   
@@ -135,7 +135,7 @@
 				user.value = userV;
 			}
 		</script>
-		<link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
+		<link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/img/favicon.ico")%>" />
 		   <!-- Bootstrap -->
 		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
 		<link rel='StyleSheet' href='<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>' type='text/css' />
