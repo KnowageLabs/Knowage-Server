@@ -34,7 +34,6 @@ import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -65,12 +64,12 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 /**
  * @authors Francesco Lucchi (francesco.lucchi@eng.it)
+ * @authors Marco Balestri (marco.balestri@eng.it)
  */
 
 public class ExcelExporter {
@@ -79,7 +78,6 @@ public class ExcelExporter {
 
 	private final String outputType;
 	private final String userUniqueIdentifier;
-	private final Map<String, String> i18nMessages;
 	private final boolean exportWidget;
 	private final JSONObject body;
 	private Locale locale;
@@ -99,36 +97,14 @@ public class ExcelExporter {
 		this.exportWidget = false;
 		this.requestURL = requestURL;
 		this.body = new JSONObject();
-
-		Locale locale = getLocale(parameterMap);
-		try {
-			i18nMessages = DAOFactory.getI18NMessageDAO().getAllI18NMessages(locale);
-			LogMF.debug(logger, "Loaded messages [{0}]", i18nMessages);
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while retrieving the I18N messages", e);
-		}
 	}
 
 	public ExcelExporter(String outputType, String userUniqueIdentifier, JSONObject body) {
 		this.outputType = outputType;
 		this.userUniqueIdentifier = userUniqueIdentifier;
-		this.exportWidget = setExportWidget(body);
+		this.exportWidget = body.optBoolean("exportWidget");
 		this.body = body;
-
-		Locale locale = getLocale(body);
-		this.locale = locale;
-		try {
-			i18nMessages = DAOFactory.getI18NMessageDAO().getAllI18NMessages(locale);
-			LogMF.debug(logger, "Loaded messages [{0}]", i18nMessages);
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while retrieving the I18N messages", e);
-		}
-	}
-
-	private boolean setExportWidget(JSONObject body) {
-		boolean exportWidgetOnly = body.optBoolean("exportWidget");
-		return Boolean.valueOf(exportWidgetOnly);
-
+		this.locale = getLocale(body);
 	}
 
 	private Locale getLocale(JSONObject body) {
@@ -144,34 +120,16 @@ public class ExcelExporter {
 
 	}
 
-	private Locale getLocale(Map<String, String[]> parameterMap) {
-		try {
-			Assert.assertNotNull(parameterMap, "Empty input parameters map");
-			Assert.assertNotNull(parameterMap.get(SpagoBIConstants.SBI_LANGUAGE), "Missing language code in input parameters map");
-			Assert.assertNotNull(parameterMap.get(SpagoBIConstants.SBI_COUNTRY), "Missing country code in input parameters map");
-			Assert.assertTrue(parameterMap.get(SpagoBIConstants.SBI_LANGUAGE).length == 1, "More than one language code in input parameters map");
-			Assert.assertTrue(parameterMap.get(SpagoBIConstants.SBI_COUNTRY).length == 1, "More than one country code in input parameters map");
-
-			String language = parameterMap.get(SpagoBIConstants.SBI_LANGUAGE)[0];
-			String country = parameterMap.get(SpagoBIConstants.SBI_COUNTRY)[0];
-			Locale toReturn = new Locale(language, country);
-			return toReturn;
-		} catch (Exception e) {
-			logger.warn("Could get locale information from input parameters map", e);
-			return Locale.ENGLISH;
-		}
-
-	}
-
 	public String getMimeType() {
 		String mimeType;
-		if ("xlsx".equalsIgnoreCase(outputType)) {
+
+		if ("xlsx".equalsIgnoreCase(outputType))
 			mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-		} else if ("xls".equalsIgnoreCase(outputType)) {
+		else if ("xls".equalsIgnoreCase(outputType))
 			mimeType = "application/vnd.ms-excel";
-		} else {
+		else
 			throw new SpagoBIRuntimeException("Unsupported output type [" + outputType + "]");
-		}
+
 		return mimeType;
 	}
 
@@ -239,15 +197,14 @@ public class ExcelExporter {
 			ObjTemplate template = null;
 			String message = "Unable to get template for document with id [" + documentId + "] and label [" + documentLabel + "]";
 			try {
-				if (documentId != null && documentId.intValue() != 0) {
+				if (documentId != null && documentId.intValue() != 0)
 					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
-				} else if (documentLabel != null && !documentLabel.isEmpty()) {
+				else if (documentLabel != null && !documentLabel.isEmpty())
 					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplateByLabel(documentLabel);
-				}
 
-				if (template == null) {
+				if (template == null)
 					throw new SpagoBIRuntimeException(message);
-				}
+
 				templateString = new String(template.getContent());
 			} catch (EMFAbstractError e) {
 				throw new SpagoBIRuntimeException(message);
@@ -256,13 +213,12 @@ public class ExcelExporter {
 
 		Workbook wb;
 
-		if ("xlsx".equalsIgnoreCase(outputType)) {
+		if ("xlsx".equalsIgnoreCase(outputType))
 			wb = new XSSFWorkbook();
-		} else if ("xls".equalsIgnoreCase(outputType)) {
+		else if ("xls".equalsIgnoreCase(outputType))
 			wb = new HSSFWorkbook();
-		} else {
+		else
 			throw new SpagoBIRuntimeException("Unsupported output type [" + outputType + "]");
-		}
 
 		try {
 			if (exportWidget) {
@@ -486,9 +442,8 @@ public class ExcelExporter {
 				Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
 				Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
 				Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
-				JSONObject styleJSON = (!optionsObj.isNull("style") ? optionsObj.getJSONObject("style") : new JSONObject());
 				CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinition, optionsObj.getJSONArray("jsonData"),
-						optionsObj.getJSONObject("metadata"), styleJSON, null);
+						optionsObj.getJSONObject("metadata"), null);
 
 				CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 

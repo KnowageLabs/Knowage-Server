@@ -91,10 +91,6 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 	static private Logger logger = Logger.getLogger(CrosstabResource.class);
 
-	// INPUT PARAMETERS
-	private static final NodeComparator ASC = new NodeComparator(1);
-	private static final NodeComparator DESC = new NodeComparator(-1);
-
 	public static final String OUTPUT_TYPE = "OUTPUT_TYPE";
 
 	public enum OutputType {
@@ -194,8 +190,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
 			Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
 			Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
-			JSONObject styleJSON = (!request.isNull("style") ? request.getJSONObject("style") : new JSONObject());
-			CrosstabBuilder builder = new CrosstabBuilder(getLocale(), crosstabDefinitionJo, jsonData, request.getJSONObject("metadata"), styleJSON, variables);
+			CrosstabBuilder builder = new CrosstabBuilder(getLocale(), crosstabDefinitionJo, jsonData, request.getJSONObject("metadata"), variables);
 
 			JSONObject ret = new JSONObject();
 			ret.put("htmlTable", builder.getSortedCrosstab(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId));
@@ -207,31 +202,6 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
-	}
-
-	private Map<Integer, NodeComparator> toComparatorMap(Map<String, Object> sortKeyMap) {
-		Map<Integer, NodeComparator> sortKeys = new HashMap<Integer, NodeComparator>();
-
-		Iterator<String> mapIter = sortKeyMap.keySet().iterator();
-		NodeComparator nc = new NodeComparator();
-		Integer key = null;
-		while (mapIter.hasNext()) {
-			String field = mapIter.next();
-			Object fieldValue = sortKeyMap.get(field);
-
-			if (field.equalsIgnoreCase("parentValue")) {
-				nc.setParentValue(fieldValue.toString());
-			} else if (field.equalsIgnoreCase("measureLabel")) {
-				nc.setMeasureLabel(fieldValue.toString());
-			} else {
-				key = new Integer(field);
-				nc.setDirection(Integer.valueOf(fieldValue.toString()));
-			}
-		}
-		if (key != null)
-			sortKeys.put(key, nc);
-
-		return sortKeys;
 	}
 
 	private Map<Integer, NodeComparator> toComparatorMap(List<Map<String, Object>> sortKeyMap) {
@@ -280,9 +250,6 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(this.getUserProfile());
 			IDataSet dataset = dataSetDao.loadDataSetByLabel(datasetLabel);
-			// checkQbeDataset(dataset);
-
-			IDataSource dataSource = dataset.getDataSource();
 
 			// persist dataset into temporary table
 			IDataSetTableDescriptor descriptor = this.persistDataSet(dataset);
@@ -468,7 +435,6 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 				+ TemporaryTableManager.class.getName() + "] cannot be null");
 		logger.debug("Total records: " + resultNumber);
 
-		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 		Integer maxSize = null; // QbeEngineConfig.getInstance().getResultLimit();
 		boolean overflow = maxSize != null && resultNumber >= maxSize;
 		if (overflow) {
@@ -733,9 +699,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	}
 
 	public Map<String, List<String>> getFiltersOnDomainValues() {
-		Map<String, List<String>> toReturn = new HashMap();
-
-		return toReturn;
+		return new HashMap<String, List<String>>();
 	}
 
 	public List<String> getAllFields() {

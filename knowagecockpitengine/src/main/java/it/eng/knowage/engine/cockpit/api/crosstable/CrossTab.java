@@ -104,7 +104,7 @@ public class CrossTab {
 	public static final String SUBTOTAL = "SubTotal";
 
 	public static final String PATH_SEPARATOR = "_S_";
-	// private static final String DATA_MATRIX_NA = "NA";
+
 	/**
 	 *
 	 */
@@ -112,8 +112,6 @@ public class CrossTab {
 	private static final String DATA_MATRIX_NA = "";
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	private static final NodeComparator ASC = new NodeComparator(1);
-	private static final NodeComparator DESC = new NodeComparator(-1);
 
 	private static Logger logger = Logger.getLogger(CrossTab.class);
 
@@ -299,10 +297,6 @@ public class CrossTab {
 	 */
 	@Deprecated
 	private List<String> orderingHeaderList = new ArrayList<String>();
-	/**
-	 * Contains mapping between current column ALIAS and external referenced column ALIAS for sorting
-	 */
-	private BidiMap dsAliasSortingReferenceBiMap = new DualHashBidiMap();
 	/**
 	 * Contains mapping between current column NAME and external referenced column NAME for sorting
 	 */
@@ -523,7 +517,7 @@ public class CrossTab {
 			}
 			columnsOverflow = columnsRoot.getLeafsNumber() < completeColumnsRoot.getLeafsNumber();
 		}
-		Map measureToOrderMap = new LinkedHashMap();
+		Map<String, Double> measureToOrderMap = new LinkedHashMap<String, Double>();
 
 		for (index = 0; index < dataStoredata.length(); index++) {
 			valueRecord = dataStoredata.getJSONObject(index);
@@ -1471,8 +1465,8 @@ public class CrossTab {
 	private void cleanTreeAfterMerge(Node node, int level) {
 		int treeDepth = node.getSubTreeDepth();
 		List<Node> listOfNodesToRemove = cleanTreeAfterMergeRecorsive(node, treeDepth, level);
-		for (Iterator iterator = listOfNodesToRemove.iterator(); iterator.hasNext();) {
-			Node node2 = (Node) iterator.next();
+		for (Iterator<Node> iterator = listOfNodesToRemove.iterator(); iterator.hasNext();) {
+			Node node2 = iterator.next();
 			node2.removeNodeFromTree();
 
 		}
@@ -2588,8 +2582,6 @@ public class CrossTab {
 
 		final List<MeasureInfo> measures = getMeasures();
 		final int measureSize = measures.size();
-		final int rowsToAddSize = colums.isEmpty() ? 0 : colums.get(0).length;
-		final int colsToAddSize = colums.size();
 
 		Placeholder/* <?> */[][] newData = new Placeholder[dataMatrix.length][];
 		for (int i = 0; i < dataMatrix.length; i++) {

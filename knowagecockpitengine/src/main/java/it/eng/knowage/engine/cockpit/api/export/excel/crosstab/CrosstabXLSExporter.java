@@ -118,15 +118,6 @@ public class CrosstabXLSExporter {
 	}
 
 	public int fillAlreadyCreatedSheet(Sheet sheet, CrossTab cs, CreationHelper createHelper, int startRow, Locale locale)
-			throws JSONException, SerializationException {
-		// we enrich the JSON object putting every node the descendants_no
-		// property: it is useful when merging cell into rows/columns headers
-		// and when initializing the sheet
-		int totalRowNum = commonFillSheet(sheet, cs, createHelper, startRow, locale);
-		return totalRowNum;
-	}
-
-	public int commonFillSheet(Sheet sheet, CrossTab cs, CreationHelper createHelper, int startRow, Locale locale)
 			throws SerializationException, JSONException {
 		int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
 		int rowsDepth = cs.getRowsRoot().getSubTreeDepth();
