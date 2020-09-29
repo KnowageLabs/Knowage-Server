@@ -17,11 +17,11 @@
        			</md-tooltip>
 				{{::translate.load("sbi.common.unselect.all");}}
 			</md-button>
-			<md-button  ng-show="isSlicer&&!selectView&&isAnySelected()" ng-click="setSelectedView()"  aria-label="Select only view" class="md-raised">
+			<md-button  ng-show="!selectView && isAnySelected()" ng-click="setSelectedView()"  aria-label="Select only view" class="md-raised">
 				{{::translate.load('sbi.olap.filter.showselected')}}
 			</md-button>
 			
-			<md-button  ng-show="isSlicer&&selectView&&isAnySelected()" ng-class="{'md-warning':showTreeError}" ng-click="setAllView()"  aria-label="Show All view" class="md-raised">
+			<md-button  ng-show="selectView && isAnySelected()" ng-class="{'md-warning':showTreeError}" ng-click="setAllView()"  aria-label="Show All view" class="md-raised">
 				{{::translate.load('sbi.olap.filter.showall')}}
 			</md-button>
 			
