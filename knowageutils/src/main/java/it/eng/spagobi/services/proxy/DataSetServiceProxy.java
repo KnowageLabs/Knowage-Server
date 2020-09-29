@@ -123,6 +123,7 @@ public final class DataSetServiceProxy extends AbstractServiceProxy {
 			}
 		} catch (Exception e) {
 			logger.error("Error during Service LookUp", e);
+			throw new IllegalStateException(e);
 		} finally {
 			logger.debug("OUT");
 		}

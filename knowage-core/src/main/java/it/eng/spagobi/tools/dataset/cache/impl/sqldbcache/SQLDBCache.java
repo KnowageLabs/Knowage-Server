@@ -42,6 +42,7 @@ import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -494,6 +495,9 @@ public class SQLDBCache implements ICache {
 							String tableName = persistStoreInCache(dataSet, dataStore);
 							timeSpent = System.currentTimeMillis() - start;
 							Map<String, Object> properties = new HashMap<String, Object>();
+							if (dataSet instanceof VersionedDataSet) {
+								dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
+							}
 							getMetadata().addCacheItem(((AbstractDataSet) dataSet).getName(), signature, properties, tableName, dataStore);
 
 						} else {

@@ -188,7 +188,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		logger.debug("Loading federation with id " + federationId);
 		FederationClient fc = new FederationClient();
 		try {
-			return fc.getFederation(federationId, getUserId(), getDataSetServiceProxy());
+			return fc.getFederation(federationId, getUserIdentifier(), getDataSetServiceProxy());
 		} catch (Exception e) {
 			logger.error("Error loading the federation definition");
 			throw new SpagoBIEngineRuntimeException("Error loading the federation definition", e);
@@ -250,7 +250,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 
 		JSONObject datasetPersistedLabels = null;
 		try {
-			datasetPersistedLabels = FederationUtils.createDatasetsOnCache(dsf.getDataSetRelationKeysMap(), getUserId());
+			datasetPersistedLabels = FederationUtils.createDatasetsOnCache(dsf.getDataSetRelationKeysMap(), getUserIdentifier());
 		} catch (JSONException e1) {
 			logger.error("Error loading the dataset. Please check that all the dataset linked to this federation are still working", e1);
 			throw new SpagoBIEngineRuntimeException("Error loading the dataset. Please check that all the dataset linked to this federation are still working",

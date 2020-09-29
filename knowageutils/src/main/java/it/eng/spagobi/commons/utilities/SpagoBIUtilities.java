@@ -36,6 +36,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 
@@ -658,34 +659,36 @@ public class SpagoBIUtilities {
 	 * @return the path for resources
 	 */
 	public static String getRootResourcePath() {
-		SingletonConfig configSingleton = SingletonConfig.getInstance();
-		String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-		String resourcePath = "";
-		String systemPathVar = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_SYSTEMVAR_JNDI_NAME");
-		logger.debug("Resource path systemPathVar " + systemPathVar);
-		if (systemPathVar == null || systemPathVar.length() == 0) {
-			resourcePath = SpagoBIUtilities.readJndiResource(path);
-			logger.debug("Resource path loaded by jndi  " + resourcePath);
-		} else {
-			// search the resource folder from system variable (can be argument -D..... on lunching configuration of server)
-			// this approach is good when you work with a cluster architecture
-			logger.debug("loading the resource path from system variable");
-			String systemPathVarSuffix = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_FROM_SYSTEMVAR_SUFFIX");
+		String resourcePath = EnginConf.getInstance().getRootResourcePath();
+		if (StringUtils.isEmpty(resourcePath)) {
+			SingletonConfig configSingleton = SingletonConfig.getInstance();
+			String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+			String systemPathVar = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_SYSTEMVAR_JNDI_NAME");
+			logger.debug("Resource path systemPathVar " + systemPathVar);
+			if (systemPathVar == null || systemPathVar.length() == 0) {
+				resourcePath = SpagoBIUtilities.readJndiResource(path);
+				logger.debug("Resource path loaded by jndi  " + resourcePath);
+			} else {
+				// search the resource folder from system variable (can be argument -D..... on lunching configuration of server)
+				// this approach is good when you work with a cluster architecture
+				logger.debug("loading the resource path from system variable");
+				String systemPathVarSuffix = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_FROM_SYSTEMVAR_SUFFIX");
 
-			logger.debug("Resource path systemPathVarSuffix " + systemPathVarSuffix);
-			if (systemPathVar != null) {
-				resourcePath = System.getProperty(systemPathVar);
-			}
-			logger.debug("Resource path resourcePath via systemvar " + resourcePath);
-			if (systemPathVarSuffix != null) {
-				if (!resourcePath.endsWith(File.separatorChar + "")) {
-					resourcePath = resourcePath + File.separatorChar;
+				logger.debug("Resource path systemPathVarSuffix " + systemPathVarSuffix);
+				if (systemPathVar != null) {
+					resourcePath = System.getProperty(systemPathVar);
 				}
-				resourcePath = resourcePath + systemPathVarSuffix;
+				logger.debug("Resource path resourcePath via systemvar " + resourcePath);
+				if (systemPathVarSuffix != null) {
+					if (!resourcePath.endsWith(File.separatorChar + "")) {
+						resourcePath = resourcePath + File.separatorChar;
+					}
+					resourcePath = resourcePath + systemPathVarSuffix;
+				}
+				logger.debug("Resource path resourcePath via systemvar with suffix " + resourcePath);
 			}
-			logger.debug("Resource path resourcePath via systemvar with suffix " + resourcePath);
+			logger.debug("Resource path " + resourcePath);
 		}
-		logger.debug("Resource path " + resourcePath);
 		return resourcePath;
 	}
 
