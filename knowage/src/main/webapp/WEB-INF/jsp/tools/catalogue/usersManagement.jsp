@@ -186,7 +186,7 @@ Boolean isSSOEnabledH = GeneralUtilities.isSSOEnabled();
 			<div layout="row" layout-wrap ng-repeat="attribute in tempAttributes">
 				<div flex=100>
 					<md-input-container class="md-block"> <label>{{attribute.name}}</label>
-					<input name="attr" ng-model="attribute.value" ng-maxlength="100"
+					<input name="attr" ng-model="attribute.value" ng-maxlength="500"
 						ng-change="setDirty()"> <div ng-messages="" ng-show="false"></div></md-input-container>
 						
 				</div>
