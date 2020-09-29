@@ -67,7 +67,7 @@ def retrieveAnalyticalDriversInfo(data):
     return drivers
 
 def getDatasetAsDataframe(widget):
-    address = "http://" + widget.knowage_address + "/knowage/restful-services/2.0/datasets/" + widget.dataset_name + "/data?offset=0&size=-1"
+    address = widget.knowage_address + "/knowage/restful-services/2.0/datasets/" + widget.dataset_name + "/data?offset=0&size=-1"
     auth_token = security.buildAuthToken(widget.user_id)
     headers = {'Authorization': auth_token}
     #rest request for dataset

@@ -45,7 +45,7 @@ function pythonWidgetEditControllerFunction(
 
 	$scope.setLibraries = function () {
 		$http({
-	        url: "https://" + $scope.newModel.pythonAddress + "/widget/edit/libraries",
+	        url: $scope.newModel.pythonAddress + "/widget/edit/libraries",
 	        method: "GET",
 	        headers: {'Content-Type': 'application/json',
 	        		  'Authorization': $scope.encodedUserId}
