@@ -41,6 +41,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -68,6 +69,8 @@ import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
+
+	static private Logger logger = Logger.getLogger(SbiGeoLayersDAOHibImpl.class);
 
 	/**
 	 * Load layer by id.
@@ -117,10 +120,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} finally {
 
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-
+			if (tmpSession != null && tmpSession.isOpen()) {
+				tmpSession.close();
 			}
 		}
 
@@ -257,8 +258,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 						out.close();
 					}
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logException(e);
 				}
 
 			}
@@ -328,9 +328,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} finally {
 
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
+			if (tmpSession != null && tmpSession.isOpen()) {
+				tmpSession.close();
 			}
 		}
 
@@ -433,8 +432,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					out.close();
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logException(e);
 			}
 
 			layerDef.put("layerId", aLayer.getLayerIdentify());
@@ -498,9 +496,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} finally {
 
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
+			if (tmpSession != null && tmpSession.isOpen()) {
+				tmpSession.close();
 			}
 
 		}
@@ -641,18 +638,15 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				br.close();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new IllegalArgumentException("Error during loading properties : " + e.getLocalizedMessage(), e);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
+			if (tmpSession != null && tmpSession.isOpen()) {
+				tmpSession.close();
 			}
 			if (inputstream != null) {
 				try {
 					inputstream.close();
 				} catch (Exception e) {
-					e.printStackTrace();
 					throw new SpagoBIRuntimeException("Cannot close file input stream", e);
 				}
 			}
@@ -717,9 +711,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} finally {
 
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
+			if (tmpSession != null && tmpSession.isOpen()) {
+				tmpSession.close();
 			}
 
 		}
@@ -748,9 +741,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} finally {
 
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
+			if (tmpSession != null && tmpSession.isOpen()) {
+				tmpSession.close();
 			}
 
 		}
@@ -822,12 +814,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logException(e);
 		} finally {
 
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
+			if (tmpSession != null && tmpSession.isOpen()) {
+				tmpSession.close();
 			}
 
 		}
@@ -851,13 +842,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} catch (HibernateException he) {
 			logException(he);
-
 		} finally {
 
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-
+			if (tmpSession != null && tmpSession.isOpen()) {
+				tmpSession.close();
 			}
 		}
 		return roles;
@@ -879,7 +867,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} catch (HibernateException he) {
 			logException(he);
-
 		}
 		return roles;
 	}
@@ -985,9 +972,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} finally {
 
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
+			if (tmpSession != null && tmpSession.isOpen()) {
+				tmpSession.close();
 			}
 
 		}
@@ -1017,7 +1003,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				}
 
 			} catch (EMFInternalError e) {
-				e.printStackTrace();
+				logException(e);
 			}
 		}
 		return false;

@@ -194,7 +194,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<div flex=100>
 												<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.options")}}</label>
 												<input class="input_class" ng-model="selectedLayer.layerOptions"
-													required maxlength="100" ng-maxlength="100" md-maxlength="100">
+													maxlength="100" ng-maxlength="100" md-maxlength="100">
 												</md-input-container>
 											</div>
 										</div>
@@ -202,7 +202,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<div flex=100>
 												<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.params")}}</label>
 												<input class="input_class" ng-model="selectedLayer.layerParams"
-													required maxlength="100" ng-maxlength="100" md-maxlength="100">
+													maxlength="100" ng-maxlength="100" md-maxlength="100">
 												</md-input-container>
 											</div>
 										</div>
