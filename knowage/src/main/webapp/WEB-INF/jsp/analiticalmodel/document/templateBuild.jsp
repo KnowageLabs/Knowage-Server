@@ -81,13 +81,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
    	// try to get from the preferences the height of the area
    	String heightArea = (String) ChannelUtilities.getPreferenceValue(aRequestContainer, "HEIGHT_AREA", "600");
-    
-	//String backEndContext=GeneralUtilities.getSpagoBiHostBackEnd();
-	//String param1="?"+SpagoBIConstants.SBI_BACK_END_HOST+"="+backEndContext;
 
 	StringBuffer urlToCall= new StringBuffer(engineurl.getMainURL());
-	//urlToCall+=param1;
-	urlToCall.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
+	urlToCall.append("?"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
 	urlToCall.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
 
 %>
@@ -102,7 +98,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 	<html ng-app="TemplateBuildModule" ng-controller="TemplateBuildController">
 		<body style="overflow: hidden">
-			<iframe flex class=" noBorder" width="100%" height="100%" ng-src="<%= (GeneralUtilities.getUrl(host+urlToCall.toString(), engineurl.getParameters())) %>" name="angularIframe"></iframe>
+			<iframe flex class=" noBorder" width="100%" height="100%" ng-src="<%= (GeneralUtilities.getUrl(urlToCall.toString(), engineurl.getParameters())) %>" name="angularIframe"></iframe>
 		</body>
 	</html>
 	
