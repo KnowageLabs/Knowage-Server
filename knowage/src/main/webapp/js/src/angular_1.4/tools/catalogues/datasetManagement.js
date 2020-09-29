@@ -2003,6 +2003,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataset){
 			sbiModule_restServices.post("dataset","drivers/",selectedDataset.qbeDatamarts).then(function(response){
 				$scope.selectedDataSet.drivers = angular.copy(response.data.filterStatus);
+				for(var i = 0; i < $scope.selectedDataSet.drivers.length; i++) {
+					if($scope.selectedDataSet.drivers[i].parameterValue && $scope.selectedDataSet.drivers[i].parameterDescription) {
+						$scope.selectedDataSet.drivers[i].hasDefaultOrOneAdmissibleValue = true;
+					}
+				}
 				var selectedModel = $filter('filter')($scope.datamartList, {name: $scope.selectedDataSet.qbeDatamarts},true)[0];
 				 if (!selectedModel) delete $scope.selectedDataSet.qbeJSONQuery;
 			})
@@ -3306,11 +3311,20 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				$scope.dataset = $scope.selectedDataSet;
 				if($scope.dataset.drivers) {
 					$scope.drivers = $scope.dataset.drivers;
-					$scope.showDrivers = $scope.drivers.length > 0 || $scope.selectedDataSet.pars.length > 0;
+					if($scope.drivers) {
+						var driverValuesAreSet = driversExecutionService.driversAreSet($scope.drivers);
+						if($scope.drivers.length > 0 && !driverValuesAreSet || $scope.selectedDataSet.pars.length > 0) {
+							$scope.showDrivers = true;
+						} else {
+							$scope.showDrivers = false;
+						}
+						driversExecutionService.hasMandatoryDrivers($scope.drivers);
+					}
 				} else {
 					$scope.showDrivers = $scope.selectedDataSet.pars.length > 0;
 				}
 				$scope.dataset.executed = !$scope.showDrivers;
+				$scope.showFilterIcon = driversExecutionService.showFilterIcon;
 
 				$scope.executeParameter = function(){
 					$scope.showDrivers = false;
@@ -3358,6 +3372,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 $scope.datasetInPreview=undefined;
 			 $scope.counter = 0;
 			 $scope.selectedDataSet.start = 0;
+			 if(typeof $scope.selectedDataSet.drivers !== 'undefined') {
+				for(var i=0; i < $scope.selectedDataSet.drivers.length; i++) {
+					if(($scope.selectedDataSet.drivers[i].parameterDescription || $scope.selectedDataSet.drivers[i].parameterValue) && !$scope.selectedDataSet.drivers[i].hasDefaultOrOneAdmissibleValue) {
+						delete $scope.selectedDataSet.drivers[i].parameterDescription;
+						delete $scope.selectedDataSet.drivers[i].parameterValue;
+					}
+				}
+			 }
 			 $mdDialog.cancel();
 	    }
 	}
@@ -3443,15 +3465,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		}
 
-		if(typeof $scope.selectedDataSet.drivers !== 'undefined') {
-			for(var i=0; i < $scope.selectedDataSet.drivers.length; i++) {
-				if($scope.selectedDataSet.drivers[i].parameterDescription && $scope.selectedDataSet.drivers[i].parameterValue) {
-					delete $scope.selectedDataSet.drivers[i].parameterDescription;
-					delete $scope.selectedDataSet.drivers[i].parameterValue;
-				}
-			}
-		}
-
 		if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && driversExecutionService.driversAreSet($scope.selectedDataSet.drivers)) {
 			$scope.selectedDataSet["DRIVERS"] = driversExecutionService.prepareDriversForSending($scope.selectedDataSet.drivers);
 		} else if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && !driversExecutionService.driversAreSet($scope.selectedDataSet.drivers) ||
@@ -3491,7 +3504,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						return columns;
 					}
 					$scope.getPreviewSet(response.data);
-					if((!$scope.selectedDataSet.drivers || $scope.selectedDataSet.drivers.length == 0) && (!$scope.selectedDataSet.pars || $scope.selectedDataSet.pars.length == 0)) {
+					if(((!$scope.selectedDataSet.drivers || $scope.selectedDataSet.drivers.length == 0) && (!$scope.selectedDataSet.pars || $scope.selectedDataSet.pars.length == 0))
+							|| ($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && driversExecutionService.driversAreSet($scope.selectedDataSet.drivers))) {
 						$mdDialog.show({
 							  scope:$scope,
 							  preserveScope: true,
