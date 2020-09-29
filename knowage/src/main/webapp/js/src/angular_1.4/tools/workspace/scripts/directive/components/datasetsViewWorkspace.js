@@ -1232,8 +1232,17 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     		}
 
     		$scope.previewDS();
-    		$scope.showDrivers = $scope.drivers ? $scope.drivers.length > 0 : false || $scope.dataset.pars.length > 0;
+    		if($scope.drivers) {
+    			var driverValuesAreSet = driversExecutionService.driversAreSet($scope.drivers);
+				if($scope.drivers.length > 0 && !driverValuesAreSet || $scope.dataset.pars.length > 0) {
+					$scope.showDrivers = true;
+				} else {
+					$scope.showDrivers = false;
+				}
+    		}
     		$scope.dataset.executed = !$scope.showDrivers;
+
+    		$scope.showFilterIcon = driversExecutionService.showFilterIcon;
 
         	$scope.toggleDrivers = function(){
 				$scope.showDrivers = !$scope.showDrivers;
