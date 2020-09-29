@@ -642,7 +642,7 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	}
 };
 
-function variablesController($scope, sbiModule_translate, cockpitModule_template, cockpitModule_analyticalDrivers,cockpitModule_analyticalDriversUrls){
+function variablesController($scope, sbiModule_translate,sbiModule_user, cockpitModule_template, cockpitModule_analyticalDrivers,cockpitModule_analyticalDriversUrls){
 
 	$scope.variables = cockpitModule_template.configuration.variables;
 	$scope.cockpitModule_template = cockpitModule_template;
@@ -674,14 +674,10 @@ function variablesController($scope, sbiModule_translate, cockpitModule_template
 		{"value":"driver", "label":sbiModule_translate.load('sbi.cockpit.cross.analyticaldriver')},
 		{"value":"profile", "label":"Profile"}]
 
-	$scope.profileAttributes = [
-		{"value":"country", "label": "Country"},
-		{"value":"user_id", "label": "User ID"},
-		{"value":"name", "label": "User Name"},
-		{"value":"TENANT_ID", "label": "Tenant"},
-		{"value":"language", "label": "Language"},
-		{"value":"user_roles", "label": "User Roles"},
-		{"value":"email", "label": "User email"}]
+	$scope.profileAttributes = [];
+	for (var k in sbiModule_user.profileAttributes){
+		$scope.profileAttributes.push({"value":k, "label":k})
+	}
 
 	$scope.addVariable = function(ev){
 		$scope.variables.push({});
