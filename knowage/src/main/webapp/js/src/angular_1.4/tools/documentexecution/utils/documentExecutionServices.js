@@ -690,6 +690,26 @@
 			}
 		}
 
+		serviceScope.formatAdmissibleValue = function(execProperties) {
+			execProperties.hasOneAdmissibleValue = true;
+			var drivers = execProperties.parametersData.documentParameters;
+			for(var i = 0; i < drivers.length; i++) {
+				if(drivers[i].parameterValue && drivers[i].parameterValue.length > 0) {
+					for(var j = 0; j < drivers[i].parameterValue.length; j++) {
+						if(drivers[i].parameterValue[j].value) {
+							drivers[i].parameterValue = drivers[i].parameterValue[j].value;
+						}
+					}
+					if(drivers[i].driverDefaultValue) {
+						execProperties.hasOneAdmissibleValue = false;
+					}
+
+				} else {
+					execProperties.hasOneAdmissibleValue = false;
+				}
+			}
+		}
+
 
 
 		serviceScope.getParametersForExecution = function(role, buildCorrelation,crossParameters) {
@@ -725,6 +745,7 @@
 									angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
 
 									sbiModule_i18n.loadI18nMap().then(function() {
+										serviceScope.formatAdmissibleValue(execProperties);
 										serviceScope.prepareDrivers(response.data, buildCorrelation);
 									}); // end of load I 18n
 
@@ -880,7 +901,7 @@
 	documentExecutionModule.service('docExecute_paramRolePanelService', function(execProperties,$mdSidenav,$timeout) {
 
 		this.checkParameterRolePanelDisabled = function() {
-			return ((!execProperties.parametersData.documentParameters || execProperties.parametersData.documentParameters.length == 0)
+			return ((!execProperties.parametersData.documentParameters || execProperties.parametersData.documentParameters.length == 0 || execProperties.hasOneAdmissibleValue)
 					&& (execProperties.roles.length==1));
 		};
 
