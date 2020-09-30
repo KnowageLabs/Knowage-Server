@@ -299,6 +299,7 @@ sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,sbiMod
 		return	$mdToast.show(
 					$mdToast
 					.simple()
+					.parent(angular.element(document.querySelector('body')))
 					.content(msg)
 					.position('top')
 					.action('OK')
@@ -321,6 +322,7 @@ sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,sbiMod
 		return	$mdToast.show(
 					$mdToast
 					.simple()
+					.parent(angular.element(document.querySelector('body')))
 					.content(msg)
 					.position('top')
 					.action('OK')
@@ -345,6 +347,7 @@ sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,sbiMod
 		return	$mdToast.show(
 					$mdToast
 					.simple()
+					.parent(angular.element(document.querySelector('body')))
 					.content(msg)
 					.position('top')
 					.action('OK')
