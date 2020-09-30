@@ -476,7 +476,7 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 							scope.deleteFile(scope.fileToDelete.event, scope.fileToDelete.license, scope.fileToDelete.hostName);
 							delete scope.isDeletingLicense;
 							
-							$scope.menuCall(scope.fileToDelete.event, Sbi.config.contextName + logoutUrl, "execUrl");
+							$scope.menuCall(scope.fileToDelete.event, Sbi.config.contextName + scope.logoutUrl, "execUrl");
 						}
 						
 						scope.deleteFile = function (event, license, hostName) {
