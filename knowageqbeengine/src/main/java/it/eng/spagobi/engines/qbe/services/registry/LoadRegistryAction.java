@@ -62,7 +62,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -734,19 +733,9 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 			if (value != null && !value.toString().equals("")) {
 
-				// TODO, change this behaviour
-				if (value.toString().contains(",")) {
-					value = "{,{" + value + "}}";
-				}
-				List valuesList = new ParametersDecoder().decode(value.toString());
-				String[] valuesArr = new String[valuesList.size()];
+				String[] valuesArr = value.toString().split(",", -1);
 
-				for (int j = 0; j < valuesList.size(); j++) {
-					String val = valuesList.get(j).toString();
-					valuesArr[j] = val;
-				}
-
-				logger.debug("Set filter from analytical deriver " + driverName + ": " + filter.getField() + "=" + value);
+				logger.debug("Set filter from analytical driver " + driverName + ": " + filter.getField() + "=" + value);
 
 				String fieldId = fieldNameIdMap.get(fieldName);
 				String[] fields = new String[] { fieldId };
