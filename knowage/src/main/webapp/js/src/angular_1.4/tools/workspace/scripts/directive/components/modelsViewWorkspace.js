@@ -107,6 +107,7 @@
 	            enableSorting: true,
 	            pagination: false,
 	            onGridSizeChanged: resizeColumns,
+	            rowSelection: 'single',
 	            onRowClicked: modelsOnSelectionChanged,
 	            defaultColDef: {
 	            	suppressMovable: true,
@@ -126,6 +127,7 @@
 	            enableSorting: true,
 	            pagination: false,
 	            onGridSizeChanged: resizeColumns,
+	            rowSelection: 'single',
 	            onRowClicked: federationsOnSelectionChanged,
 	            defaultColDef: {
 	            	suppressMovable: true,
