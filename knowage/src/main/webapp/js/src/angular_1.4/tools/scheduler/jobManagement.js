@@ -1495,7 +1495,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				};
 
 				activityEventCtrl.onlyNumberConvert = function(item) {
-					return item.replace(/\D/g,'');
+					return typeof item == "undefined" ? "" : item.replace(/\D/g,'');
 				};
 
 				activityEventCtrl.prova = function(item) {
