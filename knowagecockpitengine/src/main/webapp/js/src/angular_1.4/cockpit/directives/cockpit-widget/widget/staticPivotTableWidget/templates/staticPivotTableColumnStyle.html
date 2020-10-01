@@ -50,7 +50,7 @@
 										{{translate.load("sbi.cockpit.widgets.table.sorting.column")}}
 								</md-checkbox>
 						</md-input-container>
-						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE' selectedColumn.fieldType!='CALCULATED_FIELD'" class="md-block" flex>
+						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE' && selectedColumn.fieldType!='CALCULATED_FIELD'" class="md-block" flex>
 							<label>{{translate.load("sbi.cockpit.widgets.table.sorting.orderByColumnValue");}}</label>
 							<md-select ng-model="selectedColumn.sortingId" ng-disabled="!selectedColumn.sorting || selectedColumn.sorting=='' || selectedColumn.showSortingAlert" data-ng-change="updateSortOptions(selectedColumn)">
 								<md-option ng-repeat="sortCol in selectedColumn.sorterByColumns" ng-value="sortCol" >							
