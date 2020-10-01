@@ -118,7 +118,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		elem.classList.add('crosstab-fill-width');
 		elem.style['table-layout'] = 'fixed';
 	}
-	
+
 	$scope.evaluatePivotedCells = function(elem){
 		var offsetArray = [];
 		var staticThead = elem.querySelectorAll("thead tr");
@@ -129,7 +129,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 			}
 		}
-		
+
 		var pivotedHeaders = elem.querySelectorAll("td[pivot*='header']");
 		for(var h = 0; h < pivotedHeaders.length; h++){
 			pivotedHeaders[h].style.left = "";
@@ -1206,7 +1206,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			    	 $scope.getMeasureType = function(item){
 			    		 return item.nature == 'calculated_field' ? "'CALCULATED-FIELD'":"'MEASURE-PT'";
 			    	 }
-			    	 
+
 			    	 $scope.addCalculatedField = function(item) {
 
 							item.nature = "calculated_field";
@@ -1371,8 +1371,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 							}, function() {
 								console.log("Selected column:", $scope.selectedColumn);
 							});
-			    	  }
-			      },
+					}
+
+				},
 				disableParentScroll: true,
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/staticPivotTableWidget/templates/staticPivotTableWidgetEditPropertyTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
@@ -1430,6 +1431,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			return newArray;
 		}
 
+		$scope.availableAggregationFunctions = $scope.cockpitModule_generalOptions.aggregationFunctions.filter(function(el) {
+			return el.value != "COUNT_DISTINCT";
+		});
 		$scope.availableIcons = setChunks(knModule_fontIconsService.icons,4);
 		$scope.conditions=['>','<','==','>=','<=','!='];
 
@@ -1755,6 +1759,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				axisConf[c].direction = direction;
 		}
 	}
+
 };
 
 

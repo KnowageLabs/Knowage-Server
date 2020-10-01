@@ -239,9 +239,6 @@ public class CrossTab {
 		case "COUNT":
 			ret = CountAggregator.instance();
 			break;
-		case "COUNT_DISTINCT":
-			ret = NotDefinedAggregator.instance();
-			break;
 		default:
 			ret = NotDefinedAggregator.instance();
 			break;
