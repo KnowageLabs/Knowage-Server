@@ -29,13 +29,15 @@
 		</script>
 	</head>
 	<body layout="row" ng-controller="olapController" class="kn-olap">
-	
-		<rest-loading></rest-loading>
 		
+	 	<div ng-if="showLoadingMask" layout-fill style='position:fixed;z-index: 500;background:rgba(0,0,0, 0.3);'>
+            <md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%' ></md-progress-circular>
+        </div>
+	 
 		<div layout="column" flex>	
-			<main-toolbar ng-hide="true"></main-toolbar>
-			<filter-panel></filter-panel>
-			<olap-panel></olap-panel>
+			<main-toolbar ng-hide="true" loading></main-toolbar>
+			<filter-panel loading></filter-panel>
+			<olap-panel loading></olap-panel>
 		</div>
 		<div style="width:2px"></div>
 		<sbi-side-nav></sbi-side-nav>

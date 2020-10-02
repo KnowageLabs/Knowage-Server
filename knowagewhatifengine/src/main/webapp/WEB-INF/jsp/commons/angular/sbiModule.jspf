@@ -70,13 +70,12 @@ sbiM.directive('loading',   ['$http' ,function ($http)
                 
                 scope.showLoadingMask = true;
 
-                scope.$watch(scope.isLoading, function (v)
+                scope.$watch(scope.isLoading, function (newValue, oldValue)
                 {
-                    if(v){
-                    	scope.showEl = true;
-                    }else{
-                    	scope.showEl = false;
+                    if(newValue){
                     	scope.showLoadingMask = true;
+                    }else{
+                    	scope.showLoadingMask = false;
                     }
                 });
             }
@@ -109,76 +108,6 @@ sbiM.factory('sbiModule_user',function(){
 		return user.functionalities.indexOf(func)!=-1;
 	}
 	return user;
-});
-
-sbiM.directive('restLoading',   ['$http',function ($http)
-                              	{
-                              	    return {
-                              	        template:"<div loading layout-fill style='position:fixed;z-index: 500;background:rgba(0,0,0, 0.3);'>"+
-                              	    	"<md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%' ></md-progress-circular></div>",
-                              	        link: function (scope, elm, attrs)
-                              	        {	
-                              	        	scope.$on('loader_show',function(){
-                              	        		elm.css("display","block");
-                              	        	})
-                              	        	
-                              	        	
-                              	        	scope.$on('loader_hide',function(){
-                              	        		elm.css("display","none");
-                              	        	})
-                              	        	
-                              	        	
-                              	        }
-                              	    };
-                              	}]);
-
-
-sbiM.factory('http_load_interseptor',function($rootScope,$q){
-	
-	var noLoadingUrls = ["/restful-services/1.0/analysis/","/restful-services/1.0/modelconfig/noloading"];
-	
-	var isNoLoadingUrl = function(url,noLoadingUrls){
-		//debugger;
-  		if((url.indexOf( "NOLOADING=true"  ))!==-1){
-  			return true;
-  		}
-		
-  		for(var i=0;i<noLoadingUrls.length;i++){
-  			if((url.indexOf(noLoadingUrls[i]))!==-1){
-  				return true;
-  			}
-  		}
-  		return false;
-  	}
-	
-	return {
-	        request: function (config) {
-	            
-	            if(!isNoLoadingUrl(config.url,noLoadingUrls)){
-	            	
-	            	$rootScope.$broadcast("loader_show");
-	            	
-	            }
-	            
-	            return config;
-	        },
-
-	        response: function (result) {
-
-	            $rootScope.$broadcast("loader_hide");
-	            return result;
-	        },
-
-	        responseError: function (rejection) {
-	            
-	            $rootScope.$broadcast("loader_hide");
-	            return $q.reject(rejection);
-	        }
-	    }
-})
-
-sbiM.config(function ($httpProvider) {
-    $httpProvider.interceptors.push('http_load_interseptor');
 });
 
 sbiM.service('sbiModule_messaging',function(toastr){
