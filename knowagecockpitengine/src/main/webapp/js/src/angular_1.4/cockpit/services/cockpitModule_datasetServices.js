@@ -1440,19 +1440,21 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					}
 
 					$scope.getDocDrivers = function() {
-						$scope.docDrivers = [];
-						var params = {
-								label: cockpitModule_properties.DOCUMENT_LABEL,
-								role: cockpitModule_properties.SELECTED_ROLE,
-								parameters: {}
-						};
-						sbiModule_restServices.restToRootProject();
-						sbiModule_restServices.promisePost("1.0/documentexecution", "filters", params)
-						.then(function(response){
-							angular.copy(response.data.filterStatus, $scope.docDrivers);
-						},function(response){
-							sbiModule_restServices.errorHandler(response.data,"error while attempt to load document drivers")
-						})
+						if(cockpitModule_properties.DOCUMENT_ID) {
+							$scope.docDrivers = [];
+							var params = {
+									label: cockpitModule_properties.DOCUMENT_LABEL,
+									role: cockpitModule_properties.SELECTED_ROLE,
+									parameters: {}
+							};
+							sbiModule_restServices.restToRootProject();
+							sbiModule_restServices.promisePost("1.0/documentexecution", "filters", params)
+							.then(function(response){
+								angular.copy(response.data.filterStatus, $scope.docDrivers);
+							},function(response){
+								sbiModule_restServices.errorHandler(response.data,"error while attempt to load document drivers")
+							})
+						}
 					}
 
 					$scope.getDocDrivers();
@@ -1530,7 +1532,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							$scope.tmpCurrentAvaiableDataset = $scope.cockpitDatasetGrid.api.getSelectedRows();
 							for(var i=0; i < $scope.tmpCurrentAvaiableDataset.length; i++) {
 								if($scope.tmpCurrentAvaiableDataset[i].type == "SbiQbeDataSet") {
-									if((cockpitModule_datasetServices.selectedDSWithDrivers.length==1 || $scope.docDrivers.length > 0) && $scope.tmpCurrentAvaiableDataset[i].drivers && $scope.tmpCurrentAvaiableDataset[i].drivers.length > 0) {
+									if((cockpitModule_datasetServices.selectedDSWithDrivers.length==1 || ($scope.docDrivers && $scope.docDrivers.length > 0)) && $scope.tmpCurrentAvaiableDataset[i].drivers && $scope.tmpCurrentAvaiableDataset[i].drivers.length > 0) {
 										sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.parameter.error.one.dataset"), 'Error');
 									} else {
 										$scope.addDataset();
@@ -1541,7 +1543,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							}
 						}else{
 							$scope.tmpCurrentAvaiableDataset = $scope.cockpitDatasetGrid.api.getSelectedRows()[0];
-							if((cockpitModule_datasetServices.selectedDSWithDrivers.length==1 || $scope.docDrivers.length > 0) && $scope.tmpCurrentAvaiableDataset.drivers && $scope.tmpCurrentAvaiableDataset.drivers.length > 0) {
+							if((cockpitModule_datasetServices.selectedDSWithDrivers.length==1 || ($scope.docDrivers && $scope.docDrivers.length > 0)) && $scope.tmpCurrentAvaiableDataset.drivers && $scope.tmpCurrentAvaiableDataset.drivers.length > 0) {
 								sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.parameter.error.one.dataset"), 'Error');
 							} else {
 								$scope.addDataset();
