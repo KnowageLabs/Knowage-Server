@@ -37,13 +37,15 @@
 	
 	<!-- lov combobox single and multiple input -->
 	<div ng-if="(ngModel.settings.modalityValue=='dropdown' || ngModel.settings.modalityValue=='multiDropdown') && !isSelectedColumnTemporal()" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding layout-fill layout-align="center center">
-	
 		<!-- single -->
 		<md-input-container class="md-block" ng-if="showSelection && ngModel.settings.modalityValue=='dropdown'" style="width:100%">
 			<div class="kn-select">
-				<select ng-if="ngModel.settings.hideDisabled" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value for value in ngModel.activeValues" ng-style="::gridWidth()">
+				<select ng-if="ngModel.settings.hideDisabled && (ngModel.activeValues.length > 0)" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value for value in ngModel.activeValues" ng-style="::gridWidth()">
 					<option></option>
 				</select>
+				<select ng-if="ngModel.settings.hideDisabled && !ngModel.activeValues" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value for value in datasetRecords.rows.map(mapToColumn)" ng-style="::gridWidth()">
+                	<option></option>
+                </select>
 				<select ng-if="!ngModel.settings.hideDisabled" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)" ng-style="::gridWidth()">
                 	<option></option>
                 </select>
