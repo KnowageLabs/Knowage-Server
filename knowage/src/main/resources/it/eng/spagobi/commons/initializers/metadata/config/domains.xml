@@ -131,9 +131,12 @@
 	<DOMAIN valueCd="org.hibernate.dialect.SQLServerDialect"
 		valueNm="sbidomains.nm.sqlserver" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.sqlserver" />
-	<DOMAIN valueCd="org.hibernate.dialect.MySQLInnoDBDialect"
+	<DOMAIN valueCd="org.hibernate.dialect.MySQLDialect"
 		valueNm="sbidomains.nm.mysql" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
 		valueDs="sbidomains.ds.mysql" />
+	<DOMAIN valueCd="org.hibernate.dialect.MySQLInnoDBDialect"
+		valueNm="sbidomains.nm.mysqlInnoDB" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect"
+		valueDs="sbidomains.ds.mysqlInnoDB" />
 	<DOMAIN valueCd="org.hibernate.dialect.PostgreSQLDialect"
 		valueNm="sbidomains.nm.postgresql" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.postgresql" />
@@ -150,7 +153,7 @@
 		domainCd="DIALECT_HIB" domainNm="MongoDB dialect" valueDs="sbidomains.ds.mongo" />
 	<DOMAIN valueCd="hive" valueNm="sbidomains.nm.hive" domainCd="DIALECT_HIB"
 		domainNm="HQL Hive dialect" valueDs="sbidomains.ds.hive" />
-	<DOMAIN valueCd="org.hibernate.dialect.MySQLDialect" valueNm="sbidomains.nm.hive2" domainCd="DIALECT_HIB"
+	<DOMAIN valueCd="org.hibernate.dialect.Hive2Dialect" valueNm="sbidomains.nm.hive2" domainCd="DIALECT_HIB"
 		domainNm="HQL Hive2 dialect" valueDs="sbidomains.ds.hive2" />
 	<DOMAIN valueCd="orient" valueNm="sbidomains.nm.orient"
 		domainCd="DIALECT_HIB" domainNm="OrientDB dialect" valueDs="sbidomains.ds.orient" />

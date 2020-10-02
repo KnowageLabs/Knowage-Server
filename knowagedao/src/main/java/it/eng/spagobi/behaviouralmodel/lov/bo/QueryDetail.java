@@ -674,7 +674,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		String toReturn = "";
 		date = escapeString(date); // for security reasons
 		if (dialect != null) {
-			if (dialect.equals(DatabaseDialect.MYSQL)) {
+			if (dialect.equals(DatabaseDialect.MYSQL) || dialect.equals(DatabaseDialect.MYSQL_INNODB)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " STR_TO_DATE(" + date + ",'%d/%m/%Y %h:%i:%s') ";
 				} else {

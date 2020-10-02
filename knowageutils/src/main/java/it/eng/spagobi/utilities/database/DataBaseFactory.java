@@ -50,6 +50,7 @@ public abstract class DataBaseFactory {
 				case IMPALA:
 					return new ImpalaDataBase(dataSource);
 				case MYSQL:
+				case MYSQL_INNODB:
 					return new MySQLDataBase(dataSource);
 				case ORACLE:
 					return new OracleDataBase(dataSource);
