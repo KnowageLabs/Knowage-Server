@@ -39,6 +39,7 @@ public class SelectQueryVisitorFactory {
 		case IMPALA:
 			return new ImpalaSelectQueryVisitor(database);
 		case MYSQL:
+		case MYSQL_INNODB:
 			return new MySqlSelectQueryVisitor(database);
 		case ORACLE:
 		case ORACLE_9I10G:
