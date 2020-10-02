@@ -24,7 +24,7 @@ olapMod.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
 
-olapMod.config(['$locationProvider', function($locationProvider) { 
+olapMod.config(['$locationProvider', function($locationProvider) {
 	$locationProvider.html5Mode({ enabled: true, requireBase: false }); }]
 )
 
@@ -394,7 +394,6 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 					}
     		   	}else{
     		   		$scope.sendModelConfig($scope.modelConfig,false);
-    		   		$rootScope.$broadcast("loader_show");
     		   	}
 
 			if($scope.modelConfig.rowCount>$scope.max+1 && $scope.max<$scope.modelConfig.startRow+2*$scope.modelConfig.pageSize &&
