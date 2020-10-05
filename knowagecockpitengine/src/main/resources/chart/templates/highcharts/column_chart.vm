@@ -494,7 +494,7 @@
 		    {
 			#if($chart.LEGEND.showCheckboxes && $chart.LEGEND.showCheckboxes==true )
 			itemDistance: 0,
-    			symbolPadding: 25,
+    			symbolPadding: 0,
 			#end
 	            enabled: true,
 	            align: 'center',
