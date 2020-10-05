@@ -322,9 +322,8 @@
 			+ '&FEDERATION_ID=' + federationId
 			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 
-			$qbeViewer.openQbeInterfaceFromModel($scope,url);
-
-//			$window.location.href=url;
+			$scope.selectedModel = federation;
+			$qbeViewer.openQbeInterfaceFromModel($scope,url,federation);
 
 		}
 
