@@ -56,7 +56,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 	private static final String LOG_SUFFIX = ".log";
 
 	@Override
-	public MetaModel loadMetaModelForExecutionByNameAndRole(String name, String role) {
+	public MetaModel loadMetaModelForExecutionByNameAndRole(String name, String role, Boolean loadDSwithDrivers) {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -98,7 +98,10 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				// *******************
 				// *****************************************************************
 
-				aParameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(tmpBIMetaModelParameter.getParID(), role);
+				aParameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(tmpBIMetaModelParameter.getParID(), role, loadDSwithDrivers);
+				if (aParameter.getModalityValue() == null) {
+					return null;
+				}
 				tmpBIMetaModelParameter.setParID(aParameter.getId());
 				tmpBIMetaModelParameter.setParameter(aParameter);
 				metaModelParameters.add(tmpBIMetaModelParameter);
@@ -165,7 +168,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				// *******************
 				// *****************************************************************
 
-				aParameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(tmpBIMetaModelParameter.getParID(), role);
+				aParameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(tmpBIMetaModelParameter.getParID(), role, false);
 				tmpBIMetaModelParameter.setParID(aParameter.getId());
 				tmpBIMetaModelParameter.setParameter(aParameter);
 				metamodelParameters.add(tmpBIMetaModelParameter);

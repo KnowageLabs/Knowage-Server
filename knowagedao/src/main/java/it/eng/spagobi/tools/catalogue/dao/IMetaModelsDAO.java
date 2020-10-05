@@ -81,6 +81,6 @@ public interface IMetaModelsDAO extends ISpagoBIDao {
 
 	public MetaModel loadMetaModelForDetail(Integer id);
 
-	public MetaModel loadMetaModelForExecutionByNameAndRole(String name, String role);
+	public MetaModel loadMetaModelForExecutionByNameAndRole(String name, String role, Boolean loadDSwithDrivers);
 
 }

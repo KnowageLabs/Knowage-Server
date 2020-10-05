@@ -425,6 +425,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			ArrayList<HashMap<String, Object>> drivers = null;
 			dao.setUserProfile(getUserProfile());
 			dataSourceDAO.setUserProfile(getUserProfile());
+			Boolean loadDSwithDrivers = true;
 
 			Integer page = getNumberOrNull(pageStr);
 			Integer item_per_page = getNumberOrNull(itemPerPageStr);
@@ -441,6 +442,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			JSONObject jo = new JSONObject();
 			JSONArray ja = new JSONArray();
+
 			for (SbiDataSet ds : dataset) {
 				IDataSet dataSet = DataSetFactory.toDataSet(ds, getUserProfile());
 				JSONObject jsonIDataSet = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
@@ -455,18 +457,28 @@ public class DataSetResource extends AbstractDataSetResource {
 				if (dataSet instanceof AbstractJDBCDataset) {
 					IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
 					isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+					jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
+
+					ja.put(jsonSbiDataSet);
 				} else if (dataSet instanceof QbeDataSet) {
 					String businessModelName = (String) jsonSbiDataSet.getJSONObject("configuration").get("qbeDatamarts");
-					drivers = getDatasetDriversByModelName(businessModelName);
-					jsonSbiDataSet.put("drivers", drivers);
-					IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
-					isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+					drivers = getDatasetDriversByModelName(businessModelName, loadDSwithDrivers);
+					if (drivers != null) {
+						jsonSbiDataSet.put("drivers", drivers);
+						IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
+						isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+						jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
+
+						ja.put(jsonSbiDataSet);
+					}
+
 				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet.getClass().equals(SolrDataSet.class)) {
 					isNearRealtimeSupported = true;
-				}
-				jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
+					jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
 
-				ja.put(jsonSbiDataSet);
+					ja.put(jsonSbiDataSet);
+				}
+
 			}
 			jo.put("item", ja);
 			jo.put("itemCount", dao.countSbiDataSet(search, idArray));
@@ -1165,7 +1177,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		return parametersArrayList;
 	}
 
-	public ArrayList<HashMap<String, Object>> getDatasetDriversByModelName(String businessModelName) {
+	public ArrayList<HashMap<String, Object>> getDatasetDriversByModelName(String businessModelName, Boolean loadDSwithDrivers) {
 		ArrayList<HashMap<String, Object>> parametersArrList = new ArrayList<>();
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
@@ -1178,7 +1190,10 @@ public class DataSetResource extends AbstractDataSetResource {
 			logger.debug(e2.getCause(), e2);
 			throw new SpagoBIRuntimeException(e2.getMessage(), e2);
 		}
-		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role);
+		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role, loadDSwithDrivers);
+		if (businessModel == null) {
+			return null;
+		}
 		BusinessModelRuntime dum = new BusinessModelRuntime(this.getUserProfile(), null);
 		parameters = BusinessModelOpenUtils.getParameters(businessModel, role, request.getLocale(), null, true, dum);
 		parametersArrList = transformRuntimeDrivers(parameters, parameterUseDAO, role, businessModel, BMOP);
@@ -1231,7 +1246,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			parametersArrList = getDatasetDriversByModelName(businessModelName);
+			parametersArrList = getDatasetDriversByModelName(businessModelName, false);
 		}
 		return parametersArrList;
 	}

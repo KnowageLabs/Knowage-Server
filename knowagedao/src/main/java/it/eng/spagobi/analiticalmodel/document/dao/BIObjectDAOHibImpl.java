@@ -204,7 +204,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				// *******************
 				// *****************************************************************
 
-				aParameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(tmpBIObjectParameter.getParID(), role);
+				aParameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(tmpBIObjectParameter.getParID(), role, false);
 				tmpBIObjectParameter.setParID(aParameter.getId());
 				tmpBIObjectParameter.setParameter(aParameter);
 				biObjectParameters.add(tmpBIObjectParameter);
@@ -3216,7 +3216,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				// *******************
 				// *****************************************************************
 
-				aParameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(tmpBIObjectParameter.getParID(), role);
+				aParameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(tmpBIObjectParameter.getParID(), role, false);
 				tmpBIObjectParameter.setParID(aParameter.getId());
 				tmpBIObjectParameter.setParameter(aParameter);
 				biObjectParameters.add(tmpBIObjectParameter);
@@ -3293,7 +3293,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 		Parameter parameter = new Parameter();
 		try {
-			parameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(docDriver.getParID(), role);
+			parameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(docDriver.getParID(), role, false);
 		} catch (EMFUserError e) {
 			e.printStackTrace();
 		}
