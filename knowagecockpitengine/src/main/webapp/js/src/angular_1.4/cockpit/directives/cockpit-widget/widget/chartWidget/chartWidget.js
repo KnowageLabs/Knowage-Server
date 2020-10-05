@@ -139,7 +139,7 @@ function cockpitChartWidgetControllerFunction(
 		 }
 			
 		for(var z in $scope.model.content.columnSelectedOfDataset){
-			for(var c in $scope.localModel.columnSelectedOfDatasetAggregations){
+			for(var c in $scope.model.content.columnSelectedOfDatasetAggregations){
 				if (($scope.model.content.columnSelectedOfDatasetAggregations[c].name == $scope.model.content.columnSelectedOfDataset[z].name) && $scope.model.content.columnSelectedOfDataset[z].aggregationSelected != $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected) {
 					 $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected = $scope.model.content.columnSelectedOfDataset[z].aggregationSelected;
 				}
