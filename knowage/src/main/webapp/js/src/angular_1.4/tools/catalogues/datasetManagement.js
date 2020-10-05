@@ -3424,6 +3424,21 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.continueToRestExecutionOfPreview();
 	}
 
+	$scope.buildFileDataSetMetaData=function(dataset){
+		var toReturn = [];
+		if (dataset && dataset.meta && dataset.meta.columns) {
+			for (var i=0; i<dataset.meta.columns.length; i++) {
+				var currMeta = dataset.meta.columns[i];
+				var newMeta = {};
+				newMeta['column'] = currMeta.column;
+				newMeta['pname'] = currMeta.pname;
+				newMeta['pvalue'] = currMeta.pvalue;
+				toReturn[i] = newMeta;
+			}
+		}
+		return toReturn;
+	}
+
 	$scope.continueToRestExecutionOfPreview = function() {
 
 		$scope.disableBack = true;
@@ -3459,9 +3474,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
 
 			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="python/r") {
-				//restAddress is set ONLY for debugging purposes
-				//the real python address used by the PythonDataProxy is retrieved BE side
-    			$scope.selectedDataSet.restAddress = "https://" + JSON.parse($scope.selectedDataSet.pythonEnvironment).value + '/dataset';
     			$scope.selectedDataSet.restJsonPathItems = "$[*]";
     			$scope.selectedDataSet.restDirectlyJSONAttributes = true;
     			$scope.selectedDataSet.parameters = true;
@@ -3490,6 +3502,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			      escapeToClose :false
 			    });
 		}
+
+		$scope.selectedDataSet.fileDsMetadata = $scope.buildFileDataSetMetaData($scope.dataset);
 
 		sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(

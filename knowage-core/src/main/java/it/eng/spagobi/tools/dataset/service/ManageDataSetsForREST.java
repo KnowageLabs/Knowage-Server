@@ -89,8 +89,11 @@ import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -437,208 +440,9 @@ public class ManageDataSetsForREST {
 		JSONObject jsonDsConfig = new JSONObject();
 
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-			FileDataSet dataSet = new FileDataSet();
-			String dsId = json.optString(DataSetConstants.ID);
-			String dsLabel = json.getString(DataSetConstants.LABEL);
-			String fileType = json.getString(DataSetConstants.FILE_TYPE);
-			String versionNum = json.getString(DataSetConstants.VERSION_NUM);
-
-			String csvDelimiter = json.optString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER);
-			String csvQuote = json.optString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER);
-			String dateFormat = json.optString(DataSetConstants.FILE_DATE_FORMAT);
-			String timestampFormat = json.optString(DataSetConstants.FILE_TIMESTAMP_FORMAT);
-			String csvEncoding = json.optString(DataSetConstants.CSV_FILE_ENCODING);
-
-			String skipRows = json.optString(DataSetConstants.XSL_FILE_SKIP_ROWS);
-			String limitRows = json.optString(DataSetConstants.XSL_FILE_LIMIT_ROWS);
-			String xslSheetNumber = json.optString(DataSetConstants.XSL_FILE_SHEET_NUMBER);
-
-			String dsLab = dsLabel;
-
-			Boolean newFileUploaded = false;
-			if (json.optString("fileUploaded") != null) {
-				newFileUploaded = Boolean.valueOf(json.optString("fileUploaded"));
-			}
-
-			if (versionNum != "") {
-				dsLab = dsLabel + "_" + versionNum;
-			}
-
-			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, csvEncoding);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
-			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
-			jsonDsConfig.put(DataSetConstants.FILE_TIMESTAMP_FORMAT, timestampFormat);
-
-			dataSet.setResourcePath(DAOConfig.getResourcePath());
-			String fileName = json.getString(DataSetConstants.FILE_NAME);
-			File pathFile = new File(fileName);
-			fileName = pathFile.getName();
-			if (savingDataset) {
-				logger.debug("When saving the dataset the file associated will get the dataset label name");//
-				if (dsLabel != null) {
-					jsonDsConfig.put(DataSetConstants.FILE_NAME, dsLab + "." + fileType.toLowerCase());
-				}
-			} else {
-				jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
-			}
-
-			dataSet.setConfiguration(jsonDsConfig.toString());
-
-			if ((dsId == null) || (dsId.isEmpty())) {
-				logger.debug("By creating a new dataset, the file uploaded has to be renamed and moved");
-				dataSet.setUseTempFile(true);
-				if (savingDataset) {
-					logger.debug("Rename and move the file");
-					String resourcePath = dataSet.getResourcePath();
-					if (dsLabel != null) {
-						renameAndMoveDatasetFile(fileName, dsLab, resourcePath, fileType);
-						dataSet.setUseTempFile(false);
-					}
-				}
-			} else {
-				logger.debug("Reading or modifying a existing dataset. If change the label then the name of the file should be changed");
-
-				JSONObject configuration;
-				Integer id_ds = json.getInt(DataSetConstants.ID);
-				configuration = new JSONObject(DAOFactory.getDataSetDAO().loadDataSetById(id_ds).getConfiguration());
-				String realName = configuration.getString("fileName");
-				if (dsLabel != null && !realName.equals(dsLabel)) {
-
-					File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar
-							+ dsLab + "." + configuration.getString("fileType").toLowerCase());
-					File source = new File(
-							SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + realName);
-
-					if (!source.getCanonicalPath().equals(dest.getCanonicalPath()) && savingDataset && !newFileUploaded) {
-						logger.debug("Source and destination are not the same. Copying from source to dest");
-						FileUtils.copyFile(source, dest);
-					}
-				}
-
-				if (newFileUploaded) {
-					logger.debug("Modifying an existing dataset with a new file uploaded");
-					dataSet.setUseTempFile(true);
-
-					logger.debug("Saving the existing dataset with a new file associated");
-					if (savingDataset) {
-						logger.debug("Rename and move the file");
-						String resourcePath = dataSet.getResourcePath();
-						if (dsLabel != null) {
-							renameAndMoveDatasetFile(fileName, dsLabel + "_" + versionNum, resourcePath, fileType);
-							dataSet.setUseTempFile(false);
-						}
-					}
-
-				} else {
-					logger.debug("Using existing dataset file, file in correct place");
-					dataSet.setUseTempFile(false);
-				}
-			}
-
-			dataSet.setFileType(fileType);
-
-			if (savingDataset) {
-				logger.debug("The file used will have the name equals to dataset's label");
-				dataSet.setFileName(dsLab + "." + fileType.toLowerCase());
-			} else {
-				dataSet.setFileName(fileName);
-			}
-			toReturn = dataSet;
+			toReturn = manageFileDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
-			CkanDataSet dataSet = new CkanDataSet();
-
-			String dsId = json.optString(DataSetConstants.DS_ID);
-			String dsLabel = json.getString(DataSetConstants.LABEL);
-			String fileType = json.getString(CkanDataSetConstants.CKAN_FILE_TYPE);
-
-			String csvDelimiter = json.optString(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
-			String csvQuote = json.optString(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
-			String dateFormat = json.optString(CkanDataSetConstants.CKAN_CSV_DATE_FORMAT);
-
-			String skipRows = json.optString(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
-			String limitRows = json.optString(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
-			String xslSheetNumber = json.optString(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
-
-			String ckanUrl = json.optString(CkanDataSetConstants.CKAN_URL);
-
-			String ckanId = json.optString(CkanDataSetConstants.CKAN_ID);
-			String scopeCd = DataSetConstants.DS_SCOPE_USER;
-
-			String ckanEncodig = json.optString(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING);
-
-			Boolean newFileUploaded = false;
-			if (json.optString("fileUploaded") != null) {
-				newFileUploaded = Boolean.valueOf(json.optString("fileUploaded"));
-			}
-
-			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
-			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, ckanEncodig);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
-			jsonDsConfig.put(CkanDataSetConstants.CKAN_URL, ckanUrl);
-			jsonDsConfig.put(CkanDataSetConstants.CKAN_ID, ckanId);
-			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
-
-			dataSet.setResourcePath(ckanUrl);
-			dataSet.setCkanUrl(ckanUrl);
-
-			String fileName = json.optString("fileName");
-			if (savingDataset) {
-				// when saving the dataset the file associated will get the
-				// dataset label name
-				if (dsLabel != null) {
-					jsonDsConfig.put(DataSetConstants.FILE_NAME, dsLabel + "." + fileType.toLowerCase());
-				}
-			} else {
-				jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
-			}
-
-			dataSet.setConfiguration(jsonDsConfig.toString());
-
-			if ((dsId == null) || (dsId.isEmpty())) {
-				// creating a new dataset, the file uploaded has to be renamed
-				// and moved
-				if (savingDataset) {
-					// delete the file
-					String resourcePath = DAOConfig.getResourcePath();
-					deleteDatasetFile(fileName, resourcePath, fileType);
-				}
-			} else {
-				// reading or modifying a existing dataset
-				if (newFileUploaded) {
-					// modifying an existing dataset with a new file uploaded
-					// saving the existing dataset with a new file associated
-					if (savingDataset) {
-						// rename and move the file
-						String resourcePath = DAOConfig.getResourcePath();
-						deleteDatasetFile(fileName, resourcePath, fileType);
-					}
-				}
-			}
-
-			dataSet.setFileType(fileType);
-
-			if (savingDataset) {
-				// the file used will have the name equals to dataset's label
-				dataSet.setFileName(dsLabel + "." + fileType.toLowerCase());
-			} else {
-				// fileName can be empty if you preview it as administrator
-				if (fileName.isEmpty()) {
-					dataSet.setFileName(CkanDataSetConstants.CKAN_DUMMY_FILENAME + "." + fileType.toLowerCase());
-				} else {
-					dataSet.setFileName(fileName);
-				}
-			}
-			toReturn = dataSet;
+			toReturn = manageCkanDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_REST_TYPE)) {
 			toReturn = manageRESTDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_PYTHON_TYPE)) {
@@ -648,158 +452,19 @@ public class ManageDataSetsForREST {
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SOLR_TYPE)) {
 			toReturn = manageSolrDataSet(savingDataset, jsonDsConfig, json, userProfile);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
-			IDataSet dataSet;
-			String query = json.optString((DataSetConstants.QUERY).toLowerCase());
-			String queryScript = json.optString(DataSetConstants.QUERY_SCRIPT);
-			String queryScriptLanguage = json.optString(DataSetConstants.QUERY_SCRIPT_LANGUAGE);
-			String dataSourceLabel = json.optString(DataSetConstants.DATA_SOURCE);
-			jsonDsConfig.put(DataSetConstants.QUERY, query);
-			jsonDsConfig.put(DataSetConstants.QUERY_SCRIPT, queryScript);
-			jsonDsConfig.put(DataSetConstants.QUERY_SCRIPT_LANGUAGE, queryScriptLanguage);
-			jsonDsConfig.put(DataSetConstants.DATA_SOURCE, dataSourceLabel);
-
-			Assert.assertNotNull(dataSourceLabel, "Impossible to continue if dataSource label is null");
-			Assert.assertTrue(!dataSourceLabel.isEmpty(), "Impossible to continue if dataSource label is empty");
-			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
-			Assert.assertNotNull(dataSource, "A datasource with label " + dataSourceLabel + " could not be found");
-			if (dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
-				dataSet = new MongoDataSet();
-			} else {
-				String checkSqlValidation = SingletonConfig.getInstance().getConfigValue("DATA_SET_SQL_VALIDATION");
-				if (("true").equals(checkSqlValidation)) {
-					boolean isSelect = false;
-					try {
-						if (SqlUtils.isSelectSOrWithStatement(query)) {
-							logger.info("SQL is a SELECT statement.");
-							if (query.toLowerCase().contains(" update ") || query.toLowerCase().contains(" delete ")
-									|| query.toLowerCase().contains(" insert ")) {
-								isSelect = false;
-							} else {
-								isSelect = true;
-							}
-						}
-					} catch (Exception e) {
-						logger.error("SQL is NOT a SELECT statement.");
-						isSelect = false;
-					}
-					if (isSelect) {
-						dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
-					} else {
-						logger.error("SQL is NOT a SELECT statement, or contains keywords like INSERT, UPDATE, DELETE.");
-						throw new SpagoBIServiceException("Manage Dataset", "Provided SQL is NOT a SELECT statement");
-					}
-
-				} else {
-					dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
-				}
-
-			}
-
-			((ConfigurableDataSet) dataSet).setDataSource(dataSource);
-			((ConfigurableDataSet) dataSet).setQuery(query);
-			((ConfigurableDataSet) dataSet).setQueryScript(queryScript);
-			((ConfigurableDataSet) dataSet).setQueryScriptLanguage(queryScriptLanguage);
-
-			toReturn = dataSet;
+			toReturn = manageQueryDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {
-			ScriptDataSet dataSet = new ScriptDataSet();
-			String script = json.optString("script");
-			String scriptLanguage = json.optString(DataSetConstants.SCRIPT_LANGUAGE);
-			jsonDsConfig.put(DataSetConstants.SCRIPT, script);
-			jsonDsConfig.put(DataSetConstants.SCRIPT_LANGUAGE, scriptLanguage);
-			dataSet.setScript(script);
-			dataSet.setScriptLanguage(scriptLanguage);
-			toReturn = dataSet;
+			toReturn = manageScriptDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_JCLASS)) {
-			JavaClassDataSet dataSet = new JavaClassDataSet();
-			String jclassName = json.getString(DataSetConstants.JCLASS_NAME);
-			jsonDsConfig.put(DataSetConstants.JCLASS_NAME, jclassName);
-			dataSet.setClassName(jclassName);
-			toReturn = dataSet;
+			toReturn = manageJavaClassDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_CUSTOM)) {
-			CustomDataSet customDs = new CustomDataSet();
-			String customData = json.getString(DataSetConstants.CUSTOM_DATA);
-			jsonDsConfig.put(DataSetConstants.CUSTOM_DATA, customData);
-			customDs.setCustomData(customData);
-			String javaClassName = json.getString(DataSetConstants.JCLASS_NAME);
-			jsonDsConfig.put(DataSetConstants.JCLASS_NAME, javaClassName);
-			customDs.setJavaClassName(javaClassName);
-			toReturn = customDs.instantiate();
+			toReturn = manageCustomDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QBE)) {
-			QbeDataSet dataSet = new QbeDataSet();
-			String qbeDatamarts = json.optString(DataSetConstants.QBE_DATAMARTS);
-			String dataSourceLabel = json.optString(DataSetConstants.QBE_DATA_SOURCE);
-			String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
-			HashMap<String, Object> driversMap = null;
-			JSONObject driversJSON = json.optJSONObject(DRIVERS);
-			driversMap = JSONObjectDeserializator.getHashMapFromJSONObject(driversJSON);
-
-			jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, qbeDatamarts);
-			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
-			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
-
-			dataSet.setDrivers(DataSetUtilities.getDriversMap(driversJSON));
-			// START -> This code should work instead of CheckQbeDataSets around
-			// the projects
-			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
-			Map parameters = dataSet.getParamsMap();
-			if (parameters == null) {
-				parameters = new HashMap();
-				dataSet.setParamsMap(parameters);
-			}
-			dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
-			logger.debug("Datamart retriever correctly added to Qbe dataset");
-			// END
-			dataSet.setJsonQuery(jsonQuery);
-			dataSet.setDatamarts(qbeDatamarts);
-			if (dataSourceLabel != null && !dataSourceLabel.trim().equals("")) {
-				IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
-				dataSet.setDataSource(dataSource);
-			}
-
-			String sourceDatasetLabel = json.optString(DataSetConstants.SOURCE_DS_LABEL);
-			IDataSet sourceDataset = null;
-			if (sourceDatasetLabel != null && !sourceDatasetLabel.trim().equals("")) {
-				try {
-					sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
-					if (sourceDataset == null) {
-						throw new SpagoBIRuntimeException("Dataset with label [" + sourceDatasetLabel + "] does not exist");
-					}
-					dataSet.setSourceDataset(sourceDataset);
-					dataSet.setDataSource(sourceDataset.getDataSource());
-				} catch (Exception e) {
-					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot retrieve source dataset information", e);
-				}
-			}
-			toReturn = dataSet;
+			toReturn = manageQbeDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FEDERATED)) {
-
-			Integer id = json.getInt(DataSetConstants.ID);
-			Assert.assertNotNull(id, "The federated dataset id is null");
-			IDataSetDAO dao = DAOFactory.getDataSetDAO();
-			dao.setUserProfile(userProfile);
-			IDataSet dataSet = dao.loadDataSetById(id);
-			// if its a federated dataset the datasource are teh ones on cahce
-			SQLDBCache cache = (SQLDBCache) CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
-			dataSet.setDataSourceForReading(cache.getDataSource());
-			dataSet.setDataSourceForWriting(cache.getDataSource());
-			jsonDsConfig = new JSONObject(dataSet.getConfiguration());
-
-			// update the json query getting the one passed from the qbe editor
-			String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
-			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
-			((FederatedDataSet) (((VersionedDataSet) dataSet).getWrappedDataset())).setJsonQuery(jsonQuery);
-			toReturn = dataSet;
+			toReturn = manageFederatedDataSet(savingDataset, jsonDsConfig, json, userProfile);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
-			FlatDataSet dataSet = new FlatDataSet();
-			String tableName = json.optString(DataSetConstants.FLAT_TABLE_NAME);
-			String dataSourceLabel = json.optString(DataSetConstants.DATA_SOURCE_FLAT);
-			jsonDsConfig.put(DataSetConstants.FLAT_TABLE_NAME, tableName);
-			jsonDsConfig.put(DataSetConstants.DATA_SOURCE_FLAT, dataSourceLabel);
-			dataSet.setTableName(tableName);
-			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
-			dataSet.setDataSource(dataSource);
-			toReturn = dataSet;
+			toReturn = manageFlatDataSet(savingDataset, jsonDsConfig, json);
 		} else {
 			throw new SpagoBIRuntimeException("Cannot find a match with dataset type " + datasetTypeName);
 		}
@@ -1264,6 +929,436 @@ public class ManageDataSetsForREST {
 				logger.debug("Dataset File " + fileName + " has been deleted");
 			}
 		}
+	}
+
+	private FlatDataSet manageFlatDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, EMFUserError {
+		FlatDataSet dataSet = new FlatDataSet();
+		String tableName = json.optString(DataSetConstants.FLAT_TABLE_NAME);
+		String dataSourceLabel = json.optString(DataSetConstants.DATA_SOURCE_FLAT);
+		jsonDsConfig.put(DataSetConstants.FLAT_TABLE_NAME, tableName);
+		jsonDsConfig.put(DataSetConstants.DATA_SOURCE_FLAT, dataSourceLabel);
+		dataSet.setTableName(tableName);
+		IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+		dataSet.setDataSource(dataSource);
+		return dataSet;
+	}
+
+	private QbeDataSet manageQbeDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, EMFUserError, IOException {
+		QbeDataSet dataSet = new QbeDataSet();
+		String qbeDatamarts = json.optString(DataSetConstants.QBE_DATAMARTS);
+		String dataSourceLabel = json.optString(DataSetConstants.QBE_DATA_SOURCE);
+		String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
+		HashMap<String, Object> driversMap = null;
+		JSONObject driversJSON = json.optJSONObject(DRIVERS);
+		driversMap = JSONObjectDeserializator.getHashMapFromJSONObject(driversJSON);
+
+		jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, qbeDatamarts);
+		jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
+		jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
+
+		dataSet.setDrivers(DataSetUtilities.getDriversMap(driversJSON));
+		// START -> This code should work instead of CheckQbeDataSets around
+		// the projects
+		SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+		Map parameters = dataSet.getParamsMap();
+		if (parameters == null) {
+			parameters = new HashMap();
+			dataSet.setParamsMap(parameters);
+		}
+		dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+		logger.debug("Datamart retriever correctly added to Qbe dataset");
+		// END
+		dataSet.setJsonQuery(jsonQuery);
+		dataSet.setDatamarts(qbeDatamarts);
+		if (dataSourceLabel != null && !dataSourceLabel.trim().equals("")) {
+			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+			dataSet.setDataSource(dataSource);
+		}
+
+		String sourceDatasetLabel = json.optString(DataSetConstants.SOURCE_DS_LABEL);
+		IDataSet sourceDataset = null;
+		if (sourceDatasetLabel != null && !sourceDatasetLabel.trim().equals("")) {
+			try {
+				sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
+				if (sourceDataset == null) {
+					throw new SpagoBIRuntimeException("Dataset with label [" + sourceDatasetLabel + "] does not exist");
+				}
+				dataSet.setSourceDataset(sourceDataset);
+				dataSet.setDataSource(sourceDataset.getDataSource());
+			} catch (Exception e) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot retrieve source dataset information", e);
+			}
+		}
+		return dataSet;
+	}
+
+	private IDataSet manageCustomDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException {
+		CustomDataSet customDs = new CustomDataSet();
+		String customData = json.getString(DataSetConstants.CUSTOM_DATA);
+		jsonDsConfig.put(DataSetConstants.CUSTOM_DATA, customData);
+		customDs.setCustomData(customData);
+		String javaClassName = json.getString(DataSetConstants.JCLASS_NAME);
+		jsonDsConfig.put(DataSetConstants.JCLASS_NAME, javaClassName);
+		customDs.setJavaClassName(javaClassName);
+		return customDs.instantiate();
+	}
+
+	private IDataSet manageFederatedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json, UserProfile userProfile) throws Exception {
+		Integer id = json.getInt(DataSetConstants.ID);
+		Assert.assertNotNull(id, "The federated dataset id is null");
+		IDataSetDAO dao = DAOFactory.getDataSetDAO();
+		dao.setUserProfile(userProfile);
+		IDataSet dataSet = dao.loadDataSetById(id);
+		// if its a federated dataset the datasource are teh ones on cahce
+		SQLDBCache cache = (SQLDBCache) CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
+		dataSet.setDataSourceForReading(cache.getDataSource());
+		dataSet.setDataSourceForWriting(cache.getDataSource());
+		jsonDsConfig = new JSONObject(dataSet.getConfiguration());
+
+		// update the json query getting the one passed from the qbe editor
+		String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
+		jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
+		((FederatedDataSet) (((VersionedDataSet) dataSet).getWrappedDataset())).setJsonQuery(jsonQuery);
+		return dataSet;
+	}
+
+	private JavaClassDataSet manageJavaClassDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException {
+		JavaClassDataSet dataSet = new JavaClassDataSet();
+		String jclassName = json.getString(DataSetConstants.JCLASS_NAME);
+		jsonDsConfig.put(DataSetConstants.JCLASS_NAME, jclassName);
+		dataSet.setClassName(jclassName);
+		return dataSet;
+	}
+
+	private ScriptDataSet manageScriptDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException {
+		ScriptDataSet dataSet = new ScriptDataSet();
+		String script = json.optString("script");
+		String scriptLanguage = json.optString(DataSetConstants.SCRIPT_LANGUAGE);
+		jsonDsConfig.put(DataSetConstants.SCRIPT, script);
+		jsonDsConfig.put(DataSetConstants.SCRIPT_LANGUAGE, scriptLanguage);
+		dataSet.setScript(script);
+		dataSet.setScriptLanguage(scriptLanguage);
+		return dataSet;
+	}
+
+	private IDataSet manageQueryDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, EMFUserError {
+		IDataSet dataSet;
+		String query = json.optString((DataSetConstants.QUERY).toLowerCase());
+		String queryScript = json.optString(DataSetConstants.QUERY_SCRIPT);
+		String queryScriptLanguage = json.optString(DataSetConstants.QUERY_SCRIPT_LANGUAGE);
+		String dataSourceLabel = json.optString(DataSetConstants.DATA_SOURCE);
+		jsonDsConfig.put(DataSetConstants.QUERY, query);
+		jsonDsConfig.put(DataSetConstants.QUERY_SCRIPT, queryScript);
+		jsonDsConfig.put(DataSetConstants.QUERY_SCRIPT_LANGUAGE, queryScriptLanguage);
+		jsonDsConfig.put(DataSetConstants.DATA_SOURCE, dataSourceLabel);
+
+		Assert.assertNotNull(dataSourceLabel, "Impossible to continue if dataSource label is null");
+		Assert.assertTrue(!dataSourceLabel.isEmpty(), "Impossible to continue if dataSource label is empty");
+		IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+		Assert.assertNotNull(dataSource, "A datasource with label " + dataSourceLabel + " could not be found");
+		if (dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
+			dataSet = new MongoDataSet();
+		} else {
+			String checkSqlValidation = SingletonConfig.getInstance().getConfigValue("DATA_SET_SQL_VALIDATION");
+			if (("true").equals(checkSqlValidation)) {
+				boolean isSelect = false;
+				try {
+					if (SqlUtils.isSelectSOrWithStatement(query)) {
+						logger.info("SQL is a SELECT statement.");
+						if (query.toLowerCase().contains(" update ") || query.toLowerCase().contains(" delete ") || query.toLowerCase().contains(" insert ")) {
+							isSelect = false;
+						} else {
+							isSelect = true;
+						}
+					}
+				} catch (Exception e) {
+					logger.error("SQL is NOT a SELECT statement.");
+					isSelect = false;
+				}
+				if (isSelect) {
+					dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
+				} else {
+					logger.error("SQL is NOT a SELECT statement, or contains keywords like INSERT, UPDATE, DELETE.");
+					throw new SpagoBIServiceException("Manage Dataset", "Provided SQL is NOT a SELECT statement");
+				}
+
+			} else {
+				dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
+			}
+
+		}
+
+		((ConfigurableDataSet) dataSet).setDataSource(dataSource);
+		((ConfigurableDataSet) dataSet).setQuery(query);
+		((ConfigurableDataSet) dataSet).setQueryScript(queryScript);
+		((ConfigurableDataSet) dataSet).setQueryScriptLanguage(queryScriptLanguage);
+
+		return dataSet;
+	}
+
+	private CkanDataSet manageCkanDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException {
+		CkanDataSet dataSet = new CkanDataSet();
+
+		String dsId = json.optString(DataSetConstants.DS_ID);
+		String dsLabel = json.getString(DataSetConstants.LABEL);
+		String fileType = json.getString(CkanDataSetConstants.CKAN_FILE_TYPE);
+
+		String csvDelimiter = json.optString(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
+		String csvQuote = json.optString(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
+		String dateFormat = json.optString(CkanDataSetConstants.CKAN_CSV_DATE_FORMAT);
+
+		String skipRows = json.optString(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
+		String limitRows = json.optString(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
+		String xslSheetNumber = json.optString(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
+
+		String ckanUrl = json.optString(CkanDataSetConstants.CKAN_URL);
+
+		String ckanId = json.optString(CkanDataSetConstants.CKAN_ID);
+		String scopeCd = DataSetConstants.DS_SCOPE_USER;
+
+		String ckanEncodig = json.optString(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING);
+
+		Boolean newFileUploaded = false;
+		if (json.optString("fileUploaded") != null) {
+			newFileUploaded = Boolean.valueOf(json.optString("fileUploaded"));
+		}
+
+		jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
+		jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
+		jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
+		jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
+		jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, ckanEncodig);
+		jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
+		jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
+		jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
+		jsonDsConfig.put(CkanDataSetConstants.CKAN_URL, ckanUrl);
+		jsonDsConfig.put(CkanDataSetConstants.CKAN_ID, ckanId);
+		jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
+
+		dataSet.setResourcePath(ckanUrl);
+		dataSet.setCkanUrl(ckanUrl);
+
+		String fileName = json.optString("fileName");
+		if (savingDataset) {
+			// when saving the dataset the file associated will get the
+			// dataset label name
+			if (dsLabel != null) {
+				jsonDsConfig.put(DataSetConstants.FILE_NAME, dsLabel + "." + fileType.toLowerCase());
+			}
+		} else {
+			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
+		}
+
+		dataSet.setConfiguration(jsonDsConfig.toString());
+
+		if ((dsId == null) || (dsId.isEmpty())) {
+			// creating a new dataset, the file uploaded has to be renamed
+			// and moved
+			if (savingDataset) {
+				// delete the file
+				String resourcePath = DAOConfig.getResourcePath();
+				deleteDatasetFile(fileName, resourcePath, fileType);
+			}
+		} else {
+			// reading or modifying a existing dataset
+			if (newFileUploaded) {
+				// modifying an existing dataset with a new file uploaded
+				// saving the existing dataset with a new file associated
+				if (savingDataset) {
+					// rename and move the file
+					String resourcePath = DAOConfig.getResourcePath();
+					deleteDatasetFile(fileName, resourcePath, fileType);
+				}
+			}
+		}
+
+		dataSet.setFileType(fileType);
+
+		if (savingDataset) {
+			// the file used will have the name equals to dataset's label
+			dataSet.setFileName(dsLabel + "." + fileType.toLowerCase());
+		} else {
+			// fileName can be empty if you preview it as administrator
+			if (fileName.isEmpty()) {
+				dataSet.setFileName(CkanDataSetConstants.CKAN_DUMMY_FILENAME + "." + fileType.toLowerCase());
+			} else {
+				dataSet.setFileName(fileName);
+			}
+		}
+		return dataSet;
+	}
+
+	private FileDataSet manageFileDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, IOException {
+		FileDataSet dataSet = new FileDataSet();
+		String dsId = json.optString(DataSetConstants.ID);
+		String dsLabel = json.getString(DataSetConstants.LABEL);
+		String fileType = json.getString(DataSetConstants.FILE_TYPE);
+		String versionNum = json.getString(DataSetConstants.VERSION_NUM);
+
+		String csvDelimiter = json.optString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER);
+		String csvQuote = json.optString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER);
+		String dateFormat = json.optString(DataSetConstants.FILE_DATE_FORMAT);
+		String timestampFormat = json.optString(DataSetConstants.FILE_TIMESTAMP_FORMAT);
+		String csvEncoding = json.optString(DataSetConstants.CSV_FILE_ENCODING);
+
+		String skipRows = json.optString(DataSetConstants.XSL_FILE_SKIP_ROWS);
+		String limitRows = json.optString(DataSetConstants.XSL_FILE_LIMIT_ROWS);
+		String xslSheetNumber = json.optString(DataSetConstants.XSL_FILE_SHEET_NUMBER);
+
+		JSONArray dsMeta = json.optJSONArray(DataSetConstants.FILE_DS_METADATA);
+		if (dsMeta != null && dsMeta.length() > 0) {
+			DatasetMetadataParser dsp = new DatasetMetadataParser();
+			String metadataXML = dsp.metadataToXML(getUserMetaData(dsMeta));
+			dataSet.setDsMetadata(metadataXML);
+		}
+
+		String dsLab = dsLabel;
+
+		Boolean newFileUploaded = false;
+		if (json.optString("fileUploaded") != null) {
+			newFileUploaded = Boolean.valueOf(json.optString("fileUploaded"));
+		}
+
+		if (versionNum != "") {
+			dsLab = dsLabel + "_" + versionNum;
+		}
+
+		jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
+		jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
+		jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
+		jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, csvEncoding);
+		jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
+		jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
+		jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
+		jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
+		jsonDsConfig.put(DataSetConstants.FILE_TIMESTAMP_FORMAT, timestampFormat);
+
+		dataSet.setResourcePath(DAOConfig.getResourcePath());
+		String fileName = json.getString(DataSetConstants.FILE_NAME);
+		File pathFile = new File(fileName);
+		fileName = pathFile.getName();
+		if (savingDataset) {
+			logger.debug("When saving the dataset the file associated will get the dataset label name");//
+			if (dsLabel != null) {
+				jsonDsConfig.put(DataSetConstants.FILE_NAME, dsLab + "." + fileType.toLowerCase());
+			}
+		} else {
+			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
+		}
+
+		dataSet.setConfiguration(jsonDsConfig.toString());
+
+		if ((dsId == null) || (dsId.isEmpty())) {
+			logger.debug("By creating a new dataset, the file uploaded has to be renamed and moved");
+			dataSet.setUseTempFile(true);
+			if (savingDataset) {
+				logger.debug("Rename and move the file");
+				String resourcePath = dataSet.getResourcePath();
+				if (dsLabel != null) {
+					renameAndMoveDatasetFile(fileName, dsLab, resourcePath, fileType);
+					dataSet.setUseTempFile(false);
+				}
+			}
+		} else {
+			logger.debug("Reading or modifying a existing dataset. If change the label then the name of the file should be changed");
+
+			JSONObject configuration;
+			Integer id_ds = json.getInt(DataSetConstants.ID);
+			configuration = new JSONObject(DAOFactory.getDataSetDAO().loadDataSetById(id_ds).getConfiguration());
+			String realName = configuration.getString("fileName");
+			if (dsLabel != null && !realName.equals(dsLabel)) {
+
+				File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar
+						+ dsLab + "." + configuration.getString("fileType").toLowerCase());
+				File source = new File(
+						SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + realName);
+
+				if (!source.getCanonicalPath().equals(dest.getCanonicalPath()) && savingDataset && !newFileUploaded) {
+					logger.debug("Source and destination are not the same. Copying from source to dest");
+					FileUtils.copyFile(source, dest);
+				}
+			}
+
+			if (newFileUploaded) {
+				logger.debug("Modifying an existing dataset with a new file uploaded");
+				dataSet.setUseTempFile(true);
+
+				logger.debug("Saving the existing dataset with a new file associated");
+				if (savingDataset) {
+					logger.debug("Rename and move the file");
+					String resourcePath = dataSet.getResourcePath();
+					if (dsLabel != null) {
+						renameAndMoveDatasetFile(fileName, dsLabel + "_" + versionNum, resourcePath, fileType);
+						dataSet.setUseTempFile(false);
+					}
+				}
+
+			} else {
+				logger.debug("Using existing dataset file, file in correct place");
+				dataSet.setUseTempFile(false);
+			}
+		}
+
+		dataSet.setFileType(fileType);
+
+		if (savingDataset) {
+			logger.debug("The file used will have the name equals to dataset's label");
+			dataSet.setFileName(dsLab + "." + fileType.toLowerCase());
+		} else {
+			dataSet.setFileName(fileName);
+		}
+		return dataSet;
+	}
+
+	private IMetaData getUserMetaData(JSONArray dsMeta) throws JSONException {
+		MetaData toReturn = new MetaData();
+		toReturn.setFieldsMeta(getFieldsMeta(dsMeta));
+		return toReturn;
+	}
+
+	private List<IFieldMetaData> getFieldsMeta(JSONArray dsMeta) throws JSONException {
+		List<IFieldMetaData> toReturn = new ArrayList<IFieldMetaData>();
+		for (int i = 0; i < dsMeta.length() - 1; i = i + 2) {
+			JSONObject currMetaType = dsMeta.getJSONObject(i);
+			JSONObject currMetaFieldType = dsMeta.getJSONObject(i + 1);
+			IFieldMetaData m = new FieldMetadata();
+			m.setName(currMetaType.getString("column"));
+			m.setAlias(null);
+			m.setType(getClassTypeFromColumn(currMetaType.getString("pvalue")));
+			m.setProperties(new HashMap<>());
+			m.setFieldType(getFieldTypeFromColumn(currMetaFieldType.getString("pvalue")));
+			m.setMultiValue(false);
+			toReturn.add(m);
+		}
+		return toReturn;
+	}
+
+	private Class getClassTypeFromColumn(String columnClass) {
+		if (columnClass.equalsIgnoreCase("String"))
+			return java.lang.String.class;
+		else if (columnClass.equalsIgnoreCase("Long"))
+			return java.lang.Long.class;
+		else if (columnClass.equalsIgnoreCase("Integer"))
+			return java.math.BigDecimal.class;
+		else if (columnClass.equalsIgnoreCase("Double"))
+			return java.lang.Double.class;
+		else if (columnClass.equalsIgnoreCase("Date"))
+			return java.sql.Date.class;
+		else if (columnClass.equalsIgnoreCase("Timestamp"))
+			return java.sql.Timestamp.class;
+		else
+			throw new SpagoBIRuntimeException("Couldn't map class <" + columnClass + ">");
+	}
+
+	private FieldType getFieldTypeFromColumn(String fieldType) {
+		if (fieldType.equalsIgnoreCase("ATTRIBUTE"))
+			return FieldType.ATTRIBUTE;
+		else if (fieldType.equalsIgnoreCase("MEASURE"))
+			return FieldType.MEASURE;
+		else if (fieldType.equalsIgnoreCase("SPATIAL_ATTRIBUTE"))
+			return FieldType.SPATIAL_ATTRIBUTE;
+		else
+			throw new SpagoBIRuntimeException("Couldn't map field type <" + fieldType + ">");
 	}
 
 	private RESTDataSet manageRESTDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {

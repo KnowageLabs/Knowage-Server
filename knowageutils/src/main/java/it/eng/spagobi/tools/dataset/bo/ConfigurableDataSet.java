@@ -28,6 +28,7 @@ import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
+import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetCsvDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -64,8 +65,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 	/**
 	 * utility method used to clean different parameters values that should be null
 	 *
-	 * @param params
-	 *            parameters map
+	 * @param params parameters map
 	 * @return cleaned params map
 	 */
 	private Map cleanNullParametersValues(Map params) {
@@ -137,6 +137,14 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 			}
 
 			dataProxy.setCalculateResultNumberOnLoad(this.isCalculateResultNumberOnLoadEnabled());
+
+			try {
+				// in file dataset metadata can be set by users
+				if (dataReader instanceof FileDatasetCsvDataReader)
+					((FileDatasetCsvDataReader) dataReader).setMetaData(this.getMetadata());
+			} catch (Exception e) {
+				// Yes, it's mute
+			}
 
 			dataStore = dataProxy.load(dataReader);
 
@@ -242,7 +250,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 			sb.append(querableBehaviour.getStatement());
 			sb.append("_");
 		}
-		if(getDataSource() != null &&  getDataSource().checkIsJndi() && getDataSource().checkIsMultiSchema()) {
+		if (getDataSource() != null && getDataSource().checkIsJndi() && getDataSource().checkIsMultiSchema()) {
 			sb.append(getDataSource().getJNDIRunTime(getUserProfile()));
 			sb.append("_");
 		}

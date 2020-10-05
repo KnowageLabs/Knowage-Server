@@ -45,6 +45,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -66,6 +67,7 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 	private String csvEncoding;
 	private String dateFormat;
 	private String timestampFormat;
+	private IMetaData metaData;
 
 	public FileDatasetCsvDataReader(JSONObject jsonConf) {
 		super();
@@ -142,7 +144,6 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 		MetaData dataStoreMeta;
 		dataStore = new DataStore();
 		dataStoreMeta = new MetaData();
-		dataStore.setMetaData(dataStoreMeta);
 		int maxResults = this.getMaxResults();
 		boolean checkMaxResults = false;
 		if ((maxResults > 0)) {
@@ -166,12 +167,17 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 
 			int columnsNumber = mapReader.length();
 
-			// Create Datastore Metadata with header file
-			for (int i = 0; i < header.length; i++) {
-				FieldMetadata fieldMeta = new FieldMetadata();
-				String fieldName = StringUtils.escapeForSQLColumnName(header[i]);
-				fieldMeta.setName(fieldName);
-				dataStoreMeta.addFiedMeta(fieldMeta);
+			if (metaData != null)
+				dataStore.setMetaData(metaData);
+			else {
+				// Create Datastore Metadata with header file
+				for (int i = 0; i < header.length; i++) {
+					FieldMetadata fieldMeta = new FieldMetadata();
+					String fieldName = StringUtils.escapeForSQLColumnName(header[i]);
+					fieldMeta.setName(fieldName);
+					dataStoreMeta.addFiedMeta(fieldMeta);
+				}
+				dataStore.setMetaData(dataStoreMeta);
 			}
 
 			final CellProcessor[] processors = new CellProcessor[columnsNumber];
@@ -298,6 +304,14 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 	@Override
 	public boolean isMaxResultsSupported() {
 		return true;
+	}
+
+	public IMetaData getMetaData() {
+		return metaData;
+	}
+
+	public void setMetaData(IMetaData metaData) {
+		this.metaData = metaData;
 	}
 
 }

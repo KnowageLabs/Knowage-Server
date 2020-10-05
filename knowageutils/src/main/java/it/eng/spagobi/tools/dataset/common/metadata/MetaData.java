@@ -17,9 +17,13 @@
  */
 package it.eng.spagobi.tools.dataset.common.metadata;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -219,6 +223,10 @@ public class MetaData implements IMetaData, Cloneable {
 		for (FieldMetadata fm : fieldsMeta) {
 			this.getFieldsMeta().add(fm);
 		}
+	}
+
+	public void setFieldsMeta(List<IFieldMetaData> fieldsMeta) {
+		this.fieldsMeta = fieldsMeta;
 	}
 
 	@Override
