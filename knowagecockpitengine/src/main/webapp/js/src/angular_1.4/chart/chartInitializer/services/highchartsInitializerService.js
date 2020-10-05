@@ -178,7 +178,7 @@ angular.module('chartInitializer')
 			}
 			chartConfMergeService.addProperty(renderObj.chartTemplate.advanced,chartConf);
 
-			if(chartConf.chart.additionalData.orderColumnDataValues) {
+			if(chartConf.chart.additionalData && chartConf.chart.additionalData.orderColumnDataValues) {
 				var orderColumnValues = JSON.parse(chartConf.chart.additionalData.orderColumnDataValues);
 				var orderKeys = Object.keys(orderColumnValues);
 				for(var i = 0; i < chartConf.series.length; i++) {
@@ -189,7 +189,7 @@ angular.module('chartInitializer')
 					}
 				}
 			}
-
+            if(renderObj.chartTemplate.VALUES.CATEGORY) {
 			var groupBy = renderObj.chartTemplate.VALUES.CATEGORY.groupby;
 			var drillOrder = renderObj.chartTemplate.VALUES.CATEGORY.drillOrder;
 			if(renderObj.chartTemplate.groupSeriesCateg && drillOrder && drillOrder[groupBy] && drillOrder[groupBy].orderColumn) {
@@ -202,7 +202,7 @@ angular.module('chartInitializer')
 					else sortDesc(chartConf.series, 'orderValue');
 				}
 			}
-
+            }
 
 			this.chart =  new Highcharts.Chart(chartConf);
 			if(isBasic){
