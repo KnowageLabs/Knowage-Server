@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -38,6 +39,8 @@ import it.eng.spagobi.utilities.engines.IEngineInstance;
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
 public abstract class AbstractRestService {
+
+	private static final Logger LOGGER = Logger.getLogger(AbstractRestService.class);
 
 	public ExecutionSession es;
 
@@ -97,7 +100,13 @@ public abstract class AbstractRestService {
 	}
 
 	public Locale getLocale() {
-		return (Locale) getEnv().get(EngineConstants.ENV_LOCALE);
+		Locale locale = Locale.getDefault();
+		try {
+			locale = (Locale) getEnv().get(EngineConstants.ENV_LOCALE);
+		} catch (NullPointerException e) {
+			LOGGER.warn("Locale not set: is the engine instance into session?");
+		}
+		return locale;
 	}
 
 	public Locale buildLocaleFromSession() {
