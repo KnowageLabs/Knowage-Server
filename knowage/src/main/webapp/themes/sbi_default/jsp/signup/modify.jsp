@@ -166,7 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  $scope.newUser.address = '<%=location%>';	  
 	  //$scope.newUser.biography = '<%=short_bio%>';	  
 	  $scope.activeSignup= <%=activeSignup%>;
-	  $scope.emailFormat = /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/;
+	  $scope.emailFormat = /^[a-zA-Z0-9.!#$%&*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/;
 	  $scope.$watch("newUser.confirmPassword", function(newValue, oldValue) {
 		    if (newValue == $scope.newUser.password) {
 		    	$scope.signUpForm.confirmPassword.$setValidity('correct',true) ;
