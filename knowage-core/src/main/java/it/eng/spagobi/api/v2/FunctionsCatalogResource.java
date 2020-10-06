@@ -43,12 +43,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
@@ -1335,12 +1335,11 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	}
 
 	private String getForwardingUrl(HttpServletRequest request) {
-		String knowageContext = GeneralUtilities.getSpagoBiContext();
+		String knowageContext = KnowageSystemConfiguration.getKnowageContext();
 		String resourceUri = request.getRequestURI().replaceFirst(knowageContext, knowageContext + DATA_MINING_ENGINE_SUFFIX);
 		String queryParams = request.getQueryString();
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(GeneralUtilities.getSpagoBiHost());
 		sb.append(resourceUri);
 		if (queryParams != null) {
 			sb.append("?");

@@ -1,0 +1,21 @@
+<div layout-fill class="overlayGray" layout="row" layout-align="center center">
+	<md-dialog aria-label="table configuration" ng-cloak  layout="column" class="width80 calculatedField">
+		<md-toolbar class="_md md-knowage-theme _md-toolbar-transitions">
+	    	<div class="md-toolbar-tools">
+	        	<h2 class="ng-binding">{{::translate.load('sbi.crosstab.catalogfunctionwizard.title')}}</h2>
+	        </div>
+	    </md-toolbar>
+	    
+	    {{allCatalogFunction}}
+	    
+	    <md-dialog-actions layout="row" style="box-shadow:0px -1px 2px #ccc">
+	      	<span flex></span>
+	      	<md-button class="md-raised" ng-click="cancelConfiguration()" >
+	        	{{::translate.load('sbi.generic.cancel')}}
+	      	</md-button>
+	      	<md-button class="md-raised md-primary" ng-click="saveColumnConfiguration()"  >
+	        	{{::translate.load('sbi.generic.save')}}
+	    	</md-button>
+		</md-dialog-actions>
+	</md-dialog>
+</div>
