@@ -493,11 +493,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					})
 				}
 				if(dataset.drivers) {
-					for(var i = 0; i < dataset.drivers.length; i++) {
+					for(var k = 0; k < dataset.drivers.length; k++) {
 						for(var j = 0; j < dsIl.drivers.length; j++) {
-							if(dataset.drivers[i].id == dsIl.drivers[j].id) {
-								dsIl.drivers[j].parameterValue = dataset.drivers[i].parameterValue;
-								dsIl.drivers[j].parameterDescription = dataset.drivers[i].parameterDescription;
+							if(dataset.drivers[k].id == dsIl.drivers[j].id) {
+								dsIl.drivers[j].parameterValue = dataset.drivers[k].parameterValue;
+								dsIl.drivers[j].parameterDescription = dataset.drivers[k].parameterDescription;
 							}
 						}
 					}
@@ -818,18 +818,21 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			for(var i = 0; i < dataset.drivers.length; i++) {
 				var urlName = dataset.drivers[i].urlName;
 				var driverValue = null;
-				if(cockpitModule_analyticalDrivers[urlName].includes("{")) {
-					driverValue = this.formatDriverValueForExecution(cockpitModule_analyticalDrivers[urlName]);
-				} else {
-					driverValue = cockpitModule_analyticalDrivers[urlName];
+				if(cockpitModule_analyticalDrivers[urlName]) {
+					if(cockpitModule_analyticalDrivers[urlName].includes("{")) {
+						driverValue = this.formatDriverValueForExecution(cockpitModule_analyticalDrivers[urlName]);
+					} else {
+						driverValue = cockpitModule_analyticalDrivers[urlName];
+					}
+					var driverDescription = cockpitModule_analyticalDrivers[urlName+"_description"];
+					dataset.drivers[i].parameterValue = driverValue;
+					dataset.drivers[i].parameterDescription = driverDescription;
 				}
-				var driverDescription = cockpitModule_analyticalDrivers[urlName+"_description"];
-				dataset.drivers[i].parameterValue = driverValue;
-				dataset.drivers[i].parameterDescription = driverDescription;
 			}
 			bodyJSON.drivers = driversExecutionService.prepareDriversForSending(dataset.drivers);
 			this.driversAreSet(dataset.drivers);
 		}
+
 		if(bodyJSON.drivers && this.driverHasValue) {
 			bodyString = bodyString + ",drivers:" + JSON.stringify(bodyJSON.drivers);
 		}
