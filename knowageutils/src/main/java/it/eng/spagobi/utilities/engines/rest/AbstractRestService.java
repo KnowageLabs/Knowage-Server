@@ -103,7 +103,7 @@ public abstract class AbstractRestService {
 		Locale locale = Locale.getDefault();
 		try {
 			locale = (Locale) getEnv().get(EngineConstants.ENV_LOCALE);
-		} catch (NullPointerException e) {
+		} catch (Exception e) {
 			LOGGER.warn("Locale not set: is the engine instance into session?");
 		}
 		return locale;
