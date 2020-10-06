@@ -365,12 +365,10 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	}
 
 	$scope.setAllView = function(){
-		$scope.selectView = false;
 		hierarchyTreeService.setCollapsedForAll($scope.data,true);
 	}
 
 	$scope.setSelectedView = function(){
-		$scope.selectView = true;
     	if ($scope.isSlicer) {
     		$scope.getSlicerTree();
     	} else {
@@ -378,7 +376,13 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
     	}
 	}
 
-
+	$scope.toggleViewMode = function(){
+		if ($scope.selectView) {
+			$scope.setSelectedView();
+		} else {
+			$scope.setAllView();
+		}
+	}
 
 	checkIfExists = function(data){
 		var exist = false;
@@ -543,6 +547,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 	$scope.filterDialogSave = function(){
 		if($scope.activeaxis == -1){
+
 			if($scope.olapMode){
 				$scope.FiltersService.setSlicers(filterFather,[$scope.filterSelected[$scope.filterAxisPosition]])
 			}else{
