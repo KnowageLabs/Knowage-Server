@@ -1010,9 +1010,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(!filterElement.dataset || !filterElement.dataset.dsId){
 					filterElement.dataset = {"label":datasetLabel, "dsId":dataset.id.dsId};
 				}
-
+				
+				var tempDatasetId = dataset.dsId || dataset.id.dsId;
 				// if filter.dataset is defined check dataset is current one
-				if(filterElement.dataset != undefined && filterElement.dataset.dsId == dataset.id.dsId){
+				if(filterElement.dataset != undefined && filterElement.dataset.dsId === tempDatasetId){
 
 					var colName=filterElement.colName;
 					var type=filterElement.type;
