@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.api;
+package it.eng.spagobi.api.v2;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -43,25 +43,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
-import it.eng.spagobi.functions.metadata.SbiFunctionInputDataset;
-import it.eng.spagobi.functions.metadata.SbiFunctionInputFile;
+import it.eng.spagobi.functions.metadata.SbiFunctionInputColumn;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputVariable;
-import it.eng.spagobi.functions.metadata.SbiFunctionOutput;
+import it.eng.spagobi.functions.metadata.SbiFunctionOutputColumn;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.CatalogFunction;
-import it.eng.spagobi.utilities.CatalogFunctionInputFile;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -69,7 +65,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
-@Path("/1.0/functions-catalog")
+@Path("/2.0/functions-catalog")
 @ManageAuthorization
 public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
@@ -542,38 +538,40 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 		try {
 			int catalogFunctionId = -1;
-			String url = "";
 			JSONObject jsonObj = new JSONObject(body);
 			String name = jsonObj.getString("name");
 			String description = jsonObj.getString("description");
+			String benchmarks = jsonObj.getString("benchmarks");
 			String language = jsonObj.getString("language");
-			String script = jsonObj.getString("script");
+			String family = jsonObj.getString("functionFamily");
+			String onlineScript = null, offlineScriptTrain = null, offlineScriptUse = null;
+			if (family.equals("online")) {
+				onlineScript = jsonObj.getString("onlineScript");
+			} else {
+				offlineScriptTrain = jsonObj.getString("offlineScriptTrainModel");
+				offlineScriptUse = jsonObj.getString("offlineScriptUseModel");
+			}
 			String owner = (String) getUserProfile().getUserId();
 			String label = jsonObj.getString("label");
 			String type = jsonObj.getString("type");
-			if (jsonObj.has("url")) {
-				url = jsonObj.getString("url");
-			}
-			boolean remote = jsonObj.getBoolean("remote");
 
-			JSONArray jsonInputDatasets = jsonObj.getJSONArray("inputDatasets");
+			JSONArray jsonInputColumns = jsonObj.getJSONArray("inputColumns");
 			JSONArray jsonInputVariables = jsonObj.getJSONArray("inputVariables");
-			JSONArray jsonInputFiles = jsonObj.getJSONArray("inputFiles");
 
 			JSONArray jsonKeywords = jsonObj.getJSONArray("keywords");
 
-			JSONArray outputItems = jsonObj.getJSONArray("outputItems");
+			JSONArray jsonOutputColumns = jsonObj.getJSONArray("outputColumns");
 
 			Map<String, String> inputVariables = new HashMap<String, String>();
-			List<String> inputDatasets = new ArrayList<String>();
-			List<CatalogFunctionInputFile> inputFiles = new ArrayList<CatalogFunctionInputFile>();
+			Map<String, String> inputColumns = new HashMap<String, String>();
+			Map<String, String> outputColumns = new HashMap<String, String>();
 
-			for (int i = 0; i < jsonInputDatasets.length(); i++) {
+			for (int i = 0; i < jsonInputColumns.length(); i++) {
 
-				JSONObject inputItemJSON = jsonInputDatasets.getJSONObject(i);
-
-				String datasetLabel = inputItemJSON.getString("label");
-				inputDatasets.add(datasetLabel);
+				JSONObject inputItemJSON = jsonInputColumns.getJSONObject(i);
+				String colName = inputItemJSON.getString("name");
+				String colType = inputItemJSON.getString("type");
+				inputColumns.put(colName, colType);
 			}
 
 			for (int i = 0; i < jsonInputVariables.length(); i++) {
@@ -584,22 +582,12 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				inputVariables.put(varName, varValue);
 			}
 
-			for (int i = 0; i < jsonInputFiles.length(); i++) {
+			for (int i = 0; i < jsonOutputColumns.length(); i++) {
 
-				JSONObject inputItemJSON = jsonInputFiles.getJSONObject(i);
-				String fileName = inputItemJSON.getString("filename");
-				String alias = inputItemJSON.getString("alias");
-				byte[] content = inputItemJSON.getString("base64").getBytes();
-				inputFiles.add(new CatalogFunctionInputFile(fileName, alias, content));
-			}
-
-			Map<String, String> outputs = new HashMap<String, String>();
-			for (int i = 0; i < outputItems.length(); i++) {
-
-				JSONObject outputItemJSON = outputItems.getJSONObject(i);
-				String outLabel = outputItemJSON.getString("label");
-				String outType = outputItemJSON.getString("type");
-				outputs.put(outLabel, outType);
+				JSONObject outputItemJSON = jsonOutputColumns.getJSONObject(i);
+				String colName = outputItemJSON.getString("name");
+				String colType = outputItemJSON.getString("type");
+				outputColumns.put(colName, colType);
 			}
 
 			List<String> keywordsList = new ArrayList<String>();
@@ -609,17 +597,19 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 			itemToInsert.setName(name);
 			itemToInsert.setDescription(description);
+			itemToInsert.setBenchmarks(benchmarks);
 			itemToInsert.setLanguage(language);
-			itemToInsert.setScript(script);
+			itemToInsert.setFamily(family);
+			itemToInsert.setOnlineScript(onlineScript);
+			itemToInsert.setOfflineScriptTrain(offlineScriptTrain);
+			itemToInsert.setOfflineScriptUse(offlineScriptUse);
 			itemToInsert.setOwner(owner);
 			itemToInsert.setKeywords(keywordsList);
 			itemToInsert.setLabel(label);
 			itemToInsert.setType(type);
-			itemToInsert.setUrl(url);
-			itemToInsert.setRemote(remote);
 
 			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
-			catalogFunctionId = catalogFunctionDAO.insertCatalogFunction(itemToInsert, inputDatasets, inputVariables, outputs, inputFiles);
+			catalogFunctionId = catalogFunctionDAO.insertCatalogFunction(itemToInsert, inputColumns, inputVariables, outputColumns);
 			logger.debug("Catalog function ID equals to [" + catalogFunctionId + "]");
 			response = jsonObj;
 			response.put("id", catalogFunctionId);
@@ -737,31 +727,34 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			JSONObject jsonObj = new JSONObject(body);
 			String name = jsonObj.getString("name");
 			String description = jsonObj.getString("description");
+			String benchmarks = jsonObj.getString("benchmarks");
 			String language = jsonObj.getString("language");
-			String script = jsonObj.getString("script");
+			String family = jsonObj.getString("functionFamily");
+			String onlineScript = null, offlineScriptTrain = null, offlineScriptUse = null;
+			if (family.equals("online")) {
+				onlineScript = jsonObj.getString("onlineScript");
+			} else {
+				offlineScriptTrain = jsonObj.getString("offlineScriptTrainModel");
+				offlineScriptUse = jsonObj.getString("offlineScriptUseModel");
+			}
 			String owner = (String) getUserProfile().getUserId();
 			String label = jsonObj.getString("label");
 			String type = jsonObj.getString("type");
-			String url = "";
-			if (jsonObj.has("url")) {
-				url = jsonObj.getString("url");
-			}
-			boolean remote = jsonObj.getBoolean("remote");
 
-			JSONArray jsonInputDatasets = jsonObj.getJSONArray("inputDatasets");
+			JSONArray jsonInputColumns = jsonObj.getJSONArray("inputColumns");
 			JSONArray jsonInputVariables = jsonObj.getJSONArray("inputVariables");
-			JSONArray jsonInputFiles = jsonObj.getJSONArray("inputFiles");
-			JSONArray outputItems = jsonObj.getJSONArray("outputItems");
+			JSONArray jsonOutputColumns = jsonObj.getJSONArray("outputColumns");
 			JSONArray keywords = jsonObj.getJSONArray("keywords");
 
+			Map<String, String> inputColumns = new HashMap<String, String>();
+			Map<String, String> outputColumns = new HashMap<String, String>();
 			Map<String, String> inputVariables = new HashMap<String, String>();
-			List<String> inputDatasets = new ArrayList<String>();
-			List<CatalogFunctionInputFile> inputFiles = new ArrayList<CatalogFunctionInputFile>();
 
-			for (int i = 0; i < jsonInputDatasets.length(); i++) {
-				JSONObject inputItemJSON = jsonInputDatasets.getJSONObject(i);
-				String datasetLabel = inputItemJSON.getString("label");
-				inputDatasets.add(datasetLabel);
+			for (int i = 0; i < jsonInputColumns.length(); i++) {
+				JSONObject inputColumnJSON = jsonInputColumns.getJSONObject(i);
+				String colName = inputColumnJSON.getString("name");
+				String colType = inputColumnJSON.getString("type");
+				inputColumns.put(colName, colType);
 			}
 
 			for (int i = 0; i < jsonInputVariables.length(); i++) {
@@ -771,28 +764,13 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				inputVariables.put(varName, varValue);
 			}
 
-			for (int i = 0; i < jsonInputFiles.length(); i++) {
-				JSONObject inputItemJSON = jsonInputFiles.getJSONObject(i);
-				CatalogFunctionInputFile inputFile = new CatalogFunctionInputFile();
-				String fileName = inputItemJSON.getString("filename");
-				inputFile.setFileName(fileName);
-				if (inputItemJSON.has("base64")) {
-					byte[] content = inputItemJSON.getString("base64").getBytes();
-					inputFile.setContent(content);
-				}
-				String alias = inputItemJSON.getString("alias");
-				inputFile.setAlias(alias);
-
-				inputFiles.add(inputFile);
+			for (int i = 0; i < jsonOutputColumns.length(); i++) {
+				JSONObject outputColumnJSON = jsonOutputColumns.getJSONObject(i);
+				String colName = outputColumnJSON.getString("name");
+				String colType = outputColumnJSON.getString("type");
+				inputColumns.put(colName, colType);
 			}
 
-			Map<String, String> outputs = new HashMap<String, String>();
-			for (int i = 0; i < outputItems.length(); i++) {
-				JSONObject outputItemJSON = outputItems.getJSONObject(i);
-				String outLabel = outputItemJSON.getString("label");
-				String outType = outputItemJSON.getString("type");
-				outputs.put(outLabel, outType);
-			}
 			List<String> keyList = new ArrayList<String>();
 			for (int i = 0; i < keywords.length(); i++) {
 				String key = keywords.getString(i);
@@ -801,20 +779,18 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 			itemToInsert.setName(name);
 			itemToInsert.setDescription(description);
+			itemToInsert.setBenchmarks(benchmarks);
 			itemToInsert.setLanguage(language);
-			itemToInsert.setScript(script);
+			itemToInsert.setFamily(family);
+			itemToInsert.setOnlineScript(onlineScript);
+			itemToInsert.setOfflineScriptTrain(offlineScriptTrain);
+			itemToInsert.setOfflineScriptUse(offlineScriptUse);
 			itemToInsert.setOwner(owner);
-			itemToInsert.setInputDatasets(inputDatasets);
-			itemToInsert.setOutputs(outputs);
+			itemToInsert.setOutputColumns(outputColumns);
 			itemToInsert.setInputVariables(inputVariables);
 			itemToInsert.setKeywords(keyList);
 			itemToInsert.setLabel(label);
 			itemToInsert.setType(type);
-			if (url != null) {
-				itemToInsert.setUrl(url);
-			}
-			itemToInsert.setRemote(remote);
-			itemToInsert.setInputFiles(inputFiles);
 
 			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
 			catalogFunctionDAO.setUserProfile(getUserProfile());
@@ -823,7 +799,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			if (oldFunction == null) {
 				throw new SpagoBIRuntimeException("no old function in db with Id:" + id);
 			}
-			updateCatalogFunctionFiles(itemToInsert, oldFunction);
 
 			catalogFunctionDAO.updateCatalogFunction(itemToInsert, id);
 
@@ -833,45 +808,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException("Error while update catalog function " + id, e);
 		}
 		return response.toString();
-	}
-
-	private void updateCatalogFunctionFiles(CatalogFunction itemToInsert, SbiCatalogFunction oldFunction) {
-
-		List<CatalogFunctionInputFile> inputFiles = itemToInsert.getInputFiles();
-		boolean findInOldFiles = false;
-		List<CatalogFunctionInputFile> tempFileList = new ArrayList<CatalogFunctionInputFile>();
-
-		for (CatalogFunctionInputFile inputFile : inputFiles) // scorro i nuovi files
-		{
-			CatalogFunctionInputFile tempFile = new CatalogFunctionInputFile();
-			for (Object o : oldFunction.getSbiFunctionInputFiles()) // scorro i vecchi file
-			{
-				SbiFunctionInputFile oldFile = (SbiFunctionInputFile) o;
-				// .. c'è un file con lo stesso filename di un oldFile
-				if (oldFile.getId().getFileName().equals(inputFile.getFileName())) {
-					findInOldFiles = true;
-					tempFile.setFileName(inputFile.getFileName());
-					// se c'è un content nel file da salvare lo metto nel file di appoggio, altrimenti metto quello del vecchio file
-					if (inputFile.getContent() != null) {
-						tempFile.setContent(inputFile.getContent());
-					} else {
-						tempFile.setContent(oldFile.getContent());
-					}
-					// metto l'alias del nuovo file nel file di appoggio
-					tempFile.setAlias(inputFile.getAlias());
-				}
-			}
-			if (findInOldFiles == false) {
-				tempFile = inputFile;
-			}
-			findInOldFiles = false;
-
-			tempFileList.add(tempFile);
-
-		}
-
-		itemToInsert.setInputFiles(tempFileList);
-
 	}
 
 	// @formatter:off
@@ -945,17 +881,19 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			ret.put("id", sbiFunction.getFunctionId());
 			ret.put("name", sbiFunction.getName());
 			ret.put("description", sbiFunction.getDescription());
+			ret.put("benchmarks", sbiFunction.getBenchmarks());
 			ret.put("language", hasPermission ? sbiFunction.getLanguage() : "");
-			ret.put("script", hasPermission ? sbiFunction.getScript() : "");
+			ret.put("family", hasPermission ? sbiFunction.getFamily() : "");
+			ret.put("onlineScript", hasPermission ? sbiFunction.getOnlineScript() : "");
+			ret.put("offlineScriptTrainModel", hasPermission ? sbiFunction.getOfflineScriptTrain() : "");
+			ret.put("offlineScriptUseModel", hasPermission ? sbiFunction.getOfflineScriptUse() : "");
 			ret.put("owner", sbiFunction.getOwner());
 			ret.put("label", sbiFunction.getLabel());
 			ret.put("type", sbiFunction.getType());
-			ret.put("url", hasPermission ? sbiFunction.getUrl() : "");
-			ret.put("remote", sbiFunction.isRemote());
 
 			JSONArray inputVariables = new JSONArray();
-			JSONArray inputDatasets = new JSONArray();
-			JSONArray inputFiles = new JSONArray();
+			JSONArray inputColumns = new JSONArray();
+			JSONArray outputColumns = new JSONArray();
 
 			JSONArray keywords = new JSONArray();
 
@@ -967,40 +905,20 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				inputVariables.put(objToInsert);
 			}
 
-			IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
-			for (Object obj : sbiFunction.getSbiFunctionInputDatasets()) {
+			for (Object obj : sbiFunction.getSbiFunctionInputColumns()) {
 				JSONObject objToInsert = new JSONObject();
-				SbiFunctionInputDataset d = (SbiFunctionInputDataset) obj;
-				inputDatasets.put(objToInsert);
-				String label = null;
-				IDataSet loadedDS = dsDAO.loadDataSetById(d.getId().getDsId());
-				if (loadedDS != null) {
-					label = loadedDS.getLabel();
-				} else {
-					label = "DS not found in DB";
-				}
-				objToInsert.put("label", label);
+				SbiFunctionInputColumn c = (SbiFunctionInputColumn) obj;
+				objToInsert.put("name", c.getId().getColName());
+				objToInsert.put("type", c.getColType());
+				inputColumns.put(objToInsert);
 			}
 
-			for (Object obj : sbiFunction.getSbiFunctionInputFiles()) {
+			for (Object obj : sbiFunction.getSbiFunctionOutputColumns()) {
 				JSONObject objToInsert = new JSONObject();
-				SbiFunctionInputFile f = (SbiFunctionInputFile) obj;
-				objToInsert.put("filename", f.getId().getFileName());
-				objToInsert.put("alias", f.getAlias());
-
-				inputFiles.put(objToInsert);
-			}
-
-			JSONArray outputItems = new JSONArray();
-			IDomainDAO domainDAO = DAOFactory.getDomainDAO();
-			for (Object obj : sbiFunction.getSbiFunctionOutputs()) {
-				JSONObject objToInsert = new JSONObject();
-
-				SbiFunctionOutput o = (SbiFunctionOutput) obj;
-				objToInsert.put("label", o.getId().getLabel());
-				String typeName = domainDAO.loadDomainById(o.getOutType()).getValueName();
-				objToInsert.put("type", typeName);
-				outputItems.put(objToInsert);
+				SbiFunctionOutputColumn c = (SbiFunctionOutputColumn) obj;
+				objToInsert.put("name", c.getId().getColName());
+				objToInsert.put("type", c.getColType());
+				outputColumns.put(objToInsert);
 			}
 
 			String keywordsString = sbiFunction.getKeywords();
@@ -1013,10 +931,8 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 			ret.put("keywords", keywords);
 			ret.put("inputVariables", inputVariables);
-			ret.put("inputDatasets", inputDatasets);
-			ret.put("inputFiles", inputFiles);
-
-			ret.put("outputItems", outputItems);
+			ret.put("inputColumns", inputColumns);
+			ret.put("outputColumns", outputColumns);
 
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Error while insert catalog function", e);
@@ -1419,11 +1335,12 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	}
 
 	private String getForwardingUrl(HttpServletRequest request) {
-		String knowageContext = KnowageSystemConfiguration.getKnowageContext();
+		String knowageContext = GeneralUtilities.getSpagoBiContext();
 		String resourceUri = request.getRequestURI().replaceFirst(knowageContext, knowageContext + DATA_MINING_ENGINE_SUFFIX);
 		String queryParams = request.getQueryString();
 
 		StringBuilder sb = new StringBuilder();
+		sb.append(GeneralUtilities.getSpagoBiHost());
 		sb.append(resourceUri);
 		if (queryParams != null) {
 			sb.append("?");
