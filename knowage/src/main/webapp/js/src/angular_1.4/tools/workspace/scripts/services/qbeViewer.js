@@ -252,19 +252,21 @@ angular
 					driverableObject.drivers = $scope.bmOpen_urlViewPointService.listOfDrivers;
 				}
 				if($scope.drivers) {
+					var driverValuesAreSet = driversExecutionService.driversAreSet($scope.drivers);
+					if($scope.drivers.length > 0 && !driverValuesAreSet) {
+						$scope.showDrivers = true;
+					} else {
+						$scope.showDrivers = false;
+					}
 					driversExecutionService.hasMandatoryDrivers($scope.drivers);
-					$scope.showDrivers = $scope.drivers.length > 0;
 				}
 				$scope.showFilterIcon = driversExecutionService.showFilterIcon;
 			}
 
-
-			$scope.driverableObject.executed = !$scope.showDrivers;
-
 			if($scope.driverableObject.pars && $scope.driverableObject.pars.length > 0){
-					$scope.showDrivers = true
-					$scope.driverableObject.executed = false;
+					$scope.showDrivers = true;
 			}
+			$scope.driverableObject.executed = !$scope.showDrivers;
 
 			var driversObject =  driversExecutionService.prepareDriversForSending($scope.drivers);
 			queryDriverObj.DRIVERS = driversObject;
@@ -272,6 +274,7 @@ angular
 			urlBuilderService.addQueryParams(queryDriverObj);
 			urlBuilderService.addQueryParams(queryParamObj);
 			$scope.documentViewerUrl = urlBuilderService.build();
+
 
 			$scope.toggleDrivers =function(){
 				$scope.showDrivers = !$scope.showDrivers;

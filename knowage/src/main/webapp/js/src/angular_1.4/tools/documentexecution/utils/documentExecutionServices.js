@@ -611,7 +611,104 @@
 		}
 
 
+		serviceScope.prepareDrivers = function(data, buildCorrelation) {
+			//correlation
+			buildCorrelation(execProperties.parametersData.documentParameters, execProperties);
 
+			//setting default value
+			serviceScope.buildObjForFillParameterPanel(data);
+			// Enable visualcorrelation
+			execProperties.initResetFunctionVisualDependency.status=true;
+			execProperties.initResetFunctionDataDependency.status=true;
+			execProperties.initResetFunctionLovDependency.status=true;
+
+			execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
+
+			if (data.isReadyForExecution === true) {
+				serviceScope.executionProcesRestV1(execProperties.selectedRole.name,
+						driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters));
+			} else {
+				serviceScope.frameLoaded = true; // this hides loading mask
+				docExecute_paramRolePanelService.toggleParametersPanel(true);
+			}
+
+			// keep track of start value for reset!
+			if(execProperties.parametersData.documentParameters != undefined){
+				for(var i=0; i<execProperties.parametersData.documentParameters.length; i++){
+					var param = execProperties.parametersData.documentParameters[i];
+
+					// take driverDefaultValue for reset, no more present value
+					if(param.driverDefaultValue){
+						if(param.multivalue == false){
+							if(param.driverDefaultValue.length >= 1){ // single value
+								var valDef = param.driverDefaultValue[0];
+								var valueD = valDef.value;
+								var descriptionD = valDef.description;
+								if(param.selectionType == 'LOOKUP' || param.selectionType == 'TREE'){
+									param.defaultValue = [];
+									param.defaultValue.push(valueD);
+									param.defaultValueDescription = [];
+									param.defaultValueDescription.push(descriptionD);
+								}
+								else{
+									param.defaultValue = valueD;
+									param.defaultValueDescription = descriptionD;
+								}
+
+
+							}
+						}
+						else{
+							param.defaultValue = [];
+							param.defaultValueDescription = [];
+							for(var j = 0; j<param.driverDefaultValue.length;j++){
+								var valDef = param.driverDefaultValue[j];
+								var valueD = valDef.value;
+								var descriptionD = valDef.description;
+								param.defaultValue.push(valueD);
+								param.defaultValueDescription.push(descriptionD);
+							}
+						}
+
+					}
+				}
+
+//				if(param.parameterValue){
+//				{
+//				param.defaultValue = angular.copy(param.parameterValue);
+
+//				if(param.parameterDescription == undefined){
+//				param.defaultValueDescription = angular.copy(param.parameterValue);
+//				}
+//				else{
+//				param.defaultValueDescription = angular.copy(param.parameterDescription);
+
+//				}
+//				}
+//				}
+
+			}
+		}
+
+		serviceScope.formatAdmissibleValue = function(execProperties) {
+			execProperties.hasOneAdmissibleValue = true;
+			var drivers = execProperties.parametersData.documentParameters;
+			for(var i = 0; i < drivers.length; i++) {
+				if(drivers[i].parameterValue && drivers[i].parameterValue.length > 0) {
+					for(var j = 0; j < drivers[i].parameterValue.length; j++) {
+						if(drivers[i].parameterValue[j].value) {
+							drivers[i].parameterValue = drivers[i].parameterValue[j].value;
+						}
+					}
+					if(drivers[i].driverDefaultValue) {
+						execProperties.hasOneAdmissibleValue = false;
+					}
+
+				} else {
+					execProperties.hasOneAdmissibleValue = false;
+				}
+			}
+		}
 
 
 
@@ -648,84 +745,8 @@
 									angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
 
 									sbiModule_i18n.loadI18nMap().then(function() {
-
-										//correlation
-										buildCorrelation(execProperties.parametersData.documentParameters, execProperties);
-
-										//setting default value
-										serviceScope.buildObjForFillParameterPanel(response.data.filterStatus);
-										// Enable visualcorrelation
-										execProperties.initResetFunctionVisualDependency.status=true;
-										execProperties.initResetFunctionDataDependency.status=true;
-										execProperties.initResetFunctionLovDependency.status=true;
-
-										execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
-
-										if (response.data.isReadyForExecution === true) {
-											serviceScope.executionProcesRestV1(execProperties.selectedRole.name,
-													driversExecutionService.buildStringParameters(execProperties.parametersData.documentParameters));
-										} else {
-											serviceScope.frameLoaded = true; // this hides loading mask
-											docExecute_paramRolePanelService.toggleParametersPanel(true);
-										}
-
-										// keep track of start value for reset!
-										if(execProperties.parametersData.documentParameters != undefined){
-											for(var i=0; i<execProperties.parametersData.documentParameters.length; i++){
-												var param = execProperties.parametersData.documentParameters[i];
-
-												// take driverDefaultValue for reset, no more present value
-												if(param.driverDefaultValue){
-													if(param.multivalue == false){
-														if(param.driverDefaultValue.length >= 1){ // single value
-															var valDef = param.driverDefaultValue[0];
-															var valueD = valDef.value;
-															var descriptionD = valDef.description;
-															if(param.selectionType == 'LOOKUP' || param.selectionType == 'TREE'){
-																param.defaultValue = [];
-																param.defaultValue.push(valueD);
-																param.defaultValueDescription = [];
-																param.defaultValueDescription.push(descriptionD);
-															}
-															else{
-																param.defaultValue = valueD;
-																param.defaultValueDescription = descriptionD;
-															}
-
-
-														}
-													}
-													else{
-														param.defaultValue = [];
-														param.defaultValueDescription = [];
-														for(var j = 0; j<param.driverDefaultValue.length;j++){
-															var valDef = param.driverDefaultValue[j];
-															var valueD = valDef.value;
-															var descriptionD = valDef.description;
-															param.defaultValue.push(valueD);
-															param.defaultValueDescription.push(descriptionD);
-														}
-													}
-
-												}
-											}
-
-//											if(param.parameterValue){
-//											{
-//											param.defaultValue = angular.copy(param.parameterValue);
-
-//											if(param.parameterDescription == undefined){
-//											param.defaultValueDescription = angular.copy(param.parameterValue);
-//											}
-//											else{
-//											param.defaultValueDescription = angular.copy(param.parameterDescription);
-
-//											}
-//											}
-//											}
-
-										}
-
+										serviceScope.formatAdmissibleValue(execProperties);
+										serviceScope.prepareDrivers(response.data, buildCorrelation);
 									}); // end of load I 18n
 
 								} else {
@@ -880,7 +901,7 @@
 	documentExecutionModule.service('docExecute_paramRolePanelService', function(execProperties,$mdSidenav,$timeout) {
 
 		this.checkParameterRolePanelDisabled = function() {
-			return ((!execProperties.parametersData.documentParameters || execProperties.parametersData.documentParameters.length == 0)
+			return ((!execProperties.parametersData.documentParameters || execProperties.parametersData.documentParameters.length == 0 || execProperties.hasOneAdmissibleValue)
 					&& (execProperties.roles.length==1));
 		};
 

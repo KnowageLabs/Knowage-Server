@@ -27,6 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
 <%@page import="java.util.Enumeration"%>
 
+<%@page import="it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO"%>
+<%@page import="it.eng.spagobi.tools.dataset.dao.BIObjDataSetDAOHibImpl"%>
+<%@page import="it.eng.spagobi.tools.dataset.bo.BIObjDataSet"%>
+
 <%@ page language="java" pageEncoding="UTF-8" session="true"%>
 
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
@@ -62,8 +66,8 @@ try{
     obj = biObjectDAO.loadBIObjectByLabel(objLabel);
     if(obj == null){
         obj = biObjectDAO.loadBIObjectById(Integer.valueOf(objId));
-    }
-    
+    }    
+
     /*
         This request parameter is sent from the controller of the document execution application (documentViewer.js) and it
         serves as indicator of the previous page, i.e. the starting point of the document execution - from where the execution
@@ -155,6 +159,8 @@ if(executionRoleNames.size() > 0) {
         <script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/driversexecution/driversExecutionModule.js")%>"></script>        
         <script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/driversexecution/driversDependencyService.js")%>"></script>
         <script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/driversexecution/driversExecutionService.js")%>"></script>
+        <script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/driversexecution/datasetDriversService.js")%>"></script>
+        
         <!-- Styles -->
         <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>  
         <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
@@ -522,7 +528,7 @@ if(executionRoleNames.size() > 0) {
                         'TOOLBAR_VISIBLE' : toolbarVisible,
                         'CAN_RESET_PARAMETERS' : canResetParameters,     
                         'SidenavOri': '<%=obj.getParametersRegion() %>',
-                        'IS_FOR_EXPORT' : <%= isForExport %>
+                        'IS_FOR_EXPORT' : <%= isForExport %>,
                         <%
                         if(cockpitSelections != null && !cockpitSelections.equalsIgnoreCase("")) {
                         %>

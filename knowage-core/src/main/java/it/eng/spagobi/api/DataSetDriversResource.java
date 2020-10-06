@@ -86,7 +86,7 @@ public class DataSetDriversResource extends AbstractDataSetResource {
 			logger.debug(e2.getCause(), e2);
 			throw new SpagoBIRuntimeException(e2.getMessage(), e2);
 		}
-		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role);
+		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role, false);
 		BusinessModelOpenParameters BMOP = new BusinessModelOpenParameters();
 		try {
 			// role = this.getUserProfile().getRoles().iterator().next().toString();

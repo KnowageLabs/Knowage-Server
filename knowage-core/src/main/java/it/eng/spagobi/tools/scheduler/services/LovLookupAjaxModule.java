@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -81,7 +81,7 @@ public class LovLookupAjaxModule extends AbstractBasicListModule {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.dispatching.service.list.basic.IFaceBasicListService#getList(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
 	@Override
@@ -131,7 +131,7 @@ public class LovLookupAjaxModule extends AbstractBasicListModule {
 		String valColName = "";
 		// recover lov object
 		IParameterDAO pardao = DAOFactory.getParameterDAO();
-		Parameter par = pardao.loadForExecutionByParameterIDandRoleName(parId, roleName);
+		Parameter par = pardao.loadForExecutionByParameterIDandRoleName(parId, roleName, false);
 		ModalitiesValue modVal = par.getModalityValue();
 		// get the lov provider
 		String looProvider = modVal.getLovProvider();
@@ -307,7 +307,7 @@ public class LovLookupAjaxModule extends AbstractBasicListModule {
 
 	/**
 	 * Executes a select statement.
-	 * 
+	 *
 	 * @param requestContainer
 	 *            The request container object
 	 * @param responseContainer
@@ -316,12 +316,12 @@ public class LovLookupAjaxModule extends AbstractBasicListModule {
 	 *            The statement definition string
 	 * @param datasource
 	 *            the datasource
-	 * 
+	 *
 	 * @return A generic object containing the Execution results
-	 * 
+	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
-	 * 
+	 *
 	 * @deprecated
 	 */
 	@Deprecated

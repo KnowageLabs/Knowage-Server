@@ -39,6 +39,7 @@ var cockpitApp= angular.module("cockpitModule",[
 	'jsonFormatter',
 	'ui.codemirror',
 	'agGrid',
+	'driversExecutionModule',
 	'chartDesignerManager',
 	'customWidgetAPI'
 	]);

@@ -83,7 +83,7 @@ public class RuntimeLoadingParameterValuesRetriever extends ParameterValuesRetri
 		List<String> toReturn = new ArrayList<String>();
 		try {
 			IParameterDAO pardao = DAOFactory.getParameterDAO();
-			Parameter par = pardao.loadForExecutionByParameterIDandRoleName(parId, roleToBeUsed);
+			Parameter par = pardao.loadForExecutionByParameterIDandRoleName(parId, roleToBeUsed, false);
 			ModalitiesValue modVal = par.getModalityValue();
 			// get the lov provider
 			String looProvider = modVal.getLovProvider();

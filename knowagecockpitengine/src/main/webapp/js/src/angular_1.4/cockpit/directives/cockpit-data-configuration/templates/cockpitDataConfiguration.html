@@ -49,15 +49,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											{{translate.load("sbi.cockpit.mainpanel.nodataset")}}
 										</div>
 									</div>
-									<table class="kn-table" ng-if="tmpAvaiableDataset.length > 0">
+									<table class="kn-table" ng-if="tmpAvaiableDataset.length > 0">									
 										<thead>
 											<tr>
 												<th ng-repeat="column in cockpitDatasetColumns" ng-class="{'tableAction':column.type=='expand'}">{{column.label}}</th>
 												<th></th>
 											</tr>
 										</thead>
-										<tbody>
-											<tr ng-repeat-start="row in tmpAvaiableDataset">
+										<tbody ng-repeat="row in tmpAvaiableDataset">
+											<tr>											
 												<td ng-repeat="column in cockpitDatasetColumns" ng-class="{'tableAction':column.type=='expand'}">
 													<md-button class="md-icon-button" ng-click="expandRow(row)" ng-if="column.type=='expand' && row.parameters && row.parameters.length > 0">
 														<md-icon md-font-icon="fa" ng-class="{'fa-chevron-up':row.expanded, 'fa-chevron-down':!row.expanded}">
@@ -76,41 +76,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													</md-button>
 												</td>
 											</tr>
-											<tr ng-repeat-end ng-show="row.parameters && row.parameters.length > 0 && row.expanded">
+											<tr ng-show="(row.drivers && row.drivers.length > 0 && row.expanded) || (row.parameters && row.parameters.length > 0 && row.expanded)">											
 												<td colspan="100">
-													<md-card layout="column" class="datasetParameterDetail">
+													<md-card layout="row" class="datasetParameterDetail">
 														<md-toolbar class="ternaryToolbar">
 														  <div class="md-toolbar-tools">
 														    <h2>{{translate.load("sbi.cockpit.mainpanel.btn.parameters")}}</h2>
 														    <span flex></span>
 														  </div>
 														</md-toolbar>
-														<md-card-content flex layout="column" >
-															<div  layout-wrap layout="row" >
-																<div layout="row" flex="30" style="margin:8px;" ng-repeat="par in row.parameters" >
-																	<md-input-container>
-															          <label>{{par.name}}</label>
-															          <input  ng-model="par.value" ng-init="par.value=par.value==undefined ? par.defaultValue : par.value" required>
-															        </md-input-container>
-															        <md-menu class="noPadding" ng-if="haveAnaliticalDriver()">
-																	      <md-button aria-label="Open parameters panel" class="md-icon-button" ng-click="$mdOpenMenu()">
-																	        <md-icon md-menu-origin md-font-icon="fa fa-search"></md-icon>
-																	      </md-button>
-																	      <md-menu-content width="3">
-																	        <md-menu-item ng-repeat="driver in cockpitModule_analyticalDriversUrls">
-																	          <md-button ng-click="addParameter(par,driver.url)">{{driver.url}}</md-button>
-																	        </md-menu-item>
-																        </md-menu-content>
-															        </md-menu>
-														        </div>
-													        </div>
+														<md-card-content>															
+										   					<div flex layout="row">																
+																<render-parameters flex driverable-object="row" param="param" ng-repeat="param in row.parameters" ></render-parameters> 
+															    <document-paramenter-element flex dataset-settings="cockpitModule_properties.DOCUMENT_ID" execProperties="row" parameter="parameter" ng-repeat="parameter in row.drivers" ng-show="parameter.visible" layout="row" layout-align="start" />						    
+														    </div>						    
 														</md-card-content>
-													</md-card>
+													</md-card>													
 												</td>
 											</tr>
 										</tbody>
 									</table>
-
 							</md-card-content>
 						</md-card>
 		         		

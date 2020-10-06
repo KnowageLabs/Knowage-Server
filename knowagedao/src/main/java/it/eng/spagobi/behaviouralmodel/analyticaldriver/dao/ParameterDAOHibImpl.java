@@ -17,18 +17,6 @@
  */
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
-import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -43,6 +31,18 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiDomains;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a parameter
@@ -143,7 +143,7 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#loadForExecutionByParameterIDandRoleName(java.lang.Integer, java.lang.String)
 	 */
 	@Override
-	public Parameter loadForExecutionByParameterIDandRoleName(Integer parameterID, String roleName) throws EMFUserError {
+	public Parameter loadForExecutionByParameterIDandRoleName(Integer parameterID, String roleName, Boolean loadDSwithDrivers) throws EMFUserError {
 
 		Query hqlQuery = null;
 		String hql = null;
@@ -167,10 +167,14 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 			List results = hibQuery.list();
 
 			if (results == null || results.size() == 0) {
-				logger.error("No parameteruse for association among parameter " + parameterID + " and role " + roleName);
-				Vector v = new Vector();
-				v.add(roleName);
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 1078, v);
+				if (loadDSwithDrivers) {
+					return parameter;
+				} else {
+					logger.error("No parameteruse for association among parameter " + parameterID + " and role " + roleName);
+					Vector v = new Vector();
+					v.add(roleName);
+					throw new EMFUserError(EMFErrorSeverity.ERROR, 1078, v);
+				}
 			}
 
 			if (results.size() > 1) {
@@ -214,7 +218,7 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 				parameter.setModalityValueForDefault(null);
 				parameter.setDefaultFormula(hibParuse.getDefaultFormula());
 			}
-			
+
 			currLov = hibParuse.getSbiLovForMax();
 			if (hibParuse.getSbiLovForMax() != null) {
 				ModalitiesValue lov = DAOFactory.getModalitiesValueDAO().loadModalitiesValueByID(currLov.getLovId());
@@ -303,6 +307,7 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#loadAllSbiParameters()
 	 */
+	@Override
 	public List loadAllSbiParameters() throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;

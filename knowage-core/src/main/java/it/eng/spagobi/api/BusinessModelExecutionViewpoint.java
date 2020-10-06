@@ -3,13 +3,38 @@
 
 package it.eng.spagobi.api;
 
-import java.io.IOException;import java.sql.Timestamp;import java.util.ArrayList;import java.util.HashMap;import java.util.Iterator;import java.util.List;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;import javax.ws.rs.GET;import javax.ws.rs.POST;import javax.ws.rs.Path;import javax.ws.rs.Produces;import javax.ws.rs.QueryParam;import javax.ws.rs.core.Context;import javax.ws.rs.core.MediaType;import javax.ws.rs.core.Response;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.json.JSONException;import org.json.JSONObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import it.eng.spago.error.EMFUserError;import it.eng.spago.security.IEngUserProfile;import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelViewpointDAO;import it.eng.spagobi.commons.bo.UserProfile;import it.eng.spagobi.commons.dao.DAOFactory;import it.eng.spagobi.commons.utilities.StringUtilities;import it.eng.spagobi.services.rest.annotations.ManageAuthorization;import it.eng.spagobi.tools.catalogue.bo.MetaModel;import it.eng.spagobi.utilities.assertion.Assert;import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelViewpointDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/metamodelviewpoint")
 @ManageAuthorization
@@ -56,7 +81,7 @@ public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 			Assert.assertNotNull(userProfile, "Impossible to retrive user profile");
 			MetaModel metaModel;
 			try {
-				metaModel = DAOFactory.getMetaModelsDAO().loadMetaModelForExecutionByNameAndRole(name, role);
+				metaModel = DAOFactory.getMetaModelsDAO().loadMetaModelForExecutionByNameAndRole(name, role, false);
 				logger.debug("User: [" + ((UserProfile) userProfile).getUserId() + "]");
 				logger.debug("Document Id: [" + metaModel.getId() + "]");
 				viewpointOwner = (String) ((UserProfile) userProfile).getUserId();
@@ -117,7 +142,7 @@ public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 		userProfile = this.getUserProfile();
 		Assert.assertNotNull(userProfile, "Impossible to retrive user profile");
 		MetaModel metaModel;
-		metaModel = DAOFactory.getMetaModelsDAO().loadMetaModelForExecutionByNameAndRole(name, role);
+		metaModel = DAOFactory.getMetaModelsDAO().loadMetaModelForExecutionByNameAndRole(name, role, false);
 		metaModelId = metaModel.getId();
 		logger.debug("User: [" + ((UserProfile) userProfile).getUserId() + "]");
 		logger.debug("Document Id: [" + metaModelId + "]");

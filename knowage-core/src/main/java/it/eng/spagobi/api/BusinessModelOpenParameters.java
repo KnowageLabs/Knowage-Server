@@ -173,7 +173,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 
 			MetaModel obj;
 			try {
-				obj = DAOFactory.getMetaModelsDAO().loadMetaModelForExecutionByNameAndRole(name, role);
+				obj = DAOFactory.getMetaModelsDAO().loadMetaModelForExecutionByNameAndRole(name, role, false);
 				if (selectedParameterValuesJSON != null) {
 					dum.refreshParametersValues(selectedParameterValuesJSON, false, obj);
 				}
@@ -522,7 +522,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
-		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(name, role);
+		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(name, role, false);
 
 		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
 
@@ -1137,7 +1137,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 		mode = (String) requestVal.opt("mode");
 
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
-		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(name, role);
+		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(name, role, false);
 
 		BIMetaModelParameter biMetaModelParameter = null;
 		List<BIMetaModelParameter> parameters = businessModel.getDrivers();

@@ -214,6 +214,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   	<div ng-show="widgetSpinner" class="widgetSpinner" layout-fill>
        <md-progress-circular  md-diameter="20px" md-mode='indeterminate'></md-progress-circular>
     </div>
+    
+    
+    
 	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>
 		<md-card-title layout="row" layout-align="start center" ng-show="extendedStyle.titles" ng-style="extendedStyle.title" >
 			<md-toolbar class="widgetToolbar" layout="row" layout-align="start center">
@@ -223,12 +226,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 			</md-toolbar>
 		</md-card-title>
-		
-			
-		</div>
-			<md-card-content flex="" layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill ng-style="paddingStyle">
+			<md-card-content layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill ng-style="paddingStyle">
+				<div layout="row" ng-show="parametersMessage" class="errorContainer" layout-align="center center" layout-fill>
+					<div class="kn-infoerror" flex="60">{{translate.load('sbi.cockpit.parameter.and.driver')}}</div>			   		
+				</div>
 			</md-card-content>
 	</md-card>
-	
 	
 </li>

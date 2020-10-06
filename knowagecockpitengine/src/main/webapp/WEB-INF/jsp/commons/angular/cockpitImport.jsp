@@ -61,6 +61,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/services/knModule_fontIconsService.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/services/knModule_aggridLabels.js")%>"></script>
 
+<!-- Drivers -->
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "js/src/angular_1.4/tools/driversexecution/driversExecutionModule.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "js/src/angular_1.4/tools/driversexecution/driversExecutionService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "js/src/angular_1.4/tools/driversexecution/driversDependencyService.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "js/src/angular_1.4/tools/documentexecution/documentParamenterElement/documentParamenterElementController.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "js/src/angular_1.4/tools/businessmodelopening/businessModelOpeningModule.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "js/src/angular_1.4/tools/businessmodelopening/businessModelOpeningServices.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "js/src/angular_1.4/tools/driversexecution/renderparameters/renderParameters.js")%>"></script>
+
 <!-- Factory -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/factory/cockpitModule_gridsterOptions.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/factory/cockpitModule_generalOptions.js")%>"></script>

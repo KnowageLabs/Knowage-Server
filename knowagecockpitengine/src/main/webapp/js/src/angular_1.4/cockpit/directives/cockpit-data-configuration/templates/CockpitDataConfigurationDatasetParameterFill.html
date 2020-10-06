@@ -4,22 +4,19 @@
     <md-toolbar class="secondaryToolbar" layout="row">
 		<h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.mainpanel.btn.parameters')}}</h1>
 	</md-toolbar>
-    <md-dialog-content flex layout=column  >
-    	<div class="md-dialog-content"  flex layout=column >
-	    	<md-input-container ng-repeat="par in tmpParam"    ">
-	          <label>{{par.name}}</label>
-	          <input type={{par.type}} ng-model="par.value" ng-init="par.value=par.value==undefined ? par.defaultValue : par.value" required>
-	        </md-input-container>
-			</div>
+    <md-dialog-content flex layout="row" layout-align="center center">
+    	<div flex="60" class="kn-warning">
+    		{{translate.load('sbi.cockpit.parameter.and.driver')}}
+		</div>
 	</md-dialog-content>
 			
 	    <md-dialog-actions layout="row">
       <span flex></span>
-      <md-button ng-click="cancelConfiguration()" >
+      <md-button class="md-raised" ng-click="cancelConfiguration()" >
         {{translate.load('sbi.generic.cancel')}}
       </md-button>
-      <md-button ng-click="saveConfiguration()" ng-disabled=" parameterForm.$invalid" >
-        {{translate.load('sbi.generic.save')}} 
+      <md-button class="md-raised md-primary" ng-click="saveConfiguration()" ng-disabled=" parameterForm.$invalid" >
+        {{translate.load('sbi.generic.close')}} 
       </md-button>
     </md-dialog-actions>
 	 

@@ -35,7 +35,7 @@
 		</div>
 
 		<div layout="row" layout-align="start center">
-			<md-button class="md-icon-button" id="{{::parameter.urlName}}" ng-click="popupLookupParameterDialog(parameter)">
+			<md-button ng-disabled="datasetSettings" class="md-icon-button" id="{{::parameter.urlName}}" ng-click="popupLookupParameterDialog(parameter)">
 				<md-icon md-font-icon="fa fa-external-link"></md-icon>
 			</md-button>
 			<div flex>				
@@ -113,7 +113,7 @@
 		
 		</div>
 		<md-input-container class="md-block noMargin" flex>
-			<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" type="number" />	
+			<input ng-disabled="datasetSettings" class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" type="number" />	
 		</md-input-container>
 	</div>
 	
@@ -127,7 +127,7 @@
 		
 		</div>
 		<md-input-container class="md-block noMargin" flex>
-			<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" />
+			<input ng-disabled="datasetSettings" class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" />
 		</md-input-container>
 	</div>
 	
@@ -141,7 +141,7 @@
 		
 		</div>
 		<md-radio-group ng-model="parameter.parameterValue" ng-required="::parameter.mandatory">
-			<md-radio-button class="md-primary" ng-repeat="defaultParameter in parameter.defaultValues" ng-if="defaultParameter.isEnabled" value="{{::defaultParameter.value}}" ng-click="toggleRadioParameter(defaultParameter.value, defaultParameter.description, parameter)">
+			<md-radio-button ng-disabled="datasetSettings" class="md-primary" ng-repeat="defaultParameter in parameter.defaultValues" ng-if="defaultParameter.isEnabled" value="{{::defaultParameter.value}}" ng-click="toggleRadioParameter(defaultParameter.value, defaultParameter.description, parameter)">
 				{{::defaultParameter.label}} 
 			</md-radio-button>
 		</md-radio-group>
@@ -157,7 +157,7 @@
 		 
 		</div>
 		<div ng-repeat="defaultParameter in parameter.defaultValues" ng-if="defaultParameter.isEnabled">
-			<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" 
+			<md-checkbox ng-disabled="datasetSettings" class="md-primary" value="{{::defaultParameter.value}}" 
 					ng-checked="checkboxParameterExists(defaultParameter.value, parameter)" ng-click="toggleCheckboxParameter(defaultParameter.value, defaultParameter.description, parameter)" >
 				{{::defaultParameter.label}}
 			</md-checkbox>
@@ -175,14 +175,14 @@
                </div>
                <md-input-container class="md-block" ng-if="parameter.selectionType=='COMBOBOX'  && parameter.showOnPanel=='true'">
 		<!-- multiple -->
-			<md-select ng-model="parameter.parameterValue" multiple ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory} "
+			<md-select ng-disabled="datasetSettings" ng-model="parameter.parameterValue" multiple ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory} "
 		 		ng-change="toggleComboParameter(parameter)"	ng-if="showDefaultValueAreValid(parameter) && parameter.multivalue" > 
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
 					{{defaultParameter.label}}
 				</md-option>
 			</md-select>
 			<!-- single -->
-			<md-select ng-model="parameter.parameterValue" ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory} "
+			<md-select ng-disabled="datasetSettings" ng-model="parameter.parameterValue" ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory} "
 		        ng-change="toggleComboParameter(parameter)" ng-if="showDefaultValueAreValid(parameter) && !parameter.multivalue  && parameter.showOnPanel=='true'"> 
 				<md-option></md-option>
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">

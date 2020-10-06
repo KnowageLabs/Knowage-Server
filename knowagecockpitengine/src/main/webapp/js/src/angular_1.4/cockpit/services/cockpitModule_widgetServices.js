@@ -196,11 +196,24 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 	};
 
+	this.addDSWithDrivers = function(ngModel) {
+		var dsDr = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
+		if(dsDr.drivers && dsDr.drivers.length > 0 && cockpitModule_datasetServices.selectedDSWithDrivers.length == 0) {
+			cockpitModule_datasetServices.selectedDSWithDrivers.push(dsDr);
+		} else if (cockpitModule_datasetServices.selectedDSWithDrivers.length > 0) {
+			for(var i = 0; i < cockpitModule_datasetServices.selectedDSWithDrivers.length; i++) {
+				if(cockpitModule_datasetServices.selectedDSWithDrivers[i].id.dsId == ngModel.dataset.dsId) {
+					return;
+				}
+				cockpitModule_datasetServices.selectedDSWithDrivers.push(dsDr);
+			}
+		}
+	}
+
 	this.loadDatasetRecords = function(ngModel, options, loadDomainValues,nature){
 		if(loadDomainValues == undefined){
 			loadDomainValues = false;
 		}
-
 		if (!options) options = {};
 		var page = options.page;
 		var itemPerPage = options.itemPerPage;
@@ -210,6 +223,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		var dsId;
 
 		if(ngModel.dataset!=undefined && ngModel.dataset.dsId!=undefined){
+			this.addDSWithDrivers(ngModel);
 //			var dataset = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
 			var dataset;
 			if (!Array.isArray(ngModel.dataset.dsId)){
@@ -282,7 +296,37 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		}
 	};
 
+	this.parametersAreSet = function() {
+		if(cockpitModule_datasetServices.newDataSet) {
+			var newDs = cockpitModule_datasetServices.newDataSet;
+			  for(var i = 0; i < newDs.parameters.length; i++) {
+				  if(newDs.parameters[i].value) {
+					  cockpitModule_datasetServices.parameterHasValue = true;
+				  } else {
+					  cockpitModule_datasetServices.parameterHasValue = false;
+				  }
+			  }
+			  return cockpitModule_datasetServices.parameterHasValue;
+		}
+	  }
+
+	this.driversAreSet = function(config) {
+		var ds = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
+		if(ds.drivers) {
+			for(var i = 0; i < ds.drivers.length; i++) {
+				if(ds.drivers[i].parameterValue) {
+					cockpitModule_datasetServices.driverHasValue = true;
+				} else {
+					cockpitModule_datasetServices.driverHasValue = false;
+				}
+			}
+			return cockpitModule_datasetServices.driverHasValue;
+		}
+	}
+
 	this.initWidget=function(element,config,options){
+		this.parametersAreSet();
+		this.driversAreSet(config);
 		element.addClass('fadeOut');
 		element.removeClass('fadeIn');
 

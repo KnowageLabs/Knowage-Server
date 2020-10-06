@@ -20,9 +20,13 @@ package it.eng.spagobi.api.v2;
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -56,8 +60,19 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.BusinessModelOpenUtils;
+import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
+import it.eng.spagobi.analiticalmodel.document.handlers.BusinessModelDriverRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.BusinessModelRuntime;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
+import it.eng.spagobi.api.BusinessModelOpenParameters;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIMetaModelParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
@@ -70,8 +85,11 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -86,6 +104,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DatasetFunctionsConfig;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -403,8 +422,10 @@ public class DataSetResource extends AbstractDataSetResource {
 		try {
 			ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			ArrayList<HashMap<String, Object>> drivers = null;
 			dao.setUserProfile(getUserProfile());
 			dataSourceDAO.setUserProfile(getUserProfile());
+			Boolean loadDSwithDrivers = true;
 
 			Integer page = getNumberOrNull(pageStr);
 			Integer item_per_page = getNumberOrNull(itemPerPageStr);
@@ -421,6 +442,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			JSONObject jo = new JSONObject();
 			JSONArray ja = new JSONArray();
+
 			for (SbiDataSet ds : dataset) {
 				IDataSet dataSet = DataSetFactory.toDataSet(ds, getUserProfile());
 				JSONObject jsonIDataSet = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
@@ -432,15 +454,31 @@ public class DataSetResource extends AbstractDataSetResource {
 				jsonSbiDataSet.put("parameters", jsonIDataSet.getJSONArray("pars"));
 				jsonSbiDataSet.put("isIterable", dataSet.isIterable());
 				dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
-				if (dataSet instanceof AbstractJDBCDataset || dataSet instanceof QbeDataSet) {
+				if (dataSet instanceof AbstractJDBCDataset) {
 					IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
 					isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+					jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
+
+					ja.put(jsonSbiDataSet);
+				} else if (dataSet instanceof QbeDataSet) {
+					String businessModelName = (String) jsonSbiDataSet.getJSONObject("configuration").get("qbeDatamarts");
+					drivers = getDatasetDriversByModelName(businessModelName, loadDSwithDrivers);
+					if (drivers != null) {
+						jsonSbiDataSet.put("drivers", drivers);
+						IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
+						isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+						jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
+
+						ja.put(jsonSbiDataSet);
+					}
+
 				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet.getClass().equals(SolrDataSet.class)) {
 					isNearRealtimeSupported = true;
-				}
-				jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
+					jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
 
-				ja.put(jsonSbiDataSet);
+					ja.put(jsonSbiDataSet);
+				}
+
 			}
 			jo.put("item", ja);
 			jo.put("itemCount", dao.countSbiDataSet(search, idArray));
@@ -630,6 +668,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
 
 			String parameters = null;
+			Map<String, Object> driversRuntimeMap = null;
 			String selections = null;
 			String likeSelections = null;
 			String aggregations = null;
@@ -642,6 +681,9 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				JSONObject jsonParameters = jsonBody.optJSONObject("parameters");
 				parameters = jsonParameters != null ? jsonParameters.toString() : null;
+
+				JSONObject jsonDrivers = jsonBody.optJSONObject("drivers");
+				driversRuntimeMap = DataSetUtilities.getDriversMap(jsonDrivers);
 
 				JSONObject jsonSelections = jsonBody.optJSONObject("selections");
 				selections = jsonSelections != null ? jsonSelections.toString() : null;
@@ -682,8 +724,8 @@ public class DataSetResource extends AbstractDataSetResource {
 				}
 			}
 			timing.stop();
-			return getDataStore(label, parameters, null, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
-					options, columns);
+			return getDataStore(label, parameters, driversRuntimeMap, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize,
+					isNearRealtime, options, columns);
 		} catch (Exception e) {
 			logger.error("Error loading dataset data from " + label, e);
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
@@ -884,6 +926,329 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 		return null;
 
+	}
+
+	public ArrayList<HashMap<String, Object>> transformRuntimeDrivers(List<BusinessModelDriverRuntime> parameters, IParameterUseDAO parameterUseDAO,
+			String role, MetaModel businessModel, BusinessModelOpenParameters BMOP) {
+		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
+		ParameterUse parameterUse;
+		for (BusinessModelDriverRuntime objParameter : parameters) {
+			Integer paruseId = objParameter.getParameterUseId();
+			try {
+				parameterUse = parameterUseDAO.loadByUseID(paruseId);
+			} catch (EMFUserError e1) {
+				logger.debug(e1.getCause(), e1);
+				throw new SpagoBIRuntimeException(e1.getMessage(), e1);
+			}
+
+			HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
+			parameterAsMap.put("id", objParameter.getBiObjectId());
+			parameterAsMap.put("label", objParameter.getLabel());
+			parameterAsMap.put("urlName", objParameter.getId());
+			parameterAsMap.put("type", objParameter.getParType());
+			parameterAsMap.put("typeCode", objParameter.getTypeCode());
+			parameterAsMap.put("selectionType", objParameter.getSelectionType());
+			parameterAsMap.put("valueSelection", parameterUse.getValueSelection());
+			parameterAsMap.put("selectedLayer", objParameter.getSelectedLayer());
+			parameterAsMap.put("selectedLayerProp", objParameter.getSelectedLayerProp());
+			parameterAsMap.put("visible", ((objParameter.isVisible())));
+			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
+			parameterAsMap.put("multivalue", objParameter.isMultivalue());
+			parameterAsMap.put("driverLabel", objParameter.getPar().getLabel());
+			parameterAsMap.put("driverUseLabel", objParameter.getAnalyticalDriverExecModality().getLabel());
+
+			parameterAsMap.put("allowInternalNodeSelection",
+					objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
+
+			// get values
+			if (objParameter.getDriver().getParameterValues() != null) {
+
+				List paramValueLst = new ArrayList();
+				List paramDescrLst = new ArrayList();
+				Object paramValues = objParameter.getDriver().getParameterValues();
+				Object paramDescriptionValues = objParameter.getDriver().getParameterValuesDescription();
+
+				if (paramValues instanceof List) {
+
+					List<String> valuesList = (List) paramValues;
+					List<String> descriptionList = (List) paramDescriptionValues;
+					if (paramDescriptionValues == null || !(paramDescriptionValues instanceof List)) {
+						descriptionList = new ArrayList<String>();
+					}
+
+					// String item = null;
+					for (int k = 0; k < valuesList.size(); k++) {
+
+						String itemVal = valuesList.get(k);
+
+						String itemDescr = descriptionList.size() > k && descriptionList.get(k) != null ? descriptionList.get(k) : itemVal;
+
+						try {
+							// % character breaks decode method
+							if (!itemVal.contains("%")) {
+								itemVal = URLDecoder.decode(itemVal, "UTF-8");
+							}
+							if (!itemDescr.contains("%")) {
+								itemDescr = URLDecoder.decode(itemDescr, "UTF-8");
+							}
+
+							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
+							if (objParameter.isMultivalue() && itemVal.indexOf("{") >= 0) {
+								String sep = itemVal.substring(1, 2);
+								String val = itemVal.substring(3, itemVal.indexOf("}"));
+								String[] valLst = val.split(sep);
+								for (int k2 = 0; k2 < valLst.length; k2++) {
+									String itemVal2 = valLst[k2];
+									if (itemVal2 != null && !"".equals(itemVal2))
+										paramValueLst.add(itemVal2);
+								}
+							} else {
+								if (itemVal != null && !"".equals(itemVal))
+									paramValueLst.add(itemVal);
+								paramDescrLst.add(itemDescr);
+							}
+						} catch (UnsupportedEncodingException e) {
+							// TODO Auto-generated catch block
+							// e.printStackTrace();
+							logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
+						}
+					}
+				} else if (paramValues instanceof String) {
+					// % character breaks decode method
+					if (!((String) paramValues).contains("%")) {
+						try {
+							paramValues = URLDecoder.decode((String) paramValues, "UTF-8");
+						} catch (UnsupportedEncodingException e) {
+							logger.debug(e.getCause(), e);
+							throw new SpagoBIRuntimeException(e.getMessage(), e);
+						}
+					}
+					paramValueLst.add(paramValues.toString());
+
+					String parDescrVal = paramDescriptionValues != null && paramDescriptionValues instanceof String ? paramDescriptionValues.toString()
+							: paramValues.toString();
+					if (!parDescrVal.contains("%")) {
+						try {
+							parDescrVal = URLDecoder.decode(parDescrVal, "UTF-8");
+						} catch (UnsupportedEncodingException e) {
+							logger.debug(e.getCause(), e);
+							throw new SpagoBIRuntimeException(e.getMessage(), e);
+						}
+					}
+					paramDescrLst.add(parDescrVal);
+				}
+
+				parameterAsMap.put("parameterValue", paramValueLst);
+				parameterAsMap.put("parameterDescription", paramDescriptionValues);
+			}
+
+			boolean showParameterLov = true;
+
+			// Parameters NO TREE
+			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
+					&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
+
+				ArrayList<HashMap<String, Object>> admissibleValues = objParameter.getAdmissibleValues();
+
+				if (!objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_LOOKUP)) {
+					parameterAsMap.put("defaultValues", admissibleValues);
+				} else {
+					parameterAsMap.put("defaultValues", new ArrayList<>());
+				}
+				parameterAsMap.put("defaultValuesMeta", objParameter.getLovColumnsNames());
+				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, objParameter.getLovValueColumnName());
+				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA, objParameter.getLovDescriptionColumnName());
+
+				// hide the parameter if is mandatory and have one value in lov (no error parameter)
+				if (admissibleValues != null && admissibleValues.size() == 1 && objParameter.isMandatory() && !admissibleValues.get(0).containsKey("error")
+						&& (objParameter.getDataDependencies() == null || objParameter.getDataDependencies().isEmpty())
+						&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().isEmpty())) {
+					showParameterLov = false;
+				}
+
+				// if parameterValue is not null and is array, check if all element are present in lov
+				Object values = parameterAsMap.get("parameterValue");
+				if (values != null && admissibleValues != null) {
+					BMOP.checkIfValuesAreAdmissible(values, admissibleValues);
+				}
+			}
+
+			// DATE RANGE DEFAULT VALUE
+			if (objParameter.getParType().equals("DATE_RANGE")) {
+				try {
+					ArrayList<HashMap<String, Object>> defaultValues = BMOP.manageDataRange(businessModel, role, objParameter.getId());
+					parameterAsMap.put("defaultValues", defaultValues);
+				} catch (SerializationException | EMFUserError | JSONException | IOException e) {
+					logger.debug("Filters DATE RANGE ERRORS ", e);
+				}
+			}
+
+			// convert the parameterValue from array of string in array of object
+			DefaultValuesList parameterValueList = new DefaultValuesList();
+			Object oVals = parameterAsMap.get("parameterValue");
+			Object oDescr = parameterAsMap.get("parameterDescription") != null ? parameterAsMap.get("parameterDescription") : new ArrayList<String>();
+
+			if (oVals != null) {
+				if (oVals instanceof List) {
+					// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
+					if (oVals.toString().startsWith("[") && oVals.toString().endsWith("]") && parameterUse.getValueSelection().equals("man_in")) {
+						List<String> valList = (ArrayList) oVals;
+						String stringResult = "";
+						for (int k = 0; k < valList.size(); k++) {
+							String itemVal = valList.get(k);
+							if (objParameter.getParType().equals("STRING") && objParameter.isMultivalue()) {
+								stringResult += "'" + itemVal + "'";
+							} else {
+								stringResult += itemVal;
+							}
+							if (k != valList.size() - 1) {
+								stringResult += ",";
+							}
+						}
+						LovValue defValue = new LovValue();
+						defValue.setValue(stringResult);
+						defValue.setDescription(stringResult);
+						parameterValueList.add(defValue);
+					} else {
+						List<String> valList = (ArrayList) oVals;
+						List<String> descrList = (ArrayList) oDescr;
+						for (int k = 0; k < valList.size(); k++) {
+							String itemVal = valList.get(k);
+							String itemDescr = descrList.size() > k ? descrList.get(k) : itemVal;
+							LovValue defValue = new LovValue();
+							defValue.setValue(itemVal);
+							defValue.setDescription(itemDescr != null ? itemDescr : itemVal);
+							parameterValueList.add(defValue);
+						}
+					}
+					parameterAsMap.put("parameterValue", parameterValueList);
+				}
+			}
+
+			parameterAsMap.put("dependsOn", objParameter.getDependencies());
+			parameterAsMap.put("dataDependencies", objParameter.getDataDependencies());
+			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
+			parameterAsMap.put("lovDependencies", (objParameter.getLovDependencies() != null) ? objParameter.getLovDependencies() : new ArrayList<>());
+
+			// load DEFAULT VALUE if present and if the parameter value is empty
+			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0
+					&& objParameter.getDefaultValues().get(0).getValue() != null) {
+				DefaultValuesList valueList = null;
+				// check if the parameter is really valorized (for example if it isn't an empty list)
+				List lstValues = (List) parameterAsMap.get("parameterValue");
+				// if (lstValues.size() == 0)
+				// jsonCrossParameters.remove(objParameter.getId());
+
+				String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
+						? objParameter.getDriver().getParameter().getLabel()
+						: "";
+				String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
+				String sessionKey = parLab + "_" + useModLab;
+
+				valueList = objParameter.getDefaultValues();
+
+				// in every case fill default values!
+				parameterAsMap.put("driverDefaultValue", valueList);
+			}
+
+			if (!showParameterLov) {
+				parameterAsMap.put("showOnPanel", "false");
+			} else {
+				parameterAsMap.put("showOnPanel", "true");
+			}
+			parametersArrayList.add(parameterAsMap);
+
+		}
+		for (int z = 0; z < parametersArrayList.size(); z++) {
+
+			Map docP = parametersArrayList.get(z);
+			DefaultValuesList defvalList = (DefaultValuesList) docP.get("parameterValue");
+			if (defvalList != null && defvalList.size() == 1) {
+				LovValue defval = defvalList.get(0);
+				if (defval != null) {
+					Object val = defval.getValue();
+					if (val != null && val.equals("$")) {
+						docP.put("parameterValue", "");
+					}
+				}
+
+			}
+		}
+		return parametersArrayList;
+	}
+
+	public ArrayList<HashMap<String, Object>> getDatasetDriversByModelName(String businessModelName, Boolean loadDSwithDrivers) {
+		ArrayList<HashMap<String, Object>> parametersArrList = new ArrayList<>();
+		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
+		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
+		List<BusinessModelDriverRuntime> parameters = new ArrayList<>();
+		BusinessModelOpenParameters BMOP = new BusinessModelOpenParameters();
+		String role;
+		try {
+			role = getUserProfile().getRoles().contains("admin") ? "admin" : (String) getUserProfile().getRoles().iterator().next();
+		} catch (EMFInternalError e2) {
+			logger.debug(e2.getCause(), e2);
+			throw new SpagoBIRuntimeException(e2.getMessage(), e2);
+		}
+		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role, loadDSwithDrivers);
+		if (businessModel == null) {
+			return null;
+		}
+		BusinessModelRuntime dum = new BusinessModelRuntime(this.getUserProfile(), null);
+		parameters = BusinessModelOpenUtils.getParameters(businessModel, role, request.getLocale(), null, true, dum);
+		parametersArrList = transformRuntimeDrivers(parameters, parameterUseDAO, role, businessModel, BMOP);
+
+		return parametersArrList;
+	}
+
+	@GET
+	@Path("/documentDrivers/{docId}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public ArrayList<HashMap<String, Object>> getDatasetDriversByDocumentId(@PathParam("docId") Integer docId) {
+		IDataSet dataset = null;
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+		IBIObjDataSetDAO biObjDataSetDAO = DAOFactory.getBIObjDataSetDAO();
+		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+		IBIMetaModelParameterDAO driversDao = DAOFactory.getBIMetaModelParameterDAO();
+		String businessModelName = null;
+		MetaModel businessModel = null;
+		ArrayList<HashMap<String, Object>> parametersArrList = new ArrayList<>();
+		ArrayList<BIObjDataSet> biObjDataSetList = null;
+		try {
+			biObjDataSetList = biObjDataSetDAO.getBiObjDataSets(docId);
+		} catch (EMFUserError e1) {
+			e1.printStackTrace();
+		}
+		ArrayList datasetList = null;
+		BIObjDataSet biObjDataSet = null;
+		Integer dsId = null;
+		List docDrivers = null;
+
+		if (biObjDataSetList.size() == 1) {
+			biObjDataSet = biObjDataSetList.get(0);
+			dsId = biObjDataSet.getDataSetId();
+			dataset = datasetDao.loadDataSetById(dsId);
+		} else {
+			Iterator itDs = biObjDataSetList.iterator();
+			while (itDs.hasNext()) {
+				biObjDataSet = (BIObjDataSet) itDs.next();
+				dsId = biObjDataSet.getDataSetId();
+				dataset = datasetDao.loadDataSetById(dsId);
+			}
+		}
+		dataset = dataset instanceof VersionedDataSet ? ((VersionedDataSet) dataset).getWrappedDataset() : dataset;
+		if (dataset != null && dataset.getDsType() == "SbiQbeDataSet") {
+			String config = dataset.getConfiguration();
+			try {
+				JSONObject jsonConfig = new JSONObject(dataset.getConfiguration());
+				businessModelName = (String) jsonConfig.get("qbeDatamarts");
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			parametersArrList = getDatasetDriversByModelName(businessModelName, false);
+		}
+		return parametersArrList;
 	}
 
 }
