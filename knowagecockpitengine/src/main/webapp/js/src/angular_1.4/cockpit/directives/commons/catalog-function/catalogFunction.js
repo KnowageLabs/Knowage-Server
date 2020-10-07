@@ -41,26 +41,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	});
 
-	function catalogFunctionController($scope,sbiModule_translate,$q,$mdDialog,cockpitModule_datasetServices,$mdToast){
-
+	function catalogFunctionController($scope,sbiModule_translate,sbiModule_restServices,$q,$mdDialog,cockpitModule_datasetServices,$mdToast){
 		$scope.translate = sbiModule_translate;
-		if($scope.selectedItem){
+		sbiModule_restServices.restToRootProject();
+		sbiModule_restServices.get("2.0/functions-catalog", "").then(
+				function(result) {
+					$scope.ngModel.allCatalogFunctions = result.data.functions;
+				}, function () {
+					$scope.ngModel.allCatalogFunctions = {};
+				}
+		)
 
-			if ($scope.measuresListFunc != undefined) {
-//				var tmpList = $scope.measuresListFunc();
-//				$scope.currentRow = tmpList[$scope.selectedItem];
-				$scope.currentRow = $scope.selectedItem;
-
-			} else if ( $scope.ngModel.content == undefined) {  // case when coming from chart widget
-				$scope.currentRow = $scope.ngModel.columnSelectedOfDatasetAggregations[$scope.selectedItem];
-			} else {
-				$scope.currentRow = $scope.ngModel.content.columnSelectedOfDataset[$scope.selectedItem]
-			}
-
-
-		}
 		$scope.addNewCatalogFunction = function(){
-
 			var deferred = $q.defer();
 			var promise ;
 			$mdDialog.show({
@@ -80,197 +72,107 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					measuresListFunc: $scope.measuresListFunc,
 					callbackAddTo: $scope.callbackAddTo
 				},
-				//fullscreen: true,
+				fullscreen: true,
 				controller: catalogFunctionDialogController
 			}).then(function() {
 				deferred.promise.then(function(result){
-					if($scope.currentRow != undefined){
-						if($scope.callbackUpdateAlias) {
-							$scope.callbackUpdateAlias({newAlias: result.alias, oldAlias: $scope.currentRow.alias});
-						}
-						$scope.currentRow.name = result.alias;
-						$scope.currentRow.aliasToShow = result.alias;
-						$scope.currentRow.formula = result.formula;
-						$scope.currentRow.formulaEditor = result.formulaEditor;
-						$scope.currentRow.aggregationSelected = result.aggregationSelected;
-						$scope.currentRow.funcSummary = result.funcSummary;
-						$scope.currentRow.alias = result.alias;
-					}else{
-						if ($scope.callbackAddTo != undefined) {
-							$scope.callbackAddTo({newItem: result});
-						} else if ($scope.ngModel.content == undefined) {
-							$scope.ngModel.columnSelectedOfDatasetAggregations.push(result);
-						} else {
-							$scope.ngModel.content.columnSelectedOfDataset.push(result);
-						}
-					}
-					if($scope.callbackUpdateGrid){
-						$scope.callbackUpdateGrid();
-					}
+					$scope.selectedFunctionConfiguration = result;
 				});
 			}, function() {
 			});
 			promise =  deferred.promise;
-
 		}
 	}
 
 	function catalogFunctionDialogController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
-		$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 		$scope.model = model;
-		$scope.callbackUpdateGrid = callbackUpdateGrid;
-		$scope.callbackUpdateAlias = callbackUpdateAlias;
-		$scope.callbackAddTo = callbackAddTo;
-		$scope.localDataset = {};
-		$scope.calculatedField = actualItem ? angular.copy(actualItem) : {};
-		if(!$scope.calculatedField.aggregationSelected) $scope.calculatedField.aggregationSelected = 'NONE';
-		if($scope.calculatedField.formula && !$scope.calculatedField.formulaEditor) $scope.calculatedField.formulaEditor = $scope.calculatedField.formula;
 
-		$scope.setVariableFunction = function(variable){
-			return {
-			      "syntax":"$V{ "+variable.name+" }",
-			      "description":variable.name,
-			      "body":"$V{"+variable.name+"}",
-			      "name": variable.name,
-			      "output":"Number",
-			      "type":"variables"
-			   };
+		$scope.model.functionsGrid = {
+		        enableColResize: false,
+		        enableFilter: true,
+		        enableSorting: true,
+		        onGridReady: resizeFunctions,
+		        onGridSizeChanged: resizeFunctions,
+		        rowSelection: "single",
+		        onRowSelected: selectFunction,
+		        pagination: true,
+		        paginationAutoPageSize: true,
+		        columnDefs: [
+		        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.name'), field:'name', headerTooltip:'description'},
+		        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.type'), field:'type', cellRenderer: languageRenderer, cellStyle: {'display': 'inline-flex', 'justify-content':'center', 'align-items':'center'}}],
+		        rowData: $scope.model.allCatalogFunctions
 		}
 
-		//premade functions for codemirror menu bar
-		$scope.functions = angular.copy(cockpitModule_generalOptions.calculatedFieldsFunctions);
-		angular.forEach(cockpitModule_template.configuration.variables, function(value, key) {
-			$scope.functions.push($scope.setVariableFunction(value));
-		})
-
-		$scope.availableFormulaTypes = [];
-
-		if(additionalInfo && additionalInfo.nullifFunction && additionalInfo.nullifFunction.length > 0) $scope.nullifWarningLabel = additionalInfo.nullifFunction[0];
-
-		angular.forEach($scope.functions, function(value, key) {
-			if(value.type == $scope.translate.load("kn.cockpit.functions.type.functions")){
-				if(additionalInfo && additionalInfo.availableFunctions && additionalInfo.availableFunctions.length != 0){
-					if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
-				}
-			}else if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
-		});
-
-		$scope.checkFormulaAvailability = function(formula){
-			if(formula.type == $scope.translate.load("kn.cockpit.functions.type.functions") && additionalInfo){
-				if(additionalInfo.availableFunctions.lenght > 0 && additionalInfo.availableFunctions.indexOf(formula.name) === -1) return false;
-			}
-			return true;
+		function resizeFunctions(){
+			$scope.model.functionsGrid.api.sizeColumnsToFit();
 		}
 
-
-		if($scope.calculatedField.formulaEditor) {
-			$timeout(function(){
-				$scope.reloadCodemirror = true;
-			},0)
+		function selectFunction(props){
+			$scope.selectFunction(props.data);
 		}
 
-		$scope.addFormula = function(formula) {
-			$scope.addTextInCodemirror(formula.body);
+		function languageRenderer(props){
+			return "<i class='fa fa-circle'></i>";
 		}
 
-		$scope.toastifyMsg = function(type,msg){
-			Toastify({
-				text: msg,
-				duration: 10000,
-				close: true,
-				className: 'kn-' + type + 'Toast',
-				stopOnFocus: true
-			}).showToast();
+		$scope.model.columnsGrid = {
+			angularCompileRows: true,
+			domLayout :'autoHeight',
+	        enableColResize: false,
+	        enableFilter: false,
+	        enableSorting: false,
+	        onGridReady : resizeColumns,
+	        onCellEditingStopped: refreshRowForColumns,
+	        singleClickEdit: true,
+	        columnDefs: [
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.name'), field:'name'},
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.type'), field:'type'}]
 		}
 
-		$scope.addMeasures = function(field) {
-			var text = field.name;
-
-			var	prefix = '"';
-			var	suffix = '"';
-
-
-			$scope._editor.focus();
-			if ($scope._editor.somethingSelected()) {
-				$scope._editor.replaceSelection(prefix + text + suffix);
-				return
-			}
-			var position = $scope._editor.getCursor();
-			$scope.addTextInCodemirror(prefix + text + suffix);
+		function refreshRowForColumns(cell){
+			$scope.model.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 		}
 
-		if($scope.model.dataset.dsId != undefined){
-			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
+		function resizeColumns(){
+			$scope.model.columnsGrid.api.sizeColumnsToFit();
 		}
 
-		$scope.measuresList = [];
-		$scope.datasetColumnsList = [];
-
-		for(var i=0;i<$scope.localDataset.metadata.fieldsMeta.length;i++){
-			var obj = $scope.localDataset.metadata.fieldsMeta[i];
-			if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
-				$scope.datasetColumnsList.push(obj);
-			}
+		$scope.model.variablesGrid = {
+			angularCompileRows: true,
+			domLayout :'autoHeight',
+	        enableColResize: false,
+	        enableFilter: false,
+	        enableSorting: false,
+	        onGridReady : resizeVariables,
+	        onCellEditingStopped: refreshRowForVariables,
+	        singleClickEdit: true,
+	        columnDefs: [
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.name'), field:'name'},
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.type'), field:'type'}]
 		}
 
-		if (measuresListFunc != undefined) {
-
-			var tmpList = measuresListFunc();
-			for (var i in tmpList) {
-				var obj = tmpList[i];
-				if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
-					$scope.measuresList.push(obj);
-				}
-			}
-		} else if ($scope.model.content == undefined) {
-
-			for(var i in $scope.model.columnSelectedOfDatasetAggregations){
-				var obj = $scope.model.columnSelectedOfDatasetAggregations[i];
-				if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
-					$scope.measuresList.push(obj);
-				}
-			}
-		} else {
-			for(var i in $scope.model.content.columnSelectedOfDataset){
-				var obj = $scope.model.content.columnSelectedOfDataset[i];
-				if(obj.fieldType == 'MEASURE' && !obj.isCalculated){
-					$scope.measuresList.push(obj);
-				}
-			}
+		function refreshRowForVariables(cell){
+			$scope.model.variablesGrid.api.redrawRows({rowNodes: [$scope.variablesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 		}
+
+		function resizeVariables(){
+			$scope.model.variablesGrid.api.sizeColumnsToFit();
+		}
+
+		$scope.selectFunction=function(func){
+			$scope.model.selectedFunction = func;
+			$scope.model.columnsGrid.api.setRowData(func.inputColumns);
+			$scope.model.variablesGrid.api.setRowData(func.inputVariables);
+		}
+
 		$scope.saveColumnConfiguration=function(){
-			if($scope.aliasForm.alias.$valid){
-				$scope.validateFormula(true)
-				.then(function(success){
-					if(!$scope.calculatedField.alias){
-						$scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.noalias"));
-						return;
-					}
-					$scope.result = angular.copy($scope.calculatedField);
-					if(!$scope.result.aggregationSelected) $scope.result.aggregationSelected = 'NONE';
-					$scope.result.funcSummary = $scope.result.aggregationSelected == 'NONE' ? 'SUM' : $scope.result.aggregationSelected;
-					$scope.result.aliasToShow = $scope.result.alias;
-					$scope.result.name = $scope.result.alias;
-					$scope.result.fieldType = 'MEASURE';
-					$scope.result.isCalculated = true;
-					$scope.result.type = "java.lang.Double";
-					promise.resolve($scope.result);
-					$mdDialog.hide();
-
-				},function(error){
-					$scope.toastifyMsg('warning',$scope.translate.load(error));
-					return;
-				})
-			}else $scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.invalidalias"));
+			promise.resolve($scope.model.selectedFunction);
+			$mdDialog.hide();
 		}
+
 		$scope.cancelConfiguration=function(){
 			$mdDialog.cancel();
-		}
-
-		$scope.resetFormula = function(){
-			$scope.calculatedField.formulaEditor = '';
-			$scope.calculatedField.aggregationSelected = 'NONE';
 		}
 
 		$scope.isSolrDataset = function() {
