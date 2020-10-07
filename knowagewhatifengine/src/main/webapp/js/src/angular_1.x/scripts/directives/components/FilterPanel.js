@@ -234,6 +234,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 		$scope.showDialog(ev,$scope.filterDial);
 
+		$scope.checkSlicerSelection();
+
 		$scope.loadingFilter = false;
 
 
@@ -244,19 +246,15 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 **/
 	$scope.expandTreeAsync = function(item){
 
-		if($scope.selectView ){
-			$scope.showTreeError = true;
-			$timeout(function(){
-				$scope.showTreeError = false;
-			},10000)
+		if ($scope.selectView) {
 			item.collapsed = true;
 			return;
 		}
 
-		if($scope.bindMode){
+		if ($scope.bindMode){
 			sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.attributeBinding.warning'), 'Warning');
 		}else{
-		$scope.getHierarchyMembersAsynchronus(filterFather,$scope.activeaxis,item.uniqueName,item.id);
+			$scope.getHierarchyMembersAsynchronus(filterFather,$scope.activeaxis,item.uniqueName,item.id);
 		}
 	};
 
@@ -422,10 +420,14 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					if(visibleSelectedTracker[j].id == h  && visibleSelectedTracker[j].selected.length > 0)
 						shouldSearchVisible= false;
 					}
+
 			  }
 			  else{
 				  checkIfExists(response.data);
 			  }
+
+			  var root = $scope.data[0];
+			  $scope.checkSlicerSelection(root);
 
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.hierarchyGet.error'), 'Error');
@@ -772,6 +774,33 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(
 				sbiModule_translate.load('sbi.olap.filtering.info')).ok("ok").targetEvent(ev));
 	};
+
+	$scope.checkSlicerSelection = function() {
+		if ($scope.isSlicer) {
+			// in case of a slicer, we check if user selected members in ancestor-descendant relationship, to display warning in that case, since this means aggregating values for those members
+			var root = $scope.data[0];
+			var hasSelectedDescendant = $scope.hasSelectedAncestorsAndDescendant(root, false);
+			$scope.ancestorAndDescendantSlicerSelection = hasSelectedDescendant;
+		} else {
+			$scope.ancestorAndDescendantSlicerSelection = false;
+		}
+	}
+
+	$scope.hasSelectedAncestorsAndDescendant = function (item, ancestorIsSelected) {
+		var visible = item.visible;
+		if (visible && ancestorIsSelected) {
+			return true;
+		}
+		var children = item.children;
+		for (index in children) {
+			var child = children[index];
+			var hasSelectedAncestorsAndDescendant = $scope.hasSelectedAncestorsAndDescendant(child, ancestorIsSelected || visible);
+			if (hasSelectedAncestorsAndDescendant) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Filter shift if necessary

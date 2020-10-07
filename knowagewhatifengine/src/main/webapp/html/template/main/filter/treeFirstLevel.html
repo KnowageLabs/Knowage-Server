@@ -15,7 +15,7 @@
 				</md-icon>
 			</span>
 			<span  ng-show="activeaxis == -1 && !olapMode">
-				<md-checkbox ng-model="item.visible" ">
+				<md-checkbox ng-model="item.visible" ng-change="checkSlicerSelection()">
 				<span ng-class="highlight(item.name)?'highlight-filter-result':''">
 					{{item.name}}
 				</span>	

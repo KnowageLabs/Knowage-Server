@@ -46,9 +46,6 @@
 				</md-checkbox>	
 			</md-input-container>
     	</div>
-    	<div layout="row" flex ng-if="showTreeError" layout-align="center center">
-    		<div class="kn-warning" flex="60">{{::translate.load('sbi.olap.filter.lockedhierarchies')}}</div>
-    	</div>
 		<div layout="row" flex>
 			<div ui-tree>
 				<ul ui-tree-nodes="" ng-model="data" class="tree" >
@@ -63,6 +60,13 @@
 	</md-dialog-content>
 
 	<md-dialog-actions layout="row">
+	
+		<div flex layout="row" layout-align="center" ng-if="ancestorAndDescendantSlicerSelection">
+			<div class="kn-warning">
+			{{::translate.load('sbi.olap.filter.slicer.ancestorAndDescendantSelection')}}
+			</div>
+		</div>
+	
 		<md-button class="md-raised" ng-click="closeFiltersDialog()">
 			{{::translate.load('sbi.common.cancel')}}
 		</md-button>

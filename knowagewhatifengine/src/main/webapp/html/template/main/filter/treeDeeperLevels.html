@@ -12,14 +12,14 @@
 		</md-icon>
 		<span ng-if="selectView">└</span>
 		<span ng-click="" ng-show=" !item.leaf">
-			<md-checkbox ng-model="item.visible">
+			<md-checkbox ng-model="item.visible" ng-change="checkSlicerSelection()">
 			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
 				{{item.name}}
 			</span>
 			</md-checkbox>
 		</span>
 		<span ng-click="" ng-show=" item.leaf">
-			<md-checkbox ng-model="item.visible" >
+			<md-checkbox ng-model="item.visible" ng-change="checkSlicerSelection()">
 			<span ng-class="highlight(item.name)?'highlight-filter-result':''" class="no-wrap">
 				{{item.name}}
 			</span>
