@@ -3168,7 +3168,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				biObjDataSet = biObjDataSetList.get(0);
 				dsId = biObjDataSet.getDataSetId();
 				dataset = datasetDao.loadDataSetById(dsId);
-				if (dataset.getDsType() == "SbiQbeDataSet") {
+				if (dataset != null && dataset.getDsType() == "SbiQbeDataSet") {
 					docDrivers = getDatasetDrivers(role, biObject, cockpitDrivers, businessModelsDAO, dataset);
 				}
 			} else {
@@ -3177,7 +3177,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					biObjDataSet = (BIObjDataSet) itDs.next();
 					dsId = biObjDataSet.getDataSetId();
 					dataset = datasetDao.loadDataSetById(dsId);
-					if (dataset.getDsType() == "SbiQbeDataSet") {
+					if (dataset != null && dataset.getDsType() == "SbiQbeDataSet") {
 						docDrivers = getDatasetDrivers(role, biObject, cockpitDrivers, businessModelsDAO, dataset);
 					}
 				}

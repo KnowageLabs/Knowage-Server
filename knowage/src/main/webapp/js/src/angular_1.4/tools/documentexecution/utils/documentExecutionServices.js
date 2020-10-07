@@ -697,7 +697,9 @@
 				if(drivers[i].parameterValue && drivers[i].parameterValue.length > 0) {
 					for(var j = 0; j < drivers[i].parameterValue.length; j++) {
 						if(drivers[i].parameterValue[j].value) {
-							drivers[i].parameterValue = drivers[i].parameterValue[j].value;
+							var tempValue = drivers[i].parameterValue[j].value;
+							drivers[i].parameterValue = [];
+							drivers[i].parameterValue.push(tempValue);
 						}
 					}
 					if(drivers[i].driverDefaultValue) {

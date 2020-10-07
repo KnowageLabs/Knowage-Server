@@ -528,7 +528,7 @@ if(executionRoleNames.size() > 0) {
                         'TOOLBAR_VISIBLE' : toolbarVisible,
                         'CAN_RESET_PARAMETERS' : canResetParameters,     
                         'SidenavOri': '<%=obj.getParametersRegion() %>',
-                        'IS_FOR_EXPORT' : <%= isForExport %>,
+                        'IS_FOR_EXPORT' : <%= isForExport %>
                         <%
                         if(cockpitSelections != null && !cockpitSelections.equalsIgnoreCase("")) {
                         %>
