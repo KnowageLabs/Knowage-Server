@@ -49,6 +49,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.geotools.data.DataSourceException;
 import org.json.JSONArray;
@@ -461,15 +462,20 @@ public class DataSetResource extends AbstractDataSetResource {
 
 					ja.put(jsonSbiDataSet);
 				} else if (dataSet instanceof QbeDataSet) {
-					String businessModelName = (String) jsonSbiDataSet.getJSONObject("configuration").get("qbeDatamarts");
-					drivers = getDatasetDriversByModelName(businessModelName, loadDSwithDrivers);
-					if (drivers != null) {
-						jsonSbiDataSet.put("drivers", drivers);
-						IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
-						isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
-						jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
+					try {
+						String businessModelName = (String) jsonSbiDataSet.getJSONObject("configuration").get("qbeDatamarts");
+						drivers = getDatasetDriversByModelName(businessModelName, loadDSwithDrivers);
+						if (drivers != null) {
+							jsonSbiDataSet.put("drivers", drivers);
+							IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
+							isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+							jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
 
-						ja.put(jsonSbiDataSet);
+							ja.put(jsonSbiDataSet);
+						}
+					} catch (Exception e) {
+						LogMF.error(logger, "Error loading dataset %s with id %d", new String[] { ds.getName(), ds.getId().getDsId().toString() });
+						throw e;
 					}
 
 				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet.getClass().equals(SolrDataSet.class)) {
