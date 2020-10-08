@@ -226,8 +226,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 			</md-toolbar>
 		</md-card-title>
-			<md-card-content layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill ng-style="paddingStyle">
-				<div layout="row" ng-show="parametersMessage" class="errorContainer" layout-align="center center" layout-fill>
+			<md-card-content flex layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill ng-style="paddingStyle">
+				<div layout="row" ng-if="parametersMessage" class="errorContainer" layout-align="center center" layout-fill>
 					<div class="kn-infoerror" flex="60">{{translate.load('sbi.cockpit.parameter.and.driver')}}</div>			   		
 				</div>
 			</md-card-content>
