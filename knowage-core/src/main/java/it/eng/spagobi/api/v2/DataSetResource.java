@@ -474,7 +474,7 @@ public class DataSetResource extends AbstractDataSetResource {
 							ja.put(jsonSbiDataSet);
 						}
 					} catch (Exception e) {
-						LogMF.error(logger, "Error loading dataset %s with id %d", new String[] { ds.getName(), ds.getId().getDsId().toString() });
+						LogMF.error(logger, "Error loading dataset %s with id %s", new String[] { ds.getName(), ds.getId().getDsId().toString() });
 						throw e;
 					}
 
