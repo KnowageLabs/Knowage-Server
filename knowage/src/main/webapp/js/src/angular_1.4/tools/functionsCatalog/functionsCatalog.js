@@ -36,6 +36,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.tableSelectedFunction.language = "Python";
 	$scope.languages = [ "Python", "R" ];
 	$scope.inputColumnTypes = ['STRING', 'DATE', 'NUMBER', 'LIST'];
+	$scope.inputVariableTypes = ['STRING', 'DATE', 'NUMBER'];
 	$scope.outputColumnTypes = ['STRING', 'DATE', 'NUMBER'];
 	$scope.functionTypesList = [];
 	$scope.inputColumns = [];

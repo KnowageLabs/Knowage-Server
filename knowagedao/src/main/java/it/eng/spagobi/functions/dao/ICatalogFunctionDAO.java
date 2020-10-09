@@ -5,13 +5,15 @@ import java.util.Map;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.functions.metadata.IInputVariable;
+import it.eng.spagobi.functions.metadata.IOutputColumn;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
 import it.eng.spagobi.utilities.CatalogFunction;
 
 public interface ICatalogFunctionDAO extends ISpagoBIDao {
 
-	public int insertCatalogFunction(CatalogFunction catalogFunction, Map<String, String> inputColumns, Map<String, String> inputVariables,
-			Map<String, String> outputColumns) throws EMFUserError;
+	public int insertCatalogFunction(CatalogFunction catalogFunction, Map<String, String> inputColumns, Map<String, ? extends IInputVariable> inputVariables,
+			Map<String, ? extends IOutputColumn> outputColumns) throws EMFUserError;
 
 	public List<SbiCatalogFunction> loadAllCatalogFunctions();
 

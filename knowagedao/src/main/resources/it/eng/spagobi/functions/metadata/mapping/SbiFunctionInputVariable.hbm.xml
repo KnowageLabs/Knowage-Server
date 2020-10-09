@@ -16,8 +16,12 @@
             <column name="FUNCTION_ID" not-null="true" />
         </many-to-one>
         
+        <property name="varType" type="string">
+	      <column name="VAR_TYPE" length="100" not-null="true" />
+	    </property>
+        
         <property name="varValue" type="string">
-	      <column name="VAR_VALUE" length="100" not-null="true" />
+	      <column name="VAR_VALUE" length="100" not-null="false" />
 	    </property>
         
  		<component name="commonInfo" insert="true" update="true" 

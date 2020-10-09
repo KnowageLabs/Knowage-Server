@@ -293,7 +293,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	       								<input ng-model="v.name" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
 	   								</md-input-container>
 	   								<md-input-container class="md-block" flex>
-	           							<label>{{translate.load("sbi.functionscatalog.variablevalue");}}</label>
+	           							<label>{{translate.load("sbi.functionscatalog.variabletype");}}</label>
+	       								<md-select ng-model="v.type" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+		    								<md-option ng-repeat="variableType in inputVariableTypes" value="{{variableType}}">
+		      								{{variableType}}
+		    								</md-option>
+	 									</md-select>
+	   								</md-input-container>
+	   								<md-input-container class="md-block" flex>
+	           							<label>{{translate.load("sbi.functionscatalog.variabledefaultvalue");}}</label>
 	       								<input ng-model="v.value" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
 	   								</md-input-container>
 	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeInputVariable(i)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
@@ -306,10 +314,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab label='{{translate.load("sbi.functionscatalog.script");}}' ng-if="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
 					<md-card>
 						<md-card-content>
-	  					 	<md-radio-group>
-	      						<md-radio-button class="md-primary" ng-click="radioButtonOnlineOfflinePush('online')" style="outline: none; border: 0; ">On-line</md-radio-button>
-	    					</md-radio-group>	
-	    					
 	    					<md-input-container class="md-block">
 	            				<label>{{translate.load("sbi.functionscatalog.language");}}</label>
 	            				<md-select ng-model="shownFunction.language">
@@ -319,7 +323,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	           					</md-select>
 	          				</md-input-container>
 	      						
-	  						<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.functionFamily=='online'">
+	  						<md-input-container class="md-block md-input-has-value">
 	          					<label class="customCodeMirrorLabel">{{translate.load("sbi.functionscatalog.script");}}</label>
 	          					<textarea flex ui-refresh="true" ng-model="shownFunction.onlineScript" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
 	        				</md-input-container>
@@ -337,36 +341,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        			</md-card-content>
 	        		</md-card>			    					
 				</md-tab>
+				
 				<md-tab label='{{translate.load("sbi.functionscatalog.output");}}'>
 					<md-card class="noMdError smallInputs">
 						<md-toolbar class="secondaryToolbar">
 							<div class="md-toolbar-tools">
-								<h2>{{translate.load("sbi.functionscatalog.output");}}</h2>
+								<h2>{{translate.load("sbi.functionscatalog.outputcolumns");}}</h2>
 								<div flex></div>
-								<md-button class="md-secondary" ng-click="output=addOutputColumn()" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">{{translate.load("sbi.functionscatalog.addoutputcolumn");}}</md-button> 		
+								<md-button class="md-secondary" ng-click="input=addOutputColumn()" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">{{translate.load("sbi.functionscatalog.addcolumn");}}</md-button>
 							</div>
 						</md-toolbar>	
-						<md-card-content>
+						<md-card-content>					
 							<md-list>
 								<md-list-item ng-if="shownFunction.outputColumns.length==0" class="messageItem" layout-align="center center">
-									&emsp;&emsp;{{translate.load("sbi.functionscatalog.nooutputexpected");}}
-								</md-list-item>
-								<md-list-item ng-repeat="o in shownFunction.outputColumns">
+									&emsp;&emsp;{{translate.load("sbi.functionscatalog.noinputcolumnsrequired");}}
+								</md-list-item>	
+								<md-list-item ng-repeat="c in shownFunction.outputColumns">
 									<md-input-container class="md-block" flex>
-	        							<label>{{translate.load("sbi.functionscatalog.columnname");}}</label>
-	        							<input ng-model="o.name" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-	      							</md-input-container>
-	   								<md-input-container aria-hidden="true" class="md-block" flex>
-		      							<label>{{translate.load("sbi.functionscatalog.columntype");}}</label>
-		        						<md-select ng-model="o.type" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-	              							<md-option ng-repeat="type in outputColumnTypes" value="{{type}}">
-	                							{{type}}
-	              							</md-option>
-	           							</md-select>
-	      							</md-input-container>
-	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="removeOutputColumn(o)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
+	           							<label>{{translate.load("sbi.functionscatalog.columnname");}}</label>
+	       								<input ng-model="c.name" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+	   								</md-input-container>
+	   								<md-input-container class="md-block" flex>
+	  									<label>{{translate.load("sbi.functionscatalog.columnfieldtype");}}</label>
+	  									<md-select ng-model="c.fieldType" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+		    								<md-option ng-repeat="columnFieldType in ['MEASURE', 'ATTRIBUTE']" value="{{columnFieldType}}">
+		      								{{columnFieldType}}
+		    								</md-option>
+	 									</md-select>
+									</md-input-container>
+	   								<md-input-container class="md-block" flex>
+	  									<label>{{translate.load("sbi.functionscatalog.columntype");}}</label>
+	  									<md-select ng-model="c.type" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+		    								<md-option ng-repeat="columnType in outputColumnTypes" value="{{columnType}}">
+		      								{{columnType}}
+		    								</md-option>
+	 									</md-select>
+									</md-input-container>
+	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeInputColumn(c)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
 								</md-list-item>
-							</md-list>
+						  	</md-list>
 						</md-card-content>
 					</md-card>
 				</md-tab>

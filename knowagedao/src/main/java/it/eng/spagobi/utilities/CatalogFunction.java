@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.eng.spagobi.functions.metadata.IInputVariable;
+import it.eng.spagobi.functions.metadata.IOutputColumn;
+
 public class CatalogFunction {
 
 	private int functionId;
@@ -19,15 +22,15 @@ public class CatalogFunction {
 	private String owner;
 	private String label;
 	private String type;
-	private Map<String, String> inputVariables = new HashMap<String, String>();
+	private Map<String, IInputVariable> inputVariables = new HashMap<String, IInputVariable>();
 	private Map<String, String> inputColumns = new HashMap<String, String>();
-	private Map<String, String> outputColumns = new HashMap<String, String>();
+	private Map<String, IOutputColumn> outputColumns = new HashMap<String, IOutputColumn>();
 
 	private List<String> keywords = new ArrayList<String>();
 
 	public CatalogFunction(int functionId, String name, String description, String language, String benchmarks, String family, String onlineScript,
-			String offlineScriptTrain, String offlineScriptUse, String owner, String label, String type, Map<String, String> inputVariables,
-			Map<String, String> inputColumns, Map<String, String> outputColumns, List<String> keywords) {
+			String offlineScriptTrain, String offlineScriptUse, String owner, String label, String type, Map<String, IInputVariable> inputVariables,
+			Map<String, String> inputColumns, Map<String, IOutputColumn> outputColumns, List<String> keywords) {
 		super();
 		this.functionId = functionId;
 		this.name = name;
@@ -104,11 +107,11 @@ public class CatalogFunction {
 		this.offlineScriptUse = offlineScriptUse;
 	}
 
-	public Map<String, String> getInputVariables() {
+	public Map<String, IInputVariable> getInputVariables() {
 		return inputVariables;
 	}
 
-	public void setInputVariables(Map<String, String> inputVariables) {
+	public void setInputVariables(Map<String, IInputVariable> inputVariables) {
 		this.inputVariables = inputVariables;
 	}
 
@@ -168,11 +171,11 @@ public class CatalogFunction {
 		this.inputColumns = inputColumns;
 	}
 
-	public Map<String, String> getOutputColumns() {
+	public Map<String, IOutputColumn> getOutputColumns() {
 		return outputColumns;
 	}
 
-	public void setOutputColumns(Map<String, String> outputColumns) {
+	public void setOutputColumns(Map<String, IOutputColumn> outputColumns) {
 		this.outputColumns = outputColumns;
 	}
 }

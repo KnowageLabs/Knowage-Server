@@ -14,6 +14,8 @@ import org.hibernate.Transaction;
 
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.functions.metadata.IInputVariable;
+import it.eng.spagobi.functions.metadata.IOutputColumn;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputColumn;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputColumnId;
@@ -50,8 +52,8 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	}
 
 	@Override
-	public int insertCatalogFunction(CatalogFunction catalogFunction, Map<String, String> inputColumns, Map<String, String> inputVariables,
-			Map<String, String> outputColumns) {
+	public int insertCatalogFunction(CatalogFunction catalogFunction, Map<String, String> inputColumns, Map<String, ? extends IInputVariable> inputVariables,
+			Map<String, ? extends IOutputColumn> outputColumns) {
 
 		int catalogFunctionId = -1;
 		Session session;
@@ -99,14 +101,16 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		return catalogFunctionId;
 	}
 
-	private Set<SbiFunctionInputVariable> getSbiFunctionInputVariablesSet(Map<String, String> inputVariables, SbiCatalogFunction sbiCatalogFunction) {
+	private Set<SbiFunctionInputVariable> getSbiFunctionInputVariablesSet(Map<String, ? extends IInputVariable> inputVariables,
+			SbiCatalogFunction sbiCatalogFunction) {
 
 		Set<SbiFunctionInputVariable> inputVarSet = new HashSet<SbiFunctionInputVariable>();
 		SbiFunctionInputVariable var = null;
 
 		for (String varName : inputVariables.keySet()) {
-			String value = inputVariables.get(varName);
-			var = new SbiFunctionInputVariable(new SbiFunctionInputVariableId(sbiCatalogFunction.getFunctionId(), varName), sbiCatalogFunction, value);
+			String value = inputVariables.get(varName).getValue();
+			String type = inputVariables.get(varName).getType();
+			var = new SbiFunctionInputVariable(new SbiFunctionInputVariableId(sbiCatalogFunction.getFunctionId(), varName), sbiCatalogFunction, type, value);
 			updateSbiCommonInfo4Insert(var);
 			inputVarSet.add(var);
 		}
@@ -129,14 +133,16 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		return inputColSet;
 	}
 
-	private Set<SbiFunctionOutputColumn> getSbiFunctionOutputColumnsSet(Map<String, String> outputColumns, SbiCatalogFunction sbiCatalogFunction) {
+	private Set<SbiFunctionOutputColumn> getSbiFunctionOutputColumnsSet(Map<String, ? extends IOutputColumn> outputColumns,
+			SbiCatalogFunction sbiCatalogFunction) {
 
 		Set<SbiFunctionOutputColumn> outputColSet = new HashSet<SbiFunctionOutputColumn>();
 		SbiFunctionOutputColumn col = null;
 
 		for (String colName : outputColumns.keySet()) {
-			String value = outputColumns.get(colName);
-			col = new SbiFunctionOutputColumn(new SbiFunctionOutputColumnId(sbiCatalogFunction.getFunctionId(), colName), sbiCatalogFunction, value);
+			String fieldType = outputColumns.get(colName).getFieldType();
+			String type = outputColumns.get(colName).getType();
+			col = new SbiFunctionOutputColumn(new SbiFunctionOutputColumnId(sbiCatalogFunction.getFunctionId(), colName), sbiCatalogFunction, fieldType, type);
 			updateSbiCommonInfo4Insert(col);
 			outputColSet.add(col);
 		}
@@ -237,8 +243,8 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			if (updatedCatalogFunction.getInputColumns().keySet().contains(ci.getId().getColName())) {
 				delete = false;
 				updateSbiCommonInfo4Update(ci);
-				ci.setColType(updatedCatalogFunction.getInputVariables().get(ci.getId().getColName()));
-				updatedCatalogFunction.getInputVariables().remove(ci.getId().getColName());
+				ci.setColType(updatedCatalogFunction.getInputColumns().get(ci.getId().getColName()));
+				updatedCatalogFunction.getInputColumns().remove(ci.getId().getColName());
 			}
 
 			if (delete) {
@@ -274,8 +280,9 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			if (updatedCatalogFunction.getOutputColumns().keySet().contains(ci.getId().getColName())) {
 				delete = false;
 				updateSbiCommonInfo4Update(ci);
-				ci.setColType(updatedCatalogFunction.getInputVariables().get(ci.getId().getColName()));
-				updatedCatalogFunction.getInputVariables().remove(ci.getId().getColName());
+				ci.setColFieldType(updatedCatalogFunction.getOutputColumns().get(ci.getId().getColName()).getFieldType());
+				ci.setColType(updatedCatalogFunction.getOutputColumns().get(ci.getId().getColName()).getType());
+				updatedCatalogFunction.getOutputColumns().remove(ci.getId().getColName());
 			}
 
 			if (delete) {
@@ -292,9 +299,10 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		// insert cols that are not present
 		Set<SbiFunctionOutputColumn> hibColsSet = hibCatFunction.getSbiFunctionOutputColumns();
 		for (String colName : updatedCatalogFunction.getOutputColumns().keySet()) {
-			String colType = updatedCatalogFunction.getOutputColumns().get(colName);
+			String colFieldType = updatedCatalogFunction.getOutputColumns().get(colName).getFieldType();
+			String colType = updatedCatalogFunction.getOutputColumns().get(colName).getType();
 			SbiFunctionOutputColumn col = new SbiFunctionOutputColumn(new SbiFunctionOutputColumnId(hibCatFunction.getFunctionId(), colName), hibCatFunction,
-					colType);
+					colFieldType, colType);
 			updateSbiCommonInfo4Insert(col);
 			hibColsSet.add(col);
 		}
@@ -311,7 +319,8 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			if (updatedCatalogFunction.getInputVariables().keySet().contains(vi.getId().getVarName())) {
 				delete = false;
 				updateSbiCommonInfo4Update(vi);
-				vi.setVarValue(updatedCatalogFunction.getInputVariables().get(vi.getId().getVarName()));
+				vi.setVarType(updatedCatalogFunction.getInputVariables().get(vi.getId().getVarName()).getType());
+				vi.setVarValue(updatedCatalogFunction.getInputVariables().get(vi.getId().getVarName()).getValue());
 				updatedCatalogFunction.getInputVariables().remove(vi.getId().getVarName());
 			}
 
@@ -329,9 +338,10 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		// insert vars that are not presents
 		Set<SbiFunctionInputVariable> hibVarsSet = hibCatFunction.getSbiFunctionInputVariables();
 		for (String varName : updatedCatalogFunction.getInputVariables().keySet()) {
-			String varValue = updatedCatalogFunction.getInputVariables().get(varName);
+			String varType = updatedCatalogFunction.getInputVariables().get(varName).getType();
+			String varValue = updatedCatalogFunction.getInputVariables().get(varName).getValue();
 			SbiFunctionInputVariable var = new SbiFunctionInputVariable(new SbiFunctionInputVariableId(hibCatFunction.getFunctionId(), varName), hibCatFunction,
-					varValue);
+					varType, varValue);
 			updateSbiCommonInfo4Insert(var);
 			hibVarsSet.add(var);
 		}

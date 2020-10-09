@@ -16,6 +16,10 @@
             <column name="FUNCTION_ID" not-null="true" />
         </many-to-one>
         
+        <property name="colFieldType" type="string">
+	      <column name="COL_FIELD_TYPE" length="100" not-null="true" />
+	    </property>
+        
         <property name="colType" type="string">
 	      <column name="COL_TYPE" length="100" not-null="true" />
 	    </property>

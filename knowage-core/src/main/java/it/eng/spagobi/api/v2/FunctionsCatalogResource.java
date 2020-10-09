@@ -44,6 +44,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
+import it.eng.knowage.functionscatalog.utils.InputVariable;
+import it.eng.knowage.functionscatalog.utils.OutputColumn;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -51,6 +53,8 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
+import it.eng.spagobi.functions.metadata.IInputVariable;
+import it.eng.spagobi.functions.metadata.IOutputColumn;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputColumn;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputVariable;
@@ -73,128 +77,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	public static String DATA_MINING_ENGINE_SUFFIX = "dataminingengine";
 
-	// @formatter:off
-	/**
-	 * @api {get} /1.0/functions-catalog Request Functions
-	 * @apiName GET_getAllCatalogFunctions
-	 * @apiGroup Functions
-	 *
-	 * @apiVersion 0.1.0
-	 *
-	 * @apiDescription
-	 * -- AUTHENTICATION
-	 *
-	 * All the Knowage RESTful services are based on Basic Authentication. Please generate your request in accordance with this
-	 * requirement.
-	 *
-	 *
-	 * -- DESCRIPTION
-	 *
-	 * This service can be called to obtain a complete list of functions registered in the catalog. In case the current user is not
-	 * the owner of the function, the fields 'language', 'script' and 'url' will never be returned, but empty.
-	 *
-	 * @apiSuccess {json} functions The list of functions and keywords.
-	 *
-	 * @apiSuccessExample {json} Response-example:
-		{
-		   "functions":[
-		      {
-		         "id":16,
-		         "name":"tst_average",
-		         "description":"tst_average",
-		         "language":"R",
-		         "script":"x <- c($P{firstvar}, $P{secondvar}, $P{thirdvar})\nav <- mean(x)",
-		         "owner":"test_admin",
-		         "label":"tst_average",
-		         "type":"Utilities",
-		         "remote":"false",
-		         "url":"",
-		         "keywords":[
-		            "average"
-		         ],
-		         "inputVariables":[
-		            {
-		               "name":"thirdvar",
-		               "value":"-5"
-		            },
-		            {
-		               "name":"secondvar",
-		               "value":"11"
-		            },
-		            {
-		               "name":"firstvar",
-		               "value":"5"
-		            }
-		         ],
-		         "inputDatasets":[
-
-		         ],
-		         "inputFiles":[
-		         	{
-		               "name":"sourcefile",
-		               "value":
-		               		{
-						   	  	"filesize": "54836",
-						      	"filetype": "image/jpeg",
-						      	"filename": "sourcechart.jpg",
-		   	  				}
-		            }
-
-		         ],
-		         "outputItems":[
-		            {
-		               "type":"Text",
-		               "label":"av"
-		            },
-		             {
-		               "type":"File",
-		               "label":"myfile"
-		            }
-		         ]
-		      },
-		      {
-		         "id":17,
-		         "name":"tst_average_ds",
-		         "description":"tst_average_ds",
-		         "language":"",
-		         "script":"",
-		         "owner":"test_dev",
-		         "label":"tst_average_ds",
-		         "type":"Utilities",
-		         "remote":"true",
-		         "url":"",
-		         "keywords":[
-
-		         ],
-		         "inputVariables":[
-
-		         ],
-		         "inputDatasets":[
-		            {
-		               "label":"TST_FUNC_CAT_LP"
-		            }
-		         ],
-		         "outputItems":[
-		            {
-		               "type":"Dataset",
-		               "label":"dsoutput"
-		            }
-		         ]
-		      }
-		   ],
-		   "keywords":[
-		      "average"
-		   ]
-		}
-	 * @apiErrorExample {json} Error-Response example:
-		 *    {
-		 *    	"service":"",
-		 *    	"errors":[
-		 *    		{"message":"Here the error message."}
-		 *    	]
-		 *    }
-	*/
-	// @formatter:on
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -243,114 +125,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	}
 
-	// @formatter:off
-		/**
-		 * @api {get} /1.0/functions-catalog/:type Request Functions by type
-		 * @apiName GET_getCatalogFunctionsByType
-		 * @apiGroup Functions
-		 *
-		 * @apiVersion 0.1.0
-		 *
-		 * @apiDescription
-		 * -- AUTHENTICATION
-		 *
-		 * All the Knowage RESTful services are based on Basic Authentication. Please generate your request in accordance with this
-		 * requirement.
-		 *
-		 *
-		 * -- DESCRIPTION
-		 *
-		 * This service can be called to obtain a filtered list of functions registered in the catalog. The list is filtered by the type.
-		 * In case the current user is not the owner of the function, the fields 'language', 'script' and 'url' will never be returned, but empty.
-		 *
-		 * @apiParam {String} type Function type.
-		 *
-		 * @apiSuccess {json} functions The list of functions and keywords with the specified type.
-		 *
-		 * @apiSuccessExample {json} Response-example:
-			{
-			   "functions":[
-			      {
-			         "id":16,
-			         "name":"tst_average",
-			         "description":"tst_average",
-			         "language":"R",
-			         "script":"x <- c($P{firstvar}, $P{secondvar}, $P{thirdvar})\nav <- mean(x)",
-			         "owner":"test_admin",
-			         "label":"tst_average",
-			         "type":"Utilities",
-			         "remote":"false",
-		         	 "url":"",
-			         "keywords":[
-			            "average"
-			         ],
-			         "inputVariables":[
-			            {
-			               "name":"thirdvar",
-			               "value":"-5"
-			            },
-			            {
-			               "name":"secondvar",
-			               "value":"11"
-			            },
-			            {
-			               "name":"firstvar",
-			               "value":"5"
-			            }
-			         ],
-			         "inputDatasets":[
-
-			         ],
-			         "outputItems":[
-			            {
-			               "type":"Text",
-			               "label":"av"
-			            }
-			         ]
-			      },
-			      {
-			         "id":17,
-			         "name":"tst_average_ds",
-			         "description":"tst_average_ds",
-			         "language":"",
-			         "script":"",
-			         "owner":"test_dev",
-			         "label":"tst_average_ds",
-			         "type":"Utilities",
-			         "remote":"false",
-		             "url":""
-			         "keywords":[
-
-			         ],
-			         "inputVariables":[
-
-			         ],
-			         "inputDatasets":[
-			            {
-			               "label":"TST_FUNC_CAT_LP"
-			            }
-			         ],
-			         "outputItems":[
-			            {
-			               "type":"Dataset",
-			               "label":"dsoutput"
-			            }
-			         ]
-			      }
-			   ],
-			   "keywords":[
-			      "average"
-			   ]
-			}
-	* @apiErrorExample {json} Error-Response example:
-		 *    {
-		 *    	"service":"",
-		 *    	"errors":[
-		 *    		{"message":"Here the error message."}
-		 *    	]
-		 *    }
-	*/
-	// @formatter:on
 	@GET
 	@Path("/{type}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -405,125 +179,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	}
 
-	// @formatter:off
-	/**
-	 * @api {post} /1.0/functions-catalog/insert Insert Function
-	 * @apiName POST_insertCatalogFunction
-	 * @apiGroup Functions
-	 *
-	 * @apiVersion 0.1.0
-	 *
-		 * @apiDescription
-		 * -- AUTHENTICATION
-		 *
-		 * All the Knowage RESTful services are based on Basic Authentication. Please generate your request in accordance with this
-		 * requirement.
-		 *
-		 *
-		 * -- DESCRIPTION
-		 *
-		 * This service can be called to add a new function to the catalog. If 'remote' field is false, then script and language MUST
-		 * be valorized since the function will be execute within the Knowage Datamining capabilities. Otherwise script and language cannot be provided
-		 * and their value MUST be ignored.
-		 *
-		 * Also, if 'remote' field is true, the output fields still must be provided, even if the output is generated remotely.
-		 * Those defined output are used to validate the response provided by the remote function. As instance, if a remote function has
-		 * a dataset as output, then it MUST take care of save that dataset inside Knowage (through API) before returning the response.
-		 * Knowage will validate the output by looking into its repository to see if that dataset has been added.
-		 *
-	 *
-	 * @apiParam {json} function Function detail.
-	 * @apiParamExample {json} Request-Example:
-	 *
-			{
-			   "id":"",
-			   "name":"tst_average_ds",
-			   "description":"tst_average_ds",
-			   "language":"R",
-			   "script":"z<-TST_FUNC_CAT_LP\ndsoutput<-rbind(z,rowMeans(z, na.rm = TRUE))\nfieldoutput<-${field}\ndsoutput",
-			   "owner":"test_admin",
-			   "label":"tst_average_ds",
-			   "type":"Utilities",
-			   "remote":"false",
-		       "url":"",
-			   "keywords":[
-			      "average",
-			      "cool",
-			      "math"
-			   ],
-			   "inputVariables":[
-			      {
-			         "name":"field",
-			         "value":"5"
-			      }
-			   ],
-			   "inputDatasets":[
-			      {
-			         "label":"TST_FUNC_CAT_LP"
-			      }
-			   ],
-			   "outputItems":[
-			      {
-			         "type":"Dataset",
-			         "label":"dsoutput"
-			      },
-			      {
-			         "label":"fieldoutput",
-			         "type":"Text"
-			      }
-			   ]
-			}
-	 *
-	 * @apiSuccess {json} response The response of the update.
-	 *
-	 * @apiSuccessExample {json} Response-example:
-			{
-			   "id":17,
-			   "name":"tst_average_ds",
-			   "description":"tst_average_ds",
-			   "language":"R",
-			   "script":"z<-TST_FUNC_CAT_LP\ndsoutput<-rbind(z,rowMeans(z, na.rm = TRUE))\nfieldoutput<-${field}\ndsoutput",
-			   "owner":"test_admin",
-			   "label":"tst_average_ds",
-			   "type":"Utilities",
-			   "remote":"false",
-		       "url":"",
-			   "keywords":[
-			      "average",
-			      "cool",
-			      "math"
-			   ],
-			   "inputVariables":[
-			      {
-			         "name":"field",
-			         "value":"5"
-			      }
-			   ],
-			   "inputDatasets":[
-			      {
-			         "label":"TST_FUNC_CAT_LP"
-			      }
-			   ],
-			   "outputItems":[
-			      {
-			         "type":"Dataset",
-			         "label":"dsoutput"
-			      },
-			      {
-			         "label":"fieldoutput",
-			         "type":"Text"
-			      }
-			   ]
-			}
-	 * @apiErrorExample {json} Error-Response example:
-		 *    {
-		 *    	"service":"",
-		 *    	"errors":[
-		 *    		{"message":"Here the error message."}
-		 *    	]
-		 *    }
-		 */
-	// @formatter:on
 	@POST
 	@Path("/insert")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -543,7 +198,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			String description = jsonObj.getString("description");
 			String benchmarks = jsonObj.getString("benchmarks");
 			String language = jsonObj.getString("language");
-			String family = jsonObj.getString("functionFamily");
+			String family = jsonObj.has("functionFamily") ? jsonObj.getString("functionFamily") : "online";
 			String onlineScript = null, offlineScriptTrain = null, offlineScriptUse = null;
 			if (family.equals("online")) {
 				onlineScript = jsonObj.getString("onlineScript");
@@ -562,9 +217,9 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 			JSONArray jsonOutputColumns = jsonObj.getJSONArray("outputColumns");
 
-			Map<String, String> inputVariables = new HashMap<String, String>();
+			Map<String, InputVariable> inputVariables = new HashMap<String, InputVariable>();
 			Map<String, String> inputColumns = new HashMap<String, String>();
-			Map<String, String> outputColumns = new HashMap<String, String>();
+			Map<String, IOutputColumn> outputColumns = new HashMap<String, IOutputColumn>();
 
 			for (int i = 0; i < jsonInputColumns.length(); i++) {
 
@@ -578,16 +233,18 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 				JSONObject inputItemJSON = jsonInputVariables.getJSONObject(i);
 				String varName = inputItemJSON.getString("name");
+				String varType = inputItemJSON.getString("type");
 				String varValue = inputItemJSON.getString("value");
-				inputVariables.put(varName, varValue);
+				inputVariables.put(varName, new InputVariable(varName, varType, varValue));
 			}
 
 			for (int i = 0; i < jsonOutputColumns.length(); i++) {
 
 				JSONObject outputItemJSON = jsonOutputColumns.getJSONObject(i);
 				String colName = outputItemJSON.getString("name");
+				String colFieldType = outputItemJSON.getString("fieldType");
 				String colType = outputItemJSON.getString("type");
-				outputColumns.put(colName, colType);
+				outputColumns.put(colName, new OutputColumn(colName, colFieldType, colType));
 			}
 
 			List<String> keywordsList = new ArrayList<String>();
@@ -620,93 +277,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		return response.toString();
 	}
 
-	// @formatter:off
-		/**
-		 * @api {put} /1.0/functions-catalog/update/:id Update Function
-		 * @apiName PUT_updateCatalogFunction
-		 * @apiGroup Functions
-		 *
-	 * @apiVersion 0.1.0
-	 *
-		 * @apiDescription
-		 * -- AUTHENTICATION
-		 *
-		 * All the Knowage RESTful services are based on Basic Authentication. Please generate your request in accordance with this
-		 * requirement.
-		 *
-		 *
-		 * -- DESCRIPTION
-		 *
-		 * This service can be called to update an existing function to the catalog. If 'remote' field is false, then script and language MUST
-		 * be valorized since the function will be execute within the Knowage Datamining capabilities. Otherwise script and language cannot be provided
-		 * and their value MUST be ignored.
-		 *
-		 * Also, if 'remote' field is true, the output fields still must be provided, even if the output is generated remotely.
-		 * Those defined outputs are used to validate the response provided by the remote function. As instance, if a remote function has
-		 * a dataset as output, then it MUST take care of save that dataset inside Knowage (through API) before returning the response.
-		 * Knowage will validate the output by looking into its repository to see if that dataset has been added.
-		 *
-		 *
-		 * @apiParam {String} id Function id.
-		 *
-		 * @apiParam {json} function Function detail.
-		 * @apiParamExample {json} Request-Example:
-		 *
-				{
-				   "id":17,
-				   "name":"tst_average_ds",
-				   "description":"tst_average_ds",
-				   "language":"R",
-				   "script":"z<-TST_FUNC_CAT_LP\ndsoutput<-rbind(z,rowMeans(z, na.rm = TRUE))\nfieldoutput<-${field}\ndsoutput",
-				   "owner":"test_admin",
-				   "label":"tst_average_ds",
-				   "type":"Utilities",
-				   "remote":"false",
-		           "url":"",
-				   "keywords":[
-				      "average",
-				      "cool",
-				      "math"
-				   ],
-				   "inputVariables":[
-				      {
-				         "name":"field",
-				         "value":"5"
-				      }
-				   ],
-				   "inputDatasets":[
-				      {
-				         "label":"TST_FUNC_CAT_LP"
-				      }
-				   ],
-				   "outputItems":[
-				      {
-				         "type":"Dataset",
-				         "label":"dsoutput"
-				      },
-				      {
-				         "label":"fieldoutput",
-				         "type":"Text"
-				      }
-				   ]
-				}
-		 *
-		 * @apiSuccess {json} response The response of the update.
-		 *
-		 * @apiSuccessExample {json} Response-example:
-			{
-				"Response":"OK"
-			}
-
-		* @apiErrorExample {json} Error-Response example:
-		 *    {
-		 *    	"service":"",
-		 *    	"errors":[
-		 *    		{"message":"Here the message."}
-		 *    	]
-		 *    }
-		 */
-	// @formatter:on
 	@PUT
 	@Path("/update/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -729,7 +299,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			String description = jsonObj.getString("description");
 			String benchmarks = jsonObj.getString("benchmarks");
 			String language = jsonObj.getString("language");
-			String family = jsonObj.getString("functionFamily");
+			String family = jsonObj.has("functionFamily") ? jsonObj.getString("functionFamily") : "online";
 			String onlineScript = null, offlineScriptTrain = null, offlineScriptUse = null;
 			if (family.equals("online")) {
 				onlineScript = jsonObj.getString("onlineScript");
@@ -747,8 +317,8 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			JSONArray keywords = jsonObj.getJSONArray("keywords");
 
 			Map<String, String> inputColumns = new HashMap<String, String>();
-			Map<String, String> outputColumns = new HashMap<String, String>();
-			Map<String, String> inputVariables = new HashMap<String, String>();
+			Map<String, IOutputColumn> outputColumns = new HashMap<String, IOutputColumn>();
+			Map<String, IInputVariable> inputVariables = new HashMap<String, IInputVariable>();
 
 			for (int i = 0; i < jsonInputColumns.length(); i++) {
 				JSONObject inputColumnJSON = jsonInputColumns.getJSONObject(i);
@@ -760,15 +330,17 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			for (int i = 0; i < jsonInputVariables.length(); i++) {
 				JSONObject inputItemJSON = jsonInputVariables.getJSONObject(i);
 				String varName = inputItemJSON.getString("name");
+				String varType = inputItemJSON.getString("type");
 				String varValue = inputItemJSON.getString("value");
-				inputVariables.put(varName, varValue);
+				inputVariables.put(varName, new InputVariable(varName, varType, varValue));
 			}
 
 			for (int i = 0; i < jsonOutputColumns.length(); i++) {
 				JSONObject outputColumnJSON = jsonOutputColumns.getJSONObject(i);
 				String colName = outputColumnJSON.getString("name");
+				String colFieldType = outputColumnJSON.getString("fieldType");
 				String colType = outputColumnJSON.getString("type");
-				inputColumns.put(colName, colType);
+				outputColumns.put(colName, new OutputColumn(colName, colFieldType, colType));
 			}
 
 			List<String> keyList = new ArrayList<String>();
@@ -786,6 +358,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			itemToInsert.setOfflineScriptTrain(offlineScriptTrain);
 			itemToInsert.setOfflineScriptUse(offlineScriptUse);
 			itemToInsert.setOwner(owner);
+			itemToInsert.setInputColumns(inputColumns);
 			itemToInsert.setOutputColumns(outputColumns);
 			itemToInsert.setInputVariables(inputVariables);
 			itemToInsert.setKeywords(keyList);
@@ -810,43 +383,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		return response.toString();
 	}
 
-	// @formatter:off
-	/**
-	 * @api {get} /1.0/functions-catalog/delete/:id Delete Function by ID
-	 * @apiName GET_deleteCatalogFunction
-	 * @apiGroup Functions
-	 *
-	 	 * @apiVersion 0.1.0
-	 *
-		 * @apiDescription
-		 * -- AUTHENTICATION
-		 *
-		 * All the Knowage RESTful services are based on Basic Authentication. Please generate your request in accordance with this
-		 * requirement.
-		 *
-		 *
-		 * -- DESCRIPTION
-		 *
-		 * This service can be called to delete an existing function to the catalog.
-		 *
-	 *
-	 * @apiParam {String} id Function id.
-	 *
-	 * @apiSuccess {json} response The response of the update.
-	 *
-	 * @apiSuccessExample {json} Response-example:
-		{
-			"Response":"OK"
-		}
-	 	* @apiErrorExample {json} Error-Response example:
-		 *    {
-		 *    	"service":"",
-		 *    	"errors":[
-		 *    		{"message":"Here the error message."}
-		 *    	]
-		 *    }
-		 */
-	// @formatter:on
 	@GET
 	@Path("/delete/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -901,6 +437,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				JSONObject objToInsert = new JSONObject();
 				SbiFunctionInputVariable v = (SbiFunctionInputVariable) obj;
 				objToInsert.put("name", v.getId().getVarName());
+				objToInsert.put("type", v.getVarType());
 				objToInsert.put("value", v.getVarValue());
 				inputVariables.put(objToInsert);
 			}
@@ -917,6 +454,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				JSONObject objToInsert = new JSONObject();
 				SbiFunctionOutputColumn c = (SbiFunctionOutputColumn) obj;
 				objToInsert.put("name", c.getId().getColName());
+				objToInsert.put("fieldType", c.getColFieldType());
 				objToInsert.put("type", c.getColType());
 				outputColumns.put(objToInsert);
 			}
@@ -962,84 +500,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	// ------------------- START FUNCTIONS CATALOG EXECUTE FORWARDER ------------------
 
-	// @formatter:off
-		/**
-		 * @api {get} /1.0/function/execute/sample/:id Execute function by ID with sample data
-		 * @apiName GET_executeSampleCatalogFunctionById
-		 * @apiGroup Functions
-		 *
-		 * @apiVersion 0.1.0
-		 *
-		 * @apiDescription
-		 * -- AUTHENTICATION
-		 *
-		 * All the Knowage RESTful services are based on Basic Authentication. Please generate your request in accordance with this
-		 * requirement.
-		 *
-		 *
-		 * -- DESCRIPTION
-		 *
-		 * This service can be used to execute a function (local or remote) specifying its identifier.
-		 * The identifier (which is less friendly compared to label) can be obtained by querying the function catalog through its APIs.
-		 *
-		 * When calling this service, it is not request to provide any data. The function will use the embedded mandatory sample data.
-		 * Those sample data have been provided when the functions has been added to the catalog.
-		 *
-		 * The response contains an array of JSONObject with three fields: 'resultType', 'result' and 'resultName'.
-		 *
-		 * The first field contains one of the following values: 'Image', 'Text', 'Dataset' or 'File'.
-		 *
-		 * In case of 'Image' and 'File', the result is provided with Base64 encoding.
-		 *
-		 * Also, 'File' has a special result structure (see example below). Please notice that 'filesize' and 'filetype' are optional fields.
-		 * Valid values for 'filetype' are listed here: http://www.iana.org/assignments/media-types/
-		 *
-		 *
-		 * -- IMPORTANT --
-		 *
-		 * Due to its nature, this service can benefit of data compression for both request and response. Because of this, the payload can be compressed
-		 * when required (mostly when files and images are involved). This means that a request or a response with one or more 'File' SHOULD be sent already compressed
-		 * with a header set to 'Content-Encoding': 'gzip'.
-		 *
-		 * In both direction this aspect must be handled by reading the request header accordingly.
-		 *
-		 * @apiParam {Number} id Function ID.
-		 *
-		 * @apiSuccess {json} response The list of functions and keywords with the specified type.
-		 *
-		 * @apiSuccessExample {json} Response-example:
-			[
-			   {
-			      "resultType":"Image",
-			      "result":"iVBORw0KGgoAAAANSUhEUgAAAyAA....BiJ1pQ89NBDakQohBASIEIIIYqG1CaKuIkY+OlY6623QmCC",
-			      "resultName":"valuesPlot"
-			   },
-			   {
-			      "resultType":"Text",
-			      "result":"120",
-			      "resultName":"maximimValue"
-			   },
-			   {
-			   	  "resultType":"File",
-			   	  "result":
-			   	  {
-			   	  	"filesize": "54836",
-			      	"filetype": "image/jpeg",
-			      	"filename": "chart.jpg",
-			      	"base64":   "/9j/4AAQSkZJRgABAgAAAQAB....AAD//gAEKgD/4gIctcwIQA..."
-			   	  },
-			      "resultName":"fileToBeSave"
-			   }
-			]
-		* @apiErrorExample {json} Error-Response example:
-				 *    {
-				 *    	"service":"",
-				 *    	"errors":[
-				 *    		{"message":"Here the error message."}
-				 *    	]
-				 *    }
-			*/
-		// @formatter:on
 	@GET
 	@Path("/execute/sample/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1060,52 +520,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		return response.getResponseBody();
 	}
 
-	// @formatter:off
-			/**
-			 * @api {get} /1.0/function/execute/sample?label=:label Execute function by label with sample data
-			 * @apiName GET_executeSampleCatalogFunctionByLabel
-			 * @apiGroup Functions
-			 *
-			 * @apiVersion 0.1.0
-			 *
-			 * @apiDescription
-			 * -- AUTHENTICATION
-			 * All the Knowage RESTful services are based on Basic Authentication. Please generate your request in accordance with this
-			 * requirement.
-			 *
-			 *
-			 * -- DESCRIPTION
-			 * This service can be used to execute a function (local or remote) specifying its label.
-			 * The label is usually known, but can be obtained by querying the function catalog through its GUI or APIs.
-			 *
-			 * Please refer to the service GET /1.0/function/execute/sample/:id to get more information about the usage.
-			 *
-			 * @apiParam {String} label Function label.
-			 *
-			 * @apiSuccess {json} response The list of functions and keywords with the specified type.
-			 *
-			 * @apiSuccessExample {json} Response-example:
-				[
-				   {
-				      "resultType":"Image",
-				      "result":"iVBORw0KGgoAAAANSUhEUgAAAyAA....BiJ1pQ89NBDakQohBASIEIIIYqG1CaKuIkY+OlY6623QmCC",
-				      "resultName":"valuesPlot"
-				   },
-				   {
-				      "resultType":"Text",
-				      "result":"120",
-				      "resultName":"maximimValue"
-				   }
-				]
-			* @apiErrorExample {json} Error-Response example:
-				 *    {
-				 *    	"service":"",
-				 *    	"errors":[
-				 *    		{"message":"Here the error message."}
-				 *    	]
-				 *    }
-			*/
-		// @formatter:on
 	@GET
 	@Path("/execute/sample")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1126,101 +540,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		return response.getResponseBody();
 	}
 
-	// @formatter:off
-			/**
-			 * @api {POST} /1.0/function/execute/new/:id Execute function by ID with provided data
-			 * @apiName POST_executeCatalogFunctionById
-			 * @apiGroup Functions
-			 *
-			 * @apiVersion 0.1.0
-			 *
-			 * @apiDescription
-			 * -- AUTHENTICATION
-			 *
-			 * All the Knowage RESTful services are based on Basic Authentication. Please generate your request in accordance with this
-			 * requirement.
-			 *
-			 *
-			 * -- DESCRIPTION
-			 *
-			 * This service can be used to execute a function (local or remote) specifying its identifier and providing specific data.
-			 * The identifier (which is less friendly compared to label) can be obtained by querying the function catalog through its APIs.
-			 *
-			 * The request contains an array of three JSONObject, which defines input type and provided data.
-			 * When calling this service, the caller MUST provide all the data. Optional fields are not allowed.
-			 * Please pay attention to the special structure for 'filesIn' inputs. Like inside the response file structure, 'filesize' and 'filetype' are useful but optional.
-			 *
-			 * The response contains an array of JSONObject with three fields: 'resultType', 'result' and 'resultName'.
-			 *
-			 * The first field contains one of the following values: 'Image', 'Text', 'Dataset' or 'File'.
-			 *
-			 * In case of 'Image' and 'File', the result is provided with Base64 encoding.
-			 *
-			 * Also, 'File' has a special result structure (see example below). Please notice that 'filesize' and 'filetype' are optional fields.
-			 * Valid values for 'filetype' are listed here: http://www.iana.org/assignments/media-types/
-			 *
-			 *
-			 * -- IMPORTANT --
-			 *
-			 * Due to its nature, this service can benefit of data compression for both request and response. Because of this, the payload can be compressed
-			 * when required (mostly when files and images are involved). This means that a request or a response with one or more 'File' SHOULD be sent already compressed
-			 * with a header set to 'Content-Encoding': 'gzip'.
-			 *
-			 * In both direction this aspect must be handled by reading the request header accordingly.
-			 *
-			 * @apiParam {Number} id Function id.
-			 * @apiParam {json} function Function detail.
-			 * @apiParamExample {json} Request-Example:
-			 *
-					[
-					   {
-					      "type":"variablesIn",
-					      "items":{
-					         "a":"3",
-					         "b":"3"
-					      }
-					   },
-					   {
-					      "type":"datasetsIn",
-					      "items":{
-					         "df":"df2"
-					      }
-					   },
-					   {
-					      "type":"filesIn",
-					      "items":{
-					         "df": {
-					         	"filename":"traffic.avi",
-					         	"base64":"/9j/4AAQSkZJRgABAgAAAQAB....AAD//gAEKgD/4gIctcwIQA..."
-					         }
-					      }
-					   }
-					]
-				 *
-				 * @apiSuccess {json} response The results from the execute function.
-				 *
-				 * @apiSuccessExample {json} Response-example:
-					[
-					   {
-					      "resultType":"Image",
-					      "result":"iVBORw0KGgoAAAANSUhEUgAAA...==NSUhEUgtfgf",
-					      "resultName":"res"
-					   },
-					   {
-					      "resultType":"Dataset",
-					      "result":"biadmin_function_catalog_datasetOutNEW",
-					      "resultName":"datasetOut"
-					   }
-					]
-				* @apiErrorExample {json} Error-Response example:
-				 *    {
-				 *    	"service":"",
-				 *    	"errors":[
-				 *    		{"message":"Here the error message."}
-				 *    	]
-				 *    }
-			*/
-		// @formatter:on
 	@POST
 	@Path("/execute/new/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1241,70 +560,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		return response.getResponseBody();
 	}
 
-	// @formatter:off
-				/**
-				 * @api {POST} /1.0/function/execute/new?label=:label Execute function by label with provided data
-				 * @apiName POST_executeCatalogFunctionByLabel
-				 * @apiGroup Functions
-				 *
-				 * @apiVersion 0.1.0
-				 *
-				 * @apiDescription
-				 * -- AUTHENTICATION
-				 * All the Knowage RESTful services are based on Basic Authentication. Please generate your request in accordance with this
-				 * requirement.
-				 *
-				 *
-				 * -- DESCRIPTION
-				 * This service can be used to execute a function (local or remote) specifying its label and providing specific data.
-				 * The label is usually known, but can be obtained by querying the function catalog through its GUI or APIs.
-				 *
-				 * Please refer to the service GET /1.0/function/execute/new/:id to get more information about the usage.
-				 *
-				 * @apiParam {String} label Function label.
-				 * @apiParam {json} function Function detail.
-				 * @apiParamExample {json} Request-Example:
-				 *
-					[
-					   {
-					      "type":"variablesIn",
-					      "items":{
-					         "a":"3",
-					         "b":"3"
-					      }
-					   },
-					   {
-					      "type":"datasetsIn",
-					      "items":{
-					         "df":"df2"
-					      }
-					   }
-					]
-				 *
-				 * @apiSuccess {json} response The results from the execute function.
-				 *
-				 * @apiSuccessExample {json} Response-example:
-					[
-					   {
-					      "resultType":"Image",
-					      "result":"iVBORw0KGgoAAAANSUhEUgAAA...==NSUhEUgtfgf",
-					      "resultName":"res"
-					   },
-					   {
-					      "resultType":"Dataset",
-					      "result":"biadmin_function_catalog_datasetOutNEW",
-					      "resultName":"datasetOut"
-					   }
-					]
-				* @apiErrorExample {json} Error-Response example:
-				 *    {
-				 *    	"service":"",
-				 *    	"errors":[
-				 *    		{"message":"Here the error message."}
-				 *    	]
-				 *    }
-			*/
-		// @formatter:on
 	@POST
 	@Path("/execute/new")
 	@Produces(MediaType.APPLICATION_JSON)
