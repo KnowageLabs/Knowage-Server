@@ -42,7 +42,7 @@
   }
 }
 
-.calculatedFieldEditor{
+.calculatedFieldEditor, .olapEditor{
   md-menu-bar {
     padding: 0;
     background-color: #f2f2f2;
@@ -58,6 +58,9 @@
   .CodeMirror {
     width: 100%;
     height: 200px;
+    .codeMirror-gutters {
+      left: 0 !important;
+    }
     .CodeMirror-gutter {
       width: 29px !important;
     }
@@ -66,7 +69,7 @@
     }
   }
   .CodeMirror-gutter-wrapper {
-    left: -30px;
+    left: -30px !important;
   }
   .CodeMirror-linenumber.CodeMirror-gutter-elt {
     width: auto !important;

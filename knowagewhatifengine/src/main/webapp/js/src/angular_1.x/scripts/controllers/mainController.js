@@ -226,7 +226,28 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 
 		$scope.rowsAxisOrdinal = source.rowsAxisOrdinal;
 		$scope.showMdxVar = source.mdxFormatted;
-		$scope.MDXWithoutCF = source.MDXWITHOUTCF;
+		
+		//codemirror initializer
+	    $scope.codemirrorLoaded = function(_editor) {
+	        $scope._doc = _editor.getDoc();
+	        $scope._editor = _editor;
+	        _editor.focus();
+	        $scope._doc.markClean()
+	        _editor.on("beforeChange", function() {});
+	        _editor.on("change", function() {});
+	    };
+
+	    //codemirror options
+	    $scope.editorOptionsMdx = {
+	        theme: 'eclipse',
+	        lineWrapping: true,
+	        readOnly: true,
+	        lineNumbers: true,
+	        mode: "text/x-sql",
+	        onLoad: $scope.codemirrorLoaded
+	    };
+	    
+	    $scope.MDXWithoutCF = source.MDXWITHOUTCF;
 		$scope.formulasData = source.formulas;
 		$scope.ready = false;
 

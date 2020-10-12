@@ -65,6 +65,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<!-- scroll pagination -->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/kn-scroll-pagination/knScrollPagination.js"></script>	
 	
+	<!-- UI.Codemirror  -->
+	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/codemirror/lib/codemirror.css")%>"/>
+	<link type="text/css" rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/codemirror/theme/eclipse.css")%>"/>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/codemirror/lib/codemirror.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/codemirror/mode/sql/sql.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/angular-ui-codemirror/src/ui-codemirror.js")%>"></script>
+	
 	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/themes/commons/css/customStyle.css")%>">
 	
 	<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
