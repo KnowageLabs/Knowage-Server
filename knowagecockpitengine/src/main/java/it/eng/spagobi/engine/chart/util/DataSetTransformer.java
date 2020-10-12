@@ -718,14 +718,16 @@ public class DataSetTransformer {
 		}
 		for (Object singleObject : dataRows) {
 			Map mapObject = (Map) singleObject;
-			if (!map.containsKey(mapObject.get(primCat))) {
+			if (mapObject.get(primCat) != null && !map.containsKey(mapObject.get(primCat).toString())) {
 				ArrayList<String> newListOfOrderColumnItems = new ArrayList<>();
 				newListOfOrderColumnItems.add(getStringOrNull(mapObject.get(secCat)));
 				map.put(getStringOrNull(mapObject.get(primCat)), newListOfOrderColumnItems);
 			} else {
-				ArrayList oldArrayList = map.get(mapObject.get(primCat));
-				oldArrayList.add(mapObject.get(secCat));
-				map.put(getStringOrNull(mapObject.get(primCat)), oldArrayList);
+				if (mapObject.get(primCat) != null) {
+					ArrayList oldArrayList = map.get(mapObject.get(primCat).toString());
+					oldArrayList.add(mapObject.get(secCat));
+					map.put(getStringOrNull(mapObject.get(primCat)), oldArrayList);
+				}
 			}
 		}
 
