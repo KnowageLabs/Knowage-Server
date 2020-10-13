@@ -135,90 +135,104 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 
-			if(!self.compareVersion("7.1.1",version)){
+			if(!self.compareVersion("7.2.4",version)){
 				if(model.type=='map') {
-					var colsSelectedFromAllLayers = model.content.columnSelectedOfDataset;
-					var layers = model.content.layers;
-					// Add content attribute to every layer
-					for (var j in layers) {
-						var currLayer = layers[j];
-						currLayer.content = {};
-					}
-					// Selected columns are moved into the respective layers
-					for (var i in colsSelectedFromAllLayers) {
-						var currColSelSet = colsSelectedFromAllLayers[i];
-
-						// Move aggregation function of all the measures outside properties
-						for (var k in currColSelSet) {
-							var currCol = currColSelSet[k];
-							if ("MEASURE" == currCol.fieldType) {
-								currCol.aggregationSelected = currCol.properties.aggregationSelected;
-								delete currCol.properties.aggregationSelected;
-							}
-						}
-
+					if (model.content.columnSelectedOfDataset) {
+						var colsSelectedFromAllLayers = model.content.columnSelectedOfDataset;
+						var layers = model.content.layers;
+						// Add content attribute to every layer
 						for (var j in layers) {
 							var currLayer = layers[j];
-							var currDsId = currLayer.dsId;
-							if (currDsId == i) {
-								currLayer.content.columnSelectedOfDataset = currColSelSet;
-								break;
-							}
+							currLayer.content = {};
 						}
-					}
+						// Selected columns are moved into the respective layers
+						for (var i in colsSelectedFromAllLayers) {
+							var currColSelSet = colsSelectedFromAllLayers[i];
 
-					// Add dataset to every layer
-					cockpitModule_datasetServices
-						.loadDatasetsFromTemplate()
-						.then(function() {
+							/*
+							 * If measure doesn't have showMap properties
+							 * set it true by default.
+							 */
+							currColSelSet.forEach(function(el) {
+								if (el.fieldType == "MEASURE") {
+									if (!("shoMap" in el.properties)) {
+										el.properties.showMap = true;
+									}
+								}
+							});
+
+							// Move aggregation function of all the measures outside properties
+							for (var k in currColSelSet) {
+								var currCol = currColSelSet[k];
+								if ("MEASURE" == currCol.fieldType) {
+									currCol.aggregationSelected = currCol.properties.aggregationSelected;
+									delete currCol.properties.aggregationSelected;
+								}
+							}
+
 							for (var j in layers) {
 								var currLayer = layers[j];
 								var currDsId = currLayer.dsId;
-								currLayer.dataset =
-									cockpitModule_datasetServices.getDatasetById(currDsId);
-								currLayer.name = currLayer.dataset.label;
-								currLayer.dataset.dsId = currLayer.dataset.id.dsId;
-							}
-						});
-
-					// Fix marker that use icons from Font Awesome
-					for (var j in layers) {
-						var currLayer = layers[j];
-						if (currLayer.markerConf
-								&& currLayer.markerConf.type == "icon") {
-
-							var markerConf = currLayer.markerConf;
-							var icon = markerConf.icon;
-							var family = icon.family;
-							var label = icon.label;
-
-							var familyArr = undefined;
-
-							for (var k in knModule_fontIconsService.icons) {
-								var currFamily = knModule_fontIconsService.icons[k];
-								if (currFamily.name == family) {
-									familyArr = currFamily.icons;
+								if (currDsId == i) {
+									currLayer.content.columnSelectedOfDataset = currColSelSet;
 									break;
 								}
 							}
-
-							for (var k in familyArr) {
-								var currIcon = familyArr[k];
-
-								if (currIcon.label == label) {
-									markerConf.icon = currIcon;
-									break;
-								}
-							}
-
 						}
-					}
 
-					// Cleanup
-					delete model.content.columnSelectedOfDataset;
+						// Add dataset to every layer
+						cockpitModule_datasetServices
+							.loadDatasetsFromTemplate()
+							.then(function() {
+								for (var j in layers) {
+									var currLayer = layers[j];
+									var currDsId = currLayer.dsId;
+									currLayer.dataset =
+										cockpitModule_datasetServices.getDatasetById(currDsId);
+									currLayer.name = currLayer.dataset.label;
+									currLayer.dataset.dsId = currLayer.dataset.id.dsId;
+								}
+							});
+
+						// Fix marker that use icons from Font Awesome
+						for (var j in layers) {
+							var currLayer = layers[j];
+							if (currLayer.markerConf
+									&& currLayer.markerConf.type == "icon") {
+
+								var markerConf = currLayer.markerConf;
+								var icon = markerConf.icon;
+								var family = icon.family;
+								var label = icon.label;
+
+								var familyArr = undefined;
+
+								for (var k in knModule_fontIconsService.icons) {
+									var currFamily = knModule_fontIconsService.icons[k];
+									if (currFamily.name == family) {
+										familyArr = currFamily.icons;
+										break;
+									}
+								}
+
+								for (var k in familyArr) {
+									var currIcon = familyArr[k];
+
+									if (currIcon.label == label) {
+										markerConf.icon = currIcon;
+										break;
+									}
+								}
+
+							}
+						}
+
+						// Cleanup
+						delete model.content.columnSelectedOfDataset;
+					}
 				}
 			}
-			
+
 			if(!self.compareVersion("7.3.1",version)){
 				if(model.type=='table' || model.type=='discovery'){
 					for(var k in model.content.columnSelectedOfDataset){
@@ -246,7 +260,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										if(model.content.crosstabDefinition.measures[k].scopeFunc.condition[c].iconColor) {
 											model.content.crosstabDefinition.measures[k].scopeFunc.condition[c].color = model.content.crosstabDefinition.measures[k].scopeFunc.condition[c].iconColor;
 											delete model.content.crosstabDefinition.measures[k].scopeFunc.condition[c].iconColor;
-										} 
+										}
 									}
 								}
 								model.content.crosstabDefinition.measures[k].ranges = model.content.crosstabDefinition.measures[k].scopeFunc.condition;
