@@ -327,16 +327,15 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			}
 		}
 		for (var i = 0; i < $scope.shownFunction.inputVariables.length; i++) {
-			if ($scope.shownFunction.inputVariables[i].name == undefined
-					|| $scope.shownFunction.inputVariables[i].value == undefined) {
+			if ($scope.shownFunction.inputVariables[i].name == undefined || $scope.shownFunction.inputVariables[i].type == undefined) {
 				correctArguments = false;
 				var index = i + 1;
 
 				if ($scope.shownFunction.inputVariables[i].name == undefined) {
 					$scope.missingFields.push("Input variable  " + index + " name missing");
 				}
-				if ($scope.shownFunction.inputVariables[i].value == undefined) {
-					$scope.missingFields.push("Input variable  " + index + " value missing");
+				if ($scope.shownFunction.inputVariables[i].type == undefined) {
+					$scope.missingFields.push("Input variable  " + index + " type missing");
 
 				}
 			}

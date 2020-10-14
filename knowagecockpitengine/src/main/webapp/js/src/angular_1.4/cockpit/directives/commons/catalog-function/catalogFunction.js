@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	angular.module('cockpitModule').directive('catalogFunction',function(){
 		return{
 			template:   '<button class="md-button md-knowage-theme" ng-click="addNewCatalogFunction()" ng-class="{\'md-icon-button\':selectedItem && !insideMenu}">'+
-						'	<md-icon md-font-icon="fa fa-calculator" ng-if="selectedItem"></md-icon>'+
+						'	<md-icon md-font-icon="fas fa-square-root-alt" ng-if="selectedItem"></md-icon>'+
 						'	<span ng-if="!selectedItem">{{::translate.load("sbi.cockpit.widgets.table.catalogFunctions.add")}}</span>'+
 						'	<span ng-if="selectedItem && insideMenu">{{::translate.load("sbi.cockpit.widgets.table.catalogFunctions.edit")}}</span>'+
 						'	<md-tooltip ng-if="selectedItem && !insideMenu" md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.catalogFunctions.edit")}}</md-tooltip>'+
@@ -55,11 +55,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			)
 		}
 
+		$scope.removeFunctionOutputColumns = function(){
+			if ($scope.ngModel.content == undefined) {
+				var columns = $scope.ngModel.columnSelectedOfDatasetAggregations;
+			} else {
+				var columns = $scope.ngModel.content.columnSelectedOfDataset;
+			}
+			var colsToMantain = [];
+			for (var i=0; i<columns.length; i++) {
+				if (columns[i].boundFunction && $scope.currentRow && columns[i].boundFunction.id == $scope.currentRow.boundFunction.id)
+					continue;
+				else
+					colsToMantain.push(columns[i]);
+			}
+			if ($scope.ngModel.content == undefined) {
+				$scope.ngModel.columnSelectedOfDatasetAggregations = colsToMantain;
+			} else {
+				$scope.ngModel.content.columnSelectedOfDataset = colsToMantain;
+			}
+		}
+
 		$scope.loadAllCatalogFunctions();
+
+		if($scope.selectedItem){
+			if ($scope.measuresListFunc != undefined) {
+//				var tmpList = $scope.measuresListFunc();
+//				$scope.currentRow = tmpList[$scope.selectedItem];
+				$scope.currentRow = $scope.selectedItem;
+			} else if ( $scope.ngModel.content == undefined) {  // case when coming from chart widget
+				$scope.currentRow = $scope.ngModel.columnSelectedOfDatasetAggregations[$scope.selectedItem];
+			} else {
+				$scope.currentRow = $scope.ngModel.content.columnSelectedOfDataset[$scope.selectedItem]
+			}
+		}
 
 		$scope.addNewCatalogFunction = function(){
 			var deferred = $q.defer();
 			var promise ;
+			if ($scope.currentRow) {
+				$scope.currentFunction = $scope.currentRow.boundFunction
+			}
+
 			$mdDialog.show({
 				templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitCatalogFunctionTemplate.html',
 				parent : angular.element(document.body),
@@ -70,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				locals: {
 					promise: deferred,
 					model:$scope.ngModel,
-					actualItem : $scope.currentRow,
+					actualItem : $scope.currentFunction,
 					callbackUpdateGrid: $scope.callbackUpdateGrid,
 					callbackUpdateAlias: $scope.callbackUpdateAlias,
 					additionalInfo: $scope.additionalInfo,
@@ -81,24 +117,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				controller: catalogFunctionDialogController
 			}).then(function() {
 				deferred.promise.then(function(result){
-					if($scope.currentRow != undefined){
-						if($scope.callbackUpdateAlias) {
-							$scope.callbackUpdateAlias({newAlias: result.alias, oldAlias: $scope.currentRow.alias});
+					$scope.removeFunctionOutputColumns();
+					if ($scope.ngModel.content == undefined) {
+						for (var i=0; i<result.length; i++) {
+							$scope.ngModel.columnSelectedOfDatasetAggregations.push(result[i]);
 						}
-						$scope.currentRow.name = result.alias;
-						$scope.currentRow.aliasToShow = result.alias;
-						$scope.currentRow.formula = result.formula;
-						$scope.currentRow.formulaEditor = result.formulaEditor;
-						$scope.currentRow.aggregationSelected = result.aggregationSelected;
-						$scope.currentRow.funcSummary = result.funcSummary;
-						$scope.currentRow.alias = result.alias;
-					}else{
-						if ($scope.callbackAddTo != undefined) {
-							$scope.callbackAddTo({newItem: result});
-						} else if ($scope.ngModel.content == undefined) {
-							$scope.ngModel.columnSelectedOfDatasetAggregations.push(result);
-						} else {
-							$scope.ngModel.content.columnSelectedOfDataset.push(result);
+					} else {
+						for (var i=0; i<result.length; i++) {
+							$scope.ngModel.content.columnSelectedOfDataset.push(result[i]);
 						}
 					}
 					$scope.ngModel.selectedFunction = undefined;
@@ -113,7 +139,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	function catalogFunctionDialogController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
 		$scope.model = model;
-		$scope.catalogFunction = actualItem ? angular.copy(actualItem) : {};
+		$scope.model.selectedFunction = actualItem ? angular.copy(actualItem) : {};
 		var style = {'display': 'inline-flex', 'justify-content':'center', 'align-items':'center'};
 
 		$scope.model.functionsGrid = {
@@ -161,7 +187,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        columnDefs: [
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.name'), field:'name'},
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.type'), field:'type'},
-	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.datasetColumn'), field:'dsColumn', editable:true, cellRenderer:editableCell, cellEditor:"agSelectCellEditor", cellEditorParams: {values: getDatasetColumns()}}]
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.datasetColumn'), field:'dsColumn', editable:true, cellRenderer:editableCell, cellEditor:"agSelectCellEditor", cellEditorParams: {values: getDatasetColumns()}}],
+	        rowData: $scope.model.selectedFunction.inputColumns
 		}
 
 		function refreshRowForColumns(cell){
@@ -176,7 +203,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var toReturn = [];
 			for (var i=0; i<$scope.model.content.columnSelectedOfDataset.length; i++) {
 				var column = $scope.model.content.columnSelectedOfDataset[i];
-				toReturn.push(column.name);
+				if (!column.isFunction)
+					toReturn.push(column.name);
 			}
 			return toReturn;
 		}
@@ -194,11 +222,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        columnDefs: [
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.name'), field:'name'},
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.type'), field:'type'},
-	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.value'), field:'value', editable: true, cellRenderer: editableCell}]
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.value'), field:'value', editable: true, cellRenderer: editableCell}],
+	        	rowData: $scope.model.selectedFunction.inputVariables
 		}
 
 		function editableCell(params){
-			return typeof(params.value) !== 'undefined' ? '<i class="fa fa-edit"></i> <i>'+params.value : '';
+			var editButton = '<i class="fa fa-edit"></i> <i>';
+			if (typeof(params.value) !== 'undefined')
+				return editButton + params.value;
+			else return editButton;
 		}
 
 		function refreshRowForVariables(cell){
@@ -223,6 +255,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return true;
 		}
 
+		checkVariablesConfiguration=function(variables){
+			for (var i=0; i<variables.length; i++) {
+				if (!variables[i].value || variables[i].value == '')
+					return false;
+			}
+			return true;
+		}
+
 		$scope.toastifyMsg = function(type,msg){
 			Toastify({
 				text: msg,
@@ -236,16 +276,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.saveColumnConfiguration=function(){
 			if (!checkColumnsConfiguration($scope.model.selectedFunction.inputColumns))
 				$scope.toastifyMsg('warning',$scope.translate.load("sbi.cockpit.widgets.table.catalogFunctions.function.error.datasetColumns"));
-			else if (!checkColumnsConfiguration($scope.model.selectedFunction.inputColumns))
+			else if (!checkVariablesConfiguration($scope.model.selectedFunction.inputVariables))
 				$scope.toastifyMsg('warning',$scope.translate.load("sbi.cockpit.widgets.table.catalogFunctions.function.error.inputVariables"));
 			else {
-				$scope.result = angular.copy($scope.catalogFunction);
-				if(!$scope.result.alias) $scope.result.alias = $scope.model.selectedFunction.outputColumns[0].name;
-				$scope.result.aliasToShow = $scope.result.alias;
-				$scope.result.name = $scope.result.alias;
-				$scope.result.fieldType = $scope.model.selectedFunction.outputColumns[0].fieldType;
-				$scope.result.isFunction = true;
-				$scope.result.type = getResultType($scope.model.selectedFunction.outputColumns[0].type);
+				$scope.result = [];
+				for (var i=0; i<$scope.model.selectedFunction.outputColumns.length; i++) {
+					$scope.result[i] = {};
+					$scope.result[i].boundFunction = angular.copy($scope.model.selectedFunction);
+					if(!$scope.result[i].alias) $scope.result[i].alias = $scope.model.selectedFunction.outputColumns[i].name;
+					$scope.result[i].aliasToShow = $scope.result[i].alias;
+					$scope.result[i].name = $scope.result[i].alias;
+					$scope.result[i].fieldType = $scope.model.selectedFunction.outputColumns[i].fieldType;
+					$scope.result[i].isFunction = true;
+					$scope.result[i].type = getResultType($scope.model.selectedFunction.outputColumns[i].type);
+				}
 				promise.resolve($scope.result);
 				$mdDialog.hide();
 			}

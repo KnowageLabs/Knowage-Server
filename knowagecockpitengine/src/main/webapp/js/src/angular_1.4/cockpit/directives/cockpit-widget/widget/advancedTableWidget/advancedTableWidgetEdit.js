@@ -31,7 +31,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			break;
 		}
 	}
-	
+
 	function uuidv4() {
 	  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 	    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -49,14 +49,14 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		$scope.getDatasetAdditionalInfo(id);
 		$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
 	}
-	
+
 	$scope.getDatasetAdditionalInfo = function(dsId){
         for(var k in cockpitModule_template.configuration.datasets){
         	if(cockpitModule_template.configuration.datasets[k].dsId == dsId) {
         		$scope.localDataset = cockpitModule_template.configuration.datasets[k];
         		break;
         	}
-        
+
         }
         sbiModule_restServices.restToRootProject();
         sbiModule_restServices.promiseGet('2.0/datasets', 'availableFunctions/' + dsId, "useCache=" + $scope.localDataset.useCache).then(function(response){
@@ -148,7 +148,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 
 	function aggregationRenderer(params) {
 		var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
-        return params.data.fieldType == "MEASURE" && !params.data.isCalculated ? aggregation : '';
+        return (params.data.fieldType == "MEASURE" && !params.data.isCalculated && !params.data.isFunction) ? aggregation : '';
 	}
 
 	function groupRenderer(params) {
@@ -157,11 +157,11 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		if(typeof params.valueFormatted != 'undefined') value = params.valueFormatted;
 		return '<i class="fa fa-edit"></i> <i>'+ value +'</i>';
 	}
-	
+
 	function groupSelectFormatter(params) {
 		return $scope.availableGroups[params.value];
 	}
-	
+
 	function groupSelectParser(params) {
 		for (var key in $scope.availableGroups) {
 		    if ($scope.availableGroups.hasOwnProperty(key)) {
@@ -177,7 +177,9 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		if(params.data.isCalculated){
 			calculator = '<calculated-field ng-model="newModel" selected-item="'+params.rowIndex+'" additional-info="datasetAdditionalInfos"></calculated-field>';
 		}
-
+		if(params.data.isFunction){
+			calculator = '<catalog-function ng-model="newModel" selected-item="'+params.rowIndex+'" additional-info="datasetAdditionalInfos"></catalog-function>';
+		}
 		return 	calculator +
 				'<md-button class="md-icon-button noMargin" ng-click="draw('+params.rowIndex+')" ng-style="{\'background-color\':newModel.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
 				'   <md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.columnstyle.icon")}}</md-tooltip>'+
@@ -320,7 +322,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		scope.translate=sbiModule_translate;
 		scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 		scope.model = angular.copy(model);
-		
+
 		scope.addGroup = function(){
 			var id = uuidv4();
 			if(scope.model.groups) scope.model.groups.push({id:id});
@@ -482,12 +484,29 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		for(var k in $scope.newModel.content.columnSelectedOfDataset){
 			if($scope.newModel.content.columnSelectedOfDataset[k].alias == rowName) var item = $scope.newModel.content.columnSelectedOfDataset[k];
 		}
-  		  var index=$scope.newModel.content.columnSelectedOfDataset.indexOf(item);
-		  $scope.newModel.content.columnSelectedOfDataset.splice(index,1);
-		  if($scope.newModel.settings.sortingColumn == item.aliasToShow){
-			  $scope.newModel.settings.sortingColumn = null;
-		  }
-	  }
+		if (!item.isFunction) {
+			var index=$scope.newModel.content.columnSelectedOfDataset.indexOf(item);
+			$scope.newModel.content.columnSelectedOfDataset.splice(index,1);
+			if($scope.newModel.settings.sortingColumn == item.aliasToShow){
+				$scope.newModel.settings.sortingColumn = null;
+			}
+		} else {
+			var id = item.boundFunction.id;
+			colsToRemove = [];
+			for (var i=0; i<$scope.newModel.content.columnSelectedOfDataset.length; i++) {
+				var col = $scope.newModel.content.columnSelectedOfDataset[i];
+				if (col.isFunction && col.boundFunction.id == id)
+					colsToRemove.push(col);
+			}
+			for (var j=0; j<colsToRemove.length; j++) {
+				var index=$scope.newModel.content.columnSelectedOfDataset.indexOf(colsToRemove[j]);
+				$scope.newModel.content.columnSelectedOfDataset.splice(index,1);
+				if($scope.newModel.settings.sortingColumn == colsToRemove[j].aliasToShow){
+					$scope.newModel.settings.sortingColumn = null;
+				}
+			}
+		}
+	}
 
 	$scope.addSummaryRow = function(){
 		$scope.newModel.settings.summary.list.push({});
@@ -496,7 +515,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	$scope.removeSummaryRow = function(i){
 		$scope.newModel.settings.summary.list.splice(i,1);
 	}
-	
+
 	$scope.checkForPinnedColumns = function(columns){
 		for(var k in columns){
 			if(columns[k].pinned) return false;

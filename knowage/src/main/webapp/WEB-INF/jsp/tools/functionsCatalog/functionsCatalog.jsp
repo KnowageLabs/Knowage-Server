@@ -304,7 +304,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	           							<label>{{translate.load("sbi.functionscatalog.variabledefaultvalue");}}</label>
 	       								<input ng-model="v.value" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
 	   								</md-input-container>
-	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeInputVariable(i)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
+	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeInputVariable(v)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
 								</md-list-item>
 							</md-list>
 						</md-card-content>
@@ -377,7 +377,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    								</md-option>
 	 									</md-select>
 									</md-input-container>
-	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeInputColumn(c)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
+	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeOutputColumn(c)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
 								</md-list-item>
 						  	</md-list>
 						</md-card-content>

@@ -158,7 +158,7 @@
 
 		function aggregationRenderer(params) {
 			var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
-			return params.data.fieldType == "MEASURE" ? aggregation : '';
+			return (params.data.fieldType == "MEASURE" && !params.data.isFunction) ? aggregation : '';
 		}
 
 		function buttonRenderer(params){
@@ -166,6 +166,10 @@
 			if(params.data.isCalculated){
 				calculator = '<md-button class="md-icon-button" ng-click="addNewCalculatedField(\''+params.rowIndex+'\')">'+
 							 '<md-icon md-font-icon="fa fa-calculator"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.inlineCalculatedFields.title")}}</md-tooltip></md-button>';
+			}
+			if(params.data.isFunction){
+				calculator = '<md-button class="md-icon-button" ng-click="addNewCatalogFunction(\''+params.rowIndex+'\')">'+
+							 '<md-icon md-font-icon="fas fa-square-root-alt"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.inlineCatalogFunction.title")}}</md-tooltip></md-button>';
 			}
 			return 	calculator +
 					'<md-button class="md-icon-button noMargin" ng-click="draw(\''+params.data.name+'\')" ng-style="{\'background-color\':model.content.columnSelectedOfDataset['+params.rowIndex+'].style[\'background-color\']}">'+
@@ -222,12 +226,29 @@
 			for(var k in $scope.model.content.columnSelectedOfDataset){
 				if($scope.model.content.columnSelectedOfDataset[k].name == rowName) var item = $scope.model.content.columnSelectedOfDataset[k];
 			}
-	  		  var index=$scope.model.content.columnSelectedOfDataset.indexOf(item);
-			  $scope.model.content.columnSelectedOfDataset.splice(index,1);
-			  if($scope.model.settings.sortingColumn == item.aliasToShow){
-				  $scope.model.settings.sortingColumn = null;
-			  }
-		  }
+			if (!item.isFunction) {
+				var index=$scope.model.content.columnSelectedOfDataset.indexOf(item);
+				$scope.model.content.columnSelectedOfDataset.splice(index,1);
+				if($scope.model.settings.sortingColumn == item.aliasToShow){
+					$scope.model.settings.sortingColumn = null;
+				}
+			} else {
+				var id = item.boundFunction.id;
+				colsToRemove = [];
+				for (var i=0; i<$scope.newModel.content.columnSelectedOfDataset.length; i++) {
+					var col = $scope.newModel.content.columnSelectedOfDataset[i];
+					if (col.isFunction && col.boundFunction.id == id)
+						colsToRemove.push(col);
+				}
+				for (var j=0; j<colsToRemove.length; j++) {
+					var index=$scope.newModel.content.columnSelectedOfDataset.indexOf(colsToRemove[j]);
+					$scope.newModel.content.columnSelectedOfDataset.splice(index,1);
+					if($scope.newModel.settings.sortingColumn == colsToRemove[j].aliasToShow){
+						$scope.newModel.settings.sortingColumn = null;
+					}
+				}
+			}
+		}
 
 		$scope.$watchCollection('model.content.columnSelectedOfDataset',function(newValue,oldValue){
 			if($scope.columnsGrid.api && newValue){
@@ -489,7 +510,7 @@ function cockpitStyleColumnFunction(
 	$scope.cockpitModule_properties = cockpitModule_properties;
 	$scope.model = model;
 	$scope.selectedColumn = angular.copy(selectedColumn);
-	
+
 	$scope.needsCommonPrefs   = (typeof dialogOptions.needsCommonPrefs   == 'undefined' ? true : dialogOptions.needsCommonPrefs);
 	$scope.needsVisualization = (typeof dialogOptions.needsVisualization == 'undefined' ? true : dialogOptions.needsVisualization);
 	$scope.needsThresholds    = (typeof dialogOptions.needsThresholds    == 'undefined' ? true : dialogOptions.needsThresholds);
@@ -520,10 +541,10 @@ function cockpitStyleColumnFunction(
 			}
 			newArray.push(familyArray);
 		}
-		
+
 		return newArray;
 	}
-	
+
 	$scope.availableIcons = setChunks(knModule_fontIconsService.icons,4);
 
 	$scope.getTemplateUrl = function(template){
@@ -549,7 +570,7 @@ function cockpitStyleColumnFunction(
 		if($scope.iconFamily == familyName) $scope.iconFamily = "";
 		else $scope.iconFamily = familyName;
 	}
-	
+
 	$scope.chooseIcon = function(range) {
 		$scope.tempVar = !$scope.tempVar;
 		$scope.currentRange=range;

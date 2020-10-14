@@ -234,7 +234,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				JSONObject inputItemJSON = jsonInputVariables.getJSONObject(i);
 				String varName = inputItemJSON.getString("name");
 				String varType = inputItemJSON.getString("type");
-				String varValue = inputItemJSON.getString("value");
+				String varValue = inputItemJSON.optString("value");
 				inputVariables.put(varName, new InputVariable(varName, varType, varValue));
 			}
 
@@ -331,7 +331,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				JSONObject inputItemJSON = jsonInputVariables.getJSONObject(i);
 				String varName = inputItemJSON.getString("name");
 				String varType = inputItemJSON.getString("type");
-				String varValue = inputItemJSON.getString("value");
+				String varValue = inputItemJSON.optString("value");
 				inputVariables.put(varName, new InputVariable(varName, varType, varValue));
 			}
 
