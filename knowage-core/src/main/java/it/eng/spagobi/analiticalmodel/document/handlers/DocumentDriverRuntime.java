@@ -121,6 +121,13 @@ public class DocumentDriverRuntime extends AbstractDriverRuntime<BIObjectParamet
 		}
 	}
 
+	@Override
+	public boolean areAdmissibleValuesToBePreloaded(BIObjectParameter driver) {
+		boolean preloadAdmissibleValues = isFromCross && "LOOKUP".equalsIgnoreCase(selectionType);
+		logger.debug("Is lookup and cross case? " + preloadAdmissibleValues);
+		return preloadAdmissibleValues;
+	}
+
 	public void loadAdmissibleValues(BIObjectParameter driver, DocumentRuntime dum) {
 		super.loadAdmissibleValues(driver, dum);
 	}

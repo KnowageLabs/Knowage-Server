@@ -278,7 +278,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	 * Load admissible values from LOV done if not lookup and not manual input done if is from cross and not manual input
 	 */
 
-	protected void loadAdmissibleValues(AbstractDriver driver, AbstractBIResourceRuntime dum) {
+	protected void loadAdmissibleValues(T driver, AbstractBIResourceRuntime dum) {
 		logger.debug("IN");
 		try {
 
@@ -298,17 +298,13 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 			// check if to retrieve defaultValues, if it is not LOOKUP or if it is from Cross
 			boolean retrieveAdmissibleValue = false;
-			boolean lookupAndCrossCase = false;
-			if (driver instanceof BIObjectParameter) {
-				lookupAndCrossCase = (isFromCross && ("LOOKUP".equalsIgnoreCase(selectionType)));
-			} else if (driver instanceof BIMetaModelParameter) {
-				lookupAndCrossCase = ("LOOKUP".equalsIgnoreCase(selectionType));
-			}
-			logger.debug("Is lookup and cross case? " + lookupAndCrossCase);
+			retrieveAdmissibleValue = areAdmissibleValuesToBePreloaded(driver);
+
 			boolean otherPreLoadCase = (("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType)
 					|| "SLIDER".equalsIgnoreCase(selectionType) || "TREE".equalsIgnoreCase(selectionType)));
 			logger.debug("Other pre-load cases ? " + otherPreLoadCase);
-			if (lookupAndCrossCase || otherPreLoadCase) // for these type pre-load values
+
+			if (otherPreLoadCase) // for these type pre-load values
 			{
 				retrieveAdmissibleValue = true;
 			}
@@ -442,6 +438,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		logger.debug("OUT");
 
 	}
+
+	public abstract boolean areAdmissibleValuesToBePreloaded(T driver);
 
 	private HashMap<String, Object> fromJSONtoMap(JSONObject item) throws JSONException {
 		HashMap<String, Object> itemAsMap = new HashMap<String, Object>();
