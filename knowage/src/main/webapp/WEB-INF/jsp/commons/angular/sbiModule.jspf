@@ -51,7 +51,8 @@ sbiM.factory('sbiModule_config',function(){
         isStatePersistenceEnabled: <%= SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")  %>,
         layerFileMaxSize: '<%= GeneralUtilities.getGisLayerFileMaxSize() %>',
         workspaceShowGrid: '<%= SingletonConfig.getInstance().getConfigValue("KNOWAGE.WORKSPACE_SHOW_GRID") %>',
-        dynamicResourcesBasePath: '<%= dynamicResourcesBasePath %>',        
+        dynamicResourcesBasePath: '<%= dynamicResourcesBasePath %>',       
+        downloadPollingTime: <%= SingletonConfig.getInstance().getConfigValue("KNOWAGE.DOWNLOAD.POLLING.TIME")  %>,
         
 		<%-- <%if(parametersStatePersistenceEnabled != null) {%> --%>
 		<%-- isParametersStatePersistenceEnabled: <%= Boolean.valueOf(parametersStatePersistenceEnabled) %>, --%>

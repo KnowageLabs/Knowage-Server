@@ -634,13 +634,17 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 					$scope.downloadsList = result.data;
 					$scope.newDownloadsNumber = calculateNewDownloads($scope.downloadsList);
 				})
-				$interval(function () {
-					$http.get(Sbi.config.contextName + '/restful-services/2.0/export/dataset?showAll=true').then(function (result) {
-						$scope.downloadsList = result.data;
-						$scope.newDownloadsNumber = calculateNewDownloads($scope.downloadsList);
-					}, function (error) {})
-				}, 20000);
-
+				
+				// DOWNLOAD POLLING
+				if(sbiModule_config.downloadPollingTime !== 0){
+					$interval(function () {
+						$http.get(Sbi.config.contextName + '/restful-services/2.0/export/dataset?showAll=true').then(function (result) {
+							$scope.downloadsList = result.data;
+							$scope.newDownloadsNumber = calculateNewDownloads($scope.downloadsList);
+						}, function (error) {})
+					}, sbiModule_config.downloadPollingTime || 10000);
+				}
+				
 
 				$scope.downloads = function () {
 					$scope.toggleMenu();

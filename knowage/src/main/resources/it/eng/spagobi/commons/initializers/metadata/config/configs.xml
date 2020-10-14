@@ -600,6 +600,11 @@
 	<CONFIG label="SPAGOBI.DATASET.REST.TIMEOUT" name="SPAGOBI.DATASET.REST.TIMEOUT"
 		description="Timeout in milliseconds of a REST call using the REST client" isActive="true"
 		valueCheck="180000" valueType="NUM" category="REST_CONFIGURATION" />
+		
+	<CONFIG label="KNOWAGE.DOWNLOAD.POLLING.TIME" name="Download Polling time interval"
+		description="Polling time interval in ms to refresh the download list in menu. Set to 0 to disable."
+		isActive="true" valueCheck="10000" valueType="NUM"
+		category="GENERIC_CONFIGURATION" />
 	
 </CONFIGS>
 

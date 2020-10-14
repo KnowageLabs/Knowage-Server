@@ -39,8 +39,8 @@ function manageConfigFunction($angularListDetail,sbiModule_messaging, sbiModule_
 		var tempConfigList = $filter('filter')($scope.data,$scope.configSearchText);
 		$scope.configurationGridOptions.api.setRowData(tempConfigList);
 	}
-	$scope.columns = [{"headerName":"Label","field":"label"},
-		{"headerName":"Name","field":"name"},
+	$scope.columns = [{"headerName":"Label","field":"label", "tooltipField":"description"},
+		{"headerName":"Name","field":"name", "tooltipField":"description"},
 		{"headerName":"Value Check","field":"valueCheck"},
 		{"headerName":"Category","field":"category"},
 		{"headerName":"Active","field":"active"},
