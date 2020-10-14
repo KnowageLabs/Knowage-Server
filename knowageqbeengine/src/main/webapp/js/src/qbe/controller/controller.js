@@ -460,6 +460,13 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			if (indexOfHavingCondInQuery > -1) {
 				$scope.editQueryObj.havings.splice(indexOfHavingCondInQuery, 1);
 			}
+			// Remove related filters
+			var indexOfFilter = -1;
+			while ((indexOfFilter = findWithAttr($scope.editQueryObj.filters,'leftOperandValue', data[i].id)) != -1) {
+				$scope.editQueryObj.filters.splice(indexOfFilter, 1);
+			}
+			// Recreate $scope.editQueryObj.expression
+			expression_service.generateExpressions($scope.editQueryObj.filters, $scope.editQueryObj.expression, $scope.advancedFilters);
 		}
 
 	});
