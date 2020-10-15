@@ -9,7 +9,6 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParview;
@@ -118,12 +117,6 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime<BIMetaMode
 		}
 	}
 
-	@Override
-	public boolean areAdmissibleValuesToBePreloaded(BIMetaModelParameter driver) {
-		boolean preloadAdmissibleValues = !"LOOKUP".equalsIgnoreCase(selectionType);
-		return preloadAdmissibleValues;
-	}
-
 	public void loadAdmissibleValues(BIMetaModelParameter driver, BusinessModelRuntime dum) {
 		super.loadAdmissibleValues(driver, dum);
 	}
@@ -132,7 +125,5 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime<BIMetaMode
 	public BIMetaModelParameter getDriver() {
 		return driver;
 	}
-
-	
 
 }
