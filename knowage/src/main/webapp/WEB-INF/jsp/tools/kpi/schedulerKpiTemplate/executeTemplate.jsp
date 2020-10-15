@@ -24,6 +24,6 @@
 		<md-button id="loadKpiExecution" class="md-primary" ng-click="loadLog()">{{translate.load("sbi.generic.load")}} </md-button>
 	</div>
 	<angular-table ng-show="kpiValueExecLogList.length>0" layout-fill id='logTable' ng-model=kpiValueExecLogList
-		columns='[{"label":"TimeRun","name":"timeRun"},{"label":"Error Count","name":"errorCount"},{"label":"Success Count","name":"successCount"},{"label":"Total Count","name":"totalCount"},{"label":" ","name":"icon","size":"30px"}]'
+		columns='[{"label":"TimeRun","name":"timeRun"},{"label":"Error Count","name":"errorCount"},{"label":"Success Count","name":"successCount"},{"label":"Total Count","name":"totalCount"},{"label":" ","name":"icon","size":"50px"}]'
 		scope-functions=tableFunction> </angular-table> </md-card-content></md-card>
 </div>
