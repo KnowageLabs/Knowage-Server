@@ -846,20 +846,21 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
       			$scope.basicViewScopeFunctions.openFilters(row);
             }
       	},
-      	{
-      		"label":$scope.translate.load("kn.qbe.general.havings"),
-      		icon:'fa fa-check-square',
-      		color:'#a3a5a6',
-      		action:function(row,event){
+		{
+			"label":$scope.translate.load("kn.qbe.general.havings"),
+			icon:'fa fa-check-square',
+			color:'#a3a5a6',
+			action:function(row,event){
 
-      			$scope.basicViewScopeFunctions.openHavings(row);
-            },
-            visible: function (item) {
+				$scope.basicViewScopeFunctions.openHavings(row);
+			},
+			visible: function (item) {
+				return item.funct
+				    && item.funct != ''
+				    && item.funct != "NONE" ? true : false;
+			}
 
-            	return item.funct && item.func != '' && item.funct !="NONE" ? true : false;
-            }
-
-      	},
+		},
       	{
     		"label": sbiModule_translate.load("kn.qbe.custom.table.modified.field"),
     		"icon": "fa fa-calculator",
