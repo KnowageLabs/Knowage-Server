@@ -391,7 +391,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				if (kpiSchedulerId == null) {
 					// This is unlikely to throw any exception.
 					// Nevertheless, it's safer to parse the job instance here.
-					kpiSchedulerId = Integer.parseInt(job.getJobDetail().getJobDataMap().getString("kpiSchedulerId"));
+//					kpiSchedulerId = Integer.parseInt(job.getJobDetail().getJobDataMap().getString("kpiSchedulerId"));
+					kpiSchedulerId = Integer.parseInt(job.getJobDetail().getName());
 				}
 				// Compute the KPIs values
 				result = computeKpis(kpiSchedulerId, timeRun);
