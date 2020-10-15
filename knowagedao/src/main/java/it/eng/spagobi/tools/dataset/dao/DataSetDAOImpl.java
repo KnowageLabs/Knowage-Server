@@ -26,17 +26,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.ibm.jvm.dtfjview.Session;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -2416,7 +2414,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibDataSet.setDescription(dataSet.getDescription());
 				hibDataSet.setName(dataSet.getName());
 				hibDataSet.setConfiguration(dataSet.getConfiguration());
-				hibDataSet.setType(dataSet.getDsType());
+				
+				// TODO fix this!!!! the same method for dsType is used with 2 set of values: Qbe, File, .... and SbiQbeDataSet, SbiFileDataSet, ....!!!!!
+				String type = dataSet.getDsType();
+				if (DataSetConstants.name2Code.containsKey(type)) {
+					type = DataSetConstants.name2Code.get(type);
+				}
+				
+				hibDataSet.setType(type);
 				updateSbiCommonInfo4Insert(hibDataSet);
 
 				String userIn = hibDataSet.getCommonInfo().getUserIn();
