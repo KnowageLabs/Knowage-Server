@@ -702,6 +702,9 @@
 							drivers[i].parameterValue.push(tempValue);
 						}
 					}
+					if(drivers[i].selectionType == "TREE") {
+						execProperties.hasOneAdmissibleValue = false;
+					}
 					if(drivers[i].driverDefaultValue) {
 						execProperties.hasOneAdmissibleValue = false;
 					}
