@@ -54,7 +54,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 public class TemplateResource extends AbstractSpagoBIResource {
 
 	public static enum FILETYPE {
-		json, xml, bin, rptdesign, sbicockpit, jrxml
+		json, xml, bin, rptdesign, sbicockpit, jrxml, pdf, xls, xlsx, doc, docx, ppt, pptx
 	};
 
 	static protected Logger logger = Logger.getLogger(TemplateResource.class);
@@ -196,9 +196,16 @@ public class TemplateResource extends AbstractSpagoBIResource {
 			case json:
 			case xml:
 			case bin:
-			case jrxml:
 			case rptdesign:
 			case sbicockpit:
+			case jrxml:
+			case pdf:
+			case xls:
+			case xlsx:
+			case doc:
+			case docx:
+			case ppt:
+			case pptx:
 				byteContent = template.getContent();
 				response = Response.ok(byteContent);
 				response.header("Content-Disposition", "attachment; filename=" + filename);
