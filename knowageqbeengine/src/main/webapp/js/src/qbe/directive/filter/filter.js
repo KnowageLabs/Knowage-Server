@@ -58,7 +58,9 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	}
 
 	$scope.isloadTemporalFiltersVisible = function(dataType){
-		return sbiModule_user.functionalities.indexOf("Timespan")>-1 && ( dataType.toLowerCase() == "java.sql.date" || dataType.toLowerCase() == "java.sql.timestamp");
+		return sbiModule_user.functionalities.indexOf("Timespan")>-1
+			&& (typeof dataType != "undefined")
+			&& ( dataType.toLowerCase() == "java.sql.date" || dataType.toLowerCase() == "java.sql.timestamp");
 	}
 
 	$scope.targetTypes = angular.copy(filters_service.getTargetTypes);
