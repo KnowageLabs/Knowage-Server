@@ -19,18 +19,20 @@
 from flask import Blueprint, request
 from app.utilities import security, utils
 
-dataset = Blueprint('dataset', __name__)
+dataset = Blueprint('catalog', __name__)
 #url: knowage_addr:port/dataset
 
-@dataset.route('', methods = ['POST'])
-def python_dataset_edit():
+@dataset.route('execute', methods = ['POST'])
+def python_function_execute():
     # retrieve input parameters
     try:
         data = request.get_json()
+        datastore = data['datastore']
+        col_names = datastore["metaData"]["fields"]
+        rows = datastore["rows"]
+        datastoreDataframe = utils.convertKnowageDatasetToDataframe(col_names, rows)
         token = data['script']
         isAuthenticated, script = security.jwtToken2pythonScript(token)
-        df_name = data['df_name']
-        knowage_parameters = data['parameters']
     except Exception as e:
         return str(e), 400
 
@@ -38,37 +40,23 @@ def python_dataset_edit():
         return "Unauthorized", 401
 
     #build parameters dictionary
-    parameters = buildParameters(knowage_parameters)
+    inputs = buildInputs()
     # resolve parameters
-    for p in parameters:
-        script = script.replace("$P{" + p + "}", "parameters_.get(\'" + p + "\')")
+    for input in inputs:
+        script = script.replace("$P{" + input + "}", "inputs_.get(\'" + input + "\')")
     # execute script
     try:
-        namespace = {df_name: "", "parameters_": parameters}
+        namespace = {"df_": "", "inputs_": inputs}
         exec (script, namespace)
     except Exception as e:
         return str(e), 400
     # collect script result
-    df = namespace[df_name]
+    df = namespace["df_"]
 
     # convert dataframe to knowage json format
     knowage_json = utils.convertDataframeToKnowageDataset(df)
 
     return str(knowage_json).replace('\'', "\""), 200
 
-def buildParameters(knowage_parameters):
-    parameters = {}
-    for x in knowage_parameters:
-        key = x['name']
-        if x['value'] != '':
-            value = x['value']
-        else:
-            value = x['defaultValue']
-        if x['type'] == 'Number':
-            value = float(value)
-        parameters.update({key: value})
-    return parameters
-
-@dataset.route('/libraries', methods = ['GET'])
-def python_libraries():
-    return utils.getEnvironmentLibraries(), 200
+def buildInputs():
+    return []

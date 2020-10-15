@@ -119,32 +119,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		});
 	};
 
-	$scope.showNewInputDialog = function(data, datasetList, isDemoFunction) {
-		var executionResult = $mdDialog.show({
-			controller : executeWithNewDataController,
-			templateUrl : sbiModule_config.dynamicResourcesBasePath
-					+ '/angular_1.4/tools/functionsCatalog/templates/'
-					+ 'functionCatalogNewInputs.jsp',
-			preserveScope : true,
-			locals : {
-				demoData : data,
-				logger : $log,
-				datasets : datasetList,
-				userId : $scope.userId,
-				translate : sbiModule_translate
-			},
-			clickOutsideToClose : true
-		});
-		executionResult.then(function(response) { // positive response, given
-			// from $mdDialog.hide(..)
-			$scope.showTabDialog(response, isDemoFunction);
-		}, function(data) { // negative response, given from $mdDialog.close(..)
-
-		});
-		$scope.obtainDatasetLabelsRESTcall();
-
-	};
-
 	function isEmpty(obj) {
 
 		var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -378,21 +352,13 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		return correctArguments;
 	}
 
-	$scope.acSpeedMenu = [ {
-		label : sbiModule_translate.load("Execute Demo"),
+	$scope.acSpeedMenu = [{
+		label : sbiModule_translate.load("sbi.functionscatalog.executedemo"),
 		icon : 'fa fa-play-circle-o',
 		action : function(item, event) {
 			$scope.applyDemoItem(item, event);
 		}
-	}, {
-		label : sbiModule_translate.load("Execute with new data"),
-		icon : 'fa fa-play-circle',
-		action : function(item, event) {
-			$scope.applyItem(item, event);
-		}
-	}
-
-	];
+	}];
 
 	var deleteIcon = {
 		label : sbiModule_translate.load("Delete"),
@@ -441,28 +407,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	};
 
 	$scope.applyDemoItem = function(item, event) {
-
-		var functionId = item.id;
-
-		$log.info("userId ", $scope.userId);
-		sbiModule_restServices.get("2.0/functions-catalog/execute/sample",functionId).then(
-			function(results) {
-				for (var i = 0; i < results.data.length; i++) {
-					if (results.data[i].resultType == "file"
-							|| results.data[i].resultType == "File") {
-						results.data[i].result = JSON.parse(results.data[i].result);
-					}
-				}
-				var isDemo = true;
-				$scope.showTabDialog(results, isDemo);
-
-			});
-	};
-
-	$scope.applyItem = function(item, event) {
-		demoData = item;
-		var isDemo = false;
-		$scope.showNewInputDialog(demoData, $scope.datasets, isDemo);
+		// TO DO
 	};
 
 	$scope.leftTableClick = function(item) {
