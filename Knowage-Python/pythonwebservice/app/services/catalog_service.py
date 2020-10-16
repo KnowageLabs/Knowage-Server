@@ -33,17 +33,23 @@ def python_function_execute():
         datastoreDataframe = utils.convertKnowageDatasetToDataframe(col_names, rows)
         token = data['script']
         isAuthenticated, script = security.jwtToken2pythonScript(token)
+        input_values = data['input']
     except Exception as e:
         return str(e), 400
 
     if not isAuthenticated:
         return "Unauthorized", 401
 
-    #build parameters dictionary
-    inputs = buildInputs()
-    # resolve parameters
+    # resolve references to datastore
+    script = script.replace("${df}", "df_")
+    #build inputs dictionary
+    inputs = buildInputVariables(input_values)
+    # resolve input values references
     for input in inputs:
-        script = script.replace("$P{" + input + "}", "inputs_.get(\'" + input + "\')")
+        if input_values[input].type == 'column':
+            script = script.replace("df_." + input, "df_." + inputs['input'])
+        if input_values[input].type == 'variable':
+            script = script.replace(input, "inputs_.get(\'" + input + "\')")
     # execute script
     try:
         namespace = {"df_": "", "inputs_": inputs}
@@ -58,5 +64,5 @@ def python_function_execute():
 
     return str(knowage_json).replace('\'', "\""), 200
 
-def buildInputs():
+def buildInputVariables(input_values):
     return []

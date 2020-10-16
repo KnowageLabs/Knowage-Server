@@ -30,6 +30,19 @@
 	            		<md-subheader> {{::translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.variablesSettings')}} </md-subheader>
 	            		<div ag-grid="model.variablesGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary"></div>
         			</div>
+        			<div ng-show="model.selectedFunction.id">
+        			<md-subheader> {{::translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.environment')}} </md-subheader>
+						{{model.libraries}}
+			     		<md-input-container flex class="md-block">
+						  	<md-select placeholder="Choose environment" ng-if="model.selectedFunction.language=='Python'" ng-model="model.selectedFunction.environment" ng-change="setLibraries()">   
+			        			<md-option ng-repeat="e in model.pythonEnvironments" value="{{e}}">{{e.label}}</md-option>
+							</md-select> 
+							<md-select placeholder="Choose environment" ng-if="model.selectedFunction.language=='R'" ng-model="model.selectedFunction.environment" ng-change="setLibraries()"> 
+					        	<md-option ng-repeat="e in model.rEnvironments" value="{{e}}">{{e.label}}</md-option>
+					        </md-select> 
+						</md-input-container>
+						<div ag-grid="model.librariesGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary"></div>
+					</div>
         		</div>
         		<div ng-show="!model.selectedFunction" layout="row" layout-align="center center" flex>
         			<div class="kn-info truncated" layout="row" layout-align="center center" style="height:50px" flex="50"> {{::translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.noFunctionSelected')}} </div>

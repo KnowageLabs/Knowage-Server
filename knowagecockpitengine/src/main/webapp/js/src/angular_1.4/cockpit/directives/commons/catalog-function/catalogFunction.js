@@ -44,6 +44,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	function catalogFunctionController($scope,sbiModule_translate,sbiModule_restServices,$q,$mdDialog,cockpitModule_datasetServices,$mdToast){
 		$scope.translate = sbiModule_translate;
 
+		// PYTHON ENVIRONMENTS CONFIG
+		sbiModule_restServices.restToRootProject();
+		sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
+		.then(function(response){
+			$scope.ngModel.pythonEnvironments = $scope.buildEnvironments(response.data);
+		});
+
+		// R ENVIRONMENTS CONFIG
+		sbiModule_restServices.restToRootProject();
+		sbiModule_restServices.promiseGet('2.0/configs/category', 'R_CONFIGURATION')
+		.then(function(response){
+			$scope.ngModel.rEnvironments = $scope.buildEnvironments(response.data);
+		});
+
+		$scope.buildEnvironments = function (data) {
+			toReturn = []
+			for (i=0; i<data.length; i++) {
+				key = data[i].label;
+				val = data[i].valueCheck;
+				toReturn[i] = {"label": key, "value": val};
+			}
+			return toReturn;
+		}
+
 		$scope.loadAllCatalogFunctions = function(){
 			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.get("2.0/functions-catalog", "").then(
@@ -223,7 +247,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.name'), field:'name'},
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.type'), field:'type'},
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.value'), field:'value', editable: true, cellRenderer: editableCell}],
-	        	rowData: $scope.model.selectedFunction.inputVariables
+	        rowData: $scope.model.selectedFunction.inputVariables
 		}
 
 		function editableCell(params){
@@ -247,6 +271,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.model.variablesGrid.api.setRowData(func.inputVariables);
 		}
 
+		$scope.model.librariesGrid = {
+	        enableColResize: false,
+	        enableFilter: true,
+	        enableSorting: true,
+	        onGridReady: resizeLibraries,
+	        onGridSizeChanged: resizeLibraries,
+	        pagination: true,
+	        paginationAutoPageSize: true,
+	        columnDefs: [
+	        	{headerName: "Library", field:'name'},
+	        	{headerName: "Version", field:'version'}],
+			rowData: $scope.model.libraries
+		}
+
+		function resizeLibraries(){
+			$scope.model.librariesGrid.api.sizeColumnsToFit();
+		}
+
+		function refreshRowForLibraries(cell){
+			$scope.model.librariesGrid.api.redrawRows({rowNodes: [$scope.model.librariesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
+		}
+
+		$scope.setLibraries=function() {
+			sbiModule_restServices.restToRootProject();
+			var endpoint = $scope.model.selectedFunction.language == "Python" ? "python" : "RWidget";
+			sbiModule_restServices.promiseGet('2.0/backendservices/widgets/'+ endpoint +'/libraries', JSON.parse($scope.model.selectedFunction.environment).label)
+			.then(function(response){
+				$scope.model.selectedFunction.libraries = [];
+				var librariesArray = JSON.parse((response.data.result));
+				for (idx in librariesArray) {
+					lib = librariesArray[idx];
+					$scope.model.selectedFunction.libraries.push({"name": lib.name, "version": lib.version})
+				}
+				$scope.model.librariesGrid.api.setRowData($scope.model.selectedFunction.libraries);
+			}, function(error){
+			});
+		}
+
 		checkColumnsConfiguration=function(columns){
 			for (var i=0; i<columns.length; i++) {
 				if (!columns[i].dsColumn)
@@ -260,6 +322,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if (!variables[i].value || variables[i].value == '')
 					return false;
 			}
+			return true;
+		}
+
+		checkEnvironmentConfiguration=function(environment){
+			if (!environment)
+				return false;
 			return true;
 		}
 
@@ -278,6 +346,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.toastifyMsg('warning',$scope.translate.load("sbi.cockpit.widgets.table.catalogFunctions.function.error.datasetColumns"));
 			else if (!checkVariablesConfiguration($scope.model.selectedFunction.inputVariables))
 				$scope.toastifyMsg('warning',$scope.translate.load("sbi.cockpit.widgets.table.catalogFunctions.function.error.inputVariables"));
+			else if (!checkEnvironmentConfiguration($scope.model.selectedFunction.environment))
+				$scope.toastifyMsg('warning',$scope.translate.load("sbi.cockpit.widgets.table.catalogFunctions.function.error.environment"));
 			else {
 				$scope.result = [];
 				for (var i=0; i<$scope.model.selectedFunction.outputColumns.length; i++) {
@@ -289,6 +359,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.result[i].fieldType = $scope.model.selectedFunction.outputColumns[i].fieldType;
 					$scope.result[i].isFunction = true;
 					$scope.result[i].type = getResultType($scope.model.selectedFunction.outputColumns[i].type);
+					$scope.result[i].environment = $scope.model.selectedFunction.environment;
 				}
 				promise.resolve($scope.result);
 				$mdDialog.hide();
