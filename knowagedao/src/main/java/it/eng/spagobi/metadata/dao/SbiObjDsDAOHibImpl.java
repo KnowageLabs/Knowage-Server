@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.metadata.dao;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -28,17 +39,7 @@ import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.metadata.metadata.SbiMetaObjDs;
 import it.eng.spagobi.metadata.metadata.SbiMetaObjDsId;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -229,8 +230,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO
 	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION, ... )
 	 *
-	 * @param biObj
-	 *            the document object
+	 * @param biObj the document object
 	 */
 	@Override
 	public void insertUniqueRelationFromObj(BIObject biObj) throws EMFUserError {
@@ -302,8 +302,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 	/**
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS
 	 *
-	 * @param biObj
-	 *            the document object
+	 * @param biObj the document object
 	 */
 	@Override
 	public void insertRelationFromCockpit(BIObject obj) throws EMFUserError {
@@ -356,8 +355,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 	/**
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS
 	 *
-	 * @param biObj
-	 *            the document object
+	 * @param biObj the document object
 	 */
 	private void insertRelationFromSVG(BIObject obj) throws EMFUserError {
 		logger.debug("IN");
@@ -368,7 +366,8 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 			try {
 				template = new String(obj.getActiveTemplate().getContent());
 			} catch (Exception ex) {
-				logger.error("An error occured while recovering the template, so the relations between document and dataset cannot be inserted. Please check the template uploaded!");
+				logger.error(
+						"An error occured while recovering the template, so the relations between document and dataset cannot be inserted. Please check the template uploaded!");
 				return;
 			}
 			SourceBean templateSB = SourceBean.fromXMLString(template);
@@ -394,6 +393,12 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 					logger.debug("Insert relation for dataset with label [" + dsLabel + "]");
 
 					VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel));
+
+					if (ds == null) {
+						String message = "No dataset found with label [" + dsLabel + "]";
+						logger.error(message);
+						throw new SpagoBIRuntimeException(message);
+					}
 					// insert only relations with new ds
 					if (lstDsInsertedForObj.get(ds.getId()) != null) {
 						continue;
@@ -403,16 +408,27 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 					Integer dsVersion = ds.getVersionNum();
 					logger.debug("Dataset version used for insert relation is: " + dsVersion);
 
-					// creating relation object
-					SbiMetaObjDs relObjDs = new SbiMetaObjDs();
-					SbiMetaObjDsId relObjDsId = new SbiMetaObjDsId();
-					relObjDsId.setDsId(ds.getId());
-					relObjDsId.setOrganization(dsOrganization);
-					relObjDsId.setVersionNum(dsVersion);
-					relObjDsId.setObjId(obj.getId());
-					relObjDs.setId(relObjDsId);
+					// creating meta relation object
+					SbiMetaObjDs relMetaObjDs = new SbiMetaObjDs();
+					SbiMetaObjDsId relMetaObjDsId = new SbiMetaObjDsId();
+					relMetaObjDsId.setDsId(ds.getId());
+					relMetaObjDsId.setOrganization(dsOrganization);
+					relMetaObjDsId.setVersionNum(dsVersion);
+					relMetaObjDsId.setObjId(obj.getId());
+					relMetaObjDs.setId(relMetaObjDsId);
+					DAOFactory.getSbiObjDsDAO().insertObjDs(relMetaObjDs);
 
-					DAOFactory.getSbiObjDsDAO().insertObjDs(relObjDs);
+					// creating relation object
+					ArrayList<String> arr = new ArrayList<String>();
+					arr.add(dsLabel);
+
+					Session currentSession = getSession();
+					Transaction tx = currentSession.beginTransaction();
+					DAOFactory.getBIObjDataSetDAO().updateObjectNotDetailDatasets(obj, arr, currentSession);
+					currentSession.flush();
+					tx.commit();
+					currentSession.close();
+
 					lstDsInsertedForObj.put(ds.getId(), true);
 					numInserted++;
 
@@ -424,8 +440,9 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 				logger.debug("The document doesn't use any dataset! ");
 			}
 		} catch (Exception e) {
-			logger.error("An error occured while inserting relation between SVG document and its datasets. Please check the document template and the existance of the datasets referenced. Error:  "
-					+ e);
+			logger.error(
+					"An error occured while inserting relation between SVG document and its datasets. Please check the document template and the existance of the datasets referenced. Error:  "
+							+ e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 20001);
 		}
 		logger.debug("OUT");
@@ -435,8 +452,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO
 	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION, ... )
 	 *
-	 * @param biObj
-	 *            the document object
+	 * @param biObj the document object
 	 */
 	@Override
 	public void insertRelationsFromObj(BIObject biObj) throws EMFUserError {
@@ -549,8 +565,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 	/**
 	 * Returns true if the engine uses standard dataset management (1:1 with the document)
 	 *
-	 * @param engineLabel
-	 *            : the engine label
+	 * @param engineLabel : the engine label
 	 * @return true if the engine use standard dataset (1:1), false otherwise
 	 */
 	private boolean useUniqueDataset(String engineLabel) {
