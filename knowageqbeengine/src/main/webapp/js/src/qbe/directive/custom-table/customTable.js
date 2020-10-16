@@ -853,9 +853,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				$scope.basicViewScopeFunctions.openHavings(row);
 			},
 			visible: function (item) {
-				return item.funct
-				    && item.funct != ''
-				    && item.funct != "NONE" ? true : false;
+				return (item.funct && item.funct != '' && item.funct != "NONE" ? true : false)
+					|| (item.type == "inline.calculated.field" && item.fieldType == "measure");
 			}
 
 		},
