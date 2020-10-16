@@ -26,6 +26,7 @@
 			register(['valueoffield'],'valueoffield',mappings)
 			register(['anotherentity'],'anotherentity',mappings)
 			register(['subquery'],'subqueries',mappings)
+
 			register(['default'],'manual',mappings)
 
 			register(['in','manual'],'multimanual',mappings)

@@ -38,6 +38,12 @@
 
 			register(['default'],'manual',mappings)
 
+			register(['in','manual'],'multimanual',mappings)
+			register(['notin','manual'],'multimanual',mappings)
+
+			register(['between','manual'],'betweenmanual',mappings)
+			register(['notbetween','manual'],'betweenmanual',mappings)
+
 		}
 
 		this.get = function(){
