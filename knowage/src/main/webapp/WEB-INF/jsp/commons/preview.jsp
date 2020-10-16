@@ -84,7 +84,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var		DATASET;
 			var 	backEndPagination = {page: 1, itemsPerPage: DEFAULT_MAX_ITEMS_PER_PAGE};
 			var 	filters = [];
-	  
 			//Getting the url parameters
 	  		var url = new URL(window.location.href);
 	  		var datasetLabel = url.searchParams.get("datasetLabel");
@@ -419,7 +418,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}).showToast();
 				
 				if(parameters && parameters.length > 0) body.parameters = parameters;
-				if(drivers) body.drivers = drivers;
+				
+				if(!isEmpty(drivers)){
+					var parsedDrivers = JSON.parse(drivers);
+					body.drivers = parsedDrivers;
+				}			
 		
 				var exportFormat = null;
 				if (format == 'CSV') {
