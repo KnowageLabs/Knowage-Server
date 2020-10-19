@@ -651,10 +651,10 @@ function cockpitChartWidgetControllerFunction(
 							  if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE'  && !$scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary) $scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary = $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected;
 						  }
 						
-						  for(var z in $scope.model.content.columnSelectedOfDataset){
+						  for(var z in $scope.localModel.content.columnSelectedOfDataset){
 							  for(var c in $scope.localModel.columnSelectedOfDatasetAggregations){
-								  if (($scope.model.content.columnSelectedOfDatasetAggregations[c].name == $scope.model.content.columnSelectedOfDataset[z].name) && $scope.model.content.columnSelectedOfDataset[z].aggregationSelected != $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected) {
-									   $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected = $scope.model.content.columnSelectedOfDataset[z].aggregationSelected;
+								  if (($scope.localModel.content.columnSelectedOfDatasetAggregations[c].name == $scope.model.content.columnSelectedOfDataset[z].name) && $scope.localModel.content.columnSelectedOfDataset[z].aggregationSelected != $scope.localModel.content.columnSelectedOfDatasetAggregations[c].aggregationSelected) {
+									   $scope.localModel.content.columnSelectedOfDatasetAggregations[c].aggregationSelected = $scope.localModel.content.columnSelectedOfDataset[z].aggregationSelected;
 								  }
 							  }
 						  }
