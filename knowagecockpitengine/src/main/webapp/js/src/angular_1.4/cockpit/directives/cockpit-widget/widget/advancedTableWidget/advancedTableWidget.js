@@ -447,7 +447,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					tempValue = tempValue.toString().substring(0,params.colDef.style.maxChars);
 				}
 			}
-			params.eParentOfValue.style.backgroundColor = (params.colDef.style && params.colDef.style['background-color']) || 'inherit';
+			if(params.eParentOfValue.style.backgroundColor == "") params.eParentOfValue.style.backgroundColor = (params.colDef.style && params.colDef.style['background-color']) || 'inherit';
 			if($scope.bulkSelection){
 				this.manageMultiSelection(params);
 			}
