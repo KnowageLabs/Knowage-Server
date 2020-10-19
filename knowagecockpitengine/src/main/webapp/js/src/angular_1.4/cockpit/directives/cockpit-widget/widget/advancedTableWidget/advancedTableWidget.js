@@ -70,11 +70,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		function crossHasType(type){
-			if($scope.interaction && $scope.interaction.crossType && $scope.interaction.crossType[type]) return true;
-			if($scope.interaction && $scope.interaction.previewType && $scope.interaction.previewType[type]) return true;
+			if($scope.interaction && $scope.interaction.crossType && $scope.interaction.crossType === type) return true;
+			if($scope.interaction && $scope.interaction.previewType && $scope.interaction.previewType === type) return true;
 			if($scope.interaction && $scope.interaction.links){
 				for(var l in $scope.interaction.links) {
-					if($scope.interaction.links[l].interactionType == type) return true;
+					if($scope.interaction.links[l].interactionType === type) return true;
 				}
 			}
 			return false;
