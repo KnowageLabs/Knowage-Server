@@ -137,7 +137,7 @@ md-list-item.license-item::before{
   }
 
   @mixin media-sm {
-    @media (min-width: 650px) {
+    @media (min-width: 300px) {
       @content;
     }
   }

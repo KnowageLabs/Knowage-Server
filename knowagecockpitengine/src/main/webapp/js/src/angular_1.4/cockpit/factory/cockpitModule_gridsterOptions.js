@@ -10,7 +10,7 @@ angular.module('cockpitModule').factory('cockpitModule_gridsterOptions',function
 		rowHeight: 30,
 		width : 'auto',
 		sparse: true,// "true" can increase performance of dragging and resizing for big grid (e.g. 20x50)
-		mobileBreakPoint : 600,
+		mobileBreakPoint :300,
 		mobileModeEnabled : true,
 		resizable : {
 			enabled : cockpitModule_properties.EDIT_MODE,
