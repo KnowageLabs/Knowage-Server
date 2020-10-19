@@ -143,10 +143,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        </md-fab-trigger>
 
         	<md-fab-actions>
-        		<md-button class="md-fab md-raised md-mini" ng-if="ngModel.type == 'table' && activeSearch" ng-click="resetSearch();$event.stopPropagation();" >
+        		<md-button class="md-fab md-raised md-mini" ng-if="ngModel.type == 'table' && activeSearch" ng-click="resetSearch();$event.stopPropagation();" style="transform:translateX(-10%) translateY(10%)">
 					<md-tooltip md-direction="bottom" md-delay="1000">Filtered table, click to reset search</md-tooltip>
-					<md-icon md-font-icon="fa fa-filter fa-stack-1x"></md-icon>
-					<md-icon md-font-icon="fa fa-ban fa-stack-2x ban"></md-icon>
+					<span class="fa-stack" style="transform:translateY(10%)">
+				  		<md-icon md-font-icon="fa fa-filter fa-stack-1x"></md-icon>
+						<md-icon md-font-icon="fa fa-ban fa-stack-2x ban"></md-icon>
+					</span>
 				</md-button>
 			
 				<md-button class="md-fab md-raised md-mini" ng-click="expandWidget();$event.stopPropagation();" ng-if="checkType(ngModel.type, ['table','chart','static-pivot-table', 'map'])">
