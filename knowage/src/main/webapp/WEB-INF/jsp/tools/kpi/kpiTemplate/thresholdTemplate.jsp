@@ -14,7 +14,7 @@
   <div layout="row">
 	  <md-input-container flex class="md-block">
 	            <label>{{translate.load("sbi.generic.name")}}</label>
-	            <input ng-model="kpi.threshold.name" >
+	            <input ng-model="kpi.threshold.name" required >
 	  </md-input-container>
   
    		<md-input-container flex class="md-block">

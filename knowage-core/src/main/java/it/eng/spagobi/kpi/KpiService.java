@@ -1134,8 +1134,7 @@ public class KpiService {
 	/**
 	 * Check if placeholders with default value are a subset of placeholders linked to measures used in kpi definition (ie kpi formula)
 	 *
-	 * @param servlet
-	 *            request
+	 * @param servlet     request
 	 * @param placeholder
 	 * @throws EMFUserError
 	 * @throws SpagoBIException
