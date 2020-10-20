@@ -17,18 +17,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 
+<%@page import="it.eng.spagobi.commons.services.LoginModule"%>
+<%@page import="it.eng.spago.dispatching.httpchannel.AdapterHTTP"%>
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
 <%@ page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@ page import="it.eng.spago.navigation.LightNavigationManager,
                  java.util.Map,
-                 java.util.HashMap"%>
+                 java.util.HashMap,
+                 it.eng.spago.base.Constants"%>
 
 <%
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
 	String loginUrl = null;
    	Map loginUrlPars = new HashMap(); 
-   	loginUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO, "1");
+   	loginUrlPars.put(AdapterHTTP.NEW_SESSION, "TRUE");
+   	loginUrlPars.put(Constants.PAGE, LoginModule.PAGE_NAME);
+   	loginUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_RESET, "TRUE");
    	loginUrl = urlBuilder.getUrl(request, loginUrlPars);
 %>
   
