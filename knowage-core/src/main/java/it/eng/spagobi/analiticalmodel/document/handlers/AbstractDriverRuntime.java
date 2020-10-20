@@ -431,7 +431,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	public boolean areAdmissibleValuesToBePreloaded(AbstractDriver driver) {
 		boolean preloadAdmissibleValues = true;
-		if ("LOOKUP".equalsIgnoreCase(selectionType) || "TREE".equalsIgnoreCase(selectionType)) {
+		if ("LOOKUP".equalsIgnoreCase(selectionType) || "TREE".equalsIgnoreCase(selectionType) || selectionType.isEmpty()) {
 			preloadAdmissibleValues = false;
 		}
 		return preloadAdmissibleValues;
