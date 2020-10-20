@@ -1408,7 +1408,9 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 		$scope.formatPattern = ['','#.###,##','#,###.##'];
 		$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
-		$scope.visTypes=[$scope.translate.load('kn.generic.visualization.text'),$scope.translate.load('kn.generic.visualization.texticon')];
+		$scope.visTypes=[{label:$scope.translate.load('kn.generic.visualization.text'), value:"Text"},
+			{label:$scope.translate.load('kn.generic.visualization.texticon'),value: "Text/Icon"},
+			{label:$scope.translate.load('kn.generic.visualization.icon'),value:"Icon only"}];
 		function setChunks(array, dimension){
 			var newArray = [];
 			for(var f in array){
