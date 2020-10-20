@@ -248,8 +248,7 @@ public class AbstractHibernateDAO {
 	/**
 	 * Traces the exception information of a throwable input object.
 	 *
-	 * @param t
-	 *            The input throwable object
+	 * @param t The input throwable object
 	 */
 	public void logException(Throwable t) {
 		logger.error(t.getClass().getName() + " " + t.getMessage(), t);
@@ -299,7 +298,7 @@ public class AbstractHibernateDAO {
 			toReturn = load(clazz, id, session);
 			session.flush();
 		} catch (Throwable t) {
-			throw new SpagoBIDAOException("An unexpected error occured while loading dataset whose id is equal to [" + id + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading " + clazz.getName() + " whose id is equal to [" + id + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
