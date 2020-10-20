@@ -899,7 +899,7 @@ public class DataSetTransformer {
 				}
 			}
 		} else {
-			if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
+			if (categorieColumns.get("orderColumn")!= null && !categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
 					&& !categorieColumns.get("groupby").contains(categorieColumns.get("orderColumn"))) {
 				dataColumnsMapper.remove(categorieColumns.get("orderColumn").toLowerCase());
 			}
