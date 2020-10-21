@@ -4,18 +4,34 @@
 		background-color: lighten($ternaryColor, 15%);
 	}
 
-	#filterDatepicker {
-		margin: 0;
-		.md-datepicker-input-container {
-			width: calc(100% - 60px);
-			padding-bottom: 4px;
-			border-bottom-color: #ccc;
-			.md-datepicker-input{
-				width: 100%;
+	#filterDatepickerContainer {
+		&.md-input-has-value, &.md-input-focused {
+			label:not(.md-no-float) {
+				-webkit-transform: translate3d(0,12px,0) scale(.75);
+	    		transform: translate3d(0,12px,0) scale(.75);
+	    	}
+		}
+		#filterDatepicker {
+			display: inline-flex;
+			justify-content: start;
+			align-items: center;
+			width: 100%;
+			margin: 0;
+			&> button {
+				float: none;
+			}
+			.md-datepicker-input-container {
+				width: calc(100% - 60px);
+				border-bottom-color: #ccc;
+				padding: 0;
+				.md-datepicker-input{
+					width: 100%;
+					max-width: none;
+				}
 			}
 		}
-
 	}
+
 	.exportOptions {
 		background-color: lighten($ternaryColor, 15%);
 		.layout-column {

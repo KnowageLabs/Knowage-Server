@@ -84,7 +84,7 @@
                                  <div layout="column">
                                     <md-subheader>Filter documents</md-subheader>
                                     <div layout="row" layout-align="start center" class="documentsFilter">
-                                       <md-input-container flex>
+                                       <md-input-container flex id="filterDatepickerContainer">
                                           <label>{{translate.load('sbi.impexpdoc.filterdoc')}}</label>
                                           <md-datepicker id="filterDatepicker" ng-model="filterDate"></md-datepicker>
                                        </md-input-container>
