@@ -57,6 +57,10 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiM
 	this.alterContextPath=function(cpat){
 		alteredContextPath=cpat;
 	}
+	
+	this.restToRootProject=function(){
+		alteredContextPath=sbiModule_config.externalBasePath+"/restful-services";
+	}
 
 	function getBaseUrl(endP_path) {
 		var burl= alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path+"/"  : alteredContextPath+ "/restful-services/" + endP_path+"/" 
