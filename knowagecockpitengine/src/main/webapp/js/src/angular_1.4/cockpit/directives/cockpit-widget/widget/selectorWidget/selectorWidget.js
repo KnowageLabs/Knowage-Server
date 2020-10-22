@@ -636,7 +636,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 					}
 				}else{ // COMBOBOX
-					if(parVal && (parVal.length>0 || !isNaN(parVal))){
+					if(parVal && (parVal.length>0 || (!isNaN(parVal) && !Array.isArray(parVal)))){
 						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, angular.copy(parVal));
 					}else{
 						item.value=angular.copy(parVal);
