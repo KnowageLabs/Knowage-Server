@@ -41,7 +41,7 @@
 			<div flex>				
 				<md-chips ng-model="parameter.parameterValue" readonly="true">
 					<md-chip-template>
-				    	<strong>{{parameter.parameterDescription[$chip]}}</strong>
+				    	<strong>{{$chip}}</strong>
 			        </md-chip-template>					 
 				</md-chips>
 			</div>
@@ -65,7 +65,7 @@
 			<div flex>				
 				<md-chips ng-model="parameter.parameterValue" readonly="true">
 					 <md-chip-template>
-				          <strong>{{parameter.parameterDescription[$chip]}}</strong>
+				          <strong>{{$chip}}</strong>
 			        </md-chip-template>
 				</md-chips>
 			</div>
@@ -172,9 +172,9 @@
                        <md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter)">
                                <md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
                        </md-icon>
-               </div>
-               <md-input-container class="md-block" ng-if="parameter.selectionType=='COMBOBOX'  && parameter.showOnPanel=='true'">
-		<!-- multiple -->
+        </div>
+        <md-input-container class="md-block" ng-if="parameter.selectionType=='COMBOBOX'  && parameter.showOnPanel=='true'">
+			<!-- multiple -->
 			<md-select ng-disabled="datasetSettings" ng-model="parameter.parameterValue" multiple ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory} "
 		 		ng-change="toggleComboParameter(parameter)"	ng-if="showDefaultValueAreValid(parameter) && parameter.multivalue" > 
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
