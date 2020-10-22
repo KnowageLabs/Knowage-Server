@@ -20,6 +20,11 @@
 			$scope.sbiModule_translate = sbiModule_translate;
 			$scope.driverableObject = $scope.driverableObject;
 
+			// If param don't have value, use the default
+			if (!$scope.param.value) {
+				$scope.param.value = $scope.param.defaultValue;
+			}
+
 		}
 
 	})();
