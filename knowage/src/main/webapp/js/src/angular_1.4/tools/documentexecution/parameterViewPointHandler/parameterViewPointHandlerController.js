@@ -21,7 +21,13 @@
 		$scope.driversExecutionService = driversExecutionService;
 		$scope.execProperties = $scope.execproperties;
 		$scope.translate = sbiModule_translate;
-		
+
+		$scope.$watchCollection('driversExecutionService.gvpCtrlViewpoints', function(newValue, oldValue) {
+			if (newValue && $scope.savedParametersGrid.api) {
+				$scope.savedParametersGrid.api.setRowData(newValue);
+			}
+		})
+
 		$scope.columns = [
 			{"headerName":sbiModule_translate.load('sbi.generic.name'),"field":"vpName"},
 			{"headerName":sbiModule_translate.load('sbi.generic.descr'),"field":"vpDesc"},
@@ -43,7 +49,7 @@
 			'	<md-icon md-font-icon="fa fa-trash-o"></md-icon>'+
 			'</md-button>';
 		}
-		
+
 		$scope.savedParametersGrid = {
 				angularCompileRows: true,
 				pagination : true,
@@ -57,17 +63,17 @@
 				columnDefs: $scope.columns,
 				rowData: driversExecutionService.gvpCtrlViewpoints
 		}
-		
+
 		function resizeColumns(){
 			$scope.savedParametersGrid.api.sizeColumnsToFit();
 		}
-		
+
 		function getItemFromId(id){
 			for(var k in $scope.driversExecutionService.gvpCtrlViewpoints){
 				if($scope.driversExecutionService.gvpCtrlViewpoints[k].vpId == id) return $scope.driversExecutionService.gvpCtrlViewpoints[k];
 			}
 		}
-		
+
 		$scope.fillParams = function(id){
 			var item = getItemFromId(id);
 			var params = decodeRequestStringToJson(item.vpValueParams);
@@ -80,7 +86,7 @@
 			 fillParametersPanel(params);
 			 $scope.returnToDocument();
 		}
-		
+
 		$scope.executeParams = function(id){
 			var item = getItemFromId(id);
 			var params = decodeRequestStringToJson(item.vpValueParams);
@@ -95,7 +101,7 @@
 			 $scope.execute($scope.execProperties.selectedRole.name, stringfyFromGetUrlParameters(params));
 			 $scope.returnToDocument();
 		}
-		
+
 		$scope.deleteParams = function(id){
 			var item = getItemFromId(id);
 			var confirm = $mdDialog
@@ -107,7 +113,7 @@
 					.ok(sbiModule_translate.load("sbi.general.continue"))
 					.cancel(sbiModule_translate.load("sbi.general.cancel")
 				);
-			
+
 			$mdDialog.show(confirm).then(function() {
 				var index = driversExecutionService.gvpCtrlViewpoints.indexOf(item);
 				if($scope.execProperties.executionInstance.OBJECT_TYPE_CODE){
@@ -115,7 +121,7 @@
 				} else {
 					var deletePath = "1.0/metamodelviewpoint";
 				}
-	
+
 				 var objViewpoint = JSON.parse('{ "VIEWPOINT" : "'+ item.vpId +'"}');
 					sbiModule_restServices.post(deletePath,	"deleteViewpoint", objViewpoint)
 					   .success(function(data, status, headers, config) {
