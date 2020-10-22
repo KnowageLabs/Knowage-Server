@@ -3380,6 +3380,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					}
 				}
 			 }
+			 for(var j = 0; j < $scope.selectedDataSet.pars.length; j++) {
+			 	if($scope.selectedDataSet.pars[j].value) {
+			 		delete $scope.selectedDataSet.pars[j].value;
+			 	}
+			 }
 			 $mdDialog.cancel();
 	    }
 	}
