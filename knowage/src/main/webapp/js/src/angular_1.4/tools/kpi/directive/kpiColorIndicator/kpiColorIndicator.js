@@ -142,6 +142,11 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 			}
 			
 			scope.getListKPI = function(){
+			
+				if(sbiModule_config.contextName != "/knowage") {
+					sbiModule_restServices.restToRootProject();
+				}
+			
 				sbiModule_restServices.promiseGet("1.0/kpi","listKpiWithResult")
 				.then(function(response){ 
 					for(var i=0;i<response.data.length;i++){
