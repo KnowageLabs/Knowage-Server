@@ -124,6 +124,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			"java.lang.Double": {label:"float",icon:"fa fa-hashtag"},
 			"java.lang.Float": {label:"float",icon:"fa fa-hashtag"},
 			"java.math.BigDecimal": {label:"float",icon:"fa fa-hashtag"},
+			"java.lang.Object": {label:'object',icon:'fas fa-cube'},
 			"oracle.sql.TIMESTAMP": {label:'timestamp',icon:'fa fa-calendar'},
 			"java.sql.Timestamp": {label:'timestamp',icon:'fa fa-calendar'},
 			"java.util.Date": {label:'date',icon:'fa fa-calendar'},
