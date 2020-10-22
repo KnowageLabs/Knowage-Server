@@ -90,7 +90,7 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 				.ok('OK');
 		$mdDialog.show(alert).then(function() {
 			$scope.stepControl.resetBreadCrumb();
-			$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+			$scope.stepControl.insertBread({name: sbiModule_translate.load('sbi.ds.file.upload.button','component_impexp_messages')});
 			$scope.finishImport();
 		} );
 	}
@@ -117,14 +117,14 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 				sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
 
 				$scope.stepControl.resetBreadCrumb();
-				$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+				$scope.stepControl.insertBread({name: sbiModule_translate.load('sbi.ds.file.upload.button','component_impexp_messages')});
 				$scope.finishImport();
 			}else {
 				// download association file
 				$scope.download.getBlob(response.data,file,'text/xml','xml');
 
 				$scope.stepControl.resetBreadCrumb();
-				$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+				$scope.stepControl.insertBread({name: sbiModule_translate.load('sbi.ds.file.upload.button','component_impexp_messages')});
 				$scope.finishImport();
 
 			}
@@ -138,7 +138,7 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 },
 	function() {
 	$scope.stepControl.resetBreadCrumb();
-		$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+		$scope.stepControl.insertBread({name: sbiModule_translate.load('sbi.ds.file.upload.button','component_impexp_messages')});
 		$scope.finishImport();
 });
 
@@ -151,7 +151,7 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 //				.ok('OK');
 //		$mdDialog.show(alert).then(function() {
 //			$scope.stepControl.resetBreadCrumb();
-//			$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+//			$scope.stepControl.insertBread({name: sbiModule_translate.load('sbi.ds.file.upload.button','component_impexp_messages')});
 //			$scope.finishImport();
 //		} );
 	}
