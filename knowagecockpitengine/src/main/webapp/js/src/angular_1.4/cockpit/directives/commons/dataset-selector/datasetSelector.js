@@ -50,6 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.translate=sbiModule_translate;
 		if(!$scope.datasetSettings) $scope.datasetSettings = {};
 		$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
+		$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue) || !(cockpitModule_datasetServices.driverHasValue);
 
 		$scope.addNewDataset=function(){
 			cockpitModule_datasetServices.addDataset(undefined,$scope.availableDatasets,false,true,$scope.datasetTypeAvailable || undefined,$scope.datasetTypeExclusion || undefined,$scope.noParameters || false )
@@ -88,8 +89,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
-		$scope.availableDatasetsFilter = function(ds){		
-			return $scope.isDatasetAvailable(ds);		
+		$scope.availableDatasetsFilter = function(ds){
+			return $scope.isDatasetAvailable(ds);
 		}
 
 
@@ -114,7 +115,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if($scope.datasetTypeAvailable[a].configuration){
 							if(ds.configuration[$scope.datasetTypeAvailable[a].configuration.property] == $scope.datasetTypeAvailable[a].configuration.value) return true;
 							return false;
-						}	
+						}
 						return true;
 					} return false;
 				}

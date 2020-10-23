@@ -10,7 +10,7 @@
 					<md-option ng-value="item.id.dsId" ng-repeat="item in availableDatasets | filter:searchTerm | filter:availableDatasetsFilter">{{item.name}} ({{item.label}})</md-option>
 				</md-optgroup>
 			</md-select>
-			<div ng-if="(dataset.drivers && dataset.drivers.length > 0) || (dataset.parameters && dataset.parameters.length > 0)" class="kn-warning">	
+			<div ng-if="parametersMessage" class="kn-warning">	
 				{{translate.load('sbi.cockpit.parameter.and.driver')}}	
 			</div>
 		</md-input-container>	
