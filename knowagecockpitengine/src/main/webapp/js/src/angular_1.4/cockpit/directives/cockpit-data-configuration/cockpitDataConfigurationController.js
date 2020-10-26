@@ -353,9 +353,7 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 	 $scope.addDocument=function(){
 		 cockpitModule_documentServices.addDocument("cockpitDataConfig",$scope.tmpAvaiableDocument,true);
 	 }
-	 $scope.addParameter=function(par,panelPar){
-		 par.value = "$P{"+panelPar+"}"
-	 }
+
 }
 
 function associationGroupController($scope,sbiModule_translate,cockpitModule_nearRealtimeServices){

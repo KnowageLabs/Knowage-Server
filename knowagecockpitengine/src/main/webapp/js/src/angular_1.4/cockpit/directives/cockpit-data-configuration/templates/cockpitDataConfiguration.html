@@ -86,9 +86,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 														  </div>
 														</md-toolbar>
 														<md-card-content>															
-										   					<div flex layout="row">																
-																<render-parameters flex driverable-object="row" param="param" ng-repeat="param in row.parameters" ></render-parameters> 
-															    <document-paramenter-element flex execProperties="row" parameter="parameter" ng-repeat="parameter in row.drivers" ng-show="parameter.visible" layout="row" layout-align="start" />						    
+										   					<div flex layout="row">
+																<render-parameters flex 
+																	driverable-object="row" 
+																	analytical-drivers="cockpitModule_analyticalDriversUrls" 
+																	have-analytical-drivers-fn="haveAnaliticalDriver()"																	
+																	param="param" 
+																	ng-repeat="param in row.parameters">
+																</render-parameters> 
+															    <document-paramenter-element flex 
+																    execProperties="row" 
+																    parameter="parameter" 
+																    ng-repeat="parameter in row.drivers" 
+																    ng-show="parameter.visible" 
+																    layout="row" 
+																    layout-align="start"/>
 														    </div>						    
 														</md-card-content>
 													</md-card>													

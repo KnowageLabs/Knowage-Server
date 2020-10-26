@@ -11,6 +11,8 @@
 				scope: {
 					param: '=',
 					driverableObject: '=',
+					haveAnalyticalDriversFn: '&?',
+					analyticalDrivers: '=?',
 				}
 			}
 		}]);
@@ -25,6 +27,9 @@
 				$scope.param.value = $scope.param.defaultValue;
 			}
 
+			 $scope.addParameter=function(driverUrl){
+				 $scope.param.value = "$P{"+driverUrl+"}"
+			 }
 		}
 
 	})();
