@@ -386,7 +386,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    message: "Please Rotate Your Device",
 	    subMessage: "For a better mobile experience",
 	    allowClickBypass: false,
-	    onlyMobile: false,
+	    onlyMobile: true,
 	    zIndex: 9999
 	};
 	
