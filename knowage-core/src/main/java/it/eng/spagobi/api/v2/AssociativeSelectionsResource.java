@@ -35,6 +35,7 @@ import org.jgrapht.graph.Pseudograph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -204,15 +205,24 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 			IDataSet dataSetInFilter = null;
 			if (filtersString != null && !filtersString.isEmpty()) {
 				JSONArray jsonArray = new JSONArray(filtersString);
-
 				JSONArray firstFilterValues = null;
-
 				if (jsonArray instanceof JSONArray) {
-
 					for (int i = 0; i < jsonArray.length(); i++) { // looking for filter embedded in array
 						JSONObject filterJsonObject = jsonArray.optJSONObject(i);
 						if (filterJsonObject != null && filterJsonObject.has("filterOperator")) {
-							dataSetInFilter = getDataSetDAO().loadDataSetByLabel(filterJsonObject.optString("dataset"));
+							String label = filterJsonObject.optString("dataset");
+							if (filterJsonObject.optString("dataset")!= null ) {
+								try {
+								JSONObject obj = filterJsonObject.getJSONObject("dataset"); 
+								if (obj instanceof JSONObject) {
+									label = ((JSONObject) obj).getString("label");
+								}
+								}
+								catch (Exception e) {
+									//continue
+								}
+							}
+							dataSetInFilter = getDataSetDAO().loadDataSetByLabel(label);
 							filterJsonObject.optString("filterOperator");
 							firstFilterValues = filterJsonObject.getJSONArray("filterVals");
 							SimpleFilter firstSimpleFilter = dataRes.getFilter(filterJsonObject.optString("filterOperator"), firstFilterValues,
