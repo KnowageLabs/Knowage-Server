@@ -132,7 +132,7 @@
 				 	 	
 				 	</md-tab>
 				 	
-				 	<md-tab label="{{translate.load('sbi.workspace.dataset.all')}}" flex ng-click="switchDatasetsTab('allDataSet')">
+				 	<md-tab label="{{translate.load('sbi.workspace.dataset.all')}}" flex ng-click="switchDatasetsTab('allDataSet')" md-active="activateAllDatasetsTab">
 				      	<md-tab-body>
 				      	<div layout-fill layout="column">
 				      	 	<filter-by-tags tags-array="allDSTags" current-datasets-tab="currentDatasetsTab" datasets="datasets"></filter-by-tags>
