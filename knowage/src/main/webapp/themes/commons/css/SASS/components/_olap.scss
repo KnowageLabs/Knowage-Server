@@ -868,7 +868,7 @@ md-option[selected], md-select-menu md-option[selected]{
 }
 
 .top-axis-container{
-	width:100%;	
+	overflow: hidden;
 }
 
 
@@ -892,11 +892,19 @@ md-option[selected], md-select-menu md-option[selected]{
 	 cursor:pointer;
 }
 
-.top-shift{
-	min-width:32px;
-	min-height:32px;
-	/*margin-right:1%;*/
-	padding-bottom: 5px;
+.top-shift, .left-axis-shift{
+	width:24px;
+	height:24px;
+	margin: 0 4px;
+	.md-icon-button {
+		width: 24px;
+		height: 24px;
+		padding: 0;
+		margin: 0;
+		md-icon {
+			font-size: 1.5rem;
+		}
+	}
 }
 
 .filter-shift-arrow{
@@ -966,7 +974,8 @@ md-option[selected], md-select-menu md-option[selected]{
 }
 
 .left-axis{
-	height:calc(100% - 64px);
+	height:100%;
+	overflow: hidden;
 }
 
 .export-dialog{
@@ -996,6 +1005,7 @@ md-option[selected], md-select-menu md-option[selected]{
 }
 
 .filter-panel{
+	overflow: hidden;
 	.new-filter-card {
 		span {
 			padding-left: 8px
