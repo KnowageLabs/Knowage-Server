@@ -50,7 +50,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 	$scope.selectedDataSet = undefined;
 	$scope.showDatasettInfo = false;
-	$scope.currentTab = "myDataSet";
+	$scope.currentTab = "allDataSet";
     $scope.previewDatasetModel=[];
     $scope.previewDatasetColumns=[];
     $scope.startPreviewIndex=0;
@@ -493,7 +493,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     }
 
     $scope.isSharingEnabled=function(){
-        return $scope.currentTab==="myDataSet";
+        return $scope.currentTab==="allDataSet";
     }
 
     $scope.exportDataset= function(dataset,format){
@@ -782,7 +782,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     			clonedDataset.id = response.data.id;
 				toastr.success(sbiModule_translate.load("sbi.ds.saved"),
 						sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
-				$scope.activateMyDatasetsTab = true;
+				$scope.activateMyDatasetsTab = false;
+				$scope.activateAllDatasetsTab = true;
 	    		$scope.myDatasets.push(clonedDataset);
 	    		$scope.datasets.push(clonedDataset);
     		}, function(postErr){
@@ -834,7 +835,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	 * Set the currently active Datasets tab. Initially, the 'My Data Set' tab is selected (active).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.currentDatasetsTab = "myDataSet";
+	$scope.currentDatasetsTab = "allDataSet";
 
     $scope.switchDatasetsTab = function(datasetsTab) {
     	var oldTab = angular.copy($scope.currentDatasetsTab);
