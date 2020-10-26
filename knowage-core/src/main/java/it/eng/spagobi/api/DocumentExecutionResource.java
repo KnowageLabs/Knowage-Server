@@ -460,14 +460,18 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String label = requestVal.getString("label");
 		String role = requestVal.getString("role");
 		JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
+
+		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+
+		boolean driversCacheEnabled = false;
 		Map<String, JSONObject> sessionParametersMap = new HashMap<String, JSONObject>();
-		if (("true").equals(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")))
+		if (("true").equals(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled"))) {
 			sessionParametersMap = getSessionParameters(requestVal);
+			driversCacheEnabled = true;
+		}
 
 		// keep track of par coming from cross to get descriptions from admissible values
 		List<String> parsFromCross = new ArrayList<String>();
-
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
 		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
@@ -708,6 +712,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			} else {
 				parameterAsMap.put("showOnPanel", "true");
 			}
+
+			parameterAsMap.put("isReadFromCache", driversCacheEnabled);
+
 			parametersArrayList.add(parameterAsMap);
 
 		}
@@ -1173,12 +1180,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	/**
 	 * Produces a json with a bynary content of a metadata file and its name
 	 *
-	 * @param id
-	 *            of document
-	 * @param id
-	 *            of subObject
-	 * @param id
-	 *            of a metaData
+	 * @param id          of document
+	 * @param id          of subObject
+	 * @param id          of a metaData
 	 * @param httpRequest
 	 * @return a response with a json
 	 * @throws EMFUserError

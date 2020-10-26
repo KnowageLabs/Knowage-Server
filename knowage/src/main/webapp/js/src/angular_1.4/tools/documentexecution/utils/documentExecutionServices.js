@@ -702,7 +702,7 @@
 							drivers[i].parameterValue.push(tempValue);
 						}
 					}
-					if(drivers[i].selectionType == "TREE" || drivers[i].selectionType == "LOOKUP" || drivers[i].driverDefaultValue) {
+					if(drivers[i].selectionType == "TREE" || drivers[i].selectionType == "LOOKUP" || drivers[i].driverDefaultValue || drivers[i].isReadFromCache) {
 						execProperties.hasOneAdmissibleValue = false;
 					}
 
