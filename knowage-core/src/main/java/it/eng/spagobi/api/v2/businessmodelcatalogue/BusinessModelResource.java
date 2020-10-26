@@ -486,7 +486,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 				}
 
 				if (businessModel.getName().equals(configurationMap.get(qbeDatamarts))) {
-					throw new SpagoBIRuntimeException("This business model cannot be deleted because there are datasets that were created on top of it");
+					throw new SpagoBIRuntimeException("This business model cannot be deleted because there are datasets that were created on top of it :[ "+dataSet.getName()+ " ]");
 				}
 			}
 
