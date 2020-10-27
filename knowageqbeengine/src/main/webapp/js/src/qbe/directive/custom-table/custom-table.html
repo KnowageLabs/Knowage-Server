@@ -205,12 +205,17 @@
 							<span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
 							<md-menu >
 								<span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part" ng-click="openMenu($mdMenu.open, $event)"><span class="ag-icon ag-icon-small-right" unselectable="on"></span></span>
-								<md-menu-content class="qbeMenuContent"> 
+								<md-menu-content class="qbeMenuContent">
+									<!--
+										KNOWAGE-5457 : Hide NONE into SmartView
+									 -->
+									<!--
 									<md-menu-item>
 										<md-button ng-click="applyFuntion('none',field.id,field.entity)" ng-class="{'md-raised':field.funct=='NONE'}">
 											<span>{{::translate.load("kn.qbe.custom.table.none")}}</span> 
 										</md-button> 
-									</md-menu-item> 
+									</md-menu-item>
+									 -->
 									<md-menu-item> 
 										<md-button ng-click="applyFuntion('sum',field.id,field.entity)" ng-class="{'md-raised':field.funct=='SUM'}">
 											<span>{{::translate.load("kn.qbe.custom.table.sum")}}</span> 
