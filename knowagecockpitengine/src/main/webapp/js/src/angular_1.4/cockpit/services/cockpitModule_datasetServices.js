@@ -1540,18 +1540,20 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 					$scope.saveDataset=function(){
 						if(multiple){
-							$scope.tmpCurrentAvaiableDataset = $scope.cockpitDatasetGrid.api.getSelectedRows();
-							for(var i=0; i < $scope.tmpCurrentAvaiableDataset.length; i++) {
-								if($scope.tmpCurrentAvaiableDataset[i].type == "SbiQbeDataSet") {
-									if((cockpitModule_datasetServices.selectedDSWithDrivers.length==1 || ($scope.docDrivers && $scope.docDrivers.length > 0)) && $scope.tmpCurrentAvaiableDataset[i].drivers && $scope.tmpCurrentAvaiableDataset[i].drivers.length > 0) {
+							$scope.tmpCurrentAvaiableDataset = [];
+							var tempMultiDataset = $scope.cockpitDatasetGrid.api.getSelectedRows();
+							for(var i=0; i < tempMultiDataset.length; i++) {
+								if(tempMultiDataset[i].type == "SbiQbeDataSet") {
+									if((cockpitModule_datasetServices.selectedDSWithDrivers.length==1 || ($scope.docDrivers && $scope.docDrivers.length > 0)) && tempMultiDataset[i].drivers && tempMultiDataset[i].drivers.length > 0) {
 										sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.parameter.error.one.dataset"), 'Error');
 									} else {
-										$scope.addDataset();
+										$scope.tmpCurrentAvaiableDataset.push(tempMultiDataset[i]);
 									}
 								} else {
-									$scope.addDataset();
+									$scope.tmpCurrentAvaiableDataset.push(tempMultiDataset[i]);
 								}
 							}
+							$scope.addDataset();
 						}else{
 							$scope.tmpCurrentAvaiableDataset = $scope.cockpitDatasetGrid.api.getSelectedRows()[0];
 							if((cockpitModule_datasetServices.selectedDSWithDrivers.length==1 || ($scope.docDrivers && $scope.docDrivers.length > 0)) && $scope.tmpCurrentAvaiableDataset.drivers && $scope.tmpCurrentAvaiableDataset.drivers.length > 0) {
