@@ -477,13 +477,11 @@ function businessModelAttributeControllerFunction($scope, $timeout,$mdDialog, sb
 					return $scope.unUsedColumns && $scope.unUsedColumns.length > 0;
 				}
 
-				for(var i in $scope.allColumns){
-					if(!contains($scope.allColumns[i],"name",$scope.selectedBusinessModel.columns,"uniqueName")){
-						$scope.unUsedColumns.push($scope.allColumns[i])
-					}
-
-				}
-
+				// Create the unused columns list ignoring deleted columns
+				$scope.allColumns
+					.filter(function(el) { return !el.markedDeleted; })
+					.filter(function(el) { return !contains(el,"name",$scope.selectedBusinessModel.columns,"uniqueName"); })
+					.forEach(function(el) { $scope.unUsedColumns.push(el); });
 
 				console.log($scope.selectedBusinessModel)
 				console.log(physicalModels)

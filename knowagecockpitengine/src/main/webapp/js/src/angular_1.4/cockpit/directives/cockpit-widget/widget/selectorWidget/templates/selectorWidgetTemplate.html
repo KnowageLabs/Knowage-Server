@@ -3,7 +3,7 @@
 		<div ng-if="ngModel.settings.enableAll || !ngModel.settings.hideDisabled || !ngModel.activeValues" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
 			<label class="kn-custom-radio-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
 				<span>{{::record.column_1}}</span>
-			  <input type="radio" ng-checked="::isSelected(record.column_1)" ng-disabled="::isDisabled(record.column_1)" ng-value="::record.column_1">
+			  <input type="radio" ng-checked="::isSelected(record.column_1)" ng-disabled="::isDisabled(record.column_1)" ng-value="::record.column_1"/>
 			  <span class="checkmark"></span>
 			</label>
 		</div>
@@ -21,14 +21,14 @@
 		<div ng-if="ngModel.settings.enableAll || !ngModel.settings.hideDisabled || !ngModel.activeValues" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event,true)" >
 			<label class="kn-custom-checkbox-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
 				<span>{{::record.column_1}}</span>
-				<input type="checkbox" ng-checked="::isSelected(record.column_1)" ng-disabled="::isDisabled(record.column_1)" ng-value="::record.column_1">
+				<input type="checkbox" ng-checked="::isSelected(record.column_1)" ng-disabled="::isDisabled(record.column_1)" ng-value="::record.column_1"/>
 				<span class="checkmark"></span>
 			</label>
 		</div>
 		<div ng-if="!ngModel.settings.enableAll && ngModel.settings.hideDisabled && ngModel.activeValues.length > 0" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event,true)" >
 			<label class="kn-custom-checkbox-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in ngModel.activeValues" ng-disabled="::isDisabled(record)" title="{{record}}" ng-style="::gridWidth()">
 				<span>{{::record}}</span>
-				<input type="checkbox" ng-checked="::isSelected(record)" ng-value="::record">
+				<input type="checkbox" ng-checked="::isSelected(record)" ng-value="::record"/>
 				<span class="checkmark"></span>
 			</label>
 		</div>
@@ -37,13 +37,15 @@
 	
 	<!-- lov combobox single and multiple input -->
 	<div ng-if="(ngModel.settings.modalityValue=='dropdown' || ngModel.settings.modalityValue=='multiDropdown') && !isSelectedColumnTemporal()" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding layout-fill layout-align="center center">
-	
 		<!-- single -->
 		<md-input-container class="md-block" ng-if="showSelection && ngModel.settings.modalityValue=='dropdown'" style="width:100%">
 			<div class="kn-select">
-				<select ng-if="ngModel.settings.hideDisabled" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value for value in ngModel.activeValues" ng-style="::gridWidth()">
+				<select ng-if="ngModel.settings.hideDisabled && (ngModel.activeValues.length > 0)" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value for value in ngModel.activeValues" ng-style="::gridWidth()">
 					<option></option>
 				</select>
+				<select ng-if="ngModel.settings.hideDisabled && !ngModel.activeValues" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value for value in datasetRecords.rows.map(mapToColumn)" ng-style="::gridWidth()">
+                	<option></option>
+                </select>
 				<select ng-if="!ngModel.settings.hideDisabled" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)" ng-style="::gridWidth()">
                 	<option></option>
                 </select>

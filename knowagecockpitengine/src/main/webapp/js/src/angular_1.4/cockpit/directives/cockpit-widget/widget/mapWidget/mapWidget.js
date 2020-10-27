@@ -539,7 +539,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				// all attributes that don't have aggregateBy properties need a default value to true
 				for (var c in columns) {
 					var currCol = columns[c];
-					if (currCol.fieldType == "ATTRIBUTE") {
+					if (currCol.fieldType == "ATTRIBUTE" || currCol.fieldType == "SPATIAL_ATTRIBUTE") {
 						if (!currCol.properties) {
 							currCol.properties = {};
 						}
@@ -853,25 +853,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			columnsForData = columnsForData.filter(function(el) {
 					var type = el.fieldType;
 					return !(type == "ATTRIBUTE" && !el.properties.aggregateBy);
+				})
+				.map(function(el) {
+					/*
+					 * The following step can edit the objs and
+					 * we don't want that.
+					 */
+					return angular.copy(el);
+				})
+				.map(function(el) {
+					/*
+					 * Reset aggregation function because the backend service
+					 * expects this.
+					 */
+					if (el.properties.aggregateBy) {
+						el.aggregationSelected = 'NONE';
+					}
+
+					return el;
+				})
+				.map(function(el) {
+					var type = el.fieldType;
+
+					/*
+					 * Convert spatial attribute to measure when the aggregation
+					 * is disabled..
+					 */
+					if (type == "SPATIAL_ATTRIBUTE" && !el.properties.aggregateBy) {
+						el.fieldType = "MEASURE";
+					}
+
+					return el;
 				});
 
 			for (f in columnsForData){
 				var tmpField = columnsForData[f];
-				if (tmpField.fieldType == "SPATIAL_ATTRIBUTE") {
-					geoColumn = tmpField.name;
-				} else if (tmpField.properties
+				if (tmpField.properties
 						&& tmpField.properties.showMap) {
 					//first measure
 					selectedMeasure = tmpField.aliasToShow;
-					if (!layerDef.defaultIndicator)  layerDef.defaultIndicator = selectedMeasure;
+					if (!layerDef.defaultIndicator) {
+						layerDef.defaultIndicator = selectedMeasure;
+					}
 				}
 
 			}
 
 			var model = { content: { columnSelectedOfDataset: columnsForData }, updateble: true };
 			if($scope.ngModel.filters) model.filters = $scope.ngModel.filters;
-			var features = [];
-			var layer =  new ol.layer.Vector();
 
 			//get the dataset columns values
 			cockpitModule_datasetServices.loadDatasetRecordsById(layerDef.dsId, undefined, undefined, undefined, undefined, model).then(

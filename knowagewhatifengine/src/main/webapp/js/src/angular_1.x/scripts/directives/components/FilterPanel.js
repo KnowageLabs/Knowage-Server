@@ -33,18 +33,25 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 })
 
 .directive('topaxis',function(sbiModule_config){
+	var buttonsDimension = 64;
+	
+	function manageTopSlider(element,maxWidth){
+		var elements = element[0].querySelectorAll('.top-axis-element');
+		var totalWidth = 0;
+		elements.forEach(function(item){
+			totalWidth += item.clientWidth;
+		})
+		return (totalWidth + buttonsDimension) > maxWidth;
+	}
 
 	function link(scope,element,attrs){
 		scope.$watch(function(){
 			return element[0].offsetWidth;
-		},function(newValue,oldValue){
-			var taw = newValue - 66;
-			scope.maxCols = Math.round(taw/200);
-			if(scope.columns){
-				scope.topSliderNeeded = scope.columns.length > scope.maxCols? true : false;
-			}
-
-		})
+		},function(newValue,oldValue){scope.topSliderNeeded = manageTopSlider(element,newValue)})
+		
+		scope.$watch(function(){
+			return element[0].querySelectorAll('.top-axis-element').length;
+		},function(newValue,oldValue){scope.topSliderNeeded = manageTopSlider(element,element[0].offsetWidth)})
 	};
 	return{
 		restrict: "A",
@@ -53,18 +60,25 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 })
 
 .directive('leftaxis',function(sbiModule_config){
+	var buttonsDimension = 64;
+	
+	function manageLeftSlider(element,maxHeight){
+		var elements = element[0].querySelectorAll('.left-axis-element');
+		var totalHeight = 0;
+		elements.forEach(function(item){
+			totalHeight += item.clientHeight;
+		})
+		return (totalHeight + buttonsDimension) > maxHeight;
+	}
 
 	function link(scope,element,attrs){
 		scope.$watch(function(){
 			return element[0].offsetHeight;
-		},function(newValue,oldValue){
-			var lah = newValue - 66;
-			scope.maxRows = Math.round(lah/175);
-			if(scope.rows){
-				scope.leftSliderNeeded = scope.rows.length > scope.maxRows? true : false;
-			}
-
-		})
+		},function(newValue,oldValue){scope.leftSliderNeeded = manageLeftSlider(element,newValue)})
+		
+		scope.$watch(function(){
+			return element[0].querySelectorAll('.left-axis-element').length;
+		},function(newValue,oldValue){scope.leftSliderNeeded = manageLeftSlider(element,element[0].offsetHeight)})
 	};
 	return{
 		restrict: "A",
@@ -73,22 +87,25 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 })
 
 .directive('filterpanel',function(sbiModule_config){
+	var buttonsDimension = 64;
+	
+	function manageTopSlider(element,maxWidth){
+		var elements = element[0].querySelectorAll('.new-filter-card');
+		var totalWidth = 0;
+		elements.forEach(function(item){
+			totalWidth += item.clientWidth;
+		})
+		return (totalWidth + buttonsDimension) > maxWidth;
+	}
 
 	function link(scope,element,attrs){
 		scope.$watch(function(){
 			return element[0].offsetWidth;
-		},function(newValue,oldValue){
-			var faw = newValue - 66;
-			scope.numVisibleFilters = Math.round(faw/200);
-			if(scope.filterCardList){
-				scope.shiftNeeded = scope.filterCardList.length >  scope.numVisibleFilters ? true
-						: false;
-
-				if(!scope.shiftNeeded)
-					scope.index = 0;
-			}
-
-		})
+		},function(newValue,oldValue){scope.filterSliderNeeded = manageTopSlider(element,newValue)})
+		
+		scope.$watch(function(){
+			return element[0].querySelectorAll('.new-filter-card').length;
+		},function(newValue,oldValue){scope.filterSliderNeeded = manageTopSlider(element,element[0].offsetWidth)})
 	};
 	return{
 		restrict: "A",
@@ -137,19 +154,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.parametersLoaded= false;
 
 	$scope.unSelectAll = function(tree){
-
 		hierarchyTreeService.setVisibilityForAll(tree,false);
-
-
-			tree[0].visible = true;
-			if(!$scope.isSlicer){
-				filterPlaceMemberOnAxis();
-			}
-
-
-
+		//tree[0].visible = true;
 		tree[0].visible = false;
-
 	}
 
 	$scope.parameterBindings=[];
@@ -231,13 +238,13 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		}
 
             if(loadHierarchy){
-            	if($scope.isSlicer){
+            	if ($scope.isSlicer) {
             		$scope.getSlicerTree();
-            	}else{
-            		$scope.getHierarchyMembersAsynchronus(filterFather, filter.axis, null,filter.id);
+            	} else {
+            		$scope.findVisibleMembers(filterFather);
             	}
 
-			$scope.dataPointers.push(filterFather);
+            	$scope.dataPointers.push(filterFather);
             }
 
 
@@ -343,19 +350,34 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		var body = {};
 		body.hierarchyUniqueName = filterFather;
 		sbiModule_restServices.promisePost("1.0/hierarchy/slicerTree?" + $httpParamSerializer(queryParams),"",body)
-		.then(function(response) {
-			checkIfExists(response.data);
-			$scope.selectView = hierarchyTreeService.isAnyVisible($scope.data)
+			.then(function(response) {
+				checkIfExists(response.data);
+				$scope.selectView = hierarchyTreeService.isAnyVisible($scope.data)
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
+			});
+	}
 
-
-
-	}, function(response) {
-		sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
-	});
+	$scope.findVisibleMembers = function(hierarchy) {
+		var queryParams = {};
+		queryParams.SBI_EXECUTION_ID = JSsbiExecutionID;
+		var body = {
+				'hierarchy': hierarchy
+		};
+		sbiModule_restServices.promisePost("1.0/hierarchy/visibleMembers?" + $httpParamSerializer(queryParams),"",body)
+			.then(function(response) {
+				checkIfExists(response.data);
+				$scope.selectView = hierarchyTreeService.isAnyVisible($scope.data)
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
+			});
 	}
 
 	$scope.isAnySelected = function(){
-
+		if (!$scope.isSlicer) {
+			// in case of dimensions on axis, there is always at least 1 selected member
+			return true;
+		}
 		return $scope.FiltersService.getSlicers(filterFather).length > 0;
 	}
 
@@ -366,8 +388,11 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 	$scope.setSelectedView = function(){
 		$scope.selectView = true;
-		$scope.getSlicerTree();
-
+    	if ($scope.isSlicer) {
+    		$scope.getSlicerTree();
+    	} else {
+    		$scope.findVisibleMembers(filterFather);
+    	}
 	}
 
 

@@ -29,12 +29,13 @@ public enum DatabaseDialect {
 
 	// @formatter:off
 	HIVE("Apache Hive v1", "hive", true, false, false, true),
-	HIVE2("Apache Hive v2", "org.hibernate.dialect.MySQLDialect", true, false, false, true),
+	HIVE2("Apache Hive v2", "org.hibernate.dialect.Hive2Dialect", true, false, false, true),
 	MONGO("MongoDB", "MongoDialect", false, false, false, false),
 	CASSANDRA("Apache Cassandra", "org.hibernate.dialect.cassandra", true, false, false,false),
 	DB2("IBM DB2", "org.hibernate.dialect.DB2400Dialect", true, true, false, false),
 	IMPALA("Apache Impala","org.hibernate.dialect.impala", true, true, false,true),
-	MYSQL("MySQL/MariaDB", "org.hibernate.dialect.MySQLInnoDBDialect", true, true, true, true),
+	MYSQL("MySQL/MariaDB", "org.hibernate.dialect.MySQLDialect", true, true, true, true),
+	MYSQL_INNODB("MySQL/MariaDB (INNODB)", "org.hibernate.dialect.MySQLInnoDBDialect", true, true, true, true),
 	ORACLE_9I10G("Oracle 9i/10g","org.hibernate.dialect.Oracle9Dialect", true, true, true, true),
 	ORACLE("Oracle", "org.hibernate.dialect.OracleDialect", true, true, true, true),
 	POSTGRESQL("PostgreSQL","org.hibernate.dialect.PostgreSQLDialect", true, true, true, true),

@@ -283,6 +283,33 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	}
 
 	@POST
+	@Path("/visibleMembers")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Set<NodeFilter> findVisibleMembers(Map<String, String> params) {
+
+		String hierarchy = params.get("hierarchy");
+		List<Member> visibleMembers = null;
+
+		try {
+			PlaceMembersOnAxes pm = getPivotModel().getTransform(PlaceMembersOnAxes.class);
+			visibleMembers = pm.findVisibleMembers(CubeUtilities.getHierarchy(getPivotModel().getCube(), hierarchy));
+
+			FilterTreeBuilder ftb = new FilterTreeBuilder();
+			ftb.setHierarchy(getHierarchy(hierarchy));
+			ftb.setTreeLeaves(new HashSet<Member>(visibleMembers));
+			ftb.setVisibleMembers(new HashSet<Member>(visibleMembers));
+			ftb.setShowSiblings(false);
+			return ftb.build();
+
+		} catch (Exception e) {
+			logger.error("Error while getting visible members of a hierarchy", e);
+			throw new SpagoBIRuntimeException("Error while getting visible members of a hierarchy", e);
+		}
+
+	}
+
+	@POST
 	@Path("/getvisible")
 	public String getVisibleMembers(@javax.ws.rs.core.Context HttpServletRequest req) {
 

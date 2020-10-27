@@ -33,6 +33,7 @@ public class DatasetFunctionsConfig {
 		functionsConfigurationMap.put(DatabaseDialect.DB2.getValue(), map);
 		functionsConfigurationMap.put(DatabaseDialect.IMPALA.getValue(), map);
 		functionsConfigurationMap.put(DatabaseDialect.MYSQL.getValue(), map);
+		functionsConfigurationMap.put(DatabaseDialect.MYSQL_INNODB.getValue(), map);
 		functionsConfigurationMap.put(DatabaseDialect.ORACLE_9I10G.getValue(), map);
 		functionsConfigurationMap.put(DatabaseDialect.ORACLE.getValue(), map);
 		functionsConfigurationMap.put(DatabaseDialect.POSTGRESQL.getValue(), map);

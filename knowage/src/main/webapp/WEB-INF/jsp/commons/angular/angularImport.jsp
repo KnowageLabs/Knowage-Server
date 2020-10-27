@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Knowage">
-<link rel="manifest" href="<%=urlBuilder.getResourceLink(request,"/manifest.json")%>">
+<link rel="manifest" href="<%=urlBuilder.getResourceLink(request,"/manifest.json")%>" crossorigin="use-credentials">
 
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/node_modules/@fortawesome/fontawesome-free/css/all.min.css")%>">
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css")%>">

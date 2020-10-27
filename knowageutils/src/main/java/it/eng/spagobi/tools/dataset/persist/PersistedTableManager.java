@@ -1107,7 +1107,8 @@ public class PersistedTableManager implements IPersistedManager {
 		// get the list of tables names
 		if (dialect.equals(DatabaseDialect.ORACLE) || dialect.equals(DatabaseDialect.ORACLE_9I10G)) {
 			statement = "SELECT TABLE_NAME " + "FROM USER_TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toUpperCase() + "%'";
-		} else if (dialect.equals(DatabaseDialect.SQLSERVER) || dialect.equals(DatabaseDialect.MYSQL) || dialect.equals(DatabaseDialect.POSTGRESQL)) {
+		} else if (dialect.equals(DatabaseDialect.SQLSERVER) || dialect.equals(DatabaseDialect.MYSQL) || dialect.equals(DatabaseDialect.MYSQL_INNODB)
+				|| dialect.equals(DatabaseDialect.POSTGRESQL)) {
 			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toLowerCase() + "%'";
 		}
 

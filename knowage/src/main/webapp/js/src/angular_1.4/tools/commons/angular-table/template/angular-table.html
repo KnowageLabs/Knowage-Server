@@ -80,7 +80,7 @@
         <span ng-if="val.name!='--MULTISELECT--'"  flex>
                 {{val.label}}
         
-            <md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom"  >{{val.label}}</md-tooltip> 
+            <md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom"  >{{val.tooltip || val.label}}</md-tooltip> 
         </span>
     </div>
 </th>

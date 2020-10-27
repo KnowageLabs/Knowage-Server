@@ -113,10 +113,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * constructor.
 	 *
-	 * @param dataDefinition
-	 *            the xml representation of the lov
-	 * @throws SourceBeanException
-	 *             the source bean exception
+	 * @param dataDefinition the xml representation of the lov
+	 * @throws SourceBeanException the source bean exception
 	 */
 	public QueryDetail(String dataDefinition) throws SourceBeanException {
 		loadFromXML(dataDefinition);
@@ -125,10 +123,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * loads the lov from an xml string.
 	 *
-	 * @param dataDefinition
-	 *            the xml definition of the lov
-	 * @throws SourceBeanException
-	 *             the source bean exception
+	 * @param dataDefinition the xml definition of the lov
+	 * @throws SourceBeanException the source bean exception
 	 */
 	@Override
 	public void loadFromXML(String dataDefinition) throws SourceBeanException {
@@ -143,6 +139,17 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			if (!query.startsWith("<![CDATA[")) {
 				query = "<![CDATA[" + query + "]]>";
 				dataDefinition = dataDefinition.substring(0, startInd + 6) + query + dataDefinition.substring(endId);
+			}
+		}
+		if (dataDefinition.indexOf("<decoded_STMT>") != -1) {
+			int startInd = dataDefinition.indexOf("<decoded_STMT>");
+			int endId = dataDefinition.indexOf("</decoded_STMT>");
+			String query = dataDefinition.substring(startInd + 14, endId);
+			query = query.trim();
+			query = convertSpecialChars(query);
+			if (!query.startsWith("<![CDATA[")) {
+				query = "<![CDATA[" + query + "]]>";
+				dataDefinition = dataDefinition.substring(0, startInd + 14) + query + dataDefinition.substring(endId);
 			}
 		}
 
@@ -323,10 +330,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * state_province, city FROM REGION and there is a dependency that set country to be "USA", this method returns SELECT * FROM (SELECT country,
 	 * state_province, city FROM REGION) T WHERE ( country = 'USA' )
 	 *
-	 * @param dependencies
-	 *            The dependencies' configuration to be considered into the query
-	 * @param executionInstance
-	 *            The execution instance (useful to retrieve dependencies values)
+	 * @param dependencies      The dependencies' configuration to be considered into the query
+	 * @param executionInstance The execution instance (useful to retrieve dependencies values)
 	 * @return the in-line view that filters the original lov using the dependencies.
 	 */
 	public String getWrappedStatement(List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> drivers) {
@@ -363,12 +368,9 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * This method builds the WHERE clause for the wrapped statement (the statement that adds filters for correlations/dependencies) See getWrappedStatement
 	 * method.
 	 *
-	 * @param buffer
-	 *            The String buffer that contains query definition
-	 * @param dependencies
-	 *            The dependencies configuration
-	 * @param executionInstance
-	 *            The execution instance
+	 * @param buffer            The String buffer that contains query definition
+	 * @param dependencies      The dependencies configuration
+	 * @param executionInstance The execution instance
 	 */
 	private void buildWhereClause(StringBuffer buffer, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> drivers) {
 		buffer.append(" WHERE ");
@@ -404,12 +406,9 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * This methods adds a single filter based on the input dependency's configuration. See buildWhereClause and getWrappedStatement methods.
 	 *
-	 * @param buffer
-	 *            The String buffer that contains query definition
-	 * @param dependency
-	 *            The dependency's configuration
-	 * @param executionInstance
-	 *            The execution instance
+	 * @param buffer            The String buffer that contains query definition
+	 * @param dependency        The dependency's configuration
+	 * @param executionInstance The execution instance
 	 */
 	private void addFilter(StringBuffer buffer, AbstractParuse dependency, List<? extends AbstractDriver> drivers) {
 		AbstractDriver fatherParameter = getFatherParameter(dependency, drivers);
@@ -536,10 +535,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * Finds the value to be used into the dependency's filter.
 	 *
-	 * @param dependency
-	 *            The dependency's configuration
-	 * @param executionInstance
-	 *            The execution instance
+	 * @param dependency        The dependency's configuration
+	 * @param executionInstance The execution instance
 	 * @return the value to be used in the wrapped statement
 	 */
 	private String findValue(AbstractParuse dependency, List<? extends AbstractDriver> drivers) {
@@ -579,10 +576,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * Concatenates values by ','
 	 *
-	 * @param biparam
-	 *            The BIObjectParameter in the dependency
-	 * @param values
-	 *            The values to be concatenated
+	 * @param biparam The BIObjectParameter in the dependency
+	 * @param values  The values to be concatenated
 	 * @return the values concatenated by ','
 	 */
 	private String concatenateValues(AbstractDriver driver, List values) {
@@ -602,10 +597,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * Finds the suitable SQL value for the input value. A number is not changed. A String is surrounded by single-quotes. A date is put inside a
 	 * database-dependent function. The date must respect the format returned by GeneralUtilities.getServerDateFormat() Input values are validated.
 	 *
-	 * @param biparam
-	 *            The BIObjectParameter in the dependency
-	 * @param value
-	 *            The value of the parameter
+	 * @param biparam The BIObjectParameter in the dependency
+	 * @param value   The value of the parameter
 	 * @return the SQL value suitable for the input value
 	 */
 	private String getSQLValue(AbstractDriver driver, String value) {
@@ -681,7 +674,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		String toReturn = "";
 		date = escapeString(date); // for security reasons
 		if (dialect != null) {
-			if (dialect.equals(DatabaseDialect.MYSQL)) {
+			if (dialect.equals(DatabaseDialect.MYSQL) || dialect.equals(DatabaseDialect.MYSQL_INNODB)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " STR_TO_DATE(" + date + ",'%d/%m/%Y %h:%i:%s') ";
 				} else {
@@ -726,10 +719,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * Finds the suitable operator for the input dependency.
 	 *
-	 * @param dependency
-	 *            The dependency's configuration
-	 * @param executionInstance
-	 *            The Execution instance
+	 * @param dependency        The dependency's configuration
+	 * @param executionInstance The Execution instance
 	 * @return the suitable operator for the input dependency
 	 */
 	private String findOperator(AbstractParuse dependency, List<? extends AbstractDriver> drivers) {
@@ -778,8 +769,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * Gets the values and return them as an xml structure
 	 *
-	 * @param statement
-	 *            the query statement to execute
+	 * @param statement the query statement to execute
 	 * @return the xml string containing values
 	 * @throws Exception
 	 */
@@ -826,10 +816,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * This methods find out if the input parameters' values are admissible for this QueryDetail instance, i.e. if the values are contained in the query result.
 	 *
-	 * @param profile
-	 *            The user profile
-	 * @param biparam
-	 *            The BIObjectParameter with the values that must be validated
+	 * @param profile The user profile
+	 * @param biparam The BIObjectParameter with the values that must be validated
 	 * @return a list of errors: it is empty if all values are admissible, otherwise it will contain a EMFUserError for each wrong value
 	 * @throws Exception
 	 */
@@ -933,8 +921,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * Gets the list of names of the profile attributes required.
 	 *
 	 * @return list of profile attribute names
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Override
 	public List getProfileAttributeNames() {
@@ -967,8 +954,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * Checks if the lov requires one or more profile attributes.
 	 *
 	 * @return true if the lov require one or more profile attributes, false otherwise
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Override
 	public boolean requireProfileAttributes() {
@@ -984,11 +970,9 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * Splits an XML string by using some <code>SourceBean</code> object methods in order to obtain the source <code>QueryDetail</code> objects whom XML has
 	 * been built.
 	 *
-	 * @param dataDefinition
-	 *            The XML input String
+	 * @param dataDefinition The XML input String
 	 * @return The corrispondent <code>QueryDetail</code> object
-	 * @throws SourceBeanException
-	 *             If a SourceBean Exception occurred
+	 * @throws SourceBeanException If a SourceBean Exception occurred
 	 */
 	public static QueryDetail fromXML(String dataDefinition) throws SourceBeanException {
 		return new QueryDetail(dataDefinition);
@@ -1006,8 +990,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * Sets the data source.
 	 *
-	 * @param dataSource
-	 *            the new data source
+	 * @param dataSource the new data source
 	 */
 	public void setDataSource(String dataSource) {
 		this.dataSource = dataSource;
@@ -1026,8 +1009,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * Sets the query definition.
 	 *
-	 * @param queryDefinition
-	 *            the new query definition
+	 * @param queryDefinition the new query definition
 	 */
 	public void setQueryDefinition(String queryDefinition) {
 		this.queryDefinition = queryDefinition;
@@ -1156,8 +1138,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * Gets the data source by label.
 	 *
-	 * @param dsLabel
-	 *            the ds label
+	 * @param dsLabel the ds label
 	 * @return the data source by label
 	 */
 	public SpagoBiDataSource getDataSourceByLabel(String dsLabel) {
@@ -1237,11 +1218,9 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * Creates a ago DataConnection object starting from a sql connection.
 	 *
-	 * @param con
-	 *            Connection to the export database
+	 * @param con Connection to the export database
 	 * @return The Spago DataConnection Object
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public DataConnection getDataConnection(Connection con) throws EMFInternalError {
 		DataConnection dataCon = null;
@@ -1260,8 +1239,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * Gets the set of names of the parameters required.
 	 *
 	 * @return set of parameter names
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Override
 	public Set<String> getParameterNames() {

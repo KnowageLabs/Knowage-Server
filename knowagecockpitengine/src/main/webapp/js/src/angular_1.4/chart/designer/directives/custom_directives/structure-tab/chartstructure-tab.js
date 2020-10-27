@@ -697,23 +697,24 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					}
 				}
 
-		}
-		var sflag = 0;
-		 for (var i = $scope.fieldsMetadata.length-1; i>=0; i--) {
-			if($scope.fieldsMetadata[i].fieldType == 'MEASURE'){
-				for (var j = 0; j < $scope.chartTemplate.VALUES.SERIE.length; j++) {
-					if($scope.chartTemplate.VALUES.SERIE[j].column == $scope.fieldsMetadata[i].alias){
-						sflag++;
+				var sflag = 0;
+				 for (var i = $scope.fieldsMetadata.length-1; i>=0; i--) {
+					if($scope.fieldsMetadata[i].fieldType == 'MEASURE'){
+						for (var j = 0; j < $scope.chartTemplate.VALUES.SERIE.length; j++) {
+							if($scope.chartTemplate.VALUES.SERIE[j].column == $scope.fieldsMetadata[i].alias){
+								sflag++;
 
+							}
+
+						}
 					}
 
-				}
-			}
-
-		 }
-		 if($scope.chartTemplate.VALUES.SERIE.length> 0 && sflag == 0){
-			 sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.dschange.series"), 'Warning');
-		 }
+				 }
+				 if($scope.chartTemplate.VALUES.SERIE.length> 0 && sflag == 0){
+					 sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.dschange.series"), 'Warning');
+				 }
+		}
+		
 
 	}
 

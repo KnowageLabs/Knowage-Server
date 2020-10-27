@@ -98,20 +98,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return x.column_1;
 		}
 
-		$scope.selectElement = function(e,isBulk){
-			if(e.target.attributes.disabled || e.target.parentNode.attributes.disabled) return;
-
-			if(e.target.attributes.value && e.target.attributes.value.value){
-				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.attributes.value.value));
-				else $scope.prepareParameter(getValueFromString(e.target.attributes.value.value));
-			}else if(e.target.parentNode.attributes.value && e.target.parentNode.attributes.value.value){
-				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.parentNode.attributes.value.value));
-				else $scope.prepareParameter(getValueFromString(e.target.parentNode.attributes.value.value));
-			}
-			else if(e.target.parentNode.querySelectorAll("input")[0].value){
-				 $scope.toggleParameter(getValueFromString(e.target.parentNode.querySelectorAll("input")[0].value)); 
-			}
+		$scope.getInput = function(e) {
 			
+			if (e.target.tagName == 'INPUT') {
+				return e.target;
+			}
+			else {
+				return e.target.parentNode.querySelector('input');
+			}
+						
+		}
+		
+		$scope.selectElement = function(e,isBulk){
+//			e.preventDefault();
+			if (e.target.tagName != 'INPUT') return;
+			if(e.target.attributes.disabled || e.target.parentNode.attributes.disabled) return;
+            var inputElement = $scope.getInput(e);
+			if(inputElement && inputElement.value){
+				if(!isBulk) $scope.toggleParameter(getValueFromString(inputElement.value));
+				else $scope.prepareParameter(getValueFromString(inputElement.value));
+			}		
 		}
 		
 //		$scope.$watch("selectedDate.startDate",function(newValue,oldValue){

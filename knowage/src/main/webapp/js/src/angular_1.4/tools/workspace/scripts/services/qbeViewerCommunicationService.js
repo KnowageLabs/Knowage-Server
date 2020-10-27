@@ -22,7 +22,7 @@ angular
 						workspaceDSUpdateProces(message, dataset, openPanelForSavingQbeDataset);
 					} else if(message == "qbeJSONQuery" && dataset.qbeJSONQuery){
 						comunicator.sendMessage({qbeJSONQuery:dataset.qbeJSONQuery})
-					} else if(dataset.smartView != undefined){
+					} else if(driverableObject.smartView != undefined){
 						comunicator.sendMessage({smartView:driverableObject.smartView})
 					}
 

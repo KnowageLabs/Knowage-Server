@@ -483,6 +483,12 @@ public class LovResource extends AbstractSpagoBIResource {
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			ModalitiesValue modVal = toModality(requestBodyJSON);
+			String provider = modVal.getLovProvider();
+			provider = provider.replace("<STMT>", "<STMT><![CDATA[");
+			provider = provider.replace("</STMT>", "]]></STMT>");
+			provider = provider.replace("<decoded_STMT>", "<decoded_STMT><![CDATA[");
+			provider = provider.replace("</decoded_STMT>", "]]></decoded_STMT>");
+			modVal.setLovProvider(provider);
 
 			Integer lovId = null;
 			if (requestBodyJSON.has("id"))

@@ -167,7 +167,7 @@ public class MailSessionBuilder {
 
 	private final String trustedStoreFileKey = "MAIL.PROFILES.trustedStore.file";
 
-	private final String trustedStoreFileValue;
+	private String trustedStoreFileValue;
 	private String smtpHostValue;
 	private String smtpPortValue;
 	private String fromValue;
@@ -177,11 +177,9 @@ public class MailSessionBuilder {
 	private String profileName;
 	private Integer timeout;
 	private Integer connectionTimeout;
+	private boolean debug = false;
 
 	private MailSessionBuilder() {
-		SingletonConfig config = SingletonConfig.getInstance();
-
-		trustedStoreFileValue = config.getConfigValue(trustedStoreFileKey);
 	}
 
 	/**
@@ -259,6 +257,8 @@ public class MailSessionBuilder {
 		LogMF.debug(logger, "\tpasswordValue = {0}", passwordValue);
 		LogMF.debug(logger, "\tsecurityValue = {0}", securityValue);
 
+		trustedStoreFileValue = config.getConfigValue(trustedStoreFileKey);
+
 		return this;
 	}
 
@@ -274,16 +274,23 @@ public class MailSessionBuilder {
 		if (securityValueEnum == null) {
 			securityValueEnum = SecurityMode.NONE;
 		}
+
+		String prefix = "mail.smtp";
+
+		if (securityValueEnum == SecurityMode.SSL) {
+			prefix = "mail.smtps";
+		}
+
 		if (securityValueEnum == SecurityMode.NONE) {
-			props.put("mail.smtp.starttls.enable", "false");
+			props.put(prefix + ".starttls.enable", "false");
 		} else if (securityValueEnum == SecurityMode.SSL) {
-			props.put("mail.smtp.starttls.enable", "false");
+			props.put(prefix + ".starttls.enable", "false");
 		} else if (securityValueEnum == SecurityMode.STARTTLS) {
-			props.put("mail.smtp.starttls.enable", "true");
+			props.put(prefix + ".starttls.enable", "true");
 		}
 
 
-		props.put("mail.smtp.host", smtpHostValue);
+		props.put(prefix + ".host", smtpHostValue);
 
 
 		if (StringUtils.isEmpty(smtpPortValue)) {
@@ -292,13 +299,13 @@ public class MailSessionBuilder {
 			LogMF.warn(logger, "SMTP port is empty: using the default port {0}", defaultPort);
 			smtpPortValue = Integer.toString(defaultPort);
 		}
-		props.put("mail.smtp.port", smtpPortValue);
+		props.put(prefix + ".port", smtpPortValue);
 
 
 		Authenticator auth = null;
 		if (StringUtils.isNotEmpty(userValue)) {
-			props.put("mail.smtp.user", userValue);
-			props.put("mail.smtp.password", passwordValue);
+			props.put(prefix + ".user", userValue);
+			props.put(prefix + ".password", passwordValue);
 		}
 
 
@@ -306,35 +313,35 @@ public class MailSessionBuilder {
 			fromValue = "spagobi.scheduler@eng.it";
 		}
 		InternetAddress fromValueInternetAddress = new InternetAddress(fromValue);
-		props.put("mail.smtp.from", fromValue);
+		props.put(prefix + ".from", fromValue);
 
 
 		if (timeout != null) {
-			props.put("mail.smtp.timeout", timeout.toString());
+			props.put(prefix + ".timeout", timeout.toString());
 		}
 
 
 		if (connectionTimeout != null) {
-			props.put("mail.smtp.connectiontimeout", connectionTimeout.toString());
+			props.put(prefix + ".connectiontimeout", connectionTimeout.toString());
 		}
 
 
 		// create autheticator object
 		if (StringUtils.isNotEmpty(userValue)) {
 			auth = new SMTPAuthenticator(userValue, passwordValue);
-			props.put("mail.smtp.auth", "true");
+			props.put(prefix + ".auth", "true");
 			// SSL Connection
 			if (securityValueEnum == SecurityMode.SSL) {
 				Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-				props.put("mail.smtps.auth", "true");
-				props.put("mail.smtps.socketFactory.port", smtpPortValue);
+				props.put(prefix + ".auth", "true");
+				props.put(prefix + ".socketFactory.port", smtpPortValue);
 				if ((!StringUtilities.isEmpty(trustedStoreFileValue))) {
-					props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
+					props.put(prefix + ".socketFactory.class", CUSTOM_SSL_FACTORY);
 
 				} else {
-					props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
+					props.put(prefix + ".socketFactory.class", DEFAULT_SSL_FACTORY);
 				}
-				props.put("mail.smtp.socketFactory.fallback", "false");
+				props.put(prefix + ".socketFactory.fallback", "false");
 			}
 			session = Session.getInstance(props, auth);
 		} else {
@@ -342,9 +349,10 @@ public class MailSessionBuilder {
 		}
 
 
-		// TODO Debug???
-		// session.setDebug(true);
-		// session.setDebugOut(System.out);
+		if (debug) {
+			session.setDebug(true);
+			session.setDebugOut(System.out);
+		}
 
 
 		LogMF.debug(logger, "Session created using properties {0}", props);
@@ -365,7 +373,7 @@ public class MailSessionBuilder {
 		return this;
 	}
 
-	public MailSessionBuilder overwritingFromAddress(String fromValue) {
+	public MailSessionBuilder setFromAddress(String fromValue) {
 		if (StringUtils.isNotEmpty(fromValue)) {
 			logger.warn("Overwriting the from address...");
 			LogMF.debug(logger, "... with {0} replacing {1}", fromValue, this.fromValue);
@@ -375,7 +383,7 @@ public class MailSessionBuilder {
 		return this;
 	}
 
-	public MailSessionBuilder overwritingUser(String userValue) {
+	public MailSessionBuilder setUser(String userValue) {
 		if (StringUtils.isNotEmpty(userValue)) {
 			logger.warn("Overwriting the username...");
 			LogMF.debug(logger, "... with {0} replacing {1}", userValue, this.userValue);
@@ -385,7 +393,7 @@ public class MailSessionBuilder {
 		return this;
 	}
 
-	public MailSessionBuilder overwritingPassword(String passwordValue) {
+	public MailSessionBuilder setPassword(String passwordValue) {
 		if (StringUtils.isNotEmpty(passwordValue)) {
 			logger.warn("Overwriting the password...");
 			LogMF.debug(logger, "... with {0} replacing {1}", passwordValue, this.passwordValue);
@@ -394,4 +402,40 @@ public class MailSessionBuilder {
 
 		return this;
 	}
+
+	public MailSessionBuilder setHost(String smtpHostValue) {
+		if (StringUtils.isNotEmpty(smtpHostValue)) {
+			logger.warn("Overwriting the host...");
+			LogMF.debug(logger, "... with {0} replacing {1}", smtpHostValue, this.smtpHostValue);
+			this.smtpHostValue = smtpHostValue;
+		}
+
+		return this;
+	}
+
+	public MailSessionBuilder setPort(String smtpPortValue) {
+		if (StringUtils.isNotEmpty(smtpPortValue)) {
+			logger.warn("Overwriting the port...");
+			LogMF.debug(logger, "... with {0} replacing {1}", smtpPortValue, this.smtpPortValue);
+			this.smtpPortValue = smtpPortValue;
+		}
+
+		return this;
+	}
+
+	public MailSessionBuilder setSecurityMode(String securityValue) {
+		if (StringUtils.isNotEmpty(securityValue)) {
+			logger.warn("Overwriting the security mode...");
+			LogMF.debug(logger, "... with {0} replacing {1}", securityValue, this.securityValue);
+			this.securityValue = securityValue;
+		}
+
+		return this;
+	}
+
+	public MailSessionBuilder enableDebug() {
+		debug = true;
+		return this;
+	}
+
 }
