@@ -9,7 +9,7 @@
 	   		</div>
 	   	</md-toolbar>
         
-        <div class="expandableEntities" ng-repeat="entity in value" >
+        <div class="expandableEntities" ng-repeat="entity in value track by $index" >
             <h4 ng-click="toggleExpander(entity)" ng-style="{'border-left': '10px solid '+entity.color}" ng-class="{'expanded':entity.expanded, 'filterEntityColor':isThereAFilter(entity)}" ng-drag="dragEnabled" ng-drag-data="entity" ng-drag-success="dragLi($data,$event)">
                 <i ng-class="getIconCls(entity)">
                 	<md-tooltip md-delay="500">{{entity.iconCls}}</md-tooltip>
