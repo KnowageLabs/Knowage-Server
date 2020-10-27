@@ -160,6 +160,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                 if (Object.prototype.toString.call(col[i]) == "[object Object]") {
                                                     //json of parameter like name, label,size
                                                     tmpColData.name = col[i].name || "---";
+                                                    tmpColData.tooltip = col[i].tooltip;
                                                     tmpColData.label = col[i].label || tmpColData.name;
                                                     tmpColData.size = col[i].size || "";
                                                     tmpColData.editable = (col[i].editable && scope.allowEdit) || false;
