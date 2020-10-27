@@ -12,7 +12,7 @@
 		<div layout="row" layout-align="start center" class="kn-treePath">
 			<span ng-repeat="path in paramDialogCtrl.tempParameter.treePath">{{path}} <i class="fa fa-chevron-right" ng-if="!$last"></i></span>
 		</div>
-		
+
 		<component-tree ng-model="paramDialogCtrl.tempParameter.children" subnode-key="children" 
 				text-to-show-key="description" drag-enabled="false"
 				multi-select="::paramDialogCtrl.tempParameter.multivalue"
@@ -28,6 +28,7 @@
 				is-internal-selection-allowed="paramDialogCtrl.allowInternalNodeSelection"
 				selected-item="paramDialogCtrl.tempParameter.parameterDescription"
 				dynamic-tree
+				not-hide-on-load="true"
 				/>
 	</md-dialog-content>
 	

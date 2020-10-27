@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 agGrid.initialiseAgGridWithAngular1(angular);
-var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer','driversExecutionModule','agGrid', 'tagsModule']); //ADDDD ,'driversExecutionModule'
+var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer','driversExecutionModule','agGrid', 'tagsModule','componentTreeModule']); //ADDDD ,'driversExecutionModule'
 
 
 datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
@@ -3312,6 +3312,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				if($scope.dataset.drivers) {
 					$scope.drivers = $scope.dataset.drivers;
 					if($scope.drivers) {
+							if( Array.isArray($scope.dataset.drivers[0].parameterValue)){
+								parameterValue = $scope.dataset.drivers[0].parameterValue[0].value;
+						   		$scope.dataset.drivers[0].parameterValue = [parameterValue];
+				      	}
+					
 						var driverValuesAreSet = driversExecutionService.driversAreSet($scope.drivers);
 						if($scope.drivers.length > 0 && !driverValuesAreSet || $scope.selectedDataSet.pars.length > 0) {
 							$scope.showDrivers = true;
