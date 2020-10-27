@@ -844,6 +844,17 @@ public class CrossTabHTMLSerializer {
 //		 }
 		// // FINE TEST
 
+		// get number of children of each column subtree
+		Node n = crossTab.getColumnsRoot();
+		List<String> headerList = crossTab.getColumnsHeaderList();
+		String lastHeaderValue = headerList.get(headerList.size() - 1);
+		for (int k = 0; k < crossTab.getColumnsRoot().getDistanceFromLeaves() - 1; k++) {
+			n = n.getChilds().get(0);
+			if (n.getValue().equals(lastHeaderValue))
+				break;
+		}
+		int subtreeNumLeaves = n.getLeafsNumber();
+
 		int nPartialSumRow = 0;
 		int nPartialLevels = 0;
 		for (int i = 0; i < data.length; i++) {
@@ -876,7 +887,7 @@ public class CrossTabHTMLSerializer {
 					if (crossTab.isMeasureOnRow()) {
 						pos = i % measuresInfo.size();
 					} else {
-						pos = j % measuresInfo.size();
+						pos = (j % subtreeNumLeaves) % measuresInfo.size();
 					}
 					measureConfig = crossTab.getCrosstabDefinition().getMeasures().get(pos).getConfig();
 					String visType = (measureConfig.isNull("visType")) ? "Text" : measureConfig.getString("visType");
