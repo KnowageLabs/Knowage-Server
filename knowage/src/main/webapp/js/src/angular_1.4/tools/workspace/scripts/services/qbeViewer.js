@@ -31,75 +31,47 @@ angular
 
 
 		this.openQbeInterfaceFromModel = function($scope,url,driverableObject) {
-
 			$scope.editQbeDset = false;
 			if(datasetParameters.error){
 				sbiModule_messaging.showErrorMessage(datasetParameters.error, 'Error');
 			}else{
-
-				$mdDialog
-					.show
-					(
-						{
-							skipHide: true,
-							scope:$scope,
-							preserveScope: true,
-							controller: openQbeInterfaceController,
-							templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
-							fullscreen: true,
-							locals:{
-									url:url,
-									driverableObject:$scope.selectedModel
-							}
-						}
-					)
-					.then(function($scope) {
-
-					});
+				$mdDialog.show({
+					skipHide: true,
+					scope:$scope,
+					preserveScope: true,
+					controller: openQbeInterfaceController,
+					templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
+					fullscreen: true,
+					locals:{
+						url:url,
+						driverableObject:$scope.selectedModel
+					}
+				}).then(function($scope) {
+				});
 			}
-
 		};
 
 		this.openQbeInterfaceDSet = function($scope, editDSet, url, isDerived) {
-
-
-
 			if(datasetParameters.error){
 				sbiModule_messaging.showErrorMessage(datasetParameters.error, 'Error');
 			}else{
-
 				$scope.editQbeDset = editDSet;
-
-
-
-				$mdDialog
-					.show
-					(
-						{
-							scope:$scope,
-							preserveScope: true,
-							controller: openQbeInterfaceController,
-							templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
-							fullscreen: true,
-							locals:{
-								url:url,
-								driverableObject:$scope.selectedDataSet,
-								   }
-						}
-					)
-					.then(function($scope) {
-
-					});
-
+				$mdDialog.show({
+					scope:$scope,
+					preserveScope: true,
+					controller: openQbeInterfaceController,
+					templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
+					fullscreen: true,
+					locals:{
+						url:url,
+						driverableObject:$scope.selectedDataSet,
+					}
+				}).then(function($scope) {
+				});
 			}
 		};
 
 		function openQbeInterfaceController($scope,url,driverableObject,$timeout) {
-
-
-
-
-
 			$scope.showDrivers = false;
 			$scope.driverableObject = {};
 			$scope.driverableObject.executed = true;
@@ -109,12 +81,12 @@ angular
 			var initNewDataSet = function() {
 				if ($scope.selectedDataSet == undefined || angular.equals($scope.selectedDataSet, {})) {
 					$scope.selectedDataSet = {
-							dsTypeCd: "Qbe",
-							qbeDatamarts: driverableObject.name,
-							qbeDataSource: driverableObject.dataSourceLabel,
-							currentView: driverableObject.currentView,
-							parameterView: driverableObject.parameterView,
-							executed: driverableObject.executed
+						dsTypeCd: "Qbe",
+						qbeDatamarts: driverableObject.name,
+						qbeDataSource: driverableObject.dataSourceLabel,
+						currentView: driverableObject.currentView,
+						parameterView: driverableObject.parameterView,
+						executed: driverableObject.executed
 					};
 				}
 			}
@@ -123,111 +95,106 @@ angular
 
 			var openConfirmationPanel = function(okFunction,cancelFunction){
 				var config = {
-						attachTo:  angular.element(document.body),
-						templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/workspace/templates/closingConfirmationPanel.html',
-						position: $mdPanel.newPanelPosition().absolute().center(),
-						fullscreen :false,
-						controller: function($scope,mdPanelRef,sbiModule_translate){
-							$scope.translate = sbiModule_translate;
-							var isFunction=function(func){
-								return func && typeof func === "function";
-							}
+					attachTo:  angular.element(document.body),
+					templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/workspace/templates/closingConfirmationPanel.html',
+					position: $mdPanel.newPanelPosition().absolute().center(),
+					fullscreen :false,
+					controller: function($scope,mdPanelRef,sbiModule_translate){
+						$scope.translate = sbiModule_translate;
+						var isFunction=function(func){
+							return func && typeof func === "function";
+						}
 
-							var executeAndClose = function(func){
-								if(isFunction(func)){
-									func();
-								}
-								mdPanelRef.close();
+						var executeAndClose = function(func){
+							if(isFunction(func)){
+								func();
 							}
-							$scope.ok = function(){
-								executeAndClose(okFunction)
-							}
+							mdPanelRef.close();
+						}
+						$scope.ok = function(){
+							executeAndClose(okFunction)
+						}
 
-							$scope.cancel = function(){
-								executeAndClose(cancelFunction)
-							}
-						},
+						$scope.cancel = function(){
+							executeAndClose(cancelFunction)
+						}
+					},
 
-						hasBackdrop: true,
-						clickOutsideToClose: true,
-						escapeToClose: true,
-						focusOnOpen: true,
-						preserveScope: true
-
+					hasBackdrop: true,
+					clickOutsideToClose: true,
+					escapeToClose: true,
+					focusOnOpen: true,
+					preserveScope: true
 				};
-
 				$mdPanel.open(config);
 			}
 
 			var openPanelForSavingQbeDataset = function() {
 				savingPanelConfig = {
-						attachTo:  angular.element(document.body),
-						templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/workspace/templates/saveQbeDatasetTemplate.html',
-						position: $mdPanel.newPanelPosition().absolute().center(),
-						panelClass:"layout-column",
-						fullscreen: true,
-						controller: function($scope, selectedDataSet, mdPanelRef, closeDocumentFn, savedFromQbe, sbiModule_messaging, sbiModule_translate, datasetSave_service, datasetScheduler_service){
-							$scope.model = {selectedDataSet: selectedDataSet, "mdPanelRef": mdPanelRef};
+					attachTo:  angular.element(document.body),
+					templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/workspace/templates/saveQbeDatasetTemplate.html',
+					position: $mdPanel.newPanelPosition().absolute().center(),
+					panelClass:"layout-column",
+					fullscreen: true,
+					controller: function($scope, selectedDataSet, mdPanelRef, closeDocumentFn, savedFromQbe, sbiModule_messaging, sbiModule_translate, datasetSave_service, datasetScheduler_service){
+						$scope.model = {selectedDataSet: selectedDataSet, "mdPanelRef": mdPanelRef};
 
-							$scope.closePanel = function(){
-								mdPanelRef.close().then(function(panelRef) {
-								    panelRef.destroy();
-								  });;
-							}
+						$scope.closePanel = function(){
+							mdPanelRef.close().then(function(panelRef) {
+							    panelRef.destroy();
+							  });;
+						}
 
-							$scope.saveDataSet = function() {
-								if ($scope.model.selectedDataSet.isPersisted && !$scope.model.selectedDataSet.hasOwnProperty('pars'))
-									$scope.model.selectedDataSet.pars = [];
+						$scope.saveDataSet = function() {
+							if ($scope.model.selectedDataSet.isPersisted && !$scope.model.selectedDataSet.hasOwnProperty('pars'))
+								$scope.model.selectedDataSet.pars = [];
 
-								datasetSave_service.persistDataSet($scope.model.selectedDataSet)
-												.then(function(response){
-													var dsId = response.data.id;
-													if (savedFromQbe)
-														$scope.model.selectedDataSet.id = dsId;
+							datasetSave_service.persistDataSet($scope.model.selectedDataSet).then(function(response){
+								var dsId = response.data.id;
+								if (savedFromQbe)
+									$scope.model.selectedDataSet.id = dsId;
 
-													if ($scope.model.selectedDataSet.isScheduled) {
-														$scope.model.selectedDataSet.schedulingCronLine = datasetScheduler_service.createSchedulingCroneLine();
-														datasetScheduler_service.schedulDataset($scope.model.selectedDataSet)
-															.then(function(response){
-																sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.generic.success'), 'SUCCESS');
-																$scope.closePanel();
-																if (!savedFromQbe) {
-																	clearModel();
-																	closeQbe();
-																}
-															}, function(response){
-																sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-															});
-													} else {
-														sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.generic.success'), 'SUCCESS');
-														$scope.closePanel();
-														if (!savedFromQbe) {
-															clearModel();
-															closeQbe();
-														}
-													}
-												}, function(error){
-													sbiModule_messaging.showErrorMessage(error.data.errors[0].message, 'Error');
-												});
-							}
+								if ($scope.model.selectedDataSet.isScheduled) {
+									$scope.model.selectedDataSet.schedulingCronLine = datasetScheduler_service.createSchedulingCroneLine();
+									datasetScheduler_service.schedulDataset($scope.model.selectedDataSet)
+										.then(function(response){
+											sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.generic.success'), 'SUCCESS');
+											$scope.closePanel();
+											if (!savedFromQbe) {
+												clearModel();
+												closeQbe();
+											}
+										}, function(response){
+											sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+										});
+								} else {
+									sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.generic.success'), 'SUCCESS');
+									$scope.closePanel();
+									if (!savedFromQbe) {
+										clearModel();
+										closeQbe();
+									}
+								}
+							}, function(error){
+								sbiModule_messaging.showErrorMessage(error.data.errors[0].message, 'Error');
+							});
+						}
 
-							var closeQbe = function() {
+						var closeQbe = function() {
+							return closeDocumentFn();
+						}
 
-								return closeDocumentFn();
-							}
-
-							var clearModel = function() {
-								$scope.model.selectedDataSet = {};
-							}
-						},
-						locals: {selectedDataSet: $scope.selectedDataSet, closeDocumentFn: $scope.closeDocument, savedFromQbe: $scope.datasetSavedFromQbe},
-						hasBackdrop: true,
-						clickOutsideToClose: true,
-						escapeToClose: true,
-						focusOnOpen: true,
-						preserveScope: true,
+						var clearModel = function() {
+							$scope.model.selectedDataSet = {};
+						}
+					},
+					locals: {selectedDataSet: $scope.selectedDataSet, closeDocumentFn: $scope.closeDocument, savedFromQbe: $scope.datasetSavedFromQbe},
+					hasBackdrop: true,
+					clickOutsideToClose: true,
+					escapeToClose: true,
+					focusOnOpen: true,
+					preserveScope: true,
 				};
-
 				$mdPanel.open(savingPanelConfig);
 			}
 
@@ -463,25 +430,18 @@ angular
 
 
 			var persistDataSet = function(){
-				sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet))
-				.then(
-						function(response) {
-
-							sbiModule_restServices.promiseGet('1.0/datasets/dataset/id',response.data.id)
-								.then(
-										function(responseDS) {
-
-											$log.info("Dataset saved successfully");
-											$scope.datasetSavedFromQbe=true;
-											$scope.closeDocument();
-
-										})})
+				sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet)).then(function(response) {
+					sbiModule_restServices.promiseGet('1.0/datasets/dataset/id',response.data.id)
+						.then(function(responseDS) {
+							$log.info("Dataset saved successfully");
+							$scope.datasetSavedFromQbe=true;
+							$scope.closeDocument();
+					})})
 			}
 
 			var messagingHandler = qbeViewerMessagingHandler.initalizeHandler(driverableObject,$scope.selectedDataSet,$scope.parameterItems, openPanelForSavingQbeDataset);
 			qbeViewerMessagingHandler.registerHandler(messagingHandler);
 
 		}
-
 
 });
