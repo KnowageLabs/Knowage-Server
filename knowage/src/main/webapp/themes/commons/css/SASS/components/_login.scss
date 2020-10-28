@@ -54,6 +54,9 @@
 	    &::placeholder{
 	    	color: lighten($darkTextColor, 15%);
 	    }
+	    &.smallerInput{
+	    	height: $defaultSize*2;
+	    }
 	}
 
 	.profile-img-card {
@@ -202,7 +205,7 @@
 	}
 	.signUpContainer {
 		h3 {
-			margin:0;
+			margin:8px 0;
 			text-transform: uppercase;
 			font-size: $defaultSize;
 		}
@@ -228,11 +231,12 @@
 			}
 		}
 		#sticky {
-		    height: 75px;
+			height: 75px;
+		    width: 100%;
 		    background-size: cover;
 		    background-position: center;
 		    border-radius: 4px;
-		    margin: 0 8px;
+		    margin: 0;
 		    background-repeat: no-repeat;
 		    box-shadow: 0px 2px 2px $shadowsColor;
 		}
