@@ -243,7 +243,11 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	}
 
 	$scope.getMapLayersFields = function(layer){
-		if(layer) return $scope.$parent.newModel.content.columnSelectedOfDataset[layer.dsId];
+		if(layer) {
+			for(var k in $scope.$parent.newModel.content.layers){
+				if($scope.$parent.newModel.content.layers[k].dsId === layer.dsId) return $scope.$parent.newModel.content.layers[k].content.columnSelectedOfDataset;
+			}
+		}
 	}
 
 	if($scope.localModel != undefined && $scope.localModel.type === 'static-pivot-table'){
