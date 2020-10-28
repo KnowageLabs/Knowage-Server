@@ -360,10 +360,9 @@ EXO -->
 	</servlet>
 	<!-- end axis servlet -->
 
-	
 	<servlet>
 		<servlet-name>StickyCaptcha</servlet-name>
-		<servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
+		<servlet-class>it.eng.spagobi.commons.services.KnowageCaptchaServlet</servlet-class>
 		<init-param>
 			<param-name>captcha-width</param-name>
 			<param-value>250</param-value>
@@ -374,16 +373,6 @@ EXO -->
 		</init-param>
 
 	</servlet>
-	
-
-
-
-   
-
-   
-
-
-   
 
 	<!-- START SERVLET MAPPINGS -->
 

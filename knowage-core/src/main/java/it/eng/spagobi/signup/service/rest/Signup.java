@@ -82,7 +82,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.services.ChangeTheme;
-import nl.captcha.Captcha;
+import net.logicsquad.nanocaptcha.image.ImageCaptcha;
 
 @Path("/signup")
 public class Signup {
@@ -492,7 +492,7 @@ public class Signup {
 		boolean useCaptcha = Boolean.valueOf(strUseCaptcha);
 
 		try {
-			Captcha c = (Captcha) req.getSession().getAttribute(Captcha.NAME);
+			ImageCaptcha c = (ImageCaptcha) req.getSession().getAttribute("simpleCaptcha");
 
 			if (useCaptcha && captcha == null) {
 				logger.error("empty captcha");
@@ -644,7 +644,7 @@ public class Signup {
 			String okMsg = msgBuilder.getMessage("signup.ok.message", "messages", locale);
 
 			// Captcha is burned and must be reloaded at client side
-			req.getSession().removeAttribute(Captcha.NAME);
+			req.getSession().removeAttribute("simpleCaptcha");
 
 			logger.debug("OUT");
 			return Response.ok(new JSONObject().put("message", okMsg).toString()).build();
@@ -705,11 +705,7 @@ public class Signup {
 
 	private void sendMail(String emailAddress, String subject, String emailContent) throws Exception {
 
-		SessionFacade facade = MailSessionBuilder.newInstance()
-			.usingUserProfile()
-			.withTimeout(5000)
-			.withConnectionTimeout(5000)
-			.build();
+		SessionFacade facade = MailSessionBuilder.newInstance().usingUserProfile().withTimeout(5000).withConnectionTimeout(5000).build();
 
 		// create a message
 		Message msg = facade.createNewMimeMessage();

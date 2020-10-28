@@ -127,12 +127,12 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>nl.captcha</groupId>
-			<artifactId>simplecaptcha</artifactId>
-			<version>1.2.1</version>
+			<groupId>net.logicsquad</groupId>
+			<artifactId>nanocaptcha</artifactId>
+			<version>1.1</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.github.jsqlparser</groupId>
 			<artifactId>jsqlparser</artifactId>
