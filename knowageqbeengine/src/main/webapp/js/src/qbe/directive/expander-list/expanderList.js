@@ -49,6 +49,7 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                     for (var k in scope.ngModel) {
                         if (scope.ngModel.hasOwnProperty(k)) {
                             for (var j in scope.ngModel[k]) {
+                                if(!scope.colors[scope.usedColorIndex]) scope.usedColorIndex = 0;
                                 var color = scope.colors[scope.usedColorIndex];
                                 scope.usedColorIndex++;
                                 scope.ngModel[k][j].color = color;

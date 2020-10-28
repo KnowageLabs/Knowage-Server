@@ -748,7 +748,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                        	},{
 	                        		"label":$scope.translate.load("kn.qbe.general.alias"),
 	                            	"name":"alias",
-	                            	hideTooltip:true,
 	                            	transformer: function() {
 	                   	    		 return '<md-input-container class="md-block" style="margin:0"><input  ng-model="row.alias" ng-click="scopeFunctions.setAlias(row)"></md-input-container>';
 	                   	    	 	},
@@ -757,7 +756,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.group"),
 	                            	"name":"group",
-	                    			hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-checkbox  ng-model="row.group"  ng-change="scopeFunctions.groupChanged(row)" aria-label="Checkbox"></md-checkbox>';
 	                            	},
@@ -766,25 +764,24 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.selectgridpanel.headers.order"),
 	                            	"name":"ordering",
-	                            	hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-select  ng-model=row.ordering class="noMargin" ><md-option ng-repeat="col in scopeFunctions.orderingValues" value="{{col}}">{{col}}</md-option></md-select>';
 	                            	},
 	                            	"size": "9%"
 	                        	},
 	                        	{
-	                        		"label":$scope.translate.load("kn.qbe.custom.table.aggregation"),
+	                        		"label":$scope.translate.load("kn.qbe.custom.table.aggregation.short"),
+	                        		"tooltip":$scope.translate.load("kn.qbe.custom.table.aggregation"),
 	                            	"name":"function",
-	                            	hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-select ng-disabled="row.group" ng-model=row.funct class="noMargin" ><md-option ng-repeat="col in scopeFunctions.filterAggreagtionFunctions(row)" value="{{col}}">{{col}}</md-option></md-select>';
 	                            	},
 	                            	"size": "9%"
 	                        	},
 	                        	{
-	                        		"label":$scope.translate.load("kn.qbe.custom.table.show.field"),
+	                        		"label":$scope.translate.load("kn.qbe.custom.table.show.field.short"),
+	                        		"tooltip":$scope.translate.load("kn.qbe.custom.table.show.field"),
 	                            	"name":"visible",
-	                    			hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-checkbox  ng-model="row.visible"  aria-label="Checkbox"></md-checkbox>';
 	                            	},
@@ -793,7 +790,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                        	{
 	                        		"label":$scope.translate.load("kn.qbe.custom.table.inUse"),
 	                            	"name":"inUse",
-	                    			hideTooltip:true,
 	                            	transformer: function() {
 	                            		return '<md-checkbox  ng-model="row.inUse" aria-label="Checkbox"></md-checkbox>';
 	                            	},

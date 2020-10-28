@@ -2,13 +2,13 @@
 	<div id="leftaxis" leftaxis class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
 		
 		<div class="left-axis-shift" ng-if="leftSliderNeeded">
-			<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('down')" >
+			<md-button class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('up')" >
 				<md-icon class="icon-color-white" md-font-icon="fa fa-arrow-circle-o-up fa-2x" ></md-icon>
 			</md-button>
 		</div>	
 		
-		<div class="left-axis" layout="column">
-			<div  ng-repeat="row in rows|limitTo:maxRows:leftStart">
+		<div class="left-axis" layout="column" flex>
+			<div class="left-axis-element" ng-repeat="row in rows">
 				<div class="filter-toolbar-element-left"  
 					 ng-drag="true" 
 					 ng-drag-data="row" 
@@ -41,10 +41,9 @@
 		</div>
 	
 		<div class="left-axis-shift" ng-if="leftSliderNeeded">
-			<md-button style="right:10px;"
-					   class="md-icon-button" 
+			<md-button  class="md-icon-button" 
 					   aria-label="Favorite" 
-					   ng-click="dimensionShift('up')">
+					   ng-click="dimensionShift('down')">
 				<md-icon class="icon-color-white" md-font-icon="fa fa-arrow-circle-o-down fa-2x"></md-icon>
 			</md-button>
 		</div>
