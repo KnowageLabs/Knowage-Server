@@ -310,10 +310,10 @@
 			};
 			var prepareParameterForNewValues = function(execProperties,data){
 				for(var i=0; i<execProperties.parametersData.documentParameters.length;i++){
-					if(execProperties.parametersData.documentParameters[i].urlName==data.idParam){
+					if(execProperties.parametersData.documentParameters[i].urlName==data.idParam &&
+							areCorrelatedParametersEmpty(execProperties.parametersData.documentParameters, execProperties.parametersData.documentParameters[i])){
 
 						driversExecutionService.emptyParameter(execProperties.parametersData.documentParameters[i]);
-
 						if(execProperties.parametersData.documentParameters[i].defaultValues &&
 								execProperties.parametersData.documentParameters[i].defaultValues.length>0){
 							for(var j=0;j<execProperties.parametersData.documentParameters[i].defaultValues.length;j++){
@@ -324,6 +324,20 @@
 					}
 				}
 			};
+
+			areCorrelatedParametersEmpty = function(allParams, currParam) {
+				for (var i=0; i<currParam.dataDependencies.length; i++) {
+					fatherUrl = currParam.dataDependencies[i].parFatherUrlName;
+					for (var j=0; j<allParams.length; j++) {
+						if (fatherUrl == allParams[j].urlName) {
+							if (allParams[j].parameterValue == '') {
+								return true;
+							}
+						}
+					}
+				}
+				return false;
+			}
 
 			dependencyService.updateLovValues = function(value,execProperties){
 
