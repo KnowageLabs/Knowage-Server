@@ -109,7 +109,7 @@ function pythonWidgetEditControllerFunction(
 				if (newValue != oldValue) $scope.newModel.content.columnSelectedOfDataset = $scope.dataset.metadata.fieldsMeta;
 				for (i in $scope.newModel.content.columnSelectedOfDataset) {
 					obj = $scope.newModel.content.columnSelectedOfDataset[i];
-					if(obj.fieldType == "MEASURE" && !obj.value) obj.aggregationSelected = "SUM";
+					if(obj.fieldType == "MEASURE" && !obj.value) obj.aggregationSelected = obj.aggregationSelected || "SUM";
 				}
 				if ($scope.columnsGrid && $scope.columnsGrid.api) {
 					$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
@@ -380,7 +380,7 @@ function addColumnController($scope,sbiModule_translate,$mdDialog,model,getMetad
 
 		for(var i in $scope.columnsGridOptions.api.getSelectedRows()){
 			var obj = $scope.columnsGridOptions.api.getSelectedRows()[i];
-			obj.aggregationSelected = 'SUM';
+			if (obj.type == "MEASURE") obj.aggregationSelected = obj.aggregationSelected || 'SUM';
 			obj.typeSelected = obj.type;
 			$scope.model.content.columnSelectedOfDataset.push(obj);
 		}
