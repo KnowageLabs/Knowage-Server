@@ -570,7 +570,7 @@ public class Signup {
 			Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>();
 
 			ISbiAttributeDAO attrDao = DAOFactory.getSbiAttributeDAO();
-
+			attrDao.setTenant(defaultTenant);
 			addAttribute(attributes, attrDao.loadSbiAttributeByName("email").getAttributeId(), email);
 			if (attrDao.loadSbiAttributeByName("gender") != null)
 				addAttribute(attributes, attrDao.loadSbiAttributeByName("gender").getAttributeId(), sex);
