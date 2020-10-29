@@ -2773,6 +2773,22 @@ public class CrossTab {
 		return cellCellType;
 	}
 
+	public boolean isCellFromSubtotalsColumn(int column) {
+		CellType columnType = celltypeOfColumns.get(column);
+		if (columnType.getValue().equalsIgnoreCase("partialsum"))
+			return true;
+		else
+			return false;
+	}
+
+	public boolean isCellFromTotalsColumn(int column) {
+		CellType columnType = celltypeOfColumns.get(column);
+		if (columnType.getValue().equalsIgnoreCase("totals"))
+			return true;
+		else
+			return false;
+	}
+
 	public Node getColumnsRoot() {
 		return columnsRoot;
 	}
@@ -2953,6 +2969,23 @@ public class CrossTab {
 	 */
 	public List<CellType> getCelltypeOfColumns() {
 		return celltypeOfColumns;
+	}
+
+	/**
+	 * Returns the number of leaves of the first level subtree: Takes the root node of the column tree, visits the first level in depth, and return the number
+	 * of leaves of this first level
+	 *
+	 * @return the number of leaves
+	 */
+	public int getColumnsMainSubtreeNumberOfLeaves() {
+		Node n = columnsRoot;
+		String lastHeaderValue = columnsHeaderList.get(columnsHeaderList.size() - 1);
+		for (int k = 0; k < columnsRoot.getDistanceFromLeaves() - 1; k++) {
+			n = n.getChilds().get(0);
+			if (n.getValue().equals(lastHeaderValue))
+				break;
+		}
+		return n.getLeafsNumber();
 	}
 
 //	/**

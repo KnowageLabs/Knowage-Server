@@ -844,17 +844,9 @@ public class CrossTabHTMLSerializer {
 //		 }
 		// // FINE TEST
 
-		// get number of children of each column subtree
-		Node n = crossTab.getColumnsRoot();
-		List<String> headerList = crossTab.getColumnsHeaderList();
-		String lastHeaderValue = headerList.get(headerList.size() - 1);
-		for (int k = 0; k < crossTab.getColumnsRoot().getDistanceFromLeaves() - 1; k++) {
-			n = n.getChilds().get(0);
-			if (n.getValue().equals(lastHeaderValue))
-				break;
-		}
-		int subtreeNumLeaves = n.getLeafsNumber();
-
+		// get measures of subtotals column
+		List<Measure> allMeasures = crossTab.getCrosstabDefinition().getMeasures();
+		List<Measure> subtotalMeasures = getSubtotalsMeasures(allMeasures);
 		int nPartialSumRow = 0;
 		int nPartialLevels = 0;
 		for (int i = 0; i < data.length; i++) {
@@ -868,6 +860,7 @@ public class CrossTabHTMLSerializer {
 				continue;
 
 			String[] values = data[i];
+			int totalsCounter = 0;
 			int pos;
 			for (int j = 0; j < values.length; j++) {
 				String text = values[j];
@@ -887,9 +880,17 @@ public class CrossTabHTMLSerializer {
 					if (crossTab.isMeasureOnRow()) {
 						pos = i % measuresInfo.size();
 					} else {
-						pos = (j % subtreeNumLeaves) % measuresInfo.size();
+						pos = (j % crossTab.getColumnsMainSubtreeNumberOfLeaves()) % measuresInfo.size();
 					}
-					measureConfig = crossTab.getCrosstabDefinition().getMeasures().get(pos).getConfig();
+
+					if (crossTab.isCellFromSubtotalsColumn(j)) {
+						measureConfig = subtotalMeasures.get(pos).getConfig();
+					} else if (crossTab.isCellFromTotalsColumn(j)) {
+						measureConfig = subtotalMeasures.get(totalsCounter).getConfig();
+						totalsCounter++;
+					} else {
+						measureConfig = allMeasures.get(pos).getConfig();
+					}
 					String visType = (measureConfig.isNull("visType")) ? "Text" : measureConfig.getString("visType");
 					SourceBean iconSB = null;
 
@@ -1108,6 +1109,17 @@ public class CrossTabHTMLSerializer {
 			table.setAttribute(aRow);
 		}
 		return table;
+	}
+
+	List<Measure> getSubtotalsMeasures(List<Measure> allMeasures) throws JSONException {
+		List<Measure> toReturn = new ArrayList<Measure>();
+		for (int k = 0; k < allMeasures.size(); k++) {
+			if (!allMeasures.get(k).getConfig().has("excludeFromTotalAndSubtotal")
+					|| !allMeasures.get(k).getConfig().getBoolean("excludeFromTotalAndSubtotal")) {
+				toReturn.add(allMeasures.get(k));
+			}
+		}
+		return toReturn;
 	}
 
 	/**
