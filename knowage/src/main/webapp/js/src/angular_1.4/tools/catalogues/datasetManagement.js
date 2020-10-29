@@ -3311,12 +3311,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				$scope.dataset = $scope.selectedDataSet;
 				if($scope.dataset.drivers) {
 					$scope.drivers = $scope.dataset.drivers;
-					if($scope.drivers) {
+					if($scope.drivers && $scope.dataset.drivers.length > 0) {
 							if( $scope.dataset.drivers[0].parameterValue && Array.isArray($scope.dataset.drivers[0].parameterValue)){
 								parameterValue = $scope.dataset.drivers[0].parameterValue[0].value;
-						   		$scope.dataset.drivers[0].parameterValue = [parameterValue];
-				      	}
-					
+								$scope.dataset.drivers[0].parameterValue = [parameterValue];
+						}
+
 						var driverValuesAreSet = driversExecutionService.driversAreSet($scope.drivers);
 						if($scope.drivers.length > 0 && !driverValuesAreSet || $scope.selectedDataSet.pars.length > 0) {
 							$scope.showDrivers = true;
