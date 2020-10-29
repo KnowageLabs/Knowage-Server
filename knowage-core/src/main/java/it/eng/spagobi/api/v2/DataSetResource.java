@@ -1203,8 +1203,9 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Path("/documentDrivers/{docId}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public ArrayList<HashMap<String, Object>> getDatasetDriversByDocumentId(@PathParam("docId") Integer docId) {
+	public HashMap<String, Object> getDatasetDriversByDocumentId(@PathParam("docId") Integer docId) {
 		IDataSet dataset = null;
+		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		IBIObjDataSetDAO biObjDataSetDAO = DAOFactory.getBIObjDataSetDAO();
 		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
@@ -1246,7 +1247,12 @@ public class DataSetResource extends AbstractDataSetResource {
 			}
 			parametersArrList = getDatasetDriversByModelName(businessModelName, false);
 		}
-		return parametersArrList;
+		if (parametersArrList.size() > 0) {
+			resultAsMap.put("filterStatus", parametersArrList);
+		} else {
+			resultAsMap.put("filterStatus", new ArrayList<>());
+		}
+		return resultAsMap;
 	}
 
 }

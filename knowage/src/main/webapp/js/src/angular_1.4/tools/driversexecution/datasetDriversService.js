@@ -7,8 +7,8 @@
 			datasetService.getDatasetDriversByDocumentId = function(id) {
 				sbiModule_restServices.promiseGet("2.0/datasets","documentDrivers/"+id)
 				.then(function(response) {
-					angular.copy(response.data, execProperties.parametersData.documentParameters);
-					if(response.data && response.data.length > 0) {
+					angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
+					if(response.data && response.data.filterStatus && response.data.filterStatus.length > 0) {
 						docExecute_urlViewPointService.prepareDrivers(response.data, driversDependencyService.buildCorrelation);
 					}
 				}, function(response) {
