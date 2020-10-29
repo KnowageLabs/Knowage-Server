@@ -117,10 +117,10 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 			}
 			newArray.push(familyArray);
 		}
-		
+
 		return newArray;
 	}
-	
+
 	$scope.availableIcons = setChunks(knModule_fontIconsService.icons,4);
 	$scope.outputParametersType=
 		[{"value": "static", "label" : $scope.translate.load("sbi.cockpit.cross.outputParameters.type.static")},
@@ -157,25 +157,25 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
 	}
-	
+
 	$scope.addLink = function(){
 		if($scope.ngModel.link.links) $scope.ngModel.link.links.push({});
 		else $scope.ngModel.link.links = [{}];
 	}
-	
+
 	$scope.deleteLink = function($index){
 		$scope.ngModel.link.links.splice($index,1);
 	}
-	
+
 	$scope.addLinkParameter = function(link){
 		if(link.parameters) link.parameters.push({});
 		else link.parameters = [{}];
 	}
-	
+
 	$scope.deleteLinkParameter = function(link,index){
 		link.parameters.splice(index,1);
 	}
-	
+
 	$scope.codemirrorLoaded = function(_editor) {
         $scope._doc = _editor.getDoc();
         $scope._editor = _editor;
@@ -206,7 +206,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		else $scope.tempLink.icon = family.className+' '+icon.className;
 		$scope.iconOpened = false;
 	}
-	
+
 	$scope.openFamily = function(familyName){
 		if($scope.iconFamily == familyName) $scope.iconFamily = "";
 		else $scope.iconFamily = familyName;
@@ -302,10 +302,12 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.crossText = $scope.localModel != undefined && $scope.localModel.type === 'text';
 
 	$scope.crossHtml = !$scope.localModel && $scope.$parent.newModel && $scope.$parent.newModel.type === 'html';
-	
+
 	$scope.crossCustom = !$scope.localModel && $scope.$parent.newModel && $scope.$parent.newModel.type === 'customchart';
 
 	$scope.crossPython = !$scope.localModel && $scope.$parent.newModel && $scope.$parent.newModel.type === 'python';
+
+	$scope.crossR = !$scope.localModel && $scope.$parent.newModel && $scope.$parent.newModel.type === 'r';
 
 	$scope.crossImage = !$scope.localModel && !$scope.$parent.newModel;
 
