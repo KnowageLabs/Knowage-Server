@@ -1402,7 +1402,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		if($scope.extendedStyle.sheetsBackgroundColor!=undefined && $scope.cockpitModule_template.style) {
 
 			$scope.sheetsBackgroundColor=$scope.extendedStyle.sheetsBackgroundColor;
-			$scope.cockpitModule_template.style.background=$scope.extendedStyle.sheetsBackgroundColor;
+			$scope.cockpitModule_template.configuration.style.sheetsBackgroundColor=$scope.extendedStyle.sheetsBackgroundColor;
 
 		}
 

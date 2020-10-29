@@ -79,9 +79,12 @@ function cockpitGridControllerFunction($rootScope, $scope,cockpitModule_gridster
 			    "min-height": "100%"
 
 		};
-		if(tempBgStyle.imageBackgroundUrl) $scope.backgroundStyle['background-image'] = 'url('+tempBgStyle.imageBackgroundUrl+')';
-		if(tempBgStyle.sheetsBackgroundColor) $scope.backgroundStyle['background-color'] = tempBgStyle.sheetsBackgroundColor;
-		$scope.backgroundStyle['background-size'] = tempBgStyle.imageBackgroundSize || 'contain';
+		if(!cockpitModule_properties.EDIT_MODE){
+			if(tempBgStyle.imageBackgroundUrl) $scope.backgroundStyle['background-image'] = 'url('+tempBgStyle.imageBackgroundUrl+')';
+			if(tempBgStyle.sheetsBackgroundColor) $scope.backgroundStyle['background-color'] = tempBgStyle.sheetsBackgroundColor;
+			$scope.backgroundStyle['background-size'] = tempBgStyle.imageBackgroundSize || 'contain';
+		}
+		
 
 		$rootScope.showCockpitSpinner = function(){
 			$timeout(function(){
