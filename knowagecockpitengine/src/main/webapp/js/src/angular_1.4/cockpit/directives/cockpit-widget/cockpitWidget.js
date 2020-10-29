@@ -1413,14 +1413,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	}
 
-	$scope.getDataset = function(){
-		if($scope.ngModel.dataset!=undefined && $scope.ngModel.dataset.dsId != undefined){
-			 return cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
-		} else{
-			return undefined;
-		}
-	}
-
 	$scope.getDataset = function(label){
 		if($scope.ngModel.dataset!=undefined && $scope.ngModel.dataset.dsId != undefined){
 			if (!Array.isArray($scope.ngModel.dataset.dsId)){
@@ -1428,8 +1420,12 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			}
 			for (ds in $scope.ngModel.dataset.dsId){
 				var tmpDS = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId[ds]);
-				if (tmpDS.label == label)
-					return tmpDS;
+				// At the moment the multi-dataset data association is not supported,
+				// with the following condition we are permitting to multi-dataset widgets to receive
+				// data when an association is triggered.
+				if(label){
+					if(tmpDS.label === label) return tempDS;
+				}else return tmpDS;
 			}
 		} else{
 			return undefined;
