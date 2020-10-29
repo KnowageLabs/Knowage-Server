@@ -3312,7 +3312,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				if($scope.dataset.drivers) {
 					$scope.drivers = $scope.dataset.drivers;
 					if($scope.drivers) {
-							if( Array.isArray($scope.dataset.drivers[0].parameterValue)){
+							if( $scope.dataset.drivers[0].parameterValue && Array.isArray($scope.dataset.drivers[0].parameterValue)){
 								parameterValue = $scope.dataset.drivers[0].parameterValue[0].value;
 						   		$scope.dataset.drivers[0].parameterValue = [parameterValue];
 				      	}
