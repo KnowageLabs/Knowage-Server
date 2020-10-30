@@ -2046,6 +2046,7 @@
 						text-overflow: ellipsis;
 						overflow: hidden;
 						white-space: nowrap;
+						position: sticky;
 						background-color: inherit;
 							&.crosstab-header-text {
 							/*border-top:none;	*/
@@ -2061,26 +2062,32 @@
 				}
 				tr:first-child {
 					td {
-						position: sticky;
 						top: 0;
 					}
 				}
 				tr:nth-child(2){
 					td {
-						position: sticky;
 						top: 30px;
 					}
 				}
 				tr:nth-child(3){
 					td {
-						position: sticky;
 						top: 60px;
 					}
 				}
 				tr:nth-child(4){
 					td {
-						position: sticky;
 						top: 90px;
+					}
+				}
+				tr:nth-child(5){
+					td {
+						top: 120px;
+					}
+				}
+				tr:nth-child(6){
+					td {
+						top: 150px;
 					}
 				}
 			}
