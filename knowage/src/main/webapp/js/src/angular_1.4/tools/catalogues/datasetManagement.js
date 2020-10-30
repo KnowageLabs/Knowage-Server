@@ -3503,6 +3503,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		$scope.selectedDataSet.fileDsMetadata = $scope.buildFileDataSetMetaData($scope.dataset);
 
+		// Take the parameters and put it on the dataset
+		$scope.selectedDataSet.pars = $scope.parameterItems;
+
 		sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(
 				function(response) {
