@@ -86,12 +86,13 @@ def getDatasetAsDataframe(widget):
                 column_types.update({x['name']: "int64"})
     #save data as dataframe
     df = pd.DataFrame(r.json()["rows"])
-    #cast types
-    df = df.astype(column_types)
-    #drop first column (redundant)
-    df.drop(columns=['id'], inplace=True)
-    # assign column names
-    df.columns = column_names
+    if not df.empty:
+        #cast types
+        df = df.astype(column_types)
+        #drop first column (redundant)
+        df.drop(columns=['id'], inplace=True)
+        # assign column names
+        df.columns = column_names
     return df
 
 def serverExists(id):
