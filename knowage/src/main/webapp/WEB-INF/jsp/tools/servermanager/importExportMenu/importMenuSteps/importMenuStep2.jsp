@@ -23,23 +23,23 @@
 		<p flex="50">{{translate.load('sbi.hierarchies.source');}}</p>
 		<p flex="50">{{translate.load('sbi.modelinstances.target');}}</p>
 	</md-whiteframe >
-		<md-subheader class="md-primary">{{translate.load('SBISet.impexp.exportedRoles','component_impexp_messages');}}</md-subheader>
-		<section>
+	<md-subheader class="md-primary">{{translate.load('SBISet.impexp.exportedRoles','component_impexp_messages');}}</md-subheader>
+	<section>
 		<md-list class="centerText" ng-cloak >
 			<md-list-item ng-repeat="expRol in IEDConf.roles.exportedRoles" class="secondary-button-padding">
-		   		<p>{{expRol.name}}</p>
-		   		<p ng-if="IEDConf.roles.associatedRoles[expRol.id].fixed==true">{{IEDConf.roles.associatedRoles[expRol.id].name}}</p>
-		   		<md-input-container ng-if="IEDConf.roles.associatedRoles[expRol.id].fixed!=true"  flex="50">
-			        <label>Role</label>
+				<p>{{expRol.name}}</p>
+				<p ng-if="IEDConf.roles.associatedRoles[expRol.id].fixed==true">{{IEDConf.roles.associatedRoles[expRol.id].name}}</p>
+				<md-input-container ng-if="IEDConf.roles.associatedRoles[expRol.id].fixed!=true"  flex="50">
+					<label>Role</label>
 					<md-select ng-model="IEDConf.roles.associatedRoles[expRol.id]">
-			        	<md-option></md-option>
-			          	<md-option ng-repeat="currRol in IEDConf.roles.currentRoles" ng-value="currRol.id" ng-if="currentRoleIsSelectable(currRol,expRol)">
+						<md-option></md-option>
+						<md-option ng-repeat="currRol in IEDConf.roles.currentRoles" ng-value="currRol.id" ng-if="currentRoleIsSelectable(currRol,expRol)">
 		            		{{currRol.name}}
 		            	</md-option>
-		        </md-select>
-		      </md-input-container>
-		    <md-divider></md-divider>
-		  </md-list-item>
+					</md-select>
+				</md-input-container>
+				<md-divider></md-divider>
+			</md-list-item>
 		</md-list>
-		</section>	
+	</section>
 </md-content>
