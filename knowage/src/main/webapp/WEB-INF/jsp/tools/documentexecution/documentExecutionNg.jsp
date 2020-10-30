@@ -467,12 +467,12 @@ if(executionRoleNames.size() > 0) {
                     <iframe class="noBorder" id="documentFrame" name="documentFrame"  iframe-onload="iframeOnload()"
                         iframe-set-dimensions-onload flex ng-show="urlViewPointService.frameLoaded">
                     </iframe>
-                    <md-sidenav class="md-sidenav-right md-whiteframe-4dp lateralsidenav"  id="parametersPanelSideNav-e"
-			                ng-if="'<%=obj.getParametersRegion() %>' == 'east'" md-component-id="parametersPanelSideNav-e" 
-			                layout="column"
-			                ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp")%>'">
-			        </md-sidenav>
                 </md-content>
+                <md-sidenav style="height:100%" class="md-sidenav-right md-whiteframe-4dp lateralsidenav"  id="parametersPanelSideNav-e"
+		                ng-if="'<%=obj.getParametersRegion() %>' == 'east'" md-component-id="parametersPanelSideNav-e" 
+		                layout="column"
+		                ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp")%>'">
+		        </md-sidenav>
                                         
                 <div flex layout ng-if="currentView.status == 'PARAMETERS'"> 
                     <div ng-if="parameterView.status == 'FILTER_SAVED'" layout flex>

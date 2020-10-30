@@ -46,12 +46,11 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 	</md-input-container>
 </div>
 
-<md-content>
+<md-content flex>
 	<div ng-hide="isParameterPanelDisabled()" layout="{{filterDropping}}">
 		<document-paramenter-element execProperties="execProperties" parameter="parameter" ng-repeat="parameter in documentParameters" ng-show="parameter.visible" layout="row" layout-align="start" />
 	</div>
 </md-content>
-<div flex></div>
 			
 <!-- execute button -->
 <div layout="row" layout-align="center center" class="kn-buttonBar">
@@ -71,7 +70,4 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
         </md-menu-item>
       </md-menu-content>
     </md-menu>
-	<!-- md-button ng-cloak class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="exportCsv()" ng-hide="isParameterPanelDisabled()" ng-if="executionInstance.OBJECT_TYPE_CODE=='DOCUMENT_COMPOSITE'">
-		Export CSV
-	</md-button-->
 </div>
