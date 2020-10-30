@@ -139,6 +139,10 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 function(answer) {},
                 function() {});
     };
+    
+    $scope.eraseAttribute = function(e,attribute) {
+    	attribute.value = "";
+    }
 
     function lovsDialogController($scope,attribute , $mdDialog) {
     	$scope.attribute = attribute;

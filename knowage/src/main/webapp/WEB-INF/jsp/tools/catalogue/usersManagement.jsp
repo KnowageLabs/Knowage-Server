@@ -139,25 +139,28 @@
                         <md-content flex class="ToolbarBox noBorder">
                            <md-card layout-padding>
                               <div layout="row" layout-wrap ng-repeat="attribute in tempAttributes | orderBy : '-lovId'">
-                                 <div flex=100 ng-if="attribute.lovId == null || attribute.lovId == 0  ">
+                                 <div flex ng-if="attribute.lovId == null || attribute.lovId == 0  ">
                                     <md-input-container class="md-block">
                                        <label>{{attribute.name}}</label>
                                        <input name="attr" ng-model="attribute.value" ng-maxlength="500">
                                        <div ng-messages="" ng-show="false"></div>
                                     </md-input-container>
                                  </div>
-                                 <div flex=100 layout="row" ng-if="attribute.lovId != null ">
+                                 <div flex layout="row" ng-if="attribute.lovId != null">
                                     <div flex>
                                        <md-input-container ng-class="{'md-input-has-value': attribute.value}" class="md-block ">
                                           <label ">{{attribute.name}}</label>  
                                           <input name="attr " ng-model="attribute.value " readonly>
                                        </md-input-container>
                                     </div>
-                                    <div flex=5>
-                                       <md-button class="md-icon-button " ng-click="openLovs($event,attribute) ">
-                                          <md-icon md-font-icon="fa fa-edit "></md-icon>
-                                       </md-button>
-                                    </div>
+                                 </div>
+                                 <div>
+                                 	<md-button class="md-icon-button " ng-if="attribute.lovId != null" ng-click="openLovs($event,attribute) ">
+                                    	<md-icon md-font-icon="fa fa-edit "></md-icon>
+                                    </md-button>
+                                    <md-button class="md-icon-button " ng-click="eraseAttribute($event,attribute) ">
+                                        <md-icon md-font-icon="fa fa-eraser "></md-icon>
+                                    </md-button>
                                  </div>
                               </div>
                            </md-card>
