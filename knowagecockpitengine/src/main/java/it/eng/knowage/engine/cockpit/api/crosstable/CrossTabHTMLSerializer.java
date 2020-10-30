@@ -1427,8 +1427,21 @@ public class CrossTabHTMLSerializer {
 			if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
 				return 100 * value / Double.parseDouble(entries[offset + columnSumStartRow][j]);
 			} else {
-				return 100 * value / Double.parseDouble(entries[columnSumStartRow][j]);
+				return 100 * value / getColumnTotal(entries, crossTab, columnSumStartRow, j);
 			}
+		}
+	}
+
+	private Double getColumnTotal(String[][] matrix, CrossTab crossTab, int columnSumStartRow, int colIdx) {
+		if (crossTab.isCalculateTotalsOnRows()) { // if i have the totals row i can read the total value from there
+			return Double.parseDouble(matrix[columnSumStartRow][colIdx]);
+		} else { // otherwise i need to compute it
+			Double total = 0.0;
+			for (int i = 0; i < matrix.length; i++) {
+				Double value = Double.parseDouble(matrix[i][colIdx]);
+				total += value;
+			}
+			return total;
 		}
 	}
 

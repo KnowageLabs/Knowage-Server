@@ -3032,6 +3032,14 @@ public class CrossTab {
 		return expandCollapseRows;
 	}
 
+	public boolean isCalculateTotalsOnColumns() {
+		return config.optBoolean("calculatetotalsoncolumns");
+	}
+
+	public boolean isCalculateTotalsOnRows() {
+		return config.optBoolean("calculatetotalsonrows");
+	}
+
 	public String getColumnAliasFromName(String columnName) {
 		return dsColumnName2Alias.get(columnName);
 	}
