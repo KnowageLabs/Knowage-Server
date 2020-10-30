@@ -212,14 +212,14 @@ if(executionRoleNames.size() > 0) {
                     style="left: 50%;top: 50%;margin-left: -30px;margin-top: -30px;"></md-progress-circular>
         </div>
                     
-        <md-sidenav class="md-sidenav-right md-whiteframe-4dp lateralsidenav" style="height:100%"
+        <md-sidenav class="md-sidenav-right md-whiteframe-4dp lateralsidenav" 
                 ng-if="'<%=obj.getParametersRegion() %>' == 'west'" md-component-id="parametersPanelSideNav" 
                 layout="column" md-is-locked-open="showParametersPanel.status" 
                 ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp")%>'">     
         </md-sidenav>
     
         <div layout="column"  ng-init="initSelectedRole()" ng-cloak layout-fill>
-            <md-sidenav id="sidenavOri" class="md-sidenav-right md-whiteframe-4dp topsidenav" style="height:100%"
+            <md-sidenav id="sidenavOri" class="md-sidenav-right md-whiteframe-4dp topsidenav"
                     ng-if="'<%=obj.getParametersRegion() %>' == 'north'" md-component-id="parametersPanelSideNav" 
                     layout="column" md-is-locked-open="showParametersPanel.status" 
                     ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp")%>'">
@@ -468,7 +468,7 @@ if(executionRoleNames.size() > 0) {
                         iframe-set-dimensions-onload flex ng-show="urlViewPointService.frameLoaded">
                     </iframe>
                 </md-content>
-                <md-sidenav style="height:100%" class="md-sidenav-right md-whiteframe-4dp lateralsidenav"  id="parametersPanelSideNav-e"
+                <md-sidenav  class="md-sidenav-right md-whiteframe-4dp lateralsidenav"  id="parametersPanelSideNav-e"
 		                ng-if="'<%=obj.getParametersRegion() %>' == 'east'" md-component-id="parametersPanelSideNav-e" 
 		                layout="column"
 		                ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp")%>'">
