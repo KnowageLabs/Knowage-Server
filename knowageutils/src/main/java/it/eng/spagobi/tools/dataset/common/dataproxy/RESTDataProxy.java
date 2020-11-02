@@ -251,19 +251,21 @@ public class RESTDataProxy extends AbstractDataProxy {
 		unparametrizedRequestHeaders.clear();
 		unparametrizedRequestHeaders.putAll(requestHeaders);
 
-		Set<Entry<String, String>> entrySet = getParameters().entrySet();
-		for (Entry<String, String> entry : entrySet) {
-			String key = entry.getKey();
-			String value = entry.getValue();
-			value = value.replaceAll("^'", "").replaceAll("'$", "");
-			String keyPlaceholderRegex = "\\$P\\{" + key  + "\\}";
+		if (parameters != null) {
+			Set<Entry<String, String>> entrySet = parameters.entrySet();
+			for (Entry<String, String> entry : entrySet) {
+				String key = entry.getKey();
+				String value = entry.getValue();
+				value = value.replaceAll("^'", "").replaceAll("'$", "");
+				String keyPlaceholderRegex = "\\$P\\{" + key  + "\\}";
 
-			unparametrizedAddress = unparametrizedAddress.replaceAll(keyPlaceholderRegex, /* TODO : needs some escapes? */ value);
-			unparametrizedRequestBody = unparametrizedRequestBody.replaceAll(keyPlaceholderRegex, value);
+				unparametrizedAddress = unparametrizedAddress.replaceAll(keyPlaceholderRegex, /* TODO : needs some escapes? */ value);
+				unparametrizedRequestBody = unparametrizedRequestBody.replaceAll(keyPlaceholderRegex, value);
 
-			Set<Entry<String, String>> headersEntrySet = unparametrizedRequestHeaders.entrySet();
-			for (Entry<String, String> headerEntry : headersEntrySet) {
-				headerEntry.setValue(headerEntry.getValue().replaceAll(keyPlaceholderRegex, value));
+				Set<Entry<String, String>> headersEntrySet = unparametrizedRequestHeaders.entrySet();
+				for (Entry<String, String> headerEntry : headersEntrySet) {
+					headerEntry.setValue(headerEntry.getValue().replaceAll(keyPlaceholderRegex, value));
+				}
 			}
 		}
 
