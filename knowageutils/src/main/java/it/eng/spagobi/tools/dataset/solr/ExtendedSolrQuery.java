@@ -116,7 +116,7 @@ public class ExtendedSolrQuery extends SolrQuery {
 					JsonFacet jsonFacet;
 					if (group instanceof CoupledProjection) {
 						jsonFacet = new AggregationJsonFacet(proj.getName(), proj.getAggregationFunction(),
-								((CoupledProjection) group).getAggregatedProjection().getName());
+								((CoupledProjection) group).getAggregatedProjection().getName(),limit);
 					} else {
 						String type = proj.getType().getName();
 						if (type.equalsIgnoreCase("java.lang.String")) {
@@ -131,7 +131,7 @@ public class ExtendedSolrQuery extends SolrQuery {
 					JsonFacet jsonFacet;
 					if (group instanceof CoupledProjection) {
 						jsonFacet = new AggregationJsonFacet(proj.getName(), proj.getAggregationFunction(),
-								((CoupledProjection) group).getAggregatedProjection().getName());
+								((CoupledProjection) group).getAggregatedProjection().getName(),limit);
 					} else {
 						String type = proj.getType().getName();
 						if (type.equalsIgnoreCase("java.lang.String")) {

@@ -31,11 +31,13 @@ public class AggregationJsonFacet extends JsonFacet {
 
     private final String sort;
     private final Map<String,String> facet = new HashMap<>(1);
-
-    public AggregationJsonFacet(String field, IAggregationFunction function, String columnToAggregate) {
+    protected int limit = 10;
+    
+    public AggregationJsonFacet(String field, IAggregationFunction function, String columnToAggregate, int limit) {
         super(field);
         facet.put(function.getName().toLowerCase(), function.getName().toLowerCase() + "(" + columnToAggregate + ")");
         this.sort = function.getName().toLowerCase() + " desc";
+        this.limit = limit;
     }
 
     public Map<String, String> getFacet() {
@@ -45,4 +47,12 @@ public class AggregationJsonFacet extends JsonFacet {
     public String getSort() {
         return sort;
     }
+	public int getLimit() {
+		return limit;
+	}
+
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
 }
