@@ -165,6 +165,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.model = model;
 		$scope.model.selectedFunction = actualItem ? angular.copy(actualItem) : {};
 		var style = {'display': 'inline-flex', 'justify-content':'center', 'align-items':'center'};
+		var typesMap = {'STRING': "fa fa-quote-right", 'NUMBER': "fa fa-hashtag", 'DATE': 'fa fa-calendar'};
 
 		$scope.model.functionsGrid = {
 		        enableColResize: false,
@@ -193,9 +194,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function languageRenderer(props){
 			var language = props.value;
 			if (language == 'Python')
-				return language + "<i class='fab fa-python'></i>";
+				return language + "<i class='fab fa-python layout-padding'></i>";
 			else
-				return language + "<i class='fab fa-r-project'></i>";
+				return language + "<i class='fab fa-r-project layout-padding'></i>";
 		}
 
 		$scope.model.columnsGrid = {
@@ -210,7 +211,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        singleClickEdit: true,
 	        columnDefs: [
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.name'), field:'name'},
-	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.type'), field:'type'},
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.type'), field:'type', cellRenderer:typeRenderer},
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.datasetColumn'), field:'dsColumn', editable:true, cellRenderer:editableCell, cellEditor:"agSelectCellEditor", cellEditorParams: {values: getDatasetColumns()}}],
 	        rowData: $scope.model.selectedFunction.inputColumns
 		}
@@ -245,7 +246,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        singleClickEdit: true,
 	        columnDefs: [
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.name'), field:'name'},
-	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.type'), field:'type'},
+	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.type'), field:'type', cellRenderer: typeRenderer},
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.value'), field:'value', editable: true, cellRenderer: editableCell}],
 	        rowData: $scope.model.selectedFunction.inputVariables
 		}
@@ -255,6 +256,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if (typeof(params.value) !== 'undefined')
 				return editButton + params.value;
 			else return editButton;
+		}
+
+		function typeRenderer(params){
+			var typeIcon = '<i class="' + typesMap[params.value] + '"></i> <i>'
+			return typeIcon + params.value;
 		}
 
 		function refreshRowForVariables(cell){

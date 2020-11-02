@@ -1,4 +1,4 @@
-<md-dialog aria-label="table configuration" ng-cloak layout="column" style="min-width:80%; min-height:70%;">
+<md-dialog aria-label="table configuration"  class="catalogFunctionDialog" ng-cloak layout="column" style="min-width:80%; min-height:70%;">
 	<md-toolbar class="_md md-knowage-theme _md-toolbar-transitions">
     	<div class="md-toolbar-tools">
         	<h2 class="ng-binding">{{::translate.load('sbi.cockpit.widgets.table.catalogFunctions.catalogfunctionwizard.title')}}</h2>
@@ -11,7 +11,7 @@
    		   		<div ag-grid="model.functionsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-full-dimensions"></div>
         	</md-card-content>
     	</md-card>
-    	<md-card layout="column" flex class="right">
+    	<md-card layout="column" flex class="right" ng-class="{'icon-r': model.selectedFunction.language=='R', 'icon-python': model.selectedFunction.language=='Python'}">
         	<md-card-content layout="column" layout-fill class="noPadding">
         		<div ng-show="model.selectedFunction">
         			<div ng-show="model.selectedFunction.description">
@@ -32,7 +32,6 @@
         			</div>
         			<div ng-show="model.selectedFunction.id">
         			<md-subheader> {{::translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.environment')}} </md-subheader>
-						{{model.libraries}}
 			     		<md-input-container flex class="md-block">
 						  	<md-select placeholder="Choose environment" ng-if="model.selectedFunction.language=='Python'" ng-model="model.selectedFunction.environment" ng-change="setLibraries()">   
 			        			<md-option ng-repeat="e in model.pythonEnvironments" value="{{e}}">{{e.label}}</md-option>
@@ -41,7 +40,7 @@
 					        	<md-option ng-repeat="e in model.rEnvironments" value="{{e}}">{{e.label}}</md-option>
 					        </md-select> 
 						</md-input-container>
-						<div ag-grid="model.librariesGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary"></div>
+						<div ag-grid="model.librariesGrid" ng-if="model.selectedFunction.environment" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary"></div>
 					</div>
         		</div>
         		<div ng-show="!model.selectedFunction" layout="row" layout-align="center center" flex>
