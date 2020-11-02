@@ -1139,14 +1139,14 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
 						? objParameter.getDriver().getParameter().getLabel()
-						: "";
-				String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
-				String sessionKey = parLab + "_" + useModLab;
+								: "";
+						String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
+						String sessionKey = parLab + "_" + useModLab;
 
-				valueList = objParameter.getDefaultValues();
+						valueList = objParameter.getDefaultValues();
 
-				// in every case fill default values!
-				parameterAsMap.put("driverDefaultValue", valueList);
+						// in every case fill default values!
+						parameterAsMap.put("driverDefaultValue", valueList);
 			}
 
 			if (!showParameterLov) {
@@ -1205,6 +1205,10 @@ public class DataSetResource extends AbstractDataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public HashMap<String, Object> getDatasetDriversByDocumentId(@PathParam("docId") Integer docId) {
 		IDataSet dataset = null;
+		ArrayList datasetList = null;
+		BIObjDataSet biObjDataSet = null;
+		Integer dsId = null;
+		List docDrivers = null;
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		IBIObjDataSetDAO biObjDataSetDAO = DAOFactory.getBIObjDataSetDAO();
@@ -1215,43 +1219,34 @@ public class DataSetResource extends AbstractDataSetResource {
 		ArrayList<HashMap<String, Object>> parametersArrList = new ArrayList<>();
 		ArrayList<BIObjDataSet> biObjDataSetList = null;
 		try {
-			biObjDataSetList = biObjDataSetDAO.getBiObjDataSets(docId);
-		} catch (EMFUserError e1) {
-			e1.printStackTrace();
-		}
-		ArrayList datasetList = null;
-		BIObjDataSet biObjDataSet = null;
-		Integer dsId = null;
-		List docDrivers = null;
-
-		if (biObjDataSetList.size() == 1) {
-			biObjDataSet = biObjDataSetList.get(0);
+		
+		biObjDataSetList = biObjDataSetDAO.getBiObjDataSets(docId);		
+		Iterator itDs = biObjDataSetList.iterator();
+		while (itDs.hasNext()) {
+			biObjDataSet = (BIObjDataSet) itDs.next();
 			dsId = biObjDataSet.getDataSetId();
 			dataset = datasetDao.loadDataSetById(dsId);
-		} else {
-			Iterator itDs = biObjDataSetList.iterator();
-			while (itDs.hasNext()) {
-				biObjDataSet = (BIObjDataSet) itDs.next();
-				dsId = biObjDataSet.getDataSetId();
-				dataset = datasetDao.loadDataSetById(dsId);
-			}
-		}
-		dataset = dataset instanceof VersionedDataSet ? ((VersionedDataSet) dataset).getWrappedDataset() : dataset;
-		if (dataset != null && dataset.getDsType() == "SbiQbeDataSet") {
-			String config = dataset.getConfiguration();
-			try {
+			dataset = dataset instanceof VersionedDataSet ? ((VersionedDataSet) dataset).getWrappedDataset() : dataset;
+			if (dataset != null && dataset.getDsType() == "SbiQbeDataSet") {
+				String config = dataset.getConfiguration();
 				JSONObject jsonConfig = new JSONObject(dataset.getConfiguration());
-				businessModelName = (String) jsonConfig.get("qbeDatamarts");
-			} catch (JSONException e) {
-				e.printStackTrace();
+				businessModelName = (String) jsonConfig.get("qbeDatamarts");	
+				parametersArrList = getDatasetDriversByModelName(businessModelName, false);
+				if (parametersArrList != null && !parametersArrList.isEmpty()) break;
 			}
-			parametersArrList = getDatasetDriversByModelName(businessModelName, false);
+
+		}
+		}
+		catch (Exception e) {
+			logger.error("Cannot retrieve drivers list",e);
+			throw new SpagoBIRuntimeException(e.getMessage(), e);
 		}
 		if (parametersArrList.size() > 0) {
 			resultAsMap.put("filterStatus", parametersArrList);
 		} else {
 			resultAsMap.put("filterStatus", new ArrayList<>());
 		}
+		
 		return resultAsMap;
 	}
 
