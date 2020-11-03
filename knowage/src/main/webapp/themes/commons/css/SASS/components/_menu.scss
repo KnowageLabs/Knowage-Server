@@ -236,6 +236,12 @@ md-list-item.license-item::before{
         @include alpha-attribute('color', rgba($text, 0.8), white);
         text-decoration: none;
       }
+      &.spacer {
+        height: 70px;
+        &:hover {
+          background-color: lighten($main, 5%);
+        }
+      }
     }
     .icon {
       height: 46px;
