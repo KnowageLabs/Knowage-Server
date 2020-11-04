@@ -3304,6 +3304,16 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 * THE PREVIEW OF THE DATASET LOGIC (START)
 	 * ========================================
 	 */
+	$scope.gridOptions = {
+		enableColResize: true,
+		enableSorting: false,
+		enableFilter: false,
+		pagination: false,
+		suppressDragLeaveHidesColumns : true,
+		headerHeight: 48,
+		columnDefs: [],
+		rowData: []
+	};
 
 	function DatasetPreviewController($scope,$mdDialog,$http,$sce) {
 			if($scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd != "File"){
@@ -3337,6 +3347,20 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					$scope.selectedDataSet["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
 					sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 						.then(function(response){
+
+							$scope.gridOptions.api.setColumnDefs(getColumns(response.data.metaData.fields),);
+
+							function getColumns(fields) {
+								var columns = [];
+								for(var f in fields){
+									if(typeof fields[f] != 'object') continue;
+									var tempCol = {"headerName":fields[f].header,"field":fields[f].name, "tooltipField":fields[f].name};
+									tempCol.headerComponentParams = {template: headerTemplate(fields[f].type)};
+									columns.push(tempCol);
+								}
+								return columns;
+							}
+
 							$scope.getPreviewSet(response.data);
 						},
 					function(response) {
@@ -3391,7 +3415,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 	}
 			 }
 			 $mdDialog.cancel();
-	    }
+		}
+
+		// If drivers/params is not needed, show the data
+		if (!$scope.showDrivers) {
+			$scope.executeParameter();
+		}
 	}
 
 	$scope.parametersPreviewColumns = [
@@ -3506,49 +3535,18 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		// Take the parameters and put it on the dataset
 		$scope.selectedDataSet.pars = $scope.parameterItems;
 
-		sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
-			.then(
-				function(response) {
-					 $scope.gridOptions = {
-				        enableColResize: true,
-				        enableSorting: false,
-					    enableFilter: false,
-					    pagination: false,
-					    suppressDragLeaveHidesColumns : true,
-				        headerHeight: 48,
-				        columnDefs :getColumns(response.data.metaData.fields),
-				    	rowData: response.data.rows
-					};
+		if(((!$scope.selectedDataSet.drivers || $scope.selectedDataSet.drivers.length == 0) && (!$scope.selectedDataSet.pars || $scope.selectedDataSet.pars.length == 0))
+				|| ($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && driversExecutionService.driversAreSet($scope.selectedDataSet.drivers))) {
+			$mdDialog.show({
+					scope:$scope,
+					preserveScope: true,
+					controller: DatasetPreviewController,
+					templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',
+					clickOutsideToClose:false,
+					escapeToClose :false
+				});
+		}
 
-				    function getColumns(fields) {
-						var columns = [];
-						for(var f in fields){
-							if(typeof fields[f] != 'object') continue;
-							var tempCol = {"headerName":fields[f].header,"field":fields[f].name, "tooltipField":fields[f].name};
-							tempCol.headerComponentParams = {template: headerTemplate(fields[f].type)};
-							columns.push(tempCol);
-						}
-						return columns;
-					}
-					$scope.getPreviewSet(response.data);
-					if(((!$scope.selectedDataSet.drivers || $scope.selectedDataSet.drivers.length == 0) && (!$scope.selectedDataSet.pars || $scope.selectedDataSet.pars.length == 0))
-							|| ($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && driversExecutionService.driversAreSet($scope.selectedDataSet.drivers))) {
-						$mdDialog.show({
-							  scope:$scope,
-							  preserveScope: true,
-						      controller: DatasetPreviewController,
-						      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',
-						      clickOutsideToClose:false,
-						      escapeToClose :false
-						    });
-					}
-				},
-				function(response) {
-					// Since the repsonse contains the error that is related to the Query syntax and/or content, close the parameters dialog
-					$mdDialog.cancel();
-					sbiModule_messaging.showErrorMessage($scope.translate.load(response.data.errors[0].message), 'Error');
-				}
-			);
 	}
 
     $scope.createColumnsForPreview=function(fields){
