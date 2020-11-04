@@ -2003,9 +2003,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 $scope.getDatasetParametersFromBusinessModel = function (selectedDataset){
 			sbiModule_restServices.post("dataset","drivers/",selectedDataset.qbeDatamarts).then(function(response){
 				$scope.selectedDataSet.drivers = angular.copy(response.data.filterStatus);
-				for(var i = 0; i < $scope.selectedDataSet.drivers.length; i++) {
-					if($scope.selectedDataSet.drivers[i].parameterValue && $scope.selectedDataSet.drivers[i].parameterDescription) {
-						$scope.selectedDataSet.drivers[i].hasDefaultOrOneAdmissibleValue = true;
+				if ($scope.selectedDataSet.drivers) {
+					for(var i = 0; i < $scope.selectedDataSet.drivers.length; i++) {
+						if($scope.selectedDataSet.drivers[i].parameterValue && $scope.selectedDataSet.drivers[i].parameterDescription) {
+							$scope.selectedDataSet.drivers[i].hasDefaultOrOneAdmissibleValue = true;
+						}
 					}
 				}
 				var selectedModel = $filter('filter')($scope.datamartList, {name: $scope.selectedDataSet.qbeDatamarts},true)[0];
