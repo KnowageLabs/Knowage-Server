@@ -1217,7 +1217,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 //						tempJSN = JSON.stringify(tempJSN);
 //						tempJSN = tempJSN.substring(1,tempJSN.length-1);
-					}				
+					}else{
+						if(parameters[parameter]!= "") tempJSN += parameters[parameter];
+					}			
 
 //					tempJSN = tempJSN.replace(/[\[\]]/g,""); 
 					tempJSN += '"';
