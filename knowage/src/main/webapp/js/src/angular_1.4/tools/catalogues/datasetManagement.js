@@ -3518,6 +3518,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		}
 
+		/*
+		 * Take the parameters and put it on the dataset. We have to do it before all the checks.
+		 */
+		$scope.selectedDataSet.pars = angular.copy($scope.parameterItems);
+
 		if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && driversExecutionService.driversAreSet($scope.selectedDataSet.drivers)) {
 			$scope.selectedDataSet["DRIVERS"] = driversExecutionService.prepareDriversForSending($scope.selectedDataSet.drivers);
 		} else if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && !driversExecutionService.driversAreSet($scope.selectedDataSet.drivers) ||
@@ -3533,9 +3538,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 
 		$scope.selectedDataSet.fileDsMetadata = $scope.buildFileDataSetMetaData($scope.dataset);
-
-		// Take the parameters and put it on the dataset
-		$scope.selectedDataSet.pars = $scope.parameterItems;
 
 		if(((!$scope.selectedDataSet.drivers || $scope.selectedDataSet.drivers.length == 0) && (!$scope.selectedDataSet.pars || $scope.selectedDataSet.pars.length == 0))
 				|| ($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && driversExecutionService.driversAreSet($scope.selectedDataSet.drivers))) {
