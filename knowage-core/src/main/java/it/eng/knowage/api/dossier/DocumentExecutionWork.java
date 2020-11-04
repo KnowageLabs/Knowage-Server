@@ -33,6 +33,7 @@ import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class DocumentExecutionWork implements Work {
@@ -103,8 +104,6 @@ public class DocumentExecutionWork implements Work {
 		progressThreadManager.setStatusStarted(progressThreadId);
 		try {
 
-			;
-
 			metaDAO = DAOFactory.getObjMetadataDAO();
 			contentDAO = DAOFactory.getObjMetacontentDAO();
 
@@ -130,8 +129,9 @@ public class DocumentExecutionWork implements Work {
 			try {
 				listObjMetaContent = getMetaDataAndContent(metaDAO, contentDAO, biObject);
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				String message = "Error while retrieving metadata and content of the biObject with id " + biObject.getId();
+				logger.error(message);
+				throw new SpagoBIRuntimeException(message);
 			}
 			biObject.setObjMetaDataAndContents(listObjMetaContent);
 
