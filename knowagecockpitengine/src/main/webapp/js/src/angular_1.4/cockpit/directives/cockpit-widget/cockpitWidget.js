@@ -1077,7 +1077,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 							var tempJson = replacePlaceholders(parameter.json, row);
 							paramValue = encodeURIComponent(tempJson);
 						}
-						linkUrl += (k == 0 ? "?" : "&" ) +  parameter.name + "=" + paramValue;
+						if(parameter.resource) linkUrl += (k == 0 ? "/" : "&" ) + paramValue;
+						else linkUrl += (k == 0 ? "?" : "&" ) +  parameter.name + "=" + paramValue;
 					}
 					if(linkSettings.type == 'replace') window.location.href = linkUrl;
 					if(linkSettings.type == 'blank') window.open(linkUrl);

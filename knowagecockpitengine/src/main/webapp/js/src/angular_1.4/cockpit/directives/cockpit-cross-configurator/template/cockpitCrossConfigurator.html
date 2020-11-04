@@ -416,6 +416,10 @@
 						<md-option ng-repeat="c in allCockpitDatasetsColumns[parameter.dataset]" ng-value="c.name">{{c.name}}</md-option>
 					</md-select>
 				</md-input-container>
+				<md-checkbox ng-model="parameter.resource">
+		               {{translate.load("kn.cockpit.cross.link.parameter.resource")}}
+		               <md-tooltip md-delay="500">{{translate.load("kn.cockpit.cross.link.parameter.resource.tooltip")}}</md-tooltip>
+		          </md-checkbox>
 				
 				<md-button class="md-icon-button" ng-click="deleteLinkParameter($index)">
 					<md-icon md-font-icon="fa fa-trash"></md-font-icon>
