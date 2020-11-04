@@ -1199,55 +1199,6 @@ public class DataSetResource extends AbstractDataSetResource {
 		return parametersArrList;
 	}
 
-	@GET
-	@Path("/documentDrivers/{docId}")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public HashMap<String, Object> getDatasetDriversByDocumentId(@PathParam("docId") Integer docId) {
-		IDataSet dataset = null;
-		ArrayList datasetList = null;
-		BIObjDataSet biObjDataSet = null;
-		Integer dsId = null;
-		List docDrivers = null;
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
-		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
-		IBIObjDataSetDAO biObjDataSetDAO = DAOFactory.getBIObjDataSetDAO();
-		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
-		IBIMetaModelParameterDAO driversDao = DAOFactory.getBIMetaModelParameterDAO();
-		String businessModelName = null;
-		MetaModel businessModel = null;
-		ArrayList<HashMap<String, Object>> parametersArrList = new ArrayList<>();
-		ArrayList<BIObjDataSet> biObjDataSetList = null;
-		try {
-		
-		biObjDataSetList = biObjDataSetDAO.getBiObjDataSets(docId);		
-		Iterator itDs = biObjDataSetList.iterator();
-		while (itDs.hasNext()) {
-			biObjDataSet = (BIObjDataSet) itDs.next();
-			dsId = biObjDataSet.getDataSetId();
-			dataset = datasetDao.loadDataSetById(dsId);
-			dataset = dataset instanceof VersionedDataSet ? ((VersionedDataSet) dataset).getWrappedDataset() : dataset;
-			if (dataset != null && dataset.getDsType() == "SbiQbeDataSet") {
-				String config = dataset.getConfiguration();
-				JSONObject jsonConfig = new JSONObject(dataset.getConfiguration());
-				businessModelName = (String) jsonConfig.get("qbeDatamarts");	
-				parametersArrList = getDatasetDriversByModelName(businessModelName, false);
-				if (parametersArrList != null && !parametersArrList.isEmpty()) break;
-			}
-
-		}
-		}
-		catch (Exception e) {
-			logger.error("Cannot retrieve drivers list",e);
-			throw new SpagoBIRuntimeException(e.getMessage(), e);
-		}
-		if (parametersArrList.size() > 0) {
-			resultAsMap.put("filterStatus", parametersArrList);
-		} else {
-			resultAsMap.put("filterStatus", new ArrayList<>());
-		}
-		
-		return resultAsMap;
-	}
+	
 
 }
