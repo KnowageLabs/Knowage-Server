@@ -131,7 +131,7 @@ public class DocumentExecutionWork implements Work {
 			} catch (Exception e1) {
 				String message = "Error while retrieving metadata and content of the biObject with id " + biObject.getId();
 				logger.error(message);
-				throw new SpagoBIRuntimeException(message);
+				throw new SpagoBIRuntimeException(message, e1);
 			}
 			biObject.setObjMetaDataAndContents(listObjMetaContent);
 
