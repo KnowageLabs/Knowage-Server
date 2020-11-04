@@ -1,40 +1,40 @@
 <!-- manual number input -->
-	<div class="textInput" ng-if="param.type == 'Number'"  layout="column" layout-margin>
-		<div layout="row" layout-align="start center" class="labelContainer">
-			<label ng-class='requiredField'  flex = 80 ng-style= ''>{{param.name}} </label> 
-			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(param)">
-				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
-			</md-icon>
-		</div>
+<div class="textInput" ng-if="param.type == 'Number'"  layout="column" layout-margin>
+	<div layout="row" layout-align="start center" class="labelContainer">
+		<label ng-class='requiredField'  flex = 80 ng-style= ''>{{param.name}} </label> 
+		<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(param)">
+			<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+		</md-icon>
+	</div>
+	<md-input-container class="md-block noMargin" flex>
+		<input class="input_class" ng-if="!param.multiValue" ng-model="param.value"  ng-required=true type="number"/>
+		<!-- if the parameter is multivalue the user must be able to insert also value separators, not only numbers -->
+		<input class="input_class" ng-if="param.multiValue" ng-model="param.value"  ng-required=true/>
+	</md-input-container>
+</div>
+
+<!-- manual text input -->
+<div ng-if="param.type=='String'||param.type=='Raw'||param.type=='Generic'" layout="column" layout-margin class="textInput">
+	<div layout="row" layout-align="start center" class="labelContainer">
+		<label ng-class='requiredField'  flex = 80 ng-style= ''>{{param.name}} </label> 
+		<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(param)">
+			<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
+		</md-icon>
+	</div>
+	<div layout="row" layout-align="start center">
 		<md-input-container class="md-block noMargin" flex>
-			<input class="input_class" ng-if="!param.multiValue" ng-model="param.value"  ng-required=true type="number"/>
-			<!-- if the parameter is multivalue the user must be able to insert also value separators, not only numbers -->
-			<input class="input_class" ng-if="param.multiValue" ng-model="param.value"  ng-required=true/>
+			<input class="input_class" ng-model="param.value"  ng-required=true />
 		</md-input-container>
+		
+		<md-menu class="noPadding" ng-if="haveAnalyticalDriversFn">
+			  <md-button aria-label="Open parameters panel" class="md-icon-button" ng-click="$mdOpenMenu()">
+				<md-icon md-menu-origin md-font-icon="fa fa-search"></md-icon>
+			  </md-button>
+			  <md-menu-content width="3">
+				<md-menu-item ng-repeat="driver in analyticalDrivers">
+				  <md-button ng-click="addParameter(driver.url)">{{driver.url}}</md-button>
+				</md-menu-item>
+			</md-menu-content>
+		</md-menu>
 	</div>
-	
-	<!-- manual text input -->
-	<div ng-if="param.type=='String'" layout="column" layout-margin class="textInput">
-		<div layout="row" layout-align="start center" class="labelContainer">
-			<label ng-class='requiredField'  flex = 80 ng-style= ''>{{param.name}} </label> 
-			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(param)">
-				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
-			</md-icon>
-		</div>
-		<div layout="row" layout-align="start center">
-			<md-input-container class="md-block noMargin" flex>
-				<input class="input_class" ng-model="param.value"  ng-required=true />
-			</md-input-container>
-			
-			<md-menu class="noPadding" ng-if="haveAnalyticalDriversFn">
-				  <md-button aria-label="Open parameters panel" class="md-icon-button" ng-click="$mdOpenMenu()">
-					<md-icon md-menu-origin md-font-icon="fa fa-search"></md-icon>
-				  </md-button>
-				  <md-menu-content width="3">
-					<md-menu-item ng-repeat="driver in analyticalDrivers">
-					  <md-button ng-click="addParameter(driver.url)">{{driver.url}}</md-button>
-					</md-menu-item>
-				</md-menu-content>
-			</md-menu>
-		</div>
-	</div>
+</div>
