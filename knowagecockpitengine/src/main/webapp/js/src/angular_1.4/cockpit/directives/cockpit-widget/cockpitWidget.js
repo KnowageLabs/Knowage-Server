@@ -1100,7 +1100,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 								var tempJson = replacePlaceholders(parameter.json, row);
 								paramValue = encodeURIComponent(tempJson);
 							}
-							linkUrl += (k == 0 ? "?" : "&" ) +  parameter.name + "=" + paramValue;
+							if(parameter.resource) linkUrl += (k == 0 ? "/" : "&" ) + paramValue;
+							else linkUrl += (k == 0 ? "?" : "&" ) +  parameter.name + "=" + paramValue;
 						}
 						if(currentLink.type == 'replace') window.location.href = linkUrl;
 						if(currentLink.type == 'blank') window.open(linkUrl);
