@@ -62,6 +62,9 @@
 		<property name="binContent" type="binary">
             <column name="PPT" sql-type="longvarbinary"/>
         </property>
+		<property name="docBinContent" type="binary">
+            <column name="DOC" sql-type="longvarbinary"/>
+        </property>
 		<many-to-one name="progress" class="it.eng.spagobi.tools.massiveExport.metadata.SbiProgressThread">
 			<column length="20" name="PROGRESS" />
 		</many-to-one>

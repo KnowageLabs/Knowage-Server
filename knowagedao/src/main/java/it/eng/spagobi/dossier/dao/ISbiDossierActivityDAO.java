@@ -23,16 +23,16 @@ import java.util.List;
 import it.eng.knowage.engine.dossier.activity.bo.DossierActivity;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
-public interface ISbiDossierActivityDAO extends ISpagoBIDao{
-	
-	public List <DossierActivity> loadAllActivities(Integer documentId);
-	
-	public DossierActivity loadActivity(Integer activityId);
-	
-	public Integer insertNewActivity(DossierActivity aLayer);
-	
-	public Integer updateActivity(DossierActivity dossierActivity, byte[] file);
+public interface ISbiDossierActivityDAO extends ISpagoBIDao {
 
-	public void deleteActivity(Integer activityId);	
-	
+	public List<DossierActivity> loadAllActivities(Integer documentId);
+
+	public DossierActivity loadActivity(Integer activityId);
+
+	public Integer insertNewActivity(DossierActivity aLayer);
+
+	public Integer updateActivity(DossierActivity dossierActivity, byte[] file, String type);
+
+	public void deleteActivity(Integer activityId);
+
 }

@@ -82,7 +82,7 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 	}
 
 	@Override
-	public Integer updateActivity(DossierActivity dossierActivity, byte[] file) {
+	public Integer updateActivity(DossierActivity dossierActivity, byte[] file, String type) {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -93,7 +93,11 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 
 			SbiDossierActivity hibDossierActivity = toSbiDossierActivity(dossierActivity);
 
-			hibDossierActivity.setBinContent(file);
+			if (type.equals("ppt")) {
+				hibDossierActivity.setBinContent(file);
+			} else if (type.equals("doc")) {
+				hibDossierActivity.setDocBinContent(file);
+			}
 
 			updateSbiCommonInfo4Update(hibDossierActivity);
 			aSession.update(hibDossierActivity);
@@ -228,6 +232,10 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			da.setPptExists(false);
 			da.setBinContent(null);
 			da.setHasBinContent(false);
+		}
+
+		if (hibDossierActivity.getDocBinContent() != null) {
+			da.setDocBinContent(hibDossierActivity.getDocBinContent());
 		}
 
 		da.setCreationDate(hibDossierActivity.getCommonInfo().getTimeIn());
