@@ -33,38 +33,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  <%--------- Declarations  --------%>
   <%	
   	Logger logg = Logger.getLogger(this.getClass().getName());
-  	List<String> domainLanguages = new ArrayList();
   	JSONObject i18nAvailableLanguages = new JSONObject();
  	JSONArray langs = new JSONArray();
- 		
-	IDomainDAO domainDao = DAOFactory.getDomainDAO();
-	List<Domain> domainList = domainDao.loadListDomainsByType("LANG");
-	Iterator<Domain> it = domainList.iterator();
-	
-	while(it.hasNext()) {
-		Domain dom = it.next();
-		String lang = dom.getValueName();
-		domainLanguages.add(lang);
-	}
-	
+ 	
 	IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+	Config availableLangConfig = configsDao.loadConfigParametersByLabel("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
+	String availableLangLocale = availableLangConfig.getValueCheck();
+	String[] langArray = availableLangLocale.substring(1, availableLangLocale.length()-1).split("\\],\\[");
+	
   	Config defaultLangConfig = configsDao.loadConfigParametersByLabel("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
   	String defaultLangLocale = defaultLangConfig.getValueCheck();
-  	String[] array = defaultLangLocale.split(",");
-  	Locale localeObj = new Locale(array[0], array[1]);  	
-  	String defaultLang = localeObj.getDisplayLanguage();
+  	String[] defaultArray = defaultLangLocale.split(",");
+  	Locale defaultLocaleObj = new Locale(defaultArray[0], defaultArray[1]);  	
+  	String defaultLang = defaultLocaleObj.getISO3Language();
   	
-  	for(String member : domainLanguages) {
+  	for(String language : langArray) {
   		JSONObject json = new JSONObject();
   		try {
-  			json.put("language", member);
-  			if(member.equals(defaultLang)) {
+  			String[] tempArray = language.split(",");
+  			Locale tempLocaleObj = new Locale(tempArray[0], tempArray[1]);
+  			String tempLang = tempLocaleObj.getISO3Language();
+  			json.put("language", tempLocaleObj.getDisplayLanguage(defaultLocaleObj));
+  			if(tempLang.equals(defaultLang)) {
   				json.put("defaultLanguage", true);
   			}
   			langs.put(json);
   		} catch (JSONException e) {
   			logg.error(e.getMessage(), e);
-			throw new RuntimeException();
+			throw new RuntimeException(e);
   		}
   	}
   	  	

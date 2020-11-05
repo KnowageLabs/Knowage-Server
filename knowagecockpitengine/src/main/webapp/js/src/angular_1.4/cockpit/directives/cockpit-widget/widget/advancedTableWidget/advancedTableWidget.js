@@ -228,6 +228,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.visType = $scope.ngModel.content.columnSelectedOfDataset[c].visType;
 							if($scope.ngModel.content.columnSelectedOfDataset[c].visType.toLowerCase() == 'chart' || $scope.ngModel.content.columnSelectedOfDataset[c].visType.toLowerCase() == 'text & chart') tempCol.chart = $scope.ngModel.content.columnSelectedOfDataset[c].barchart;
 						}
+						
+						tempCol.headerName = $filter('i18n')(tempCol.headerName);
+						tempCol.headerTooltip = $filter('i18n')(tempCol.headerTooltip);
 
 						//Columns group managament
 						if($scope.ngModel.content.columnSelectedOfDataset[c].group && $scope.ngModel.groups && $scope.ngModel.groups.length > 0) {
@@ -517,7 +520,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    this.eGui.style.fontStyle = (params.style && params.style['font-style']) || (params.colDef.style && params.colDef.style['font-style']) || "";
             if(params.colDef.style && params.colDef.style.hideSummary) this.eGui.innerHTML = '';
             else {
-            	var title = params.summaryRows[params.rowIndex].label;
+            	var title = $filter('i18n')(params.summaryRows[params.rowIndex].label);
             	if(title && params.style && params.style['pinnedOnly'] && params.column.pinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
             	if(params.valueFormatted || params.value){
             		if (params.rowIndex == 0 || !params.colDef.isCalculated) {
