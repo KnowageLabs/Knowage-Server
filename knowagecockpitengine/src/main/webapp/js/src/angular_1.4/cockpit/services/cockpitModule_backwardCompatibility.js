@@ -136,6 +136,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 			if(!self.compareVersion("7.2.4",version)){
+				if(model.type=='table') {
+					if(model.settings.autoRowsHeight) delete model.settings.autoRowsHeight;
+				}
 				if(model.type=='map') {
 					if (model.content.columnSelectedOfDataset) {
 						var colsSelectedFromAllLayers = model.content.columnSelectedOfDataset;
