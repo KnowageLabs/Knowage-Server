@@ -7,9 +7,10 @@
 		</md-icon>
 	</div>
 	<md-input-container class="md-block noMargin" flex>
-		<input class="input_class" ng-if="!param.multiValue" ng-model="param.value"  ng-required=true type="number"/>
-		<!-- if the parameter is multivalue the user must be able to insert also value separators, not only numbers -->
-		<input class="input_class" ng-if="param.multiValue" ng-model="param.value"  ng-required=true/>
+		<!-- Temporaly disabled : <input class="input_class" ng-if="!param.multiValue" ng-model="param.value"  ng-required=true type="number"/> -->
+		<!-- Temporaly disabled : if the parameter is multivalue the user must be able to insert also value separators, not only numbers -->
+		<!-- Temporaly disabled : <input class="input_class" ng-if="param.multiValue" ng-model="param.value"  ng-required=true/> -->
+		<input class="input_class" ng-model="param.value" ng-required=true/>
 	</md-input-container>
 </div>
 
