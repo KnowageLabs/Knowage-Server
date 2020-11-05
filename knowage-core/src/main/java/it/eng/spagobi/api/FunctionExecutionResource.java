@@ -56,6 +56,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.DriversRuntimeLoaderFactory;
 import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -120,8 +121,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 	 *
 	 * @Path("/url")
 	 *
-	 * @Produces(MediaType.APPLICATION_JSON ) public Response getDocumentExecutionURL(@Context HttpServletRequest req) throws IOException,
-	 * JSONException {
+	 * @Produces(MediaType.APPLICATION_JSON ) public Response getDocumentExecutionURL(@Context HttpServletRequest req) throws IOException, JSONException {
 	 *
 	 * logger.debug("IN"); JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req); // String label = requestVal.getString("label"); String role =
 	 * requestVal.getString("role"); String modality = requestVal.optString("modality"); // String displayToolbar = requestVal.optString("displayToolbar"); //
@@ -141,8 +141,8 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 	 * DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(label, executingRole); // IParameterUseDAO parameterUseDAO =
 	 * DAOFactory.getParameterUseDAO(); BIObject obj = new BIObject();
 	 *
-	 * // List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null); // for (DocumentDriverRuntime objParameter
-	 * : parameters) { // // DEF VALUE // if (jsonParameters.isNull(objParameter.getId())) { // if (objParameter.getDefaultValues() != null &&
+	 * // List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null); // for (DocumentDriverRuntime
+	 * objParameter : parameters) { // // DEF VALUE // if (jsonParameters.isNull(objParameter.getId())) { // if (objParameter.getDefaultValues() != null &&
 	 * objParameter.getDefaultValues().size() > 0) { // if (objParameter.getDefaultValues().size() == 1) { // // SINGLE // Object value; // if
 	 * (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) { // // value =
 	 * objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0]; // value =
@@ -198,7 +198,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 	 */
 	@POST
 	@Path("/filters")
-	@Produces(MediaType.APPLICATION_JSON )
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDocumentExecutionFilters(@Context HttpServletRequest req) throws DocumentExecutionException, EMFUserError, IOException, JSONException {
 
 		logger.debug("IN");
@@ -209,9 +209,8 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
-		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
-		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
+		BIObject biObject = DriversRuntimeLoaderFactory.getDriversRuntimeLoader().loadBIObjectForExecutionByLabelAndRole(label, role);
 
 		MessageBuilder m = new MessageBuilder();
 		Locale locale = m.getLocale(req);
@@ -238,8 +237,8 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
 
-			parameterAsMap
-					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
+			parameterAsMap.put("allowInternalNodeSelection",
+					objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
 			if (jsonParameters.has(objParameter.getId())) {
 				dum.refreshParameterForFilters(objParameter.getDriver(), jsonParameters);
@@ -252,8 +251,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
 					&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
 
-				HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
-						objParameter.getDriver(), req);
+				HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, biObject, objParameter.getDriver(), req);
 
 				ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
 						.get(DocumentExecutionUtils.DEFAULT_VALUES);
@@ -347,7 +345,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/parametervalues")
-	@Produces(MediaType.APPLICATION_JSON )
+	@Produces(MediaType.APPLICATION_JSON)
 	// public Response getParameterValues(@QueryParam("label") String label, @QueryParam("role") String role, @QueryParam("biparameterId") String biparameterId,
 	// @QueryParam("mode") String mode, @QueryParam("treeLovNode") String treeLovNode,
 	// // @QueryParam("treeLovNode") Integer treeLovNodeLevel,
@@ -372,7 +370,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 		mode = (String) requestVal.opt("mode");
 
 		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
-		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
+		BIObject biObject = DriversRuntimeLoaderFactory.getDriversRuntimeLoader().loadBIObjectForExecutionByLabelAndRole(label, role);
 
 		BIObjectParameter biObjectParameter = null;
 		List<BIObjectParameter> parameters = biObject.getDrivers();
@@ -426,7 +424,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 	 */
 	@GET
 	@Path("/filterlist")
-	@Produces(MediaType.APPLICATION_JSON )
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDocumentExecutionFilterList(@QueryParam("label") String label, @QueryParam("role") String role,
 			@QueryParam("parameters") String jsonParameters, @QueryParam("urlName") String urlName, @Context HttpServletRequest req) {
 		logger.debug("IN");
@@ -450,10 +448,8 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 	/**
 	 * Produces a json of document metadata grouped by typeCode ("GENERAL_META", "LONG_TEXT", "SHORT_TEXT")
 	 *
-	 * @param objectId
-	 *            of document
-	 * @param subObjectId
-	 *            of subObject
+	 * @param objectId    of document
+	 * @param subObjectId of subObject
 	 * @param httpRequest
 	 * @return a response with a json
 	 * @throws EMFUserError
@@ -577,8 +573,8 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 		addMetadata(generalMetadata, name, value, null);
 	}
 
-	private void addMetadata(JSONArray generalMetadata, String name, String value, Integer id) throws JsonMappingException, JsonParseException, JSONException,
-			IOException {
+	private void addMetadata(JSONArray generalMetadata, String name, String value, Integer id)
+			throws JsonMappingException, JsonParseException, JSONException, IOException {
 		JSONObject data = new JSONObject();
 		if (id != null) {
 			data.put("id", id);
@@ -588,8 +584,8 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 		generalMetadata.put(data);
 	}
 
-	private void addTextMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id) throws JSONException,
-			JsonMappingException, JsonParseException, IOException {
+	private void addTextMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id)
+			throws JSONException, JsonMappingException, JsonParseException, IOException {
 		JSONArray jsonArray = metadataMap.get(type);
 		if (jsonArray == null) {
 			jsonArray = new JSONArray();

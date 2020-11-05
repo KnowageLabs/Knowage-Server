@@ -25,6 +25,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
 import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
+import it.eng.spagobi.analiticalmodel.document.handlers.DriversRuntimeLoaderFactory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -78,7 +79,7 @@ public class DocumentExecutionViewpoint extends AbstractSpagoBIResource {
 			Assert.assertNotNull(userProfile, "Impossible to retrive user profile");
 			BIObject obj;
 			try {
-				obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(label, role);
+				obj = DriversRuntimeLoaderFactory.getDriversRuntimeLoader().loadBIObjectForExecutionByLabelAndRole(label, role);
 				logger.debug("User: [" + ((UserProfile) userProfile).getUserId() + "]");
 				logger.debug("Document Id:  [" + obj.getId() + "]");
 				viewpointOwner = (String) ((UserProfile) userProfile).getUserId();
@@ -140,7 +141,7 @@ public class DocumentExecutionViewpoint extends AbstractSpagoBIResource {
 		Assert.assertNotNull(userProfile, "Impossible to retrive user profile");
 		BIObject obj;
 		try {
-			obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(label, role);
+			obj = DriversRuntimeLoaderFactory.getDriversRuntimeLoader().loadBIObjectForExecutionByLabelAndRole(label, role);
 			biobjectId = obj.getId();
 			logger.debug("User: [" + ((UserProfile) userProfile).getUserId() + "]");
 			logger.debug("Document Id:  [" + biobjectId + "]");
