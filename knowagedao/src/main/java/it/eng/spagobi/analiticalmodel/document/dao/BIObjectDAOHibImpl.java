@@ -3063,20 +3063,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	@Override
-	public BIObject loadBIObjectForExecutionByLabelAndRole(String label, String role) throws EMFUserError {
-		BIObject biObject = loadBIObjectByLabel(label);
-		List<BIObjectParameter> documentDrivers = getDocumentDrivers(biObject, role);
-		List<BIObjectParameter> datasetDrivers = getDatasetDrivers(biObject, role);
-		// i can either have document drivers or drivers inherited from meta model, but NOT both
-		if (documentDrivers != null && !documentDrivers.isEmpty()) {
-			biObject.setDrivers(documentDrivers);
-		} else if (datasetDrivers != null && !datasetDrivers.isEmpty()) {
-			biObject.setDrivers(datasetDrivers);
-		}
-		return biObject;
-	}
-
-	private List<BIObjectParameter> getDocumentDrivers(BIObject biObject, String role) throws EMFUserError {
+	public List<BIObjectParameter> loadDocumentDrivers(BIObject biObject, String role) throws EMFUserError {
 		logger.debug("IN");
 		List toReturn = new ArrayList<BIObjectParameter>();
 		Session aSession = getSession();
