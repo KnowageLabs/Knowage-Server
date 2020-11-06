@@ -193,7 +193,9 @@
 
 					$scope.i18n.loadI18nMap().then(function() {
 						for (var i = 0 ; i < $scope.federationDefinitions.length; i ++ ){
-							$scope.federationDefinitions[i].name = $scope.i18n.getI18n($scope.federationDefinitions[i].name);
+							var currFederationDefinition = $scope.federationDefinitions[i];
+							currFederationDefinition.name        = $scope.i18n.getI18n(currFederationDefinition.name);
+							currFederationDefinition.description = $scope.i18n.getI18n(currFederationDefinition.description);
 						}
 
 						angular.copy($scope.federationDefinitions,$scope.federationDefinitionsInitial);
@@ -217,7 +219,8 @@
 				$scope.i18n.loadI18nMap().then(function() {
 
 					for (var i = 0 ; i < $scope.businessModels.length; i ++ ){
-						$scope.businessModels[i].description = $scope.i18n.getI18n($scope.businessModels[i].description);
+						var currBusinessModel = $scope.businessModels[i];
+						currBusinessModel.description = $scope.i18n.getI18n(currBusinessModel.description);
 					}
 
 					angular.copy($scope.businessModels,$scope.businessModelsInitial);
