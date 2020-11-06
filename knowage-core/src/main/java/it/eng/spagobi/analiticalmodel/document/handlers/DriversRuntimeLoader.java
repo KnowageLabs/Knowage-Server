@@ -147,7 +147,9 @@ public class DriversRuntimeLoader {
 		docDriver.setProg(datasetDriver.getProg());
 		docDriver.setColSpan(datasetDriver.getColSpan());
 		docDriver.setThickPerc(datasetDriver.getThickPerc());
-
+		docDriver.setParameterValues(datasetDriver.getParameterValues());	
+		docDriver.setParameterValuesDescription(datasetDriver.getParameterValuesDescription());
+		
 		Parameter parameter = new Parameter();
 		try {
 			parameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(docDriver.getParID(), role, false);

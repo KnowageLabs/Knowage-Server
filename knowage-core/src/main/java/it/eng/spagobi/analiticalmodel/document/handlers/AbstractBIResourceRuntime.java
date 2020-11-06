@@ -139,6 +139,21 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 		refreshParametersValuesMonitor.stop();
 	}
 
+	public void refreshParametersMetamodelValues(JSONObject jsonObject, boolean transientMode, IDrivableBIResource object) {
+		logger.debug("IN");
+		Monitor refreshParametersValuesMonitor = MonitorFactory.start("Knowage.DocumentRuntime.refreshParametersValues");
+
+		Assert.assertNotNull(jsonObject, "JSONObject in input is null!!");
+		List biparams = object.getMetamodelDrivers();
+		Iterator iterParams = biparams.iterator();
+		while (iterParams.hasNext()) {
+			AbstractDriver biparam = (AbstractDriver) iterParams.next();
+			refreshParameter(biparam, jsonObject, transientMode);
+		}
+		logger.debug("OUT");
+		refreshParametersValuesMonitor.stop();
+	}
+	
 	public void refreshParameterForFilters(AbstractDriver biparam, JSONObject parameter) {
 		refreshParameter(biparam, parameter, false);
 	}

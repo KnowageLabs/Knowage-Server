@@ -312,7 +312,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 				} else {
 					BusinessModelRuntime bum = new BusinessModelRuntime(UserProfileManager.getProfile(), req.getLocale());
 					if (selectedParameterValuesJSON != null) {
-						bum.refreshParametersValues(selectedParameterValuesJSON, false, obj);
+						bum.refreshParametersMetamodelValues(selectedParameterValuesJSON, false, obj);
 					}
 					// START converts JSON object with document's parameters into an
 					// hashmap
