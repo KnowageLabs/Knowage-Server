@@ -149,7 +149,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-icon md-font-icon="fa fa-ban fa-stack-2x ban"></md-icon>
 				</md-button>
 			
-				<md-button class="md-fab md-raised md-mini" ng-click="expandWidget();$event.stopPropagation();" ng-if="checkType(ngModel.type, ['table','chart','static-pivot-table', 'map'])">
+				<md-button class="md-fab md-raised md-mini" ng-click="expandWidget();$event.stopPropagation();" ng-if="checkType(ngModel.type, ['table','chart','static-pivot-table', 'map', 'customchart'])">
 					<md-tooltip md-direction="bottom" ng-if="!widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
 					<md-tooltip md-direction="bottom" ng-if="widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.collapse")}}</md-tooltip>
 					<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
@@ -185,7 +185,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-icon md-font-icon="fa fa-camera-retro" ng-if="!ngModel.loadingScreen"></md-icon>
 				</md-button>
 				
-				<md-button class="md-fab md-raised md-mini" ng-click="exportToExcel($event,ngModel,options)" ng-disabled="ngModel.loadingScreen" ng-if="showExcelExportButton() && checkType(ngModel.type, ['table','chart','static-pivot-table', 'discovery'])">
+				<md-button class="md-fab md-raised md-mini" ng-click="exportToExcel($event,ngModel,options)" ng-disabled="ngModel.loadingScreen" ng-if="showExcelExportButton() && checkType(ngModel.type, ['table','chart','static-pivot-table','discovery','map','customchart'])">
 					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.widgets.tooltip.export")}}</md-tooltip>					
 					<md-icon md-font-icon="fa fa-file-excel-o" ng-if="!ngModel.loadingScreen"></md-icon>
 				</md-button>
