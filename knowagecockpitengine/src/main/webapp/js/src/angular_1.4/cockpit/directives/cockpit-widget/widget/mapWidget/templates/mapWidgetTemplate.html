@@ -16,7 +16,7 @@
 			<ul>
 				<li ng-repeat="prop in layerConfig track by $index" ng-if="prop.properties.showDetails">
 					<p>
-						<strong>{{prop.aliasToShow}}:</strong>
+						<strong>{{ prop.aliasToShow | i18n}}:</strong>
 						<span  ng-class="{'clickable' : prop.fieldType=='ATTRIBUTE'}" ng-cloak ng-click="selectPropValue(layerConfig.dsId, prop, layerConfig.modalSelectionColumn)">{{ getPropValue(prop) }}</span>
 					</p>
 					<p ng-if="props[prop.name].showWarning" class="warningMessage"><i class='fa fa-warning'></i> {{translate.load('sbi.cockpit.map.alarmrange')}}</p>

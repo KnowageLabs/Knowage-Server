@@ -81,6 +81,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 		})
+		.filter('i18n', function(sbiModule_i18n) {
+			return function(label) {
+				return sbiModule_i18n.getI18n(label);
+			}
+		})
 		.directive('cockpitMapWidget',function(){
 			return{
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/mapWidget/templates/mapWidgetTemplate.html',
@@ -147,6 +152,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			sbiModule_messaging,
 			sbiModule_restServices,
 			sbiModule_config,
+			sbiModule_i18n,
 			cockpitModule_mapServices,
 			cockpitModule_mapThematizerServices,
 			cockpitModule_datasetServices,
@@ -171,7 +177,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.zoomControl = undefined; // Zoom control on map
 		$scope.scaleControl = undefined; // Scale indicator
 		$scope.mouseWheelZoomInteraction = undefined; // Manage the mouse wheel on map
+		$scope.i18n = sbiModule_i18n;
 
+		$scope.i18n.loadI18nMap();
 
 		$scope.init = function(element,width,height) {
 

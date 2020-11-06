@@ -15,7 +15,7 @@
 			<div class="indicatorLabel"  layout="row" layout-align="start center" ng-click="toggleLayerExpanse(layer)">
 				<md-icon md-font-icon="fa fa-eye" ng-if="getLayerVisibility(layer.name)" ng-click="toggleLayer($event,layer.name)"></md-icon>
 				<md-icon md-font-icon="fa fa-eye-slash" ng-if="!getLayerVisibility(layer.name)" ng-click="toggleLayer($event,layer.name)"></md-icon>
-				<span flex class="truncated"><md-tooltip md-delay="500">{{layer.alias}}</md-tooltip>{{layer.alias}}</span>
+				<span flex class="truncated"><md-tooltip md-delay="500">{{ layer.alias | i18n }}</md-tooltip>{{ layer.alias | i18n }}</span>
 				<md-icon ng-if="(layer.visualizationType == 'markers' || layer.visualizationType == 'clusters') && layer.markerConf.type == 'icon'" md-font-icon="{{ layer.markerConf.icon.className }}" ng-style="{ color: layer.markerConf.style.color }"></md-icon>
 				<div ng-if="(layer.visualizationType == 'markers' || layer.visualizationType == 'clusters') && layer.markerConf.type == 'url'" style="width: 24px;height: 24px;" layout-align="center center" layout="column">
 					<img ng-src="{{ layer.markerConf.url }}" style="max-width: 50%;max-height: 50%;"></img>
@@ -54,7 +54,7 @@
 			</div>
 			<md-radio-group style="padding:8px;" ng-model="layer.defaultIndicator" ng-if="layer.expandedNav">
 				<md-radio-button ng-repeat="ind in layer.content.columnSelectedOfDataset" ng-if="ind.properties.showMap" ng-click="thematizeMeasure(layer.name, ind.aliasToShow)"  class="md-primary" ng-value="ind.name" style="font-size:.7rem;" >
-					{{ind.aliasToShow}}
+					{{ ind.aliasToShow | i18n }}
 				</md-radio-button>
 			</md-radio-group>
 		</div>
@@ -88,7 +88,7 @@
 					dnd-dragend="dragUtils.dragObjectType = undefined">
 					
 				<md-input-container style="width:100%; font-size:.8rem; padding: .25rem;">
-					<label class="md-primary md-no-float">{{ currCol.aliasToShow }}</label>
+					<label class="md-primary md-no-float">{{ currCol.aliasToShow | i18n }}</label>
 					<div class="kn-select">
 						<div ng-click="openMultiSelectFilterValueDialog($event, currLayer, currCol)" style="height:32px;padding-right:24px;" class="truncated fakeDialog"><span ng-repeat="value in getLayerByName(currLayer.name).filterBy[currCol.name]">{{value}}<b ng-if="!$last">,</b></span></div>
 					</div>
