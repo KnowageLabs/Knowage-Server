@@ -673,7 +673,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				localeText : knModule_aggridLabels
 		}
 
-		if($scope.ngModel.settings.norows && $scope.ngModel.settings.norows.message) $scope.advancedTableGrid.localeText.noRowsToShow = $scope.ngModel.settings.norows.message;
+		if($scope.ngModel.settings.norows && $scope.ngModel.settings.norows.message) $scope.advancedTableGrid.localeText.noRowsToShow = $filter('i18n')($scope.ngModel.settings.norows.message);
 		
 		function getRowHeight(params) {
 			if(_rowHeight > 0) return _rowHeight;
