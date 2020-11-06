@@ -186,7 +186,7 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 				},
 			{
 				'label':sbiModule_translate.load('kn.cockpit.html.tag11'),
-				'name': 'active-selection',
+				'name': 'variable',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag11.desc'),
 				'hidden': !variables ? true : false,
 				'hiddenMessage': 'no variable present',
@@ -196,6 +196,15 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 						'type': 'select',
 						'flex':'flex-100',
 						'options': variables}]
+			},{
+				'label':sbiModule_translate.load('kn.cockpit.html.tag12'),
+				'name': 'internationalization',
+				'description': sbiModule_translate.load('kn.cockpit.html.tag12.desc'),
+				'tag':"[kn-i18n='%%i18n%%']",
+				'inputs': [
+					{	'name':'i18n',
+						'type': 'text',
+						'flex':'flex-100'}]
 				}
 		]
 	}

@@ -94,6 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.advancedCalcRegex = /(?:\[kn-calc=\{([\(\)\[\]\w\s\-\=\>\<\"\'\!\+\*\/\%\&\,\.\|]*)\}(?:\s+min=\'(\d*)\')?(?:\s+max=\'(\d*)\')?(?:\s+precision=\'(\d)\')?(\s+format)?\])/g;
 		$scope.repeatIndexRegex = /\[kn-repeat-index\]/g;
 		$scope.variablesRegex = /(?:\[kn-variable=\'([a-zA-Z0-9\_\-\s]+)\'(?:\s+key=\'([a-zA-Z0-9\_\-\s]+)\')?\s?\])/g;
+		$scope.i18nRegex = /(?:\[kn-i18n=\'([a-zA-Z0-9\_\-\s]+)\'\s?\])/g;
 		$scope.gt = /(\<.*kn-.*=["].*)(>)(.*["].*\>)/g;
 		$scope.lt = /(\<.*kn-.*=["].*)(<)(.*["].*\>)/g;
 
@@ -344,6 +345,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    	condition = condition.replace($scope.paramsRegex, $scope.ifConditionParamsReplacer);
 				    	condition = condition.replace($scope.calcRegex, $scope.calcReplacer);
 				    	condition = condition.replace($scope.variablesRegex, $scope.variablesReplacer);
+				    	condition = condition.replace($scope.i18nRegex, $scope.i18nReplacer);
 				    	if(eval(condition)){
 				    		allElements[j].removeAttribute("kn-if");
 				    	}else{
@@ -407,6 +409,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				resultHtml = resultHtml.replace($scope.widgetIdRegex, 'w'+$scope.ngModel.id);
 				resultHtml = resultHtml.replace($scope.paramsRegex, $scope.paramsReplacer);
 				resultHtml = resultHtml.replace($scope.variablesRegex, $scope.variablesReplacer);
+				resultHtml = resultHtml.replace($scope.i18nRegex, $scope.i18nReplacer);
 				resolve(resultHtml);
 			})
 		}
@@ -490,6 +493,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(!cockpitModule_properties.VARIABLES[p1]) return null;
 			if(p2) return cockpitModule_properties.VARIABLES[p1][p2] || null;
 			else return cockpitModule_properties.VARIABLES[p1] || null;
+		}
+		
+		$scope.i18nReplacer = function(match, p1){
+			return $filter('i18n')(p1);
 		}
 
 		$scope.checkAttributePlaceholders = function(rawAttribute){
