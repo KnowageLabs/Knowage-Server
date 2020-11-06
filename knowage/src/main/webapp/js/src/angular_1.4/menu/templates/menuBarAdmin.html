@@ -57,12 +57,12 @@
 					<i ng-if="!custom.custIcon && !custom.icon && !custom.menu" class="icon fa fa-2x fa-file-o"></i>
 					
 					<div ng-if="custom.descr && custom.descr.length>0">
-						<md-tooltip md-delay="500">{{custom.descr}}</md-tooltip>
-						<span >{{custom.descr}}</span>
+						<md-tooltip md-delay="500">{{ custom.descr | i18n }}</md-tooltip>
+						<span>{{ custom.descr | i18n }}</span>
 					</div>
 					<div ng-if="(!custom.descr || custom.descr.length==0) && custom.text">
-						<md-tooltip md-delay="500">{{custom.text}}</md-tooltip>
-						<span >{{custom.text}}</span>
+						<md-tooltip md-delay="500">{{ custom.text | i18n }}</md-tooltip>
+						<span>{{ custom.text | i18n }}</span>
 					</div>
 					<span flex></span>
 					<md-button class="md-icon-button" ng-if="custom.menu" ng-click="openMenu($event,$index)">

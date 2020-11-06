@@ -19,11 +19,19 @@
 agGrid.initialiseAgGridWithAngular1(angular);
 var myApp = angular.module('menuAppAdmin', ['ngMaterial', 'sbiModule', 'agGrid', 'ngScrollbars']);
 
-myApp.controller('menuCtrl', ['$scope', '$mdDialog',
-	function ($scope, $mdDialog) {
+myApp.filter('i18n', function(sbiModule_i18n) {
+	return function(label) {
+		return sbiModule_i18n.getI18n(label);
+	}
+}).controller('menuCtrl', ['$scope', '$mdDialog', 'sbiModule_i18n',
+	function ($scope, $mdDialog, sbiModule_i18n) {
 		$scope.languages = [];
 		$scope.openAside = false;
 		$scope.hideAdminPanel = false;
+
+		$scope.i18n = sbiModule_i18n;
+		$scope.i18n.loadI18nMap();
+
 		$scope.toggleMenu = function () {
 			$scope.openAside = !$scope.openAside;
 		}
@@ -462,7 +470,7 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 							delete scope.isDeletingLicense;
 							delete scope.fileToDelete;
 						}
-						
+
 						scope.openDeletingDialog = function (event, license, hostName) {
 							scope.isDeletingLicense = true;
 							scope.fileToDelete = { event: event,
@@ -471,16 +479,16 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 							  message: translate.load('kn.license.warningBeforeDeletion').replace("{0}", license.product)
 							  }
 						}
-						
+
 						scope.deleteLicense = function() {
 							scope.deleteFile(scope.fileToDelete.event, scope.fileToDelete.license, scope.fileToDelete.hostName);
 							delete scope.isDeletingLicense;
-							
+
 							$scope.menuCall(scope.fileToDelete.event, Sbi.config.contextName + scope.logoutUrl, "execUrl");
 						}
-						
+
 						scope.deleteFile = function (event, license, hostName) {
-							
+
 							var currentHostName = hostName;
 									var urlToCall = restLicense.base + '/delete' + '/' + hostName + '/' + license.product;
 									$http
@@ -499,7 +507,7 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 														var index = $scope.licenseData[currentHostName].indexOf(obj);
 														$scope.licenseData[currentHostName].splice(index, 1);
 														scope.file = undefined;
-														
+
 														// scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'), scope.translate.load('sbi.generic.info'));
 													} else {
 														if (response.data.errors) {
@@ -517,9 +525,9 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 													scope.messaging.showErrorMessage(scope.translate.load('kn.license.error'), scope.translate.load('kn.license.errormessage'));
 												}
 											});
-							
-							
-							
+
+
+
 
 
 						}
@@ -634,7 +642,7 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 					$scope.downloadsList = result.data;
 					$scope.newDownloadsNumber = calculateNewDownloads($scope.downloadsList);
 				})
-				
+
 				// DOWNLOAD POLLING
 				if(sbiModule_config.downloadPollingTime !== 0){
 					$interval(function () {
@@ -644,7 +652,7 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 						}, function (error) {})
 					}, sbiModule_config.downloadPollingTime || 10000);
 				}
-				
+
 
 				$scope.downloads = function () {
 					$scope.toggleMenu();

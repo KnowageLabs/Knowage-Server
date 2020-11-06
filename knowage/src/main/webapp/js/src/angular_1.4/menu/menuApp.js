@@ -20,12 +20,20 @@ agGrid.initialiseAgGridWithAngular1(angular);
 var myApp = angular.module('menuApp', ['ngMaterial','ngAria', 'sbiModule', 'agGrid','ngScrollbars']);
 
 
-myApp.controller('menuCtrl', ['$scope','$mdDialog',
-    function ($scope,$mdDialog ) {
+myApp.filter('i18n', function(sbiModule_i18n) {
+	return function(label) {
+		return sbiModule_i18n.getI18n(label);
+	}
+})
+.controller('menuCtrl', ['$scope','$mdDialog','sbiModule_i18n',
+    function ($scope,$mdDialog,sbiModule_i18n) {
 
 		$scope.languages = [];
 
 		$scope.openAside = false;
+
+		$scope.i18n = sbiModule_i18n;
+		$scope.i18n.loadI18nMap();
 
 		$scope.toggleMenu = function(){
 			if(!$scope.openAside) $scope.setNewsBadge();
@@ -334,7 +342,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				$scope.downloadsList = result.data;
 				$scope.newDownloadsNumber = calculateNewDownloads($scope.downloadsList);
 			})
-			
+
 			// DOWNLOAD POLLING
 			if(sbiModule_config.downloadPollingTime !== 0){
 				$interval(function () {
