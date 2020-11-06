@@ -31,6 +31,7 @@ public class DriversRuntimeLoader {
 	public BIObject loadBIObjectForExecutionByLabelAndRole(String label, String role) throws EMFUserError {
 		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
 		BIObject biObject = dao.loadBIObjectByLabel(label);
+//		MetaModel meta = DAOFactory.getMetaModelsDAO().loadMetaModelById(id)
 		List<BIObjectParameter> documentDrivers = dao.loadDocumentDrivers(biObject, role);
 		List<BIMetaModelParameter> datasetDrivers = getMetamodelDatasetDrivers(biObject, role);
 		List<BIObjectParameter> dsDrivers = getDatasetDrivers(biObject, role);
@@ -176,6 +177,10 @@ public class DriversRuntimeLoader {
 		docDriver.setColSpan(datasetDriver.getColSpan());
 		docDriver.setThickPerc(datasetDriver.getThickPerc());
 
+		docDriver.setParameterValues(datasetDriver.getParameterValues());	
+		docDriver.setParameterValuesDescription(datasetDriver.getParameterValuesDescription());
+		
+		
 		Parameter parameter = new Parameter();
 		try {
 			parameter = aParameterDAO.loadForExecutionByParameterIDandRoleName(docDriver.getParID(), role, false);

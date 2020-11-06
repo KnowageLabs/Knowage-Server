@@ -378,7 +378,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 
 						// get from cache, if available
 						LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-						lovResult = executionCacheManager.getLovResultDum(profile, lovProvDet, biParameterExecDependencies, obj, true, req.getLocale());
+						lovResult = executionCacheManager.getLovResultBum(profile, lovProvDet, biParameterExecDependencies, obj, true, req.getLocale());
 
 						// get all the rows of the result
 						LovResultHandler lovResultHandler = new LovResultHandler(lovResult);

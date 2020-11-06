@@ -895,12 +895,12 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	public void setDrivers(List<BIObjectParameter> drivers) {
 		this.biObjectParameters = drivers;
 	}
-
+	@Override
 	public List<BIMetaModelParameter> getMetamodelDrivers() {
 		return biBIMetaModelParameter;
 	}
 
-
+	@Override
 	public void setMetamodelDrivers(List<BIMetaModelParameter> drivers) {
 		this.biBIMetaModelParameter = drivers;
 	}
