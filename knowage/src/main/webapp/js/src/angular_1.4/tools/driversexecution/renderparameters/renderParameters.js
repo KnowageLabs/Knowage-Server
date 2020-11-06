@@ -1,7 +1,11 @@
 (function() {
+
 	var driversExecutionModule = angular.module('driversExecutionModule');
 
-		driversExecutionModule.directive('renderParameters', ['sbiModule_config', function(sbiModule_config){
+		/*
+		 * WARNING : You may initialize sbiModule_i18n in the main controller!
+		 */
+		driversExecutionModule.directive('renderParameters', ['sbiModule_config', 'sbiModule_i18n', function(sbiModule_config, sbiModule_i18n){
 
 			return {
 				restrict: 'E',

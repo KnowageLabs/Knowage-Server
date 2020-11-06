@@ -25,7 +25,12 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 datasetModule
-	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer","$q" ,"driversExecutionService", "$filter", "$mdSidenav","tagsHandlerService","sbiModule_urlBuilderService","$httpParamSerializer","sbiModule_download", datasetFunction]) /// aaddd ,"driversExecutionService"
+	.filter('i18n', function(sbiModule_i18n) {
+		return function(label) {
+			return sbiModule_i18n.getI18n(label);
+		}
+	})
+	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer","$q" ,"driversExecutionService", "$filter", "$mdSidenav","tagsHandlerService","sbiModule_urlBuilderService","$httpParamSerializer","sbiModule_download","sbiModule_i18n", datasetFunction]) /// aaddd ,"driversExecutionService"
 	.service('multipartForm',['$http',function($http){
 
 			this.post = function(uploadUrl,data){
@@ -44,7 +49,7 @@ datasetModule
 		;
 
 
-function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q, driversExecutionService, $filter, $mdSidenav,tagsHandlerService, sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download){
+function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer , $q, driversExecutionService, $filter, $mdSidenav,tagsHandlerService, sbiModule_urlBuilderService, $httpParamSerializer, sbiModule_download, sbiModule_i18n){
 
 	$scope.maxSizeStr = maxSizeStr;
 
@@ -60,6 +65,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.allTags = [];
 	$scope.tags = [];
 	$scope.location = "catalog"
+	$scope.i18n=sbiModule_i18n;
+
+	$scope.i18n.loadI18nMap();
+
 	var parameterDeletingMessage = "Are you sure you want to delete the dataset parameter ? ";
 	var qbeParameterDeletingMessage = "";
 	var urlBuilderService = sbiModule_urlBuilderService;
@@ -3350,7 +3359,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 						.then(function(response){
 
-							$scope.gridOptions.api.setColumnDefs(getColumns(response.data.metaData.fields),);
+							$scope.gridOptions.api.setColumnDefs(getColumns(response.data.metaData.fields));
 
 							function getColumns(fields) {
 								var columns = [];

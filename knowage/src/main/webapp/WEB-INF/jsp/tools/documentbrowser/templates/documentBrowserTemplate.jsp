@@ -230,7 +230,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<h3>
 							<b>{{translate.load("sbi.generic.name")}}</b>
 						</h3>
-						<p>{{selectedDocument.name}}</p>
+						<p>{{ selectedDocument.name | i18n }}</p>
 					</div>
 				</md-list-item>
 				<md-list-item class="md-2-line">
@@ -252,7 +252,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-list-item class="md-2-line" ng-if="selectedDocument.description">
 					<div class="md-list-item-text " flex>
 						<h3> <b>{{translate.load("sbi.generic.descr")}}</b> </h3>
-						<p>{{selectedDocument.description}}</p>
+						<p>{{selectedDocument.description | i18n }}</p>
 					</div>
 				</md-list-item>
 				<md-list-item class="md-2-line">

@@ -1,5 +1,11 @@
 var app = angular.module('documentBrowserModule');
-app.controller('documentBrowserController',
+app
+.filter('i18n', function(sbiModule_i18n) {
+	return function(label) {
+		return sbiModule_i18n.getI18n(label);
+	}
+})
+.controller('documentBrowserController',
 		[ '$window','$mdMedia', '$scope', '$http', '$mdSidenav',
 		  '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices',
 		  'sbiModule_config', 'setFocus','$timeout', '$cookies',
@@ -33,6 +39,8 @@ function documentBrowserFunction($window,
 	$scope.searchingDocuments=false;
 	$scope.lastSearchInputInserted = "";
 	$scope.imageServletUrl = sbiModule_config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=";
+
+	$scope.i18n.loadI18nMap();
 
 	//$scope.defaultFolderId = defaultFolderId;
 	if(defaultFoldersId != undefined && defaultFoldersId != ''){
