@@ -4,8 +4,8 @@
 		<md-card class="documentCard" ng-class="{'md-whiteframe-15dp' : selectedFederation==federation }" ng-click="clickFederation(federation);">
 	      	<md-card-title>
 	         	<md-card-title-text>
-		           	<p class=" ellipsis">{{federation.name}}</p>
-		            <md-tooltip md-delay="1000">{{federation.name}} : {{federation.description}}</md-tooltip>
+		           	<p class=" ellipsis">{{ federation.name | i18n }}</p>
+		            <md-tooltip md-delay="1000">{{ federation.name  | i18n }} : {{ federation.description | i18n }}</md-tooltip>
 	       		</md-card-title-text>
 	   		</md-card-title>
 	   		

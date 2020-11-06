@@ -273,13 +273,13 @@
 				 <md-list-item class="md-2-line">
 				          <div class="md-list-item-text">
 				            <h3><b>{{translate.load("sbi.generic.descr")}}</b></h3>
-				            <p>{{selectedDataSet.description}}</p>
+				            <p>{{ selectedDataSet.description | i18n }}</p>
 				          </div>
 				 </md-list-item>
 				 <md-list-item class="md-2-line">
 				          <div class="md-list-item-text">
 				            <h3><b>{{translate.load("sbi.generic.name")}}</b></h3>
-				            <p>{{selectedDataSet.name}}</p>
+				            <p>{{ selectedDataSet.name | i18n }}</p>
 				          </div>
 				 </md-list-item>
 				 <md-list-item class="md-2-line" ng-show="currentTab=='myDataSet'">

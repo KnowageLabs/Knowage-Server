@@ -22,6 +22,11 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 	angular.module('dataset_view', ['ngMaterial'])
+	.filter('i18n', function(sbiModule_i18n) {
+		return function(label) {
+			return sbiModule_i18n.getI18n(label);
+		}
+	})
 	.directive('datasetView', function() {
 		return {
 			templateUrl: currentScriptPath + 'dataset-view.html',
@@ -47,23 +52,28 @@
 				deleteDatasetAction:"&",
 				tableColumns:"=?"
 			},
-	
+
 			link: function (scope, elem, attrs) {
-	
+
 				elem.css("position","static")
 				 if(!attrs.tableSpeedMenuOption){
 					 scope.tableSpeedMenuOption=[];
 				 }
-	
+
 			}
 		}
 	});
-	
-	function datasetViewControllerFunction($scope,sbiModule_user,sbiModule_translate){
+
+	function datasetViewControllerFunction($scope,sbiModule_user,sbiModule_translate,sbiModule_i18n){
+
+		$scope.i18n = sbiModule_i18n;
+
+		$scope.i18n.loadI18nMap();
+
 		$scope.clickDataset=function(item){
 			 $scope.selectDatasetAction({ds: item});
 		}
-		
+
 		$scope.cockpitDatasetColumn = [
 			{"headerName": sbiModule_translate.load('sbi.workspace.dataset.label'),"field":"label"},
 			{"headerName": sbiModule_translate.load('sbi.workspace.dataset.name'),"field":"name"},
@@ -71,7 +81,7 @@
 			{"headerName": "Tags","field":"tags", cellRenderer:tagsRenderer},
 			{"headerName": sbiModule_translate.load('sbi.workspace.dataset.hasParameters'),"field":"pars","cellStyle":
 				{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}];
-	
+
 		$scope.workspaceDatasetViewGrid = {
 	        enableColResize: false,
 	        enableFilter: true,
@@ -84,26 +94,26 @@
 	        columnDefs : $scope.cockpitDatasetColumn,
 	        rowData: $scope.ngModel
 		};
-		
+
 		$scope.$watchCollection('ngModel',function(newValue,oldValue){
 			if($scope.workspaceDatasetViewGrid.api){
 				$scope.workspaceDatasetViewGrid.api.setRowData($scope.ngModel);
 			}
 		})
-	
+
 		function resizeColumns(){
 			$scope.workspaceDatasetViewGrid.api.sizeColumnsToFit();
 		}
-		
+
 		function clickDataset(param){
 			$scope.selectDatasetAction({ds: param.data});
 			$scope.selectedDataset = param.data;
 		}
-	
+
 		function hasParametersRenderer(params){
 			return (params.value && params.value.length > 0) ? '<i class="fa fa-check"></i>' : '';
 		}
-		
+
 		function tagsRenderer(params){
 			if(params.value && params.value.length > 0) {
 				var cell = '';
@@ -113,9 +123,9 @@
 				return cell;
 			}
 		}
-		
+
 		$scope.sbiUser = sbiModule_user;
 		$scope.translate=sbiModule_translate;
-	
+
 	}
 })();
