@@ -310,8 +310,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 						result = buildJsonResult("OK", "", valuesJSON, null, biparameterId).toString();
 					}
 				} else {
-					List<MetaModelParuse> biParameterExecDependencies;
-					BusinessModelRuntime bum =  new BusinessModelRuntime(UserProfileManager.getProfile(), req.getLocale());
+					BusinessModelRuntime bum = new BusinessModelRuntime(UserProfileManager.getProfile(), req.getLocale());
 					if (selectedParameterValuesJSON != null) {
 						bum.refreshParametersValues(selectedParameterValuesJSON, false, obj);
 					}
@@ -361,7 +360,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 					for (int i = 0; i < parameters.size(); i++) {
 						BIMetaModelParameter p = (BIMetaModelParameter) parameters.get(i);
 						if (biparameterId.equalsIgnoreCase(p.getParameterUrlName())) {
-							biMetaModelParameter = p;							
+							biMetaModelParameter = p;
 
 							break;
 						}
@@ -372,14 +371,14 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 					lovProvDet = bum.getLovDetail(biMetaModelParameter);
 					// START get the lov result
 					String lovResult = null;
+					List<MetaModelParuse> biParameterExecDependencies = bum.getDependencies(biMetaModelParameter, role);
 					try {
 						// get the result of the lov
 						IEngUserProfile profile = getUserProfile();
 
 						// get from cache, if available
 						LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-						lovResult = executionCacheManager.getLovResultDum(profile, lovProvDet, bum.getDependencies(biMetaModelParameter, role), obj, true,
-								req.getLocale());
+						lovResult = executionCacheManager.getLovResultDum(profile, lovProvDet, biParameterExecDependencies, obj, true, req.getLocale());
 
 						// get all the rows of the result
 						LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
@@ -393,7 +392,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 						throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's values", e);
 					}
 
-					Assert.assertNotNull(lovResult, "Impossible to get parameter's values"); 
+					Assert.assertNotNull(lovResult, "Impossible to get parameter's values");
 					// END get the lov result
 
 					// START filtering the list by filtering toolbar
@@ -413,7 +412,6 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 					// START filtering for correlation (only for
 					// DependenciesPostProcessingLov, i.e. scripts, java classes and
 					// fixed lists)
-					biParameterExecDependencies = bum.getDependencies(biMetaModelParameter, role);
 					if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null && biParameterExecDependencies != null
 							&& biParameterExecDependencies.size() > 0) { // && contest != null && !contest.equals(MASSIVE_EXPORT)
 						rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, biParameterExecDependencies);
@@ -427,7 +425,6 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 						valuesJSON = buildJSONForLOV(lovProvDet, rows, mode, start, limit);
 						result = buildJsonResult("OK", "", valuesJSON, null, biparameterId).toString();
 					}
-
 
 				}
 			} catch (EMFUserError e1) {
@@ -658,14 +655,14 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 
 				String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
 						? objParameter.getDriver().getParameter().getLabel()
-								: "";
-						String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
-						String sessionKey = parLab + "_" + useModLab;
+						: "";
+				String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
+				String sessionKey = parLab + "_" + useModLab;
 
-						valueList = objParameter.getDefaultValues();
+				valueList = objParameter.getDefaultValues();
 
-						// in every case fill default values!
-						parameterAsMap.put("driverDefaultValue", valueList);
+				// in every case fill default values!
+				parameterAsMap.put("driverDefaultValue", valueList);
 			}
 
 			if (!showParameterLov) {

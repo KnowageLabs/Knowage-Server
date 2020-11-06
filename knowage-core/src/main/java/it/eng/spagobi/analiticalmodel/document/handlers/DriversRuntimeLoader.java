@@ -67,7 +67,7 @@ public class DriversRuntimeLoader {
 					MetaModel businessModel = businessModelsDAO.loadMetaModelByName(businessModelName);
 					qbeDatasetDrivers = driversDao.loadBIMetaModelParameterByMetaModelId(businessModel.getId());
 					if (qbeDatasetDrivers != null && !qbeDatasetDrivers.isEmpty()) {
-						toReturn = toMetamodelDrivers(qbeDatasetDrivers, biObject, role);
+						toReturn = toMetamodelDrivers(qbeDatasetDrivers, role);
 						// in a document i can use only one qbe dataset WITH DRIVERS
 						break;
 					}
@@ -113,6 +113,7 @@ public class DriversRuntimeLoader {
 		}
 		return toReturn;
 	}
+
 	private List<BIObjectParameter> toDocumentDrivers(List<BIMetaModelParameter> qbeDatasetDrivers, BIObject biObject, String role) {
 		List<BIObjectParameter> toReturn = new ArrayList<BIObjectParameter>();
 		for (BIMetaModelParameter d : qbeDatasetDrivers) {
@@ -120,20 +121,22 @@ public class DriversRuntimeLoader {
 		}
 		return toReturn;
 	}
-	private List<BIMetaModelParameter> toMetamodelDrivers(List<BIMetaModelParameter> qbeDatasetDrivers, BIObject biObject, String role) {
+
+	private List<BIMetaModelParameter> toMetamodelDrivers(List<BIMetaModelParameter> qbeDatasetDrivers, String role) {
 		List<BIMetaModelParameter> toReturn = new ArrayList<BIMetaModelParameter>();
 		for (BIMetaModelParameter d : qbeDatasetDrivers) {
-			toReturn.add(transformDSDrivertoBIMetaModelParameter(d, biObject, role));
+			toReturn.add(transformDSDrivertoBIMetaModelParameter(d, role));
 		}
 		return toReturn;
 	}
-	public BIMetaModelParameter transformDSDrivertoBIMetaModelParameter(BIMetaModelParameter datasetDriver, BIObject biObject, String role) {
+
+	public BIMetaModelParameter transformDSDrivertoBIMetaModelParameter(BIMetaModelParameter datasetDriver, String role) {
 		BIMetaModelParameter docDriver = new BIMetaModelParameter();
 		IParameterDAO aParameterDAO = DAOFactory.getParameterDAO();
-		docDriver.setId(biObject.getId());
+		docDriver.setId(datasetDriver.getId());
 		docDriver.setLabel(datasetDriver.getLabel());
 		docDriver.setModifiable(datasetDriver.getModifiable());
-		docDriver.setMultivalue(datasetDriver.getMultivalue()); 
+		docDriver.setMultivalue(datasetDriver.getMultivalue());
 		docDriver.setBiMetaModelID(datasetDriver.getBiMetaModelID());
 		docDriver.setParameterUrlName(datasetDriver.getParameterUrlName());
 		docDriver.setParID(datasetDriver.getParID());
