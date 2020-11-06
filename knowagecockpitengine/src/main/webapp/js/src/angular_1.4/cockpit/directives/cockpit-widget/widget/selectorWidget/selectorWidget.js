@@ -376,7 +376,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		function MultiSelectDialogController($rootScope, scope, $mdDialog, $filter, sbiModule_translate, targetModel, activeSelections, itemsList, selectables, settings, title, ds, callback,updateSelectables) {
 			scope.activeSelections = activeSelections;
 			scope.settings = settings;
-			scope.title = title;
+			scope.title = $filter('i18n')(title);
 			scope.translate = sbiModule_translate;
 			scope.allSelected = false;
 
