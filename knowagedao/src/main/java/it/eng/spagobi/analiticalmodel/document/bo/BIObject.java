@@ -38,6 +38,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -124,6 +125,8 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	private String biObjectTypeCode = null;
 
 	private List<BIObjectParameter> biObjectParameters = null;
+	
+	private List<BIMetaModelParameter> biBIMetaModelParameter = null;
 
 	private String path = null;
 
@@ -893,4 +896,12 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 		this.biObjectParameters = drivers;
 	}
 
+	public List<BIMetaModelParameter> getMetamodelDrivers() {
+		return biBIMetaModelParameter;
+	}
+
+
+	public void setMetamodelDrivers(List<BIMetaModelParameter> drivers) {
+		this.biBIMetaModelParameter = drivers;
+	}
 }

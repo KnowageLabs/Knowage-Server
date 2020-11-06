@@ -42,7 +42,9 @@ import it.eng.spagobi.analiticalmodel.document.handlers.DriversRuntimeLoaderFact
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIMetaModelParameterDAO;
@@ -66,6 +68,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -93,8 +96,8 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 	// in massive export case
 	public static String OBJ_PARAMETER_IDS = "OBJ_PARAMETER_IDS";
 	public static String CONTEST = "CONTEST"; // used to check if mssive export
-												// case; cannot use MODALITY
-												// because already in use
+	// case; cannot use MODALITY
+	// because already in use
 	public static String MASSIVE_EXPORT = "massiveExport";
 	private static final String ROLE = "ROLE";
 	private static final String OBJECT_LABEL = "OBJECT_LABEL";
@@ -126,11 +129,11 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 		String mode;
 		JSONObject valuesJSON;
 		// String contest;
-		BIObjectParameter biObjectParameter;
+
 		// ExecutionInstance executionInstance;
 
 		List rows;
-		List<ObjParuse> biParameterExecDependencies;
+
 		ILovDetail lovProvDet;
 
 		List objParameterIds;
@@ -176,6 +179,8 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 				BIObject obj = DriversRuntimeLoaderFactory.getDriversRuntimeLoader().loadBIObjectForExecutionByLabelAndRole(label, role);
 				ArrayList<HashMap<String, Object>> qbeDrivers = getQbeDrivers(obj);
 				if (qbeDrivers == null || qbeDrivers.isEmpty()) {
+					BIObjectParameter biObjectParameter;
+					List<ObjParuse> biParameterExecDependencies;
 					DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), req.getLocale());
 					if (selectedParameterValuesJSON != null) {
 						dum.refreshParametersValues(selectedParameterValuesJSON, false, obj);
@@ -305,7 +310,125 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 						result = buildJsonResult("OK", "", valuesJSON, null, biparameterId).toString();
 					}
 				} else {
-					// TO DO
+					List<MetaModelParuse> biParameterExecDependencies;
+					BusinessModelRuntime bum =  new BusinessModelRuntime(UserProfileManager.getProfile(), req.getLocale());
+					if (selectedParameterValuesJSON != null) {
+						bum.refreshParametersValues(selectedParameterValuesJSON, false, obj);
+					}
+					// START converts JSON object with document's parameters into an
+					// hashmap
+					selectedParameterValues = null;
+					if (selectedParameterValuesJSON != null) {
+						try {
+							selectedParameterValues = new HashMap();
+							Iterator it = selectedParameterValuesJSON.keys();
+							while (it.hasNext()) {
+								String key = (String) it.next();
+								Object v = selectedParameterValuesJSON.get(key);
+								if (v == JSONObject.NULL) {
+									selectedParameterValues.put(key, null);
+								} else if (v instanceof JSONArray) {
+									JSONArray a = (JSONArray) v;
+									String[] nv = new String[a.length()];
+									for (int i = 0; i < a.length(); i++) {
+										if (a.get(i) != null) {
+											nv[i] = a.get(i).toString();
+										} else {
+											nv[i] = null;
+										}
+									}
+									selectedParameterValues.put(key, nv);
+								} else if (v instanceof String) {
+									selectedParameterValues.put(key, v);
+								} else if (v instanceof Integer) {
+									selectedParameterValues.put(key, "" + v);
+								} else if (v instanceof Double) {
+									selectedParameterValues.put(key, "" + v);
+								} else {
+									Assert.assertUnreachable("Attribute [" + key + "] value [" + v
+											+ "] of PARAMETERS is not of type JSONArray nor String. It is of type [" + v.getClass().getName() + "]");
+								}
+							}
+						} catch (JSONException e) {
+							throw new SpagoBIServiceException("parameter JSONObject is malformed", e);
+						}
+					}
+					// END converts JSON object with document's parameters into an
+					// hashmap
+					// START get the relevant biobject parameter
+					BIMetaModelParameter biMetaModelParameter = null;
+					List parameters = obj.getMetamodelDrivers();
+					for (int i = 0; i < parameters.size(); i++) {
+						BIMetaModelParameter p = (BIMetaModelParameter) parameters.get(i);
+						if (biparameterId.equalsIgnoreCase(p.getParameterUrlName())) {
+							biMetaModelParameter = p;							
+
+							break;
+						}
+					}
+					Assert.assertNotNull(biMetaModelParameter, "Impossible to find parameter [" + biparameterId + "]");
+					// END get the relevant biobject parameter
+
+					lovProvDet = bum.getLovDetail(biMetaModelParameter);
+					// START get the lov result
+					String lovResult = null;
+					try {
+						// get the result of the lov
+						IEngUserProfile profile = getUserProfile();
+
+						// get from cache, if available
+						LovResultCacheManager executionCacheManager = new LovResultCacheManager();
+						lovResult = executionCacheManager.getLovResultDum(profile, lovProvDet, bum.getDependencies(biMetaModelParameter, role), obj, true,
+								req.getLocale());
+
+						// get all the rows of the result
+						LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
+						rows = lovResultHandler.getRows();
+
+					} catch (MissingLOVDependencyException mldaE) {
+						String localizedMessage = getLocalizedMessage("sbi.api.documentExecParameters.dependencyNotFill", req);
+						String msg = localizedMessage + ": " + mldaE.getDependsFrom();
+						throw new SpagoBIServiceException(SERVICE_NAME, msg);
+					} catch (Exception e) {
+						throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's values", e);
+					}
+
+					Assert.assertNotNull(lovResult, "Impossible to get parameter's values"); 
+					// END get the lov result
+
+					// START filtering the list by filtering toolbar
+					try {
+						if (filtersJSON != null) {
+							String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
+							String columnfilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
+							String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
+							String typeValueFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_VALUE_FILTER);
+							rows = DelegatedBasicListService.filterList(rows, valuefilter, typeValueFilter, columnfilter, typeFilter);
+						}
+					} catch (JSONException e) {
+						throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read filter's configuration", e);
+					}
+					// END filtering the list by filtering toolbar
+
+					// START filtering for correlation (only for
+					// DependenciesPostProcessingLov, i.e. scripts, java classes and
+					// fixed lists)
+					biParameterExecDependencies = bum.getDependencies(biMetaModelParameter, role);
+					if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null && biParameterExecDependencies != null
+							&& biParameterExecDependencies.size() > 0) { // && contest != null && !contest.equals(MASSIVE_EXPORT)
+						rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, biParameterExecDependencies);
+					}
+					// END filtering for correlation
+
+					if (lovProvDet.getLovType() != null && lovProvDet.getLovType().contains("tree")) {
+						JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel, treeLovNodeValue);
+						result = buildJsonResult("OK", "", null, valuesJSONArray, biparameterId).toString();
+					} else {
+						valuesJSON = buildJSONForLOV(lovProvDet, rows, mode, start, limit);
+						result = buildJsonResult("OK", "", valuesJSON, null, biparameterId).toString();
+					}
+
+
 				}
 			} catch (EMFUserError e1) {
 				// result = buildJsonResult("KO", e1.getMessage(), null,null).toString();
@@ -535,14 +658,14 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 
 				String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
 						? objParameter.getDriver().getParameter().getLabel()
-						: "";
-				String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
-				String sessionKey = parLab + "_" + useModLab;
+								: "";
+						String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
+						String sessionKey = parLab + "_" + useModLab;
 
-				valueList = objParameter.getDefaultValues();
+						valueList = objParameter.getDefaultValues();
 
-				// in every case fill default values!
-				parameterAsMap.put("driverDefaultValue", valueList);
+						// in every case fill default values!
+						parameterAsMap.put("driverDefaultValue", valueList);
 			}
 
 			if (!showParameterLov) {
@@ -667,15 +790,15 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 				treeLovParentNodeName = "lovroot";
 				treeLovNodeLevel = -1;
 			} else if (lovProvDet.getTreeLevelsColumns().size() > treeLovNodeLevel + 1) {// treeLovNodeLevel-1
-																							// because
-																							// the
-																							// fake
-																							// root
-																							// node
-																							// is
-																							// the
-																							// level
-																							// 0
+				// because
+				// the
+				// fake
+				// root
+				// node
+				// is
+				// the
+				// level
+				// 0
 
 				treeLovNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1).getFirst();
 				treeLovParentNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel).getFirst();
@@ -693,8 +816,8 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 				List columns = row.getContainedAttributes();
 				valueJSON = new JSONObject();
 				boolean notNullNode = false; // if the row does not contain the
-												// value atribute we don't add
-												// the node
+				// value atribute we don't add
+				// the node
 				for (int i = 0; i < columns.size(); i++) {
 					SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
 					if ((treeLovParentNodeName == "lovroot") || (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName)
@@ -706,20 +829,20 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 					// in the lov definition
 					if (lovProvDet.getTreeLevelsColumns().size() == treeLovNodeLevel + 2) {
 						if (attribute.getKey().equalsIgnoreCase(descriptionColumn)) {// its
-																						// the
-																						// column
-																						// of
-																						// the
-																						// description
+							// the
+							// column
+							// of
+							// the
+							// description
 							valueJSON.put("description", attribute.getValue());
 							notNullNode = true;
 						}
 						if (attribute.getKey().equalsIgnoreCase(valueColumn)) {// its
-																				// the
-																				// column
-																				// of
-																				// the
-																				// value
+							// the
+							// column
+							// of
+							// the
+							// value
 							valueJSON.put("value", attribute.getValue());
 							valueJSON.put("id", attribute.getValue() + NODE_ID_SEPARATOR + (treeLovNodeLevel + 1));
 							notNullNode = true;
