@@ -301,7 +301,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				for(var f in fields){
 					if(typeof fields[f] == 'object' && $scope.ngModel.content.columnSelectedOfDataset[c].name === fields[f].header){
-						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].alias,"field":fields[f].name, "tooltipField":fields[f].name};
+						var tempCol = {
+								"headerName":$filter('i18n')($scope.ngModel.content.columnSelectedOfDataset[c].alias),
+								"field":fields[f].name, 
+								"tooltipField":$filter('i18n')(fields[f].name)};
 						tempCol.paramType = fields[f].type;
 						if(fields[f].type == 'text') {
 							tempCol.cellRenderer = textCellRenderer;

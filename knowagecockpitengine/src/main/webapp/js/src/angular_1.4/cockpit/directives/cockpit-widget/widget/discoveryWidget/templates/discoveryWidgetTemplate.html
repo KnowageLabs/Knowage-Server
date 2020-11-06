@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 		<md-card-content class="noPadding discoveryFiltersList">
 			<div class="md-dense noPadding noSelect">
         		<md-subheader ng-repeat-start="(key,facet) in facets" ng-if="isFacetVisible(key)" ng-click="facet.closed=!facet.closed" class="noPadding">
-        			<span>{{getFacetAlias(key)}}</span>
+        			<span>{{getFacetAlias(key) | i18n}}</span>
        				<md-button class="md-icon-button noMargin" >
         				<md-icon ng-if="facet.closed" md-font-icon="fa fa-chevron-down" ></md-icon>
         				<md-icon ng-if="!facet.closed" md-font-icon="fa fa-chevron-up" ></md-icon>
