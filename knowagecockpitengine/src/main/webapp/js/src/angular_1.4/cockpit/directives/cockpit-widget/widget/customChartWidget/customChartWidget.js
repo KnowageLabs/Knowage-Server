@@ -45,6 +45,7 @@ function cockpitCustomChartControllerFunction(
 		$sce,
 		$filter,
 		cockpitModule_generalServices,
+		cockpitModule_properties,
 		sbiModule_translate,
 		datastore
 		){
