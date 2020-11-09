@@ -2,7 +2,7 @@
 
 <md-dialog aria-label="crosstable configuration" ng-cloak  layout="column" class="width80">
    <md-toolbar class="secondaryToolbar" layout="row">
-			<h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.widgets.table.columnstyle')}}</h1>
+			<h1 flex class="md-toolbar-tools">{{::translate.load('sbi.cockpit.widgets.table.columnstyle')}}</h1>
 			 <md-button class="md-icon-button" ng-click="cleanStyleColumn()" >
 			  <md-icon md-font-icon="fa fa-eraser" aria-label="Clean"></md-icon>
 			  </md-button>
@@ -15,7 +15,7 @@
 				 <div layout="column" ng-if="selectedColumn.widgetType=='staticPivotTable'">
 					<div flex layout="row" layout-align="start center">
 						<md-checkbox ng-disabled="selectedColumn.disableShowHeader" flex ng-model="selectedColumn.showHeader" >
-									{{translate.load("sbi.cockpit.table.showHeader")}}
+									{{::translate.load("sbi.cockpit.table.showHeader")}}
 						</md-checkbox>
 						<div class="kn-info" layout="row" flex layout-align="start center" ng-if="selectedColumn.showSortingAlert" >
 							ATTENTION: Were saved manual sortings that are different by the next configuration set. The system will use the first ones.</br>
@@ -26,32 +26,32 @@
 					</div>
 					<div layout="row" flex> 
 						<md-input-container flex>
-						  <label>{{translate.load('sbi.cockpit.table.columnname')}}</label>
+						  <label>{{::translate.load('sbi.cockpit.table.columnname')}}</label>
 						  <input ng-model="selectedColumn.id"  ng-disabled="true">
 						</md-input-container>
 						<md-input-container flex>
-						  <label>{{translate.load('sbi.cockpit.table.title')}}</label>
+						  <label>{{::translate.load('sbi.cockpit.table.title')}}</label>
 						  <input ng-model="selectedColumn.alias">
 						</md-input-container>	
 						<md-input-container flex ng-if="variables">
-						  	<label>{{translate.load('sbi.cockpit.widgets.staticpivot.variables')}} <small>{{translate.load('sbi.generic.optional')}}</small></label>
+						  	<label>{{::translate.load('sbi.cockpit.widgets.staticpivot.variables')}} <small>{{::translate.load('sbi.generic.optional')}}</small></label>
 						  	<md-select ng-model="selectedColumn.variable">
 						  		<md-option></md-option>
 								<md-option ng-repeat="(key, value) in variables" ng-value="key" >							
 									{{key}}
 								</md-option>
 							</md-select>
-						  	<div class="hint">{{translate.load('sbi.cockpit.widgets.staticpivot.variables.hint')}}</div>
+						  	<div class="hint">{{::translate.load('sbi.cockpit.widgets.staticpivot.variables.hint')}}</div>
 						</md-input-container>
 					</div>
 					<div layout="row">
 						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE' && selectedColumn.fieldType!='CALCULATED_FIELD'" class="md-block" flex>
 								<md-checkbox ng-model="selectedColumn.sorting" aria-label="Checkbox Order" ng-disabled="selectedColumn.showSortingAlert">
-										{{translate.load("sbi.cockpit.widgets.table.sorting.column")}}
+										{{::translate.load("sbi.cockpit.widgets.table.sorting.column")}}
 								</md-checkbox>
 						</md-input-container>
 						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE' && selectedColumn.fieldType!='CALCULATED_FIELD'" class="md-block" flex>
-							<label>{{translate.load("sbi.cockpit.widgets.table.sorting.orderByColumnValue");}}</label>
+							<label>{{::translate.load("sbi.cockpit.widgets.table.sorting.orderByColumnValue");}}</label>
 							<md-select ng-model="selectedColumn.sortingId" ng-disabled="!selectedColumn.sorting || selectedColumn.sorting=='' || selectedColumn.showSortingAlert" data-ng-change="updateSortOptions(selectedColumn)">
 								<md-option ng-repeat="sortCol in selectedColumn.sorterByColumns" ng-value="sortCol" >							
 								{{sortCol}}
@@ -59,14 +59,15 @@
 							</md-select>
 						</md-input-container>
 						<md-input-container ng-if="selectedColumn.fieldType!='MEASURE' && selectedColumn.fieldType!='CALCULATED_FIELD'" class="md-block" flex>
-							<label>{{translate.load("sbi.cockpit.widgets.table.sorting.order");}}</label>
+							<label>{{::translate.load("sbi.cockpit.widgets.table.sorting.order");}}</label>
 							<md-select ng-model="selectedColumn.sortingOrder" ng-disabled="!selectedColumn.sorting || selectedColumn.sorting=='' || selectedColumn.showSortingAlert" data-ng-change="updateSortOptions(selectedColumn)">
-								<md-option value="ASC">{{translate.load("sbi.cockpit.widgets.table.sorting.asc");}}</md-option>
-								<md-option value="DESC">{{translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
+								<md-option value="ASC">{{::translate.load("sbi.cockpit.widgets.table.sorting.asc");}}</md-option>
+								<md-option value="DESC">{{::translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
 							</md-select>
 						</md-input-container>
 						<md-input-container ng-if="selectedColumn.fieldType=='MEASURE' || selectedColumn.fieldType=='CALCULATED_FIELD'" flex>
-							<label>{{translate.load('sbi.cockpit.aggregationwindow.selectAggregation')}}</label>
+							<md-tooltip md-delay="500"> {{::translate.load('sbi.cockpit.aggregationwindow.selectAggregation.tooltip')}} </md-tooltip>
+							<label>{{::translate.load('sbi.cockpit.aggregationwindow.selectAggregation')}}</label>
 							<md-select ng-model="selectedColumn.funct">
 								<md-option ng-repeat="agF in availableAggregationFunctions" ng-value="agF.value" >
 								{{agF.label}}
@@ -74,7 +75,7 @@
 							</md-select>
 						</md-input-container>
 						<md-input-container ng-if="selectedColumn.fieldType=='MEASURE' || selectedColumn.fieldType=='CALCULATED_FIELD'" flex>
-							<md-checkbox flex ng-model="selectedColumn.excludeFromTotalAndSubtotal">{{translate.load("sbi.cockpit.aggregationwindow.excludeFromTotalAndSubtotal")}}</md-checkbox>
+							<md-checkbox flex ng-model="selectedColumn.excludeFromTotalAndSubtotal">{{::translate.load("sbi.cockpit.aggregationwindow.excludeFromTotalAndSubtotal")}}</md-checkbox>
 						</md-input-container>
 					</div>			
 					
@@ -86,7 +87,7 @@
 					<!-- both simple table and static pivot table -->
 					<div layout="column">
 					<md-input-container md-class="md-block">
-						<label>{{translate.load('sbi.cockpit.table.visualizationtype')}}</label>
+						<label>{{::translate.load('sbi.cockpit.table.visualizationtype')}}</label>
 							<md-select ng-model="selectedColumn.visType">
 								<md-option ng-repeat="vType in visTypes" value="{{vType.value}}">
 									{{vType.label}}
@@ -96,22 +97,22 @@
 			 
 				   <div ng-if="selectedColumn.visType=='Chart'|| selectedColumn.visType=='Chart & Text' || selectedColumn.visType== 'Text & Chart' " layout="row" layout-wrap>
 						<md-input-container flex=50 class="md-block" class="small counter" >
-							<label>{{translate.load('sbi.cockpit.table.minvalue')}}</label>
+							<label>{{::translate.load('sbi.cockpit.table.minvalue')}}</label>
 							<input class="input_class" type="number" ng-model="selectedColumn.minValue" required>
 						</md-input-container>
 						
 						<md-input-container flex=50 class="md-block" class="small counter">
-							<label>{{translate.load('sbi.cockpit.table.maxvalue')}}</label>
+							<label>{{::translate.load('sbi.cockpit.table.maxvalue')}}</label>
 							<input class="input_class" type="number" ng-model="selectedColumn.maxValue" required>
 						</md-input-container>
 						
 						<md-input-container flex=50 class="md-block" class="small counter">
-							<label>{{translate.load('sbi.cockpit.table.chartlength')}}(px)</label>
+							<label>{{::translate.load('sbi.cockpit.table.chartlength')}}(px)</label>
 							<input class="input_class" type="number" ng-model="selectedColumn.chartLength" required>
 						</md-input-container>
 						
 						<md-input-container flex=50 class="md-block" class="small counter">
-							<label>{{translate.load('sbi.cockpit.table.chartcolor')}}</label>
+							<label>{{::translate.load('sbi.cockpit.table.chartcolor')}}</label>
 							<color-picker  options="colorPickerProperty" ng-model="selectedColumn.chartColor "></color-picker>
 						</md-input-container>
 						
@@ -179,7 +180,7 @@
 					<md-toolbar class="ternaryToolbar ">
 					  <div class="md-toolbar-tools">
 						<h2>
-						  <span>{{translate.load('sbi.cockpit.table.threshold')}}</span>
+						  <span>{{::translate.load('sbi.cockpit.table.threshold')}}</span>
 						</h2>
 					  </div>
 				   </md-toolbar>
@@ -196,35 +197,35 @@
 						>						
 						</angular-table>
 						<div flex>
-						{{translate.load('sbi.cockpit.table.backgroundthresholds')}}
+						{{::translate.load('sbi.cockpit.table.backgroundthresholds')}}
 							<div ng-repeat="i in [0, 1, 2]"  layout="row">
 									
 									<md-input-container flex class="md-block" flex="33%">
-										<label>{{translate.load('sbi.cockpit.table.condition')}}</label>
+										<label>{{::translate.load('sbi.cockpit.table.condition')}}</label>
 										<md-select aria-label="aria-label" ng-model="selectedColumn.colorThresholdOptions.condition[i]">
 											<md-option ng-repeat="c in conditions" value="{{c}}">{{c}}</md-option>
 										</md-select>
 									</md-input-container>
 									
 									<md-input-container flex class="md-block"  ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'" class="small counter">
-										<label>{{translate.load('sbi.cockpit.table.threshold')}}</label>
+										<label>{{::translate.load('sbi.cockpit.table.threshold')}}</label>
 										<input class="input_class" type="number" ng-model="selectedColumn.colorThresholdOptions.conditionValue[i]" required>
 									</md-input-container>
 									
 									<md-input-container flex class="md-block" flex="33%" ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'">
-										<label>{{translate.load('sbi.cockpit.table.condition')}}</label>
+										<label>{{::translate.load('sbi.cockpit.table.condition')}}</label>
 										<md-select aria-label="aria-label" ng-model="selectedColumn.colorThresholdOptions.condition2[i]">
 											<md-option ng-repeat="c in conditions" value="{{c}}">{{c}}</md-option>
 										</md-select>
 									</md-input-container>
 									
 									<md-input-container flex class="md-block"  ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'" class="small counter">
-										<label>{{translate.load('sbi.cockpit.table.threshold')}}</label>
+										<label>{{::translate.load('sbi.cockpit.table.threshold')}}</label>
 										<input class="input_class" type="number" ng-model="selectedColumn.colorThresholdOptions.conditionValue2[i]" required>
 									</md-input-container>									
 									
 									<md-input-container flex class="md-block" ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'">
-										<label>{{translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+										<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
 										<color-picker options="colorPickerProperty" ng-model="selectedColumn.colorThresholdOptions.color[i]"></color-picker>
 									</md-input-container>
 							</div>							
@@ -245,43 +246,43 @@
 			   </md-toolbar>
 			   
 			   <md-card-content>
-			   <div flex layout="row" ng-if="selectedColumn.fieldType == 'MEASURE'">
+			   <div flex layout="row" ng-if="selectedColumn.fieldType == 'MEASURE' || selectedColumn.fieldType == 'CALCULATED_FIELD'">
 					<md-input-container flex class="md-block" class="small counter">
-						<label> {{translate.load('sbi.cockpit.style.prefix')}}</label>
-						<input class="input_class"  ng-model="selectedColumn.style.prefix"> 
+						<label> {{::translate.load('sbi.cockpit.style.prefix')}}</label>
+						<input class="input_class"  ng-model="selectedColumn.style.prefix" ng-no-trim> 
 					</md-input-container>
 					<md-input-container flex class="md-block" class="small counter">
-						<label>{{translate.load('sbi.cockpit.style.suffix')}}</label>
-						<input class="input_class"  ng-model="selectedColumn.style.suffix"> 
+						<label>{{::translate.load('sbi.cockpit.style.suffix')}}</label>
+						<input class="input_class"  ng-model="selectedColumn.style.suffix" ng-no-trim> 
 					</md-input-container>
 					<md-input-container flex class="md-block"  class="small counter">  
-						<label>{{translate.load('sbi.cockpit.style.format')}}</label>
+						<label>{{::translate.load('sbi.cockpit.style.format')}}</label>
 						<md-select aria-label="aria-label" ng-model="selectedColumn.style.format">
 							<md-option ng-repeat="f in formatPattern" value="{{f}}">{{f}}</md-option>
 						</md-select>
 					</md-input-container>
 					<md-input-container flex class="md-block" class="small counter">
-						<label>{{translate.load('sbi.cockpit.style.precision')}}</label>
+						<label>{{::translate.load('sbi.cockpit.style.precision')}}</label>
 						<input class="input_class" type="number" ng-model="selectedColumn.style.precision" min="0" ng-disabled="!isPrecisionEnabled()">
 					</md-input-container>
 			   </div>	
 			   <div  flex layout="row">
 					<md-input-container class="md-block" flex>
-						<label>{{translate.load('sbi.cockpit.table.columnSize')}}</label>
+						<label>{{::translate.load('sbi.cockpit.table.columnSize')}}</label>
 						<input class="input_class" type="text" ng-model="selectedColumn.style.size"> 
 					</md-input-container>
 					<md-input-container flex class="md-block"> 
-						<label>{{translate.load('sbi.cockpit.table.fontcolor')}}</label>
+						<label>{{::translate.load('sbi.cockpit.table.fontcolor')}}</label>
 						<color-picker  options="colorPickerProperty" ng-model="selectedColumn.style.color"></color-picker>
 					</md-input-container>
 					<md-input-container flex class="md-block"> 
-						<label>{{translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+						<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
 						<color-picker  options="colorPickerProperty" ng-model="selectedColumn.style.background "></color-picker>
 					</md-input-container>
 				</div>
 			   <div flex>
 					<md-input-container flex class="md-block"> 
-							<label>{{translate.load('sbi.cockpit.table.fontweight')}}</label>
+							<label>{{::translate.load('sbi.cockpit.table.fontweight')}}</label>
 							<md-select aria-label="aria-label" ng-model="selectedColumn.style.fontWeight">
 									<md-option ng-repeat="w in cockpitModule_generalOptions.fontWeight" ng-value="w.value">{{w.label}}</md-option>
 							</md-select>
@@ -289,7 +290,7 @@
 				</div>
 				<div flex>
 					<md-input-container class="md-block" flex>
-				<label>{{translate.load("sbi.cockpit.table.fontsize")}}</label>
+				<label>{{::translate.load("sbi.cockpit.table.fontsize")}}</label>
 				<md-select ng-model="selectedColumn.style.fontSize">
 					<md-option ng-repeat="fs in cockpitModule_generalOptions.fontSizeDimension" ng-value="fs.value">{{fs.label}}</md-option>
 				</md-select>
@@ -297,13 +298,13 @@
 				</div>
 			 <div layout="row" flex class="relative"> 	
 					<md-input-container flex class="md-block"> 
-							<label>{{translate.load('sbi.cockpit.table.alignment')}}</label>
+							<label>{{::translate.load('sbi.cockpit.table.alignment')}}</label>
 							<md-select aria-label="aria-label" ng-model="selectedColumn.style.textAlign">
 									<md-option ng-repeat="a in cockpitModule_generalOptions.textAlign" ng-value="a.value">{{a.label}}</md-option>
 							</md-select>
 					</md-input-container>
 					<md-input-container flex class="md-block"> 
-							<label>{{translate.load('sbi.cockpit.table.vertical.alignment')}}</label>
+							<label>{{::translate.load('sbi.cockpit.table.vertical.alignment')}}</label>
 							<md-select aria-label="aria-label" ng-model="selectedColumn.style.textVerticalAlign">
 									<md-option ng-repeat="a in cockpitModule_generalOptions.textVerticalAlign" ng-value="a.value">{{a.label}}</md-option>
 							</md-select>
@@ -319,10 +320,10 @@
 	<md-dialog-actions layout="row">
 	  <span flex></span>
 	  <md-button ng-click="cancelcolumnStyleConfiguration()" class="md-raised" >
-		{{translate.load('sbi.generic.cancel')}}
+		{{::translate.load('sbi.generic.cancel')}}
 	  </md-button>
 	  <md-button ng-click="saveColumnStyleConfiguration()" class="md-primary md-raised" ng-disabled="checkIfDisable()" >
-		{{translate.load('sbi.generic.save')}}
+		{{::translate.load('sbi.generic.save')}}
 	  </md-button>
 	</md-dialog-actions>
 	 

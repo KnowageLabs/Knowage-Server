@@ -242,7 +242,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 				if (measure.isCalculated) {
 					obj.formula = measure.formula;
-					if (measure.funct && measure.funct != 'NONE') obj.formula = measure.funct + "(" + measure.formula + ")";
 				}
 
 				obj["orderType"] = "";
