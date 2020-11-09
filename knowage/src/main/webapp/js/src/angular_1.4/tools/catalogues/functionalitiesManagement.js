@@ -7,10 +7,15 @@ app.config([ '$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
 	$mdThemingProvider.setDefaultTheme('knowage');
 } ]);
-
-app.controller('FunctionalitiesManagementController', [ "$scope","sbiModule_restServices", "sbiModule_translate", "$mdDialog", "sbiModule_messaging",
+app.filter('i18n', function(sbiModule_i18n) {
+    return function(label) {
+        return sbiModule_i18n.getI18n(label);
+    }
+});
+app.controller('FunctionalitiesManagementController', [ "$scope","sbiModule_restServices", "sbiModule_translate", "$mdDialog", "sbiModule_messaging", "sbiModule_i18n",
 		FunctionalitiesManagementFunction ]);
-function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiModule_translate, $mdDialog,sbiModule_messaging) {
+function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiModule_translate, $mdDialog,sbiModule_messaging, sbiModule_i18n) {
+	sbiModule_i18n.loadI18nMap();
 	// getting all functionalities
 	$scope.getFolders = function() {
 		sbiModule_restServices.promiseGet("2.0/functionalities", "").then(
