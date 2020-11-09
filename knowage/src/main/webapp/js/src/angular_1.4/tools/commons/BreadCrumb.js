@@ -1,10 +1,15 @@
 (function() {
-	
+
 	var scripts = document.getElementsByTagName("script");
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	
+
 angular.module('bread_crumb', ['ngMaterial'])
+.filter('i18n', function(sbiModule_i18n) {
+	return function(label) {
+		return sbiModule_i18n.getI18n(label);
+	}
+})
 .directive('breadCrumb', function() {
 	return {
 		templateUrl: currentScriptPath + 'templates/bread_crumb.html',
@@ -21,7 +26,7 @@ angular.module('bread_crumb', ['ngMaterial'])
 			control:'=',
 			disableGoBack:"=?"
 		},
-		link: function (scope, elm, attrs) { 
+		link: function (scope, elm, attrs) {
 			scope.control = scope.control || {};
 			scope.ngModel= scope.ngModel || [];
 			if(scope.control.insertBread==undefined){
@@ -41,7 +46,7 @@ angular.module('bread_crumb', ['ngMaterial'])
 					}
 				};
 			}
-			
+
 			if(scope.control.refresh==undefined){
 				scope.control.refresh = function(){
 					scope.$apply();
@@ -51,9 +56,13 @@ angular.module('bread_crumb', ['ngMaterial'])
 	}
 });
 
-function breadCrumbControllerFunction($scope){
+function breadCrumbControllerFunction($scope,sbiModule_i18n){
+
+	$scope.i18n = sbiModule_i18n;
+	$scope.i18n.loadI18nMap();
+
 	var s=$scope;
-	
+
 	s.goToHome = function() {
 		//TODO add link to the homepage
 		return;
@@ -65,13 +74,13 @@ function breadCrumbControllerFunction($scope){
 			return true
 		}
 	}
-	
+
 	s.moveToItem = function(item,index,isFromBread){
-		
+
 		if(!s.canGoBack(item,index) && isFromBread==true){
 			return;
 		}
-		
+
 		if(index!=s.selectedIndex){
 			s.selectedIndex=index;
 			s.selectedItem=item;
@@ -81,11 +90,11 @@ function breadCrumbControllerFunction($scope){
 			}
 		}
 	};
-	
+
 	s.addItem = function(item){
 		s.ngModel.push(item);
 		s.selectedIndex=s.ngModel.length-1;
 		s.selectedItem=item;
 	};
-}	
+}
 })();
