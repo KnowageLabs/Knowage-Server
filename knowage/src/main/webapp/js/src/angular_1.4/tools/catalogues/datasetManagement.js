@@ -2944,7 +2944,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		console.info("DOWNLOAD FILE [IN]");
 
 		var params = {};
-		params.fileName = $scope.selectedDataSet.fileName;
+		params.dsLabel = $scope.selectedDataSet.label;
 		params.type = $scope.selectedDataSet.fileType;
 		var requestParams = '?' + $httpParamSerializer(params);
 		var config = {"responseType": "arraybuffer"};

@@ -373,16 +373,17 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/download/file")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response downloadDataSetFile(@QueryParam("fileName") String fileName, @QueryParam("type") String type) {
+	public Response downloadDataSetFile(@QueryParam("dsLabel") String dsLabel, @QueryParam("type") String type) {
 		File file = null;
 		ResponseBuilder response = null;
-		IDataSet myDataset = getDatasetManagementAPI().getDataSet(getDatasetLabelFromFileName(fileName));
+		IDataSet myDataset = getDatasetManagementAPI().getDataSet(dsLabel);
 		List<IDataSet> visibleDatasets = getDatasetManagementAPI().getDataSets();
 		if (!visibleDatasets.contains(myDataset)) {
-			logger.warn("User not allowed to download file " + fileName);
+			logger.warn("User not allowed to download file from dataset: " + dsLabel);
 			return Response.status(Status.UNAUTHORIZED).build();
 		}
 		try {
+			String fileName = getFileNameFromDatasetConfiguration(myDataset);
 			String resourcePath = SpagoBIUtilities.getResourcePath();
 			File fileDirectory = new File(resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files");
 			file = new File(fileDirectory, fileName);
@@ -409,14 +410,16 @@ public class DataSetResource extends AbstractDataSetResource {
 		return response.build();
 	}
 
-	private String getDatasetLabelFromFileName(String fileName) {
-		// strip file extension
-		String label = fileName.substring(0, fileName.lastIndexOf('.'));
-		// strip version counter if exists
-		if (label.matches(".*_[0-9]+")) {
-			label = label.substring(0, label.lastIndexOf('_'));
+	private String getFileNameFromDatasetConfiguration(IDataSet dataSet) {
+		try {
+			dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
+			JSONObject conf = new JSONObject(dataSet.getConfiguration());
+			String fileName = conf.getString("fileName");
+			return fileName;
+		} catch (Exception e) {
+			logger.error("Error while getting file name from configuration", e);
+			throw new SpagoBIRuntimeException("Error while getting file name from configuration");
 		}
-		return label;
 	}
 
 	private String getMimeType(String type) {
