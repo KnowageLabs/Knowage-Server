@@ -34,7 +34,7 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 
 .directive('topaxis',function(sbiModule_config){
 	var buttonsDimension = 64;
-	
+
 	function manageTopSlider(element,maxWidth){
 		var elements = element[0].querySelectorAll('.top-axis-element');
 		var totalWidth = 0;
@@ -48,7 +48,7 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 		scope.$watch(function(){
 			return element[0].offsetWidth;
 		},function(newValue,oldValue){scope.topSliderNeeded = manageTopSlider(element,newValue)})
-		
+
 		scope.$watch(function(){
 			return element[0].querySelectorAll('.top-axis-element').length;
 		},function(newValue,oldValue){scope.topSliderNeeded = manageTopSlider(element,element[0].offsetWidth)})
@@ -61,7 +61,7 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 
 .directive('leftaxis',function(sbiModule_config){
 	var buttonsDimension = 64;
-	
+
 	function manageLeftSlider(element,maxHeight){
 		var elements = element[0].querySelectorAll('.left-axis-element');
 		var totalHeight = 0;
@@ -75,7 +75,7 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 		scope.$watch(function(){
 			return element[0].offsetHeight;
 		},function(newValue,oldValue){scope.leftSliderNeeded = manageLeftSlider(element,newValue)})
-		
+
 		scope.$watch(function(){
 			return element[0].querySelectorAll('.left-axis-element').length;
 		},function(newValue,oldValue){scope.leftSliderNeeded = manageLeftSlider(element,element[0].offsetHeight)})
@@ -88,7 +88,7 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 
 .directive('filterpanel',function(sbiModule_config){
 	var buttonsDimension = 64;
-	
+
 	function manageTopSlider(element,maxWidth){
 		var elements = element[0].querySelectorAll('.new-filter-card');
 		var totalWidth = 0;
@@ -102,7 +102,7 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 		scope.$watch(function(){
 			return element[0].offsetWidth;
 		},function(newValue,oldValue){scope.filterSliderNeeded = manageTopSlider(element,newValue)})
-		
+
 		scope.$watch(function(){
 			return element[0].querySelectorAll('.new-filter-card').length;
 		},function(newValue,oldValue){scope.filterSliderNeeded = manageTopSlider(element,element[0].offsetWidth)})
@@ -129,7 +129,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	var cutArray = [12, 11, 10, 9, 6]; //array with maximum lengths for card
 	$scope.selectView = false;
 
-
+	$scope.currentSelectedMembers = [];
 
 
 	var typeMsgWarn =sbiModule_translate.load('sbi.common.warning');
@@ -155,8 +155,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 	$scope.unSelectAll = function(tree){
 		hierarchyTreeService.setVisibilityForAll(tree,false);
-		//tree[0].visible = true;
 		tree[0].visible = false;
+		$scope.currentSelectedMembers = [];
 	}
 
 	$scope.parameterBindings=[];
@@ -350,7 +350,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		sbiModule_restServices.promisePost("1.0/hierarchy/slicerTree?" + $httpParamSerializer(queryParams),"",body)
 			.then(function(response) {
 				checkIfExists(response.data);
-				$scope.selectView = hierarchyTreeService.isAnyVisible($scope.data)
+				$scope.selectView = hierarchyTreeService.isAnyVisible($scope.data);
+				// update current selected members array
+				$scope.currentSelectedMembers = $scope.hierarchyTreeService.getVisibleMembers($scope.data);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
 			});
@@ -365,7 +367,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		sbiModule_restServices.promisePost("1.0/hierarchy/visibleMembers?" + $httpParamSerializer(queryParams),"",body)
 			.then(function(response) {
 				checkIfExists(response.data);
-				$scope.selectView = hierarchyTreeService.isAnyVisible($scope.data)
+				$scope.selectView = hierarchyTreeService.isAnyVisible($scope.data);
+				// update current selected members array
+				$scope.currentSelectedMembers = $scope.hierarchyTreeService.getVisibleMembers($scope.data);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
 			});
@@ -561,6 +565,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.searchText = "";
 		hlght = false;
 		$scope.isSlicer=true;
+		// reset current selected members array
+		$scope.currentSelectedMembers = [];
 		$mdDialog.hide();
 	}
 
@@ -570,7 +576,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			if($scope.olapMode){
 				$scope.FiltersService.setSlicers(filterFather,[$scope.filterSelected[$scope.filterAxisPosition]])
 			}else{
-				$scope.FiltersService.setSlicers(filterFather,$scope.hierarchyTreeService.getVisibleMembers($scope.data))
+				$scope.FiltersService.setSlicers(filterFather, $scope.currentSelectedMembers);
 
 			}
 			if($scope.selectedAttribute){
@@ -588,7 +594,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		}
 		else
 
-			if(hierarchyTreeService.isAnyVisible($scope.data)){
+			if ($scope.currentSelectedMembers.length > 0) {
 				filterPlaceMemberOnAxis();
 				$scope.bindMode=false;
 				selectedFlag = false;
@@ -630,9 +636,16 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	filterPlaceMemberOnAxis = function(){
 
 		clearSelectedList();
+		var membersToSend = [];
+		$scope.currentSelectedMembers.forEach(function (aMember) {
+			var aMemberCopy = angular.copy(aMember);
+			delete aMemberCopy.collapsed;
+			delete aMemberCopy.children;
+			membersToSend.push(aMemberCopy);
+		});
 		var encoded = encodeURI('1.0/axis/'+ $scope.activeaxis+ '/placeMembersOnAxis?SBI_EXECUTION_ID='+ JSsbiExecutionID);
 		sbiModule_restServices.promisePost
-		(encoded,"",hierarchyTreeService.getVisibleMembers($scope.data))
+		(encoded, "", membersToSend)
 		.then(function(response) {
 
 			 $scope.handleResponse(response);
@@ -969,7 +982,22 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	   }
 
 	   if(mode == 'edit'){
-	   $scope.loadProfileAttributes();
+		   $scope.loadProfileAttributes();
+	   }
+
+	   $scope.updateSelectedMembers = function (item) {
+		   if (item.visible) {
+			   // if member is selected, add it into the array
+			   $scope.currentSelectedMembers.push(item);
+		   } else {
+			   // if member is not selected, remove it from the array; we must search it by uniqueName first
+			   const member = $scope.currentSelectedMembers.find(function(aMember) {return aMember.uniqueName == item.uniqueName});
+			   if (member) {
+				   const index = $scope.currentSelectedMembers.indexOf(member);
+				   $scope.currentSelectedMembers.splice(index, 1);
+			   }
+		   }
+		   console.log($scope.currentSelectedMembers);
 	   }
 };
 })();
