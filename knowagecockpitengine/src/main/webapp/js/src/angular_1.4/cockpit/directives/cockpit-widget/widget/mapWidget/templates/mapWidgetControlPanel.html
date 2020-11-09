@@ -10,7 +10,7 @@
 		</md-button>
 	</md-toolbar>
 
-	<div ng-repeat="layer in ngModel.content.layers | filter:{isStatic:false}">
+	<div ng-repeat="layer in ngModel.content.layers | orderBy:'':true | filter:{isStatic:false}">
 		<div class="indicatorOptions" layout="column">
 			<div class="indicatorLabel"  layout="row" layout-align="start center" ng-click="toggleLayerExpanse(layer)">
 				<md-icon md-font-icon="fa fa-eye" ng-if="getLayerVisibility(layer.name)" ng-click="toggleLayer($event,layer.name)"></md-icon>
@@ -65,7 +65,7 @@
 		<h2 class="md-toolbar-tools">{{translate.load('sbi.cockpit.map.section.filters')}}</h2>
 		<span flex></span>
 	</md-toolbar>
-	<div ng-repeat="currLayer in ngModel.content.layers | filter:hasPerLayerFilters" ng-if="!isFilterDisabled(currLayer)">
+	<div ng-repeat="currLayer in ngModel.content.layers | orderBy:'':true | filter:hasPerLayerFilters" ng-if="!isFilterDisabled(currLayer)">
 
 		<div class="indicatorOptions" layout="column">
 			<div class="indicatorLabel" layout="row" layout-align="start center">

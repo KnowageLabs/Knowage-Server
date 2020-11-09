@@ -628,6 +628,14 @@ function mapWidgetEditControllerFunction(
 		return ret;
 	}
 
+	$scope.refreshDataForFilters = function() {
+		$scope.newModel.dataset.dsId = $scope.newModel.datasetId = $scope.newModel.content.layers.map(function(el) { return el.dsId; });
+	}
+
+	$scope.$watch("newModel.content.layers", function() {
+		$scope.refreshDataForFilters();
+	}, true);
+
 	function getSizeFromFieldType(column) {
 		var fieldType = column.value.fieldType;
 
