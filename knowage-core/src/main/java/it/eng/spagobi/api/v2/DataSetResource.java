@@ -48,6 +48,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -375,6 +376,12 @@ public class DataSetResource extends AbstractDataSetResource {
 	public Response downloadDataSetFile(@QueryParam("fileName") String fileName, @QueryParam("type") String type) {
 		File file = null;
 		ResponseBuilder response = null;
+		IDataSet myDataset = getDatasetManagementAPI().getDataSet(getDatasetLabelFromFileName(fileName));
+		List<IDataSet> visibleDatasets = getDatasetManagementAPI().getDataSets();
+		if (!visibleDatasets.contains(myDataset)) {
+			logger.warn("User not allowed to download file " + fileName);
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
 		try {
 			String resourcePath = SpagoBIUtilities.getResourcePath();
 			File fileDirectory = new File(resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files");
@@ -400,6 +407,16 @@ public class DataSetResource extends AbstractDataSetResource {
 			throw new SpagoBIRuntimeException("Error while downloading dataset file");
 		}
 		return response.build();
+	}
+
+	private String getDatasetLabelFromFileName(String fileName) {
+		// strip file extension
+		String label = fileName.substring(0, fileName.lastIndexOf('.'));
+		// strip version counter if exists
+		if (label.matches(".*_[0-9]+")) {
+			label = label.substring(0, label.lastIndexOf('_'));
+		}
+		return label;
 	}
 
 	private String getMimeType(String type) {
