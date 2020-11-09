@@ -181,6 +181,44 @@ public class LovResultCacheManager {
 		logger.debug("OUT");
 		return lovResult;
 	}
+	
+	/*
+	 * GET LOV RESULT FROM BUSINESS MODELS
+	 */
+
+	public String getLovResultBum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies, IDrivableBIResource object,
+			boolean retrieveIfNotcached, Locale locale) throws Exception {
+		logger.debug("IN");
+
+		String lovResult = null;
+
+		if (lovDefinition instanceof QueryDetail) {
+			// queries are cached
+			String cacheKey = getCacheKeyBum(profile, lovDefinition, dependencies, object);
+			logger.info("Cache key : " + cacheKey);
+			if (cache.contains(cacheKey)) {
+				logger.info("Retrieving lov result from cache...");
+				// lov provider is present, so read the DATA in cache
+				lovResult = (String) cache.get(cacheKey);
+				logger.debug(lovResult);
+			} else if (retrieveIfNotcached) {
+				logger.info("Executing lov to get result ...");
+				lovResult = lovDefinition.getLovResult(profile, dependencies, object.getMetamodelDrivers(), locale);
+				logger.debug(lovResult);
+				// insert the data in cache
+				if (lovResult != null)
+					cache.put(cacheKey, lovResult);
+			}
+		} else {
+			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input
+			logger.info("Executing lov (NOT QUERY TYPE) to get result ...");
+			lovResult = lovDefinition.getLovResult(profile, dependencies, object.getMetamodelDrivers(), locale);
+			logger.debug(lovResult);
+		}
+
+		logger.debug("OUT");
+		return lovResult;
+	}
 
 	private String getCacheKeyDum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies, IDrivableBIResource objetc) throws Exception {
 		logger.debug("IN");
@@ -195,6 +233,32 @@ public class LovResultCacheManager {
 			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 			if (parameters != null && !parameters.isEmpty()) {
 				Map<String, String> types = queryDetail.getParametersNameToTypeMap(objetc.getDrivers());
+				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
+			}
+			clone.setQueryDefinition(statement);
+			toReturn = userID + ";" + clone.toXML();
+
+		} else {
+			toReturn = userID + ";" + lovDefinition.toXML();
+		}
+		logger.debug("OUT: returning [" + toReturn + "]");
+		return toReturn;
+	}
+	
+
+	private String getCacheKeyBum(IEngUserProfile profile, ILovDetail lovDefinition, List<? extends AbstractParuse> dependencies, IDrivableBIResource objetc) throws Exception {
+		logger.debug("IN");
+		String toReturn = null;
+		String userID = (String) ((UserProfile) profile).getUserId();
+		if (lovDefinition instanceof QueryDetail) {
+			QueryDetail queryDetail = (QueryDetail) lovDefinition;
+			QueryDetail clone = queryDetail.clone();
+			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, objetc.getDrivers()));
+			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(objetc.getMetamodelDrivers());
+			String statement = queryDetail.getWrappedStatement(dependencies, objetc.getMetamodelDrivers());
+			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+			if (parameters != null && !parameters.isEmpty()) {
+				Map<String, String> types = queryDetail.getParametersNameToTypeMap(objetc.getMetamodelDrivers());
 				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
 			}
 			clone.setQueryDefinition(statement);

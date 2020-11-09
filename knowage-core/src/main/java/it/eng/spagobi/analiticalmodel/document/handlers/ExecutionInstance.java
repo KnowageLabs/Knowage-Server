@@ -181,7 +181,7 @@ public class ExecutionInstance implements Serializable {
 		this.userProfile = userProfile;
 		this.flowId = flowId;
 		this.executionId = executionId;
-		this.object = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(biobjectLabel, executionRole);
+		this.object = DriversRuntimeLoaderFactory.getDriversRuntimeLoader().loadBIObjectForExecutionByLabelAndRole(biobjectLabel, executionRole);
 		this.calendar = new GregorianCalendar();
 		this.executionRole = executionRole;
 		this.executionModality = (executionModality == null) ? SpagoBIConstants.NORMAL_EXECUTION_MODALITY : executionModality;

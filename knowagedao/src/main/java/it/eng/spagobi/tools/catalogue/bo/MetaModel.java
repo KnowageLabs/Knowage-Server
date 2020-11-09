@@ -23,6 +23,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
@@ -208,6 +209,18 @@ public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 
 	public void setTablePrefixNotLike(String tablePrefixNotLike) {
 		this.tablePrefixNotLike = tablePrefixNotLike;
+	}
+
+	@Override
+	public List<? extends AbstractDriver> getMetamodelDrivers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setMetamodelDrivers(List<BIMetaModelParameter> drivers) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
