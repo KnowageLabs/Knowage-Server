@@ -124,7 +124,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.oneOperandOperators = ['=', '!=', 'like', '<','>','<=','>=','IN'];
 		$scope.twoOperandsOperators = ['range'];
 
-		
+
 		$scope.updateFiltersDatasetNames = function(){
 			for(var k in $scope.ngModelShared.filters){
 				if ($scope.ngModelShared.filters[k].dataset == 'string') {
@@ -380,7 +380,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.$watch("ngModelShared.datasetId", function(newValue, oldValue) {
 
 			if(newValue != undefined){
-				if($scope.ngModelShared.type == 'text'){
+				if($scope.ngModelShared.type == 'text' || $scope.ngModelShared.type == 'map'){
 					// new value is array containing all datasets currently included in widget
 					$scope.refreshMultiDatasetCase(newValue, 'text');
 
@@ -395,7 +395,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		// TABLE CASE
 		$scope.$watch("ngModelShared.dataset.dsId", function(newValue, oldValue) {
 			if(newValue != undefined){
-				if($scope.ngModelShared.type == 'text'){
+				if($scope.ngModelShared.type == 'text' || $scope.ngModelShared.type == 'map'){
 					// new value is array containing all datasets currently included in widget
 					$scope.refreshMultiDatasetCase(newValue, 'text');
 				}else {
