@@ -8,7 +8,7 @@
 				<md-icon ng-click='openFolder(folder,false)' ng-if="folder.type !== 'folder'" md-font-icon="{{iconDocument}}"></md-icon>
 				
 				<div tabindex="2" ng-click='openFolder(folder,true)' class="line-container">
-					<span> &nbsp;{{folder[label]}}</span> 
+					<span> &nbsp;{{ folder[label] | i18n }}</span> 
 				</div>
 			</div>
 			<div class="menu-container" ng-if="menuOption.length!=0 && menuOption!=undefined" ng-show="folder.isHover" layout="row" layout-aling="end center">
