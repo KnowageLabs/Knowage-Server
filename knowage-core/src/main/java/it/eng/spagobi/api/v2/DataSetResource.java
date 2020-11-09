@@ -72,7 +72,6 @@ import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesLi
 import it.eng.spagobi.api.BusinessModelOpenParameters;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIMetaModelParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -90,7 +89,6 @@ import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -105,7 +103,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DatasetFunctionsConfig;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
-import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -375,7 +372,6 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/download/file")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@UserConstraint(functionalities = { SpagoBIConstants.DS_SCOPE_USER, SpagoBIConstants.DS_SCOPE_ENTERPRISE })
 	public Response downloadDataSetFile(@QueryParam("fileName") String fileName, @QueryParam("type") String type) {
 		File file = null;
 		ResponseBuilder response = null;
@@ -1139,14 +1135,14 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
 						? objParameter.getDriver().getParameter().getLabel()
-								: "";
-						String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
-						String sessionKey = parLab + "_" + useModLab;
+						: "";
+				String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
+				String sessionKey = parLab + "_" + useModLab;
 
-						valueList = objParameter.getDefaultValues();
+				valueList = objParameter.getDefaultValues();
 
-						// in every case fill default values!
-						parameterAsMap.put("driverDefaultValue", valueList);
+				// in every case fill default values!
+				parameterAsMap.put("driverDefaultValue", valueList);
 			}
 
 			if (!showParameterLov) {
@@ -1198,7 +1194,5 @@ public class DataSetResource extends AbstractDataSetResource {
 
 		return parametersArrList;
 	}
-
-	
 
 }
