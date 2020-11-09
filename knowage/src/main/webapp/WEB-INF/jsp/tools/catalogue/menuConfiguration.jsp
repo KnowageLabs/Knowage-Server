@@ -273,7 +273,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 <div ng-if="selectedMenu.functionality == 'DocumentUserBrowser'">
 				<img style="margin: 0 0 -5px -6px;" src="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/img/treebase.gif")%>" alt="" /> 
 				
-				<span>{{translate.load("sbi.menu.folders", "component_scheduler_messages")}}</span>
+				<span>{{translate.load("sbi.menu.folders")}}</span>
 				
 				<div id="docTree" ui-tree="" data-drag-enabled="false"
 						data-drag-delay="false" data-empty-placeholder-enabled="false">
