@@ -41,43 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	});
 
-	function catalogFunctionController($scope,sbiModule_translate,sbiModule_restServices,$q,$mdDialog,cockpitModule_datasetServices,$mdToast){
+	function catalogFunctionController($scope,sbiModule_translate,sbiModule_restServices,cockpitModule_catalogFunctionService,$q,$mdDialog,cockpitModule_datasetServices,$mdToast){
 		$scope.translate = sbiModule_translate;
-
-		// PYTHON ENVIRONMENTS CONFIG
-		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
-		.then(function(response){
-			$scope.ngModel.pythonEnvironments = $scope.buildEnvironments(response.data);
-		});
-
-		// R ENVIRONMENTS CONFIG
-		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promiseGet('2.0/configs/category', 'R_CONFIGURATION')
-		.then(function(response){
-			$scope.ngModel.rEnvironments = $scope.buildEnvironments(response.data);
-		});
-
-		$scope.buildEnvironments = function (data) {
-			toReturn = []
-			for (i=0; i<data.length; i++) {
-				key = data[i].label;
-				val = data[i].valueCheck;
-				toReturn[i] = {"label": key, "value": val};
-			}
-			return toReturn;
-		}
-
-		$scope.loadAllCatalogFunctions = function(){
-			sbiModule_restServices.restToRootProject();
-			sbiModule_restServices.get("2.0/functions-catalog", "").then(
-					function(result) {
-						$scope.ngModel.allCatalogFunctions = result.data.functions;
-					}, function () {
-						$scope.ngModel.allCatalogFunctions = {};
-					}
-			)
-		}
 
 		$scope.removeFunctionOutputColumns = function(){
 			if ($scope.ngModel.content == undefined) {
@@ -99,8 +64,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
-		$scope.loadAllCatalogFunctions();
-
 		if($scope.selectedItem){
 			if ($scope.measuresListFunc != undefined) {
 //				var tmpList = $scope.measuresListFunc();
@@ -115,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.addNewCatalogFunction = function(){
 			var deferred = $q.defer();
-			var promise ;
+			var promise;
 			if ($scope.currentRow) {
 				$scope.currentFunction = $scope.currentRow.boundFunction
 			}
@@ -152,22 +115,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					}
 					$scope.ngModel.selectedFunction = undefined;
-					$scope.loadAllCatalogFunctions();
 				});
 			}, function() {
 			});
-			promise =  deferred.promise;
+			promise = deferred.promise;
 		}
 	}
 
-	function catalogFunctionDialogController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
+	function catalogFunctionDialogController($scope,sbiModule_translate,cockpitModule_template,cockpitModule_catalogFunctionService,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
 		$scope.model = model;
-		$scope.model.selectedFunction = actualItem ? angular.copy(actualItem) : {};
+		$scope.selectedFunction = actualItem ? angular.copy(actualItem) : {};
 		var style = {'display': 'inline-flex', 'justify-content':'center', 'align-items':'center'};
 		var typesMap = {'STRING': "fa fa-quote-right", 'NUMBER': "fa fa-hashtag", 'DATE': 'fa fa-calendar'};
+		$scope.rEnvironments = cockpitModule_catalogFunctionService.rEnvironments;
+		$scope.pythonEnvironments = cockpitModule_catalogFunctionService.pythonEnvironments;
 
-		$scope.model.functionsGrid = {
+		$scope.functionsGrid = {
 		        enableColResize: false,
 		        enableFilter: true,
 		        enableSorting: true,
@@ -180,11 +144,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        columnDefs: [
 		        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.name'), field:'name', headerTooltip:'description'},
 		        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.language'), field:'language', cellRenderer: languageRenderer, cellStyle: style}],
-		        rowData: $scope.model.allCatalogFunctions
+		        rowData: cockpitModule_catalogFunctionService.allCatalogFunctions
 		}
 
 		function resizeFunctions(){
-			$scope.model.functionsGrid.api.sizeColumnsToFit();
+			$scope.functionsGrid.api.sizeColumnsToFit();
 		}
 
 		function selectFunction(props){
@@ -199,7 +163,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				return language + "<i class='fab fa-r-project layout-padding'></i>";
 		}
 
-		$scope.model.columnsGrid = {
+		$scope.columnsGrid = {
 			angularCompileRows: true,
 			domLayout :'autoHeight',
 	        enableColResize: false,
@@ -213,15 +177,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.name'), field:'name'},
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.type'), field:'type', cellRenderer:typeRenderer},
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputColumn.datasetColumn'), field:'dsColumn', editable:true, cellRenderer:editableCell, cellEditor:"agSelectCellEditor", cellEditorParams: {values: getDatasetColumns()}}],
-	        rowData: $scope.model.selectedFunction.inputColumns
+	        rowData: $scope.selectedFunction.inputColumns
 		}
 
 		function refreshRowForColumns(cell){
-			$scope.model.columnsGrid.api.redrawRows({rowNodes: [$scope.model.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
+			$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 		}
 
 		function resizeColumns(){
-			$scope.model.columnsGrid.api.sizeColumnsToFit();
+			$scope.columnsGrid.api.sizeColumnsToFit();
 		}
 
 		function getDatasetColumns(){
@@ -234,7 +198,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return toReturn;
 		}
 
-		$scope.model.variablesGrid = {
+		$scope.variablesGrid = {
 			angularCompileRows: true,
 			domLayout :'autoHeight',
 	        enableColResize: false,
@@ -248,7 +212,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.name'), field:'name'},
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.type'), field:'type', cellRenderer: typeRenderer},
 	        	{headerName: $scope.translate.load('sbi.cockpit.widgets.table.catalogFunctions.inputVariable.value'), field:'value', editable: true, cellRenderer: editableCell}],
-	        rowData: $scope.model.selectedFunction.inputVariables
+	        rowData: $scope.selectedFunction.inputVariables
 		}
 
 		function editableCell(params){
@@ -264,20 +228,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		function refreshRowForVariables(cell){
-			$scope.model.variablesGrid.api.redrawRows({rowNodes: [$scope.model.variablesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
+			$scope.variablesGrid.api.redrawRows({rowNodes: [$scope.variablesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 		}
 
 		function resizeVariables(){
-			$scope.model.variablesGrid.api.sizeColumnsToFit();
+			$scope.variablesGrid.api.sizeColumnsToFit();
 		}
 
 		$scope.selectFunction=function(func){
-			$scope.model.selectedFunction = func;
-			$scope.model.columnsGrid.api.setRowData(func.inputColumns);
-			$scope.model.variablesGrid.api.setRowData(func.inputVariables);
+			$scope.selectedFunction = func;
+			$scope.columnsGrid.api.setRowData(func.inputColumns);
+			$scope.variablesGrid.api.setRowData(func.inputVariables);
 		}
 
-		$scope.model.librariesGrid = {
+		$scope.librariesGrid = {
 	        enableColResize: false,
 	        enableFilter: true,
 	        enableSorting: true,
@@ -288,29 +252,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        columnDefs: [
 	        	{headerName: "Library", field:'name'},
 	        	{headerName: "Version", field:'version'}],
-			rowData: $scope.model.libraries
+			rowData: $scope.libraries
 		}
 
 		function resizeLibraries(){
-			$scope.model.librariesGrid.api.sizeColumnsToFit();
+			$scope.librariesGrid.api.sizeColumnsToFit();
 		}
 
 		function refreshRowForLibraries(cell){
-			$scope.model.librariesGrid.api.redrawRows({rowNodes: [$scope.model.librariesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
+			$scope.librariesGrid.api.redrawRows({rowNodes: [$scope.librariesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 		}
 
 		$scope.setLibraries=function() {
 			sbiModule_restServices.restToRootProject();
-			var endpoint = $scope.model.selectedFunction.language == "Python" ? "python" : "RWidget";
-			sbiModule_restServices.promiseGet('2.0/backendservices/widgets/'+ endpoint +'/libraries', JSON.parse($scope.model.selectedFunction.environment).label)
+			var endpoint = $scope.selectedFunction.language == "Python" ? "python" : "RWidget";
+			sbiModule_restServices.promiseGet('2.0/backendservices/widgets/'+ endpoint +'/libraries', JSON.parse($scope.selectedFunction.environment).label)
 			.then(function(response){
-				$scope.model.selectedFunction.libraries = [];
+				$scope.selectedFunction.libraries = [];
 				var librariesArray = JSON.parse((response.data.result));
 				for (idx in librariesArray) {
 					lib = librariesArray[idx];
-					$scope.model.selectedFunction.libraries.push({"name": lib.name, "version": lib.version})
+					$scope.selectedFunction.libraries.push({"name": lib.name, "version": lib.version})
 				}
-				$scope.model.librariesGrid.api.setRowData($scope.model.selectedFunction.libraries);
+				$scope.librariesGrid.api.setRowData($scope.selectedFunction.libraries);
 			}, function(error){
 			});
 		}
@@ -348,24 +312,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.saveColumnConfiguration=function(){
-			if (!checkColumnsConfiguration($scope.model.selectedFunction.inputColumns))
+			if (!checkColumnsConfiguration($scope.selectedFunction.inputColumns))
 				$scope.toastifyMsg('warning',$scope.translate.load("sbi.cockpit.widgets.table.catalogFunctions.function.error.datasetColumns"));
-			else if (!checkVariablesConfiguration($scope.model.selectedFunction.inputVariables))
+			else if (!checkVariablesConfiguration($scope.selectedFunction.inputVariables))
 				$scope.toastifyMsg('warning',$scope.translate.load("sbi.cockpit.widgets.table.catalogFunctions.function.error.inputVariables"));
-			else if (!checkEnvironmentConfiguration($scope.model.selectedFunction.environment))
+			else if (!checkEnvironmentConfiguration($scope.selectedFunction.environment))
 				$scope.toastifyMsg('warning',$scope.translate.load("sbi.cockpit.widgets.table.catalogFunctions.function.error.environment"));
 			else {
 				$scope.result = [];
-				for (var i=0; i<$scope.model.selectedFunction.outputColumns.length; i++) {
+				for (var i=0; i<$scope.selectedFunction.outputColumns.length; i++) {
 					$scope.result[i] = {};
-					$scope.result[i].boundFunction = angular.copy($scope.model.selectedFunction);
-					if(!$scope.result[i].alias) $scope.result[i].alias = $scope.model.selectedFunction.outputColumns[i].name;
+					$scope.result[i].boundFunction = angular.copy($scope.selectedFunction);
+					if(!$scope.result[i].alias) $scope.result[i].alias = $scope.selectedFunction.outputColumns[i].name;
 					$scope.result[i].aliasToShow = $scope.result[i].alias;
 					$scope.result[i].name = $scope.result[i].alias;
-					$scope.result[i].fieldType = $scope.model.selectedFunction.outputColumns[i].fieldType;
+					$scope.result[i].fieldType = $scope.selectedFunction.outputColumns[i].fieldType;
 					$scope.result[i].isFunction = true;
-					$scope.result[i].type = getResultType($scope.model.selectedFunction.outputColumns[i].type);
-					$scope.result[i].environment = $scope.model.selectedFunction.environment;
+					$scope.result[i].type = getResultType($scope.selectedFunction.outputColumns[i].type);
+					$scope.result[i].environment = $scope.selectedFunction.environment;
 				}
 				promise.resolve($scope.result);
 				$mdDialog.hide();
@@ -382,7 +346,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.cancelConfiguration=function(){
-			$scope.model.selectedFunction = undefined;
+			$scope.selectedFunction = undefined;
 			$mdDialog.cancel();
 		}
 

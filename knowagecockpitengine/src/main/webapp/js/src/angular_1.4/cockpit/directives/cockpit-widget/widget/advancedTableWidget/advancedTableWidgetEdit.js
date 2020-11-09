@@ -371,7 +371,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		$scope.translate=sbiModule_translate;
 
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
-		$scope.model = model;
+		angular.copy(model,$scope.model);
 		$scope.localDataset = {};
 
 		if($scope.model.dataset && $scope.model.dataset.dsId){
