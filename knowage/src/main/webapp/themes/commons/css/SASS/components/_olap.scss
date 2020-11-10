@@ -75,6 +75,9 @@
 				border-right: 1px solid $bordersColor;
 				padding-right: 5px;
 			}
+			td[measurename] {
+				text-align: right;
+			}
 		}
 		tr {
 			&:nth-child(even) {
