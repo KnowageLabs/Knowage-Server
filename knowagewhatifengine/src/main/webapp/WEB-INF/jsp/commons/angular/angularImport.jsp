@@ -24,6 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/@fortawesome/fontawesome-free/css/all.css")%>"/>
 	<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css")%>"/>
 
+	<!-- polyfill -->
+	<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/polyfills/includes-polyfill/includes-polyfill.js")%>"/>
+
 	<!-- angular reference-->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
