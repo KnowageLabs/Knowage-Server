@@ -29,7 +29,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat-start="layer in newModel.content.layers | orderBy:'order' ">
+				<tr ng-repeat-start="layer in newModel.content.layers | orderBy:'order':true ">
 					
 					<td class="multiTableAction" ng-if="newModel.content.layers.length > 1">
 						<div layout="row" layout-align="center"> 

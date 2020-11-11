@@ -114,20 +114,24 @@ function mapWidgetEditControllerFunction(
 		return false;
 	}
 
-	$scope.updateDsList = function(column, dsId){
-		for(var j in $scope.newModel.content.columnSelectedOfDataset[dsId]){
-			if($scope.newModel.content.columnSelectedOfDataset[dsId][j].name == column.name){
-				for(var k in $scope.confrontationDsList){
-					if($scope.confrontationDsList[k].name == column.name){
-						$scope.confrontationDsList.splice(k,1);
+	$scope.updateDsList = function(layer, column){
+		var columns = layer.content.columnSelectedOfDataset;
+		var confrontationDsList = $scope.confrontationDsList;
+		var confrontationDsMetadata = $scope.confrontationDs.metadata.fieldsMeta;
+
+		for(var j in columns){
+			if(columns[j].name == column.name){
+				for(var k in confrontationDsList){
+					if(confrontationDsList[k].name == column.name){
+						confrontationDsList.splice(k,1);
 						break;
 					}
 				}
-				for(var i in $scope.confrontationDs.metadata.fieldsMeta){
-					if(column.name == $scope.confrontationDs.metadata.fieldsMeta[i].name){
-						angular.merge($scope.newModel.content.columnSelectedOfDataset[dsId][j],$scope.confrontationDs.metadata.fieldsMeta[i]);
-						if(!$scope.newModel.content.columnSelectedOfDataset[dsId][j].aliasToShow){
-							$scope.newModel.content.columnSelectedOfDataset[dsId][j].aliasToShow = $scope.newModel.content.columnSelectedOfDataset[dsId][j].alias;
+				for(var i in confrontationDsMetadata){
+					if(column.name == confrontationDsMetadata[i].name){
+						angular.merge(columns[j], confrontationDsMetadata[i]);
+						if(!columns[j].aliasToShow){
+							columns[j].aliasToShow = layer.content.columnSelectedOfDataset[j].alias;
 						}
 						break;
 					}
@@ -179,10 +183,13 @@ function mapWidgetEditControllerFunction(
 		var currentIdx = $scope.newModel.content.layers.indexOf(current);
 		var switchToIdx = null;
 		var switchTo = null;
+		/*
+		 * REMEMBER : the layers are showed in inverted order
+		 */
 		if (direction=='up') {
-			switchToIdx = currentIdx - 1;
-		} else {
 			switchToIdx = currentIdx + 1;
+		} else {
+			switchToIdx = currentIdx - 1;
 		}
 		$scope.newModel.content.layers[currentIdx] = $scope.newModel.content.layers[switchToIdx];
 		$scope.newModel.content.layers[switchToIdx] = current;
@@ -233,8 +240,8 @@ function mapWidgetEditControllerFunction(
 								currCol.aliasToShow = currCol.alias;
 
 								// Initialize columns
-								if (currCol.fieldType == 'ATTRIBUTE' && currCol.fieldType == 'SPATIAL_ATTRIBUTE') {
-									currCol.properties.aggregateBy = true;
+								if (currCol.fieldType == 'ATTRIBUTE' || currCol.fieldType == 'SPATIAL_ATTRIBUTE') {
+									currCol.properties.aggregateBy = false;
 								}
 
 								columnSelected.push(currCol);
@@ -597,7 +604,17 @@ function mapWidgetEditControllerFunction(
 			return sizeC1 - sizeC2;
 		}
 
-		return c1.value.name.localeCompare(c2.value.name);
+		var nameC1 = c1.value.name;
+		var nameC2 = c2.value.name;
+
+		if (typeof nameC1 == "undefined") {
+			return +1;
+		}
+		if (typeof nameC2 == "undefined") {
+			return -1;
+		}
+
+		return nameC1.localeCompare(nameC2);
 	}
 
 	$scope.disableAggregationForMeasures = function(layer) {
@@ -627,6 +644,17 @@ function mapWidgetEditControllerFunction(
 
 		return ret;
 	}
+
+	$scope.refreshDataForFilters = function() {
+		if (typeof $scope.newModel.dataset == "undefined") {
+			$scope.newModel.dataset = {};
+		}
+		$scope.newModel.dataset.dsId = $scope.newModel.datasetId = $scope.newModel.content.layers.map(function(el) { return el.dsId; });
+	}
+
+	$scope.$watch("newModel.content.layers", function() {
+		$scope.refreshDataForFilters();
+	}, true);
 
 	function getSizeFromFieldType(column) {
 		var fieldType = column.value.fieldType;

@@ -10,7 +10,7 @@
 		</md-button>
 	</md-toolbar>
 
-	<div ng-repeat="layer in ngModel.content.layers | filter:{isStatic:false}">
+	<div ng-repeat="layer in ngModel.content.layers | orderBy:'':true | filter:{isStatic:false}">
 		<div class="indicatorOptions" layout="column">
 			<div class="indicatorLabel"  layout="row" layout-align="start center" ng-click="toggleLayerExpanse(layer)">
 				<md-icon md-font-icon="fa fa-eye" ng-if="getLayerVisibility(layer.name)" ng-click="toggleLayer($event,layer.name)"></md-icon>
@@ -41,12 +41,12 @@
 						xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="12"
 						height="12">
 						<defs>
-							<linearGradient id="default_gradient">
+							<linearGradient ng-attr-id="{{ 'default_gradient-' + layer.dsId }}">
 							<stop style="stop-opacity:1;" ng-style="{ 'stop-color': layer.analysisConf.fromColor }" offset="0" />
 							<stop style="stop-opacity:1;" ng-style="{ 'stop-color': layer.analysisConf.toColor   }" offset="1" />
 							</linearGradient>
 						</defs>
-						<rect style="opacity:1;fill:url(#default_gradient);fill-opacity:1.0;" width="12" height="12" x="0" y="0" />
+						<rect ng-style="{ 'fill': 'url(#default_gradient-' + layer.dsId + ')' }" style="opacity:1;fill-opacity:1.0;" width="12" height="12" x="0" y="0" />
 					</svg>
 				</div>
 				<md-icon md-font-icon="fa fa-chevron-down" ng-if="!layer.expandedNav"></md-icon>
@@ -65,7 +65,7 @@
 		<h2 class="md-toolbar-tools">{{translate.load('sbi.cockpit.map.section.filters')}}</h2>
 		<span flex></span>
 	</md-toolbar>
-	<div ng-repeat="currLayer in ngModel.content.layers | filter:hasPerLayerFilters" ng-if="!isFilterDisabled(currLayer)">
+	<div ng-repeat="currLayer in ngModel.content.layers | orderBy:'':true | filter:hasPerLayerFilters" ng-if="!isFilterDisabled(currLayer)">
 
 		<div class="indicatorOptions" layout="column">
 			<div class="indicatorLabel" layout="row" layout-align="start center">
