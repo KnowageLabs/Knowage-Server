@@ -2979,6 +2979,10 @@ public class CrossTab {
 	 */
 	public int getColumnsMainSubtreeNumberOfLeaves() {
 		Node n = columnsRoot;
+		if (columnsHeaderList.size() == 0) {
+			// i don't have any columns defined
+			return 1;
+		}
 		String lastHeaderValue = columnsHeaderList.get(columnsHeaderList.size() - 1);
 		for (int k = 0; k < columnsRoot.getDistanceFromLeaves() - 1; k++) {
 			n = n.getChilds().get(0);

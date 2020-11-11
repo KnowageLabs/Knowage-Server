@@ -847,6 +847,7 @@ public class CrossTabHTMLSerializer {
 		// get measures of subtotals column
 		List<Measure> allMeasures = crossTab.getCrosstabDefinition().getMeasures();
 		List<Measure> subtotalMeasures = getSubtotalsMeasures(allMeasures);
+		int columnsMainSubtreeNumberOfLeaves = crossTab.getColumnsMainSubtreeNumberOfLeaves();
 		int nPartialSumRow = 0;
 		int nPartialLevels = 0;
 		for (int i = 0; i < data.length; i++) {
@@ -880,7 +881,7 @@ public class CrossTabHTMLSerializer {
 					if (crossTab.isMeasureOnRow()) {
 						pos = i % measuresInfo.size();
 					} else {
-						pos = (j % crossTab.getColumnsMainSubtreeNumberOfLeaves()) % measuresInfo.size();
+						pos = (j % columnsMainSubtreeNumberOfLeaves) % measuresInfo.size();
 					}
 
 					if (crossTab.isCellFromSubtotalsColumn(j)) {
