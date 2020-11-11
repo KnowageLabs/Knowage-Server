@@ -32,6 +32,7 @@ public class Report {
 	String label;
 	List<PlaceHolder> placeholders;
 	List<Parameter> parameters;
+	String imageName;
 	
 	public Report() {
 		placeholders = new ArrayList<>();
@@ -53,6 +54,15 @@ public class Report {
 		this.label = label;
 	}
 	
+	public String getImageName() {
+		return imageName;
+	}
+	
+	@JsonSetter("imageName")
+	public void setImageName(String imageName) {
+		this.imageName = imageName;
+	}
+
 	public List<Parameter> getParameters() {
 		return parameters;
 	}
