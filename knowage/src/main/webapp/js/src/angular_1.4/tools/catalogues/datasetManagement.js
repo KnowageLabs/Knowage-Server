@@ -3352,35 +3352,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				$scope.dataset.executed = !$scope.showDrivers;
 				$scope.showFilterIcon = driversExecutionService.showFilterIcon;
 
-				$scope.executeParameter = function(){
-					$scope.showDrivers = false;
-					$scope.dataset.executed = true;
-					$scope.selectedDataSet["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
-					sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
-						.then(function(response){
-
-							$scope.gridOptions.api.setColumnDefs(getColumns(response.data.metaData.fields));
-
-							function getColumns(fields) {
-								var columns = [];
-								for(var f in fields){
-									if(typeof fields[f] != 'object') continue;
-									var tempCol = {"headerName":fields[f].header,"field":fields[f].name, "tooltipField":fields[f].name};
-									tempCol.headerComponentParams = {template: headerTemplate(fields[f].type)};
-									columns.push(tempCol);
-								}
-								return columns;
-							}
-
-							$scope.getPreviewSet(response.data);
-						},
-					function(response) {
-						// Since the repsonse contains the error that is related to the Query syntax and/or content, close the parameters dialog
-						$mdDialog.cancel();
-						sbiModule_messaging.showErrorMessage($scope.translate.load(response.data.errors[0].message), 'Error');
-					})
-				}
-
 				$scope.isExecuteParameterDisabled = function() {
 					for(var i = 0; i < $scope.drivers.length; i++) {
 						if($scope.drivers[i].mandatory && (typeof $scope.drivers[i].parameterValue === 'undefined' || $scope.drivers[i].parameterValue == '')){
@@ -3402,6 +3373,35 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				$scope.drivers = [];
 				$scope.showDrivers = false;
 			}
+
+		$scope.executeParameter = function(){
+			$scope.showDrivers = false;
+			$scope.dataset.executed = true;
+			$scope.selectedDataSet["DRIVERS"] =  driversExecutionService.prepareDriversForSending($scope.drivers);
+			sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
+				.then(function(response){
+
+					$scope.gridOptions.api.setColumnDefs(getColumns(response.data.metaData.fields));
+
+					function getColumns(fields) {
+						var columns = [];
+						for(var f in fields){
+							if(typeof fields[f] != 'object') continue;
+							var tempCol = {"headerName":fields[f].header,"field":fields[f].name, "tooltipField":fields[f].name};
+							tempCol.headerComponentParams = {template: headerTemplate(fields[f].type)};
+							columns.push(tempCol);
+						}
+						return columns;
+					}
+
+					$scope.getPreviewSet(response.data);
+				},
+			function(response) {
+				// Since the repsonse contains the error that is related to the Query syntax and/or content, close the parameters dialog
+				$mdDialog.cancel();
+				sbiModule_messaging.showErrorMessage($scope.translate.load(response.data.errors[0].message), 'Error');
+			})
+		}
 
 		$scope.closeDatasetPreviewDialog=function(){
 			 $scope.previewDatasetModel=[];
