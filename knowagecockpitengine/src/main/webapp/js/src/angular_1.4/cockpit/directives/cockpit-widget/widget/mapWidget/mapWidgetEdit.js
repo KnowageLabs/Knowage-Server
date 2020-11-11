@@ -183,10 +183,13 @@ function mapWidgetEditControllerFunction(
 		var currentIdx = $scope.newModel.content.layers.indexOf(current);
 		var switchToIdx = null;
 		var switchTo = null;
+		/*
+		 * REMEMBER : the layers are showed in inverted order
+		 */
 		if (direction=='up') {
-			switchToIdx = currentIdx - 1;
-		} else {
 			switchToIdx = currentIdx + 1;
+		} else {
+			switchToIdx = currentIdx - 1;
 		}
 		$scope.newModel.content.layers[currentIdx] = $scope.newModel.content.layers[switchToIdx];
 		$scope.newModel.content.layers[switchToIdx] = current;
