@@ -251,6 +251,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 	$scope.applyI18N = function(crosstabDataRequestData) {
 		// looks for all "alias" properties and apply I18N to them
 		crosstabDataRequestData.crosstabDefinition = $scope.getI18NJSON(crosstabDataRequestData.crosstabDefinition, "alias");
+		// looks for all "totals" and "subtotal" properties and apply I18N to them
+		crosstabDataRequestData.crosstabDefinition.config = $scope.getI18NtotalsAndSubtotals(crosstabDataRequestData.crosstabDefinition.config);
 		// looks for all "header" properties and apply I18N to them
 		crosstabDataRequestData.metadata = $scope.getI18NJSON(crosstabDataRequestData.metadata, "header");
 	}
@@ -267,7 +269,16 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 
     	this.traverse(clone, func);
     	return clone;
-	};
+	}
+
+	$scope.getI18NtotalsAndSubtotals = function (jsonTemplate) {
+		var clone = angular.copy(jsonTemplate);
+		clone.columnsubtotalLabel = sbiModule_i18n.getI18n(clone.columnsubtotalLabel);
+		clone.columntotalLabel = sbiModule_i18n.getI18n(clone.columntotalLabel);
+		clone.rowsubtotalLabel = sbiModule_i18n.getI18n(clone.rowsubtotalLabel);
+		clone.rowtotalLabel = sbiModule_i18n.getI18n(clone.rowtotalLabel);
+		return clone;
+	}
 
 	$scope.escapeHtmlString = function(customString){
 		 var map = cockpitModule_generalOptions.htmlEscapes;
