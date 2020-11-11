@@ -237,8 +237,8 @@ function mapWidgetEditControllerFunction(
 								currCol.aliasToShow = currCol.alias;
 
 								// Initialize columns
-								if (currCol.fieldType == 'ATTRIBUTE' && currCol.fieldType == 'SPATIAL_ATTRIBUTE') {
-									currCol.properties.aggregateBy = true;
+								if (currCol.fieldType == 'ATTRIBUTE' || currCol.fieldType == 'SPATIAL_ATTRIBUTE') {
+									currCol.properties.aggregateBy = false;
 								}
 
 								columnSelected.push(currCol);
@@ -643,6 +643,9 @@ function mapWidgetEditControllerFunction(
 	}
 
 	$scope.refreshDataForFilters = function() {
+		if (typeof $scope.newModel.dataset == "undefined") {
+			$scope.newModel.dataset = {};
+		}
 		$scope.newModel.dataset.dsId = $scope.newModel.datasetId = $scope.newModel.content.layers.map(function(el) { return el.dsId; });
 	}
 
