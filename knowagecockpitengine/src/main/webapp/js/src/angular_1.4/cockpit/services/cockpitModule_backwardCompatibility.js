@@ -237,6 +237,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 			if(!self.compareVersion("7.3.1",version)){
+				if(model.oldDatasetExecutions) delete model.oldDatasetExecutions;
+
 				if(model.type=='table' || model.type=='discovery'){
 					for(var k in model.content.columnSelectedOfDataset){
 						if(model.content.columnSelectedOfDataset[k].momentDateFormat){

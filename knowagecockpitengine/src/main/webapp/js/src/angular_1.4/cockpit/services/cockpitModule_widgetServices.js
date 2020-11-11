@@ -38,7 +38,7 @@ angular.module("cockpitModule").factory("cockpitModule_widgetConfigurator",funct
 
 
 
-angular.module("cockpitModule").service("cockpitModule_widgetServices",function($rootScope,cockpitModule_widgetConfigurator,cockpitModule_template,$mdDialog,sbiModule_translate,StructureTabService,$timeout,$q,cockpitModule_datasetServices,sbiModule_restServices,cockpitModule_properties,cockpitModule_widgetSelection,cockpitModule_templateServices){
+angular.module("cockpitModule").service("cockpitModule_widgetServices",function($rootScope,cockpitModule_widgetConfigurator,cockpitModule_template,sbiModule_messaging,$mdDialog,sbiModule_translate,StructureTabService,$timeout,$q,cockpitModule_datasetServices,sbiModule_restServices,cockpitModule_properties,cockpitModule_widgetSelection,cockpitModule_templateServices){
 
 	var wi=this;
 	var validForm = false;
@@ -48,6 +48,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	this.isFormValid  = function (){
 		return validForm;
 	}
+	var oldDatasetExecutions = {};
 	var fullPageWidget=false;
 	var widgetInit=0;
 	var widgetCount=cockpitModule_templateServices.getNumberOfWidgets();
@@ -444,8 +445,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 					if(config.type != "selector" || nature == 'init'){
 						var currDatasetExecution = this.loadDatasetRecords(config, options, config.type == "selector",nature);
-
-						config.oldDatasetExecutions = config.oldDatasetExecutions || [];
+						oldDatasetExecutions[config.id] = [];
 
 						if(currDatasetExecution == null){
 							$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature,options:options});
@@ -460,7 +460,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 								$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
 							}
 
-							$q.all(config.oldDatasetExecutions).then(function() {
+							$q.all(oldDatasetExecutions[config.id]).then(function() {
 								currDatasetExecution.then(function(data){
 									if(config.type == "selector"){
 										if(cockpitModule_widgetSelection.getLastTimestampedSelection() != undefined
@@ -474,12 +474,20 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 									$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
 									$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature,changedChartType:changedChartType, "chartConf":data, options:options});
 								}, function(){
+									for (var i in oldDatasetExecutions[config.id]) {
+										// removing promises that have failed (status 2)
+										if (oldDatasetExecutions[config.id][i].$$state.status == 2) {
+											oldDatasetExecutions[config.id].splice(i,1);
+										}
+									}
 									$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
 									console.error("Unable to load data");
 								});
+							}, function(error) {
+								sbiModule_messaging.showErrorMessage(sbiModule_translate.load("kn.widgetservices.error.promise"), error);
 							});
 
-							config.oldDatasetExecutions.push(currDatasetExecution);
+							oldDatasetExecutions[config.id].push(currDatasetExecution);
 						}
 					}else{
 						var data = {};
