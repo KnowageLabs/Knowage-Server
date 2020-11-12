@@ -880,18 +880,19 @@ public class CrossTabHTMLSerializer {
 					// 1. Get specific measure configuration (format, bgcolor, icon visualization,..)
 					if (crossTab.isMeasureOnRow()) {
 						pos = i % measuresInfo.size();
+						measureConfig = allMeasures.get(pos).getConfig();
 					} else {
 						pos = (j % columnsMainSubtreeNumberOfLeaves) % measuresInfo.size();
+						if (crossTab.isCellFromSubtotalsColumn(j)) {
+							measureConfig = subtotalMeasures.get(pos).getConfig();
+						} else if (crossTab.isCellFromTotalsColumn(j)) {
+							measureConfig = subtotalMeasures.get(totalsCounter).getConfig();
+							totalsCounter++;
+						} else {
+							measureConfig = allMeasures.get(pos).getConfig();
+						}
 					}
 
-					if (crossTab.isCellFromSubtotalsColumn(j)) {
-						measureConfig = subtotalMeasures.get(pos).getConfig();
-					} else if (crossTab.isCellFromTotalsColumn(j)) {
-						measureConfig = subtotalMeasures.get(totalsCounter).getConfig();
-						totalsCounter++;
-					} else {
-						measureConfig = allMeasures.get(pos).getConfig();
-					}
 					String visType = (measureConfig.isNull("visType")) ? "Text" : measureConfig.getString("visType");
 					SourceBean iconSB = null;
 
