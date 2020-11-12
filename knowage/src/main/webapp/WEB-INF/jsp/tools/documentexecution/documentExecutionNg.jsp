@@ -145,6 +145,7 @@ if(executionRoleNames.size() > 0) {
 %>
     <head>
         <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+        <link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico", currTheme)%>" />
         
 <%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE Persist JS                                                     --%>
@@ -154,6 +155,19 @@ if(executionRoleNames.size() > 0) {
 	//defining GLOBAL context url for following directives and template usage
 	_CURRENTCONTEXTURL="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution")%>"
 </script>
+		<script>
+			if(!PleaseRotateOptions){
+				var PleaseRotateOptions = {
+				    message: "Please Rotate Your Device",
+				    subMessage: "For a better mobile experience",
+				    allowClickBypass: false,
+				    onlyMobile: true,
+				    zIndex: 9999
+				};
+			}
+		</script>
+		
+		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/pleaserotate.js/pleaserotate.min.js")%>"></script>
     
         <!--  Drivers Execution -->
         <script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/driversexecution/driversExecutionModule.js")%>"></script>        
