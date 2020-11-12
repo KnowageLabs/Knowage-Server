@@ -5,18 +5,15 @@
       			<div class="breadcrumb">
       				<i class="fa fa-2x fa-home"></i>
       			</div>
-      			<md-tooltip md-delay="1000">
-		 			{{item[itemName]}}
-		 		</md-tooltip>
       		</md-tab-label>
 		</md-tab>
 		<md-tab ng-class="{disabledLink : !canGoBack(item,$index) }" ng-repeat="item in ngModel"  tabindex="3" ng-click="moveToItem(item,$index,true)" >
 		 	<md-tab-label>
 		 		<div class="breadcrumb" ng-class="{'last' : $last}">
-		 			<div class="truncated">{{ item[itemName] || '...' | i18n }}</div>
+		 			<div class="truncated">{{ ( item[itemName] || '...' ) | i18n }}</div>
 		 		</div>
 		 		<md-tooltip md-delay="1000">
-		 			{{item[itemName]}}
+		 			{{ item[itemName] | i18n }}
 		 		</md-tooltip>
 		 	</md-tab-label>
 		 </md-tab>

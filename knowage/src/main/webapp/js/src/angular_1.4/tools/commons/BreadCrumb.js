@@ -56,10 +56,14 @@ angular.module('bread_crumb', ['ngMaterial'])
 	}
 });
 
-function breadCrumbControllerFunction($scope,sbiModule_i18n){
+function breadCrumbControllerFunction($scope,$filter,sbiModule_i18n){
 
-	$scope.i18n = sbiModule_i18n;
-	$scope.i18n.loadI18nMap();
+	sbiModule_i18n.loadI18nMap()
+		.then(function() {
+			for (var i in $scope.ngModel) {
+				$scope.ngModel[i].name = sbiModule_i18n.getI18n($scope.ngModel[i].name);
+			}
+		});
 
 	var s=$scope;
 
