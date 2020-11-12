@@ -6,12 +6,26 @@
 			<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 		</md-icon>
 	</div>
-	<md-input-container class="md-block noMargin" flex>
-		<!-- Temporaly disabled : <input class="input_class" ng-if="!param.multiValue" ng-model="param.value"  ng-required="true" type="number"/> -->
-		<!-- Temporaly disabled : if the parameter is multivalue the user must be able to insert also value separators, not only numbers -->
-		<!-- Temporaly disabled : <input class="input_class" ng-if="param.multiValue" ng-model="param.value"  ng-required="true"/> -->
-		<input class="input_class" ng-model="param.value" ng-required="true"/>
-	</md-input-container>
+	<div layout="row" layout-align="start center">
+		<md-input-container class="md-block noMargin" flex>
+			<!-- Temporaly disabled : <input class="input_class" ng-if="!param.multiValue" ng-model="param.value"  ng-required="true" type="number"/> -->
+			<!-- Temporaly disabled : if the parameter is multivalue the user must be able to insert also value separators, not only numbers -->
+			<!-- Temporaly disabled : <input class="input_class" ng-if="param.multiValue" ng-model="param.value"  ng-required="true"/> -->
+			<input class="input_class" ng-model="param.value" ng-required="true"/>
+		</md-input-container>
+
+		<!-- WARNING : Duplicated template, see below -->
+		<md-menu class="noPadding" ng-if="haveAnalyticalDriversFn">
+			  <md-button aria-label="Open parameters panel" class="md-icon-button" ng-click="$mdOpenMenu()">
+				<md-icon md-menu-origin md-font-icon="fa fa-search"></md-icon>
+			  </md-button>
+			  <md-menu-content width="3">
+				<md-menu-item ng-repeat="driver in analyticalDrivers">
+				  <md-button ng-click="addParameter(driver.url)">{{driver.url}}</md-button>
+				</md-menu-item>
+			</md-menu-content>
+		</md-menu>
+	</div>
 </div>
 
 <!-- manual text input -->
@@ -27,6 +41,7 @@
 			<input class="input_class" ng-model="param.value"  ng-required="true" />
 		</md-input-container>
 		
+		<!-- WARNING : Duplicated template, see above -->
 		<md-menu class="noPadding" ng-if="haveAnalyticalDriversFn">
 			  <md-button aria-label="Open parameters panel" class="md-icon-button" ng-click="$mdOpenMenu()">
 				<md-icon md-menu-origin md-font-icon="fa fa-search"></md-icon>
