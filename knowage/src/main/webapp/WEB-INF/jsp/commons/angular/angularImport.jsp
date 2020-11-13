@@ -27,8 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="manifest" href="<%=urlBuilder.getResourceLink(request,"/manifest.json")%>" crossorigin="use-credentials">
 
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/node_modules/@fortawesome/fontawesome-free/css/all.min.css")%>">
-<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css")%>">
-
 
 <!-- angular reference-->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/dist/angular-bundle.js")%>"></script> 

@@ -44,6 +44,7 @@ module.exports = function(grunt) {
 	        	 ],
 	        	 'dist/knowage-modules-styles-bundle.css' : [
 	        		 'themes/commons/css/reset_2018.css',
+	        		 'node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css',
 	        		 'js/lib/angular/angular-material_1.1.0/angular-material.min.css',
 	        		 'js/lib/angular/angular-tree/angular-ui-tree.min.css',
 	        		 'node_modules/toastify-js/src/toastify.css',
