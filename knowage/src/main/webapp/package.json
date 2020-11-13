@@ -1,6 +1,6 @@
 {
   "name": "knowage",
-  "version": "7.2.0",
+  "version": "7.3.0",
   "description": "Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems.",
   "main": "index.js",
   "scripts": {
@@ -53,6 +53,7 @@
     "jspdf": "1.5.3",
     "moment": "2.22.2",
     "ng-scrollbars": "0.0.11",
+    "ng-wysiwyg": "0.6.2",
     "ngdraggable": "0.1.10",
     "pleaserotate.js": "0.1.2",
     "toastify-js": "^1.6.1",
@@ -63,5 +64,9 @@
   "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/KnowageLabs/Knowage-Server/issues"
+  },
+  "devDependencies": {
+    "grunt": "^1.3.0",
+    "grunt-contrib-concat": "^1.0.1"
   }
 }

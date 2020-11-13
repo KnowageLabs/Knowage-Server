@@ -31,19 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <!-- angular reference-->
-<!-- START-DEBUG -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular.js")%>"></script> 
-<!-- END-DEBUG -->
-
-<!-- START-PRODUCTION 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular.min.js")%>"></script> 
-END-PRODUCTION -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-animate.min.js")%>"></script> 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-aria.min.js")%>"></script> 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-sanitize.min.js")%>"></script> 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-messages.min.js")%>"></script> 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-cookies.js")%>"></script> 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/prettyCron/moment-with-locales.min.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/dist/angular-bundle.js")%>"></script> 
 
 <!-- IE Patch (official polyfill provided by https://developer.mozilla.org )-->
 <script type="text/javascript">
@@ -65,27 +53,13 @@ if (!String.prototype.endsWith) {
 	};
 }
 </script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/polyfills/includes-polyfill/includes-polyfill.js")%>"></script>
-
-<!-- angular-material-->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.js")%>"></script> 
-<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
-
-<!-- angular tree -->
-<link rel="stylesheet" 	href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-tree/angular-ui-tree.min.css")%>">
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-tree/angular-ui-tree.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/dist/polyfills-bundle.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/dist/knowage-lib-bundle.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/dist/knowage-modules-bundle.js")%>"></script>
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/dist/knowage-modules-styles-bundle.css")%>">
 
 <!-- angular list -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/AngularList.js")%>"></script> 		
-
-<!-- context menu -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/contextmenu/ng-context-menu.js")%>"></script> 
-
-<!--pagination-->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/pagination/dirPagination.js")%>"></script> 
-
-<!-- expanderBox -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/expander-box/expanderBox.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/AngularList.js")%>"></script> 		 
 
 <!-- angular table -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script> 
@@ -113,23 +87,7 @@ if (!String.prototype.endsWith) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angular2Col.js")%>"></script> 
 
 <!-- toastr -->
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/angular-toastr.css")%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js")%>"></script> 
-
-<link rel="stylesheet" type="text/css"  href="<%=urlBuilder.getResourceLink(request,"/node_modules/toastify-js/src/toastify.css")%>">
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/toastify-js/src/toastify.js")%>"></script>		
-
-<!-- colorpicker -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/tinycolor-min.js")%>"></script> 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/tinygradient.min.js")%>"></script> 
-
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/angularjs-color-picker.js")%>"></script>
-<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/angularjs-color-picker.min.css")%>">
-<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css")%>">
-
-<!--  wysiwyg -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>	
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/ngWYSIWYG/editor.min.css")%>">
 
 <!-- qbe viewer -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewer.js")%>"></script> 
@@ -149,25 +107,6 @@ if (!String.prototype.endsWith) {
 
 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/xml2js/xml2json.js")%>"></script> 
-
-<!-- angular-base64 -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-base64/angular-base64.min.js")%>"></script> 
-
-<!-- angular JSON FORMATTER -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/jsonformatter/dist/json-formatter.min.js")%>"></script> 
-
-<!-- angular-xregexp -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/xregexp/xregexp-all.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-xregexp/angular-xregexp.js")%>"></script> 
-
-<%-- angular tree control --%>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-tree-control/angular-tree-control.js")%>"></script>
-
-<!-- Include context-menu module if you're going to use menu-id attribute -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-tree-control/context-menu.js")%>"></script>
-
-<!-- link for CSS when using the tree as a Dom element -->
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/node_modules/angular-tree-control/css/tree-control.css")%>"></script>
 
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>">
 
