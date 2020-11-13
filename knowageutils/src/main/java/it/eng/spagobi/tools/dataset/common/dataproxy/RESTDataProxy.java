@@ -50,9 +50,9 @@ public class RESTDataProxy extends AbstractDataProxy {
 	private static final int FETCH_SIZE_NOT_DEFINED = -1;
 	private static final int MAX_RESULT_NOT_DEFINED = -1;
 
-	protected String requestBody;
-	protected String address;
-	protected final Map<String, String> requestHeaders;
+	private String requestBody;
+	private String address;
+	private final Map<String, String> requestHeaders;
 
 	private String unparametrizedRequestBody;
 	private String unparametrizedAddress;
@@ -237,9 +237,19 @@ public class RESTDataProxy extends AbstractDataProxy {
 		return maxResultsParam;
 	}
 
+	public void setAddress(String address) {
+		this.address = address;
+		replaceParameters();
+	}
+
 	@Override
 	public void setParameters(Map<String, String> parameters) {
 		super.setParameters(parameters);
+		replaceParameters();
+	}
+
+	public void setRequestBody(String requestBody) {
+		this.requestBody = requestBody;
 		replaceParameters();
 	}
 

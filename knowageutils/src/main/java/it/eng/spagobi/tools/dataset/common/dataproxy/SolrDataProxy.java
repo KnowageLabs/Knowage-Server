@@ -83,9 +83,9 @@ public class SolrDataProxy extends RESTDataProxy {
 	private void addPaginationParams(IDataReader dataReader) {
 		String paginationParam = createPaginationParameters(dataReader);
 		if (method == HttpMethod.Get) {
-			this.address += paginationParam;
+			setAddress(getAddress() + paginationParam);
 		} else if (method == HttpMethod.Post) {
-			this.requestBody += paginationParam;
+			setRequestBody(getRequestBody() + paginationParam);
 		}
 
 	}
@@ -93,9 +93,9 @@ public class SolrDataProxy extends RESTDataProxy {
 	@Override
 	public IDataStore load(IDataReader dataReader) {
 		if (!facets) {
-			this.address = this.address.replaceAll(" ", "%20");
+			setAddress(getAddress().replaceAll(" ", "%20"));
 			addPaginationParams(dataReader);
-			logger.info("Solr query to execute has address [" + address + "] and body [" + requestBody + "]");
+			logger.info("Solr query to execute has address [" + getAddress() + "] and body [" + getRequestBody() + "]");
 			return super.load(dataReader);
 		} else {
 			try {
@@ -103,8 +103,8 @@ public class SolrDataProxy extends RESTDataProxy {
 
 				List<NameValuePair> query = getQuery();
 
-				String tempAddress = this.address.replaceAll(" ", "%20");
-				String tempBody = this.requestBody;
+				String tempAddress = getAddress().replaceAll(" ", "%20");
+				String tempBody = getRequestBody();
 				if (method == HttpMethod.Get) {
 					tempAddress += createPaginationParameters(dataReader);
 				} else if (method == HttpMethod.Post) {
@@ -112,7 +112,7 @@ public class SolrDataProxy extends RESTDataProxy {
 				}
 				logger.info("Solr query to execute has address [" + tempAddress + "] and body [" + tempBody + "]");
 
-				Response response = RestUtilities.makeRequest(this.method, tempAddress, this.requestHeaders,
+				Response response = RestUtilities.makeRequest(this.method, tempAddress, getRequestHeaders(),
 						tempBody, query);
 				String responseBody = response.getResponseBody();
 				if (response.getStatusCode() != HttpStatus.SC_OK) {
@@ -126,7 +126,7 @@ public class SolrDataProxy extends RESTDataProxy {
 					int resultNumber = 0;
 					// add stuff to get the number of facets
 					response = RestUtilities.makeRequest(this.method, tempAddress + ("&stats=true&stats.field=" + facetField + "&stats.calcdistinct=true"),
-							this.requestHeaders, this.requestBody, query);
+							getRequestHeaders(), getRequestBody(), query);
 					String responseBodyNumber = response.getResponseBody();
 
 					try {
@@ -137,7 +137,7 @@ public class SolrDataProxy extends RESTDataProxy {
 					}
 					if (response.getStatusCode() != HttpStatus.SC_OK || resultNumberNotAvailable) {
 						logger.debug("Can not resolve the resolutNumber of the query" + responseBodyNumber);
-						response = RestUtilities.makeRequest(this.method, tempAddress, this.requestHeaders, this.requestBody, query);
+						response = RestUtilities.makeRequest(this.method, tempAddress, getRequestHeaders(), getRequestBody(), query);
 						responseBodyNumber = response.getResponseBody();
 						Object parsed = JsonPath.read(responseBodyNumber, "$.facet_counts.facet_fields.*.[*]");
 						List<Object> parsedData;
