@@ -223,11 +223,14 @@ public class ExcelExporter {
 		try {
 			if (exportWidget) {
 				String widgetId = String.valueOf(body.get("widget"));
-				if (options.isEmpty()) // check if exporting crosstab
-					exportWidget(templateString, widgetId, wb);
-				else {
+				String widgetType = getWidgetTypeFromCockpitTemplate(templateString, widgetId);
+				if (widgetType.equalsIgnoreCase("static-pivot-table")) {
 					JSONObject optionsObj = new JSONObject(options);
 					exportWidgetCrossTab(templateString, widgetId, wb, optionsObj);
+				} else if (widgetType.equalsIgnoreCase("map")) {
+					exportWidgetMap(templateString, widgetId, wb);
+				} else {
+					exportWidget(templateString, widgetId, wb);
 				}
 			} else {
 				JSONArray widgetsJson = getWidgetsJson(templateString);
@@ -248,6 +251,28 @@ public class ExcelExporter {
 		}
 
 		return out.toByteArray();
+	}
+
+	String getWidgetTypeFromCockpitTemplate(String templateString, String widgetId) {
+		try {
+			JSONObject templateJson = new JSONObject(templateString);
+			JSONArray sheets = templateJson.getJSONArray("sheets");
+			for (int i = 0; i < sheets.length(); i++) {
+				JSONObject sheet = sheets.getJSONObject(i);
+				JSONArray widgets = sheet.getJSONArray("widgets");
+				for (int j = 0; j < widgets.length(); j++) {
+					JSONObject widget = widgets.getJSONObject(j);
+					String currWidgetId = widget.getString("id");
+					if (currWidgetId.equals(widgetId)) {
+						return widget.getString("type");
+					}
+				}
+			}
+		} catch (JSONException e) {
+			logger.error("Couldn't get widget " + widgetId + " type, it will be exported as a normal widget.");
+		}
+		logger.error("Couldn't get widget " + widgetId + " type, it will be exported as a normal widget.");
+		return "";
 	}
 
 	private JSONObject buildOptionsForCrosstab(String templateString) {
@@ -347,8 +372,11 @@ public class ExcelExporter {
 				else if (widgetType.equalsIgnoreCase("static-pivot-table") && optionsObj.has(widgetId)) {
 					JSONObject options = optionsObj.getJSONObject(widgetId);
 					exportWidgetCrossTab(templateString, widgetId, wb, options);
-				} else
+				} else if (widgetType.equalsIgnoreCase("map")) {
+					exportWidgetMap(templateString, widgetId, wb);
+				} else {
 					exportWidget(templateString, widgetId, wb);
+				}
 			}
 		} catch (JSONException e) {
 			logger.error("Error exporting cockpit", e);
@@ -378,6 +406,39 @@ public class ExcelExporter {
 				if (dataStore != null) {
 					String cockpitSheetName = getCockpitSheetName(template, widgetId);
 					createExcelFile(dataStore, wb, widgetName, cockpitSheetName);
+				}
+			}
+		} catch (JSONException e) {
+			logger.error("Unable to load template", e);
+		}
+	}
+
+	private void exportWidgetMap(String templateString, String widgetId, Workbook wb) throws SerializationException {
+		try {
+			JSONObject template = new JSONObject(templateString);
+			JSONObject widget = getWidgetById(template, widgetId);
+			if (widget != null) {
+				String widgetName = null;
+				JSONObject style = widget.optJSONObject("style");
+				if (style != null) {
+					JSONObject title = style.optJSONObject("title");
+					if (title != null) {
+						widgetName = title.optString("label");
+					} else {
+						JSONObject content = widget.optJSONObject("content");
+						if (content != null) {
+							widgetName = content.getString("name");
+						}
+					}
+				}
+
+				JSONArray dataStoreArray = getMultiDataStoreForWidget(template, widget);
+				for (int i = 0; i < dataStoreArray.length(); i++) {
+					JSONObject dataStore = dataStoreArray.getJSONObject(i);
+					if (dataStore != null) {
+						String cockpitSheetName = getCockpitSheetName(template, widgetId) + String.valueOf(i);
+						createExcelFile(dataStore, wb, widgetName, cockpitSheetName);
+					}
 				}
 			}
 		} catch (JSONException e) {
@@ -535,6 +596,37 @@ public class ExcelExporter {
 		return null;
 	}
 
+	private JSONArray getMultiDataStoreForWidget(JSONObject template, JSONObject widget) {
+		Map<String, Object> map = new java.util.HashMap<String, Object>();
+		JSONArray multiDataStore = new JSONArray();
+		try {
+			JSONArray datasetIds = widget.getJSONArray("datasetId");
+			for (int i = 0; i < datasetIds.length(); i++) {
+				int datasetId = datasetIds.getInt(i);
+				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
+				String datasetLabel = dataset.getLabel();
+				JSONObject cockpitSelections = getMultiCockpitSelectionsFromBody(widget, datasetId);
+
+				JSONArray summaryRow = getSummaryRowFromWidget(widget);
+				if (summaryRow != null)
+					cockpitSelections.put("summaryRow", summaryRow);
+
+				if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
+					JSONObject jsOptions = new JSONObject();
+					jsOptions.put("solrFacetPivot", true);
+					cockpitSelections.put("options", jsOptions);
+				}
+
+				JSONObject dataStore = getDatastore(datasetLabel, map, cockpitSelections.toString());
+				dataStore.put("widgetData", widget);
+				multiDataStore.put(dataStore);
+			}
+		} catch (Exception e) {
+			logger.error("Cannot get Datastore for widget", e);
+		}
+		return multiDataStore;
+	}
+
 	private JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget) {
 		Map<String, Object> map = new java.util.HashMap<String, Object>();
 		JSONObject datastore = null;
@@ -574,9 +666,9 @@ public class ExcelExporter {
 		if (body == null || body.length() == 0)
 			return cockpitSelections;
 		try {
-			if (exportWidget) // export single widget
+			if (exportWidget) { // export single widget
 				cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
-			else { // export whole cockpit
+			} else { // export whole cockpit
 				JSONArray allWidgets = body.getJSONArray("widget");
 				int i;
 				for (i = 0; i < allWidgets.length(); i++) {
@@ -585,6 +677,40 @@ public class ExcelExporter {
 						break;
 				}
 				cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS").getJSONObject(i);
+			}
+		} catch (Exception e) {
+			logger.error("Cannot get cockpit selections", e);
+		}
+		return cockpitSelections;
+	}
+
+	private JSONObject getMultiCockpitSelectionsFromBody(JSONObject widget, int datasetId) {
+		JSONObject cockpitSelections = new JSONObject();
+		JSONArray allSelections = new JSONArray();
+		if (body == null || body.length() == 0)
+			return cockpitSelections;
+		try {
+			if (exportWidget) { // export single widget with multi dataset
+				allSelections = body.getJSONArray("COCKPIT_SELECTIONS");
+				for (int i = 0; i < allSelections.length(); i++) {
+					if (allSelections.getJSONObject(i).getInt("datasetId") == datasetId) {
+						cockpitSelections = allSelections.getJSONObject(i);
+					}
+				}
+			} else { // export whole cockpit
+				JSONArray allWidgets = body.getJSONArray("widget");
+				int i;
+				for (i = 0; i < allWidgets.length(); i++) {
+					JSONObject curWidget = allWidgets.getJSONObject(i);
+					if (curWidget.getString("id").equals(widget.getString("id")))
+						break;
+				}
+				allSelections = body.getJSONArray("COCKPIT_SELECTIONS").getJSONArray(i);
+				for (int j = 0; j < allSelections.length(); j++) {
+					if (allSelections.getJSONObject(j).getInt("datasetId") == datasetId) {
+						cockpitSelections = allSelections.getJSONObject(j);
+					}
+				}
 			}
 		} catch (Exception e) {
 			logger.error("Cannot get cockpit selections", e);
@@ -624,9 +750,12 @@ public class ExcelExporter {
 			} else {
 				columnsOrdered = columns;
 			}
-			if (widgetContent.has("columnSelectedOfDataset"))
-				mapGroupsAndColumns = getMapFromGroupsArray(groupsArray, widgetContent.getJSONArray("columnSelectedOfDataset"));
 
+			try {
+				mapGroupsAndColumns = getMapFromGroupsArray(groupsArray, widgetContent.getJSONArray("columnSelectedOfDataset"));
+			} catch (JSONException e) {
+				logger.error("Couldn't retrieve groups", e);
+			}
 			Sheet sheet;
 			Row header = null;
 			if (exportWidget) { // export single widget

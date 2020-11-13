@@ -285,7 +285,31 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 				}
 
 				requestUrl.COCKPIT_SELECTIONS[i] = {};
-				if (widget.dataset && Object.keys(widget.dataset).length != 0) {
+				if (widget.type == "map") {
+					requestUrl.COCKPIT_SELECTIONS[i] = [];
+					for (var k=0; k<widget.datasetId.length; k++) {
+						var dsId = widget.datasetId[k];
+						var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
+						var aggregation;
+						if (widget.settings) {
+							aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset, widget.settings.sortingColumn,widget.settings.sortingOrder);
+						}
+						else {
+							aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
+						}
+						var loadDomainValues = widget.type == "selector" ? true : false;
+						var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
+						var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
+						var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
+						var paramsToSend = angular.fromJson(parametersString);
+						requestUrl.COCKPIT_SELECTIONS[i][k] = {};
+						requestUrl.COCKPIT_SELECTIONS[i][k].aggregations = aggregation;
+						requestUrl.COCKPIT_SELECTIONS[i][k].parameters = paramsToSend;
+						requestUrl.COCKPIT_SELECTIONS[i][k].selections = selections;
+					}
+					requestUrl.COCKPIT_VARIABLES[i] = cockpitModule_properties.VARIABLES;
+				}
+				else if (widget.dataset && Object.keys(widget.dataset).length != 0) {
 					var dsId = widget.dataset.dsId
 					var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
 					var aggregation;

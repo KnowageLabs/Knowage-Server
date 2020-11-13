@@ -84,31 +84,59 @@
 				}
 			}
 
-			var dsId = widget.dataset.dsId;
-			var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
-			var aggregation;
-			if (widget.settings) {
-			 aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset, widget.settings.sortingColumn,widget.settings.sortingOrder);
-			}
-			else {
-				aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
-			}
-			// cleanAggregation(widget, aggregation);
+			if (widget.type == "map") {
+				requestUrl.COCKPIT_SELECTIONS = [];
+				for (var k=0; k<widget.datasetId.length; k++) {
+					var dsId = widget.datasetId[k];
+					var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
+					var aggregation;
+					if (widget.settings) {
+					 aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset, widget.settings.sortingColumn,widget.settings.sortingOrder);
+					}
+					else {
+						aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
+					}
+					// cleanAggregation(widget, aggregation);
 
-			var loadDomainValues = widget.type == "selector" ? true : false;
-			var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
+					var loadDomainValues = widget.type == "selector" ? true : false;
+					var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
+					var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
+					var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
+					var paramsToSend = angular.fromJson(parametersString);
+					requestUrl.COCKPIT_SELECTIONS[k] = {};
+					requestUrl.COCKPIT_SELECTIONS[k].datasetId = dsId;
+					requestUrl.COCKPIT_SELECTIONS[k].aggregations = aggregation;
+					requestUrl.COCKPIT_SELECTIONS[k].parameters = paramsToSend;
+					requestUrl.COCKPIT_SELECTIONS[k].selections = selections;
+					requestUrl.COCKPIT_VARIABLES = cockpitModule_properties.VARIABLES;
+					requestUrl.options = options;
+				}
+			} else {
+				var dsId = widget.dataset.dsId;
+				var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
+				var aggregation;
+				if (widget.settings) {
+				 aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset, widget.settings.sortingColumn,widget.settings.sortingOrder);
+				}
+				else {
+					aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
+				}
+				// cleanAggregation(widget, aggregation);
 
-			var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
-			var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
-			var paramsToSend = angular.fromJson(parametersString);
-			requestUrl.COCKPIT_SELECTIONS = {};
-			requestUrl.COCKPIT_SELECTIONS.aggregations = aggregation;
-			requestUrl.COCKPIT_SELECTIONS.parameters = paramsToSend;
-			requestUrl.COCKPIT_SELECTIONS.selections = selections;
-			requestUrl.COCKPIT_VARIABLES = cockpitModule_properties.VARIABLES;
-			requestUrl.options = options;
+				var loadDomainValues = widget.type == "selector" ? true : false;
+				var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
+				var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
+				var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
+				var paramsToSend = angular.fromJson(parametersString);
+				requestUrl.COCKPIT_SELECTIONS = {};
+				requestUrl.COCKPIT_SELECTIONS.aggregations = aggregation;
+				requestUrl.COCKPIT_SELECTIONS.parameters = paramsToSend;
+				requestUrl.COCKPIT_SELECTIONS.selections = selections;
+				requestUrl.COCKPIT_VARIABLES = cockpitModule_properties.VARIABLES;
+				requestUrl.options = options;
+			}
+
 			deferred.resolve(requestUrl);
-
 			return deferred.promise;
 		}
 
