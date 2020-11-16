@@ -22,56 +22,65 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.sql.SqlUtils;
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @author Marco Libanori
  */
-public class JDBCDataProxy extends AbstractDataProxy {
+public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 
 	IDataSource dataSource;
 	String statement;
 	String schema;
+	int fetchSize;
+	int offset;
 
-	private static transient Logger logger = Logger.getLogger(JDBCDataProxy.class);
+	private static transient Logger logger = Logger.getLogger(JDBCBigQueryDataProxy.class);
 
-	public JDBCDataProxy() {
+	public JDBCBigQueryDataProxy(int offsetParam, int fetchSizeParam) {
+		this.setCalculateResultNumberOnLoad(true);
+		this.offset = offsetParam;
+		this.fetchSize = fetchSizeParam;
+	}
+
+	public JDBCBigQueryDataProxy() {
 		this.setCalculateResultNumberOnLoad(true);
 	}
 
-	public JDBCDataProxy(IDataSource dataSource, String statement) {
-		this();
+	public JDBCBigQueryDataProxy(IDataSource dataSource, String statement, int offsetParam, int fetchSizeParam) {
+		this(offsetParam, fetchSizeParam);
 		setDataSource(dataSource);
 		setStatement(statement);
 	}
 
-	public JDBCDataProxy(IDataSource dataSource) {
-		this();
+	public JDBCBigQueryDataProxy(IDataSource dataSource, int offsetParam, int fetchSizeParam) {
+		this(offsetParam, fetchSizeParam);
 		setDataSource(dataSource);
 		setStatement(statement);
 	}
 
+	public JDBCBigQueryDataProxy(IDataSource dataSource) {
+		setDataSource(dataSource);
+	}
+
+	@Override
 	public String getSchema() {
 		return schema;
 	}
 
+	@Override
 	public void setSchema(String schema) {
 		this.schema = schema;
 	}
 
+	@Override
 	public IDataStore load(String statement, IDataReader dataReader) throws EMFUserError {
 		if (statement != null) {
 			setStatement(statement);
@@ -95,37 +104,20 @@ public class JDBCDataProxy extends AbstractDataProxy {
 
 		try {
 
-			Monitor timeToGetConnection = MonitorFactory.start("Knowage.JDBCDataProxy.gettingJDBCConnection");
-			logger.debug("Retrieving JDBC connection...");
 			try {
 				connection = getDataSource().getConnection();
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
-			} finally {
-				timeToGetConnection.stop();
 			}
-			logger.debug("Got JDBC connection.");
-
 			String dialect = dataSource.getHibDialectClass();
-			DatabaseDialect databaseDialect = DatabaseDialect.get(dialect);
 			Assert.assertNotNull(dialect, "Database dialect cannot be null");
 			try {
-				// ATTENTION: For the most db sets the stmt as a scrollable
-				// stmt, only for the compatibility with Ingres sets
-				// a stmt forward only
-				if (databaseDialect.equals(DatabaseDialect.HIVE) || databaseDialect.equals(DatabaseDialect.HIVE2)
-						|| databaseDialect.equals(DatabaseDialect.CASSANDRA) || databaseDialect.equals(DatabaseDialect.IMPALA)
-						|| databaseDialect.equals(DatabaseDialect.ORIENT) || databaseDialect.equals(DatabaseDialect.SPARKSQL)
-						|| databaseDialect.equals(DatabaseDialect.VERTICA) || databaseDialect.equals(DatabaseDialect.REDSHIFT)
-						|| databaseDialect.equals(DatabaseDialect.BIGQUERY)) {
-					stmt = connection.createStatement();
-				} else {
-					stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				}
+
+				stmt = connection.createStatement();
+
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
 			}
-
 			String sqlQuery = "";
 			try {
 				// get max size
@@ -133,14 +125,9 @@ public class JDBCDataProxy extends AbstractDataProxy {
 					stmt.setMaxRows(getMaxResults());
 				}
 				sqlQuery = getStatement();
-				LogMF.info(logger, "Executing query:\n{0}", sqlQuery);
-				Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeStatement:" + sqlQuery);
-				try {
-					resultSet = stmt.executeQuery(sqlQuery);
-				} finally {
-					timeToExecuteStatement.stop();
-				}
-				LogMF.debug(logger, "Query has been executed:\n{0}", sqlQuery);
+				logger.info("Executing query " + sqlQuery + " ...");
+				resultSet = stmt.executeQuery(sqlQuery);
+
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
 			}
@@ -149,21 +136,13 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			if (isCalculateResultNumberOnLoadEnabled()) {
 				logger.debug("Calculation of result set total number is enabled");
 				try {
-					// if its an hive like db the query can be very slow so it's better to execute it just once and not use the inline view tecnique
-					if (SqlUtils.isHiveLikeDialect(dialect)) {
-						logger.debug("It's a BigData datasource so count data iterating result set till max");
-						dataReader.setCalculateResultNumberEnabled(true);
-					} else if (dataReader.isPaginationSupported() && !dataReader.isPaginationRequested()) {
-						// we need to load entire resultset, therefore there is no need to use the inline view tecnique
-						logger.debug("Offset = 0, fetch size = -1: the entire resultset will be loaded, no need to use the inline view tecnique");
-						dataReader.setCalculateResultNumberEnabled(true);
-					} else {
-						// try to calculate the query total result number using inline view tecnique
-						resultNumber = getResultNumber(connection);
-						logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
-						// ok, no need to ask the datareader to calculate the query total result number
-						dataReader.setCalculateResultNumberEnabled(false);
-					}
+
+					// try to calculate the query total result number using inline view tecnique
+					resultNumber = getResultNumber(connection);
+					logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
+					// ok, no need to ask the datareader to calculate the query total result number
+					dataReader.setCalculateResultNumberEnabled(false);
+
 				} catch (Exception t) {
 					logger.debug("KO Calculation of result set total number using inlineview", t);
 					try {
@@ -182,17 +161,12 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			}
 
 			dataStore = null;
-			Monitor timeToGetDataStore = MonitorFactory.start("Knowage.JDBCDataProxy.getDataStore:" + sqlQuery);
-			LogMF.debug(logger, "Getting datastore for SQL query:\n{0}", sqlQuery);
 			try {
 				// read data
 				dataStore = dataReader.read(resultSet);
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while parsing resultset", t);
-			} finally {
-				timeToGetDataStore.stop();
 			}
-			LogMF.debug(logger, "Got datastore for SQL query:\n{0}", sqlQuery);
 
 			if (resultNumber > -1) { // it means that resultNumber was successfully calculated by this data proxy
 				int limitedResultNumber = getMaxResults() > 0 && resultNumber > getMaxResults() ? getMaxResults() : resultNumber;
@@ -210,6 +184,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		return dataStore;
 	}
 
+	@Override
 	protected int getResultNumber(Connection connection) {
 		logger.debug("IN");
 		int resultNumber = 0;
@@ -217,38 +192,27 @@ public class JDBCDataProxy extends AbstractDataProxy {
 
 		ResultSet rs = null;
 
-		String statement = this.getStatement();
+		String statement = getStatement();
 		// if db is SQL server the query nees to be modified in case it contains ORDER BY clause
 
 		String dialect = dataSource.getHibDialectClass();
 		logger.debug("Dialect is " + dialect);
 
-		if (dialect.toUpperCase().contains("SQLSERVER") && statement.toUpperCase().contains("ORDER BY")) {
-			logger.debug("we are in SQL SERVER and ORDER BY case");
-			statement = modifySQLServerQuery(statement);
-		}
 		try {
 			String tableAlias = "";
 			if (!dialect.toLowerCase().contains("orient")) {
 				tableAlias = "temptable";
 			}
-			String sqlQuery = "SELECT COUNT(*) FROM (" + statement + ") " + tableAlias;
+			String sqlQuery = "SELECT COUNT(*) FROM (" + getOldStatement() + ") " + tableAlias;
+			logger.info("Executing query " + sqlQuery + " ...");
 			stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			LogMF.info(logger, "Executing count statement, SQL query:\n{0}", sqlQuery);
-			Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeCountStatement:" + sqlQuery);
-			try {
-				rs = stmt.executeQuery(sqlQuery);
-			} finally {
-				timeToExecuteStatement.stop();
-			}
-			LogMF.debug(logger, "Executed count statement, SQL query:\n{0}", sqlQuery);
+			rs = stmt.executeQuery(sqlQuery);
 			rs.next();
 			resultNumber = rs.getInt(1);
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
 		} finally {
 			releaseResources(null, stmt, rs);
-
 		}
 		logger.debug("OUT : returning " + resultNumber);
 		return resultNumber;
@@ -286,24 +250,27 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		return statement;
 	}
 
+	@Override
 	protected int getResultNumber(ResultSet resultSet) throws SQLException {
 		logger.debug("IN");
-		LogMF.debug(logger, "Moving into last record for statement:\n{0}", resultSet.getStatement().toString());
+
 		int rowcount = 0;
 		if (resultSet.last()) {
 			rowcount = resultSet.getRow();
 			resultSet.beforeFirst(); // not rs.first() because the rs.next()
-										// below will move on, missing the first
-										// element
+			// below will move on, missing the first
+			// element
 		}
-		LogMF.debug(logger, "Moved into last record for statement:\n{0}", resultSet.getStatement().toString());
+
 		return rowcount;
 	}
 
+	@Override
 	public IDataSource getDataSource() {
 		return dataSource;
 	}
 
+	@Override
 	public void setDataSource(IDataSource dataSource) {
 		this.dataSource = dataSource;
 	}
@@ -360,19 +327,73 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				stmt.setMaxRows(getMaxResults());
 			}
 			String sqlQuery = getStatement();
-			LogMF.info(logger, "Executing query:\n{0}", sqlQuery);
-			Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeStatement:" + sqlQuery);
-			try {
-				resultSet = stmt.executeQuery(sqlQuery);
-			} finally {
-				timeToExecuteStatement.stop();
-			}
-			LogMF.debug(logger, "Executed query:\n{0}", sqlQuery);
+			logger.info("Executing query " + sqlQuery + " ...");
+			resultSet = stmt.executeQuery(sqlQuery);
 			return resultSet;
 		} catch (SQLException e) {
 			throw new SpagoBIRuntimeException(e);
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@Override
+	public boolean isOffsetSupported() {
+		return true;
+	}
+
+	@Override
+	public boolean isFetchSizeSupported() {
+		return true;
+	}
+
+	@Override
+	public String getStatement() {
+
+		if (fetchSize == -1) {
+			if (!this.statement.isEmpty()) {
+				this.statement = this.statement.replaceAll(";", "");
+				return this.statement;
+			}
+		}
+
+		String newStatement = "";
+		if (!this.statement.isEmpty()) {
+			this.statement = this.statement.replaceAll(";", "");
+
+			String preQuery = "SELECT * FROM (";
+			newStatement = preQuery.concat(this.statement).concat(") OFFSET " + offset + " LIMIT " + fetchSize);
+		}
+
+		return newStatement;
+	}
+
+	public String getOldStatement() {
+		return statement;
+	}
+
+	@Override
+	public void setStatement(String statement) {
+		this.statement = statement;
+	}
+
+	@Override
+	public int getFetchSize() {
+		return fetchSize;
+	}
+
+	@Override
+	public void setFetchSize(int fetchSize) {
+		this.fetchSize = fetchSize;
+	}
+
+	@Override
+	public int getOffset() {
+		return offset;
+	}
+
+	@Override
+	public void setOffset(int offset) {
+		this.offset = offset;
 	}
 }

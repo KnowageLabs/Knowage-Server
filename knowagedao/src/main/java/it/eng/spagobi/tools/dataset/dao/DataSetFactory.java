@@ -54,6 +54,7 @@ import it.eng.spagobi.tools.dataset.bo.FacetSolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCBigQueryDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
@@ -813,6 +814,8 @@ public class DataSetFactory {
 				ds = new JDBCVerticaDataSet();
 			} else if (dialectToLowerCase.contains("RedShift")) {
 				ds = new JDBCRedShiftDataSet();
+			} else if (dialectToLowerCase.contains("BigQuery")) {
+				ds = new JDBCBigQueryDataSet();
 			}
 		}
 		return (ds != null) ? ds : new JDBCDataSet();

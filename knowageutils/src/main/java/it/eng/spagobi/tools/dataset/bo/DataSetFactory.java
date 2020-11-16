@@ -107,6 +107,8 @@ public class DataSetFactory {
 				className = JDBCVerticaDataSet.class.getName();
 			} else if (dialectToLowerCase.contains("RedShift")) {
 				className = JDBCRedShiftDataSet.class.getName();
+			} else if (dialectToLowerCase.contains("BigQuery")) {
+				className = JDBCBigQueryDataSet.class.getName();
 			}
 		}
 		try {

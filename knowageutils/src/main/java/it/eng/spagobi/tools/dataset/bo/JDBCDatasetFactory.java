@@ -60,6 +60,9 @@ public class JDBCDatasetFactory {
 		case REDSHIFT:
 			dataSet = new JDBCRedShiftDataSet();
 			break;
+		case BIGQUERY:
+			dataSet = new JDBCBigQueryDataSet();
+			break;
 		default:
 			dataSet = new JDBCDataSet();
 		}
