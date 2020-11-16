@@ -50,8 +50,23 @@
 					<version>1.6.0</version>
 					<executions>
 						<execution>		
+							<id>npm-update-version</id>
+						   <phase>process-sources</phase>
+	                  		<goals>
+		                    	<goal>exec</goal>
+		                  	</goals>
+		                  	<configuration>
+								<executable>npm</executable>
+			                    <arguments>
+		                      		<argument>version</argument>
+		                      		<argument>${project.version}</argument>
+			                    </arguments>
+			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+							</configuration>
+						</execution>
+						<execution>		
 							<id>npm-package-install</id>
-						   <phase>prepare-package</phase>
+						   <phase>process-sources</phase>
 	                  		<goals>
 		                    	<goal>exec</goal>
 		                  	</goals>
