@@ -57,7 +57,8 @@ module.exports = function(grunt) {
 	        		 'node_modules/ng-wysiwyg/dist/editor.min.css',
 	        		 'node_modules/angular-tree-control/css/tree-control.css'
 	        	 ],
-	        	 'dist/knowage-sources-bundle.js' : [
+	        	 'dist/knowage-sources-bundle_<%= pkg.version %>.js' : [
+	        		 'js/src/angular_1.4/tools/commons/sbiModule_services/sbiModule_dateServices.js',
 	        		 'js/src/angular_1.4/tools/commons/AngularList.js',
 	        		 'js/src/angular_1.4/tools/commons/angular-table/AngularTable.js',
 	        		 'js/src/angular_1.4/tools/commons/angular-table/utils/daff.js',
