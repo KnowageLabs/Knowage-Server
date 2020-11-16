@@ -1084,36 +1084,31 @@ public class CrossTab {
 	 */
 	private boolean addRecord(Node root, JSONObject datasetRecords, List<String> attributeFieldsName, List<String> orderingList) {
 		boolean toReturn = false;
-		String columnName = null;
-		String valueField = null;
-		String descriptionField = null;
-		Node node;
 		Node nodeToCheck = root;
-		int nodePosition;
 
-		for (int indexFields = 0; indexFields < attributeFieldsName.size(); indexFields++) {
-			try {
-				columnName = attributeFieldsName.get(indexFields);
+		try {
+			for (int indexFields = 0; indexFields < attributeFieldsName.size(); indexFields++) {
+				String columnName = attributeFieldsName.get(indexFields);
 				String valueColumn = getValueFromOrderingId(orderingList, columnName);
 				if (valueColumn == null || valueColumn.equals(""))
 					valueColumn = columnName; // value = description
-				valueField = datasetRecords.getString(valueColumn);
-				descriptionField = datasetRecords.getString(columnName);
-			} catch (JSONException e) {
-				logger.error("Error getting the values from the dataset");
-				throw new SpagoBIEngineRuntimeException("Error getting the values from the dataset");
-			}
-			JSONObject jsonObject = dsColumnName2Metadata.get(columnName);
-			node = new Node(columnName, valueField, descriptionField, jsonObject);
+				String valueField = datasetRecords.getString(valueColumn);
+				String descriptionField = datasetRecords.getString(columnName);
+				JSONObject jsonObject = dsColumnName2Metadata.get(valueColumn);
+				Node node = new Node(columnName, valueField, descriptionField, jsonObject);
 
-			nodePosition = nodeToCheck.getChilds().indexOf(node);
-			if (nodePosition < 0) {
-				toReturn = true;
-				nodeToCheck.addChild(node);
-				nodeToCheck = node;
-			} else {
-				nodeToCheck = nodeToCheck.getChilds().get(nodePosition);
+				int nodePosition = nodeToCheck.getChilds().indexOf(node);
+				if (nodePosition < 0) {
+					toReturn = true;
+					nodeToCheck.addChild(node);
+					nodeToCheck = node;
+				} else {
+					nodeToCheck = nodeToCheck.getChilds().get(nodePosition);
+				}
 			}
+		} catch (Exception e) {
+			logger.error("Error getting the values from the dataset", e);
+			throw new SpagoBIEngineRuntimeException("Error getting the values from the dataset", e);
 		}
 		return toReturn;
 	}
