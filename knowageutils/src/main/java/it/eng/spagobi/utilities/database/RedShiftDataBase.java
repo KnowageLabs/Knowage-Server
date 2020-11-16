@@ -24,7 +24,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 public class RedShiftDataBase extends AbstractDataBase implements CacheDataBase {
 
-	private static transient Logger logger = Logger.getLogger(PostgreSQLDataBase.class);
+	private static transient Logger logger = Logger.getLogger(RedShiftDataBase.class);
 
 	private static int MAX_VARCHAR_VALUE = 10485760;
 
