@@ -95,7 +95,7 @@ public class BigQueryDataBase extends AbstractDataBase implements CacheDataBase 
 	 */
 	@Override
 	public String getAliasDelimiter() {
-		return "\"";
+		return "";
 	}
 
 	/*
