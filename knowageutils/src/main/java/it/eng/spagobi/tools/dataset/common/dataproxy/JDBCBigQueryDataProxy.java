@@ -362,7 +362,7 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 			this.statement = this.statement.replaceAll(";", "");
 
 			String preQuery = "SELECT * FROM (";
-			newStatement = preQuery.concat(this.statement).concat(") OFFSET " + offset + " LIMIT " + fetchSize);
+			newStatement = preQuery.concat(this.statement).concat(") LIMIT " + fetchSize + " OFFSET " + offset);
 		}
 
 		return newStatement;
