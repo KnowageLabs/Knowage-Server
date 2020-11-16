@@ -17,16 +17,12 @@
  */
 (function() {
 
-	var scripts = document.getElementsByTagName("script");
-	var currentScriptPath = scripts[scripts.length - 1].src;
-	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-
 	angular.module('datasetSchedulerModule')
-		   .directive('schedulerTimeUnit', function(){
+		   .directive('schedulerTimeUnit', function(sbiModule_config){
 				return {
-					templateUrl : function(elem,attr){return currentScriptPath + attr.type+'.html'},
+					templateUrl : function(elem,attr){return sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/scheduler/dataset-scheduler/'+ + attr.type+'.html'},
 
 
 				};
 		   });
-})()
+}());

@@ -22,4 +22,4 @@ angular.module('sbiModule')
 				'noRowsToShow': sbiModule_translate.load('kn.table.norows')
 			}
 	});
-})();
+}());

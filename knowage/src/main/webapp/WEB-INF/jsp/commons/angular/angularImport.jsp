@@ -56,13 +56,21 @@ if (!String.prototype.endsWith) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/dist/knowage-modules-bundle.js")%>"></script>
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/dist/knowage-modules-styles-bundle.css")%>">
 
+<script>agGrid.initialiseAgGridWithAngular1(angular);</script>
+
+<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
+
+<!--  START-PRODUCTION -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/dist/knowage-sources-bundle.js")%>"></script>
+<!--  END-PRODUCTION -->
+
+<!--  START-DEBUG -->
 <!-- angular list -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/AngularList.js")%>"></script> 		 
 
 <!-- angular table -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js")%>"></script> 
-
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/kn-table/knTable.js")%>"></script> 
 
 <!-- document tree -->
@@ -75,10 +83,10 @@ if (!String.prototype.endsWith) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/upload-file/FileUpload.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/upload-file/FileUploadBase64.js")%>"></script> 
 
-<!-- 	angular time picker -->
+<!-- angular time picker -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js")%>"></script> 
 
-<!-- 	angular list detail template -->
+<!-- angular list detail template -->
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js")%>"></script> 
 
 <!-- deprecated angular 2 col -->
@@ -101,17 +109,16 @@ if (!String.prototype.endsWith) {
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/scheduler/dataset-scheduler/datasetScheduler.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/scheduler/dataset-scheduler/datasetScheduler_service.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/scheduler/dataset-scheduler/schedulerTimeUnit.js")%>"></script>
-<!-- xml2js -->
 
+<!-- AG GRID TRANSLATIONS-->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/services/knModule_aggridLabels.js")%>"></script>
 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/xml2js/xml2json.js")%>"></script> 
+<!--  END-DEBUG -->
 
+<!-- KNOWAGE MAIN CSS IMPORT -->
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>">
 
-<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 
-<!-- AG GRID -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/node_modules/ag-grid-community/dist/ag-grid-community.min.js")%>"></script>
-<script>agGrid.initialiseAgGridWithAngular1(angular);</script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/services/knModule_aggridLabels.js")%>"></script>
+
+
 	
