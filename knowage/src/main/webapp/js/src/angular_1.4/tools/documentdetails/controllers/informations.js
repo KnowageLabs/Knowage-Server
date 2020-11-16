@@ -42,7 +42,6 @@ angular
              self.datasets1 = documentAndInfo.datasets;
              self.datasets =[];
              self.document = self.documentService.document;
-             self.id = self.document.id;
              self.selectedDataset = {};
 
              if(self.document.visible != false )self.document.visible = true;
@@ -299,9 +298,9 @@ angular
 
              function DialogNewTemplateController($scope, sbiModule_config) {
      			if(self.templateService.listOfTemplates && self.templateService.listOfTemplates.length > 0) {
-     				$scope.iframeUrl = sbiModule_config.contextName + "/servlet/AdapterHTTP?OBJECT_ID="+self.id+"&PAGE=DocumentTemplateBuildPage&MESSAGEDET=EDIT_DOCUMENT_TEMPLATE";
+     				$scope.iframeUrl = sbiModule_config.contextName + "/servlet/AdapterHTTP?OBJECT_ID="+DocumentService.document.id+"&PAGE=DocumentTemplateBuildPage&MESSAGEDET=EDIT_DOCUMENT_TEMPLATE";
      			} else {
-     				$scope.iframeUrl = sbiModule_config.contextName + "/servlet/AdapterHTTP?OBJECT_ID="+self.id+"&PAGE=DocumentTemplateBuildPage&MESSAGEDET=NEW_DOCUMENT_TEMPLATE";
+     				$scope.iframeUrl = sbiModule_config.contextName + "/servlet/AdapterHTTP?OBJECT_ID="+DocumentService.document.id+"&PAGE=DocumentTemplateBuildPage&MESSAGEDET=NEW_DOCUMENT_TEMPLATE";
      			}
      		};
 
