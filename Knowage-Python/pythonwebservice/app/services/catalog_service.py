@@ -19,10 +19,10 @@
 from flask import Blueprint, request
 from app.utilities import security, utils
 
-dataset = Blueprint('catalog', __name__)
-#url: knowage_addr:port/dataset
+catalog = Blueprint('catalog', __name__)
+#url: knowage_addr:port/catalog
 
-@dataset.route('execute', methods = ['POST'])
+@catalog.route('execute', methods = ['POST'])
 def python_function_execute():
     # retrieve input parameters
     try:

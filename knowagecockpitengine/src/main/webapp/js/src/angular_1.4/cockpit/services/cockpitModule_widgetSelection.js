@@ -288,6 +288,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		functionConfig.inputColumns = catalogFunc.inputColumns;
 		functionConfig.inputVariables = catalogFunc.inputVariables;
 		functionConfig.outputColumns = catalogFunc.outputColumns;
+		functionConfig.environment = JSON.parse(catalogFunc.environment).label;
 		return functionConfig;
 	}
 

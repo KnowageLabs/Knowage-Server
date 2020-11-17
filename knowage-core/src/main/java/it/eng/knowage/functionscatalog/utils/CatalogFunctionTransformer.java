@@ -28,16 +28,24 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.knowage.backendservices.rest.widgets.PythonUtils;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
+import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.AbstractDataStoreTransformer;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 
 /**
  * @author Marco Balestri (marco.balestri@eng.it)
@@ -52,6 +60,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 	private Map<String, InputVariable> inputVariables;
 	private Map<String, OutputColumn> outputColumns;
 	private UserProfile profile;
+	private CatalogFunctionDataProxy proxy;
 
 	private static transient Logger logger = Logger.getLogger(CatalogFunctionTransformer.class);
 
@@ -68,16 +77,6 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		initInputVariables();
 		initFunction();
 		initProxy();
-	}
-
-	private void initFunction() {
-		ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
-		fcDAO.setUserProfile(profile);
-		function = fcDAO.getCatalogFunctionById(functionId);
-	}
-
-	private void initProxy() {
-
 	}
 
 	private void initInputColumns() {
@@ -129,6 +128,58 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		}
 	}
 
+	private void initFunction() {
+		ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
+		fcDAO.setUserProfile(profile);
+		function = fcDAO.getCatalogFunctionById(functionId);
+	}
+
+	private void initProxy() {
+		String address = getEngineAddress() + "catalog/execute";
+		HttpMethod method = HttpMethod.valueOf("Post");
+		Map<String, String> requestHeaders = new HashMap<String, String>();
+		requestHeaders.put("Content-Type", "application/json");
+		String requestBody = buildRequestBody();
+		proxy = new CatalogFunctionDataProxy(address, method, requestHeaders, requestBody);
+	}
+
+	String getEngineAddress() {
+		String envLabel = null;
+		String address = null;
+		try {
+			envLabel = functionConfiguration.getString("environment");
+			address = PythonUtils.getPythonAddress(envLabel);
+		} catch (Exception e) {
+			logger.error("Cannot retrieve environment <" + envLabel + "> address", e);
+			throw new SpagoBIRuntimeException("Cannot retrieve environment <" + envLabel + "> address", e);
+		}
+		return address;
+	}
+
+	String buildRequestBody() {
+		JSONObject toReturn = new JSONObject();
+		try {
+			toReturn.put("script", buildScript());
+		} catch (Exception e) {
+			logger.error("Error building request body", e);
+			throw new SpagoBIRuntimeException("Error building request body", e);
+		}
+		return toReturn.toString();
+	}
+
+	String buildScript() {
+		String script = function.getOnlineScript();
+		for (String colName : inputColumns.keySet()) {
+			String dsColumn = inputColumns.get(colName);
+			script.replace("${" + dsColumn + "}", colName);
+		}
+		for (String varName : inputVariables.keySet()) {
+			String value = inputVariables.get(varName).getValue();
+			script.replace("${" + varName + "}", value);
+		}
+		return script;
+	}
+
 	@Override
 	public void transformDataSetMetaData(IDataStore dataStore) {
 		IMetaData dataStoreMeta = dataStore.getMetaData();
@@ -151,11 +202,44 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 	}
 
 	private List<Field> getNewFields(IDataStore dataStore) {
+		proxy.setDataStore(dataStore);
+		// we use JSON data reader with the same config used for Python DataSet
+		IDataReader dataReader = new JSONPathDataReader("$[*]", new ArrayList<JSONPathAttribute>(), true, false);
+		IDataStore data = proxy.load(dataReader);
 		return new ArrayList<Field>();
 	}
 
 	private List<IFieldMetaData> getNewFieldsMeta(IDataStore dataStore) {
-		return new ArrayList<IFieldMetaData>();
+		List<IFieldMetaData> newMeta = new ArrayList<IFieldMetaData>();
+		try {
+			for (String colName : outputColumns.keySet()) {
+				OutputColumn outCol = outputColumns.get(colName);
+				FieldMetadata meta = new FieldMetadata();
+				meta.setName(outCol.getName());
+				meta.setAlias(outCol.getName());
+				meta.setType(getMetaType(outCol.getType()));
+				meta.setFieldType(getMetaFieldType(outCol.getFieldType()));
+				outCol.getType();
+				newMeta.add(meta);
+			}
+		} catch (Exception e) {
+			logger.error("Error getting new fields meta", e);
+			throw new SpagoBIRuntimeException("Error getting new fields meta", e);
+		}
+		return newMeta;
 	}
 
+	private Class getMetaType(String type) {
+		if (type.equalsIgnoreCase("NUMBER"))
+			return Long.class;
+		else
+			return String.class;
+	}
+
+	private FieldType getMetaFieldType(String type) {
+		if (type.equalsIgnoreCase("MEASURE"))
+			return FieldType.MEASURE;
+		else
+			return FieldType.ATTRIBUTE;
+	}
 }
