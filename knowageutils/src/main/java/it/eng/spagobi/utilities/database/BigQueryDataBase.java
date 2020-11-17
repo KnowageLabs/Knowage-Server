@@ -37,14 +37,14 @@ public class BigQueryDataBase extends AbstractDataBase implements CacheDataBase 
 		super(dataSource);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
+	 */
 	@Override
-	public int getVarcharLength() {
-		return varcharLength;
-	}
-
-	@Override
-	public void setVarcharLength(int varcharLength) {
-		this.varcharLength = varcharLength;
+	public String getAliasDelimiter() {
+		return "";
 	}
 
 	@Override
@@ -91,16 +91,6 @@ public class BigQueryDataBase extends AbstractDataBase implements CacheDataBase 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
-	 */
-	@Override
-	public String getAliasDelimiter() {
-		return "";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -112,6 +102,16 @@ public class BigQueryDataBase extends AbstractDataBase implements CacheDataBase 
 			query += " AND table_schema = '" + schema + "'";
 		}
 		return query;
+	}
+
+	@Override
+	public int getVarcharLength() {
+		return varcharLength;
+	}
+
+	@Override
+	public void setVarcharLength(int varcharLength) {
+		this.varcharLength = varcharLength;
 	}
 
 }
