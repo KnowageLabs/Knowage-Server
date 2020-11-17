@@ -19,8 +19,9 @@
 package it.eng.knowage.functionscatalog.utils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,12 +34,14 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
+import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader.JSONPathAttribute;
-import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
@@ -139,7 +142,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		HttpMethod method = HttpMethod.valueOf("Post");
 		Map<String, String> requestHeaders = new HashMap<String, String>();
 		requestHeaders.put("Content-Type", "application/json");
-		JSONObject requestBody = buildRequestBody();
+		JSONObject requestBody = initRequestBody();
 		proxy = new CatalogFunctionDataProxy(address, method, requestHeaders, requestBody);
 	}
 
@@ -156,10 +159,34 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		return address;
 	}
 
-	JSONObject buildRequestBody() {
+	JSONObject initRequestBody() {
 		JSONObject toReturn = new JSONObject();
+		JSONObject inputs = new JSONObject();
 		try {
-			toReturn.put("script", buildScript());
+			JSONArray inputColsArray = new JSONArray();
+			for (String colName : inputColumns.keySet()) {
+				String dsColumn = inputColumns.get(colName);
+				inputColsArray.put(dsColumn);
+			}
+
+			JSONObject inputVarsObj = new JSONObject();
+			for (String varName : inputVariables.keySet()) {
+				InputVariable var = inputVariables.get(varName);
+				inputVarsObj.put(varName, var.getValue());
+			}
+
+			JSONArray outputColsArray = new JSONArray();
+			for (String colName : outputColumns.keySet()) {
+				OutputColumn outCol = outputColumns.get(colName);
+				outputColsArray.put(outCol.getName());
+			}
+
+			inputs.put("inputColumns", inputColsArray);
+			inputs.put("inputVariables", inputVarsObj);
+			inputs.put("outputColumns", outputColsArray);
+
+			toReturn.put("inputs", inputs);
+			toReturn.put("token", getScriptJwtToken());
 		} catch (Exception e) {
 			logger.error("Error building request body", e);
 			throw new SpagoBIRuntimeException("Error building request body", e);
@@ -167,17 +194,24 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		return toReturn;
 	}
 
-	String buildScript() {
+	String getScriptJwtToken() {
 		String script = function.getOnlineScript();
+		// replace keywords
 		for (String colName : inputColumns.keySet()) {
 			String dsColumn = inputColumns.get(colName);
-			script.replace("${" + dsColumn + "}", colName);
+			script = script.replace("${" + colName + "}", "${" + dsColumn + "}");
 		}
-		for (String varName : inputVariables.keySet()) {
-			String value = inputVariables.get(varName).getValue();
-			script.replace("${" + varName + "}", value);
+		for (String colName : outputColumns.keySet()) {
+			OutputColumn outCol = outputColumns.get(colName);
+			script = script.replace("${" + outCol.getName() + "}", "${" + colName + "}");
 		}
-		return script;
+		// create token
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MINUTE, 5);
+		Date expiresAt = calendar.getTime();
+		String jwtToken = JWTSsoService.catalogFunction2jwtToken(script, expiresAt);
+
+		return jwtToken;
 	}
 
 	@Override
@@ -191,22 +225,20 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 
 	@Override
 	public void transformDataSetRecords(IDataStore dataStore) {
-		List<Field> newFields = getNewFields(dataStore);
-		Iterator iterator = dataStore.iterator();
-		int i = 0;
-		while (iterator.hasNext()) {
-			IRecord record = (IRecord) iterator.next();
-			record.appendField(newFields.get(i));
-			i++;
-		}
-	}
-
-	private List<Field> getNewFields(IDataStore dataStore) {
 		proxy.setDataStore(dataStore);
 		// we use JSON data reader with the same config used for Python DataSet
 		IDataReader dataReader = new JSONPathDataReader("$[*]", new ArrayList<JSONPathAttribute>(), true, false);
-		IDataStore data = proxy.load(dataReader);
-		return new ArrayList<Field>();
+		IDataStore newColumns = proxy.load(dataReader);
+		for (int i = 0; i < newColumns.getRecords().size(); i++) {
+			IRecord newRecord = (Record) newColumns.getRecords().get(i);
+			IRecord oldRecord = (Record) dataStore.getRecords().get(i);
+			for (int j = 0; j < newRecord.getFields().size(); j++) {
+				IField newField = newRecord.getFields().get(j);
+				oldRecord.appendField(newField);
+			}
+			int bar = 0;
+		}
+		int foo = 0;
 	}
 
 	private List<IFieldMetaData> getNewFieldsMeta(IDataStore dataStore) {
@@ -231,7 +263,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 
 	private Class getMetaType(String type) {
 		if (type.equalsIgnoreCase("NUMBER"))
-			return Long.class;
+			return Double.class;
 		else
 			return String.class;
 	}

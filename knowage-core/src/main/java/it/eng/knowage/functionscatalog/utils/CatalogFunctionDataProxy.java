@@ -18,6 +18,7 @@
 
 package it.eng.knowage.functionscatalog.utils;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import org.apache.commons.httpclient.HttpStatus;
@@ -101,7 +102,8 @@ public class CatalogFunctionDataProxy extends AbstractDataProxy {
 			JSONArray fieldsArray = new JSONArray();
 			for (int j = 0; j < record.getFields().size(); j++) {
 				IField field = record.getFields().get(j);
-				fieldsArray.put(field.getValue());
+				Object value = field.getValue() instanceof BigDecimal ? ((BigDecimal) field.getValue()).doubleValue() : field.getValue();
+				fieldsArray.put(value);
 			}
 			recordsArray.put(fieldsArray);
 		}

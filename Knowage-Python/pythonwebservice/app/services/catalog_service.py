@@ -31,10 +31,13 @@ def python_function_execute():
         datastore = data['datastore']
         col_metadata = datastore["metadata"]
         records = datastore["records"]
-        datastoreDf = utils.convertKnowageDatastoreToDataframe(col_metadata, records)
-        token = data['script']
+        datastore_df = utils.convertKnowageDatastoreToDataframe(col_metadata, records)
+        token = data['token']
         isAuthenticated, script = security.jwtToken2pythonScript(token)
-        input_values = data['input']
+        input_values = data['inputs']
+        input_columns = input_values['inputColumns']
+        input_variables = input_values['inputVariables']
+        output_columns = input_values['outputColumns']
     except Exception as e:
         return str(e), 400
 
@@ -42,28 +45,31 @@ def python_function_execute():
         return "Unauthorized", 401
 
     # resolve references to datastore
-    script = script.replace("${df}", "df_")
-    #build inputs dictionary
-    inputs = buildInputVariables(input_values)
-    # resolve input values references
-    for input in inputs:
-        if input_values[input].type == 'column':
-            script = script.replace("df_." + input, "df_." + inputs['input'])
-        if input_values[input].type == 'variable':
-            script = script.replace(input, "inputs_.get(\'" + input + "\')")
+    #script = script.replace("${df}", "df_")
+
+    # resolve references to input columns
+    for input_col in input_columns:
+        script = script.replace("${" + input_col + "}", "df_." + input_col)
+
+    # resolve references to input variables
+    for input_var in input_variables:
+        script = script.replace("${" + input_var + "}", "variables_.get(\'" + input_var + "\')")
+
+    # resolve references to output columns
+    for output_col in output_columns:
+        script = script.replace("${" + output_col + "}", "outdf_." + output_col)
+
+    # init empty dataframe that will contain new columns
+    out_df = pd.DataFrame(columns=output_columns)
+
     # execute script
     try:
-        namespace = {"df_": "", "inputs_": inputs}
+        namespace = {"df_": datastore_df, "outdf_": out_df, "variables_": input_variables}
         exec (script, namespace)
     except Exception as e:
         return str(e), 400
-    # collect script result
-    df = namespace["df_"]
 
     # convert dataframe to knowage json format
-    knowage_json = utils.convertDataframeToKnowageDataset(df)
+    knowage_json = utils.convertDataframeToKnowageDataset(namespace["outdf_"])
 
     return str(knowage_json).replace('\'', "\""), 200
-
-def buildInputVariables(input_values):
-    return []
