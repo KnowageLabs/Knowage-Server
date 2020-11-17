@@ -20,10 +20,8 @@ package it.eng.spagobi.engines.whatif.api;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -113,7 +111,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		SwapAxes transform = model.getTransform(SwapAxes.class);
 
 		List<Member> list = new ArrayList<Member>();
-		Set<Member> visibleMembers = null;
+		List<Member> visibleMembers = null;
 		String memberDescription;
 
 		String hierarchyUniqueName = null;
@@ -263,7 +261,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@Path("/slicerTree")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Set<NodeFilter> getSlicerTree(Map<String, String> params) {
+	public List<NodeFilter> getSlicerTree(Map<String, String> params) {
 
 		try {
 			SlicerManager slicerManager = new SlicerManager((SpagoBIPivotModel) getPivotModel());
@@ -286,7 +284,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@Path("/visibleMembers")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Set<NodeFilter> findVisibleMembers(Map<String, String> params) {
+	public List<NodeFilter> findVisibleMembers(Map<String, String> params) {
 
 		String hierarchy = params.get("hierarchy");
 		List<Member> visibleMembers = null;
@@ -297,8 +295,8 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 			FilterTreeBuilder ftb = new FilterTreeBuilder();
 			ftb.setHierarchy(getHierarchy(hierarchy));
-			ftb.setTreeLeaves(new HashSet<Member>(visibleMembers));
-			ftb.setVisibleMembers(new HashSet<Member>(visibleMembers));
+			ftb.setTreeLeaves(visibleMembers);
+			ftb.setVisibleMembers(visibleMembers);
 			ftb.setShowSiblings(false);
 			return ftb.build();
 
@@ -365,14 +363,14 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@Path("/search")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Set<NodeFilter> searchMembersByName(SeachParameters seachParameter) {
+	public List<NodeFilter> searchMembersByName(SeachParameters seachParameter) {
 
 		try {
 			Hierarchy hierarchy = getHierarchy(seachParameter.getHierarchyUniqueName());
 
 			FilterTreeBuilder ftb = new FilterTreeBuilder();
-			Set<Member> treeLeaves = CubeUtilities.findMembersByName(hierarchy, seachParameter.getName(), false);
-			Set<Member> visibleMembers = getVisibleMembers(seachParameter.getAxis(), seachParameter.getHierarchyUniqueName());
+			List<Member> treeLeaves = CubeUtilities.findMembersByName(hierarchy, seachParameter.getName(), false);
+			List<Member> visibleMembers = getVisibleMembers(seachParameter.getAxis(), seachParameter.getHierarchyUniqueName());
 			ftb.setHierarchy(getHierarchy(seachParameter.getHierarchyUniqueName()));
 			ftb.setTreeLeaves(treeLeaves);
 			ftb.setVisibleMembers(visibleMembers);
@@ -429,8 +427,8 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	/**
 	 * @param axis
 	 */
-	private Set<Member> getVisibleMembers(int axis, String hierarchyUniqueName) {
-		Set<Member> visibleMembers = new HashSet<>();
+	private List<Member> getVisibleMembers(int axis, String hierarchyUniqueName) {
+		List<Member> visibleMembers = new ArrayList<>();
 		if (axis >= 0) {
 			PlaceMembersOnAxes pm = getPivotModel().getTransform(PlaceMembersOnAxes.class);
 			visibleMembers.addAll(pm.findVisibleMembers(CubeUtilities.getAxis(axis)));
