@@ -95,11 +95,16 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				obj["id"] = col.alias;
 				obj["alias"] = (ngModel.type == "table" ? col.aliasToShow : col.alias);
 
+				if(col.boundFunction){
+					obj["catalogFunctionId"] = col.boundFunction.id;
+					obj["catalogFunctionConfig"] = buildCatalogFunctionConfiguration(col.boundFunction);
+				}
+
 				if(col.isCalculated == true){
 					obj["formula"] = col.formula;
 				}
-					obj["columnName"] = col.name;
-					obj["orderType"] = "";
+				obj["columnName"] = col.name;
+				obj["orderType"] = "";
 				if(columnOrdering !=undefined){
 					if (typeof columnOrdering == "string" || columnOrdering.name) {
 						var tempOrder = columnOrdering.name ? columnOrdering.name : columnOrdering;
@@ -276,6 +281,14 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 		return result;
 
+	}
+
+	buildCatalogFunctionConfiguration = function(catalogFunc) {
+		var functionConfig = {};
+		functionConfig.inputColumns = catalogFunc.inputColumns;
+		functionConfig.inputVariables = catalogFunc.inputVariables;
+		functionConfig.outputColumns = catalogFunc.outputColumns;
+		return functionConfig;
 	}
 
 	this.createSortingCategory=function(id, orderType){

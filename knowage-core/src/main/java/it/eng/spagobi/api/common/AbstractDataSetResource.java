@@ -45,6 +45,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.functionscatalog.utils.CatalogFunctionTransformer;
 import it.eng.knowage.parsers.CaseChangingCharStream;
 import it.eng.knowage.parsers.SQLiteLexer;
 import it.eng.knowage.parsers.SQLiteParser;
@@ -72,6 +73,7 @@ import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -81,6 +83,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.CoupledCalculatedFieldProjection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.CoupledProjection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCatalogFunctionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
@@ -244,6 +247,15 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 			IDataStore dataStore = getDatasetManagementAPI().getDataStore(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), projections,
 					where, groups, sortings, summaryRowArray, offset, fetchSize, maxRowCount, indexes);
+
+			// if required apply function from catalog
+			int catalogFuncId = getCatalogFunctionId(projections);
+			JSONObject catalogFunctionConfig = getCatalogFunctionConfiguration(projections);
+			if (catalogFuncId != -1) {
+				IDataStoreTransformer functionTransformer = new CatalogFunctionTransformer(catalogFuncId, catalogFunctionConfig);
+				functionTransformer.transform(dataStore);
+			}
+
 			IDataWriter dataWriter = getDataStoreWriter();
 
 			timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:convertToJson");
@@ -262,6 +274,29 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			totalTiming.stop();
 			logger.debug("OUT");
 		}
+	}
+
+	private int getCatalogFunctionId(List<AbstractSelectionField> projections) {
+		int id = -1;
+		for (AbstractSelectionField p : projections) {
+			if (p instanceof DataStoreCatalogFunctionField) {
+				int oldId = id;
+				id = ((DataStoreCatalogFunctionField) p).getCatalogFunctionId();
+				if (oldId != -1 && oldId != id)
+					throw new SpagoBIRuntimeException("Only one function supported");
+			}
+		}
+		return id;
+	}
+
+	private JSONObject getCatalogFunctionConfiguration(List<AbstractSelectionField> projections) {
+		for (AbstractSelectionField p : projections) {
+			if (p instanceof DataStoreCatalogFunctionField) {
+				// we can take the first configuration since all the other ones will be identical
+				return ((DataStoreCatalogFunctionField) p).getCatalogFunctionConfig();
+			}
+		}
+		throw new SpagoBIRuntimeException("Only one function supported");
 	}
 
 	@SuppressWarnings("unused")
@@ -396,8 +431,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			throws JSONException, ValidationException {
 
 		String functionObj = catOrMeasure.optString("funct");
-		// check if it is an array
-		if (functionObj.startsWith("[")) {
+		if (functionObj.startsWith("[")) { // check if it is an array
 			// call for each aggregation function
 			JSONArray functs = new JSONArray(functionObj);
 			for (int j = 0; j < functs.length(); j++) {
@@ -423,7 +457,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		if (jsonObject.has("formula")) {
 			function = AggregationFunctions.get("NONE");
 		}
-		if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
+		if (jsonObject.has("catalogFunctionId")) { // check if the column is coming from catalog function
+			int catalogFuncId = jsonObject.getInt("catalogFunctionId");
+			JSONObject catalogFuncConf = jsonObject.getJSONObject("catalogFunctionConfig");
+			projection = new DataStoreCatalogFunctionField(function, columnAlias, columnAlias, catalogFuncId, catalogFuncConf);
+		} else if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
 			if (jsonObject.has("formula")) {
 				String formula = jsonObject.optString("formula");
 				DataStoreCalculatedField aggregatedProjection = new DataStoreCalculatedField(dataSet, functionColumnName, formula);

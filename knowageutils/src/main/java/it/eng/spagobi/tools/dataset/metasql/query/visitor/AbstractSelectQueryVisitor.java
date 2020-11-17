@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
@@ -33,6 +34,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.BetweenFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCatalogFunctionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.InFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.LikeFilter;
@@ -470,10 +472,15 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			List<AbstractSelectionField> projectionsAbs = query.getProjections();
 			List<Projection> projections = new ArrayList<Projection>();
 			List<DataStoreCalculatedField> projectionsCalcFields = new ArrayList<DataStoreCalculatedField>();
+			List<DataStoreCatalogFunctionField> projectionsCataolgFunctionsFields = new ArrayList<DataStoreCatalogFunctionField>();
 			for (AbstractSelectionField abstractSelectionField : projectionsAbs) {
-				if (!abstractSelectionField.getClass().equals(DataStoreCalculatedField.class)) {
+				if (!abstractSelectionField.getClass().equals(DataStoreCalculatedField.class)
+						&& !abstractSelectionField.getClass().equals(DataStoreCatalogFunctionField.class)) {
 					Projection proj = (Projection) abstractSelectionField;
 					projections.add(proj);
+				} else if (abstractSelectionField.getClass().equals(DataStoreCatalogFunctionField.class)) {
+					DataStoreCatalogFunctionField projCatalogFunc = (DataStoreCatalogFunctionField) abstractSelectionField;
+					projectionsCataolgFunctionsFields.add(projCatalogFunc);
 				} else {
 					DataStoreCalculatedField projCalc = (DataStoreCalculatedField) abstractSelectionField;
 					projectionsCalcFields.add(projCalc);
@@ -578,7 +585,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 	}
 
 	protected void buildGroupBy(SelectQuery query) {
-		List<AbstractSelectionField> groups = query.getGroups();
+		List<AbstractSelectionField> groups = query.getGroups().stream().filter(g -> (g instanceof DataStoreCatalogFunctionField) == false)
+				.collect(Collectors.toList());
 		if (groups == null || groups.isEmpty()) {
 			return;
 		}
