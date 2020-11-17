@@ -1259,6 +1259,23 @@ filter-by-tags {
   }
 }
 
+.tab-badge {
+    background-color: $fabPrimaryColor;
+    padding: 4px;
+    border-radius: 20px;
+    min-width: 20px;
+    display: inline-block;
+    height: 20px;
+    line-height: 11px;
+    color: $lightTextColor;
+    position: relative;
+}
+.tab-spacer {
+    width: 20px;
+    height: 16px;
+    display: inline-block;
+}
+
 @supports (-ms-ime-align: auto) {
   .kn-list-detail {
     overflow-y: hidden;

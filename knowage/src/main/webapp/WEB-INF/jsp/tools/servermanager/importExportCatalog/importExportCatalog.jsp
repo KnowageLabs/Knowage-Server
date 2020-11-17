@@ -81,31 +81,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<div>
 								 <md-tabs md-dynamic-height >
 								      <md-tab id="Dataset"  md-on-select="showDataset=true" >
-								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-tab-label>
+								        <md-tab-label>
+								        	{{translate.load("sbi.importexportcatalog.radiodataset");}}
+								        	<span ng-show="getCatalogForCategory(catalogSelected, 'Dataset').length > 0" class="tab-badge">{{getCatalogForCategory(catalogSelected, 'Dataset').length}}</span>
+								        	<span ng-show="getCatalogForCategory(catalogSelected, 'Dataset').length == 0" class="tab-spacer"></span>
+								        </md-tab-label>
 								        <md-tab-body >
 								         	<export-catalog ng-if="showDataset" type-catalog="Dataset" path-catalog="catalog" catalog-data="catalogDataset" catalog-selected="catalogSelected"></export-catalog>
 								        </md-tab-body>
 								      </md-tab>
 								       <md-tab id="BusinessModel"  md-on-select="showBM=true" >
-								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiobusinessmodel");}}</md-tab-label>
+								        <md-tab-label>
+								        	{{translate.load("sbi.importexportcatalog.radiobusinessmodel");}}
+								        	<span ng-show="getCatalogForCategory(catalogSelected, 'BusinessModel').length > 0" class="tab-badge">{{getCatalogForCategory(catalogSelected, 'BusinessModel').length}}</span>
+								        	<span ng-show="getCatalogForCategory(catalogSelected, 'BusinessModel').length == 0" class="tab-spacer"></span>
+								        </md-tab-label>
 								        <md-tab-body>
 								         	<export-catalog ng-if="showBM" type-catalog="BusinessModel"  path-catalog="catalog" catalog-data="catalogBM" catalog-selected="catalogSelected"></export-catalog>
 								        </md-tab-body>
 								      </md-tab>
 								       <md-tab id="MondrianSchema" md-on-select="showSchema=true">
-								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiomondrianschema");}}</md-tab-label>
+								        <md-tab-label>
+								        	{{translate.load("sbi.importexportcatalog.radiomondrianschema");}}
+								        	<span ng-show="getCatalogForCategory(catalogSelected, 'MondrianSchema').length > 0" class="tab-badge">{{getCatalogForCategory(catalogSelected, 'MondrianSchema').length}}</span>
+								        	<span ng-show="getCatalogForCategory(catalogSelected, 'MondrianSchema').length == 0" class="tab-spacer"></span>
+								        </md-tab-label>
 								        <md-tab-body>
 								         	<export-catalog  ng-if="showSchema" type-catalog="MondrianSchema"  path-catalog="catalog" catalog-data="catalogSchema" catalog-selected="catalogSelected"></export-catalog>
 								        </md-tab-body>
 								      </md-tab>
 								       <md-tab id="SVG" md-on-select="showSVG=true">
-								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiosvg");}}</md-tab-label>
+								        <md-tab-label>
+								        	{{translate.load("sbi.importexportcatalog.radiosvg");}}
+								        	<span ng-show="getCatalogForCategory(catalogSelected, 'SVG').length > 0" class="tab-badge">{{getCatalogForCategory(catalogSelected, 'SVG').length}}</span>
+								        	<span ng-show="getCatalogForCategory(catalogSelected, 'SVG').length == 0" class="tab-spacer"></span>
+								        </md-tab-label>
 								        <md-tab-body>
 								         	<export-catalog ng-if="showSVG" type-catalog="SVG"  path-catalog="catalog" catalog-data="catalogSVG" catalog-selected="catalogSelected"></export-catalog>
 								        </md-tab-body>
 								      </md-tab>
 								       <md-tab id="Layer" md-on-select="showLayer=true">
-								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiolayer");}}</md-tab-label>
+								        <md-tab-label>
+								        	<span>{{translate.load("sbi.importexportcatalog.radiolayer");}}</span>
+								        	<span ng-show="getCatalogForCategory(catalogSelected, 'Layer').length > 0" class="tab-badge">{{getCatalogForCategory(catalogSelected, 'Layer').length}}</span>
+								        	<span ng-show="getCatalogForCategory(catalogSelected, 'Layer').length == 0" class="tab-spacer"></span>
+								        </md-tab-label>
 								        <md-tab-body>
 								         	<export-catalog ng-if="showLayer" type-catalog="Layer"  path-catalog="catalog" catalog-data="catalogLayer" catalog-selected="catalogSelected"></export-catalog>
 								        </md-tab-body>
