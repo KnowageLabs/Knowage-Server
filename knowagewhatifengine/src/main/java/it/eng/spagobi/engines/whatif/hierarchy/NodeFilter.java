@@ -18,10 +18,8 @@
 
 package it.eng.spagobi.engines.whatif.hierarchy;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Member;
@@ -39,7 +37,7 @@ public class NodeFilter implements Comparable<NodeFilter> {
 	private boolean visible;
 	private final boolean leaf;
 
-	private final Set<NodeFilter> children;
+	private final List<NodeFilter> children;
 
 	public NodeFilter(Member m) throws OlapException {
 		super();
@@ -49,7 +47,7 @@ public class NodeFilter implements Comparable<NodeFilter> {
 		this.name = m.getCaption();
 		this.visible = false;
 		this.collapsed = false;
-		this.children = new HashSet<NodeFilter>();
+		this.children = new ArrayList<NodeFilter>();
 		this.leaf = m.getChildMemberCount() == 0;
 
 		if (m != null) {
@@ -63,7 +61,7 @@ public class NodeFilter implements Comparable<NodeFilter> {
 		}
 	}
 
-	public NodeFilter(Member m, int depth, Set<Member> leaves, Set<Member> visibleMembers, boolean showSiblings) throws OlapException {
+	public NodeFilter(Member m, int depth, List<Member> leaves, List<Member> visibleMembers, boolean showSiblings) throws OlapException {
 
 		super();
 		if (visibleMembers != null && visibleMembers.contains(m)) {
@@ -77,7 +75,7 @@ public class NodeFilter implements Comparable<NodeFilter> {
 		this.uniqueName = m.getUniqueName();
 		this.name = m.getCaption();
 		this.collapsed = false;
-		this.children = new TreeSet<NodeFilter>();
+		this.children = new ArrayList<NodeFilter>();
 		this.leaf = m.getChildMemberCount() == 0;
 
 		int curDepth = m.getDepth();
@@ -113,7 +111,7 @@ public class NodeFilter implements Comparable<NodeFilter> {
 	/**
 	 * @return the children
 	 */
-	public Set<NodeFilter> getChildren() {
+	public List<NodeFilter> getChildren() {
 		return children;
 	}
 
@@ -152,7 +150,7 @@ public class NodeFilter implements Comparable<NodeFilter> {
 		return leaf;
 	}
 
-	public boolean isPotentialChild(Set<Member> leaves, Member member) {
+	public boolean isPotentialChild(List<Member> leaves, Member member) {
 		if (leaves.contains(member)) {
 			return true;
 		}
@@ -184,16 +182,14 @@ public class NodeFilter implements Comparable<NodeFilter> {
 	}
 
 	/**
-	 * @param collapsed
-	 *            the collapsed to set
+	 * @param collapsed the collapsed to set
 	 */
 	public void setCollapsed(boolean collapsed) {
 		this.collapsed = collapsed;
 	}
 
 	/**
-	 * @param visible
-	 *            the visible to set
+	 * @param visible the visible to set
 	 */
 	public void setVisible(boolean visible) {
 		this.visible = visible;

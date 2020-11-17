@@ -17,8 +17,8 @@
  */
 package it.eng.spagobi.engines.whatif.hierarchy;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.olap4j.OlapException;
@@ -36,8 +36,8 @@ public class FilterTreeBuilder {
 
 	public static transient Logger logger = Logger.getLogger(FilterTreeBuilder.class);
 	private Hierarchy hierarchy;
-	private Set<Member> treeMembers;
-	private Set<Member> visibleMembers;
+	private List<Member> treeMembers;
+	private List<Member> visibleMembers;
 	private boolean showSiblings;
 	private int nodeLimit;
 
@@ -63,14 +63,14 @@ public class FilterTreeBuilder {
 	/**
 	 * @return the treeMembers
 	 */
-	public Set<Member> getTreeMembers() {
+	public List<Member> getTreeMembers() {
 		return treeMembers;
 	}
 
 	/**
 	 * @return the visibleMembers
 	 */
-	public Set<Member> getVisibleMembers() {
+	public List<Member> getVisibleMembers() {
 		return visibleMembers;
 	}
 
@@ -82,42 +82,38 @@ public class FilterTreeBuilder {
 	}
 
 	/**
-	 * @param hierarchy
-	 *            the hierarchy to set
+	 * @param hierarchy the hierarchy to set
 	 */
 	public void setHierarchy(Hierarchy hierarchy) {
 		this.hierarchy = hierarchy;
 	}
 
 	/**
-	 * @param showSiblings
-	 *            the showSiblings to set
+	 * @param showSiblings the showSiblings to set
 	 */
 	public void setShowSiblings(boolean showSiblings) {
 		this.showSiblings = showSiblings;
 	}
 
 	/**
-	 * @param treeMembers
-	 *            the treeMembers to set
+	 * @param list the treeMembers to set
 	 */
-	public void setTreeLeaves(Set<Member> treeMembers) {
-		this.treeMembers = treeMembers;
+	public void setTreeLeaves(List<Member> list) {
+		this.treeMembers = list;
 	}
 
 	/**
-	 * @param visibleMembers
-	 *            the visibleMembers to set
+	 * @param visibleMembers the visibleMembers to set
 	 */
-	public void setVisibleMembers(Set<Member> visibleMembers) {
+	public void setVisibleMembers(List<Member> visibleMembers) {
 		this.visibleMembers = visibleMembers;
 	}
 
 	/**
 	 * @return
 	 */
-	public Set<NodeFilter> build() {
-		Set<NodeFilter> nodes = new TreeSet<NodeFilter>();
+	public List<NodeFilter> build() {
+		List<NodeFilter> nodes = new ArrayList<NodeFilter>();
 		try {
 			for (Member member : hierarchy.getRootMembers()) {
 

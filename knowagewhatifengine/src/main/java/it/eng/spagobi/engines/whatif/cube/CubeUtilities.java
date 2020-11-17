@@ -18,11 +18,9 @@
 package it.eng.spagobi.engines.whatif.cube;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,25 +52,14 @@ public class CubeUtilities {
 	public static transient Logger logger = Logger.getLogger(CubeUtilities.class);
 
 	/**
-	 * Looks for the member with id memberUniqueName in the cube
-	 *
-	 * @param cube
-	 *            the cube wherein to find the member
-	 * @param memberUniqueName
-	 *            the member to find
-	 * @return the olap Member found.. null otherwise
-	 * @throws OlapException
-	 */
-	/**
 	 * @param hierarchy
 	 * @param name
-	 * @param strict
-	 *            TODO
+	 * @param strict    TODO
 	 * @return
 	 * @throws OlapException
 	 */
-	public static Set<Member> findMembersByName(Hierarchy hierarchy, String name, Boolean strict) throws OlapException {
-		Set<Member> searchResultMembers = new HashSet<Member>();
+	public static List<Member> findMembersByName(Hierarchy hierarchy, String name, Boolean strict) throws OlapException {
+		List<Member> searchResultMembers = new ArrayList<Member>();
 		for (Level level : hierarchy.getLevels()) {// && j < nodeLimit
 
 			for (Member member : level.getMembers()) {
@@ -90,6 +77,14 @@ public class CubeUtilities {
 		return searchResultMembers;
 	}
 
+	/**
+	 * Looks for the member with id memberUniqueName in the cube
+	 *
+	 * @param cube             the cube wherein to find the member
+	 * @param memberUniqueName the member to find
+	 * @return the olap Member found.. null otherwise
+	 * @throws OlapException
+	 */
 	public static Member getMember(Cube cube, String memberUniqueName) throws OlapException {
 		Hierarchy hierarchy = null;
 		NamedList<Hierarchy> hierarchies = cube.getHierarchies();
@@ -108,10 +103,8 @@ public class CubeUtilities {
 	/**
 	 * Looks for the member with id memberUniqueName in the hierarchy
 	 *
-	 * @param hierarchy
-	 *            the hierarchy wherein to find the member
-	 * @param memberUniqueName
-	 *            the member to find
+	 * @param hierarchy        the hierarchy wherein to find the member
+	 * @param memberUniqueName the member to find
 	 * @return the olap Member found.. null otherwise
 	 * @throws OlapException
 	 */
@@ -122,8 +115,7 @@ public class CubeUtilities {
 	/**
 	 * Check if the member is the root
 	 *
-	 * @param memberUniqueName
-	 *            the name of the member
+	 * @param memberUniqueName the name of the member
 	 * @return true if the member is the root
 	 * @throws OlapException
 	 */
@@ -150,10 +142,8 @@ public class CubeUtilities {
 	/**
 	 * Retrive a position from the position unique name
 	 *
-	 * @param positions
-	 *            the list of position
-	 * @param positionUniqueName
-	 *            the position unique name
+	 * @param positions          the list of position
+	 * @param positionUniqueName the position unique name
 	 * @return
 	 * @throws OlapException
 	 */
@@ -176,10 +166,8 @@ public class CubeUtilities {
 	/**
 	 * Searches in the cube for the hierarchy
 	 *
-	 * @param cube
-	 *            the cube
-	 * @param hierarchyUniqueName
-	 *            the unique name of the hierarchy to search
+	 * @param cube                the cube
+	 * @param hierarchyUniqueName the unique name of the hierarchy to search
 	 * @return
 	 * @throws OlapException
 	 */
@@ -558,12 +546,9 @@ public class CubeUtilities {
 	/**
 	 * Checks if the member is visible in the cube
 	 *
-	 * @param model
-	 *            the pivot model
-	 * @param member
-	 *            the member to check
-	 * @param axis
-	 *            the axis that contains the member
+	 * @param model  the pivot model
+	 * @param member the member to check
+	 * @param axis   the axis that contains the member
 	 * @return true if the model is visible
 	 */
 	public static boolean isMemberVisible(PivotModel model, Member member, Axis axis) {
