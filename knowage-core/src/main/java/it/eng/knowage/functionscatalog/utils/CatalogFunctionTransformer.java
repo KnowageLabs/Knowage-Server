@@ -139,7 +139,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		HttpMethod method = HttpMethod.valueOf("Post");
 		Map<String, String> requestHeaders = new HashMap<String, String>();
 		requestHeaders.put("Content-Type", "application/json");
-		String requestBody = buildRequestBody();
+		JSONObject requestBody = buildRequestBody();
 		proxy = new CatalogFunctionDataProxy(address, method, requestHeaders, requestBody);
 	}
 
@@ -156,7 +156,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		return address;
 	}
 
-	String buildRequestBody() {
+	JSONObject buildRequestBody() {
 		JSONObject toReturn = new JSONObject();
 		try {
 			toReturn.put("script", buildScript());
@@ -164,7 +164,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 			logger.error("Error building request body", e);
 			throw new SpagoBIRuntimeException("Error building request body", e);
 		}
-		return toReturn.toString();
+		return toReturn;
 	}
 
 	String buildScript() {

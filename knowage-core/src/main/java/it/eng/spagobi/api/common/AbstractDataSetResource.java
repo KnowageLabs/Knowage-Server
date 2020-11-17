@@ -250,8 +250,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 			// if required apply function from catalog
 			int catalogFuncId = getCatalogFunctionId(projections);
-			JSONObject catalogFunctionConfig = getCatalogFunctionConfiguration(projections);
 			if (catalogFuncId != -1) {
+				JSONObject catalogFunctionConfig = getCatalogFunctionConfiguration(projections);
 				IDataStoreTransformer functionTransformer = new CatalogFunctionTransformer(catalogFuncId, catalogFunctionConfig);
 				functionTransformer.transform(dataStore);
 			}

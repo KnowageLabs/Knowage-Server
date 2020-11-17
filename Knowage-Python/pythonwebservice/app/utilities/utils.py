@@ -90,7 +90,7 @@ def convertKnowageDatasetToDataframe(names, rows):
             elif x["type"] == "int":
                 column_types.update({x['name']: "int64"})
     #save data as dataframe
-    df = pd.DataFrame(r.json()["rows"])
+    df = pd.DataFrame(rows)
     if not df.empty:
         #cast types
         df = df.astype(column_types)
@@ -98,6 +98,27 @@ def convertKnowageDatasetToDataframe(names, rows):
         df.drop(columns=['id'], inplace=True)
         # assign column names
         df.columns = column_names
+    return df
+
+def convertKnowageDatastoreToDataframe(metadata, rows):
+    column_names = []
+    column_types = {}
+    for x in metadata:
+        if type(x) is dict:
+            column_names.append(x['header'])
+            if x["type"] == "class java.lang.Double":
+                column_types.update({x['header']: "float64"})
+            elif x["type"] == "class java.lang.Integer":
+                column_types.update({x['header']: "int64"})
+    #save data as dataframe
+    df = pd.DataFrame(rows)
+    if not df.empty:
+        # assign column names
+        df.columns = column_names
+        #cast types
+        df = df.astype(column_types)
+        #drop first column (redundant)
+        df.drop(columns=['id'], inplace=True)
     return df
 
 def convertDataframeToKnowageDataset(df):

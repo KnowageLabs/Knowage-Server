@@ -21,11 +21,18 @@ package it.eng.knowage.functionscatalog.utils;
 import java.util.Map;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.spagobi.tools.dataset.common.dataproxy.AbstractDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxyException;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -34,13 +41,13 @@ import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
 public class CatalogFunctionDataProxy extends AbstractDataProxy {
 
-	private String requestBody;
+	private JSONObject requestBody;
 	private String address;
 	private final Map<String, String> requestHeaders;
 	private final HttpMethod method;
 	private IDataStore dataStore;
 
-	public CatalogFunctionDataProxy(String address, HttpMethod method, Map<String, String> requestHeaders, String requestBody) {
+	public CatalogFunctionDataProxy(String address, HttpMethod method, Map<String, String> requestHeaders, JSONObject requestBody) {
 		this.requestBody = requestBody;
 		this.address = address;
 		this.requestHeaders = requestHeaders;
@@ -51,7 +58,11 @@ public class CatalogFunctionDataProxy extends AbstractDataProxy {
 	public IDataStore load(IDataReader dataReader) {
 		try {
 			Helper.checkNotNull(dataReader, "dataReader");
-			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody);
+
+			// ONLY AT THIS POINT WE HAVE ACTUAL DATA, so we must put them in the request
+			putDataStoreInRequestBody();
+
+			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody.toString());
 			String responseBody = response.getResponseBody();
 			if (response.getStatusCode() != HttpStatus.SC_OK) {
 				throw new RESTDataProxyException(
@@ -67,6 +78,36 @@ public class CatalogFunctionDataProxy extends AbstractDataProxy {
 		} catch (Exception e) {
 			throw new RESTDataProxyException(e);
 		}
+	}
+
+	private void putDataStoreInRequestBody() throws JSONException {
+		JSONObject data = new JSONObject();
+
+		// put metadata
+		JSONArray metadataArray = new JSONArray();
+		for (int i = 0; i < dataStore.getMetaData().getFieldsMeta().size(); i++) {
+			IFieldMetaData meta = (IFieldMetaData) dataStore.getMetaData().getFieldsMeta().get(i);
+			JSONObject metaObj = new JSONObject();
+			metaObj.put("header", meta.getName());
+			metaObj.put("type", meta.getType());
+			metadataArray.put(metaObj);
+		}
+		data.put("metadata", metadataArray);
+
+		// put records
+		JSONArray recordsArray = new JSONArray();
+		for (int i = 0; i < dataStore.getRecords().size(); i++) {
+			IRecord record = (Record) dataStore.getRecords().get(i);
+			JSONArray fieldsArray = new JSONArray();
+			for (int j = 0; j < record.getFields().size(); j++) {
+				IField field = record.getFields().get(j);
+				fieldsArray.put(field.getValue());
+			}
+			recordsArray.put(fieldsArray);
+		}
+		data.put("records", recordsArray);
+
+		requestBody.put("datastore", data);
 	}
 
 	public IDataStore getDataStore() {

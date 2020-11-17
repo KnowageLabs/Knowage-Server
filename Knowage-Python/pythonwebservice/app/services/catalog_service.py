@@ -18,6 +18,7 @@
 
 from flask import Blueprint, request
 from app.utilities import security, utils
+import pandas as pd
 
 catalog = Blueprint('catalog', __name__)
 #url: knowage_addr:port/catalog
@@ -28,9 +29,9 @@ def python_function_execute():
     try:
         data = request.get_json()
         datastore = data['datastore']
-        col_names = datastore["metaData"]["fields"]
-        rows = datastore["rows"]
-        datastoreDataframe = utils.convertKnowageDatasetToDataframe(col_names, rows)
+        col_metadata = datastore["metadata"]
+        records = datastore["records"]
+        datastoreDf = utils.convertKnowageDatastoreToDataframe(col_metadata, records)
         token = data['script']
         isAuthenticated, script = security.jwtToken2pythonScript(token)
         input_values = data['input']
