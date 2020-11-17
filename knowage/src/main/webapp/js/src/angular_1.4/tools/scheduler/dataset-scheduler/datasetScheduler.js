@@ -17,14 +17,10 @@
  */
 (function() {
 	
-	var scripts = document.getElementsByTagName("script");
-	var currentScriptPath = scripts[scripts.length - 1].src;
-	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	
 	angular.module('datasetSchedulerModule')
-		   .directive('datasetScheduler', function(){
+		   .directive('datasetScheduler', function(sbiModule_config){
 				return {
-					templateUrl : currentScriptPath + 'dataset-scheduler.html',
+					templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/scheduler/dataset-scheduler/dataset-scheduler.html',
 					controller : scheduleDataset,
 					scope : {
 						model : '='

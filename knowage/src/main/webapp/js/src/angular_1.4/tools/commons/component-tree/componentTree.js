@@ -6,16 +6,11 @@
  */
 
 (function() {
-	var scripts = document.getElementsByTagName('script')
-	var componentTreePath = scripts[scripts.length-1].src;
-	componentTreePath = componentTreePath.substring(0, componentTreePath.lastIndexOf('/') + 1);
-
-//	debugger;
 
 	angular.module('componentTreeModule', [ 'ngMaterial', 'ui.tree', 'sbiModule'])
-	.directive('componentTree', function($compile) {
+	.directive('componentTree', function($compile,sbiModule_config) {
 		return {
-			templateUrl: componentTreePath + 'template/component-tree.html',
+			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/commons/component-tree/template/component-tree.html',
 			transclude : true,
 			priority: 1000,
 			scope: {

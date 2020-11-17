@@ -104,8 +104,8 @@ END-PRODUCTION -->
 <link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css")%>">
 
 <!--  wysiwyg -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>	
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/ngWYSIWYG/editor.min.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ng-wysiwyg/dist/wysiwyg.min.js")%>"></script>	
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ng-wysiwyg/dist/editor.min.css")%>">
 
 
 <!-- 		angular-drag-and-drop-lists -->

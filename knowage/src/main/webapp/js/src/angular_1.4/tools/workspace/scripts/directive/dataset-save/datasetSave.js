@@ -17,14 +17,10 @@
  */
 (function() {
 	
-	var scripts = document.getElementsByTagName("script");
-	var currentScriptPath = scripts[scripts.length - 1].src;
-	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	
 	angular.module('datasetSaveModule')
-		   .directive('datasetSave', function(){
+		   .directive('datasetSave', function(sbiModule_config){
 				return {
-					templateUrl : currentScriptPath + 'dataset-save.html',
+					templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/workspace/scripts/directive/dataset-save/dataset-save.html',
 					controller : saveDataset,
 					scope: {
 						model: '=',

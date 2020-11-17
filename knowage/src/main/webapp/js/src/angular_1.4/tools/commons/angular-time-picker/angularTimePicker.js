@@ -1,12 +1,9 @@
 (function() {
-	var scripts = document.getElementsByTagName("script");
-	var currentScriptPath = scripts[scripts.length - 1].src;
-	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 	
-angular.module('angular_time_picker', ['ngMaterial'])
+angular.module('angular_time_picker', ['ngMaterial','sbiModule'])
 .directive('angularTimePicker', function() {
   return {
-    templateUrl: currentScriptPath + 'angular-time-picker.html',
+    templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/commons/angular-time-picker/angular-time-picker.html',
     controller: angularTimePickerFunction,
     scope: {
     	ngModel:'=',

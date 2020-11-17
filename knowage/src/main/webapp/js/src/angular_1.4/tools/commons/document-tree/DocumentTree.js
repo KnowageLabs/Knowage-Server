@@ -2,14 +2,12 @@
  * @authors Alessio Conese (alessio.conese@eng.it)
  *
  */
-var scripts = document.getElementsByTagName("script")
-var currentScriptPathDocumentTree = scripts[scripts.length-1].src;
 
-angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
+angular.module('document_tree', [ 'ngMaterial', 'ui.tree','sbiModule'])
 .directive('documentTree',
-		function($compile) {
+		function($compile,sbiModule_config) {
 	return {
-		templateUrl: currentScriptPathDocumentTree.substring(0, currentScriptPathDocumentTree.lastIndexOf('/') + 1) + 'template/document-tree.html',
+		templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/commons/document-tree/template/document-tree.html',
 		transclude : true,
 		priority:1000,
 		scope: {

@@ -17,17 +17,13 @@
  */
 (function() {
 	
-	var scripts = document.getElementsByTagName("script");
-	var currentScriptPath = scripts[scripts.length - 1].src;
-	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	
 	angular
-		.module('knTable', ['ngMaterial'])
+		.module('knTable', ['ngMaterial','sbiModule'])
 		.directive('knTable', knTableDirective)
 
-	function knTableDirective() {
+	function knTableDirective(sbiModule_config) {
 		return {
-			templateUrl: currentScriptPath + 'template/knTable.tpl.html',
+			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/commons/kn-table/template/knTable.tpl.html',
 			controller: knTableController,
 			restrict: 'E',
 			scope: {

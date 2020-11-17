@@ -117,8 +117,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js")%>"></script>
 <script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js")%>"></script>
 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>	
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/ng-wysiwyg/dist/wysiwyg.min.js")%>"></script>	
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "node_modules/ng-wysiwyg/dist/editor.min.css")%>"> 
 
 
 

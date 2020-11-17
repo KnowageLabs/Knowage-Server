@@ -50,22 +50,50 @@
 					<version>1.6.0</version>
 					<executions>
 						<execution>		
-							<id>npm-package-install</id>
-						   <phase>prepare-package</phase>
+							<id>npm-update-version</id>
+						   <phase>process-sources</phase>
 	                  		<goals>
 		                    	<goal>exec</goal>
 		                  	</goals>
+		                  	<configuration>
+								<executable>npm</executable>
+			                    <arguments>
+		                      		<argument>version</argument>
+		                      		<argument>${project.version}</argument>
+			                    </arguments>
+			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+							</configuration>
+						</execution>
+						<execution>		
+							<id>npm-package-install</id>
+						   <phase>process-sources</phase>
+	                  		<goals>
+		                    	<goal>exec</goal>
+		                  	</goals>
+		                  	<configuration>
+								<executable>npm</executable>
+			                    <arguments>
+		                      		<argument>install</argument>
+			                    </arguments>
+			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+							</configuration>
+						</execution>
+						<execution>		
+							<id>grunt-concat-dist</id>
+						   <phase>process-resources</phase>
+	                  		<goals>
+		                    	<goal>exec</goal>
+		                  	</goals>
+		                  	<configuration>
+								<executable>grunt</executable>
+			                    <arguments>
+		                      		<argument>knowage-concat</argument>
+			                    </arguments>
+			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+							</configuration>
 						</execution>
 					</executions>
-					<configuration>
-						<executable>npm</executable>
-	                    <arguments>
-                      		<argument>install</argument>
-	                    </arguments>
-	                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
-					</configuration>
 		  	</plugin>
-		  
 		  </plugins>
 	</build>
 	
