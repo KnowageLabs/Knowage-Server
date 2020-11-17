@@ -60,6 +60,7 @@
 			                    <arguments>
 		                      		<argument>version</argument>
 		                      		<argument>${project.version}</argument>
+		                      		<argument>--allow-same-version</argument>
 			                    </arguments>
 			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
 							</configuration>
