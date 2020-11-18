@@ -27,8 +27,10 @@ import java.util.Date;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -70,50 +72,50 @@ public class ExcelExportJob extends AbstractExportJob {
 
 			// STYLE CELL
 			CellStyle borderStyleHeader = wb.createCellStyle();
-			borderStyleHeader.setBorderBottom(CellStyle.BORDER_THIN);
-			borderStyleHeader.setBorderLeft(CellStyle.BORDER_THIN);
-			borderStyleHeader.setBorderRight(CellStyle.BORDER_THIN);
-			borderStyleHeader.setBorderTop(CellStyle.BORDER_THIN);
-			borderStyleHeader.setAlignment(CellStyle.ALIGN_CENTER);
+			borderStyleHeader.setBorderBottom(BorderStyle.THIN);
+			borderStyleHeader.setBorderLeft(BorderStyle.THIN);
+			borderStyleHeader.setBorderRight(BorderStyle.THIN);
+			borderStyleHeader.setBorderTop(BorderStyle.THIN);
+			borderStyleHeader.setAlignment(HorizontalAlignment.CENTER);
 
 			CellStyle borderStyleRow = wb.createCellStyle();
-			borderStyleRow.setBorderBottom(CellStyle.BORDER_THIN);
-			borderStyleRow.setBorderLeft(CellStyle.BORDER_THIN);
-			borderStyleRow.setBorderRight(CellStyle.BORDER_THIN);
-			borderStyleRow.setBorderTop(CellStyle.BORDER_THIN);
-			borderStyleRow.setAlignment(CellStyle.ALIGN_RIGHT);
+			borderStyleRow.setBorderBottom(BorderStyle.THIN);
+			borderStyleRow.setBorderLeft(BorderStyle.THIN);
+			borderStyleRow.setBorderRight(BorderStyle.THIN);
+			borderStyleRow.setBorderTop(BorderStyle.THIN);
+			borderStyleRow.setAlignment(HorizontalAlignment.RIGHT);
 
 			CellStyle tsCellStyle = wb.createCellStyle();
 			tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
-			tsCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-			tsCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-			tsCellStyle.setBorderRight(CellStyle.BORDER_THIN);
-			tsCellStyle.setBorderTop(CellStyle.BORDER_THIN);
-			tsCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+			tsCellStyle.setBorderBottom(BorderStyle.THIN);
+			tsCellStyle.setBorderLeft(BorderStyle.THIN);
+			tsCellStyle.setBorderRight(BorderStyle.THIN);
+			tsCellStyle.setBorderTop(BorderStyle.THIN);
+			tsCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 			CellStyle dateCellStyle = wb.createCellStyle();
 			dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
-			dateCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-			dateCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-			dateCellStyle.setBorderRight(CellStyle.BORDER_THIN);
-			dateCellStyle.setBorderTop(CellStyle.BORDER_THIN);
-			dateCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+			dateCellStyle.setBorderBottom(BorderStyle.THIN);
+			dateCellStyle.setBorderLeft(BorderStyle.THIN);
+			dateCellStyle.setBorderRight(BorderStyle.THIN);
+			dateCellStyle.setBorderTop(BorderStyle.THIN);
+			dateCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 			CellStyle intCellStyle = wb.createCellStyle();
 			intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
-			intCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-			intCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-			intCellStyle.setBorderRight(CellStyle.BORDER_THIN);
-			intCellStyle.setBorderTop(CellStyle.BORDER_THIN);
-			intCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+			intCellStyle.setBorderBottom(BorderStyle.THIN);
+			intCellStyle.setBorderLeft(BorderStyle.THIN);
+			intCellStyle.setBorderRight(BorderStyle.THIN);
+			intCellStyle.setBorderTop(BorderStyle.THIN);
+			intCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 			CellStyle decimalCellStyle = wb.createCellStyle();
 			decimalCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
-			decimalCellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-			decimalCellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-			decimalCellStyle.setBorderRight(CellStyle.BORDER_THIN);
-			decimalCellStyle.setBorderTop(CellStyle.BORDER_THIN);
-			decimalCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+			decimalCellStyle.setBorderBottom(BorderStyle.THIN);
+			decimalCellStyle.setBorderLeft(BorderStyle.THIN);
+			decimalCellStyle.setBorderRight(BorderStyle.THIN);
+			decimalCellStyle.setBorderTop(BorderStyle.THIN);
+			decimalCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 			String limitExp = SingletonConfig.getInstance().getConfigValue("dataset.export.xls.resultsLimit");
 			Integer limitExport;
