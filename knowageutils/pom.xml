@@ -212,7 +212,7 @@
 
 		<dependency>
 			<groupId>javax.xml</groupId>
-			<artifactId>jaxrpc</artifactId>
+			<artifactId>jaxrpc-api</artifactId>
 			<version>1.1</version>
 			<scope>compile</scope>
 		</dependency>
@@ -318,14 +318,14 @@
 		</dependency>
 
 		<dependency>
-			<groupId>opensymphony</groupId>
+			<groupId>org.opensymphony.quartz</groupId>
 			<artifactId>quartz</artifactId>
 			<version>1.6.1</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>opensymphony</groupId>
+			<groupId>org.opensymphony.quartz</groupId>
 			<artifactId>quartz-oracle</artifactId>
 			<version>1.6.1</version>
 			<scope>compile</scope>
