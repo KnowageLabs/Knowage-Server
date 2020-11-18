@@ -26,57 +26,70 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import it.eng.knowage.engines.dossier.template.parameter.Parameter;
 import it.eng.knowage.engines.dossier.template.placeholder.PlaceHolder;
 
-
-
 public class Report {
 	String label;
 	List<PlaceHolder> placeholders;
 	List<Parameter> parameters;
 	String imageName;
-	
+	String sheet;
+
 	public Report() {
 		placeholders = new ArrayList<>();
 		parameters = new ArrayList<>();
 	}
-	
+
 	public List<PlaceHolder> getPlaceholders() {
 		return placeholders;
 	}
+
 	@JsonSetter("PLACEHOLDER")
 	public void setPlaceholders(List<PlaceHolder> placeholders) {
 		this.placeholders = placeholders;
 	}
+
 	public String getLabel() {
 		return label;
 	}
+
 	@JsonSetter("label")
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 	public String getImageName() {
 		return imageName;
 	}
-	
+
 	@JsonSetter("imageName")
 	public void setImageName(String imageName) {
 		this.imageName = imageName;
 	}
 
+	public String getSheet() {
+		return sheet;
+	}
+
+	@JsonSetter("sheet")
+	public void setSheet(String sheet) {
+		this.sheet = sheet;
+	}
+
 	public List<Parameter> getParameters() {
 		return parameters;
 	}
+
 	@JsonSetter("PARAMETER")
 	public void setParameters(List<Parameter> parameters) {
 		this.parameters = parameters;
 	}
+
 	@JsonIgnore
 	public List<Parameter> getDinamicParams() {
-		List <Parameter> dinamicParams = new ArrayList<>();
-		
+		List<Parameter> dinamicParams = new ArrayList<>();
+
 		for (int i = 0; i < parameters.size(); i++) {
 			Parameter parameter = parameters.get(i);
-			if(parameter.getType().equals("dynamic")){
+			if (parameter.getType().equals("dynamic")) {
 				dinamicParams.add(parameter);
 			}
 		}
