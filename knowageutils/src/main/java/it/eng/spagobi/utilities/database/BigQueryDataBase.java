@@ -22,26 +22,29 @@ import org.apache.log4j.Logger;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-public class RedShiftDataBase extends AbstractDataBase implements CacheDataBase {
+/**
+ * @author Marco Libanori
+ */
+public class BigQueryDataBase extends AbstractDataBase implements CacheDataBase {
 
-	private static transient Logger logger = Logger.getLogger(RedShiftDataBase.class);
+	private static transient Logger logger = Logger.getLogger(BigQueryDataBase.class);
 
 	private static int MAX_VARCHAR_VALUE = 10485760;
 
 	private int varcharLength = 255;
 
-	public RedShiftDataBase(IDataSource dataSource) {
+	public BigQueryDataBase(IDataSource dataSource) {
 		super(dataSource);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
+	 */
 	@Override
-	public int getVarcharLength() {
-		return varcharLength;
-	}
-
-	@Override
-	public void setVarcharLength(int varcharLength) {
-		this.varcharLength = varcharLength;
+	public String getAliasDelimiter() {
+		return "";
 	}
 
 	@Override
@@ -88,16 +91,6 @@ public class RedShiftDataBase extends AbstractDataBase implements CacheDataBase 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
-	 */
-	@Override
-	public String getAliasDelimiter() {
-		return "\"";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -109,6 +102,16 @@ public class RedShiftDataBase extends AbstractDataBase implements CacheDataBase 
 			query += " AND table_schema = '" + schema + "'";
 		}
 		return query;
+	}
+
+	@Override
+	public int getVarcharLength() {
+		return varcharLength;
+	}
+
+	@Override
+	public void setVarcharLength(int varcharLength) {
+		this.varcharLength = varcharLength;
 	}
 
 }

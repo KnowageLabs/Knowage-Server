@@ -56,6 +56,8 @@ public class SelectQueryVisitorFactory {
 			return new TeradataSelectQueryVisitor(database);
 		case REDSHIFT:
 			return new RedShiftSelectQueryVisitor(database);
+		case BIGQUERY:
+			return new BigQuerySelectQueryVisitor(database);
 		default:
 			throw new IllegalArgumentException("Dialect [" + dataSource.getHibDialectClass() + "] not supported");
 		}

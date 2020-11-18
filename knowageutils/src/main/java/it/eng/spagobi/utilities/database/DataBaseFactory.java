@@ -76,6 +76,8 @@ public abstract class DataBaseFactory {
 					return new VerticaDataBase(dataSource);
 				case REDSHIFT:
 					return new RedShiftDataBase(dataSource);
+				case BIGQUERY:
+					return new BigQueryDataBase(dataSource);
 				default:
 					throw new DataBaseException("Impossible to find a database implementation for [" + sqlDialect.toString() + "]");
 				}
