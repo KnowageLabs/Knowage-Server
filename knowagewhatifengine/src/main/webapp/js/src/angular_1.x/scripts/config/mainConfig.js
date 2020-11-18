@@ -23,5 +23,6 @@ angular.module('olap.configuration', [
                                       'ngSanitize',
                                       'ngDraggable',
                                       'ngCookies',
+                                      'ui.codemirror',
                                       'ngStorage'
                                       ]);

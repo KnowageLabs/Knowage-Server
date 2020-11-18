@@ -63,6 +63,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private Map<Integer, String> positionMeasureMap;
 	private boolean initialized = false;
 	private final Map<String, Object> properties;
+	private static final String pathToImages = "../../../../knowage/themes/commons/img/olap/";
 
 	public WhatIfHTMLRendereCallback(Writer writer) {
 		super(writer);
@@ -212,7 +213,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				if (context.getRenderer().getEnableDrillThrough()) {
 
 					Map<String, String> attributes = new TreeMap<String, String>();
-					attributes.put("src", "../../img/ico_search.gif");
+					attributes.put("src", pathToImages + "ico_search.gif");
 					attributes.put("id", "drillt");
 					attributes.put("ng-click", "drillThrough(" + ordinal + ")");
 					startElement("img", attributes);
@@ -228,7 +229,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 				if (properties != null && !properties.isEmpty()) {
 					Map<String, String> attributes1 = new TreeMap<String, String>();
-					attributes1.put("src", "../../img/show_props.png");
+					attributes.put("src", pathToImages + "show_props.png");
 					attributes1.put("ng-click", "getProps('" + context.getMember().getUniqueName() + "') ;$event.stopPropagation();");
 					startElement("img", attributes1);
 					endElement("img");
@@ -289,7 +290,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 							} else {
 								if (context.getAxis() == Axis.ROWS && !isPropertyCell(context)) {
 
-									attributes.put("src", "../../img/nodrill.png");
+									attributes.put("src", pathToImages + "nodrill.png");
 									attributes.put("style", "padding : 2px");
 									startElement("img", attributes);
 									endElement("img");
@@ -306,7 +307,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				} else {
 					if (context.getAxis() == Axis.ROWS && !isPropertyCell(context)) {
 
-						attributes.put("src", "../../img/nodrill.png");
+						attributes.put("src", pathToImages + "nodrill.png");
 						attributes.put("style", "padding : 2px");
 						startElement("img", attributes);
 						endElement("img");
@@ -399,7 +400,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 					if (d != 0) {
 						context.getMember();
-						attributes.put("src", "../../img/arrow-up.png");
+						attributes.put("src", pathToImages + "arrow-up.png");
 						attributes.put("ng-click",
 								"drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + context.getHierarchy().getUniqueName() + "' )");
 						startElement("img", attributes);
@@ -422,7 +423,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					int rowId = context.getRowIndex();
 					int positionId = getOrdinalNoSubset(context.getCell().getOrdinal());
 					String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
-					attributes.put("src", "../../img/cross-navigation.png");
+					attributes.put("src", pathToImages + "cross-navigation.png");
 					attributes.put("ng-click", "cellClickCreateCrossNavigationMenu('" + positionId + "');$event.stopPropagation();");
 					attributes.put("id", id);
 					startElement("img", attributes);
@@ -558,7 +559,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	}
 
 	private void setSortingCommand(TableRenderContext context) {
-		String pathToImages = "../../../../knowage/themes/commons/img/olap/";
 		int axis = 0;
 		if (context.getAxis() != null) {
 			axis = context.getAxis().axisOrdinal();

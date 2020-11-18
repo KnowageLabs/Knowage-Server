@@ -94,8 +94,14 @@ function mapWidgetEditControllerFunction(
 		}
 	}
 
-	$scope.addField = function(columns){
-		columns.unshift({});
+	$scope.addField = function(layer){
+		if (!layer.content) {
+			layer.content = {}
+		}
+		if (!layer.content.columnSelectedOfDataset) {
+			layer.content.columnSelectedOfDataset = [];
+		}
+		layer.content.columnSelectedOfDataset.unshift({});
 	}
 
 	$scope.checkDs = function(column){

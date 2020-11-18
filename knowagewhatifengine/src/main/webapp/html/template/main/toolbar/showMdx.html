@@ -2,18 +2,19 @@
 	
 	<md-toolbar class="primaryToolbar">
 		<div class="md-toolbar-tools">
-			<h2>Current MDX Query</h2>
+			<h2>{{translate.load('BUTTON_MDX')}}</h2>
 		</div>
 	</md-toolbar>
 	
-	<md-dialog-content class="olapDialogContent">
-		<pre class="showMdxVar" ng-bind-html="showMdxVar"></pre>
+	<md-dialog-content class="olapDialogContent olapEditor" flex style="max-width:600px">
+		<textarea id="css" ui-codemirror="editorOptionsMdx" ng-model="MDXWithoutCF" flex></textarea>
+		<!--  pre class="showMdxVar" ng-bind-html="showMdxVar"></pre-->
 	</md-dialog-content>	
 	
 	
 	<md-dialog-actions layout="row" >
 		<md-button class="md-raised md-primary" ng-click="closeDialogToolbarRight()">
-			Close
+			{{translate.load('sbi.common.close')}}
 		</md-button>	
 	</md-dialog-actions>
 	
