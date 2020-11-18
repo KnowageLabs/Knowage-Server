@@ -19,6 +19,7 @@
 from flask import Blueprint, request
 from app.utilities import security, utils
 import pandas as pd
+import logging
 
 catalog = Blueprint('catalog', __name__)
 #url: knowage_addr:port/catalog
@@ -39,25 +40,26 @@ def python_function_execute():
         input_variables = input_values['inputVariables']
         output_columns = input_values['outputColumns']
     except Exception as e:
+        logging.error("Error parsing catalog function request: {}".format(e))
         return str(e), 400
 
     if not isAuthenticated:
+        logging.error("Unauthorized access")
         return "Unauthorized", 401
 
-    # resolve references to datastore
-    #script = script.replace("${df}", "df_")
-
-    # resolve references to input columns
-    for input_col in input_columns:
-        script = script.replace("${" + input_col + "}", "df_." + input_col)
-
-    # resolve references to input variables
-    for input_var in input_variables:
-        script = script.replace("${" + input_var + "}", "variables_.get(\'" + input_var + "\')")
-
-    # resolve references to output columns
-    for output_col in output_columns:
-        script = script.replace("${" + output_col + "}", "outdf_." + output_col)
+    try:
+        # resolve references to input columns
+        for input_col in input_columns:
+            script = script.replace("${" + input_col + "}", "df_." + input_col)
+        # resolve references to input variables
+        for input_var in input_variables:
+            script = script.replace("${" + input_var + "}", "variables_.get(\'" + input_var + "\')")
+        # resolve references to output columns
+        for output_col in output_columns:
+            script = script.replace("${" + output_col + "}", "outdf_." + output_col)
+    except Exception as e:
+        logging.error("Error resolving input references inside script: {}".format(e))
+        return str(e), 400
 
     # init empty dataframe that will contain new columns
     out_df = pd.DataFrame(columns=output_columns)
@@ -67,9 +69,14 @@ def python_function_execute():
         namespace = {"df_": datastore_df, "outdf_": out_df, "variables_": input_variables}
         exec (script, namespace)
     except Exception as e:
+        logging.error("Error during script execution: {}".format(e))
         return str(e), 400
 
     # convert dataframe to knowage json format
-    knowage_json = utils.convertDataframeToKnowageDataset(namespace["outdf_"])
+    try:
+        knowage_json = utils.convertDataframeToKnowageDataset(namespace["outdf_"])
+    except Exception as e:
+        logging.error("Error converting dataframe to knowage format: {}".format(e))
+        return str(e), 400
 
     return str(knowage_json).replace('\'', "\""), 200

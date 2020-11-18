@@ -135,6 +135,10 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
 		fcDAO.setUserProfile(profile);
 		function = fcDAO.getCatalogFunctionById(functionId);
+		if (function == null) {
+			logger.error("Couldn't retrieve function: " + functionId);
+			throw new SpagoBIRuntimeException("Couldn't retrieve function: " + functionId);
+		}
 	}
 
 	private void initProxy() {
@@ -215,27 +219,37 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 	}
 
 	@Override
-	public void transformDataSetMetaData(IDataStore dataStore) {
-		IMetaData dataStoreMeta = dataStore.getMetaData();
-		List<IFieldMetaData> newMeta = getNewFieldsMeta(dataStore);
-		for (int i = 0; i < newMeta.size(); i++) {
-			dataStoreMeta.addFiedMeta(newMeta.get(i));
+	public void transformDataSetRecords(IDataStore dataStore) {
+		try {
+			proxy.setDataStore(dataStore);
+			// we use JSON data reader with the same config used for Python DataSet
+			IDataReader dataReader = new JSONPathDataReader("$[*]", new ArrayList<JSONPathAttribute>(), true, false);
+			IDataStore newColumns = proxy.load(dataReader);
+			for (int i = 0; i < newColumns.getRecords().size(); i++) {
+				IRecord newRecord = (Record) newColumns.getRecords().get(i);
+				IRecord oldRecord = (Record) dataStore.getRecords().get(i);
+				for (int j = 0; j < newRecord.getFields().size(); j++) {
+					IField newField = newRecord.getFields().get(j);
+					oldRecord.appendField(newField);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error transforming records: ", e);
+			throw new SpagoBIRuntimeException("Error transforming records: ", e);
 		}
 	}
 
 	@Override
-	public void transformDataSetRecords(IDataStore dataStore) {
-		proxy.setDataStore(dataStore);
-		// we use JSON data reader with the same config used for Python DataSet
-		IDataReader dataReader = new JSONPathDataReader("$[*]", new ArrayList<JSONPathAttribute>(), true, false);
-		IDataStore newColumns = proxy.load(dataReader);
-		for (int i = 0; i < newColumns.getRecords().size(); i++) {
-			IRecord newRecord = (Record) newColumns.getRecords().get(i);
-			IRecord oldRecord = (Record) dataStore.getRecords().get(i);
-			for (int j = 0; j < newRecord.getFields().size(); j++) {
-				IField newField = newRecord.getFields().get(j);
-				oldRecord.appendField(newField);
+	public void transformDataSetMetaData(IDataStore dataStore) {
+		IMetaData dataStoreMeta = dataStore.getMetaData();
+		List<IFieldMetaData> newMeta = getNewFieldsMeta(dataStore);
+		try {
+			for (int i = 0; i < newMeta.size(); i++) {
+				dataStoreMeta.addFiedMeta(newMeta.get(i));
 			}
+		} catch (Exception e) {
+			logger.error("Error transforming metadata: ", e);
+			throw new SpagoBIRuntimeException("Error transforming metadata: ", e);
 		}
 	}
 

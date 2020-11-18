@@ -79,6 +79,7 @@ def getDatasetAsDataframe(widget):
     df = convertKnowageDatasetToDataframe(col_names, rows);
     return df;
 
+# used for widget
 def convertKnowageDatasetToDataframe(names, rows):
     column_names = []
     column_types = {}
@@ -100,6 +101,7 @@ def convertKnowageDatasetToDataframe(names, rows):
         df.columns = column_names
     return df
 
+# used for functions catalog
 def convertKnowageDatastoreToDataframe(metadata, rows):
     column_names = []
     column_types = {}
