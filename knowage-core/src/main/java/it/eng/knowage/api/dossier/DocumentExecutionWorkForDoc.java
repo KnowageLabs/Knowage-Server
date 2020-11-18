@@ -254,6 +254,9 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 	public String addParametersToServiceUrl(List<BIObjectParameter> drivers, List<Parameter> parameter, StringBuilder serviceUrlBuilder)
 			throws UnsupportedEncodingException {
+		if (drivers.size() != parameter.size()) {
+			throw new SpagoBIRuntimeException("There are a different number of parameters/drivers between document and template");
+		}
 		for (BIObjectParameter biObjectParameter : drivers) {
 			boolean found = false;
 			for (Parameter templateParameter : parameter) {
