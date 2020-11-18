@@ -547,13 +547,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				// all attributes that don't have aggregateBy properties need a default value to true
 				for (var c in columns) {
 					var currCol = columns[c];
-					if (currCol.fieldType == "ATTRIBUTE" || currCol.fieldType == "SPATIAL_ATTRIBUTE") {
-						if (!currCol.properties) {
-							currCol.properties = {};
-						}
-						if (!currCol.properties.hasOwnProperty("aggregateBy")) {
-							currCol.properties.aggregateBy = true;
-						}
+					if (!currCol.properties) {
+						currCol.properties = {};
+					}
+					if (!currCol.properties.hasOwnProperty("aggregateBy")) {
+						currCol.properties.aggregateBy = (currCol.fieldType == "ATTRIBUTE" || currCol.fieldType == "SPATIAL_ATTRIBUTE");
+					}
+					if (currCol.fieldType == "MEASURE") {
+						currCol.properties.aggregateBy = false;
 					}
 				}
 				// Set exploded flag for heatmap and cluster
