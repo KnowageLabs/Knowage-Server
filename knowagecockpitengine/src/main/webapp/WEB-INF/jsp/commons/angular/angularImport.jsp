@@ -59,11 +59,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-sources-bundle_"+ Version.getCompleteVersion() +".min.js")%>"></script>
+<% if(Version.getEnvironment() == Environment.PRODUCTION) { %>
 
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-sources-bundle_"+ Version.getCompleteVersion() +".min.js")%>"></script>
+	
+<% } else { %>
 
-
-
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/component-tree/componentTree.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/upload-file/FileUpload.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/commons/calculated-field/calculatedFieldMode.js")%>"></script>
+ 
+ <%}%>
 
 <!-- KNOWAGE main css import -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/themes/commons/css/customStyle.css")%>"/>
