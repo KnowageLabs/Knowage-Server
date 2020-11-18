@@ -42,9 +42,9 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
  */
 public class JDBCDataProxy extends AbstractDataProxy {
 
-	IDataSource dataSource;
-	String statement;
-	String schema;
+	private IDataSource dataSource;
+	private String statement;
+	private String schema;
 
 	private static transient Logger logger = Logger.getLogger(JDBCDataProxy.class);
 

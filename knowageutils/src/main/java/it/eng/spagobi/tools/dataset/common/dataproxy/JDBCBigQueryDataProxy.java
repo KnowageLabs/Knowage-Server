@@ -36,11 +36,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 
-	IDataSource dataSource;
-	String statement;
-	String schema;
-	int fetchSize;
-	int offset;
+	private IDataSource dataSource;
+	private String statement;
+	private String schema;
+	private int fetchSize;
+	private int offset;
 
 	private static transient Logger logger = Logger.getLogger(JDBCBigQueryDataProxy.class);
 
@@ -357,15 +357,26 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 			}
 		}
 
-		String newStatement = "";
+		StringBuilder newStatement = new StringBuilder();
 		if (!this.statement.isEmpty()) {
 			this.statement = this.statement.replaceAll(";", "");
 
-			String preQuery = "SELECT * FROM (";
-			newStatement = preQuery.concat(this.statement).concat(") LIMIT " + fetchSize + " OFFSET " + offset);
+			newStatement.append("SELECT * FROM (")
+				.append(this.statement)
+				.append(")");
+
+			// TODO : could fetchSize be an Integer?
+			if (fetchSize > 0) {
+				newStatement.append(" LIMIT " + fetchSize);
+			}
+
+			// TODO : could offset be an Integer?
+			if (fetchSize > 0) {
+				newStatement.append(" OFFSET " + offset);
+			}
 		}
 
-		return newStatement;
+		return newStatement.toString();
 	}
 
 	public String getOldStatement() {
