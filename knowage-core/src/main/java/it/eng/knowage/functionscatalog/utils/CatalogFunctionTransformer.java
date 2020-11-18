@@ -236,9 +236,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 				IField newField = newRecord.getFields().get(j);
 				oldRecord.appendField(newField);
 			}
-			int bar = 0;
 		}
-		int foo = 0;
 	}
 
 	private List<IFieldMetaData> getNewFieldsMeta(IDataStore dataStore) {
