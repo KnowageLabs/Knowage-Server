@@ -64,9 +64,12 @@ def python_function_execute():
     # init empty dataframe that will contain new columns
     out_df = pd.DataFrame(columns=output_columns)
 
+    #build variables runtime object
+    input_variables_runtime = build_runtime_variables(input_variables)
+
     # execute script
     try:
-        namespace = {"df_": datastore_df, "outdf_": out_df, "variables_": input_variables}
+        namespace = {"df_": datastore_df, "outdf_": out_df, "variables_": input_variables_runtime}
         exec (script, namespace)
     except Exception as e:
         logging.error("Error during script execution: {}".format(e))
@@ -80,3 +83,13 @@ def python_function_execute():
         return str(e), 400
 
     return str(knowage_json).replace('\'', "\""), 200
+
+def build_runtime_variables(input_variables):
+    runtime_vars = {}
+    for key in input_variables:
+        var = input_variables[key]
+        if var["type"] == "NUMBER":
+            runtime_vars[key] = float(var["value"])
+        else:
+            runtime_vars[key] = var["value"]
+    return runtime_vars

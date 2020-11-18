@@ -176,7 +176,10 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 			JSONObject inputVarsObj = new JSONObject();
 			for (String varName : inputVariables.keySet()) {
 				InputVariable var = inputVariables.get(varName);
-				inputVarsObj.put(varName, var.getValue());
+				JSONObject varObj = new JSONObject();
+				varObj.put("type", var.getType());
+				varObj.put("value", var.getValue());
+				inputVarsObj.put(varName, varObj);
 			}
 
 			JSONArray outputColsArray = new JSONArray();
