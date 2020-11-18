@@ -83,11 +83,34 @@ module.exports = function(grunt) {
 	        	 ]
         	}
         }
-    }
+    },
+    uglify: {
+        options: {
+          mangle: false
+        },
+        target: {
+          files: {
+            'dist/angular-bundle.min.js': ['dist/angular-bundle.js'],
+            'dist/polyfills-bundle.min.js': ['dist/polyfills-bundle.js'],
+            'dist/knowage-lib-bundle.min.js': ['dist/knowage-lib-bundle.js'],
+            'dist/knowage-modules-bundle.min.js': ['dist/knowage-modules-bundle.js'],
+            'dist/knowage-sources-bundle_<%= pkg.version %>.min.js': ['dist/knowage-sources-bundle_<%= pkg.version %>.js']
+          }
+        }
+      },
+      cssmin: {
+    	  target: {
+			  files: {
+				  'dist/knowage-modules-styles-bundle.min.css': ['dist/knowage-modules-styles-bundle.css']
+		    }
+    	  }
+    	}
   });
 
   // Load the plugin that provides the "concat" task.
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.registerTask('knowage-concat', ['concat']);
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.registerTask('knowage-concat', ['concat','uglify','cssmin']);
 
 };

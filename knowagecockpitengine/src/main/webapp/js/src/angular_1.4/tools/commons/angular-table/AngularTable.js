@@ -3,21 +3,12 @@
  * v1.0.2
  * 
  */ 
-var scripts = document.getElementsByTagName("script");
-var currentScriptPath = scripts[scripts.length - 1].src;
-var tempScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-////load daff.js
-//var script = document.createElement('script');
-//script.type = 'text/javascript';
-//script.src = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1) + 'utils/daff.js';
-//document.getElementsByTagName('head')[0].appendChild(script);
-
-angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagination', 'ng-context-menu', 'ui.tree'])
+angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagination', 'ng-context-menu', 'ui.tree','sbiModule'])
     .directive('angularTable',
-            function ($compile) {
+            function ($compile,sbiModule_config) {
                 return {
-                    templateUrl: tempScriptPath.substring(0, tempScriptPath.lastIndexOf('/') + 1) + 'template/angular-table.html',
+                    templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/tools/commons/angular-table/template/angular-table.html',
                     transclude: true,
                     controller: TableControllerFunction,
                     priority: 1000,
@@ -1148,11 +1139,11 @@ $scope.setCurrentPageFromInput=function(num,paginationItem,functChangePage){
 //script.src = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1) + 'utils/daff.js';
 //document.getElementsByTagName('head')[0].appendChild(script);
 
-angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagination', 'ng-context-menu', 'ui.tree'])
+angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagination', 'ng-context-menu', 'ui.tree','sbiModule'])
         .directive('angularTable',
-                function ($compile) {
+                function ($compile,sbiModule_config) {
                     return {
-                        templateUrl: tempScriptPath.substring(0, tempScriptPath.lastIndexOf('/') + 1) + 'template/angular-table.html',
+                        templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/tools/commons/angular-table/template/angular-table.html',
                         transclude: true,
                         controller: TableControllerFunction,
                         priority: 1000,
