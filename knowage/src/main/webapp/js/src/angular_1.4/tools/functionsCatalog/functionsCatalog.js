@@ -19,6 +19,10 @@ app.controller('functionsCatalogController', [ "sbiModule_config",
 		"$mdToast", "$log", "sbiModule_download", "sbiModule_messaging",
 		"$sce", "$compile", "$angularListDetail", functionsCatalogFunction ]);
 
+app.controller('functionCatalogPreviewController',function($scope){
+
+});
+
 function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		sbiModule_restServices, $scope, $mdDialog, $mdToast, $log,
 		sbiModule_download, sbiModule_messaging, $sce, $compile,
@@ -34,9 +38,10 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	};
 	$scope.tableSelectedFunction = {};
 	$scope.tableSelectedFunction.language = "Python";
-	$scope.languages = [ "Python", "R" ];
-	$scope.inputColumnTypes = ['STRING', 'DATE', 'NUMBER', 'LIST'];
+	$scope.languages = ["Python"];
+	$scope.inputColumnTypes = ['STRING', 'DATE', 'NUMBER'];
 	$scope.inputVariableTypes = ['STRING', 'DATE', 'NUMBER'];
+	$scope.outputColumnFieldTypes = ['MEASURE', 'ATTRIBUTE'];
 	$scope.outputColumnTypes = ['STRING', 'DATE', 'NUMBER'];
 	$scope.functionTypesList = [];
 	$scope.inputColumns = [];
@@ -317,7 +322,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 		for (var i = 0; i < $scope.shownFunction.outputColumns.length; i++) {
 			if ($scope.shownFunction.outputColumns[i].name == undefined
-					|| $scope.shownFunction.outputColumns[i].type == undefined) {
+					|| $scope.shownFunction.outputColumns[i].type == undefined || $scope.shownFunction.outputColumns[i].fieldType == undefined) {
 				correctArguments = false;
 				var index = i + 1;
 
@@ -326,9 +331,15 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				}
 				if ($scope.shownFunction.outputColumns[i].name == undefined) {
 					$scope.missingFields.push("Output column " + index + " name missing");
-
+				}
+				if ($scope.shownFunction.outputColumns[i].fieldType == undefined) {
+					$scope.missingFields.push("Output column " + index + " fieldtype missing");
 				}
 			}
+//			if ($scope.shownFunction.outputColumns[i].fieldType == "MEASURE" && $scope.shownFunction.outputColumns[i].type != "NUMBER") {
+//				correctArguments = false;
+//				$scope.missingFields.push("Field type and type not matching");
+//			}
 		}
 		if ($scope.shownFunction.description == ""
 				|| $scope.shownFunction.description == "") {
@@ -353,10 +364,10 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	}
 
 	$scope.acSpeedMenu = [{
-		label : sbiModule_translate.load("sbi.functionscatalog.executedemo"),
+		label : sbiModule_translate.load("sbi.functionscatalog.executepreview"),
 		icon : 'fa fa-play-circle-o',
 		action : function(item, event) {
-			$scope.applyDemoItem(item, event);
+			$scope.applyPreviewItem(item, event);
 		}
 	}];
 
@@ -406,8 +417,26 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 	};
 
-	$scope.applyDemoItem = function(item, event) {
-		// TO DO
+	$scope.applyPreviewItem = function(item, event) {
+//		var deferred = $q.defer();
+		var promise;
+
+		$mdDialog.show({
+			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/functionsCatalog/templates/functionCatalogPreviewTemplate.html',
+			parent : angular.element(document.body),
+			clickOutsideToClose:true,
+			escapeToClose :true,
+			preserveScope: true,
+			autoWrap:false,
+			fullscreen: true,
+			controller: functionCatalogPreviewController
+		}).then(function() {
+//			deferred.promise.then(function(result){
+//
+//			});
+		}, function() {
+		});
+//		promise = deferred.promise;
 	};
 
 	$scope.leftTableClick = function(item) {

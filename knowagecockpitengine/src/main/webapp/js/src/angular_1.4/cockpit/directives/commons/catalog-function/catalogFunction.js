@@ -190,8 +190,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		function getDatasetColumns(){
 			var toReturn = [];
-			for (var i=0; i<$scope.model.content.columnSelectedOfDataset.length; i++) {
-				var column = $scope.model.content.columnSelectedOfDataset[i];
+			if ($scope.model.content == undefined) {
+				var columns = $scope.model.columnSelectedOfDatasetAggregations;
+			} else {
+				var columns = $scope.model.content.columnSelectedOfDataset;
+			}
+			for (var i=0; i<columns.length; i++) {
+				var column = columns[i];
 				if (!column.isFunction)
 					toReturn.push(column.name);
 			}

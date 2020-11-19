@@ -120,7 +120,8 @@ def convertKnowageDatastoreToDataframe(metadata, rows):
         #cast types
         df = df.astype(column_types)
         #drop first column (redundant)
-        df.drop(columns=['id'], inplace=True)
+        if 'id' in df.columns:
+            df.drop(columns=['id'], inplace=True)
     return df
 
 def convertDataframeToKnowageDataset(df):

@@ -137,7 +137,7 @@ function cockpitChartWidgetControllerFunction(
 			if($scope.model.content.columnSelectedOfDatasetAggregations[c].fieldType == 'ATTRIBUTE') $scope.model.content.columnSelectedOfDatasetAggregations[c].isAttribute = true;
 			if($scope.model.content.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.model.content.columnSelectedOfDatasetAggregations[c].funcSummary) $scope.model.content.columnSelectedOfDatasetAggregations[c].funcSummary = $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected;
 		 }
-			
+
 		for(var z in $scope.model.content.columnSelectedOfDataset){
 			for(var c in $scope.model.content.columnSelectedOfDatasetAggregations){
 				if (($scope.model.content.columnSelectedOfDatasetAggregations[c].name == $scope.model.content.columnSelectedOfDataset[z].name) && $scope.model.content.columnSelectedOfDataset[z].aggregationSelected != $scope.model.content.columnSelectedOfDatasetAggregations[c].aggregationSelected) {
@@ -643,18 +643,20 @@ function cockpitChartWidgetControllerFunction(
 		    						$scope.localModel.columnSelectedOfDatasetAggregations.push(obj);
 		    					}
 			    		  }
-			    		  
+
 						  for(var c in $scope.localModel.columnSelectedOfDatasetAggregations){
 							  if(!$scope.localModel.columnSelectedOfDatasetAggregations[c].aliasToShow) $scope.localModel.columnSelectedOfDatasetAggregations[c].aliasToShow = $scope.localModel.columnSelectedOfDatasetAggregations[c].alias;
 							  if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE' && !$scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected) $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected = 'SUM';
 							  if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'ATTRIBUTE') $scope.localModel.columnSelectedOfDatasetAggregations[c].isAttribute = true;
 							  if($scope.localModel.columnSelectedOfDatasetAggregations[c].fieldType == 'MEASURE'  && !$scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary) $scope.localModel.columnSelectedOfDatasetAggregations[c].funcSummary = $scope.localModel.columnSelectedOfDatasetAggregations[c].aggregationSelected;
 						  }
-						
-						  for(var z in $scope.localModel.content.columnSelectedOfDataset){
-							  for(var c in $scope.localModel.columnSelectedOfDatasetAggregations){
-								  if (($scope.localModel.content.columnSelectedOfDatasetAggregations[c].name == $scope.model.content.columnSelectedOfDataset[z].name) && $scope.localModel.content.columnSelectedOfDataset[z].aggregationSelected != $scope.localModel.content.columnSelectedOfDatasetAggregations[c].aggregationSelected) {
-									   $scope.localModel.content.columnSelectedOfDatasetAggregations[c].aggregationSelected = $scope.localModel.content.columnSelectedOfDataset[z].aggregationSelected;
+
+						  if ($scope.localModel.content) {
+							  for(var z in $scope.localModel.content.columnSelectedOfDataset){
+								  for(var c in $scope.localModel.columnSelectedOfDatasetAggregations){
+									  if (($scope.localModel.content.columnSelectedOfDatasetAggregations[c].name == $scope.model.content.columnSelectedOfDataset[z].name) && $scope.localModel.content.columnSelectedOfDataset[z].aggregationSelected != $scope.localModel.content.columnSelectedOfDatasetAggregations[c].aggregationSelected) {
+										   $scope.localModel.content.columnSelectedOfDatasetAggregations[c].aggregationSelected = $scope.localModel.content.columnSelectedOfDataset[z].aggregationSelected;
+									  }
 								  }
 							  }
 						  }

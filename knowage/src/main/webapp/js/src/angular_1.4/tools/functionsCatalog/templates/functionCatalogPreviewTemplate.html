@@ -1,0 +1,17 @@
+<html ng-app="functionsCatalogControllerModule">
+	<md-card>
+		<md-card-content>
+		 	<div ng-controller="functionCatalogPreviewController" class="md-padding" ng-cloak>
+			  <h1 class="md-title">Choose a dataset</h1>
+			  <div layout="row">
+			    <md-input-container>
+			      <label>Datasets</label>
+			      <md-select ng-model="selectedDatasetId">
+		          	<md-option ng-repeat="dataset in datasetList" ng-value="dataset.dsId">dataset</md-option>
+			      </md-select>
+			    </md-input-container>
+			  </div>
+			</div>
+		</md-card-content>
+	</md-card>
+</html>

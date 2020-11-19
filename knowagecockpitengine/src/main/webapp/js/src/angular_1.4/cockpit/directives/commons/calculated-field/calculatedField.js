@@ -254,10 +254,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		containsAggregation = function(formula) {
-			aggregations = ["SUM", "MIN", "MAX", "AVG", "COUNT"];
+			aggregations = cockpitModule_generalOptions.aggregationFunctions;
 			var aggregationFound = false;
 			for (var i=0; i<aggregations.length; i++) {
-				var aggr = aggregations[i];
+				var aggr = aggregations[i].value;
 				if(formula.indexOf(aggr) !== -1) {
 					aggregationFound = true;
 					break;

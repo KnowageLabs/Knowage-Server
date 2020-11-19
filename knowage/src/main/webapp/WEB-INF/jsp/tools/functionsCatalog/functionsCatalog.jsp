@@ -363,8 +363,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	   								</md-input-container>
 	   								<md-input-container class="md-block" flex>
 	  									<label>{{translate.load("sbi.functionscatalog.columnfieldtype");}}</label>
-	  									<md-select ng-model="c.fieldType" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-		    								<md-option ng-repeat="columnFieldType in ['MEASURE', 'ATTRIBUTE']" value="{{columnFieldType}}">
+	  									<md-select ng-model="c.fieldType" on-change="c.type=''" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+		    								<md-option ng-repeat="columnFieldType in outputColumnFieldTypes" value="{{columnFieldType}}">
 		      								{{columnFieldType}}
 		    								</md-option>
 	 									</md-select>
