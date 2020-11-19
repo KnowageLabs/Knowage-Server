@@ -17,15 +17,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -144,9 +147,16 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			String dossierTemplateJson = objectMapper.writeValueAsString(dossierTemplate);
 			Map<String, String> imagesMap = null;
 
+			Set<String> executedDocuments = new HashSet<String>();
+
 			for (Report reportToUse : dossierTemplate.getReports()) {
 
 				String cockpitDocument = reportToUse.getLabel();
+				if (executedDocuments.contains(cockpitDocument)) {
+					progressThreadManager.incrementPartial(progressThreadId);
+					continue;
+				}
+
 				String imageName = reportToUse.getImageName(); // image format is .png
 
 				this.validImage(imageName);
@@ -210,6 +220,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 						logger.debug(message);
 
 						handleAllPicturesFromZipFile(responseAsByteArray, randomKey, imagesMap, reportToUse);
+						executedDocuments.add(cockpitDocument);
 
 					} else {
 						String path = SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution" + File.separator;
@@ -225,6 +236,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 					break;
 				}
+
 			}
 			// Activity creation
 
@@ -326,17 +338,17 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 		if (outFolder.isDirectory()) {
 			for (final File f : outFolder.listFiles(IMAGE_FILTER)) {
-//				BufferedImage img = null;
 
 				try {
-//					img = ImageIO.read(f);
 
 					File to = FileUtilities.createFile(FilenameUtils.removeExtension(documentLabel + "_" + f.getName()), ".png", randomKey,
 							new ArrayList<PlaceHolder>());
 
-					org.apache.commons.io.FileUtils.moveFile(f, to);
+					FileUtils.copyFile(f, to);
 
 					imagesMap.put(reportToUse.getImageName() + "_" + f.getName(), to.getAbsolutePath());
+
+					FileUtils.deleteQuietly(f);
 
 				} catch (final IOException e) {
 					// handle errors here
