@@ -20,10 +20,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
@@ -45,7 +48,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.ZipUtils;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
@@ -280,18 +282,28 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 		return serviceURL;
 	}
 
-	private void handleAllPicturesFromZipFile(byte[] responseAsByteArray, String randomKey, Map<String, String> imagesMap, Report reportToUse) {
+	private void handleAllPicturesFromZipFile(byte[] responseAsByteArray, String randomKey, Map<String, String> imagesMap, Report reportToUse)
+			throws IOException {
 
 		String outFolderPath = SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution" + File.separator + randomKey + File.separator;
 
 		File outFolder = new File(outFolderPath);
 
-		try {
-			ZipUtils.unzip(new ByteArrayInputStream(responseAsByteArray), outFolder);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		byte[] buffer = new byte[1024];
+		ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(responseAsByteArray));
+		ZipEntry zipEntry = zis.getNextEntry();
+		while (zipEntry != null) {
+			File newFile = FileUtilities.createFile(FilenameUtils.removeExtension(zipEntry.getName()), ".png", randomKey, new ArrayList<PlaceHolder>());
+			FileOutputStream fos = new FileOutputStream(newFile);
+			int len;
+			while ((len = zis.read(buffer)) > 0) {
+				fos.write(buffer, 0, len);
+			}
+			fos.close();
+			zipEntry = zis.getNextEntry();
 		}
+		zis.closeEntry();
+		zis.close();
 
 		// array of supported extensions (use a List if you prefer)
 		String[] EXTENSIONS = new String[] { "gif", "png", "bmp" // and other formats you need
@@ -319,7 +331,8 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 				try {
 //					img = ImageIO.read(f);
 
-					File to = new File(outFolderPath + documentLabel + "_" + f.getName());
+					File to = FileUtilities.createFile(FilenameUtils.removeExtension(documentLabel + "_" + f.getName()), ".png", randomKey,
+							new ArrayList<PlaceHolder>());
 
 					org.apache.commons.io.FileUtils.moveFile(f, to);
 
@@ -331,6 +344,19 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			}
 
 		}
+	}
+
+	public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
+		File destFile = new File(destinationDir, zipEntry.getName());
+
+		String destDirPath = destinationDir.getCanonicalPath();
+		String destFilePath = destFile.getCanonicalPath();
+
+		if (!destFilePath.startsWith(destDirPath + File.separator)) {
+			throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+		}
+
+		return destFile;
 	}
 
 	private List<DocumentMetadataProperty> getMetaDataAndContent(IObjMetadataDAO metaDao, IObjMetacontentDAO metaContentDAO, BIObject obj) throws Exception {
