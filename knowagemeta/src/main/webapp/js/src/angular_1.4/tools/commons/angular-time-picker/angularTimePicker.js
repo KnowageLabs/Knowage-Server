@@ -1,13 +1,13 @@
 angular.module('angular_time_picker', ['ngMaterial'])
 .directive('angularTimePicker', function() {
   return {
-    templateUrl: '/knowage/js/src/angular_1.4/tools/commons/angular-time-picker//angular-time-picker.html',
+    templateUrl: '/knowage/js/src/angular_1.4/tools/commons/angular-time-picker/angular-time-picker.html',
     controller: angularTimePickerFunction,
     scope: {
     	ngModel:'=',
     	id:"@"
     	},
-      link: function (scope, elm, attrs) {   
+      link: function (scope, elm, attrs) {
 	    	  if(!attrs.id){
 	    		  scope.id= (new Date()).getTime();
 	    	  }
@@ -28,7 +28,7 @@ function angularTimePickerFunction($scope){
 			angular.element(document.querySelector('angular-time-picker #minInput-'+$scope.id))[0].value=00;
 		}
 	}
-	
+
 	s.getHours=function(){
 		if(s.ngModel==undefined || s.ngModel=="NaN:NaN"){return 0};
 		return parseInt(s.ngModel.split(":")[0]);
@@ -37,18 +37,18 @@ function angularTimePickerFunction($scope){
 		if(s.ngModel==undefined || s.ngModel=="NaN:NaN"){return 0};
 		return parseInt(s.ngModel.split(":")[1]);
 	}
-	
+
 	s.alterHours=function(up){
 		if(up){
 		s.hours=(s.hours+1)%24;
-		
+
 		}else{
 			s.hours-=1;
 			if(s.hours<0){s.hours=23;}
 		}
 		s.alterNgModel();
 	}
-	
+
 	s.alterMinutes=function(up){
 		if(up){
 		s.minutes=(s.minutes+1)%60;
@@ -59,7 +59,7 @@ function angularTimePickerFunction($scope){
 
 		s.alterNgModel();
 	}
-	
+
 	s.alterNgModel=function(){
 			if(s.ngModel==undefined || s.ngModel=="NaN:NaN" || s.ngModel==""){
 				var date=new Date();
@@ -71,28 +71,28 @@ function angularTimePickerFunction($scope){
 		s.ngModel=(h<10? '0'+h : h)+":"+(m<10? '0'+m : m);
 	}
 	s.alterNgModel();
-		
-	
-	
+
+
+
 	$scope.$watch(
 			function() {
 				return s.ngModel;
-			}, function(newValue, oldValue) { 
+			}, function(newValue, oldValue) {
 				if (newValue != oldValue) {
 					s.hours=s.getHours();
 					s.minutes=s.getMinutes();
 					s.alterNgModel();
 				}
 			}, true);
-	
-	
+
+
 	$scope.$watch(
 			function() {
 				var elem=angular.element(document.querySelector('angular-time-picker #minInput-'+$scope.id))[0];
 				return elem==undefined? null:  elem.valueAsNumber;
 			}, function(newValue, oldValue) {
-				
-				if (newValue != oldValue) { 
+
+				if (newValue != oldValue) {
 					if(newValue>59 || newValue<0){
 						angular.element(document.querySelector('angular-time-picker #minInput-'+$scope.id))[0].value=oldValue;
 					}else{
@@ -101,13 +101,13 @@ function angularTimePickerFunction($scope){
 					}
 				}
 			}, true);
-	
+
 	$scope.$watch(
 			function() {
 				var elem=angular.element(document.querySelector('angular-time-picker #hoursInput-'+$scope.id))[0];
 				return elem==undefined? null:  elem.valueAsNumber;
 			}, function(newValue, oldValue) {
-				
+
 				if (newValue != oldValue) {
 					if(newValue>23 || newValue<0){
 						angular.element(document.querySelector('angular-time-picker #hoursInput-'+$scope.id))[0].value=oldValue;
@@ -117,6 +117,6 @@ function angularTimePickerFunction($scope){
 					}
 				}
 			}, true);
-	
+
 	}
 
