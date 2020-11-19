@@ -26,17 +26,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
 
+import it.eng.spagobi.utilities.assertion.Assert;
+
 public class DatasetFunctionsConfig {
 
 	private static final String AVAILABLE_FUNCTIONS = "availableFunctions";
 	private static final String NULLIF_FUNCTION = "nullifFunction";
 	private static final String NULLIF = "NULLIF";
-	HashMap<String, HashMap<String, List<String>>> functionsConfigurationMap = new HashMap<String, HashMap<String, List<String>>>();
+	HashMap<String, HashMap<String, List<String>>> functionsConfigurationMap = new HashMap<>();
 
 	public DatasetFunctionsConfig() {
-		List<String> availableFunctions = new ArrayList<String>();
-		HashMap<String, List<String>> map = new HashMap<String, List<String>>();
-		List<String> list = new ArrayList<String>();
+		List<String> availableFunctions = new ArrayList<>();
+		HashMap<String, List<String>> map = new HashMap<>();
+		List<String> list = new ArrayList<>();
 
 		Stream.of(HIVE, CASSANDRA, ORIENT, METAMODEL).forEach(e -> functionsConfigurationMap.put(e.getValue(), map));
 
@@ -50,10 +52,16 @@ public class DatasetFunctionsConfig {
 	}
 
 	public List<String> getAvailableFunctions(String dialect) {
+		Assert.assertNotEmpty(dialect, "Dialect cannot be empty or null");
+		Assert.assertTrue(functionsConfigurationMap.containsKey(dialect), "You must add the dialect to functionsConfigurationMap");
+
 		return functionsConfigurationMap.get(dialect).get(AVAILABLE_FUNCTIONS);
 	}
 
 	public List<String> getNullifFunction(String dialect) {
+		Assert.assertNotEmpty(dialect, "Dialect cannot be empty or null");
+		Assert.assertTrue(functionsConfigurationMap.containsKey(dialect), "You must add the dialect to functionsConfigurationMap");
+
 		return functionsConfigurationMap.get(dialect).get(NULLIF_FUNCTION);
 	}
 }
