@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@ page import="javax.servlet.ServletContext" %>
 
 <%@ page contentType="applicaton/octet-stream" %>
+<%@ page trimDirectiveWhitespaces="true" %>
 <%
 	ServletContext servletContext = request.getServletContext();
 	int documentId = Integer.valueOf(request.getParameter("document"));
