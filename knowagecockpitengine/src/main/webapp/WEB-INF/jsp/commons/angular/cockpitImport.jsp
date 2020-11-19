@@ -21,14 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	spagoBiContext - context path of core engine: /knowage
 	cockpitEngineContext - context name of particular engine, in this case: /cockpitengine  
   -------------------------------------------------------------------------------------- -->
-<%@page import="it.eng.knowage.wapp.Environment"%>
-<%@page import="it.eng.knowage.wapp.Version"%>
-<% if(Version.getEnvironment() == Environment.PRODUCTION) { %>
-
-	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-sources-cockpit-bundle_"+ Version.getCompleteVersion() +".min.js")%>"></script>
-	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-sources-widgets-bundle_"+ Version.getCompleteVersion() +".min.js")%>"></script>
-	
-<% } else { %>
 
 	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/cockpit.js")%>"></script>
 	
@@ -117,4 +109,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/commons/dataset-selector/multiDatasetSelector.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/commons/document-selector/documentSelector.js")%>"></script>
 
-<%}%>

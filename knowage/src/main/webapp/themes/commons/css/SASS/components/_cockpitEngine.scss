@@ -714,6 +714,7 @@
 
 	cockpit-widget{
 		&>li{
+			position: relative;
 			&.fullScreenWidget{
 				width:100%!important;
 				height:100%!important;

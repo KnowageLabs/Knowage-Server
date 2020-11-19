@@ -16,13 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-<%@page import="it.eng.knowage.wapp.Environment"%>
-<%@page import="it.eng.knowage.wapp.Version"%>
-<% if(Version.getEnvironment() == Environment.PRODUCTION) { %>
-
-	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-sources-chartrender-bundle_"+ Version.getCompleteVersion() +".min.js")%>"></script>
-	
-<% } else { %>
 
 	<%@page import="it.eng.spagobi.engine.chart.ChartEngineConfig"%>
 	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/chartInitializer/chartInitializerModule.js")%>"></script>
@@ -63,4 +56,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<!-- Settings  -->
 	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/commons/Settings.js")%>"></script>
 
-<% } %>

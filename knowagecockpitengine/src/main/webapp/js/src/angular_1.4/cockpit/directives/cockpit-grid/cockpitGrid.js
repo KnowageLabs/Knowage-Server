@@ -22,9 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 (function(){
-angular.module('cockpitModule').directive('cockpitGrid',function($compile,cockpitModule_widgetServices,cockpitModule_properties){
+	var cockpitToolbarPath = '/angular_1.4/cockpit';
+angular.module('cockpitModule').directive('cockpitGrid',function($compile,cockpitModule_widgetServices,cockpitModule_properties, sbiModule_config){
 	   return{
-		   templateUrl: baseScriptPath+ '/directives/cockpit-grid/templates/cockpitGrid.html',
+		   templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath+ '/directives/cockpit-grid/templates/cockpitGrid.html',
 		   transclude: true,
 		   controller: cockpitGridControllerFunction,
 		   priority: 1000,

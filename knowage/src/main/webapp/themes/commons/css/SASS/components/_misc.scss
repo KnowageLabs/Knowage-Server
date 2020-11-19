@@ -1275,6 +1275,9 @@ filter-by-tags {
     height: 16px;
     display: inline-block;
 }
+.color-picker-input-wrapper {
+  width: 90%;
+}
 
 @supports (-ms-ime-align: auto) {
   .kn-list-detail {

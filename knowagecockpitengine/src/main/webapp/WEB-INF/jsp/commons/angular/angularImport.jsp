@@ -34,16 +34,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/weather-icons/css/weather-icons.min.css")%>">
 
 <!-- angular reference-->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/dist/angular-bundle.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/dist/angular-bundle.js")%>"></script>
 
 <!-- IE11 polyfills bundle -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/dist/polyfills-bundle.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/dist/polyfills-bundle.js")%>"></script>
 
 <!-- All internal/external libraries bundle -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/dist/knowage-lib-bundle.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/dist/knowage-lib-bundle.js")%>"></script>
 
 <!-- All internal/external cockpit specific libraries bundle -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-lib-bundle.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-lib-bundle.js")%>"></script>
 
 <script type="text/javascript">
     if(/MSIE \d|Trident.*rv:/.test(navigator.userAgent))
@@ -51,17 +51,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </script>
 
 <!-- All node_modules libraries bundle -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-modules-bundle.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-modules-bundle.js")%>"></script>
 
 <!-- All external styles bundle -->
-<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext,"/dist/knowagecockpit-modules-styles-bundle.min.css")%>">
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext,"/dist/knowagecockpit-modules-styles-bundle.css")%>">
 
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 
 <% if(Version.getEnvironment() == Environment.PRODUCTION) { %>
 
-	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-sources-bundle_"+ Version.getCompleteVersion() +".min.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-sources-bundle_"+ Version.getCompleteVersion() +".js")%>"></script>
 	
 <% } else { %>
 

@@ -1,2 +1,4 @@
-agGrid.initialiseAgGridWithAngular1(angular);
-angular.module('driversExecutionModule', ['agGrid']);
+(function() {
+	agGrid.initialiseAgGridWithAngular1(angular);
+	angular.module('driversExecutionModule', ['agGrid']);
+})();

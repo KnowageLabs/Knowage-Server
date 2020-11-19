@@ -26,10 +26,10 @@ angular.module('cockpitModule').directive('mdTabFixedAddSheetButton',function ($
         }
     };
 })
-
-angular.module('cockpitModule').directive('cockpitSheet',function($compile){
+var cockpitToolbarPath = '/angular_1.4/cockpit';
+angular.module('cockpitModule').directive('cockpitSheet',function($compile,sbiModule_config){
 	   return{
-		   templateUrl: baseScriptPath+ '/directives/cockpit-sheet/templates/cockpitSheet.html',
+		   templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath+ '/directives/cockpit-sheet/templates/cockpitSheet.html',
 		   transclude: true,
 		   controller: cockpitSheetControllerFunction,
 		   priority: 1000,

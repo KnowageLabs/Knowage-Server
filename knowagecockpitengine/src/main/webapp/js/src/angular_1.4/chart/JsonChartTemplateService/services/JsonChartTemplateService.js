@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+(function() {
 angular.module('JsonChartTemplateServiceModule')
 
 .factory('jsonChartTemplate',function(sbiModule_restServices,sbiModule_i18n,$q,$httpParamSerializer){
@@ -172,3 +172,4 @@ angular.module('JsonChartTemplateServiceModule')
 	}
 
 })
+})();

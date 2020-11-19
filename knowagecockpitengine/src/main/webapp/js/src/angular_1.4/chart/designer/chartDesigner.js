@@ -16,14 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var app =angular.module('chartDesignerManager', ['chart-directives','ChartDesignerService', 'chartengine.settings', 'chartBackwardCompatibilityModule'])
+angular.module('chartDesignerManager', ['chart-directives','ChartDesignerService', 'chartengine.settings', 'chartBackwardCompatibilityModule'])
 
-app.config(['$mdThemingProvider', function($mdThemingProvider) {
+.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
-}]);
-
-app.directive("chartDesigner" ,function(chartDesignerBasePath){
+}]).directive("chartDesigner" ,function(chartDesignerBasePath){
 	return {
 		templateUrl: chartDesignerBasePath + '/chartDesignerTemplate.html',
 		controller: chartDesignerFunction,

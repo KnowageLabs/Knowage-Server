@@ -21,14 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	spagoBiContext - context path of core engine: /knowage
 	cockpitEngineContext - context name of particular engine, in this case: /cockpitengine  
   --------------------------------------------------------------------------------------- -->
-<%@page import="it.eng.knowage.wapp.Version"%>
-<%@page import="it.eng.knowage.wapp.Environment"%>
-<% if(Version.getEnvironment() == Environment.PRODUCTION) { %>
-
-	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-sources-chart-bundle_"+ Version.getCompleteVersion() +".min.js")%>"></script>
-	
-<% } else { %>
-
+  
 	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/customDirectives.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/chart-tab/chart-tab.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/directives/custom_directives/configuration-tab/configuration-tab.js")%>"></script>
@@ -54,5 +47,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer/chartDesigner.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/treemap/treemap.js")%>"></script>
 	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/heatmap/heatmap.js")%>"></script>		
-
-<% } %>
