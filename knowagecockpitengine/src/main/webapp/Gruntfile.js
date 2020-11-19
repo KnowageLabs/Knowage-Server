@@ -84,6 +84,35 @@ module.exports = function(grunt) {
 	        	 ],
 	        	 'dist/knowagecockpit-sources-widgets-bundle_<%= pkg.version %>.js' : [
 	        		 'js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/*Widget/*.js'
+	        	 ],
+	        	 'dist/knowagecockpit-sources-chart-bundle_<%= pkg.version %>.js': [
+	        		 'js/src/angular_1.4/chart/designer/directives/custom_directives/*.js',
+	        		 'js/src/angular_1.4/chart/commons/Settings.js',
+	        		 'js/src/angular_1.4/chart/designer/directives/common_directives/commonDirectives.js',
+	        		 'js/src/angular_1.4/chart/designer/directives/third_party/thirdPartyDirectives.js',
+	        		 'js/src/angular_1.4/chart/designer/directives/chartDirectives.js',
+	        		 'js/src/angular_1.4/chart/designer/services/chartDesignerServices.js',
+	        		 'js/src/angular_1.4/chart/designer/services/backward/chartBackwardCompatibilityModule.js',
+	        		 'js/src/angular_1.4/chart/designer/services/backward/*Compatibility/*.js',
+	        		 'js/src/angular_1.4/chart/designer/services/channelMessaging.js',
+	        		 'js/src/angular_1.4/chart/designer/chartDesigner.js',
+	        		 'js/src/angular_1.4/chart/treemap/treemap.js',
+	        		 'js/src/angular_1.4/chart/heatmap/heatmap.js'
+	        	 ],
+	        	 'dist/knowagecockpit-sources-chartrender-bundle_<%= pkg.version %>.js': [
+	        		'js/src/angular_1.4/chart/chartInitializer/chartInitializerModule.js',
+	        		'js/src/angular_1.4/chart/designer/services/chartDesignerServices.js',
+	        		'js/src/angular_1.4/chart/chartInitializer/services/*.js',
+	        		'js/src/angular_1.4/chart/chartRenderer/chartRendererModule.js',
+	        		'js/src/angular_1.4/chart/chartRenderer/directives/chartRenderer.js',
+	        		'js/src/angular_1.4/chart/JsonChartTemplateService/JsonChartTemplateServiceModule.js',
+	        		'js/src/angular_1.4/chart/JsonChartTemplateService/services/JsonChartTemplateService.js',
+	        		'js/src/angular_1.4/chart/chartRenderer/services/chartConfMergeService.js',
+	        		'js/src/angular_1.4/chart/chartRenderer/services/chartSonifyService.js',
+	        		'js/lib/d3/d3.js',
+	        		'js/lib/chartJs/Chart.js',
+	        		'js/src/angular_1.4/chart/d3/*.js',
+	        		'js/src/angular_1.4/chart/commons/Settings.js'
 	        	 ]
         	}
         }
@@ -98,7 +127,9 @@ module.exports = function(grunt) {
             'dist/knowagecockpit-modules-bundle.min.js': ['dist/knowagecockpit-modules-bundle.js'],
             'dist/knowagecockpit-sources-bundle_<%= pkg.version %>.min.js': ['dist/knowagecockpit-sources-bundle_<%= pkg.version %>.js'],
             'dist/knowagecockpit-sources-cockpit-bundle_<%= pkg.version %>.min.js' : ['dist/knowagecockpit-sources-cockpit-bundle_<%= pkg.version %>.js'],
-            'dist/knowagecockpit-sources-widgets-bundle_<%= pkg.version %>.min.js' : ['dist/knowagecockpit-sources-widgets-bundle_<%= pkg.version %>.js']
+            'dist/knowagecockpit-sources-widgets-bundle_<%= pkg.version %>.min.js' : ['dist/knowagecockpit-sources-widgets-bundle_<%= pkg.version %>.js'],
+            'dist/knowagecockpit-sources-chart-bundle_<%= pkg.version %>.min.js' : ['dist/knowagecockpit-sources-chart-bundle_<%= pkg.version %>.js'],
+            'dist/knowagecockpit-sources-chartrender-bundle_<%= pkg.version %>.min.js' : ['dist/knowagecockpit-sources-chartrender-bundle_<%= pkg.version %>.js'],
           }
         }
       },
