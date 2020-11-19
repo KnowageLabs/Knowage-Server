@@ -19,7 +19,12 @@ var EmptyJob = {
 
 app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger",
                                "sbiModule_config", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", "$window",
-                               "sbiModule_dateServices", "sbiModule_messaging", mainFunction ]);
+                               "sbiModule_dateServices", "sbiModule_messaging", mainFunction ])
+.filter('i18n', function(sbiModule_i18n) {
+	return function(label) {
+		return sbiModule_i18n.getI18n(label);
+	}
+});
 
 function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger,
 		sbiModule_config, $scope, $mdDialog, $mdToast, $timeout, $location, $window, sbiModule_dateServices, sbiModule_messaging) {
