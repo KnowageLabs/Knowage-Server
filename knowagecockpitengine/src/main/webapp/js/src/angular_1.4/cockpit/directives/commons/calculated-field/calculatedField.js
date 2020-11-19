@@ -228,6 +228,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					reject();
 					return;
 				}
+				if($scope.model && $scope.model.type == "static-pivot-table") {
+					if(!containsAggregation($scope.calculatedField.formula)) {
+						$scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.crosstab.noaggregations"));
+						reject();
+						return;
+					}
+				}
 				$scope.formulaLoading = true;
 				sbiModule_restServices.restToRootProject();
 				sbiModule_restServices.promisePost('2.0/datasets','validateFormula',{
@@ -244,6 +251,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					reject(response.data.errors[0].message);
 				})
 			})
+		}
+
+		containsAggregation = function(formula) {
+			aggregations = ["SUM", "MIN", "MAX", "AVG", "COUNT"];
+			var aggregationFound = false;
+			for (var i=0; i<aggregations.length; i++) {
+				var aggr = aggregations[i];
+				if(formula.indexOf(aggr) !== -1) {
+					aggregationFound = true;
+					break;
+				}
+			}
+			return aggregationFound;
 		}
 
 		$scope.addMeasures = function(field) {
