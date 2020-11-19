@@ -12,17 +12,9 @@ module.exports = function(grunt) {
         basic_and_extras: {
         	files: {
 	        	 'dist/knowagecockpit-lib-bundle.js' : [
-	        		 knowageContext + 'js/lib/angular/angular-material_1.1.0/angular-material.min.js',
-	        		 knowageContext + 'js/lib/angular/angular-tree/angular-ui-tree.js',
-	        		 knowageContext + 'js/lib/angular/contextmenu/ng-context-menu.js',
-	        		 knowageContext + 'js/lib/angular/pagination/dirPagination.js',
-	        		 knowageContext + 'js/lib/angular/expander-box/expanderBox.js',
-	        		 knowageContext + 'js/lib/angular/color-picker/tinycolor-min.js',
-	        		 knowageContext + 'js/lib/angular/color-picker/tinygradient.min.js',
-	        		 knowageContext + 'js/lib/angular/color-picker/angularjs-color-picker.js',
-	        		 knowageContext + 'js/lib/xml2js/xml2json.js',
 	        		 knowageContext + 'js/lib/angular/angular-gridster/angular-gridster.min.js',
-	        		 knowageContext + 'js/lib/angular/angular-json-tree/angular-json-tree.js',
+	        		 knowageContext + 'js/lib/angular/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js',
+	        		 knowageContext + 'js/lib/angular/angular-json-tree/json-tree.js',
 	        		 knowageContext + 'js/lib/openlayers/6.1.1/ol.js',
 	        		 knowageContext + 'js/lib/mathjs/4.0.1/math.min.js'
 	        	 ],
@@ -59,7 +51,7 @@ module.exports = function(grunt) {
 					knowageContext +  'js/lib/angular/angular-json-tree/json-tree.css',
 					knowageContext +  'js/lib/openlayers/6.1.1/ol.css'
 	        	 ],
-	        	 'dist/knowage-sources-bundle_<%= pkg.version %>.js' : [
+	        	 'dist/knowagecockpit-sources-bundle_<%= pkg.version %>.js' : [
 					'js/src/angular_1.4/tools/commons/angular-table/AngularTable.js',
 					knowageContext + 'js/src/angular_1.4/tools/commons/angular-table/utils/daff.js',
 					knowageContext + 'js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js',
@@ -71,7 +63,17 @@ module.exports = function(grunt) {
 	        	 ],
 	        	 'dist/knowagecockpit-sources-cockpit-bundle_<%= pkg.version %>.js' : [
 					'js/src/angular_1.4/cockpit/cockpit.js',
-					'js/src/angular_1.4/cockpit/directives/cockpit-*/*.js',
+					'js/src/angular_1.4/cockpit/directives/cockpit-sheet/cockpitSheet.js',
+					'js/src/angular_1.4/cockpit/directives/cockpit-grid/cockpitGrid.js',
+					'js/src/angular_1.4/cockpit/directives/cockpit-widget/cockpitWidget.js',
+					'js/src/angular_1.4/cockpit/directives/cockpit-toolbar/cockpitToolbar.js',
+					'js/src/angular_1.4/cockpit/directives/cockpit-style-configurator/cockpitStyleConfigurator.js',
+					'js/src/angular_1.4/cockpit/directives/cockpit-cross-configurator/cockpitCrossConfigurator.js',
+					'js/src/angular_1.4/cockpit/directives/cockpit-columns-configurator/cockpitColumnsConfigurator.js',
+					'js/src/angular_1.4/cockpit/directives/cockpit-column-variables/cockpitColumnVariables.js',
+					'js/src/angular_1.4/cockpit/directives/cockpit-selector-configurator/cockpitSelectorConfigurator.js',
+					'js/src/angular_1.4/cockpit/directives/cockpit-filters-configuration/cockpitFiltersConfiguration.js',
+					'js/src/angular_1.4/cockpit/directives/cockpit-text-configuration/cockpitTextConfiguration.js',
 					'js/src/angular_1.4/cockpit/services/*.js',
 					knowageContext + 'js/src/angular_1.4/tools/commons/services/*.js',
 					knowageContext + 'js/src/angular_1.4/tools/driversexecution/*.js',
