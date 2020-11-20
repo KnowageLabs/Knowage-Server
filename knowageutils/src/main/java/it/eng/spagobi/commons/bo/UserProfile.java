@@ -84,6 +84,19 @@ public class UserProfile implements IEngUserProfile {
 	public UserProfile() {
 	}
 
+	public UserProfile(UserProfile other) {
+		super();
+		this.userUniqueIdentifier = other.userUniqueIdentifier;
+		this.userId = other.userId;
+		this.userName = other.userName;
+		this.userAttributes = other.userAttributes;
+		this.roles = other.roles;
+		this.functionalities = other.functionalities;
+		this.organization = other.organization;
+		this.isSuperadmin = other.isSuperadmin;
+		this.spagoBIUserProfile = other.spagoBIUserProfile;
+	}
+
 	/**
 	 * The Constructor.
 	 *
