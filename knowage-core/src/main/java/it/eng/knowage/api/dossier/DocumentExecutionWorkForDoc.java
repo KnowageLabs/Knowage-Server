@@ -153,10 +153,6 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			for (Report reportToUse : dossierTemplate.getReports()) {
 
 				String cockpitDocument = reportToUse.getLabel();
-				if (executedDocuments.contains(cockpitDocument)) {
-					progressThreadManager.incrementPartial(progressThreadId);
-					continue;
-				}
 
 				String imageName = reportToUse.getImageName(); // image format is .png
 
@@ -199,6 +195,11 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 					String serviceUrl = addParametersToServiceUrl(drivers, parameter, serviceUrlBuilder);
 
+					if (executedDocuments.contains(serviceUrl)) {
+						progressThreadManager.incrementPartial(progressThreadId);
+						break;
+					}
+
 					// Images creation
 					Response images = executePostService(null, serviceUrl, userUniqueIdentifier, MediaType.TEXT_HTML, dossierTemplateJson);
 					byte[] responseAsByteArray = images.readEntity(byte[].class);
@@ -219,9 +220,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 					if (isZipped) {
 						String message = "Document has more than one single sheet. Screenshot is replaced with an empty image.";
 						logger.debug(message);
-
 						handleAllPicturesFromZipFile(responseAsByteArray, randomKey, imagesMap, reportToUse);
-						executedDocuments.add(cockpitDocument);
 
 					} else {
 						String path = SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution" + File.separator;
@@ -234,7 +233,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 					progressThreadManager.incrementPartial(progressThreadId);
 					logger.debug("progress Id incremented");
-
+					executedDocuments.add(serviceUrl);
 					break;
 				}
 
@@ -269,49 +268,70 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 	public String addParametersToServiceUrl(List<BIObjectParameter> drivers, List<Parameter> parameter, StringBuilder serviceUrlBuilder)
 			throws UnsupportedEncodingException {
-		if (drivers.size() != parameter.size()) {
-			throw new SpagoBIRuntimeException("There are a different number of parameters/drivers between document and template");
-		}
-		int i = 0;
-		for (Parameter parameterToFind : parameter) {
-			if (parameterToFind.getValue() != null && !parameterToFind.getValue().isEmpty()) {
-				i++;
+		if (drivers != null) {
+			if (drivers.size() != parameter.size()) {
+				throw new SpagoBIRuntimeException("There are a different number of parameters/drivers between document and template");
 			}
-		}
-		if (i == parameter.size()) { // if a parameter is dynamic it is already filled
+
+//			int i = 0;
+//			for (Parameter parameterToFind : parameter) {
+//				if (parameterToFind.getValue() != null && !parameterToFind.getValue().isEmpty()) {
+//					i++;
+//				}
+//			}
+//			if (i == parameter.size()) { // if a parameter is dynamic it is already filled
+//				ParametersDecoder decoder = new ParametersDecoder();
+//				for (BIObjectParameter biObjectParameter : drivers) {
+//					boolean found = false;
+//					for (Parameter templateParameter : parameter) {
+//						if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
+//							String value = templateParameter.getValue();
+//							value = decoder.decodeParameter(value);
+//							if (decoder.isMultiValues(value) && value.contains("STRING"))
+//								value.replaceAll("'", "");
+//							serviceUrlBuilder
+//									.append("&" + biObjectParameter.getParameterUrlName() + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8.toString()));
+//							found = true;
+//							break;
+//						}
+//					}
+//					if (!found) {
+//						throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
+//					}
+//				}
+//				return serviceUrlBuilder.toString();
+//			}
 			ParametersDecoder decoder = new ParametersDecoder();
 			for (BIObjectParameter biObjectParameter : drivers) {
 				boolean found = false;
 				for (Parameter templateParameter : parameter) {
-					if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
-						String value = templateParameter.getValue();
-						value = decoder.decodeParameter(value);
-						if (decoder.isMultiValues(value) && value.contains("STRING"))
-							value.replaceAll("'", "");
-						serviceUrlBuilder
-								.append("&" + biObjectParameter.getParameterUrlName() + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8.toString()));
-						found = true;
-						break;
+
+					if (templateParameter.getType().equals("dynamic")) {
+						if (templateParameter.getValue() != null && !templateParameter.getValue().isEmpty()) {
+							if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
+								String value = templateParameter.getValue();
+								value = decoder.decodeParameter(value);
+								if (decoder.isMultiValues(value) && value.contains("STRING"))
+									value.replaceAll("'", "");
+								serviceUrlBuilder.append(
+										"&" + biObjectParameter.getParameterUrlName() + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8.toString()));
+								found = true;
+								break;
+							}
+
+						}
+					} else {
+						if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
+							serviceUrlBuilder.append("&" + biObjectParameter.getParameterUrlName() + "="
+									+ URLEncoder.encode(templateParameter.getValue(), StandardCharsets.UTF_8.toString()));
+							found = true;
+							break;
+						}
 					}
 				}
 				if (!found) {
 					throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
 				}
-			}
-			return serviceUrlBuilder.toString();
-		}
-		for (BIObjectParameter biObjectParameter : drivers) {
-			boolean found = false;
-			for (Parameter templateParameter : parameter) {
-				if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
-					serviceUrlBuilder.append("&" + biObjectParameter.getParameterUrlName() + "="
-							+ URLEncoder.encode(templateParameter.getValue(), StandardCharsets.UTF_8.toString()));
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
 			}
 		}
 		return serviceUrlBuilder.toString();
