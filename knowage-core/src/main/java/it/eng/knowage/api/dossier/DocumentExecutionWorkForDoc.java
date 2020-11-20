@@ -58,6 +58,7 @@ import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
+import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -270,6 +271,34 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			throws UnsupportedEncodingException {
 		if (drivers.size() != parameter.size()) {
 			throw new SpagoBIRuntimeException("There are a different number of parameters/drivers between document and template");
+		}
+		int i = 0;
+		for (Parameter parameterToFind : parameter) {
+			if (parameterToFind.getValue() != null && !parameterToFind.getValue().isEmpty()) {
+				i++;
+			}
+		}
+		if (i == parameter.size()) { // if a parameter is dynamic it is already filled
+			ParametersDecoder decoder = new ParametersDecoder();
+			for (BIObjectParameter biObjectParameter : drivers) {
+				boolean found = false;
+				for (Parameter templateParameter : parameter) {
+					if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
+						String value = templateParameter.getValue();
+						value = decoder.decodeParameter(value);
+						if (decoder.isMultiValues(value) && value.contains("STRING"))
+							value.replaceAll("'", "");
+						serviceUrlBuilder
+								.append("&" + biObjectParameter.getParameterUrlName() + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8.toString()));
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
+				}
+			}
+			return serviceUrlBuilder.toString();
 		}
 		for (BIObjectParameter biObjectParameter : drivers) {
 			boolean found = false;
