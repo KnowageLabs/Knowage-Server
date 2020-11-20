@@ -32,6 +32,8 @@ public class Report {
 	List<Parameter> parameters;
 	String imageName;
 	String sheet;
+	String sheetHeight;
+	String sheetWidth;
 
 	public Report() {
 		placeholders = new ArrayList<>();
@@ -74,6 +76,24 @@ public class Report {
 		this.sheet = sheet;
 	}
 
+	public String getSheetHeight() {
+		return sheetHeight;
+	}
+
+	@JsonSetter("sheetHeight")
+	public void setSheetHeight(String sheetHeight) {
+		this.sheetHeight = sheetHeight;
+	}
+
+	public String getSheetWidth() {
+		return sheetWidth;
+	}
+
+	@JsonSetter("sheetWidth")
+	public void setSheetWidth(String sheetWidth) {
+		this.sheetWidth = sheetWidth;
+	}
+
 	public List<Parameter> getParameters() {
 		return parameters;
 	}
@@ -95,4 +115,5 @@ public class Report {
 		}
 		return dinamicParams;
 	}
+
 }
