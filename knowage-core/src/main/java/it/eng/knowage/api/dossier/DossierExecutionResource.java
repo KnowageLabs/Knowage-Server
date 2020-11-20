@@ -214,6 +214,7 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 			logger.debug("search value for obj par with label  " + parameterUrl);
 			boolean hasValue = false;
 			List<String> documentParameterValues = new ArrayList<String>();
+			List<String> documentParameterValuesDescription = new ArrayList<String>();
 			for (Parameter parameter : parameters) {
 				if (parameter.getUrlName().equals(parameterUrl)) {
 					String value = parameter.getValue();
@@ -225,8 +226,11 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 
 					if (value != null) {
 						documentParameterValues.add(value);
-						hasValue = true;
 						logger.debug("value is " + value);
+
+						documentParameterValuesDescription.add(parameter.getUrlNameDescription());
+						hasValue = true;
+						break;
 					}
 				}
 			}
@@ -241,6 +245,7 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 
 			logger.debug("insert for " + documentParameter.getLabel() + " value" + documentParameterValues.toString());
 			documentParameter.setParameterValues(documentParameterValues);
+			documentParameter.setParameterValuesDescription(documentParameterValuesDescription);
 
 		}
 
