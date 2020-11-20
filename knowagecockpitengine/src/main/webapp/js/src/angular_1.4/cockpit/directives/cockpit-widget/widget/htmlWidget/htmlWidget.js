@@ -18,9 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 	angular
 		.module('cockpitModule')
-		.directive('cockpitHtmlWidget',function(){
+		.directive('cockpitHtmlWidget',function(sbiModule_config){
 			return{
-				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/htmlWidget/templates/htmlWidgetTemplate.html',
+				templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/cockpit/directives/cockpit-widget/widget/htmlWidget/templates/htmlWidgetTemplate.html',
 				controller: cockpitHtmlWidgetControllerFunction,
 				compile: function (tElement, tAttrs, transclude) {
 					return {

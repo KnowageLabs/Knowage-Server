@@ -20,9 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 (function(){
-	var scripts = document.getElementsByTagName("script");
-	var currentScriptPath = scripts[scripts.length - 1].src;
-	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	var cockpitToolbarPath = '/angular_1.4/cockpit/directives/cockpit-widget';
 
 angular.module('cockpitModule')
 .config( ['$compileProvider', function( $compileProvider ){
@@ -134,9 +132,9 @@ angular.module('cockpitModule')
 		return sbiModule_i18n.getI18n(label);
 	}
 })
-.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,cockpitModule_generalServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_exportWidgetService, $httpParamSerializer){
+.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,sbiModule_config,cockpitModule_generalServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices, cockpitModule_properties, cockpitModule_exportWidgetService, $httpParamSerializer){
 	   return{
-		   templateUrl: baseScriptPath+ '/directives/cockpit-widget/templates/cockpitWidget.html',
+		   templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath + '/templates/cockpitWidget.html',
 		   controller: cockpitWidgetControllerFunction,
 		   scope: {
 			   ngModel: '='
@@ -696,7 +694,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			},
 			scope: $scope,
 			preserveScope:true,
-	      templateUrl: currentScriptPath+'/templates/changeSheetDialog.tpl.html',
+	      templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath+'/templates/changeSheetDialog.tpl.html',
 	      targetEvent: ev,
 	      clickOutsideToClose:true,
 	      locals: { targetSheet: $scope.targetSheet, cockpitModule_widgetServices:cockpitModule_widgetServices }
@@ -730,7 +728,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			},
 			scope: $scope,
 			preserveScope:true,
-	      templateUrl: currentScriptPath+'/templates/tableSearch.tpl.html',
+	      templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath+'/templates/tableSearch.tpl.html',
 	      targetEvent: ev,
 	      clickOutsideToClose:true,
 	      locals: {ngModel:$scope.ngModel}
@@ -880,7 +878,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 							$mdDialog.show({
 								parent: angular.element(document.body),
-								templateUrl: currentScriptPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
+								templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath + '/widget/htmlWidget/templates/htmlWidgetPreviewDialogTemplate.html',
 								controller: function(scope) {
 									scope.previewUrl = $scope.iframeSrcUrl;
 
@@ -1621,7 +1619,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 				},
 				scope: $scope,
-		      templateUrl: currentScriptPath+'/templates/changeWidgetTypeDialog.tpl.html',
+		      templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath+'/templates/changeWidgetTypeDialog.tpl.html',
 		      targetEvent: ev,
 		      preserveScope: true,
 		      clickOutsideToClose:true,
@@ -1686,7 +1684,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			},
 			scope: $scope,
 			preserveScope:true,
-	      templateUrl: currentScriptPath+'/templates/chartTypes.tpl.html',
+	      templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath+'/templates/chartTypes.tpl.html',
 	      targetEvent: ev,
 	      clickOutsideToClose:true,
 	      locals: {ngModel:$scope.ngModel}
