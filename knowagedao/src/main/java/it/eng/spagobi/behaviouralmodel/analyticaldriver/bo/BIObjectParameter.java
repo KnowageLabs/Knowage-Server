@@ -24,7 +24,7 @@ import java.io.Serializable;
  *
  * @author Zoppello This class map the SBI_OBJ_PAR table
  */
-public class BIObjectParameter extends AbstractDriver implements Serializable {
+public class BIObjectParameter extends AbstractDriver implements Serializable, Comparable<BIObjectParameter> {
 
 	/* BIOBJ_ID NUMBER N Business Intelligence Object identifier */
 	private Integer biObjectID = null;
@@ -67,6 +67,11 @@ public class BIObjectParameter extends AbstractDriver implements Serializable {
 		toReturn.setThickPerc(super.getThickPerc());
 
 		return toReturn;
+	}
+
+	@Override
+	public int compareTo(BIObjectParameter arg0) {
+		return this.getParameterUrlName().compareTo(arg0.getParameterUrlName());
 	}
 
 }
