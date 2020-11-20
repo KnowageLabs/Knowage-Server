@@ -43,7 +43,6 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Role;
@@ -55,14 +54,12 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
-import it.eng.spagobi.services.common.SsoServiceFactory;
-import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.security.InternalSecurityServiceSupplierImpl;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
@@ -89,13 +86,10 @@ public class LoginModule extends AbstractHttpModule {
 	/**
 	 * Service.
 	 *
-	 * @param request
-	 *            the request
-	 * @param response
-	 *            the response
+	 * @param request  the request
+	 * @param response the response
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 *
 	 * @see it.eng.spago.dispatching.action.AbstractHttpAction#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
@@ -116,106 +110,57 @@ public class LoginModule extends AbstractHttpModule {
 
 		boolean activeSoo = isSSOActive();
 
-		String docLabel = (String) request.getAttribute(SpagoBIConstants.OBJECT_LABEL);
-		boolean isPublicDoc = false;
-		boolean isPublicUser = false;
-		if (docLabel != null) {
-			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(docLabel);
-			isPublicDoc = ObjectsAccessVerifier.isObjectPublic(obj);
-		}
-
 		errorHandler = getErrorHandler();
 
 		UserProfile previousProfile = (UserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
-		String userId = null;
-		if (!activeSoo) {
-			if (isPublicDoc) {
-				userId = SpagoBIConstants.PUBLIC_USER_ID;
-				isPublicUser = true;
-			} else {
-				userId = (String) request.getAttribute("userID");
-			}
-			logger.debug("userID=" + userId);
-			if (userId == null) {
-				if (previousProfile != null) {
-					profile = previousProfile;
-					// user is authenticated, nothing to do
-					logger.debug("User is authenticated");
-					// fill response
-					List lstMenu = MenuUtilities.getMenuItems(profile);
-
-					String url = "/themes/" + currTheme + "/jsp/";
-					if (UserUtilities.isTechnicalUser(profile)) {
-						url += "adminHome.jsp";
-					} else {
-						url += "userHome.jsp";
-					}
-					servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-
-					return;
+		String userId = (String) request.getAttribute("userID");
+		logger.debug("userID=" + userId);
+		if (userId == null) {
+			if (previousProfile != null) {
+				profile = previousProfile;
+				// user is authenticated, nothing to do
+				logger.debug("User is authenticated");
+				// fill response
+				List lstMenu = MenuUtilities.getMenuItems(profile);
+				String url = "/themes/" + currTheme + "/jsp/";
+				if (UserUtilities.isTechnicalUser(profile)) {
+					url += "adminHome.jsp";
 				} else {
-					// user must authenticate
-					logger.debug("User must authenticate");
-					// set publisher name
-					String url = "/themes/" + currTheme + "/jsp/login.jsp";
-					getHttpRequest().setAttribute("start_url", url);
-					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-					// orig:
-					// String url = GeneralUtilities.getSpagoBiHost() + servletRequest.getContextPath();
-					// response.setAttribute("start_url", url);
-					// response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "login");
-					logger.debug("OUT");
-					return;
+					url += "userHome.jsp";
 				}
-				// logger.error("User identifier not found. Cannot build user profile object");
-				// throw new SecurityException("User identifier not found.");
-			}
-		} else {
+				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+				return;
+			} else {
+				// user must authenticate
+				logger.debug("User must authenticate");
 
-			SsoServiceInterface userProxy = SsoServiceFactory.createProxyService();
-			userId = userProxy.readUserIdentifier(servletRequest);
-			logger.debug("OUT,userId:" + userId);
-			// if we are in SSO and user has a previous profile keep it!
-			if (previousProfile != null
-			// && previousProfile.getUserUniqueIdentifier().equals(userId) REMOVE
-			) {
-				if (previousProfile != null) {
-					profile = previousProfile;
-					// user is authenticated, nothing to do
-					logger.debug("User is authenticated");
-					// fill response
-					List lstMenu = MenuUtilities.getMenuItems(profile);
-
-					// set publisher name
-					String url = "/themes/" + currTheme + "/jsp/";
-					if (UserUtilities.isTechnicalUser(profile)) {
-						url += "adminHome.jsp";
-					} else {
-						url += "userHome.jsp";
-					}
-					servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-
-					return;
+				if (activeSoo) {
+					logger.warn(
+							"SSO authentication failed: as a matter of fact no user profile object was found in session. The default login page will be displayed");
 				}
-			}
 
+				// set publisher name
+				String url = "/themes/" + currTheme + "/jsp/login.jsp";
+				getHttpRequest().setAttribute("start_url", url);
+				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+				logger.debug("OUT");
+				return;
+			}
 		}
 
-		boolean isInternalSecurity = ("true".equalsIgnoreCase((String) request.getAttribute("isInternalSecurity"))) ? true : false;
+		String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+		boolean isInternalSecurity = securityServiceSupplier.equalsIgnoreCase(InternalSecurityServiceSupplierImpl.class.getName());
 		logger.debug("isInternalSecurity: " + isInternalSecurity);
 
 		ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
-		// If SSO is not active, check username and password, i.e. performs the authentication;
-		// instead, if SSO is active, the authentication mechanism is provided by the SSO itself, so SpagoBI does not make
-		// any authentication, just creates the user profile object and puts it into Spago permanent container
-		if (!activeSoo && !isPublicUser) {
+		// if userID is specified, look for password and try to authenticate user
+		if (userId != null) {
 			String pwd = (String) request.getAttribute("password");
+			SpagoBIUserProfile userProfile = null;
 			try {
 
-				SpagoBIUserProfile userProfile = null;
 				userProfile = supplier.checkAuthentication(userId, pwd);
 				if (userProfile == null) {
 					logger.error("userName/pwd uncorrect");
@@ -232,9 +177,8 @@ public class LoginModule extends AbstractHttpModule {
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
 						return;
 					}
-				}
 
-				userId = userProfile.getUniqueIdentifier();
+				}
 
 			} catch (Exception e) {
 				logger.error("Reading user information... ERROR", e);
@@ -271,7 +215,6 @@ public class LoginModule extends AbstractHttpModule {
 
 					boolean goToChangePwd = checkPwd(user);
 					if (goToChangePwd) {
-						response.setAttribute("user_id", user.getUserId());
 						String url = GeneralUtilities.getSpagoBiHost() + servletRequest.getContextPath();
 						response.setAttribute("start_url", url);
 						response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ChangePwdPublisher");
@@ -290,6 +233,9 @@ public class LoginModule extends AbstractHttpModule {
 					}
 				}
 			}
+
+			userId = userProfile.getUniqueIdentifier();
+
 		}
 
 		try {
@@ -354,9 +300,6 @@ public class LoginModule extends AbstractHttpModule {
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "ERR");
 			throw new SecurityException("Reading user information... ERROR", e);
 		}
-
-		// String username = (String) profile.getUserUniqueIdentifier();
-		String username = (String) ((UserProfile) profile).getUserId();
 
 		// putting tenant id on thread local
 		Tenant tenant = new Tenant(((UserProfile) profile).getOrganization());
