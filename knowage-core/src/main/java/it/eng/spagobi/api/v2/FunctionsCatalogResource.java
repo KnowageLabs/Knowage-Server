@@ -401,8 +401,10 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			fcDAO.setUserProfile(getUserProfile());
 			fcDAO.deleteCatalogFunction(id);
 			retObj.put("Response", "OK");
-		} catch (JSONException e) {
-			throw new SpagoBIServiceException("Error returning function identified by id " + id, e);
+		} catch (Exception e) {
+			String message = "Error while deleting the function with id: " + id + ", is it used in some documents?";
+			logger.error(message, e);
+			throw new SpagoBIRuntimeException(message, e);
 		}
 		logger.debug("OUT");
 		return retObj.toString();
