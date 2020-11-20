@@ -12,7 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.knowage.engine.cockpit.api.export.pdf.AbstractNodeJSBasedExporter;
-import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
+import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 
 public class PngExporter extends AbstractNodeJSBasedExporter {
