@@ -249,7 +249,7 @@ public class JSONDataWriter implements IDataWriter {
 
 		} else {
 			Object result = "";
-			if (field.getValue() != null) {
+			if (field.getValue() != null && !field.getValue().equals("")) {
 				if (fieldMetaData.isMultiValue()) {
 					JSONArray _result = new JSONArray();
 					List list = (List) field.getValue();
