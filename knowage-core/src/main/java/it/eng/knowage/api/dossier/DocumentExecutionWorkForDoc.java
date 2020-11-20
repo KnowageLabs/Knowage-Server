@@ -42,6 +42,8 @@ import it.eng.knowage.engines.dossier.template.AbstractDossierTemplate;
 import it.eng.knowage.engines.dossier.template.parameter.Parameter;
 import it.eng.knowage.engines.dossier.template.placeholder.PlaceHolder;
 import it.eng.knowage.engines.dossier.template.report.Report;
+import it.eng.knowage.export.wrapper.beans.RenderOptions;
+import it.eng.knowage.export.wrapper.beans.ViewportDimensions;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -196,13 +198,21 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 					String serviceUrl = addParametersToServiceUrl(drivers, parameter, serviceUrlBuilder);
 
+					RenderOptions renderOptions = RenderOptions.defaultOptions();
+					if (reportToUse.getSheetHeight() != null && !reportToUse.getSheetHeight().isEmpty() && reportToUse.getSheetWidth() != null
+							&& !reportToUse.getSheetWidth().isEmpty()) {
+						ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(Integer.valueOf(reportToUse.getSheetWidth()))
+								.withHeight(Integer.valueOf(reportToUse.getSheetHeight())).build();
+						renderOptions.withDimensions(dimensions);
+					}
+
 					if (executedDocuments.contains(serviceUrl)) {
 						progressThreadManager.incrementPartial(progressThreadId);
 						break;
 					}
 
 					// Images creation
-					Response images = executePostService(null, serviceUrl, userUniqueIdentifier, MediaType.TEXT_HTML, dossierTemplateJson);
+					Response images = executePostService(null, serviceUrl, userUniqueIdentifier, MediaType.TEXT_HTML, dossierTemplateJson, renderOptions);
 					byte[] responseAsByteArray = images.readEntity(byte[].class);
 
 					List<Object> list = images.getMetadata().get("Content-Type");
@@ -240,7 +250,6 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 			}
 			// Activity creation
-
 			imageNames.clear();
 
 			progressThreadManager.setStatusDownload(progressThreadId);
@@ -273,35 +282,6 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			if (drivers.size() != parameter.size()) {
 				throw new SpagoBIRuntimeException("There are a different number of parameters/drivers between document and template");
 			}
-
-//			int i = 0;
-//			for (Parameter parameterToFind : parameter) {
-//				if (parameterToFind.getValue() != null && !parameterToFind.getValue().isEmpty()) {
-//					i++;
-//				}
-//			}
-//			if (i == parameter.size()) { // if a parameter is dynamic it is already filled
-//				ParametersDecoder decoder = new ParametersDecoder();
-//				for (BIObjectParameter biObjectParameter : drivers) {
-//					boolean found = false;
-//					for (Parameter templateParameter : parameter) {
-//						if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
-//							String value = templateParameter.getValue();
-//							value = decoder.decodeParameter(value);
-//							if (decoder.isMultiValues(value) && value.contains("STRING"))
-//								value.replaceAll("'", "");
-//							serviceUrlBuilder
-//									.append("&" + biObjectParameter.getParameterUrlName() + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8.toString()));
-//							found = true;
-//							break;
-//						}
-//					}
-//					if (!found) {
-//						throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
-//					}
-//				}
-//				return serviceUrlBuilder.toString();
-//			}
 			Collections.sort(drivers);
 			ParametersDecoder decoder = new ParametersDecoder();
 			for (BIObjectParameter biObjectParameter : drivers) {
