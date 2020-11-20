@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- ------------------------------------------------------------------------%>
 <%-- JAVA IMPORTS                                                          --%>
 <%-- ------------------------------------------------------------------------%>
+<%@page import="it.eng.knowage.export.wrapper.beans.RenderOptions"%>
 <%@page import="it.eng.knowage.engine.cockpit.api.export.png.PngExporter"%>
-<%@ page import="it.eng.knowage.slimerjs.wrapper.beans.RenderOptions" %>
 <%@ page import="java.util.zip.ZipInputStream" %>
 <%@ page import="java.io.ByteArrayInputStream" %>
 <%@ page import="javax.servlet.ServletContext" %>
