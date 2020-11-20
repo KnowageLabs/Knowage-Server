@@ -16,6 +16,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -301,31 +302,49 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 //				}
 //				return serviceUrlBuilder.toString();
 //			}
+			Collections.sort(drivers);
 			ParametersDecoder decoder = new ParametersDecoder();
 			for (BIObjectParameter biObjectParameter : drivers) {
 				boolean found = false;
 				for (Parameter templateParameter : parameter) {
 
 					if (templateParameter.getType().equals("dynamic")) {
+
 						if (templateParameter.getValue() != null && !templateParameter.getValue().isEmpty()) {
+
+							// filled by fillParametersValues in DossierExecutionResource
+							String value = templateParameter.getValue();
+							value = decoder.decodeParameter(value);
+							if (decoder.isMultiValues(value) && value.contains("STRING"))
+								value.replaceAll("'", "");
+
 							if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
-								String value = templateParameter.getValue();
-								value = decoder.decodeParameter(value);
-								if (decoder.isMultiValues(value) && value.contains("STRING"))
-									value.replaceAll("'", "");
-								serviceUrlBuilder.append(
-										"&" + biObjectParameter.getParameterUrlName() + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8.toString()));
+
+								serviceUrlBuilder.append(String.format("&%s=%s", biObjectParameter.getParameterUrlName(),
+										URLEncoder.encode(value, StandardCharsets.UTF_8.toString())));
+
+								// description
+								serviceUrlBuilder.append(String.format("&%s_description=%s", biObjectParameter.getParameterUrlName(),
+										URLEncoder.encode(templateParameter.getUrlNameDescription(), StandardCharsets.UTF_8.toString())));
 								found = true;
 								break;
 							}
-
 						}
 					} else {
 						if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
-							serviceUrlBuilder.append("&" + biObjectParameter.getParameterUrlName() + "="
-									+ URLEncoder.encode(templateParameter.getValue(), StandardCharsets.UTF_8.toString()));
-							found = true;
-							break;
+							if (biObjectParameter.isMultivalue()) {
+
+							} else {
+								serviceUrlBuilder.append(String.format("&%s=%s", biObjectParameter.getParameterUrlName(),
+										URLEncoder.encode(templateParameter.getValue(), StandardCharsets.UTF_8.toString())));
+
+								// description
+								serviceUrlBuilder.append(String.format("&%s_description=%s", biObjectParameter.getParameterUrlName(),
+										URLEncoder.encode(templateParameter.getUrlNameDescription(), StandardCharsets.UTF_8.toString())));
+
+								found = true;
+								break;
+							}
 						}
 					}
 				}
