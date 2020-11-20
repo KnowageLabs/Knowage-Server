@@ -15,9 +15,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 	angular
 		.module('cockpitModule')
-		.directive('cockpitTableWidget',function(){
+		.directive('cockpitTableWidget',function(sbiModule_config){
 			return{
-				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/advancedTableWidget/templates/advancedTableWidgetTemplate.html',
+				templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/cockpit/directives/cockpit-widget/widget/advancedTableWidget/templates/advancedTableWidgetTemplate.html',
 				controller: cockpitAdvancedTableWidgetControllerFunction,
 				compile: function (tElement, tAttrs, transclude) {
 					return {
@@ -925,7 +925,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					attachTo:  angular.element(document.body),
 					controller: advancedTableWidgetEditControllerFunction,
 					disableParentScroll: true,
-					templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/advancedTableWidget/templates/advancedTableWidgetEditPropertyTemplate.html',
+					templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/cockpit/directives/cockpit-widget/widget/advancedTableWidget/templates/advancedTableWidgetEditPropertyTemplate.html',
 					position: $mdPanel.newPanelPosition().absolute().center(),
 					fullscreen :true,
 					hasBackdrop: true,

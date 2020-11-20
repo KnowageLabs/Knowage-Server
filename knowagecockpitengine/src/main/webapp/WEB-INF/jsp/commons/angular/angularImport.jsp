@@ -15,6 +15,8 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
+<%@page import="it.eng.knowage.wapp.Environment"%>
+<%@page import="it.eng.knowage.wapp.Version"%>
 <script>
 /*${disable.console.logging}*/
 </script>
@@ -29,140 +31,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta name="viewport" content="width=device-width">
 
 <link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/@fortawesome/fontawesome-free/css/all.css")%>">
-<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext,"/node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css")%>">
 <link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/weather-icons/css/weather-icons.min.css")%>">
 
-<!--  script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular.js"></script-->
-
 <!-- angular reference-->
-<!-- START-DEBUG -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular/angular.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/dist/angular-bundle.js")%>"></script>
 
-<!-- END-DEBUG -->
-<!-- START-PRODUCTION 
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular_1.4/angular.min.js"></script>
-END-PRODUCTION -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-animate/angular-animate.min.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-aria/angular-aria.min.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-sanitize/angular-sanitize.min.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-messages/angular-messages.min.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/angular-cookies/angular-cookies.min.js")%>"></script>
+<!-- IE11 polyfills bundle -->
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/dist/polyfills-bundle.js")%>"></script>
 
-<!-- POLYFILLS -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/canvas-toBlob/canvas-toBlob.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/promise-polyfill/promise-polyfill.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/map-polyfill/map-polyfill.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/polyfills/append-polyfill/append-polyfill.js")%>"></script>
+<!-- All internal/external libraries bundle -->
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/dist/knowage-lib-bundle.js")%>"></script>
 
-<!-- angular-material-->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-material_1.1.0/angular-material.min.js")%>"></script>
-<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
+<!-- All internal/external cockpit specific libraries bundle -->
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-lib-bundle.js")%>"></script>
 
-<!-- angular tree -->
-<link rel="stylesheet" 	href="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-tree/angular-ui-tree.min.css")%>">
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-tree/angular-ui-tree.js")%>"></script> 
-
-<!-- context menu -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/contextmenu/ng-context-menu.js")%>"></script>
-
-<!--pagination-->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/pagination/dirPagination.js")%>"></script>
-
-<!-- expanderBox -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/expander-box/expanderBox.js")%>"></script>
-
-<!-- angular table -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
-
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js")%>"></script>
-
-<!-- document tree -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
-
-<!-- component tree -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/component-tree/componentTree.js")%>"></script>
-
-<!-- file upload -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/upload-file/FileUpload.js")%>"></script>
-
-<!-- 	angular time picker -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js")%>"></script>
-
-<!-- 	angular list dewtail template -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js")%>"></script>
-
- <!-- angular-gridster-->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-gridster/angular-gridster.min.js")%>"></script>
-<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/angular-gridster/angular-gridster.min.css")%>">
- 
- 
-<!-- colorpicker -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/color-picker/tinycolor-min.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/lib/angular/color-picker/tinygradient.min.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/color-picker/angularjs-color-picker.js")%>"></script>
-<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/color-picker/angularjs-color-picker.min.css")%>">
-<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css")%>">
-
-<!--  wysiwyg -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ng-wysiwyg/dist/wysiwyg.min.js")%>"></script>	
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/node_modules/ng-wysiwyg/dist/editor.min.css")%>">
-
-
-<!-- 		angular-drag-and-drop-lists -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>	
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/themes/commons/css/customStyle.css")%>"/>	
-
-<!--  angular JSON FORMATTER -->
-<link rel="stylesheet" type="text/css" href="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/jsonformatter/dist/json-formatter.min.css">
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/jsonformatter/dist/json-formatter.min.js"></script>	
-
-<!-- UI.Codemirror  -->
-<link rel="stylesheet" type="text/css" href="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/lib/codemirror.css">
-<link type="text/css" rel="stylesheet" href="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/theme/eclipse.css">
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/lib/codemirror.js"></script>
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/addon/mode/simple.js"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/commons/calculated-field/calculatedFieldMode.js")%>"></script>
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/mode/xml/xml.js"></script>
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/mode/css/css.js"></script>
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/mode/r/r.js"></script>
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/codemirror/mode/javascript/javascript.js"></script>
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/angular-ui-codemirror/src/ui-codemirror.js"></script>
-
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/ag-grid-community/dist/ag-grid-community.min.js"></script>
-
-<!-- angular json tree -->
-<link rel="stylesheet" 	href="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.css">
-<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.js"></script>
-
-<!-- Open Layers 6.1.1 -->
-<link rel="stylesheet" type="text/css" href="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/openlayers/6.1.1/ol.css">
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/openlayers/6.1.1/ol.js"></script>
-
-<link rel="stylesheet" type="text/css"  href="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/toastify-js/src/toastify.css">
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/toastify-js/src/toastify.js"></script>		
-
-<!-- MOMENT.JS -->
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/moment/min/moment-with-locales.min.js"></script>
 <script type="text/javascript">
     if(/MSIE \d|Trident.*rv:/.test(navigator.userAgent))
         document.write('<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/rgbcolor/rgbcolor.js"><\/script>');
 </script>
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/canvg/dist/browser/canvg.min.js"></script>
 
-<!-- mathjs for quantil thematization -->
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/mathjs/4.0.1/math.min.js"></script>
+<!-- All node_modules libraries bundle -->
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-modules-bundle.js")%>"></script>
 
-<!-- html2canvas -->
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/html2canvas/dist/html2canvas.min.js"></script>
-
-<!--  JSPDF -->
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/jspdf/dist/jspdf.min.js"></script>
-
-<!-- FILESAVER -->
-<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/file-saver/dist/FileSaver.min.js"></script>
+<!-- All external styles bundle -->
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext,"/dist/knowagecockpit-modules-styles-bundle.css")%>">
 
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
-
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
+
+<% if(Version.getEnvironment() == Environment.PRODUCTION) { %>
+
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-sources-bundle_"+ Version.getCompleteVersion() +".js")%>"></script>
+	
+<% } else { %>
+
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/component-tree/componentTree.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/upload-file/FileUpload.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/cockpit/directives/commons/calculated-field/calculatedFieldMode.js")%>"></script>
+ 
+ <%}%>
+
+<!-- KNOWAGE main css import -->
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(spagoBiContext, "/themes/commons/css/customStyle.css")%>"/>
 
 	

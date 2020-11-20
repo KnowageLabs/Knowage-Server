@@ -17,11 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 (function() {
-
+var cockpitToolbarPath = '/angular_1.4/cockpit';
 angular.module('cockpitModule')
-.directive('cockpitToolbar',function(){
+.directive('cockpitToolbar',function(sbiModule_config){
 	return{
-		templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/cockpitToolbar.html',
+		templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath + '/directives/cockpit-toolbar/templates/cockpitToolbar.html',
 		controller: cockpitToolbarControllerFunction,
 		scope: {
 				config: '='
@@ -99,7 +99,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 
 	$scope.openSelections = function(){
 		$mdDialog.show({
-			  templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/selectionsList.html',
+			  templateUrl: sbiModule_config.dynamicResourcesEnginePath + cockpitToolbarPath + '/directives/cockpit-toolbar/templates/selectionsList.html',
 			  parent: angular.element(document.body),
 			  clickOutsideToClose:true,
 			  escapeToClose :true,
@@ -112,7 +112,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 
 	$scope.addWidget=function(){
 		$mdDialog.show({
-			  templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/addWidget.html',
+			  templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath + '/directives/cockpit-toolbar/templates/addWidget.html',
 			  parent: angular.element(document.body),
 			  clickOutsideToClose:true,
 			  escapeToClose :true,
@@ -238,7 +238,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 					$scope.cockpitModule_properties = cockpitModule_properties;
 					$scope.cockpitModule_template = cockpitModule_template;
 				 },
-				 templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/exportExcelDialogTemplate.html',
+				 templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath+ '/directives/cockpit-toolbar/templates/exportExcelDialogTemplate.html',
 				 parent: angular.element(document.body),
 				 hasBackdrop: false,
 				 clickOutsideToClose:false
@@ -363,7 +363,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 					$scope.cockpitModule_properties = cockpitModule_properties;
 					$scope.cockpitModule_template = cockpitModule_template;
 				 },
-				 templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/exportPdfDialogTemplate.html',
+				 templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath+ '/directives/cockpit-toolbar/templates/exportPdfDialogTemplate.html',
 				 parent: angular.element(document.body),
 				 hasBackdrop: false,
 				 clickOutsideToClose:false
