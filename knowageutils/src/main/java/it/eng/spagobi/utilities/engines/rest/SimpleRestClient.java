@@ -40,6 +40,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -104,7 +105,7 @@ public class SimpleRestClient {
 	 * @throws Exception
 	 */
 	protected Response executeGetService(Map<String, Object> parameters, String serviceUrl, String userId) throws Exception {
-		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.GET, null, null);
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.GET, null, null, null);
 	}
 
 	/**
@@ -119,16 +120,30 @@ public class SimpleRestClient {
 	 * @throws Exception
 	 */
 	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
-		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data, null);
 	}
 
 	/**
 	 * Invokes a rest service in post and return response
 	 *
-	 * @param parameters
-	 *            the parameters of the request
-	 * @param serviceUrl
-	 *            the relative (refers always to core application context) path of the service
+	 * @param parameters the parameters of the request
+	 * @param serviceUrl the relative (refers always to core application context) path of the service
+	 * @param userId
+	 * @param mediaType
+	 * @param data
+	 * @return
+	 * @throws Exception
+	 */
+	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data,
+			RenderOptions renderOptions) throws Exception {
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data, renderOptions);
+	}
+
+	/**
+	 * Invokes a rest service in post and return response
+	 *
+	 * @param parameters the parameters of the request
+	 * @param serviceUrl the relative (refers always to core application context) path of the service
 	 * @param userId
 	 * @param mediaType
 	 * @param data
@@ -136,7 +151,7 @@ public class SimpleRestClient {
 	 * @throws Exception
 	 */
 	protected Response executePutService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
-		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.PUT, mediaType, data);
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.PUT, mediaType, data, null);
 	}
 
 	protected HttpResponse executePostServiceWithFormParams(Map<String, Object> parameters, byte[] form, String serviceUrl, String userId) throws Exception {
@@ -202,8 +217,8 @@ public class SimpleRestClient {
 		}
 	}
 
-	private Response executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, String mediaType, Object data)
-			throws Exception {
+	private Response executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, String mediaType, Object data,
+			RenderOptions renderOptions) throws Exception {
 		logger.debug("IN");
 
 		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<String, Object>();
@@ -242,6 +257,10 @@ public class SimpleRestClient {
 
 		// provide authentication exactly before of call
 		authenticationProvider.provideAuthentication(request, target, myHeaders, data);
+
+//		if (renderOptions != null)
+//			request.setAttribute("renderOptions", renderOptions);
+
 		if (type.equals(RequestTypeEnum.POST)) {
 			response = request.post(Entity.json(data.toString()));
 		} else if (type.equals(RequestTypeEnum.PUT)) {
