@@ -105,7 +105,7 @@ public class ProfiledLdapSecurityServiceSupplier extends LdapSecurityServiceSupp
 				logger.error(" PROP SEARCH_USER_BEFORE = "+properties.getProperty(SEARCH_USER_BEFORE));
 				logger.error(" PROP SEARCH_USER_BEFORE_ADD_DN = "+properties.getProperty(SEARCH_USER_BEFORE_ADD_DN));
 				logger.error(" PROP SEARCH_USER_BEFORE_USER = "+properties.getProperty(SEARCH_USER_BEFORE_USER));
-				logger.error(" PROP SEARCH_USER_BEFORE_PSW = "+properties.getProperty(SEARCH_USER_BEFORE_PSW));
+				//logger.error(" PROP SEARCH_USER_BEFORE_PSW = "+properties.getProperty(SEARCH_USER_BEFORE_PSW));
 				logger.error(" PROP SEARCH_USER_BEFORE_FILTER = "+properties.getProperty(SEARCH_USER_BEFORE_FILTER));
 
 				if (searchUserBefore) {
