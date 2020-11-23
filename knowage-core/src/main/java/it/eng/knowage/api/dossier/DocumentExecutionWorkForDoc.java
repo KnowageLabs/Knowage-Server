@@ -9,6 +9,7 @@ package it.eng.knowage.api.dossier;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -142,6 +143,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			throw new SpagoBIServiceException("Error setting DAO", e);
 		}
 
+		BIObject biObject = null;
 		try {
 			/**/
 			String userUniqueIdentifier = (String) userProfile.getUserUniqueIdentifier();
@@ -151,6 +153,9 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			Map<String, String> imagesMap = null;
 
 			Set<String> executedDocuments = new HashSet<String>();
+			String path = SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution" + File.separator;
+
+			this.validImage(dossierTemplate.getReports());
 
 			for (Report reportToUse : dossierTemplate.getReports()) {
 
@@ -158,12 +163,10 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 				String imageName = reportToUse.getImageName(); // image format is .png
 
-				this.validImage(imageName);
-
 				List<Parameter> parameter = reportToUse.getParameters();
 
 				logger.debug("executing post service to execute documents");
-				BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(cockpitDocument);
+				biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(cockpitDocument);
 				Integer docId = biObject.getId();
 
 				Collection<String> roles = userProfile.getRoles();
@@ -238,7 +241,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 						handleAllPicturesFromZipFile(responseAsByteArray, randomKey, imagesMap, reportToUse);
 
 					} else {
-						String path = SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution" + File.separator;
+
 						File f = FileUtilities.createFile(imageName, ".png", randomKey, new ArrayList<PlaceHolder>());
 						FileOutputStream outputStream = new FileOutputStream(f);
 						outputStream.write(responseAsByteArray);
@@ -263,8 +266,9 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 			/**/
 		} catch (Exception e) {
-			logger.error("Error while creating dossier activity", e);
 			progressThreadManager.setStatusError(progressThreadId);
+			createErrorFile(biObject, e);
+			logger.error("Error while creating dossier activity", e);
 			throw new SpagoBIRuntimeException(e.getMessage(), e);
 		} finally {
 			logger.debug("OUT");
@@ -272,11 +276,14 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 	}
 
-	public void validImage(String image) {
-		if (!imageNames.contains(image)) {
-			imageNames.add(image);
-		} else {
-			throw new SpagoBIRuntimeException("Image names must be different inside template");
+	public void validImage(List<Report> reports) {
+		for (Report reportToUse : reports) {
+			String image = reportToUse.getImageName();
+			if (!imageNames.contains(image)) {
+				imageNames.add(image);
+			} else {
+				throw new SpagoBIRuntimeException("Image names must be different inside template");
+			}
 		}
 	}
 
@@ -500,6 +507,60 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 		}
 		logger.debug("OUT");
 
+	}
+
+	public File createErrorFile(BIObject biObj, Throwable error) {
+//		public File createErrorFile(BIObject biObj, Throwable error, Map randomNamesToName) {
+		logger.debug("IN");
+		File toReturn = null;
+		FileWriter fw = null;
+		try {
+			if (biObj == null) {
+				ArrayList<PlaceHolder> list = new ArrayList<PlaceHolder>();
+				PlaceHolder p = new PlaceHolder();
+				p.setValue("ERROR");
+				list.add(p);
+				toReturn = FileUtilities.createFile("errorLog", ".txt", randomKey, list);
+				fw = new FileWriter(toReturn);
+				fw.write(error + "\n");
+				if (error != null) {
+					StackTraceElement[] errs = error.getStackTrace();
+					for (int i = 0; i < errs.length; i++) {
+						String err = errs[i].toString();
+						fw.write(err + "\n");
+					}
+				}
+				fw.flush();
+			} else {
+				String fileName = "Error " + biObj.getLabel() + "-" + biObj.getName();
+				toReturn = File.createTempFile(fileName, ".txt");
+//			randomNamesToName.put(toReturn.getName(), fileName + ".txt");
+				fw = new FileWriter(toReturn);
+				fw.write("Error while executing biObject " + biObj.getLabel() + " - " + biObj.getName() + "\n");
+				if (error != null) {
+					StackTraceElement[] errs = error.getStackTrace();
+					for (int i = 0; i < errs.length; i++) {
+						String err = errs[i].toString();
+						fw.write(err + "\n");
+					}
+				}
+				fw.flush();
+			}
+		} catch (Exception e) {
+			logger.error("Error in wirting error file for biObj " + biObj.getLabel());
+			deleteDBRowInCaseOfError(progressThreadDAO, progressThreadId);
+			throw new SpagoBIServiceException("Error in wirting error file for biObj " + biObj.getLabel(), e);
+		} finally {
+			if (fw != null) {
+				try {
+					fw.flush();
+					fw.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
 	}
 
 }

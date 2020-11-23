@@ -1,6 +1,8 @@
 package it.eng.knowage.api.dossier;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -134,6 +136,7 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 				List<BIObjectPlaceholdersPair> documentsToExecute = getBIObjectFromTemplate(dossierTemplate);
 
 				String randomName = getRandomName();
+				Files.createDirectories(Paths.get(randomName));
 				ProgressThread progressThread = new ProgressThread(profile.getUserId().toString(), documentsToExecute.size(), null, null, randomName,
 						ProgressThread.TYPE_DOSSIER_EXECUTION);
 				IProgressThreadDAO progressThreadDAO = DAOFactory.getProgressThreadDAO();
