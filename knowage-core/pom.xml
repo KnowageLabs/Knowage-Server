@@ -11,7 +11,7 @@
 
 	<artifactId>knowage-core</artifactId>
 	<packaging>jar</packaging>
-	
+
 	<dependencies>
 		
 		<dependency>
@@ -126,12 +126,14 @@
 			</exclusions>
 		</dependency>
 		
+<!-- removing this dependency as not available anymore in the the server.
+I ported the Java files in this project instead.
 		<dependency>
 			<groupId>nl.captcha</groupId>
 			<artifactId>simplecaptcha</artifactId>
 			<version>1.2.1</version>
 			<scope>compile</scope>
-		</dependency>
+		</dependency>-->
 		
 		<dependency>
 			<groupId>com.github.jsqlparser</groupId>
