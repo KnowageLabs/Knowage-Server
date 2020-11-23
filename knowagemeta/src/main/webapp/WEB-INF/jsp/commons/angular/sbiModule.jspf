@@ -16,7 +16,8 @@ sbiM.factory('sbiModule_config',function(){
 		serverDateFormat: '<%= GeneralUtilities.getServerDateFormat() %>',
 		productTypes:[],
 		profileAttributes:[],
-		avaiableRoles:[]
+		avaiableRoles:[],
+		dynamicResourcesBasePath: '<%= dynamicResourcesBasePath %>',    
 	};
 	<% for(String pr : productTypes) { 	%>
 	conf.productTypes.push('<%=pr%>');
