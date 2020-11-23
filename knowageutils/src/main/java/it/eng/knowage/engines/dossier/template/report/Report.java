@@ -34,6 +34,7 @@ public class Report {
 	String sheet;
 	String sheetHeight;
 	String sheetWidth;
+	String deviceScaleFactor;
 
 	public Report() {
 		placeholders = new ArrayList<>();
@@ -92,6 +93,15 @@ public class Report {
 	@JsonSetter("sheetWidth")
 	public void setSheetWidth(String sheetWidth) {
 		this.sheetWidth = sheetWidth;
+	}
+
+	public String getDeviceScaleFactor() {
+		return deviceScaleFactor;
+	}
+
+	@JsonSetter("deviceScaleFactor")
+	public void setDeviceScaleFactor(String deviceScaleFactor) {
+		this.deviceScaleFactor = deviceScaleFactor;
 	}
 
 	public List<Parameter> getParameters() {

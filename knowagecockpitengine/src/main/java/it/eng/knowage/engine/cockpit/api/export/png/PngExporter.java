@@ -24,10 +24,6 @@ public class PngExporter extends AbstractNodeJSBasedExporter {
 		super(documentId, userId, requestUrl, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
 	}
 
-	public PngExporter(int documentId, String userId, String requestUrl, RenderOptions renderOptions) {
-		this(documentId, userId, requestUrl, renderOptions, null, false, false);
-	}
-
 	@Override
 	protected byte[] handleFile(Path outputDir, BIObject document, List<InputStream> imagesInputStreams) throws IOException {
 		logger.debug("IN");

@@ -105,7 +105,7 @@ public class SimpleRestClient {
 	 * @throws Exception
 	 */
 	protected Response executeGetService(Map<String, Object> parameters, String serviceUrl, String userId) throws Exception {
-		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.GET, null, null, null);
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.GET, null, null);
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class SimpleRestClient {
 	 * @throws Exception
 	 */
 	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
-		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data, null);
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class SimpleRestClient {
 	 */
 	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data,
 			RenderOptions renderOptions) throws Exception {
-		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data, renderOptions);
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
 	}
 
 	/**
@@ -151,7 +151,7 @@ public class SimpleRestClient {
 	 * @throws Exception
 	 */
 	protected Response executePutService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
-		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.PUT, mediaType, data, null);
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.PUT, mediaType, data);
 	}
 
 	protected HttpResponse executePostServiceWithFormParams(Map<String, Object> parameters, byte[] form, String serviceUrl, String userId) throws Exception {
@@ -217,8 +217,8 @@ public class SimpleRestClient {
 		}
 	}
 
-	private Response executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, String mediaType, Object data,
-			RenderOptions renderOptions) throws Exception {
+	private Response executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, String mediaType, Object data)
+			throws Exception {
 		logger.debug("IN");
 
 		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<String, Object>();
@@ -257,9 +257,6 @@ public class SimpleRestClient {
 
 		// provide authentication exactly before of call
 		authenticationProvider.provideAuthentication(request, target, myHeaders, data);
-
-//		if (renderOptions != null)
-//			request.setAttribute("renderOptions", renderOptions);
 
 		if (type.equals(RequestTypeEnum.POST)) {
 			response = request.post(Entity.json(data.toString()));

@@ -211,6 +211,10 @@ public abstract class AbstractNodeJSBasedExporter {
 		}
 	}
 
+	protected double getDeviceScaleFactor(BIObject document) {
+		return Double.valueOf(renderOptions.getDimensions().getDeviceScaleFactor());
+	}
+
 	protected FrontpageDetails getFrontpageDetails(boolean includeFrontPage, BIObject document) {
 		FrontpageDetails toReturn = null;
 
@@ -236,6 +240,7 @@ public abstract class AbstractNodeJSBasedExporter {
 		int sheetCount = getSheetCount(document);
 		int sheetWidth = getSheetWidth(document);
 		int sheetHeight = getSheetHeight(document);
+		double deviceScaleFactor = getDeviceScaleFactor(document);
 
 		String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
 
@@ -255,7 +260,7 @@ public abstract class AbstractNodeJSBasedExporter {
 		}
 
 		ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), url.toString(), encodedUserId, outputDir.toString(),
-				Integer.toString(sheetCount), Integer.toString(sheetWidth), Integer.toString(sheetHeight));
+				Integer.toString(sheetCount), Integer.toString(sheetWidth), Integer.toString(sheetHeight), Double.toString(deviceScaleFactor));
 
 		Process exec = processBuilder.start();
 

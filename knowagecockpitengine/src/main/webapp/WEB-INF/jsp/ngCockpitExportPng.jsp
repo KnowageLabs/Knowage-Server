@@ -33,8 +33,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	String userId = request.getParameter("user_id");
 	String requestURL = (String) request.getAttribute("requestURL");
 	RenderOptions renderOptions = (RenderOptions) request.getAttribute("renderOptions");
+	String pdfPageOrientation = request.getParameter("pdfPageOrientation");
+	boolean pdfFrontPage = request.getParameter("pdfFrontPage") != null ? Boolean.valueOf(request.getParameter("pdfFrontPage")) : false;
+	boolean pdfBackPage = request.getParameter("pdfBackPage") != null ? Boolean.valueOf(request.getParameter("pdfBackPage")) : false;
 
-	PngExporter pngExporter = new PngExporter(documentId, userId, requestURL, renderOptions);
+	PngExporter pngExporter = new PngExporter(documentId, userId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
 	byte[] data = pngExporter.getBinaryData();
 
 	boolean isZipped = new ZipInputStream(new ByteArrayInputStream(data)).getNextEntry() != null;
