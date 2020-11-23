@@ -236,6 +236,10 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 
 		if (hibDossierActivity.getDocBinContent() != null) {
 			da.setDocBinContent(hibDossierActivity.getDocBinContent());
+			da.setHasDocBinContent(true);
+		} else {
+			da.setDocBinContent(null);
+			da.setHasDocBinContent(false);
 		}
 
 		da.setCreationDate(hibDossierActivity.getCommonInfo().getTimeIn());
