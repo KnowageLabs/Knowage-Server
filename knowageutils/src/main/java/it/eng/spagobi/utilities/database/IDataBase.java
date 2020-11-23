@@ -17,6 +17,13 @@
  */
 package it.eng.spagobi.utilities.database;
 
+import java.sql.SQLException;
+import java.util.Map;
+
+import javax.naming.NamingException;
+
+import org.json.JSONException;
+
 import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
@@ -27,19 +34,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 public interface IDataBase extends Comparable<IDataBase> {
 
 	/**
-	 * @return The database name
-	 */
-	String getName();
-
-	/**
-	 *
-	 * @return the database dialect
-	 */
-	DatabaseDialect getDatabaseDialect();
-
-	public abstract boolean isCacheSupported();
-
-	/**
 	 *
 	 * @return the alias delimiter
 	 */
@@ -47,11 +41,26 @@ public interface IDataBase extends Comparable<IDataBase> {
 
 	/**
 	 *
+	 * @return the database dialect
+	 */
+	DatabaseDialect getDatabaseDialect();
+
+	public abstract IDataSource getDataSource();
+
+	/**
+	 * @return The database name
+	 */
+	String getName();
+
+	public Map<String, Map<String, String>> getStructure(final String tableNamePatternLike, final String tableNamePatternNotLike) throws JSONException, SQLException, ClassNotFoundException, NamingException, DataBaseException;
+
+	/**
+	 *
 	 * @return the alias name used for sub queries in the FROM
 	 */
 	String getSubQueryAlias();
 
-	public abstract IDataSource getDataSource();
+	public abstract boolean isCacheSupported();
 
 	public abstract boolean isMetaSupported();
 }

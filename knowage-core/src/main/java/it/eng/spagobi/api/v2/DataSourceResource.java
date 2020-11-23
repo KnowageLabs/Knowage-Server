@@ -18,11 +18,7 @@
 package it.eng.spagobi.api.v2;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,8 +41,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mongodb.DB;
@@ -64,11 +58,9 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
-import it.eng.spagobi.utilities.database.MetaDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -326,7 +318,10 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			dataSourceDAO.setUserProfile(getUserProfile());
 			IDataSource dataSource = dataSourceDAO.loadDataSourceByID(dsId);
 
-			tableContent = getTableMetadata(dataSource, tablePrefixLike, tablePrefixNotLike);
+			IDataBase dataBase = DataBaseFactory.getDataBase(dataSource);
+			Map<String, Map<String, String>> structure = dataBase.getStructure(tablePrefixLike, tablePrefixNotLike);
+
+			tableContent = new JSONObject(structure);
 
 		} catch (Exception e) {
 			logger.error("Error while getting structure of data source by id", e);
@@ -335,76 +330,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 		return tableContent.toString();
-	}
-
-	private JSONObject getTableMetadata(IDataSource dataSource, String tablePrefixLike, String tablePrefixNotLike)
-			throws HibernateException, JSONException, SQLException, ClassNotFoundException, NamingException, DataBaseException {
-		JSONObject tableContent = new JSONObject();
-		Connection conn = null;
-		ResultSet rs = null;
-		try {
-			conn = dataSource.getConnection();
-			DatabaseMetaData meta = conn.getMetaData();
-			final String tableNamePatternLike = tablePrefixLike;
-			final String tableNamePatternNotLike = tablePrefixNotLike;
-
-			if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
-				// String q =
-				// "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS WHERE OWNER = '"
-				// + userName + "'";
-				String q = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM USER_TAB_COLUMNS";
-				Statement stmt = conn.createStatement();
-				rs = stmt.executeQuery(q);
-				while (rs.next()) {
-					if (StringUtils.matchesLikeNotLikeCriteria(rs.getString(1), tableNamePatternLike, tableNamePatternNotLike)) {
-						if (!tableContent.has(rs.getString(1))) {
-							tableContent.put(rs.getString(1), new JSONObject());
-						}
-						tableContent.getJSONObject(rs.getString(1)).put(rs.getString(2), rs.getString(3));
-					}
-				}
-			} else {
-				final String[] TYPES = { "TABLE", "VIEW" };
-				final String tableNamePattern = "%";
-
-				final MetaDataBase database = DataBaseFactory.getMetaDataBase(dataSource);
-				final String catalog = database.getCatalog(conn);
-				final String schema = database.getSchema(conn);
-				logger.debug("This connection has been configured with the catalog [" + catalog + "] and schema [" + schema + "]");
-				rs = meta.getTables(catalog, schema, tableNamePattern, TYPES);
-				while (rs.next()) {
-					ResultSet tabCol = null;
-					String tableName = rs.getString(3);
-					if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike)) {
-						try {
-							JSONObject column = new JSONObject();
-							tabCol = meta.getColumns(rs.getString(1), rs.getString(2), tableName, "%");
-							while (tabCol.next()) {
-								column.put(tabCol.getString(4), "null");
-							}
-							tableContent.put(tableName, column);
-						} catch (Exception e) {
-							logger.error("Impossible to obtain metadata for catalog " + rs.getString(1) + ", schema " + rs.getString(2) + ", table/view "
-									+ tableName, e);
-							logger.error("Continue with the other tables/views");
-							continue;
-						} finally {
-							if (tabCol != null) {
-								tabCol.close();
-							}
-						}
-					}
-				}
-			}
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (!conn.isClosed()) {
-				conn.close();
-			}
-		}
-		return tableContent;
 	}
 
 	@POST

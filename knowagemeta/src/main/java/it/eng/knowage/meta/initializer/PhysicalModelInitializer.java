@@ -381,7 +381,9 @@ public class PhysicalModelInitializer {
 		PhysicalForeignKey foreignKey;
 
 		try {
-			tableRs = dbMeta.getTables(model.getCatalog(), model.getSchema(), null, new String[] { "TABLE", "VIEW" });
+			String catalog = model.getCatalog();
+			String schema = model.getSchema();
+			tableRs = dbMeta.getTables(catalog, schema, null, new String[] { "TABLE", "VIEW" });
 
 			/*
 			 * -------------------------------------------------- resultset's structure -------------------------------------------------- 1. TABLE_CAT String

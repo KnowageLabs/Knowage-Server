@@ -28,6 +28,8 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  */
 public class SQLServerDataBase extends AbstractDataBase implements MetaDataBase {
 
+	private static final String SELECT_ALL_COLS_BY_SCHEMA = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS c WHERE c.TABLE_SCHEMA = ?";
+
 	public SQLServerDataBase(IDataSource dataSource) {
 		super(dataSource);
 	}
@@ -43,12 +45,13 @@ public class SQLServerDataBase extends AbstractDataBase implements MetaDataBase 
 	}
 
 	@Override
+	public String getCatalog(Connection conn) throws SQLException {
+		return conn.getCatalog();
+	}
+
+	@Override
 	public String getSchema(Connection conn) throws SQLException {
 		return conn.getSchema();
 	}
 
-	@Override
-	public String getCatalog(Connection conn) throws SQLException {
-		return conn.getCatalog();
-	}
 }

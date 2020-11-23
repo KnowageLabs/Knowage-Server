@@ -17,10 +17,21 @@
  */
 package it.eng.spagobi.utilities.database;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.naming.NamingException;
+
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.StringUtils;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -28,12 +39,12 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  */
 public abstract class AbstractDataBase implements IDataBase {
 
-	IDataSource dataSource;
-	protected DatabaseDialect databaseDialect;
 	public static final String STANDARD_ALIAS_DELIMITER = "\"";
 	public static final String STANDARD_SUBQUERY_ALIAS_DELIMITER = "T";
-
 	private static transient Logger logger = Logger.getLogger(AbstractDataBase.class);
+	IDataSource dataSource;
+
+	protected DatabaseDialect databaseDialect;
 
 	protected AbstractDataBase() {
 
@@ -45,8 +56,8 @@ public abstract class AbstractDataBase implements IDataBase {
 	}
 
 	@Override
-	public String getName() {
-		return databaseDialect.getName();
+	public int compareTo(IDataBase o) {
+		return getName().compareToIgnoreCase(o.getName());
 	}
 
 	/*
@@ -57,12 +68,6 @@ public abstract class AbstractDataBase implements IDataBase {
 	@Override
 	public String getAliasDelimiter() {
 		return STANDARD_ALIAS_DELIMITER;
-	}
-
-	@Override
-	public String getSubQueryAlias() {
-		return STANDARD_SUBQUERY_ALIAS_DELIMITER;
-
 	}
 
 	/*
@@ -76,6 +81,69 @@ public abstract class AbstractDataBase implements IDataBase {
 	}
 
 	@Override
+	public IDataSource getDataSource() {
+		return dataSource;
+	}
+
+	@Override
+	public String getName() {
+		return databaseDialect.getName();
+	}
+
+	@Override
+	public Map<String, Map<String, String>> getStructure(final String tableNamePatternLike, final String tableNamePatternNotLike) throws JSONException, SQLException, ClassNotFoundException, NamingException, DataBaseException {
+		Map<String, Map<String, String>> tableContent = new LinkedHashMap<>();
+		try(Connection conn = dataSource.getConnection()) {
+			DatabaseMetaData meta = conn.getMetaData();
+
+			final String[] TYPES = { "TABLE", "VIEW" };
+			final String tableNamePattern = "%";
+
+			final MetaDataBase database = DataBaseFactory.getMetaDataBase(dataSource);
+			final String catalog = database.getCatalog(conn);
+			final String schema = database.getSchema(conn);
+			logger.debug("This connection has been configured with the catalog [" + catalog + "] and schema [" + schema + "]");
+			try (ResultSet rs = meta.getTables(catalog, schema, tableNamePattern, TYPES)) {
+				while (rs.next()) {
+					ResultSet tabCol = null;
+					String tableName = rs.getString(3);
+					if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike)) {
+						String param1 = rs.getString(1);
+						String param2 = rs.getString(2);
+						try {
+							tabCol = meta.getColumns(param1, param2, tableName, "%");
+							while (tabCol.next()) {
+								String param4 = tabCol.getString(4);
+
+
+								tableContent.putIfAbsent(tableName, new LinkedHashMap<String, String>());
+								tableContent.get(tableName).put(param4, param2);
+							}
+
+						} catch (Exception e) {
+							logger.error("Impossible to obtain metadata for catalog " + param1 + ", schema " + param2 + ", table/view "
+									+ tableName, e);
+							logger.error("Continue with the other tables/views");
+						} finally {
+							if (tabCol != null) {
+								tabCol.close();
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return tableContent;
+	}
+
+	@Override
+	public String getSubQueryAlias() {
+		return STANDARD_SUBQUERY_ALIAS_DELIMITER;
+
+	}
+
+	@Override
 	public boolean isCacheSupported() {
 		return this instanceof CacheDataBase;
 	}
@@ -83,15 +151,5 @@ public abstract class AbstractDataBase implements IDataBase {
 	@Override
 	public boolean isMetaSupported() {
 		return this instanceof MetaDataBase;
-	}
-
-	@Override
-	public IDataSource getDataSource() {
-		return dataSource;
-	}
-
-	@Override
-	public int compareTo(IDataBase o) {
-		return getName().compareToIgnoreCase(o.getName());
 	}
 }

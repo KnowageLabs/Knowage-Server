@@ -18,17 +18,27 @@
 package it.eng.spagobi.utilities.database;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.StringUtils;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public class OracleDataBase extends AbstractDataBase implements CacheDataBase, MetaDataBase {
+
+	private static final String SELECT_ALL_COLS = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM USER_TAB_COLUMNS";
 
 	private static transient Logger logger = Logger.getLogger(OracleDataBase.class);
 
@@ -40,14 +50,19 @@ public class OracleDataBase extends AbstractDataBase implements CacheDataBase, M
 		super(dataSource);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
+	 */
 	@Override
-	public int getVarcharLength() {
-		return varcharLength;
+	public String getAliasDelimiter() {
+		return "\"";
 	}
 
 	@Override
-	public void setVarcharLength(int varcharLength) {
-		this.varcharLength = varcharLength;
+	public String getCatalog(Connection conn) throws SQLException {
+		return conn.getCatalog();
 	}
 
 	@Override
@@ -92,14 +107,33 @@ public class OracleDataBase extends AbstractDataBase implements CacheDataBase, M
 		return toReturn;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
-	 */
 	@Override
-	public String getAliasDelimiter() {
-		return "\"";
+	public String getSchema(Connection conn) throws SQLException {
+		return conn.getSchema();
+	}
+
+	@Override
+	public Map<String, Map<String, String>> getStructure(String tableNamePatternLike, String tableNamePatternNotLike)
+			throws JSONException, SQLException, ClassNotFoundException, NamingException {
+		Map<String, Map<String, String>> tableContent = new LinkedHashMap<>();
+		try (Connection conn = dataSource.getConnection()) {
+
+			Statement stmt = conn.createStatement();
+			try (ResultSet rs = stmt.executeQuery(SELECT_ALL_COLS)) {
+				while (rs.next()) {
+					String tableName = rs.getString(1);
+					String columnName = rs.getString(2);
+					String columnType = rs.getString(3);
+
+					if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike)) {
+
+						tableContent.putIfAbsent(tableName, new LinkedHashMap<>());
+						tableContent.get(tableName).put(columnName, columnType);
+					}
+				}
+			}
+		}
+		return tableContent;
 	}
 
 	/*
@@ -118,12 +152,12 @@ public class OracleDataBase extends AbstractDataBase implements CacheDataBase, M
 	}
 
 	@Override
-	public String getSchema(Connection conn) throws SQLException {
-		return conn.getSchema();
+	public int getVarcharLength() {
+		return varcharLength;
 	}
 
 	@Override
-	public String getCatalog(Connection conn) throws SQLException {
-		return conn.getCatalog();
+	public void setVarcharLength(int varcharLength) {
+		this.varcharLength = varcharLength;
 	}
 }
