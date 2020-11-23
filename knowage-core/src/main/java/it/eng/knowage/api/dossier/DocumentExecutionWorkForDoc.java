@@ -308,7 +308,6 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 							// filled by fillParametersValues in DossierExecutionResource
 							String value = templateParameter.getValue();
-							value = decoder.decodeParameter(value);
 							if (decoder.isMultiValues(value) && value.contains("STRING"))
 								value.replaceAll("'", "");
 
