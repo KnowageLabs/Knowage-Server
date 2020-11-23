@@ -550,8 +550,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 					// save associations between functions and documents
 					try {
 						IEngineDriver driver = (IEngineDriver) Class.forName(driverName).newInstance();
-//						ArrayList<Integer> functionsAssociated = driver.getFunctionsAssociated(templateContent);
-						ArrayList<Integer> functionsAssociated = new ArrayList<Integer>();
+						ArrayList<Integer> functionsAssociated = driver.getFunctionsAssociated(templateContent);
 						if (functionsAssociated != null && !functionsAssociated.isEmpty()) {
 							IBIObjFunctionDAO biObjFunctionDAO = DAOFactory.getBIObjFunctionDAO();
 							biObjFunctionDAO.updateObjectFunctions(biObject, functionsAssociated, aSession);
