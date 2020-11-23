@@ -10,4 +10,8 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 public interface IBIObjFunctionDAO {
 
 	public ArrayList<BIObject> getBIObjectsUsingFunction(Integer functionId, Session currSession) throws EMFUserError;
+
+	public void eraseBIObjFunctionByObjectId(Integer biObjId) throws EMFUserError;
+
+	public void eraseBIObjFunctionByObjectId(Integer biObjId, Session currSession) throws EMFUserError;
 }

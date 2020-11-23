@@ -150,13 +150,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Load bi object for execution by id and role.
 	 *
-	 * @param id
-	 *            the id
-	 * @param role
-	 *            the role
+	 * @param id   the id
+	 * @param role the role
 	 * @return the BI object
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForExecutionByIdAndRole(java.lang.Integer, java.lang.String)
 	 */
 	@Override
@@ -229,11 +226,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Load bi object by id.
 	 *
-	 * @param biObjectID
-	 *            the bi object id
+	 * @param biObjectID the bi object id
 	 * @return the BI object
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectById(java.lang.Integer)
 	 */
 	@Override
@@ -270,11 +265,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Load bi object for detail.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 * @return the BI object
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForDetail(java.lang.Integer)
 	 */
 	@Override
@@ -317,11 +310,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Load bi object by label.
 	 *
-	 * @param label
-	 *            the label
+	 * @param label the label
 	 * @return the BI object
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectByLabel(java.lang.String)
 	 */
 	@Override
@@ -362,11 +353,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Load bi object for tree.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 * @return the BI object
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForTree(java.lang.Integer)
 	 */
 	@Override
@@ -411,10 +400,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Modify bi object.
 	 *
-	 * @param obj
-	 *            the obj
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param obj the obj
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#modifyBIObject(it.eng.spagobi.analiticalmodel.document.bo.BIObject)
 	 */
 	@Override
@@ -425,12 +412,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Modify bi object.
 	 *
-	 * @param obj
-	 *            the obj
-	 * @param loadParsDC
-	 *            boolean for management Document Composition params
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param obj        the obj
+	 * @param loadParsDC boolean for management Document Composition params
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#modifyBIObject(it.eng.spagobi.analiticalmodel.document.bo.BIObject)
 	 */
 	@Override
@@ -441,12 +425,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Modify bi object.
 	 *
-	 * @param obj
-	 *            the obj
-	 * @param objTemp
-	 *            the obj temp
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param obj     the obj
+	 * @param objTemp the obj temp
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#modifyBIObjectWithoutVersioning(it.eng.spagobi.analiticalmodel.document.bo.BIObject)
 	 */
 	@Override
@@ -457,12 +438,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Modify bi object (specially provided for custom-made output category parameters for the SUNBURST chart).
 	 *
-	 * @param obj
-	 *            the obj
-	 * @param objTemp
-	 *            the obj temp
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param obj     the obj
+	 * @param objTemp the obj temp
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#modifyBIObjectWithoutVersioning(it.eng.spagobi.analiticalmodel.document.bo.BIObject)
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -474,12 +452,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Modify bi object (for special chart types, that need exclusion of some of default output parameters). Example: WORDCLOUD, PARALLEL and CHORD chart types.
 	 *
-	 * @param obj
-	 *            the obj
-	 * @param objTemp
-	 *            the obj temp
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param obj     the obj
+	 * @param objTemp the obj temp
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#modifyBIObjectWithoutVersioning(it.eng.spagobi.analiticalmodel.document.bo.BIObject)
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -491,14 +466,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Modify bi object.
 	 *
-	 * @param obj
-	 *            the obj
-	 * @param objTemp
-	 *            the obj temp
-	 * @param loadParsDC
-	 *            boolean for management Document Composition params
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param obj        the obj
+	 * @param objTemp    the obj temp
+	 * @param loadParsDC boolean for management Document Composition params
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#modifyBIObjectWithoutVersioning(it.eng.spagobi.analiticalmodel.document.bo.BIObject)
 	 */
 	@Override
@@ -510,12 +481,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Updates the biobject data into database.
 	 *
-	 * @param biObject
-	 *            The BI Object as input
-	 * @param objTemp
-	 *            The BIObject template
-	 * @throws EMFUserError
-	 *             If any exception occurred
+	 * @param biObject The BI Object as input
+	 * @param objTemp  The BIObject template
+	 * @throws EMFUserError If any exception occurred
 	 */
 	private void internalModify(BIObject biObject, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError {
 		logger.debug("IN");
@@ -688,12 +656,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Updates the biobject data into database (specially provided for custom-made output category parameters for the SUNBURST chart).
 	 *
-	 * @param biObject
-	 *            The BI Object as input
-	 * @param objTemp
-	 *            The BIObject template
-	 * @throws EMFUserError
-	 *             If any exception occurred
+	 * @param biObject The BI Object as input
+	 * @param objTemp  The BIObject template
+	 * @throws EMFUserError If any exception occurred
 	 */
 	private void internalModify(BIObject biObject, ObjTemplate objTemp, boolean loadParsDC, List categories) throws EMFUserError {
 		logger.debug("IN");
@@ -843,12 +808,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * Updates the biobject data into database (for special chart types, that need exclusion of some of default output parameters). Example: WORDCLOUD, PARALLEL
 	 * and CHORD chart types.
 	 *
-	 * @param biObject
-	 *            The BI Object as input
-	 * @param objTemp
-	 *            The BIObject template
-	 * @throws EMFUserError
-	 *             If any exception occurred
+	 * @param biObject The BI Object as input
+	 * @param objTemp  The BIObject template
+	 * @throws EMFUserError If any exception occurred
 	 */
 	private void internalModify(BIObject biObject, ObjTemplate objTemp, boolean loadParsDC, String specificChartTypes) throws EMFUserError {
 		logger.debug("IN");
@@ -993,12 +955,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * Implements the query to insert a BIObject and its template. All information needed is stored into the input <code>BIObject</code> and
 	 * <code>ObjTemplate</code> objects.
 	 *
-	 * @param obj
-	 *            The object containing all insert information
-	 * @param objTemp
-	 *            The template of the biobject
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param obj     The object containing all insert information
+	 * @param objTemp The template of the biobject
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	@Override
 	public void insertBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError {
@@ -1008,10 +967,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
 	 *
-	 * @param obj
-	 *            The object containing all insert information
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param obj The object containing all insert information
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	@Override
 	public Integer insertBIObject(BIObject obj) throws EMFUserError {
@@ -1021,12 +978,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
 	 *
-	 * @param obj
-	 *            The object containing all insert information
-	 * @param loadParsDC
-	 *            boolean for management Document Composition params
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param obj        The object containing all insert information
+	 * @param loadParsDC boolean for management Document Composition params
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	@Override
 	public void insertBIObject(BIObject obj, boolean loadParsDC) throws EMFUserError {
@@ -1036,12 +990,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
 	 *
-	 * @param obj
-	 *            The object containing all insert information
-	 * @param loadParsDC
-	 *            boolean for management Document Composition params
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param obj        The object containing all insert information
+	 * @param loadParsDC boolean for management Document Composition params
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	@Override
 	public Integer insertBIObject(BIObject obj, ObjTemplate objTemp) throws EMFUserError {
@@ -1051,12 +1002,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
 	 *
-	 * @param obj
-	 *            The object containing all insert information
-	 * @param loadParsDC
-	 *            boolean for management Document Composition params
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param obj        The object containing all insert information
+	 * @param loadParsDC boolean for management Document Composition params
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	@Override
 	public Integer insertBIObjectForClone(BIObject obj, ObjTemplate objTemp) throws EMFUserError {
@@ -1219,12 +1167,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Erase bi object.
 	 *
-	 * @param obj
-	 *            the obj
-	 * @param idFunct
-	 *            the id funct
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param obj     the obj
+	 * @param idFunct the id funct
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#eraseBIObject(it.eng.spagobi.analiticalmodel.document.bo.BIObject, java.lang.Integer)
 	 */
 	@Override
@@ -1318,6 +1263,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 				// delete ObjDataset eventually associatyed
 				DAOFactory.getBIObjDataSetDAO().eraseBIObjDataSetByObjectId(obj.getId());
+				// delete ObjFunction eventually associated
+				DAOFactory.getBIObjFunctionDAO().eraseBIObjFunctionByObjectId(obj.getId());
 
 				// delete parameters associated
 				// before deleting parameters associated is needed to delete all
@@ -1399,13 +1346,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Gets the correct roles for execution.
 	 *
-	 * @param id
-	 *            the id
-	 * @param profile
-	 *            the profile
+	 * @param id      the id
+	 * @param profile the profile
 	 * @return the correct roles for execution
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#getCorrectRolesForExecution(java.lang.Integer, it.eng.spago.security.IEngUserProfile)
 	 */
 	@Override
@@ -1425,11 +1369,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Gets the correct roles for execution.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 * @return the correct roles for execution
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#getCorrectRolesForExecution(java.lang.Integer)
 	 */
 	@Override
@@ -1450,13 +1392,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Gets a list of correct role according to the report at input, identified by its id
 	 *
-	 * @param id
-	 *            The Integer representing report's id
-	 * @param roles
-	 *            The collection of all roles
+	 * @param id    The Integer representing report's id
+	 * @param roles The collection of all roles
 	 * @return The correct roles list
-	 * @throws EMFUserError
-	 *             if any exception occurred
+	 * @throws EMFUserError if any exception occurred
 	 */
 	private List getCorrectRoles(Integer id, Collection roles) throws EMFUserError {
 		logger.debug("IN");
@@ -1605,8 +1544,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * From the Hibernate BI object at input, gives the corrispondent BI object.
 	 *
-	 * @param hibBIObject
-	 *            The Hibernate BI object
+	 * @param hibBIObject The Hibernate BI object
 	 * @return the corrispondent output <code>BIObject</code>
 	 */
 	@Override
@@ -1768,8 +1706,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * From the hibernate BI object parameter at input, gives the corrispondent <code>BIObjectParameter</code> object.
 	 *
-	 * @param hiObjPar
-	 *            The hybernate BI object parameter
+	 * @param hiObjPar The hybernate BI object parameter
 	 * @return The corrispondent <code>BIObjectParameter</code>
 	 */
 	public BIObjectParameter toBIObjectParameter(SbiObjPar hiObjPar) {
@@ -2086,11 +2023,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Gets the biparameters associated with to a biobject.
 	 *
-	 * @param aBIObject
-	 *            BIObject the biobject to analize
+	 * @param aBIObject BIObject the biobject to analize
 	 * @return List, list of the biparameters associated with the biobject
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List getBIObjectParameters(BIObject aBIObject) throws EMFUserError {
@@ -2251,14 +2186,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Called only for document composition (update object modality). Puts parameters into the document composition getting these from document's children.
 	 *
-	 * @param aSession
-	 *            the hibernate session
-	 * @param biObject
-	 *            the BI object of document composition
-	 * @param template
-	 *            the BI last active template
-	 * @param flgDelete
-	 *            the flag that suggest if is necessary to delete parameters before the insertion
+	 * @param aSession  the hibernate session
+	 * @param biObject  the BI object of document composition
+	 * @param template  the BI last active template
+	 * @param flgDelete the flag that suggest if is necessary to delete parameters before the insertion
 	 * @throws EMFUserError
 	 */
 	private void insertParametersDocComposition(BIObject biObject, ObjTemplate template, boolean flgDelete) throws EMFUserError {
@@ -2374,8 +2305,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Called only for document composition (insert object modality). Puts parameters into the document composition getting these from document's children.
 	 *
-	 * @param biobjectId
-	 *            the document composition biobject id
+	 * @param biobjectId the document composition biobject id
 	 * @throws EMFUserError
 	 */
 	private void insertParametersDocComposition(Integer biobjectId) throws EMFUserError {
@@ -2549,8 +2479,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * Loads visible objects of the user roles
 	 *
 	 * @param folderID
-	 * @param profile
-	 *            the profile of the user
+	 * @param profile  the profile of the user
 	 * @return
 	 * @throws EMFUserError
 	 */
@@ -2799,16 +2728,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Search objects with the features specified
 	 *
-	 * @param valueFilter
-	 *            the value of the filter for the research
-	 * @param typeFilter
-	 *            the type of the filter (the operator: equals, starts...)
-	 * @param columnFilter
-	 *            the column on which the filter is applied
-	 * @param nodeFilter
-	 *            the node (folder id) on which the filter is applied
-	 * @param profile
-	 *            the profile of the user
+	 * @param valueFilter  the value of the filter for the research
+	 * @param typeFilter   the type of the filter (the operator: equals, starts...)
+	 * @param columnFilter the column on which the filter is applied
+	 * @param nodeFilter   the node (folder id) on which the filter is applied
+	 * @param profile      the profile of the user
 	 * @return
 	 * @throws EMFUserError
 	 */
