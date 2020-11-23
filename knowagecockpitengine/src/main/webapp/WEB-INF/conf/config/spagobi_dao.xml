@@ -152,6 +152,7 @@
 		<DAO name="MetaModelParviewDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.MetaModelParviewDAOHibImpl"/>
 		
 		<DAO name="ICatalogFunctionDAO" implementation="it.eng.spagobi.functions.dao.CatalogFunctionDAOImpl"/>
+		<DAO name="BIObjFunctionDAO" implementation="it.eng.spagobi.functions.dao.BIObjFunctionDAOHibImpl"/>
 		<DAO name="IObjFuncOrganizerDAO" implementation="it.eng.spagobi.workspace.dao.ObjFuncOrganizerHIBDAOImpl"/>
 		<DAO name="CalendarDAO" implementation="it.eng.spagobi.tools.calendar.dao.CalendarDAOImpl" />
 	</DAO-CONF>

@@ -92,7 +92,7 @@ public class BIObjFunctionDAOHibImpl extends AbstractHibernateDAO implements IBI
 
 		logger.debug("IN");
 
-		String hql = "from SbiObjFunction s where s.sbiObject.biobjId = " + biObjId + "";
+		String hql = "from SbiObjFunction s where s.biobjId = " + biObjId + "";
 		Query hqlQuery = currSession.createQuery(hql);
 		List hibObjectPars = hqlQuery.list();
 
@@ -152,7 +152,7 @@ public class BIObjFunctionDAOHibImpl extends AbstractHibernateDAO implements IBI
 
 		ArrayList<BIObjFunction> toReturn = new ArrayList<BIObjFunction>();
 
-		String hql = "from SbiObjFunction s where s.sbiObject.biobjId = " + biObjId + "";
+		String hql = "from SbiObjFunction s where s.biobjId = " + biObjId + "";
 		Query hqlQuery = currSession.createQuery(hql);
 		List hibObjectPars = hqlQuery.list();
 

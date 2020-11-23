@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.engines.drivers.cockpit;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.drivers.EngineURL;
-import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
-import it.eng.spagobi.engines.drivers.generic.GenericDriver;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -31,6 +24,13 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.drivers.EngineURL;
+import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 
 public class CockpitDriver extends GenericDriver {
 
@@ -72,6 +72,52 @@ public class CockpitDriver extends GenericDriver {
 
 		logger.debug("OUT");
 		return datasetsLabels;
+	}
+
+	@Override
+	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
+		logger.debug("IN");
+
+		ArrayList<Integer> functionIds = new ArrayList<Integer>();
+		JSONObject templateContent = getTemplateAsJsonObject(contentTemplate);
+		if (templateContent == null) {
+			logger.error("Template content non returned. Impossible get associated functions. Check the template!");
+			return functionIds;
+		}
+
+		JSONArray sheets = templateContent.getJSONArray("sheets");
+		for (int i = 0; i < sheets.length(); i++) {
+			JSONObject sheet = sheets.getJSONObject(i);
+			JSONArray widgets = sheet.getJSONArray("widgets");
+			for (int j = 0; j < widgets.length(); j++) {
+				JSONObject widget = widgets.getJSONObject(j);
+				String widgetId = widget.getString("id");
+				JSONArray columnSelectedOfDataset = new JSONArray();
+				try {
+					if (widget.has("content")) {
+						columnSelectedOfDataset = widget.getJSONObject("content").getJSONArray("columnSelectedOfDataset");
+					} else {
+						// case chart widget
+						columnSelectedOfDataset = widget.getJSONArray("columnSelectedOfDatasetAggregations");
+					}
+				} catch (JSONException e) {
+					logger.error("Something went wrong while getting functions associated to widget: " + widgetId, e);
+					// if something went wrong the template is malformed, just skip
+				}
+				// loop on dataset columns and look for function ids
+				for (int k = 0; k < columnSelectedOfDataset.length(); k++) {
+					JSONObject column = columnSelectedOfDataset.getJSONObject(k);
+					if (column.has("boundFunction")) {
+						int funcId = column.getJSONObject("boundFunction").getInt("id");
+						if (!functionIds.contains(funcId))
+							functionIds.add(funcId);
+					}
+				}
+			}
+		}
+
+		logger.debug("OUT");
+		return functionIds;
 	}
 
 	@Override
