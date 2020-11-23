@@ -103,4 +103,67 @@ public class BIObjFunctionDAOHibImpl extends AbstractHibernateDAO implements IBI
 		}
 		logger.debug("OUT");
 	}
+
+	@Override
+	public void updateObjectFunctions(BIObject biObj, List<Integer> functionsToInsert, Session currSession) throws EMFUserError {
+		logger.debug("IN");
+		logger.debug("update catalog functions associations for biObj " + biObj.getId());
+
+		ArrayList<BIObjFunction> functionsAlreadyAssociated = getBiObjFunctions(biObj.getId(), currSession);
+		ArrayList<Integer> idsAlreadyAssociated = new ArrayList<Integer>();
+		for (BIObjFunction f : functionsAlreadyAssociated) {
+			idsAlreadyAssociated.add(f.getFunctionId());
+		}
+
+		logger.debug("Insert new dataset associations");
+		for (Iterator iterator = functionsToInsert.iterator(); iterator.hasNext();) {
+			Integer funcToInsert = (Integer) iterator.next();
+			// don't insert if it is already present
+			if (!idsAlreadyAssociated.contains(funcToInsert)) {
+				logger.debug("Insert association with function " + funcToInsert);
+				insertBiObjFunction(biObj.getId(), funcToInsert, currSession);
+			} else {
+				logger.debug("Association with function " + funcToInsert + " already present and not deleted");
+			}
+		}
+
+		logger.debug("OUT");
+	}
+
+	public void insertBiObjFunction(Integer biObjId, Integer funcId, Session currSession) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiObjFunction toInsert = new SbiObjFunction();
+		SbiObjects sbiObject = (SbiObjects) currSession.load(SbiObjects.class, biObjId);
+
+		toInsert.setFunctionId(funcId);
+		toInsert.setSbiObject(sbiObject);
+
+		updateSbiCommonInfo4Insert(toInsert);
+
+		currSession.save(toInsert);
+
+		logger.debug("OUT");
+	}
+
+	@Override
+	public ArrayList<BIObjFunction> getBiObjFunctions(Integer biObjId, Session currSession) throws EMFUserError {
+		logger.debug("IN");
+
+		ArrayList<BIObjFunction> toReturn = new ArrayList<BIObjFunction>();
+
+		String hql = "from SbiObjFunction s where s.sbiObject.biobjId = " + biObjId + "";
+		Query hqlQuery = currSession.createQuery(hql);
+		List hibObjectPars = hqlQuery.list();
+
+		Iterator it = hibObjectPars.iterator();
+		int count = 1;
+		while (it.hasNext()) {
+			BIObjFunction aBIObjectFunction = toBIObjFunction((SbiObjFunction) it.next());
+			toReturn.add(aBIObjectFunction);
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
 }

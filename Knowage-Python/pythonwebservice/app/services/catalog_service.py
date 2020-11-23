@@ -59,7 +59,7 @@ def python_function_execute():
             script = script.replace("${" + output_col + "}", "outdf_." + output_col)
     except Exception as e:
         logging.error("Error resolving input references inside script: {}".format(e))
-        return str(e), 400
+        return str(e), 500
 
     # init empty dataframe that will contain new columns
     out_df = pd.DataFrame(columns=output_columns)
@@ -73,14 +73,14 @@ def python_function_execute():
         exec (script, namespace)
     except Exception as e:
         logging.error("Error during script execution: {}".format(e))
-        return str(e), 400
+        return str(e), 500
 
     # convert dataframe to knowage json format
     try:
         knowage_json = utils.convertDataframeToKnowageDataset(namespace["outdf_"])
     except Exception as e:
         logging.error("Error converting dataframe to knowage format: {}".format(e))
-        return str(e), 400
+        return str(e), 500
 
     return str(knowage_json).replace('\'', "\""), 200
 
