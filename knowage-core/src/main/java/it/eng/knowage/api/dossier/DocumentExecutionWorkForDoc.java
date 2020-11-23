@@ -101,6 +101,9 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 		try {
 			this.setTenant();
 			this.runInternal();
+		} catch (Exception e) {
+			logger.error("Error while creating dossier activity", e);
+			throw new SpagoBIRuntimeException(e.getMessage(), e);
 		} finally {
 			TenantManager.unset();
 		}
