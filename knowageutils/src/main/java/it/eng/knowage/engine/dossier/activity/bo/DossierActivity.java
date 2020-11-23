@@ -17,11 +17,20 @@ public class DossierActivity {
 	@JsonIgnore
 	private byte[] binContent;
 	private boolean hasBinContent;
+	private boolean hasDocBinContent;
 	private boolean pptExists;
 	private Date creationDate;
 
 	@JsonIgnore
 	private byte[] docBinContent;
+
+	public boolean isHasDocBinContent() {
+		return hasDocBinContent;
+	}
+
+	public void setHasDocBinContent(boolean hasDocBinContent) {
+		this.hasDocBinContent = hasDocBinContent;
+	}
 
 	public boolean isHasBinContent() {
 		return hasBinContent;
