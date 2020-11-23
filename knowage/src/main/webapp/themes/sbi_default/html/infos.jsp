@@ -28,10 +28,10 @@
 		 	 <div layout-padding>
 				<p>Version: <%= Version.getVersionForDatabase() %></p>
 				<p >
-					Logged User: <%= userName %>
+					Logged User: {{user.userName}}
 				</p>
 				<p >
-					Tenant: <%= tenantName %>
+					Tenant: {{user.tenant}}
 				</p>
 				<p  >
 					Source code available at <a href="http://www.knowage-suite.com" target="_blank">www.knowage-suite.com</a>

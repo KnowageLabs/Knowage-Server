@@ -53,7 +53,7 @@ myApp.config(function($mdThemingProvider,ScrollBarsProvider) {
         };
 });
 
-myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_i18n', '$interval', '$httpParamSerializer'
+myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_i18n', '$interval', '$httpParamSerializer', 'sbiModule_user'
   				, function(
   						$http,
   						$mdDialog,
@@ -64,7 +64,8 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
   						sbiModule_translate,
   						sbiModule_i18n,
   						$interval,
-  						$httpParamSerializer
+  						$httpParamSerializer,
+  						sbiModule_user
   						) {
     return {
         restrict: 'E',
@@ -249,7 +250,8 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 					controller: infoDialogController
 				});
 
-				function infoDialogController(scope, $mdDialog, title, okMessage) {
+				function infoDialogController(scope, $mdDialog, title, okMessage, sbiModule_user) {
+						scope.user = sbiModule_user;
 	        	        scope.title = title;
 	        	        scope.okMessage = okMessage;
 	        	        scope.closeDialog = function() {
