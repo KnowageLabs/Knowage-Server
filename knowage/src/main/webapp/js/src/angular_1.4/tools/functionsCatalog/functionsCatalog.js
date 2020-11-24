@@ -1,7 +1,8 @@
+agGrid.initialiseAgGridWithAngular1(angular);
 var app = angular.module('functionsCatalogControllerModule', [ 'ngMaterial',
 		'angular_list', 'angular_table', 'sbiModule', 'angular_2_col',
 		'file_upload_base64', 'angular-list-detail', 'ui.codemirror',
-		'ngWYSIWYG', 'ngSanitize' ]);
+		'ngWYSIWYG', 'ngSanitize', 'agGrid' ]);
 
 app.config([ '$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -18,10 +19,6 @@ app.controller('functionsCatalogController', [ "sbiModule_config",
 		"sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog",
 		"$mdToast", "$log", "sbiModule_download", "sbiModule_messaging",
 		"$sce", "$compile", "$angularListDetail", functionsCatalogFunction ]);
-
-app.controller('functionCatalogPreviewController',function($scope){
-
-});
 
 function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		sbiModule_restServices, $scope, $mdDialog, $mdToast, $log,
@@ -105,23 +102,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		lineNumbers : true,
 		mode : $scope.shownFunction.language.toLowerCase(),
 		autoRefresh : true
-	};
-
-	$scope.showTabDialog = function(result, isDemoExecution) {
-		$mdDialog.show({
-			controller : functionCatalogResultsController,
-			templateUrl : sbiModule_config.dynamicResourcesBasePath
-					+ '/angular_1.4/tools/functionsCatalog/templates/'
-					+ 'functionCatalogResults.jsp',
-			preserveScope : true,
-			locals : {
-				results : result.data,
-				logger : $log,
-				translate : sbiModule_translate,
-				isDemo : isDemoExecution
-			},
-			clickOutsideToClose : true
-		});
 	};
 
 	function isEmpty(obj) {
@@ -420,28 +400,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 	};
 
-	$scope.applyPreviewItem = function(item, event) {
-//		var deferred = $q.defer();
-		var promise;
-
-		$mdDialog.show({
-			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/functionsCatalog/templates/functionCatalogPreviewTemplate.html',
-			parent : angular.element(document.body),
-			clickOutsideToClose:true,
-			escapeToClose :true,
-			preserveScope: true,
-			autoWrap:false,
-			fullscreen: true,
-			controller: functionCatalogPreviewController
-		}).then(function() {
-//			deferred.promise.then(function(result){
-//
-//			});
-		}, function() {
-		});
-//		promise = deferred.promise;
-	};
-
 	$scope.leftTableClick = function(item) {
 		$scope.showDetail = true;
 		$scope.shownFunction = angular.copy(item);
@@ -558,6 +516,21 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		return $scope.functionsToDisplay;
 	}
 
+	$scope.applyPreviewItem = function(item, event) {
+		$mdDialog.show({
+			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/functionsCatalog/templates/functionCatalogPreviewTemplate.html',
+			parent : angular.element(document.body),
+			clickOutsideToClose:true,
+			escapeToClose :true,
+			autoWrap:false,
+			locals: {
+				selectedFunction: item,
+			},
+			fullscreen: true,
+			controller: functionCatalogPreviewController
+		})
+	};
+
 	// --------------------------------------------Application
 	// Logic---------------------------------------
 
@@ -566,46 +539,48 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 	// ----------------------------------------------Controllers-----------------------------------------------
 
-	function functionCatalogResultsController($scope, $mdDialog, logger,
-			results, translate, isDemo) {
-		function isObject(obj) {
-			return obj === Object(obj);
+	function functionCatalogPreviewController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,selectedFunction) {
+		$scope.translate=sbiModule_translate;
+		$scope.selectedFunction = selectedFunction;
+
+		$scope.datasetsGrid = {
+		        enableColResize: false,
+		        enableFilter: true,
+		        enableSorting: true,
+		        onGridReady: initDatasets,
+		        onGridSizeChanged: resizeDatasets,
+		        rowSelection: "single",
+		        onRowSelected: selectDataset,
+		        pagination: true,
+		        paginationAutoPageSize: true,
+		        columnDefs: [
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.datasetlabel'), field:'label'},
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.datasettype'), field:'dsTypeCd'}],
+		        rowData: $scope.datasetList
 		}
 
-		logger.info("received results: ", results);
-		$scope.download = function(filename, base64) {
-			var element = document.createElement('a');
-			element.setAttribute('href',
-					'data:application/octet-stream;base64,' + base64);
-
-			element.setAttribute('download', filename);
-
-			element.style.display = 'none';
-			document.body.appendChild(element);
-
-			element.click();
-
-			document.body.removeChild(element);
+		function initDatasets(){
+			sbiModule_restServices.promiseGet('1.0/datasets','')
+			.then(function(response){
+				$scope.datasetList = response.data.root;
+				$scope.datasetsGrid.api.setRowData($scope.datasetList);
+				resizeDatasets();
+			}, function(error){
+				debugger;
+			});
 		}
 
-		$scope.numTab = results.length;
-		$scope.results = results;
-		$scope.translate = translate;
-		$scope.isDemo = isDemo;
-		$scope.truncate = false;
-		$scope.error = "";
-		for ( var res in $scope.results) {
-			if ($scope.results.hasOwnProperty(res)) {
-				if ($scope.results[res].resultType == "image"
-						|| $scope.results[res].resultType == "Image") {
-					$scope.results[res].imageString = "data:image/png;base64,"
-							+ $scope.results[res].result;
-				}
-				if (res == "errors") {
-					$scope.error = $scope.results.errors[0].localizedMessage
-							+ "\n" + $scope.results.errors[0].message;
-				}
-			}
+		function resizeDatasets(){
+			$scope.datasetsGrid.api.sizeColumnsToFit();
+		}
+
+		function selectDataset(props){
+			$scope.selectedDataset = props.api.getSelectedRows()[0];
+		}
+
+		$scope.cancelPreview=function(){
+			$scope.selectedDataset = undefined;
+			$mdDialog.cancel();
 		}
 
 	};
