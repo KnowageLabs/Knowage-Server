@@ -165,6 +165,23 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 			this.validImage(dossierTemplate.getReports());
 
+			ISbiDossierActivityDAO daoAct = DAOFactory.getDossierActivityDao();
+			daoAct.setUserProfile(userProfile);
+			DossierActivity activity = daoAct.loadActivityByProgressThreadId(progressThreadId);
+			String dbArray = activity.getConfigContent();
+			JSONArray jsonArray = null;
+
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("TYPE", "DOC_TEMPLATE");
+			jsonObject.put("MESSAGE", dossierTemplate.getDocTemplate().getName());
+
+			if (dbArray != null && !dbArray.isEmpty()) {
+				jsonArray = new org.json.JSONArray(dbArray);
+			} else {
+				jsonArray = new JSONArray();
+			}
+			jsonArray.put(jsonObject);
+
 			for (Report reportToUse : dossierTemplate.getReports()) {
 
 				String cockpitDocument = reportToUse.getLabel();
@@ -215,7 +232,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 						serviceUrlBuilder.append("&pdfDeviceScaleFactor=" + Double.valueOf(renderOptions.getDimensions().getDeviceScaleFactor()));
 					}
 
-					String serviceUrl = addParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder);
+					String serviceUrl = addParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder, jsonArray);
 
 					if (executedDocuments.contains(serviceUrl)) {
 						progressThreadManager.incrementPartial(progressThreadId);
@@ -263,6 +280,9 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			// Activity creation
 			imageNames.clear();
 
+			activity.setConfigContent(jsonArray.toString());
+			daoAct.updateActivity(activity);
+
 			progressThreadManager.setStatusDownload(progressThreadId);
 			logger.debug("Thread row in database set as download state");
 
@@ -291,8 +311,8 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 		}
 	}
 
-	public String addParametersToServiceUrl(Integer progressthreadId, BIObject biObject, Report reportToUse, StringBuilder serviceUrlBuilder)
-			throws UnsupportedEncodingException, JSONException {
+	public String addParametersToServiceUrl(Integer progressthreadId, BIObject biObject, Report reportToUse, StringBuilder serviceUrlBuilder,
+			JSONArray jsonArray) throws UnsupportedEncodingException, JSONException {
 		List<BIObjectParameter> drivers = biObject.getDrivers();
 		if (drivers != null) {
 			List<Parameter> parameter = reportToUse.getParameters();
@@ -301,10 +321,6 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			}
 			Collections.sort(drivers);
 			ParametersDecoder decoder = new ParametersDecoder();
-			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("TYPE", "Object Metadata");
-			String docTemplate = "Document template: [" + reportToUse.getLabel() + "]";
-			jsonObject.put("MESSAGE", docTemplate);
 
 			for (BIObjectParameter biObjectParameter : drivers) {
 				boolean found = false;
@@ -355,29 +371,15 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 					}
 				}
 
-				String metadataMessage = "Document name: [" + biObject.getName() + "] parameter name: [" + paramName + "] parameter value: [" + value + "]";
+				String metadataMessage = paramName + "=" + value;
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("TYPE", "PARAMETER");
 				jsonObject.put("MESSAGE", metadataMessage);
+				jsonArray.put(jsonObject);
 
 				if (!found) {
 					throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
 				}
-			}
-			ISbiDossierActivityDAO daoAct = DAOFactory.getDossierActivityDao();
-			daoAct.setUserProfile(userProfile);
-			DossierActivity activity = daoAct.loadActivityByProgressThreadId(progressthreadId);
-			String dbArray = activity.getConfigContent();
-			JSONArray jsonArray = null;
-			if (dbArray != null && !dbArray.isEmpty()) {
-				jsonArray = new org.json.JSONArray(dbArray);
-				jsonArray.put(jsonObject);
-				activity.setConfigContent(jsonArray.toString());
-				daoAct.updateActivity(activity);
-
-			} else {
-				jsonArray = new JSONArray();
-				jsonArray.put(jsonObject);
-				activity.setConfigContent(jsonArray.toString());
-				daoAct.updateActivity(activity);
 			}
 
 		}
