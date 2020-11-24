@@ -20,7 +20,6 @@ public class DossierActivity {
 	private boolean hasDocBinContent;
 	private boolean pptExists;
 	private Date creationDate;
-	@JsonIgnore
 	private String configContent;
 
 	@JsonIgnore
