@@ -20,6 +20,8 @@ public class DossierActivity {
 	private boolean hasDocBinContent;
 	private boolean pptExists;
 	private Date creationDate;
+	@JsonIgnore
+	private String configContent;
 
 	@JsonIgnore
 	private byte[] docBinContent;
@@ -140,6 +142,14 @@ public class DossierActivity {
 
 	public void setDocBinContent(byte[] docBinContent) {
 		this.docBinContent = docBinContent;
+	}
+
+	public String getConfigContent() {
+		return configContent;
+	}
+
+	public void setConfigContent(String configContent) {
+		this.configContent = configContent;
 	}
 
 }

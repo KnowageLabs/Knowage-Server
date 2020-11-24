@@ -14,6 +14,15 @@ public class SbiDossierActivity extends SbiHibernateModel {
 	private SbiProgressThread progress;
 	private byte[] binContent;
 	private byte[] docBinContent;
+	private String configContent;
+
+	public String getConfigContent() {
+		return configContent;
+	}
+
+	public void setConfigContent(String configContent) {
+		this.configContent = configContent;
+	}
 
 	public byte[] getBinContent() {
 		return binContent;

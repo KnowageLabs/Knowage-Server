@@ -241,8 +241,8 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			da.setDocBinContent(null);
 			da.setHasDocBinContent(false);
 		}
-
 		da.setCreationDate(hibDossierActivity.getCommonInfo().getTimeIn());
+		da.setConfigContent(hibDossierActivity.getConfigContent());
 
 		return da;
 	}
@@ -254,6 +254,7 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 		sda.setActivity(dossierActivity.getActivity());
 		sda.setDocumentId(dossierActivity.getDocumentId());
 		sda.setParameters(dossierActivity.getParameters());
+		sda.setConfigContent(dossierActivity.getConfigContent());
 		UserProfile userProfile = (UserProfile) this.getUserProfile();
 		if (dossierActivity.getProgressId() != null) {
 			sda.setProgress(new SbiProgressThread(dossierActivity.getProgressId(), (String) userProfile.getUserId()));
@@ -261,6 +262,71 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 		// sda.setPpt(dossierActivity.getBinId());
 
 		return sda;
+	}
+
+	@Override
+	public DossierActivity loadActivityByProgressThreadId(Integer progressthreadId) {
+		logger.debug("IN");
+		Session aSession = null;
+		DossierActivity da = null;
+
+		try {
+			aSession = getSession();
+
+			Criterion aCriterion = Expression.eq("progress.progressThreadId", progressthreadId);
+			Criteria criteria = aSession.createCriteria(SbiDossierActivity.class);
+			criteria.add(aCriterion);
+
+			SbiDossierActivity hibDa = (SbiDossierActivity) criteria.uniqueResult();
+
+			if (hibDa == null)
+				return null;
+			da = toDossierActivity(hibDa);
+
+			logger.debug("Loaded activity with progressthreadId: " + progressthreadId);
+		} catch (HibernateException he) {
+			logger.error("Exception while loading dossier activity with id: " + progressthreadId, he);
+			throw new SpagoBIRuntimeException("Exception while loading dossier activity with id: " + progressthreadId, he);
+		} finally {
+
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return da;
+	}
+
+	@Override
+	public Integer updateActivity(DossierActivity dossierActivity) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer id = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiDossierActivity hibDossierActivity = toSbiDossierActivity(dossierActivity);
+			updateSbiCommonInfo4Update(hibDossierActivity);
+			aSession.update(hibDossierActivity);
+
+			tx.commit();
+
+			logger.debug("Dossier activity updated correctly. Id of activity: " + dossierActivity.getId());
+
+		} catch (HibernateException he) {
+			if (tx != null)
+				tx.rollback();
+			logger.error("Exception while updating a dossier activity with id: " + dossierActivity.getId(), he);
+			throw new SpagoBIRuntimeException("Exception while updating a dossier activity with id: " + dossierActivity.getId(), he);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return id;
 	}
 
 }
