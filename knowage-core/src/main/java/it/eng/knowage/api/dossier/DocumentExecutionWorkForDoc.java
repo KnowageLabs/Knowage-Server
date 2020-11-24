@@ -325,19 +325,21 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 						}
 					} else {
 						if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
-							if (biObjectParameter.isMultivalue()) {
+							serviceUrlBuilder.append(String.format("&%s=%s", biObjectParameter.getParameterUrlName(),
+									URLEncoder.encode(templateParameter.getValue(), StandardCharsets.UTF_8.toString())));
 
-							} else {
-								serviceUrlBuilder.append(String.format("&%s=%s", biObjectParameter.getParameterUrlName(),
-										URLEncoder.encode(templateParameter.getValue(), StandardCharsets.UTF_8.toString())));
+							if (templateParameter.getUrlNameDescription() == null) {
+								throw new SpagoBIRuntimeException(
+										"There is no description field inside template parameters. It is mandatory for static types.");
 
-								// description
-								serviceUrlBuilder.append(String.format("&%s_description=%s", biObjectParameter.getParameterUrlName(),
-										URLEncoder.encode(templateParameter.getUrlNameDescription(), StandardCharsets.UTF_8.toString())));
-
-								found = true;
-								break;
 							}
+							// description
+							serviceUrlBuilder.append(String.format("&%s_description=%s", biObjectParameter.getParameterUrlName(),
+									URLEncoder.encode(templateParameter.getUrlNameDescription(), StandardCharsets.UTF_8.toString())));
+
+							found = true;
+							break;
+
 						}
 					}
 				}
