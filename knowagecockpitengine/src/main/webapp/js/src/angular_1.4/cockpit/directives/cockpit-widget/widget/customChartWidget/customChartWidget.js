@@ -77,17 +77,31 @@ function cockpitCustomChartControllerFunction(
 		$scope.showWidgetSpinner();
 		var thisElement = angular.element( document.querySelector( '#w'+$scope.ngModel.id+' .htmlRenderer' ) )[0];
 		thisElement.innerHTML = '';
-		thisElement.innerHTML = $sce.trustAsHtml($scope.ngModel.html.code);
-		if(datasetRecords){
+		thisElement.innerHTML = "<style>"+ $sce.trustAsCss($scope.ngModel.css.code) + "</style>";
+		thisElement.innerHTML += $sce.trustAsHtml($scope.ngModel.html.code);
+		// execute JS code
+		var scrajs = thisElement.getElementsByTagName('kn-import');
+		if(scrajs.length > 0){
+			var toLoad = scrajs.length;
+			var loaded = 0;
+			var updateLoaded = function(){
+				loaded++;
+			}
+			for(var k = 0; k < scrajs.length; k++) {
+		        var scr = document.createElement("script");
+		        scr.type = "text/javascript";
+		        scr.src = scrajs[k].attributes[0].textContent;
+				scr.addEventListener("load", updateLoaded);
+		        thisElement.appendChild(scr);          
+		    }
+		}	 
+	    
+		function setJs(){
 			try {
-				datastore.setData(datasetRecords);
-
-				if($scope.ngModel.js) {
-					var tempJS = $sce.trustAs($sce.JS, $scope.ngModel.js.code).$$unwrapTrustedValue();
-					if(!tempJS.match(/(\$scope|\$destroy|datastore\.setData)/g)) eval(tempJS);
-					else {
-						$scope.jsError = $scope.translate.load('kn.cockpit.custom.code.unsafe');
-					}
+				var tempJS = $sce.trustAs($sce.JS, $scope.ngModel.js.code).$$unwrapTrustedValue();
+				if(!tempJS.match(/(\$scope|\$destroy|datastore\.setData)/g)) eval(tempJS);
+				else {
+					$scope.jsError = $scope.translate.load('kn.cockpit.custom.code.unsafe');
 				}
 				$scope.hideWidgetSpinner();
 				if(nature == 'init'){
@@ -96,9 +110,28 @@ function cockpitCustomChartControllerFunction(
 						cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
 					},500);
 				}
-			} catch(e){
+			}catch(e){
 				$scope.hideWidgetSpinner();
 				$scope.jsError = e;
+			}
+		}
+		
+		function jsLoadSemaphore(){
+			if(loaded == toLoad){
+				setJs();
+			}else {
+				$timeout(function(){
+					jsLoadSemaphore();
+				},1000)
+			}
+		}
+	
+		if(datasetRecords){
+			datastore.setData(datasetRecords);
+			if($scope.ngModel.js) {
+				if(toLoad){
+					jsLoadSemaphore();
+				}else setJs();
 			}
 		}
 	}
