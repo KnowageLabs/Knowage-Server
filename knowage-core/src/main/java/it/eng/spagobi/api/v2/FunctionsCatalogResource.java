@@ -52,6 +52,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.functions.dao.FunctionInUseException;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.functions.metadata.IInputVariable;
 import it.eng.spagobi.functions.metadata.IOutputColumn;
@@ -401,8 +402,14 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			fcDAO.setUserProfile(getUserProfile());
 			fcDAO.deleteCatalogFunction(id);
 			retObj.put("Response", "OK");
+		} catch (FunctionInUseException fiue) {
+			try {
+				retObj.put("FunctionInUseException", fiue.getMessage());
+			} catch (JSONException e) {
+				throw new SpagoBIRuntimeException(e);
+			}
 		} catch (Exception e) {
-			String message = "Error while deleting the function with id: " + id + ", is it used in some documents?";
+			String message = "Error while deleting the function with id: " + id;
 			logger.error(message, e);
 			throw new SpagoBIRuntimeException(message, e);
 		}

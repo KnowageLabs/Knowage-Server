@@ -390,6 +390,8 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 
 			transaction.commit();
 
+		} catch (FunctionInUseException fiue) {
+			throw fiue;
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
