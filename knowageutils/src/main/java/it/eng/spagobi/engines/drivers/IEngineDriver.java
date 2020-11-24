@@ -18,9 +18,6 @@
 
 package it.eng.spagobi.engines.drivers;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -28,15 +25,14 @@ import java.util.Map;
 
 import org.json.JSONException;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+
 /**
- * Defines the methods implements by the SpagoBI drivers that, starting from a
- * SpagoBI BIOBject, produce the parameters for a specific engine to which they
- * are associated. The names anv values of the map parameters will be used by
- * the system to produce a POST request to the engine application. Each driver
- * can extract and trasform the BIParameter of the BIObject in order to create a
- * a right request based on the engine specificaion. The methods can be used
- * also to do some setting operation like for example handshake security
- * requests.
+ * Defines the methods implements by the SpagoBI drivers that, starting from a SpagoBI BIOBject, produce the parameters for a specific engine to which they are
+ * associated. The names anv values of the map parameters will be used by the system to produce a POST request to the engine application. Each driver can
+ * extract and trasform the BIParameter of the BIObject in order to create a a right request based on the engine specificaion. The methods can be used also to
+ * do some setting operation like for example handshake security requests.
  */
 public interface IEngineDriver {
 
@@ -44,108 +40,88 @@ public interface IEngineDriver {
 	public static final String LANGUAGE = "knowage_sys_language";
 
 	/**
-	 * Returns a map of parameters which will be send in the request to the
-	 * engine application.
+	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param biobject
-	 *            the biobject
+	 * @param profile  Profile of the user
+	 * @param roleName the name of the execution role
+	 * @param biobject the biobject
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
 	public Map getParameterMap(Object biobject, IEngUserProfile profile, String roleName);
 
 	/**
-	 * Returns a map of parameters which will be send in the request to the
-	 * engine application.
+	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param subObject
-	 *            SubObject to execute
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param object
-	 *            the object
+	 * @param subObject SubObject to execute
+	 * @param profile   Profile of the user
+	 * @param roleName  the name of the execution role
+	 * @param object    the object
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
 	public Map getParameterMap(Object object, Object subObject, IEngUserProfile profile, String roleName);
 
 	/**
-	 * Returns the EngineURL for the creation of a new template for the
-	 * document.
+	 * Returns the EngineURL for the creation of a new template for the document.
 	 *
-	 * @param biobject
-	 *            the biobject
-	 * @param profile
-	 *            the profile
+	 * @param biobject the biobject
+	 * @param profile  the profile
 	 *
 	 * @return the EngineURL for the creation of a new template for the document
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest;
 
 	/**
 	 * Returns the EngineURL for the modification of the document template.
 	 *
-	 * @param biobject
-	 *            the biobject
-	 * @param profile
-	 *            the profile
+	 * @param biobject the biobject
+	 * @param profile  the profile
 	 *
 	 * @return the EngineURL for the modification of the document template
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest;
 
 	/**
 	 * Returns the template elaborated.
 	 *
-	 * @param byte[] the template
-	 * @param profile
-	 *            the profile
+	 * @param byte[]  the template
+	 * @param profile the profile
 	 *
 	 * @return the byte[] with the modification of the document template
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	public byte[] ElaborateTemplate(byte[] template) throws InvalidOperationRequest;
 
 	/**
 	 * Returns the template elaborated.
 	 *
-	 * @param byte[] the template
-	 * @param profile
-	 *            the profile
+	 * @param byte[]  the template
+	 * @param profile the profile
 	 *
 	 * @return the byte[] with the modification of the document template
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	public void applyLocale(Locale locale);
 
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException;
 
+	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException;
+
 	public List<DefaultOutputParameter> getDefaultOutputParameters();
 
 	/**
-	 * Specially provided method for custom-made output category parameters for
-	 * the SUNBURST chart.
+	 * Specially provided method for custom-made output category parameters for the SUNBURST chart.
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 *
-	 *         Handles OLAP cross-navigation parameters in WhatIfDriver
-	 *         implementation.
+	 *         Handles OLAP cross-navigation parameters in WhatIfDriver implementation.
 	 *
 	 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
 	 *
@@ -153,8 +129,7 @@ public interface IEngineDriver {
 	public List<DefaultOutputParameter> getSpecificOutputParameters(List categories);
 
 	/**
-	 * Method used for special chart types, that need exclusion of some of
-	 * default output parameters).
+	 * Method used for special chart types, that need exclusion of some of default output parameters).
 	 *
 	 * Example: WORDCLOUD, PARALLEL and CHORD chart types.
 	 *

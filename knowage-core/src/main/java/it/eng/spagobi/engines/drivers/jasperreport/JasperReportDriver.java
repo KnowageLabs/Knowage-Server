@@ -18,6 +18,15 @@
 
 package it.eng.spagobi.engines.drivers.jasperreport;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -36,10 +45,6 @@ import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-
-import java.util.*;
 
 /**
  * Driver Implementation (IEngineDriver Interface) for Jasper Report Engine.
@@ -51,12 +56,9 @@ public class JasperReportDriver extends AbstractEngineDriver implements IEngineD
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param biobject
-	 *            the biobject
+	 * @param profile  Profile of the user
+	 * @param roleName the name of the execution role
+	 * @param biobject the biobject
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
@@ -78,14 +80,10 @@ public class JasperReportDriver extends AbstractEngineDriver implements IEngineD
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param subObject
-	 *            SubObject to execute
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param object
-	 *            the object
+	 * @param subObject SubObject to execute
+	 * @param profile   Profile of the user
+	 * @param roleName  the name of the execution role
+	 * @param object    the object
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
@@ -97,8 +95,7 @@ public class JasperReportDriver extends AbstractEngineDriver implements IEngineD
 	/**
 	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
 	 *
-	 * @param biobj
-	 *            BIObject to execute
+	 * @param biobj BIObject to execute
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map getMap(BIObject biobj) {
@@ -187,10 +184,8 @@ public class JasperReportDriver extends AbstractEngineDriver implements IEngineD
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
 	 *
-	 * @param biobj
-	 *            BIOBject to execute
-	 * @param pars
-	 *            Map of the parameters for the execution call
+	 * @param biobj BIOBject to execute
+	 * @param pars  Map of the parameters for the execution call
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map addBIParameters(BIObject biobj, Map pars) {
@@ -236,15 +231,12 @@ public class JasperReportDriver extends AbstractEngineDriver implements IEngineD
 	/**
 	 * Function not implemented. This method should not be called
 	 *
-	 * @param biobject
-	 *            The BIOBject to edit
-	 * @param profile
-	 *            the profile
+	 * @param biobject The BIOBject to edit
+	 * @param profile  the profile
 	 *
 	 * @return the edits the document template build url
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -255,15 +247,12 @@ public class JasperReportDriver extends AbstractEngineDriver implements IEngineD
 	/**
 	 * Function not implemented. Thid method should not be called
 	 *
-	 * @param biobject
-	 *            The BIOBject to edit
-	 * @param profile
-	 *            the profile
+	 * @param biobject The BIOBject to edit
+	 * @param profile  the profile
 	 *
 	 * @return the new document template build url
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -275,6 +264,14 @@ public class JasperReportDriver extends AbstractEngineDriver implements IEngineD
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
+		// catalog functions can be used only inside cockpits
+		// therefore the default implementation is to return an empty list
+		// CockpitEngine will have its own implementation
+		return new ArrayList<Integer>();
 	}
 
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)

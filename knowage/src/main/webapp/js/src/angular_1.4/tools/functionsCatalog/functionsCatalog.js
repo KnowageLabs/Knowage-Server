@@ -409,6 +409,9 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		var functionId = $scope.shownFunction.id;
 
 		sbiModule_restServices.get("2.0/functions-catalog","delete/" + functionId).then(function(result) {
+			if (result && result.data && result.data.FunctionInUseException) {
+				sbiModule_messaging.showErrorMessage(result.data.FunctionInUseException,"Delete Error");
+			}
 			$scope.obtainCatalogFunctionsRESTcall();
 			$scope.cleanNewFunction();
 			$scope.shownFunction = $scope.newFunction;

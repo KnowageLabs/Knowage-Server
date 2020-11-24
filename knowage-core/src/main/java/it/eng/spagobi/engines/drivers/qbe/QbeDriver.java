@@ -17,6 +17,15 @@
  */
 package it.eng.spagobi.engines.drivers.qbe;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -37,15 +46,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-
 /**
  * Driver Implementation (IEngineDriver Interface) for Qbe External Engine.
  */
@@ -56,12 +56,9 @@ public class QbeDriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param analyticalDocument
-	 *            the biobject
+	 * @param profile            Profile of the user
+	 * @param roleName           the name of the execution role
+	 * @param analyticalDocument the biobject
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
@@ -74,8 +71,8 @@ public class QbeDriver extends AbstractEngineDriver implements IEngineDriver {
 
 		try {
 			Assert.assertNotNull(analyticalDocument, "Input parameter [analyticalDocument] cannot be null");
-			Assert.assertTrue((analyticalDocument instanceof BIObject), "Input parameter [analyticalDocument] cannot be an instance of ["
-					+ analyticalDocument.getClass().getName() + "]");
+			Assert.assertTrue((analyticalDocument instanceof BIObject),
+					"Input parameter [analyticalDocument] cannot be an instance of [" + analyticalDocument.getClass().getName() + "]");
 
 			biObject = (BIObject) analyticalDocument;
 
@@ -95,14 +92,10 @@ public class QbeDriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param analyticalDocumentSubObject
-	 *            SubObject to execute
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param analyticalDocument
-	 *            the object
+	 * @param analyticalDocumentSubObject SubObject to execute
+	 * @param profile                     Profile of the user
+	 * @param roleName                    the name of the execution role
+	 * @param analyticalDocument          the object
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
@@ -117,16 +110,16 @@ public class QbeDriver extends AbstractEngineDriver implements IEngineDriver {
 
 		try {
 			Assert.assertNotNull(analyticalDocument, "Input parameter [analyticalDocument] cannot be null");
-			Assert.assertTrue((analyticalDocument instanceof BIObject), "Input parameter [analyticalDocument] cannot be an instance of ["
-					+ analyticalDocument.getClass().getName() + "]");
+			Assert.assertTrue((analyticalDocument instanceof BIObject),
+					"Input parameter [analyticalDocument] cannot be an instance of [" + analyticalDocument.getClass().getName() + "]");
 			biObject = (BIObject) analyticalDocument;
 
 			if (analyticalDocumentSubObject == null) {
 				logger.warn("Input parameter [subObject] is null");
 				return getParameterMap(analyticalDocument, profile, roleName);
 			}
-			Assert.assertTrue((analyticalDocumentSubObject instanceof SubObject), "Input parameter [subObjectDetail] cannot be an instance of ["
-					+ analyticalDocumentSubObject.getClass().getName() + "]");
+			Assert.assertTrue((analyticalDocumentSubObject instanceof SubObject),
+					"Input parameter [subObjectDetail] cannot be an instance of [" + analyticalDocumentSubObject.getClass().getName() + "]");
 			subObject = (SubObject) analyticalDocumentSubObject;
 
 			parameters = getRequestParameters(biObject);
@@ -178,8 +171,7 @@ public class QbeDriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
 	 *
-	 * @param biObject
-	 *            BIObject to execute
+	 * @param biObject BIObject to execute
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map getRequestParameters(BIObject biObject) {
@@ -221,10 +213,8 @@ public class QbeDriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
 	 *
-	 * @param biobj
-	 *            BIOBject to execute
-	 * @param pars
-	 *            Map of the parameters for the execution call
+	 * @param biobj BIOBject to execute
+	 * @param pars  Map of the parameters for the execution call
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map appendAnalyticalDriversToRequestParameters(BIObject biobj, Map pars) {
@@ -258,15 +248,12 @@ public class QbeDriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Function not implemented. Thid method should not be called
 	 *
-	 * @param biobject
-	 *            The BIOBject to edit
-	 * @param profile
-	 *            the profile
+	 * @param biobject The BIOBject to edit
+	 * @param profile  the profile
 	 *
 	 * @return the edits the document template build url
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -277,15 +264,12 @@ public class QbeDriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Function not implemented. Thid method should not be called
 	 *
-	 * @param biobject
-	 *            The BIOBject to edit
-	 * @param profile
-	 *            the profile
+	 * @param biobject The BIOBject to edit
+	 * @param profile  the profile
 	 *
 	 * @return the new document template build url
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -372,6 +356,14 @@ public class QbeDriver extends AbstractEngineDriver implements IEngineDriver {
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
+		// catalog functions can be used only inside cockpits
+		// therefore the default implementation is to return an empty list
+		// CockpitEngine will have its own implementation
+		return new ArrayList<Integer>();
 	}
 
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)

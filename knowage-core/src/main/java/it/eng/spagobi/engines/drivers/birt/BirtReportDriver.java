@@ -18,6 +18,15 @@
 
 package it.eng.spagobi.engines.drivers.birt;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -30,15 +39,6 @@ import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-
 /**
  * Driver Implementation (IEngineDriver Interface) for Birt Report Engine.
  */
@@ -48,12 +48,9 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param biobject
-	 *            the biobject
+	 * @param profile  Profile of the user
+	 * @param roleName the name of the execution role
+	 * @param biobject the biobject
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
@@ -74,14 +71,10 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param subObject
-	 *            SubObject to execute
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param object
-	 *            the object
+	 * @param subObject SubObject to execute
+	 * @param profile   Profile of the user
+	 * @param roleName  the name of the execution role
+	 * @param object    the object
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
@@ -115,10 +108,8 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
 	 *
-	 * @param biobj
-	 *            BIOBject to execute
-	 * @param pars
-	 *            Map of the parameters for the execution call
+	 * @param biobj BIOBject to execute
+	 * @param pars  Map of the parameters for the execution call
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map addBIParameters(BIObject biobj, Map pars) {
@@ -158,15 +149,12 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 	/**
 	 * Function not implemented. Thid method should not be called
 	 *
-	 * @param biobject
-	 *            The BIOBject to edit
-	 * @param profile
-	 *            the profile
+	 * @param biobject The BIOBject to edit
+	 * @param profile  the profile
 	 *
 	 * @return the edits the document template build url
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -177,15 +165,12 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 	/**
 	 * Function not implemented. Thid method should not be called
 	 *
-	 * @param biobject
-	 *            The BIOBject to edit
-	 * @param profile
-	 *            the profile
+	 * @param biobject The BIOBject to edit
+	 * @param profile  the profile
 	 *
 	 * @return the new document template build url
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -228,6 +213,14 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 		logger.debug("OUT");
 		return datasetsLabels;
 
+	}
+
+	@Override
+	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
+		// catalog functions can be used only inside cockpits
+		// therefore the default implementation is to return an empty list
+		// CockpitEngine will have its own implementation
+		return new ArrayList<Integer>();
 	}
 
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)

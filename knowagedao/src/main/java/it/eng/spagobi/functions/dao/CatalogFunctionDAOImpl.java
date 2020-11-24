@@ -2,6 +2,7 @@ package it.eng.spagobi.functions.dao;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +13,9 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.functions.metadata.IInputVariable;
 import it.eng.spagobi.functions.metadata.IOutputColumn;
@@ -364,11 +367,31 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			transaction = session.beginTransaction();
 			Assert.assertNotNull(transaction, "transaction cannot be null");
 
+			// check if function is used by document by querying SBI_OBJ_FUNCTION table
+			ArrayList<BIObject> objectsAssociated = DAOFactory.getBIObjFunctionDAO().getBIObjectsUsingFunction(id, session);
+			if (!objectsAssociated.isEmpty()) {
+				for (Iterator iterator = objectsAssociated.iterator(); iterator.hasNext();) {
+					BIObject biObject = (BIObject) iterator.next();
+					logger.debug("Function with id " + id + " is used by BiObject with label " + biObject.getLabel());
+				}
+				String message = "[deleteInUseFunctionError]: Function with id [" + id + "] " + "cannot be deleted because it is referenced by documents";
+				FunctionInUseException fiue = new FunctionInUseException(message);
+				ArrayList<String> objs = new ArrayList<String>();
+				for (int i = 0; i < objectsAssociated.size(); i++) {
+					BIObject obj = objectsAssociated.get(i);
+					objs.add(obj.getLabel());
+				}
+				fiue.setObjectsLabel(objs);
+				throw fiue;
+			}
+
 			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, id);
 			session.delete(hibCatFunction);
 
 			transaction.commit();
 
+		} catch (FunctionInUseException fiue) {
+			throw fiue;
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
