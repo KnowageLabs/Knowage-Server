@@ -1,52 +1,30 @@
-<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
-<%@page import="it.eng.spago.security.IEngUserProfile"%>
-<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
-<%@page import="it.eng.knowage.wapp.Version"%>
-
- <%
- 	String userName="";
- 	String tenantName="";
-	IEngUserProfile userProfile = (IEngUserProfile)session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-	
-
-	if (userProfile!=null){
-		userName=(String)((UserProfile)userProfile).getUserName();
-		tenantName=(String)((UserProfile)userProfile).getOrganization();
-	}
-
-	String contextName = ChannelUtilities.getSpagoBIContextName(request);
-	%>
-	
-<md-dialog id="infosDialog" layout="column">
-<form>
-
-	<md-dialog-content layout="column" layout-padding layout-margin>
-		<div layout="row" style="width:100%" layout-align="center center">
-			<img src="<%=contextName %>/themes/commons/img/defaultTheme/logo.svg" width="200" layout-margin />
-		</div>
-		 	 
+<md-dialog id="kn-info" layout="column">
+	<form>
+		<md-dialog-content layout="column" layout-padding layout-margin>
+			<div layout="row" style="width:100%" layout-align="center center">
+				<img src="/knowage/themes/commons/img/defaultTheme/logo.svg" />
+			</div>
+			 	 
 		 	 <div layout-padding>
-				<p>Version: <%= Version.getVersionForDatabase() %></p>
-				<p >
-					Logged User: {{user.userName}}
+				<p>
+					<span>{{translate.load('kn.info.version')}}</span> {{config.knowageVersion}}</p>
+				<p>
+					<span>{{translate.load('kn.info.user')}}</span> {{user.userName}}</p>
+				<p>
+					<span>{{translate.load('kn.info.tenant')}}</span> {{user.tenant}}</p>
+				<p>
+					{{translate.load('kn.info.source')}} 
+					<a href="http://www.knowage-suite.com" target="_blank">www.knowage-suite.com</a>
 				</p>
-				<p >
-					Tenant: {{user.tenant}}
-				</p>
-				<p  >
-					Source code available at <a href="http://www.knowage-suite.com" target="_blank">www.knowage-suite.com</a>
-				</p>
-				
-				<p layout-align ="center center" > 
-					<i>&#169; 2019 Engineering Ingegneria Informatica S.p.A.</i>
+				<p layout-align ="center center" >
+					<i>&copy; {{translate.load('kn.generic.copyright')}}</i>
 				</p>
 			</div>
-	</md-dialog-content>
-	<div class="md-actions">
-		<md-button ng-click="closeDialog()" >
-			{{okMessage}}
-        </md-button>
-     </div>
+		</md-dialog-content>
+		<div class="md-actions">
+			<md-button class="md-primary md-raised" ng-click="closeDialog()" >
+				{{okMessage}}
+	        </md-button>
+	     </div>
      </form>
-	
 </md-dialog>

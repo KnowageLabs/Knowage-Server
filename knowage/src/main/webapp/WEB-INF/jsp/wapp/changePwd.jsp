@@ -108,30 +108,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          
          app.controller('changePwdController', ['$scope', '$http', function($scope, $http) {
          
-         $scope.authFailed = "";
-         $scope.isCalling = false;
-         
-           $scope.changePwd = function(user) {
-           	
-           	$scope.isCalling = true;
-           	
-           	$scope.authFailed = "";
-           	
-         $http({
-         	method: 'PUT',
-         	data: $scope.changePwdData,
-         	headers: { "Accept": "text/plain" },
-         	url: '<%= urlBuilder.getResourceLink(request, "/restful-services/credential") %>'
-         }).then(function successCallback(response) {
-         	var status = response.status;
-         	$scope.authFailed = response.data;
-         	$scope.isCalling = false;
-         }, function errorCallback(response) {
-         	var status = response.status;
-         	$scope.authFailed = response.data;
-         	$scope.isCalling = false;
-         });
-           };
+	         $scope.authFailed = "";
+	         $scope.isCalling = false;
+	         $scope.oldEncMethodMessage = <%= oldEncMethodMessage %>;
+	         $scope.changePwd = function(user) {
+	           	$scope.isCalling = true;
+	           	$scope.authFailed = "";
+	           	
+		        $http({
+		        	method: 'PUT',
+		        	data: $scope.changePwdData,
+		        	headers: { "Accept": "text/plain" },
+		        	url: '<%= urlBuilder.getResourceLink(request, "/restful-services/credential") %>'
+		        }).then(function successCallback(response) {
+		        	var status = response.status;
+		        	$scope.authFailed = response.data;
+		        	$scope.isCalling = false;
+		        }, function errorCallback(response) {
+		        	var status = response.status;
+		        	$scope.authFailed = response.data;
+		        	$scope.isCalling = false;
+		        });
+		     };
          
          }]);
       </script>
@@ -141,7 +139,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div layout="row" style="width:100%" layout-align="center center">
 	      <md-card flex="60" layout-padding>
 	         <div id="oldEncMethodMessage" layout="row" layout-align="center center" >
-	         	<div class="kn-info" flex><%=oldEncMethodMessage%></div>
+	         	<div class="kn-info" flex>{{oldEncMethodMessage}}</div>
 	         </div>
 	         <div layout="row" layout-align="center center" class="noPadding" >
 	         	<img id="profile-img" class="logoHeader" src='<%=urlBuilder.getResourceLink(request, "themes/commons/img/defaultTheme/logoCover.svg")%>' flex="60" flex-xs="100" aria-hidden="true"/>

@@ -1,5 +1,7 @@
 
 
+<%@page import="it.eng.spagobi.commons.utilities.SpagoBIUtilities"%>
+<%@page import="it.eng.knowage.wapp.Version"%>
 <%@page import="it.eng.spagobi.tenant.TenantManager"%>
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
@@ -19,6 +21,9 @@ var sbiM=angular.module('sbiModule',["toastr","ngSanitize"]);
 %>
 sbiM.factory('sbiModule_config',function(){ 
 	return {
+		knowageVersion: '<%= Version.getVersionForDatabase() %>',
+		cpuNumber: <%= Runtime.getRuntime().availableProcessors() %>,
+		hostName: '<%= SpagoBIUtilities.getCurrentHostName() %>',
     	contextName: '<%= KnowageSystemConfiguration.getKnowageContext() %>',
     	contextLogo: '<%= urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>',
     	contextMetaName: '<%= KnowageSystemConfiguration.getKnowageContext() %>meta',

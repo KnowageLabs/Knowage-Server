@@ -276,8 +276,10 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 						controller: infoDialogController
 					});
 
-					function infoDialogController(scope, $mdDialog, title, okMessage, sbiModule_user) {
+					function infoDialogController(scope, $mdDialog, title, okMessage, sbiModule_user, sbiModule_config, sbiModule_translate) {
 						scope.user = sbiModule_user;
+						scope.translate = sbiModule_translate;
+						scope.config = sbiModule_config;
 						scope.title = title;
 						scope.okMessage = okMessage;
 						scope.closeDialog = function () {
@@ -323,11 +325,13 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 						$scope.showAlert('Attention, ' + "Error Calling REST service for Menu. Please check if the server or connection is working.")
 					});
 
-					function licenseDialogController(scope, $mdDialog, title, okMessage, licenseData, config, translate, messaging, download, hosts) {
+					function licenseDialogController(scope, $mdDialog, title, okMessage, licenseData, config, translate, messaging, download, hosts, sbiModule_config) {
 						scope.title = title;
 						scope.okMessage = okMessage;
 						scope.licenseData = licenseData;
 						scope.config = config;
+						scope.config.hostName = sbiModule_config.hostName;
+						scope.config.cpuNumber = sbiModule_config.cpuNumber;
 						scope.translate = $scope.translate;
 						scope.messaging = $scope.messaging;
 						scope.download = $scope.download;

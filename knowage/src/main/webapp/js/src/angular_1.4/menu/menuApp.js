@@ -250,8 +250,10 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 					controller: infoDialogController
 				});
 
-				function infoDialogController(scope, $mdDialog, title, okMessage, sbiModule_user) {
+				function infoDialogController(scope, $mdDialog, title, okMessage, sbiModule_user, sbiModule_config, sbiModule_translate) {
 						scope.user = sbiModule_user;
+						scope.translate = sbiModule_translate;
+						scope.config = sbiModule_config;
 	        	        scope.title = title;
 	        	        scope.okMessage = okMessage;
 	        	        scope.closeDialog = function() {
