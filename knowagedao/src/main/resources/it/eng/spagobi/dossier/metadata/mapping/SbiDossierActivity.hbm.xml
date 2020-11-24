@@ -65,6 +65,9 @@
 		<property name="docBinContent" type="binary">
             <column name="DOC" sql-type="longvarbinary"/>
         </property>
+        <property name="configContent" type="string">
+            <column length="4000" name="CONFIG" />
+        </property>
 		<many-to-one name="progress" class="it.eng.spagobi.tools.massiveExport.metadata.SbiProgressThread">
 			<column length="20" name="PROGRESS" />
 		</many-to-one>

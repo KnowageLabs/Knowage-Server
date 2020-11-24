@@ -29,9 +29,13 @@ public interface ISbiDossierActivityDAO extends ISpagoBIDao {
 
 	public DossierActivity loadActivity(Integer activityId);
 
+	public DossierActivity loadActivityByProgressThreadId(Integer progressthreadId);
+
 	public Integer insertNewActivity(DossierActivity aLayer);
 
 	public Integer updateActivity(DossierActivity dossierActivity, byte[] file, String type);
+
+	public Integer updateActivity(DossierActivity dossierActivity);
 
 	public void deleteActivity(Integer activityId);
 

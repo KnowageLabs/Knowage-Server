@@ -34,11 +34,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import commonj.work.Work;
 import it.eng.knowage.api.dossier.utils.FileUtilities;
+import it.eng.knowage.engine.dossier.activity.bo.DossierActivity;
 import it.eng.knowage.engines.dossier.template.AbstractDossierTemplate;
 import it.eng.knowage.engines.dossier.template.parameter.Parameter;
 import it.eng.knowage.engines.dossier.template.placeholder.PlaceHolder;
@@ -54,6 +58,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
@@ -166,8 +171,6 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 				String imageName = reportToUse.getImageName(); // image format is .png
 
-				List<Parameter> parameter = reportToUse.getParameters();
-
 				logger.debug("executing post service to execute documents");
 				biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(cockpitDocument);
 				Integer docId = biObject.getId();
@@ -179,8 +182,6 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 						String message = "user " + ((UserProfile) userProfile).getUserName() + " cannot execute document " + biObject.getName();
 						throw new SpagoBIRuntimeException(message);
 					}
-
-					List<BIObjectParameter> drivers = biObject.getDrivers();
 
 					String docName = biObject.getName();
 
@@ -214,7 +215,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 						serviceUrlBuilder.append("&pdfDeviceScaleFactor=" + Double.valueOf(renderOptions.getDimensions().getDeviceScaleFactor()));
 					}
 
-					String serviceUrl = addParametersToServiceUrl(drivers, parameter, serviceUrlBuilder);
+					String serviceUrl = addParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder);
 
 					if (executedDocuments.contains(serviceUrl)) {
 						progressThreadManager.incrementPartial(progressThreadId);
@@ -290,16 +291,25 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 		}
 	}
 
-	public String addParametersToServiceUrl(List<BIObjectParameter> drivers, List<Parameter> parameter, StringBuilder serviceUrlBuilder)
-			throws UnsupportedEncodingException {
+	public String addParametersToServiceUrl(Integer progressthreadId, BIObject biObject, Report reportToUse, StringBuilder serviceUrlBuilder)
+			throws UnsupportedEncodingException, JSONException {
+		List<BIObjectParameter> drivers = biObject.getDrivers();
 		if (drivers != null) {
+			List<Parameter> parameter = reportToUse.getParameters();
 			if (drivers.size() != parameter.size()) {
 				throw new SpagoBIRuntimeException("There are a different number of parameters/drivers between document and template");
 			}
 			Collections.sort(drivers);
 			ParametersDecoder decoder = new ParametersDecoder();
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("TYPE", "Object Metadata");
+			String docTemplate = "Document template: [" + reportToUse.getLabel() + "]";
+			jsonObject.put("MESSAGE", docTemplate);
+
 			for (BIObjectParameter biObjectParameter : drivers) {
 				boolean found = false;
+				String value = "";
+				String paramName = "";
 				for (Parameter templateParameter : parameter) {
 
 					if (templateParameter.getType().equals("dynamic")) {
@@ -307,12 +317,12 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 						if (templateParameter.getValue() != null && !templateParameter.getValue().isEmpty()) {
 
 							// filled by fillParametersValues in DossierExecutionResource
-							String value = templateParameter.getValue();
+							value = templateParameter.getValue();
 							if (decoder.isMultiValues(value) && value.contains("STRING"))
 								value.replaceAll("'", "");
 
 							if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
-
+								paramName = templateParameter.getUrlName();
 								serviceUrlBuilder.append(String.format("&%s=%s", biObjectParameter.getParameterUrlName(),
 										URLEncoder.encode(value, StandardCharsets.UTF_8.toString())));
 
@@ -327,7 +337,8 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 						if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
 							serviceUrlBuilder.append(String.format("&%s=%s", biObjectParameter.getParameterUrlName(),
 									URLEncoder.encode(templateParameter.getValue(), StandardCharsets.UTF_8.toString())));
-
+							value = templateParameter.getValue();
+							paramName = templateParameter.getUrlName();
 							if (templateParameter.getUrlNameDescription() == null) {
 								throw new SpagoBIRuntimeException(
 										"There is no description field inside template parameters. It is mandatory for static types.");
@@ -343,10 +354,32 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 						}
 					}
 				}
+
+				String metadataMessage = "Document name: [" + biObject.getName() + "] parameter name: [" + paramName + "] parameter value: [" + value + "]";
+				jsonObject.put("MESSAGE", metadataMessage);
+
 				if (!found) {
 					throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
 				}
 			}
+			ISbiDossierActivityDAO daoAct = DAOFactory.getDossierActivityDao();
+			daoAct.setUserProfile(userProfile);
+			DossierActivity activity = daoAct.loadActivityByProgressThreadId(progressthreadId);
+			String dbArray = activity.getConfigContent();
+			JSONArray jsonArray = null;
+			if (dbArray != null && !dbArray.isEmpty()) {
+				jsonArray = new org.json.JSONArray(dbArray);
+				jsonArray.put(jsonObject);
+				activity.setConfigContent(jsonArray.toString());
+				daoAct.updateActivity(activity);
+
+			} else {
+				jsonArray = new JSONArray();
+				jsonArray.put(jsonObject);
+				activity.setConfigContent(jsonArray.toString());
+				daoAct.updateActivity(activity);
+			}
+
 		}
 		return serviceUrlBuilder.toString();
 	}
@@ -518,12 +551,12 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 		logger.debug("IN");
 		File toReturn = null;
 		FileWriter fw = null;
+		ArrayList<PlaceHolder> list = new ArrayList<PlaceHolder>();
+		PlaceHolder p = new PlaceHolder();
+		p.setValue("ERROR");
+		list.add(p);
 		try {
 			if (biObj == null) {
-				ArrayList<PlaceHolder> list = new ArrayList<PlaceHolder>();
-				PlaceHolder p = new PlaceHolder();
-				p.setValue("ERROR");
-				list.add(p);
 				toReturn = FileUtilities.createFile("errorLog", ".txt", randomKey, list);
 				fw = new FileWriter(toReturn);
 				fw.write(error + "\n");
@@ -537,10 +570,11 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 				fw.flush();
 			} else {
 				String fileName = "Error " + biObj.getLabel() + "-" + biObj.getName();
-				toReturn = File.createTempFile(fileName, ".txt");
+				toReturn = FileUtilities.createFile(fileName, ".txt", randomKey, list);
 //			randomNamesToName.put(toReturn.getName(), fileName + ".txt");
 				fw = new FileWriter(toReturn);
 				fw.write("Error while executing biObject " + biObj.getLabel() + " - " + biObj.getName() + "\n");
+				fw.write(error + "\n");
 				if (error != null) {
 					StackTraceElement[] errs = error.getStackTrace();
 					for (int i = 0; i < errs.length; i++) {
