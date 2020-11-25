@@ -303,6 +303,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		    this.eGui = document.createElement('div');
 		    this.eGui.style.width = '100%';
+		    this.eGui.style.height = '100%';
 		    this.eGui.innerHTML = '<div class="ag-cell-label-container customHeaderTemplate" role="presentation" style="background-color:'+headerStyle["background-color"]+'">'+
 								'    <div ref="eLabel" class="ag-header-cell-label" role="presentation" style="color:'+headerStyle.color+';justify-content:'+headerStyle["justify-content"]+'">'+
 								'       <div class="'+cellClasses+'" style="justify-content:'+headerStyle["justify-content"]+'">'+
