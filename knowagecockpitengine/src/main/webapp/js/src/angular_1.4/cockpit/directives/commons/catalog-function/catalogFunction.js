@@ -355,15 +355,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$mdDialog.cancel();
 		}
 
-		$scope.isSolrDataset = function() {
-			if($scope.model.dataset.dsId != undefined) {
-				if (cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId).type == "SbiSolrDataSet") {
-					return true;
-				}
-
-			}
-			return false;
-		}
 	}
 
 })();

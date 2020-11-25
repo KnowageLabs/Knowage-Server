@@ -541,7 +541,32 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 	function functionCatalogPreviewController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,selectedFunction) {
 		$scope.translate=sbiModule_translate;
-		$scope.selectedFunction = selectedFunction;
+		$scope.selectedFunction = angular.copy(selectedFunction);
+		$scope.selectedTab = 0;
+		var style = {'display': 'inline-flex', 'justify-content':'center', 'align-items':'center'};
+		var typesMap = {'STRING': "fa fa-quote-right", 'NUMBER': "fa fa-hashtag", 'DATE': 'fa fa-calendar'};
+
+		// PYTHON ENVIRONMENTS CONFIG
+		sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
+		.then(function(response){
+			$scope.pythonEnvironments = buildEnvironments(response.data);
+		});
+
+		// R ENVIRONMENTS CONFIG
+		sbiModule_restServices.promiseGet('2.0/configs/category', 'R_CONFIGURATION')
+		.then(function(response){
+			$scope.rEnvironments = buildEnvironments(response.data);
+		});
+
+		buildEnvironments = function (data) {
+			toReturn = []
+			for (i=0; i<data.length; i++) {
+				key = data[i].label;
+				val = data[i].valueCheck;
+				toReturn[i] = {"label": key, "value": val};
+			}
+			return toReturn;
+		}
 
 		$scope.datasetsGrid = {
 		        enableColResize: false,
@@ -554,7 +579,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		        pagination: true,
 		        paginationAutoPageSize: true,
 		        columnDefs: [
-		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.datasetlabel'), field:'label'},
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.dataset'), field:'label'},
 		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.datasettype'), field:'dsTypeCd'}],
 		        rowData: $scope.datasetList
 		}
@@ -566,7 +591,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				$scope.datasetsGrid.api.setRowData($scope.datasetList);
 				resizeDatasets();
 			}, function(error){
-				debugger;
 			});
 		}
 
@@ -576,11 +600,169 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 		function selectDataset(props){
 			$scope.selectedDataset = props.api.getSelectedRows()[0];
+			$scope.selectedDatasetColumns = getDatasetColumns($scope.selectedDataset);
+			angular.copy(selectedFunction);
+		}
+
+		function getDatasetColumns(ds){
+			var toReturn = [];
+			var allColumns = ds.meta.columns;
+			for (var i=0; i<allColumns.length; i=i+3) {
+//				var type = allColumns[i].pvalue;
+//				var fieldType = allColumns[i+1].pvalue;
+				var alias = allColumns[i+2].pvalue;
+				toReturn.push(alias);
+			}
+			return toReturn;
+		}
+
+		$scope.columnsGrid = {
+				angularCompileRows: true,
+				domLayout :'autoHeight',
+		        enableColResize: false,
+		        enableFilter: false,
+		        enableSorting: false,
+		        onGridReady : resizeColumns,
+		        onGridSizeChanged: resizeColumns,
+		        onCellEditingStopped: refreshRowForColumns,
+		        singleClickEdit: true,
+		        columnDefs: [
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputColumn.name'), field:'name'},
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputColumn.type'), field:'type', cellRenderer:typeRenderer},
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputColumn.datasetColumn'), field:'dsColumn', editable:true, cellRenderer:editableCell, cellEditor:"agSelectCellEditor", cellEditorParams: {values: $scope.selectedDatasetColumns}}],
+		        rowData: $scope.selectedFunction.inputColumns
+		}
+
+		function refreshRowForColumns(cell){
+			$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
+		}
+
+		function resizeColumns(){
+			$scope.columnsGrid.api.sizeColumnsToFit();
+		}
+
+		function editableCell(params){
+			var editButton = '<i class="fa fa-edit"></i> <i>';
+			if (typeof(params.value) !== 'undefined')
+				return editButton + params.value;
+			else return editButton;
+		}
+
+		function typeRenderer(params){
+			var typeIcon = '<i class="' + typesMap[params.value] + '"></i> <i>'
+			return typeIcon + params.value;
+		}
+
+		$scope.variablesGrid = {
+				angularCompileRows: true,
+				domLayout :'autoHeight',
+		        enableColResize: false,
+		        enableFilter: false,
+		        enableSorting: false,
+		        onGridReady : resizeVariables,
+		        onGridSizeChanged: resizeVariables,
+		        onCellEditingStopped: refreshRowForVariables,
+		        singleClickEdit: true,
+		        columnDefs: [
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputVariable.name'), field:'name'},
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputVariable.type'), field:'type', cellRenderer: typeRenderer},
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputVariable.value'), field:'value', editable: true, cellRenderer: editableCell}],
+		        rowData: $scope.selectedFunction.inputVariables
+		}
+
+		function refreshRowForVariables(cell){
+			$scope.variablesGrid.api.redrawRows({rowNodes: [$scope.variablesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
+		}
+
+		function resizeVariables(){
+			$scope.variablesGrid.api.sizeColumnsToFit();
+		}
+
+		$scope.librariesGrid = {
+		        enableColResize: false,
+		        enableFilter: true,
+		        enableSorting: true,
+		        onGridReady: resizeLibraries,
+		        onGridSizeChanged: resizeLibraries,
+		        pagination: true,
+		        paginationAutoPageSize: true,
+		        columnDefs: [
+		        	{headerName: "Library", field:'name'},
+		        	{headerName: "Version", field:'version'}]
+		}
+
+		function resizeLibraries(){
+			$scope.librariesGrid.api.sizeColumnsToFit();
+		}
+
+		function refreshRowForLibraries(cell){
+			$scope.librariesGrid.api.redrawRows({rowNodes: [$scope.librariesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
+		}
+
+		$scope.setLibraries=function() {
+			var endpoint = $scope.selectedFunction.language == "Python" ? "python" : "RWidget";
+			sbiModule_restServices.promiseGet('2.0/backendservices/widgets/'+ endpoint +'/libraries', JSON.parse($scope.selectedFunction.environment).label)
+			.then(function(response){
+				$scope.selectedFunction.libraries = [];
+				var librariesArray = JSON.parse((response.data.result));
+				for (idx in librariesArray) {
+					lib = librariesArray[idx];
+					$scope.selectedFunction.libraries.push({"name": lib.name, "version": lib.version})
+				}
+				$scope.librariesGrid.api.setRowData($scope.selectedFunction.libraries);
+			}, function(error){
+			});
 		}
 
 		$scope.cancelPreview=function(){
 			$scope.selectedDataset = undefined;
+			$scope.selectedFunction = angular.copy(selectedFunction);
+			$scope.selectedTab = 0;
 			$mdDialog.cancel();
+		}
+
+		$scope.goToPreview=function(){
+			if (!checkColumnsConfiguration($scope.selectedFunction.inputColumns))
+				$scope.toastifyMsg('warning',$scope.translate.load("sbi.functionscatalog.functionpreview.function.error.datasetColumns"));
+			else if (!checkVariablesConfiguration($scope.selectedFunction.inputVariables))
+				$scope.toastifyMsg('warning',$scope.translate.load("sbi.functionscatalog.functionpreview.function.error.inputVariables"));
+			else if (!checkEnvironmentConfiguration($scope.selectedFunction.environment))
+				$scope.toastifyMsg('warning',$scope.translate.load("sbi.functionscatalog.functionpreview.function.error.environment"));
+			else {
+				$scope.selectedTab = 1;
+			}
+		}
+
+		checkColumnsConfiguration=function(columns){
+			for (var i=0; i<columns.length; i++) {
+				if (!columns[i].dsColumn)
+					return false;
+			}
+			return true;
+		}
+
+		checkVariablesConfiguration=function(variables){
+			for (var i=0; i<variables.length; i++) {
+				if (!variables[i].value || variables[i].value == '')
+					return false;
+			}
+			return true;
+		}
+
+		checkEnvironmentConfiguration=function(environment){
+			if (!environment)
+				return false;
+			return true;
+		}
+
+		$scope.toastifyMsg = function(type,msg){
+			Toastify({
+				text: msg,
+				duration: 10000,
+				close: true,
+				className: 'kn-' + type + 'Toast',
+				stopOnFocus: true
+			}).showToast();
 		}
 
 	};
