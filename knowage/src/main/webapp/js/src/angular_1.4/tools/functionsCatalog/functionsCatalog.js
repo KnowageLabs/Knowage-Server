@@ -539,10 +539,10 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 	// ----------------------------------------------Controllers-----------------------------------------------
 
-	function functionCatalogPreviewController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,selectedFunction) {
+	function functionCatalogPreviewController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_messaging,$mdDialog,selectedFunction) {
 		$scope.translate=sbiModule_translate;
 		$scope.selectedFunction = angular.copy(selectedFunction);
-		$scope.selectedTab = 0;
+		$scope.disablePreview = true;
 		var style = {'display': 'inline-flex', 'justify-content':'center', 'align-items':'center'};
 		var typesMap = {'STRING': "fa fa-quote-right", 'NUMBER': "fa fa-hashtag", 'DATE': 'fa fa-calendar'};
 
@@ -575,7 +575,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		        onGridReady: initDatasets,
 		        onGridSizeChanged: resizeDatasets,
 		        rowSelection: "single",
-		        onRowSelected: selectDataset,
+		        onRowClicked: selectDataset,
 		        pagination: true,
 		        paginationAutoPageSize: true,
 		        columnDefs: [
@@ -601,7 +601,13 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		function selectDataset(props){
 			$scope.selectedDataset = props.api.getSelectedRows()[0];
 			$scope.selectedDatasetColumns = getDatasetColumns($scope.selectedDataset);
-			angular.copy(selectedFunction);
+			$scope.selectedFunction = angular.copy(selectedFunction);
+			$scope.$apply();
+			if ($scope.columnsGrid.api) {
+				$scope.columnDefs[2].cellEditorParams.values = $scope.selectedDatasetColumns;
+				$scope.columnsGrid.api.setColumnDefs($scope.columnDefs);
+				$scope.columnsGrid.api.setRowData($scope.selectedFunction.inputColumns);
+			}
 		}
 
 		function getDatasetColumns(ds){
@@ -616,6 +622,11 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			return toReturn;
 		}
 
+		$scope.columnDefs = [
+        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputColumn.name'), field:'name'},
+        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputColumn.type'), field:'type', cellRenderer:typeRenderer},
+        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputColumn.datasetColumn'), field:'dsColumn', editable:true, cellRenderer:editableCell, cellEditor:"agSelectCellEditor", cellEditorParams: {values: $scope.selectedDatasetColumns}}];
+
 		$scope.columnsGrid = {
 				angularCompileRows: true,
 				domLayout :'autoHeight',
@@ -626,10 +637,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		        onGridSizeChanged: resizeColumns,
 		        onCellEditingStopped: refreshRowForColumns,
 		        singleClickEdit: true,
-		        columnDefs: [
-		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputColumn.name'), field:'name'},
-		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputColumn.type'), field:'type', cellRenderer:typeRenderer},
-		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputColumn.datasetColumn'), field:'dsColumn', editable:true, cellRenderer:editableCell, cellEditor:"agSelectCellEditor", cellEditorParams: {values: $scope.selectedDatasetColumns}}],
+		        columnDefs: $scope.columnDefs,
 		        rowData: $scope.selectedFunction.inputColumns
 		}
 
@@ -717,7 +725,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.cancelPreview=function(){
 			$scope.selectedDataset = undefined;
 			$scope.selectedFunction = angular.copy(selectedFunction);
-			$scope.selectedTab = 0;
 			$mdDialog.cancel();
 		}
 
@@ -729,8 +736,86 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			else if (!checkEnvironmentConfiguration($scope.selectedFunction.environment))
 				$scope.toastifyMsg('warning',$scope.translate.load("sbi.functionscatalog.functionpreview.function.error.environment"));
 			else {
-				$scope.selectedTab = 1;
+				$scope.disablePreview = false;
+				$scope.selectedIndex = 1;
+				executePreview();
 			}
+		}
+
+		executePreview=function(){
+			body = buildDataServiceBody();
+			sbiModule_restServices.promisePost('2.0/datasets/'+ $scope.selectedDataset.label, 'data', body)
+			.then(function(response){
+				debugger;
+			}, function(error){
+				sbiModule_messaging.showErrorMessage("Error during dataset execution","Data service error");
+			});
+		}
+
+		buildDataServiceBody=function(){
+			var body = {};
+			body.aggregations = buildBodyAggregations();
+			body.parameters = {};
+			body.selections = {};
+			body.indexes = [];
+			return body;
+		}
+
+		buildBodyAggregations=function(){
+			var aggregations = {};
+			var measures = [];
+			var categories = [];
+			//traditional columns
+			var allColumns = $scope.selectedDataset.meta.columns;
+			for (var i=0; i<allColumns.length; i=i+3) {
+				var name = allColumns[i].column;
+				var fieldType = allColumns[i+1].pvalue;
+				var alias = allColumns[i+2].pvalue;
+				var obj = {};
+				obj.id = name;
+				obj.alias = alias;
+				obj.columnName = name;
+				obj.funct = "NONE";
+				if (fieldType == "MEASURE") {
+					obj.orderColumn = name;
+					measures.push(obj);
+				} else {
+					obj.orderType = "";
+					categories.push(obj);
+				}
+			}
+			//catalog function columns
+			var functionConfig = {};
+			functionConfig.inputColumns = $scope.selectedFunction.inputColumns;
+			functionConfig.inputVariables = $scope.selectedFunction.inputVariables;
+			functionConfig.outputColumns = $scope.selectedFunction.outputColumns;
+			functionConfig.environment = JSON.parse($scope.selectedFunction.environment).label;
+			for (var i=0; i<$scope.selectedFunction.outputColumns.length; i++) {
+				var outputCol = $scope.selectedFunction.outputColumns[i];
+				var obj = {};
+				obj.id = outputCol.name;
+				obj.alias = outputCol.name;
+				obj.catalogFunctionId = $scope.selectedFunction.id;
+				obj.catalogFunctionConfig = functionConfig;
+				obj.columnName = outputCol.name;
+				obj.funct = "NONE";
+				if (fieldType == "MEASURE") {
+					obj.orderColumn = outputCol.name;
+					measures.push(obj);
+				} else {
+					obj.orderType = "";
+					categories.push(obj);
+				}
+			}
+			aggregations.measures = measures;
+			aggregations.categories = categories;
+			aggregations.dataset = $scope.selectedDataset.label;
+			return aggregations;
+		}
+
+		$scope.goToConfigurator=function(){
+			$scope.disablePreview = true;
+			$scope.selectedIndex = 0;
 		}
 
 		checkColumnsConfiguration=function(columns){

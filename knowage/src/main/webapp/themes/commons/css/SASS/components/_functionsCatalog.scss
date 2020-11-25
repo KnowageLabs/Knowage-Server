@@ -165,6 +165,19 @@
 	}
 }
 
+.catalogFunctionDialog{
+	md-tabs-content-wrapper{
+		md-tab-content{
+			&:first-child{
+				overflow:hidden;
+				.right{
+					overflow:auto;
+				}
+			}
+		}
+	}
+}
+
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
