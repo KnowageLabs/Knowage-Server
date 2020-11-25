@@ -52,22 +52,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(variable.type == 'profile') resolve( sbiModule_user.profileAttributes[variable.attribute] );
 				if(variable.type == 'dataset') {
 					var tempDataset = cockpitModule_datasetServices.getDatasetById(variable.dataset);
-					var tempColumn = {content:{columnSelectedOfDataset:[]}}
-					for(var j in tempDataset.metadata.fieldsMeta){
-						if(variable.column && tempDataset.metadata.fieldsMeta[j].name == variable.column){
-							tempColumn.content.columnSelectedOfDataset.push(tempDataset.metadata.fieldsMeta[j]);
-							break;
-						}else if(!variable.column){
-							tempColumn.content.columnSelectedOfDataset.push(tempDataset.metadata.fieldsMeta[j]);
+					if(tempDataset){
+						var tempColumn = {content:{columnSelectedOfDataset:[]}}
+						for(var j in tempDataset.metadata.fieldsMeta){
+							if(variable.column && tempDataset.metadata.fieldsMeta[j].name == variable.column){
+								tempColumn.content.columnSelectedOfDataset.push(tempDataset.metadata.fieldsMeta[j]);
+								break;
+							}else if(!variable.column){
+								tempColumn.content.columnSelectedOfDataset.push(tempDataset.metadata.fieldsMeta[j]);
+							}
 						}
-					}
-					cockpitModule_datasetServices.loadDatasetRecordsById(variable.dataset, 0, -1,undefined, undefined,tempColumn).then(
-						function(response){
-							if(variable.column) resolve(response.rows[0].column_1);
-							else resolve(formatDataset(response));
-						},function(error){
-							reject(error)
-					})
+						cockpitModule_datasetServices.loadDatasetRecordsById(variable.dataset, 0, -1,undefined, undefined,tempColumn).then(
+							function(response){
+								if(variable.column) resolve(response.rows[0].column_1);
+								else resolve(formatDataset(response));
+							},function(error){
+								reject(error)
+						})
+					}else reject(sbiModule_translate.load('kn.cockpit.dataset.error.notavailable'));
 				}
 			})
 		}
