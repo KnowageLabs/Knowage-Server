@@ -15,28 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package it.eng.knowage.api.dossier.utils;
 
-package it.eng.spagobi.dossier.dao;
-
-import java.util.List;
-
-import it.eng.knowage.engine.dossier.activity.bo.DossierActivity;
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
-
-public interface ISbiDossierActivityDAO extends ISpagoBIDao {
-
-	public List<DossierActivity> loadAllActivities(Integer documentId);
-
-	public DossierActivity loadActivity(Integer activityId);
-
-	public DossierActivity loadActivityByProgressThreadId(Integer progressthreadId);
-
-	public Integer insertNewActivity(DossierActivity aLayer);
-
-	public Integer updateActivity(DossierActivity dossierActivity, byte[] file, String type);
-
-	public Integer updateActivity(DossierActivity dossierActivity);
-
-	public void deleteActivity(Integer activityId);
+public class DocTemplateLoader implements ITemplateLoader {
 
 }

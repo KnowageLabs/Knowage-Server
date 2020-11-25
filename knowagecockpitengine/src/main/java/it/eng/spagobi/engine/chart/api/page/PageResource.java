@@ -41,8 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
-import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
-import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
+import it.eng.knowage.export.wrapper.beans.RenderOptions;
+import it.eng.knowage.export.wrapper.beans.ViewportDimensions;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.SingletonConfig;

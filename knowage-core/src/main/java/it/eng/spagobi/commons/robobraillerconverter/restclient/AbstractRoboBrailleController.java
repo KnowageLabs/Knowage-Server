@@ -1,10 +1,5 @@
 package it.eng.spagobi.commons.robobraillerconverter.restclient;
 
-import it.eng.spagobi.commons.robobraillerconverter.jobmanager.Job;
-import it.eng.spagobi.commons.robobraillerconverter.jobmanager.JobManager;
-import it.eng.spagobi.commons.robobraillerconverter.restclient.conf.ConfigInstance;
-import it.eng.spagobi.commons.robobraillerconverter.restclient.conf.RobobrailleConfiguration;
-
 import java.io.File;
 import java.util.Map;
 
@@ -21,12 +16,17 @@ import com.wealdtech.hawk.HawkCredentials;
 import com.wealdtech.hawk.HawkCredentials.Algorithm;
 import com.wealdtech.hawk.HawkCredentials.Builder;
 
+import it.eng.spagobi.commons.robobraillerconverter.jobmanager.Job;
+import it.eng.spagobi.commons.robobraillerconverter.jobmanager.JobManager;
+import it.eng.spagobi.commons.robobraillerconverter.restclient.conf.ConfigInstance;
+import it.eng.spagobi.commons.robobraillerconverter.restclient.conf.RobobrailleConfiguration;
+
 public abstract class AbstractRoboBrailleController implements JobManager {
 
 	static protected Logger logger = Logger.getLogger(AbstractRoboBrailleController.class);
 	protected HttpClient httpClient;
 	protected HawkClient hawkClient;
-	//protected ClientExecutor executor;
+	// protected ClientExecutor executor;
 	protected String controllerPath;
 	protected String fileExtension;
 	private RobobrailleConfiguration robobrailleConfiguration;
@@ -85,6 +85,7 @@ public abstract class AbstractRoboBrailleController implements JobManager {
 		return null;
 
 	}
+
 	@Override
 	public void setJobStatus(Job job) {
 //
@@ -133,7 +134,7 @@ public abstract class AbstractRoboBrailleController implements JobManager {
 //			throw new SpagoBIRuntimeException("error while getting result from API",e);
 //
 //		}
-return null;
+		return null;
 	}
 
 	@Override
@@ -154,7 +155,6 @@ return null;
 //			logger.error("error while deleting job on API",e);
 //			throw new SpagoBIRuntimeException("error while deleting job on API",e);
 //		}
-
 
 	}
 
@@ -221,7 +221,7 @@ return null;
 
 	}
 
-	private void setProxy(){
+	private void setProxy() {
 		String proxyHost = System.getProperty("http.robobrailleProxyHost");
 		String proxyPort = System.getProperty("http.robobrailleProxyPort");
 		int proxyPortInt = Integer.parseInt(proxyPort);
@@ -234,8 +234,8 @@ return null;
 
 			logger.debug("Setting proxy with authentication");
 			httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-			authscope  = new AuthScope(proxyHost, proxyPortInt);
-			Credentials credentials = new UsernamePasswordCredentials(proxyUsername,proxyPassword);
+			authscope = new AuthScope(proxyHost, proxyPortInt);
+			Credentials credentials = new UsernamePasswordCredentials(proxyUsername, proxyPassword);
 			httpClient.getState().setProxyCredentials(authscope, credentials);
 			logger.debug("Proxy with authentication set");
 		} else {

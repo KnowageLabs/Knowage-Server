@@ -19,7 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- ------------------------------------------------------------------------%>
 <%-- JAVA IMPORTS                                                          --%>
 <%-- ------------------------------------------------------------------------%>
-<%@ page import="it.eng.knowage.slimerjs.wrapper.beans.RenderOptions" %>
+
+<%@page import="it.eng.knowage.export.wrapper.beans.RenderOptions"%>
 <%@ page import="it.eng.knowage.engine.cockpit.api.export.pdf.PdfExporterV2" %>
 <%@ page import="javax.servlet.ServletContext" %>
 
@@ -34,7 +35,7 @@ String pdfPageOrientation = request.getParameter("pdfPageOrientation");
 boolean pdfFrontPage = Boolean.valueOf(request.getParameter("pdfFrontPage"));
 boolean pdfBackPage = Boolean.valueOf(request.getParameter("pdfBackPage"));
 
-PdfExporterV2 pdfExporter = new PdfExporterV2(documentId, userId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage, servletContext);
+PdfExporterV2 pdfExporter = new PdfExporterV2(documentId, userId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
 byte[] data = pdfExporter.getBinaryData();
 
 response.setHeader("Content-length", Integer.toString(data.length));

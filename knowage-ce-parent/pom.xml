@@ -102,7 +102,6 @@
 		<module>../knowageldapsecurityprovider</module>
 		<module>../knowagegooglesecurityprovider</module>
 		<module>../knowage</module>
-		<module>../slimerjs-wrapper</module>
 		<module>../knowagecockpitengine</module>
 		<module>../knowagekpiengine</module>
 		<module>../knowagesdk</module>

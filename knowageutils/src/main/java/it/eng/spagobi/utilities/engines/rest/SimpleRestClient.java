@@ -40,6 +40,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -125,10 +126,24 @@ public class SimpleRestClient {
 	/**
 	 * Invokes a rest service in post and return response
 	 *
-	 * @param parameters
-	 *            the parameters of the request
-	 * @param serviceUrl
-	 *            the relative (refers always to core application context) path of the service
+	 * @param parameters the parameters of the request
+	 * @param serviceUrl the relative (refers always to core application context) path of the service
+	 * @param userId
+	 * @param mediaType
+	 * @param data
+	 * @return
+	 * @throws Exception
+	 */
+	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data,
+			RenderOptions renderOptions) throws Exception {
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
+	}
+
+	/**
+	 * Invokes a rest service in post and return response
+	 *
+	 * @param parameters the parameters of the request
+	 * @param serviceUrl the relative (refers always to core application context) path of the service
 	 * @param userId
 	 * @param mediaType
 	 * @param data
@@ -242,6 +257,7 @@ public class SimpleRestClient {
 
 		// provide authentication exactly before of call
 		authenticationProvider.provideAuthentication(request, target, myHeaders, data);
+
 		if (type.equals(RequestTypeEnum.POST)) {
 			response = request.post(Entity.json(data.toString()));
 		} else if (type.equals(RequestTypeEnum.PUT)) {

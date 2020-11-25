@@ -5,7 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class DossierActivity {
-	
+
 	private Integer id;
 	private Integer documentId;
 	private String activity;
@@ -17,9 +17,22 @@ public class DossierActivity {
 	@JsonIgnore
 	private byte[] binContent;
 	private boolean hasBinContent;
+	private boolean hasDocBinContent;
 	private boolean pptExists;
 	private Date creationDate;
-	
+	private String configContent;
+
+	@JsonIgnore
+	private byte[] docBinContent;
+
+	public boolean isHasDocBinContent() {
+		return hasDocBinContent;
+	}
+
+	public void setHasDocBinContent(boolean hasDocBinContent) {
+		this.hasDocBinContent = hasDocBinContent;
+	}
+
 	public boolean isHasBinContent() {
 		return hasBinContent;
 	}
@@ -28,8 +41,6 @@ public class DossierActivity {
 		this.hasBinContent = hasBinContent;
 	}
 
-	
-	
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -49,10 +60,12 @@ public class DossierActivity {
 	public Integer getProgressId() {
 		return progressId;
 	}
+
 	@JsonIgnore
 	public byte[] getBinContent() {
 		return binContent;
 	}
+
 	@JsonIgnore
 	public void setBinContent(byte[] binContent) {
 		this.binContent = binContent;
@@ -121,7 +134,21 @@ public class DossierActivity {
 	public void setParameters(String parameters) {
 		this.parameters = parameters;
 	}
-	
-	
+
+	public byte[] getDocBinContent() {
+		return docBinContent;
+	}
+
+	public void setDocBinContent(byte[] docBinContent) {
+		this.docBinContent = docBinContent;
+	}
+
+	public String getConfigContent() {
+		return configContent;
+	}
+
+	public void setConfigContent(String configContent) {
+		this.configContent = configContent;
+	}
 
 }
