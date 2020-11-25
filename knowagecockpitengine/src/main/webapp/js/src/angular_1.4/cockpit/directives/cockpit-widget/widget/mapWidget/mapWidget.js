@@ -765,7 +765,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 				//modal selection management
 				if ($scope.clickOnFeature && $scope.selectedLayer.modalSelectionColumn){
-					$scope.doSelection($scope.selectedLayer.modalSelectionColumn, $scope.props[$scope.selectedLayer.modalSelectionColumn].value, null, null, null, null, $scope.selectedLayer.dsId);
+					$scope.doSelection($scope.selectedLayer.modalSelectionColumn, $scope.props[$scope.selectedLayer.modalSelectionColumn].value, null, null, $scope.props, null, $scope.selectedLayer.dsId);
 				}
 
 				//popup isn't shown with cluster and heatmap
@@ -1133,7 +1133,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    $scope.selectPropValue = function(dsId, prop, modalSelectionColumn){
 	    	if (!modalSelectionColumn && prop.fieldType !== "MEASURE"){
-	    		$scope.doSelection(prop.alias, $scope.props[prop.name].value, null, null, null, null, dsId);
+	    		$scope.doSelection(prop.alias, $scope.props[prop.name].value, null, null, $scope.props, null, dsId);
 	    	}
 	    }
 
