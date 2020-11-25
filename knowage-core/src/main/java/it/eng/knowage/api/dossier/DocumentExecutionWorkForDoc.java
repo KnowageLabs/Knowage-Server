@@ -167,7 +167,11 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 			ISbiDossierActivityDAO daoAct = DAOFactory.getDossierActivityDao();
 			daoAct.setUserProfile(userProfile);
-			DossierActivity activity = daoAct.loadActivityByProgressThreadId(progressThreadId);
+			DossierActivity activity = null;
+
+			while (activity == null) {
+				activity = daoAct.loadActivityByProgressThreadId(progressThreadId);
+			}
 			String dbArray = activity.getConfigContent();
 			JSONArray jsonArray = null;
 
@@ -322,6 +326,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			Collections.sort(drivers);
 			ParametersDecoder decoder = new ParametersDecoder();
 
+			HashMap<String, String> paramMap = new HashMap<String, String>();
 			for (BIObjectParameter biObjectParameter : drivers) {
 				boolean found = false;
 				String value = "";
@@ -370,16 +375,17 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 						}
 					}
 				}
-
-				String metadataMessage = paramName + "=" + value;
+				paramMap.put(paramName, value);
+				if (!found) {
+					throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
+				}
+			}
+			for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+				String metadataMessage = entry.getKey() + "=" + entry.getValue();
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("TYPE", "PARAMETER");
 				jsonObject.put("MESSAGE", metadataMessage);
 				jsonArray.put(jsonObject);
-
-				if (!found) {
-					throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
-				}
 			}
 
 		}
