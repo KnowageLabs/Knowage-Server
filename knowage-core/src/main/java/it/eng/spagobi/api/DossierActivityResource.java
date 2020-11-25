@@ -182,7 +182,11 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			sdaDAO = DAOFactory.getDossierActivityDao();
 			logger.debug("Downloading PPT file with activity id: " + activityId + ". Activity name: " + activityName);
 			activity = sdaDAO.loadActivity(activityId);
-			file = activity.getBinContent();
+			if (type.equals("doc")) {
+				file = activity.getDocBinContent();
+			} else {
+				file = activity.getBinContent();
+			}
 
 			ResponseBuilder response = Response.ok(file);
 			response.header("Content-Disposition", "attachment; filename=" + activityName + "_" + formattedDate + "." + type);
