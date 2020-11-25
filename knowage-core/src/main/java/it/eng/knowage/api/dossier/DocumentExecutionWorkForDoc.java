@@ -175,6 +175,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			String dbArray = activity.getConfigContent();
 			JSONArray jsonArray = null;
 
+			HashMap<String, String> paramMap = new HashMap<String, String>();
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("TYPE", "DOC_TEMPLATE");
 			jsonObject.put("MESSAGE", dossierTemplate.getDocTemplate().getName());
@@ -236,7 +237,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 						serviceUrlBuilder.append("&pdfDeviceScaleFactor=" + Double.valueOf(renderOptions.getDimensions().getDeviceScaleFactor()));
 					}
 
-					String serviceUrl = addParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder, jsonArray);
+					String serviceUrl = addParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder, jsonArray, paramMap);
 
 					if (executedDocuments.contains(serviceUrl)) {
 						progressThreadManager.incrementPartial(progressThreadId);
@@ -284,6 +285,13 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			// Activity creation
 			imageNames.clear();
 
+			for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+				String metadataMessage = entry.getKey() + "=" + entry.getValue();
+				jsonObject = new JSONObject();
+				jsonObject.put("TYPE", "PARAMETER");
+				jsonObject.put("MESSAGE", metadataMessage);
+				jsonArray.put(jsonObject);
+			}
 			activity.setConfigContent(jsonArray.toString());
 			daoAct.updateActivity(activity);
 
@@ -316,7 +324,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 	}
 
 	public String addParametersToServiceUrl(Integer progressthreadId, BIObject biObject, Report reportToUse, StringBuilder serviceUrlBuilder,
-			JSONArray jsonArray) throws UnsupportedEncodingException, JSONException {
+			JSONArray jsonArray, HashMap<String, String> paramMap) throws UnsupportedEncodingException, JSONException {
 		List<BIObjectParameter> drivers = biObject.getDrivers();
 		if (drivers != null) {
 			List<Parameter> parameter = reportToUse.getParameters();
@@ -326,7 +334,6 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			Collections.sort(drivers);
 			ParametersDecoder decoder = new ParametersDecoder();
 
-			HashMap<String, String> paramMap = new HashMap<String, String>();
 			for (BIObjectParameter biObjectParameter : drivers) {
 				boolean found = false;
 				String value = "";
@@ -380,14 +387,6 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 					throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
 				}
 			}
-			for (Map.Entry<String, String> entry : paramMap.entrySet()) {
-				String metadataMessage = entry.getKey() + "=" + entry.getValue();
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("TYPE", "PARAMETER");
-				jsonObject.put("MESSAGE", metadataMessage);
-				jsonArray.put(jsonObject);
-			}
-
 		}
 		return serviceUrlBuilder.toString();
 	}
