@@ -39,9 +39,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		%>
 		
 		<script>
-			var datasetId = '<%= datasetID %>';
-			var datasetLabel = '<%= datasetLabel  %>';
-			var contextName = '<%=contextName %>';
+			app.factory('documentInfo',function(){ 
+				return {
+					id : '<%= datasetID %>',
+					label: '<%= datasetLabel %>'
+				}
+			})
 		</script> 
 
 
@@ -54,10 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>{{translate.load("Dataset Link");}}</title>
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-<%-- 
-		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/federateddataset/linkDataset.js"></script>
-		<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css"> 
---%>
+
 		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/federateddataset/linkDataset.js")%>"></script>
 		<link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 	
@@ -65,53 +65,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	<body class="federatedDataset linkDocument" ng-app="linkDatasetModule" id="ng-app">
 		
-		<div ng-controller="linkDatasetCTRL" layout-fill class="contentdemoBasicUsage">		
-		  <div class ="md-container" >
-			
-	
-						
-	
-			<md-content layout-padding class="mainContainer" >
+		<div ng-controller="linkDatasetCTRL" class="contentdemoBasicUsage" layout="column" layout-fill>		
 			
 			<rest-loading></rest-loading>
 			
-			<md-select placeholder="Select Source" ng-model="source">
-      		<md-option ng-value="source" ng-repeat="source in sourceList" ng-click="getTablesBySourceID(source.sourceId)">{{source.name}}</md-option>
+			<md-select placeholder="Select Source" ng-model="source" layout-margin>
+      			<md-option ng-value="source" ng-repeat="source in sourceList" ng-click="getTablesBySourceID(source.sourceId)">{{source.name}}</md-option>
     		</md-select>
 			
-				<div ng-show="showme == true" layout="row" style="height:680px">
+			<div ng-show="showme == true" layout="row" flex>
 					
-					<!-- Avaliable tables -->
-					<div flex class="datasetBox">
-					  <md-card>	
-						<md-toolbar class="miniheadfedsmall"  >
-							<div class="md-toolbar-tools">
-								<h2 class="md-flex" >Avaibile tables</h2>
-								<span flex=""></span>					
-							</div>
-						</md-toolbar>
-						
+				<!-- Avaliable tables -->
+				<div flex class="datasetBox" layout="column">
+				  <md-card flex>	
+					<md-toolbar class="miniheadfedsmall"  >
+						<div class="md-toolbar-tools">
+							<h2 class="md-flex" >Available Tables</h2>
+							<span flex=""></span>					
+						</div>
+					</md-toolbar>
 
-					
-						<md-content  layout-padding>
-							<angular-list
-							layout-fill 
-							id="availableTables_id" 
-							ng-model="tablesList" 
-							item-name="name"
-							show-search-bar=true
-							click-function="moveToSelected(item)"
-							>					
-							</angular-list>
-						</md-content>
-					 </md-card>	
-					</div>
-				
-				
-				
-					<!-- Selected tables -->
-					<div  flex class="datasetBox">
-					 <md-card>
+					<md-card-content  layout-padding>
+						<angular-list
+						layout-fill 
+						id="availableTables_id" 
+						ng-model="tablesList" 
+						item-name="name"
+						show-search-bar=true
+						click-function="moveToSelected(item)"
+						>					
+						</angular-list>
+					</md-card-content>
+				 </md-card>	
+				</div>
+
+				<!-- Selected tables -->
+				<div flex class="datasetBox" layout="column">
+					 <md-card flex>
 						<md-toolbar class="miniheadfedsmall"  >
 							<div class="md-toolbar-tools">
 								<h2 class="md-flex" >Selected Tables</h2>
@@ -119,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 						</md-toolbar>
 					
-						<md-content layout-padding >
+						<md-card-content layout-padding >
 							<angular-list layout-fill 
 							id="selectedTables_id" 
 							ng-model="selectedTables" 
@@ -127,24 +117,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							speed-menu-option=removeFromSelected
 							>					
 							</angular-list>
-						</md-content>
+						</md-card-content>
 					</md-card>
 				</div>
-				
-				<div>
-				
-				<div>
-				<md-button class="md-raised buttonRight" aria-label="btn_save"
-						ng-click="saveRelation(<%= datasetID %>)" ng-disabled="checkSave()">Save
+			</div>
+			<md-dialog-actions layout="row" layout-align="end center">
+				<md-button class="md-raised" aria-label="btn_save"
+						ng-click="saveRelation(<%= datasetID %>)" ng-disabled="checkSave()">{{translate.load('sbi.generic.save')}}
 				</md-button>
-				</div>
-				</div>
-				
-				
-				
-			</md-content>
-			
-		 </div>		 	
+			</md-dialog-actions>
 		</div>
 	
 	</body>
