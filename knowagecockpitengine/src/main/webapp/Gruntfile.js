@@ -165,6 +165,6 @@ module.exports = function(grunt) {
   // Load the plugin that provides the "concat" task.
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.registerTask('knowagecockpit-concat', ['concat','uglify']);
+  grunt.registerTask('knowagecockpit-concat', ['concat']);
 
 };
