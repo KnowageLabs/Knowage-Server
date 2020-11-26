@@ -43,7 +43,6 @@ import it.eng.knowage.engines.dossier.template.parameter.Parameter;
 import it.eng.knowage.engines.dossier.template.placeholder.PlaceHolder;
 import it.eng.knowage.engines.dossier.template.report.Report;
 import it.eng.knowage.export.wrapper.beans.RenderOptions;
-import it.eng.knowage.export.wrapper.beans.ViewportDimensions;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -196,15 +195,20 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 					serviceUrlBuilder.append(docName);
 					serviceUrlBuilder.append("&NEW_SESSION=TRUE&SBI_ENVIRONMENT=DOCBROWSER&IS_FOR_EXPORT=true&documentMode=VIEW&export=true&outputType=PNG");
 
-					String serviceUrl = addParametersToServiceUrl(drivers, parameter, serviceUrlBuilder);
-
 					RenderOptions renderOptions = RenderOptions.defaultOptions();
 					if (reportToUse.getSheetHeight() != null && !reportToUse.getSheetHeight().isEmpty() && reportToUse.getSheetWidth() != null
 							&& !reportToUse.getSheetWidth().isEmpty()) {
-						ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(Integer.valueOf(reportToUse.getSheetWidth()))
-								.withHeight(Integer.valueOf(reportToUse.getSheetHeight())).build();
-						renderOptions.withDimensions(dimensions);
+						serviceUrlBuilder.append("&pdfWidth=" + Integer.valueOf(reportToUse.getSheetWidth()));
+						serviceUrlBuilder.append("&pdfHeight=" + Integer.valueOf(reportToUse.getSheetHeight()));
 					}
+
+					if (reportToUse.getDeviceScaleFactor() != null && !reportToUse.getDeviceScaleFactor().isEmpty()) {
+						serviceUrlBuilder.append("&pdfDeviceScaleFactor=" + Double.valueOf(reportToUse.getDeviceScaleFactor()));
+					} else {
+						serviceUrlBuilder.append("&pdfDeviceScaleFactor=" + Double.valueOf(renderOptions.getDimensions().getDeviceScaleFactor()));
+					}
+
+					String serviceUrl = addParametersToServiceUrl(drivers, parameter, serviceUrlBuilder);
 
 					if (executedDocuments.contains(serviceUrl)) {
 						progressThreadManager.incrementPartial(progressThreadId);
@@ -212,7 +216,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 					}
 
 					// Images creation
-					Response images = executePostService(null, serviceUrl, userUniqueIdentifier, MediaType.TEXT_HTML, dossierTemplateJson, renderOptions);
+					Response images = executePostService(null, serviceUrl, userUniqueIdentifier, MediaType.TEXT_HTML, dossierTemplateJson);
 					byte[] responseAsByteArray = images.readEntity(byte[].class);
 
 					List<Object> list = images.getMetadata().get("Content-Type");

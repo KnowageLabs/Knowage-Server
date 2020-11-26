@@ -571,6 +571,9 @@
 	<CONFIG label="internal.exporting.pdf.viewportHeight" name="Viewport height for PDF"
 		description="Integer value that set the viewport height of Chromium: used to resize the content printed on PDF." isActive="true"
 		valueCheck="842" valueType="NUM" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="internal.exporting.pdf.viewportDeviceScaleFactor" name="Viewport device scale factor for PDF"
+		description="Double value that set the viewport device scale factor of Chromium: used to increase the resolution printed on PDF." isActive="true"
+		valueCheck="0.8" valueType="NUM" category="GENERIC_CONFIGURATION" />
 	<CONFIG label="internal.exporting.pdf.printScale"     name="Print scale for PDF"
 		description="Floating point value between 0.0 and 1.0 to set the scale of the content before printing onto PDF" isActive="true"
 		valueCheck="1" valueType="NUM" category="GENERIC_CONFIGURATION" />

@@ -70,6 +70,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private static final String PDF_ZOOM = "pdfZoom";
 	private static final String PDF_WIDTH = "pdfWidth";
 	private static final String PDF_HEIGHT = "pdfHeight";
+	private static final String PDF_DEVICE_SCALE_FACTOR = "pdfDeviceScaleFactor";
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
 	static private final List<String> PDF_PARAMETERS = Arrays
 			.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM, PDF_PAGE_ORIENTATION });
@@ -224,10 +225,12 @@ public class PageResource extends AbstractCockpitEngineResource {
 		long defaultJsRenderingWait = defaultRenderOptions.getJsRenderingWait();
 		int pdfWidth = Integer.valueOf(defaultDimensions.getWidth());
 		int pdfHeight = Integer.valueOf(defaultDimensions.getHeight());
+		double pdfDeviceScaleFactor = Double.valueOf(defaultDimensions.getDeviceScaleFactor());
 		long pdfRenderingWaitTime = defaultJsRenderingWait;
 
 		String widthParameterVal = request.getParameter(PDF_WIDTH);
 		String heightParameterVal = request.getParameter(PDF_HEIGHT);
+		String deviceScaleFactorVal = request.getParameter(PDF_DEVICE_SCALE_FACTOR);
 		String jsRenderingWaitParameterVal = request.getParameter(PDF_WAIT_TIME);
 
 		if (widthParameterVal != null) {
@@ -240,7 +243,12 @@ public class PageResource extends AbstractCockpitEngineResource {
 			pdfRenderingWaitTime = 1000 * Long.valueOf(jsRenderingWaitParameterVal);
 		}
 
-		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight).build();
+		if (deviceScaleFactorVal != null) {
+			pdfDeviceScaleFactor = Double.valueOf(deviceScaleFactorVal);
+		}
+
+		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight).withDeviceScaleFactor(pdfDeviceScaleFactor)
+				.build();
 		RenderOptions renderOptions = defaultRenderOptions.withDimensions(dimensions).withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
 		return renderOptions;
 	}

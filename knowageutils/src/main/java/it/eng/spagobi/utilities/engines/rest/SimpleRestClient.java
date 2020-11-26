@@ -135,6 +135,22 @@ public class SimpleRestClient {
 	 * @return
 	 * @throws Exception
 	 */
+	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data,
+			RenderOptions renderOptions) throws Exception {
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
+	}
+
+	/**
+	 * Invokes a rest service in post and return response
+	 *
+	 * @param parameters the parameters of the request
+	 * @param serviceUrl the relative (refers always to core application context) path of the service
+	 * @param userId
+	 * @param mediaType
+	 * @param data
+	 * @return
+	 * @throws Exception
+	 */
 	protected Response executePutService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.PUT, mediaType, data);
 	}
@@ -242,6 +258,7 @@ public class SimpleRestClient {
 
 		// provide authentication exactly before of call
 		authenticationProvider.provideAuthentication(request, target, myHeaders, data);
+
 		if (type.equals(RequestTypeEnum.POST)) {
 			response = request.post(Entity.json(data.toString()));
 		} else if (type.equals(RequestTypeEnum.PUT)) {
