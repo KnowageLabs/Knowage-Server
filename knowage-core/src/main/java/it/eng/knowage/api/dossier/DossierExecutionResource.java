@@ -20,7 +20,7 @@ import commonj.work.WorkEvent;
 import commonj.work.WorkItem;
 import de.myfoo.commonj.work.FooRemoteWorkItem;
 import it.eng.knowage.api.dossier.utils.DossierExecutionUtilities;
-import it.eng.knowage.engines.dossier.template.DossierTemplate;
+import it.eng.knowage.engines.dossier.template.AbstractDossierTemplate;
 import it.eng.knowage.engines.dossier.template.parameter.Parameter;
 import it.eng.knowage.engines.dossier.template.report.Report;
 import it.eng.spago.error.EMFUserError;
@@ -49,7 +49,7 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 	@Path("/executedocuments")
 	@Produces(MediaType.TEXT_HTML + "; charset=UTF-8")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String executeDocuments(DossierTemplate dossierTemplate) {
+	public String executeDocuments(AbstractDossierTemplate dossierTemplate) {
 		logger.debug("IN");
 		Integer progressThreadId = null;
 
@@ -157,7 +157,7 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 		logger.debug("OUT");
 	}
 
-	private List<BIObjectPlaceholdersPair> getBIObjectFromTemplate(DossierTemplate dossierTemplate) throws EMFUserError {
+	private List<BIObjectPlaceholdersPair> getBIObjectFromTemplate(AbstractDossierTemplate dossierTemplate) throws EMFUserError {
 		List<BIObjectPlaceholdersPair> documentsToExecute = new ArrayList<BIObjectPlaceholdersPair>();
 		IBIObjectDAO biobjectDAO = DAOFactory.getBIObjectDAO();
 		List<Report> reports = dossierTemplate.getReports();

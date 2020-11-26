@@ -1,22 +1,20 @@
 package it.eng.spagobi.dossier.metadata;
 
-import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.tools.massiveExport.metadata.SbiProgressThread;
 
-public class SbiDossierActivity extends SbiHibernateModel{
-	
+public class SbiDossierActivity extends SbiHibernateModel {
 
 	private static final long serialVersionUID = 1104724670349915546L;
-	
+
 	private Integer id;
 	private Integer documentId;
 	private String activity;
 	private String parameters;
 	private SbiProgressThread progress;
 	private byte[] binContent;
-	
-	
+	private byte[] docBinContent;
+
 	public byte[] getBinContent() {
 		return binContent;
 	}
@@ -26,7 +24,7 @@ public class SbiDossierActivity extends SbiHibernateModel{
 	}
 
 	public SbiDossierActivity() {
-		
+
 	}
 
 	public Integer getId() {
@@ -68,7 +66,13 @@ public class SbiDossierActivity extends SbiHibernateModel{
 	public void setParameters(String parameters) {
 		this.parameters = parameters;
 	}
-	
-	
+
+	public byte[] getDocBinContent() {
+		return docBinContent;
+	}
+
+	public void setDocBinContent(byte[] docBinContent) {
+		this.docBinContent = docBinContent;
+	}
 
 }

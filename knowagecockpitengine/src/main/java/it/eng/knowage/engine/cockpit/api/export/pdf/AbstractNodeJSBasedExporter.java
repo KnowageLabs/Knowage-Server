@@ -1,27 +1,97 @@
 package it.eng.knowage.engine.cockpit.api.export.pdf;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.knowage.export.pdf.FrontpageDetails;
 import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
- * Common class between PDF exporter.
- * 
- * @author Marco Libanori
+ *
+ * @author albnale
+ * @since 2020/11/04
+ *
  */
-public abstract class AbstractPdfExporter {
+public abstract class AbstractNodeJSBasedExporter {
+
+	private static final Logger logger = Logger.getLogger(AbstractNodeJSBasedExporter.class);
+
+	static class SheetImageFileVisitor extends SimpleFileVisitor<Path> {
+
+		/**
+		 * Path matcher for sheets' screenshots.
+		 *
+		 * It's not static just because i think it's not thread-safe.
+		 */
+		private final PathMatcher imagePathMatcher = FileSystems.getDefault().getPathMatcher("glob:**.png");
+
+		/**
+		 * Reference to the array of input streams.
+		 */
+		private final List<InputStream> imagesInputStreams;
+
+		public SheetImageFileVisitor(List<InputStream> imagesInputStreams) {
+			super();
+			this.imagesInputStreams = imagesInputStreams;
+		}
+
+		@Override
+		public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+			return FileVisitResult.CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult visitFile(Path filePath, BasicFileAttributes attributes) {
+			logger.debug("Visit file " + filePath);
+			if (imagePathMatcher.matches(filePath)) {
+				logger.debug("File " + filePath + " matches the filter!");
+				try {
+					InputStream currImageInputStream = Files.newInputStream(filePath, StandardOpenOption.DELETE_ON_CLOSE);
+					imagesInputStreams.add(currImageInputStream);
+				} catch (IOException e) {
+					throw new IllegalStateException("Cannot open input stream on file " + filePath, e);
+				}
+			}
+
+			return FileVisitResult.CONTINUE;
+		}
+	};
+
+	protected static final String SCRIPT_NAME = "cockpit-export.js";
+
+	protected static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
+
+	protected abstract byte[] handleFile(final Path outputDir, BIObject document, final List<InputStream> imagesInputStreams) throws IOException;
 
 	protected final int documentId;
-
-	public abstract byte[] getBinaryData() throws Exception;
 
 	protected final String userId;
 	protected final String requestUrl;
@@ -30,14 +100,14 @@ public abstract class AbstractPdfExporter {
 	protected final boolean pdfBackPage;
 	protected final RenderOptions renderOptions;
 
-	public AbstractPdfExporter(int documentId, String userId, String requestUrl, RenderOptions renderOptions, String pageOrientation, boolean pdfFrontPage,
-			boolean pdfBackPage) {
+	public AbstractNodeJSBasedExporter(int documentId, String userId, String requestUrl, RenderOptions renderOptions, String pdfPageOrientation,
+			boolean pdfFrontPage, boolean pdfBackPage) {
 		super();
 		this.documentId = documentId;
 		this.userId = userId;
 		this.requestUrl = requestUrl;
 		this.renderOptions = renderOptions;
-		this.pageOrientation = pageOrientation;
+		this.pageOrientation = pdfPageOrientation;
 		this.pdfFrontPage = pdfFrontPage;
 		this.pdfBackPage = pdfBackPage;
 	}
@@ -156,4 +226,62 @@ public abstract class AbstractPdfExporter {
 		return toReturn;
 	}
 
+	public byte[] getBinaryData() throws IOException, InterruptedException, EMFUserError {
+
+		final Path outputDir = Files.createTempDirectory("knowage-exporter-2");
+
+		Files.createDirectories(outputDir);
+
+		BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
+		int sheetCount = getSheetCount(document);
+		int sheetWidth = getSheetWidth(document);
+		int sheetHeight = getSheetHeight(document);
+
+		String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
+
+		URI url = UriBuilder.fromUri(requestUrl).replaceQueryParam("outputType_description", "HTML").replaceQueryParam("outputType", "HTML")
+				.replaceQueryParam("export", null).build();
+
+		// Script
+		String cockpitExportScriptPath = SingletonConfig.getInstance().getConfigValue(CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
+		Path exportScriptFullPath = Paths.get(cockpitExportScriptPath, SCRIPT_NAME);
+
+		if (!Files.isRegularFile(exportScriptFullPath)) {
+			String msg = String.format("Cannot find export script at \"%s\": did you set the correct value for %s configuration?", exportScriptFullPath,
+					CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
+			IllegalStateException ex = new IllegalStateException(msg);
+			logger.error(msg, ex);
+			throw ex;
+		}
+
+		ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), url.toString(), encodedUserId, outputDir.toString(),
+				Integer.toString(sheetCount), Integer.toString(sheetWidth), Integer.toString(sheetHeight));
+
+		Process exec = processBuilder.start();
+
+		exec.waitFor();
+
+		final List<InputStream> imagesInputStreams = new ArrayList<InputStream>();
+
+		try {
+			Files.walkFileTree(outputDir, new SheetImageFileVisitor(imagesInputStreams));
+
+			if (imagesInputStreams.isEmpty()) {
+				throw new IllegalStateException("No files in " + outputDir + ": see main log file of the AS");
+			}
+
+			// replace images in doc
+			return handleFile(outputDir, document, imagesInputStreams);
+
+		} finally {
+			for (InputStream currImageinputStream : imagesInputStreams) {
+				IOUtils.closeQuietly(currImageinputStream);
+			}
+			try {
+				Files.delete(outputDir);
+			} catch (Exception e) {
+				// Yes, it's mute!
+			}
+		}
+	}
 }

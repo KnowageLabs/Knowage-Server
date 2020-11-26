@@ -5,7 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class DossierActivity {
-	
+
 	private Integer id;
 	private Integer documentId;
 	private String activity;
@@ -19,7 +19,10 @@ public class DossierActivity {
 	private boolean hasBinContent;
 	private boolean pptExists;
 	private Date creationDate;
-	
+
+	@JsonIgnore
+	private byte[] docBinContent;
+
 	public boolean isHasBinContent() {
 		return hasBinContent;
 	}
@@ -28,8 +31,6 @@ public class DossierActivity {
 		this.hasBinContent = hasBinContent;
 	}
 
-	
-	
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -49,10 +50,12 @@ public class DossierActivity {
 	public Integer getProgressId() {
 		return progressId;
 	}
+
 	@JsonIgnore
 	public byte[] getBinContent() {
 		return binContent;
 	}
+
 	@JsonIgnore
 	public void setBinContent(byte[] binContent) {
 		this.binContent = binContent;
@@ -121,7 +124,13 @@ public class DossierActivity {
 	public void setParameters(String parameters) {
 		this.parameters = parameters;
 	}
-	
-	
+
+	public byte[] getDocBinContent() {
+		return docBinContent;
+	}
+
+	public void setDocBinContent(byte[] docBinContent) {
+		this.docBinContent = docBinContent;
+	}
 
 }

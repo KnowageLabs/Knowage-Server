@@ -34,7 +34,7 @@ String pdfPageOrientation = request.getParameter("pdfPageOrientation");
 boolean pdfFrontPage = Boolean.valueOf(request.getParameter("pdfFrontPage"));
 boolean pdfBackPage = Boolean.valueOf(request.getParameter("pdfBackPage"));
 
-PdfExporterV2 pdfExporter = new PdfExporterV2(documentId, userId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage, servletContext);
+PdfExporterV2 pdfExporter = new PdfExporterV2(documentId, userId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
 byte[] data = pdfExporter.getBinaryData();
 
 response.setHeader("Content-length", Integer.toString(data.length));

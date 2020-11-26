@@ -141,8 +141,8 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Path("/activity/{activityId}/ppt")
-	public Integer updateActivity(MultiPartBody multipartFormDataInput, @PathParam("activityId") Integer activityId) {
+	@Path("/activity/{activityId}/{type}")
+	public Integer updateActivity(MultiPartBody multipartFormDataInput, @PathParam("activityId") Integer activityId, @PathParam("type") String type) {
 
 		byte[] file = null;
 		UserProfile profile = getUserProfile();
@@ -156,7 +156,7 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			sdaDAO.setUserProfile(profile);
 			DossierActivity dossierActivity = sdaDAO.loadActivity(activityId);
 			logger.debug("Updating dossier activity with id: " + dossierActivity.getId());
-			id = sdaDAO.updateActivity(dossierActivity, file);
+			id = sdaDAO.updateActivity(dossierActivity, file, type);
 			logger.debug("Successfully updated dossier activity with id: " + dossierActivity.getId());
 		} catch (Exception e) {
 			logger.error("Error while updating new activity", e);
