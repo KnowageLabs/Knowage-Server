@@ -26,7 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.knowage.export.pdf.FrontpageDetails;
-import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
+import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;

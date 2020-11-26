@@ -141,13 +141,6 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>slimerjs-wrapper</artifactId>
-			<version>7.2.11-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-		
-		<dependency>
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
 			<version>1.7</version>

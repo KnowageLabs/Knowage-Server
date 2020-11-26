@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.knowage.export.pdf.ExportDetails;
 import it.eng.knowage.export.pdf.PDFCreator;
-import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
+import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 
 public class PdfExporterV2 extends AbstractNodeJSBasedExporter {
