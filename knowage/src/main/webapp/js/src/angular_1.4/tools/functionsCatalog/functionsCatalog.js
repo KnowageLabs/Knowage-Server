@@ -595,7 +595,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		}
 
 		function resizeDatasets(){
-			$scope.datasetsGrid.api.sizeColumnsToFit();
+			if ($scope.datasetsGrid.api) $scope.datasetsGrid.api.sizeColumnsToFit();
 		}
 
 		function selectDataset(props){
@@ -728,6 +728,20 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			$mdDialog.cancel();
 		}
 
+		$scope.resultDataGrid = {
+		        enableColResize: false,
+		        enableFilter: true,
+		        enableSorting: true,
+		        onGridReady: resizeResultData,
+		        onGridSizeChanged: resizeResultData,
+		        pagination: true,
+		        paginationAutoPageSize: true
+		}
+
+		function resizeResultData(){
+			if ($scope.resultDataGrid.api) $scope.resultDataGrid.api.sizeColumnsToFit();
+		}
+
 		$scope.goToPreview=function(){
 			if (!checkColumnsConfiguration($scope.selectedFunction.inputColumns))
 				$scope.toastifyMsg('warning',$scope.translate.load("sbi.functionscatalog.functionpreview.function.error.datasetColumns"));
@@ -746,7 +760,15 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			body = buildDataServiceBody();
 			sbiModule_restServices.promisePost('2.0/datasets/'+ $scope.selectedDataset.label, 'data', body)
 			.then(function(response){
-				debugger;
+				//display results table
+				var resultColumnDefs = [];
+				for (var i=1; i<response.data.metaData.fields.length; i++) {
+					var header = response.data.metaData.fields[i];
+					var colDef = {headerName: header.header, field: header.name};
+					resultColumnDefs.push(colDef);
+				}
+				$scope.resultDataGrid.api.setColumnDefs(resultColumnDefs);
+				$scope.resultDataGrid.api.setRowData(response.data.rows);
 			}, function(error){
 				sbiModule_messaging.showErrorMessage("Error during dataset execution","Data service error");
 			});
