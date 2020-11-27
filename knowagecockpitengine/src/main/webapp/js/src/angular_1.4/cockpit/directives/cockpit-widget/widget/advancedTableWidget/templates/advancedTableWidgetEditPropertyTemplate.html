@@ -213,6 +213,11 @@
 										{{::translate.load('sbi.cockpit.table.rows.autoAdapt')}}
 									</md-checkbox>
 								</div-->
+								<div flex=20 layout="row" layout-align="start center">
+									<md-checkbox ng-model="newModel.settings.indexColumn" class="md-block" aria-label="index column">
+										{{::translate.load('sbi.cockpit.table.settings.showindexcolumn')}}
+									</md-checkbox>
+								</div>
 								<div flex layout="row" >
 									<md-input-container flex class="md-block">
 										<label>{{::translate.load('sbi.cockpit.table.rows.height')}}</label>
