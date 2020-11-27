@@ -140,6 +140,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(model.settings.autoRowsHeight) delete model.settings.autoRowsHeight;
 				}
 				if(model.type=='map') {
+
+					// Ignore models that has zero elements in model.content.columnSelectedOfDataset
+					if (Object.keys(model.content.columnSelectedOfDataset).length === 0) {
+						delete model.content.columnSelectedOfDataset;
+					}
+
 					if (model.content.columnSelectedOfDataset) {
 						var colsSelectedFromAllLayers = model.content.columnSelectedOfDataset;
 						var layers = model.content.layers;
