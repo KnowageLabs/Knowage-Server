@@ -1,10 +1,10 @@
 <!-- control panel -->
-<md-sidenav class="md-sidenav-right mapOptionsSidenav" md-component-id="optionSidenavId" eval-attr-as-expr="mdComponentId" style="height:100%">
+<md-sidenav class="md-sidenav-right mapOptionsSidenav" md-component-id="optionSidenavId" eval-attr-as-expr="mdComponentId" style="height:100%;" ng-style="ngModel.style.controlPanel" md-is-locked-open="ngModel.controlPanelAlwaysOpen">
 
 	<md-toolbar layout="row" class="secondaryToolbar" layout-align="start center">
 		<h2 class="md-toolbar-tools">{{translate.load('sbi.cockpit.map.section.options')}}</h2>
 		<span flex></span>
-		<md-button class="md-icon-button" title="close" aria-label="Clear" ng-click="toggleSidenav()">
+		<md-button class="md-icon-button" title="close" aria-label="Clear" ng-click="toggleSidenav()" ng-show="!ngModel.controlPanelAlwaysOpen">
 			<md-tooltip direction="bottom">{{::translate.load('sbi.general.close')}}</md-tooltip>
 			<md-icon md-font-icon="fa fa-times"></md-icon>
 		</md-button>

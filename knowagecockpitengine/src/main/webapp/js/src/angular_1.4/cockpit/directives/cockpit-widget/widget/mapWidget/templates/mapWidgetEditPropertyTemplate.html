@@ -51,17 +51,69 @@
 					</md-content>
 				</md-tab>
 
-		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
-		        	<cockpit-style-configurator widget ng-model="newModel.style">
-		        		<cockpit-style-custom-widget-configurator label="'Padding'">
-				           <div layout="row" flex ng-cloak layout-wrap>
-	
-				          
-				           </div>
-				        </cockpit-style-custom-widget-configurator>
-		        	</cockpit-style-configurator>
-		        </md-tab>
-		        
+				<md-tab label="{{translate.load('sbi.cockpit.style')}}">
+
+					<md-card>
+						<md-toolbar class="ternaryToolbar">
+							<div class="md-toolbar-tools" layout="row">{{::translate.load("sbi.cockpit.map.edit.tooltip")}}</div>
+						</md-toolbar>
+						<md-card-content>
+							<div flex layout=column>
+								<div flex layout="row">
+									<md-input-container flex class="md-block" >
+										<label>{{::translate.load("sbi.cockpit.map.edit.tooltip.box.width")}}</label>
+										<input ng-model="newModel.style.tooltip.box['width']" type="text"/>
+										<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+									</md-input-container>
+									<md-input-container flex class="md-block" >
+										<label>{{::translate.load("sbi.cockpit.map.edit.tooltip.box.height")}}</label>
+										<input ng-model="newModel.style.tooltip.box['height']" type="text"/>
+										<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+									</md-input-container>
+								</div>
+								<div flex layout="row">
+									<md-input-container flex class="md-block" >
+										<label>{{::translate.load("sbi.cockpit.map.edit.tooltip.text.fontSize")}}</label>
+										<input ng-model="newModel.style.tooltip.text['font-size']" type="text"/>
+										<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+									</md-input-container>
+									<md-input-container flex class="md-block">
+										<label>{{::translate.load('sbi.cockpit.map.edit.tooltip.text.fontColor')}}</label>
+										<color-picker ng-model="newModel.style.tooltip.text['color']" options="{ 'format': 'rgb' }"/>
+									</md-input-container>
+								</div>
+							</div>
+						</md-card-content>
+					</md-card>
+				
+					<md-card>
+						<md-toolbar class="ternaryToolbar">
+							<div class="md-toolbar-tools" layout="row">{{::translate.load("sbi.cockpit.map.edit.controlPanel")}}</div>
+						</md-toolbar>
+						<md-card-content>
+							<div flex layout=column>
+								<div flex layout="row">
+									<div flex=20 layout="row" layout-align="start center">
+										<md-checkbox ng-model="newModel.controlPanelAlwaysOpen" class="md-block" aria-label="Control panel always open">{{::translate.load("sbi.cockpit.map.edit.controlPanel.alwaysOpen")}}</md-checkbox>
+									</div>
+									<md-input-container flex class="md-block" >
+										<label>{{::translate.load("sbi.cockpit.map.edit.controlPanel.width")}}</label>
+										<input ng-model="newModel.style.controlPanel['width']" type="text"/>
+										<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+									</md-input-container>
+								</div>
+							</div>
+						</md-card-content>
+					</md-card>
+				
+					<cockpit-style-configurator widget ng-model="newModel.style">
+						<cockpit-style-custom-widget-configurator label="'Padding'">
+							<div layout="row" flex ng-cloak layout-wrap>
+							</div>
+						</cockpit-style-custom-widget-configurator>
+					</cockpit-style-configurator>
+				</md-tab>
+
 		        <md-tab label="{{::translate.load('sbi.cockpit.widget.table.cross')}}">
 					<cockpit-cross-configurator widget ng-cloak ng-model="newModel.cross"></cockpit-cross-configurator>
 				</md-tab>
