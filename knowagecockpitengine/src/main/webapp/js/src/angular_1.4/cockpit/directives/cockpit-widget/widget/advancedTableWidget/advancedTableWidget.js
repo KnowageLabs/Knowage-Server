@@ -113,6 +113,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.columnsNameArray = [];
 			var dataset = cockpitModule_datasetServices.getAvaiableDatasetById($scope.ngModel.dataset.dsId);
 			var columnGroups = {};
+			if($scope.ngModel.settings.indexColumn){
+				columns.push({headerName:"",field:"",cellRenderer:indexCellRenderer,sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false});
+			}
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
 					var thisColumn = $scope.ngModel.content.columnSelectedOfDataset[c];
@@ -313,18 +316,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								'	</div>'+
 								'</div>';
 
-		    this.mySortAscButton = this.eGui.querySelector(".ag-cell-label-container");
-		    this.eSortDownButton = this.eGui.querySelector(".ag-sort-descending-icon");
-		    this.eSortUpButton = this.eGui.querySelector(".ag-sort-ascending-icon");
-
-		    this.onSortChangedListener = this.onSortChanged.bind(this);
-	        this.agParams.column.addEventListener('sortChanged', this.onSortChangedListener);
-	        this.onSortChanged();
-
-		    this.mySortAscButton.addEventListener('click', function(event) {
-		    	if(params.column.sort == '') params.setSort('asc');
-		    	else params.setSort(params.column.sort == 'asc' ? 'desc' : 'asc');
-		    });
+		    if(params.column.colDef.sortable){
+		    	this.mySortAscButton = this.eGui.querySelector(".ag-cell-label-container");
+			    this.eSortDownButton = this.eGui.querySelector(".ag-sort-descending-icon");
+			    this.eSortUpButton = this.eGui.querySelector(".ag-sort-ascending-icon");
+	
+			    this.onSortChangedListener = this.onSortChanged.bind(this);
+		        this.agParams.column.addEventListener('sortChanged', this.onSortChangedListener);
+		        this.onSortChanged();
+	
+			    this.mySortAscButton.addEventListener('click', function(event) {
+			    	if(params.column.sort == '') params.setSort('asc');
+			    	else params.setSort(params.column.sort == 'asc' ? 'desc' : 'asc');
+			    });
+		    }
 		};
 
 		CustomHeader.prototype.onSortChanged = function () {
@@ -538,6 +543,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		SummaryRowRenderer.prototype.getGui = function() {
 		    return this.eGui;
 		};
+		
+		function indexCellRenderer(params) {
+			return (($scope.ngModel.settings.page - 1) * $scope.ngModel.settings.pagination.itemsNumber) + params.data.id;
+		}
 
 		function TooltipValue(params) {
 			if(params.colDef.style && params.colDef.style.tooltip) {
