@@ -363,7 +363,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	   								</md-input-container>
 	   								<md-input-container class="md-block" flex>
 	  									<label>{{translate.load("sbi.functionscatalog.columnfieldtype");}}</label>
-	  									<md-select ng-model="c.fieldType" on-change="c.type=''" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+	  									<md-select ng-model="c.fieldType" ng-change="resetType(c)" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
 		    								<md-option ng-repeat="columnFieldType in outputColumnFieldTypes" value="{{columnFieldType}}">
 		      								{{columnFieldType}}
 		    								</md-option>
@@ -372,7 +372,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	   								<md-input-container class="md-block" flex>
 	  									<label>{{translate.load("sbi.functionscatalog.columntype");}}</label>
 	  									<md-select ng-model="c.type" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-		    								<md-option ng-repeat="columnType in outputColumnTypes" value="{{columnType}}">
+		    								<md-option ng-if="c.fieldType=='ATTRIBUTE' || columnType=='NUMBER'" ng-repeat="columnType in outputColumnTypes" value="{{columnType}}">
 		      								{{columnType}}
 		    								</md-option>
 	 									</md-select>

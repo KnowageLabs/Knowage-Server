@@ -266,6 +266,10 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 	}
 
+	$scope.resetType=function(col) {
+		col.type = '';
+	}
+
 	$scope.checkCorrectArguments = function() {
 		var correctArguments = true;
 		$scope.missingFields = [];
@@ -777,10 +781,20 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		buildDataServiceBody=function(){
 			var body = {};
 			body.aggregations = buildBodyAggregations();
-			body.parameters = {};
+			body.parameters = buildBodyParameters();
 			body.selections = {};
 			body.indexes = [];
 			return body;
+		}
+
+		buildBodyParameters=function(){
+			var parameters = {}
+			var allParameters = $scope.selectedDataset.pars;
+			for (var i=0; i< allParameters.length; i++) {
+				var currPar = allParameters[i];
+				parameters[currPar.name] = currPar.defaultValue;
+			}
+			return parameters;
 		}
 
 		buildBodyAggregations=function(){
