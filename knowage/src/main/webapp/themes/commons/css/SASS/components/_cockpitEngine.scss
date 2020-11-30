@@ -1603,15 +1603,17 @@
 	        		.md-fab-action-item {
 	        			.md-fab {
 	        				margin: 8px 4px 8px 0;
+	        				background-color: $lightTextColor !important;
 	        				&:hover {
+	        					background-color: $baseColor !important;
 	        					md-icon {
 	        						color: $lightTextColor;
 	        					}
 	        				}
 	        				&.md-warning {
-	        					background-color:  lighten($negativeColor,20%);
+	        					background-color:  lighten($negativeColor,20%) !important;
 	        					&:hover {
-									background-color:  $negativeColor;
+									background-color:  $negativeColor !important;
 	        					}
 	        					md-icon {
 	        						color: $lightTextColor;

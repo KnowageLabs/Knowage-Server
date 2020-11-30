@@ -5,6 +5,7 @@
 html{
   height: 100%; 
   font-size: $rootFontSize;
+  font-family: $defaultFontFamily;
 }
 
 #doc, #iframeDoc {
@@ -146,7 +147,7 @@ md-checkbox.md-knowage-theme.md-checked ._md-icon {
 }
 
 .md-button.md-knowage-theme.md-fab {
-  &:not([disabled]):not(.md-mini) {
+  &:not([disabled]) {
           background-color: $fabPrimaryColor !important;
   }
   top: $fabTop;

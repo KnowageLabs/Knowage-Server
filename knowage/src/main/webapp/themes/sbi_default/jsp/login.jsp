@@ -210,7 +210,7 @@
 		               	<button class="btn btn-lg btn-primary btn-block btn-signup" onclick="signup();" ><%=msgBuilder.getMessage("signup")%></button>
 					<%} %> 
             	</div>
-            	
+            	<!-- img class="col-xs-8 col-sm-offset-4 col-sm-4" src='<%=urlBuilder.getResourceLink(request, "themes/commons/img/defaultTheme/poweredBy.svg")%>' / -->
             	<% } %>
             	
             	

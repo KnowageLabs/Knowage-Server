@@ -10,7 +10,7 @@ document-tree {
 	}
 
 	.line-container{
-		font-family: Roboto,"Helvetica Neue",sans-serif;
+		font-family: $defaultFontFamily;
 		font-size: 14px;
 		color: rgba(0, 0, 0, 0.87);
 		font-weight: normal;
@@ -40,13 +40,13 @@ document-tree {
 	}
 		
 	.minihead-tree {
-	  	background-color: #3B668C !important;
+	  	background-color: $baseColor !important;
 		color: white !important;	
 	}
 
 	md-toolbar.minihead-tree-small {
-		background-color: #3B668C;
-		color: #000000255255255;
+		background-color: $baseColor;
+		color: $lightTextColor;
 		height: 35px;
 		min-height: 0px;
 	}
@@ -55,13 +55,13 @@ document-tree {
 	}
 	
 	.minihead-tree-small{
-		background-color: #3B668C !important;
-		color: white !important;
+		background-color: $baseColor !important;
+		color: $lightTextColor !important;
 		height: 35px;
 	}
 
 	.blue-stack{
-	background-color: rgb(169, 195, 219);
+	background-color: $secondaryColor;
 
 		span {
 			font-weight: bold;
@@ -149,7 +149,7 @@ component-tree  {
 			border-radius: 4px;
 			box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 			&.bottomBorder md-list-item button {
-				border-bottom: 1px solid rgb(176, 190, 197);
+				border-bottom: 1px solid $bordersColor;
 				padding: 0;
 				margin-left: 8px;
 				margin-right: 8px;
@@ -164,15 +164,15 @@ component-tree  {
 	}
 
 	md-toolbar.minihead-tree-small {
-		background-color: #3B668C;
-		color: #000000255255255;
+		background-color: $baseColor;
+		color: $lightTextColor;
 		height: 35px;
 		min-height: 0px;
 	}
 
 	.minihead-tree-small {
-		background-color: #3B668C !important;
-		color: white !important;
+		background-color: $baseColor !important;
+		color: $lightTextColor !important;
 		height: 35px;
 	}
 
@@ -180,10 +180,10 @@ component-tree  {
 		padding: 4px;
 		.selectedNode {
 			font-weight: bold;
-			background: rgb(224,224,224);
+			background: $contentBackground;
 		}
 		&:hover {
-			background-color: rgba(144, 144, 144, 0.5);
+			background-color: rgba($ternaryColor, 0.5);
 			cursor: pointer;
 		}
 	}
