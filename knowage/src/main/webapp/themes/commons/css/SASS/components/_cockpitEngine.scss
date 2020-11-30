@@ -129,6 +129,13 @@
 		    left: -50px;
 		    min-width: 150px;
 			border-radius: 10px;
+			h2 {
+				margin-top: 0;
+				font-size: .7rem;
+				text-transform: uppercase;
+				font-family: 'Roboto';
+				font-weight: 100;
+			}
 		    &:after, &:before {
 		        top: 100%;
 		        border: solid transparent;
@@ -152,20 +159,14 @@
 	      	}
 		}
 		.popup-content {
-			h2 {
-				margin-top: 0;
-				font-size: .7rem;
-				text-transform: uppercase;
-				font-family: 'Roboto';
-				font-weight: 100;
-			}
+			min-height:100px;
+			overflow: auto;
 			ul {
 				list-style: none;
 				padding: 0;
 				p {
 					margin: 0;
 					span {
-						padding-left: 8px;
 						font-size: .6rem;
 						font-family: 'Roboto';
 					}
