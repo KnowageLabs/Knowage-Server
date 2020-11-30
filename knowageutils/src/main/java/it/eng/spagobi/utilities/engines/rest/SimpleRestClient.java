@@ -40,6 +40,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -125,10 +126,8 @@ public class SimpleRestClient {
 	/**
 	 * Invokes a rest service in post and return response
 	 *
-	 * @param parameters
-	 *            the parameters of the request
-	 * @param serviceUrl
-	 *            the relative (refers always to core application context) path of the service
+	 * @param parameters the parameters of the request
+	 * @param serviceUrl the relative (refers always to core application context) path of the service
 	 * @param userId
 	 * @param mediaType
 	 * @param data
