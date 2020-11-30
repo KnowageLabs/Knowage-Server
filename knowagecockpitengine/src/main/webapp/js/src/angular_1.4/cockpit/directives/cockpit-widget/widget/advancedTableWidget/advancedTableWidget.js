@@ -545,7 +545,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 		
 		function indexCellRenderer(params) {
-			return (($scope.ngModel.settings.page - 1) * $scope.ngModel.settings.pagination.itemsNumber) + params.data.id;
+			return (($scope.ngModel.settings.page - 1) * $scope.ngModel.settings.pagination.itemsNumber) + (params.rowIndex + 1);
 		}
 
 		function TooltipValue(params) {
