@@ -1315,6 +1315,12 @@ public class SchedulerUtilitiesV2 {
 
 	public static String serializeUserProfile(UserProfile profile) {
 		try {
+
+			if (!(UserProfile.class.equals(profile.getClass()))) {
+				// We need exactly a UserPrifle: see deserialization
+				profile = new UserProfile(profile);
+			}
+
 			String json = UserUtilities.fromUserProfile2JSON(profile);
 			String base64 = Base64.encodeBase64String(json.getBytes("UTF-8"));
 			return base64;
