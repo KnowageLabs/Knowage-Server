@@ -777,7 +777,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				temp2.put(HREF,
 						"javascript:callExternalApp('" + StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '" + path + "')");
 				temp2.put(LINK_TYPE, "callExternalApp");
-				temp2.put(SRC, StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()));
+				temp2.put(SRC, childElem.getExternalApplicationUrl());
 			} else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
 				String url = "javascript:execDirectUrl('" + childElem.getUrl() + "'";
 				url = url.replace("${SPAGOBI_CONTEXT}", contextName);
