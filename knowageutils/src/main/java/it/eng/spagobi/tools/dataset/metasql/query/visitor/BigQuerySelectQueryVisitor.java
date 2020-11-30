@@ -18,12 +18,42 @@
 
 package it.eng.spagobi.tools.dataset.metasql.query.visitor;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.Date;
+
 import it.eng.spagobi.utilities.database.IDataBase;
 
 public class BigQuerySelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	public BigQuerySelectQueryVisitor(IDataBase database) {
 		super(database);
+	}
+
+	@Override
+	protected String getFormattedTimestamp(Timestamp timestamp) {
+		StringBuilder sb = new StringBuilder();
+		Instant instant = timestamp.toInstant();
+		String timestampAsString = null;
+
+		timestampAsString = instant.toString();
+
+		sb.append("'").append(timestampAsString).append("'");
+
+		return sb.toString();
+	}
+
+	@Override
+	protected String getFormattedDate(Date date) {
+		StringBuilder sb = new StringBuilder();
+		Instant instant = date.toInstant();
+		String dateAsString = null;
+
+		dateAsString = instant.toString();
+
+		sb.append("'").append(dateAsString).append("'");
+
+		return sb.toString();
 	}
 
 }
