@@ -11,8 +11,8 @@
 		<div href="#" id="popup-closer-{{ngModel.id}}" class="ol-popup-closer">  
 			<i class="fa fa-times"></i>
 		</div> 
+		<h2 ng-style="{ 'font-size': ngModel.style.tooltip.text['font-size'] }">{{translate.load('sbi.cockpit.map.details')}}</h2>
 		<div id="popup-content-{{ngModel.id}}" class="popup-content" ng-style="ngModel.style.tooltip.box">
-			<h2 ng-style="{ 'font-size': ngModel.style.tooltip.text['font-size'] }">{{translate.load('sbi.cockpit.map.details')}}</h2>
 			<ul>
 				<li ng-repeat="prop in layerConfig track by $index" ng-if="prop.properties.showDetails">
 					<p>
