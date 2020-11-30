@@ -51,7 +51,26 @@
 			        		</div>
 			        	</md-card-content>
 			    	</md-card>
-			    </div>
+			    	<md-card ng-if="selectedDataset && selectedDataset.pars.length > 0">
+			        	<md-card-content class="noPadding">
+			   		   		<md-sidenav>
+						        <md-toolbar class="md-theme-indigo">
+						          <h1 class="md-toolbar-tools">Disabled Close Events</h1>
+						        </md-toolbar>
+						
+						        <md-content layout-margin="">
+						          <p>
+						            This sidenav is showing the backdrop, but users can't close the
+						             sidenav by clicking on the backdrop or pressing the 'Escape' key.
+						          </p>
+						          <md-button ng-click="toggleSidenav()" class="md-accent">
+						            Close this Sidenav
+						          </md-button>
+						        </md-content>			
+					      </md-sidenav>
+			        	</md-card-content>
+			    	</md-card>
+			    </div>    	
 		    </md-tab>
 		    <md-tab label="preview" ng-disabled="disablePreview">
 			    <md-content>

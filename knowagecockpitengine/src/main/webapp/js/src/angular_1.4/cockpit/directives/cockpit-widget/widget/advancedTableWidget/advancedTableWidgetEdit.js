@@ -491,6 +491,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 				$scope.newModel.settings.sortingColumn = null;
 			}
 		} else {
+			//if column to be deleted belongs to a function, we must delete all the other columns belonging to that function as well
 			var id = item.boundFunction.id;
 			colsToRemove = [];
 			for (var i=0; i<$scope.newModel.content.columnSelectedOfDataset.length; i++) {

@@ -327,18 +327,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.result = [];
 				for (var i=0; i<$scope.selectedFunction.outputColumns.length; i++) {
 					$scope.result[i] = {};
-					$scope.result[i].boundFunction = angular.copy($scope.selectedFunction);
+					$scope.result[i].boundFunction = copyFunctionForModel($scope.selectedFunction);
 					if(!$scope.result[i].alias) $scope.result[i].alias = $scope.selectedFunction.outputColumns[i].name;
 					$scope.result[i].aliasToShow = $scope.result[i].alias;
 					$scope.result[i].name = $scope.result[i].alias;
 					$scope.result[i].fieldType = $scope.selectedFunction.outputColumns[i].fieldType;
 					$scope.result[i].isFunction = true;
 					$scope.result[i].type = getResultType($scope.selectedFunction.outputColumns[i].type);
-					$scope.result[i].environment = $scope.selectedFunction.environment;
 				}
 				promise.resolve($scope.result);
 				$mdDialog.hide();
 			}
+		}
+
+		copyFunctionForModel=function(func){
+			var funcForExecution = {};
+			funcForExecution.id = func.id;
+			funcForExecution.name = func.name;
+			funcForExecution.label = func.label;
+			funcForExecution.inputVariables = func.inputVariables;
+			funcForExecution.inputColumns = func.inputColumns;
+			funcForExecution.outputColumns = func.outputColumns;
+			funcForExecution.environment = func.environment;
+			return funcForExecution;
 		}
 
 		getResultType=function(type){
