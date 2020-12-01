@@ -515,3 +515,18 @@ $exportBarHeight : 36px;
 		}
 	}
 }
+
+@media print {
+	.ag-body-horizontal-scroll-viewport, 
+	.ag-body-viewport, .ag-center-cols-clipper, 
+	.ag-center-cols-container, .ag-center-cols-viewport, 
+	.ag-root, .ag-root-wrapper, .ag-root-wrapper-body, 
+	.ag-virtual-list-viewport {
+		height: inherit !important; 
+    	overflow: inherit !important; 
+    	display: flex !important;
+	}
+	.ag-body-viewport, .ag-root, .ag-root-wrapper {
+		height: 100% !important;
+	}
+}
