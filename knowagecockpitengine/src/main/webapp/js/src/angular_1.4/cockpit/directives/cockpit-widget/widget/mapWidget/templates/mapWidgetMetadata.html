@@ -139,7 +139,7 @@
 												</td>
 												<td style="text-align:center" class="multiTableAction">
 
-													<md-menu ng-if="column.fieldType === 'MEASURE'">
+													<md-menu ng-if="column.fieldType !== 'SPATIAL_ATTRIBUTE'">
 														<md-button aria-label="Column options" class="md-icon-button" ng-click="openColumnMenu($mdOpenMenu,$event)">
 															<md-icon md-menu-origin md-font-icon="fas fa-ellipsis-v"></md-icon>
 															<md-tooltip md-delay="500">{{::translate.load("kn.generic.moreoptions")}}</md-tooltip>
@@ -160,8 +160,8 @@
 															<md-menu-item ng-if="column.isCalculated || !checkDs(column,false)" class="insideMenu">
 																<calculated-field ng-model="layer" selected-item="$index" inside-menu="true" additional-info="datasetsAdditionalInfos[layer.dsId]"></calculated-field>
 															</md-menu-item>
-															<md-menu-divider ng-if="isDeletable(column)"></md-menu-divider>
-															<md-menu-item ng-if="isDeletable(column)">
+															<md-menu-divider ng-if="column.fieldType === 'MEASURE'"></md-menu-divider>
+															<md-menu-item>
 																<md-button ng-click="deleteColumn(layer.content.columnSelectedOfDataset,column)">
 																	<md-icon md-font-icon="fa fa-trash"></md-icon>
 																	{{translate.load('sbi.cockpit.map.edit.metadata.delete')}}
