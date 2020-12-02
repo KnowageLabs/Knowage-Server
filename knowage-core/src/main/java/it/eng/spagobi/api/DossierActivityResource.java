@@ -17,6 +17,10 @@
  */
 package it.eng.spagobi.api;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,10 +43,13 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.knowage.engine.dossier.activity.bo.DossierActivity;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
 import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
@@ -112,6 +119,58 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			logger.error("Error while loading random key of progress thread with id: " + progressId, e);
 			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
+	}
+
+	@GET
+	@Path("/resourcePath")
+	public Response getresourcePath(@QueryParam("templateName") String fileName) {
+		String separator = File.separator;
+		String outPath = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + fileName;
+		ResponseBuilder responseBuilder = null;
+		byte[] bytes;
+		File file = new File(outPath);
+		try {
+			bytes = Files.readAllBytes(file.toPath());
+			responseBuilder = Response.ok(bytes);
+			responseBuilder.header("Content-Disposition", "attachment; filename=" + fileName);
+			responseBuilder.header("filename", fileName);
+		} catch (IOException e) {
+			logger.error("Error while updating new activity", e);
+			throw new SpagoBIRestServiceException(getLocale(), e);
+		}
+
+		return responseBuilder.build();
+	}
+
+	@POST
+	@Path("/importTemplateFile")
+	@Consumes("multipart/form-data")
+	public Response importTemplateFile(MultiPartBody multipartFormDataInput) throws JSONException {
+		byte[] archiveBytes = null;
+		JSONObject response = new JSONObject();
+		try {
+
+			String separator = File.separator;
+			final FormFile file = multipartFormDataInput.getFormFileParameterValues("file")[0];
+			String fileName = file.getFileName();
+			archiveBytes = file.getContent();
+			File f = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + fileName);
+			FileOutputStream outputStream = new FileOutputStream(f);
+			outputStream.write(archiveBytes);
+			outputStream.close();
+			response.put("STATUS", "OK");
+		} catch (Exception e) {
+			logger.error("Error while import file", e);
+			response.put("STATUS", "NON OK");
+			response.put("ERROR", e.getMessage());
+			logger.error(e);
+		} finally {
+			logger.debug("OUT");
+
+		}
+
+		return Response.status(200).entity(response.toString()).build();
+
 	}
 
 	@POST

@@ -19,6 +19,8 @@ public class AbstractDossierTemplate {
 	private String name;
 	private PptDossierTemplate pptTemplate;
 	private DocDossierTemplate docTemplate;
+	private String downloadable;
+	private String uploadable;
 
 	@JsonProperty("REPORT")
 	List<Report> reports = new ArrayList<>();
@@ -57,6 +59,24 @@ public class AbstractDossierTemplate {
 	@JsonSetter("REPORT")
 	public void setReports(List<Report> reports) {
 		this.reports = reports;
+	}
+
+	public String getDownloadable() {
+		return downloadable;
+	}
+
+	@XmlAttribute(name = "downloadable", required = true)
+	public void setDownloadable(String downloadable) {
+		this.downloadable = downloadable;
+	}
+
+	public String getUploadable() {
+		return uploadable;
+	}
+
+	@XmlAttribute(name = "uploadable", required = true)
+	public void setUploadable(String uploadable) {
+		this.uploadable = uploadable;
 	}
 
 	@JsonIgnore
