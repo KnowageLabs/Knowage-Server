@@ -16,9 +16,9 @@
 	      	<md-card>
 		  		<md-card-content>
 		  		 	<dataset-selector ng-model=localModel.dataset.dsId on-change="changeDatasetFunction(dsId)"></dataset-selector>
+		  		 	<!-- <catalog-function ng-if="localModel.dataset.dsId" ng-model="localModel" additional-info="datasetAdditionalInfos"></catalog-function> -->
 		  		</md-card-content>
-		  	</md-card>
-			  
+		  	</md-card>		  
 			   
 			   <md-card ng-if="localModel.dataset.dsId!=undefined" flex layout="column">	
 			     	<md-card-content flex layout="row" class="pivotTableDesigner" style="height: 100%;">			     		
