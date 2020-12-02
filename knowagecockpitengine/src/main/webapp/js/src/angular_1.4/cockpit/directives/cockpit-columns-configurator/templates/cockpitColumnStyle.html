@@ -31,22 +31,24 @@
             					<md-option value="right">{{::translate.load('sbi.cockpit.table.pinnedright')}}</md-option>
           					</md-select>
 	        			</md-input-container>
+        			</div>
+        			<div layout="row" ng-if="needsCommonPrefs && (!selectedColumn.widgetType || (selectedColumn.widgetType == 'staticPivotTable' && selectedColumn.containerType!='COLUMNS'))" >
 						<md-switch ng-disabled="selectedColumn.widgetType!=undefined" ng-model="selectedColumn.style.hiddenColumn" aria-label="Hidden Column" flex>
-						{{::translate.load('sbi.cockpit.table.hiddencolumn')}}
-					</md-switch>
-					<md-switch ng-if="selectedColumn.style.hiddenColumn" ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
-						{{::translate.load('sbi.cockpit.table.hide')}}
-					</md-switch>
-					<md-switch ng-if="selectedColumn.fieldType=='MEASURE'" ng-model="selectedColumn.style.hideSummary" aria-label="Hide Summary" flex>
-						{{::translate.load('sbi.cockpit.table.hidesummary')}}
-					</md-switch>
-					<md-switch ng-model="selectedColumn.style.hideHeader" aria-label="Hide header" flex>
-						{{::translate.load('kn.table.hideheader')}}
-					</md-switch>
-					<md-switch ng-model="selectedColumn.rowSpan" aria-label="Row Span" flex>
-						{{::translate.load('kn.table.rowspan')}}
-						<md-tooltip md-delay="1000">{{::translate.load('kn.table.rowspan.tooltip')}}</md-tooltip>
-					</md-switch>
+							{{::translate.load('sbi.cockpit.table.hiddencolumn')}}
+						</md-switch>
+						<md-switch ng-if="selectedColumn.style.hiddenColumn" ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
+							{{::translate.load('sbi.cockpit.table.hide')}}
+						</md-switch>
+						<md-switch ng-if="selectedColumn.fieldType=='MEASURE'" ng-model="selectedColumn.style.hideSummary" aria-label="Hide Summary" flex>
+							{{::translate.load('sbi.cockpit.table.hidesummary')}}
+						</md-switch>
+						<md-switch ng-model="selectedColumn.style.hideHeader" aria-label="Hide header" flex>
+							{{::translate.load('kn.table.hideheader')}}
+						</md-switch>
+						<md-switch ng-model="selectedColumn.rowSpan" aria-label="Row Span" flex>
+							{{::translate.load('kn.table.rowspan')}}
+							<md-tooltip md-delay="1000">{{::translate.load('kn.table.rowspan.tooltip')}}</md-tooltip>
+						</md-switch>
 					</div>
 			       
 			       <div ng-if="needsVisualization && (selectedColumn.fieldType=='MEASURE')">
