@@ -142,7 +142,7 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		return typeof(params.data.name) !== 'undefined';
 	}
 	function isAggregationEditable(params) {
-		if (params.data.isCalculated) return false;
+		if (params.data.isCalculated || params.data.isFunction) return false;
 		return params.data.fieldType == "MEASURE" ? true : false;
 	}
 

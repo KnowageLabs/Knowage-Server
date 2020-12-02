@@ -31,16 +31,16 @@ function customChartWidgetEditControllerFunction(
 	cockpitModule_datasetServices,
 	cockpitModule_generalOptions,
 	datastore){
-	
+
 	$scope.translate = sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.typesMap = cockpitModule_generalOptions.typesMap;
 	$scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
-	
+
 	if($scope.newModel.css.opened) $scope.newModel.css.opened = false;
 	if($scope.newModel.html.opened) $scope.newModel.html.opened = false;
 	if(!$scope.newModel.js.opened) $scope.newModel.js.opened = true;
-	
+
 	$scope.toggleLanguage = function(language){
 		var languages = ['css','html','js'];
 		for(var k in languages){
@@ -48,7 +48,7 @@ function customChartWidgetEditControllerFunction(
 			else $scope.newModel[language].opened = !$scope.newModel[language].opened;
 		}
 	}
-	
+
 	$scope.changeDS = function(id){
 	    $scope.newModel.content.columnSelectedOfDataset = cockpitModule_datasetServices.getDatasetById(id).metadata.fieldsMeta;
 		for(var c in $scope.newModel.content.columnSelectedOfDataset){
@@ -59,7 +59,7 @@ function customChartWidgetEditControllerFunction(
 		$scope.getDatasetAdditionalInfo(id);
 		$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
 	}
-	
+
 	$scope.getDatasetAdditionalInfo = function(dsId){
         for(var k in cockpitModule_template.configuration.datasets){
         	if(cockpitModule_template.configuration.datasets[k].dsId == dsId) {
@@ -69,7 +69,7 @@ function customChartWidgetEditControllerFunction(
         }
 	}
 	if($scope.newModel.dataset && $scope.newModel.dataset.dsId) $scope.getDatasetAdditionalInfo($scope.newModel.dataset.dsId);
-	
+
 	function getColumnsDefinition() {
 		$scope.availableGroups = [''];
 
@@ -82,15 +82,15 @@ function customChartWidgetEditControllerFunction(
 	    		cellEditor:"agSelectCellEditor",cellEditorParams: {values: $scope.availableAggregations}},
 	    	{headerName:"",cellRenderer: buttonRenderer,"field":"valueId","cellStyle":{"border":"none !important","text-align": "right","display":"inline-flex","justify-content":"flex-end"},width: 100,suppressSizeToFit:true, tooltip: false,
 	    			headerClass:'header-cell-buttons'}];
-		
+
 		if($scope.columnsGrid && $scope.columnsGrid.api) {
 			$scope.columnsGrid.api.setColumnDefs($scope.columnsDefinition);
 			$scope.columnsGrid.api.setRowData($scope.newModel.content.columnSelectedOfDataset);
 			resizeColumns();
 		}
-	}	
+	}
 	getColumnsDefinition();
-	
+
 	$scope.columnsGrid = {
 		angularCompileRows: true,
 		domLayout:'autoHeight',
@@ -104,7 +104,7 @@ function customChartWidgetEditControllerFunction(
         columnDefs: $scope.columnsDefinition,
 		rowData: $scope.newModel.content.columnSelectedOfDataset
 	}
-	
+
 	function resizeColumns(){
 		$scope.columnsGrid.api.sizeColumnsToFit();
 	}
@@ -119,13 +119,13 @@ function customChartWidgetEditControllerFunction(
 		return typeof(params.data.name) !== 'undefined';
 	}
 	function isAggregationEditable(params) {
-		if (params.data.isCalculated) return false;
+		if (params.data.isCalculated || params.data.isFunction) return false;
 		return params.data.fieldType == "MEASURE" ? true : false;
 	}
 
 	function aggregationRenderer(params) {
 		var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
-        return params.data.fieldType == "MEASURE" && !params.data.isCalculated ? aggregation : '';
+		return (params.data.fieldType == "MEASURE" && !params.data.isCalculated && !params.data.isFunction) ? aggregation : '';
 	}
 
 	function groupRenderer(params) {
@@ -137,29 +137,49 @@ function customChartWidgetEditControllerFunction(
 		if(params.data.isCalculated){
 			calculator = '<calculated-field ng-model="newModel" selected-item="'+params.rowIndex+'" additional-info="datasetAdditionalInfos"></calculated-field>';
 		}
-
+		if(params.data.isFunction){
+			calculator = '<catalog-function ng-model="newModel" selected-item="'+params.rowIndex+'" additional-info="datasetAdditionalInfos"></catalog-function>';
+		}
 		return 	calculator +
 				'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.alias+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
 	}
-	
+
 	function refreshRow(cell){
 		if(cell.data.fieldType == 'MEASURE' && !cell.data.aggregationSelected) cell.data.aggregationSelected = 'SUM';
 		if(cell.data.fieldType == 'MEASURE' && cell.data.aggregationSelected) cell.data.funcSummary = cell.data.aggregationSelected == 'NONE' ? 'SUM' : cell.data.aggregationSelected;
 		if(cell.data.isCalculated) cell.data.alias = cell.data.aliasToShow;
 		$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
 	}
-	
+
 	$scope.deleteColumn = function(rowName,event) {
 		for(var k in $scope.newModel.content.columnSelectedOfDataset){
 			if($scope.newModel.content.columnSelectedOfDataset[k].alias == rowName) var item = $scope.newModel.content.columnSelectedOfDataset[k];
 		}
-  		  var index=$scope.newModel.content.columnSelectedOfDataset.indexOf(item);
-		  $scope.newModel.content.columnSelectedOfDataset.splice(index,1);
-		  if($scope.newModel.settings.sortingColumn == item.aliasToShow){
-			  $scope.newModel.settings.sortingColumn = null;
-		  }
+		if (!item.isFunction) {
+			var index=$scope.newModel.content.columnSelectedOfDataset.indexOf(item);
+			$scope.newModel.content.columnSelectedOfDataset.splice(index,1);
+			if($scope.newModel.settings.sortingColumn == item.aliasToShow){
+				$scope.newModel.settings.sortingColumn = null;
+			}
+		} else {
+			//if column to be deleted belongs to a function, we must delete all the other columns belonging to that function as well
+			var id = item.boundFunction.id;
+			colsToRemove = [];
+			for (var i=0; i<$scope.newModel.content.columnSelectedOfDataset.length; i++) {
+				var col = $scope.newModel.content.columnSelectedOfDataset[i];
+				if (col.isFunction && col.boundFunction.id == id)
+					colsToRemove.push(col);
+			}
+			for (var j=0; j<colsToRemove.length; j++) {
+				var index=$scope.newModel.content.columnSelectedOfDataset.indexOf(colsToRemove[j]);
+				$scope.newModel.content.columnSelectedOfDataset.splice(index,1);
+				if($scope.newModel.settings && $scope.newModel.settings.sortingColumn == colsToRemove[j].aliasToShow){
+					$scope.newModel.settings.sortingColumn = null;
+				}
+			}
+		}
 	  }
-	
+
 	$scope.openListColumn = function(){
 		if($scope.newModel.dataset == undefined || $scope.newModel.dataset.dsId == undefined){
 			$scope.showAction($scope.translate.load("sbi.cockpit.table.missingdataset"));
@@ -179,7 +199,7 @@ function customChartWidgetEditControllerFunction(
 			});
 		}
 	}
-	
+
 	function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDialog,model,cockpitModule_datasetServices,cockpitModule_generalOptions,$filter){
 		$scope.translate=sbiModule_translate;
 
@@ -248,14 +268,14 @@ function customChartWidgetEditControllerFunction(
 			$mdDialog.cancel();
 		}
 	}
-	
+
 	$scope.$watch('newModel.content.columnSelectedOfDataset',function(newValue,oldValue){
 		if($scope.columnsGrid.api && newValue){
 			$scope.columnsGrid.api.setRowData(newValue);
 			$scope.columnsGrid.api.sizeColumnsToFit();
 		}
 	},true)
-	
+
 	//Codemirror initializer
 	$scope.codemirrorLoaded = function(_editor) {
         $scope._doc = _editor.getDoc();
@@ -288,7 +308,7 @@ function customChartWidgetEditControllerFunction(
         mode: {name: "javascript"},
         onLoad: $scope.codemirrorLoaded
     };
-	
+
 	$scope.saveConfiguration=function(){
 		 mdPanelRef.close();
 		 angular.copy($scope.newModel,model);
