@@ -98,7 +98,6 @@
 					<groupId>org.apache.hadoop</groupId>
 					<artifactId>hadoop-common</artifactId>
 				</exclusion>
-
 			</exclusions>
 		</dependency>
 		
@@ -164,6 +163,10 @@
 				<exclusion>
 					<groupId>javacup</groupId>
 					<artifactId>javacup</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xalan</groupId>
+					<artifactId>xalan</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
