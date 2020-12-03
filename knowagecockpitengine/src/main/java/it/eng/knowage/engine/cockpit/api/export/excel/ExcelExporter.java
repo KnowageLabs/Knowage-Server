@@ -1514,7 +1514,7 @@ public class ExcelExporter {
 
 						}
 
-						if (!mapColumnsAggregations.isEmpty()) {
+						if (!mapColumnsAggregations.isEmpty() && column.has("name")) {
 							aliasToShow = mapColumnsAggregations.get(column.getString("name"));
 						}
 
