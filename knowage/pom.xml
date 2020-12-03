@@ -378,15 +378,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.jamonapi</groupId>
-			<artifactId>jamon</artifactId>
-			<version>2.80</version>
-		</dependency>
-
-		<dependency>
-  			<groupId>com.fdsapi</groupId>
-  			<artifactId>fdsapi</artifactId>
-  			<version>1.2</version>
+			<groupId>com.fdsapi</groupId>
+			<artifactId>fdsapi</artifactId>
+			<version>1.2</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/com.fdsapi/fdsapi -->
