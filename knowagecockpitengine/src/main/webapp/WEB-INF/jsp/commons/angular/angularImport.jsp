@@ -55,6 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- All external styles bundle -->
 <link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext,"/dist/knowagecockpit-modules-styles-bundle.css")%>">
+<link rel="stylesheet" href="<%=urlBuilder.getResourcePath(cockpitEngineContext,"/node_modules/ng-wysiwyg/dist/editor.min.css")%>">
 
 <%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>

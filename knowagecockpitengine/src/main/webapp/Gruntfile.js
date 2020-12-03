@@ -44,7 +44,6 @@ module.exports = function(grunt) {
 					knowageContext +  'node_modules/toastify-js/src/toastify.css',
 					knowageContext +  'js/lib/angular/color-picker/angularjs-color-picker.min.css',
 					knowageContext +  'js/lib/angular/color-picker/mdColorPickerPersonalStyle.css',
-					knowageContext +  'node_modules/ng-wysiwyg/dist/editor.min.css',
 					knowageContext +  'node_modules/angular-tree-control/css/tree-control.css',
 					knowageContext +  'node_modules/codemirror/lib/codemirror.css',
 					knowageContext +  'node_modules/codemirror/theme/eclipse.css',
