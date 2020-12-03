@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>7.2.11</version>
+		<version>7.2.12</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
-			<version>7.2.11</version>
+			<version>7.2.12</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -98,7 +98,6 @@
 					<groupId>org.apache.hadoop</groupId>
 					<artifactId>hadoop-common</artifactId>
 				</exclusion>
-
 			</exclusions>
 		</dependency>
 		
@@ -177,6 +176,10 @@
 				<exclusion>
 					<groupId>javacup</groupId>
 					<artifactId>javacup</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xalan</groupId>
+					<artifactId>xalan</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
