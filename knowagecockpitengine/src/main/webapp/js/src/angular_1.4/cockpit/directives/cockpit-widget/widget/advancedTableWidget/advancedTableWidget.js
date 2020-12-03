@@ -114,7 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var dataset = cockpitModule_datasetServices.getAvaiableDatasetById($scope.ngModel.dataset.dsId);
 			var columnGroups = {};
 			if($scope.ngModel.settings.indexColumn){
-				columns.push({headerName:"",field:"",cellRenderer:indexCellRenderer,sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false});
+				columns.push({headerName:"",field:"",cellRenderer:indexCellRenderer,sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false, pinned:'left'});
 			}
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
