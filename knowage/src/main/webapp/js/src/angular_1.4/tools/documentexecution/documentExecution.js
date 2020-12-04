@@ -778,14 +778,15 @@ var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, tar
 };
 
 var execExternalCrossNavigation=function(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters){
-	var parent = angular.element(frameElement).scope().$parent;
-	while(parent != undefined){
-		if(parent.navigateTo != undefined){
+	
+	var currentScope = angular.element(frameElement).scope();
+	while(currentScope != undefined){
+		if(currentScope.navigateTo != undefined){
 			break;
 		}
-		parent = parent.$parent;
+		currentScope = currentScope.$parent;
 	}
-	parent.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters);
+	currentScope.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters);
 };
 
 var execPreviewDataset = function(datasetLabel, parameters, directDownload) {
