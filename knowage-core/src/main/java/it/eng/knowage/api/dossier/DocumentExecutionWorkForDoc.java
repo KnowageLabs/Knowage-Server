@@ -222,6 +222,9 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 					serviceUrlBuilder.append(docId);
 					serviceUrlBuilder.append("&IS_TECHNICAL_USER=true&DOCUMENT_NAME=");
 					serviceUrlBuilder.append(docName);
+					serviceUrlBuilder.append("&SBI_HOST=");
+					serviceUrlBuilder.append(URLEncoder.encode(hostUrl, StandardCharsets.UTF_8.toString()));
+					serviceUrlBuilder.append("&SBICONTEXT=knowage");
 					serviceUrlBuilder.append("&NEW_SESSION=TRUE&SBI_ENVIRONMENT=DOCBROWSER&IS_FOR_EXPORT=true&documentMode=VIEW&export=true&outputType=PNG");
 
 					RenderOptions renderOptions = RenderOptions.defaultOptions();
