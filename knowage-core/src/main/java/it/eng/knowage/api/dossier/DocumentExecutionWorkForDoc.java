@@ -287,9 +287,9 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			}
 			// Activity creation
 			imageNames.clear();
-
+			ParametersDecoder decoder = new ParametersDecoder();
 			for (Map.Entry<String, String> entry : paramMap.entrySet()) {
-				String metadataMessage = entry.getKey() + "=" + entry.getValue();
+				String metadataMessage = entry.getKey() + "=" + decoder.decodeParameter(entry.getValue());
 				jsonObject = new JSONObject();
 				jsonObject.put("TYPE", "PARAMETER");
 				jsonObject.put("MESSAGE", metadataMessage);
