@@ -593,7 +593,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if($scope.ngModel.settings.norows.hide) $scope.advancedTableGrid.api.hideOverlay();
 					if($scope.ngModel.settings.norows.message) $scope.advancedTableGrid.localeText.noRowsToShow = $scope.ngModel.settings.norows.message;
 				}
-				if(!$scope.ngModel.settings.pagination.enabled) $scope.advancedTableGrid.api.paginationSetPageSize($scope.totalRows);
 				if($scope.ngModel.settings.pagination.enabled && $scope.ngModel.settings.pagination.frontEnd && $scope.ngModel.settings.pagination.itemsNumber) $scope.advancedTableGrid.api.paginationSetPageSize($scope.ngModel.settings.pagination.itemsNumber);
 				resizeColumns();
 				$scope.hideWidgetSpinner();
