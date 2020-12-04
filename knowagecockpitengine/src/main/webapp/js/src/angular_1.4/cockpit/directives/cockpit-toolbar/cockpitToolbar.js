@@ -287,8 +287,11 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 				requestUrl.COCKPIT_SELECTIONS[i] = {};
 				if (widget.type == "map") {
 					requestUrl.COCKPIT_SELECTIONS[i] = [];
-					for (var k=0; k<widget.datasetId.length; k++) {
-						var dsId = widget.datasetId[k];
+					var allDsId = [];
+					if(widget.datasetId) allDsId = widget.datasetId;
+					else allDsId.push(widget.dataset.dsId);
+					for (var k=0; k<allDsId.length; k++) {
+						var dsId = allDsId[k];
 						var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
 						var aggregation;
 						if (widget.settings) {
