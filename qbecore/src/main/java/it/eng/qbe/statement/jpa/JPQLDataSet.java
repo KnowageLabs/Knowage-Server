@@ -254,7 +254,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 	}
 
-	private IStatement getFilteredStatement() {
+	public IStatement getFilteredStatement() {
 		logger.debug("IN");
 		// we create a new query adding filters defined by profile attributes
 		IModelAccessModality accessModality = this.getStatement().getDataSource().getModelAccessModality();
