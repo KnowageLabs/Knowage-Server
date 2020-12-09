@@ -516,6 +516,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 
 	// SAMPLE METHOD, this will be the implementation
 	this.promiseGet = function(endP_path, req_Path, item, conf) {
+		
 		var deferred = $q.defer();
 		
 		// Required for passing JSON on a GET request

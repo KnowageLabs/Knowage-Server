@@ -1289,6 +1289,18 @@ filter-by-tags {
   }
 }
 
+.loadingSpinner {
+ 	position: absolute;	
+   	z-index:500;
+	display:flex;
+	flex-direction:row;
+	background:rgba(0,0,0,0.3);
+	md-progess-circular{
+		top:50%;
+		left:50%;
+		transform:translateX(-50%) translateY(-50%);
+	}
+}
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
