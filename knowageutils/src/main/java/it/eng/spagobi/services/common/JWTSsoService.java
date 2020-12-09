@@ -20,6 +20,7 @@ package it.eng.spagobi.services.common;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator.Builder;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -39,6 +41,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.security.hmacfilter.HMACUtils;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -162,6 +165,20 @@ public class JWTSsoService implements SsoServiceInterface {
 		String userId = userIdClaim.asString();
 		LogMF.debug(logger, "User id is [{0}]", userId);
 		return userId;
+	}
+
+	public static String map2jwtToken(Map<String, String> claims, Date expiresAt) {
+		LogMF.debug(logger, "Claims map in input is [{0}]", claims);
+		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
+		Assert.assertTrue(claims != null && !claims.isEmpty(), "Claims map in input is empty!!!");
+		Builder builder = JWT.create();
+		for (Map.Entry<String, String> entry : claims.entrySet()) {
+			builder = builder.withClaim(entry.getKey(), entry.getValue());
+		}
+		builder.withExpiresAt(expiresAt); // token will expire at the desired expire date
+		String token = builder.sign(algorithm);
+		LogMF.debug(logger, "JWT token is [{0}]", token);
+		return token;
 	}
 
 }
