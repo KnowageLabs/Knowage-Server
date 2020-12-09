@@ -236,23 +236,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						tempCol.headerTooltip = $filter('i18n')(tempCol.headerTooltip);
 
 						//Columns group managament
-						if($scope.ngModel.content.columnSelectedOfDataset[c].group && $scope.ngModel.groups && $scope.ngModel.groups.length > 0) {
-							$scope.ngModel.groups.forEach(function(group){
-								var groupKey = group.id ? group.id : group.name;
-								if(groupKey == $scope.ngModel.content.columnSelectedOfDataset[c].group){
-									if(typeof columnGroups[groupKey] != 'undefined') {
-										columns[columnGroups[groupKey]].children.push(tempCol);
-									}else {
-										columnGroups[groupKey] = columns.length;
-										columns.push({
-									        headerName: group.name,
-									        headerGroupComponent: CustomHeaderGroupRenderer,
-									        headerParams: group,
-									        children: [tempCol]
-									    });
-									}
-								}
-							})
+						var group = getColumnGroup($scope.ngModel.content.columnSelectedOfDataset[c]);
+						if(group) {
+							if(typeof columnGroups[group.id] != 'undefined') {
+								columns[columnGroups[group.id]].children.push(tempCol);
+							}else {
+								columnGroups[group.id] = columns.length;
+								columns.push({
+							        headerName: group.name,
+							        headerGroupComponent: CustomHeaderGroupRenderer,
+							        headerParams: group,
+							        children: [tempCol]
+							    });
+							}
 						}
 						else columns.push(tempCol);
 						break;
@@ -284,6 +280,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			for(var k in $scope.metadata.fields){
 				if($scope.metadata.fields[k].dataIndex && $scope.metadata.fields[k].dataIndex == colNum) return $scope.metadata.fields[k].header;
 			}
+		}
+		
+		function getColumnGroup(col){
+			if(col.group && $scope.ngModel.groups && $scope.ngModel.groups.length > 0){
+				for(var k in $scope.ngModel.groups){
+					var groupKey = $scope.ngModel.groups[k].id ? $scope.ngModel.groups[k].id : $scope.ngModel.groups[k].name;
+					if(groupKey == col.group){
+						return $scope.ngModel.groups[k];
+					}
+				}
+			}else return false;
 		}
 
 		//CUSTOM HEADER TEMPLATE RENDERER

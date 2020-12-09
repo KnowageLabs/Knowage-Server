@@ -153,7 +153,6 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 
 	function groupRenderer(params) {
 		var value = '';
-		if(typeof params.value != 'undefined') value = params.value;
 		if(typeof params.valueFormatted != 'undefined') value = params.valueFormatted;
 		return '<i class="fa fa-edit"></i> <i>'+ value +'</i>';
 	}
