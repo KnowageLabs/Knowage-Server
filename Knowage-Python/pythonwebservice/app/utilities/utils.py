@@ -24,6 +24,7 @@ import os
 import xml.etree.ElementTree as ET
 import json
 import pkg_resources
+import logging
 
 def findFreePort():
     import socket
@@ -75,6 +76,23 @@ def getDatasetAsDataframe(widget):
     r = requests.post(address, headers=headers, data=payload)
     #retrieve column names from metadata
     names = r.json()["metaData"]["fields"]
+    #get cast types map
+    column_names, column_types = get_cast_types(names)
+    #save data as dataframe
+    df = pd.DataFrame(r.json()["rows"])
+    if not df.empty:
+        try:
+            #cast types
+            df = df.astype(column_types)
+        except Exception as e:
+            logging.warning("Could not cast dataframe types")
+        #drop first column (redundant)
+        df.drop(columns=['id'], inplace=True)
+        # assign column names
+        df.columns = column_names
+    return df
+
+def get_cast_types(names):
     column_names = []
     column_types = {}
     for x in names:
@@ -84,16 +102,7 @@ def getDatasetAsDataframe(widget):
                 column_types.update({x['name']: "float64"})
             elif x["type"] == "int":
                 column_types.update({x['name']: "int64"})
-    #save data as dataframe
-    df = pd.DataFrame(r.json()["rows"])
-    if not df.empty:
-        #cast types
-        df = df.astype(column_types)
-        #drop first column (redundant)
-        df.drop(columns=['id'], inplace=True)
-        # assign column names
-        df.columns = column_names
-    return df
+    return column_names, column_types
 
 def serverExists(id):
     with cm.lck:
