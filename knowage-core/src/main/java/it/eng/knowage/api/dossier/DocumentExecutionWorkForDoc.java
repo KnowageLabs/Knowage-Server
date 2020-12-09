@@ -195,6 +195,10 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 				logger.debug("executing post service to execute documents");
 				biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(cockpitDocument);
+
+				if (biObject == null) { // it should mean that a cockpit doesn't exist: template error
+					throw new SpagoBIRuntimeException("Template error: the cockpit " + cockpitDocument + " doesn't exist, check the template");
+				}
 				Integer docId = biObject.getId();
 
 				Collection<String> roles = userProfile.getRoles();

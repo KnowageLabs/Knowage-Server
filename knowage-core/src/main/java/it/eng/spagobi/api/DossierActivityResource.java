@@ -135,8 +135,8 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			responseBuilder.header("Content-Disposition", "attachment; filename=" + fileName);
 			responseBuilder.header("filename", fileName);
 		} catch (IOException e) {
-			logger.error("Error while updating new activity", e);
-			throw new SpagoBIRestServiceException(getLocale(), e);
+			logger.error("Error while import file", e);
+			return Response.serverError().entity("Document not present").build();
 		}
 
 		return responseBuilder.build();
