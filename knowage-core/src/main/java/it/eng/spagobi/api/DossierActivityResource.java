@@ -19,7 +19,6 @@ package it.eng.spagobi.api;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -123,23 +122,58 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/resourcePath")
-	public Response getresourcePath(@QueryParam("templateName") String fileName) {
+	public Response getresourcePath(@QueryParam("templateName") String fileName) throws JSONException {
 		String separator = File.separator;
+		if (fileName.endsWith("?"))
+			fileName = fileName.substring(0, fileName.length() - 1);
 		String outPath = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + fileName;
 		ResponseBuilder responseBuilder = null;
 		byte[] bytes;
 		File file = new File(outPath);
+		JSONObject response = new JSONObject();
 		try {
 			bytes = Files.readAllBytes(file.toPath());
 			responseBuilder = Response.ok(bytes);
 			responseBuilder.header("Content-Disposition", "attachment; filename=" + fileName);
 			responseBuilder.header("filename", fileName);
-		} catch (IOException e) {
-			logger.error("Error while updating new activity", e);
-			throw new SpagoBIRestServiceException(getLocale(), e);
+			response.put("STATUS", "OK");
+		} catch (Exception e) {
+			response.put("STATUS", "KO");
+			response.put("ERROR", e.getMessage());
+			logger.error(e);
+			return Response.status(200).entity(response.toString()).build();
+		} finally {
+			logger.debug("OUT");
+
 		}
 
 		return responseBuilder.build();
+	}
+
+	@GET
+	@Path("/checkPathFile")
+	public Response checkPathFile(@QueryParam("templateName") String fileName) throws JSONException {
+		String separator = File.separator;
+		if (fileName.endsWith("?"))
+			fileName = fileName.substring(0, fileName.length() - 1);
+		String outPath = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + fileName;
+		byte[] bytes;
+		File file = new File(outPath);
+		JSONObject response = new JSONObject();
+		try {
+			bytes = Files.readAllBytes(file.toPath());
+			response.put("STATUS", "OK");
+		} catch (Exception e) {
+			response.put("STATUS", "KO");
+			response.put("ERROR", e.getMessage());
+			logger.error(e);
+			return Response.status(200).entity(response.toString()).build();
+		} finally {
+			logger.debug("OUT");
+
+		}
+
+		return Response.status(200).entity(response.toString()).build();
 	}
 
 	@POST
@@ -161,7 +195,7 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			response.put("STATUS", "OK");
 		} catch (Exception e) {
 			logger.error("Error while import file", e);
-			response.put("STATUS", "NON OK");
+			response.put("STATUS", "KO");
 			response.put("ERROR", e.getMessage());
 			logger.error(e);
 		} finally {
