@@ -497,10 +497,10 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				if (lstDependences == null || lstDependences != null) {
 					for (int i = 0; i < lstDependences.size(); i++) {
 						Column tmpDep = (Column) lstDependences.get(i);
-						addRecursiveDependenciesFrom(targetEntity, aRecord, entityType, filtersForRef, tmpDep, c, columns);
+						addRecursiveDependenciesFrom(targetEntity, aRecord, entityJavaType, filtersForRef, tmpDep, c, columns);
 					}
 				}
-				
+
 				Object referenced = getReferencedObjectJPA(entityManager, entityJavaType, filtersForRef);
 
 				Class clas = targetEntity.getJavaType();
