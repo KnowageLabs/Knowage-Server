@@ -57,12 +57,9 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Controls if the current user can develop the object relative to the input folder id.
 	 *
-	 * @param state
-	 *            state of the object
-	 * @param folderId
-	 *            The id of the folder containing te object
-	 * @param profile
-	 *            user profile
+	 * @param state    state of the object
+	 * @param folderId The id of the folder containing te object
+	 * @param profile  user profile
 	 * @return A boolean control value
 	 */
 	public static boolean canDev(String state, Integer folderId, IEngUserProfile profile) {
@@ -75,12 +72,9 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Controls if current user can exec the object relative to the input folder id.
 	 *
-	 * @param state
-	 *            state of the object
-	 * @param folderId
-	 *            The id of the folder containing te object
-	 * @param profile
-	 *            user profile
+	 * @param state    state of the object
+	 * @param folderId The id of the folder containing te object
+	 * @param profile  user profile
 	 * @return A boolean control value
 	 */
 	public static boolean canExec(String state, Integer folderId, IEngUserProfile profile) {
@@ -204,6 +198,14 @@ public class ObjectsAccessVerifier {
 		}
 	}
 
+	/* Method to know is user canEdit a document */
+	public static boolean canEdit(BIObject biObject, IEngUserProfile profile) {
+		// if it is the owner of the document or it is admin
+
+		String owner = (String) ((UserProfile) profile).getUserId();
+		return UserUtilities.isAdministrator(profile) || owner.equals(biObject.getCreationUser());
+	}
+
 	/**
 	 * Metodo che verifica il numero di istanze visibili del documento
 	 *
@@ -289,12 +291,9 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Control if current user can test the object relative to the folder id.
 	 *
-	 * @param state
-	 *            state of the object
-	 * @param folderId
-	 *            The id of the folder containing the object
-	 * @param profile
-	 *            user profile
+	 * @param state    state of the object
+	 * @param folderId The id of the folder containing the object
+	 * @param profile  user profile
 	 * @return A boolean control value
 	 */
 	public static boolean canTest(String state, Integer folderId, IEngUserProfile profile) {
@@ -309,10 +308,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Control if the user can develop the document specified by the input id
 	 *
-	 * @param documentId
-	 *            The id of the document
-	 * @param profile
-	 *            The user profile
+	 * @param documentId The id of the document
+	 * @param profile    The user profile
 	 * @return A boolean control value
 	 */
 	public static boolean canDevBIObject(Integer biObjectID, IEngUserProfile profile) {
@@ -341,10 +338,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Control if the user can develop the input document
 	 *
-	 * @param documentId
-	 *            The id of the document
-	 * @param profile
-	 *            The user profile
+	 * @param documentId The id of the document
+	 * @param profile    The user profile
 	 * @return A boolean control value
 	 */
 	public static boolean canDevBIObject(BIObject obj, IEngUserProfile profile) {
@@ -390,10 +385,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Control if the current user can develop new object into the functionality identified by its id.
 	 *
-	 * @param folderId
-	 *            The id of the lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folderId The id of the lowFunctionality
+	 * @param profile  user profile
 	 * @return A boolean control value
 	 */
 	public static boolean canDev(Integer folderId, IEngUserProfile profile) {
@@ -403,10 +396,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Control if the current user can develop new object into the functionality identified by its id.
 	 *
-	 * @param folder
-	 *            The lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folder  The lowFunctionality
+	 * @param profile user profile
 	 * @return A boolean control value
 	 */
 	public static boolean canDev(LowFunctionality folder, IEngUserProfile profile) {
@@ -416,10 +407,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Control if the current user can test new object into the functionality.
 	 *
-	 * @param folder
-	 *            The lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folder  The lowFunctionality
+	 * @param profile user profile
 	 * @return A boolean control value
 	 */
 	public static boolean canTest(LowFunctionality folder, IEngUserProfile profile) {
@@ -430,10 +419,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Control if the current user can test new object into the functionality identified by its id.
 	 *
-	 * @param folderId
-	 *            The id of the lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folderId The id of the lowFunctionality
+	 * @param profile  user profile
 	 * @return A boolean control value
 	 */
 	public static boolean canTest(Integer folderId, IEngUserProfile profile) {
@@ -456,10 +443,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Control if the current user can execute objects into the input functionality.
 	 *
-	 * @param folder
-	 *            The lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folder  The lowFunctionality
+	 * @param profile user profile
 	 * @return A boolean control value
 	 */
 	public static boolean canExec(LowFunctionality folder, IEngUserProfile profile) {
@@ -469,10 +454,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Control if the current user can execute new object into the functionality identified by its id.
 	 *
-	 * @param folderId
-	 *            The id of the lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folderId The id of the lowFunctionality
+	 * @param profile  user profile
 	 * @return A boolean control value
 	 */
 	public static boolean canExec(Integer folderId, IEngUserProfile profile) {
@@ -495,10 +478,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Control if the current user can create objects into the input functionality.
 	 *
-	 * @param folder
-	 *            The lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folder  The lowFunctionality
+	 * @param profile user profile
 	 * @return A boolean control value
 	 */
 	public static boolean canCreate(LowFunctionality folder, IEngUserProfile profile) {
@@ -508,10 +489,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Private method called by the corrispondent public method canExec. Executes roles functionalities control .
 	 *
-	 * @param folder
-	 *            The lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folder  The lowFunctionality
+	 * @param profile user profile
 	 * @return A boolean control value
 	 */
 	private static boolean canExecInternal(LowFunctionality folder, IEngUserProfile profile) {
@@ -560,10 +539,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Private method called by the corrispondent public method canTest. Executes roles functionalities control .
 	 *
-	 * @param folderId
-	 *            The id of the lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folderId The id of the lowFunctionality
+	 * @param profile  user profile
 	 * @return A boolean control value
 	 */
 	private static boolean canTestInternal(LowFunctionality folder, IEngUserProfile profile) {
@@ -605,10 +582,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Private method called by the corrispondent public method canDev. Executes roles functionalities control .
 	 *
-	 * @param folderId
-	 *            The id of the lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folderId The id of the lowFunctionality
+	 * @param profile  user profile
 	 * @return A boolean control value
 	 */
 	private static boolean canDevInternal(LowFunctionality folder, IEngUserProfile profile) {
@@ -648,10 +623,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Private method called by the corrispondent public method canTest. Executes roles functionalities control .
 	 *
-	 * @param folderId
-	 *            The id of the lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folderId The id of the lowFunctionality
+	 * @param profile  user profile
 	 * @return A boolean control value
 	 */
 	private static boolean canTestInternal(Integer folderId, IEngUserProfile profile) {
@@ -698,10 +671,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Private method called by the corrispondent public method isAbleToSave. Executes roles functionalities control .
 	 *
-	 * @param folderId
-	 *            The id of the lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folderId The id of the lowFunctionality
+	 * @param profile  user profile
 	 */
 	private static boolean canCreateInternal(Integer folderId, IEngUserProfile profile) {
 		logger.debug("IN");
@@ -769,10 +740,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Private method called by the corrispondent public method canDev. Executes roles functionalities control .
 	 *
-	 * @param folderId
-	 *            The id of the lowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param folderId The id of the lowFunctionality
+	 * @param profile  user profile
 	 * @return A boolean control value
 	 */
 	private static boolean canDevInternal(Integer folderId, IEngUserProfile profile) {
@@ -873,13 +842,10 @@ public class ObjectsAccessVerifier {
 	 * it; - if the document is in TEST state the user must have the test permission in a folder containing it; - if the document is in REL state the user must
 	 * have the execution permission in a folder containing it.
 	 *
-	 * @param obj
-	 *            The BIObject
-	 * @param profile
-	 *            user profile
+	 * @param obj     The BIObject
+	 * @param profile user profile
 	 * @return A boolean control value
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public static boolean canSee(BIObject obj, IEngUserProfile profile) throws EMFInternalError {
 		logger.debug("IN");
@@ -966,13 +932,10 @@ public class ObjectsAccessVerifier {
 	 * Other users can see the LowFunctionality only if they have at least one of the following permission: - they can develop on that folder; - they can test
 	 * on that folder; - they can execute on that folder.
 	 *
-	 * @param lowFunctionality
-	 *            The LowFunctionality
-	 * @param profile
-	 *            user profile
+	 * @param lowFunctionality The LowFunctionality
+	 * @param profile          user profile
 	 * @return true if the user can see the specified lowFunctionality, false otherwise
-	 * @throws EMFInternalError
-	 *             the EMF internal error
+	 * @throws EMFInternalError the EMF internal error
 	 */
 	public static boolean canSee(LowFunctionality lowFunctionality, IEngUserProfile profile) throws EMFInternalError {
 		boolean canSee = false;
@@ -1076,10 +1039,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * returns the list of correct roles of the input profile for the execution of the document with the specified input
 	 *
-	 * @param objectId
-	 *            the document id
-	 * @param profile
-	 *            the user profile
+	 * @param objectId the document id
+	 * @param profile  the user profile
 	 * @return the list of correct roles of the input profile for the execution of the document with the specified input
 	 * @throws EMFUserError
 	 * @throws EMFInternalError
@@ -1111,8 +1072,7 @@ public class ObjectsAccessVerifier {
 	 * Retrieves the correct permission on folder that the user must have in order to execute the document: eg: document state = REL --> permission to EXECUTION
 	 * document state = DEV --> permission to DEVELOPMENT document state = TEST --> permission to TEST
 	 *
-	 * @param documentState
-	 *            The document state
+	 * @param documentState The document state
 	 * @return the permission required to execute the document
 	 */
 	public static String getPermissionFromDocumentState(String documentState) {
@@ -1131,12 +1091,9 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Returns true if the user in input is able to delete the input object in the specified position (folder)
 	 *
-	 * @param biobjectId
-	 *            The id of the document to be deleted
-	 * @param profile
-	 *            The user profile object
-	 * @param lowFunctionality
-	 *            The folder
+	 * @param biobjectId       The id of the document to be deleted
+	 * @param profile          The user profile object
+	 * @param lowFunctionality The folder
 	 * @return true if the user in input is able to delete the input object in the specified position (folder)
 	 */
 	public static boolean canDeleteBIObject(int biobjectId, IEngUserProfile profile, LowFunctionality lowFunctionality) {
@@ -1181,10 +1138,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Returns true if the user in input is able to delete the input object everywhere
 	 *
-	 * @param biobjectId
-	 *            The id of the document to be deleted
-	 * @param profile
-	 *            The user profile object
+	 * @param biobjectId The id of the document to be deleted
+	 * @param profile    The user profile object
 	 * @return true if the user in input is able to delete the input object everywhere
 	 */
 	public static boolean canDeleteBIObject(int biobjectId, IEngUserProfile profile) {
@@ -1233,10 +1188,8 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Returns true if the user in input is able to clone the input object everywhere It consider the same conditions of the delete operation
 	 *
-	 * @param biobjectId
-	 *            The id of the document to be cloned
-	 * @param profile
-	 *            The user profile object
+	 * @param biobjectId The id of the document to be cloned
+	 * @param profile    The user profile object
 	 * @return true if the user in input is able to clone the input object everywhere
 	 */
 	public static boolean canCloneBIObject(int biobjectId, IEngUserProfile profile) {
@@ -1248,12 +1201,9 @@ public class ObjectsAccessVerifier {
 	 * Returns true if the user in input is able to clone the input object in the specified position (folder) It consider the same conditions of the delete
 	 * operation
 	 *
-	 * @param biobjectId
-	 *            The id of the document to be cloned
-	 * @param profile
-	 *            The user profile object
-	 * @param lowFunctionality
-	 *            The folder
+	 * @param biobjectId       The id of the document to be cloned
+	 * @param profile          The user profile object
+	 * @param lowFunctionality The folder
 	 * @return true if the user in input is able to clone the input object in the specified position (folder)
 	 */
 	public static boolean canCloneBIObject(int biobjectId, IEngUserProfile profile, LowFunctionality lowFunctionality) {
@@ -1265,10 +1215,8 @@ public class ObjectsAccessVerifier {
 	 * Check if the user can execute the required document. It checks the state of the document and its position on folders, and look for user permissions. It
 	 * also checks if behavioural model is set properly (i.e. the user has valid roles for execution).
 	 *
-	 * @param obj
-	 *            The document to be executed
-	 * @param profile
-	 *            The user profile object
+	 * @param obj     The document to be executed
+	 * @param profile The user profile object
 	 * @return true if the user can execute the required document, false otherwise
 	 * @throws EMFInternalError
 	 * @throws EMFUserError
