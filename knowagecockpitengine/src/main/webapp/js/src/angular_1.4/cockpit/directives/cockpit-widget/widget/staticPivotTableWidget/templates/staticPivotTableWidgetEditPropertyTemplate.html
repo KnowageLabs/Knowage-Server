@@ -197,7 +197,7 @@
 							<span >{{::translate.load("sbi.crosstab.crosstabdetailswizard.measureson")}}</span>
 							<md-radio-group flex layout="row" ng-model="localModel.content.crosstabDefinition.config.measureson" >
 								<md-radio-button value="columns" class="md-primary">{{::translate.load("sbi.cockpit.pivot.columns")}}</md-radio-button>
-								<md-radio-button value="rows" class="md-primary"> {{::translate.load("sbi.cockpit.pivot.rows")}} </md-radio-button>
+								<md-radio-button ng-click="localModel.content.crosstabDefinition.config.hideZeroRows='false'" value="rows" class="md-primary"> {{::translate.load("sbi.cockpit.pivot.rows")}} </md-radio-button>
 							</md-radio-group>
 						</div>
 						
@@ -236,7 +236,7 @@
 					    </md-input-container>
 					</md-card-content>
 					<md-card-content layout="row" layout-align="space-around center">
-						<md-checkbox ng-model="localModel.content.crosstabDefinition.config.hideZeroRows">
+						<md-checkbox ng-disabled="localModel.content.crosstabDefinition.config.measureson=='rows'" ng-model="localModel.content.crosstabDefinition.config.hideZeroRows">
 				        	{{::translate.load("sbi.crosstab.crosstabdetailswizard.hidezerorows")}}
 				        </md-checkbox>
 				        <md-checkbox ng-model="localModel.content.crosstabDefinition.config.fixedColumn">
