@@ -54,7 +54,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
+import it.eng.spagobi.commons.serializer.DataSetMetadataJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
@@ -296,7 +296,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					attributesResponseSuccessJSON.put("id", id);
 					attributesResponseSuccessJSON.put("dateIn", ds.getDateIn());
 					attributesResponseSuccessJSON.put("userIn", ds.getUserIn());
-					attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.metadataSerializerChooser(ds.getDsMetadata()));
+					attributesResponseSuccessJSON.put("meta", new DataSetMetadataJSONSerializer().metadataSerializerChooser(ds.getDsMetadata()));
 				} else {
 					IDataSet existingByLabel = dsDao.loadDataSetByLabel(ds.getLabel());
 					if (existingByLabel != null) {
@@ -318,7 +318,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						attributesResponseSuccessJSON.put("dateIn", dsSaved.getDateIn());
 						attributesResponseSuccessJSON.put("userIn", dsSaved.getUserIn());
 						attributesResponseSuccessJSON.put("versNum", dsSaved.getVersionNum());
-						attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.metadataSerializerChooser(dsSaved.getDsMetadata()));
+						attributesResponseSuccessJSON.put("meta", new DataSetMetadataJSONSerializer().metadataSerializerChooser(dsSaved.getDsMetadata()));
 					}
 				}
 				String operation = (id != null && !id.equals("") && !id.equals("0")) ? "DATA_SET.MODIFY" : "DATA_SET.ADD";

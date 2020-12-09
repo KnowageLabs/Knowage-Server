@@ -32,7 +32,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
@@ -210,7 +209,8 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(PARS, parsListJSON);
 
 			String meta = ds.getDsMetadata();
-			Object serializedMetadata = metadataSerializerChooser(meta);
+			DataSetMetadataJSONSerializer dataSetMetadataJSONSerializer = new DataSetMetadataJSONSerializer();
+			Object serializedMetadata = dataSetMetadataJSONSerializer.serialize(meta, locale);
 
 			result.put(METADATA, serializedMetadata);
 
@@ -550,142 +550,6 @@ public class DataSetJSONSerializer implements Serializer {
 				result.put(ja, prop);
 			}
 		}
-	}
-
-	public static Object metadataSerializerChooser(String meta) throws SourceBeanException, JSONException {
-		if (meta != null && !meta.equals("")) {
-			SourceBean source = SourceBean.fromXMLString(meta);
-			if (source != null) {
-				if (source.getName().equals("COLUMNLIST")) {
-					return serializeMetada(meta);
-				} else if (source.getName().equals("META")) {
-					return serializeGenericMetadata(meta);
-				}
-			}
-		}
-
-		return null;
-
-	}
-
-	public static JSONArray serializeMetada(String meta) throws JSONException, SourceBeanException {
-		JSONArray metaListJSON = new JSONArray();
-
-		if (meta != null && !meta.equals("")) {
-			SourceBean source = SourceBean.fromXMLString(meta);
-			if (source != null) {
-				if (source.getName().equals("COLUMNLIST")) {
-					List<SourceBean> rows = source.getAttributeAsList("COLUMN");
-					for (int i = 0; i < rows.size(); i++) {
-						SourceBean row = rows.get(i);
-						String name = (String) row.getAttribute("name");
-						String type = (String) row.getAttribute("TYPE");
-						String fieldType = (String) row.getAttribute("fieldType");
-						JSONObject jsonMeta = new JSONObject();
-						jsonMeta.put("name", name);
-						jsonMeta.put("type", type);
-						jsonMeta.put("fieldType", fieldType);
-						metaListJSON.put(jsonMeta);
-					}
-				} else if (source.getName().equals("METADATALIST")) {
-					List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
-					for (int i = 0; i < rows.size(); i++) {
-						SourceBean row = rows.get(i);
-						String name = (String) row.getAttribute("NAME");
-						String type = (String) row.getAttribute("TYPE");
-						JSONObject jsonMeta = new JSONObject();
-						jsonMeta.put("name", name);
-						jsonMeta.put("type", type);
-						metaListJSON.put(jsonMeta);
-					}
-				}
-			}
-		}
-		return metaListJSON;
-	}
-
-	// Serialize the new generalized version of Metadata
-	public static JSONObject serializeGenericMetadata(String meta) throws JSONException, SourceBeanException {
-		JSONObject metadataJSONObject = new JSONObject();
-
-		if (meta != null && !meta.equals("")) {
-			SourceBean source = SourceBean.fromXMLString(meta);
-
-			if (source != null) {
-				if (source.getName().equals("META")) {
-					// Dataset Metadata --------------
-
-					SourceBean dataset = (SourceBean) source.getAttribute("DATASET");
-					JSONArray datasetJSONArray = new JSONArray();
-					if (dataset != null) {
-						List<SourceBean> propertiesDataset = dataset.getAttributeAsList("PROPERTY");
-						for (int j = 0; j < propertiesDataset.size(); j++) {
-							SourceBean property = propertiesDataset.get(j);
-							String propertyName = (String) property.getAttribute("name");
-							String propertyValue = (String) property.getAttribute("value");
-							JSONObject propertiesJSONObject = new JSONObject();
-							propertiesJSONObject.put("pname", propertyName);
-							propertiesJSONObject.put("pvalue", propertyValue);
-							datasetJSONArray.put(propertiesJSONObject);
-						}
-					}
-
-					metadataJSONObject.put("dataset", datasetJSONArray);
-
-					// Columns Metadata -------------
-					SourceBean columns = (SourceBean) source.getAttribute("COLUMNLIST");
-					JSONArray columnsJSONArray = new JSONArray();
-
-					if (columns != null) {
-						List<SourceBean> rows = columns.getAttributeAsList("COLUMN");
-						for (int i = 0; i < rows.size(); i++) {
-							SourceBean row = rows.get(i);
-							String columnName = (String) row.getAttribute("name");
-							String type = (String) row.getAttribute("TYPE");
-
-							JSONObject typeJSONObject = new JSONObject();
-							typeJSONObject.put("column", columnName);
-							typeJSONObject.put("pname", "Type");
-							typeJSONObject.put("pvalue", type);
-							columnsJSONArray.put(typeJSONObject);
-
-							String fieldType = (String) row.getAttribute("fieldType");
-							JSONObject fieldTypeJSONObject = new JSONObject();
-							fieldTypeJSONObject.put("column", columnName);
-							fieldTypeJSONObject.put("pname", "fieldType");
-							fieldTypeJSONObject.put("pvalue", fieldType);
-							columnsJSONArray.put(fieldTypeJSONObject);
-
-							String fieldAlias = (String) row.getAttribute("alias");
-							JSONObject fieldAliasJSONObject = new JSONObject();
-							fieldAliasJSONObject.put("column", columnName);
-							fieldAliasJSONObject.put("pname", "fieldAlias");
-							fieldAliasJSONObject.put("pvalue", fieldAlias);
-							columnsJSONArray.put(fieldAliasJSONObject);
-
-							List<SourceBean> properties = row.getAttributeAsList("PROPERTY");
-							for (int j = 0; j < properties.size(); j++) {
-								SourceBean property = properties.get(j);
-								String propertyName = (String) property.getAttribute("name");
-								String propertyValue = (String) property.getAttribute("value");
-								JSONObject propertiesJSONObject = new JSONObject();
-								propertiesJSONObject.put("column", columnName);
-								propertiesJSONObject.put("pname", propertyName);
-								propertiesJSONObject.put("pvalue", propertyValue);
-
-								columnsJSONArray.put(propertiesJSONObject);
-							}
-
-						}
-						metadataJSONObject.put("columns", columnsJSONArray);
-
-					}
-				}
-
-			}
-
-		}
-		return metadataJSONObject;
 	}
 
 }

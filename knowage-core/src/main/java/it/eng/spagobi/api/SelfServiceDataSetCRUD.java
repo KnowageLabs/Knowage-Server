@@ -68,7 +68,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
+import it.eng.spagobi.commons.serializer.DataSetMetadataJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
@@ -867,7 +867,7 @@ public class SelfServiceDataSetCRUD {
 			List<IDataSet> dataSets = new ArrayList<>();
 			dataSets.add(dsToTest);
 
-			JSONObject metaJSONobject = DataSetJSONSerializer.serializeGenericMetadata(metaData);
+			JSONObject metaJSONobject = new DataSetMetadataJSONSerializer().serializeGenericMetadata(metaData);
 			if (limitPreview && (limit < dsToTest.getDataStore().getRecordsCount())) {
 				dsToTest.getDataStore().getRecords().subList(limit, dsToTest.getDataStore().getRecords().size()).clear();
 			}
