@@ -72,8 +72,7 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.EXECUTION", logParam, "OK");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						logger.error("Audit log error", e);
 					}
 					logger.error("User [" + profile.getUserId() + "] cannot see document [id: '" + obj.getId() + "', label: '" + obj.getLabel() + "'].");
 					Vector v = new Vector();
