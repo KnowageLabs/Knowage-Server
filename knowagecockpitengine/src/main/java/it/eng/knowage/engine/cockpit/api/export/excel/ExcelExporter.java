@@ -1215,9 +1215,9 @@ public class ExcelExporter {
 														String keyToAdd = keysJ.next();
 														String newKeyToAdd = keyToAdd.replace("$P{", "").replace("}", "");
 														if (jsonobjectVals.has(newKeyToAdd) && !jsonobjectVals.getString(newKeyToAdd).isEmpty()
-																&& jsnParam.getString(datasetVals.getString(keyToAdd)).isEmpty()) {
-															if (jsnParam.has(datasetVals.getString(keyToAdd)))
-																jsnParam.remove(datasetVals.getString(keyToAdd));
+																&& jsnParam.getString(datasetVals.getString(newKeyToAdd)).isEmpty()) {
+															if (jsnParam.has(datasetVals.getString(newKeyToAdd)))
+																jsnParam.remove(datasetVals.getString(newKeyToAdd));
 
 															jsnParam.put(newKeyToAdd, jsonobjectVals.getString(newKeyToAdd));
 														}
