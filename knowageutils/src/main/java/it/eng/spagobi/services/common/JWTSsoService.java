@@ -167,14 +167,16 @@ public class JWTSsoService implements SsoServiceInterface {
 		return userId;
 	}
 
-	public static String map2jwtToken(Map<String, String> claims, Date expiresAt) {
+	public static String map2jwtToken(Map<String, String> claims, Date expiresAt, String issuer) {
 		LogMF.debug(logger, "Claims map in input is [{0}]", claims);
 		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
+		LogMF.debug(logger, "JWT token issuer [{0}]", issuer);
 		Assert.assertTrue(claims != null && !claims.isEmpty(), "Claims map in input is empty!!!");
 		Builder builder = JWT.create();
 		for (Map.Entry<String, String> entry : claims.entrySet()) {
 			builder = builder.withClaim(entry.getKey(), entry.getValue());
 		}
+		builder.withIssuer(issuer);
 		builder.withExpiresAt(expiresAt); // token will expire at the desired expire date
 		String token = builder.sign(algorithm);
 		LogMF.debug(logger, "JWT token is [{0}]", token);
