@@ -129,8 +129,8 @@ function cockpitCustomChartControllerFunction(
 			}
 		}
 	
-		if(datasetRecords){
-			datastore.setData(datasetRecords);
+		if(datasetRecords || nature == 'fullExpand'){
+			if(datasetRecords) datastore.setData(datasetRecords);
 			if($scope.ngModel.js) {
 				if(toLoad){
 					jsLoadSemaphore();
