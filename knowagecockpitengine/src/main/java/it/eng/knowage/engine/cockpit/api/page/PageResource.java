@@ -52,6 +52,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -190,7 +191,23 @@ public class PageResource extends AbstractCockpitEngineResource {
 				} else {
 					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
 					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-					// getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
+
+					String editMode = request.getParameter("documentMode");
+					if (editMode != null) {
+						editMode = editMode.equals("null") ? null : request.getParameter("documentMode");
+					}
+
+					if (editMode != null && editMode.equals("EDIT")) {
+						String documentLabel = request.getParameter("DOCUMENT_LABEL");
+						BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(documentLabel);
+						if (!ObjectsAccessVerifier.canEdit(obj, getUserProfile())) {
+							String message = String.format("User [%s] cannot edit this document", (String) getUserProfile().getUserId());
+							logger.error(message);
+							throw new Exception(message);
+
+						}
+					}
+
 					dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
 				}
 			} else if ("edit".equals(pageName)) {
