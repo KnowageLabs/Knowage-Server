@@ -780,11 +780,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					var geometry = $scope.selectedFeature.getGeometry();
 					var coordinate = evt.coordinate;
 					overlay.setPosition(coordinate);
+					$scope.popupContainer.style["visibility"] = 'visible';
 				}
 
 				//when no feature is clicked, close the details popup
 				if ($scope.selectedFeature == undefined) {
 					$scope.closer.onclick();
+					$scope.popupContainer.style["visibility"] = 'hidden';
 					return;
 				}
 
