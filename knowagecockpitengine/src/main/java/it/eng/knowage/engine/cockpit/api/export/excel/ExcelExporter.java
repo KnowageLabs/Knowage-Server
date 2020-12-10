@@ -93,6 +93,9 @@ public class ExcelExporter {
 
 	private Locale locale;
 
+	private int uniqueId = 0;
+	private static final int SHEET_NAME_MAX_LEN = 31;
+
 	// Old implementation with parameterMap
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap) {
 		this.outputType = outputType;
@@ -395,7 +398,7 @@ public class ExcelExporter {
 
 				Sheet sheet;
 
-				widgetName = WorkbookUtil.createSafeSheetName(widgetName);
+				widgetName = createUniqueSafeSheetName(widgetName);
 				sheet = wb.createSheet(widgetName);
 
 				CreationHelper createHelper = wb.getCreationHelper();
@@ -543,7 +546,7 @@ public class ExcelExporter {
 
 			Sheet sheet;
 
-			widgetName = WorkbookUtil.createSafeSheetName(widgetName);
+			widgetName = createUniqueSafeSheetName(widgetName);
 			sheet = wb.createSheet(widgetName);
 
 			exporter.fillAlreadyCreatedSheet(sheet, cs, createHelper, 0, locale);
@@ -689,7 +692,7 @@ public class ExcelExporter {
 				Row header = null;
 				Row newheader = null;
 				if (exportWidget) { // export single widget
-					widgetName = WorkbookUtil.createSafeSheetName(widgetName);
+					widgetName = createUniqueSafeSheetName(widgetName);
 					sheet = wb.createSheet(widgetName);
 
 					// Create HEADER - Column Names
@@ -718,7 +721,7 @@ public class ExcelExporter {
 						}
 					}
 
-					sheetName = WorkbookUtil.createSafeSheetName(sheetName);
+					sheetName = createUniqueSafeSheetName(sheetName);
 					sheet = wb.createSheet(sheetName);
 					// First row for Widget name in case exporting whole Cockpit document
 					Row firstRow = sheet.createRow((short) 0);
@@ -809,6 +812,15 @@ public class ExcelExporter {
 				logger.error("Cannot write data to Excel file", e);
 			}
 		}
+	}
+
+	private String createUniqueSafeSheetName(String name) {
+		String safeSheetName = WorkbookUtil.createSafeSheetName(name);
+		if (safeSheetName.length() + String.valueOf(uniqueId).length() > SHEET_NAME_MAX_LEN)
+			safeSheetName = safeSheetName.substring(0, safeSheetName.length() - String.valueOf(uniqueId).length());
+		String uniqueSafeSheetName = safeSheetName + String.valueOf(uniqueId);
+		uniqueId++;
+		return uniqueSafeSheetName;
 	}
 
 	private HashMap<String, String> getMapFromGroupsArray(JSONArray groupsArray, JSONArray aggr) throws JSONException {
@@ -1215,9 +1227,10 @@ public class ExcelExporter {
 														String keyToAdd = keysJ.next();
 														String newKeyToAdd = keyToAdd.replace("$P{", "").replace("}", "");
 														if (jsonobjectVals.has(newKeyToAdd) && !jsonobjectVals.getString(newKeyToAdd).isEmpty()
-																&& jsnParam.getString(datasetVals.getString(newKeyToAdd)).isEmpty()) {
-															if (jsnParam.has(datasetVals.getString(newKeyToAdd)))
-																jsnParam.remove(datasetVals.getString(newKeyToAdd));
+																&& jsnParam.has(datasetVals.getString(keyToAdd))
+																&& jsnParam.getString(datasetVals.getString(keyToAdd)).isEmpty()) {
+															if (jsnParam.has(datasetVals.getString(keyToAdd)))
+																jsnParam.remove(datasetVals.getString(keyToAdd));
 
 															jsnParam.put(newKeyToAdd, jsonobjectVals.getString(newKeyToAdd));
 														}
