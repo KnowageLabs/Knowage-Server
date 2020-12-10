@@ -51,26 +51,30 @@
 						<md-option value="CLASSIFY_BY_EQUAL_INTERVALS">{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesByEqualIntervals')}}</md-option>
 						<md-option value="CLASSIFY_BY_QUANTILS">{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesByQuantils')}}</md-option>
 					</md-select>
-		      	</md-input-container>
-		      	<md-input-container flex="50" class="md-block" >
-			        <label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesNumber')}}</label>
-			        <input ng-model="layer.analysisConf.classes" type="number" ng-init="layer.analysisConf.classes=layer.analysisConf.classes||3">
-		      	</md-input-container>
-	      	</div>
-	      	<div layout="row" layout-align="start center" style="margin: 10px 0">
-		      	<md-input-container flex="50" class="md-block" >
-			        <label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.fromColor')}}</label>
-			         <color-picker options="colorPickerOptions" ng-model="layer.analysisConf.fromColor" ng-init="layer.analysisConf.fromColor=layer.analysisConf.fromColor|| '#d1d1d1' "></color-picker> 
-		      	</md-input-container>
-		      	<md-input-container flex="50" class="md-block">
-			        <label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.toColor')}}</label>
-			         <color-picker options="colorPickerOptions" ng-model="layer.analysisConf.toColor" ng-init="layer.analysisConf.toColor=layer.analysisConf.toColor|| '#5b5b5b' "></color-picker> 
-		      	</md-input-container>
+				</md-input-container>
+				<md-input-container flex="50" class="md-block" >
+					<label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesNumber')}}</label>
+					<input ng-model="layer.analysisConf.classes" type="number" ng-init="layer.analysisConf.classes=layer.analysisConf.classes||3">
+				</md-input-container>
+			</div>
+			<div layout="row" layout-align="start center" style="margin: 10px 0">
+				<md-input-container flex="35" class="md-block" >
+					<label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.fromColor')}}</label>
+					 <color-picker options="colorPickerOptions" ng-model="layer.analysisConf.fromColor" ng-init="layer.analysisConf.fromColor=layer.analysisConf.fromColor|| '#d1d1d1' "></color-picker> 
+				</md-input-container>
+				<md-input-container flex="35" class="md-block">
+					<label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.toColor')}}</label>
+					 <color-picker options="colorPickerOptions" ng-model="layer.analysisConf.toColor" ng-init="layer.analysisConf.toColor=layer.analysisConf.toColor|| '#5b5b5b' "></color-picker> 
+				</md-input-container>
+				<md-input-container flex="30" class="md-block flex">
+					<label>{{translate.load('sbi.cockpit.map.edit.visualization.marker.borderColor')}}</label>
+					<color-picker options="colorPickerOptions" ng-model="layer.markerConf.style.borderColor"></color-picker> 
+				</md-input-container>
 			</div>
 		</div>
 		<md-subheader ng-if="layer.visualizationType == 'clusters' || layer.visualizationType == 'markers'">{{translate.load('sbi.cockpit.map.edit.visualization.header.marker')}}</md-subheader>
 		<div style="padding:8px;" ng-if="layer.visualizationType == 'clusters' || layer.visualizationType == 'markers'">
-	 
+
 		<div class="buttonBarSquared" layout="row" ng-init="layer.markerConf.type=layer.markerConf.type||'default'" >
 			<div class="markerTypeIcon" ng-click="setIconType(layer,'default')" ng-class="{'selected':layer.markerConf.type == 'default'}">
 				<md-tooltip>{{translate.load('sbi.cockpit.map.edit.visualization.marker.defaultMarker')}}</md-tooltip>
