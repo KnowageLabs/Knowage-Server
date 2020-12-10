@@ -50,7 +50,7 @@ function mapWidgetEditControllerFunction(
 
 	$scope.setTargetLayer = function(layer){
 		for(var t in $scope.newModel.content.layers){
-			if($scope.newModel.content.layers[t].targetDefault && $scope.newModel.content.layers[t].dsId != layer.dsId){
+			if($scope.isTargetLayer($scope.newModel.content.layers[t]) && $scope.newModel.content.layers[t].dsId != layer.dsId){
 				$scope.newModel.content.layers[t].targetDefault = false;
 			}
 		}
@@ -447,7 +447,7 @@ function mapWidgetEditControllerFunction(
 			// $scope.newModel.dataset.dsId = [];
 			for (var k in $scope.newModel.content.layers){
 				// $scope.newModel.dataset.dsId.push($scope.newModel.content.layers[k].dsId);
-				if($scope.newModel.content.layers[k].targetDefault){
+				if($scope.isTargetLayer($scope.newModel.content.layers[k])){
 					$scope.newModel.dataset.dsId = $scope.newModel.content.layers[k].dsId;
 				}
 			}
@@ -661,6 +661,10 @@ function mapWidgetEditControllerFunction(
 	$scope.$watch("newModel.content.layers", function() {
 		$scope.refreshDataForFilters();
 	}, true);
+
+	$scope.isTargetLayer = function(layer) {
+		return layer && layer.targetDefault || false;
+	}
 
 	function getSizeFromFieldType(column) {
 		var fieldType = column.value.fieldType;
