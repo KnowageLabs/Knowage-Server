@@ -17,10 +17,17 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -29,6 +36,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -47,6 +55,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetFilter;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataSetDAO {
@@ -112,7 +121,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			if (organiz != null) {
 				c.add(Restrictions.eq("id.organization", organiz));
 			}
-			c.add(Restrictions.eq("active", true));
+			onlyActive(c);
 
 			sbiDataSet = (SbiDataSet) c.uniqueResult();
 			initialize(sbiDataSet);
@@ -160,7 +169,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			}
 
 			c.add(Restrictions.like("label", search == null ? "" : search, MatchMode.ANYWHERE).ignoreCase());
-			c.add(Restrictions.eq("active", true));
+			onlyActive(c);
 
 			if (ids != null && ids.length > 0) {
 				c.add(Restrictions.in("id.dsId", ids));
@@ -388,5 +397,273 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			initialize(dataset);
 		}
 	}
+
+	@Override
+	public List<SbiDataSet> list(int offset, int fetchSize, String owner, String sortByColumn, boolean reverse, List<Integer> tagIds, SbiDataSetFilter filter) {
+
+		Session session = null;
+		List<SbiDataSet> ret = Collections.emptyList();
+
+		try {
+			session = getSession();
+
+			Criteria cr = session.createCriteria(SbiDataSet.class);
+
+			onlyActive(cr);
+			fromOffset(cr, offset);
+			withFetchSize(cr, fetchSize);
+			ownedBy(cr, owner);
+			sortedBy(cr, sortByColumn, reverse);
+			withTags(cr, tagIds);
+			filterOn(cr, filter);
+
+			ret = cr.list();
+
+		} catch(Exception ex) {
+			LogMF.error(logger, "Error getting list of dataset with offset {0}, limit {1}, owner {2}, sorting column {3}, reverse {4} and tags {5}", new Object[] { offset, fetchSize, owner, sortByColumn, reverse, tagIds });
+		}finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<SbiDataSet> workspaceList(int offset, int fetchSize, String owner, boolean includeOwned, boolean includePublic, String scope, String type, Set<Domain> categoryList, String implementation, boolean showDerivedDatasets) {
+
+		List<SbiDataSet> results = Collections.emptyList();
+		Session session = null;
+
+		try {
+			// open session
+			session = getSession();
+			Criteria cr = session.createCriteria(SbiDataSet.class);
+
+			onlyActive(cr);
+			fromOffset(cr, offset);
+			withFetchSize(cr, fetchSize);
+
+			if (StringUtils.isNotEmpty(owner)) {
+				if (includeOwned) {
+					ownedBy(cr, owner);
+				} else {
+					notOwnedBy(cr, owner);
+				}
+			}
+
+			withDsTypeCd(cr, type);
+
+			if (categoryList != null) {
+				logger.debug("We'll take in consideration categories");
+				if (!categoryList.isEmpty()) {
+					logger.debug("User has one or more categories");
+					if (owner != null && includeOwned) {
+						logger.debug("The owner can see all it's datasets");
+					} else {
+						List<String> collect = categoryList.stream().map(e -> e.getValueCd()).collect(Collectors.toList());
+						cr.createAlias("category", "c");
+						cr.add(Restrictions.in("c.valueCd", collect));
+					}
+				} else {
+					logger.debug("No categories for the user so we take just it's own datasets");
+					if (owner == null || !includeOwned) {
+						logger.debug("Owner is not specified on the service so we should return no datasets");
+						return Collections.emptyList();
+					}
+				}
+
+			}
+
+			withImplementation(cr, implementation);
+			withDerived(cr, showDerivedDatasets);
+
+			results = cr.list();
+
+		} catch (Throwable t) {
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset whose owner is equal to [" + owner + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+
+		return results;
+	}
+
+	@Override
+	public List<SbiDataSet> loadMyDataSets(int offset, int fetchSize, UserProfile userProfile) {
+		logger.debug("IN");
+		List<SbiDataSet> results = new ArrayList<>();
+		Session session = null;
+
+		try {
+			Set<Domain> dataSetCategoriesByUser = UserUtilities.getDataSetCategoriesByUser(userProfile);
+			List<Integer> categoryIds = dataSetCategoriesByUser.stream().map(Domain::getValueId).collect(toList());
+
+			session = getSession();
+			Criteria cr = session.createCriteria(SbiDataSet.class);
+
+			Criteria scope = session.createCriteria(SbiDomains.class);
+			scope.add(Restrictions.and(Restrictions.in("valueCd", new String[] { "USER", "ENTERPRISE"}), Restrictions.eq("domainCd", "DS_SCOPE")));
+			List<SbiDomains> scopesList = scope.list();
+
+			fromOffset(cr, offset);
+			withFetchSize(cr, fetchSize);
+
+			Criterion onlyActive = onlyActiveRestriction();
+			Criterion owned = ownedByRestriction(userProfile);
+
+			Criterion categories = null;
+			if (dataSetCategoriesByUser.isEmpty()) {
+				categories = Restrictions.isNull("category");
+			} else {
+				Criterion inCategories = Restrictions.in("category.valueId", categoryIds);
+				Criterion b = Restrictions.isNull("category");
+
+				categories = Restrictions.disjunction().add(b).add(inCategories);
+			}
+
+			Criterion scopes = Restrictions.in("scope", scopesList);
+
+			Criterion rhs2 = Restrictions.conjunction().add(categories).add(scopes);
+			Criterion rhs = Restrictions.disjunction().add(owned).add(rhs2);
+
+			cr.add(Restrictions.conjunction().add(onlyActive).add(rhs));
+
+			results = cr.list();
+
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("An unexpected error occured while loading all datasets for final user", e);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+
+		return results;
+	}
+
+	private void withImplementation(Criteria cr, String implementation) {
+		if (StringUtils.isNotEmpty(implementation)) {
+			cr.add(Restrictions.eq("type", implementation));
+		}
+	}
+
+	private void withDerived(Criteria cr, Boolean showDerivedDatasets) {
+		if (showDerivedDatasets == false) {
+			cr.add(Restrictions.isNull("federation"));
+		}
+	}
+
+	private void withDsTypeCd(Criteria cr, String type) {
+		if (StringUtils.isNotEmpty(type)) {
+			cr.createAlias("scope", "s");
+			cr.add(Restrictions.eq("s.valueCd", type));
+		}
+	}
+
+	private void notOwnedBy(Criteria cr, String owner) {
+		if (StringUtils.isNotEmpty(owner)) {
+			cr.add(notOwnedRestriction(owner));
+		}
+	}
+
+	private void withTags(Criteria cr, List<Integer> tagIds) {
+		if (!tagIds.isEmpty()) {
+			cr.createAlias("tag.dsTagId", "tag");
+			cr.add(Restrictions.in("tag.tagId", tagIds));
+		}
+	}
+
+	private void sortedBy(Criteria cr, String sortByColumn, boolean reverse) {
+		if (StringUtils.isNotEmpty(sortByColumn)) {
+			Order orderBy = null;
+
+			if (!reverse) {
+				orderBy = Order.asc(sortByColumn);
+			} else {
+				orderBy = Order.desc(sortByColumn);
+			}
+			cr.addOrder(orderBy);
+		}
+	}
+
+	private void ownedBy(Criteria cr, String owner) {
+		if (StringUtils.isNotEmpty(owner)) {
+			cr.add(ownedByRestriction(owner));
+		}
+	}
+
+	private void ownedByCurrentUSer(Criteria cr) {
+		IEngUserProfile userProfile = getUserProfile();
+		ownedBy(cr, userProfile);
+	}
+
+	private void ownedBy(Criteria cr, IEngUserProfile userProfile) {
+		String owner = userProfile.getUserUniqueIdentifier().toString();
+		if (StringUtils.isNotEmpty(owner)) {
+			cr.add(ownedByRestriction(owner));
+		}
+	}
+
+	private void withFetchSize(Criteria cr, int fetchSize) {
+		if (fetchSize != -1) {
+			cr.setFetchSize(fetchSize);
+		}
+	}
+
+	private void fromOffset(Criteria cr, int offset) {
+		if (offset != -1) {
+			cr.setFirstResult(offset);
+		}
+	}
+
+	private void onlyActive(Criteria cr) {
+		cr.add(onlyActiveRestriction());
+	}
+
+	private void filterOn(Criteria cr, SbiDataSetFilter filter) {
+		if (filter != null) {
+			String typeFilter = filter.getType();
+			String columnFilter = filter.getColumn();
+			String valueFilter = filter.getValue();
+
+			switch (typeFilter) {
+			case "=":
+				cr.add(Restrictions.eq(columnFilter, valueFilter));
+				break;
+			case "like":
+				cr.add(Restrictions.like(columnFilter, "%" + valueFilter + "%").ignoreCase());
+				break;
+			default:
+				logger.warn("Invalid filter type: " + typeFilter);
+				break;
+			}
+		}
+	}
+
+
+
+	private Criterion onlyActiveRestriction() {
+		return Restrictions.eq("active", true);
+	}
+
+	private Criterion notOwnedRestriction(String owner) {
+		return Restrictions.ne("owner", owner);
+	}
+
+	private Criterion ownedByRestriction(String owner) {
+		return Restrictions.eq("owner", owner);
+	}
+
+	private Criterion ownedByRestriction(IEngUserProfile userProfile) {
+		String owner = userProfile.getUserUniqueIdentifier().toString();
+		return Restrictions.eq("owner", owner);
+	}
+
 
 }

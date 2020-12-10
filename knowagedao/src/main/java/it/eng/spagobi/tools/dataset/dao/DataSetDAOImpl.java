@@ -17,8 +17,11 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,6 +29,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -33,6 +38,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1008,6 +1014,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return idToReturn;
 	}
 
+	/**
+	 * @deprecated
+	 * TODO Delete
+	 * DONE
+	 */
+	@Deprecated
 	@Override
 	public List<IDataSet> loadCkanDataSets(UserProfile user) {
 		return loadDataSets(user.getUserId().toString(), true, false, null, "USER", UserUtilities.getDataSetCategoriesByUser(user), "SbiCkanDataSet", false);
@@ -1210,16 +1222,24 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return results;
 	}
 
+	/**
+	 * @deprecated See {@link ISbiDataSetDAO}
+	 * TODO : Delete
+	 * DONE
+	 */
 	@Override
+	@Deprecated
 	public List<IDataSet> loadDataSets() {
 		return loadDataSets(null, null, null, null, null, null, null, true);
 	}
 
-	// ========================================================================================
-	// CREATE operations (Crud)
-	// ========================================================================================
-
+	/**
+	 * @deprecated See {@link ISbiDataSetDAO}
+	 * TODO : Delete
+	 * DONE
+	 */
 	@Override
+	@Deprecated
 	public List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, Set<Domain> categoryList,
 			String implementation, Boolean showDerivedDatasets) {
 
@@ -1360,7 +1380,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return toReturn;
 	}
 
+	/**
+	 * @deprecated See {@link ISbiDataSetDAO}
+	 * TODO : Delete
+	 * DONE
+	 */
 	@Override
+	@Deprecated
 	public List<IDataSet> loadDataSetsByOwner(UserProfile user, Boolean includeOwned, Boolean includePublic, Boolean showDerivedDatasets) {
 		return loadDataSets(user.getUserId().toString(), includeOwned, includePublic, null, null, UserUtilities.getDataSetCategoriesByUser(user), null,
 				showDerivedDatasets);
@@ -1462,18 +1488,36 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return toReturn;
 	}
 
+	/**
+	 * @deprecated
+	 * TODO Delete
+	 * DONE
+	 */
+	@Deprecated
 	@Override
 	public List<IDataSet> loadDataSetsOwnedByUser(UserProfile user, Boolean showDerivedDatasets) {
 		return loadDataSetsByOwner(user, true, false, showDerivedDatasets);
 	}
 
+	/**
+	 * @deprecated See {@link ISbiDataSetDAO}
+	 * TODO : Delete
+	 * DONE
+	 */
 	@Override
+	@Deprecated
 	public List<IDataSet> loadDatasetsSharedWithUser(UserProfile profile, Boolean showDerivedDataset) {
 		return loadDataSets(profile.getUserId().toString(), false, false, "PUBLIC", "USER", UserUtilities.getDataSetCategoriesByUser(profile), null,
 				showDerivedDataset);
 	}
 
+	/**
+	 * @deprecated See {@link ISbiDataSetDAO}
+	 * TODO : Delete
+	 * DONE
+	 */
 	@Override
+	@Deprecated
 	public List<IDataSet> loadEnterpriseDataSets(UserProfile profile) {
 		return loadDataSets(null, null, null, null, "ENTERPRISE", UserUtilities.getDataSetCategoriesByUser(profile), null, true);
 	}
@@ -1718,6 +1762,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return toReturn;
 	}
 
+
 	@Override
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize, String owner) {
 
@@ -1884,9 +1929,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
+	@Deprecated
 	public List<IDataSet> loadFlatDatasets() {
 		return loadDataSets(null, false, false, null, "TECHNICAL", null, "SbiFlatDataSet", true);
-		// "from SbiDataSet h where h.active = ? and h.scope.valueCd ='TECHNICAL' and h.type='SbiFlatDataSet'"
 	}
 
 	@Override
@@ -1974,6 +2019,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
+	@Deprecated
 	public List<IDataSet> loadNotDerivedUserDataSets(UserProfile user) {
 		return loadDataSets(user.getUserId().toString(), true, false, null, "USER", UserUtilities.getDataSetCategoriesByUser(user), null, false);
 	}
@@ -2309,7 +2355,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return dsActiveDetail;
 	}
 
+	/**
+	 * @deprecated See {@link ISbiDataSetDAO}
+	 * TODO : Delete
+	 */
 	@Override
+	@Deprecated
 	public List<IDataSet> loadUserDataSets(String user) {
 		return loadDataSets(user, true, false, null, "USER", null, null, true);
 	}
@@ -2938,5 +2989,59 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			logger.debug("OUT");
 		}
+	}
+
+	@Override
+	public List<IDataSet> loadFilteredDatasetList(int offset, int fetchSize, String owner, String sortByColumn, boolean reverse, List<Integer> tagIds) {
+
+		Session session = null;
+		List<IDataSet> ret = Collections.EMPTY_LIST;
+
+		try {
+			session = getSession();
+
+			Criteria cr = session.createCriteria(SbiDataSet.class);
+
+			if (offset != -1) {
+				cr.setFirstResult(offset);
+			}
+			if (fetchSize != -1) {
+				cr.setFetchSize(fetchSize);
+			}
+
+			if (StringUtils.isNotEmpty(owner)) {
+				cr.add(Restrictions.eq("owner", owner));
+			}
+
+			if (StringUtils.isNotEmpty(sortByColumn)) {
+				Order orderBy = null;
+
+				if (!reverse) {
+					orderBy = Order.asc(sortByColumn);
+				} else {
+					orderBy = Order.desc(sortByColumn);
+				}
+				cr.addOrder(orderBy);
+			}
+
+			if (!tagIds.isEmpty()) {
+				cr.add(Restrictions.in("tag.dsTagId.tagId", tagIds));
+			}
+
+			List<SbiDataSet> listOfSbiDataset = cr.list();
+
+			ret = listOfSbiDataset.stream()
+					.map(e -> DataSetFactory.toDataSet(e, getUserProfile()))
+					.collect(toList());
+
+		} catch(Exception ex) {
+			LogMF.error(logger, "Error getting list of dataset with offset {0}, limit {1}, owner {2}, sorting column {3}, reverse {4} and tags {5}", new Object[] { offset, fetchSize, owner, sortByColumn, reverse, tagIds });
+		}finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+
+		return ret;
 	}
 }

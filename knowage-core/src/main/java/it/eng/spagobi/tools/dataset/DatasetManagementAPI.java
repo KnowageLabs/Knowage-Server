@@ -331,6 +331,11 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	/**
+	 * @deprecated
+	 * TODO ML-DATASOURCE-V3 Delete
+	 */
+	@Deprecated
 	public List<IDataSet> getEnterpriseDataSet() {
 		try {
 			return getDataSetDAO().loadEnterpriseDataSets(getUserProfile());
@@ -341,6 +346,11 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	/**
+	 * @deprecated
+	 * TODO ML-DATASOURCE-V3 Delete
+	 */
+	@Deprecated
 	public List<IDataSet> getOwnedDataSet() {
 		try {
 			return getDataSetDAO().loadDataSetsOwnedByUser(getUserProfile(), true);
@@ -352,6 +362,11 @@ public class DatasetManagementAPI {
 
 	}
 
+	/**
+	 * @deprecated
+	 * TODO ML-DATASOURCE-V3 Delete
+	 */
+	@Deprecated
 	public List<IDataSet> getSharedDataSet() {
 		try {
 			return getDataSetDAO().loadDatasetsSharedWithUser(getUserProfile(), true);
@@ -362,6 +377,11 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	/**
+	 * @deprecated
+	 * TODO ML-DATASOURCE-V3 Delete
+	 */
+	@Deprecated
 	public List<IDataSet> getUncertifiedDataSet() {
 		try {
 			return getDataSetDAO().loadDatasetOwnedAndShared(getUserProfile());
@@ -372,6 +392,11 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	/**
+	 * @deprecated
+	 * TODO ML-DATASOURCE-V3 Delete
+	 */
+	@Deprecated
 	public List<IDataSet> getMyDataDataSet() {
 		try {
 			return getDataSetDAO().loadMyDataDataSets(getUserProfile());
