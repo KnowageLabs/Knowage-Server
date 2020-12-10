@@ -215,7 +215,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			}
 		} catch (Throwable t) {
 			logger.error(t);
-			error.addErrorKey("sbi.document.dao.instatiation.error");
+			error.addErrorKey("sbi.document.saveError");
 		}
 		return id;
 	}
@@ -290,7 +290,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			return document.getId();
 		} catch (Throwable t) {
 			logger.error(t);
-			error.addErrorKey("sbi.document.dao.instatiation.error");
+			error.addErrorKey("sbi.document.saveError");
 		}
 		return null;
 	}

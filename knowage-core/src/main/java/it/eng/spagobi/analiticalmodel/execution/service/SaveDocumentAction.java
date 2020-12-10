@@ -112,7 +112,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		try {
 			documentManagementAPI = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.document.dao.instatiation.error", t);
+			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.document.saveError", t);
 		}
 
 		JSONObject request = parseRequest();
