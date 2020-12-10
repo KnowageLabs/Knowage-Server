@@ -695,7 +695,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    $scope.getTargetDataset = function() {
 	    	for (l in $scope.ngModel.content.layers){
-	    		if ($scope.ngModel.content.layers[l].targetDefault == true){
+	    		if ($scope.isTargetLayer($scope.ngModel.content.layers[l])){
 	    			return $scope.ngModel.content.layers[l];
 	    		}
 	    	}
@@ -1141,10 +1141,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	$scope.doSelection(layerConfig.alias, $scope.props[layerConfig[0].name].value, null, null, props, null, dsId);
 	    }
 
-	    $scope.checkCrossNavigation = function(layerConfig){
-	    	if($scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable) return true;
-	    	return false;
-	    }
+		$scope.checkCrossNavigation = function(){
+			var targetLayer = $scope.getTargetDataset();
+			var selectedLayer = $scope.selectedLayer;
+
+			if(targetLayer
+					&& targetLayer.name == selectedLayer.name
+					&& $scope.ngModel.cross
+					&& $scope.ngModel.cross.cross
+					&& $scope.ngModel.cross.cross.enable) {
+				return true;
+			}
+			return false;
+		}
 
 		var BASE_LAYER_TYPE = "baseLayer";
 		var BACKGROUND_LAYER_TYPE = "backgroundLayer";
@@ -1597,6 +1606,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.mouseWheelZoomInteraction = $scope.createMouseWheelZoomInteraction();
 
 			$scope.map.addInteraction($scope.mouseWheelZoomInteraction);
+		}
+
+		$scope.isTargetLayer = function(layer) {
+			return layer && layer.targetDefault || false;
 		}
 
 		function getDefaultModalSelectionColumn(layerDef) {
