@@ -140,7 +140,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	 * load all datasets - All Data Set Tab
 	 */
 	$scope.loadDatasets = function(){
-		sbiModule_restServices.promiseGet("1.0/datasets/mydata", "")
+		sbiModule_restServices.promiseGet("3.0/datasets/mydata", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.datasets);
 			tagsHandlerService.setAllDS(response.data.root);
@@ -159,7 +159,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
 	$scope.loadMyDatasets = function(){
-		sbiModule_restServices.promiseGet("1.0/datasets/owned", "")
+		sbiModule_restServices.promiseGet("3.0/datasets/owned", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.myDatasets);
 			tagsHandlerService.setOwnedDS(response.data.root);
@@ -178,7 +178,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
 	$scope.loadEnterpriseDatasets = function(){
-		sbiModule_restServices.promiseGet("1.0/datasets/enterprise", "")
+		sbiModule_restServices.promiseGet("3.0/datasets/enterprise", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.enterpriseDatasets);
 			createSourceNameOnDataset($scope.enterpriseDatasets);
@@ -197,7 +197,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
 	$scope.loadSharedDatasets = function(){
-		sbiModule_restServices.promiseGet("1.0/datasets/shared", "")
+		sbiModule_restServices.promiseGet("3.0/datasets/shared", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.sharedDatasets);
 			createSourceNameOnDataset($scope.sharedDatasets);
