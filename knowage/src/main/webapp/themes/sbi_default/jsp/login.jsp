@@ -186,7 +186,7 @@
 		        		
 		        		if(request.getParameter("targetService") != null) {
 		        			%>
-							<input type="hidden" name="<%= "targetService" %>" value="<%= request.getParameter("targetService") %>" />
+							<input type="hidden" name="<%= "targetService" %>" value="<%= StringEscapeUtils.escapeHtml(request.getParameter("targetService")) %>" />
 							<%
 		        		}
 		        		%>	
