@@ -31,11 +31,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class JSONArray extends AbstractJSONArray {
+public class JSONArray extends AbstractJSONArray implements ICommonObject {
 
 	private ArrayNode rootNode;
 
-	ArrayNode getWrappedObject() {
+	@Override
+	public ArrayNode getWrappedObject() {
 		return this.rootNode;
 	}
 
@@ -49,7 +50,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Construct a JSONArray from a source JSON text.
-	 * 
+	 *
 	 * @param source
 	 *            A string that begins with <code>[</code>&nbsp;<small>(left bracket)</small> and ends with <code>]</code>&nbsp;<small>(right bracket)</small>.
 	 * @throws JSONException
@@ -67,7 +68,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Construct a JSONArray from a Collection.
-	 * 
+	 *
 	 * @param collection
 	 *            A Collection.
 	 */
@@ -84,7 +85,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Construct a JSONArray from an array
-	 * 
+	 *
 	 * @throws JSONException
 	 *             If not an array.
 	 */
@@ -115,7 +116,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Get the string associated with an index.
-	 * 
+	 *
 	 * @param index
 	 *            The index must be between 0 and length() - 1.
 	 * @return A string value.
@@ -133,7 +134,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Determine if the value is null.
-	 * 
+	 *
 	 * @param index
 	 *            The index must be between 0 and length() - 1.
 	 * @return true if the value at the index is null, or if there is no value.
@@ -144,7 +145,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Get the optional object value associated with an index.
-	 * 
+	 *
 	 * @param index
 	 *            The index must be between 0 and length() - 1.
 	 * @return An object value, or null if there is no object at that index.
@@ -191,7 +192,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Put a value in the JSONArray, where the value will be a JSONArray which is produced from a Collection.
-	 * 
+	 *
 	 * @param value
 	 *            A Collection value.
 	 * @return this.
@@ -242,7 +243,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Put a value in the JSONArray, where the value will be a JSONObject which is produced from a Map.
-	 * 
+	 *
 	 * @param value
 	 *            A Map value.
 	 * @return this.
@@ -255,7 +256,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Append an object value. This increases the array's length by one.
-	 * 
+	 *
 	 * @param value
 	 *            An object value. The value should be a Boolean, Double, Integer, JSONArray, JSONObject, Long, or String, or the JSONObject.NULL object.
 	 * @return this.
@@ -301,7 +302,7 @@ public class JSONArray extends AbstractJSONArray {
 	/**
 	 * Put or replace a boolean value in the JSONArray. If the index is greater than the length of the JSONArray, then null elements will be added as necessary
 	 * to pad it out.
-	 * 
+	 *
 	 * @param index
 	 *            The subscript.
 	 * @param value
@@ -317,7 +318,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Put a value in the JSONArray, where the value will be a JSONArray which is produced from a Collection.
-	 * 
+	 *
 	 * @param index
 	 *            The subscript.
 	 * @param value
@@ -333,7 +334,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Put or replace a double value. If the index is greater than the length of the JSONArray, then null elements will be added as necessary to pad it out.
-	 * 
+	 *
 	 * @param index
 	 *            The subscript.
 	 * @param value
@@ -349,7 +350,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Put or replace an int value. If the index is greater than the length of the JSONArray, then null elements will be added as necessary to pad it out.
-	 * 
+	 *
 	 * @param index
 	 *            The subscript.
 	 * @param value
@@ -365,7 +366,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Put or replace a long value. If the index is greater than the length of the JSONArray, then null elements will be added as necessary to pad it out.
-	 * 
+	 *
 	 * @param index
 	 *            The subscript.
 	 * @param value
@@ -381,7 +382,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Put a value in the JSONArray, where the value will be a JSONObject that is produced from a Map.
-	 * 
+	 *
 	 * @param index
 	 *            The subscript.
 	 * @param value
@@ -398,7 +399,7 @@ public class JSONArray extends AbstractJSONArray {
 	/**
 	 * Put or replace an object value in the JSONArray. If the index is greater than the length of the JSONArray, then null elements will be added as necessary
 	 * to pad it out.
-	 * 
+	 *
 	 * @param index
 	 *            The subscript.
 	 * @param value
@@ -461,7 +462,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Remove an index and close the hole.
-	 * 
+	 *
 	 * @param index
 	 *            The index of the element to be removed.
 	 * @return The value that was associated with the index, or null if there was no value.
@@ -475,7 +476,7 @@ public class JSONArray extends AbstractJSONArray {
 	/**
 	 * Make a string from the contents of this JSONArray. The <code>separator</code> string is inserted between each element. Warning: This method assumes that
 	 * the data structure is acyclical.
-	 * 
+	 *
 	 * @param separator
 	 *            A string that will be inserted between the elements.
 	 * @return a string.
@@ -499,7 +500,7 @@ public class JSONArray extends AbstractJSONArray {
 
 	/**
 	 * Make a prettyprinted JSON text of this JSONArray. Warning: This method assumes that the data structure is acyclical.
-	 * 
+	 *
 	 * @param indentFactor
 	 *            The number of spaces to add to each level of indentation.
 	 * @return a printable, displayable, transmittable representation of the object, beginning with <code>[</code>&nbsp;<small>(left bracket)</small> and ending
