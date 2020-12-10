@@ -52,4 +52,12 @@ public class Assert {
 		assertNotNull(input, message);
 		assertNotEmpty(input, message);
 	}
+
+	public static void assertType(Object obj, Class<?> clazz, String message) {
+		assertNotNull(obj, "The obj param cannot be null");
+
+		if (!obj.getClass().equals(clazz)) {
+			throw new AssertionException(message);
+		}
+	}
 }
