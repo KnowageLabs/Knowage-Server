@@ -1423,7 +1423,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				// with the following condition we are permitting to multi-dataset widgets to receive
 				// data when an association is triggered.
 				if(label){
-					if(tmpDS.label === label) return tempDS;
+					if(tmpDS.label === label) return tmpDS;
 				}else return tmpDS;
 			}
 		} else{
