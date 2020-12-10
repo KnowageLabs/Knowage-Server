@@ -1136,7 +1136,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var targetLayer = $scope.getTargetDataset();
 			var selectedLayer = $scope.selectedLayer;
 
-			if(targetLayer
+			if(selectedLayer
+					&& targetLayer
 					&& targetLayer.name == selectedLayer.name
 					&& $scope.ngModel.cross
 					&& $scope.ngModel.cross.cross
