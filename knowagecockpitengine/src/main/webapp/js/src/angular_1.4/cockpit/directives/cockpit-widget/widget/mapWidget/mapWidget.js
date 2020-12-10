@@ -1131,11 +1131,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    }
 
-	    $scope.selectPropValue = function(dsId, prop, modalSelectionColumn){
-	    	if (!modalSelectionColumn && prop.fieldType !== "MEASURE"){
-	    		$scope.doSelection(prop.alias, $scope.props[prop.name].value, null, null, $scope.props, null, dsId);
-	    	}
-	    }
+		/**
+		 * @deprecated Not used
+		 */
+		$scope.selectPropValue = function(dsId, prop, modalSelectionColumn){
+			if (!modalSelectionColumn && prop.fieldType !== "MEASURE"){
+				$scope.doSelection(prop.alias, $scope.props[prop.name].value, null, null, $scope.props, null, dsId);
+			}
+		}
 
 	    $scope.crossNavigate = function(dsId,layerConfig,props) {
 	    	$scope.doSelection(layerConfig.alias, $scope.props[layerConfig[0].name].value, null, null, props, null, dsId);
