@@ -1355,60 +1355,65 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		 	},
 
-		 	// Clone the dataset.
-		 	{
-		 		label: $scope.translate.load("sbi.ds.clone.tooltip"),
-			 	icon:'fa fa-files-o',
-			 	backgroundColor:'transparent',
+			// Clone the dataset.
+			{
+				label: $scope.translate.load("sbi.ds.clone.tooltip"),
+				icon:'fa fa-files-o',
+				backgroundColor:'transparent',
 
-			 	action: function(item,event) {
+				action: function(item,event) {
 
-					if (item.id) {
+					sbiModule_restServices.promiseGet('1.0/datasets', item.label).then(function(response) {
 
-						if ($scope.datasetsListTemp.length==$scope.datasetsListPersisted.length+1) {
+						var item = response.data[0];
 
-							if ($scope.dirtyForm) {
+						if (item.id) {
 
-					 				var confirm = $mdDialog.confirm()
-									        .title($scope.translate.load("sbi.catalogues.generic.modify"))
-									        .targetEvent(event)
-									        .textContent($scope.translate.load("sbi.catalogues.generic.modify.msg"))
-									        .ariaLabel("Losing the changed and not saved data")
-									        .ok($scope.translate.load("sbi.general.yes"))
-									        .cancel($scope.translate.load("sbi.general.No"));
+							if ($scope.datasetsListTemp.length==$scope.datasetsListPersisted.length+1) {
 
-									$mdDialog
-										.show(confirm)
-										.then(
-												function() {
-													$scope.setFormNotDirty();
-													$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
-													cloningDataset(item);
-//													console.log("prosao clone 3");
-										 		},
-										 		function() {
-										 			console.log("keep changes");
-										 		}
-											);
+								if ($scope.dirtyForm) {
 
-					 			}
-					 			else {
-					 				$scope.setFormNotDirty();
-					 				$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
-					 				cloningDataset(item);
-					 			}
+										var confirm = $mdDialog.confirm()
+										        .title($scope.translate.load("sbi.catalogues.generic.modify"))
+										        .targetEvent(event)
+										        .textContent($scope.translate.load("sbi.catalogues.generic.modify.msg"))
+										        .ariaLabel("Losing the changed and not saved data")
+										        .ok($scope.translate.load("sbi.general.yes"))
+										        .cancel($scope.translate.load("sbi.general.No"));
 
-					 		}
+										$mdDialog
+											.show(confirm)
+											.then(
+													function() {
+														$scope.setFormNotDirty();
+														$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
+														cloningDataset(item);
+	//													console.log("prosao clone 3");
+													},
+													function() {
+														console.log("keep changes");
+													}
+												);
 
-						else {
-							$scope.setFormNotDirty();
-							$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
-							cloningDataset(item);
+									}
+									else {
+										$scope.setFormNotDirty();
+										$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
+										cloningDataset(item);
+									}
+
+								}
+
+							else {
+								$scope.setFormNotDirty();
+								$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
+								cloningDataset(item);
+							}
+
 						}
-
-					}
-			 	}
-		 	}
+					});
+				}
+			}
 
 	 ];
 
