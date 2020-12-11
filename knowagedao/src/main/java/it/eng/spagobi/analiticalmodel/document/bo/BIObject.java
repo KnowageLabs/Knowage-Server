@@ -61,14 +61,14 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	// BIOBJ_ID NUMBER N Business Intelligence Object identifier
 	private Integer id = null;
 
-	// ENGINE_ID NUMBER N Engine idenitifier (FK)
+	// ENGINE_ID NUMBER N Engine identifier (FK)
 	@NotNull
 	private Engine engine = null;
 
-	// DATA_SOURCE_ID NUMBER N DataSource idenitifier (FK)
+	// DATA_SOURCE_ID NUMBER N DataSource identifier (FK)
 	private Integer dataSourceId = null;
 
-	// DATA_SOURCE_ID NUMBER N DataSource idenitifier (FK)
+	// DATA_SOURCE_ID NUMBER N DataSource identifier (FK)
 	private Integer dataSetId = null;
 
 	// DESCR VARCHAR2(128) Y BI Object description
@@ -125,7 +125,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	private String biObjectTypeCode = null;
 
 	private List<BIObjectParameter> biObjectParameters = null;
-	
+
 	private List<BIMetaModelParameter> biBIMetaModelParameter = null;
 
 	private String path = null;
@@ -895,6 +895,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	public void setDrivers(List<BIObjectParameter> drivers) {
 		this.biObjectParameters = drivers;
 	}
+
 	@Override
 	public List<BIMetaModelParameter> getMetamodelDrivers() {
 		return biBIMetaModelParameter;
