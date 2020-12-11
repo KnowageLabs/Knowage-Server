@@ -830,8 +830,9 @@
 				preserveScope : true,
 				templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/glossary/commons/templates/dialog-new-parameters-document-execution.html',
 				controllerAs : 'vpCtrl',
-				controller : function($mdDialog) {
+				controller : function($mdDialog, kn_regex) {
 					var vpctl = this;
+					vpctl.regex = kn_regex;
 					vpctl.headerTitle = sbiModule_translate.load("sbi.execution.executionpage.toolbar.saveas");
 					vpctl.name = sbiModule_translate.load("sbi.execution.viewpoints.name");
 					vpctl.description = sbiModule_translate.load("sbi.execution.viewpoints.description");
