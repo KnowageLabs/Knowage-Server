@@ -792,7 +792,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			var allParameters = $scope.selectedDataset.pars;
 			for (var i=0; i< allParameters.length; i++) {
 				var currPar = allParameters[i];
-				parameters[currPar.name] = currPar.defaultValue;
+				if (currPar.value && currPar.value != "") parameters[currPar.name] = currPar.value;
+				else parameters[currPar.name] = currPar.defaultValue;
 			}
 			return parameters;
 		}

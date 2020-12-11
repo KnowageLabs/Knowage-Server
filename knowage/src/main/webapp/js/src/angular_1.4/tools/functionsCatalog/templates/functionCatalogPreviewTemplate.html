@@ -51,23 +51,13 @@
 			        		</div>
 			        	</md-card-content>
 			    	</md-card>
-			    	<md-card ng-if="selectedDataset && selectedDataset.pars.length > 0">
-			        	<md-card-content class="noPadding">
-			   		   		<md-sidenav>
-						        <md-toolbar class="md-theme-indigo">
-						          <h1 class="md-toolbar-tools">Disabled Close Events</h1>
-						        </md-toolbar>
-						
-						        <md-content layout-margin="">
-						          <p>
-						            This sidenav is showing the backdrop, but users can't close the
-						             sidenav by clicking on the backdrop or pressing the 'Escape' key.
-						          </p>
-						          <md-button ng-click="toggleSidenav()" class="md-accent">
-						            Close this Sidenav
-						          </md-button>
-						        </md-content>			
-					      </md-sidenav>
+			    	<md-card ng-if="selectedDataset && selectedDataset.pars.length > 0" flex="20">
+			        	<md-card-content class="noPadding"> 
+			        		<md-subheader> {{::translate.load('sbi.functionscatalog.functionpreview.parameters.cardheader')}} </md-subheader>
+				 			<md-input-container ng-repeat="par in selectedDataset.pars">
+							    <label>{{par.name}}</label>
+							    <input ng-model="par.value" value="par.defaultValue" type="text"/>
+							</md-input-container>
 			        	</md-card-content>
 			    	</md-card>
 			    </div>    	
