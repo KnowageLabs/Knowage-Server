@@ -18,9 +18,9 @@
 
 (function(){
 	angular.module("cockpitModule")
-		.service("cockpitModule_exportWidgetService", ['$q', '$httpParamSerializer', '$mdToast', 'sbiModule_config', 'sbiModule_user', 'sbiModule_download', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_messaging', 'sbiModule_cockpitDocument', 'cockpitModule_datasetServices', 'cockpitModule_widgetSelection','cockpitModule_properties', exportWidgetService]);
+		.service("cockpitModule_exportWidgetService", ['$q', '$httpParamSerializer', '$mdToast', 'sbiModule_config', 'cockpitModule_analyticalDrivers', 'sbiModule_user', 'sbiModule_download', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_messaging', 'sbiModule_cockpitDocument', 'cockpitModule_datasetServices', 'cockpitModule_widgetSelection','cockpitModule_properties', exportWidgetService]);
 
-	function exportWidgetService ($q, $httpParamSerializer, $mdToast, sbiModule_config, sbiModule_user, sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_cockpitDocument, cockpitModule_datasetServices, cockpitModule_widgetSelection, cockpitModule_properties) {
+	function exportWidgetService ($q, $httpParamSerializer, $mdToast, sbiModule_config, cockpitModule_analyticalDrivers, sbiModule_user, sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_cockpitDocument, cockpitModule_datasetServices, cockpitModule_widgetSelection, cockpitModule_properties) {
 		var objToReturn = {};
 
 		objToReturn.exportWidgetToExcel = function (type, widget, options) {
@@ -84,6 +84,7 @@
 				}
 			}
 
+			var drivers = formatDrivers(cockpitModule_analyticalDrivers);
 			if (widget.type == "map") {
 				requestUrl.COCKPIT_SELECTIONS = [];
 				for (var k=0; k<widget.datasetId.length; k++) {
@@ -107,6 +108,7 @@
 					requestUrl.COCKPIT_SELECTIONS[k].datasetId = dsId;
 					requestUrl.COCKPIT_SELECTIONS[k].aggregations = aggregation;
 					requestUrl.COCKPIT_SELECTIONS[k].parameters = paramsToSend;
+					requestUrl.COCKPIT_SELECTIONS[k].drivers = drivers;
 					requestUrl.COCKPIT_SELECTIONS[k].selections = selections;
 					requestUrl.COCKPIT_VARIABLES = cockpitModule_properties.VARIABLES;
 					requestUrl.options = options;
@@ -131,6 +133,7 @@
 				requestUrl.COCKPIT_SELECTIONS = {};
 				requestUrl.COCKPIT_SELECTIONS.aggregations = aggregation;
 				requestUrl.COCKPIT_SELECTIONS.parameters = paramsToSend;
+				requestUrl.COCKPIT_SELECTIONS.drivers = drivers;
 				requestUrl.COCKPIT_SELECTIONS.selections = selections;
 				requestUrl.COCKPIT_VARIABLES = cockpitModule_properties.VARIABLES;
 				requestUrl.options = options;
@@ -138,6 +141,17 @@
 
 			deferred.resolve(requestUrl);
 			return deferred.promise;
+		}
+
+		var formatDrivers = function (analyticalDrivers) {
+			var toReturn = {};
+			for (var key in analyticalDrivers) {
+				if (key.endsWith("_description")) continue;
+				var key_description = key + "_description";
+				toReturn[key] = [{'value': analyticalDrivers[key], 'description': analyticalDrivers[key_description]}];
+				var foo = 0;
+			}
+			return toReturn;
 		}
 
 		var cleanAggregation = function (widget, aggregation) {

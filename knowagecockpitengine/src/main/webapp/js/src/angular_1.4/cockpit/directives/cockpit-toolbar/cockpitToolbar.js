@@ -37,7 +37,7 @@ angular.module('cockpitModule')
 	}
 });
 
-function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCommunicationService,cockpitModule_datasetServices,cockpitModule_widgetServices,cockpitModule_templateServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,sbiModule_messaging,sbiModule_download,sbiModule_user,sbiModule_cockpitDocument,sbiModule_config,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
+function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCommunicationService,cockpitModule_datasetServices,cockpitModule_analyticalDrivers,cockpitModule_widgetServices,cockpitModule_templateServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,sbiModule_messaging,sbiModule_download,sbiModule_user,sbiModule_cockpitDocument,sbiModule_config,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
 	$scope.translate = sbiModule_translate;
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
@@ -266,6 +266,8 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 					COCKPIT_SELECTIONS: [],
 					COCKPIT_VARIABLES: []
 			}
+
+			var drivers = formatDrivers(cockpitModule_analyticalDrivers);
 			for(i=0; i<cockpitWidgets.length; i++) {
 				var widget = cockpitWidgets[i];
 				requestUrl.widget[i] = widget;
@@ -308,6 +310,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 						requestUrl.COCKPIT_SELECTIONS[i][k] = {};
 						requestUrl.COCKPIT_SELECTIONS[i][k].aggregations = aggregation;
 						requestUrl.COCKPIT_SELECTIONS[i][k].parameters = paramsToSend;
+						requestUrl.COCKPIT_SELECTIONS[i][k].drivers = drivers;
 						requestUrl.COCKPIT_SELECTIONS[i][k].selections = selections;
 					}
 					requestUrl.COCKPIT_VARIABLES[i] = cockpitModule_properties.VARIABLES;
@@ -329,6 +332,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 					var paramsToSend = angular.fromJson(parametersString);
 					requestUrl.COCKPIT_SELECTIONS[i].aggregations = aggregation;
 					requestUrl.COCKPIT_SELECTIONS[i].parameters = paramsToSend;
+					requestUrl.COCKPIT_SELECTIONS[i].drivers = drivers;
 					requestUrl.COCKPIT_SELECTIONS[i].selections = selections;
 					requestUrl.COCKPIT_VARIABLES[i] = cockpitModule_properties.VARIABLES;
 				}
@@ -353,6 +357,17 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting.error"), 'Error');
 			});
 		})
+	}
+
+	var formatDrivers = function (analyticalDrivers) {
+		var toReturn = {};
+		for (var key in analyticalDrivers) {
+			if (key.endsWith("_description")) continue;
+			var key_description = key + "_description";
+			toReturn[key] = [{'value': analyticalDrivers[key], 'description': analyticalDrivers[key_description]}];
+			var foo = 0;
+		}
+		return toReturn;
 	}
 
 	$scope.exportPdf = function(){
