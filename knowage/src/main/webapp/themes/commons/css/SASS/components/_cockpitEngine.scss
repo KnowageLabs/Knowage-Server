@@ -171,6 +171,16 @@
 			top: 8px;
 			right: 8px;
 		}
+		
+		.ol-tooltip {
+			position: absolute;
+			background-color: rgba(0,0,0,0.6);
+			color: white;
+			padding:4px;
+			font-size: .6rem;
+			border-radius:4px;
+			transform: translateY(-100%);
+		}
 
 		md-sidenav { 
 			transition: 0.2s linear all;

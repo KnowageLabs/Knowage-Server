@@ -91,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var dataset = cockpitModule_datasetServices.getAvaiableDatasetById($scope.ngModel.dataset.dsId);
 			var columnGroups = {};
 			if($scope.ngModel.settings.indexColumn){
-				columns.push({headerName:"",field:"",cellRenderer:indexCellRenderer,sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false});
+				columns.push({headerName:"",field:"",cellRenderer:indexCellRenderer,sortable:false,filter:false,width: 50,suppressSizeToFit:true, tooltipValueGetter: false, pinned:'left'});
 			}
 			for(var c in $scope.ngModel.content.columnSelectedOfDataset){
 				for(var f in fields){
@@ -593,7 +593,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if($scope.ngModel.settings.norows.hide) $scope.advancedTableGrid.api.hideOverlay();
 					if($scope.ngModel.settings.norows.message) $scope.advancedTableGrid.localeText.noRowsToShow = $scope.ngModel.settings.norows.message;
 				}
-				if(!$scope.ngModel.settings.pagination.enabled) $scope.advancedTableGrid.api.paginationSetPageSize($scope.totalRows);
 				if($scope.ngModel.settings.pagination.enabled && $scope.ngModel.settings.pagination.frontEnd && $scope.ngModel.settings.pagination.itemsNumber) $scope.advancedTableGrid.api.paginationSetPageSize($scope.ngModel.settings.pagination.itemsNumber);
 				resizeColumns();
 				$scope.hideWidgetSpinner();

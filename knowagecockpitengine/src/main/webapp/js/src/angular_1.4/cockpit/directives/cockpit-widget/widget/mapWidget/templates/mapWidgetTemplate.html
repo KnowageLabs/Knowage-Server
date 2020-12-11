@@ -7,7 +7,10 @@
 		<ng-include src="getTemplateUrl('mapWidgetLegendPanel')"></ng-include>
 	</div>
 	
-	<div id="popup-{{ngModel.id}}" class="ol-popup" > 
+	<div id="tooltip-{{ngModel.id}}" class="ol-tooltip">
+		<span>{{ tooltip }}</span>
+	</div> 
+	<div id="popup-{{ngModel.id}}" class="ol-popup" style="visibility: hidden;"> 
 		<div href="#" id="popup-closer-{{ngModel.id}}" class="ol-popup-closer">  
 			<i class="fa fa-times"></i>
 		</div> 
@@ -17,11 +20,11 @@
 				<li ng-repeat="prop in layerConfig track by $index" ng-if="prop.properties.showDetails">
 					<p>
 						<strong ng-style="ngModel.style.tooltip.text">{{ prop.aliasToShow | i18n}}:</strong>
-						<span ng-style="ngModel.style.tooltip.text" ng-class="{'clickable' : prop.fieldType=='ATTRIBUTE'}" ng-cloak ng-click="selectPropValue(layerConfig.dsId, prop, layerConfig.modalSelectionColumn)">{{ getPropValue(prop) }}</span>
+						<span ng-style="ngModel.style.tooltip.text" ng-cloak >{{ getPropValue(prop) }}</span>
 					</p>
 					<p ng-if="props[prop.name].showWarning" class="warningMessage"><i class='fa fa-warning'></i> {{translate.load('sbi.cockpit.map.alarmrange')}}</p>
 				</li>
-				<li ng-if="checkCrossNavigation(layerConfig,props)">
+				<li ng-if="checkCrossNavigation()">
 					<span class="crossNavigationLink" ng-click="crossNavigate(layerConfig.dsId,layerConfig,props)">{{(ngModel.cross && ngModel.cross.cross && ngModel.cross.cross.label) || translate.load('sbi.cockpit.map.gotodetail')}}</span>
 				</li>
 			</ul>

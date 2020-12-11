@@ -93,9 +93,9 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		return new datastore(newData);
 	},
 
-	datastore.prototype.filter = function(filterObject){
+	datastore.prototype.filter = function(filterObject, strict){
 		var newData = angular.copy(this.data);
-		newData.rows = $filter('filter')(newData.rows, filterObject);
+		newData.rows = $filter('filter')(newData.rows, filterObject, strict);
 		return new datastore(newData);
 	}
 

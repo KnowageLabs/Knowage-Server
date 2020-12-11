@@ -50,7 +50,7 @@ function mapWidgetEditControllerFunction(
 
 	$scope.setTargetLayer = function(layer){
 		for(var t in $scope.newModel.content.layers){
-			if($scope.newModel.content.layers[t].targetDefault && $scope.newModel.content.layers[t].dsId != layer.dsId){
+			if($scope.isTargetLayer($scope.newModel.content.layers[t]) && $scope.newModel.content.layers[t].dsId != layer.dsId){
 				$scope.newModel.content.layers[t].targetDefault = false;
 			}
 		}
@@ -173,7 +173,14 @@ function mapWidgetEditControllerFunction(
 	}
 
 	$scope.deleteColumn = function(layer,column){
-		layer.splice(layer.indexOf(column),1);
+		var columns = layer.content.columnSelectedOfDataset;
+		columns.splice(columns.indexOf(column),1);
+
+		// Reset tooltip, if needed
+		if (column.name == layer.tooltipColumn) {
+			layer.showTooltip = false;
+			layer.tooltipColumn = undefined;
+		}
 	}
 
 	$scope.deleteLayer = function(layer){
@@ -447,7 +454,7 @@ function mapWidgetEditControllerFunction(
 			// $scope.newModel.dataset.dsId = [];
 			for (var k in $scope.newModel.content.layers){
 				// $scope.newModel.dataset.dsId.push($scope.newModel.content.layers[k].dsId);
-				if($scope.newModel.content.layers[k].targetDefault){
+				if($scope.isTargetLayer($scope.newModel.content.layers[k])){
 					$scope.newModel.dataset.dsId = $scope.newModel.content.layers[k].dsId;
 				}
 			}
@@ -661,6 +668,24 @@ function mapWidgetEditControllerFunction(
 	$scope.$watch("newModel.content.layers", function() {
 		$scope.refreshDataForFilters();
 	}, true);
+
+	$scope.isTargetLayer = function(layer) {
+		return layer && layer.targetDefault || false;
+	}
+
+	$scope.setTooltipCol = function(layer, column) {
+		var columnsList = layer.content.columnSelectedOfDataset;
+		layer.showTooltip = column.properties.showTooltip;
+		layer.tooltipColumn = (column.properties.showTooltip) ? column.name : undefined;
+
+		for(var i in columnsList){
+			if(columnsList[i].name !== column.name){
+				columnsList[i].properties.showTooltip = false;
+			}
+		}
+	}
+
+
 
 	function getSizeFromFieldType(column) {
 		var fieldType = column.value.fieldType;

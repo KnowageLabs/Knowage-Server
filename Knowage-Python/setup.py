@@ -12,7 +12,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="knowage-python",
-    version="7.2.2",
+    version="7.2.12",
     license='AGPL v3',
     author="Marco Balestri",
     author_email="marco.balestri@eng.it",
@@ -30,5 +30,5 @@ setuptools.setup(
         "License :: OSI Approved :: GNU Affero General Public License v3",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.7',
+    python_requires='>=3.6.8',
 )

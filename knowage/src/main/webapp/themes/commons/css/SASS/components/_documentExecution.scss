@@ -297,11 +297,9 @@
 				}
 				md-icon {
 					font: normal normal normal 14px/1 'FontAwesome';
-					svg {
-						display: none;
-					}
 					&:before {
 						content: '\f133';
+						display: none;
 					}
 				}
 			}

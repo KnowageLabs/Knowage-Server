@@ -160,6 +160,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//ol objects
 		$scope.popupContainer; 		//popup detail
 		$scope.closer; 				//popup detail closer icon
+		$scope.tooltipContainer;
 		$scope.layers = [];  		//layers with features
 		$scope.values = {};  		//layers with values
 		$scope.savedValues = {};
@@ -557,40 +558,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		}
 
-	    $scope.createLayerWithData = function(label, data, isCluster, isHeatmap){
-	    	//prepare object with metadata for desiderata dataset columns
-	    	var geoColumn, selectedMeasure = null;
-    		var columnsForData, isHeatmap;
-    		var layerID = $scope.ngModel.id + "|" + label;
-    		var layerDef =  $scope.configs[layerID];
+		$scope.createLayerWithData = function(label, data, isCluster, isHeatmap){
+			//prepare object with metadata for desiderata dataset columns
+			var geoColumn, selectedMeasure = null;
+			var columnsForData, isHeatmap;
+			var layerID = $scope.ngModel.id + "|" + label;
+			var layerDef =  $scope.configs[layerID];
 
-    		if (!layerDef) return;
+			if (!layerDef) return;
 
 			columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
 
-    		//remove old layer
-    		var previousLayer = $scope.getLayerByName(label);
-    		if (previousLayer) {
-    			$scope.map.removeLayer(previousLayer); //ol obj
-    		}
-    		$scope.removeLayer(label);
+			//remove old layer
+			var previousLayer = $scope.getLayerByName(label);
+			if (previousLayer) {
+				$scope.map.removeLayer(previousLayer); //ol obj
+			}
+			$scope.removeLayer(label);
 
-    		for (f in columnsForData){
-    			var tmpField = columnsForData[f];
-    			if (tmpField && tmpField.fieldType == "SPATIAL_ATTRIBUTE"){
-    				geoColumn = tmpField.name;
-    				break;
-    			}
-    		}
+			for (f in columnsForData){
+				var tmpField = columnsForData[f];
+				if (tmpField && tmpField.fieldType == "SPATIAL_ATTRIBUTE"){
+					geoColumn = tmpField.name;
+					break;
+				}
+			}
 
-    		layerDef.layerID = layerID;
-    		var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data);
-    		if (featuresSource == null){
-    			//creates a fake layer for internal object (becasue isn't the first loop anymore)
-    			layer = {};
-    			layer.name = layerDef.name;
-    			layer.dsId = layerDef.dsId;
-    			$scope.addLayer(layerDef.name, layer);	//add layer to internal object
+			layerDef.layerID = layerID;
+			var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data);
+			if (featuresSource == null){
+				//creates a fake layer for internal object (becasue isn't the first loop anymore)
+				layer = {};
+				layer.name = layerDef.name;
+				layer.dsId = layerDef.dsId;
+				$scope.addLayer(layerDef.name, layer);	//add layer to internal object
 				return;
 			}
 
@@ -601,21 +602,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if (isCluster) {
 				var clusterSource = new ol.source.Cluster({source: featuresSource
 														  });
-				layer =   new ol.layer.Vector({source: clusterSource,
+				layer = new ol.layer.Vector({source: clusterSource,
 										  	  style: cockpitModule_mapThematizerServices.layerStyle
 										});
 			} else if (isHeatmap) {
 				layer = new ol.layer.Heatmap({source: featuresSource,
-										      blur: layerDef.heatmapConf.blur,
-										      radius: layerDef.heatmapConf.radius,
-										      weight: cockpitModule_mapThematizerServices.setHeatmapWeight
-//										      gradient:['#00f', '#0ff', '#0f0', '#ff0', '#ff8d10', '#ff10f5', '#f00', '#00f', '#0ff', '#0f0', '#ff0', '#ff8d10', '#ff10f5', '#f00']
-										     });
+												blur: layerDef.heatmapConf.blur,
+												radius: layerDef.heatmapConf.radius,
+												weight: cockpitModule_mapThematizerServices.setHeatmapWeight
+											});
 			} else {
 				layer = new ol.layer.Vector({source: featuresSource,
-	    									 style: cockpitModule_mapThematizerServices.layerStyle
-	    									});
+											 style: cockpitModule_mapThematizerServices.layerStyle
+											});
 			}
+
+			// Reference to the original layer
+			layer.set("originalLayer", layerDef);
 
 			//add decoration to layer element
 			layer.name = layerDef.name;
@@ -686,7 +689,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	    $scope.getTargetDataset = function() {
 	    	for (l in $scope.ngModel.content.layers){
-	    		if ($scope.ngModel.content.layers[l].targetDefault == true){
+	    		if ($scope.isTargetLayer($scope.ngModel.content.layers[l])){
 	    			return $scope.ngModel.content.layers[l];
 	    		}
 	    	}
@@ -722,12 +725,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             });
 	    }
 
-		$scope.addMapEvents = function (overlay){
+		$scope.addMapEvents = function (){
 			if ($scope.closer){
 				$scope.closer.onclick = function(){
-					overlay.setPosition(undefined);
-					  if ($scope.closer && $scope.closer.blur) $scope.closer.blur();
-					  return false;
+					$scope.popupOverlay.setPosition(undefined);
+					if ($scope.closer && $scope.closer.blur) $scope.closer.blur();
+					return false;
 				}
 			}
 			$scope.map.on('singleclick', function(evt) {
@@ -779,12 +782,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 					var geometry = $scope.selectedFeature.getGeometry();
 					var coordinate = evt.coordinate;
-					overlay.setPosition(coordinate);
+					$scope.popupOverlay.setPosition(coordinate);
+					$scope.popupContainer.style["visibility"] = 'visible';
 				}
 
 				//when no feature is clicked, close the details popup
 				if ($scope.selectedFeature == undefined) {
 					$scope.closer.onclick();
+					$scope.popupContainer.style["visibility"] = 'hidden';
 					return;
 				}
 
@@ -815,20 +820,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			});
 
-    		// change mouse cursor when over marker
-    	      $scope.map.on('pointermove', function(e) {
-    	    	  var pixel = $scope.map.getEventPixel(e.originalEvent);
-    	    	  var hit = $scope.map.hasFeatureAtPixel(pixel);
-    	    	  $scope.map.getViewport().style.cursor = hit ? 'pointer' : '';
-    	      });
+		}
 
-    		$scope.map.on('moveend', function(evt){
-    			var view = $scope.map.getView();
-    			if (!$scope.ngModel.content.currentView) $scope.ngModel.content.currentView = {};
-    			$scope.ngModel.content.currentView.center = view.getCenter();
-    			$scope.ngModel.content.currentView.zoom = view.getZoom();
-    		});
-	    }
+		$scope.addMapEventForTooltip = function (){
+			$scope.map.on('pointermove', function(evt) {
+				var featureFounded = false;
+				var selectedLayer = undefined;
+				var selectedFeature = undefined;
+				var props = {};
+
+				/*
+				 * This function does exactly what it says: it cycles
+				 * through EVERY feature of EVERY layer at specific
+				 * pixel. If the z-index value of the layer is correct
+				 * we can just stop at the first layer (first call).
+				 */
+				evt.map.forEachFeatureAtPixel(evt.pixel,
+					function(feature, layer) {
+						if (!featureFounded) {
+							selectedLayer = layer;
+							selectedFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
+							props = selectedFeature.getProperties();
+							featureFounded = true;
+						}
+				});
+
+				var coordinate = evt.coordinate;
+				if (selectedLayer) {
+					var originalLayer = selectedLayer.get("originalLayer");
+					if (originalLayer.showTooltip) {
+						var tooltipCol = originalLayer.tooltipColumn;
+						var prop = $scope.getColumnSelectedOfDataset(selectedLayer.dsId)
+							.find(function(e) { return tooltipCol == e.name; });
+						var value = $scope.getPropValueFromProps(props, prop);
+
+						$scope.tooltipOverlay.setPosition(coordinate);
+						$scope.tooltipContainer.style["visibility"] = 'visible';
+						$scope.tooltip = value || "n.d.";
+					}
+				} else {
+					$scope.tooltipContainer.style["visibility"] = 'hidden';
+				}
+
+				$scope.$apply();
+			});
+		}
 
 	    $scope.isDisplayableProp = function (p, config){
 	    	for (c in config){
@@ -929,11 +965,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if (!$scope.popupContainer){
 				$scope.popupContainer = document.getElementById('popup-' + $scope.ngModel.id);
 				$scope.closer = document.getElementById('popup-closer-' +$scope.ngModel.id);
+
+				$scope.tooltipContainer = document.getElementById('tooltip-' + $scope.ngModel.id);
 			}
 
 			//create overlayers (popup..)
-			var overlay = new ol.Overlay({
+			$scope.popupOverlay = new ol.Overlay({
 				element: $scope.popupContainer,
+				autoPan: true,
+				autoPanAnimation: {
+					duration: 250
+				}
+			});
+
+			$scope.tooltipOverlay = new ol.Overlay({
+				element: $scope.tooltipContainer,
 				autoPan: true,
 				autoPanAnimation: {
 					duration: 250
@@ -949,7 +995,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.map = new ol.Map({
 				target: 'map-' + $scope.ngModel.id,
 				layers: layers,
-				overlays: [overlay],
+				overlays: [$scope.popupOverlay, $scope.tooltipOverlay],
 				controls: [],
 				interactions: [
 					new ol.interaction.DragPan(),
@@ -970,7 +1016,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			//add events methods
 			$scope.addViewEvents();
-			$scope.addMapEvents(overlay);
+			$scope.addMapEvents();
+			$scope.addMapEventForTooltip();
 			$scope.loading = false;
 			$timeout(function(){
 				$scope.widgetIsInit=true;
@@ -1122,18 +1169,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	}
 	    }
 
-	    $scope.selectPropValue = function(dsId, prop, modalSelectionColumn){
-	    	if (!modalSelectionColumn && prop.fieldType !== "MEASURE"){
-	    		$scope.doSelection(prop.alias, $scope.props[prop.name].value, null, null, $scope.props, null, dsId);
-	    	}
-	    }
+		/**
+		 * @deprecated Not used
+		 */
+		$scope.selectPropValue = function(dsId, prop, modalSelectionColumn){
+			if (!modalSelectionColumn && prop.fieldType !== "MEASURE"){
+				$scope.doSelection(prop.alias, $scope.props[prop.name].value, null, null, $scope.props, null, dsId);
+			}
+		}
 
 	    $scope.crossNavigate = function(dsId,layerConfig,props) {
 	    	$scope.doSelection(layerConfig.alias, $scope.props[layerConfig[0].name].value, null, null, props, null, dsId);
 	    }
 
-	    $scope.checkCrossNavigation = function(layerConfig){
-	    	if($scope.ngModel.cross && $scope.ngModel.cross.cross && $scope.ngModel.cross.cross.enable) return true;
+		$scope.checkCrossNavigation = function(){
+			var targetLayer = $scope.getTargetDataset();
+			var selectedLayer = $scope.selectedLayer;
+
+			if(selectedLayer
+					&& targetLayer
+					&& targetLayer.name == selectedLayer.name
+					&& $scope.ngModel.cross
+					&& $scope.ngModel.cross.cross
+					&& $scope.ngModel.cross.cross.enable) {
+				return true;
+			}
 	    	return false;
 	    }
 
@@ -1468,7 +1528,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.getPropValue = function(prop) {
-			var currProp = $scope.props[prop.name];
+			return $scope.getPropValueFromProps($scope.props, prop);
+		}
+
+		$scope.getPropValueFromProps = function(props, prop) {
+			var currProp = props[prop.name];
 			var currPropValue = currProp.value;
 			var ret = "";
 			if (prop.style) {
@@ -1590,7 +1654,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.map.addInteraction($scope.mouseWheelZoomInteraction);
 		}
 
-		// $scope.reinit();
+		$scope.isTargetLayer = function(layer) {
+			return layer && layer.targetDefault || false;
+		}
+
+		function getDefaultModalSelectionColumn(layerDef) {
+			return layerDef.dataset
+				.metadata
+				.fieldsMeta
+				.find(function(field) {
+						return field.fieldType == 'SPATIAL_ATTRIBUTE';
+					})
+				.name;
+		}
 
 		// In edit mode, if a remove dataset from cokpit it has to be deleted also from widget
 		if (cockpitModule_properties.EDIT_MODE) {

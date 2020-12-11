@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -50,8 +51,19 @@ import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.query.CriteriaConstants;
+import it.eng.qbe.query.ExpressionNode;
+import it.eng.qbe.query.WhereField;
+import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.statement.jpa.JPQLDataSet;
+import it.eng.qbe.statement.jpa.JPQLStatement;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -60,6 +72,8 @@ public class JPAPersistenceManager implements IPersistenceManager {
 	private JPADataSource dataSource;
 
 	public static transient Logger logger = Logger.getLogger(JPAPersistenceManager.class);
+
+	public static transient Logger auditlogger = Logger.getLogger("audit.query");
 
 	public JPAPersistenceManager(JPADataSource dataSource) {
 		super();
@@ -471,11 +485,8 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 		Attribute.PersistentAttributeType type = a.getPersistentAttributeType();
 		if (type.equals(PersistentAttributeType.MANY_TO_ONE)) {
-			String entityType = a.getJavaType().getName();
+			String entityJavaType = a.getJavaType().getName();
 			String subKey = a.getName();
-			int lastPkgDotSub = entityType.lastIndexOf(".");
-			String entityNameNoPkgSub = entityType.substring(lastPkgDotSub + 1);
-
 			try {
 				LinkedHashMap filtersForRef = new LinkedHashMap();
 				filtersForRef.put(c.getField(), (aRecord.get(aKey)));
@@ -486,11 +497,11 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				if (lstDependences == null || lstDependences != null) {
 					for (int i = 0; i < lstDependences.size(); i++) {
 						Column tmpDep = (Column) lstDependences.get(i);
-						addRecursiveDependenciesFrom(targetEntity, aRecord, entityType, filtersForRef, tmpDep, c, columns);
+						addRecursiveDependenciesFrom(targetEntity, aRecord, entityJavaType, filtersForRef, tmpDep, c, columns);
 					}
 				}
 
-				Object referenced = getReferencedObjectJPA(entityManager, entityNameNoPkgSub, filtersForRef);
+				Object referenced = getReferencedObjectJPA(entityManager, entityJavaType, filtersForRef);
 
 				Class clas = targetEntity.getJavaType();
 				Field f = clas.getDeclaredField(subKey);
@@ -702,48 +713,102 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		return toReturn;
 	}
 
-	private Object getReferencedObjectJPA(EntityManager em, String entityType, HashMap whereFields) {
-		// the master field element (for exception messages):
-		String field = "";
-		Object fieldValue = "";
+	private Object getReferencedObjectJPA(EntityManager em, String entityJavaType, HashMap whereFields) {
 
-		// Defining query ...
-		String query = "select x from " + entityType + " x where ";
-		Integer i = 0;
-		for (Iterator iterator = whereFields.keySet().iterator(); iterator.hasNext();) {
-			String andOperator = (i < whereFields.size() - 1) ? " AND " : "";
-			String key = (String) iterator.next();
-			Object value = whereFields.get(key);
-			if (value != null) {
-				query += " x." + key + " = :val__" + i + andOperator;
-			}
-			if (i == 0) {
-				field = key;
-				fieldValue = value;
-			}
-			i++;
-		}
+		String query = buildReferencedObjectQuery(entityJavaType, whereFields);
+		logQuery(query);
 
-		// Setting where clause values...
-		i = 0;
 		Query tmpQuery = em.createQuery(query);
-		for (Iterator iterator = whereFields.keySet().iterator(); iterator.hasNext();) {
-			String key = (String) iterator.next();
-			Object value = whereFields.get(key);
-			tmpQuery.setParameter("val__" + i, value);
-			i++;
-		}
 		// Getting list of records...
 		final List result = tmpQuery.getResultList();
 
 		if (result == null || result.size() == 0) {
-			throw new SpagoBIRuntimeException("Record with " + field + " equals to " + fieldValue.toString() + " not found for entity " + entityType);
+			throw new SpagoBIRuntimeException("Record with input filters [" + whereFields + "] not found for entity " + entityJavaType);
 		}
 		if (result.size() > 1) {
-			throw new SpagoBIRuntimeException("More than 1 record with " + field + " equals to " + fieldValue.toString() + " in entity " + entityType);
+			throw new SpagoBIRuntimeException("More than 1 record with input filters [" + whereFields + "] were found in entity " + entityJavaType);
 		}
 
 		return result.get(0);
+	}
+
+	private String buildReferencedObjectQuery(String entityJavaType, HashMap whereFields) {
+		it.eng.qbe.query.Query query = buildRegularQueryToReferenceObject(entityJavaType, whereFields);
+		// we create a dataset object to apply profiled visibility constraints
+		JPQLDataSet dataset = buildJPQLDatasetToReferenceObject(query);
+		IStatement filteredStatement = dataset.getFilteredStatement();
+		String jpaQueryStr = filteredStatement.getQueryString();
+		/*
+		 * At this point, we have a query that is like: "select t_0.id, t_0.someOtherProperty from Entity where..." that is returning an object array but we
+		 * need to get a JPA object instead, therefore we are transforming the statement into "select t_0 from Entity t_0 where ..."
+		 */
+		jpaQueryStr = transformToEntityQuery(jpaQueryStr);
+		return jpaQueryStr;
+	}
+
+	protected JPQLDataSet buildJPQLDatasetToReferenceObject(it.eng.qbe.query.Query query) {
+		JPQLStatement statement = (JPQLStatement) getDataSource().createStatement(query);
+		JPQLDataSet dataset = new JPQLDataSet(statement);
+		// setting user profile attributes
+		Map userAttributes = new HashMap();
+		UserProfile profile = UserProfileManager.getProfile();
+		Iterator it = profile.getUserAttributeNames().iterator();
+		while (it.hasNext()) {
+			String attributeName = (String) it.next();
+			Object attributeValue;
+			try {
+				attributeValue = profile.getUserAttribute(attributeName);
+			} catch (EMFInternalError e) {
+				throw new SpagoBIRuntimeException("Error while getting user profile attribute [" + attributeName + "]", e);
+			}
+			userAttributes.put(attributeName, attributeValue);
+		}
+		dataset.addBinding("attributes", userAttributes);
+		dataset.setUserProfileAttributes(userAttributes);
+		return dataset;
+	}
+
+	protected it.eng.qbe.query.Query buildRegularQueryToReferenceObject(String entityJavaType, HashMap whereFields) {
+		it.eng.qbe.query.Query query = new it.eng.qbe.query.Query();
+		query.setId(StringUtilities.getRandomString(5));
+		int lastPkgDotSub = entityJavaType.lastIndexOf(".");
+		String entityNameNoPkgSub = entityJavaType.substring(lastPkgDotSub + 1);
+		IModelEntity entity = dataSource.getModelStructure().getEntityByName(entityNameNoPkgSub);
+		List<IModelField> fields = entity.getAllFields();
+		for (Iterator<IModelField> it = fields.iterator(); it.hasNext();) {
+			IModelField field = it.next();
+			query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, null, null);
+		}
+		ArrayList<ExpressionNode> expressionNodes = new ArrayList<ExpressionNode>();
+		for (Iterator iterator = whereFields.keySet().iterator(); iterator.hasNext();) {
+			String key = (String) iterator.next();
+			Object value = whereFields.get(key);
+			if (value != null) {
+				WhereField.Operand left = new WhereField.Operand(new String[] { entityJavaType + ":" + key }, "name",
+						AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
+				WhereField.Operand right = new WhereField.Operand(new String[] { value.toString() }, "value", AbstractStatement.OPERAND_TYPE_STATIC, null,
+						null);
+				query.addWhereField(key, key, false, left, CriteriaConstants.EQUALS_TO, right, "AND");
+				expressionNodes.add(new ExpressionNode("NODE_CONST", "$F{" + key + "}"));
+			}
+		}
+		// put together expression nodes
+		if (expressionNodes.size() == 1) {
+			query.setWhereClauseStructure(expressionNodes.get(0));
+		} else if (expressionNodes.size() > 1) {
+			ExpressionNode exprNodeAnd = new ExpressionNode("NODE_OP", "AND");
+			exprNodeAnd.setChildNodes(expressionNodes);
+			query.setWhereClauseStructure(exprNodeAnd);
+		}
+		return query;
+	}
+
+	private String transformToEntityQuery(String jpaQueryStr) {
+		// query at this point is : select <something> from <table> <alias> ... to be replaced by select <alias> from <table> <alias> ...
+		// The following replacement works also in case query is containing joins to other entities, but MAIN entity must be the first one in the FROM clause!!!
+		// TODO refactor this code to be more reliable
+		String toReturn = jpaQueryStr.replaceAll("(?i)select (.*) from (\\w+) (\\w+)", "select $3 from $2 $3");
+		return toReturn;
 	}
 
 	private Column getDependenceColumns(List columns, String depField) {
@@ -756,6 +821,12 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			}
 		}
 		return toReturn;
+	}
+
+	private void logQuery(String jpqlQuery) {
+		UserProfile userProfile = UserProfileManager.getProfile();
+		auditlogger.info("[" + userProfile.getUserId() + "]:: JPQL: " + jpqlQuery);
+		logger.debug("[" + userProfile.getUserId() + "]:: JPQL: " + jpqlQuery);
 	}
 
 }
