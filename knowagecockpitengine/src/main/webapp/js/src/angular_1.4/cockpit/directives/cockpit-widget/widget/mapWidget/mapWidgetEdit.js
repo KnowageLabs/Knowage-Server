@@ -173,7 +173,14 @@ function mapWidgetEditControllerFunction(
 	}
 
 	$scope.deleteColumn = function(layer,column){
-		layer.splice(layer.indexOf(column),1);
+		var columns = layer.content.columnSelectedOfDataset;
+		columns.splice(columns.indexOf(column),1);
+
+		// Reset tooltip, if needed
+		if (column.name == layer.tooltipColumn) {
+			layer.showTooltip = false;
+			layer.tooltipColumn = undefined;
+		}
 	}
 
 	$scope.deleteLayer = function(layer){
@@ -665,6 +672,20 @@ function mapWidgetEditControllerFunction(
 	$scope.isTargetLayer = function(layer) {
 		return layer && layer.targetDefault || false;
 	}
+
+	$scope.setTooltipCol = function(layer, column) {
+		var columnsList = layer.content.columnSelectedOfDataset;
+		layer.showTooltip = column.properties.showTooltip;
+		layer.tooltipColumn = (column.properties.showTooltip) ? column.name : undefined;
+
+		for(var i in columnsList){
+			if(columnsList[i].name !== column.name){
+				columnsList[i].properties.showTooltip = false;
+			}
+		}
+	}
+
+
 
 	function getSizeFromFieldType(column) {
 		var fieldType = column.value.fieldType;

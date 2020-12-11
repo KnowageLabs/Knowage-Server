@@ -7,6 +7,9 @@
 		<ng-include src="getTemplateUrl('mapWidgetLegendPanel')"></ng-include>
 	</div>
 	
+	<div id="tooltip-{{ngModel.id}}" class="ol-tooltip">
+		<span>{{ tooltip }}</span>
+	</div> 
 	<div id="popup-{{ngModel.id}}" class="ol-popup" style="visibility: hidden;"> 
 		<div href="#" id="popup-closer-{{ngModel.id}}" class="ol-popup-closer">  
 			<i class="fa fa-times"></i>
