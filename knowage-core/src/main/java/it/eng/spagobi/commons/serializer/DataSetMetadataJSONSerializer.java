@@ -28,7 +28,6 @@ import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Marco Libanori
@@ -46,7 +45,6 @@ public class DataSetMetadataJSONSerializer implements Serializer {
 	@Override
 	public Object serialize(Object meta, Locale locale) throws SerializationException {
 		try {
-			Assert.assertType(meta, String.class, "The meta param must be a String");
 			String _meta = (String) meta;
 
 			Object ret = serializeToJson(_meta);
