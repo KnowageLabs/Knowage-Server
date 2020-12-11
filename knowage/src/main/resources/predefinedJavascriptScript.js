@@ -88,5 +88,3 @@ function isValid(key) {
 		&& parameters.get(key) != "%";
 }
 
-parameters.isValid = isValid;
-
