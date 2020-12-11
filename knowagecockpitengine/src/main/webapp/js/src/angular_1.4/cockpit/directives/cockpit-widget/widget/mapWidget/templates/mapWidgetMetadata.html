@@ -69,6 +69,7 @@
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnDetail')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnMap')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnFilter')}}</th>
+												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnTooltip')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.modalColumn')}}</th>
 												<th></th>
 											</tr>
@@ -134,6 +135,9 @@
 												<td style="text-align:center">
 													<md-checkbox ng-model="column.properties.showFilter" aria-label="Show column on filter" ng-if="column.fieldType=='ATTRIBUTE'" ng-disabled="!column.properties.aggregateBy"/>
 												</td>
+												<td style="text-align:center">
+													<md-checkbox ng-model="column.properties.showTooltip" ng-change="setTooltipCol(layer,column)"  aria-label="Show column on tooltip" />
+												</td>
 												<td style="display: flex;justify-content: center;">
 													<md-switch ng-if="column.fieldType == 'ATTRIBUTE'" ng-model="column.properties.modal" class="noMargin" ng-change="setModalColumn(column,layer)" aria-label="modal" ng-disabled="!column.properties.aggregateBy"></md-switch>
 												</td>
@@ -162,7 +166,7 @@
 															</md-menu-item>
 															<md-menu-divider ng-if="column.fieldType === 'MEASURE'"></md-menu-divider>
 															<md-menu-item>
-																<md-button ng-click="deleteColumn(layer.content.columnSelectedOfDataset,column)">
+																<md-button ng-click="deleteColumn(layer,column)">
 																	<md-icon md-font-icon="fa fa-trash"></md-icon>
 																	{{translate.load('sbi.cockpit.map.edit.metadata.delete')}}
 																</md-button>
@@ -175,6 +179,6 @@
 											</tr>
 										</tbody>
 									</table>	
-								</div>	
+								</div>
 							</md-card-content>
 						</md-card>
