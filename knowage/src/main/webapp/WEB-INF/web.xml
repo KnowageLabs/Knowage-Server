@@ -205,14 +205,20 @@
 
  EXO -->
 
-	<!-- START SERVLET DEFINITIONS -->
-	
-	<!-- 
+	<!--
+		Enable WADL support.
+		
+		The following configuration create the endpoint:
+		
+		<pre>/<<context name>>/application.xml</pre>
+		
+		To get the WADL descriptor.
+	 -->
+	<!--
 	<servlet>
 		<servlet-name>RESTEasy WADL</servlet-name>
 		<servlet-class>org.jboss.resteasy.wadl.ResteasyWadlServlet</servlet-class>
 	</servlet>
-
 	<servlet-mapping>
 		<servlet-name>RESTEasy WADL</servlet-name>
 		<url-pattern>/application.xml</url-pattern>
