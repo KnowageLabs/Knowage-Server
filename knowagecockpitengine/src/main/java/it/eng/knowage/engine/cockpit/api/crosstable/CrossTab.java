@@ -2181,7 +2181,7 @@ public class CrossTab {
 				for (int y = 0; y < columnsSum.get(0).length; y++) {
 					if (aggregationFunctions[i].equalsIgnoreCase("SUM")) {
 						if (celltypeOfColumns.get(y).equals(CellType.DATA)) {
-							String value = columnsSum.get(i)[y];
+							String value = columnsSum.get(0)[y];
 							if (!value.equals(DATA_MATRIX_NA)) {
 								st[i] = st[i] + new Double(value);
 							}
