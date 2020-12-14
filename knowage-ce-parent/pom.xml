@@ -24,10 +24,10 @@
 			<url>https://www.license4j.com/maven/</url>
 			<layout>default</layout>
 		</repository>
-		<!-- We use boundlessgeo.com because it contains hibernate-spatial-1.1.1.jar, needed by Qbe core; this library is not available on Maven Central -->
+		<!-- We use geo-solutions because it contains hibernate-spatial-1.1.1.jar, needed by Qbe core; this library is not available on Maven Central -->
 		<repository>
-			<id>boundlessgeo.com</id>
-			<url>https://repo.boundlessgeo.com/main/</url>
+			<id>geo-solutions</id>
+			<url>https://maven.geo-solutions.it/</url>
 		</repository>
 		<!-- We use osgeo.org because it contains geotools 2.7.5, needed by knowage DAO; this library is not available on Maven Central -->
 		<repository>
