@@ -1,4 +1,4 @@
-var app = angular.module('documentExecutionModule').controller('noteController', ['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
+var app = angular.module('documentExecutionModule').controller('noteController', ['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices',
                                                                      			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
                                                                     			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService','sbiModule_download',
                                                                     			 'sbiModule_messaging',noteControllerFunction ]);
@@ -7,10 +7,10 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 		sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices
 		,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,sbiModule_messaging) {
 
-	
+
 	$scope.saveNote = function(){
 		var obj = {
-				'nota' : $scope.contentNotes,
+				'content' : $scope.contentNotes,
 				'idObj': $scope.executionInstance.OBJECT_ID,
 				'type' : $scope.typeNote
 		}
@@ -31,13 +31,13 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 
 	}
 	$scope.getNotesList = function(){
-		
+
 		if($scope.notesList.length==0){
 			$scope.getList();
 		}
 	}
 	$scope.getList = function(){
-		var obj = {'id' : $scope.executionInstance.OBJECT_ID};
+		var obj = {'idObj' : $scope.executionInstance.OBJECT_ID};
 		sbiModule_restServices.promisePost("documentnotes", 'getListNotes',obj).then(
 				function(response) {
 					if (response.data.hasOwnProperty("errors")) {
@@ -57,10 +57,10 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 				"execReq":nota.execReq,
 				"owner":nota.owner
 		}
-		
+
 		var confirm = $mdDialog.confirm()
 				.title("Are you sure?")
-				.ariaLabel('cancel metadata') 
+				.ariaLabel('cancel metadata')
 				.ok($scope.translate.load("sbi.general.ok"))
 				.cancel($scope.translate.load("sbi.general.cancel"));
 				$mdDialog.show(confirm).then(function() {
@@ -82,7 +82,7 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 					return;
 				});
 	}
-	
+
 	$scope.editNote = function(nota){
 		$scope.contentNotes=nota.content;
 		$scope.noteLoaded.content = nota.content;
@@ -92,13 +92,13 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 		$scope.noteLoaded.exeqReq = nota.exeqReq;
 		$scope.noteLoaded.owner = nota.owner;
 		$scope.selectedTab.tab=0;
-	
+
 	}
-	
+
 	$scope.exportNote = function(typeExport){
 		var obj = {
 				'idObj': $scope.executionInstance.OBJECT_ID,
-				'type' : typeExport	
+				'type' : typeExport
 		}
 		sbiModule_restServices.promisePost("documentnotes", 'getDownalNote',obj).then(
 				function(response) {
@@ -107,25 +107,25 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 						sbiModule_messaging.showErrorMessage(response.data,"");
 					} else {
 						console.log(response);
-						
+
 						var arr = response.data.file;
 						var byteArray = new Uint8Array(arr);
 						sbiModule_download.getBlob(byteArray,$scope.executionInstance.OBJECT_LABEL,"application/"+typeExport,typeExport);
 
-						
+
 					}
 
 				},function(response) {
 					$scope.errorHandler(response.data,"");
 				})
-		
+
 	}
 
 	$scope.setTab = function(Tab){
 		$scope.selectedTab = Tab;
 	}
-	
-	
+
+
 	$scope.close = function(){
 		$mdDialog.cancel();
 
@@ -148,7 +148,7 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 //			}
 //		});
 //	};
-	
+
 }
 
 app.filter("asDate", function () {
