@@ -248,7 +248,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 				throw new SpagoBIRuntimeException("More than one user were found on LDAP using filter [" + filter + "]");
 			}
 		} catch (NamingException e) {
-			throw new SpagoBIRuntimeException("Error while finding user distinguish name for user [" + userId + "]");
+			throw new SpagoBIRuntimeException("Error while finding user distinguish name for user [" + userId + "]", e);
 		} finally {
 			if (ctx != null) {
 				try {
