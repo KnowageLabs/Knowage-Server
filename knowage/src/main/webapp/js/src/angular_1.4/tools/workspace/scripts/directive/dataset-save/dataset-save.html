@@ -17,8 +17,8 @@
 							
 								<md-input-container class="md-block">
 							    	<label>{{translate.load("sbi.ds.label")}}</label>
-									<input ng-model="model.label" ng-required="true" ng-change="setFormDirty()">
-									<div  ng-messages="datasetForm.lbl.$error" ng-show="!model.label">
+									<input ng-model="model.label" required ng-change="setFormDirty()" name="label">
+									<div  ng-messages="datasetForm.label.$error" ng-show="!model.label">
 	  						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
 					 				</div>
 								</md-input-container>
@@ -27,8 +27,8 @@
 							
 								<md-input-container class="md-block">
 							    	<label>{{translate.load("sbi.ds.name")}}</label>
-									<input ng-model="model.name" ng-required="true" ng-change="setFormDirty()">
-									<div  ng-messages="datasetForm.lbl.$error" ng-show="!model.name">
+									<input ng-model="model.name" required ng-change="setFormDirty()" name="model">
+									<div  ng-messages="datasetForm.model.$error" ng-show="!model.name">
   						 				<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
 					 				</div>
 								</md-input-container>
@@ -55,34 +55,31 @@
 							
 						
 						<div ng-if="userLogged.isTechnical == 'true'">	
-							
-							       <md-input-container class="md-block" > 
-							       		<label>{{translate.load("sbi.ds.scope")}}</label>
-								       	<md-select placeholder ="{{translate.load('sbi.generic.scope')}}"
-								        	ng-required = "true" ng-change="changeDatasetScope(); setScopeId(model.scopeCd)"
-								        	ng-model="model.scopeCd">   
-								        	<md-option ng-repeat="l in scopeList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
-								        	</md-option>
-								       	</md-select>  
-							       		<div  ng-messages="datasetForm.lbl.$error" ng-show="!model.scopeCd">
-			    						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
-			   						 	</div>
-							        </md-input-container>
-							
-							  
-							   
-							       <md-input-container class="md-block" > 
-							       <label>{{translate.load("sbi.generic.category")}}</label>
-							       <md-select 	placeholder ="{{translate.load('sbi.generic.category')}}"
-							        			ng-required="isCategoryRequired" ng-model="model.catTypeVn">   
-							        	<md-option ng-repeat="l in categoryList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
-							       </md-select>  
-							       	<div ng-messages="datasetForm.lbl.$error" ng-show="isCategoryRequired && !model.categoryCd">
-		   						 		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
-		  						 	</div>
-							        </md-input-container>
-							  
-						  </div>
+
+							<md-input-container class="md-block" > 
+								<label>{{translate.load("sbi.ds.scope")}}</label>
+								<md-select placeholder ="{{translate.load('sbi.generic.scope')}}"required
+										ng-model="model.scopeCd" name="scopeCombo">
+									<md-option ng-repeat="l in scopeList" ng-value="l.VALUE_CD">{{l.VALUE_CD}}
+									</md-option>
+								</md-select>  
+								<div  ng-messages="datasetForm.scopeCombo.$error" ng-show="!model.scopeCd">
+									<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+								</div>
+							</md-input-container>
+
+							<md-input-container class="md-block" > 
+								<label>{{translate.load("sbi.generic.category")}}</label>
+								<md-select 	placeholder ="{{translate.load('sbi.generic.category')}}"
+										ng-required="isCategoryRequired" ng-model="model.catTypeVn" name="categoryCombo">   
+									<md-option ng-repeat="l in categoryList" ng-value="l.VALUE_CD">{{l.VALUE_CD}}</md-option>
+								</md-select>  
+								<div ng-messages="datasetForm.categoryCombo.$error" ng-show="isCategoryRequired && !model.categoryCd">
+									<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+								</div>
+							</md-input-container>
+
+						</div>
 					</md-card>
 				</md-tab>
 				
@@ -109,8 +106,8 @@
 									
 										<md-input-container class="md-block" ng-show="model.isPersisted">
 									    	<label>{{translate.load("sbi.ds.persistTableName")}}</label>
-											<input ng-model="model.persistTableName" ng-required="model.isPersisted" ng-change="setFormDirty()">
-											<div  ng-messages="datasetForm.lbl.$error" ng-show="!model.persistTable">
+											<input ng-model="model.persistTableName" ng-required="model.isPersisted" ng-change="setFormDirty()" name="persistCheck">
+											<div  ng-messages="datasetForm.persistCheck.$error" ng-show="!model.persistTable">
 		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	   						 				</div>
 										</md-input-container>
