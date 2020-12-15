@@ -28,7 +28,7 @@ import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 
 @Pattern(regexp = "^([\\p{L}\\w\\s\\-\\_\\(\\)\\[\\]\\;\\:\\!\\?\\,\\.\\'\\\"\\x2F\\x5F%])*$", message = "contains invalid characters")
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @Retention(value = RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = GenericValidator.class)
 @Documented
