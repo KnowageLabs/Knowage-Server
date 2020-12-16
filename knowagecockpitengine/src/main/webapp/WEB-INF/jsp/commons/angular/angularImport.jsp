@@ -134,6 +134,9 @@ END-PRODUCTION -->
 <link rel="stylesheet" 	href="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.css">
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.js"></script>
 
+<link rel="stylesheet" 	href="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular-json-tree/json-tree_cockpit.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/angular/angular-json-tree/json-tree_cockpit.js")%>"></script>
+
 <!-- Open Layers 6.1.1 -->
 <link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/6.1.1/ol.css">
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/openlayers/6.1.1/ol.js"></script>

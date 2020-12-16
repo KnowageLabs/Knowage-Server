@@ -624,6 +624,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				onCellClicked: onCellClicked,
 				defaultColDef: {
 					resizable: cockpitModule_properties.EDIT_MODE,
+					suppressMovable: true,
 					sortable: true
 				},
 				components: {
