@@ -26,11 +26,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -78,6 +80,7 @@ import it.eng.spagobi.rest.publishers.PublisherService;
 import it.eng.spagobi.security.Password;
 import it.eng.spagobi.services.rest.annotations.PublicService;
 import it.eng.spagobi.signup.validation.SignupJWTTokenManager;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.themes.ThemesManager;
@@ -96,6 +99,9 @@ public class Signup {
 	private final static long MAX_TIME_DELTA_DEFAULT_MS = 30000;
 
 	private static Logger logger = Logger.getLogger(PublisherService.class);
+
+	@Inject
+	private HttpServletRequest request;
 
 	@GET
 	@Path("/prepareUpdate")
@@ -237,31 +243,23 @@ public class Signup {
 	@POST
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String update(@Context HttpServletRequest req) {
+	public String update(@Valid SignupDTO signupDTO) {
 		logger.debug("IN");
 
 		MessageBuilder msgBuilder = new MessageBuilder();
-		Locale locale = msgBuilder.getLocale(req);
+		Locale locale = msgBuilder.getLocale(request);
 
-		JSONObject requestJSON = null;
-		try {
-			requestJSON = RestUtilities.readBodyAsJSONObject(req);
-		} catch (Throwable t) {
-			logger.error("Error during body read", t);
-			throw new SpagoBIServiceException(msgBuilder.getMessage("signup.check.error", "messages", locale), t);
-		}
-
-		String name = GeneralUtilities.trim(requestJSON.optString("name"));
-		String surname = GeneralUtilities.trim(requestJSON.optString("surname"));
-		String password = GeneralUtilities.trim(requestJSON.optString("password"));
-		String email = GeneralUtilities.trim(requestJSON.optString("email"));
-		String birthDate = GeneralUtilities.trim(requestJSON.optString("birthDate"));
-		String address = GeneralUtilities.trim(requestJSON.optString("address"));
+		String name = signupDTO.getName();
+		String surname = signupDTO.getSurname();
+		String password = signupDTO.getPassword();
+		String email = signupDTO.getEmail();
+		String birthDate = signupDTO.getBirthDate();
+		String address = GeneralUtilities.trim(signupDTO.getAddress());
 		// String biography = GeneralUtilities.trim(requestJSON.optString("biography"));
 		// String language = GeneralUtilities.trim(requestJSON.optString("language"));
 
 		try {
-			UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			UserProfile profile = getUserProfile();
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			ISbiAttributeDAO attrDao = DAOFactory.getSbiAttributeDAO();
 
@@ -433,7 +431,7 @@ public class Signup {
 		// String strLocale = GeneralUtilities.trim(req.getParameter("locale"));
 		// Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_")+1));
 		MessageBuilder msgBuilder = new MessageBuilder();
-		Locale locale = msgBuilder.getLocale(req);
+		Locale locale = msgBuilder.getLocale(request);
 
 		JSONObject requestJSON = null;
 		try {
@@ -731,4 +729,7 @@ public class Signup {
 
 	}
 
+	private UserProfile getUserProfile() {
+		return UserProfileManager.getProfile();
+	}
 }
