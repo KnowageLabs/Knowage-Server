@@ -15,6 +15,8 @@ public class EmailValidationImpl implements ConstraintValidator<EmailValidation,
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
+		if (value == null || value.isEmpty())
+			return true;
 		return GenericValidator.isEmail(value);
 	}
 
