@@ -26,7 +26,7 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 					}
 
 				},function(response) {
-					$scope.errorHandler(response.data,"");
+					sbiModule_messaging.showErrorMessage(response.data,"Error during save operation");
 				})
 
 	}
