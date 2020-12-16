@@ -18,6 +18,7 @@
 
 package it.eng.spagobi.engines.whatif.api;
 
+import javax.validation.Valid;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -39,7 +40,7 @@ public class SubObjectResource extends AbstractWhatIfEngineService {
 
 	@POST
 	@Path("/")
-	public void save(SubObjectDTO subobj) {
+	public void save(@Valid SubObjectDTO subobj) {
 
 		logger.debug("IN");
 		logger.debug("Subobject Name: " + subobj.getName());
