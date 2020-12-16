@@ -18,15 +18,10 @@
 
 package it.eng.spagobi.engines.whatif.api;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
@@ -34,7 +29,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/subobject")
 @ManageAuthorization
@@ -45,42 +39,23 @@ public class SubObjectResource extends AbstractWhatIfEngineService {
 
 	@POST
 	@Path("/")
-	public void save(@javax.ws.rs.core.Context HttpServletRequest req) {
-		String name = null;
-		String description = null;
-		String scope = null;
-		JSONObject jo;
-		EngineAnalysisMetadata analysisMetadata = null;
-
-		try {
-			jo = RestUtilities.readBodyAsJSONObject(req);
-			name = jo.getString("name");
-			description = jo.getString("description");
-			scope = jo.getString("scope");
-		} catch (IOException e) {
-			logger.error("Error saving the subobject", e);
-			throw new SpagoBIRestServiceException("sbi.olap.subobject.save.error", getLocale(), "Error saving the subobject", e);
-		} catch (JSONException e) {
-			logger.error("Error saving the subobject", e);
-			throw new SpagoBIRestServiceException("sbi.olap.subobject.save.error", getLocale(), "Error saving the subobject", e);
-		}
+	public void save(SubObjectDTO subobj) {
 
 		logger.debug("IN");
+		logger.debug("Subobject Name: " + subobj.getName());
+		logger.debug("Subobject description: " + subobj.getDescription());
+		logger.debug("Subobject scope: " + subobj.getScope());
 
-		logger.debug("Subobject Name: " + name);
-		logger.debug("Subobject description: " + description);
-		logger.debug("Subobject scope: " + scope);
+		EngineAnalysisMetadata analysisMetadata = getWhatIfEngineInstance().getAnalysisMetadata();
+		analysisMetadata.setName(subobj.getName());
+		analysisMetadata.setDescription(subobj.getDescription());
 
-		analysisMetadata = getWhatIfEngineInstance().getAnalysisMetadata();
-		analysisMetadata.setName(name);
-		analysisMetadata.setDescription(description);
-
-		if (EngineAnalysisMetadata.PUBLIC_SCOPE.equalsIgnoreCase(scope)) {
+		if (EngineAnalysisMetadata.PUBLIC_SCOPE.equalsIgnoreCase(subobj.getScope())) {
 			analysisMetadata.setScope(EngineAnalysisMetadata.PUBLIC_SCOPE);
-		} else if (EngineAnalysisMetadata.PRIVATE_SCOPE.equalsIgnoreCase(scope)) {
+		} else if (EngineAnalysisMetadata.PRIVATE_SCOPE.equalsIgnoreCase(subobj.getScope())) {
 			analysisMetadata.setScope(EngineAnalysisMetadata.PRIVATE_SCOPE);
 		} else {
-			Assert.assertUnreachable("Value [" + scope + "] is not valid for the input parameter scope");
+			Assert.assertUnreachable("Value [" + subobj.getScope() + "] is not valid for the input parameter scope");
 		}
 
 		String result = null;
