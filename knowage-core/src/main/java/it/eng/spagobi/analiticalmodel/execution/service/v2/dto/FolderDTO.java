@@ -22,13 +22,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class FolderDTO {
 
 	@JsonProperty("id")
-	private int id;
+	private String id;
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -36,7 +36,7 @@ public class FolderDTO {
 
 	}
 
-	public FolderDTO(int id) {
+	public FolderDTO(String id) {
 		this.id = id;
 	}
 
