@@ -190,7 +190,7 @@
 			title="#menu.DocumentTest"
 			functionality="DocumentTestManagement"
 			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION"
-			iconCls="folder_open"/>
+			iconCls="fa fa-2x fa-folder-o"/>
 	<ITEM code="workspace" title="Workspace" functionality="WorkspaceManagement" iconCls="fa fa-2x fa-briefcase"/>  
 							
 	<ITEM code="analyticalModel" title="#menu.AnalyticalModel" iconCls="charts">
