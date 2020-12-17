@@ -18,7 +18,7 @@
 
 (function() {
 	'use strict';
-	
+
 	angular.module('InternationalizationModule', ['ngMaterial', 'sbiModule', 'i18nAvailableLanguagesModule'])
 		   .config([
 			   '$mdThemingProvider',
@@ -37,21 +37,21 @@
 			    	 }
 		    	 }
 		     }]);
-	
+
 	function InternationalizationController($scope, i18nAvailableLanguagesService, sbiModule_restServices, sbiModule_messaging, sbiModule_translate, $mdDialog) {
 		var availableLanguagesService = i18nAvailableLanguagesService.getAvailableLanguages();
-		$scope.availableLanguages = availableLanguagesService.languages;		
-		$scope.defaultLangMessages = [];	
+		$scope.availableLanguages = availableLanguagesService.languages;
+		$scope.defaultLangMessages = [];
 		$scope.messages = [];
 		$scope.isTechnicalUser = isTechnicalUser;
 		$scope.emptyMessage = false;
 		$scope.translate = sbiModule_translate;
-		
+
 		//REST
 		$scope.getMessages = function(selectedTab) {
 			$scope.messages = [];
 			sbiModule_restServices.promiseGet("2.0/i18nMessages", "internationalization/?currLanguage="+selectedTab.language)
-				.then(function(response){	
+				.then(function(response){
 					//For Default Language
 					if(selectedTab.defaultLanguage) {
 						//If database is empty show one row of input fields
@@ -65,20 +65,20 @@
 						} else {
 							$scope.defaultLangMessages = response.data;
 							angular.copy($scope.defaultLangMessages, $scope.messages);
-						}						
+						}
 					} else {
 					//For other languages
-						//If there are some messages in database 
-						if(response.data.length != 0) {							
-							$scope.defaultLangMessages.forEach(function(defMess){								
+						//If there are some messages in database
+						if(response.data.length != 0) {
+							$scope.defaultLangMessages.forEach(function(defMess){
 								response.data.forEach(function(newMess){
 									if(defMess.label == newMess.label) {
 										newMess.defaultMessageCode = defMess.message;
 										$scope.messages.push(newMess);
-									}								
-								});								
+									}
+								});
 							});
-							
+
 							for(var i = response.data.length; i < $scope.defaultLangMessages.length; i++) {
 								var defMess = $scope.defaultLangMessages[i];
 								var mess = {};
@@ -88,10 +88,10 @@
 								mess.message = '';
 								$scope.messages.push(mess);
 							}
-							 							
+
 						} else {
-						//If there is no messages in database, take Label and Message Code from Default one 
-							$scope.defaultLangMessages.forEach(function(defMess){								
+						//If there is no messages in database, take Label and Message Code from Default one
+							$scope.defaultLangMessages.forEach(function(defMess){
 								var newMess = {};
 								newMess.language = selectedTab.language;
 								newMess.label = defMess.label;
@@ -99,12 +99,12 @@
 								newMess.message = '';
 								$scope.messages.push(newMess);
 							});
-						}						
-					} 											
+						}
+					}
 				});
 		};
-		
-		//Adding new blank row in Default Language table		
+
+		//Adding new blank row in Default Language table
 		$scope.addLabel = function() {
 			var tempMessage = {
 					language: '',
@@ -113,13 +113,13 @@
 			};
 			$scope.messages.unshift(tempMessage);
 		};
-		
+
 		//REST
 		$scope.saveLabel = function(langObj, message) {
 			if(message.hasOwnProperty('id')) {
-				//UPDATE I18NMessage								
+				//UPDATE I18NMessage
 				var toModify = angular.copy(message, {});
-				delete toModify.defaultMessageCode;	
+				delete toModify.defaultMessageCode;
 				sbiModule_restServices.promisePut("2.0/i18nMessages", "", toModify)
 				.then(function(response){
 					console.log('[PUT]: SUCCESS!');
@@ -128,9 +128,9 @@
 						$scope.getMessages(langObj);
 					}
 				}, function(response){
-					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					sbiModule_messaging.showErrorMessage(response.data, 'Error');
 				});
-														
+
 			} else {
 				//INSERT I18NMessage
 				var toInsert = angular.copy(message, {});
@@ -146,25 +146,25 @@
 							$scope.getMessages(langObj);
 						}
 					}, function(response){
-						sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-					});				
-			}						
+						sbiModule_messaging.showErrorMessage(response.data, 'Error');
+					});
+			}
 		};
-			
+
 		//REST
 		//DELETE
 		$scope.deleteLabel = function(langObj, message, event) {
 			if(message.hasOwnProperty('id')) {
 				//Deleting Non-Default I18NMessage
-				if(message.hasOwnProperty('defaultMessageCode')) {					
+				if(message.hasOwnProperty('defaultMessageCode')) {
 					var confirm = $mdDialog.confirm()
 					.title(sbiModule_translate.load('kn.internationalization.delete.confirm.title'))
 		            .textContent(sbiModule_translate.load('kn.internationalization.delete.confirm.message'))
 		            .targetEvent(event)
 		            .ok(sbiModule_translate.load('kn.internationalization.delete.confirm.yes'))
 		            .cancel(sbiModule_translate.load('kn.internationalization.delete.confirm.no'));
-					
-					$mdDialog.show(confirm).then(function(){						
+
+					$mdDialog.show(confirm).then(function(){
 						sbiModule_restServices.promiseDelete("2.0/i18nMessages", message.id)
 						.then(function(response){
 							console.log("[DELETE]: SUCCESS!");
@@ -182,7 +182,7 @@
 		            .targetEvent(event)
 		            .ok(sbiModule_translate.load('kn.internationalization.delete.confirm.yes'))
 		            .cancel(sbiModule_translate.load('kn.internationalization.delete.confirm.no'));
-					
+
 					$mdDialog.show(confirm).then(function(){
 						sbiModule_restServices.promiseDelete("2.0/i18nMessages/deletedefault", message.id)
 						.then(function(response){
@@ -193,7 +193,7 @@
 							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 						});
 					});
-				}				
+				}
 			} else {
 				//Can't delete Default I18NMessage from other tab
 				$mdDialog.show(
@@ -205,9 +205,9 @@
 					.ok(sbiModule_translate.load('kn.internationalization.delete.alert.ok'))
 				);
 			}
-			
+
 		};
-		
-		
+
+
 	};
 })();

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -110,11 +111,11 @@ public class I18nResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response saveI18NMessage(SbiI18NMessageBody message) {
+	public Response saveI18NMessage(@Valid I18NMessageBodyDTO message) {
 		I18NMessagesDAO I18NMessagesDAO = null;
 		try {
 			I18NMessagesDAO = DAOFactory.getI18NMessageDAO();
-			I18NMessagesDAO.insertI18NMessage(message);
+			I18NMessagesDAO.insertI18NMessage(toSbiI18NMessageBody(message));
 			return Response.ok().build();
 		} catch (Exception e) {
 			logger.error("Error while saving I18NMessage", e);
@@ -122,10 +123,15 @@ public class I18nResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	private SbiI18NMessageBody toSbiI18NMessageBody(I18NMessageBodyDTO message) {
+		return new SbiI18NMessageBody(message.getLabel(), message.getMessage(), message.getLanguage());
+	}
+
 	@PUT
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response modifyI18NMessage(SbiI18NMessages message) {
+	public Response modifyI18NMessage(@Valid I18NMessageDTO messageDTO) {
+		SbiI18NMessages message = toSbiI18NMessages(messageDTO);
 		I18NMessagesDAO I18NMessagesDAO = null;
 		try {
 			I18NMessagesDAO = DAOFactory.getI18NMessageDAO();
@@ -141,6 +147,10 @@ public class I18nResource extends AbstractSpagoBIResource {
 			logger.error("Error while updating I18NMessage", e);
 			throw new SpagoBIRestServiceException("Error while updating I18NMessage", buildLocaleFromSession(), e);
 		}
+	}
+
+	private SbiI18NMessages toSbiI18NMessages(I18NMessageDTO m) {
+		return new SbiI18NMessages(m.getId(), m.getLanguageCd(), m.getLabel(), m.getMessage());
 	}
 
 	/*
