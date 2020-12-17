@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,151 +11,79 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.services.common;
 
-import it.eng.spagobi.services.security.exceptions.SecurityException;
-import it.eng.spagobi.utilities.assertion.Assert;
+import java.util.Calendar;
+import java.util.Date;
 
-import java.io.IOException;
-import java.util.Enumeration;
-
-import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
-/**
- * This class contain the specific code for ENEL(distribuzione) SSO
- */
-public class RequestHeaderSsoService implements SsoServiceInterface {
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.assertion.Assert;
 
-	static private final String USER_IDENTIFIER_REQUEST_HEADER_NAME = "REMOTE_USER";
+/**
+ * SSO system based on request header, suitable when integrating with Shibboleth or any other external system that is providing information on headers
+ */
+public class RequestHeaderSsoService extends JWTSsoService {
+
+	static private final String USER_IDENTIFIER_DEFAULT_REQUEST_HEADER_NAME = "REMOTE_USER";
+
+	static private final String USER_IDENTIFIER_HEADER_NAME_SYSTEM_PROPERTY = "knowage.sso.request.header.name";
+
+	private static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 
 	static private Logger logger = Logger.getLogger(RequestHeaderSsoService.class);
 
-	/**
-	 * Read user id.
-	 * 
-	 * @param session
-	 *            HttpSession
-	 * 
-	 * @return String
-	 */
+	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
-		String user;
-
 		logger.debug("IN");
 
 		Assert.assertNotNull(request, "Input parameter [request] cannot be null");
 
-		user = null;
-
 		try {
-
-			user = request.getParameter(USER_IDENTIFIER_REQUEST_HEADER_NAME);
-			logger.debug("Request parameter [" + USER_IDENTIFIER_REQUEST_HEADER_NAME + "] is equal to [" + user + "]");
-
-			user = request.getHeader(USER_IDENTIFIER_REQUEST_HEADER_NAME);
-			logger.debug("Request header [" + USER_IDENTIFIER_REQUEST_HEADER_NAME + "] is equal to [" + user + "]");
-
-			user = request.getRemoteUser();
-			logger.debug("Remote user is equal to [" + user + "]");
-
-			user = (String) request.getAttribute(USER_IDENTIFIER_REQUEST_HEADER_NAME);
-			logger.debug("Request attribute [" + USER_IDENTIFIER_REQUEST_HEADER_NAME + "] is equal to [" + user + "]");
-
-			if (user != null) {
-
-				if (user.lastIndexOf('@') != -1) {
-					user = user.substring(0, user.lastIndexOf('@'));
-				}
-
-				user = user.toUpperCase();
-				logger.debug("Incoming request come from the autenthicated user [" + user + "]");
-			} else {
-				// if "Proxy-Remote-User" is null dump all header in the request just for debug purpose
-				logger.debug("Impossible to read  header [" + USER_IDENTIFIER_REQUEST_HEADER_NAME + "] from request");
-				Enumeration headerNames = request.getHeaderNames();
-				while (headerNames.hasMoreElements()) {
-					String headerName = (String) headerNames.nextElement();
-					logger.debug("Request header [" + headerName + "] is equal to [" + request.getHeader(headerName) + "]");
-				}
-
-				logger.debug("Incoming request come from a user not yet authenticated");
+			String headerName = getHeaderName();
+			String userId = request.getHeader(headerName);
+			LogMF.debug(logger, "Request header {0} is equal to [{1}]", headerName, userId);
+			if (userId == null) {
+				LogMF.debug(logger, "Request header {0} not found. Using default JWT SSO system...", headerName);
+				// in case header is not present, defaults to regular JWT SSO system
+				return super.readUserIdentifier(request);
 			}
-
-		} catch (Throwable t) {
+			String jwtToken = getJWTToken(userId);
+			LogMF.debug(logger, "OUT: returning [{0}]", jwtToken);
+			return jwtToken;
+		} catch (Exception t) {
 			// fail fast
+			logger.error("An unpredicted error occurred while reading user identifier", t);
 			throw new RuntimeException("An unpredicted error occurred while reading user identifier", t);
-		} finally {
-			logger.debug("OUT");
 		}
-
-		return user;
 	}
 
-	/**
-	 * Read user id.
-	 * 
-	 * @param session
-	 *            PortletSession
-	 * 
-	 * @return String
-	 */
-	public String readUserIdentifier(PortletSession session) {
-		logger.debug("NOT Implemented");
-		return "";
+	protected String getJWTToken(String userId) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.HOUR, USER_JWT_TOKEN_EXPIRE_HOURS);
+		Date expiresAt = calendar.getTime();
+		String jwtToken = JWTSsoService.userId2jwtToken(userId, expiresAt);
+		return jwtToken;
 	}
 
-	/**
-	 * Get a new ticket.
-	 * 
-	 * @param session
-	 *            HttpSession
-	 * @param filterReceipt
-	 *            String
-	 * 
-	 * @return String
-	 * 
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	public String readTicket(HttpSession session) throws IOException {
-		return "NA";
-	}
-
-	/**
-	 * This method verify the ticket.
-	 * 
-	 * @param ticket
-	 *            String, ticket to validate
-	 * @param userId
-	 *            String, user id
-	 * @param validateUrl
-	 *            String
-	 * @param validateService
-	 *            String
-	 * 
-	 * @return String
-	 * 
-	 * @throws SecurityException
-	 *             the security exception
-	 */
-	public void validateTicket(String ticket, String userId) throws SecurityException {
-
-	}
-
-	public static void main(String[] s) {
-		String user = "risorse\\AE11716";
-		if (user.lastIndexOf('\\') != -1) {
-			user = user.substring(user.lastIndexOf('\\') + 1);
+	private String getHeaderName() {
+		String toReturn = System.getProperty(USER_IDENTIFIER_HEADER_NAME_SYSTEM_PROPERTY);
+		LogMF.debug(logger, "Request header name found from system properties: [{0}]", toReturn);
+		if (StringUtilities.isEmpty(toReturn)) {
+			LogMF.debug(logger, "System property [{0}] was not found or it was empty. Using default request header name [{1}] ...",
+					USER_IDENTIFIER_HEADER_NAME_SYSTEM_PROPERTY, USER_IDENTIFIER_DEFAULT_REQUEST_HEADER_NAME);
+			toReturn = USER_IDENTIFIER_DEFAULT_REQUEST_HEADER_NAME;
 		}
-		logger.debug(user);
+		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
+		return toReturn;
 	}
 
 }
