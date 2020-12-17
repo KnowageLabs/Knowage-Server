@@ -50,26 +50,13 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 	static private Logger logger = Logger.getLogger(SbiFederationDefinitionDAOHibImpl.class);
 
 	/**
-	 * Saves the FederationDefinition. If already exist returns that one
-	 *
-	 * @param dataset
-	 */
-	@Override
-	public int saveSbiFederationDefinitionNoDuplicated(FederationDefinition federationDefinition) {
-		return saveSbiFederationDefinition(federationDefinition, false);
-	}
-
-	/**
 	 * Saves the FederationDefinition. If already exist one with same label thrown an exception
 	 *
 	 * @param dataset
 	 */
 	@Override
-	public int saveSbiFederationDefinition(FederationDefinition federationDefinition) {
-		return saveSbiFederationDefinition(federationDefinition, true);
-	}
+	public int saveSbiFederationDefinition(FederationDefinition dataset) {
 
-	private int saveSbiFederationDefinition(FederationDefinition dataset, boolean duplicated) {
 		LogMF.debug(logger, "IN:  model = [{0}]", dataset);
 
 		Session session = null;
@@ -79,7 +66,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			session = getSession();
 			Assert.assertNotNull(session, "session cannot be null");
 			transaction = session.beginTransaction();
-			int id = saveSbiFederationDefinition(dataset, duplicated, session, transaction).getFederation_id();
+			int id = saveSbiFederationDefinition(dataset, true, session, transaction).getFederation_id();
 			transaction.commit();
 			return id;
 		} catch (Throwable t) {
