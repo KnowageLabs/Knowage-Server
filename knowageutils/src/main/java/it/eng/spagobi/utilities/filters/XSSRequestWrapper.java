@@ -146,7 +146,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 			value = scriptPattern.matcher(value).replaceAll("");
 
 			// Avoid onClick= expressions
-			scriptPattern = Pattern.compile("onlClick(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+			scriptPattern = Pattern.compile("onClick(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 			value = scriptPattern.matcher(value).replaceAll("");
 
 			// Avoid anything between form tags
