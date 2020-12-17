@@ -18,7 +18,6 @@
 package it.eng.spagobi.api.v2;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -34,16 +32,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.functionscatalog.utils.InputVariable;
 import it.eng.knowage.functionscatalog.utils.OutputColumn;
 import it.eng.spago.error.EMFUserError;
@@ -63,12 +58,8 @@ import it.eng.spagobi.functions.metadata.SbiFunctionOutputColumn;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.CatalogFunction;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
-import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
 @Path("/2.0/functions-catalog")
 @ManageAuthorization
@@ -505,111 +496,5 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 					return false;
 			}
 		}
-	}
-
-	// ------------------- START FUNCTIONS CATALOG EXECUTE FORWARDER ------------------
-
-	@GET
-	@Path("/execute/sample/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String executeSampleCatalogFunctionById(@PathParam("id") int id) {
-		logger.debug("IN");
-		logger.debug("Received request for executing function with id [" + id + "]");
-		Response response;
-		try {
-			Map<String, String> headers = getHeadersToForward(request);
-			String url = getForwardingUrl(request);
-			response = RestUtilities.makeRequest(HttpMethod.Get, url, headers, "", null, true);
-		} catch (Exception e) {
-			throw new SpagoBIEngineRuntimeException("Error while attempting to forward request to the datamining engine or getting the response", e);
-		} finally {
-			logger.debug("OUT");
-		}
-		return response.getResponseBody();
-	}
-
-	@GET
-	@Path("/execute/sample")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String executeSampleCatalogFunctionByLabel(@QueryParam("label") String label) {
-		logger.debug("IN");
-		logger.debug("Received request for executing function with label [" + label + "]");
-		Response response;
-		try {
-			Map<String, String> headers = getHeadersToForward(request);
-			String url = getForwardingUrl(request);
-			response = RestUtilities.makeRequest(HttpMethod.Get, url, headers, "", null, true);
-		} catch (Exception e) {
-			throw new SpagoBIEngineRuntimeException("Error while attempting to forward request to the datamining engine or getting the response", e);
-		} finally {
-			logger.debug("OUT");
-		}
-		return response.getResponseBody();
-	}
-
-	@POST
-	@Path("/execute/new/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String executeCatalogFunctionById(String body, @PathParam("id") int id) {
-		logger.debug("IN");
-		logger.debug("Received request for executing function with id [" + id + "]");
-		Response response;
-		try {
-			Map<String, String> headers = getHeadersToForward(request);
-			String url = getForwardingUrl(request);
-			response = RestUtilities.makeRequest(HttpMethod.Post, url, headers, body, null, true);
-		} catch (Exception e) {
-			throw new SpagoBIEngineRuntimeException("Error while attempting to forward request to the datamining engine or getting the response", e);
-		} finally {
-			logger.debug("OUT");
-		}
-		return response.getResponseBody();
-	}
-
-	@POST
-	@Path("/execute/new")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String executeCatalogFunctionByLabel(String body, @QueryParam("label") String label) {
-		logger.debug("IN");
-		logger.debug("Received request for executing function with label [" + label + "]");
-		Response response;
-		try {
-			Map<String, String> headers = getHeadersToForward(request);
-			String url = getForwardingUrl(request);
-			response = RestUtilities.makeRequest(HttpMethod.Post, url, headers, body, null, true);
-		} catch (Exception e) {
-			throw new SpagoBIEngineRuntimeException("Error while attempting to forward request to the datamining engine or getting the response", e);
-		} finally {
-			logger.debug("OUT");
-		}
-		return response.getResponseBody();
-	}
-
-	private Map<String, String> getHeadersToForward(HttpServletRequest request) throws UnsupportedEncodingException {
-		Map<String, String> headers = RestUtilities.toHeaders(request);
-		String userId = (String) getUserProfile().getUserUniqueIdentifier();
-		logger.debug("Adding auth for user " + userId);
-		String encodedBytes = Base64.encode(userId.getBytes("UTF-8"));
-		headers.put("Authorization", "Direct " + encodedBytes);
-		return headers;
-	}
-
-	private String getForwardingUrl(HttpServletRequest request) {
-		String knowageContext = KnowageSystemConfiguration.getKnowageContext();
-		String resourceUri = request.getRequestURI().replaceFirst(knowageContext, knowageContext + DATA_MINING_ENGINE_SUFFIX);
-		String queryParams = request.getQueryString();
-
-		StringBuilder sb = new StringBuilder();
-		sb.append(resourceUri);
-		if (queryParams != null) {
-			sb.append("?");
-			sb.append(queryParams);
-		}
-
-		return sb.toString();
 	}
 }
