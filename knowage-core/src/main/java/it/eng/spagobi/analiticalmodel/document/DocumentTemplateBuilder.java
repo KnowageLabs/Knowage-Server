@@ -17,15 +17,12 @@
  */
 package it.eng.spagobi.analiticalmodel.document;
 
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.drivers.smartfilter.SmartFilterDriver;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -61,39 +58,39 @@ public class DocumentTemplateBuilder {
 		return template;
 	}
 
-	public ObjTemplate buildSmartFilterDocumentTemplate(String templateName, String templateAuthor, BIObject parentQbeDocument, String query,
-			JSONObject smartFilterData, String modelName) {
-
-		ObjTemplate template;
-
-		logger.debug("IN");
-
-		template = null;
-		try {
-			String smartFilterValuesString = null;
-			if (smartFilterData != null) {
-				smartFilterValuesString = smartFilterData.toString();
-			}
-
-			SmartFilterDriver smartFilterDriver = new SmartFilterDriver();
-
-			String smartFiltertDocumentTemplate = null;
-			if (parentQbeDocument != null) {
-				ObjTemplate parentQbeDocumentTemplate = parentQbeDocument.getActiveTemplate();
-				String parentQbeDocumentTemplateContent = new String(parentQbeDocumentTemplate.getContent());
-				smartFiltertDocumentTemplate = smartFilterDriver.composeSmartFilterTemplate(smartFilterData.toString(), query, smartFilterValuesString,
-						parentQbeDocumentTemplateContent);
-			} else if (parentQbeDocument == null && smartFilterData != null) {
-				smartFiltertDocumentTemplate = smartFilterDriver.createNewSmartFitleremplate(smartFilterData.toString(), modelName, query);
-			}
-
-			template = buildDocumentTemplate(templateName, templateAuthor, smartFiltertDocumentTemplate);
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while building template", t);
-		} finally {
-			logger.debug("OUT");
-		}
-
-		return template;
-	}
+//	public ObjTemplate buildSmartFilterDocumentTemplate(String templateName, String templateAuthor, BIObject parentQbeDocument, SmartFilterDTO smartFilterData,
+//			String modelName) {
+//
+//		ObjTemplate template;
+//
+//		logger.debug("IN");
+//
+//		template = null;
+//		try {
+//			String smartFilterValuesString = null;
+//			if (smartFilterData != null) {
+//				smartFilterValuesString = smartFilterData.toString();
+//			}
+//
+//			SmartFilterDriver smartFilterDriver = new SmartFilterDriver();
+//
+//			String smartFiltertDocumentTemplate = null;
+//			if (parentQbeDocument != null) {
+//				ObjTemplate parentQbeDocumentTemplate = parentQbeDocument.getActiveTemplate();
+//				String parentQbeDocumentTemplateContent = new String(parentQbeDocumentTemplate.getContent());
+//				smartFiltertDocumentTemplate = smartFilterDriver.composeSmartFilterTemplate(smartFilterValuesString, smartFilterValuesString,
+//						parentQbeDocumentTemplateContent);
+//			} else if (parentQbeDocument == null && smartFilterData != null) {
+//				smartFiltertDocumentTemplate = smartFilterDriver.createNewSmartFitleremplate(smartFilterValuesString, modelName);
+//			}
+//
+//			template = buildDocumentTemplate(templateName, templateAuthor, smartFiltertDocumentTemplate);
+//		} catch (Throwable t) {
+//			throw new SpagoBIRuntimeException("An unexpected error occured while building template", t);
+//		} finally {
+//			logger.debug("OUT");
+//		}
+//
+//		return template;
+//	}
 }

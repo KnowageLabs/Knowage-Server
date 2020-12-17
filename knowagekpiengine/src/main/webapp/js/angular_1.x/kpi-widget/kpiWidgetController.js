@@ -33,7 +33,7 @@
 
 	function kpiWidgetController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config,$interval){
 		$scope.thresholdStops;
-		debugger;
+
 		$scope.translate = sbiModule_translate;
 		$scope.data = [{
 			"values" : []

@@ -17,6 +17,19 @@
  */
 package it.eng.spagobi.engines.drivers.smartfilter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
@@ -43,19 +56,6 @@ import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * Driver Implementation (IEngineDriver Interface) for Qbe External Engine.
  */
@@ -66,12 +66,9 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param analyticalDocument
-	 *            the biobject
+	 * @param profile            Profile of the user
+	 * @param roleName           the name of the execution role
+	 * @param analyticalDocument the biobject
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
@@ -84,8 +81,8 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 
 		try {
 			Assert.assertNotNull(analyticalDocument, "Input parameter [analyticalDocument] cannot be null");
-			Assert.assertTrue((analyticalDocument instanceof BIObject), "Input parameter [analyticalDocument] cannot be an instance of ["
-					+ analyticalDocument.getClass().getName() + "]");
+			Assert.assertTrue((analyticalDocument instanceof BIObject),
+					"Input parameter [analyticalDocument] cannot be an instance of [" + analyticalDocument.getClass().getName() + "]");
 
 			biObject = (BIObject) analyticalDocument;
 
@@ -104,14 +101,10 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param analyticalDocumentSubObject
-	 *            SubObject to execute
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param analyticalDocument
-	 *            the object
+	 * @param analyticalDocumentSubObject SubObject to execute
+	 * @param profile                     Profile of the user
+	 * @param roleName                    the name of the execution role
+	 * @param analyticalDocument          the object
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
@@ -126,16 +119,16 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 
 		try {
 			Assert.assertNotNull(analyticalDocument, "Input parameter [analyticalDocument] cannot be null");
-			Assert.assertTrue((analyticalDocument instanceof BIObject), "Input parameter [analyticalDocument] cannot be an instance of ["
-					+ analyticalDocument.getClass().getName() + "]");
+			Assert.assertTrue((analyticalDocument instanceof BIObject),
+					"Input parameter [analyticalDocument] cannot be an instance of [" + analyticalDocument.getClass().getName() + "]");
 			biObject = (BIObject) analyticalDocument;
 
 			if (analyticalDocumentSubObject == null) {
 				logger.warn("Input parameter [subObject] is null");
 				return getParameterMap(analyticalDocument, profile, roleName);
 			}
-			Assert.assertTrue((analyticalDocumentSubObject instanceof SubObject), "Input parameter [subObjectDetail] cannot be an instance of ["
-					+ analyticalDocumentSubObject.getClass().getName() + "]");
+			Assert.assertTrue((analyticalDocumentSubObject instanceof SubObject),
+					"Input parameter [subObjectDetail] cannot be an instance of [" + analyticalDocumentSubObject.getClass().getName() + "]");
 			subObject = (SubObject) analyticalDocumentSubObject;
 
 			parameters = getRequestParameters(biObject);
@@ -160,10 +153,8 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 	/**
 	 * Adds a system parameter contaning info about document parameters (url name, label, type)
 	 *
-	 * @param biobject
-	 *            The BIObject under execution
-	 * @param map
-	 *            The parameters map
+	 * @param biobject The BIObject under execution
+	 * @param map      The parameters map
 	 * @return the modified map with the new parameter
 	 */
 	private Map addDocumentParametersInfo(Map map, BIObject biobject) {
@@ -197,8 +188,7 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 	/**
 	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
 	 *
-	 * @param biObject
-	 *            BIObject to execute
+	 * @param biObject BIObject to execute
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map getRequestParameters(BIObject biObject) {
@@ -240,10 +230,8 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
 	 *
-	 * @param biobj
-	 *            BIOBject to execute
-	 * @param pars
-	 *            Map of the parameters for the execution call
+	 * @param biobj BIOBject to execute
+	 * @param pars  Map of the parameters for the execution call
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map appendAnalyticalDriversToRequestParameters(BIObject biobj, Map pars) {
@@ -276,15 +264,12 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 	/**
 	 * Function not implemented. Thid method should not be called
 	 *
-	 * @param biobject
-	 *            The BIOBject to edit
-	 * @param profile
-	 *            the profile
+	 * @param biobject The BIOBject to edit
+	 * @param profile  the profile
 	 *
 	 * @return the edits the document template build url
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -340,15 +325,12 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 	/**
 	 * Function not implemented. Thid method should not be called
 	 *
-	 * @param biobject
-	 *            The BIOBject to edit
-	 * @param profile
-	 *            the profile
+	 * @param biobject The BIOBject to edit
+	 * @param profile  the profile
 	 *
 	 * @return the new document template build url
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -502,46 +484,45 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 		return null;
 	}
 
-	public String composeSmartFilterTemplate(String smartFilterDef, String smartFilterQuery, String smartFilterValues, String originalQbeTempl)
-			throws SourceBeanException {
+	public String composeSmartFilterTemplate(String smartFilterDef, String smartFilterQuery, String smartFilterValues) throws SourceBeanException {
 		/*
 		 * SourceBean templateSB = new SourceBean(TAG_WORKSHEET); templateSB.setAttribute(ATTRIBUTE_VERSION, CURRENT_VERSION); SourceBean confSB =
 		 * SourceBean.fromXMLString(originalQbeTempl); // from version 0 to version 1 worksheet change compensation: on version 0 the // worksheet definition
 		 * was inside QBE tag; on version 1 the QBE tag is inside // WORKSHEET tag if (confSB.getName().equalsIgnoreCase(TAG_QBE) ||
 		 * confSB.getName().equalsIgnoreCase(TAG_QBE_COMPOSITE) || confSB.getName().equalsIgnoreCase(TAG_SMART_FILTER)) {
-		 * 
+		 *
 		 * if (confSB.containsAttribute(TAG_WORKSHEET_DEFINITION)) { confSB.delAttribute(TAG_WORKSHEET_DEFINITION); } templateSB.setAttribute(confSB);
 		 * SourceBean wk_def_sb = new SourceBean(TAG_WORKSHEET_DEFINITION); wk_def_sb.setCharacters(workSheetDef); templateSB.setAttribute(wk_def_sb);
-		 * 
+		 *
 		 * if (workSheetQuery != null && !workSheetQuery.equals("")) { SourceBean query_sb = new SourceBean(QUERY); query_sb.setCharacters(workSheetQuery);
 		 * confSB.updAttribute(query_sb); }
-		 * 
+		 *
 		 * if (smartFilterValues != null && !smartFilterValues.equals("")) { SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
 		 * smartFilterValuesSB.setCharacters(smartFilterValues); confSB.updAttribute(smartFilterValuesSB); }
-		 * 
+		 *
 		 * } else {
-		 * 
+		 *
 		 * SourceBean qbeSB = null;
-		 * 
+		 *
 		 * if (confSB.containsAttribute(TAG_QBE)) { qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE); } else if (confSB.containsAttribute(TAG_QBE_COMPOSITE)) {
 		 * qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE_COMPOSITE); } else if (confSB.containsAttribute(TAG_SMART_FILTER)) { qbeSB = (SourceBean)
 		 * confSB.getAttribute(TAG_SMART_FILTER); }
-		 * 
+		 *
 		 * if (qbeSB != null) { templateSB.setAttribute(qbeSB); if (workSheetQuery != null && !workSheetQuery.equals("")) { SourceBean query_sb = new
 		 * SourceBean(QUERY); query_sb.setCharacters(workSheetQuery); qbeSB.updAttribute(query_sb); }
-		 * 
+		 *
 		 * if (smartFilterValues != null && !smartFilterValues.equals("")) { SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
 		 * smartFilterValuesSB.setCharacters(smartFilterValues); qbeSB.updAttribute(smartFilterValuesSB); } }
-		 * 
+		 *
 		 * SourceBean wk_def_sb = new SourceBean(TAG_WORKSHEET_DEFINITION); wk_def_sb.setCharacters(workSheetDef); templateSB.setAttribute(wk_def_sb); }
-		 * 
+		 *
 		 * String template = templateSB.toXML(false);
 		 */
 		String template = "";
 		return template;
 	}
 
-	public String createNewSmartFitleremplate(String smartFilterDefinition, String modelName, String query) throws SourceBeanException {
+	public String createNewSmartFitleremplate(String smartFilterDefinition, String modelName) throws SourceBeanException {
 		// SourceBean templateSB = new SourceBean(TAG_WORKSHEET);
 		// templateSB.setAttribute(ATTRIBUTE_VERSION, CURRENT_VERSION);
 		// SourceBean worksheetDefinitionSB = new SourceBean(TAG_WORKSHEET_DEFINITION);
