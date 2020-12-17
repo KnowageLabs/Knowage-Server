@@ -44,15 +44,12 @@ public class UserBO implements Serializable {
 	 */
 	private static final long serialVersionUID = -5176913503788924840L;
 
-	@Xss
-	@NotNull
-	private int id;
+	private Integer id;
 	@Xss
 	@NotNull
 	@Size(max = 100)
 	private String userId;
 	@Xss
-	@NotNull
 	@Size(max = 150)
 	private String password;
 	@Xss
@@ -70,11 +67,11 @@ public class UserBO implements Serializable {
 	private List sbiExtUserRoleses = new ArrayList();
 	private HashMap<Integer, HashMap<String, String>> sbiUserAttributeses = new HashMap<Integer, HashMap<String, String>>();
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

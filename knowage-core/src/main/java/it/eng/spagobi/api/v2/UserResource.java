@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -37,8 +38,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -159,19 +158,10 @@ public class UserResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response insertUser(String body) {
-		UserBO user = null;
+	public Response insertUser(@Valid UserBO requestDTO) {
 		ISbiUserDAO usersDao = null;
 
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			user = mapper.readValue(body, UserBO.class);
-		} catch (Exception e1) {
-			logger.error(e1);
-			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
-		}
-
-		String userId = user.getUserId();
+		String userId = requestDTO.getUserId();
 		if (userId.startsWith(PublicProfile.PUBLIC_USER_PREFIX)) {
 			logger.error("public is reserved prefix for user id");
 			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
@@ -190,12 +180,12 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 
 		SbiUser sbiUser = new SbiUser();
-		sbiUser.setUserId(user.getUserId());
-		sbiUser.setFullName(user.getFullName());
-		sbiUser.setPassword(user.getPassword());
-		sbiUser.setDefaultRoleId(user.getDefaultRoleId());
+		sbiUser.setUserId(requestDTO.getUserId());
+		sbiUser.setFullName(requestDTO.getFullName());
+		sbiUser.setPassword(requestDTO.getPassword());
+		sbiUser.setDefaultRoleId(requestDTO.getDefaultRoleId());
 
-		List<Integer> list = user.getSbiExtUserRoleses();
+		List<Integer> list = requestDTO.getSbiExtUserRoleses();
 		Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>(0);
 		for (Integer id : list) {
 			SbiExtRoles role = new SbiExtRoles();
@@ -204,7 +194,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 		sbiUser.setSbiExtUserRoleses(roles);
 
-		HashMap<Integer, HashMap<String, String>> map = user.getSbiUserAttributeses();
+		HashMap<Integer, HashMap<String, String>> map = requestDTO.getSbiUserAttributeses();
 		Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>(0);
 
 		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
@@ -245,21 +235,13 @@ public class UserResource extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateUser(@PathParam("id") Integer id, String body) {
+	public Response updateUser(@PathParam("id") Integer id, @Valid UserBO requestDTO) {
 
 		SbiUser sbiUserOriginal = new SbiUser();
-		UserBO user = null;
 		ISbiUserDAO usersDao = null;
 		ProfileAttributeResourceRoleProcessor roleFilter = new ProfileAttributeResourceRoleProcessor();
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			user = mapper.readValue(body, UserBO.class);
-		} catch (Exception e1) {
-			logger.error(e1);
-			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
-		}
 
-		String userId = user.getUserId();
+		String userId = requestDTO.getUserId();
 		if (userId.startsWith(PublicProfile.PUBLIC_USER_PREFIX)) {
 			logger.error("public is reserved prefix for user id");
 			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
@@ -267,15 +249,15 @@ public class UserResource extends AbstractSpagoBIResource {
 
 		SbiUser sbiUser = new SbiUser();
 		sbiUser.setId(id);
-		sbiUser.setUserId(user.getUserId());
-		sbiUser.setFullName(user.getFullName());
-		sbiUser.setPassword(user.getPassword());
-		sbiUser.setDefaultRoleId(user.getDefaultRoleId());
-		sbiUser.setFailedLoginAttempts(user.getFailedLoginAttempts());
+		sbiUser.setUserId(requestDTO.getUserId());
+		sbiUser.setFullName(requestDTO.getFullName());
+		sbiUser.setPassword(requestDTO.getPassword());
+		sbiUser.setDefaultRoleId(requestDTO.getDefaultRoleId());
+		sbiUser.setFailedLoginAttempts(requestDTO.getFailedLoginAttempts());
 		// This reset the account lock enabled in case of too much failed login attempts
 //		sbiUser.setFailedLoginAttempts(0);
 
-		List<Integer> list = user.getSbiExtUserRoleses();
+		List<Integer> list = requestDTO.getSbiExtUserRoleses();
 		Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>(0);
 		for (Integer i : list) {
 			SbiExtRoles role = new SbiExtRoles();
@@ -284,7 +266,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 		sbiUser.setSbiExtUserRoleses(roles);
 
-		HashMap<Integer, HashMap<String, String>> map = user.getSbiUserAttributeses();
+		HashMap<Integer, HashMap<String, String>> map = requestDTO.getSbiUserAttributeses();
 		Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>(0);
 		List<SbiAttribute> attrList = null;
 		ISbiAttributeDAO objDao = null;
