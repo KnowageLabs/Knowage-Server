@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -39,8 +40,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.functionscatalog.utils.CatalogFunctionDTO;
+import it.eng.knowage.functionscatalog.utils.InputColumnDTO;
 import it.eng.knowage.functionscatalog.utils.InputVariable;
+import it.eng.knowage.functionscatalog.utils.InputVariableDTO;
+import it.eng.knowage.functionscatalog.utils.KeywordDTO;
 import it.eng.knowage.functionscatalog.utils.OutputColumn;
+import it.eng.knowage.functionscatalog.utils.OutputColumnDTO;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -176,93 +182,22 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String insertCatalogFunction(String body) throws IOException {
+	public String insertCatalogFunction(@Valid CatalogFunctionDTO funcDTO) throws IOException {
 		logger.debug("IN");
-		ICatalogFunctionDAO catalogFunctionDAO = null;
-
-		CatalogFunction itemToInsert = new CatalogFunction();
+		int catalogFunctionId = -1;
 		JSONObject response = new JSONObject();
-
 		try {
-			int catalogFunctionId = -1;
-			JSONObject jsonObj = new JSONObject(body);
-			String name = jsonObj.getString("name");
-			String description = jsonObj.getString("description");
-			String benchmarks = jsonObj.getString("benchmarks");
-			String language = jsonObj.getString("language");
-			String family = jsonObj.has("functionFamily") ? jsonObj.getString("functionFamily") : "online";
-			String onlineScript = null, offlineScriptTrain = null, offlineScriptUse = null;
-			if (family.equals("online")) {
-				onlineScript = jsonObj.getString("onlineScript");
-			} else {
-				offlineScriptTrain = jsonObj.getString("offlineScriptTrainModel");
-				offlineScriptUse = jsonObj.getString("offlineScriptUseModel");
-			}
-			String owner = (String) getUserProfile().getUserId();
-			String label = jsonObj.getString("label");
-			String type = jsonObj.getString("type");
+			List<String> keywords = toKeywordsList(funcDTO.getKeywords());
+			CatalogFunction itemToInsert = toCatalogFunction(funcDTO, keywords);
+			Map<String, IInputVariable> inputVariables = toInputVariablesMap(funcDTO.getInputVariables());
+			Map<String, String> inputColumns = toInputColumnsMap(funcDTO.getInputColumns());
+			Map<String, IOutputColumn> outputColumns = toOutputColumnsMap(funcDTO.getOutputColumns());
 
-			JSONArray jsonInputColumns = jsonObj.getJSONArray("inputColumns");
-			JSONArray jsonInputVariables = jsonObj.getJSONArray("inputVariables");
-
-			JSONArray jsonKeywords = jsonObj.getJSONArray("keywords");
-
-			JSONArray jsonOutputColumns = jsonObj.getJSONArray("outputColumns");
-
-			Map<String, InputVariable> inputVariables = new HashMap<String, InputVariable>();
-			Map<String, String> inputColumns = new HashMap<String, String>();
-			Map<String, IOutputColumn> outputColumns = new HashMap<String, IOutputColumn>();
-
-			for (int i = 0; i < jsonInputColumns.length(); i++) {
-
-				JSONObject inputItemJSON = jsonInputColumns.getJSONObject(i);
-				String colName = inputItemJSON.getString("name");
-				String colType = inputItemJSON.getString("type");
-				inputColumns.put(colName, colType);
-			}
-
-			for (int i = 0; i < jsonInputVariables.length(); i++) {
-
-				JSONObject inputItemJSON = jsonInputVariables.getJSONObject(i);
-				String varName = inputItemJSON.getString("name");
-				String varType = inputItemJSON.getString("type");
-				String varValue = inputItemJSON.optString("value");
-				inputVariables.put(varName, new InputVariable(varName, varType, varValue));
-			}
-
-			for (int i = 0; i < jsonOutputColumns.length(); i++) {
-
-				JSONObject outputItemJSON = jsonOutputColumns.getJSONObject(i);
-				String colName = outputItemJSON.getString("name");
-				String colFieldType = outputItemJSON.getString("fieldType");
-				String colType = outputItemJSON.getString("type");
-				outputColumns.put(colName, new OutputColumn(colName, colFieldType, colType));
-			}
-
-			List<String> keywordsList = new ArrayList<String>();
-			for (int i = 0; i < jsonKeywords.length(); i++) {
-				keywordsList.add(jsonKeywords.getString(i));
-			}
-
-			itemToInsert.setName(name);
-			itemToInsert.setDescription(description);
-			itemToInsert.setBenchmarks(benchmarks);
-			itemToInsert.setLanguage(language);
-			itemToInsert.setFamily(family);
-			itemToInsert.setOnlineScript(onlineScript);
-			itemToInsert.setOfflineScriptTrain(offlineScriptTrain);
-			itemToInsert.setOfflineScriptUse(offlineScriptUse);
-			itemToInsert.setOwner(owner);
-			itemToInsert.setKeywords(keywordsList);
-			itemToInsert.setLabel(label);
-			itemToInsert.setType(type);
-
-			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
+			ICatalogFunctionDAO catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
 			catalogFunctionId = catalogFunctionDAO.insertCatalogFunction(itemToInsert, inputColumns, inputVariables, outputColumns);
-			logger.debug("Catalog function ID equals to [" + catalogFunctionId + "]");
-			response = jsonObj;
-			response.put("id", catalogFunctionId);
 
+			logger.debug("Catalog function ID equals to [" + catalogFunctionId + "]");
+			response.put("id", catalogFunctionId);
 		} catch (EMFUserError | JSONException e) {
 			throw new SpagoBIServiceException("Error while insert catalog function", e);
 		}
@@ -274,101 +209,34 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String updateCatalogFunction(@PathParam("id") int id, String body) {
+	public String updateCatalogFunction(@PathParam("id") int id, @Valid CatalogFunctionDTO funcDTO) {
 		logger.debug("IN");
-		ICatalogFunctionDAO catalogFunctionDAO = null;
+		JSONObject response = new JSONObject();
 
 		if (!hasPermission(id)) {
 			throw new SpagoBIRuntimeException("You are not owner or administrator. Permission denied.");
 		}
 
-		CatalogFunction itemToInsert = new CatalogFunction();
-		JSONObject response = new JSONObject();
-
 		try {
-			JSONObject jsonObj = new JSONObject(body);
-			String name = jsonObj.getString("name");
-			String description = jsonObj.getString("description");
-			String benchmarks = jsonObj.getString("benchmarks");
-			String language = jsonObj.getString("language");
-			String family = jsonObj.has("functionFamily") ? jsonObj.getString("functionFamily") : "online";
-			String onlineScript = null, offlineScriptTrain = null, offlineScriptUse = null;
-			if (family.equals("online")) {
-				onlineScript = jsonObj.getString("onlineScript");
-			} else {
-				offlineScriptTrain = jsonObj.getString("offlineScriptTrainModel");
-				offlineScriptUse = jsonObj.getString("offlineScriptUseModel");
-			}
-			String owner = (String) getUserProfile().getUserId();
-			String label = jsonObj.getString("label");
-			String type = jsonObj.getString("type");
-
-			JSONArray jsonInputColumns = jsonObj.getJSONArray("inputColumns");
-			JSONArray jsonInputVariables = jsonObj.getJSONArray("inputVariables");
-			JSONArray jsonOutputColumns = jsonObj.getJSONArray("outputColumns");
-			JSONArray keywords = jsonObj.getJSONArray("keywords");
-
-			Map<String, String> inputColumns = new HashMap<String, String>();
-			Map<String, IOutputColumn> outputColumns = new HashMap<String, IOutputColumn>();
-			Map<String, IInputVariable> inputVariables = new HashMap<String, IInputVariable>();
-
-			for (int i = 0; i < jsonInputColumns.length(); i++) {
-				JSONObject inputColumnJSON = jsonInputColumns.getJSONObject(i);
-				String colName = inputColumnJSON.getString("name");
-				String colType = inputColumnJSON.getString("type");
-				inputColumns.put(colName, colType);
-			}
-
-			for (int i = 0; i < jsonInputVariables.length(); i++) {
-				JSONObject inputItemJSON = jsonInputVariables.getJSONObject(i);
-				String varName = inputItemJSON.getString("name");
-				String varType = inputItemJSON.getString("type");
-				String varValue = inputItemJSON.optString("value");
-				inputVariables.put(varName, new InputVariable(varName, varType, varValue));
-			}
-
-			for (int i = 0; i < jsonOutputColumns.length(); i++) {
-				JSONObject outputColumnJSON = jsonOutputColumns.getJSONObject(i);
-				String colName = outputColumnJSON.getString("name");
-				String colFieldType = outputColumnJSON.getString("fieldType");
-				String colType = outputColumnJSON.getString("type");
-				outputColumns.put(colName, new OutputColumn(colName, colFieldType, colType));
-			}
-
-			List<String> keyList = new ArrayList<String>();
-			for (int i = 0; i < keywords.length(); i++) {
-				String key = keywords.getString(i);
-				keyList.add(key);
-			}
-
-			itemToInsert.setName(name);
-			itemToInsert.setDescription(description);
-			itemToInsert.setBenchmarks(benchmarks);
-			itemToInsert.setLanguage(language);
-			itemToInsert.setFamily(family);
-			itemToInsert.setOnlineScript(onlineScript);
-			itemToInsert.setOfflineScriptTrain(offlineScriptTrain);
-			itemToInsert.setOfflineScriptUse(offlineScriptUse);
-			itemToInsert.setOwner(owner);
+			List<String> keywords = toKeywordsList(funcDTO.getKeywords());
+			CatalogFunction itemToInsert = toCatalogFunction(funcDTO, keywords);
+			Map<String, IInputVariable> inputVariables = toInputVariablesMap(funcDTO.getInputVariables());
+			Map<String, String> inputColumns = toInputColumnsMap(funcDTO.getInputColumns());
+			Map<String, IOutputColumn> outputColumns = toOutputColumnsMap(funcDTO.getOutputColumns());
 			itemToInsert.setInputColumns(inputColumns);
 			itemToInsert.setOutputColumns(outputColumns);
 			itemToInsert.setInputVariables(inputVariables);
-			itemToInsert.setKeywords(keyList);
-			itemToInsert.setLabel(label);
-			itemToInsert.setType(type);
 
-			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
+			ICatalogFunctionDAO catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
 			catalogFunctionDAO.setUserProfile(getUserProfile());
 
 			SbiCatalogFunction oldFunction = catalogFunctionDAO.getCatalogFunctionById(id);
 			if (oldFunction == null) {
 				throw new SpagoBIRuntimeException("no old function in db with Id:" + id);
 			}
-
 			catalogFunctionDAO.updateCatalogFunction(itemToInsert, id);
 
 			response.put("Response", "OK");
-
 		} catch (JSONException e) {
 			throw new SpagoBIServiceException("Error while update catalog function " + id, e);
 		}
@@ -496,5 +364,67 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 					return false;
 			}
 		}
+	}
+
+	CatalogFunction toCatalogFunction(CatalogFunctionDTO funcDTO, List<String> keywords) {
+		CatalogFunction toReturn = new CatalogFunction();
+
+		toReturn.setName(funcDTO.getName());
+		toReturn.setDescription(funcDTO.getDescription());
+		toReturn.setBenchmarks(funcDTO.getBenchmarks());
+		toReturn.setLanguage(funcDTO.getLanguage());
+		toReturn.setFamily(funcDTO.getFamily());
+		toReturn.setOnlineScript(funcDTO.getOnlineScript());
+		toReturn.setOfflineScriptTrain(funcDTO.getOfflineScriptTrainModel());
+		toReturn.setOfflineScriptUse(funcDTO.getOfflineScriptUseModel());
+		toReturn.setOwner((String) getUserProfile().getUserId());
+		toReturn.setKeywords(keywords);
+		toReturn.setLabel(funcDTO.getLabel());
+		toReturn.setType(funcDTO.getType());
+
+		return toReturn;
+	}
+
+	private Map<String, String> toInputColumnsMap(List<InputColumnDTO> inputColumnsDTO) {
+		Map<String, String> inputColumns = new HashMap<String, String>();
+		for (int i = 0; i < inputColumnsDTO.size(); i++) {
+			InputColumnDTO inputCol = inputColumnsDTO.get(i);
+			String colName = inputCol.getName();
+			String colType = inputCol.getType();
+			inputColumns.put(colName, colType);
+		}
+		return inputColumns;
+	}
+
+	private Map<String, IInputVariable> toInputVariablesMap(List<InputVariableDTO> inputVariablesDTO) {
+		Map<String, IInputVariable> inputVariables = new HashMap<String, IInputVariable>();
+		for (int i = 0; i < inputVariablesDTO.size(); i++) {
+			InputVariableDTO inputVar = inputVariablesDTO.get(i);
+			String varName = inputVar.getName();
+			String varType = inputVar.getType();
+			String varValue = inputVar.getValue();
+			inputVariables.put(varName, new InputVariable(varName, varType, varValue));
+		}
+		return inputVariables;
+	}
+
+	private Map<String, IOutputColumn> toOutputColumnsMap(List<OutputColumnDTO> outputColumnsDTO) {
+		Map<String, IOutputColumn> outputColumns = new HashMap<String, IOutputColumn>();
+		for (int i = 0; i < outputColumnsDTO.size(); i++) {
+			OutputColumnDTO outputCol = outputColumnsDTO.get(i);
+			String colName = outputCol.getName();
+			String colFieldType = outputCol.getFieldType();
+			String colType = outputCol.getType();
+			outputColumns.put(colName, new OutputColumn(colName, colFieldType, colType));
+		}
+		return outputColumns;
+	}
+
+	private List<String> toKeywordsList(List<KeywordDTO> keywordsDTO) {
+		List<String> keywords = new ArrayList<String>();
+		for (int i = 0; i < keywordsDTO.size(); i++) {
+			keywords.add(keywordsDTO.get(i).getKeyword());
+		}
+		return keywords;
 	}
 }

@@ -173,6 +173,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		} else {
 			if ($scope.saveOrUpdateFlag == "save") {
 				body = $scope.shownFunction;
+				if (!body.id || body.id == "") body.id = -1;
 
 				sbiModule_restServices.post("2.0/functions-catalog", "insert", body).then(
 					function(result) {
@@ -227,6 +228,12 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				)
 			} else if ($scope.saveOrUpdateFlag == "update") {
 				body = $scope.shownFunction;
+				// Yes, I'm doing something bad and I know it
+				// I don't know why I have "family" and not "functionFamily" field, so I am overwriting it on the fly
+				if (body.family) {
+					body.functionFamily = body.family;
+					delete body.family;
+				}
 				functionId = $scope.shownFunction.id;
 
 				sbiModule_restServices.put("2.0/functions-catalog", "update/" + functionId,body).then(
