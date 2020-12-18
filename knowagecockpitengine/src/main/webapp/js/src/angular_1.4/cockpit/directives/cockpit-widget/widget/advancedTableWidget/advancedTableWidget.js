@@ -137,14 +137,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						//ROWSPAN MANAGEMENT
 						if($scope.ngModel.content.columnSelectedOfDataset[c].rowSpan){
 							tempCol.rowSpanDimensions = {};
+							var previousValue;
+							var previousIndex;
 							for(var r in $scope.tempRows){
-								if(!tempCol.rowSpanDimensions[$scope.tempRows[r][fields[f].name]]) tempCol.rowSpanDimensions[$scope.tempRows[r][fields[f].name]] = {value: 1};
-								else tempCol.rowSpanDimensions[$scope.tempRows[r][fields[f].name]].value ++;
+								if(previousValue != $scope.tempRows[r][fields[f].name]){
+									previousValue = $scope.tempRows[r][fields[f].name];
+									previousIndex = r;
+									$scope.tempRows[r].span = 1;
+								}else {
+									$scope.tempRows[previousIndex].span ++;
+								}
 							}
 							tempCol.rowSpan = RowSpanCalculator;
 							tempCol.cellClassRules = {
 								'cell-span': function(params) {
-									return params.colDef.rowSpanDimensions && params.colDef.rowSpanDimensions[params.value] && params.colDef.rowSpanDimensions[params.value].value > 1
+									return $scope.tempRows[params.rowIndex].span > 1
 								}
 					        }
 						}
@@ -567,9 +574,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		function RowSpanCalculator(params) {
-			if(params.colDef.rowSpanDimensions && params.colDef.rowSpanDimensions[params.data[params.colDef.field]] && !params.colDef.rowSpanDimensions[params.data[params.colDef.field]].disabled){
-				params.colDef.rowSpanDimensions[params.data[params.colDef.field]].disabled = true;
-				return params.colDef.rowSpanDimensions[params.data[params.colDef.field]].value;
+			if(params.data.span > 1){
+				return params.data.span;
 			}else return 1;
         };
 
