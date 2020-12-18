@@ -17,13 +17,36 @@
  */
 package it.eng.spagobi.images;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+
+import org.apache.clerezza.jaxrs.utils.form.FormFile;
+import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.images.dao.IImagesDAO;
@@ -32,33 +55,11 @@ import it.eng.spagobi.images.dao.IImagesDAO.OrderBy;
 import it.eng.spagobi.images.metadata.SbiImages;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.glossary.util.Util;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import org.apache.clerezza.jaxrs.utils.form.FormFile;
-import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.*;
 
 @Path("/1.0/images")
 public class ImagesService {
-	private static final String IMAGE_GALLERY_MAX_IMAGE_SIZE = "IMAGE_GALLERY.MAX_IMAGE_SIZE_KB";
-	private static final String IMAGE_GALLERY_MAX_USER_IMAGES = "IMAGE_GALLERY.MAX_USER_IMAGES";
-	private static final String IMAGE_GALLERY_MAX_TENANT_IMAGES = "IMAGE_GALLERY.MAX_TENANT_IMAGES";
-	private final long defaultMaxImageSize = 1024;
-	private final long defaultMaxUserImages = 10;
-	private final long defaultMaxTenantImages = 100;
 
 	private static transient Logger logger = Logger.getLogger(ImagesService.class);
 
@@ -128,9 +129,8 @@ public class ImagesService {
 	@Produces(MediaType.TEXT_PLAIN)
 	@UserConstraint(functionalities = { SpagoBIConstants.IMAGES_MANAGEMENT })
 	public String addImage(MultiPartBody input, @Context HttpServletRequest req) {
-		boolean success = true;
 		String msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.uploadOK";
-		String fileName = "";
+		String fileName = null;
 		try {
 
 			IImagesDAO dao = DAOFactory.getImagesDAO();
@@ -141,50 +141,45 @@ public class ImagesService {
 
 			if (file != null) {
 
-
 				fileName = file.getFileName();
+				ImageServiceAPI imageServiceAPI = new ImageServiceAPI();
 
+				if (imageServiceAPI.isTooBig(file)) {
+					msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.tooBigImage";
+				} else if (imageServiceAPI.isTooManyImageForTenant()) {
+					msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.tooImageForTenant";
+				} else if (imageServiceAPI.isTooManyImageForUser()) {
+					msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.tooImageForUser";
+				} else if (!imageServiceAPI.isAnImage(file)) {
+					msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.fileIsNotAnImage";
+				} else if (!imageServiceAPI.isValidFileExtension(file)) {
+					msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.fileTypeIsNotAllowed";
+				} else {
+					SbiImages image = dao.loadImage(fileName);
+					if (image == null) {
+						byte[] data = file.getContent();
+						dao.insertImage(fileName, data);
 
-					byte[] data = file.getContent();
-					if (data.length > getParamValue(IMAGE_GALLERY_MAX_IMAGE_SIZE, defaultMaxImageSize) * 1024) {
-						msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.tooBigImage";
-						success = false;
-					}
-					if (success) {
-						long numImagesByTenant = dao.countImages(false);
-						if (numImagesByTenant >= getParamValue(IMAGE_GALLERY_MAX_TENANT_IMAGES, defaultMaxTenantImages)) {
-							msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.tooImageForTenant";
-							success = false;
-						}
-					}
-					if (success) {
-						long numImagesByUser = dao.countImages(true);
-						if (numImagesByUser >= getParamValue(IMAGE_GALLERY_MAX_USER_IMAGES, defaultMaxUserImages)) {
-							msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.tooImageForUser";
-							success = false;
-						}
-					}
-					if (success) {
-						SbiImages image = dao.loadImage(fileName);
-						if (image == null) {
-							dao.insertImage(fileName, data);
-						} else {
-							msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.alreadyExists";
-							success = false;
-						}
-					}
+						JSONObject ret = new JSONObject();
+						ret.put("success", true);
+						ret.put("msg", msg);
+						ret.put("fileName", fileName);
+						return ret.toString();
 
-
+					} else {
+						msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.alreadyExists";
+					}
+				}
 			}
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while executing service \"addImage\"", t);
 			msg = "An unexpected error occured while executing service \"addImage\"";
-			success = false;
+			throw new SpagoBIRuntimeException(msg);
 		}
 
 		try {
 			JSONObject ret = new JSONObject();
-			ret.put("success", success);
+			ret.put("success", false);
 			ret.put("msg", msg);
 			ret.put("fileName", fileName);
 			return ret.toString();
@@ -193,21 +188,21 @@ public class ImagesService {
 		}
 	}
 
-	public boolean isValidJSON(final String json) {
-		boolean valid = false;
-		try {
-			final JsonParser parser = new ObjectMapper().getJsonFactory().createJsonParser(json);
-			while (parser.nextToken() != null) {
-			}
-			valid = true;
-		} catch (JsonParseException jpe) {
-			logger.debug("Parsed String is not a valid JSON: " + json);
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
-
-		return valid;
-	}
+//	public boolean isValidJSON(final String json) {
+//		boolean valid = false;
+//		try {
+//			final JsonParser parser = new ObjectMapper().getJsonFactory().createJsonParser(json);
+//			while (parser.nextToken() != null) {
+//			}
+//			valid = true;
+//		} catch (JsonParseException jpe) {
+//			logger.debug("Parsed String is not a valid JSON: " + json);
+//		} catch (IOException ioe) {
+//			ioe.printStackTrace();
+//		}
+//
+//		return valid;
+//	}
 
 	private String checkIfImageIsInUse(Integer imageId) {
 		logger.debug("IN");
@@ -379,17 +374,6 @@ public class ImagesService {
 		OutputStream output = response.getOutputStream();
 		output.write(content);
 		response.flushBuffer();
-	}
-
-	private long getParamValue(String paramName, long defaultValue) {
-		long ret = defaultValue;
-		try {
-			String size = SingletonConfig.getInstance().getConfigValue(paramName);
-			if (size != null && size.matches("\\d+"))
-				ret = Long.parseLong(size);
-		} catch (NumberFormatException e) {
-		}
-		return ret;
 	}
 
 	private Map<OrderBy, Direction> getOrderMap(String parameter) {
