@@ -1563,7 +1563,7 @@ public class ManageDataSetsForREST {
 					}
 
 					ds.setId(Integer.valueOf(id));
-					modifyPersistence(ds, logParam, req);
+					modifyPersistence(ds, logParam);
 					dsDao.modifyDataSet(ds);
 					logger.debug("Resource " + id + " updated");
 					attributesResponseSuccessJSON.put("success", true);
@@ -1601,7 +1601,7 @@ public class ManageDataSetsForREST {
 				// handle insert of persistence and scheduling
 				if (!isFromSaveNoMetadata) {
 					auditlogger.info("[Start persisting metadata for dataset with id " + ds.getId() + "]");
-					insertPersistence(ds, logParam, json, userProfile, req);
+					insertPersistence(ds, logParam, json, userProfile);
 					auditlogger.info("Metadata saved for dataset with id " + ds.getId() + "]");
 					auditlogger.info("[End persisting metadata for dataset with id " + ds.getId() + "]");
 				}
@@ -1620,7 +1620,7 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	public void modifyPersistence(IDataSet ds, HashMap<String, String> logParam, HttpServletRequest req) throws Exception {
+	public void modifyPersistence(IDataSet ds, HashMap<String, String> logParam) throws Exception {
 		logger.debug("IN");
 		IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
 		iDatasetDao.setUserProfile(profile);
@@ -1633,7 +1633,7 @@ public class ManageDataSetsForREST {
 		logger.debug("OUT");
 	}
 
-	public void insertPersistence(IDataSet ds, HashMap<String, String> logParam, JSONObject json, UserProfile userProfile, HttpServletRequest req)
+	public void insertPersistence(IDataSet ds, HashMap<String, String> logParam, JSONObject json, UserProfile userProfile)
 			throws Exception {
 		logger.debug("IN");
 
