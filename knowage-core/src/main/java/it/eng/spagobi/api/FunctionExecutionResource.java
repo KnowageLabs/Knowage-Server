@@ -59,6 +59,8 @@ import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DriversRuntimeLoaderFactory;
 import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
+import it.eng.spagobi.api.dto.FunctionExecutionResourceDTO;
+import it.eng.spagobi.api.dto.FunctionExecutionResourceMetadataDTO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
@@ -524,23 +526,22 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/saveDocumentMetadata")
-	public Response saveDocumentMetadata(@Context HttpServletRequest httpRequest) throws JSONException {
+	public Response saveDocumentMetadata(FunctionExecutionResourceDTO functionExecutionResourceDTO) throws JSONException {
 		try {
-			JSONObject params = RestUtilities.readBodyAsJSONObject(httpRequest);
+
 			IObjMetacontentDAO dao = DAOFactory.getObjMetacontentDAO();
 			dao.setUserProfile(getUserProfile());
-			Integer biobjectId = params.getInt("id");
-			Integer subobjectId = params.has("subobjectId") ? params.getInt("subobjectId") : null;
-			String jsonMeta = params.getString("jsonMeta");
+			Integer biobjectId = functionExecutionResourceDTO.getId();
+			Integer subobjectId = functionExecutionResourceDTO.getSubobjectId();
+			List<FunctionExecutionResourceMetadataDTO> jsonMeta = functionExecutionResourceDTO.getJsonMeta();
 
 			logger.debug("Object id = " + biobjectId);
 			logger.debug("Subobject id = " + subobjectId);
 
-			JSONArray metadata = new JSONArray(jsonMeta);
-			for (int i = 0; i < metadata.length(); i++) {
-				JSONObject aMetadata = metadata.getJSONObject(i);
-				Integer metadataId = aMetadata.getInt("id");
-				String text = aMetadata.getString("value");
+			for (int i = 0; i < jsonMeta.size(); i++) {
+				FunctionExecutionResourceMetadataDTO aMetadata = jsonMeta.get(i);
+				Integer metadataId = aMetadata.getId();
+				String text = aMetadata.getValue();
 				ObjMetacontent aObjMetacontent = dao.loadObjMetacontent(metadataId, biobjectId, subobjectId);
 				if (aObjMetacontent == null) {
 					logger.debug("ObjMetacontent for metadata id = " + metadataId + ", biobject id = " + biobjectId + ", subobject id = " + subobjectId

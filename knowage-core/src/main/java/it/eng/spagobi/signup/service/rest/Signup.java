@@ -78,6 +78,7 @@ import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.rest.publishers.PublisherService;
 import it.eng.spagobi.security.Password;
 import it.eng.spagobi.services.rest.annotations.PublicService;
+import it.eng.spagobi.signup.service.rest.dto.SignupDTO;
 import it.eng.spagobi.signup.validation.SignupJWTTokenManager;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;

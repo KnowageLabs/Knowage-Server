@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.signup.service.rest;
+package it.eng.spagobi.signup.service.rest.dto;
 
 import javax.validation.constraints.NotNull;
 
@@ -23,20 +23,25 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import it.eng.spagobi.services.validation.EmailValidation;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.Xss;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class SignupDTO {
+public class SignupDTO {
 
 	@ExtendedAlphanumeric
 	@NotNull
+	@Xss
 	private String name;
 	@ExtendedAlphanumeric
 	@NotNull
+	@Xss
 	private String surname;
 	@ExtendedAlphanumeric
 	@NotNull
+	@Xss
 	private String password;
 	@EmailValidation
+	@Xss
 	private String email;
 
 	// properties for creation only
