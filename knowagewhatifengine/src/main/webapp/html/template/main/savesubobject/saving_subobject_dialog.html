@@ -9,7 +9,7 @@
 	<md-dialog-content class="olapDialogContent" >
 		<div layout-padding layout="column">
 			<md-input-container class="md-block">
-				<label>Name</label>
+				<label>{{translate.load("sbi.common.name");}}</label>
 				<input type="text" ng-model="subObject.name" />
 				<div ng-show="!subObject.isValid()">
 	         		 <div ng-message="required">{{translate.load("sbi.olap.generic.required");}}</div>
@@ -17,7 +17,7 @@
 			</md-input-container>
 	
 			<md-input-container class="md-block">
-				<label>{{translate.load("sbi.olap.generic.description");}}</label>
+				<label>{{translate.load("sbi.common.description");}}</label>
 				<input type="text" ng-model="subObject.description" />
 			</md-input-container>
 	
