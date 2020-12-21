@@ -178,8 +178,6 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		}
 		$scope.dataset.meta = JSON.stringify($scope.dataset.meta);
 
-		debugger;
-
 		$http({
 			method: 'POST',
 			url: sbiModule_config.contextName + '/restful-services/selfservicedataset/testDataSet',
@@ -274,8 +272,6 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		// If User changes provided DataTypes on UI, go for Validation of Dataset, otherwise go for Preview of Dataset
 		if (isDirty) {
 			// Validation
-
-			debugger;
 
 			$http({
 				method: 'POST',
@@ -396,8 +392,6 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		params.SBI_EXECUTION_ID = -1;
 		params.isTech = false;
 		params.showOnlyOwner=true;
-
-		debugger;
 
 		$http({
 			method: 'POST',
