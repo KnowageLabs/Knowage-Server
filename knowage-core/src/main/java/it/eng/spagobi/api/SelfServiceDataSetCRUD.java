@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.ws.rs.BeanParam;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -57,6 +60,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
+import it.eng.spagobi.api.dto.SelfServiceDataSetDTO;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
@@ -69,7 +73,6 @@ import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.DataSetMetadataJSONSerializer;
-import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -113,6 +116,7 @@ import it.eng.spagobi.tools.notification.AbstractEvent;
 import it.eng.spagobi.tools.notification.DatasetNotificationEvent;
 import it.eng.spagobi.tools.notification.DatasetNotificationManager;
 import it.eng.spagobi.tools.notification.EventConstants;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -134,6 +138,9 @@ public class SelfServiceDataSetCRUD {
 	static private String previewRowsConfigLabel = "SPAGOBI.DATASET.PREVIEW_ROWS";
 
 	static private int ROWS_LIMIT_GUESS_TYPE_HEURISTIC = 10000;
+
+	@Context
+	private HttpServletRequest request;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -361,25 +368,25 @@ public class SelfServiceDataSetCRUD {
 
 	@POST
 	@Path("/save")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String saveDataSet(@Context HttpServletRequest request) {
-		IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	public String saveDataSet(@Valid @BeanParam SelfServiceDataSetDTO selfServiceDataSetDTO) {
+		IEngUserProfile profile = UserProfileManager.getProfile();
 		DatasetMetadataParser dsp = new DatasetMetadataParser();
 		try {
 
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
-			String label = request.getParameter("label");
-			String meta = request.getParameter(DataSetConstants.METADATA);
+			String label = selfServiceDataSetDTO.getLabel();
+			String meta = selfServiceDataSetDTO.getMeta();
 			// attributes for persisting dataset
-			String exportToHdfs = request.getParameter("exportToHdfs");
-			String persist = request.getParameter("persist");
-			String persistTablePrefix = request.getParameter("tablePrefix");
-			String persistTableName = request.getParameter("tableName");
+			String persist = selfServiceDataSetDTO.getPersist();
+			String persistTablePrefix = selfServiceDataSetDTO.getPersistTablePrefix();
+			String persistTableName = selfServiceDataSetDTO.getPersistTableName();
 
 			IDataSet ds = dao.loadDataSetByLabel(label);
-			IDataSet dsNew = recoverDataSetDetails(request, ds, true);
+			IDataSet dsNew = recoverDataSetDetails(selfServiceDataSetDTO, ds, true);
 
 			logger.debug("Recalculating dataset's metadata: executing the dataset...");
 			IMetaData metadata = getDatasetMetadata(dsNew, profile, meta);
@@ -398,7 +405,10 @@ public class SelfServiceDataSetCRUD {
 
 			// retrieve persist data
 			dsNew.setPersisted(Boolean.valueOf(persist));
-			dsNew.setPersistTableName(persistTablePrefix.toUpperCase() + persistTableName.toUpperCase());
+			if (persistTablePrefix != null)
+				dsNew.setPersistTableName(persistTablePrefix.toUpperCase() + persistTableName.toUpperCase());
+			else
+				dsNew.setPersistTableName(null);
 
 			Integer toReturnId = dsNew.getId();
 			if (dsNew.getId() == -1) {
@@ -414,7 +424,7 @@ public class SelfServiceDataSetCRUD {
 				dao.modifyDataSet(dsNew);
 
 				// Notifications Management -----------------------------------
-				notificationManagement(request, ds, dsNew);
+				notificationManagement(selfServiceDataSetDTO, ds, dsNew);
 
 				updateAudit(request, profile, "DATA_SET.MODIFY", logParam, "OK");
 			}
@@ -432,7 +442,7 @@ public class SelfServiceDataSetCRUD {
 					dataset.setPersistTableName(persistTablePrefix.toUpperCase() + persistTableName.toUpperCase());
 				} else {
 					// otherwise use dataset name as table name
-					String name = request.getParameter("name");
+					String name = selfServiceDataSetDTO.getName();
 					dataset.setPersistTableName(name);
 				}
 
@@ -539,7 +549,7 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 
-	// Modifiy the original file associated to the dataset adding a column with
+	// Modify the original file associated to the dataset adding a column with
 	// correct values to use for geo hierarchy
 	// then set this column as the hierarchy level column inside the dataset
 	// metadata
@@ -586,7 +596,7 @@ public class SelfServiceDataSetCRUD {
 
 	}
 
-	private void notificationManagement(HttpServletRequest req, IDataSet currentDataset, IDataSet updatedDataset) {
+	private void notificationManagement(SelfServiceDataSetDTO selfServiceDataSetDTO, IDataSet currentDataset, IDataSet updatedDataset) {
 
 		try {
 			// DatasetNotificationManager dsNotificationManager = new
@@ -598,8 +608,8 @@ public class SelfServiceDataSetCRUD {
 
 			// File change check
 			boolean newFileUploaded = false;
-			if (req.getParameter("fileUploaded") != null) {
-				newFileUploaded = Boolean.valueOf((req.getParameter("fileUploaded")));
+			if (selfServiceDataSetDTO.getFileUploaded() != null) {
+				newFileUploaded = Boolean.valueOf(selfServiceDataSetDTO.getFileUploaded());
 			}
 			if (newFileUploaded) {
 				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_FILE_CHANGED,
@@ -841,19 +851,21 @@ public class SelfServiceDataSetCRUD {
 	@POST
 	@Path("/testDataSet")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String testDataSet(@Context HttpServletRequest req) {
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	public String testDataSet(@Valid @BeanParam SelfServiceDataSetDTO selfServiceDataSetDTO) {
+		IEngUserProfile profile = UserProfileManager.getProfile();
+
 		DatasetMetadataParser dsp = new DatasetMetadataParser();
 		Integer limit = new Integer(10);
 		try {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
-			String label = req.getParameter("label");
-			String meta = req.getParameter(DataSetConstants.METADATA);
-			boolean limitPreview = Boolean.valueOf(req.getParameter("limitPreview"));
+			String label = selfServiceDataSetDTO.getLabel();
+			String meta = selfServiceDataSetDTO.getMeta();
+			boolean limitPreview = Boolean.valueOf(selfServiceDataSetDTO.getLimitPreview());
 
-			IDataSet dsToTest = recoverDataSetDetails(req, null, false);
+			IDataSet dsToTest = recoverDataSetDetails(selfServiceDataSetDTO, null, false);
 
 			logger.debug("Recalculating dataset's metadata: executing the dataset...");
 
@@ -879,7 +891,7 @@ public class SelfServiceDataSetCRUD {
 			return JSONReturn.toString();
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
-			updateAudit(req, profile, "DATA_SET.TEST", null, "ERR");
+			updateAudit(request, profile, "DATA_SET.TEST", null, "ERR");
 			logger.debug(ex.getMessage());
 			try {
 				return (ExceptionUtilities.serializeException(ex.getMessage(), null));
@@ -889,7 +901,7 @@ public class SelfServiceDataSetCRUD {
 			}
 		} catch (RuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
-			updateAudit(req, profile, "DATA_SET.TEST", null, "ERR");
+			updateAudit(request, profile, "DATA_SET.TEST", null, "ERR");
 			logger.debug(canNotFillResponseError);
 			try {
 				return (ExceptionUtilities.serializeException(parsingDSError, null));
@@ -899,7 +911,7 @@ public class SelfServiceDataSetCRUD {
 			}
 		} catch (Exception ex) {
 			logger.error("Cannot fill response container", ex);
-			updateAudit(req, profile, "DATA_SET.TEST", null, "ERR");
+			updateAudit(request, profile, "DATA_SET.TEST", null, "ERR");
 			logger.debug(canNotFillResponseError);
 			try {
 				return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
@@ -913,9 +925,10 @@ public class SelfServiceDataSetCRUD {
 	@POST
 	@Path("/getDataStore")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getDataStore(@Context HttpServletRequest req) {
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	public String getDataStore(@Valid @BeanParam SelfServiceDataSetDTO selfServiceDataSetDTO) {
+		IEngUserProfile profile = UserProfileManager.getProfile();
 		Integer start = new Integer(0);
 		Integer limit = new Integer(10);
 		Integer resultNumber = null;
@@ -926,13 +939,13 @@ public class SelfServiceDataSetCRUD {
 		try {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
-			req.setCharacterEncoding("UTF-8");
-			String datasetMetadata = req.getParameter("datasetMetadata");
+//			req.setCharacterEncoding("UTF-8");
+			String datasetMetadata = selfServiceDataSetDTO.getDatasetMetadata();
 			IDataSet dataSet;
 
 			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
 			Config previewRowsConfig = configDao.loadConfigParametersByLabel(previewRowsConfigLabel);
-			String limitPreview = req.getParameter("limitPreview");
+			String limitPreview = selfServiceDataSetDTO.getLimitPreview();
 			boolean limitPreviewCheck = false;
 			if (limitPreview.equalsIgnoreCase("true")) {
 				limitPreviewCheck = true;
@@ -950,10 +963,10 @@ public class SelfServiceDataSetCRUD {
 			if (limitPreviewCheck && (previewRowsConfig != null) && (previewRowsConfig.isActive())) {
 				// use a preview limit
 				String previewRowsConfigValue = previewRowsConfig.getValueCheck();
-				dataSet = recoverDataSetDetails(req, null, false, true, Integer.valueOf(previewRowsConfigValue));
+				dataSet = recoverDataSetDetails(selfServiceDataSetDTO, null, false, true, Integer.valueOf(previewRowsConfigValue));
 			} else {
 				// no preview limit
-				dataSet = recoverDataSetDetails(req, null, false);
+				dataSet = recoverDataSetDetails(selfServiceDataSetDTO, null, false);
 			}
 
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
@@ -996,7 +1009,7 @@ public class SelfServiceDataSetCRUD {
 
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
-			updateAudit(req, profile, "DATA_SET.GETDATASTORE", null, "ERR");
+			updateAudit(request, profile, "DATA_SET.GETDATASTORE", null, "ERR");
 			logger.debug(ex.getMessage());
 			try {
 				return (ExceptionUtilities.serializeException(ex.getMessage(), null));
@@ -1006,7 +1019,7 @@ public class SelfServiceDataSetCRUD {
 			}
 		} catch (RuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
-			updateAudit(req, profile, "DATA_SET.GETDATASTORE", null, "ERR");
+			updateAudit(request, profile, "DATA_SET.GETDATASTORE", null, "ERR");
 			logger.debug(canNotFillResponseError);
 			try {
 				return (ExceptionUtilities.serializeException(parsingDSError, null));
@@ -1016,7 +1029,7 @@ public class SelfServiceDataSetCRUD {
 			}
 		} catch (Exception ex) {
 			logger.error("Cannot fill response container", ex);
-			updateAudit(req, profile, "DATA_SET.GETDATASTORE", null, "ERR");
+			updateAudit(request, profile, "DATA_SET.GETDATASTORE", null, "ERR");
 			logger.debug(canNotFillResponseError);
 			try {
 				return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
@@ -1301,53 +1314,43 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 
-	private JSONObject serializeDatasets(List<IDataSet> dataSets) throws SerializationException, JSONException {
-		JSONObject dataSetsJSON = new JSONObject();
-		JSONArray dataSetsJSONArray = new JSONArray();
-		if (dataSets != null) {
-			dataSetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
-			dataSetsJSON.put("root", dataSetsJSONArray);
-		}
-		return dataSetsJSON;
+	private IDataSet recoverDataSetDetails(SelfServiceDataSetDTO selfServiceDataSetDTO, IDataSet dataSet, boolean savingDataset)
+			throws EMFUserError, SourceBeanException, IOException {
+		return recoverDataSetDetails(selfServiceDataSetDTO, dataSet, savingDataset, false, -1);
 	}
 
-	private IDataSet recoverDataSetDetails(HttpServletRequest request, IDataSet dataSet, boolean savingDataset)
-			throws EMFUserError, SourceBeanException, IOException {
-		return recoverDataSetDetails(request, dataSet, savingDataset, false, -1);
-	}
-
-	private IDataSet recoverDataSetDetails(HttpServletRequest request, IDataSet dataSet, boolean savingDataset, boolean checkMaxResults, int maxResults)
-			throws EMFUserError, SourceBeanException, IOException {
+	private IDataSet recoverDataSetDetails(SelfServiceDataSetDTO selfServiceDataSetDTO, IDataSet dataSet, boolean savingDataset, boolean checkMaxResults,
+			int maxResults) throws EMFUserError, SourceBeanException, IOException {
 		boolean insertion = (dataSet == null);
 		Integer id = -1;
-		String idStr = request.getParameter("id");
+		String idStr = selfServiceDataSetDTO.getId();
 		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
 
-		String type = request.getParameter("type");
-		String label = request.getParameter("label");
-		String description = request.getParameter("description");
-		String name = request.getParameter("name");
-		String catTypeId = request.getParameter("catTypeId");
-		String meta = request.getParameter(DataSetConstants.METADATA);
+		String type = selfServiceDataSetDTO.getType();
+		String label = selfServiceDataSetDTO.getLabel();
+		String description = selfServiceDataSetDTO.getDescription();
+		String name = selfServiceDataSetDTO.getName();
+		String catTypeId = selfServiceDataSetDTO.getCatTypeId();
+		String meta = selfServiceDataSetDTO.getMeta();
 		String scopeCd = DataSetConstants.DS_SCOPE_USER;
 
 		type = getDatasetTypeName(type);
 		IDataSet toReturn = null;
 		if (type.equals(DataSetConstants.DS_QBE)) {
-			toReturn = this.getQbeDataSet(request);
+			toReturn = this.getQbeDataSet(selfServiceDataSetDTO);
 		} else if (type.equals(DataSetConstants.DS_CKAN)) {
 			if (checkMaxResults) {
-				toReturn = this.getCkanDataSet(request, savingDataset, maxResults);
+				toReturn = this.getCkanDataSet(selfServiceDataSetDTO, savingDataset, maxResults);
 			} else {
-				toReturn = this.getCkanDataSet(request, savingDataset);
+				toReturn = this.getCkanDataSet(selfServiceDataSetDTO, savingDataset);
 			}
 		} else {
 			if (checkMaxResults) {
-				toReturn = this.getFileDataSet(request, savingDataset, maxResults);
+				toReturn = this.getFileDataSet(selfServiceDataSetDTO, savingDataset, maxResults);
 			} else {
-				toReturn = this.getFileDataSet(request, savingDataset);
+				toReturn = this.getFileDataSet(selfServiceDataSetDTO, savingDataset);
 			}
 		}
 
@@ -1402,9 +1405,9 @@ public class SelfServiceDataSetCRUD {
 		return toReturn;
 	}
 
-	private IDataSet getQbeDataSet(HttpServletRequest request) {
+	private IDataSet getQbeDataSet(SelfServiceDataSetDTO selfServiceDataSetDTO) {
 		QbeDataSet toReturn = new QbeDataSet();
-		this.getQbeDataSetConfig(request, toReturn);
+		this.getQbeDataSetConfig(selfServiceDataSetDTO, toReturn);
 		SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
 		Map parameters = toReturn.getParamsMap();
 		if (parameters == null) {
@@ -1415,12 +1418,12 @@ public class SelfServiceDataSetCRUD {
 		return toReturn;
 	}
 
-	private void getQbeDataSetConfig(HttpServletRequest request, QbeDataSet toReturn) {
+	private void getQbeDataSetConfig(SelfServiceDataSetDTO selfServiceDataSetDTO, QbeDataSet toReturn) {
 		try {
 			JSONObject jsonDsConfig = new JSONObject();
-			String qbeJSONQuery = request.getParameter(DataSetConstants.QBE_JSON_QUERY);
-			String datamarts = request.getParameter(DataSetConstants.QBE_DATAMARTS);
-			String dataSourceLabel = request.getParameter(DataSetConstants.QBE_DATA_SOURCE);
+			String qbeJSONQuery = selfServiceDataSetDTO.getQbeJSONQuery();
+			String datamarts = selfServiceDataSetDTO.getQbeDatamarts();
+			String dataSourceLabel = selfServiceDataSetDTO.getQbeDataSource();
 
 			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, qbeJSONQuery);
 			jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, datamarts);
@@ -1439,8 +1442,8 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 
-	private IDataSet getFileDataSet(HttpServletRequest request, boolean savingDataset, int maxResults) {
-		IDataSet dataSet = this.getFileDataSet(request, savingDataset);
+	private IDataSet getFileDataSet(SelfServiceDataSetDTO selfServiceDataSetDTO, boolean savingDataset, int maxResults) {
+		IDataSet dataSet = this.getFileDataSet(selfServiceDataSetDTO, savingDataset);
 		if (dataSet instanceof FileDataSet) {
 			FileDataSet fileDataSet = ((FileDataSet) dataSet);
 			fileDataSet.setMaxResults(maxResults);
@@ -1452,24 +1455,24 @@ public class SelfServiceDataSetCRUD {
 		return dataSet;
 	}
 
-	private IDataSet getFileDataSet(HttpServletRequest request, boolean savingDataset) {
+	private IDataSet getFileDataSet(SelfServiceDataSetDTO selfServiceDataSetDTO, boolean savingDataset) {
 		FileDataSet toReturn = new FileDataSet();
 		toReturn.setResourcePath(DAOConfig.getResourcePath());
 
-		JSONObject jsonDsConfig = this.getFileDataSetConfig(request, savingDataset);
+		JSONObject jsonDsConfig = this.getFileDataSetConfig(selfServiceDataSetDTO, savingDataset);
 		toReturn.setConfiguration(jsonDsConfig.toString());
 
 		Integer id = -1;
-		String idStr = request.getParameter("id");
+		String idStr = selfServiceDataSetDTO.getId();
 		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
-		String label = request.getParameter("label");
-		String fileName = request.getParameter("fileName");
-		String fileType = request.getParameter("fileType");
+		String label = selfServiceDataSetDTO.getLabel();
+		String fileName = selfServiceDataSetDTO.getFileName();
+		String fileType = selfServiceDataSetDTO.getFileType();
 		Boolean newFileUploaded = false;
-		if (request.getParameter("fileUploaded") != null) {
-			newFileUploaded = Boolean.valueOf((request.getParameter("fileUploaded")));
+		if (selfServiceDataSetDTO.getFileUploaded() != null) {
+			newFileUploaded = Boolean.valueOf(selfServiceDataSetDTO.getFileUploaded());
 		}
 
 		if (id == -1) {
@@ -1515,20 +1518,20 @@ public class SelfServiceDataSetCRUD {
 		return toReturn;
 	}
 
-	private JSONObject getFileDataSetConfig(HttpServletRequest req, boolean savingDataset) {
+	private JSONObject getFileDataSetConfig(SelfServiceDataSetDTO selfServiceDataSetDTO, boolean savingDataset) {
 		JSONObject jsonDsConfig = new JSONObject();
 		try {
-			String label = req.getParameter("label");
-			String fileName = req.getParameter("fileName");
-			String csvDelimiter = req.getParameter("csvDelimiter");
-			String csvQuote = req.getParameter("csvQuote");
-			String csvEncoding = req.getParameter("csvEncoding");
-			String fileType = req.getParameter("fileType");
-			String skipRows = req.getParameter("skipRows");
-			String limitRows = req.getParameter("limitRows");
-			String xslSheetNumber = req.getParameter("xslSheetNumber");
-			String dateFormat = req.getParameter("dateFormat");
-			String timestampFormat = req.getParameter("timestampFormat");
+			String label = selfServiceDataSetDTO.getLabel();
+			String fileName = selfServiceDataSetDTO.getFileName();
+			String csvDelimiter = selfServiceDataSetDTO.getCsvDelimiter();
+			String csvQuote = selfServiceDataSetDTO.getCsvQuote();
+			String csvEncoding = selfServiceDataSetDTO.getCsvEncoding();
+			String fileType = selfServiceDataSetDTO.getFileType();
+			String skipRows = selfServiceDataSetDTO.getSkipRows();
+			String limitRows = selfServiceDataSetDTO.getLimitRows();
+			String xslSheetNumber = selfServiceDataSetDTO.getXslSheetNumber();
+			String dateFormat = selfServiceDataSetDTO.getDateFormat();
+			String timestampFormat = selfServiceDataSetDTO.getTimestampFormat();
 
 			String scopeCd = DataSetConstants.DS_SCOPE_USER;
 
@@ -1582,8 +1585,8 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 
-	private IDataSet getCkanDataSet(HttpServletRequest request, boolean savingDataset, int maxResults) {
-		IDataSet dataSet = this.getCkanDataSet(request, savingDataset);
+	private IDataSet getCkanDataSet(SelfServiceDataSetDTO selfServiceDataSetDTO, boolean savingDataset, int maxResults) {
+		IDataSet dataSet = this.getCkanDataSet(selfServiceDataSetDTO, savingDataset);
 		if (dataSet instanceof CkanDataSet) {
 			CkanDataSet ckanDataSet = ((CkanDataSet) dataSet);
 			ckanDataSet.setMaxResults(maxResults);
@@ -1595,27 +1598,27 @@ public class SelfServiceDataSetCRUD {
 		return dataSet;
 	}
 
-	private IDataSet getCkanDataSet(HttpServletRequest request, boolean savingDataset) {
+	private IDataSet getCkanDataSet(SelfServiceDataSetDTO selfServiceDataSetDTO, boolean savingDataset) {
 		CkanDataSet toReturn = new CkanDataSet();
-		JSONObject jsonDsConfig = this.getCkanDataSetConfig(request, savingDataset);
+		JSONObject jsonDsConfig = this.getCkanDataSetConfig(selfServiceDataSetDTO, savingDataset);
 		toReturn.setConfiguration(jsonDsConfig.toString());
 
 		Integer id = -1;
-		String idStr = request.getParameter("id");
+		String idStr = selfServiceDataSetDTO.getId();
 		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
-		String ckanUrl = request.getParameter("ckanUrl");
-		String ckanId = request.getParameter("ckanId");
+		String ckanUrl = selfServiceDataSetDTO.getCkanUrl();
+		String ckanId = selfServiceDataSetDTO.getCkanId();
 		toReturn.setCkanId(ckanId);
 		toReturn.setCkanUrl(ckanUrl);
 		toReturn.setResourcePath(ckanUrl);
-		String label = request.getParameter("label");
-		String fileName = request.getParameter("fileName");
-		String fileType = request.getParameter("fileType");
+		String label = selfServiceDataSetDTO.getLabel();
+		String fileName = selfServiceDataSetDTO.getFileName();
+		String fileType = selfServiceDataSetDTO.getFileType();
 		Boolean newFileUploaded = false;
-		if (request.getParameter("fileUploaded") != null) {
-			newFileUploaded = Boolean.valueOf((request.getParameter("fileUploaded")));
+		if (selfServiceDataSetDTO.getFileUploaded() != null) {
+			newFileUploaded = Boolean.valueOf(selfServiceDataSetDTO.getFileUploaded());
 		}
 
 		if (id == -1) {
@@ -1637,22 +1640,22 @@ public class SelfServiceDataSetCRUD {
 		return toReturn;
 	}
 
-	private JSONObject getCkanDataSetConfig(HttpServletRequest req, boolean savingDataset) {
+	private JSONObject getCkanDataSetConfig(SelfServiceDataSetDTO selfServiceDataSetDTO, boolean savingDataset) {
 		JSONObject jsonDsConfig = new JSONObject();
 		try {
-			String label = req.getParameter("label");
-			String fileName = req.getParameter("fileName");
-			String csvDelimiter = req.getParameter("csvDelimiter");
-			String csvQuote = req.getParameter("csvQuote");
-			String csvEncoding = req.getParameter("csvEncoding");
-			String fileType = req.getParameter("fileType");
-			String skipRows = req.getParameter("skipRows");
-			String limitRows = req.getParameter("limitRows");
-			String xslSheetNumber = req.getParameter("xslSheetNumber");
-			String ckanId = req.getParameter("ckanId");
-			String ckanUrl = req.getParameter("ckanUrl");
+			String label = selfServiceDataSetDTO.getLabel();
+			String fileName = selfServiceDataSetDTO.getFileName();
+			String csvDelimiter = selfServiceDataSetDTO.getCsvDelimiter();
+			String csvQuote = selfServiceDataSetDTO.getCsvQuote();
+			String csvEncoding = selfServiceDataSetDTO.getCsvEncoding();
+			String fileType = selfServiceDataSetDTO.getFileType();
+			String skipRows = selfServiceDataSetDTO.getSkipRows();
+			String limitRows = selfServiceDataSetDTO.getLimitRows();
+			String xslSheetNumber = selfServiceDataSetDTO.getXslSheetNumber();
+			String ckanId = selfServiceDataSetDTO.getCkanId();
+			String ckanUrl = selfServiceDataSetDTO.getCkanUrl();
 			String scopeCd = DataSetConstants.DS_SCOPE_USER;
-			String dateFormat = req.getParameter("dateFormat");
+			String dateFormat = selfServiceDataSetDTO.getDateFormat();
 
 			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
 			if (savingDataset) {
@@ -2096,20 +2099,6 @@ public class SelfServiceDataSetCRUD {
 		return columnsJSON;
 
 	}
-
-	// private void checkQbeDataset(IDataSet dataSet) {
-	// if (dataSet instanceof QbeDataSet) {
-	// SpagoBICoreDatamartRetriever retriever = new
-	// SpagoBICoreDatamartRetriever();
-	// Map parameters = dataSet.getParamsMap();
-	// if (parameters == null) {
-	// parameters = new HashMap();
-	// dataSet.setParamsMap(parameters);
-	// }
-	// dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER,
-	// retriever);
-	// }
-	// }
 
 	private void checkFileDataset(IDataSet dataSet) {
 		if (dataSet instanceof FileDataSet) {
