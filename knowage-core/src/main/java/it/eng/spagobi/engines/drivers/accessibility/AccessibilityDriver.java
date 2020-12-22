@@ -17,6 +17,15 @@
  */
 package it.eng.spagobi.engines.drivers.accessibility;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -27,15 +36,6 @@ import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
 
 public class AccessibilityDriver extends AbstractEngineDriver implements IEngineDriver {
 
@@ -128,6 +128,14 @@ public class AccessibilityDriver extends AbstractEngineDriver implements IEngine
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
+		// catalog functions can be used only inside cockpits
+		// therefore the default implementation is to return an empty list
+		// CockpitEngine will have its own implementation
+		return new ArrayList<Integer>();
 	}
 
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)

@@ -61,7 +61,7 @@ def getDocumentTemplate(python_widget):
     logging.warning("Response: {}".format(r))
     return base64.b64decode(r.text).decode("utf-8")
 
-def jwtToken2pythonDataset(token):
+def jwtToken2pythonScript(token):
     try:
         decodedToken = jwt.decode(token, utils.getHMACKey(), algorithms='HS256')
     except Exception as e:

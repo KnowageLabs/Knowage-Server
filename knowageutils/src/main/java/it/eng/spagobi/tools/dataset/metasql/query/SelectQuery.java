@@ -29,6 +29,7 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
+import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCatalogFunctionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
@@ -256,6 +257,13 @@ public class SelectQuery {
 
 			if (projectio instanceof Projection) {
 				Projection projection = (Projection) projectio;
+				IAggregationFunction aggregationFunction = projection.getAggregationFunction();
+				if (aggregationFunction != null && !AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+					hasAggregationFunction = true;
+					break;
+				}
+			} else if (projectio instanceof DataStoreCatalogFunctionField) {
+				DataStoreCatalogFunctionField projection = (DataStoreCatalogFunctionField) projectio;
 				IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 				if (aggregationFunction != null && !AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 					hasAggregationFunction = true;

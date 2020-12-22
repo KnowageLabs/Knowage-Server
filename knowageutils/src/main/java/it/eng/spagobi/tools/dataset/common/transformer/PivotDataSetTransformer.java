@@ -65,7 +65,7 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 	}
 
 	@Override
-	void transformDataSetMetaData(IDataStore dataStore) {
+	public void transformDataSetMetaData(IDataStore dataStore) {
 		IMetaData dataStoreMeta;
 		int pivotFieldIndex;
 		int valueFieldIndex;
@@ -88,7 +88,7 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 	}
 
 	@Override
-	void transformDataSetRecords(IDataStore dataStore) {
+	public void transformDataSetRecords(IDataStore dataStore) {
 		IMetaData dataStoreMeta;
 		int pivotFieldIndex;
 		int valueFieldIndex;
@@ -298,8 +298,7 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 	}
 
 	/**
-	 * @param numRows
-	 *            the numRows to set
+	 * @param numRows the numRows to set
 	 */
 	public void setNumRows(boolean numRows) {
 		this.numRows = numRows;

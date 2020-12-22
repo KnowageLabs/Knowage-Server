@@ -1,0 +1,15 @@
+<md-dialog aria-label="table configuration" ng-cloak  layout="column" class="width80">
+    <md-toolbar class="secondaryToolbar" layout="row">
+		<h1 flex class="md-toolbar-tools">{{::translate.load('sbi.cockpit.table.column.catalogfunction')}}</h1>
+	</md-toolbar>
+			
+	<md-dialog-actions layout="row" style="box-shadow:0px -1px 2px #ccc">
+      	<span flex></span>
+      	<md-button class="md-raised" ng-click="cancelConfiguration()" >
+        	{{::translate.load('sbi.generic.cancel')}}
+      	</md-button>
+      	<md-button class="md-raised md-primary" ng-click="saveColumnConfiguration()"  >
+        	{{::translate.load('sbi.generic.save')}}
+    	</md-button>
+	</md-dialog-actions>
+</md-dialog>

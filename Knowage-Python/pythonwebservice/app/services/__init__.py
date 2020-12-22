@@ -9,7 +9,9 @@ def create_app():
     from app.services.editmode_service import editMode
     from app.services.viewmode_service import viewMode
     from app.services.dataset_service import dataset
+    from app.services.catalog_service import catalog
     app.register_blueprint(editMode, url_prefix='/widget/edit')
     app.register_blueprint(viewMode, url_prefix='/widget/view')
     app.register_blueprint(dataset, url_prefix='/dataset')
+    app.register_blueprint(catalog, url_prefix='/catalog')
     return app

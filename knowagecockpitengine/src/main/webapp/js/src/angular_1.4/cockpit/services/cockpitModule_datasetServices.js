@@ -644,7 +644,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		var params="?";
 		var bodyString = "{";
-		
+
 		var bodyJSON = {};
 
 
@@ -1087,7 +1087,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(!filterElement.dataset || !filterElement.dataset.dsId){
 					filterElement.dataset = {"label":datasetLabel, "dsId":dataset.id.dsId};
 				}
-				
+
 				var tempDatasetId = dataset.dsId || dataset.id.dsId;
 				// if filter.dataset is defined check dataset is current one
 				if(filterElement.dataset != undefined && filterElement.dataset.dsId === tempDatasetId){
@@ -1176,7 +1176,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}else{
 //					var tempJSN = JSON.stringify(parameters[parameter]);
 					var tempJSN = '"';
-					if(Array.isArray(parameters[parameter])) { 
+					if(Array.isArray(parameters[parameter])) {
 						var splittedValues = parameters[parameter];
 						if(Array.isArray(parameters[parameter][0])) {
 							splittedValues = [];
@@ -1188,7 +1188,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							else {
 								for (var y in parameters[parameter]) {
 									splittedValues.push(parameters[parameter][y][0]);
-								}	
+								}
 							}
 						}
 						if (typeof parameters[parameter][0] == "string" ) {
@@ -1213,7 +1213,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								}
 							}
 							else tempJSN += "";
-						}							
+						}
 
 //						tempJSN = JSON.stringify(tempJSN);
 //						tempJSN = tempJSN.substring(1,tempJSN.length-1);
@@ -1221,7 +1221,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						if(parameters[parameter]!= "") tempJSN += parameters[parameter];
 					}			
 
-//					tempJSN = tempJSN.replace(/[\[\]]/g,""); 
+//					tempJSN = tempJSN.replace(/[\[\]]/g,"");
 					tempJSN += '"';
 
 					output += delim + "\"" + parameter + "\":" + tempJSN ;

@@ -101,7 +101,7 @@
 
 		<mapping resource="it/eng/spagobi/tools/dataset/metadata/mapping/SbiDataSet.hbm.xml" />
         <mapping  resource="it/eng/spagobi/tools/dataset/metadata/mapping/SbiObjDataSet.hbm.xml" />
-            
+        <mapping  resource="it/eng/spagobi/functions/metadata/mapping/SbiObjFunction.hbm.xml" />
 		
 
 		<!-- Menu -->
@@ -223,9 +223,8 @@
          <!-- Function catalog mapping -->  
      	 <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiCatalogFunction.hbm.xml" />
          <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputVariable.hbm.xml" />
-     	 <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputDataset.hbm.xml" />
-         <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionOutput.hbm.xml" />
-         <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputFile.hbm.xml" />
+     	 <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputColumn.hbm.xml" />
+         <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionOutputColumn.hbm.xml" />
 		
 	 <!-- News Management -->
         <mapping resource="it/eng/spagobi/tools/news/metadata/mapping/SbiNews.hbm.xml" />

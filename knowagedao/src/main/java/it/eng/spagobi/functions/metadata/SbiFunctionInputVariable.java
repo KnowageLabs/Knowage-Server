@@ -11,14 +11,16 @@ public class SbiFunctionInputVariable extends SbiHibernateModel {
 
 	private SbiFunctionInputVariableId id;
 	private SbiCatalogFunction sbiCatalogFunction;
+	private String varType;
 	private String varValue;
 
 	public SbiFunctionInputVariable() {
 	}
 
-	public SbiFunctionInputVariable(SbiFunctionInputVariableId id, SbiCatalogFunction sbiCatalogFunction, String varValue) {
+	public SbiFunctionInputVariable(SbiFunctionInputVariableId id, SbiCatalogFunction sbiCatalogFunction, String varType, String varValue) {
 		this.id = id;
 		this.sbiCatalogFunction = sbiCatalogFunction;
+		this.varType = varType;
 		this.varValue = varValue;
 	}
 
@@ -36,6 +38,14 @@ public class SbiFunctionInputVariable extends SbiHibernateModel {
 
 	public void setSbiCatalogFunction(SbiCatalogFunction sbiCatalogFunction) {
 		this.sbiCatalogFunction = sbiCatalogFunction;
+	}
+
+	public String getVarType() {
+		return this.varType;
+	}
+
+	public void setVarType(String varType) {
+		this.varType = varType;
 	}
 
 	public String getVarValue() {

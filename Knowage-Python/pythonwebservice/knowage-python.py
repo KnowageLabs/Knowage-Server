@@ -12,7 +12,7 @@ application = create_app()
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        port = int(sys.argv[0])
+        port = int(sys.argv[1])
     else:
         port = 5000
     open(constants.LOG_FILE, 'w+').close() #clean log file

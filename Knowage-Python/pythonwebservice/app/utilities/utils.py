@@ -74,25 +74,14 @@ def getDatasetAsDataframe(widget):
     #rest request for dataset
     payload = widget.datastore_request
     r = requests.post(address, headers=headers, data=payload)
-    #retrieve column names from metadata
-    names = r.json()["metaData"]["fields"]
-    #get cast types map
-    column_names, column_types = get_cast_types(names)
-    #save data as dataframe
-    df = pd.DataFrame(r.json()["rows"])
-    if not df.empty:
-        try:
-            #cast types
-            df = df.astype(column_types)
-        except Exception as e:
-            logging.warning("Could not cast dataframe types")
-        #drop first column (redundant)
-        df.drop(columns=['id'], inplace=True)
-        # assign column names
-        df.columns = column_names
+    # retrieve column names from metadata
+    col_names = r.json()["metaData"]["fields"]
+    rows = r.json()["rows"]
+    df = convertKnowageDatasetToDataframe(col_names, rows)
     return df
 
-def get_cast_types(names):
+# used for widget
+def convertKnowageDatasetToDataframe(names, rows):
     column_names = []
     column_types = {}
     for x in names:
@@ -102,7 +91,49 @@ def get_cast_types(names):
                 column_types.update({x['name']: "float64"})
             elif x["type"] == "int":
                 column_types.update({x['name']: "int64"})
-    return column_names, column_types
+    #save data as dataframe
+    df = pd.DataFrame(rows)
+    if not df.empty:
+        #cast types
+        df = df.astype(column_types)
+        #drop first column (redundant)
+        df.drop(columns=['id'], inplace=True)
+        # assign column names
+        df.columns = column_names
+    return df
+
+# used for functions catalog
+def convertKnowageDatastoreToDataframe(metadata, rows):
+    column_names = []
+    column_types = {}
+    for x in metadata:
+        if type(x) is dict:
+            column_names.append(x['header'])
+            if x["type"] == "class java.lang.Double":
+                column_types.update({x['header']: "float64"})
+            elif x["type"] == "class java.lang.Integer":
+                column_types.update({x['header']: "int64"})
+    #save data as dataframe
+    df = pd.DataFrame(rows)
+    if not df.empty:
+        # assign column names
+        df.columns = column_names
+        #cast types
+        df = df.astype(column_types)
+        #drop first column (redundant)
+        if 'id' in df.columns:
+            df.drop(columns=['id'], inplace=True)
+    return df
+
+def convertDataframeToKnowageDataset(df):
+    knowage_json = []
+    n_rows, n_cols = df.shape
+    for i in range(0, n_rows):
+        element = {}
+        for j in range(0, n_cols):
+            element.update({df.columns[j]: df.loc[i][df.columns[j]]})
+        knowage_json.append(element)
+    return knowage_json
 
 def serverExists(id):
     with cm.lck:

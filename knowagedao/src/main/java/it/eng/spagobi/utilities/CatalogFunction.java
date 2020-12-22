@@ -5,45 +5,47 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.eng.spagobi.functions.metadata.IInputVariable;
+import it.eng.spagobi.functions.metadata.IOutputColumn;
+
 public class CatalogFunction {
 
 	private int functionId;
 	private String name;
 	private String description;
+	private String benchmarks;
 	private String language;
-	private String script;
+	private String family;
+	private String onlineScript;
+	private String offlineScriptTrain;
+	private String offlineScriptUse;
 	private String owner;
 	private String label;
 	private String type;
-	private String url;
-	private boolean remote;
-
-	private Map<String, String> inputVariables = new HashMap<String, String>();
-	private List<String> inputDatasets = new ArrayList<String>();
-	private Map<String, String> outputs = new HashMap<String, String>();
-	List<CatalogFunctionInputFile> inputFiles = new ArrayList<CatalogFunctionInputFile>();
+	private Map<String, IInputVariable> inputVariables = new HashMap<String, IInputVariable>();
+	private Map<String, String> inputColumns = new HashMap<String, String>();
+	private Map<String, IOutputColumn> outputColumns = new HashMap<String, IOutputColumn>();
 
 	private List<String> keywords = new ArrayList<String>();
 
-	public CatalogFunction(int functionId, String name, String description, String language, String script, String owner, String label, String type,
-			Map<String, String> inputVariables, List<CatalogFunctionInputFile> inputFiles, List<String> inputDatasets, Map<String, String> outputs,
-			List<String> keywords, String url, boolean remote) {
+	public CatalogFunction(int functionId, String name, String description, String language, String benchmarks, String family, String onlineScript,
+			String offlineScriptTrain, String offlineScriptUse, String owner, String label, String type, Map<String, IInputVariable> inputVariables,
+			Map<String, String> inputColumns, Map<String, IOutputColumn> outputColumns, List<String> keywords) {
 		super();
 		this.functionId = functionId;
 		this.name = name;
 		this.description = description;
 		this.language = language;
-		this.script = script;
+		this.onlineScript = onlineScript;
+		this.offlineScriptTrain = offlineScriptTrain;
+		this.offlineScriptUse = offlineScriptUse;
 		this.owner = owner;
 		this.label = label;
 		this.type = type;
 		this.inputVariables = inputVariables;
-		this.inputDatasets = inputDatasets;
-		this.inputFiles = inputFiles;
-		this.outputs = outputs;
+		this.inputColumns = inputColumns;
+		this.outputColumns = outputColumns;
 		this.keywords = keywords;
-		this.url = url;
-		this.remote = remote;
 	}
 
 	public CatalogFunction() {
@@ -81,36 +83,36 @@ public class CatalogFunction {
 		this.language = language;
 	}
 
-	public String getScript() {
-		return script;
+	public String getOnlineScript() {
+		return onlineScript;
 	}
 
-	public void setScript(String script) {
-		this.script = script;
+	public void setOnlineScript(String onlineScript) {
+		this.onlineScript = onlineScript;
 	}
 
-	public Map<String, String> getInputVariables() {
+	public String getOfflineScriptTrain() {
+		return offlineScriptTrain;
+	}
+
+	public void setOfflineScriptTrain(String offlineScriptTrain) {
+		this.offlineScriptTrain = offlineScriptTrain;
+	}
+
+	public String getOfflineScriptUse() {
+		return offlineScriptUse;
+	}
+
+	public void setOfflineScriptUse(String offlineScriptUse) {
+		this.offlineScriptUse = offlineScriptUse;
+	}
+
+	public Map<String, IInputVariable> getInputVariables() {
 		return inputVariables;
 	}
 
-	public void setInputVariables(Map<String, String> inputVariables) {
+	public void setInputVariables(Map<String, IInputVariable> inputVariables) {
 		this.inputVariables = inputVariables;
-	}
-
-	public List<String> getInputDatasets() {
-		return inputDatasets;
-	}
-
-	public void setInputDatasets(List<String> inputDatasets) {
-		this.inputDatasets = inputDatasets;
-	}
-
-	public Map<String, String> getOutputs() {
-		return outputs;
-	}
-
-	public void setOutputs(Map<String, String> outputs) {
-		this.outputs = outputs;
 	}
 
 	public String getOwner() {
@@ -145,28 +147,35 @@ public class CatalogFunction {
 		this.type = type;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getBenchmarks() {
+		return benchmarks;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setBenchmarks(String benchmarks) {
+		this.benchmarks = benchmarks;
 	}
 
-	public boolean getRemote() {
-		return remote;
+	public String getFamily() {
+		return family;
 	}
 
-	public void setRemote(boolean remote) {
-		this.remote = remote;
+	public void setFamily(String family) {
+		this.family = family;
 	}
 
-	public List<CatalogFunctionInputFile> getInputFiles() {
-		return inputFiles;
+	public Map<String, String> getInputColumns() {
+		return inputColumns;
 	}
 
-	public void setInputFiles(List<CatalogFunctionInputFile> inputFiles) {
-		this.inputFiles = inputFiles;
+	public void setInputColumns(Map<String, String> inputColumns) {
+		this.inputColumns = inputColumns;
 	}
 
+	public Map<String, IOutputColumn> getOutputColumns() {
+		return outputColumns;
+	}
+
+	public void setOutputColumns(Map<String, IOutputColumn> outputColumns) {
+		this.outputColumns = outputColumns;
+	}
 }

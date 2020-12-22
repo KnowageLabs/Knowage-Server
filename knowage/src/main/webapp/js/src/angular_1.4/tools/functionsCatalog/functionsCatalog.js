@@ -1,7 +1,8 @@
+agGrid.initialiseAgGridWithAngular1(angular);
 var app = angular.module('functionsCatalogControllerModule', [ 'ngMaterial',
 		'angular_list', 'angular_table', 'sbiModule', 'angular_2_col',
 		'file_upload_base64', 'angular-list-detail', 'ui.codemirror',
-		'ngWYSIWYG', 'ngSanitize' ]);
+		'ngWYSIWYG', 'ngSanitize', 'agGrid' ]);
 
 app.config([ '$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -32,20 +33,16 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		"remote" : false,
 		"url" : ""
 	};
-	$scope.datasetLabelList = [];
-	$scope.datasetNamesList = [];
-	$scope.datasets = [];
 	$scope.tableSelectedFunction = {};
 	$scope.tableSelectedFunction.language = "Python";
-	$scope.languages = [ "Python", "R" ];
-	$scope.outputTypes = [ "Dataset", "Text", "Image", "File" ];
-	$scope.inputTypes = [ "Simple Input", "Dataset Input" ];
+	$scope.languages = ["Python"];
+	$scope.inputColumnTypes = ['STRING', 'DATE', 'NUMBER'];
+	$scope.inputVariableTypes = ['STRING', 'DATE', 'NUMBER'];
+	$scope.outputColumnFieldTypes = ['MEASURE', 'ATTRIBUTE'];
+	$scope.outputColumnTypes = ['STRING', 'DATE', 'NUMBER'];
 	$scope.functionTypesList = [];
-	$scope.simpleInputs = []; // =Input variables
-	$scope.inputDatasets = [];
-	$scope.inputFiles = [];
+	$scope.inputColumns = [];
 	$scope.varIndex = 0;
-	$scope.datasetsIndex = 0;
 	$scope.functionsList = [];
 	$scope.emptyStr = " ";
 	$scope.searchKeywords = [];
@@ -60,44 +57,41 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.newFunction = {
 		"id" : "",
 		"name" : "",
-		"inputDatasets" : [],
+		"inputColumns" : [],
 		"inputVariables" : [],
-		"inputUrls" : [],
-		"inputFiles" : [],
-		"outputItems" : [],
+		"outputColumns" : [],
 		"language" : "Python",
-		"script" : "",
+		"onlineScript" : "",
+		"offlineScriptTrainModel" : "",
+		"offlineScriptUseModel" : "",
 		"description" : "",
+		"benchmarks" : "",
 		"owner" : $scope.ownerUserName,
 		"keywords" : [],
 		"label" : "",
-		"keywords" : [], // keywords and type added
 		"type" : "",
-		"remote" : false,
-		"url" : ""
+		"functionFamily": "online"
 	};
 	$scope.cleanNewFunction = function() {
 		$scope.newFunction = {
 			"id" : "",
 			"name" : "",
-			"inputDatasets" : [],
+			"inputColumns" : [],
 			"inputVariables" : [],
-			"inputUrls" : [],
-			"inputFiles" : [],
-			"outputItems" : [],
+			"outputColumns" : [],
 			"language" : "Python",
-			"script" : "",
+			"onlineScript" : "",
+			"offlineScriptTrainModel" : "",
+			"offlineScriptUseModel" : "",
 			"description" : "",
+			"benchmarks" : "",
 			"owner" : $scope.ownerUserName,
 			"keywords" : [],
 			"label" : "",
-			"keywords" : [], // keywords and type added
 			"type" : "",
-			"remote" : false,
-			"url" : ""
+			"functionFamily": "online"
 		};
 	}
-	$scope.datasetLabelsList = [];
 	$scope.saveOrUpdateFlag = "";
 	$scope.userId = "";
 	$scope.isAdmin = "";
@@ -108,87 +102,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		lineNumbers : true,
 		mode : $scope.shownFunction.language.toLowerCase(),
 		autoRefresh : true
-	};
-
-	$scope.myF = function(text) {
-		$scope.userId = text;
-	}
-
-	// Utility functions
-
-	$scope.getBase64 = function(file) {
-		var reader = new FileReader();
-		reader.readAsDataURL(file);
-		reader.onload = function() {
-			console.log("File in Base64: ", reader.result);
-		};
-		reader.onerror = function(error) {
-			console.log('Error: ', error);
-		};
-	}
-
-	$scope.formatFile = function(body) { // convert file into BASE64 and put
-											// content into inputFile.base64
-		console.log("Format file body ", body);
-
-		var newBody = angular.copy(body);
-		newBody.inputFiles = [];
-
-		for (var i = 0; i < body.inputFiles.length; i++) {
-			if (body.inputFiles[i].file != undefined) {
-				var inputFile = body.inputFiles[i];
-				body.inputFiles[i].base64 = inputFile.file.base64;
-				inputFile.file.base64 = "";
-				newBody.inputFiles.push(body.inputFiles[i]);
-			}
-
-		}
-		body = newBody;
-		console.log("Format file body ", body);
-
-	}
-
-	$scope.showTabDialog = function(result, isDemoExecution) {
-		$mdDialog.show({
-			controller : functionCatalogResultsController,
-			templateUrl : sbiModule_config.dynamicResourcesBasePath
-					+ '/angular_1.4/tools/functionsCatalog/templates/'
-					+ 'functionCatalogResults.jsp',
-			preserveScope : true,
-			locals : {
-				results : result.data,
-				logger : $log,
-				translate : sbiModule_translate,
-				isDemo : isDemoExecution
-			},
-			clickOutsideToClose : true
-		});
-	};
-
-	$scope.showNewInputDialog = function(data, datasetList, isDemoFunction) {
-		var executionResult = $mdDialog.show({
-			controller : executeWithNewDataController,
-			templateUrl : sbiModule_config.dynamicResourcesBasePath
-					+ '/angular_1.4/tools/functionsCatalog/templates/'
-					+ 'functionCatalogNewInputs.jsp',
-			preserveScope : true,
-			locals : {
-				demoData : data,
-				logger : $log,
-				datasets : datasetList,
-				userId : $scope.userId,
-				translate : sbiModule_translate
-			},
-			clickOutsideToClose : true
-		});
-		executionResult.then(function(response) { // positive response, given
-			// from $mdDialog.hide(..)
-			$scope.showTabDialog(response, isDemoFunction);
-		}, function(data) { // negative response, given from $mdDialog.close(..)
-
-		});
-		$scope.obtainDatasetLabelsRESTcall();
-
 	};
 
 	function isEmpty(obj) {
@@ -217,19 +130,12 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		return true;
 	}
 
-	$scope.radioButtonRemoteLocalPush = function(localOrRemoteStr) {
-		if (localOrRemoteStr == "local") {
-			$scope.shownFunction.url = "";
-			$scope.languageHidden = true;
-
-		} else if (localOrRemoteStr == "remote") {
-			$scope.shownFunction.script = "";
-			$scope.languageHidden = false;
-		}
+	$scope.radioButtonOnlineOfflinePush = function(onlineOrOfflineStr) {
+		$scope.shownFunction.functionFamily = onlineOrOfflineStr;
 	}
 
 	$scope.obtainCatalogFunctionsRESTcall = function() {
-		sbiModule_restServices.get("1.0/functions-catalog", "").then(
+		sbiModule_restServices.get("2.0/functions-catalog", "").then(
 			function(result) {
 				$scope.functionsList = result.data.functions;
 				$scope.functionsList_bck = angular.copy(result.data.functions);
@@ -251,21 +157,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		);
 	}
 
-	$scope.obtainDatasetLabelsRESTcall = function() {
-		sbiModule_restServices.get("2.0/datasets", "", "asPagedList=true").then(
-			function(datasets) {
-				$scope.datasets = datasets.data;
-				$scope.datasetsList = [];
-				$scope.datasetLabelsList = [];
-				$scope.datasetNamesList = [];
-				for (d in datasets.data.item) {
-					$scope.datasetLabelsList.push(datasets.data.item[d].label);
-					$scope.datasetNamesList.push(datasets.data.item[d].name);
-				}
-			}
-		);
-	}
-
 	$scope.addFunction = function() {
 		$scope.shownFunction = $scope.newFunction;
 		$scope.newFunction.owner = $scope.ownerUserName;
@@ -282,8 +173,9 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		} else {
 			if ($scope.saveOrUpdateFlag == "save") {
 				body = $scope.shownFunction;
+				if (!body.id || body.id == "") body.id = -1;
 
-				sbiModule_restServices.post("1.0/functions-catalog", "insert", body).then(
+				sbiModule_restServices.post("2.0/functions-catalog", "insert", body).then(
 					function(result) {
 						if (result.data.errors != undefined) {
 							var errorToDisplay = "";
@@ -305,19 +197,20 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 								$scope.newFunction = {
 									"id" : "",
 									"name" : "",
-									"inputDatasets" : [],
+									"inputColumns" : [],
 									"inputVariables" : [],
-									"inputUrls" : [],
-									"inputFiles" : [],
-									"outputItems" : [],
+									"outputColumns" : [],
 									"language" : "Python",
-									"script" : "",
+									"onlineScript" : "",
+									"offlineScriptTrainModel" : "",
+									"offlineScriptUseModel" : "",
 									"description" : "",
+									"benchmarks" : "",
 									"owner" : $scope.ownerUserName,
 									"keywords" : [],
 									"label" : "",
-									"remote" : false,
-									"url" : ""
+									"type" : "",
+									"functionFamily": "online"
 								};
 							}
 							$scope.shownFunction = $scope.newFunction;
@@ -335,9 +228,15 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				)
 			} else if ($scope.saveOrUpdateFlag == "update") {
 				body = $scope.shownFunction;
+				// Yes, I'm doing something bad and I know it
+				// I don't know why I have "family" and not "functionFamily" field, so I am overwriting it on the fly
+				if (body.family) {
+					body.functionFamily = body.family;
+					delete body.family;
+				}
 				functionId = $scope.shownFunction.id;
 
-				sbiModule_restServices.put("1.0/functions-catalog", "update/" + functionId,body).then(
+				sbiModule_restServices.put("2.0/functions-catalog", "update/" + functionId,body).then(
 					function(result) {
 						$scope.obtainCatalogFunctionsRESTcall();
 						if (result.data.errors != undefined) {
@@ -374,60 +273,64 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 	}
 
+	$scope.resetType=function(col) {
+		col.type = '';
+	}
+
 	$scope.checkCorrectArguments = function() {
 		var correctArguments = true;
 		$scope.missingFields = [];
 
-		for (var i = 0; i < $scope.shownFunction.inputDatasets.length; i++) {
-			if ($scope.shownFunction.inputDatasets[i].label == undefined) {
+		for (var i = 0; i < $scope.shownFunction.inputColumns.length; i++) {
+			if ($scope.shownFunction.inputColumns[i].name == undefined
+					|| $scope.shownFunction.inputColumns[i].type == undefined) {
 				correctArguments = false;
 				var index = i + 1;
-				$scope.missingFields
-						.push("Input dataset " + index + " missing");
+
+				if ($scope.shownFunction.inputColumns[i].name == undefined) {
+					$scope.missingFields.push("Input variable  " + index + " name missing");
+				}
+				if ($scope.shownFunction.inputColumns[i].type == undefined) {
+					$scope.missingFields.push("Input variable  " + index + " type missing");
+
+				}
 			}
 		}
 		for (var i = 0; i < $scope.shownFunction.inputVariables.length; i++) {
-			if ($scope.shownFunction.inputVariables[i].name == undefined
-					|| $scope.shownFunction.inputVariables[i].value == undefined) {
+			if ($scope.shownFunction.inputVariables[i].name == undefined || $scope.shownFunction.inputVariables[i].type == undefined) {
 				correctArguments = false;
 				var index = i + 1;
 
 				if ($scope.shownFunction.inputVariables[i].name == undefined) {
 					$scope.missingFields.push("Input variable  " + index + " name missing");
 				}
-				if ($scope.shownFunction.inputVariables[i].value == undefined) {
-					$scope.missingFields.push("Input variable  " + index + " value missing");
+				if ($scope.shownFunction.inputVariables[i].type == undefined) {
+					$scope.missingFields.push("Input variable  " + index + " type missing");
 
 				}
 			}
 		}
 
-		for (var i = 0; i < $scope.shownFunction.inputFiles.length; i++) {
-			if ($scope.shownFunction.inputFiles[i].filename == undefined) {
+		for (var i = 0; i < $scope.shownFunction.outputColumns.length; i++) {
+			if ($scope.shownFunction.outputColumns[i].name == undefined
+					|| $scope.shownFunction.outputColumns[i].type == undefined || $scope.shownFunction.outputColumns[i].fieldType == undefined) {
 				correctArguments = false;
 				var index = i + 1;
 
-				if ($scope.shownFunction.inputFiles[i].fileName == undefined) {
-					$scope.missingFields.push("Input file  " + index + "file name missing");
+				if ($scope.shownFunction.outputColumns[i].type == undefined) {
+					$scope.missingFields.push("Output column " + index + " type missing");
 				}
-
-			}
-		}
-
-		for (var i = 0; i < $scope.shownFunction.outputItems.length; i++) {
-			if ($scope.shownFunction.outputItems[i].label == undefined
-					|| $scope.shownFunction.outputItems[i].type == undefined) {
-				correctArguments = false;
-				var index = i + 1;
-
-				if ($scope.shownFunction.outputItems[i].type == undefined) {
-					$scope.missingFields.push("Output " + index + " type missing");
+				if ($scope.shownFunction.outputColumns[i].name == undefined) {
+					$scope.missingFields.push("Output column " + index + " name missing");
 				}
-				if ($scope.shownFunction.outputItems[i].label == undefined) {
-					$scope.missingFields.push("Output " + index + " label missing");
-
+				if ($scope.shownFunction.outputColumns[i].fieldType == undefined) {
+					$scope.missingFields.push("Output column " + index + " fieldtype missing");
 				}
 			}
+//			if ($scope.shownFunction.outputColumns[i].fieldType == "MEASURE" && $scope.shownFunction.outputColumns[i].type != "NUMBER") {
+//				correctArguments = false;
+//				$scope.missingFields.push("Field type and type not matching");
+//			}
 		}
 		if ($scope.shownFunction.description == ""
 				|| $scope.shownFunction.description == "") {
@@ -435,31 +338,29 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			$scope.missingFields.push("Function description missing");
 
 		}
-		if ($scope.shownFunction.remote == true && ($scope.shownFunction.url == undefined || $scope.shownFunction.url == "")) {
+		if ($scope.shownFunction.functionFamily == "online" && (!$scope.shownFunction.onlineScript || $scope.shownFunction.onlineScript == "")) {
 			correctArguments = false;
-			$scope.missingFields.push("Function url missing");
-		} else if ($scope.shownFunction.remote == false && ($scope.shownFunction.script == undefined || $scope.shownFunction.script == "")) {
-			correctArguments = false;
-			$scope.missingFields.push("Function script missing");
+			$scope.missingFields.push("Online script missing");
+		} else if ($scope.shownFunction.functionFamily == "offline") {
+			if (!$scope.shownFunction.offlineScriptTrainModel || $scope.shownFunction.offlineScriptTrainModel == "") {
+				correctArguments = false;
+				$scope.missingFields.push("Offline train script missing");
+			}
+			if (!$scope.shownFunction.offlineScriptUseModel || $scope.shownFunction.offlineScriptUseModel == "") {
+				correctArguments = false;
+				$scope.missingFields.push("Offline use script missing");
+			}
 		}
 		return correctArguments;
 	}
 
-	$scope.acSpeedMenu = [ {
-		label : sbiModule_translate.load("Execute Demo"),
+	$scope.acSpeedMenu = [{
+		label : sbiModule_translate.load("sbi.functionscatalog.executepreview"),
 		icon : 'fa fa-play-circle-o',
 		action : function(item, event) {
-			$scope.applyDemoItem(item, event);
+			$scope.applyPreviewItem(item, event);
 		}
-	}, {
-		label : sbiModule_translate.load("Execute with new data"),
-		icon : 'fa fa-play-circle',
-		action : function(item, event) {
-			$scope.applyItem(item, event);
-		}
-	}
-
-	];
+	}];
 
 	var deleteIcon = {
 		label : sbiModule_translate.load("Delete"),
@@ -498,38 +399,16 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.shownFunction = angular.copy(item);
 		var functionId = $scope.shownFunction.id;
 
-		sbiModule_restServices.get("1.0/functions-catalog","delete/" + functionId).then(function(result) {
+		sbiModule_restServices.get("2.0/functions-catalog","delete/" + functionId).then(function(result) {
+			if (result && result.data && result.data.FunctionInUseException) {
+				sbiModule_messaging.showErrorMessage(result.data.FunctionInUseException,"Delete Error");
+			}
 			$scope.obtainCatalogFunctionsRESTcall();
 			$scope.cleanNewFunction();
 			$scope.shownFunction = $scope.newFunction;
 			$scope.saveOrUpdateFlag = "save";
 		});
 
-	};
-
-	$scope.applyDemoItem = function(item, event) {
-
-		var functionId = item.id;
-
-		$log.info("userId ", $scope.userId);
-		sbiModule_restServices.get("1.0/functions-catalog/execute/sample",functionId).then(
-			function(results) {
-				for (var i = 0; i < results.data.length; i++) {
-					if (results.data[i].resultType == "file"
-							|| results.data[i].resultType == "File") {
-						results.data[i].result = JSON.parse(results.data[i].result);
-					}
-				}
-				var isDemo = true;
-				$scope.showTabDialog(results, isDemo);
-
-			});
-	};
-
-	$scope.applyItem = function(item, event) {
-		demoData = item;
-		var isDemo = false;
-		$scope.showNewInputDialog(demoData, $scope.datasets, isDemo);
 	};
 
 	$scope.leftTableClick = function(item) {
@@ -542,15 +421,15 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 	}
 
-	$scope.addInputDataset = function() {
+	$scope.addInputColumn = function() {
 		$scope.cleanNewFunction();
-		var inputDataset = {};
+		var inputColumn = {};
 
-		$scope.shownFunction.inputDatasets.push(inputDataset);
+		$scope.shownFunction.inputColumns.push(inputColumn);
 		$log
-				.info("Added an input Dataset ",
-						$scope.shownFunction.inputDatasets);
-		return inputDataset;
+				.info("Added an input Column ",
+						$scope.shownFunction.inputColumns);
+		return inputColumn;
 	}
 
 	$scope.addInputVariable = function() {
@@ -572,11 +451,11 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		return inputFile;
 	}
 
-	$scope.removeInputDataset = function(inputDataset) {
-		var index = $scope.shownFunction.inputDatasets.indexOf(inputDataset);
-		$scope.shownFunction.inputDatasets.splice(index, 1);
-		$log.info("Removed an input Dataset ",
-				$scope.shownFunction.inputDatasets);
+	$scope.removeInputColumn = function(inputColumn) {
+		var index = $scope.shownFunction.inputColumns.indexOf(inputColumn);
+		$scope.shownFunction.inputColumns.splice(index, 1);
+		$log.info("Removed an input Column ",
+				$scope.shownFunction.inputColumns);
 	}
 
 	$scope.removeInputVariable = function(inputVariable) {
@@ -592,43 +471,19 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$log.info("Removed an input File ", $scope.shownFunction.inputFile);
 	}
 
-	$scope.addOutputItem = function() {
-		var output = {};
-		$scope.shownFunction.outputItems.push(output);
-		$log.info("Added an outputItem ", $scope.shownFunction.outputItems);
-		return output;
+	$scope.addOutputColumn = function() {
+		var outputColumn = {};
+		$scope.shownFunction.outputColumns.push(outputColumn);
+		$log.info("Added an output Column ", $scope.shownFunction.outputColumns);
+		return outputColumn;
 	}
 
-	$scope.removeOutputItem = function(output) {
-		var index = $scope.shownFunction.outputItems.indexOf(output);
-		$scope.shownFunction.outputItems.splice(index, 1);
-		$log.info("Removed an output Item ", $scope.shownFunction.output);
+	$scope.removeOutputColumn = function(outputColumn) {
+		var index = $scope.shownFunction.outputColumns.indexOf(outputColumn);
+		$scope.shownFunction.outputColumns.splice(index, 1);
+		$log.info("Removed an output Column ", $scope.shownFunction.outputColumns);
 
 	}
-
-	$scope.datasetPreview = function(datasetLabel) {
-		sbiModule_restServices.get("1.0/datasets", datasetLabel + "/content").then(function(dataset) {
-			$scope.showDatasetPreviewDialog(dataset.data, datasetLabel);
-		});
-	}
-
-	$scope.showDatasetPreviewDialog = function(datasetToSee, labelDS) {
-		var executionResult = $mdDialog.show({
-			controller : datasetPreviewController,
-			templateUrl : sbiModule_config.dynamicResourcesBasePath
-					+ '/angular_1.4/tools/functionsCatalog/templates/'
-					+ 'datasetPreview.jsp',
-			preserveScope : true,
-			locals : {
-				logger : $log,
-				dataset : datasetToSee,
-				datasetLabel : labelDS,
-				translate : sbiModule_translate
-			},
-			clickOutsideToClose : true
-		});
-
-	};
 
 	$scope.filterByType = function(typeObject) {
 		var type = typeObject.valueCd;
@@ -638,7 +493,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$angularListDetail.goToList();
 		$scope.selectedType = typeObject.valueCd;
 		if (type != "All") {
-			sbiModule_restServices.get("1.0/functions-catalog", type).then(
+			sbiModule_restServices.get("2.0/functions-catalog", type).then(
 					function(result) {
 						$scope.functionsList = result.data.functions;
 						$scope.searchKeywords = result.data.keywords;
@@ -672,283 +527,377 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		return $scope.functionsToDisplay;
 	}
 
+	$scope.applyPreviewItem = function(item, event) {
+		$mdDialog.show({
+			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/functionsCatalog/templates/functionCatalogPreviewTemplate.html',
+			parent : angular.element(document.body),
+			clickOutsideToClose:true,
+			escapeToClose :true,
+			autoWrap:false,
+			locals: {
+				selectedFunction: item,
+			},
+			fullscreen: true,
+			controller: functionCatalogPreviewController
+		})
+	};
+
 	// --------------------------------------------Application
 	// Logic---------------------------------------
 
-	$scope.obtainDatasetLabelsRESTcall();
 	$scope.obtainCatalogFunctionsRESTcall();
 	$scope.obtainFunctionTypesRESTcall();
 
 	// ----------------------------------------------Controllers-----------------------------------------------
 
-	function functionCatalogResultsController($scope, $mdDialog, logger,
-			results, translate, isDemo) {
-		function isObject(obj) {
-			return obj === Object(obj);
+	function functionCatalogPreviewController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_messaging,$mdDialog,selectedFunction) {
+		$scope.translate=sbiModule_translate;
+		$scope.selectedFunction = angular.copy(selectedFunction);
+		$scope.disablePreview = true;
+		var style = {'display': 'inline-flex', 'justify-content':'center', 'align-items':'center'};
+		var typesMap = {'STRING': "fa fa-quote-right", 'NUMBER': "fa fa-hashtag", 'DATE': 'fa fa-calendar'};
+
+		// PYTHON ENVIRONMENTS CONFIG
+		sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
+		.then(function(response){
+			$scope.pythonEnvironments = buildEnvironments(response.data);
+		});
+
+		// R ENVIRONMENTS CONFIG
+		sbiModule_restServices.promiseGet('2.0/configs/category', 'R_CONFIGURATION')
+		.then(function(response){
+			$scope.rEnvironments = buildEnvironments(response.data);
+		});
+
+		buildEnvironments = function (data) {
+			toReturn = []
+			for (i=0; i<data.length; i++) {
+				key = data[i].label;
+				val = data[i].valueCheck;
+				toReturn[i] = {"label": key, "value": val};
+			}
+			return toReturn;
 		}
 
-		logger.info("received results: ", results);
-		$scope.download = function(filename, base64) {
-			var element = document.createElement('a');
-			element.setAttribute('href',
-					'data:application/octet-stream;base64,' + base64);
-
-			element.setAttribute('download', filename);
-
-			element.style.display = 'none';
-			document.body.appendChild(element);
-
-			element.click();
-
-			document.body.removeChild(element);
+		$scope.datasetsGrid = {
+		        enableColResize: false,
+		        enableFilter: true,
+		        enableSorting: true,
+		        onGridReady: initDatasets,
+		        onGridSizeChanged: resizeDatasets,
+		        rowSelection: "single",
+		        onRowClicked: selectDataset,
+		        pagination: true,
+		        paginationAutoPageSize: true,
+		        columnDefs: [
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.dataset'), field:'label'},
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.datasettype'), field:'dsTypeCd'}],
+		        rowData: $scope.datasetList
 		}
 
-		$scope.numTab = results.length;
-		$scope.results = results;
-		$scope.translate = translate;
-		$scope.isDemo = isDemo;
-		$scope.truncate = false;
-		$scope.error = "";
-		$scope.dataset = {
-			rows : []
-		};
-		for ( var res in $scope.results) {
-			if ($scope.results.hasOwnProperty(res)) {
-				if ($scope.results[res].resultType == "image"
-						|| $scope.results[res].resultType == "Image") {
-					$scope.results[res].imageString = "data:image/png;base64,"
-							+ $scope.results[res].result;
-				}
-				if ($scope.results[res].resultType == "dataset"
-						|| $scope.results[res].resultType == "Dataset"
-						|| $scope.results[res].resultType == "spagobi_ds") {
-					var datasetLabel = $scope.results[res].result;
-					sbiModule_restServices.post("1.0/datasets", datasetLabel + "/content").then(function(result) {
-						for (var i = 0; i < result.data.rows.length; i++) {
-							delete result.data.rows[i].id;
-						}
+		function initDatasets(){
+			sbiModule_restServices.promiseGet('1.0/datasets','')
+			.then(function(response){
+				$scope.datasetList = response.data.root;
+				$scope.datasetsGrid.api.setRowData($scope.datasetList);
+				resizeDatasets();
+			}, function(error){
+			});
+		}
 
-						$scope.dataset = result.data;
-						$scope.datasetLabel = datasetLabel;
-						if ($scope.dataset.rows.length > 10) {
-							$scope.truncate = true;
-						}
-						$scope.dataset.rows = $scope.dataset.rows.slice(0, 9);
+		function resizeDatasets(){
+			if ($scope.datasetsGrid.api) $scope.datasetsGrid.api.sizeColumnsToFit();
+		}
 
-						$scope.headers = [];
-						// in case first field is "recNO", skip
-						// it
-						if (!isObject($scope.dataset.metaData.fields[0])) {
-							i = 1;
-						} else {
-							i = 0;
-						}
-
-						for (i; i < $scope.dataset.metaData.fields.length; i++) {
-							if ($scope.dataset.metaData.fields[i].header != undefined && $scope.dataset.metaData.fields[i].header != "") {
-								var colToInsert = {};
-								colToInsert["label"] = $scope.dataset.metaData.fields[i].header;
-								colToInsert["name"] = $scope.dataset.metaData.fields[i].name;
-								$scope.headers.push(colToInsert);
-							}
-
-						}
-
-					});
-				}
-				if (res == "errors") {
-					$scope.error = $scope.results.errors[0].localizedMessage
-							+ "\n" + $scope.results.errors[0].message;
-				}
+		function selectDataset(props){
+			$scope.selectedDataset = props.api.getSelectedRows()[0];
+			$scope.selectedDatasetColumns = getDatasetColumns($scope.selectedDataset);
+			$scope.selectedFunction = angular.copy(selectedFunction);
+			$scope.$apply();
+			if ($scope.columnsGrid.api) {
+				$scope.columnDefs[2].cellEditorParams.values = $scope.selectedDatasetColumns;
+				$scope.columnsGrid.api.setColumnDefs($scope.columnDefs);
+				$scope.columnsGrid.api.setRowData($scope.selectedFunction.inputColumns);
 			}
 		}
 
-	}
-	;
-
-	function executeWithNewDataController($scope, $mdDialog, logger, demoData,
-			datasets, userId, translate) {
-		logger.info("received demo function data: ", demoData);
-		$scope.demoData = demoData;
-		$scope.datasets = datasets;
-		$scope.functionId = demoData.id;
-		$scope.userId = userId;
-		logger.info("HAVING DATASETS: ", $scope.datasets);
-		$scope.replacingDatasetList = {};
-		$scope.replacingFileList = {};
-		$scope.replacingVariableValues = {};
-		$scope.replacingDatasetOutLabels = {};
-		$scope.replacingTextOutLabels = {};
-		$scope.replacingImageOutLabels = {};
-		$scope.translate = translate;
-
-		$scope.getDatasetNameByLabel = function(label, datasetList) {
-			for ( var d in datasetList.item) {
-				if (datasetList.item.hasOwnProperty(d)) {
-					var datasetObj = datasetList.item[d];
-					if (datasetObj.label == label)
-						return datasetObj.name;
-				}
+		function getDatasetColumns(ds){
+			var toReturn = [];
+			var allColumns = ds.meta.columns;
+			for (var i=0; i<allColumns.length; i=i+3) {
+//				var type = allColumns[i].pvalue;
+//				var fieldType = allColumns[i+1].pvalue;
+				var alias = allColumns[i+2].pvalue;
+				toReturn.push(alias);
 			}
+			return toReturn;
 		}
 
-		$scope.cancel = function() {
+		$scope.columnDefs = [
+        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputColumn.name'), field:'name'},
+        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputColumn.type'), field:'type', cellRenderer:typeRenderer},
+        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputColumn.datasetColumn'), field:'dsColumn', editable:true, cellRenderer:editableCell, cellEditor:"agSelectCellEditor", cellEditorParams: {values: $scope.selectedDatasetColumns}}];
+
+		$scope.columnsGrid = {
+				angularCompileRows: true,
+				domLayout :'autoHeight',
+		        enableColResize: false,
+		        enableFilter: false,
+		        enableSorting: false,
+		        onGridReady : resizeColumns,
+		        onGridSizeChanged: resizeColumns,
+		        onCellEditingStopped: refreshRowForColumns,
+		        singleClickEdit: true,
+		        columnDefs: $scope.columnDefs,
+		        rowData: $scope.selectedFunction.inputColumns
+		}
+
+		function refreshRowForColumns(cell){
+			$scope.columnsGrid.api.redrawRows({rowNodes: [$scope.columnsGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
+		}
+
+		function resizeColumns(){
+			$scope.columnsGrid.api.sizeColumnsToFit();
+		}
+
+		function editableCell(params){
+			var editButton = '<i class="fa fa-edit"></i> <i>';
+			if (typeof(params.value) !== 'undefined')
+				return editButton + params.value;
+			else return editButton;
+		}
+
+		function typeRenderer(params){
+			var typeIcon = '<i class="' + typesMap[params.value] + '"></i> <i>'
+			return typeIcon + params.value;
+		}
+
+		$scope.variablesGrid = {
+				angularCompileRows: true,
+				domLayout :'autoHeight',
+		        enableColResize: false,
+		        enableFilter: false,
+		        enableSorting: false,
+		        onGridReady : resizeVariables,
+		        onGridSizeChanged: resizeVariables,
+		        onCellEditingStopped: refreshRowForVariables,
+		        singleClickEdit: true,
+		        columnDefs: [
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputVariable.name'), field:'name'},
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputVariable.type'), field:'type', cellRenderer: typeRenderer},
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.inputVariable.value'), field:'value', editable: true, cellRenderer: editableCell}],
+		        rowData: $scope.selectedFunction.inputVariables
+		}
+
+		function refreshRowForVariables(cell){
+			$scope.variablesGrid.api.redrawRows({rowNodes: [$scope.variablesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
+		}
+
+		function resizeVariables(){
+			$scope.variablesGrid.api.sizeColumnsToFit();
+		}
+
+		$scope.librariesGrid = {
+		        enableColResize: false,
+		        enableFilter: true,
+		        enableSorting: true,
+		        onGridReady: resizeLibraries,
+		        onGridSizeChanged: resizeLibraries,
+		        pagination: true,
+		        paginationAutoPageSize: true,
+		        columnDefs: [
+		        	{headerName: "Library", field:'name'},
+		        	{headerName: "Version", field:'version'}]
+		}
+
+		function resizeLibraries(){
+			$scope.librariesGrid.api.sizeColumnsToFit();
+		}
+
+		function refreshRowForLibraries(cell){
+			$scope.librariesGrid.api.redrawRows({rowNodes: [$scope.librariesGrid.api.getDisplayedRowAtIndex(cell.rowIndex)]});
+		}
+
+		$scope.setLibraries=function() {
+			var endpoint = $scope.selectedFunction.language == "Python" ? "python" : "RWidget";
+			sbiModule_restServices.promiseGet('2.0/backendservices/widgets/'+ endpoint +'/libraries', JSON.parse($scope.selectedFunction.environment).label)
+			.then(function(response){
+				$scope.selectedFunction.libraries = [];
+				var librariesArray = JSON.parse((response.data.result));
+				for (idx in librariesArray) {
+					lib = librariesArray[idx];
+					$scope.selectedFunction.libraries.push({"name": lib.name, "version": lib.version})
+				}
+				$scope.librariesGrid.api.setRowData($scope.selectedFunction.libraries);
+			}, function(error){
+			});
+		}
+
+		$scope.cancelPreview=function(){
+			$scope.selectedDataset = undefined;
+			$scope.selectedFunction = angular.copy(selectedFunction);
 			$mdDialog.cancel();
-		};
+		}
 
-		$scope.isExecuteDisabled = function() {
-			disabled = false;
-			function isEmpty(obj) {
+		$scope.resultDataGrid = {
+		        enableColResize: false,
+		        enableFilter: true,
+		        enableSorting: true,
+		        onGridReady: resizeResultData,
+		        onGridSizeChanged: resizeResultData,
+		        pagination: true,
+		        paginationAutoPageSize: true
+		}
 
-				// Speed up calls to hasOwnProperty
-				var hasOwnProperty = Object.prototype.hasOwnProperty;
+		function resizeResultData(){
+			if ($scope.resultDataGrid.api) $scope.resultDataGrid.api.sizeColumnsToFit();
+		}
 
-				// null and undefined are "empty"
-				if (obj == null)
-					return true;
+		$scope.goToPreview=function(){
+			if (!checkColumnsConfiguration($scope.selectedFunction.inputColumns))
+				$scope.toastifyMsg('warning',$scope.translate.load("sbi.functionscatalog.functionpreview.function.error.datasetColumns"));
+			else if (!checkVariablesConfiguration($scope.selectedFunction.inputVariables))
+				$scope.toastifyMsg('warning',$scope.translate.load("sbi.functionscatalog.functionpreview.function.error.inputVariables"));
+			else if (!checkEnvironmentConfiguration($scope.selectedFunction.environment))
+				$scope.toastifyMsg('warning',$scope.translate.load("sbi.functionscatalog.functionpreview.function.error.environment"));
+			else {
+				$scope.disablePreview = false;
+				$scope.selectedIndex = 1;
+				executePreview();
+			}
+		}
 
-				// Assume if it has a length property with a non-zero value
-				// that that property is correct.
-				if (obj.length > 0)
+		executePreview=function(){
+			body = buildDataServiceBody();
+			sbiModule_restServices.promisePost('2.0/datasets/'+ $scope.selectedDataset.label, 'data', body)
+			.then(function(response){
+				//display results table
+				var resultColumnDefs = [];
+				for (var i=1; i<response.data.metaData.fields.length; i++) {
+					var header = response.data.metaData.fields[i];
+					var colDef = {headerName: header.header, field: header.name};
+					resultColumnDefs.push(colDef);
+				}
+				$scope.resultDataGrid.api.setColumnDefs(resultColumnDefs);
+				$scope.resultDataGrid.api.setRowData(response.data.rows);
+			}, function(error){
+				sbiModule_messaging.showErrorMessage("Error during dataset execution","Data service error");
+			});
+		}
+
+		buildDataServiceBody=function(){
+			var body = {};
+			body.aggregations = buildBodyAggregations();
+			body.parameters = buildBodyParameters();
+			body.selections = {};
+			body.indexes = [];
+			return body;
+		}
+
+		buildBodyParameters=function(){
+			var parameters = {}
+			var allParameters = $scope.selectedDataset.pars;
+			for (var i=0; i< allParameters.length; i++) {
+				var currPar = allParameters[i];
+				if (currPar.value && currPar.value != "") parameters[currPar.name] = currPar.value;
+				else parameters[currPar.name] = currPar.defaultValue;
+			}
+			return parameters;
+		}
+
+		buildBodyAggregations=function(){
+			var aggregations = {};
+			var measures = [];
+			var categories = [];
+			//traditional columns
+			var allColumns = $scope.selectedDataset.meta.columns;
+			for (var i=0; i<allColumns.length; i=i+3) {
+				var name = allColumns[i].column;
+				var fieldType = allColumns[i+1].pvalue;
+				var alias = allColumns[i+2].pvalue;
+				var obj = {};
+				obj.id = name;
+				obj.alias = alias;
+				obj.columnName = name;
+				obj.funct = "NONE";
+				if (fieldType == "MEASURE") {
+					obj.orderColumn = name;
+					measures.push(obj);
+				} else {
+					obj.orderType = "";
+					categories.push(obj);
+				}
+			}
+			//catalog function columns
+			var functionConfig = {};
+			functionConfig.inputColumns = $scope.selectedFunction.inputColumns;
+			functionConfig.inputVariables = $scope.selectedFunction.inputVariables;
+			functionConfig.outputColumns = $scope.selectedFunction.outputColumns;
+			functionConfig.environment = JSON.parse($scope.selectedFunction.environment).label;
+			for (var i=0; i<$scope.selectedFunction.outputColumns.length; i++) {
+				var outputCol = $scope.selectedFunction.outputColumns[i];
+				var obj = {};
+				obj.id = outputCol.name;
+				obj.alias = outputCol.name;
+				obj.catalogFunctionId = $scope.selectedFunction.id;
+				obj.catalogFunctionConfig = functionConfig;
+				obj.columnName = outputCol.name;
+				obj.funct = "NONE";
+				if (fieldType == "MEASURE") {
+					obj.orderColumn = outputCol.name;
+					measures.push(obj);
+				} else {
+					obj.orderType = "";
+					categories.push(obj);
+				}
+			}
+			aggregations.measures = measures;
+			aggregations.categories = categories;
+			aggregations.dataset = $scope.selectedDataset.label;
+			return aggregations;
+		}
+
+		$scope.goToConfigurator=function(){
+			$scope.disablePreview = true;
+			$scope.selectedIndex = 0;
+		}
+
+		checkColumnsConfiguration=function(columns){
+			for (var i=0; i<columns.length; i++) {
+				if (!columns[i].dsColumn)
 					return false;
-				if (obj.length === 0)
-					return true;
-
-				// Otherwise, does it have any properties of its own?
-				// Note that this doesn't handle
-				// toString and valueOf enumeration bugs in IE < 9
-				for ( var key in obj) {
-					if (hasOwnProperty.call(obj, key))
-						return false;
-				}
-
-				return true;
 			}
-
-			// The output are generic outputItems with a Type field that
-			// distinguish them, in contrast with the input, that are divided in
-			// inputDatasets and inputVariables
-			// in future make 3 lists of outputs (outputImages, outputDatasets
-			// and outputText) instead of outputItems (also in the jsp view!!)
-			$scope.numDSout = 0;
-			function classifyOutput() {
-				for (var i = 0; i < $scope.demoData.outputItems.length; i++) {
-					if (demoData.outputItems[i].type == "Dataset"
-							|| demoData.outputItems[i].type == "dataset"
-							|| demoData.outputItems[i].type == "spabobi_ds") {
-						$scope.numDSout = $scope.numDSout + 1;
-					}
-
-				}
-				return $scope.numDSout;
-			}
-
-			$scope.numDSout = classifyOutput();
-
-			if ((isEmpty($scope.replacingDatasetList) && $scope.demoData.inputDatasets.length != 0)
-					|| (isEmpty($scope.replacingVariableValues) && $scope.demoData.inputVariables.length != 0)
-					|| (isEmpty($scope.replacingDatasetOutLabels) && $scope.numDSout != 0)) {
-				disabled = true;
-			} else {
-				for ( var property in $scope.replacingDatasetList) {
-					if ($scope.replacingDatasetList.hasOwnProperty(property)) {
-						if (isEmpty($scope.replacingDatasetList[property])) {
-							disabled = true;
-						}
-					}
-				}
-				for ( var property in $scope.replacingVariableValues) {
-					if ($scope.replacingVariableValues.hasOwnProperty(property)) {
-						if (isEmpty($scope.replacingVariableValues[property])) {
-							disabled = true;
-						}
-					}
-				}
-				for ( var property in $scope.replacingDatasetOutLabels) {
-					if ($scope.replacingDatasetOutLabels
-							.hasOwnProperty(property)) {
-						if (isEmpty($scope.replacingDatasetOutLabels[property])) {
-							disabled = true;
-						}
-					}
-				}
-
-			}
-			return disabled;
+			return true;
 		}
 
-		$scope.executeFunction = function() {
-			var body = [];
-
-			var variablesIn = {}, datasetsIn = {}, filesIn = {};
-			variablesIn.type = "variablesIn";
-			variablesIn.items = $scope.replacingVariableValues;
-			body.push(variablesIn);
-
-			datasetsIn.type = "datasetsIn";
-			datasetsIn.items = $scope.replacingDatasetList;
-			body.push(datasetsIn);
-
-			filesIn.type = "filesIn"
-			filesIn.items = $scope.replacingFileList;
-			body.push(filesIn);
-
-			logger.info("body: ", body);
-
-			sbiModule_restServices.post("1.0/functions-catalog/execute/new",$scope.functionId, body).then(
-				function(executionResult) {
-					for (var i = 0; i < executionResult.data.length; i++) {
-						if (executionResult.data[i].resultType == "file" || executionResult.data[i].resultType == "File") {
-							executionResult.data[i].result = JSON.parse(executionResult.data[i].result);
-						}
-					}
-					$mdDialog.hide(executionResult);
-				}
-			);
+		checkVariablesConfiguration=function(variables){
+			for (var i=0; i<variables.length; i++) {
+				if (!variables[i].value || variables[i].value == '')
+					return false;
+			}
+			return true;
 		}
+
+		checkEnvironmentConfiguration=function(environment){
+			if (!environment)
+				return false;
+			return true;
+		}
+
+		$scope.toastifyMsg = function(type,msg){
+			Toastify({
+				text: msg,
+				duration: 10000,
+				close: true,
+				className: 'kn-' + type + 'Toast',
+				stopOnFocus: true
+			}).showToast();
+		}
+
 	};
 
 	$scope.cancelFunction = function() {
 		$angularListDetail.goToList();
-	}
-
-	function datasetPreviewController($scope, $mdDialog, logger, dataset,
-			datasetLabel, translate) {
-		function isObject(obj) {
-			return obj === Object(obj);
-		}
-
-		logger.info("Preview Controller, received dataset: ", dataset);
-		for (var i = 0; i < dataset.rows.length; i++) {
-			delete dataset.rows[i].id;
-		}
-		$scope.dataset = dataset;
-		$scope.truncate = false;
-		$scope.datasetLabel = datasetLabel;
-		$scope.translate = translate;
-		if ($scope.dataset.rows.length > 10) {
-			$scope.truncate = true;
-		}
-		$scope.dataset.rows = $scope.dataset.rows.slice(0, 9);
-
-		$scope.headers = [];
-		// in case first field is "recNO", skip it
-		if (!isObject($scope.dataset.metaData.fields[0])) {
-			i = 1;
-		} else {
-			i = 0;
-		}
-
-		for (i; i < $scope.dataset.metaData.fields.length; i++) {
-			if ($scope.dataset.metaData.fields[i].header != undefined
-					&& $scope.dataset.metaData.fields[i].header != "") {
-				var colToInsert = {};
-				colToInsert["label"] = $scope.dataset.metaData.fields[i].header;
-				colToInsert["name"] = $scope.dataset.metaData.fields[i].name;
-				$scope.headers.push(colToInsert);
-			}
-
-		}
 	}
 
 };

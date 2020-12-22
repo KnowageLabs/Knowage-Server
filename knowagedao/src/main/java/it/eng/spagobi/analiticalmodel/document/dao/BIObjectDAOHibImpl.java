@@ -1262,6 +1262,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 				// delete ObjDataset eventually associatyed
 				DAOFactory.getBIObjDataSetDAO().eraseBIObjDataSetByObjectId(obj.getId());
+				// delete ObjFunction eventually associated
+				DAOFactory.getBIObjFunctionDAO().eraseBIObjFunctionByObjectId(obj.getId());
 
 				// delete parameters associated
 				// before deleting parameters associated is needed to delete all

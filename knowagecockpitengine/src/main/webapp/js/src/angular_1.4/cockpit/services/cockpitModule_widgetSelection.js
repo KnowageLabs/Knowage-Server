@@ -95,11 +95,16 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				obj["id"] = col.alias;
 				obj["alias"] = (ngModel.type == "table" ? col.aliasToShow : col.alias);
 
+				if(col.boundFunction){
+					obj["catalogFunctionId"] = col.boundFunction.id;
+					obj["catalogFunctionConfig"] = buildCatalogFunctionConfiguration(col.boundFunction);
+				}
+
 				if(col.isCalculated == true){
 					obj["formula"] = col.formula;
 				}
-					obj["columnName"] = col.name;
-					obj["orderType"] = "";
+				obj["columnName"] = col.name;
+				obj["orderType"] = "";
 				if(columnOrdering !=undefined){
 					if (typeof columnOrdering == "string" || columnOrdering.name) {
 						var tempOrder = columnOrdering.name ? columnOrdering.name : columnOrdering;
@@ -188,6 +193,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				obj["alias"] = col.alias;
 				obj["columnName"] = col.id;
 
+				if(col.boundFunction){
+					obj["catalogFunctionId"] = col.boundFunction.id;
+					obj["catalogFunctionConfig"] = buildCatalogFunctionConfiguration(col.boundFunction);
+				}
+
 				obj["orderType"] = "";
 				if(columnOrdering !=undefined){
 					if(columnOrdering.name == col.name){
@@ -210,6 +220,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				obj["id"] = row.id;
 				obj["alias"] = row.alias;
 				obj["columnName"] = row.id;
+
+				if(row.boundFunction){
+					obj["catalogFunctionId"] = row.boundFunction.id;
+					obj["catalogFunctionConfig"] = buildCatalogFunctionConfiguration(row.boundFunction);
+				}
 
 				obj["orderType"] = "";
 				if(columnOrdering !=undefined){
@@ -243,6 +258,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				if (measure.isCalculated) {
 					obj.formula = measure.formula;
 				}
+				if(measure.boundFunction){
+					obj["catalogFunctionId"] = measure.boundFunction.id;
+					obj["catalogFunctionConfig"] = buildCatalogFunctionConfiguration(measure.boundFunction);
+				}
 
 				obj["orderType"] = "";
 				if(columnOrdering !=undefined){
@@ -275,6 +294,15 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 		return result;
 
+	}
+
+	buildCatalogFunctionConfiguration = function(catalogFunc) {
+		var functionConfig = {};
+		functionConfig.inputColumns = catalogFunc.inputColumns;
+		functionConfig.inputVariables = catalogFunc.inputVariables;
+		functionConfig.outputColumns = catalogFunc.outputColumns;
+		functionConfig.environment = JSON.parse(catalogFunc.environment).label;
+		return functionConfig;
 	}
 
 	this.createSortingCategory=function(id, orderType){

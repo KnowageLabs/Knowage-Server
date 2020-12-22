@@ -164,6 +164,19 @@ public class JWTSsoService implements SsoServiceInterface {
 		return token;
 	}
 
+	public static String catalogFunction2jwtToken(String script, Date expiresAt) {
+		LogMF.debug(logger, "Python script in input is [{0}]", script);
+		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
+		// @formatter:off
+		String token = JWT.create()
+				.withClaim(SsoServiceInterface.PYTHON_DATASET_SCRIPT, script)
+				.withExpiresAt(expiresAt) // token will expire at the desired expire date
+				.sign(algorithm);
+		// @formatter:on
+		LogMF.debug(logger, "JWT token is [{0}]", token);
+		return token;
+	}
+
 	public static String jwtToken2userId(String jwtToken) throws JWTVerificationException {
 		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
 		JWTVerifier verifier = JWT.require(algorithm).build();

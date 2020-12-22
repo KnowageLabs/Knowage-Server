@@ -18,6 +18,17 @@
 
 package it.eng.spagobi.engines.drivers.xmla;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
@@ -40,17 +51,6 @@ import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-
 /**
  * Driver Implementation (IEngineDriver Interface) for XMLA Engine.
  */
@@ -61,12 +61,9 @@ public class XMLADriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param biobject
-	 *            the biobject
+	 * @param profile  Profile of the user
+	 * @param roleName the name of the execution role
+	 * @param biobject the biobject
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
@@ -88,14 +85,10 @@ public class XMLADriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param subObject
-	 *            SubObject to execute
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param object
-	 *            the object
+	 * @param subObject SubObject to execute
+	 * @param profile   Profile of the user
+	 * @param roleName  the name of the execution role
+	 * @param object    the object
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
@@ -131,8 +124,7 @@ public class XMLADriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
 	 *
-	 * @param biobj
-	 *            BIObject to execute
+	 * @param biobj BIObject to execute
 	 * @return Map The map of the execution call parameters
 	 */
 	protected Map getMap(BIObject biobj, IEngUserProfile profile, String roleName) {
@@ -162,14 +154,10 @@ public class XMLADriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Adds parameter for data access based on the user functionalities
 	 *
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            Role name of the user
-	 * @param pars
-	 *            Map of previous parameters
-	 * @param template
-	 *            bytes of the biobject template
+	 * @param profile  Profile of the user
+	 * @param roleName Role name of the user
+	 * @param pars     Map of previous parameters
+	 * @param template bytes of the biobject template
 	 * @return The parameter map containing parameter for data access control
 	 */
 	protected Map addDataAccessParameter(IEngUserProfile profile, String roleName, Map pars, byte[] templateBy) {
@@ -423,10 +411,8 @@ public class XMLADriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
 	 *
-	 * @param biobj
-	 *            BIOBject to execute
-	 * @param pars
-	 *            Map of the parameters for the execution call
+	 * @param biobj BIOBject to execute
+	 * @param pars  Map of the parameters for the execution call
 	 * @return Map The map of the execution call parameters
 	 */
 	protected Map addBIParameters(BIObject biobj, Map pars) {
@@ -459,15 +445,12 @@ public class XMLADriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Returns the url to be invoked for editing template document.
 	 *
-	 * @param biobject
-	 *            The biobject
-	 * @param profile
-	 *            the profile
+	 * @param biobject The biobject
+	 * @param profile  the profile
 	 *
 	 * @return the url to be invoked for editing template document
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -505,15 +488,12 @@ public class XMLADriver extends AbstractEngineDriver implements IEngineDriver {
 	/**
 	 * Returns the url to be invoked for creating a new template document.
 	 *
-	 * @param biobject
-	 *            The biobject
-	 * @param profile
-	 *            the profile
+	 * @param biobject The biobject
+	 * @param profile  the profile
 	 *
 	 * @return the url to be invoked for creating a new template document
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -557,6 +537,14 @@ public class XMLADriver extends AbstractEngineDriver implements IEngineDriver {
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
+		// catalog functions can be used only inside cockpits
+		// therefore the default implementation is to return an empty list
+		// CockpitEngine will have its own implementation
+		return new ArrayList<Integer>();
 	}
 
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)

@@ -153,6 +153,7 @@
 		<DAO name="IWhatifWorkflowDAO" implementation="it.eng.spagobi.whatif.dao.WhatifWorkflowDAOHibImpl"/>
 		
 		<DAO name="ICatalogFunctionDAO" implementation="it.eng.spagobi.functions.dao.CatalogFunctionDAOImpl"/>
+		<DAO name="BIObjFunctionDAO" implementation="it.eng.spagobi.functions.dao.BIObjFunctionDAOHibImpl"/>
 		<DAO name="IObjFuncOrganizerDAO" implementation="it.eng.spagobi.workspace.dao.ObjFuncOrganizerHIBDAOImpl"/>
 		<DAO name="CalendarDAO" implementation="it.eng.spagobi.tools.calendar.dao.CalendarDAOImpl" />
 		<DAO name="DossierActivityDAO" implementation="it.eng.spagobi.dossier.dao.SbiDossierActivityDAOHibImpl"/>
