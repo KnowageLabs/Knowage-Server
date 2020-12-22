@@ -30,6 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -526,7 +527,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/saveDocumentMetadata")
-	public Response saveDocumentMetadata(FunctionExecutionResourceDTO functionExecutionResourceDTO) throws JSONException {
+	public Response saveDocumentMetadata(@Valid FunctionExecutionResourceDTO functionExecutionResourceDTO) throws JSONException {
 		try {
 
 			IObjMetacontentDAO dao = DAOFactory.getObjMetacontentDAO();
