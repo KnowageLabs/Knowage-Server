@@ -358,7 +358,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						angular.forEach(selectedColumnsDs,function(widgetColumn){
 							var isWidgetColumnMatching = false;
 							for(var i = 0; i < actualDs.metadata.fieldsMeta.length; i++){
-								if(widget.type == 'text' || actualDs.metadata.fieldsMeta[i].name == widgetColumn.name || actualDs.metadata.fieldsMeta[i].alias == widgetColumn.name || widgetColumn.formula){
+								if(widget.type == 'text' || actualDs.metadata.fieldsMeta[i].name == widgetColumn.name || actualDs.metadata.fieldsMeta[i].alias == widgetColumn.name || widgetColumn.formula || widgetColumn.boundFunction){
 									isWidgetColumnMatching = true;
 									break;
 								}
@@ -1219,7 +1219,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 //						tempJSN = tempJSN.substring(1,tempJSN.length-1);
 					}else{
 						if(parameters[parameter]!= "") tempJSN += parameters[parameter];
-					}			
+					}
 
 //					tempJSN = tempJSN.replace(/[\[\]]/g,"");
 					tempJSN += '"';

@@ -94,8 +94,11 @@ def convertKnowageDatasetToDataframe(names, rows):
     #save data as dataframe
     df = pd.DataFrame(rows)
     if not df.empty:
-        #cast types
-        df = df.astype(column_types)
+        try:
+            #cast types
+            df = df.astype(column_types)
+        except Exception as e:
+            logging.warning("Could not cast dataframe types")
         #drop first column (redundant)
         df.drop(columns=['id'], inplace=True)
         # assign column names

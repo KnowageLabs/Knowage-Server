@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service.v2;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,8 +32,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -355,13 +352,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		String templateContent = null;
 		try {
 			templateContent = new ObjectMapper().writeValueAsString(templateContentMap);
-		} catch (JsonGenerationException e) {
-			String message = "Exception when converting template to string";
-			throw new SpagoBIRuntimeException(message, e);
-		} catch (JsonMappingException e) {
-			String message = "Exception when converting template to string";
-			throw new SpagoBIRuntimeException(message, e);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			String message = "Exception when converting template to string";
 			throw new SpagoBIRuntimeException(message, e);
 		}
