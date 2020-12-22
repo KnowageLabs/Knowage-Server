@@ -636,17 +636,23 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     }
 
     $scope.editFileDataset = function (arg) {
-  	  $scope.initializeDatasetWizard(arg);
-  	  // Set the flag for editing the current dataaset (file)
-  	  $scope.editingDatasetFile = true;
-        $mdDialog.show({
-  		  scope:$scope,
-  		  preserveScope: true,
-  	      controller: DatasetCreateController,
-  	      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',
-  	      clickOutsideToClose: false,
-  	      escapeToClose :true
-  	    });
+  	  	$scope.initializeDatasetWizard(arg);
+
+		sbiModule_restServices.get('1.0/datasets', arg.label).then(function(response) {
+
+	   	 	$scope.dataset = response.data[0];
+
+			// Set the flag for editing the current dataaset (file)
+			$scope.editingDatasetFile = true;
+			$mdDialog.show({
+				scope:$scope,
+				preserveScope: true,
+				controller: DatasetCreateController,
+				templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',
+				clickOutsideToClose: false,
+				escapeToClose :true
+			});
+		});
     }
 
     $scope.tableDatasets = [
