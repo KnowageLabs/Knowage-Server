@@ -44,10 +44,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	function catalogFunctionController($scope,sbiModule_translate,sbiModule_restServices,cockpitModule_catalogFunctionService,$q,$mdDialog,cockpitModule_datasetServices,$mdToast){
 		$scope.translate = sbiModule_translate;
 
+		function buildCrossTabColumns(crosstabDefinition){
+			var columnsArray = [];
+			for (var c in crosstabDefinition.columns) {
+				columnsArray.push(crosstabDefinition.columns[c]);
+			}
+			for (var r in crosstabDefinition.rows) {
+				columnsArray.push(crosstabDefinition.rows[r]);
+			}
+			for (var m in crosstabDefinition.measures) {
+				columnsArray.push(crosstabDefinition.measures[m]);
+			}
+			return columnsArray;
+		}
+
 		$scope.removeFunctionOutputColumns = function(){
-			if ($scope.ngModel.content == undefined) {
+			if ($scope.ngModel.content == undefined) { // chart widget
 				var columns = $scope.ngModel.columnSelectedOfDatasetAggregations;
-			} else {
+			} else if ($scope.ngModel.content.crosstabDefinition) { // cross tab widget
+				return;
+			} else {	// other widgets
 				var columns = $scope.ngModel.content.columnSelectedOfDataset;
 			}
 			var colsToMantain = [];
@@ -57,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				else
 					colsToMantain.push(columns[i]);
 			}
-			if ($scope.ngModel.content == undefined) {
+			if ($scope.ngModel.content == undefined) { // chart widget
 				$scope.ngModel.columnSelectedOfDatasetAggregations = colsToMantain;
 			} else {
 				$scope.ngModel.content.columnSelectedOfDataset = colsToMantain;
@@ -66,12 +82,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		if($scope.selectedItem){
 			if ($scope.measuresListFunc != undefined) {
-//				var tmpList = $scope.measuresListFunc();
-//				$scope.currentRow = tmpList[$scope.selectedItem];
 				$scope.currentRow = $scope.selectedItem;
-			} else if ( $scope.ngModel.content == undefined) {  // case when coming from chart widget
+			} else if ( $scope.ngModel.content == undefined) {  // chart widget
 				$scope.currentRow = $scope.ngModel.columnSelectedOfDatasetAggregations[$scope.selectedItem];
-			} else {
+			} else { // other widgets
 				$scope.currentRow = $scope.ngModel.content.columnSelectedOfDataset[$scope.selectedItem]
 			}
 		}
@@ -98,18 +112,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					callbackUpdateAlias: $scope.callbackUpdateAlias,
 					additionalInfo: $scope.additionalInfo,
 					measuresListFunc: $scope.measuresListFunc,
-					callbackAddTo: $scope.callbackAddTo
+					callbackAddTo: $scope.callbackAddTo,
+					buildCrossTabColumns: buildCrossTabColumns
 				},
 				fullscreen: true,
 				controller: catalogFunctionDialogController
 			}).then(function() {
 				deferred.promise.then(function(result){
 					$scope.removeFunctionOutputColumns();
-					if ($scope.ngModel.content == undefined) {
+					if ($scope.ngModel.content == undefined) { // chart widget
 						for (var i=0; i<result.length; i++) {
 							$scope.ngModel.columnSelectedOfDatasetAggregations.push(result[i]);
 						}
-					} else {
+					} else if ($scope.ngModel.content.crosstabDefinition) { // cross tab widget
+						for (var i=0; i<result.length; i++) {
+							result[i].id = result[i].name;
+							result[i].nature = "catalog_function";
+							if (result[i].fieldType == "ATTRIBUTE") {
+								$scope.ngModel.content.crosstabDefinition.rows.push(result[i]);
+							} else {
+								result[i].containerType = "MEASURE-PT";
+								result[i].funct = "NONE";
+								result[i].iconCls = "measure";
+								result[i].values = "[]";
+								$scope.ngModel.content.crosstabDefinition.measures.push(result[i]);
+							}
+						}
+					} else { // other widgets
 						for (var i=0; i<result.length; i++) {
 							$scope.ngModel.content.columnSelectedOfDataset.push(result[i]);
 						}
@@ -122,7 +151,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	}
 
-	function catalogFunctionDialogController($scope,sbiModule_translate,cockpitModule_template,cockpitModule_catalogFunctionService,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
+	function catalogFunctionDialogController($scope,sbiModule_translate,cockpitModule_template,cockpitModule_catalogFunctionService,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,buildCrossTabColumns,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
 		$scope.model = model;
 		$scope.selectedFunction = actualItem ? angular.copy(actualItem) : {};
@@ -190,15 +219,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		function getDatasetColumns(){
 			var toReturn = [];
-			if ($scope.model.content == undefined) {
+			if ($scope.model.content == undefined) { // chart widget
 				var columns = $scope.model.columnSelectedOfDatasetAggregations;
-			} else {
+			} else if ($scope.model.content.crosstabDefinition) { // cross tab widget
+				var columns = buildCrossTabColumns($scope.model.content.crosstabDefinition);
+			} else { // other widgets
 				var columns = $scope.model.content.columnSelectedOfDataset;
 			}
 			for (var i=0; i<columns.length; i++) {
 				var column = columns[i];
-				if (!column.isFunction)
-					toReturn.push(column.name);
+				if (!column.isFunction) {
+					if (column.name) toReturn.push(column.name);
+					else toReturn.push(column.id);
+				}
 			}
 			return toReturn;
 		}

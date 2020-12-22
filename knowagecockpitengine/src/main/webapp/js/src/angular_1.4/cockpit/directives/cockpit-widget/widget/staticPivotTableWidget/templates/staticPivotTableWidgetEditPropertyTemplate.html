@@ -16,7 +16,7 @@
 	      	<md-card>
 		  		<md-card-content>
 		  		 	<dataset-selector ng-model=localModel.dataset.dsId on-change="changeDatasetFunction(dsId)"></dataset-selector>
-		  		 	<!-- <catalog-function ng-if="localModel.dataset.dsId" ng-model="localModel" additional-info="datasetAdditionalInfos"></catalog-function> -->
+		  		 	<catalog-function ng-if="localModel.dataset.dsId" ng-model="localModel" additional-info="datasetAdditionalInfos"></catalog-function>
 		  		</md-card-content>
 		  	</md-card>		  
 			   
@@ -93,6 +93,7 @@
 			      								dnd-dragend="dragUtils.dragObjectType=undefined">
 			      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
 			      							{{item.alias}}
+			      							 <md-icon md-font-icon="fa fa-trash" ng-if="item.nature=='catalog_function'" aria-label="Checkbox 1" class="md-secondary" ng-click="deleteCatalogFunction()"></md-icon>
 			      							 <md-icon md-font-icon="fa fa-cog" aria-label="Checkbox 1" class="md-secondary" ng-click="editFieldsProperty(item)"></md-icon>
 			      							</md-list-item>
 			      							<md-list-item class="dndPlaceholder" >
@@ -123,6 +124,7 @@
 			      							 >
 			      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
 			      							{{item.alias}}
+			      							 <md-icon md-font-icon="fa fa-trash" ng-if="item.nature=='catalog_function'" aria-label="Checkbox 1" class="md-secondary" ng-click="deleteCatalogFunction()"></md-icon>
 			      							 <md-icon md-font-icon="fa fa-cog" aria-label="Checkbox 1" class="md-secondary" ng-click="editFieldsProperty(item)"></md-icon>
 			      							</md-list-item>
 			      							<md-list-item class="dndPlaceholder" >
@@ -154,8 +156,9 @@
 			      							 >
 			      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
 			      							<span flex> {{item.alias}} </span>
-			      							 <calculated-field ng-if="item.nature=='calculated_field'" ng-model="localModel" selected-item="item" measures-list-func="getAvailableMeasures()" additional-info="datasetAdditionalInfos" callback-add-to="addCalculatedField(newItem)"></calculated-field>
+			      							 <calculated-field ng-if="item.nature=='calculated_field'" ng-model="localModel" selected-item="item" measures-list-func="getAvailableMeasures()" additional-info="datasetAdditionalInfos" callback-add-to="addCalculatedField(newItem)"></calculated-field> 
 			      							 <md-icon md-font-icon="fa fa-trash" ng-if="item.nature=='calculated_field'" aria-label="Checkbox 1" class="md-secondary" ng-click="deleteCalculatedField($index)"></md-icon>
+			      							 <md-icon md-font-icon="fa fa-trash" ng-if="item.nature=='catalog_function'" aria-label="Checkbox 1" class="md-secondary" ng-click="deleteCatalogFunction()"></md-icon>
 			      							 <md-icon md-font-icon="fa fa-cog" aria-label="Checkbox 1" class="md-secondary" ng-click="editFieldsProperty(item)"></md-icon> 
 			      							</md-list-item>
 			      							<md-list-item class="dndPlaceholder" >

@@ -76,8 +76,8 @@ def getDatasetAsDataframe(widget):
     # retrieve column names from metadata
     col_names = r.json()["metaData"]["fields"]
     rows = r.json()["rows"]
-    df = convertKnowageDatasetToDataframe(col_names, rows);
-    return df;
+    df = convertKnowageDatasetToDataframe(col_names, rows)
+    return df
 
 # used for widget
 def convertKnowageDatasetToDataframe(names, rows):
