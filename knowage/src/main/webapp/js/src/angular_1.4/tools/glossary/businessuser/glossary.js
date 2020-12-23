@@ -1731,14 +1731,14 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 	ctr.glossMenuOpt = [ {
 		label : sbiModule_translate.load('sbi.generic.modify'),
 		action : function(item, event) {
-			ctr.createNewGlossary(item);
+			ctr.createNewGlossary(event,item);
 		}
 	},
 
 	{
 		label : sbiModule_translate.load('sbi.generic.clone'),
 		action : function(item, event) {
-			ctr.CloneGloss(item);
+			ctr.CloneGloss(event, item);
 		}
 	},
 
