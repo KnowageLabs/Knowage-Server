@@ -80,7 +80,8 @@ public class HierarchyConstants {
 	public final static String FILTER_CONDITION = "CONDITION";
 
 	// dialects for correct definition of date's functions
-	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
+	public static final String DIALECT_MYSQL_INNODB = "org.hibernate.dialect.MySQLInnoDBDialect";
+	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLDialect";
 	public static final String DIALECT_TERADATA = "org.hibernate.dialect.TeradataDialect";
 	public static final String DIALECT_POSTGRES = "org.hibernate.dialect.PostgreSQLDialect";
 	public static final String DIALECT_ORACLE = "org.hibernate.dialect.OracleDialect";
