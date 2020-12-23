@@ -64,10 +64,8 @@ public class HierarchyUtils {
 	/**
 	 * This method creates a JSON from a Hierarchy field
 	 *
-	 * @param field
-	 *            Field read from hierarchies config
-	 * @param isHierarchyField
-	 *            to manage differences between dimensions and hierarchies fields
+	 * @param field            Field read from hierarchies config
+	 * @param isHierarchyField to manage differences between dimensions and hierarchies fields
 	 * @return a JSON that represents a field
 	 * @throws JSONException
 	 */
@@ -126,8 +124,7 @@ public class HierarchyUtils {
 	/**
 	 * This method creates a JSON from a Hierarchy filter
 	 *
-	 * @param filter
-	 *            Filter read from hierarchies config
+	 * @param filter Filter read from hierarchies config
 	 * @return a JSON that represents a filter
 	 * @throws JSONException
 	 */
@@ -167,10 +164,8 @@ public class HierarchyUtils {
 	/**
 	 * This method creates a JSON array from a list of fields
 	 *
-	 * @param fields
-	 *            List of Fields read from hierarchies config
-	 * @param hierarchyFields
-	 *            to manage differences between dimensions and hierarchies fields
+	 * @param fields          List of Fields read from hierarchies config
+	 * @param hierarchyFields to manage differences between dimensions and hierarchies fields
 	 * @return a JSON array that represents fields
 	 * @throws JSONException
 	 */
@@ -192,8 +187,7 @@ public class HierarchyUtils {
 	/**
 	 * This method creates a JSON array from a list of filters
 	 *
-	 * @param filters
-	 *            List of Filters read from hierarchies config
+	 * @param filters List of Filters read from hierarchies config
 	 * @return a JSON array that represents filters
 	 * @throws JSONException
 	 */
@@ -213,10 +207,8 @@ public class HierarchyUtils {
 	/**
 	 * This method creates a JSON array from a list of fields
 	 *
-	 * @param fields
-	 *            List of Fields read from hierarchies config
-	 * @param hierarchyFields
-	 *            to manage differences between dimensions and hierarchies fields
+	 * @param fields          List of Fields read from hierarchies config
+	 * @param hierarchyFields to manage differences between dimensions and hierarchies fields
 	 * @return a JSON array that represents fields
 	 * @throws JSONException
 	 */
@@ -269,8 +261,7 @@ public class HierarchyUtils {
 	/**
 	 * This method find the max int value of the table primary key
 	 *
-	 * @param primaryKey
-	 *            of the table, name of the table, connection to the db
+	 * @param primaryKey of the table, name of the table, connection to the db
 	 * @return -1 if it finds a result, >= 0 otherwise
 	 *
 	 * @throws SQLException
@@ -333,7 +324,7 @@ public class HierarchyUtils {
 		String format = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 		String convertedDate = "";
 		String actualDialect = dataSource.getHibDialectClass();
-		if (HierarchyConstants.DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
+		if (HierarchyConstants.DIALECT_MYSQL_INNODB.equalsIgnoreCase(actualDialect) || HierarchyConstants.DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
 			convertedDate = "STR_TO_DATE('" + dateToConvert + "','" + format + "')";
 		} else if (HierarchyConstants.DIALECT_POSTGRES.equalsIgnoreCase(actualDialect)) {
 			convertedDate = "TO_DATE('" + dateToConvert + "','" + format + "')";
@@ -375,10 +366,8 @@ public class HierarchyUtils {
 	 * Return a condition for test validity on a date (used by dimension OPTIONAL filters)
 	 *
 	 * @param dataSource
-	 * @param filterConditions
-	 *            : an hashmap with one or more conditions that will added on the input date
-	 * @param filterValue
-	 *            : the value of the date to test
+	 * @param filterConditions : an hashmap with one or more conditions that will added on the input date
+	 * @param filterValue      : the value of the date to test
 	 * @return String with conditions
 	 */
 	public static String createDateFilterCondition(IDataSource dataSource, HashMap<String, String> filterConditions, String filterValue) {
@@ -397,10 +386,8 @@ public class HierarchyUtils {
 	 * Return a condition for test validity on a string (used by dimension OPTIONAL filters)
 	 *
 	 * @param dataSource
-	 * @param filterConditions
-	 *            : an hashmap with one or more conditions that will added on the input value
-	 * @param filterValue
-	 *            : the string value to test
+	 * @param filterConditions : an hashmap with one or more conditions that will added on the input value
+	 * @param filterValue      : the string value to test
 	 * @return String with conditions
 	 */
 	public static String createStringFilterCondition(IDataSource dataSource, HashMap<String, String> filterConditions, String filterValue) {
@@ -418,10 +405,8 @@ public class HierarchyUtils {
 	 * Return a condition for test validity on a number (used by dimension OPTIONAL filters)
 	 *
 	 * @param dataSource
-	 * @param filterConditions
-	 *            : an hashmap with one or more conditions that will added on the input value
-	 * @param filterValue
-	 *            : the numeric value to test
+	 * @param filterConditions : an hashmap with one or more conditions that will added on the input value
+	 * @param filterValue      : the numeric value to test
 	 * @return String with conditions
 	 */
 	public static String createNumberFilterCondition(IDataSource dataSource, HashMap<String, String> filterConditions, String filterValue) {
@@ -946,24 +931,15 @@ public class HierarchyUtils {
 	/**
 	 * Create query for extracting automatic hierarchy rows
 	 *
-	 * @param dataSource
-	 *            : the datasource
-	 * @param dimension
-	 *            : the selected dimension
-	 * @param hierarchyType
-	 *            : the selected hierarchy type
-	 * @param hierarchyName
-	 *            : the selected hierarchy name
-	 * @param hierarchyDate
-	 *            : the validity date
-	 * @param filterDimension
-	 *            : true for get nodes that aren't present into the selected dimension
-	 * @param optionDate
-	 *            : optional after date
-	 * @param optionHierarchy
-	 *            : optional hierarchy for get nodes that aren't present into the hierarchy
-	 * @param optionHierType
-	 *            : optional hierarchy type (ref. to optionHierarchy)
+	 * @param dataSource      : the datasource
+	 * @param dimension       : the selected dimension
+	 * @param hierarchyType   : the selected hierarchy type
+	 * @param hierarchyName   : the selected hierarchy name
+	 * @param hierarchyDate   : the validity date
+	 * @param filterDimension : true for get nodes that aren't present into the selected dimension
+	 * @param optionDate      : optional after date
+	 * @param optionHierarchy : optional hierarchy for get nodes that aren't present into the hierarchy
+	 * @param optionHierType  : optional hierarchy type (ref. to optionHierarchy)
 	 * @return String the query to extract the hierarchy (all nodes and leaves)
 	 *
 	 */
@@ -1238,8 +1214,7 @@ public class HierarchyUtils {
 	 * The function set the PreparedStatement parameters for the insert query in table {HierarchyConstants.REL_MASTER_TECH_TABLE_NAME}. The parameters are taken
 	 * from a resultSet of a previous query.
 	 *
-	 * @param PreparedStatement
-	 *            , resultSet, countPrimaryKey
+	 * @param PreparedStatement , resultSet, countPrimaryKey
 	 *
 	 * @return void
 	 */
@@ -1351,8 +1326,7 @@ public class HierarchyUtils {
 	/**
 	 * Returns a string with columns of the HIER_MASTER_TECHNICAL for SQL stmt
 	 *
-	 * @param dataSource
-	 *            the datasource
+	 * @param dataSource the datasource
 	 * @return String the columns list
 	 *
 	 */
@@ -1401,8 +1375,7 @@ public class HierarchyUtils {
 	/**
 	 * Returns a string with columns values of the HIER_MASTER_TECHNICAL for SQL stmt. It can set fixed values if they are defined into the input HashMap
 	 *
-	 * @param dataSource
-	 *            the datasource
+	 * @param dataSource the datasource
 	 * @return String the columns list
 	 *
 	 */
