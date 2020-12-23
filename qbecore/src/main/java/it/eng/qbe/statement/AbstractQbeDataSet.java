@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -209,14 +210,11 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		Object[] row;
 		if (!(o instanceof Object[])) {
 			row = new Object[1];
-			row[0] = o == null ? "" : o;
+			row[0] = o;
 		} else {
 			row = (Object[]) o;
 		}
-		String rowS = "";
-		for (int i = 0; i < row.length; i++) {
-			rowS = rowS + " [" + row[i] + "]";
-		}
+		LogMF.debug(logger, "Processing record {0}", Arrays.toString(row));
 		IRecord record = new Record();
 		for (int i = 0, j = 0; i < dataStoreMeta.getFieldCount(); i++) {
 			IFieldMetaData fieldMeta = dataStoreMeta.getFieldMeta(i);
