@@ -298,10 +298,11 @@
 							}
 						}
 
-						for(var i = 0; i < postForm.elements.length; i++) {
+						// removing unused form elements; we loop backwards, so deletion of items does not affect the loop iterations
+						for (var i = postForm.elements.length - 1; i >= 0; i--) {
 							var postFormElement = postForm.elements[i].id.replace("postForm_", "");
 							if(!postObject.params.hasOwnProperty(postFormElement)) {
-								postForm.elements[i].value = "";
+								postForm.removeChild(postForm.elements[i]);
 							}
 						}
 
