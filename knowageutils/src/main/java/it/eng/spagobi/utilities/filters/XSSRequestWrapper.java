@@ -255,13 +255,14 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 		Pattern maliciousTagPattern = Pattern.compile("&lt;iframe(.*?)iframe\\s*&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		value = maliciousTagPattern.matcher(value).replaceAll("");
 
-		Pattern scriptPattern = Pattern.compile("<iframe[^>]+(src\\s*=\\s*['\"]([^'\"]+)['\"])[^>](.+?)</iframe\\s*>",
-				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+		Pattern scriptPattern = Pattern.compile("<iframe[^>]*?(?:\\/>|>[^<]*?<\\/iframe>)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		Matcher scriptMatcher = scriptPattern.matcher(value);
 
 		while (scriptMatcher.find()) {
 			String iframe = scriptMatcher.group();
-			String link = scriptMatcher.group(2);
+			String s = "src=\"";
+			int ix = iframe.indexOf(s) + s.length();
+			String link = iframe.substring(ix, iframe.indexOf("\"", ix + 1));
 
 			try {
 				URL url = new URL(link);
