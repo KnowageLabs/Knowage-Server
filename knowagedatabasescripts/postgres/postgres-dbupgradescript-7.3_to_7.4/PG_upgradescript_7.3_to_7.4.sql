@@ -4,14 +4,14 @@
 -- START
 
 -- CLEAN old tables
-DELETE FROM SBI_CATALOG_FUNCTION;
-DELETE FROM SBI_FUNCTION_INPUT_VARIABLE;
+DELETE FROM sbi_catalog_function;
+DELETE FROM sbi_function_input_variable;
 
 -- DROP old tables
-DROP TABLE IF EXISTS SBI_FUNCTION_OUTPUT, SBI_FUNCTION_INPUT_DATASET, SBI_FUNCTION_INPUT_FILE;
+DROP TABLE IF EXISTS sbi_function_output, sbi_function_input_dataset, sbi_function_input_file;
 
 -- ------------------------- TABLE sbi_catalog_function -------------------------
-ALTER TABLE SBI_CATALOG_FUNCTION
+ALTER TABLE sbi_catalog_function
 ADD COLUMN BENCHMARKS text,
 ADD COLUMN FAMILY text,
 ADD COLUMN ONLINE_SCRIPT text,
@@ -22,52 +22,47 @@ DROP COLUMN URL,
 DROP COLUMN REMOTE;
 
 -- ----------------------- TABLE sbi_function_input_column -----------------------
-CREATE TABLE IF NOT EXISTS SBI_FUNCTION_INPUT_COLUMN (LIKE SBI_FUNCTION_INPUT_VARIABLE);
+CREATE TABLE IF NOT EXISTS sbi_function_input_column (LIKE sbi_function_input_variable);
 
-ALTER TABLE SBI_FUNCTION_INPUT_COLUMN
+ALTER TABLE sbi_function_input_column
 ALTER COLUMN VAR_NAME TYPE varchar(100),
 ALTER COLUMN VAR_VALUE type varchar(100);
 
 
-ALTER TABLE SBI_FUNCTION_INPUT_COLUMN
+ALTER TABLE sbi_function_input_column
 RENAME COLUMN VAR_NAME TO COL_NAME;
 
-ALTER TABLE SBI_FUNCTION_INPUT_COLUMN
+ALTER TABLE sbi_function_input_column
 RENAME COLUMN VAR_VALUE TO COL_TYPE;
 
 -- ---------------------- TABLE sbi_function_input_variable ---------------------
-ALTER TABLE SBI_FUNCTION_INPUT_VARIABLE
+ALTER TABLE sbi_function_input_variable
 ADD COLUMN VAR_TYPE varchar(100);
 
 -- ---------------------- TABLE sbi_function_output_column -----------------------
-CREATE TABLE IF NOT EXISTS SBI_FUNCTION_OUTPUT_COLUMN (LIKE SBI_FUNCTION_INPUT_COLUMN);
+CREATE TABLE IF NOT EXISTS sbi_function_output_column (LIKE sbi_function_input_column);
 
-ALTER TABLE SBI_FUNCTION_OUTPUT_COLUMN
+ALTER TABLE sbi_function_output_column
 ADD COLUMN COL_FIELD_TYPE varchar(100);
 
 -- --------------------------- TABLE sbi_obj_function ---------------------------
-CREATE TABLE IF NOT EXISTS SBI_OBJ_FUNCTION (LIKE SBI_OBJ_DATA_SET);
+CREATE TABLE IF NOT EXISTS sbi_obj_function (LIKE sbi_obj_data_set);
 
-ALTER TABLE SBI_OBJ_FUNCTION
+ALTER TABLE sbi_obj_function
 DROP IS_DETAIL;
 
-ALTER TABLE SBI_OBJ_FUNCTION
+ALTER TABLE sbi_obj_function
 ALTER COLUMN BIOBJ_DS_ID TYPE int,
 ALTER COLUMN DS_ID TYPE int;
 
-ALTER TABLE SBI_OBJ_FUNCTION
+ALTER TABLE sbi_obj_function
 RENAME COLUMN BIOBJ_DS_ID to BIOBJ_FUNCTION_ID;
 
-ALTER TABLE SBI_OBJ_FUNCTION
+ALTER TABLE sbi_obj_function
 RENAME COLUMN  DS_ID to FUNCTION_ID;
 
-ALTER TABLE SBI_OBJ_FUNCTION
-ADD FOREIGN KEY (BIOBJ_ID) REFERENCES SBI_OBJECTS(BIOBJ_ID),
-ADD FOREIGN KEY (FUNCTION_ID) REFERENCES SBI_CATALOG_FUNCTION(FUNCTION_ID);
+ALTER TABLE sbi_obj_function
+ADD FOREIGN KEY (BIOBJ_ID) REFERENCES sbi_objects(BIOBJ_ID),
+ADD FOREIGN KEY (FUNCTION_ID) REFERENCES sbi_catalog_function(FUNCTION_ID);
 
 -- END
-
--- 28/12/2020 Alberto Nale
-ALTER TABLE SBI_DOSSIER_ACTIVITY ADD DOC bytea NULL;
-
-ALTER TABLE SBI_DOSSIER_ACTIVITY ADD CONFIG varchar(4000) NULL;
