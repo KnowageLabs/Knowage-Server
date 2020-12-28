@@ -32,10 +32,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -266,7 +267,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		document = syncronizeDocument(document, filteredFolders, request.getDocumentDTO());
 
 		String tempalteName = (MODIFY_GEOREPORT.equalsIgnoreCase(action)) ? "template.georeport" : "template.sbicockpit";
-		String templateContent = getTemplateContentAsString(customDataDTO.getTemplateContent());
+		String templateContent = new Gson().toJson(customDataDTO.getTemplateContent());
 
 		if (MODIFY_KPI.equalsIgnoreCase(action)) {
 			tempalteName = "template.xml";
@@ -334,7 +335,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		filteredFolders = getFilteredFoldersList(saveDocumentDTO, filteredFolders);
 		CustomDataDTO customDataDTO = saveDocumentDTO.getCustomDataDTO();
 		Map<String, Object> json = new HashMap<String, Object>();
-		String templateContent = getTemplateContentAsString(customDataDTO.getTemplateContent());
+		String templateContent = new Gson().toJson(customDataDTO.getTemplateContent());
 		json.put("templateContent", templateContent);
 
 		customDataDTO.setTemplateContent(json);
@@ -346,17 +347,6 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 
 		documentManagementAPI.saveDocument(document, template);
 		return document.getId();
-	}
-
-	private String getTemplateContentAsString(Map<String, Object> templateContentMap) {
-		String templateContent = null;
-		try {
-			templateContent = new ObjectMapper().writeValueAsString(templateContentMap);
-		} catch (Exception e) {
-			String message = "Exception when converting template to string";
-			throw new SpagoBIRuntimeException(message, e);
-		}
-		return templateContent;
 	}
 
 	private List<Integer> getFilteredFoldersList(SaveDocumentDTO request, List<Integer> filteredFolders) throws JSONException {
@@ -596,8 +586,8 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return document;
 	}
 
-	private ObjTemplate buildDocumentTemplate(String templateName, CustomDataDTO customDataDTO, BIObject sourceDocument) {
-		String templateContent = getTemplateContentAsString(customDataDTO.getTemplateContent());
+	private ObjTemplate buildDocumentTemplate(String templateName, CustomDataDTO customDataDTO, BIObject sourceDocument) throws JSONException {
+		String templateContent = new Gson().toJson(customDataDTO.getTemplateContent());
 
 		String modelName = customDataDTO.getModelName();
 		return buildDocumentTemplate(templateName, templateContent, sourceDocument, modelName);

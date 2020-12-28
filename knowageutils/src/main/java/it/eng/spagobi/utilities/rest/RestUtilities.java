@@ -205,7 +205,7 @@ public class RestUtilities {
 		return (JSONArray) stripXSSJsonObject(JSONUtils.toJSONArray(requestBody));
 	}
 
-	private static Object stripXSSJsonObject(Object o) throws JSONException {
+	public static Object stripXSSJsonObject(Object o) throws JSONException {
 		if (o instanceof JSONObject) {
 			JSONObject inJsonObject = (JSONObject) o;
 			final Iterator<String> keys = inJsonObject.keys();

@@ -19,7 +19,13 @@ package it.eng.spagobi.analiticalmodel.execution.service.v2.dto;
 
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.Gson;
+
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 public class CustomDataDTO {
 
@@ -43,8 +49,14 @@ public class CustomDataDTO {
 		this.modelName = modelName;
 	}
 
-	public Map<String, Object> getTemplateContent() {
-		return templateContent;
+	public Map<String, Object> getTemplateContent() throws JSONException {
+
+		final JSONObject jsonObject = new JSONObject(templateContent);
+
+		RestUtilities.stripXSSJsonObject(jsonObject);
+
+		return new Gson().fromJson(jsonObject.toString(), Map.class);
+
 	}
 
 	public void setTemplateContent(Map<String, Object> templateContent) {
