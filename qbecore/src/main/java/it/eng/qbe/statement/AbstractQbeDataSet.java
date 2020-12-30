@@ -34,7 +34,6 @@ import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import it.eng.qbe.datasource.AbstractDataSource;
-import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.CalculatedSelectField;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.ISelectField;
@@ -123,8 +122,6 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 					dataStoreFieldMeta.setProperty("format", format);
 				}
 
-				IModelField datamartField = ((AbstractDataSource) statement.getDataSource()).getModelStructure().getField(dataMartSelectField.getUniqueName());
-				String iconCls = datamartField.getPropertyAsString("type");
 				String nature = dataMartSelectField.getNature();
 				dataStoreFieldMeta.setProperty("aggregationFunction", dataMartSelectField.getFunction().getName());
 
