@@ -401,7 +401,8 @@ public class CrosstabQueryCreator {
 
 		if (dialect != null) {
 
-			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)) {
+			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)
+					|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL_INNODB)) {
 				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
 					toReturn = " STR_TO_DATE(" + dateStr + ",'%d/%m/%Y %h:%i:%s') ";
 				} else {
