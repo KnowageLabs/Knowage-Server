@@ -547,8 +547,7 @@ public class JSONDataWriter implements IDataWriter {
 					fieldMetaDataJSON.put("hidden", true);
 				}
 
-				boolean multiValue = fieldMetaData.isMultiValue();
-				fieldMetaDataJSON.put("multiValue", multiValue);
+				fieldMetaDataJSON.put("multiValue", fieldMetaData.isMultiValue());
 
 				fieldsMetaDataJSON.put(fieldMetaDataJSON);
 			}
