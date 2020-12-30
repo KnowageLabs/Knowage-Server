@@ -350,8 +350,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 	/**
 	 * Parse the date: get the user locale and format the timestamp in the db format
 	 *
-	 * @param date
-	 *            the localized date
+	 * @param date the localized date
 	 * @return the date in the db format
 	 */
 	protected String parseTimestamp(String date) {
@@ -367,7 +366,8 @@ public abstract class AbstractStatementClause implements IStatementClause {
 
 		if (dialect != null) {
 
-			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)) {
+			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)
+					|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL_INNODB)) {
 				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
 					toReturn = " STR_TO_DATE(" + toReturn + ",'%d/%m/%Y %H:%i:%s') ";
 				} else {
@@ -440,8 +440,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 	/**
 	 * Parse the date: get the user locale and format the date in the db format
 	 *
-	 * @param date
-	 *            the localized date
+	 * @param date the localized date
 	 * @return the date in the db format
 	 */
 	protected String parseDate(String date) {
@@ -457,7 +456,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 
 		if (dialect != null) {
 
-			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)) {
+			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL_INNODB)) {
 				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
 					toReturn = " STR_TO_DATE(" + toReturn + ",'%d/%m/%Y') ";
 				} else {
