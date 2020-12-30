@@ -114,6 +114,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 				dialectNode = null;
 				// get the code function only for the dialect managed
 				if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)
+						|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL_INNODB)
 						|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_EXTENDED_MYSQL)) {
 					dialectNode = functionNode.selectSingleNode(functionNode.getUniquePath() + "/" + FIELD_TAG_MYSQL_DIALECT + "");
 				} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
@@ -246,8 +247,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		}
 
 		/**
-		 * @param type
-		 *            the type to set
+		 * @param type the type to set
 		 */
 		public void setType(String type) {
 			this.type = type;
@@ -261,8 +261,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		}
 
 		/**
-		 * @param name
-		 *            the name to set
+		 * @param name the name to set
 		 */
 		public void setName(String name) {
 			this.name = name;
@@ -276,8 +275,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		}
 
 		/**
-		 * @param code
-		 *            the code to set
+		 * @param code the code to set
 		 */
 		public void setCode(String code) {
 			this.code = code;
@@ -291,8 +289,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		}
 
 		/**
-		 * @param group
-		 *            the group to set
+		 * @param group the group to set
 		 */
 		public void setGroup(String group) {
 			this.group = group;
@@ -306,8 +303,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		}
 
 		/**
-		 * @param desc
-		 *            the desc to set
+		 * @param desc the desc to set
 		 */
 		public void setDesc(String desc) {
 			this.desc = desc;
@@ -321,8 +317,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		}
 
 		/**
-		 * @param nParams
-		 *            the nParams to set
+		 * @param nParams the nParams to set
 		 */
 		public void setnParams(Integer nParams) {
 			this.nParams = nParams;
@@ -336,8 +331,7 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 		}
 
 		/**
-		 * @param dialect
-		 *            the dialect to set
+		 * @param dialect the dialect to set
 		 */
 		public void setDialect(String dialect) {
 			this.dialect = dialect;
