@@ -58,6 +58,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ReadRoles" description="ReadRoles" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="PythonWidget" description="CreatePythonWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="PythonDataset" description="CreatePythonDataset" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="HierarchiesManagement" description="HierarchiesManagement" />
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
