@@ -227,7 +227,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 
 		$scope.chartTypes.sort();
 		for (var i = 0; i < $scope.chartTypes.length; i++) {
-			if($scope.chartTypes[i].toUpperCase()==$scope.chartTemplate.type.toUpperCase()){
+			if($scope.chartTypes && $scope.chartTypes[i].toUpperCase()==$scope.chartTemplate.type.toUpperCase()){
 				$scope.selectedChartType = $scope.chartTypes[i];
 				setConfigurationButtons($scope.selectedChartType);
 			}

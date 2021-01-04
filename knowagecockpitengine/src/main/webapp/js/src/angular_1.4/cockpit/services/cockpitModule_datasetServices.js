@@ -1246,6 +1246,15 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		this.traverse(clone, func);
+		if(clone.CHART.VALUES.SERIE) {
+		for (i=0; i<clone.CHART.VALUES.SERIE.length;i++){
+		var newSerie = clone.CHART.VALUES.SERIE[i];
+		if (newSerie.hasOwnProperty("name")) {
+				newSerie.name = sbiModule_i18n.getI18n(newSerie.name);
+		}
+		clone.CHART.VALUES.SERIE[i] = newSerie;
+		}
+		}
 		return clone;
 
 	}
