@@ -76,6 +76,7 @@ import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.export.ExportConfig;
+import it.eng.spagobi.engines.whatif.export.KnowageExcelExporter;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
@@ -412,7 +413,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-		ExcelExporter exporter = new ExcelExporter(out);
+		ExcelExporter exporter = new KnowageExcelExporter(out, getLocale());
 		ExportConfig exportConfig = WhatIfEngineConfig.getInstance().getExportProperties();
 		if (exportConfig.getFontFamily() != null)
 			exporter.setFontFamily(exportConfig.getFontFamily());
