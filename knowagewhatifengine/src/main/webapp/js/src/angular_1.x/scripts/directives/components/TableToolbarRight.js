@@ -231,8 +231,13 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				$scope.olapToolbarButtons.push(btn);
 			else if(whatifButtonNames.indexOf(btn.name)>-1)
 				$scope.whatifToolbarButtons.push(btn);
-			else if(tableButtonNames.indexOf(btn.name)>-1)
+			else if(tableButtonNames.indexOf(btn.name)>-1) {
+				if (btn.name == "BUTTON_SAVE_SUBOBJECT" && !sbiModule_user.isAbleTo("SaveSubobjectFunctionality")) {
+					// in case user is not allowed to save subobjects (customized views), skip save subobject button
+					continue;
+				}
 				$scope.tableToolbarButtons.push(btn);
+			}
 
 		}
 		whatifToolbarButtonsVisible = $scope.whatifToolbarButtons;
