@@ -18,6 +18,7 @@
 package it.eng.spagobi.engines.whatif.export;
 
 import java.io.OutputStream;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -64,6 +65,8 @@ public class KnowageExcelExporter extends ExcelExporter {
 		List<Member> slicers = changeSlicer.getSlicer();
 		if (!slicers.isEmpty()) {
 			logger.debug("Some slicers found, adding them into the XLS file ...");
+			// at this time, members are sorted by selection order. We sort them by unique name
+			slicers.sort(Comparator.comparing(Member::getUniqueName));
 			addSlicersSheet(workbook, slicers);
 		}
 	}
