@@ -3,7 +3,7 @@
         <md-card-content layout="column">
             <md-list>
                 <md-list-item ng-repeat="field in fields | filter: { type: '!inline.calculated.field' }" ng-click="addField(field)">
-                    {{field.alias}}
+                    <div md-truncate>{{field.alias}}</div>
                 </md-list-item>
             </md-list>
 
