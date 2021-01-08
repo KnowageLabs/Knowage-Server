@@ -1727,7 +1727,11 @@
 			cropThreshold:$countXvalues,
 		#if($chartType != 'radar') 	
     		#set($referencedAxis = $relatedSerie.axis)
+    		$datasettransformer.print($yAxisPositions)
+    		#if ($yAxisPositions[$referencedAxis])
     		yAxis: $yAxisPositions[$referencedAxis]
+    		#end
+    		
     	#end
 	    }, 
 	#end
