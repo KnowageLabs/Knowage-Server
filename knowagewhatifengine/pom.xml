@@ -166,7 +166,7 @@
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>
-			<version>3.10.0.0-100</version>
+			<version>3.10.1.8-209</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
