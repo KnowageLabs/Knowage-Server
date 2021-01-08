@@ -36,6 +36,9 @@
 							cy="6" />
 					</svg>
 				</div>
+				<div ng-if="layer.visualizationType == 'markers' && layer.markerConf.type == 'img'" style="max-width: 24px; max-height: 24px;" layout-align="center center" layout="column">
+					<img ng-src="{{layer.markerConf.img}}" style="max-width: 100%; max-height: 100%;"></img>
+				</div>
 				<div ng-if="layer.visualizationType == 'choropleth'" style="width: 24px;height: 24px;" layout-align="center center" layout="column">
 					<svg xmlns="http://www.w3.org/2000/svg"
 						xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="12"
