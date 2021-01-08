@@ -47,7 +47,7 @@
 								<md-button ng-click="showSQLQuery()">{{::translate.load('kn.generic.query.SQL')}}</md-button>
 							</md-menu-item>
 							<md-menu-item ng-show="ngModel.length>0">
-								<md-checkbox ng-model="distinct" class="menuCheckbox" style="width:auto"></md-checkbox>
+								<md-checkbox ng-model="distinct" class="menuCheckbox" ng-change="setDistinct(distinct)" style="width:auto"></md-checkbox>
 								<span>{{::translate.load("kn.qbe.custom.table.distinct")}}</span>
 							</md-menu-item>
 							<md-menu-item>
