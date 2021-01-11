@@ -97,9 +97,11 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			for (SbiCatalogFunction f : functions) {
 				JSONObject funcJsonObject = sbiFunctionToJsonObject(f);
 				funcArray.put(funcJsonObject);
-				for (String key : f.getKeywords().split(",")) {
-					if (!key.equals("")) {
-						keywordSet.add(key);
+				if (f.getKeywords() != null && f.getKeywords().split(",").length > 0) {
+					for (String key : f.getKeywords().split(",")) {
+						if (!key.equals("")) {
+							keywordSet.add(key);
+						}
 					}
 				}
 			}
@@ -151,9 +153,11 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			for (SbiCatalogFunction f : filteredFunctions) {
 				JSONObject funcJsonObject = sbiFunctionToJsonObject(f);
 				funcArray.put(funcJsonObject);
-				for (String key : f.getKeywords().split(",")) {
-					if (!key.equals("")) {
-						keywordSet.add(key);
+				if (f.getKeywords() != null && f.getKeywords().split(",").length > 0) {
+					for (String key : f.getKeywords().split(",")) {
+						if (!key.equals("")) {
+							keywordSet.add(key);
+						}
 					}
 				}
 			}
