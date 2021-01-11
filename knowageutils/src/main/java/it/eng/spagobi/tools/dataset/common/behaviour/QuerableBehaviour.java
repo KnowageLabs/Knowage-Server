@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
@@ -147,45 +145,12 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 		}
 
 		Map<String, Object> bindings = new HashMap<String, Object>();
-		IDataSet targetDataSet = getTargetDataSet();
-		Map userProfileAttributes = targetDataSet.getUserProfileAttributes();
-		Map paramsMap = targetDataSet.getParamsMap();
-
-		paramsMap = stripSingleQuotesFromString(paramsMap);
-
-		bindings.put("attributes", userProfileAttributes);
-		bindings.put("parameters", paramsMap);
+		bindings.put("attributes", getTargetDataSet().getUserProfileAttributes());
+		bindings.put("parameters", getTargetDataSet().getParamsMap());
 		bindings.put("query", statement);
 		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
 		Object o = scriptManager.runScript(script, language, bindings, imports);
 		return o == null ? statement : o.toString();
-	}
-
-	/**
-	 * String single quotes from string values.
-	 *
-	 * Single quotes are added during parameters' parsing and before the script execution
-	 * must be excluded from the values.
-	 *
-	 * @param paramsMap Parameters map
-	 * @return A new instance of the map with touched values, if needed
-	 * @since KNOWAGE-3951
-	 */
-	private Map<String, Object> stripSingleQuotesFromString(final Map<String, Object> paramsMap) {
-		Map<String, Object> ret = new HashMap<String, Object>(paramsMap);
-		for (Entry<String, Object> entry : ret.entrySet()) {
-			Object value = entry.getValue();
-			if (value instanceof String) {
-				String _value = (String) value;
-				if (Pattern.matches("^'.+'$", _value)) {
-					// Strip first and last single quote
-					value = _value.substring(1, _value.length() - 1);
-				}
-			}
-			entry.setValue(value);
-		}
-
-		return ret;
 	}
 
 	private String resolveProfileAttributes(String statement) {
