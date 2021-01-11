@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
+<%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 <%@page import="it.eng.spago.base.*"%>
 
 <%
@@ -73,8 +74,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         
 		<script type="text/javascript" charset="utf-8">
 			//GLOBAL VARIABLES 
-			const 	MAX_ROWS_CLIENT_PAGINATION = 5000;
-			const 	MAX_ROWS_EXCEL_EXPORT = 20000;
+			const 	MAX_ROWS_CLIENT_PAGINATION = <%= SingletonConfig.getInstance().getConfigValue("dataset.preview.clientpagination.maxrows") %>;
+			const 	MAX_ROWS_EXCEL_EXPORT = <%= SingletonConfig.getInstance().getConfigValue("dataset.export.xls.resultsLimit")  %>;
 			const 	SEARCH_WAIT_TIMEOUT = 500;
 			const 	DEFAULT_MAX_ITEMS_PER_PAGE = 15;
 			const 	KNOWAGE_BASEURL = '<%= GeneralUtilities.getSpagoBiContext() %>';
@@ -371,7 +372,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						gridOptions.api.showNoRowsOverlay();
 					}else{
 						backEndPagination.totalRows = data.results;
-						if(data.results > MAX_ROWS_EXCEL_EXPORT){
+						if(data.results > (MAX_ROWS_EXCEL_EXPORT || 20000)){
 							if(document.getElementById('export-XLSX')) document.getElementById('export-XLSX').remove();
 						}
 						gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
@@ -383,7 +384,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}else{
 							
 							gridOptions.api.setRowData(data.rows);
-							if(data.results > MAX_ROWS_CLIENT_PAGINATION) {
+							if(data.results > (MAX_ROWS_CLIENT_PAGINATION || 500)) {
 								gridOptions.pagination = false;
 								options.backEndPagination = true;
 								backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;

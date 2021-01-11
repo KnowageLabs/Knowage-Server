@@ -603,6 +603,10 @@
 	<CONFIG label="SPAGOBI.DATASET.REST.TIMEOUT" name="SPAGOBI.DATASET.REST.TIMEOUT"
 		description="Timeout in milliseconds of a REST call using the REST client" isActive="true"
 		valueCheck="180000" valueType="NUM" category="REST_CONFIGURATION" />
+	<CONFIG label="dataset.preview.clientpagination.maxrows" name="Maximum rows number for front-end table pagination"
+		description="Maximum rows number for front-end table pagination. Default is 5000"
+		isActive="true" valueCheck="5000" valueType="NUM"
+		category="GENERIC_CONFIGURATION" />
 	
 </CONFIGS>
 
