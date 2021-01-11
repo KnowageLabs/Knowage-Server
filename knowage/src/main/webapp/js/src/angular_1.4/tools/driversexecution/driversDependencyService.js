@@ -268,38 +268,44 @@
 
 			var setParameterForNewValues = function(execProperties,data){
 
-				for(var p=0; p<data.result.root.length;p++){
-					for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
-						if(execProperties.parametersData.documentParameters[z].urlName==data.idParam){
+				var dataRoot = data.result.root;
+				var dataValues = dataRoot.map(e => e.value);
+				var parameters = execProperties.parametersData.documentParameters;
+				for(var p=0; p<dataRoot.length;p++){
+					var currData = dataRoot[p];
+
+					for(var z=0; z<parameters.length;z++){
+						var parameter = parameters[z];
+						if(parameter.urlName==data.idParam){
 
 							var toAdd = [];
 
-							if(execProperties.parametersData.documentParameters[z].defaultValues &&
-									execProperties.parametersData.documentParameters[z].defaultValues.length>0){
+							if(parameter.defaultValues &&
+									parameter.defaultValues.length>0){
 								var found = false;
 
-								for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length && !found;y++){
-									if( execProperties.parametersData.documentParameters[z].defaultValues[y].value==data.result.root[p].value){
-										execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=true;
+								for(var y=0;y<parameter.defaultValues.length && !found;y++){
+									if( parameter.defaultValues[y].value == currData.value){
+										parameter.defaultValues[y].isEnabled=true;
 										found = true;
 										//if mandatory and if combo list set parameter default !!!
-										if(data.result.root.length == 1 && execProperties.parametersData.documentParameters[z].mandatory
-												&& (execProperties.parametersData.documentParameters[z].selectionType == 'COMBOBOX'
-													|| execProperties.parametersData.documentParameters[z].selectionType == 'LIST')){
+										if(dataRoot.length == 1 && parameter.mandatory
+												&& (parameter.selectionType == 'COMBOBOX'
+													|| parameter.selectionType == 'LIST')){
 
-											execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
-													[data.result.root[0].value]	: data.result.root[0].value;
+											parameter.parameterValue = parameter.multivalue ?
+													[dataRoot[0].value]	: dataRoot[0].value;
 										}
 									}
 								}
 								// if not found add
 								if(!found) {
 									var objBase = {};
-									objBase.value = data.result.root[p].value;
-									objBase.label = data.result.root[p].label;
-									objBase.description = data.result.root[p].description;
+									objBase.value = currData.value;
+									objBase.label = currData.label;
+									objBase.description = currData.description;
 									objBase.isEnabled = true;
-									execProperties.parametersData.documentParameters[z].defaultValues.push(objBase);
+									parameter.defaultValues.push(objBase);
 								}
 							}
 
@@ -307,17 +313,33 @@
 						}
 					}
 				}
+
+				for(var z=0; z<parameters.length;z++) {
+					var parameter = parameters[z];
+					if(parameter.urlName==data.idParam) {
+						// Remove values not present in data
+						parameter.defaultValues = parameter.defaultValues.filter(function(x) { return dataValues.includes(x.value) });
+
+						// Reset selected value if not present in data
+						if (!dataValues.includes(parameter.parameterValue)) {
+							parameter.parameterValue = parameter.multivalue ? [] : undefined;
+						}
+					}
+				}
+
 			};
 			var prepareParameterForNewValues = function(execProperties,data){
-				for(var i=0; i<execProperties.parametersData.documentParameters.length;i++){
-					if(execProperties.parametersData.documentParameters[i].urlName==data.idParam &&
-							areCorrelatedParametersEmpty(execProperties.parametersData.documentParameters, execProperties.parametersData.documentParameters[i])){
+				var parameters = execProperties.parametersData.documentParameters;
+				for(var i=0; i<parameters.length;i++){
+					var parameter = parameters[i];
+					if(parameter.urlName==data.idParam &&
+							areCorrelatedParametersEmpty(parameters, parameter)){
 
-						driversExecutionService.emptyParameter(execProperties.parametersData.documentParameters[i]);
-						if(execProperties.parametersData.documentParameters[i].defaultValues &&
-								execProperties.parametersData.documentParameters[i].defaultValues.length>0){
-							for(var j=0;j<execProperties.parametersData.documentParameters[i].defaultValues.length;j++){
-								execProperties.parametersData.documentParameters[i].defaultValues[j].isEnabled=false;
+						driversExecutionService.emptyParameter(parameter);
+						if(parameter.defaultValues &&
+								parameter.defaultValues.length>0){
+							for(var j=0;j<parameter.defaultValues.length;j++){
+								parameter.defaultValues[j].isEnabled=false;
 							}
 						}
 						break;
