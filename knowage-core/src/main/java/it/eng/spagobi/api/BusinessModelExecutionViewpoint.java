@@ -144,19 +144,16 @@ public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 	public Response deleteViewpoint(@Valid DeleteViewpointRequestDTO request) {
 		IMetaModelViewpointDAO metaModelViewpointDAO;
 		Viewpoint viewpoint;
-		List<String> ids = null;
+		String id = request.getName();
 
-		ids = request.getNames();
-		for (String id : ids) {
-			try {
-				metaModelViewpointDAO = DAOFactory.getMetaModelViewpointDAO();
-				viewpoint = metaModelViewpointDAO.loadViewpointByID(Integer.valueOf(id));
-				Assert.assertNotNull(viewpoint, "Viewpoint [" + id + "] does not exist on the database");
-				metaModelViewpointDAO.eraseViewpoint(viewpoint.getVpId());
-			} catch (EMFUserError e) {
-				logger.error("Impossible to delete viewpoint with name [" + id + "] already exists", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to delete viewpoint with name [" + id + "] already exists", e);
-			}
+		try {
+			metaModelViewpointDAO = DAOFactory.getMetaModelViewpointDAO();
+			viewpoint = metaModelViewpointDAO.loadViewpointByID(Integer.valueOf(id));
+			Assert.assertNotNull(viewpoint, "Viewpoint [" + id + "] does not exist on the database");
+			metaModelViewpointDAO.eraseViewpoint(viewpoint.getVpId());
+		} catch (EMFUserError e) {
+			logger.error("Impossible to delete viewpoint with name [" + id + "] already exists", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to delete viewpoint with name [" + id + "] already exists", e);
 		}
 
 		return Response.ok().build();
