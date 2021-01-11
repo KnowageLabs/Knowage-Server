@@ -296,7 +296,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				return ((DataStoreCatalogFunctionField) p).getCatalogFunctionConfig();
 			}
 		}
-		throw new SpagoBIRuntimeException("Only one function supported");
+		throw new SpagoBIRuntimeException("Couldn't retrieve function configuration");
 	}
 
 	@SuppressWarnings("unused")
