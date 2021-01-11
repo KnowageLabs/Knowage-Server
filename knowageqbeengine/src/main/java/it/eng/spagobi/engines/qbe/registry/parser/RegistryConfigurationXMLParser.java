@@ -37,48 +37,51 @@ public class RegistryConfigurationXMLParser {
 
 	public static transient Logger logger = Logger.getLogger(RegistryConfigurationXMLParser.class);
 
-	public static String TAG_ENTITY = "ENTITY";
-	public static String TAG_FILTERS = "FILTERS";
-	public static String TAG_FILTER = "FILTER";
-	public static String TAG_COLUMNS = "COLUMNS";
-	public static String TAG_COLUMN = "COLUMN";
-	public static String TAG_CONFIGURATIONS = "CONFIGURATIONS";
-	public static String TAG_CONFIGURATION = "CONFIGURATION";
+	public static final String TAG_ENTITY = "ENTITY";
+	public static final String TAG_FILTERS = "FILTERS";
+	public static final String TAG_FILTER = "FILTER";
+	public static final String TAG_COLUMNS = "COLUMNS";
+	public static final String TAG_COLUMN = "COLUMN";
+	public static final String TAG_CONFIGURATIONS = "CONFIGURATIONS";
+	public static final String TAG_CONFIGURATION = "CONFIGURATION";
 
-	public static String ATTRIBUTE_PAGINATION = "pagination";
-	public static String ATTRIBUTE_NAME = "name";
-	public static String ATTRIBUTE_TITLE = "title";
-	public static String ATTRIBUTE_FIELD = "field";
-	public static String ATTRIBUTE_PRESENTATION = "presentation";
-	public static String ATTRIBUTE_VALUE = "value";
-	public static String ATTRIBUTE_SUMMARY_COLOR = "summaryColor";
+	public static final String ATTRIBUTE_PAGINATION = "pagination";
+	public static final String ATTRIBUTE_NAME = "name";
+	public static final String ATTRIBUTE_TITLE = "title";
+	public static final String ATTRIBUTE_FIELD = "field";
+	public static final String ATTRIBUTE_PRESENTATION = "presentation";
+	public static final String ATTRIBUTE_VALUE = "value";
+	public static final String ATTRIBUTE_SUMMARY_COLOR = "summaryColor";
+	public static final String ATTRIBUTE_DEFAULT_VALUE = "defaultValue";
 
-	public static String ATTRIBUTE_EDITOR = "editor";
-	public static String ATTRIBUTE_EDITABLE = "editable";
-	public static String ATTRIBUTE_VISIBLE = "visible";
-	public static String ATTRIBUTE_SUBENTITY = "subEntity";
-	public static String ATTRIBUTE_FORMAT = "format";
-	public static String ATTRIBUTE_COLOR = "color";
-	public static String ATTRIBUTE_SUMMARY_FUNCTION = "summaryFunction";
-	public static String ATTRIBUTE_TYPE = "type";
-	public static String ATTRIBUTE_ORDER_BY = "orderBy";
-	public static String ATTRIBUTE_INFO_COLUMN = "infoColumn";
+	public static final String ATTRIBUTE_EDITOR = "editor";
+	public static final String ATTRIBUTE_EDITABLE = "editable";
+	public static final String ATTRIBUTE_VISIBLE = "visible";
+	public static final String ATTRIBUTE_SUBENTITY = "subEntity";
+	public static final String ATTRIBUTE_FORMAT = "format";
+	public static final String ATTRIBUTE_COLOR = "color";
+	public static final String ATTRIBUTE_SUMMARY_FUNCTION = "summaryFunction";
+	public static final String ATTRIBUTE_TYPE = "type";
+	public static final String ATTRIBUTE_ORDER_BY = "orderBy";
+	public static final String ATTRIBUTE_INFO_COLUMN = "infoColumn";
 
-	public static String ATTRIBUTE_FOREIGNKEY = "foreignKey";
-	public static String ATTRIBUTE_MANDATORY_COLUMN = "mandatoryColumn";
-	public static String ATTRIBUTE_MANDATORY_VALUE = "mandatoryValue";
-	public static String ATTRIBUTE_COLUMNS_MAX_SIZE = "maxSize";
-	public static String ATTRIBUTE_COLUMN_SIZE = "size";
-	public static String ATTRIBUTE_COLUMN_TITLE = "title";
-	public static String ATTRIBUTE_COLUMN_DEPENDENCES = "dependsFrom";
-	public static String ATTRIBUTE_COLUMN_DEPENDENCES_ENTITY = "dependsFromEntity";
-	public static String ATTRIBUTE_SORTER = "sorter";
-	public static String ATTRIBUTE_UNSIGNED = "unsigned";
-	public static String ATTRIBUTE_DRIVER_NAME = "driverName";
+	public static final String ATTRIBUTE_FOREIGNKEY = "foreignKey";
+	public static final String ATTRIBUTE_MANDATORY_COLUMN = "mandatoryColumn";
+	public static final String ATTRIBUTE_MANDATORY_VALUE = "mandatoryValue";
+	public static final String ATTRIBUTE_COLUMNS_MAX_SIZE = "maxSize";
+	public static final String ATTRIBUTE_COLUMN_SIZE = "size";
+	public static final String ATTRIBUTE_COLUMN_TITLE = "title";
+	public static final String ATTRIBUTE_COLUMN_DEPENDENCES = "dependsFrom";
+	public static final String ATTRIBUTE_COLUMN_DEPENDENCES_ENTITY = "dependsFromEntity";
+	public static final String ATTRIBUTE_SORTER = "sorter";
+	public static final String ATTRIBUTE_UNSIGNED = "unsigned";
+	public static final String ATTRIBUTE_DRIVER_NAME = "driverName";
+	public static final String ATTRIBUTE_FILTER_VALUE = "filterValue";
+	public static final String ATTRIBUTE_DRIVER_STATIC = "static";
 
-	public static String PRESENTATION_TYPE_MANUAL = "MANUAL";
-	public static String PRESENTATION_TYPE_COMBO = "COMBO";
-	public static String PRESENTATION_TYPE_DRIVER = "DRIVER";
+	public static final String PRESENTATION_TYPE_MANUAL = "MANUAL";
+	public static final String PRESENTATION_TYPE_COMBO = "COMBO";
+	public static final String PRESENTATION_TYPE_DRIVER = "DRIVER";
 
 	public static final String EDITOR_TYPE_TEXT = "TEXT";
 	public static final String EDITOR_TYPE_COMBO = "COMBO";
@@ -149,6 +152,18 @@ public class RegistryConfigurationXMLParser {
 				filter.setTitle(title);
 				filter.setPresentationType(presentationType);
 				filter.setDriverName(driverName);
+
+				String isStatic = (String) aFilter.getAttribute(Filter.ATTRIBUTE_STATIC_FILTER);
+				if (isStatic != null && "true".equalsIgnoreCase(isStatic)) {
+					filter.setStatic(true);
+					String filterValue = aFilter.getAttribute(ATTRIBUTE_FILTER_VALUE) != null ? aFilter.getAttribute(ATTRIBUTE_FILTER_VALUE).toString() : null;
+					filter.setFilterValue(filterValue);
+				}
+
+				String isVisible = (String) aFilter.getAttribute(Filter.ATTRIBUTE_VISIBLE_FILTER);
+				if (isVisible != null) {
+					filter.setVisible("true".equalsIgnoreCase(isVisible));
+				}
 
 				list.add(filter);
 			}
@@ -270,6 +285,10 @@ public class RegistryConfigurationXMLParser {
 				String mandatoryValue = (String) aColumn.getAttribute(ATTRIBUTE_MANDATORY_VALUE);
 				if (mandatoryValue != null) {
 					column.setMandatoryValue(mandatoryValue);
+				}
+				String defaultValue = (String) aColumn.getAttribute(ATTRIBUTE_DEFAULT_VALUE);
+				if (defaultValue != null && !defaultValue.isEmpty()) {
+					column.setDefaultValue(defaultValue);
 				}
 				if (subEntity != null) { // if a column is a subEntity
 											// reference, the editor is a

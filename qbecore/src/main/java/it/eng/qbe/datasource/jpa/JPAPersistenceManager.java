@@ -559,12 +559,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 	}
 
 	private Column getColumn(List<Column> columns, String columnName) {
-		for (Column column : columns) {
-			if (column.getField().equals(columnName)) {
-				return column;
-			}
-		}
-		return null;
+		return columns.stream().filter(column -> column.getField().equals(columnName)).findFirst().orElse(null);
 	}
 
 	private void manageProperty(EntityType targetEntity, Object obj, String aKey, JSONObject aRecord) {
@@ -827,6 +822,21 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		UserProfile userProfile = UserProfileManager.getProfile();
 		auditlogger.info("[" + userProfile.getUserId() + "]:: JPQL: " + jpqlQuery);
 		logger.debug("[" + userProfile.getUserId() + "]:: JPQL: " + jpqlQuery);
+	}
+
+	@Override
+	public void addDefaultValueToRecord(JSONObject aRecord, RegistryConfiguration registryConf) throws JSONException {
+		Iterator it = aRecord.keys();
+		while (it.hasNext()) {
+			String attributeName = (String) it.next();
+			logger.debug("Processing column [" + attributeName + "] ...");
+			Column column = registryConf.getColumnConfiguration(attributeName);
+			String columnValue = String.valueOf(aRecord.get(attributeName));
+			boolean hasDefaultValue = column.getDefaultValue() != null;
+			if (hasDefaultValue && (columnValue == null || (columnValue != null && columnValue.isEmpty()))) {
+				aRecord.put(attributeName, column.getDefaultValue());
+			}
+		}
 	}
 
 }

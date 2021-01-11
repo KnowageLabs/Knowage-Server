@@ -18,7 +18,6 @@
 package it.eng.spagobi.engines.qbe;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -36,10 +35,8 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
-import it.eng.spagobi.engines.qbe.template.QbeTemplateValidationException;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
@@ -136,112 +133,12 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 				dataSource.setDataMartModelAccessModality(template.getDatamartModelAccessModality());
 			}
 
-			validateTemplate(template, dataSource);
+			QbeEngineInstanceValidator.validateTemplate(this);
 		}
 
 		validate();
 
 		logger.debug("OUT");
-	}
-
-	private void validateTemplate(QbeTemplate template, IDataSource dataSource2) {
-
-		if (template.hasRegistryConfiguration()) {
-			RegistryConfiguration registryConfiguration = getRegistryConfiguration();
-			String keyColumn = dataSource2.getPersistenceManager().getKeyColumn(registryConfiguration);
-
-			List<Column> columns = registryConfiguration.getColumns();
-			for (Column column : columns) {
-				if (keyColumn.equals(column.getField()) && column.isEditable()) {
-					throw new QbeTemplateValidationException(String.format(
-							"Primary Key Column [%s] cannot be editable. Please modify the template adding editable=\"false\" to [%s] column configuration.",
-							keyColumn, keyColumn));
-				}
-			}
-		}
-	}
-
-	// private void loadWorksheetDefinition(JSONObject worksheetDefinition) {
-	// try {
-	// WorkSheetDefinition workSheetDefinition = new WorkSheetDefinition();
-	// // TODO set the encoding
-	// workSheetDefinition.load( worksheetDefinition.toString().getBytes() );
-	// setWorkSheetDefinition(workSheetDefinition);
-	// } catch(Throwable t) {
-	// SpagoBIRuntimeException serviceException;
-	// String msg = "Impossible load worksheet definition [" + worksheetDefinition + "].";
-	// Throwable rootException = t;
-	// while(rootException.getCause() != null) {
-	// rootException = rootException.getCause();
-	// }
-	// String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
-	// msg += "\nThe root cause of the error is: " + str;
-	// serviceException = new SpagoBIRuntimeException(msg, t);
-	//
-	// throw serviceException;
-	// }
-	// }
-
-	private void loadFormDefinition(JSONObject formDefinition) {
-		try {
-			FormState formState = new FormState();
-			// TODO set the encoding
-			formState.load(formDefinition.toString().getBytes());
-			setFormState(formState);
-		} catch (Throwable t) {
-			SpagoBIRuntimeException serviceException;
-			String msg = "Impossible load form state [" + formDefinition + "].";
-			Throwable rootException = t;
-			while (rootException.getCause() != null) {
-				rootException = rootException.getCause();
-			}
-			String str = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
-			msg += "\nThe root cause of the error is: " + str;
-			serviceException = new SpagoBIRuntimeException(msg, t);
-
-			throw serviceException;
-		}
-
-	}
-
-	private void loadFormValuesDefinition(JSONObject formValuesDefinition) {
-		try {
-			getFormState().setFormStateValues(formValuesDefinition);
-		} catch (Throwable t) {
-			SpagoBIRuntimeException serviceException;
-			String msg = "Impossible load form state [" + formValuesDefinition + "].";
-			Throwable rootException = t;
-			while (rootException.getCause() != null) {
-				rootException = rootException.getCause();
-			}
-			String str = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
-			msg += "\nThe root cause of the error is: " + str;
-			serviceException = new SpagoBIRuntimeException(msg, t);
-
-			throw serviceException;
-		}
-
-	}
-
-	private void loadQueryDefinition(JSONObject queryDefinition) {
-		try {
-			QbeEngineAnalysisState analysisState = new QbeEngineAnalysisState(dataSource);
-			// TODO set the encoding
-			analysisState.load(queryDefinition.toString().getBytes());
-			setAnalysisState(analysisState);
-		} catch (Throwable t) {
-			SpagoBIRuntimeException serviceException;
-			String msg = "Impossible load query [" + queryDefinition + "].";
-			Throwable rootException = t;
-			while (rootException.getCause() != null) {
-				rootException = rootException.getCause();
-			}
-			String str = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
-			msg += "\nThe root cause of the error is: " + str;
-			serviceException = new SpagoBIRuntimeException(msg, t);
-
-			throw serviceException;
-		}
 	}
 
 	public void setFormState(FormState formState) {

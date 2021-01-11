@@ -39,6 +39,7 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.property.Setter;
 import org.hibernate.type.ManyToOneType;
 import org.hibernate.type.Type;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.qbe.datasource.IPersistenceManager;
@@ -225,6 +226,12 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 	public String getKeyColumn(RegistryConfiguration registryConf) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void addDefaultValueToRecord(JSONObject aRecord, RegistryConfiguration registryConf) throws JSONException {
+		// TODO Auto-generated method stub
+
 	}
 
 }

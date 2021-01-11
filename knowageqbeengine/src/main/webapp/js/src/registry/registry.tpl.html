@@ -14,12 +14,20 @@
          <md-subheader>Filters</md-subheader>
          <div layout="row" layout-align="start center" style="padding:0 8px">
             <md-input-container class="md-icon-float registryFilter" ng-repeat="filter in checkIfFilterColumnExists()" style="min-width:200px">
-               <label>{{filter.title}}</label>
-               <input  ng-model="filter.value" ng-if="filter.presentation === 'MANUAL'" ng-keyup="addToFilters(filter)" ng-keydown="$event.keyCode === 13 && getFilteredData(filters)">
-               <md-select md-on-open="addFilterOptions(filter.field)" ng-model="filter.value" ng-if="filter.presentation == 'COMBO'" ng-change="addToFilters(filter)">
-                  <md-option value=""></md-option>
-                  <md-option ng-repeat="opt in filter.options track by $index" ng-value="opt.column_1">{{opt.column_1}}</md-option>
-               </md-select>
+               <div ng-if="filter.static">
+                  <div ng-if="filter.visible">
+                     <label>{{filter.title}}</label>
+                     <input  ng-model="filter.filterValue" ng-disabled="true">
+                  </div>
+               </div>
+               <div ng-if="!filter.static">
+                  <label>{{filter.title}}</label>
+                  <input  ng-model="filter.value" ng-if="filter.presentation === 'MANUAL' && !filter.static" ng-keyup="addToFilters(filter)" ng-keydown="$event.keyCode === 13 && getFilteredData(filters)" ng-disabled="filter.static">
+                  <md-select md-on-open="addFilterOptions(filter.field)" ng-model="filter.value" ng-if="filter.presentation == 'COMBO'" ng-change="addToFilters(filter)" ng-disabled="filter.static">
+                     <md-option value=""></md-option>
+                     <md-option ng-repeat="opt in filter.options track by $index" ng-value="opt.column_1">{{opt.column_1}}</md-option>
+                  </md-select>
+               </div>
             </md-input-container>
             <span flex></span>
             <md-button ng-click="deleteFilterValues()" class="md-raised" ng-if="checkIfFiltersHaveValues()">
@@ -39,8 +47,8 @@
                   <th class="recNo"><span>&nbsp;</span></th>
                   <th ng-repeat="col in columns | orderBy: 'position' track by $index" ng-if="col.visible" width="{{col.size}}">
                      <div layout="row" layout-align="start center" ng-click="sortBy(col.field)">
-                        <span class="sortorder" ng-class="{reverse: reverse}" ng-if="configuration.pagination != 'true'">{{col.title}}</span>
-                        <span ng-if="configuration.pagination == 'true'">{{col.title}}</span>
+                        <span class="sortorder" ng-class="{reverse: reverse}" ng-if="configuration.pagination != 'true'">{{col.title}} </span>
+                        <span ng-if="configuration.pagination == 'true'">{{col.title}} </md-icon></span>
                         <span flex></span>
                         <md-menu>
                            <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdMenu.open()">

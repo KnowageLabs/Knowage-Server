@@ -106,7 +106,7 @@
 
         		$scope.data= $scope.transformDataStore(response.data).rows
 	           	 if($scope.configuration.pagination != 'true'){
-	           	 $scope.data = orderBy($scope.data,$scope.propertyName,$scope.reverse);
+	           	 	$scope.data = orderBy($scope.data,$scope.propertyName,$scope.reverse);
 	           	 }
 	           	dateColumns = dateColumnsFilter(response.data.metaData.fields);
 	           	$scope.data = dateRowsFilter(dateColumns,$scope.data);
@@ -648,11 +648,23 @@
 		$scope.addRow = function() {
 			var tmpRow = angular.copy($scope.data[0], {});
 			for ( var i in tmpRow) {
-				tmpRow[i] = "";
+				tmpRow[i] = $scope.getDefaultValue(i);
 			};
 			tmpRow.$newRow = true;
 			$scope.data.unshift(tmpRow);
 		};
+		
+		$scope.getDefaultValue = function(columnTitle) {
+			var defaultValue = "";
+			angular.forEach($scope.columnFieldTypes, function(value, key) {
+				if (angular.equals(columnTitle, value.header) && value.defaultValue) {
+					defaultValue =  value.defaultValue;
+					return;
+				}
+			});
+			
+			return defaultValue;
+		}
 
 		// reordering columns function
 		$scope.move = function(position, direction) {

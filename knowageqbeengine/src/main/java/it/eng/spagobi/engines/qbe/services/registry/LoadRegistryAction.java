@@ -227,6 +227,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		setColumnsInfos(gridDataFeed);
 		setSummaryInfos(gridDataFeed);
 		setSummaryColorInfos(gridDataFeed);
+		setFieldsDefaultValue(gridDataFeed);
 
 		logger.debug("OUT");
 
@@ -556,6 +557,37 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		}
 	}
 
+	private void setFieldsDefaultValue(JSONObject gridDataFeed) {
+
+		String fieldHeader = null;
+		try {
+			JSONArray fieldsArray = gridDataFeed.getJSONObject("metaData").getJSONArray("fields");
+			for (int i = 0; i < fieldsArray.length(); i++) {
+				if (fieldsArray.get(i).equals("recNo"))
+					continue;
+				JSONObject field = (JSONObject) fieldsArray.get(i);
+				fieldHeader = field.getString("header");
+				field.put("defaultValue", getDefaultValueForColumn(fieldHeader));
+			}
+		} catch (JSONException e) {
+			logger.error("Error during adding defaultValue attribute for column " + fieldHeader);
+		}
+
+	}
+
+	private Object getDefaultValueForColumn(String columnName) {
+
+		List<Column> columnList = registryConfig.getColumns();
+		for (Column column : columnList) {
+			boolean hasDefaultValue = column.getDefaultValue() != null;
+			if (hasDefaultValue && column.getField().equals(columnName)) {
+				return column.getDefaultValue();
+			}
+		}
+
+		return null;
+	}
+
 	private void getMandatoryMetadata(Column column) {
 		try {
 			// mandatory management
@@ -721,15 +753,16 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	private void addFilter(int i, Query query, Map env, Map<String, String> fieldNameIdMap, Filter filter, ArrayList<ExpressionNode> expressionNodes) {
 		logger.debug("IN");
 
-		ExpressionNode node = query.getWhereClauseStructure();
-		ExpressionNode nodeToInsert = new ExpressionNode("NODE_OP", "AND");
-
 		// in case it is a driver
 		if (filter.getPresentationType().equals(RegistryConfigurationXMLParser.PRESENTATION_TYPE_DRIVER)) {
 			String driverName = filter.getDriverName();
 			String fieldName = filter.getField();
-
-			Object value = env.get(driverName);
+			Object value = null;
+			if (filter.isStatic()) {
+				value = filter.getFilterValue();
+			} else {
+				value = env.get(driverName);
+			}
 
 			if (value != null && !value.toString().equals("")) {
 
@@ -757,9 +790,13 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			// query.setWhereClauseStructure(whereClauseStructure)
 		}
 		// in case it is a filter and has a value setted
-		else if (requestContainsAttribute(filter.getField())) {
-
-			String value = getAttribute(filter.getField()).toString();
+		else if (requestContainsAttribute(filter.getField()) || filter.isStatic()) {
+			String value = null;
+			if (filter.isStatic()) {
+				value = filter.getFilterValue();
+			} else {
+				value = getAttribute(filter.getField()).toString();
+			}
 			if (value != null && !value.equalsIgnoreCase("")) {
 				logger.debug("Set filter " + filter.getField() + "=" + value);
 

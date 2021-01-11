@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -134,6 +135,7 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 
 		for (int i = 0; i < modifiedRecords.length(); i++) {
 			JSONObject aRecord = modifiedRecords.getJSONObject(i);
+			addDefaultValuesRecord(aRecord, qbeEngineInstance, registryConf);
 
 			// if id field is null have to inserts
 			IDataSource genericDatasource = qbeEngineInstance.getDataSource();
@@ -228,6 +230,11 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 		Integer id = genericDatasource.getPersistenceManager().insertRecord(aRecord, registryConf, autoLoadPK, tableForPkMax, columnForPkMax);
 		logger.debug("OUT");
 		return id;
+	}
+
+	private void addDefaultValuesRecord(JSONObject aRecord, QbeEngineInstance qbeEngineInstance, RegistryConfiguration registryConf) throws JSONException {
+		IDataSource genericDatasource = qbeEngineInstance.getDataSource();
+		genericDatasource.getPersistenceManager().addDefaultValueToRecord(aRecord, registryConf);
 	}
 
 }

@@ -149,6 +149,15 @@ public class RegistryConfiguration {
 
 		private String driverName = null;
 
+		public static final String ATTRIBUTE_STATIC_FILTER = "static";
+
+		private boolean isStatic = false;
+
+		private String filterValue = null;
+
+		public static final String ATTRIBUTE_VISIBLE_FILTER = "visible";
+		private boolean isVisible = false;
+
 		public String getTitle() {
 			return title;
 		}
@@ -179,6 +188,30 @@ public class RegistryConfiguration {
 
 		public void setDriverName(String driverName) {
 			this.driverName = driverName;
+		}
+
+		public boolean isStatic() {
+			return isStatic;
+		}
+
+		public void setStatic(boolean isStatic) {
+			this.isStatic = isStatic;
+		}
+
+		public String getFilterValue() {
+			return filterValue;
+		}
+
+		public void setFilterValue(String filterValue) {
+			this.filterValue = filterValue;
+		}
+
+		public boolean isVisible() {
+			return isVisible;
+		}
+
+		public void setVisible(boolean isVisible) {
+			this.isVisible = isVisible;
 		}
 
 	}
@@ -279,6 +312,8 @@ public class RegistryConfiguration {
 		private String dependences = null;
 
 		private String dependencesEntity = null;
+
+		private Object defaultValue = null;
 
 		public String getTitle() {
 			return title;
@@ -448,6 +483,14 @@ public class RegistryConfiguration {
 
 		public void setDependencesEntity(String dependencesEntity) {
 			this.dependencesEntity = dependencesEntity;
+		}
+
+		public Object getDefaultValue() {
+			return defaultValue;
+		}
+
+		public void setDefaultValue(Object defaultValue) {
+			this.defaultValue = defaultValue;
 		}
 
 	}

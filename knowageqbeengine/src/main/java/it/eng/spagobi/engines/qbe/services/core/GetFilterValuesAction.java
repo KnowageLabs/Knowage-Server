@@ -47,6 +47,9 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Filter;
+import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -320,6 +323,27 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 				query.setWhereClauseStructure(newFilterNode);
 				// query.addSelectFiled(nameFiledWhere, "NONE", "dependes" + i,
 				// true, true, false, null, null);
+			}
+		}
+		
+		QbeEngineInstance qbeEngineInstance = getEngineInstance();
+		QbeTemplate template = qbeEngineInstance.getTemplate();
+		RegistryConfiguration registryConfig = (RegistryConfiguration) template.getProperty("registryConfiguration");
+		List<RegistryConfiguration.Filter> filters = registryConfig.getFilters();
+		for (Filter filter : filters) {
+			String currField = entityId.substring(entityId.lastIndexOf(":") + 1);
+			if (filter.isStatic() && filter.getField().equals(currField)) {
+				String nameFieldWhere = entityId;
+
+				String valueFieldWhere = filter.getFilterValue();
+
+				String[] fieldss = new String[] { nameFieldWhere };
+				String[] values = new String[] { valueFieldWhere };
+				WhereField.Operand left = new WhereField.Operand(fieldss, "name", AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
+				WhereField.Operand right = new WhereField.Operand(values, "value", AbstractStatement.OPERAND_TYPE_STATIC, null, null);
+				query.addWhereField(nameFieldWhere, valueFieldWhere, false, left, CriteriaConstants.EQUALS_TO, right, "AND");
+				ExpressionNode newFilterNode = new ExpressionNode("NODE_CONST", "$F{" + nameFieldWhere + "}");
+				query.setWhereClauseStructure(newFilterNode);
 			}
 		}
 

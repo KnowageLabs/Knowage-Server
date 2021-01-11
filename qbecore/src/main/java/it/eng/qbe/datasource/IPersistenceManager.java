@@ -17,6 +17,7 @@
  */
 package it.eng.qbe.datasource;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
@@ -30,5 +31,7 @@ public interface IPersistenceManager {
 	void deleteRecord(JSONObject aRecord, RegistryConfiguration registryConf);
 
 	String getKeyColumn(RegistryConfiguration registryConf);
+
+	void addDefaultValueToRecord(JSONObject aRecord, RegistryConfiguration registryConf) throws JSONException;
 
 }
