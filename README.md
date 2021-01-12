@@ -2,14 +2,12 @@
 <img src="https://www.knowage-suite.com/site/wp-content/uploads/2016/03/KNOWAGE_logo_color.png">
 </p>
 
-[![FIWARE Visualization](https://nexus.lab.fiware.org/static/badges/chapters/visualization.svg)](https://www.fiware.org/developers/catalogue/)
 [![License: APGL](https://img.shields.io/github/license/KnowageLabs/Knowage-Server.svg)](https://opensource.org/licenses/AGPL-3.0)
 [![Docker badge](https://img.shields.io/docker/pulls/fiware/knowage-server-docker.svg)](https://hub.docker.com/r/fiware/knowage-server-docker)
 [![Support badge](https://nexus.lab.fiware.org/static/badges/stackoverflow/knowage.svg)](https://stackoverflow.com/questions/tagged/fiware-knowage)
 <br>
 [![Documentation badge](https://img.shields.io/readthedocs/knowage.svg)](https://knowage.rtfd.io/)
 [![Build Status](https://travis-ci.com/KnowageLabs/Knowage-Server.svg?branch=master)](https://travis-ci.com/KnowageLabs/Knowage-Server)
-![Status](https://nexus.lab.fiware.org/static/badges/statuses/knowage.svg)
 
 Knowage is the full capabilities open source suite for modern business analytics
 over traditional sources and big data systems. Its features, such as data
