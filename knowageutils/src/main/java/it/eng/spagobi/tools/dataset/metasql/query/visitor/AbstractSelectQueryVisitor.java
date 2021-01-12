@@ -319,6 +319,9 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
 		String name = projection.getName();
+		/*
+		 * TODO: Remove isCalculatedColumn or change logic
+		 */
 		String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
 				: aliasDelimiter + name + aliasDelimiter;
 
@@ -359,8 +362,7 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
 		String name = projection.getFormula();
-		String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
-				: aliasDelimiter + name + aliasDelimiter;
+		String columnName = name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter);
 
 		boolean isValidAggregationFunction = aggregationFunction != null && !aggregationFunction.getName().equals(AggregationFunctions.NONE);
 		if (!isValidAggregationFunction) {

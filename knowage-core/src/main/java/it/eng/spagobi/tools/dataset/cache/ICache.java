@@ -26,6 +26,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBaseException;
 
 /**
@@ -165,4 +166,13 @@ public interface ICache {
 
 	void setUserProfile(UserProfile userProfile);
 
+	/**
+	 * @return the dataSource
+	 */
+	public IDataSource getDataSource();
+
+	/**
+	 * @param dataSource the dataSource to set
+	 */
+	public void setDataSource(IDataSource dataSource);
 }

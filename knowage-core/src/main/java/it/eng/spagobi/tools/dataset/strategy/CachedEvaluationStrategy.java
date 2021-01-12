@@ -30,6 +30,7 @@ import com.jamonapi.MonitorFactory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
+import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
@@ -37,9 +38,11 @@ import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
+import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
 
 class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
@@ -132,6 +135,30 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 
 	protected DatasetEvaluationStrategyType getEvaluationStrategy() {
 		return DatasetEvaluationStrategyType.CACHED;
+	}
+
+	@Override
+	protected IDataStore executeTotalsFunctions(IDataSet dataSet, Set<String> totalFunctionsProjections, Filter filter, int maxRowCount) {
+		try {
+
+			/*
+			 * We should retrieve values from cache DB
+			 */
+			FlatDataSet flatDataSet = new FlatDataSet();
+			flatDataSet.setDataSource(cache.getDataSource());
+			CacheItem cacheItem = cache.getMetadata().getCacheItem(dataSet.getSignature());
+			flatDataSet.setTableName(cacheItem.getTable());
+			flatDataSet.setMetadata(dataSet.getMetadata());
+
+			String[] totalFunctionsProjectionsString = new String[totalFunctionsProjections.size()];
+			totalFunctionsProjections.toArray(totalFunctionsProjectionsString);
+			String totalFunctionsQuery = new SelectQuery(dataSet).select(totalFunctionsProjectionsString).from(flatDataSet.getFlatTableName()).where(filter)
+					.toSql(flatDataSet.getDataSource());
+			logger.info("Total functions query [ " + totalFunctionsQuery + " ]");
+			return flatDataSet.getDataSource().executeStatement(totalFunctionsQuery, -1, -1, maxRowCount, false);
+		} catch (DataBaseException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }
