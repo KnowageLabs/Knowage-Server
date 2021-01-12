@@ -28,7 +28,7 @@ Engineering Ingegneria Informatica S.p.A. provides the software associated to Kn
 
 ## Copyright
 
-Copyright © 2017 Engineering Ingegneria Informatica S.p.A.
+Copyright © 2021 Engineering Ingegneria Informatica S.p.A.
 All rights reserved.
 
 
@@ -36,8 +36,6 @@ All rights reserved.
 In order to use RESTful API you will have to authenticate yourself. You can do that through basic authentication.
 
 It is not however mandatory to send authentication information if you are already accessing the REST services through a browser and you are logged in Knowage, in that case the session will be used to retrieve profile information.
-
-NB: there is no REST interfaces to manage users. This is because users authenticate using Fiware IdM. So, to manage users you can use IdM RESTful API (https://github.com/ging/fi-ware-idm/wiki/REST-API).
 
 In the future will implement a second method of authentication: it will require that you send a token in all of your HTTP requests. We will add the token as a resource in our RESTful API so it will be possible to generate the token by sending a POST request to the token resource's url. The response will be a json object containing the token that will be used later on.
 In this way, username and password will be required only the first time. 
