@@ -257,35 +257,30 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 		return this.tree[index];
 	//	this.tree
 	}
-
-	hierarchy.prototype.getLevel = function (level){
-		level++;
+	
+	hierarchy.prototype.getLevel = function(level){
 		var nodes = [];
-		var depth = 1;
 		for (var j=0; j<this.tree.length; j++) {
-			depth = 1;
-			if(depth!=level){ depth++
-				iterate(this.tree[j]);
-			} else{
+			var depth = 0;
+			if(level == depth){
 				nodes.push(this.tree[j]);
+			}else{
+				deeperLevel(this.tree[j],depth + 1);
 			}
-
-			function iterate(tree) {
-				var children = tree.children;
-				for (var i=0; i<children.length; i++) {
-					if(depth!=level){
-						depth++;
-						iterate(children[i] );
-					} else{
-						nodes.push(children[i]);
-						if(i==children.length-1) depth--;
-					}
+		}
+		
+		function deeperLevel(tree,depth){
+			var children = tree.children;
+			for (var i=0; i<children.length; i++) {
+				if(depth == level){
+					nodes.push(children[i]);
+				}else{
+					deeperLevel(children[i],depth + 1);
 				}
 			}
-
 		}
+		
 		return nodes;
-
 	}
 
 	node.prototype.getValue = function (measure) {
