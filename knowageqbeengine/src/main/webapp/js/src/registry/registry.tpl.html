@@ -41,11 +41,11 @@
       </md-card>
       <!--  /div-->
       <md-card flex style="overflow:auto;">
-         <table class="kn-table kn-table-alternated-rows" ng-if="configuration.pivot == false" flex>
+         <table class="kn-table kn-table-alternated-rows" ng-if="configuration.pivot == false" style="table-layout:fixed">
             <thead>
                <tr>
                   <th class="recNo"><span>&nbsp;</span></th>
-                  <th ng-repeat="col in columns | orderBy: 'position' track by $index" ng-if="col.visible" width="{{col.size}}">
+                  <th ng-repeat="col in columns | orderBy: 'position' track by $index" ng-if="col.visible" ng-style="{width:col.size +'px'}">
                      <div layout="row" layout-align="start center" ng-click="sortBy(col.field)">
                         <span class="sortorder" ng-class="{reverse: reverse}" ng-if="configuration.pagination != 'true'">{{col.title}} </span>
                         <span ng-if="configuration.pagination == 'true'">{{col.title}} </md-icon></span>
@@ -82,7 +82,7 @@
             <tbody>
                <tr ng-repeat="row in data">
                   <td class="recNo"> <span ng-if="!col.editable">{{$index+1}}</span> </td>
-                  <td ng-repeat="col in columns | orderBy: 'position' track by $index " ng-if="col.visible"  ng-class='checkIfSelected(row)' ng-style="{{ {'background-color':col.color} }}">
+                  <td ng-repeat="col in columns | orderBy: 'position' track by $index " ng-if="col.visible"  ng-class='checkIfSelected(row)' ng-style="{'background-color':col.color, 'width':col.size + 'px'}">
                      <div>
                         <span ng-if="!col.editable && col.dataType !== 'boolean'">{{row[col.field] }}</span>                               
                         <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (!col.editable)" ng-checked="{{row[col.field]}}" disabled ng-click="setSelected(row)" >
@@ -130,10 +130,10 @@
                </tr>
             </tbody>
          </table>
-         <table class="kn-table pivot-table" ng-if="configuration.pivot == true" flex>
+         <table class="kn-table pivot-table" ng-if="configuration.pivot == true" style="table-layout:fixed">
             <thead>
                <tr>
-                  <th ng-repeat="col in columns | orderBy: 'position' track by $index" ng-if="col.visible" width="{{col.size}}">
+                  <th ng-repeat="col in columns | orderBy: 'position' track by $index" ng-if="col.visible" ng-style="{width:col.size +'px'}">
                      <div layout="row" layout-align="start center">
                         <span>{{col.title}}</span>
                         <span flex></span>
