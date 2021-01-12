@@ -19,7 +19,7 @@ Knowage supports a modern vision of the data analytics, providing new self-servi
 
 If this is your first contact with Knowage, it is highly recommended to have a look at the [Knowage website](https://www.knowage-suite.com) and at the online [demo](https://demo.knowage-suite.com/).
 
-Knowage takes part in the [FIWARE](https://www.fiware.org/) community, being the reference implementation of the Data Visualization GE.
+Knowage is now available on [FIWARE Marketplace](https://marketplace.fiware.org/) as FIWARE-ready software enabler, being fully compliant with [FIWARE](https://www.fiware.org/) architecture and GEs. For more information check the FIWARE Marketplace entry for [Knowage](https://marketplace.fiware.org/pages/solutions/59611fb5573b7cb51c44ef68).
 
 The documentation available on Read the Docs provides Admin manual and developers' guide describing specific topics about Knowage in the FIWARE context (i.e. how to install it and how to integrate it with other FIWARE components, such as IdM, Orion Context Broker, CKAN, ...).
 
