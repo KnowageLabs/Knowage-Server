@@ -43,7 +43,7 @@ var cockpitApp= angular.module("cockpitModule",[
 	'chartDesignerManager',
 	'customWidgetAPI'
 	]);
-cockpitApp.config(function($mdThemingProvider,$mdGestureProvider,$compileProvider,$mdInkRippleProvider,$mdAriaProvider) {
+cockpitApp.config(function($mdThemingProvider,$mdGestureProvider,$compileProvider,$mdInkRippleProvider,$mdAriaProvider, $mdDateLocaleProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
     $mdGestureProvider.skipClickHijack();
@@ -51,6 +51,11 @@ cockpitApp.config(function($mdThemingProvider,$mdGestureProvider,$compileProvide
     	$mdInkRippleProvider.disableInkRipple();
     	$mdAriaProvider.disableWarnings();
     }
+
+ 	$mdDateLocaleProvider.formatDate = function(date) {
+      var m = moment(date).locale(_CURRENTLANGUAGE);
+      return m.isValid() ? m.format('L') : '';
+    };
 });
 
 

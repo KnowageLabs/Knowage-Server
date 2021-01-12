@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 
 var sbiM=angular.module('sbiModule',["ngSanitize"]);
+var _CURRENTLANGUAGE = '<%= curr_language%>';
 
 // sbiM.config(function($mdThemingProvider) {
 // 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
