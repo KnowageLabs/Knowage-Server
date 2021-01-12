@@ -25,13 +25,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
-
 import org.pivot4j.PivotModel;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
 import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
@@ -52,7 +52,7 @@ public class CrossNavigationResource extends AbstractWhatIfEngineService {
 	@GET
 	@Path("/initialize")
 	@Produces("text/html; charset=UTF-8")
-	
+
 	public String initialize() {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -79,24 +79,32 @@ public class CrossNavigationResource extends AbstractWhatIfEngineService {
 	}
 
 	/**
-	 * Service to create the js function parent.execCrossNavigation with
-	 * parameters
+	 * Service to create the js function parent.execCrossNavigation with parameters
 	 *
 	 * @return the js function
 	 */
 	@POST
 	@Path("/getCrossNavigationUrl/{ordinal}")
 	@Produces("text/html; charset=UTF-8")
-	
+
 	public String getCrossNavigationUrl(@PathParam("ordinal") int ordinal) {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		ModelConfig modelConfig = ei.getModelConfig();
 		String jsFunction = new String();
 		try {
+			// adds the calculated fields before getting the link
+			model.applyCal();
+
+			applyConfiguration(modelConfig, model);
+
 			SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model.getCellSet();
 			SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(ordinal);
 			jsFunction = CrossNavigationManager.buildCrossNavigationUrl(cellWrapper, ei);
+
+			// restore the query without calculated fields
+			model.restoreQuery();
 		} catch (Exception e) {
 			logger.error("Error cross navigation js function creation ");
 			throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e);
@@ -104,4 +112,5 @@ public class CrossNavigationResource extends AbstractWhatIfEngineService {
 		logger.debug("OUT");
 		return jsFunction;
 	}
+
 }

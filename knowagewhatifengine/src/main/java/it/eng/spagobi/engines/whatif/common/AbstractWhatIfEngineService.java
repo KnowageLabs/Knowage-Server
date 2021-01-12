@@ -178,4 +178,33 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 		return WhatIfConstants.ENGINE_NAME;
 	}
 
+	protected void applyConfiguration(ModelConfig modelConfig, SpagoBIPivotModel model) {
+		applySupperssEmptyConfiguration(modelConfig, model);
+		applySortConfiguration(modelConfig, model);
+	
+	}
+
+	private void applySortConfiguration(ModelConfig modelConfig, SpagoBIPivotModel model) {
+		Boolean sortingEnabled = modelConfig.getSortingEnabled();
+		String sortingPositionUniqeName = modelConfig.getSortingPositionUniqueName();
+		int axisToSort = modelConfig.getAxisToSort();
+		int axis = modelConfig.getAxis();
+		String sortMode = modelConfig.getSortMode();
+		if (shouldSort(sortingEnabled, sortingPositionUniqeName)) {
+	
+			model.sortModel(axisToSort, axis, sortingPositionUniqeName, sortMode);
+	
+		}
+	
+	}
+
+	private void applySupperssEmptyConfiguration(ModelConfig modelConfig, SpagoBIPivotModel model) {
+		Boolean suppressEmpty = modelConfig.getSuppressEmpty();
+		model.setNonEmpty(suppressEmpty);
+	}
+
+	private boolean shouldSort(boolean sortingEnabled, String sortingPositionUniqeName) {
+		return sortingEnabled && sortingPositionUniqeName != null;
+	}
+
 }
