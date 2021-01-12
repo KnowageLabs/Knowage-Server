@@ -20,6 +20,7 @@ package it.eng.knowage.engine.cockpit.api.export.excel;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -673,7 +674,7 @@ public class ExcelExporter {
 				int i;
 				for (i = 0; i < allWidgets.length(); i++) {
 					JSONObject curWidget = allWidgets.getJSONObject(i);
-					if (curWidget.getString("id").equals(widget.getString("id")))
+					if (new BigDecimal(curWidget.getString("id")).compareTo(new BigDecimal(widget.getString("id"))) == 0)
 						break;
 				}
 				cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS").getJSONObject(i);
