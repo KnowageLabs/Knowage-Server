@@ -20,9 +20,10 @@ domain. They can be used individually as complete solution for a certain task,
 or combined with one another to ensure full coverage of user’ requirements.
 
 
-This project is part of [FIWARE](https://www.fiware.org/). For more information
-check the FIWARE Catalogue entry for
-[Context Processing, Analysis and Visualization](https://github.com/Fiware/catalogue/tree/master/processing).
+Knowage is now available on [FIWARE Marketplace](https://marketplace.fiware.org/) 
+as FIWARE-ready software enabler, being fully compliant with [FIWARE](https://www.fiware.org/) 
+architecture and GEs. For more information check the FIWARE Marketplace entry 
+for [Knowage](https://marketplace.fiware.org/pages/solutions/59611fb5573b7cb51c44ef68).
 
 |  :books: [Documentation](http://knowage.rtfd.io/) | :page_facing_up: [Site](https://www.knowage-suite.com/site/home/) | :mortar_board: [Academy](https://fiware-academy.readthedocs.io/en/latest/processing/knowage) | :whale: [Docker Hub](https://hub.docker.com/r/fiware/knowage-server-docker/) | :dart: [Roadmap](https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md) |
 |---|---|---|---|---|
