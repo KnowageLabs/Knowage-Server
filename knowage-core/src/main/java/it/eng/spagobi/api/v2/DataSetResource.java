@@ -1017,13 +1017,12 @@ public class DataSetResource extends AbstractDataSetResource {
 										paramValueLst.add(itemVal2);
 								}
 							} else {
-								if (itemVal != null && !"".equals(itemVal))
+								if (itemVal != null && !"".equals(itemVal)) {
 									paramValueLst.add(itemVal);
-								paramDescrLst.add(itemDescr);
+									paramDescrLst.add(itemDescr);
+								}
 							}
 						} catch (UnsupportedEncodingException e) {
-							// TODO Auto-generated catch block
-							// e.printStackTrace();
 							logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 						}
 					}
@@ -1183,6 +1182,8 @@ public class DataSetResource extends AbstractDataSetResource {
 					Object val = defval.getValue();
 					if (val != null && val.equals("$")) {
 						docP.put("parameterValue", "");
+					} else {
+						docP.put("parameterValue", val);
 					}
 				}
 

@@ -379,7 +379,19 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 
 	$scope.documentHaveParameter=function(doc){
 		 return doc.objParameter.length>0
-	 }
+	}
+
+	$scope.visibleDrivers = function(row) {
+		return row.drivers.filter(isDriversVisible);
+	}
+
+	$scope.hasVisibleDrivers = function(row) {
+		return row.drivers.some(isDriversVisible);
+	}
+
+	function isDriversVisible(driver) {
+		return driver.showOnPanel == "true";
+	}
 
 	$scope.translate=sbiModule_translate;
 		    	 $scope.baseScriptPath=baseScriptPath;
