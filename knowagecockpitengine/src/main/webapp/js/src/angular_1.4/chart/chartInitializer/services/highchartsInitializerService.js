@@ -19,9 +19,10 @@
 
 angular.module('chartInitializer')
 
-.service('highcharts',['highchartsDrilldownHelper','jsonChartTemplate','chartConfMergeService','cockpitModule_datasetServices',function(highchartsDrilldownHelper,jsonChartTemplate,chartConfMergeService,cockpitModule_datasetServices){
+.service('highcharts',['highchartsDrilldownHelper','jsonChartTemplate','chartConfMergeService','cockpitModule_datasetServices', 'cockpitModule_highchartsLocales',function(highchartsDrilldownHelper,jsonChartTemplate,chartConfMergeService,cockpitModule_datasetServices,cockpitModule_highchartsLocales){
 
 	this.chart = null;
+	Highcharts.setOptions(cockpitModule_highchartsLocales);
 	var chartConfConf = null;
 	this.changeDatasetColumns = function(chartConf, data){
 		for (var attrname in chartConf) {
