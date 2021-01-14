@@ -242,11 +242,6 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 
 	}
 
-	protected IDataStore executeTotalsFunctions(Set<String> summaryRowProjections, Filter filter, int maxRowCount) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	protected IDataStore executeTotalsFunctions(IDataSet dataSet, Set<String> totalFunctionsProjections, Filter filter, int maxRowCount) {
 		// TODO Auto-generated method stub
 		return null;

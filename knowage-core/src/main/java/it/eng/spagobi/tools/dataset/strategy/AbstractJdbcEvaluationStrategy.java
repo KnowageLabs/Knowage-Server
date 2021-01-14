@@ -76,7 +76,7 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 	}
 
 	@Override
-	protected IDataStore executeTotalsFunctions(Set<String> totalFunctionsProjections, Filter filter, int maxRowCount) {
+	protected IDataStore executeTotalsFunctions(IDataSet dataSet, Set<String> totalFunctionsProjections, Filter filter, int maxRowCount) {
 		try {
 			String[] totalFunctionsProjectionsString = new String[totalFunctionsProjections.size()];
 			totalFunctionsProjections.toArray(totalFunctionsProjectionsString);
