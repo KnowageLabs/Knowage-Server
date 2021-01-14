@@ -188,7 +188,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    })
 		    .then(function(response) { //success
 		            $scope.pythonOutput = $sce.trustAsHtml(response.data);
-		            if ($scope.ngModel.pythonOutputType == 'bokeh') {
+		            if ($scope.ngModel.pythonOutputType != 'img') {
 						$scope.createIframe();
 					}
 		    },
@@ -215,7 +215,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    })
 		    .then(function(response) { //success
 		            $scope.pythonOutput = $sce.trustAsHtml(response.data);
-		            if ($scope.ngModel.pythonOutputType == 'bokeh') {
+		            if ($scope.ngModel.pythonOutputType != 'img') {
 						$scope.createIframe();
 					}
 		    },
