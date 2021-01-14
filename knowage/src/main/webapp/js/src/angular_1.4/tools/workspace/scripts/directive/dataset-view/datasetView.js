@@ -110,8 +110,8 @@
 			$scope.selectedDataset = param.data;
 		}
 
-		function hasParametersRenderer(params){
-			return (params.value && params.value.length > 0) ? '<i class="fa fa-check"></i>' : '';
+		function hasParametersRenderer(row){
+			return (row.data.params && row.data.params.length > 0) ? '<i class="fa fa-check"></i>' : '';
 		}
 
 		function tagsRenderer(params){
