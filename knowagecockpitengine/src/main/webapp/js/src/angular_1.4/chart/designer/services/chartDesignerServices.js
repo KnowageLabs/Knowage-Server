@@ -470,7 +470,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					      "isCockpitEngine":"",
 					      "orientation":"",
 					      "style":{
-		                	  "backgroundColor":"#FFFFFF",
+		                	  "backgroundColor":"none",
 		                	  "fontFamily":"",
 		                	  "fontWeight":"",
 		                	  "fontSize":"12px"
@@ -840,7 +840,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 					      "width":100,
 					      "isCockpitEngine":"",
 					      "style":{
-		                	  "backgroundColor":"#FFFFFF",
+		                	  "backgroundColor":"none",
 		                	  "fontFamily":"",
 		                	  "fontWeight":"",
 		                	  "fontSize":"12px"
@@ -1287,7 +1287,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"isCockpitEngine": "",
 				"seriesStacking": false,
 				"style":{
-              	  "backgroundColor":"#FFFFFF",
+              	  "backgroundColor":"none",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":"12px"
@@ -1535,7 +1535,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"seriesStacking": false,
 				"showTableParallel": false,
 				"style":{
-              	  "backgroundColor":"#FFFFFF",
+              	  "backgroundColor":"none",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":"12px"
@@ -1776,7 +1776,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"height": 100,
 				"isCockpitEngine": "",
 				"style":{
-              	  "backgroundColor":"#FFFFFF",
+              	  "backgroundColor":"none",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":"12px"
@@ -2039,7 +2039,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"dateFormat":"day",
 				"seriesStacking": false,
 				"style":{
-              	  "backgroundColor":"#FFFFFF",
+              	  "backgroundColor":"none",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":"12px"
@@ -2274,7 +2274,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"isCockpitEngine": "",
 				"opacMouseOver": 0,
 				"style":{
-              	  "backgroundColor":"#FFFFFF",
+              	  "backgroundColor":"none",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":"12px"
@@ -2515,7 +2515,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"height": 100,
 				"isCockpitEngine": "",
 				"style":{
-              	  "backgroundColor":"#FFFFFF",
+              	  "backgroundColor":"none",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":"12px"
@@ -2728,7 +2728,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				"seriesStacking": false,
 				"sizeCriteria": "serie",
 				"style":{
-              	  "backgroundColor":"#FFFFFF",
+              	  "backgroundColor":"none",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":"12px"
