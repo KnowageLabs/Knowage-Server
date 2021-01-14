@@ -25,22 +25,22 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.wapp.Version;
+import it.eng.spagobi.api.dto.VersionDTO;
 import it.eng.spagobi.services.rest.annotations.PublicService;
 
 @Path("/version")
 public class VersionResource extends AbstractSpagoBIResource {
-	
+
 	static protected Logger logger = Logger.getLogger(VersionResource.class);
-	
+
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@PublicService
-	public Version getVersion() {
+	public VersionDTO getVersion() {
 		logger.debug("IN");
 		try {
-			return new Version();
+			return new VersionDTO();
 		} finally {
 			logger.debug("OUT");
 		}
