@@ -30,6 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.log4j.Logger;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 
@@ -42,6 +43,8 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
  * @author Marco Libanori
  */
 public class ExportJobBuilder {
+
+	private static final Logger logger = Logger.getLogger(ExportJobBuilder.class);
 
 	private static final String EXPORT_TYPE_XLS = "xls";
 
@@ -120,6 +123,8 @@ public class ExportJobBuilder {
 	 */
 	public JobDetail build() {
 
+		logger.debug("Building export job for...");
+
 		if (dataSetId == null) {
 			throw new IllegalArgumentException("Attribute dataSetId cannot be null");
 		}
@@ -139,6 +144,11 @@ public class ExportJobBuilder {
 		jobDataMap.put(MAP_KEY_RESOURCE_PATH, resoursePath);
 		jobDataMap.put(MAP_KEY_USER_PROFILE, userProfile);
 
+		logger.debug("\t- Dataset id: " +  String.valueOf(dataSetId));
+		logger.debug("\t- UUID: " +  String.valueOf(randomUUID));
+		logger.debug("\t- Resource path: " +  String.valueOf(resoursePath));
+		logger.debug("\t- Type: " +  String.valueOf(type));
+
 		JobDetail job = null;
 		switch (type) {
 		case EXPORT_TYPE_CSV:
@@ -156,6 +166,8 @@ public class ExportJobBuilder {
 		job.setDescription(jobDescription);
 		job.setJobDataMap(jobDataMap);
 		job.setDurability(false);
+
+		logger.debug("Export job built!");
 
 		return job;
 	}

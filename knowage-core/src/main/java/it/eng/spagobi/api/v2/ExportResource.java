@@ -206,7 +206,7 @@ public class ExportResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response datasetAsCsv(@PathParam("dataSetId") Integer dataSetId, String body) {
 
-		logger.debug("IN");
+		logger.debug("IN - Exporting dataset " + String.valueOf(dataSetId) + " in CSV");
 
 		JSONObject driversJson = null;
 		JSONArray paramsJson = null;
@@ -254,7 +254,7 @@ public class ExportResource {
 			ret = Response.serverError().build();
 		}
 
-		logger.debug("OUT");
+		logger.debug("OUT - Exporting dataset \" + String.valueOf(dataSetId) + \" in CSV");
 
 		return ret;
 	}

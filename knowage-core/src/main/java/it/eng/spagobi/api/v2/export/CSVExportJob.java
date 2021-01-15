@@ -56,8 +56,6 @@ public class CSVExportJob extends AbstractExportJob {
 				dataStore = dataSet.getDataStore();
 				StreamingOutput stream = new CsvStreamingOutput(dataStore);
 				stream.write(exportFileOS);
-			} catch (Exception e) {
-				throw e;
 			} finally {
 				if (exportFileOS != null) {
 					exportFileOS.close();
