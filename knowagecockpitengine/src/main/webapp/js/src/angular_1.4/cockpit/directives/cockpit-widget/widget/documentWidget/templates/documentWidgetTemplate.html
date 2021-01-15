@@ -1,3 +1,6 @@
 <iframe height="100%" width="100%" flex iframe-finish-load callback-function="finishLoadingIframe()" class=" noBorder" ng-src="{{documentViewerUrl}}" name="documentViewerIframe" ></iframe>
-<canvas class="canvas-for-iframe" id="canvas_{{ngModel.id}}"></canvas>
-<div class="canvas-for-iframe" id="divCanvas_{{ngModel.id}}"></div>
+<div layout="row" layout-fill layout-align="center center" class="pdfExportWarning">
+	<div class="kn-warning">
+		{{translate.load('sbi.cockpit.document.warning.unavailablepdfexport')}}
+	</div>
+</div>

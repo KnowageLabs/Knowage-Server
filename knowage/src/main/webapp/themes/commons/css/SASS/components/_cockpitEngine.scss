@@ -73,6 +73,14 @@
         .screenShottingWidget {
             transition: none;
             visibility: visible;
+            cockpit-document-widget{
+            	iframe{
+            		display: none;
+            	}
+            	.pdfExportWarning{
+            		display: flex;
+            	}
+            }
 		}
 	}
 
@@ -798,7 +806,7 @@
 		}
 	}
 
-	cockpit-document-widget, cockpit-python-widget {
+	cockpit-python-widget {
 		.canvas-for-iframe{
 		    display: none;
 		    position: absolute;
@@ -811,6 +819,12 @@
 		      display: block;
 		    }
 	  	}
+	}
+
+	cockpit-document-widget{
+    	.pdfExportWarning{
+    		display: none;
+    	}
 	}
 
 	cockpit-selector-widget {

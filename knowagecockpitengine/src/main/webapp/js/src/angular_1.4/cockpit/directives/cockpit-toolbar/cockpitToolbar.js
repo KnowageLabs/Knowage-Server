@@ -521,7 +521,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 				 					}
 				 				}
 					 		for(var w in sheet.widgets){
-					 			if(sheet.widgets[w].type == 'document' || sheet.widgets[w].type == 'python'){
+					 			if(sheet.widgets[w].type == 'python'){
 					 				replaceIframe(sheet.widgets[w]);
 					 			}
 					 		}
