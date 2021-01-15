@@ -9,9 +9,9 @@
 	<md-dialog-content class="md-dialog-content" role="document" tabIndex="-1" flex>
 		<div class="md-dialog-content-body"	md-template="::paramDialogCtrl.mdContent"></div>
 		
-		<div layout="row" layout-align="start center" class="kn-treePath">
+		<!-- div layout="row" layout-align="start center" class="kn-treePath">
 			<span ng-repeat="path in paramDialogCtrl.tempParameter.treePath">{{path}} <i class="fa fa-chevron-right" ng-if="!$last"></i></span>
-		</div>
+		</div-->
 
 		<component-tree ng-model="paramDialogCtrl.tempParameter.children" subnode-key="children" 
 				text-to-show-key="description" drag-enabled="false"
