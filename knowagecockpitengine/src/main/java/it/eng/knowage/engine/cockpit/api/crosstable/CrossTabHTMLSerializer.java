@@ -828,21 +828,7 @@ public class CrossTabHTMLSerializer {
 		}
 
 		MeasureFormatter measureFormatter = new MeasureFormatter(crossTab);
-		// int measureHeaderSize = measureHeaders.size();
 		int measureHeaderSize = crossTab.getMeasures().size();
-
-		// // ONLY FOR TEST
-//		 System.out.println("measureCord.length: " + crossTab.getMeasuresCordinates().size() + " - rowsCordi.length: " + crossTab.getRowCordinates().size()
-//		 + " - columnCord.length: " + crossTab.getColumnCordinates().size());
-//		 for (int m = 0; m < crossTab.getColumnCordinates().size(); m++) {
-//		 String tmp = crossTab.getColumnCordinates().get(m);
-//		 System.out.println("** ColumnCord[" + m + "]: " + tmp);
-//		 }
-//		 for (int m = 0; m < crossTab.getRowCordinates().size(); m++) {
-//		 String tmp = crossTab.getRowCordinates().get(m);
-//		 System.out.println("** RowCord[" + m + "]: " + tmp);
-//		 }
-		// // FINE TEST
 
 		// get measures of subtotals column
 		List<Measure> allMeasures = crossTab.getCrosstabDefinition().getMeasures();
@@ -900,19 +886,6 @@ public class CrossTabHTMLSerializer {
 					JSONObject threshold = getThreshold(value, measureConfig.optJSONArray("ranges"));
 
 					if (cellType.getValue().equalsIgnoreCase("data") && threshold.has("icon")) {
-						// check indicator configuration (optional)
-						// JSONObject indicatorJ = measureConfig.getJSONObject("scopeFunc");
-//						JSONArray indicatorConditionsJ = measureConfig.getJSONArray("ranges");
-//						if (StringUtils.isNotEmpty(text)) {
-//							for (int c = 0; c < indicatorConditionsJ.length(); c++) {
-//								JSONObject condition = indicatorConditionsJ.getJSONObject(c);
-//								if (iconSB == null && !condition.isNull("value")) {
-//									// gets icon html
-//									showIcon = true;
-//									iconSB = getIconSB(Double.parseDouble(text), condition);
-//								}
-//							}
-//						}
 						iconSB = new SourceBean(ICON_TAG);
 						iconSB.setAttribute(CLASS_ATTRIBUTE, threshold.getString("icon"));
 						iconSB.setAttribute(STYLE_ATTRIBUTE, "color:" + threshold.optString("color", "black"));
@@ -935,8 +908,6 @@ public class CrossTabHTMLSerializer {
 							// background management through threshold (optional)
 							dataStyle += "background-color:" + threshold.optString("background-color", "white") + ";";
 							dataStyle += "color:" + threshold.optString("color", "black") + ";";
-							// bgColorApplied = true;
-
 						}
 						// if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
 						if (!dataStyle.equals(DEFAULT_STYLE)) {
@@ -1036,16 +1007,10 @@ public class CrossTabHTMLSerializer {
 							if (!crossTab.isMeasureOnRow()) {
 								int posRow = i - nPartialSumRow;
 								if (posRow < crossTab.getRowsSpecification().size()) {
-									// rowCord = (crossTab.getRowsSpecification().get(posRow) != null)
-									// ? StringEscapeUtils.escapeJavaScript(crossTab.getRowsSpecification().get(posRow))
-									// : null;
 									if (cellTypeValue.equalsIgnoreCase("data")) {
 										nPartialLevels = 0; // reset partialLevels count for new row
 									}
 									rowCord = getRowCordContent(crossTab, nPartialLevels, Integer.valueOf(posRow));
-									// System.out.println("*** i: [" +i + "] - posrow: [" +posRow+ "] - j: ["+j +"] - levels: ["+ nPartialLevels +"] -
-									// rowCord:
-									// ["+rowCord+ "]");
 								}
 
 							} else {
@@ -1237,7 +1202,6 @@ public class CrossTabHTMLSerializer {
 	}
 
 	private String getConfiguratedElementStyle(Double value, CellType cellType, JSONObject config, CrossTab crossTab) throws JSONException {
-		boolean bgColorApplied = false;
 		String dataStyle = "";
 		String cellTypeValue = (cellType == null) ? "" : cellType.getValue();
 
@@ -1272,7 +1236,7 @@ public class CrossTabHTMLSerializer {
 						keyStyle = "width";
 						break;
 					case "background":
-						if (bgColorApplied || cellTypeValue.equalsIgnoreCase("partialSum") || cellTypeValue.equalsIgnoreCase("totals"))
+						if (cellTypeValue.equalsIgnoreCase("partialSum") || cellTypeValue.equalsIgnoreCase("totals"))
 							continue;
 					case "color":
 						if (cellTypeValue.equalsIgnoreCase("partialSum") || cellTypeValue.equalsIgnoreCase("totals"))
