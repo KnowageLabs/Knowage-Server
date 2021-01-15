@@ -1,7 +1,7 @@
 
 (function() {
 	angular.module('driversExecutionModule')
-		.service('driversExecutionService',['sbiModule_translate', 'execProperties', 'sbiModule_config', '$filter',function(sbiModule_translate, execProperties, sbiModule_config, $filter){
+		.service('driversExecutionService',['sbiModule_translate', 'sbiModule_config', '$filter',function(sbiModule_translate, sbiModule_config, $filter){
 			var executionService = {}
 			executionService.jsonDatum =  {};
 			executionService.jsonDatumValue = null;
@@ -97,7 +97,7 @@
 				}
 			};
 
-			executionService.resetParameter = function(parameter, mainReset, endRecursion) {
+			executionService.resetParameter = function(parameter, mainReset) {
 
 				if(parameter.defaultValue != undefined && parameter.defaultValue != '' && parameter.defaultValue!= '[]'){
 					parameter.parameterValue = angular.copy(parameter.defaultValue);
@@ -123,33 +123,8 @@
 					parameter.parameterValue = parameter.multivalue ? [parameter.defaultValues[0].value] : parameter.defaultValues[0].value;
 					parameter.parameterDescription = parameter.multivalue ?	[parameter.defaultValues[0].description] : parameter.defaultValues[0].description;
 				} else {
-					executionService.emptyParameter(parameter);
+					resetWithoutDefaultValues(parameter)
 				}
-
-				// reset also all correlated parameters
-				if (!endRecursion) {
-					var allCorrelatedParams = getCorrelatedParameters(parameter);
-					for (var i=0; i<allCorrelatedParams.length; i++) {
-						var correlatedParam = allCorrelatedParams[i];
-						if (correlatedParam.defaultValues) correlatedParam.defaultValues = [];
-						executionService.resetParameter(correlatedParam, mainReset, true);
-					}
-				}
-			}
-
-			getCorrelatedParameters = function(fatherParam) {
-				var toReturn = [];
-				var allParameters = execProperties.parametersData.documentParameters;
-				for (var i=0; i<allParameters.length; i++) {
-					var dependencies = Object.keys(allParameters[i].dependsOn);
-					for (var j=0; j<dependencies.length; j++) {
-						if (dependencies[j] == fatherParam.urlName) {
-							toReturn.push(allParameters[i]);
-							break;
-						}
-					}
-				}
-				return toReturn;
 			}
 
 			executionService.resetParameterInnerLovData = function(childrenArray) {
@@ -232,6 +207,35 @@
 					returnObject[driverName] = driverValue;
 				}
 				return returnObject
+			}
+
+			var resetWithoutDefaultValues = function(parameter){
+
+				if(isParameterSelectionValueLov(parameter)) {
+					if(isParameterSelectionTypeTree(parameter)) {
+						if(parameter.multivalue) {
+							parameter.parameterValue = [];
+							executionService.resetParameterInnerLovData(parameter.children);
+						} else {
+							parameter.parameterValue = '';
+							parameter.parameterDescription = {};
+						}
+					}else {
+						if(parameter.multivalue) {
+							parameter.parameterValue = [];
+							parameter.parameterDescription = '';
+						} else {
+							parameter.parameterValue = '';
+							parameter.parameterDescription = {};
+						}
+					}
+				} else {
+					parameter.parameterValue = '';
+					if(isParameterTypeDateRange(parameter) && parameter.datarange){
+						parameter.datarange.opt='';
+					}
+
+				}
 			}
 
 			var setParameterValueForTreeSelectionType = function(parameter){

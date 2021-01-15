@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_util,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user,cockpitModule_templateServices,cockpitModule_analyticalDrivers){
+angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_util,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user,cockpitModule_templateServices,driversExecutionService,cockpitModule_analyticalDrivers){
 	var ds=this;
 
 	this.datasetList=[];
@@ -631,43 +631,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		 return newDriverValue;
 	}
 
-	this.prepareDriversForSending = function(drivers){
-
-		var transformedDrivers = {};
-			if(drivers){
-				for(var i = 0; i < drivers.length; i++){
-						var tempDriver = [];
-						var urlName = drivers[i].urlName;
-						if(drivers[i].parameterValue && Array.isArray(drivers[i].parameterValue)){
-							for(var j = 0; j < drivers[i].parameterValue.length; j++) {
-								if(drivers[i].parameterValue[j].value && drivers[i].parameterValue[j].description) {
-									var val = drivers[i].parameterValue[j];
-								} else {
-									var val = {value: drivers[i].parameterValue[j]};
-									if(drivers[i].parameterDescription && Array.isArray(drivers[i].parameterDescription)) {
-										val.description = drivers[i].parameterDescription[j];
-									} else {
-										val.description = drivers[i].parameterDescription[drivers[i].parameterValue[j]];
-									}
-								}
-								tempDriver.push(val);
-							}
-						}else{
-							 var val = {value: drivers[i].parameterValue};
-							 if(drivers[i].parameterDescription) {
-								 val.description = drivers[i].parameterDescription;
-							 } else {
-								 val.description = drivers[i].parameterValue;
-							 }
-							 tempDriver.push(val);
-						}
-						transformedDrivers[urlName] = tempDriver;
-
-				}
-			}
-		return transformedDrivers;
-	}
-
 	//TODO missing maxRows
 	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel, loadDomainValues, nature){
 
@@ -850,7 +813,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		bodyString = bodyString + "aggregations:" + JSON.stringify(aggregations) + ",parameters:" + parametersString;
 
 		if(this.newDataSet && this.newDataSet.drivers) {
-			bodyJSON.drivers =  this.prepareDriversForSending(this.newDataSet.drivers);
+			bodyJSON.drivers =  driversExecutionService.prepareDriversForSending(this.newDataSet.drivers);
 			this.driversAreSet(this.newDataSet.drivers);
 		} else if(dataset && dataset.drivers && dataset.drivers.length > 0 && cockpitModule_analyticalDrivers) {
 			for(var i = 0; i < dataset.drivers.length; i++) {
@@ -867,7 +830,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					dataset.drivers[i].parameterDescription = driverDescription;
 				}
 			}
-			bodyJSON.drivers = this.prepareDriversForSending(dataset.drivers);
+			bodyJSON.drivers = driversExecutionService.prepareDriversForSending(dataset.drivers);
 			this.driversAreSet(dataset.drivers);
 		}
 
@@ -1016,8 +979,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		  return this.parameterHasValue;
 	}
 	this.driverHasValue = true;
-
-	// a method called driversAreSet should only return a boolean, why is it SILENTLY setting a global status???
 	this.driversAreSet = function(drivers) {
 		if(drivers) {
 			for(var i = 0; i < drivers.length; i++) {
