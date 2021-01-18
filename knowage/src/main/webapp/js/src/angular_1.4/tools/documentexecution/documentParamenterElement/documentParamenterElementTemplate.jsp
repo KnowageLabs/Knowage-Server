@@ -57,13 +57,13 @@
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 			
- 		</div> 
+ 		</div>
 		<div layout="row" layout-align="start center">
 			<md-button class="md-icon-button" id="{{::parameter.urlName}}" ng-click="getTreeParameterValue()">
 				<md-icon md-font-icon="fa fa-external-link"></md-icon>
 			</md-button>
-			<div flex>				
-				<md-chips ng-model="parameter.parameterValue" readonly="true">
+			<div flex>
+				<md-chips ng-model="parameter.parameterDescription" readonly="true">
 					 <md-chip-template>
 				          <strong>{{$chip}}</strong>
 			        </md-chip-template>

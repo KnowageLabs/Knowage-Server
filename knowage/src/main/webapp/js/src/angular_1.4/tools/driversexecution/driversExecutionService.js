@@ -89,7 +89,7 @@
 					var childItem = childrenArray[i];
 					if((childItem.checked && childItem.checked == true) && (!childItem.$parent || !childItem.$parent.checked)) {
 						parameterValue.push(childItem.value);
-						parameterDescription[childItem.value]=childItem.description;
+						parameterDescription.push(childItem.description);
 					}
 					if(!childItem.leaf) {
 						executionService.recursiveChildrenChecks(parameterValue,parameterDescription,childItem.children);
@@ -244,24 +244,13 @@
 					var toReturn = '';
 
 					parameter.parameterValue =  [];
-					parameter.parameterDescription =  {};
+					parameter.parameterDescription =  [];
 					executionService.recursiveChildrenChecks(parameter.parameterValue,parameter.parameterDescription, parameter.children);
-					for(var i = 0; i < parameter.parameterValue.length; i++) {
-						var parameterValueItem = parameter.parameterValue[i];
-						if(i > 0) {
-							toReturn += ",<br/>";
-						}
-						toReturn += parameterValueItem;
-					}
-					return toReturn;
+					return 	parameter.parameterDescription;
 				} else {
-					parameter.parameterValue = (parameter.parameterValue)?
-							[parameter.parameterValue] : []
-							parameter.parameterDescription = (parameter.parameterDescription)?
-									parameter.parameterDescription : {}
-
-							return (parameter.parameterValue && parameter.parameterValue.value)?
-									parameter.parameterValue.value : '';
+					parameter.parameterDescription = [parameter.parameterDescription[parameter.parameterValue]];
+					parameter.parameterValue = (parameter.parameterValue) ?	[parameter.parameterValue] : [];
+					return (parameter.parameterValue && parameter.parameterValue.value) ? parameter.parameterValue.value : '';
 				}
 			}
 
