@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -500,40 +498,31 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 		Session session = null;
 
 		try {
-			Set<Domain> dataSetCategoriesByUser = UserUtilities.getDataSetCategoriesByUser(userProfile);
-			List<Integer> categoryIds = dataSetCategoriesByUser.stream().map(Domain::getValueId).collect(toList());
+			StringBuilder statement = new StringBuilder();
+			Set<Domain> categoryList = null;
+			List<Integer> categoryIds = null;
 
+			statement.append("from SbiDataSet ds where ds.active = :active and (ds.owner = :owner or (");
 			session = getSession();
-			Criteria cr = session.createCriteria(SbiDataSet.class);
-
-			Criteria scope = session.createCriteria(SbiDomains.class);
-			scope.add(Restrictions.and(Restrictions.in("valueCd", new String[] { "USER", "ENTERPRISE"}), Restrictions.eq("domainCd", "DS_SCOPE")));
-			List<SbiDomains> scopesList = scope.list();
-
-			fromOffset(cr, offset);
-			withFetchSize(cr, fetchSize);
-
-			Criterion onlyActive = onlyActiveRestriction();
-			Criterion owned = ownedByRestriction(userProfile);
-
-			Criterion categories = null;
-			if (dataSetCategoriesByUser.isEmpty()) {
-				categories = Restrictions.isNull("category");
+			categoryList = UserUtilities.getDataSetCategoriesByUser(userProfile);
+			if (categoryList.isEmpty()) {
+				statement.append("ds.category.valueId is null ");
 			} else {
-				Criterion inCategories = Restrictions.in("category.valueId", categoryIds);
-				Criterion b = Restrictions.isNull("category");
-
-				categories = Restrictions.disjunction().add(b).add(inCategories);
+				categoryIds = extractCategoryIds(categoryList);
+				statement.append("(ds.category.valueId is null or ds.category.valueId in (:categories)) ");
 			}
 
-			Criterion scopes = Restrictions.in("scope", scopesList);
+			statement.append(
+					"and ds.scope.valueId in (select dom.valueId from SbiDomains dom where dom.valueCd in ('USER', 'ENTERPRISE') and dom.domainCd = 'DS_SCOPE')))");
 
-			Criterion rhs2 = Restrictions.conjunction().add(categories).add(scopes);
-			Criterion rhs = Restrictions.disjunction().add(owned).add(rhs2);
+			Query query = session.createQuery(statement.toString());
+			query.setBoolean("active", true);
+			query.setString("owner", userProfile.getUserId().toString());
 
-			cr.add(Restrictions.conjunction().add(onlyActive).add(rhs));
+			if (categoryIds != null && !categoryIds.isEmpty())
+				query.setParameterList("categories", categoryIds);
 
-			results = cr.list();
+			results = query.list();
 
 		} catch (Exception e) {
 			throw new SpagoBIDAOException("An unexpected error occured while loading all datasets for final user", e);
@@ -546,6 +535,17 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 		return results;
 	}
+
+	private List<Integer> extractCategoryIds(Set<Domain> categoryList) {
+		List<Integer> toReturn = new ArrayList<>();
+		Iterator<Domain> it = categoryList.iterator();
+		while (it.hasNext()) {
+			Domain category = it.next();
+			toReturn.add(category.getValueId());
+		}
+		return toReturn;
+	}
+
 
 	private void withImplementation(Criteria cr, String implementation) {
 		if (StringUtils.isNotEmpty(implementation)) {
