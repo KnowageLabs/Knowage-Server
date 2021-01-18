@@ -223,25 +223,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 /*
+* Check if filter is unique
+*/
+$scope.checkIfFilterIsNotUnique=function(colName, dsId) {
+	
+	for (var k in $scope.ngModelShared.filters){
+		if ($scope.ngModelShared.filters[k].dataset.dsId === dsId) {
+			if ($scope.ngModelShared.filters[k].colName === colName) {				
+				return true;
+			}			
+		}			
+	}
+	return false;	
+}
+
+/*
  * Check if new filter is valid before inserting it into filter list
  */
 		$scope.checkNewFilterValidity=function(){
+			var message = '';
 			var valid = true;
 			if($scope.newFilter.dataset == undefined
 					|| $scope.newFilter.colName == undefined
 					|| $scope.newFilter.filterOperator == undefined){
 				valid = false;
+				message = $scope.translate.load("kn.cockpit.filters.warning.missingfields");
 			}
 			if( $scope.twoOperandsOperators.indexOf($scope.newFilter.filterOperator)>-1
 					&& ($scope.newFilter.filterVal1 == undefined || $scope.newFilter.filterVal2 == undefined
 							|| $scope.newFilter.filterVal1 == '' || $scope.newFilter.filterVal2 == ''
 					)){
 				valid = false;
+				message = $scope.translate.load("kn.cockpit.filters.warning.missingfields");
 			}
 			else if( $scope.oneOperandOperators.indexOf($scope.newFilter.filterOperator)>-1
 					&& ($scope.newFilter.filterVal1 == undefined || $scope.newFilter.filterVal1 == '')){
 				valid = false;
+				message = $scope.translate.load("kn.cockpit.filters.warning.missingfields");
 			}
+			if ($scope.checkIfFilterIsNotUnique($scope.newFilter.colName,$scope.newFilter.dataset.dsId)){
+				valid = false;
+				message = $scope.translate.load("kn.cockpit.filters.warning.duplicatedfilter");
+			}
+			valid || sbiModule_messaging.showWarningMessage(message,$scope.translate.load("kn.cockpit.filters.warning.title"),);
 			return valid;
 		}
 
