@@ -416,6 +416,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						scope.selectables.push({name: itemsList[j].column_1, selected: (activeSelections && activeSelections.indexOf(itemsList[j].column_1) != -1) ? true : false});
 					}
 				}
+				if(scope.settings.sortingOrder && scope.settings.sortingColumn === targetModel.selectedColumn.name) {
+					var direction = false;
+					if(scope.settings.sortingOrder) direction = scope.settings.sortingOrder == 'DESC' ? true : false;
+					scope.selectables = $filter('orderBy')(scope.selectables,"name", direction);
+				}
 				scope.selectables = $filter('orderBy')(scope.selectables, function(item){
 					if(item.selected) return 1;
 					if(!scope.isDisabled(item)) return 2;
