@@ -86,7 +86,7 @@ public class ExcelExporter {
 	private String requestURL = "";
 	private List<Integer> hiddenColumns;
 
-	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "python", "r" };
+	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "python", "r", "selector" };
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
 	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
 	private static final int SHEET_NAME_MAX_LEN = 31;
