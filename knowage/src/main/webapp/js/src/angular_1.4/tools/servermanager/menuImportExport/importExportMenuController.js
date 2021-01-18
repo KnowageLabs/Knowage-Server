@@ -102,65 +102,106 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 					sbiModule_restServices.errorHandler(data.ERROR,"sbi.generic.toastr.title.error");
 				}
 				else if(data.STATUS=="OK"){
-					//check role missing
-					//clean the vector
-					$scope.menu=[];
-					$scope.currentMenu=[];
-					$scope.currentRoles=[];
-					$scope.exportedRoles=[];
-					$scope.tree=[];
-					$scope.exportedObjects = [];
-					$scope.treeCopy=[];
-					$scope.treeInTheDB=[];
-					$scope.fileTree = [];
-					$scope.fileTreeExpandedNodes = [];
-					$scope.fileTreeDisabledNodes = [];
-					$scope.treeInTheDBExpandedNodes = [];
-					$scope.treeInTheDBDisabledNodes = [];
-					//get response
-					$scope.currentRoles=data.currentRoles;
-					$scope.exportedRoles=data.exportedRoles;
-					$scope.IEDConf.roles.currentRoles=data.currentRoles;
-					$scope.IEDConf.roles.exportedRoles=data.exportedRoles;
-					$scope.IEDConf.roles.associatedRoles=data.associatedRoles;
-					$scope.currentObjects = data.currentObjects;
-					$scope.exportedObjects = data.exportedObjects;
-					$scope.menu = data.menu;
-					//if($scope.checkRole() && $scope.checkObjects()){
-					if($scope.checkObjects()){
-						//if role is not present stop the import.
-
-						// $scope.currentMenu all menu in the target
-						$scope.currentMenu = data.currentMenu;
-
-						// $scope.menu all menu in file
-						$scope.menuArrayCopy = [];
-						angular.copy($scope.menu, $scope.menuArrayCopy);
-
-						$scope.currentMenuCopy = [];
-						angular.copy($scope.currentMenu, $scope.currentMenuCopy);
-
-						$scope.fileTreeExpandedNodes = $scope.menu;
-						$scope.fileTreeDisabledNodes = $scope.menu;
-						$scope.fileTree = $scope.treeify($scope.menu, 'menuId', 'parentId');
-						//$scope.parseToTree($scope.menu,$scope.fileTree);
-//						$scope.fileTree = $filter('orderBy')($scope.fileTree, 'prog');
+					
+					var warnings = data.warnings;
+					var proceed = true;
+					if (warnings && warnings.length > 0) {
+						var text = "";
+						var tmpType = "";
+						warnings.sort(function(a, b){
+							return a.TYPE.localeCompare(b.TYPE);
+						});
 						
-//						$scope.compareTrees();
+						var count = 0;
+						for (var i in warnings) {
+							if (tmpType.localeCompare(warnings[i].TYPE) != 0) {
+								if (count > 0) text += "</ul>";
+								text += "<h4 class='noMargin' style='line-height:36px;'><b>" + warnings[i].TYPE + "</b></h4>";
+								tmpType = warnings[i].TYPE;
+								count = 0;
+							}
+							if (count == 0) text += "<ul style='list-style-type:none;'>";
+							else if (count > 0) text += "";
 
+							text += "<li>" + warnings[i].MESSAGE + "</li>";
+							count++;
+							
+							if (warnings[i].PROCEED == false) {
+								proceed =false;
+							}
+						}
+						
+						var confirm = $mdDialog.alert()
+							.title($scope.translate.load("sbi.importusers.warnings"))
+							.htmlContent(text)
+							.ariaLabel('Alert Dialog')
+							.ok('ok');
+						
+						$mdDialog.show(confirm).then(function() {
+							$scope.stopImportWithDownloadAss($scope.translate.load("sbi.importusers.importuserokdownloadass"),response.data.folderName, response.data.associationsName);
+						});
+					} 
+					
+					if (proceed) {
+						//check role missing
+						//clean the vector
+						$scope.menu=[];
+						$scope.currentMenu=[];
+						$scope.currentRoles=[];
+						$scope.exportedRoles=[];
+						$scope.tree=[];
+						$scope.exportedObjects = [];
+						$scope.treeCopy=[];
 						$scope.treeInTheDB=[];
-						$scope.treeInTheDBExpandedNodes = $scope.currentMenu;
-						$scope.treeInTheDBSelectedNodes = $scope.currentMenu;
-						$scope.treeInTheDB = $scope.treeify($scope.currentMenu, 'menuId', 'parentId');
-//						$scope.treeInTheDB = $filter('orderBy')($scope.treeInTheDB, 'prog');
-						$scope.treeCopy=$scope.treeInTheDB;
-
+						$scope.fileTree = [];
+						$scope.fileTreeExpandedNodes = [];
+						$scope.fileTreeDisabledNodes = [];
+						$scope.treeInTheDBExpandedNodes = [];
+						$scope.treeInTheDBDisabledNodes = [];
+						//get response
+						$scope.currentRoles=data.currentRoles;
+						$scope.exportedRoles=data.exportedRoles;
+						$scope.IEDConf.roles.currentRoles=data.currentRoles;
+						$scope.IEDConf.roles.exportedRoles=data.exportedRoles;
+						$scope.IEDConf.roles.associatedRoles=data.associatedRoles;
+						$scope.currentObjects = data.currentObjects;
+						$scope.exportedObjects = data.exportedObjects;
+						$scope.menu = data.menu;
+						//if($scope.checkRole() && $scope.checkObjects()){
+						if($scope.checkObjects()){
+							//if role is not present stop the import.
+	
+							// $scope.currentMenu all menu in the target
+							$scope.currentMenu = data.currentMenu;
+	
+							// $scope.menu all menu in file
+							$scope.menuArrayCopy = [];
+							angular.copy($scope.menu, $scope.menuArrayCopy);
+	
+							$scope.currentMenuCopy = [];
+							angular.copy($scope.currentMenu, $scope.currentMenuCopy);
+	
+							$scope.fileTreeExpandedNodes = $scope.menu;
+							$scope.fileTreeDisabledNodes = $scope.menu;
+							$scope.fileTree = $scope.treeify($scope.menu, 'menuId', 'parentId');
+							//$scope.parseToTree($scope.menu,$scope.fileTree);
+	//						$scope.fileTree = $filter('orderBy')($scope.fileTree, 'prog');
+							
+	//						$scope.compareTrees();
+	
+							$scope.treeInTheDB=[];
+							$scope.treeInTheDBExpandedNodes = $scope.currentMenu;
+							$scope.treeInTheDBSelectedNodes = $scope.currentMenu;
+							$scope.treeInTheDB = $scope.treeify($scope.currentMenu, 'menuId', 'parentId');
+	//						$scope.treeInTheDB = $filter('orderBy')($scope.treeInTheDB, 'prog');
+							$scope.treeCopy=$scope.treeInTheDB;
+	
+						}
+	
+						$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedMenu','component_impexp_messages')});
+	
 					}
-
-					$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedMenu','component_impexp_messages')});
-
 				}
-
 			})
 			.error(function(data, status, headers, config) {
 				sbiModule_restServices.errorHandler(data.ERROR,"sbi.generic.toastr.title.error");
