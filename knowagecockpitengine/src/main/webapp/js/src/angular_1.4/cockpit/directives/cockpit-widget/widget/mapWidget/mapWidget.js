@@ -742,7 +742,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					return false;
 				}
 			}
-			$scope.map.on('singleclick', function(evt) {
+
+			function locateClickedLayer(evt) {
 				var featureFounded = false;
 				$scope.selectedLayer = undefined;
 				$scope.selectedFeature = undefined;
@@ -765,6 +766,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							featureFounded = true;
 						}
 				});
+			}
+
+			$scope.map.on('singleclick', function(evt) {
+
+				locateClickedLayer(evt);
 
 				//modal selection management
 				if ($scope.clickOnFeature && $scope.selectedLayer.modalSelectionColumn){
@@ -805,9 +811,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			 });
 
 			$scope.map.on('dblclick', function(evt) {
-				var currLayers = $scope.ngModel.content.layers;
-				for (l in currLayers){
-					var layerDef =  currLayers[l];
+
+				locateClickedLayer(evt);
+
+				if ($scope.selectedLayer){
+					var layerDef = $scope.selectedLayer.get("originalLayer");
 					var dsId = layerDef.dsId;
 
 					var isCluster = $scope.isCluster(layerDef);
