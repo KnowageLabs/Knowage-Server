@@ -274,6 +274,8 @@ public class JDBCTypeMapper {
 			return java.lang.String.class;
 		else if ("GEOMETRY".equals(modelType))
 			return com.vividsolutions.jts.geom.Geometry.class;
+		else if ("BOOLEAN".equals(modelType))
+			return java.lang.Boolean.class;
 		else
 			return null;
 	}

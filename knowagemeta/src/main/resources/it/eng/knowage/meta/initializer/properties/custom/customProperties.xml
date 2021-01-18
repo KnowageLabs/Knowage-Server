@@ -230,6 +230,7 @@
         <value>BIGINT</value>
         <value>FLOAT</value>
         <value>SMALLINT</value>
+        <value>BOOLEAN</value>
       </admissibleValuesOf>
       
 <!--       <admissibleValuesOf typeId="style.alignment"> -->
