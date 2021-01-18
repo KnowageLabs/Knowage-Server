@@ -371,9 +371,12 @@ public class CrossTabHTMLSerializer {
 				if (isSubtotal && crossTab.isExpandCollapseRows()) { // create subtotal hidden row (used when collapsing aggregations)
 					SourceBean subtotalHiddenColumn = new SourceBean(COLUMN_TAG);
 					subtotalHiddenColumn.setAttribute(CLASS_ATTRIBUTE, HIDDEN_CLASS);
-					Row row = rowsDef.get(i);
-					JSONObject rowConfig = row.getConfig();
-					style = customStylesMap.get(rowConfig.get("id"));
+					style = customStylesMap.get(crossTab.getColumnAliasFromName(aNode.getParentNode().getColumnName()));
+					if (style == null) {
+						Row row = rowsDef.get(i);
+						JSONObject rowConfig = row.getConfig();
+						style = customStylesMap.get(rowConfig.get("id"));
+					}
 					subtotalHiddenColumn.setAttribute(STYLE_ATTRIBUTE, style);
 					text = aNode.getParentNode().getValue();
 					subtotalHiddenColumn.setAttribute(TITLE_ATTRIBUTE, escapeAll(text));
