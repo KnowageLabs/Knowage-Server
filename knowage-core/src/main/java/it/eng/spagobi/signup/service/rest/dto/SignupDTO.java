@@ -23,16 +23,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import it.eng.spagobi.services.validation.EmailValidation;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.NoPunctation;
 import it.eng.spagobi.services.validation.Xss;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SignupDTO {
 
-	@ExtendedAlphanumeric
+	@NoPunctation
 	@NotNull
 	@Xss
 	private String name;
-	@ExtendedAlphanumeric
+	@NoPunctation
 	@NotNull
 	@Xss
 	private String surname;

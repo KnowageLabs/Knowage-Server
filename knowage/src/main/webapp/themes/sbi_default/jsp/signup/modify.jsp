@@ -29,7 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
 <%@page
 	import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
-
+<%@page import="java.util.HashMap"%>	
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%
@@ -157,13 +158,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     angular.module('signUp', ['ngMaterial','sbiModule'])
     .controller('modifyCtrl', function($scope,$http,$window,$mdToast,$timeout,$mdDialog,sbiModule_messaging) {
 	  $scope.newUser = {};
-	  $scope.newUser.name = '<%=name%>';
-	  $scope.newUser.surname = '<%=surname%>';
-	  $scope.newUser.email = '<%=email%>';
-	  $scope.newUser.username = '<%=username%>';
-	  $scope.newUser.birthDate= '<%=birth_date%>';
-	  //$scope.newUser.language = '<%=language%>';	 
-	  $scope.newUser.address = '<%=location%>';	  
+	  $scope.newUser.name = '<%=StringEscapeUtils.escapeJavaScript(name)%>';
+	  $scope.newUser.surname = '<%=StringEscapeUtils.escapeJavaScript(surname)%>';
+	  $scope.newUser.email = '<%=StringEscapeUtils.escapeJavaScript(email)%>';
+	  $scope.newUser.username = '<%=StringEscapeUtils.escapeJavaScript(username)%>';
+	  $scope.newUser.birthDate= '<%=StringEscapeUtils.escapeJavaScript(birth_date)%>';
+	  //$scope.newUser.language = '<%=StringEscapeUtils.escapeJavaScript(language)%>';	 
+	  $scope.newUser.address = '<%=StringEscapeUtils.escapeJavaScript(location)%>';	  
 	  //$scope.newUser.biography = '<%=short_bio%>';	  
 	  $scope.activeSignup= <%=activeSignup%>;
 	  $scope.emailFormat = /^[a-zA-Z0-9.!#$%&*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/;
