@@ -13,8 +13,10 @@ import it.eng.spagobi.analiticalmodel.document.handlers.AbstractBIResourceRuntim
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -61,15 +63,20 @@ public class DefaultFormulasDum {
 				logger.debug("LOV info retrieved");
 				// get from cache, if available
 				LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-				String lovResultStr = executionCacheManager.getLovResultDum(profile, lovDetails, dum.getDependencies(analyticalDocumentParameter, role),
-						object, true, locale);
+				String lovResultStr = executionCacheManager.getLovResultDum(profile, lovDetails, dum.getDependencies(analyticalDocumentParameter, role), object,
+						true, locale);
 				logger.debug("LOV executed");
 				// get all the rows of the result
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResultStr);
 				List lovResult = lovResultHandler.getRows();
 				logger.debug("LOV result parsed");
 				if (lovResult == null || lovResult.isEmpty()) {
-					throw new SpagoBIRuntimeException("LOV result is empty!!!!");
+					Parameter par = analyticalDocumentParameter.getParameter();
+					ModalitiesValue lov = par.getModalityValue();
+					String message = "LOV result is empty for driver with label [" + analyticalDocumentParameter.getLabel() + "] and lov with label ["
+							+ lov.getLabel() + "]";
+					logger.error(message);
+					throw new SpagoBIRuntimeException(message);
 				}
 				// getting first value
 				SourceBean row = (SourceBean) lovResult.get(0);
@@ -104,15 +111,20 @@ public class DefaultFormulasDum {
 				logger.debug("LOV info retrieved");
 				// get from cache, if available
 				LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-				String lovResultStr = executionCacheManager.getLovResultDum(profile, lovDetails, dum.getDependencies(analyticalDocumentParameter, role),
-						object, true, locale);
+				String lovResultStr = executionCacheManager.getLovResultDum(profile, lovDetails, dum.getDependencies(analyticalDocumentParameter, role), object,
+						true, locale);
 				logger.debug("LOV executed");
 				// get all the rows of the result
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResultStr);
 				List lovResult = lovResultHandler.getRows();
 				logger.debug("LOV result parsed");
 				if (lovResult == null || lovResult.isEmpty()) {
-					throw new SpagoBIRuntimeException("LOV result is empty!!!!");
+					Parameter par = analyticalDocumentParameter.getParameter();
+					ModalitiesValue lov = par.getModalityValue();
+					String message = "LOV result is empty for driver with label [" + analyticalDocumentParameter.getLabel() + "] and lov with label ["
+							+ lov.getLabel() + "]";
+					logger.error(message);
+					throw new SpagoBIRuntimeException(message);
 				}
 				// getting last value
 				SourceBean row = (SourceBean) lovResult.get(lovResult.size() - 1);

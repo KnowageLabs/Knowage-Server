@@ -76,6 +76,7 @@ import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.export.ExportConfig;
+import it.eng.spagobi.engines.whatif.export.KnowageExcelExporter;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
@@ -134,8 +135,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	/**
 	 * Executes the mdx query. If the mdx is null it executes the query of the model
 	 *
-	 * @param mdx
-	 *            the query to execute
+	 * @param mdx the query to execute
 	 * @return the htm table representing the cellset
 	 * @throws OlapException
 	 */
@@ -413,7 +413,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-		ExcelExporter exporter = new ExcelExporter(out);
+		ExcelExporter exporter = new KnowageExcelExporter(out, getLocale());
 		ExportConfig exportConfig = WhatIfEngineConfig.getInstance().getExportProperties();
 		if (exportConfig.getFontFamily() != null)
 			exporter.setFontFamily(exportConfig.getFontFamily());
@@ -749,34 +749,5 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	private void applyShowParentMembersConfiguration(ModelConfig modelConfig, TableRenderer renderer) {
 		Boolean showParentMembers = modelConfig.getShowParentMembers();
 		renderer.setShowParentMembers(showParentMembers);
-	}
-
-	private void applyConfiguration(ModelConfig modelConfig, SpagoBIPivotModel model) {
-		applySupperssEmptyConfiguration(modelConfig, model);
-		applySortConfiguration(modelConfig, model);
-
-	}
-
-	private void applySortConfiguration(ModelConfig modelConfig, SpagoBIPivotModel model) {
-		Boolean sortingEnabled = modelConfig.getSortingEnabled();
-		String sortingPositionUniqeName = modelConfig.getSortingPositionUniqueName();
-		int axisToSort = modelConfig.getAxisToSort();
-		int axis = modelConfig.getAxis();
-		String sortMode = modelConfig.getSortMode();
-		if (shouldSort(sortingEnabled, sortingPositionUniqeName)) {
-
-			model.sortModel(axisToSort, axis, sortingPositionUniqeName, sortMode);
-
-		}
-
-	}
-
-	private void applySupperssEmptyConfiguration(ModelConfig modelConfig, SpagoBIPivotModel model) {
-		Boolean suppressEmpty = modelConfig.getSuppressEmpty();
-		model.setNonEmpty(suppressEmpty);
-	}
-
-	private boolean shouldSort(boolean sortingEnabled, String sortingPositionUniqeName) {
-		return sortingEnabled && sortingPositionUniqeName != null;
 	}
 }

@@ -631,7 +631,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 		if (dialect != null) {
 
-			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)) {
+			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)
+					|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL_INNODB)) {
 				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
 					toReturn = " STR_TO_DATE(" + toReturn + ",'%d/%m/%Y %H:%i:%s') ";
 				} else {
@@ -725,7 +726,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 		if (dialect != null) {
 
-			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)) {
+			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)
+					|| dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL_INNODB)) {
 				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
 					toReturn = " STR_TO_DATE(" + toReturn + ",'%d/%m/%Y %H:%i:%s') ";
 				} else {

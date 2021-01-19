@@ -1,3 +1,3 @@
-<div ng-if="ngModel.pythonOutputType != 'bokeh'" bind-html-compile="pythonOutput" class="trustedHtml" ng-click="crossNavigation()"></div>
-<div ng-if="ngModel.pythonOutputType == 'bokeh'" id="bokeh"></div>
+<div ng-if="ngModel.pythonOutputType == 'img'" bind-html-compile="pythonOutput" class="trustedHtml" ng-click="crossNavigation()"></div>
+<div ng-if="ngModel.pythonOutputType != 'img'" id="bokeh"></div>
 <div class="canvas-for-iframe" ng-class="{'show-for-canvas':cockpitModule_properties.LOADING_SCREENSHOT}" id="canvas_{{ngModel.id}}"></div>

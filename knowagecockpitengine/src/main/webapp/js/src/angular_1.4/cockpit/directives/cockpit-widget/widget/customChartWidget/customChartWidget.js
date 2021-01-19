@@ -104,6 +104,25 @@ function cockpitCustomChartControllerFunction(
 				$scope.jsError = e;
 			}
 		}
+		
+		function jsLoadSemaphore(){
+			if(loaded == toLoad){
+				setJs();
+			}else {
+				$timeout(function(){
+					jsLoadSemaphore();
+				},1000)
+			}
+		}
+	
+		if(datasetRecords || nature == 'fullExpand'){
+			if(datasetRecords) datastore.setData(datasetRecords);
+			if($scope.ngModel.js) {
+				if(toLoad){
+					jsLoadSemaphore();
+				}else setJs();
+			}
+		}
 	}
 
 	$scope.reinit = function(){
