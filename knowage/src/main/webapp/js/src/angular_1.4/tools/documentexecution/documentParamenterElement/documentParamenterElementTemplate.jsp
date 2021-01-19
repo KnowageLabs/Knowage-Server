@@ -28,7 +28,7 @@
 	<div ng-if="parameter.selectionType=='LOOKUP'  && parameter.showOnPanel=='true'" layout="column" class="lookupParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<label ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory}" flex = 80 ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic','font-weight': isEmpty(parameter.dependsOn) ? '' : 'bold'}">{{i18n.getI18n(parameter.label)}}</label> 
-			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter, false)">
+			<md-icon md-font-icon="fa fa-eraser" ng-click="resetParameter(parameter, false)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 		
@@ -53,7 +53,7 @@
 	<div ng-if="parameter.selectionType=='TREE'  && parameter.showOnPanel=='true'" layout="column" class="lookupParameter" layout-margin>
  		<div layout="row" layout-align="start center" class="labelContainer"> 
  		<label ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory}" flex ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic','font-weight': isEmpty(parameter.dependsOn) ? '' : 'bold'}">{{i18n.getI18n(parameter.label)}}</label> 
-			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter, false)" class="iconWidth-16">
+			<md-icon md-font-icon="fa fa-eraser" ng-click="resetParameter(parameter, false)" class="iconWidth-16">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 			
@@ -76,7 +76,7 @@
 	<div ng-if="parameter.type=='DATE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" class="datePickerParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<label ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory}" flex ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic','font-weight': isEmpty(parameter.dependsOn) ? '' : 'bold'}">{{i18n.getI18n(parameter.label)}}</label> 
-			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter, false)">
+			<md-icon md-font-icon="fa fa-eraser" ng-click="resetParameter(parameter, false)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 		
@@ -88,7 +88,7 @@
 	<section ng-if="parameter.type=='DATE_RANGE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" class="datePickerParameter" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<label ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory}" flex ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic','font-weight': isEmpty(parameter.dependsOn) ? '' : 'bold'}">{{i18n.getI18n(parameter.label)}}</label> 
-			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter, false)">
+			<md-icon md-font-icon="fa fa-eraser" ng-click="resetParameter(parameter, false)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 		
@@ -107,7 +107,7 @@
 	<div class="textInput" ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" layout-margin>
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<label ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory}" flex ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic','font-weight': isEmpty(parameter.dependsOn) ? '' : 'bold'}">{{i18n.getI18n(parameter.label)}}</label> 
-			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter, false)">
+			<md-icon md-font-icon="fa fa-eraser" ng-click="resetParameter(parameter, false)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 		
@@ -121,7 +121,7 @@
 	<div ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'  && parameter.showOnPanel=='true'" layout="column" layout-margin class="textInput">
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<label ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory}" flex ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic','font-weight': isEmpty(parameter.dependsOn) ? '' : 'bold'}">{{i18n.getI18n(parameter.label)}} </label> 
-			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter, false)">
+			<md-icon md-font-icon="fa fa-eraser" ng-click="resetParameter(parameter, false)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 		
@@ -135,7 +135,7 @@
 	<div ng-if="parameter.selectionType=='LIST' && !parameter.multivalue  && parameter.showOnPanel=='true'" layout="column" layout-margin class="radioParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<label ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory}" flex ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic','font-weight': isEmpty(parameter.dependsOn) ? '' : 'bold'}">{{i18n.getI18n(parameter.label)}}</label> 
-			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter, false)">
+			<md-icon md-font-icon="fa fa-eraser" ng-click="resetParameter(parameter, false)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 		
@@ -151,7 +151,7 @@
 	<div ng-if="parameter.selectionType=='LIST' && parameter.multivalue  && parameter.showOnPanel=='true'" layout="column" layout-margin class="checkBoxParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
 			<label ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory}" flex ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic','font-weight': isEmpty(parameter.dependsOn) ? '' : 'bold'}">{{i18n.getI18n(parameter.label)}}</label>
-			<md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter, false)">
+			<md-icon md-font-icon="fa fa-eraser" ng-click="resetParameter(parameter, false)">
 				<md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
 			</md-icon>
 		 
@@ -169,7 +169,7 @@
 	<div ng-if="parameter.selectionType=='COMBOBOX'  && parameter.showOnPanel=='true'" layout="column" layout-margin class="selectParameter">
 		<div layout="row" layout-align="start center" class="labelContainer">
                                        <label ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory}" flex ng-style="{'font-style': isEmpty(parameter.dependsOn) ? '' : 'italic','font-weight': isEmpty(parameter.dependsOn) ? '' : 'bold'}">{{i18n.getI18n(parameter.label)}}</label>
-                       <md-icon md-font-icon="fa fa-eraser" ng-click="driversExecutionService.resetParameter(parameter)">
+                       <md-icon md-font-icon="fa fa-eraser" ng-click="resetParameter(parameter)">
                                <md-tooltip md-delay="1000">{{sbiModule_translate.load("sbi.execution.parametersselection.parameter.clear")}}</md-tooltip>
                        </md-icon>
         </div>

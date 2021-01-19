@@ -767,9 +767,34 @@
 			}
 		}
 
+		$scope.resetParameter = function(parameter, mainReset, endRecursion) {
+			// reset selected parameter
+			$scope.driversExecutionService.resetParameter(parameter, mainReset);
+			// reset also all correlated parameters
+			if (!endRecursion) {
+				var allCorrelatedParams = getCorrelatedParameters(parameter);
+				for (var i=0; i<allCorrelatedParams.length; i++) {
+					var correlatedParam = allCorrelatedParams[i];
+					if (correlatedParam.defaultValues) correlatedParam.defaultValues = [];
+					$scope.resetParameter(correlatedParam, mainReset, true);
+				}
+			}
+		}
 
-
-
+		var getCorrelatedParameters = function(fatherParam) {
+			var toReturn = [];
+			var allParameters = $scope.execProperties.parametersData.documentParameters;
+			for (var i=0; i<allParameters.length; i++) {
+				var dependencies = Object.keys(allParameters[i].dependsOn);
+				for (var j=0; j<dependencies.length; j++) {
+					if (dependencies[j] == fatherParam.urlName) {
+						toReturn.push(allParameters[i]);
+						break;
+					}
+				}
+			}
+			return toReturn;
+		}
 
 
 		var testCondition = function(fieldA, condition, fieldB){

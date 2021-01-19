@@ -123,7 +123,7 @@
 					parameter.parameterValue = parameter.multivalue ? [parameter.defaultValues[0].value] : parameter.defaultValues[0].value;
 					parameter.parameterDescription = parameter.multivalue ?	[parameter.defaultValues[0].description] : parameter.defaultValues[0].description;
 				} else {
-					resetWithoutDefaultValues(parameter)
+					executionService.emptyParameter(parameter);
 				}
 			}
 
@@ -207,35 +207,6 @@
 					returnObject[driverName] = driverValue;
 				}
 				return returnObject
-			}
-
-			var resetWithoutDefaultValues = function(parameter){
-
-				if(isParameterSelectionValueLov(parameter)) {
-					if(isParameterSelectionTypeTree(parameter)) {
-						if(parameter.multivalue) {
-							parameter.parameterValue = [];
-							executionService.resetParameterInnerLovData(parameter.children);
-						} else {
-							parameter.parameterValue = '';
-							parameter.parameterDescription = {};
-						}
-					}else {
-						if(parameter.multivalue) {
-							parameter.parameterValue = [];
-							parameter.parameterDescription = '';
-						} else {
-							parameter.parameterValue = '';
-							parameter.parameterDescription = {};
-						}
-					}
-				} else {
-					parameter.parameterValue = '';
-					if(isParameterTypeDateRange(parameter) && parameter.datarange){
-						parameter.datarange.opt='';
-					}
-
-				}
 			}
 
 			var setParameterValueForTreeSelectionType = function(parameter){
