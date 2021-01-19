@@ -95,22 +95,24 @@ public class CockpitDriver extends GenericDriver {
 				JSONArray columnSelectedOfDataset = new JSONArray();
 				try {
 					if (widget.has("content")) {
-						columnSelectedOfDataset = widget.getJSONObject("content").getJSONArray("columnSelectedOfDataset");
+						columnSelectedOfDataset = widget.getJSONObject("content").optJSONArray("columnSelectedOfDataset");
 					} else {
 						// case chart widget
-						columnSelectedOfDataset = widget.getJSONArray("columnSelectedOfDatasetAggregations");
+						columnSelectedOfDataset = widget.optJSONArray("columnSelectedOfDatasetAggregations");
 					}
 				} catch (JSONException e) {
 					logger.error("Something went wrong while getting functions associated to widget: " + widgetId, e);
 					// if something went wrong the template is malformed, just skip
 				}
 				// loop on dataset columns and look for function ids
-				for (int k = 0; k < columnSelectedOfDataset.length(); k++) {
-					JSONObject column = columnSelectedOfDataset.getJSONObject(k);
-					if (column.has("boundFunction")) {
-						int funcId = column.getJSONObject("boundFunction").getInt("id");
-						if (!functionIds.contains(funcId))
-							functionIds.add(funcId);
+				if (columnSelectedOfDataset != null) {
+					for (int k = 0; k < columnSelectedOfDataset.length(); k++) {
+						JSONObject column = columnSelectedOfDataset.getJSONObject(k);
+						if (column.has("boundFunction")) {
+							int funcId = column.getJSONObject("boundFunction").getInt("id");
+							if (!functionIds.contains(funcId))
+								functionIds.add(funcId);
+						}
 					}
 				}
 			}
