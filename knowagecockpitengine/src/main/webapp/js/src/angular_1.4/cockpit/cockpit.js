@@ -126,6 +126,21 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 	$scope.imageBackgroundUrl=cockpitModule_template.configuration.style.imageBackgroundUrl;
 	cockpitModule_template = cockpitModule_backwardCompatibility.updateCockpitModel(cockpitModule_template);
+	
+	function checkForDefaultSelections(model){
+		for(var sheet of model.sheets){
+			for(var widget of sheet.widgets){
+				if(widget.type === 'selector'){
+					if(widget.settings && widget.settings.defaultValue && widget.settings.defaultValue != '') return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	
+	cockpitModule_properties.HASDEFAULTSELECTION = checkForDefaultSelections(cockpitModule_template);
+	
 	$scope.sbiModule_device=sbiModule_device;
 
 	var initGeneralCss = $scope.$watch('cockpitModule_template.configuration.cssToRender',function(newValue,oldValue){
