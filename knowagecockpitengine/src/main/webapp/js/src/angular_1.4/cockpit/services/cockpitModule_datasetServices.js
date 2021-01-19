@@ -1327,7 +1327,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					$scope.translate = sbiModule_translate;
 					$scope.datasetSearchText = '';
 					$scope.filterDataset = function(){
-						var tempDatasetList = $filter('filter')($scope.datasetList,$scope.datasetSearchText);
+						var tempDatasetList = $filter('filter')($scope.datasetList,function(value,index,array) {
+							return value["name"].indexOf($scope.datasetSearchText) != -1
+								|| value["label"].indexOf($scope.datasetSearchText) != -1
+								|| value["tags"].some(function(e) { return e.name == $scope.datasetSearchText; })
+								|| value["type"].indexOf($scope.datasetSearchText) != -1;
+						});
 						$scope.cockpitDatasetGrid.api.setRowData(tempDatasetList);
 					}
 
