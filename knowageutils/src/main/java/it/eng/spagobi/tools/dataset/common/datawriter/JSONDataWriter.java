@@ -488,6 +488,8 @@ public class JSONDataWriter implements IDataWriter {
 					}
 					int precision = fieldMetaData.getPrecision();
 					fieldMetaDataJSON.put("precision", precision);
+					int scale = fieldMetaData.getScale();
+					fieldMetaDataJSON.put("scale", scale);
 					String format = (String) fieldMetaData.getProperty("format");
 					if (format != null) {
 						fieldMetaDataJSON.put("format", format);
