@@ -327,35 +327,21 @@ function mapWidgetEditControllerFunction(
 		return (radius * 2) + 'px';
 	}
 
+	$scope.openIconManager = false;
+	$scope.activeLayer;
+
 	$scope.chooseIcon = function(ev, layer) {
 
-		$mdDialog.show({
-			controller: function ($scope,$mdDialog) {
-				$scope.availableIcons = knModule_fontIconsService.icons;
+		$scope.openIconManager = !$scope.openIconManager;
+		$scope.activeLayer = layer;
 
-				$scope.activeLayer = {};
-				angular.copy(layer,$scope.activeLayer);
+	}
 
-				$scope.setIcon = function(family,icon){
-					if(!$scope.activeLayer.markerConf) $scope.activeLayer.markerConf = {};
-					$scope.activeLayer.markerConf.icon = icon;
-					$scope.choose();
-				}
-				$scope.choose = function(){
-					angular.copy($scope.activeLayer,layer);
-					$mdDialog.hide();
-				}
-				$scope.cancel = function(){
-					$mdDialog.cancel();
-				}
-			},
-			scope: $scope,
-			preserveScope:true,
-		  templateUrl: $scope.getTemplateUrl('mapWidgetAddIconDialog'),
-		  targetEvent: ev,
-		  clickOutsideToClose:true,
-		  locals: {  }
-		})
+	$scope.setIcon = function(icon) {
+		if(!$scope.activeLayer.markerConf) $scope.activeLayer.markerConf = {};
+		$scope.activeLayer.markerConf.icon = icon;
+		
+		$scope.openIconManager = !$scope.openIconManager;
 	}
 
 	$scope.filterIcon = function (item) {
