@@ -16,6 +16,7 @@ import org.apache.poi.hssf.usermodel.HSSFShape;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -309,11 +310,11 @@ public class Util {
 
 					Font oldFont = oldCell.getSheet().getWorkbook().getFontAt(oldCell.getCellStyle().getFontIndex());
 
-					Font newFont = newCell.getSheet().getWorkbook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(),
+					Font newFont = newCell.getSheet().getWorkbook().findFont(oldFont.getBold(), oldFont.getColor(), oldFont.getFontHeight(),
 							oldFont.getFontName(), oldFont.getItalic(), oldFont.getStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 					if (newFont == null) {
 						newFont = newCell.getSheet().getWorkbook().createFont();
-						newFont.setBoldweight(oldFont.getBoldweight());
+						newFont.setBold(oldFont.getBold());
 						newFont.setColor(oldFont.getColor());
 						newFont.setFontHeight(oldFont.getFontHeight());
 						newFont.setFontName(oldFont.getFontName());
@@ -354,22 +355,22 @@ public class Util {
 			}
 		}
 		switch (oldCell.getCellType()) {
-		case Cell.CELL_TYPE_STRING:
+		case STRING:
 			newCell.setCellValue(oldCell.getStringCellValue());
 			break;
-		case Cell.CELL_TYPE_NUMERIC:
+		case NUMERIC:
 			newCell.setCellValue(oldCell.getNumericCellValue());
 			break;
-		case Cell.CELL_TYPE_BLANK:
-			newCell.setCellType(Cell.CELL_TYPE_BLANK);
+		case BLANK:
+			newCell.setCellType(CellType.BLANK);
 			break;
-		case Cell.CELL_TYPE_BOOLEAN:
+		case BOOLEAN:
 			newCell.setCellValue(oldCell.getBooleanCellValue());
 			break;
-		case Cell.CELL_TYPE_ERROR:
+		case ERROR:
 			newCell.setCellErrorValue(oldCell.getErrorCellValue());
 			break;
-		case Cell.CELL_TYPE_FORMULA:
+		case FORMULA:
 			newCell.setCellFormula(oldCell.getCellFormula());
 			formulaInfoList.add(new FormulaInfo(oldCell.getSheet().getSheetName(), oldCell.getRowIndex(), oldCell.getColumnIndex(), oldCell.getCellFormula()));
 			break;
@@ -446,7 +447,7 @@ public class Util {
 			oldFont = oldCell.getSheet().getWorkbook().getFontAt(oldCell.getCellStyle().getFontIndex());
 			newFont = newCell.getSheet().getWorkbook().getFontAt(currentCellStyle.getFontIndex());
 
-			if (newFont.getBoldweight() != oldFont.getBoldweight()) {
+			if (newFont.getBold() != oldFont.getBold()) {
 				continue;
 			}
 			if (newFont.getColor() != oldFont.getColor()) {
@@ -543,7 +544,7 @@ public class Util {
 		newSheet.setDisplayZeros(sheetToCopy.isDisplayZeros());
 		newSheet.setPrintGridlines(sheetToCopy.isPrintGridlines());
 		newSheet.setRightToLeft(sheetToCopy.isRightToLeft());
-		newSheet.setZoom(1, 1);
+		newSheet.setZoom(100);
 		copyPrintTitle(newSheet, sheetToCopy);
 	}
 
@@ -622,7 +623,8 @@ public class Util {
 						}
 					}
 
-					newSheet.getWorkbook().setRepeatingRowsAndColumns(newSheet.getWorkbook().getSheetIndex(newSheet), colB, colE, rowB - 1, rowE - 1);
+					newSheet.setRepeatingRows(new CellRangeAddress(rowB - 1, rowE - 1, -1, -1));
+					newSheet.setRepeatingColumns(new CellRangeAddress(-1, -1, colB, colE));
 				}
 			}
 		}
