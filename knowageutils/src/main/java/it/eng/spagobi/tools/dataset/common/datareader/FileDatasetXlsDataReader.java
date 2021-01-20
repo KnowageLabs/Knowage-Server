@@ -26,6 +26,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -248,7 +249,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		}
 		for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
 			Cell cell = row.getCell(cellNum);
-			if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && org.apache.commons.lang.StringUtils.isNotBlank(cell.toString())) {
+			if (cell != null && cell.getCellType() != CellType.BLANK && org.apache.commons.lang.StringUtils.isNotBlank(cell.toString())) {
 				return false;
 			}
 		}
@@ -365,15 +366,15 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		Object valueField = null;
 		if (cell == null)
 			return null;
-		int cellType = cell.getCellType();
+		CellType cellType = cell.getCellType();
 
-		if (cellType == Cell.CELL_TYPE_FORMULA) {
+		if (cellType == CellType.FORMULA) {
 			cellType = cell.getCachedFormulaResultType();
 		}
 
 		switch (cellType) {
 
-		case Cell.CELL_TYPE_NUMERIC:
+		case NUMERIC:
 			if (DateUtil.isCellDateFormatted(cell)) {
 				/**
 				 * HSSFCell.getCellStyle().getDataFormatString() returns Cell date format (even if it is a Custom format), but it will be Excel's Date format
@@ -414,7 +415,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			}
 			break;
 
-		case Cell.CELL_TYPE_STRING:
+		case STRING:
 			if (org.apache.commons.lang.StringUtils.isBlank(cell.getStringCellValue())) {
 				valueField = "";
 			} else {
@@ -423,7 +424,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 			break;
 
-		case Cell.CELL_TYPE_BLANK:
+		case BLANK:
 			valueField = null;
 			break;
 		default:

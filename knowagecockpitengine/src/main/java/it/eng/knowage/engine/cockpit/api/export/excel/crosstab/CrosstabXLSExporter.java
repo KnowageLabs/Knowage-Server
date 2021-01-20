@@ -15,15 +15,18 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -211,17 +214,17 @@ public class CrosstabXLSExporter {
 		return measureId;
 	}
 
-	protected int getCellTypeNumeric() {
-		return HSSFCell.CELL_TYPE_NUMERIC;
+	protected org.apache.poi.ss.usermodel.CellType getCellTypeNumeric() {
+		return org.apache.poi.ss.usermodel.CellType.NUMERIC;
 	}
 
-	protected int getCellTypeString() {
-		return HSSFCell.CELL_TYPE_STRING;
+	protected org.apache.poi.ss.usermodel.CellType getCellTypeString() {
+		return org.apache.poi.ss.usermodel.CellType.STRING;
 	}
 
 	public CellStyle buildNACellStyle(Sheet sheet) {
 		CellStyle cellStyleForNA = this.buildDataCellStyle(sheet);
-		cellStyleForNA.setAlignment(CellStyle.ALIGN_CENTER);
+		cellStyleForNA.setAlignment(HorizontalAlignment.CENTER);
 		return cellStyleForNA;
 	}
 
@@ -321,8 +324,8 @@ public class CrosstabXLSExporter {
 
 	public CellStyle buildDimensionCellStyle(Sheet sheet) {
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-		cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-		cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
+		cellStyle.setAlignment(HorizontalAlignment.CENTER);
+		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
 		String headerBGColor = (String) this.getProperty(PROPERTY_DIMENSION_NAME_BACKGROUND_COLOR);
 		logger.debug("Header background color : " + headerBGColor);
@@ -330,12 +333,12 @@ public class CrosstabXLSExporter {
 				: IndexedColors.valueOf(DEFAULT_DIMENSION_NAME_BACKGROUND_COLOR).getIndex();
 		cellStyle.setFillForegroundColor(backgroundColorIndex);
 
-		cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-		cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		cellStyle.setBorderRight(CellStyle.BORDER_THIN);
-		cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+		cellStyle.setBorderBottom(BorderStyle.THIN);
+		cellStyle.setBorderLeft(BorderStyle.THIN);
+		cellStyle.setBorderRight(BorderStyle.THIN);
+		cellStyle.setBorderTop(BorderStyle.THIN);
 
 		String bordeBorderColor = (String) this.getProperty(PROPERTY_HEADER_BORDER_COLOR);
 		logger.debug("Header border color : " + bordeBorderColor);
@@ -364,7 +367,7 @@ public class CrosstabXLSExporter {
 		short colorIndex = bordeBorderColor != null ? IndexedColors.valueOf(color).getIndex() : IndexedColors.valueOf(DEFAULT_DIMENSION_NAME_COLOR).getIndex();
 		font.setColor(colorIndex);
 
-		font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		font.setBold(true);
 		font.setItalic(true);
 		cellStyle.setFont(font);
 		return cellStyle;
@@ -372,8 +375,8 @@ public class CrosstabXLSExporter {
 
 	public CellStyle buildHeaderCellStyle(Sheet sheet) {
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-		cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
-		cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
+		cellStyle.setAlignment(HorizontalAlignment.LEFT);
+		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
 		String headerBGColor = (String) this.getProperty(PROPERTY_HEADER_BACKGROUND_COLOR);
 		logger.debug("Header background color : " + headerBGColor);
@@ -381,12 +384,12 @@ public class CrosstabXLSExporter {
 				: IndexedColors.valueOf(DEFAULT_HEADER_BACKGROUND_COLOR).getIndex();
 		cellStyle.setFillForegroundColor(backgroundColorIndex);
 
-		cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-		cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		cellStyle.setBorderRight(CellStyle.BORDER_THIN);
-		cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+		cellStyle.setBorderBottom(BorderStyle.THIN);
+		cellStyle.setBorderLeft(BorderStyle.THIN);
+		cellStyle.setBorderRight(BorderStyle.THIN);
+		cellStyle.setBorderTop(BorderStyle.THIN);
 
 		String bordeBorderColor = (String) this.getProperty(PROPERTY_HEADER_BORDER_COLOR);
 		logger.debug("Header border color : " + bordeBorderColor);
@@ -416,15 +419,15 @@ public class CrosstabXLSExporter {
 				: IndexedColors.valueOf(DEFAULT_HEADER_COLOR).getIndex();
 		font.setColor(headerColorIndex);
 
-		font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		font.setBold(true);
 		cellStyle.setFont(font);
 		return cellStyle;
 	}
 
 	public CellStyle buildDataCellStyle(Sheet sheet) {
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-		cellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-		cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
+		cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
 		String cellBGColor = (String) this.getProperty(PROPERTY_CELL_BACKGROUND_COLOR);
 		logger.debug("Cell background color : " + cellBGColor);
@@ -432,12 +435,12 @@ public class CrosstabXLSExporter {
 				: IndexedColors.valueOf(DEFAULT_CELL_BACKGROUND_COLOR).getIndex();
 		cellStyle.setFillForegroundColor(backgroundColorIndex);
 
-		cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-		cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		cellStyle.setBorderRight(CellStyle.BORDER_THIN);
-		cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+		cellStyle.setBorderBottom(BorderStyle.THIN);
+		cellStyle.setBorderLeft(BorderStyle.THIN);
+		cellStyle.setBorderRight(BorderStyle.THIN);
+		cellStyle.setBorderTop(BorderStyle.THIN);
 
 		String bordeBorderColor = (String) this.getProperty(PROPERTY_CELL_BORDER_COLOR);
 		logger.debug("Cell border color : " + bordeBorderColor);

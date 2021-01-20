@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.json.JSONObject;
 
 import it.eng.knowage.engine.cockpit.api.export.excel.Threshold;
@@ -42,13 +42,13 @@ public class CrosstabXLSXExporter extends CrosstabXLSExporter {
 	}
 
 	@Override
-	protected int getCellTypeNumeric() {
-		return XSSFCell.CELL_TYPE_NUMERIC;
+	protected CellType getCellTypeNumeric() {
+		return CellType.NUMERIC;
 	}
 
 	@Override
-	protected int getCellTypeString() {
-		return XSSFCell.CELL_TYPE_STRING;
+	protected CellType getCellTypeString() {
+		return CellType.STRING;
 	}
 
 }

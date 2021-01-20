@@ -31,10 +31,6 @@
 				<exclusion>
 					<groupId>net.sf.supercsv</groupId>
 					<artifactId>super-csv</artifactId>
-				</exclusion>		
-				<exclusion>
-					<groupId>org.apache.poi</groupId>
-					<artifactId>poi</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.apache.metamodel</groupId>
