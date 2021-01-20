@@ -6,12 +6,20 @@
 			scope: {
 				selectedIcon: "=?",
 				onSelection: "&",
-				gridWidth: "@?"
+				gridWidth: "@?",
+				availableFamilies: "=?"
 			},
 			controller: function($scope,$filter,sbiModule_translate){
 				
 				$scope.availableIcons = knModule_fontIconsService.icons;
 				$scope.translate = sbiModule_translate;
+				
+				$scope.familyFilter = function(value){
+					if(!$scope.availableFamilies) return value;
+					else{
+						return $scope.availableFamilies.indexOf(value.name) != -1;
+					}
+				}
 				
 				function setChunks(array, dimension){
 					var newArray = [];
@@ -44,8 +52,7 @@
 				}
 				
 				$scope.setIcon = function(icon){
-					$scope.iconName = icon.className;
-					$scope.onSelection({iconName:$scope.iconName})
+					$scope.onSelection({icon:icon})
 				}
 
 			}

@@ -573,7 +573,7 @@ function cockpitStyleColumnFunction(
 
   	}
 	$scope.setIcon = function(icon){
-		$scope.currentRange.icon = icon;
+		$scope.currentRange.icon = icon.className;
 		$scope.tempVar = !$scope.tempVar;
 	}
 

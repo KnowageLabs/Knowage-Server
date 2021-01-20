@@ -13,7 +13,7 @@
 		      <input ng-model="searchText" type="text" >
 		    </md-input-container>
     	</div>
-    	<div ng-repeat="family in iconChunks">
+    	<div ng-repeat="family in iconChunks | filter:familyFilter">
 	    	<md-subheader class="expandableSubheader" ng-click="openFamily(family.name)">
 	    		<span>{{family.name}}</span>
 	    		<span flex></span>
