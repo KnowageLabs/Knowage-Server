@@ -382,11 +382,11 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 	}
 
 	$scope.visibleDrivers = function(row) {
-		return row.drivers.filter(isDriversVisible);
+		return row.drivers && row.drivers.filter(isDriversVisible);
 	}
 
 	$scope.hasVisibleDrivers = function(row) {
-		return row.drivers.some(isDriversVisible);
+		return row.drivers && row.drivers.some(isDriversVisible);
 	}
 
 	function isDriversVisible(driver) {
