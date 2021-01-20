@@ -286,7 +286,7 @@
 						
 			      </div>
 	    		</div>
-	    		<ng-include src="getTemplateUrl('tableWidgetAddIconDialog')" flex="20" ng-if="tempVar"></ng-include>
+	    		<icon-manager ng-if="tempVar" flex="20" selected-icon="currentRange.icon" on-selection="setIcon(iconName)"></icon-manager>
 	    </md-dialog-content>
 	   
 	    <md-dialog-actions layout="row">

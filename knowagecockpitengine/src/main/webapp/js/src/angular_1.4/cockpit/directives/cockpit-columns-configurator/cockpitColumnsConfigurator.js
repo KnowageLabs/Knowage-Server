@@ -523,29 +523,29 @@ function cockpitStyleColumnFunction(
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 	$scope.visTypes=['Chart','Text','Text & Chart','Icon only'];
 	$scope.icons=["fa fa-warning","fa fa-bell","fa fa-bolt","fa fa-commenting","fa fa-asterisk","fa fa-ban", "fa fa-check","fa fa-clock-o","fa fa-close","fa fa-exclamation-circle","fa fa-flag","fa fa-star"];
-	function setChunks(array, dimension){
-		var newArray = [];
-		for(var f in array){
-			var familyArray = {"name":array[f].name,"className":array[f].className,icons:[]};
-			var iterator = 0;
-			for(var k in array[f].icons){
-				if (iterator == 0) var tempArray = [];
-				if (iterator < dimension) {
-					tempArray.push(array[f].icons[k]);
-					iterator ++;
-				}
-				if (iterator == dimension) {
-					familyArray.icons.push(tempArray);
-					iterator = 0;
-				}
-			}
-			newArray.push(familyArray);
-		}
-
-		return newArray;
-	}
-
-	$scope.availableIcons = setChunks(knModule_fontIconsService.icons,4);
+//	function setChunks(array, dimension){
+//		var newArray = [];
+//		for(var f in array){
+//			var familyArray = {"name":array[f].name,"className":array[f].className,icons:[]};
+//			var iterator = 0;
+//			for(var k in array[f].icons){
+//				if (iterator == 0) var tempArray = [];
+//				if (iterator < dimension) {
+//					tempArray.push(array[f].icons[k]);
+//					iterator ++;
+//				}
+//				if (iterator == dimension) {
+//					familyArray.icons.push(tempArray);
+//					iterator = 0;
+//				}
+//			}
+//			newArray.push(familyArray);
+//		}
+//
+//		return newArray;
+////	}
+//
+	$scope.availableIcons = knModule_fontIconsService.icons;
 
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
@@ -566,19 +566,14 @@ function cockpitStyleColumnFunction(
 		return $scope.generalServices.isNumericColumn(column);
 	}
 
-	$scope.openFamily = function(familyName){
-		if($scope.iconFamily == familyName) $scope.iconFamily = "";
-		else $scope.iconFamily = familyName;
-	}
-
 	$scope.chooseIcon = function(range) {
 		$scope.tempVar = !$scope.tempVar;
 		$scope.currentRange=range;
 		$scope.iconFamily = $scope.availableIcons[0].name;
 
   	}
-	$scope.setIcon = function(family,icon){
-		$scope.currentRange.icon = family.className+' '+icon.className;
+	$scope.setIcon = function(icon){
+		$scope.currentRange.icon = icon;
 		$scope.tempVar = !$scope.tempVar;
 	}
 
@@ -923,4 +918,3 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 		$scope.reloadValue();
 	}
 }
-
