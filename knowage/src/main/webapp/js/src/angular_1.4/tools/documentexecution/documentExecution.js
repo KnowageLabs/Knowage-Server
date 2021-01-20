@@ -527,7 +527,7 @@
 		 * EXECUTE PARAMS
 		 * Submit param form
 		 */
-		$scope.executeParameter = function() {
+		$scope.executeParameter = function(refresh) {
 			console.log("executeParameter IN ");
 
 			var action = function() {
@@ -538,6 +538,7 @@
 			};
 
 			if($scope.cockpitEditing.documentMode == "EDIT"){
+				if(refresh) return;
 				var confirm = $mdDialog.confirm()
 						.title(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode'))
 						.content(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode.quit'))
@@ -592,7 +593,7 @@
 		if($scope.executionInstance.REFRESH_SECONDS != undefined && $scope.executionInstance.REFRESH_SECONDS > 0)
 		$interval(function(){
 			console.log("reload");
-			$scope.executeParameter();
+			$scope.executeParameter(true);
 			},$scope.executionInstance.REFRESH_SECONDS*1000);
 
 		$scope.changeRole = function(role) {
