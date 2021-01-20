@@ -135,9 +135,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 
-			if(!self.compareVersion("7.2.4",version)){
+			if(!self.compareVersion("7.2.16",version)){
 				if(model.type=='table') {
-					if(model.settings.autoRowsHeight) delete model.settings.autoRowsHeight;
+					if(model.settings.autoRowsHeight) {
+						delete model.settings.autoRowsHeight;
+						if (model.style.tr && !model.style.tr.height)  model.style.tr.height = 25;
+					}
 				}
 				if(model.type=='map') {
 
