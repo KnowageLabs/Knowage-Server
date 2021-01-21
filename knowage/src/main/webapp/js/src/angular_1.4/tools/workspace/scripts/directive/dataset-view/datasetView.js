@@ -111,7 +111,7 @@
 		}
 
 		function hasParametersRenderer(row){
-			return (row.data.params && row.data.params.length > 0) ? '<i class="fa fa-check"></i>' : '';
+			return (row.data.pars && row.data.pars.length > 0) ? '<i class="fa fa-check"></i>' : '';
 		}
 
 		function tagsRenderer(params){
