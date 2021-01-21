@@ -6,6 +6,7 @@ import java.util.Set;
 import org.json.JSONException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ContainerNode;
 
 import it.eng.spago.base.SourceBeanException;
@@ -44,6 +45,7 @@ class DataSetResourceFacadeForWorkspace extends DataSetResourceMainFacade {
 		return dataset.getCommonInfo().getTimeIn().toInstant().toString();
 	}
 
+	@JsonProperty("pars")
 	public List<DataSetParameterItem> getParams() {
 		return dataset.getParametersList();
 	}
