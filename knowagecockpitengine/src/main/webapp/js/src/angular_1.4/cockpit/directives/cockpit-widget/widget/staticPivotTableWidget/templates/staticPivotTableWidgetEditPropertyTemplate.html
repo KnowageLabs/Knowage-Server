@@ -16,12 +16,14 @@
 	      	<md-card>
 		  		<md-card-content>
 		  		 	<dataset-selector ng-model=localModel.dataset.dsId on-change="changeDatasetFunction(dsId)"></dataset-selector>
-		  		 	<catalog-function ng-if="localModel.dataset.dsId" ng-model="localModel" additional-info="datasetAdditionalInfos"></catalog-function>
 		  		</md-card-content>
 		  	</md-card>		  
 			   
-			   <md-card ng-if="localModel.dataset.dsId!=undefined" flex layout="column">	
-			     	<md-card-content flex layout="row" class="pivotTableDesigner" style="height: 100%;">			     		
+			   <md-card ng-if="localModel.dataset.dsId!=undefined" flex layout="column">
+			   		<md-subheader class="noPadding" style="margin-bottom:8px;" layout="row" layout-align="end center">
+						<catalog-function ng-if="localModel.dataset.dsId" ng-model="localModel" additional-info="datasetAdditionalInfos"></catalog-function>
+					</md-subheader>		
+			     	<md-card-content flex layout="row" class="pivotTableDesigner" >		
 			     		<div layout="column" class="measureAttributeTab">
 			     			<div layout="column" flex="50">
 			     				<md-toolbar class="primaryToolbar">
@@ -74,7 +76,6 @@
 			     			</div>
 			     		</div>
 			     		<div layout="row" flex>
-
 				     			<div flex class="contentElementBox" layout="column">
 				     				<md-toolbar class="md-hue-2 ternaryToolbar">  
 			      						<div class="md-toolbar-tools">
