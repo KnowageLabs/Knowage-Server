@@ -113,7 +113,7 @@ public class DataSetResource {
 	@Path("/pagopt/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetResourceMainFacade> getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc,
+	public DataSetResourceResponseRoot<DataSetMainDTO> getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc,
 			@QueryParam("callback") String callback, @DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("filters") DataSetResourceFilter filters,
 			@QueryParam("ordering") JSONObject ordering, @QueryParam("tags") List<Integer> tags) {
@@ -138,10 +138,10 @@ public class DataSetResource {
 				logger.info("Engine not found. ", r);
 			}
 
-			List<DataSetResourceMainFacade> dataSets = getListOfGenericDatasets(offset, fetchSize, filters, ordering, tags).stream()
-					.map(DataSetResourceMainFacade::new).collect(toList());
+			List<DataSetMainDTO> dataSets = getListOfGenericDatasets(offset, fetchSize, filters, ordering, tags).stream()
+					.map(DataSetMainDTO::new).collect(toList());
 
-			dataSets = (List<DataSetResourceMainFacade>) putActions(dataSets, typeDoc);
+			dataSets = (List<DataSetMainDTO>) putActions(dataSets, typeDoc);
 
 			return new DataSetResourceResponseRoot<>(dataSets);
 
@@ -154,14 +154,14 @@ public class DataSetResource {
 	@Path("/enterprise")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetResourceFacadeForWorkspace> getEnterpriseDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getEnterpriseDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
 		try {
-			List<DataSetResourceFacadeForWorkspace> dataSets = DAOFactory.getSbiDataSetDAO().loadEnterpriseDataSets(offset, fetchSize, getUserProfile())
-					.stream().map(DataSetResourceFacadeForWorkspace::new).collect(toList());
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadEnterpriseDataSets(offset, fetchSize, getUserProfile())
+					.stream().map(DataSetForWorkspaceDTO::new).collect(toList());
 
-			dataSets = (List<DataSetResourceFacadeForWorkspace>) putActions(dataSets, typeDoc);
+			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
 			return new DataSetResourceResponseRoot<>(dataSets);
 		} catch (Exception t) {
@@ -173,13 +173,13 @@ public class DataSetResource {
 	@Path("/owned")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetResourceFacadeForWorkspace> getOwnedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getOwnedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 		try {
-			List<DataSetResourceFacadeForWorkspace> dataSets = DAOFactory.getSbiDataSetDAO().loadDataSetsOwnedByUser(offset, fetchSize, getUserProfile(), true)
-					.stream().map(DataSetResourceFacadeForWorkspace::new).collect(toList());
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDataSetsOwnedByUser(offset, fetchSize, getUserProfile(), true)
+					.stream().map(DataSetForWorkspaceDTO::new).collect(toList());
 
-			dataSets = (List<DataSetResourceFacadeForWorkspace>) putActions(dataSets, typeDoc);
+			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
 			return new DataSetResourceResponseRoot<>(dataSets);
 
@@ -193,15 +193,15 @@ public class DataSetResource {
 	@Path("/shared")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetResourceFacadeForWorkspace> getSharedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getSharedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
 		try {
-			List<DataSetResourceFacadeForWorkspace> dataSets = DAOFactory.getSbiDataSetDAO()
-					.loadDatasetsSharedWithUser(offset, fetchSize, getUserProfile(), true).stream().map(DataSetResourceFacadeForWorkspace::new)
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO()
+					.loadDatasetsSharedWithUser(offset, fetchSize, getUserProfile(), true).stream().map(DataSetForWorkspaceDTO::new)
 					.collect(toList());
 
-			dataSets = (List<DataSetResourceFacadeForWorkspace>) putActions(dataSets, typeDoc);
+			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
 			return new DataSetResourceResponseRoot<>(dataSets);
 		} catch (Exception t) {
@@ -214,13 +214,13 @@ public class DataSetResource {
 	@Path("/uncertified")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetResourceFacadeForWorkspace> getUncertifiedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getUncertifiedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 		try {
-			List<DataSetResourceFacadeForWorkspace> dataSets = DAOFactory.getSbiDataSetDAO().loadDatasetOwnedAndShared(offset, fetchSize, getUserProfile())
-					.stream().map(DataSetResourceFacadeForWorkspace::new).collect(toList());
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDatasetOwnedAndShared(offset, fetchSize, getUserProfile())
+					.stream().map(DataSetForWorkspaceDTO::new).collect(toList());
 
-			dataSets = (List<DataSetResourceFacadeForWorkspace>) putActions(dataSets, typeDoc);
+			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
 			return new DataSetResourceResponseRoot<>(dataSets);
 		} catch (Exception t) {
@@ -233,15 +233,15 @@ public class DataSetResource {
 	@Path("/mydata")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetResourceFacadeForWorkspace> getMyDataDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getMyDataDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
 		try {
 			// TODO
-			List<DataSetResourceFacadeForWorkspace> dataSets = DAOFactory.getSbiDataSetDAO().loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
-					.map(DataSetResourceFacadeForWorkspace::new).collect(toList());
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
+					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
-			dataSets = (List<DataSetResourceFacadeForWorkspace>) putActions(dataSets, typeDoc);
+			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
 			return new DataSetResourceResponseRoot<>(dataSets);
 
@@ -298,7 +298,7 @@ public class DataSetResource {
 		return items;
 	}
 
-	private List<? extends DataSetResourceMainFacade> putActions(List<? extends DataSetResourceMainFacade> ret, String typeDocWizard) throws EMFInternalError {
+	private List<? extends DataSetMainDTO> putActions(List<? extends DataSetMainDTO> ret, String typeDocWizard) throws EMFInternalError {
 
 		UserProfile userProfile = getUserProfile();
 
@@ -317,7 +317,7 @@ public class DataSetResource {
 
 	}
 
-	private void addActions(DataSetResourceMainFacade dataset, String typeDocWizard, UserProfile userProfile, boolean isQBEEnginePresent,
+	private void addActions(DataSetMainDTO dataset, String typeDocWizard, UserProfile userProfile, boolean isQBEEnginePresent,
 			boolean isGeoEnginePresent) {
 		try {
 			List<DataSetResourceAction> actions = dataset.getActions();

@@ -12,16 +12,16 @@ import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
-class DataSetResourceMainFacade {
+class DataSetMainDTO {
 
-	static protected Logger logger = Logger.getLogger(DataSetResourceMainFacade.class);
+	static protected Logger logger = Logger.getLogger(DataSetMainDTO.class);
 
 	private static final Map<String, String> TYPE_2_DS_TYPE_CD = DataSetConstants.code2name;
 
 	protected final SbiDataSet dataset;
 	private final List<DataSetResourceAction> actions = new ArrayList<>();
 
-	public DataSetResourceMainFacade(SbiDataSet dataset) {
+	public DataSetMainDTO(SbiDataSet dataset) {
 		super();
 		this.dataset = dataset;
 	}
