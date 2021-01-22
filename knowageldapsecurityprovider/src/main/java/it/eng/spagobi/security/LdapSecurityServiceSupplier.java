@@ -60,13 +60,26 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 	protected static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 
+	private String ldapPrefix = "";
+
+	public LdapSecurityServiceSupplier() {
+
+	}
+
+	/**
+	 * @param authModeFromUserAttribute
+	 */
+	public LdapSecurityServiceSupplier(String authModeFromUserAttribute) {
+		this.ldapPrefix = authModeFromUserAttribute;
+	}
+
 	@Override
 	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
 		logger.debug("IN: userId = [" + userId + "]");
 		InitialDirContext ctx = null;
 		try {
 			Properties properties = getConfig();
-			Boolean searchUserBefore = new Boolean(properties.getProperty(SEARCH_USER_BEFORE));
+			Boolean searchUserBefore = new Boolean(properties.getProperty(ldapPrefix + SEARCH_USER_BEFORE));
 			String distinguishName = searchUserBefore ? findUserDistinguishName(userId) : userId;
 			logger.debug("Binding with distinguishName [" + distinguishName + "] ...");
 			try {
@@ -152,14 +165,14 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 		Properties properties = getConfig();
 
 		Hashtable<String, Object> env = new Hashtable<String, Object>();
-		env.put(Context.INITIAL_CONTEXT_FACTORY, properties.getProperty("INITIAL_CONTEXT_FACTORY"));
-		env.put(Context.PROVIDER_URL, properties.getProperty("PROVIDER_URL"));
+		env.put(Context.INITIAL_CONTEXT_FACTORY, properties.getProperty(ldapPrefix + "INITIAL_CONTEXT_FACTORY"));
+		env.put(Context.PROVIDER_URL, properties.getProperty(ldapPrefix + "PROVIDER_URL"));
 
-		env.put(Context.SECURITY_AUTHENTICATION, properties.getProperty("SECURITY_AUTHENTICATION"));
+		env.put(Context.SECURITY_AUTHENTICATION, properties.getProperty(ldapPrefix + "SECURITY_AUTHENTICATION"));
 
 		String distinguishName = null;
-		if (!userId.startsWith(properties.getProperty("DN_PREFIX")) && !userId.endsWith(properties.getProperty("DN_POSTFIX"))) {
-			distinguishName = properties.getProperty("DN_PREFIX") + userId + properties.getProperty("DN_POSTFIX");
+		if (!userId.startsWith(properties.getProperty(ldapPrefix + "DN_PREFIX")) && !userId.endsWith(properties.getProperty(ldapPrefix + "DN_POSTFIX"))) {
+			distinguishName = properties.getProperty(ldapPrefix + "DN_PREFIX") + userId + properties.getProperty(ldapPrefix + "DN_POSTFIX");
 		} else {
 			distinguishName = userId;
 		}
@@ -183,10 +196,10 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 		Properties properties = getConfig();
 
 		Hashtable<String, Object> env = new Hashtable<String, Object>();
-		env.put(Context.INITIAL_CONTEXT_FACTORY, properties.getProperty("INITIAL_CONTEXT_FACTORY"));
-		env.put(Context.PROVIDER_URL, properties.getProperty("PROVIDER_URL"));
+		env.put(Context.INITIAL_CONTEXT_FACTORY, properties.getProperty(ldapPrefix + "INITIAL_CONTEXT_FACTORY"));
+		env.put(Context.PROVIDER_URL, properties.getProperty(ldapPrefix + "PROVIDER_URL"));
 
-		env.put(Context.SECURITY_AUTHENTICATION, properties.getProperty("SECURITY_AUTHENTICATION"));
+		env.put(Context.SECURITY_AUTHENTICATION, properties.getProperty(ldapPrefix + "SECURITY_AUTHENTICATION"));
 		env.put("javax.security.sasl.qop", "auth-conf");
 		env.put("javax.security.sasl.strength", "high");
 
@@ -205,17 +218,17 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 		String toReturn = null;
 
-		String postfix = properties.getProperty("DN_POSTFIX");
+		String postfix = properties.getProperty(ldapPrefix + "DN_POSTFIX");
 		postfix = postfix.startsWith(",") ? postfix.substring(1) : postfix;
 
-		String usernameForLDAPAuthBefore = new String(properties.getProperty(SEARCH_USER_BEFORE_USER));
+		String usernameForLDAPAuthBefore = new String(properties.getProperty(ldapPrefix + SEARCH_USER_BEFORE_USER));
 
 		boolean validUsername = usernameForLDAPAuthBefore != null && !usernameForLDAPAuthBefore.isEmpty();
 
 		String username = usernameForLDAPAuthBefore;
 		String password = null;
 		if (validUsername) {
-			password = properties.getProperty(SEARCH_USER_BEFORE_PSW);
+			password = properties.getProperty(ldapPrefix + SEARCH_USER_BEFORE_PSW);
 			logger.debug("Found credentials in properties file for authentication before looking for attribute.");
 		}
 
@@ -234,7 +247,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 			ctrls.setTimeLimit(0);
 			ctrls.setReturningAttributes(searchAttrs);
 
-			String filter = String.format(properties.getProperty(SEARCH_USER_BEFORE_FILTER), userId);
+			String filter = String.format(properties.getProperty(ldapPrefix + SEARCH_USER_BEFORE_FILTER), userId);
 
 			NamingEnumeration<SearchResult> answer = ctx.search(postfix, filter, ctrls);
 
