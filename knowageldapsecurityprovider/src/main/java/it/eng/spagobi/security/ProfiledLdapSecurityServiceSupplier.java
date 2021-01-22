@@ -19,16 +19,20 @@ package it.eng.spagobi.security;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 
-public class ProfiledLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier {
+public class ProfiledLdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 	static private Logger logger = Logger.getLogger(ProfiledLdapSecurityServiceSupplier.class);
+
+	private InternalSecurityServiceSupplierImpl internalSecurityServiceSupplierImpl = new InternalSecurityServiceSupplierImpl();
 
 	private static final String ATTRIBUTE_AUTHENTICATION_MODE = "auth_mode";
 	private static final String ATTRIBUTE_AUTHENTICATION_MODE_LDAP = "LDAP";
@@ -42,11 +46,25 @@ public class ProfiledLdapSecurityServiceSupplier extends LdapSecurityServiceSupp
 			logger.error("UserName [" + userId + "] not found into database");
 			return null;
 		} else {
-			String authMode = getAuthMode(user);
-			if (ATTRIBUTE_AUTHENTICATION_MODE_INTERNAL.equals(authMode)) {
-				return new InternalSecurityServiceSupplierImpl().checkAuthentication(userId, psw);
+			String authModeValueFromUserAttribute = getAuthMode(user);
+			logger.warn("auth_mode=" + authModeValueFromUserAttribute);
+
+			if (ATTRIBUTE_AUTHENTICATION_MODE_INTERNAL.equals(authModeValueFromUserAttribute)) {
+				return internalSecurityServiceSupplierImpl.checkAuthentication(userId, psw);
+			}
+
+			String ldapPrefix = StringUtils.isBlank(authModeValueFromUserAttribute) ? "" : String.format("%s.", authModeValueFromUserAttribute);
+			SpagoBIUserProfile spagoBIUserProfile = new LdapSecurityServiceSupplier(ldapPrefix).checkAuthentication(userId, psw);
+
+			/* To be backwards compatible with old versions */
+			if (spagoBIUserProfile == null && ATTRIBUTE_AUTHENTICATION_MODE_LDAP.equals(authModeValueFromUserAttribute)) {
+				String message = String.format(
+						"auth_mode = [%s]. No LDAP found using prefix [%s]. Trying to use default empty prefix for backwards compatibility.",
+						authModeValueFromUserAttribute, ldapPrefix);
+				logger.warn(message);
+				return new LdapSecurityServiceSupplier("").checkAuthentication(userId, psw);
 			} else {
-				return super.checkAuthentication(userId, psw);
+				return spagoBIUserProfile;
 			}
 		}
 
@@ -70,6 +88,21 @@ public class ProfiledLdapSecurityServiceSupplier extends LdapSecurityServiceSupp
 	@Override
 	public SpagoBIUserProfile createUserProfile(String jwtToken) {
 		return new InternalSecurityServiceSupplierImpl().createUserProfile(jwtToken);
+	}
+
+	@Override
+	public SpagoBIUserProfile checkAuthenticationWithToken(String userId, String token) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean checkAuthorization(String userId, String function) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public SpagoBIUserProfile checkAuthenticationToken(String token) {
+		throw new UnsupportedOperationException();
 	}
 
 }
