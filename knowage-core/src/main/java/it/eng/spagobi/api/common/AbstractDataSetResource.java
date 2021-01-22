@@ -137,13 +137,13 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
-			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, Set<String> indexes) {
+			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, Set<String> indexes, String widgetName) {
 		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
-				null, indexes);
+				null, indexes, widgetName);
 	}
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
-			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, String options, Set<String> indexes) {
+			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, String options, Set<String> indexes, String widgetName) {
 		logger.debug("IN");
 		Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
 		try {

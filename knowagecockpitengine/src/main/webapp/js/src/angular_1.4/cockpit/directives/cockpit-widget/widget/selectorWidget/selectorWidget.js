@@ -104,7 +104,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(e.target.attributes.value && e.target.attributes.value.value){
 				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.attributes.value.value));
 				else $scope.prepareParameter(getValueFromString(e.target.attributes.value.value));
-			}else if(e.target.querySelector("input").value && e.target.querySelector("input").value){
+			}else if(e.target.querySelector("input") && e.target.querySelector("input").value){
 				if(!isBulk) $scope.toggleParameter(getValueFromString(e.target.querySelector("input").value));
 				else $scope.prepareParameter(getValueFromString(e.target.querySelector("input").value));
 			}else if(e.target.parentNode.attributes.value && e.target.parentNode.attributes.value.value){

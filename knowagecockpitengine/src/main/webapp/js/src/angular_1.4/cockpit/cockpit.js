@@ -198,6 +198,7 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 
 	cockpitModule_datasetServices.loadDatasetsFromTemplate().then(function(){
 		$scope.datasetLoaded=true;
+		if(!cockpitModule_properties.PARAMETERS) cockpitModule_properties.PARAMETERS = cockpitModule_datasetServices.returnParametersArray();
 		var dsNotInCache = cockpitModule_templateServices.getDatasetAssociatedNotUsedByWidget();
 		if(dsNotInCache.length>0){
 			cockpitModule_datasetServices.addDatasetInCache(dsNotInCache)

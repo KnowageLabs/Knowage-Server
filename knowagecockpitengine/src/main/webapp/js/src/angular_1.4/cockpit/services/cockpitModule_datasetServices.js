@@ -507,7 +507,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				console.error("ds with id "+dataset.dsId +" not found;")
 			}
 		}
-
+		
 		return fad;
 	}
 
@@ -1166,7 +1166,21 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		return filtersToSendWithoutParams;
 	}
 
-	this.getParametersAsString = function(parameters){
+  	this.returnParametersArray = function() {
+	var arrayToReturn = {};
+	for (var k in this.datasetList) {
+	
+		for (var j in this.datasetList[k].parameters) {
+			
+			arrayToReturn[this.datasetList[k].parameters[j].name]= this.datasetList[k].parameters[j];			
+		}		
+		
+	}
+	return arrayToReturn;
+}
+
+	this.getParametersAsString = function(parameters){		
+		if(!cockpitModule_properties.PARAMETERS) cockpitModule_properties.PARAMETERS = this.returnParametersArray();
 		var delim = "";
 		var output = "{";
 		for (var parameter in parameters) {
@@ -1199,14 +1213,14 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						// CASE 2 [""]
 						// CASE 3 ['pippo'],['pluto']
 						// CASE 4 [[pippo],[pluto]]
-
+						
 						for (var j in splittedValues) {
 							if (splittedValues[j] != "") {
 								if (j!=0) {
 									tempJSN  +=",";
 								}
-								if(isNaN(splittedValues[j])){
-								tempJSN  +=  (splittedValues[j].charAt(0) == "'" ? "" : "'") + splittedValues[j] + (splittedValues[j].charAt(splittedValues[j].length - 1) == "'" ? "" : "'") ;
+								if(cockpitModule_properties.PARAMETERS[parameter].type == "String"){
+									tempJSN  +=  (splittedValues[j].charAt(0) == "'" ? "" : "'") + splittedValues[j] + (splittedValues[j].charAt(splittedValues[j].length - 1) == "'" ? "" : "'") ;
 								}
 								else {
 									tempJSN  += splittedValues[j];
@@ -1488,10 +1502,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								if(autoAdd){
 									ds.addAvaiableDataset($scope.tmpCurrentAvaiableDataset[i])
 								}else{
-									currentAvaiableDataset.push($scope.tmpCurrentAvaiableDataset[i]);
+									currentAvaiableDataset.push($scope.tmpCurrentAvaiableDataset[i]);									
 								}
 							}
-
+							cockpitModule_properties.PARAMETERS = ds.returnParametersArray();
 							deferred.resolve(angular.copy($scope.tmpCurrentAvaiableDataset));
 							mdPanelRef.close();
 							$scope.$destroy();
@@ -1551,6 +1565,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								$scope.$destroy();
 
 							}
+							cockpitModule_properties.PARAMETERS = this.returnParametersArray();
 						}
 					}
 

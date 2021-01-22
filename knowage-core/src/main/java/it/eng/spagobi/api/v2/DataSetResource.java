@@ -677,7 +677,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataStorePostWithJsonInBody(@PathParam("label") String label, String body, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
 			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
-			@QueryParam("nearRealtime") boolean isNearRealtime) {
+			@QueryParam("nearRealtime") boolean isNearRealtime, @QueryParam("widgetName") String widgetName) {
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
 
@@ -739,7 +739,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			}
 			timing.stop();
 			return getDataStore(label, parameters, driversRuntimeMap, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize,
-					isNearRealtime, options, columns);
+					isNearRealtime, options, columns, widgetName);
 		} catch (Exception e) {
 			logger.error("Error loading dataset data from " + label, e);
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
@@ -844,7 +844,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			}
 
 			timing.stop();
-			return getDataStore(label, parameters, driversRuntimeMap, null, likeSelections, -1, aggregations, null, start, limit, true, columns);
+			return getDataStore(label, parameters, driversRuntimeMap, null, likeSelections, -1, aggregations, null, start, limit, true, columns, null);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} catch (Exception e) {
