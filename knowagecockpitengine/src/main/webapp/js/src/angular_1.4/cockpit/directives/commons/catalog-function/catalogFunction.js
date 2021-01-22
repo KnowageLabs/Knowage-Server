@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	angular.module('cockpitModule').directive('catalogFunction',function(){
 		return{
-			template:   '<button class="md-button md-knowage-theme" ng-click="addNewCatalogFunction()" ng-class="{\'md-icon-button\':selectedItem && !insideMenu}">'+
+			template:   '<button class="md-button md-knowage-theme" ng-click="addNewCatalogFunction()" ng-disabled="isFunctionInUse()" ng-class="{\'md-icon-button\':selectedItem && !insideMenu}">'+
 						'	<md-icon md-font-icon="fas fa-square-root-alt" ng-if="selectedItem"></md-icon>'+
 						'	<span ng-if="!selectedItem">{{::translate.load("sbi.cockpit.widgets.table.catalogFunctions.add")}}</span>'+
 						'	<span ng-if="selectedItem && insideMenu">{{::translate.load("sbi.cockpit.widgets.table.catalogFunctions.edit")}}</span>'+
@@ -78,6 +78,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			} else {
 				$scope.ngModel.content.columnSelectedOfDataset = colsToMantain;
 			}
+		}
+
+		$scope.isFunctionInUse = function(){
+			if ($scope.ngModel.content == undefined) { // chart widget
+				var columns = $scope.ngModel.columnSelectedOfDatasetAggregations;
+			} else if ($scope.ngModel.content.crosstabDefinition) { // cross tab widget
+				var columns = buildCrossTabColumns($scope.ngModel.content.crosstabDefinition);
+			} else {	// other widgets
+				var columns = $scope.ngModel.content.columnSelectedOfDataset;
+			}
+			for (var i=0; i<columns.length; i++) {
+				if (columns[i].isFunction) return true;
+			}
+			return false;
 		}
 
 		if($scope.selectedItem){

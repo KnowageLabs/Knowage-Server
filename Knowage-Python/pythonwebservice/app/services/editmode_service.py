@@ -95,6 +95,7 @@ def python_img():
         namespace = {"drivers_": drivers}
         exec(python_widget.script, namespace)
     except Exception as e:
+        logging.error("Error during script execution: {}".format(e))
         return str(e), 400
     # collect script result
     with open(img_file, "rb") as f:
