@@ -2722,10 +2722,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSet.recalculateMetadata = true;
 		$scope.manageDatasetFieldMetadata($scope.selectedDataSet.meta);
 
-		// Collect parameters
-		// TODO: maybe to remove the "index" property, if it makes trouble (it is excessive anyway)
-		$scope.selectedDataSet.pars = $scope.parameterItems;
-
 		// ADVANCED tab
 		// For transforming
 		$scope.transformDatasetState==true ? $scope.selectedDataSet.trasfTypeCd=$scope.transformationDataset.VALUE_CD : null;
@@ -3415,28 +3411,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 
 		$scope.closeDatasetPreviewDialog=function(){
-			 $scope.previewDatasetModel=[];
-			 $scope.previewDatasetColumns=[];
-			 $scope.startPreviewIndex=0;
-			 $scope.endPreviewIndex=0;
-			 $scope.totalItemsInPreview=-1;	// modified by: danristo
-			 $scope.datasetInPreview=undefined;
-			 $scope.counter = 0;
-			 $scope.selectedDataSet.start = 0;
-			 if(typeof $scope.selectedDataSet.drivers !== 'undefined') {
-				for(var i=0; i < $scope.selectedDataSet.drivers.length; i++) {
-					if(($scope.selectedDataSet.drivers[i].parameterDescription || $scope.selectedDataSet.drivers[i].parameterValue) && !$scope.selectedDataSet.drivers[i].hasDefaultOrOneAdmissibleValue) {
-						delete $scope.selectedDataSet.drivers[i].parameterDescription;
-						delete $scope.selectedDataSet.drivers[i].parameterValue;
-					}
-				}
-			 }
-			 for(var j = 0; j < $scope.selectedDataSet.pars.length; j++) {
-			 	if($scope.selectedDataSet.pars[j].value) {
-			 		delete $scope.selectedDataSet.pars[j].value;
-			 	}
-			 }
-			 $mdDialog.cancel();
+			$scope.previewDatasetModel=[];
+			$scope.previewDatasetColumns=[];
+			$scope.startPreviewIndex=0;
+			$scope.endPreviewIndex=0;
+			$scope.totalItemsInPreview=-1;	// modified by: danristo
+			$scope.datasetInPreview=undefined;
+			$scope.counter = 0;
+			$scope.selectedDataSet.start = 0;
+			$mdDialog.hide($scope.selectedDataSet);
 		}
 
 		// If drivers/params is not needed, show the data
@@ -3548,13 +3531,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		} else if($scope.selectedDataSet.drivers && $scope.selectedDataSet.drivers.length > 0 && !driversExecutionService.driversAreSet($scope.selectedDataSet.drivers) ||
 				($scope.selectedDataSet.pars && $scope.selectedDataSet.pars.length > 0 && !$scope.parametersAreSet($scope.selectedDataSet.pars))) {
 			$mdDialog.show({
-				  scope:$scope,
-				  preserveScope: true,
-			      controller: DatasetPreviewController,
-			      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',
-			      clickOutsideToClose:false,
-			      escapeToClose :false
-			    });
+					scope:$scope,
+					preserveScope: true,
+					controller: DatasetPreviewController,
+					templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',
+					clickOutsideToClose:false,
+					escapeToClose :false
+				});
 		}
 
 		$scope.selectedDataSet.fileDsMetadata = $scope.buildFileDataSetMetaData($scope.dataset);
