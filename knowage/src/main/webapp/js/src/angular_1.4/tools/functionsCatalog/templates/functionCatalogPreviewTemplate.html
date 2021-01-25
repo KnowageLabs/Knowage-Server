@@ -56,7 +56,7 @@
 			        		<md-subheader> {{::translate.load('sbi.functionscatalog.functionpreview.parameters.cardheader')}} </md-subheader>
 				 			<md-input-container ng-repeat="par in selectedDataset.pars">
 							    <label>{{par.name}}</label>
-							    <input ng-model="par.value" value="par.defaultValue" type="text"/>
+							    <input ng-model="par.value" ng-init="par.value = par.defaultValue" type="text"/>
 							</md-input-container>
 			        	</md-card-content>
 			    	</md-card>

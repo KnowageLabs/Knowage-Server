@@ -311,6 +311,12 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			}
 		}
 
+		//there must be at least one output column
+		if ($scope.shownFunction.outputColumns.length == 0) {
+			correctArguments = false;
+			$scope.missingFields.push("Insert at least one output column");
+		}
+
 		for (var i = 0; i < $scope.shownFunction.outputColumns.length; i++) {
 			if ($scope.shownFunction.outputColumns[i].name == undefined
 					|| $scope.shownFunction.outputColumns[i].type == undefined || $scope.shownFunction.outputColumns[i].fieldType == undefined) {
@@ -799,8 +805,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			var allParameters = $scope.selectedDataset.pars;
 			for (var i=0; i< allParameters.length; i++) {
 				var currPar = allParameters[i];
-				if (currPar.value && currPar.value != "") parameters[currPar.name] = currPar.value;
-				else parameters[currPar.name] = currPar.defaultValue;
+				parameters[currPar.name] = currPar.value;
 			}
 			return parameters;
 		}

@@ -291,6 +291,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.selectedFunction = func;
 			$scope.columnsGrid.api.setRowData(func.inputColumns);
 			$scope.variablesGrid.api.setRowData(func.inputVariables);
+			delete $scope.selectedFunction.environment;
 		}
 
 		$scope.librariesGrid = {
@@ -303,8 +304,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        paginationAutoPageSize: true,
 	        columnDefs: [
 	        	{headerName: "Library", field:'name'},
-	        	{headerName: "Version", field:'version'}],
-			rowData: $scope.libraries
+	        	{headerName: "Version", field:'version'}]
 		}
 
 		function resizeLibraries(){
