@@ -618,8 +618,7 @@ public class CrossTabHTMLSerializer {
 										aColumn.setCharacters(text);
 									}
 								}
-							}
-							{
+							} else {
 								if (StringUtils.isNotBlank(textVariable)) {
 									if (this.variables.has(textVariable)) {
 										aColumn.setCharacters(this.variables.getString(textVariable));
