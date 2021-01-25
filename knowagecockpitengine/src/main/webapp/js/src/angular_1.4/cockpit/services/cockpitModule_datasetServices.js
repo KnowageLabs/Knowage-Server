@@ -814,7 +814,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 		if(this.newDataSet && this.newDataSet.drivers) {
 			bodyJSON.drivers =  driversExecutionService.prepareDriversForSending(this.newDataSet.drivers);
-			this.driversAreSet(this.newDataSet.drivers);
+			this.driversAreSet(this.newDataSet);
 		} else if(dataset && dataset.drivers && dataset.drivers.length > 0 && cockpitModule_analyticalDrivers) {
 			for(var i = 0; i < dataset.drivers.length; i++) {
 				var urlName = dataset.drivers[i].urlName;
@@ -831,7 +831,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}
 			}
 			bodyJSON.drivers = driversExecutionService.prepareDriversForSending(dataset.drivers);
-			this.driversAreSet(dataset.drivers);
+			this.driversAreSet(dataset);
 		}
 
 		if(bodyJSON.drivers && this.driverHasValue) {
@@ -908,7 +908,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		bodyString = bodyString + ",indexes:" + JSON.stringify(indexes)  + "}";
 		bodyJSON.indexes = indexes;
 
-		this.parametersAreSet(dataset.parameters);
+		this.parametersAreSet(dataset);
 
 		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);
 		if(ngModel.content.wtype=="chart"){
@@ -968,25 +968,37 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	}
 
 	this.parameterHasValue = true;
-	this.parametersAreSet = function(parameters) {
-		  for(var i = 0; i < parameters.length; i++) {
-			  if(parameters[i].value) {
-				  this.parameterHasValue = true;
-			  } else {
-				  this.parameterHasValue = false;
-			  }
-		  }
-		  return this.parameterHasValue;
+	this.parametersAreSet = function(dataset) {
+
+		if (dataset.type != "SbiQbeDataSet") {
+			return true;
+		}
+
+		var parameters = dataset.parameters;
+		for(var i = 0; i < parameters.length; i++) {
+			if(parameters[i].value) {
+				this.parameterHasValue = true;
+			} else {
+				this.parameterHasValue = false;
+			}
+		}
+		return this.parameterHasValue;
 	}
 	this.driverHasValue = true;
-	this.driversAreSet = function(drivers) {
+	this.driversAreSet = function(dataset) {
+
+		if (dataset.type != "SbiQbeDataSet") {
+			return true;
+		}
+
+		var drivers = dataset.drivers;
 		if(drivers) {
 			for(var i = 0; i < drivers.length; i++) {
 				if(drivers[i].parameterValue) {
-					  this.driverHasValue = true;
-				  } else {
-					  this.driverHasValue = false;
-				  }
+					this.driverHasValue = true;
+				} else {
+					this.driverHasValue = false;
+				}
 			}
 			return this.driverHasValue;
 		}
