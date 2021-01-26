@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -61,7 +62,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 	private final JSONObject functionConfiguration;
 	private Map<String, String> inputColumns;
 	private Map<String, InputVariable> inputVariables;
-	private Map<String, OutputColumn> outputColumns;
+	private Map<String, OutputColumnRuntime> outputColumns;
 	private UserProfile profile;
 	private CatalogFunctionDataProxy proxy;
 
@@ -115,18 +116,19 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 	}
 
 	private void initOutputColumns() {
-		outputColumns = new HashMap<String, OutputColumn>();
+		outputColumns = new HashMap<String, OutputColumnRuntime>();
 		JSONArray outCols = functionConfiguration.optJSONArray("outputColumns");
 		for (int i = 0; i < outCols.length(); i++) {
 			try {
 				String columnName = outCols.getJSONObject(i).getString("name");
 				String fieldType = outCols.getJSONObject(i).getString("fieldType");
 				String type = outCols.getJSONObject(i).getString("type");
-				OutputColumn outputColumn = new OutputColumn(columnName, fieldType, type);
+				String alias = outCols.getJSONObject(i).optString("alias");
+				OutputColumnRuntime outputColumn = new OutputColumnRuntime(columnName, fieldType, type, alias);
 				outputColumns.put(columnName, outputColumn);
 			} catch (Exception e) {
 				logger.error("Error initializing output columns", e);
-				outputColumns = new HashMap<String, OutputColumn>();
+				outputColumns = new HashMap<String, OutputColumnRuntime>();
 			}
 		}
 	}
@@ -184,7 +186,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 
 			JSONArray outputColsArray = new JSONArray();
 			for (String colName : outputColumns.keySet()) {
-				OutputColumn outCol = outputColumns.get(colName);
+				OutputColumnRuntime outCol = outputColumns.get(colName);
 				outputColsArray.put(outCol.getName());
 			}
 
@@ -209,7 +211,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 			script = script.replace("${" + colName + "}", "${" + dsColumn + "}");
 		}
 		for (String colName : outputColumns.keySet()) {
-			OutputColumn outCol = outputColumns.get(colName);
+			OutputColumnRuntime outCol = outputColumns.get(colName);
 			script = script.replace("${" + outCol.getName() + "}", "${" + colName + "}");
 		}
 		// create token
@@ -245,7 +247,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 	@Override
 	public void transformDataSetMetaData(IDataStore dataStore) {
 		IMetaData dataStoreMeta = dataStore.getMetaData();
-		List<IFieldMetaData> newMeta = getNewFieldsMeta(dataStore);
+		List<IFieldMetaData> newMeta = getNewFieldsMeta();
 		try {
 			for (int i = 0; i < newMeta.size(); i++) {
 				dataStoreMeta.addFiedMeta(newMeta.get(i));
@@ -256,17 +258,16 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		}
 	}
 
-	private List<IFieldMetaData> getNewFieldsMeta(IDataStore dataStore) {
+	private List<IFieldMetaData> getNewFieldsMeta() {
 		List<IFieldMetaData> newMeta = new ArrayList<IFieldMetaData>();
 		try {
 			for (String colName : outputColumns.keySet()) {
-				OutputColumn outCol = outputColumns.get(colName);
+				OutputColumnRuntime outCol = outputColumns.get(colName);
 				FieldMetadata meta = new FieldMetadata();
 				meta.setName(outCol.getName());
-				meta.setAlias(outCol.getName());
+				meta.setAlias(StringUtils.isBlank(outCol.getAlias()) ? outCol.getName() : outCol.getAlias());
 				meta.setType(getMetaType(outCol.getType()));
 				meta.setFieldType(getMetaFieldType(outCol.getFieldType()));
-				outCol.getType();
 				newMeta.add(meta);
 			}
 		} catch (Exception e) {

@@ -97,7 +97,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 				if(col.boundFunction){
 					obj["catalogFunctionId"] = col.boundFunction.id;
-					obj["catalogFunctionConfig"] = buildCatalogFunctionConfiguration(col.boundFunction);
+					obj["catalogFunctionConfig"] = buildCatalogFunctionConfiguration(col.boundFunction, col);
 				}
 
 				if(col.isCalculated == true){
@@ -296,12 +296,21 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 	}
 
-	buildCatalogFunctionConfiguration = function(catalogFunc) {
+	buildCatalogFunctionConfiguration = function(catalogFunc, colDef) {
 		var functionConfig = {};
 		functionConfig.inputColumns = catalogFunc.inputColumns;
 		functionConfig.inputVariables = catalogFunc.inputVariables;
 		functionConfig.outputColumns = catalogFunc.outputColumns;
 		functionConfig.environment = JSON.parse(catalogFunc.environment).label;
+
+		if (colDef) {
+			for (var i=0; i<functionConfig.outputColumns.length; i++) {
+				if (functionConfig.outputColumns[i].name == colDef.name) {
+					functionConfig.outputColumns[i].alias = colDef.aliasToShow;
+				}
+			}
+		}
+
 		return functionConfig;
 	}
 
