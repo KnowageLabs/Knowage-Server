@@ -13,144 +13,152 @@
  <!-- 	<property name="hibernate.jdbc.batch_size">0</property>  -->      
 
 
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMenu.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEvents.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEventsLog.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDomains.hbm.xml" />
-        
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMenu.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEvents.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEventsLog.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDomains.hbm.xml" />
+
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiExtRoles.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMenuRole.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUser.hbm.xml" /> 
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUserAttributes.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAttribute.hbm.xml" />
-      	<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiExtUserRoles.hbm.xml" /> 
-           
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOutputParameter.hbm.xml" />    
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParameters.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParuseDet.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParuse.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParuseCk.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjParuse.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetamodelParuse.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModelParview.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMenuRole.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUser.hbm.xml" /> 
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUserAttributes.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAttribute.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiExtUserRoles.hbm.xml" /> 
+
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOutputParameter.hbm.xml" />    
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParameters.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParuseDet.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParuse.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParuseCk.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjParuse.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetamodelParuse.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModelParview.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjParview.hbm.xml" />          
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiLov.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiChecks.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjPar.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModelParameter.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjDataSet.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjects.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjFunc.hbm.xml" />        
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjState.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiSubreports.hbm.xml"/>
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiFunctions.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiFuncRole.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEngines.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSource.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiBinContents.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjTemplates.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjNotes.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiSubObjects.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiSnapshots.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoMapFeatures.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoLayers.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoLayersRoles.hbm.xml" />
-        
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoFeatures.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoMaps.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSet.hbm.xml" />
-        
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlContents.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlGlossary.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlReferences.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlWlist.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlWord.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlDataSetWlist.hbm.xml" />
-         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlDocWlist.hbm.xml" />
-    
-        
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiCrossNavigation.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiCrossNavigationPar.hbm.xml" />
-        
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiKpi.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiAlias.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRuleOutput.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRule.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiExecution.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiExecutionFilter.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiTarget.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiTargetValue.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiThresholdValue.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiThreshold.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiScorecard.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiPlaceholder.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaJob.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaSource.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaTable.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaJobSource.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaJobTable.hbm.xml" />
-        
-        <!-- old kpi 
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiResources.hbm.xml" />\
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModelInst.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModelResources.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpi.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiDocuments.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiInstance.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiInstanceHistory.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiInstPeriod.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModel.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiPeriodicity.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRole.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/_SbiKpiValue.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMeasureUnit.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRel.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlarm.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlarmContact.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlarmEvent.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiThreshold.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiThresholdValue.hbm.xml" />
-       -->
-        <!--mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiValue.hbm.xml" /-->
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjMetadata.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjMetacontents.hbm.xml" />
-        <!-- Kpi Organizational Units 
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnit.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitHierarchies.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitNodes.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitGrant.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitGrantNodes.hbm.xml" />
-         -->
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModel.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaBc.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaDsBc.hbm.xml" />
-        
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModelContent.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiArtifact.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiArtifactContent.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiLov.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiChecks.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjPar.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModelParameter.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjDataSet.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjects.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjFunc.hbm.xml" />        
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjState.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiSubreports.hbm.xml"/>
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiFunctions.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiFuncRole.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEngines.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSource.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiBinContents.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjTemplates.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjNotes.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiSubObjects.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiSnapshots.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoMapFeatures.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoLayers.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoLayersRoles.hbm.xml" />
+
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoFeatures.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoMaps.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSet.hbm.xml" />
+
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlContents.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlGlossary.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlReferences.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlWlist.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlWord.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlDataSetWlist.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlDocWlist.hbm.xml" />
+
+
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiCrossNavigation.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiCrossNavigationPar.hbm.xml" />
+
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiKpi.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiAlias.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRuleOutput.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRule.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiExecution.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiExecutionFilter.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiTarget.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiTargetValue.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiThresholdValue.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiThreshold.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiScorecard.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiPlaceholder.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaJob.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaSource.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaTable.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaJobSource.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaJobTable.hbm.xml" />
+
+		<!-- old kpi 
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiResources.hbm.xml" />\
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModelInst.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModelResources.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpi.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiDocuments.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiInstance.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiInstanceHistory.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiInstPeriod.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModel.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiPeriodicity.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRole.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/_SbiKpiValue.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMeasureUnit.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRel.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlarm.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlarmContact.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlarmEvent.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiThreshold.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiThresholdValue.hbm.xml" />
+		-->
+		<!--mapping resource="it/eng/spagobi/kpi/metadata/mapping/SbiKpiValue.hbm.xml" /-->
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjMetadata.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjMetacontents.hbm.xml" />
+		<!-- Kpi Organizational Units 
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnit.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitHierarchies.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitNodes.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitGrant.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitGrantNodes.hbm.xml" />
+		-->
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModel.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaBc.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaDsBc.hbm.xml" />
+
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModelContent.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiArtifact.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiArtifactContent.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAuthorizations.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAuthorizationsRoles.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiViewpoints.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModelViewpoints.hbm.xml" />
-                <!-- Federation definition -->
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiFederationDefinition.hbm.xml"/>
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSetFederation.hbm.xml"/>
-     
-      <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlert.hbm.xml" />
-      <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlertListener.hbm.xml" />
-      <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlertAction.hbm.xml" />
-      
-      <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaDatasetTableRelation.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiViewpoints.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModelViewpoints.hbm.xml" />
+		<!-- Federation definition -->
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiFederationDefinition.hbm.xml"/>
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSetFederation.hbm.xml"/>
 
-      <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiImages.hbm.xml" />
-        
-                <!-- User Defined Attributes -->
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdp.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdpValue.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlert.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlertListener.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlertAction.hbm.xml" />
+
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaDatasetTableRelation.hbm.xml" />
+
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiImages.hbm.xml" />
+
+		<!-- User Defined Attributes -->
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdp.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdpValue.hbm.xml" />
+		
 		<!-- Kpi Goal 
-        <mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoal.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoalKpi.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoalHierarchy.hbm.xml" />
-        -->
+		<mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoal.hbm.xml" />
+		<mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoalKpi.hbm.xml" />
+		<mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoalHierarchy.hbm.xml" />
+		-->
+
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiCatalogFunction.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiFunctionInputColumn.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiFunctionInputVariable.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiFunctionOutputColumn.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjFunction.hbm.xml" />
+
     </session-factory>
 </hibernate-configuration>
