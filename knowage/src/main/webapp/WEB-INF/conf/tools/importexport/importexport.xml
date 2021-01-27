@@ -20,6 +20,7 @@
         <TRANSFORM from="7.0" to="7.1" class="it.eng.knowage.tools.servermanager.importexport.transformers.TransformerFrom7_0_0To7_1_0" />
         <TRANSFORM from="7.1" to="7.2" class="it.eng.knowage.tools.servermanager.importexport.transformers.TransformerFrom7_1_0To7_2_0" />
         <TRANSFORM from="7.2" to="7.3" class="it.eng.knowage.tools.servermanager.importexport.transformers.TransformerFrom7_2_0To7_3_0" />
+        <TRANSFORM from="7.3" to="7.4" class="it.eng.knowage.tools.servermanager.importexport.transformers.TransformerFrom7_3_0To7_4_0" />
 
 		<!--
 		put transformers here using the syntax:
