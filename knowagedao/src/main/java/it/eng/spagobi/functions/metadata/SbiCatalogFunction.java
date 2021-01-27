@@ -12,7 +12,7 @@ import it.eng.spagobi.commons.metadata.SbiHibernateModel;
  */
 public class SbiCatalogFunction extends SbiHibernateModel {
 
-	private int functionId;
+	private Integer functionId;
 	private String name;
 	private String description;
 	private String benchmarks;
@@ -47,11 +47,11 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 		this.type = type;
 	}
 
-	public int getFunctionId() {
+	public Integer getFunctionId() {
 		return this.functionId;
 	}
 
-	public void setFunctionId(int functionId) {
+	public void setFunctionId(Integer functionId) {
 		this.functionId = functionId;
 	}
 
