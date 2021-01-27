@@ -1,4 +1,5 @@
-angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_util,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user,cockpitModule_templateServices,driversExecutionService,cockpitModule_analyticalDrivers){
+angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_util,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, 
+$mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user,cockpitModule_templateServices,driversExecutionService,cockpitModule_analyticalDrivers){
 	var ds=this;
 
 	this.datasetList=[];
@@ -658,9 +659,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		var aggregations = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
-
+        
 		if(ngModel.type=='chart'){
 			var template = this.getI18NTemplate(ngModel.content.chartTemplate);
+			// replacing variables occurences in template and aggregations, to avoid disalignaments
+			template = this.replaceStringVariables(template);
+			aggregations = this.replaceStringVariables(aggregations);	 
 			this.addNewColumnToAggregations(template.CHART, aggregations, ngModel.content.columnSelectedOfDatasetAggregations)
 
 		}
@@ -916,7 +920,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			chartTemplate.CHART.outcomingEventsEnabled = true;
 			chartTemplate.CHART.cliccable = ngModel.cliccable;
 			chartTemplate.CHART.drillable = ngModel.drillable;
-			this.repalceVariables(chartTemplate.CHART);
+			this.replaceVariables(chartTemplate.CHART);
 			var body = {"aggregations":bodyJSON, "chartTemp":chartTemplate, "exportWebData":false}
 			sbiModule_restServices.promisePost("1.0/chart/jsonChartTemplate", encodeURIComponent(dataset.label) + "/getDataAndConf" + params, body)
 			.then(function(response){
@@ -1004,7 +1008,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 	}
 
-	this.repalceVariables = function (obj){
+	this.replaceVariables = function (obj){
 		for (var attrname in obj) {
 			if(!(typeof obj[attrname] == 'object')){
 				if(typeof obj[attrname] =='string')
@@ -1012,9 +1016,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						return cockpitModule_properties.VARIABLES[p2];
 					})
 			} else {
-				this.repalceVariables(obj[attrname]);
+				this.replaceVariables(obj[attrname]);
 			}
 		}
+	}
+	
+	this.replaceStringVariables = function (obj){
+	var objString = angular.copy(obj);
+	objString = JSON.stringify(objString);
+    objString = objString.replace(/\$V\{([a-zA-Z0-9\-\_]*){1}(?:.([a-zA-Z0-9\-\_]*){1})?\}/g,function(match,p1,p2){
+					return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];
+				})
+				
+	return JSON.parse(objString);
 	}
 
 	this.addNewColumnToAggregations = function (obj, aggregations, columns){
