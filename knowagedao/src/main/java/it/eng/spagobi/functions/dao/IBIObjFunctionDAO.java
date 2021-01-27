@@ -18,5 +18,7 @@ public interface IBIObjFunctionDAO {
 
 	public void updateObjectFunctions(BIObject biObj, List<Integer> functionIds, Session currSession) throws EMFUserError;
 
+	public ArrayList<BIObjFunction> getBiObjFunctions(Integer biObjId) throws EMFUserError;
+
 	public ArrayList<BIObjFunction> getBiObjFunctions(Integer biObjId, Session currSession) throws EMFUserError;
 }

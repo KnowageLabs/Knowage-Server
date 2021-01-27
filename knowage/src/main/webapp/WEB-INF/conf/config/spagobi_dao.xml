@@ -163,6 +163,11 @@
 		<DAO name="MetaModelParviewDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.MetaModelParviewDAOHibImpl"/>
 		
 		<DAO name="ISbiTagDAO" implementation="it.eng.spagobi.tools.tag.dao.SbiTagDAOImpl"/>
+		
+		<DAO name="FunctionInputVariableDAO" implementation="it.eng.spagobi.functions.dao.FunctionInputVariableDAOImpl"></DAO>		
+		<DAO name="FunctionOutputColumnDAO" implementation="it.eng.spagobi.functions.dao.FunctionOutputColumnDAOImpl"></DAO>		
+		<DAO name="FunctionInputColumnDAO" implementation="it.eng.spagobi.functions.dao.FunctionInputColumnDAOImpl"></DAO>		
+		
 	</DAO-CONF>
 
 	<!-- ********************* END DAO CONFIGURATION ************************ -->

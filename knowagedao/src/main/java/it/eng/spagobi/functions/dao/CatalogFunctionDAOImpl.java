@@ -55,6 +55,35 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	}
 
 	@Override
+	public List<SbiCatalogFunction> loadAllCatalogFunctionsByBiobjId(Integer biobjId) {
+		logger.debug("IN");
+		Session session = null;
+		List<SbiCatalogFunction> sbiCatalogFunctions = null;
+		try {
+			session = getSession();
+			Assert.assertNotNull(session, "session cannot be null");
+
+			StringBuilder query = new StringBuilder();
+			query.append("select sbf from SbiCatalogFunction sbf ");
+			query.append(", SbiObjFunction sof ");
+			query.append("where sbf.functionId=sof.functionId ");
+			query.append("and sof.functionId = " + biobjId);
+
+			Query hibQuery = session.createQuery(query.toString());
+
+			sbiCatalogFunctions = hibQuery.list();
+		} catch (Throwable t) {
+			throw new SpagoBIDAOException("An error occured while reading Catalog Functions from DB", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return sbiCatalogFunctions;
+	}
+
+	@Override
 	public int insertCatalogFunction(CatalogFunction catalogFunction, Map<String, String> inputColumns, Map<String, ? extends IInputVariable> inputVariables,
 			Map<String, ? extends IOutputColumn> outputColumns) {
 

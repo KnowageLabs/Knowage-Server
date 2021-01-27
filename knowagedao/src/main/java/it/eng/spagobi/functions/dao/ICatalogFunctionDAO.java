@@ -25,4 +25,10 @@ public interface ICatalogFunctionDAO extends ISpagoBIDao {
 
 	public SbiCatalogFunction getCatalogFunctionByLabel(String label);
 
+	/**
+	 * @param id
+	 * @return List<SbiCatalogFunction>
+	 */
+	public List<SbiCatalogFunction> loadAllCatalogFunctionsByBiobjId(Integer id);
+
 }

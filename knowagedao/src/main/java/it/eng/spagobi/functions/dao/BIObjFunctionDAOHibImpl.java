@@ -147,13 +147,19 @@ public class BIObjFunctionDAOHibImpl extends AbstractHibernateDAO implements IBI
 	}
 
 	@Override
+	public ArrayList<BIObjFunction> getBiObjFunctions(Integer biObjId) throws EMFUserError {
+		return getBiObjFunctions(biObjId, getSession());
+	}
+
+	@Override
 	public ArrayList<BIObjFunction> getBiObjFunctions(Integer biObjId, Session currSession) throws EMFUserError {
 		logger.debug("IN");
 
 		ArrayList<BIObjFunction> toReturn = new ArrayList<BIObjFunction>();
 
-		String hql = "from SbiObjFunction s where s.sbiObject.biobjId = " + biObjId + "";
-		Query hqlQuery = currSession.createQuery(hql);
+		String query = "from SbiObjFunction s where s.sbiObject.biobjId = ?";
+		Query hqlQuery = currSession.createQuery(query);
+		hqlQuery.setInteger(0, biObjId);
 		List hibObjectPars = hqlQuery.list();
 
 		Iterator it = hibObjectPars.iterator();

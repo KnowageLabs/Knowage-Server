@@ -50,6 +50,9 @@ import it.eng.spagobi.engines.config.dao.ISbiExportersDAO;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
 import it.eng.spagobi.functions.dao.IBIObjFunctionDAO;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
+import it.eng.spagobi.functions.dao.IFunctionInputColumnDAO;
+import it.eng.spagobi.functions.dao.IFunctionInputVariableDAO;
+import it.eng.spagobi.functions.dao.IFunctionOutputColumnDAO;
 import it.eng.spagobi.georeport.dao.IFeaturesProviderFileDAO;
 import it.eng.spagobi.georeport.dao.IFeaturesProviderWFSDAO;
 import it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO;
@@ -695,6 +698,18 @@ public class DAOFactory {
 
 	public static IBIObjFunctionDAO getBIObjFunctionDAO() {
 		return (IBIObjFunctionDAO) createDAOInstance("BIObjFunctionDAO");
+	}
+
+	public static IFunctionInputVariableDAO getFunctionInputVariableDAO() {
+		return (IFunctionInputVariableDAO) createDAOInstance("FunctionInputVariableDAO");
+	}
+
+	public static IFunctionOutputColumnDAO getFunctionOutputColumnDAO() {
+		return (IFunctionOutputColumnDAO) createDAOInstance("FunctionOutputColumnDAO");
+	}
+
+	public static IFunctionInputColumnDAO getFunctionInputColumnDAO() {
+		return (IFunctionInputColumnDAO) createDAOInstance("FunctionInputColumnDAO");
 	}
 
 	/**
