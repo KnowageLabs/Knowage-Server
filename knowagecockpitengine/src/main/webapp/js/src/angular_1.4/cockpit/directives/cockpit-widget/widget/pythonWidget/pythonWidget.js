@@ -112,7 +112,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.createIframe = function () {
 			// get <div> associated to this bokeh application
 			var element = angular.element(document.querySelector('#w' + $scope.ngModel.id + ' #bokeh'));
-			// create an iframe and append it to the <div>
+			// remove old iframe if it exists
+			var oldElem = document.getElementById("bokeh_" + $scope.ngModel.id)
+			if (oldElem) oldElem.remove();
+			// create a new iframe and append it to the <div>
 			var iframe = document.createElement('iframe');
 			iframe.height="100%";
 			iframe.width="100%";

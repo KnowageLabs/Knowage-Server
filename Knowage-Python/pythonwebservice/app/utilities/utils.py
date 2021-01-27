@@ -24,6 +24,7 @@ import os
 import xml.etree.ElementTree as ET
 import json
 import pkg_resources
+import logging
 
 def findFreePort():
     import socket
@@ -86,12 +87,18 @@ def getDatasetAsDataframe(widget):
                 column_types.update({x['name']: "int64"})
     #save data as dataframe
     df = pd.DataFrame(r.json()["rows"])
-    #cast types
-    df = df.astype(column_types)
-    #drop first column (redundant)
-    df.drop(columns=['id'], inplace=True)
-    # assign column names
-    df.columns = column_names
+    if not df.empty:
+        try:
+            #cast types
+            logging.info("Trying to cast types: {}".format(column_types))
+            df = df.astype(column_types)
+        except Exception as e:
+            logging.warning("Could not cast dataframe types")
+        #drop first column (redundant)
+        if 'id' in df.columns:
+            df.drop(columns=['id'], inplace=True)
+        # assign column names
+        df.columns = column_names
     return df
 
 def serverExists(id):

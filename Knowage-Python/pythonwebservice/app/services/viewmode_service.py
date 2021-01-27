@@ -26,6 +26,7 @@ from tornado.ioloop import IOLoop
 from app.utilities import utils, security, constants, cuncurrency_manager
 from app.utilities.objects import PythonWidgetExecution, BokehResourceList
 from datetime import datetime
+import logging
 
 viewMode = Blueprint('view', __name__)
 #url: knowage_addr:port/view
@@ -55,6 +56,7 @@ def python_html():
         namespace = {python_widget.output_variable: "", "drivers_": drivers}
         exec(python_widget.script, namespace)
     except Exception as e:
+        logging.error("Error during script execution: {}".format(e))
         return str(e), 400
     #collect script result
     html = namespace[python_widget.output_variable]
@@ -90,6 +92,7 @@ def python_img():
         namespace = {"drivers_": drivers}
         exec(python_widget.script, namespace)
     except Exception as e:
+        logging.error("Error during script execution: {}".format(e))
         return str(e), 400
     # collect script result
     with open(img_file, "rb") as f:
