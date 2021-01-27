@@ -74,18 +74,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 			       		<span ref="lbFirstRowOnPage">{{(ngModel.settings.page-1)*ngModel.settings.pagination.itemsNumber+1}}</span> to <span ref="lbLastRowOnPage">{{maxPageNumber()}}</span> {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} <span ref="lbRecordCount">{{totalResults}}</span>
 			   		</span>
 			   		<span class="ag-paging-page-summary-panel">
-			   			<div ref="btFirst" class="ag-paging-button" ng-class="{'ag-disabled':ngModel.settings.page==1}"><span class="ag-icon ag-icon-first" unselectable="on"></span>
-			       			<button type="button" ref="btFirst" ng-disabled="ngModel.settings.page==1" ng-click="first()">First</button>
+			   			<div ref="btFirst" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':ngModel.settings.page==1}"><span class="ag-icon ag-icon-first" unselectable="on"></span>
+			       			<button type="button" class="ag-paging-button" ref="btFirst" ng-disabled="ngModel.settings.page==1" ng-click="first()">First</button>
 			      			</div>
-			      			<div ref="btPrevious" class="ag-paging-button" ng-class="{'ag-disabled':ngModel.settings.page==1}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
-			       			<button type="button" ref="btPrevious" ng-disabled="ngModel.settings.page==1" ng-click="prev()">Previous</button>
+			      			<div ref="btPrevious" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':ngModel.settings.page==1}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
+			       			<button type="button" class="ag-paging-button"ref="btPrevious" ng-disabled="ngModel.settings.page==1" ng-click="prev()">Previous</button>
 			       		</div>
 			       		{{::translate.load('sbi.cockpit.widgets.table.pagination.page')}} <span ref="lbCurrent">{{ngModel.settings.page}}</span> of <span ref="lbTotal">{{totalPageNumber()}}</span>
-			       		<div ref="btNext" class="ag-paging-button" ng-class="{'ag-disabled':ngModel.settings.page==totalPageNumber()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
-			       			<button type="button" ref="btNext" ng-click="next()" ng-disabled="ngModel.settings.page==totalPageNumber()">Next</button>
+			       		<div ref="btNext" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':ngModel.settings.page==totalPageNumber()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
+			       			<button type="button" class="ag-paging-button" ref="btNext" ng-click="next()" ng-disabled="ngModel.settings.page==totalPageNumber()">Next</button>
 			       		</div>
-			       		<div ref="btLast" class="ag-paging-button" ng-class="{'ag-disabled':ngModel.settings.page==totalPageNumber()}"><span class="ag-icon ag-icon-last" unselectable="on"></span>
-			       			<button type="button" ref="btLast" ng-disabled="ngModel.settings.page==totalPageNumber()" ng-click="last()">Last</button>
+			       		<div ref="btLast" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':ngModel.settings.page==totalPageNumber()}"><span class="ag-icon ag-icon-last" unselectable="on"></span>
+			       			<button type="button" class="ag-paging-button" ref="btLast" ng-disabled="ngModel.settings.page==totalPageNumber()" ng-click="last()">Last</button>
 			       		</div>
 			   		</span>
 				</div>
