@@ -34,6 +34,7 @@ public class SbiFunctionInputVariableId implements java.io.Serializable {
 		this.varName = varName;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if ((this == other))
 			return true;
@@ -43,11 +44,11 @@ public class SbiFunctionInputVariableId implements java.io.Serializable {
 			return false;
 		SbiFunctionInputVariableId castOther = (SbiFunctionInputVariableId) other;
 
-		return (this.getFunctionId() == castOther.getFunctionId())
-				&& ((this.getVarName() == castOther.getVarName()) || (this.getVarName() != null && castOther.getVarName() != null && this.getVarName().equals(
-						castOther.getVarName())));
+		return (this.getFunctionId() == castOther.getFunctionId()) && ((this.getVarName() == castOther.getVarName())
+				|| (this.getVarName() != null && castOther.getVarName() != null && this.getVarName().equals(castOther.getVarName())));
 	}
 
+	@Override
 	public int hashCode() {
 		int result = 17;
 
