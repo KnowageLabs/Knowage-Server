@@ -428,6 +428,7 @@
 						// Lov parameters NON tree
 						if(paramDialogCtrl.tempParameter.defaultValues && paramDialogCtrl.tempParameter.defaultValuesMeta) {
 							var parameterValueArray = [];
+							paramDialogCtrl.tempParameter.parameterUniqueValue = [];
 							if(paramDialogCtrl.lookoutGridOptions.api.getSelectedRows()) paramDialogCtrl.selectedTableItems = paramDialogCtrl.lookoutGridOptions.api.getSelectedRows();
 							if(paramDialogCtrl.tempParameter.multivalue) {
 
@@ -438,6 +439,7 @@
 
 									parameterValueArrayToShow.push(selectedTableItem[paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()]);
 									parameterValueArray.push(selectedTableItem[paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()]);
+									paramDialogCtrl.tempParameter.parameterUniqueValue.push(selectedTableItem);
 								}
 
 								if(paramDialogCtrl.tempParameter.selectionType == 'LOOKUP'){
@@ -648,17 +650,17 @@
 							if(paramDialogCtrl.tempParameter.parameterValue && paramDialogCtrl.tempParameter.parameterValue != null) {
 
 								var parameterValue = paramDialogCtrl.tempParameter.parameterValue;
-
+								var parameterUniqueValue = paramDialogCtrl.tempParameter.parameterUniqueValue;
 								var selectedTableItemsArray = [];
 
 								for (var i = 0; i < defaultValues.length; i++) {
 									var defaultValue = defaultValues[i];
 
 									if(isMultivalue) {
-										for (var j = 0; j < parameterValue.length; j++) {
-											var parameterValueItem = parameterValue[j];
+										for (var j = 0; j < parameterUniqueValue.length; j++) {
+											var parameterUniqueValueItem = parameterUniqueValue[j];
 
-											if(parameterValueItem == defaultValue.value) {
+											if(angular.equals(parameterUniqueValueItem, defaultValue)) {
 												selectedTableItemsArray.push(defaultValue);
 												break;
 											}
