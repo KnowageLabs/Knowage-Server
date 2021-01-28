@@ -551,11 +551,12 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 					try {
 						IEngineDriver driver = (IEngineDriver) Class.forName(driverName).newInstance();
 						ArrayList<Integer> functionsAssociated = driver.getFunctionsAssociated(templateContent);
+						IBIObjFunctionDAO biObjFunctionDAO = DAOFactory.getBIObjFunctionDAO();
 						if (functionsAssociated != null && !functionsAssociated.isEmpty()) {
-							IBIObjFunctionDAO biObjFunctionDAO = DAOFactory.getBIObjFunctionDAO();
 							biObjFunctionDAO.updateObjectFunctions(biObject, functionsAssociated, aSession);
 						} else {
 							logger.debug("No function associated to template");
+							biObjFunctionDAO.eraseBIObjFunctionByObjectId(biObject.getId(), aSession);
 						}
 					} catch (Exception e) {
 						logger.error("Error while inserting function dependencies; check template format", e);

@@ -45,7 +45,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.AbstractDataStoreTransformer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -65,6 +64,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 	private Map<String, OutputColumnRuntime> outputColumns;
 	private UserProfile profile;
 	private CatalogFunctionDataProxy proxy;
+	private IDataStore newColumns;
 
 	private static transient Logger logger = Logger.getLogger(CatalogFunctionTransformer.class);
 
@@ -229,7 +229,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 			proxy.setDataStore(dataStore);
 			// we use JSON data reader with the same config used for Python DataSet
 			IDataReader dataReader = new JSONPathDataReader("$[*]", new ArrayList<JSONPathAttribute>(), true, false);
-			IDataStore newColumns = proxy.load(dataReader);
+			newColumns = proxy.load(dataReader);
 			for (int i = 0; i < newColumns.getRecords().size(); i++) {
 				IRecord newRecord = (Record) newColumns.getRecords().get(i);
 				IRecord oldRecord = (Record) dataStore.getRecords().get(i);
@@ -259,35 +259,31 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 	}
 
 	private List<IFieldMetaData> getNewFieldsMeta() {
-		List<IFieldMetaData> newMeta = new ArrayList<IFieldMetaData>();
+		List<IFieldMetaData> newMetaList = new ArrayList<IFieldMetaData>();
 		try {
-			for (String colName : outputColumns.keySet()) {
-				OutputColumnRuntime outCol = outputColumns.get(colName);
-				FieldMetadata meta = new FieldMetadata();
-				meta.setName(outCol.getName());
-				meta.setAlias(StringUtils.isBlank(outCol.getAlias()) ? outCol.getName() : outCol.getAlias());
-				meta.setType(getMetaType(outCol.getType()));
-				meta.setFieldType(getMetaFieldType(outCol.getFieldType()));
-				newMeta.add(meta);
+			for (int i = 0; i < newColumns.getMetaData().getFieldsMeta().size(); i++) {
+				IFieldMetaData proxyMeta = (IFieldMetaData) newColumns.getMetaData().getFieldsMeta().get(i);
+				FieldMetadata newMeta = new FieldMetadata();
+				newMeta.setName(proxyMeta.getName());
+				String alias = getColumnAlias(proxyMeta.getName());
+				newMeta.setAlias(StringUtils.isBlank(alias) ? proxyMeta.getName() : alias);
+				newMeta.setType(proxyMeta.getType());
+				newMeta.setFieldType(proxyMeta.getFieldType());
+				newMetaList.add(newMeta);
 			}
 		} catch (Exception e) {
 			logger.error("Error getting new fields meta", e);
 			throw new SpagoBIRuntimeException("Error getting new fields meta", e);
 		}
-		return newMeta;
+		return newMetaList;
 	}
 
-	private Class getMetaType(String type) {
-		if (type.equalsIgnoreCase("NUMBER"))
-			return Double.class;
-		else
-			return String.class;
-	}
-
-	private FieldType getMetaFieldType(String type) {
-		if (type.equalsIgnoreCase("MEASURE"))
-			return FieldType.MEASURE;
-		else
-			return FieldType.ATTRIBUTE;
+	private String getColumnAlias(String targetColName) {
+		for (String colName : outputColumns.keySet()) {
+			OutputColumnRuntime col = outputColumns.get(colName);
+			if (targetColName.equals(col.getName()))
+				return col.getAlias();
+		}
+		return null;
 	}
 }
