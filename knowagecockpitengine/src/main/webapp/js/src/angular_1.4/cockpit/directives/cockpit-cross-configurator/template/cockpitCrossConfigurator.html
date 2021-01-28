@@ -88,7 +88,7 @@
                <md-input-container class="md-block" flex=25 ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'static' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true
                   && (outputParameter.dataType == 'number' || outputParameter.dataType == 'text' || outputParameter.dataType == 'date')">
                   <label>{{::translate.load("sbi.cockpit.cross.outputParameter.value")}}</label>
-                  <input ng-model="ngModel.cross.outputParametersList[outputParameter.name].value" type="{{outputParameter.dataType}}">
+                  <input ng-model="ngModel.cross.outputParametersList[outputParameter.name].value" type="text">
                </md-input-container>
                <input ng-model="ngModel.cross.outputParametersList[outputParameter.name].dateValue" type="hidden">
                <!-- column if dynamic -->
