@@ -46,12 +46,16 @@ def python_html():
     # resolve analytical drivers
     for d in drivers:
         python_widget.script = python_widget.script.replace("$P{" + d + "}", "drivers_.get(\'" + d + "\')")
-    #retrieve dataset
-    if python_widget.dataset_name != None:
-        dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
-        df = utils.getDatasetAsDataframe(python_widget)
-        df.to_pickle(dataset_file)
-        python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
+    try:
+        #retrieve dataset
+        if python_widget.dataset_name != None:
+            dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
+            df = utils.getDatasetAsDataframe(python_widget)
+            df.to_pickle(dataset_file)
+            python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
+    except Exception as e:
+        logging.error("Error during dataframe conversion: {}".format(e))
+        return str(e), 400
     #execute script
     try:
         namespace = {python_widget.output_variable: "", "drivers_": drivers}
@@ -84,12 +88,16 @@ def python_img():
     # resolve analytical drivers
     for d in drivers:
         python_widget.script = python_widget.script.replace("$P{" + d + "}", "drivers_.get(\'" + d + "\')")
-    # retrieve dataset
-    if python_widget.dataset_name != None:
-        dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
-        df = utils.getDatasetAsDataframe(python_widget)
-        df.to_pickle(dataset_file)
-        python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
+    try:
+        # retrieve dataset
+        if python_widget.dataset_name != None:
+            dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
+            df = utils.getDatasetAsDataframe(python_widget)
+            df.to_pickle(dataset_file)
+            python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
+    except Exception as e:
+        logging.error("Error during dataframe conversion: {}".format(e))
+        return str(e), 400
     # execute script
     try:
         namespace = {"drivers_": drivers}

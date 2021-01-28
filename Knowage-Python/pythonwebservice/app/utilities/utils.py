@@ -19,6 +19,7 @@
 import pandas as pd
 import requests
 from app.utilities import constants, security, cuncurrency_manager as cm
+from app.exceptions.KnowageRestServiceException import KnowageRestServiceException
 from datetime import datetime, timedelta
 import os
 import xml.etree.ElementTree as ET
@@ -75,7 +76,10 @@ def getDatasetAsDataframe(widget):
     payload = widget.datastore_request
     r = requests.post(address, headers=headers, data=payload)
     #retrieve column names from metadata
-    names = r.json()["metaData"]["fields"]
+    response_body = r.json()
+    if 'errors' in response_body:
+        raise KnowageRestServiceException(address)
+    names = response_body["metaData"]["fields"]
     column_names = []
     column_types = {}
     for x in names:
@@ -86,7 +90,7 @@ def getDatasetAsDataframe(widget):
             elif x["type"] == "float":
                 column_types.update({x['name']: "int64"})
     #save data as dataframe
-    df = pd.DataFrame(r.json()["rows"])
+    df = pd.DataFrame(response_body["rows"])
     if not df.empty:
         try:
             #cast types
