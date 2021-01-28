@@ -88,8 +88,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			} else {	// other widgets
 				var columns = $scope.ngModel.content.columnSelectedOfDataset;
 			}
-			for (var i=0; i<columns.length; i++) {
-				if (columns[i].isFunction) return true;
+			if (columns) {
+				for (var i=0; i<columns.length; i++) {
+					if (columns[i].isFunction) return true;
+				}
 			}
 			return false;
 		}
