@@ -53,6 +53,10 @@ def python_html():
             df = utils.getDatasetAsDataframe(python_widget)
             df.to_pickle(dataset_file)
             python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
+    except Exception as e:
+        logging.error("Error during dataframe conversion: {}".format(e))
+        return str(e), 400
+    try:
     #execute script
         namespace = {python_widget.output_variable: "", "drivers_": drivers}
         exec(python_widget.script, namespace)
@@ -91,6 +95,10 @@ def python_img():
             df = utils.getDatasetAsDataframe(python_widget)
             df.to_pickle(dataset_file)
             python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
+    except Exception as e:
+        logging.error("Error during dataframe conversion: {}".format(e))
+        return str(e), 400
+    try:
     # execute script
         namespace = {"drivers_": drivers}
         exec(python_widget.script, namespace)
