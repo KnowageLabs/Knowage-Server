@@ -79,8 +79,9 @@
 			{"headerName": sbiModule_translate.load('sbi.workspace.dataset.name'),"field":"name"},
 			{"headerName": sbiModule_translate.load('sbi.workspace.dataset.type'),"field":"dsTypeCd",width: 250,suppressSizeToFit:true,suppressMovable:true},
 			{"headerName": "Tags","field":"tags", cellRenderer:tagsRenderer},
-			{"headerName": sbiModule_translate.load('sbi.workspace.dataset.hasParameters'),"field":"pars","cellStyle":
-				{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}];
+			{"headerName": sbiModule_translate.load('sbi.workspace.dataset.hasParameters'),"field":"pars","cellStyle":{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasParametersRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true},
+			{"headerName": sbiModule_translate.load('sbi.workspace.dataset.hasDrivers'),"field":"drivers","cellStyle":{"display":"inline-flex","justify-content":"center", "align-items": "center"},cellRenderer:hasDriversRenderer,suppressSorting:true,suppressFilter:true,width: 150,suppressSizeToFit:true,suppressMovable:true}
+		];
 
 		$scope.workspaceDatasetViewGrid = {
 	        enableColResize: false,
@@ -112,6 +113,10 @@
 
 		function hasParametersRenderer(row){
 			return (row.data.pars && row.data.pars.length > 0) ? '<i class="fa fa-check"></i>' : '';
+		}
+
+		function hasDriversRenderer(row){
+			return (row.data.drivers && row.data.drivers.length > 0) ? '<i class="fa fa-check"></i>' : '';
 		}
 
 		function tagsRenderer(params){
