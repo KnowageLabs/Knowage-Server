@@ -165,6 +165,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.dataset_label = $scope.dataset.label;
 				$scope.aggregations = $scope.buildAggregations($scope.ngModel.content.columnSelectedOfDataset, $scope.dataset_label);
 				$scope.parameters = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
+				// if parameter has only one value, it must not be enclosed in array
+				for (var parKey in $scope.parameters) {
+					var parValues = $scope.parameters[parKey];
+					if (Array.isArray(parValues) && parValues.length == 1) {
+						$scope.parameters[parKey] = $scope.parameters[parKey][0];
+					}
+				}
 			}
 			else { //no dataset selected
 				$scope.selections = "";
