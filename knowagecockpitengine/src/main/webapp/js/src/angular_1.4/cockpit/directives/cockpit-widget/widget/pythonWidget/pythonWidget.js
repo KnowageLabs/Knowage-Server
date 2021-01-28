@@ -197,6 +197,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    },
 		    function(response) { //failed
 		    	$scope.pythonOutput = 'Error: ' + $sce.trustAsHtml(response.data);
+		    	if ($scope.ngModel.pythonOutputType != 'img') {
+					$scope.createIframe();
+				}
 		    });
 
 		}
@@ -224,6 +227,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    },
 		    function(response) { //failed
 		    	$scope.pythonOutput = 'Python Error';
+		    	if ($scope.ngModel.pythonOutputType != 'img') {
+					$scope.createIframe();
+				}
 		    });
 
 		}
