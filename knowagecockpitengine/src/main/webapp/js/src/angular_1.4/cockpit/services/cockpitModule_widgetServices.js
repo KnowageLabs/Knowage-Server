@@ -380,7 +380,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			if(dirtyIndex > -1){
 				cockpitModule_properties.DIRTY_WIDGETS.splice(dirtyIndex, 1);
 			}
-			if(nature === 'init' && cockpitModule_properties.HASDEFAULTSELECTION && config.type != 'selector') return;
+			if(nature === 'init' && cockpitModule_properties.HASDEFAULTSELECTION[cockpitModule_properties.CURRENT_SHEET] && config.type != 'selector') return;
 			var width = angular.element(element)[0].parentElement.offsetWidth;
 			var height = angular.element(element)[0].parentElement.offsetHeight;
 			if(data == undefined) {

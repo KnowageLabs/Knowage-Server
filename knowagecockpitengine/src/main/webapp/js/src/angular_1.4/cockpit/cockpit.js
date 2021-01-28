@@ -127,19 +127,19 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	$scope.imageBackgroundUrl=cockpitModule_template.configuration.style.imageBackgroundUrl;
 	cockpitModule_template = cockpitModule_backwardCompatibility.updateCockpitModel(cockpitModule_template);
 	
-	function checkForDefaultSelections(model){
+	function checkForDefaultSelections(model, sheetIndex){
 		for(var sheet of model.sheets){
-			for(var widget of sheet.widgets){
-				if(widget.type === 'selector'){
-					if(widget.settings && widget.settings.defaultValue && widget.settings.defaultValue != '') return true;
+			if(sheet.index == sheetIndex){
+				for(var widget of sheet.widgets){
+					if(widget.type === 'selector'){
+						if(widget.settings && widget.settings.defaultValue && widget.settings.defaultValue != '') return true;
+					}
 				}
 			}
 		}
 		return false;
 	}
-	
-	
-	cockpitModule_properties.HASDEFAULTSELECTION = checkForDefaultSelections(cockpitModule_template);
+		
 	
 	$scope.sbiModule_device=sbiModule_device;
 
@@ -165,6 +165,8 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	$scope.initializedSheets = [0]; // first sheet is always loaded
 
 	var initSheet = $scope.$watch('cockpitModule_properties.CURRENT_SHEET',function(newValue,oldValue){
+		if(!cockpitModule_properties.HASDEFAULTSELECTION) cockpitModule_properties.HASDEFAULTSELECTION = {};
+		//if(cockpitModule_template.getSelections().length == 0) cockpitModule_properties.HASDEFAULTSELECTION[newValue] = checkForDefaultSelections(cockpitModule_template, newValue);
         var currentSheet; // get sheet checking proper index
         for(var i=0; i < cockpitModule_template.sheets.length; i++){
             if(cockpitModule_template.sheets[i].index == newValue){
