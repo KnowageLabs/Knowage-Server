@@ -841,8 +841,19 @@
 		};
 
 		this.isExecuteParameterDisabled = function() {
-			for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++) {
-				if(execProperties.parametersData.documentParameters[i].mandatory && (typeof execProperties.parametersData.documentParameters[i].parameterValue === 'undefined' || execProperties.parametersData.documentParameters[i].parameterValue == '')){
+			var docParams = execProperties.parametersData.documentParameters;
+			for(var i = 0; i < docParams.length; i++) {
+				var currParam = docParams[i];
+				var currParamValue = currParam.parameterValue;
+				if(currParam.mandatory
+						&& (
+								typeof currParamValue === 'undefined'
+								|| (typeof currParamValue === 'string' && currParamValue.length == 0)
+								|| (typeof currParamValue === 'number' && isNaN(currParamValue) && currParamValue !== 0)
+								|| (Array.isArray(currParamValue) && currParamValue.length == 0)
+								|| currParamValue == null
+							)
+						) {
 					return true;
 				}
 			}
