@@ -1086,7 +1086,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 							}
 							if(parameter.bindType == 'selection') {
 								var selectionsObj = cockpitModule_template.getSelections();
-								if(selectionsObj){
+								if(selectionsObj && selectionsObj.length > 0){
 									var found = false;
 									for(var i = 0; i < selectionsObj.length && found == false; i++){
 										if(selectionsObj[i].ds == parameter.dataset && selectionsObj[i].columnName == parameter.column){
