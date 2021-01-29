@@ -30,7 +30,7 @@
 	                	<md-input-container flex>
 	                		<form name="aliasForm">
 		                    	<label>{{::translate.load('sbi.cockpit.widgets.table.column.alias')}}</label>
-		                    	<input name="alias" type="text" ng-model="calculatedField.alias" ng-pattern="/^[a-zA-Z0-9\_\-]*$/" required>
+		                    	<input name="alias" type="text" ng-model="calculatedField.alias" ng-pattern="/^[a-zA-Z0-9\_\-\%\$\u20AC\s]*$/" required>
 	                    	</form>
 	                	</md-input-container>
 <!-- 	                	<md-input-container flex="30" ng-if="calculatedField.datasetOrTableFlag"> -->
