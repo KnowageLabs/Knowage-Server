@@ -51,7 +51,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-@Path("/2.0/documents1")
+@Path("/2.0/documentdetails")
 public class DocumentResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);

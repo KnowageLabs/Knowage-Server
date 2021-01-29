@@ -7,7 +7,7 @@
     		   documentData.documentInfoObject =$location.search();
     		   documentData.documentId = documentData.documentInfoObject.OBJECT_ID;
     		   documentData.templates = "templates";
-    		   documentData.requiredPath = "2.0/documents1";
+    		   documentData.requiredPath = "2.0/documentdetails";
     		   documentData.drivers = [];
     		   documentData.previewFile = {};
     		   documentData.documentImage;

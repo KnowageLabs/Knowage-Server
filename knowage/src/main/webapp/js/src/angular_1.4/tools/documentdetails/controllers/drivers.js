@@ -65,7 +65,7 @@ angular
              var id = self.driverRelatedObject.id;
              var basePath = id + "/" + 'drivers';
              self.driverParuses = [];
-             var requiredPath = "2.0/documents1";
+             var requiredPath = "2.0/documentdetails";
              $scope.paruseColumns = {}
              self.analyticalDrivers = [];
              self.hasParuse = true;

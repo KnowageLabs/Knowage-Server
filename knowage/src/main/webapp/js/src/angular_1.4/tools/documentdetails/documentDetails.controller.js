@@ -165,19 +165,25 @@
 			 });
       }
 
-     self.setChecked = function() {
-   	  for(var i = 0; i < documentService.documentsList.length; i++) {
-   		  for(var j = 0; j < documentService.savedSubreports.length; j++) {
-   			  if(documentService.documentsList[i].id == documentService.savedSubreports[j].sub_rpt_id) {
-   				  documentService.documentsList[i].wanted = true;
-   			  }
-   		  }
-   	  }
-   	  return documentService.documentsList;
-     }
+	self.setChecked = function() {
+		for(var i = 0; i < documentService.documentsList.length; i++) {
+			for(var j = 0; j < documentService.savedSubreports.length; j++) {
+				if(documentService.documentsList[i].id == documentService.savedSubreports[j].sub_rpt_id) {
+					documentService.documentsList[i].wanted = true;
+				}
+			}
+		}
+		return documentService.documentsList;
+	}
 
-     closingIFrame.close();
+	self.noSelectedFunctionalities = function() {
+		return documentService.folders
+			.filter(function(e) { return e.checked; })
+			.length == 0;
+	}
+	
+	closingIFrame.close();
 
-   };
+	};
 
 })();

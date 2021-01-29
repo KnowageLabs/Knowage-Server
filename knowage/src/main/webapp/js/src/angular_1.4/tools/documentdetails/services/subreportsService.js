@@ -21,7 +21,7 @@
     	   .service('subreportsService', ['$filter','DocumentService','sbiModule_translate','sbiModule_restServices','sbiModule_messaging', function($filter,DocumentService,sbiModule_translate,sbiModule_restServices,sbiModule_messaging) {
     		   var subreportsResource = {};
     		   var documentService = DocumentService;
-    		   var requiredPath = "2.0/documents1";
+    		   var requiredPath = "2.0/documentdetails";
     		   
     		   subreportsResource.persistSubreports = function() {
     	        	var checkedDocuments = $filter('filter')(documentService.documentsList, {wanted: true});
