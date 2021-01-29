@@ -100,7 +100,9 @@
 			executionService.resetParameter = function(parameter, mainReset) {
 
 				if(parameter.defaultValue != undefined && parameter.defaultValue != '' && parameter.defaultValue!= '[]'){
-					parameter.parameterValue = angular.copy(parameter.defaultValue);
+					if (parameter.type == "NUM") parameter.parameterValue = parseInt(parameter.defaultValue);
+					else if (parameter.type == "DATE") parameter.parameterValue = Date.parse(parameter.defaultValue);
+					else parameter.parameterValue = angular.copy(parameter.defaultValue);
 					parameter.parameterDescription = angular.copy(parameter.defaultValueDescription);
 					if(Array.isArray(parameter.parameterValue) && !Array.isArray(parameter.parameterDescription)){
 						for(var j = 0; j < parameter.parameterValue.length; j++) {
