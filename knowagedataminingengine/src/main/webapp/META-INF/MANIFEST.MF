@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-
-Name: KnowageDataMiningEngine.war
-Implementation-Title: KnowageDataMiningEngine
-Implementation-Version: 6.0.0
-
