@@ -10,13 +10,18 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class PythonUtils {
 
+	/**
+	 *
+	 */
+	public static final String PYTHON_ENVIRONMENT_CATEGORY = "PYTHON_CONFIGURATION";
+
 	static protected Logger logger = Logger.getLogger(PythonUtils.class);
 
 	private PythonUtils() {
 	}
 
 	public static String getPythonAddress(String envLabel) {
-		List<IConfiguration> allRConfigs = SingletonConfig.getInstance().getConfigsValueByCategory("PYTHON_CONFIGURATION");
+		List<IConfiguration> allRConfigs = SingletonConfig.getInstance().getConfigsValueByCategory(PYTHON_ENVIRONMENT_CATEGORY);
 		for (IConfiguration cfg : allRConfigs) {
 			if (cfg.getLabel().equals(envLabel)) {
 				return cfg.getValueCheck() + "/";
