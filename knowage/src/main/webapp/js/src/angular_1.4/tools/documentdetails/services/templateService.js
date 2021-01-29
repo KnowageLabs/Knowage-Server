@@ -21,7 +21,7 @@
     	   .service('templateService', ['resourceService', 'DocumentService', 'multipartForm', 'sbiModule_translate', 'sbiModule_messaging', function(resourceService, DocumentService, multipartForm, sbiModule_translate, sbiModule_messaging) {
     		   var templateResource = {};
     		   var documentService = DocumentService;
-    		   var requiredPath = "2.0/documents";
+    		   var requiredPath = "2.0/documents1";
     		   templateResource.listOfTemplates = [];
     		   templateResource.changedTemplates = [];
     		   templateResource.changedTemplate = {};

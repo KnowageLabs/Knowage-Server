@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <div class="md-toolbar-tools" layout="row">
 			            <h2>{{ddc.title}}</h2>
 			            <span flex></span>			          
-			            <md-button ng-disabled="documentDetailsForm.$invalid || ddc.noSelectedFunctionalities()" ng-click="ddc.savingFunction()">Save</md-button>
+			            <md-button ng-disabled="documentDetailsForm.$invalid" ng-click="ddc.savingFunction()">Save</md-button>
 			              <md-button  ng-click="ddc.cancelFunction()">Cancel</md-button>
 			        </div>
 			    </md-toolbar>

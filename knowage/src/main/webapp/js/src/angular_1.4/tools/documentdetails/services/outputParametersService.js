@@ -21,7 +21,7 @@
     	   .service('outputParametersService', ['resourceService', 'DocumentService', 'sbiModule_translate', 'sbiModule_messaging', function(resourceService,DocumentService,sbiModule_translate,sbiModule_messaging) {
     		   var outputResource = {};
     		   var documentService = DocumentService;
-    		   var requiredPath = "2.0/documents";
+    		   var requiredPath = "2.0/documents1";
     		   outputResource.outputParametersForDeleting = [];
 
     		   outputResource.persistOutputParameters = function() {
