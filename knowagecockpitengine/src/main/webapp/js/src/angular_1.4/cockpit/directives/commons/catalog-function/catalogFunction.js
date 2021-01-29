@@ -365,10 +365,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}).showToast();
 		}
 
-		$scope.test = function() {
-			return true;
-		}
-
 		$scope.saveColumnConfiguration=function(){
 			if (!checkColumnsConfiguration($scope.selectedFunction.inputColumns))
 				$scope.toastifyMsg('warning',$scope.translate.load("sbi.cockpit.widgets.table.catalogFunctions.function.error.datasetColumns"));

@@ -100,6 +100,7 @@ def convertKnowageDatasetToDataframe(names, rows):
     if not df.empty:
         try:
             #cast types
+            logging.debug("Trying to cast types: {}".format(column_types))
             df = df.astype(column_types)
         except Exception as e:
             logging.warning("Could not cast dataframe types")
