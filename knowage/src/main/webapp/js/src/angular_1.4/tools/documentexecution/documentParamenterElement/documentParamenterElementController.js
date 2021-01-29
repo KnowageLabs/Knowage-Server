@@ -315,14 +315,15 @@
 		}
 
 		$scope.showRequiredFieldMessage = function(parameter) {
-		return (
-				parameter.mandatory
-				&& (
-						!parameter.parameterValue
-						|| (Array.isArray(parameter.parameterValue) && parameter.parameterValue.length == 0)
-						|| parameter.parameterValue == ''
-				)
-				) == true;
+			var currParamValue = parameter.parameterValue;
+			return parameter.mandatory
+					&& (
+						typeof currParamValue === 'undefined'
+						|| (typeof currParamValue === 'string' && currParamValue.length == 0)
+						|| (typeof currParamValue === 'number' && isNaN(currParamValue) && currParamValue !== 0)
+						|| (Array.isArray(currParamValue) && currParamValue.length == 0)
+						|| currParamValue == null
+					);
 		};
 
 
