@@ -45,11 +45,6 @@
 			<id>jaspersoft</id>
 			<url>http://jaspersoft.artifactoryonline.com/jaspersoft/jr-ce-releases</url>
 		</repository>
-		<!-- We use Public Maven Repository for SNAP (snap-repo-public) because it contains jpy, needed by knowagedataminingengine CE; this library is not available on Maven Central -->
-		<repository>
-			<id>snap-repo-public</id>
-			<url>http://nexus.senbox.net/nexus/content/repositories/releases/</url>
-		</repository>
 		<!-- We use Pentaho repository for mondrian, needed by knowagewhatifengine CE -->
 		<repository>
 			<id>pentaho</id>
@@ -107,7 +102,6 @@
 		<module>../knowagesdk</module>
 		
 		<module>../knowagecommonjengine</module>
-		<module>../knowagedataminingengine</module>
 		<module>../knowagegeoreportengine</module>
 		<module>../knowagemeta</module>
 		<module>../knowageqbeengine</module>
