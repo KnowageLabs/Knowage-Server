@@ -153,10 +153,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			if(!self.compareVersion("7.2.16",version)){
 				if(model.type=='table') {
-					if(model.settings.autoRowsHeight) {
+					if(typeof model.settings.autoRowsHeight != 'undefined') {
 						delete model.settings.autoRowsHeight;
 						if (model.style.tr && !model.style.tr.height)  model.style.tr.height = 25;
 					}
+					if(model.style.tr && model.style.tr.height && typeof model.style.tr.height != 'number') model.style.tr.height = parseInt(model.style.tr.height);
 				}
 				if(model.type=='map') {
 
