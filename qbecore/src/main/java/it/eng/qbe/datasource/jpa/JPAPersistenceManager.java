@@ -17,6 +17,7 @@
  */
 package it.eng.qbe.datasource.jpa;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -29,9 +30,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -46,11 +47,11 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.IPersistenceManager;
+import it.eng.qbe.datasource.jpa.audit.JPAPersistenceManagerAuditLogger;
+import it.eng.qbe.datasource.jpa.audit.Operation;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.WhereField;
@@ -203,22 +204,13 @@ public class JPAPersistenceManager implements IPersistenceManager {
 					continue;
 				}
 				Column column = registryConf.getColumnConfiguration(attributeName);
-				List columnDepends = new ArrayList();
-				if (column.getDependences() != null && !"".equals(column.getDependences())) {
-					String[] dependences = column.getDependences().split(",");
-					for (int i = 0; i < dependences.length; i++) {
-						// get dependences informations
-						Column dependenceColumn = getDependenceColumns(registryConf.getColumns(), dependences[i]);
-						if (dependenceColumn != null)
-							columnDepends.add(dependenceColumn);
-					}
-				}
 
 				if (column.getSubEntity() != null) {
 					logger.debug("Column [" + attributeName + "] is a foreign key");
 					if (aRecord.get(attributeName) != null && !aRecord.get(attributeName).equals("")) {
 						logger.debug("search foreign reference for value " + aRecord.get(attributeName));
-						manageForeignKey(targetEntity, column, newObj, attributeName, aRecord, columnDepends, entityManager, registryConf.getColumns());
+						Map<String, Object> subEntityProperties = getAllSubEntityProperties(aRecord, registryConf, column.getSubEntity());
+						setSubEntity(targetEntity, column, newObj, subEntityProperties, entityManager);
 					} else {
 						// no value in column, insert null
 						logger.debug("No value for " + attributeName + ": keep it null");
@@ -226,7 +218,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 				} else {
 					logger.debug("Column [" + attributeName + "] is a normal column");
-					manageProperty(targetEntity, newObj, attributeName, aRecord);
+					setProperty(targetEntity, newObj, attributeName, aRecord.get(attributeName));
 				}
 			}
 
@@ -262,6 +254,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			entityManager.persist(newObj);
 			entityManager.flush();
 			entityTransaction.commit();
+
+			JPAPersistenceManagerAuditLogger.log(Operation.INSERTION, this.getDataSource().getConfiguration().getModelName(), registryConf.getEntity(), null,
+					aRecord, null);
 
 		} catch (Throwable t) {
 			if (entityTransaction != null && entityTransaction.isActive()) {
@@ -307,6 +302,13 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			Object obj = entityManager.find(targetEntity.getJavaType(), this.convertValue(keyColumnValue, a));
 			logger.debug("Key column class is equal to [" + obj.getClass().getName() + "]");
 
+			// object used to track old values, just before changes
+			JSONObject oldRecord = new JSONObject();
+			// just to count the number of changes
+			int changesCounter = 0;
+			// list used to track processed attributes
+			List<String> processedAttributes = new ArrayList<String>();
+
 			while (it.hasNext()) {
 				String attributeName = (String) it.next();
 				logger.debug("Processing column [" + attributeName + "] ...");
@@ -315,32 +317,39 @@ public class JPAPersistenceManager implements IPersistenceManager {
 					logger.debug("Skip column [" + attributeName + "] because it is the key of the table");
 					continue;
 				}
+
 				Column column = registryConf.getColumnConfiguration(attributeName);
-				if (!column.isEditable()) {
-					logger.debug("Skip column [" + attributeName + "] because it is not editable");
+
+				if (!column.isEditable() || column.isInfoColumn()) {
+					logger.debug("Skip column [" + attributeName + "] because it is not editable or it is an info column");
 					continue;
 				}
-				List columnDepends = new ArrayList();
-				if (column.getDependences() != null && !"".equals(column.getDependences())) {
-					String[] dependences = column.getDependences().split(",");
-					for (int i = 0; i < dependences.length; i++) {
-						// get dependences informations
-						Column dependenceColumns = getDependenceColumns(registryConf.getColumns(), dependences[i]);
-						if (dependenceColumns != null)
-							columnDepends.add(dependenceColumns);
+
+				if (processedAttributes.contains(attributeName)) {
+					logger.debug("Skip column [" + attributeName + "] because it was already processed");
+					continue;
+				}
+
+				if (column.getSubEntity() != null) {
+					logger.debug("Column [" + attributeName + "] is a foreign key");
+
+					Map<String, Object> subEntityProperties = getAllSubEntityProperties(aRecord, registryConf, column.getSubEntity());
+
+					int changed = updateSubEntity(subEntityProperties, entityManager, targetEntity, obj, oldRecord, column);
+					if (changed > 0) {
+						changesCounter += changed;
+					}
+					// adding sub-entity attributes into the list of processed attributes
+					subEntityProperties.keySet().forEach(processedAttributes::add);
+				} else {
+					logger.debug("Column [" + attributeName + "] is a normal column");
+					boolean changed = updateProperty(aRecord, targetEntity, obj, oldRecord, attributeName);
+					if (changed) {
+						changesCounter++;
 					}
 				}
 
-				// if column is info column do not update
-				if (!column.isInfoColumn()) {
-					if (column.getSubEntity() != null) {
-						logger.debug("Column [" + attributeName + "] is a foreign key");
-						manageForeignKey(targetEntity, column, obj, attributeName, aRecord, columnDepends, entityManager, registryConf.getColumns());
-					} else {
-						logger.debug("Column [" + attributeName + "] is a normal column");
-						manageProperty(targetEntity, obj, attributeName, aRecord);
-					}
-				}
+				processedAttributes.add(attributeName);
 			}
 
 			if (!entityTransaction.isActive()) {
@@ -350,6 +359,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			entityManager.persist(obj);
 			entityManager.flush();
 			entityTransaction.commit();
+
+			JPAPersistenceManagerAuditLogger.log(Operation.UPDATE, this.getDataSource().getConfiguration().getModelName(), registryConf.getEntity(), oldRecord,
+					aRecord, changesCounter);
 
 		} catch (Throwable t) {
 			if (entityTransaction != null && entityTransaction.isActive()) {
@@ -361,6 +373,101 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			logger.debug("OUT");
 		}
 
+	}
+
+	private Map<String, Object> getAllSubEntityProperties(JSONObject aRecord, RegistryConfiguration registryConf, String subEntity) throws JSONException {
+		List<Column> columns = registryConf.getColumns();
+		// @formatter:off
+		Map<String, Object> allSubEntityProperties =
+				columns.stream()
+				.filter(column -> subEntity.equals(column.getSubEntity())) // we get all columns belonging to same sub-entity
+				.collect(Collectors.toMap(Column::getField, column -> aRecord.opt(column.getField()))); // we create a map (column field -> incoming value)
+		// @formatter:on
+		return allSubEntityProperties;
+	}
+
+	/**
+	 *
+	 * @return true if sub-entity was changed, false otherwise
+	 * @throws JSONException
+	 */
+	protected int updateSubEntity(Map<String, Object> newSubEntityAttributes, EntityManager entityManager, EntityType targetEntity, Object obj,
+			JSONObject oldRecord, Column column) throws JSONException {
+		EntityType subEntityType = getSubEntityType(targetEntity, column.getSubEntity(), entityManager);
+		Object subEntity = getOldSubEntity(targetEntity, column, obj);
+		int counter = 0;
+		for (Map.Entry<String, Object> entry : newSubEntityAttributes.entrySet()) {
+			String attributeName = entry.getKey();
+			Object newAttributeValue = entry.getValue();
+			Object oldValue = getOldProperty(subEntityType, subEntity, entry.getKey());
+			oldRecord.put(attributeName, oldValue);
+			if (!areEquals(oldValue, newAttributeValue)) {
+				counter++;
+			}
+		}
+		setSubEntity(targetEntity, column, obj, newSubEntityAttributes, entityManager);
+		return counter;
+	}
+
+	/**
+	 *
+	 * @return true if property was changed, false otherwise
+	 * @throws JSONException
+	 */
+	protected boolean updateProperty(JSONObject aRecord, EntityType targetEntity, Object obj, JSONObject oldRecord, String attributeName) throws JSONException {
+		Object oldValue = getOldProperty(targetEntity, obj, attributeName);
+		oldRecord.put(attributeName, oldValue);
+		Object newValue = aRecord.get(attributeName);
+		setProperty(targetEntity, obj, attributeName, newValue);
+		Attribute attribute = targetEntity.getAttribute(attributeName);
+		Object newValueConverted = this.convertValue(newValue, attribute);
+		if (!areEquals(oldValue, newValueConverted)) {
+			return true;
+		}
+		return false;
+	}
+
+	private EntityType getSubEntityType(EntityType targetEntity, String subEntity, EntityManager entityManager) {
+		Attribute a = targetEntity.getAttribute(subEntity);
+		Attribute.PersistentAttributeType type = a.getPersistentAttributeType();
+		if (type.equals(PersistentAttributeType.MANY_TO_ONE)) {
+			String entityJavaSimpleName = a.getJavaType().getSimpleName();
+			return getEntityByName(entityManager, entityJavaSimpleName);
+		} else {
+			throw new SpagoBIRuntimeException("Property " + subEntity + " is not a many-to-one relation");
+		}
+	}
+
+	private Object getOldSubEntity(EntityType targetEntity, Column column, Object obj) {
+
+		Attribute a = targetEntity.getAttribute(column.getSubEntity());
+
+		Attribute.PersistentAttributeType type = a.getPersistentAttributeType();
+		if (type.equals(PersistentAttributeType.MANY_TO_ONE)) {
+			String subKey = a.getName();
+			try {
+				Class clazz = targetEntity.getJavaType();
+				Object subEntity = new PropertyDescriptor(subKey, clazz).getReadMethod().invoke(obj);
+				return subEntity;
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("Error while getting sub entity " + column.getSubEntity() + " from entity " + targetEntity, e);
+			}
+		} else {
+			throw new SpagoBIRuntimeException("Property " + column.getSubEntity() + " is not a many-to-one relation");
+		}
+	}
+
+	private boolean areEquals(Object oldValue, Object newValue) {
+		if (oldValue == null && newValue == null) {
+			// both are null, return true
+			return true;
+		}
+		if (oldValue == null || newValue == null) {
+			// one of the 2 is null but not both
+			return false;
+		}
+		// compare values
+		return oldValue.equals(newValue);
 	}
 
 	@Override
@@ -411,6 +518,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			// entityManager.flush();
 			entityTransaction.commit();
 
+			JPAPersistenceManagerAuditLogger.log(Operation.DELETION, this.getDataSource().getConfiguration().getModelName(), registryConf.getEntity(), aRecord,
+					null, null);
+
 		} catch (Throwable t) {
 			if (entityTransaction != null && entityTransaction.isActive()) {
 				entityTransaction.rollback();
@@ -425,25 +535,30 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 	public EntityType getTargetEntity(RegistryConfiguration registryConf, EntityManager entityManager) {
 
-		EntityType targetEntity;
-
 		String targetEntityName = getTargetEntityName(registryConf);
+
+		EntityType targetEntity = getEntityByName(entityManager, targetEntityName);
+
+		return targetEntity;
+	}
+
+	protected EntityType getEntityByName(EntityManager entityManager, String entityName) {
+		EntityType toReturn = null;
 
 		Metamodel classMetadata = entityManager.getMetamodel();
 		Iterator it = classMetadata.getEntities().iterator();
 
-		targetEntity = null;
 		while (it.hasNext()) {
 			EntityType entity = (EntityType) it.next();
 			String jpaEntityName = entity.getName();
 
-			if (entity != null && jpaEntityName.equals(targetEntityName)) {
-				targetEntity = entity;
+			if (entity != null && jpaEntityName.equals(entityName)) {
+				toReturn = entity;
 				break;
 			}
 		}
 
-		return targetEntity;
+		return toReturn;
 	}
 
 	public String getKeyAttributeName(EntityType entity) {
@@ -466,20 +581,24 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		return keyName;
 	}
 
-	private void addRecursiveDependenciesTo(LinkedHashMap filtersForRef, List<Column> columns, Column c, JSONObject aRecord) throws JSONException {
-		for (Column column : columns) {
-			if (!column.getField().equals(c.getField()) && column.getDependences() != null && column.getDependences().equals(c.getField())) {
-				addRecursiveDependenciesTo(filtersForRef, columns, column, aRecord);
-				filtersForRef.put(column.getField(), aRecord.get(column.getField()));
-			}
+	private Object getOldProperty(EntityType targetEntity, Object obj, String aKey) {
+
+		logger.debug("IN");
+
+		try {
+			Attribute a = targetEntity.getAttribute(aKey);
+			Class clazz = targetEntity.getJavaType();
+			Object property = new PropertyDescriptor(aKey, clazz).getReadMethod().invoke(obj);
+			return property;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting property " + aKey + " from entity " + targetEntity, e);
+		} finally {
+			logger.debug("OUT");
 		}
 	}
 
 	// case of foreign key
-	private void manageForeignKey(EntityType targetEntity, Column c, Object obj, String aKey, JSONObject aRecord, List lstDependences,
-			EntityManager entityManager, List<Column> columns) {
-
-		logger.debug("column " + aKey + " is a FK");
+	private void setSubEntity(EntityType targetEntity, Column c, Object obj, Map<String, Object> mewSubEntityAttributes, EntityManager entityManager) {
 
 		Attribute a = targetEntity.getAttribute(c.getSubEntity());
 
@@ -488,90 +607,30 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			String entityJavaType = a.getJavaType().getName();
 			String subKey = a.getName();
 			try {
-				LinkedHashMap filtersForRef = new LinkedHashMap();
-				filtersForRef.put(c.getField(), (aRecord.get(aKey)));
 
-				addRecursiveDependenciesTo(filtersForRef, columns, c, aRecord);
-
-				// add dependences FROM if they are
-				if (lstDependences == null || lstDependences != null) {
-					for (int i = 0; i < lstDependences.size(); i++) {
-						Column tmpDep = (Column) lstDependences.get(i);
-						addRecursiveDependenciesFrom(targetEntity, aRecord, entityJavaType, filtersForRef, tmpDep, c, columns);
-					}
-				}
-
-				Object referenced = getReferencedObjectJPA(entityManager, entityJavaType, filtersForRef);
+				Object referenced = getReferencedObjectJPA(entityManager, entityJavaType, mewSubEntityAttributes);
 
 				Class clas = targetEntity.getJavaType();
 				Field f = clas.getDeclaredField(subKey);
 				f.setAccessible(true);
 				// entityManager.refresh(referenced);
 				f.set(obj, referenced);
-			} catch (JSONException e) {
-				logger.error(e);
-				throw new SpagoBIRuntimeException("Property " + c.getSubEntity() + " is not a many-to-one relation", e);
 			} catch (Exception e) {
-				throw new SpagoBIRuntimeException("Error setting Field " + aKey + "", e);
+				throw new SpagoBIRuntimeException("Error setting sub-entity", e);
 			}
 		} else {
 			throw new SpagoBIRuntimeException("Property " + c.getSubEntity() + " is not a many-to-one relation");
 		}
 	}
 
-	private void addRecursiveDependenciesFrom(EntityType targetEntity, JSONObject aRecord, String entityType, LinkedHashMap filtersForRef, Column tmpDep,
-			Column c, List<Column> columns) throws JSONException {
-		if (!tmpDep.isInfoColumn() && tmpDep.getSubEntity() != null) {
-			IDataSource model = getDataSource();
-			IModelStructure structure = model.getModelStructure();
-			String targetEntityName = targetEntity.getJavaType().getName();
-			IModelField selectField = structure
-					.getField(targetEntityName + "::" + tmpDep.getSubEntity() + "(" + tmpDep.getForeignKey() + "):" + tmpDep.getField());
-			IModelEntity parentEntity = selectField.getParent();
-			logger.debug("Parent entity is " + parentEntity.getUniqueName());
-			IModelEntity rootEntity = structure.getRootEntity(parentEntity);
-			logger.debug("Relevant root entity is " + rootEntity.getUniqueName());
-			List fields = rootEntity.getAllFields();
-			Iterator it = fields.iterator();
-			String dependencyEntityId = null;
-			EntityType dependencyEntityType = null;
-			while (it.hasNext()) {
-				IModelField aField = (IModelField) it.next();
-				if (aField.getName().equals(selectField.getName())) {
-					dependencyEntityId = aField.getUniqueName();
-					break;
-				}
-			}
-
-			if (dependencyEntityId.startsWith(entityType)) {
-				dependencyEntityId = dependencyEntityId.substring(dependencyEntityId.indexOf(entityType) + entityType.length() + 1);
-			} else {
-				dependencyEntityId = tmpDep.getSubEntity() + "." + dependencyEntityId;
-			}
-
-			addRecursiveDependenciesTo(filtersForRef, columns, getColumn(columns, dependencyEntityId), aRecord);
-
-			filtersForRef.put(dependencyEntityId, aRecord.get(tmpDep.getField()));
-
-		} else if (!tmpDep.isInfoColumn() && tmpDep.getSubEntity() == null) {
-			filtersForRef.put(tmpDep.getField(), (aRecord.get(tmpDep.getField())));
-		}
-	}
-
-	private Column getColumn(List<Column> columns, String columnName) {
-		return columns.stream().filter(column -> column.getField().equals(columnName)).findFirst().orElse(null);
-	}
-
-	private void manageProperty(EntityType targetEntity, Object obj, String aKey, JSONObject aRecord) {
-
+	private void setProperty(EntityType targetEntity, Object obj, String aKey, Object newValue) {
 		logger.debug("IN");
-
 		try {
 			Attribute a = targetEntity.getAttribute(aKey);
 			Class clas = targetEntity.getJavaType();
 			Field f = clas.getDeclaredField(aKey);
 			f.setAccessible(true);
-			Object valueConverted = this.convertValue(aRecord.get(aKey), a);
+			Object valueConverted = this.convertValue(newValue, a);
 			f.set(obj, valueConverted);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error setting Field " + aKey + "", e);
@@ -708,9 +767,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		return toReturn;
 	}
 
-	private Object getReferencedObjectJPA(EntityManager em, String entityJavaType, HashMap whereFields) {
+	private Object getReferencedObjectJPA(EntityManager em, String entityJavaType, Map<String, Object> subEntityAttributes) {
 
-		String query = buildReferencedObjectQuery(entityJavaType, whereFields);
+		String query = buildReferencedObjectQuery(entityJavaType, subEntityAttributes);
 		logQuery(query);
 
 		Query tmpQuery = em.createQuery(query);
@@ -718,17 +777,17 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		final List result = tmpQuery.getResultList();
 
 		if (result == null || result.size() == 0) {
-			throw new SpagoBIRuntimeException("Record with input filters [" + whereFields + "] not found for entity " + entityJavaType);
+			throw new SpagoBIRuntimeException("Record with attributes [" + subEntityAttributes + "] not found for entity " + entityJavaType);
 		}
 		if (result.size() > 1) {
-			throw new SpagoBIRuntimeException("More than 1 record with input filters [" + whereFields + "] were found in entity " + entityJavaType);
+			throw new SpagoBIRuntimeException("More than 1 record with attributes [" + subEntityAttributes + "] were found in entity " + entityJavaType);
 		}
 
 		return result.get(0);
 	}
 
-	private String buildReferencedObjectQuery(String entityJavaType, HashMap whereFields) {
-		it.eng.qbe.query.Query query = buildRegularQueryToReferenceObject(entityJavaType, whereFields);
+	private String buildReferencedObjectQuery(String entityJavaType, Map<String, Object> subEntityAttributes) {
+		it.eng.qbe.query.Query query = buildRegularQueryToReferenceObject(entityJavaType, subEntityAttributes);
 		// we create a dataset object to apply profiled visibility constraints
 		JPQLDataSet dataset = buildJPQLDatasetToReferenceObject(query);
 		IStatement filteredStatement = dataset.getFilteredStatement();
@@ -763,7 +822,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		return dataset;
 	}
 
-	protected it.eng.qbe.query.Query buildRegularQueryToReferenceObject(String entityJavaType, HashMap whereFields) {
+	protected it.eng.qbe.query.Query buildRegularQueryToReferenceObject(String entityJavaType, Map<String, Object> subEntityAttributes) {
 		it.eng.qbe.query.Query query = new it.eng.qbe.query.Query();
 		query.setId(StringUtilities.getRandomString(5));
 		int lastPkgDotSub = entityJavaType.lastIndexOf(".");
@@ -775,9 +834,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, null, null);
 		}
 		ArrayList<ExpressionNode> expressionNodes = new ArrayList<ExpressionNode>();
-		for (Iterator iterator = whereFields.keySet().iterator(); iterator.hasNext();) {
+		for (Iterator iterator = subEntityAttributes.keySet().iterator(); iterator.hasNext();) {
 			String key = (String) iterator.next();
-			Object value = whereFields.get(key);
+			Object value = subEntityAttributes.get(key);
 			if (value != null) {
 				WhereField.Operand left = new WhereField.Operand(new String[] { entityJavaType + ":" + key }, "name",
 						AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
@@ -803,18 +862,6 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		// The following replacement works also in case query is containing joins to other entities, but MAIN entity must be the first one in the FROM clause!!!
 		// TODO refactor this code to be more reliable
 		String toReturn = jpaQueryStr.replaceAll("(?i)select (.*) from (\\w+) (\\w+)", "select $3 from $2 $3");
-		return toReturn;
-	}
-
-	private Column getDependenceColumns(List columns, String depField) {
-		Column toReturn = null;
-		for (int i = 0; i < columns.size(); i++) {
-			Column c = (Column) columns.get(i);
-			if (c.getField().equalsIgnoreCase(depField)) {
-				toReturn = c;
-				break;
-			}
-		}
 		return toReturn;
 	}
 
