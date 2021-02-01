@@ -129,15 +129,16 @@ public class LoginModule extends AbstractHttpModule {
 				// user is authenticated, nothing to do
 				logger.debug("User is authenticated");
 				// fill response
-				List lstMenu = MenuUtilities.getMenuItems(profile);
-				String url = "/themes/" + currTheme + "/jsp/";
-				if (UserUtilities.isTechnicalUser(profile)) {
-					url += "adminHome.jsp";
-				} else {
-					url += "userHome.jsp";
-				}
-				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+//				List lstMenu = MenuUtilities.getMenuItems(profile);
+//				String url = "/themes/" + currTheme + "/jsp/";
+//				if (UserUtilities.isTechnicalUser(profile)) {
+//					url += "adminHome.jsp";
+//				} else {
+//					url += "userHome.jsp";
+//				}
+//				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+//				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+				getHttpResponse().sendRedirect("http://localhost:3000/knowage");
 				return;
 			} else {
 				// user must authenticate
@@ -348,16 +349,17 @@ public class LoginModule extends AbstractHttpModule {
 			}
 			// End writing log in the DB
 
-			List lstMenu = MenuUtilities.getMenuItems(profile);
-
-			String url = "/themes/" + currTheme + "/jsp/";
-			if (UserUtilities.isTechnicalUser(profile)) {
-				url += "adminHome.jsp";
-			} else {
-				url += "userHome.jsp";
-			}
-			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-			getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+//			List lstMenu = MenuUtilities.getMenuItems(profile);
+//
+//			String url = "/themes/" + currTheme + "/jsp/";
+//			if (UserUtilities.isTechnicalUser(profile)) {
+//				url += "adminHome.jsp";
+//			} else {
+//				url += "userHome.jsp";
+//			}
+//			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+//			getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+			getHttpResponse().sendRedirect("http://localhost:3000/knowage");
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after request processed in each case
 			TenantManager.unset();
