@@ -6,7 +6,7 @@
       check out the
       <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
     </p>
-    <h3>Installed CLI Plugins</h3>
+    <h3 @click="test">Installed CLI Plugins</h3>
     <ul>
       <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript" target="_blank" rel="noopener">typescript</a></li>
     </ul>
@@ -30,17 +30,34 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { defineComponent } from 'vue'
 
-@Options({
+interface TestStr {
+  amsg: string;
+  num: number;
+}
+
+export default defineComponent({
+  name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data (){
+    return{
+      testa : 1
+    }
+  },
+  methods: {
+    test() : void {
+      let test : TestStr = {amsg:'test',num:1}
+      console.log(test)
+    }
   }
 })
-export default class HelloWorld extends Vue {
-  msg!: string
-}
+
 </script>
+
+
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">

@@ -7,7 +7,7 @@
 
         <template #right>
             <Button icon="pi pi-search" class="p-mr-2" />
-            <Button icon="pi pi-times" class="p-button-danger" />
+            <Button icon="pi pi-times" class="p-button-danger p-button-text" />
         </template>
     </Toolbar>
     <div class="p-grid p-m-1">
