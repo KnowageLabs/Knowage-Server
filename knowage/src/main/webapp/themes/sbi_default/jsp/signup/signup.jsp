@@ -56,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        	<input type="email" id="email" name="email" class="form-control smallerInput" ng-model="newUser.email" placeholder="<%=msgBuilder.getMessage("signup.form.email")%>" required>
 		        	<input type="password" id="password" name="password" class="form-control smallerInput" ng-model="newUser.password" placeholder="<%=msgBuilder.getMessage("signup.form.password")%>" required>
 		        	<input type="password" id="confirmPassword" name="confirmPassword" class="form-control smallerInput" ng-model="newUser.confirmPassword" placeholder="<%=msgBuilder.getMessage("signup.form.confirmpassword")%>" required>
-					<div id="sticky" class="captcha" style="background-image:url('<%=urlBuilder.getResourceLink(request, "stickyImg")%>')"></div>
+					<div id="sticky" class="captcha" style="background-image:url('<%=urlBuilder.getResourceLink(request, "stickyImg")%>');background-size: contain;"></div>
 					<input type="text" id="captcha" name="captcha" class="form-control smallerInput" ng-model="newUser.captcha" placeholder="<%=msgBuilder.getMessage("signup.form.captcha")%>" required>
 	
 	          		<button class="btn btn-lg btn-primary btn-block btn-signin" ng-click="register()" type="submit"><%=msgBuilder.getMessage("signup.form.register")%></button>
@@ -65,7 +65,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           	</div>
          </div>
      </div>
-        
   
 	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css")%>">
 	
