@@ -110,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          
 	         $scope.authFailed = "";
 	         $scope.isCalling = false;
-	         $scope.oldEncMethodMessage = <%= oldEncMethodMessage %>;
+	         $scope.oldEncMethodMessage = "<%= oldEncMethodMessage %>";
 	         $scope.changePwd = function(user) {
 	           	$scope.isCalling = true;
 	           	$scope.authFailed = "";
