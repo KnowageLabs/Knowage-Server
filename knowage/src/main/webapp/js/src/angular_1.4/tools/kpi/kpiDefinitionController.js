@@ -297,6 +297,10 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 			sbiModule_restServices.promiseDelete("1.0/kpi",item.id+"/"+item.version+"/deleteKpi").then(
 					function(response){
+						sbiModule_messaging.showInfoMessage(
+							sbiModule_translate
+							.load("sbi.kpi.delete.success"),
+							"");
 						$scope.$broadcast("deleteKpiEvent");
 					},
 					function(response){
