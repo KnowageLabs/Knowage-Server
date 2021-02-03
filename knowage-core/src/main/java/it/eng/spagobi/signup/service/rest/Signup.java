@@ -73,6 +73,7 @@ import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
+import it.eng.spagobi.profiling.bo.ProfileAttributesValueTypes;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.rest.publishers.PublisherService;
@@ -80,6 +81,7 @@ import it.eng.spagobi.security.Password;
 import it.eng.spagobi.services.rest.annotations.PublicService;
 import it.eng.spagobi.signup.service.rest.dto.SignupDTO;
 import it.eng.spagobi.signup.validation.SignupJWTTokenManager;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.themes.ThemesManager;
@@ -252,18 +254,14 @@ public class Signup {
 		String surname = signupDTO.getSurname();
 		String password = signupDTO.getPassword();
 		String email = signupDTO.getEmail();
-		String birthDate = signupDTO.getBirthDate();
-		String address = GeneralUtilities.trim(signupDTO.getAddress());
-		// String biography = GeneralUtilities.trim(requestJSON.optString("biography"));
-		// String language = GeneralUtilities.trim(requestJSON.optString("language"));
 
 		try {
 			UserProfile profile = getUserProfile();
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			ISbiAttributeDAO attrDao = DAOFactory.getSbiAttributeDAO();
+			attrDao.setUserProfile(profile);
 
 			SbiUser user = userDao.loadSbiUserByUserId((String) profile.getUserId());
-
 			try {
 				PasswordChecker.getInstance().isValid(user, user.getPassword(), true, password, password);
 			} catch (Exception e) {
@@ -281,24 +279,32 @@ public class Signup {
 			user.setFullName(name + " " + surname);
 			if (password != null && !password.equals(defaultPassword))
 				user.setPassword(Password.encriptPassword(password));
+
 			userDao.updateSbiUser(user, userId);
 
 			SbiAttribute currEmail = attrDao.loadSbiAttributeByName("email");
-			SbiAttribute currBirthDate = attrDao.loadSbiAttributeByName("birth_date");
-			SbiAttribute currAddress = attrDao.loadSbiAttributeByName("address");
+			/* email user attribute is mandatory */
+			if (email != null && currEmail == null) {
+				SbiAttribute emailSbiAttribute = new SbiAttribute();
+				emailSbiAttribute.setAttributeName("email");
+				emailSbiAttribute.setDescription("AUTO GENERATED email profile attribute");
+				emailSbiAttribute.setValue(ProfileAttributesValueTypes.STRING);
+				SbiCommonInfo sbiCommonInfo = new SbiCommonInfo();
+				sbiCommonInfo.setOrganization(TenantManager.getTenant().getName());
+				sbiCommonInfo.setUserIn("server");
+				sbiCommonInfo.setTimeIn(new Date());
+				sbiCommonInfo.setSbiVersionIn(SbiCommonInfo.getVersion());
+				emailSbiAttribute.setCommonInfo(sbiCommonInfo);
+
+				Integer newId = attrDao.saveSbiAttribute(emailSbiAttribute);
+				currEmail = attrDao.loadSbiAttributeById(newId);
+			}
+
 			updAttribute(userDao, attrDao, email, user.getUserId(), userId, currEmail);
-			updAttribute(userDao, attrDao, birthDate, user.getUserId(), userId, currBirthDate);
-			updAttribute(userDao, attrDao, address, user.getUserId(), userId, currAddress);
-			// updAttribute(userDao, attrDao, biography, user.getUserId(), userId, attrDao.loadSbiAttributeByName("short_bio").getAttributeId());
-			// updAttribute(userDao, attrDao, language, user.getUserId(), userId, attrDao.loadSbiAttributeByName("language").getAttributeId());
 
 			profile.setAttributeValue("name", name);
 			profile.setAttributeValue("surname", surname);
-			profile.setAttributeValue("birth_date", birthDate);
 			profile.setAttributeValue("email", email);
-			// profile.setAttributeValue("language", language);
-			// profile.setAttributeValue("short_bio", biography);
-			profile.setAttributeValue("location", address);
 
 		} catch (Throwable t) {
 			logger.error("An unexpected error occurred while executing the subscribe action", t);
