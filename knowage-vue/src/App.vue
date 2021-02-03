@@ -7,7 +7,6 @@
 		<div class="layout-main">
 			<router-view />
 		</div>
-		<Button @click="setUser()">asd{{getUser()}}</Button>
   </div>
 </template>
 
@@ -21,9 +20,6 @@
 			Knmenu
 		},
 		methods: {
-			setUser(){
-				this.$store.commit("setUser",{name:'davide'});
-			},
 			getUser(){
 				return this.user.name
 			}
@@ -49,7 +45,7 @@ body {
   min-height: 100vh;
 }
 .layout-main {
-	margin-left: 175px;
+	margin-left: 58px;
 	flex:1;
 }
 </style>

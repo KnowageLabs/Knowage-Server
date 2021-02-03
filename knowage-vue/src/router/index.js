@@ -38,11 +38,11 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
+/*router.beforeEach((to, from, next) => {
   console.log('to',to)
   console.log('from',from)
   console.log('next',next)
   next()
-})
+})*/
 
 export default router

@@ -3,14 +3,44 @@
    <div class="layout-menu-container">
       <InfoDialog v-model:visibility="display"></InfoDialog>
          <div class="menu-scroll-content">
-            <div class="primnav">
-               <ul>
-                  <PanelMenu :model="fixedMenu" />
-               </ul>
+            <div>
+               <div class="profile">
+                  <button class="p-link" @click="toggleProfile">
+                     <img alt="Profile" class="profile-image" src="https://i.pravatar.cc/50" >
+                     <span class="profile-name">Isabel Oliviera</span>
+                        <i class="pi pi-fw pi-chevron-down"></i>
+                     <span class="profile-role">Marketing</span>
+                  </button>
+                  
+               </div>
+               <transition name="slide-down">
+                  <ul class="layout-menu profile-menu" v-show="showProfileMenu">
+                     <li v-for="(item, i) of fixedMenu" :key="i" role="menuitem">
+                        <router-link v-if="item.to" :to="item.to" exact>
+                           <i :class="item.icon"></i>
+                           <span>{{item.label}}</span>
+                        </router-link>
+                     </li>
+                     <li role="menuitem">
+                        <router-link :to="{name:'about'}" exact>
+                           <i class="fas fa-sign-out-alt"></i>
+                           <span>Logout</span>
+                        </router-link>
+                     </li>
+                  </ul>
+               </transition>
             </div>
-            <TieredMenu :model="myMenu"></TieredMenu>
-            <TieredMenu :model="fixedMenu"></TieredMenu>
-            <TieredMenu  :model="customMenu"></TieredMenu >
+            <div>
+                <ul class="layout-menu">
+                     <li v-for="(item, i) of customMenu" :key="i" role="menuitem">
+                        <a :href="item.url" >
+                           <i :class="item.icon"></i>
+                           <span>{{item.label}}</span>
+                        </a>
+                     </li>
+                  </ul>
+            </div>
+
          </div>
    </div>
 
@@ -18,10 +48,7 @@
 
 <script lang="ts">
    import { defineComponent } from 'vue'
-   //import MegaMenu from 'primevue/megamenu';
    import InfoDialog from '@/components/InfoDialog.vue'
-   import TieredMenu from 'primevue/tieredmenu'
-   import PanelMenu from 'primevue/panelmenu'
    import axios from 'axios'
 
    export default defineComponent({
@@ -30,12 +57,11 @@
          model: Array
       },
       components: {
-         TieredMenu,
          InfoDialog,
-         PanelMenu
       },
       data() {
          return {
+            showProfileMenu: false,
             fixedMenu: new Array<MenuItem>(),
             customMenu: new Array<MenuItem>(),
             display: false,
@@ -47,15 +73,19 @@
       methods:{
          toggleInfo(){
             this.display = !this.display
+         },
+         toggleProfile() {
+            this.showProfileMenu = !this.showProfileMenu
          }
       },
       created() {
+         this.showProfileMenu = false
          axios.get('/knowage/restful-services/1.0/menu/enduser?curr_country=US&curr_language=en')
             .then((response) => {
                this.fixedMenu = updateMenuModel(response.data.fixedMenu)
                console.log('fixedMenu',this.fixedMenu)
                this.customMenu = updateMenuModel(response.data.customMenu[0].menu)
-               console.log('customMenu',response.data.userMenu)
+               console.log('customMenu',this.customMenu)
             },(error) => console.error(error))
       }
    })
@@ -88,12 +118,79 @@
 </script>
 
 <style lang="scss" scoped>
+.slide-down-enter-active, .slide-down-leave-active {
+   overflow: hidden;
+   transition: max-height 1s ease-in-out;
+  max-height: 500px;
+}
+
+.slide-down-enter-from, .slide-down-leave-to {
+  max-height: 0; 
+}
    .layout-menu-container {
       z-index: 100;
+      width: 58px;
       top: 0;
-      background-color: #363a41;
+      background-color: #43749E;
       height: 100%;
       position: fixed;
+      .profile {
+         height: 60px;
+         padding: 8px;
+         box-shadow: 0 2px 5px 0 rgb(0,0,0);
+         & > button {
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+            .profile-image {
+               width: 45px;
+               height: 45px;
+               float: right;
+               margin-left: 4px;
+               border-radius: 50%;
+               border: 2px solid #CF0854;
+            }
+            .profile-name, .profile-role, i {
+               display: none;
+            }
+         }
+      }
+      .profile-menu {
+         border-bottom: 1px solid lighten(#43749E, 10%);
+         li {
+            &:first-child{
+               padding-top: 16px;
+            }
+         }
+      }
+      .layout-menu {
+         margin: 0;
+         padding: 0;
+         list-style: none;
+         & > li {
+            position: relative;
+            & > a {
+               text-align: center;
+               padding: 15px;
+               color: white;
+               display: block;
+                width: 100%;
+               transition: background-color .3s, border-left-color .3s;
+               overflow: hidden;
+               border-left: 4px solid transparent;
+               outline: none;
+               cursor: pointer;
+               user-select: none;
+               span {
+                  display: none;
+               }
+               &:hover {
+                  background-color: lighten(#43749E, 10%);
+               }
+            }
+         }
+      }
    }
    .p-tieredmenu{
       padding: 0;
