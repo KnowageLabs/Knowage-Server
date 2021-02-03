@@ -3,6 +3,11 @@
    <div class="layout-menu-container">
       <InfoDialog v-model:visibility="display"></InfoDialog>
          <div class="menu-scroll-content">
+            <div class="primnav">
+               <ul>
+                  <PanelMenu :model="fixedMenu" />
+               </ul>
+            </div>
             <TieredMenu :model="myMenu"></TieredMenu>
             <TieredMenu :model="fixedMenu"></TieredMenu>
             <TieredMenu  :model="customMenu"></TieredMenu >
@@ -16,6 +21,7 @@
    //import MegaMenu from 'primevue/megamenu';
    import InfoDialog from '@/components/InfoDialog.vue'
    import TieredMenu from 'primevue/tieredmenu'
+   import PanelMenu from 'primevue/panelmenu'
    import axios from 'axios'
 
    export default defineComponent({
@@ -24,9 +30,9 @@
          model: Array
       },
       components: {
-         //MegaMenu,
-        TieredMenu,
-        InfoDialog
+         TieredMenu,
+         InfoDialog,
+         PanelMenu
       },
       data() {
          return {
@@ -46,7 +52,7 @@
       created() {
          axios.get('/knowage/restful-services/1.0/menu/enduser?curr_country=US&curr_language=en')
             .then((response) => {
-               this.fixedMenu = updateMenuModel(response.data.userMenu)
+               this.fixedMenu = updateMenuModel(response.data.fixedMenu)
                console.log('fixedMenu',this.fixedMenu)
                this.customMenu = updateMenuModel(response.data.customMenu[0].menu)
                console.log('customMenu',response.data.userMenu)

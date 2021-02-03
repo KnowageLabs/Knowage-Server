@@ -7,7 +7,7 @@
 		<div class="layout-main">
 			<router-view />
 		</div>
-<Button @click="setUser()">asd{{user}}</Button>
+		<Button @click="setUser()">asd{{getUser()}}</Button>
   </div>
 </template>
 
@@ -23,6 +23,9 @@
 		methods: {
 			setUser(){
 				this.$store.commit("setUser",{name:'davide'});
+			},
+			getUser(){
+				return this.user.name
 			}
 		},
 		computed: {

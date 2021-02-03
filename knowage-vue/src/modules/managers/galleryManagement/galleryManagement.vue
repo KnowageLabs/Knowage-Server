@@ -1,5 +1,6 @@
 <template>
   gallery management
+  <router-view />
 </template>
 
 <script>
