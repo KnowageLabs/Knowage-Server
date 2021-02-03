@@ -25,10 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="java.util.Map" %>
 <%@page import="org.json.JSONObject"%>
 <%@page import="java.util.HashMap"%>	
-<%@page
-	import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
-<%@page
-	import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
 <%@page import="java.util.HashMap"%>	
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
@@ -40,210 +38,156 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	String surname = (data.get("surname")==null)?"":(String)data.get("surname");
 	String email = (data.get("email")==null)?"":(String)data.get("email");
 	String username = (data.get("username")==null)?"":(String)data.get("username");
-	String birth_date = (data.get("birth_date")==null)?"":(String)data.get("birth_date");
-	String language = (data.get("language")==null)?"":(String)data.get("language");
-	String location = (data.get("location")==null)?"":(String)data.get("location");
-	String short_bio = (data.get("short_bio")==null)?"":(String)data.get("short_bio");
 	String userIn = (data.get("userIn")==null)?"":(String)data.get("userIn");
     boolean activeSignup = (request.getAttribute("activeSignup")==null)?false:(Boolean)request.getAttribute("activeSignup");
 %>
 
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Knowage">
-    <title>Knowage - Modify Account</title>
-    
-    <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
-    
-    <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
-  </head>
 
-	<body class="kn-account" ng-app="signUp" ng-controller="modifyCtrl" ng-cloak>
-  
-  
-  	<div layout="row" layout-align="center center" layout-fill class="signUpContainer">
-      
-      <md-card flex=50 flex-xs=100>
-      <form name="signUpForm">
-        <md-card-content layout="column" layout-align="start center">
-        	<img class="headerLogoImg" src="<%=urlBuilder.getResourceLink(request, "themes/commons/img/defaultTheme/logotipo.svg")%>" width="300px">
-        	<h3>Modify profile</h3>
-        	<div layout="row" layout-wrap>
-        		<md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Name</label>
-			        <input ng-model="newUser.name" name="name" type="text" required>
-			      </md-input-container>
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Surname</label>
-			        <input ng-model="newUser.surname" name="surname" type="text" required>
-			      </md-input-container>
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Username</label>
-			        <input ng-model="newUser.username" name="username" type="text" required ng-disabled="true">
-			      </md-input-container>
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Email address</label>
-			        <input ng-model="newUser.email" name="email" type="text" ng-pattern="emailFormat">
-			      </md-input-container>
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Password</label>
-			        <input ng-model="newUser.password" name="password" type="password" required>
-			      </md-input-container>
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Confirm Password</label>
-			        <input ng-model="newUser.confirmPassword" name="confirmPassword" type="password" required>
-			      </md-input-container>  
-			      <!--
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Location</label>
-			        <input ng-model="newUser.address" name="location" type="text" >
-			      </md-input-container>
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Birthday</label>
-			        <input ng-model="newUser.birthDate" name="birthday" type="text" >
-			      </md-input-container>
-			      -->
-			      <!-- 
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Language</label>
-			        <input ng-model="newUser.language" name="language" type="text" >
-			      </md-input-container>	
-			      <md-input-container class="md-block" flex=50 flex-xs=100>
-			        <label>Short Biografy</label>
-			        <input ng-model="newUser.biography" name="biography" type="text" >
-			      </md-input-container>		
-			      -->	      			      	      
-			
-        	</div>
-          
-        </md-card-content>
-        
-        <md-card-actions layout="column" layout-align="center">
-          <md-button class="md-primary md-raised" ng-click="update()" type="submit">Modify</md-button>
-          <md-button class="md-primary md-raised goTologin" ng-click="eraseAccount()" ng-if="activeSignup">Delete Account</md-button>
-        </md-card-actions>
-         </form>
-      </md-card>
-     
-     </div>
-  
-	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css")%>">
-	
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-title" content="Knowage">
+	<title>Knowage - Modify Account</title>
+	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, " js/lib/angular/angular-material_1.1.0/angular-material.min.css ")%>">
+	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, " themes/commons/css/customStyle.css ")%>"> </head>
+
+<body class="kn-account" ng-app="signUp" ng-controller="modifyCtrl" ng-cloak>
+	<div layout="row" layout-align="center center" layout-fill class="signUpContainer">
+		<md-card flex=50 flex-xs=100>
+			<form name="signUpForm">
+				<md-card-content layout="column" layout-align="start center"> <img class="headerLogoImg" src="<%=urlBuilder.getResourceLink(request, " themes/commons/img/defaultTheme/logotipo.svg ")%>" width="300px">
+					<h3>Modify profile</h3>
+					<div layout="row" layout-wrap>
+						<md-input-container class="md-block" flex=50 flex-xs=100>
+							<label>Name</label>
+							<input ng-model="newUser.name" name="name" type="text" required> </md-input-container>
+						<md-input-container class="md-block" flex=50 flex-xs=100>
+							<label>Surname</label>
+							<input ng-model="newUser.surname" name="surname" type="text" required> </md-input-container>
+						<md-input-container class="md-block" flex=50 flex-xs=100>
+							<label>Username</label>
+							<input ng-model="newUser.username" name="username" type="text" required ng-disabled="true"> </md-input-container>
+						<md-input-container class="md-block" flex=50 flex-xs=100>
+							<label>Email address</label>
+							<input ng-model="newUser.email" name="email" type="text" ng-pattern="emailFormat"> </md-input-container>
+						<md-input-container class="md-block" flex=50 flex-xs=100>
+							<label>Password</label>
+							<input ng-model="newUser.password" name="password" type="password" required> </md-input-container>
+						<md-input-container class="md-block" flex=50 flex-xs=100>
+							<label>Confirm Password</label>
+							<input ng-model="newUser.confirmPassword" name="confirmPassword" type="password" required> </md-input-container>
+					</div>
+				</md-card-content>
+				<md-card-actions layout="column" layout-align="center">
+					<md-button class="md-primary md-raised" ng-click="update()" type="submit">Modify</md-button>
+					<md-button class="md-primary md-raised goTologin" ng-click="eraseAccount()" ng-if="activeSignup">Delete Account</md-button>
+				</md-card-actions>
+			</form>
+		</md-card>
+	</div>
+	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, " themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css ")%>">
 	<!-- angular reference-->
 	<!-- START-DEBUG -->
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/angular_1.4/angular.js")%>"></script> 
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, " js/lib/angular/angular_1.4/angular.js ")%>"></script>
 	<!-- END-DEBUG -->
-	
-	
 	<!-- START-PRODUCTION 
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/angular_1.4/angular.min.js")%>"</script> 
 	END-PRODUCTION -->
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/angular_1.4/angular-animate.min.js")%>"></script> 
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/angular_1.4/angular-aria.min.js")%>"></script> 
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/angular_1.4/angular-sanitize.min.js")%>"></script> 
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/angular_1.4/angular-messages.min.js")%>"></script> 
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/angular_1.4/angular-cookies.js")%>"></script> 
-  	
-  	<!-- Angular Material Library -->
-  	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.js")%>"></script>
-  
-  	<!-- Your application bootstrap  -->
-  	<script type="text/javascript">    
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, " js/lib/angular/angular_1.4/angular-animate.min.js ")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, " js/lib/angular/angular_1.4/angular-aria.min.js ")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, " js/lib/angular/angular_1.4/angular-sanitize.min.js ")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, " js/lib/angular/angular_1.4/angular-messages.min.js ")%>"></script>
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, " js/lib/angular/angular_1.4/angular-cookies.js ")%>"></script>
+	<!-- Angular Material Library -->
+	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request," /js/lib/angular/angular-material_1.1.0/angular-material.min.js ")%>"></script>
+	
+	<!-- Your application bootstrap  -->
+	<script type="text/javascript">    
 
-    angular.module('signUp', ['ngMaterial','sbiModule'])
-    .controller('modifyCtrl', function($scope,$http,$window,$mdToast,$timeout,$mdDialog,sbiModule_messaging) {
-	  $scope.newUser = {};
-	  $scope.newUser.name = '<%=StringEscapeUtils.escapeJavaScript(name)%>';
-	  $scope.newUser.surname = '<%=StringEscapeUtils.escapeJavaScript(surname)%>';
-	  $scope.newUser.email = '<%=StringEscapeUtils.escapeJavaScript(email)%>';
-	  $scope.newUser.username = '<%=StringEscapeUtils.escapeJavaScript(username)%>';
-	  $scope.newUser.birthDate= '<%=StringEscapeUtils.escapeJavaScript(birth_date)%>';
-	  //$scope.newUser.language = '<%=StringEscapeUtils.escapeJavaScript(language)%>';	 
-	  $scope.newUser.address = '<%=StringEscapeUtils.escapeJavaScript(location)%>';	  
-	  //$scope.newUser.biography = '<%=short_bio%>';	  
-	  $scope.activeSignup= <%=activeSignup%>;
-	  $scope.emailFormat = /^[a-zA-Z0-9.!#$%&*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/;
-	  $scope.$watch("newUser.confirmPassword", function(newValue, oldValue) {
-		    if (newValue == $scope.newUser.password) {
-		    	$scope.signUpForm.confirmPassword.$setValidity('correct',true) ;
-		    }else{
-		    	$scope.signUpForm.confirmPassword.$setValidity('correct',false) ;
-		    }
-		});
-	  $scope.eraseAccount = function(ev){
-		  //$window.location.href = '<%=urlBuilder.getResourceLink(request, "servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE")%>';
-		   // Appending dialog to document.body to cover sidenav in docs app
-		    var confirm = $mdDialog.confirm()
-		          .title('Would you like to delete your account?')
-		          .textContent('If you delete your account you will not be able to login again inside Knowage.')
-		          .ariaLabel('Erase account')
-		          .targetEvent(ev)
-		          .ok('Ok')
-		          .cancel('Cancel');
-
-		    $mdDialog.show(confirm).then(function() {
-		     //OK
-				  $http.post('<%=urlBuilder.getResourceLink(request, "restful-services/signup/delete?SBI_EXECUTION_ID=-1")%>'
+	    angular.module('signUp', ['ngMaterial','sbiModule'])
+	    .controller('modifyCtrl', function($scope,$http,$window,$mdToast,$timeout,$mdDialog,sbiModule_messaging) {
+		  $scope.newUser = {};
+		  $scope.newUser.name = '<%=StringEscapeUtils.escapeJavaScript(name)%>';
+		  $scope.newUser.surname = '<%=StringEscapeUtils.escapeJavaScript(surname)%>';
+		  $scope.newUser.email = '<%=StringEscapeUtils.escapeJavaScript(email)%>';
+		  $scope.newUser.username = '<%=StringEscapeUtils.escapeJavaScript(username)%>';
+		  $scope.activeSignup= <%=activeSignup%>;
+		  $scope.emailFormat = /^[a-zA-Z0-9.!#$%&*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/;
+		  $scope.$watch("newUser.confirmPassword", function(newValue, oldValue) {
+			    if (newValue == $scope.newUser.password) {
+			    	$scope.signUpForm.confirmPassword.$setValidity('correct',true) ;
+			    }else{
+			    	$scope.signUpForm.confirmPassword.$setValidity('correct',false) ;
+			    }
+			});
+		  $scope.eraseAccount = function(ev){
+			  //$window.location.href = '<%=urlBuilder.getResourceLink(request, "servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE")%>';
+			   // Appending dialog to document.body to cover sidenav in docs app
+			    var confirm = $mdDialog.confirm()
+			          .title('Would you like to delete your account?')
+			          .textContent('If you delete your account you will not be able to login again inside Knowage.')
+			          .ariaLabel('Erase account')
+			          .targetEvent(ev)
+			          .ok('Ok')
+			          .cancel('Cancel');
+	
+			    $mdDialog.show(confirm).then(function() {
+			     //OK
+					  $http.post('<%=urlBuilder.getResourceLink(request, "restful-services/signup/delete?SBI_EXECUTION_ID=-1")%>'
+							  , $scope.newUser)
+					  .then(function(response) {
+						  if(response.data.errors){
+								$mdToast.show(
+								    $mdToast.simple()
+								      .textContent(response.data.errors[0].message)
+								  );
+						  }else{
+							  $mdToast.show(
+							    $mdToast.simple()
+							      .textContent('Account deleted')
+							      .hideDelay(3000)
+							  );
+							  $timeout(function(){
+								  $window.parent.location.href = '<%=urlBuilder.getResourceLink(request, "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE")%>';
+							  }, 3000);
+							  
+						  }
+					  });
+				       
+				//end
+							     
+			    }, function() {
+			     //cancel
+			    });
+		  }
+		  $scope.update = function(){
+			  if($scope.signUpForm.$valid){
+				  if($scope.newUser.password != $scope.newUser.confirmPassword){
+					  $scope.signUpForm.confirmPassword.$setValidity('incorrect', false);
+					  $mdToast.show(
+					    $mdToast.simple()
+					      .textContent('the password inserted are different')
+					  );
+					  return;
+				  }
+				  $http.post('<%=urlBuilder.getResourceLink(request, "restful-services/signup/update?SBI_EXECUTION_ID=-1")%>'
 						  , $scope.newUser)
 				  .then(function(response) {
 					  if(response.data.errors){
-							$mdToast.show(
-							    $mdToast.simple()
-							      .textContent(response.data.errors[0].message)
-							  );
+							sbiModule_messaging.showAlertMessage('Account not updated',response.data.errors[0].message);
 					  }else{
-						  $mdToast.show(
-						    $mdToast.simple()
-						      .textContent('Account deleted')
-						      .hideDelay(3000)
-						  );
-						  $timeout(function(){
-							  $window.parent.location.href = '<%=urlBuilder.getResourceLink(request, "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE")%>';
-						  }, 3000);
-						  
+						  sbiModule_messaging.showAlertMessage('Account correctly updated');
 					  }
 				  });
-			       
-			//end
-						     
-		    }, function() {
-		     //cancel
-		    });
-		  
-	  }
-	  $scope.update = function(){
-		  if($scope.signUpForm.$valid){
-			  if($scope.newUser.password != $scope.newUser.confirmPassword){
-				  $scope.signUpForm.confirmPassword.$setValidity('incorrect', false);
-				  $mdToast.show(
-				    $mdToast.simple()
-				      .textContent('the password inserted are different')
-				  );
+			  }else{
 				  return;
 			  }
-			  $http.post('<%=urlBuilder.getResourceLink(request, "restful-services/signup/update?SBI_EXECUTION_ID=-1")%>'
-					  , $scope.newUser)
-			  .then(function(response) {
-				  if(response.data.errors){
-						sbiModule_messaging.showAlertMessage('Account not updated',response.data.errors[0].message);
-				  }else{
-					  sbiModule_messaging.showAlertMessage('Account correctly updated');
-				  }
-			  });
-		  }else{
-			  return;
 		  }
-		  
-	  }
-		
-	});
-    
-    
+		});
   	</script>
   </body>
 </html>
