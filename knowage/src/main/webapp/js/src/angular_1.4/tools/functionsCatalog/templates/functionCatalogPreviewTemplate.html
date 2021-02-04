@@ -1,4 +1,4 @@
-<md-dialog aria-label="table configuration"  class="catalogFunctionDialog" ng-cloak layout="column" style="min-width:85%; min-height:70%;">
+<md-dialog aria-label="table configuration"  class="catalogFunctionDialog" ng-cloak layout="column" style="min-width:90%; min-height:90%;">
 	<md-toolbar class="_md md-knowage-theme _md-toolbar-transitions">
     	<div class="md-toolbar-tools">
         	<h2 class="ng-binding">{{::translate.load('sbi.functionscatalog.functionpreview')}}</h2>
@@ -25,9 +25,9 @@
 				        			<md-subheader> {{::translate.load('sbi.functionscatalog.functionpreview.function.benchmarks')}} </md-subheader>
 			        				<p layout-padding> {{selectedFunction.benchmarks}} </p>
 			        			</div>
-			        			<div ng-show="selectedFunction.inputColumns.length>0">
+			        			<div ng-show="selectedFunction.inputColumns.length>0" style="min-height:200px;">
 			        				<md-subheader> {{::translate.load('sbi.functionscatalog.functionpreview.function.columnsSettings')}} </md-subheader>
-				            		<div ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary"></div>
+				            		<div ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-full-dimensions"></div>
 				            	</div>
 				            	<div ng-show="selectedFunction.inputVariables.length>0">
 				            		<md-subheader> {{::translate.load('sbi.functionscatalog.functionpreview.function.variablesSettings')}} </md-subheader>
