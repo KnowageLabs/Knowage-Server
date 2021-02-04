@@ -482,7 +482,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 
 		cellRenderer.prototype.refresh = function(params) {
-			if($scope.bulkSelection){
+			if($scope.bulkSelection || $scope.resetSelections){
 				this.manageMultiSelection(params);
 			}
 		}
@@ -921,7 +921,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.cancelBulkSelection = function(){
 			$scope.bulkSelection = false;
+			$scope.resetSelections = true;
 			$scope.advancedTableGrid.api.refreshCells({columns:$scope.columnsNameArray,force:true});
+			$timeout(function(){$scope.resetSelections = false},1000)
+			
 		}
 
 		$scope.$watchCollection('ngModel.settings.pagination',function(newValue,oldValue){
