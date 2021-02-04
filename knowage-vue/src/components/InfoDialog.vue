@@ -16,6 +16,7 @@
         <Button label="Close" autofocus @click="closeDialog"/>
     </template>
    </Dialog>
+   
 </template>
 
 <script lang="ts">
