@@ -21,7 +21,26 @@ public class MySQLDialect implements ISQLDialect {
 
 	@Override
 	public String getCastingToFloatFormula(Number number) {
-		return "CAST(" + number + " as decimal)";
+
+		/*
+		 * In standard SQL, the syntax DECIMAL(M) is equivalent to DECIMAL(M,0). So, If we don't specify precision, decimals are lost.
+		 */
+
+		Integer scale = null;
+		Integer precision = null;
+		if (number instanceof Double || number instanceof Float) {
+			int pos = number.toString().indexOf('.');
+			precision = number.toString().length() - (pos + 1);
+			int integerPartLength = number.toString().length() - (precision + 1);
+			scale = integerPartLength + precision;
+		}
+
+		if (scale != null && precision != null) {
+			return "CAST(" + number + " as decimal(" + scale + "," + precision + "))";
+		} else {
+			return "CAST(" + number + " as decimal)";
+		}
+
 	}
 
 }

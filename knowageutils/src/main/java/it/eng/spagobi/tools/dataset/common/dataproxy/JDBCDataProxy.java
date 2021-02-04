@@ -22,7 +22,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
@@ -91,11 +95,17 @@ public class JDBCDataProxy extends AbstractDataProxy {
 
 		try {
 
+			Monitor timeToGetConnection = MonitorFactory.start("Knowage.JDBCDataProxy.gettingJDBCConnection");
+			logger.debug("Retrieving JDBC connection...");
 			try {
 				connection = getDataSource().getConnection();
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
+			} finally {
+				timeToGetConnection.stop();
 			}
+			logger.debug("Got JDBC connection.");
+
 			String dialect = dataSource.getHibDialectClass();
 			DatabaseDialect databaseDialect = DatabaseDialect.get(dialect);
 			Assert.assertNotNull(dialect, "Database dialect cannot be null");
@@ -114,6 +124,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
 			}
+
 			String sqlQuery = "";
 			try {
 				// get max size
@@ -121,9 +132,14 @@ public class JDBCDataProxy extends AbstractDataProxy {
 					stmt.setMaxRows(getMaxResults());
 				}
 				sqlQuery = getStatement();
-				logger.info("Executing query " + sqlQuery + " ...");
-				resultSet = stmt.executeQuery(sqlQuery);
-
+				LogMF.info(logger, "Executing query:\n{0}", sqlQuery);
+				Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeStatement:" + sqlQuery);
+				try {
+					resultSet = stmt.executeQuery(sqlQuery);
+				} finally {
+					timeToExecuteStatement.stop();
+				}
+				LogMF.debug(logger, "Query has been executed:\n{0}", sqlQuery);
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
 			}
@@ -165,12 +181,17 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			}
 
 			dataStore = null;
+			Monitor timeToGetDataStore = MonitorFactory.start("Knowage.JDBCDataProxy.getDataStore:" + sqlQuery);
+			LogMF.debug(logger, "Getting datastore for SQL query:\n{0}", sqlQuery);
 			try {
 				// read data
 				dataStore = dataReader.read(resultSet);
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while parsing resultset", t);
+			} finally {
+				timeToGetDataStore.stop();
 			}
+			LogMF.debug(logger, "Got datastore for SQL query:\n{0}", sqlQuery);
 
 			if (resultNumber > -1) { // it means that resultNumber was successfully calculated by this data proxy
 				int limitedResultNumber = getMaxResults() > 0 && resultNumber > getMaxResults() ? getMaxResults() : resultNumber;
@@ -205,22 +226,28 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			logger.debug("we are in SQL SERVER and ORDER BY case");
 			statement = modifySQLServerQuery(statement);
 		}
-
 		try {
 			String tableAlias = "";
 			if (!dialect.toLowerCase().contains("orient")) {
 				tableAlias = "temptable";
 			}
 			String sqlQuery = "SELECT COUNT(*) FROM (" + statement + ") " + tableAlias;
-			logger.info("Executing query " + sqlQuery + " ...");
 			stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			rs = stmt.executeQuery(sqlQuery);
+			LogMF.info(logger, "Executing count statement, SQL query:\n{0}", sqlQuery);
+			Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeCountStatement:" + sqlQuery);
+			try {
+				rs = stmt.executeQuery(sqlQuery);
+			} finally {
+				timeToExecuteStatement.stop();
+			}
+			LogMF.debug(logger, "Executed count statement, SQL query:\n{0}", sqlQuery);
 			rs.next();
 			resultNumber = rs.getInt(1);
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
 		} finally {
 			releaseResources(null, stmt, rs);
+
 		}
 		logger.debug("OUT : returning " + resultNumber);
 		return resultNumber;
@@ -260,7 +287,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 
 	protected int getResultNumber(ResultSet resultSet) throws SQLException {
 		logger.debug("IN");
-
+		LogMF.debug(logger, "Moving into last record for statement:\n{0}", resultSet.getStatement().toString());
 		int rowcount = 0;
 		if (resultSet.last()) {
 			rowcount = resultSet.getRow();
@@ -268,7 +295,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 										// below will move on, missing the first
 										// element
 		}
-
+		LogMF.debug(logger, "Moved into last record for statement:\n{0}", resultSet.getStatement().toString());
 		return rowcount;
 	}
 
@@ -332,8 +359,14 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				stmt.setMaxRows(getMaxResults());
 			}
 			String sqlQuery = getStatement();
-			logger.info("Executing query " + sqlQuery + " ...");
-			resultSet = stmt.executeQuery(sqlQuery);
+			LogMF.info(logger, "Executing query:\n{0}", sqlQuery);
+			Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeStatement:" + sqlQuery);
+			try {
+				resultSet = stmt.executeQuery(sqlQuery);
+			} finally {
+				timeToExecuteStatement.stop();
+			}
+			LogMF.debug(logger, "Executed query:\n{0}", sqlQuery);
 			return resultSet;
 		} catch (SQLException e) {
 			throw new SpagoBIRuntimeException(e);

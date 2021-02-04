@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>7.1.5</version>
+		<version>7.1.10</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
@@ -107,7 +107,7 @@
 				        	<groupId>org.apache.maven.plugins</groupId>
 				            <artifactId>maven-war-plugin</artifactId>
 				            <configuration>
-								<warSourceExcludes>js/src/**</warSourceExcludes>
+								<warSourceExcludes>js/src/**,themes/commons/css/**</warSourceExcludes>
 								<webResources>
 									<resource>
 										<directory>src/main/webapp</directory>
@@ -119,6 +119,10 @@
 							        <resource>
 							          <directory>src/main/webapp/js/src</directory>
 							          <targetPath>js/src-${project.version}</targetPath>
+							        </resource>
+							        <resource>
+							          <directory>src/main/webapp/themes/commons/css</directory>
+							          <targetPath>themes/commons/css-${project.version}</targetPath>
 							        </resource>
 						      </webResources>
 				            </configuration>
@@ -217,7 +221,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-core</artifactId>
-			<version>7.1.5</version>
+			<version>7.1.10</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -242,7 +246,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
-			<version>7.1.5</version>
+			<version>7.1.10</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -273,14 +277,14 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowageoauth2securityprovider</artifactId>
-			<version>7.1.5</version>
+			<version>7.1.10</version>
 			<scope>runtime</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowageldapsecurityprovider</artifactId>
-			<version>7.1.5</version>
+			<version>7.1.10</version>
 			<scope>runtime</scope>
 		</dependency>
 		

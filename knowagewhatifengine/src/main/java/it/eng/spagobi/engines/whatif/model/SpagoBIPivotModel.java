@@ -47,6 +47,7 @@ import org.pivot4j.mdx.Syntax;
 import org.pivot4j.sort.SortCriteria;
 import org.pivot4j.sort.SortMode;
 import org.pivot4j.transform.ChangeSlicer;
+import org.pivot4j.transform.NonEmpty;
 import org.pivot4j.transform.SwapAxes;
 import org.pivot4j.util.OlapUtils;
 
@@ -252,8 +253,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	/**
 	 * Persist the modifications in the selected version
 	 *
-	 * @param version
-	 *            the version of the model in witch persist the modification. In null persist in the version selected in the Version dimension
+	 * @param version the version of the model in witch persist the modification. In null persist in the version selected in the Version dimension
 	 * @throws WhatIfPersistingTransformationException
 	 */
 	public void persistTransformations(Connection connection, Integer version) throws WhatIfPersistingTransformationException {
@@ -406,31 +406,8 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	}
 
 	public void setNonEmpty(boolean suppressEmpty) {
-
-		if (suppressEmpty) {
-			QueryAxis qaRows = getQueryAxis(Axis.ROWS);
-			QueryAxis qaColumns = getQueryAxis(Axis.COLUMNS);
-
-			Exp rowsExp = qaRows.getExp();
-			String notIsEmpty = "NOT isEmpty(Measures.currentMember)";
-
-			List<Exp> rowsArgs = new ArrayList<Exp>(2);
-			rowsArgs.add(rowsExp);
-			rowsArgs.add(Literal.createString(notIsEmpty));
-			FunCall rowsFilter = new FunCall("Filter", Syntax.Function, rowsArgs);
-			qaRows.setExp(rowsFilter);
-
-			Exp columnsExp = qaColumns.getExp();
-
-			List<Exp> columsArgs = new ArrayList<Exp>(2);
-			columsArgs.add(columnsExp);
-			columsArgs.add(Literal.createString(notIsEmpty));
-			FunCall columnsFilter = new FunCall("Filter", Syntax.Function, columsArgs);
-			qaColumns.setExp(columnsFilter);
-		}
-
-		fireModelChanged();
-
+		NonEmpty transform = this.getTransform(NonEmpty.class);
+		transform.setNonEmpty(suppressEmpty);
 	}
 
 	public void setSubset(Integer startRow, Integer startColumn, Integer rowSet, Integer columnSet) {

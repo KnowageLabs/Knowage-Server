@@ -382,7 +382,9 @@
 				+ "ACTION_NAME=EXECUTE_DOCUMENT_ACTION"
 				+  "&OBJECT_LABEL="+label
 				+ "&TOOLBAR_VISIBLE=true"
-				+ "&ORGANIZATION="+tenant;
+				+ "&ORGANIZATION="+tenant
+				+ "&NEW_SESSION=true";
+
 
 				if(parameters != undefined && parameters != ''){
 					url += "&PARAMETERS=" + encodeURIComponent(parameters);
@@ -436,6 +438,7 @@
 				controllerAs : 'sendMailCtrl',
 				controller : function($mdDialog) {
 					var sendmailctl = this;
+					sendmailctl.loaded = true;
 					sendmailctl.mail = {};
 					sendmailctl.mail.label = $scope.executionInstance.OBJECT_LABEL;
 					sendmailctl.mail.docId = $scope.executionInstance.OBJECT_ID;

@@ -286,7 +286,7 @@ function calculatedFieldDialogController($scope,sbiModule_translate,$mdDialog,pr
 		for(var i=0;i<$scope.formulaElement.length;i++){
 			var obj = $scope.formulaElement[i];
 			if(obj.type=="number"){
-				$scope.formula += obj.value + " ";
+				$scope.formula += obj.value + "";
 			}else if(obj.type=="measure"){
 				if(!$scope.column.datasetOrTableFlag && obj.aggregation && $scope.checkAggregation(obj) != 'NONE') {
 				   	$scope.formula += $scope.checkAggregation(obj) +'("'+obj.value+'") ';

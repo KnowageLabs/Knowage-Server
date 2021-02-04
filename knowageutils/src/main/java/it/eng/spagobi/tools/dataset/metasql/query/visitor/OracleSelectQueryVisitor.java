@@ -32,7 +32,7 @@ import it.eng.spagobi.utilities.database.IDataBase;
 
 public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
-	private static final int SQL_IN_CLAUSE_LIMIT = 999;
+	private static int SQL_IN_CLAUSE_LIMIT = 999;
 	private static final String DATE_FORMAT = "YYYY-MM-DD HH24:MI:SS";
 	private static final String TIMESTAMP_FORMAT = DATE_FORMAT + ".FF";
 
@@ -42,6 +42,7 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 	@Override
 	protected void append(InFilter item) {
+		queryBuilder.append(" (");
 		List<Projection> projections = item.getProjections();
 		String openBracket;
 		if (projections.size() > 1) {
@@ -64,28 +65,132 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 		}
 
 		queryBuilder.append(closeBracket);
-
-		queryBuilder.append(" ");
-		queryBuilder.append(item.getOperator());
-		queryBuilder.append(" (");
-
 		List<Object> operands = item.getOperands();
-		for (int i = 0; i < operands.size(); i++) {
-			if (i % projections.size() == 0) { // 1st item of tuple of values
-				if (i >= projections.size()) { // starting from 2nd tuple of values
+
+		if (operands.size() < SQL_IN_CLAUSE_LIMIT) {
+
+			queryBuilder.append(" ");
+			queryBuilder.append(item.getOperator());
+			queryBuilder.append(" (");
+
+			for (int i = 0; i < operands.size(); i++) {
+				if (i % projections.size() == 0) { // 1st item of tuple of values
+					if (i >= projections.size()) { // starting from 2nd tuple of values
+						queryBuilder.append(",");
+					}
+					queryBuilder.append(openBracket);
+				}
+				if (i % projections.size() != 0) {
 					queryBuilder.append(",");
 				}
-				queryBuilder.append(openBracket);
+				append(operands.get(i));
+				if (i % projections.size() == projections.size() - 1) { // last item of tuple of values
+					queryBuilder.append(closeBracket);
+				}
 			}
-			if (i % projections.size() != 0) {
-				queryBuilder.append(",");
-			}
-			append(operands.get(i));
-			if (i % projections.size() == projections.size() - 1) { // last item of tuple of values
-				queryBuilder.append(closeBracket);
-			}
-		}
+			queryBuilder.append(")");
+		} else {
+			if (projections.size() == 1) {
+				int temp = 0;
+				for (int i = 0; i < operands.size(); i++) {
+					if (temp == 0 && i == 0) {
+						queryBuilder.append(" ");
+						queryBuilder.append(item.getOperator());
+						queryBuilder.append(" (");
 
+					} else if (temp == 0 && i != 0) {
+
+						queryBuilder.append(" OR ");
+						append(projections.get(0), false);
+						queryBuilder.append(" ");
+						queryBuilder.append(item.getOperator());
+						queryBuilder.append(" (");
+
+					}
+
+					if (i % projections.size() == 0 && temp != 0) { // 1st item of tuple of values
+						if (i >= projections.size()) { // starting from 2nd tuple of values
+							queryBuilder.append(",");
+						}
+						queryBuilder.append(openBracket);
+					}
+					if (i % projections.size() != 0) {
+						queryBuilder.append(",");
+					}
+					append(operands.get(i));
+					if (i % projections.size() == projections.size() - 1) { // last item of tuple of values
+						queryBuilder.append(closeBracket);
+					}
+					temp++;
+
+					if (temp == SQL_IN_CLAUSE_LIMIT) {
+						temp = 0;
+						queryBuilder.append(") ");
+					}
+
+				}
+				String queryTemp = queryBuilder.toString().trim();
+				if (!queryTemp.isEmpty() && !queryTemp.substring(queryTemp.length() - 1).equals(")"))
+					queryBuilder.append(")");
+			} else {
+
+				int temp = 0;
+				if (SQL_IN_CLAUSE_LIMIT % projections.size() != 0) {
+					SQL_IN_CLAUSE_LIMIT = SQL_IN_CLAUSE_LIMIT - 1;
+				}
+				for (int i = 0; i < operands.size(); i++) {
+					if (temp == 0 && i == 0) {
+						queryBuilder.append(" ");
+						queryBuilder.append(item.getOperator());
+						queryBuilder.append(" ( (");
+
+					} else if (temp == 0 && i != 0) {
+
+						queryBuilder.append(" OR ");
+						queryBuilder.append(" (");
+						append(projections.get(0), false);
+						for (int ii = 1; ii < projections.size(); ii++) {
+							queryBuilder.append(",");
+							append(projections.get(ii), false);
+						}
+						queryBuilder.append(" )");
+						queryBuilder.append(" ");
+						queryBuilder.append(item.getOperator());
+						queryBuilder.append(" ((");
+
+					}
+
+					if (i % projections.size() == 0 && temp != 0) { // 1st item of tuple of values
+						if (i >= projections.size()) { // starting from 2nd tuple of values
+							queryBuilder.append(",");
+						}
+						queryBuilder.append(openBracket);
+					}
+					if (i % projections.size() != 0 && !(i != 0 && temp == 0)) {
+						queryBuilder.append(",");
+					}
+					append(operands.get(i));
+					if (i % projections.size() == projections.size() - 1) { // last item of tuple of values
+						queryBuilder.append(closeBracket);
+					}
+					temp++;
+
+					if (temp == SQL_IN_CLAUSE_LIMIT) {
+						temp = 0;
+						queryBuilder.append(") ");
+					}
+
+				}
+				String queryTemp = queryBuilder.toString().trim();
+				queryTemp = queryTemp.replaceAll("TO_TIMESTAMP\\([^)]+\\)", "");
+				queryTemp = queryTemp.replaceAll("TO_DATE\\([^)]+\\)", "");
+				if (!queryTemp.isEmpty()
+						&& !(queryTemp.substring(queryTemp.length() - 1).equals(")") && queryTemp.substring(queryTemp.length() - 2).equals("))")))
+					queryBuilder.append(")");
+
+			}
+
+		}
 		queryBuilder.append(")");
 	}
 

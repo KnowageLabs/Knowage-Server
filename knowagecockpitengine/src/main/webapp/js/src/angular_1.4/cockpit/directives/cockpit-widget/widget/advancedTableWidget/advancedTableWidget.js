@@ -321,7 +321,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             if(params.colDef.style && params.colDef.style.hideSummary) this.eGui.innerHTML = '';
             else {
             	var title = params.summaryRows[params.rowIndex].label;
-            	if(title && params.style && params.style['pinnedOnly'] && params.column.pinned && params.column.lastLeftPinned) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
+            	if(title && params.style && params.style['pinnedOnly'] && params.column.pinned && (params.column.lastLeftPinned || params.column.pinned == 'right')) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
             	if(params.valueFormatted || params.value){
             		if(params.summaryRows[params.rowIndex].aggregation == 'COUNT' || params.summaryRows[params.rowIndex].aggregation == 'COUNT_DISTINCT') {
             			var tempValue = $filter('number')(params.value,0);
@@ -461,7 +461,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
 				$scope.showWidgetSpinner();
 				var sorting = $scope.advancedTableGrid.api.getSortModel();
-				sorting[0].colId = sorting[0].colId.replace(/(column_[0-9]+)(?:_[0-9]+)/gm, '$1');
+				if(sorting[0]) sorting[0].colId = sorting[0].colId.replace(/(column_[0-9]+)(?:_[0-9]+)/gm, '$1');
 				$scope.ngModel.settings.sortingColumn = sorting.length>0 ? getColumnName(sorting[0].colId) : '';
 				$scope.ngModel.settings.sortingOrder = sorting.length>0 ? sorting[0]['sort'].toUpperCase() : '';
 				$scope.refreshWidget(null, 'sorting');

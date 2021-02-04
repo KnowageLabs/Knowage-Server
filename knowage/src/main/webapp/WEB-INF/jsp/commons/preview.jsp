@@ -16,15 +16,43 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
+<%@page import="it.eng.spago.base.*"%>
+
+<%
+	RequestContainer aRequestContainer = null;
+	IUrlBuilder urlBuilder = null;	
+	String sbiMode = null;
+		
+	// case of portlet mode
+	aRequestContainer = RequestContainerPortletAccess.getRequestContainer(request);
+	if (aRequestContainer == null) {
+		// case of web mode
+		aRequestContainer = RequestContainer.getRequestContainer();
+		if(aRequestContainer == null){
+			//case of REST 
+			aRequestContainer = RequestContainerAccess.getRequestContainer(request);
+		}
+	}
+
+	String channelType = aRequestContainer.getChannelType();
+	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
+	else sbiMode = "WEB";
+
+	// create url builder 
+	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
+%>
 
 <!DOCTYPE html>
     <head>
+    
     	<link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/reset_2018.css">
+    	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/reset_2018.css")%>">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/styles/ag-grid.css">
     	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/styles/ag-theme-balham.css">
     	<link rel="stylesheet" type="text/css"  href="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/toastify-js/src/toastify.css">
-    	<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">
+    	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>">
     	<script src="<%= GeneralUtilities.getSpagoBiContext() %>/node_modules/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
     	<!-- POLYFILLS -->
     	<script>if (!Array.isArray) {

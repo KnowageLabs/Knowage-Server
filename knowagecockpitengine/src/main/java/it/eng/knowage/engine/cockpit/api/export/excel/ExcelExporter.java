@@ -1042,14 +1042,36 @@ public class ExcelExporter {
 												String keyToAdd = keys.next();
 												if (jsonobject.getString("urlName").equals(keyToAdd)) {
 
-													jsnParam.put(jsonobject.getString("urlName"), jsonobject.getString("parameterValue"));
+													jsnParam.put(jsonobject.getString("urlName"), valuesToChange);
 
 												} else {
 													jsnParam.put(datasetVals.getString(keyToAdd), "");
 												}
 
 											}
-											newParameters.put(obj, jsnParam);
+											if (newParameters.has(obj)) {
+												JSONObject jsonobjectVals = newParameters.getJSONObject(obj);
+
+												if (jsonobjectVals != null) {
+													Iterator<String> keysJ = jsonobjectVals.keys();
+													while (keysJ.hasNext()) {
+														String keyToAdd = keysJ.next();
+														String newKeyToAdd = keyToAdd.replace("$P{", "").replace("}", "");
+														if (jsonobjectVals.has(newKeyToAdd) && !jsonobjectVals.getString(newKeyToAdd).isEmpty()
+																&& jsnParam.getString(datasetVals.getString(keyToAdd)).isEmpty()) {
+															if (jsnParam.has(datasetVals.getString(keyToAdd)))
+																jsnParam.remove(datasetVals.getString(keyToAdd));
+
+															jsnParam.put(newKeyToAdd, jsonobjectVals.getString(newKeyToAdd));
+														}
+													}
+
+													newParameters.put(obj, jsnParam);
+												}
+
+											} else {
+												newParameters.put(obj, jsnParam);
+											}
 										}
 									} else {
 										newParameters.put(obj, valuesToChange);
@@ -1112,17 +1134,19 @@ public class ExcelExporter {
 
 				}
 
+				// logger.debug("associativeSelectionsPayload newParameters: [" + newParameters.toString() + "]");
 				associativeSelectionsPayload.put("datasets", newParameters);
 				associativeSelectionsPayload.put("nearRealtime", nearRealArray);
 
 				AssociativeSelectionsClient client = new AssociativeSelectionsClient();
 				try {
+					logger.debug("associativeSelectionsPayload: [" + associativeSelectionsPayload.toString() + "]");
 					JSONObject associativeSelections = client.getAssociativeSelections(new HashMap<String, Object>(), userUniqueIdentifier,
 							associativeSelectionsPayload.toString());
 
 					JSONArray datasetLabels = aggregation.getJSONArray("datasets");
-					for (int j = 0; j < datasetLabels.length(); j++) {
-						String label = datasetLabels.getString(j);
+					for (int j3 = 0; j3 < datasetLabels.length(); j3++) {
+						String label = datasetLabels.getString(j3);
 						actualSelectionMap.put(label, associativeSelections.getJSONObject(label));
 					}
 				} catch (Exception e) {
@@ -1387,7 +1411,10 @@ public class ExcelExporter {
 				}
 
 			}
-
+			for (int i = 0; i < parameters.length(); i++) {
+				if (!newParameters.has(parameters.names().getString(i)))
+					newParameters.put(parameters.names().getString(i), "");
+			}
 			return newParameters;
 		} else
 			return getReplacedParameters(parameters, datasetId);
@@ -1411,11 +1438,29 @@ public class ExcelExporter {
 				String parameterName = parameterMatcher.group(1);
 				Object exists = oldParameters.get(parameterName);
 				if (exists != null) {
+					// JSONArray value = (JSONArray) newParameters.get(parameter);
+					// String regex2 = "\\((?:(?:,)?(?:\\'([a-zA-Z0-9\\-\\_\\s]+)\\')(?:,+)?)+\\)";
+					// String valueToElaborate = value.get(0).toString();
+					// Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(valueToElaborate);
+					// String realValueToAdd = "";
+					// String realValue = "";
+					// while (parameterMatcher2.find()) {
+					// if (realValue.isEmpty())
+					// realValueToAdd = parameterMatcher2.group(1);
+					// else
+					// realValueToAdd = realValueToAdd + "," + parameterMatcher2.group(1);
+					//
+					// realValue = parameterMatcher2.group(1);
+					// valueToElaborate = valueToElaborate.replace("'" + realValue + "'", "");
+					// parameterMatcher2 = Pattern.compile(regex2).matcher(valueToElaborate);
+					// }
+					// parameters.put(parameterName, realValueToAdd);
 					JSONArray value = (JSONArray) newParameters.get(parameter);
 					String regex2 = "\\(\\'(.*)\\'\\)";
 					Matcher parameterMatcher2 = Pattern.compile(regex2).matcher(value.get(0).toString());
 					if (parameterMatcher2.matches()) {
 						String realValue = parameterMatcher2.group(1);
+						realValue = "'" + realValue + "'";
 						parameters.put(parameterName, realValue);
 					}
 				}
@@ -1785,6 +1830,7 @@ public class ExcelExporter {
 	private JSONObject getSelectionsFromWidget(JSONObject widget, JSONObject configuration) throws JSONException {
 		JSONObject dataset = getDatasetFromWidget(widget, configuration);
 		String datasetName = dataset.getString("name");
+		String datasetLabel = dataset.getString("dsLabel");
 
 		JSONObject selections = new JSONObject();
 		JSONObject datasetFilters = new JSONObject();
@@ -1854,6 +1900,7 @@ public class ExcelExporter {
 			}
 		}
 
+		boolean useLabel = false;
 		if (actualSelectionMap.containsKey(datasetName)) {
 			JSONObject actualSelections = actualSelectionMap.get(datasetName);
 			Iterator<String> actualSelectionKeys = actualSelections.keys();
@@ -1864,9 +1911,24 @@ public class ExcelExporter {
 					datasetFilters.put(key, values);
 				}
 			}
+		} else if (actualSelectionMap.containsKey(datasetLabel)) {
+			useLabel = true;
+			JSONObject actualSelections = actualSelectionMap.get(datasetLabel);
+			Iterator<String> actualSelectionKeys = actualSelections.keys();
+			while (actualSelectionKeys.hasNext()) {
+				String key = actualSelectionKeys.next();
+				if (!key.contains("$")) {
+					Object values = actualSelections.get(key);
+					datasetFilters.put(key, values);
+				}
+			}
 		}
 
-		selections.put(datasetName, datasetFilters);
+		if (useLabel) {
+			selections.put(datasetLabel, datasetFilters);
+		} else {
+			selections.put(datasetName, datasetFilters);
+		}
 		return selections;
 	}
 

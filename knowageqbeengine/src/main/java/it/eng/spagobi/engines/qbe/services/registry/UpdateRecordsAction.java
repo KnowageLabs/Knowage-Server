@@ -139,7 +139,9 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 			IDataSource genericDatasource = qbeEngineInstance.getDataSource();
 			keyColumn = genericDatasource.getPersistenceManager().getKeyColumn(aRecord, registryConf);
 
-			Object keyValueObject = aRecord.get(keyColumn);
+			Object keyValueObject = null;
+			if (aRecord.has(keyColumn))
+				keyValueObject = aRecord.get(keyColumn);
 
 			if (keyValueObject == null || keyValueObject.toString().equalsIgnoreCase("")) {
 				logger.debug("Insert a new Row");

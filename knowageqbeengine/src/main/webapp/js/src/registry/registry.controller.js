@@ -96,12 +96,13 @@
         var readData = function(formParameters) {
         	 $scope.formatNumber= 0;
         	registryCRUD.read(formParameters).then(function(response) {
-	           	 $scope.data = response.data.rows;
+
+        		$scope.data= $scope.transformDataStore(response.data).rows
 	           	 if($scope.configuration.pagination != 'true'){
 	           	 $scope.data = orderBy($scope.data,$scope.propertyName,$scope.reverse);
 	           	 }
 	           	dateColumns = dateColumnsFilter(response.data.metaData.fields);
-	           	$scope.data = dateRowsFilter(dateColumns,response.data.rows);
+	           	$scope.data = dateRowsFilter(dateColumns,$scope.data);
 	           	 $scope.resultsNumber = response.data.results;
 	           	$scope.initalizePagination();
 	           	 if($scope.columnSizeInfo.length == 0) {
@@ -114,7 +115,23 @@
 
 	         });
         };
+        $scope.transformDataStore = function (datastore){
+    		var newDataStore = {};
+    		newDataStore.metaData = datastore.metaData;
+    		newDataStore.results = datastore.results;
+    		newDataStore.rows = [];
 
+    		for(var i=0; i<datastore.rows.length; i++){
+    			var obj = {};
+    			for(var j=1; j<datastore.metaData.fields.length; j++){
+    				if(datastore.rows[i][datastore.metaData.fields[j].name]!=undefined){
+    					obj[datastore.metaData.fields[j].header] = datastore.rows[i][datastore.metaData.fields[j].name];
+    				}
+    			}
+    			newDataStore.rows.push(obj);
+    		}
+    		return newDataStore;
+    	}
         loadInitialData();
 
 		// Filling columns
@@ -127,7 +144,7 @@
 				});
 
 				$scope.columnFieldTypes.forEach(function(columnType) {
-					if(columnType.name === column.field) {
+					if(columnType.header === column.field) {
 						column.dataType = columnType.type;
 					}
 				});
@@ -175,7 +192,7 @@
             var decimalPlaces;
             var floatColumns = $filter('filter')($scope.columnFieldTypes, {type: 'float'}, true);
             floatColumns.forEach(function(col){
-                if(col.name == colName) {
+                if(col.header == colName) {
                     var format = col.format.split(',');
                     decimalPlaces = format.length;
                 }
@@ -501,35 +518,35 @@
 	        			$scope.selectedRow[i][property].setTime($scope.selectedRow[i][property].getTime() - new Date().getTimezoneOffset()*60*1000);
 	    	        }
 	        	}
-				registryCRUD.update($scope.selectedRow[i]).then(function(response) {
-					sbiMessaging.showInfoMessage( $scope.sbiTranslate.load("kn.registry.registryDocument.update.success")
-							+' '+ (response.data.ids.length) + ' ' + $scope.sbiTranslate.load("kn.registry.registryDocument.row"), $scope.sbiTranslate.load("kn.registry.registryDocument.success"));
-					$scope.selectedRow = [];
-				});
+
 
 			}
+			registryCRUD.update($scope.selectedRow).then(function(response) {
+	     	   	readData($scope.formParams);
+				sbiMessaging.showInfoMessage( $scope.sbiTranslate.load("kn.registry.registryDocument.update.success")
+						+' '+ ($scope.selectedRow.length) + ' ' + $scope.sbiTranslate.load("kn.registry.registryDocument.row"), $scope.sbiTranslate.load("kn.registry.registryDocument.success"));
+				$scope.selectedRow.length = 0;
+			});
 
 		};
 
 		// Delete
 		$scope.deleteRowFromDB = function(row, event) {
-			if(row.id) {
-				var confirm = $mdDialog.confirm()
-	            .title(sbiModule_translate.load('kn.registry.document.delete.row'))
-	            .textContent(sbiModule_translate.load('kn.registry.document.delete.confirm.message'))
-	            .targetEvent(event)
-	            .ok(sbiModule_translate.load('kn.qbe.general.yes'))
-	            .cancel(sbiModule_translate.load('kn.qbe.general.no'));
 
-				$mdDialog.show(confirm).then(function() {
-						registryCRUD.delete(row).then(function(response) {
-							sbiMessaging.showInfoMessage($scope.sbiTranslate.load("kn.registry.registryDocument.delete.success"), $scope.sbiTranslate.load("kn.registry.registryDocument.success"));
-							$scope.deleteRow(row.$$hashKey);
-						});
+			var confirm = $mdDialog.confirm()
+            .title(sbiModule_translate.load('kn.registry.document.delete.row'))
+            .textContent(sbiModule_translate.load('kn.registry.document.delete.confirm.message'))
+            .targetEvent(event)
+            .ok(sbiModule_translate.load('kn.qbe.general.yes'))
+            .cancel(sbiModule_translate.load('kn.qbe.general.no'));
+
+			$mdDialog.show(confirm).then(function() {
+					registryCRUD.delete(row).then(function(response) {
+						sbiMessaging.showInfoMessage($scope.sbiTranslate.load("kn.registry.registryDocument.delete.success"), $scope.sbiTranslate.load("kn.registry.registryDocument.success"));
+						$scope.deleteRow(row.$$hashKey);
 					});
-			} else {
-				$scope.deleteRow(row.$$hashKey);
-			}
+				});
+
 
 		};
 
@@ -616,7 +633,7 @@
         	var namesOfDateColumns =[];
         	for(var i = 0 ; i <columns.length ; i++){
         		if(columns[i].type === 'date'){
-        			namesOfDateColumns.push(columns[i].name);
+        			namesOfDateColumns.push(columns[i].header);
         		}
         	}
         	return namesOfDateColumns;
@@ -633,19 +650,6 @@
         	return rows;
         }
 
-    	$scope.$watch('data',function(newValue,oldValue){
-			if (newValue.length==oldValue.length){
-				for(var i = 0 ; i <newValue.length ; i++){
-					for (var attrname in newValue[i]) {
-						if(oldValue[i][attrname]!=undefined){
-							if((newValue[i][attrname] instanceof Date && newValue[i][attrname].getTime()!=oldValue[i][attrname].getTime()) || (!(newValue[i][attrname] instanceof Date) && newValue[i][attrname]!=oldValue[i][attrname])){
-								$scope.setSelected(newValue[i])
-							}
-						}
-					}
-				}
-			}
-  		}, true);
 
 	}
 })();

@@ -439,7 +439,18 @@ public class DataSetFactory {
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
 				if (userProfile != null)
 					dataSourceDao.setUserProfile(userProfile);
-				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
+
+				/* WORKAROUND : in the past the datasource attribute was
+				 * dataSource and not dataSourceFlat.
+				 */
+				String dataSourceName = null;
+				if (jsonConf.has(DataSetConstants.DATA_SOURCE)) {
+					dataSourceName = jsonConf.getString(DataSetConstants.DATA_SOURCE);
+				} else {
+					dataSourceName = jsonConf.getString(DataSetConstants.DATA_SOURCE_FLAT);
+				}
+
+				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(dataSourceName);
 				((FlatDataSet) ds).setDataSource(dataSource);
 				((FlatDataSet) ds).setTableName(jsonConf.getString(DataSetConstants.FLAT_TABLE_NAME));
 				ds.setDsType(FLAT_DS_TYPE);

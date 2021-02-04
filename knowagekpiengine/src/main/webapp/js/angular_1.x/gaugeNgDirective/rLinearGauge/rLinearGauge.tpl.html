@@ -1,4 +1,4 @@
-<div class="rLinearGauge" ng-class="theme">
+<div class="rLinearGauge" ng-class="theme" style="padding:0px">
     <div class="values">
         <div class="value" style="left:0%">{{min}}</div>
         <div class="value centrals" ng-if="!$last" ng-repeat="threshold in thresholds" ng-style="{'left':normalize(threshold.to)}">{{threshold.to}}</div>

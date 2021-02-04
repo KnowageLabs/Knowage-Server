@@ -45,7 +45,7 @@ myApp.config(function($mdThemingProvider,ScrollBarsProvider) {
         };
 });
 
-myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_i18n', '$interval'
+myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_i18n', '$interval', '$httpParamSerializer'
   				, function(
   						$http,
   						$mdDialog,
@@ -55,7 +55,8 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
   						sbiModule_messaging,
   						sbiModule_translate,
   						sbiModule_i18n,
-  						$interval
+  						$interval,
+  						$httpParamSerializer
   						) {
     return {
         restrict: 'E',
@@ -173,7 +174,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 			$scope.roleSelection = function roleSelection(){
 				if(Sbi.user.roles && Sbi.user.roles.length > 1){
 					$scope.toggleMenu();
-					$scope.serviceUrl = Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=SET_SESSION_ROLE_ACTION";
+					$scope.serviceUrl = Sbi.config.contextName+"/servlet/AdapterHTTP";
 					var parentEl = angular.element(document.body);
 					$mdDialog.show({
 						parent: parentEl,
@@ -200,17 +201,16 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 		        	          $mdDialog.hide();
 		        	        }
 		        	        scope.save = function() {
-		        	        	$http.get(scope.serviceUrl,{
-		        	        	    params: {
-		        	        	    		SELECTED_ROLE: scope.sessionRole,
-		        	        	    	}
-		        	        	}).success(function(data){
+
+		        	        	$http.post(scope.serviceUrl,
+		        	        			$httpParamSerializer({ACTION_NAME: "SET_SESSION_ROLE_ACTION", SELECTED_ROLE: scope.sessionRole}),
+		        	        			{headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}})
+		        	        	.success(function(data){
 		        	        		console.log("default role set correcty");
 		        	        		 //call again the home page
 		        	        		var homeUrl = Sbi.config.contextName+"/servlet/AdapterHTTP?PAGE=LoginPage"
 		        	        		window.location.href=homeUrl;
-		        	        	}).
-		        	        	error(function(error){
+	        	        		}).error(function(error){
 		        	        		console.log("Error: default role NOT set");
 		        	        		$scope.showAlert('Attention, ' + $scope.userName,"Error setting default role. Please check if the server or connection is working.")
 		        	        	});
@@ -323,12 +323,22 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				$scope.showAccessibilityDialog();
 			}
 
-			$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset').then(function(result){
+			function calculateNewDownloads(data){
+				var counter = 0;
+				for(var k in data){
+					if(data[k].alreadyDownloaded == false) counter ++;
+				}
+				return counter;
+			}
+
+			$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset?showAll=true').then(function(result){
 				$scope.downloadsList = result.data;
+				$scope.newDownloadsNumber = calculateNewDownloads($scope.downloadsList);
 			})
 			$interval(function() {
-				$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset').then(function(result){
+				$http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset?showAll=true').then(function(result){
 					$scope.downloadsList = result.data;
+					$scope.newDownloadsNumber = calculateNewDownloads($scope.downloadsList);
 				},function(error){})
 			}, 20000);
 
@@ -339,12 +349,14 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 				$mdDialog.show({
 					parent: parentEl,
 					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/downloads.html',
-					controller: downloadsDialogController
+					controller: downloadsDialogController,
+					locals: {downloadsList:$scope.downloadsList}
 				});
 
 
-				function downloadsDialogController(scope, $mdDialog, sbiModule_translate) {
+				function downloadsDialogController(scope, $mdDialog, sbiModule_translate,downloadsList) {
 	        	    scope.translate = sbiModule_translate;
+	        	    scope.downloadsList = downloadsList;
 	        	    scope.closeDialog = function(){
 	        	    	$mdDialog.cancel();
 	        	    }
@@ -357,11 +369,13 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 
 					scope.deleteAllDownload = function(){
 						$http.delete(Sbi.config.contextName + '/restful-services/2.0/export').then(function(result){
+							// Clear both lists
 							$scope.downloadsList = [];
+							scope.downloadsList = [];
 						})
 					}
 
-	        	    scope.$watch('downloadsList', function(newValue,oldValue){
+					scope.$watch('downloadsList', function(newValue,oldValue){
 						if(newValue && scope.downloadGridOptions.api) {
 							scope.downloadGridOptions.api.setRowData(newValue);
 						}
@@ -429,9 +443,6 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 //						    },
 						    onGridReady: function (params) {
 						        params.api.sizeColumnsToFit();
-						        $http.get(Sbi.config.contextName+'/restful-services/2.0/export/dataset?showAll=true').then(function(result){
-				    				scope.downloadsList = result.data;
-				    			})
 						    },
 						    onGridSizeChanged: function(params){
 						    	params.api.sizeColumnsToFit();

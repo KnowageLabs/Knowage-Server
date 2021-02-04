@@ -45,5 +45,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
 
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourcePath(knowageContext, "/themes/commons/css/customStyle.css")%>">
+
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/module/sbiModule.js"></script>
 	<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jsp"%>

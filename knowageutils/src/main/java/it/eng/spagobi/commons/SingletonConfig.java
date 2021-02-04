@@ -18,36 +18,33 @@
 
 package it.eng.spagobi.commons;
 
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Defines the Singleton SpagoBI implementations.
  *
+ * TODO refactor this class since it is not a real cache!!!!
+ *
  * @author Monia Spinelli
+ *
  */
-
 public class SingletonConfig {
 
 	private static String CONFIG_CACHE_CLASS_NAME = "it.eng.spagobi.commons.SingletonConfigCache";
 
-	private static SingletonConfig instance = null;
 	private static transient Logger logger = Logger.getLogger(SingletonConfig.class);
 
 	private ISingletonConfigCache cache;
 
-	public synchronized static SingletonConfig getInstance() {
-		try {
-			if (instance == null)
-				instance = new SingletonConfig();
-		} catch (Exception e) {
-			logger.debug("Impossible to load configuration", e);
-		}
-		return instance;
+	private static SingletonConfig ISTANCE = new SingletonConfig();
+
+	public static SingletonConfig getInstance() {
+		return ISTANCE;
 	}
 
-	private SingletonConfig() throws Exception {
+	private SingletonConfig() {
 		logger.debug("IN");
 		try {
 			cache = (ISingletonConfigCache) Class.forName(CONFIG_CACHE_CLASS_NAME).newInstance();
@@ -64,20 +61,12 @@ public class SingletonConfig {
 	 *         QUESTO METODO LO UTILIZZI PER LEGGERE LA CONFIGURAZIONE DEI SINGOLI ELEMENTI: ES: String configurazione=
 	 *         SingletonConfig.getInstance().getConfigValue("home.banner");
 	 */
-	public synchronized String getConfigValue(String key) {
+	public String getConfigValue(String key) {
 		return cache.get(key);
 
 	}
 
-	/**
-	 * QUESTO METODO LO UTILIZZI ALL'INTERNO DEL SERVIZIO DI SALVATAGGIO CONFIGURAZIONE OGNI VOLTA CHE SALVIAMO UNA RIGA SVUOTIAMO LA CACHE
-	 */
-	public synchronized void clearCache() {
-		try {
-			instance = null;
-		} catch (Exception e) {
-			logger.debug("Impossible to create a new istance", e);
-		}
+	public void clearCache() {
 	}
 
 	/**

@@ -18,15 +18,16 @@
 
 package it.eng.spagobi.tools.dataset.bo;
 
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 /**
  * @authors Davide Zerbetto (davide.zerbetto@eng.it)
@@ -37,7 +38,8 @@ public class FlatDataSet extends ConfigurableDataSet {
 	public static String DS_TYPE = "SbiFlatDataSet";
 
 	public static final String FLAT_TABLE_NAME = "flatTableName";
-	public static final String DATA_SOURCE = "dataSource";
+	public static final String DATA_SOURCE = "dataSourceFlat";
+	public static final String OLD_DATA_SOURCE = "dataSource";
 
 	private static transient Logger logger = Logger.getLogger(FlatDataSet.class);
 
@@ -109,6 +111,27 @@ public class FlatDataSet extends ConfigurableDataSet {
 		}
 
 		return toReturn;
+	}
+
+	@Override
+	public void setConfiguration(String configuration) {
+		/* WORKAROUND : in the past the datasource attribute was
+		 * dataSource and not dataSourceFlat.
+		 */
+		String config = JSONUtils.escapeJsonString(configuration);
+		JSONObject jsonConf = ObjectUtils.toJSONObject(config);
+		if (jsonConf.has(OLD_DATA_SOURCE)) {
+			try {
+				String string = jsonConf.getString(OLD_DATA_SOURCE);
+				jsonConf.put(DATA_SOURCE, string);
+				jsonConf.remove(OLD_DATA_SOURCE);
+				configuration = jsonConf.toString();
+			} catch (JSONException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		super.setConfiguration(configuration);
 	}
 
 	@Override

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>it.eng.knowage</groupId>
   <artifactId>knowage-ce-parent</artifactId>
-  <version>7.1.5</version>
+  <version>7.1.10</version>
   <packaging>pom</packaging>
   <name>knowage-ce-parent</name>
 
@@ -24,15 +24,16 @@
 			<url>https://www.license4j.com/maven/</url>
 			<layout>default</layout>
 		</repository>
-		<!-- We use boundlessgeo.com because it contains hibernate-spatial-1.1.1.jar, needed by Qbe core; this library is not available on Maven Central -->
-		<repository>
-			<id>boundlessgeo.com</id>
-			<url>https://repo.boundlessgeo.com/main/</url>
-		</repository>
+
 		<!-- We use osgeo.org because it contains geotools 2.7.5, needed by knowage DAO; this library is not available on Maven Central -->
 		<repository>
 			<id>osgeo.org</id>
-			<url>http://download.osgeo.org/webdav/geotools/</url>
+			<url>https://repo.osgeo.org/repository/release/</url>
+		</repository>
+			<!-- We use Maven Geo-Solutions for hibernate-spatial-1.1.1.jar, needed by Qbe core; this library is not available on Maven Central -->
+		<repository>
+			<id>geo-solutions</id>
+			<url>https://maven.geo-solutions.it/</url>
 		</repository>
 		<!-- We use Enonic Repository because it contains simplecaptcha 1.2.1 library, needed by knowage CE core; this library is not available on Maven Central -->
 		<repository>
@@ -117,6 +118,7 @@
 		<module>../knowagejasperreportengine</module>
 		<module>../spagobi.birt.oda</module>
 		<module>../knowagebirtreportengine</module>
+		<module>../knowagedatabasescripts</module>
 	</modules>
 
 	<build>

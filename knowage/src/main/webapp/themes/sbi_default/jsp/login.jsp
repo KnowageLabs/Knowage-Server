@@ -138,10 +138,10 @@
 				user.value = userV;
 			}
 		</script>
-		<link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico",currTheme)%>" />
+		<link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
 		   <!-- Bootstrap -->
 		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
-		<link rel='StyleSheet' href='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/css/customStyle.css",currTheme)%>' type='text/css' />
+		<link rel='StyleSheet' href='<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>' type='text/css' />
 	</head>
 
   	<body class="kn-login">

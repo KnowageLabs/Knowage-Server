@@ -397,10 +397,16 @@
 			 * @public
 			 */
 			get : function(key, module, locale, defaultValue){
+
+				if (typeof key == "undefined") {
+					console.log("Requested a translation for an undefined key");
+					return "";
+				}
+
 				var validModule,
 					validLocale,
 					moduleObj,
-					value = defaultValue || key;
+					value = undefined;
 
 				validModule = module || DEFAULT_MODULE_NAME;
 				validLocale = getValidLocale(locale);
@@ -412,6 +418,24 @@
 					if (typeof moduleObj[key] !== 'undefined'){
 						value = moduleObj[key];
 					}
+				}
+
+				// If value is null here, get the value of the
+				// default locale
+				if (value == undefined) {
+					validLocale = getValidLocale(defaultLocale);
+					if (isModuleLoaded(validModule, validLocale)){
+						moduleObj = properties[validLocale][validModule];
+						if (typeof moduleObj[key] !== 'undefined'){
+							value = moduleObj[key];
+						}
+					}
+				}
+
+				// If value is null here, the key is missing from
+				// every locale
+				if (value == undefined) {
+					value = defaultValue || key;
 				}
 
 				value = value.replace("\\:", ":").replace("\\!", "!").replace("\\#", "#");

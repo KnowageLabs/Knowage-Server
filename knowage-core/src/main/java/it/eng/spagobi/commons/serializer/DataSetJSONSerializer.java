@@ -43,6 +43,7 @@ import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 import it.eng.spagobi.tools.tag.SbiTag;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class DataSetJSONSerializer implements Serializer {
@@ -423,7 +424,7 @@ public class DataSetJSONSerializer implements Serializer {
 						result.put(JCLASS_NAME, jClass);
 					}
 				} else if (type.equalsIgnoreCase(DataSetConstants.FLAT)) {
-					result.put(DATA_SOURCE_FLAT, jsonConf.getString(DataSetConstants.DATA_SOURCE));
+					result.put(DATA_SOURCE_FLAT, jsonConf.getString(DataSetConstants.DATA_SOURCE_FLAT));
 					result.put(FLAT_TABLE_NAME, jsonConf.getString(DataSetConstants.FLAT_TABLE_NAME));
 				} else if (DataSetConstants.DS_REST_NAME.equalsIgnoreCase(type)) {
 					manageRESTDataSet(jsonConf, result);
@@ -433,7 +434,9 @@ public class DataSetJSONSerializer implements Serializer {
 					manageSPARQLDataSet(jsonConf, result);
 				}
 			} catch (Exception e) {
-				logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+				String msg = "Error while defining dataset configuration.";
+				logger.error(msg, e);
+				throw new SpagoBIRuntimeException(msg, e);
 			}
 
 			result.put(TRASFORMER_TYPE_CD, ds.getTransformerCd());

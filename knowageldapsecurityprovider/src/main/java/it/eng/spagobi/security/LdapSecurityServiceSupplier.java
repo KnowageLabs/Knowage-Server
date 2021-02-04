@@ -21,12 +21,9 @@ package it.eng.spagobi.security;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -35,11 +32,8 @@ import javax.naming.directory.InitialDirContext;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
@@ -66,7 +60,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 				SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
 				if (user != null) {
 					if (!bind(userId, psw)) {
-						logger.error("Impossible to bind user " + userId + ". Usernmae or password password not valid.");
+						logger.error("Impossible to bind user " + userId + ". Username or password not valid.");
 						return null;
 					}
 
@@ -97,8 +91,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 	/**
 	 * In this method you can find the authentication source code for LDAP bind process
 	 *
-	 * @param userId:
-	 *            ex: CN=angelo,OU=ADAM USERS,O=Microsoft,C=US
+	 * @param     userId: ex: CN=angelo,OU=ADAM USERS,O=Microsoft,C=US
 	 * @param psw
 	 * @return
 	 * @throws IOException
@@ -136,68 +129,8 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 	}
 
 	@Override
-	public SpagoBIUserProfile createUserProfile(String userId) {
-		logger.debug("IN: userId parameter is " + userId);
-		try {
-			SpagoBIUserProfile profile = getSpagoBIUserProfile(userId);
-			return profile;
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while creating user profile object", e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	public SpagoBIUserProfile getSpagoBIUserProfile(String userId) throws EMFUserError {
-		logger.debug("IN - userId: " + userId);
-		SpagoBIUserProfile profile = null;
-		SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
-
-		if (user == null) {
-			logger.error("UserName [" + userId + "] not found!!");
-			return null;
-		}
-
-		profile = new SpagoBIUserProfile();
-		profile.setUniqueIdentifier(user.getUserId());
-		profile.setUserId(user.getUserId());
-		profile.setUserName(user.getFullName());
-		profile.setOrganization(user.getCommonInfo().getOrganization());
-		profile.setIsSuperadmin(user.getIsSuperadmin());
-
-		// get user name
-		String userName = userId;
-
-		// get roles of the user
-		List<SbiExtRoles> assignedUserRoles = DAOFactory.getSbiUserDAO().loadSbiUserRolesById(user.getId());
-		List<String> roles = new ArrayList<>();
-
-		for (SbiExtRoles role : assignedUserRoles) {
-			roles.add(role.getName());
-		}
-
-		HashMap<String, String> attributes = new HashMap<>();
-		ArrayList<SbiUserAttributes> assignedUserAttributes = DAOFactory.getSbiUserDAO().loadSbiUserAttributesById(user.getId());
-		if (assignedUserAttributes != null) {
-			for (SbiUserAttributes attribute : assignedUserAttributes) {
-				String attributeName = attribute.getSbiAttribute().getAttributeName();
-				String attributeValue = attribute.getAttributeValue();
-				if (attributeValue != null) {
-					logger.debug("Add attribute. " + attributeName + "=" + attributeName + " to the user" + userName);
-					attributes.put(attributeName, attributeValue);
-				}
-			}
-		}
-
-		logger.debug("Attributes load into Knowage user profile: " + attributes);
-		// end load profile attributes
-
-		profile.setAttributes(attributes);
-		profile.setRoles(roles.toArray(new String[0]));
-
-		logger.debug("OUT");
-		return profile;
-
+	public SpagoBIUserProfile createUserProfile(String jwtToken) {
+		return new InternalSecurityServiceSupplierImpl().createUserProfile(jwtToken);
 	}
 
 	@Override

@@ -1119,25 +1119,31 @@
 			#if($yAxis.min==$yAxis.max)
 			#set ($minAndMaxAreSame= true)
 			#end
-			#if($yAxis.min && $yAxis.min != "auto"  && $yAxis.min!='' )
-				#set ($min = $yAxis.min)
-					min: $yAxis.min,
-					startOnTick:false,
+			#if($yAxis.min)
+				#if($yAxis.min != "auto"  && $yAxis.min!='')
+					#set ($min = $yAxis.min)
+						min: $yAxis.min,
+						startOnTick:false,
+				#elseif($yAxis.min == "auto" || $yAxis.min=='')
+					min: "$yAxis.min",
+				#end
 			#end
-			
-			#if($yAxis.max && $yAxis.max!='auto'  && $yAxis.max!='' && $chartType != "radar")
-				#set ($max = $yAxis.max)
-				#if($min)
-					#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
+			#if($yAxis.max)
+				#if($yAxis.max!='auto'  && $yAxis.max!='' && $chartType != "radar")
+					#set ($max = $yAxis.max)
+					#if($min)
+						#if($Integer1.parseInt($min)<$Integer1.parseInt($max))
+							max:$yAxis.max,
+							endOnTick: false,
+						#end
+					#else 
 						max:$yAxis.max,
 						endOnTick: false,
 					#end
-				#else 
-					max:$yAxis.max,
-					endOnTick: false,
+		       	#elseif(($yAxis.max == "auto" || $yAxis.max=='') && $chartType != "radar")
+					max: "$yAxis.max",
 				#end
-	       		 #end
-	        
+	        #end
 			#if( $chartType == "radar")
 			min:0,
 			#end
@@ -1418,7 +1424,7 @@
 			name: "$escapeTool.javascript($relatedSerie.name)",
 
 			#foreach($customColor in $customColors)
-			#if($customColor.customName.equalsIgnoreCase($relatedSerie.name))
+			#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($relatedSerie.name))
 				color:'$customColor.customValue',
 			#end
 			#end
@@ -1502,7 +1508,7 @@
 							#end
 							#end
            					#foreach($customColor in $customColors)
-							#if($customColor.customName.equalsIgnoreCase($serieCategoryName))
+							#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($serieCategoryName))
 								color:'$customColor.customValue',
 							#end
 							#end
@@ -1742,7 +1748,7 @@
 		    #end
 				 #* #set ($counter = $counter+1) *#
 				#foreach($customColor in $customColors)
-           		#if($customColor.customName.equalsIgnoreCase($escapeTool.javascript($valueKey)))
+           		#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($escapeTool.javascript($valueKey)))
                 color:'$customColor.customValue',
 	            #end
 	            #end
@@ -1764,7 +1770,7 @@
 					#end
 					#end
 					#foreach($customColor in $customColors)
-					#if($customColor.customName.equalsIgnoreCase($el.name))
+					#if($escapeTool.javascript($customColor.customName).equalsIgnoreCase($el.name))
 						color:'$customColor.customValue',
 					#end
 					#end
