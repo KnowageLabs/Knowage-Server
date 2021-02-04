@@ -132,7 +132,7 @@
 				}
 
 
-				for(var parName in parameters) {
+				for(let parName in parameters) {
 					if(!parName.endsWith("_field_visible_description")&& parametersDetail[parName]){
 						// if(!field.isTransient)
 						var parValue = parameters[parName];

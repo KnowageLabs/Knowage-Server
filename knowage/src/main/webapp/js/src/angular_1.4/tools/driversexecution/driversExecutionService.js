@@ -241,6 +241,7 @@
 					if(typeof parameter.parameterDescription !== 'undefined'){
 						paramStrTree += parameter.parameterDescription[parameter.parameterValue[z]];
 					}
+					if (paramStrTree == 'undefined') paramStrTree = parameter.parameterValue[z];
 				}
 				executionService.jsonDatumValue = paramArrayTree;
 				executionService.jsonDatumDesc = paramStrTree;
@@ -311,8 +312,8 @@
 				}
 			};
 
-			var parseDateParameterType = function(parameter){
-				var dateToSubmitFilter = $filter('date')(parameter.parameterValue, sbiModule_config.serverDateFormat);
+			var parseDateParameterType = function(parameter){				
+				var dateToSubmitFilter = $filter('date')(parameter.parameterValue || parameter.parameterDescription[0], sbiModule_config.serverDateFormat);
 				if( Object.prototype.toString.call( dateToSubmitFilter ) === '[object Array]' ) {
 					dateToSubmit = dateToSubmitFilter[0];
 				}else{
