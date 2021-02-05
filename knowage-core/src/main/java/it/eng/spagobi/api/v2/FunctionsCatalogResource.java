@@ -44,7 +44,6 @@ import it.eng.knowage.functionscatalog.utils.CatalogFunctionDTO;
 import it.eng.knowage.functionscatalog.utils.InputColumnDTO;
 import it.eng.knowage.functionscatalog.utils.InputVariable;
 import it.eng.knowage.functionscatalog.utils.InputVariableDTO;
-import it.eng.knowage.functionscatalog.utils.KeywordDTO;
 import it.eng.knowage.functionscatalog.utils.OutputColumn;
 import it.eng.knowage.functionscatalog.utils.OutputColumnDTO;
 import it.eng.spago.error.EMFUserError;
@@ -191,7 +190,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		int catalogFunctionId = -1;
 		JSONObject response = new JSONObject();
 		try {
-			List<String> keywords = toKeywordsList(funcDTO.getKeywords());
+			List<String> keywords = funcDTO.getKeywords();
 			CatalogFunction itemToInsert = toCatalogFunction(funcDTO, keywords);
 			Map<String, IInputVariable> inputVariables = toInputVariablesMap(funcDTO.getInputVariables());
 			Map<String, String> inputColumns = toInputColumnsMap(funcDTO.getInputColumns());
@@ -222,7 +221,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		}
 
 		try {
-			List<String> keywords = toKeywordsList(funcDTO.getKeywords());
+			List<String> keywords = funcDTO.getKeywords();
 			CatalogFunction itemToInsert = toCatalogFunction(funcDTO, keywords);
 			Map<String, IInputVariable> inputVariables = toInputVariablesMap(funcDTO.getInputVariables());
 			Map<String, String> inputColumns = toInputColumnsMap(funcDTO.getInputColumns());
@@ -424,11 +423,4 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		return outputColumns;
 	}
 
-	private List<String> toKeywordsList(List<KeywordDTO> keywordsDTO) {
-		List<String> keywords = new ArrayList<String>();
-		for (int i = 0; i < keywordsDTO.size(); i++) {
-			keywords.add(keywordsDTO.get(i).getKeyword());
-		}
-		return keywords;
-	}
 }

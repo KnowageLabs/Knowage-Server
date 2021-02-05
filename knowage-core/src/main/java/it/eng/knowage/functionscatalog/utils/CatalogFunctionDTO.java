@@ -45,7 +45,7 @@ public class CatalogFunctionDTO {
 	private List<InputVariableDTO> inputVariables = new ArrayList<InputVariableDTO>();
 	private List<InputColumnDTO> inputColumns = new ArrayList<InputColumnDTO>();
 	private List<OutputColumnDTO> outputColumns = new ArrayList<OutputColumnDTO>();
-	private List<KeywordDTO> keywords = new ArrayList<KeywordDTO>();
+	private List<String> keywords = new ArrayList<String>();
 
 	public Integer getId() {
 		return id;
@@ -187,12 +187,12 @@ public class CatalogFunctionDTO {
 		this.outputColumns = outputColumns;
 	}
 
-	public List<KeywordDTO> getKeywords() {
+	public List<String> getKeywords() {
 		return keywords;
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	public void setKeywords(List<KeywordDTO> keywords) {
+	public void setKeywords(List<String> keywords) {
 		this.keywords = keywords;
 	}
 
