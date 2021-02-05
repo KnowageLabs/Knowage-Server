@@ -31,6 +31,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -130,6 +131,40 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			Criterion domainCdCriterrion = Expression.eq("menuId", menuID);
 			Criteria criteria = tmpSession.createCriteria(SbiMenu.class);
 			criteria.add(domainCdCriterrion);
+			SbiMenu hibMenu = (SbiMenu) criteria.uniqueResult();
+
+			return hibMenu;
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}
+	}
+
+	@Override
+	public SbiMenu loadSbiMenuByNameAndParentId(String name, Integer parentId) throws EMFUserError {
+		Session tmpSession = null;
+		Transaction tx = null;
+
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			Criteria criteria = tmpSession.createCriteria(SbiMenu.class);
+			criteria.add(Restrictions.eq("name", name));
+			if (parentId == null)
+				criteria.add(Restrictions.isNull("parentId"));
+			else
+				criteria.add(Restrictions.eq("parentId", parentId));
+
 			SbiMenu hibMenu = (SbiMenu) criteria.uniqueResult();
 
 			return hibMenu;
@@ -458,14 +493,15 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	 */
 
 	@Override
-	public void importMenu(SbiMenu hibMenu) throws EMFUserError {
+	public Integer importMenu(SbiMenu hibMenu) throws EMFUserError {
 		Session tmpSession = null;
 		Transaction tx = null;
+		Integer menuId = null;
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 			this.updateSbiCommonInfo4Update(hibMenu);
-			tmpSession.save(hibMenu);
+			menuId = (Integer) tmpSession.save(hibMenu);
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -484,6 +520,8 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			}
 
 		}
+
+		return menuId;
 	}
 
 	@Override
