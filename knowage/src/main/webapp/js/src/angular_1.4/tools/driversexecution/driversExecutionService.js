@@ -125,7 +125,7 @@
 					parameter.parameterValue = parameter.multivalue ? [parameter.defaultValues[0].value] : parameter.defaultValues[0].value;
 					parameter.parameterDescription = parameter.multivalue ?	[parameter.defaultValues[0].description] : parameter.defaultValues[0].description;
 				} else {
-					executionService.emptyParameter(parameter);
+					executionService.emptyParameter(parameter, true);
 				}
 			}
 
@@ -142,7 +142,7 @@
 				}
 			}
 
-			executionService.emptyParameter = function(parameter) {
+			executionService.emptyParameter = function(parameter, resetWithoutDefaultValue) {
 				if(isParameterSelectionValueLov(parameter)) {
 					if(isParameterSelectionTypeTree(parameter)) {
 						if(parameter.multivalue) {
@@ -150,12 +150,15 @@
 							executionService.resetParameterInnerLovData(parameter.children);
 						} else {
 							parameter.parameterValue = '';
+							if(resetWithoutDefaultValue) parameter.parameterDescription = {};
 						}
 					}else {
 						if(parameter.multivalue) {
 							parameter.parameterValue = [];
+							if(resetWithoutDefaultValue) parameter.parameterDescription = '';
 						} else {
 							parameter.parameterValue = '';
+							if(resetWithoutDefaultValue) parameter.parameterDescription = {};
 						}
 					}
 				} else {
@@ -312,7 +315,7 @@
 				}
 			};
 
-			var parseDateParameterType = function(parameter){				
+			var parseDateParameterType = function(parameter){
 				var dateToSubmitFilter = $filter('date')(parameter.parameterValue || parameter.parameterDescription[0], sbiModule_config.serverDateFormat);
 				if( Object.prototype.toString.call( dateToSubmitFilter ) === '[object Array]' ) {
 					dateToSubmit = dateToSubmitFilter[0];
