@@ -44,7 +44,7 @@ public class Node implements Cloneable, Comparable<Node> {
 	private final String description;// the description of the node
 	private final boolean measure;
 	private CellType cellType;// the type of the node
-	private List<Node> childs;// list of childs
+	private List<Node> children;// list of childs
 	private int leafPosition = -1;// position of the leafs in the tree.. If this
 									// is the right most leaf the value is 0 and
 									// so on
@@ -64,7 +64,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.value = value;
 		this.description = value;
 		measure = false;
-		childs = new ArrayList<Node>();
+		children = new ArrayList<Node>();
 		jsonObject = null;
 	}
 
@@ -72,7 +72,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.value = value;
 		this.description = description;
 		measure = false;
-		childs = new ArrayList<Node>();
+		children = new ArrayList<Node>();
 		jsonObject = null;
 	}
 
@@ -81,7 +81,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.value = value;
 		this.description = description;
 		measure = false;
-		childs = new ArrayList<Node>();
+		children = new ArrayList<Node>();
 		jsonObject = null;
 	}
 
@@ -90,7 +90,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.value = value;
 		this.description = description;
 		this.measure = measure;
-		childs = new ArrayList<Node>();
+		children = new ArrayList<Node>();
 		jsonObject = null;
 	}
 
@@ -99,7 +99,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.value = value;
 		this.description = description;
 		this.measure = false;
-		childs = new ArrayList<Node>();
+		children = new ArrayList<Node>();
 		this.jsonObject = jsonObject;
 	}
 
@@ -123,41 +123,48 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	}
 
-	public List<Node> getChilds() {
-		return childs;
+	public Node getFirstAncestor() {
+		Node father = this.getParentNode();
+		while (father.getParentNode() != null) {
+			father = father.getParentNode();
+		}
+		return father;
 	}
 
-	public void setChilds(List<Node> childs) {
-		this.childs = childs;
-		// Collections.sort(this.childs);
+	public List<Node> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<Node> children) {
+		this.children = children;
 	}
 
 	public void addOrderedChild(Node child) {
-		childs.add(child);
+		children.add(child);
 		child.fatherNode = this;
-		if (childs != null) {
-			Collections.sort(childs);
+		if (children != null) {
+			Collections.sort(children);
 		}
 	}
 
 	public void addOrderedChild(Node child, Comparator<Node> comp) {
-		childs.add(child);
+		children.add(child);
 		child.fatherNode = this;
-		if (childs != null) {
+		if (children != null) {
 			if (comp == null)
-				Collections.sort(childs);
+				Collections.sort(children);
 			else
-				Collections.sort(childs, comp);
+				Collections.sort(children, comp);
 		}
 	}
 
 	public void addChild(Node child) {
-		childs.add(child);
+		children.add(child);
 		child.fatherNode = this;
 	}
 
 	public boolean isChild(Node child) {
-		return childs.contains(child);
+		return children.contains(child);
 	}
 
 	/**
@@ -166,12 +173,12 @@ public class Node implements Cloneable, Comparable<Node> {
 	 * @return
 	 */
 	public int getLeafsNumber() {
-		if (childs.size() == 0) {
+		if (children.size() == 0) {
 			return 1;
 		} else {
 			int leafsNumber = 0;
-			for (int i = 0; i < childs.size(); i++) {
-				leafsNumber = leafsNumber + childs.get(i).getLeafsNumber();
+			for (int i = 0; i < children.size(); i++) {
+				leafsNumber = leafsNumber + children.get(i).getLeafsNumber();
 			}
 			return leafsNumber;
 		}
@@ -190,10 +197,10 @@ public class Node implements Cloneable, Comparable<Node> {
 		thisNode.put(CROSSTAB_NODE_JSON_KEY, this.value);
 		thisNode.put(CROSSTAB_NODE_JSON_DESCRIPTION, this.description);
 
-		if (childs.size() > 0) {
+		if (children.size() > 0) {
 			JSONArray nodeChilds = new JSONArray();
-			for (int i = 0; i < childs.size(); i++) {
-				nodeChilds.put(childs.get(i).toJSONObject());
+			for (int i = 0; i < children.size(); i++) {
+				nodeChilds.put(children.get(i).toJSONObject());
 			}
 			thisNode.put(CROSSTAB_NODE_JSON_CHILDS, nodeChilds);
 		}
@@ -217,12 +224,12 @@ public class Node implements Cloneable, Comparable<Node> {
 	}
 
 	private int setLeafPositions(int pos) {
-		if (childs.size() == 0) {
+		if (children.size() == 0) {
 			leafPosition = pos;
 			pos++;
 		} else {
-			for (int i = 0; i < childs.size(); i++) {
-				pos = childs.get(i).setLeafPositions(pos);
+			for (int i = 0; i < children.size(); i++) {
+				pos = children.get(i).setLeafPositions(pos);
 			}
 		}
 		return pos;
@@ -247,11 +254,11 @@ public class Node implements Cloneable, Comparable<Node> {
 		if (level == 0) {
 			nodes.add(this);
 		} else {
-			if (childs.size() == 0) {
+			if (children.size() == 0) {
 				return null;
 			}
-			for (int i = 0; i < childs.size(); i++) {
-				nodes.addAll(childs.get(i).getLevel(level - 1));
+			for (int i = 0; i < children.size(); i++) {
+				nodes.addAll(children.get(i).getLevel(level - 1));
 			}
 		}
 		return nodes;
@@ -306,10 +313,10 @@ public class Node implements Cloneable, Comparable<Node> {
 	 *         node). If the node is a leaf, 0 is returned.
 	 */
 	public int getDistanceFromLeaves() {
-		if (this.getChilds() == null || this.getChilds().isEmpty()) {
+		if (this.getChildren() == null || this.getChildren().isEmpty()) {
 			return 0;
 		} else {
-			return this.getChilds().get(0).getDistanceFromLeaves() + 1;
+			return this.getChildren().get(0).getDistanceFromLeaves() + 1;
 		}
 	}
 
@@ -320,11 +327,11 @@ public class Node implements Cloneable, Comparable<Node> {
 	 */
 	public List<Node> getLeafs() {
 		List<Node> list = new ArrayList<Node>();
-		if (childs.size() == 0) {
+		if (children.size() == 0) {
 			list.add(this);
 		} else {
-			for (int i = 0; i < childs.size(); i++) {
-				list.addAll(childs.get(i).getLeafs());
+			for (int i = 0; i < children.size(); i++) {
+				list.addAll(children.get(i).getLeafs());
 			}
 		}
 		return list;
@@ -341,10 +348,10 @@ public class Node implements Cloneable, Comparable<Node> {
 //	}
 
 	public int getSubTreeDepth() {
-		if (childs.size() == 0) {
+		if (children.size() == 0) {
 			return 1;
 		} else {
-			return 1 + childs.get(0).getSubTreeDepth();
+			return 1 + children.get(0).getSubTreeDepth();
 		}
 	}
 
@@ -353,7 +360,7 @@ public class Node implements Cloneable, Comparable<Node> {
 	 */
 	public void removeNodeFromTree() {
 		if (fatherNode != null) {
-			List<Node> fatherChilds = fatherNode.getChilds();
+			List<Node> fatherChilds = fatherNode.getChildren();
 			for (int i = 0; i < fatherChilds.size(); i++) {
 				if (fatherChilds.get(i) == this) {
 					fatherChilds.remove(i);
@@ -367,10 +374,10 @@ public class Node implements Cloneable, Comparable<Node> {
 	}
 
 	public int getRightMostLeafPositionCF() {
-		if (childs.size() == 0) {
+		if (children.size() == 0) {
 			return leafPosition;
 		}
-		return childs.get(childs.size() - 1).getRightMostLeafPositionCF();
+		return children.get(children.size() - 1).getRightMostLeafPositionCF();
 	}
 
 	/**
@@ -379,9 +386,9 @@ public class Node implements Cloneable, Comparable<Node> {
 	@Override
 	public Node clone() {
 		Node n = new Node(columnName, value, description, measure);
-		if (childs.size() > 0) {
-			for (int j = 0; j < childs.size(); j++) {
-				n.addChild(childs.get(j).clone());
+		if (children.size() > 0) {
+			for (int j = 0; j < children.size(); j++) {
+				n.addChild(children.get(j).clone());
 			}
 		}
 		return n;
@@ -391,14 +398,14 @@ public class Node implements Cloneable, Comparable<Node> {
 	public String toString() {
 		String string;
 
-		if (childs.size() == 0) {
+		if (children.size() == 0) {
 			return "[C:" + String.valueOf(columnName) + "-V:" + value.toString() + "-D:" + description + "]";
 		} else {
 			string = "[C:" + String.valueOf(columnName) + "-V:" + value.toString() + "-D:" + description + ",[";
-			for (int i = 0; i < childs.size() - 1; i++) {
-				string = string + childs.get(i).toString() + ",";
+			for (int i = 0; i < children.size() - 1; i++) {
+				string = string + children.get(i).toString() + ",";
 			}
-			string = string + childs.get(childs.size() - 1).toString() + "]]";
+			string = string + children.get(children.size() - 1).toString() + "]]";
 		}
 		return string;
 	}
@@ -481,19 +488,19 @@ public class Node implements Cloneable, Comparable<Node> {
 	}
 
 	public void orderedSubtree(Map<Integer, NodeComparator> sortKeys) {
-		if (childs != null) {
+		if (children != null) {
 			Comparator<Node> comparator = null;
 			if (sortKeys != null) {
 				comparator = sortKeys.get(this.getDistanceFromRoot());
 				if (comparator != null) {
-					Collections.sort(childs, comparator);
+					Collections.sort(children, comparator);
 				} else {
-					Collections.sort(childs);
+					Collections.sort(children);
 				}
 			}
 		}
-		for (int i = 0; i < childs.size(); i++) {
-			childs.get(i).orderedSubtree(sortKeys);
+		for (int i = 0; i < children.size(); i++) {
+			children.get(i).orderedSubtree(sortKeys);
 		}
 	}
 
