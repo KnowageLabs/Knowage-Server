@@ -380,8 +380,7 @@ public class CrossTabHTMLSerializer {
 								Column columnObj = ((Column) getCategoryConfByLabel(crossTab, crossTab.getColumnsRoot().getLevel(i).get(0).getValue(),
 										"columns"));
 								String columnName = (columnObj != null) ? columnObj.getEntityId() : "";
-								aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + columnName + "','"
-										+ StringEscapeUtils.escapeJavaScript(text) + "')");
+								aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + columnName + "','" + StringEscapeUtils.escapeJavaScript(text) + "')");
 							}
 							if (crossTab.getCrosstabDefinition().isMeasuresOnColumns() && i + 2 == levels) {
 								String completeText = CrossTab.PATH_SEPARATOR;
@@ -771,7 +770,11 @@ public class CrossTabHTMLSerializer {
 					}
 
 					// 6. set value
-					aColumn.setCharacters(actualText);
+					if (measureConfig.has("excludeFromTotalAndSubtotal") && measureConfig.getBoolean("excludeFromTotalAndSubtotal")
+							&& (cellTypeValue.equalsIgnoreCase("partialsum") || cellTypeValue.equalsIgnoreCase("totals")))
+						aColumn.setCharacters("");
+					else
+						aColumn.setCharacters(actualText);
 					aColumn.setAttribute(TITLE_ATTRIBUTE, actualText);
 
 					// 7. set selection function with the parent references (on row and column)
