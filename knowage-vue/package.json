@@ -1,26 +1,15 @@
 {
   "name": "knowage-vue",
-  "version": "7.5.0",
+  "version": "8.0.0",
   "description": "Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems.",
-  "main": "main.ts",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/KnowageLabs/Knowage-Server.git"
-  },
-  "keywords": [
-    "business",
-    "intelligence",
-    "bi",
-    "spagobi",
-    "knowage",
-    "bigdata"
-  ],
-  "homepage": "https://github.com/KnowageLabs/Knowage-Server#readme",
+  "author": "knowage labs <knowage@eng.it>",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "test:unit": "vue-cli-service test:unit --watch",
     "lint": "vue-cli-service lint"
   },
+  "main": "main.ts",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.2",
     "axios": "^0.21.1",
@@ -37,21 +26,25 @@
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.19",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "^4.5.11",
     "@vue/cli-plugin-typescript": "^4.5.11",
+    "@vue/cli-plugin-unit-jest": "^4.5.11",
     "@vue/cli-plugin-vuex": "^4.5.11",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/eslint-config-typescript": "^5.0.2",
+    "@vue/test-utils": "^2.0.0-0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0-0",
     "typescript": "~3.9.3",
-    "vue-cli-plugin-vuetify": "~2.0.9"
+    "vue-cli-plugin-vuetify": "~2.0.9",
+    "vue-jest": "^5.0.0-0"
   },
   "eslintConfig": {
     "root": true,
@@ -66,16 +59,39 @@
     "parserOptions": {
       "parser": "@typescript-eslint/parser"
     },
-    "rules": {}
+    "rules": {},
+    "overrides": [
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)",
+          "**/tests/unit/**/*.spec.{j,t}s?(x)"
+        ],
+        "env": {
+          "jest": true
+        }
+      }
+    ]
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
     "not dead"
   ],
-  "author": "knowage labs <knowage@eng.it>",
-  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/KnowageLabs/Knowage-Server/issues"
+  },
+  "homepage": "https://github.com/KnowageLabs/Knowage-Server#readme",
+  "keywords": [
+    "business",
+    "intelligence",
+    "bi",
+    "spagobi",
+    "knowage",
+    "bigdata"
+  ],
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KnowageLabs/Knowage-Server.git"
   }
 }

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import IframeRenderer from '@/modules/commons/IframeRenderer.vue'
+import IframeRenderer from '@/modules/shared/IframeRenderer.vue'
 import galleryManagementRoutes from '@/modules/managers/galleryManagement/galleryManagement.routes.js'
 
 const baseRoutes = [
@@ -26,7 +26,7 @@ const baseRoutes = [
   },
   {
     path: "/:catchAll(.*)",
-    component: () => import('@/modules/commons/404.vue')
+    component: () => import('@/modules/shared/404.vue')
   },
 ]
 

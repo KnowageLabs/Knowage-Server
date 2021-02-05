@@ -41,8 +41,8 @@
 
 <script lang="ts">
    import { defineComponent } from 'vue'
-   import InfoDialog from '@/components/InfoDialog.vue'
-   import KnmenuItem from './knmenu/KnMenuItem.vue'
+   import InfoDialog from '@/components/infoDialog/InfoDialog.vue'
+   import KnmenuItem from '@/components/knmenu/KnMenuItem.vue'
    import axios from 'axios'
 
    export default defineComponent({
@@ -87,7 +87,6 @@
          }
       },
       created() {
-         this.showProfileMenu = false
          axios.get('/knowage/restful-services/1.0/menu/enduser?curr_country=US&curr_language=en')
             .then((response) => {
                this.customMenu = updateMenuModel(response.data.customMenu[0].menu)
@@ -165,6 +164,7 @@
       .profile-menu {
          border-bottom: 1px solid lighten(#43749E, 10%);
       }
+
       .layout-menu {
          margin: 0;
          padding: 0;

@@ -11,7 +11,7 @@
 </template>
 
 <script>
-	import Knmenu from './components/Knmenu'
+	import Knmenu from '@/components/knmenu/Knmenu'
 	import { defineComponent } from 'vue'
 	import {  mapGetters } from 'vuex'
 
@@ -22,6 +22,11 @@
 		methods: {
 			getUser(){
 				return this.user.name
+			}
+		},
+		data() {
+			return {
+				test:'ciao'
 			}
 		},
 		computed: {
