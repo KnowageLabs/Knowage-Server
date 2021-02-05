@@ -79,6 +79,15 @@ public interface IMenuDAO extends ISpagoBIDao {
 	public Menu loadMenuByName(String name) throws EMFUserError;
 
 	/**
+	 *
+	 * @param name
+	 * @param parentId
+	 * @return
+	 * @throws EMFUserError
+	 */
+	public SbiMenu loadSbiMenuByNameAndParentId(String name, Integer parentId) throws EMFUserError;
+
+	/**
 	 * Loads all detail information for all menus. For each of them, detail information is stored into an <code>menu</code> object. After that, all menus are
 	 * stored into a <code>List</code>, which is returned.
 	 *
@@ -106,7 +115,7 @@ public interface IMenuDAO extends ISpagoBIDao {
 	 */
 	public Menu insertMenu(Menu aMenu) throws EMFUserError;
 
-	public void importMenu(SbiMenu hibMenu) throws EMFUserError;
+	public Integer importMenu(SbiMenu hibMenu) throws EMFUserError;
 
 	public SbiMenu loadSbiMenubyName(String name);
 
