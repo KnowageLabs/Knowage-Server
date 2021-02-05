@@ -66,13 +66,10 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	/**
 	 * Load SbiUser by id.
 	 *
-	 * @param id
-	 *            the identifier /** Load SbiUser by id.
-	 * @param id
-	 *            the bi object id
+	 * @param id the identifier /** Load SbiUser by id.
+	 * @param id the bi object id
 	 * @return the BI object
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public SbiUser loadSbiUserById(Integer id) throws EMFUserError {
@@ -381,8 +378,75 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		}
 	}
 
+	public void deleteSbiUserByIdLogically(Integer id) throws EMFUserError {
+		logger.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			String q = " from SbiUserAttributes x where x.id.id = :id ";
+			Query query = aSession.createQuery(q);
+			query.setInteger("id", id);
+
+			ArrayList<SbiUserAttributes> userAttributes = (ArrayList<SbiUserAttributes>) query.list();
+
+			// deletes attributes associations logically
+			if (userAttributes != null) {
+				Iterator attrsIt = userAttributes.iterator();
+				while (attrsIt.hasNext()) {
+					SbiUserAttributes temp = (SbiUserAttributes) attrsIt.next();
+					updateSbiCommonInfo4Update(temp);
+					updateSbiCommonInfo4Delete(temp);
+					aSession.save(temp);
+					aSession.flush();
+				}
+			}
+
+			String qr = " from SbiExtUserRoles x where x.id.id = :id ";
+			Query queryR = aSession.createQuery(qr);
+			queryR.setInteger("id", id);
+
+			ArrayList<SbiExtUserRoles> userRoles = (ArrayList<SbiExtUserRoles>) queryR.list();
+			if (userRoles != null) {
+				Iterator rolesIt = userRoles.iterator();
+				while (rolesIt.hasNext()) {
+					SbiExtUserRoles temp = (SbiExtUserRoles) rolesIt.next();
+					updateSbiCommonInfo4Update(temp);
+					updateSbiCommonInfo4Delete(temp);
+					aSession.save(temp);
+					aSession.flush();
+				}
+			}
+			SbiUser userToDelete = (SbiUser) aSession.load(SbiUser.class, id);
+			updateSbiCommonInfo4Update(userToDelete);
+			updateSbiCommonInfo4Delete(userToDelete);
+			aSession.save(userToDelete);
+			aSession.flush();
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+	}
+
 	@Override
 	public void deleteSbiUserById(Integer id) throws EMFUserError {
+		deleteSbiUserByIdLogically(id);
+		deleteSbiUserByIdPhisically(id);
+	}
+
+	public void deleteSbiUserByIdPhisically(Integer id) throws EMFUserError {
 		logger.debug("IN");
 
 		Session aSession = null;
@@ -442,8 +506,78 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		}
 	}
 
+	public void deleteRolesAndAttributesLogically(SbiUser user) throws EMFUserError {
+		logger.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Integer id = user.getId();
+
+			this.checkUserId(user.getUserId(), id);
+
+			// remove existing roles logically
+			String qr = " from SbiExtUserRoles x where x.id.id = :id ";
+			Query queryR = aSession.createQuery(qr);
+			queryR.setInteger("id", id);
+			List<SbiExtUserRoles> userRoles = queryR.list();
+			if (userRoles != null && !userRoles.isEmpty()) {
+				Iterator rolesIt = userRoles.iterator();
+				while (rolesIt.hasNext()) {
+					SbiExtUserRoles temp = (SbiExtUserRoles) rolesIt.next();
+					updateSbiCommonInfo4Update(temp);
+					updateSbiCommonInfo4Delete(temp);
+					aSession.save(temp);
+					aSession.flush();
+				}
+			}
+
+			// remove existing attributes logically
+			qr = " from SbiUserAttributes x where x.id.id = :id ";
+			queryR = aSession.createQuery(qr);
+			queryR.setInteger("id", id);
+			List<SbiUserAttributes> userAttributes = queryR.list();
+			if (userAttributes != null && !userAttributes.isEmpty()) {
+				Iterator<SbiUserAttributes> attrsIt = userAttributes.iterator();
+				while (attrsIt.hasNext()) {
+					SbiUserAttributes temp = attrsIt.next();
+					updateSbiCommonInfo4Update(temp);
+					updateSbiCommonInfo4Delete(temp);
+					aSession.save(temp);
+					aSession.flush();
+				}
+			}
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+
+	}
+
 	@Override
 	public Integer fullSaveOrUpdateSbiUser(SbiUser user) throws EMFUserError {
+		Integer id = user.getId();
+		if (id != null) {
+			// update scenario
+			deleteRolesAndAttributesLogically(user);
+		}
+		return fullSaveOrUpdateSbiUserPhisically(user);
+	}
+
+	public Integer fullSaveOrUpdateSbiUserPhisically(SbiUser user) throws EMFUserError {
 		logger.debug("IN");
 
 		Session aSession = null;
@@ -567,18 +701,12 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * Check if the user identifier in input is valid (for insertion or
-	 * modification) for the user with the input integer id. In case of user
-	 * insertion, id should be null.
+	 * Check if the user identifier in input is valid (for insertion or modification) for the user with the input integer id. In case of user insertion, id
+	 * should be null.
 	 *
-	 * @param userId
-	 *            The user identifier to check
-	 * @param id
-	 *            The id of the user to which the user identifier should be
-	 *            validated
-	 * @throws a
-	 *             EMFUserError with severity EMFErrorSeverity.ERROR and code
-	 *             400 in case the user id is already in use
+	 * @param userId The user identifier to check
+	 * @param id     The id of the user to which the user identifier should be validated
+	 * @throws a EMFUserError with severity EMFErrorSeverity.ERROR and code 400 in case the user id is already in use
 	 */
 	@Override
 	public void checkUserId(String userId, Integer id) throws EMFUserError {
@@ -641,11 +769,9 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * From the Hibernate SbiUser at input, gives the corrispondent BI object
-	 * (UserBO).
+	 * From the Hibernate SbiUser at input, gives the corrispondent BI object (UserBO).
 	 *
-	 * @param sbiUser
-	 *            The Hibernate SbiUser
+	 * @param sbiUser The Hibernate SbiUser
 	 * @return the corrispondent output <code>UserBO</code>
 	 * @throws EMFUserError
 	 */
@@ -803,11 +929,9 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * Get the SbiUser object with the input user identifier. The search method
-	 * is CASE INSENSITIVE!!!
+	 * Get the SbiUser object with the input user identifier. The search method is CASE INSENSITIVE!!!
 	 *
-	 * @param userId
-	 *            The user identifier
+	 * @param userId The user identifier
 	 * @return the SbiUser object with the input user identifier
 	 */
 	protected SbiUser getSbiUserByUserId(String userId) {

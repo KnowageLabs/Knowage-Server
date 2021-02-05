@@ -17,16 +17,6 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.metadata.SbiCommonInfo;
-import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-import it.eng.spagobi.commons.utilities.HibernateSessionManager;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +27,16 @@ import org.hibernate.Criteria;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Abstract class that al DAO will have to extend.
@@ -244,11 +244,17 @@ public class AbstractHibernateDAO {
 		return obj;
 	}
 
+	protected SbiHibernateModel updateSbiCommonInfo4Delete(SbiHibernateModel obj) {
+		obj.getCommonInfo().setTimeDe(new Date());
+		obj.getCommonInfo().setSbiVersionDe(SbiCommonInfo.SBI_VERSION);
+		obj.getCommonInfo().setUserDe(userID);
+		return obj;
+	}
+
 	/**
 	 * Traces the exception information of a throwable input object.
 	 *
-	 * @param t
-	 *            The input throwable object
+	 * @param t The input throwable object
 	 */
 	public void logException(Throwable t) {
 		logger.error(t.getClass().getName() + " " + t.getMessage(), t);
