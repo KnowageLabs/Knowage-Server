@@ -143,6 +143,8 @@ public class CrossTab {
 
 	private static final Placeholder NOT_AVAILABLE_PLACEHOLDER = new NotAvailablePlaceholder();
 
+	private List<Node> treeLeaves = null;
+
 	private String createJsonPathQueryFromNodes(Node currRow, Node currCol, MeasureInfo measure) {
 		Map<String, String> colsValues = new TreeMap<String, String>();
 		String measureColName = alias2DsColumnName.get(measure.name);
@@ -610,12 +612,12 @@ public class CrossTab {
 						// Node constructor needs columnName, value, description
 						// we use rowsNameList to retrieve columnName and measureInfo to retrieve value and description
 						Node node = new Node(rowsNameList.get(r), measureInfo[r + 1].toString(), measureInfo[r + 1].toString());
-						nodePosition = nodeToCheck.getChilds().indexOf(node);
+						nodePosition = nodeToCheck.getChildren().indexOf(node);
 						if (nodePosition < 0) {
 							nodeToCheck.addChild(node);
 							nodeToCheck = node;
 						} else {
-							nodeToCheck = nodeToCheck.getChilds().get(nodePosition);
+							nodeToCheck = nodeToCheck.getChildren().get(nodePosition);
 						}
 					}
 
@@ -625,12 +627,12 @@ public class CrossTab {
 					orderedColumnsRoot.addChild(n);
 				}
 			}
-			if (orderedRowsRoot.getChilds().size() > 0)
+			if (orderedRowsRoot.getChildren().size() > 0)
 				rowsRoot = orderedRowsRoot;
 			else
 				rowsRoot.orderedSubtree(rowsSortKeysMap);
 
-			if (orderedColumnsRoot.getChilds().size() > 0)
+			if (orderedColumnsRoot.getChildren().size() > 0)
 				columnsRoot = orderedColumnsRoot;
 			else
 				columnsRoot.orderedSubtree(columnsSortKeysMap);
@@ -894,14 +896,14 @@ public class CrossTab {
 				descriptionNode = new Node(lines.get(linesIndex).getAlias());
 			}
 			linesIndex++;
-			List<Node> children = node.getChilds();
+			List<Node> children = node.getChildren();
 			List<Node> newchildren = new ArrayList<Node>();
 			newchildren.add(descriptionNode);
 			for (int i = 0; i < children.size(); i++) {
-				descriptionNode.addChild(node.getChilds().get(i));
-				addHeaderTitles(lines, linesIndex, node.getChilds().get(i));
+				descriptionNode.addChild(node.getChildren().get(i));
+				addHeaderTitles(lines, linesIndex, node.getChildren().get(i));
 			}
-			node.setChilds(newchildren);
+			node.setChildren(newchildren);
 		}
 	}
 
@@ -1097,13 +1099,13 @@ public class CrossTab {
 				JSONObject jsonObject = dsColumnName2Metadata.get(valueColumn);
 				Node node = new Node(columnName, valueField, descriptionField, jsonObject);
 
-				int nodePosition = nodeToCheck.getChilds().indexOf(node);
+				int nodePosition = nodeToCheck.getChildren().indexOf(node);
 				if (nodePosition < 0) {
 					toReturn = true;
 					nodeToCheck.addChild(node);
 					nodeToCheck = node;
 				} else {
-					nodeToCheck = nodeToCheck.getChilds().get(nodePosition);
+					nodeToCheck = nodeToCheck.getChildren().get(nodePosition);
 				}
 			}
 		} catch (Exception e) {
@@ -1157,13 +1159,13 @@ public class CrossTab {
 			} else {
 				node = new Node("null");
 			}
-			nodePosition = nodeToCheck.getChilds().indexOf(node);
+			nodePosition = nodeToCheck.getChildren().indexOf(node);
 			if (nodePosition < 0) {
 				toReturn = true;
 				nodeToCheck.addChild(node);
 				nodeToCheck = node;
 			} else {
-				nodeToCheck = nodeToCheck.getChilds().get(nodePosition);
+				nodeToCheck = nodeToCheck.getChildren().get(nodePosition);
 			}
 		}
 		return toReturn;
@@ -1177,8 +1179,8 @@ public class CrossTab {
 	 */
 	private List<String> getLeafsPathList(Node n) {
 		List<String> toReturn = new ArrayList<String>();
-		for (int i = 0; i < n.getChilds().size(); i++) {
-			toReturn.addAll(visit(n.getChilds().get(i), PATH_SEPARATOR));
+		for (int i = 0; i < n.getChildren().size(); i++) {
+			toReturn.addAll(visit(n.getChildren().get(i), PATH_SEPARATOR));
 		}
 		return toReturn;
 	}
@@ -1189,7 +1191,7 @@ public class CrossTab {
 		if (StringUtils.isEmpty(description)) {
 			description = "null";
 		}
-		if (n.getChilds().isEmpty()) {
+		if (n.getChildren().isEmpty()) {
 			if (prefix.equals(PATH_SEPARATOR)) {
 				toReturn.add(prefix + description);
 			} else {
@@ -1197,11 +1199,11 @@ public class CrossTab {
 			}
 			return toReturn;
 		} else {
-			for (int i = 0; i < n.getChilds().size(); i++) {
+			for (int i = 0; i < n.getChildren().size(); i++) {
 				if (prefix.equals(PATH_SEPARATOR)) {
-					toReturn.addAll(visit(n.getChilds().get(i), prefix + description));
+					toReturn.addAll(visit(n.getChildren().get(i), prefix + description));
 				} else {
-					toReturn.addAll(visit(n.getChilds().get(i), prefix + PATH_SEPARATOR + description));
+					toReturn.addAll(visit(n.getChildren().get(i), prefix + PATH_SEPARATOR + description));
 				}
 			}
 			return toReturn;
@@ -1227,15 +1229,15 @@ public class CrossTab {
 
 	// It's ok that the list of the measures is the same for every leaf
 	private void addMeasuresToLeafs(Node node, List<Node> measuresNodes) {
-		if (node.getChilds().size() == 0) {
+		if (node.getChildren().size() == 0) {
 			for (int i = 0; i < measuresNodes.size(); i++) {
 				Node n = measuresNodes.get(i).clone();
 				node.addChild(n);
 			}
 //			node.updateFathers();
 		} else {
-			for (int i = 0; i < node.getChilds().size(); i++) {
-				addMeasuresToLeafs(node.getChilds().get(i), measuresNodes);
+			for (int i = 0; i < node.getChildren().size(); i++) {
+				addMeasuresToLeafs(node.getChildren().get(i), measuresNodes);
 			}
 		}
 	}
@@ -1416,16 +1418,16 @@ public class CrossTab {
 			// get the first node. If a child of the first node
 			// is not a child of the other nodes is not in common...
 			Node firstNode = nodes.get(0);
-			List<Node> firstNodeChilds = firstNode.getChilds();
+			List<Node> firstNodeChilds = firstNode.getChildren();
 			if (firstNodeChilds != null && firstNodeChilds.size() > 0) {
 				for (int i = 0; i < firstNodeChilds.size(); i++) {
 					commonChildNode = new ArrayList<Node>();
 					commonChildNode.add(firstNodeChilds.get(i));
 					// look for the child in all other nodes
 					for (int j = 1; j < nodes.size(); j++) {
-						index = nodes.get(j).getChilds().indexOf(firstNodeChilds.get(i));
+						index = nodes.get(j).getChildren().indexOf(firstNodeChilds.get(i));
 						if (index >= 0) {
-							commonChildNode.add(nodes.get(j).getChilds().get(index));
+							commonChildNode.add(nodes.get(j).getChildren().get(index));
 						} else {
 							commonChildNode = null;
 							break;
@@ -1444,7 +1446,7 @@ public class CrossTab {
 				newNode.setLeafPositionsForCF(leafPositions);
 			}
 		}
-		newNode.setChilds(newchilds);
+		newNode.setChildren(newchilds);
 		return newNode;
 	}
 
@@ -1474,13 +1476,13 @@ public class CrossTab {
 	 */
 	private List<Node> cleanTreeAfterMergeRecorsive(Node node, int treeDepth, int level) {
 		List<Node> listOfNodesToRemove = new ArrayList<Node>();
-		if (node.getChilds().size() == 0) {
+		if (node.getChildren().size() == 0) {
 			if (level < treeDepth - 1) {
 				listOfNodesToRemove.add(node);
 			}
 		} else {
-			for (int i = 0; i < node.getChilds().size(); i++) {
-				listOfNodesToRemove.addAll(cleanTreeAfterMergeRecorsive(node.getChilds().get(i), treeDepth, level + 1));
+			for (int i = 0; i < node.getChildren().size(); i++) {
+				listOfNodesToRemove.addAll(cleanTreeAfterMergeRecorsive(node.getChildren().get(i), treeDepth, level + 1));
 			}
 		}
 		return listOfNodesToRemove;
@@ -1566,7 +1568,7 @@ public class CrossTab {
 		operationParsed = parseOperationR.get(0);
 		operationExpsNames = parseOperationR.get(1);
 
-		List<Node> levelNodes = node.getChilds();
+		List<Node> levelNodes = node.getChildren();
 
 		Object[] expressionMap = buildExpressionMap(levelNodes, operationExpsNames);
 		Map<String, Integer> expressionToIndexMap = (Map<String, Integer>) expressionMap[1];
@@ -2256,8 +2258,8 @@ public class CrossTab {
 					addSubtotalsToTheTree(columnsRoot, true, 0);
 				} else {
 					int startPosition = 0;
-					for (int i = 0; i < columnsRoot.getChilds().size(); i++) {
-						startPosition = addSubtotalsToTheTreeNoMeasure(columnsRoot.getChilds().get(i), true, startPosition);
+					for (int i = 0; i < columnsRoot.getChildren().size(); i++) {
+						startPosition = addSubtotalsToTheTreeNoMeasure(columnsRoot.getChildren().get(i), true, startPosition);
 					}
 				}
 			}
@@ -2268,8 +2270,8 @@ public class CrossTab {
 					addSubtotalsToTheTree(rowsRoot, false, 0);
 				} else {
 					int startPosition = 0;
-					for (int i = 0; i < rowsRoot.getChilds().size(); i++) {
-						startPosition = addSubtotalsToTheTreeNoMeasure(rowsRoot.getChilds().get(i), false, startPosition);
+					for (int i = 0; i < rowsRoot.getChildren().size(); i++) {
+						startPosition = addSubtotalsToTheTreeNoMeasure(rowsRoot.getChildren().get(i), false, startPosition);
 					}
 				}
 			}
@@ -2281,8 +2283,8 @@ public class CrossTab {
 					addSubtotalsToTheTree(rowsRoot, false, 0);
 				} else {
 					int startPosition = 0;
-					for (int i = 0; i < rowsRoot.getChilds().size(); i++) {
-						startPosition = addSubtotalsToTheTreeNoMeasure(rowsRoot.getChilds().get(i), false, startPosition);
+					for (int i = 0; i < rowsRoot.getChildren().size(); i++) {
+						startPosition = addSubtotalsToTheTreeNoMeasure(rowsRoot.getChildren().get(i), false, startPosition);
 					}
 				}
 			}
@@ -2292,8 +2294,8 @@ public class CrossTab {
 					addSubtotalsToTheTree(columnsRoot, true, 0);
 				} else {
 					int startPosition = 0;
-					for (int i = 0; i < columnsRoot.getChilds().size(); i++) {
-						startPosition = addSubtotalsToTheTreeNoMeasure(columnsRoot.getChilds().get(i), true, startPosition);
+					for (int i = 0; i < columnsRoot.getChildren().size(); i++) {
+						startPosition = addSubtotalsToTheTreeNoMeasure(columnsRoot.getChildren().get(i), true, startPosition);
 					}
 				}
 			}
@@ -2305,7 +2307,7 @@ public class CrossTab {
 		int start = startingPosition;
 		int length = node.getLeafsNumber();
 		String[] total;
-		List<Node> children = node.getChilds();
+		List<Node> children = node.getChildren();
 		if (children.size() > 0) {
 			int freshStartingPosition = startingPosition;
 
@@ -2337,15 +2339,15 @@ public class CrossTab {
 		if (node.getSubTreeDepth() <= 4) {
 			return;
 		} else {
-			for (int i = 0; i < node.getChilds().size(); i++) {
-				addSubtotalsToTheTree(node.getChilds().get(i), horizontal, startingPosition);
-				startingPosition = addSubtotalsToTheNodeUpLevel(node.getChilds().get(i), horizontal, startingPosition);
+			for (int i = 0; i < node.getChildren().size(); i++) {
+				addSubtotalsToTheTree(node.getChildren().get(i), horizontal, startingPosition);
+				startingPosition = addSubtotalsToTheNodeUpLevel(node.getChildren().get(i), horizontal, startingPosition);
 			}
 		}
 	}
 
 	public int addSubtotalsToTheNodeUpLevel(Node node, boolean horizontal, int startingPosition) {
-		List<Node> children = node.getChilds();
+		List<Node> children = node.getChildren();
 		List<List<Integer>> valuesTosum = new ArrayList<List<Integer>>();
 		List<String[]> linesums = new ArrayList<String[]>();
 
@@ -2377,16 +2379,16 @@ public class CrossTab {
 	public int addSubtotalsToTheNodeFirstLevel(Node node, boolean horizontal, int positionToAddNode) {
 		Node n = node;
 		List<String[]> linesums = new ArrayList<String[]>();
-		if (n.getChilds().size() > 0 && // has children
-				n.getChilds().get(0).getChilds().size() > 0 && // has
-																// granchildren
-				n.getChilds().get(0).getChilds().get(0).getChilds().size() > 0) { // the
-																					// granchildren
-																					// are
-																					// not
-																					// leaf
-			for (int i = 0; i < n.getChilds().size(); i++) {
-				positionToAddNode = addSubtotalsToTheNodeFirstLevel(n.getChilds().get(i), horizontal, positionToAddNode);
+		if (n.getChildren().size() > 0 && // has children
+				n.getChildren().get(0).getChildren().size() > 0 && // has
+																	// granchildren
+				n.getChildren().get(0).getChildren().get(0).getChildren().size() > 0) { // the
+			// granchildren
+			// are
+			// not
+			// leaf
+			for (int i = 0; i < n.getChildren().size(); i++) {
+				positionToAddNode = addSubtotalsToTheNodeFirstLevel(n.getChildren().get(i), horizontal, positionToAddNode);
 			}
 		} else {
 			Node subtotalNode = buildSubtotalNode(1, true, horizontal);
@@ -2403,7 +2405,7 @@ public class CrossTab {
 					// no columns required: just measures
 					linesToSum.add(positionToAddNode + y);
 				} else {
-					for (int k = 0; k < n.getChilds().size(); k++) {
+					for (int k = 0; k < n.getChildren().size(); k++) {
 						linesToSum.add(positionToAddNode + measuresCount * k + y);
 					}
 				}
@@ -2412,7 +2414,7 @@ public class CrossTab {
 			if ((!measuresOnRow && crosstabDefinition.getColumns().size() == 0) || (measuresOnRow && crosstabDefinition.getRows().size() == 0)) {
 				positionToAddNode = positionToAddNode + measuresCount;
 			} else {
-				positionToAddNode = positionToAddNode + measuresCount * n.getChilds().size();
+				positionToAddNode = positionToAddNode + measuresCount * n.getChildren().size();
 			}
 			node.addChild(subtotalNode);
 			addCrosstabDataLine(node, positionToAddNode, linesums, horizontal, CellType.SUBTOTAL);
@@ -2966,25 +2968,52 @@ public class CrossTab {
 		return celltypeOfColumns;
 	}
 
+	public int getOffsetInColumnSubtree(int colIdx) {
+		int i = 0;
+		while (i + getColumnSubtreeNumberOfLeaves(i) <= colIdx) {
+			i = i + getColumnSubtreeNumberOfLeaves(i);
+		}
+		return colIdx - i;
+	}
+
 	/**
-	 * Returns the number of leaves of the first level subtree: Takes the root node of the column tree, visits the first level in depth, and return the number
-	 * of leaves of this first level
+	 * Returns the number of leaves of the current subtree: Takes the root node of the column tree, visits the first level in depth, and return the number of
+	 * leaves of this first level
 	 *
 	 * @return the number of leaves
 	 */
-	public int getColumnsMainSubtreeNumberOfLeaves() {
-		Node n = columnsRoot;
+	private int getColumnSubtreeNumberOfLeaves(int colIdx) {
 		if (columnsHeaderList.size() == 0) {
 			// i don't have any columns defined
 			return 1;
 		}
-		String lastHeaderValue = columnsHeaderList.get(columnsHeaderList.size() - 1);
-		for (int k = 0; k < columnsRoot.getDistanceFromLeaves() - 1; k++) {
-			n = n.getChilds().get(0);
-			if (n.getValue().equals(lastHeaderValue))
-				break;
+
+		if (treeLeaves == null)
+			initTreeLeavesList();
+
+		Node n = treeLeaves.get(colIdx);
+		return n.getFirstAncestor().getLeafsNumber();
+	}
+
+	private void initTreeLeavesList() {
+		treeLeaves = new ArrayList<Node>();
+		recursiveAddLeaves(columnsRoot);
+	}
+
+	private void recursiveAddLeaves(Node n) {
+		if (n == null)
+			return;
+
+		List<Node> children = n.getChildren();
+
+		if (children == null || children.size() == 0) {
+			treeLeaves.add(n);
+			return;
 		}
-		return n.getLeafsNumber();
+
+		for (int i = 0; i < children.size(); i++) {
+			recursiveAddLeaves(children.get(i));
+		}
 	}
 
 //	/**

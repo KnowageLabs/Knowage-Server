@@ -137,9 +137,9 @@ public class CrosstabXLSExporter {
 		CellStyle dimensionCellStyle = this.buildDimensionCellStyle(sheet);
 
 		// build headers for column first ...
-		buildColumnsHeader(sheet, cs, cs.getColumnsRoot().getChilds(), startRow, rowsDepth - 1, createHelper, locale, memberCellStyle, dimensionCellStyle, 0);
+		buildColumnsHeader(sheet, cs, cs.getColumnsRoot().getChildren(), startRow, rowsDepth - 1, createHelper, locale, memberCellStyle, dimensionCellStyle, 0);
 		// ... then build headers for rows ....
-		buildRowsHeaders(sheet, cs, cs.getRowsRoot().getChilds(), columnsDepth - 1 + startRow, 0, createHelper, locale, memberCellStyle);
+		buildRowsHeaders(sheet, cs, cs.getRowsRoot().getChildren(), columnsDepth - 1 + startRow, 0, createHelper, locale, memberCellStyle);
 		// then put the matrix data
 		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper, measureFormatter);
 
@@ -245,7 +245,7 @@ public class CrosstabXLSExporter {
 
 		for (int i = 0; i < siblings.size(); i++) {
 			Node aNode = siblings.get(i);
-			List<Node> childs = aNode.getChilds();
+			List<Node> childs = aNode.getChildren();
 			Row row = sheet.getRow(rowsCounter);
 			Cell cell = row.createCell(columnNum);
 			String text = aNode.getDescription();
@@ -493,7 +493,7 @@ public class CrosstabXLSExporter {
 
 		for (int i = 0; i < siblings.size(); i++) {
 			Node aNode = siblings.get(i);
-			List<Node> childs = aNode.getChilds();
+			List<Node> childs = aNode.getChildren();
 			Row row = sheet.getRow(rowNum);
 			Cell cell = row.createCell(columnCounter);
 
