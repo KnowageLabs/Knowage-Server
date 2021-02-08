@@ -1,4 +1,5 @@
 <template>
+<h1>{{ $t("test") }}</h1>
   <div class="home">
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
   </div>

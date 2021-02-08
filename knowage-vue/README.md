@@ -15,23 +15,18 @@ npm run serve
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
 ### Jest Unit-tests
 ```
 npm run test:unit
 ```
 
-## Project Structure
+## Project Structure (src)
 ```
 .
 ├── assets
 │   └── ...
 ├── components
-│   ├── knmenu
+│   ├── knMenu
 │   │   ├── KnMenu.spec.js
 │   │   ├── KnMenu.vue
 │   │   └── KnMenuItem.vue

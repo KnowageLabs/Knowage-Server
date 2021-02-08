@@ -42,7 +42,7 @@
 <script lang="ts">
    import { defineComponent } from 'vue'
    import InfoDialog from '@/components/infoDialog/InfoDialog.vue'
-   import KnmenuItem from '@/components/knmenu/KnMenuItem.vue'
+   import KnmenuItem from '@/components/knMenu/KnMenuItem.vue'
    import axios from 'axios'
 
    export default defineComponent({

@@ -1,6 +1,6 @@
 <template>
+	<Toast></Toast>
   <div class="layout-wrapper-content">
-
 		<Knmenu :model="menu"></Knmenu>
 		
 
@@ -11,13 +11,15 @@
 </template>
 
 <script>
-	import Knmenu from '@/components/knmenu/KnMenu'
+	import Knmenu from '@/components/knMenu/KnMenu'
+	import Toast from 'primevue/toast';
 	import { defineComponent } from 'vue'
 	import {  mapGetters } from 'vuex'
 
 	export default defineComponent({
 		components: {
-			Knmenu
+			Knmenu,
+			Toast
 		},
 		methods: {
 			getUser(){

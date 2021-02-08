@@ -1,14 +1,19 @@
 <template>
-    <iframe :src="`http://localhost:8080${url}`"></iframe>
+    <iframe :src="`${baseUrl}${url}`"></iframe>
 </template>
 
 <script>
 
 export default {
-  name: 'IframeRenderer',
-  props: {
-      url: String
-  }  
+    name: 'IframeRenderer',
+    props: {
+        url: String
+    },
+    data(){
+        return{
+            baseUrl: process.env.VUE_APP_API_URL
+        }
+    }
 }
 </script>
 
