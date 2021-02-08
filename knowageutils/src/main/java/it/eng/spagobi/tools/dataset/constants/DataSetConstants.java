@@ -167,6 +167,7 @@ public class DataSetConstants {
 		name2Code.put("Custom", DataSetConstants.DS_CUSTOM);
 		name2Code.put("Flat", DataSetConstants.DS_FLAT);
 		name2Code.put("Federated", DataSetConstants.DS_FEDERATED);
+		name2Code.put("Solr", DataSetConstants.DS_SOLR_TYPE);
 		name2Code.put(DS_REST_NAME, DS_REST_TYPE);
 		name2Code.put(DS_PYTHON_NAME, DS_PYTHON_TYPE);
 		name2Code.put("SPARQL", DataSetConstants.DS_SPARQL);
@@ -207,6 +208,7 @@ public class DataSetConstants {
 		code2name.put(DataSetConstants.DS_FLAT, "Flat");
 		code2name.put(DataSetConstants.DS_FEDERATED, "Federated");
 		code2name.put(DS_REST_TYPE, DS_REST_NAME);
+		code2name.put(DataSetConstants.DS_SOLR_TYPE, "Solr");
 		code2name.put(DS_PYTHON_TYPE, DS_PYTHON_NAME);
 		code2name.put(DataSetConstants.DS_SPARQL, "SPARQL");
 	}
