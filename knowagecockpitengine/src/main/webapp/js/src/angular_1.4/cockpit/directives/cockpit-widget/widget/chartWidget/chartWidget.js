@@ -630,7 +630,7 @@ function cockpitChartWidgetControllerFunction(
 			    				  delete $scope.localModel.columnSelectedOfDataset;
 			    			  }
 			    			  $scope.localModel.datasetLabel = ds.label;
-			    			  $scope.localModel.dataset = ds;
+			    			  $scope.localModel.dataset = {id: {dsId : ds.id.dsId}};
 			    			  if(!$scope.localModel.datasetId){
                                   $timeout(function(){
                                       $scope.localModel.datasetId = ds.id.dsId;
