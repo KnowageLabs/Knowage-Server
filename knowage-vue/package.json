@@ -15,6 +15,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "mitt": "^2.1.0",
+    "moment": "^2.29.1",
     "node-sass": "^5.0.0",
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",

@@ -3,7 +3,6 @@
   <div class="layout-wrapper-content">
 		<Knmenu :model="menu"></Knmenu>
 		
-
 		<div class="layout-main">
 			<router-view />
 		</div>

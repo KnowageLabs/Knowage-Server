@@ -32,6 +32,10 @@ npm run test:unit
 │   │   └── KnMenuItem.vue
 │   └── ...
 ├── helpers
+├── i18n
+│   ├── en_BG.json
+│   ├── it_IT.json
+│   └── ...
 ├── modules
 │   ├── managers
 │   │   ├── galleryManagement
@@ -43,6 +47,7 @@ npm run test:unit
 │   └── shared
 │       ├── 404.vue
 │       └── IframeRenderer.vue
+├── App.i18n.js
 ├── App.routes.js
 ├── App.spec.js
 ├── App.store.js
