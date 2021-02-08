@@ -149,6 +149,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					}
 				}
+				if(model.type=='chart') {
+						if(model.dataset.dsId){
+							model.content.dataset = model.dataset;
+						}
+						if(model.content.chartTemplate.CHART.LEGEND && model.content.chartTemplate.CHART.LEGEND.style && !model.content.chartTemplate.CHART.LEGEND.style.borderWidth) {
+							model.content.chartTemplate.CHART.LEGEND.style.borderWidth = "";
+						}					
+				}
 			}
 
 			if(!self.compareVersion("7.2.16",version)){
