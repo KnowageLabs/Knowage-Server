@@ -11,7 +11,7 @@
 </template>
 
 <script>
-	import Knmenu from '@/components/knmenu/Knmenu'
+	import Knmenu from '@/components/knmenu/KnMenu'
 	import { defineComponent } from 'vue'
 	import {  mapGetters } from 'vuex'
 

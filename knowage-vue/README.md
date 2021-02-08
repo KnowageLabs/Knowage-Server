@@ -20,5 +20,37 @@ npm run build
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Jest Unit-tests
+```
+npm run test:unit
+```
+
+## Project Structure
+```
+.
+├── assets
+│   └── ...
+├── components
+│   ├── knmenu
+│   │   ├── KnMenu.spec.js
+│   │   ├── KnMenu.vue
+│   │   └── KnMenuItem.vue
+│   └── ...
+├── helpers
+├── modules
+│   ├── managers
+│   │   ├── galleryManagement
+│   │   │   ├── GalleryManagement.routes.js
+│   │   │   ├── GalleryManagement.spec.js
+│   │   │   └── GalleryManagement.vue
+│   │   └── managers.routes.js
+│   └── ...
+│   └── shared
+│       ├── 404.vue
+│       └── IframeRenderer.vue
+├── App.routes.js
+├── App.spec.js
+├── App.store.js
+├── App.vue
+├── main.ts
+```
