@@ -32,7 +32,7 @@
 				<md-input-container ng-if="IEDConf.roles.associatedRoles[expRol.id].fixed!=true"  flex="50">
 					<label>Role</label>
 					<md-select ng-model="IEDConf.roles.associatedRoles[expRol.id]">
-						<md-option></md-option>
+						<md-option ng-value="{id:''}"></md-option>
 						<md-option ng-repeat="currRol in IEDConf.roles.currentRoles" ng-value="currRol.id" ng-if="currentRoleIsSelectable(currRol,expRol)">
 		            		{{currRol.name}}
 		            	</md-option>
