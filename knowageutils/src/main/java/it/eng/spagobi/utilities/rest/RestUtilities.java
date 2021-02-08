@@ -305,7 +305,7 @@ public class RestUtilities {
 				method.addRequestHeader(entry.getKey(), entry.getValue());
 			}
 		}
-		if (queryParams != null) {
+		if (queryParams != null && !queryParams.isEmpty()) {
 			// add uri query params to provided query params present in query
 			List<NameValuePair> addressPairs = getAddressPairs(address);
 			List<NameValuePair> totalPairs = new ArrayList<NameValuePair>(addressPairs);
