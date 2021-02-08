@@ -1,28 +1,27 @@
-
 <md-dialog style='width:50%;'>
     
-      <md-toolbar class="knowage-blue dialog-toolbar">
-		<h2 flex="flex" class="md-title">Arguments for: {{selectedMDXFunctionName}}</h2>
-		<p class="md-body-1">Description : {{selectedMDXFunction.description}}</p>
+	<md-toolbar class="md-toolbar">
+      	<div class="md-toolbar-tools">
+			<h2 flex="flex" class="md-title">Arguments for: {{selectedMDXFunctionName}}</h2>
+		</div>
 	</md-toolbar>
-       
-    <div style="padding: 5px;">
-   <md-input-container ng-if="!argument.hidden"class="md-block" ng-repeat="argument in selectedMDXFunction.argument" >
-          <label>{{argument.expected_value}}</label>
-          <label>{{argument.hidden}}</label>
-          <input ng-model="argument.default_value" ng-readonly="editArguments"> 
-          <md-button class="md-raised" ng-click="enterSelectMode($index,argument)" style="float: right;" 
-          ng-show="argument.expected_value == 'Set_Expression' || argument.expected_value == 'Member_Expression'|| argument.expected_value == 'Level_Expression'|| argument.expected_value == 'Custom_Expression'|| argument.expected_value == 'Numeric_Expression'|| argument.expected_value == 'Measure_Expression'"
-          >
-       Select from table
-      	</md-button>
-<!--       	 <md-button  class="md-raised" ng-click="openSavedSets()" style="float: right;" ng-show="argument.expected_value == 'Set_Expression'"> -->
-<!--         Open Saved -->
-<!--       </md-button> -->
-          <p class="md-body-1">Description : {{argument.argument_description}}</p>
-        </md-input-container> 
- 		</div>
-
+    <md-dialog-content layout-padding>
+    	<div layout="row" style="width:100%" layout-align="center center">
+		<div class="kn-info" flex="80">
+			Description : {{selectedMDXFunction.description}}
+		</div>
+	</div>
+			<md-input-container ng-if="!argument.hidden"class="md-block" ng-repeat="argument in selectedMDXFunction.argument" >
+			      		<label>{{argument.expected_value}}</label>
+			      		<label>{{argument.hidden}}</label>
+			      		<input ng-model="argument.default_value" ng-readonly="editArguments"> 
+			      		<md-button class="md-raised" ng-click="enterSelectMode($index,argument)" style="float: right;" 
+							ng-show="argument.expected_value == 'Set_Expression' || argument.expected_value == 'Member_Expression'|| argument.expected_value == 'Level_Expression'|| argument.expected_value == 'Custom_Expression'|| argument.expected_value == 'Numeric_Expression'|| argument.expected_value == 'Measure_Expression'">
+			 				Select from table
+						</md-button>
+			    		<p class="md-body-1">Description : {{argument.argument_description}}</p>
+			</md-input-container> 
+	</md-dialog-content>
     <md-dialog-actions layout="row">
     	<md-button ng-click="sendCC()" class="md-raised" ng-disabled="checkValidityArgs()" md-autofocus>
         OK
@@ -32,4 +31,3 @@
       </md-button>
     </md-dialog-actions>
 </md-dialog>
-
