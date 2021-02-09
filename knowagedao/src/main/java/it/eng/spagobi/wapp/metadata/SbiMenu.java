@@ -18,6 +18,7 @@
 package it.eng.spagobi.wapp.metadata;
 // Generated 9-apr-2008 12.18.27 by Hibernate Tools 3.1.0 beta3
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -309,12 +310,18 @@ public class SbiMenu extends SbiHibernateModel implements Comparable<SbiMenu> {
 
 	@Override
 	public int compareTo(SbiMenu o) {
+
 		if (this.getParentId() == null)
 			return -1;
 		if (o.getParentId() == null)
 			return 1;
 
-		return this.getName().compareTo(o.getName()) + this.getDescr().compareTo(o.getDescr()) + this.getParentId().compareTo(o.getParentId());
+		if (this.getDescr() == null) {
+			return -1;
+		}
+
+		return Comparator.comparing(SbiMenu::getParentId).thenComparing(SbiMenu::getName).thenComparing(SbiMenu::getDescr).compare(this, o);
+
 	}
 
 }
