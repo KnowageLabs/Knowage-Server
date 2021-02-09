@@ -5,6 +5,6 @@
 
 <script>
 export default {
-  name: 'Gallery Management'  
+  name: 'gallery-management'  
 }
 </script>

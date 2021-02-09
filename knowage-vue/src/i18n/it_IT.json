@@ -1,3 +1,9 @@
 {
-    "test":"italiano"
+    "common":{
+        "close": "chiudi",
+        "version": "versione"
+    },
+    "home":{
+        "test":"italiano"
+    }
 }

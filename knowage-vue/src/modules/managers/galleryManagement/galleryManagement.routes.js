@@ -2,7 +2,7 @@ let routes = [
 		{
 			path: '/knowage/gallerymanagement',
 			name: 'galleryManagement',
-			component: () => import('@/modules/managers/galleryManagement/galleryManagement.vue')
+			component: () => import('@/modules/managers/galleryManagement/GalleryManagement.vue')
 		}
 	];
 

@@ -1,3 +1,9 @@
 {
-    "test":"english"
+    "common":{
+        "close": "close",
+        "version": "version"
+    },
+    "home":{
+        "test":"english"
+    }
 }

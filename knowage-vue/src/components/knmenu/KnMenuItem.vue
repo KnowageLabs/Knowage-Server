@@ -1,6 +1,6 @@
 <template>
 
-    <li role="none" :style="item.style" :title="item.label" @mouseenter="toggleSubMenu" @mouseleave="toggleSubMenu">
+    <li role="none" :style="item.style" :title="item.label" @mouseenter="toggleSubMenu" @mouseleave="toggleSubMenu" >
         <router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{navigate, href, isActive}" exact>
             <a :href="href" @click="onClick($event, navigate)"  role="menuitem" :class="isActive && 'router-link-active'">
                 <span :class="['p-menuitem-icon', item.icon]"></span>

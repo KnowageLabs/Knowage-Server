@@ -1,15 +1,27 @@
 import axios from 'axios'
+import store from './app.store.js'
+//import router from './app.routes.js'
 
-  axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
-  axios.defaults.headers.common['Content-Type'] ='application/json;charset=utf-8'
-  axios.defaults.headers.common['Crossorigin'] ='true'
+  axios.interceptors.request.use(
+    config => {
+      return config;
+    },
+    error => {
+        Promise.reject(error)
+    });
+
   axios.interceptors.response.use(
     res => {
+      store.commit('setUser',{name:'Davide'})
       return res
     },
-    err => {
+    (err, status) => {
+      //if(err.status === 401){
+        console.log(status)
+        //if(router.history.current.name !== 'login') router.push('/login')
+      //}
       console.log('axios',err)
-      throw err;
+      return Promise.reject(err);
     }
   )
 

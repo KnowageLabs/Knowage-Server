@@ -1,21 +1,25 @@
 import { createStore } from 'vuex'
 
-export default createStore({
-  state: {
-    user: {}
+// Create a new store instance.
+const store = createStore({
+  state () {
+    return {
+      user: {},
+      error: {},
+      locale: "it_IT"
+    }
   },
   mutations: {
-     setUser (state, user) {
+    setUser (state, user){
       state.user = user
+    },
+    setError(state, msg){
+      state.error = {visible: true, msg: msg}
+    },
+    setLocale(state, locale){
+      state.locale = locale
     }
-  },
-  getters: {
-    getUser: state => {
-      return state.user
-    }
-  },
-  actions: {
-  },
-  modules: {
   }
 })
+
+export default store

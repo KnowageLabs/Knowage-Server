@@ -5,8 +5,8 @@
          <div class="menu-scroll-content">
             <div>
                <div class="profile">
-                  <button class="p-link" @click="toggleProfile" title="Isabel Oliviera">
-                     <img alt="Profile" class="profile-image" src="https://i.pravatar.cc/50" >
+                  <button class="p-link" @click="toggleProfile" v-tooltip="'Isabel Oliviera'">
+                     <img alt="Profile" class="profile-image" :src="getGravatar()" >
                      <span class="profile-name">Isabel Oliviera</span>
                         <i class="pi pi-fw pi-chevron-down"></i>
                      <span class="profile-role">Marketing</span>
@@ -17,7 +17,7 @@
                   <ul class="layout-menu profile-menu" v-show="showProfileMenu">
                      <template v-for="(item, i) of fixedMenu" :key="i">
                         <template v-if="item">
-                           <KnmenuItem :item="item" @click="itemClick"></KnmenuItem>
+                           <KnMenuItem :item="item" @click="itemClick"></KnMenuItem>
                         </template>
                      </template>
                   </ul>
@@ -26,10 +26,10 @@
             <div>
                <ul class="layout-menu">
                    <template v-for="(item, i) of userMenu" :key="i">
-                     <KnmenuItem :item="item" @click="itemClick"></KnmenuItem>
+                     <KnMenuItem :item="item" @click="itemClick"></KnMenuItem>
                   </template>
                   <template v-for="(item, i) of customMenu" :key="i">
-                     <KnmenuItem :item="item" @click="itemClick"></KnmenuItem>
+                     <KnMenuItem :item="item" @click="itemClick"></KnMenuItem>
                   </template>
                </ul>
             </div>
@@ -42,8 +42,8 @@
 <script lang="ts">
    import { defineComponent } from 'vue'
    import InfoDialog from '@/components/infoDialog/InfoDialog.vue'
-   import KnmenuItem from '@/components/knMenu/KnMenuItem.vue'
-   import axios from 'axios'
+   import KnMenuItem from '@/components/knmenu/KnMenuItem.vue'
+   import { getGravatar } from '@/helpers/gravatarHelper'
 
    export default defineComponent({
       name: 'Knmenu',
@@ -52,7 +52,7 @@
       },
       components: {
          InfoDialog,
-         KnmenuItem
+         KnMenuItem
       },
       data() {
          return {
@@ -84,10 +84,13 @@
          },
          toggleProfile() {
             this.showProfileMenu = !this.showProfileMenu
+         },
+         getGravatar(){
+            return getGravatar('davide.vernassa@eng.it');
          }
       },
       created() {
-         axios.get('/knowage/restful-services/1.0/menu/enduser?curr_country=US&curr_language=en')
+         this.axios.get('/knowage/restful-services/1.0/menu/enduser?curr_country=US&curr_language=en')
             .then((response) => {
                this.customMenu = updateMenuModel(response.data.customMenu[0].menu)
                this.userMenu = updateMenuModel(response.data.userMenu)

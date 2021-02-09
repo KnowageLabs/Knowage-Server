@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import IframeRenderer from '@/modules/shared/IframeRenderer.vue'
-import galleryManagementRoutes from '@/modules/managers/galleryManagement/galleryManagement.routes.js'
+import galleryManagementRoutes from '@/modules/managers/galleryManagement/GalleryManagement.routes.js'
 
 const baseRoutes = [
   {

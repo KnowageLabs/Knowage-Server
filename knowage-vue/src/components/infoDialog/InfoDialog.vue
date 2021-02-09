@@ -1,11 +1,11 @@
 <template>
-   <Dialog :visible="visibility" footer="footer" header="About Knowage" modal>
+   <Dialog v-bind:visible="visibility" footer="footer" header="About Knowage" :closable="false" modal>
       <div class="p-grid p-m-1">
          <div class="p-col">
             <div class="p-d-flex p-jc-center">
                <img :src="require('@/assets/logo_knowage.svg')" height="100"/>
             </div>
-            <p><strong>Versione:</strong> 7.4.0-S</p>
+            <p><strong>{{ $tc('common.version') }}</strong>: 7.4.0-S</p>
             <p><strong>Utente Loggato:</strong> {{user.name || 'KTE Admin'}}</p>
             <p><strong>Tenant:</strong> kte</p>
             <p>Codice sorgente disponibile su www.knowage-suite.com</p>
@@ -13,7 +13,7 @@
          </div>
       </div>
       <template #footer>
-        <Button label="Close" autofocus @click="closeDialog"/>
+        <Button v-t="'common.close'" autofocus @click="closeDialog"/>
     </template>
    </Dialog>
    
@@ -22,7 +22,7 @@
 <script lang="ts">
     import { defineComponent } from 'vue'
     import Dialog from 'primevue/dialog'
-    import {  mapGetters } from 'vuex'
+    import { mapState } from 'vuex'
 
     export default defineComponent({
         name: 'InfoDialog',
@@ -39,8 +39,8 @@
             }
         },
         computed: {
-            ...mapGetters({
-                user: 'getUser'
+            ...mapState({
+                user: 'user'
                 })
         }
     })
@@ -48,5 +48,8 @@
 </script>
 
 <style scoped lang="scss">
+    p {
+        text-transform: capitalize;
+    }
 
 </style>
