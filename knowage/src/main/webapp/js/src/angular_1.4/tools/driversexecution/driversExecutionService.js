@@ -147,6 +147,7 @@
 					if(isParameterSelectionTypeTree(parameter)) {
 						if(parameter.multivalue) {
 							parameter.parameterValue = [];
+							parameter.parameterDescription = [];
 							executionService.resetParameterInnerLovData(parameter.children);
 						} else {
 							parameter.parameterValue = '';
