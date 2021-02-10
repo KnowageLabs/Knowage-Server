@@ -1,5 +1,5 @@
 import axios from 'axios'
-import store from './app.store.js'
+import store from './App.store.js'
 //import router from './app.routes.js'
 
   axios.interceptors.request.use(

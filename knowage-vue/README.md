@@ -4,6 +4,10 @@
 ```
 npm install
 ```
+### Local environment variables  
+Create an **.env.local** file in the project root and set the following properties depending on your environment:
+- VUE_APP_API_URL=http://localhost:8080
+
 
 ### Compiles and hot-reloads for development
 ```

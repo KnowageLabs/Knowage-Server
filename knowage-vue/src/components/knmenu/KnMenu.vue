@@ -66,7 +66,7 @@
                {label:'info',icon:'pi pi-fw pi-info', command: () => {
                   this.toggleInfo()
                }},
-               {label:'logout', icon:'pi pi-fw pi-sign-out', url:'http://localhost:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE'}]
+               {label:'logout', icon:'pi pi-fw pi-sign-out', url:process.env.VUE_APP_API_URL + '/knowage/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE'}]
          }
       },
       methods:{
