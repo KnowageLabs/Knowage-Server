@@ -245,7 +245,16 @@ angular.module("customWidgetAPI",[]).service("datastore",function($filter){
 			for (var prop in measures) {
 				tree.reduce(function x(r, a) {
 					a[prop] = a[prop] || Array.isArray(a.children) && a.children.reduce(x, 0) || 0;
-					return r + a[prop];
+					if(measures[prop].toLowerCase()=='max'){
+						return getMaxValue(r, a[prop]);
+					}
+					else if(measures[prop].toLowerCase()=='min'){
+						if(r!=0) return getMinValue(r, a[prop]);
+						else return a[prop];
+					}
+					else if(measures[prop].toLowerCase()=='sum'){
+						return getSum(r, a[prop]);
+					}
 				}, 0);
 			}
 		}
