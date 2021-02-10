@@ -126,6 +126,11 @@
 		<mapping resource="it/eng/spagobi/profiling/mapping/SbiUserAttributes.hbm.xml" />
 		<mapping resource="it/eng/spagobi/profiling/mapping/SbiAccessibilityPreferences.hbm.xml"/>
 
+		<!-- PROFILING (history) -->
+		<mapping resource="it/eng/spagobi/profiling/mapping/SbiExtUserRolesHistory.hbm.xml" />
+		<mapping resource="it/eng/spagobi/profiling/mapping/SbiUserHistory.hbm.xml" />
+		<mapping resource="it/eng/spagobi/profiling/mapping/SbiUserAttributesHistory.hbm.xml" />
+
 		<!-- User Defined Attributes -->
 		<mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdp.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdpValue.hbm.xml" />

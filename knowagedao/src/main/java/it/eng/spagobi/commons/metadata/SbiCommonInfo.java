@@ -46,6 +46,19 @@ public class SbiCommonInfo implements java.io.Serializable {
 		timeIn = new Date();
 	}
 
+	public SbiCommonInfo(SbiCommonInfo commonInfo) {
+		this.userIn = commonInfo.userIn;
+		this.userUp = commonInfo.userUp;
+		this.userDe = commonInfo.userDe;
+		this.sbiVersionIn = commonInfo.sbiVersionIn;
+		this.sbiVersionUp = commonInfo.sbiVersionUp;
+		this.sbiVersionDe = commonInfo.sbiVersionDe;
+		this.organization = commonInfo.organization;
+		this.timeIn = commonInfo.timeIn;
+		this.timeUp = commonInfo.timeUp;
+		this.timeDe = commonInfo.timeDe;
+	}
+
 	public String getUserIn() {
 		return userIn;
 	}

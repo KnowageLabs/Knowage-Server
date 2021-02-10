@@ -20,6 +20,7 @@ package it.eng.spagobi.profiling.dao;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -40,16 +41,21 @@ import it.eng.qbe.statement.hibernate.HQLStatement.IConditionalOperator;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.dao.PagedList;
 import it.eng.spagobi.dao.QueryFilter;
 import it.eng.spagobi.dao.QueryFilters;
 import it.eng.spagobi.dao.QueryStaticFilter;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
+import it.eng.spagobi.profiling.bean.SbiExtUserRolesHistory;
 import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
+import it.eng.spagobi.profiling.bean.SbiUserAttributesHistory;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
+import it.eng.spagobi.profiling.bean.SbiUserHistory;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.profiling.dao.filters.FinalUsersFilter;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -204,10 +210,13 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	public void updateSbiUser(SbiUser user, Integer userID) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
+		Date opDate = new Date();
+
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			aSession.update(user);
+			logUpdate(aSession, user, opDate);
 			aSession.flush();
 			tx.commit();
 		} catch (HibernateException he) {
@@ -449,6 +458,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	public void deleteSbiUserByIdPhisically(Integer id) throws EMFUserError {
 		logger.debug("IN");
 
+		Date opDate = new Date();
+
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -467,8 +478,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				while (attrsIt.hasNext()) {
 					SbiUserAttributes temp = (SbiUserAttributes) attrsIt.next();
 					attrsIt.remove();
-
 					aSession.delete(temp);
+					logDeletion(aSession, temp, opDate);
 					aSession.flush();
 				}
 			}
@@ -484,12 +495,14 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 					SbiExtUserRoles temp = (SbiExtUserRoles) rolesIt.next();
 					rolesIt.remove();
 					aSession.delete(temp);
+					logDeletion(aSession, temp, opDate);
 					aSession.flush();
 				}
 			}
 			SbiUser userToDelete = (SbiUser) aSession.load(SbiUser.class, id);
 
 			aSession.delete(userToDelete);
+			logDeletion(aSession, userToDelete, opDate);
 			aSession.flush();
 			tx.commit();
 		} catch (HibernateException he) {
@@ -580,6 +593,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	public Integer fullSaveOrUpdateSbiUserPhisically(SbiUser user) throws EMFUserError {
 		logger.debug("IN");
 
+		Date opDate = new Date();
+
 		Session aSession = null;
 		Transaction tx = null;
 		Integer id = null;
@@ -595,6 +610,9 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 			if (id != 0) {
 				SbiUser userToUpdate = (SbiUser) aSession.load(SbiUser.class, id);
+				boolean isChanged = !String.valueOf(userToUpdate.getPassword()).equals(String.valueOf(user.getPassword()))
+						|| !String.valueOf(userToUpdate.getFullName()).equals(String.valueOf(user.getFullName()));
+
 				if (user.getPassword() != null && user.getPassword().length() > 0) {
 					userToUpdate.setPassword(user.getPassword());
 				}
@@ -603,6 +621,9 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				userToUpdate.setId(id);
 				updateSbiCommonInfo4Update(userToUpdate);
 				aSession.save(userToUpdate);
+				if (isChanged) {
+					logUpdate(aSession, userToUpdate, opDate);
+				}
 				currentSessionUser = userToUpdate;
 			} else {
 				SbiUser newUser = new SbiUser();
@@ -616,6 +637,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				updateSbiCommonInfo4Insert(newUser);
 				newUser.setIsSuperadmin(Boolean.FALSE);
 				id = (Integer) aSession.save(newUser);
+				logCreation(aSession, newUser, opDate);
 				currentSessionUser = newUser;
 			}
 
@@ -625,12 +647,38 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			Query queryR = aSession.createQuery(qr);
 			queryR.setInteger("id", id);
 			List<SbiExtUserRoles> userRoles = queryR.list();
+
+			Set<String> actualRoles = new HashSet<String>();
+			Set<String> addedRoles = new HashSet<String>();
+			Set<String> deletedRoles = null;
+
+			if (userRoles != null && !userRoles.isEmpty()) {
+				for (SbiExtUserRoles extUserRoles : userRoles) {
+					actualRoles.add(extUserRoles.getId().getExtRoleId().toString());
+				}
+			}
+
+			for (SbiExtRoles sbiExtRoles : user.getSbiExtUserRoleses()) {
+				addedRoles.add(sbiExtRoles.getExtRoleId().toString());
+			}
+
+			deletedRoles = new HashSet<String>(actualRoles);
+
+			deletedRoles.removeAll(addedRoles);
+			addedRoles.removeAll(actualRoles);
+
 			if (userRoles != null && !userRoles.isEmpty()) {
 				Iterator rolesIt = userRoles.iterator();
 				while (rolesIt.hasNext()) {
 					SbiExtUserRoles temp = (SbiExtUserRoles) rolesIt.next();
+
+					if (!deletedRoles.contains(temp.getId().getExtRoleId().toString())) {
+						continue;
+					}
+
 					rolesIt.remove();
 					aSession.delete(temp);
+					logDeletion(aSession, temp, opDate);
 					aSession.flush();
 				}
 			}
@@ -638,6 +686,10 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			Iterator<SbiExtRoles> rolesIt = user.getSbiExtUserRoleses().iterator();
 			while (rolesIt.hasNext()) {
 				SbiExtRoles aRole = rolesIt.next();
+
+				if (!addedRoles.contains(aRole.getExtRoleId().toString())) {
+					continue;
+				}
 
 				SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
 				SbiExtUserRolesId extUserRoleId = new SbiExtUserRolesId();
@@ -653,6 +705,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				sbiExtUserRole.getCommonInfo().setOrganization(aRole.getCommonInfo().getOrganization());
 				updateSbiCommonInfo4Insert(sbiExtUserRole);
 				aSession.saveOrUpdate(sbiExtUserRole);
+				logCreation(aSession, sbiExtUserRole, opDate);
 				aSession.flush();
 			}
 			// set attributes
@@ -661,25 +714,91 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			queryR = aSession.createQuery(qr);
 			queryR.setInteger("id", id);
 			List<SbiUserAttributes> userAttributes = queryR.list();
+			Set<SbiUserAttributes> newAttributes = user.getSbiUserAttributeses();
+
+			Set<Integer> actualAttrs = new HashSet<Integer>();
+			Set<Integer> addedAttrs = new HashSet<Integer>();
+			Set<Integer> deletedAttrs = null;
+			Set<Integer> alreadyPresentAttrs = null;
+
+			if (userAttributes != null && !userAttributes.isEmpty()) {
+				for (SbiUserAttributes sbiUserAttributes : userAttributes) {
+					actualAttrs.add(sbiUserAttributes.getId().getAttributeId());
+				}
+			}
+
+			for (SbiUserAttributes sbiUserAttributes : user.getSbiUserAttributeses()) {
+				addedAttrs.add(sbiUserAttributes.getId().getAttributeId());
+			}
+
+			deletedAttrs = new HashSet<Integer>(actualAttrs);
+			alreadyPresentAttrs = new HashSet<Integer>(actualAttrs);
+
+			alreadyPresentAttrs.retainAll(addedAttrs);
+			deletedAttrs.removeAll(addedAttrs);
+			addedAttrs.removeAll(actualAttrs);
+
+			// remove deleted attributes
 			if (userAttributes != null && !userAttributes.isEmpty()) {
 				Iterator<SbiUserAttributes> attrsIt = userAttributes.iterator();
 				while (attrsIt.hasNext()) {
 					SbiUserAttributes temp = attrsIt.next();
-					attrsIt.remove();
-					aSession.delete(temp);
-					aSession.flush();
+					int attributeId = temp.getId().getAttributeId();
+
+					if (deletedAttrs.contains(attributeId)) {
+						attrsIt.remove();
+						aSession.delete(temp);
+						logDeletion(aSession, temp, opDate);
+						aSession.flush();
+					}
+
 				}
 			}
-			// add new attributes
-			Set<SbiUserAttributes> newAttributes = user.getSbiUserAttributeses();
+			// update attributes
+			if (userAttributes != null && !userAttributes.isEmpty()) {
+				Iterator<SbiUserAttributes> attrsIt = userAttributes.iterator();
+				while (attrsIt.hasNext()) {
+					SbiUserAttributes temp = attrsIt.next();
+					int attributeId = temp.getId().getAttributeId();
+
+					if (alreadyPresentAttrs.contains(attributeId)) {
+						if (newAttributes != null && !newAttributes.isEmpty()) {
+
+							SbiUserAttributes currUserAttr = null;
+							for (SbiUserAttributes sbiUserAttributes : newAttributes) {
+
+								if (sbiUserAttributes.getId().getAttributeId() == attributeId) {
+									currUserAttr = sbiUserAttributes;
+									break;
+								}
+							}
+
+							if (currUserAttr != null && !currUserAttr.getAttributeValue().equals(temp.getAttributeValue())) {
+								temp.setAttributeValue(currUserAttr.getAttributeValue());
+								updateSbiCommonInfo4Update(temp);
+								aSession.saveOrUpdate(temp);
+								logUpdate(aSession, temp, opDate);
+								aSession.flush();
+							}
+						}
+					}
+				}
+			}
+			// add new attributes and updates old ones
 			if (newAttributes != null && !newAttributes.isEmpty()) {
 				Iterator<SbiUserAttributes> attrsIt = newAttributes.iterator();
 				while (attrsIt.hasNext()) {
 					SbiUserAttributes attribute = attrsIt.next();
-					attribute.getId().setId(id);
-					updateSbiCommonInfo4Insert(attribute);
-					aSession.saveOrUpdate(attribute);
-					aSession.flush();
+					int attributeId = attribute.getId().getAttributeId();
+
+					if (addedAttrs.contains(attributeId)) {
+						attribute.getId().setId(id);
+						updateSbiCommonInfo4Insert(attribute);
+						aSession.saveOrUpdate(attribute);
+						logCreation(aSession, attribute, opDate);
+						aSession.flush();
+					}
+
 				}
 			}
 
@@ -1110,59 +1229,162 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	}
 
-	// public List<UserBO> loadSbiUserListFiltered(String hsql,Integer offset,
-	// Integer fetchSize) throws EMFUserError {
-	// logger.debug("IN");
-	// List<UserBO> toReturn = null;
-	// Session aSession = null;
-	// Transaction tx = null;
-	// Integer resultNumber;
-	// Query hibernateQuery;
-	//
-	// try {
-	// aSession = getSession();
-	// tx = aSession.beginTransaction();
-	// toReturn = new ArrayList();
-	// List toTransform = null;
-	//
-	// String hql = "select count(*) "+hsql;
-	// Query hqlQuery = aSession.createQuery(hql);
-	// Long temp = (Long)hqlQuery.uniqueResult();
-	// resultNumber = new Integer(temp.intValue());
-	//
-	// offset = offset < 0 ? 0 : offset;
-	// if(resultNumber > 0) {
-	// fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber):
-	// resultNumber;
-	// }
-	//
-	// hibernateQuery = aSession.createQuery(hsql);
-	// hibernateQuery.setFirstResult(offset);
-	// if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);
-	//
-	// toTransform = hibernateQuery.list();
-	//
-	// for (Iterator iterator = toTransform.iterator(); iterator.hasNext();) {
-	// SbiUser hibuser = (SbiUser) iterator.next();
-	// toReturn.add(toUserBO(hibuser));
-	// }
-	//
-	// } catch (HibernateException he) {
-	// logger.error("Error while loading the list of users", he);
-	//
-	// if (tx != null)
-	// tx.rollback();
-	//
-	// throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
-	//
-	// } finally {
-	// if (aSession != null) {
-	// if (aSession.isOpen())
-	// aSession.close();
-	// logger.debug("OUT");
-	// }
-	// }
-	// return toReturn;
-	// }
 
+
+
+
+
+	// TODO [HISTORY] Event
+
+
+	private void logCreation(Session aSession, SbiUser bean, Date opDate) {
+		SbiUserHistory currentEvent = new SbiUserHistory(bean);
+		updateSbiCommonInfo4Insert(currentEvent);
+		currentEvent.setTimeStart(opDate);
+		currentEvent.setTimeEnd(null);
+		aSession.save(currentEvent);
+	}
+
+	private void logCreation(Session aSession, SbiExtUserRoles bean, Date opDate) {
+		SbiExtUserRolesHistory currentEvent = new SbiExtUserRolesHistory(bean);
+		resetCommonInfo(currentEvent);
+		updateSbiCommonInfo4Insert(currentEvent);
+		currentEvent.setTimeStart(opDate);
+		currentEvent.setTimeEnd(null);
+		aSession.save(currentEvent);
+	}
+
+	private void logCreation(Session aSession, SbiUserAttributes bean, Date opDate) {
+		SbiUserAttributesHistory currentEvent = new SbiUserAttributesHistory(bean);
+		resetCommonInfo(currentEvent);
+		updateSbiCommonInfo4Insert(currentEvent);
+		currentEvent.setTimeStart(opDate);
+		currentEvent.setTimeEnd(null);
+		aSession.save(currentEvent);
+	}
+
+	private void logUpdate(Session aSession, SbiUser bean, Date opDate) {
+		SbiUserHistory lastEvent = getLastEventForSbiUser(aSession, bean);
+
+		lastEvent.setTimeEnd(opDate);
+		aSession.save(lastEvent);
+
+		SbiUserHistory currentEvent = new SbiUserHistory(bean);
+		resetCommonInfo(currentEvent);
+		updateSbiCommonInfo4Update(currentEvent);
+		currentEvent.setTimeStart(opDate);
+		currentEvent.setTimeEnd(null);
+		aSession.save(currentEvent);
+
+	}
+
+	private void logUpdate(Session aSession, SbiUserAttributes bean, Date opDate) {
+		SbiUserAttributesHistory lastEvent = getLastEventForSbiUserAttributes(aSession, bean);
+
+		lastEvent.setTimeEnd(opDate);
+		aSession.save(lastEvent);
+
+		SbiUserAttributesHistory currentEvent = new SbiUserAttributesHistory(bean);
+		resetCommonInfo(currentEvent);
+		updateSbiCommonInfo4Update(currentEvent);
+		currentEvent.setTimeStart(opDate);
+		currentEvent.setTimeEnd(null);
+		aSession.save(currentEvent);
+
+	}
+
+	private void logDeletion(Session aSession, SbiUser bean, Date opDate) {
+		SbiUserHistory lastEvent = getLastEventForSbiUser(aSession, bean);
+
+		if (lastEvent != null) {
+			lastEvent.setTimeEnd(opDate);
+			aSession.save(lastEvent);
+
+			SbiUserHistory newEvent = new SbiUserHistory(bean);
+			resetCommonInfo(newEvent);
+			updateSbiCommonInfo4Delete(newEvent);
+			newEvent.setTimeStart(opDate);
+			newEvent.setTimeEnd(opDate);
+			aSession.save(newEvent);
+		}
+	}
+
+	private void logDeletion(Session aSession, SbiExtUserRoles bean, Date opDate) {
+		SbiExtUserRolesHistory lastEvent = getLastEventForSbiExtUserRoles(aSession, bean);
+
+		if (lastEvent != null) {
+			lastEvent.setTimeEnd(opDate);
+			aSession.save(lastEvent);
+
+			SbiExtUserRolesHistory newEvent = new SbiExtUserRolesHistory(bean);
+			resetCommonInfo(newEvent);
+			updateSbiCommonInfo4Delete(newEvent);
+			newEvent.setTimeStart(opDate);
+			newEvent.setTimeEnd(opDate);
+			aSession.save(newEvent);
+		}
+	}
+
+	private void logDeletion(Session aSession, SbiUserAttributes bean, Date opDate) {
+		SbiUserAttributesHistory lastEvent = getLastEventForSbiUserAttributes(aSession, bean);
+
+		if (lastEvent != null) {
+			lastEvent.setTimeEnd(opDate);
+			aSession.save(lastEvent);
+
+			SbiUserAttributesHistory newEvent = new SbiUserAttributesHistory(bean);
+			resetCommonInfo(newEvent);
+			updateSbiCommonInfo4Delete(newEvent);
+			newEvent.setTimeStart(opDate);
+			newEvent.setTimeEnd(opDate);
+			aSession.save(newEvent);
+		}
+	}
+
+	private SbiUserHistory getLastEventForSbiUser(Session aSession, SbiUser bean) {
+		Criteria criteria = aSession.createCriteria(SbiUserHistory.class);
+		criteria.add(Restrictions.eq("id", bean.getId()));
+		criteria.add(Restrictions.isNull("timeEnd"));
+		SbiUserHistory lastEvent = (SbiUserHistory) criteria.uniqueResult();
+		return lastEvent;
+	}
+
+	private SbiExtUserRolesHistory getLastEventForSbiExtUserRoles(Session aSession, SbiExtUserRoles bean) {
+		Criteria criteria = aSession.createCriteria(SbiExtUserRolesHistory.class);
+		criteria.add(Restrictions.eq("id", bean.getId().getId()));
+		criteria.add(Restrictions.eq("extRoleId", bean.getId().getExtRoleId()));
+		criteria.add(Restrictions.isNull("timeEnd"));
+		SbiExtUserRolesHistory lastEvent = (SbiExtUserRolesHistory) criteria.uniqueResult();
+		return lastEvent;
+	}
+
+	private SbiUserAttributesHistory getLastEventForSbiUserAttributes(Session aSession, SbiUserAttributes bean) {
+		Criteria criteria = aSession.createCriteria(SbiUserAttributesHistory.class);
+		criteria.add(Restrictions.eq("id", bean.getId().getId()));
+		criteria.add(Restrictions.eq("attributeId", bean.getId().getAttributeId()));
+		criteria.add(Restrictions.isNull("timeEnd"));
+		SbiUserAttributesHistory lastEvent = (SbiUserAttributesHistory) criteria.uniqueResult();
+		return lastEvent;
+	}
+
+	/**
+	 * Only for historical tables.
+	 *
+	 * You cannot reset USER_IN and TIME_IN on the original tables.
+	 */
+	private void resetCommonInfo(SbiHibernateModel bean) {
+		SbiCommonInfo commonInfo = bean.getCommonInfo();
+
+		commonInfo.setSbiVersionDe(null);
+		commonInfo.setSbiVersionIn(null);
+		commonInfo.setSbiVersionUp(null);
+
+		commonInfo.setTimeDe(null);
+		commonInfo.setTimeIn(null);
+		commonInfo.setTimeUp(null);
+
+		commonInfo.setUserDe(null);
+		commonInfo.setUserIn(null);
+		commonInfo.setUserUp(null);
+	}
 }
