@@ -8,21 +8,16 @@
 <div layout="row"  layout-align="start center" >
 	<label>{{translate.load("sbi.chartengine.axisstylepopup.labelParams.enable.rotationOfLabelYAxis")}}</label>
 	<md-input-container class="small counter">  
-		<md-checkbox ng-model="axisForDisplay.LABELS.rotation" ng-true-value="0" ng-false-value="'auto'"
+		<md-checkbox ng-model="axisForDisplay.LABELS.rotationEnabled"
 		style="margin:0 8px" aria-label="enableRotation" name="enableRotation"></md-checkbox>
 	</md-input-container>
 </div>
 
-<md-input-container class="md-block" ng-if="axisForDisplay.LABELS.rotation!='auto'"> 
+<md-input-container class="md-block"> 
 		<label>{{translate.load("sbi.chartengine.axisstylepopup.labelParams.rotationOfLabelYAxis")}}</label>
 		<input  type="number" step="any" name="gauge_labels_rotation"
-			ng-model="axisForDisplay.LABELS.rotation"  /> 
+			ng-model="axisForDisplay.LABELS.rotation" ng-disabled="!axisForDisplay.LABELS.rotationEnabled" /> 
 	</md-input-container>
 	
-<md-input-container class="md-block" ng-if="axisForDisplay.LABELS.rotation=='auto'"> 
-		<label>{{translate.load("sbi.chartengine.axisstylepopup.labelParams.rotationOfLabelYAxis")}}</label>
-		<input readonly step="any" name="gauge_labels_rotation"
-			ng-model="axisForDisplay.LABELS.rotation"  /> 
-	</md-input-container>
 
 </div>
