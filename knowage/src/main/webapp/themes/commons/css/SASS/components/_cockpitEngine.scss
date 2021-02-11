@@ -792,6 +792,7 @@
 
 	cockpit-chart-widget {
 		/* d3 binded classes for the chart widgets */
+		flex-direction: column;
 		.d3chartclass {
 			position: relative;
 			.tooltip {
@@ -799,8 +800,15 @@
 			}
 		}
 		.sonification-controls{
-			position: absolute;
-		    bottom: 10px;
+		    position: relative;
+		    bottom: 0;
+		    display: inline-flex;
+		    justify-content: space-around;
+		    align-items: center;
+		    text-align: center;
+		    height: 40px;
+		    width: 200px;
+		    padding: 0;
 		    left: 50%;
 		    transform: translateX(-50%);
 		}
