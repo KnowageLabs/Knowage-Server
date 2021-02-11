@@ -243,9 +243,11 @@
 					paramArrayTree[z] = parameter.parameterValue[z];
 					//modify description tree
 					if(typeof parameter.parameterDescription !== 'undefined'){
-						paramStrTree += parameter.parameterDescription[parameter.parameterValue[z]];
+						var descr = parameter.parameterDescription[parameter.parameterValue[z]];
+						if (descr == 'undefined') descr = parameter.parameterDescription[z];
+						if (descr == 'undefined') descr = parameter.parameterValue[z];
+						paramStrTree += descr;
 					}
-					if (paramStrTree == 'undefined') paramStrTree = parameter.parameterValue[z];
 				}
 				executionService.jsonDatumValue = paramArrayTree;
 				executionService.jsonDatumDesc = paramStrTree;
