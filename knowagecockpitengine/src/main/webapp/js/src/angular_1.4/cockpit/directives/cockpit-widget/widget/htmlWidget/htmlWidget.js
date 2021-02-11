@@ -107,17 +107,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.showPreview = function(datasetLabel){
-//		    $mdDialog.show({
-//		      controller: function(scope){
-//		    	  scope.previewUrl = '/knowage/restful-services/2.0/datasets/preview?datasetLabel='+(datasetLabel || cockpitModule_datasetServices.getDatasetLabelById($scope.ngModel.dataset.dsId));
-//		    	  scope.closePreview = function(){
-//		    		  $mdDialog.hide();
-//		    	  }
-//		      },
-//		      templateUrl: $scope.getTemplateUrl('htmlWidgetPreviewDialogTemplate'),
-//		      parent: angular.element(document.body),
-//		      clickOutsideToClose:true
-//		    })
 			var dataset = cockpitModule_datasetServices.getDatasetByLabel(datasetLabel);
 			$scope.doSelection(null, null, null, null, null, null, dataset.id.dsId, null);
 		}
@@ -386,12 +375,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 * Function to replace kn-calc placeholders
 		 */
 		$scope.parseCalc = function(rawHtml) {
-			if(rawHtml.match($scope.advancedCalcRegex)){
-				return rawHtml.replace($scope.advancedCalcRegex, $scope.calcReplacer);
-			}else {
-				return rawHtml.replace($scope.calcRegex, $scope.calcReplacer);
-			}
-			
+			rawHtml = rawHtml.replace($scope.advancedCalcRegex, $scope.calcReplacer);
+			rawHtml = rawHtml.replace($scope.calcRegex, $scope.calcReplacer);
+			return rawHtml;
 		}
 
 		/**
