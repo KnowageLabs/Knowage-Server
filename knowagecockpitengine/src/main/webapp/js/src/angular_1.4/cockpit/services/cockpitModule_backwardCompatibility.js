@@ -167,6 +167,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 					if(model.style.tr && model.style.tr.height && typeof model.style.tr.height != 'number') model.style.tr.height = parseInt(model.style.tr.height);
 				}
+				if(model.type=='chart') {					
+					for (var k in model.content.chartTemplate.CHART.AXES_LIST.AXIS) {
+						if (model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotation && model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotation!='auto') {
+							model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotationEnabled = true;
+						}
+					}
+				}				
 				if(model.type=='map') {
 
 					// Ignore models that has zero elements in model.content.columnSelectedOfDataset
