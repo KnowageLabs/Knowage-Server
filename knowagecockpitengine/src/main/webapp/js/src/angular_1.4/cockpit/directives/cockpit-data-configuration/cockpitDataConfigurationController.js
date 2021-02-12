@@ -492,13 +492,17 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 
 		    	  $scope.parametersAreSet = function() {
 		    		  var newDs = $scope.tmpAvaiableDataset;
-		    		  for(var i = 0; i < newDs[0].parameters.length; i++) {
-		    			  if(newDs[0].parameters[i].value) {
-		    				  cockpitModule_datasetServices.parameterHasValue = true;
-		    			  } else {
-		    				  cockpitModule_datasetServices.parameterHasValue = false;
-		    			  }
-		    		  }
+					  if (newDs.length > 0) {
+		    		    for(var i = 0; i < newDs[0].parameters.length; i++) {
+		    			    if(newDs[0].parameters[i].value) {
+		    				    cockpitModule_datasetServices.parameterHasValue = true;
+		    			    } else {
+		    			  	  cockpitModule_datasetServices.parameterHasValue = false;
+		    			    }
+		    		    }
+					  } else {
+						  cockpitModule_datasetServices.parameterHasValue = true;
+					  }
 		    		  return cockpitModule_datasetServices.parameterHasValue;
 		    	  }
 
