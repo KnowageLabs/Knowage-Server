@@ -101,7 +101,7 @@
 
 				if(parameter.defaultValue != undefined && parameter.defaultValue != '' && parameter.defaultValue!= '[]'){
 					if (parameter.type == "NUM") parameter.parameterValue = parseInt(parameter.defaultValue);
-					else if (parameter.type == "DATE") parameter.parameterValue = Date.parse(parameter.defaultValue);
+					else if (parameter.type == "DATE") parameter.parameterValue = new Date(parameter.defaultValue.split("#")[0]);
 					else parameter.parameterValue = angular.copy(parameter.defaultValue);
 					parameter.parameterDescription = angular.copy(parameter.defaultValueDescription);
 					if(Array.isArray(parameter.parameterValue) && !Array.isArray(parameter.parameterDescription)){
