@@ -251,6 +251,13 @@ public class ExcelExporter {
 		return out.toByteArray();
 	}
 
+	private void exportEmptyExcel(Workbook wb) {
+		Sheet sh = wb.createSheet();
+		Row row = sh.createRow(0);
+		Cell cell = row.createCell(0);
+		cell.setCellValue("No data");
+	}
+
 	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) throws JSONException, SerializationException {
 		if (templateString == null) {
 			ObjTemplate template = null;
@@ -293,6 +300,8 @@ public class ExcelExporter {
 			List<JSONObject> excelSheets = getExcelSheetsList(templateString);
 			if (!excelSheets.isEmpty()) {
 				exportWidgetsToExcel(excelSheets, wb);
+			} else {
+				exportEmptyExcel(wb);
 			}
 		}
 
