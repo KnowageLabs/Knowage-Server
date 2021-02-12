@@ -440,7 +440,11 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 				 	}
 
 				 	function replaceIframe(widget){
-				 		var element = document.querySelector('#w'+widget.id+' iframe').contentWindow.document.getElementsByTagName("iframe")[0].contentWindow.document.getElementsByTagName("iframe")[0].contentWindow.document.getElementsByTagName('body')[0];
+				 		if(widget.type == 'python' && (widget.pythonOutputType == 'html' || widget.pythonOutputType == 'bokeh')) {
+							var element = document.querySelector('#w'+widget.id+' iframe').contentWindow.document.getElementsByTagName('body')[0];
+						}else{
+				 			var element = document.querySelector('#w'+widget.id+' iframe').contentWindow.document.getElementsByTagName("iframe")[0].contentWindow.document.getElementsByTagName("iframe")[0].contentWindow.document.getElementsByTagName('body')[0];
+				 		}
 				 		if(element.className && element.className == 'kn-svgviewer') {
 				 			element = element.querySelector('iframe');
 					 		var xml = new XMLSerializer().serializeToString(angular.element(element)[0].contentWindow.document.getElementsByTagName('svg')[0]);
@@ -457,10 +461,9 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 					 			width: element.clientWidth,
 					 			height: element.scrollHeight
 					 		}).then(function(canvas){
-					 			document.querySelector('#divCanvas_'+widget.id).classList.add('show-for-canvas');
-					 			document.querySelector('#divCanvas_'+widget.id).innerHTML = '';
-					 			canvas.style.height = "100%";
-					 			document.querySelector('#divCanvas_'+widget.id).appendChild(canvas);
+					 			document.querySelector('#canvas_'+widget.id).classList.add('show-for-canvas');
+					 			document.querySelector('#canvas_'+widget.id).innerHTML = '';
+					 			document.querySelector('#canvas_'+widget.id).appendChild(canvas);
 					 		},function(error){
 					 			reject(error);
 					 		})
@@ -521,7 +524,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 				 					}
 				 				}
 					 		for(var w in sheet.widgets){
-					 			if(sheet.widgets[w].type == 'python'){
+					 			if(sheet.widgets[w].type == 'python' && sheet.widgets[w].pythonOutputType != 'img'){
 					 				replaceIframe(sheet.widgets[w]);
 					 			}
 					 		}

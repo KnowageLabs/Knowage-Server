@@ -1280,6 +1280,10 @@ filter-by-tags {
   width: 90%;
 }
 
+iframe {
+  border: 0;
+}
+
 @supports (-ms-ime-align: auto) {
   .kn-list-detail {
     overflow-y: hidden;
