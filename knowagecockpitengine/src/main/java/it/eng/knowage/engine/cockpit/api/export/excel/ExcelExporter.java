@@ -364,13 +364,15 @@ public class ExcelExporter {
 
 	private void exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj) throws SerializationException {
 		try {
+			int totExportedWidgets = 0;
 			for (int i = 0; i < widgetsJson.length(); i++) {
 				JSONObject currWidget = widgetsJson.getJSONObject(i);
 				String widgetId = currWidget.getString("id");
 				String widgetType = currWidget.getString("type");
 				if (Arrays.asList(WIDGETS_TO_IGNORE).contains(widgetType.toLowerCase()))
 					continue;
-				else if (widgetType.equalsIgnoreCase("static-pivot-table") && optionsObj.has(widgetId)) {
+				totExportedWidgets++;
+				if (widgetType.equalsIgnoreCase("static-pivot-table") && optionsObj.has(widgetId)) {
 					JSONObject options = optionsObj.getJSONObject(widgetId);
 					exportWidgetCrossTab(templateString, widgetId, wb, options);
 				} else if (widgetType.equalsIgnoreCase("map")) {
@@ -379,9 +381,19 @@ public class ExcelExporter {
 					exportWidget(templateString, widgetId, wb);
 				}
 			}
+			if (totExportedWidgets == 0) {
+				exportEmptyExcel(wb);
+			}
 		} catch (JSONException e) {
 			logger.error("Error exporting cockpit", e);
 		}
+	}
+
+	private void exportEmptyExcel(Workbook wb) {
+		Sheet sh = wb.createSheet();
+		Row row = sh.createRow(0);
+		Cell cell = row.createCell(0);
+		cell.setCellValue("No data");
 	}
 
 	private void exportWidget(String templateString, String widgetId, Workbook wb) throws SerializationException {
