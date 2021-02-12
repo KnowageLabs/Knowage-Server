@@ -53,7 +53,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   			String[] tempArray = language.split(",");
   			Locale tempLocaleObj = new Locale(tempArray[0], tempArray[1]);
   			String tempLang = tempLocaleObj.getISO3Language();
-  			json.put("language", tempLocaleObj.getDisplayLanguage(defaultLocaleObj));
+  			json.put("language", tempLocaleObj.getDisplayLanguage(locale));
+  			json.put("iso3code", tempLang);
   			if(tempLang.equals(defaultLang)) {
   				json.put("defaultLanguage", true);
   			}

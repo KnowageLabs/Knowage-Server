@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-checkbox ng-model="emptyMessage"  aria-label="Find Empty Fields">
 									{{translate.load("kn.internationalization.checkbox.showBlankMessages")}}
 								</md-checkbox> 
-							</div>						
+							</div>					
 						  	<table class="kn-table">
 						  		<thead>
 							  		<tr>
