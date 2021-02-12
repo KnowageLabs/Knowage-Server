@@ -1014,7 +1014,7 @@ public class ExcelExporter {
 					excelSheets.add(datastoreObj);
 
 				} else if ("table".equals(widgetType) || "chart".equals(widgetType) || "advanced-table".equals(widgetType) || "discovery".equals(widgetType)
-						|| "customchart".equals(widgetType)) {
+						|| "customchart".equals(widgetType) || "python".equals(widgetType)) {
 					JSONObject datasetObj = widget.getJSONObject("dataset");
 					int datasetId = datasetObj.getInt("dsId");
 					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
