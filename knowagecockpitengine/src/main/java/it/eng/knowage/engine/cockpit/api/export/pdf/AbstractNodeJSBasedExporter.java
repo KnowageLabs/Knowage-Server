@@ -235,6 +235,7 @@ public abstract class AbstractNodeJSBasedExporter {
 		final Path outputDir = Files.createTempDirectory("knowage-exporter-2");
 
 		Files.createDirectories(outputDir);
+		logger.info("Files will be placed in: " + outputDir);
 
 		BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
 		int sheetCount = getSheetCount(document);
@@ -243,13 +244,16 @@ public abstract class AbstractNodeJSBasedExporter {
 		double deviceScaleFactor = getDeviceScaleFactor(document);
 
 		String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
+		logger.debug("Encoded User Id: " + encodedUserId);
 
 		URI url = UriBuilder.fromUri(requestUrl).replaceQueryParam("outputType_description", "HTML").replaceQueryParam("outputType", "HTML")
 				.replaceQueryParam("export", null).build();
+		logger.debug("URL: " + url);
 
 		// Script
 		String cockpitExportScriptPath = SingletonConfig.getInstance().getConfigValue(CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
 		Path exportScriptFullPath = Paths.get(cockpitExportScriptPath, SCRIPT_NAME);
+		logger.info("Script Path: " + cockpitExportScriptPath);
 
 		if (!Files.isRegularFile(exportScriptFullPath)) {
 			String msg = String.format("Cannot find export script at \"%s\": did you set the correct value for %s configuration?", exportScriptFullPath,
@@ -262,9 +266,12 @@ public abstract class AbstractNodeJSBasedExporter {
 		ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), url.toString(), encodedUserId, outputDir.toString(),
 				Integer.toString(sheetCount), Integer.toString(sheetWidth), Integer.toString(sheetHeight), Double.toString(deviceScaleFactor));
 
+		logger.info("Starting export script");
 		Process exec = processBuilder.start();
 
+		logger.info("Waiting...");
 		exec.waitFor();
+		logger.warn("Exit value: " + exec.exitValue());
 
 		final List<InputStream> imagesInputStreams = new ArrayList<InputStream>();
 
