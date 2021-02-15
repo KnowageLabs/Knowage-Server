@@ -134,14 +134,15 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (ObjectsAccessVerifier.canDeleteBIObject(document.getId(), getUserProfile())) {
+			
 			try {
+				CockpitStatisticsTablesUtils.deleteCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
 				DAOFactory.getBIObjectDAO().eraseBIObject(document, null);
 			} catch (EMFUserError e) {
 				logger.error("Error while deleting the specified document", e);
 				throw new SpagoBIRuntimeException("Error while deleting the specified document", e);
 			}
 
-			CockpitStatisticsTablesUtils.deleteCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
 			return Response.ok().build();
 		} else
 			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to delete document with label [" + label + "]");

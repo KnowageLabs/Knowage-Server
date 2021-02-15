@@ -169,14 +169,15 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		try {
 			documentDao = DAOFactory.getBIObjectDAO();
 			document = documentDao.loadBIObjectById(id);
+
+			CockpitStatisticsTablesUtils.deleteCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
+
 			DAOFactory.getBIObjectDAO().eraseBIObject(document, null);
 			Assert.assertNotNull(document, "Document can not be null");
 		} catch (EMFUserError e) {
 			logger.error("Document can not be deleted", e);
 			throw new SpagoBIRestServiceException("Deleting of document has failed", buildLocaleFromSession(), e);
 		}
-
-		CockpitStatisticsTablesUtils.deleteCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
 
 		logger.debug("OUT");
 		return id;
