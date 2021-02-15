@@ -237,6 +237,11 @@
          <!-- Tags mapping -->
          <mapping resource="it/eng/spagobi/tools/tag/metadata/mapping/SbiTag.hbm.xml" />
          <mapping resource="it/eng/spagobi/tools/tag/metadata/mapping/SbiDataSetTag.hbm.xml" />
+         
+         <!-- Cockpit widgets and associations -->
+         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiCockpitAssociation.hbm.xml" />
+         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiCockpitWidget.hbm.xml" />
+         
         
         <!-- end mapping -->
         
