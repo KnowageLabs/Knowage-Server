@@ -778,7 +778,7 @@
 				var allCorrelatedParams = getCorrelatedParameters(parameter);
 				for (var i=0; i<allCorrelatedParams.length; i++) {
 					var correlatedParam = allCorrelatedParams[i];
-					if (correlatedParam.defaultValues) correlatedParam.defaultValues = [];
+					if (correlatedParam.defaultValues) correlatedParam.parameterValue = "";
 					$scope.resetParameter(correlatedParam, mainReset, true);
 				}
 			}
