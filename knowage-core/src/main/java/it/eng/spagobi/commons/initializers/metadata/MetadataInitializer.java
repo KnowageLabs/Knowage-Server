@@ -55,6 +55,8 @@ public class MetadataInitializer extends SpagoBIInitializer {
 		metadataInitializers.add(new ConfigurationsInitializer());
 		metadataInitializers.add(new AlertListenerInitializer());
 		metadataInitializers.add(new AlertActionInitializer());
+		metadataInitializers.add(new CockpitStatisticsInitializer());
+
 		// metadataInitializers.add(new KpiPeriodicityInitializer());
 		// metadataInitializers.add(new UnitGrantInitializer());
 	}

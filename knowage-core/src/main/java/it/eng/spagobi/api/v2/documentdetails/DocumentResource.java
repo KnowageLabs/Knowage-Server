@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.utils.CockpitStatisticsTablesUtils;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.api.v2.documentdetails.subresources.DataDependenciesResource;
 import it.eng.spagobi.api.v2.documentdetails.subresources.DocumentImageResource;
@@ -46,6 +47,7 @@ import it.eng.spagobi.api.v2.documentdetails.subresources.TemplateResource;
 import it.eng.spagobi.api.v2.documentdetails.subresources.VisualDependenciesResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -173,6 +175,9 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			logger.error("Document can not be deleted", e);
 			throw new SpagoBIRestServiceException("Deleting of document has failed", buildLocaleFromSession(), e);
 		}
+
+		CockpitStatisticsTablesUtils.deleteCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
+
 		logger.debug("OUT");
 		return id;
 	}
