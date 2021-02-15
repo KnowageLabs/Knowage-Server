@@ -327,6 +327,9 @@
 					}
 				}
 
+				parameter.defaultValues.sort( function(a,b) {
+					 return (a.description > b.description) ? 1 : ((b.description > a.description) ? -1 : 0);
+					});
 			};
 			var prepareParameterForNewValues = function(execProperties,data){
 				var parameters = execProperties.parametersData.documentParameters;
