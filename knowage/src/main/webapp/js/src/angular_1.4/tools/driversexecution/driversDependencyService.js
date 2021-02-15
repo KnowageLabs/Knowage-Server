@@ -378,14 +378,15 @@
 										if(execProperties.parametersData.documentParameters[z].urlName==response.data.idParam){
 											execProperties.parametersData.documentParameters[z].defaultValues = [];
 											//BUILD DEAFULT VALUE
-											var defaultValueArrCache = setDefaultValues(execProperties.parametersData.documentParameters[z],response);
+											var defaultValueArrCache = getDefaultValues(execProperties.parametersData.documentParameters[z],response);
 											var parameterValue = execProperties.parametersData.documentParameters[z].parameterValue;
+											var parameterDescription = execProperties.parametersData.documentParameters[z].parameterDescription;
 											//Remove parameter value if not present in default value (clean operation)
 											//MULTIVALUE
 											if(angular.isArray(parameterValue)) {
 												var paramValueArrCache= [];
 												angular.copy(parameterValue,paramValueArrCache);
-												for(var u = 0; u < paramValueArrCache.length; u++){
+												for(var u = 0; u < paramValueArrCache.values.length; u++){
 													var index = parameterValue.indexOf(paramValueArrCache[u]);
 													if(defaultValueArrCache.indexOf(paramValueArrCache[u]) === -1) {
 														parameterValue.splice(index, 1);
@@ -393,9 +394,7 @@
 												}
 											}else{
 												//SINGLEVALUE
-												if(defaultValueArrCache.indexOf(parameterValue) === -1) {
-													parameterValue = '';
-												}
+												parameterValue = '';
 											}
 
 											//if mandatory and is unique default value
@@ -453,13 +452,16 @@
 				}
 			}
 
-			var setDefaultValues = function(parameter,response){
-				var defaultValueArrCache = [];
+			var getDefaultValues = function(parameter,response){
+				var defaultValueArrCache = {};
+				defaultValueArrCache.descriptions = [];
+				defaultValueArrCache.values = [];
 				if(response.data.result.root != undefined) {
 					for(var k=0; k<response.data.result.root.length; k++){
 						response.data.result.root[k].isEnabled = true;
 						parameter.defaultValues.push(response.data.result.root[k]);
-						defaultValueArrCache.push(response.data.result.root[k].value);
+						defaultValueArrCache.values.push(response.data.result.root[k].value);
+						defaultValueArrCache.descriptions.push(response.data.result.root[k].description);
 					}
 				}
 				return defaultValueArrCache;

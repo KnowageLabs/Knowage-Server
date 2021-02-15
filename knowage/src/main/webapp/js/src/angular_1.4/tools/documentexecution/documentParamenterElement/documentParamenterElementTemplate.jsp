@@ -184,7 +184,6 @@
 			<!-- single -->
 			<md-select ng-disabled="datasetSettings" ng-model="parameter.parameterValue" ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory} "
 		        ng-change="toggleComboParameter(parameter)" ng-if="showDefaultValueAreValid(parameter) && !parameter.multivalue  && parameter.showOnPanel=='true'"> 
-				<md-option></md-option>
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
 					{{defaultParameter.label}}
 				</md-option>
