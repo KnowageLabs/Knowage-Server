@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import IframeRenderer from '@/modules/shared/IframeRenderer.vue'
-import galleryManagementRoutes from '@/modules/managers/galleryManagement/GalleryManagement.routes.js'
+import managersRoutes from '@/modules/managers/managers.routes.js'
 
 const baseRoutes = [
   {
@@ -30,7 +30,7 @@ const baseRoutes = [
   },
 ]
 
-const routes = baseRoutes.concat(galleryManagementRoutes)
+const routes = baseRoutes.concat(managersRoutes)
 
 const router = createRouter({
   base: '/knowage/',

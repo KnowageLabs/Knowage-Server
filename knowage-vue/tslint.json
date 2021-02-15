@@ -1,3 +1,5 @@
 {
-    "quotemark":[true, "single"]
+    "quotemark":[true, "single"],
+    "triple-equals": [true, "allow-null-check"],
+    "indent": [true, "tabs"]
 }

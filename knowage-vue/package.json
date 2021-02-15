@@ -22,6 +22,7 @@
     "primeicons": "^4.1.0",
     "primevue": "^3.2.2",
     "sass-loader": "^10.1.1",
+    "uuid": "^8.3.2",
     "vue": "^3.0.5",
     "vue-axios": "^3.2.4",
     "vue-class-component": "^8.0.0-0",

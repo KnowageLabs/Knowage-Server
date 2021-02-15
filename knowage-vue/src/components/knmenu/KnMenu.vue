@@ -44,6 +44,7 @@
    import InfoDialog from '@/components/infoDialog/InfoDialog.vue'
    import KnMenuItem from '@/components/knmenu/KnMenuItem.vue'
    import { getGravatar } from '@/helpers/gravatarHelper'
+   import auth  from '@/helpers/authHelper'
 
    export default defineComponent({
       name: 'Knmenu',
@@ -61,17 +62,23 @@
             userMenu: new Array<MenuItem>(),
             display: false,
             fixedMenu: [
-               {label:'home', icon:'pi pi-fw pi-home', to:{name:'home'}},
-               {label:'about', icon:'pi pi-fw pi-star', to:{name:'about'}},
+               {label:'home', icon:'pi pi-fw pi-home', to:'/knowage'},
+               {label:'about', icon:'pi pi-fw pi-star', to:'/knowage/about'},
+               {label:'galleryManagement', icon:'pi pi-th-large', to:'/knowage/gallerymanagement'},
                {label:'info',icon:'pi pi-fw pi-info', command: () => {
                   this.toggleInfo()
                }},
-               {label:'logout', icon:'pi pi-fw pi-sign-out', url:process.env.VUE_APP_API_URL + '/knowage/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE'}]
+               {label:'logout', icon:'pi pi-fw pi-sign-out', command: () => {
+                  this.logout()
+               }}]
          }
       },
       methods:{
          toggleInfo(){
             this.display = !this.display
+         },
+         logout(){
+            auth.logout()
          },
          itemClick(event){
             const item = event.item;

@@ -18,6 +18,7 @@ import 'primeflex/primeflex.css'
 import ToastService from 'primevue/toastservice'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
+import Toolbar from 'primevue/toolbar'
 
 import Tooltip from 'primevue/tooltip'
 
@@ -39,6 +40,7 @@ createApp(App)
 
     .component('Button', Button)
     .component('Card', Card)
+    .component('Toolbar', Toolbar)
 
     .mount('#app')
 
