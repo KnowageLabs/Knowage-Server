@@ -160,7 +160,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				if(model.type=='chart') {					
 					for (var k in model.content.chartTemplate.CHART.AXES_LIST.AXIS) {
-						if (model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotation && model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotation!='auto') {
+						if (model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS && model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotation && model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotation!='auto') {
 							model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotationEnabled = true;
 						}
 					}
