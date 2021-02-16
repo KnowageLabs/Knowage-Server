@@ -136,6 +136,12 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		}
 	}
 
+	function translateEnterpriseDatasetNames(datasetsArray) {
+		for (var i=0; i<datasetsArray.length; i++) {
+			datasetsArray[i].name = $scope.i18n.getI18n(datasetsArray[i].name);
+		}
+	}
+
 	/**
 	 * load all datasets - All Data Set Tab
 	 */
@@ -182,6 +188,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.enterpriseDatasets);
 			createSourceNameOnDataset($scope.enterpriseDatasets);
+			translateEnterpriseDatasetNames($scope.enterpriseDatasets);
 			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
 			tagsHandlerService.setEnterpriseDS($scope.enterpriseDatasets);
 		},function(response){
