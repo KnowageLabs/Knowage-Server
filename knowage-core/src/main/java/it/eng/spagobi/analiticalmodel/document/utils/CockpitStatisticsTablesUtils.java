@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -43,6 +44,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiCockpitAssociation;
 import it.eng.spagobi.commons.metadata.SbiCockpitWidget;
@@ -99,6 +101,7 @@ public class CockpitStatisticsTablesUtils {
 
 	public static void parseTemplate(SbiObjects sbiObjects, Session session, boolean initializer) {
 
+		Transaction tx = session.beginTransaction();
 		Criteria c = session.createCriteria(SbiObjTemplates.class, "sot");
 		c.add(Restrictions.eq("sot.sbiObject.biobjId", sbiObjects.getBiobjId()));
 		c.add(Restrictions.eq("sot.active", true));
@@ -115,7 +118,6 @@ public class CockpitStatisticsTablesUtils {
 				String contentString = new String(contentByte);
 				JSONObject template = new JSONObject(contentString);
 
-				Transaction tx = session.beginTransaction();
 				Set<String> associationsMap = handleDatasetAssociations(sbiObjects, template, session, initializer);
 				Map<Integer, JSONObject> dataSetMap = getDatasetMap(sbiObjects, template, session);
 
@@ -194,7 +196,6 @@ public class CockpitStatisticsTablesUtils {
 
 								if (!tx.wasCommitted())
 									tx.commit();
-
 							}
 
 						} // end single widget
@@ -203,8 +204,15 @@ public class CockpitStatisticsTablesUtils {
 
 			} catch (JSONException e) {
 				logger.error("Error while reading template information");
+				if (tx != null)
+					tx.rollback();
 			} catch (Exception e) {
 				logger.error("Error during parsing template widget", e);
+				if (tx != null)
+					tx.rollback();
+			} finally {
+				if (!tx.wasCommitted())
+					tx.commit();
 			}
 		}
 		logger.debug("OUT");
@@ -361,7 +369,7 @@ public class CockpitStatisticsTablesUtils {
 				JSONObject contDataset = content.optJSONObject("dataset");
 				if (contDataset != null) {
 					JSONObject id = contDataset.optJSONObject("id");
-					if (id.has("dsId")) {
+					if (id != null && id.has("dsId")) {
 						Integer oldId = id.optInt("dsId");
 						if (oldId != null) {
 							sbiCockpitWidgets.setDsId(oldId);
@@ -453,14 +461,23 @@ public class CockpitStatisticsTablesUtils {
 								sbiCockpitAssociations.setBiobjId(sbiObjects.getBiobjId());
 
 								if (field1.getString("store") != null) {
-									Integer fromDatasetId = dataSetDAO.loadDataSetByLabel(field1.getString("store")).getId();
-									sbiCockpitAssociations.setDsIdFrom(fromDatasetId);
+									try {
+										Integer fromDatasetId = dataSetDAO.loadDataSetByLabel(field1.getString("store")).getId();
+										sbiCockpitAssociations.setDsIdFrom(fromDatasetId);
+
+									} catch (SpagoBIDAOException e) {
+										logger.warn(e.getMessage(), e);
+									}
 									sbiCockpitAssociations.setColumnNameFrom(field1.getString("column"));
 								}
 
 								if (field2.getString("store") != null) {
-									Integer toDatasetId = dataSetDAO.loadDataSetByLabel(field2.getString("store")).getId();
-									sbiCockpitAssociations.setDsIdTo(toDatasetId);
+									try {
+										Integer toDatasetId = dataSetDAO.loadDataSetByLabel(field2.getString("store")).getId();
+										sbiCockpitAssociations.setDsIdTo(toDatasetId);
+									} catch (SpagoBIDAOException e) {
+										logger.warn(e.getMessage(), e);
+									}
 									sbiCockpitAssociations.setColumnNameTo(field2.getString("column"));
 								}
 
@@ -475,6 +492,10 @@ public class CockpitStatisticsTablesUtils {
 					}
 				}
 			}
+		} catch (HibernateException e) {
+			logger.error(e.getMessage(), e);
+			if (tx != null)
+				tx.rollback();
 		} finally {
 			if (!tx.wasCommitted())
 				tx.commit();
