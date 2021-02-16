@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
@@ -20,10 +21,17 @@ class DataSetMainDTO {
 
 	protected final SbiDataSet dataset;
 	private final List<DataSetResourceAction> actions = new ArrayList<>();
+	private final int usedByNDocs;
 
 	public DataSetMainDTO(SbiDataSet dataset) {
 		super();
 		this.dataset = dataset;
+
+		Integer dsId = dataset.getId().getDsId();
+
+		Integer numObjAssociated = DAOFactory.getDataSetDAO().countBIObjAssociated(dsId);
+		Integer numFederAssociated = DAOFactory.getFedetatedDatasetDAO().countFederationsUsingDataset(dsId);
+		usedByNDocs = numObjAssociated + numFederAssociated;
 	}
 
 	public Integer getId() {
@@ -81,6 +89,10 @@ class DataSetMainDTO {
 	@JsonIgnore
 	public String getDsMetadata() {
 		return dataset.getDsMetadata();
+	}
+
+	public int getUsedByNDocs() {
+		return usedByNDocs;
 	}
 
 }
