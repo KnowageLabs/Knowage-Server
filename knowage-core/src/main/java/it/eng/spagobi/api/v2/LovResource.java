@@ -335,7 +335,7 @@ public class LovResource extends AbstractSpagoBIResource {
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
 					logger.error("Cannot get values from java class");
-					throw new SpagoBIRuntimeException("Cannot get values from java class");
+					throw new SpagoBIRuntimeException("Cannot get values from java class", e);
 				}
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("FIX_LOV")) {
 
@@ -346,7 +346,7 @@ public class LovResource extends AbstractSpagoBIResource {
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
 					logger.error("Cannot get values from fixed lov");
-					throw new SpagoBIRuntimeException("Cannot get values from fixed lov");
+					throw new SpagoBIRuntimeException("Cannot get values from fixed lov", e);
 				}
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("QUERY")) {
 
@@ -357,7 +357,7 @@ public class LovResource extends AbstractSpagoBIResource {
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
 					logger.error("Cannot get values from query");
-					throw new SpagoBIRuntimeException("Cannot get values from query");
+					throw new SpagoBIRuntimeException("Cannot get values from query", e);
 				}
 
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("SCRIPT")) {
@@ -369,7 +369,7 @@ public class LovResource extends AbstractSpagoBIResource {
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
 					logger.error("Cannot get values from script");
-					throw new SpagoBIRuntimeException("Cannot get values from script");
+					throw new SpagoBIRuntimeException("Cannot get values from script", e);
 				}
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("DATASET")) {
 				DatasetDetail datasetClassDetail = DatasetDetail.fromXML(lovProvider);
@@ -379,7 +379,7 @@ public class LovResource extends AbstractSpagoBIResource {
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
 					logger.error("Cannot get values from dataset");
-					throw new SpagoBIRuntimeException("Cannot get values from dataset");
+					throw new SpagoBIRuntimeException("Cannot get values from dataset", e);
 				}
 			}
 			Integer start = pagination.getInt("paginationStart");
