@@ -1,7 +1,7 @@
 let routes = [
 		{
 			path: '/knowage/gallerymanagement',
-			name: 'galleryManagement',
+			name: 'gallerymanagement',
 			component: () => import('@/modules/managers/galleryManagement/GalleryManagement.vue'),
 			children: [
 				{
@@ -17,4 +17,4 @@ let routes = [
 		}
 	];
 
-	export default routes;
+export default routes;
