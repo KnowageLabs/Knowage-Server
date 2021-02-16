@@ -244,8 +244,8 @@
 					//modify description tree
 					if(typeof parameter.parameterDescription !== 'undefined'){
 						var descr = parameter.parameterDescription[parameter.parameterValue[z]];
-						if (descr == 'undefined') descr = parameter.parameterDescription[z];
-						if (descr == 'undefined') descr = parameter.parameterValue[z];
+						if (typeof descr == 'undefined') descr = parameter.parameterDescription[z];
+						if (typeof descr == 'undefined') descr = parameter.parameterValue[z];
 						paramStrTree += descr;
 					}
 				}
