@@ -49,6 +49,7 @@ function recentController($scope, sbiModule_restServices, sbiModule_translate, $
 
 				for (var i = 0 ; i < $scope.recentDocumentsList.length; i ++ ){
 					$scope.recentDocumentsList[i].documentName = $scope.i18n.getI18n($scope.recentDocumentsList[i].documentName);
+					$scope.recentDocumentsList[i].documentLabel = $scope.i18n.getI18n($scope.recentDocumentsList[i].documentLabel);
 				}
 
 				$scope.recentDocumentsInitial = $scope.recentDocumentsList;
