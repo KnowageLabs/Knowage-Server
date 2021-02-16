@@ -754,50 +754,53 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	}
     }
 
-    $scope.cloneDataset = function(dataset) {
-    	var clonedDataset = angular.copy(dataset);
-    	clonedDataset.id = "";
-    	clonedDataset.dsVersions = [];
-    	clonedDataset.usedByNDocs = 0;
-		clonedDataset.name = "CLONE_" + clonedDataset.name;
-		clonedDataset.label = "CLONE_" + clonedDataset.label;
-		clonedDataset.description = "CLONED " + clonedDataset.description;
-		clonedDataset.scopeCd = "USER";
-    	if(sbiModule_user.userId != clonedDataset.owner){
-    		clonedDataset.owner = sbiModule_user.userId;
-    	}
-    	if(clonedDataset.catTypeId){
-    		delete clonedDataset.catTypeId;
-    	}
-    	$mdDialog.show({
-    		controller: cloneQbeDatasetDialogController,
-			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/workspace/templates/cloneDatasetDialogTemplate.html',
-			parent: angular.element(document.body),
-			locals: {
-				clonedLabel: clonedDataset.label,
-				clonedName: clonedDataset.name,
-				clonedDescription: clonedDataset.description
-			},
-			clickOutsideToClose: false
-    	}).then(function(result){
-    		clonedDataset.name = result.name;
-    		clonedDataset.label = result.label;
-    		clonedDataset.description = result.description;
-    		sbiModule_restServices.promisePost('1.0/datasets', '', clonedDataset)
-    		.then(function(response){
-    			clonedDataset.id = response.data.id;
-				toastr.success(sbiModule_translate.load("sbi.ds.saved"),
-						sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
-				$scope.activateMyDatasetsTab = true;
-	    		$scope.myDatasets.push(clonedDataset);
-	    		$scope.datasets.push(clonedDataset);
-    		}, function(postErr){
-    			toastr.error(postErr.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
-    		});
-    	}, function(response){
-    		// canceled mdDialog
-    	});
-    }
+	$scope.cloneDataset = function(dataset) {
+		sbiModule_restServices.promiseGet('1.0/datasets', dataset.label).then(function(response) {
+			var dataset = response.data[0];
+			var clonedDataset = angular.copy(dataset);
+			clonedDataset.id = "";
+			clonedDataset.dsVersions = [];
+			clonedDataset.usedByNDocs = 0;
+			clonedDataset.name = "CLONE_" + clonedDataset.name;
+			clonedDataset.label = "CLONE_" + clonedDataset.label;
+			clonedDataset.description = "CLONED " + clonedDataset.description;
+			clonedDataset.scopeCd = "USER";
+			if(sbiModule_user.userId != clonedDataset.owner){
+				clonedDataset.owner = sbiModule_user.userId;
+			}
+			if(clonedDataset.catTypeId){
+				delete clonedDataset.catTypeId;
+			}
+			$mdDialog.show({
+				controller: cloneQbeDatasetDialogController,
+				templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/workspace/templates/cloneDatasetDialogTemplate.html',
+				parent: angular.element(document.body),
+				locals: {
+					clonedLabel: clonedDataset.label,
+					clonedName: clonedDataset.name,
+					clonedDescription: clonedDataset.description
+				},
+				clickOutsideToClose: false
+			}).then(function(result){
+				clonedDataset.name = result.name;
+				clonedDataset.label = result.label;
+				clonedDataset.description = result.description;
+				sbiModule_restServices.promisePost('1.0/datasets', '', clonedDataset)
+				.then(function(response){
+					clonedDataset.id = response.data.id;
+					toastr.success(sbiModule_translate.load("sbi.ds.saved"),
+							sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
+					$scope.activateMyDatasetsTab = true;
+					$scope.myDatasets.push(clonedDataset);
+					$scope.datasets.push(clonedDataset);
+				}, function(postErr){
+					toastr.error(postErr.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+				});
+			}, function(response){
+				// canceled mdDialog
+			});
+		});
+	}
 
     function cloneQbeDatasetDialogController($scope, $mdDialog, sbiModule_translate, kn_regex, clonedLabel, clonedName, clonedDescription) {
     	 $scope.translate = sbiModule_translate;
