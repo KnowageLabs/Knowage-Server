@@ -26,6 +26,7 @@ from tornado.ioloop import IOLoop
 from app.utilities import utils, security, constants, cuncurrency_manager
 from app.utilities.objects import PythonWidgetExecution, BokehResourceList
 from datetime import datetime
+import logging
 
 viewMode = Blueprint('view', __name__)
 #url: knowage_addr:port/view
@@ -44,17 +45,22 @@ def python_html():
     # resolve analytical drivers
     for d in drivers:
         python_widget.script = python_widget.script.replace("$P{" + d + "}", "drivers_.get(\'" + d + "\')")
-    #retrieve dataset
-    if python_widget.dataset_name != None:
-        dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
-        df = utils.getDatasetAsDataframe(python_widget)
-        df.to_pickle(dataset_file)
-        python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
+    try:
+        #retrieve dataset
+        if python_widget.dataset_name != None:
+            dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
+            df = utils.getDatasetAsDataframe(python_widget)
+            df.to_pickle(dataset_file)
+            python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
+    except Exception as e:
+        logging.error("Error during dataframe conversion: {}".format(e))
+        return str(e), 400
     #execute script
     try:
         namespace = {python_widget.output_variable: "", "drivers_": drivers}
         exec(python_widget.script, namespace)
     except Exception as e:
+        logging.error("Error during script execution: {}".format(e))
         return str(e), 400
     #collect script result
     html = namespace[python_widget.output_variable]
@@ -79,17 +85,22 @@ def python_img():
     # resolve analytical drivers
     for d in drivers:
         python_widget.script = python_widget.script.replace("$P{" + d + "}", "drivers_.get(\'" + d + "\')")
-    # retrieve dataset
-    if python_widget.dataset_name != None:
-        dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
-        df = utils.getDatasetAsDataframe(python_widget)
-        df.to_pickle(dataset_file)
-        python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
-    # execute script
     try:
+        # retrieve dataset
+        if python_widget.dataset_name != None:
+            dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
+            df = utils.getDatasetAsDataframe(python_widget)
+            df.to_pickle(dataset_file)
+            python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
+    except Exception as e:
+        logging.error("Error during dataframe conversion: {}".format(e))
+        return str(e), 400
+    try:
+    # execute script
         namespace = {"drivers_": drivers}
         exec(python_widget.script, namespace)
     except Exception as e:
+        logging.error("Error during script execution: {}".format(e))
         return str(e), 400
     # collect script result
     with open(img_file, "rb") as f:

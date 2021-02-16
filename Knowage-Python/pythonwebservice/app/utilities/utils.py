@@ -19,11 +19,13 @@
 import pandas as pd
 import requests
 from app.utilities import constants, security, cuncurrency_manager as cm
+from app.exceptions.KnowageRestServiceException import KnowageRestServiceException
 from datetime import datetime, timedelta
 import os
 import xml.etree.ElementTree as ET
 import json
 import pkg_resources
+import logging
 
 def findFreePort():
     import socket
@@ -74,7 +76,10 @@ def getDatasetAsDataframe(widget):
     payload = widget.datastore_request
     r = requests.post(address, headers=headers, data=payload)
     #retrieve column names from metadata
-    names = r.json()["metaData"]["fields"]
+    response_body = r.json()
+    if 'errors' in response_body:
+        raise KnowageRestServiceException(address)
+    names = response_body["metaData"]["fields"]
     column_names = []
     column_types = {}
     for x in names:
@@ -85,13 +90,19 @@ def getDatasetAsDataframe(widget):
             elif x["type"] == "float":
                 column_types.update({x['name']: "int64"})
     #save data as dataframe
-    df = pd.DataFrame(r.json()["rows"])
-    #cast types
-    df = df.astype(column_types)
-    #drop first column (redundant)
-    df.drop(columns=['id'], inplace=True)
-    # assign column names
-    df.columns = column_names
+    df = pd.DataFrame(response_body["rows"])
+    if not df.empty:
+        try:
+            #cast types
+            logging.info("Trying to cast types: {}".format(column_types))
+            df = df.astype(column_types)
+        except Exception as e:
+            logging.warning("Could not cast dataframe types")
+        #drop first column (redundant)
+        if 'id' in df.columns:
+            df.drop(columns=['id'], inplace=True)
+        # assign column names
+        df.columns = column_names
     return df
 
 def serverExists(id):

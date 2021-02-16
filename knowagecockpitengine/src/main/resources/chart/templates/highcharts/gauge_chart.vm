@@ -387,7 +387,7 @@
 	            	endOnTick: $yAxis.endOnTickGauge,
 	            #end
 	            
-	        	#if($yAxis.minorTickInterval == '' ||  $yAxis.minorTickInterval == '0' || $yAxis.minorTickInterval == 'auto')
+	        	#if(!$yAxis.minorTickEnabled || !$yAxis.minorTickInterval)
 	        		minorTickInterval: 'auto',
         		#else
         			minorTickInterval: $yAxis.minorTickInterval,
@@ -408,10 +408,10 @@
 	    						distance: $yAxis.LABELS.distance,
     					#end 
     			
-	    			 	#if ($yAxis.LABELS.rotation && $yAxis.LABELS.rotation!="" && $yAxis.LABELS.rotation!='auto')    	
+	    			 	#if ($yAxis.LABELS.rotationEnabled && $yAxis.LABELS.rotation)    	
 	    						rotation: $yAxis.LABELS.rotation,
 	    				#else
-	    						rotation: 'auto',
+	    						rotation: 0,
     					#end
 	                
 		    		#if($yAxis.style)

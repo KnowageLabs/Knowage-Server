@@ -112,7 +112,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.createIframe = function () {
 			// get <div> associated to this bokeh application
 			var element = angular.element(document.querySelector('#w' + $scope.ngModel.id + ' #bokeh'));
-			// create an iframe and append it to the <div>
+			// remove old iframe if it exists
+			var oldElem = document.getElementById("bokeh_" + $scope.ngModel.id)
+			if (oldElem) oldElem.remove();
+			// create a new iframe and append it to the <div>
 			var iframe = document.createElement('iframe');
 			iframe.height="100%";
 			iframe.width="100%";
@@ -162,6 +165,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.dataset_label = $scope.dataset.label;
 				$scope.aggregations = $scope.buildAggregations($scope.ngModel.content.columnSelectedOfDataset, $scope.dataset_label);
 				$scope.parameters = cockpitModule_datasetServices.getDatasetParameters($scope.ngModel.dataset.dsId);
+				// if parameter has only one value, it must not be enclosed in array
+				for (var parKey in $scope.parameters) {
+					var parValues = $scope.parameters[parKey];
+					if (Array.isArray(parValues) && parValues.length == 1) {
+						$scope.parameters[parKey] = $scope.parameters[parKey][0];
+					}
+				}
 			}
 			else { //no dataset selected
 				$scope.selections = "";
@@ -194,6 +204,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    },
 		    function(response) { //failed
 		    	$scope.pythonOutput = 'Error: ' + $sce.trustAsHtml(response.data);
+		    	if ($scope.ngModel.pythonOutputType != 'img') {
+					$scope.createIframe();
+				}
 		    });
 
 		}
@@ -221,6 +234,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    },
 		    function(response) { //failed
 		    	$scope.pythonOutput = 'Python Error';
+		    	if ($scope.ngModel.pythonOutputType != 'img') {
+					$scope.createIframe();
+				}
 		    });
 
 		}

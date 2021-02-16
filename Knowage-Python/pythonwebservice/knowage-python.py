@@ -5,8 +5,8 @@ from app.services import create_app
 from app.utilities import constants
 import logging
 
-LOG_FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
-logging.basicConfig(format=LOG_FORMAT)
+logging.basicConfig(format=constants.LOG_FORMAT)
+#logging.basicConfig(filename=constants.LOG_FILE, filemode='w', format=constants.LOG_FORMAT)
 
 application = create_app()
 

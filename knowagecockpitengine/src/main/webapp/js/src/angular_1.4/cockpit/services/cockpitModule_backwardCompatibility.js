@@ -134,6 +134,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(model.settings && model.settings.modalityValue == 'singleValue' && model.settings.modalityPresent == 'COMBOBOX') model.settings.modalityValue = 'dropdown';
 				}
 			}
+			
+			if(!self.compareVersion("7.2.1",version)){
+				if(model.type=='table') {
+					if(model.content && model.content.columnSelectedOfDataset){
+						for(var k in model.content.columnSelectedOfDataset){
+							if(model.content.columnSelectedOfDataset[k].isCalculated) {
+								model.content.columnSelectedOfDataset[k].aggregationSelected = "NONE";
+								if(!model.content.columnSelectedOfDataset[k].formula.match(/(AVG|SUM|MIN|MAX|COUNT|COUNT DISTINCT|TOTAL_SUM|TOTAL_AVG|TOTAL_MIN|TOTAL_MAX|TOTAL_COUNT)\(\"+[\D\+\-\*\/\w]*\)/gm)){
+									model.content.columnSelectedOfDataset[k].formula = "SUM(" + model.content.columnSelectedOfDataset[k].formula + ")";
+									model.content.columnSelectedOfDataset[k].formulaEditor = "SUM(" + model.content.columnSelectedOfDataset[k].formulaEditor + ")";
+								}
+							}
+						}
+					}
+				}
+			}
 
 			if(!self.compareVersion("7.2.16",version)){
 				if(model.type=='table') {
@@ -142,6 +158,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if (model.style.tr && !model.style.tr.height)  model.style.tr.height = 25;
 					}
 				}
+				if(model.type=='chart') {					
+					for (var k in model.content.chartTemplate.CHART.AXES_LIST.AXIS) {
+						if (model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS && model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotation && model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotation!='auto') {
+							model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotationEnabled = true;
+						}
+					}
+				}				
 				if(model.type=='map') {
 
 					// Ignore models that has zero elements in model.content.columnSelectedOfDataset
