@@ -119,7 +119,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(!self.compareVersion("7.0.0",version)){
 				if(model.type=='table'){
 					if(model.cross && model.cross.cross && !model.cross.cross.crossType) model.cross.cross.crossType = 'allRow';
-					if(model.style && model.style.tr && model.style.tr.height) model.style.tr.height = model.style.tr.height.replace(/px|rem|em|pt/g,'');
+					if(model.style && model.style.tr && model.style.tr.height) model.style.tr.height = parseInt(model.style.tr.height.replace(/px|rem|em|pt/g,''));
 					if(model.content && model.content.columnSelectedOfDataset){
 						for(var k in model.content.columnSelectedOfDataset){
 							if(model.content.columnSelectedOfDataset[k].fieldType == "ATTRIBUTE" && model.content.columnSelectedOfDataset[k].funcSummary) {
