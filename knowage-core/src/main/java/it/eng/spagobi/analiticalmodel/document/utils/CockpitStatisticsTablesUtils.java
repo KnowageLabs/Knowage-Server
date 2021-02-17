@@ -86,7 +86,6 @@ public class CockpitStatisticsTablesUtils {
 		} finally {
 			if (!tx.wasCommitted())
 				tx.commit();
-
 		}
 
 	}
@@ -96,12 +95,21 @@ public class CockpitStatisticsTablesUtils {
 
 		SbiObjects sbiObjects = (SbiObjects) session.createCriteria(SbiObjects.class).add(Restrictions.eq("biobjId", biObject.getId())).uniqueResult();
 
-		parseTemplate(sbiObjects, session, false);
+		Transaction tx = session.beginTransaction();
+		try {
+			parseTemplate(sbiObjects, session, false);
+		} catch (Exception e) {
+			logger.error("Error during parsing template widget", e);
+			if (tx != null)
+				tx.rollback();
+		} finally {
+			if (!tx.wasCommitted())
+				tx.commit();
+		}
 	}
 
 	public static void parseTemplate(SbiObjects sbiObjects, Session session, boolean initializer) {
 
-		Transaction tx = session.beginTransaction();
 		Criteria c = session.createCriteria(SbiObjTemplates.class, "sot");
 		c.add(Restrictions.eq("sot.sbiObject.biobjId", sbiObjects.getBiobjId()));
 		c.add(Restrictions.eq("sot.active", true));
@@ -118,8 +126,8 @@ public class CockpitStatisticsTablesUtils {
 				String contentString = new String(contentByte);
 				JSONObject template = new JSONObject(contentString);
 
-				Set<String> associationsMap = handleDatasetAssociations(sbiObjects, template, session, initializer);
 				Map<Integer, JSONObject> dataSetMap = getDatasetMap(sbiObjects, template, session);
+				Set<String> associationsMap = handleDatasetAssociations(sbiObjects, template, session, dataSetMap, initializer);
 
 				JSONArray sheets = template.optJSONArray("sheets");
 				if (sheets != null) {
@@ -149,13 +157,17 @@ public class CockpitStatisticsTablesUtils {
 									boolean useCache = dataSetMap.get(dsId).optBoolean("useCache");
 									sbiCockpitWidgets.setCache(useCache);
 
+									/* Not all widgets have dataset associated */
+									if (datasetLabel != null) {
+										final String finalDatasetLabel = datasetLabel;
+										boolean isAssociative = associationsMap.stream().anyMatch(x -> x.contains(finalDatasetLabel));
+										sbiCockpitWidgets.setAssociative(isAssociative);
+									}
+
 									updateSbiCommonInfo4Insert(sbiObjects, sbiCockpitWidgets, initializer);
 
 									session.save(sbiCockpitWidgets);
 									session.flush();
-
-									if (!tx.wasCommitted())
-										tx.commit();
 
 								}
 							} else {
@@ -165,25 +177,18 @@ public class CockpitStatisticsTablesUtils {
 								sbiCockpitWidgets.setBiobjId(sbiObjects.getBiobjId());
 								sbiCockpitWidgets.setWidgetType(widgetType);
 
-//								JSONObject cross = widget.optJSONObject("cross");
-//								if (cross != null) {
-//									JSONObject preview = cross.optJSONObject("preview");
-//									if (preview != null) {
-//										int oldId = preview.optInt("dataset");
-//										Integer newId = dsIds.get(oldId);
-//										preview.put("dataset", newId);
-//
-//									}
-//								}
-
-								datasetLabel = parseDatasetObject(sbiCockpitWidgets, datasetLabel, widget);
+								datasetLabel = parseDatasetObject(sbiCockpitWidgets, datasetLabel, widget, dataSetMap);
 
 								datasetLabel = parseContentObject(sbiCockpitWidgets, datasetLabel, widget);
 
 								datasetLabel = parseFiltersObject(sbiCockpitWidgets, datasetLabel, widget);
 
-								sbiCockpitWidgets.setAssociative(associationsMap.contains(datasetLabel));
-
+								/* Not all widgets have dataset associated */
+								if (datasetLabel != null) {
+									final String finalDatasetLabel = datasetLabel;
+									boolean isAssociative = associationsMap.stream().anyMatch(x -> x.contains(finalDatasetLabel));
+									sbiCockpitWidgets.setAssociative(isAssociative);
+								}
 								if (sbiCockpitWidgets.getDsId() != null && sbiCockpitWidgets.getDsId() > 0) {
 									boolean useCache = dataSetMap.get(sbiCockpitWidgets.getDsId()).optBoolean("useCache");
 									sbiCockpitWidgets.setCache(useCache);
@@ -194,8 +199,6 @@ public class CockpitStatisticsTablesUtils {
 								session.save(sbiCockpitWidgets);
 								session.flush();
 
-								if (!tx.wasCommitted())
-									tx.commit();
 							}
 
 						} // end single widget
@@ -204,16 +207,8 @@ public class CockpitStatisticsTablesUtils {
 
 			} catch (JSONException e) {
 				logger.error("Error while reading template information");
-				if (tx != null)
-					tx.rollback();
-			} catch (Exception e) {
-				logger.error("Error during parsing template widget", e);
-				if (tx != null)
-					tx.rollback();
-			} finally {
-				if (!tx.wasCommitted())
-					tx.commit();
 			}
+
 		}
 		logger.debug("OUT");
 	}
@@ -391,13 +386,14 @@ public class CockpitStatisticsTablesUtils {
 		return datasetLabel;
 	}
 
-	private static String parseDatasetObject(SbiCockpitWidget sbiCockpitWidgets, String datasetLabel, JSONObject widget) {
+	private static String parseDatasetObject(SbiCockpitWidget sbiCockpitWidgets, String datasetLabel, JSONObject widget, Map<Integer, JSONObject> dataSetMap)
+			throws JSONException {
 		JSONObject dataset = widget.optJSONObject("dataset");
 		if (dataset != null) {
 			if (dataset.has("dsId")) {
 				Integer oldId = dataset.optInt("dsId");
 				sbiCockpitWidgets.setDsId(oldId);
-				datasetLabel = dataset.optString("label");
+				datasetLabel = dataSetMap.get(oldId).getString("dsLabel");
 
 				/* CREARE UNA RIGA PER DATASET??? */
 				try {
@@ -433,10 +429,9 @@ public class CockpitStatisticsTablesUtils {
 		return datasetLabel;
 	}
 
-	private static Set<String> handleDatasetAssociations(SbiObjects sbiObjects, JSONObject template, Session session, boolean initializer)
-			throws JSONException {
+	private static Set<String> handleDatasetAssociations(SbiObjects sbiObjects, JSONObject template, Session session, Map<Integer, JSONObject> dataSetMap,
+			boolean initializer) throws JSONException {
 		Set<String> associationsMap = new HashSet<String>();
-		Transaction tx = session.beginTransaction();
 		try {
 			JSONObject configuration = template.optJSONObject("configuration");
 			if (configuration != null) {
@@ -462,7 +457,16 @@ public class CockpitStatisticsTablesUtils {
 
 								if (field1.getString("store") != null) {
 									try {
-										Integer fromDatasetId = dataSetDAO.loadDataSetByLabel(field1.getString("store")).getId();
+
+										Integer fromDatasetId = dataSetMap.entrySet().stream().filter(e -> {
+											try {
+												return e.getValue().getString("dsLabel").equals(field1.getString("store"));
+											} catch (JSONException e1) {
+												logger.error(e1.getMessage(), e1);
+												return false;
+											}
+										}).map(Map.Entry::getKey).findFirst().orElse(null);
+
 										sbiCockpitAssociations.setDsIdFrom(fromDatasetId);
 
 									} catch (SpagoBIDAOException e) {
@@ -473,7 +477,15 @@ public class CockpitStatisticsTablesUtils {
 
 								if (field2.getString("store") != null) {
 									try {
-										Integer toDatasetId = dataSetDAO.loadDataSetByLabel(field2.getString("store")).getId();
+
+										Integer toDatasetId = dataSetMap.entrySet().stream().filter(e -> {
+											try {
+												return e.getValue().getString("dsLabel").equals(field2.getString("store"));
+											} catch (JSONException e1) {
+												logger.error(e1.getMessage(), e1);
+												return false;
+											}
+										}).map(Map.Entry::getKey).findFirst().orElse(null);
 										sbiCockpitAssociations.setDsIdTo(toDatasetId);
 									} catch (SpagoBIDAOException e) {
 										logger.warn(e.getMessage(), e);
@@ -494,11 +506,7 @@ public class CockpitStatisticsTablesUtils {
 			}
 		} catch (HibernateException e) {
 			logger.error(e.getMessage(), e);
-			if (tx != null)
-				tx.rollback();
 		} finally {
-			if (!tx.wasCommitted())
-				tx.commit();
 
 		}
 
