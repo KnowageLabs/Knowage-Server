@@ -21,11 +21,9 @@
  */
 package it.eng.spagobi.analiticalmodel.document.utils;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,33 +62,46 @@ public class CockpitStatisticsTablesUtils {
 	static private Logger logger = Logger.getLogger(CockpitStatisticsTablesUtils.class);
 
 	public static void deleteCockpitWidgetsTable(BIObject biObject, Session session) {
+		logger.debug("IN");
 		Transaction tx = session.beginTransaction();
 		try {
 			Integer biobjId = biObject.getId();
 
-			List<SbiCockpitWidget> sbiCockpitWidgetsList = session.createCriteria(SbiCockpitWidget.class).add(Restrictions.eq("biobjId", biobjId)).list();
-			for (SbiCockpitWidget sbiCockpitWidgets : sbiCockpitWidgetsList) {
-				session.evict(sbiCockpitWidgets);
-				session.delete(sbiCockpitWidgets);
+			logger.debug("Cleaning SbiCockpitWidget table - START");
+			List<SbiCockpitWidget> sbiCockpitWidgetList = session.createCriteria(SbiCockpitWidget.class).add(Restrictions.eq("biobjId", biobjId)).list();
+			for (SbiCockpitWidget sbiCockpitWidget : sbiCockpitWidgetList) {
+
+				logger.debug(String.format("Removing SbiCockpitWidget with id [%s]", sbiCockpitWidget.getSbiCockpitWidgetId()));
+				session.evict(sbiCockpitWidget);
+				session.delete(sbiCockpitWidget);
 				session.flush();
+
 			}
 
-			List<SbiCockpitAssociation> sbiCockpitAssociationsList = session.createCriteria(SbiCockpitAssociation.class)
-					.add(Restrictions.eq("biobjId", biobjId)).list();
-			for (SbiCockpitAssociation sbiCockpitAssociation : sbiCockpitAssociationsList) {
+			logger.debug("Cleaning SbiCockpitWidget table - STOP");
+
+			List<SbiCockpitAssociation> sbiCockpitAssociationList = session.createCriteria(SbiCockpitAssociation.class).add(Restrictions.eq("biobjId", biobjId))
+					.list();
+
+			logger.debug("Cleaning SbiCockpitAssociation table - START");
+			for (SbiCockpitAssociation sbiCockpitAssociation : sbiCockpitAssociationList) {
+				logger.debug(String.format("Removing SbiCockpitAssociation with id [%s]", sbiCockpitAssociation.getSbiCockpitAssociationId()));
 				session.evict(sbiCockpitAssociation);
 				session.delete(sbiCockpitAssociation);
 				session.flush();
 			}
+			logger.debug("Cleaning SbiCockpitAssociation table - STOP");
 
 		} finally {
 			if (!tx.wasCommitted())
 				tx.commit();
 		}
 
+		logger.debug("OUT");
 	}
 
 	public static void updateCockpitWidgetsTable(BIObject biObject, Session session) {
+		logger.debug("IN");
 		deleteCockpitWidgetsTable(biObject, session);
 
 		SbiObjects sbiObjects = (SbiObjects) session.createCriteria(SbiObjects.class).add(Restrictions.eq("biobjId", biObject.getId())).uniqueResult();
@@ -106,17 +117,18 @@ public class CockpitStatisticsTablesUtils {
 			if (!tx.wasCommitted())
 				tx.commit();
 		}
+		logger.debug("OUT");
 	}
 
 	public static void parseTemplate(SbiObjects sbiObjects, Session session, boolean initializer) {
-
+		logger.debug("IN");
 		Criteria c = session.createCriteria(SbiObjTemplates.class, "sot");
 		c.add(Restrictions.eq("sot.sbiObject.biobjId", sbiObjects.getBiobjId()));
 		c.add(Restrictions.eq("sot.active", true));
 		SbiObjTemplates sbiObjTemplates = (SbiObjTemplates) c.uniqueResult();
 
 		if (sbiObjTemplates == null) {
-
+			logger.error(String.format("No active template found for sbiObject with id [%s]", sbiObjects.getBiobjId()));
 		} else {
 
 			try {
@@ -131,74 +143,68 @@ public class CockpitStatisticsTablesUtils {
 
 				JSONArray sheets = template.optJSONArray("sheets");
 				if (sheets != null) {
+					logger.debug(String.format("Document with label [%s] has [%s] sheets", sbiObjects.getLabel(), sheets.length()));
 
 					for (int i = 0; i < sheets.length(); i++) {
-						JSONObject sheet;
-
-						sheet = sheets.getJSONObject(i);
+						JSONObject sheet = sheets.getJSONObject(i);
 
 						JSONArray widgets = sheet.getJSONArray("widgets");
+						logger.debug(String.format("Document with label [%s] has [%s] widgets", sbiObjects.getLabel(), widgets.length()));
+
 						for (int j = 0; j < widgets.length(); j++) {
 							String datasetLabel = null;
 							JSONObject widget = widgets.getJSONObject(j);
 
 							String widgetType = widget.getString("type");
+							logger.debug(String.format("Parsing widget with id [%s] of type [%s]", widget.get("id"), widgetType));
+
 							if (widgetType.equals("map")) {
+
 								Set<Integer> dsIds = parseContentForMapWidget(datasetLabel, widget);
+								logger.debug(String.format("Found [%s] dataset ids in content JSON object", dsIds.size()));
 								for (Integer dsId : dsIds) {
-									SbiCockpitWidget sbiCockpitWidgets = new SbiCockpitWidget();
+									SbiCockpitWidget sbiCockpitWidget = new SbiCockpitWidget();
+									sbiCockpitWidget.setTab(sheet.getString("label"));
+									sbiCockpitWidget.setBiobjId(sbiObjects.getBiobjId());
+									sbiCockpitWidget.setWidgetType(widgetType);
 
-									sbiCockpitWidgets.setTab(sheet.getString("label"));
-									sbiCockpitWidgets.setBiobjId(sbiObjects.getBiobjId());
-									sbiCockpitWidgets.setWidgetType(widgetType);
-
-									sbiCockpitWidgets.setDsId(dsId);
+									sbiCockpitWidget.setDsId(dsId);
 
 									boolean useCache = dataSetMap.get(dsId).optBoolean("useCache");
-									sbiCockpitWidgets.setCache(useCache);
+									sbiCockpitWidget.setCache(useCache);
 
-									/* Not all widgets have dataset associated */
-									if (datasetLabel != null) {
-										final String finalDatasetLabel = datasetLabel;
-										boolean isAssociative = associationsMap.stream().anyMatch(x -> x.contains(finalDatasetLabel));
-										sbiCockpitWidgets.setAssociative(isAssociative);
-									}
+									setIsAssociative(associationsMap, datasetLabel, sbiCockpitWidget);
 
-									updateSbiCommonInfo4Insert(sbiObjects, sbiCockpitWidgets, initializer);
+									setUseCache(dataSetMap, datasetLabel, sbiCockpitWidget);
 
-									session.save(sbiCockpitWidgets);
+									updateSbiCommonInfo4Insert(sbiObjects, sbiCockpitWidget, initializer);
+
+									session.save(sbiCockpitWidget);
 									session.flush();
-
+									logger.debug(
+											String.format("Persisted SbiCockpitWidget with id [%s] to database", sbiCockpitWidget.getSbiCockpitWidgetId()));
 								}
 							} else {
-								SbiCockpitWidget sbiCockpitWidgets = new SbiCockpitWidget();
+								SbiCockpitWidget sbiCockpitWidget = new SbiCockpitWidget();
 
-								sbiCockpitWidgets.setTab(sheet.getString("label"));
-								sbiCockpitWidgets.setBiobjId(sbiObjects.getBiobjId());
-								sbiCockpitWidgets.setWidgetType(widgetType);
+								sbiCockpitWidget.setTab(sheet.getString("label"));
+								sbiCockpitWidget.setBiobjId(sbiObjects.getBiobjId());
+								sbiCockpitWidget.setWidgetType(widgetType);
 
-								datasetLabel = parseDatasetObject(sbiCockpitWidgets, datasetLabel, widget, dataSetMap);
+								datasetLabel = parseDatasetObject(sbiCockpitWidget, datasetLabel, widget, dataSetMap);
 
-								datasetLabel = parseContentObject(sbiCockpitWidgets, datasetLabel, widget);
+								datasetLabel = parseContentObject(sbiCockpitWidget, datasetLabel, widget);
 
-								datasetLabel = parseFiltersObject(sbiCockpitWidgets, datasetLabel, widget);
+								datasetLabel = parseFiltersObject(sbiCockpitWidget, datasetLabel, widget);
 
-								/* Not all widgets have dataset associated */
-								if (datasetLabel != null) {
-									final String finalDatasetLabel = datasetLabel;
-									boolean isAssociative = associationsMap.stream().anyMatch(x -> x.contains(finalDatasetLabel));
-									sbiCockpitWidgets.setAssociative(isAssociative);
-								}
-								if (sbiCockpitWidgets.getDsId() != null && sbiCockpitWidgets.getDsId() > 0) {
-									boolean useCache = dataSetMap.get(sbiCockpitWidgets.getDsId()).optBoolean("useCache");
-									sbiCockpitWidgets.setCache(useCache);
-								}
+								setIsAssociative(associationsMap, datasetLabel, sbiCockpitWidget);
+								setUseCache(dataSetMap, datasetLabel, sbiCockpitWidget);
 
-								updateSbiCommonInfo4Insert(sbiObjects, sbiCockpitWidgets, initializer);
-								sbiCockpitWidgets.getCommonInfo().setOrganization(sbiObjects.getCommonInfo().getOrganization());
-								session.save(sbiCockpitWidgets);
+								updateSbiCommonInfo4Insert(sbiObjects, sbiCockpitWidget, initializer);
+								sbiCockpitWidget.getCommonInfo().setOrganization(sbiObjects.getCommonInfo().getOrganization());
+								session.save(sbiCockpitWidget);
 								session.flush();
-
+								logger.debug(String.format("Persisted SbiCockpitWidget with id [%s] to database", sbiCockpitWidget.getSbiCockpitWidgetId()));
 							}
 
 						} // end single widget
@@ -213,7 +219,26 @@ public class CockpitStatisticsTablesUtils {
 		logger.debug("OUT");
 	}
 
+	private static void setIsAssociative(Set<String> associationsMap, String datasetLabel, SbiCockpitWidget sbiCockpitWidget) {
+		/* Not all widgets have dataset associated */
+		if (datasetLabel != null) {
+			final String finalDatasetLabel = datasetLabel;
+			boolean isAssociative = associationsMap.stream().anyMatch(x -> x.contains(finalDatasetLabel));
+			sbiCockpitWidget.setAssociative(isAssociative);
+			logger.debug(String.format("Dataset with label [%s] is %s in associative logic", datasetLabel, isAssociative ? "" : "NOT"));
+		}
+	}
+
+	private static void setUseCache(Map<Integer, JSONObject> dataSetMap, String datasetLabel, SbiCockpitWidget sbiCockpitWidget) {
+		if (sbiCockpitWidget.getDsId() != null && sbiCockpitWidget.getDsId() > 0) {
+			boolean useCache = dataSetMap.get(sbiCockpitWidget.getDsId()).optBoolean("useCache");
+			sbiCockpitWidget.setCache(useCache);
+			logger.debug(String.format("Dataset with label [%s] is %s cached", datasetLabel, useCache ? "" : "NOT"));
+		}
+	}
+
 	private static Map<Integer, JSONObject> getDatasetMap(SbiObjects sbiObjects, JSONObject template, Session session) throws JSONException {
+		logger.debug("IN");
 		Map<Integer, JSONObject> datasetMap = new HashMap<Integer, JSONObject>();
 		JSONObject configuration = template.optJSONObject("configuration");
 		if (configuration != null) {
@@ -225,36 +250,42 @@ public class CockpitStatisticsTablesUtils {
 					if (datasetInConf != null && datasetInConf.has("dsId")) {
 						Integer dsId = datasetInConf.optInt("dsId");
 						datasetMap.put(dsId, datasetInConf);
+						logger.debug(String.format("Added dataset with id [%s] and label [%s] to datasetMap", dsId, datasetInConf.get("dsLabel")));
 					}
 				}
 			}
 		}
+		logger.debug("OUT");
 		return datasetMap;
 	}
 
-	private static String parseFiltersObject(SbiCockpitWidget sbiCockpitWidgets, String datasetLabel, JSONObject widget) throws JSONException {
+	private static String parseFiltersObject(SbiCockpitWidget sbiCockpitWidget, String datasetLabel, JSONObject widget) throws JSONException {
+		logger.debug("IN");
 		// FILTERS
 		JSONArray filters = widget.optJSONArray("filters");
 		boolean hasFilters = filters != null && !filters.toString().equals("{}");
-		sbiCockpitWidgets.setFilters(hasFilters);
+		sbiCockpitWidget.setFilters(hasFilters);
 		if (filters != null) {
-
+			logger.debug(String.format("Widget has [%s] filters", filters.length()));
 			for (int filterIdx = 0; filterIdx < filters.length(); filterIdx++) {
 				JSONObject filter = (JSONObject) filters.get(filterIdx);
 				if (filter != null && filter.has("dataset")) {
 					JSONObject contDataset = filter.optJSONObject("dataset");
 					if (contDataset != null && contDataset.has("dsId")) {
 						Integer dsId = contDataset.optInt("dsId");
-						sbiCockpitWidgets.setDsId(dsId);
+						sbiCockpitWidget.setDsId(dsId);
 						datasetLabel = contDataset.optString("label");
+						logger.debug(String.format("Widget has dataset with id [%s] and label [%s] associated", dsId, datasetLabel));
 					}
 				}
 			}
 		}
+		logger.debug("OUT");
 		return datasetLabel;
 	}
 
 	private static Set<Integer> parseContentForMapWidget(String datasetLabel, JSONObject widget) throws JSONException {
+		logger.debug("IN");
 		Set<Integer> dsIds = new HashSet<Integer>();
 		JSONObject content = widget.optJSONObject("content");
 		// check if there is datasetId array, if it is there is a text widget with user selected Id
@@ -290,16 +321,17 @@ public class CockpitStatisticsTablesUtils {
 						Integer dsId = layer.optInt("dsId");
 						dsIds.add(dsId);
 						datasetLabel = layer.optString("label");
+						logger.debug(String.format("Map widget has dataset with [%s] and label [%s] associated", dsId, datasetLabel));
 					}
 				}
 			}
 		}
-
+		logger.debug("OUT");
 		return dsIds;
 	}
 
-	private static String parseContentObject(SbiCockpitWidget sbiCockpitWidgets, String datasetLabel, JSONObject widget) throws JSONException {
-		/* DEVO CREARE UNA RIGA PER OGNUNO */
+	private static String parseContentObject(SbiCockpitWidget sbiCockpitWidget, String datasetLabel, JSONObject widget) throws JSONException {
+		logger.debug("IN");
 		// CONTENT
 		JSONObject content = widget.optJSONObject("content");
 		// check if there is datasetId array, if it is there is a text widget with user selected Id
@@ -333,32 +365,32 @@ public class CockpitStatisticsTablesUtils {
 //					JSONObject layer = layers.getJSONObject(l);
 //					Integer oldId = layer.optInt("dsId");
 //					if (oldId != null) {
-//						sbiCockpitWidgets.setDsId(oldId);
+//						sbiCockpitWidget.setDsId(oldId);
 //						datasetLabel = layer.optString("label");
 //					}
 //				}
 //			}
 
-			JSONObject columns = content.optJSONObject("columnSelectedOfDataset");
-			if (columns != null) {
-				List<Integer> idToClean = new ArrayList();
-				Iterator<?> keys = columns.keys();
-
-				while (keys.hasNext()) {
-					String key = (String) keys.next();
-					if (columns.get(key) instanceof JSONArray) {
-						Integer oldId = Integer.valueOf(key);
-						if (oldId != null) {
-							idToClean.add(oldId);
-						}
-					}
-				}
-				for (int d = 0; d < idToClean.size(); d++) { // update objects
-					Integer oldId = idToClean.get(d);
-					sbiCockpitWidgets.setDsId(oldId);
-				}
-
-			}
+//			JSONObject columns = content.optJSONObject("columnSelectedOfDataset");
+//			if (columns != null) {
+//				List<Integer> idToClean = new ArrayList();
+//				Iterator<?> keys = columns.keys();
+//
+//				while (keys.hasNext()) {
+//					String key = (String) keys.next();
+//					if (columns.get(key) instanceof JSONArray) {
+//						Integer oldId = Integer.valueOf(key);
+//						if (oldId != null) {
+//							idToClean.add(oldId);
+//						}
+//					}
+//				}
+//				for (int d = 0; d < idToClean.size(); d++) { // update objects
+//					Integer oldId = idToClean.get(d);
+//					sbiCockpitWidget.setDsId(oldId);
+//				}
+//
+//			}
 
 			if (content.has("dataset")) {
 				JSONObject contDataset = content.optJSONObject("dataset");
@@ -367,8 +399,10 @@ public class CockpitStatisticsTablesUtils {
 					if (id != null && id.has("dsId")) {
 						Integer oldId = id.optInt("dsId");
 						if (oldId != null) {
-							sbiCockpitWidgets.setDsId(oldId);
+							logger.debug(String.format("Dataset id [%s] found in id.dsId property", oldId));
+							sbiCockpitWidget.setDsId(oldId);
 							datasetLabel = contDataset.optString("label");
+							logger.debug(String.format("Widget has dataset with id [%s] and label [%s] associated", oldId, datasetLabel));
 						}
 
 					}
@@ -376,42 +410,57 @@ public class CockpitStatisticsTablesUtils {
 					if (contDataset.has("dsId")) {
 						Integer oldId = contDataset.optInt("dsId");
 						if (oldId != null && oldId != 0) {
-							sbiCockpitWidgets.setDsId(oldId);
+							logger.debug(String.format("Dataset id [%s] found in dsId property", oldId));
+
+							sbiCockpitWidget.setDsId(oldId);
 							datasetLabel = contDataset.optString("label");
+							logger.debug(String.format("Widget has dataset with id [%s] and label [%s] associated", oldId, datasetLabel));
 						}
 					}
 				}
 			}
 		}
+		logger.debug("OUT");
 		return datasetLabel;
 	}
 
-	private static String parseDatasetObject(SbiCockpitWidget sbiCockpitWidgets, String datasetLabel, JSONObject widget, Map<Integer, JSONObject> dataSetMap)
+	private static String parseDatasetObject(SbiCockpitWidget sbiCockpitWidget, String datasetLabel, JSONObject widget, Map<Integer, JSONObject> dataSetMap)
 			throws JSONException {
+		logger.debug("IN");
 		JSONObject dataset = widget.optJSONObject("dataset");
 		if (dataset != null) {
 			if (dataset.has("dsId")) {
 				Integer oldId = dataset.optInt("dsId");
-				sbiCockpitWidgets.setDsId(oldId);
-				datasetLabel = dataSetMap.get(oldId).getString("dsLabel");
+				logger.debug(String.format("Found dsId [%s] in datasets JSON object", oldId));
+				sbiCockpitWidget.setDsId(oldId);
 
-				/* CREARE UNA RIGA PER DATASET??? */
+				JSONObject datasetJSONObject = dataSetMap.get(oldId);
+				if (datasetJSONObject == null) {
+					logger.debug(String.format("Dataset with id [%s] NOT found in dataset JSON object", oldId));
+				} else {
+					datasetLabel = datasetJSONObject.getString("dsLabel");
+					logger.debug(String.format("Dataset label set to [%s]", datasetLabel));
+				}
+
 				try {
 					JSONArray oldIdArray = dataset.getJSONArray("dsId");
 					JSONArray tmp = new JSONArray();
 					for (int k = 0; k < oldIdArray.length(); k++) {
+						logger.debug(String.format("dsId is an array of length [%s]", oldIdArray.length()));
+
 						Integer jsonOldId = oldIdArray.getInt(k);
 						if (jsonOldId != null) {
 							tmp.put(jsonOldId);
-							sbiCockpitWidgets.setDsId(jsonOldId);
+							sbiCockpitWidget.setDsId(jsonOldId);
 							datasetLabel = dataset.optString("label");
+							logger.debug(String.format("Widget has dataset with id [%s] and label [%s] associated", jsonOldId, datasetLabel));
 						}
 					}
 
 					if (tmp.length() > 0) {
 						// dataset.remove("dsId");
 						// dataset.put("dsId", tmp);
-						// sbiCockpitWidgets.setDsId(tmp);
+						// sbiCockpitWidget.setDsId(tmp);
 					}
 				} catch (JSONException ex) {
 					logger.debug("Field dsId is not an array");
@@ -422,15 +471,18 @@ public class CockpitStatisticsTablesUtils {
 			// html widget case: the datasetId is a simple property of widget obj
 			Integer oldId = widget.optInt("datasetId");
 			if (oldId != null) {
-				sbiCockpitWidgets.setDsId(oldId);
+				sbiCockpitWidget.setDsId(oldId);
 				datasetLabel = widget.optString("label");
+				logger.debug(String.format("Widget has dataset with id [%s] and label [%s] associated", oldId, datasetLabel));
 			}
 		}
+		logger.debug("OUT");
 		return datasetLabel;
 	}
 
 	private static Set<String> handleDatasetAssociations(SbiObjects sbiObjects, JSONObject template, Session session, Map<Integer, JSONObject> dataSetMap,
 			boolean initializer) throws JSONException {
+		logger.debug("IN");
 		Set<String> associationsMap = new HashSet<String>();
 		try {
 			JSONObject configuration = template.optJSONObject("configuration");
@@ -439,8 +491,9 @@ public class CockpitStatisticsTablesUtils {
 				boolean isAssociative = associations != null && !associations.toString().equals("{}");
 				if (isAssociative) {
 					for (int k = 0; k < associations.length(); k++) {
-						JSONObject association = (JSONObject) associations.get(k);
+						logger.debug("Found " + associations.length() + " dataset associations in document with label " + sbiObjects.getLabel());
 
+						JSONObject association = (JSONObject) associations.get(k);
 						JSONArray fields = association.optJSONArray("fields");
 						if (fields != null) {
 
@@ -452,54 +505,64 @@ public class CockpitStatisticsTablesUtils {
 								JSONObject field1 = fields.optJSONObject(i);
 								JSONObject field2 = fields.optJSONObject(i + 1);
 
-								SbiCockpitAssociation sbiCockpitAssociations = new SbiCockpitAssociation();
-								sbiCockpitAssociations.setBiobjId(sbiObjects.getBiobjId());
+								SbiCockpitAssociation sbiCockpitAssociation = new SbiCockpitAssociation();
+								sbiCockpitAssociation.setBiobjId(sbiObjects.getBiobjId());
 
-								if (field1.getString("store") != null) {
+								String fromDataset = field1.getString("store");
+								String fromColumn = field1.getString("column");
+								if (fromDataset != null) {
 									try {
 
 										Integer fromDatasetId = dataSetMap.entrySet().stream().filter(e -> {
 											try {
-												return e.getValue().getString("dsLabel").equals(field1.getString("store"));
+												return e.getValue().getString("dsLabel").equals(fromDataset);
 											} catch (JSONException e1) {
 												logger.error(e1.getMessage(), e1);
 												return false;
 											}
 										}).map(Map.Entry::getKey).findFirst().orElse(null);
 
-										sbiCockpitAssociations.setDsIdFrom(fromDatasetId);
+										sbiCockpitAssociation.setDsIdFrom(fromDatasetId);
 
 									} catch (SpagoBIDAOException e) {
 										logger.warn(e.getMessage(), e);
 									}
-									sbiCockpitAssociations.setColumnNameFrom(field1.getString("column"));
+									sbiCockpitAssociation.setColumnNameFrom(fromColumn);
 								}
 
-								if (field2.getString("store") != null) {
+								String toDataset = field2.getString("store");
+								String toColumn = field2.getString("column");
+								if (toDataset != null) {
 									try {
 
 										Integer toDatasetId = dataSetMap.entrySet().stream().filter(e -> {
 											try {
-												return e.getValue().getString("dsLabel").equals(field2.getString("store"));
+												return e.getValue().getString("dsLabel").equals(toDataset);
 											} catch (JSONException e1) {
 												logger.error(e1.getMessage(), e1);
 												return false;
 											}
 										}).map(Map.Entry::getKey).findFirst().orElse(null);
-										sbiCockpitAssociations.setDsIdTo(toDatasetId);
+										sbiCockpitAssociation.setDsIdTo(toDatasetId);
 									} catch (SpagoBIDAOException e) {
 										logger.warn(e.getMessage(), e);
 									}
-									sbiCockpitAssociations.setColumnNameTo(field2.getString("column"));
+									sbiCockpitAssociation.setColumnNameTo(toColumn);
 								}
 
-								updateSbiCommonInfo4Insert(sbiObjects, sbiCockpitAssociations, initializer);
-								sbiCockpitAssociations.getCommonInfo().setOrganization(sbiObjects.getCommonInfo().getOrganization());
-								session.save(sbiCockpitAssociations);
+								updateSbiCommonInfo4Insert(sbiObjects, sbiCockpitAssociation, initializer);
+								sbiCockpitAssociation.getCommonInfo().setOrganization(sbiObjects.getCommonInfo().getOrganization());
+								session.save(sbiCockpitAssociation);
 								session.flush();
 
+								logger.debug(String.format("Field [%s-%s] associated with field [%s-%s] in association", fromDataset, fromColumn, toDataset,
+										toColumn));
+
 							}
-							associationsMap.add(association.getString("description"));
+							String associationDescription = association.getString("description");
+							associationsMap.add(associationDescription);
+							logger.debug(String.format("Added association with description [%s] to associationMap", associationDescription));
+
 						}
 					}
 				}
@@ -509,20 +572,20 @@ public class CockpitStatisticsTablesUtils {
 		} finally {
 
 		}
-
+		logger.debug("OUT");
 		return associationsMap;
 	}
 
 	/**
-	 * @param sbiCockpitWidgets
+	 * @param sbiCockpitWidget
 	 * @param b
 	 */
-	private static void updateSbiCommonInfo4Insert(SbiObjects sbiObjects, SbiHibernateModel sbiCockpitWidgets, boolean initializer) {
-		sbiCockpitWidgets.getCommonInfo().setTimeIn(new Date());
-		sbiCockpitWidgets.getCommonInfo().setSbiVersionIn(SbiCommonInfo.getVersion());
+	private static void updateSbiCommonInfo4Insert(SbiObjects sbiObjects, SbiHibernateModel sbiCockpitWidget, boolean initializer) {
+		sbiCockpitWidget.getCommonInfo().setTimeIn(new Date());
+		sbiCockpitWidget.getCommonInfo().setSbiVersionIn(SbiCommonInfo.getVersion());
 		String userIn = initializer ? "server" : sbiObjects.getCommonInfo().getUserIn();
-		sbiCockpitWidgets.getCommonInfo().setUserIn(userIn);
-		sbiCockpitWidgets.getCommonInfo().setOrganization(sbiObjects.getCommonInfo().getOrganization());
+		sbiCockpitWidget.getCommonInfo().setUserIn(userIn);
+		sbiCockpitWidget.getCommonInfo().setOrganization(sbiObjects.getCommonInfo().getOrganization());
 
 	}
 }
