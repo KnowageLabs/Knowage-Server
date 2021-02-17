@@ -24,9 +24,8 @@ package it.eng.spagobi.commons.initializers.metadata;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
@@ -50,9 +49,11 @@ public class CockpitStatisticsInitializer extends SpagoBIInitializer {
 
 		List sbiCockpitWidgetsList = hibernateSession.createCriteria(SbiCockpitWidget.class).list();
 		if (sbiCockpitWidgetsList == null || (sbiCockpitWidgetsList != null && sbiCockpitWidgetsList.isEmpty())) {
-			Criteria c = hibernateSession.createCriteria(SbiObjects.class, "so");
-			c.createAlias("sbiEngines", "engines");
-			c.add(Restrictions.eq("engines.name", "Cockpit Engine"));
+			StringBuilder sb = new StringBuilder();
+			sb.append("select so from SbiObjects so, SbiEngines se ");
+			sb.append(" where so.sbiEngines.engineId = se.engineId");
+			sb.append(" and se.name = 'Cockpit Engine'");
+			Query c = hibernateSession.createQuery(sb.toString());
 			List templates = c.list();
 			for (Object objTemplate : templates) {
 				SbiObjects sbiObjects = (SbiObjects) objTemplate;
