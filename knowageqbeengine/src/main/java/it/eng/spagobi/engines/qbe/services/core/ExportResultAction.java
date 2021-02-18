@@ -62,6 +62,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -97,7 +98,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		String responseType = null;
 		boolean writeBackResponseInline = false;
 		String mimeType = null;
-		String exportLimit = null;
+		Integer exportLimit = null;
 		JSONObject queryJSON = null;
 		String fileExtension = null;
 		IStatement statement = null;
@@ -124,7 +125,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			mimeType = getAttributeAsString(MIME_TYPE);
 			logger.debug(MIME_TYPE + ": " + mimeType);
 
-			exportLimit = getAttributeAsString(LIMIT);
+			exportLimit = parseExportLimit(getAttributeAsString(LIMIT));
 			logger.debug(LIMIT + ": " + exportLimit);
 
 			responseType = getAttributeAsString(RESPONSE_TYPE);
@@ -205,16 +206,11 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			params = new HashMap();
 			params.put("pagination", getPaginationParamVaue(mimeType));
 
-			if ("application/vnd.ms-excel".equalsIgnoreCase(mimeType)) {
-				// export into XLS
+			if (isXls(mimeType)) {
 				exportIntoXLS(writeBackResponseInline, mimeType, statement, sqlQuery, extractedFields, exportLimit);
-
-			} else if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equalsIgnoreCase(mimeType)) {
-				// export into XLSX
+			} else if (isXlsx(mimeType)) {
 				exportIntoXLSX(writeBackResponseInline, mimeType, statement, sqlQuery, extractedFields, exportLimit);
-
-			} else if ("text/csv".equalsIgnoreCase(mimeType)) {
-				// export into CSV
+			} else if (isCsv(mimeType)) {
 				exportIntoCSV(writeBackResponseInline, mimeType, fileExtension, transaction, sqlQuery);
 			}
 
@@ -286,6 +282,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		}
 	}
 
+	@Deprecated
 	private int getResultNumber(IDataStore dataStore) {
 		int resultNumber;
 		Object propertyRawValue;
@@ -294,19 +291,27 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		return resultNumber;
 	}
 
+	private int getResultNumber(DataIterator dataStore) {
+		int resultNumber;
+		Object propertyRawValue;
+		propertyRawValue = dataStore.getMetaData().getProperty("resultNumber");
+		resultNumber = ((Integer) propertyRawValue).intValue();
+		return resultNumber;
+	}
+
 	private void exportIntoXLS(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery, Vector extractedFields,
-			String exportLimit) throws EMFInternalError, IOException, FileNotFoundException, SpagoBIEngineException {
-		IDataStore dataStore = getDataStore(statement, sqlQuery, exportLimit);
+			Integer exportLimit) throws EMFInternalError, IOException, FileNotFoundException, SpagoBIEngineException {
+		DataIterator iterator = getDataIterator(statement, sqlQuery, exportLimit);
 		Locale locale = (Locale) getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);
-		QbeXLSExporter exp = new QbeXLSExporter(dataStore, locale);
+		QbeXLSExporter exp = new QbeXLSExporter(iterator, locale);
 		exp.setExtractedFields(extractedFields);
 
-		int resultNumber = getResultNumber(dataStore);
-		Integer limit = parseExportLimit(exportLimit);
+//		int resultNumber = getResultNumber(iterator);
+//		Integer limit = parseExportLimit(exportLimit);
 		boolean showLimitExportMessage = false;
-		if (resultNumber > limit) {
-			showLimitExportMessage = true;
-		}
+//		if (resultNumber > limit) {
+//			showLimitExportMessage = true;
+//		}
 		Workbook wb = exp.export(exportLimit, showLimitExportMessage);
 
 		File file = File.createTempFile("workbook", ".xls");
@@ -330,18 +335,18 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 	}
 
 	private void exportIntoXLSX(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery, Vector extractedFields,
-			String exportLimit) throws EMFInternalError, IOException, FileNotFoundException, SpagoBIEngineException {
-		IDataStore dataStore = getDataStore(statement, sqlQuery, exportLimit);
+			Integer exportLimit) throws EMFInternalError, IOException, FileNotFoundException, SpagoBIEngineException {
+		DataIterator iterator = getDataIterator(statement, sqlQuery, exportLimit);
 		Locale locale = (Locale) getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);
-		QbeXLSXExporter exp = new QbeXLSXExporter(dataStore, locale);
+		QbeXLSXExporter exp = new QbeXLSXExporter(iterator, locale);
 		exp.setExtractedFields(extractedFields);
 
-		int resultNumber = getResultNumber(dataStore);
-		Integer limit = parseExportLimit(exportLimit);
+//		int resultNumber = getResultNumber(iterator);
+//		Integer limit = parseExportLimit(exportLimit);
 		boolean showLimitExportMessage = false;
-		if (resultNumber > limit) {
-			showLimitExportMessage = true;
-		}
+//		if (resultNumber > limit) {
+//			showLimitExportMessage = true;
+//		}
 		Workbook wb = exp.export(exportLimit, showLimitExportMessage);
 
 		File file = File.createTempFile("workbook", ".xlsx");
@@ -364,8 +369,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		}
 	}
 
-	private IDataStore getDataStore(IStatement statement, String sqlQuery, String exportLimit) throws EMFInternalError {
-		IDataStore dataStore = null;
+	private DataIterator getDataIterator(IStatement statement, String sqlQuery, Integer exportLimit) throws EMFInternalError {
+		DataIterator iterator = null;
 
 		boolean isFormEngineInstance = getEngineInstance().getTemplate().getProperty("formJSONTemplate") != null;
 		if (!isFormEngineInstance) {
@@ -373,7 +378,51 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 
 			IDataSet dataSet = null;
 
-			Integer limit = parseExportLimit(exportLimit);
+			boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
+			dataSet = QbeDatasetFactory.createDataSet(statement);
+			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+
+			dataSet.addBinding("attributes", getUserProfileAttributes());
+			dataSet.addBinding("parameters", this.getEnv());
+			logger.debug("Executing query ...");
+
+			Map<String, Object> envs = getEnv();
+			String stringDrivers = envs.get(DRIVERS).toString();
+			Map<String, Object> drivers = null;
+			try {
+				drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
+			} catch (Exception e) {
+				logger.debug("Drivers cannot be transformed from string to map");
+				throw new SpagoBIRuntimeException("Drivers cannot be transformed from string to map", e);
+			}
+			dataSet.setDrivers(drivers);
+
+			iterator = dataSet.iterator();
+
+		} else {
+			// case of FormEngine
+
+			JDBCDataSet dataset = new JDBCDataSet();
+			IDataSource datasource = (IDataSource) this.getEnv().get(EngineConstants.ENV_DATASOURCE);
+			dataset.setDataSource(datasource);
+			dataset.setUserProfileAttributes(UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
+			dataset.setQuery(sqlQuery);
+			logger.debug("Executing query ...");
+			iterator = dataset.iterator();
+		}
+
+		return iterator;
+	}
+
+	@Deprecated
+	private IDataStore getDataStore(IStatement statement, String sqlQuery, Integer exportLimit) throws EMFInternalError {
+		IDataStore dataStore = null;
+
+		boolean isFormEngineInstance = getEngineInstance().getTemplate().getProperty("formJSONTemplate") != null;
+		if (!isFormEngineInstance) {
+			// case of standard QBE
+
+			IDataSet dataSet = null;
 
 			Integer start = 0;
 			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
@@ -396,7 +445,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			}
 			dataSet.setDrivers(drivers);
 
-			dataSet.loadData(start, limit, (maxSize == null ? -1 : maxSize.intValue()));
+			dataSet.loadData(start, exportLimit, (maxSize == null ? -1 : maxSize.intValue()));
 
 			dataStore = dataSet.getDataStore();
 
@@ -502,6 +551,18 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 	private Query deserializeQuery(JSONObject queryJSON) throws SerializationException, JSONException {
 		// queryJSON.put("expression", queryJSON.get("filterExpression"));
 		return SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON.toString(), getEngineInstance().getDataSource());
+	}
+
+	private boolean isCsv(String mimeType) {
+		return "text/csv".equalsIgnoreCase(mimeType);
+	}
+
+	private boolean isXlsx(String mimeType) {
+		return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equalsIgnoreCase(mimeType);
+	}
+
+	private boolean isXls(String mimeType) {
+		return "application/vnd.ms-excel".equalsIgnoreCase(mimeType);
 	}
 
 }

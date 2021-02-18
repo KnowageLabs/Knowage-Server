@@ -19,7 +19,6 @@ package it.eng.spagobi.engines.qbe.exporter;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -28,6 +27,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -45,9 +45,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import it.eng.spagobi.engines.qbe.bo.MeasureScaleFactorOption;
 import it.eng.spagobi.engines.qbe.query.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -89,23 +89,15 @@ public class QbeXLSExporter {
 	private Locale locale;
 	private Map<String, Object> properties;
 
-	IDataStore dataStore = null;
+	DataIterator iterator = null;
 	Vector extractedFields = null;
 	Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
 
-	public QbeXLSExporter(IDataStore dataStore, Locale locale) {
+	public QbeXLSExporter(DataIterator iterator, Locale locale) {
 		super();
-		this.dataStore = dataStore;
+		this.iterator = iterator;
 		this.locale = locale;
 		this.properties = new HashMap<String, Object>();
-	}
-
-	public IDataStore getDataStore() {
-		return dataStore;
-	}
-
-	public void setDataStore(IDataStore dataStore) {
-		this.dataStore = dataStore;
 	}
 
 	public QbeXLSExporter() {
@@ -121,7 +113,7 @@ public class QbeXLSExporter {
 		return this.properties.get(propertyName);
 	}
 
-	public Workbook export(String exportLimit, boolean showLimitExportMessage) {
+	public Workbook export(Integer exportLimit, boolean showLimitExportMessage) {
 		Workbook workbook = this.instantiateWorkbook();
 		CreationHelper createHelper = workbook.getCreationHelper();
 		Sheet sheet = workbook.createSheet("new sheet");
@@ -132,25 +124,24 @@ public class QbeXLSExporter {
 		return workbook;
 	}
 
-	public void fillSheet(Sheet sheet, Workbook wb, CreationHelper createHelper, int startRow, String exportLimit, boolean showLimitExportMessage) {
+	public void fillSheet(Sheet sheet, Workbook wb, CreationHelper createHelper, int startRow, Integer exportLimit, boolean showLimitExportMessage) {
 		// we enrich the JSON object putting every node the descendants_no
 		// property: it is useful when merging cell into rows/columns headers
 		// and when initializing the sheet
-		if (dataStore != null && !dataStore.isEmpty()) {
-			if (showLimitExportMessage) {
-				fillMessageHeader(sheet, exportLimit);
-				startRow = 1;
-			}
+		if (iterator.hasNext()) {
 			CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, startRow, DEFAULT_START_COLUMN);
-			fillSheetData(sheet, wb, createHelper, cellTypes, startRow + 1, DEFAULT_START_COLUMN);
+			fillSheetData(sheet, wb, createHelper, cellTypes, startRow + 1, DEFAULT_START_COLUMN, exportLimit);
+
+// TODO			if (showLimitExportMessage) {
+				fillMessageHeader(sheet, exportLimit);
+// TODO			}
 		}
 	}
 
-	private void fillMessageHeader(Sheet sheet, String exportLimit) {
-		int beginRowMessageData = 0;
+	protected void fillMessageHeader(Sheet sheet, Integer exportLimit) {
 		String message = "Query results are exceeding configured threshold, therefore only " + exportLimit + " were exported.";
 		CellStyle messageCellStyle = buildHeaderCellStyle(sheet);
-		Row messageRow = sheet.getRow(beginRowMessageData);
+		Row messageRow = sheet.getRow(0);
 		Cell cell = messageRow.createCell(0);
 		cell.setCellValue(message);
 		cell.setCellStyle(messageCellStyle);
@@ -179,8 +170,8 @@ public class QbeXLSExporter {
 
 		try {
 
-			IMetaData dataStoreMetaData = dataStore.getMetaData();
-			int colnumCount = dataStoreMetaData.getFieldCount();
+			IMetaData dataStoreMetaData = getMetadata();
+			int colnumCount = getFieldCount();
 
 			Row headerRow = sheet.getRow(beginRowHeaderData);
 			CellStyle headerCellStyle = buildHeaderCellStyle(sheet);
@@ -334,9 +325,8 @@ public class QbeXLSExporter {
 		return cellStyle;
 	}
 
-	public void fillSheetData(Sheet sheet, Workbook wb, CreationHelper createHelper, CellStyle[] cellTypes, int beginRowData, int beginColumnData) {
+	public void fillSheetData(Sheet sheet, Workbook wb, CreationHelper createHelper, CellStyle[] cellTypes, int beginRowData, int beginColumnData, Integer exportLimit) {
 		CellStyle dCellStyle = this.buildCellStyle(sheet);
-		Iterator it = dataStore.iterator();
 		int rownum = beginRowData;
 		short formatIndexInt = this.getBuiltinFormat("#,##0");
 		CellStyle cellStyleInt = this.buildCellStyle(sheet); // cellStyleInt is the default cell style for integers
@@ -347,11 +337,13 @@ public class QbeXLSExporter {
 		cellStyleDate.cloneStyleFrom(dCellStyle);
 		cellStyleDate.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy"));
 
-		IMetaData d = dataStore.getMetaData();
+		IMetaData d = getMetadata();
 
-		while (it.hasNext()) {
+		final int maxRows = getMaxRows();
+		int i = 0;
+		while (iterator.hasNext() && i<exportLimit && i<maxRows) {
 			Row rowVal = sheet.getRow(rownum);
-			IRecord record = (IRecord) it.next();
+			IRecord record = iterator.next();
 			List fields = record.getFields();
 			int length = fields.size();
 			for (int fieldIndex = 0; fieldIndex < length; fieldIndex++) {
@@ -463,6 +455,18 @@ public class QbeXLSExporter {
 	protected short getBuiltinFormat(String formatStr) {
 		short format = HSSFDataFormat.getBuiltinFormat(formatStr);
 		return format;
+	}
+
+	protected int getMaxRows() {
+		return SpreadsheetVersion.EXCEL97.getLastRowIndex();
+	}
+
+	protected IMetaData getMetadata() {
+		return iterator.getMetaData();
+	}
+
+	protected int getFieldCount() {
+		return getMetadata().getFieldCount();
 	}
 
 }
