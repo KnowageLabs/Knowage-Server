@@ -1,17 +1,14 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
-
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -36,7 +33,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -49,12 +45,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab;
-import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabBuilder;
-import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabSerializationConstants;
-import it.eng.knowage.engine.cockpit.api.crosstable.NodeComparator;
-import it.eng.knowage.engine.cockpit.api.export.excel.crosstab.CrosstabXLSExporter;
-import it.eng.knowage.engine.cockpit.api.export.excel.crosstab.CrosstabXLSXExporter;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFUserError;
@@ -66,7 +56,6 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.json.JSONUtils;
 
 /**
  * @authors Francesco Lucchi (francesco.lucchi@eng.it)
@@ -77,9 +66,8 @@ public class ExcelExporter {
 
 	static private Logger logger = Logger.getLogger(ExcelExporter.class);
 
-	private final String outputType;
 	private final String userUniqueIdentifier;
-	private final boolean exportWidget;
+	private final boolean isSingleWidgetExport;
 	private final JSONObject body;
 	private Locale locale;
 	private int uniqueId = 0;
@@ -93,17 +81,15 @@ public class ExcelExporter {
 
 	// used only for scheduled export
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap, String requestURL) {
-		this.outputType = outputType;
 		this.userUniqueIdentifier = userUniqueIdentifier;
-		this.exportWidget = false;
+		this.isSingleWidgetExport = false;
 		this.requestURL = requestURL;
 		this.body = new JSONObject();
 	}
 
 	public ExcelExporter(String outputType, String userUniqueIdentifier, JSONObject body) {
-		this.outputType = outputType;
 		this.userUniqueIdentifier = userUniqueIdentifier;
-		this.exportWidget = body.optBoolean("exportWidget");
+		this.isSingleWidgetExport = body.optBoolean("exportWidget");
 		this.body = body;
 		this.locale = getLocale(body);
 	}
@@ -122,17 +108,7 @@ public class ExcelExporter {
 	}
 
 	public String getMimeType() {
-		String mimeType;
-
-		if (isXlsx()) {
-			mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-		} else if (isXls()) {
-			mimeType = "application/vnd.ms-excel";
-		} else {
-			throw new SpagoBIRuntimeException("Unsupported output type [" + outputType + "]");
-		}
-
-		return mimeType;
+		return "application/vnd.ms-excel";
 	}
 
 	// used only for scheduled exports
@@ -161,7 +137,7 @@ public class ExcelExporter {
 			Process exec = processBuilder.start();
 			exec.waitFor();
 			// the script creates the resulting xls and saves it to outputFile
-			Path outputFile = outputDir.resolve(documentLabel + "." + outputType.toLowerCase());
+			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");
 			return getByteArrayFromFile(outputFile, outputDir);
 		} catch (Exception e) {
 			logger.error("Error during scheduled export execution", e);
@@ -213,28 +189,17 @@ public class ExcelExporter {
 			}
 		}
 
-		Workbook wb;
-
-		if (isXlsx()) {
-			wb = new XSSFWorkbook();
-		} else if (isXls()) {
-			wb = new HSSFWorkbook();
-		} else {
-			throw new SpagoBIRuntimeException("Unsupported output type [" + outputType + "]");
-		}
+		Workbook wb = new XSSFWorkbook();
 
 		try {
-			if (exportWidget) {
+			if (isSingleWidgetExport) {
 				String widgetId = String.valueOf(body.get("widget"));
 				String widgetType = getWidgetTypeFromCockpitTemplate(templateString, widgetId);
-				if (widgetType.equalsIgnoreCase("static-pivot-table")) {
-					JSONObject optionsObj = new JSONObject(options);
-					exportWidgetCrossTab(templateString, widgetId, wb, optionsObj);
-				} else if (widgetType.equalsIgnoreCase("map")) {
-					exportWidgetMap(templateString, widgetId, wb);
-				} else {
-					exportWidget(templateString, widgetId, wb);
-				}
+				JSONObject optionsObj = new JSONObject();
+				if (options != null && !options.isEmpty())
+					optionsObj = new JSONObject(options);
+				WidgetXLSXExporter widgetExporter = new WidgetXLSXExporter(this, widgetType, templateString, widgetId, wb, optionsObj);
+				widgetExporter.export();
 			} else {
 				JSONArray widgetsJson = getWidgetsJson(templateString);
 				JSONObject optionsObj = buildOptionsForCrosstab(templateString);
@@ -250,7 +215,7 @@ public class ExcelExporter {
 			out.flush();
 			out.close();
 		} catch (IOException e) {
-			throw new SpagoBIRuntimeException("Unable to generate output file with extension [" + outputType + "]", e);
+			throw new SpagoBIRuntimeException("Unable to generate output file", e);
 		}
 
 		return out.toByteArray();
@@ -374,14 +339,11 @@ public class ExcelExporter {
 				if (Arrays.asList(WIDGETS_TO_IGNORE).contains(widgetType.toLowerCase()))
 					continue;
 				totExportedWidgets++;
-				if (widgetType.equalsIgnoreCase("static-pivot-table") && optionsObj.has(widgetId)) {
-					JSONObject options = optionsObj.getJSONObject(widgetId);
-					exportWidgetCrossTab(templateString, widgetId, wb, options);
-				} else if (widgetType.equalsIgnoreCase("map")) {
-					exportWidgetMap(templateString, widgetId, wb);
-				} else {
-					exportWidget(templateString, widgetId, wb);
-				}
+				JSONObject currWidgetOptions = new JSONObject();
+				if (optionsObj.has(widgetId))
+					currWidgetOptions = optionsObj.getJSONObject(widgetId);
+				WidgetXLSXExporter widgetExporter = new WidgetXLSXExporter(this, widgetType, templateString, widgetId, wb, currWidgetOptions);
+				widgetExporter.export();
 			}
 			if (totExportedWidgets == 0) {
 				exportEmptyExcel(wb);
@@ -398,220 +360,7 @@ public class ExcelExporter {
 		cell.setCellValue("No data");
 	}
 
-	private void exportWidget(String templateString, String widgetId, Workbook wb) throws SerializationException {
-		try {
-			JSONObject template = new JSONObject(templateString);
-			JSONObject widget = getWidgetById(template, widgetId);
-			if (widget != null) {
-				String widgetName = null;
-				JSONObject style = widget.optJSONObject("style");
-				if (style != null) {
-					JSONObject title = style.optJSONObject("title");
-					if (title != null) {
-						widgetName = title.optString("label");
-					} else {
-						JSONObject content = widget.optJSONObject("content");
-						if (content != null) {
-							widgetName = content.getString("name");
-						}
-					}
-				}
-
-				JSONObject dataStore = getDataStoreForWidget(template, widget);
-				if (dataStore != null) {
-					String cockpitSheetName = getCockpitSheetName(template, widgetId);
-					createExcelFile(dataStore, wb, widgetName, cockpitSheetName);
-				}
-			}
-		} catch (JSONException e) {
-			logger.error("Unable to load template", e);
-		}
-	}
-
-	private void exportWidgetMap(String templateString, String widgetId, Workbook wb) throws SerializationException {
-		try {
-			JSONObject template = new JSONObject(templateString);
-			JSONObject widget = getWidgetById(template, widgetId);
-			if (widget != null) {
-				String widgetName = null;
-				JSONObject style = widget.optJSONObject("style");
-				if (style != null) {
-					JSONObject title = style.optJSONObject("title");
-					if (title != null) {
-						widgetName = title.optString("label");
-					} else {
-						JSONObject content = widget.optJSONObject("content");
-						if (content != null) {
-							widgetName = content.getString("name");
-						}
-					}
-				}
-
-				JSONArray dataStoreArray = getMultiDataStoreForWidget(template, widget);
-				for (int i = 0; i < dataStoreArray.length(); i++) {
-					JSONObject dataStore = dataStoreArray.getJSONObject(i);
-					if (dataStore != null) {
-						String cockpitSheetName = getCockpitSheetName(template, widgetId) + String.valueOf(i);
-						createExcelFile(dataStore, wb, widgetName, cockpitSheetName);
-					}
-				}
-			}
-		} catch (JSONException e) {
-			logger.error("Unable to load template", e);
-		}
-	}
-
-	private void exportWidgetCrossTab(String templateString, String widgetId, Workbook wb, JSONObject optionsObj) throws SerializationException {
-		try {
-			JSONObject template = new JSONObject(templateString);
-			JSONObject widget = getWidgetById(template, widgetId);
-			if (widget != null) {
-				String widgetName = null;
-				JSONObject style = widget.optJSONObject("style");
-				if (style != null) {
-					JSONObject title = style.optJSONObject("title");
-					if (title != null) {
-						widgetName = title.optString("label");
-					} else {
-						JSONObject content = widget.optJSONObject("content");
-						if (content != null) {
-							widgetName = content.getString("name");
-						}
-					}
-				}
-
-				JSONObject crosstabDefinition = optionsObj.getJSONObject("crosstabDefinition");
-				JSONArray measures = crosstabDefinition.optJSONArray("measures");
-				JSONObject variables = optionsObj.optJSONObject("variables");
-				Map<String, List<Threshold>> thresholdColorsMap = getThresholdColorsMap(measures);
-
-				CrosstabXLSExporter exporter;
-				if (outputType != null && outputType.toLowerCase().equals("xlsx"))
-					exporter = new CrosstabXLSXExporter(null, variables, thresholdColorsMap);
-				else
-					exporter = new CrosstabXLSExporter(null, variables);
-
-				JSONObject crosstabDefinitionJo = optionsObj.getJSONObject("crosstabDefinition");
-				JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
-				JSONObject crosstabStyleJo = (optionsObj.isNull("style")) ? new JSONObject() : optionsObj.getJSONObject("style");
-				crosstabDefinitionConfigJo.put("style", crosstabStyleJo);
-
-				JSONObject sortOptions = optionsObj.getJSONObject("sortOptions");
-
-				List<Map<String, Object>> columnsSortKeys;
-				List<Map<String, Object>> rowsSortKeys;
-				List<Map<String, Object>> measuresSortKeys;
-
-				// the id of the crosstab in the client configuration array
-				Integer myGlobalId;
-				JSONArray columnsSortKeysJo = sortOptions.optJSONArray("columnsSortKeys");
-				JSONArray rowsSortKeysJo = sortOptions.optJSONArray("rowsSortKeys");
-				JSONArray measuresSortKeysJo = sortOptions.optJSONArray("measuresSortKeys");
-				myGlobalId = sortOptions.optInt("myGlobalId");
-				columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
-				rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
-				measuresSortKeys = JSONUtils.toMap(measuresSortKeysJo);
-				if (optionsObj != null) {
-					logger.debug("Export cockpit crosstab optionsObj.toString(): " + optionsObj.toString());
-				}
-
-				Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
-				Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
-				Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
-				CrosstabBuilder builder = new CrosstabBuilder(locale, crosstabDefinition, optionsObj.getJSONArray("jsonData"),
-						optionsObj.getJSONObject("metadata"), null);
-
-				CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
-
-				Sheet sheet;
-
-				String cockpitSheetName = getCockpitSheetName(template, widgetId);
-				sheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
-
-				CreationHelper createHelper = wb.getCreationHelper();
-
-				exporter.fillAlreadyCreatedSheet(sheet, cs, createHelper, 0, locale);
-
-			}
-		} catch (JSONException e) {
-			logger.error("Unable to load template", e);
-		}
-	}
-
-	private String getCockpitSheetName(JSONObject template, String widgetId) {
-		try {
-			JSONArray sheets = template.getJSONArray("sheets");
-			if (sheets.length() == 1)
-				return "";
-			for (int i = 0; i < sheets.length(); i++) {
-				JSONObject sheet = sheets.getJSONObject(i);
-				JSONArray widgets = sheet.getJSONArray("widgets");
-				for (int j = 0; j < widgets.length(); j++) {
-					JSONObject widget = widgets.getJSONObject(j);
-					if (widgetId.equals(widget.getString("id")))
-						return sheet.getString("label");
-				}
-			}
-			return "";
-		} catch (Exception e) {
-			logger.error("Unable to retrieve cockpit sheet name from template", e);
-			return "";
-		}
-	}
-
-	private Map<String, List<Threshold>> getThresholdColorsMap(JSONArray measures) {
-		Map<String, List<Threshold>> toReturn = new HashMap<String, List<Threshold>>();
-		try {
-			for (int i = 0; i < measures.length(); i++) {
-				JSONObject measure = measures.getJSONObject(i);
-				String id = measure.getString("id");
-				if (!measure.has("ranges"))
-					continue;
-				JSONArray ranges = measure.getJSONArray("ranges");
-				List<Threshold> allThresholds = new ArrayList<Threshold>();
-				for (int j = 0; j < ranges.length(); j++) {
-					JSONObject range = ranges.getJSONObject(j);
-					String operator = range.getString("operator");
-					if (!operator.equals("none")) {
-						Double value = range.getDouble("value");
-						String color = range.getString("background-color");
-						Threshold threshold = new Threshold(operator, value, color);
-						allThresholds.add(threshold);
-					}
-				}
-				toReturn.put(id, allThresholds);
-			}
-		} catch (Exception e) {
-			logger.error("Unable to build threshold color map", e);
-			Map<String, List<Threshold>> emptyMap = new HashMap<String, List<Threshold>>();
-			return emptyMap;
-		}
-		return toReturn;
-	}
-
-	private JSONObject getWidgetById(JSONObject template, String widgetId) {
-		try {
-			long widget_id = Long.parseLong(widgetId);
-
-			JSONArray sheets = template.getJSONArray("sheets");
-			for (int i = 0; i < sheets.length(); i++) {
-				JSONObject sheet = sheets.getJSONObject(i);
-				JSONArray widgets = sheet.getJSONArray("widgets");
-				for (int j = 0; j < widgets.length(); j++) {
-					JSONObject widget = widgets.getJSONObject(j);
-					long id = widget.getLong("id");
-					if (id == widget_id) {
-						return widget;
-					}
-				}
-			}
-		} catch (JSONException e) {
-			logger.error("Unable to get widget", e);
-		}
-		return null;
-	}
-
-	private JSONArray getMultiDataStoreForWidget(JSONObject template, JSONObject widget) {
+	protected JSONArray getMultiDataStoreForWidget(JSONObject template, JSONObject widget) {
 		Map<String, Object> map = new java.util.HashMap<String, Object>();
 		JSONArray multiDataStore = new JSONArray();
 		try {
@@ -642,7 +391,7 @@ public class ExcelExporter {
 		return multiDataStore;
 	}
 
-	private JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget) {
+	protected JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget) {
 		Map<String, Object> map = new java.util.HashMap<String, Object>();
 		JSONObject datastore = null;
 		try {
@@ -681,7 +430,7 @@ public class ExcelExporter {
 		if (body == null || body.length() == 0)
 			return cockpitSelections;
 		try {
-			if (exportWidget) { // export single widget
+			if (isSingleWidgetExport) { // export single widget
 				cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
 			} else { // export whole cockpit
 				JSONArray allWidgets = body.getJSONArray("widget");
@@ -705,7 +454,7 @@ public class ExcelExporter {
 		if (body == null || body.length() == 0)
 			return cockpitSelections;
 		try {
-			if (exportWidget) { // export single widget with multi dataset
+			if (isSingleWidgetExport) { // export single widget with multi dataset
 				allSelections = body.getJSONArray("COCKPIT_SELECTIONS");
 				for (int i = 0; i < allSelections.length(); i++) {
 					if (allSelections.getJSONObject(i).getInt("datasetId") == datasetId) {
@@ -733,7 +482,7 @@ public class ExcelExporter {
 		return cockpitSelections;
 	}
 
-	private void createExcelFile(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) throws JSONException, SerializationException {
+	protected void createExcelFile(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) throws JSONException, SerializationException {
 		try {
 			JSONObject metadata = dataStore.getJSONObject("metaData");
 			JSONArray columns = metadata.getJSONArray("fields");
@@ -773,7 +522,7 @@ public class ExcelExporter {
 			}
 			Sheet sheet;
 			Row header = null;
-			if (exportWidget) { // export single widget
+			if (isSingleWidgetExport) { // export single widget
 				sheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 				header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, 0);
 			} else { // export whole cockpit
@@ -812,7 +561,7 @@ public class ExcelExporter {
 			for (int r = 0; r < rows.length(); r++) {
 				JSONObject rowObject = rows.getJSONObject(r);
 				Row row;
-				if (exportWidget)
+				if (isSingleWidgetExport)
 					row = sheet.createRow((r + isGroup) + 1); // starting from second row, because the 0th (first) is Header
 				else
 					row = sheet.createRow((r + isGroup) + 2);
@@ -945,10 +694,10 @@ public class ExcelExporter {
 		}
 	}
 
-	private Sheet createUniqueSafeSheet(Workbook wb, String widgetName, String cockpitSheetName) {
+	protected Sheet createUniqueSafeSheet(Workbook wb, String widgetName, String cockpitSheetName) {
 		Sheet sheet;
 		String sheetName;
-		if (!exportWidget && cockpitSheetName != null && !cockpitSheetName.equals(""))
+		if (!isSingleWidgetExport && cockpitSheetName != null && !cockpitSheetName.equals(""))
 			sheetName = cockpitSheetName.concat(".").concat(widgetName);
 		else
 			sheetName = widgetName;
@@ -1240,29 +989,8 @@ public class ExcelExporter {
 		return null;
 	}
 
-	private Map<Integer, NodeComparator> toComparatorMap(List<Map<String, Object>> sortKeyMap) {
-		Map<Integer, NodeComparator> sortKeys = new HashMap<Integer, NodeComparator>();
-
-		for (int s = 0; s < sortKeyMap.size(); s++) {
-			Map<String, Object> sMap = sortKeyMap.get(s);
-			NodeComparator nc = new NodeComparator();
-
-			nc.setParentValue((String) sMap.get("parentValue"));
-			nc.setMeasureLabel((String) sMap.get("measureLabel"));
-			if (sMap.get("direction") != null) {
-				nc.setDirection(Integer.valueOf(sMap.get("direction").toString()));
-				sortKeys.put(Integer.valueOf(sMap.get("column").toString()), nc);
-			}
-		}
-		return sortKeys;
-	}
-
-	private boolean isXls() {
-		return "xls".equalsIgnoreCase(outputType);
-	}
-
-	private boolean isXlsx() {
-		return "xlsx".equalsIgnoreCase(outputType);
+	protected Locale getLocale() {
+		return locale;
 	}
 
 }
