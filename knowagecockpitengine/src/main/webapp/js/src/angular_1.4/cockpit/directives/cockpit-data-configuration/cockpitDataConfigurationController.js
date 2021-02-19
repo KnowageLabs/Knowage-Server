@@ -40,6 +40,13 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 			});
 	}
 
+	function deleteDataSetFromDsWithDriversArray(dsId) {
+		cockpitModule_datasetServices.selectedDSWithDrivers = cockpitModule_datasetServices.selectedDSWithDrivers
+			.filter(function(e) {
+				return e.id.dsId != dsId;
+			});
+	}
+
 	$scope.datasetTableActions=[{
 			label : 'delete',
 			icon:'fa fa-trash' ,
@@ -55,6 +62,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 						if(associationList.withAssoc.length == 0 && currentSelection[item.label] ==undefined ){
 							$scope.tmpAvaiableDataset.splice($scope.tmpAvaiableDataset.indexOf(item),1);
 							deleteVariablesByDataSetId(item.id.dsId);
+							deleteDataSetFromDsWithDriversArray(item.id.dsId);
 						}else{
 							// there is an association
 							 var confirm = $mdDialog.confirm()
@@ -70,6 +78,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 									angular.copy(associationList.withoutAssoc,$scope.tmpAssociations);
 									$scope.tmpAvaiableDataset.splice($scope.tmpAvaiableDataset.indexOf(item),1);
 									deleteVariablesByDataSetId(item.id.dsId);
+									deleteDataSetFromDsWithDriversArray(item.id.dsId);
 								}
 								if(currentSelection[item.label] != undefined){
 									// remove selection
