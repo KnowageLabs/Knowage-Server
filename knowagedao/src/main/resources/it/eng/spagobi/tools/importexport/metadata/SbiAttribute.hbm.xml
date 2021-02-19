@@ -14,7 +14,7 @@
 			<column name="ATTRIBUTE_NAME" not-null="true" />
 		</property>
 		<property name="description" type="string">
-			<column name="DESCRIPTION" length="500" not-null="true" />
+			<column name="DESCRIPTION" length="500" />
 		</property>
 		<property name="allowUser" type="short">
 			<column name="ALLOW_USER" not-null="false" />
