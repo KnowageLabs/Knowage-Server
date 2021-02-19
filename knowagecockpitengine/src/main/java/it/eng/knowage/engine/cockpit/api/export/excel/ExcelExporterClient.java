@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,8 +28,8 @@ import org.json.JSONObject;
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
 /**
- * @authors Francesco Lucchi (francesco.lucchi@eng.it)
- *
+ * @author Francesco Lucchi (francesco.lucchi@eng.it)
+ * @author Marco Balestri (marco.balestri@eng.it)
  */
 
 public class ExcelExporterClient extends SimpleRestClient {
@@ -38,8 +38,16 @@ public class ExcelExporterClient extends SimpleRestClient {
 	static protected Logger logger = Logger.getLogger(ExcelExporterClient.class);
 
 	public JSONObject getDataStore(Map<String, Object> parameters, String datasetLabel, String userId, String body) throws Exception {
+		// if pagination is disabled offset = 0, fetchSize = -1
+		return getDataStore(parameters, datasetLabel, userId, body, 0, -1);
+	}
+
+	public JSONObject getDataStore(Map<String, Object> parameters, String datasetLabel, String userId, String body, int offset, int fetchSize)
+			throws Exception {
 		logger.debug("IN");
 
+		parameters.put("offset", offset);
+		parameters.put("size", fetchSize);
 		Response resp = executePostService(parameters, String.format(serviceUrl, datasetLabel), userId, MediaType.APPLICATION_JSON, body);
 		String resultString = resp.readEntity(String.class);
 		JSONObject result = new JSONObject(resultString);

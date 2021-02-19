@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package it.eng.knowage.engine.cockpit.api.export.excel;
 
 import java.util.ArrayList;
@@ -60,9 +61,14 @@ class WidgetXLSXExporter {
 
 	public void export() {
 		if (widgetType.equalsIgnoreCase("static-pivot-table") && optionsObj != null) {
+			// crosstab widget object must be retrieved BE side
 			exportCrossTabWidget();
 		} else if (widgetType.equalsIgnoreCase("map")) {
+			// map widget supports multiple datasets
 			exportMapWidget();
+		} else if (widgetType.equalsIgnoreCase("advanced-table-widget")) {
+			// table widget supports pagination
+			exportTableWidget();
 		} else {
 			exportGenericWidget();
 		}
@@ -92,6 +98,44 @@ class WidgetXLSXExporter {
 					String cockpitSheetName = getCockpitSheetName(template, widgetId);
 					excelExporter.createExcelFile(dataStore, wb, widgetName, cockpitSheetName);
 				}
+			}
+		} catch (Exception e) {
+			logger.error("Unable to export widget: " + widgetId, e);
+		}
+	}
+
+	private void exportTableWidget() {
+		try {
+			JSONObject template = new JSONObject(templateString);
+			JSONObject widget = getWidgetById(template, widgetId);
+			if (widget != null) {
+				String widgetName = null;
+				JSONObject style = widget.optJSONObject("style");
+				if (style != null) {
+					JSONObject title = style.optJSONObject("title");
+					if (title != null) {
+						widgetName = title.optString("label");
+					} else {
+						JSONObject content = widget.optJSONObject("content");
+						if (content != null) {
+							widgetName = content.getString("name");
+						}
+					}
+				}
+
+				JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget, 0, -1);
+				if (dataStore != null) {
+					String cockpitSheetName = getCockpitSheetName(template, widgetId);
+					excelExporter.createExcelFile(dataStore, wb, widgetName, cockpitSheetName);
+				}
+
+//				String cockpitSheetName = getCockpitSheetName(template, widgetId);
+//				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+//
+//				CreationHelper createHelper = wb.getCreationHelper();
+//
+//				exporter.fillAlreadyCreatedSheet(sheet, cs, createHelper, 0, excelExporter.getLocale());
+
 			}
 		} catch (Exception e) {
 			logger.error("Unable to export widget: " + widgetId, e);
@@ -156,10 +200,8 @@ class WidgetXLSXExporter {
 
 				CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 
-				Sheet sheet;
-
 				String cockpitSheetName = getCockpitSheetName(template, widgetId);
-				sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 
 				CreationHelper createHelper = wb.getCreationHelper();
 

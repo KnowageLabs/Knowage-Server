@@ -58,8 +58,8 @@ import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
- * @authors Francesco Lucchi (francesco.lucchi@eng.it)
- * @authors Marco Balestri (marco.balestri@eng.it)
+ * @author Francesco Lucchi (francesco.lucchi@eng.it)
+ * @author Marco Balestri (marco.balestri@eng.it)
  */
 
 public class ExcelExporter {
@@ -200,6 +200,7 @@ public class ExcelExporter {
 				WidgetXLSXExporter widgetExporter = new WidgetXLSXExporter(this, widgetType, templateString, widgetId, wb, optionsObj);
 				widgetExporter.export();
 			} else {
+				// export whole cockpit
 				JSONArray widgetsJson = getWidgetsJson(templateString);
 				JSONObject optionsObj = buildOptionsForCrosstab(templateString);
 				exportCockpit(templateString, widgetsJson, wb, optionsObj);
@@ -388,6 +389,11 @@ public class ExcelExporter {
 	}
 
 	protected JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget) {
+		// if pagination is disabled offset = 0, fetchSize = -1
+		return getDataStoreForWidget(template, widget, 0, -1);
+	}
+
+	protected JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget, int offset, int fetchSize) {
 		Map<String, Object> map = new java.util.HashMap<String, Object>();
 		JSONObject datastore = null;
 		try {
@@ -412,7 +418,7 @@ public class ExcelExporter {
 				cockpitSelections.put("options", jsOptions);
 			}
 
-			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString());
+			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString(), offset, fetchSize);
 			datastore.put("widgetData", widget);
 
 		} catch (Exception e) {
@@ -758,9 +764,14 @@ public class ExcelExporter {
 	}
 
 	private JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections) {
+		// if pagination is disabled offset = 0, fetchSize = -1
+		return getDatastore(datasetLabel, map, selections, 0, -1);
+	}
+
+	private JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections, int offset, int fetchSize) {
 		ExcelExporterClient client = new ExcelExporterClient();
 		try {
-			JSONObject datastore = client.getDataStore(map, datasetLabel, userUniqueIdentifier, selections);
+			JSONObject datastore = client.getDataStore(map, datasetLabel, userUniqueIdentifier, selections, offset, fetchSize);
 			return datastore;
 		} catch (Exception e) {
 			String message = "Unable to get data";
