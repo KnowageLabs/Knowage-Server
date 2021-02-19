@@ -40,7 +40,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -189,9 +189,8 @@ public class ExcelExporter {
 			}
 		}
 
-		Workbook wb = new XSSFWorkbook();
+		try (Workbook wb = new SXSSFWorkbook()) {
 
-		try {
 			if (isSingleWidgetExport) {
 				String widgetId = String.valueOf(body.get("widget"));
 				String widgetType = getWidgetTypeFromCockpitTemplate(templateString, widgetId);
@@ -205,20 +204,17 @@ public class ExcelExporter {
 				JSONObject optionsObj = buildOptionsForCrosstab(templateString);
 				exportCockpit(templateString, widgetsJson, wb, optionsObj);
 			}
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Cannot export data to excel", e);
-		}
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		try {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			wb.write(out);
 			out.flush();
 			out.close();
+			return out.toByteArray();
 		} catch (IOException e) {
 			throw new SpagoBIRuntimeException("Unable to generate output file", e);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot export data to excel", e);
 		}
-
-		return out.toByteArray();
 	}
 
 	String getWidgetTypeFromCockpitTemplate(String templateString, String widgetId) {
