@@ -108,7 +108,7 @@ public class ExcelExporter {
 	}
 
 	public String getMimeType() {
-		return "application/vnd.ms-excel";
+		return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 	}
 
 	// used only for scheduled exports
