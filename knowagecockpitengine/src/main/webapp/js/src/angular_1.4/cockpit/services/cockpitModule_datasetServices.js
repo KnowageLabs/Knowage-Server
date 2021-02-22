@@ -838,7 +838,7 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 			this.driversAreSet(dataset);
 		}
 
-		if(bodyJSON.drivers && this.driverHasValue) {
+		if(bodyJSON.drivers && this.driversAreSet(dataset)) {
 			bodyString = bodyString + ",drivers:" + JSON.stringify(bodyJSON.drivers);
 		}
 
@@ -971,41 +971,54 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 		}
 	}
 
-	this.parameterHasValue = true;
+	this.areParametersSet = function(dsId) {
+		return this.areParametersSetMap[dsId] || true;
+	}
+	
+	this.areDriversSet = function(dsId) {
+		return this.areDriversSetMap[dsId] || true;
+	}
+
+	this.areParametersSetMap = {};
+	this.areDriversSetMap = {};
+
 	this.parametersAreSet = function(dataset) {
 
-		if (dataset.type != "SbiQbeDataSet") {
-			return true;
-		}
-
-		var parameters = dataset.parameters;
-		for(var i = 0; i < parameters.length; i++) {
-			if(parameters[i].value) {
-				this.parameterHasValue = true;
-			} else {
-				this.parameterHasValue = false;
-			}
-		}
-		return this.parameterHasValue;
-	}
-	this.driverHasValue = true;
-	this.driversAreSet = function(dataset) {
-
-		if (dataset.type != "SbiQbeDataSet") {
-			return true;
-		}
-
-		var drivers = dataset.drivers;
-		if(drivers) {
-			for(var i = 0; i < drivers.length; i++) {
-				if(drivers[i].parameterValue) {
-					this.driverHasValue = true;
+		var dsId = dataset.id.dsId;
+		
+		if (dataset.type == "SbiQbeDataSet") {
+			var parameters = dataset.parameters;
+			for(var i = 0; i < parameters.length; i++) {
+				if(parameters[i].value) {
+					this.areParametersSetMap[dsId] = true;
 				} else {
-					this.driverHasValue = false;
+					this.areParametersSetMap[dsId] = false;
 				}
 			}
-			return this.driverHasValue;
+		} else {
+			this.areParametersSetMap[dsId] = true;
 		}
+
+		return this.areParametersSetMap[dsId];
+	}
+	this.driversAreSet = function(dataset) {
+
+		var dsId = dataset.id.dsId;
+		
+		var drivers = dataset.drivers;
+		if (dataset.type == "SbiQbeDataSet" && drivers) {
+			for(var i = 0; i < drivers.length; i++) {
+				if(drivers[i].parameterValue) {
+					this.areDriversSetMap[dsId] = true;
+				} else {
+					this.areDriversSetMap[dsId] = false;
+				}
+			}
+		} else {
+			this.areDriversSetMap[dsId] = true;
+		}
+
+		return this.areDriversSetMap[dsId];
 	}
 
 	this.replaceVariables = function (obj){
