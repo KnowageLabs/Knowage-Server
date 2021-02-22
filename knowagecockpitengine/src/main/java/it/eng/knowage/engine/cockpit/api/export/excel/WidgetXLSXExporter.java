@@ -42,6 +42,8 @@ class WidgetXLSXExporter {
 
 	static private Logger logger = Logger.getLogger(WidgetXLSXExporter.class);
 
+	private static final int FETCH_SIZE = 50000;
+
 	ExcelExporter excelExporter;
 	String widgetType;
 	String templateString;
@@ -66,7 +68,7 @@ class WidgetXLSXExporter {
 		} else if (widgetType.equalsIgnoreCase("map")) {
 			// map widget supports multiple datasets
 			exportMapWidget();
-		} else if (widgetType.equalsIgnoreCase("advanced-table-widget")) {
+		} else if (widgetType.equalsIgnoreCase("table")) {
 			// table widget supports pagination
 			exportTableWidget();
 		} else {
@@ -96,7 +98,7 @@ class WidgetXLSXExporter {
 				JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget);
 				if (dataStore != null) {
 					String cockpitSheetName = getCockpitSheetName(template, widgetId);
-					excelExporter.createExcelFile(dataStore, wb, widgetName, cockpitSheetName);
+					excelExporter.createAndFillExcelSheet(dataStore, wb, widgetName, cockpitSheetName);
 				}
 			}
 		} catch (Exception e) {
@@ -123,19 +125,19 @@ class WidgetXLSXExporter {
 					}
 				}
 
-				JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget, 0, -1);
-				if (dataStore != null) {
-					String cockpitSheetName = getCockpitSheetName(template, widgetId);
-					excelExporter.createExcelFile(dataStore, wb, widgetName, cockpitSheetName);
+				String cockpitSheetName = getCockpitSheetName(template, widgetId);
+				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+
+				int offset = 0;
+				boolean firstPage = true;
+				JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, FETCH_SIZE);
+				int totalNumberOfRows = dataStore.getInt("results");
+				while (offset < totalNumberOfRows) {
+					excelExporter.fillSheetWithData(dataStore, wb, sheet, widgetName, offset);
+					offset += FETCH_SIZE;
+					dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, FETCH_SIZE);
+					firstPage = false;
 				}
-
-//				String cockpitSheetName = getCockpitSheetName(template, widgetId);
-//				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
-//
-//				CreationHelper createHelper = wb.getCreationHelper();
-//
-//				exporter.fillAlreadyCreatedSheet(sheet, cs, createHelper, 0, excelExporter.getLocale());
-
 			}
 		} catch (Exception e) {
 			logger.error("Unable to export widget: " + widgetId, e);
@@ -166,7 +168,7 @@ class WidgetXLSXExporter {
 				JSONObject variables = optionsObj.optJSONObject("variables");
 				Map<String, List<Threshold>> thresholdColorsMap = getThresholdColorsMap(measures);
 
-				CrosstabXLSXExporter exporter = new CrosstabXLSXExporter(null, variables, thresholdColorsMap);
+				CrosstabXLSXExporter crossTabExporter = new CrosstabXLSXExporter(null, variables, thresholdColorsMap);
 
 				JSONObject crosstabDefinitionJo = optionsObj.getJSONObject("crosstabDefinition");
 				JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
@@ -205,7 +207,7 @@ class WidgetXLSXExporter {
 
 				CreationHelper createHelper = wb.getCreationHelper();
 
-				exporter.fillAlreadyCreatedSheet(sheet, cs, createHelper, 0, excelExporter.getLocale());
+				crossTabExporter.fillExcelSheetWithData(sheet, cs, createHelper, 0, excelExporter.getLocale());
 
 			}
 		} catch (Exception e) {
@@ -284,7 +286,7 @@ class WidgetXLSXExporter {
 					JSONObject dataStore = dataStoreArray.getJSONObject(i);
 					if (dataStore != null) {
 						String cockpitSheetName = getCockpitSheetName(template, widgetId) + String.valueOf(i);
-						excelExporter.createExcelFile(dataStore, wb, widgetName, cockpitSheetName);
+						excelExporter.createAndFillExcelSheet(dataStore, wb, widgetName, cockpitSheetName);
 					}
 				}
 			}

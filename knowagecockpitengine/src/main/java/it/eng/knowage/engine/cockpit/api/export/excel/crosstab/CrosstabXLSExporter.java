@@ -120,7 +120,7 @@ public class CrosstabXLSExporter {
 		return this.properties.get(propertyName);
 	}
 
-	public int fillAlreadyCreatedSheet(Sheet sheet, CrossTab cs, CreationHelper createHelper, int startRow, Locale locale)
+	public int fillExcelSheetWithData(Sheet sheet, CrossTab cs, CreationHelper createHelper, int startRow, Locale locale)
 			throws SerializationException, JSONException {
 		int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
 		int rowsDepth = cs.getRowsRoot().getSubTreeDepth();

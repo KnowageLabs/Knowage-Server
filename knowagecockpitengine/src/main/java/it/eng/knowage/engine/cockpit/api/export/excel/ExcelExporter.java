@@ -227,8 +227,8 @@ public class ExcelExporter {
 				JSONArray widgets = sheet.getJSONArray("widgets");
 				for (int j = 0; j < widgets.length(); j++) {
 					JSONObject widget = widgets.getJSONObject(j);
-					String currWidgetId = widget.getString("id");
-					if (currWidgetId.equals(widgetId)) {
+					BigDecimal currWidgetId = new BigDecimal(widget.getString("id"));
+					if (currWidgetId.compareTo(new BigDecimal(widgetId)) == 0) {
 						return widget.getString("type");
 					}
 				}
@@ -484,7 +484,12 @@ public class ExcelExporter {
 		return cockpitSelections;
 	}
 
-	protected void createExcelFile(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) throws JSONException, SerializationException {
+	protected void createAndFillExcelSheet(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) {
+		Sheet newSheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+		fillSheetWithData(dataStore, wb, newSheet, widgetName, 0);
+	}
+
+	protected void fillSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset) {
 		try {
 			JSONObject metadata = dataStore.getJSONObject("metaData");
 			JSONArray columns = metadata.getJSONArray("fields");
@@ -522,31 +527,31 @@ public class ExcelExporter {
 			} catch (JSONException e) {
 				logger.error("Couldn't retrieve groups", e);
 			}
-			Sheet sheet;
-			Row header = null;
-			if (isSingleWidgetExport) { // export single widget
-				sheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
-				header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, 0);
-			} else { // export whole cockpit
-				sheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
-				// First row is for Widget name in case exporting whole Cockpit document
-				Row firstRow = sheet.createRow((short) 0);
-				Cell firstCell = firstRow.createCell(0);
-				firstCell.setCellValue(widgetName);
-				header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, 1);
-			}
 
-			for (int i = 0; i < columnsOrdered.length(); i++) {
-				JSONObject column = columnsOrdered.getJSONObject(i);
-				String columnName = column.getString("header");
-				if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("discovery")) {
-					if (arrayHeader.get(columnName) != null) {
-						columnName = arrayHeader.get(columnName);
-					}
+			if (offset == 0) { // if pagination is active, headers must be created only once
+				Row header = null;
+				if (isSingleWidgetExport) { // export single widget
+					header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, 0);
+				} else { // export whole cockpit
+					// First row is for Widget name in case exporting whole Cockpit document
+					Row firstRow = sheet.createRow((short) 0);
+					Cell firstCell = firstRow.createCell(0);
+					firstCell.setCellValue(widgetName);
+					header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, 1);
 				}
 
-				Cell cell = header.createCell(i);
-				cell.setCellValue(columnName);
+				for (int i = 0; i < columnsOrdered.length(); i++) {
+					JSONObject column = columnsOrdered.getJSONObject(i);
+					String columnName = column.getString("header");
+					if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("discovery")) {
+						if (arrayHeader.get(columnName) != null) {
+							columnName = arrayHeader.get(columnName);
+						}
+					}
+
+					Cell cell = header.createCell(i);
+					cell.setCellValue(columnName);
+				}
 			}
 
 			// Cell styles for int and float
@@ -564,9 +569,9 @@ public class ExcelExporter {
 				JSONObject rowObject = rows.getJSONObject(r);
 				Row row;
 				if (isSingleWidgetExport)
-					row = sheet.createRow((r + isGroup) + 1); // starting from second row, because the 0th (first) is Header
+					row = sheet.createRow((offset + r + isGroup) + 1); // starting from second row, because the 0th (first) is Header
 				else
-					row = sheet.createRow((r + isGroup) + 2);
+					row = sheet.createRow((offset + r + isGroup) + 2);
 
 				for (int c = 0; c < columnsOrdered.length(); c++) {
 					JSONObject column = columnsOrdered.getJSONObject(c);
