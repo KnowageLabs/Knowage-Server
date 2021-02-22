@@ -47,11 +47,11 @@ class WidgetXLSXExporter {
 	ExcelExporter excelExporter;
 	String widgetType;
 	String templateString;
-	String widgetId;
+	long widgetId;
 	Workbook wb;
 	JSONObject optionsObj;
 
-	public WidgetXLSXExporter(ExcelExporter excelExporter, String widgetType, String templateString, String widgetId, Workbook wb, JSONObject options) {
+	public WidgetXLSXExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options) {
 		super();
 		this.excelExporter = excelExporter;
 		this.widgetType = widgetType;
@@ -295,7 +295,7 @@ class WidgetXLSXExporter {
 		}
 	}
 
-	private String getCockpitSheetName(JSONObject template, String widgetId) {
+	private String getCockpitSheetName(JSONObject template, long widgetId) {
 		try {
 			JSONArray sheets = template.getJSONArray("sheets");
 			if (sheets.length() == 1)
@@ -305,7 +305,7 @@ class WidgetXLSXExporter {
 				JSONArray widgets = sheet.getJSONArray("widgets");
 				for (int j = 0; j < widgets.length(); j++) {
 					JSONObject widget = widgets.getJSONObject(j);
-					if (widgetId.equals(widget.getString("id")))
+					if (widgetId == widget.getLong("id"))
 						return sheet.getString("label");
 				}
 			}
@@ -316,9 +316,8 @@ class WidgetXLSXExporter {
 		}
 	}
 
-	private JSONObject getWidgetById(JSONObject template, String widgetId) {
+	private JSONObject getWidgetById(JSONObject template, long widgetId) {
 		try {
-			long widget_id = Long.parseLong(widgetId);
 
 			JSONArray sheets = template.getJSONArray("sheets");
 			for (int i = 0; i < sheets.length(); i++) {
@@ -327,7 +326,7 @@ class WidgetXLSXExporter {
 				for (int j = 0; j < widgets.length(); j++) {
 					JSONObject widget = widgets.getJSONObject(j);
 					long id = widget.getLong("id");
-					if (id == widget_id) {
+					if (id == widgetId) {
 						return widget;
 					}
 				}

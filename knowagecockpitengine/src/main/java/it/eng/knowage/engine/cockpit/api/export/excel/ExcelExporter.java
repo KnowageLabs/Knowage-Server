@@ -17,7 +17,6 @@ package it.eng.knowage.engine.cockpit.api.export.excel;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -192,7 +191,7 @@ public class ExcelExporter {
 		try (Workbook wb = new SXSSFWorkbook()) {
 
 			if (isSingleWidgetExport) {
-				String widgetId = String.valueOf(body.get("widget"));
+				long widgetId = body.getLong("widget");
 				String widgetType = getWidgetTypeFromCockpitTemplate(templateString, widgetId);
 				JSONObject optionsObj = new JSONObject();
 				if (options != null && !options.isEmpty())
@@ -218,7 +217,7 @@ public class ExcelExporter {
 		}
 	}
 
-	String getWidgetTypeFromCockpitTemplate(String templateString, String widgetId) {
+	String getWidgetTypeFromCockpitTemplate(String templateString, long widgetId) {
 		try {
 			JSONObject templateJson = new JSONObject(templateString);
 			JSONArray sheets = templateJson.getJSONArray("sheets");
@@ -227,8 +226,8 @@ public class ExcelExporter {
 				JSONArray widgets = sheet.getJSONArray("widgets");
 				for (int j = 0; j < widgets.length(); j++) {
 					JSONObject widget = widgets.getJSONObject(j);
-					BigDecimal currWidgetId = new BigDecimal(widget.getString("id"));
-					if (currWidgetId.compareTo(new BigDecimal(widgetId)) == 0) {
+					long currWidgetId = widget.getLong("id");
+					if (currWidgetId == widgetId) {
 						return widget.getString("type");
 					}
 				}
@@ -339,7 +338,7 @@ public class ExcelExporter {
 				JSONObject currWidgetOptions = new JSONObject();
 				if (optionsObj.has(widgetId))
 					currWidgetOptions = optionsObj.getJSONObject(widgetId);
-				WidgetXLSXExporter widgetExporter = new WidgetXLSXExporter(this, widgetType, templateString, widgetId, wb, currWidgetOptions);
+				WidgetXLSXExporter widgetExporter = new WidgetXLSXExporter(this, widgetType, templateString, Long.parseLong(widgetId), wb, currWidgetOptions);
 				widgetExporter.export();
 			}
 			if (totExportedWidgets == 0) {
@@ -439,7 +438,7 @@ public class ExcelExporter {
 				int i;
 				for (i = 0; i < allWidgets.length(); i++) {
 					JSONObject curWidget = allWidgets.getJSONObject(i);
-					if (new BigDecimal(curWidget.getString("id")).compareTo(new BigDecimal(widget.getString("id"))) == 0)
+					if (curWidget.getLong("id") == widget.getLong("id"))
 						break;
 				}
 				cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS").getJSONObject(i);
