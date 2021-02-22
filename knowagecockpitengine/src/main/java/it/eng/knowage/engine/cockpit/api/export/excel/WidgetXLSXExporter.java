@@ -36,13 +36,14 @@ import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabBuilder;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabSerializationConstants;
 import it.eng.knowage.engine.cockpit.api.crosstable.NodeComparator;
 import it.eng.knowage.engine.cockpit.api.export.excel.crosstab.CrosstabXLSXExporter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 class WidgetXLSXExporter {
 
 	static private Logger logger = Logger.getLogger(WidgetXLSXExporter.class);
 
-	private static final int FETCH_SIZE = 5000;
+	private static final int FETCH_SIZE = 50000;
 
 	ExcelExporter excelExporter;
 	String widgetType;
@@ -129,14 +130,19 @@ class WidgetXLSXExporter {
 				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 
 				int offset = 0;
-				boolean firstPage = true;
-				JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, FETCH_SIZE);
+				int fetchSize = FETCH_SIZE;
+				int maxFetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
+				if (fetchSize > maxFetchSize) {
+					logger.warn(
+							"Excel export FETCH_SIZE exceeds SPAGOBI.API.DATASET.MAX_ROWS_NUMBER environment variable. FETCH_SIZE value is being overwritten at runtime");
+					fetchSize = maxFetchSize;
+				}
+				JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, fetchSize);
 				int totalNumberOfRows = dataStore.getInt("results");
 				while (offset < totalNumberOfRows) {
 					excelExporter.fillSheetWithData(dataStore, wb, sheet, widgetName, offset);
-					offset += FETCH_SIZE;
-					dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, FETCH_SIZE);
-					firstPage = false;
+					offset += fetchSize;
+					dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, fetchSize);
 				}
 			}
 		} catch (Exception e) {
