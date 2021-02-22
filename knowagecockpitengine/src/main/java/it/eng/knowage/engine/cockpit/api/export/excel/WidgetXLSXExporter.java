@@ -42,7 +42,7 @@ class WidgetXLSXExporter {
 
 	static private Logger logger = Logger.getLogger(WidgetXLSXExporter.class);
 
-	private static final int FETCH_SIZE = 50000;
+	private static final int FETCH_SIZE = 5000;
 
 	ExcelExporter excelExporter;
 	String widgetType;
