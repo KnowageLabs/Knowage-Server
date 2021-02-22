@@ -6,6 +6,11 @@ var scripts = document.getElementsByTagName("script")
 var currentScriptPathDocumentTree = scripts[scripts.length-1].src;
 
 angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
+.filter('i18n', function(sbiModule_i18n) {
+		return function(label) {
+			return sbiModule_i18n.getI18n(label);
+		}
+	})
 .directive('documentTree',
 		function($compile) {
 	return {

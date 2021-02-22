@@ -4,6 +4,11 @@
  */
 
 angular.module('document_tree', [ 'ngMaterial', 'ui.tree','sbiModule'])
+.filter('i18n', function(sbiModule_i18n) {
+		return function(label) {
+			return sbiModule_i18n.getI18n(label);
+		}
+	})
 .directive('documentTree',
 		function($compile,sbiModule_config) {
 	return {
