@@ -269,8 +269,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	$scope.cockpitModule_properties = cockpitModule_properties;
 
-	$scope.parametersMessage = false;
-
 	$scope.enter = function(e){
 		if($scope.widgetExitTimeout) $timeout.cancel($scope.widgetExitTimeout);
 		$timeout(function(){
@@ -432,7 +430,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			}
 			break;
 		case "PARAMETER_CHANGE":
-			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue) || !(cockpitModule_datasetServices.driverHasValue);
 			var ds=$scope.getDataset();
 			if(ds!=undefined && config.dsList.hasOwnProperty(ds.label)){
 				$scope.refreshWidget(undefined,"parameter_change");
@@ -452,7 +449,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		case "REFRESH"  :
 			// Break to prevent double refresh in case of default selections
 			if(config.nature === 'init' && cockpitModule_properties.HASDEFAULTSELECTION[cockpitModule_properties.CURRENT_SHEET] && $scope.ngModel.type != 'selector') break;
-			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue) || !(cockpitModule_datasetServices.driverHasValue);
 		    var dirtyIndex = $scope.cockpitModule_properties.DIRTY_WIDGETS.indexOf($scope.ngModel.id);
 		    if($scope.$parent.$parent.sheet.index == $scope.cockpitModule_properties.CURRENT_SHEET){
                 if(dirtyIndex > -1){
@@ -484,7 +480,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
             break;
 		case "INIT" :
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
-			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue) || !(cockpitModule_datasetServices.driverHasValue);
 			break;
 		case "RESIZE" :
 			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map" || $scope.ngModel.type=="static-pivot-table") {
@@ -1730,6 +1725,17 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	$scope.exportToExcel = function(event, ngModel, options) {
 		cockpitModule_exportWidgetService.exportWidgetToExcel('xlsx', ngModel, options);
+	}
+	
+	$scope.getPerWidgetDatasetIds = function() {
+		return $scope.ngModel.dataset ? [ $scope.ngModel.dataset.dsId ] : [];
+	}
+
+	$scope.areParametersAndDriversNotSet = function() {
+		var result = $scope.getPerWidgetDatasetIds().some(function(dsId) {
+				return !(cockpitModule_datasetServices.areParametersSet(dsId)) || !(cockpitModule_datasetServices.areDriversSet(dsId));
+			});
+		return result;
 	}
 
 };

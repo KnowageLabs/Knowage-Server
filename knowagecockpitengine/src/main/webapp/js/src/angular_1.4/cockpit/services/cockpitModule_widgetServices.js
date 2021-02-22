@@ -302,16 +302,16 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	this.parametersAreSet = function() {
 		if(cockpitModule_datasetServices.newDataSet) {
 			var newDs = cockpitModule_datasetServices.newDataSet;
-			  for(var i = 0; i < newDs.parameters.length; i++) {
-				  if(newDs.parameters[i].value) {
-					  cockpitModule_datasetServices.parameterHasValue = true;
-				  } else {
-					  cockpitModule_datasetServices.parameterHasValue = false;
-				  }
-			  }
-			  return cockpitModule_datasetServices.parameterHasValue;
+			for(var i = 0; i < newDs.parameters.length; i++) {
+				if(newDs.parameters[i].value) {
+					cockpitModule_datasetServices.parameterHasValue = cockpitModule_datasetServices.areParametersSet[ds.id.dsId] = true;
+				} else {
+					cockpitModule_datasetServices.parameterHasValue = cockpitModule_datasetServices.areParametersSet[ds.id.dsId] = false;
+				}
+			}
+			return cockpitModule_datasetServices.areParametersSet[ds.id.dsId];
 		}
-	  }
+	}
 
 	this.driversAreSet = function(config) {
 		if(config.dataset) {
@@ -320,12 +320,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		if(ds && ds.drivers) {
 			for(var i = 0; i < ds.drivers.length; i++) {
 				if(ds.drivers[i].parameterValue) {
-					cockpitModule_datasetServices.driverHasValue = true;
+					cockpitModule_datasetServices.areDriversSet[ds.id.dsId] = true;
 				} else {
-					cockpitModule_datasetServices.driverHasValue = false;
+					cockpitModule_datasetServices.areDriversSet[ds.id.dsId] = false;
 				}
 			}
-			return cockpitModule_datasetServices.driverHasValue;
+			return cockpitModule_datasetServices.areDriversSet[ds.id.dsId];
 		}
 	}
 

@@ -1706,6 +1706,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			});
 		}
 
+		$scope.getPerWidgetDatasetIds = function() {
+			return $scope.ngModel.content.layers.map(function(e) { return e.dataset.id.dsId; });
+		}
+
 	}
 
 	// this function register the widget in the cockpitModule_widgetConfigurator factory
