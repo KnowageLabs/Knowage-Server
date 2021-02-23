@@ -387,10 +387,8 @@ public class HierarchyService {
 	/**
 	 * This method manages the creation of the JSON for hierarchies fields
 	 *
-	 * @param dimensionName
-	 *            the name of the dimension
-	 * @param excludeLeaf
-	 *            exclusion for fields in leaf section
+	 * @param dimensionName the name of the dimension
+	 * @param excludeLeaf   exclusion for fields in leaf section
 	 * @return the JSON with fields in hierarchy section
 	 * @throws JSONException
 	 */
@@ -500,6 +498,7 @@ public class HierarchyService {
 				BigDecimal maxDepthValue = (BigDecimal) maxDepthField.getValue();
 				maxDepth = maxDepthValue.intValue();
 			}
+			logger.debug("maxDepth: " + maxDepth);
 
 			int currentLevel = 0;
 			int lastValorizedLevel = 0;
@@ -509,6 +508,10 @@ public class HierarchyService {
 				IField nameField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + i)); // NAME CODE
 				IField codeLeafField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_LEAF_CD))); // LEAF CODE
 				String leafCode = (String) codeLeafField.getValue();
+
+				logger.debug("codeField: " + codeField.getValue());
+				logger.debug("nameField: " + nameField.getValue());
+				logger.debug("codeLeafField: " + codeLeafField.getValue());
 
 				if (currentLevel == maxDepth) {
 					break; // skip to next iteration
@@ -569,9 +572,13 @@ public class HierarchyService {
 							Field fld = nodeFields.get(f);
 							IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : i)));
 							if (fld.isOrderField()) {
-								mapAttrs.put(fld.getId() + i, (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
+								Object value = (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue();
+								logger.debug("id: [" + (fld.getId() + i) + "], value: [" + value + "]");
+								mapAttrs.put(fld.getId() + i, value);
 							}
-							mapAttrs.put(fld.getId(), (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
+							Object value = (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue();
+							mapAttrs.put(fld.getId(), value);
+							logger.debug("id: [" + (fld.getId()) + "], value: [" + value + "]");
 						}
 						data.setAttributes(mapAttrs);
 						attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, false);
@@ -600,8 +607,7 @@ public class HierarchyService {
 	 * @param nodeCode
 	 * @param lastLevelFound
 	 * @param data
-	 * @param allNodeCodes
-	 *            : codes list for debug
+	 * @param allNodeCodes   : codes list for debug
 	 */
 	private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound, int lastValorizedLevel, HierarchyTreeNodeData data,
 			Set<String> allNodeCodes, boolean isLeaf) {
@@ -682,8 +688,7 @@ public class HierarchyService {
 	/**
 	 * Get the JSONObject representing the tree having the passed node as a root
 	 *
-	 * @param node
-	 *            the root of the subtree
+	 * @param node the root of the subtree
 	 * @return JSONObject representing the subtree
 	 */
 	private JSONObject getSubTreeJSONObject(HierarchyTreeNode node, HashMap hierConfig, String hierTp, String hierNm) {
@@ -805,12 +810,14 @@ public class HierarchyService {
 
 			// 4 - Valorization of DEFUALT for prepared statement placeholders
 			// -----------------------------------------------
+			logger.debug("Valorization of DEFUALT for prepared statement placeholders");
 			for (int i = 1; i <= lstFields.size(); i++) {
 				hierPreparedStatement.setObject(i, null);
 			}
 
 			// 4 - Explore the path and set the corresponding columns for insert hier
 			// -----------------------------------------------
+			logger.debug("Explore the path and set the corresponding columns for insert hier");
 			HashMap<String, Object> lstMTFieldsValue = new HashMap<String, Object>();
 			String hierGeneralInfos = null;
 			for (int i = 0; i < path.size(); i++) {
@@ -826,6 +833,7 @@ public class HierarchyService {
 
 			// 5 - Insert relations between MASTER and TECHNICAL
 			// ----------------------------------------------
+			logger.debug("Insert relations between MASTER and TECHNICAL");
 			if (paramsMap.get("doPropagation") != null && (boolean) paramsMap.get("doPropagation")) {
 				// adds only distinct values
 				List lstRelMTInserted = (List) paramsMap.get("lstRelMTInserted");
@@ -843,6 +851,8 @@ public class HierarchyService {
 
 			// 6 - Execution of insert prepared statement
 			// -----------------------------------------------
+			logger.debug("Execution of insert prepared statement");
+			logger.debug(insertQuery);
 			hierPreparedStatement.execute();
 			hierPreparedStatement.close();
 		} catch (Throwable t) {
@@ -1004,16 +1014,21 @@ public class HierarchyService {
 	private PreparedStatement valorizeHierPlaceholdersFromNode(PreparedStatement preparedStatement, HierarchyTreeNodeData node, LinkedHashMap lstFields,
 			HashMap paramsMap, HashMap lstMTFieldsValue) throws SQLException {
 
+		logger.debug("IN");
 		PreparedStatement toReturn = preparedStatement;
 		HashMap values = new HashMap();
 
 		try {
 			boolean isRoot = ((Boolean) node.getAttributes().get("isRoot")).booleanValue();
+			logger.debug("isRoot: " + isRoot);
 			boolean isLeaf = ((Boolean) node.getAttributes().get("isLeaf")).booleanValue();
+			logger.debug("isLeaf: " + isLeaf);
 			String hierarchyPrefix = (String) paramsMap.get("hierarchyPrefix");
+			logger.debug("hierarchyPrefix: " + hierarchyPrefix);
 			int level = 0;
 			String strLevel = (String) node.getAttributes().get(HierarchyConstants.LEVEL);
 			level = (strLevel != null) ? Integer.parseInt(strLevel) : 0;
+			logger.debug("level: " + level);
 			if (level == 0 && !isRoot) {
 				logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode() + "] - name: [" + node.getNodeName() + "]");
 				throw new SpagoBIServiceException("persistService",
@@ -1038,6 +1053,7 @@ public class HierarchyService {
 					if (attrPos != -1 && !values.containsKey(key)) {
 						preparedStatement.setObject(attrPos, value);
 						values.put(key, value);
+						logger.debug("Field: [" + key + "] with value [" + value + "]");
 					}
 				}
 			}
@@ -1101,6 +1117,7 @@ public class HierarchyService {
 		// System.out.println(errMsg);
 		// FINE TEST
 
+		logger.debug("OUT");
 		return toReturn;
 	}
 
@@ -1118,6 +1135,7 @@ public class HierarchyService {
 	private PreparedStatement valorizeHierPlaceholdersFromRelation(PreparedStatement preparedStatement, LinkedHashMap<String, String> lstFields,
 			JSONObject relationData, JSONObject leafData, HashMap paramsMap) throws SQLException {
 
+		logger.debug("IN");
 		PreparedStatement toReturn = preparedStatement;
 		HashMap values = new HashMap();
 
@@ -1201,6 +1219,7 @@ public class HierarchyService {
 					t.getMessage() + " - " + t.getCause() + " - " + errMsg);
 		}
 
+		logger.debug("OUT");
 		return toReturn;
 	}
 
@@ -1220,9 +1239,11 @@ public class HierarchyService {
 
 		// get level : is null if the node is the root
 		Integer level = (node.getAttributes().get(HierarchyConstants.LEVEL) != null)
-				? Integer.valueOf((String) node.getAttributes().get(HierarchyConstants.LEVEL)) : null;
+				? Integer.valueOf((String) node.getAttributes().get(HierarchyConstants.LEVEL))
+				: null;
 		Integer maxDepth = (node.getAttributes().get(HierarchyConstants.MAX_DEPTH) != null)
-				? Integer.valueOf((String) node.getAttributes().get(HierarchyConstants.MAX_DEPTH)) : null;
+				? Integer.valueOf((String) node.getAttributes().get(HierarchyConstants.MAX_DEPTH))
+				: null;
 
 		boolean isLeaf = (level != null && maxDepth != null && level.compareTo(maxDepth) == 0) ? true : false;
 
@@ -1354,7 +1375,8 @@ public class HierarchyService {
 			String nodeLeafId = !node.isNull(HierarchyConstants.LEAF_ID) ? node.getString(HierarchyConstants.LEAF_ID) : "";
 			if (nodeLeafId.equals("")) {
 				nodeLeafId = (mapAttrs.get(hierarchyPrefix + "_" + HierarchyConstants.LEAF_ID) != null)
-						? (String) mapAttrs.get(hierarchyPrefix + "_" + HierarchyConstants.LEAF_ID) : "";
+						? (String) mapAttrs.get(hierarchyPrefix + "_" + HierarchyConstants.LEAF_ID)
+						: "";
 			}
 			if (nodeLeafId.equals("") && !node.isNull(hierarchyPrefix + "_" + HierarchyConstants.FIELD_ID)) {
 				nodeLeafId = node.getString(hierarchyPrefix + "_" + HierarchyConstants.FIELD_ID); // dimension id (ie: ACCOUNT_ID)
