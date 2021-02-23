@@ -19,7 +19,6 @@ package it.eng.spagobi.engines.qbe.services.core;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -52,6 +51,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -190,20 +190,7 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 
 			try {
 				logger.debug("Executing query ...");
-				dataSet = QbeDatasetFactory.createDataSet(statement);
-				dataSet.setUserProfileAttributes(userProfile.getUserAttributes());
-				dataSet.setAbortOnOverflow(true);
-
-				Map userAttributes = new HashMap();
-				UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-				Iterator it = profile.getUserAttributeNames().iterator();
-				while (it.hasNext()) {
-					String attributeName = (String) it.next();
-					Object attributeValue = profile.getUserAttribute(attributeName);
-					userAttributes.put(attributeName, attributeValue);
-				}
-				dataSet.addBinding("attributes", userAttributes);
-				dataSet.addBinding("parameters", this.getEnv());
+				dataSet = getActiveQueryAsDataSet(filteredQuery);
 
 				Map<String, Object> envs = getEnv();
 				String stringDrivers = envs.get(DRIVERS).toString();
@@ -277,6 +264,35 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 				totalTimeMonitor.stop();
 			logger.debug("OUT");
 		}
+	}
+
+	private IDataSet getActiveQueryAsDataSet(Query q) {
+		IStatement statement = getEngineInstance().getDataSource().createStatement(q);
+		IDataSet dataSet;
+		try {
+
+			dataSet = QbeDatasetFactory.createDataSet(statement);
+			boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
+			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+
+			Map userAttributes = new HashMap();
+			UserProfile userProfile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			userAttributes.putAll(userProfile.getUserAttributes());
+			userAttributes.put(SsoServiceInterface.USER_ID, userProfile.getUserId().toString());
+
+			dataSet.addBinding("attributes", userAttributes);
+			dataSet.addBinding("parameters", this.getEnv());
+			dataSet.setUserProfileAttributes(userAttributes);
+
+			dataSet.setParamsMap(this.getEnv());
+
+		} catch (Exception e) {
+			logger.debug("Error getting the data set from the query");
+			throw new SpagoBIRuntimeException("Error getting the data set from the query", e);
+		}
+		logger.debug("Dataset correctly taken from the query ");
+		return dataSet;
+
 	}
 
 	private Query buildQuery(JSONObject fieldDescriptor, String type, JSONObject filtersJSON) throws JSONException {
