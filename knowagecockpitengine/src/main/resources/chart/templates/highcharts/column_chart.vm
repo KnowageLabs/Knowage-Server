@@ -989,8 +989,8 @@
         		#if($labelAlign && $chartType != "radar")
         			align: "$labelAlign", 
         		#end
-        		
-        		#if($rotation!="" &&  $rotation!="null")
+	        		      		
+        		#if($rotation!="" &&  $rotation!="null" && $rotation.class.name == "java.lang.Integer")
         			rotation: $rotation,
     			#end
         	#end
@@ -1204,11 +1204,13 @@
 					#end
                 #end
         		##x:50,
-        		#*
+        		
         		#if( $yAxis.style.rotate != '' ) 
         			rotation: $yAxis.style.rotate,
+        		#else 
+        		    rotation: 0,
         		#end
-        		*#
+        		
         		
         		#if( $chartType != "radar" && $yAxis.TITLE.style.align != '' )
         			#if ($yAxis.TITLE.style.align == 'center' || $yAxis.TITLE.style.align=="")
@@ -1306,6 +1308,7 @@
 	        		style:{
 		        	#foreach($styleName in $yAxis.style.keySet())
 		        		#set ($axisStyle = $yAxis.style[$styleName])
+		        		
 		        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
 		        			fontStyle: '$axisStyle',
 						#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
@@ -1331,9 +1334,10 @@
 	        		#if($labelAlign && $chartType != "radar")
 	        			align: "$labelAlign",	        		     			
 	        		#end
-	        		        		
-	        		#if($rotation!="" &&  $rotation!="null")
-	        			rotation: $rotation,
+	        		
+	        		
+	        		#if($rotation!="" &&  $rotation!="null" &&  $rotation.class.name == "java.lang.Integer" )
+	        			rotation: $rotation,	        			
 	    			#end
 	    			
 	        	#end     		
