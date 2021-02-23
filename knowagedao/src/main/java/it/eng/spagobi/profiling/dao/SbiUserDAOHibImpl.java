@@ -1229,14 +1229,6 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	}
 
-
-
-
-
-
-	// TODO [HISTORY] Event
-
-
 	private void logCreation(Session aSession, SbiUser bean, Date opDate) {
 		SbiUserHistory currentEvent = new SbiUserHistory(bean);
 		updateSbiCommonInfo4Insert(currentEvent);
@@ -1266,31 +1258,33 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	private void logUpdate(Session aSession, SbiUser bean, Date opDate) {
 		SbiUserHistory lastEvent = getLastEventForSbiUser(aSession, bean);
 
-		lastEvent.setTimeEnd(opDate);
-		aSession.save(lastEvent);
+		if (lastEvent != null) {
+			lastEvent.setTimeEnd(opDate);
+			aSession.save(lastEvent);
 
-		SbiUserHistory currentEvent = new SbiUserHistory(bean);
-		resetCommonInfo(currentEvent);
-		updateSbiCommonInfo4Update(currentEvent);
-		currentEvent.setTimeStart(opDate);
-		currentEvent.setTimeEnd(null);
-		aSession.save(currentEvent);
-
+			SbiUserHistory currentEvent = new SbiUserHistory(bean);
+			resetCommonInfo(currentEvent);
+			updateSbiCommonInfo4Update(currentEvent);
+			currentEvent.setTimeStart(opDate);
+			currentEvent.setTimeEnd(null);
+			aSession.save(currentEvent);
+		}
 	}
 
 	private void logUpdate(Session aSession, SbiUserAttributes bean, Date opDate) {
 		SbiUserAttributesHistory lastEvent = getLastEventForSbiUserAttributes(aSession, bean);
 
-		lastEvent.setTimeEnd(opDate);
-		aSession.save(lastEvent);
+		if (lastEvent != null) {
+			lastEvent.setTimeEnd(opDate);
+			aSession.save(lastEvent);
 
-		SbiUserAttributesHistory currentEvent = new SbiUserAttributesHistory(bean);
-		resetCommonInfo(currentEvent);
-		updateSbiCommonInfo4Update(currentEvent);
-		currentEvent.setTimeStart(opDate);
-		currentEvent.setTimeEnd(null);
-		aSession.save(currentEvent);
-
+			SbiUserAttributesHistory currentEvent = new SbiUserAttributesHistory(bean);
+			resetCommonInfo(currentEvent);
+			updateSbiCommonInfo4Update(currentEvent);
+			currentEvent.setTimeStart(opDate);
+			currentEvent.setTimeEnd(null);
+			aSession.save(currentEvent);
+		}
 	}
 
 	private void logDeletion(Session aSession, SbiUser bean, Date opDate) {
