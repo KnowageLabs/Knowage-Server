@@ -8,13 +8,12 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 		,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,sbiModule_messaging) {
 
 
+	$scope.objNote = {};
+
 	$scope.saveNote = function(){
-		var obj = {
-				'content' : $scope.contentNotes,
-				'idObj': $scope.executionInstance.OBJECT_ID,
-				'type' : $scope.typeNote
-		}
-		sbiModule_restServices.promisePost("documentnotes", 'saveNote',obj).then(
+		$scope.objNote.content = $scope.contentNotes;
+		$scope.objNote.idObj = $scope.executionInstance.OBJECT_ID;
+		sbiModule_restServices.promisePost("documentnotes", 'saveNote',$scope.objNote).then(
 				function(response) {
 					if (response.data.hasOwnProperty("errors")) {
 						//$scope.showAction(response.data);
@@ -85,6 +84,7 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 
 	$scope.editNote = function(nota){
 		$scope.contentNotes=nota.content;
+		$scope.objNote.type = nota.type;
 		$scope.noteLoaded.content = nota.content;
 		$scope.noteLoaded.id = nota.id;
 		$scope.noteLoaded.lastChangeDate = nota.lastChangeDate;

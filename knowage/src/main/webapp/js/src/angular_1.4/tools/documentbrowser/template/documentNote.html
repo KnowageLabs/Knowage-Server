@@ -1,4 +1,4 @@
-<md-dialog class="documentBrowserNoteDialog" id="dialogNote" flex layout="column" aria-label="Select type of download" ng-controller="noteController" ng-cloak>
+<md-dialog class="documentBrowserNoteDialog" id="dialogNote" flex layout="column" aria-label="Select type of download" ng-cloak>
     <md-toolbar ">
       <div class="md-toolbar-tools">
         <h2>{{translate.load("sbi.execution.executionpage.toolbar.annotate")}}</h2>
@@ -50,7 +50,7 @@
 		</md-tabs>
 		</md-dialog-content>
 		<div class="md-actions" layout="row" ng-if="selectedTab.tab == 0">
-	  			<md-select flex class="selectTypeNote" name="typeNote" ng-model="typeNote" required> 
+	  			<md-select flex class="selectTypeNote" name="typeNote" ng-model="objNote.type" required> 
 					<md-option  value="Private">Private</md-option>
 					<md-option  value="Public">Public</md-option>
 				</md-select>
