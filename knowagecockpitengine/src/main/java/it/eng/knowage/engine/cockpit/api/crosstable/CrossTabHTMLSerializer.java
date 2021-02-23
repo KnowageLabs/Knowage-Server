@@ -860,7 +860,6 @@ public class CrossTabHTMLSerializer {
 					nPartialLevels++;
 				}
 
-				String classType = "";
 				JSONObject measureConfig = new JSONObject();
 				try {
 					internalserializeData2 = MonitorFactory.start("CockpitEngine.serializeData.getMeasureConfigAndThreshold");
@@ -893,7 +892,7 @@ public class CrossTabHTMLSerializer {
 					}
 					internalserializeData2.stop();
 
-					classType = cellType.getValue();
+					String classType = cellType.getValue();
 
 					internalserializeData3 = MonitorFactory.start("CockpitEngine.serializeData.setStyle");
 					// 2. style and alignment management
@@ -907,15 +906,20 @@ public class CrossTabHTMLSerializer {
 
 						if (value != null && cellTypeValue.equalsIgnoreCase("data") && !measureConfig.isNull("ranges")) {
 							// background management through threshold (optional)
-							dataStyle += "background-color:" + threshold.optString("background-color", "white") + ";";
-							dataStyle += "color:" + threshold.optString("color", "black") + ";";
+							String backgroundColor = threshold.optString("background-color");
+							if (backgroundColor != null && !backgroundColor.isEmpty())
+								dataStyle += "background-color:" + backgroundColor + ";";
+							String textColor = threshold.optString("color");
+							if (textColor != null && !textColor.isEmpty())
+								dataStyle += "color:" + textColor + ";";
 						}
 						// if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
 						if (!dataStyle.equals(DEFAULT_STYLE)) {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, dataStyle);
 							classType += "NoStandardStyle";
 							isDataNoStandardStyle = true;
-							aColumn.setAttribute(CLASS_ATTRIBUTE, "dataNoStandardStyle");
+//							aColumn.setAttribute(CLASS_ATTRIBUTE, "dataNoStandardStyle");
+							aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
 						} else {
 							isDataNoStandardStyle = false;
 							aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
