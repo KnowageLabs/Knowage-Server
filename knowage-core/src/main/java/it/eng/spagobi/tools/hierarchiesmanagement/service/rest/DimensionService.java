@@ -86,8 +86,9 @@ public class DimensionService {
 			return dimesionsJSONArray.toString();
 
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while retriving dimensions names");
-			throw new SpagoBIServiceException("An unexpected error occured while retriving dimensions names", t);
+			String message = "An unexpected error occured while retriving dimensions names";
+			logger.error(message);
+			throw new SpagoBIServiceException(message, t);
 		}
 
 	}
