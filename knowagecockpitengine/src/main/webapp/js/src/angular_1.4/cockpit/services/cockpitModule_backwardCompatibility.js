@@ -167,9 +167,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 					if(model.style.tr && model.style.tr.height && typeof model.style.tr.height != 'number') model.style.tr.height = parseInt(model.style.tr.height);
 				}
-				if(model.type=='chart') {					
+				if(model.type=='chart') {
+				 if (model.content.chartTemplate.CHART.AXES_LIST) {				
 					for (var k in model.content.chartTemplate.CHART.AXES_LIST.AXIS) {
-						if (model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].labels) {
+						if (model.content.chartTemplate.CHART.AXES_LIST && model.content.chartTemplate.CHART.AXES_LIST.AXIS && model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].labels) {
 							model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS = model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].labels;
 							delete model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].labels;
 						}
@@ -177,6 +178,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotationEnabled = true;
 						}
 					}
+				 }
 				}				
 				if(model.type=='map') {
 
