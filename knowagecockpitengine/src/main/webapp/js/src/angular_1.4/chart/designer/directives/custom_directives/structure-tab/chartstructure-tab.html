@@ -469,7 +469,7 @@
    	 							<md-icon aria-label="Move series item down" class="fa fa-arrow-down" style="display:inline"></md-icon>
  	 						</md-button>
 						    
-						    <md-button 	class="md-icon-button" ng-click="showStructureDetails('seriesItemConfig',seriesContainer.name);prepareSeriesItemConfiguration(seriesItem,seriesContainer.name);" 
+						    <md-button ng-if="selectedChartType != 'treemap'"	class="md-icon-button" ng-click="showStructureDetails('seriesItemConfig',seriesContainer.name);prepareSeriesItemConfiguration(seriesItem,seriesContainer.name);" 
 						    			style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
 						    	<!-- alternative: fa-paint-brush -->
 						   		<md-icon aria-label="Series item configuration" class="fa fa-pencil-square-o" style="display:inline"></md-icon>
