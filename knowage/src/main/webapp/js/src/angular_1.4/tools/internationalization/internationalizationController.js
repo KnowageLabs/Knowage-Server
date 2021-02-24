@@ -27,31 +27,34 @@
 				   $mdThemingProvider.theme('knowage');
 				   $mdThemingProvider.setDefaultTheme('knowage');
 			   }
-		   ]).controller('internationalizationController', ['$scope', 'i18nAvailableLanguagesService', 'sbiModule_restServices', 'sbiModule_messaging', 'sbiModule_translate', '$mdDialog', InternationalizationController])
-		     .filter('findEmpty', ['$filter', function($filter){
-		    	 return function(messages, emptyMessage) {
-		    		 if(emptyMessage) {
-			    		 return $filter('filter')(messages, {message: ''}, true);
-			    	 } else {
-			    		 return messages;
-			    	 }
-		    	 }
-		     }]);
+		   ]).controller('internationalizationController', ['$scope', 'i18nAvailableLanguagesService', 'sbiModule_restServices', 'sbiModule_messaging', 'sbiModule_translate', '$mdDialog', '$filter', InternationalizationController])
 
-	function InternationalizationController($scope, i18nAvailableLanguagesService, sbiModule_restServices, sbiModule_messaging, sbiModule_translate, $mdDialog) {
+	function InternationalizationController($scope, i18nAvailableLanguagesService, sbiModule_restServices, sbiModule_messaging, sbiModule_translate, $mdDialog,$filter) {
 		var availableLanguagesService = i18nAvailableLanguagesService.getAvailableLanguages();
 		$scope.availableLanguages = availableLanguagesService.languages;
 		$scope.defaultLangMessages = [];
 		$scope.messages = [];
 		$scope.isTechnicalUser = isTechnicalUser;
-		$scope.emptyMessage = false;
 		$scope.translate = sbiModule_translate;
+
+		$scope.toggleEmptyMessages = function(){
+			if($scope.emptyMessage.value){
+				$scope.emptyMessage.originalMessages = angular.copy($scope.messages);
+				$scope.messages = $filter('filter')($scope.messages, function(value){
+					return !value.message
+				})
+			}else {
+				$scope.messages = angular.copy($scope.emptyMessage.originalMessages);
+			}
+					
+		}
 
 		//REST
 		$scope.getMessages = function(selectedTab) {
 			$scope.messages = [];
 			sbiModule_restServices.promiseGet("2.0/i18nMessages", "internationalization/?currLanguage="+selectedTab.iso3code)
 				.then(function(response){
+					$scope.emptyMessage = {value:false, originalMessages:[]};
 					//For Default Language
 					if(selectedTab.defaultLanguage) {
 						//If database is empty show one row of input fields
@@ -210,7 +213,5 @@
 			}
 
 		};
-
-
 	};
 })();
