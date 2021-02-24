@@ -597,6 +597,11 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 				.on("dragend", dragend));
 
 		// Axis
+        if(data && data.yAxis && data.yAxis.labels  && data.yAxis.labels.style) {
+           if (!data.yAxis.labels.style.rotation || isNaN(data.yAxis.labels.style.rotation))
+           data.yAxis.labels.style.rotation = 0;
+         }
+
 		g.append("svg:g")
 		.attr("class","axis")
 		.each(function(d) { d3.select(this).call(axis.scale(y[d])); })
