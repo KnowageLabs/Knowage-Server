@@ -188,7 +188,8 @@ public class ExcelExporter {
 			}
 		}
 
-		try (Workbook wb = new SXSSFWorkbook()) {
+		int windowSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE"));
+		try (Workbook wb = new SXSSFWorkbook(windowSize)) {
 
 			if (isSingleWidgetExport) {
 				long widgetId = body.getLong("widget");

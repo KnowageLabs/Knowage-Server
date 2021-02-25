@@ -209,13 +209,21 @@ class WidgetXLSXExporter {
 					optionsObj.getJSONObject("metadata"), null);
 
 			CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
-
-			String cockpitSheetName = getCockpitSheetName(template, widgetId);
-			Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
-
 			CreationHelper createHelper = wb.getCreationHelper();
 
-			crossTabExporter.fillExcelSheetWithData(sheet, cs, createHelper, 0, excelExporter.getLocale());
+			int totalRowsNumber = cs.getTotalNumberOfRows();
+
+			int windowSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE"));
+			if (totalRowsNumber <= windowSize) {
+				// crosstab fits in memory
+				String cockpitSheetName = getCockpitSheetName(template, widgetId);
+				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+				crossTabExporter.fillExcelSheetWithData(sheet, cs, createHelper, 0, excelExporter.getLocale());
+			} else {
+				// export crosstab as generic widget
+				logger.warn("Crosstab [" + widgetId + "] has more rows than streaming windows size. It will be exported as a generic widget.");
+				exportGenericWidget();
+			}
 
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Unable to export crosstab widget: " + widgetId, e);
