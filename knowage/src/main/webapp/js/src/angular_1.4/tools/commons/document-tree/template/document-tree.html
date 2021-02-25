@@ -6,10 +6,6 @@
 				<md-icon tabindex="2" ng-click='openFolder(folder,false)' ng-if="!folder.expanded && folder[subfoldersId] !== undefined" md-font-icon="{{folder.subfolders.length!=0 ? multiFolders : iconFolder}}"></md-icon>				
 				<md-icon tabindex="2" ng-click='openFolder(folder,false)' ng-if=" folder.expanded && folder[subfoldersId] !== undefined" md-font-icon="{{folder.subfolders.length!=0 ? multiFoldersOpen : iconFolder}}"></md-icon>
 				<md-icon ng-click='openFolder(folder,false)' ng-if="folder.type !== 'folder'" md-font-icon="{{iconDocument}}"></md-icon>
-				<div ng-if="orderBy !== undefined && orderBy.length > 0 && folder.type =='folder'">
-					<md-icon tabindex="2" ng-if='folder.sortDirection=="asc"' ng-click='toogleSort(folder)' class = "fa fa-sort-asc"></md-icon>
-					<md-icon tabindex="2" ng-if='folder.sortDirection=="desc"' ng-click='toogleSort(folder)' class = "fa fa-sort-desc"></md-icon>
-				</div>
 				<div tabindex="2" ng-click='openFolder(folder,true)' class="line-container">
 					<span> &nbsp;{{folder[label]}}</span> 
 				</div>

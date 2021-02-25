@@ -156,11 +156,32 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			    					folders[i].biObjects[j].checked = folders[i].biObjects[j].checked == undefined ? false : folders[i].biObjects[j].checked;
 			    					folders[i].biObjects[j].visible = folders[i].biObjects[j].visible == undefined ?  true : folders[i].biObjects[j].visible;
 			    				}
+			    				if (scope.orderBy) scope.sortFolders(folders);
 			    			}
 
 			    		}
 
 			    	}
+
+			    	scope.sortFolders = function(folders) {
+						var field = scope.orderBy;
+						folders.sort(scope.orderFunction(field,"asc"));
+						for (var i = 0 ; i < folders.length; i ++ ){
+							if (folders[i][subfoldersId] !== undefined && folders[i][subfoldersId].length > 0){
+
+							folders[i][subfoldersId].sort(scope.orderFunction(field,"asc"));
+
+							}
+						}
+					}
+
+			    	scope.orderFunction = function(key,direction){
+						return function(a,b){
+							var x = a[key]; var y = b[key];
+							var val = ((x < y) ? -1 : ((x > y) ? 1 : 0));
+							return direction =='asc' ? val : -val;
+						};
+					}
 
 			    	scope.ngModel = scope.initializeFoldersAndCreateTreeStructure(scope.ngModel, null);
 					scope.folders=scope.ngModel;
