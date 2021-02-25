@@ -86,6 +86,8 @@
 	
 				subreportsService.deleteSubreports();
 				subreportsService.persistSubreports();
+			}).then(function() {
+				$scope.$root.$broadcast("RefreshTemplates", "");
 			});
 
 		};
