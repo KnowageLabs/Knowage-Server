@@ -232,7 +232,7 @@ public class ExcelExporter {
 					}
 				}
 			}
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			logger.error("Couldn't get widget " + widgetId + " type, it will be exported as a normal widget.");
 		}
 		logger.error("Couldn't get widget " + widgetId + " type, it will be exported as a normal widget.");
@@ -251,7 +251,7 @@ public class ExcelExporter {
 					JSONObject widget = sheetWidgets.getJSONObject(j);
 					if (!widget.getString("type").equals("static-pivot-table"))
 						continue;
-					String widgetId = widget.getString("id");
+					long widgetId = widget.getLong("id");
 					JSONObject options = new JSONObject();
 					options.put("config", new JSONObject().put("type", "pivot"));
 					options.put("sortOptions", widget.getJSONObject("content").getJSONObject("sortOptions"));
@@ -266,7 +266,7 @@ public class ExcelExporter {
 					JSONObject datastore = client.getDataStore(new HashMap<String, Object>(), dsLabel, userUniqueIdentifier, selections);
 					options.put("metadata", datastore.getJSONObject("metaData"));
 					options.put("jsonData", datastore.getJSONArray("rows"));
-					toReturn.put(widgetId, options);
+					toReturn.put(String.valueOf(widgetId), options);
 				}
 			}
 			return toReturn;
