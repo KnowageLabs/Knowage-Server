@@ -868,9 +868,6 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 					}
 					//apply styles on data (values)
 					dataColumnList=row.querySelectorAll(".data");
-					if(dataColumnList.length == 0){
-						dataColumnList=row.querySelectorAll(".dataNoStandardStyle"); //personal user settings
-					}
 					if(dataColumnList.length>0){
 						// alternateRow only if there are not thresholds
 						if ($scope.ngModel.content.style.showAlternateRows
@@ -888,6 +885,12 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 						$scope.applyBorderStyle(dataColumnList);
 					}else{
 						tmpOddRow=false;
+					}
+
+					dataNoStandardColumnList=row.querySelectorAll(".dataNoStandardStyle"); //personal user settings
+					if(dataNoStandardColumnList.length>0){
+						//border cell style
+						$scope.applyBorderStyle(dataNoStandardColumnList);
 					}
 				});
 			}

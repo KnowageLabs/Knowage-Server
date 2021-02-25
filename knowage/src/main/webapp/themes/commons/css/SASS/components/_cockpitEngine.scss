@@ -2178,7 +2178,7 @@
 							font-style:normal !important;								
 						}
 					}
-					&.data{
+					&.data, &.dataNoStandardStyle{
 						text-align: center;
 					}
 					&.partialsum{

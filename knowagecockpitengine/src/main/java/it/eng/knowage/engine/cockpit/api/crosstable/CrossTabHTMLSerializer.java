@@ -918,8 +918,7 @@ public class CrossTabHTMLSerializer {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, dataStyle);
 							classType += "NoStandardStyle";
 							isDataNoStandardStyle = true;
-//							aColumn.setAttribute(CLASS_ATTRIBUTE, "dataNoStandardStyle");
-							aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
+							aColumn.setAttribute(CLASS_ATTRIBUTE, "dataNoStandardStyle");
 						} else {
 							isDataNoStandardStyle = false;
 							aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
