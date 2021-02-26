@@ -284,7 +284,6 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			try {
 				aSession = getSession();
 				tx = aSession.beginTransaction();
-				// String hql = "select max(sot.prog) as maxprog from SbiObjTemplates sot where sot.sbiObject.biobjId="+biobjId;
 				String hql = "delete from SbiObjTemplates where active=false and sbiObject.biobjId=? and creationDate<?";
 				Query query = aSession.createQuery(hql);
 				query.setInteger(0, documents.getJSONObject(i).getInt("id"));
