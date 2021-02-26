@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.Vector;
+
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -48,7 +52,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	private HashMap attributes;
 
 	static private final List<HierarchyTreeNode> EMPTY_LIST = Collections.emptyList();
-	static private final Iterator<HierarchyTreeNode> EMPTY_ITERATOR = Collections.<HierarchyTreeNode> emptyList().iterator();
+	static private final Iterator<HierarchyTreeNode> EMPTY_ITERATOR = Collections.<HierarchyTreeNode>emptyList().iterator();
 
 	public HierarchyTreeNode(Object obj, String key) {
 		this.obj = obj;
@@ -189,8 +193,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	}
 
 	/**
-	 * @param key
-	 *            the key to set
+	 * @param key the key to set
 	 */
 	public void setKey(String key) {
 		this.key = key;
@@ -204,8 +207,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	}
 
 	/**
-	 * @param attributes
-	 *            the attributes to set
+	 * @param attributes the attributes to set
 	 */
 	public void setAttributes(HashMap attributes) {
 		this.attributes = attributes;
@@ -230,28 +232,49 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	/**
 	 * Returns the specific node if exists into the input hierarchy
 	 *
-	 * @param key
-	 *            : element key
-	 * @param theLast
-	 *            : boolean: if true returns the last element, otherwise the first
-	 * @param levelToCheck
-	 *            : Integer: the level to check
+	 * @param key          : element key
+	 * @param theLast      : boolean: if true returns the last element, otherwise the first
+	 * @param levelToCheck : Integer: the level to check
 	 *
 	 * @return the node
 	 */
-	public HierarchyTreeNode getHierarchyNode(String key, boolean theLast, Integer levelToCheck) {
+	public HierarchyTreeNode getHierarchyNode(String key, boolean theLast, Integer levelToCheck, HierarchyTreeNodeData data, IRecord record, IMetaData dsMeta,
+			String prefix) {
+
+		/* As default, node toReturn is assigned to root. If toReturn will not be overridden, current node/leaf is attached to root. */
 		HierarchyTreeNode toReturn = this;
-		HierarchyTreeNode treeNode = null;
-		for (Iterator<HierarchyTreeNode> treeIterator = this.iterator(); treeIterator.hasNext();) {
+
+		String recordCdLev = null;
+		if (levelToCheck > 0) {
+			/* Retrieving record CD LEV for record when node is not root */
+			recordCdLev = ((String) record.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEV + levelToCheck)).getValue()).trim();
+		}
+
+		Iterator<HierarchyTreeNode> treeIterator = this.iterator();
+		/* treeNode is assigned to root node because root node has not a CD_LEV hashCode */
+		HierarchyTreeNode treeNode = this; // treeIterator.next();
+		while (treeIterator.hasNext()) {
 			treeNode = treeIterator.next();
 			if (treeNode.getKey().equals(key)) {
-				if (levelToCheck != null) {
+				if (levelToCheck > 0) {
+					/* The index has scrolled through all the nodes on that level */
+					if (treeNode.getLevel() > levelToCheck)
+						break;
+
 					if (treeNode.getLevel() == levelToCheck) {
-						toReturn = treeNode;
-						if (!theLast)
+
+						/* Recovery CD LEV of the treeNode to compare with that of the node I am looking for */
+						String treeNodeCdLev = (String) ((HierarchyTreeNodeData) treeNode.getObject()).getAttributes()
+								.get(prefix + HierarchyConstants.SUFFIX_CD_LEV);
+
+						if (treeNodeCdLev.equals(recordCdLev)) {
+							toReturn = treeNode;
 							break;
+						}
+
 					}
 				} else {
+					/* Root node */
 					toReturn = treeNode;
 					if (!theLast)
 						break;

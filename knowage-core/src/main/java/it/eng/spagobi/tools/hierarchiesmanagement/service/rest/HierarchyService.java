@@ -29,7 +29,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -465,8 +468,6 @@ public class HierarchyService {
 		// ONLY FOR DEBUG
 		Set<String> allNodeCodes = new HashSet<String>();
 
-		HierarchyTreeNode root = null;
-
 		metadata = dataStore.getMetaData(); // saving metadata for next using
 
 		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
@@ -477,13 +478,15 @@ public class HierarchyService {
 		// contains the code of the last level node (not null) inserted in the tree
 		IMetaData dsMeta = dataStore.getMetaData();
 
+		HierarchyTreeNode root = null;
+		Map<String, HierarchyTreeNode> attachedNodesMap = new HashMap<String, HierarchyTreeNode>();
+
 		for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 			String lastLevelCodeFound = null;
 			String lastLevelNameFound = null;
 
 			IRecord record = (IRecord) iterator.next();
 			List<IField> recordFields = record.getFields();
-			int fieldsCount = recordFields.size();
 
 			// MAX_DEPTH, must be equal to the level of the leaf (that we skip)
 			IField maxDepthField = record.getFieldAt(dsMeta.getFieldIndex(HierarchyConstants.MAX_DEPTH));
@@ -500,94 +503,101 @@ public class HierarchyService {
 			}
 			logger.debug("maxDepth: " + maxDepth);
 
-			int currentLevel = 0;
 			int lastValorizedLevel = 0;
 
-			for (int i = 1, l = numLevels; i <= l; i++) {
-				IField codeField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + i)); // NODE CODE
-				IField nameField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + i)); // NAME CODE
-				IField codeLeafField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_LEAF_CD))); // LEAF CODE
-				String leafCode = (String) codeLeafField.getValue();
+			Map<Integer, String> map = new TreeMap<Integer, String>();
+			for (int i = numLevels; i > 0; i--) {
+				String value = (String) record.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_NM_LEV + i)).getValue();
+				if (value != null && !value.isEmpty()) {
+					map.put(i, value);
+				}
+			}
 
-				logger.debug("codeField: " + codeField.getValue());
-				logger.debug("nameField: " + nameField.getValue());
-				logger.debug("codeLeafField: " + codeLeafField.getValue());
+			HierarchyTreeNodeData data = null;
+			IField codeField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + 1)); // NODE CODE
+			IField nameField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + 1)); // NAME CODE
+			String nodeCode = (String) codeField.getValue();
+			String nodeName = (String) nameField.getValue();
 
-				if (currentLevel == maxDepth) {
-					break; // skip to next iteration
-				} else if (codeField.getValue() == null || codeField.getValue().equals("")) {
-					// do nothing: it's an empty node
-					// lastValorizedLevel++;
-				} else {
-					String nodeCode = (String) codeField.getValue();
-					String nodeName = (String) nameField.getValue();
-					HierarchyTreeNodeData data = new HierarchyTreeNodeData(nodeCode, nodeName);
-					// ONLY FOR DEBUG
-					if (!allNodeCodes.contains(nodeCode)) {
-						allNodeCodes.add(nodeCode);
-					}
-					// ------------------------
+			/* SETTING ROOT NODE */
+			if (root == null) {
+				// get root attribute for automatic edit node GUI
+				HashMap rootAttrs = new HashMap();
+				ArrayList<Field> generalFields = hierarchies.getHierarchy(dimension).getMetadataGeneralFields();
+				for (int f = 0, lf = generalFields.size(); f < lf; f++) {
+					Field fld = generalFields.get(f);
+					IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : 1)));
+					rootAttrs.put(fld.getId(), (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
+				}
+				rootCode = (String) rootAttrs.get(HierarchyConstants.HIER_CD);
 
+				nodeCode = String.valueOf(rootAttrs.get(HierarchyConstants.HIER_CD));
+				nodeName = String.valueOf(rootAttrs.get(HierarchyConstants.HIER_NM));
+
+				data = new HierarchyTreeNodeData(nodeCode, nodeName);
+				root = new HierarchyTreeNode(data, rootCode, rootAttrs);
+
+				// ONLY FOR DEBUG
+				if (!allNodeCodes.contains(nodeCode)) {
+					allNodeCodes.add(nodeCode);
+				}
+			}
+			// ------------------------
+
+			Iterator<Entry<Integer, String>> it = map.entrySet().iterator();
+			while (it.hasNext()) {
+				Entry<Integer, String> entry = it.next();
+
+				HashMap mapAttrs = null;
+				int i = entry.getKey();
+				codeField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + i)); // NODE CODE
+				nameField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + i)); // NAME CODE
+				nodeCode = (String) codeField.getValue();
+				nodeName = (String) nameField.getValue();
+				data = new HierarchyTreeNodeData(nodeCode, nodeName);
+
+				if (it.hasNext()) {
+
+					// get nodes attribute for automatic edit node GUI
+					ArrayList<Field> nodeFields = hierarchies.getHierarchy(dimension).getMetadataNodeFields();
 					// update LEVEL && MAX_DEPTH informations
-					HashMap mapAttrs = data.getAttributes();
+					mapAttrs = data.getAttributes();
 					mapAttrs.put(HierarchyConstants.LEVEL, i);
 					mapAttrs.put(HierarchyConstants.MAX_DEPTH, maxDepth);
 					data.setAttributes(mapAttrs);
 
-					if (root == null) {
-						// get root attribute for automatic edit node GUI
-						HashMap rootAttrs = new HashMap();
-						ArrayList<Field> generalFields = hierarchies.getHierarchy(dimension).getMetadataGeneralFields();
-						for (int f = 0, lf = generalFields.size(); f < lf; f++) {
-							Field fld = generalFields.get(f);
-							IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : i)));
-							rootAttrs.put(fld.getId(), (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
-						}
-						rootCode = (String) rootAttrs.get(HierarchyConstants.HIER_CD);
-						root = new HierarchyTreeNode(data, rootCode, rootAttrs);
-
-						// ONLY FOR DEBUG
-						if (!allNodeCodes.contains(nodeCode)) {
-							allNodeCodes.add(nodeCode);
-						}
-						// ------------------------
-					}
-					// check if its a leaf
-					if (i == maxDepth) {
-						data = HierarchyUtils.setDataValues(dimension, nodeCode, data, record, metadata);
-						// update LEVEL informations
-						mapAttrs = data.getAttributes();
-						mapAttrs.put(HierarchyConstants.LEVEL, i);
-						mapAttrs.put(HierarchyConstants.MAX_DEPTH, maxDepth);
-						data.setAttributes(mapAttrs);
-						attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, true);
-						lastValorizedLevel++;
-						lastLevelCodeFound = nodeCode;
-						lastLevelNameFound = nodeName;
-						break;
-					} else if (!root.getKey().contentEquals(nodeCode)) {
-						// get nodes attribute for automatic edit node GUI
-						ArrayList<Field> nodeFields = hierarchies.getHierarchy(dimension).getMetadataNodeFields();
-						for (int f = 0, lf = nodeFields.size(); f < lf; f++) {
-							Field fld = nodeFields.get(f);
-							IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : i)));
-							if (fld.isOrderField()) {
-								Object value = (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue();
-								logger.debug("id: [" + (fld.getId() + i) + "], value: [" + value + "]");
-								mapAttrs.put(fld.getId() + i, value);
-							}
+					for (int f = 0; f < nodeFields.size(); f++) {
+						Field fld = nodeFields.get(f);
+						IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : i)));
+						if (fld.isOrderField()) {
 							Object value = (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue();
-							mapAttrs.put(fld.getId(), value);
-							logger.debug("id: [" + (fld.getId()) + "], value: [" + value + "]");
+							logger.debug("id: [" + (fld.getId() + i) + "], value: [" + value + "]");
+							mapAttrs.put(fld.getId() + i, value);
 						}
-						data.setAttributes(mapAttrs);
-						attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, false);
+						Object value = (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue();
+						mapAttrs.put(fld.getId(), value);
+						logger.debug("id: [" + (fld.getId()) + "], value: [" + value + "]");
 					}
-					lastValorizedLevel++;
+					data.setAttributes(mapAttrs);
+					attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, false, record, dsMeta, prefix,
+							attachedNodesMap);
+					lastValorizedLevel = entry.getKey();
+					lastLevelCodeFound = nodeCode;
+					lastLevelNameFound = nodeName;
+				} else {
+					data = HierarchyUtils.setDataValues(dimension, nodeCode, data, record, metadata);
+					// update LEVEL informations
+					mapAttrs = data.getAttributes();
+					mapAttrs.put(HierarchyConstants.LEVEL, i);
+					mapAttrs.put(HierarchyConstants.MAX_DEPTH, maxDepth);
+					data.setAttributes(mapAttrs);
+					attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, true, record, dsMeta, prefix,
+							attachedNodesMap);
+					lastValorizedLevel = entry.getKey();
 					lastLevelCodeFound = nodeCode;
 					lastLevelNameFound = nodeName;
 				}
-				currentLevel++;
+
 			}
 
 		}
@@ -608,25 +618,41 @@ public class HierarchyService {
 	 * @param lastLevelFound
 	 * @param data
 	 * @param allNodeCodes   : codes list for debug
+	 * @param record
 	 */
 	private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound, int lastValorizedLevel, HierarchyTreeNodeData data,
-			Set<String> allNodeCodes, boolean isLeaf) {
+			Set<String> allNodeCodes, boolean isLeaf, IRecord record, IMetaData dsMeta, String prefix, Map<String, HierarchyTreeNode> attachedNodesMap) {
 
+		HierarchyTreeNode aNode = null;
 		HierarchyTreeNode treeNode = null;
 		// first search parent node (with all path)
 		Integer nodeLevel = ((Integer) data.getAttributes().get(HierarchyConstants.LEVEL));
-		treeNode = root.getHierarchyNode(lastLevelFound, true, lastValorizedLevel);
-		if ((lastValorizedLevel + 1) == nodeLevel) {
+
+		String recordCdLev = null;
+		if (lastValorizedLevel > 0)
+			recordCdLev = ((String) record.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEV + lastValorizedLevel)).getValue()).trim();
+		if (recordCdLev != null && attachedNodesMap.containsKey(recordCdLev)) {
+			treeNode = attachedNodesMap.get(recordCdLev);
+		} else {
+			treeNode = root.getHierarchyNode(lastLevelFound, true, lastValorizedLevel, data, record, dsMeta, prefix);
+		}
+		if (lastValorizedLevel < nodeLevel && !isLeaf) {
 			// then check if node was already added as a child of this parent
 			if (!treeNode.getChildrensKeys().contains(nodeCode)) {
 				// node not already attached to the level
-				HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
+				aNode = new HierarchyTreeNode(data, nodeCode);
 				treeNode.add(aNode, nodeCode);
+				String aNodeCdLev = (String) ((HierarchyTreeNodeData) aNode.getObject()).getAttributes().get(prefix + HierarchyConstants.SUFFIX_CD_LEV);
+				if (aNodeCdLev != null)
+					attachedNodesMap.put(aNodeCdLev, aNode);
 			}
 		} else if (isLeaf) {
 			// attach the leaf to the last node
-			HierarchyTreeNode aNode = new HierarchyTreeNode(data, nodeCode);
+			aNode = new HierarchyTreeNode(data, nodeCode);
 			treeNode.add(aNode, nodeCode);
+			String aNodeCdLev = (String) ((HierarchyTreeNodeData) aNode.getObject()).getAttributes().get(prefix + HierarchyConstants.SUFFIX_CD_LEV);
+			if (aNodeCdLev != null)
+				attachedNodesMap.put(aNodeCdLev, aNode);
 		}
 
 		// ONLY FOR DEBUG
