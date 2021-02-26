@@ -166,7 +166,7 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 
 	var initSheet = $scope.$watch('cockpitModule_properties.CURRENT_SHEET',function(newValue,oldValue){
 		if(!cockpitModule_properties.HASDEFAULTSELECTION) cockpitModule_properties.HASDEFAULTSELECTION = {};
-		//if(cockpitModule_template.getSelections().length == 0) cockpitModule_properties.HASDEFAULTSELECTION[newValue] = checkForDefaultSelections(cockpitModule_template, newValue);
+		if(cockpitModule_template.getSelections().length == 0) cockpitModule_properties.HASDEFAULTSELECTION[newValue] = checkForDefaultSelections(cockpitModule_template, newValue);
         var currentSheet; // get sheet checking proper index
         for(var i=0; i < cockpitModule_template.sheets.length; i++){
             if(cockpitModule_template.sheets[i].index == newValue){
