@@ -345,8 +345,8 @@ public class ExcelExporter {
 			if (totExportedWidgets == 0) {
 				exportEmptyExcel(wb);
 			}
-		} catch (JSONException e) {
-			logger.error("Error exporting cockpit", e);
+		} catch (Exception e) {
+			logger.error("Error while exporting cockpit. Operation aborted.", e);
 		}
 	}
 
@@ -372,7 +372,7 @@ public class ExcelExporter {
 				if (summaryRow != null)
 					cockpitSelections.put("summaryRow", summaryRow);
 
-				if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
+				if (isSolrDataset(dataset)) {
 					JSONObject jsOptions = new JSONObject();
 					jsOptions.put("solrFacetPivot", true);
 					cockpitSelections.put("options", jsOptions);
@@ -383,7 +383,7 @@ public class ExcelExporter {
 				multiDataStore.put(dataStore);
 			}
 		} catch (Exception e) {
-			logger.error("Cannot get Datastore for widget", e);
+			throw new SpagoBIRuntimeException("Unable to get multi datastore for map widget: ", e);
 		}
 		return multiDataStore;
 	}
@@ -422,7 +422,8 @@ public class ExcelExporter {
 			datastore.put("widgetData", widget);
 
 		} catch (Exception e) {
-			logger.error("Cannot get Datastore for widget", e);
+			throw new SpagoBIRuntimeException("Error getting datastore for widget [type=" + widget.optString("type") + "] [id=" + widget.optLong("id") + "]",
+					e);
 		}
 		return datastore;
 	}
@@ -446,6 +447,7 @@ public class ExcelExporter {
 			}
 		} catch (Exception e) {
 			logger.error("Cannot get cockpit selections", e);
+			return new JSONObject();
 		}
 		return cockpitSelections;
 	}
@@ -453,9 +455,9 @@ public class ExcelExporter {
 	private JSONObject getMultiCockpitSelectionsFromBody(JSONObject widget, int datasetId) {
 		JSONObject cockpitSelections = new JSONObject();
 		JSONArray allSelections = new JSONArray();
-		if (body == null || body.length() == 0)
-			return cockpitSelections;
 		try {
+			if (body == null || body.length() == 0)
+				return cockpitSelections;
 			if (isSingleWidgetExport) { // export single widget with multi dataset
 				allSelections = body.getJSONArray("COCKPIT_SELECTIONS");
 				for (int i = 0; i < allSelections.length(); i++) {
@@ -480,6 +482,7 @@ public class ExcelExporter {
 			}
 		} catch (Exception e) {
 			logger.error("Cannot get cockpit selections", e);
+			return new JSONObject();
 		}
 		return cockpitSelections;
 	}
@@ -607,7 +610,7 @@ public class ExcelExporter {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Cannot write data to Excel file", e);
+			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
 		}
 	}
 
@@ -674,7 +677,8 @@ public class ExcelExporter {
 				header = column.getString("aliasToShow");
 			return header;
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException(e);
+			logger.error("Error retrieving table column header values.", e);
+			return "";
 		}
 	}
 
@@ -697,47 +701,54 @@ public class ExcelExporter {
 				header = sheet.createRow((short) startRowOffset); // first row
 			return header;
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException(e);
+			throw new SpagoBIRuntimeException("Couldn't create header column names", e);
 		}
 	}
 
 	protected Sheet createUniqueSafeSheet(Workbook wb, String widgetName, String cockpitSheetName) {
 		Sheet sheet;
 		String sheetName;
-		if (!isSingleWidgetExport && cockpitSheetName != null && !cockpitSheetName.equals(""))
-			sheetName = cockpitSheetName.concat(".").concat(widgetName);
-		else
-			sheetName = widgetName;
-		String safeSheetName = WorkbookUtil.createSafeSheetName(sheetName);
-		if (safeSheetName.length() + String.valueOf(uniqueId).length() > SHEET_NAME_MAX_LEN)
-			safeSheetName = safeSheetName.substring(0, safeSheetName.length() - String.valueOf(uniqueId).length());
-		String uniqueSafeSheetName = safeSheetName + String.valueOf(uniqueId);
-		sheet = wb.createSheet(uniqueSafeSheetName);
-		uniqueId++;
-		return sheet;
+		try {
+			if (!isSingleWidgetExport && cockpitSheetName != null && !cockpitSheetName.equals(""))
+				sheetName = cockpitSheetName.concat(".").concat(widgetName);
+			else
+				sheetName = widgetName;
+			String safeSheetName = WorkbookUtil.createSafeSheetName(sheetName);
+			if (safeSheetName.length() + String.valueOf(uniqueId).length() > SHEET_NAME_MAX_LEN)
+				safeSheetName = safeSheetName.substring(0, safeSheetName.length() - String.valueOf(uniqueId).length());
+			String uniqueSafeSheetName = safeSheetName + String.valueOf(uniqueId);
+			sheet = wb.createSheet(uniqueSafeSheetName);
+			uniqueId++;
+			return sheet;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Couldn't create sheet", e);
+		}
 	}
 
 	private HashMap<String, String> getMapFromGroupsArray(JSONArray groupsArray, JSONArray aggr) throws JSONException {
 		HashMap<String, String> returnMap = new HashMap<String, String>();
-		if (aggr != null && groupsArray != null) {
+		try {
+			if (aggr != null && groupsArray != null) {
 
-			for (int i = 0; i < groupsArray.length(); i++) {
+				for (int i = 0; i < groupsArray.length(); i++) {
 
-				String id = groupsArray.getJSONObject(i).getString("id");
-				String groupName = groupsArray.getJSONObject(i).getString("name");
+					String id = groupsArray.getJSONObject(i).getString("id");
+					String groupName = groupsArray.getJSONObject(i).getString("name");
 
-				for (int ii = 0; ii < aggr.length(); ii++) {
-					JSONObject column = aggr.getJSONObject(ii);
+					for (int ii = 0; ii < aggr.length(); ii++) {
+						JSONObject column = aggr.getJSONObject(ii);
 
-					if (column.has("group") && column.getString("group").equals(id)) {
-						String nameToInsert = getTableColumnHeaderValue(column);
-						returnMap.put(nameToInsert, groupName);
+						if (column.has("group") && column.getString("group").equals(id)) {
+							String nameToInsert = getTableColumnHeaderValue(column);
+							returnMap.put(nameToInsert, groupName);
+						}
+
 					}
-
 				}
 			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Couldn't create map from groups array", e);
 		}
-
 		return returnMap;
 
 	}
@@ -793,212 +804,224 @@ public class ExcelExporter {
 	}
 
 	private JSONArray getSummaryRowFromWidget(JSONObject widget) throws JSONException {
-		JSONObject settings = widget.optJSONObject("settings");
-		JSONArray jsonArrayForSummary = new JSONArray();
-		if (settings != null) {
-			JSONObject summary = settings.optJSONObject("summary");
-			if (settings.has("summary") && summary.has("enabled") && summary.optBoolean("enabled")) {
+		try {
+			JSONObject settings = widget.optJSONObject("settings");
+			JSONArray jsonArrayForSummary = new JSONArray();
+			if (settings != null) {
+				JSONObject summary = settings.optJSONObject("summary");
+				if (settings.has("summary") && summary.has("enabled") && summary.optBoolean("enabled")) {
 
-				if (summary.has("list")) {
-					JSONArray listArray = summary.getJSONArray("list");
+					if (summary.has("list")) {
+						JSONArray listArray = summary.getJSONArray("list");
 
-					if (listArray.length() > 1) {
-						for (int jj = 0; jj < listArray.length(); jj++) {
+						if (listArray.length() > 1) {
+							for (int jj = 0; jj < listArray.length(); jj++) {
 
-							JSONObject aggrObj = listArray.getJSONObject(jj);
+								JSONObject aggrObj = listArray.getJSONObject(jj);
 
-							if (!aggrObj.has("aggregation")) {
+								if (!aggrObj.has("aggregation")) {
 
-								JSONArray measures = new JSONArray();
-								JSONObject content = widget.optJSONObject("content");
-								if (content != null) {
-									JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
-									if (columns != null) {
-										for (int i = 0; i < columns.length(); i++) {
-											JSONObject column = columns.getJSONObject(i);
-											if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
-												JSONObject measure = new JSONObject();
-												measure.put("id", column.getString("alias"));
-												measure.put("alias", column.getString("aliasToShow"));
+									JSONArray measures = new JSONArray();
+									JSONObject content = widget.optJSONObject("content");
+									if (content != null) {
+										JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
+										if (columns != null) {
+											for (int i = 0; i < columns.length(); i++) {
+												JSONObject column = columns.getJSONObject(i);
+												if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
+													JSONObject measure = new JSONObject();
+													measure.put("id", column.getString("alias"));
+													measure.put("alias", column.getString("aliasToShow"));
 
-												String formula = column.optString("formula");
-												String name = formula.isEmpty() ? column.optString("name") : formula;
-												if (column.has("formula")) {
-													measure.put("formula", name);
-												} else
-													measure.put("columnName", name);
+													String formula = column.optString("formula");
+													String name = formula.isEmpty() ? column.optString("name") : formula;
+													if (column.has("formula")) {
+														measure.put("formula", name);
+													} else
+														measure.put("columnName", name);
 
-												measure.put("funct", column.getString("funcSummary"));
+													measure.put("funct", column.getString("funcSummary"));
 
-												boolean hidden = false;
+													boolean hidden = false;
 
-												if (column.has("style")) {
+													if (column.has("style")) {
 
-													JSONObject style = column.optJSONObject("style");
-													if (style != null) {
+														JSONObject style = column.optJSONObject("style");
+														if (style != null) {
 
-														String hideSummary = style.optString("hideSummary");
+															String hideSummary = style.optString("hideSummary");
 
-														if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
-															hidden = true;
+															if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
+																hidden = true;
+															}
+
 														}
 
 													}
-
+													if (!hidden)
+														measures.put(measure);
 												}
-												if (!hidden)
-													measures.put(measure);
 											}
 										}
 									}
-								}
-								JSONObject summaryRow = new JSONObject();
-								summaryRow.put("measures", measures);
+									JSONObject summaryRow = new JSONObject();
+									summaryRow.put("measures", measures);
 
-								JSONObject dataset = widget.optJSONObject("dataset");
-								if (dataset != null) {
-									int dsId = dataset.getInt("dsId");
-									summaryRow.put("dataset", dsId);
-								}
+									JSONObject dataset = widget.optJSONObject("dataset");
+									if (dataset != null) {
+										int dsId = dataset.getInt("dsId");
+										summaryRow.put("dataset", dsId);
+									}
 
-								jsonArrayForSummary.put(summaryRow);
+									jsonArrayForSummary.put(summaryRow);
 
-							} else {
+								} else {
 
-								JSONArray measures = new JSONArray();
-								JSONObject content = widget.optJSONObject("content");
-								if (content != null) {
-									JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
-									if (columns != null) {
-										for (int i = 0; i < columns.length(); i++) {
-											JSONObject column = columns.getJSONObject(i);
-											if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
-												JSONObject measure = new JSONObject();
-												measure.put("id", column.getString("alias"));
-												measure.put("alias", column.getString("aliasToShow"));
+									JSONArray measures = new JSONArray();
+									JSONObject content = widget.optJSONObject("content");
+									if (content != null) {
+										JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
+										if (columns != null) {
+											for (int i = 0; i < columns.length(); i++) {
+												JSONObject column = columns.getJSONObject(i);
+												if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
+													JSONObject measure = new JSONObject();
+													measure.put("id", column.getString("alias"));
+													measure.put("alias", column.getString("aliasToShow"));
 
-												String formula = column.optString("formula");
-												String name = formula.isEmpty() ? column.optString("name") : formula;
-												if (column.has("formula")) {
-													measure.put("formula", name);
-												} else
-													measure.put("columnName", name);
+													String formula = column.optString("formula");
+													String name = formula.isEmpty() ? column.optString("name") : formula;
+													if (column.has("formula")) {
+														measure.put("formula", name);
+													} else
+														measure.put("columnName", name);
 
-												measure.put("funct", aggrObj.get("aggregation"));
+													measure.put("funct", aggrObj.get("aggregation"));
 
-												boolean hidden = false;
+													boolean hidden = false;
 
-												if (column.has("style")) {
+													if (column.has("style")) {
 
-													JSONObject style = column.optJSONObject("style");
-													if (style != null) {
+														JSONObject style = column.optJSONObject("style");
+														if (style != null) {
 
-														String hideSummary = style.optString("hideSummary");
+															String hideSummary = style.optString("hideSummary");
 
-														if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
-															hidden = true;
+															if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
+																hidden = true;
+															}
+
 														}
 
 													}
-
+													if (!hidden)
+														measures.put(measure);
 												}
-												if (!hidden)
-													measures.put(measure);
 											}
 										}
 									}
-								}
-								JSONObject summaryRow = new JSONObject();
-								summaryRow.put("measures", measures);
+									JSONObject summaryRow = new JSONObject();
+									summaryRow.put("measures", measures);
 
-								JSONObject dataset = widget.optJSONObject("dataset");
-								if (dataset != null) {
-									int dsId = dataset.getInt("dsId");
-									summaryRow.put("dataset", dsId);
-								}
+									JSONObject dataset = widget.optJSONObject("dataset");
+									if (dataset != null) {
+										int dsId = dataset.getInt("dsId");
+										summaryRow.put("dataset", dsId);
+									}
 
-								jsonArrayForSummary.put(summaryRow);
+									jsonArrayForSummary.put(summaryRow);
+
+								}
 
 							}
+						} else {
+							JSONArray measures = new JSONArray();
+							JSONObject content = widget.optJSONObject("content");
+							if (content != null) {
+								JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
+								if (columns != null) {
+									for (int i = 0; i < columns.length(); i++) {
+										JSONObject column = columns.getJSONObject(i);
+										if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
+											JSONObject measure = new JSONObject();
+											measure.put("id", column.getString("alias"));
+											measure.put("alias", column.getString("aliasToShow"));
 
-						}
-					} else {
-						JSONArray measures = new JSONArray();
-						JSONObject content = widget.optJSONObject("content");
-						if (content != null) {
-							JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
-							if (columns != null) {
-								for (int i = 0; i < columns.length(); i++) {
-									JSONObject column = columns.getJSONObject(i);
-									if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
-										JSONObject measure = new JSONObject();
-										measure.put("id", column.getString("alias"));
-										measure.put("alias", column.getString("aliasToShow"));
+											String formula = column.optString("formula");
+											String name = formula.isEmpty() ? column.optString("name") : formula;
+											if (column.has("formula")) {
+												measure.put("formula", name);
+											} else
+												measure.put("columnName", name);
 
-										String formula = column.optString("formula");
-										String name = formula.isEmpty() ? column.optString("name") : formula;
-										if (column.has("formula")) {
-											measure.put("formula", name);
-										} else
-											measure.put("columnName", name);
+											measure.put("funct", column.getString("funcSummary"));
 
-										measure.put("funct", column.getString("funcSummary"));
+											boolean hidden = false;
 
-										boolean hidden = false;
+											if (column.has("style")) {
 
-										if (column.has("style")) {
+												JSONObject style = column.optJSONObject("style");
+												if (style != null) {
 
-											JSONObject style = column.optJSONObject("style");
-											if (style != null) {
+													String hideSummary = style.optString("hideSummary");
 
-												String hideSummary = style.optString("hideSummary");
+													if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
+														hidden = true;
+													}
 
-												if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
-													hidden = true;
 												}
 
 											}
-
+											if (!hidden)
+												measures.put(measure);
 										}
-										if (!hidden)
-											measures.put(measure);
 									}
 								}
 							}
-						}
-						JSONObject summaryRow = new JSONObject();
-						summaryRow.put("measures", measures);
+							JSONObject summaryRow = new JSONObject();
+							summaryRow.put("measures", measures);
 
-						JSONObject dataset = widget.optJSONObject("dataset");
-						if (dataset != null) {
-							int dsId = dataset.getInt("dsId");
-							summaryRow.put("dataset", dsId);
-						}
+							JSONObject dataset = widget.optJSONObject("dataset");
+							if (dataset != null) {
+								int dsId = dataset.getInt("dsId");
+								summaryRow.put("dataset", dsId);
+							}
 
-						jsonArrayForSummary.put(summaryRow);
+							jsonArrayForSummary.put(summaryRow);
+						}
 					}
+					return jsonArrayForSummary;
 				}
-				return jsonArrayForSummary;
 			}
+			return null;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException(e);
 		}
-		return null;
 	}
 
 	private boolean getRealtimeFromTableWidget(int dsId, JSONObject configuration) throws JSONException {
-		JSONObject dataset = getDataset(dsId, configuration);
-		return !dataset.getBoolean("useCache");
+		try {
+			JSONObject dataset = getDataset(dsId, configuration);
+			return !dataset.getBoolean("useCache");
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException(e);
+		}
 	}
 
 	private JSONObject getDataset(int dsId, JSONObject configuration) throws JSONException {
-		JSONArray datasets = configuration.getJSONArray("datasets");
-		for (int i = 0; i < datasets.length(); i++) {
-			JSONObject dataset = (JSONObject) datasets.get(i);
-			int id = dataset.getInt("dsId");
-			if (id == dsId) {
-				return dataset;
+		try {
+			JSONArray datasets = configuration.getJSONArray("datasets");
+			for (int i = 0; i < datasets.length(); i++) {
+				JSONObject dataset = (JSONObject) datasets.get(i);
+				int id = dataset.getInt("dsId");
+				if (id == dsId) {
+					return dataset;
+				}
 			}
+			return null;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException(e);
 		}
-		return null;
 	}
 
 	protected Locale getLocale() {

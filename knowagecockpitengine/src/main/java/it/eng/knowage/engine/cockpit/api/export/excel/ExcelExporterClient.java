@@ -45,6 +45,7 @@ public class ExcelExporterClient extends SimpleRestClient {
 	public JSONObject getDataStore(Map<String, Object> parameters, String datasetLabel, String userId, String body, int offset, int fetchSize)
 			throws Exception {
 		logger.debug("IN");
+		logger.debug("parameters: [" + parameters + "], serviceUrl: [" + serviceUrl + "], datasetLabel: [" + datasetLabel + "], body: [" + body + "]");
 
 		parameters.put("offset", offset);
 		parameters.put("size", fetchSize);
@@ -52,8 +53,8 @@ public class ExcelExporterClient extends SimpleRestClient {
 		String resultString = resp.readEntity(String.class);
 		JSONObject result = new JSONObject(resultString);
 
+		logger.debug("Response: [" + result + "]");
 		logger.debug("OUT");
-
 		return result;
 	}
 }
