@@ -444,30 +444,14 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 								points.forEach(function(leaf){
 									if (leaf.id === self.userOptions.id || leaf.parent === self.userOptions.id) {
 										leaf.visible = !leaf.visible;
-										if (leaf.id === "id_0") {
-											newLevels = levels.map(function(l){
-												return l.level === 1 ? Object.assign({}, l, {
-													levelSize: {
-														value: leaf.visible ? 1 : 0
-				                                    }
-												}) : l;
-											});
-										}
 									}
 								});
 
-								if (!newLevels) {
-									var newData = points.filter(function(leaf){
-										return leaf.visible;
-									});
+								var newData = points.filter(function(leaf){
+									return leaf.visible;
+								});
 
-									series.setData(newData, true, true, false);
-								} else {
-									series.update({
-										levels: newLevels
-									})
-								}
-
+								series.setData(newData, true, true, false);
 							}
 						}
 					}
