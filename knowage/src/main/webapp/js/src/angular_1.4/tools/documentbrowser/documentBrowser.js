@@ -374,7 +374,8 @@ function documentBrowserFunction($window,
 	};
 
 	$scope.setSearchInput = function (newSearchInput) {
-
+		$scope.selectedDocuments = {};
+		$mdSidenav('right').close();
 		$scope.lastSearchInputInserted = newSearchInput;
 		$scope.searchInput = newSearchInput;
 		setFocus("searchInput");
@@ -422,11 +423,11 @@ function documentBrowserFunction($window,
 		$scope.showSearchView = !$scope.showSearchView;
 		if ($scope.showSearchView) {
 			setFocus('searchInput');
-			$scope.selectDocument();
 		}else{
 			$scope.searchDocuments = [];
 			$scope.searchInput = '';
 		}
+		$mdSidenav('right').close();
 	};
 
 
