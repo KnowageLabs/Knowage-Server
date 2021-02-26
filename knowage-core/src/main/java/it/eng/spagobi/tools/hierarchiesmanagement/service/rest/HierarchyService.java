@@ -581,7 +581,7 @@ public class HierarchyService {
 					data.setAttributes(mapAttrs);
 					attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, false, record, dsMeta, prefix,
 							attachedNodesMap);
-					lastValorizedLevel = entry.getKey();
+					lastValorizedLevel = i;
 					lastLevelCodeFound = nodeCode;
 					lastLevelNameFound = nodeName;
 				} else {
@@ -593,7 +593,7 @@ public class HierarchyService {
 					data.setAttributes(mapAttrs);
 					attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, true, record, dsMeta, prefix,
 							attachedNodesMap);
-					lastValorizedLevel = entry.getKey();
+					lastValorizedLevel = i;
 					lastLevelCodeFound = nodeCode;
 					lastLevelNameFound = nodeName;
 				}
@@ -629,8 +629,10 @@ public class HierarchyService {
 		Integer nodeLevel = ((Integer) data.getAttributes().get(HierarchyConstants.LEVEL));
 
 		String recordCdLev = null;
+		String recordCdNodeLevel = null;
 		if (lastValorizedLevel > 0)
 			recordCdLev = ((String) record.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEV + lastValorizedLevel)).getValue()).trim();
+		recordCdNodeLevel = ((String) record.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEV + nodeLevel)).getValue()).trim();
 		if (recordCdLev != null && attachedNodesMap.containsKey(recordCdLev)) {
 			treeNode = attachedNodesMap.get(recordCdLev);
 		} else {
@@ -638,7 +640,8 @@ public class HierarchyService {
 		}
 		if (lastValorizedLevel < nodeLevel && !isLeaf) {
 			// then check if node was already added as a child of this parent
-			if (!treeNode.getChildrensKeys().contains(nodeCode)) {
+
+			if (recordCdNodeLevel != null && !recordCdNodeLevel.isEmpty() && !attachedNodesMap.containsKey(recordCdNodeLevel)) {
 				// node not already attached to the level
 				aNode = new HierarchyTreeNode(data, nodeCode);
 				treeNode.add(aNode, nodeCode);
@@ -848,6 +851,13 @@ public class HierarchyService {
 			String hierGeneralInfos = null;
 			for (int i = 0; i < path.size(); i++) {
 				HierarchyTreeNodeData node = path.get(i);
+//				if (node.getNodeCode() != null && !node.getNodeCode().isEmpty() && node.getNodeCode().equals("M_CONSO2021-R-HUB") && path.size() == 10
+//						&& path.get(4).getNodeCode() != null && !path.get(4).getNodeCode().isEmpty() && path.get(4).getNodeCode().equals("BU PROD E&U")
+//						&&
+				if (path.size() == 9 && path.get(8).getLeafId() != null && !path.get(8).getLeafId().isEmpty()
+						&& Integer.valueOf(path.get(8).getLeafId()).equals(new Integer(65239))) {
+					boolean banana = true;
+				}
 				hierPreparedStatement = valorizeHierPlaceholdersFromNode(hierPreparedStatement, node, lstFields, paramsMap, lstMTFieldsValue);
 				lstMTFieldsValue = getMTvalues(lstMTFieldsValue, node, paramsMap);
 				Boolean isRoot = (Boolean) node.getAttributes().get("isRoot");
