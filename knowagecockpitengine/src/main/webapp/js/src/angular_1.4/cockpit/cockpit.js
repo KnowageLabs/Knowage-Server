@@ -148,18 +148,19 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	})
 
 	$scope.variablesInit = function(){
-		if(cockpitModule_template.configuration && cockpitModule_template.configuration.variables){
-			if(!cockpitModule_properties.VARIABLES) cockpitModule_properties.VARIABLES = {};
-			cockpitModule_template.configuration.variables.forEach(function(variable){
+		if(!cockpitModule_properties.VARIABLES) cockpitModule_properties.VARIABLES = {};
+		return Promise.all(cockpitModule_template.configuration.variables.map(function(variable){
+			return new Promise (function(resolve, reject){
 				cockpitModule_variableService.getVariableValue(variable).then(
-						function(response){
-							cockpitModule_properties.VARIABLES[variable.name] = response;
-						},function(error){
-							console.error('error during the variables recovery.')
-						}
-					)
+					function(response){
+						cockpitModule_properties.VARIABLES[variable.name] = response;
+						resolve(response)
+					},function(error){
+						reject('error during the variables recovery.')
+					}
+				)
 			})
-		}
+		}));
 	}
 
 	$scope.initializedSheets = [0]; // first sheet is always loaded
@@ -199,24 +200,36 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	$scope.datasetLoaded=false;
 
 	cockpitModule_datasetServices.loadDatasetsFromTemplate().then(function(){
-		$scope.datasetLoaded=true;
-		if(!cockpitModule_properties.PARAMETERS) cockpitModule_properties.PARAMETERS = cockpitModule_datasetServices.returnParametersArray();
-		var dsNotInCache = cockpitModule_templateServices.getDatasetAssociatedNotUsedByWidget();
-		if(dsNotInCache.length>0){
-			cockpitModule_datasetServices.addDatasetInCache(dsNotInCache)
-			.then(function(){
+		
+		var loadDatasetList = function(){
+			$scope.datasetLoaded=true;
+			if(!cockpitModule_properties.PARAMETERS) cockpitModule_properties.PARAMETERS = cockpitModule_datasetServices.returnParametersArray();
+			var dsNotInCache = cockpitModule_templateServices.getDatasetAssociatedNotUsedByWidget();
+			if(dsNotInCache.length>0){
+				cockpitModule_datasetServices.addDatasetInCache(dsNotInCache)
+				.then(function(){
+					$rootScope.$broadcast("WIDGET_INITIALIZED");
+				});
+				//WIDGET_INITIALIZED at the end
+			}else{
 				$rootScope.$broadcast("WIDGET_INITIALIZED");
-			});
-			//WIDGET_INITIALIZED at the end
-		}else{
-			$rootScope.$broadcast("WIDGET_INITIALIZED");
-		}
+			}
 
-		if(!cockpitModule_properties.EDIT_MODE){
-			cockpitModule_nearRealtimeServices.init();
-			cockpitModule_realtimeServices.init();
+			if(!cockpitModule_properties.EDIT_MODE){
+				cockpitModule_nearRealtimeServices.init();
+				cockpitModule_realtimeServices.init();
+			}
 		}
-		$scope.variablesInit();
+		
+		if(cockpitModule_template.configuration && cockpitModule_template.configuration.variables){
+			$scope.variablesInit().then(function(value){
+				loadDatasetList();
+			},function(error){
+				loadDatasetList();
+				console.log(error)
+			})
+		}else loadDatasetList();
+		
 	},function(){
 		console.error("error when load dataset list")
 	});
