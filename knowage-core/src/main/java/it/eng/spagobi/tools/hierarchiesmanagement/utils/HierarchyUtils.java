@@ -1324,6 +1324,7 @@ public class HierarchyUtils {
 					relPreparedStatement.executeUpdate();
 					relPreparedStatement.close();
 				} catch (Throwable t2) {
+					logger.error(t2.getMessage());
 					logger.error("An unexpected error occured while updating hierarchy for propagation");
 					throw new SpagoBIServiceException("An unexpected error occured while updating hierarchy for propagation", t2);
 				}
