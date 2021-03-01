@@ -254,25 +254,34 @@ public class ExcelExporter {
 						continue;
 					long widgetId = widget.getLong("id");
 					JSONObject options = new JSONObject();
-					options.put("config", new JSONObject().put("type", "pivot"));
-					options.put("sortOptions", widget.getJSONObject("content").getJSONObject("sortOptions"));
-					options.put("name", widget.getJSONObject("content").getString("name"));
-					options.put("crosstabDefinition", widget.getJSONObject("content").getJSONObject("crosstabDefinition"));
-					options.put("style", widget.getJSONObject("content").getJSONObject("style"));
-					// variables cannot be retrieved from template so we must recover them from request body
-					options.put("variables", getCockpitVariables());
-					ExcelExporterClient client = new ExcelExporterClient();
-					String dsLabel = getDatasetLabel(template, widget.getJSONObject("dataset").getString("dsId"));
-					String selections = getCockpitSelectionsFromBody(widget).toString();
-					JSONObject datastore = client.getDataStore(new HashMap<String, Object>(), dsLabel, userUniqueIdentifier, selections);
-					options.put("metadata", datastore.getJSONObject("metaData"));
-					options.put("jsonData", datastore.getJSONArray("rows"));
-					toReturn.put(String.valueOf(widgetId), options);
+					try {
+						options.put("config", new JSONObject().put("type", "pivot"));
+						options.put("sortOptions", widget.getJSONObject("content").getJSONObject("sortOptions"));
+						options.put("name", widget.getJSONObject("content").getString("name"));
+						options.put("crosstabDefinition", widget.getJSONObject("content").getJSONObject("crosstabDefinition"));
+						options.put("style", widget.getJSONObject("content").getJSONObject("style"));
+						// variables cannot be retrieved from template so we must recover them from request body
+						options.put("variables", getCockpitVariables());
+						ExcelExporterClient client = new ExcelExporterClient();
+						int datasetId = widget.getJSONObject("dataset").getInt("dsId");
+						String dsLabel = getDatasetLabel(template, datasetId);
+						String selections = getCockpitSelectionsFromBody(widget).toString();
+						JSONObject configuration = template.getJSONObject("configuration");
+						Map<String, Object> parametersMap = new HashMap<String, Object>();
+						if (getRealtimeFromWidget(datasetId, configuration))
+							parametersMap.put("nearRealtime", true);
+						JSONObject datastore = client.getDataStore(parametersMap, dsLabel, userUniqueIdentifier, selections);
+						options.put("metadata", datastore.getJSONObject("metaData"));
+						options.put("jsonData", datastore.getJSONArray("rows"));
+						toReturn.put(String.valueOf(widgetId), options);
+					} catch (Exception e) {
+						logger.warn("Cannot build crosstab options for widget [" + widgetId + "]. Only raw data without formatting will be exported.", e);
+					}
 				}
 			}
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("Cannot retrieve cross table options from data service", e);
+			logger.warn("Error while building crosstab options. Only raw data without formatting will be exported.", e);
 			return new JSONObject();
 		}
 	}
@@ -289,12 +298,12 @@ public class ExcelExporter {
 		}
 	}
 
-	private String getDatasetLabel(JSONObject template, String dsId) {
+	private String getDatasetLabel(JSONObject template, int dsId) {
 		try {
 			JSONArray cockpitDatasets = template.getJSONObject("configuration").getJSONArray("datasets");
 			for (int i = 0; i < cockpitDatasets.length(); i++) {
-				String currDsId = cockpitDatasets.getJSONObject(i).getString("dsId");
-				if (currDsId.equals(dsId))
+				int currDsId = cockpitDatasets.getJSONObject(i).getInt("dsId");
+				if (currDsId == dsId)
 					return cockpitDatasets.getJSONObject(i).getString("dsLabel");
 			}
 		} catch (Exception e) {
@@ -326,7 +335,7 @@ public class ExcelExporter {
 		}
 	}
 
-	private void exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj) throws SerializationException {
+	private void exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj) {
 		try {
 			int totExportedWidgets = 0;
 			for (int i = 0; i < widgetsJson.length(); i++) {
@@ -403,7 +412,7 @@ public class ExcelExporter {
 			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 			String datasetLabel = dataset.getLabel();
 
-			if (getRealtimeFromTableWidget(datasetId, configuration))
+			if (getRealtimeFromWidget(datasetId, configuration))
 				map.put("nearRealtime", true);
 
 			JSONObject cockpitSelections = getCockpitSelectionsFromBody(widget);
@@ -725,7 +734,7 @@ public class ExcelExporter {
 		}
 	}
 
-	private HashMap<String, String> getMapFromGroupsArray(JSONArray groupsArray, JSONArray aggr) throws JSONException {
+	private HashMap<String, String> getMapFromGroupsArray(JSONArray groupsArray, JSONArray aggr) {
 		HashMap<String, String> returnMap = new HashMap<String, String>();
 		try {
 			if (aggr != null && groupsArray != null) {
@@ -803,7 +812,7 @@ public class ExcelExporter {
 		return dataSet instanceof SolrDataSet;
 	}
 
-	private JSONArray getSummaryRowFromWidget(JSONObject widget) throws JSONException {
+	private JSONArray getSummaryRowFromWidget(JSONObject widget) {
 		try {
 			JSONObject settings = widget.optJSONObject("settings");
 			JSONArray jsonArrayForSummary = new JSONArray();
@@ -999,16 +1008,16 @@ public class ExcelExporter {
 		}
 	}
 
-	private boolean getRealtimeFromTableWidget(int dsId, JSONObject configuration) throws JSONException {
+	private boolean getRealtimeFromWidget(int dsId, JSONObject configuration) {
 		try {
 			JSONObject dataset = getDataset(dsId, configuration);
-			return !dataset.getBoolean("useCache");
+			return !dataset.optBoolean("useCache");
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(e);
 		}
 	}
 
-	private JSONObject getDataset(int dsId, JSONObject configuration) throws JSONException {
+	private JSONObject getDataset(int dsId, JSONObject configuration) {
 		try {
 			JSONArray datasets = configuration.getJSONArray("datasets");
 			for (int i = 0; i < datasets.length(); i++) {

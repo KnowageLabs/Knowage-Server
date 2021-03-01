@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
@@ -45,16 +46,18 @@ public class ExcelExporterClient extends SimpleRestClient {
 	public JSONObject getDataStore(Map<String, Object> parameters, String datasetLabel, String userId, String body, int offset, int fetchSize)
 			throws Exception {
 		logger.debug("IN");
-		logger.debug("parameters: [" + parameters + "], serviceUrl: [" + serviceUrl + "], datasetLabel: [" + datasetLabel + "], body: [" + body + "]");
-
 		parameters.put("offset", offset);
 		parameters.put("size", fetchSize);
+		logger.debug("parameters: [" + parameters + "], serviceUrl: [" + serviceUrl + "], datasetLabel: [" + datasetLabel + "], body: [" + body + "]");
+
 		Response resp = executePostService(parameters, String.format(serviceUrl, datasetLabel), userId, MediaType.APPLICATION_JSON, body);
 		String resultString = resp.readEntity(String.class);
 		JSONObject result = new JSONObject(resultString);
 
 		logger.debug("Response: [" + result + "]");
 		logger.debug("OUT");
+		if (result.has("errors"))
+			throw new SpagoBIRuntimeException("Error in data service: " + serviceUrl);
 		return result;
 	}
 }
