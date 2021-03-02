@@ -37,7 +37,7 @@ function importCatalogStep1FuncController(sbiModule_download, sbiModule_device,
 			.then(function(response, status, headers, config) {
 				var resp = response.data;
 				if (resp.STATUS == "OK")
-					$scope.stopImport($scope.translate.load("sbi.importkpis.importkpiok"));
+					$scope.stopImport($scope.translate.load("sbi.importexportcatalog.generic.ok"));
 				else
 					$scope.stopImport(resp.ERROR);
 			},function(response, status, headers, config) {

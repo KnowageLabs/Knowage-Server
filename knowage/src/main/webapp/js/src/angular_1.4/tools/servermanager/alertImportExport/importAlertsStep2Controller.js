@@ -39,7 +39,7 @@ function importAlertStep2FuncController(sbiModule_download, sbiModule_device,
 					} else if (data.success == false) {
 						$scope.stopImport(data.submessage, $scope.translate.load(data.error,'component_impexp_messages'));
 					} else if (data.success == true) {
-						$scope.stopImport($scope.translate.load("sbi.importkpis.importkpiok"));
+						$scope.stopImport($scope.translate.load("sbi.importexportcatalog.generic.ok"));
 					}
 				}).error(function(data, status, headers, config) {
 					$scope.stopImport(data);
