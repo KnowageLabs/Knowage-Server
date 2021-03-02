@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
@@ -31,10 +32,6 @@ public class CustomDataDTO {
 
 	@JsonProperty("templateContent")
 	private Map<String, Object> templateContent;
-//	@JsonProperty("smartFilter")
-//	private SmartFilterDTO smartFilter;
-//	@JsonProperty("query")
-//	private String query;
 	@JsonProperty("modelName")
 	private String modelName;
 
@@ -44,8 +41,6 @@ public class CustomDataDTO {
 
 	public CustomDataDTO(Map<String, Object> templateContent, String modelName) {
 		this.templateContent = templateContent;
-//		this.smartFilter = smartFilter;
-//		this.query = query;
 		this.modelName = modelName;
 	}
 
@@ -55,29 +50,19 @@ public class CustomDataDTO {
 
 		RestUtilities.stripXSSJsonObject(jsonObject);
 
-		return new Gson().fromJson(jsonObject.toString(), Map.class);
+		/*
+		 * Changed for charts: null values have to be present into json template
+		 */
+		GsonBuilder builder = new GsonBuilder();
+		builder.serializeNulls();
+		Gson gson = builder.setPrettyPrinting().create();
+		return gson.fromJson(jsonObject.toString(), Map.class);
 
 	}
 
 	public void setTemplateContent(Map<String, Object> templateContent) {
 		this.templateContent = templateContent;
 	}
-
-//	public SmartFilterDTO getSmartFilterPostObject() {
-//		return smartFilter;
-//	}
-//
-//	public void setSmartFilterPostObject(SmartFilterDTO smartFilterPostObject) {
-//		this.smartFilter = smartFilterPostObject;
-//	}
-//
-//	public String getQuery() {
-//		return query;
-//	}
-//
-//	public void setQuery(String query) {
-//		this.query = query;
-//	}
 
 	public String getModelName() {
 		return modelName;
