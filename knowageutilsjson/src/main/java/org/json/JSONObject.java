@@ -527,7 +527,7 @@ public class JSONObject extends AbstractJSONObject implements ICommonObject, Ser
 				rootNode.put(key, NullNode.instance);
 			}
 		} else {
-			rootNode.set(key, NullNode.instance);
+			rootNode.set(key, null);
 		}
 
 		return this;
