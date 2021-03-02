@@ -14,7 +14,13 @@ ALTER TABLE SBI_CROSS_NAVIGATION ADD  POPUP_OPTIONS VARCHAR(4000)  DEFAULT NULL;
 ALTER TABLE SBI_MENU ADD ICON VARCHAR2(1000) NULL;
 ALTER TABLE SBI_MENU ADD CUST_ICON VARCHAR2(4000) NULL;
 
---08/06/2020 Andrijana Predojevic
+-- 2020/04/10 Alberto Nale
+UPDATE SBI_ALERT_LISTENER SET TEMPLATE='angular_1.4/tools/alert/listeners/kpiListener/templates/kpiListener.html' WHERE NAME='KPI Listener';
+UPDATE SBI_ALERT_ACTION SET TEMPLATE='angular_1.4/tools/alert/actions/executeETL/templates/executeETL.html' WHERE NAME= 'Execute ETL Document';
+UPDATE SBI_ALERT_ACTION SET TEMPLATE='angular_1.4/tools/alert/actions/sendMail/templates/sendMail.html' WHERE NAME= 'Send mail';
+UPDATE SBI_ALERT_ACTION SET TEMPLATE='angular_1.4/tools/alert/actions/contextBroker/templates/contextBroker.html' WHERE NAME= 'Context Broker';
+
+-- 08/06/2020 Andrijana Predojevic
 ALTER TABLE SBI_OBJ_PARUSE ADD CONSTRAINT XAK1SBI_OBJ_PARUSE UNIQUE (OBJ_PAR_ID,USE_ID,OBJ_PAR_FATHER_ID,FILTER_OPERATION);
 
 --09/06/2020 Andrijana Predojevic
