@@ -451,7 +451,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		switch(eventType){
 		case "REFRESH"  :
 			// Break to prevent double refresh in case of default selections
-			if(config.nature === 'init' && cockpitModule_properties.HASDEFAULTSELECTION[cockpitModule_properties.CURRENT_SHEET] && $scope.ngModel.type != 'selector') break;
+			var thisSheetDefaultSelections = cockpitModule_properties.HASDEFAULTSELECTION[cockpitModule_properties.CURRENT_SHEET];
+			if(nature === 'init' && config.type != 'selector' && config.dataset && thisSheetDefaultSelections && thisSheetDefaultSelections.indexOf(config.dataset.dsId) != -1) break;
 			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue) || !(cockpitModule_datasetServices.driverHasValue);
 		    var dirtyIndex = $scope.cockpitModule_properties.DIRTY_WIDGETS.indexOf($scope.ngModel.id);
 		    if($scope.$parent.$parent.sheet.index == $scope.cockpitModule_properties.CURRENT_SHEET){
