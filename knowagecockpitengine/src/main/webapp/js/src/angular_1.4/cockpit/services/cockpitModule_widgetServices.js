@@ -381,7 +381,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				cockpitModule_properties.DIRTY_WIDGETS.splice(dirtyIndex, 1);
 			}
 			var thisSheetDefaultSelections = cockpitModule_properties.HASDEFAULTSELECTION[cockpitModule_properties.CURRENT_SHEET];
-			if(nature === 'init' && config.type != 'selector' && config.dataset && thisSheetDefaultSelections && thisSheetDefaultSelections.indexOf(config.dataset.dsId) != -1) return;
+			if(nature === 'init' && config.type != 'selector' && config.updateble && config.dataset && thisSheetDefaultSelections && thisSheetDefaultSelections.indexOf(config.dataset.dsId) != -1) return;
 			var width = angular.element(element)[0].parentElement.offsetWidth;
 			var height = angular.element(element)[0].parentElement.offsetHeight;
 			if(data == undefined) {
