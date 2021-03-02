@@ -32,9 +32,9 @@ def python_function_execute():
         datastore = data['datastore']
         col_metadata = datastore["metadata"]
         records = datastore["records"]
-        datastore_df = utils.convertKnowageDatastoreToDataframe(col_metadata, records)
+        datastore_df = utils.datastore_to_dataframe(col_metadata, records)
         token = data['token']
-        isAuthenticated, script = security.jwtToken2pythonScript(token)
+        isAuthenticated, script = security.jwt_token_to_python_script(token)
         input_values = data['inputs']
         input_columns = input_values['inputColumns']
         input_variables = input_values['inputVariables']
@@ -77,7 +77,7 @@ def python_function_execute():
 
     # convert dataframe to knowage json format
     try:
-        knowage_json = utils.convertDataframeToKnowageDataset(namespace["outdf_"])
+        knowage_json = utils.dataframe_to_datastore(namespace["outdf_"])
     except Exception as e:
         logging.error("Error converting dataframe to knowage format: {}".format(e))
         return str(e), 500

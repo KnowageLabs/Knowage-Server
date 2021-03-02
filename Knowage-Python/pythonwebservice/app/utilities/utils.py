@@ -19,7 +19,7 @@
 import pandas as pd
 import requests
 from app.utilities import constants, security, cuncurrency_manager as cm
-from app.exceptions.KnowageRestServiceException import KnowageRestServiceException
+from app.exceptions.KnowageRestServiceError import KnowageRestServiceError
 from datetime import datetime, timedelta
 import os
 import xml.etree.ElementTree as ET
@@ -27,12 +27,12 @@ import json
 import pkg_resources
 import logging
 
-def findFreePort():
+def find_free_port():
     import socket
     import random
     s = socket.socket()
     count = 0
-    range = getPortsRange()
+    range = get_ports_range()
     lower_bound = int(range[0])
     upper_bound = int(range[1])
     while count < upper_bound - lower_bound:
@@ -45,32 +45,32 @@ def findFreePort():
             pass
     return None
 
-def retrieveScriptInfo(data):
+def get_widget_config(data):
     script = data.get("script")
     output_variable = data.get('output_variable')
     return script, output_variable
 
-def retrieveKnowageInfo(headers):
-    user_id = headers['Knowage-Authorization']
-    return user_id
-
-def retrieveDatasetInfo(data):
-    dataset_name = data.get('dataset')
-    datastore_request = data['datastore_request']
-    return dataset_name, datastore_request
-
-def retrieveWidgetInfo(data):
+def get_widget_info(data):
     document_id = data['document_id']
     widget_id = data['widget_id']
     return document_id, widget_id
 
-def retrieveAnalyticalDriversInfo(data):
+def get_knowage_token(headers):
+    user_id = headers['Knowage-Authorization']
+    return user_id
+
+def get_dataset(data):
+    dataset_name = data.get('dataset')
+    datastore_request = data['datastore_request']
+    return dataset_name, datastore_request
+
+def get_analytical_drivers(data):
     drivers = data.get("drivers")
     return drivers
 
-def getDatasetAsDataframe(widget):
+def load_data_as_dataframe(widget):
     address = widget.knowage_address + "/knowage/restful-services/2.0/datasets/" + widget.dataset_name + "/data?offset=0&size=-1"
-    auth_token = security.buildAuthToken(widget.user_id)
+    auth_token = security.build_auth_token(widget.user_id)
     headers = {'Authorization': auth_token}
     #rest request for dataset
     payload = widget.datastore_request
@@ -78,14 +78,14 @@ def getDatasetAsDataframe(widget):
     # retrieve column names from metadata
     response_body = r.json()
     if 'errors' in response_body:
-        raise KnowageRestServiceException(address)
+        raise KnowageRestServiceError(address)
     col_names = response_body["metaData"]["fields"]
     rows = response_body["rows"]
-    df = convertKnowageDatasetToDataframe(col_names, rows)
+    df = dataset_to_dataframe(col_names, rows)
     return df
 
 # used for widget
-def convertKnowageDatasetToDataframe(names, rows):
+def dataset_to_dataframe(names, rows):
     column_names = []
     column_types = {}
     for x in names:
@@ -111,7 +111,7 @@ def convertKnowageDatasetToDataframe(names, rows):
     return df
 
 # used for functions catalog
-def convertKnowageDatastoreToDataframe(metadata, rows):
+def datastore_to_dataframe(metadata, rows):
     column_names = []
     column_types = {}
     for x in metadata:
@@ -133,7 +133,7 @@ def convertKnowageDatastoreToDataframe(metadata, rows):
             df.drop(columns=['id'], inplace=True)
     return df
 
-def convertDataframeToKnowageDataset(df):
+def dataframe_to_datastore(df):
     knowage_json = []
     n_rows, n_cols = df.shape
     for i in range(0, n_rows):
@@ -143,13 +143,13 @@ def convertDataframeToKnowageDataset(df):
         knowage_json.append(element)
     return knowage_json
 
-def serverExists(id):
+def server_exists(id):
     with cm.lck:
         if id in cm.active_servers.keys():
             return True
         return False
 
-def destroyServer(id):
+def destroy_server(id):
     # retrieve server and thread to be stopped and stop them
     with cm.lck:
         bokeh_server = cm.active_servers[id]
@@ -160,7 +160,7 @@ def destroyServer(id):
     bokeh_server.stop()
     th.join()
 
-def bokehGarbageCollector():
+def bokeh_garbage_collector():
     to_destroy = []
     now = datetime.now()
     with cm.lck:
@@ -174,33 +174,33 @@ def bokehGarbageCollector():
                     dataset_file = constants.TMP_FOLDER + res.dataset_name + ".pckl"
                     os.remove(dataset_file)
     for w in to_destroy:
-        destroyServer(w)
+        destroy_server(w)
 
-def getHMACKey():
+def get_hmac_key():
     tree = ET.parse(constants.CONFIG_FILE)
     root = tree.getroot()
     key = root[0][0].text
     return key
 
-def getKnowageAddress():
+def get_knowage_address():
     tree = ET.parse(constants.CONFIG_FILE)
     root = tree.getroot()
     addr = root[0][1].text
     return addr
 
-def getPythonAddress():
+def get_python_engine_address():
     tree = ET.parse(constants.CONFIG_FILE)
     root = tree.getroot()
     addr = root[0][2].text
     return addr
 
-def getPortsRange():
+def get_ports_range():
     tree = ET.parse(constants.CONFIG_FILE)
     root = tree.getroot()
     range = root[0][3].text
     return range.split("-")
 
-def getEnvironmentLibraries():
+def get_environment_libraries():
     to_return = []
     for d in pkg_resources.working_set:
         lib = str(d).split(" ")

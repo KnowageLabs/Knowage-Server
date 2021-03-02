@@ -28,7 +28,7 @@ def python_dataset_edit():
     try:
         data = request.get_json()
         token = data['script']
-        isAuthenticated, script = security.jwtToken2pythonScript(token)
+        isAuthenticated, script = security.jwt_token_to_python_script(token)
         df_name = data['df_name']
         knowage_parameters = data['parameters']
     except Exception as e:
@@ -52,7 +52,7 @@ def python_dataset_edit():
     df = namespace[df_name]
 
     # convert dataframe to knowage json format
-    knowage_json = utils.convertDataframeToKnowageDataset(df)
+    knowage_json = utils.dataframe_to_datastore(df)
 
     return str(knowage_json).replace('\'', "\""), 200
 
@@ -71,4 +71,4 @@ def buildParameters(knowage_parameters):
 
 @dataset.route('/libraries', methods = ['GET'])
 def python_libraries():
-    return utils.getEnvironmentLibraries(), 200
+    return utils.get_environment_libraries(), 200

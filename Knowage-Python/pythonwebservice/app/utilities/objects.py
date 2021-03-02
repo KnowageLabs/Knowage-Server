@@ -31,7 +31,7 @@ class PythonWidgetExecution:
 
     def __init__(self, analytical_drivers=None, user_id=None, document_id=None, widget_id=None,
                  script=None, output_variable=None, dataset_name=None, datastore_request=None):
-        self._knowage_address = utils.getKnowageAddress()
+        self._knowage_address = utils.get_knowage_address()
         self._user_id = user_id
         self._document_id = document_id
         self._widget_id = widget_id

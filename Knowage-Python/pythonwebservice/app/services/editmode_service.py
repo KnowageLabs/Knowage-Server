@@ -34,14 +34,14 @@ editMode = Blueprint('editMode', __name__)
 @editMode.route('/html', methods = ['POST'])
 def python_html():
     #retrieve input parameters
-    script, output_variable = utils.retrieveScriptInfo(request.get_json())
-    user_id = utils.retrieveKnowageInfo(request.headers)
-    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
-    drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
+    script, output_variable = utils.get_widget_config(request.get_json())
+    user_id = utils.get_knowage_token(request.headers)
+    dataset_name, datastore_request = utils.get_dataset(request.get_json())
+    drivers = utils.get_analytical_drivers(request.get_json())
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, script=script, output_variable=output_variable, user_id=user_id,
                                           dataset_name=dataset_name, datastore_request=datastore_request)
     # check authentication
-    if not security.userIsAuthorizedForFunctionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
+    if not security.is_user_authorized_for_functionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
         return "Error: authentication failed", 401
     # resolve analytical drivers
     for d in drivers:
@@ -50,7 +50,7 @@ def python_html():
         #retrieve dataset
         if python_widget.dataset_name != None:
             dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
-            df = utils.getDatasetAsDataframe(python_widget)
+            df = utils.load_data_as_dataframe(python_widget)
             df.to_pickle(dataset_file)
             python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
     except Exception as e:
@@ -75,15 +75,15 @@ def python_html():
 @editMode.route('/img', methods = ['POST'])
 def python_img():
     # retrieve input parameters
-    script, img_file = utils.retrieveScriptInfo(request.get_json())
-    user_id = utils.retrieveKnowageInfo(request.headers)
-    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
-    document_id, widget_id = utils.retrieveWidgetInfo(request.get_json())
-    drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
+    script, img_file = utils.get_widget_config(request.get_json())
+    user_id = utils.get_knowage_token(request.headers)
+    dataset_name, datastore_request = utils.get_dataset(request.get_json())
+    document_id, widget_id = utils.get_widget_info(request.get_json())
+    drivers = utils.get_analytical_drivers(request.get_json())
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, script=script, output_variable=img_file, user_id=user_id,
                                           dataset_name=dataset_name, datastore_request=datastore_request)
     # check authentication
-    if not security.userIsAuthorizedForFunctionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
+    if not security.is_user_authorized_for_functionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
         return "Error: authentication failed", 401
     # resolve analytical drivers
     for d in drivers:
@@ -92,7 +92,7 @@ def python_img():
         # retrieve dataset
         if python_widget.dataset_name != None:
             dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
-            df = utils.getDatasetAsDataframe(python_widget)
+            df = utils.load_data_as_dataframe(python_widget)
             df.to_pickle(dataset_file)
             python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
     except Exception as e:
@@ -118,29 +118,29 @@ def python_img():
 
 @editMode.route('/bokeh', methods = ['POST'])
 def python_bokeh():
-    utils.bokehGarbageCollector()
+    utils.bokeh_garbage_collector()
     # retrieve input parameters
     script = request.get_json()['script']
     widget_id = request.get_json()['widget_id']
     script_file_name = constants.TMP_FOLDER + "bokeh_script_" + str(widget_id) + ".txt"
-    user_id = utils.retrieveKnowageInfo(request.headers)
-    dataset_name, datastore_request = utils.retrieveDatasetInfo(request.get_json())
-    drivers = utils.retrieveAnalyticalDriversInfo(request.get_json())
+    user_id = utils.get_knowage_token(request.headers)
+    dataset_name, datastore_request = utils.get_dataset(request.get_json())
+    drivers = utils.get_analytical_drivers(request.get_json())
     python_widget = PythonWidgetExecution(analytical_drivers=drivers, script=script, user_id=user_id,
                                           dataset_name=dataset_name, datastore_request=datastore_request, widget_id=widget_id)
     # check authentication
-    if not security.userIsAuthorizedForFunctionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
+    if not security.is_user_authorized_for_functionality(python_widget, constants.EDIT_PYTHON_SCRIPTS):
         return "Error: authentication failed", 401
     #destroy old bokeh server
-    if utils.serverExists(python_widget.widget_id):
-        utils.destroyServer(python_widget.widget_id)
+    if utils.server_exists(python_widget.widget_id):
+        utils.destroy_server(python_widget.widget_id)
     # resolve analytical drivers
     for d in drivers:
         python_widget.script = python_widget.script.replace("$P{" + d + "}", "drivers_.get(\'" + d + "\')")
     # retrieve dataset
     if python_widget.dataset_name != None:
         dataset_file = constants.TMP_FOLDER + python_widget.dataset_name + ".pckl"
-        df = utils.getDatasetAsDataframe(python_widget)
+        df = utils.load_data_as_dataframe(python_widget)
         df.to_pickle(dataset_file)
         python_widget.script = "import pandas as pd\n" + python_widget.dataset_name + " = pd.read_pickle(\"" + dataset_file + "\")\n" + python_widget.script
 
@@ -168,16 +168,16 @@ def python_bokeh():
         bokeh_file.write(python_widget.script)
 
     #instance a bokeh server for the widget if not instanciated yet
-    if not utils.serverExists(python_widget.widget_id): #allocate bokeh server
+    if not utils.server_exists(python_widget.widget_id): #allocate bokeh server
         t = Thread(target=bk_worker) #thread that hosts bokeh server
-        bk_res = BokehResourceList(thread=t, timestamp=datetime.now(), port=utils.findFreePort(), dataset_name=dataset_name)
+        bk_res = BokehResourceList(thread=t, timestamp=datetime.now(), port=utils.find_free_port(), dataset_name=dataset_name)
         with cuncurrency_manager.lck:
             cuncurrency_manager.bokeh_resources.update({python_widget.widget_id : bk_res}) #{widget_id : BokehResourceList}
         t.start()
     #serve plot
-    jscript = server_document(utils.getPythonAddress() + ":" + str(cuncurrency_manager.bokeh_resources[python_widget.widget_id].port) + "/bkapp" + str(python_widget.widget_id))
+    jscript = server_document(utils.get_python_engine_address() + ":" + str(cuncurrency_manager.bokeh_resources[python_widget.widget_id].port) + "/bkapp" + str(python_widget.widget_id))
     return render_template("embed.html", script=jscript)
 
 @editMode.route('/libraries', methods = ['GET'])
 def python_libraries():
-    return utils.getEnvironmentLibraries(), 200
+    return utils.get_environment_libraries(), 200
