@@ -1205,7 +1205,7 @@
                 #end
         		##x:50,
         		
-        		#if( $yAxis.style.rotate != '' &&   $yAxis.style.rotate.class.name == "java.lang.Integer") 
+        		#if( $yAxis.style.rotate != '' ) 
         			rotation: $yAxis.style.rotate,
         		#else 
         		    rotation: 0,
