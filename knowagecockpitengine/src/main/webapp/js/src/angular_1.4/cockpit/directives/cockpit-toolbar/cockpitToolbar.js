@@ -665,9 +665,9 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 		var currentDs = cockpitModule_datasetServices.getDatasetByLabel(ds).metadata.fieldsMeta;
 		for(var col in $scope.tmpFilters[ds]){
 			var aliasColumnName;
-			for(var a in cockpitModule_template.configuration.aliases){
-				if(cockpitModule_template.configuration.aliases[a].column == col){
-					aliasColumnName = cockpitModule_template.configuration.aliases[a].alias;
+			for(var a in cockpitModule_properties.aliases){
+				if(cockpitModule_properties.aliases[a].column == col){
+					aliasColumnName = cockpitModule_properties.aliases[a].alias;
 				}
 			}
 			var tmpObj={

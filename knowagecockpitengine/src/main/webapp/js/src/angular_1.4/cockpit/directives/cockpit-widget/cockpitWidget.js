@@ -1220,8 +1220,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				if(sel!=undefined){
 
 
-					if(!cockpitModule_template.configuration.aliases){
-						cockpitModule_template.configuration.aliases = [];
+					if(!cockpitModule_properties.aliases){
+						cockpitModule_properties.aliases = [];
 					}
 
 					if(!angular.equals("noAssoc",sel)){
@@ -1251,7 +1251,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 									delete cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue];
 								}
 								cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue]=columnValue[o];
-								cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':singleOriginalColumnValue,'alias':columnName[o]});
+								cockpitModule_properties.aliases.push({'dataset':dsLabel,'column':singleOriginalColumnValue,'alias':columnName[o]});
 							}
 						}else{
 								if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(originalColumnName)){ // sort
@@ -1271,7 +1271,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 								}else{
 									cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=columnValue;
 								}
-								cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
+								cockpitModule_properties.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
 						}
 						cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
 
