@@ -289,6 +289,10 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 	$scope.checkType = function(type,availableTypes){
 		return availableTypes.indexOf(type) != -1;
 	}
+	
+	$scope.checkChartType = function(model, notAvailableCharts){
+		return !(notAvailableCharts.indexOf(model.content.chartTemplate.CHART.type.toLowerCase()) != -1);
+	}
 
 	$scope.checkMenuVisibility = function(){
 		if(cockpitModule_template.configuration.hideUserMenu) return false;
@@ -1645,7 +1649,9 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		var minMaxCategoriesSeries = cockpitModule_widgetServices.createCompatibleCharts();
 		for (var attrname in minMaxCategoriesSeries.serie.min) {
 			if((minMaxCategoriesSeries.serie.min[attrname] <= serie.length) && (minMaxCategoriesSeries.categ.min[attrname] <= numOfCateg) ){
-				$scope.chartTypes.push(attrname)
+				if(minMaxCategoriesSeries.charts[$scope.ngModel.content.chartTemplate.CHART.type.toLowerCase()] && minMaxCategoriesSeries.charts[$scope.ngModel.content.chartTemplate.CHART.type.toLowerCase()].indexOf(attrname) != -1){
+					$scope.chartTypes.push(attrname);
+				}
 			}
 		}
 

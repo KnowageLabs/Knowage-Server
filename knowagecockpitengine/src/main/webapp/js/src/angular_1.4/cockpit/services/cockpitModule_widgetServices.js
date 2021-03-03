@@ -551,6 +551,22 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		minMaxCategoriesSeries.serie.min.radar = 1;
 		minMaxCategoriesSeries.serie.min.bar = 1;
 		minMaxCategoriesSeries.serie.min.pie = 1;
+		
+		minMaxCategoriesSeries.charts = {
+				"line":["bar","heatmap"],
+				"bar":["pie","bubble","radar","sunburst","treemap","scatter","wordcloud","heatmap"],
+				"pie":["bar","sunburst","treemap","wordcloud"],
+				"chord":[],
+				"parallel":["bubble","radar","scatter"],
+				"bubble":["bar","parallel"],
+				"radar":["bar","parallel"],
+				"sunburst":["bar","pie","treemap"],
+				"gauge":[],
+				"treemap":["bar", "pie", "sunburst"],
+				"scatter":["parallel"],
+				"wordCloud":["bar","pie"],
+				"heatmap":["bar"]
+		};
 
 		return minMaxCategoriesSeries;
 	};

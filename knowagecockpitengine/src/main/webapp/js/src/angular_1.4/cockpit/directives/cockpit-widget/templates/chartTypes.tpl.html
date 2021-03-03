@@ -1,17 +1,22 @@
 <md-dialog class="kn-chartdesigner" style="min-width:400px;">
  <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>Available chart types</h2>
+        <h2>{{::translate.load("kn.cockpit.chartswitch.availablecharttypes")}}</h2>
       </div>
     </md-toolbar>
     <md-dialog-content layout-padding>
-   	<md-grid-list style="margin-top:16px;" md-cols-gt-md="4" md-cols-md="4" md-cols-sm="2" md-gutter="16px" md-row-height="1:1">
-					    <md-grid-tile ng-repeat="chart in chartTypes" class="{{chart}}" ng-click="changeChartType(chart)" ng-class="{'active':selectedChartType == chart}">
-					    	<md-tooltip md-direction="bottom">
-					          {{chart}}
-					        </md-tooltip>
-					    </md-grid-tile>
-					 </md-grid-list>
+    <div layout="row" layout-align="center center" ng-if="chartTypes.length == 0">
+    	<div class="kn-info">
+    		{{::translate.load("kn.cockpit.chartswitch.nocharts")}}
+    	</div>
+    </div>
+   	<md-grid-list ng-if="chartTypes.length > 0" style="margin-top:16px;" md-cols-gt-md="3" md-cols-md="3" md-cols-sm="2" md-gutter="16px" md-row-height="1:1">
+	    <md-grid-tile ng-repeat="chart in chartTypes" class="{{chart}}" ng-click="changeChartType(chart)" ng-class="{'active':selectedChartType == chart}">
+	    	<md-tooltip md-direction="bottom">
+	          {{chart}}
+	        </md-tooltip>
+	    </md-grid-tile>
+ 	</md-grid-list>
     </md-dialog-content>
     
     <md-dialog-actions layout="row">
