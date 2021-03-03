@@ -535,7 +535,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	$scope.updateFromSelection = function(isInit,associativeSelection){
 		var dataset= $scope.getDataset();
-		if($scope.ngModel.updateble==false){
+		if(!isInit && $scope.ngModel.updateble==false){
 			if(dataset && $scope.cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 				$scope.cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
 			}
