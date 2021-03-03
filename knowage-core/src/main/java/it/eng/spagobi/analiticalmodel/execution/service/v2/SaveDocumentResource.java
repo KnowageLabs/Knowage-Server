@@ -37,7 +37,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -268,10 +267,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		document = syncronizeDocument(document, filteredFolders, request.getDocumentDTO());
 
 		String tempalteName = (MODIFY_GEOREPORT.equalsIgnoreCase(action)) ? "template.georeport" : "template.sbicockpit";
-		GsonBuilder builder = new GsonBuilder();
-		builder.serializeNulls();
-		Gson gson = builder.setPrettyPrinting().create();
-		String templateContent = gson.toJson(customDataDTO.getTemplateContent());
+		String templateContent = new Gson().toJson(customDataDTO.getTemplateContent());
 
 		if (MODIFY_KPI.equalsIgnoreCase(action)) {
 			tempalteName = "template.xml";
@@ -286,7 +282,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			documentManagementAPI.saveDocument(document, template);
 			return document.getId();
 		} catch (Throwable t) {
-			logger.error(t.getMessage(), t);
+			logger.error(t);
 			error.addErrorKey("sbi.document.saveError");
 		}
 		return null;
