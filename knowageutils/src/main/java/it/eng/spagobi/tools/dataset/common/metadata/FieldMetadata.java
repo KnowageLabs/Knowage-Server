@@ -29,6 +29,7 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 	FieldType fieldType;
 	boolean multiValue;
 	int precision;
+	int scale;
 
 	public FieldMetadata() {
 		super();
@@ -186,7 +187,7 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 
 	@Override
 	public void setScale(int scale) {
-		// TODO Auto-generated method stub
+		this.scale = scale;
 
 	}
 
@@ -199,7 +200,7 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 	@Override
 	public int getScale() {
 		// TODO Auto-generated method stub
-		return 0;
+		return scale;
 	}
 
 }

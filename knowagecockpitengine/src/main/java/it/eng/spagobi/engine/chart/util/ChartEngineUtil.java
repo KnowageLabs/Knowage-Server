@@ -215,8 +215,8 @@ public class ChartEngineUtil {
 						for (int i = 0; i < resultFields.size(); i++) {
 
 							if (resultFields.get(i) instanceof LinkedHashMap<?, ?>) {
-								if (resultFields.get(i).get("precision") != null) {
-									precisionFields.put((String) resultFields.get(i).get("name"), (Integer) resultFields.get(i).get("precision"));
+								if (resultFields.get(i).get("scale") != null) {
+									precisionFields.put((String) resultFields.get(i).get("name"), (Integer) resultFields.get(i).get("scale"));
 
 								}
 							}
@@ -240,7 +240,7 @@ public class ChartEngineUtil {
 						LinkedHashMap<String, Object> resultTemp = (LinkedHashMap<String, Object>) resultFields.get(i);
 						for (String keys : resultTemp.keySet()) {
 
-							if (precisionFields.get(keys) != null && precisionFields.get(keys) == 0) {
+							if (precisionFields.get(keys) != null && precisionFields.get(keys) <= 0) {
 								if (resultTemp.get(keys) instanceof Double) {
 									BigDecimal newValue = new BigDecimal((Double) resultTemp.get(keys));
 									resultTemp.put(keys, newValue.toPlainString());
