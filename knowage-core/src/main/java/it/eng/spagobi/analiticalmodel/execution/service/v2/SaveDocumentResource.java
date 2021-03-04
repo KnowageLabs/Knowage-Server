@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service.v2;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,9 +32,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -269,7 +265,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		document = syncronizeDocument(document, filteredFolders, request.getDocumentDTO());
 
 		String tempalteName = (MODIFY_GEOREPORT.equalsIgnoreCase(action)) ? "template.georeport" : "template.sbicockpit";
-		String templateContent = getTemplateContentAsString(customDataDTO.getTemplateContent());
+		String templateContent = customDataDTO.getTemplateContentAsString();
 
 		if (MODIFY_KPI.equalsIgnoreCase(action)) {
 			tempalteName = "template.xml";
@@ -337,7 +333,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		filteredFolders = getFilteredFoldersList(saveDocumentDTO, filteredFolders);
 		CustomDataDTO customDataDTO = saveDocumentDTO.getCustomDataDTO();
 		Map<String, Object> json = new HashMap<String, Object>();
-		String templateContent = getTemplateContentAsString(customDataDTO.getTemplateContent());
+		String templateContent = customDataDTO.getTemplateContentAsString();
 		json.put("templateContent", templateContent);
 
 		customDataDTO.setTemplateContent(json);
@@ -589,7 +585,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 	}
 
 	private ObjTemplate buildDocumentTemplate(String templateName, CustomDataDTO customDataDTO, BIObject sourceDocument) throws JSONException {
-		String templateContent = getTemplateContentAsString(customDataDTO.getTemplateContent());
+		String templateContent = customDataDTO.getTemplateContentAsString();
 
 		String modelName = customDataDTO.getModelName();
 		return buildDocumentTemplate(templateName, templateContent, sourceDocument, modelName);
@@ -900,22 +896,5 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 //			logger.debug("The document doesn't use any dataset! ");
 //		}
 //	}
-
-	private String getTemplateContentAsString(Map<String, Object> templateContentMap) {
-		String templateContent = null;
-		try {
-			templateContent = new ObjectMapper().writeValueAsString(templateContentMap);
-		} catch (JsonGenerationException e) {
-			String message = "Exception when converting template to string";
-			throw new SpagoBIRuntimeException(message, e);
-		} catch (JsonMappingException e) {
-			String message = "Exception when converting template to string";
-			throw new SpagoBIRuntimeException(message, e);
-		} catch (IOException e) {
-			String message = "Exception when converting template to string";
-			throw new SpagoBIRuntimeException(message, e);
-		}
-		return templateContent;
-	}
 
 }

@@ -23,7 +23,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.Gson;
 
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
@@ -31,10 +30,6 @@ public class CustomDataDTO {
 
 	@JsonProperty("templateContent")
 	private Map<String, Object> templateContent;
-//	@JsonProperty("smartFilter")
-//	private SmartFilterDTO smartFilter;
-//	@JsonProperty("query")
-//	private String query;
 	@JsonProperty("modelName")
 	private String modelName;
 
@@ -49,35 +44,23 @@ public class CustomDataDTO {
 		this.modelName = modelName;
 	}
 
-	public Map<String, Object> getTemplateContent() throws JSONException {
+	public Map<String, Object> getTemplateContent() {
+		return templateContent;
+	}
+
+	public String getTemplateContentAsString() throws JSONException {
 
 		final JSONObject jsonObject = new JSONObject(templateContent);
 
 		RestUtilities.stripXSSJsonObject(jsonObject);
 
-		return new Gson().fromJson(jsonObject.toString(), Map.class);
+		return jsonObject.toString();
 
 	}
 
 	public void setTemplateContent(Map<String, Object> templateContent) {
 		this.templateContent = templateContent;
 	}
-
-//	public SmartFilterDTO getSmartFilterPostObject() {
-//		return smartFilter;
-//	}
-//
-//	public void setSmartFilterPostObject(SmartFilterDTO smartFilterPostObject) {
-//		this.smartFilter = smartFilterPostObject;
-//	}
-//
-//	public String getQuery() {
-//		return query;
-//	}
-//
-//	public void setQuery(String query) {
-//		this.query = query;
-//	}
 
 	public String getModelName() {
 		return modelName;
