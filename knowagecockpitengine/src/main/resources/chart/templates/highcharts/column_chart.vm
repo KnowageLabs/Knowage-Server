@@ -1207,8 +1207,6 @@
         		
         		#if( $yAxis.style.rotate != '' ) 
         			rotation: $yAxis.style.rotate,
-        		#else 
-        		    rotation: 0,
         		#end
         		
         		
