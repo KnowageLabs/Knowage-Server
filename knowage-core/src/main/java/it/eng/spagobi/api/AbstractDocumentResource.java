@@ -36,6 +36,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.document.utils.CockpitStatisticsTablesUtils;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.DocumentUtilities;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.services.serialization.JsonConverter;
@@ -134,13 +135,15 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (ObjectsAccessVerifier.canDeleteBIObject(document.getId(), getUserProfile())) {
-			
-			try {
-				CockpitStatisticsTablesUtils.deleteCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
-				DAOFactory.getBIObjectDAO().eraseBIObject(document, null);
-			} catch (EMFUserError e) {
-				logger.error("Error while deleting the specified document", e);
-				throw new SpagoBIRuntimeException("Error while deleting the specified document", e);
+
+			if (!DocumentUtilities.getValidLicenses().isEmpty()) {
+				try {
+					CockpitStatisticsTablesUtils.deleteCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
+					DAOFactory.getBIObjectDAO().eraseBIObject(document, null);
+				} catch (EMFUserError e) {
+					logger.error("Error while deleting the specified document", e);
+					throw new SpagoBIRuntimeException("Error while deleting the specified document", e);
+				}
 			}
 
 			return Response.ok().build();

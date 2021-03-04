@@ -51,6 +51,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
+import it.eng.spagobi.commons.utilities.DocumentUtilities;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -326,7 +327,8 @@ public class AnalyticalModelDocumentManagementAPI {
 			logger.debug("Document with [" + document.getLabel() + "] succesfully inserted with id [" + document.getId() + "]");
 		}
 
-		CockpitStatisticsTablesUtils.updateCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
+		if (!DocumentUtilities.getValidLicenses().isEmpty())
+			CockpitStatisticsTablesUtils.updateCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
 
 		return overwrite;
 	}
@@ -363,7 +365,8 @@ public class AnalyticalModelDocumentManagementAPI {
 			logger.debug("Document with [" + document.getLabel() + "] succesfully inserted with id [" + document.getId() + "]");
 		}
 
-		CockpitStatisticsTablesUtils.updateCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
+		if (!DocumentUtilities.getValidLicenses().isEmpty())
+			CockpitStatisticsTablesUtils.updateCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
 
 		return overwrite;
 	}
@@ -404,7 +407,8 @@ public class AnalyticalModelDocumentManagementAPI {
 			logger.debug("Document with [" + document.getLabel() + "] succesfully inserted with id [" + document.getId() + "]");
 		}
 
-		CockpitStatisticsTablesUtils.updateCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
+		if (!DocumentUtilities.getValidLicenses().isEmpty())
+			CockpitStatisticsTablesUtils.updateCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
 
 		return overwrite;
 	}
