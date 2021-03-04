@@ -882,10 +882,10 @@ public class ExecutionInstance implements Serializable {
 	private void validateNumber(String value) {
 		// @formatter:off
 		if (!GenericValidator.isInt(value)
-				|| GenericValidator.isFloat(value)
-				|| GenericValidator.isDouble(value)
-				|| GenericValidator.isShort(value)
-				|| GenericValidator.isLong(value)) {
+				&& !GenericValidator.isFloat(value)
+				&& !GenericValidator.isDouble(value)
+				&& !GenericValidator.isShort(value)
+				&& !GenericValidator.isLong(value)) {
 			// @formatter:on
 			// The string is not a integer, not a float, not a double, not a short, not a long, therefore it is not a number
 			throw new SecurityException("Input value " + value + " is not a valid number!");
