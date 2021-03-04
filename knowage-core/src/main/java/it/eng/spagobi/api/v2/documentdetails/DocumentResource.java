@@ -47,6 +47,7 @@ import it.eng.spagobi.api.v2.documentdetails.subresources.TemplateResource;
 import it.eng.spagobi.api.v2.documentdetails.subresources.VisualDependenciesResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.DocumentUtilities;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -170,7 +171,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			documentDao = DAOFactory.getBIObjectDAO();
 			document = documentDao.loadBIObjectById(id);
 
-			CockpitStatisticsTablesUtils.deleteCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
+			if (!DocumentUtilities.getValidLicenses().isEmpty())
+				CockpitStatisticsTablesUtils.deleteCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
 
 			DAOFactory.getBIObjectDAO().eraseBIObject(document, null);
 			Assert.assertNotNull(document, "Document can not be null");
