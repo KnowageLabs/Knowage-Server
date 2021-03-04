@@ -558,12 +558,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				"pie":["bar","sunburst","treemap","wordcloud"],
 				"chord":[],
 				"parallel":["bubble","radar","scatter"],
-				"bubble":["bar","parallel"],
-				"radar":["bar","parallel"],
+				"bubble":["bar"],
+				"radar":["bar"],
 				"sunburst":["bar","pie","treemap"],
 				"gauge":[],
 				"treemap":["bar", "pie", "sunburst"],
-				"scatter":["parallel"],
+				"scatter":[],
 				"wordCloud":["bar","pie"],
 				"heatmap":["bar"]
 		};

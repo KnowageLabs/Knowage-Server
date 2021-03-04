@@ -180,7 +180,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-icon md-font-icon="fa fa-search"></md-icon>
 				</md-button>
 				
-				<md-button class="md-fab md-raised md-mini"  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="checkType(ngModel.type, ['chart']) && checkChartType(ngModel, ['chord','gauge'])">
+				<md-button class="md-fab md-raised md-mini"  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="checkType(ngModel.type, ['chart']) && checkChartType(ngModel, ['chord','gauge','scatter'])">
 					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.chartType")}}</md-tooltip>
 					<md-icon md-font-icon="fa fa-bar-chart"></md-icon>
 				</md-button>
