@@ -38,6 +38,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.OutputParameterDAOImpl;
 import it.eng.spagobi.analiticalmodel.document.dao.SubObjectDAOHibImpl;
+import it.eng.spagobi.analiticalmodel.document.utils.CockpitStatisticsTablesUtils;
 import it.eng.spagobi.analiticalmodel.execution.service.v2.dto.MetadataDTO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
@@ -50,6 +51,8 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
+import it.eng.spagobi.commons.utilities.DocumentUtilities;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
@@ -324,6 +327,9 @@ public class AnalyticalModelDocumentManagementAPI {
 			logger.debug("Document with [" + document.getLabel() + "] succesfully inserted with id [" + document.getId() + "]");
 		}
 
+		if (!DocumentUtilities.getValidLicenses().isEmpty())
+			CockpitStatisticsTablesUtils.updateCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
+
 		return overwrite;
 	}
 
@@ -358,6 +364,9 @@ public class AnalyticalModelDocumentManagementAPI {
 			overwrite = false;
 			logger.debug("Document with [" + document.getLabel() + "] succesfully inserted with id [" + document.getId() + "]");
 		}
+
+		if (!DocumentUtilities.getValidLicenses().isEmpty())
+			CockpitStatisticsTablesUtils.updateCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
 
 		return overwrite;
 	}
@@ -397,6 +406,9 @@ public class AnalyticalModelDocumentManagementAPI {
 			overwrite = false;
 			logger.debug("Document with [" + document.getLabel() + "] succesfully inserted with id [" + document.getId() + "]");
 		}
+
+		if (!DocumentUtilities.getValidLicenses().isEmpty())
+			CockpitStatisticsTablesUtils.updateCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
 
 		return overwrite;
 	}

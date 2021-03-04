@@ -34,7 +34,10 @@ import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagement
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
+import it.eng.spagobi.analiticalmodel.document.utils.CockpitStatisticsTablesUtils;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.DocumentUtilities;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -79,7 +82,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Error while creating url of the new resource", e);
 		}
 	}
-	
+
 	public Response getDocumentDetails(Object documentIdentifier) {
 
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
@@ -92,7 +95,8 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 				String toBeReturned = JsonConverter.objectToJson(document, BIObject.class);
 				return Response.ok(toBeReturned).build();
 			} else
-				throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see document with identifier [" + documentIdentifier + "]");
+				throw new SpagoBIRuntimeException(
+						"User [" + getUserProfile().getUserName() + "] has no rights to see document with identifier [" + documentIdentifier + "]");
 
 		} catch (SpagoBIRuntimeException e) {
 			throw e;
@@ -105,7 +109,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		}
 
 	}
-	
+
 	public Response updateDocument(String label, String body) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject oldDocument = documentManager.getDocument(label);
@@ -123,7 +127,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		documentManager.saveDocument(document, null);
 		return Response.ok().build();
 	}
-	
+
 	public Response deleteDocument(@PathParam("label") String label) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
@@ -131,17 +135,22 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (ObjectsAccessVerifier.canDeleteBIObject(document.getId(), getUserProfile())) {
-			try {
-				DAOFactory.getBIObjectDAO().eraseBIObject(document, null);
-			} catch (EMFUserError e) {
-				logger.error("Error while deleting the specified document", e);
-				throw new SpagoBIRuntimeException("Error while deleting the specified document", e);
+
+			if (!DocumentUtilities.getValidLicenses().isEmpty()) {
+				try {
+					CockpitStatisticsTablesUtils.deleteCockpitWidgetsTable(document, HibernateSessionManager.getCurrentSession());
+					DAOFactory.getBIObjectDAO().eraseBIObject(document, null);
+				} catch (EMFUserError e) {
+					logger.error("Error while deleting the specified document", e);
+					throw new SpagoBIRuntimeException("Error while deleting the specified document", e);
+				}
 			}
+
 			return Response.ok().build();
 		} else
 			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to delete document with label [" + label + "]");
 	}
-	
+
 	protected Object getObjectIdentifier(String labelOrId) {
 		Object documentIdentifier = null;
 		try {
@@ -154,7 +163,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		logger.debug("Document identifier [" + documentIdentifier + "]");
 		return documentIdentifier;
 	}
-	
+
 	public Response getDocumentTemplate(String label) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
@@ -162,8 +171,8 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
-			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label
-					+ "]");
+			throw new SpagoBIRuntimeException(
+					"User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label + "]");
 
 		ResponseBuilder rb;
 		ObjTemplate template = document.getActiveTemplate();
@@ -181,17 +190,16 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		rb.header("Content-Disposition", "attachment; filename=" + document.getActiveTemplate().getName());
 		return rb.build();
 	}
-	
+
 	public Response addDocumentTemplate(String label, MultiPartBody input) {
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
-				getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
-			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName()
-					+ "] has no rights to manage the template of document with label [" + label + "]");
+			throw new SpagoBIRuntimeException(
+					"User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label [" + label + "]");
 
 		final FormFile file = input.getFormFileParameterValues("file")[0];
 
@@ -217,7 +225,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		}
 
 	}
-	
+
 	public Response deleteCurrentTemplate(String documentLabel) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(documentLabel);
@@ -245,7 +253,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		}
 		return Response.ok().build();
 	}
-	
+
 	public Response deleteTemplateById(String documentLabel, Integer templateId) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(documentLabel);

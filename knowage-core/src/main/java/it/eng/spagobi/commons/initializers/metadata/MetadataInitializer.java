@@ -19,11 +19,15 @@ package it.eng.spagobi.commons.initializers.metadata;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
+import com.license4j.License;
+
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.utilities.DocumentUtilities;
 
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
@@ -55,6 +59,15 @@ public class MetadataInitializer extends SpagoBIInitializer {
 		metadataInitializers.add(new ConfigurationsInitializer());
 		metadataInitializers.add(new AlertListenerInitializer());
 		metadataInitializers.add(new AlertActionInitializer());
+
+		Map<String, License> licenses = DocumentUtilities.getValidLicenses();
+		if (!licenses.isEmpty()) {
+			metadataInitializers.add(new CockpitStatisticsInitializer());
+		} else {
+			String message = "No LicenseManager found. " + CockpitStatisticsInitializer.class.getSimpleName() + " will be skipped.";
+			logger.debug(message);
+		}
+
 		// metadataInitializers.add(new KpiPeriodicityInitializer());
 		// metadataInitializers.add(new UnitGrantInitializer());
 	}
