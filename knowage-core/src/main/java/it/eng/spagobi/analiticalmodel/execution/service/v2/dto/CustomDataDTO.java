@@ -50,7 +50,7 @@ public class CustomDataDTO {
 
 	public String getTemplateContentAsString() throws JSONException {
 
-		final JSONObject jsonObject = new JSONObject(templateContent);
+		final JSONObject jsonObject = new JSONObject(templateContent, true);
 
 		RestUtilities.stripXSSJsonObject(jsonObject);
 

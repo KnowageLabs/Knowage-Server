@@ -41,8 +41,7 @@ public class JacksonWrapper {
 	 * Wrap an object, if necessary. If the object is null, return the NullNode object. If it is an array or collection, wrap it in a ArrayNode. If it is a map,
 	 * wrap it in a ObjectNode. If it is a standard property (Double, String, et al) then it is already wrapped.
 	 *
-	 * @param object
-	 *            The object to wrap
+	 * @param object The object to wrap
 	 * @return The wrapped value
 	 * @throws JSONException
 	 */
@@ -83,6 +82,67 @@ public class JacksonWrapper {
 			} else if (object instanceof Map) {
 
 				wrappedObject = wrap(new JSONObject((Map) object));
+
+			} else {
+				// wrappedObject = new JSONObject(object);
+				wrappedObject = object.toString();
+			}
+
+			return wrappedObject;
+
+		} catch (Throwable t) {
+			if (t instanceof JSONException)
+				throw (JSONException) t;
+			throw new JSONException("An unexpected error occured while wrapping value [" + object + "] of type ["
+					+ (object != null ? object.getClass().getName() : "null") + "]: " + t.getMessage());
+		}
+	}
+
+	/**
+	 * This method is used if you want to keep null-valued properties in the JSONObject
+	 *
+	 * @param object
+	 * @param keepNullValues
+	 * @return
+	 * @throws JSONException
+	 */
+	static final Object wrap(Object object, boolean keepNullValues) throws JSONException {
+		Object wrappedObject = null;
+
+		try {
+			if (object == null || object.equals(JSONObject.NULL)) {
+				return NullNode.instance;
+			}
+
+			if (object instanceof Byte || object instanceof Character || object instanceof Boolean || object instanceof Short || object instanceof Integer
+					|| object instanceof Long || object instanceof BigInteger || object instanceof Float || object instanceof Double
+					|| object instanceof BigDecimal || object instanceof String) {
+
+				wrappedObject = object;
+
+			} else if (object instanceof JSONObject || object instanceof JSONArray) {
+
+				wrappedObject = object;
+
+			} else if (object instanceof ObjectNode) {
+
+				wrappedObject = new JSONObject((ObjectNode) object);
+
+			} else if (object instanceof ArrayNode) {
+
+				wrappedObject = new JSONArray((ArrayNode) object);
+
+			} else if (object instanceof Collection) {
+
+				wrappedObject = wrap(new JSONArray((Collection) object, keepNullValues), keepNullValues);
+
+			} else if (object.getClass().isArray()) {
+
+				wrappedObject = wrap(new JSONArray(object), keepNullValues);
+
+			} else if (object instanceof Map) {
+
+				wrappedObject = wrap(new JSONObject((Map) object, keepNullValues), keepNullValues);
 
 			} else {
 				// wrappedObject = new JSONObject(object);

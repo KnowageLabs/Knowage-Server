@@ -51,10 +51,9 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Construct a JSONArray from a source JSON text.
 	 *
-	 * @param source
-	 *            A string that begins with <code>[</code>&nbsp;<small>(left bracket)</small> and ends with <code>]</code>&nbsp;<small>(right bracket)</small>.
-	 * @throws JSONException
-	 *             If there is a syntax error.
+	 * @param source A string that begins with <code>[</code>&nbsp;<small>(left bracket)</small> and ends with <code>]</code>&nbsp;<small>(right
+	 *               bracket)</small>.
+	 * @throws JSONException If there is a syntax error.
 	 */
 	public JSONArray(String source) throws JSONException {
 		try {
@@ -69,8 +68,7 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Construct a JSONArray from a Collection.
 	 *
-	 * @param collection
-	 *            A Collection.
+	 * @param collection A Collection.
 	 */
 	public JSONArray(Collection collection) {
 		ObjectMapper mapper = JacksonMapper.getMapper();
@@ -84,10 +82,26 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	}
 
 	/**
+	 * This method is used if you want to keep null-valued properties in the JSONObject
+	 *
+	 * @param collection
+	 * @param keepNullValues
+	 */
+	public JSONArray(Collection collection, boolean keepNullValues) {
+		ObjectMapper mapper = JacksonMapper.getMapper();
+		rootNode = mapper.createArrayNode();
+		if (collection != null) {
+			Iterator iter = collection.iterator();
+			while (iter.hasNext()) {
+				put(iter.next(), keepNullValues);
+			}
+		}
+	}
+
+	/**
 	 * Construct a JSONArray from an array
 	 *
-	 * @throws JSONException
-	 *             If not an array.
+	 * @throws JSONException If not an array.
 	 */
 	public JSONArray(Object array) throws JSONException {
 		this();
@@ -117,11 +131,9 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Get the string associated with an index.
 	 *
-	 * @param index
-	 *            The index must be between 0 and length() - 1.
+	 * @param index The index must be between 0 and length() - 1.
 	 * @return A string value.
-	 * @throws JSONException
-	 *             If there is no string value for the index.
+	 * @throws JSONException If there is no string value for the index.
 	 */
 	@Override
 	public String getString(int index) throws JSONException {
@@ -135,8 +147,7 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Determine if the value is null.
 	 *
-	 * @param index
-	 *            The index must be between 0 and length() - 1.
+	 * @param index The index must be between 0 and length() - 1.
 	 * @return true if the value at the index is null, or if there is no value.
 	 */
 	public boolean isNull(int index) {
@@ -146,8 +157,7 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Get the optional object value associated with an index.
 	 *
-	 * @param index
-	 *            The index must be between 0 and length() - 1.
+	 * @param index The index must be between 0 and length() - 1.
 	 * @return An object value, or null if there is no object at that index.
 	 */
 	@Override
@@ -166,10 +176,8 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Get the optional string associated with an index. The defaultValue is returned if the key is not found.
 	 *
-	 * @param index
-	 *            The index must be between 0 and length() - 1.
-	 * @param defaultValue
-	 *            The default value.
+	 * @param index        The index must be between 0 and length() - 1.
+	 * @param defaultValue The default value.
 	 * @return A String value.
 	 */
 	@Override
@@ -181,8 +189,7 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Append a boolean value. This increases the array's length by one.
 	 *
-	 * @param value
-	 *            A boolean value.
+	 * @param value A boolean value.
 	 * @return this.
 	 */
 	public JSONArray put(boolean value) {
@@ -193,8 +200,7 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Put a value in the JSONArray, where the value will be a JSONArray which is produced from a Collection.
 	 *
-	 * @param value
-	 *            A Collection value.
+	 * @param value A Collection value.
 	 * @return this.
 	 */
 	public JSONArray put(Collection value) {
@@ -205,10 +211,8 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Append a double value. This increases the array's length by one.
 	 *
-	 * @param value
-	 *            A double value.
-	 * @throws JSONException
-	 *             if the value is not finite.
+	 * @param value A double value.
+	 * @throws JSONException if the value is not finite.
 	 * @return this.
 	 */
 	public JSONArray put(double value) throws JSONException {
@@ -220,8 +224,7 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Append an int value. This increases the array's length by one.
 	 *
-	 * @param value
-	 *            An int value.
+	 * @param value An int value.
 	 * @return this.
 	 */
 	public JSONArray put(int value) {
@@ -232,8 +235,7 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Append an long value. This increases the array's length by one.
 	 *
-	 * @param value
-	 *            A long value.
+	 * @param value A long value.
 	 * @return this.
 	 */
 	public JSONArray put(long value) {
@@ -244,8 +246,7 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Put a value in the JSONArray, where the value will be a JSONObject which is produced from a Map.
 	 *
-	 * @param value
-	 *            A Map value.
+	 * @param value A Map value.
 	 * @return this.
 	 * @throws JSONException
 	 */
@@ -257,8 +258,7 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Append an object value. This increases the array's length by one.
 	 *
-	 * @param value
-	 *            An object value. The value should be a Boolean, Double, Integer, JSONArray, JSONObject, Long, or String, or the JSONObject.NULL object.
+	 * @param value An object value. The value should be a Boolean, Double, Integer, JSONArray, JSONObject, Long, or String, or the JSONObject.NULL object.
 	 * @return this.
 	 */
 	public JSONArray put(Object value) {
@@ -300,16 +300,58 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	}
 
 	/**
+	 * This method is used if you want to keep null-valued properties in the JSONObject
+	 *
+	 * @param value
+	 * @param keepNullValues
+	 * @return
+	 */
+	public JSONArray put(Object value, boolean keepNullValues) {
+		try {
+			Object wrappedValue = JacksonWrapper.wrap(value, keepNullValues);
+			if (wrappedValue instanceof Byte) {
+				rootNode.add((Byte) wrappedValue);
+			} else if (wrappedValue instanceof Character) {
+				rootNode.add((Character) wrappedValue);
+			} else if (wrappedValue instanceof Short) {
+				rootNode.add((Short) wrappedValue);
+			} else if (wrappedValue instanceof Integer) {
+				rootNode.add((Integer) wrappedValue);
+			} else if (wrappedValue instanceof Long) {
+				rootNode.add((Long) wrappedValue);
+			} else if (wrappedValue instanceof Boolean) {
+				rootNode.add((Boolean) wrappedValue);
+			} else if (wrappedValue instanceof Float) {
+				rootNode.add((Float) wrappedValue);
+			} else if (wrappedValue instanceof Double) {
+				rootNode.add((Double) wrappedValue);
+			} else if (wrappedValue instanceof String) {
+				rootNode.add((String) wrappedValue);
+			} else if (wrappedValue instanceof JSONObject) {
+				ObjectNode node = ((JSONObject) wrappedValue).getWrappedObject();
+				rootNode.add(node);
+			} else if (wrappedValue instanceof JSONArray) {
+				ArrayNode node = ((JSONArray) wrappedValue).getWrappedObject();
+				rootNode.add(node);
+			} else if (wrappedValue == NullNode.instance) {
+				rootNode.add(NullNode.instance);
+			}
+
+		} catch (JSONException t) {
+			throw new RuntimeException(t);
+		}
+
+		return this;
+	}
+
+	/**
 	 * Put or replace a boolean value in the JSONArray. If the index is greater than the length of the JSONArray, then null elements will be added as necessary
 	 * to pad it out.
 	 *
-	 * @param index
-	 *            The subscript.
-	 * @param value
-	 *            A boolean value.
+	 * @param index The subscript.
+	 * @param value A boolean value.
 	 * @return this.
-	 * @throws JSONException
-	 *             If the index is negative.
+	 * @throws JSONException If the index is negative.
 	 */
 	public JSONArray put(int index, boolean value) throws JSONException {
 		this.put(index, value ? Boolean.TRUE : Boolean.FALSE);
@@ -319,13 +361,10 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Put a value in the JSONArray, where the value will be a JSONArray which is produced from a Collection.
 	 *
-	 * @param index
-	 *            The subscript.
-	 * @param value
-	 *            A Collection value.
+	 * @param index The subscript.
+	 * @param value A Collection value.
 	 * @return this.
-	 * @throws JSONException
-	 *             If the index is negative or if the value is not finite.
+	 * @throws JSONException If the index is negative or if the value is not finite.
 	 */
 	public JSONArray put(int index, Collection value) throws JSONException {
 		this.put(index, new JSONArray(value));
@@ -335,13 +374,10 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Put or replace a double value. If the index is greater than the length of the JSONArray, then null elements will be added as necessary to pad it out.
 	 *
-	 * @param index
-	 *            The subscript.
-	 * @param value
-	 *            A double value.
+	 * @param index The subscript.
+	 * @param value A double value.
 	 * @return this.
-	 * @throws JSONException
-	 *             If the index is negative or if the value is not finite.
+	 * @throws JSONException If the index is negative or if the value is not finite.
 	 */
 	public JSONArray put(int index, double value) throws JSONException {
 		this.put(index, new Double(value));
@@ -351,13 +387,10 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Put or replace an int value. If the index is greater than the length of the JSONArray, then null elements will be added as necessary to pad it out.
 	 *
-	 * @param index
-	 *            The subscript.
-	 * @param value
-	 *            An int value.
+	 * @param index The subscript.
+	 * @param value An int value.
 	 * @return this.
-	 * @throws JSONException
-	 *             If the index is negative.
+	 * @throws JSONException If the index is negative.
 	 */
 	public JSONArray put(int index, int value) throws JSONException {
 		this.put(index, new Integer(value));
@@ -367,13 +400,10 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Put or replace a long value. If the index is greater than the length of the JSONArray, then null elements will be added as necessary to pad it out.
 	 *
-	 * @param index
-	 *            The subscript.
-	 * @param value
-	 *            A long value.
+	 * @param index The subscript.
+	 * @param value A long value.
 	 * @return this.
-	 * @throws JSONException
-	 *             If the index is negative.
+	 * @throws JSONException If the index is negative.
 	 */
 	public JSONArray put(int index, long value) throws JSONException {
 		this.put(index, new Long(value));
@@ -383,13 +413,10 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Put a value in the JSONArray, where the value will be a JSONObject that is produced from a Map.
 	 *
-	 * @param index
-	 *            The subscript.
-	 * @param value
-	 *            The Map value.
+	 * @param index The subscript.
+	 * @param value The Map value.
 	 * @return this.
-	 * @throws JSONException
-	 *             If the index is negative or if the the value is an invalid number.
+	 * @throws JSONException If the index is negative or if the the value is an invalid number.
 	 */
 	public JSONArray put(int index, Map value) throws JSONException {
 		this.put(index, new JSONObject(value));
@@ -400,14 +427,11 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	 * Put or replace an object value in the JSONArray. If the index is greater than the length of the JSONArray, then null elements will be added as necessary
 	 * to pad it out.
 	 *
-	 * @param index
-	 *            The subscript.
-	 * @param value
-	 *            The value to put into the array. The value should be a Boolean, Double, Integer, JSONArray, JSONObject, Long, or String, or the
-	 *            JSONObject.NULL object.
+	 * @param index The subscript.
+	 * @param value The value to put into the array. The value should be a Boolean, Double, Integer, JSONArray, JSONObject, Long, or String, or the
+	 *              JSONObject.NULL object.
 	 * @return this.
-	 * @throws JSONException
-	 *             If the index is negative or if the the value is an invalid number.
+	 * @throws JSONException If the index is negative or if the the value is an invalid number.
 	 */
 	public JSONArray put(int index, Object value) throws JSONException {
 		if (index < 0) {
@@ -463,8 +487,7 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Remove an index and close the hole.
 	 *
-	 * @param index
-	 *            The index of the element to be removed.
+	 * @param index The index of the element to be removed.
 	 * @return The value that was associated with the index, or null if there was no value.
 	 */
 	public Object remove(int index) {
@@ -477,11 +500,9 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	 * Make a string from the contents of this JSONArray. The <code>separator</code> string is inserted between each element. Warning: This method assumes that
 	 * the data structure is acyclical.
 	 *
-	 * @param separator
-	 *            A string that will be inserted between the elements.
+	 * @param separator A string that will be inserted between the elements.
 	 * @return a string.
-	 * @throws JSONException
-	 *             If the array contains an invalid number.
+	 * @throws JSONException If the array contains an invalid number.
 	 */
 	@Override
 	public String join(String separator) throws JSONException {
@@ -501,8 +522,7 @@ public class JSONArray extends AbstractJSONArray implements ICommonObject {
 	/**
 	 * Make a prettyprinted JSON text of this JSONArray. Warning: This method assumes that the data structure is acyclical.
 	 *
-	 * @param indentFactor
-	 *            The number of spaces to add to each level of indentation.
+	 * @param indentFactor The number of spaces to add to each level of indentation.
 	 * @return a printable, displayable, transmittable representation of the object, beginning with <code>[</code>&nbsp;<small>(left bracket)</small> and ending
 	 *         with <code>]</code>&nbsp;<small>(right bracket)</small>.
 	 * @throws JSONException
