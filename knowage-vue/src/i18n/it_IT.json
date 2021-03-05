@@ -1,9 +1,16 @@
 {
     "common":{
         "close": "chiudi",
+        "loggedUser": "utente loggato",
+        "tenant": "tenant",
         "version": "versione"
     },
     "home":{
-        "test":"italiano"
+        "test": "italiano"
+    },
+    "infoDialog":{
+        "aboutKnowage": "About Knowage",
+        "copyright": "© 2020 Engineering Ingegneria Informatica S.p.A.",
+        "sourceCode": "Codice sorgente disponibile su www.knowage-suite.com"
     }
 }

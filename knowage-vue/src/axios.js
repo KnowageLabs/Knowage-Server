@@ -1,5 +1,5 @@
 import axios from 'axios'
-import store from './App.store.js'
+//import store from './App.store.js'
 //import router from './app.routes.js'
 
   axios.interceptors.request.use(
@@ -12,7 +12,6 @@ import store from './App.store.js'
 
   axios.interceptors.response.use(
     res => {
-      store.commit('setUser',{name:'Davide'})
       return res
     },
     (err, status) => {

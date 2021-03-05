@@ -1,15 +1,15 @@
 <template>
-   <Dialog v-bind:visible="visibility" footer="footer" header="About Knowage" :closable="false" modal>
+   <Dialog v-bind:visible="visibility" footer="footer" :header="$tc('infoDialog.aboutKnowage')" :closable="false" modal>
       <div class="p-grid p-m-1">
          <div class="p-col">
             <div class="p-d-flex p-jc-center">
                <img :src="require('@/assets/logo_knowage.svg')" height="100"/>
             </div>
-            <p><strong>{{ $tc('common.version') }}</strong>: 7.4.0-S</p>
-            <p><strong>Utente Loggato:</strong> {{user.name || 'KTE Admin'}}</p>
-            <p><strong>Tenant:</strong> kte</p>
-            <p>Codice sorgente disponibile su www.knowage-suite.com</p>
-            <p>© 2020 Engineering Ingegneria Informatica S.p.A.</p>
+            <p><strong>{{ $tc('common.version') }}:</strong> 7.4.0-S</p>
+            <p><strong>{{ $tc('common.loggedUser') }}:</strong> {{user.fullName}}</p>
+            <p><strong>{{ $tc('common.tenant') }}:</strong> kte</p>
+            <p>{{ $tc('infoDialog.sourceCode') }}</p>
+            <p>{{ $tc('infoDialog.copyright') }}</p>
          </div>
       </div>
       <template #footer>

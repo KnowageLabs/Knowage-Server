@@ -5,13 +5,12 @@
          <div class="menu-scroll-content">
             <div>
                <div class="profile">
-                  <button class="p-link" @click="toggleProfile" v-tooltip="'Isabel Oliviera'">
-                     <img alt="Profile" class="profile-image" :src="getGravatar()" >
-                     <span class="profile-name">Isabel Oliviera</span>
+                  <button class="p-link" @click="toggleProfile" v-tooltip="user.fullName">
+                     <img alt="Profile" class="profile-image" :src="getGravatar(user)" >
+                     <span class="profile-name">{{user.fullName}}</span>
                         <i class="pi pi-fw pi-chevron-down"></i>
                      <span class="profile-role">Marketing</span>
                   </button>
-                  
                </div>
                <transition name="slide-down">
                   <ul class="layout-menu profile-menu" v-show="showProfileMenu">
@@ -25,6 +24,7 @@
             </div>
             <div>
                <ul class="layout-menu">
+                  <KnAdminMenu :model="items"></KnAdminMenu>
                    <template v-for="(item, i) of userMenu" :key="i">
                      <KnMenuItem :item="item" @click="itemClick"></KnMenuItem>
                   </template>
@@ -44,6 +44,7 @@
    import InfoDialog from '@/components/infoDialog/InfoDialog.vue'
    import KnMenuItem from '@/components/knmenu/KnMenuItem.vue'
    import { getGravatar } from '@/helpers/gravatarHelper'
+   import {  mapState } from 'vuex'
    import auth  from '@/helpers/authHelper'
 
    export default defineComponent({
@@ -92,8 +93,9 @@
          toggleProfile() {
             this.showProfileMenu = !this.showProfileMenu
          },
-         getGravatar(){
-            return getGravatar('davide.vernassa@eng.it');
+         getGravatar(user){
+            if(user && user.attributes && user.attributes.email) return getGravatar(user.attributes.email)
+            else return getGravatar('knowage@eng.it')
          }
       },
       created() {
@@ -102,7 +104,12 @@
                this.customMenu = updateMenuModel(response.data.customMenu[0].menu)
                this.userMenu = updateMenuModel(response.data.userMenu)
             },(error) => console.error(error))
-      }
+      },
+      computed: {
+			...mapState({
+				user: 'user'
+			})
+		}
    })
 
    interface MenuItem {

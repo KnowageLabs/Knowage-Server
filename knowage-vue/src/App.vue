@@ -13,6 +13,7 @@
 	import Knmenu from '@/components/knmenu/KnMenu'
 	import Toast from 'primevue/toast';
 	import { defineComponent } from 'vue'
+	import store from '@/App.store'
 	import {  mapState } from 'vuex'
 
 	export default defineComponent({
@@ -20,15 +21,11 @@
 			Knmenu,
 			Toast
 		},
-		methods: {
-			getUser(){
-				return this.user.name
-			}
-		},
-		data() {
-			return {
-				test:'ciao'
-			}
+		created() {
+			this.axios.get('/knowage/restful-services/3.0/users/current')
+            .then((response) => {
+               store.commit('setUser', response.data.wrappedObject)
+            },(error) => console.error(error))
 		},
 		computed: {
 			...mapState({

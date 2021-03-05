@@ -1,9 +1,16 @@
 {
     "common":{
         "close": "close",
+        "loggedUser": "logged user",
+        "tenant": "tenant",
         "version": "version"
     },
     "home":{
         "test":"english"
+    },
+    "infoDialog":{
+        "aboutKnowage": "About Knowage",
+        "copyright": "© 2020 Engineering Ingegneria Informatica S.p.A.",
+        "sourceCode": "Source code available on www.knowage-suite.com"
     }
 }
