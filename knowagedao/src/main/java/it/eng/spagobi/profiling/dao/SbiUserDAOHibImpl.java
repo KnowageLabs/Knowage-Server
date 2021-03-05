@@ -180,8 +180,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				aSession = getSession();
 				tx = aSession.beginTransaction();
 
-				aSession.createQuery("UPDATE SbiUser us SET us.failedLoginAttempts = 0 WHERE us.userId = :userId").setParameter("userId", userId)
-						.executeUpdate();
+				aSession.createQuery("UPDATE SbiUser us SET us.failedLoginAttempts = 0 WHERE us.userId = :userId")
+						.setParameter("userId", userId).executeUpdate();
 
 				tx.commit();
 			}
@@ -615,11 +615,13 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				aSession = getSession();
 				tx = aSession.beginTransaction();
 
-				ProjectionList projList = Projections.projectionList().add(Projections.property("failedLoginAttempts"), "failedLoginAttempts");
+				ProjectionList projList = Projections.projectionList().add(Projections.property("failedLoginAttempts"),
+						"failedLoginAttempts");
 
 				SimpleExpression eq = Restrictions.eq("userId", userId);
 
-				result = (Integer) aSession.createCriteria(SbiUser.class).add(eq).setProjection(projList).uniqueResult();
+				result = (Integer) aSession.createCriteria(SbiUser.class).add(eq).setProjection(projList)
+						.uniqueResult();
 
 				tx.commit();
 			}
@@ -656,7 +658,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				aSession = getSession();
 				tx = aSession.beginTransaction();
 
-				aSession.createQuery("UPDATE SbiUser us SET us.failedLoginAttempts = us.failedLoginAttempts + 1 WHERE us.userId = :userId")
+				aSession.createQuery(
+						"UPDATE SbiUser us SET us.failedLoginAttempts = us.failedLoginAttempts + 1 WHERE us.userId = :userId")
 						.setParameter("userId", userId).executeUpdate();
 
 				tx.commit();
@@ -676,11 +679,13 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * Check if the user identifier in input is valid (for insertion or modification) for the user with the input integer id. In case of user insertion, id
-	 * should be null.
+	 * Check if the user identifier in input is valid (for insertion or
+	 * modification) for the user with the input integer id. In case of user
+	 * insertion, id should be null.
 	 *
 	 * @param userId The user identifier to check
-	 * @param id     The id of the user to which the user identifier should be validated
+	 * @param id     The id of the user to which the user identifier should be
+	 *               validated
 	 * @throws SpagoBIDAOException
 	 */
 	@Override
@@ -737,7 +742,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * From the Hibernate SbiUser at input, gives the corrispondent BI object (UserBO).
+	 * From the Hibernate SbiUser at input, gives the corrispondent BI object
+	 * (UserBO).
 	 *
 	 * @param sbiUser The Hibernate SbiUser
 	 * @return the corrispondent output <code>UserBO</code>
@@ -763,7 +769,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 		Integer maxFailedLoginAttempts = null;
 		try {
-			maxFailedLoginAttempts = Integer.valueOf(SingletonConfig.getInstance().getConfigValue("internal.security.login.maxFailedLoginAttempts"));
+			maxFailedLoginAttempts = Integer.valueOf(
+					SingletonConfig.getInstance().getConfigValue("internal.security.login.maxFailedLoginAttempts"));
 		} catch (NumberFormatException e) {
 			throw new SpagoBIRuntimeException("Error while retrieving maxFailedLoginAttempts for user ", e);
 		} catch (Exception e) {
@@ -815,7 +822,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * Get the SbiUser object with the input user identifier. The search method is CASE INSENSITIVE!!!
+	 * Get the SbiUser object with the input user identifier. The search method is
+	 * CASE INSENSITIVE!!!
 	 *
 	 * @param userId The user identifier
 	 * @return the SbiUser object with the input user identifier
@@ -835,6 +843,14 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			Criteria criteria = aSession.createCriteria(SbiUser.class);
 			criteria.add(Restrictions.eq("userId", userId).ignoreCase());
 			SbiUser user = (SbiUser) criteria.uniqueResult();
+
+			Hibernate.initialize(user);
+			Hibernate.initialize(user.getSbiExtUserRoleses());
+			Hibernate.initialize(user.getSbiUserAttributeses());
+			for (SbiUserAttributes current : user.getSbiUserAttributeses()) {
+				Hibernate.initialize(current.getSbiAttribute());
+			}
+
 			LogMF.debug(logger, "OUT : returning [{0}]", user);
 			return user;
 		} finally {
@@ -847,6 +863,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			}
 			logger.debug("OUT");
 		}
+
 	}
 
 	@Override
@@ -867,7 +884,10 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 			total = users.size();
 			int indexStart = offset < 0 ? 0 : Math.min(offset, total - 1); // if totale = 0 --> indexStart = -1
-			int indexEnd = (fetchSize > 0) ? Math.min(indexStart + fetchSize - 1, total - 1) : total - 1; // if totale = 0 --> indexEnd = -1
+			int indexEnd = (fetchSize > 0) ? Math.min(indexStart + fetchSize - 1, total - 1) : total - 1; // if totale =
+																											// 0 -->
+																											// indexEnd
+																											// = -1
 
 			List<UserBO> results = new ArrayList<UserBO>();
 			if (total > 0) {
@@ -923,12 +943,14 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		if (filter instanceof QueryStaticFilter) {
 			QueryStaticFilter staticFilter = (QueryStaticFilter) filter;
 			boolean ignoreCase = staticFilter.isIgnoreCase();
-			IConditionalOperator conditionalOperator = (IConditionalOperator) HQLStatement.conditionalOperators.get(staticFilter.getOperator());
+			IConditionalOperator conditionalOperator = (IConditionalOperator) HQLStatement.conditionalOperators
+					.get(staticFilter.getOperator());
 			String actualFieldName = AvailableFiltersOnUsersList.valueOf(staticFilter.getField()).toString();
 			String leftHandValue = ignoreCase ? "upper(" + actualFieldName + ")" : actualFieldName;
 			String value = staticFilter.getValue() != null ? staticFilter.getValue().toString() : "";
 			String escapedValue = StringEscapeUtils.escapeSql(value);
-			String[] rightHandValues = new String[] { "'" + (ignoreCase ? escapedValue.toUpperCase() : escapedValue) + "'" };
+			String[] rightHandValues = new String[] {
+					"'" + (ignoreCase ? escapedValue.toUpperCase() : escapedValue) + "'" };
 			return conditionalOperator.apply(leftHandValue, rightHandValues);
 		} else if (filter instanceof FinalUsersFilter) {
 			StringBuffer buffer = new StringBuffer();

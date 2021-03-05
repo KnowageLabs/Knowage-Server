@@ -56,8 +56,9 @@ public class SbiUser extends SbiHibernateModel {
 		this.userId = userId;
 	}
 
-	public SbiUser(int id, String userId, String password, String fullName, Date dtPwdBegin, Date dtPwdEnd, Boolean flgPwdBlocked, Date dtLastAccess,
-			Set<SbiExtRoles> sbiExtUserRoleses, Set<SbiUserAttributes> sbiUserAttributeses, Boolean isSuperadmin) {
+	public SbiUser(int id, String userId, String password, String fullName, Date dtPwdBegin, Date dtPwdEnd,
+			Boolean flgPwdBlocked, Date dtLastAccess, Set<SbiExtRoles> sbiExtUserRoleses,
+			Set<SbiUserAttributes> sbiUserAttributeses, Boolean isSuperadmin) {
 		this.id = id;
 		this.userId = userId;
 		this.password = password;
