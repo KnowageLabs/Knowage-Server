@@ -134,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(model.settings && model.settings.modalityValue == 'singleValue' && model.settings.modalityPresent == 'COMBOBOX') model.settings.modalityValue = 'dropdown';
 				}
 			}
-			
+
 			if(!self.compareVersion("7.2.1",version)){
 				if(model.type=='table') {
 					if(model.content && model.content.columnSelectedOfDataset){
@@ -155,7 +155,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 						if(model.content.chartTemplate.CHART.LEGEND && model.content.chartTemplate.CHART.LEGEND.style && !model.content.chartTemplate.CHART.LEGEND.style.borderWidth) {
 							model.content.chartTemplate.CHART.LEGEND.style.borderWidth = "";
-						}					
+						}
 				}
 			}
 
@@ -168,7 +168,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(model.style.tr && model.style.tr.height && typeof model.style.tr.height != 'number') model.style.tr.height = parseInt(model.style.tr.height);
 				}
 				if(model.type=='chart') {
-				 if (model.content.chartTemplate.CHART.AXES_LIST) {				
+				 if (model.content.chartTemplate.CHART.AXES_LIST) {
 					for (var k in model.content.chartTemplate.CHART.AXES_LIST.AXIS) {
 						if (model.content.chartTemplate.CHART.AXES_LIST && model.content.chartTemplate.CHART.AXES_LIST.AXIS && model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].labels) {
 							model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS = model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].labels;
@@ -179,7 +179,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					}
 				 }
-				}				
+				}
 				if(model.type=='map') {
 
 					// Ignore models that has zero elements in model.content.columnSelectedOfDataset
@@ -327,7 +327,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													"value": model.content.crosstabDefinition.measures[k].colorThresholdOptions.conditionValue[j],
 													"background-color": model.content.crosstabDefinition.measures[k].colorThresholdOptions.color[j]
 											}
-											model.content.crosstabDefinition.measures[k].ranges.push(tempObj)
+
+											if (model.content.crosstabDefinition.measures[k].ranges) model.content.crosstabDefinition.measures[k].ranges.push(tempObj);
+											else model.content.crosstabDefinition.measures[k].ranges = [tempObj];
 										}
 									}
 									delete model.content.crosstabDefinition.measures[k].colorThresholdOptions;
