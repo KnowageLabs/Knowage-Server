@@ -228,7 +228,7 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	        }
 	    })
 		
-		var loadDatasetList = function(){
+		//var loadDatasetList = function(){
 			$scope.datasetLoaded=true;
 			if(!cockpitModule_properties.PARAMETERS) cockpitModule_properties.PARAMETERS = cockpitModule_datasetServices.returnParametersArray();
 			var dsNotInCache = cockpitModule_templateServices.getDatasetAssociatedNotUsedByWidget();
@@ -246,16 +246,16 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 				cockpitModule_nearRealtimeServices.init();
 				cockpitModule_realtimeServices.init();
 			}
-		}
+		//}
 		
 		if(cockpitModule_template.configuration && cockpitModule_template.configuration.variables){
 			$scope.variablesInit().then(function(value){
-				loadDatasetList();
+				//loadDatasetList();
 			},function(error){
-				loadDatasetList();
+				//loadDatasetList();
 				console.log(error)
 			})
-		}else loadDatasetList();
+		}
 		
 	},function(){
 		console.error("error when load dataset list")
