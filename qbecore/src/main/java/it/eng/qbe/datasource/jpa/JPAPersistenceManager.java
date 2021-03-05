@@ -250,10 +250,14 @@ public class JPAPersistenceManager implements IPersistenceManager {
 					logger.debug("Retrieve PK as max+1 from table: " + tableForPkMax + " / column: " + columnForPkMax);
 					pkValue = getPKValueFromTemplateTable(tableForPkMax, columnForPkMax, entityManager);
 					setKeyProperty(targetEntity, newObj, keyColumn, pkValue);
+					// we store pk value into record object for audit purposes
+					aRecord.put(keyColumn, pkValue);
 				} else {
 					logger.debug("calculate max value +1 for key column " + keyColumn + " in table " + targetEntity.getName());
 					pkValue = getPKValue(targetEntity, keyColumn, entityManager);
 					setKeyProperty(targetEntity, newObj, keyColumn, pkValue);
+					// we store pk value into record object for audit purposes
+					aRecord.put(keyColumn, pkValue);
 				}
 
 				if (pkValue == null) {
