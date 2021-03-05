@@ -702,7 +702,6 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 		Class clazz = attribute.getJavaType();
 		String clazzName = clazz.getName();
-		logger.error("Field type: " + clazzName);
 
 		if (Number.class.isAssignableFrom(clazz)) {
 			if (value.equals("NaN") || value.equals("null") || value.equals("")) {
@@ -711,28 +710,20 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			}
 			// BigInteger, Integer, Long, Short, Byte
 			if (Integer.class.getName().equals(clazzName)) {
-				logger.error(">>> Integer");
 				toReturn = Integer.parseInt(value);
 			} else if (Double.class.getName().equals(clazzName)) {
-				logger.error(">>> Double");
 				toReturn = new Double(value);
 			} else if (BigDecimal.class.getName().equals(clazzName)) {
-				logger.error(">>> BigDecimal");
 				toReturn = new BigDecimal(value);
 			} else if (BigInteger.class.getName().equals(clazzName)) {
-				logger.error(">>> BigInteger");
 				toReturn = new BigInteger(value);
 			} else if (Long.class.getName().equals(clazzName)) {
-				logger.error(">>> Long");
 				toReturn = new Long(value);
 			} else if (Short.class.getName().equals(clazzName)) {
-				logger.error(">>> Short");
 				toReturn = new Short(value);
 			} else if (Byte.class.getName().equals(clazzName)) {
-				logger.error(">>> Byte");
 				toReturn = new Byte(value);
 			} else {
-				logger.error(">>> Float");
 				toReturn = new Float(value);
 			}
 		} else if (String.class.isAssignableFrom(clazz)) {
