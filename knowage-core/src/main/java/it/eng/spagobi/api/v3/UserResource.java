@@ -19,21 +19,29 @@
 package it.eng.spagobi.api.v3;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.api.v2.ProfileAttributeResourceRoleProcessor;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.profiling.bo.UserInformationBO;
@@ -41,8 +49,6 @@ import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.profiling.dao.SbiUserDAOHibImpl;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 @Path("/3.0/users")
 @ManageAuthorization
@@ -50,10 +56,9 @@ public class UserResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
 	@Path("/current")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public Response getUserById() {
+	public Response getCurrentUserInformation(@Context HttpServletRequest httpRequest) {
 		SbiUserDAOHibImpl hib = new SbiUserDAOHibImpl();
 		try {
 
@@ -63,6 +68,12 @@ public class UserResource extends AbstractSpagoBIResource {
 			UserProfile userProfile = getUserProfile();
 			usersDao.setUserProfile(userProfile);
 			sbiUser = usersDao.loadSbiUserByUserId(String.valueOf(userProfile.getUserId()));
+
+			if (sbiUser == null) {
+				String message = "No current user existing.";
+				logger.error(message);
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
 			user = hib.toUserBO(sbiUser);
 
 			ISbiAttributeDAO objDao = DAOFactory.getSbiAttributeDAO();
@@ -74,15 +85,30 @@ public class UserResource extends AbstractSpagoBIResource {
 				roleFilter.removeHiddenAttributes(hiddenAttributesIds, user);
 			}
 
-			UserInformationBO fe = new UserInformationBO(user);
-			JSONObject json = new JSONObject(fe);
+			UserInformationBO userInformationBO = new UserInformationBO(user);
 
-			return Response.ok(json).build();
-		} catch (Exception e) {
+			JSONObject documentsJSON = null;
+			MessageBuilder m = new MessageBuilder();
+			Locale locale = m.getLocale(httpRequest);
+			ObjectNode documentsObjectNode = null;
+			try {
+				documentsJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(userInformationBO, locale);
+				if (documentsJSON != null)
+					documentsObjectNode = documentsJSON.getWrappedObject();
+			} catch (SerializationException e) {
+				String message = "Error serializing menus for user";
+				logger.error(message, e);
+				return Response.status(Response.Status.EXPECTATION_FAILED).entity(message).build();
+			}
+
+			return Response.ok(documentsObjectNode).build();
+
+		} catch (EMFUserError e) {
 			String message = "No current user existing.";
 			logger.error(message, e);
-			throw new SpagoBIRestServiceException(message, buildLocaleFromSession(), e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(message).build();
 		}
+
 	}
 
 }
