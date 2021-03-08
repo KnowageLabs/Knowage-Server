@@ -24,7 +24,7 @@
 		created() {
 			this.axios.get('/knowage/restful-services/3.0/users/current')
             .then((response) => {
-               store.commit('setUser', response.data.wrappedObject)
+               store.commit('setUser', response.data)
             },(error) => console.error(error))
 		},
 		computed: {
