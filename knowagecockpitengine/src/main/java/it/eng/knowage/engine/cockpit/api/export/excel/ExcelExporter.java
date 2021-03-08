@@ -517,7 +517,13 @@ public class ExcelExporter {
 			if (widgetData.getString("type").equalsIgnoreCase("table")) {
 				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-					arrayHeader.put(column.getString("name"), column.getString("aliasToShow"));
+					String key;
+					if (column.optBoolean("isCalculated") && !column.has("name")) {
+						key = column.getString("alias");
+					} else {
+						key = column.getString("name");
+					}
+					arrayHeader.put(key, column.getString("aliasToShow"));
 				}
 			}
 
