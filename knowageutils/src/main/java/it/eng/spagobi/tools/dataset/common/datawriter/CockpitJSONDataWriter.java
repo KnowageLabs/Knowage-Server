@@ -72,13 +72,17 @@ public class CockpitJSONDataWriter extends JSONDataWriter {
 			} else if (Double.class.isAssignableFrom(type)) {
 				result = Double.valueOf(value.toString());
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
-				result = new BigDecimal(value.toString());
+				result = value;
 			} else {
 				result = value.toString();
 			}
 		}
 
 		return result;
+	}
+
+	private boolean isIntegerValue(BigDecimal bd) {
+		return bd.stripTrailingZeros().scale() <= 0;
 	}
 
 }

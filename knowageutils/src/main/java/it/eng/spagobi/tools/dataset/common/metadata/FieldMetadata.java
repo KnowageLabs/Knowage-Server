@@ -28,6 +28,8 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 	Map properties;
 	FieldType fieldType;
 	boolean multiValue;
+	int precision;
+	int scale;
 
 	public FieldMetadata() {
 		super();
@@ -123,7 +125,8 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 
 	@Override
 	public String toString() {
-		return "FieldMetadata [name=" + name + ", alias=" + alias + ", type=" + type + ", properties=" + properties + ", fieldType=" + fieldType + ", multivalue=" + multiValue + "]";
+		return "FieldMetadata [name=" + name + ", alias=" + alias + ", type=" + type + ", properties=" + properties + ", fieldType=" + fieldType
+				+ ", multivalue=" + multiValue + "]";
 	}
 
 	@Override
@@ -175,4 +178,29 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 	public void setMultiValue(boolean multiValue) {
 		this.multiValue = multiValue;
 	}
+
+	@Override
+	public void setPrecision(int precision) {
+		this.precision = precision;
+
+	}
+
+	@Override
+	public void setScale(int scale) {
+		this.scale = scale;
+
+	}
+
+	@Override
+	public int getPrecision() {
+		// TODO Auto-generated method stub
+		return precision;
+	}
+
+	@Override
+	public int getScale() {
+		// TODO Auto-generated method stub
+		return scale;
+	}
+
 }

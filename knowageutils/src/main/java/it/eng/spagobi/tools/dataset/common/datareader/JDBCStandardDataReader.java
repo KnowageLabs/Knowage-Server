@@ -69,7 +69,8 @@ public class JDBCStandardDataReader extends AbstractDataReader {
 		ResultSet rs;
 		int columnCount;
 		int columnIndex;
-
+		int fieldPrecision;
+		int fieldScale;
 		logger.debug("IN");
 
 		dataStore = null;
@@ -90,6 +91,10 @@ public class JDBCStandardDataReader extends AbstractDataReader {
 				fieldMeta = new FieldMetadata();
 				fieldName = rs.getMetaData().getColumnLabel(columnIndex);
 				fieldType = rs.getMetaData().getColumnClassName(columnIndex);
+				fieldPrecision = rs.getMetaData().getPrecision(columnIndex);
+				fieldMeta.setPrecision(fieldPrecision);
+				fieldScale = rs.getMetaData().getScale(columnIndex);
+				fieldMeta.setScale(fieldScale);
 				logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]. TYPE= " + fieldType);
 				fieldMeta.setName(fieldName);
 				if (fieldType != null) {

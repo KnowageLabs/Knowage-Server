@@ -19,7 +19,9 @@ package it.eng.spagobi.engine.chart.util;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -185,14 +187,76 @@ public class ChartEngineUtil {
 		TypeReference<Map<String, Object>> typeRef = new TypeReference<Map<String, Object>>() {
 		};
 
-		// TODO Aggiungere a questo livello StringEscapeUtils.escapeHtml per
-		// lettere
+		// TODO Add at this level StringEscapeUtils.escapeHtml
 		Map<String, Object> result = mapper.readValue(json, typeRef);
+
+		result = changeDataByPrecision(result);
 
 		Map<String, Object> escapedMapStrings = escape ? escapeMapStrings(result) : result;
 
 		// return result;
 		return escapedMapStrings;
+	}
+
+	private static Map<String, Object> changeDataByPrecision(Map<String, Object> resultToChange) {
+
+		LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>();
+		HashMap<String, Integer> precisionFields = new HashMap<String, Integer>();
+		boolean found = false;
+		for (String key : resultToChange.keySet()) {
+			if (key.equalsIgnoreCase("metaData")) {
+				found = true;
+				LinkedHashMap<String, Object> resultMEta = (LinkedHashMap<String, Object>) resultToChange.get(key);
+				for (String keys : resultMEta.keySet()) {
+
+					if (keys.equalsIgnoreCase("fields")) {
+						List<Map<String, Object>> resultFields = (List<Map<String, Object>>) resultMEta.get(keys);
+
+						for (int i = 0; i < resultFields.size(); i++) {
+
+							if (resultFields.get(i) instanceof LinkedHashMap<?, ?>) {
+								if (resultFields.get(i).get("scale") != null) {
+									precisionFields.put((String) resultFields.get(i).get("name"), (Integer) resultFields.get(i).get("scale"));
+
+								}
+							}
+
+						}
+
+					}
+				}
+
+			}
+
+		}
+		if (!found)
+			return resultToChange;
+		for (String key : resultToChange.keySet()) {
+			if (key.equalsIgnoreCase("rows")) {
+				List<Map<String, Object>> resultFields = (List<Map<String, Object>>) resultToChange.get(key);
+				for (int i = 0; i < resultFields.size(); i++) {
+
+					if (resultFields.get(i) instanceof LinkedHashMap<?, ?>) {
+						LinkedHashMap<String, Object> resultTemp = (LinkedHashMap<String, Object>) resultFields.get(i);
+						for (String keys : resultTemp.keySet()) {
+
+							if (precisionFields.get(keys) != null && precisionFields.get(keys) <= 0) {
+								if (resultTemp.get(keys) instanceof Double) {
+									BigDecimal newValue = new BigDecimal((Double) resultTemp.get(keys));
+									resultTemp.put(keys, newValue.toPlainString());
+
+								}
+							}
+
+						}
+
+					}
+				}
+
+			}
+		}
+
+		return resultToChange;
 	}
 
 	/**
@@ -202,8 +266,7 @@ public class ChartEngineUtil {
 		LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>();
 
 		for (String key : mapElement2.keySet()) {
-			if (mapElement2.get(key) instanceof List) { // Se il tag individuato
-														// e' un array
+			if (mapElement2.get(key) instanceof List) { // if tag selected is an array
 				@SuppressWarnings("unchecked")
 				List<Map<String, Object>> mapsArray = (List<Map<String, Object>>) mapElement2.get(key);
 
@@ -216,10 +279,7 @@ public class ChartEngineUtil {
 				}
 				result.put(key, mapsArrayOut);
 
-			} else if (!(mapElement2.get(key) instanceof Map)) { // Se viene
-																	// individuato
-																	// un tag
-																	// <style/>
+			} else if (!(mapElement2.get(key) instanceof Map)) { // if we found a tag <style/>
 				if (key.equals(STYLE_TAG)) {
 					String value = (String) mapElement2.get(key);
 
@@ -234,8 +294,7 @@ public class ChartEngineUtil {
 					result.put(key, escapedString);
 				}
 
-			} else { // Nel caso è un semplice nodo viene chiamata la funzione
-						// ricorsivamente
+			} else { // in caso of simple node we call it recoursively
 				@SuppressWarnings("unchecked")
 				Map<String, Object> value = escapeMapStrings((Map<String, Object>) mapElement2.get(key));
 				result.put(key, value);

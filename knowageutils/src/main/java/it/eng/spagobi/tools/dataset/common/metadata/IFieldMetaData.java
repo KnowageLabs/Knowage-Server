@@ -68,4 +68,12 @@ public interface IFieldMetaData {
 	boolean isMultiValue();
 
 	void setMultiValue(boolean multiValue);
+
+	void setPrecision(int precision);
+
+	void setScale(int scale);
+
+	int getPrecision();
+
+	int getScale();
 }
