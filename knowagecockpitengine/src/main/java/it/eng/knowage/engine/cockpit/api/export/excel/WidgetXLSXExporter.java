@@ -62,27 +62,28 @@ class WidgetXLSXExporter {
 		this.optionsObj = options;
 	}
 
-	public void export() {
+	public int export() {
 		try {
 			if (widgetType.equalsIgnoreCase("static-pivot-table") && optionsObj != null) {
 				// crosstab widget object must be retrieved BE side
-				exportCrossTabWidget();
+				return exportCrossTabWidget();
 			} else if (widgetType.equalsIgnoreCase("map")) {
 				// map widget supports multiple datasets
-				exportMapWidget();
+				return exportMapWidget();
 			} else if (widgetType.equalsIgnoreCase("table")) {
 				// table widget supports pagination
-				exportTableWidget();
+				return exportTableWidget();
 			} else {
-				exportGenericWidget();
+				return exportGenericWidget();
 			}
 		} catch (Exception e) {
 			// log exception and skip widget
 			logger.error("Could not export widget [id=" + widgetId + " type=" + widgetType + "]", e);
 		}
+		return 0;
 	}
 
-	private void exportGenericWidget() {
+	private int exportGenericWidget() {
 		try {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
@@ -104,14 +105,16 @@ class WidgetXLSXExporter {
 			if (dataStore != null) {
 				String cockpitSheetName = getCockpitSheetName(template, widgetId);
 				excelExporter.createAndFillExcelSheet(dataStore, wb, widgetName, cockpitSheetName);
+				return 1;
 			}
 
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Unable to export widget: " + widgetId, e);
 		}
+		return 0;
 	}
 
-	private void exportTableWidget() {
+	private int exportTableWidget() {
 		try {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
@@ -141,19 +144,22 @@ class WidgetXLSXExporter {
 				fetchSize = maxFetchSize;
 			}
 			JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, fetchSize);
-			int totalNumberOfRows = dataStore.getInt("results");
-			while (offset < totalNumberOfRows) {
-				excelExporter.fillSheetWithData(dataStore, wb, sheet, widgetName, offset);
-				offset += fetchSize;
-				dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, fetchSize);
+			if (dataStore != null) {
+				int totalNumberOfRows = dataStore.getInt("results");
+				while (offset < totalNumberOfRows) {
+					excelExporter.fillSheetWithData(dataStore, wb, sheet, widgetName, offset);
+					offset += fetchSize;
+					dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, fetchSize);
+				}
+				return 1;
 			}
-
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Unable to export generic widget: " + widgetId, e);
 		}
+		return 0;
 	}
 
-	private void exportCrossTabWidget() {
+	private int exportCrossTabWidget() {
 		try {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
@@ -219,15 +225,54 @@ class WidgetXLSXExporter {
 				String cockpitSheetName = getCockpitSheetName(template, widgetId);
 				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 				crossTabExporter.fillExcelSheetWithData(sheet, cs, createHelper, 0, excelExporter.getLocale());
+				return 1;
 			} else {
 				// export crosstab as generic widget
 				logger.warn("Crosstab [" + widgetId + "] has more rows than streaming windows size. It will be exported as a generic widget.");
-				exportGenericWidget();
+				return exportGenericWidget();
 			}
 
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Unable to export crosstab widget: " + widgetId, e);
 		}
+	}
+
+	private int exportMapWidget() {
+		int exportedSheets = 0;
+		try {
+			JSONObject template = new JSONObject(templateString);
+			JSONObject widget = getWidgetById(template, widgetId);
+			String widgetName = null;
+			JSONObject style = widget.optJSONObject("style");
+			if (style != null) {
+				JSONObject title = style.optJSONObject("title");
+				if (title != null) {
+					widgetName = title.optString("label");
+				} else {
+					JSONObject content = widget.optJSONObject("content");
+					if (content != null) {
+						widgetName = content.getString("name");
+					}
+				}
+			}
+
+			JSONArray dataStoreArray = excelExporter.getMultiDataStoreForWidget(template, widget);
+			for (int i = 0; i < dataStoreArray.length(); i++) {
+				try {
+					JSONObject dataStore = dataStoreArray.getJSONObject(i);
+					if (dataStore != null) {
+						String cockpitSheetName = getCockpitSheetName(template, widgetId) + String.valueOf(i);
+						excelExporter.createAndFillExcelSheet(dataStore, wb, widgetName, cockpitSheetName);
+						exportedSheets++;
+					}
+				} catch (Exception e) {
+					logger.error("Couldn't export layer [" + (i + 1) + "] of map widget [" + widgetId + "]");
+				}
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Unable to export map widget: " + widgetId, e);
+		}
+		return exportedSheets;
 	}
 
 	private Map<String, List<Threshold>> getThresholdColorsMap(JSONArray measures) {
@@ -276,38 +321,6 @@ class WidgetXLSXExporter {
 			}
 		}
 		return sortKeys;
-	}
-
-	private void exportMapWidget() {
-		try {
-			JSONObject template = new JSONObject(templateString);
-			JSONObject widget = getWidgetById(template, widgetId);
-			String widgetName = null;
-			JSONObject style = widget.optJSONObject("style");
-			if (style != null) {
-				JSONObject title = style.optJSONObject("title");
-				if (title != null) {
-					widgetName = title.optString("label");
-				} else {
-					JSONObject content = widget.optJSONObject("content");
-					if (content != null) {
-						widgetName = content.getString("name");
-					}
-				}
-			}
-
-			JSONArray dataStoreArray = excelExporter.getMultiDataStoreForWidget(template, widget);
-			for (int i = 0; i < dataStoreArray.length(); i++) {
-				JSONObject dataStore = dataStoreArray.getJSONObject(i);
-				if (dataStore != null) {
-					String cockpitSheetName = getCockpitSheetName(template, widgetId) + String.valueOf(i);
-					excelExporter.createAndFillExcelSheet(dataStore, wb, widgetName, cockpitSheetName);
-				}
-			}
-
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Unable to export map widget: " + widgetId, e);
-		}
 	}
 
 	private String getCockpitSheetName(JSONObject template, long widgetId) {

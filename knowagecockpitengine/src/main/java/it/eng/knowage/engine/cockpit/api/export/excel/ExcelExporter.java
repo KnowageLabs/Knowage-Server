@@ -191,6 +191,7 @@ public class ExcelExporter {
 		int windowSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE"));
 		try (Workbook wb = new SXSSFWorkbook(windowSize)) {
 
+			int exportedSheets = 0;
 			if (isSingleWidgetExport) {
 				long widgetId = body.getLong("widget");
 				String widgetType = getWidgetTypeFromCockpitTemplate(templateString, widgetId);
@@ -198,13 +199,16 @@ public class ExcelExporter {
 				if (options != null && !options.isEmpty())
 					optionsObj = new JSONObject(options);
 				WidgetXLSXExporter widgetExporter = new WidgetXLSXExporter(this, widgetType, templateString, widgetId, wb, optionsObj);
-				widgetExporter.export();
+				exportedSheets = widgetExporter.export();
 			} else {
 				// export whole cockpit
 				JSONArray widgetsJson = getWidgetsJson(templateString);
 				JSONObject optionsObj = buildOptionsForCrosstab(templateString);
-				exportCockpit(templateString, widgetsJson, wb, optionsObj);
+				exportedSheets = exportCockpit(templateString, widgetsJson, wb, optionsObj);
 			}
+
+			if (exportedSheets == 0)
+				exportEmptyExcel(wb);
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			wb.write(out);
@@ -335,35 +339,34 @@ public class ExcelExporter {
 		}
 	}
 
-	private void exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj) {
+	private int exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj) {
+		int exportedSheets = 0;
 		try {
-			int totExportedWidgets = 0;
 			for (int i = 0; i < widgetsJson.length(); i++) {
 				JSONObject currWidget = widgetsJson.getJSONObject(i);
 				String widgetId = currWidget.getString("id");
 				String widgetType = currWidget.getString("type");
 				if (Arrays.asList(WIDGETS_TO_IGNORE).contains(widgetType.toLowerCase()))
 					continue;
-				totExportedWidgets++;
 				JSONObject currWidgetOptions = new JSONObject();
 				if (optionsObj.has(widgetId))
 					currWidgetOptions = optionsObj.getJSONObject(widgetId);
 				WidgetXLSXExporter widgetExporter = new WidgetXLSXExporter(this, widgetType, templateString, Long.parseLong(widgetId), wb, currWidgetOptions);
-				widgetExporter.export();
-			}
-			if (totExportedWidgets == 0) {
-				exportEmptyExcel(wb);
+				exportedSheets += widgetExporter.export();
 			}
 		} catch (Exception e) {
 			logger.error("Error while exporting cockpit. Operation aborted.", e);
 		}
+		return exportedSheets;
 	}
 
 	private void exportEmptyExcel(Workbook wb) {
-		Sheet sh = wb.createSheet();
-		Row row = sh.createRow(0);
-		Cell cell = row.createCell(0);
-		cell.setCellValue("No data");
+		if (wb.getNumberOfSheets() == 0) {
+			Sheet sh = wb.createSheet();
+			Row row = sh.createRow(0);
+			Cell cell = row.createCell(0);
+			cell.setCellValue("No data");
+		}
 	}
 
 	protected JSONArray getMultiDataStoreForWidget(JSONObject template, JSONObject widget) {
