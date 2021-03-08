@@ -50,7 +50,7 @@ public class UserInformationBO {
 	private Date dtLastAccess;
 	private Integer defaultRoleId;
 	private boolean blockedByFailedLoginAttempts;
-	private Object attributes;
+	private Map<String, Object> attributes;
 
 	public UserInformationBO(UserBO user) throws EMFUserError {
 		this.id = user.getId();
@@ -161,11 +161,11 @@ public class UserInformationBO {
 		this.blockedByFailedLoginAttempts = blockedByFailedLoginAttempts;
 	}
 
-	public Object getAttributes() {
+	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(Object attributes) {
+	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
 
