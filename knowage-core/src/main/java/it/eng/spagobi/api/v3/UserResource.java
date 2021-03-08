@@ -92,13 +92,13 @@ public class UserResource extends AbstractSpagoBIResource {
 			Locale locale = m.getLocale(httpRequest);
 			ObjectNode documentsObjectNode = null;
 			try {
-				documentsJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(userInformationBO, locale);
+				documentsJSON = (JSONObject) SerializerFactory.getSerializer(MediaType.APPLICATION_JSON).serialize(userInformationBO, locale);
 				if (documentsJSON != null)
 					documentsObjectNode = documentsJSON.getWrappedObject();
 			} catch (SerializationException e) {
 				String message = "Error serializing menus for user";
 				logger.error(message, e);
-				return Response.status(Response.Status.EXPECTATION_FAILED).entity(message).build();
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(message).build();
 			}
 
 			return Response.ok(documentsObjectNode).build();
