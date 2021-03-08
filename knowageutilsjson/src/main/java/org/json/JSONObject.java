@@ -481,7 +481,7 @@ public class JSONObject extends AbstractJSONObject implements ICommonObject, Ser
 	}
 
 	/**
-	 * Put a key/value pair in the JSONObject. If the value is null, then the key will be removed from the JSONObject if it is present.
+	 * Put a key/value pair in the JSONObject. If the value is null, then the key will NOT be removed from the JSONObject if it is present.
 	 *
 	 * @param key   A key string.
 	 * @param value An object which is the value. It should be of one of these types: Boolean, Double, Integer, JSONArray, JSONObject, Long, String, or the
@@ -493,41 +493,38 @@ public class JSONObject extends AbstractJSONObject implements ICommonObject, Ser
 		if (key == null) {
 			throw new JSONException("Null key");
 		}
-		if (value != null) {
-			Object wrappedValue = JacksonWrapper.wrap(value);
-			if (wrappedValue instanceof Byte) {
-				rootNode.put(key, (Byte) wrappedValue);
-			} else if (wrappedValue instanceof Character) {
-				rootNode.put(key, (Character) wrappedValue);
-			} else if (wrappedValue instanceof Short) {
-				rootNode.put(key, (Short) wrappedValue);
-			} else if (wrappedValue instanceof Integer) {
-				rootNode.put(key, (Integer) wrappedValue);
-			} else if (wrappedValue instanceof Long) {
-				rootNode.put(key, (Long) wrappedValue);
-			} else if (wrappedValue instanceof Boolean) {
-				rootNode.put(key, (Boolean) wrappedValue);
-			} else if (wrappedValue instanceof Float) {
-				rootNode.put(key, (Float) wrappedValue);
-			} else if (wrappedValue instanceof Double) {
-				rootNode.put(key, (Double) wrappedValue);
-			} else if (wrappedValue instanceof BigDecimal) {
-				rootNode.put(key, (BigDecimal) wrappedValue);
-			} else if (wrappedValue instanceof BigInteger) {
-				rootNode.put(key, (BigInteger) wrappedValue);
-			} else if (wrappedValue instanceof String) {
-				rootNode.put(key, (String) wrappedValue);
-			} else if (wrappedValue instanceof JSONObject) {
-				ObjectNode node = ((JSONObject) wrappedValue).getWrappedObject();
-				rootNode.put(key, node);
-			} else if (wrappedValue instanceof JSONArray) {
-				ArrayNode node = ((JSONArray) wrappedValue).getWrappedObject();
-				rootNode.put(key, node);
-			} else if (wrappedValue == NullNode.instance) {
-				rootNode.put(key, NullNode.instance);
-			}
-		} else {
-			this.remove(key);
+		
+		Object wrappedValue = JacksonWrapper.wrap(value);
+		if (wrappedValue instanceof Byte) {
+			rootNode.put(key, (Byte) wrappedValue);
+		} else if (wrappedValue instanceof Character) {
+			rootNode.put(key, (Character) wrappedValue);
+		} else if (wrappedValue instanceof Short) {
+			rootNode.put(key, (Short) wrappedValue);
+		} else if (wrappedValue instanceof Integer) {
+			rootNode.put(key, (Integer) wrappedValue);
+		} else if (wrappedValue instanceof Long) {
+			rootNode.put(key, (Long) wrappedValue);
+		} else if (wrappedValue instanceof Boolean) {
+			rootNode.put(key, (Boolean) wrappedValue);
+		} else if (wrappedValue instanceof Float) {
+			rootNode.put(key, (Float) wrappedValue);
+		} else if (wrappedValue instanceof Double) {
+			rootNode.put(key, (Double) wrappedValue);
+		} else if (wrappedValue instanceof BigDecimal) {
+			rootNode.put(key, (BigDecimal) wrappedValue);
+		} else if (wrappedValue instanceof BigInteger) {
+			rootNode.put(key, (BigInteger) wrappedValue);
+		} else if (wrappedValue instanceof String) {
+			rootNode.put(key, (String) wrappedValue);
+		} else if (wrappedValue instanceof JSONObject) {
+			ObjectNode node = ((JSONObject) wrappedValue).getWrappedObject();
+			rootNode.put(key, node);
+		} else if (wrappedValue instanceof JSONArray) {
+			ArrayNode node = ((JSONArray) wrappedValue).getWrappedObject();
+			rootNode.put(key, node);
+		} else if (wrappedValue == NullNode.instance) {
+			rootNode.put(key, NullNode.instance);
 		}
 
 		return this;
