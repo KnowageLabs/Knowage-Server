@@ -76,6 +76,7 @@ public class UserFunctionalityDAO extends AbstractHibernateDAO implements IUserF
 					}
 				} else {
 					logger.warn("The role " + roles[i] + "doesn't exist in SBI_EXT_ROLES");
+
 				}
 			}
 			logger.debug("Role type=" + roleTypes);
@@ -85,35 +86,37 @@ public class UserFunctionalityDAO extends AbstractHibernateDAO implements IUserF
 			// ADDED
 			// Get corresponding Product Type Id for roles'tenants
 			Set<Integer> productTypesId = new HashSet<Integer>();
-			for (String tenant : roleTypesTenant) {
-				String hql = "from SbiOrganizationProductType opt where opt.commonInfo.organization=?";
-				Query query = aSession.createQuery(hql);
-				query.setParameter(0, tenant);
-				List productTypes = query.list();
-				Iterator iter = productTypes.iterator();
-				while (iter.hasNext()) {
-					SbiOrganizationProductType sbiOrganizationProductType = (SbiOrganizationProductType) iter.next();
-					productTypesId.add(sbiOrganizationProductType.getSbiProductType().getProductTypeId());
+			if (!roleTypesTenant.isEmpty()) {
+				for (String tenant : roleTypesTenant) {
+					String hql = "from SbiOrganizationProductType opt where opt.commonInfo.organization=?";
+					Query query = aSession.createQuery(hql);
+					query.setParameter(0, tenant);
+					List productTypes = query.list();
+					Iterator iter = productTypes.iterator();
+					while (iter.hasNext()) {
+						SbiOrganizationProductType sbiOrganizationProductType = (SbiOrganizationProductType) iter.next();
+						productTypesId.add(sbiOrganizationProductType.getSbiProductType().getProductTypeId());
+					}
 				}
-			}
 
-			if (productTypesId.isEmpty()) {
-				throw new SpagoBIException("No Product Types found for the user");
-			}
+				if (productTypesId.isEmpty()) {
+					throw new SpagoBIException("No Product Types found for the user");
+				}
 
-			String hql = "Select distinct suf.name from SbiUserFunctionality suf left join suf.roleType rt " + "where rt.valueCd IN (:ROLE_TYPES) "
-					+ " and rt.domainCd='ROLE_TYPE'" + " and suf.productType.productTypeId IN (:PRODUCT_TYPES) ";
-			Query query = aSession.createQuery(hql);
-			query.setParameterList("ROLE_TYPES", roleTypes);
-			query.setParameterList("PRODUCT_TYPES", productTypesId);
-			List userFuncList = query.list();
-			Iterator iter = userFuncList.iterator();
-			while (iter.hasNext()) {
-				String tmp = (String) iter.next();
-				toReturn.add(tmp);
-				logger.debug("Add Functionality=" + tmp);
+				String hql = "Select distinct suf.name from SbiUserFunctionality suf left join suf.roleType rt " + "where rt.valueCd IN (:ROLE_TYPES) "
+						+ " and rt.domainCd='ROLE_TYPE'" + " and suf.productType.productTypeId IN (:PRODUCT_TYPES) ";
+				Query query = aSession.createQuery(hql);
+				query.setParameterList("ROLE_TYPES", roleTypes);
+				query.setParameterList("PRODUCT_TYPES", productTypesId);
+				List userFuncList = query.list();
+				Iterator iter = userFuncList.iterator();
+				while (iter.hasNext()) {
+					String tmp = (String) iter.next();
+					toReturn.add(tmp);
+					logger.debug("Add Functionality=" + tmp);
+				}
+				tx.commit();
 			}
-			tx.commit();
 		} catch (HibernateException he) {
 			if (tx != null)
 				tx.rollback();
