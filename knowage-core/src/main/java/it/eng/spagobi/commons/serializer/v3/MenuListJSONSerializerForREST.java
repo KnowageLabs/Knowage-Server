@@ -399,17 +399,20 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 				for (Object groupItem : menuCategory) {
 
-					List itemsSBList = ((SourceBean) groupItem).getAttributeAsList(ITEM);
+					if (isLicensedMenu(((SourceBean) groupItem))) {
 
-					JSONArray children = createItemsArray(locale, messageBuilder, funcs, itemsSBList);
+						List itemsSBList = ((SourceBean) groupItem).getAttributeAsList(ITEM);
 
-					if (children.length() > 0) {
+						JSONArray children = createItemsArray(locale, messageBuilder, funcs, itemsSBList);
 
-						SourceBean objSB = (SourceBean) groupItem;
-						JSONObject groupItemJSON = createMenuNode(locale, messageBuilder, objSB);
-						groupItemJSON.put(ITEMS, children);
+						if (children.length() > 0) {
 
-						tempMenuList.put(groupItemJSON);
+							SourceBean objSB = (SourceBean) groupItem;
+							JSONObject groupItemJSON = createMenuNode(locale, messageBuilder, objSB);
+							groupItemJSON.put(ITEMS, children);
+
+							tempMenuList.put(groupItemJSON);
+						}
 					}
 				}
 
@@ -431,9 +434,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 			SourceBean itemSB = (SourceBean) item;
 			String type = (String) itemSB.getAttribute(TYPE);
-			String condition = (String) itemSB.getAttribute(CONDITION);
 
-			if (type == null || isAbleTo(type, funcs) || (condition != null && menuConditionIsSatisfied(condition))) {
+			if (type == null || isAbleTo(type, funcs) || menuConditionIsSatisfied(itemSB) || isLicensedMenu(itemSB)) {
 
 				JSONObject menu = createMenuNode(locale, messageBuilder, itemSB);
 				items.put(menu);
@@ -443,8 +445,25 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return items;
 	}
 
-	private boolean menuConditionIsSatisfied(String condition) {
+	private boolean isLicensedMenu(SourceBean itemSB) {
+		boolean isLicensed = false;
+		String label = (String) itemSB.getAttribute(LABEL);
+		if (label != null && !label.isEmpty() && (label.equals("menu.ServerManager") || label.equals("menu.CacheManagement"))) {
+			try {
+				Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+				isLicensed = true;
+			} catch (ClassNotFoundException e) {
+				isLicensed = false;
+			}
+		}
+
+		return isLicensed;
+	}
+
+	private boolean menuConditionIsSatisfied(SourceBean itemSB) {
 		boolean isSatisfied = false;
+
+		String condition = (String) itemSB.getAttribute(CONDITION);
 		if (condition != null && !condition.isEmpty()) {
 			switch (condition) {
 
@@ -484,6 +503,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		} else {
 			isSatisfied = true;
 		}
+
 		return isSatisfied;
 	}
 
