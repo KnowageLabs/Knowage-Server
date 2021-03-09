@@ -40,9 +40,9 @@
 			};
 
 			dependencyService.buildCorrelation = function(parameters, execProperties){
-				dependencyService.buildVisualCorrelationMap(parameters,execProperties);
-				dependencyService.buildDataDependenciesMap(parameters,execProperties);
-				dependencyService.buildLovCorrelationMap(parameters,execProperties);
+				dependencyService.buildVisualCorrelationMap(parameters);
+				dependencyService.buildDataDependenciesMap(parameters);
+				dependencyService.buildLovCorrelationMap(parameters);
 				//INIT VISUAL CORRELATION PARAMS
 				for(var i=0; i<parameters.length; i++){
 					dependencyService.updateVisualDependency(parameters[i],execProperties);
