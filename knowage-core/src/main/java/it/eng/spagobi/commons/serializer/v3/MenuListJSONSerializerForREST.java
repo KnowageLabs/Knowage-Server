@@ -47,6 +47,8 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.profiling.PublicProfile;
+import it.eng.spagobi.security.InternalSecurityServiceSupplierImpl;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.wapp.bo.Menu;
@@ -58,7 +60,19 @@ import it.eng.spagobi.wapp.util.MenuUtilities;
  */
 public class MenuListJSONSerializerForREST implements Serializer {
 
+	private static final String CONDITION = "condition";
+
 	static private Logger logger = Logger.getLogger(MenuListJSONSerializerForREST.class);
+
+	private static final String TYPE = "type";
+	private static final String GROUP_ITEM = "GROUP_ITEM";
+	private static final String ITEM = "ITEM";
+	private static final String USER = "USER";
+	private static final String FIXED = "FIXED";
+	private static final String ADMIN = "ADMIN";
+	private static final String LABEL = "label";
+	private static final String ITEMS = "items";
+	private static final String TO = "to";
 
 	public static final String ID = "id";
 	public static final String TITLE = "title";
@@ -67,23 +81,17 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	public static final String ICON = "icon";
 	public static final String CUST_ICON = "custIcon";
 	public static final String ICON_CLS = "iconCls";
-//	public static final String ICON_ALIGN = "iconAlign";
-//	public static final String SCALE = "scale";
-	public static final String TOOLTIP = "tooltip";
 	public static final String SRC = "src";
 	public static final String XTYPE = "xtype";
 	public static final String PATH = "path";
 	public static final String HREF = "href";
 	public static final String FIRST_URL = "firstUrl";
-	public static final String LINK_TYPE = "linkType";
 
 	public static final String MENU = "menu";
 
 	public static final String NAME = "name";
 	public static final String TEXT = "text";
 	public static final String DESCR = "descr";
-	public static final String ITEMS = "items";
-	public static final String LABEL = "itemLabel";
 	public static final String INFO = "INFO";
 	public static final String ROLE = "ROLE";
 	public static final String LANG = "LANG";
@@ -160,105 +168,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		}
 
 		try {
-			List filteredMenuList = (List) o;
-			JSONArray tempFirstLevelMenuList = new JSONArray();
-			JSONArray userMenu = new JSONArray();
-			if (filteredMenuList != null && !filteredMenuList.isEmpty()) {
-				result = new JSONObject();
-
-				JSONArray menuUserList = new JSONArray();
-				MessageBuilder msgBuild = new MessageBuilder();
-
-				JSONObject personal = new JSONObject(); // MB
-
-//				String userMenuMessage = msgBuild.getMessage("menu.UserMenu", locale);
-//				personal.put(ICON_CLS, "spagobi");
-//				personal.put(TOOLTIP, userMenuMessage);
-//				personal.put(PATH, userMenuMessage);
-//
-//				tempFirstLevelMenuList.put(personal);
-//				boolean isAdmin = false;
-//				for (int i = 0; i < filteredMenuList.size(); i++) {
-//					Menu menuElem = (Menu) filteredMenuList.get(i);
-//					String path = MenuUtilities.getMenuPath(filteredMenuList, menuElem, locale);
-//
-//					if (menuElem.getLevel().intValue() == 1) {
-//
-//						JSONObject temp = new JSONObject();
-//
-//						if (!menuElem.isAdminsMenu()) {
-//							// Create custom Menu elements (menu defined by the
-//							// users)
-//
-//							menuUserList = createUserMenuElement(filteredMenuList, menuElem, locale, 1, menuUserList);
-//							personal.put(MENU, menuUserList);
-//
-//							if (menuElem.getHasChildren()) {
-//
-//								List lstChildrenLev2 = menuElem.getLstChildren();
-//								JSONArray tempMenuList2 = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1, locale);
-//								temp.put(MENU, tempMenuList2);
-//							}
-//						} else {
-//							// This part create the elements for the admin menu
-//							isAdmin = true;
-//
-//							temp.put(ICON_CLS, menuElem.getIconCls());
-//
-//							String text = "";
-//							if (!menuElem.isAdminsMenu() || !menuElem.getName().startsWith("#"))
-//
-//								// text = msgBuild.getI18nMessage(locale, menuElem.getName());
-//								text = menuElem.getName();
-//							else {
-//								if (menuElem.getName().startsWith("#")) {
-//									String titleCode = menuElem.getName().substring(1);
-//									text = msgBuild.getMessage(titleCode, locale);
-//								} else {
-//									text = menuElem.getName();
-//								}
-//							}
-//							temp.put(TOOLTIP, text);
-////							temp.put(ICON_ALIGN, "top");
-////							temp.put(SCALE, "large");
-//							temp.put(PATH, path);
-////							temp.put(TARGET, "_self");
-//
-//							// if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin_angular")) {
-//							if (menuElem.getCode() != null
-//									&& (menuElem.getCode().equals("doc_admin_angular") || menuElem.getCode().equals("doc_test_angular"))) {
-//								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_ANGULAR + "', '" + text + "')");
-//								temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER_ANGULAR);
-//								temp.put(LINK_TYPE, "execDirectUrl");
-//							}
-//
-//							/**
-//							 * The URL for the Workspace web page.
-//							 *
-//							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-//							 */
-//							if (menuElem.getCode() != null && menuElem.getCode().equals("workspace")) {
-//
-//								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_WORKSPACE + "', '" + text + "')");
-//								temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER_WORKSPACE);
-//								temp.put(LINK_TYPE, "execDirectUrl");
-//
-//							}
-//
-//							if (menuElem.getHasChildren()) {
-//								List lstChildrenLev2 = menuElem.getLstChildren();
-//								JSONArray tempMenuList = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1, locale);
-//								temp.put(MENU, tempMenuList);
-//							}
-//							if (menuElem.getCode().equals("doc_test_angular") && UserUtilities.isAdministrator(this.getUserProfile())) {
-//								continue;
-//							}
-//
-//							userMenu.put(temp);
-//						}
-//					}
-//				}
-			}
 //
 //			if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
 //				userMenu = createEndUserMenu(locale, 1, new JSONArray());
@@ -288,14 +197,17 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			}
 
 			JSONArray fixedMenuJSONArray = createFixedMenu(menuDefinitionFile, locale);
-			JSONArray adminMenuJSONArray = createAdminMenu(menuDefinitionFile, locale);
 
-			JSONArray userMenuJSONArray = new JSONArray();
-			if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
-				userMenuJSONArray = createUserMenu(menuDefinitionFile, locale);
+			JSONArray adminMenuJSONArray = new JSONArray();
+			if (UserUtilities.isTechnicalUser(this.getUserProfile())) {
+				adminMenuJSONArray = createAdminMenu(menuDefinitionFile, locale);
 			}
 
-			JSONArray customMenuJSONArray = createCustomMenu(menuDefinitionFile, locale);
+			JSONArray userMenuJSONArray = new JSONArray();
+			userMenuJSONArray = createUserMenu(menuDefinitionFile, locale);
+
+			List filteredMenuList = (List) o;
+			JSONArray customMenuJSONArray = createCustomMenu(filteredMenuList, locale);
 
 			JSONObject wholeMenu = new JSONObject();
 			wholeMenu.put("fixedMenu", fixedMenuJSONArray);
@@ -305,8 +217,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 			result = wholeMenu;
 
-//			createEndUserMenu(locale, 5, new JSONArray());
-
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
@@ -315,276 +225,155 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return result;
 	}
 
-	private JSONArray createEndUserMenu(Locale locale, int level, JSONArray tempMenuList) throws JSONException, EMFUserError, EMFInternalError {
-
-		MessageBuilder messageBuilder = new MessageBuilder();
-
-		List funcs = (List) userProfile.getFunctionalities();
-
-		String strActiveSignup = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
-		boolean activeSignup = strActiveSignup.equalsIgnoreCase("true");
-
-		String strMyAccountMenu = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.MY_ACCOUNT_MENU");
-		boolean myAccountMenu = !"false".equalsIgnoreCase(strMyAccountMenu); // default value is true, for backward compatibility
-
-		String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
-		boolean isInternalSecurityServiceSupplier = securityServiceSupplier.equalsIgnoreCase("it.eng.spagobi.security.InternalSecurityServiceSupplierImpl");
-		boolean isPublicUser = userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID);
-		if (isInternalSecurityServiceSupplier && !isPublicUser && myAccountMenu) {
-			// build myAccount
-			JSONObject myAccount = new JSONObject();
-
-			myAccount.put(ICON_CLS, "fa fa-2x fa-address-card");
-			myAccount.put(TOOLTIP, "My Account");
-			myAccount.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + "/restful-services/signup/prepareUpdate', \'Modify user\')");
-			myAccount.put(FIRST_URL, contextName + "/restful-services/signup/prepareUpdate");
-			myAccount.put(LINK_TYPE, "execDirectUrl");
-
-			tempMenuList.put(myAccount);
-		}
-
-		// workspace is added unconditionally
-
-		String strSbiSocialAnalysisStatus = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE");
-		boolean sbiSocialAnalysisStatus = "TRUE".equalsIgnoreCase(strSbiSocialAnalysisStatus);
-		JSONObject socialAnalysis = new JSONObject();
-		socialAnalysis.put(ICON_CLS, "public");
-		socialAnalysis.put(TOOLTIP, messageBuilder.getMessage("menu.SocialAnalysis", locale));
-		socialAnalysis.put(HREF,
-				"javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString()
-						+ "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry()
-						+ "');");
-		socialAnalysis.put(FIRST_URL, HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&"
-				+ SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry());
-		socialAnalysis.put(LINK_TYPE, "execDirectUrl");
-
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.SocialAnalysis",
-				SpagoBIConstants.CREATE_SOCIAL_ANALYSIS, socialAnalysis.get(FIRST_URL), socialAnalysis.get(ICON_CLS)));
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.SocialAnalysis",
-				SpagoBIConstants.VIEW_SOCIAL_ANALYSIS, socialAnalysis.get(FIRST_URL), socialAnalysis.get(ICON_CLS)));
-		tempMenuList.put(socialAnalysis);
-
-		JSONObject glossaryManagementTechnical = new JSONObject();
-		glossaryManagementTechnical.put(ICON_CLS, "fa fa-2x fa-book");
-		glossaryManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.glossary.technical", locale));
-		glossaryManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_GLOSSARY_TECHNICAL + "');");
-		glossaryManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_GLOSSARY_TECHNICAL);
-		glossaryManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-		tempMenuList.put(glossaryManagementTechnical);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.glossary.technical",
-				SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL, glossaryManagementTechnical.get(FIRST_URL), glossaryManagementTechnical.get(ICON_CLS)));
-
-		glossaryManagementTechnical = new JSONObject();
-		glossaryManagementTechnical.put(ICON_CLS, "fa fa-2x fa-building");
-		glossaryManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.glossary.business", locale));
-		glossaryManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_GLOSSARY_BUSINESS + "');");
-		glossaryManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_GLOSSARY_BUSINESS);
-		glossaryManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-		tempMenuList.put(glossaryManagementTechnical);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.glossary.business",
-				SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS, glossaryManagementTechnical.get(FIRST_URL), glossaryManagementTechnical.get(ICON_CLS)));
-
-//			JSONObject o = new JSONObject();
-//			o.put(ICON_CLS, "fa fa-2x fa-exchange");
-//			o.put(label, messageBuilder.getMessage("menu.cross.definition", locale));
-////			o.put(ICON_ALIGN, "top");
-////			o.put(SCALE, "large");
-////			o.put(TARGET, "_self");
-//			o.put(to, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_CROSS_DEFINITION + "');");
-//			o.put(FIRST_URL, contextName + HREF_MANAGE_CROSS_DEFINITION);
-//			o.put(LINK_TYPE, "execDirectUrl");
-//			o.put(command, "function()")
-//			tempMenuList.put(o);
-
-		JSONObject calendar = new JSONObject();
-		calendar.put(ICON_CLS, "fa fa-2x fa-calendar");
-		calendar.put(TOOLTIP, messageBuilder.getMessage("menu.calendar", locale));
-		calendar.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_CALENDAR + "');");
-		calendar.put(FIRST_URL, contextName + HREF_CALENDAR);
-		calendar.put(LINK_TYPE, "execDirectUrl");
-		tempMenuList.put(calendar);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.calendar",
-				SpagoBIConstants.MANAGE_CALENDAR, calendar.get(FIRST_URL), calendar.get(ICON_CLS)));
-
-		JSONObject lovsManagementTechnical = new JSONObject();
-		lovsManagementTechnical.put(ICON_CLS, "fa fa-2x fa-list");
-		lovsManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.lovs.management", locale)); // TODO
-		lovsManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_LOVS + "');");
-		lovsManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_LOVS);
-		lovsManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-		tempMenuList.put(lovsManagementTechnical);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.lovs.management",
-				SpagoBIConstants.LOVS_MANAGEMENT, lovsManagementTechnical.get(FIRST_URL), lovsManagementTechnical.get(ICON_CLS)));
-		// add
-
-		JSONObject tenantManagementTechnical = new JSONObject();
-		tenantManagementTechnical.put(ICON_CLS, "insert_drive_file");
-		tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.template.management", locale)); // TODO
-		tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_TEMPLATE_MANAGEMENT + "');");
-		tenantManagementTechnical.put(FIRST_URL, contextName + HREF_TEMPLATE_MANAGEMENT);
-		tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-		tempMenuList.put(tenantManagementTechnical);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.template.management",
-				SpagoBIConstants.TEMPLATE_MANAGEMENT, tenantManagementTechnical.get(FIRST_URL), tenantManagementTechnical.get(ICON_CLS)));
-
-		tenantManagementTechnical = new JSONObject();
-		tenantManagementTechnical.put(ICON_CLS, "description");
-		tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.importexport.document", locale)); // TODO
-		tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_IMPEXP_DOCUMENT + "');");
-		tenantManagementTechnical.put(FIRST_URL, contextName + HREF_IMPEXP_DOCUMENT);
-		tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-		tempMenuList.put(tenantManagementTechnical);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.importexport.document",
-				SpagoBIConstants.IMP_EXP_DOCUMENT, tenantManagementTechnical.get(FIRST_URL), tenantManagementTechnical.get(ICON_CLS)));
-
-		tenantManagementTechnical = new JSONObject();
-		tenantManagementTechnical.put(ICON_CLS, "rotate_90_degrees_ccw");
-		tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.importexport.resources", locale)); // TODO
-		tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_IMPEXP_RESOURCE + "');");
-		tenantManagementTechnical.put(FIRST_URL, contextName + HREF_IMPEXP_RESOURCE);
-		tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-		tempMenuList.put(tenantManagementTechnical);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.importexport.resources",
-				SpagoBIConstants.IMP_EXP_RESOURCES, tenantManagementTechnical.get(FIRST_URL), tenantManagementTechnical.get(ICON_CLS)));
-
-		tenantManagementTechnical = new JSONObject();
-		tenantManagementTechnical.put(ICON_CLS, "portrait");
-		tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.importexport.users", locale)); // TODO
-		tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_IMPEXP_USER + "');");
-		tenantManagementTechnical.put(FIRST_URL, contextName + HREF_IMPEXP_USER);
-		tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-		tempMenuList.put(tenantManagementTechnical);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.importexport.users",
-				SpagoBIConstants.IMP_EXP_USERS, tenantManagementTechnical.get(FIRST_URL), tenantManagementTechnical.get(ICON_CLS)));
-
-		tenantManagementTechnical = new JSONObject();
-		tenantManagementTechnical.put(ICON_CLS, "portrait");
-		tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.importexport.glossary", locale)); // TODO
-		tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_IMPEXP_USER + "');");
-		tenantManagementTechnical.put(FIRST_URL, contextName + HREF_IMPEXP_USER);
-		tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-		tempMenuList.put(tenantManagementTechnical);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.importexport.glossary",
-				SpagoBIConstants.IMP_EXP_GLOSSARY, tenantManagementTechnical.get(FIRST_URL), tenantManagementTechnical.get(ICON_CLS)));
-
-		tenantManagementTechnical = new JSONObject();
-		tenantManagementTechnical.put(ICON_CLS, "style"); // TODO: change
-															// icon
-		tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.importexport.catalog", locale)); // TODO
-		tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_IMPEXP_CATALOG + "');");
-		tenantManagementTechnical.put(FIRST_URL, contextName + HREF_IMPEXP_CATALOG);
-		tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-		tempMenuList.put(tenantManagementTechnical);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.importexport.catalog",
-				SpagoBIConstants.IMP_EXP_CATALOG, tenantManagementTechnical.get(FIRST_URL), tenantManagementTechnical.get(ICON_CLS)));
-
-		JSONObject i18n = new JSONObject();
-		i18n.put(ICON_CLS, "fa fa-2x fa-flag");
-		i18n.put(TOOLTIP, messageBuilder.getMessage("menu.i18n", locale));
-		i18n.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_I18N + "');");
-		i18n.put(FIRST_URL, contextName + HREF_I18N);
-		i18n.put(LINK_TYPE, "execDirectUrl");
-		tempMenuList.put(i18n);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.i18n",
-				SpagoBIConstants.MANAGE_INTERNATIONALIZATION, i18n.get(FIRST_URL), i18n.get(ICON_CLS)));
-
-		// if (isAbleTo(SpagoBIConstants.SEE_NEWS, funcs)) {
-		JSONObject news = new JSONObject();
-		news.put(ICON_CLS, "fa fa-2x fa-newspaper-o");
-		news.put(TOOLTIP, messageBuilder.getMessage("menu.news", locale));
-		news.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_I18N + "');");
-		news.put(FIRST_URL, contextName + HREF_I18N);
-		news.put(LINK_TYPE, "news");
-		tempMenuList.put(news);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.news", SpagoBIConstants.SEE_NEWS,
-				news.get(FIRST_URL), news.get(ICON_CLS)));
-		// }
-
-		JSONObject download = new JSONObject();
-		download.put(ICON_CLS, "fa fa-2x fa-download");
-		download.put(TOOLTIP, messageBuilder.getMessage("menu.Download", locale));
-		download.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_I18N + "');");
-		download.put(FIRST_URL, contextName + HREF_I18N);
-		download.put(LINK_TYPE, "downloads");
-		tempMenuList.put(download);
-		System.out.println(String.format("<ITEM label=\"%s\" functionality=\"%s\" to=\"%s\" iconCls=\"%s\" />", "menu.Download", "", download.get(FIRST_URL),
-				download.get(ICON_CLS)));
-
-		// end
-		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
-		JSONObject myFolder = new JSONObject();
-		if (personalFolder != null) {
-			Integer persFoldId = personalFolder.getId();
-			myFolder = createMenuItem("folder_special", "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&node=" + persFoldId,
-					messageBuilder.getMessage("menu.MyFolder", locale), true, null);
-			tempMenuList.put(myFolder);
-		}
-
-		return tempMenuList;
-	}
-
-	private JSONObject createMenuItem(String icon, String href, String tooltip, boolean idDirectLink, String label) throws JSONException {
-		JSONObject menuItem = new JSONObject();
-		menuItem.put(ICON_CLS, icon);
-		if (label != null) {
-			menuItem.put(LABEL, label);
-		}
-		if (idDirectLink) {
-			menuItem.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + href + "', '" + tooltip + "')");
-			menuItem.put(LINK_TYPE, "execDirectUrl");
-			menuItem.put(FIRST_URL, contextName + href);
-		} else {
-			if (label != null && label.equals(INFO)) {
-				menuItem.put(HREF, "javascript:info()");
-				menuItem.put(LINK_TYPE, "info");
-			} else if (label != null && label.equals(ROLE)) {
-				menuItem.put(HREF, "javascript:roleSelection()");
-				menuItem.put(LINK_TYPE, "roleSelection");
-			} else if (label != null && label.equals(LANG)) {
-				menuItem.put(LINK_TYPE, "languageSelection");
-			} else if (label != null && label.equals(HELP)) {
-				menuItem.put(HREF, "http://wiki.spagobi.org/xwiki/bin/view/Main/");
-				menuItem.put(FIRST_URL, "http://wiki.spagobi.org/xwiki/bin/view/Main/");
-				menuItem.remove(TARGET);
-				menuItem.put(TARGET, "_blank");
-			} else if (href != null && href.length() > 0) {
-				menuItem.put(HREF, "javascript:execUrl('" + contextName + href + "')");
-				menuItem.put(LINK_TYPE, "execUrl");
-			}
-		}
-
-		if (label != null && label.equals(HELP)) {
-			menuItem.put(LINK_TYPE, "externalUrl");
-		} else {
-			menuItem.put(FIRST_URL, contextName + href);
-		}
-		return menuItem;
-	}
+//	private JSONObject createMenuItem(String icon, String href, String tooltip, boolean idDirectLink, String label) throws JSONException {
+//		JSONObject menuItem = new JSONObject();
+//		menuItem.put(ICON_CLS, icon);
+//		if (label != null) {
+//			menuItem.put(LABEL, label);
+//		}
+//		if (idDirectLink) {
+//			menuItem.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + href + "', '" + tooltip + "')");
+//			menuItem.put(FIRST_URL, contextName + href);
+//		} else {
+//			if (label != null && label.equals(INFO)) {
+//				menuItem.put(HREF, "javascript:info()");
+//			} else if (label != null && label.equals(ROLE)) {
+//				menuItem.put(HREF, "javascript:roleSelection()");
+//			} else if (label != null && label.equals(LANG)) {
+//			} else if (label != null && label.equals(HELP)) {
+//				menuItem.put(HREF, "http://wiki.spagobi.org/xwiki/bin/view/Main/");
+//				menuItem.put(FIRST_URL, "http://wiki.spagobi.org/xwiki/bin/view/Main/");
+//				menuItem.remove(TARGET);
+//				menuItem.put(TARGET, "_blank");
+//			} else if (href != null && href.length() > 0) {
+//				menuItem.put(HREF, "javascript:execUrl('" + contextName + href + "')");
+//			}
+//		}
+//
+//		if (label != null && label.equals(HELP)) {
+//		} else {
+//			menuItem.put(FIRST_URL, contextName + href);
+//		}
+//		return menuItem;
+//	}
 
 	private JSONArray createUserMenu(SourceBean menuDefinitionFile, Locale locale) throws JSONException {
 
 		logger.debug("IN");
 
-		return createMenu(menuDefinitionFile, locale, "USER", false);
+		JSONArray userMenu = createMenu(menuDefinitionFile, locale, USER, false);
+
+		logger.debug("OUT");
+
+		return userMenu;
 	}
 
 	private JSONArray createFixedMenu(SourceBean menuDefinitionFile, Locale locale) throws JSONException {
 
 		logger.debug("IN");
 
-		return createMenu(menuDefinitionFile, locale, "FIXED", false);
+		JSONArray fixedMenu = createMenu(menuDefinitionFile, locale, FIXED, false);
+
+		logger.debug("OUT");
+
+		return fixedMenu;
 	}
 
 	private JSONArray createAdminMenu(SourceBean menuDefinitionFile, Locale locale) throws JSONException {
 
 		logger.debug("IN");
 
-		return createMenu(menuDefinitionFile, locale, "ADMIN", true);
+		JSONArray adminMenu = createMenu(menuDefinitionFile, locale, ADMIN, true);
+
+		logger.debug("OUT");
+
+		return adminMenu;
 	}
 
-	private JSONArray createCustomMenu(SourceBean menuDefinitionFile, Locale locale) throws JSONException {
+	private JSONArray createCustomMenu(List filteredMenuList, Locale locale) throws JSONException {
 
-		return new JSONArray();
+		JSONArray tempFirstLevelMenuList = new JSONArray();
+		JSONArray userMenu = new JSONArray();
+
+		if (filteredMenuList != null && !filteredMenuList.isEmpty()) {
+
+			JSONArray menuUserList = new JSONArray();
+			MessageBuilder msgBuild = new MessageBuilder();
+
+			JSONObject personal = new JSONObject(); // MB
+			String userMenuMessage = msgBuild.getMessage("menu.UserMenu", locale);
+			personal.put(ICON_CLS, "spagobi");
+			personal.put(LABEL, userMenuMessage);
+
+			tempFirstLevelMenuList.put(personal);
+			for (int i = 0; i < filteredMenuList.size(); i++) {
+				Menu menuElem = (Menu) filteredMenuList.get(i);
+				String path = MenuUtilities.getMenuPath(filteredMenuList, menuElem, locale);
+
+				if (menuElem.getLevel().intValue() == 1) {
+
+					JSONObject temp = new JSONObject();
+
+					if (!menuElem.isAdminsMenu()) {
+						// Create custom Menu elements (menu defined by the users)
+
+						menuUserList = createUserMenuElement(filteredMenuList, menuElem, locale, 1, menuUserList);
+						personal.put(ITEMS, menuUserList);
+
+						if (menuElem.getHasChildren()) {
+							List lstChildrenLev2 = menuElem.getLstChildren();
+							JSONArray tempMenuList2 = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1, locale);
+							temp.put(ITEMS, tempMenuList2);
+						}
+					} else {
+						// This part create the elements for the admin menu
+
+						temp.put(ICON_CLS, menuElem.getIconCls());
+
+						String text = "";
+						if (!menuElem.isAdminsMenu() || !menuElem.getName().startsWith("#"))
+							text = menuElem.getName();
+						else {
+							if (menuElem.getName().startsWith("#")) {
+								String titleCode = menuElem.getName().substring(1);
+								text = msgBuild.getMessage(titleCode, locale);
+							} else {
+								text = menuElem.getName();
+							}
+						}
+						temp.put(LABEL, text);
+						temp.put(PATH, path);
+
+						if (menuElem.getCode() != null && (menuElem.getCode().equals("doc_admin_angular") || menuElem.getCode().equals("doc_test_angular"))) {
+							temp.put(TO, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_ANGULAR + "', '" + text + "')");
+							temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER_ANGULAR);
+						}
+
+						/**
+						 * The URL for the Workspace web page.
+						 *
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						if (menuElem.getCode() != null && menuElem.getCode().equals("workspace")) {
+							temp.put(TO, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_WORKSPACE + "', '" + text + "')");
+							temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER_WORKSPACE);
+						}
+
+						if (menuElem.getHasChildren()) {
+							List lstChildrenLev2 = menuElem.getLstChildren();
+							JSONArray tempMenuList = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1, locale);
+							temp.put(ITEMS, tempMenuList);
+						}
+						if (menuElem.getCode().equals("doc_test_angular") && UserUtilities.isAdministrator(this.getUserProfile())) {
+							continue;
+						}
+
+						userMenu.put(temp);
+					}
+				}
+			}
+		}
+		return tempFirstLevelMenuList;
 	}
 
 	private JSONArray createMenu(SourceBean menuDefinitionFile, Locale locale, String attribute, boolean isAdminMenu) throws JSONException {
@@ -606,11 +395,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		if (isAdminMenu) {
 			for (Object domain : attributeList) {
 
-				List menuCategory = ((SourceBean) domain).getAttributeAsList("GROUP_ITEM");
+				List menuCategory = ((SourceBean) domain).getAttributeAsList(GROUP_ITEM);
 
 				for (Object groupItem : menuCategory) {
 
-					List itemsSBList = ((SourceBean) groupItem).getAttributeAsList("ITEM");
+					List itemsSBList = ((SourceBean) groupItem).getAttributeAsList(ITEM);
 
 					JSONArray children = createItemsArray(locale, messageBuilder, funcs, itemsSBList);
 
@@ -618,7 +407,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 						SourceBean objSB = (SourceBean) groupItem;
 						JSONObject groupItemJSON = createMenuNode(locale, messageBuilder, objSB);
-						groupItemJSON.put("items", children);
+						groupItemJSON.put(ITEMS, children);
 
 						tempMenuList.put(groupItemJSON);
 					}
@@ -627,7 +416,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			}
 		} else {
 			for (Object domain : attributeList) {
-				List itemsSBList = ((SourceBean) domain).getAttributeAsList("ITEM");
+				List itemsSBList = ((SourceBean) domain).getAttributeAsList(ITEM);
 				JSONArray children = createItemsArray(locale, messageBuilder, funcs, itemsSBList);
 				tempMenuList = children;
 			}
@@ -641,11 +430,12 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		for (Object item : itemsSBList) {
 
 			SourceBean itemSB = (SourceBean) item;
-			String type = String.valueOf(itemSB.getAttribute("type"));
-			if (itemSB.getAttribute("type") == null || isAbleTo(type, funcs) || menuConditionIsSatisfied(itemSB, funcs)) {
+			String type = (String) itemSB.getAttribute(TYPE);
+			String condition = (String) itemSB.getAttribute(CONDITION);
+
+			if (type == null || isAbleTo(type, funcs) || (condition != null && menuConditionIsSatisfied(condition))) {
 
 				JSONObject menu = createMenuNode(locale, messageBuilder, itemSB);
-
 				items.put(menu);
 			}
 		}
@@ -653,46 +443,39 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return items;
 	}
 
-	private boolean menuConditionIsSatisfied(SourceBean itemSB, List funcs) {
+	private boolean menuConditionIsSatisfied(String condition) {
 		boolean isSatisfied = false;
-		String condition = (String) itemSB.getAttribute("condition");
 		if (condition != null && !condition.isEmpty()) {
 			switch (condition) {
-			case "public_user":
 
+			case "my_account":
 				String strMyAccountMenu = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.MY_ACCOUNT_MENU");
 				boolean myAccountMenu = !"false".equalsIgnoreCase(strMyAccountMenu); // default value is true, for backward compatibility
 
 				String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
-				boolean isInternalSecurityServiceSupplier = securityServiceSupplier
-						.equalsIgnoreCase("it.eng.spagobi.security.InternalSecurityServiceSupplierImpl");
+				boolean isInternalSecurityServiceSupplier = securityServiceSupplier.equalsIgnoreCase(InternalSecurityServiceSupplierImpl.class.getName());
 				boolean isPublicUser = userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID);
 				if (isInternalSecurityServiceSupplier && !isPublicUser && myAccountMenu) {
 					isSatisfied = true;
 				}
+
 				break;
 
-			case "social_analisys":
-				String strSbiSocialAnalysisStatus = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE");
-				boolean sbiSocialAnalysisStatus = "TRUE".equalsIgnoreCase(strSbiSocialAnalysisStatus);
-				if (sbiSocialAnalysisStatus
-						&& (isAbleTo(SpagoBIConstants.CREATE_SOCIAL_ANALYSIS, funcs) || isAbleTo(SpagoBIConstants.VIEW_SOCIAL_ANALYSIS, funcs))) {
+			case "public_user":
+				if (PublicProfile.isPublicUser(userProfile.getUserUniqueIdentifier().toString())
+						|| userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)) {
 					isSatisfied = true;
 				}
 				break;
 
-			case "personal_folder":
-				LowFunctionality personalFolder;
-				try {
-					personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
-					if (personalFolder != null) {
-						isSatisfied = true;
-					}
-				} catch (EMFUserError e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			case "silent_login":
+				boolean showLogoutOnSilentLogin = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue("SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN"));
+				boolean silentLogin = Boolean.TRUE.equals(this.getHttpSession().getAttribute(SsoServiceInterface.SILENT_LOGIN));
+				// we show/don't show the logout button in case of a silent login,
+				// according to configuration
+				if (!silentLogin || showLogoutOnSilentLogin) {
+					isSatisfied = true;
 				}
-
 				break;
 
 			default:
@@ -712,13 +495,13 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		for (Object objAttribute : containedAttributes) {
 			SourceBeanAttribute attribute = (SourceBeanAttribute) objAttribute;
 
-			if (!attribute.getKey().equals("ITEM") && attribute.getValue() != null && !String.valueOf(attribute.getValue()).isEmpty()) {
+			if (!attribute.getKey().equals(ITEM) && attribute.getValue() != null && !String.valueOf(attribute.getValue()).isEmpty()) {
 
 				String value = (String) attribute.getValue();
-				if (!attribute.getKey().equals("type")) {
-					if (attribute.getKey().equals("label")) {
+				if (!attribute.getKey().equals(TYPE) && !attribute.getKey().equals(CONDITION)) {
+					if (attribute.getKey().equals(LABEL)) {
 						value = messageBuilder.getMessage((String) attribute.getValue(), locale);
-					} else if (attribute.getKey().equals("to")) {
+					} else if (attribute.getKey().equals(TO)) {
 
 						value = value.replace("${SPAGOBI_CONTEXT}", contextName);
 						value = value.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
@@ -745,48 +528,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return menu;
 	}
 
-//	private JSONArray createFixedMenu(Locale locale, int level, JSONArray tempMenuList) throws JSONException {
-//
-//		MessageBuilder messageBuilder = new MessageBuilder();
-//
-//		JSONObject lang = createMenuItem("flag", "", messageBuilder.getMessage("menu.Languages", locale), false, "LANG");
-//
-//		JSONObject roles = createMenuItem("assignment_ind", "", messageBuilder.getMessage("menu.RoleSelection", locale), false, "ROLE");
-//
-//		JSONObject info = createMenuItem("info", "", messageBuilder.getMessage("menu.info", locale), false, "INFO");
-//
-//		// JSONObject help = createMenuItem("help", "",
-//		// messageBuilder.getMessage("menu.help", locale), false, "HELP");
-//
-//		tempMenuList.put(roles);
-//
-//		tempMenuList.put(lang);
-//
-//		// tempMenuList.put(help);
-//
-//		tempMenuList.put(info);
-//
-//		if (PublicProfile.isPublicUser(userProfile.getUserUniqueIdentifier().toString())
-//				|| userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)) {
-//			JSONObject login = createMenuItem("input", HREF_LOGIN, messageBuilder.getMessage("menu.login", locale), false, null);
-//			tempMenuList.put(login);
-//		} else {
-//
-//			HttpSession session = this.getHttpSession();
-//
-//			boolean showLogoutOnSilentLogin = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue("SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN"));
-//			boolean silentLogin = Boolean.TRUE.equals(session.getAttribute(SsoServiceInterface.SILENT_LOGIN));
-//			// we show/don't show the logout button in case of a silent login,
-//			// according to configuration
-//			if (!silentLogin || showLogoutOnSilentLogin) {
-//				JSONObject power = createMenuItem("power_settings_new", HREF_LOGOUT, messageBuilder.getMessage("menu.logout", locale), false, null);
-//				tempMenuList.put(power);
-//			}
-//		}
-//
-//		return tempMenuList;		logger.debug("OUT");
-//	}
-
 	private Object getChildren(List filteredMenuList, List children, int level, Locale locale) throws JSONException {
 		JSONArray tempMenuList = new JSONArray();
 		for (int j = 0; j < children.size(); j++) {
@@ -803,8 +544,14 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		MessageBuilder msgBuild = new MessageBuilder();
 		String text = "";
+
+		if (childElem.getParentId() != null && childElem.getParentId().equals(childElem.getMenuId())) {
+			// HANDLE wrong menu cases
+			childElem.setParentId(null);
+		}
+
+		/* TEXT PROPERTY HANDLING */
 		if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
-			// text = msgBuild.getI18nMessage(locale, childElem.getName());
 			text = childElem.getName();
 		else {
 			if (childElem.getName().startsWith("#")) {
@@ -829,112 +576,99 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		level++;
 		if (childElem.getGroupingMenu() != null && childElem.getGroupingMenu().equals("true")) {
-			temp2.put(TITLE, text);
-			temp2.put(TITLE_ALIGN, "left");
-			temp2.put(COLUMNS, 1);
-			temp2.put(XTYPE, "buttongroup");
+			temp2.put(LABEL, text);
 			temp2.put(ICON_CLS, childElem.getIconCls());
 		} else {
 			if (childElem.getIcon() != null) {
-				temp2.put(ICON, new JSONObject(childElem.getIcon()));
+				temp2.put(ICON, childElem.getIcon().getClassName());
 			}
 			if (childElem.getCustIcon() != null) {
-				temp2.put(CUST_ICON, new JSONObject(childElem.getCustIcon()));
+				temp2.put(CUST_ICON, childElem.getCustIcon().getSrc());
 			}
 
-			temp2.put(TEXT, text);
+			temp2.put(LABEL, text);
 
+			/* DESCR PROPERTY HANDLING */
 			String descr = "";
 			if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
-				// text = msgBuild.getI18nMessage(locale, childElem.getName());
 				descr = childElem.getDescr();
-			else {
-				if (childElem.getName().startsWith("#")) {
-					String titleCode = childElem.getDescr().substring(1);
-
-					try {
-						switch (titleCode) {
-						case "menu.ServerManager":
-						case "menu.CacheManagement":
-							Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
-							break;
-						}
-					} catch (ClassNotFoundException e) {
-						return tempMenuList;
-					}
-
-					descr = msgBuild.getMessage(titleCode, locale);
-				} else {
-					descr = childElem.getDescr();
-				}
+			else if (childElem.getName().startsWith("#")) {
+//				String titleCode = childElem.getDescr().substring(1);
+//
+//				try {
+//					switch (titleCode) {
+//					case "menu.ServerManager":
+//					case "menu.CacheManagement":
+//						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+//						break;
+//					}
+//				} catch (ClassNotFoundException e) {
+//					return tempMenuList;
+//				}
+//
+//				descr = msgBuild.getMessage(titleCode, locale);
+			} else {
+				descr = childElem.getDescr();
 			}
-			temp2.put(DESCR, descr);
-			temp2.put("style", "text-align: left;");
-			temp2.put(TARGET, "_self");
-			temp2.put(ICON_CLS, "bullet");
 
-			String src = childElem.getUrl();
+			temp2.put(DESCR, descr);
+//			temp2.put(ICON_CLS, "bullet");
 
 			if (childElem.getObjId() != null) {
-				if (childElem.isClickable() == true) {
-					temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="
-							+ childElem.getMenuId() + "', '" + path + "' )");
-					temp2.put(LINK_TYPE, "execDirectUrl");
-					temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId());
-				} else {
-					temp2.put("isClickable", "false");
-				}
+				setPropertiesForObjectMenu(childElem, temp2, path);
 			} else if (childElem.getStaticPage() != null && !childElem.getStaticPage().equals("")) {
-				temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId()
-						+ "', '" + path + "' )");
-				temp2.put(LINK_TYPE, "execDirectUrl");
-				temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId());
+				setPropertiesForStaticMenu(childElem, temp2, path);
 			} else if (StringUtilities.isNotEmpty(childElem.getFunctionality())) {
-				String finalUrl = "javascript:execDirectUrl('" + DetailMenuModule.findFunctionalityUrl(childElem, contextName) + "', '" + path + "')";
-				temp2.put(HREF, finalUrl);
-				temp2.put(LINK_TYPE, "execDirectUrl");
-				temp2.put(SRC, DetailMenuModule.findFunctionalityUrl(childElem, contextName));
+				setPropertiesForFunctionalityMenu(childElem, temp2, path);
 			} else if (childElem.getExternalApplicationUrl() != null && !childElem.getExternalApplicationUrl().isEmpty()) {
-				temp2.put(HREF,
-						"javascript:callExternalApp('" + StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '" + path + "')");
-				temp2.put(LINK_TYPE, "callExternalApp");
-				temp2.put(SRC, childElem.getExternalApplicationUrl());
+				setPropertiesForExternalAppMenu(childElem, temp2, path);
 			} else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
-				String url = "javascript:execDirectUrl('" + childElem.getUrl() + "'";
-				url = url.replace("${SPAGOBI_CONTEXT}", contextName);
-				url = url.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
-				src = src.replace("${SPAGOBI_CONTEXT}", contextName);
-				src = src.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
-				path = path.replace("#", "");
-
-				// code to manage SpagoBISocialAnalysis link in admin menu
-				if (url.contains("${SPAGOBI_SOCIAL_ANALYSIS_URL}")) {
-					url = url.substring(0, url.length() - 1);
-					url = url.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
-					src = src.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
-					// if (!GeneralUtilities.isSSOEnabled()) {
-					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE
-							+ "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "'";
-				}
-				temp2.put(SRC, src);
-				temp2.put(HREF, url + ", '" + path + "')");
-				String linkType = childElem.getLinkType() == null ? "execDirectUrl" : childElem.getLinkType();
-				temp2.put(LINK_TYPE, linkType);
+				setPropertiesForAdminWithUrlMenu(childElem, locale, temp2, path);
 			}
 
 		}
+
 		if (childElem.getHasChildren()) {
 			List childrenBis = childElem.getLstChildren();
 			JSONArray tempMenuList2 = (JSONArray) getChildren(filteredMenuList, childrenBis, level, locale);
 			if (childElem.getGroupingMenu() != null && childElem.getGroupingMenu().equals("true")) {
 				temp2.put(ITEMS, tempMenuList2);
 			} else {
-				temp2.put(MENU, tempMenuList2);
+				temp2.put(ITEMS, tempMenuList2);
 			}
 		}
 
 		tempMenuList.put(temp2);
+
 		return tempMenuList;
+	}
+
+	private void setPropertiesForObjectMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
+		if (childElem.isClickable() == true) {
+			temp2.put(TO, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId());
+		} else {
+			temp2.put("isClickable", "false");
+		}
+	}
+
+	private void setPropertiesForAdminWithUrlMenu(Menu childElem, Locale locale, JSONObject temp2, String path) throws JSONException {
+		String url = childElem.getUrl();
+		url = url.replace("${SPAGOBI_CONTEXT}", contextName);
+		url = url.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
+
+		temp2.put(TO, contextName + url);
+	}
+
+	private void setPropertiesForExternalAppMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
+		temp2.put("url", StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()));
+	}
+
+	private void setPropertiesForFunctionalityMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
+		temp2.put("url", StringEscapeUtils.escapeJavaScript(DetailMenuModule.findFunctionalityUrl(childElem, contextName)));
+	}
+
+	private void setPropertiesForStaticMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
+		temp2.put(TO, contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId());
 	}
 
 	private boolean isAbleTo(String func, List funcs) {

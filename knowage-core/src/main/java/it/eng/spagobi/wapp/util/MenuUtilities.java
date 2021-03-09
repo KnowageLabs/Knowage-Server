@@ -232,20 +232,20 @@ public class MenuUtilities {
 						logger.debug("Not found menu items for user role " + (String) arrRoles[i]);
 					}
 
-					if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)) {
-						// list technical user menu
-						technicalMenuLoaded = true;
-						List firstLevelItems = ConfigSingleton.getInstance().getAttributeAsList("TECHNICAL_USER_MENU.ITEM");
-						Iterator it = firstLevelItems.iterator();
-						while (it.hasNext()) {
-							SourceBean itemSB = (SourceBean) it.next();
-							if (isAbleToSeeItem(itemSB, profile)) {
-
-								lstFinalMenu.add(getAdminItemRec(itemSB, levelItem, profile, null));
-								levelItem++;
-							}
-						}
-					}
+//					if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)) {
+//						// list technical user menu
+//						technicalMenuLoaded = true;
+//						List firstLevelItems = ConfigSingleton.getInstance().getAttributeAsList("TECHNICAL_USER_MENU.ITEM");
+//						Iterator it = firstLevelItems.iterator();
+//						while (it.hasNext()) {
+//							SourceBean itemSB = (SourceBean) it.next();
+//							if (isAbleToSeeItem(itemSB, profile)) {
+//
+//								lstFinalMenu.add(getAdminItemRec(itemSB, levelItem, profile, null));
+//								levelItem++;
+//							}
+//						}
+//					}
 				} else
 					logger.debug("Role " + (String) arrRoles[i] + " not found on db");
 			}

@@ -80,6 +80,7 @@
 				type="FunctionsCatalogManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/functionsCatalog/functionsCatalog.jsp" />
 		</GROUP_ITEM>
+
 		<GROUP_ITEM label="menu.ToolsMenu"
 			iconCls="fa fa-2x fa-tasks">
 
@@ -90,8 +91,6 @@
 			<ITEM label="menu.HierarchiesEditor"
 				type="HierarchiesManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp" />
-			<ITEM label="menu.SocialAnalysis" type="CreateSocialAnalysis"
-				to="${SPAGOBI_SOCIAL_ANALYSIS_URL}" />
 			<ITEM label="menu.CacheManagement" type="CacheManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cache/cacheHome.jsp" />
 			<ITEM label="menu.cross.definition" type="ManageCrossNavigation"
@@ -121,103 +120,76 @@
 		<GROUP_ITEM label="menu.ServerManager"
 			iconCls="fa fa-2x fa-cogs">
 
-			<ITEM label="menu.template.management" type="TemplateManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp"
-				iconCls="insert_drive_file" />
-			<ITEM label="menu.importexport.document" type="ImpExpDocument"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp"
-				iconCls="description" />
-			<ITEM label="menu.importexport.resources" type="ImpExpResources"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp"
-				iconCls="rotate_90_degrees_ccw" />
-			<ITEM label="menu.importexport.users" type="ImpExpUsers"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp"
-				iconCls="portrait" />
-			<ITEM label="menu.importexport.glossary" type="ImpExpGlossary"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp"
-				iconCls="portrait" />
-			<ITEM label="menu.importexport.catalog" type="ImpExpCatalog"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp"
-				iconCls="style" />
-			<ITEM label="menu.i18n" type="ManageInternationalization"
+			<ITEM label="menu.TenantMan" type="TenantManagement"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp" />
+			<ITEM label="menu.TemplateManagement" type="TemplateManagement"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp" />
+			<ITEM label="menu.ImpExpDocument" type="ImpExpDocument"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp" />
+			<ITEM label="menu.ImpExpMenu" type="ImpExpMenu"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportMenu/importExportMenu.jsp" />
+			<ITEM label="menu.ImpExpUsers" type="ImpExpUsers"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp" />
+			<ITEM label="menu.ImpExpKpis" type="ImpExpKpis"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportKpis/importExportKpis.jsp" />
+			<ITEM label="menu.ImpExpCatalog" type="ImpExpCatalog"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp" />
+			<ITEM label="menu.ImpExpAnalyticalDrivers"
+				type="ImpExpAnalyticalDrivers"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportAnalyticalDrivers/importExportAnalyticalDrivers.jsp" />
+			<ITEM label="menu.ImpExpGlossary" type="ImpExpGlossary"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportGlossary/importExportGlossaryTemplate.jsp" />
+			<ITEM label="menu.ImpExpAlerts" type="ImpExpAlerts"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportAlerts/importExportAlerts.jsp" />
+			<ITEM label="menu.InstallConf" type="InstallConfig"
+				to="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig" />
+			<ITEM label="menu.license" type="LicenseManagement"
+				to="showLicenseDialog" />
+			<ITEM label="menu.event" type="EventsManagement"
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/event/eventLogsApp.jsp" />
+
+		</GROUP_ITEM>
+
+		<GROUP_ITEM label="menu.i18n" iconCls="fa fa-flag">
+			<ITEM label="menu.manageI18n" type="ManageInternationalization"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
 				iconCls="fa fa-2x fa-flag" />
-
 		</GROUP_ITEM>
 	</ADMIN>
 
 	<FIXED>
-		<ITEM label="menu.Languages" iconCls="flag" command="languageSelection"/>
+		<ITEM label="menu.Languages" iconCls="flag"
+			command="languageSelection" />
 		<ITEM label="menu.RoleSelection" iconCls="assignment_ind"
 			command="roleSelection" />
 		<ITEM label="menu.info" iconCls="info" command="info" />
-		<ITEM label="menu.login"
+		<ITEM label="menu.login" type="PublicUser"
 			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&amp;LIGHT_NAVIGATOR_DISABLED=TRUE"
 			iconCls="input" condition="public_user" />
-		<ITEM label="menu.logout"
+		<ITEM label="menu.logout" type="SilentLogin"
 			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&amp;LIGHT_NAVIGATOR_DISABLED=TRUE&amp;NEW_SESSION=TRUE"
-			iconCls="power_settings_new" />
+			iconCls="power_settings_new" condition="silent_login" />
 	</FIXED>
 
 
 	<USER>
-		<ITEM label="menu.DocumentDev" type="DocumentDevManagement"
-			to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION"
-			iconCls="fa fa-2x fa-folder-o" />
-		<ITEM label="menu.DocumentTest" type="DocumentTestManagement"
-			to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION"
-			iconCls="fa fa-2x fa-folder-o" />
-		<ITEM label="Workspace" type="WorkspaceManagement"
-			iconCls="fa fa-2x fa-briefcase" />
+		<!-- <ITEM label="menu.DocumentDev" type="DocumentDevManagement" to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION" 
+			iconCls="fa fa-2x fa-folder-o" /> <ITEM label="menu.DocumentTest" type="DocumentTestManagement" 
+			to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION" 
+			iconCls="fa fa-2x fa-folder-o" /> <ITEM label="Workspace" type="WorkspaceManagement" 
+			iconCls="fa fa-2x fa-briefcase" /> -->
 
 		<ITEM label="menu.Browser" type="SeeDocBrowser"
 			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 			iconCls="fa fa-2x fa-folder-o" />
 
-		<ITEM label="menu.MyFavorites" type="SeeFavourites"
-			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&amp;OPERATION=GET_HOT_LINK_LIST&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-			iconCls="fa fa-2x fa-bookmark" />
-
-		<ITEM label="menu.Subscriptions" type="SeeSubscriptions"
-			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-			iconCls="fa fa-2x fa-envelope" />
-
-		<ITEM label="menu.Users" type="FinalUsersManagement"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp"
-			iconCls="fa fa-2x fa-users" />
-
 		<ITEM label="menu.workspace" type="FinalUsersManagement"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp"
 			iconCls="fa fa-2x fa-briefcase" />
 
-		<ITEM label="menu.HierarchiesManagement"
-			type="HierarchiesManagement"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp"
-			iconCls="fa fa-2x fa-sitemap" />
-
-		<ITEM label="menu.FunctionsCatalog" type="FunctionsCatalogUsage"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/functionsCatalog/functionsCatalog.jsp"
-			iconCls="fa fa-2x fa-cubes" />
-
-		<!-- NEW 2021/03/09 -->
-		<ITEM label="My Account"
+		<ITEM label="My Account" condition="my_account"
 			to="${SPAGOBI_CONTEXT}/restful-services/signup/prepareUpdate"
 			iconCls="fa fa-2x fa-address-card" />
-
-		<ITEM label="menu.SocialAnalysis" type="CreateSocialAnalysis"
-			to="${SPAGOBI_CONTEXT}/SpagoBISocialAnalysis/restful-services/start?user_id=&amp;SBI_LANGUAGE=en&amp;SBI_COUNTRY=US"
-			iconCls="public" />
-		<ITEM label="menu.SocialAnalysis" type="ViewSocialAnalysis"
-			to="${SPAGOBI_CONTEXT}/SpagoBISocialAnalysis/restful-services/start?user_id=&amp;SBI_LANGUAGE=en&amp;SBI_COUNTRY=US"
-			iconCls="public" />
-
-		<ITEM label="menu.MyFolder" condition="personal_folder"
-			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&amp;node="
-			iconCls="folder_special" />
-
-
-
-		<!-- NEW 2021/03/09 -->
 
 	</USER>
 
