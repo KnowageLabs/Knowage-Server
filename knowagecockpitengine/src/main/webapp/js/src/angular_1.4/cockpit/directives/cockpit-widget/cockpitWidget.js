@@ -259,7 +259,8 @@ function cockpitWidgetControllerFunction(
 		cockpitModule_exportWidgetService,
 		$httpParamSerializer,
 		cockpitModule_defaultTheme,
-		cockpitModule_templateServices)
+		cockpitModule_templateServices,
+		cockpitModule_utilstServices)
 
 {
 
@@ -754,7 +755,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		for(var p in previewSettings.parameters){
 			if(previewSettings.parameters[p].bindType != 'static' && previewSettings.parameters[p].defaultValue) previewSettings.parameters[p].value = previewSettings.parameters[p].defaultValue
 			if(previewSettings.parameters[p].bindType == 'driver'){
-				previewSettings.parameters[p].value = cockpitModule_analyticalDrivers[previewSettings.parameters[p].driver];
+				previewSettings.parameters[p].value = getFormattedParameterValue(previewSettings.parameters[p]);
 			}
 			if(previewSettings.parameters[p].bindType == 'dynamic'){
 				if($scope.ngModel.type == 'chart') previewSettings.parameters[p].value = clickedValue;
@@ -775,6 +776,12 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			}
 		}
 		return previewSettings.parameters;
+	}
+
+	var getFormattedParameterValue = function(param){
+		var value = cockpitModule_analyticalDrivers[param.driver];
+		if (!param.multiValue) return value;
+		else return cockpitModule_utilstServices.getDriverArray(value);
 	}
 
 	var popupMessage = function(result){
@@ -837,8 +844,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 		if(!directInteraction || directInteraction == 'cross'){
 			if (previewSettings && previewSettings.enable) {
-				if(!previewSettings.previewType || previewSettings.previewType == 'allRow' || 
-				(previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName) || 
+				if(!previewSettings.previewType || previewSettings.previewType == 'allRow' ||
+				(previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName) ||
 				(previewSettings.previewType == 'icon' && (!columnName || columnName == ""))){
 					$scope.iframeSrcUrl = sbiModule_config.host + sbiModule_config.externalBasePath + SERVICE;
 	
