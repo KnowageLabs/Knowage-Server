@@ -158,17 +158,17 @@
 	</ADMIN>
 
 	<FIXED>
-		<ITEM label="menu.Languages" iconCls="flag"
-			command="languageSelection" />
-		<ITEM label="menu.RoleSelection" iconCls="assignment_ind"
+		<ITEM label="menu.home" iconCls="pi pi-fw pi-home" to="/knowage"/>
+		<ITEM label="menu.Languages" iconCls="fab fa-font-awesome-flag" command="languageSelection"/>
+		<ITEM label="menu.RoleSelection" iconCls="fas fa-users-cog"
 			command="roleSelection" />
-		<ITEM label="menu.info" iconCls="info" command="info" />
-		<ITEM label="menu.login" type="PublicUser"
+		<ITEM label="menu.info" iconCls="fas fa-info-circle" command="info" />
+		<ITEM label="menu.login"
 			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&amp;LIGHT_NAVIGATOR_DISABLED=TRUE"
-			iconCls="input" condition="public_user" />
-		<ITEM label="menu.logout" type="SilentLogin"
-			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&amp;LIGHT_NAVIGATOR_DISABLED=TRUE&amp;NEW_SESSION=TRUE"
-			iconCls="power_settings_new" condition="silent_login" />
+			iconCls="fas fa-sign-in-alt" condition="public_user" />
+		<ITEM label="menu.logout"
+			command="logout" condition="silent_login"
+			iconCls="fas fa-sign-out-alt" />
 	</FIXED>
 
 
@@ -181,15 +181,15 @@
 
 		<ITEM label="menu.Browser" type="SeeDocBrowser"
 			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-			iconCls="fa fa-2x fa-folder-o" />
+			iconCls="fas fa-folder-o" />
 
 		<ITEM label="menu.workspace" type="FinalUsersManagement"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp"
-			iconCls="fa fa-2x fa-briefcase" />
+			iconCls="fas fa-briefcase" />
 
 		<ITEM label="My Account" condition="my_account"
 			to="${SPAGOBI_CONTEXT}/restful-services/signup/prepareUpdate"
-			iconCls="fa fa-2x fa-address-card" />
+			iconCls="fas fa-address-card" />
 
 	</USER>
 

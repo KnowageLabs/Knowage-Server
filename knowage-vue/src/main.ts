@@ -18,6 +18,7 @@ import 'primeflex/primeflex.css'
 import ToastService from 'primevue/toastservice'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
+import InputText from 'primevue/inputtext';
 import Toolbar from 'primevue/toolbar'
 
 import Tooltip from 'primevue/tooltip'
@@ -33,13 +34,13 @@ createApp(App)
     .use(PrimeVue)
     .use(ToastService)
 
-    .provide('$axios', axios)
 // eslint-disable-next-line
 // @ts-ignore
     .directive('tooltip', Tooltip)
 
     .component('Button', Button)
     .component('Card', Card)
+	.component('InputText', InputText)
     .component('Toolbar', Toolbar)
 
     .mount('#app')

@@ -4,6 +4,8 @@ import axios from 'axios'
 
   axios.interceptors.request.use(
     config => {
+			config.headers.common["Accept"] = "application/json; charset=utf-8"
+			config.headers.common["Content-Type"] = "application/json; charset=utf-8"
       return config;
     },
     error => {
@@ -14,13 +16,16 @@ import axios from 'axios'
     res => {
       return res
     },
-    (err, status) => {
-      //if(err.status === 401){
-        console.log(status)
-        //if(router.history.current.name !== 'login') router.push('/login')
-      //}
-      console.log('axios',err)
-      return Promise.reject(err);
+    function (error) {
+			console.log(error.response)
+      if(error.status === 401){
+				console.log(status)
+				//if(router.history.current.name !== 'login') router.push('/login')
+      }
+			if(error.status === 500){
+				console.log(500)
+			}
+      return Promise.reject(error);
     }
   )
 

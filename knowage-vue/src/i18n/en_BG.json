@@ -2,6 +2,7 @@
     "common":{
         "close": "close",
         "loggedUser": "logged user",
+        "search": "search",
         "tenant": "tenant",
         "version": "version"
     },
@@ -12,5 +13,11 @@
         "aboutKnowage": "About Knowage",
         "copyright": "© 2020 Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on www.knowage-suite.com"
+    },
+    "language": {
+        "english": "english",
+        "italian": "italian",
+        "languageSelection": "Language Selection"
+        
     }
 }
