@@ -45,6 +45,7 @@ import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.Serializer;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -288,7 +289,12 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 			JSONArray fixedMenuJSONArray = createFixedMenu(menuDefinitionFile, locale);
 			JSONArray adminMenuJSONArray = createAdminMenu(menuDefinitionFile, locale);
-			JSONArray userMenuJSONArray = createUserMenu(menuDefinitionFile, locale);
+
+			JSONArray userMenuJSONArray = new JSONArray();
+			if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
+				userMenuJSONArray = createUserMenu(menuDefinitionFile, locale);
+			}
+
 			JSONArray customMenuJSONArray = createCustomMenu(menuDefinitionFile, locale);
 
 			JSONObject wholeMenu = new JSONObject();
@@ -636,7 +642,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 			SourceBean itemSB = (SourceBean) item;
 			String type = String.valueOf(itemSB.getAttribute("type"));
-			if (itemSB.getAttribute("type") == null || isAbleTo(type, funcs)) {
+			if (itemSB.getAttribute("type") == null || isAbleTo(type, funcs) || menuConditionIsSatisfied(itemSB, funcs)) {
 
 				JSONObject menu = createMenuNode(locale, messageBuilder, itemSB);
 
@@ -645,6 +651,57 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		}
 
 		return items;
+	}
+
+	private boolean menuConditionIsSatisfied(SourceBean itemSB, List funcs) {
+		boolean isSatisfied = false;
+		String condition = (String) itemSB.getAttribute("condition");
+		if (condition != null && !condition.isEmpty()) {
+			switch (condition) {
+			case "public_user":
+
+				String strMyAccountMenu = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.MY_ACCOUNT_MENU");
+				boolean myAccountMenu = !"false".equalsIgnoreCase(strMyAccountMenu); // default value is true, for backward compatibility
+
+				String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+				boolean isInternalSecurityServiceSupplier = securityServiceSupplier
+						.equalsIgnoreCase("it.eng.spagobi.security.InternalSecurityServiceSupplierImpl");
+				boolean isPublicUser = userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID);
+				if (isInternalSecurityServiceSupplier && !isPublicUser && myAccountMenu) {
+					isSatisfied = true;
+				}
+				break;
+
+			case "social_analisys":
+				String strSbiSocialAnalysisStatus = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE");
+				boolean sbiSocialAnalysisStatus = "TRUE".equalsIgnoreCase(strSbiSocialAnalysisStatus);
+				if (sbiSocialAnalysisStatus
+						&& (isAbleTo(SpagoBIConstants.CREATE_SOCIAL_ANALYSIS, funcs) || isAbleTo(SpagoBIConstants.VIEW_SOCIAL_ANALYSIS, funcs))) {
+					isSatisfied = true;
+				}
+				break;
+
+			case "personal_folder":
+				LowFunctionality personalFolder;
+				try {
+					personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
+					if (personalFolder != null) {
+						isSatisfied = true;
+					}
+				} catch (EMFUserError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				break;
+
+			default:
+				break;
+			}
+		} else {
+			isSatisfied = true;
+		}
+		return isSatisfied;
 	}
 
 	private JSONObject createMenuNode(Locale locale, MessageBuilder messageBuilder, SourceBean itemSB) throws JSONException {
@@ -658,12 +715,30 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			if (!attribute.getKey().equals("ITEM") && attribute.getValue() != null && !String.valueOf(attribute.getValue()).isEmpty()) {
 
 				String value = (String) attribute.getValue();
-				if (attribute.getKey().equals("label")) {
-					value = messageBuilder.getMessage((String) attribute.getValue(), locale);
-				} else if (attribute.getKey().equals("to")) {
-					value = value.replace("user_id=", "user_id=" + userProfile.getUserUniqueIdentifier());
+				if (!attribute.getKey().equals("type")) {
+					if (attribute.getKey().equals("label")) {
+						value = messageBuilder.getMessage((String) attribute.getValue(), locale);
+					} else if (attribute.getKey().equals("to")) {
+
+						value = value.replace("${SPAGOBI_CONTEXT}", contextName);
+						value = value.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
+						value = value.replace("user_id=", "user_id=" + userProfile.getUserUniqueIdentifier());
+
+						if (value.contains("node=")) {
+							LowFunctionality personalFolder;
+							try {
+								personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
+								if (personalFolder != null) {
+									value = value.replace("node=", "node=" + personalFolder.getId());
+								}
+							} catch (EMFUserError e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}
+					menu.put(attribute.getKey(), value);
 				}
-				menu.put(attribute.getKey(), value);
 			}
 		}
 
