@@ -305,8 +305,6 @@
 					var lovColumns = [];
 					var lovObject = JSON.parse(lov.lovProviderJSON);
 					if(lovObject != [] && lovObject.QUERY){
-						debugger;
-						
 						var visibleColumns = lovObject.QUERY['VISIBLE-COLUMNS'];
 						var invisibleColumns = lovObject.QUERY['INVISIBLE-COLUMNS'];
 
