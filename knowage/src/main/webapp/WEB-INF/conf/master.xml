@@ -208,6 +208,8 @@
 <CONFIGURATOR path="/WEB-INF/conf/webapp/business_map.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/validation.xml" />
 
+<CONFIGURATOR path="/WEB-INF/conf/webapp/static_menu.xml" />
+
 	<CONFIGURATOR path="/WEB-INF/conf/config/security_liferay_config.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/internal_profiling.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/tree_initialization.xml" />
