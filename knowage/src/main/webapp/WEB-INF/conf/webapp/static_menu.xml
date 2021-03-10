@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <STATIC_MENU>
-	<TECHNICAL_USER>
+	<TECHNICAL_USER_FUNCTIONALITIES>
 		<GROUP_ITEM label="menu.DataProviders" iconCls="storage">
 
 			<ITEM label="menu.EngMan" requiredFunctionality="EnginesManagement"
@@ -151,9 +151,9 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
 				iconCls="fa fa-2x fa-flag" />
 		</GROUP_ITEM>
-	</TECHNICAL_USER>
+	</TECHNICAL_USER_FUNCTIONALITIES>
 
-	<ALL_USERS>
+	<COMMON_USER_FUNCTIONALITIES>
 		<ITEM label="menu.home" iconCls="pi pi-fw pi-home" to="/knowage" />
 		<ITEM label="menu.Languages" iconCls="fab fa-font-awesome-flag"
 			command="languageSelection" />
@@ -166,7 +166,7 @@
 			iconCls="fas fa-sign-in-alt" condition="public_user" />
 		<ITEM label="menu.logout" command="logout"
 			condition="silent_login" iconCls="fas fa-sign-out-alt" />
-	</ALL_USERS>
+	</COMMON_USER_FUNCTIONALITIES>
 
 
 	<ALLOWED_USER_FUNCTIONALITIES>
