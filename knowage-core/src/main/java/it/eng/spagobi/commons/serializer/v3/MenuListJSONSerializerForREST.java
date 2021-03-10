@@ -300,12 +300,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			JSONArray menuUserList = new JSONArray();
 			MessageBuilder msgBuild = new MessageBuilder();
 
-			JSONObject personal = new JSONObject(); // MB
-			String userMenuMessage = msgBuild.getMessage("menu.UserMenu", locale);
-			personal.put(ICON_CLS, "spagobi");
-			personal.put(LABEL, userMenuMessage);
-
-			tempFirstLevelMenuList.put(personal);
 			for (int i = 0; i < filteredMenuList.size(); i++) {
 				Menu menuElem = (Menu) filteredMenuList.get(i);
 				String path = MenuUtilities.getMenuPath(filteredMenuList, menuElem, locale);
@@ -318,7 +312,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						// Create custom Menu elements (menu defined by the users)
 
 						menuUserList = createUserMenuElement(filteredMenuList, menuElem, locale, 1, menuUserList);
-						personal.put(ITEMS, menuUserList);
+
+						for (int k = 0; k < menuUserList.length(); k++)
+							tempFirstLevelMenuList.put(menuUserList.get(k));
 
 						if (menuElem.getHasChildren()) {
 							List lstChildrenLev2 = menuElem.getLstChildren();
