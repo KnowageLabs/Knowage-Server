@@ -327,10 +327,19 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		for (Object item : itemsSBList) {
 
 			SourceBean itemSB = (SourceBean) item;
+
+			boolean addElement = true;
+
+			String condition = (String) itemSB.getAttribute(CONDITION);
 			String type = (String) itemSB.getAttribute(TYPE);
 
-			if (type == null || isAbleTo(type, funcs) || menuConditionIsSatisfied(itemSB) || isLicensedMenu(itemSB)) {
+			if (condition != null && !condition.isEmpty()) {
+				addElement = menuConditionIsSatisfied(itemSB);
+			} else if (type != null && isAbleTo(type, funcs)) {
+				addElement = isLicensedMenu(itemSB);
+			}
 
+			if (addElement) {
 				JSONObject menu = createMenuNode(locale, messageBuilder, itemSB);
 				items.put(menu);
 			}
