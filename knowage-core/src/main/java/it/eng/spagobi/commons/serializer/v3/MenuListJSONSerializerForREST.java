@@ -77,7 +77,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	private static final String ITEMS = "items";
 	private static final String TO = "to";
 
-	public static final String ICON = "icon";
 	public static final String CUST_ICON = "custIcon";
 	public static final String ICON_CLS = "iconCls";
 	public static final String PATH = "path";
@@ -482,7 +481,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			temp2.put(ICON_CLS, childElem.getIconCls());
 		} else {
 			if (childElem.getIcon() != null) {
-				temp2.put(ICON, childElem.getIcon().getClassName());
+				temp2.put(ICON_CLS, childElem.getIcon().getClassName());
 			}
 			if (childElem.getCustIcon() != null) {
 				temp2.put(CUST_ICON, childElem.getCustIcon().getSrc());
