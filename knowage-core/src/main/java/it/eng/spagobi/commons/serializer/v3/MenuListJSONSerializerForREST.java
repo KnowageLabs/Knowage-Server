@@ -200,10 +200,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		JSONArray tempFirstLevelMenuList = new JSONArray();
 		JSONArray userMenu = new JSONArray();
+		JSONArray menuUserList = null;
 
 		if (filteredMenuList != null && !filteredMenuList.isEmpty()) {
 
-			JSONArray menuUserList = new JSONArray();
+			menuUserList = new JSONArray();
 			MessageBuilder msgBuild = new MessageBuilder();
 
 			for (int i = 0; i < filteredMenuList.size(); i++) {
@@ -218,15 +219,15 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						// Create custom Menu elements (menu defined by the users)
 
 						menuUserList = createUserMenuElement(filteredMenuList, menuElem, locale, 1, menuUserList);
-
-						for (int k = 0; k < menuUserList.length(); k++)
-							tempFirstLevelMenuList.put(menuUserList.get(k));
+						if (menuUserList.length() > 0)
+							tempFirstLevelMenuList.put(menuUserList.get(0));
 
 						if (menuElem.getHasChildren()) {
 							List lstChildrenLev2 = menuElem.getLstChildren();
 							JSONArray tempMenuList2 = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1, locale);
 							temp.put(ITEMS, tempMenuList2);
 						}
+
 					} else {
 						// This part create the elements for the admin menu
 
@@ -244,7 +245,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							}
 						}
 						temp.put(LABEL, text);
-						temp.put(PATH, path);
 
 						if (menuElem.getCode() != null && (menuElem.getCode().equals("doc_admin_angular") || menuElem.getCode().equals("doc_test_angular"))) {
 							temp.put(TO, contextName + HREF_DOC_BROWSER_ANGULAR);
@@ -273,7 +273,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				}
 			}
 		}
-		return tempFirstLevelMenuList;
+		return menuUserList;
 	}
 
 	private JSONArray createMenu(SourceBean menuDefinitionFile, Locale locale, String attribute, boolean isAdminMenu) throws JSONException, EMFInternalError {
@@ -341,12 +341,12 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private boolean isLicensedMenu(SourceBean itemSB) {
-		boolean isLicensed = false;
+		Boolean isLicensed = true;
+
 		String label = (String) itemSB.getAttribute(LABEL);
 		if (label != null && !label.isEmpty() && (label.equals("menu.ServerManager") || label.equals("menu.CacheManagement"))) {
 			try {
 				Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
-				isLicensed = true;
 			} catch (ClassNotFoundException e) {
 				isLicensed = false;
 			}
