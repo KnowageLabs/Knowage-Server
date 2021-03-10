@@ -57,6 +57,8 @@ import it.eng.spagobi.wapp.util.MenuUtilities;
  */
 public class MenuListJSONSerializerForREST implements Serializer {
 
+	private static final String URL = "url";
+
 	private static final String PLACEHOLDER_SPAGO_ADAPTER_HTTP = "${SPAGO_ADAPTER_HTTP}";
 
 	private static final String PLACEHOLDER_SPAGOBI_CONTEXT = "${SPAGOBI_CONTEXT}";
@@ -559,11 +561,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private void setPropertiesForExternalAppMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
-		temp2.put("url", StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()));
+		temp2.put(URL, StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()));
 	}
 
 	private void setPropertiesForFunctionalityMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
-		temp2.put("url", StringEscapeUtils.escapeJavaScript(DetailMenuModule.findFunctionalityUrl(childElem, contextName)));
+		temp2.put(URL, StringEscapeUtils.escapeJavaScript(DetailMenuModule.findFunctionalityUrl(childElem, contextName)));
 	}
 
 	private void setPropertiesForStaticMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
