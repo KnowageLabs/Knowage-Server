@@ -341,8 +341,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						temp.put(PATH, path);
 
 						if (menuElem.getCode() != null && (menuElem.getCode().equals("doc_admin_angular") || menuElem.getCode().equals("doc_test_angular"))) {
-							temp.put(TO, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_ANGULAR + "', '" + text + "')");
-							temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER_ANGULAR);
+							temp.put(TO, contextName + HREF_DOC_BROWSER_ANGULAR);
 						}
 
 						/**
@@ -351,8 +350,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 						 */
 						if (menuElem.getCode() != null && menuElem.getCode().equals("workspace")) {
-							temp.put(TO, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_WORKSPACE + "', '" + text + "')");
-							temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER_WORKSPACE);
+							temp.put(TO, contextName + HREF_DOC_BROWSER_WORKSPACE);
 						}
 
 						if (menuElem.getHasChildren()) {
