@@ -31,12 +31,15 @@ import javax.ws.rs.core.MediaType;
 
 import org.json.JSONObject;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.v3.MenuListJSONSerializerForREST;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.wapp.util.MenuUtilities;
 
 /**
@@ -60,28 +63,34 @@ public class MenuResource extends AbstractSpagoBIResource {
 			return ExceptionUtilities.serializeException("Profile not found when executing service", null);
 		}
 
+		UserProfile profile = (UserProfile) userProfile;
+
+		String country = req.getParameter("curr_country");
+		String language = req.getParameter("curr_language");
+
+		Locale currentLocale = new Locale(language, country, "");
+		List lstMenu = null;
 		try {
-			UserProfile profile = (UserProfile) userProfile;
-
-			String country = req.getParameter("curr_country");
-			String language = req.getParameter("curr_language");
-
-			Locale currentLocale = new Locale(language, country, "");
-			List lstMenu = MenuUtilities.getMenuItems(profile);
-
-			HttpSession session = req.getSession();
-			// Locale locale = MessageBuilder.getBrowserLocaleFromSpago();
-			List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
-			MenuListJSONSerializerForREST serializer = new MenuListJSONSerializerForREST(userProfile, session);
-			JSONObject jsonMenuList = (JSONObject) serializer.serialize(filteredMenuList, currentLocale);
-
-			return jsonMenuList.toString();
-
-		} catch (Throwable t) {
-			return ExceptionUtilities.serializeException("An unexpected error occured while executing service", null);
-		} finally {
-			logger.debug("OUT");
+			lstMenu = MenuUtilities.getMenuItems(profile);
+		} catch (EMFUserError e1) {
+			String message = "An error occured while retrieving menu";
+			throw new SpagoBIRuntimeException(message, e1);
 		}
+
+		HttpSession session = req.getSession();
+		// Locale locale = MessageBuilder.getBrowserLocaleFromSpago();
+		List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
+		MenuListJSONSerializerForREST serializer = new MenuListJSONSerializerForREST(userProfile, session);
+		JSONObject jsonMenuList = new JSONObject();
+		try {
+			jsonMenuList = (JSONObject) serializer.serialize(filteredMenuList, currentLocale);
+		} catch (SerializationException e) {
+			String message = "An error occured while serialiazing menu";
+			throw new SpagoBIRuntimeException(message, e);
+		}
+
+		logger.debug("OUT");
+		return jsonMenuList.toString();
 
 	}
 
