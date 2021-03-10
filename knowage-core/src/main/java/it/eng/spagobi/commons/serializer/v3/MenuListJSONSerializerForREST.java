@@ -38,6 +38,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.Serializer;
+import it.eng.spagobi.commons.utilities.DocumentUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -366,6 +367,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		if (label != null && !label.isEmpty() && (label.equals("menu.ServerManager") || label.equals("menu.CacheManagement"))) {
 			try {
 				Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+
+				isLicensed = DocumentUtilities.getValidLicenses().size() > 0;
 			} catch (ClassNotFoundException e) {
 				isLicensed = false;
 			}
