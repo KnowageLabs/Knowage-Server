@@ -152,7 +152,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 
 	@Override
 	public SbiGlGlossary loadGlossaryByGlossaryNm(String name) {
-		if (name.equals(null) || name.trim().equals("")) {
+		if (name == null || name.trim().equals("")) {
 			return null;
 		}
 		Session session = null;
@@ -169,7 +169,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 
 	@Override
 	public SbiGlGlossary loadGlossaryByGlossaryCd(String cd) {
-		if (cd.equals(null) || cd.trim().equals("")) {
+		if (cd == null || cd.trim().equals("")) {
 			return null;
 		}
 		Session session = null;
