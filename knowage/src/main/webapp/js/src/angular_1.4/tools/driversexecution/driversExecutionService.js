@@ -150,7 +150,7 @@
 							parameter.parameterDescription = [];
 							executionService.resetParameterInnerLovData(parameter.children);
 						} else {
-							parameter.parameterValue = '';
+							delete parameter.parameterValue;
 							if(resetWithoutDefaultValue) parameter.parameterDescription = {};
 						}
 					}else {
@@ -158,12 +158,12 @@
 							parameter.parameterValue = [];
 							if(resetWithoutDefaultValue) parameter.parameterDescription = '';
 						} else {
-							parameter.parameterValue = '';
+							delete parameter.parameterValue;
 							if(resetWithoutDefaultValue) parameter.parameterDescription = {};
 						}
 					}
 				} else {
-					parameter.parameterValue = '';
+					delete parameter.parameterValue;
 					if(isParameterTypeDateRange(parameter) && parameter.datarange){
 						parameter.datarange.opt='';
 					}
@@ -421,13 +421,11 @@
 						if (currDriverDescValArr.length == 0) {
 							return false;
 						} else {
-							var allValuesSet = true;
 							for (var i in currDriverDescValArr) {
 								var curr = currDriverDescValArr[i];
 								if (curr.value == undefined) {
-									allValuesSet = false;
+									return false;
 								}
-								return allValuesSet;
 							}
 						}
 					}
