@@ -184,22 +184,22 @@
 
 		<ITEM label="menu.HierarchiesEditor" requiredFunctionality="HierarchiesManagement"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp"
-			iconCls="fa fa-2x fa-sitemap" />
+			iconCls="fas fa-sitemap" />
 
 		<ITEM label="menu.glossary.technical"
 			requiredFunctionality="ManageGlossaryTechnical"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp"
-			iconCls="fa fa-2x fa-book" />
+			iconCls="fas fa-book" />
 		<ITEM label="menu.glossary.business"
 			requiredFunctionality="ManageGlossaryBusiness"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp"
-			iconCls="fa fa-2x fa-building" />
+			iconCls="fas fa-building" />
 		<ITEM label="menu.calendar" requiredFunctionality="ManageCalendar"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/calendar/calendarTemplate.jsp"
-			iconCls="fa fa-2x fa-calendar" />
+			iconCls="fas fa-calendar" />
 		<ITEM label="menu.lovs.management" requiredFunctionality="LovsManagement"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp"
-			iconCls="fa fa-2x fa-list" />
+			iconCls="fas fa-list" />
 		<ITEM label="menu.template.management" requiredFunctionality="TemplateManagement"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp"
 			iconCls="insert_drive_file" />
@@ -220,13 +220,13 @@
 			iconCls="style" />
 		<ITEM label="menu.i18n" requiredFunctionality="ManageInternationalization"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
-			iconCls="fa fa-2x fa-flag" />
+			iconCls="fas fa-flag" />
 		<ITEM label="menu.news" requiredFunctionality="NewsVisualization"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
-			iconCls="fa fa-2x fa-newspaper-o" />
+			iconCls="far fa-newspaper" />
 		<ITEM label="menu.Download" requiredFunctionality=""
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
-			iconCls="fa fa-2x fa-download" />
+			iconCls="fas fa-download" />
 
 
 	</ALLOWED_USER_FUNCTIONALITIES>

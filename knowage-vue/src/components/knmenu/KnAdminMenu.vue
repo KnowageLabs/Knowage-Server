@@ -70,7 +70,7 @@
                         columnClass= 'p-col-4';
                     break;
                     case 6:
-                        columnClass= 'p-col-2';
+                        columnClass= 'p-col-4';
                     break;
                     case 7:
                         columnClass= 'p-col-3';
@@ -132,7 +132,7 @@ li {
         position: absolute;
         z-index: 9;
         top: 0;
-        left: 60px;
+        left: 100%;
         background-color: #f0f8ff;
         min-width: 900px;
         min-height: 200px;

@@ -67,7 +67,7 @@ li {
     & > a {
         text-decoration: none;
         text-align: center;
-        padding: 15px;
+        padding: 12px 15px;
         padding-left: 12px;
         color: white;
         display: block;
@@ -93,10 +93,10 @@ li {
         }
     }
     & > ul {
-        margin: 0;
+        margin:0;
         padding: 0;
         list-style: none;
-        box-shadow: 0 6px 12px black;
+        box-shadow: 0 4px 8px rgb(72, 72, 72);
         background-color: lighten(#43749E, 15%);
         position: absolute;
         top: 0;
@@ -110,8 +110,10 @@ li {
                 display: inline-flex;
                 align-items: center;
                 padding: 10px 5px 10px 10px;
+                background-color: #f0f8ff;
+                color: #43749e;
                 &:hover {
-                    background-color: darken(#43749E, 10%);
+                    background-color: darken(#f0f8ff,10%);
                 }
                 .p-menuitem-text {
                     display: inline-block;
@@ -121,7 +123,7 @@ li {
                     flex: 1;
                 }
                 .p-menuitem-icon {
-                    display: inline-block;
+                    display: none;
                     vertical-align: middle;
                     margin-right: 10px;
                 }

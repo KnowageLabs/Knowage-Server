@@ -15,7 +15,7 @@
                </div>
                <transition name="slide-down">
                   <ul class="layout-menu profile-menu" v-show="showProfileMenu">
-                     <template v-for="(item, i) of fixedMenu" :key="i">
+                     <template v-for="(item, i) of commonUserFunctionalities" :key="i">
                         <template v-if="item">
                            <KnMenuItem :item="item" @click="itemClick"></KnMenuItem>
                         </template>
@@ -25,11 +25,11 @@
             </div>
             <div>
                <ul class="layout-menu">
-                  <KnAdminMenu :model="adminMenu" v-if="adminMenu && adminMenu.length > 0"></KnAdminMenu>
-                  <template v-for="(item, i) of userMenu" :key="i">
+                  <KnAdminMenu :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0"></KnAdminMenu>
+                  <template v-for="(item, i) of allowedUserFunctionalities" :key="i">
                      <KnMenuItem :item="item" @click="itemClick"></KnMenuItem>
                   </template>
-                  <template v-for="(item, i) of customMenu" :key="i">
+                  <template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
                      <KnMenuItem :item="item" @click="itemClick"></KnMenuItem>
                   </template>
                </ul>
@@ -61,10 +61,10 @@
       data() {
          return {
             showProfileMenu: false,
-            customMenu: new Array<MenuItem>(),
-            userMenu: new Array<MenuItem>(),
-            fixedMenu: new Array<MenuItem>(),
-            adminMenu: new Array<MenuItem>(),
+            dynamicUserFunctionalities: new Array<MenuItem>(),
+            allowedUserFunctionalities: new Array<MenuItem>(),
+            commonUserFunctionalities: new Array<MenuItem>(),
+            technicalUserFunctionalities: new Array<MenuItem>(),
             display: false,
             languageDisplay: false
          }
@@ -102,10 +102,10 @@
       created() {
          this.axios.get('/knowage/restful-services/3.0/menu/enduser?curr_country=IT&curr_language=it')
             .then(response => {
-               this.customMenu = response.data.customMenu
-               this.adminMenu = response.data.adminMenu
-               this.fixedMenu = response.data.fixedMenu
-               this.userMenu = response.data.userMenu
+               this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
+               this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
+               this.commonUserFunctionalities = response.data.commonUserFunctionalities
+               this.allowedUserFunctionalities = response.data.allowedUserFunctionalities
             }).catch(error => console.error(error))
       },
       computed: {
@@ -122,22 +122,6 @@
       iconCls?: string;
       items?: Array<MenuItem> | Array<Array<MenuItem>>;
    }
-
-   /*function updateMenuModel(oldModel: Array<any>) : Array<MenuItem> {
-      oldModel = oldModel.map(obj =>{
-         let item:MenuItem = {label:obj.tooltip || obj.title || obj.text}
-         if(obj.icon){
-            item.icon = obj.icon.className
-         }else item.icon = (obj.menu || obj.items) ? 'fas fa-list' : 'fas fa-file'
-         if(obj.linkType === 'execUrl') item.url = obj.firstUrl
-         else if(obj.linkType === 'execDirectUrl') item.url = obj.firstUrl || obj.src
-         else if(obj.linkType) item.to = obj.linkType
-         if(obj.menu) item.items = updateMenuModel(obj.menu)
-         if(obj.items) item.items = updateMenuModel(obj.items)
-         return item
-      })
-      return oldModel
-   }*/
 
    
 </script>
