@@ -35,12 +35,9 @@ import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.Serializer;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -60,6 +57,10 @@ import it.eng.spagobi.wapp.util.MenuUtilities;
  */
 public class MenuListJSONSerializerForREST implements Serializer {
 
+	private static final String PLACEHOLDER_SPAGO_ADAPTER_HTTP = "${SPAGO_ADAPTER_HTTP}";
+
+	private static final String PLACEHOLDER_SPAGOBI_CONTEXT = "${SPAGOBI_CONTEXT}";
+
 	private static final String CONDITION = "condition";
 
 	static private Logger logger = Logger.getLogger(MenuListJSONSerializerForREST.class);
@@ -74,77 +75,15 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	private static final String ITEMS = "items";
 	private static final String TO = "to";
 
-	public static final String ID = "id";
-	public static final String TITLE = "title";
-	public static final String TITLE_ALIGN = "titleAlign";
-	public static final String COLUMNS = "columns";
 	public static final String ICON = "icon";
 	public static final String CUST_ICON = "custIcon";
 	public static final String ICON_CLS = "iconCls";
-	public static final String SRC = "src";
-	public static final String XTYPE = "xtype";
 	public static final String PATH = "path";
-	public static final String HREF = "href";
-	public static final String FIRST_URL = "firstUrl";
 
-	public static final String MENU = "menu";
-
-	public static final String NAME = "name";
-	public static final String TEXT = "text";
 	public static final String DESCR = "descr";
-	public static final String INFO = "INFO";
-	public static final String ROLE = "ROLE";
-	public static final String LANG = "LANG";
-	public static final String HOME = "HOME";
-	public static final String TARGET = "hrefTarget";
-	public static final String HELP = "HELP";
 
-	// OLD DOC MANAGER
 	private static final String HREF_DOC_BROWSER_ANGULAR = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
-
-	/**
-	 * The URL for the Workspace web page.
-	 *
-	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	 */
 	private static final String HREF_DOC_BROWSER_WORKSPACE = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_WORKSPACE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
-
-	private static final String HREF_BOOKMARK = "/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
-	private static final String HREF_SUBSCRIPTIONS = "/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
-	private static final String HREF_PENCIL = "/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYANALYSIS=TRUE";
-	private static final String HREF_MYDATA = "/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true";
-	private static final String HREF_MYDATA_ADMIN = "/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=false";
-	private static final String HREF_LOGIN = "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
-	private static final String HREF_LOGOUT = "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE";
-	private static final String HREF_SOCIAL_ANALYSIS = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL");
-	private static final String HREF_HIERARCHIES_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp";
-	private static final String HREF_MANAGE_GLOSSARY_TECHNICAL = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp";
-	private static final String HREF_MANAGE_GLOSSARY_BUSINESS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp";
-	private static final String HREF_MANAGE_CROSS_DEFINITION = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp";
-
-	private static final String HREF_CALENDAR = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/calendar/calendarTemplate.jsp";
-
-	private static final String HREF_MANAGE_DOMAIN = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/domain/domainManagement.jsp";
-	private static final String HREF_MANAGE_CONFIG = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/config/configManagement.jsp";
-	private static final String HREF_MANAGE_TENANT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp";
-	private static final String HREF_MANAGE_UDP = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/udp/manageUdpAngular.jsp";
-
-	// private static final String HREF_USERS =
-	// "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
-	private static final String HREF_USERS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp";
-
-	private static final String HREF_MANAGE_LOVS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp";
-	private static final String HREF_FUNCTIONS_CATALOG = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/functionsCatalog/functionsCatalog.jsp";
-
-	private static final String HREF_TEMPLATE_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp";
-	private static final String HREF_IMPEXP_DOCUMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp";
-	private static final String HREF_IMPEXP_RESOURCE = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp";
-	private static final String HREF_IMPEXP_USER = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp";
-	private static final String HREF_IMPEXP_CATALOG = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp";
-
-	private static final String HREF_WORKSPACE = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp";
-
-	private static final String HREF_I18N = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp";
 
 	public String contextName = "";
 	public String defaultThemePath = "/themes/sbi_default";
@@ -164,14 +103,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		contextName = KnowageSystemConfiguration.getKnowageContext();
 		if (!(o instanceof List)) {
-			throw new SerializationException("MenuListJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
+			throw new SerializationException(
+					MenuListJSONSerializerForREST.class.getSimpleName() + " is unable to serialize object of type: " + o.getClass().getName());
 		}
 
 		try {
-//
-//			if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
-//				userMenu = createEndUserMenu(locale, 1, new JSONArray());
-//			}
 
 			InputStream is = null;
 			SourceBean menuDefinitionFile = null;
@@ -225,39 +161,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return result;
 	}
 
-//	private JSONObject createMenuItem(String icon, String href, String tooltip, boolean idDirectLink, String label) throws JSONException {
-//		JSONObject menuItem = new JSONObject();
-//		menuItem.put(ICON_CLS, icon);
-//		if (label != null) {
-//			menuItem.put(LABEL, label);
-//		}
-//		if (idDirectLink) {
-//			menuItem.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + href + "', '" + tooltip + "')");
-//			menuItem.put(FIRST_URL, contextName + href);
-//		} else {
-//			if (label != null && label.equals(INFO)) {
-//				menuItem.put(HREF, "javascript:info()");
-//			} else if (label != null && label.equals(ROLE)) {
-//				menuItem.put(HREF, "javascript:roleSelection()");
-//			} else if (label != null && label.equals(LANG)) {
-//			} else if (label != null && label.equals(HELP)) {
-//				menuItem.put(HREF, "http://wiki.spagobi.org/xwiki/bin/view/Main/");
-//				menuItem.put(FIRST_URL, "http://wiki.spagobi.org/xwiki/bin/view/Main/");
-//				menuItem.remove(TARGET);
-//				menuItem.put(TARGET, "_blank");
-//			} else if (href != null && href.length() > 0) {
-//				menuItem.put(HREF, "javascript:execUrl('" + contextName + href + "')");
-//			}
-//		}
-//
-//		if (label != null && label.equals(HELP)) {
-//		} else {
-//			menuItem.put(FIRST_URL, contextName + href);
-//		}
-//		return menuItem;
-//	}
-
-	private JSONArray createUserMenu(SourceBean menuDefinitionFile, Locale locale) throws JSONException {
+	private JSONArray createUserMenu(SourceBean menuDefinitionFile, Locale locale) throws JSONException, EMFInternalError {
 
 		logger.debug("IN");
 
@@ -268,7 +172,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return userMenu;
 	}
 
-	private JSONArray createFixedMenu(SourceBean menuDefinitionFile, Locale locale) throws JSONException {
+	private JSONArray createFixedMenu(SourceBean menuDefinitionFile, Locale locale) throws JSONException, EMFInternalError {
 
 		logger.debug("IN");
 
@@ -279,7 +183,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return fixedMenu;
 	}
 
-	private JSONArray createAdminMenu(SourceBean menuDefinitionFile, Locale locale) throws JSONException {
+	private JSONArray createAdminMenu(SourceBean menuDefinitionFile, Locale locale) throws JSONException, EMFInternalError {
 
 		logger.debug("IN");
 
@@ -370,21 +274,16 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return tempFirstLevelMenuList;
 	}
 
-	private JSONArray createMenu(SourceBean menuDefinitionFile, Locale locale, String attribute, boolean isAdminMenu) throws JSONException {
+	private JSONArray createMenu(SourceBean menuDefinitionFile, Locale locale, String attribute, boolean isAdminMenu) throws JSONException, EMFInternalError {
 		MessageBuilder messageBuilder = new MessageBuilder();
 		List attributeList = menuDefinitionFile.getAttributeAsList(attribute);
 		return buildMenuTreeBranch(locale, messageBuilder, attributeList, isAdminMenu);
 	}
 
-	private JSONArray buildMenuTreeBranch(Locale locale, MessageBuilder messageBuilder, List attributeList, boolean isAdminMenu) throws JSONException {
+	private JSONArray buildMenuTreeBranch(Locale locale, MessageBuilder messageBuilder, List attributeList, boolean isAdminMenu)
+			throws JSONException, EMFInternalError {
 		JSONArray tempMenuList = new JSONArray();
-		List funcs = null;
-		try {
-			funcs = (List) userProfile.getFunctionalities();
-		} catch (EMFInternalError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		List funcs = (List) userProfile.getFunctionalities();
 
 		if (isAdminMenu) {
 			for (Object domain : attributeList) {
@@ -517,22 +416,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						value = messageBuilder.getMessage((String) attribute.getValue(), locale);
 					} else if (attribute.getKey().equals(TO)) {
 
-						value = value.replace("${SPAGOBI_CONTEXT}", contextName);
-						value = value.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
-						value = value.replace("user_id=", "user_id=" + userProfile.getUserUniqueIdentifier());
+						value = value.replace(PLACEHOLDER_SPAGOBI_CONTEXT, contextName);
+						value = value.replace(PLACEHOLDER_SPAGO_ADAPTER_HTTP, GeneralUtilities.getSpagoAdapterHttpUrl());
 
-						if (value.contains("node=")) {
-							LowFunctionality personalFolder;
-							try {
-								personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
-								if (personalFolder != null) {
-									value = value.replace("node=", "node=" + personalFolder.getId());
-								}
-							} catch (EMFUserError e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
 					}
 					menu.put(attribute.getKey(), value);
 				}
@@ -560,7 +446,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		String text = "";
 
 		if (childElem.getParentId() != null && childElem.getParentId().equals(childElem.getMenuId())) {
-			// HANDLE wrong menu cases
+			// Incorrect menu configuration handling. Nodes with parent_id equals to menu_id will be attached to root.
 			childElem.setParentId(null);
 		}
 
@@ -626,7 +512,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			}
 
 			temp2.put(DESCR, descr);
-//			temp2.put(ICON_CLS, "bullet");
 
 			if (childElem.getObjId() != null) {
 				setPropertiesForObjectMenu(childElem, temp2, path);
@@ -667,8 +552,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	private void setPropertiesForAdminWithUrlMenu(Menu childElem, Locale locale, JSONObject temp2, String path) throws JSONException {
 		String url = childElem.getUrl();
-		url = url.replace("${SPAGOBI_CONTEXT}", contextName);
-		url = url.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
+		url = url.replace(PLACEHOLDER_SPAGOBI_CONTEXT, contextName);
+		url = url.replace(PLACEHOLDER_SPAGO_ADAPTER_HTTP, GeneralUtilities.getSpagoAdapterHttpUrl());
 
 		temp2.put(TO, contextName + url);
 	}
