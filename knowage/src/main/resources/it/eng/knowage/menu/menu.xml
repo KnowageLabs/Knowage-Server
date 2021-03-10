@@ -181,7 +181,7 @@
 
 		<ITEM label="menu.Browser" type="SeeDocBrowser"
 			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-			iconCls="fas fa-folder-o" />
+			iconCls="far fa-folder-open" />
 
 		<ITEM label="menu.workspace" type="FinalUsersManagement"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp"

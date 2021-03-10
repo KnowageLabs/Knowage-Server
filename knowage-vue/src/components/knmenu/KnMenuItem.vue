@@ -3,13 +3,17 @@
     <li role="none" :style="item.style" :title="item.label" @mouseenter="toggleSubMenu" @mouseleave="toggleSubMenu" >
         <router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{navigate, href, isActive}" exact>
             <a :href="href" @click="onClick($event, navigate)"  role="menuitem" :class="isActive && 'router-link-active'">
-                <span :class="['p-menuitem-icon', item.iconCls]"></span>
+                <span v-if="item.iconCls" :class="['p-menuitem-icon', item.iconCls]"></span>
+                <img v-if="item.icon" :src="item.icon" />
+                <span v-if="!item.iconCls && !item.icon" class="p-menuitem-icon fas fa-file"></span>
                 <span class="p-menuitem-text">{{item.label}}</span>
                 <i v-if="item.items" class="pi pi-fw pi-angle-right"></i>
             </a>
         </router-link>
         <a v-else :href="item.url" @click="onClick" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
-            <span :class="['p-menuitem-icon', item.iconCls]"></span>
+            <span v-if="item.iconCls" :class="['p-menuitem-icon', item.iconCls]"></span>
+            <img v-if="item.icon" :src="item.icon" />
+            <span v-if="!item.iconCls && !item.icon" class="p-menuitem-icon fas fa-file"></span>
             <span class="p-menuitem-text">{{item.label}}</span>
             <i v-if="item.items" class="pi pi-fw pi-angle-right"></i>
         </a>

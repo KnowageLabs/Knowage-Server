@@ -25,8 +25,8 @@
             </div>
             <div>
                <ul class="layout-menu">
-                  <KnAdminMenu :model="adminMenu"></KnAdminMenu>
-                   <template v-for="(item, i) of userMenu" :key="i">
+                  <KnAdminMenu :model="adminMenu" v-if="adminMenu && adminMenu.length > 0"></KnAdminMenu>
+                  <template v-for="(item, i) of userMenu" :key="i">
                      <KnMenuItem :item="item" @click="itemClick"></KnMenuItem>
                   </template>
                   <template v-for="(item, i) of customMenu" :key="i">
