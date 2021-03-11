@@ -12,6 +12,7 @@ import it.eng.spagobi.security.OAuth2.OAuth2Client;
 import it.eng.spagobi.security.OAuth2.OAuth2Config;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -87,7 +88,10 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 
 			// Get roles of the application (specified in the
 			// oauth2.config.properties)
-			String url = config.getProperty("REST_BASE_URL") + config.getProperty("ROLES_PATH") + "?application_id=" + config.getProperty("APPLICATION_ID");
+			
+			String rolesPath = config.getProperty("ROLES_PATH");
+			rolesPath = MessageFormat.format(rolesPath, config.getProperty("APPLICATION_ID"));
+			String url = config.getProperty("REST_BASE_URL") + rolesPath;
 			GetMethod httpget = new GetMethod(url);
 			httpget.addRequestHeader("X-Auth-Token", token);
 
