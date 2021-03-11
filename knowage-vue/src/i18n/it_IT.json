@@ -18,5 +18,11 @@
         "english": "inglese",
         "italian": "italiano",
         "languageSelection": "Selezione Lingua"
+    },
+    "managers": {
+        "gallery": {
+            "title": "Gestione gallery",
+            "hint": "I templates permettono di accedere ad elementi già pronti per procedere più rapidamente alla creazione delle dashboards. Per visualizzare i dettagli di un template selezionarne uno tra quelli a lato, oppure premere il pulsante \"+\" per aggiungerne o importarne uno."
+        }
     }
 }

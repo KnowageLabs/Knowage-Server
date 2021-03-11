@@ -1,12 +1,11 @@
 <template>
-  <div class="hint">
-      <Card>
+  <div class="galleryHint hint">
+      <Card class="galleryHintContent">
         <template #title>
-            Gallery Management
+            <i class="far fa-life-ring galleryHintIcon"></i> {{$t('managers.gallery.title')}}
         </template>
         <template #content>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt
-            quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque quas!
+            {{$t('managers.gallery.hint')}}
         </template>
     </Card>
   </div>
@@ -20,3 +19,22 @@
 
     })
 </script>
+
+<style lang="scss" scoped>
+    .galleryHint{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+
+        .galleryHintContent{
+            border-radius: 0;
+        }
+
+        .galleryHintIcon{
+            font-size: 3rem;
+        }
+    }
+
+</style>
