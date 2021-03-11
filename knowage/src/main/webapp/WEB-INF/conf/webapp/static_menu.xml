@@ -1,205 +1,216 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <STATIC_MENU>
 	<TECHNICAL_USER_FUNCTIONALITIES>
-		<GROUP_ITEM label="menu.DataProviders" iconCls="storage">
+		<GROUP_ITEM id="1000" label="menu.DataProviders"
+			iconCls="storage">
 
-			<!-- <ITEM label="menu.EngMan" requiredFunctionality="EnginesManagement" 
-				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListEnginesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" 
-				/> -->
-			<ITEM label="menu.DataSourceMan"
+			<ITEM id="1001" label="menu.EngMan"
+				requiredFunctionality="EnginesManagement"
+				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListEnginesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
+			<ITEM id="1002" label="menu.DataSourceMan"
 				requiredFunctionality="DataSourceManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/datasource/datasource.jsp" />
-			<ITEM label="menu.DataSetMan"
+			<ITEM id="1003" label="menu.DataSetMan"
 				requiredFunctionality="DatasetManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/datasetManagement.jsp" />
 
 		</GROUP_ITEM>
-		<GROUP_ITEM label="menu.ProfileMenu"
+		<GROUP_ITEM id="2000" label="menu.ProfileMenu"
 			iconCls="fa fa-2x fa-id-card-o">
 
-			<ITEM label="menu.Attributes"
+			<ITEM id="2001" label="menu.Attributes"
 				requiredFunctionality="ProfileManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/profileAttributesManagement.jsp" />
-			<ITEM label="menu.Roles"
+			<ITEM id="2002" label="menu.Roles"
 				requiredFunctionality="ProfileManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/rolesManagement.jsp" />
-			<ITEM label="menu.Users"
+			<ITEM id="2003" label="menu.Users"
 				requiredFunctionality="ProfileManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp" />
-			<ITEM label="menu.menuconfiguration"
+			<ITEM id="2004" label="menu.menuconfiguration"
 				requiredFunctionality="MenuManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/menuConfiguration.jsp" />
-			<ITEM label="menu.FunctMan"
+			<ITEM id="2005" label="menu.FunctMan"
 				requiredFunctionality="FunctionalitiesManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/functionalitiesManagement.jsp" />
-			<ITEM label="menu.community.mng"
+			<ITEM id="2006" label="menu.community.mng"
 				requiredFunctionality="CommunityManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/community/ManageCommunity.jsp" />
 		</GROUP_ITEM>
-		<GROUP_ITEM label="menu.BehaviouralModelMenu"
+
+		<GROUP_ITEM id="3000" label="menu.BehaviouralModelMenu"
 			iconCls="fa fa-2x fa-users">
 
-			<!-- <ITEM label="menu.lovs.management" requiredFunctionality="LovsManagement"
+			<!-- <ITEM id="3001" label="menu.lovs.management" requiredFunctionality="LovsManagement" 
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp" 
 				iconCls="fa fa-2x fa-list" /> -->
-			<ITEM label="menu.LovMan" requiredFunctionality="LovsView"
+			<ITEM id="3002" label="menu.LovMan"
+				requiredFunctionality="LovsView"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp" />
-			<ITEM label="menu.ParameterMan"
+			<ITEM id="3003" label="menu.ParameterMan"
 				requiredFunctionality="ParameterView"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/analyticalDrivers.jsp" />
-			<ITEM label="menu.ConstraintMan"
+			<ITEM id="3004" label="menu.ConstraintMan"
 				requiredFunctionality="ConstraintView"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/modalitiesCheck.jsp" />
-			<ITEM label="menu.BehaviouralModelLineage"
+			<ITEM id="3005" label="menu.BehaviouralModelLineage"
 				requiredFunctionality="BehaviouralModelLineage"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/behaviouralModelLineage.jsp" />
 		</GROUP_ITEM>
-		<GROUP_ITEM label="menu.Catalogs"
+
+		<GROUP_ITEM id="4000" label="menu.Catalogs"
 			iconCls="fa fa-2x fa-paint-brush">
 
-			<ITEM label="menu.MetaModelsCatalogue"
+			<ITEM id="4001" label="menu.MetaModelsCatalogue"
 				requiredFunctionality="MetaModelsCatalogueManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/businessModelCatalogue.jsp" />
-			<ITEM label="menu.MondrianCatalogue"
+			<ITEM id="4002" label="menu.MondrianCatalogue"
 				requiredFunctionality="ArtifactCatalogueManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/mondrianSchemasCatalogue.jsp?requiredFunctionality=MONDRIAN_SCHEMA&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
-			<ITEM label="menu.MapCat"
+			<ITEM id="4003" label="menu.MapCat"
 				requiredFunctionality="MapCatalogueManagement"
 				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListMapsPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
-			<ITEM label="menu.FeatureMapCat"
+			<ITEM id="4004" label="menu.FeatureMapCat"
 				requiredFunctionality="MapFeaturesManagement"
 				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListFeaturesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
-			<ITEM label="menu.MeasuresCatalogue"
+			<ITEM id="4005" label="menu.MeasuresCatalogue"
 				requiredFunctionality="MeasuresCatalogueManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/measure/measuresCatalogue.jsp" />
-			<ITEM label="menu.LayersCatalogue"
+			<ITEM id="4006" label="menu.LayersCatalogue"
 				requiredFunctionality="GeoLayersManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/layer/layerCatalogue.jsp" />
-			<ITEM label="menu.glossary.technical"
+			<ITEM id="4007" label="menu.glossary.technical"
 				requiredFunctionality="ManageGlossaryTechnical"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp"
 				iconCls="fa fa-2x fa-book" />
-			<ITEM label="menu.glossary.business"
+			<ITEM id="4008" label="menu.glossary.business"
 				requiredFunctionality="ManageGlossaryBusiness"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp"
 				iconCls="fa fa-2x fa-building" />
-			<ITEM label="menu.timespan" requiredFunctionality="Timespan"
+			<ITEM id="4009" label="menu.timespan"
+				requiredFunctionality="Timespan"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/timespan/timespan.jsp" />
-			<ITEM label="menu.calendar" requiredFunctionality="Calendar"
+			<ITEM id="4010" label="menu.calendar"
+				requiredFunctionality="Calendar"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/calendar/calendarTemplate.jsp" />
-			<ITEM label="menu.FunctionsCatalog"
+			<ITEM id="4011" label="menu.FunctionsCatalog"
 				requiredFunctionality="FunctionsCatalogManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/functionsCatalog/functionsCatalog.jsp" />
 		</GROUP_ITEM>
 
-		<GROUP_ITEM label="menu.ToolsMenu"
+		<GROUP_ITEM id="5000" label="menu.ToolsMenu"
 			iconCls="fa fa-2x fa-tasks">
 
-			<ITEM label="menu.Scheduler"	
+			<ITEM id="5001" label="menu.Scheduler"
 				requiredFunctionality="SchedulerManagement"
 				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_SCHEDULER_ACTION_ANGULARJS&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
-			<ITEM label="menu.SchedulerMonitor"	
+			<ITEM id="5002" label="menu.SchedulerMonitor"
 				requiredFunctionality="SchedulerManagement"
 				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_SCHEDULER_MONITOR_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
-			<ITEM label="menu.HierarchiesEditor"
+			<ITEM id="5003" label="menu.HierarchiesEditor"
 				requiredFunctionality="HierarchiesManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp" />
-			<ITEM label="menu.CacheManagement"
+			<ITEM id="5004" label="menu.CacheManagement"
 				requiredFunctionality="CacheManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cache/cacheHome.jsp" />
-			<ITEM label="menu.cross.definition"
+			<ITEM id="5005" label="menu.cross.definition"
 				requiredFunctionality="ManageCrossNavigation"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp" />
-			<ITEM label="menu.Alert" requiredFunctionality="AlertManagement"
+			<ITEM id="5006" label="menu.Alert"
+				requiredFunctionality="AlertManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/alertDefinition.jsp" />
-			<ITEM label="menu.NewsManagement"
+			<ITEM id="5007" label="menu.NewsManagement"
 				requiredFunctionality="NewsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/news/newsManagement.jsp" />
 		</GROUP_ITEM>
-		
-		<GROUP_ITEM label="menu.KpiModel" iconCls="traffic">
-			<ITEM label="menu.kpi.kpiDefinition"
+
+		<GROUP_ITEM id="6000" label="menu.KpiModel"
+			iconCls="traffic">
+			<ITEM id="6001" label="menu.kpi.kpiDefinition"
 				requiredFunctionality="KpiManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/kpiDefinition.jsp" />
-			<ITEM label="menu.kpi.measureRuleDefinition"
+			<ITEM id="6002" label="menu.kpi.measureRuleDefinition"
 				requiredFunctionality="KpiManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/measureRuleDefinition.jsp" />
-			<ITEM label="menu.kpi.targetDefinition"
+			<ITEM id="6003" label="menu.kpi.targetDefinition"
 				requiredFunctionality="KpiTargetsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/targetDefinition.jsp" />
-			<ITEM label="menu.kpi.schedulerKpi"
+			<ITEM id="6004" label="menu.kpi.schedulerKpi"
 				requiredFunctionality="KpiManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/schedulerKpi.jsp" />
-			<ITEM label="menu.kpi.scorecard"
+			<ITEM id="6005" label="menu.kpi.scorecard"
 				requiredFunctionality="ScorecardsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/scorecardKpi.jsp" />
 		</GROUP_ITEM>
 
-		<GROUP_ITEM label="menu.ServerSettings"
+		<GROUP_ITEM id="7000" label="menu.ServerSettings"
 			iconCls="fa fa-2x fa-cogs">
-			<!-- <ITEM label="menu.UdpMan" requiredFunctionality="UserDefinedPropertyManagement"
+			<!-- <ITEM id="1000" label="menu.UdpMan" requiredFunctionality="UserDefinedPropertyManagement" 
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/udp/manageUdpAngular.jsp" 
 				/> -->
-			<ITEM label="menu.Config"
+			<ITEM id="7001" label="menu.Config"
 				requiredFunctionality="ConfigManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/config/configManagement.jsp" />
-			<ITEM label="menu.Domain"
+			<ITEM id="7002" label="menu.Domain"
 				requiredFunctionality="DomainManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/domain/domainManagement.jsp" />
 
-			<ITEM label="Exporters menu"
+			<ITEM id="7003" label="Exporters menu"
 				requiredFunctionality="ExportersCatalogue"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/exportersCatalogue.jsp" />
-			<ITEM label="menu.MetadataMan"
+			<ITEM id="7004" label="menu.MetadataMan"
 				requiredFunctionality="ObjMetadataManagement"
 				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListObjMetadataPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
 		</GROUP_ITEM>
 
 
-		<GROUP_ITEM label="menu.ServerManager"
-			iconCls="fa fa-2x fa-cogs">
+		<GROUP_ITEM id="8000" label="menu.ServerManager"
+			toBeLicensed="true" iconCls="fa fa-2x fa-cogs">
 
-			<ITEM label="menu.TenantMan"
+			<ITEM id="8001" label="menu.TenantMan"
 				requiredFunctionality="TenantManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp" />
-			<ITEM label="menu.TemplateManagement"
+			<ITEM id="8002" label="menu.TemplateManagement"
 				requiredFunctionality="TemplateManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp" />
-			<ITEM label="menu.ImpExpDocument"
+			<ITEM id="8003" label="menu.ImpExpDocument"
 				requiredFunctionality="ImpExpDocument"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp" />
-			<ITEM label="menu.ImpExpMenu" requiredFunctionality="ImpExpMenu"
+			<ITEM id="8004" label="menu.ImpExpMenu"
+				requiredFunctionality="ImpExpMenu"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportMenu/importExportMenu.jsp" />
-			<ITEM label="menu.ImpExpUsers"
+			<ITEM id="8005" label="menu.ImpExpUsers"
 				requiredFunctionality="ImpExpUsers"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp" />
-			<ITEM label="menu.ImpExpKpis" requiredFunctionality="ImpExpKpis"
+			<ITEM id="8006" label="menu.ImpExpKpis"
+				requiredFunctionality="ImpExpKpis"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportKpis/importExportKpis.jsp" />
-			<ITEM label="menu.ImpExpCatalog"
+			<ITEM id="8007" label="menu.ImpExpCatalog"
 				requiredFunctionality="ImpExpCatalog"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp" />
-			<ITEM label="menu.ImpExpAnalyticalDrivers"
+			<ITEM id="8008" label="menu.ImpExpAnalyticalDrivers"
 				requiredFunctionality="ImpExpAnalyticalDrivers"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportAnalyticalDrivers/importExportAnalyticalDrivers.jsp" />
-			<ITEM label="menu.ImpExpGlossary"
+			<ITEM id="8009" label="menu.ImpExpGlossary"
 				requiredFunctionality="ImpExpGlossary"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportGlossary/importExportGlossaryTemplate.jsp" />
-			<ITEM label="menu.ImpExpAlerts"
+			<ITEM id="8010" label="menu.ImpExpAlerts"
 				requiredFunctionality="ImpExpAlerts"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportAlerts/importExportAlerts.jsp" />
-			<ITEM label="menu.InstallConf"
+			<ITEM id="8011" label="menu.InstallConf"
 				requiredFunctionality="InstallConfig"
 				to="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig" />
-			<ITEM label="menu.license"
+			<ITEM id="8012" label="menu.license"
 				requiredFunctionality="LicenseManagement" to="showLicenseDialog" />
-			<ITEM label="menu.event"
+			<ITEM id="8013" label="menu.event"
 				requiredFunctionality="EventsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/event/eventLogsApp.jsp" />
 
 		</GROUP_ITEM>
 
-		<GROUP_ITEM label="menu.i18n" iconCls="fa fa-flag">
-			<ITEM label="menu.manageI18n"
+		<GROUP_ITEM id="9000" label="menu.i18n"
+			iconCls="fa fa-flag">
+			<ITEM id="9001" label="menu.manageI18n"
 				requiredFunctionality="ManageInternationalization"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
 				iconCls="fa fa-2x fa-flag" />
@@ -262,23 +273,23 @@
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp"
 			iconCls="insert_drive_file" />
 		<ITEM label="menu.importexport.document"
-			requiredFunctionality="ImpExpDocument"
+			requiredFunctionality="ImpExpDocument" toBeLicensed="true"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp"
 			iconCls="description" />
 		<ITEM label="menu.importexport.resources"
-			requiredFunctionality="ImpExpResources"
+			requiredFunctionality="ImpExpResources" toBeLicensed="true"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp"
 			iconCls="rotate_90_degrees_ccw" />
 		<ITEM label="menu.importexport.users"
-			requiredFunctionality="ImpExpUsers"
+			requiredFunctionality="ImpExpUsers" toBeLicensed="true"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp"
 			iconCls="portrait" />
 		<ITEM label="menu.importexport.glossary"
-			requiredFunctionality="ImpExpGlossary"
+			requiredFunctionality="ImpExpGlossary" toBeLicensed="true"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp"
 			iconCls="portrait" />
 		<ITEM label="menu.importexport.catalog"
-			requiredFunctionality="ImpExpCatalog"
+			requiredFunctionality="ImpExpCatalog" toBeLicensed="true"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp"
 			iconCls="style" />
 		<ITEM label="menu.i18n"
