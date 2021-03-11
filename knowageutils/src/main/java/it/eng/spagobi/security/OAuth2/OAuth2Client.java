@@ -8,6 +8,7 @@ package it.eng.spagobi.security.OAuth2;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -38,22 +39,12 @@ public class OAuth2Client {
 			String url = config.getProperty("REST_BASE_URL") + config.getProperty("TOKEN_PATH");
 			PostMethod httppost = new PostMethod(url);
 			httppost.setRequestHeader("Content-Type", "application/json");
+			
+			logger.debug("Configured TOKEN_BODY is " + config.getProperty("TOKEN_BODY"));
+			
+			String body = MessageFormat.format(config.getProperty("TOKEN_BODY"), id, password);
 
-			String body = "{\r\n";
-			body += "    \"auth\": {\r\n";
-			body += "        \"identity\": {\r\n";
-			body += "            \"methods\": [\r\n";
-			body += "                \"password\"\r\n";
-			body += "            ],\r\n";
-			body += "            \"password\": {\r\n";
-			body += "                \"user\": {\r\n";
-			body += "                    \"id\": \"" + id + "\",\r\n";
-			body += "                    \"password\": \"" + password + "\"\r\n";
-			body += "                }\r\n";
-			body += "            }\r\n";
-			body += "        }\r\n";
-			body += "    }\r\n";
-			body += "}";
+			logger.debug("==>\n" + body + "\n<==");
 
 			httppost.setRequestBody(body);
 
