@@ -41,7 +41,7 @@
 			<div flex>				
 				<md-chips ng-model="parameter.parameterValue" readonly="true">
 					<md-chip-template>
-						<strong>{{parameter.parameterDescription[$chip]}}</strong>
+						<strong>{{ descriptionOf($chip) }}</strong>
 					</md-chip-template>
 				</md-chips>
 			</div>
