@@ -783,6 +783,15 @@
 				}
 			}
 		}
+		
+		$scope.descriptionOf = function(value) {
+			var matches = $scope.parameter.driverDefaultValue ? $scope.parameter.driverDefaultValue.filter(function(e) { return e.value == value; }) : [];
+			if (matches.length > 0) {
+				return matches[0].description;
+			} else {
+				return $scope.parameter.parameterDescription[value];
+			}
+		}
 
 		var getCorrelatedParameters = function(fatherParam) {
 			var toReturn = [];
