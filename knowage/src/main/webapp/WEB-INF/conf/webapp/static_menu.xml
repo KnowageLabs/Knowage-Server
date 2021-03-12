@@ -122,6 +122,8 @@
 			<ITEM id="5007" label="menu.NewsManagement"
 				requiredFunctionality="NewsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/news/newsManagement.jsp" />
+			<ITEM label="menu.GalleryManagement"
+				to="${SPAGOBI_CONTEXT}/gallerymanagement" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="6000" label="menu.KpiModel"

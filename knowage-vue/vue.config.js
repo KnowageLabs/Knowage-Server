@@ -18,6 +18,15 @@ module.exports = {
       args[0].title = 'Knowage'
       return args
     })
+  },
+	css: {
+    loaderOptions: {
+      scss: {
+        additionalData: `
+				@import "@/assets/scss/_material.scss";
+				@import "@/assets/scss/_variables.scss";`
+      }
+    }
   }
 }
   

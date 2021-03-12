@@ -9,14 +9,14 @@
         </Toolbar>
         <Listbox class="knList" v-model="selectedCars" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="label" filterMatchMode="contains" >
           <template #option="slotProps">
-            <router-link class="noDecoration" :to="slotProps.option.id" exact>
+            <router-link class="noDecoration" :to="{ name: 'gallerydetail', params: { id: slotProps.option.id }}" exact>
               <div class="knListItem">
                 <Avatar :icon="iconTypesMap[slotProps.option.type]" shape="circle" size="medium"/>
                 <div class="knListItemText">
                   <span>{{slotProps.option.label}}</span>
                   <span class="smallerLine">{{slotProps.option.author}}</span>
                 </div>
-                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded" />
+                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded" @click="deleteTemplate($event,slotProps.option.id)"/>
               </div>
             </router-link>
           </template>
@@ -39,14 +39,26 @@
     data (){
       return{
         galleryTemplates: [
-          {id:'1234', label:'test1', type:'html', author:'author1', tags:[]},
-          {id:'5678', label:'test2', type:'chart', author:'author2', tags:["tag1", "tag2"]}
+          {id:'908d9674-ff77-43bd-90e6-fa11eef06c99', label:'colored card', type:'html', author:'davide.vernassa@eng.it', tags:["html","card"]},
+          {id:'b206bf60-5622-4432-9e6c-fd4a66bab811', label:'advanced line chart', type:'chart', author:'matteo.massarotto@eng.it', tags:["chart", "highchart"]},
+          {id:'b160c219-801e-4030-afa9-b52583a9094f', label:'hierarchy', type:'chart', author:'davide.vernassa@eng.it', tags:["highchart", "MARE"]},
+          {id:'27f46bee-442b-4c65-a6ff-4e55a1caa93f', label:'double cards', type:'html', author:'davide.vernassa@eng.it', tags:["html", "card"]},
+          {id:'84d99a09-5d07-4fa5-85f3-e0c19c78d508', label:'progression chart', type:'python', author:'alberto.nale@eng.it', tags:["python", "function","ai"]},
+          {id:'cba22aa7-444f-4dfb-9d16-ca7df7965360', label:'multicard', type:'html', author:'davide.vernassa@eng.it', tags:["html", "multiple", "card"]},
+          {id:'0e5c80b8-8308-48fe-8943-274d7bfa5dfb', label:'header_light', type:'html', author:'alberto.nale@eng.it', tags:["html", "header"]},
+          {id:'833c2694-7873-4308-956d-f0a4ccddae08', label:'header_dark', type:'html', author:'alberto.nale@eng.it', tags:["html", "header"]}
         ],
         iconTypesMap: {
           "chart": "fab fa-js-square",
           "html": "fab fa-html5",
           "python": "fab fa-python"
         }
+      }
+    },
+    methods:{
+      deleteTemplate(e,templateId){
+        e.preventDefault()
+        alert(templateId)
       }
     },
     components: {
@@ -79,10 +91,12 @@
     border: none;
     border-radius: 0;
 
-    .p-listbox-filter{
-      border-radius: 0;
+    .p-listbox-filter-container{
+      input.p-listbox-filter{
+        border-radius: 0;
+      }
     }
-
+    
     .knListItem{
       display: flex;
       flex-direction: row;

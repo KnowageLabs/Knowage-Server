@@ -138,9 +138,9 @@
 }
    .layout-menu-container {
       z-index: 100;
-      width: 58px;
+      width: $mainmenu-width;
       top: 0;
-      background-color: #43749E;
+      background-color: $color-primary;
       height: 100%;
       position: fixed;
       .profile {
@@ -151,7 +151,7 @@
             cursor: pointer;
             width: 100%;
             font-size: 14px;
-            font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: $font-family;
             .profile-image {
                width: 45px;
                height: 45px;
@@ -167,7 +167,7 @@
          }
       }
       .profile-menu {
-         border-bottom: 1px solid lighten(#43749E, 10%);
+         border-bottom: 1px solid lighten($color-primary, 10%);
       }
 
       .layout-menu {
@@ -197,7 +197,7 @@
                   display: none;
                }
                &:hover {
-                  background-color: lighten(#43749E, 10%);
+                  background-color: lighten($color-primary, 10%);
                }
             }
          }

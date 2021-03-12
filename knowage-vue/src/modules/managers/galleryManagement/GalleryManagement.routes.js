@@ -10,6 +10,7 @@ let routes = [
 				},
 				{
 					path: ':id',
+					name: 'gallerydetail',
 					component: () => import('@/modules/managers/galleryManagement/GalleryManagementDetail.vue'),
 					props: true
 				}

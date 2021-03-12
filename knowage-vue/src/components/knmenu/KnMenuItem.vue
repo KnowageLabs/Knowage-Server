@@ -82,7 +82,7 @@ li {
             display: none;
         }
         &:hover {
-            background-color: lighten(#43749E, 10%);
+            background-color: lighten($color-primary, 10%);
         }
         &.router-link-active {
             border-left: 3px solid #CF0854;
