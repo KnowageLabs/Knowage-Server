@@ -113,7 +113,6 @@
 		<module>../spagobi.birt.oda</module>
 		<module>../knowagebirtreportengine</module>
 		<module>../knowagedatabasescripts</module>
-		<module>../knowage-api</module>
 	</modules>
 
 	<build>
