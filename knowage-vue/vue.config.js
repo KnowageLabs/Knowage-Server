@@ -3,7 +3,7 @@ module.exports = {
   devServer: {
     proxy: {
       '^/knowage/restful-services/[0-9].0': {
-        target: process.env.VUE_APP_API_URL,
+        target: process.env.VUE_APP_HOST_URL,
         changeOrigin: true
       }
     }

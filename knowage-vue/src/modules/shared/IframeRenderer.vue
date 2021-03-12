@@ -11,7 +11,7 @@ export default {
     },
     data(){
         return{
-            baseUrl: process.env.VUE_APP_API_URL
+            baseUrl: process.env.VUE_APP_HOST_URL
         }
     }
 }

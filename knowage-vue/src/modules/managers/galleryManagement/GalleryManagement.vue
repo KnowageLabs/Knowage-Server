@@ -10,11 +10,11 @@
             <FabButton icon="fas fa-plus" />
           </template>
         </Toolbar>
-        <Listbox class="knList" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="label" filterMatchMode="contains" >
+        <Listbox class="knList" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="label" filterMatchMode="contains" :filterFields="['label','type','tags']">
           <template #option="slotProps">
             <router-link class="kn-decoration-none" :to="{ name: 'gallerydetail', params: { id: slotProps.option.id }}" exact>
               <div class="knListItem">
-                <Avatar :icon="iconTypesMap[slotProps.option.type]" shape="circle" size="medium"/>
+                <Avatar :icon="iconTypesMap[slotProps.option.type].className" shape="circle" size="medium" :style="iconTypesMap[slotProps.option.type].style" />
                 <div class="knListItemText">
                   <span>{{slotProps.option.label}}</span>
                   <span class="smallerLine">{{slotProps.option.author}}</span>
@@ -58,16 +58,19 @@
           {id:'833c2694-7873-4308-956d-f0a4ccddae08', label:'header_dark', type:'html', author:'alberto.nale@eng.it', tags:["html", "header"]}
         ],
         iconTypesMap: {
-          "chart": "fab fa-js-square",
-          "html": "fab fa-html5",
-          "python": "fab fa-python"
+          "chart": {"className":"fab fa-js-square", "style":{"background-color":"#ffc107","color":"white"}},
+          "html": {"className":"fab fa-html5", "style":{"background-color":"#c2185b","color":"white"}},
+          "python": {"className":"fab fa-python", "style":{"background-color":"#4caf50","color":"white"}},
         }
       }
     },
     methods:{
       deleteTemplate(e,templateId){
         e.preventDefault()
-        alert(templateId)
+        /*this.axios.delete(`/knowage/restful-services/3.0/gallery/${this.id}`)
+            .then(response => this.template = response.data)
+            .catch(error => console.error(error))*/
+        alert('delete template: '+templateId)
       }
     }
   })

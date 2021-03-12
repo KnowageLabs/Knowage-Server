@@ -10,7 +10,6 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue'
-import store from '@/App.store'
 import { formatDate } from '@/helpers/dateHelper'
 import HelloWorld from '@/components/HelloWorld.vue'
 
@@ -30,7 +29,7 @@ export default defineComponent({
       return formatDate(undefined,'LLL')
     },
     setLocale(){
-      store.commit('setLocale', 'en_GB')
+      this.$store.commit('setLocale', 'en_GB')
       // eslint-disable-next-line
       // @ts-ignore
       this.$i18n.locale = 'en_GB'

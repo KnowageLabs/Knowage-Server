@@ -1,7 +1,7 @@
 import axios from 'axios'
 //import store from './App.store.js'
 //import router from './app.routes.js'
-
+	//axios.defaults.baseURL = process.env.VUE_APP_HOST_URL
   axios.interceptors.request.use(
     config => {
 			config.headers.common["Accept"] = "application/json; charset=utf-8"

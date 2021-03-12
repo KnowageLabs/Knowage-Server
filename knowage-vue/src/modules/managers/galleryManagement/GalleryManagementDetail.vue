@@ -79,6 +79,7 @@
 import { defineComponent } from 'vue'
 import Chips from 'primevue/chips'
 import InputText from 'primevue/inputtext'
+import router from '@/App.routes'
 import Skeleton from 'primevue/skeleton'
 import Splitter from 'primevue/splitter'
 import SplitterPanel from 'primevue/splitterpanel'
@@ -136,6 +137,9 @@ export default defineComponent({
         this.loadTemplate()
     },
     methods: {
+        closeTemplate(){
+            router.push('/knowage/gallerymanagement')
+        },
         loadTemplate(){
             /*this.axios.get(`/knowage/restful-services/3.0/gallery/${this.id}`)
             .then(response => this.template = response.data)
