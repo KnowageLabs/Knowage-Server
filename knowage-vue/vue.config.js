@@ -23,6 +23,7 @@ module.exports = {
     loaderOptions: {
       scss: {
         additionalData: `
+				@import "@/assets/scss/_common.scss";
 				@import "@/assets/scss/_material.scss";
 				@import "@/assets/scss/_variables.scss";`
       }

@@ -6,17 +6,20 @@
           <template #left>
             {{$t('managers.gallery.title')}}
           </template>
+          <template #right>
+            <FabButton icon="fas fa-plus" />
+          </template>
         </Toolbar>
-        <Listbox class="knList" v-model="selectedCars" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="label" filterMatchMode="contains" >
+        <Listbox class="knList" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="label" filterMatchMode="contains" >
           <template #option="slotProps">
-            <router-link class="noDecoration" :to="{ name: 'gallerydetail', params: { id: slotProps.option.id }}" exact>
+            <router-link class="kn-decoration-none" :to="{ name: 'gallerydetail', params: { id: slotProps.option.id }}" exact>
               <div class="knListItem">
                 <Avatar :icon="iconTypesMap[slotProps.option.type]" shape="circle" size="medium"/>
                 <div class="knListItemText">
                   <span>{{slotProps.option.label}}</span>
                   <span class="smallerLine">{{slotProps.option.author}}</span>
                 </div>
-                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded" @click="deleteTemplate($event,slotProps.option.id)"/>
+                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deleteTemplate($event,slotProps.option.id)"/>
               </div>
             </router-link>
           </template>
@@ -32,10 +35,16 @@
 <script lang="ts">
   import { defineComponent } from 'vue'
   import Avatar from 'primevue/avatar'
+  import FabButton from '@/components/UI/fabButton/FabButton.vue'
   import Listbox from 'primevue/listbox'
 
   export default defineComponent({
     name: 'gallery-management',
+    components: {
+      Avatar,
+      FabButton,
+      Listbox
+    },
     data (){
       return{
         galleryTemplates: [
@@ -60,15 +69,12 @@
         e.preventDefault()
         alert(templateId)
       }
-    },
-    components: {
-      Avatar,
-      Listbox
     }
   })
 </script>
 
 <style lang="scss" scoped>
+
   .knPage {
     display: flex;
     flex-direction: column;
@@ -90,8 +96,17 @@
   .knList{
     border: none;
     border-radius: 0;
-
-    .p-listbox-filter-container{
+    &:deep() .p-listbox-item {
+      padding: 0;
+      a {
+        display: block;
+        padding: 0.75rem 0.75rem;
+        &.router-link-active{
+          background-color: $color-secondary;
+        }
+      }
+    }
+    &:deep() .p-listbox-filter-container{
       input.p-listbox-filter{
         border-radius: 0;
       }
