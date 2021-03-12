@@ -10,19 +10,67 @@
             <Button icon="pi pi-times" class="p-button-danger p-button-text" />
         </template>
     </Toolbar>
-    <div class="p-grid p-m-0">
-        <div>
-            <span class="p-float-label">
-                <InputText id="label" class="kn-material-input" type="text" v-model="template.label" />
-                <label for="label">Label</label>
-            </span>
-            <span class="p-float-label">
-                <Textarea classv-model="template.description" id="description" rows="5" cols="30" />
-                <label for="description">Description</label>
-            </span>
-            <span class="p-float-label">
-                <Chips v-model="template.tags" />
-            </span>
+    <div class="p-grid p-m-0 p-fluid">
+        <div  class="p-col-9">
+        <Card >
+            <template #title>
+                Information
+            </template>
+            <template #content>
+                <div class="p-grid">
+                    <div class="p-col-6">
+                        <span class="p-float-label">
+                            <InputText id="label" class="kn-material-input" type="text" v-model="template.label" />
+                            <label for="label">Label</label>
+                        </span>
+                    </div>
+                    <div class="p-col-6">
+                        <span class="p-float-label">
+                            <InputText id="type" class="kn-material-input" type="text" v-model="template.type" />
+                            <label for="type">Type</label>
+                        </span>
+                    </div>
+
+                    <div class="p-col-12">
+                        <span class="p-float-label">
+                            <Textarea classv-model="template.description" class="kn-material-input" :autoResize="true" id="description" rows="3" />
+                            <label for="description">Description</label>
+                        </span>
+                    </div>
+
+                    <div class="p-col-12">
+                        <span class="p-float-label kn-material-input">
+                            <Chips v-model="template.tags"/>
+                            <label for="tags">Tags</label>
+                        </span>
+                    </div>
+                </div>
+            </template>
+        </Card>
+        </div>
+        <div class="p-col-3 kn-height-full">
+         <Card>
+                <template #title>
+                    Image
+                    <Button icon="fas fa-upload" class="p-button-danger p-button-text" />
+                </template>
+             <template #content>
+                 conten
+             </template>
+         </Card>
+        </div>
+        <div  class="p-col-12">
+            <Accordion :multiple="true">
+	<AccordionTab header="Header I">
+		Content
+	</AccordionTab>
+	<AccordionTab header="Header II">
+		Content
+	</AccordionTab>
+	<AccordionTab header="Header III">
+		Content
+	</AccordionTab>
+</Accordion>
         </div>
     </div>
   </div>
@@ -32,7 +80,9 @@
 import { defineComponent } from 'vue'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
-import Chips from 'primevue/chips';
+import Chips from 'primevue/chips'
+import Accordion from 'primevue/accordion'
+import AccordionTab from 'primevue/accordiontab'
 
 interface GalleryTemplate {
     id: string
@@ -47,6 +97,8 @@ interface GalleryTemplate {
 export default defineComponent({
     name: 'gallery-management-detail',
     components: {
+        Accordion,
+        AccordionTab,
         Chips,
         InputText,
         Textarea
