@@ -3338,10 +3338,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				$scope.drivers = [];
 				$scope.dataset = $scope.selectedDataSet;
 				if($scope.dataset.drivers) {
-					$scope.drivers = angular.copy($scope.dataset.drivers);
-
-					$scope.buildObjForFillParameterPanel($scope.drivers);
-
+					$scope.drivers = $scope.dataset.drivers;
 					if($scope.drivers && $scope.drivers.length > 0) {
 							if( $scope.dataset.drivers[0].parameterValue && Array.isArray($scope.dataset.drivers[0].parameterValue)){
 								parameterValue = $scope.dataset.drivers[0].parameterValue[0].value;
@@ -3359,7 +3356,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				} else {
 					$scope.showDrivers = $scope.selectedDataSet.pars.length > 0;
 				}
-
 				$scope.dataset.executed = !$scope.showDrivers;
 				$scope.showFilterIcon = driversExecutionService.showFilterIcon;
 
@@ -3559,157 +3555,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 
 	}
-	
-	$scope.buildObjForFillParameterPanel = function(filterStatus) {
-		var fillObj = {};
-		var hasDefVal = false;
-		for(var i=0; i<filterStatus.length; i++){
-			if(filterStatus[i].parameterValue && filterStatus[i].parameterValue.length>0) {
-				var arrDefToFill = [];
-				var arrDefToFillDescription = []; //TREE
-				//MULTIVALUE
-				hasDefVal= true;
-				if(filterStatus[i].multivalue && filterStatus[i].valueSelection!='man_in' || filterStatus[i].selectionType=='TREE' || filterStatus[i].selectionType=='LOOKUP'){
-					for(var k=0;k<filterStatus[i].parameterValue.length;k++){
-						arrDefToFill.push(filterStatus[i].parameterValue[k].value);
-						arrDefToFillDescription.push(filterStatus[i].parameterValue[k].description);
-					}
-					fillObj[filterStatus[i].urlName] = JSON.stringify(arrDefToFill);
-					//TREE - LOOKUP
-					if(filterStatus[i].selectionType=='TREE' || filterStatus[i].selectionType=='LOOKUP'){
-						var strDefToFillDescription ='';
-						for(var z=0; z<arrDefToFillDescription.length; z++){
-							strDefToFillDescription=strDefToFillDescription+arrDefToFillDescription[z];
-							if(z<arrDefToFill.length-1){
-								strDefToFillDescription=strDefToFillDescription+';';
-							}
-						}
-						fillObj[filterStatus[i].urlName+'_field_visible_description'] = strDefToFillDescription;
-					}else{
-						fillObj[filterStatus[i].urlName+'_field_visible_description'] = JSON.stringify(arrDefToFill);
-					}
-				}else{
-					//SINGLE VALUE
-					fillObj[filterStatus[i].urlName] = filterStatus[i].parameterValue[0].value;
-					fillObj[filterStatus[i].urlName+'_field_visible_description'] =filterStatus[i].parameterValue[0].value;
-				}
-			}
-			if (filterStatus[i].driverMaxValue) {
-				fillObj[filterStatus[i].urlName+'_max_value'] = filterStatus[i].driverMaxValue
-			}
-		}
-		if(hasDefVal){
-			$scope.fillParametersPanel(fillObj);
-		}
-		// TODO : serviceScope.setMaxValueForParameters(fillObj);
-	};
-	
-	/*
-	 * Fill Parameters Panel
-	 */
-	$scope.fillParametersPanel = function(params){
-
-		if($scope.drivers.length > 0){
-
-			for(var i = 0; i < $scope.drivers.length; i++){
-				var parameter = $scope.drivers[i];
-
-				// in case the parameter value is missing or it is "[]", we reset the parameter.
-				// TODO improve this: the "[]" is a string while it should be an actual empty array!!! fix this in combination with decodeRequestStringToJson
-				// choosing a more convenient encoding/decoding
-				if(!params[parameter.urlName] || params[parameter.urlName] == "[]") {
-					driversExecutionService.resetParameter(parameter);
-				} else {
-					if(parameter.valueSelection=='lov') {
-						if(parameter.selectionType.toLowerCase() == "tree" || parameter.selectionType.toLowerCase() == "lookup") {
-							//TREE DESC FOR LABEL
-							var ArrValue = JSON.parse(params[parameter.urlName]);
-							if (typeof parameter.parameterDescription === 'undefined'){
-								parameter.parameterDescription = {};
-							}
-							if(params[parameter.urlName+'_field_visible_description']!=undefined) {
-								parameter.parameterDescription = {};
-								var ArrDesc = params[parameter.urlName+'_field_visible_description'].split(';');
-								for(var w=0; w<ArrValue.length; w++){
-									parameter.parameterDescription[ArrValue[w]] =ArrDesc[w];
-								}
-								parameter.parameterValue = ArrValue;
-							}
-						} else {
-							//FROM VIEWPOINT : the lov value saved (multivalue or single value) matched  with the parameter
-							parameter.parameterValue = parameter.multivalue ? JSON.parse(params[parameter.urlName])	: params[parameter.urlName];
-						}
-
-					} else if(parameter.valueSelection.toLowerCase() == 'map_in') {
-						var valueToBeCleanedByQuotes = params[parameter.urlName].replace(/^'(.*)'$/g, '$1');
-						var valueToBeSplitted = valueToBeCleanedByQuotes.split("','");
-
-						parameter.parameterValue = (parameter.multivalue)? valueToBeSplitted : valueToBeCleanedByQuotes;
-					} else {
-						if(parameter.type=='NUM'){
-							if (parameter.multivalue){
-								var values = params[parameter.urlName].split(",");
-								parameter.parameterValue = "";
-								for (var v=0; v<values.length; v++){
-									parameter.parameterValue += parseFloat(values[v],10);
-									if (v < (values.length-1)) parameter.parameterValue += ",";
-								}
-							}else
-								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
-						}else if(parameter.type=='DATE'){
-							//set parameter date server
-							if (parameter.multivalue){
-								var values = params[parameter.urlName].split(",");
-								parameter.parameterValue = "";
-								for (var v=0; v<values.length; v++){
-									var res = sbiModule_dateServices.getDateFromFormat(values[v], sbiModule_config.serverDateFormat);
-									parameter.parameterValue += sbiModule_dateServices.formatDate(res, sbiModule_config.serverDateFormat); //convert to string
-									if (v < (values.length-1)) parameter.parameterValue += ",";
-								}
-							}else
-								parameter.parameterValue = sbiModule_dateServices.getDateFromFormat(params[parameter.urlName], sbiModule_config.serverDateFormat);
-						}else if(parameter.type=='DATE_RANGE'){
-							var dateRange = params[parameter.urlName];
-							var dateRangeArr = dateRange.split('_');
-							var range = dateRangeArr[1];
-							dateRange = dateRangeArr[0];
-							if (dateRange === parseInt(dateRange)){
-								//FROM DEFAULT
-								parameter.parameterValue= new Date(parseInt(dateRange));
-							}else{
-								//FROM VIEWPOINT
-								parameter.parameterValue= sbiModule_dateServices.getDateFromFormat(dateRange, sbiModule_config.serverDateFormat);
-							}
-							if(typeof parameter.datarange ==='undefined'){
-								parameter.datarange = {};
-							}
-							parameter.datarange.opt=serviceScope.convertDateRange(range);
-						}
-						else if(parameter.type=='STRING'){
-							parameter.parameterValue = params[parameter.urlName];
-							if(parameter.defaultValues && parameter.defaultValues.length > 0) {
-								var parameterValues = parameter.parameterValue;
-								var parArr = parameterValues.split(';');
-								for(var j = 0; j < parameter.defaultValues.length; j++) {
-									var defaultValue = parameter.defaultValues[j];
-									for(var k = 0; k < parArr.length; k++) {
-										if(defaultValue.value == parArr[k]) {
-											defaultValue.isSelected = true;
-											break;
-										} else {
-											defaultValue.isSelected = false;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				// TODO : driversDependencyService.updateVisualDependency(parameter, serviceScope.businessModel);
-			}
-		}
-	};
-	
 
     $scope.createColumnsForPreview=function(fields){
     	for(i=1;i<fields.length;i++){
