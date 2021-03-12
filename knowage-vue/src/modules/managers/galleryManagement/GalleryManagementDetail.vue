@@ -1,47 +1,46 @@
 <template>
   <div class="managerDetail">
-    <Toolbar>
+    <Toolbar class="kn-toolbar-secondary p-m-0">
         <template #left>
             Template {{template.label}}
         </template>
-
         <template #right>
-            <Button icon="pi pi-save" class="p-button-danger p-button-text" @click="saveTemplate" />
-            <Button icon="pi pi-times" class="p-button-danger p-button-text" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveTemplate" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" />
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid">
         <div  class="p-col-9">
         <Card >
             <template #title>
-                Information
+                {{$t('common.information')}}
             </template>
             <template #content>
                 <div class="p-grid">
                     <div class="p-col-6">
                         <span class="p-float-label">
                             <InputText id="label" class="kn-material-input" type="text" v-model="template.label" />
-                            <label for="label">Label</label>
+                            <label class="kn-material-input-label" for="label">{{$t('common.label')}}</label>
                         </span>
                     </div>
                     <div class="p-col-6">
                         <span class="p-float-label">
                             <InputText id="type" class="kn-material-input" type="text" v-model="template.type" />
-                            <label for="type">Type</label>
+                            <label class="kn-material-input-label" for="type">{{$t('common.type')}}</label>
                         </span>
                     </div>
 
                     <div class="p-col-12">
                         <span class="p-float-label">
                             <Textarea classv-model="template.description" class="kn-material-input" :autoResize="true" id="description" rows="3" />
-                            <label for="description">Description</label>
+                            <label class="kn-material-input-label" for="description">{{$t('common.description')}}</label>
                         </span>
                     </div>
 
                     <div class="p-col-12">
                         <span class="p-float-label kn-material-input">
                             <Chips v-model="template.tags"/>
-                            <label for="tags">Tags</label>
+                            <label class="kn-material-input-label" for="tags">{{$t('common.tags')}}</label>
                         </span>
                     </div>
                 </div>
@@ -50,27 +49,27 @@
         </div>
         <div class="p-col-3 kn-height-full">
          <Card>
-                <template #title>
-                    Image
-                    <Button icon="fas fa-upload" class="p-button-danger p-button-text" />
-                </template>
+            <template #title>
+                {{$t('common.image')}}
+                <Button icon="fas fa-upload" class="p-button-text" />
+            </template>
              <template #content>
-                 conten
+                <Skeleton size="10rem"></Skeleton>
              </template>
          </Card>
         </div>
         <div  class="p-col-12">
-            <Accordion :multiple="true">
-	<AccordionTab header="Header I">
-		Content
-	</AccordionTab>
-	<AccordionTab header="Header II">
-		Content
-	</AccordionTab>
-	<AccordionTab header="Header III">
-		Content
-	</AccordionTab>
-</Accordion>
+        <Splitter style="height: 300px">
+            <SplitterPanel :size="100" >
+                {{$t('common.codingLanguages.html')}}
+            </SplitterPanel>
+            <SplitterPanel :size="100">
+                {{$t('common.codingLanguages.js')}}
+            </SplitterPanel>
+            <SplitterPanel :size="100">
+                {{$t('common.codingLanguages.css')}}
+            </SplitterPanel>
+        </Splitter>
         </div>
     </div>
   </div>
@@ -78,11 +77,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
 import Chips from 'primevue/chips'
-import Accordion from 'primevue/accordion'
-import AccordionTab from 'primevue/accordiontab'
+import InputText from 'primevue/inputtext'
+import Skeleton from 'primevue/skeleton'
+import Splitter from 'primevue/splitter'
+import SplitterPanel from 'primevue/splitterpanel'
+import Textarea from 'primevue/textarea'
 
 interface GalleryTemplate {
     id: string
@@ -97,10 +97,11 @@ interface GalleryTemplate {
 export default defineComponent({
     name: 'gallery-management-detail',
     components: {
-        Accordion,
-        AccordionTab,
         Chips,
         InputText,
+        Skeleton,
+        Splitter,
+        SplitterPanel,
         Textarea
     },
     props: {

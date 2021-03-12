@@ -6,3 +6,12 @@
 .kn-height-full {
     height: 100%;
 }
+
+.kn-toolbar-secondary.p-toolbar {
+    background-color: #bbd6ed;
+    border: none;
+    border-radius: 0;
+    color: $color-primary;
+    height: $toolbar-height;
+    padding: $toolbar-padding;
+}

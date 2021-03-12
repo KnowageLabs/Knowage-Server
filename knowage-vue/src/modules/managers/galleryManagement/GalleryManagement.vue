@@ -19,13 +19,13 @@
                   <span>{{slotProps.option.label}}</span>
                   <span class="smallerLine">{{slotProps.option.author}}</span>
                 </div>
-                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deleteTemplate($event,slotProps.option.id)"/>
+                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain kn-gallery-slotProps.option.type" @click="deleteTemplate($event,slotProps.option.id)"/>
               </div>
             </router-link>
           </template>
         </Listbox>
       </div>
-      <div class="p-col-9">
+      <div class="p-col-9 p-p-0 p-m-0">
         <router-view />
       </div>
     </div>

@@ -4,3 +4,8 @@
     border-right: none !important;
     border-radius: 0 !important;
 }
+
+label.kn-material-input-label {
+    color: $color-primary !important;
+    text-transform: capitalize;
+}
