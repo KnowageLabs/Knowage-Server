@@ -93,6 +93,7 @@
 		<module>../spagobi-metamodel-utils</module>
 		<module>../knowagedao</module>
 		<module>../knowage-core</module>
+		<module>../knowageoauth2</module>
 		<module>../knowageoauth2securityprovider</module>
 		<module>../knowageldapsecurityprovider</module>
 		<module>../knowagegooglesecurityprovider</module>
