@@ -19,8 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.security.OAuth2.OAuth2Client;
-import it.eng.spagobi.security.OAuth2.OAuth2Config;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
