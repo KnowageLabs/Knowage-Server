@@ -377,6 +377,23 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		$scope.editQueryObj.fields[data.index+data.direction] = temp;
 	})
 
+	$scope.$on('setOrder',function(event,data){
+
+
+		var colIndex = 0;
+		var orderMap = {};
+		data.forEach(function(e) {
+			orderMap[e] = colIndex++;
+		});
+
+		$scope.editQueryObj
+			.fields
+			.sort(function(a, b) {
+				return orderMap[a.id] - orderMap[b.id];
+			});
+
+	})
+
 	$scope.$on('showCalculatedField', function (event, data) {
 		$scope.showCalculatedField(data);
 	});
