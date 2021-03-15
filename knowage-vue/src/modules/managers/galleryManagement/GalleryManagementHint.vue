@@ -2,10 +2,10 @@
   <div class="galleryHint hint">
       <Card class="galleryHintContent">
         <template #title>
-            <i class="far fa-life-ring galleryHintIcon"></i> {{$t('managers.gallery.title')}}
+            <i class="far fa-life-ring galleryHintIcon"></i> {{$t('managers.widgetGallery.title')}}
         </template>
         <template #content>
-            {{$t('managers.gallery.hint')}}
+            {{$t('managers.widgetGallery.hint')}}
         </template>
     </Card>
   </div>

@@ -20,9 +20,10 @@
         "languageSelection": "Selezione Lingua"
     },
     "managers": {
-        "gallery": {
-            "title": "Gestione gallery",
-            "hint": "I templates permettono di accedere ad elementi già pronti per procedere più rapidamente alla creazione delle dashboards. Per visualizzare i dettagli di un template selezionarne uno tra quelli a lato, oppure premere il pulsante \"+\" per aggiungerne o importarne uno."
+        "widgetGallery": {
+            "title": "Gestione Gallery",
+            "hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
+            "noResults": "Nessun template disponibile per la ricerca corrente"
         }
     }
 }

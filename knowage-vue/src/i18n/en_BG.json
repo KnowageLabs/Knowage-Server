@@ -35,7 +35,8 @@
     "managers": {
         "widgetGallery": {
             "title": "Gallery management",
-            "hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one."
+            "hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
+            "noResults": "No templates available for the selected filter"
         }
     }
 }

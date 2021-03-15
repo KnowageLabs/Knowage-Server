@@ -6,7 +6,7 @@
         </template>
         <template #right>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveTemplate" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate($event)"/>
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid">
@@ -62,9 +62,11 @@
         <Splitter style="height: 300px">
             <SplitterPanel :size="100" >
                 {{$t('common.codingLanguages.html')}}
+                <div ref="htmlCodemirror" ></div>
             </SplitterPanel>
             <SplitterPanel :size="100">
                 {{$t('common.codingLanguages.js')}}
+                <div ref="jsCodemirror"></div>
             </SplitterPanel>
             <SplitterPanel :size="100">
                 {{$t('common.codingLanguages.css')}}
@@ -78,6 +80,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Chips from 'primevue/chips'
+import CodeMirror from 'codemirror/src/codemirror'
 import InputText from 'primevue/inputtext'
 import router from '@/App.routes'
 import Skeleton from 'primevue/skeleton'
@@ -113,11 +116,12 @@ export default defineComponent({
             template: {} as GalleryTemplate,
             cmOptions : {
                 tabSize: 4,
-                mode: 'text/javascript',
+                mode: 'javascript',
                 theme: 'base16-dark',
                 lineNumbers: true,
                 line: true,
             },
+            code: '<div>ciao</div>',
             galleryTemplates: [
                 {id:'908d9674-ff77-43bd-90e6-fa11eef06c99', label:'colored card', type:'html', author:'davide.vernassa@eng.it', tags:["html","card"]},
                 {id:'b206bf60-5622-4432-9e6c-fd4a66bab811', label:'advanced line chart', type:'chart', author:'matteo.massarotto@eng.it', tags:["chart", "highchart"]},
@@ -132,6 +136,22 @@ export default defineComponent({
     },
     created() {
         this.loadTemplate()
+    },
+    mounted(){
+        CodeMirror(this.$refs.htmlCodemirror, {
+            lineNumbers: true,
+            tabSize: 2,
+            value: this.code,
+            mode: ['html'],
+            theme: 'monokai'
+        });
+        CodeMirror(this.$refs.jsCodemirror, {
+            lineNumbers: true,
+            tabSize: 2,
+            value: 'var ciao = 7;',
+            mode: 'text/javascript',
+            theme: 'monokai'
+        });
     },
     updated() {
         this.loadTemplate()

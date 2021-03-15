@@ -9,6 +9,13 @@ import VueAxios from 'vue-axios'
 import interceptor from './axios.js'
 interceptor()
 
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/monokai.css'
+import 'codemirror/mode/htmlmixed/htmlmixed.js'
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/xml/xml.js'
+
+
 import 'primevue/resources/themes/mdc-light-indigo/theme.css'
 import 'primevue/resources/primevue.min.css'               
 import 'primeicons/primeicons.css'

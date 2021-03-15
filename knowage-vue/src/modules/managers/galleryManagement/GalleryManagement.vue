@@ -4,13 +4,13 @@
       <div class="knListColumn p-col-3 p-p-0">
         <Toolbar class="knToolbar">
           <template #left>
-            {{$t('managers.gallery.title')}}
+            {{$t('managers.widgetGallery.title')}}
           </template>
           <template #right>
             <FabButton icon="fas fa-plus" />
           </template>
         </Toolbar>
-        <Listbox class="knList" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="label" filterMatchMode="contains" :filterFields="['label','type','tags']">
+        <Listbox class="knList" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="label" filterMatchMode="contains" :filterFields="['label','type','tags']" :emptyFilterMessage="$t('managers.widgetGallery.noResults')">
           <template #option="slotProps">
             <router-link class="kn-decoration-none" :to="{ name: 'gallerydetail', params: { id: slotProps.option.id }}" exact>
               <div class="knListItem">
