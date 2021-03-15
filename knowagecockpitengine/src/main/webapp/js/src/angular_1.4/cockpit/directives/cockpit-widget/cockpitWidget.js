@@ -781,7 +781,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 	var getFormattedParameterValue = function(param){
 		var value = cockpitModule_analyticalDrivers[param.driver];
 		if (!param.multiValue) return value;
-		else return cockpitModule_utilstServices.getDriverArray(value);
+		else return cockpitModule_utilstServices.getMultiValueParameterArray(value);
 	}
 
 	var popupMessage = function(result){
