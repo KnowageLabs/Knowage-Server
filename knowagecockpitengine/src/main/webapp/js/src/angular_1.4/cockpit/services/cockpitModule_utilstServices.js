@@ -30,7 +30,7 @@ angular.module("cockpitModule").service("cockpitModule_utilstServices",function(
 	}
 
 	this.getMultiValueParameterArray=function(encodedValue){
-		var valRegExp = new RegExp('\{([;,.]{1})\{([a-zA-Z0-9,.;]*)\}(STRING|NUMBER)\}');
+		var valRegExp = new RegExp('\{([;,.]{1})\{(.*)\}(STRING|NUMBER)\}');
 		var matches = encodedValue.match(valRegExp);
 		var decodedValue = matches[2].split(matches[1]);
 		return decodedValue;
