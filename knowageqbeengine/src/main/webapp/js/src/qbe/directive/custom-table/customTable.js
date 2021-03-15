@@ -127,6 +127,18 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		},
 		components: {
 			agColumnHeader: CustomHeader
+		},
+		onDragStopped: function(data) {
+
+			var currColsOrder = $scope.qbeTableGrid
+				.columnApi
+				.getAllGridColumns()
+				.map(function(e) {
+					return e.colDef.properties.id;
+				});
+
+			$rootScope.$broadcast("setOrder", currColsOrder);
+
 		}
 	}
 
