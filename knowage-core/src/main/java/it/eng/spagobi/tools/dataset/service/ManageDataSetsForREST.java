@@ -1557,7 +1557,7 @@ public class ManageDataSetsForREST {
 			String id = json.optString(DataSetConstants.ID);
 			try {
 				IDataSet existingByName = dsDao.loadDataSetByName(ds.getName());
-				if (id != null && !id.equals("") && !id.equals("0")) {
+				if (id != null && !id.equals("") && !id.equals("0") && existingByName != null) {
 					if (existingByName != null && !Integer.valueOf(id).equals(existingByName.getId())) {
 						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.nameAlreadyExistent");
 					}
