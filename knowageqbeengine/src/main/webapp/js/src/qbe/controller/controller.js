@@ -262,7 +262,9 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 						"order":i+1,
 						"ordering":currField.order,
 						"filters": [],
-						"havings": []
+						"havings": [],
+						"dataType": currField.dataType,
+						"format": currField.format
 					}
 
 				if(currField.temporal){
