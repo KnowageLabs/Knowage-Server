@@ -50,7 +50,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.translate=sbiModule_translate;
 		if(!$scope.datasetSettings) $scope.datasetSettings = {};
 		$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
-		$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue) || !(cockpitModule_datasetServices.driverHasValue);
 
 		$scope.addNewDataset=function(){
 			cockpitModule_datasetServices.addDataset(undefined,$scope.availableDatasets,false,true,$scope.datasetTypeAvailable || undefined,$scope.datasetTypeExclusion || undefined,$scope.noParameters || false )
