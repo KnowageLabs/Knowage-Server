@@ -12,6 +12,8 @@ public class WidgetGalleryDTO {
 	private String type;
 	private List<String> tags = new ArrayList<String>();
 
+	private Code code = new Code();
+
 	public UUID getId() {
 		return id;
 	}
@@ -48,13 +50,25 @@ public class WidgetGalleryDTO {
 		return tags;
 	}
 
-	public WidgetGalleryDTO(UUID id, String author, String label, String type, List<String> tags) {
+	public Code getCode() {
+		return code;
+	}
+
+	public void setCode(Code code) {
+		this.code = code;
+	}
+
+	public WidgetGalleryDTO(UUID id, String author, String label, String type, List<String> tags, String html, String javaScript, String python, String css) {
 		super();
 		this.id = id;
 		this.author = author;
 		this.label = label;
 		this.type = type;
 		this.tags = tags;
+		this.code.setCss(css);
+		this.code.setHtml(html);
+		this.code.setJavascript(javaScript);
+		this.code.setPython(python);
 	}
 
 	public WidgetGalleryDTO() {
