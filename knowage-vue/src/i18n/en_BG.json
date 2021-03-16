@@ -1,15 +1,15 @@
 {
-    "common":{
+    "common": {
         "codingLanguages": {
             "html": "html",
-            "js": "js",
+            "javascript": "javascript",
             "css": "css",
             "python": "python"
         },
         "close": "close",
         "description": "description",
         "image": "image",
-        "information" : "information",
+        "information": "information",
         "label": "label",
         "loggedUser": "logged user",
         "search": "search",
@@ -18,10 +18,10 @@
         "type": "type",
         "version": "version"
     },
-    "home":{
-        "test":"english"
+    "home": {
+        "test": "english"
     },
-    "infoDialog":{
+    "infoDialog": {
         "aboutKnowage": "About Knowage",
         "copyright": "© 2020 Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on www.knowage-suite.com"
@@ -30,7 +30,6 @@
         "english": "english",
         "italian": "italian",
         "languageSelection": "Language Selection"
-        
     },
     "managers": {
         "widgetGallery": {
