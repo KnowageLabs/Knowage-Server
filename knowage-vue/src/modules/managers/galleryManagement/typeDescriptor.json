@@ -1,0 +1,66 @@
+{
+    "allowedEditors": {
+        "html": [
+            "html",
+            "css"
+        ],
+        "python": [
+            "html",
+            "python",
+            "css"
+        ],
+        "chart": [
+            "html",
+            "javascript",
+            "css"
+        ]
+    },
+    "editor": {
+        "html": {
+            "name": "htmlCodemirror"
+        },
+        "javascript": {
+            "name": "javascriptCodemirror"
+        },
+        "python": {
+            "name": "pythonCodemirror"
+        },
+        "css": {
+            "name": "cssCodemirror"
+        }
+    },
+    "options": {
+        "html": {
+            "tabSize": 4,
+            "mode": "xml",
+            "theme": "default",
+            "lineNumbers": true,
+            "line": false,
+            "cursor": true
+        },
+        "javascript": {
+            "tabSize": 4,
+            "mode": "javascript",
+            "theme": "default",
+            "lineNumbers": true,
+            "line": false,
+            "cursor": true
+        },
+        "pyhton": {
+            "tabSize": 4,
+            "mode": "text/x-python",
+            "theme": "default",
+            "lineNumbers": true,
+            "line": false,
+            "cursor": true
+        },
+        "css": {
+            "tabSize": 4,
+            "mode": "css",
+            "theme": "default",
+            "lineNumbers": true,
+            "line": false,
+            "cursor": true
+        }
+    }
+}
