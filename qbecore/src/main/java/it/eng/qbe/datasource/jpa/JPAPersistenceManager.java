@@ -324,6 +324,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			logger.debug("Key column class is equal to [" + obj.getClass().getName() + "]");
 			// object used to track old values, just before changes
 			JSONObject oldRecord = new JSONObject();
+			oldRecord.put(keyAttributeName, this.convertValue(keyColumnValue, a));
 			// just to count the number of changes
 			int changesCounter = 0;
 
