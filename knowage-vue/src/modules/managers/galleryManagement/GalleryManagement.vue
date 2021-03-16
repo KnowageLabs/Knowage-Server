@@ -47,16 +47,7 @@
     },
     data (){
       return{
-        galleryTemplates: [
-          {id:'908d9674-ff77-43bd-90e6-fa11eef06c99', label:'colored card', type:'html', author:'davide.vernassa@eng.it', tags:["html","card"]},
-          {id:'b206bf60-5622-4432-9e6c-fd4a66bab811', label:'advanced line chart', type:'chart', author:'matteo.massarotto@eng.it', tags:["chart", "highchart"]},
-          {id:'b160c219-801e-4030-afa9-b52583a9094f', label:'hierarchy', type:'chart', author:'davide.vernassa@eng.it', tags:["highchart", "MARE"]},
-          {id:'27f46bee-442b-4c65-a6ff-4e55a1caa93f', label:'double cards', type:'html', author:'davide.vernassa@eng.it', tags:["html", "card"]},
-          {id:'84d99a09-5d07-4fa5-85f3-e0c19c78d508', label:'progression chart', type:'python', author:'alberto.nale@eng.it', tags:["python", "function","ai"]},
-          {id:'cba22aa7-444f-4dfb-9d16-ca7df7965360', label:'multicard', type:'html', author:'davide.vernassa@eng.it', tags:["html", "multiple", "card"]},
-          {id:'0e5c80b8-8308-48fe-8943-274d7bfa5dfb', label:'header_light', type:'html', author:'alberto.nale@eng.it', tags:["html", "header"]},
-          {id:'833c2694-7873-4308-956d-f0a4ccddae08', label:'header_dark', type:'html', author:'alberto.nale@eng.it', tags:["html", "header"]}
-        ],
+        galleryTemplates: [],
         iconTypesMap: {
           "chart": {"className":"fab fa-js-square", "style":{"background-color":"#ffc107","color":"white"}},
           "html": {"className":"fab fa-html5", "style":{"background-color":"#c2185b","color":"white"}},
@@ -64,7 +55,15 @@
         }
       }
     },
+    created() {
+      this.loadAllTemplates()
+    },
     methods:{
+      loadAllTemplates() {
+        this.axios.get(`/knowage-api/api/1.0/widgetgallery`)
+          .then(response => this.galleryTemplates = response.data)
+          .catch(error => console.error(error))
+      },
       deleteTemplate(e,templateId){
         e.preventDefault()
         /*this.axios.delete(`/knowage/restful-services/3.0/gallery/${this.id}`)
