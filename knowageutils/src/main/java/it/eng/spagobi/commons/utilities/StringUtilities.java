@@ -830,6 +830,7 @@ public class StringUtilities {
 	 */
 	public static String fromStringToHTML(String s) {
 		if (s != null) {
+			s = s.replace("<", "&lt;");
 			s = s.replace(" ", "&nbsp;");
 			s = s.replace("\n", "<br>");
 		}
