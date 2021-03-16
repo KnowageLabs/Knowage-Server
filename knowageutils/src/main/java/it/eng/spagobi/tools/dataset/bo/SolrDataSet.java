@@ -289,8 +289,7 @@ public class SolrDataSet extends RESTDataSet {
 		String body = null;
 		String address = null;
 		/*
-		 * In case in the future we will let the user to choose
-		 * between GET and POST...
+		 * In case in the future we will let the user to choose between GET and POST...
 		 */
 		HttpMethod method = HttpMethod.Post;
 		if (method == HttpMethod.Get) {
@@ -298,7 +297,7 @@ public class SolrDataSet extends RESTDataSet {
 		} else if (method == HttpMethod.Post) {
 			address = solrConfiguration.toString(false);
 			body = solrConfiguration.getQueryParameters();
-			requestHeaders.put("Content-Type", "application/x-www-form-urlencoded");
+			requestHeaders.put("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
 		}
 		setDataProxy(new SolrDataProxy(address, method, body, facetField, requestHeaders, offset, fetchSize, maxResults, isFacet()));
 	}
