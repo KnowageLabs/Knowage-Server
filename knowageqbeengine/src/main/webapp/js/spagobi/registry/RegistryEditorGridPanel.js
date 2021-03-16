@@ -1610,7 +1610,9 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 
 		var recordsArray =[];
 		if(record){
-				recordsArray = [record.json];
+			var aRecordData = Ext.apply({}, record.data);
+			delete aRecordData.recNo; // record number is not needed when deleting
+			recordsArray = [aRecordData];
 		}
 
 
