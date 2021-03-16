@@ -24,6 +24,8 @@ public class OAuth2Config {
 	private final String userInfoUrl;
 	private final String adminEmail;
 	private final String scopes;
+	private final String userIdClaim;
+	private final String userNameClaim;
 	
 	public OAuth2Config() {
 		this.authorizeUrl = System.getProperty("oauth_authorize_url", System.getenv("OAUTH2_AUTHORIZE_URL"));
@@ -35,7 +37,13 @@ public class OAuth2Config {
 		this.adminEmail = System.getProperty("oauth_admin_email", System.getenv("OAUTH2_ADMIN_EMAIL"));
 		
 		String _scopes = System.getProperty("oauth_scopes", System.getenv("OAUTH2_SCOPES"));
-		this.scopes = Objects.isNull(_scopes) ? "openid,profile" : _scopes;
+		this.scopes = Objects.isNull(_scopes) ? "openid profile" : _scopes;
+
+		String _userIdClaim = System.getProperty("oauth_user_id_claim", System.getenv("OAUTH2_USER_ID_CLAIM"));
+		this.userIdClaim = Objects.isNull(_userIdClaim) ? "sub" : _userIdClaim;
+
+		String _userNameClaim = System.getProperty("oauth_user_name_claim", System.getenv("OAUTH2_USER_NAME_CLAIM"));
+		this.userNameClaim = Objects.isNull(_userNameClaim) ? "preferred_username" : _userNameClaim;
 		
 		logger.debug("constructed OAuth2Config: " + this.toString());
 	}
@@ -79,12 +87,21 @@ public class OAuth2Config {
 		return this.adminEmail;
 	}
 
+	public String getUserIdClaim() {
+		return userIdClaim;
+	}
+
+	public String getUserNameClaim() {
+		return userNameClaim;
+	}
+
 	@Override
 	public String toString() {
 		return "OAuth2Config [authorizeUrl=" + authorizeUrl + ", redirectUrl=" + redirectUrl + ", clientId=" + clientId
 				+ ", clientSecret=" + clientSecret + ", tokenUrl=" + tokenUrl + ", userInfoUrl=" + userInfoUrl
-				+ ", adminEmail=" + adminEmail + ", scopes=" + scopes + "]";
+				+ ", adminEmail=" + adminEmail + ", scopes=" + scopes + ", userIdClaim=" + userIdClaim
+				+ ", userNameClaim=" + userNameClaim + "]";
 	}
 	
-	
+
 }

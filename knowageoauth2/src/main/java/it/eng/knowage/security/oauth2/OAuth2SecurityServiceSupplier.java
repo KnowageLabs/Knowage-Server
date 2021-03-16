@@ -61,9 +61,9 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			LogMF.debug(logger, "Server response is:\n{0}", responseStr);
 			JSONObject jsonObject = new JSONObject(responseStr);
 
-			String userId = jsonObject.getString("sub");
+			String userId = jsonObject.getString(config.getUserIdClaim());
 			logger.debug("User id is [" + userId + "]");
-			String userName = jsonObject.getString("preferred_username");
+			String userName = jsonObject.getString(config.getUserNameClaim());
 			logger.debug("User name is [" + userName + "]");
 
 			profile = new SpagoBIUserProfile();
