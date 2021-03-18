@@ -123,7 +123,6 @@
 				requiredFunctionality="NewsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/news/newsManagement.jsp" />
 			<ITEM label="menu.WidgetGalleryManagement"
-				requiredFunctionality="WidgetGalleryManagement"
 				to="${SPAGOBI_CONTEXT}/gallerymanagement" />
 		</GROUP_ITEM>
 

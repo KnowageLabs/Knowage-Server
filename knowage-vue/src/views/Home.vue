@@ -35,7 +35,7 @@ export default defineComponent({
       this.$i18n.locale = 'en_GB'
     },
     errorTest(){
-      this.$toast.add({severity:'error', summary: 'Error Message', detail:'Message Content', life: 3000});
+      this.$store.commit('setError','Message Content');
     }
   }
 });

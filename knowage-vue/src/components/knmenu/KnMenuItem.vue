@@ -69,7 +69,7 @@ li {
         text-align: center;
         padding: 12px 15px;
         padding-left: 12px;
-        color: white;
+        color: $mainmenu-icon-color;
         display: block;
         width: 100%;
         transition: background-color .3s, border-left-color .3s;
@@ -82,10 +82,10 @@ li {
             display: none;
         }
         &:hover {
-            background-color: lighten($color-primary, 10%);
+            background-color: lighten($mainmenu-background-color, 10%);
         }
         &.router-link-active {
-            border-left: 3px solid #CF0854;
+            border-left: 3px solid $mainmenu-highlight-color;
         }
         img {
             width: 20px;
@@ -96,8 +96,8 @@ li {
         margin:0;
         padding: 0;
         list-style: none;
-        box-shadow: 0 4px 8px rgb(72, 72, 72);
-        background-color: lighten(#43749E, 15%);
+        box-shadow: $mainmenu-box-shadow;
+        background-color: lighten($mainmenu-background-color, 15%);
         position: absolute;
         top: 0;
         left: 100%;
@@ -110,10 +110,10 @@ li {
                 display: inline-flex;
                 align-items: center;
                 padding: 10px 5px 10px 10px;
-                background-color: #f0f8ff;
-                color: #43749e;
+                background-color: $mainmenu-panel-color;
+                color: $mainmenu-panel-text-color;
                 &:hover {
-                    background-color: darken(#f0f8ff,10%);
+                    background-color: darken($mainmenu-panel-color,10%);
                 }
                 .p-menuitem-text {
                     display: inline-block;

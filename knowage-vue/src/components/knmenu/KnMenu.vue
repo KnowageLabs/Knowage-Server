@@ -140,13 +140,13 @@
       z-index: 100;
       width: $mainmenu-width;
       top: 0;
-      background-color: $color-primary;
+      background-color: $mainmenu-background-color;
       height: 100%;
       position: fixed;
       .profile {
          height: 60px;
          padding: 8px;
-         box-shadow: -3px 0px 4px 0 black;
+         box-shadow: $mainmenu-profile-box-shadow;
          & > button {
             cursor: pointer;
             width: 100%;
@@ -158,7 +158,7 @@
                float: right;
                margin-left: 4px;
                border-radius: 50%;
-               border: 2px solid #CF0854;
+               border: 2px solid $mainmenu-highlight-color;
                background-color: white;
             }
             .profile-name, .profile-role, i {
@@ -167,7 +167,7 @@
          }
       }
       .profile-menu {
-         border-bottom: 1px solid lighten($color-primary, 10%);
+         border-bottom: 1px solid lighten($mainmenu-background-color, 10%);
       }
 
       .layout-menu {
@@ -184,7 +184,7 @@
             & > a {
                text-align: center;
                padding: 15px;
-               color: white;
+               color: $mainmenu-icon-color;
                display: block;
                width: 100%;
                transition: background-color .3s, border-left-color .3s;
@@ -197,7 +197,7 @@
                   display: none;
                }
                &:hover {
-                  background-color: lighten($color-primary, 10%);
+                  background-color: lighten($mainmenu-background-color, 10%);
                }
             }
          }

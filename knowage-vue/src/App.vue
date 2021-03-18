@@ -57,12 +57,12 @@ export default defineComponent({
     }),
   },
   watch: {
-    error: function (oldError, newError) {
+    error(newError) {
       if (newError.visible) {
         this.$toast.add({
-          severity: "success",
-          summary: "Success Message",
-          detail: "Order submitted",
+          severity: "error",
+          summary: "Error Message",
+          detail: newError.msg,
           life: 3000,
         });
       }

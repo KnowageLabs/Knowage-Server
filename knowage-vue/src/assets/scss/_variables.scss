@@ -7,7 +7,15 @@ $color-fab: #CE0651;
 $font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
 
 // MENU VARIABLES
+$mainmenu-background-color: $color-primary;
+$mainmenu-box-shadow: 0px 4px 8px rgb(72,72,72);
+$mainmenu-highlight-color: $color-fab;
+$mainmenu-icon-color: #fff;
+$mainmenu-panel-color: #f0f8ff;
+$mainmenu-panel-text-color: $color-primary;
+$mainmenu-profile-box-shadow: -3px 0 4px 0 black;
 $mainmenu-width: 58px;
+
 
 // TOOLBAR VARIABLES
 $toolbar-height: 38px;

@@ -64,9 +64,9 @@
       </div>
       <div class="p-col-12">
         <Splitter style="height: 300px">
-          <SplitterPanel :size="100" :minSize="100" v-for="allowedEditor in typeDescriptor.allowedEditors[this.template.type]" v-bind:key="allowedEditor">
-            {{ $t("common.codingLanguages." + allowedEditor) }}
-            <CodeMirror :ref="`${allowedEditor}Editor_${this.template.id}`" :value="this.template.code[allowedEditor]" :options="typeDescriptor.options[allowedEditor]" @ready="onCmReady" @focus="onCmFocus" @input="onCmCodeChange" />
+          <SplitterPanel :size="100" :minSize="100" v-for="allowedEditor in typeDescriptor.allowedEditors[template.type]" v-bind:key="allowedEditor">
+            <h4><i :class="['icon',typeDescriptor.editor[allowedEditor].icon]"></i> {{ $t("common.codingLanguages." + allowedEditor) }}</h4>
+            <CodeMirror :ref="`${allowedEditor}Editor_${template.id}`" :value="template.code[allowedEditor]" :options="typeDescriptor.options[allowedEditor]" @ready="onCmReady" @focus="onCmFocus" @input="onCmCodeChange" />
           </SplitterPanel>
         </Splitter>
       </div>
@@ -385,3 +385,15 @@ export default defineComponent({
   }
 });
 </script>
+<style lang="scss" scoped>
+  .managerDetail {
+    h4{
+      margin: 0;
+      padding: 8px;
+      background-color: #1A1B1F;
+      color: #AAAEBC;
+      text-transform: uppercase;
+    }
+  }
+
+</style>

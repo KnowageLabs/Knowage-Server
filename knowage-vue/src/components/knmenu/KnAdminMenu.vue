@@ -16,11 +16,11 @@
                             <li role="none" :style="item.style" :class="searched(item.label)">
                                 <router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{navigate, href}">
                                     <a :href="href" role="menuitem"  @click="onLeafClick($event, item, navigate)">
-                                        a<span class="p-menuitem-text">{{item.label}}</span>
+                                        <span class="p-menuitem-text">{{item.label}}</span>
                                     </a>
                                 </router-link>
                                 <a v-else :href="item.url" :target="item.target"  role="menuitem" :tabindex="item.disabled ? null : '0'">
-                                    b<span class="p-menuitem-text">{{item.label}}</span>
+                                    <span class="p-menuitem-text">{{item.label}}</span>
                                 </a>
                             </li>
                         </template>
@@ -115,7 +115,7 @@ li {
         text-align: center;
         padding: 15px;
         padding-left: 12px;
-        color: white;
+        color: $mainmenu-icon-color;
         display: block;
         width: 100%;
         transition: background-color .3s, border-left-color .3s;
@@ -125,20 +125,20 @@ li {
         cursor: pointer;
         user-select: none;
         &:hover {
-            background-color: lighten(#43749E, 10%);
+            background-color: lighten($mainmenu-background-color, 10%);
         }
         &.router-link-active {
-            border-left: 3px solid #CF0854;
+            border-left: 3px solid $mainmenu-highlight-color;
         }
     }
     .p-megamenu-panel {
         padding: 16px;
-        box-shadow: 0 4px 8px rgb(72, 72, 72);
+        box-shadow: $mainmenu-box-shadow;
         position: absolute;
         z-index: 9;
         top: 0;
         left: 100%;
-        background-color: #f0f8ff;
+        background-color: $mainmenu-panel-color;
         min-width: 900px;
         min-height: 200px;
         ul {
@@ -155,10 +155,10 @@ li {
             transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
             a {
                 text-decoration: none;
-                color: #43749e;
+                color: $mainmenu-panel-text-color;
             }
             &:hover {
-                background-color: darken(#f0f8ff,10%);
+                background-color: darken($mainmenu-panel-color,10%);
             }
             &.searched {
                 background-color: yellow; 

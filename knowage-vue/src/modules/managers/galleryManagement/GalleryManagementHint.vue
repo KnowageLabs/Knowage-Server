@@ -30,6 +30,7 @@
 
         .galleryHintContent{
             border-radius: 0;
+            width: 90%;
         }
 
         .galleryHintIcon{

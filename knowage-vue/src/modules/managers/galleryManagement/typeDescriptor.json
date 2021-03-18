@@ -17,23 +17,27 @@
     },
     "editor": {
         "html": {
-            "name": "htmlCodemirror"
+            "name": "htmlCodemirror",
+            "icon": "fab fa-html5"
         },
         "javascript": {
-            "name": "javascriptCodemirror"
+            "name": "javascriptCodemirror",
+            "icon": "fab fa-js-square"
         },
         "python": {
-            "name": "pythonCodemirror"
+            "name": "pythonCodemirror",
+            "icon": "fab fa-python"
         },
         "css": {
-            "name": "cssCodemirror"
+            "name": "cssCodemirror",
+            "icon": "fab fa-css3"
         }
     },
     "options": {
         "html": {
             "tabSize": 4,
             "mode": "xml",
-            "theme": "default",
+            "theme": "monokai",
             "lineNumbers": true,
             "line": false,
             "cursor": true
@@ -41,15 +45,15 @@
         "javascript": {
             "tabSize": 4,
             "mode": "javascript",
-            "theme": "default",
+            "theme": "monokai",
             "lineNumbers": true,
             "line": false,
             "cursor": true
         },
-        "pyhton": {
+        "python": {
             "tabSize": 4,
             "mode": "text/x-python",
-            "theme": "default",
+            "theme": "monokai",
             "lineNumbers": true,
             "line": false,
             "cursor": true
@@ -57,7 +61,7 @@
         "css": {
             "tabSize": 4,
             "mode": "css",
-            "theme": "default",
+            "theme": "monokai",
             "lineNumbers": true,
             "line": false,
             "cursor": true
