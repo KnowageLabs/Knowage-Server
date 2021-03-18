@@ -122,7 +122,8 @@
 			<ITEM id="5007" label="menu.NewsManagement"
 				requiredFunctionality="NewsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/news/newsManagement.jsp" />
-			<ITEM label="menu.GalleryManagement"
+			<ITEM label="menu.WidgetGalleryManagement"
+				requiredFunctionality="WidgetGalleryManagement"
 				to="${SPAGOBI_CONTEXT}/gallerymanagement" />
 		</GROUP_ITEM>
 
@@ -245,11 +246,11 @@
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp"
 			iconCls="fas fa-briefcase" />
 
-		<ITEM label="My Account" condition="my_account"
+		<ITEM label="menu.myAccount" condition="my_account"
 			to="${SPAGOBI_CONTEXT}/restful-services/signup/prepareUpdate"
 			iconCls="fas fa-address-card" />
 
-		<ITEM label="menu.HierarchiesEditor"
+		<!-- <ITEM label="menu.HierarchiesEditor"
 			requiredFunctionality="HierarchiesManagement"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp"
 			iconCls="fas fa-sitemap" />
@@ -297,7 +298,7 @@
 		<ITEM label="menu.i18n"
 			requiredFunctionality="ManageInternationalization"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
-			iconCls="fas fa-flag" />
+			iconCls="fas fa-flag" /> -->
 		<ITEM label="menu.news" requiredFunctionality="NewsVisualization"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
 			iconCls="far fa-newspaper" />
