@@ -25,7 +25,7 @@
             </div>
             <div>
                <ul class="layout-menu">
-                  <KnAdminMenu :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0"></KnAdminMenu>
+                  <KnAdminMenu :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0"  @click="itemClick"></KnAdminMenu>
                   <template v-for="(item, i) of allowedUserFunctionalities" :key="i">
                      <KnMenuItem :item="item" @click="itemClick"></KnMenuItem>
                   </template>

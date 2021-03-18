@@ -14,13 +14,13 @@
                         <li role="presentation">{{column.label}}</li>
                         <template v-for="(item, i) of column.items" :key="item.label + i.toString()">
                             <li role="none" :style="item.style" :class="searched(item.label)">
-                                <router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{navigate, href}" @click="onLeafClick($event, item, navigate)">
-                                    <a :href="href" role="menuitem">
-                                        <span class="p-menuitem-text">{{item.label}}</span>
+                                <router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{navigate, href}">
+                                    <a :href="href" role="menuitem"  @click="onLeafClick($event, item, navigate)">
+                                        a<span class="p-menuitem-text">{{item.label}}</span>
                                     </a>
                                 </router-link>
                                 <a v-else :href="item.url" :target="item.target"  role="menuitem" :tabindex="item.disabled ? null : '0'">
-                                    <span class="p-menuitem-text">{{item.label}}</span>
+                                    b<span class="p-menuitem-text">{{item.label}}</span>
                                 </a>
                             </li>
                         </template>
@@ -37,6 +37,7 @@
 
     export default defineComponent({
         name: 'kn-admin-menu',
+        emits: ['click'],
         props: {
             model: Array
         },
@@ -90,7 +91,11 @@
                     return
                 }
                 if (item.to && navigate) {
-                    navigate(event)
+                        this.$emit('click', {
+                        originalEvent: event,
+                        navigate: navigate,
+                        item: item
+                    });
                 }
             },
             searched(label){
