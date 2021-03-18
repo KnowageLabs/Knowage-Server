@@ -30,6 +30,8 @@ import Toolbar from 'primevue/toolbar'
 
 import Tooltip from 'primevue/tooltip'
 
+import ConfirmationService from 'primevue/confirmationservice';
+
 import i18n from '@/App.i18n'
 
 
@@ -40,6 +42,7 @@ createApp(App)
 	.use(i18n)
 	.use(PrimeVue)
 	.use(ToastService)
+	.use(ConfirmationService)
 
 	// eslint-disable-next-line
 	// @ts-ignore
