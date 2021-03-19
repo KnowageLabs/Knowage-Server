@@ -1,0 +1,23 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "prettier.semi": false,
+    "prettier.useEditorConfig": false,
+    "scss.lint.float": "warning",
+    "vetur.format.defaultFormatter.css": "prettier",
+    "scss.lint.important": "warning",
+    "prettier.printWidth": 300,
+    "prettier.singleQuote": true,
+    "vetur.format.defaultFormatter.html": "prettier",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "eslint.format.enable": true,
+    "prettier.trailingComma": "none"
+  },
+  "extensions": {
+    "recommendations": ["octref.vetur", "dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+  }
+}
