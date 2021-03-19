@@ -18,13 +18,10 @@
 package it.eng.spagobi.api.v2;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -56,9 +53,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 import it.eng.spagobi.api.v2.export.Entry;
 import it.eng.spagobi.api.v2.export.ExportDeleteOldJob;
 import it.eng.spagobi.api.v2.export.ExportJobBuilder;
@@ -71,6 +65,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.resource.export.Utilities;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -114,79 +109,9 @@ public class ExportResource {
 	public List<Entry> dataset(@DefaultValue("false") @QueryParam("showAll") boolean showAll) throws IOException {
 
 		logger.debug("IN");
+		Utilities exportResourceUtilities = new Utilities();
 
-		List<Entry> ret = new ArrayList<Entry>();
-
-		UserProfile userProfile = UserProfileManager.getProfile();
-
-		logger.info("Getting list of exported files for user " + userProfile.getUserId() + "...");
-		Monitor totalTime = MonitorFactory.start("Knowage.ExportResource.gettingExportedDatasets.user:" + userProfile.getUserId());
-
-		try {
-
-			String resoursePath = SpagoBIUtilities.getResourcePath();
-			java.nio.file.Path perUserExportResourcePath = ExportPathBuilder.getInstance().getPerUserExportResourcePath(resoursePath, userProfile);
-
-			if (Files.isDirectory(perUserExportResourcePath)) {
-
-				DirectoryStream<java.nio.file.Path> userJobDirectory = null;
-
-				try {
-					userJobDirectory = Files.newDirectoryStream(perUserExportResourcePath, new DirectoryStream.Filter<java.nio.file.Path>() {
-
-						@Override
-						public boolean accept(java.nio.file.Path entry) throws IOException {
-							return Files.isDirectory(entry);
-						}
-					});
-
-					Iterator<java.nio.file.Path> iterator = userJobDirectory.iterator();
-
-					while (iterator.hasNext()) {
-						java.nio.file.Path curr = iterator.next();
-						java.nio.file.Path downloadPlaceholderPath = curr.resolve(ExportPathBuilder.DOWNLOADED_PLACEHOLDER_FILENAME);
-						java.nio.file.Path metadataPath = curr.resolve(ExportPathBuilder.METADATA_FILENAME);
-						java.nio.file.Path dataPath = curr.resolve(ExportPathBuilder.DATA_FILENAME);
-
-						boolean downloadPlaceholderExist = Files.isRegularFile(downloadPlaceholderPath);
-
-						if (!showAll) {
-							if (downloadPlaceholderExist) {
-								continue;
-							}
-						}
-
-						if (!Files.isRegularFile(metadataPath)) {
-							continue;
-						}
-
-						if (!Files.isRegularFile(dataPath)) {
-							continue;
-						}
-
-						ExportMetadata metadata = ExportMetadata.readFromJsonFile(metadataPath);
-
-						Entry entry = new Entry(metadata.getDataSetName(), metadata.getStartDate(), metadata.getId().toString(), downloadPlaceholderExist);
-
-						ret.add(entry);
-					}
-
-				} finally {
-					if (userJobDirectory != null) {
-						try {
-							userJobDirectory.close();
-						} catch (IOException e) {
-							// Yes, it's mute!
-						}
-					}
-				}
-			}
-
-		} finally {
-			totalTime.stop();
-		}
-
-		logger.info("Got list of exported files for user " + userProfile.getUserId());
+		List<Entry> ret = exportResourceUtilities.getAllExportedFiles(showAll);
 
 		logger.debug("OUT");
 

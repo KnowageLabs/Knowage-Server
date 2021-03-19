@@ -18,34 +18,20 @@
 
 package it.eng.knowage.websocket;
 
-public class KnowageWebSocketMessage {
-	private String from;
-	private String to;
-	private Object content;
+import javax.websocket.HandshakeResponse;
+import javax.websocket.server.HandshakeRequest;
+import javax.websocket.server.ServerEndpointConfig;
 
-	public String getFrom() {
-		return from;
+public class HttpSessionConfigurator extends ServerEndpointConfig.Configurator {
+
+	@Override
+	public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
+		System.out.println("modifyHandshake() Current thread " + Thread.currentThread().getName());
+//		String user = request.getParameterMap().get("user").get(0);
+//		sec.getUserProperties().put(user, request.getHttpSession());
+
+		sec.getUserProperties().put("HTTP_SESSION", request.getHttpSession());
+//		System.out.println("modifyHandshake() User " + user + " with http session ID " + ((HttpSession) request.getHttpSession()).getId());
 	}
 
-	public void setFrom(String from) {
-		this.from = from;
-	}
-
-	public String getTo() {
-		return to;
-	}
-
-	public void setTo(String to) {
-		this.to = to;
-	}
-
-	public Object getContent() {
-		return content;
-	}
-
-	public void setContent(Object content) {
-		this.content = content;
-	}
-
-	// standard constructors, getters, setters
 }

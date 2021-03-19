@@ -35,18 +35,23 @@ export default defineComponent({
   methods: {
     newsDownloadHandler() {
       console.log("Starting connection to WebSocket Server");
-      var uri = process.env.VUE_APP_WEBSOCKET_URL + this.user.userId;
+      var uri = process.env.VUE_APP_WEBSOCKET_URL;
 
       this.connection = new WebSocket(uri);
       this.connection.onmessage = function (event) {
-        console.log(event);
+        if (event.data) {
+          let json = JSON.parse(event.data);
+          if (json.news) {
+            console.log("Received data string", json.news.count);
+          }
+
+          store.commit("setDownload", json.download.count > 0);
+        }
       };
 
       this.connection.onopen = function (event) {
         console.log("Connected");
-        if (event.data === String) {
-          console.log("Received data string", event.data);
-        }
+        console.log(event);
       };
     },
   },

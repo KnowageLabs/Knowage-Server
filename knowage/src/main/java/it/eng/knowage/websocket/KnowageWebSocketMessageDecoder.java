@@ -22,26 +22,25 @@ import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class KnowageWebSocketMessageDecoder implements Decoder.Text<KnowageWebSocketMessage> {
+public class KnowageWebSocketMessageDecoder implements Decoder.Text<JSONObject> {
+	private static final Logger logger = Logger.getLogger(KnowageWebSocketMessageDecoder.class);
 
 	@Override
-	public KnowageWebSocketMessage decode(String s) throws DecodeException {
+	public JSONObject decode(String s) throws DecodeException {
 
-		KnowageWebSocketMessage m = null;
+		JSONObject jsonObject = null;
 		try {
-			JSONObject jsonObject = new JSONObject(s);
-			m = new KnowageWebSocketMessage();
-			m.setFrom(jsonObject.getString("from"));
-			m.setTo(jsonObject.getString("to"));
-			m.setContent(jsonObject.getString("content"));
+			new JSONObject(s);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String message = "Error during decoding KnowageWebSocketMessage";
+			logger.error(message);
 		}
-		return m;
+
+		return jsonObject;
 	}
 
 	@Override

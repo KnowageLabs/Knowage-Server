@@ -18,18 +18,19 @@
 
 package it.eng.knowage.websocket;
 
+import java.io.IOException;
+import java.io.Writer;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonWriter;
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
 import org.json.JSONObject;
 
-public class KnowageWebSocketMessageEncoder implements Encoder.Text<KnowageWebSocketMessage> {
-
-	@Override
-	public String encode(KnowageWebSocketMessage message) throws EncodeException {
-		return new JSONObject(message).toString();
-	}
+public class KnowageWebSocketMessageEncoder implements Encoder.TextStream<JSONObject> {
 
 	@Override
 	public void init(EndpointConfig endpointConfig) {
@@ -40,4 +41,10 @@ public class KnowageWebSocketMessageEncoder implements Encoder.Text<KnowageWebSo
 	public void destroy() {
 		// Close resources
 	}
+
+	@Override
+	public void encode(JSONObject object, Writer writer) throws EncodeException, IOException {
+		writer.write(object.toString());
+	}
+
 }
