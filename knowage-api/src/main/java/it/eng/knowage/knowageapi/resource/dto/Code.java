@@ -20,10 +20,10 @@ package it.eng.knowage.knowageapi.resource.dto;
 
 public class Code {
 
-	private String html = null;
-	private String javascript = null;
-	private String python = null;
-	private String css = null;
+	private String html = "";
+	private String javascript = "";
+	private String python = "";
+	private String css = "";
 
 	public String getHtml() {
 		return html;
