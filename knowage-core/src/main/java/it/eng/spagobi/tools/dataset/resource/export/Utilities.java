@@ -71,6 +71,37 @@ public class Utilities {
 							return Files.isDirectory(entry);
 						}
 					});
+
+					Iterator<java.nio.file.Path> iterator = userJobDirectory.iterator();
+
+					while (iterator.hasNext()) {
+						java.nio.file.Path curr = iterator.next();
+						java.nio.file.Path downloadPlaceholderPath = curr.resolve(ExportPathBuilder.DOWNLOADED_PLACEHOLDER_FILENAME);
+						java.nio.file.Path metadataPath = curr.resolve(ExportPathBuilder.METADATA_FILENAME);
+						java.nio.file.Path dataPath = curr.resolve(ExportPathBuilder.DATA_FILENAME);
+
+						boolean downloadPlaceholderExist = Files.isRegularFile(downloadPlaceholderPath);
+
+						if (!showAll) {
+							if (downloadPlaceholderExist) {
+								continue;
+							}
+						}
+
+						if (!Files.isRegularFile(metadataPath)) {
+							continue;
+						}
+
+						if (!Files.isRegularFile(dataPath)) {
+							continue;
+						}
+
+						ExportMetadata metadata = ExportMetadata.readFromJsonFile(metadataPath);
+
+						Entry entry = new Entry(metadata.getDataSetName(), metadata.getStartDate(), metadata.getId().toString(), downloadPlaceholderExist);
+
+						ret.add(entry);
+					}
 				} finally {
 					if (userJobDirectory != null) {
 						try {
@@ -80,36 +111,6 @@ public class Utilities {
 						}
 					}
 				}
-			}
-			Iterator<java.nio.file.Path> iterator = userJobDirectory.iterator();
-
-			while (iterator.hasNext()) {
-				java.nio.file.Path curr = iterator.next();
-				java.nio.file.Path downloadPlaceholderPath = curr.resolve(ExportPathBuilder.DOWNLOADED_PLACEHOLDER_FILENAME);
-				java.nio.file.Path metadataPath = curr.resolve(ExportPathBuilder.METADATA_FILENAME);
-				java.nio.file.Path dataPath = curr.resolve(ExportPathBuilder.DATA_FILENAME);
-
-				boolean downloadPlaceholderExist = Files.isRegularFile(downloadPlaceholderPath);
-
-				if (!showAll) {
-					if (downloadPlaceholderExist) {
-						continue;
-					}
-				}
-
-				if (!Files.isRegularFile(metadataPath)) {
-					continue;
-				}
-
-				if (!Files.isRegularFile(dataPath)) {
-					continue;
-				}
-
-				ExportMetadata metadata = ExportMetadata.readFromJsonFile(metadataPath);
-
-				Entry entry = new Entry(metadata.getDataSetName(), metadata.getStartDate(), metadata.getId().toString(), downloadPlaceholderExist);
-
-				ret.add(entry);
 			}
 
 		} finally {
