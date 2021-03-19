@@ -299,7 +299,7 @@
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
 			iconCls="fas fa-flag" /> -->
 		<ITEM label="menu.news" requiredFunctionality="NewsVisualization" conditionedView="news"
-			to="${SPAGOBI_CONTEXT}/themes/${KNOWAGE_THEME}/html/news.html"
+			to="${SPAGOBI_CONTEXT}/themes/${KNOWAGE_THEME}/html/news.jsp"
 			iconCls="far fa-newspaper" />
 		<ITEM label="menu.Download" conditionedView="download"
 			to="${SPAGOBI_CONTEXT}/themes/${KNOWAGE_THEME}/html/downloads.html"
