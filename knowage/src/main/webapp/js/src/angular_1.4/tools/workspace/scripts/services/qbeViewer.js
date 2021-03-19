@@ -88,6 +88,11 @@ angular
 						parameterView: driverableObject.parameterView,
 						executed: driverableObject.executed
 					};
+
+					if (driverableObject.hasOwnProperty("federation_id")) {
+						// The driverableObject it's a federation
+						$scope.selectedDataSet.federation_id = driverableObject.federation_id;
+					}
 				}
 			}
 

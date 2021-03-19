@@ -28,7 +28,6 @@ import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.DataSetDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.datasource.sql.ISQLDataSource;
 import it.eng.qbe.datasource.transaction.ITransaction;
 import it.eng.qbe.datasource.transaction.dataset.DataSetTransaction;
@@ -50,7 +49,7 @@ public class DataSetDataSource extends AbstractDataSource implements ISQLDataSou
 	public static final String DATASETS = "DATASETS";
 	public Class statementType = SQLStatement.class;
 
-	private static transient Logger logger = Logger.getLogger(JPADataSource.class);
+	private static transient Logger logger = Logger.getLogger(DataSetDataSource.class);
 
 	protected DataSetDataSource(String dataSourceName, IDataSourceConfiguration configuration) {
 		logger.debug("Creating a new DataSetDataSource");
