@@ -51,14 +51,18 @@
 						<md-select ng-model="layer.analysisConf.method" ng-init="layer.analysisConf.method = layer.analysisConf.method || 'CLASSIFY_BY_EQUAL_INTERVALS'">
 							<md-option value="CLASSIFY_BY_EQUAL_INTERVALS">{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesByEqualIntervals')}}</md-option>
 							<md-option value="CLASSIFY_BY_QUANTILS">{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesByQuantils')}}</md-option>
+							<md-option value="CLASSIFY_BY_RANGES">{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesByRanges')}}</md-option>
 						</md-select>
 					</md-input-container>
-					<md-input-container flex="50" class="md-block" >
+					<md-input-container ng-if="layer.analysisConf.method!='CLASSIFY_BY_RANGES'" flex="50" class="md-block" >
 						<label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesNumber')}}</label>
 						<input ng-model="layer.analysisConf.classes" type="number" ng-init="layer.analysisConf.classes=layer.analysisConf.classes||3">
 					</md-input-container>
+					<md-button class="md-button md-primary" ng-if="layer.analysisConf.method=='CLASSIFY_BY_RANGES'" ng-click="getChoroplethThresholds($event,layer.analysisConf)">
+						{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.manageRanges')}}
+					</md-button>
 				</div>
-				<div layout="row" layout-align="start center" style="margin: 10px 0">
+				<div ng-if="layer.analysisConf.method!='CLASSIFY_BY_RANGES'" layout="row" layout-align="start center" style="margin: 10px 0">
 					<md-input-container flex="35" class="md-block" >
 						<label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.fromColor')}}</label>
 						 <color-picker options="colorPickerOptions" ng-model="layer.analysisConf.fromColor" ng-init="layer.analysisConf.fromColor=layer.analysisConf.fromColor|| '#d1d1d1' "></color-picker> 

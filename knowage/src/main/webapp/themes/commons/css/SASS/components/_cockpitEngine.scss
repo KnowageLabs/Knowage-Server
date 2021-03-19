@@ -256,7 +256,7 @@
 		.mapWidgetLegend{
 			position:absolute;
 			display:block;
-			min-width:240px;
+			min-width:250px;
 			width:auto;
 			height:auto;
 			bottom:0;
@@ -264,6 +264,9 @@
 			background-color:white;
 			opacity:0.9;
 			border-radius:5px;
+			&.ranges{
+				min-width: 150px;
+			}
 			.legendLayerLabel{
 				font-size:.7rem;
 				font-weight:bold;
