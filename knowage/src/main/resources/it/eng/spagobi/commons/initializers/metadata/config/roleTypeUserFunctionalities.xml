@@ -389,5 +389,7 @@
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="PythonDataset" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="PythonDataset" roleType="DEV_ROLE" />
+
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="WidgetGalleryManagement" roleType="ADMIN" />
 	
 </ROLE_TYPE_USER_FUNCTIONALITIES>

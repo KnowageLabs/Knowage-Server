@@ -60,7 +60,8 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	               {dbname:"CREATE_SELF_SERVICE_COCKPIT",label:"createSelfSelviceCockpit",visible:false, category:"ITEMS"},
 	               {dbname:"CREATE_SELF_SERVICE_GEOREPORT",label:"createSelfSelviceGeoreport",visible:false, category:"ITEMS"},
 	               {dbname:"CREATE_SELF_SERVICE_KPI",label:"createSelfSelviceKpi",visible:false, category:"ITEMS"},
-	               {dbname:"SEE_NEWS",label:"newsVisualization",visible:false, category:"ITEMS"}
+	               {dbname:"SEE_NEWS",label:"newsVisualization",visible:false, category:"ITEMS"},
+	               {dbname:"MANAGE_WIDGET_GALLERY",label:"manageWidgetGallery",visible:false, category:"MANAGE"}
 	               ];
 
 	var showEEAuthorizations = sbiModule_user.functionalities.indexOf("EnterpriseAuthorizations")>-1;
@@ -170,6 +171,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 		$scope.selectedRole.ableToCreateSelfServiceCockpit = true;
 		$scope.selectedRole.ableToCreateSelfServiceGeoreport = true;
 		$scope.selectedRole.ableToCreateSelfServiceKpi = true;
+		$scope.selectedRole.ableToManageWidgetGallery = true;
 	}
 
 	$scope.setDirty = function () {

@@ -59,6 +59,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="PythonWidget" description="CreatePythonWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="PythonDataset" description="CreatePythonDataset" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="HierarchiesManagement" description="HierarchiesManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="WidgetGalleryManagement" description="WidgetGalleryManagement" />
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -117,6 +118,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadRoles" description="ReadRoles" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="PythonWidget" description="CreatePythonWidget" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="WidgetGalleryManagement" description="WidgetGalleryManagement" />
 	
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
