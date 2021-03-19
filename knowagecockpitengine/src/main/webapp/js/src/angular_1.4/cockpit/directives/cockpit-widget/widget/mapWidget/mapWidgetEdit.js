@@ -41,6 +41,7 @@ function mapWidgetEditControllerFunction(
 	$scope.availableAggregationFunctionsForSpatialAttribute = ['MIN','MAX','COUNT'];
 	$scope.availableBackgroundLayers = [];
 	$scope.availableOperators = [{'label':'==','value':'=='},{'label':'!=','value':'!='},{'label':'<','value':'<','range':true},{'label':'>','value':'>','range':true},{'label':'<=','value':'<=','range':true},{'label':'>=','value':'>=','range':true}];
+	$scope.availableChoroplethOperators = [{'label':'>=','value':'>='},{'label':'<','value':'<'}];
 	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},{"name":"choropleth","enabled":true,"class":"choropleth"}];
 	$scope.uploadImg = {};
 	$scope.widgetSpinner = false;
@@ -340,7 +341,7 @@ function mapWidgetEditControllerFunction(
 	$scope.setIcon = function(icon) {
 		if(!$scope.activeLayer.markerConf) $scope.activeLayer.markerConf = {};
 		$scope.activeLayer.markerConf.icon = icon;
-		
+
 		$scope.openIconManager = !$scope.openIconManager;
 	}
 
@@ -456,8 +457,8 @@ function mapWidgetEditControllerFunction(
 			controller: function ($scope,$mdDialog) {
 
 				$scope.activeMeasure = {};
-
 				angular.copy(measure,$scope.activeMeasure);
+				if(!$scope.activeMeasure.properties) $scope.activeMeasure.properties = {};
 
 				$scope.addThreshold = function() {
 					if(!$scope.activeMeasure.properties.thresholds){
@@ -481,6 +482,43 @@ function mapWidgetEditControllerFunction(
 			scope: $scope,
 			preserveScope:true,
 		  templateUrl: $scope.getTemplateUrl('mapWidgetMeasureThresholds'),
+		  targetEvent: ev,
+		  clickOutsideToClose:true,
+		  locals: {  }
+		})
+	}
+
+	$scope.getChoroplethThresholds = function(ev, analysisConf) {
+
+		$mdDialog.show({
+			controller: function ($scope,$mdDialog) {
+
+				$scope.activeAnalysisConf = {};
+				angular.copy(analysisConf,$scope.activeAnalysisConf);
+				if(!$scope.activeAnalysisConf.properties) $scope.activeAnalysisConf.properties = {};
+
+				$scope.addThreshold = function() {
+					if(!$scope.activeAnalysisConf.properties.thresholds){
+						$scope.activeAnalysisConf.properties.thresholds = [];
+					}
+					$scope.activeAnalysisConf.properties.thresholds.push({});
+				}
+
+				$scope.deleteThreshold = function(threshold){
+					$scope.activeAnalysisConf.properties.thresholds.splice($scope.activeAnalysisConf.properties.thresholds.indexOf(threshold),1);
+				}
+
+				$scope.set = function(){
+					angular.copy($scope.activeAnalysisConf,analysisConf);
+					$mdDialog.hide();
+				}
+				$scope.cancel = function(){
+					$mdDialog.cancel();
+				}
+			},
+			scope: $scope,
+			preserveScope:true,
+		  templateUrl: $scope.getTemplateUrl('mapWidgetChoroplethThresholds'),
 		  targetEvent: ev,
 		  clickOutsideToClose:true,
 		  locals: {  }
