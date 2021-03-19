@@ -58,21 +58,18 @@ import it.eng.spagobi.wapp.util.MenuUtilities;
  */
 public class MenuListJSONSerializerForREST implements Serializer {
 
+	static private Logger logger = Logger.getLogger(MenuListJSONSerializerForREST.class);
+
 	private static final String ID = "id";
-
 	private static final String TO_BE_LICENSED = "toBeLicensed";
-
 	private static final String STATIC_MENU = "STATIC_MENU";
-
 	private static final String URL = "url";
 
 	private static final String PLACEHOLDER_SPAGO_ADAPTER_HTTP = "${SPAGO_ADAPTER_HTTP}";
-
 	private static final String PLACEHOLDER_SPAGOBI_CONTEXT = "${SPAGOBI_CONTEXT}";
+	private static final String PLACEHOLDER_KNOWAGE_THEME = "${KNOWAGE_THEME}";
 
 	private static final String CONDITION = "condition";
-
-	static private Logger logger = Logger.getLogger(MenuListJSONSerializerForREST.class);
 
 	private static final String REQUIRED_FUNCTIONALITY = "requiredFunctionality";
 	private static final String GROUP_ITEM = "GROUP_ITEM";
@@ -99,13 +96,15 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	private IEngUserProfile userProfile;
 	private HttpSession httpSession;
+	private String currentTheme = null;
 
 	private Set<Integer> technicalUserMenuIds = new HashSet<Integer>();
 
-	public MenuListJSONSerializerForREST(IEngUserProfile userProfile, HttpSession session) {
+	public MenuListJSONSerializerForREST(IEngUserProfile userProfile, HttpSession session, String currentTheme) {
 		Assert.assertNotNull(userProfile, "User profile in input is null");
 		this.setUserProfile(userProfile);
 		this.setHttpSession(session);
+		this.currentTheme = currentTheme;
 	}
 
 	@Override
@@ -379,7 +378,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	private boolean isLicensedMenu(SourceBean itemSB) {
 		Boolean isLicensed = true;
 
-		boolean toBeLicensed = "true".equals((String) itemSB.getAttribute(TO_BE_LICENSED));
+		boolean toBeLicensed = "true".equals(itemSB.getAttribute(TO_BE_LICENSED));
 		if (toBeLicensed) {
 			try {
 				Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
@@ -458,6 +457,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					} else if (attribute.getKey().equals(TO)) {
 						value = value.replace(PLACEHOLDER_SPAGOBI_CONTEXT, contextName);
 						value = value.replace(PLACEHOLDER_SPAGO_ADAPTER_HTTP, GeneralUtilities.getSpagoAdapterHttpUrl());
+
+						value = value.replace(PLACEHOLDER_KNOWAGE_THEME, currentTheme);
 					}
 
 					menu.put(attribute.getKey(), value);

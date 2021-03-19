@@ -301,8 +301,8 @@
 		<ITEM label="menu.news" requiredFunctionality="NewsVisualization"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
 			iconCls="far fa-newspaper" />
-		<ITEM label="menu.Download" requiredFunctionality=""
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
+		<ITEM label="menu.Download" conditionedView="download"
+			to="${SPAGOBI_CONTEXT}/themes/${KNOWAGE_THEME}/html/downloads.html"
 			iconCls="fas fa-download" />
 
 

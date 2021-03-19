@@ -31,15 +31,18 @@ import javax.ws.rs.core.MediaType;
 
 import org.json.JSONObject;
 
+import it.eng.spago.base.RequestContainer;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.v3.MenuListJSONSerializerForREST;
+import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.util.MenuUtilities;
 
 /**
@@ -77,10 +80,13 @@ public class MenuResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException(message, e1);
 		}
 
+		RequestContainer recCont = ChannelUtilities.getRequestContainer(req);
+		String currentTheme = ThemesManager.getCurrentTheme(recCont);
+
 		HttpSession session = req.getSession();
 		// Locale locale = MessageBuilder.getBrowserLocaleFromSpago();
 		List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
-		MenuListJSONSerializerForREST serializer = new MenuListJSONSerializerForREST(userProfile, session);
+		MenuListJSONSerializerForREST serializer = new MenuListJSONSerializerForREST(userProfile, session, currentTheme);
 		JSONObject jsonMenuList = new JSONObject();
 		try {
 			jsonMenuList = (JSONObject) serializer.serialize(filteredMenuList, currentLocale);
