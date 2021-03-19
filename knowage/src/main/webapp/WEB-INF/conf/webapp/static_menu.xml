@@ -298,8 +298,8 @@
 			requiredFunctionality="ManageInternationalization"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
 			iconCls="fas fa-flag" /> -->
-		<ITEM label="menu.news" requiredFunctionality="NewsVisualization"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
+		<ITEM label="menu.news" requiredFunctionality="NewsVisualization" conditionedView="news"
+			to="${SPAGOBI_CONTEXT}/themes/${KNOWAGE_THEME}/html/news.html"
 			iconCls="far fa-newspaper" />
 		<ITEM label="menu.Download" conditionedView="download"
 			to="${SPAGOBI_CONTEXT}/themes/${KNOWAGE_THEME}/html/downloads.html"

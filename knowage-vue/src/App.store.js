@@ -6,8 +6,9 @@ const store = createStore({
 		return {
 			user: {},
 			error: {},
-			locale: "it_IT",
+			locale: 'it_IT',
 			download: false,
+			news: false
 		}
 	},
 	mutations: {
@@ -22,6 +23,9 @@ const store = createStore({
 		},
 		setDownload(state, hasDownload) {
 			state.download = hasDownload
+		},
+		setNews(state, hasNews) {
+			state.news = hasNews
 		}
 	}
 })

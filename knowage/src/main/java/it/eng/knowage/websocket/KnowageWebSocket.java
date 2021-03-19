@@ -43,9 +43,9 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.resource.export.Utilities;
-import it.eng.spagobi.tools.news.bo.BasicNews;
-import it.eng.spagobi.tools.news.dao.ISbiNewsDAO;
 import it.eng.spagobi.tools.news.dao.ISbiNewsReadDAO;
+import it.eng.spagobi.tools.news.manager.INewsManager;
+import it.eng.spagobi.tools.news.manager.NewsManagerImpl;
 import it.eng.spagobi.user.UserProfileManager;
 
 @ServerEndpoint(value = "/webSocket", encoders = KnowageWebSocketMessageEncoder.class, configurator = HttpSessionConfigurator.class)
@@ -120,21 +120,23 @@ public class KnowageWebSocket {
 	private JSONObject handleNews() {
 		UserProfile userProfile = UserProfileManager.getProfile();
 
-		ISbiNewsDAO newsDao = DAOFactory.getSbiNewsDAO();
-		List<BasicNews> allNews = newsDao.getAllNews(userProfile);
-
 		ISbiNewsReadDAO newsReadDao = DAOFactory.getSbiNewsReadDAO();
-		List<Integer> readNews = newsReadDao.getReadNews(userProfile);
 
-		int count = 0;
-		for (BasicNews basicNews : allNews) {
-			if (!readNews.contains(basicNews.getId()))
-				count++;
-		}
+		INewsManager newsManager = new NewsManagerImpl();
+		int total = newsManager.getAllNews(userProfile).size();
+
+		newsReadDao = DAOFactory.getSbiNewsReadDAO();
+		List<Integer> listOfReads = newsReadDao.getReadNews(userProfile);
+		int unread = total - listOfReads.size();
 
 		JSONObject news = new JSONObject();
 		try {
-			news.put("count", count);
+			JSONObject countJSONObject = new JSONObject();
+
+			countJSONObject.put("total", total);
+			countJSONObject.put("unread", unread);
+
+			news.put("count", countJSONObject);
 		} catch (JSONException e) {
 			String message = "Error while creating news JSON message";
 			logger.error(message);

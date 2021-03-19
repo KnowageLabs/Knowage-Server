@@ -110,12 +110,16 @@
 		computed: {
 			...mapState({
 				user: 'user',
-				download: 'download'
+				download: 'download',
+				news: 'news'
 			})
 		},
 		watch: {
 			download(newDownload, oldDownload) {
 				if (oldDownload != this.download) this.download = newDownload
+			},
+			news(newNews, oldNews) {
+				if (oldNews != this.news) this.news = newNews
 			}
 		}
 	})
