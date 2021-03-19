@@ -1299,6 +1299,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	        , valueField: 'column_1'
 	        , triggerAction: 'all'
 	        , lstDependsFromRef: lstDependsFromRef
+	        , width: 135
         });
 
 		var thisPanel = this;
