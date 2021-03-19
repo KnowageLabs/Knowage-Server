@@ -53,14 +53,14 @@ public class OAuth2Client {
 	}
 
 	// It returns the access token of OAuth2 given the authorization code
-	public String getAccessToken(String code) {
+	public String getAccessTokenWithRedirect(String code, String redirectUrl) {
 		logger.debug("IN");
 		try {
 			logger.debug("using authorization code grant");
 			PostMethod httppost = createPostMethodForAccessToken();
 			httppost.setParameter("grant_type", "authorization_code");
 			httppost.setParameter("code", code);
-			httppost.setParameter("redirect_uri", config.getRedirectUrl());
+			httppost.setParameter("redirect_uri", redirectUrl);
 
 			return sendHttpPost(httppost);
 		} catch (Exception e) {
@@ -71,7 +71,7 @@ public class OAuth2Client {
 	}
 
 	// It returns the access token of OAuth2 given username and password
-	public String getAccessToken(String username, String password) {
+	public String getAccessTokenWithPassword(String username, String password) {
 		logger.debug("IN");
 		try {
 			logger.debug("using password grant");

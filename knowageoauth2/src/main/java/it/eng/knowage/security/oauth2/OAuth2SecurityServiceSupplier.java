@@ -112,6 +112,12 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			attributes.put("userId", userId);
 			attributes.put("userName", userName);
 			attributes.put("email", email);
+			
+			// add any attributes configured by the env
+			config.getProfileAttributes().forEach(a -> {
+				attributes.put(a, jsonObject.optString(a));
+			});
+			
 			profile.setAttributes(attributes);
 
 			return profile;
@@ -127,7 +133,7 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 	@Override
 	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
 		OAuth2Client oauth2Client = new OAuth2Client();
-		return createUserProfile(oauth2Client.getAccessToken(userId, psw));
+		return createUserProfile(oauth2Client.getAccessTokenWithPassword(userId, psw));
 	}
 
 	@Override

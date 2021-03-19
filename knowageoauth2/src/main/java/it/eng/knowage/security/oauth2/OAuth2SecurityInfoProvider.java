@@ -59,6 +59,7 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 		List<String> attributes = new ArrayList<String>();
 		attributes.add("displayName");
 		attributes.add("email");
+		attributes.addAll(OAuth2Config.getInstance().getProfileAttributes());
 		return attributes;
 	}
 

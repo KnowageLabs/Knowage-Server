@@ -5,7 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.knowage.security.oauth2;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 
@@ -17,7 +19,8 @@ public class OAuth2Config {
 	static private Logger logger = Logger.getLogger(OAuth2Config.class);
 	private static OAuth2Config instance = null;
 	private final String authorizeUrl;
-	private final String redirectUrl;
+	private final String redirectAddress;
+	private final String redirectPath;
 	private final String clientId;
 	private final String clientSecret;
 	private final String tokenUrl;
@@ -26,24 +29,46 @@ public class OAuth2Config {
 	private final String scopes;
 	private final String userIdClaim;
 	private final String userNameClaim;
+	private final List<String> profileAttributes = new ArrayList<>();
 	
 	public OAuth2Config() {
-		this.authorizeUrl = System.getProperty("oauth_authorize_url", System.getenv("OAUTH2_AUTHORIZE_URL"));
+		this.authorizeUrl = Optional.ofNullable(System.getProperty("oauth_authorize_url", System.getenv("OAUTH2_AUTHORIZE_URL")))
+				.orElseThrow(() -> new RuntimeException("missing OAUTH2_AUTHORIZE_URL"));
+		
 		this.clientId = System.getProperty("oauth_client_id", System.getenv("OAUTH2_CLIENT_ID"));
 		this.clientSecret = System.getProperty("oauth_client_secret", System.getenv("OAUTH2_CLIENT_SECRET"));
-		this.redirectUrl = System.getProperty("oauth_redirect_url", System.getenv("OAUTH2_REDIRECT_URL"));
-		this.tokenUrl = System.getProperty("oauth_token_url", System.getenv("OAUTH2_TOKEN_URL"));
-		this.userInfoUrl = System.getProperty("oauth_user_info_url", System.getenv("OAUTH2_USER_INFO_URL"));
-		this.adminEmail = System.getProperty("oauth_admin_email", System.getenv("OAUTH2_ADMIN_EMAIL"));
 		
-		String _scopes = System.getProperty("oauth_scopes", System.getenv("OAUTH2_SCOPES"));
-		this.scopes = Objects.isNull(_scopes) ? "openid profile" : _scopes;
+		this.redirectAddress = Optional.ofNullable(System.getProperty("oauth_redirect_address", System.getenv("OAUTH2_REDIRECT_ADDRESS")))
+				.orElse("http://localhost:8080");
+		
+		this.redirectPath = Optional.ofNullable(System.getProperty("oauth_redirect_path", System.getenv("OAUTH2_REDIRECT_PATH")))
+				.orElse("/knowage/servlet/AdapterHTTP?PAGE=LoginPage");
+		
+		this.tokenUrl = Optional.ofNullable(System.getProperty("oauth_token_url", System.getenv("OAUTH2_TOKEN_URL")))
+				.orElseThrow(() -> new RuntimeException("missing OAUTH2_TOKEN_URL"));
+		
+		this.userInfoUrl = Optional.ofNullable(System.getProperty("oauth_user_info_url", System.getenv("OAUTH2_USER_INFO_URL")))
+				.orElseThrow(() -> new RuntimeException("missing OAUTH2_USER_INFO_URL"));
+		
+		this.adminEmail = Optional.ofNullable(System.getProperty("oauth_admin_email", System.getenv("OAUTH2_ADMIN_EMAIL")))
+				.orElseThrow(() -> new RuntimeException("missing OAUTH2_ADMIN_EMAIL"));
+		
+		this.scopes = Optional.ofNullable(System.getProperty("oauth_scopes", System.getenv("OAUTH2_SCOPES")))
+				.orElse("openid profile");
 
-		String _userIdClaim = System.getProperty("oauth_user_id_claim", System.getenv("OAUTH2_USER_ID_CLAIM"));
-		this.userIdClaim = Objects.isNull(_userIdClaim) ? "sub" : _userIdClaim;
+		this.userIdClaim = Optional.ofNullable(System.getProperty("oauth_user_id_claim", System.getenv("OAUTH2_USER_ID_CLAIM")))
+				.orElse("sub");
 
-		String _userNameClaim = System.getProperty("oauth_user_name_claim", System.getenv("OAUTH2_USER_NAME_CLAIM"));
-		this.userNameClaim = Objects.isNull(_userNameClaim) ? "preferred_username" : _userNameClaim;
+		this.userNameClaim = Optional.ofNullable(System.getProperty("oauth_user_name_claim", System.getenv("OAUTH2_USER_NAME_CLAIM")))
+				.orElse("preferred_username");
+		
+		final Optional<String> _attributes = Optional.ofNullable(System.getProperty("oauth_profile_attributes", System.getenv("OAUTH2_PROFILE_ATTRIBUTES")));
+		if(_attributes.isPresent()) {
+			String[] parts = _attributes.get().split(",");
+			for (int i = 0; i < parts.length; i++) {
+				this.profileAttributes.add(parts[i]);
+			}
+		}
 		
 		logger.debug("constructed OAuth2Config: " + this.toString());
 	}
@@ -58,9 +83,13 @@ public class OAuth2Config {
 	public String getAuthorizeUrl() {
 		return this.authorizeUrl;
 	}
+	
+	public String getRedirectAddress() {
+		return this.redirectAddress;
+	}
 
 	public String getRedirectUrl() {
-		return this.redirectUrl;
+		return this.redirectAddress + this.redirectPath;
 	}
 
 	public String getClientId() {
@@ -94,13 +123,18 @@ public class OAuth2Config {
 	public String getUserNameClaim() {
 		return userNameClaim;
 	}
+	
+	public List<String> getProfileAttributes() {
+		return this.profileAttributes;
+	}
 
 	@Override
 	public String toString() {
-		return "OAuth2Config [authorizeUrl=" + authorizeUrl + ", redirectUrl=" + redirectUrl + ", clientId=" + clientId
-				+ ", clientSecret=" + clientSecret + ", tokenUrl=" + tokenUrl + ", userInfoUrl=" + userInfoUrl
-				+ ", adminEmail=" + adminEmail + ", scopes=" + scopes + ", userIdClaim=" + userIdClaim
-				+ ", userNameClaim=" + userNameClaim + "]";
+		return "OAuth2Config [authorizeUrl=" + authorizeUrl + ", redirectAddress=" + redirectAddress + ", redirectPath="
+				+ redirectPath + ", clientId=" + clientId + ", clientSecret=" + clientSecret + ", tokenUrl=" + tokenUrl
+				+ ", userInfoUrl=" + userInfoUrl + ", adminEmail=" + adminEmail + ", scopes=" + scopes
+				+ ", userIdClaim=" + userIdClaim + ", userNameClaim=" + userNameClaim + ", profileAttributes="
+				+ profileAttributes + ", getRedirectUrl()=" + getRedirectUrl() + "]";
 	}
 	
 

@@ -19,6 +19,7 @@ package it.eng.knowage.security.oauth2;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.servlet.Filter;
@@ -57,18 +58,26 @@ public class OAuth2Filter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		logger.debug("IN");
 
-		HttpSession session = ((HttpServletRequest) request).getSession();
+		HttpServletRequest httpServletRequest = ((HttpServletRequest) request);
+		HttpSession session = httpServletRequest.getSession();
 
 		OAuth2Config oauth2Config = OAuth2Config.getInstance();
 
 		if (session.isNew() || session.getAttribute("access_token") == null) {
-			if (((HttpServletRequest) request).getParameter("code") == null) {
+			final String oauth2RedirectUrl = oauth2Config.getRedirectUrl();
+			if (httpServletRequest.getParameter("code") == null) {
+
+				// Store the currently requested url in session so we can redirect after authentication
+				final String postAuthRedirectUrl = oauth2Config.getRedirectAddress() + httpServletRequest.getRequestURI() + "?" + httpServletRequest.getQueryString();
+				session.setAttribute("redirectUrl", postAuthRedirectUrl);
+				
 				// We have to retrieve the Oauth2's code redirecting the browser
 				// to the OAuth2 provider
+				
 				String url = oauth2Config.getAuthorizeUrl();
 				url += "?response_type=code&client_id=" + oauth2Config.getClientId();
 				url += "&scope=" + OAuth2Config.getInstance().getScopes();
-				url += "&redirect_uri=" + URLEncoder.encode(oauth2Config.getRedirectUrl(), "UTF-8");
+				url += "&redirect_uri=" + URLEncoder.encode(oauth2RedirectUrl + "", "UTF-8");
 				url += "&state=" + URLEncoder.encode(UUID.randomUUID().toString(), "UTF-8");
 				logger.debug("redirecting to login: " + url);
 				((HttpServletResponse) response).sendRedirect(url);
@@ -77,10 +86,13 @@ public class OAuth2Filter implements Filter {
 				final OAuth2Client client = new OAuth2Client();
 				final String code = ((HttpServletRequest) request).getParameter("code");
 				logger.debug("using authorization code to fetch access token: " + code);
-				final String accessToken = client.getAccessToken(code);
+				final String accessToken = client.getAccessTokenWithRedirect(code, oauth2RedirectUrl);
 				session.setAttribute("access_token", accessToken);
 
-				chain.doFilter(request, response);
+				final String postAuthRedirectUrl = Optional.of(session.getAttribute("redirectUrl"))
+						.orElse(oauth2RedirectUrl).toString();
+				logger.debug("redirecting to initially requested page: " + postAuthRedirectUrl);
+				((HttpServletResponse) response).sendRedirect(postAuthRedirectUrl);
 			}
 		} else {
 			// pass the request along the filter chain
@@ -97,4 +109,5 @@ public class OAuth2Filter implements Filter {
 	public void init(FilterConfig fConfig) throws ServletException {
 
 	}
+
 }
