@@ -29,7 +29,8 @@
     "vue-class-component": "^8.0.0-0",
     "vue-i18n": "^9.0.0",
     "vue-router": "4.0.5",
-    "vuex": "4.0.0"
+    "vuex": "4.0.0",
+    "vue3-code-mirror": "1.0.3"
   },
   "devDependencies": {
     "@types/jest": "^24.0.19",
