@@ -89,7 +89,7 @@ public class OAuth2Filter implements Filter {
 				final String accessToken = client.getAccessTokenWithRedirect(code, oauth2RedirectUrl);
 				session.setAttribute("access_token", accessToken);
 
-				final String postAuthRedirectUrl = Optional.of(session.getAttribute("redirectUrl"))
+				final String postAuthRedirectUrl = Optional.ofNullable(session.getAttribute("redirectUrl"))
 						.orElse(oauth2RedirectUrl).toString();
 				logger.debug("redirecting to initially requested page: " + postAuthRedirectUrl);
 				((HttpServletResponse) response).sendRedirect(postAuthRedirectUrl);
