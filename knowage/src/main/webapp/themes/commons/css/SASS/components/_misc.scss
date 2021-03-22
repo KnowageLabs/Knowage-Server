@@ -315,7 +315,7 @@ a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.m
 }
 
 //Raised Button
-.md-button.md-knowage-theme.md-raised:not(.md-fab) {
+.md-button.md-knowage-theme.md-raised:not(.md-fab):not([disabled]) {
     color: $baseColor;
     background-color: $secondaryColor;
 }
