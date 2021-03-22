@@ -45,6 +45,9 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 
 			// We call the OAuth2 provider to get user's info
 			GetMethod httpget = new GetMethod(config.getUserInfoUrl());
+			
+			// TODO: This will fail if the access token is expired, and the UX does not reflect the actual cause.
+			// We should be using a refresh token I think.
 			httpget.addRequestHeader("Authorization", "Bearer " + userUniqueIdentifier);
 			int statusCode = httpClient.executeMethod(httpget);
 			byte[] response = httpget.getResponseBody();
