@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,24 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.qbe.services.registry;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
@@ -29,6 +42,8 @@ import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.statement.hibernate.HQLDataSet;
+import it.eng.qbe.statement.jpa.JPQLDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -53,22 +68,9 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- * 
+ *
  */
 
 public class LoadRegistryAction extends ExecuteQueryAction {
@@ -76,7 +78,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	private static final long serialVersionUID = -642121076148276452L;
 	private final String ID_COLUMN = "ID_COLUMN";
 	private final String REGISTRY_QUERY_ID = "q9";
-	
+
 	private final JSONArray mandatories = new JSONArray();
 	private final JSONArray columnsInfos = new JSONArray();
 	private String columnMaxSize = null;
@@ -148,9 +150,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null ? maxSize : "none") + "]");
 			String jpaQueryStr = statement.getQueryString();
 			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
-			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL/JPQL: " + jpaQueryStr);
-			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + statement.getSqlQueryString());
+
+			logQueryInAudit(qbeDataSet);
 
 			int startI = start;
 			int limitI = (limit == null ? (maxSize == null ? -1 : maxSize) : limit);
@@ -608,7 +609,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			QueryCatalogue queryCatalogue = qbeEngineInstance.getQueryCatalogue();
 			queryCatalogue.addQuery(query);
 			query.setDistinctClauseEnabled(false);
-			qbeEngineInstance.setActiveQuery(REGISTRY_QUERY_ID);			
+			qbeEngineInstance.setActiveQuery(REGISTRY_QUERY_ID);
 			IModelEntity entity = getSelectedEntity();
 
 			QbeTemplate template = qbeEngineInstance.getTemplate();
@@ -632,8 +633,9 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 						name = field.getName();
 					}
 
-					String sorter = column.getSorter() != null && (column.getSorter().equalsIgnoreCase("ASC") || column.getSorter().equalsIgnoreCase("DESC")) ? column
-							.getSorter().toUpperCase() : null;
+					String sorter = column.getSorter() != null && (column.getSorter().equalsIgnoreCase("ASC") || column.getSorter().equalsIgnoreCase("DESC"))
+							? column.getSorter().toUpperCase()
+							: null;
 
 					query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, sorter, field.getPropertyAsString("format"));
 					fieldNameIdMap.put(column.getField(), field.getUniqueName());
@@ -775,8 +777,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			String subEntityKey = entityUName.substring(0, entityUName.lastIndexOf("::")) + "::" + column.getSubEntity() + "(" + column.getForeignKey() + ")";
 			IModelEntity subEntity = entity.getSubEntity(subEntityKey);
 			if (subEntity == null) {
-				throw new SpagoBIEngineServiceException(getActionName(), "Sub-entity [" + column.getSubEntity() + "] not found in entity [" + entity.getName()
-						+ "]!");
+				throw new SpagoBIEngineServiceException(getActionName(),
+						"Sub-entity [" + column.getSubEntity() + "] not found in entity [" + entity.getName() + "]!");
 			}
 			entity = subEntity;
 		}
@@ -829,6 +831,21 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			logger.debug("OUT");
 		}
 		return entity;
+	}
+
+	private void logQueryInAudit(AbstractQbeDataSet dataset) {
+		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+
+		if (dataset instanceof JPQLDataSet) {
+			auditlogger.info("[" + userProfile.getUserId() + "]:: JPQL: " + dataset.getStatement().getQueryString());
+			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + ((JPQLDataSet) dataset).getSQLQuery(true));
+		} else if (dataset instanceof HQLDataSet) {
+			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + dataset.getStatement().getQueryString());
+			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + ((HQLDataSet) dataset).getSQLQuery(true));
+		} else {
+			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getStatement().getSqlQueryString());
+		}
+
 	}
 
 }
