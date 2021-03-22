@@ -72,7 +72,7 @@ export default defineComponent({
       galleryTemplates: [],
       typeDescriptor: typeDescriptor,
       addMenuItems: [
-        { label: this.$t('managers.widgetGallery.newTemplate'), icon: 'fas fa-plus', command: () => {} },
+        { label: this.$t('managers.widgetGallery.newTemplate'), icon: 'fas fa-plus', command: () => this.newTemplate() },
         { label: this.$t('managers.widgetGallery.importTemplate'), icon: 'fas fa-file-import', command: () => {} }
       ]
     }
@@ -93,6 +93,9 @@ export default defineComponent({
             .then(response => this.template = response.data)
             .catch(error => console.error(error))*/
       alert('delete template: ' + templateId)
+    },
+    newTemplate() {
+      this.$router.push('/knowage/gallerymanagement/newtemplate')
     },
     toggleAdd(event) {
       // eslint-disable-next-line

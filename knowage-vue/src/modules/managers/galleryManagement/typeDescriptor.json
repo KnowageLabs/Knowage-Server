@@ -60,5 +60,10 @@
     "chart": { "className": "fab fa-js-square", "style": { "background-color": "#ffc107", "color": "white" } },
     "html": { "className": "fab fa-html5", "style": { "background-color": "#c2185b", "color": "white" } },
     "python": { "className": "fab fa-python", "style": { "background-color": "#4caf50", "color": "white" } }
-  }
+  },
+  "types": [
+    { "name": "HTML", "value": "html" },
+    { "name": "Chart", "value": "chart" },
+    { "name": "Python", "value": "python" }
+  ]
 }

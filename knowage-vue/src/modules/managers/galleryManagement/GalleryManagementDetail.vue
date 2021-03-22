@@ -24,7 +24,15 @@
               </div>
               <div class="p-col-6">
                 <span class="p-float-label">
-                  <InputText id="type" class="kn-material-input" type="text" v-model="template.type" @change="setDirty" />
+                  <Dropdown
+                    id="type"
+                    class="kn-material-input"
+                    v-model="template.type"
+                    @change="setDirty"
+                    :options="typeDescriptor.types"
+                    optionLabel="name"
+                    optionValue="value"
+                  />
                   <label class="kn-material-input-label" for="type">{{ $t('common.type') }}</label>
                 </span>
               </div>
@@ -48,21 +56,7 @@
         <Card class="imageUploader">
           <template #title>
             {{ $t('common.image') }}
-            <FileUpload
-              ref="fileupload"
-              mode="basic"
-              name="demo[]"
-              accept="image/*"
-              :maxFileSize="100000"
-              :fileLimit="1"
-              :customUpload="true"
-              @uploader="uploadFile"
-              invalidFileSizeMessage="Invalid file size message"
-              invalidFileLimitMessage="Invalid file limit message"
-              chooseLabel=" "
-              :auto="true"
-              showCancelButton="true"
-            />
+            <input type="file" @change="uploadFile" />
           </template>
           <template #content>
             <div class="imageContainer p-d-flex p-jc-center p-ai-center">
@@ -73,21 +67,23 @@
         </Card>
       </div>
     </div>
-    <div class="p-grid p-m-0">
-      <div class="p-col-12">
-        <div class="p-grid">
-          <div
-            :class="typeDescriptor.allowedEditors[template.type].length === 2 ? 'p-col-6' : 'p-col-4'"
-            v-for="allowedEditor in typeDescriptor.allowedEditors[template.type]"
-            v-bind:key="allowedEditor"
-          >
-            <h4>
-              <i :class="['icon', typeDescriptor.editor[allowedEditor].icon]"></i>
-              {{ $t('common.codingLanguages.' + allowedEditor) }}
-            </h4>
-            <VCodeMirror :value="template.code[allowedEditor]" :options="typeDescriptor.options[allowedEditor]" @change="onCmCodeChange" />
-          </div>
-        </div>
+    <div class="p-grid p-m-0 flex" v-if="template.type">
+      <div
+        :class="typeDescriptor.allowedEditors[template.type].length === 2 ? 'p-col-6' : 'p-col-4'"
+        v-for="allowedEditor in typeDescriptor.allowedEditors[template.type]"
+        v-bind:key="allowedEditor"
+        style="height:100%;display:flex;flex-direction:column"
+      >
+        <h4>
+          <i :class="['icon', typeDescriptor.editor[allowedEditor].icon]"></i>
+          {{ $t('common.codingLanguages.' + allowedEditor) }}
+        </h4>
+        <VCodeMirror
+          class="flex"
+          v-model:value="template.code[allowedEditor]"
+          :options="typeDescriptor.options[allowedEditor]"
+          @update:value="onCmCodeChange"
+        />
       </div>
     </div>
   </div>
@@ -97,9 +93,8 @@
 import { defineComponent } from 'vue'
 import Chips from 'primevue/chips'
 import { VCodeMirror } from 'vue3-code-mirror'
-import FileUpload from 'primevue/fileupload'
+import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
-import router from '@/App.routes'
 import Textarea from 'primevue/textarea'
 import typeDescriptor from './typeDescriptor.json'
 
@@ -111,7 +106,7 @@ interface GalleryTemplate {
   description?: string
   code: Code
   tags?: Array<string>
-  image: string
+  image: string | ArrayBuffer
 }
 
 interface Code {
@@ -126,7 +121,7 @@ export default defineComponent({
   components: {
     Chips,
     VCodeMirror,
-    FileUpload,
+    Dropdown,
     InputText,
     Textarea
   },
@@ -145,7 +140,7 @@ export default defineComponent({
   },
   created() {
     this.dirty = false
-    this.loadTemplate()
+    this.loadTemplate(this.id)
   },
   methods: {
     download(content, fileName, contentType) {
@@ -183,28 +178,52 @@ export default defineComponent({
       }
     },
     closeTemplate(): void {
-      router.push('/knowage/gallerymanagement')
+      this.$router.push('/knowage/gallerymanagement')
     },
     loadTemplate(id?: string): void {
-      this.axios
-        .get(`/knowage-api/api/1.0/widgetgallery/${id || this.id}`)
-        .then((response) => {
-          this.template = response.data
-        })
-        .catch((error) => console.error(error))
+      if (id) {
+        this.axios
+          .get(`/knowage-api/api/1.0/widgetgallery/${id || this.id}`)
+          .then((response) => {
+            this.template = response.data
+          })
+          .catch((error) => console.error(error))
+      } else {
+        this.template = { code: { html: '', css: '', javascript: '', python: '' } } as GalleryTemplate
+      }
     },
     onCmCodeChange(): void {
       console.log('the code is changed ', '')
       this.setDirty()
     },
     saveTemplate() {
-      console.log('test', this.template)
+      let postUrl = this.id ? '/knowage-api/api/1.0/widgetgallery/' + this.id : '/knowage-api/api/1.0/widgetgallery/'
+      this.axios
+        .post(postUrl, this.template)
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => console.error(error))
     },
     setDirty() {
       this.dirty = true
     },
     uploadFile(event) {
-      this.template.image = event.files[0].objectURL
+      const reader = new FileReader()
+      let self = this
+
+      reader.addEventListener(
+        'load',
+        function() {
+          // convert image file to base64 string
+          self.template.image = reader.result || ''
+        },
+        false
+      )
+
+      if (event.srcElement.files[0]) {
+        reader.readAsDataURL(event.srcElement.files[0])
+      }
       this.$toast.add({
         severity: 'info',
         summary: 'Success',
@@ -223,6 +242,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .managerDetail {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
   .flex {
     flex: 1;
   }
