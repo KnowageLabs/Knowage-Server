@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.message.MessageBundle;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
@@ -51,6 +52,7 @@ public class UserInformationBO {
 	private Integer defaultRoleId;
 	private boolean blockedByFailedLoginAttempts;
 	private Map<String, Object> attributes;
+	private String locale;
 
 	public UserInformationBO(UserBO user) throws EMFUserError {
 		this.id = user.getId();
@@ -60,6 +62,7 @@ public class UserInformationBO {
 		this.dtLastAccess = user.getDtLastAccess();
 		this.defaultRoleId = user.getDefaultRoleId();
 		this.blockedByFailedLoginAttempts = user.getBlockedByFailedLoginAttempts();
+		this.locale = MessageBundle.getUserLocale().getDisplayLanguage();
 
 		Map<String, Object> userAttributes = new HashMap<String, Object>();
 		HashMap<Integer, HashMap<String, String>> sbiUserAttributes = user.getSbiUserAttributeses();
@@ -167,6 +170,14 @@ public class UserInformationBO {
 
 	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
+	}
+
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
 	}
 
 }

@@ -86,6 +86,8 @@ public class UserInformationBOJSONSerializer implements Serializer {
 
 			result.put("attributes", obj.getAttributes());
 
+			result.put("locale", obj.getLocale());
+
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
