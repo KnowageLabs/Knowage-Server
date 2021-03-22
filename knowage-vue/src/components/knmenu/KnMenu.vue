@@ -26,7 +26,7 @@
 				<ul class="layout-menu">
 					<KnAdminMenu :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></KnAdminMenu>
 					<template v-for="(item, i) of allowedUserFunctionalities" :key="i">
-						<KnMenuItem :item="item" @click="itemClick"></KnMenuItem>
+						<KnMenuItem :item="item" @click="itemClick" v-if="!item.conditionedView || (item.conditionedView == 'download' && download) || (item.conditionedView == 'news' && news)"></KnMenuItem>
 					</template>
 					<template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
 						<KnMenuItem :item="item" @click="itemClick"></KnMenuItem>
@@ -130,6 +130,7 @@
 		to?: string
 		iconCls?: string
 		items?: Array<MenuItem> | Array<Array<MenuItem>>
+		conditionedView?: string
 	}
 </script>
 

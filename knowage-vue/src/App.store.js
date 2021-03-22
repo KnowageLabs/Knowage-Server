@@ -6,7 +6,6 @@ const store = createStore({
 		return {
 			user: {},
 			error: {},
-			locale: 'it_IT',
 			download: false,
 			news: false
 		}
