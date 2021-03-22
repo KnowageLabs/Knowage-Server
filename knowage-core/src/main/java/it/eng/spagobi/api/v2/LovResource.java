@@ -247,7 +247,7 @@ public class LovResource extends AbstractSpagoBIResource {
 				scriptValue = scriptDetail.getLovResult(getUserProfile(), null, null, null);
 				rowsSourceBean = SourceBean.fromXMLString(scriptValue);
 				lovColumns = findFirstRowAttributes(rowsSourceBean);
-				lovExecutionResult.setValues(toList(rowsSourceBean, 0, lovValues.size()));
+				lovExecutionResult.setValues(filterNulls(rowsSourceBean, lovColumns.size(), 0, lovValues.size()));
 				lovExecutionResult.setFields(GridMetadataContainer.buildHeaderMapForGrid(lovColumns));
 				List rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
 				lovExecutionResult.setResults(rows.size());
@@ -384,7 +384,7 @@ public class LovResource extends AbstractSpagoBIResource {
 			}
 			Integer start = pagination.getInt("paginationStart");
 			Integer limit = pagination.getInt("paginationLimit");
-			lovExecutionResult.setValues(toList(rowsSourceBean, start, limit));
+			lovExecutionResult.setValues(filterNulls(rowsSourceBean, colNames.size(), start, limit));
 			lovExecutionResult.setFields(GridMetadataContainer.buildHeaderMapForGrid(colNames));
 			List rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
 			lovExecutionResult.setResults(rows.size());
@@ -802,7 +802,7 @@ public class LovResource extends AbstractSpagoBIResource {
 		return columnsNames;
 	}
 
-	private List<Map<String, String>> toList(SourceBean rowsSourceBean, Integer start, Integer limit) throws JSONException {
+	private List<Map<String, String>> filterNulls(SourceBean rowsSourceBean, int numCols, Integer start, Integer limit) throws JSONException {
 		Map<String, String> map;
 		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 		int startIter = 0;
@@ -825,7 +825,6 @@ public class LovResource extends AbstractSpagoBIResource {
 				}
 
 				for (int i = startIter; i < endIter; i++) {
-					JSONObject rowJson = new JSONObject();
 					List<SourceBeanAttribute> rowAttrs = (rows.get(i)).getContainedAttributes();
 					Iterator<SourceBeanAttribute> rowAttrsIter = rowAttrs.iterator();
 					map = new HashMap<String, String>();
@@ -833,7 +832,11 @@ public class LovResource extends AbstractSpagoBIResource {
 						SourceBeanAttribute rowAttr = rowAttrsIter.next();
 						map.put(rowAttr.getKey(), (rowAttr.getValue()).toString());
 					}
-					list.add(map);
+					if (map.keySet().size() < numCols) {
+						logger.warn("Row [" + rows.get(i) + "] contains some null values. It will be skipped.");
+					} else {
+						list.add(map);
+					}
 				}
 			}
 		}
