@@ -780,7 +780,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 				throw new SpagoBIEngineServiceException(getActionName(),
 						"Sub-entity [" + column.getSubEntity() + "] not found in entity [" + entity.getName() + "]!");
 			}
-			entity = subEntity;
+			entity = subEntity.getStructure().getRootEntity(subEntity); // we get the relevant root entity, as in a Qbe query (see KNOWAGE-5864)
+
 		}
 		logger.debug("Looking for attribute " + column.getField() + " in entity " + entity.getName() + " ...");
 		List<IModelField> fields = entity.getAllFields();
