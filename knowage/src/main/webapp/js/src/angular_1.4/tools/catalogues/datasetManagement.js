@@ -3340,11 +3340,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				if($scope.dataset.drivers) {
 					$scope.drivers = $scope.dataset.drivers;
 					if($scope.drivers && $scope.drivers.length > 0) {
-							if( $scope.dataset.drivers[0].parameterValue && Array.isArray($scope.dataset.drivers[0].parameterValue)){
-								parameterValue = $scope.dataset.drivers[0].parameterValue[0].value;
-								$scope.dataset.drivers[0].parameterValue = [parameterValue];
-						}
-
+							for (var i=0; i<$scope.dataset.drivers.length; i++) {
+								if($scope.dataset.drivers[i].selectionType=='TREE' && $scope.dataset.drivers[i].parameterValue && Array.isArray($scope.dataset.drivers[i].parameterValue)){
+									parameterValue = $scope.dataset.drivers[i].parameterValue[0].value;
+									$scope.dataset.drivers[i].parameterValue = [parameterValue];
+								}
+							}
 						var driverValuesAreSet = driversExecutionService.driversAreSet($scope.drivers);
 						if($scope.drivers.length > 0 && !driverValuesAreSet || $scope.selectedDataSet.pars.length > 0) {
 							$scope.showDrivers = true;
