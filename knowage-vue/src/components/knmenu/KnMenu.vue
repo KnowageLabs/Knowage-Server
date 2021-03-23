@@ -2,6 +2,7 @@
 	<div class="layout-menu-container">
 		<InfoDialog v-model:visibility="display"></InfoDialog>
 		<LanguageDialog v-model:visibility="languageDisplay"></LanguageDialog>
+		<RoleDialog v-model:visibility="roleDisplay"></RoleDialog>
 		<div class="menu-scroll-content">
 			<div>
 				<div class="profile">
@@ -43,6 +44,7 @@
 	import KnMenuItem from '@/components/knmenu/KnMenuItem.vue'
 	import KnAdminMenu from '@/components/knmenu/KnAdminMenu.vue'
 	import LanguageDialog from '@/components/languageDialog/languageDialog.vue'
+	import RoleDialog from '@/components/roleDialog/roleDialog.vue'
 	import { getGravatar } from '@/helpers/gravatarHelper'
 	import { mapState } from 'vuex'
 	import auth from '@/helpers/authHelper'
@@ -53,7 +55,8 @@
 			InfoDialog,
 			KnMenuItem,
 			KnAdminMenu,
-			LanguageDialog
+			LanguageDialog,
+			RoleDialog
 		},
 		data() {
 			return {
@@ -63,7 +66,8 @@
 				commonUserFunctionalities: new Array<MenuItem>(),
 				technicalUserFunctionalities: new Array<MenuItem>(),
 				display: false,
-				languageDisplay: false
+				languageDisplay: false,
+				roleDisplay: false
 			}
 		},
 		methods: {
@@ -74,7 +78,7 @@
 				auth.logout()
 			},
 			roleSelection() {
-				alert('ciao')
+				this.roleDisplay = !this.roleDisplay
 			},
 			languageSelection() {
 				this.languageDisplay = !this.languageDisplay

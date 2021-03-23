@@ -15,6 +15,10 @@ module.exports = {
 			'^/knowage/webSocket': {
 				target: process.env.VUE_APP_HOST_URL,
 				changeOrigin: true
+			},
+			'^/knowagecockpitengine/': {
+				target: process.env.VUE_APP_HOST_URL,
+				changeOrigin: true
 			}
 		}
 	},
@@ -33,7 +37,8 @@ module.exports = {
 				additionalData: `
 				@import "@/assets/scss/_variables.scss";
 				@import "@/assets/scss/_common.scss";
-				@import "@/assets/scss/_material.scss";`
+				@import "@/assets/scss/_material.scss";
+				@import "@/assets/scss/_toolbar.scss";`
 			}
 		}
 	}

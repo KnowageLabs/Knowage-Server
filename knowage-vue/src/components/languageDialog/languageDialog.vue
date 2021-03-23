@@ -1,10 +1,10 @@
 <template>
 	<Dialog v-bind:visible="visibility" footer="footer" :header="$t('language.languageSelection')" :closable="false" modal>
-		<Listbox :options="languages" optionLabel="name" listStyle="max-height:250px" style="width:15em">
+		<Listbox class="knList countryList" :options="languages" optionLabel="name" optionDisabled="disabled">
 			<template #option="slotProps">
-				<div class="p-d-flex p-ai-center country-item" @click="changeLanguage({ language: slotProps.option.language, country: slotProps.option.country })">
+				<div class="p-d-flex p-ai-center countryItem" @click="changeLanguage({ language: slotProps.option.language, country: slotProps.option.country })">
 					<img :alt="slotProps.option.country" :src="require(`@/assets/images/flags/icon-${slotProps.option.country.toLowerCase()}.png`)" width="40" />
-					<span>{{ $t(`language.${slotProps.option.language}_${slotProps.option.country}`) }}</span>
+					<div class="countryLabel">{{ $t(`language.${slotProps.option.language}_${slotProps.option.country}`) }}</div>
 				</div>
 			</template>
 		</Listbox>
@@ -22,6 +22,12 @@
 	import store from '@/App.store'
 	import { concatLocale } from '@/helpers/localeHelper'
 
+	interface Language {
+		language: string
+		country: string
+		disabled: boolean | false
+	}
+
 	export default defineComponent({
 		name: 'language-dialog',
 		components: {
@@ -30,7 +36,7 @@
 		},
 		data() {
 			return {
-				languages: []
+				languages: Array<Language>()
 			}
 		},
 		created() {},
@@ -71,6 +77,12 @@
 								}
 								return 0
 							})
+
+							for (var idx in this.languages) {
+								if (this.languages[idx].language + '_' + this.languages[idx].country === this.$i18n.locale) {
+									this.languages[idx].disabled = true
+								}
+							}
 						},
 						(error) => console.error(error)
 					)
@@ -80,4 +92,23 @@
 	})
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+	.countryList {
+		border: none;
+		border-radius: 0;
+		min-width: 200px;
+		max-height: 300px;
+
+		&:deep() li.p-listbox-item {
+			padding: 0rem 0rem;
+		}
+
+		.countryItem {
+			padding: 0.25rem 0.25rem;
+
+			.countryLabel {
+				margin: 0 0 0 15px;
+			}
+		}
+	}
+</style>

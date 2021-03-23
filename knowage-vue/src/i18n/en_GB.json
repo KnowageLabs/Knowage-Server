@@ -23,7 +23,7 @@
   },
   "infoDialog": {
     "aboutKnowage": "About Knowage",
-    "copyright": "© 2020 Engineering Ingegneria Informatica S.p.A.",
+	"copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
     "sourceCode": "Source code available on "
   },
   "language": {
@@ -32,6 +32,10 @@
     "it_IT": "italian",
     "languageSelection": "Language Selection"
   },
+	"role": {
+		"rolePlaceholder": "Select a role",
+		"roleSelection": "Role Selection"
+	},
   "managers": {
     "widgetGallery": {
       "title": "Gallery management",
