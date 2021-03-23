@@ -11,3 +11,10 @@ declare module 'vue/types/vue' {
     $router: VueRouter
   }
 }
+
+declare module 'vue/i18n/vue' {
+  import { I18n } from 'vue-i18n'
+  interface Vue {
+    $i18n: VueRouter
+  }
+}

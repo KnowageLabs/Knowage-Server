@@ -24,16 +24,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.message.MessageBundle;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
+import it.eng.spagobi.tenant.TenantManager;
 
 /**
  * Business Object used to retrieve basic informations about current the user
@@ -52,7 +57,8 @@ public class UserInformationBO {
 	private Integer defaultRoleId;
 	private boolean blockedByFailedLoginAttempts;
 	private Map<String, Object> attributes;
-	private String locale;
+	private JSONObject locale;
+	private String organization;
 
 	public UserInformationBO(UserBO user) throws EMFUserError {
 		this.id = user.getId();
@@ -62,7 +68,20 @@ public class UserInformationBO {
 		this.dtLastAccess = user.getDtLastAccess();
 		this.defaultRoleId = user.getDefaultRoleId();
 		this.blockedByFailedLoginAttempts = user.getBlockedByFailedLoginAttempts();
-		this.locale = MessageBundle.getUserLocale().getDisplayLanguage();
+		this.organization = TenantManager.getTenant().getName();
+
+		Locale defaultLocale = GeneralUtilities.getDefaultLocale();
+
+		JSONObject localeJSON = new JSONObject();
+		try {
+			localeJSON.put("country", defaultLocale.getCountry());
+			localeJSON.put("language", defaultLocale.getLanguage());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		this.locale = localeJSON;
 
 		Map<String, Object> userAttributes = new HashMap<String, Object>();
 		HashMap<Integer, HashMap<String, String>> sbiUserAttributes = user.getSbiUserAttributeses();
@@ -172,12 +191,20 @@ public class UserInformationBO {
 		this.attributes = attributes;
 	}
 
-	public String getLocale() {
+	public JSONObject getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(JSONObject locale) {
 		this.locale = locale;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
 	}
 
 }

@@ -17,6 +17,7 @@
 	import { defineComponent } from 'vue'
 	import store from '@/App.store'
 	import { mapState } from 'vuex'
+	import { concatLocale } from '@/helpers/localeHelper'
 
 	export default defineComponent({
 		components: {
@@ -28,7 +29,14 @@
 			this.axios.get('/knowage/restful-services/3.0/users/current').then(
 				(response) => {
 					store.commit('setUser', response.data)
-					localStorage.setItem('user', response.data)
+
+					let storedLocale = response.data.locale
+					if (localStorage.getItem('locale')) {
+						storedLocale = JSON.parse(localStorage.getItem('locale'))
+					}
+					localStorage.setItem('locale', JSON.stringify(storedLocale))
+					store.commit('setLocale', storedLocale)
+					this.$i18n.locale = concatLocale(storedLocale)
 				},
 				(error) => console.error(error)
 			)

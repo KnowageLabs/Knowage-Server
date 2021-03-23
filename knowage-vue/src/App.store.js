@@ -7,6 +7,7 @@ const store = createStore({
 			user: {},
 			error: {},
 			download: false,
+			locale: {},
 			news: false
 		}
 	},

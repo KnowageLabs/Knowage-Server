@@ -97,8 +97,13 @@
 			}
 		},
 		created() {
+			let localObject = this.locale
+			if (localStorage.getItem('locale')) {
+				localObject = JSON.parse(localStorage.getItem('locale') || '')
+			}
+
 			this.axios
-				.get('/knowage/restful-services/3.0/menu/enduser?curr_country=IT&curr_language=it')
+				.get(`/knowage/restful-services/3.0/menu/enduser?curr_country=${localObject.country}&curr_language=${localObject.language}`)
 				.then((response) => {
 					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
 					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
@@ -111,6 +116,7 @@
 			...mapState({
 				user: 'user',
 				download: 'download',
+				locale: 'locale',
 				news: 'news'
 			})
 		},

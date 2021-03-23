@@ -1,4 +1,6 @@
+import { concatLocale } from '@/helpers/localeHelper'
 import { createI18n } from 'vue-i18n'
+import store from './App.store'
 
 const messages = {
 	en_GB: require('@/i18n/en_GB.json'),
@@ -9,8 +11,10 @@ const messages = {
 	pt_BR: require('@/i18n/pt_BR.json')
 }
 
+let currentLocale = localStorage.getItem('locale') ? concatLocale(localStorage.getItem('locale').language) : store.local
+
 const i18n = createI18n({
-	locale: localStorage.getItem('user') ? localStorage.getItem('user').locale : null,
+	locale: currentLocale,
 	fallbackLocale: 'en_GB',
 	messages: messages
 })

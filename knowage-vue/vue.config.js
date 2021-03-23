@@ -1,3 +1,5 @@
+process.env.VUE_APP_VERSION = process.env.npm_package_version
+
 module.exports = {
 	publicPath: '/knowage/',
 	devServer: {
@@ -17,15 +19,13 @@ module.exports = {
 		}
 	},
 	configureWebpack: {
-		devtool: "source-map"
+		devtool: 'source-map'
 	},
-	chainWebpack: config => {
-		config
-			.plugin('html')
-			.tap(args => {
-				args[0].title = 'Knowage'
-				return args
-			})
+	chainWebpack: (config) => {
+		config.plugin('html').tap((args) => {
+			args[0].title = 'Knowage'
+			return args
+		})
 	},
 	css: {
 		loaderOptions: {
