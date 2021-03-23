@@ -56,6 +56,8 @@ public class UserInformationBOJSONSerializer implements Serializer {
 
 			result.put("organization", obj.getOrganization());
 
+			result.put("token", obj.getUniqueIdentifier());
+
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

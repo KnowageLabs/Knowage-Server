@@ -86,6 +86,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			}
 
 			UserInformationBO userInformationBO = new UserInformationBO(user);
+			userInformationBO.setUniqueIdentifier((String) userProfile.getUserUniqueIdentifier());
 
 			JSONObject documentsJSON = null;
 			MessageBuilder m = new MessageBuilder();

@@ -42,7 +42,7 @@ import it.eng.spagobi.tenant.TenantManager;
 
 /**
  * Business Object used to retrieve basic informations about current the user
- * 
+ *
  * @since 2021/03/05
  * @author albnale
  */
@@ -59,6 +59,7 @@ public class UserInformationBO {
 	private Map<String, Object> attributes;
 	private JSONObject locale;
 	private String organization;
+	private String uniqueIdentifier;
 
 	public UserInformationBO(UserBO user) throws EMFUserError {
 		this.id = user.getId();
@@ -205,6 +206,14 @@ public class UserInformationBO {
 
 	public void setOrganization(String organization) {
 		this.organization = organization;
+	}
+
+	public String getUniqueIdentifier() {
+		return uniqueIdentifier;
+	}
+
+	public void setUniqueIdentifier(String object) {
+		this.uniqueIdentifier = object;
 	}
 
 }
