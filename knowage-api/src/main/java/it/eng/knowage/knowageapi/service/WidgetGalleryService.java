@@ -31,7 +31,8 @@ public class WidgetGalleryService {
 
 		toRet.setAuthor(sbiWidgetGallery.getAuthor());
 		toRet.setId(sbiWidgetGallery.getUuid());
-		toRet.setLabel(sbiWidgetGallery.getDescription());
+		toRet.setName(sbiWidgetGallery.getName());
+		toRet.setDescription(sbiWidgetGallery.getDescription());
 		toRet.setType(sbiWidgetGallery.getType());
 		return toRet;
 	}

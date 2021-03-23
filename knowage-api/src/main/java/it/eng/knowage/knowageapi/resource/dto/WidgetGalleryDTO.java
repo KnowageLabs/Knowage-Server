@@ -9,7 +9,8 @@ public class WidgetGalleryDTO {
 
 	private UUID id;
 	private String author;
-	private String label;
+	private String name;
+	private String description;
 	private String type;
 	private List<String> tags = new ArrayList<String>();
 	// TODO correctly image handling
@@ -34,12 +35,12 @@ public class WidgetGalleryDTO {
 		this.author = author;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getName() {
+		return name;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getType() {
@@ -62,12 +63,20 @@ public class WidgetGalleryDTO {
 		this.code = code;
 	}
 
-	public WidgetGalleryDTO(UUID id, String author, String label, String type, List<String> tags, String html, String javaScript, String python, String css,
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public WidgetGalleryDTO(UUID id, String author, String name, String type, List<String> tags, String html, String javaScript, String python, String css,
 			String image) {
 		super();
 		this.id = id;
 		this.author = author;
-		this.label = label;
+		this.name = name;
 		this.type = type;
 		this.tags = tags;
 		this.code.setCss(css);

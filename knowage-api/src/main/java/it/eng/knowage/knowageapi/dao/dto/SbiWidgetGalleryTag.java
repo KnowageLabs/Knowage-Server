@@ -22,9 +22,6 @@ import javax.persistence.Table;
 public class SbiWidgetGalleryTag implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "META_VERSION")
-	private String metaVersion;
-
 	private String organization;
 
 	@Column(name = "SBI_VERSION_DE")
@@ -72,14 +69,6 @@ public class SbiWidgetGalleryTag implements Serializable {
 
 	public void setId(SbiWidgetGalleryTagId id) {
 		this.id = id;
-	}
-
-	public String getMetaVersion() {
-		return this.metaVersion;
-	}
-
-	public void setMetaVersion(String metaVersion) {
-		this.metaVersion = metaVersion;
 	}
 
 	public String getOrganization() {

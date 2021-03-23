@@ -65,6 +65,11 @@
 			<version>5.4.29.Final</version>
 		</dependency>
 
+	 <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.3.0</version>
+        </dependency>
 	</dependencies>
 
 	<build>

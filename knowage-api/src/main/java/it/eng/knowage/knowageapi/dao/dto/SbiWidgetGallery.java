@@ -41,9 +41,6 @@ public class SbiWidgetGallery implements Serializable {
 	@Column(name = "LICENSE_TEXT")
 	private String licenseText;
 
-	@Column(name = "META_VERSION")
-	private String metaVersion;
-
 	private String name;
 
 	private String organization;
@@ -132,14 +129,6 @@ public class SbiWidgetGallery implements Serializable {
 
 	public void setLicenseText(String licenseText) {
 		this.licenseText = licenseText;
-	}
-
-	public String getMetaVersion() {
-		return this.metaVersion;
-	}
-
-	public void setMetaVersion(String metaVersion) {
-		this.metaVersion = metaVersion;
 	}
 
 	public String getName() {

@@ -1,11 +1,17 @@
 package it.eng.knowage.knowageapi.resource;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -14,6 +20,14 @@ import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestHeader;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 import it.eng.knowage.knowageapi.service.WidgetGalleryService;
@@ -27,13 +41,16 @@ public class GalleryResource {
 
 	private HashMap<String, WidgetGalleryDTO> mockMap = new HashMap<String, WidgetGalleryDTO>();
 
+	// TODO: put authorization with token into an interceptor
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response widgetList() {
+	public Response widgetList(@HeaderParam("Authorization") String token) {
 		Response response = null;
 
 //		List<WidgetGalleryDTO> widgetGalleryDTOs = widgetGalleryService.getWidgets();
+
+		String userId = jwtToken2userId(token.replace("Bearer ", ""));
 
 		List<WidgetGalleryDTO> widgetGalleryDTOs = mockGallery();
 
@@ -50,7 +67,7 @@ public class GalleryResource {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response widget(@PathParam("id") String widgetId) {
+	public Response widget(@RequestHeader(name = "Authorization") String token, @PathParam("id") String widgetId) {
 		Response response = null;
 
 		List<WidgetGalleryDTO> widgetGalleryDTOs = mockGallery();
@@ -63,6 +80,49 @@ public class GalleryResource {
 
 		return response;
 
+	}
+
+	@POST
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response widgetCreateOrUpdate(@RequestHeader(name = "Authorization") String token, @PathParam("id") String widgetId) {
+		Response response = null;
+
+		List<WidgetGalleryDTO> widgetGalleryDTOs = mockGallery();
+
+		if (widgetGalleryDTOs != null)
+			response = Response.status(Response.Status.OK).entity(mockMap.get(widgetId)).build();
+		else {
+			response = Response.status(Response.Status.NO_CONTENT).build();
+		}
+
+		return response;
+
+	}
+
+	public static String jwtToken2userId(String jwtToken) throws JWTVerificationException {
+		String userId = null;
+		Context ctx;
+		try {
+			ctx = new InitialContext();
+
+			String key = (String) ctx.lookup("java:/comp/env/hmacKey");
+			Algorithm algorithm = Algorithm.HMAC256(key);
+			JWTVerifier verifier = JWT.require(algorithm).build();
+			DecodedJWT decodedJWT = verifier.verify(jwtToken);
+			Claim userIdClaim = decodedJWT.getClaim("user_id");
+			userId = userIdClaim.asString();
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return userId;
 	}
 
 	public List<WidgetGalleryDTO> mockGallery() {
