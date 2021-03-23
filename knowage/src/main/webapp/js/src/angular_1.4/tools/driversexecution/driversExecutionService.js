@@ -36,8 +36,10 @@
 
 						if(isParameterSelectionValueLov(parameter)) {
 
-							if(isParameterSelectionTypeTree(parameter) || isParameterSelectionTypeLookup(parameter)){
-								parseParameterTreeOrLookupSelectionType(parameter);
+							if(isParameterSelectionTypeTree(parameter)){
+								parseParameterTreeSelectionType(parameter);
+							} else if (isParameterSelectionTypeLookup(parameter)) {
+								parseParameterLookupSelectionType(parameter);
 							} else {
 								parseParameterListOrComboxSelectionType(parameter);
 							}
@@ -232,7 +234,7 @@
 			}
 
 
-			var parseParameterTreeOrLookupSelectionType = function(parameter){
+			var parseParameterTreeSelectionType = function(parameter){
 				var paramArrayTree = [];
 				var paramStrTree = "";
 
@@ -251,6 +253,22 @@
 				}
 				executionService.jsonDatumValue = paramArrayTree;
 				executionService.jsonDatumDesc = paramStrTree;
+
+			};
+
+			var parseParameterLookupSelectionType = function(parameter){
+				var paramArray = [];
+				var paramStr = "";
+
+				for(var z = 0; parameter.parameterValue && z < parameter.parameterValue.length; z++) {
+					if(z > 0) {
+						paramStr += ";";
+					}
+					paramArray[z] = parameter.parameterValue[z].value;
+					paramStr += parameter.parameterDescription[z];
+				}
+				executionService.jsonDatumValue = paramArray;
+				executionService.jsonDatumDesc = paramStr;
 
 			};
 
