@@ -36,10 +36,8 @@
 
 						if(isParameterSelectionValueLov(parameter)) {
 
-							if(isParameterSelectionTypeTree(parameter)){
-								parseParameterTreeSelectionType(parameter);
-							} else if (isParameterSelectionTypeLookup(parameter)) {
-								parseParameterLookupSelectionType(parameter);
+							if(isParameterSelectionTypeTree(parameter) || isParameterSelectionTypeLookup(parameter)){
+								parseParameterTreeOrLookupSelectionType(parameter);
 							} else {
 								parseParameterListOrComboxSelectionType(parameter);
 							}
@@ -234,7 +232,7 @@
 			}
 
 
-			var parseParameterTreeSelectionType = function(parameter){
+			var parseParameterTreeOrLookupSelectionType = function(parameter){
 				var paramArrayTree = [];
 				var paramStrTree = "";
 
@@ -242,33 +240,18 @@
 					if(z > 0) {
 						paramStrTree += ";";
 					}
-					paramArrayTree[z] = parameter.parameterValue[z];
+					var value = parameter.parameterValue[z].value ? parameter.parameterValue[z].value : parameter.parameterValue[z];
+					paramArrayTree[z] = value;
 					//modify description tree
 					if(typeof parameter.parameterDescription !== 'undefined'){
-						var descr = parameter.parameterDescription[parameter.parameterValue[z]];
+						var descr = parameter.parameterDescription[value];
 						if (typeof descr == 'undefined') descr = parameter.parameterDescription[z];
-						if (typeof descr == 'undefined') descr = parameter.parameterValue[z];
+						if (typeof descr == 'undefined') descr = value;
 						paramStrTree += descr;
 					}
 				}
 				executionService.jsonDatumValue = paramArrayTree;
 				executionService.jsonDatumDesc = paramStrTree;
-
-			};
-
-			var parseParameterLookupSelectionType = function(parameter){
-				var paramArray = [];
-				var paramStr = "";
-
-				for(var z = 0; parameter.parameterValue && z < parameter.parameterValue.length; z++) {
-					if(z > 0) {
-						paramStr += ";";
-					}
-					paramArray[z] = parameter.parameterValue[z].value;
-					paramStr += parameter.parameterDescription[z];
-				}
-				executionService.jsonDatumValue = paramArray;
-				executionService.jsonDatumDesc = paramStr;
 
 			};
 
