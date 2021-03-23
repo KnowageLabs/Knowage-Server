@@ -148,14 +148,14 @@ public class KnowageWebSocket {
 	@OnClose
 	public void onClose(Session session) throws IOException, EncodeException {
 
-		JSONObject disconnectedJSON = new JSONObject();
-		try {
-			disconnectedJSON.put("disconnected", true);
-			session.getBasicRemote().sendObject(disconnectedJSON);
-		} catch (JSONException e) {
-			String message = "Error while creating closing JSON message";
-			logger.error(message);
-		}
+//		JSONObject disconnectedJSON = new JSONObject();
+//		try {
+//			disconnectedJSON.put("disconnected", true);
+//			session.getBasicRemote().sendObject(disconnectedJSON);
+//		} catch (JSONException e) {
+//			String message = "Error while creating closing JSON message";
+//			logger.error(message);
+//		}
 	}
 
 	@OnError
