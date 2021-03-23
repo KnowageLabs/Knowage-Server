@@ -200,7 +200,7 @@ export default defineComponent({
           }
         })
       } else {
-        this.download(JSON.stringify(this.template), this.template.id + '.json', 'text/plain')
+        this.download(JSON.stringify(this.template), this.template.label + '.json', 'text/plain')
       }
     },
     closeTemplate(): void {
