@@ -15,10 +15,6 @@ module.exports = {
 			'^/knowage/webSocket': {
 				target: process.env.VUE_APP_HOST_URL,
 				changeOrigin: true
-			},
-			'^/knowagecockpitengine/': {
-				target: process.env.VUE_APP_HOST_URL,
-				changeOrigin: true
 			}
 		}
 	},

@@ -35,11 +35,6 @@ const baseRoutes = [
 		props: (route) => ({ url: route.fullPath })
 	},
 	{
-		path: '/knowagecockpitengine:catchAll(.*)',
-		component: IframeRenderer,
-		props: (route) => ({ url: route.fullPath })
-	},
-	{
 		path: '/:catchAll(.*)',
 		component: () => import('@/modules/shared/404.vue')
 	}
