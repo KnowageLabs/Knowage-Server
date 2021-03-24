@@ -70,19 +70,26 @@ export default defineComponent({
   computed: {
     ...mapState({
       error: 'error',
+      info: 'info',
       user: 'user'
     })
   },
   watch: {
     error(newError) {
-      if (newError.visible) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Error Message',
-          detail: newError.msg,
-          life: 3000
-        })
-      }
+      this.$toast.add({
+        severity: 'error',
+        summary: newError.title,
+        detail: newError.msg,
+        life: 5000
+      })
+    },
+    info(newInfo) {
+      this.$toast.add({
+        severity: 'info',
+        summary: newInfo.title,
+        detail: newInfo.msg,
+        life: 5000
+      })
     },
     user(newUser, oldUser) {
       if (!oldUser.userId && oldUser != newUser) this.newsDownloadHandler()

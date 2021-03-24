@@ -38,7 +38,7 @@
               </div>
               <div class="p-col-12">
                 <span class="p-float-label">
-                  <Textarea classv-model="template.description" class="kn-material-input" :autoResize="true" id="description" rows="3" @change="setDirty" />
+                  <Textarea v-model="template.description" class="kn-material-input" :autoResize="true" id="description" rows="3" @change="setDirty" />
                   <label class="kn-material-input-label" for="description">{{ $t('common.description') }}</label>
                 </span>
               </div>
@@ -56,7 +56,7 @@
         <Card class="imageUploader">
           <template #title>
             {{ $t('common.image') }}
-            <input id="inputImage" type="file" @change="uploadFile" />
+            <input id="inputImage" type="file" @change="uploadFile" accept="image/png, image/jpeg" />
             <label for="inputImage">
               <i class="pi pi-upload" />
             </label>
@@ -237,19 +237,16 @@ export default defineComponent({
     uploadFile(event) {
       const reader = new FileReader()
       let self = this
-
       reader.addEventListener(
         'load',
         function() {
-          // convert image file to base64 string
           self.template.image = reader.result || ''
         },
         false
       )
-
-      if (event.srcElement.files[0]) {
+      if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
         reader.readAsDataURL(event.srcElement.files[0])
-      }
+      } else this.$store.commit('setInfo', { title: 'Error in file upload', msg: 'Uploaded image excedes max size (200KB)' })
     },
     resizeHandler() {
       this.windowWidth = window.innerWidth
@@ -335,6 +332,7 @@ export default defineComponent({
     img {
       height: auto;
       max-height: 100%;
+      max-width: 100%;
     }
   }
   .codemirrorContainer {
