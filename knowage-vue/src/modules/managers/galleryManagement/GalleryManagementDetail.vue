@@ -1,7 +1,7 @@
 <template>
   <div class="managerDetail">
     <Toolbar class="kn-toolbar-secondary p-m-0">
-      <template #left> Template {{ template.label }} </template>
+      <template #left> Template {{ template.name }} </template>
       <template #right>
         <Button icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" @click="downloadTemplate" />
         <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveTemplate" />
@@ -18,7 +18,7 @@
             <div class="p-grid">
               <div class="p-col-6">
                 <span class="p-float-label">
-                  <InputText id="label" class="kn-material-input" type="text" v-model="template.label" @change="setDirty" />
+                  <InputText id="label" class="kn-material-input" type="text" v-model="template.name" @change="setDirty" />
                   <label class="kn-material-input-label" for="label">{{ $t('common.label') }}</label>
                 </span>
               </div>
@@ -111,6 +111,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 import Chips from 'primevue/chips'
 import { VCodeMirror } from 'vue3-code-mirror'
 import Dropdown from 'primevue/dropdown'
@@ -123,7 +124,7 @@ import galleryDescriptor from './GalleryManagementDescriptor.json'
 interface GalleryTemplate {
   id: string
   author: string
-  label: string
+  name: string
   type: string
   description?: string
   code: Code
@@ -202,7 +203,7 @@ export default defineComponent({
           }
         })
       } else {
-        this.download(JSON.stringify(this.template), this.template.label + '.json', 'text/plain')
+        this.download(JSON.stringify(this.template), this.template.name + '.json', 'text/plain')
       }
     },
     closeTemplate(): void {
@@ -210,7 +211,7 @@ export default defineComponent({
     },
     loadTemplate(id?: string): void {
       if (id) {
-        this.axios
+        axios
           .get(`${process.env.VUE_APP_API_PATH}1.0/widgetgallery/${id || this.id}`)
           .then((response) => {
             this.template = response.data
@@ -225,7 +226,7 @@ export default defineComponent({
     },
     saveTemplate(): void {
       let postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
-      this.axios
+      axios
         .post(process.env.VUE_APP_API_PATH + postUrl, this.template)
         .then(() => {
           this.$store.commit('setInfo', { title: 'Saved template', msg: 'template saved correctly' })

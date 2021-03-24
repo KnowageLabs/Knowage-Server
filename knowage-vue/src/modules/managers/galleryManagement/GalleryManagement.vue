@@ -16,9 +16,9 @@
           :options="galleryTemplates"
           :filter="true"
           :filterPlaceholder="$t('common.search')"
-          optionLabel="label"
+          optionLabel="name"
           filterMatchMode="contains"
-          :filterFields="['label', 'type', 'tags']"
+          :filterFields="['name', 'type', 'tags']"
           :emptyFilterMessage="$t('managers.widgetGallery.noResults')"
         >
           <template #option="slotProps">
@@ -31,7 +31,7 @@
                   :style="typeDescriptor.iconTypesMap[slotProps.option.type].style"
                 />
                 <div class="knListItemText">
-                  <span>{{ slotProps.option.label }}</span>
+                  <span>{{ slotProps.option.name }}</span>
                   <span class="smallerLine">{{ slotProps.option.author }}</span>
                 </div>
                 <Button
@@ -95,7 +95,7 @@ export default defineComponent({
         icon: 'pi pi-exclamation-triangle',
         accept: () => {
           this.axios
-            .delete('/knowage/restful-services/3.0/gallery/' + templateId)
+            .delete(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + templateId)
             .then(() => {
               this.$store.commit('setInfo', { title: 'Deleted template', msg: 'template deleted' })
               this.loadAllTemplates()
