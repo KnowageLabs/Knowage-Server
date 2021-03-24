@@ -87,6 +87,7 @@ public class WidgetGalleryService {
 		image = image.substring(image.indexOf(",") + 1);
 		byte[] byteArrray = image.getBytes();
 		SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
+		newSbiWidgetGallery.setUuid(uuid);
 		newSbiWidgetGallery.setAuthor(author);
 		newSbiWidgetGallery.setDescription(description);
 		newSbiWidgetGallery.setLicenseText(licenseText);

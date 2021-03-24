@@ -185,8 +185,8 @@ public class GalleryResource {
 				newSbiWidgetGallery = widgetGalleryService.getWidgetsById(widgetId);
 				if (newSbiWidgetGallery != null) {
 
-					SbiWidgetGallery newSbiWidgetGalleryToUpdate = widgetGalleryService.updateGallery(newSbiWidgetGallery, label, type, userId, description,
-							"licenseText", "licenseName", "tenant", image, "sbiversion", body, userId);
+					widgetGalleryService.updateGallery(newSbiWidgetGallery.getId(), label, type, userId, description, "licenseText", "licenseName", "tenant",
+							image, "sbiversion", body, userId);
 				}
 
 			} catch (JSONException e) {
