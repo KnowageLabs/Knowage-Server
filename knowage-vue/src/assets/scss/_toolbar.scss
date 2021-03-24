@@ -6,9 +6,16 @@
 .kn-dialog {
 	&.p-dialog {
 		.p-dialog-header {
-			background-color: #3b678c;
+			.p-dialog-title {
+				font-size: 1rem;
+				font-weight: 400;
+			}
+			background-color: $color-primary;
 			border-radius: 0;
 			color: white;
+			height: 1rem;
+			text-transform: none;
+			font-weight: 600;
 		}
 	}
 }

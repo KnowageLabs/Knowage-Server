@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-bind:visible="visibility" footer="footer" :header="$t('language.languageSelection')" :closable="false" modal>
+  <Dialog class="kn-dialog" v-bind:visible="visibility" footer="footer" :header="$t('language.languageSelection')" :closable="false" modal>
     <Listbox class="knList countryList" :options="languages" optionLabel="name" optionDisabled="disabled">
       <template #option="slotProps">
         <div class="p-d-flex p-ai-center countryItem" @click="changeLanguage({ language: slotProps.option.language, country: slotProps.option.country })">
@@ -9,7 +9,7 @@
       </template>
     </Listbox>
     <template #footer>
-      <Button v-t="'common.close'" autofocus @click="closeDialog" />
+		<Button class="kn-button kn-button--primary" v-t="'common.close'" @click="closeDialog" />
     </template>
   </Dialog>
 </template>

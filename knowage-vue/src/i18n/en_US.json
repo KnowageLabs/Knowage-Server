@@ -39,7 +39,7 @@
     "languageSelection": "Language Selection"
   },
   "role": {
-    "rolePlaceholder": "Select a role",
+	"defaultRolePlaceholder": "No default role selected",
     "roleSelection": "Role Selection"
   },
   "managers": {

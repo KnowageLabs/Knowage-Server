@@ -318,7 +318,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private JSONArray createItemsArray(Locale locale, MessageBuilder messageBuilder, List funcs, JSONArray technicalUserMenuJSONArray, List itemsSBList,
-			boolean isTechnicalUserMenu) throws JSONException {
+			boolean isTechnicalUserMenu) throws JSONException, EMFInternalError {
 		JSONArray items = new JSONArray();
 		for (Object item : itemsSBList) {
 
@@ -353,18 +353,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	private boolean isInTechnicalUserMenu(JSONArray technicalUserMenuJSONArray, SourceBean itemSB, MessageBuilder messageBuilder, Locale locale)
 			throws JSONException {
 
-//		String itemSBLabel = messageBuilder.getMessage((String) itemSB.getAttribute(LABEL), locale);
-//
-//		for (int i = 0; i < technicalUserMenuJSONArray.length(); i++) {
-//			JSONObject menuJSON = (JSONObject) technicalUserMenuJSONArray.get(i);
-//
-//			String menuJSONLabel = menuJSON.getString(LABEL);
-//
-//			if (menuJSONLabel.equals(itemSBLabel)) {
-//				return true;
-//			}
-//		}
-
 		String strId = (String) itemSB.getAttribute(ID);
 		if (strId != null) {
 			Integer id = Integer.valueOf(strId);
@@ -392,7 +380,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return isLicensed;
 	}
 
-	private boolean menuConditionIsSatisfied(SourceBean itemSB) {
+	private boolean menuConditionIsSatisfied(SourceBean itemSB) throws EMFInternalError {
 		boolean isSatisfied = false;
 
 		String condition = (String) itemSB.getAttribute(CONDITION);
@@ -400,16 +388,21 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			switch (condition) {
 
 			case "my_account":
-				String strMyAccountMenu = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.MY_ACCOUNT_MENU");
-				boolean myAccountMenu = !"false".equalsIgnoreCase(strMyAccountMenu); // default value is true, for backward compatibility
+				if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
+					String strMyAccountMenu = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.MY_ACCOUNT_MENU");
+					boolean myAccountMenu = !"false".equalsIgnoreCase(strMyAccountMenu); // default value is true, for backward compatibility
 
-				String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
-				boolean isInternalSecurityServiceSupplier = securityServiceSupplier.equalsIgnoreCase(InternalSecurityServiceSupplierImpl.class.getName());
-				boolean isPublicUser = userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID);
-				if (isInternalSecurityServiceSupplier && !isPublicUser && myAccountMenu) {
-					isSatisfied = true;
+					String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+					boolean isInternalSecurityServiceSupplier = securityServiceSupplier.equalsIgnoreCase(InternalSecurityServiceSupplierImpl.class.getName());
+					boolean isPublicUser = userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID);
+					if (isInternalSecurityServiceSupplier && !isPublicUser && myAccountMenu) {
+						isSatisfied = true;
+					}
 				}
+				break;
 
+			case "multiple_roles":
+				isSatisfied = userProfile.getRoles().size() > 1;
 				break;
 
 			case "public_user":

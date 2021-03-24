@@ -1,27 +1,36 @@
 .kn-decoration-none {
-  text-decoration: none;
-  color: inherit;
+	text-decoration: none;
+	color: inherit;
 }
 
 .kn-height-full {
-  height: 100%;
+	height: 100%;
 }
 
 .kn-toolbar-secondary.p-toolbar {
-  background-color: #bbd6ed;
-  border: none;
-  border-radius: 0;
-  color: $color-primary;
-  height: $toolbar-height;
-  padding: $toolbar-padding;
+	background-color: #bbd6ed;
+	border: none;
+	border-radius: 0;
+	color: $color-primary;
+	height: $toolbar-height;
+	padding: $toolbar-padding;
+}
+
+.kn-button {
+	background-color: $color-secondary;
+	color: white;
+	text-transform: uppercase;
+	&--primary {
+		background-color: $color-primary;
+	}
 }
 
 .noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }

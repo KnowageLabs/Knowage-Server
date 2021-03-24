@@ -1,9 +1,9 @@
 <template>
-	<Dialog class="kn-dialog roleDialog" v-bind:visible="visibility" footer="footer" :header="$t('role.roleSelection')" :closable="true" modal>
-		<Dropdown id="role" v-model="selectedRole" class="kn-material-input" @change="setDirty" :options="roles" optionLabel="label" optionValue="value" :placeholder="$t('role.rolePlaceholder')" />
+	<Dialog class="kn-dialog roleDialog" v-bind:visible="visibility" footer="footer" :header="$t('role.roleSelection')" :closable="false" modal>
+		<Dropdown id="role" v-model="sessionRole" class="kn-material-input" @change="setDirty" :options="roles" :placeholder="$t('role.defaultRolePlaceholder')" />
 		<template #footer>
-			<Button v-t="'common.close'" @click="closeDialog" />
-			<Button v-t="'common.save'" autofocus @click="changeRole" />
+			<Button class="p-button-text kn-button" v-t="'common.close'" @click="closeDialog" />
+			<Button class="kn-button kn-button--primary" v-t="'common.save'" @click="changeRole" />
 		</template>
 	</Dialog>
 </template>
@@ -12,11 +12,7 @@
 	import { defineComponent } from 'vue'
 	import Dialog from 'primevue/dialog'
 	import Dropdown from 'primevue/dropdown'
-
-	interface Role {
-		label: string
-		value: string
-	}
+	import axios from 'axios'
 
 	export default defineComponent({
 		name: 'role-dialog',
@@ -27,12 +23,8 @@
 		data() {
 			return {
 				/* roles: Array<Role>() */
-				roles: [
-					{ label: 'role1', value: 'roleDescription1' },
-					{ label: 'role2', value: 'roleDescription2' },
-					{ label: 'veryVeryVeryLongRole', value: 'roleDescription3' }
-				],
-				selectedRole: null
+				roles: ['', 'admin', 'Audit', 'user'],
+				sessionRole: ''
 			}
 		},
 		created() {},
@@ -41,40 +33,38 @@
 		},
 		emits: ['update:visibility'],
 		methods: {
-			changeRole(nextLanguage: { language: string; country: string }) {
-				console.log(nextLanguage)
-				/* 				store.commit('setLocale', nextLanguage)
-				localStorage.setItem('locale', JSON.stringify(nextLanguage))
-				this.$i18n.locale = concatLocale(nextLanguage)
+			formUrlEncoded(x) {
+				return Object.keys(x)
+					.reduce((p, c) => p + `&${c}=${encodeURIComponent(x[c])}`, '')
+					.substring(1)
+			},
 
-				this.closeDialog()
-				this.$router.go(0)
-				this.$forceUpdate() */
+			changeRole() {
+				let headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
+				let data = this.formUrlEncoded({ ACTION_NAME: 'SET_SESSION_ROLE_ACTION', SELECTED_ROLE: this.sessionRole })
+				let postUrl = '/knowage/servlet/AdapterHTTP'
+				axios
+					.post(postUrl, data, { headers: headers })
+					.then(() => {
+						this.closeDialog()
+						this.$router.go(0)
+					})
+					.catch((error) => console.error(error))
 			},
 			closeDialog() {
 				this.$emit('update:visibility', false)
-			}
-		},
-		watch: {
-			visibility(newVisibility) {
-				if (newVisibility && this.roles.length == 0) {
-					/* 					this.axios.get('/knowage/restful-services/2.0/roles').then(
-						(response) => {
-							console.log('cas', response)
-						},
-						(error) => console.error(error)
-					) */
-					console.log(newVisibility)
-				}
 			}
 		}
 	})
 </script>
 
 <style scoped lang="scss">
-	.roleDialog {
-		#role {
-			width: 100%;
+	.p-dialog {
+		.p-dropdown {
+			margin: 10px 0 0 0;
 		}
+	}
+	.roleDialog #role {
+		width: 300px;
 	}
 </style>

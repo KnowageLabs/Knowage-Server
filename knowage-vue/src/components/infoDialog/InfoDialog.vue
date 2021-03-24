@@ -1,5 +1,5 @@
 <template>
-	<Dialog v-bind:visible="visibility" footer="footer" :header="$t('infoDialog.aboutKnowage')" :closable="false" modal>
+	<Dialog class="kn-dialog" v-bind:visible="visibility" footer="footer" :header="$t('infoDialog.aboutKnowage')" :closable="false" modal>
 		<div class="p-grid p-m-1">
 			<div class="p-col">
 				<div class="p-d-flex p-jc-center">
@@ -19,7 +19,7 @@
 			</div>
 		</div>
 		<template #footer>
-			<Button v-t="'common.close'" autofocus @click="closeDialog" />
+			<Button class="kn-button kn-button--primary" v-t="'common.close'" @click="closeDialog" />
 		</template>
 	</Dialog>
 </template>

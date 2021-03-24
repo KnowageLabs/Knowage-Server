@@ -11,7 +11,7 @@ const messages = {
 	pt_BR: require('@/i18n/pt_BR.json')
 }
 
-let currentLocale = localStorage.getItem('locale') ? concatLocale(localStorage.getItem('locale').language) : store.local
+let currentLocale = localStorage.getItem('locale') ? concatLocale(localStorage.getItem('locale')) : store.local
 
 const i18n = createI18n({
 	locale: currentLocale,

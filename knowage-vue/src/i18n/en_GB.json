@@ -15,6 +15,7 @@
     "information": "information",
     "label": "label",
     "loggedUser": "logged user",
+	"save": "save",
     "search": "search",
     "tenant": "tenant",
     "tags": "tags",
@@ -36,7 +37,7 @@
     "languageSelection": "Language Selection"
   },
   "role": {
-    "rolePlaceholder": "Select a role",
+	"defaultRolePlaceholder": "No default role selected",
     "roleSelection": "Role Selection"
   },
   "managers": {
