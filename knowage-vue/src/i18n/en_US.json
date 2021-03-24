@@ -6,6 +6,9 @@
       "css": "css",
       "python": "python"
     },
+    "error": {
+      "exceededSize": "Uploaded file exceedes max size {size}"
+    },
     "close": "close",
     "description": "description",
     "image": "image",
@@ -23,7 +26,7 @@
   },
   "infoDialog": {
     "aboutKnowage": "About Knowage",
-	"copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
+    "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
     "sourceCode": "Source code available on "
   },
   "language": {
@@ -35,10 +38,10 @@
     "pt_BR": "portuguese",
     "languageSelection": "Language Selection"
   },
-	"role": {
-		"rolePlaceholder": "Select a role",
-		"roleSelection": "Role Selection"
-	},
+  "role": {
+    "rolePlaceholder": "Select a role",
+    "roleSelection": "Role Selection"
+  },
   "managers": {
     "widgetGallery": {
       "title": "Gallery management",

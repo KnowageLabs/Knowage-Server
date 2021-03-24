@@ -1,17 +1,33 @@
 import { shallowMount } from '@vue/test-utils'
-import Knmenu from '../Knmenu.vue'
+import Knmenu from './Knmenu.vue'
+import { createStore } from 'vuex'
+import Tooltip from 'primevue/tooltip'
+
+const store = createStore({
+  state() {
+    return {
+      locale: { country: 'IT', language: 'it' }
+    }
+  }
+})
 
 describe('Kmenu', () => {
+  test('is loaded empty', () => {
     const wrapper = shallowMount(Knmenu, {
-        propsData: {
-          items: []
+      propsData: {
+        items: []
+      },
+      global: {
+        directives: {
+          tooltip: Tooltip
+        },
+        plugins: [store],
+        mocks: {
+          $t: (msg) => msg
         }
+      }
     })
-
-    it('has test value set to test', () => {
-        expect(wrapper.vm.showProfileMenu).toBe(false)
-      })
-    it('returns empty array if no props is set', () => {
-    expect(wrapper.vm.fixedMenu[0].label).toBe('home')
-    })
+    expect(wrapper.vm.dynamicUserFunctionalities[0]).toBe(undefined)
+    expect(wrapper.vm.commonUserFunctionalities[0]).toBe(undefined)
   })
+})

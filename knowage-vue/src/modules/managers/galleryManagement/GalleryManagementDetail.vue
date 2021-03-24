@@ -29,7 +29,7 @@
                     class="kn-material-input"
                     v-model="template.type"
                     @change="setDirty"
-                    :options="typeDescriptor.types"
+                    :options="galleryDescriptor.types"
                     optionLabel="name"
                     optionValue="value"
                   />
@@ -70,38 +70,38 @@
         </Card>
       </div>
     </div>
-    <div class="p-grid p-m-0 flex" v-if="template.type && windowWidth < 1500">
+    <div class="p-grid p-m-2 flex" v-if="template.type && windowWidth < windowWidthBreakPoint">
       <TabView class="tabview-custom" style="width:100%">
-        <TabPanel v-for="allowedEditor in typeDescriptor.allowedEditors[template.type]" v-bind:key="allowedEditor">
+        <TabPanel v-for="allowedEditor in galleryDescriptor.allowedEditors[template.type]" v-bind:key="allowedEditor">
           <template #header>
-            <i :class="['icon', typeDescriptor.editor[allowedEditor].icon]"></i>&nbsp;<span style="text-transform:uppercase">{{
+            <i :class="['icon', galleryDescriptor.editor[allowedEditor].icon]"></i>&nbsp;<span style="text-transform:uppercase">{{
               $t('common.codingLanguages.' + allowedEditor)
             }}</span>
           </template>
           <VCodeMirror
             class="flex"
             v-model:value="template.code[allowedEditor]"
-            :options="typeDescriptor.options[allowedEditor]"
+            :options="galleryDescriptor.options[allowedEditor]"
             @update:value="onCmCodeChange"
           />
         </TabPanel>
       </TabView>
     </div>
-    <div class="p-grid p-m-0 flex" v-if="template.type && windowWidth >= 1500">
+    <div class="p-grid p-m-0 flex" v-if="template.type && windowWidth >= windowWidthBreakPoint">
       <div
-        :class="typeDescriptor.allowedEditors[template.type].length === 2 ? 'p-col-6' : 'p-col-4'"
-        v-for="allowedEditor in typeDescriptor.allowedEditors[template.type]"
+        :class="galleryDescriptor.allowedEditors[template.type].length === 2 ? 'p-col-6' : 'p-col-4'"
+        v-for="allowedEditor in galleryDescriptor.allowedEditors[template.type]"
         v-bind:key="allowedEditor"
         style="height:100%;display:flex;flex-direction:column"
       >
         <h4>
-          <i :class="['icon', typeDescriptor.editor[allowedEditor].icon]"></i>
+          <i :class="['icon', galleryDescriptor.editor[allowedEditor].icon]"></i>
           {{ $t('common.codingLanguages.' + allowedEditor) }}
         </h4>
         <VCodeMirror
           class="flex"
           v-model:value="template.code[allowedEditor]"
-          :options="typeDescriptor.options[allowedEditor]"
+          :options="galleryDescriptor.options[allowedEditor]"
           @update:value="onCmCodeChange"
         />
       </div>
@@ -118,7 +118,7 @@ import InputText from 'primevue/inputtext'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Textarea from 'primevue/textarea'
-import typeDescriptor from './typeDescriptor.json'
+import galleryDescriptor from './GalleryManagementDescriptor.json'
 
 interface GalleryTemplate {
   id: string
@@ -149,6 +149,7 @@ export default defineComponent({
     TabPanel,
     Textarea
   },
+  emits: ['saved'],
   props: {
     id: String
   },
@@ -159,8 +160,9 @@ export default defineComponent({
       test: '',
       galleryTemplates: [],
       template: {} as GalleryTemplate,
-      typeDescriptor: typeDescriptor,
-      windowWidth: window.innerWidth
+      galleryDescriptor: galleryDescriptor,
+      windowWidth: window.innerWidth,
+      windowWidthBreakPoint: 1500
     }
   },
   created() {
@@ -169,7 +171,7 @@ export default defineComponent({
     window.addEventListener('resize', this.resizeHandler)
   },
   methods: {
-    download(content, fileName, contentType) {
+    download(content, fileName, contentType): void {
       var a = document.createElement('a')
       var file = new Blob([content], { type: contentType })
       a.href = URL.createObjectURL(file)
@@ -209,7 +211,7 @@ export default defineComponent({
     loadTemplate(id?: string): void {
       if (id) {
         this.axios
-          .get(`/knowage-api/api/1.0/widgetgallery/${id || this.id}`)
+          .get(`${process.env.VUE_APP_API_PATH}1.0/widgetgallery/${id || this.id}`)
           .then((response) => {
             this.template = response.data
           })
@@ -219,22 +221,22 @@ export default defineComponent({
       }
     },
     onCmCodeChange(): void {
-      console.log('the code is changed ', '')
       this.setDirty()
     },
-    saveTemplate() {
-      let postUrl = this.id ? '/knowage-api/api/1.0/widgetgallery/' + this.id : '/knowage-api/api/1.0/widgetgallery/'
+    saveTemplate(): void {
+      let postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
       this.axios
-        .post(postUrl, this.template)
-        .then((response) => {
-          console.log(response)
+        .post(process.env.VUE_APP_API_PATH + postUrl, this.template)
+        .then(() => {
+          this.$store.commit('setInfo', { title: 'Saved template', msg: 'template saved correctly' })
+          this.$emit('saved')
         })
         .catch((error) => console.error(error))
     },
-    setDirty() {
+    setDirty(): void {
       this.dirty = true
     },
-    uploadFile(event) {
+    uploadFile(event): void {
       const reader = new FileReader()
       let self = this
       reader.addEventListener(
@@ -246,9 +248,9 @@ export default defineComponent({
       )
       if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
         reader.readAsDataURL(event.srcElement.files[0])
-      } else this.$store.commit('setInfo', { title: 'Error in file upload', msg: 'Uploaded image excedes max size (200KB)' })
+      } else this.$store.commit('setError', { title: 'Error in file upload', msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
     },
-    resizeHandler() {
+    resizeHandler(): void {
       this.windowWidth = window.innerWidth
     }
   },

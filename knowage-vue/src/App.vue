@@ -2,7 +2,7 @@
   <Toast></Toast>
   <ConfirmDialog></ConfirmDialog>
   <div class="layout-wrapper-content">
-    <Knmenu :model="menu"></Knmenu>
+    <Knmenu></Knmenu>
 
     <div class="layout-main">
       <router-view />
@@ -17,6 +17,7 @@ import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
 import store from '@/App.store'
 import { mapState } from 'vuex'
+import axios from 'axios'
 import { concatLocale } from '@/helpers/localeHelper'
 
 export default defineComponent({
@@ -26,7 +27,7 @@ export default defineComponent({
     Toast
   },
   created() {
-    this.axios.get('/knowage/restful-services/3.0/users/current').then(
+    axios.get('/knowage/restful-services/3.0/users/current').then(
       (response) => {
         store.commit('setUser', response.data)
 

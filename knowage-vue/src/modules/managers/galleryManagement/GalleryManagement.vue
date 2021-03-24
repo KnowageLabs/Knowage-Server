@@ -45,7 +45,7 @@
         </Listbox>
       </div>
       <div class="p-col-9 p-p-0 p-m-0">
-        <router-view />
+        <router-view @saved="savedElement" />
       </div>
     </div>
   </div>
@@ -57,7 +57,7 @@ import Avatar from 'primevue/avatar'
 import FabButton from '@/components/UI/fabButton/FabButton.vue'
 import Listbox from 'primevue/listbox'
 import Menu from 'primevue/menu'
-import typeDescriptor from './typeDescriptor.json'
+import galleryDescriptor from './GalleryManagementDescriptor.json'
 
 export default defineComponent({
   name: 'gallery-management',
@@ -70,7 +70,7 @@ export default defineComponent({
   data() {
     return {
       galleryTemplates: [],
-      typeDescriptor: typeDescriptor,
+      typeDescriptor: galleryDescriptor,
       addMenuItems: [
         { label: this.$t('managers.widgetGallery.newTemplate'), icon: 'fas fa-plus', command: () => this.newTemplate() },
         { label: this.$t('managers.widgetGallery.importTemplate'), icon: 'fas fa-file-import', command: () => {} }
@@ -89,13 +89,26 @@ export default defineComponent({
     },
     deleteTemplate(e, templateId): void {
       e.preventDefault()
-      /*this.axios.delete(`/knowage/restful-services/3.0/gallery/${this.id}`)
-            .then(response => this.template = response.data)
-            .catch(error => console.error(error))*/
-      alert('delete template: ' + templateId)
+      this.$confirm.require({
+        message: 'Are you sure you want to delete the selected template?',
+        header: 'Confirmation',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          this.axios
+            .delete('/knowage/restful-services/3.0/gallery/' + templateId)
+            .then(() => {
+              this.$store.commit('setInfo', { title: 'Deleted template', msg: 'template deleted' })
+              this.loadAllTemplates()
+            })
+            .catch((error) => console.error(error))
+        }
+      })
     },
     newTemplate() {
       this.$router.push('/knowage/gallerymanagement/newtemplate')
+    },
+    savedElement() {
+      this.loadAllTemplates()
     },
     toggleAdd(event) {
       // eslint-disable-next-line
