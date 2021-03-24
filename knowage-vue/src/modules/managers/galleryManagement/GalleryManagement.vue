@@ -99,6 +99,7 @@ export default defineComponent({
             .then(() => {
               this.$store.commit('setInfo', { title: 'Deleted template', msg: 'template deleted' })
               this.loadAllTemplates()
+              if (templateId === this.$route.params.id) this.$router.push('/knowage/gallerymanagement')
             })
             .catch((error) => console.error(error))
         }
