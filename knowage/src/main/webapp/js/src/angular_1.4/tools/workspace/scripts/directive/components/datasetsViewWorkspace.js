@@ -571,55 +571,58 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		$scope.showDriversForExport = false;
 	}
 
-    $scope.previewDataset = function(dataset){
-    	console.info("DATASET FOR PREVIEW: ",dataset);
-    	$scope.datasetInPreview = dataset;
-    	$scope.selectedDataSet = dataset;
-    	$scope.disableBack=true;
-    	$scope.getDatasetParametersFromBusinessModel(dataset).then(function(){
-	    	/**
-	    	 * Variable that serves as indicator if the dataset metadata exists and if it contains the 'resultNumber'
-	    	 * property (e.g. Query datasets).
-	    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	    	 */
-	    	var dsRespHasResultNumb = dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber";
-	    	/**
-	    	 * The paginated dataset preview should contain the 'resultNumber' inside the 'dataset' property. If not, disable the
-	    	 * pagination in the toolbar of the preview dataset dialog.
-	    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	    	 */
-	    	if(dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber"){
-	    		$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
-	    		$scope.previewPaginationEnabled=true;
-	    	}else{
-	    		$scope.previewPaginationEnabled=false;
-	    	}
-//	    	if(!($scope.datasetInPreview.pars.length > 0 || driversExecutionService.hasMandatoryDrivers($scope.drivers)))
-//	    	$scope.getPreviewSet($scope.datasetInPreview);
-	    	/**
-	    	 * Execute this if-else block only if there is already an information about the total amount of rows in the dataset metadata.
-	    	 * In other words, it should be executed for the e.g. Query dataset, since it has this property in its meta.
-	    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	    	 */
-	    	if (dsRespHasResultNumb) {
-	    		if($scope.totalItemsInPreview < $scope.itemsPerPage) {
-	    			$scope.endPreviewIndex = $scope.totalItemsInPreview;
-	    			$scope.disableNext = true;
-	    		} else {
-	    		 	$scope.endPreviewIndex = $scope.itemsPerPage;
-	    		 	$scope.disableNext = false;
-	    		}
-	    	}
-	     	$mdDialog.show({
-				  scope: $scope,
-				  preserveScope: true,
-			      controller: DatasetPreviewController,
-			      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplateWorkspace.html',
-			      clickOutsideToClose: false,
-			      escapeToClose: false
-			});
-    	})
-    }
+	$scope.previewDataset = function(dataset){
+		sbiModule_restServices.promiseGet('1.0/datasets', dataset.label).then(function(response) {
+			var dataset = response.data[0];
+
+			console.info("DATASET FOR PREVIEW: ",dataset);
+			$scope.datasetInPreview = dataset;
+			$scope.selectedDataSet = dataset;
+			$scope.disableBack=true;
+			$scope.getDatasetParametersFromBusinessModel(dataset).then(function(){
+				/**
+				 * Variable that serves as indicator if the dataset metadata exists and if it contains the 'resultNumber'
+				 * property (e.g. Query datasets).
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				var dsRespHasResultNumb = dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber";
+				/**
+				 * The paginated dataset preview should contain the 'resultNumber' inside the 'dataset' property. If not, disable the
+				 * pagination in the toolbar of the preview dataset dialog.
+				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				if(dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber"){
+					$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
+					$scope.previewPaginationEnabled=true;
+				}else{
+					$scope.previewPaginationEnabled=false;
+				}
+				/**
+				 * Execute this if-else block only if there is already an information about the total amount of rows in the dataset metadata.
+				 * In other words, it should be executed for the e.g. Query dataset, since it has this property in its meta.
+				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				if (dsRespHasResultNumb) {
+					if($scope.totalItemsInPreview < $scope.itemsPerPage) {
+						$scope.endPreviewIndex = $scope.totalItemsInPreview;
+						$scope.disableNext = true;
+					} else {
+						$scope.endPreviewIndex = $scope.itemsPerPage;
+						$scope.disableNext = false;
+					}
+				}
+				$mdDialog.show({
+					scope: $scope,
+					preserveScope: true,
+					controller: DatasetPreviewController,
+					templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplateWorkspace.html',
+					clickOutsideToClose: false,
+					escapeToClose: false
+				});
+			})
+
+		});
+	}
 
 	$scope.editQbeDataset = function(dataset) {
 		sbiModule_restServices.promiseGet('1.0/datasets', dataset.label).then(function(response) {
