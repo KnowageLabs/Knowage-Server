@@ -471,7 +471,7 @@
 							driversExecutionService.setParameterValueResult(paramDialogCtrl.initialParameterState);
 						}
 
-
+						$scope.resetCorrelatedParameters(paramDialogCtrl.initialParameterState, false);
 
 						$mdDialog.hide();
 					};
@@ -775,15 +775,19 @@
 			$scope.driversExecutionService.resetParameter(parameter, mainReset);
 			// reset also all correlated parameters
 			if (!endRecursion) {
-				var allCorrelatedParams = getCorrelatedParameters(parameter);
-				for (var i=0; i<allCorrelatedParams.length; i++) {
-					var correlatedParam = allCorrelatedParams[i];
-					if (correlatedParam.defaultValues) correlatedParam.parameterValue = "";
-					$scope.resetParameter(correlatedParam, mainReset, true);
-				}
+				$scope.resetCorrelatedParameters(parameter, mainReset);
 			}
 		}
-		
+
+		$scope.resetCorrelatedParameters = function(parameter, mainReset) {
+			var allCorrelatedParams = getCorrelatedParameters(parameter);
+			for (var i=0; i<allCorrelatedParams.length; i++) {
+				var correlatedParam = allCorrelatedParams[i];
+				if (correlatedParam.defaultValues) correlatedParam.parameterValue = "";
+				$scope.resetParameter(correlatedParam, mainReset, true);
+			}
+		}
+
 		$scope.descriptionOf = function(value) {
 			var matches = $scope.parameter.driverDefaultValue ? $scope.parameter.driverDefaultValue.filter(function(e) { return e.value == value; }) : [];
 			if (matches.length > 0) {
