@@ -3,11 +3,10 @@ package it.eng.knowage.knowageapi.resource.dto;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class WidgetGalleryDTO {
 
-	private UUID id;
+	private String id;
 	private String author;
 	private String name;
 	private String description;
@@ -19,11 +18,11 @@ public class WidgetGalleryDTO {
 
 	private Code code = new Code();
 
-	public UUID getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(UUID id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -71,7 +70,7 @@ public class WidgetGalleryDTO {
 		this.description = description;
 	}
 
-	public WidgetGalleryDTO(UUID id, String author, String name, String type, List<String> tags, String html, String javaScript, String python, String css,
+	public WidgetGalleryDTO(String id, String author, String name, String type, List<String> tags, String html, String javaScript, String python, String css,
 			String image) {
 		super();
 		this.id = id;
@@ -97,6 +96,18 @@ public class WidgetGalleryDTO {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+	public byte[] getImageBase64Content() {
+		return imageBase64Content;
+	}
+
+	public void setImageBase64Content(byte[] imageBase64Content) {
+		this.imageBase64Content = imageBase64Content;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 
 }

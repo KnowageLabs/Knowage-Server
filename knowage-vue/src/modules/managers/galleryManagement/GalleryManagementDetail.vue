@@ -228,8 +228,9 @@ export default defineComponent({
       let postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
       axios
         .post(process.env.VUE_APP_API_PATH + postUrl, this.template)
-        .then(() => {
+        .then((response) => {
           this.$store.commit('setInfo', { title: 'Saved template', msg: 'template saved correctly' })
+          this.$router.push('/knowage/gallerymanagement/' + response.data)
           this.$emit('saved')
         })
         .catch((error) => console.error(error))

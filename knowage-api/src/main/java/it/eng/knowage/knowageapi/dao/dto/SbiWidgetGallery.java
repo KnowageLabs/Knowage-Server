@@ -3,13 +3,10 @@ package it.eng.knowage.knowageapi.dao.dto;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQuery;
@@ -27,8 +24,8 @@ public class SbiWidgetGallery implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private UUID uuid;
+	@Column(name = "UUID")
+	private String uuid;
 
 	private String author;
 
@@ -91,11 +88,12 @@ public class SbiWidgetGallery implements Serializable {
 	public SbiWidgetGallery() {
 	}
 
-	public UUID getUuid() {
+	@Column(columnDefinition = "uuid", updatable = false)
+	public String getUuid() {
 		return this.uuid;
 	}
 
-	public void setUuid(UUID id) {
+	public void setUuid(String id) {
 		this.uuid = id;
 	}
 

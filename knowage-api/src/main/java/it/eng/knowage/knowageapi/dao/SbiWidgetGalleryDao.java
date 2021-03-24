@@ -1,16 +1,19 @@
 package it.eng.knowage.knowageapi.dao;
 
 import java.util.Collection;
-import java.util.UUID;
 
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
 
 public interface SbiWidgetGalleryDao {
 
-	UUID create(SbiWidgetGallery sbiWidgetGallery);
+	String create(SbiWidgetGallery sbiWidgetGallery);
 
-	SbiWidgetGallery findById(int id);
+	String update(SbiWidgetGallery sbiWidgetGallery);
+
+	SbiWidgetGallery findById(String id);
 
 	Collection<SbiWidgetGallery> findAll();
+
+	int deleteById(String id);
 
 }

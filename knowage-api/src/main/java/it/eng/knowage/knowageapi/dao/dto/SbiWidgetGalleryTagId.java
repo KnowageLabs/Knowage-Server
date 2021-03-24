@@ -61,4 +61,8 @@ public class SbiWidgetGalleryTagId implements Serializable {
 		return true;
 	}
 
+	public SbiWidgetGalleryTagId() {
+		super();
+	}
+
 }
