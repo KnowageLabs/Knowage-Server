@@ -120,6 +120,8 @@ public class RoleBO implements Serializable {
 	private boolean ableToCreateSelfServiceGeoreport;
 	private boolean ableToCreateSelfServiceKpi;
 
+	private boolean ableToManageWidgetGallery;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -135,10 +137,8 @@ public class RoleBO implements Serializable {
 	/**
 	 * Constructor.
 	 *
-	 * @param name
-	 *            the name
-	 * @param description
-	 *            the description
+	 * @param name        the name
+	 * @param description the description
 	 */
 	public RoleBO(String name, String description) {
 		super();
@@ -159,8 +159,7 @@ public class RoleBO implements Serializable {
 	/**
 	 * Sets the description.
 	 *
-	 * @param description
-	 *            the description to set
+	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -178,8 +177,7 @@ public class RoleBO implements Serializable {
 	/**
 	 * Sets the id.
 	 *
-	 * @param id
-	 *            the role id to set
+	 * @param id the role id to set
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -197,8 +195,7 @@ public class RoleBO implements Serializable {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -216,8 +213,7 @@ public class RoleBO implements Serializable {
 	/**
 	 * Sets the role type cd.
 	 *
-	 * @param roleTypeCD
-	 *            The roleTypeCD to set.
+	 * @param roleTypeCD The roleTypeCD to set.
 	 */
 	public void setRoleTypeCD(String roleTypeCD) {
 		this.roleTypeCD = roleTypeCD;
@@ -235,8 +231,7 @@ public class RoleBO implements Serializable {
 	/**
 	 * Sets the role type id.
 	 *
-	 * @param roleTypeID
-	 *            The roleTypeID to set.
+	 * @param roleTypeID The roleTypeID to set.
 	 */
 	public void setRoleTypeID(Integer roleTypeID) {
 		this.roleTypeID = roleTypeID;
@@ -254,8 +249,7 @@ public class RoleBO implements Serializable {
 	/**
 	 * Sets the code.
 	 *
-	 * @param code
-	 *            The code to set.
+	 * @param code The code to set.
 	 */
 	public void setCode(String code) {
 		this.code = code;
@@ -640,4 +634,13 @@ public class RoleBO implements Serializable {
 	public void setAbleToCreateSelfServiceKpi(boolean ableToCreateSelfServiceKpi) {
 		this.ableToCreateSelfServiceKpi = ableToCreateSelfServiceKpi;
 	}
+
+	public boolean isAbleToManageWidgetGallery() {
+		return ableToManageWidgetGallery;
+	}
+
+	public void setAbleToManageWidgetGallery(boolean ableToManageWidgetGallery) {
+		this.ableToManageWidgetGallery = ableToManageWidgetGallery;
+	}
+
 }
