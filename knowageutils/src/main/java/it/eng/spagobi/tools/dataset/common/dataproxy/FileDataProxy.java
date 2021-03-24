@@ -17,20 +17,19 @@
  */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.Base64;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Encoder;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -140,8 +139,8 @@ public class FileDataProxy extends AbstractDataProxy {
 	public String getMD5Checksum() {
 		logger.debug("IN");
 		byte[] checksum = this.createChecksum();
-		BASE64Encoder encoder = new BASE64Encoder();
-		String encoded = encoder.encode(checksum);
+		Base64.Encoder encoder = Base64.getEncoder();
+		String encoded = encoder.encodeToString(checksum);
 		logger.debug("OUT: returning [" + encoded + "]");
 		return encoded;
 	}

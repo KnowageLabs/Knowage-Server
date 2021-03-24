@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,19 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.services.content.service;
+
+import java.util.Base64;
+import java.util.HashMap;
+
+import org.apache.log4j.Logger;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -33,15 +41,6 @@ import it.eng.spagobi.services.common.AbstractServiceImpl;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 
-import java.util.HashMap;
-
-import org.apache.log4j.Logger;
-
-import sun.misc.BASE64Encoder;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 public class ContentServiceImpl extends AbstractServiceImpl {
 
 	static private Logger logger = Logger.getLogger(ContentServiceImpl.class);
@@ -55,14 +54,14 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 
 	/**
 	 * Read template.
-	 * 
+	 *
 	 * @param token
 	 *            the token
 	 * @param user
 	 *            the user
 	 * @param document
 	 *            the document
-	 * 
+	 *
 	 * @return the content
 	 */
 	public Content readTemplate(String token, String user, String document,
@@ -88,14 +87,14 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 
 	/**
 	 * Read template by label.
-	 * 
+	 *
 	 * @param token
 	 *            the token
 	 * @param user
 	 *            the user
 	 * @param document
 	 *            the document
-	 * 
+	 *
 	 * @return the content
 	 */
 	public Content readTemplateByLabel(String token, String user, String label,
@@ -121,14 +120,14 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 
 	/**
 	 * Read sub object content.
-	 * 
+	 *
 	 * @param token
 	 *            the token
 	 * @param user
 	 *            the user
 	 * @param subObjectId
 	 *            the sub object id
-	 * 
+	 *
 	 * @return the content
 	 */
 	public Content readSubObjectContent(String token, String user,
@@ -153,7 +152,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 
 	/**
 	 * Read sub object content.
-	 * 
+	 *
 	 * @param token
 	 *            the token
 	 * @param user
@@ -162,7 +161,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 	 *            the sub object name
 	 * @param objId
 	 *            the object id
-	 * 
+	 *
 	 * @return the content
 	 */
 	public Content readSubObjectContent(String token, String user,
@@ -187,7 +186,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 
 	/**
 	 * Save sub object.
-	 * 
+	 *
 	 * @param token
 	 *            the token
 	 * @param user
@@ -202,7 +201,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 	 *            the visibility boolean
 	 * @param content
 	 *            the content
-	 * 
+	 *
 	 * @return the string
 	 */
 	public String saveSubObject(String token, String user, String documentiId,
@@ -237,7 +236,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 
 	/**
 	 * Save object template.
-	 * 
+	 *
 	 * @param token
 	 *            the token
 	 * @param user
@@ -248,7 +247,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 	 *            the template name
 	 * @param content
 	 *            the content
-	 * 
+	 *
 	 * @return the string
 	 */
 	public String saveObjectTemplate(String token, String user,
@@ -280,7 +279,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 
 	/**
 	 * Download all.
-	 * 
+	 *
 	 * @param token
 	 *            the token
 	 * @param user
@@ -289,7 +288,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 	 *            the biobject id
 	 * @param fileName
 	 *            the file name
-	 * 
+	 *
 	 * @return the content
 	 */
 	public Content downloadAll(String token, String user, String biobjectId,
@@ -307,8 +306,8 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 			ISubObjectDAO subdao = DAOFactory.getSubObjectDAO();
 			SubObject subobj = subdao.getSubObject(id);
 			byte[] cont = subobj.getContent();
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			content.setContent(bASE64Encoder.encode(cont));
+			Base64.Encoder bASE64Encoder = Base64.getEncoder();
+			content.setContent(bASE64Encoder.encodeToString(cont));
 			content.setFileName(subobj.getName());
 			return content;
 		} catch (NumberFormatException e) {
@@ -331,8 +330,8 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 			SubObject subobj = subdao.getSubObjectByNameAndBIObjectId(
 					subObjectName, objId);
 			byte[] cont = subobj.getContent();
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			content.setContent(bASE64Encoder.encode(cont));
+			Base64.Encoder bASE64Encoder = Base64.getEncoder();
+			content.setContent(bASE64Encoder.encodeToString(cont));
 			content.setFileName(subobj.getName());
 			return content;
 		} catch (NumberFormatException e) {

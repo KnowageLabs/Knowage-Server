@@ -4,12 +4,11 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Security;
+import java.util.Base64;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
-import sun.misc.BASE64Encoder;
 
 public class PasswordEncrypter {
 	private Mac mac = null;
@@ -34,8 +33,8 @@ public class PasswordEncrypter {
 	public String enCrypt(String value) {
 		byte[] result = mac.doFinal(value.getBytes());
 
-		BASE64Encoder encoder = new BASE64Encoder();
-		String encoded = encoder.encode(result);
+		Base64.Encoder encoder = Base64.getEncoder();
+		String encoded = encoder.encodeToString(result);
 
 		return encoded;
 	}

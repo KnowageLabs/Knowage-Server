@@ -5,10 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.security.OAuth2;
 
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Base64;
 import java.util.Properties;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -22,7 +21,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sun.misc.BASE64Encoder;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class OAuth2Client {
 	private static Logger logger = Logger.getLogger(OAuth2Client.class);
@@ -39,9 +38,9 @@ public class OAuth2Client {
 			String url = config.getProperty("REST_BASE_URL") + config.getProperty("TOKEN_PATH");
 			PostMethod httppost = new PostMethod(url);
 			httppost.setRequestHeader("Content-Type", "application/json");
-			
+
 			logger.debug("Configured TOKEN_BODY is " + config.getProperty("TOKEN_BODY"));
-			
+
 			String body = MessageFormat.format(config.getProperty("TOKEN_BODY"), id, password);
 
 			logger.debug("==>\n" + body + "\n<==");
@@ -137,7 +136,7 @@ public class OAuth2Client {
 	// The generated PostMethod object is used to retrieve access token (OAuth2)
 	private PostMethod createPostMethodForAccessToken() {
 		String authorizationCredentials = config.getProperty("CLIENT_ID") + ":" + config.getProperty("SECRET");
-		String encoded = new String(new BASE64Encoder().encode(authorizationCredentials.getBytes()));
+		String encoded = new String(Base64.getEncoder().encode(authorizationCredentials.getBytes()));
 		encoded = encoded.replaceAll("\n", "");
 		encoded = encoded.replaceAll("\r", "");
 

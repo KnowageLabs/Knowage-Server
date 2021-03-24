@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.common.dataproxy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +43,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.client.ProxyClientUtilities;
-import sun.misc.BASE64Encoder;
 
 public class CkanDataProxy extends AbstractDataProxy {
 
@@ -168,8 +168,8 @@ public class CkanDataProxy extends AbstractDataProxy {
 	public String getMD5Checksum() {
 		logger.debug("IN");
 		byte[] checksum = this.createChecksum();
-		BASE64Encoder encoder = new BASE64Encoder();
-		String encoded = encoder.encode(checksum);
+		Base64.Encoder encoder = Base64.getEncoder();
+		String encoded = encoder.encodeToString(checksum);
 		logger.debug("OUT: returning [" + encoded + "]");
 		return encoded;
 	}

@@ -17,6 +17,17 @@
  */
 package it.eng.knowage.engines.svgviewer.map.provider;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.List;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.log4j.Logger;
+import org.w3c.dom.svg.SVGDocument;
+
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
 import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
@@ -27,18 +38,6 @@ import it.eng.spagobi.mapcatalogue.bo.GeoMap;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.log4j.Logger;
-import org.w3c.dom.svg.SVGDocument;
-
-import sun.misc.BASE64Encoder;
 
 /**
  * The Class SOMapProvider.
@@ -61,7 +60,7 @@ public class SOMapProvider extends AbstractMapProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#init(java.lang.Object)
 	 */
 	@Override
@@ -73,7 +72,7 @@ public class SOMapProvider extends AbstractMapProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#getSVGMapDOMDocument(java.lang.String)
 	 */
 	@Override
@@ -104,7 +103,7 @@ public class SOMapProvider extends AbstractMapProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#getSVGMapDOMDocument(java.lang.String)
 	 */
 	@Override
@@ -131,8 +130,8 @@ public class SOMapProvider extends AbstractMapProvider {
 				logger.info("Template map is empty. Try uploadyng the svg.");
 				return null;
 			}
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			map.setContent(bASE64Encoder.encode(template));
+			Base64.Encoder bASE64Encoder = Base64.getEncoder();
+			map.setContent(bASE64Encoder.encodeToString(template));
 			logger.debug("template read");
 			map.setFileName(member.getName() + ".svg");
 
@@ -156,7 +155,7 @@ public class SOMapProvider extends AbstractMapProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#getSVGMapStreamReader(java.lang.String)
 	 */
 	@Override
@@ -205,7 +204,7 @@ public class SOMapProvider extends AbstractMapProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#getMapNamesByFeature(java.lang.String)
 	 */
 	@Override
@@ -215,7 +214,7 @@ public class SOMapProvider extends AbstractMapProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#getFeatureNamesInMap(java.lang.String)
 	 */
 	@Override
