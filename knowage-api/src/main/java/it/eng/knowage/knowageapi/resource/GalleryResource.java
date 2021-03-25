@@ -42,7 +42,7 @@ public class GalleryResource {
 
 	private HashMap<String, WidgetGalleryDTO> mockMap = new HashMap<String, WidgetGalleryDTO>();
 
-	// TODO: put authorization with token into an interceptor
+	// TODO: business logic for tenant and profiles
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -117,8 +117,8 @@ public class GalleryResource {
 				python = jsonCode.getString("python");
 				css = jsonCode.getString("css");
 
-				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, "licenseText", "licenseName", "tenant", image,
-						"sbiversion", body, userId, tags);
+				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, "licenseText", "licenseName", "tenant", image, "",
+						body, userId, tags);
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -177,7 +177,7 @@ public class GalleryResource {
 				if (newSbiWidgetGallery != null) {
 
 					widgetGalleryService.updateGallery(newSbiWidgetGallery.getId(), label, type, userId, description, "licenseText", "licenseName", "tenant",
-							image, "sbiversion", body, userId, tags);
+							image, "", body, userId, tags);
 				}
 
 			} catch (JSONException e) {

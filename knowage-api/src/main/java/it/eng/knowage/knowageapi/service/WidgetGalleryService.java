@@ -58,7 +58,6 @@ public class WidgetGalleryService {
 		toRet.setDescription(sbiWidgetGallery.getDescription());
 		toRet.setType(sbiWidgetGallery.getType());
 		toRet.setImage(sbiWidgetGallery.getPreviewImage());
-//		toRet.setImageBase64Content(sbiWidgetGallery.getPreviewImage());
 		List<SbiWidgetGalleryTag> tagList = sbiWidgetGallery.getSbiWidgetGalleryTags();
 		if (tagList != null && tagList.size() > 0) {
 			List<String> tags = new ArrayList<String>();
@@ -130,11 +129,11 @@ public class WidgetGalleryService {
 		newSbiWidgetGallery.setName(name);
 		newSbiWidgetGallery.setOrganization(organization);
 		newSbiWidgetGallery.setPreviewImage(image);
-		newSbiWidgetGallery.setSbiVersionIn(sbiversion);
+		newSbiWidgetGallery.setSbiVersionUp(sbiversion);
 		newSbiWidgetGallery.setTemplate(template);
-		newSbiWidgetGallery.setTimeIn(Timestamp.from(Instant.now()));
+		newSbiWidgetGallery.setTimeUp(Timestamp.from(Instant.now()));
 		newSbiWidgetGallery.setType(type);
-		newSbiWidgetGallery.setUserIn(userid);
+		newSbiWidgetGallery.setUserUp(userid);
 		List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, userid, tags);
 		newSbiWidgetGallery.getSbiWidgetGalleryTags().addAll(tagList);
 		sbiWidgetGalleryDao.update(newSbiWidgetGallery);

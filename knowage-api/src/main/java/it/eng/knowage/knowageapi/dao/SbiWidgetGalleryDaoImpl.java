@@ -53,9 +53,9 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		sbiWidgetGalleryFound.setPreviewImage(sbiWidgetGallery.getPreviewImage());
 		sbiWidgetGalleryFound.setSbiVersionIn(sbiWidgetGallery.getSbiVersionIn());
 		sbiWidgetGalleryFound.setTemplate(sbiWidgetGallery.getTemplate());
-		sbiWidgetGalleryFound.setTimeIn(Timestamp.from(Instant.now()));
+		sbiWidgetGalleryFound.setTimeUp(Timestamp.from(Instant.now()));
 		sbiWidgetGalleryFound.setType(sbiWidgetGallery.getType());
-		sbiWidgetGalleryFound.setUserIn(sbiWidgetGallery.getUserIn());
+		sbiWidgetGalleryFound.setUserUp(sbiWidgetGallery.getUserUp());
 		sbiWidgetGalleryFound.getSbiWidgetGalleryTags().clear();
 		sbiWidgetGalleryFound.getSbiWidgetGalleryTags().addAll(sbiWidgetGallery.getSbiWidgetGalleryTags());
 		em.merge(sbiWidgetGalleryFound);
