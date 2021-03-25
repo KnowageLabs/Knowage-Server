@@ -302,9 +302,6 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 					}
 					// END filtering for correlation
 
-					// filter out rows that contain null values
-					rows.removeIf(r -> ((SourceBean) r).getContainedAttributes().size() < 2); // row must have at least two elements (value, description)
-
 					if (lovProvDet.getLovType() != null && lovProvDet.getLovType().contains("tree")) {
 						JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel, treeLovNodeValue);
 						result = buildJsonResult("OK", "", null, valuesJSONArray, biparameterId).toString();
@@ -420,9 +417,6 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 						rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, biParameterExecDependencies);
 					}
 					// END filtering for correlation
-
-					// filter out rows that contain null values
-					rows.removeIf(r -> ((SourceBean) r).getContainedAttributes().size() < 2); // row must have at least two elements (value, description)
 
 					if (lovProvDet.getLovType() != null && lovProvDet.getLovType().contains("tree")) {
 						JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel, treeLovNodeValue);
