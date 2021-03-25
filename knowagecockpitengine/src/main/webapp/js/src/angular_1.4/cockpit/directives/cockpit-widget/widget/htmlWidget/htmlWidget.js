@@ -136,9 +136,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.getOptions = function(){
+			var maxRows = $scope.maxRow();
 			var obj = {};
 				obj["page"] = 0;
-				obj["itemPerPage"] = $scope.maxRow();
+				obj["itemPerPage"] = -1;
 				obj["type"] = 'html';
 			return obj;
 		}
@@ -176,6 +177,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var occurrencies = str.replace($scope.rowsRegex,function(match,p1,p2){
 				if(p2>=tempMaxRow) tempMaxRow = parseInt(p2)+1;
 			});
+			$scope.ngModel.limitRows = {enable:true,rows:tempMaxRow};
 			return tempMaxRow;
 		}
 
