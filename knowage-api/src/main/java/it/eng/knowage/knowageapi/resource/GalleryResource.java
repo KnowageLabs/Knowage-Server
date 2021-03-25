@@ -1,14 +1,8 @@
 package it.eng.knowage.knowageapi.resource;
 
 import java.io.UnsupportedEncodingException;
-import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -35,7 +29,6 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 import it.eng.knowage.knowageapi.service.WidgetGalleryService;
 import it.eng.knowage.knowageapi.utils.StringUtilities;
@@ -105,7 +98,7 @@ public class GalleryResource {
 		String javascript = "";
 		String python = "";
 		String userId = jwtToken2userId(token.replace("Bearer ", ""));
-		SbiWidgetGallery newSbiWidgetGallery = null;
+		WidgetGalleryDTO newSbiWidgetGallery = null;
 		if (StringUtilities.isNotEmpty(body)) {
 			try {
 				JSONObject jsonBody = new JSONObject(body);
@@ -124,10 +117,8 @@ public class GalleryResource {
 				python = jsonCode.getString("python");
 				css = jsonCode.getString("css");
 
-				newSbiWidgetGallery = createNewGallery(name, type, userId, description, "licenseText", "licenseName", "tenant", image, "sbiversion", body,
-						userId);
-
-				widgetGalleryService.createNewGallery(newSbiWidgetGallery);
+				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, "licenseText", "licenseName", "tenant", image,
+						"sbiversion", body, userId, tags);
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -136,7 +127,7 @@ public class GalleryResource {
 		}
 
 		if (newSbiWidgetGallery != null)
-			response = Response.status(Response.Status.OK).entity(newSbiWidgetGallery.getUuid()).build();
+			response = Response.status(Response.Status.OK).entity(newSbiWidgetGallery.getId()).build();
 		else {
 			// TODO: error handling!!
 			response = Response.status(Response.Status.NO_CONTENT).build();
@@ -186,7 +177,7 @@ public class GalleryResource {
 				if (newSbiWidgetGallery != null) {
 
 					widgetGalleryService.updateGallery(newSbiWidgetGallery.getId(), label, type, userId, description, "licenseText", "licenseName", "tenant",
-							image, "sbiversion", body, userId);
+							image, "sbiversion", body, userId, tags);
 				}
 
 			} catch (JSONException e) {
@@ -225,31 +216,6 @@ public class GalleryResource {
 
 	}
 
-	public SbiWidgetGallery createNewGallery(String name, String type, String author, String description, String licenseText, String licenseName,
-			String organization, String image, String sbiversion, String template, String userid) {
-
-		UUID uuidGenerated = generateType1UUID();
-		image = image.substring(image.indexOf(",") + 1);
-		byte[] byteArrray = image.getBytes();
-		SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
-		newSbiWidgetGallery.setUuid(uuidGenerated.toString());
-		newSbiWidgetGallery.setAuthor(author);
-		newSbiWidgetGallery.setDescription(description);
-		newSbiWidgetGallery.setLicenseText(licenseText);
-		newSbiWidgetGallery.setLicenseName(licenseName);
-		newSbiWidgetGallery.setName(name);
-		newSbiWidgetGallery.setOrganization(organization);
-		newSbiWidgetGallery.setPreviewImage(byteArrray);
-		newSbiWidgetGallery.setSbiVersionIn(sbiversion);
-		newSbiWidgetGallery.setTemplate(template);
-		newSbiWidgetGallery.setTimeIn(Timestamp.from(Instant.now()));
-		newSbiWidgetGallery.setType(type);
-		newSbiWidgetGallery.setUserIn(userid);
-
-		return newSbiWidgetGallery;
-
-	}
-
 	public static String jwtToken2userId(String jwtToken) throws JWTVerificationException {
 		String userId = null;
 		Context ctx;
@@ -275,29 +241,4 @@ public class GalleryResource {
 		return userId;
 	}
 
-	public static UUID generateType1UUID() {
-
-		long most64SigBits = get64MostSignificantBitsForVersion1();
-		long least64SigBits = get64LeastSignificantBitsForVersion1();
-
-		return new UUID(most64SigBits, least64SigBits);
-	}
-
-	private static long get64LeastSignificantBitsForVersion1() {
-		Random random = new Random();
-		long random63BitLong = random.nextLong() & 0x3FFFFFFFFFFFFFFFL;
-		long variant3BitFlag = 0x8000000000000000L;
-		return random63BitLong + variant3BitFlag;
-	}
-
-	private static long get64MostSignificantBitsForVersion1() {
-		LocalDateTime start = LocalDateTime.of(1582, 10, 15, 0, 0, 0);
-		Duration duration = Duration.between(start, LocalDateTime.now());
-		long seconds = duration.getSeconds();
-		long nanos = duration.getNano();
-		long timeForUuidIn100Nanos = seconds * 10000000 + nanos * 100;
-		long least12SignificatBitOfTime = (timeForUuidIn100Nanos & 0x000000000000FFFFL) >> 4;
-		long version = 1 << 12;
-		return (timeForUuidIn100Nanos & 0xFFFFFFFFFFFF0000L) + version + least12SignificatBitOfTime;
-	}
 }

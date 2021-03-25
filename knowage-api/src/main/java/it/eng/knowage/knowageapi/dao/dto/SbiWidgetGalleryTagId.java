@@ -1,7 +1,6 @@
 package it.eng.knowage.knowageapi.dao.dto;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 import javax.persistence.Embeddable;
 
@@ -9,9 +8,9 @@ import javax.persistence.Embeddable;
 public class SbiWidgetGalleryTagId implements Serializable {
 
 	private String tag;
-	private UUID widgetId;
+	private String widgetId;
 
-	public SbiWidgetGalleryTagId(String tag, UUID widgetId) {
+	public SbiWidgetGalleryTagId(String tag, String widgetId) {
 		super();
 		this.tag = tag;
 		this.widgetId = widgetId;
@@ -25,11 +24,11 @@ public class SbiWidgetGalleryTagId implements Serializable {
 		this.tag = tag;
 	}
 
-	public UUID getWidgetId() {
+	public String getWidgetId() {
 		return widgetId;
 	}
 
-	public void setWidgetId(UUID widgetId) {
+	public void setWidgetId(String widgetId) {
 		this.widgetId = widgetId;
 	}
 

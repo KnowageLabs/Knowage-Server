@@ -42,9 +42,8 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 
 	@Override
 	public String update(SbiWidgetGallery sbiWidgetGallery) {
-
-		SbiWidgetGallery sbiWidgetGalleryFound = em.find(SbiWidgetGallery.class, sbiWidgetGallery.getUuid());
 		em.getTransaction().begin();
+		SbiWidgetGallery sbiWidgetGalleryFound = em.find(SbiWidgetGallery.class, sbiWidgetGallery.getUuid());
 		sbiWidgetGalleryFound.setAuthor(sbiWidgetGallery.getAuthor());
 		sbiWidgetGalleryFound.setDescription(sbiWidgetGallery.getDescription());
 		sbiWidgetGalleryFound.setLicenseText(sbiWidgetGallery.getLicenseText());
@@ -57,7 +56,9 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		sbiWidgetGalleryFound.setTimeIn(Timestamp.from(Instant.now()));
 		sbiWidgetGalleryFound.setType(sbiWidgetGallery.getType());
 		sbiWidgetGalleryFound.setUserIn(sbiWidgetGallery.getUserIn());
-
+		sbiWidgetGalleryFound.getSbiWidgetGalleryTags().clear();
+		sbiWidgetGalleryFound.getSbiWidgetGalleryTags().addAll(sbiWidgetGallery.getSbiWidgetGalleryTags());
+		em.merge(sbiWidgetGalleryFound);
 		em.getTransaction().commit();
 		return sbiWidgetGallery.getUuid();
 	}

@@ -2,8 +2,10 @@ package it.eng.knowage.knowageapi.dao.dto;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -44,7 +46,7 @@ public class SbiWidgetGallery implements Serializable {
 
 	@Lob
 	@Column(name = "PREVIEW_IMAGE")
-	private byte[] previewImage;
+	private String previewImage;
 
 	@Column(name = "SBI_VERSION_DE")
 	private String sbiVersionDe;
@@ -82,8 +84,8 @@ public class SbiWidgetGallery implements Serializable {
 	private String userUp;
 
 	// bi-directional many-to-one association to SbiWidgetGalleryTag
-	@OneToMany(mappedBy = "sbiWidgetGallery", fetch = FetchType.EAGER)
-	private List<SbiWidgetGalleryTag> sbiWidgetGalleryTags;
+	@OneToMany(mappedBy = "sbiWidgetGallery", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private final List<SbiWidgetGalleryTag> sbiWidgetGalleryTags = new ArrayList<SbiWidgetGalleryTag>();
 
 	public SbiWidgetGallery() {
 	}
@@ -145,11 +147,11 @@ public class SbiWidgetGallery implements Serializable {
 		this.organization = organization;
 	}
 
-	public byte[] getPreviewImage() {
+	public String getPreviewImage() {
 		return this.previewImage;
 	}
 
-	public void setPreviewImage(byte[] previewImage) {
+	public void setPreviewImage(String previewImage) {
 		this.previewImage = previewImage;
 	}
 
@@ -251,10 +253,6 @@ public class SbiWidgetGallery implements Serializable {
 
 	public List<SbiWidgetGalleryTag> getSbiWidgetGalleryTags() {
 		return this.sbiWidgetGalleryTags;
-	}
-
-	public void setSbiWidgetGalleryTags(List<SbiWidgetGalleryTag> sbiWidgetGalleryTags) {
-		this.sbiWidgetGalleryTags = sbiWidgetGalleryTags;
 	}
 
 	public SbiWidgetGalleryTag addSbiWidgetGalleryTag(SbiWidgetGalleryTag sbiWidgetGalleryTag) {

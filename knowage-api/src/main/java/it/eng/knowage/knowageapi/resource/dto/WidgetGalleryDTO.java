@@ -1,6 +1,7 @@
 package it.eng.knowage.knowageapi.resource.dto;
 
 import java.nio.charset.Charset;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,13 @@ public class WidgetGalleryDTO {
 	// TODO correctly image handling
 	private byte[] imageBase64Content = null;
 	private String image = null;
+	private String licenseText;
+	private String licenseName;
+	private String organization;
+	private String sbiversion;
+	private String template;
+	private Timestamp timestamp;
+	private String user;
 
 	private Code code = new Code();
 
@@ -108,6 +116,62 @@ public class WidgetGalleryDTO {
 
 	public void setTags(List<String> tags) {
 		this.tags = tags;
+	}
+
+	public String getLicenseText() {
+		return licenseText;
+	}
+
+	public void setLicenseText(String licenseText) {
+		this.licenseText = licenseText;
+	}
+
+	public String getLicenseName() {
+		return licenseName;
+	}
+
+	public void setLicenseName(String licenseName) {
+		this.licenseName = licenseName;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+
+	public String getSbiversion() {
+		return sbiversion;
+	}
+
+	public void setSbiversion(String sbiversion) {
+		this.sbiversion = sbiversion;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
+	}
+
+	public Timestamp getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Timestamp timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
 	}
 
 }

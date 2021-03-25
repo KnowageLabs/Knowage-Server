@@ -4,12 +4,12 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTagId;
 
@@ -25,20 +25,24 @@ public class SbiWidgetGalleryTagDaoImpl implements SbiWidgetGalleryTagDao {
 	@Override
 	public SbiWidgetGalleryTagId create(SbiWidgetGalleryTag sbiWidgetGalleryTag) {
 
+		em.getTransaction().begin();
+		// persist the entity
 		em.persist(sbiWidgetGalleryTag);
+		em.getTransaction().commit();
 		return sbiWidgetGalleryTag.getId();
 	}
 
 	@Override
-	public SbiWidgetGallery findById(int id) {
+	public SbiWidgetGalleryTag findById(int id) {
 		// TODO Auto-generated method stub
-		return null;
+		return em.find(SbiWidgetGalleryTag.class, id);
+
 	}
 
 	@Override
-	public Collection<SbiWidgetGallery> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<SbiWidgetGalleryTag> findAll() {
+		Query query = em.createQuery("SELECT e FROM SbiWidgetGalleryTag e");
+		return query.getResultList();
 	}
 
 }
