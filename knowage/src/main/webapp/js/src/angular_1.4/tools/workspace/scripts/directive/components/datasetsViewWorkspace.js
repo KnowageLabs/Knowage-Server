@@ -336,19 +336,17 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		$scope.showDatasetInfo = isOpen;
 	};
 
+	$scope.closeDatasetDetail = function() {
+		$mdSidenav('rightDs').close();
+	};
+
 	$scope.toggleDatasetDetail = function() {
 		$mdSidenav('rightDs').toggle();
 	};
 
 	$scope.selectDataset= function (dataset) {
-		var alreadySelected = (dataset !== undefined && $scope.selectedDataSet === dataset);
 		$scope.selectedDataSet = dataset;
-		if (alreadySelected) {
-			$scope.selectedDataSet=undefined;
-			$scope.setDetailOpen(!$scope.showDatasetDetail);
-		} else {
-			$scope.setDetailOpen(dataset !== undefined);
-		}
+		$scope.setDetailOpen(typeof dataset !== "undefined");
 	};
 
 	$scope.shareDatasetWithCategories = function(dataset){
@@ -504,6 +502,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     }
 
     $scope.exportDataset= function(dataset,format){
+    	$scope.closeDatasetDetail();
     	$scope.showExportDriverPanel = true;
     	$scope.dataset = dataset;
     	$scope.formatValueForExport = format;
@@ -572,6 +571,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
 	$scope.previewDataset = function(dataset){
+		$scope.closeDatasetDetail();
 		sbiModule_restServices.promiseGet('1.0/datasets', dataset.label).then(function(response) {
 			var dataset = response.data[0];
 
@@ -625,6 +625,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
 	$scope.editQbeDataset = function(dataset) {
+    	$scope.closeDatasetDetail();
 		sbiModule_restServices.promiseGet('1.0/datasets', dataset.label).then(function(response) {
 			var dataset = response.data[0];
 			$scope.selectedDataSet = dataset;
@@ -649,6 +650,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	}
 
     $scope.editFileDataset = function (arg) {
+    	$scope.closeDatasetDetail();
   	  	$scope.initializeDatasetWizard(arg);
 
 		sbiModule_restServices.get('1.0/datasets', arg.label).then(function(response) {
