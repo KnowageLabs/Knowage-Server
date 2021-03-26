@@ -18,6 +18,7 @@
 package it.eng.qbe.datasource.jpa;
 
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -44,6 +45,7 @@ import javax.persistence.metamodel.Metamodel;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -406,6 +408,10 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			String attributeName, Column column, List columnDepends) throws JSONException {
 		EntityType subEntityType = getSubEntityType(targetEntity, column.getSubEntity(), entityManager);
 		Object subEntity = getOldSubEntity(targetEntity, column, obj);
+		// in case the sub-entity is linked by a column that is NOT a real primary key, but that column plus profile columns ARE primary key together, Hibernate
+		// will fail when initializing it (and therefore when invoking any get method) because it will find more records with the same identifier. Therefore we
+		// load the sub-entity again using a query that contains profile filters
+		subEntity = reloadSubEntityByQuery(subEntity, subEntityType, entityManager);
 		Object oldValue = getOldProperty(subEntityType, subEntity, attributeName);
 		oldRecord.put(attributeName, oldValue);
 		Object newValue = aRecord.get(attributeName);
@@ -414,6 +420,22 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * This method reload the input subentity. The input sub-entity is meant to be a non-initialized Hibernate entity. Instead of initialing it with any get
+	 * method, we load it again from database using a query, that will include profile attributes filters. This is useful when the sub-entity is linked by a
+	 * column that is NOT a real primary key, but that column plus profile columns ARE primary key together.
+	 **/
+	protected Object reloadSubEntityByQuery(Object subEntity, EntityType subEntityType, EntityManager entityManager) {
+		Session session = (Session) entityManager.getDelegate();
+		Serializable id = session.getIdentifier(subEntity);
+		String subEntityKeyAttributeName = getKeyAttributeName(subEntityType);
+		String subEntityJavaType = subEntityType.getJavaType().getName();
+		HashMap whereFields = new HashMap();
+		whereFields.put(subEntityKeyAttributeName, id);
+		subEntity = getReferencedObjectJPA(entityManager, subEntityJavaType, whereFields);
+		return subEntity;
 	}
 
 	/**
