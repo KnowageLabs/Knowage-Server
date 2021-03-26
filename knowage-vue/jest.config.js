@@ -1,10 +1,7 @@
 module.exports = {
   preset: '@vue/cli-plugin-unit-jest/presets/typescript-and-babel',
   transformIgnorePatterns: ['/node_modules/(?!vue-awesome)'],
-  testMatch: ['**/**/**/w*.spec.[jt]s?(x)'],
-  moduleNameMapper: {
-    vue$: 'vue/dist/vue'
-  },
+  testMatch: ['**/**/**/*.spec.[jt]s?(x)'],
 
   transform: {
     '^.+\\.vue$': 'vue-jest',

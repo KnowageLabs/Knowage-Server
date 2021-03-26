@@ -1,7 +1,6 @@
 {
   "parser": "babel-eslint",
   "env": {
-    "jest/globals": true,
     "es6": true
   },
   "parserOptions": {
