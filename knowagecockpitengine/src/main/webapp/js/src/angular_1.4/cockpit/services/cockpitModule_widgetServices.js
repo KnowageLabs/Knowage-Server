@@ -92,7 +92,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			}
 			if (columnsMap[modelColumns[j].name]) {
 				tempColumns.push(modelColumns[j]);           // already present fields, ignores deleted ones
-				columnsNameArray.splice(columnsNameArray.indexOf(modelColumns[j].name),1);
+				if(!modelColumns[j].isCalculated){
+					columnsNameArray.splice(columnsNameArray.indexOf(modelColumns[j].name),1);
+				} 
 			}
 
 		}
