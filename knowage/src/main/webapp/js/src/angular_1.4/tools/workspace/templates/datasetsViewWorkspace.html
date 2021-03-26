@@ -214,12 +214,12 @@
 					<md-icon md-font-icon="fa fa-pencil"></md-icon>
 				</md-button>
 				 
-	          	<md-button ng-if="selectedDataSet.pars.length == 0 && selectedDataSet.drivers.length == 0" aria-label="Export Dataset to XLSX" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'XLSX')">
+	          	<md-button ng-if="!hasDrivers(selectedDataSet) && !hasParameters(selectedDataSet)" aria-label="Export Dataset to XLSX" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'XLSX')">
 		           	<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
 	            	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.export.xlsx')}}</md-tooltip>
 	          	</md-button>
 	          	
-	          	<md-button ng-if="selectedDataSet.pars.length == 0 && selectedDataSet.drivers.length == 0" aria-label="Export Dataset to CSV" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'CSV')">
+	          	<md-button ng-if="!hasDrivers(selectedDataSet) && !hasParameters(selectedDataSet)" aria-label="Export Dataset to CSV" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'CSV')">
 		           	<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
 	            	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.export.csv')}}</md-tooltip>
 	          	</md-button>	        
