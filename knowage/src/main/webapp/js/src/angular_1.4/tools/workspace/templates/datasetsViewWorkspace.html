@@ -157,44 +157,6 @@
 
 	
 	</div>
-	<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav"  flex md-is-locked-open="$mdMedia('gt-md')" style="width:100%" ng-if="showDriversForExport">
-		<md-toolbar class="header secondaryToolbar" >
-			
-				<div class="md-toolbar-tools" layout="row" layout-align="space-around center">
-					<md-button aria-label="Reset Parameter" class="md-icon-button" ng-click="clearListParametersForm();">
-						<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.clear")}}</md-tooltip>
-						<md-icon md-font-icon="fa fa-eraser"></md-icon>
-					</md-button>						
-					<md-button aria-label="Open Saved Parameters" class="md-icon-button" 
-							ng-click="urlViewPointService.getViewpoints();">
-							<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.open")}}</md-tooltip>
-							<md-icon md-font-icon="fa fa-pencil"></md-icon>
-					</md-button>	
-					<md-button aria-label="Save Parameters" class="md-icon-button"	ng-click="urlViewPointService.createNewViewpoint();">
-							<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.save")}}</md-tooltip>
-							<md-icon md-font-icon="fa fa-floppy-o"></md-icon>
-					</md-button>		  	
-			  	</div>
-		</md-toolbar>
-		
-		<div layout="row" layout-align="center center">
-			<div class="kn-info" flex="80">{{::translate.load("sbi.execution.parametersselection.export.message")}}</div>
-		</div>
-		<md-content flex>
-			<document-paramenter-element execProperties="dataset"  parameter="parameter" ng-repeat="parameter in drivers" ng-show="parameter.visible" layout="row" layout-align="start" ></document-paramenter-element>
-     	     <render-parameters driverable-object = "dataset" param = "param" ng-repeat="param in dataset.pars" ></render-parameters> 
-		</md-content>
-		<div layout="row">
-     	     <md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised"  ng-click="exportDatasetWithDrivers(selectedDataSet)">
-				{{::translate.load("sbi.execution.parametersselection.exportbutton.message")}}
-			</md-button>
-		</div>
-		<div layout="row">
-     	     <md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised"  ng-click="hidePanel()">
-				{{::translate.load("sbi.execution.parametersselection.cancelbutton.message")}}
-			</md-button>
-		</div>
-	</md-sidenav>
       <md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDs"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDatasetDetails()">
 		<md-toolbar class="ternaryToolbar">
 			<div layout="row" layout-align="space-around center">		

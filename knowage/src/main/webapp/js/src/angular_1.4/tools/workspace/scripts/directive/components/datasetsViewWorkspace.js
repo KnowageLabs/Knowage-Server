@@ -66,7 +66,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.allDSTags = [];
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
-    $scope.showExportDriverPanel = false;
     /**
      * Flag that will tell us if we are entering the Dataset wizard from the Editing or from Creating phase (changing or adding a new dataset, respectively).
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -329,7 +328,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	};
 
 	$scope.setDetailOpen = function(isOpen) {
-		if($scope.showDriversForExport) $scope.showDriversForExport = false;
 		if (isOpen && !$mdSidenav('rightDs').isLockedOpen() && !$mdSidenav('rightDs').isOpen()) {
 			$scope.toggleDatasetDetail();
 		}
@@ -509,24 +507,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	return (dataset && dataset.pars && dataset.pars.length > 0);
     }
 
-    $scope.exportDataset= function(dataset,format){
-    	$scope.closeDatasetDetail();
-    	$scope.showExportDriverPanel = true;
-    	sbiModule_restServices.promiseGet('1.0/datasets', dataset.label).then(function(response) {
-    	    var ds = response.data[0];
-    	    $scope.formatValueForExport = format;
-    	    $scope.getDatasetParametersFromBusinessModel(ds).then(function(){
-				if($scope.drivers && $scope.drivers.length > 0){
-					$scope.dataset.parametersData = {};
-					$scope.dataset.parametersData.documentParameters = $scope.drivers;
-					$scope.showDriversForExport = true;
-				}else{
-					 $scope.exportDatasetWithDrivers(dataset,format);
-				}
-    	    })
-    	})
-    }
-
 	$scope.asyncExport = function(dataset, format) {
 		var data = {};
 
@@ -562,10 +542,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 	}
 
-	$scope.exportDatasetWithDrivers = function(dataset) {
-		$scope.showExportDriverPanel = false;
-		var format = $scope.formatValueForExport;
-
+	$scope.exportDataset = function(dataset, format) {
 		if(format == 'CSV') {
 			$scope.asyncExport(dataset, format);
 		} else if (format == 'XLSX') {
@@ -573,11 +550,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		} else {
 			console.info("Format " + format + " not supported");
 		}
-		$scope.showDriversForExport = false;
-	}
-
-	$scope.hidePanel = function() {
-		$scope.showDriversForExport = false;
 	}
 
 	$scope.previewDataset = function(dataset){
