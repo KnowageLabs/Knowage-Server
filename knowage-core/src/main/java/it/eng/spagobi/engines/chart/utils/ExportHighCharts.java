@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,13 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.chart.utils;
-
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
@@ -36,8 +34,6 @@ import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.print.PrintTranscoder;
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Decoder;
-
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
@@ -48,9 +44,11 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
 /**
  * The Class ExportHighChartsAction.
- * 
+ *
  * @author Antonella Giachino (antonella.giachino@eng.it)
  */
 public class ExportHighCharts {
@@ -66,7 +64,6 @@ public class ExportHighCharts {
 
 	/** Logger component. */
 	private static transient Logger logger = Logger.getLogger(ExportHighCharts.class);
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
 
 	public static final String ENGINE_NAME = "SpagoBIChartEngine";
 
@@ -120,7 +117,7 @@ public class ExportHighCharts {
 	/**
 	 * Set the dimension of the image to fit the A4 page size The layout of the
 	 * page should be horizontal
-	 * 
+	 *
 	 * @param jpg
 	 *            the image to fit
 	 */

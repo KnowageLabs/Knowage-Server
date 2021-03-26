@@ -1,38 +1,29 @@
 /*
  * Knowage, Open Source Business Intelligence suite
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.services.content.bo.Content;
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
 
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.util.XMLResourceDescriptor;
-import org.apache.log4j.Logger;
-import org.w3c.dom.svg.SVGDocument;
-
-import sun.misc.BASE64Decoder;
-d a copy of the GNU Affero General Public License
+ * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.engines.svgviewer.map.utils;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.services.content.bo.Content;
+package it.eng.knowage.engines.svgviewer.map.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Base64;
 import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
@@ -44,7 +35,8 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.log4j.Logger;
 import org.w3c.dom.svg.SVGDocument;
 
-import sun.misc.BASE64Decoder;
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.services.content.bo.Content;
 
 /**
  * The Class SVGMapLoader.
@@ -55,7 +47,7 @@ public class SVGMapLoader {
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(SVGMapLoader.class);
 
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
+	private static final Base64.Decoder DECODER = Base64.getDecoder();
 
 	/** The document factory. */
 	private SAXSVGDocumentFactory documentFactory;
@@ -91,7 +83,7 @@ public class SVGMapLoader {
 	public SVGDocument loadMapAsDocument(Content map) throws IOException {
 		String mapContent;
 
-		mapContent = new String(DECODER.decodeBuffer(map.getContent()));
+		mapContent = new String(DECODER.decode(map.getContent()));
 		documentFactory = new SAXSVGDocumentFactory(parser);
 		return (SVGDocument) documentFactory.createDocument(null, new StringReader(mapContent));
 	}

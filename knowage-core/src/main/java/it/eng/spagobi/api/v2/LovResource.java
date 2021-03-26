@@ -20,6 +20,7 @@ package it.eng.spagobi.api.v2;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -86,7 +87,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
-import sun.misc.BASE64Encoder;
 
 /**
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -876,8 +876,8 @@ public class LovResource extends AbstractSpagoBIResource {
 			int pos2 = provider.indexOf("</SCRIPT>");
 			String content = provider.substring(pos1 + 8, pos2);
 			content = StringEscapeUtils.unescapeHtml4(content);
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			String encoded = bASE64Encoder.encode(content.getBytes());
+			Base64.Encoder bASE64Encoder = Base64.getEncoder();
+			String encoded = bASE64Encoder.encodeToString(content.getBytes());
 			provider = provider.substring(0, pos1 + 8) + encoded + provider.substring(pos2);
 
 		}
@@ -892,8 +892,8 @@ public class LovResource extends AbstractSpagoBIResource {
 			int pos2 = provider.indexOf("</STMT>");
 			String content = provider.substring(pos1 + 6, pos2);
 			content = StringEscapeUtils.unescapeHtml4(content);
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			String encoded = bASE64Encoder.encode(content.getBytes());
+			Base64.Encoder bASE64Encoder = Base64.getEncoder();
+			String encoded = bASE64Encoder.encodeToString(content.getBytes());
 			provider = provider.substring(0, pos1 + 6) + encoded + provider.substring(pos2);
 
 		}
