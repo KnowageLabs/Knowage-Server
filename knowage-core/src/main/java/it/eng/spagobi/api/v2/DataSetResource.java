@@ -61,6 +61,7 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
+import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -474,6 +475,8 @@ public class DataSetResource extends AbstractDataSetResource {
 				if (dataSet instanceof AbstractJDBCDataset) {
 					IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
 					isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+				} else if (dataSet instanceof FederatedDataSet) {
+					isNearRealtimeSupported = false;
 				} else if (dataSet instanceof QbeDataSet) {
 					try {
 						String businessModelName = (String) jsonSbiDataSet.getJSONObject("configuration").get("qbeDatamarts");
