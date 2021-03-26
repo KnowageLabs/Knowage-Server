@@ -345,11 +345,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	};
 
 	$scope.selectDataset= function (dataset) {
-		if (typeof dataset === "undefined") return;
-		sbiModule_restServices.promiseGet('1.0/datasets', dataset.label).then(function(response) {
-			$scope.selectedDataSet = response.data[0];
-			$scope.setDetailOpen(typeof dataset !== "undefined");
-		});
+		$scope.selectedDataSet = dataset;
+		$scope.setDetailOpen(typeof dataset !== "undefined");
 	};
 
 	$scope.shareDatasetWithCategories = function(dataset){
@@ -502,6 +499,14 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
     $scope.isSharingEnabled=function(){
         return $scope.currentTab==="myDataSet";
+    }
+
+    $scope.hasDrivers=function(dataset){
+    	return (dataset && dataset.drivers && dataset.drivers.length > 0);
+    }
+
+    $scope.hasParameters=function(dataset){
+    	return (dataset && dataset.pars && dataset.pars.length > 0);
     }
 
     $scope.exportDataset= function(dataset,format){
