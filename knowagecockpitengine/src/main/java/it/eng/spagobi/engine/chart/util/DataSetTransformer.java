@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -740,7 +741,6 @@ public class DataSetTransformer {
 		if (drillOrder != null) {
 			for (String key : drillOrder.keySet()) {
 				LinkedHashMap<String, String> obj = (LinkedHashMap<String, String>) drillOrder.get(key);
-				System.out.println(drillOrder.get(key));
 				orderColumn = obj.get("orderColumn");
 			}
 		}
@@ -760,12 +760,14 @@ public class DataSetTransformer {
 		}
 		LinkedHashMap<String, String> pair = new LinkedHashMap<String, String>();
 		JSONObject jsonPair = null;
+		JSONObject cleanJson = null;
 		if (!columnIndex.equals("") && !groupByIndex.equals("")) {
 			for (Object object : dataRows) {
 				if (object instanceof LinkedHashMap) {
 					LinkedHashMap<Object, Object> obj = (LinkedHashMap<Object, Object>) object;
 					String value = "" + obj.get(columnIndex);
-					pair.put("" + obj.get(groupByIndex), value);
+					String valueToEscape = "" + obj.get(groupByIndex);
+					pair.put("" + valueToEscape, value);
 				}
 			}
 			try {
@@ -776,7 +778,10 @@ public class DataSetTransformer {
 		}
 
 		return jsonPair;
+	}
 
+	public String escapeStringForJavascript(JSONObject stringToEscaPe) {
+		return StringEscapeUtils.escapeEcmaScript(stringToEscaPe.toString());
 	}
 
 	public LinkedHashMap<String, ArrayList<JSONObject>> prepareDataForGrouping(List<Object> dataRows, String isCockpitEngine, String groupSeries,
