@@ -1,138 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="SpagoBIGeoReportEngine" version="2.4">
-  <description>SpagoBI - SpagoBIGeoReportEngine</description>
-  <display-name>knowagegeoreportengine</display-name>
-  <filter>
-    <filter-name>EncodingFilter</filter-name>
-    <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
-    <init-param>
-      <param-name>encoding</param-name>
-      <param-value>UTF-8</param-value>
-    </init-param>
-  </filter>
-  <filter>
-    <filter-name>SpagoBIAccessFilter</filter-name>
-    <filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
-  </filter>
-  
+
+<web-app
+		id="knowagegeoreportengine"
+		xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+		version="3.1" >
+
+	<description>SpagoBI - SpagoBIGeoReportEngine</description>
+	<display-name>knowagegeoreportengine</display-name>
+	<filter>
+		<filter-name>EncodingFilter</filter-name>
+		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
+	</filter>
+
 <!-- START-CAS ${enable.cas.end}
-  <filter>
-    <filter-name>CAS Authentication Filter</filter-name>
-    <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
-    <init-param>
-      <param-name>casServerLoginUrl</param-name>
-      <param-value>https://161.27.213.105:48081/cas/login</param-value>
-    </init-param>
-    <init-param>
-      <param-name>serverName</param-name>
-      <param-value>161.27.213.105:48081</param-value>
-    </init-param>    
-  </filter>
-  
-  <filter>
-    <filter-name>CAS Validation Filter</filter-name>
-    <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
-    <init-param>
-      <param-name>casServerUrlPrefix</param-name>
-      <param-value>https://161.27.213.105:48081/cas</param-value>
-    </init-param>
-    <init-param>
-      <param-name>serverName</param-name>
-      <param-value>https://161.27.213.105:48081</param-value>
-    </init-param>
-    <init-param>
-      <param-name>proxyReceptorUrl</param-name>
-      <param-value>/proxyCallback</param-value>
-    </init-param> 
-    <init-param>
-  		<param-name>proxyCallbackUrl</param-name>
-  		<param-value>https://161.27.213.105:48081/knowagegeoreportengine/proxyCallback</param-value>
-    </init-param>  
-  </filter>
-  
-  <filter>
-    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
-  </filter>
+	<filter>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+		<init-param>
+			<param-name>casServerLoginUrl</param-name>
+			<param-value>https://161.27.213.105:48081/cas/login</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>161.27.213.105:48081</param-value>
+		</init-param>
+	</filter>
+
+	<filter>
+		<filter-name>CAS Validation Filter</filter-name>
+		<filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+		<init-param>
+			<param-name>casServerUrlPrefix</param-name>
+			<param-value>https://161.27.213.105:48081/cas</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>https://161.27.213.105:48081</param-value>
+		</init-param>
+		<init-param>
+			<param-name>proxyReceptorUrl</param-name>
+			<param-value>/proxyCallback</param-value>
+		</init-param>
+		<init-param>
+			<param-name>proxyCallbackUrl</param-name>
+			<param-value>https://161.27.213.105:48081/knowagegeoreportengine/proxyCallback</param-value>
+		</init-param>
+	</filter>
+
+	<filter>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+	</filter>
  ${enable.cas.start} END-CAS -->
 
 <!-- START-CAS ${enable.cas.end}
-   <filter-mapping>
-    <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP</url-pattern>
-  </filter-mapping> 
+	<filter-mapping>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
 
-   <filter-mapping>
-    <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP</url-pattern>
-  </filter-mapping> 
-
-   <filter-mapping>
-    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP</url-pattern>
-  </filter-mapping> 
-
-   <filter-mapping>
-    <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/api/*</url-pattern>
-  </filter-mapping> 
-
-   <filter-mapping>
-    <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/api/*</url-pattern>
-  </filter-mapping> 
-
-   <filter-mapping>
-    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/api/*</url-pattern>
-  </filter-mapping> 
-  
-  <filter-mapping>
+	<filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
-		<url-pattern>/proxyCallback</url-pattern>	
-  </filter-mapping>
-  ${enable.cas.start} END-CAS -->
- 
-  <filter-mapping>
-    <filter-name>EncodingFilter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>SpagoBIAccessFilter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP</url-pattern>
-  </filter-mapping>
-  <servlet>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<url-pattern>/api/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/api/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<url-pattern>/api/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/proxyCallback</url-pattern>
+	</filter-mapping>
+	${enable.cas.start} END-CAS -->
+
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
+	<servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>
 			it.eng.spagobi.utilities.engines.EngineTestServlet
 		</servlet-class>
 	</servlet>
-  <servlet>
-    <servlet-name>ConfigServlet</servlet-name>
-    <servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
-    <init-param>
-      <param-name>AF_CONFIG_FILE</param-name>
-      <param-value>/WEB-INF/conf/master.xml</param-value>
-    </init-param>
-    <load-on-startup>0</load-on-startup>
-  </servlet>
-  <!-- START ProxyTicketReceptor -->
-  <servlet>
-    <servlet-name>ProxyTicketReceptor</servlet-name>
-    <servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class>
-    <init-param>
-      <param-name>edu.yale.its.tp.cas.proxyUrl</param-name>
-      <param-value>https://161.27.213.105:48081/exo-cas-2/proxy</param-value>
-    </init-param>
-  </servlet>
-  <!-- END ProxyTicketReceptor -->
-  <servlet-mapping>
+	<servlet>
+		<servlet-name>ConfigServlet</servlet-name>
+		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
+		<init-param>
+			<param-name>AF_CONFIG_FILE</param-name>
+			<param-value>/WEB-INF/conf/master.xml</param-value>
+		</init-param>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<!-- START ProxyTicketReceptor -->
+	<servlet>
+		<servlet-name>ProxyTicketReceptor</servlet-name>
+		<servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class>
+		<init-param>
+			<param-name>edu.yale.its.tp.cas.proxyUrl</param-name>
+			<param-value>https://161.27.213.105:48081/exo-cas-2/proxy</param-value>
+		</init-param>
+	</servlet>
+	<!-- END ProxyTicketReceptor -->
+	<servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/Test</url-pattern>
-  </servlet-mapping>
-  
-  <welcome-file-list>
-    <welcome-file>/html/index.jsp</welcome-file>
-  </welcome-file-list>
- 
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>/html/index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!-- Multipart configuration -->
+	<multipart-config>
+		<max-file-size>524288000</max-file-size>
+		<max-request-size>524288000</max-request-size>
+		<file-size-threshold>104857600</file-size-threshold>
+	</multipart-config>
+
 </web-app>

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="SpagoBICommonJEngine" 
-		 version="2.4" 
-		 xmlns="http://java.sun.com/xml/ns/j2ee" 
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
+<web-app
+		id="knowagecommonjengine"
+		xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+		version="3.1" >
 
 	<display-name>knowagecommonjengine</display-name>
-	<description>
-		SpagoBI CommonJ Engine
-	</description>
+	<description>Knowage CommonJ Engine</description>
 
 	<!--  ============================================================================ -->
 	<!--  FILTERS								 									   -->
-	<!--  ============================================================================ -->		
+	<!--  ============================================================================ -->
 
 	<filter>
 		<filter-name>EncodingFilter</filter-name>
@@ -32,7 +32,7 @@
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
-	</filter-mapping>   
+	</filter-mapping>
 
 	<!-- START-CAS ${enable.cas.end}
 	<filter>
@@ -45,7 +45,7 @@
 		<init-param>
 			<param-name>serverName</param-name>
 			<param-value>161.27.213.105:48081</param-value>
-		</init-param>    
+		</init-param>
 	</filter>
 
 	<filter>
@@ -62,11 +62,11 @@
 		<init-param>
 			<param-name>proxyReceptorUrl</param-name>
 			<param-value>/proxyCallback</param-value>
-		</init-param> 
+		</init-param>
 		<init-param>
 			<param-name>proxyCallbackUrl</param-name>
 			<param-value>https://161.27.213.105:48081/knowagecommonjengine/proxyCallback</param-value>
-		</init-param>  
+		</init-param>
 	</filter>
 
 	<filter>
@@ -96,7 +96,7 @@
 
 	<filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
-		<url-pattern>/proxyCallback</url-pattern>	
+		<url-pattern>/proxyCallback</url-pattern>
 	</filter-mapping>
 	${enable.cas.start} END-CAS -->
 
@@ -113,12 +113,11 @@
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
-	</filter-mapping>	
+	</filter-mapping>
 
 	<!--  ============================================================================ -->
 	<!--  SERVLETS								 									   -->
 	<!--  ============================================================================ -->
-
 
 	<servlet>
 		<servlet-name>AdapterHTTP</servlet-name>
@@ -135,7 +134,6 @@
 		<load-on-startup>0</load-on-startup>
 	</servlet>
 
-
 	<servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>
@@ -146,7 +144,6 @@
 	<!--  ============================================================================ -->
 	<!--  SERVLET MAPPINGS						 									   -->
 	<!--  ============================================================================ -->
-
 
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
@@ -170,7 +167,7 @@
 	<error-page>
 		<error-code>404</error-code>
 		<location>/jsp/errors/error404.jsp</location>
-	</error-page> 
+	</error-page>
 
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
@@ -200,5 +197,12 @@
 		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
 	<!-- END TOMCAT RES -->
+
+	<!-- Multipart configuration -->
+	<multipart-config>
+		<max-file-size>524288000</max-file-size>
+		<max-request-size>524288000</max-request-size>
+		<file-size-threshold>104857600</file-size-threshold>
+	</multipart-config>
 
 </web-app>
