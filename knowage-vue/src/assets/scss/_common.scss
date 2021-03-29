@@ -7,15 +7,6 @@
 	height: 100%;
 }
 
-.kn-toolbar-secondary.p-toolbar {
-	background-color: #bbd6ed;
-	border: none;
-	border-radius: 0;
-	color: $color-primary;
-	height: $toolbar-height;
-	padding: $toolbar-padding;
-}
-
 .kn-button {
 	background-color: $color-secondary;
 	color: white;
@@ -23,6 +14,10 @@
 	&--primary {
 		background-color: $color-primary;
 	}
+}
+
+.kn-flex {
+	flex: 1;
 }
 
 .noselect {

@@ -16,10 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.spagobi.api;
-
-import java.util.List;
-import java.util.Locale;
+package it.eng.spagobi.api.v3;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -28,23 +25,31 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.log4j.Logger;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.profiling.bo.UserInformationDTO;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
+@Path("2.0/currentuser")
 
-@Path("/2.0/languages")
-public class LanguageResource {
-
-	static private Logger logger = Logger.getLogger(LanguageResource.class);
+public class CurrentUserResource extends AbstractSpagoBIResource {
+	private final String charset = "; charset=UTF-8";
 
 	@GET
 	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public List<Locale> getAllLanguages(@Context HttpServletRequest req) {
-		logger.debug("IN");
-		List<Locale> supportedLocales = GeneralUtilities.getSupportedLocales();
-		logger.debug("OUT");
-		return supportedLocales;
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public UserInformationDTO getCurrentUserInformation(@Context HttpServletRequest httpRequest) {
+
+		UserProfile userProfile = getUserProfile();
+
+		if (userProfile == null) {
+			String message = "UserProfile is null";
+			logger.error(message);
+			throw new SpagoBIEngineRuntimeException(message);
+		}
+
+		return new UserInformationDTO(userProfile);
+
 	}
 
 }

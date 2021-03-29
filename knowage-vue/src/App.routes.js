@@ -35,6 +35,11 @@ const baseRoutes = [
 		props: (route) => ({ url: route.fullPath })
 	},
 	{
+		path: '/login',
+		name: 'login',
+		redirect: process.env.VUE_APP_HOST_URL + '/knowage/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE'
+	},
+	{
 		path: '/:catchAll(.*)',
 		component: () => import('@/modules/shared/404.vue')
 	}

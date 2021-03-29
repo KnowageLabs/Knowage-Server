@@ -340,6 +340,7 @@ public class SpagoBIConstants {
 	public static final String CURRENT_LANGUAGE = "CURRENT_LANGUAGE";
 	public static final String AF_LANGUAGE = "AF_LANGUAGE";
 	public static final String AF_COUNTRY = "AF_COUNTRY";
+	public static final String AF_LANGUAGE_TAG = "AF_LANGUAGE_TAG";
 
 	public static final String TEMPLATE_ID = "TEMPLATE_ID";
 

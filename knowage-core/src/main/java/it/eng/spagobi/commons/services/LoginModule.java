@@ -71,7 +71,6 @@ import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.services.ChangeTheme;
-import it.eng.spagobi.wapp.util.MenuUtilities;
 
 public class LoginModule extends AbstractHttpModule {
 
@@ -138,7 +137,7 @@ public class LoginModule extends AbstractHttpModule {
 //				}
 //				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 //				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-				getHttpResponse().sendRedirect("http://localhost:3000/knowage");
+				getHttpResponse().sendRedirect("http://localhost:9999/knowage_FE");
 				return;
 			} else {
 				// user must authenticate
@@ -359,7 +358,7 @@ public class LoginModule extends AbstractHttpModule {
 //			}
 //			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 //			getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-			getHttpResponse().sendRedirect("http://localhost:3000/knowage");
+			getHttpResponse().sendRedirect("http://localhost:9999/knowage_FE");
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after request processed in each case
 			TenantManager.unset();

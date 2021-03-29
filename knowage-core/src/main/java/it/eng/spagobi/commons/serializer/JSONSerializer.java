@@ -48,7 +48,6 @@ import it.eng.spagobi.hotlink.rememberme.bo.RememberMe;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bo.UserBO;
-import it.eng.spagobi.profiling.bo.UserInformationBO;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
@@ -137,8 +136,6 @@ public class JSONSerializer implements Serializer {
 		mappings.put(ParameterUse.class, new ParametersUseJSONSerialize());
 		mappings.put(ModalitiesValue.class, new ModalitiesValuesJSONSerializer());
 		mappings.put(FederationDefinition.class, new DatasetFederationJSONSerializer());
-
-		mappings.put(UserInformationBO.class, new UserInformationBOJSONSerializer());
 
 	}
 

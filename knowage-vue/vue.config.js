@@ -1,7 +1,7 @@
 process.env.VUE_APP_VERSION = process.env.npm_package_version
 
 module.exports = {
-	publicPath: '/knowage/',
+	publicPath: '/knowage_FE/',
 	devServer: {
 		proxy: {
 			'^/knowage/restful-services/[0-9].0': {
@@ -38,7 +38,8 @@ module.exports = {
 				@import "@/assets/scss/_variables.scss";
 				@import "@/assets/scss/_common.scss";
 				@import "@/assets/scss/_material.scss";
-				@import "@/assets/scss/_toolbar.scss";`
+				@import "@/assets/scss/_toolbar.scss";
+				@import "@/assets/scss/_dialog.scss";`
 			}
 		}
 	}

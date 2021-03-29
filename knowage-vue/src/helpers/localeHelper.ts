@@ -1,17 +1,9 @@
 import moment from 'moment'
 import store from '@/App.store.js'
-
-export type Locale = {
-  country: string
-  language: string
-}
-
-export function concatLocale(obj: Locale): string {
-  return obj ? obj.language + '_' + obj.country : 'undefined'
-}
+import i18n from '@/App.i18n'
 
 export function formatDate(dateString?: string, format?: string) {
-  return moment(dateString || new Date())
-    .locale(localStorage.getItem('locale') ? concatLocale(JSON.parse(localStorage.getItem('locale') || '')) : store.locale)
-    .format(format || 'L')
+	return moment(dateString || new Date())
+		.locale(localStorage.getItem('locale') ? localStorage.getItem('locale') || i18n.fallbackLocale : store.locale ? store.local : i18n.fallbackLocale)
+		.format(format || 'L')
 }

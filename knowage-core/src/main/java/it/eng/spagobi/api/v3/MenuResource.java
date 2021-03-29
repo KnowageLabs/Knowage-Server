@@ -68,10 +68,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 		UserProfile profile = (UserProfile) userProfile;
 
-		String country = req.getParameter("curr_country");
-		String language = req.getParameter("curr_language");
-
-		Locale currentLocale = new Locale(language, country, "");
+		Locale currentLocale = Locale.forLanguageTag(req.getParameter("locale"));
 		List lstMenu = null;
 		try {
 			lstMenu = MenuUtilities.getMenuItems(profile);

@@ -1,5 +1,5 @@
 <template>
-	<Dialog class="kn-dialog" v-bind:visible="visibility" footer="footer" :header="$t('infoDialog.aboutKnowage')" :closable="false" modal>
+	<Dialog class="kn-dialog--toolbar--primary" v-bind:visible="visibility" footer="footer" :header="$t('infoDialog.aboutKnowage')" :closable="false" modal>
 		<div class="p-grid p-m-1">
 			<div class="p-col">
 				<div class="p-d-flex p-jc-center">

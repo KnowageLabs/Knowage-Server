@@ -1,4 +1,5 @@
 // COMMON COLORS VARIABLES
+$color-default: #a7a7a7;
 $color-primary: #43749e;
 $color-secondary: #bbd6ed;
 $color-fab: #ce0651;
@@ -17,5 +18,16 @@ $mainmenu-profile-box-shadow: -3px 0 4px 0 black;
 $mainmenu-width: 58px;
 
 // TOOLBAR VARIABLES
-$toolbar-height: 38px;
+$toolbar-height: 2.5rem;
 $toolbar-padding: 0 0.75rem;
+$toolbar-font-weight: 400;
+$toolbar-font-size: 1rem;
+
+$toolbar-background-color-default: $color-default;
+$toolbar-color-default: black;
+
+$toolbar-background-color-primary: $color-primary;
+$toolbar-color-primary: white;
+
+$toolbar-background-color-secondary: $color-secondary;
+$toolbar-color-secondary: white;

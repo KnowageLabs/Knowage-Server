@@ -1,34 +1,34 @@
 import axios from 'axios'
-//import store from './App.store.js'
-//import router from './app.routes.js'
-//axios.defaults.baseURL = process.env.VUE_APP_HOST_URL
+//import router from './App.routes.js'
+import authHelper from '@/helpers/authHelper'
+
 axios.interceptors.request.use(
-  (config) => {
-    config.headers.common['Accept'] = 'application/json; charset=utf-8'
-    config.headers.common['Content-Type'] = 'application/json; charset=utf-8'
-    if (localStorage.getItem('token')) config.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
-    return config
-  },
-  (error) => {
-    Promise.reject(error)
-  }
+	(config) => {
+		config.headers.common['Accept'] = 'application/json; charset=utf-8'
+		config.headers.common['Content-Type'] = 'application/json; charset=utf-8'
+		if (localStorage.getItem('token')) config.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
+		return config
+	},
+	(error) => {
+		Promise.reject(error)
+	}
 )
 
 axios.interceptors.response.use(
-  (res) => {
-    return res
-  },
-  function(error) {
-    console.log(error.response)
-    if (error.status === 401) {
-      console.log(status)
-      //if(router.history.current.name !== 'login') router.push('/login')
-    }
-    if (error.status === 500) {
-      console.log(500)
-    }
-    return Promise.reject(error)
-  }
+	(res) => {
+		return res
+	},
+	function(error) {
+		if (error.response.status) {
+			if (error.response.status === 401) {
+				authHelper.logout()
+			}
+			if (error.response.status === 500) {
+				console.log(500)
+			}
+		}
+		return Promise.reject(error)
+	}
 )
 
 export default axios
