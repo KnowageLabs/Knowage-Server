@@ -137,7 +137,7 @@ public class LoginModule extends AbstractHttpModule {
 //				}
 //				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 //				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-				getHttpResponse().sendRedirect("http://localhost:9999/knowage_FE");
+				getHttpResponse().sendRedirect("http://localhost:3000/knowage");
 				return;
 			} else {
 				// user must authenticate
@@ -358,7 +358,7 @@ public class LoginModule extends AbstractHttpModule {
 //			}
 //			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 //			getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-			getHttpResponse().sendRedirect("http://localhost:9999/knowage_FE");
+			getHttpResponse().sendRedirect("http://localhost:3000/knowage");
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after request processed in each case
 			TenantManager.unset();
