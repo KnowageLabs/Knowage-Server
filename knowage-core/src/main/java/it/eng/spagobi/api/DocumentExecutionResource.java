@@ -795,8 +795,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		for (int i = 0; i < parametersArrayList.size(); i++) {
 			Map<String, Object> parameter = parametersArrayList.get(i);
 			List defaultValuesList = (List) parameter.get("defaultValues");
-			defaultValuesList
-					.removeIf(defaultVal -> (((Map) defaultVal).get("value") == JSONObject.NULL || ((Map) defaultVal).get("description") == JSONObject.NULL));
+			if (defaultValuesList != null) {
+				defaultValuesList.removeIf(
+						defaultVal -> (((Map) defaultVal).get("value") == JSONObject.NULL || ((Map) defaultVal).get("description") == JSONObject.NULL));
+			}
 		}
 
 		resultAsMap.put("filterStatus", parametersArrayList);
