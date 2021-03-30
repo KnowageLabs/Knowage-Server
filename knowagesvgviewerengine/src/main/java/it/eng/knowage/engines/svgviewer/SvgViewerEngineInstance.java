@@ -17,6 +17,19 @@
  */
 package it.eng.knowage.engines.svgviewer;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.knowage.engines.svgviewer.component.SvgViewerEngineComponentFactory;
 import it.eng.knowage.engines.svgviewer.datamart.provider.IDataMartProvider;
 import it.eng.knowage.engines.svgviewer.map.provider.IMapProvider;
@@ -34,19 +47,6 @@ import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -100,8 +100,8 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 			setDataMartProviderMonitor.stop();
 			// setMapProvider(SvgViewerEngineComponentFactory.buildMapProvider(getDataMartProvider().getSelectedMemberName(), env));
 			Monitor setMapProviderMonitor = MonitorFactory.start("GeoEngine.SvgViewerEngineInstance.setMapProvider");
-			setMapProvider(SvgViewerEngineComponentFactory.buildMapProvider(
-					getDataMartProvider().getHierarchyMember(getDataMartProvider().getSelectedMemberName()), env));
+			setMapProvider(SvgViewerEngineComponentFactory
+					.buildMapProvider(getDataMartProvider().getHierarchyMember(getDataMartProvider().getSelectedMemberName()), env));
 			setMapProviderMonitor.stop();
 			Monitor setMapRendererMonitor = MonitorFactory.start("GeoEngine.SvgViewerEngineInstance.setMapRenderer");
 			setMapRenderer(SvgViewerEngineComponentFactory.buildMapRenderer(template, env));
@@ -279,8 +279,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 	/**
 	 * Sets the map provider.
 	 *
-	 * @param mapProvider
-	 *            the new map provider
+	 * @param mapProvider the new map provider
 	 */
 	protected void setMapProvider(IMapProvider mapProvider) {
 		this.mapProvider = mapProvider;
@@ -298,8 +297,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 	/**
 	 * Sets the map renderer.
 	 *
-	 * @param mapRenderer
-	 *            the new map renderer
+	 * @param mapRenderer the new map renderer
 	 */
 	protected void setMapRenderer(IMapRenderer mapRenderer) {
 		this.mapRenderer = mapRenderer;
@@ -433,9 +431,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 		if (selectedHierarchyName == null) {
 			SvgViewerEngineException geoException;
 			logger.error("Select hierarchy name is not defined");
-			String description = "Select hierarchy name is not defined";
-			geoException = new SvgViewerEngineException("Configuration error");
-			geoException.setDescription(description);
+			geoException = new SvgViewerEngineException("Select hierarchy name is not defined");
 			throw geoException;
 		}
 	}

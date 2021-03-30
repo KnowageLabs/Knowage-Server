@@ -69,6 +69,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.dataset.actions.DatasetActionsCheckerFactory;
 import it.eng.spagobi.tools.dataset.association.DistinctValuesCalculateWork;
 import it.eng.spagobi.tools.dataset.association.DistinctValuesClearWork;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
@@ -119,6 +120,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.groovy.GroovySandbox;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -1539,6 +1541,22 @@ public class DatasetManagementAPI {
 			where = new OrFilter(likeFilters);
 		}
 		return where;
+	}
+
+	public void canLoadData(IDataSet dataSet) throws ActionNotPermittedException {
+		DatasetActionsCheckerFactory.getDatasetActionsChecker(getUserProfile(), dataSet).canLoadData();
+	}
+
+	public void canEdit(IDataSet dataSet) throws ActionNotPermittedException {
+		DatasetActionsCheckerFactory.getDatasetActionsChecker(getUserProfile(), dataSet).canEdit();
+	}
+
+	public void canSave(IDataSet dataSet) throws ActionNotPermittedException {
+		DatasetActionsCheckerFactory.getDatasetActionsChecker(getUserProfile(), dataSet).canSave();
+	}
+
+	public void canShare(IDataSet dataSet) throws ActionNotPermittedException {
+		DatasetActionsCheckerFactory.getDatasetActionsChecker(getUserProfile(), dataSet).canShare();
 	}
 
 }

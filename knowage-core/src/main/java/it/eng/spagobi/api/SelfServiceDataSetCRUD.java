@@ -79,6 +79,7 @@ import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.metamodel.SiblingsFileWrapper;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -113,6 +114,8 @@ import it.eng.spagobi.tools.notification.DatasetNotificationEvent;
 import it.eng.spagobi.tools.notification.DatasetNotificationManager;
 import it.eng.spagobi.tools.notification.EventConstants;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -121,7 +124,7 @@ import it.eng.spagobi.utilities.json.JSONUtils;
  * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini (monica.franceschini@eng.it)
  */
 @Path("/selfservicedataset")
-public class SelfServiceDataSetCRUD {
+public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 	static private Logger logger = Logger.getLogger(SelfServiceDataSetCRUD.class);
 	static private String deleteNullIdDataSetError = "error.mesage.description.data.set.cannot.be.null";
@@ -486,7 +489,7 @@ public class SelfServiceDataSetCRUD {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String shareDataSet(@Context HttpServletRequest req) {
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
@@ -502,6 +505,14 @@ public class SelfServiceDataSetCRUD {
 			}
 
 			IDataSet ds = dao.loadDataSetById(id);
+
+			try {
+				new DatasetManagementAPI(profile).canShare(ds);
+			} catch (ActionNotPermittedException e) {
+				logger.error("User " + profile.getUserId() + " cannot share the dataset with label " + ds.getLabel());
+				throw new SpagoBIRestServiceException(e.getI18NCode(), buildLocaleFromSession(),
+						"User " + profile.getUserId() + " cannot share the dataset with label " + ds.getLabel(), e, "MessageFiles.messages");
+			}
 
 			HashMap<String, String> logParam = new HashMap();
 
@@ -525,7 +536,8 @@ public class SelfServiceDataSetCRUD {
 			jo.put("catTypeCd", ds.getCategoryCd());
 
 			return jo.toString();
-
+		} catch (SpagoBIRestServiceException e) {
+			throw e;
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
 			updateAudit(req, profile, "DATA_SET.SHARE", null, "ERR");
@@ -1965,10 +1977,8 @@ public class SelfServiceDataSetCRUD {
 	 * This is an heuristic to guess the column type of a column in a datastore created with a file dataset. The method analyses just a portion of the entire
 	 * datastore so the result is not guaranteed at 100%.
 	 *
-	 * @param dataStore
-	 *            the datastore to scan
-	 * @param columnIndex
-	 *            the index of the column to check
+	 * @param dataStore   the datastore to scan
+	 * @param columnIndex the index of the column to check
 	 * @return the guessed type of the column
 	 */
 	private String guessColumnType(IDataStore dataStore, int columnIndex) {

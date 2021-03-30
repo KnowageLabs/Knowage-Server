@@ -149,7 +149,7 @@
 		<md-toolbar class="ternaryToolbar">
 			<div layout="row" layout-align="space-around center">		
 			
-				<md-button aria-label="Preview Dataset" class="md-icon-button" ng-click="previewDataset(selectedDataset)">
+				<md-button aria-label="Preview Dataset" class="md-icon-button" ng-click="previewDataset(selectedDataset)" ng-show="selectedDataset.canLoadData">
 					<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.preview')}}</md-tooltip>
 					<md-icon md-font-icon="fa fa-eye"></md-icon>
 				</md-button>
@@ -159,17 +159,18 @@
 					<md-icon md-font-icon="fa fa-pencil"></md-icon>
 				</md-button>
 
-				 <md-button title="{{translate.load('sbi.workspace.dataset.qbe.edit')}}" aria-label="Show detail" ng-show="isAbleToEditQbeDataset(selectedDataset)" class="md-icon-button" ng-click="editQbeDataset(selectedDataset)">
+				 <md-button title="{{translate.load('sbi.workspace.dataset.qbe.edit')}}" aria-label="Show detail" ng-show="selectedDataset.canLoadData && isAbleToEditQbeDataset(selectedDataset)" class="md-icon-button" ng-click="editQbeDataset(selectedDataset)">
 					<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.qbe.edit')}}</md-tooltip>
 					<md-icon md-font-icon="fa fa-pencil"></md-icon>
 				</md-button>
 				 
-	          	<md-button aria-label="Export Dataset to XLSX" class="md-icon-button" ng-click="exportDataset(selectedDataset,'XLSX')">
+	          	<md-button aria-label="Export Dataset to XLSX" class="md-icon-button" ng-click="exportDataset(selectedDataset,'XLSX')" ng-show="selectedDataset.canLoadData">
 		           	<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
 	            	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.export.xlsx')}}</md-tooltip>
 	          	</md-button>
 	          	
-	          	<md-button ng-show="selectedDataset.isIterable && selectedDataset.pars.length == 0" aria-label="Export Dataset to CSV" class="md-icon-button" ng-click="exportDataset(selectedDataset,'CSV')">
+	          	<md-button ng-show="selectedDataset.canLoadData && selectedDataset.isIterable && selectedDataset.pars.length == 0" aria-label="Export Dataset to CSV" 
+	          					class="md-icon-button" ng-click="exportDataset(selectedDataset,'CSV')">
 		           	<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
 	            	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.export.csv')}}</md-tooltip>
 	          	</md-button>	        
@@ -180,13 +181,13 @@
 			        	<md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
 			      	</md-button>
 			      	<md-menu-content width="4">
-			        	<md-menu-item ng-show="currentDatasetsTab=='myDataSet'">
+			        	<md-menu-item ng-show="selectedDataset.canLoadData && currentDatasetsTab=='myDataSet'">
 			          		<md-button aria-label="Share Dataset" ng-click="shareDatasetWithCategories(selectedDataset)">
 				            	<md-icon md-font-icon="fa fa-share-alt" md-menu-align-target></md-icon>
 				            	{{translate.load('sbi.workspace.dataset.shareUnshare')}}
 				          	</md-button>
 				        </md-menu-item>
-				        <md-menu-item ng-show="selectedDataset.dsTypeCd=='Qbe' && (currentDatasetsTab=='myDataSet' || currentDatasetsTab=='enterpriseDataSet' || currentDatasetsTab=='sharedDataSet')">
+				        <md-menu-item ng-show="selectedDataset.canLoadData && selectedDataset.dsTypeCd=='Qbe' && (currentDatasetsTab=='myDataSet' || currentDatasetsTab=='enterpriseDataSet' || currentDatasetsTab=='sharedDataSet')">
 				          	<md-button aria-label="Clone Dataset" ng-click="cloneDataset(selectedDataset)">
 				            	<md-icon md-font-icon="fa fa-clone" md-menu-align-target></md-icon>
 				            	{{translate.load('sbi.workspace.dataset.clone')}}

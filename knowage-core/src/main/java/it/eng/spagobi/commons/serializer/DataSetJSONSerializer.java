@@ -29,15 +29,20 @@ import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
 public class DataSetJSONSerializer implements Serializer {
 
@@ -132,6 +137,10 @@ public class DataSetJSONSerializer implements Serializer {
 
 	public static final String IS_REALTIME = "isRealtime";
 	public static final String IS_ITERABLE = "isIterable";
+
+	private static final String CAN_LOAD_DATA = "canLoadData";
+
+	private static final String CANNOT_LOAD_DATA_MESSAGE = "cannotLoadDataMessage";
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -438,6 +447,17 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(DATE_IN, ds.getDateIn());
 			result.put(SCOPE_CD, ds.getScopeCd());
 			result.put(SCOPE_ID, ds.getScopeId());
+
+			UserProfile profile = UserProfileManager.getProfile();
+			try {
+				new DatasetManagementAPI(profile).canLoadData(ds);
+				result.put(CAN_LOAD_DATA, true);
+			} catch (ActionNotPermittedException e) {
+				logger.warn("User " + profile + " cannot preview the dataset with label " + ds.getLabel());
+				result.put(CAN_LOAD_DATA, false);
+				result.put(CANNOT_LOAD_DATA_MESSAGE, EngineMessageBundle.getMessage(e.getI18NCode(), "MessageFiles.messages", locale));
+			}
+
 		} catch (Throwable t) {
 			IDataSet ds = (IDataSet) o;
 			if (ds instanceof VersionedDataSet) {

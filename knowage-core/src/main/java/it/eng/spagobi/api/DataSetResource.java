@@ -67,9 +67,7 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -88,6 +86,7 @@ import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -308,7 +307,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	@GET
 	@Path("/olderversions/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -484,10 +483,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Acquire required version of the dataset
 	 *
-	 * @param id
-	 *            The ID of the dataset whose version with the versionId ID should be restored.
-	 * @param versionId
-	 *            The ID of the version of the dataset that should be restored and exchanged for the current one (active).
+	 * @param id        The ID of the dataset whose version with the versionId ID should be restored.
+	 * @param versionId The ID of the version of the dataset that should be restored and exchanged for the current one (active).
 	 * @return Serialized dataset that is restored as the old version of the dataset.
 	 * @throws JSONException
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -544,6 +541,15 @@ public class DataSetResource extends AbstractDataSetResource {
 	public Response export(@PathParam("id") int id, @QueryParam("outputType") @DefaultValue("csv") String outputType) {
 
 		IDataSet dataSet = getDataSetDAO().loadDataSetById(id);
+
+		try {
+			new DatasetManagementAPI(getUserProfile()).canLoadData(dataSet);
+		} catch (ActionNotPermittedException e) {
+			logger.error("User " + getUserProfile().getUserId() + " cannot export the dataset with label " + dataSet.getLabel());
+			throw new SpagoBIRestServiceException(e.getI18NCode(), buildLocaleFromSession(),
+					"User " + getUserProfile().getUserId() + " cannot export the dataset with label " + dataSet.getLabel(), e, "MessageFiles.messages");
+		}
+
 		dataSet.setUserProfileAttributes(getUserProfile().getUserAttributes());
 		Assert.assertNotNull(dataSet, "Impossible to find a dataset with id [" + id + "]");
 		// Assert.assertTrue(dataSet.getParamsMap() == null || dataSet.getParamsMap().isEmpty(), "Impossible to export a dataset with parameters");
@@ -577,10 +583,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Delete a version for the selected dataset.
 	 *
-	 * @param id
-	 *            The ID of the selected dataset.
-	 * @param versionId
-	 *            The ID of the version of the selected dataset.
+	 * @param id        The ID of the selected dataset.
+	 * @param versionId The ID of the version of the selected dataset.
 	 * @return Status of the request (OK status).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -613,8 +617,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Delete all versions for the selected dataset.
 	 *
-	 * @param id
-	 *            The ID of the selected dataset.
+	 * @param id The ID of the selected dataset.
 	 * @return Status of the request (OK status).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -1027,7 +1030,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	protected String serializeDataSets(List<IDataSet> dataSets, String typeDocWizard) {
 		try {
-			JSONArray datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
+			JSONArray datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, buildLocaleFromSession());
 			JSONArray datasetsJSONReturn = putActions(getUserProfile(), datasetsJSONArray, typeDocWizard);
 			JSONObject resultJSON = new JSONObject();
 			resultJSON.put("root", datasetsJSONReturn);
@@ -1237,7 +1240,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		if (ordering != null) {
 			boolean reverseOrdering = ordering.optBoolean("reverseOrdering");
 			String columnOrdering = ordering.optString("columnOrdering");
-			if(columnOrdering.equalsIgnoreCase("dsTypeCd")) {
+			if (columnOrdering.equalsIgnoreCase("dsTypeCd")) {
 				columnOrdering = "type";
 			}
 			if (columnOrdering != null && !columnOrdering.isEmpty()) {
