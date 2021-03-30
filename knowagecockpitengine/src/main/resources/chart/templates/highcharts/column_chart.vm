@@ -18,9 +18,10 @@
 #set($drillOrder = $categorieColumns.get("drillOrder")) ## metadata related to categories
 	#if($drillOrder[$categorieColumns.groupby].orderColumn && $categorieColumns.groupby && $drillOrder[$categorieColumns.groupby].orderColumn != $categorieColumns.groupby)
 	#set($orderColumnDataValues = $datasettransformer.prepareDataForOrderingColumnForBar($rows,$dataFields,$drillOrder,$categorieColumns.groupby))
+	#if($orderColumnDataValues)
 	#set($orderColumnDataValuesEscaped = $datasettransformer.escapeStringForJavascript($orderColumnDataValues))
 	#end
-	
+	#end
 	
 #end
 #if($categorieColumns.name=="")
@@ -175,7 +176,7 @@
          			categoryOrderType: '$categorieColumns.orderType',
          	#end		
 			
-			#if($orderColumnDataValues)
+			#if($orderColumnDataValues && $escapeStringForJavascript)
 			orderColumnDataValues: '$orderColumnDataValuesEscaped',
 			#end
 			 
@@ -1981,7 +1982,7 @@
             padding: 0
         },
         formatter: function() { 
-        	var prepareResult = function(point, result,key){
+        	var prepareResult = function(point, result,key, xvalue){
        			var ttColor = point.series.tooltipOptions.ttColor ? point.series.tooltipOptions.ttColor : '';
 				var ttBackColor = point.series.tooltipOptions.ttBackColor ? point.series.tooltipOptions.ttBackColor : '';
 					
@@ -2173,12 +2174,17 @@
 				result += 
 					'<div style="padding:10px;color:' + ttColor + '; opacity: 0.9; background:' + ttBackColor + ';' + fontStyle + "; font-family: " + ttFont + "; "
 						+ tooltipFontStyle + " font-size: " + ttFontSize + ';text-align:' + ttAlign + ';">'; 
-				  
 			   if  (point.series.userOptions.category && point.series.userOptions.category =='$categoryDate'){
 					result += '<span>' + Highcharts.dateFormat('$dateFormat', point.x) + '</span><br/>' + point.series.name + ': ' + prefix + thisValue + postfix + '</div>';
 				  
 				} else {
-					result += '<span>' + key + '</span><br/>' + point.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+						if($chart.groupCategories && xvalue && xvalue.parent) {			
+						result += '<span>' + xvalue.name + '</span><span style = "margin-left:4px">' + xvalue.parent.name + '</span><br/>' + point.series.name + ': ' + prefix + thisValue + postfix + '</div>';			
+						}
+				        else {				        
+				        result += '<span>' + key + '</span><br/>' + point.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+				        }
+					
 				}
            		return result
         	}
@@ -2190,8 +2196,9 @@
 					result = prepareResult(point, result, point.key)
 				})
            	} else {
-      			result = prepareResult(this.point, result,this.key)
+      			result = prepareResult(this.point, result,this.key,this.x)
 			}
+
 			return result;
 		}
     },
