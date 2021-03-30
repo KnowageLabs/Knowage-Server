@@ -244,6 +244,7 @@
 		$scope.toggleRadioParameter = function(parVal ,parDesc, parameter) {
 			if(parameter.parameterDescription == undefined ) parameter.parameterDescription = "";
 			parameter.parameterDescription = parDesc;
+			$scope.resetCorrelatedParameters(parameter, false);
 		};
 
 		$scope.toggleComboParameter = function(parameter) {
@@ -254,6 +255,7 @@
 				parameter.parameterDescription ="";
 			}
 			addParameterValueDescription(parameter);
+			$scope.resetCorrelatedParameters(parameter, false);
 		}
 
 
