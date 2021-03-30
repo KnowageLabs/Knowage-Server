@@ -1075,6 +1075,12 @@ filter-by-tags {
   }
 }
 
+md-card.md-knowage-theme{
+	&.disabled {
+		background-color: $ternaryColor !important;
+	}
+}
+
 
 @supports (-ms-ime-align: auto) {
   .kn-list-detail {
