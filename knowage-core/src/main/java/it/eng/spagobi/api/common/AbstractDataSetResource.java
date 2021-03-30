@@ -50,6 +50,7 @@ import it.eng.knowage.parsers.CaseChangingCharStream;
 import it.eng.knowage.parsers.SQLiteLexer;
 import it.eng.knowage.parsers.SQLiteParser;
 import it.eng.knowage.parsers.ThrowingErrorListener;
+import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
@@ -64,7 +65,9 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
+import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -97,6 +100,9 @@ import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
+import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -136,14 +142,25 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return idArray;
 	}
 
+	/**
+	 * TODO is isNearRealtime really needed? It comes from frontend, isn't it a specific info of the dataset?
+	 * @deprecated
+	 */
+	@Deprecated
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
-			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, Set<String> indexes, String widgetName) {
+			String aggregations, String summaryRow, int offset, int fetchSize, Boolean isNearRealtime, Set<String> indexes, String widgetName) {
 		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
 				null, indexes, widgetName);
 	}
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
-			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, String options, Set<String> indexes, String widgetName) {
+			String aggregations, String summaryRow, int offset, int fetchSize, Set<String> indexes, String widgetName) {
+		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, null,
+				null, indexes, widgetName);
+	}
+
+	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
+			String aggregations, String summaryRow, int offset, int fetchSize, Boolean isNearRealtime, String options, Set<String> indexes, String widgetName) {
 		logger.debug("IN");
 		Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
 		try {
@@ -173,6 +190,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(getUserProfile());
 			IDataSet dataSet = dataSetDao.loadDataSetByLabel(label);
+			if (isNearRealtime == null) {
+				isNearRealtime = isNearRealtimeSupported(dataSet);
+			}
 			Assert.assertNotNull(dataSet, "Unable to load dataset with label [" + label + "]");
 			dataSet.setUserProfile(getUserProfile());
 			dataSet.setDrivers(drivers);
@@ -1098,4 +1118,22 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 		return dsDAO;
 	}
+
+	protected final boolean isNearRealtimeSupported(IDataSet dataSet) throws DataBaseException {
+		boolean isNearRealtimeSupported = false;
+		dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
+		if (dataSet instanceof AbstractJDBCDataset) {
+			IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
+			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+		} else if (dataSet instanceof FederatedDataSet) {
+			isNearRealtimeSupported = false;
+		} else if (dataSet instanceof QbeDataSet) {
+			IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
+			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
+		} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet.getClass().equals(SolrDataSet.class)) {
+			isNearRealtimeSupported = true;
+		}
+		return isNearRealtimeSupported;
+	}
+
 }
