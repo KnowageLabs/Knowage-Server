@@ -17,14 +17,6 @@
  */
 package it.eng.knowage.engines.svgviewer.component;
 
-import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
-import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
-import it.eng.knowage.engines.svgviewer.datamart.provider.IDataMartProvider;
-import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
-import it.eng.knowage.engines.svgviewer.map.provider.IMapProvider;
-import it.eng.knowage.engines.svgviewer.map.renderer.IMapRenderer;
-import it.eng.spago.base.SourceBean;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +25,14 @@ import org.apache.log4j.Logger;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
+import it.eng.knowage.engines.svgviewer.datamart.provider.IDataMartProvider;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
+import it.eng.knowage.engines.svgviewer.map.provider.IMapProvider;
+import it.eng.knowage.engines.svgviewer.map.renderer.IMapRenderer;
+import it.eng.spago.base.SourceBean;
 
 /**
  * The Class GeoEngineComponentFactory.
@@ -46,17 +46,13 @@ public class SvgViewerEngineComponentFactory {
 	/**
 	 * Builds the.
 	 *
-	 * @param geoEngineComponentClassName
-	 *            the geo engine component class name
-	 * @param conf
-	 *            the conf
-	 * @param env
-	 *            the env
+	 * @param geoEngineComponentClassName the geo engine component class name
+	 * @param conf                        the conf
+	 * @param env                         the env
 	 *
 	 * @return the i geo engine component
 	 *
-	 * @throws GeoEngineException
-	 *             the geo engine exception
+	 * @throws GeoEngineException the geo engine exception
 	 */
 	public static ISvgViewerEngineComponent build(String geoEngineComponentClassName, Object conf, Map env) throws SvgViewerEngineException {
 
@@ -79,8 +75,7 @@ public class SvgViewerEngineComponentFactory {
 			List hints = new ArrayList();
 			hints.add("Check if the class name is wrong or mispelled");
 			hints.add("Check if the class is on the class path");
-			geoException = new SvgViewerEngineException("Impossible to instatiate component", e);
-			geoException.setDescription(description);
+			geoException = new SvgViewerEngineException(description, e);
 			// geoException.setHints(hints);
 			throw geoException;
 		}
@@ -102,15 +97,12 @@ public class SvgViewerEngineComponentFactory {
 	/**
 	 * Builds the map provider.
 	 *
-	 * @param template
-	 *            the template
-	 * @param env
-	 *            the env
+	 * @param template the template
+	 * @param env      the env
 	 *
 	 * @return the i map provider
 	 *
-	 * @throws GeoEngineException
-	 *             the geo engine exception
+	 * @throws GeoEngineException the geo engine exception
 	 */
 	public static IMapProvider buildMapProvider(HierarchyMember member, Map env) throws SvgViewerEngineException {
 		IMapProvider mapProvider = null;
@@ -133,15 +125,12 @@ public class SvgViewerEngineComponentFactory {
 	/**
 	 * Builds the map renderer.
 	 *
-	 * @param template
-	 *            the template
-	 * @param env
-	 *            the env
+	 * @param template the template
+	 * @param env      the env
 	 *
 	 * @return the i map renderer
 	 *
-	 * @throws GeoEngineException
-	 *             the geo engine exception
+	 * @throws GeoEngineException the geo engine exception
 	 */
 	public static IMapRenderer buildMapRenderer(SourceBean template, Map env) throws SvgViewerEngineException {
 		IMapRenderer mapRenderer = null;
@@ -159,15 +148,12 @@ public class SvgViewerEngineComponentFactory {
 	/**
 	 * Builds the dataset provider.
 	 *
-	 * @param template
-	 *            the template
-	 * @param env
-	 *            the env
+	 * @param template the template
+	 * @param env      the env
 	 *
 	 * @return the i dataset provider
 	 *
-	 * @throws GeoEngineException
-	 *             the geo engine exception
+	 * @throws GeoEngineException the geo engine exception
 	 */
 	public static IDataMartProvider buildDataMartProvider(SourceBean template, Map env) throws SvgViewerEngineException {
 		IDataMartProvider dataMartProvider = null;

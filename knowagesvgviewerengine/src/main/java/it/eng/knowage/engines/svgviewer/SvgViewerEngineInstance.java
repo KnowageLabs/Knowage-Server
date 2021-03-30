@@ -431,9 +431,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 		if (selectedHierarchyName == null) {
 			SvgViewerEngineException geoException;
 			logger.error("Select hierarchy name is not defined");
-			String description = "Select hierarchy name is not defined";
-			geoException = new SvgViewerEngineException("Configuration error");
-			geoException.setDescription(description);
+			geoException = new SvgViewerEngineException("Select hierarchy name is not defined");
 			throw geoException;
 		}
 	}

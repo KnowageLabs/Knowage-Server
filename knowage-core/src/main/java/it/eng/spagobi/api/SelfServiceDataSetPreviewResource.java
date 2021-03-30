@@ -45,6 +45,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
@@ -52,6 +53,7 @@ import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -154,6 +156,14 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 
 			}
 
+			try {
+				new DatasetManagementAPI(profile).canLoadData(ds);
+			} catch (ActionNotPermittedException e) {
+				logger.error("User " + profile.getUserId() + " cannot preview the dataset with label " + label);
+				throw new SpagoBIRestServiceException(e.getI18NCode(), buildLocaleFromSession(),
+						"User " + profile.getUserId() + " cannot preview the dataset with label " + label, e, "MessageFiles.messages");
+			}
+
 			logger.debug("The user can execute the dataset");
 
 			logger.debug("Setting profile attributes");
@@ -189,7 +199,8 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			logger.debug("Data set written");
 
 			return stringFeed;
-
+		} catch (SpagoBIRestServiceException e) {
+			throw e;
 		} catch (Exception e) {
 			logger.error("Error loading the dataset values ", e);
 			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.generalerror", buildLocaleFromSession(), e);

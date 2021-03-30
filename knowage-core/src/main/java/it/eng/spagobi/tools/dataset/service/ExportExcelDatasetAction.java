@@ -40,13 +40,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONObjectDeserializator;
 
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
@@ -90,6 +93,15 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 		IDataSetDAO dao = DAOFactory.getDataSetDAO();
 		dao.setUserProfile(this.getUserProfile());
 		IDataSet dataSet = dao.loadDataSetById(id);
+
+		UserProfile profile = (UserProfile) this.getUserProfile();
+		try {
+			new DatasetManagementAPI(profile).canLoadData(dataSet);
+		} catch (ActionNotPermittedException e) {
+			logger.error("User " + profile.getUserId() + " cannot export the dataset with label " + dataSet.getLabel());
+			throw new SpagoBIServiceException(e.getI18NCode(), "User " + profile.getUserId() + " cannot export the dataset with label " + dataSet.getLabel(),
+					e);
+		}
 
 		Map<String, Object> drivers = null;
 		try {

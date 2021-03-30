@@ -65,6 +65,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
@@ -110,10 +111,11 @@ import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
-import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -163,6 +165,14 @@ public class ManageDataSetsForREST {
 
 	protected String datasetInsert(JSONObject json, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, HttpServletRequest req) throws JSONException {
 		IDataSet ds = getGuiGenericDatasetToInsert(json, userProfile);
+
+		try {
+			new DatasetManagementAPI(userProfile).canSave(ds);
+		} catch (ActionNotPermittedException e) {
+			logger.error("User " + userProfile.getUserId() + " cannot save the dataset with label " + ds.getLabel());
+			throw new SpagoBIRestServiceException(e.getI18NCode(), locale,
+					"User " + userProfile.getUserId() + " cannot save the dataset with label " + ds.getLabel(), e, "MessageFiles.messages");
+		}
 
 		return datasetInsert(ds, dsDao, locale, userProfile, json, req);
 	}
@@ -945,7 +955,8 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private QbeDataSet manageQbeDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json, UserProfile userProfile) throws JSONException, EMFUserError, IOException {
+	private QbeDataSet manageQbeDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json, UserProfile userProfile)
+			throws JSONException, EMFUserError, IOException {
 		QbeDataSet dataSet = null;
 		String federationId = json.optString("federation_id");
 		if (StringUtils.isNoneEmpty(federationId)) {
@@ -1649,8 +1660,7 @@ public class ManageDataSetsForREST {
 		logger.debug("OUT");
 	}
 
-	public void insertPersistence(IDataSet ds, HashMap<String, String> logParam, JSONObject json, UserProfile userProfile)
-			throws Exception {
+	public void insertPersistence(IDataSet ds, HashMap<String, String> logParam, JSONObject json, UserProfile userProfile) throws Exception {
 		logger.debug("IN");
 
 		if (ds.isPersisted()) {

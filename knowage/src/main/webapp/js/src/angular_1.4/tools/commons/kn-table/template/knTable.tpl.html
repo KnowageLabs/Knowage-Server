@@ -9,7 +9,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat-start="row in model | filter:searchModel | orderBy:sortingColumn:sortingDirection" ng-click="clickFunctionWrapper(row,$event)" ng-class="{'selected':selectedItem == row}">
+            <tr ng-repeat-start="row in model | filter:searchModel | orderBy:sortingColumn:sortingDirection" ng-click="clickFunctionWrapper(row,$event)" 
+            		ng-class="{'selected':selectedItem == row, 'disabled' : !row.canLoadData}">
                 <td ng-repeat="column in columns">
                     <span ng-if="!column.type || column.type=='text'">{{row[column.name]}}</span>
                     <span ng-if="column.type=='date'">{{setDate(row[column.name])}}</span>
