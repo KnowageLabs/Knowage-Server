@@ -16,11 +16,11 @@
 #end
 #if($categorieColumns.get("drillOrder"))
 #set($drillOrder = $categorieColumns.get("drillOrder")) ## metadata related to categories
-	#if($drillOrder[$categorieColumns.groupby].orderColumn && $categorieColumns.groupby && $drillOrder[$categorieColumns.groupby].orderColumn != $categorieColumns.groupby)
+	#if($drillOrder[$categorieColumns.groupby].orderColumn && $categorieColumns.groupby && $drillOrder[$categorieColumns.groupby].orderColumn != $categorieColumns.groupby)	
 	#set($orderColumnDataValues = $datasettransformer.prepareDataForOrderingColumnForBar($rows,$dataFields,$drillOrder,$categorieColumns.groupby))
+	#end
 	#if($orderColumnDataValues)
 	#set($orderColumnDataValuesEscaped = $datasettransformer.escapeStringForJavascript($orderColumnDataValues))
-	#end
 	#end
 	
 #end
@@ -176,7 +176,7 @@
          			categoryOrderType: '$categorieColumns.orderType',
          	#end		
 			
-			#if($orderColumnDataValues && $escapeStringForJavascript)
+			#if($orderColumnDataValues && $orderColumnDataValuesEscaped)
 			orderColumnDataValues: '$orderColumnDataValuesEscaped',
 			#end
 			 
