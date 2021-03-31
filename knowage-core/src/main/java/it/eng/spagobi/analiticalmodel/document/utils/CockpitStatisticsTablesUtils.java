@@ -197,6 +197,10 @@ public class CockpitStatisticsTablesUtils {
 
 								datasetLabel = parseFiltersObject(sbiCockpitWidget, datasetLabel, widget);
 
+								JSONObject content = widget.optJSONObject("content");
+								if (content != null)
+									datasetLabel = parseFiltersObject(sbiCockpitWidget, datasetLabel, content);
+
 								setIsAssociative(associationsMap, datasetLabel, sbiCockpitWidget);
 								setUseCache(dataSetMap, datasetLabel, sbiCockpitWidget);
 
@@ -259,10 +263,10 @@ public class CockpitStatisticsTablesUtils {
 		return datasetMap;
 	}
 
-	private static String parseFiltersObject(SbiCockpitWidget sbiCockpitWidget, String datasetLabel, JSONObject widget) throws JSONException {
+	private static String parseFiltersObject(SbiCockpitWidget sbiCockpitWidget, String datasetLabel, JSONObject widgetOrContent) throws JSONException {
 		logger.debug("IN");
 		// FILTERS
-		JSONArray filters = widget.optJSONArray("filters");
+		JSONArray filters = widgetOrContent.optJSONArray("filters");
 		boolean hasFilters = filters != null && !filters.toString().equals("{}");
 		sbiCockpitWidget.setFilters(hasFilters);
 		if (filters != null) {
