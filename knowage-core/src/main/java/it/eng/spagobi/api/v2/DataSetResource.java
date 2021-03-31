@@ -484,6 +484,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	private void setDriversIntoDsJSONConfig(IDataSet dataSet, SbiDataSet ds, JSONObject jsonSbiDataSet) throws Exception {
+		dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
 		if (dataSet instanceof QbeDataSet) {
 			try {
 				Boolean loadDSwithDrivers = true;
