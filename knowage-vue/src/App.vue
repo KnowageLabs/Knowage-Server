@@ -60,10 +60,10 @@
 						if (json.news) {
 							console.log('Total news', json.news.count.total)
 							console.log('Unread news', json.news.count.unread)
-							store.commit('setNews', json.news.count.total > 0)
+							store.commit('setNews', json.news)
 						}
 
-						store.commit('setDownload', json.downloads.count > 0)
+						store.commit('setDownloads', json.downloads)
 					}
 				}
 
