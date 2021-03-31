@@ -95,7 +95,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				tempColumns.push(modelColumns[j]);           // already present fields, ignores deleted ones
 				if(!modelColumns[j].isCalculated){
 					columnsNameArray.splice(columnsNameArray.indexOf(modelColumns[j].name),1);
-				} 
+				}
 			}
 
 		}
@@ -306,18 +306,19 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			var newDs = cockpitModule_datasetServices.newDataSet;
 			for(var i = 0; i < newDs.parameters.length; i++) {
 				if(newDs.parameters[i].value) {
-					cockpitModule_datasetServices.parameterHasValue = cockpitModule_datasetServices.areParametersSet[ds.id.dsId] = true;
+					cockpitModule_datasetServices.parameterHasValue = cockpitModule_datasetServices.areParametersSet[newDs.id.dsId] = true;
 				} else {
-					cockpitModule_datasetServices.parameterHasValue = cockpitModule_datasetServices.areParametersSet[ds.id.dsId] = false;
+					cockpitModule_datasetServices.parameterHasValue = cockpitModule_datasetServices.areParametersSet[newDs.id.dsId] = false;
 				}
 			}
-			return cockpitModule_datasetServices.areParametersSet[ds.id.dsId];
+			return cockpitModule_datasetServices.areParametersSet[newDs.id.dsId];
 		}
 	}
 
 	this.driversAreSet = function(config) {
+		var ds;
 		if(config.dataset) {
-			var ds = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
+			ds = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
 		}
 		if(ds && ds.drivers) {
 			for(var i = 0; i < ds.drivers.length; i++) {
@@ -553,7 +554,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		minMaxCategoriesSeries.serie.min.radar = 1;
 		minMaxCategoriesSeries.serie.min.bar = 1;
 		minMaxCategoriesSeries.serie.min.pie = 1;
-		
+
 		minMaxCategoriesSeries.charts = {
 				"line":["bar","heatmap"],
 				"bar":["pie","bubble","radar","sunburst","treemap","scatter","wordcloud","heatmap"],
