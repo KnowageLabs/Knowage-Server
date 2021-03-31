@@ -3,6 +3,8 @@
 		<InfoDialog v-model:visibility="display"></InfoDialog>
 		<LanguageDialog v-model:visibility="languageDisplay"></LanguageDialog>
 		<RoleDialog v-model:visibility="roleDisplay"></RoleDialog>
+		<NewsDialog v-model:visibility="newsDisplay"></NewsDialog>
+
 		<div class="menu-scroll-content">
 			<div>
 				<div class="profile">
@@ -27,7 +29,11 @@
 				<ul class="layout-menu">
 					<KnAdminMenu :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></KnAdminMenu>
 					<template v-for="(item, i) of allowedUserFunctionalities" :key="i">
-						<KnMenuItem :item="item" @click="itemClick" v-if="!item.conditionedView || (item.conditionedView == 'download' && download) || (item.conditionedView == 'news' && news)"></KnMenuItem>
+						<template v-if="!item.conditionedView || (item.conditionedView == 'download' && downloads) || (item.conditionedView == 'news' && news)">
+							<KnMenuItem :item="item" @click="itemClick"> </KnMenuItem>
+							<div class="tag" v-if="item.conditionedView && item.conditionedView == 'news' && news.count && news.count.unread && news.count.unread > 0">{{ news.count.unread }}</div>
+							<div class="tag" v-if="item.conditionedView && item.conditionedView == 'download' && downloads.count && downloads.count > 0">{{ downloads.count }}</div>
+						</template>
 					</template>
 					<template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
 						<KnMenuItem :item="item" @click="itemClick"></KnMenuItem>
@@ -45,6 +51,7 @@
 	import KnAdminMenu from '@/components/knmenu/KnAdminMenu.vue'
 	import LanguageDialog from '@/components/languageDialog/languageDialog.vue'
 	import RoleDialog from '@/components/roleDialog/roleDialog.vue'
+	import NewsDialog from '@/components/newsDialog/newsDialog.vue'
 	import { getGravatar } from '@/helpers/gravatarHelper'
 	import { mapState } from 'vuex'
 	import auth from '@/helpers/authHelper'
@@ -57,7 +64,8 @@
 			KnMenuItem,
 			KnAdminMenu,
 			LanguageDialog,
-			RoleDialog
+			RoleDialog,
+			NewsDialog
 		},
 		data() {
 			return {
@@ -68,7 +76,10 @@
 				technicalUserFunctionalities: new Array<MenuItem>(),
 				display: false,
 				languageDisplay: false,
-				roleDisplay: false
+				roleDisplay: false,
+				newsDisplay: false,
+				unreadNewsCount: 0,
+				downloadsCount: 0
 			}
 		},
 		methods: {
@@ -83,6 +94,9 @@
 			},
 			languageSelection() {
 				this.languageDisplay = !this.languageDisplay
+			},
+			newsSelection() {
+				this.newsDisplay = !this.newsDisplay
 			},
 			itemClick(event) {
 				const item = event.item
@@ -121,14 +135,14 @@
 		computed: {
 			...mapState({
 				user: 'user',
-				download: 'download',
+				downloads: 'downloads',
 				locale: 'locale',
 				news: 'news'
 			})
 		},
 		watch: {
 			download(newDownload, oldDownload) {
-				if (oldDownload != this.download) this.download = newDownload
+				if (oldDownload != this.downloads) this.downloads = newDownload
 			},
 			news(newNews, oldNews) {
 				if (oldNews != this.news) this.news = newNews

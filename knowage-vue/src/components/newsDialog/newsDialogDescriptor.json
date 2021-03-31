@@ -1,0 +1,7 @@
+{
+	"newsType": {
+		"1": { "className": "fas fa-rss", "style": { "background-color": "#ffc107", "color": "white" }, "label": "news.news" },
+		"2": { "className": "far fa-bell", "style": { "background-color": "#c2185b", "color": "white" }, "label": "news.notifications" },
+		"3": { "className": "fas fa-exclamation-triangle", "style": { "background-color": "#cccccc", "color": "white" }, "label": "news.warnings" }
+	}
+}
