@@ -86,9 +86,10 @@
 
 <script lang="ts">
 	import { defineComponent } from 'vue'
+	import { VCodeMirror } from 'vue3-code-mirror'
 	import axios from 'axios'
 	import Chips from 'primevue/chips'
-	import { VCodeMirror } from 'vue3-code-mirror'
+	import { download } from '@/helpers/commons/fileHelper'
 	import Dropdown from 'primevue/dropdown'
 	import InputText from 'primevue/inputtext'
 	import TabView from 'primevue/tabview'
@@ -147,13 +148,6 @@
 			window.addEventListener('resize', this.resizeHandler)
 		},
 		methods: {
-			download(content, fileName, contentType): void {
-				var a = document.createElement('a')
-				var file = new Blob([content], { type: contentType })
-				a.href = URL.createObjectURL(file)
-				a.download = fileName
-				a.click()
-			},
 			downloadTemplate(): void {
 				if (this.dirty) {
 					this.$confirm.require({
@@ -178,7 +172,7 @@
 						}
 					})
 				} else {
-					this.download(JSON.stringify(this.template), this.template.name + '.json', 'text/plain')
+					download(JSON.stringify(this.template), this.template.name + '.json', 'text/plain')
 				}
 			},
 			closeTemplate(): void {

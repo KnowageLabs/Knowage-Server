@@ -1,5 +1,5 @@
 <template>
-	<Dialog class="kn-dialog--toolbar--primary knNewsDialog" v-bind:visible="visibility" footer="footer" :header="$t('news.newsDialog.title')" :closable="false" modal>
+	<Dialog class="kn-dialog--toolbar--primary knNewsDialog" v-bind:visible="visibility" footer="footer" :header="$t('newsDialog.title')" :closable="false" modal>
 		<TabView class="knTab" @tab-click="emptySelectedNews()">
 			<TabPanel v-for="(type, index) in news" v-bind:key="index" :header="$t(typeDescriptor.newsType[index].label)">
 				<div class="knPageContent p-grid p-m-0 p-p-0">
@@ -15,16 +15,20 @@
 							</template>
 						</Listbox>
 					</div>
-
-					<div class="p-col-7" v-if="Object.keys(selectedNews).length != 0">
+					<div class="p-col-7 p-flex-column" v-if="Object.keys(selectedNews).length != 0">
 						<h4>
-							{{ $t('news.newsDialog.description') }}: {{ selectedNews.description }}
-
-							<span>{{ $t('news.newsDialog.expirationDate') }} : {{ getDate() }}</span>
+							<div class="p-col">
+								{{ $t('newsDialog.description') }}: <span class="h4-text">{{ selectedNews.description }}</span>
+							</div>
+							<div class="p-col">
+								{{ $t('newsDialog.expirationDate') }} : <span class="h4-text">{{ getDate() }}</span>
+							</div>
 						</h4>
-						<p v-html="selectedNews.html"></p>
+						<div class="p-col">
+							<p v-html="selectedNews.html" disabled></p>
+						</div>
 					</div>
-					<div class="p-col-7 " v-else>{{ $t('news.newsDialog.noNewsSelected') }}</div>
+					<div class="p-col-7 " v-else>{{ $t('common.info.noElementSelected') }}</div>
 				</div>
 			</TabPanel>
 		</TabView>
@@ -76,8 +80,7 @@
 				this.selectedNews = {} as SingleNews
 			},
 			getDate() {
-				if (this.selectedNews && this.selectedNews.expirationDate) return formatDate(this.selectedNews.expirationDate, 'LLL')
-				return null
+				return formatDate(this.selectedNews.expirationDate, 'LLL')
 			},
 			closeDialog() {
 				this.$emit('update:visibility', false)
@@ -88,18 +91,18 @@
 						(response) => {
 							console.log(response)
 							this.selectedNews = response.data
+
+							if (!this.selectedNews.read) {
+								axios.post('/knowage/restful-services/2.0/newsRead/' + id).then(
+									(response) => {
+										console.log(response)
+									},
+									(error) => console.error(error)
+								)
+							}
 						},
 						(error) => console.error(error)
 					)
-					if (!this.selectedNews.read) {
-						axios.post('/knowage/restful-services/2.0/newsRead/' + id).then(
-							(response) => {
-								console.log(response)
-								this.selectedNews = response.data
-							},
-							(error) => console.error(error)
-						)
-					}
 				}
 			}
 		},
@@ -165,5 +168,9 @@
 
 	.kn-list-column {
 		border-right: 1px solid #ccc;
+	}
+
+	.h4-text {
+		font-weight: normal;
 	}
 </style>

@@ -129,10 +129,6 @@ public class KnowageWebSocket {
 		List<Integer> listOfReads = newsReadDao.getReadNews(userProfile);
 		int unread = total - listOfReads.size();
 
-		total = 10;
-
-		unread = 3;
-
 		JSONObject news = new JSONObject();
 		try {
 			JSONObject countJSONObject = new JSONObject();

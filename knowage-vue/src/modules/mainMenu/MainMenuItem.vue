@@ -2,7 +2,8 @@
 	<li role="none" :style="item.style" :title="item.desc || item.label" @mouseenter="toggleSubMenu" @mouseleave="toggleSubMenu">
 		<router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, href, isActive }" exact>
 			<a :href="href" @click="onClick($event, navigate)" role="menuitem" :class="isActive && 'router-link-active'">
-				<span v-if="item.iconCls" :class="['p-menuitem-icon', item.iconCls]" v-badge="2"></span>
+				<Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>
+				<span v-if="item.iconCls" :class="['p-menuitem-icon', item.iconCls]"></span>
 				<img v-if="item.custIcon" :src="item.custIcon" />
 				<span v-if="!item.iconCls && !item.custIcon" class="p-menuitem-icon fas fa-file"></span>
 				<span class="p-menuitem-text">{{ item.label }}</span>
@@ -10,7 +11,8 @@
 			</a>
 		</router-link>
 		<a v-else :href="item.url" @click="onClick" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
-			<span v-if="item.iconCls" :class="['p-menuitem-icon', item.iconCls]" v-badge></span>
+			<Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>
+			<span v-if="item.iconCls" :class="['p-menuitem-icon', item.iconCls]"></span>
 			<img v-if="item.custIcon" :src="item.custIcon" />
 			<span v-if="!item.iconCls && !item.custIcon" class="p-menuitem-icon fas fa-file"></span>
 			<span class="p-menuitem-text">{{ item.label }}</span>
@@ -26,12 +28,15 @@
 
 <script lang="ts">
 	import { defineComponent } from 'vue'
+	import Badge from 'primevue/badge'
 
 	export default defineComponent({
 		name: 'kn-menu-item',
+		components: { Badge },
 		emits: ['click'],
 		props: {
-			item: null
+			item: null,
+			badge: null
 		},
 		data() {
 			return {

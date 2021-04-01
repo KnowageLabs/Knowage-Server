@@ -5,7 +5,6 @@
 		<RoleDialog v-model:visibility="roleDisplay"></RoleDialog>
 		<DownloadsDialog v-model:visibility="downloadsDisplay"></DownloadsDialog>
 		<NewsDialog v-model:visibility="newsDisplay"></NewsDialog>
-		<div @click="openDialog">downloads</div>
 		<div class="menu-scroll-content">
 			<div>
 				<div class="profile">
@@ -30,7 +29,12 @@
 				<ul class="layout-menu">
 					<MainMenuAdmin :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></MainMenuAdmin>
 					<template v-for="(item, i) of allowedUserFunctionalities" :key="i">
-						<MainMenuItem :item="item" @click="itemClick" v-if="!item.conditionedView || (item.conditionedView == 'download' && download) || (item.conditionedView == 'news' && news)"></MainMenuItem>
+						<MainMenuItem
+							:item="item"
+							@click="itemClick"
+							v-if="!item.conditionedView || (item.conditionedView == 'download' && downloads) || (item.conditionedView == 'news' && news)"
+							:badge="item.conditionedView == 'download' ? downloads.count : conditionedView == 'news' ? news.unread : 0"
+						></MainMenuItem>
 					</template>
 					<template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
 						<MainMenuItem :item="item" @click="itemClick"></MainMenuItem>
@@ -81,9 +85,6 @@
 			}
 		},
 		methods: {
-			openDialog() {
-				this.downloadsDisplay = true
-			},
 			info() {
 				this.display = !this.display
 			},
@@ -92,6 +93,9 @@
 			},
 			roleSelection() {
 				this.roleDisplay = !this.roleDisplay
+			},
+			downloadsSelection() {
+				this.downloadsDisplay = !this.downloadsDisplay
 			},
 			languageSelection() {
 				this.languageDisplay = !this.languageDisplay
@@ -136,14 +140,14 @@
 		computed: {
 			...mapState({
 				user: 'user',
-				download: 'download',
+				downloads: 'downloads',
 				locale: 'locale',
 				news: 'news'
 			})
 		},
 		watch: {
 			download(newDownload, oldDownload) {
-				if (oldDownload != this.download) this.download = newDownload
+				if (oldDownload != this.downloads) this.downloads = newDownload
 			},
 			news(newNews, oldNews) {
 				if (oldNews != this.news) this.news = newNews

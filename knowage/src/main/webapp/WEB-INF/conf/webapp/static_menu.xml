@@ -278,8 +278,7 @@
 			conditionedView="news" iconCls="far fa-newspaper"
 			command="newsSelection" />
 		<ITEM label="menu.Download" conditionedView="download"
-			to="${SPAGOBI_CONTEXT}/themes/${KNOWAGE_THEME}/html/downloads.html"
-			iconCls="fas fa-download" />
+			iconCls="fas fa-download" command="downloadsSelection" />
 
 
 	</ALLOWED_USER_FUNCTIONALITIES>
