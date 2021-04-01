@@ -34,12 +34,7 @@ module.exports = {
 	css: {
 		loaderOptions: {
 			scss: {
-				additionalData: `
-				@import "@/assets/scss/_variables.scss";
-				@import "@/assets/scss/_common.scss";
-				@import "@/assets/scss/_material.scss";
-				@import "@/assets/scss/_toolbar.scss";
-				@import "@/assets/scss/_dialog.scss";`
+				additionalData: '@import "@/assets/scss/main.scss";'
 			}
 		}
 	}

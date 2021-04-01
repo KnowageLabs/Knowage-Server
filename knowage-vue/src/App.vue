@@ -2,7 +2,7 @@
 	<Toast></Toast>
 	<ConfirmDialog></ConfirmDialog>
 	<div class="layout-wrapper-content">
-		<Knmenu></Knmenu>
+		<MainMenu></MainMenu>
 
 		<div class="layout-main">
 			<router-view />
@@ -12,7 +12,7 @@
 
 <script>
 	import ConfirmDialog from 'primevue/confirmdialog'
-	import Knmenu from '@/components/knmenu/KnMenu'
+	import MainMenu from '@/modules/mainMenu/MainMenu'
 	import Toast from 'primevue/toast'
 	import { defineComponent } from 'vue'
 	import store from '@/App.store'
@@ -22,7 +22,7 @@
 	export default defineComponent({
 		components: {
 			ConfirmDialog,
-			Knmenu,
+			MainMenu,
 			Toast
 		},
 		created() {

@@ -1,0 +1,40 @@
+.kn-list {
+	border: none;
+	border-radius: 0;
+	.p-listbox-item {
+		padding: 0;
+		a {
+			display: block;
+			padding: 0.75rem 0.75rem;
+			&.router-link-active {
+				background-color: $list-item-selected-background-color;
+			}
+		}
+	}
+	.p-listbox-filter-container {
+		input.p-listbox-filter {
+			border-radius: 0;
+		}
+	}
+
+	.kn-list-item {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+
+		.kn-list-item-text {
+			display: flex;
+			flex: 1;
+			flex-direction: column;
+			justify-content: center;
+			align-items: flex-start;
+			margin-left: 0.8rem;
+
+			.kn-list-item-text-secondary {
+				color: $list-item-text-secondary-color;
+				font-size: $list-item-text-secondary-font-size;
+			}
+		}
+	}
+}

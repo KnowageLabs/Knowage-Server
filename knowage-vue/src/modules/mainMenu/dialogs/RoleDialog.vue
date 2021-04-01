@@ -1,5 +1,5 @@
 <template>
-	<Dialog class="kn-dialog--toolbar--primary roleDialog" v-bind:visible="visibility" footer="footer" :header="$t('role.roleSelection')" :closable="false" modal>
+	<Dialog class="kn-dialog--toolbar--primary RoleDialog" v-bind:visible="visibility" footer="footer" :header="$t('role.roleSelection')" :closable="false" modal>
 		<Dropdown id="role" v-model="sessionRole" class="kn-material-input" @change="setDirty" :options="roles" :placeholder="$t('role.defaultRolePlaceholder')" />
 		<template #footer>
 			<Button class="p-button-text kn-button" v-t="'common.close'" @click="closeDialog" />
@@ -64,7 +64,7 @@
 			margin: 10px 0 0 0;
 		}
 	}
-	.roleDialog #role {
+	.RoleDialog #role {
 		width: 300px;
 	}
 </style>

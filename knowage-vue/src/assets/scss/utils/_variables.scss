@@ -7,6 +7,11 @@ $color-fab: #ce0651;
 // COMMON FONT VARIABLES
 $font-family: Roboto, 'Helvetica Neue', Arial, sans-serif;
 
+// LIST VARIABLES
+$list-item-selected-background-color: $color-secondary;
+$list-item-text-secondary-color: $color-default;
+$list-item-text-secondary-font-size: 0.8rem;
+
 // MENU VARIABLES
 $mainmenu-background-color: $color-primary;
 $mainmenu-box-shadow: 0px 4px 8px rgb(72, 72, 72);

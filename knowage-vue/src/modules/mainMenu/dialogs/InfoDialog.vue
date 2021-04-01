@@ -1,9 +1,9 @@
 <template>
-	<Dialog class="kn-dialog--toolbar--primary" v-bind:visible="visibility" footer="footer" :header="$t('infoDialog.aboutKnowage')" :closable="false" modal>
+	<Dialog class="kn-dialog--toolbar--primary" v-bind:visible="visibility" footer="footer" :header="$t('InfoDialog.aboutKnowage')" :closable="false" modal>
 		<div class="p-grid p-m-1">
 			<div class="p-col">
 				<div class="p-d-flex p-jc-center">
-					<img :src="require('@/assets/logo_knowage.svg')" height="100" />
+					<img :src="require('@/assets/images/commons/logo_knowage.svg')" height="100" />
 				</div>
 				<p>
 					<strong>{{ $t('common.version') }}:</strong> {{ currentVersion }}
@@ -14,8 +14,8 @@
 				<p>
 					<strong>{{ $t('common.tenant') }}:</strong> {{ user.organization }}
 				</p>
-				<p>{{ $t('infoDialog.sourceCode') }} <a href="www.knowage-suite.com">Knowage Suite</a></p>
-				<p>{{ $t('infoDialog.copyright', { year: currentYear }) }}</p>
+				<p>{{ $t('InfoDialog.sourceCode') }} <a href="www.knowage-suite.com">Knowage Suite</a></p>
+				<p>{{ $t('InfoDialog.copyright', { year: currentYear }) }}</p>
 			</div>
 		</div>
 		<template #footer>

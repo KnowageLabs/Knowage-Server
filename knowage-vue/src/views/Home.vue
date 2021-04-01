@@ -8,7 +8,7 @@
 
 <script lang="ts">
 	import { defineComponent } from 'vue'
-	import { formatDate } from '@/helpers/localeHelper'
+	import { formatDate } from '@/helpers/commons/localeHelper'
 
 	export default defineComponent({
 		name: 'Home',

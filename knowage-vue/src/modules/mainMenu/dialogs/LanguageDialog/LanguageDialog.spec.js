@@ -1,15 +1,13 @@
 import { shallowMount } from '@vue/test-utils'
-import { createStore } from 'vuex'
-import languageDialog from './languageDialog.vue'
+import LanguageDialog from './LanguageDialog.vue'
 import flushPromises from 'flush-promises'
 import axios from 'axios'
 import router from '@/App.routes.js'
 import Button from 'primevue/button'
 
-const myLanguages = ['it_IT', 'en_US', 'fr_FR', 'zh_CN#Hans']
 const defaultLocale = 'en_US'
 
-const mockWrapper = shallowMount(languageDialog, {
+const mockWrapper = shallowMount(LanguageDialog, {
 	propsData: {
 		visibility: false,
 		languages: []
@@ -28,7 +26,7 @@ const mockWrapper = shallowMount(languageDialog, {
 	}
 })
 
-describe('languageDialog', () => {
+describe('LanguageDialog', () => {
 	test('is loaded empty', () => {
 		expect(mockWrapper.vm.languages.length).toBe(0)
 		expect(mockWrapper.vm.visibility).toBe(false)
@@ -39,7 +37,7 @@ jest.mock('axios', () => ({
 	get: jest.fn(() => Promise.resolve({ data: ['it_IT', 'en_US', 'fr_FR', 'zh_CN#Hans'] }))
 }))
 
-describe('languageDialog', () => {
+describe('LanguageDialog', () => {
 	test('language dialog is not populated', async () => {
 		expect(mockWrapper.vm.languages.length).toBe(0)
 		/* mockWrapper.vm.$emit('update:visibility', true) */
@@ -60,7 +58,7 @@ describe('languageDialog', () => {
 	})
 })
 
-describe('languageDialog', () => {
+describe('LanguageDialog', () => {
 	it('Test click event', async () => {
 		mockWrapper.vm.changeLanguage({ locale: 'it_IT', disabled: false })
 		expect(mockWrapper.vm.$i18n.locale).toBe('it_IT')

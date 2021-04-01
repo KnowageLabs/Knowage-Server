@@ -1,6 +1,6 @@
 import axios from 'axios'
 //import router from './App.routes.js'
-import authHelper from '@/helpers/authHelper'
+import authHelper from '@/helpers/commons/authHelper'
 
 axios.interceptors.request.use(
 	(config) => {

@@ -1,14 +1,14 @@
 <template>
 	<Dialog class="kn-dialog--toolbar--primary knNewsDialog" v-bind:visible="visibility" footer="footer" :header="$t('news.newsDialog.title')" :closable="false" modal>
-		<TabView @tab-click="emptySelectedNews()">
+		<TabView class="knTab" @tab-click="emptySelectedNews()">
 			<TabPanel v-for="(type, index) in news" v-bind:key="index" :header="$t(typeDescriptor.newsType[index].label)">
 				<div class="knPageContent p-grid p-m-0 p-p-0">
 					<div class="p-col-5 ">
-						<Listbox class="knList" :options="news[index]" optionLabel="title" style="width:20rem" listStyle="max-height:250px">
+						<Listbox class="kn-list" :options="news[index]" optionLabel="title" style="width:20rem" listStyle="max-height:250px">
 							<template #option="slotProps">
-								<div class="knListItem" @click="getNews(slotProps.option.id)">
+								<div class="kn-list-item" @click="getNews(slotProps.option.id)">
 									<Avatar :icon="typeDescriptor.newsType[slotProps.option.type].className" shape="circle" size="medium" :style="typeDescriptor.newsType[slotProps.option.type].style" />
-									<div class="knListItemText">
+									<div class="kn-list-item-text">
 										<span>{{ slotProps.option.title }}</span>
 									</div>
 								</div>
@@ -41,10 +41,10 @@
 	import Listbox from 'primevue/listbox'
 	import { mapState } from 'vuex'
 	import axios from 'axios'
-	import newsDialogDescriptor from './newsDialogDescriptor.json'
+	import newsDialogDescriptor from './NewsDialogDescriptor.json'
 	import TabView from 'primevue/tabview'
 	import TabPanel from 'primevue/tabpanel'
-	import { formatDate } from '@/helpers/localeHelper'
+	import { formatDate } from '@/helpers/commons/localeHelper'
 
 	interface SingleNews {
 		description?: string
@@ -139,16 +139,15 @@
 </script>
 
 <style scoped lang="scss">
-	.knNewsDialog {
+	.newsDialog {
 		min-width: 800px;
 		max-width: 1200px;
-		min-height: 600px;
 		width: 800px;
-		height: 600px;
 	}
 	.knTab {
-		.p-tabview {
-			height: 500px;
+		&.p-tabview {
+			min-height: 400px;
+			max-height: 600px;
 
 			&:deep() .p-tabview-title {
 				text-transform: uppercase;
@@ -164,53 +163,7 @@
 		height: 75%;
 	}
 
-	.noDecoration {
-		text-decoration: none;
-		color: inherit;
-	}
-
-	.knListColumn {
+	.kn-list-column {
 		border-right: 1px solid #ccc;
-	}
-
-	.knList {
-		border: none;
-		border-radius: 0;
-		&:deep() .p-listbox-item {
-			padding: 0;
-			a {
-				display: block;
-				padding: 0.75rem 0.75rem;
-				&.router-link-active {
-					background-color: $color-secondary;
-				}
-			}
-		}
-		&:deep() .p-listbox-filter-container {
-			input.p-listbox-filter {
-				border-radius: 0;
-			}
-		}
-
-		.knListItem {
-			display: flex;
-			flex-direction: row;
-			justify-content: flex-start;
-			align-items: center;
-
-			.knListItemText {
-				display: flex;
-				flex: 1;
-				flex-direction: column;
-				justify-content: center;
-				align-items: flex-start;
-				margin-left: 0.8rem;
-
-				.smallerLine {
-					color: rgb(148, 148, 148);
-					font-size: 0.8rem;
-				}
-			}
-		}
 	}
 </style>

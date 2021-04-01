@@ -27,29 +27,28 @@ import Button from 'primevue/button'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Toolbar from 'primevue/toolbar'
-
 import Tooltip from 'primevue/tooltip'
+import BadgeDirective from 'primevue/badgedirective'
 
 import ConfirmationService from 'primevue/confirmationservice'
 
 import i18n from '@/App.i18n'
 
 createApp(App)
-  .use(VueAxios, axios)
-  .use(store)
-  .use(router)
-  .use(i18n)
-  .use(PrimeVue)
-  .use(ToastService)
-  .use(ConfirmationService)
+	.use(VueAxios, axios)
+	.use(store)
+	.use(router)
+	.use(i18n)
+	.use(PrimeVue)
+	.use(ToastService)
+	.use(ConfirmationService)
 
-  // eslint-disable-next-line
-  // @ts-ignore
-  .directive('tooltip', Tooltip)
+	.directive('badge', BadgeDirective)
+	.directive('tooltip', Tooltip)
 
-  .component('Button', Button)
-  .component('Card', Card)
-  .component('InputText', InputText)
-  .component('Toolbar', Toolbar)
+	.component('Button', Button)
+	.component('Card', Card)
+	.component('InputText', InputText)
+	.component('Toolbar', Toolbar)
 
-  .mount('#app')
+	.mount('#app')

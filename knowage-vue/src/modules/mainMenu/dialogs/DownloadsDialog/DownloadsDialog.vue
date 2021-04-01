@@ -1,5 +1,5 @@
 <template>
-  <Dialog class="kn-dialog--toolbar--primary roleDialog" v-bind:visible="visibility" footer="footer" :header="$t('downloadsDialog.title')" :closable="false" modal>
+  <Dialog class="kn-dialog--toolbar--primary RoleDialog" v-bind:visible="visibility" footer="footer" :header="$t('downloadsDialog.title')" :closable="false" modal>
     <DataTable :value="rowData" style="width:800px" :resizableColumns="true" columnResizeMode="fit | expand">
       <Column v-for="(column, index) in columnDefs" v-bind:key="index" :field="column.field" :header="$t(column.headerName)" :bodyStyle="column.bodyStyle">
         <template v-if="column.template" #body="slotProps">

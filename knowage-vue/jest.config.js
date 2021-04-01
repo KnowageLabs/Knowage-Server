@@ -2,7 +2,7 @@ module.exports = {
 	preset: '@vue/cli-plugin-unit-jest/presets/typescript-and-babel',
 	transformIgnorePatterns: ['/node_modules/(?!vue-awesome)'],
 	//testMatch: ['**/**/**/**/*.spec.[jt]s?(x)', 'src/components/languageDialog/languageDialog.spec.js'],
-	testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
+	testMatch: ['**/?(*.)+(spec).[jt]s?(x)'],
 
 	transform: {
 		'^.+\\.vue$': 'vue-jest',

@@ -1,6 +1,6 @@
 <template>
 	<Dialog class="kn-dialog--toolbar--primary" v-bind:visible="visibility" footer="footer" :header="$t('language.languageSelection')" :closable="false" modal>
-		<Listbox class="knList countryList" :options="languages" optionDisabled="disabled">
+		<Listbox class="kn-list countryList" :options="languages" optionDisabled="disabled">
 			<template #option="slotProps">
 				<div :class="['p-d-flex', 'p-ai-center', 'countryItem', slotProps.option.locale]" @click="changeLanguage(slotProps.option)">
 					<img :alt="slotProps.option.locale" :src="require('@/assets/images/flags/icon-' + slotProps.option.locale.toLowerCase() + '.png')" width="40" />

@@ -56,7 +56,7 @@
 					<template #content>
 						<div class="imageContainer p-d-flex p-jc-center p-ai-center">
 							<i class="far fa-image fa-5x icon" v-if="!template.image" />
-							<img :src="template.image" v-if="template.image" height="100%" class="noselect" />
+							<img :src="template.image" v-if="template.image" height="100%" class="kn-no-select" />
 						</div>
 					</template>
 				</Card>
