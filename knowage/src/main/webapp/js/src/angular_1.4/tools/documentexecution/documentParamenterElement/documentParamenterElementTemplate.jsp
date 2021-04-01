@@ -38,11 +38,16 @@
 			<md-button ng-disabled="datasetSettings" class="md-icon-button" id="{{::parameter.urlName}}" ng-click="popupLookupParameterDialog(parameter)">
 				<md-icon md-font-icon="fa fa-external-link"></md-icon>
 			</md-button>
-			<div flex>				
+			<div flex ng-if="isArray(parameter.parameterValue) && parameter.parameterValue.length > 0">
 				<md-chips ng-model="parameter.parameterValue" readonly="true">
 					<md-chip-template>
 						<strong>{{ descriptionOf($chip) }}</strong>
 					</md-chip-template>
+				</md-chips>
+			</div>
+			<div flex ng-if="!isArray(parameter.parameterValue) && !isBlank(parameter.parameterValue)">
+				<md-chips>
+					<md-chip><strong>{{parameter.parameterValue}}</strong></md-chip>
 				</md-chips>
 			</div>
 		</div>

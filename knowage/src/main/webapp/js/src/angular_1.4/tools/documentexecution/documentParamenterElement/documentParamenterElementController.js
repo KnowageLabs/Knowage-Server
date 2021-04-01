@@ -791,6 +791,14 @@
 			}
 		}
 
+		$scope.isArray = function(obj) {
+			return Array.isArray(obj);
+		}
+
+		$scope.isBlank = function(value) {
+			return (!value || value == '');
+		}
+
 		$scope.descriptionOf = function(value) {
 			var matches = $scope.parameter.driverDefaultValue ? $scope.parameter.driverDefaultValue.filter(function(e) { return e.value == value; }) : [];
 			if (matches.length > 0) {
