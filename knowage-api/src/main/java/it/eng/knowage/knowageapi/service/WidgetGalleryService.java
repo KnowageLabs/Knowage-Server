@@ -41,10 +41,19 @@ public class WidgetGalleryService {
 		return ret;
 	}
 
-	public WidgetGalleryDTO getWidgetsById(String id) {
+	public List<WidgetGalleryDTO> getWidgetsByTenant(String tenant) {
 
-		SbiWidgetGallery widget = sbiWidgetGalleryDao.findById(id);
+		List<SbiWidgetGallery> widgets = (List<SbiWidgetGallery>) sbiWidgetGalleryDao.findAllByTenant(tenant);
 
+		List<WidgetGalleryDTO> ret = widgets.stream().map(el -> mapTo(el)).collect(Collectors.toList());
+
+		return ret;
+	}
+
+	public WidgetGalleryDTO getWidgetsById(String id, String tenant) {
+
+		SbiWidgetGallery widget = sbiWidgetGalleryDao.findByIdTenant(id, tenant);
+		updateGalleryCounter(widget);
 		return mapTo(widget);
 	}
 
@@ -58,6 +67,8 @@ public class WidgetGalleryService {
 		toRet.setDescription(sbiWidgetGallery.getDescription());
 		toRet.setType(sbiWidgetGallery.getType());
 		toRet.setImage(sbiWidgetGallery.getPreviewImage());
+		toRet.setOrganization(sbiWidgetGallery.getOrganization());
+		toRet.setUsageCounter(sbiWidgetGallery.getUsageCounter());
 		List<SbiWidgetGalleryTag> tagList = sbiWidgetGallery.getSbiWidgetGalleryTags();
 		if (tagList != null && tagList.size() > 0) {
 			List<String> tags = new ArrayList<String>();
@@ -108,6 +119,7 @@ public class WidgetGalleryService {
 		newSbiWidgetGallery.setTimeIn(Timestamp.from(Instant.now()));
 		newSbiWidgetGallery.setType(type);
 		newSbiWidgetGallery.setUserIn(userid);
+		newSbiWidgetGallery.setUsageCounter(1);
 		List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, userid, tags);
 		newSbiWidgetGallery.getSbiWidgetGalleryTags().addAll(tagList);
 
@@ -139,8 +151,12 @@ public class WidgetGalleryService {
 		sbiWidgetGalleryDao.update(newSbiWidgetGallery);
 	}
 
-	public int deleteGallery(String id) {
-		return sbiWidgetGalleryDao.deleteById(id);
+	public void updateGalleryCounter(SbiWidgetGallery newSbiWidgetGallery) {
+		sbiWidgetGalleryDao.updateCounter(newSbiWidgetGallery);
+	}
+
+	public int deleteGallery(String id, String tenant) {
+		return sbiWidgetGalleryDao.deleteByIdTenant(id, tenant);
 	}
 
 	public WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String licenseText, String licenseName,
@@ -161,7 +177,6 @@ public class WidgetGalleryService {
 		newSbiWidgetGallery.setTimestamp(Timestamp.from(Instant.now()));
 		newSbiWidgetGallery.setType(type);
 		newSbiWidgetGallery.setUser(userid);
-
 		return newSbiWidgetGallery;
 
 	}
@@ -179,7 +194,7 @@ public class WidgetGalleryService {
 			SbiWidgetGalleryTag sbiWidgetGalleryTag = new SbiWidgetGalleryTag();
 			SbiWidgetGalleryTagId newId = new SbiWidgetGalleryTagId(tagArray[i], sbiWidgetGallery.getUuid());
 			sbiWidgetGalleryTag.setId(newId);
-			sbiWidgetGalleryTag.setOrganization("tenant");
+			sbiWidgetGalleryTag.setOrganization(sbiWidgetGallery.getOrganization());
 			sbiWidgetGalleryTag.setSbiVersionIn("");
 			sbiWidgetGalleryTag.setTimeIn(Timestamp.from(Instant.now()));
 			sbiWidgetGalleryTag.setUserIn(userid);

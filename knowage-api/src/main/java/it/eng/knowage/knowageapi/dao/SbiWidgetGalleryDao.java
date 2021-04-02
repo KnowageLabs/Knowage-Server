@@ -10,10 +10,17 @@ public interface SbiWidgetGalleryDao {
 
 	String update(SbiWidgetGallery sbiWidgetGallery);
 
+	String updateCounter(SbiWidgetGallery sbiWidgetGallery);
+
 	SbiWidgetGallery findById(String id);
 
 	Collection<SbiWidgetGallery> findAll();
 
 	int deleteById(String id);
 
+	SbiWidgetGallery findByIdTenant(String id, String tenant);
+
+	Collection<SbiWidgetGallery> findAllByTenant(String tenant);
+
+	int deleteByIdTenant(String id, String tenant);
 }

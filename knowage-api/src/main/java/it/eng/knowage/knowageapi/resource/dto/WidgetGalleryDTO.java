@@ -23,7 +23,7 @@ public class WidgetGalleryDTO {
 	private String template;
 	private Timestamp timestamp;
 	private String user;
-
+	private int usageCounter;
 	private Code code = new Code();
 
 	public String getId() {
@@ -172,6 +172,14 @@ public class WidgetGalleryDTO {
 
 	public void setUser(String user) {
 		this.user = user;
+	}
+
+	public int getUsageCounter() {
+		return usageCounter;
+	}
+
+	public void setUsageCounter(int usageCounter) {
+		this.usageCounter = usageCounter;
 	}
 
 }
