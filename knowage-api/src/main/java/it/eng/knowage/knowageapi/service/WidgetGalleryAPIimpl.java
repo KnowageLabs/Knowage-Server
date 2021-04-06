@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.dao.SbiWidgetGalleryDao;
-import it.eng.knowage.knowageapi.dao.SbiWidgetGalleryTagDao;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTagId;
@@ -24,14 +23,12 @@ import it.eng.knowage.knowageapi.resource.dto.Code;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 
 @Component
-public class WidgetGalleryService {
+public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 
 	@Autowired
 	private SbiWidgetGalleryDao sbiWidgetGalleryDao;
 
-	@Autowired
-	private SbiWidgetGalleryTagDao sbiWidgetGalleryTagDao;
-
+	@Override
 	public List<WidgetGalleryDTO> getWidgets() {
 
 		List<SbiWidgetGallery> widgets = (List<SbiWidgetGallery>) sbiWidgetGalleryDao.findAll();
@@ -41,6 +38,7 @@ public class WidgetGalleryService {
 		return ret;
 	}
 
+	@Override
 	public List<WidgetGalleryDTO> getWidgetsByTenant(String tenant) {
 
 		List<SbiWidgetGallery> widgets = (List<SbiWidgetGallery>) sbiWidgetGalleryDao.findAllByTenant(tenant);
@@ -50,6 +48,7 @@ public class WidgetGalleryService {
 		return ret;
 	}
 
+	@Override
 	public WidgetGalleryDTO getWidgetsById(String id, String tenant) {
 
 		SbiWidgetGallery widget = sbiWidgetGalleryDao.findByIdTenant(id, tenant);
@@ -70,6 +69,8 @@ public class WidgetGalleryService {
 		toRet.setOrganization(sbiWidgetGallery.getOrganization());
 		toRet.setUsageCounter(sbiWidgetGallery.getUsageCounter());
 		List<SbiWidgetGalleryTag> tagList = sbiWidgetGallery.getSbiWidgetGalleryTags();
+		toRet.setLicenseText(sbiWidgetGallery.getLicenseText());
+		toRet.setLicenseName(sbiWidgetGallery.getLicenseName());
 		if (tagList != null && tagList.size() > 0) {
 			List<String> tags = new ArrayList<String>();
 			for (int i = 0; i < tagList.size(); i++) {
@@ -99,6 +100,7 @@ public class WidgetGalleryService {
 		return toRet;
 	}
 
+	@Override
 	public WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String licenseText, String licenseName,
 			String organization, String image, String sbiversion, String template, String userid, String tags) {
 
@@ -129,6 +131,7 @@ public class WidgetGalleryService {
 
 	}
 
+	@Override
 	public void updateGallery(String uuid, String name, String type, String author, String description, String licenseText, String licenseName,
 			String organization, String image, String sbiversion, String template, String userid, String tags) {
 
@@ -151,14 +154,17 @@ public class WidgetGalleryService {
 		sbiWidgetGalleryDao.update(newSbiWidgetGallery);
 	}
 
+	@Override
 	public void updateGalleryCounter(SbiWidgetGallery newSbiWidgetGallery) {
 		sbiWidgetGalleryDao.updateCounter(newSbiWidgetGallery);
 	}
 
+	@Override
 	public int deleteGallery(String id, String tenant) {
 		return sbiWidgetGalleryDao.deleteByIdTenant(id, tenant);
 	}
 
+	@Override
 	public WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String licenseText, String licenseName,
 			String organization, String image, String sbiversion, String template, String userid, String tags) {
 
@@ -181,6 +187,7 @@ public class WidgetGalleryService {
 
 	}
 
+	@Override
 	public List<SbiWidgetGalleryTag> createNewWidgetTagsByList(SbiWidgetGallery sbiWidgetGallery, String userid, String tags) {
 
 		List<SbiWidgetGalleryTag> tagList = new ArrayList<SbiWidgetGalleryTag>();

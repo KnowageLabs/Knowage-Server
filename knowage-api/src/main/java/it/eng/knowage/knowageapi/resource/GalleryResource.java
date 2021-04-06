@@ -31,7 +31,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
-import it.eng.knowage.knowageapi.service.WidgetGalleryService;
+import it.eng.knowage.knowageapi.service.WidgetGalleryAPI;
 import it.eng.knowage.knowageapi.utils.StringUtilities;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import spagobisecurity.SecurityServiceProxy;
@@ -43,7 +43,10 @@ public class GalleryResource {
 	static private Logger logger = Logger.getLogger(GalleryResource.class);
 
 	@Autowired
-	WidgetGalleryService widgetGalleryService;
+	WidgetGalleryAPI widgetGalleryService;
+
+	// TODO: error handling
+	// TODO: set FE roles and decide the BE roles management behaviour
 
 	@GET
 	@Path("/")
@@ -53,6 +56,8 @@ public class GalleryResource {
 		SpagoBIUserProfile profile = null;
 		List<WidgetGalleryDTO> widgetGalleryDTOs = null;
 		try {
+
+			// TODO: add check for functionalities if user can see gallery
 			profile = getUserProfile(token);
 			widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenant(profile.getOrganization());
 		} catch (Throwable e) {
@@ -111,6 +116,8 @@ public class GalleryResource {
 		String javascript = "";
 		String python = "";
 		String userId = jwtToken2userId(token.replace("Bearer ", ""));
+		String licenseText = "";
+		String licenseName = "";
 		WidgetGalleryDTO newSbiWidgetGallery = null;
 		if (StringUtilities.isNotEmpty(body)) {
 			try {
@@ -129,10 +136,13 @@ public class GalleryResource {
 				javascript = jsonCode.getString("javascript");
 				python = jsonCode.getString("python");
 				css = jsonCode.getString("css");
-
+				if (jsonBody.has("licenseText"))
+					licenseText = jsonCode.optString("licenseText");
+				if (jsonBody.has("licenseName"))
+					licenseName = jsonCode.optString("licenseName");
 				profile = getUserProfile(token);
 
-				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, "licenseText", "licenseName",
+				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, licenseText, licenseName,
 						profile.getOrganization(), image, "", body, userId, tags);
 
 			} catch (JSONException e) {
@@ -174,6 +184,8 @@ public class GalleryResource {
 		String javascript = "";
 		String python = "";
 		String userId = jwtToken2userId(token.replace("Bearer ", ""));
+		String licenseText = "";
+		String licenseName = "";
 		WidgetGalleryDTO newSbiWidgetGallery = null;
 		if (StringUtilities.isNotEmpty(body)) {
 			try {
@@ -193,10 +205,14 @@ public class GalleryResource {
 				python = jsonCode.getString("python");
 				css = jsonCode.getString("css");
 				profile = getUserProfile(token);
+				if (jsonBody.has("licenseText"))
+					licenseText = jsonCode.optString("licenseText");
+				if (jsonBody.has("licenseName"))
+					licenseName = jsonCode.optString("licenseName");
 				newSbiWidgetGallery = widgetGalleryService.getWidgetsById(widgetId, profile.getOrganization());
 				if (newSbiWidgetGallery != null) {
 
-					widgetGalleryService.updateGallery(newSbiWidgetGallery.getId(), label, type, userId, description, "licenseText", "licenseName",
+					widgetGalleryService.updateGallery(newSbiWidgetGallery.getId(), label, type, userId, description, licenseText, licenseName,
 							profile.getOrganization(), image, "", body, userId, tags);
 				}
 
