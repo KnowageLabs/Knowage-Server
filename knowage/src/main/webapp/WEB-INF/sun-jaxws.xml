@@ -21,4 +21,9 @@
 		implementation="it.eng.spagobi.services.content.service.ContentServiceImpl"
 		url-pattern="/services/ContentService" />
 
+	<endpoint
+		name="DataSetService"
+		implementation="it.eng.spagobi.services.dataset.service.DataSetServiceImpl"
+		url-pattern="/services/DataSetService" />
+
 </endpoints>

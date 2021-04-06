@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,17 +17,19 @@
  */
 package it.eng.spagobi.services.proxy;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
-import javax.xml.rpc.ServiceException;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
 
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.services.dataset.DataSetService;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.services.dataset.stub.DataSetServiceServiceLocator;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -43,9 +45,11 @@ import it.eng.spagobi.tools.dataset.utils.datamart.IQbeDataSetDatamartRetriever;
  */
 public final class DataSetServiceProxy extends AbstractServiceProxy {
 
-	static private final String SERVICE_NAME = "DataSet Service";
+	private static final String SERVICE_NAME = "DataSet Service";
 
-	static private Logger logger = Logger.getLogger(DataSetServiceProxy.class);
+	private static final QName SERVICE_QNAME = new QName("http://dataset.services.spagobi.eng.it/", "DataSetService");
+
+	private static Logger logger = Logger.getLogger(DataSetServiceProxy.class);
 
 	private MetamodelServiceProxy metamodelServiceProxy;
 
@@ -88,17 +92,19 @@ public final class DataSetServiceProxy extends AbstractServiceProxy {
 		this.session = session;
 	}
 
-	private it.eng.spagobi.services.dataset.stub.DataSetService lookUp() throws SecurityException {
+	private DataSetService lookUp() throws SecurityException {
 		try {
-			DataSetServiceServiceLocator locator = new DataSetServiceServiceLocator();
-			it.eng.spagobi.services.dataset.stub.DataSetService service = null;
+			DataSetService service = null;
+
 			if (serviceUrl != null) {
-				service = locator.getDataSetService(serviceUrl);
+				URL serviceUrlWithWsdl = new URL(serviceUrl.toString() + "?wsdl");
+
+				service = Service.create(serviceUrlWithWsdl, SERVICE_QNAME).getPort(DataSetService.class);
 			} else {
-				service = locator.getDataSetService();
+				service = Service.create(SERVICE_QNAME).getPort(DataSetService.class);
 			}
 			return service;
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			logger.error("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]");
 			throw new SecurityException("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]", e);
 		}
