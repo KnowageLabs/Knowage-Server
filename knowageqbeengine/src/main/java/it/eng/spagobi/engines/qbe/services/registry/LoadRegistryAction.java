@@ -39,9 +39,12 @@ import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
+import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
+import it.eng.qbe.statement.hibernate.HQLDataSet;
+import it.eng.qbe.statement.jpa.JPQLDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -166,6 +169,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		IStatement statement = getEngineInstance().getDataSource().createStatement(filteredQuery);
 
 		IDataSet dataSet = getActiveQueryAsDataSet(filteredQuery);
+		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) dataSet;
 		// QueryGraph graph = statement.getQuery().getQueryGraph();
 		boolean valid = true; // GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(graph,
 								// statement.getQuery().getQueryEntities(getDataSource()));
@@ -179,9 +183,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null ? maxSize : "none") + "]");
 			String jpaQueryStr = statement.getQueryString();
 			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
-			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL/JPQL: " + jpaQueryStr);
-			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + statement.getSqlQueryString());
+
+			logQueryInAudit(qbeDataSet);
 
 			int startI = start;
 			int limitI = (limit == null ? (maxSize == null ? -1 : maxSize) : limit);
@@ -888,6 +891,20 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			logger.debug("OUT");
 		}
 		return entity;
+	}
+
+	private void logQueryInAudit(AbstractQbeDataSet dataset) {
+		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+
+		if (dataset instanceof JPQLDataSet) {
+			auditlogger.info("[" + userProfile.getUserId() + "]:: JPQL: " + dataset.getStatement().getQueryString());
+			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + ((JPQLDataSet) dataset).getSQLQuery(true));
+		} else if (dataset instanceof HQLDataSet) {
+			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + dataset.getStatement().getQueryString());
+			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + ((HQLDataSet) dataset).getSQLQuery(true));
+		} else {
+			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getStatement().getSqlQueryString());
+		}
 	}
 
 }
