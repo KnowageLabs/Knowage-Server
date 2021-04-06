@@ -26,4 +26,9 @@
 		implementation="it.eng.spagobi.services.dataset.service.DataSetServiceImpl"
 		url-pattern="/services/DataSetService" />
 
+	<endpoint
+		name="DataSourceService"
+		implementation="it.eng.spagobi.services.datasource.service.DataSourceServiceImpl"
+		url-pattern="/services/DataSourceService" />
+
 </endpoints>

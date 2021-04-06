@@ -86,19 +86,6 @@
   <arrayMapping innerType="ns6:SDKMap" languageSpecificType="java:it.eng.spagobi.sdk.maps.bo.SDKMap[]" qname="ns5:ArrayOf_tns2_SDKMap" xmlns:ns5="urn:spagobisdkmaps" xmlns:ns6="http://bo.maps.sdk.spagobi.eng.it"/>
   <arrayMapping innerType="ns8:SDKFeature" languageSpecificType="java:it.eng.spagobi.sdk.maps.bo.SDKFeature[]" qname="ns7:ArrayOf_tns2_SDKFeature" xmlns:ns7="urn:spagobisdkmaps" xmlns:ns8="http://bo.maps.sdk.spagobi.eng.it"/>
  </service>
- <service name="DataSourceService" provider="java:RPC">
-  <parameter name="wsdlServicePort" value="DataSourceService"/>
-  <parameter name="className" value="it.eng.spagobi.services.datasource.stub.DataSourceServiceSoapBindingSkeleton"/>
-  <parameter name="typeMappingVersion" value="1.2"/>
-  <parameter name="allowedMethods" value="*"/>
-  <parameter name="wsdlServiceElement" value="DataSourceServiceService"/>
-  <parameter name="wsdlTargetNamespace" value="urn:spagobidatasource"/>
-  <parameter name="wsdlPortType" value="DataSourceService"/>
-  <parameter name="scope" value="Application"/>
-  <parameter name="schemaUnqualified" value="urn:spagobidatasource,http://bo.datasource.services.spagobi.eng.it"/>
-  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns9:SpagoBiDataSource" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.services.datasource.bo.SpagoBiDataSource" xmlns:ns9="http://bo.datasource.services.spagobi.eng.it"/>
-  <arrayMapping innerType="ns11:SpagoBiDataSource" languageSpecificType="java:it.eng.spagobi.services.datasource.bo.SpagoBiDataSource[]" qname="ns10:ArrayOf_tns2_SpagoBiDataSource" xmlns:ns10="urn:spagobidatasource" xmlns:ns11="http://bo.datasource.services.spagobi.eng.it"/>
- </service>
  <service name="TestConnectionService" provider="java:RPC">
   <requestFlow>
    <handler type="java:org.apache.ws.axis.security.WSDoAllReceiver">
