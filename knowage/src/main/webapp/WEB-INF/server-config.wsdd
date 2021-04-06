@@ -255,19 +255,6 @@
   <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns46:SpagoBiDataSource" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.services.datasource.bo.SpagoBiDataSource" xmlns:ns46="http://bo.datasource.services.spagobi.eng.it"/>
   <arrayMapping innerType="ns48:SpagoBiDataSet" languageSpecificType="java:it.eng.spagobi.services.dataset.bo.SpagoBiDataSet[]" qname="ns47:ArrayOf_tns2_SpagoBiDataSet" xmlns:ns47="urn:spagobidataset" xmlns:ns48="http://bo.dataset.services.spagobi.eng.it"/>
  </service>
- <service name="ArtifactService" provider="java:RPC">
-  <parameter name="wsdlServicePort" value="ArtifactService"/>
-  <parameter name="className" value="it.eng.spagobi.services.artifact.stub.ArtifactServiceSoapBindingSkeleton"/>
-  <parameter name="typeMappingVersion" value="1.2"/>
-  <parameter name="allowedMethods" value="*"/>
-  <parameter name="wsdlServiceElement" value="ArtifactServiceService"/>
-  <parameter name="wsdlTargetNamespace" value="urn:spagobiartifact"/>
-  <parameter name="wsdlPortType" value="ArtifactService"/>
-  <parameter name="scope" value="Application"/>
-  <parameter name="schemaUnqualified" value="http://bo.artifact.services.spagobi.eng.it,urn:spagobiartifact"/>
-  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns49:SpagoBIArtifact" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.services.artifact.bo.SpagoBIArtifact" xmlns:ns49="http://bo.artifact.services.spagobi.eng.it"/>
-  <arrayMapping innerType="ns51:SpagoBIArtifact" languageSpecificType="java:it.eng.spagobi.services.artifact.bo.SpagoBIArtifact[]" qname="ns50:ArrayOf_tns2_SpagoBIArtifact" xmlns:ns50="urn:spagobiartifact" xmlns:ns51="http://bo.artifact.services.spagobi.eng.it"/>
- </service>
  <service name="DataSetsSDKService" provider="java:RPC">
   <requestFlow>
    <handler type="java:org.apache.ws.axis.security.WSDoAllReceiver">

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,25 +11,33 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.services.artifact.service;
 
-import it.eng.spagobi.services.artifact.bo.SpagoBIArtifact;
-import it.eng.spagobi.services.common.AbstractServiceImpl;
-
 import javax.activation.DataHandler;
+import javax.jws.WebService;
 
 import org.apache.log4j.Logger;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
-public class ArtifactServiceImpl extends AbstractServiceImpl {
+import it.eng.spagobi.services.artifact.ArtifactService;
+import it.eng.spagobi.services.artifact.bo.SpagoBIArtifact;
+import it.eng.spagobi.services.common.AbstractServiceImpl;
 
-	static private Logger logger = Logger.getLogger(ArtifactServiceImpl.class);
+@WebService(
+		name = "ArtifactServiceService",
+		portName = "ArtifactServicePort",
+		serviceName = "ArtifactService",
+		targetNamespace = "http://artifact.services.spagobi.eng.it/"
+	)
+public class ArtifactServiceImpl extends AbstractServiceImpl implements ArtifactService {
+
+	private static Logger logger = Logger.getLogger(ArtifactServiceImpl.class);
 
 	/**
 	 * Instantiates a new artifact service impl.
@@ -46,6 +54,7 @@ public class ArtifactServiceImpl extends AbstractServiceImpl {
 	 * @param type. The artifact's type.
 	 * @return the content of the artifact.
 	 */
+	@Override
 	public DataHandler getArtifactContentByNameAndType(String token,String user, String name, String type){
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory
@@ -53,7 +62,7 @@ public class ArtifactServiceImpl extends AbstractServiceImpl {
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			ArtifactServiceImplSupplier supplier = new ArtifactServiceImplSupplier();			
+			ArtifactServiceImplSupplier supplier = new ArtifactServiceImplSupplier();
 			return supplier.getArtifactContentByNameAndType(name, type);
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -62,7 +71,7 @@ public class ArtifactServiceImpl extends AbstractServiceImpl {
 			this.unsetTenant();
 			monitor.stop();
 			logger.debug("OUT");
-		}				
+		}
 	}
 
 	/**
@@ -72,14 +81,15 @@ public class ArtifactServiceImpl extends AbstractServiceImpl {
 	 * @param id. The artifact's id.
 	 * @return the content of the artifact.
 	 */
-    public DataHandler getArtifactContentById(String token, String user, Integer id){
+	@Override
+	public DataHandler getArtifactContentById(String token, String user, Integer id){
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory
 				.start("spagobi.service.artifact.getArtifactContentById");
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			ArtifactServiceImplSupplier supplier = new ArtifactServiceImplSupplier();			
+			ArtifactServiceImplSupplier supplier = new ArtifactServiceImplSupplier();
 			return supplier.getArtifactContentById(id);
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -88,9 +98,9 @@ public class ArtifactServiceImpl extends AbstractServiceImpl {
 			this.unsetTenant();
 			monitor.stop();
 			logger.debug("OUT");
-		}				
-    }
-    
+		}
+	}
+
 	/**
 	 * return the artifacts list of the given type
 	 * @param token. The token.
@@ -98,14 +108,15 @@ public class ArtifactServiceImpl extends AbstractServiceImpl {
 	 * @param type. The artifact's type.
 	 * @return the list of the artifacts of the given type.
 	 */
-    public SpagoBIArtifact[] getArtifactsByType(String token, String user, String type){
+	@Override
+	public SpagoBIArtifact[] getArtifactsByType(String token, String user, String type){
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory
 				.start("spagobi.service.artifact.getArtifactsByType");
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			ArtifactServiceImplSupplier supplier = new ArtifactServiceImplSupplier();			
+			ArtifactServiceImplSupplier supplier = new ArtifactServiceImplSupplier();
 			return supplier.getArtifactsByType(type);
 		} catch (Exception e) {
 			logger.error("An error occurred while getting artifacts of type [" + type + "]", e);
@@ -114,7 +125,7 @@ public class ArtifactServiceImpl extends AbstractServiceImpl {
 			this.unsetTenant();
 			monitor.stop();
 			logger.debug("OUT");
-		}				
-    }
+		}
+	}
 
 }

@@ -471,6 +471,10 @@
 		<servlet-name>SoapServlet</servlet-name>
 		<url-pattern>/services/SecurityService</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SoapServlet</servlet-name>
+		<url-pattern>/services/ArtifactService</url-pattern>
+	</servlet-mapping>
 
 	<!-- START TOMCAT RES -->
 	<resource-ref id="knowageds_core">
