@@ -22,14 +22,17 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.servlet.http.HttpSession;
 import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
+import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
+import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import org.apache.log4j.LogMF;
@@ -48,35 +51,52 @@ import it.eng.spagobi.tools.news.manager.INewsManager;
 import it.eng.spagobi.tools.news.manager.NewsManagerImpl;
 import it.eng.spagobi.user.UserProfileManager;
 
-@ServerEndpoint(value = "/webSocket", encoders = KnowageWebSocketMessageEncoder.class, configurator = HttpSessionConfigurator.class)
+@ServerEndpoint(value = "/webSocket/{login}", encoders = KnowageWebSocketMessageEncoder.class, decoders = KnowageWebSocketMessageDecoder.class, configurator = HttpSessionConfigurator.class)
 
 public class KnowageWebSocket {
 
 	private static final Logger logger = Logger.getLogger(KnowageWebSocket.class);
 
 	private Session session;
-	private static Map<String, String> users = new HashMap<>();
+	private static Map<Object, Session> userSession = new HashMap<>();
 	private HttpSession httpSession;
 
+	private static Map<Object, KnowageWebSocket> userWebSockets = new HashMap<Object, KnowageWebSocket>();
+	protected static CopyOnWriteArraySet<KnowageWebSocket> webSocketSet = new CopyOnWriteArraySet<KnowageWebSocket>();
+
 	@OnOpen
-	public void onOpen(Session session, EndpointConfig config) throws IOException, EncodeException {
+	public void onOpen(@PathParam("login") boolean login, Session session, EndpointConfig config) throws IOException, EncodeException {
+
+		webSocketSet.add(this);
+		this.session = session;
 
 		this.httpSession = (HttpSession) config.getUserProperties().get("HTTP_SESSION");
 
-		initializeUserProfileAndTenant();
+		if (login) {
+			JSONObject masterJsonObject = getMasterMessageObject();
+			broadcast(masterJsonObject);
+		}
+	}
 
+	private JSONObject getMasterMessageObject() {
+		return getMasterMessageObject(true, true);
+	}
+
+	private JSONObject getMasterMessageObject(boolean news, boolean downloads) {
 		JSONObject masterJsonObject = new JSONObject();
 
+		initializeUserProfileAndTenant();
 		try {
-			masterJsonObject.put("news", handleNews());
-			masterJsonObject.put("downloads", handleDownloads());
+			if (news)
+				masterJsonObject.put("news", handleNews());
+
+			if (downloads)
+				masterJsonObject.put("downloads", handleDownloads());
 		} catch (JSONException e) {
 			String message = "Error while creating JSON message";
 			logger.error(message);
 		}
-
-		if (session.isOpen())
-			session.getBasicRemote().sendObject(masterJsonObject);
+		return masterJsonObject;
 	}
 
 	private void initializeUserProfileAndTenant() {
@@ -92,8 +112,16 @@ public class KnowageWebSocket {
 			// putting tenant id on thread local
 			Tenant tenant = new Tenant(tenantId);
 			TenantManager.setTenant(tenant);
-		}
 
+			Object userUniqueIdentifier = userProfile.getUserUniqueIdentifier();
+			if (!userSession.containsKey(userUniqueIdentifier)) {
+				userSession.put(userUniqueIdentifier, session);
+			}
+
+			if (!userWebSockets.containsKey(userUniqueIdentifier)) {
+				userWebSockets.put(userUniqueIdentifier, this);
+			}
+		}
 	}
 
 	private JSONObject handleDownloads() {
@@ -145,8 +173,44 @@ public class KnowageWebSocket {
 		return news;
 	}
 
+	@OnMessage
+	public void onMessage(Session session, String message) throws IOException, EncodeException, JSONException {
+		// Handle new messages
+
+		JSONObject messageJSON = new JSONObject(message);
+
+		broadcast(getMasterMessageObject(messageJSON.has("news"), messageJSON.has("downloads")));
+	}
+
+	private void broadcast(JSONObject message) throws IOException, EncodeException {
+//		UserProfile userProfile = UserProfileManager.getProfile();
+//		userSession.entrySet().forEach(x -> {
+////			Object uuid = x.getKey();
+//
+//			try {
+//				x.getValue().getBasicRemote().sendObject(message);
+//			} catch (IOException | EncodeException e) {
+//				e.printStackTrace();
+//			}
+//		});
+//		
+
+		webSocketSet.forEach(x -> {
+//			Object uuid = x.getKey();
+
+			try {
+				x.session.getBasicRemote().sendObject(message);
+			} catch (IOException | EncodeException e) {
+				e.printStackTrace();
+			}
+		});
+
+	}
+
 	@OnClose
 	public void onClose(Session session) throws IOException, EncodeException {
+
+		webSocketSet.remove(this);
 
 //		JSONObject disconnectedJSON = new JSONObject();
 //		try {

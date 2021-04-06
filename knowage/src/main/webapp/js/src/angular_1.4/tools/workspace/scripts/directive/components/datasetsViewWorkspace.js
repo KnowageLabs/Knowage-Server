@@ -538,6 +538,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 						stopOnFocus: true
 					}).showToast();
 				}
+
 			});
 
 	}

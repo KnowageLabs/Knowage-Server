@@ -29,12 +29,7 @@
 				<ul class="layout-menu">
 					<MainMenuAdmin :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></MainMenuAdmin>
 					<template v-for="(item, i) of allowedUserFunctionalities" :key="i">
-						<MainMenuItem
-							:item="item"
-							@click="itemClick"
-							v-if="!item.conditionedView || (item.conditionedView == 'download' && downloads) || (item.conditionedView == 'news' && news)"
-							:badge="item.conditionedView == 'download' ? downloads.count : conditionedView == 'news' ? news.unread : 0"
-						></MainMenuItem>
+						<MainMenuItem :item="item" @click="itemClick" v-if="!item.conditionedView || (item.conditionedView == 'download' && downloads) || (item.conditionedView == 'news' && news)" :badge="getBadgeValue(item)"></MainMenuItem>
 					</template>
 					<template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
 						<MainMenuItem :item="item" @click="itemClick"></MainMenuItem>
@@ -118,6 +113,27 @@
 			getGravatarSrc(user) {
 				if (user && user.attributes && user.attributes.email) return getGravatar(user.attributes.email)
 				else return getGravatar('knowage@eng.it')
+			},
+			updateNewsAndDownload() {
+				for (var idx in this.allowedUserFunctionalities) {
+					let menu = this.allowedUserFunctionalities[idx]
+					if (menu.conditionedView) {
+						if (menu.conditionedView == 'news' && this.news && this.news.count && this.news.count.unread) {
+							menu.badge = this.news.unread
+						}
+
+						if (menu.conditionedView == 'downloads' && this.downloads && this.downloads.count) {
+							menu.badge = this.downloads.count
+						}
+					}
+				}
+			},
+			getBadgeValue(item) {
+				if (item.conditionedView === 'download') return this.downloads && this.downloads.count
+
+				if (item.conditionedView === 'news') return this.news && this.news.count && this.news.count.unread
+
+				return 0
 			}
 		},
 		mounted() {
@@ -134,6 +150,7 @@
 					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
 					this.commonUserFunctionalities = response.data.commonUserFunctionalities
 					this.allowedUserFunctionalities = response.data.allowedUserFunctionalities
+					this.updateNewsAndDownload()
 				})
 				.catch((error) => console.error(error))
 		},
@@ -148,9 +165,11 @@
 		watch: {
 			download(newDownload, oldDownload) {
 				if (oldDownload != this.downloads) this.downloads = newDownload
+				this.updateNewsAndDownload()
 			},
 			news(newNews, oldNews) {
 				if (oldNews != this.news) this.news = newNews
+				this.updateNewsAndDownload()
 			}
 		}
 	})
@@ -162,6 +181,7 @@
 		iconCls?: string
 		items?: Array<MenuItem> | Array<Array<MenuItem>>
 		conditionedView?: string
+		badge?: number
 	}
 </script>
 

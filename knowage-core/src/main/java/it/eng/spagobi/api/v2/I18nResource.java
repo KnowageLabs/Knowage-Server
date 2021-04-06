@@ -37,10 +37,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.i18n.metadata.SbiI18NMessageBody;
 import it.eng.spagobi.i18n.metadata.SbiI18NMessages;
@@ -66,10 +68,12 @@ public class I18nResource extends AbstractSpagoBIResource {
 		}
 		try {
 			Locale locale = null;
-			if (currLanguage != null && currCountry != null) {
+			if (StringUtils.isNotBlank(currLanguage) && StringUtils.isNotBlank(currCountry)) {
+
+//				locale = Locale.forLanguageTag(languageConfig);
 				locale = new Locale(currLanguage, currCountry);
 			} else {
-				locale = Locale.ENGLISH;
+				locale = GeneralUtilities.getDefaultLocale();
 			}
 			Map<String, String> map = DAOFactory.getI18NMessageDAO().getAllI18NMessages(locale);
 

@@ -241,7 +241,7 @@
 			iconCls="far fa-folder-open" />
 
 		<ITEM label="menu.workspace"
-			requiredFunctionality="FinalUsersManagement"
+
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp"
 			iconCls="fas fa-briefcase" />
 

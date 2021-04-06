@@ -344,15 +344,15 @@
 	<DOMAIN valueCd="CREATION" valueNm="sbidomains.permissiononfolder.nm.create"
 		domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder"
 		valueDs="sbidomains.permissiononfolder.ds.create" />
-	<DOMAIN valueCd="ITA" valueNm="Italian" domainCd="LANG"
+	<DOMAIN valueCd="it-IT" valueNm="Italian" domainCd="LANG"
 		domainNm="Language ISO code" valueDs="Italian" />
-	<DOMAIN valueCd="SPA" valueNm="Spanish" domainCd="LANG"
+	<DOMAIN valueCd="es-ES" valueNm="Spanish" domainCd="LANG"
 		domainNm="Language ISO code" valueDs="Spanish" />
-	<DOMAIN valueCd="ENG" valueNm="English" domainCd="LANG"
+	<DOMAIN valueCd="en-US" valueNm="English" domainCd="LANG"
 		domainNm="Language ISO code" valueDs="English" />
-	<DOMAIN valueCd="FRA" valueNm="French" domainCd="LANG"
+	<DOMAIN valueCd="fr-FR" valueNm="French" domainCd="LANG"
 		domainNm="Language ISO code" valueDs="French" />
-	<DOMAIN valueCd="POR" valueNm="Portoguese" domainCd="LANG"
+	<DOMAIN valueCd="pt-BR" valueNm="Portoguese" domainCd="LANG"
 		domainNm="Language ISO code" valueDs="Portoguese" />
 	<DOMAIN valueCd="fieldType" valueNm="fieldType" domainCd="DS_META_PROPERTY"
 		domainNm="Data Set Metadata Property" valueDs="Data Set Metadata Property" />

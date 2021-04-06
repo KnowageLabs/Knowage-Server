@@ -49,6 +49,7 @@
 	import TabView from 'primevue/tabview'
 	import TabPanel from 'primevue/tabpanel'
 	import { formatDate } from '@/helpers/commons/localeHelper'
+	import WS from '@/services/webSocket'
 
 	interface SingleNews {
 		description?: string
@@ -94,8 +95,8 @@
 
 							if (!this.selectedNews.read) {
 								axios.post('/knowage/restful-services/2.0/newsRead/' + id).then(
-									(response) => {
-										console.log(response)
+									() => {
+										WS.send(JSON.stringify({ news: true }))
 									},
 									(error) => console.error(error)
 								)

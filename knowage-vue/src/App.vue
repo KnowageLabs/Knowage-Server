@@ -18,12 +18,18 @@
 	import store from '@/App.store'
 	import { mapState } from 'vuex'
 	import axios from 'axios'
+	import WS from '@/services/webSocket.js'
 
 	export default defineComponent({
 		components: {
 			ConfirmDialog,
 			MainMenu,
 			Toast
+		},
+		data() {
+			return {
+				connection: null
+			}
 		},
 		created() {
 			axios
@@ -39,6 +45,8 @@
 					localStorage.setItem('token', response.data.userUniqueIdentifier)
 					store.commit('setLocale', storedLocale)
 					this.$i18n.locale = storedLocale
+
+					this.newsDownloadHandler()
 				})
 				.catch(function(error) {
 					if (error.response) {
@@ -51,25 +59,29 @@
 		methods: {
 			newsDownloadHandler() {
 				console.log('Starting connection to WebSocket Server')
-				var uri = process.env.VUE_APP_WEBSOCKET_URL
 
-				this.connection = new WebSocket(uri)
-				this.connection.onmessage = function(event) {
-					if (event.data) {
-						let json = JSON.parse(event.data)
-						if (json.news) {
-							console.log('Total news', json.news.count.total)
-							console.log('Unread news', json.news.count.unread)
-							store.commit('setNews', json.news)
+				if (!this.connection) {
+					this.connection = WS
+
+					this.connection.update = function(event) {
+						if (event.data) {
+							let json = JSON.parse(event.data)
+							if (json.news) {
+								store.commit('setNews', json.news)
+							}
+							if (json.downloads) {
+								store.commit('setDownloads', json.downloads)
+							}
 						}
-
-						store.commit('setDownloads', json.downloads)
 					}
-				}
-
-				this.connection.onopen = function(event) {
-					console.log('Connected')
-					console.log(event)
+					this.connection.onopen = function(event) {
+						this.update(event)
+					}
+					this.connection.onmessage = function(event) {
+						this.update(event)
+					}
+				} else {
+					this.connection.update()
 				}
 			}
 		},
@@ -97,8 +109,8 @@
 					life: 5000
 				})
 			},
-			user(newUser, oldUser) {
-				if (!oldUser.userId && oldUser != newUser) this.newsDownloadHandler()
+			user() {
+				/* if (!oldUser.userId && oldUser != newUser)  */
 			}
 		}
 	})

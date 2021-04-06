@@ -96,7 +96,7 @@ div.lower i  {
 		<!-- CRON for Dataset Scheduling -->
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/prettyCron/prettycron.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/prettyCron/later.js")%>"></script> 	
-		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/prettyCron/moment-with-locales.js")%>"></script>
+		<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "node_modules/moment/min/moment-with-locales.min.js")%>'></script>
 
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		

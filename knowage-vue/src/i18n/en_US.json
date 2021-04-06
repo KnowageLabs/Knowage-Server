@@ -7,6 +7,7 @@
 			"javascript": "javascript",
 			"python": "python"
 		},
+		"deleteAll": "delete all",
 		"description": "description",
 		"download": "download",
 		"error": {
@@ -14,6 +15,7 @@
 		},
 		"image": "image",
 		"info": {
+			"noDataFound": "No data found",
 			"noElementSelected": "No element selected"
 		},
 		"information": "information",

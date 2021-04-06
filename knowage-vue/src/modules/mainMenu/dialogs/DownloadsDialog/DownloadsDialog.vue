@@ -10,8 +10,12 @@
 					><template v-else>{{ slotProps.data[column.field] }} </template>
 				</template>
 			</Column>
+			<template #empty>
+				{{ $t('common.info.noDataFound') }}
+			</template>
 		</DataTable>
 		<template #footer>
+			<Button class="kn-button p-button-danger" :disabled="downloadsList.length == 0" @click="deleteAllDownloads">{{ $t('common.deleteAll') }}</Button>
 			<Button class="kn-button kn-button--primary" @click="closeDialog">{{ $t('common.close') }}</Button>
 		</template>
 	</Dialog>
@@ -83,6 +87,19 @@
 			downloadContent(id) {
 				var encodedUri = encodeURI('knowage/restful-services/2.0/export/dataset/' + id)
 				download(encodedUri, null, null)
+			},
+			deleteAllDownloads() {
+				axios.delete('/knowage/restful-services/2.0/export').then(
+					() => {
+						this.downloadsList = []
+					},
+					(error) => console.error(error)
+				)
+			}
+		},
+		watch: {
+			visibility(newVisibility, oldVisibility) {
+				if (newVisibility != oldVisibility) this.getDownloads()
 			}
 		}
 	})
