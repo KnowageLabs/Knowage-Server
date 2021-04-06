@@ -11,4 +11,9 @@
 		implementation="it.eng.spagobi.services.artifact.service.ArtifactServiceImpl"
 		url-pattern="/services/ArtifactService" />
 
+	<endpoint
+		name="AuditService"
+		implementation="it.eng.spagobi.services.audit.service.AuditServiceImpl"
+		url-pattern="/services/AuditService" />
+
 </endpoints>
