@@ -19,6 +19,7 @@ import it.eng.knowage.knowageapi.dao.SbiWidgetGalleryDao;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTagId;
+import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.resource.dto.Code;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 
@@ -29,34 +30,46 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	private SbiWidgetGalleryDao sbiWidgetGalleryDao;
 
 	@Override
-	public List<WidgetGalleryDTO> getWidgets() {
+	public List<WidgetGalleryDTO> getWidgets() throws JSONException {
 
 		List<SbiWidgetGallery> widgets = (List<SbiWidgetGallery>) sbiWidgetGalleryDao.findAll();
 
-		List<WidgetGalleryDTO> ret = widgets.stream().map(el -> mapTo(el)).collect(Collectors.toList());
+		List<WidgetGalleryDTO> ret = widgets.stream().map(el -> {
+			try {
+				return mapTo(el);
+			} catch (JSONException e) {
+				throw new KnowageRuntimeException(e.getMessage());
+			}
+		}).collect(Collectors.toList());
 
 		return ret;
 	}
 
 	@Override
-	public List<WidgetGalleryDTO> getWidgetsByTenant(String tenant) {
+	public List<WidgetGalleryDTO> getWidgetsByTenant(String tenant) throws JSONException {
 
 		List<SbiWidgetGallery> widgets = (List<SbiWidgetGallery>) sbiWidgetGalleryDao.findAllByTenant(tenant);
 
-		List<WidgetGalleryDTO> ret = widgets.stream().map(el -> mapTo(el)).collect(Collectors.toList());
+		List<WidgetGalleryDTO> ret = widgets.stream().map(el -> {
+			try {
+				return mapTo(el);
+			} catch (JSONException e) {
+				throw new KnowageRuntimeException(e.getMessage());
+			}
+		}).collect(Collectors.toList());
 
 		return ret;
 	}
 
 	@Override
-	public WidgetGalleryDTO getWidgetsById(String id, String tenant) {
+	public WidgetGalleryDTO getWidgetsById(String id, String tenant) throws JSONException {
 
 		SbiWidgetGallery widget = sbiWidgetGalleryDao.findByIdTenant(id, tenant);
 		updateGalleryCounter(widget);
 		return mapTo(widget);
 	}
 
-	private WidgetGalleryDTO mapTo(SbiWidgetGallery sbiWidgetGallery) {
+	private WidgetGalleryDTO mapTo(SbiWidgetGallery sbiWidgetGallery) throws JSONException {
 
 		WidgetGalleryDTO toRet = new WidgetGalleryDTO();
 
@@ -80,22 +93,18 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		}
 		Code code = new Code();
 		JSONObject jsonBody;
-		try {
-			jsonBody = new JSONObject(sbiWidgetGallery.getTemplate());
-			JSONObject jsonCode = jsonBody.optJSONObject("code");
-			String html = jsonCode.getString("html");
-			String javascript = jsonCode.getString("javascript");
-			String python = jsonCode.getString("python");
-			String css = jsonCode.getString("css");
-			code.setCss(css);
-			code.setJavascript(javascript);
-			code.setPython(python);
-			code.setHtml(html);
-			toRet.setCode(code);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		jsonBody = new JSONObject(sbiWidgetGallery.getTemplate());
+		JSONObject jsonCode = jsonBody.optJSONObject("code");
+		String html = jsonCode.getString("html");
+		String javascript = jsonCode.getString("javascript");
+		String python = jsonCode.getString("python");
+		String css = jsonCode.getString("css");
+		code.setCss(css);
+		code.setJavascript(javascript);
+		code.setPython(python);
+		code.setHtml(html);
+		toRet.setCode(code);
 
 		return toRet;
 	}

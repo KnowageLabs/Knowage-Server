@@ -68,7 +68,7 @@ public class GalleryResource {
 		if (widgetGalleryDTOs != null)
 			response = Response.status(Response.Status.OK).entity(widgetGalleryDTOs).build();
 		else {
-			response = Response.status(Response.Status.NO_CONTENT).build();
+			response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 
 		return response;
