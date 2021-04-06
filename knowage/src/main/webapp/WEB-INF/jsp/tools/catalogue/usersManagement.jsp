@@ -60,7 +60,7 @@
                               <div flex=100>
                                  <md-input-container class="md-block">
                                     <label>{{translate.load("sbi.users.userId")}}</label>
-                                    <input name="id" ng-model="selectedUser.userId" ng-required="true" ng-maxlength="100">
+                                    <input name="id" ng-disabled="isUserIdEditable(selectedUser)" ng-model="selectedUser.userId" ng-required="true" ng-maxlength="100">
                                     <div ng-messages="attributeForm.id.$error" ng-show="selectedUser.userId== null">
                                        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
                                     </div>

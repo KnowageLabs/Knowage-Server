@@ -104,7 +104,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
             obj.multivalue = $scope.usersAttributes[i].multivalue;
             obj.allowUser = $scope.usersAttributes[i].allowUser;
             obj.syntax = $scope.usersAttributes[i].syntax;
-            
+
             if($scope.usersAttributes[i].lovId){
             	$scope.getLovsValues(obj)
             }
@@ -139,7 +139,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
                 function(answer) {},
                 function() {});
     };
-    
+
     $scope.eraseAttribute = function(e,attribute) {
     	attribute.value = "";
     }
@@ -369,16 +369,16 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     		});
 		}
     }
-    
+
     $scope.angularTableColumns = [{"label":"User ID","name":"userId"},	{"label":"Full Name","name":"fullName"}];
 
     $scope.getUsers = function () { // service that gets list of users GET
     	sbiModule_restServices.promiseGet("2.0", "users")
 		.then(function(response) {
 			$scope.usersList = response.data;
-			
+
 			$scope.addWarnings();
-			
+
             $scope.addConfirmPwdProp();
 
 		}, function(response) {
@@ -386,14 +386,14 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 		});
     }
-    
+
     $scope.addWarnings = function() {
     	var warningColumn = {"label":" ","name":"warningIcon", "size":"8%;" };
 		var warningColumnIdx = $scope.findColumn(warningColumn, $scope.angularTableColumns);
-		
+
 		if (warningColumnIdx != -1)
 			$scope.angularTableColumns.splice(warningColumnIdx, 1);
-		
+
 
 		for (var idx in $scope.usersList) {
 			if ($scope.usersList[idx].blockedByFailedLoginAttempts) {
@@ -403,17 +403,17 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			}
 		}
     }
-    
+
     $scope.findColumn = function (columnToFind, list) {
     	for (var i in list) {
     		if (angular.equals(list[i].label, columnToFind.label) && angular.equals(list[i].name, columnToFind.name)) {
     			return i;
     		}
     	}
-    	
+
     	return -1;
     }
-    
+
     $scope.unlockUser = function() {
     	$scope.selectedUser.failedLoginAttempts=0;
     	$scope.saveUser();
@@ -493,6 +493,15 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 		});
     }
+
+	$scope.isUserIdEditable = function(user) {
+		if (user.hasOwnProperty('id')) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 };
 
 function nxEqualExDirective() {
