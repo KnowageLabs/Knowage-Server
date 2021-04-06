@@ -1,12 +1,10 @@
 package it.eng.knowage.knowageapi.resource;
 
-import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -18,7 +16,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,6 +27,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
+import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 import it.eng.knowage.knowageapi.service.WidgetGalleryAPI;
 import it.eng.knowage.knowageapi.utils.StringUtilities;
@@ -45,64 +43,48 @@ public class GalleryResource {
 	@Autowired
 	WidgetGalleryAPI widgetGalleryService;
 
-	// TODO: error handling
 	// TODO: set FE roles and decide the BE roles management behaviour
 
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response widgetList(@HeaderParam("Authorization") String token) {
-		Response response = null;
+	public List<WidgetGalleryDTO> widgetList(@HeaderParam("Authorization") String token) {
 		SpagoBIUserProfile profile = null;
 		List<WidgetGalleryDTO> widgetGalleryDTOs = null;
 		try {
-
-			// TODO: add check for functionalities if user can see gallery
 			profile = getUserProfile(token);
-			widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenant(profile.getOrganization());
+			if (widgetGalleryService.canSeeGallery(profile)) {
+				widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenant(profile.getOrganization());
+			}
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new KnowageRuntimeException(e.getMessage());
 		}
 
-		if (widgetGalleryDTOs != null)
-			response = Response.status(Response.Status.OK).entity(widgetGalleryDTOs).build();
-		else {
-			response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-		}
-
-		return response;
+		return widgetGalleryDTOs;
 
 	}
 
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response widget(@HeaderParam("Authorization") String token, @PathParam("id") String widgetId) {
-		Response response = null;
+	public WidgetGalleryDTO widget(@HeaderParam("Authorization") String token, @PathParam("id") String widgetId) {
 		SpagoBIUserProfile profile = null;
 		WidgetGalleryDTO widgetGalleryDTO = null;
 		try {
 			profile = getUserProfile(token);
 			widgetGalleryDTO = widgetGalleryService.getWidgetsById(widgetId, profile.getOrganization());
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if (widgetGalleryDTO != null)
-			response = Response.status(Response.Status.OK).entity(widgetGalleryDTO).build();
-		else {
-			response = Response.status(Response.Status.NO_CONTENT).build();
+			throw new KnowageRuntimeException(e.getMessage());
 		}
 
-		return response;
+		return widgetGalleryDTO;
 
 	}
 
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response widgetCreate(String body, @HeaderParam("Authorization") String token) {
+	public WidgetGalleryDTO widgetCreate(String body, @HeaderParam("Authorization") String token) {
 		Response response = null;
 		SpagoBIUserProfile profile = null;
 		String image = "";
@@ -145,32 +127,20 @@ public class GalleryResource {
 				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, licenseText, licenseName,
 						profile.getOrganization(), image, "", body, userId, tags);
 
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new KnowageRuntimeException(e.getMessage());
 			}
+
 		}
 
-		if (newSbiWidgetGallery != null)
-			response = Response.status(Response.Status.OK).entity(newSbiWidgetGallery.getId()).build();
-		else {
-			// TODO: error handling!!
-			response = Response.status(Response.Status.NO_CONTENT).build();
-		}
-
-		return response;
+		return newSbiWidgetGallery;
 
 	}
 
 	@POST
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response widgetUpdate(String body, @HeaderParam("Authorization") String token, @PathParam("id") String widgetId) {
+	public WidgetGalleryDTO widgetUpdate(String body, @HeaderParam("Authorization") String token, @PathParam("id") String widgetId) {
 		Response response = null;
 		SpagoBIUserProfile profile = null;
 		String image = "";
@@ -216,22 +186,11 @@ public class GalleryResource {
 							profile.getOrganization(), image, "", body, userId, tags);
 				}
 
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (Exception e) {
+				throw new KnowageRuntimeException(e.getMessage());
 			}
 		}
-
-		if (newSbiWidgetGallery != null)
-			response = Response.status(Response.Status.OK).entity(newSbiWidgetGallery.getId()).build();
-		else {
-			response = Response.status(Response.Status.NO_CONTENT).build();
-		}
-
-		return response;
+		return newSbiWidgetGallery;
 
 	}
 
@@ -247,10 +206,10 @@ public class GalleryResource {
 			if (success == 1)
 				response = Response.status(Response.Status.OK).build();
 			else {
-				response = Response.status(Response.Status.NO_CONTENT).build();
+				response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 			}
 		} catch (Exception e) {
-
+			throw new KnowageRuntimeException(e.getMessage());
 		}
 
 		return response;
@@ -271,7 +230,7 @@ public class GalleryResource {
 					// .withExpiresAt(expiresAt)
 					.sign(algorithm);
 		} catch (Exception e) {
-
+			throw new KnowageRuntimeException(e.getMessage());
 		}
 		return technicalToken;
 	}
@@ -281,31 +240,21 @@ public class GalleryResource {
 		Context ctx;
 		try {
 			ctx = new InitialContext();
-
 			String key = (String) ctx.lookup("java:/comp/env/hmacKey");
 			Algorithm algorithm = Algorithm.HMAC256(key);
 			JWTVerifier verifier = JWT.require(algorithm).build();
 			DecodedJWT decodedJWT = verifier.verify(jwtToken);
 			Claim userIdClaim = decodedJWT.getClaim("user_id");
 			userId = userIdClaim.asString();
-		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e.getMessage());
 		}
 		return userId;
 	}
 
 	public SpagoBIUserProfile getUserProfile(String userToken) throws RemoteException {
-
 		SpagoBIUserProfile profile = null;
 		userToken = userToken.replace("Bearer ", "");
-		// String userId = jwtToken2userId(userToken);
 		String technicalToken = getTechnicalToken();
 		Context ctx;
 		try {
@@ -314,7 +263,7 @@ public class GalleryResource {
 			SecurityServiceServiceProxy proxy = new SecurityServiceServiceProxy(serviceUrl + "/services/SecurityService");
 			profile = proxy.getUserProfile(technicalToken, userToken);
 		} catch (Exception e) {
-
+			throw new KnowageRuntimeException(e.getMessage());
 		}
 		return profile;
 	}

@@ -65,4 +65,8 @@ public class KnowageServiceException extends KnowageRuntimeException {
 		this.serviceName = serviceName;
 	}
 
+//	@Override
+//	public String getLocalizedMessage() {
+//		return MessageBundle.getMessage(getMessage());
+//	}
 }

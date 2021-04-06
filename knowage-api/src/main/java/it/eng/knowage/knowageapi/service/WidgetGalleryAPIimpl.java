@@ -22,12 +22,15 @@ import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTagId;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.resource.dto.Code;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
+import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 @Component
 public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 
 	@Autowired
 	private SbiWidgetGalleryDao sbiWidgetGalleryDao;
+
+	private static String GALLERY_FUNCTION = "WidgetGalleryManagement";
 
 	@Override
 	public List<WidgetGalleryDTO> getWidgets() throws JSONException {
@@ -246,5 +249,19 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		long least12SignificatBitOfTime = (timeForUuidIn100Nanos & 0x000000000000FFFFL) >> 4;
 		long version = 1 << 12;
 		return (timeForUuidIn100Nanos & 0xFFFFFFFFFFFF0000L) + version + least12SignificatBitOfTime;
+	}
+
+	/*
+	 * Permission methods
+	 */
+	@Override
+	public boolean canSeeGallery(SpagoBIUserProfile userProfile) {
+		boolean canSee = false;
+		for (String function : userProfile.getFunctions()) {
+			if (function.equalsIgnoreCase(GALLERY_FUNCTION)) {
+				canSee = true;
+			}
+		}
+		return canSee;
 	}
 }

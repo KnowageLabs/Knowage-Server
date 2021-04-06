@@ -7,6 +7,7 @@ import org.json.JSONException;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
+import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 public interface WidgetGalleryAPI {
 
@@ -31,4 +32,5 @@ public interface WidgetGalleryAPI {
 
 	List<SbiWidgetGalleryTag> createNewWidgetTagsByList(SbiWidgetGallery sbiWidgetGallery, String userid, String tags);
 
+	boolean canSeeGallery(SpagoBIUserProfile userProfile);
 }

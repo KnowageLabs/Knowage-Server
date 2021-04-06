@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 /**
  *
@@ -37,15 +38,15 @@ import org.json.JSONObject;
  *         Updates the audit log for the services that throw exceptions
  *
  */
-
+@Component
 @Provider
-public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
+public class KnowageExceptionMapper implements ExceptionMapper<RuntimeException> {
 	private static final String LOCALIZED_MESSAGE = "localizedMessage";
 	private static final String ERROR_MESSAGE = "message";
 	private static final String ERROR_SERVICE = "service";
 	private static final String ERROR_MESSAGES = "errors";
 
-	static private Logger logger = Logger.getLogger(RestExceptionMapper.class);
+	static private Logger logger = Logger.getLogger(KnowageExceptionMapper.class);
 
 	@Context
 	private HttpServletRequest servletRequest;
@@ -60,7 +61,7 @@ public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
 
 	private Response toResponseFromGenericException(RuntimeException t) {
 		JSONObject serializedMessages = serializeException(t);
-		return Response.status(200).entity(serializedMessages.toString()).build();
+		return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(serializedMessages.toString()).build();
 	}
 
 	private JSONObject serializeException(RuntimeException t) {
