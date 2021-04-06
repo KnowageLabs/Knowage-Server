@@ -10,30 +10,33 @@
 		return {
 			protocol: '<%= request.getScheme()%>' ,
 			host: '<%= request.getServerName()%>',
-		    port: '<%= request.getServerPort()%>',
-		    contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
-		    controllerPath: null ,// no cotroller just servlets   
+			port: '<%= request.getServerPort()%>',
+			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
+			controllerPath: null ,// no cotroller just servlets   
 			dateFormat: '<%= GeneralUtilities.getLocaleDateFormat(MessageBundle.getUserLocale()) %>',  // the date format localized according to user language and country 
-	 		docLabel :"<%=docLabel%>",
+			docLabel :"<%=docLabel%>",
 			docVersion : "<%=docVersion%>",
-		 	userId : "<%=userId%>",
-		 	docAuthor :"<%=docAuthor%>",
+			userId : "<%=userId%>",
+			docAuthor :"<%=docAuthor%>",
 			docName :"<%=docName.replace('\n', ' ')%>",
-		 	docDescription: "<%=docDescription.replace('\n', ' ')%>",
-		 	docIsPublic: "<%=docIsPublic%>",
-		 	docIsVisible: "<%=docIsVisible%>",
-		 	docPreviewFile: "<%=docPreviewFile%>",
-		 	docCommunities: "<%=docCommunity%>",
-		 	docFunctionalities: "<%=docFunctionalities%>",
-// 		 	contextLogo: "/knowage/themes/sbi_default/img/wapp/logo.png",
-		 	contextLogo: "<%=KnowageSystemConfiguration.getKnowageContext()%>/themes/sbi_default/img/wapp/logo.png", 
-		 	<%--
+			docDescription: "<%=docDescription.replace('\n', ' ')%>",
+			docIsPublic: "<%=docIsPublic%>",
+			docIsVisible: "<%=docIsVisible%>",
+			docPreviewFile: "<%=docPreviewFile%>",
+			docCommunities: "<%=docCommunity%>",
+			docFunctionalities: "<%=docFunctionalities%>",
+//			contextLogo: "/knowage/themes/sbi_default/img/wapp/logo.png",
+			contextLogo: "<%=KnowageSystemConfiguration.getKnowageContext()%>/themes/sbi_default/img/wapp/logo.png", 
+			<%--
 			docDatasetLabel: "<%=docDatasetLabel%>",
-		 	docDatasetName: "<%=docDatasetName%>",
-		 	visibleDataSet: "<%=visibleDataSet%>",
-		 	--%>
-		 	externalBasePath:"<%= KnowageSystemConfiguration.getKnowageContext()%>",
-		 	sbiEnviroment:"<%=request.getParameter(SpagoBIConstants.SBI_ENVIRONMENT)%>"
+			docDatasetName: "<%=docDatasetName%>",
+			visibleDataSet: "<%=visibleDataSet%>",
+			--%>
+			externalBasePath:"<%= KnowageSystemConfiguration.getKnowageContext()%>",
+			sbiEnviroment:"<%=request.getParameter(SpagoBIConstants.SBI_ENVIRONMENT)%>",
+			dynamicResourcesBasePath: "<%=dynamicResourcesBasePath%>",		//  /knowage/js/src
+			dynamicResourcesEnginePath: "<%=dynamicResourcesEnginePath%>"	//  /kpi/js/src
+
 		};
 	});
 

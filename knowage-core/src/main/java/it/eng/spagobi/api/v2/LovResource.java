@@ -20,6 +20,7 @@ package it.eng.spagobi.api.v2;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -86,7 +87,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
-import sun.misc.BASE64Encoder;
 
 /**
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -247,7 +247,7 @@ public class LovResource extends AbstractSpagoBIResource {
 				scriptValue = scriptDetail.getLovResult(getUserProfile(), null, null, null);
 				rowsSourceBean = SourceBean.fromXMLString(scriptValue);
 				lovColumns = findFirstRowAttributes(rowsSourceBean);
-				lovExecutionResult.setValues(toList(rowsSourceBean, 0, lovValues.size()));
+				lovExecutionResult.setValues(filterNulls(rowsSourceBean, lovColumns.size(), 0, lovValues.size()));
 				lovExecutionResult.setFields(GridMetadataContainer.buildHeaderMapForGrid(lovColumns));
 				List rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
 				lovExecutionResult.setResults(rows.size());
@@ -335,7 +335,7 @@ public class LovResource extends AbstractSpagoBIResource {
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
 					logger.error("Cannot get values from java class");
-					throw new SpagoBIRuntimeException("Cannot get values from java class");
+					throw new SpagoBIRuntimeException("Cannot get values from java class", e);
 				}
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("FIX_LOV")) {
 
@@ -346,7 +346,7 @@ public class LovResource extends AbstractSpagoBIResource {
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
 					logger.error("Cannot get values from fixed lov");
-					throw new SpagoBIRuntimeException("Cannot get values from fixed lov");
+					throw new SpagoBIRuntimeException("Cannot get values from fixed lov", e);
 				}
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("QUERY")) {
 
@@ -357,7 +357,7 @@ public class LovResource extends AbstractSpagoBIResource {
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
 					logger.error("Cannot get values from query");
-					throw new SpagoBIRuntimeException("Cannot get values from query");
+					throw new SpagoBIRuntimeException("Cannot get values from query", e);
 				}
 
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("SCRIPT")) {
@@ -369,7 +369,7 @@ public class LovResource extends AbstractSpagoBIResource {
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
 					logger.error("Cannot get values from script");
-					throw new SpagoBIRuntimeException("Cannot get values from script");
+					throw new SpagoBIRuntimeException("Cannot get values from script", e);
 				}
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("DATASET")) {
 				DatasetDetail datasetClassDetail = DatasetDetail.fromXML(lovProvider);
@@ -379,12 +379,12 @@ public class LovResource extends AbstractSpagoBIResource {
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
 					logger.error("Cannot get values from dataset");
-					throw new SpagoBIRuntimeException("Cannot get values from dataset");
+					throw new SpagoBIRuntimeException("Cannot get values from dataset", e);
 				}
 			}
 			Integer start = pagination.getInt("paginationStart");
 			Integer limit = pagination.getInt("paginationLimit");
-			lovExecutionResult.setValues(toList(rowsSourceBean, start, limit));
+			lovExecutionResult.setValues(filterNulls(rowsSourceBean, colNames.size(), start, limit));
 			lovExecutionResult.setFields(GridMetadataContainer.buildHeaderMapForGrid(colNames));
 			List rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
 			lovExecutionResult.setResults(rows.size());
@@ -802,7 +802,7 @@ public class LovResource extends AbstractSpagoBIResource {
 		return columnsNames;
 	}
 
-	private List<Map<String, String>> toList(SourceBean rowsSourceBean, Integer start, Integer limit) throws JSONException {
+	private List<Map<String, String>> filterNulls(SourceBean rowsSourceBean, int numCols, Integer start, Integer limit) throws JSONException {
 		Map<String, String> map;
 		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 		int startIter = 0;
@@ -825,7 +825,6 @@ public class LovResource extends AbstractSpagoBIResource {
 				}
 
 				for (int i = startIter; i < endIter; i++) {
-					JSONObject rowJson = new JSONObject();
 					List<SourceBeanAttribute> rowAttrs = (rows.get(i)).getContainedAttributes();
 					Iterator<SourceBeanAttribute> rowAttrsIter = rowAttrs.iterator();
 					map = new HashMap<String, String>();
@@ -833,7 +832,11 @@ public class LovResource extends AbstractSpagoBIResource {
 						SourceBeanAttribute rowAttr = rowAttrsIter.next();
 						map.put(rowAttr.getKey(), (rowAttr.getValue()).toString());
 					}
-					list.add(map);
+					if (map.keySet().size() < numCols) {
+						logger.warn("Row [" + rows.get(i) + "] contains some null values. It will be skipped.");
+					} else {
+						list.add(map);
+					}
 				}
 			}
 		}
@@ -873,8 +876,8 @@ public class LovResource extends AbstractSpagoBIResource {
 			int pos2 = provider.indexOf("</SCRIPT>");
 			String content = provider.substring(pos1 + 8, pos2);
 			content = StringEscapeUtils.unescapeHtml4(content);
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			String encoded = bASE64Encoder.encode(content.getBytes());
+			Base64.Encoder bASE64Encoder = Base64.getEncoder();
+			String encoded = bASE64Encoder.encodeToString(content.getBytes());
 			provider = provider.substring(0, pos1 + 8) + encoded + provider.substring(pos2);
 
 		}
@@ -889,8 +892,8 @@ public class LovResource extends AbstractSpagoBIResource {
 			int pos2 = provider.indexOf("</STMT>");
 			String content = provider.substring(pos1 + 6, pos2);
 			content = StringEscapeUtils.unescapeHtml4(content);
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			String encoded = bASE64Encoder.encode(content.getBytes());
+			Base64.Encoder bASE64Encoder = Base64.getEncoder();
+			String encoded = bASE64Encoder.encodeToString(content.getBytes());
 			provider = provider.substring(0, pos1 + 6) + encoded + provider.substring(pos2);
 
 		}

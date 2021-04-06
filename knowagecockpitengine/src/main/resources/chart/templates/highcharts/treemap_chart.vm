@@ -270,9 +270,9 @@
 				*#
                 position: 
                 {
-                    align: "center",
+                    align: "right",
                     verticalAlign: "bottom",
-                    ##x: -10,
+                    x: -20,
                     y: 8
                 },
                 

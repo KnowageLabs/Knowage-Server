@@ -217,7 +217,11 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	$scope.restService.get("dimensions", "getDimensions")
 		.success(
 			function(data, status, headers, config) {
-				$scope.dimensions = angular.copy(data);
+				if (data.errors === undefined){
+					$scope.dimensions = angular.copy(data);
+				}else{
+					$scope.showAlert($scope.translate.load("sbi.generic.error"),data.errors[0].message);
+				}
 		}).error(
 			function(data, status) {
 				var message = 'GET dimensions error of ' + data + ' with status :' + status;

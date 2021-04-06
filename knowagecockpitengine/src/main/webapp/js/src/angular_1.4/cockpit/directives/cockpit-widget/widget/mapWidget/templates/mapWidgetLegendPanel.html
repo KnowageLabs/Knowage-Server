@@ -1,12 +1,18 @@
 <!-- legend panel -->
-<div  class="mapWidgetLegend">
+<div  class="mapWidgetLegend" ng-class="{'ranges': legend[0].method=='CLASSIFY_BY_RANGES'}">
 	<div ng-repeat="legendElem in legend">
-		<div layout="column" ng-if="getLayerVisibility(legendElem.layer)">
+		<div layout="column" ng-if="legendElem.method!='CLASSIFY_BY_RANGES' && getLayerVisibility(legendElem.layer)">
 			<span class="legendLayerLabel" flex>&nbsp;{{legendElem.alias}}</span>
 			<div layout="row" layout-align="start center">
 				  <span class="legendStartLimit">{{legendElem.limits[0]}}&nbsp;&nbsp;</span>
 				  <div style="height:10px;width:90%;display:block;border-radius:25px;" ng-style="{ background: 'linear-gradient(to right ' + legendElem.colors + ')' }"></div>
 				  <span class="legendEndLimit">&nbsp;&nbsp;{{legendElem.limits[1]}}</span>
+			</div>
+		</div>
+		<div layout="column" layout-align="space-around center" ng-if="legendElem.method=='CLASSIFY_BY_RANGES' && getLayerVisibility(legendElem.layer)">
+			<div layout="row" style="align-items:center" ng-repeat="r in legendElem.ranges">
+				<div style="height:10px;width:10px;border-radius:25px;" ng-style="{ background: r.color }"></div>
+				<div style="font-size:small;margin-left:5px;margin-right:5px;">[{{r.from}}-{{r.to}}]</div>
 			</div>
 		</div>
 	</div>

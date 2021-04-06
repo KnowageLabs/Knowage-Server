@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,24 +20,23 @@ package it.eng.spagobi.engines.whatif.schema;
 import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Base64;
+
+import org.apache.log4j.Logger;
 
 import mondrian.i18n.LocalizingDynamicSchemaProcessor;
 import mondrian.olap.Util;
 
-import org.apache.log4j.Logger;
-
-import sun.misc.BASE64Decoder;
-
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- * 
+ *
  *         DATE CONTRIBUTOR/DEVELOPER NOTE 26/03/2013 Davide Zerbetto (davide.zerbetto@eng.it) SpagoBIFilterDynamicSchemaProcessor now extends Andrea Fantappie
  *         (andrea.fantappie@eng.it) LocalizingDynamicSchemaProcessor (instead of FilterDynamicSchemaProcessor) to support i18n
  */
 public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchemaProcessor {
 	private static Logger logger = Logger.getLogger(SpagoBIFilterDynamicSchemaProcessor.class);
 
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
+	private static final Base64.Decoder DECODER = Base64.getDecoder();
 
 	Integer indexProgression = null;
 
@@ -95,7 +94,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 
 	/**
 	 * return the first profile attribute in schema
-	 * 
+	 *
 	 * @param schema
 	 * @param indexProgression
 	 *            . keeps track of the last found index to go always ahead in reading
@@ -116,7 +115,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 
 	/**
 	 * return the first parameter in schema
-	 * 
+	 *
 	 * @param schema
 	 * @param indexProgression
 	 *            . keeps track of the last found index to go always ahead in reading
@@ -137,7 +136,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 
 	/**
 	 * Search for profile attributes to substitute in schema definition, identified by $P{attribute_name}
-	 * 
+	 *
 	 * @param originalSchema
 	 * @param connectInfo
 	 * @return modifiedSchema
@@ -155,10 +154,10 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 				logger.debug("Attribute value in Base64 encoding is " + attrValueBase64);
 				String value = null;
 				try {
-					value = new String(DECODER.decodeBuffer(attrValueBase64), "UTF-8");
+					value = new String(DECODER.decode(attrValueBase64), "UTF-8");
 				} catch (UnsupportedEncodingException e) {
 					logger.error("UTF-8 encoding not supported!!!!!", e);
-					value = new String(DECODER.decodeBuffer(attrValueBase64));
+					value = new String(DECODER.decode(attrValueBase64));
 				}
 				logger.debug("change attribute " + att + " with  [" + value + "]");
 
@@ -171,7 +170,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 
 	/**
 	 * Search for parameters to substitute in schema definition, identified by $P{attribute_name}
-	 * 
+	 *
 	 * @param originalSchema
 	 * @param connectInfo
 	 * @return modifiedSchema
@@ -189,10 +188,10 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 				logger.debug("Parameter value in Base64 encoding is " + attrValueBase64);
 				String value = null;
 				try {
-					value = new String(DECODER.decodeBuffer(attrValueBase64), "UTF-8");
+					value = new String(DECODER.decode(attrValueBase64), "UTF-8");
 				} catch (UnsupportedEncodingException e) {
 					logger.error("UTF-8 encoding not supported!!!!!", e);
-					value = new String(DECODER.decodeBuffer(attrValueBase64));
+					value = new String(DECODER.decode(attrValueBase64));
 				}
 				logger.debug("change attribute " + att + " with  [" + value + "]");
 

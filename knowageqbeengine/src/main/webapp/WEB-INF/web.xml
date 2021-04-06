@@ -1,210 +1,198 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="SpagoBIQbeEngine" 
-		 version="2.4" 
-		 xmlns="http://java.sun.com/xml/ns/j2ee" 
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+<web-app id="knowageqbeengine"
+		xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+		version="3.1" >
 
 	<display-name>QBE</display-name>
-	<description>
-		Spago BI - Query By Example Web Version
-	</description>
-	
+	<description>Knowage QBE Engine</description>
 
-	
 	<!--  ============================================================================ -->
-	<!--  FILTERS								 									   -->
+	<!--  FILTERS                                                                      -->
 	<!--  ============================================================================ -->
-	
-	
+
 	<filter>
-        <filter-name>EncodingFilter</filter-name>
-        <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
-         <init-param>
-            <param-name>encoding</param-name>
-            <param-value>UTF-8</param-value>
-        </init-param>
-    </filter>
-	
-	   <filter-mapping>
-            <filter-name>EncodingFilter</filter-name>
-            <url-pattern>/servlet/AdapterHTTP</url-pattern>
-    </filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
 
-    <filter-mapping>
-            <filter-name>EncodingFilter</filter-name>
-            <url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
-    </filter-mapping>
-	
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
+	</filter-mapping>
+
 	<filter>
 		<filter-name>EngineCheckSessionFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EngineCheckSessionFilter</filter-class>
 	</filter>
-	
-<!-- START-CAS ${enable.cas.end}
+
+	<!-- START-CAS ${enable.cas.end}
 	<filter>
-	  <filter-name>CAS Authentication Filter</filter-name>
-	  <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
-	  <init-param>
-	    <param-name>casServerLoginUrl</param-name>
-	    <param-value>https://161.27.213.105:48081/cas/login</param-value>
-	  </init-param>
-	  <init-param>
-	    <param-name>serverName</param-name>
-	    <param-value>161.27.213.105:48081</param-value>
-	  </init-param>    
-	</filter>
-	
-	<filter>
-	  <filter-name>CAS Validation Filter</filter-name>
-	  <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
-	  <init-param>
-	    <param-name>casServerUrlPrefix</param-name>
-	    <param-value>https://161.27.213.105:48081/cas</param-value>
-	  </init-param>
-	  <init-param>
-	    <param-name>serverName</param-name>
-	    <param-value>https://161.27.213.105:48081</param-value>
-	  </init-param>
-	  <init-param>
-	    <param-name>proxyReceptorUrl</param-name>
-	    <param-value>/proxyCallback</param-value>
-	  </init-param> 
-	  <init-param>
-		<param-name>proxyCallbackUrl</param-name>
-		<param-value>https://161.27.213.105:48081/knowageqbeengine/proxyCallback</param-value>
-	  </init-param>  
-	</filter>
-	
-	<filter>
-	  <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-	  <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+		<init-param>
+			<param-name>casServerLoginUrl</param-name>
+			<param-value>https://161.27.213.105:48081/cas/login</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>161.27.213.105:48081</param-value>
+		</init-param>
 	</filter>
 
-   ${enable.cas.start} END-CAS -->
-	
+	<filter>
+		<filter-name>CAS Validation Filter</filter-name>
+		<filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+		<init-param>
+			<param-name>casServerUrlPrefix</param-name>
+			<param-value>https://161.27.213.105:48081/cas</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>https://161.27.213.105:48081</param-value>
+		</init-param>
+		<init-param>
+			<param-name>proxyReceptorUrl</param-name>
+			<param-value>/proxyCallback</param-value>
+		</init-param>
+		<init-param>
+			<param-name>proxyCallbackUrl</param-name>
+			<param-value>https://161.27.213.105:48081/knowageqbeengine/proxyCallback</param-value>
+		</init-param>
+	</filter>
+
+	<filter>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+	</filter>
+	${enable.cas.start} END-CAS -->
+
 	<filter>
 		<filter-name>SpagoBIAccessFilter</filter-name>
-		<filter-class>
-			it.eng.spagobi.utilities.filters.SpagoBIAccessFilter
-		</filter-class>
+		<filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
 	</filter>
-	
+
 	<filter>
 		<filter-name>AntiInjectionFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.AntiInjectionFilter</filter-class>
 	</filter>
-	
+
 	<!--  ============================================================================ -->
 	<!--  FILTER MAPPINGS						 									   -->
 	<!--  ============================================================================ -->
 
 	<!-- EngineCheckSessionFilter on AdapterHTTP; urls with NEW_SESSION=TRUE will open a new session if previous one has expired -->
-    <filter-mapping>
-        <filter-name>EngineCheckSessionFilter</filter-name>
-        <url-pattern>/servlet/AdapterHTTP</url-pattern>
-    </filter-mapping>
-
-<!-- START-CAS ${enable.cas.end}
-  <filter-mapping>
-    <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP</url-pattern>
-  </filter-mapping> 
-    	
-   <filter-mapping>
-    <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP</url-pattern>
-  </filter-mapping> 
-   	
-
-   <filter-mapping>
-    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP</url-pattern>
-   </filter-mapping> 
-  
-   <filter-mapping>
-	<filter-name>CAS Validation Filter</filter-name>
-	<url-pattern>/proxyCallback</url-pattern>	
-   </filter-mapping>
-  
-   ${enable.cas.start} END-CAS -->
-	
 	<filter-mapping>
-    		<filter-name>SpagoBIAccessFilter</filter-name>
-    		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<filter-name>EngineCheckSessionFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
+
+	<!-- START-CAS ${enable.cas.end}
+	<filter-mapping>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
-    		<filter-name>SpagoBIAccessFilter</filter-name>
-    		<url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
-	
+
+	<filter-mapping>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/proxyCallback</url-pattern>
+	</filter-mapping>
+
+	 ${enable.cas.start} END-CAS -->
+
+	<filter-mapping>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
+	</filter-mapping>
+
 	<filter-mapping>
 		<filter-name>AntiInjectionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
-	
+
 	<!--  ============================================================================ -->
-	<!--  START LISTENERS								 							   -->
+	<!--  START LISTENERS                                                              -->
 	<!--  ============================================================================ -->
 
 	<!--  ============================================================================ -->
-	<!--  END LISTENERS								 								   -->
+	<!--  END LISTENERS                                                                -->
 	<!--  ============================================================================ -->
-	
+
 
 	<!--  ============================================================================ -->
-	<!--  SERVLETS								 									   -->
+	<!--  SERVLETS                                                                     -->
 	<!--  ============================================================================ -->
-  	
+
 	<servlet>
 		<servlet-name>ConfigServlet</servlet-name>
 		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
-		 
 		<init-param>
 			<param-name>AF_CONFIG_FILE</param-name>
 			<param-value>/WEB-INF/conf/master.xml</param-value>
 		</init-param>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
-	
+
 	<servlet>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
 	</servlet>
-    
-    <servlet>
+
+	<servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
-		<servlet-class>
-			it.eng.spagobi.utilities.engines.EngineTestServlet
-		</servlet-class>
+		<servlet-class>it.eng.spagobi.utilities.engines.EngineTestServlet</servlet-class>
 	</servlet>
-    
-    
-    <!--  ============================================================================ -->
-	<!--  SERVLET MAPPINGS						 									   -->
+
+	<!--  ============================================================================ -->
+	<!--  SERVLET MAPPINGS                                                             -->
 	<!--  ============================================================================ -->
 
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</servlet-mapping>
-	
-		<servlet-mapping>
+
+	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
 	</servlet-mapping>
-    
-    <servlet-mapping>
+
+	<servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/servlet/AdapterHTTPTest</url-pattern>
 	</servlet-mapping>
-    
-    
+
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>
-	
+
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>
@@ -213,26 +201,26 @@
 		<welcome-file>default.htm</welcome-file>
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
-	
-	  <error-page>
-	  	<exception-type>java.lang.Throwable</exception-type>
-	  	<location>/html/error.html</location>
-	  </error-page>
-		 
-	  <error-page>
-	  	<error-code>404</error-code>
-	  	<location>/html/error.html</location>
-	  </error-page>
-  
-	  <error-page>
-	  	<error-code>500</error-code>
-	  	<location>/html/error.html</location>
-	  </error-page>
 
-	<!-- WEBLOGIC CONFS START 
- 	<env-entry> 
-		<env-entry-name>resource_path</env-entry-name> 
-		<env-entry-type>java.lang.String</env-entry-type> 
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/html/error.html</location>
+	</error-page>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/html/error.html</location>
+	</error-page>
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/html/error.html</location>
+	</error-page>
+
+	<!-- WEBLOGIC CONFS START
+	<env-entry>
+		<env-entry-name>resource_path</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>D:/Sviluppo/SpagoBI/bigdata/tomcat/resource</env-entry-value>
 	</env-entry>
 	<env-entry>
@@ -250,5 +238,13 @@
 		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>it.eng.spagobi.services.common.FakeSsoService</env-entry-value>
 	</env-entry>
-	WEBLOGIC CONFS END -->	
+	WEBLOGIC CONFS END -->
+
+	<!-- Multipart configuration -->
+	<multipart-config>
+		<max-file-size>524288000</max-file-size>
+		<max-request-size>524288000</max-request-size>
+		<file-size-threshold>104857600</file-size-threshold>
+	</multipart-config>
+
 </web-app>

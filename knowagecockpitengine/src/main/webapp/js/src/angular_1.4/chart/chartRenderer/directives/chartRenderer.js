@@ -133,6 +133,7 @@ angular.module('chartRendererModule')
 								})
 							}
 							else {
+								if(!scope.initializer) scope.init({ data:jsonData,isRealtime:isRealtime,chartConf:dataAndChartConf.chartConf,selectionsAndParams:selectionsAndParams },true);
 								scope.chartConf = eval("(" + dataAndChartConf.chartConf + ")");
 								scope.renderChart(scope.chartConf, jsonData,selectionsAndParams);
 							}
@@ -190,22 +191,18 @@ angular.module('chartRendererModule')
 			})
 
 			scope.$on('init',function(event,data, isRealtime,changedChartType,chartConf,selectionsAndParams){
-
 				var initObject = { data:data,isRealtime:isRealtime,chartConf:chartConf,selectionsAndParams:selectionsAndParams }
 				scope.init(initObject)
-									})
-				scope.init = function(initObject){
+			})
+				
+			scope.init = function(initObject, stopChartLoad){
 
 				var lib = getChartExecutionLib(scope.chartTemplate);
 				if(lib){
 					scope.noLib = false;
 					scope.chartInitializer = chartInitializerRetriver.getChartInitializer(lib);
 					scope.chartSonifyService = chartInitializerRetriver.getChartInitializer("chartSonifyService");
-					/*var template = scope.chartTemplate;
-					if(changedChartType){
-						template = ChartUpdateService.getTemplate(template);
-					}*/
-					scope.loadChart(scope.chartTemplate,scope.datasetLabel,initObject.data,initObject.isRealtime,false,initObject.chartConf,initObject.selectionsAndParams);
+					if(!stopChartLoad) scope.loadChart(scope.chartTemplate,scope.datasetLabel,initObject.data,initObject.isRealtime,false,initObject.chartConf,initObject.selectionsAndParams);
 
 				}else{
 					element[0].innerHTML = "no library implementation";

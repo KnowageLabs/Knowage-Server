@@ -20,10 +20,10 @@
 							show-qbe-dataset-action="showQbeDataset(ds);"
 							edit-qbe-dataset-action="editQbeDataset(ds);"
 							preview-dataset-action= "previewDataset(ds);"
-							clone-dataset-action="cloneDataset(ds);"
 							show-detail-dataset-action="editFileDataset(ds);"
 							delete-dataset-action="deleteDataset(ds);"
 							table-columns="tableDatasets"
+							clone-dataset-action="cloneDataset(ds);"
 					 	  ></dataset-view>	
 					 	  </div>
 				 	 	</md-tab-body>
@@ -45,7 +45,7 @@
 								show-qbe-dataset-action="showQbeDataset(ds);"
 								preview-dataset-action= "previewDataset(ds);"
 								clone-dataset-action="cloneDataset(ds);"
-					 	  	></dataset-view>		
+					 	  	></dataset-view>
 					 	  	</div>
 				 	    </md-tab-body>
 				 	</md-tab> 
@@ -65,7 +65,7 @@
 								show-qbe-dataset-action="showQbeDataset(ds);"
 								preview-dataset-action= "previewDataset(ds);"
 								clone-dataset-action="cloneDataset(ds);"
-					 	  	></dataset-view>	
+					 	  	></dataset-view>
 					 	  	</div>
 				 	 	</md-tab-body>
 				 	</md-tab>  
@@ -145,9 +145,10 @@
 								select-dataset-action="selectDataset(ds);"
 								edit-qbe-dataset-action="editQbeDataset(ds);"
 								show-qbe-dataset-action="showQbeDataset(ds);"
-								preview-dataset-action= "previewDataset(ds);"		
-								table-columns="tableDatasets"					
-					 	  	></dataset-view>	
+								preview-dataset-action= "previewDataset(ds);"
+								table-columns="tableDatasets"
+								clone-dataset-action="cloneDataset(ds);"
+					 	  	></dataset-view>
 					 	  	</div>
 				 	  	</md-tab-body>
 				 	</md-tab>    
@@ -155,47 +156,6 @@
    				</md-tabs>
 
 	
-	</div>
-	<div layout="column" flex=20 ng-if="showDriversForExport">
-		<md-toolbar class="header secondaryToolbar" >
-			
-				<div class="md-toolbar-tools" layout="row" layout-align="space-around center">
-					<md-button aria-label="Reset Parameter" class="md-icon-button" ng-click="clearListParametersForm();">
-						<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.clear")}}</md-tooltip>
-						<md-icon md-font-icon="fa fa-eraser"></md-icon>
-					</md-button>						
-					<md-button aria-label="Open Saved Parameters" class="md-icon-button" 
-							ng-click="urlViewPointService.getViewpoints();">
-							<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.open")}}</md-tooltip>
-							<md-icon md-font-icon="fa fa-pencil"></md-icon>
-					</md-button>	
-					<md-button aria-label="Save Parameters" class="md-icon-button"	ng-click="urlViewPointService.createNewViewpoint();">
-							<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.save")}}</md-tooltip>
-							<md-icon md-font-icon="fa fa-floppy-o"></md-icon>
-					</md-button>		  	
-			  	</div>
-		</md-toolbar>
-
-	<div  class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav"  flex md-is-locked-open="$mdMedia('gt-md')" style="width:100%">
-		<md-content>
-			<div layout="row">
-				<div class="kn-info" flex="80" layout-align="center center">{{::translate.load("sbi.execution.parametersselection.export.message")}}</div>
-			</div>
-			
-			<document-paramenter-element execProperties="dataset"  parameter="parameter" ng-repeat="parameter in drivers" ng-show="parameter.visible" layout="row" layout-align="start" ></document-paramenter-element>
-     	     <render-parameters driverable-object = "dataset" param = "param" ng-repeat="param in dataset.pars" ></render-parameters> 
-     	     <div layout="row">
-	     	     <md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised"  ng-click="exportDatasetWithDrivers(selectedDataSet)">
-					{{::translate.load("sbi.execution.parametersselection.exportbutton.message")}}
-				</md-button>
-			</div>
-			<div layout="row">
-	     	     <md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised"  ng-click="hidePanel()">
-					{{::translate.load("sbi.execution.parametersselection.cancelbutton.message")}}
-				</md-button>
-			</div>
-		</md-content>
-	</div>
 	</div>
       <md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDs"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDatasetDetails()">
 		<md-toolbar class="ternaryToolbar">
@@ -216,12 +176,12 @@
 					<md-icon md-font-icon="fa fa-pencil"></md-icon>
 				</md-button>
 				 
-	          	<md-button aria-label="Export Dataset to XLSX" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'XLSX')">
+	          	<md-button ng-if="!hasDrivers(selectedDataSet) && !hasParameters(selectedDataSet)" aria-label="Export Dataset to XLSX" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'XLSX')">
 		           	<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
 	            	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.export.xlsx')}}</md-tooltip>
 	          	</md-button>
 	          	
-	          	<md-button ng-show="selectedDataSet.isIterable && selectedDataSet.pars.length == 0" aria-label="Export Dataset to CSV" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'CSV')">
+	          	<md-button ng-if="!hasDrivers(selectedDataSet) && !hasParameters(selectedDataSet)" aria-label="Export Dataset to CSV" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'CSV')">
 		           	<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
 	            	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.export.csv')}}</md-tooltip>
 	          	</md-button>	        
@@ -272,12 +232,6 @@
 			<md-list>
 				 <md-list-item class="md-2-line">
 				          <div class="md-list-item-text">
-				            <h3><b>{{translate.load("sbi.generic.descr")}}</b></h3>
-				            <p>{{ selectedDataSet.description | i18n }}</p>
-				          </div>
-				 </md-list-item>
-				 <md-list-item class="md-2-line">
-				          <div class="md-list-item-text">
 				            <h3><b>{{translate.load("sbi.generic.name")}}</b></h3>
 				            <p>{{ selectedDataSet.name | i18n }}</p>
 				          </div>
@@ -288,7 +242,12 @@
 				            <p>{{selectedDataSet.label}}</p>
 				          </div>
 				 </md-list-item>
-				 
+				 <md-list-item class="md-2-line" ng-if="selectedDataSet.description">
+				          <div class="md-list-item-text">
+				            <h3><b>{{translate.load("sbi.generic.descr")}}</b></h3>
+				            <p>{{ selectedDataSet.description | i18n }}</p>
+				          </div>
+				 </md-list-item>
 				 <md-list-item class="md-2-line">
 				          <div class="md-list-item-text">
 				            <h3><b>{{translate.load("sbi.workspace.dataset.type")}}</b></h3>

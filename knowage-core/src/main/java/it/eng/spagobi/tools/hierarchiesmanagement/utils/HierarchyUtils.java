@@ -826,6 +826,7 @@ public class HierarchyUtils {
 	 */
 	public static HierarchyTreeNodeData setDataValues(String dimension, String nodeCode, HierarchyTreeNodeData data, IRecord record, IMetaData metadata) {
 		// inject leafID into node
+		logger.debug("IN");
 
 		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 
@@ -839,6 +840,7 @@ public class HierarchyUtils {
 			leafIdString = String.valueOf(leafId);
 		}
 		data.setLeafId(leafIdString);
+		logger.debug("leafIdString: " + leafIdString);
 
 		IField leafParentCodeField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.LEAF_PARENT_CD));
 		String leafParentCodeString = (String) leafParentCodeField.getValue();
@@ -861,6 +863,7 @@ public class HierarchyUtils {
 			beginDtDate = (Date) beginDtField.getValue();
 		}
 		data.setBeginDt(beginDtDate);
+		logger.debug("beginDtDate: " + beginDtDate);
 
 		IField endDtField = record.getFieldAt(metadata.getFieldIndex(HierarchyConstants.END_DT));
 		Date endDtDate = null;
@@ -871,6 +874,7 @@ public class HierarchyUtils {
 			endDtDate = (Date) endDtField.getValue();
 		}
 		data.setEndDt(endDtDate);
+		logger.debug("endDtDate: " + endDtDate);
 
 		HashMap mapAttrs = new HashMap();
 		int numLevels = Integer.valueOf((String) hierarchies.getConfig(dimension).get(HierarchyConstants.NUM_LEVELS));
@@ -881,6 +885,7 @@ public class HierarchyUtils {
 		} else {
 			maxDepth = (Integer) field.getValue();
 		}
+		logger.debug("maxDepth: " + maxDepth);
 
 		// add leaf field attributes for automatic edit field GUI
 		ArrayList<Field> leafFields = hierarchies.getHierarchy(dimension).getMetadataLeafFields();
@@ -889,13 +894,18 @@ public class HierarchyUtils {
 			String idFld = fld.getId();
 			if (!fld.isSingleValue()) {
 				IField fldValue = record.getFieldAt(metadata.getFieldIndex(idFld + maxDepth));
-				mapAttrs.put(idFld, (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
+				Object value = (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue();
+				mapAttrs.put(idFld, value);
+				logger.debug("mapAttrs.put: idFld [" + idFld + "], value [" + value + "]");
 			} else {
 				IField fldValue = record.getFieldAt(metadata.getFieldIndex(idFld));
-				mapAttrs.put(idFld, (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
+				Object value = (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue();
+				mapAttrs.put(idFld, value);
+				logger.debug("mapAttrs.put: idFld [" + idFld + "], value [" + value + "]");
 			}
 		}
 		data.setAttributes(mapAttrs);
+		logger.debug("OUT");
 		return data;
 	}
 
@@ -1314,6 +1324,7 @@ public class HierarchyUtils {
 					relPreparedStatement.executeUpdate();
 					relPreparedStatement.close();
 				} catch (Throwable t2) {
+					logger.error(t2.getMessage());
 					logger.error("An unexpected error occured while updating hierarchy for propagation");
 					throw new SpagoBIServiceException("An unexpected error occured while updating hierarchy for propagation", t2);
 				}

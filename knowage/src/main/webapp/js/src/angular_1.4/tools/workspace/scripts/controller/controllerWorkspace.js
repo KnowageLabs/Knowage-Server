@@ -183,7 +183,7 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 
 	// The configuration for the message displayed inside the toaster. (danristo)
 	$scope.toasterConfig = {
-		timeOut: 1500,
+		timeOut: 3500,
 		closeButton: true
 	};
 
@@ -236,10 +236,10 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 		$scope.dataset.name = dataset!=undefined ? dataset.name : "";
 		$scope.dataset.description = dataset!=undefined ? dataset.description : "";
 		$scope.dataset.meta = dataset!=undefined ? dataset.meta : [];
-		
+
 		$scope.dataset.persist =  (dataset != undefined && dataset.hasOwnProperty('isPersisted')) ? dataset.isPersisted : false;
 		$scope.dataset.tableName = (dataset != undefined && dataset.persistTableName) ? dataset.persistTableName : "";
-		
+
 		$scope.dataset.fileUploaded = false;
 
 	}
@@ -285,7 +285,7 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 	 	{value:"MM.dd.yyyy",name:"MM.dd.yyyy"}
 
 	];
-	
+
 	$scope.timestampFormatTypes = [
 		{ value:"dd/MM/yyyy HH:mm:ss", name:"dd/MM/yyyy HH:mm:ss" },
 	 	{ value:"MM/dd/yyyy hh:mm:ss a", name:"MM/dd/yyyy hh:mm:ss a" },
@@ -296,7 +296,7 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 	 	{ value:"dd.MM.yyyy HH:mm:ss", name:"dd.MM.yyyy HH:mm:ss" },
 	 	{ value:"MM.dd.yyyy HH:mm:ss", name:"MM.dd.yyyy HH:mm:ss" }
 	];
-	
+
 
 	/**
 	 * Keep and change the values for three comboboxes that appear when user uploads a CSV file when creating a new Dataset.
@@ -317,7 +317,7 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 	$scope.chooseDateFormat = function(dateFormat) {
 		$scope.dataset.dateFormat = dateFormat;
 	}
-	
+
 	$scope.chooseTimestampFormat = function(timestampFormat) {
 		$scope.dataset.timestampFormat = timestampFormat;
 	}

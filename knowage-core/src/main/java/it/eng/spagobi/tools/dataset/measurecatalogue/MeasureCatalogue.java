@@ -18,6 +18,21 @@
 
 package it.eng.spagobi.tools.dataset.measurecatalogue;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
@@ -33,23 +48,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.event.DataSetEvent;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Set;
-
 import junit.framework.Assert;
-
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MeasureCatalogue implements Observer {
 
@@ -97,8 +96,9 @@ public class MeasureCatalogue implements Observer {
 			throw new SpagoBIRuntimeException("Error loading the name of the model that contains the hierarchies", e);
 		}
 
-		Assert.assertNotNull("The model with the definition of the cube must be difined in the configs (property " + MeasureCatalogueCostants.modelConfigLabel
-				+ ")", modelConfig);
+		Assert.assertNotNull(
+				"The model with the definition of the cube must be difined in the configs (property " + MeasureCatalogueCostants.modelConfigLabel + ")",
+				modelConfig);
 
 		String modelname = modelConfig.getValueCheck();
 		logger.debug("Initilaizing model [" + modelname + "]");
@@ -140,8 +140,9 @@ public class MeasureCatalogue implements Observer {
 			throw new SpagoBIRuntimeException("Error loading the name of the model that contains the hierarchies", e);
 		}
 
-		Assert.assertNotNull("The model with the definition of the cube must be difined in the configs (property " + MeasureCatalogueCostants.modelConfigLabel
-				+ ")", modelConfig);
+		Assert.assertNotNull(
+				"The model with the definition of the cube must be difined in the configs (property " + MeasureCatalogueCostants.modelConfigLabel + ")",
+				modelConfig);
 
 		String modelname = modelConfig.getValueCheck();
 		logger.debug("Loading Siblings File [" + modelname + ".siblings ]");
@@ -304,8 +305,7 @@ public class MeasureCatalogue implements Observer {
 	}
 
 	/**
-	 * @param metamodelWrapper
-	 *            the metamodelWrapper to set
+	 * @param metamodelWrapper the metamodelWrapper to set
 	 */
 	public void setMetamodelWrapper(MetaModelWrapper metamodelWrapper) {
 		this.metamodelWrapper = metamodelWrapper;
@@ -365,7 +365,7 @@ public class MeasureCatalogue implements Observer {
 		Set<MeasureCatalogueMeasure> filteredMeasures = new HashSet<MeasureCatalogueMeasure>();
 		for (Iterator iterator = measures.iterator(); iterator.hasNext();) {
 			MeasureCatalogueMeasure measureCatalogueMeasure = (MeasureCatalogueMeasure) iterator.next();
-			if (isAdminUser || (!owner.equals(null) && owner.equals(measureCatalogueMeasure.getDataSet().getOwner()))) {
+			if (isAdminUser || (owner != null && owner.equals(measureCatalogueMeasure.getDataSet().getOwner()))) {
 				filteredMeasures.add(measureCatalogueMeasure);
 			}
 		}

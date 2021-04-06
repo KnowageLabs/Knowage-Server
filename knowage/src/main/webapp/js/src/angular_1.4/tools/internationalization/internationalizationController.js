@@ -27,41 +27,44 @@
 				   $mdThemingProvider.theme('knowage');
 				   $mdThemingProvider.setDefaultTheme('knowage');
 			   }
-		   ]).controller('internationalizationController', ['$scope', 'i18nAvailableLanguagesService', 'sbiModule_restServices', 'sbiModule_messaging', 'sbiModule_translate', '$mdDialog', InternationalizationController])
-		     .filter('findEmpty', ['$filter', function($filter){
-		    	 return function(messages, emptyMessage) {
-		    		 if(emptyMessage) {
-			    		 return $filter('filter')(messages, {message: ''}, true);
-			    	 } else {
-			    		 return messages;
-			    	 }
-		    	 }
-		     }]);
+		   ]).controller('internationalizationController', ['$scope', 'i18nAvailableLanguagesService', 'sbiModule_restServices', 'sbiModule_messaging', 'sbiModule_translate', '$mdDialog', '$filter', InternationalizationController])
 
-	function InternationalizationController($scope, i18nAvailableLanguagesService, sbiModule_restServices, sbiModule_messaging, sbiModule_translate, $mdDialog) {
+	function InternationalizationController($scope, i18nAvailableLanguagesService, sbiModule_restServices, sbiModule_messaging, sbiModule_translate, $mdDialog,$filter) {
 		var availableLanguagesService = i18nAvailableLanguagesService.getAvailableLanguages();
 		$scope.availableLanguages = availableLanguagesService.languages;
 		$scope.defaultLangMessages = [];
 		$scope.messages = [];
 		$scope.isTechnicalUser = isTechnicalUser;
-		$scope.emptyMessage = false;
 		$scope.translate = sbiModule_translate;
+
+		$scope.toggleEmptyMessages = function(){
+			if($scope.emptyMessage.value){
+				$scope.emptyMessage.originalMessages = angular.copy($scope.messages);
+				$scope.messages = $filter('filter')($scope.messages, function(value){
+					return !value.message
+				})
+			}else {
+				$scope.messages = angular.copy($scope.emptyMessage.originalMessages);
+			}
+					
+		}
 
 		//REST
 		$scope.getMessages = function(selectedTab) {
 			$scope.messages = [];
-			sbiModule_restServices.promiseGet("2.0/i18nMessages", "internationalization/?currLanguage="+selectedTab.language)
+			sbiModule_restServices.promiseGet("2.0/i18nMessages", "internationalization/?currLanguage="+selectedTab.iso3code)
 				.then(function(response){
+					$scope.emptyMessage = {value:false, originalMessages:[]};
 					//For Default Language
 					if(selectedTab.defaultLanguage) {
 						//If database is empty show one row of input fields
 						if(response.data.length == 0) {
-							var newBlankMessage = {
+							$scope.messages = [{
 								language: '',
 								label: '',
 								message: ''
-							};
-							$scope.messages.push(newBlankMessage);
+							}];
+							$scope.defaultLangMessages = [];
 						} else {
 							$scope.defaultLangMessages = response.data;
 							angular.copy($scope.defaultLangMessages, $scope.messages);
@@ -71,29 +74,32 @@
 						//If there are some messages in database
 						if(response.data.length != 0) {
 							$scope.defaultLangMessages.forEach(function(defMess){
-								response.data.forEach(function(newMess){
-									if(defMess.label == newMess.label) {
-										newMess.defaultMessageCode = defMess.message;
-										$scope.messages.push(newMess);
-									}
+								// searching if default message was translated into current language
+								var translatedMessageArray = response.data.filter(function(item){
+									return item.label == defMess.label;
 								});
-							});
 
-							for(var i = response.data.length; i < $scope.defaultLangMessages.length; i++) {
-								var defMess = $scope.defaultLangMessages[i];
-								var mess = {};
-								mess.language = selectedTab.language;
-								mess.label = defMess.label;
-								mess.defaultMessageCode = defMess.message;
-								mess.message = '';
-								$scope.messages.push(mess);
-							}
+								if (translatedMessageArray[0]) {
+									// in case default message was translated into current language, we add the default translation message as a reference for translators
+									translatedMessageArray[0].defaultMessageCode = defMess.message;
+									$scope.messages.push(translatedMessageArray[0]);
+								} else {
+									// in case default message was not translated into current language, we add an empty translation message
+									var message = {
+										language : selectedTab.iso3code,
+										label : defMess.label,
+										defaultMessageCode : defMess.message,
+										message : ''
+									};
+									$scope.messages.push(message);
+								}
+							});
 
 						} else {
 						//If there is no messages in database, take Label and Message Code from Default one
 							$scope.defaultLangMessages.forEach(function(defMess){
 								var newMess = {};
-								newMess.language = selectedTab.language;
+								newMess.language = selectedTab.iso3code;
 								newMess.label = defMess.label;
 								newMess.defaultMessageCode = defMess.message;
 								newMess.message = '';
@@ -137,7 +143,7 @@
 				if(toInsert.hasOwnProperty('defaultMessageCode')) {
 					delete toInsert.defaultMessageCode;
 				}
-				toInsert.language = langObj.language;
+				toInsert.language = langObj.iso3code;
 				sbiModule_restServices.promisePost("2.0/i18nMessages", "", toInsert)
 					.then(function(response){
 						console.log("[POST]: SUCCESS!");
@@ -207,7 +213,5 @@
 			}
 
 		};
-
-
 	};
 })();

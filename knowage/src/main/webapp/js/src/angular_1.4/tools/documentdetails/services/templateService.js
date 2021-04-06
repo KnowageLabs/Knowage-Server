@@ -17,65 +17,76 @@
  */
 
 (function () {
-    angular.module('TemplateModule', ['sbiModule'])
-    	   .service('templateService', ['resourceService', 'DocumentService', 'multipartForm', 'sbiModule_translate', 'sbiModule_messaging', function(resourceService, DocumentService, multipartForm, sbiModule_translate, sbiModule_messaging) {
-    		   var templateResource = {};
-    		   var documentService = DocumentService;
-    		   var requiredPath = "2.0/documentdetails";
-    		   templateResource.listOfTemplates = [];
-    		   templateResource.changedTemplates = [];
-    		   templateResource.changedTemplate = {};
-    		   templateResource.file = {};
-    		   templateResource.templatesForDeleting = [];
-    		   var templateUploadBasePath = document.id + '/templates';
+	angular.module('TemplateModule', ['sbiModule'])
+			.service('templateService', ['resourceService', 'DocumentService', 'multipartForm', 'sbiModule_translate', 'sbiModule_messaging', function(resourceService, DocumentService, multipartForm, sbiModule_translate, sbiModule_messaging) {
+				var templateResource = {};
+				var documentService = DocumentService;
+				var requiredPath = "2.0/documentdetails";
+				templateResource.listOfTemplates = [];
+				templateResource.changedTemplates = [];
+				templateResource.changedTemplate = {};
+				templateResource.file = {};
+				templateResource.templatesForDeleting = [];
+				var templateUploadBasePath = document.id + '/templates';
 
-    		   templateResource.uploadTemplate = function() {
-    	        	if(templateResource.file.file) {
-    	        		var templateUploadBasePath = documentService.document.id + '/templates';
-    	        		multipartForm.post(requiredPath +"/"+ templateUploadBasePath, templateResource.file).then(function(response){
-    	        			templateResource.getAllTemplates();
-    	  	      	  });
-    	        	}
-    	        };
+				templateResource.uploadTemplate = function() {
+					var ret = Promise.resolve();
+					if(templateResource.file.file) {
+						var templateUploadBasePath = documentService.document.id + '/templates';
+						ret = multipartForm.post(requiredPath +"/"+ templateUploadBasePath, templateResource.file).then(function(response){
+							templateResource.getAllTemplates();
+						});
+					}
+					return ret;
+				};
 
-    	        templateResource.getAllTemplates = function() {
-    	        	var templateBasePath = documentService.document.id + '/templates';
-    	        	resourceService.get(requiredPath, templateBasePath).then(function(response) {
-    	        		templateResource.listOfTemplates = response.data;
-    	        	});
-    	        }
+				templateResource.getAllTemplates = function() {
+					var ret = Promise.resolve();
+					var templateBasePath = documentService.document.id + '/templates';
+					ret = resourceService.get(requiredPath, templateBasePath).then(function(response) {
+						templateResource.listOfTemplates = response.data;
+					});
+					return ret;
+				}
 
-    	        templateResource.getSelectedTemplate = function(template) {
-   	          	 var basePath = documentService.document.id + '/templates';
-   	          	 var basePathWithId = basePath + "/selected/" + template.id;
-   	          	 resourceService.get(requiredPath, basePathWithId).then(function(response) {
-   	          		 templateResource.selectedTemplateContent = response.data;
-   	          	 });
-   	           };
+				templateResource.getSelectedTemplate = function(template) {
+					var ret = Promise.resolve();
+					var basePath = documentService.document.id + '/templates';
+					var basePathWithId = basePath + "/selected/" + template.id;
+					ret = resourceService.get(requiredPath, basePathWithId).then(function(response) {
+						templateResource.selectedTemplateContent = response.data;
+					});
+					return ret;
+				};
 
-    	        templateResource.setActiveTemplate = function() {
-    	        	if(templateResource.changedTemplate.id) {
-    					var templateModifyBasePath = documentService.document.id + "/templates/" + templateResource.changedTemplate.id;
-    	    			resourceService.put(requiredPath, templateModifyBasePath);
-    				}
-    	        };
+				templateResource.setActiveTemplate = function() {
+					var ret = Promise.resolve();
+					if(templateResource.changedTemplate.id) {
+						var templateModifyBasePath = documentService.document.id + "/templates/" + templateResource.changedTemplate.id;
+						ret = resourceService.put(requiredPath, templateModifyBasePath);
+					}
+					return ret;
+				};
 
-    	        var deleteTemplateById = function(template) {
-    	          	 var basePath = documentService.document.id + "/" + 'templates';
-    	          	 var basePathWithId = basePath + "/" + template.id;
-    	          	 resourceService.delete(requiredPath, basePathWithId).then(function(response) {
-    	          		 sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
-    	          	 });
-    	           };
+				var deleteTemplateById = function(template) {
+					var ret = Promise.resolve();
+					var basePath = documentService.document.id + "/" + 'templates';
+					var basePathWithId = basePath + "/" + template.id;
+					ret = resourceService.delete(requiredPath, basePathWithId).then(function(response) {
+						 sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.documentdetails.toast.deleted"), 'Success!');
+					});
+					return ret;
+				};
 
-    	           templateResource.deleteTemplates = function() {
-    	          	 for(var i = 0; i < templateResource.templatesForDeleting.length; i++) {
-    	          		 deleteTemplateById(templateResource.templatesForDeleting[i]);
-    	          	 }
-    	           };
+				templateResource.deleteTemplates = function() {
+					var ret = [];
+					for(var i = 0; i < templateResource.templatesForDeleting.length; i++) {
+						ret.push(deleteTemplateById(templateResource.templatesForDeleting[i]));
+					}
+					return Promise.all(ret);
+				};
 
-
-    		   return templateResource;
-    	   }]);
+			return templateResource;
+		}]);
 
 })();

@@ -1,0 +1,50 @@
+<md-dialog style="min-width:70%;" class="thresholdSelector" >
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{::translate.load("sbi.cockpit.map.edit.thresholds.choropleth.thresholds")}}</h2>
+        <span flex></span>
+        <md-button ng-click="addThreshold()">
+        	{{::translate.load("sbi.cockpit.map.edit.thresholds.choropleth.addThreshold")}}
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content layout-padding style="min-height:300px;">
+    	<div layout="column"  ng-if="activeAnalysisConf.properties.thresholds && activeAnalysisConf.properties.thresholds.length > 0">
+    		<div ng-repeat="threshold in activeAnalysisConf.properties.thresholds" layout="row" layout-align="center center">
+    			<md-input-container class="md-block flex">
+			        <label>{{::translate.load("sbi.cockpit.map.edit.thresholds.choropleth.color")}}</label>
+		         	<color-picker options="colorPickerOptions" ng-model="threshold.color"></color-picker> 
+	      		</md-input-container>
+	      		<md-input-container class="md-block flex">
+			        <label>{{::translate.load("sbi.cockpit.map.edit.thresholds.choropleth.from")}} (>=)</label>
+			        <input type="number" ng-model="threshold.from" />
+	      		</md-input-container>
+	      		<md-input-container class="md-block flex">
+			        <label>{{::translate.load("sbi.cockpit.map.edit.thresholds.choropleth.to")}} (&lt;)</label>
+			        <input type="number" ng-model="threshold.to" />
+	      		</md-input-container>
+	      		<md-button class="md-icon-button" ng-click="deleteThreshold(threshold)">
+	      			<md-tooltip>{{::translate.load("sbi.cockpit.map.edit.thresholds.choropleth.delete")}}</md-tooltip>
+	      			<md-icon md-font-icon="fa fa-trash"></md-icon>
+	      		</md-button>
+    		</div>
+    	</div>
+    	<div layout="row" layout-align="center center" ng-if="!activeAnalysisConf.properties.thresholds || activeAnalysisConf.properties.thresholds.length == 0">
+    		<div class="kn-noItems" flex="80">
+    			{{::translate.load("sbi.cockpit.map.edit.thresholds.choropleth.noThresholdPresent")}}
+    		</div>
+    	</div>
+      
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="cancel()">
+        {{::translate.load("kn.generic.cancel")}}
+      </md-button>
+      <md-button class="md-raised md-primary" ng-click="set()">
+       	{{::translate.load("kn.generic.set")}}
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

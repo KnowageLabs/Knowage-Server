@@ -414,7 +414,7 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	};
 
 	$scope.columns = [
-		{"headerName":"Valori","field":"column_1",checkboxSelection:true,rowMultiSelectWithClick:"checkboxSelection"}
+		{"headerName":"Valori","field":"column_1",checkboxSelection:true,rowMultiSelectWithClick:"checkboxSelection", filter: true}
 	];
 
 	$scope.valuesGrid = {

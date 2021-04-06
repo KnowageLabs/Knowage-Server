@@ -89,11 +89,8 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
-import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
@@ -439,10 +436,8 @@ public class DataSetResource extends AbstractDataSetResource {
 		try {
 			ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
-			ArrayList<HashMap<String, Object>> drivers = null;
 			dao.setUserProfile(getUserProfile());
 			dataSourceDAO.setUserProfile(getUserProfile());
-			Boolean loadDSwithDrivers = true;
 
 			Integer page = getNumberOrNull(pageStr);
 			Integer item_per_page = getNumberOrNull(itemPerPageStr);
@@ -462,36 +457,18 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			for (SbiDataSet ds : dataset) {
 				IDataSet dataSet = DataSetFactory.toDataSet(ds, getUserProfile());
+				boolean isNearRealtimeSupported = isNearRealtimeSupported(dataSet);
 				JSONObject jsonIDataSet = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
 
 				JSONObject jsonSbiDataSet = new JSONObject(JsonConverter.objectToJson(ds, SbiDataSet.class));
-				boolean isNearRealtimeSupported = false;
 				jsonSbiDataSet.put("isRealtime", dataSet.isRealtime());
 				jsonSbiDataSet.put("isCachingSupported", dataSet.isCachingSupported());
 				jsonSbiDataSet.put("parameters", jsonIDataSet.getJSONArray("pars"));
 				jsonSbiDataSet.put("isIterable", dataSet.isIterable());
-				dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
-				if (dataSet instanceof AbstractJDBCDataset) {
-					IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
-					isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
-				} else if (dataSet instanceof QbeDataSet) {
-					try {
-						String businessModelName = (String) jsonSbiDataSet.getJSONObject("configuration").get("qbeDatamarts");
-						drivers = getDatasetDriversByModelName(businessModelName, loadDSwithDrivers);
-						if (drivers == null) {
-							continue;
-						}
-						jsonSbiDataSet.put("drivers", drivers);
-						IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
-						isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformer();
-					} catch (Exception e) {
-						LogMF.error(logger, "Error loading dataset {0} with id {1}", new String[] { ds.getName(), ds.getId().getDsId().toString() });
-						throw e;
-					}
-				} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet.getClass().equals(SolrDataSet.class)) {
-					isNearRealtimeSupported = true;
-				}
 				jsonSbiDataSet.put("isNearRealtimeSupported", isNearRealtimeSupported);
+
+				setDriversIntoDsJSONConfig(dataSet, ds, jsonSbiDataSet);
+
 				ja.put(jsonSbiDataSet);
 			}
 			jo.put("item", ja);
@@ -503,6 +480,24 @@ public class DataSetResource extends AbstractDataSetResource {
 			throw new SpagoBIRuntimeException("Error while getting the list of datasets", e);
 		} finally {
 			logger.debug("OUT");
+		}
+	}
+
+	private void setDriversIntoDsJSONConfig(IDataSet dataSet, SbiDataSet ds, JSONObject jsonSbiDataSet) throws Exception {
+		dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
+		if (dataSet instanceof QbeDataSet) {
+			try {
+				Boolean loadDSwithDrivers = true;
+				ArrayList<HashMap<String, Object>> drivers = null;
+				String businessModelName = (String) jsonSbiDataSet.getJSONObject("configuration").get("qbeDatamarts");
+				drivers = getDatasetDriversByModelName(businessModelName, loadDSwithDrivers);
+				if (drivers != null) {
+					jsonSbiDataSet.put("drivers", drivers);
+				}
+			} catch (Exception e) {
+				LogMF.error(logger, "Error loading dataset {0} with id {1}", new String[] { ds.getName(), ds.getId().getDsId().toString() });
+				throw e;
+			}
 		}
 	}
 
@@ -844,7 +839,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			}
 
 			timing.stop();
-			return getDataStore(label, parameters, driversRuntimeMap, null, likeSelections, -1, aggregations, null, start, limit, true, columns, null);
+			return getDataStore(label, parameters, driversRuntimeMap, null, likeSelections, -1, aggregations, null, start, limit, columns, null);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} catch (Exception e) {

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,19 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.chart.service;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.chart.utils.ExportHighCharts;
-import it.eng.spagobi.utilities.engines.AbstractEngineAction;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.mime.MimeUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -34,11 +26,17 @@ import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Decoder;
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.chart.utils.ExportHighCharts;
+import it.eng.spagobi.utilities.engines.AbstractEngineAction;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.mime.MimeUtils;
 
 /**
  * The Class ExportHighChartsAction.
- * 
+ *
  * @author Antonella Giachino (antonella.giachino@eng.it)
  */
 public class ExportHighChartsAction extends AbstractEngineAction {
@@ -54,7 +52,6 @@ public class ExportHighChartsAction extends AbstractEngineAction {
 
 	/** Logger component. */
 	private static transient Logger logger = Logger.getLogger(ExportHighChartsAction.class);
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
 
 	public static final String ENGINE_NAME = "SpagoBIChartEngine";
 

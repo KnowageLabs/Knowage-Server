@@ -422,7 +422,7 @@ function impExpFuncController(sbiModule_download, sbiModule_device, $scope, $mdD
 												translate: sbiModule_translate,
 												docRelToMenu: $scope.docRelToMenu,
 											},
-											templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/servermanager/menuImportExport/templates/importMenuDocAssociationDialog.html',
+											templateUrl: sbiModule_config.dynamicResourcesBasePath +'/angular_1.4/tools/servermanager/menuImportExport/templates/importMenuDocAssociationDialog.html',
 											clickOutsideToClose: true,
 											escapeToClose: true,
 											fullscreen: true

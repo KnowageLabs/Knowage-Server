@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -317,7 +317,7 @@ public class ExecutionProxy {
 				httpMethod = postMethod;
 			}
 			String userId = (String) UserProfile.createSchedulerUserProfile().getUserUniqueIdentifier();
-			String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
+			String encodedUserId = Base64.getEncoder().encodeToString(userId.getBytes("UTF-8"));
 			httpMethod.addRequestHeader("Authorization", "Direct " + encodedUserId);
 
 			// sent request to the engine

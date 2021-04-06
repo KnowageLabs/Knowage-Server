@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.utilities.engines.rest;
 
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -30,7 +31,6 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -194,7 +194,7 @@ public class SimpleRestClient {
 			request.setEntity(builder.build());
 			client = HttpClientBuilder.create().build();
 
-			String encodedBytes = Base64.encode(userId.getBytes("UTF-8"));
+			String encodedBytes = Base64.getEncoder().encodeToString(userId.getBytes("UTF-8"));
 			request.addHeader("Authorization", "Direct " + encodedBytes);
 
 			authenticationProvider.provideAuthenticationMultiPart(request, myHeaders);
@@ -276,7 +276,7 @@ public class SimpleRestClient {
 	private void addAuthorizations(Builder request, String userId, MultivaluedMap<String, Object> myHeaders) throws Exception {
 		logger.debug("Adding auth for user " + userId);
 
-		String encodedBytes = Base64.encode(userId.getBytes("UTF-8"));
+		String encodedBytes = Base64.getEncoder().encodeToString(userId.getBytes("UTF-8"));
 		request.header("Authorization", "Direct " + encodedBytes);
 		myHeaders.add("Authorization", "Direct " + encodedBytes);
 	}

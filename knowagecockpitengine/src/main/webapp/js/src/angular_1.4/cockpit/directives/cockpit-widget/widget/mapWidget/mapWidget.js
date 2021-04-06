@@ -1549,6 +1549,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.getPropValueFromProps = function(props, prop) {
+			// Props can be an empty object
+			if (!(prop.name in props)) {
+				return null;
+			}
+		
 			var currProp = props[prop.name];
 			var currPropValue = currProp.value;
 			var ret = "";
@@ -1704,6 +1709,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.reinit();
 				}
 			});
+		}
+
+		$scope.getPerWidgetDatasetIds = function() {
+			return $scope.ngModel.content.layers.map(function(e) { return e.dataset.id.dsId; });
 		}
 
 	}

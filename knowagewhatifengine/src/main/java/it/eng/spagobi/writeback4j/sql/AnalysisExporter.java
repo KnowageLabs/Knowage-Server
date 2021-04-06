@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,14 +19,7 @@
 package it.eng.spagobi.writeback4j.sql;
 
 
-import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.writeback4j.IMemberCoordinates;
-import it.eng.spagobi.writeback4j.ISchemaRetriver;
-
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.sql.Connection;
@@ -41,11 +34,18 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
 import org.olap4j.metadata.Dimension.Type;
 import org.olap4j.metadata.Member;
 import org.pivot4j.PivotModel;
+
+import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.writeback4j.IMemberCoordinates;
+import it.eng.spagobi.writeback4j.ISchemaRetriver;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
@@ -113,11 +113,11 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 			}
 			out.flush();
 			toReturn = fos.toByteArray();
-			
+
 			logger.debug("Finished to navigate the result set");
 			logger.debug("Start Creating zip");
-			
-			
+
+
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ZipOutputStream zos = new ZipOutputStream(baos);
 			ZipEntry entry = new ZipEntry(fileName);
@@ -126,12 +126,12 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 			zos.write(toReturn);
 			zos.closeEntry();
 			zos.close();
-			
+
 			toReturn = baos.toByteArray();
-			
+
 			logger.debug("zip created");
 
-			
+
 			logger.debug("OUT");
 		} catch (Exception e) {
 			out.close();

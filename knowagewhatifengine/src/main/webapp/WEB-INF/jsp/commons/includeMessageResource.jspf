@@ -16,8 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/lib/messageResource/messageResource.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext,"/js/lib/messageResource/messageResourceKnowageCustom.js")%>"></script>
 
 <script type="text/javascript">
 	//Function that gets the properties file's content in an synchronous way

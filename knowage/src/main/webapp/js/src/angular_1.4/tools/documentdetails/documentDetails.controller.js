@@ -58,39 +58,39 @@
         	window.parent.angular.element(window.frameElement).scope().closeDialogFromExt(true);
         };
 
-        self.savingFunction = function(){
+		self.savingFunction = function(){
 
+			if(documentService.document.id != undefined){
+				DriversService.persistDrivers(documentService.document.id,requiredPath);
+				DriversService.deleteDrivers(documentService.document.id,requiredPath);
+	
+//				DriversService.persistDataDependency(documentService.document.id,requiredPath);
+//				DriversService.deleteDataDependencies(documentService.document.id,requiredPath);
+	
+				DriversService.persistVisualDependency(documentService.document.id,requiredPath);
+				DriversService.deleteVisualDependencies(documentService.document.id,requiredPath);
+			}
 
+			if(DocumentService.document.outputParameters) {
+				outputParametersService.persistOutputParameters();
+				outputParametersService.deleteOutputParameters();
+			}
 
-        	if(documentService.document.id != undefined){
-        	DriversService.persistDrivers(documentService.document.id,requiredPath);
-        	DriversService.deleteDrivers(documentService.document.id,requiredPath);
-
-//        	DriversService.persistDataDependency(documentService.document.id,requiredPath);
-//        	DriversService.deleteDataDependencies(documentService.document.id,requiredPath);
-
-        	DriversService.persistVisualDependency(documentService.document.id,requiredPath);
-        	DriversService.deleteVisualDependencies(documentService.document.id,requiredPath);
-        	}
-        	if(DocumentService.document.outputParameters) {
-        		outputParametersService.persistOutputParameters();
-        		outputParametersService.deleteOutputParameters();
-        	}
-
-
-        	dataLineageService.persistTables();
+			dataLineageService.persistTables();
 			dataLineageService.deleteTables();
 
-        	templateService.uploadTemplate();
-        	templateService.setActiveTemplate();
-        	templateService.deleteTemplates();
+			persistDocument().then(function() {
+				templateService.uploadTemplate();
+				templateService.setActiveTemplate();
+				templateService.deleteTemplates();
+	
+				subreportsService.deleteSubreports();
+				subreportsService.persistSubreports();
+			}).then(function() {
+				$scope.$root.$broadcast("RefreshTemplates", "");
+			});
 
-        	subreportsService.deleteSubreports();
-			subreportsService.persistSubreports();
-
-			persistDocument();
-
-        };
+		};
 
 
         var uploadImage = function() {
@@ -114,35 +114,37 @@
         };
 
 
-         var persistDocument = function(){
-      	   prepareDocumentForPersisting(documentService.document);
-      	   setFoldersPath();
-         	if(documentService.document.id || document.id){
-         		resourceService.put(documentService.requiredPath,documentService.document.id,documentService.document).then(function(response){
-         			if(response.data.errors){
-         				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-         			}else
-         			sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.documentupdated"), 'Success!');
-         			documentService.document = response.data;
-         			self.typeCode = response.data.typeCode;
-         			self.engine = response.data.engine;
-         			uploadImage();
-         		});
-         	} else{
-         		resourceService.post(documentService.requiredPath,"",document).then(function(response){
-         			if(response.data.errors){
-         				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-         			}else
-         			sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.documentcreated"), 'Success!');
-         			documentService.document = response.data;
-         			DriversService.setDriverRelatedObject(response.data);
-         			self.docId = response.data.id;
-         			self.typeCode = response.data.typeCode;
-         			self.engine = response.data.engine;
-         			uploadImage();
-         		});
-         	}
-         };
+		var persistDocument = function(){
+			prepareDocumentForPersisting(documentService.document);
+			setFoldersPath();
+			if(documentService.document.id || document.id){
+				return resourceService.put(documentService.requiredPath,documentService.document.id,documentService.document).then(function(response){
+					if(response.data.errors){
+						sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					} else {
+						sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.documentupdated"), 'Success!');
+					}
+					documentService.document = response.data;
+					self.typeCode = response.data.typeCode;
+					self.engine = response.data.engine;
+					uploadImage();
+				});
+			} else {
+				return resourceService.post(documentService.requiredPath,"",document).then(function(response){
+					if(response.data.errors){
+						sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					} else {
+						sbiModule_messaging.showInfoMessage(self.translate.load("sbi.documentdetails.toast.documentcreated"), 'Success!');
+					}
+					documentService.document = response.data;
+					DriversService.setDriverRelatedObject(response.data);
+					self.docId = response.data.id;
+					self.typeCode = response.data.typeCode;
+					self.engine = response.data.engine;
+					uploadImage();
+				});
+			}
+		};
 
          var setFoldersPath = function(){
       	   document.functionalities=[];

@@ -257,7 +257,8 @@ function cockpitWidgetControllerFunction(
 		cockpitModule_exportWidgetService,
 		$httpParamSerializer,
 		cockpitModule_defaultTheme,
-		cockpitModule_templateServices)
+		cockpitModule_templateServices,
+		cockpitModule_utilstServices)
 
 {
 
@@ -268,8 +269,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 	var MAXMENUWIDTH = 425;
 
 	$scope.cockpitModule_properties = cockpitModule_properties;
-
-	$scope.parametersMessage = false;
 
 	$scope.enter = function(e){
 		if($scope.widgetExitTimeout) $timeout.cancel($scope.widgetExitTimeout);
@@ -288,6 +287,10 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	$scope.checkType = function(type,availableTypes){
 		return availableTypes.indexOf(type) != -1;
+	}
+
+	$scope.checkChartType = function(model, notAvailableCharts){
+		return !(notAvailableCharts.indexOf(model.content.chartTemplate.CHART.type.toLowerCase()) != -1);
 	}
 
 	$scope.checkMenuVisibility = function(){
@@ -432,7 +435,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			}
 			break;
 		case "PARAMETER_CHANGE":
-			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue) || !(cockpitModule_datasetServices.driverHasValue);
 			var ds=$scope.getDataset();
 			if(ds!=undefined && config.dsList.hasOwnProperty(ds.label)){
 				$scope.refreshWidget(undefined,"parameter_change");
@@ -451,8 +453,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		switch(eventType){
 		case "REFRESH"  :
 			// Break to prevent double refresh in case of default selections
-			if(config.nature === 'init' && cockpitModule_properties.HASDEFAULTSELECTION[cockpitModule_properties.CURRENT_SHEET] && $scope.ngModel.type != 'selector') break;
-			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue) || !(cockpitModule_datasetServices.driverHasValue);
+			var thisSheetDefaultSelections = cockpitModule_properties.HASDEFAULTSELECTION[cockpitModule_properties.CURRENT_SHEET];
+			if(config.nature === 'init' && $scope.ngModel.updateble && $scope.ngModel.type != 'selector' && $scope.getDataset() && thisSheetDefaultSelections && thisSheetDefaultSelections.indexOf($scope.getDataset().id.dsId) != -1) break;
 		    var dirtyIndex = $scope.cockpitModule_properties.DIRTY_WIDGETS.indexOf($scope.ngModel.id);
 		    if($scope.$parent.$parent.sheet.index == $scope.cockpitModule_properties.CURRENT_SHEET){
                 if(dirtyIndex > -1){
@@ -484,7 +486,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
             break;
 		case "INIT" :
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
-			$scope.parametersMessage = !(cockpitModule_datasetServices.parameterHasValue) || !(cockpitModule_datasetServices.driverHasValue);
 			break;
 		case "RESIZE" :
 			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map" || $scope.ngModel.type=="static-pivot-table") {
@@ -530,7 +531,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	$scope.updateFromSelection = function(isInit,associativeSelection){
 		var dataset= $scope.getDataset();
-		if($scope.ngModel.updateble==false){
+		if(!isInit && $scope.ngModel.updateble==false){
 			if(dataset && $scope.cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 				$scope.cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
 			}
@@ -767,7 +768,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		for(var p in previewSettings.parameters){
 			if(previewSettings.parameters[p].bindType != 'static' && previewSettings.parameters[p].defaultValue) previewSettings.parameters[p].value = previewSettings.parameters[p].defaultValue
 			if(previewSettings.parameters[p].bindType == 'driver'){
-				previewSettings.parameters[p].value = cockpitModule_analyticalDrivers[previewSettings.parameters[p].driver];
+				previewSettings.parameters[p].value = getFormattedParameterValue(previewSettings.parameters[p]);
 			}
 			if(previewSettings.parameters[p].bindType == 'dynamic'){
 				if($scope.ngModel.type == 'chart') previewSettings.parameters[p].value = clickedValue;
@@ -788,6 +789,12 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			}
 		}
 		return previewSettings.parameters;
+	}
+
+	var getFormattedParameterValue = function(param){
+		var value = cockpitModule_analyticalDrivers[param.driver];
+		if (!param.multiValue) return value;
+		else return cockpitModule_utilstServices.getMultiValueParameterArray(value);
 	}
 
 	var popupMessage = function(result){
@@ -856,8 +863,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 		if(!directInteraction || directInteraction == 'cross'){
 			if (previewSettings && previewSettings.enable) {
-				if(!previewSettings.previewType || previewSettings.previewType == 'allRow' || 
-				(previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName) || 
+				if(!previewSettings.previewType || previewSettings.previewType == 'allRow' ||
+				(previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName) ||
 				(previewSettings.previewType == 'icon' && (!columnName || columnName == ""))){
 					$scope.iframeSrcUrl = sbiModule_config.externalBasePath + SERVICE;
 
@@ -1215,8 +1222,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				if(sel!=undefined){
 
 
-					if(!cockpitModule_template.configuration.aliases){
-						cockpitModule_template.configuration.aliases = [];
+					if(!cockpitModule_properties.aliases){
+						cockpitModule_properties.aliases = [];
 					}
 
 					if(!angular.equals("noAssoc",sel)){
@@ -1246,7 +1253,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 									delete cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue];
 								}
 								cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue]=columnValue[o];
-								cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':singleOriginalColumnValue,'alias':columnName[o]});
+								cockpitModule_properties.aliases.push({'dataset':dsLabel,'column':singleOriginalColumnValue,'alias':columnName[o]});
 							}
 						}else{
 								if(cockpitModule_template.configuration.filters[dsLabel].hasOwnProperty(originalColumnName)){ // sort
@@ -1266,7 +1273,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 								}else{
 									cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=columnValue;
 								}
-								cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
+								cockpitModule_properties.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
 						}
 						cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
 
@@ -1644,7 +1651,9 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		var minMaxCategoriesSeries = cockpitModule_widgetServices.createCompatibleCharts();
 		for (var attrname in minMaxCategoriesSeries.serie.min) {
 			if((minMaxCategoriesSeries.serie.min[attrname] <= serie.length) && (minMaxCategoriesSeries.categ.min[attrname] <= numOfCateg) ){
-				$scope.chartTypes.push(attrname)
+				if(minMaxCategoriesSeries.charts[$scope.ngModel.content.chartTemplate.CHART.type.toLowerCase()] && minMaxCategoriesSeries.charts[$scope.ngModel.content.chartTemplate.CHART.type.toLowerCase()].indexOf(attrname) != -1){
+					$scope.chartTypes.push(attrname);
+				}
 			}
 		}
 
@@ -1730,6 +1739,17 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	$scope.exportToExcel = function(event, ngModel, options) {
 		cockpitModule_exportWidgetService.exportWidgetToExcel('xlsx', ngModel, options);
+	}
+
+	$scope.getPerWidgetDatasetIds = function() {
+		return $scope.ngModel.dataset ? [ $scope.ngModel.dataset.dsId ] : [];
+	}
+
+	$scope.areParametersAndDriversNotSet = function() {
+		var result = $scope.getPerWidgetDatasetIds().some(function(dsId) {
+				return !(cockpitModule_datasetServices.areParametersSet(dsId)) || !(cockpitModule_datasetServices.areDriversSet(dsId));
+			});
+		return result;
 	}
 
 };

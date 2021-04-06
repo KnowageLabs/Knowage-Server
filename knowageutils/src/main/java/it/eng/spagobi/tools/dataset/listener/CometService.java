@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.listener;
 
+import org.cometd.bayeux.Promise;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ConfigurableServerChannel;
 import org.cometd.bayeux.server.LocalSession;
@@ -44,9 +45,7 @@ public class CometService extends AbstractService {
 
 			LocalSession session = getLocalSession();
 			String json = getJSON(event);
-			channel.publish(session, json);
-		} catch (JSONException e) {
-			throw new CometServiceException(e);
+			channel.publish(session, json, Promise.noop());
 		} catch (Exception e) {
 			throw new CometServiceException(e);
 		}

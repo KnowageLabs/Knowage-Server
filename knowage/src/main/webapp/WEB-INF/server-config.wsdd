@@ -342,19 +342,6 @@
   <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns67:SDKEngine" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.sdk.engines.bo.SDKEngine" xmlns:ns67="http://bo.engines.sdk.spagobi.eng.it"/>
   <arrayMapping innerType="ns69:SDKEngine" languageSpecificType="java:it.eng.spagobi.sdk.engines.bo.SDKEngine[]" qname="ns68:ArrayOf_tns2_SDKEngine" xmlns:ns68="urn:spagobisdkengines" xmlns:ns69="http://bo.engines.sdk.spagobi.eng.it"/>
  </service>
- <service name="SecurityService" provider="java:RPC">
-  <parameter name="wsdlServicePort" value="SecurityService"/>
-  <parameter name="className" value="it.eng.spagobi.services.security.stub.SecurityServiceSoapBindingSkeleton"/>
-  <parameter name="typeMappingVersion" value="1.2"/>
-  <parameter name="allowedMethods" value="*"/>
-  <parameter name="wsdlServiceElement" value="SecurityServiceService"/>
-  <parameter name="wsdlTargetNamespace" value="urn:spagobisecurity"/>
-  <parameter name="wsdlPortType" value="SecurityService"/>
-  <parameter name="scope" value="Application"/>
-  <parameter name="schemaUnqualified" value="http://xml.apache.org/xml-soap,http://bo.security.services.spagobi.eng.it,urn:spagobisecurity"/>
-  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns70:SpagoBIUserProfile" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.services.security.bo.SpagoBIUserProfile" xmlns:ns70="http://bo.security.services.spagobi.eng.it"/>
-  <arrayMapping innerType="soapenc:string" languageSpecificType="java:java.lang.String[]" qname="ns71:ArrayOf_soapenc_string" xmlns:ns71="urn:spagobisecurity" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"/>
- </service>
  <service name="Version" provider="java:RPC">
   <parameter name="allowedMethods" value="getVersion"/>
   <parameter name="className" value="org.apache.axis.Version"/>

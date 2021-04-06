@@ -4,7 +4,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 	$mdThemingProvider.setDefaultTheme('knowage');
 }])
 .service('$crossNavigationHelper',
-		function($crossNavigationSteps,$rootScope, $window, sbiModule_restServices,sbiModule_config,$mdDialog,sbiModule_translate,sbiModule_dateServices,$filter,sbiModule_logger){
+		function($crossNavigationSteps,$rootScope, $window, sbiModule_restServices,sbiModule_config,$mdDialog,sbiModule_translate,sbiModule_i18n,sbiModule_dateServices,$filter,sbiModule_logger){
 		var cns=this;
 		var selectedRole={};
 		this.crossNavigationSteps=$crossNavigationSteps;
@@ -110,6 +110,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					}else{
 						navObj[n].crossText = navObj[n].crossName; //default: force the crossName
 					}
+					navObj[n].crossText = sbiModule_i18n.getI18n(navObj[n].crossText);
 
 					if (navObj[n].crossBreadcrumb){
 						//replace parameters placeholders if exist in breadcrumbs

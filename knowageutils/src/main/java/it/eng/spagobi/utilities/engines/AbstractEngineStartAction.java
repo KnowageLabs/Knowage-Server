@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.utilities.engines;
 
-import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,7 +59,6 @@ import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableRecorder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
-import sun.misc.BASE64Decoder;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -89,7 +88,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	private DataSetServiceProxy datasetProxy;
 	private MetamodelServiceProxy metamodelProxy;
 
-	protected static final BASE64Decoder DECODER = new BASE64Decoder();
+	protected static final Base64.Decoder DECODER = Base64.getDecoder();
 
 	public static final String AUDIT_ID = "SPAGOBI_AUDIT_ID";
 	public static final String DOCUMENT_ID = "document";
@@ -284,7 +283,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		try {
 			if (template == null)
 				throw new SpagoBIEngineRuntimeException("There are no template associated to document [" + documentId + "]");
-			templateContent = DECODER.decodeBuffer(template.getContent());
+			templateContent = DECODER.decode(template.getContent());
 		} catch (Throwable e) {
 			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Impossible to get template's content", e);
 			engineException.setDescription("Impossible to get template's content:  " + e.getMessage());
@@ -449,13 +448,8 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 			logger.debug("IN");
 
 			spagoBISubObject = getContentServiceProxy().readSubObjectContent(getAnalysisMetadata().getId().toString());
-			try {
-				rowData = DECODER.decodeBuffer(spagoBISubObject.getContent());
-				analysisStateRowData = rowData;
-			} catch (IOException e) {
-				logger.warn("Impossible to decode the content of " + getAnalysisMetadata().getId().toString() + " subobject");
-				return null;
-			}
+			rowData = DECODER.decode(spagoBISubObject.getContent());
+			analysisStateRowData = rowData;
 
 			logger.debug("OUT");
 		}

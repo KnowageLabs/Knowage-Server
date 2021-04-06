@@ -2794,6 +2794,13 @@ public class CrossTab {
 		return rowsRoot;
 	}
 
+	public int getTotalNumberOfRows() {
+		int columnsDepth = this.getColumnsRoot().getSubTreeDepth();
+		int rowsNumber = this.getDataMatrix().length;
+		// + 1 because there may be also the bottom row with the totals
+		return columnsDepth + rowsNumber + 1;
+	}
+
 	/**
 	 * TODO
 	 */

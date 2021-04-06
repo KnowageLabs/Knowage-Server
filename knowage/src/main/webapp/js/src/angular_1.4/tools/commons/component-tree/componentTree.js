@@ -55,6 +55,7 @@
 				, checkChildren: '=?'	//boolean value
 				, uncheckParent: '=?'	//boolean value
 				, importExportTree : '@?'
+				, showImportExportInfoLabel: '=?'
 			},
 			controller: componentTreeControllerFunction,
 			controllerAs: 'ctrl',
@@ -332,6 +333,10 @@
 //		debugger;
 		
 		$scope.translate = sbiModule_translate;
+
+		if (typeof $scope.showImportExportInfoLabel == "undefined") {
+			$scope.showImportExportInfoLabel = true;
+		}
 
 		$scope.toogleSelected = function(element, parent) {
 			if (element !== undefined && $scope.multiSelect) {

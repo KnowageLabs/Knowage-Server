@@ -262,7 +262,9 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 						"order":i+1,
 						"ordering":currField.order,
 						"filters": [],
-						"havings": []
+						"havings": [],
+						"dataType": currField.dataType,
+						"format": currField.format
 					}
 
 				if(currField.temporal){
@@ -375,6 +377,23 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		var temp = $scope.editQueryObj.fields[data.index];
 		$scope.editQueryObj.fields[data.index] = $scope.editQueryObj.fields[data.index+data.direction]
 		$scope.editQueryObj.fields[data.index+data.direction] = temp;
+	})
+
+	$scope.$on('setOrder',function(event,data){
+
+
+		var colIndex = 0;
+		var orderMap = {};
+		data.forEach(function(e) {
+			orderMap[e] = colIndex++;
+		});
+
+		$scope.editQueryObj
+			.fields
+			.sort(function(a, b) {
+				return orderMap[a.id] - orderMap[b.id];
+			});
+
 	})
 
 	$scope.$on('showCalculatedField', function (event, data) {

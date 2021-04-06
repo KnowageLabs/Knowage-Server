@@ -42,6 +42,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			sbiModule_restServices.get("2.0", "folders","includeDocs=true").success(function(data){
 				//if not errors in response, copy the data
 				if (data.errors === undefined){
+					
+					data.forEach(function(el) { el.exportable = false; });
+					
 					$scope.folders=angular.copy(data);
 					$scope.tree = angular.copy(data);
 					$scope.createTree();
@@ -65,6 +68,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 							$scope.flagSelect=false;
 						} else {
 							
+							data.forEach(function(el) { el.exportable = true; });
 							$scope.documents=data;
 							$scope.flagSelect=true;
 						}
@@ -74,14 +78,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						$scope.flagSelect=false;
 						console.log("NO DATA " + status);
 					})
-					//$scope.parseDate();
-			
-			
-			
-			
-		}else{
+		} else {
 			showAction(sbiModule_translate.load("sbi.templatemanagemenent.alertdate"));
-			
 		}
 		
 	}
@@ -91,28 +89,15 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			if($scope.folders[i]["biObjects"].length!=0){
 				for(var j=0;j<$scope.folders[i]["biObjects"].length;j++){
 					for(var k=0;k<$scope.documents.length;k++){
-					if($scope.folders[i]["biObjects"][j].name==$scope.documents[k].name){
-						$scope.tree[i].biObjects.push($scope.folders[i]["biObjects"][j]);
-					}
+						if($scope.folders[i]["biObjects"][j].name==$scope.documents[k].name){
+							$scope.tree[i].biObjects.push($scope.documents[k]);
+						}
 					}
 				}
 			}
 		}
 	}
-	  $scope.indexInList=function(item, list) {
 
-			for (var i = 0; i < list.length; i++) {
-				for(var j=0;j< list[i]["biObjects"].length;j++){
-					var object = list[i]["biObjects"][j];
-					if(object.name==item.name){
-						return i;
-					}
-				}
-
-			}
-
-			return -1;
-		};
 	$scope.parseDate = function(){
 		//parse the date in the format yyyy-mm-gg
 		if($scope.dateSelected.data){
@@ -228,34 +213,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		
 	   
 	}
-	$scope.toggle = function (item, list) {
-		var index = $scope.indexInList(item.id, list);
 
-		if(index != -1){
-			$scope.docChecked.splice(index,1);
-		}else{
-			$scope.docChecked.push(item.id);
-		}
-
-	};
-
-	$scope.exists = function (item, list) {
-
-		return  $scope.indexInList(item.id, list)>-1;
-
-	};
-
-	$scope.indexInList= function(item, list) {
-
-		for (var i = 0; i < list.length; i++) {
-			var object = list[i];
-			if(object==item){
-				return i;
-			}
-		}
-
-		return -1;
-	};
 	$scope.selectAll = function(){
 		if(!$scope.flagCheck){
 			//if it was false then the user check 

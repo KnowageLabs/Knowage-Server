@@ -105,7 +105,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</document-tree>
 				-->
 				<component-tree ng-model="tree" id="impExpTree" create-tree="true"
-					selected-item="docChecked" multi-select="true" show-files="true">
+					selected-item="docChecked" multi-select="true" show-files="true"
+					import-export-tree="true" show-import-export-info-label="false">
 				</component-tree>
 			</div>
 		</md-content>

@@ -107,17 +107,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.showPreview = function(datasetLabel){
-//		    $mdDialog.show({
-//		      controller: function(scope){
-//		    	  scope.previewUrl = '/knowage/restful-services/2.0/datasets/preview?datasetLabel='+(datasetLabel || cockpitModule_datasetServices.getDatasetLabelById($scope.ngModel.dataset.dsId));
-//		    	  scope.closePreview = function(){
-//		    		  $mdDialog.hide();
-//		    	  }
-//		      },
-//		      templateUrl: $scope.getTemplateUrl('htmlWidgetPreviewDialogTemplate'),
-//		      parent: angular.element(document.body),
-//		      clickOutsideToClose:true
-//		    })
 			var dataset = cockpitModule_datasetServices.getDatasetByLabel(datasetLabel);
 			$scope.doSelection(null, null, null, null, null, null, dataset.id.dsId, null);
 		}
@@ -147,9 +136,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.getOptions = function(){
+			var maxRows = $scope.maxRow();
 			var obj = {};
 				obj["page"] = 0;
-				obj["itemPerPage"] = $scope.maxRow();
+				obj["itemPerPage"] = -1;
 				obj["type"] = 'html';
 			return obj;
 		}
@@ -187,6 +177,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var occurrencies = str.replace($scope.rowsRegex,function(match,p1,p2){
 				if(p2>=tempMaxRow) tempMaxRow = parseInt(p2)+1;
 			});
+			$scope.ngModel.limitRows = {enable:true,rows:tempMaxRow};
 			return tempMaxRow;
 		}
 
@@ -386,12 +377,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 * Function to replace kn-calc placeholders
 		 */
 		$scope.parseCalc = function(rawHtml) {
-			if(rawHtml.match($scope.advancedCalcRegex)){
-				return rawHtml.replace($scope.advancedCalcRegex, $scope.calcReplacer);
-			}else {
-				return rawHtml.replace($scope.calcRegex, $scope.calcReplacer);
-			}
-			
+			rawHtml = rawHtml.replace($scope.advancedCalcRegex, $scope.calcReplacer);
+			rawHtml = rawHtml.replace($scope.calcRegex, $scope.calcReplacer);
+			return rawHtml;
 		}
 
 		/**

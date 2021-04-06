@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.services.security.service;
+
+import javax.jws.WebService;
+
+import org.apache.log4j.Logger;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
@@ -25,21 +32,22 @@ import it.eng.spagobi.services.security.SecurityService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 
-import org.apache.log4j.Logger;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 /**
  * This class create the user profile and implements the security check
- * 
+ *
  * @author Bernabei Angelo
- * 
+ * @author Marco Libanori
  */
+@WebService(
+		name = "SecurityServiceService",
+		portName = "SecurityServicePort",
+		serviceName = "SecurityService",
+		targetNamespace = "http://security.services.spagobi.eng.it/"
+	)
 public class SecurityServiceImpl extends AbstractServiceImpl implements
 		SecurityService {
 
-	static private Logger logger = Logger.getLogger(SecurityServiceImpl.class);
+	private static Logger logger = Logger.getLogger(SecurityServiceImpl.class);
 
 	/**
 	 * Instantiates a new security service impl.
@@ -50,14 +58,15 @@ public class SecurityServiceImpl extends AbstractServiceImpl implements
 
 	/**
 	 * User profile creation.
-	 * 
+	 *
 	 * @param token
 	 *            the token
 	 * @param userId
 	 *            the user id
-	 * 
+	 *
 	 * @return the user profile
 	 */
+	@Override
 	public SpagoBIUserProfile getUserProfile(String token, String userId) {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory
@@ -78,7 +87,7 @@ public class SecurityServiceImpl extends AbstractServiceImpl implements
 
 	/**
 	 * check if user can access to the folder "idFolder".
-	 * 
+	 *
 	 * @param token
 	 *            the token
 	 * @param userId
@@ -87,9 +96,10 @@ public class SecurityServiceImpl extends AbstractServiceImpl implements
 	 *            the id folder
 	 * @param state
 	 *            the state
-	 * 
+	 *
 	 * @return true, if checks if is authorized
 	 */
+	@Override
 	public boolean isAuthorized(String token, String userId, String idFolder,
 			String state) {
 		logger.debug("IN");
@@ -117,16 +127,17 @@ public class SecurityServiceImpl extends AbstractServiceImpl implements
 
 	/**
 	 * check if the user can execute the function.
-	 * 
+	 *
 	 * @param token
 	 *            the token
 	 * @param userId
 	 *            the user id
 	 * @param function
 	 *            the function
-	 * 
+	 *
 	 * @return true, if check authorization
 	 */
+	@Override
 	public boolean checkAuthorization(String token, String userId,
 			String function) {
 		logger.debug("IN");

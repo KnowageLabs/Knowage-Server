@@ -57,7 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		      		<h1><%=msgBuilder.getMessage("authError")%></h1>
 					<span class="ops">Ooooooops!</span>
 					<p class="retry"><%=msgBuilder.getMessage("userPwdInvalid")%>, <a href="<%=loginUrl%>"><%=msgBuilder.getMessage("retry")%>!</a></p>
-					<p><%=msgBuilder.getMessage("noAccount")%> <a href="#" onclick="signup();"><%=msgBuilder.getMessage("signup")%></a></p>
+					
 				</div>
 	       </div>
 	       </main> 

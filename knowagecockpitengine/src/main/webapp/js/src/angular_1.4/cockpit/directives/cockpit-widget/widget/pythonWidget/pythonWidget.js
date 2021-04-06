@@ -90,7 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$timeout(function () {
 					$scope.widgetIsInit = true;
 					cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
-				}, 500);
+				}, 2000);
 			}
 			$scope.documentId = cockpitModule_properties.DOCUMENT_ID;
 			if ($scope.ngModel.pythonAddress == undefined) {
@@ -98,7 +98,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			} else {
 				$scope.sendData();
 			}
-			$scope.hideWidgetSpinner();
 		}
 
 		$scope.reinit = function() {
@@ -201,12 +200,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		            if ($scope.ngModel.pythonOutputType != 'img') {
 						$scope.createIframe();
 					}
+		            $scope.hideWidgetSpinner();
 		    },
 		    function(response) { //failed
 		    	$scope.pythonOutput = 'Error: ' + $sce.trustAsHtml(response.data);
 		    	if ($scope.ngModel.pythonOutputType != 'img') {
 					$scope.createIframe();
 				}
+		    	$scope.hideWidgetSpinner();
 		    });
 
 		}
@@ -231,12 +232,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		            if ($scope.ngModel.pythonOutputType != 'img') {
 						$scope.createIframe();
 					}
+		            $scope.hideWidgetSpinner();
 		    },
 		    function(response) { //failed
 		    	$scope.pythonOutput = 'Python Error';
 		    	if ($scope.ngModel.pythonOutputType != 'img') {
 					$scope.createIframe();
 				}
+		    	$scope.hideWidgetSpinner();
 		    });
 
 		}

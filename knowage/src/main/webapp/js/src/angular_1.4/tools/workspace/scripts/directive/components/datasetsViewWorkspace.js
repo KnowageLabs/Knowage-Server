@@ -66,7 +66,6 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.allDSTags = [];
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
-    $scope.showExportDriverPanel = false;
     /**
      * Flag that will tell us if we are entering the Dataset wizard from the Editing or from Creating phase (changing or adding a new dataset, respectively).
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -136,6 +135,12 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		}
 	}
 
+	function translateEnterpriseDatasetNames(datasetsArray) {
+		for (var i=0; i<datasetsArray.length; i++) {
+			datasetsArray[i].name = $scope.i18n.getI18n(datasetsArray[i].name);
+		}
+	}
+
 	/**
 	 * load all datasets - All Data Set Tab
 	 */
@@ -182,6 +187,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.enterpriseDatasets);
 			createSourceNameOnDataset($scope.enterpriseDatasets);
+			translateEnterpriseDatasetNames($scope.enterpriseDatasets);
 			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
 			tagsHandlerService.setEnterpriseDS($scope.enterpriseDatasets);
 		},function(response){
@@ -322,11 +328,14 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	};
 
 	$scope.setDetailOpen = function(isOpen) {
-		if($scope.showDriversForExport) $scope.showDriversForExport = false;
 		if (isOpen && !$mdSidenav('rightDs').isLockedOpen() && !$mdSidenav('rightDs').isOpen()) {
 			$scope.toggleDatasetDetail();
 		}
 		$scope.showDatasetInfo = isOpen;
+	};
+
+	$scope.closeDatasetDetail = function() {
+		$mdSidenav('rightDs').close();
 	};
 
 	$scope.toggleDatasetDetail = function() {
@@ -334,14 +343,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	};
 
 	$scope.selectDataset= function (dataset) {
-		var alreadySelected = (dataset !== undefined && $scope.selectedDataSet === dataset);
 		$scope.selectedDataSet = dataset;
-		if (alreadySelected) {
-			$scope.selectedDataSet=undefined;
-			$scope.setDetailOpen(!$scope.showDatasetDetail);
-		} else {
-			$scope.setDetailOpen(dataset !== undefined);
-		}
+		$scope.setDetailOpen(typeof dataset !== "undefined");
 	};
 
 	$scope.shareDatasetWithCategories = function(dataset){
@@ -496,19 +499,12 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
         return $scope.currentTab==="myDataSet";
     }
 
-    $scope.exportDataset= function(dataset,format){
-    	$scope.showExportDriverPanel = true;
-    	$scope.dataset = dataset;
-    	$scope.formatValueForExport = format;
-    	$scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet).then(function(){
-    		if($scope.drivers && $scope.drivers.length > 0){
-    			$scope.dataset.parametersData = {};
-    			$scope.dataset.parametersData.documentParameters = $scope.drivers;
-    			$scope.showDriversForExport = true;
-    		}else{
-    			 $scope.exportDatasetWithDrivers(dataset,format);
-    		}
-    	})
+    $scope.hasDrivers=function(dataset){
+    	return (dataset && dataset.drivers && dataset.drivers.length > 0);
+    }
+
+    $scope.hasParameters=function(dataset){
+    	return (dataset && dataset.pars && dataset.pars.length > 0);
     }
 
 	$scope.asyncExport = function(dataset, format) {
@@ -546,10 +542,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 	}
 
-	$scope.exportDatasetWithDrivers = function(dataset) {
-		$scope.showExportDriverPanel = false;
-		var format = $scope.formatValueForExport;
-
+	$scope.exportDataset = function(dataset, format) {
 		if(format == 'CSV') {
 			$scope.asyncExport(dataset, format);
 		} else if (format == 'XLSX') {
@@ -557,85 +550,89 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		} else {
 			console.info("Format " + format + " not supported");
 		}
-		$scope.showDriversForExport = false;
 	}
 
-	$scope.hidePanel = function() {
-		$scope.showDriversForExport = false;
+	$scope.previewDataset = function(dataset){
+		$scope.closeDatasetDetail();
+		sbiModule_restServices.promiseGet('1.0/datasets', dataset.label).then(function(response) {
+			var dataset = response.data[0];
+
+			console.info("DATASET FOR PREVIEW: ",dataset);
+			$scope.datasetInPreview = dataset;
+			$scope.selectedDataSet = dataset;
+			$scope.disableBack=true;
+			$scope.getDatasetParametersFromBusinessModel(dataset).then(function(){
+				/**
+				 * Variable that serves as indicator if the dataset metadata exists and if it contains the 'resultNumber'
+				 * property (e.g. Query datasets).
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				var dsRespHasResultNumb = dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber";
+				/**
+				 * The paginated dataset preview should contain the 'resultNumber' inside the 'dataset' property. If not, disable the
+				 * pagination in the toolbar of the preview dataset dialog.
+				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				if(dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber"){
+					$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
+					$scope.previewPaginationEnabled=true;
+				}else{
+					$scope.previewPaginationEnabled=false;
+				}
+				/**
+				 * Execute this if-else block only if there is already an information about the total amount of rows in the dataset metadata.
+				 * In other words, it should be executed for the e.g. Query dataset, since it has this property in its meta.
+				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				if (dsRespHasResultNumb) {
+					if($scope.totalItemsInPreview < $scope.itemsPerPage) {
+						$scope.endPreviewIndex = $scope.totalItemsInPreview;
+						$scope.disableNext = true;
+					} else {
+						$scope.endPreviewIndex = $scope.itemsPerPage;
+						$scope.disableNext = false;
+					}
+				}
+				$mdDialog.show({
+					scope: $scope,
+					preserveScope: true,
+					controller: DatasetPreviewController,
+					templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplateWorkspace.html',
+					clickOutsideToClose: false,
+					escapeToClose: false
+				});
+			})
+
+		});
 	}
 
-    $scope.previewDataset = function(dataset){
-    	console.info("DATASET FOR PREVIEW: ",dataset);
-    	$scope.datasetInPreview = dataset;
-    	$scope.selectedDataSet = dataset;
-    	$scope.disableBack=true;
-    	$scope.getDatasetParametersFromBusinessModel(dataset).then(function(){
-	    	/**
-	    	 * Variable that serves as indicator if the dataset metadata exists and if it contains the 'resultNumber'
-	    	 * property (e.g. Query datasets).
-	    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	    	 */
-	    	var dsRespHasResultNumb = dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber";
-	    	/**
-	    	 * The paginated dataset preview should contain the 'resultNumber' inside the 'dataset' property. If not, disable the
-	    	 * pagination in the toolbar of the preview dataset dialog.
-	    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	    	 */
-	    	if(dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber"){
-	    		$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
-	    		$scope.previewPaginationEnabled=true;
-	    	}else{
-	    		$scope.previewPaginationEnabled=false;
-	    	}
-//	    	if(!($scope.datasetInPreview.pars.length > 0 || driversExecutionService.hasMandatoryDrivers($scope.drivers)))
-//	    	$scope.getPreviewSet($scope.datasetInPreview);
-	    	/**
-	    	 * Execute this if-else block only if there is already an information about the total amount of rows in the dataset metadata.
-	    	 * In other words, it should be executed for the e.g. Query dataset, since it has this property in its meta.
-	    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	    	 */
-	    	if (dsRespHasResultNumb) {
-	    		if($scope.totalItemsInPreview < $scope.itemsPerPage) {
-	    			$scope.endPreviewIndex = $scope.totalItemsInPreview;
-	    			$scope.disableNext = true;
-	    		} else {
-	    		 	$scope.endPreviewIndex = $scope.itemsPerPage;
-	    		 	$scope.disableNext = false;
-	    		}
-	    	}
-	     	$mdDialog.show({
-				  scope: $scope,
-				  preserveScope: true,
-			      controller: DatasetPreviewController,
-			      templateUrl: sbiModule_config.dynamicResourcesBasePath+'/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplateWorkspace.html',
-			      clickOutsideToClose: false,
-			      escapeToClose: false
+	$scope.editQbeDataset = function(dataset) {
+    	$scope.closeDatasetDetail();
+		sbiModule_restServices.promiseGet('1.0/datasets', dataset.label).then(function(response) {
+			var dataset = response.data[0];
+			$scope.selectedDataSet = dataset;
+			var url = null;
+			if(dataset.dsTypeCd=='Federated'){
+				url = datasetParameters.qbeEditFederatedDataSetServiceUrl
+					+'&FEDERATION_ID='+dataset.federationId
+					+'&DATA_SOURCE_ID='+ dataset.qbeDataSourceId;
+			} else {
+				var modelName= dataset.qbeDatamarts;
+				var dataSource=dataset.qbeDataSource;
+				url = datasetParameters.buildQbeDataSetServiceUrl
+					+'&DATAMART_NAME='+modelName
+					+'&DATASOURCE_LABEL='+ dataSource
+					+'&DATA_SOURCE_ID='+ dataset.qbeDataSourceId;
+			}
+			$scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet).then(function(){
+				$scope.isFromDataSetCatalogue = false;
+				$qbeViewer.openQbeInterfaceDSet($scope, true, url);
 			});
-    	})
-    }
-
-    $scope.editQbeDataset = function(dataset) {
-    	$scope.selectedDataSet = dataset;
-    	var url = null;
-	     if(dataset.dsTypeCd=='Federated'){
-		      url = datasetParameters.qbeEditFederatedDataSetServiceUrl
-		         +'&FEDERATION_ID='+dataset.federationId
-		         +'&DATA_SOURCE_ID='+ dataset.qbeDataSourceId;
-	     } else {
-		      var modelName= dataset.qbeDatamarts;
-		      var dataSource=dataset.qbeDataSource;
-		      url = datasetParameters.buildQbeDataSetServiceUrl
-		           +'&DATAMART_NAME='+modelName
-		           +'&DATASOURCE_LABEL='+ dataSource
-		           +'&DATA_SOURCE_ID='+ dataset.qbeDataSourceId;
-	     }
-	     $scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet).then(function(){
-			  $scope.isFromDataSetCatalogue = false;
-			  $qbeViewer.openQbeInterfaceDSet($scope, true, url);
-	     });
-    }
+		});
+	}
 
     $scope.editFileDataset = function (arg) {
+    	$scope.closeDatasetDetail();
   	  	$scope.initializeDatasetWizard(arg);
 
 		sbiModule_restServices.get('1.0/datasets', arg.label).then(function(response) {
@@ -754,50 +751,53 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	}
     }
 
-    $scope.cloneDataset = function(dataset) {
-    	var clonedDataset = angular.copy(dataset);
-    	clonedDataset.id = "";
-    	clonedDataset.dsVersions = [];
-    	clonedDataset.usedByNDocs = 0;
-		clonedDataset.name = "CLONE_" + clonedDataset.name;
-		clonedDataset.label = "CLONE_" + clonedDataset.label;
-		clonedDataset.description = "CLONED " + clonedDataset.description;
-		clonedDataset.scopeCd = "USER";
-    	if(sbiModule_user.userId != clonedDataset.owner){
-    		clonedDataset.owner = sbiModule_user.userId;
-    	}
-    	if(clonedDataset.catTypeId){
-    		delete clonedDataset.catTypeId;
-    	}
-    	$mdDialog.show({
-    		controller: cloneQbeDatasetDialogController,
-			templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/workspace/templates/cloneDatasetDialogTemplate.html',
-			parent: angular.element(document.body),
-			locals: {
-				clonedLabel: clonedDataset.label,
-				clonedName: clonedDataset.name,
-				clonedDescription: clonedDataset.description
-			},
-			clickOutsideToClose: false
-    	}).then(function(result){
-    		clonedDataset.name = result.name;
-    		clonedDataset.label = result.label;
-    		clonedDataset.description = result.description;
-    		sbiModule_restServices.promisePost('1.0/datasets', '', clonedDataset)
-    		.then(function(response){
-    			clonedDataset.id = response.data.id;
-				toastr.success(sbiModule_translate.load("sbi.ds.saved"),
-						sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
-				$scope.activateMyDatasetsTab = true;
-	    		$scope.myDatasets.push(clonedDataset);
-	    		$scope.datasets.push(clonedDataset);
-    		}, function(postErr){
-    			toastr.error(postErr.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
-    		});
-    	}, function(response){
-    		// canceled mdDialog
-    	});
-    }
+	$scope.cloneDataset = function(dataset) {
+		sbiModule_restServices.promiseGet('1.0/datasets', dataset.label).then(function(response) {
+			var dataset = response.data[0];
+			var clonedDataset = angular.copy(dataset);
+			clonedDataset.id = "";
+			clonedDataset.dsVersions = [];
+			clonedDataset.usedByNDocs = 0;
+			clonedDataset.name = "CLONE_" + clonedDataset.name;
+			clonedDataset.label = "CLONE_" + clonedDataset.label;
+			clonedDataset.description = "CLONED " + clonedDataset.description;
+			clonedDataset.scopeCd = "USER";
+			if(sbiModule_user.userId != clonedDataset.owner){
+				clonedDataset.owner = sbiModule_user.userId;
+			}
+			if(clonedDataset.catTypeId){
+				delete clonedDataset.catTypeId;
+			}
+			$mdDialog.show({
+				controller: cloneQbeDatasetDialogController,
+				templateUrl: sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/workspace/templates/cloneDatasetDialogTemplate.html',
+				parent: angular.element(document.body),
+				locals: {
+					clonedLabel: clonedDataset.label,
+					clonedName: clonedDataset.name,
+					clonedDescription: clonedDataset.description
+				},
+				clickOutsideToClose: false
+			}).then(function(result){
+				clonedDataset.name = result.name;
+				clonedDataset.label = result.label;
+				clonedDataset.description = result.description;
+				sbiModule_restServices.promisePost('1.0/datasets', '', clonedDataset)
+				.then(function(response){
+					clonedDataset.id = response.data.id;
+					toastr.success(sbiModule_translate.load("sbi.ds.saved"),
+							sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
+					$scope.activateMyDatasetsTab = true;
+					$scope.myDatasets.push(clonedDataset);
+					$scope.datasets.push(clonedDataset);
+				}, function(postErr){
+					toastr.error(postErr.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+				});
+			}, function(response){
+				// canceled mdDialog
+			});
+		});
+	}
 
     function cloneQbeDatasetDialogController($scope, $mdDialog, sbiModule_translate, kn_regex, clonedLabel, clonedName, clonedDescription) {
     	 $scope.translate = sbiModule_translate;

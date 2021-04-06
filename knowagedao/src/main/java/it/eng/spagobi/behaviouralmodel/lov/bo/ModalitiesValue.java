@@ -18,6 +18,7 @@
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import java.io.Serializable;
+import java.util.Base64;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.transform.TransformerException;
@@ -33,7 +34,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-import sun.misc.BASE64Encoder;
 
 /**
  * Defines a Value object for the Predefined LOV
@@ -340,8 +340,8 @@ public class ModalitiesValue implements Serializable {
 			int pos2 = provider.indexOf("</SCRIPT>");
 			String content = provider.substring(pos1 + 8, pos2);
 			content = StringEscapeUtils.unescapeHtml4(content);
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			String encoded = bASE64Encoder.encode(content.getBytes());
+			Base64.Encoder bASE64Encoder = Base64.getEncoder();
+			String encoded = bASE64Encoder.encodeToString(content.getBytes());
 			provider = provider.substring(0, pos1 + 8) + encoded + provider.substring(pos2);
 
 		}
@@ -354,8 +354,8 @@ public class ModalitiesValue implements Serializable {
 			int pos2 = provider.indexOf("</STMT>");
 			String content = provider.substring(pos1 + 6, pos2);
 			content = StringEscapeUtils.unescapeHtml4(content);
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			String encoded = bASE64Encoder.encode(content.getBytes());
+			Base64.Encoder bASE64Encoder = Base64.getEncoder();
+			String encoded = bASE64Encoder.encodeToString(content.getBytes());
 			provider = provider.substring(0, pos1 + 6) + encoded + provider.substring(pos2);
 
 		}

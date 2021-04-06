@@ -122,23 +122,50 @@ function cockpitMasterControllerWrapper(
 
 
 cockpitApp.controller("cockpitMasterController",cockpitMasterControllerFunction);
-function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_backwardCompatibility,cockpitModule_datasetServices,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_nearRealtimeServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device,accessibility_preferences,$sce, cockpitModule_variableService){
+function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_backwardCompatibility,cockpitModule_datasetServices,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_nearRealtimeServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device,accessibility_preferences,$sce, cockpitModule_variableService, cockpitModule_widgetSelection){
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 	$scope.imageBackgroundUrl=cockpitModule_template.configuration.style.imageBackgroundUrl;
 	cockpitModule_template = cockpitModule_backwardCompatibility.updateCockpitModel(cockpitModule_template);
 	
+	function getAssociatedDatasetIds(label){
+		var tempIds = [];
+		for(var k in cockpitModule_template.configuration.associations){
+			var tempAssoc = cockpitModule_template.configuration.associations[k].fields;
+			for(var j in tempAssoc){
+				if(tempAssoc[j].store == label) {
+					var dsToPush = tempAssoc.map(function(value){
+						return value.store;
+					})
+					for(var y in dsToPush){
+						if(!tempIds.includes(dsToPush[y])) tempIds.push(dsToPush[y]);
+					}
+				}
+			}
+		}	
+		return tempIds.map(function(value){
+			return cockpitModule_datasetServices.getDatasetByLabel(value).id.dsId;
+		});
+	}
+	
 	function checkForDefaultSelections(model, sheetIndex){
+		var datasetArray = [];
 		for(var sheet of model.sheets){
 			if(sheet.index == sheetIndex){
 				for(var widget of sheet.widgets){
 					if(widget.type === 'selector'){
-						if(widget.settings && widget.settings.defaultValue && widget.settings.defaultValue != '') return true;
+						if(widget.settings && widget.settings.defaultValue && widget.settings.defaultValue != '') {
+							var tempIds = getAssociatedDatasetIds(widget.dataset.label);
+							for(var k in tempIds){
+								if(datasetArray.indexOf(tempIds[k]) == -1) datasetArray.push(tempIds[k]);
+							}
+						}
 					}
 				}
 			}
 		}
-		return false;
+		return datasetArray ;
 	}
+
 		
 	
 	$scope.sbiModule_device=sbiModule_device;
@@ -148,75 +175,88 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	})
 
 	$scope.variablesInit = function(){
-		if(cockpitModule_template.configuration && cockpitModule_template.configuration.variables){
-			if(!cockpitModule_properties.VARIABLES) cockpitModule_properties.VARIABLES = {};
-			cockpitModule_template.configuration.variables.forEach(function(variable){
+		if(!cockpitModule_properties.VARIABLES) cockpitModule_properties.VARIABLES = {};
+		return Promise.all(cockpitModule_template.configuration.variables.map(function(variable){
+			return new Promise (function(resolve, reject){
 				cockpitModule_variableService.getVariableValue(variable).then(
-						function(response){
-							cockpitModule_properties.VARIABLES[variable.name] = response;
-						},function(error){
-							console.error('error during the variables recovery.')
-						}
-					)
+					function(response){
+						cockpitModule_properties.VARIABLES[variable.name] = response;
+						resolve(response)
+					},function(error){
+						reject('error during the variables recovery.')
+					}
+				)
 			})
-		}
+		}));
 	}
 
 	$scope.initializedSheets = [0]; // first sheet is always loaded
-
-	var initSheet = $scope.$watch('cockpitModule_properties.CURRENT_SHEET',function(newValue,oldValue){
-		if(!cockpitModule_properties.HASDEFAULTSELECTION) cockpitModule_properties.HASDEFAULTSELECTION = {};
-		//if(cockpitModule_template.getSelections().length == 0) cockpitModule_properties.HASDEFAULTSELECTION[newValue] = checkForDefaultSelections(cockpitModule_template, newValue);
-        var currentSheet; // get sheet checking proper index
-        for(var i=0; i < cockpitModule_template.sheets.length; i++){
-            if(cockpitModule_template.sheets[i].index == newValue){
-                currentSheet = cockpitModule_template.sheets[i];
-                break;
-            }
-        }
-
-        if(currentSheet && currentSheet.widgets){
-            if(newValue!=undefined && $scope.initializedSheets.indexOf(newValue) == -1){
-                for(var i=0; i < currentSheet.widgets.length; i++){
-                    var widgetId = currentSheet.widgets[i].id;
-                    var tempElement = angular.element(document.querySelector('#w' + widgetId));
-                    $rootScope.$broadcast("WIDGET_EVENT" + widgetId, "INIT", {element:tempElement});
-                }
-                $scope.initializedSheets.push(newValue);
-            }else{
-                for(var i=0; i < currentSheet.widgets.length; i++){
-                    var widgetId = currentSheet.widgets[i].id;
-                    if(cockpitModule_properties.DIRTY_WIDGETS.indexOf(widgetId) > -1){
-                        var tempElement = angular.element(document.querySelector('#w' + widgetId));
-                        $rootScope.$broadcast("WIDGET_EVENT" + widgetId, "UPDATE_FROM_SHEET_CHANGE", {element:tempElement});
-                    }
-                }
-            }
-        }
-    })
 
 	//load the dataset list
 	$scope.datasetLoaded=false;
 
 	cockpitModule_datasetServices.loadDatasetsFromTemplate().then(function(){
-		$scope.datasetLoaded=true;
-		if(!cockpitModule_properties.PARAMETERS) cockpitModule_properties.PARAMETERS = cockpitModule_datasetServices.returnParametersArray();
-		var dsNotInCache = cockpitModule_templateServices.getDatasetAssociatedNotUsedByWidget();
-		if(dsNotInCache.length>0){
-			cockpitModule_datasetServices.addDatasetInCache(dsNotInCache)
-			.then(function(){
-				$rootScope.$broadcast("WIDGET_INITIALIZED");
-			});
-			//WIDGET_INITIALIZED at the end
-		}else{
-			$rootScope.$broadcast("WIDGET_INITIALIZED");
-		}
+		
+		var initSheet = $scope.$watch('cockpitModule_properties.CURRENT_SHEET',function(newValue,oldValue){
+			if(!cockpitModule_properties.HASDEFAULTSELECTION) cockpitModule_properties.HASDEFAULTSELECTION = {};
+			//if(cockpitModule_template.getSelections().length == 0) cockpitModule_properties.HASDEFAULTSELECTION[newValue] = checkForDefaultSelections(cockpitModule_template, newValue);
+	        var currentSheet; // get sheet checking proper index
+	        for(var i=0; i < cockpitModule_template.sheets.length; i++){
+	            if(cockpitModule_template.sheets[i].index == newValue){
+	                currentSheet = cockpitModule_template.sheets[i];
+	                break;
+	            }
+	        }
 
-		if(!cockpitModule_properties.EDIT_MODE){
-			cockpitModule_nearRealtimeServices.init();
-			cockpitModule_realtimeServices.init();
+	        if(currentSheet && currentSheet.widgets){
+	            if(newValue!=undefined && $scope.initializedSheets.indexOf(newValue) == -1){
+	                for(var i=0; i < currentSheet.widgets.length; i++){
+	                    var widgetId = currentSheet.widgets[i].id;
+	                    var tempElement = angular.element(document.querySelector('#w' + widgetId));
+	                    $rootScope.$broadcast("WIDGET_EVENT" + widgetId, "INIT", {element:tempElement});
+	                }
+	                $scope.initializedSheets.push(newValue);
+	            }else{
+	                for(var i=0; i < currentSheet.widgets.length; i++){
+	                    var widgetId = currentSheet.widgets[i].id;
+	                    if(cockpitModule_properties.DIRTY_WIDGETS.indexOf(widgetId) > -1){
+	                        var tempElement = angular.element(document.querySelector('#w' + widgetId));
+	                        $rootScope.$broadcast("WIDGET_EVENT" + widgetId, "UPDATE_FROM_SHEET_CHANGE", {element:tempElement});
+	                    }
+	                }
+	            }
+	        }
+	    })
+		
+		//var loadDatasetList = function(){
+			$scope.datasetLoaded=true;
+			if(!cockpitModule_properties.PARAMETERS) cockpitModule_properties.PARAMETERS = cockpitModule_datasetServices.returnParametersArray();
+			var dsNotInCache = cockpitModule_templateServices.getDatasetAssociatedNotUsedByWidget();
+			if(dsNotInCache.length>0){
+				cockpitModule_datasetServices.addDatasetInCache(dsNotInCache)
+				.then(function(){
+					$rootScope.$broadcast("WIDGET_INITIALIZED");
+				});
+				//WIDGET_INITIALIZED at the end
+			}else{
+				$rootScope.$broadcast("WIDGET_INITIALIZED");
+			}
+
+			if(!cockpitModule_properties.EDIT_MODE){
+				cockpitModule_nearRealtimeServices.init();
+				cockpitModule_realtimeServices.init();
+			}
+		//}
+		
+		if(cockpitModule_template.configuration && cockpitModule_template.configuration.variables){
+			$scope.variablesInit().then(function(value){
+				//loadDatasetList();
+			},function(error){
+				//loadDatasetList();
+				console.log(error)
+			})
 		}
-		$scope.variablesInit();
+		
 	},function(){
 		console.error("error when load dataset list")
 	});

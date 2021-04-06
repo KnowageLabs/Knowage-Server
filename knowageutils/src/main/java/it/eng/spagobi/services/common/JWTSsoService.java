@@ -156,7 +156,7 @@ public class JWTSsoService implements SsoServiceInterface {
 		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
 		// @formatter:off
 		String token = JWT.create()
-				.withClaim(SsoServiceInterface.PYTHON_DATASET_SCRIPT, script)
+				.withClaim(SsoServiceInterface.PYTHON_SCRIPT, script)
 				.withExpiresAt(expiresAt) // token will expire at the desired expire date
 				.sign(algorithm);
 		// @formatter:on
@@ -169,7 +169,7 @@ public class JWTSsoService implements SsoServiceInterface {
 		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
 		// @formatter:off
 		String token = JWT.create()
-				.withClaim(SsoServiceInterface.PYTHON_DATASET_SCRIPT, script)
+				.withClaim(SsoServiceInterface.PYTHON_SCRIPT, script)
 				.withExpiresAt(expiresAt) // token will expire at the desired expire date
 				.sign(algorithm);
 		// @formatter:on

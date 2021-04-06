@@ -17,19 +17,6 @@
  */
 package it.eng.spagobi.engines.jasperreport;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.services.content.bo.Content;
-import it.eng.spagobi.services.proxy.ContentServiceProxy;
-import it.eng.spagobi.utilities.DynamicClassLoader;
-import it.eng.spagobi.utilities.ParametersDecoder;
-import it.eng.spagobi.utilities.ResourceClassLoader;
-import it.eng.spagobi.utilities.SpagoBIAccessUtils;
-
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -45,6 +32,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,6 +57,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+import org.xml.sax.InputSource;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+//import com.sun.image.codec.jpeg.JPEGCodec;
+//import com.sun.image.codec.jpeg.JPEGEncodeParam;
+//import com.sun.image.codec.jpeg.JPEGImageEncoder;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.services.content.bo.Content;
+import it.eng.spagobi.services.proxy.ContentServiceProxy;
+import it.eng.spagobi.utilities.DynamicClassLoader;
+import it.eng.spagobi.utilities.ParametersDecoder;
+import it.eng.spagobi.utilities.ResourceClassLoader;
+import it.eng.spagobi.utilities.SpagoBIAccessUtils;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
@@ -94,23 +105,9 @@ import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-import org.xml.sax.InputSource;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-//import com.sun.image.codec.jpeg.JPEGCodec;
-//import com.sun.image.codec.jpeg.JPEGEncodeParam;
-//import com.sun.image.codec.jpeg.JPEGImageEncoder;
-
 /**
  * Jasper Report implementation built to provide all methods to run a report inside SpagoBI. It is the jasper report Engine implementation for SpagoBI.
- * 
+ *
  * @author Gioia * @deprecated
  */
 @Deprecated
@@ -127,7 +124,7 @@ public class JasperReportRunner {
 
 	/**
 	 * Class Constructor.
-	 * 
+	 *
 	 * @param session
 	 *            the session
 	 */
@@ -137,7 +134,7 @@ public class JasperReportRunner {
 
 	/**
 	 * This method, known all input information, runs a report with JasperReport inside SpagoBI. iIt is the Jasper Report Engine's core method.
-	 * 
+	 *
 	 * @param parameters
 	 *            The input parameters map
 	 * @param servletContext
@@ -212,8 +209,8 @@ public class JasperReportRunner {
 			}
 			logger.debug("Read the template." + template.getFileName());
 			InputStream is = null;
-			BASE64Decoder bASE64Decoder = new BASE64Decoder();
-			byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
+			Base64.Decoder bASE64Decoder = Base64.getDecoder();
+			byte[] templateContent = bASE64Decoder.decode(template.getContent());
 			is = new java.io.ByteArrayInputStream(templateContent);
 
 			if (template.getFileName().indexOf(".zip") > -1) {
@@ -464,7 +461,7 @@ public class JasperReportRunner {
 	/**
 	 * This method builds the html header string to be injected on report HTML output. This is necessary in order to inject the document.domain javascript
 	 * directive
-	 * 
+	 *
 	 * @return the HTML head tag as a string
 	 */
 	/*
@@ -495,7 +492,7 @@ public class JasperReportRunner {
 
 	/**
 	 * Build a classpath variable appending all the jar files founded into the specified directory.
-	 * 
+	 *
 	 * @param libDir
 	 *            JR lib-dir to scan for find jar files to include into the classpath variable
 	 * @return the classpath used by JasperReprorts Engine (by default equals to WEB-INF/lib)
@@ -540,7 +537,7 @@ public class JasperReportRunner {
 
 	/**
 	 * Gets the virtualizer. (the slowest)
-	 * 
+	 *
 	 * @param tmpDirectory
 	 *            the tmp directory
 	 * @param servletContext
@@ -581,7 +578,7 @@ public class JasperReportRunner {
 
 	/**
 	 * Gets the swap virtualizer. (the fastest)
-	 * 
+	 *
 	 * @param tmpDirectory
 	 *            the tmp directory
 	 * @param servletContext
@@ -624,7 +621,7 @@ public class JasperReportRunner {
 
 	/**
 	 * Gets the gZip virtualizer (it works in memory: slower).
-	 * 
+	 *
 	 * @param tmpDirectory
 	 *            the tmp directory
 	 * @param servletContext
@@ -679,8 +676,8 @@ public class JasperReportRunner {
 
 				byte[] byteImg = baos.toByteArray();
 				baos.close();
-				BASE64Encoder encoder64 = new BASE64Encoder();
-				String encodedImage = encoder64.encode(byteImg);
+				Base64.Encoder encoder64 = Base64.getEncoder();
+				String encodedImage = encoder64.encodeToString(byteImg);
 				message += encodedImage;
 				message += "</IMAGE>";
 				count++;
@@ -1009,6 +1006,7 @@ public class JasperReportRunner {
 					// File already exists
 					File[] compiledJRFiles = subreportCacheDir.listFiles(new FilenameFilter() {
 
+						@Override
 						public boolean accept(File dir, String name) {
 							logger.debug("scan dir [" + name + "]");
 							return name.endsWith(".jasper");
@@ -1035,8 +1033,8 @@ public class JasperReportRunner {
 					template.getFileName();
 					logger.debug("Read the template.(subreport)" + template.getFileName());
 					InputStream is = null;
-					BASE64Decoder bASE64Decoder = new BASE64Decoder();
-					byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
+					Base64.Decoder bASE64Decoder = Base64.getDecoder();
+					byte[] templateContent = bASE64Decoder.decode(template.getContent());
 					is = new java.io.ByteArrayInputStream(templateContent);
 					String str = new String(templateContent);
 

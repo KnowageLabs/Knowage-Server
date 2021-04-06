@@ -596,6 +596,9 @@
 	<CONFIG label="KNOWAGE.RESOURCE.EXPORT.FOLDER.MAX_FOLDER_SIZE" name="KNOWAGE.RESOURCE.EXPORT.FOLDER.MAX_FOLDER_SIZE"
 		description="Resource export folder cleaning max folder size (byte). Default 10737418240." isActive="true"
 		valueCheck="10737418240" valueType="NUM" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE" name="Apache POI streaming mode window size"
+		description="The number of Excel rows that are kept in memory before flushing." isActive="true"
+		valueCheck="5000" valueType="NUM" category="GENERIC_CONFIGURATION" />
 		
 	<CONFIG label="SPAGOBI.DATASET.SOLR.FACET_LIMIT" name="SPAGOBI.DATASET.SOLR.FACET_LIMIT"
 		description="Limit the buckets count when Solr dataset execute facet query (-1 for unlimited)" isActive="true"

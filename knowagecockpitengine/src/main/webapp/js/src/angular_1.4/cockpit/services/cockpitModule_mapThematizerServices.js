@@ -376,14 +376,25 @@
 				var colors = "";
 				var limits = [];
 				var tmpLayerName = l.split("|");
-					if (tmpLayerName[0] == referenceId && mts.activeLegend[l] && mts.activeLegend[l].choroplet){
+				if (tmpLayerName[0] == referenceId && mts.activeLegend[l] && mts.activeLegend[l].choroplet){
+					if (mts.activeLegend[l].method=="CLASSIFY_BY_RANGES") {
+						var ranges = [];
+						for (c in mts.activeLegend[l].choroplet){
+							var tmpConf = mts.activeLegend[l].choroplet[c];
+							if (tmpConf.from == null) tmpConf.from = "min";
+							if (tmpConf.to == null) tmpConf.to = "max";
+							ranges.push({"color": tmpConf.color, "from": tmpConf.from, "to":tmpConf.to});
+						}
+						toReturn.push({"layer": tmpLayerName[1], "alias": mts.activeLegend[l].alias, "method": mts.activeLegend[l].method, "ranges": ranges});
+					} else {
 						for (c in mts.activeLegend[l].choroplet){
 							var tmpConf = mts.activeLegend[l].choroplet[c];
 							if (tmpConf.color) colors += ", " + tmpConf.color;
 							if (limits.length == 0) limits.push(tmpConf.from);
 							if (limits.length >= 1) limits.splice(1, 1, tmpConf.to);
 						}
-					toReturn.push({"layer": tmpLayerName[1], "alias": mts.activeLegend[l].alias, "colors": colors, "limits": limits});
+						toReturn.push({"layer": tmpLayerName[1], "alias": mts.activeLegend[l].alias, "method": mts.activeLegend[l].method, "colors": colors, "limits": limits});
+					}
 				}
 			}
 			return toReturn;
@@ -409,6 +420,7 @@
 					mts.activeLegend[layerName] = {choroplet:[]};
 				}
 				mts.activeLegend[layerName].alias = config.alias;
+				mts.activeLegend[layerName].method = config.analysisConf.method;
 
 				if(config.analysisConf.method == "CLASSIFY_BY_EQUAL_INTERVALS"){
 					mts.updateChoroplethLegendGradient(layerName, config.analysisConf, config.analysisConf.classes);
@@ -450,7 +462,14 @@
 						}
 					}
 //					console.log("Quantils legends: ", mts.activeLegend[layerName]);
-				}else {
+				} else if (config.analysisConf.method == "CLASSIFY_BY_RANGES") {
+					for(var i=config.analysisConf.properties.thresholds.length-1; i>=0; i--){
+						var threshold = config.analysisConf.properties.thresholds[i];
+						mts.activeLegend[layerName].choroplet[i] = {color: threshold.color, itemFeatures: []};
+						mts.activeLegend[layerName].choroplet[i].from=threshold.from;
+						mts.activeLegend[layerName].choroplet[i].to=threshold.to;
+					}
+				} else {
 					console.log("Temathization method [" + config.analysisConf.method + "] not supported");
 				}
 			}

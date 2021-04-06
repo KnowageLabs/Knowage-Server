@@ -88,7 +88,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	// LABEL VARCHAR2(36) Y Engine label (short textual identifier)
 	@NotEmpty
 	@Alphanumeric
-	@Size(max = 20)
+	@Size(max = 100)
 	private String label = null;
 
 	// ENCRYPT NUMBER Y Parameter encryption request.

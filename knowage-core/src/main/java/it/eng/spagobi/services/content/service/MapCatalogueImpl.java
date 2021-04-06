@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,26 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.services.content.service;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Base64;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -29,22 +44,6 @@ import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapsDAO;
 import it.eng.spagobi.services.common.AbstractServiceImpl;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
-import sun.misc.BASE64Encoder;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 public class MapCatalogueImpl extends AbstractServiceImpl {
 
@@ -63,8 +62,8 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
 	public static final String ERROR_MAP_NOT_FOUND = ERROR_PREFIX + "03";
 	protected final 	String DOCUMENT_FILE_NAME = "geoDefaultHierarchy.xml";
 	protected final 	String DOCUMENT_PATH_NAME = "GEOENGINE.DEFAULT_HIERARCHY";
-	
-	
+
+
     /**
      * Instantiates a new map catalogue impl.
      */
@@ -83,43 +82,43 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
             this.setTenantByUserId(user);
             GeoMap tmpMap =  DAOFactory.getSbiGeoMapsDAO().loadMapByName(mapName);
             if (tmpMap == null) {
-            	logger.info("Map with name " + mapName + " not found on db."); 
+            	logger.info("Map with name " + mapName + " not found on db.");
             	return null;
             }
             byte[] template = DAOFactory.getBinContentDAO().getBinContent(tmpMap.getBinId());
-   
+
             if (template == null)
             {
             	logger.info("Template map is empty. Try uploadyng the svg.");
             	return null;
             }
-            BASE64Encoder bASE64Encoder = new BASE64Encoder();
-    	    content.setContent(bASE64Encoder.encode(template));
+            Base64.Encoder bASE64Encoder = Base64.getEncoder();
+    	    content.setContent(bASE64Encoder.encodeToString(template));
     	    logger.debug("template read");
     	    content.setFileName(mapName +".svg");
-    	    
+
     	    return content;
-		    
+
 		} catch (Throwable e) {
-		    logger.error("Exception",e); 
+		    logger.error("Exception",e);
 		    throw new RuntimeException("Exception occured while retrieving map from db", e);
 		}finally{
 			this.unsetTenant();
 		    monitor.stop();
 		    logger.debug("OUT");
-		}        
+		}
     }
-    
+
     /**
      * Map catalogue.
-     * 
+     *
      * @param token the token
      * @param user the user
      * @param operation the operation
      * @param path the path
      * @param featureName the feature name
      * @param mapName the map name
-     * 
+     *
      * @return the string
      */
     public String mapCatalogue(String token, String user, String operation,String path,String featureName,String mapName) {
@@ -137,17 +136,17 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
 		this.unsetTenant();
 	    monitor.stop();
 	    logger.debug("OUT");
-	}	
+	}
 
     }
 
     private String mapCatalogue(String user, String operation,String path,String featureName,String mapName) {
-	
-	
+
+
 	String strRet = null;
-	logger.debug("IN");	 				
+	logger.debug("IN");
  	try{
- 		
+
  		if(operation.equalsIgnoreCase(GET_STANDARD_HIERARCHY)) {
  			strRet = getStandardHierarchy();
  			if (strRet == null){
@@ -162,7 +161,7 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
  			strRet = getFeaturesInMap(mapName);
  			if (strRet == null){
  				strRet = ERROR_FEATURE_NOT_FOUND;
- 			}	 		
+ 			}
  		} else if(operation.equalsIgnoreCase(GET_MAP_URL)) {
  			//strRet = getMapUrl(request, mapName);
  			strRet = getMapUrl(mapName);
@@ -170,12 +169,12 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
  			if (strRet == null){
  				strRet = ERROR_MAP_NOT_FOUND;
  			}
-		} else if(operation.equalsIgnoreCase(GET_ALL_MAP_NAMES)) {	 			
+		} else if(operation.equalsIgnoreCase(GET_ALL_MAP_NAMES)) {
  			strRet = getAllMapNames();
  			if (strRet == null){
  				strRet = ERROR_MAP_NOT_FOUND;
- 			}			
- 		} else if(operation.equalsIgnoreCase(GET_ALL_FEATURE_NAMES)) {	 			
+ 			}
+ 		} else if(operation.equalsIgnoreCase(GET_ALL_FEATURE_NAMES)) {
  			strRet = getAllFeatureNames();
  			if (strRet == null){
  				strRet = ERROR_FEATURE_NOT_FOUND;
@@ -183,8 +182,8 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
 		}
  		else if(operation.equalsIgnoreCase(DOWNLOAD)) {
  		   byte[] file=readFile(path);
- 		   BASE64Encoder bASE64Encoder = new BASE64Encoder();
- 		   strRet=bASE64Encoder.encode(file);
+ 		   Base64.Encoder bASE64Encoder = Base64.getEncoder();
+ 		   strRet=bASE64Encoder.encodeToString(file);
 		}
  		return strRet;
  	} catch(Exception e) {
@@ -192,7 +191,7 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
  	}finally{
  	   logger.debug("OUT");
  	}
- 	
+
 	return null;
     }
 
@@ -287,7 +286,7 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
     }
 
     /**
-     * return the URL for get MAP, the URL point to the Back end Server. 
+     * return the URL for get MAP, the URL point to the Back end Server.
      * @param mapName
      * @return
      */
@@ -313,7 +312,7 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
     /**
      * Handle a download request of a map file. Reads the file, sends it as an
      * http response attachment. and in the end deletes the file.
-     * 
+     *
      * @param request
      *                the http request
      * @param response

@@ -22,7 +22,6 @@
 
 		var exporters = [];
 		exporters.push(new Exporter('csv','text/csv'));
-		exporters.push(new Exporter('xls','application/vnd.ms-excel'));
 		exporters.push(new Exporter('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
 		var query = {};
 		var bodySend = {};

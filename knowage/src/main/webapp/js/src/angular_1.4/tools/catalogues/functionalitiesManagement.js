@@ -314,7 +314,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 
 	 $scope.isCheckable = function(row, criteria) {
 		var checkable = false;
-		if($scope.parent.name == 'Functionalities') {
+		if($scope.path == '/Functionalities') {
 			checkable = true;
 		} else if($scope.parent[criteria] && $scope.parent[criteria].length > 0) {
 			for(var i = 0; i < $scope.parent[criteria].length; i++) {

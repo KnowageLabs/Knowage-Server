@@ -50,7 +50,7 @@ angular.module('chartInitializer')
 			} else if(jsonData.rows){
 				var data = jsonData;
 			}
-			if(data && data.rows.length>0){
+			if(data && data.rows && data.rows.length>0){
 				this.changeDatasetColumns(renderObj.chartConf,data);
 			}
 

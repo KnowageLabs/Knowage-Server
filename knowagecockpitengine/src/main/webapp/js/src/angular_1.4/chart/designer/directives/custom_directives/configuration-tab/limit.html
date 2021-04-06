@@ -18,9 +18,9 @@
 		ng-repeat="option in orderParallelOptions" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 
-	<div layout="row" layout-margin>
+	<div  layout="row" layout-margin>
 		<label>{{translate.load("sbi.chartengine.configuration.parallel.groupByCategory")}}</label>
-		<md-input-container class="small counter"> <md-checkbox
+		<md-input-container class="small counter"> <md-checkbox ng-disabled="chartTemplate.type.toLowerCase()=='parallel'"
 			ng-model="chartTemplate.LIMIT.groupByCategory" aria-label="groupByCategory" name ="limit_groupBy"></md-checkbox>
 		</md-input-container>
 	</div>

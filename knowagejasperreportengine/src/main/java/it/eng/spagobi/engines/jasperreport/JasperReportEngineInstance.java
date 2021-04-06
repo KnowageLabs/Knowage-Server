@@ -18,6 +18,41 @@
 package it.eng.spagobi.engines.jasperreport;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Base64;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.jasperreport.datasource.JRSpagoBIDataStoreDataSource;
@@ -40,33 +75,6 @@ import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-
-import javax.servlet.http.HttpServletRequest;
-
 import net.sf.jasperreports.engine.JRDataset;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
@@ -80,15 +88,6 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
-
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
-import sun.misc.BASE64Decoder;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it) Davide Zerbetto (davide.zerbetto@eng.it)
@@ -581,6 +580,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				logger.debug("dirTemplate is equal to [" + subreportCacheDir + "]");
 
 				File[] compiledJRFiles = subreportCacheDir.listFiles(new FilenameFilter() {
+					@Override
 					public boolean accept(File dir, String name) {
 						logger.debug("scan dir [" + name + "]");
 						return name.endsWith(".jasper");
@@ -612,8 +612,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					template.getFileName();
 					logger.debug("Read the template.(subreport)" + template.getFileName());
 					InputStream is = null;
-					BASE64Decoder bASE64Decoder = new BASE64Decoder();
-					byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
+					Base64.Decoder bASE64Decoder = Base64.getDecoder();
+					byte[] templateContent = bASE64Decoder.decode(template.getContent());
 					is = new java.io.ByteArrayInputStream(templateContent);
 					String str = new String(templateContent);
 
@@ -791,14 +791,17 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 	// -- unimplemented methods ------------------------------------------------------------
 
+	@Override
 	public IEngineAnalysisState getAnalysisState() {
 		throw new JasperReportEngineRuntimeException("Unsupported method [getAnalysisState]");
 	}
 
+	@Override
 	public void setAnalysisState(IEngineAnalysisState analysisState) {
 		throw new JasperReportEngineRuntimeException("Unsupported method [setAnalysisState]");
 	}
 
+	@Override
 	public void validate() throws SpagoBIEngineException {
 		throw new JasperReportEngineRuntimeException("Unsupported method [validate]");
 	}

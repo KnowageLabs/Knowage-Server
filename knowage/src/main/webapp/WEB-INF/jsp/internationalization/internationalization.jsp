@@ -59,10 +59,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<label> {{translate.load("kn.internationalization.search")}} </label>
 									<input type="text" aria-label="data change" ng-model="searchText">
 								</md-input-container>
-								<md-checkbox ng-model="emptyMessage"  aria-label="Find Empty Fields">
+								<md-checkbox ng-model="emptyMessage.value" ng-change="toggleEmptyMessages()" aria-label="Find Empty Fields">
 									{{translate.load("kn.internationalization.checkbox.showBlankMessages")}}
 								</md-checkbox> 
-							</div>						
+							</div>					
 						  	<table class="kn-table">
 						  		<thead>
 							  		<tr>
@@ -79,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							  		</tr>
 						  		</thead>
 						  		<tbody>
-						  			<tr ng-repeat="mess in messages | filter:searchText | findEmpty:emptyMessage">
+						  			<tr ng-repeat="mess in messages | filter:searchText">
 						  				<td ng-if="language.defaultLanguage && isTechnicalUser">
 						  					<div>
 						  						<md-input-container>

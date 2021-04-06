@@ -88,6 +88,11 @@ angular
 						parameterView: driverableObject.parameterView,
 						executed: driverableObject.executed
 					};
+
+					if (driverableObject.hasOwnProperty("federation_id")) {
+						// The driverableObject it's a federation
+						$scope.selectedDataSet.federation_id = driverableObject.federation_id;
+					}
 				}
 			}
 
@@ -369,7 +374,7 @@ angular
 						vpctl.submit = function() {
 							vpctl.newViewpoint.OBJECT_LABEL = driverableObject.executionInstance.OBJECT_LABEL;
 							vpctl.newViewpoint.ROLE = driverableObject.selectedRole.name;
-							vpctl.newViewpoint.VIEWPOINT = driversExecutionService.buildStringParameters($scope.drivers);
+							vpctl.newViewpoint.VIEWPOINT = formatParametersForViewpoint(driversExecutionService.buildStringParameters($scope.drivers));
 							sbiModule_restServices.post("1.0/metamodelviewpoint", "addViewpoint", vpctl.newViewpoint)
 									.success(function(data, status, headers, config) {
 										if(data.errors && data.errors.length > 0 ) {
@@ -393,6 +398,15 @@ angular
 					templateUrl : sbiModule_config.dynamicResourcesBasePath + '/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
 				});
 			};
+
+			var formatParametersForViewpoint = function(parameters) {
+				var toReturn = {};
+				for (var parKey in parameters) {
+					if ((typeof parameters[parKey]) != "string") toReturn[parKey] = JSON.stringify(parameters[parKey]); // force arrays to be strings
+					else toReturn[parKey] = parameters[parKey];
+				}
+				return toReturn;
+			}
 
 //			$scope.frameLoaded = true;
 

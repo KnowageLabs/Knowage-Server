@@ -221,6 +221,7 @@
 					for (var i = 0 ; i < $scope.businessModels.length; i ++ ){
 						var currBusinessModel = $scope.businessModels[i];
 						currBusinessModel.description = $scope.i18n.getI18n(currBusinessModel.description);
+						currBusinessModel.name = $scope.i18n.getI18n(currBusinessModel.name);
 					}
 
 					angular.copy($scope.businessModels,$scope.businessModelsInitial);

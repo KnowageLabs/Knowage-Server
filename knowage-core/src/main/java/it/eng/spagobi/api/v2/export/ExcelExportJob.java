@@ -27,21 +27,22 @@ import java.util.Date;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 public class ExcelExportJob extends AbstractExportJob {
@@ -66,179 +67,146 @@ public class ExcelExportJob extends AbstractExportJob {
 			SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
 			// create WB
-			XSSFWorkbook wb = new XSSFWorkbook();
-			XSSFSheet sheet = wb.createSheet("dataset");
-			CreationHelper createHelper = wb.getCreationHelper();
+			try(Workbook wb = new SXSSFWorkbook()) {
+				Sheet sheet = wb.createSheet("dataset");
+				CreationHelper createHelper = wb.getCreationHelper();
 
-			// STYLE CELL
-			CellStyle borderStyleHeader = wb.createCellStyle();
-			borderStyleHeader.setBorderBottom(BorderStyle.THIN);
-			borderStyleHeader.setBorderLeft(BorderStyle.THIN);
-			borderStyleHeader.setBorderRight(BorderStyle.THIN);
-			borderStyleHeader.setBorderTop(BorderStyle.THIN);
-			borderStyleHeader.setAlignment(HorizontalAlignment.CENTER);
+				// STYLE CELL
+				CellStyle borderStyleHeader = wb.createCellStyle();
+				borderStyleHeader.setBorderBottom(BorderStyle.THIN);
+				borderStyleHeader.setBorderLeft(BorderStyle.THIN);
+				borderStyleHeader.setBorderRight(BorderStyle.THIN);
+				borderStyleHeader.setBorderTop(BorderStyle.THIN);
+				borderStyleHeader.setAlignment(HorizontalAlignment.CENTER);
 
-			CellStyle borderStyleRow = wb.createCellStyle();
-			borderStyleRow.setBorderBottom(BorderStyle.THIN);
-			borderStyleRow.setBorderLeft(BorderStyle.THIN);
-			borderStyleRow.setBorderRight(BorderStyle.THIN);
-			borderStyleRow.setBorderTop(BorderStyle.THIN);
-			borderStyleRow.setAlignment(HorizontalAlignment.RIGHT);
+				CellStyle borderStyleRow = wb.createCellStyle();
+				borderStyleRow.setBorderBottom(BorderStyle.THIN);
+				borderStyleRow.setBorderLeft(BorderStyle.THIN);
+				borderStyleRow.setBorderRight(BorderStyle.THIN);
+				borderStyleRow.setBorderTop(BorderStyle.THIN);
+				borderStyleRow.setAlignment(HorizontalAlignment.RIGHT);
 
-			CellStyle tsCellStyle = wb.createCellStyle();
-			tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
-			tsCellStyle.setBorderBottom(BorderStyle.THIN);
-			tsCellStyle.setBorderLeft(BorderStyle.THIN);
-			tsCellStyle.setBorderRight(BorderStyle.THIN);
-			tsCellStyle.setBorderTop(BorderStyle.THIN);
-			tsCellStyle.setAlignment(HorizontalAlignment.RIGHT);
+				CellStyle tsCellStyle = wb.createCellStyle();
+				tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
+				tsCellStyle.setBorderBottom(BorderStyle.THIN);
+				tsCellStyle.setBorderLeft(BorderStyle.THIN);
+				tsCellStyle.setBorderRight(BorderStyle.THIN);
+				tsCellStyle.setBorderTop(BorderStyle.THIN);
+				tsCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
-			CellStyle dateCellStyle = wb.createCellStyle();
-			dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
-			dateCellStyle.setBorderBottom(BorderStyle.THIN);
-			dateCellStyle.setBorderLeft(BorderStyle.THIN);
-			dateCellStyle.setBorderRight(BorderStyle.THIN);
-			dateCellStyle.setBorderTop(BorderStyle.THIN);
-			dateCellStyle.setAlignment(HorizontalAlignment.RIGHT);
+				CellStyle dateCellStyle = wb.createCellStyle();
+				dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
+				dateCellStyle.setBorderBottom(BorderStyle.THIN);
+				dateCellStyle.setBorderLeft(BorderStyle.THIN);
+				dateCellStyle.setBorderRight(BorderStyle.THIN);
+				dateCellStyle.setBorderTop(BorderStyle.THIN);
+				dateCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
-			CellStyle intCellStyle = wb.createCellStyle();
-			intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
-			intCellStyle.setBorderBottom(BorderStyle.THIN);
-			intCellStyle.setBorderLeft(BorderStyle.THIN);
-			intCellStyle.setBorderRight(BorderStyle.THIN);
-			intCellStyle.setBorderTop(BorderStyle.THIN);
-			intCellStyle.setAlignment(HorizontalAlignment.RIGHT);
+				CellStyle intCellStyle = wb.createCellStyle();
+				intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
+				intCellStyle.setBorderBottom(BorderStyle.THIN);
+				intCellStyle.setBorderLeft(BorderStyle.THIN);
+				intCellStyle.setBorderRight(BorderStyle.THIN);
+				intCellStyle.setBorderTop(BorderStyle.THIN);
+				intCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
-			CellStyle decimalCellStyle = wb.createCellStyle();
-			decimalCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
-			decimalCellStyle.setBorderBottom(BorderStyle.THIN);
-			decimalCellStyle.setBorderLeft(BorderStyle.THIN);
-			decimalCellStyle.setBorderRight(BorderStyle.THIN);
-			decimalCellStyle.setBorderTop(BorderStyle.THIN);
-			decimalCellStyle.setAlignment(HorizontalAlignment.RIGHT);
+				CellStyle decimalCellStyle = wb.createCellStyle();
+				decimalCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+				decimalCellStyle.setBorderBottom(BorderStyle.THIN);
+				decimalCellStyle.setBorderLeft(BorderStyle.THIN);
+				decimalCellStyle.setBorderRight(BorderStyle.THIN);
+				decimalCellStyle.setBorderTop(BorderStyle.THIN);
+				decimalCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
-			String limitExp = SingletonConfig.getInstance().getConfigValue("dataset.export.xls.resultsLimit");
-			Integer limitExport;
-			try {
-				limitExport = Integer.parseInt(limitExp);
-			} catch (NumberFormatException e) {
-				String msg = "Export limit cannot be parsed, check if value set for dataset.export.xls.resultsLimit in Configuration Management is numeric";
-				logger.error(msg, e);
-				limitExport = 10000;
-			}
+				IMetaData dataSetMetadata = dataSet.getMetadata();
 
-			dataSet.loadData(0, limitExport, -1);
-			IDataStore dataStore = dataSet.getDataStore();
-
-			int resultNumber;
-			Object propertyRawValue;
-			propertyRawValue = dataStore.getMetaData().getProperty("resultNumber");
-			resultNumber = ((Integer) propertyRawValue).intValue();
-
-			IMetaData dataSetMetadata = dataSet.getMetadata();
-			// CREATE MESSAGE ABOUT LIMIT
-			if (resultNumber > limitExport) {
-				String message = "Query results are exceeding configured threshold, therefore only " + limitExport + " were exported.";
-				XSSFRow messageRow = sheet.createRow((short) 0); // first row
-				XSSFCell cell = messageRow.createCell(0);
-				cell.setCellValue(message);
-				cell.setCellStyle(borderStyleHeader);
-			}
-
-			// if(resultNumber > limitExport) {
-			// "Query results are exceeding configured threshold, therefore only " + limitExport + " were exported.";
-			// }
-
-			// CREATE HEADER SHEET
-			XSSFRow header;
-			if (resultNumber > limitExport) {
-				header = sheet.createRow((short) 1); // second row
-			} else {
+				// CREATE HEADER SHEET
+				Row header;
 				header = sheet.createRow((short) 0); // first row
-			}
-			if (dataSetMetadata != null && dataSetMetadata.getFieldCount() > 0) {
-				for (int i = 0; i <= dataSetMetadata.getFieldCount() - 1; i++) {
-					XSSFCell cell = header.createCell(i);
-					cell.setCellValue(dataSetMetadata.getFieldAlias(i));
-					cell.setCellStyle(borderStyleHeader);
-				}
-			}
-
-			// FILL CELL RECORD
-			for (int i = 0; i < Integer.MAX_VALUE && i < dataStore.getRecordsCount(); i++) {
-				try {
-					IRecord dataSetRecord = dataStore.getRecordAt(i);
-
-					XSSFRow row;
-					if (resultNumber > limitExport) {
-						row = sheet.createRow(i + 2); // starting from 3rd row
-					} else {
-						row = sheet.createRow(i + 1); // starting from 2nd row
+				if (dataSetMetadata != null && dataSetMetadata.getFieldCount() > 0) {
+					for (int i = 0; i <= dataSetMetadata.getFieldCount() - 1; i++) {
+						Cell cell = header.createCell(i);
+						cell.setCellValue(dataSetMetadata.getFieldAlias(i));
+						cell.setCellStyle(borderStyleHeader);
 					}
+				}
 
-					for (int k = 0; k <= dataSetRecord.getFields().size() - 1; k++) {
-						Class<?> clazz = dataSetMetadata.getFieldType(k);
-						Object value = dataSetRecord.getFieldAt(k).getValue();
-						XSSFCell cell = row.createCell(k);
+				// FILL CELL RECORD
+				try (DataIterator iterator = dataSet.iterator()) {
+
+					int i = 0;
+					final int recordLimit = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+					while (iterator.hasNext() && i < recordLimit) {
 
 						try {
-							if (value != null) {
+							IRecord dataSetRecord = iterator.next();
 
-								if (Timestamp.class.isAssignableFrom(clazz)) {
-									String formatedTimestamp = timeStampFormat.format(value);
-									Date ts = timeStampFormat.parse(formatedTimestamp);
-									cell.setCellValue(ts);
-									cell.setCellStyle(tsCellStyle);
-								} else if (Date.class.isAssignableFrom(clazz)) {
-									String formatedDate = dateFormat.format(value);
-									Date date = dateFormat.parse(formatedDate);
-									cell.setCellValue(date);
-									cell.setCellStyle(dateCellStyle);
-								} else if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz) || Double.class.isAssignableFrom(clazz)
-										|| Float.class.isAssignableFrom(clazz) || BigDecimal.class.isAssignableFrom(clazz)) {
-									// Format Numbers
-									if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)) {
-										cell.setCellValue(Double.parseDouble(value.toString()));
-										cell.setCellStyle(intCellStyle);
+							Row row = sheet.createRow(i + 1); // starting from 2nd row
+
+							for (int k = 0; k <= dataSetRecord.getFields().size() - 1; k++) {
+								Class<?> clazz = dataSetMetadata.getFieldType(k);
+								Object value = dataSetRecord.getFieldAt(k).getValue();
+								Cell cell = row.createCell(k);
+
+								try {
+									if (value != null) {
+
+										if (Timestamp.class.isAssignableFrom(clazz)) {
+											String formatedTimestamp = timeStampFormat.format(value);
+											Date ts = timeStampFormat.parse(formatedTimestamp);
+											cell.setCellValue(ts);
+											cell.setCellStyle(tsCellStyle);
+										} else if (Date.class.isAssignableFrom(clazz)) {
+											String formatedDate = dateFormat.format(value);
+											Date date = dateFormat.parse(formatedDate);
+											cell.setCellValue(date);
+											cell.setCellStyle(dateCellStyle);
+										} else if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz) || Double.class.isAssignableFrom(clazz)
+												|| Float.class.isAssignableFrom(clazz) || BigDecimal.class.isAssignableFrom(clazz)) {
+											// Format Numbers
+											if (Integer.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)) {
+												cell.setCellValue(Double.parseDouble(value.toString()));
+												cell.setCellStyle(intCellStyle);
+											} else {
+												cell.setCellValue(Double.parseDouble(value.toString()));
+												cell.setCellStyle(decimalCellStyle);
+											}
+
+										} else {
+											cell.setCellValue(value.toString());
+											cell.setCellStyle(borderStyleRow);
+										}
+
 									} else {
-										cell.setCellValue(Double.parseDouble(value.toString()));
-										cell.setCellStyle(decimalCellStyle);
+										cell.setCellStyle(borderStyleRow);
 									}
-
-								} else {
-									cell.setCellValue(value.toString());
-									cell.setCellStyle(borderStyleRow);
+								} catch (ParseException e) {
+									String msg = "Error parsing values";
+									logger.error(msg, e);
+									throw new IllegalStateException(msg, e);
 								}
 
-							} else {
-								cell.setCellStyle(borderStyleRow);
 							}
-						} catch (ParseException e) {
-							String msg = "Error parsing values";
+
+						} catch (Exception e) {
+							String msg = "Error generating Excel file";
 							logger.error(msg, e);
 							throw new IllegalStateException(msg, e);
 						}
 
+						i++;
 					}
-
-				} catch (Exception e) {
-					String msg = "Error generating Excel file";
-					logger.error(msg, e);
-					throw new IllegalStateException(msg, e);
 				}
-			}
 
-			wb.write(exportFileOS);
-			exportFileOS.flush();
-			exportFileOS.close();
+				wb.write(exportFileOS);
+				exportFileOS.flush();
+				exportFileOS.close();
+			}
 		} catch (Exception e) {
 			String msg = String.format("Error writing data file \"%s\"!", getDataFile());
 			logger.error(msg, e);
 			throw new JobExecutionException(msg, e);
 		} finally {
-			// if (iterator != null) {
-			// iterator.close();
-			// }
 			if (exportFileOS != null) {
 				try {
 					exportFileOS.close();

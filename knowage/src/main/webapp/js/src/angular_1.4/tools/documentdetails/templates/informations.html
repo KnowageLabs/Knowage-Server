@@ -20,11 +20,11 @@
                     <md-input-container class="md-block" flex>
                         <label>{{di.translate.load("sbi.documentdetails.informations.label")}}</label>
                         <input name="label" placeholder="{{sbi.documentdetails.informations.label}}" ng-model="di.document.label" type="text" 
-                        		ng-required="true" ng-maxlength="20" ng-pattern="di.regex.alphanumeric" />
+                        		ng-required="true" ng-maxlength="100" ng-pattern="di.regex.alphanumeric" />
                       	<div ng-messages="informations.label.$error" role="alert" ng-messages-multiple>
 							<div ng-message="required">{{di.translate.load("sbi.catalogues.generic.reqired")}}</div>
 							<div ng-message="pattern">{{di.translate.load("sbi.config.manage.fields.validation.alphanumericRegex")}}</div>
-							<div ng-message="maxlength">{{di.translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 20</div>
+							<div ng-message="maxlength">{{di.translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 100</div>
   						</div>
                     </md-input-container>
                     <md-input-container flex>

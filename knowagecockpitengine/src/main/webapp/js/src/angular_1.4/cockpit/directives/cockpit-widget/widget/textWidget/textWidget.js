@@ -263,6 +263,11 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 
 	}
 
+	$scope.getPerWidgetDatasetIds = function() {
+		return $scope.ngModel.dataset
+			&& $scope.ngModel.dataset.dsId
+			&& Array.isArray($scope.ngModel.dataset.dsId) ? $scope.ngModel.dataset.dsId : [ $scope.ngModel.dataset.dsId ];
+	}
 
 };
 

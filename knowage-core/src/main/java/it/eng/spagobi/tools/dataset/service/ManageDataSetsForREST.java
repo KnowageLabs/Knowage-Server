@@ -35,6 +35,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -109,6 +110,7 @@ import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
@@ -460,7 +462,7 @@ public class ManageDataSetsForREST {
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_CUSTOM)) {
 			toReturn = manageCustomDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QBE)) {
-			toReturn = manageQbeDataSet(savingDataset, jsonDsConfig, json);
+			toReturn = manageQbeDataSet(savingDataset, jsonDsConfig, json, userProfile);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FEDERATED)) {
 			toReturn = manageFederatedDataSet(savingDataset, jsonDsConfig, json, userProfile);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
@@ -943,8 +945,22 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private QbeDataSet manageQbeDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, EMFUserError, IOException {
-		QbeDataSet dataSet = new QbeDataSet();
+	private QbeDataSet manageQbeDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json, UserProfile userProfile) throws JSONException, EMFUserError, IOException {
+		QbeDataSet dataSet = null;
+		String federationId = json.optString("federation_id");
+		if (StringUtils.isNoneEmpty(federationId)) {
+			FederationDefinition federation = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(Integer.parseInt(federationId));
+			dataSet = new FederatedDataSet(federation, userProfile.getUserId().toString());
+
+			IDataSource defaultCacheDataSource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+
+			dataSet.setDataSourceForReading(defaultCacheDataSource);
+			dataSet.setDataSourceForWriting(defaultCacheDataSource);
+
+			json.put(DataSetConstants.QBE_DATA_SOURCE, defaultCacheDataSource.getLabel());
+		} else {
+			dataSet = new QbeDataSet();
+		}
 		String qbeDatamarts = json.optString(DataSetConstants.QBE_DATAMARTS);
 		String dataSourceLabel = json.optString(DataSetConstants.QBE_DATA_SOURCE);
 		String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
@@ -1557,7 +1573,7 @@ public class ManageDataSetsForREST {
 			String id = json.optString(DataSetConstants.ID);
 			try {
 				IDataSet existingByName = dsDao.loadDataSetByName(ds.getName());
-				if (id != null && !id.equals("") && !id.equals("0")) {
+				if (id != null && !id.equals("") && !id.equals("0") && existingByName != null) {
 					if (existingByName != null && !Integer.valueOf(id).equals(existingByName.getId())) {
 						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.nameAlreadyExistent");
 					}

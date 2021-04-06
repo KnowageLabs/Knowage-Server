@@ -36,8 +36,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
@@ -267,7 +265,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		document = syncronizeDocument(document, filteredFolders, request.getDocumentDTO());
 
 		String tempalteName = (MODIFY_GEOREPORT.equalsIgnoreCase(action)) ? "template.georeport" : "template.sbicockpit";
-		String templateContent = new Gson().toJson(customDataDTO.getTemplateContent());
+		String templateContent = customDataDTO.getTemplateContentAsString();
 
 		if (MODIFY_KPI.equalsIgnoreCase(action)) {
 			tempalteName = "template.xml";
@@ -335,7 +333,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		filteredFolders = getFilteredFoldersList(saveDocumentDTO, filteredFolders);
 		CustomDataDTO customDataDTO = saveDocumentDTO.getCustomDataDTO();
 		Map<String, Object> json = new HashMap<String, Object>();
-		String templateContent = new Gson().toJson(customDataDTO.getTemplateContent());
+		String templateContent = customDataDTO.getTemplateContentAsString();
 		json.put("templateContent", templateContent);
 
 		customDataDTO.setTemplateContent(json);
@@ -587,7 +585,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 	}
 
 	private ObjTemplate buildDocumentTemplate(String templateName, CustomDataDTO customDataDTO, BIObject sourceDocument) throws JSONException {
-		String templateContent = new Gson().toJson(customDataDTO.getTemplateContent());
+		String templateContent = customDataDTO.getTemplateContentAsString();
 
 		String modelName = customDataDTO.getModelName();
 		return buildDocumentTemplate(templateName, templateContent, sourceDocument, modelName);

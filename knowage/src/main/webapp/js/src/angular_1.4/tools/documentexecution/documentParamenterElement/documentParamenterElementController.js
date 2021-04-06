@@ -244,6 +244,7 @@
 		$scope.toggleRadioParameter = function(parVal ,parDesc, parameter) {
 			if(parameter.parameterDescription == undefined ) parameter.parameterDescription = "";
 			parameter.parameterDescription = parDesc;
+			$scope.resetCorrelatedParameters(parameter, false);
 		};
 
 		$scope.toggleComboParameter = function(parameter) {
@@ -254,13 +255,15 @@
 				parameter.parameterDescription ="";
 			}
 			addParameterValueDescription(parameter);
+			$scope.resetCorrelatedParameters(parameter, false);
 		}
 
 
 		$scope.popupLookupParameterDialog = function(parameter) {
 
 			$scope.execProperties.hideProgressCircular.status=false;
-			parameter.PARAMETERS=driversExecutionService.buildStringParameters($scope.execProperties.drivers);
+			var params = $scope.execProperties.drivers ? $scope.execProperties.drivers : $scope.execProperties.parametersData.documentParameters;
+			parameter.PARAMETERS=driversExecutionService.buildStringParameters(params);
 			var templateUrl = sbiModule_config.dynamicResourcesBasePath
 				+ '/angular_1.4/tools/documentexecution/templates/popupLookupParameterDialogTemplate.htm';
 
@@ -471,7 +474,7 @@
 							driversExecutionService.setParameterValueResult(paramDialogCtrl.initialParameterState);
 						}
 
-
+						$scope.resetCorrelatedParameters(paramDialogCtrl.initialParameterState, false);
 
 						$mdDialog.hide();
 					};
@@ -775,12 +778,35 @@
 			$scope.driversExecutionService.resetParameter(parameter, mainReset);
 			// reset also all correlated parameters
 			if (!endRecursion) {
-				var allCorrelatedParams = getCorrelatedParameters(parameter);
-				for (var i=0; i<allCorrelatedParams.length; i++) {
-					var correlatedParam = allCorrelatedParams[i];
-					if (correlatedParam.defaultValues) correlatedParam.defaultValues = [];
-					$scope.resetParameter(correlatedParam, mainReset, true);
-				}
+				$scope.resetCorrelatedParameters(parameter, mainReset);
+			}
+		}
+
+		$scope.resetCorrelatedParameters = function(parameter, mainReset) {
+			var allCorrelatedParams = getCorrelatedParameters(parameter);
+			for (var i=0; i<allCorrelatedParams.length; i++) {
+				var correlatedParam = allCorrelatedParams[i];
+				if (correlatedParam.defaultValues) correlatedParam.parameterValue = "";
+				$scope.resetParameter(correlatedParam, mainReset, true);
+			}
+		}
+
+		$scope.isArray = function(obj) {
+			return Array.isArray(obj);
+		}
+
+		$scope.isBlank = function(value) {
+			return (!value || value == '');
+		}
+
+		$scope.descriptionOf = function(value) {
+			var matches = $scope.parameter.driverDefaultValue ? $scope.parameter.driverDefaultValue.filter(function(e) { return e.value == value; }) : [];
+			if (matches.length > 0) {
+				return matches[0].description;
+			} else if(typeof value == "object" && value.hasOwnProperty("description")) {
+				return value.description;
+			} else {
+				return $scope.parameter.parameterDescription[value];
 			}
 		}
 

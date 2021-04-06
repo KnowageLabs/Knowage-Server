@@ -180,7 +180,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-icon md-font-icon="fa fa-search"></md-icon>
 				</md-button>
 				
-				<md-button class="md-fab md-raised md-mini"  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="checkType(ngModel.type, ['chart'])">
+				<md-button class="md-fab md-raised md-mini"  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="checkType(ngModel.type, ['chart']) && checkChartType(ngModel, ['chord','gauge','scatter'])">
 					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.chartType")}}</md-tooltip>
 					<md-icon md-font-icon="fa fa-bar-chart"></md-icon>
 				</md-button>
@@ -205,7 +205,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-icon md-font-icon="fa fa-camera-retro" ng-if="!ngModel.loadingScreen"></md-icon>
 				</md-button>
 				
-				<md-button class="md-fab md-raised md-mini" ng-click="exportToExcel($event,ngModel,options)" ng-disabled="ngModel.loadingScreen" ng-if="showExcelExportButton() && checkType(ngModel.type, ['table','chart','static-pivot-table','discovery','map','customchart'])">
+				<md-button class="md-fab md-raised md-mini" ng-click="exportToExcel($event,ngModel,options)" ng-disabled="ngModel.loadingScreen" ng-if="showExcelExportButton() && checkType(ngModel.type, ['table','chart','static-pivot-table','discovery','map','customchart', 'python'])">
 					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.widgets.tooltip.export")}}</md-tooltip>					
 					<md-icon md-font-icon="fa fa-file-excel-o" ng-if="!ngModel.loadingScreen"></md-icon>
 				</md-button>
@@ -229,8 +229,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-toolbar>
 		</md-card-title>
 			<md-card-content flex layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill ng-style="paddingStyle">
-				<div layout="row" ng-if="parametersMessage" class="errorContainer" layout-align="center center" layout-fill>
-					<div class="kn-infoerror" flex="60">{{translate.load('sbi.cockpit.parameter.and.driver')}}</div>			   		
+				<div layout="row" ng-if="areParametersAndDriversNotSet()" class="errorContainer" layout-align="center center" layout-fill>
+					<div class="kn-infoerror" flex="60">{{translate.load('sbi.cockpit.parameter.and.driver')}}</div>
 				</div>
 			</md-card-content>
 	</md-card>

@@ -1,12 +1,14 @@
-<Context path="/knowagekpiengine" >
-	<!--	<Loader delegate="true"/>  -->
-	<ResourceLink global="jdbc/foodmart_oracle" name="jdbc/foodmart_oracle" type="javax.sql.DataSource"/>
-	<ResourceLink global="jdbc/foodmart_mysql" name="jdbc/foodmart_mysql" type="javax.sql.DataSource"/>
+<Context path="/knowagekpiengine">
+	<CookieProcessor sameSiteCookies="strict" />
+	
+	<!-- <Loader delegate="true"/> -->
+	<ResourceLink global="jdbc/foodmart_oracle" name="jdbc/foodmart_oracle" type="javax.sql.DataSource" />
+	<ResourceLink global="jdbc/foodmart_mysql" name="jdbc/foodmart_mysql" type="javax.sql.DataSource" />
 	<ResourceLink global="jdbc/foodmart_demo" name="jdbc/foodmart_demo" type="javax.sql.DataSource" />
-	<ResourceLink global="jdbc/knowage" name="jdbc/knowage" type="javax.sql.DataSource"/>
-	<ResourceLink global="jdbc/ds_cache" name="jdbc/ds_cache" type="javax.sql.DataSource"/>
-    <ResourceLink global="resource_path" name="resource_path" type="java.lang.String"/>
-    <ResourceLink global="sso_class" name="sso_class" type="java.lang.String"/>
-    <ResourceLink global="service_url" name="service_url" type="java.lang.String"/>  
-	<ResourceLink global="hmacKey" name="hmacKey" type="java.lang.String"/>
- </Context>
+	<ResourceLink global="jdbc/knowage" name="jdbc/knowage" type="javax.sql.DataSource" />
+	<ResourceLink global="jdbc/ds_cache" name="jdbc/ds_cache" type="javax.sql.DataSource" />
+	<ResourceLink global="resource_path" name="resource_path" type="java.lang.String" />
+	<ResourceLink global="sso_class" name="sso_class" type="java.lang.String" />
+	<ResourceLink global="service_url" name="service_url" type="java.lang.String" />
+	<ResourceLink global="hmacKey" name="hmacKey" type="java.lang.String" />
+</Context>

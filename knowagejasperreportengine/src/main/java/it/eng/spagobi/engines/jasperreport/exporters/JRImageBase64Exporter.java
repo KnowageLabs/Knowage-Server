@@ -20,6 +20,7 @@ package it.eng.spagobi.engines.jasperreport.exporters;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 
@@ -41,7 +42,6 @@ import net.sf.jasperreports.export.ExporterConfiguration;
 import net.sf.jasperreports.export.ExporterInput;
 import net.sf.jasperreports.export.ExporterOutput;
 import net.sf.jasperreports.export.ReportExportConfiguration;
-import sun.misc.BASE64Encoder;
 
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
@@ -88,8 +88,8 @@ public class JRImageBase64Exporter extends JRImageExporter {
 				byte[] byteImg = baos.toByteArray();
 
 				baos.close();
-				BASE64Encoder encoder64 = new BASE64Encoder();
-				String encodedImage = encoder64.encode(byteImg);
+				Base64.Encoder encoder64 = Base64.getEncoder();
+				String encodedImage = encoder64.encodeToString(byteImg);
 
 				message += encodedImage;
 				message += "</IMAGE>";
@@ -107,31 +107,37 @@ public class JRImageBase64Exporter extends JRImageExporter {
 		}
 	}
 
+	@Override
 	public ReportContext getReportContext() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public void setConfiguration(ReportExportConfiguration arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void setConfiguration(ExporterConfiguration arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void setExporterInput(ExporterInput arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void setExporterOutput(ExporterOutput arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void setReportContext(ReportContext arg0) {
 		// TODO Auto-generated method stub
 

@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.talend.services;
 
@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,15 +20,9 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
 import org.xml.sax.InputSource;
-
-import sun.misc.BASE64Encoder;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.talend.TalendEngine;
@@ -46,73 +41,76 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
  *
  */
 public class JobUploadService extends AbstractEngineStartServlet {
-	
+
 	private static final String USER = "biadmin";
 	private static final String PASSWORD = "biadmin";
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	private static transient Logger logger = Logger.getLogger(JobUploadService.class);
-	
-	public void doService( EngineStartServletIOManager servletIOManager ) throws SpagoBIEngineException { 
-		
-		boolean isMultipart;
-		FileItemFactory factory;
-		ServletFileUpload upload;
-		JobDeploymentDescriptor jobDeploymentDescriptor;
-		
-		logger.debug("IN");
-		
-		try {		
-			
-			auditServiceStartEvent();
-				
-					
-			//  Check that we have a file upload request
-			isMultipart = ServletFileUpload.isMultipartContent( servletIOManager.getRequest() );
-			
-			// Create a factory for disk-based file items
-			factory = new DiskFileItemFactory();
 
-			// Create a new file upload handler
-			upload = new ServletFileUpload(factory);
+	@Override
+	public void doService( EngineStartServletIOManager servletIOManager ) throws SpagoBIEngineException {
 
-			// Parse the request
-			List items = null;
-			try {
-				items = upload.parseRequest(servletIOManager.getRequest());
-			} catch (FileUploadException e) {
-				throw new SpagoBIEngineException("Impossible to upload file", "impossible.to.upload.file", e );
-			}
-			
-			jobDeploymentDescriptor = getJobsDeploymetDescriptor(items);
-			
-			// Process the uploaded items
-			Iterator iter = items.iterator();
-			while (iter.hasNext()) {
-			    FileItem item = (FileItem) iter.next();
-			    if (item.isFormField()) {
-			        processFormField(item);
-			    } else {
-			        String[] jobNames = processUploadedFile(item, jobDeploymentDescriptor);
-			        if(TalendEngine.getConfig().isAutoPublishActive()) {
-			        	if(jobNames == null) continue;
-				        for(int i = 0; i < jobNames.length; i++) {
-				        	publishOnSpagoBI(servletIOManager, jobDeploymentDescriptor.getLanguage(), jobDeploymentDescriptor.getProject(), jobNames[i]);		 
-				        }
-			        }
-			    }
-			}
-			
-			servletIOManager.tryToWriteBackToClient( "OK" );			
-			
-		} catch (Exception e){
-			throw new SpagoBIEngineException("An error occurred while executing [JobUploadService]", "an.unpredicted.error.occured", e);
-		} finally {
-			logger.debug("OUT");
-		}		
+//		boolean isMultipart;
+//		FileItemFactory factory;
+//		ServletFileUpload upload;
+//		JobDeploymentDescriptor jobDeploymentDescriptor;
+//
+//		logger.debug("IN");
+//
+//		try {
+//
+//			auditServiceStartEvent();
+//
+//
+//			//  Check that we have a file upload request
+//			isMultipart = ServletFileUpload.isMultipartContent( servletIOManager.getRequest() );
+//
+//			// Create a factory for disk-based file items
+//			factory = new DiskFileItemFactory();
+//
+//			// Create a new file upload handler
+//			upload = new ServletFileUpload(factory);
+//
+//			// Parse the request
+//			List items = null;
+//			try {
+//				items = upload.parseRequest(servletIOManager.getRequest());
+//			} catch (FileUploadException e) {
+//				throw new SpagoBIEngineException("Impossible to upload file", "impossible.to.upload.file", e );
+//			}
+//
+//			jobDeploymentDescriptor = getJobsDeploymetDescriptor(items);
+//
+//			// Process the uploaded items
+//			Iterator iter = items.iterator();
+//			while (iter.hasNext()) {
+//			    FileItem item = (FileItem) iter.next();
+//			    if (item.isFormField()) {
+//			        processFormField(item);
+//			    } else {
+//			        String[] jobNames = processUploadedFile(item, jobDeploymentDescriptor);
+//			        if(TalendEngine.getConfig().isAutoPublishActive()) {
+//			        	if(jobNames == null) continue;
+//				        for(int i = 0; i < jobNames.length; i++) {
+//				        	publishOnSpagoBI(servletIOManager, jobDeploymentDescriptor.getLanguage(), jobDeploymentDescriptor.getProject(), jobNames[i]);
+//				        }
+//			        }
+//			    }
+//			}
+//
+//			servletIOManager.tryToWriteBackToClient( "OK" );
+//
+//		} catch (Exception e){
+//			throw new SpagoBIEngineException("An error occurred while executing [JobUploadService]", "an.unpredicted.error.occured", e);
+//		} finally {
+//			logger.debug("OUT");
+//		}
+
+		throw new UnsupportedOperationException("Not supported on Tomcat 10");
 	}
-	
+
 	public void auditServiceStartEvent() {
 		logger.info("EXECUTION_STARTED: " + new Date(System.currentTimeMillis()));
 	}
@@ -122,18 +120,18 @@ public class JobUploadService extends AbstractEngineStartServlet {
 	}
 
 	public void auditServiceEndEvent() {
-		logger.info("EXECUTION_PERFORMED: " + new Date(System.currentTimeMillis()));	
+		logger.info("EXECUTION_PERFORMED: " + new Date(System.currentTimeMillis()));
 	}
-	
-	public String getUserIdentifier() {    	
+
+	public String getUserIdentifier() {
     	return USER;
     }
-	
-	
+
+
 
 	private JobDeploymentDescriptor getJobsDeploymetDescriptor(List items) {
 		JobDeploymentDescriptor jobDeploymentDescriptor = null;
-		
+
 		Iterator iter = items.iterator();
 		while (iter.hasNext()) {
 		    FileItem item = (FileItem) iter.next();
@@ -155,11 +153,11 @@ public class JobUploadService extends AbstractEngineStartServlet {
 		}
 		return jobDeploymentDescriptor;
 	}
-	
-	
+
+
 	private void processFormField(FileItem item) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private String[] processUploadedFile(FileItem item, JobDeploymentDescriptor jobDeploymentDescriptor) throws ZipException, IOException, SpagoBIEngineException {
@@ -168,59 +166,59 @@ public class JobUploadService extends AbstractEngineStartServlet {
 	    String contentType = item.getContentType();
 	    boolean isInMemory = item.isInMemory();
 	    long sizeInBytes = item.getSize();
-	    
+
 	    if(fieldName.equalsIgnoreCase("deploymentDescriptor")) return null;
-	    
+
 	    RuntimeRepository runtimeRepository = TalendEngine.getRuntimeRepository();
 	    File jobsDir = new File(runtimeRepository.getRootDir(), jobDeploymentDescriptor.getLanguage().toLowerCase());
 		File projectDir = new File(jobsDir, jobDeploymentDescriptor.getProject());
 		File tmpDir = new File(projectDir, "tmp");
-		if(!tmpDir.exists()) tmpDir.mkdirs();	   
+		if(!tmpDir.exists()) tmpDir.mkdirs();
 	     File uploadedFile = new File(tmpDir, fileName);
-	    
+
 	    try {
 			item.write(uploadedFile);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}	
-		
+		}
+
 		String[] dirNames = ZipUtils.getDirectoryNameByLevel(new ZipFile(uploadedFile), 2);
 		List dirNameList = new ArrayList();
 		for(int i = 0; i < dirNames.length; i++) {
 			if(!dirNames[i].equalsIgnoreCase("lib")) dirNameList.add(dirNames[i]);
 		}
 		String[] jobNames = (String[])dirNameList.toArray(new String[0]);
-		
+
 	    runtimeRepository.deployJob(jobDeploymentDescriptor, new ZipFile(uploadedFile));
-	    uploadedFile.delete();	
+	    uploadedFile.delete();
 	    tmpDir.delete();
-	    
+
 	    return jobNames;
 	}
-	
-	
+
+
 	/**
 	 * Checks if is valid template.
-	 * 
+	 *
 	 * @param templateFile the template file
-	 * 
+	 *
 	 * @return true, if is valid template
 	 */
 	public boolean isValidTemplate(File templateFile) {
 		try {
-		   	SourceBean template = SourceBean.fromXMLStream( new InputSource(new FileInputStream(templateFile)) ); 
+		   	SourceBean template = SourceBean.fromXMLStream( new InputSource(new FileInputStream(templateFile)) );
 			Job job = new Job( template );
 			if(job.getLanguage() == null || job.getProject() == null || job.getName() == null) return false;
 		} catch (Exception e) {
 			 return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	private String getTemplate(String language, String projectName, String jobName) throws IOException, SpagoBIEngineException {
 		String template = null;
-		
+
 		RuntimeRepository runtimeRepository = TalendEngine.getRuntimeRepository();
 		File jobsDir = new File(runtimeRepository.getRootDir(), language.toLowerCase());
 		File projectDir = new File(jobsDir, projectName);
@@ -243,24 +241,24 @@ public class JobUploadService extends AbstractEngineStartServlet {
 			template += "language=\"" + language + "\" />\n";
 			template += "</etl>";
 		}
-		
+
 		return template;
 	}
-	
-	
+
+
 	/*
 	 * TODO: implementare questa funzione tramite una API  WEB Service
 	 */
 	private void publishOnSpagoBI(EngineStartServletIOManager servletIOManager, String language, String projectName, String jobName) throws IOException, SpagoBIEngineException {
 		RuntimeRepository runtimeRepository = TalendEngine.getRuntimeRepository();
-		
+
 		String template = getTemplate(language, projectName, jobName);
-		
-		BASE64Encoder encoder = new BASE64Encoder();
-		String templateBase64Coded = encoder.encode(template.getBytes());		
-		
+
+		Base64.Encoder encoder = Base64.getEncoder();
+		String templateBase64Coded = encoder.encodeToString(template.getBytes());
+
 		TalendEngineConfig config = TalendEngineConfig.getInstance();
-		
+
 		String user = USER;
 		String password = PASSWORD;
 		Date now = new Date();
@@ -271,10 +269,10 @@ public class JobUploadService extends AbstractEngineStartServlet {
 		String description = language + " job defined in " + projectName  + " project";
 		String encrypt = "false";
 		String visible = "true";
-		String functionalitiyCode = config.getSpagobiTargetFunctionalityLabel();		
+		String functionalitiyCode = config.getSpagobiTargetFunctionalityLabel();
 		String type = "ETL";
 		String state = "DEV";
-		
+
 		 HashMap<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("TEMPLATE", templateBase64Coded);
 		attributes.put("LABEL", label);
@@ -283,10 +281,10 @@ public class JobUploadService extends AbstractEngineStartServlet {
 		attributes.put("ENCRYPTED", encrypt);
 		attributes.put("VISIBLE", visible);
 		attributes.put("TYPE", type);
-		attributes.put("FUNCTIONALITYCODE", functionalitiyCode);	
+		attributes.put("FUNCTIONALITYCODE", functionalitiyCode);
 		attributes.put("STATE", state);
 		attributes.put("USER", user);
-		
+
 		try {
 			ContentServiceProxy contentProxy=new ContentServiceProxy(user, servletIOManager.getHttpSession());
 		    contentProxy.publishTemplate(attributes);
@@ -297,7 +295,7 @@ public class JobUploadService extends AbstractEngineStartServlet {
 		    ContentServiceProxy contentProxy=new ContentServiceProxy(user,session);
 		    contentProxy.publishTemplate(attributes);
 		    */
-			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -313,13 +311,13 @@ public class JobUploadService extends AbstractEngineStartServlet {
 	    String contentType = item.getContentType();
 	    boolean isInMemory = item.isInMemory();
 	    long sizeInBytes = item.getSize();
-	    
+
 	    if(fieldName.equalsIgnoreCase("deploymentDescriptor")) return;
-	    
-	    
-	    
+
+
+
 	    RuntimeRepository runtimeRepository = TalendEngine.getRuntimeRepository();
-	    
+
 	    String projectName = jobDeploymentDescriptor.getProject();
 	    String projectLanguage = jobDeploymentDescriptor.getLanguage().toLowerCase();
 	    String jobName = "JOB_NAME";
@@ -331,12 +329,12 @@ public class JobUploadService extends AbstractEngineStartServlet {
 	    template += "context=\"" + projectName + "\" ";
 	    template += "language=\"" + contextName + "\" />\n";
 	    template += "</etl>";
-	    
-	    BASE64Encoder encoder = new BASE64Encoder();
-	    String templateBase64Coded = encoder.encode(template.getBytes());		
-	    
+
+	    Base64.Encoder encoder = Base64.getEncoder();
+	    String templateBase64Coded = encoder.encodeToString(template.getBytes());
+
 	    TalendEngineConfig config = TalendEngineConfig.getInstance();
-	    
+
 	    String user = "biadmin";
 		String password = "biadmin";
 		String label = "ETL_JOB";
@@ -344,10 +342,10 @@ public class JobUploadService extends AbstractEngineStartServlet {
 		String description = "Etl Job";
 		boolean encrypt = false;
 		boolean visible = true;
-		String functionalitiyCode = config.getSpagobiTargetFunctionalityLabel();	
+		String functionalitiyCode = config.getSpagobiTargetFunctionalityLabel();
 		String type = "ETL";
 		String state = "DEV";
-	    
+
 	    try {
 
 	    	//PublishAccessUtils.publish(spagobiurl, user, password, label, name, description, encrypt, visible, type, state, functionalitiyCode, templateBase64Coded);
@@ -355,7 +353,7 @@ public class JobUploadService extends AbstractEngineStartServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    
+
 	}
 
 }

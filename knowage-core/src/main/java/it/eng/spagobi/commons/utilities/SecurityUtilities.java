@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.utilities;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,18 +30,19 @@ import java.security.SignatureException;
 import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
 
-import sun.misc.BASE64Encoder;
-
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
 
 /**
  * Contains some SpagoBI's security utilities.
  */
 public class SecurityUtilities {
-	
+
 	/**
 	 * Get the SpagoBI Provate Key for a DSA alghoritm.
-	 * 
+	 *
 	 * @return PrivateKey DSA alghoritm for SpagoBI
 	 */
 	public PrivateKey getPrivateKeyDSA() {
@@ -55,7 +53,7 @@ public class SecurityUtilities {
 	    SourceBean nameSbiPrivKeySB = (SourceBean)conf.getAttribute("SPAGOBI.SERVICE_SECURITY.SPAGOBI_PRIVATE_KEY_DSA");
 	    String logicalName = nameSbiPrivKeySB.getCharacters();
 		// get the input stream of the key file
-	    InputStream privKeyIs = this.getClass().getClassLoader().getResourceAsStream(logicalName);	    
+	    InputStream privKeyIs = this.getClass().getClassLoader().getResourceAsStream(logicalName);
 	    try {
 	       	ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	       	byte[] buffer = new byte[1024];
@@ -65,7 +63,7 @@ public class SecurityUtilities {
 	       	privKeyIs.close();
 	       	baos.close();
 	       	byte[] privKeyByte = baos.toByteArray();
-	        // get the public key from bytes  
+	        // get the public key from bytes
 	        KeyFactory keyFactory = KeyFactory.getInstance("DSA");
 	        EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privKeyByte);
 	        privKey = keyFactory.generatePrivate(privateKeySpec);
@@ -85,18 +83,18 @@ public class SecurityUtilities {
 					"getPrivateKeyDSA",
 					"Invalid Key", e);
 		} finally {
-	    	
+
 	    }
 		return privKey;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Generate a random array of bytes (1024 bits) using the SHA1PRNG alghoritm.
-	 * 
+	 *
 	 * @return Byte array filled with random byte
-	 */ 
+	 */
 	public byte[] generateRandomChallenge() {
 		byte[] challenge = null;
 		try {
@@ -109,32 +107,32 @@ public class SecurityUtilities {
 								this.getClass().getName(),
 								"generateRandomChallenge",
 								"Alghoritm SHA1PRNG not found ", e);
-		} 
+		}
 		return challenge;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Encode a byte array using Base64 alghoritm.
-	 * 
+	 *
 	 * @param bytes bytes to encode
-	 * 
+	 *
 	 * @return String Base64 string of the bytes
 	 */
 	public String encodeBase64(byte[] bytes) {
-		BASE64Encoder encoder = new BASE64Encoder();
-		String encoded = encoder.encode(bytes);
+		Base64.Encoder encoder = Base64.getEncoder();
+		String encoded = encoder.encodeToString(bytes);
 		return encoded;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Sign dsa.
-	 * 
+	 *
 	 * @param data the data
-	 * 
+	 *
 	 * @return the byte[]
 	 */
 	public byte[] signDSA(byte[] data) {
@@ -161,9 +159,9 @@ public class SecurityUtilities {
 								"signDSA",
 								"Error during the sign phase ", e);
 		} finally {
-			
+
 		}
 		return signed;
 	}
-	
+
 }

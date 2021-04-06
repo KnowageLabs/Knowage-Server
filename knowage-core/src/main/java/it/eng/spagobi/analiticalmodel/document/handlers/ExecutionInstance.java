@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,6 +77,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.ParameterValuesDecoder;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.validation.SpagoBIValidationImpl;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -804,6 +806,7 @@ public class ExecutionInstance implements Serializable {
 		ModalitiesValue lov = biparam.getParameter().getModalityValue();
 		if (lov.getITypeCd().equals("MAN_IN")) {
 			logger.debug("Modality in use for biparameter [" + biparamLabel + "] is manual input");
+			validateManualInput(biparam);
 			return new ArrayList();
 		}
 		// patch for default date value
@@ -854,6 +857,46 @@ public class ExecutionInstance implements Serializable {
 		mergeDescriptions(biparam, selectedDefaultValue, clone);
 		logger.debug("OUT");
 		return toReturn;
+	}
+
+	private void validateManualInput(BIObjectParameter driver) {
+		List<String> values = driver.getParameterValues();
+		if (values == null || values.isEmpty()) {
+			// no values to be validated
+			return;
+		}
+		String value = values.get(0);
+		if (StringUtilities.isEmpty(value)) {
+			// no values to be validated
+			return;
+		}
+		if (driver.getParameter().getType().equalsIgnoreCase("DATE")) {
+			validateDate(value);
+		} else if (driver.getParameter().getType().equalsIgnoreCase("NUM")) {
+			validateNumber(value);
+		} else if (driver.getParameter().getType().equalsIgnoreCase("STRING")) {
+			// unfortunately we cannot do anything for strings as a general validation, anything is a String!
+		}
+	}
+
+	private void validateNumber(String value) {
+		// @formatter:off
+		if (!GenericValidator.isInt(value)
+				&& !GenericValidator.isFloat(value)
+				&& !GenericValidator.isDouble(value)
+				&& !GenericValidator.isShort(value)
+				&& !GenericValidator.isLong(value)) {
+			// @formatter:on
+			// The string is not a integer, not a float, not a double, not a short, not a long, therefore it is not a number
+			throw new SecurityException("Input value " + value + " is not a valid number!");
+		}
+	}
+
+	private void validateDate(String value) {
+		String dateFormat = GeneralUtilities.getServerDateFormat();
+		if (!GenericValidator.isDate(value, dateFormat, true)) {
+			throw new SecurityException("Input value " + value + " is not a valid date [considering fomat " + dateFormat + "]!");
+		}
 	}
 
 	private void mergeDescriptions(BIObjectParameter biparam, DefaultValuesList selectedDefaultValue, BIObjectParameter cloned) {

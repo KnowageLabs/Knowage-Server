@@ -281,7 +281,7 @@
 	        			#set($labelAlign=$axisStyle)
 	        		#elseif($styleName == 'rotate' && $axisStyle)
 	        			#set($rotation=$axisStyle)
-	        			#if($rotation!="")
+	        			#if($rotation!="" && $rotation.class.name == "java.lang.Integer")
 						rotation: $rotation,
 						#end		        			
 					#else		        			

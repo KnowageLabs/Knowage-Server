@@ -17,9 +17,9 @@
  */
 package it.eng.spagobi.utilities.engines;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,7 +50,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.messages.EngineMessageBundle;
-import sun.misc.BASE64Decoder;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -261,14 +260,8 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			templateName = template.getFileName();
 			logger.debug("Read the template [" + template.getFileName() + "]");
 
-			try {
-				// BASE64Decoder cannot be used in a static way, since it is not thread-safe;
-				// see https://spagobi.eng.it/jira/browse/SPAGOBI-881
-				BASE64Decoder decoder = new BASE64Decoder();
-				templateContent = decoder.decodeBuffer(template.getContent());
-			} catch (IOException e) {
-				throw new SpagoBIRuntimeException("Impossible to get content from template [" + template.getFileName() + "]", e);
-			}
+			Base64.Decoder decoder = Base64.getDecoder();
+			templateContent = decoder.decode(template.getContent());
 		} else {
 			logger.warn("Document template is not defined or it is impossible to get it from the server");
 		}

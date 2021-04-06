@@ -305,16 +305,20 @@
 					var lovColumns = [];
 					var lovObject = JSON.parse(lov.lovProviderJSON);
 					if(lovObject != [] && lovObject.QUERY){
-						var stringColumns = lovObject.QUERY['VISIBLE-COLUMNS'];
-						if(stringColumns.includes(",")){
-							lovColumns = stringColumns.split(',')
-							lovIdAndColumns.id = lov.id;
-							lovIdAndColumns.columns = lovColumns;
-						}else{
-							lovColumns.push(stringColumns);
-							lovIdAndColumns.id = lov.id;
-							lovIdAndColumns.columns = lovColumns;
+						var visibleColumns = lovObject.QUERY['VISIBLE-COLUMNS'];
+						var invisibleColumns = lovObject.QUERY['INVISIBLE-COLUMNS'];
+
+						var visibleColumnsArr = visibleColumns ? visibleColumns.split(',') : [];
+						var invisibleColumnsArr = invisibleColumns ? invisibleColumns.split(',') : [];
+						for (var i of visibleColumnsArr) {
+							lovColumns.push(i);
 						}
+						for (var i of invisibleColumnsArr) {
+							lovColumns.push(i);
+						}
+
+						lovIdAndColumns.id = lov.id;
+						lovIdAndColumns.columns = lovColumns.filter(function(el) { return "" !== el; }).sort();
 					}
 					return lovIdAndColumns;
 				}

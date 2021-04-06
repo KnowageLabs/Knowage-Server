@@ -93,7 +93,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			}
 			if (columnsMap[modelColumns[j].name]) {
 				tempColumns.push(modelColumns[j]);           // already present fields, ignores deleted ones
-				columnsNameArray.splice(columnsNameArray.indexOf(modelColumns[j].name),1);
+				if(!modelColumns[j].isCalculated){
+					columnsNameArray.splice(columnsNameArray.indexOf(modelColumns[j].name),1);
+				}
 			}
 
 		}
@@ -302,30 +304,31 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	this.parametersAreSet = function() {
 		if(cockpitModule_datasetServices.newDataSet) {
 			var newDs = cockpitModule_datasetServices.newDataSet;
-			  for(var i = 0; i < newDs.parameters.length; i++) {
-				  if(newDs.parameters[i].value) {
-					  cockpitModule_datasetServices.parameterHasValue = true;
-				  } else {
-					  cockpitModule_datasetServices.parameterHasValue = false;
-				  }
-			  }
-			  return cockpitModule_datasetServices.parameterHasValue;
+			for(var i = 0; i < newDs.parameters.length; i++) {
+				if(newDs.parameters[i].value) {
+					cockpitModule_datasetServices.parameterHasValue = cockpitModule_datasetServices.areParametersSet[newDs.id.dsId] = true;
+				} else {
+					cockpitModule_datasetServices.parameterHasValue = cockpitModule_datasetServices.areParametersSet[newDs.id.dsId] = false;
+				}
+			}
+			return cockpitModule_datasetServices.areParametersSet[newDs.id.dsId];
 		}
-	  }
+	}
 
 	this.driversAreSet = function(config) {
+		var ds;
 		if(config.dataset) {
-			var ds = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
+			ds = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
 		}
 		if(ds && ds.drivers) {
 			for(var i = 0; i < ds.drivers.length; i++) {
 				if(ds.drivers[i].parameterValue) {
-					cockpitModule_datasetServices.driverHasValue = true;
+					cockpitModule_datasetServices.areDriversSet[ds.id.dsId] = true;
 				} else {
-					cockpitModule_datasetServices.driverHasValue = false;
+					cockpitModule_datasetServices.areDriversSet[ds.id.dsId] = false;
 				}
 			}
-			return cockpitModule_datasetServices.driverHasValue;
+			return cockpitModule_datasetServices.areDriversSet[ds.id.dsId];
 		}
 	}
 
@@ -380,7 +383,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			if(dirtyIndex > -1){
 				cockpitModule_properties.DIRTY_WIDGETS.splice(dirtyIndex, 1);
 			}
-			if(nature === 'init' && cockpitModule_properties.HASDEFAULTSELECTION[cockpitModule_properties.CURRENT_SHEET] && config.type != 'selector') return;
+			var thisSheetDefaultSelections = cockpitModule_properties.HASDEFAULTSELECTION[cockpitModule_properties.CURRENT_SHEET];
+			if(nature === 'init' && config.type != 'selector' && config.updateble && config.dataset && thisSheetDefaultSelections && thisSheetDefaultSelections.indexOf(config.dataset.dsId) != -1) return;
 			var width = angular.element(element)[0].parentElement.offsetWidth;
 			var height = angular.element(element)[0].parentElement.offsetHeight;
 			if(data == undefined) {
@@ -550,6 +554,22 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		minMaxCategoriesSeries.serie.min.radar = 1;
 		minMaxCategoriesSeries.serie.min.bar = 1;
 		minMaxCategoriesSeries.serie.min.pie = 1;
+
+		minMaxCategoriesSeries.charts = {
+				"line":["bar","heatmap"],
+				"bar":["pie","bubble","radar","sunburst","treemap","scatter","wordcloud","heatmap"],
+				"pie":["bar","sunburst","treemap","wordcloud"],
+				"chord":[],
+				"parallel":["bubble","radar","scatter"],
+				"bubble":["bar"],
+				"radar":["bar"],
+				"sunburst":["bar","pie","treemap"],
+				"gauge":[],
+				"treemap":["bar", "pie", "sunburst"],
+				"scatter":[],
+				"wordCloud":["bar","pie"],
+				"heatmap":["bar"]
+		};
 
 		return minMaxCategoriesSeries;
 	};

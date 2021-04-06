@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,13 +11,31 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spagobi.engines.commonj.services;
 
+import java.io.IOException;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import commonj.work.Work;
+import commonj.work.WorkEvent;
+import commonj.work.WorkItem;
+import de.myfoo.commonj.work.FooRemoteWorkItem;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
@@ -44,27 +62,6 @@ import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import sun.misc.BASE64Decoder;
-
-import commonj.work.Work;
-import commonj.work.WorkEvent;
-import commonj.work.WorkItem;
-
-import de.myfoo.commonj.work.FooRemoteWorkItem;
-
 public class StartWorkAction extends AbstractEngineAction {
 
 	private static transient Logger logger = Logger.getLogger(StartWorkAction.class);
@@ -73,7 +70,7 @@ public class StartWorkAction extends AbstractEngineAction {
 	private ContentServiceProxy contentProxy;
 	String documentId;
 	String documentLabel;
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
+	private static final Base64.Decoder DECODER = Base64.getDecoder();
 	String userId = null;
 	HttpSession session = null;
 	HttpServletRequest httpRequest = null;
@@ -331,7 +328,7 @@ public class StartWorkAction extends AbstractEngineAction {
 			try {
 				if (template == null)
 					throw new SpagoBIEngineRuntimeException("There are no template associated to document [" + documentId + "]");
-				templateContent = DECODER.decodeBuffer(template.getContent());
+				templateContent = DECODER.decode(template.getContent());
 			} catch (Throwable e) {
 				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException("COmmonj", "Impossible to get template's content", e);
 				engineException.setDescription("Impossible to get template's content:  " + e.getMessage());

@@ -33,7 +33,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import it.eng.spagobi.api.common.AbstractDataSetResource;
+import it.eng.spagobi.api.v2.DataSetResource;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.content.service.ContentServiceImplSupplier;
@@ -48,7 +48,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
  */
 
 @Path("/2.0/backendservices/widgets/RWidget")
-public class RWidgetProxy extends AbstractDataSetResource {
+public class RWidgetProxy extends DataSetResource {
 
 	Map<String, String> headers;
 	HttpMethod methodPost = HttpMethod.valueOf("Post");

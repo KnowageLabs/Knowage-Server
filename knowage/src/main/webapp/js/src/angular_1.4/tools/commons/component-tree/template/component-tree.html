@@ -25,7 +25,7 @@
 		<div ng-click="openFolder(node,true)" class="line-container" ng-class="{'selectedNode': selectedItem.id!=undefined ? (selectedItem.id == node.id) : (selectedItem.$$hashKey == node.$$hashKey) }">
 			<span>&nbsp;{{node[label]}}&nbsp;</span>
 			<span ng-if="node[stateCode] && node[stateCode].length > 0">{{"( "}}&nbsp;{{node[stateCode]}}&nbsp;{{" )"}}</span>
-			<span ng-if="importExportTree && !node.exportable"><i>[{{translate.load("sbi.impexpdoc.notExportable")}}]</i></span>
+			<span ng-if="showImportExportInfoLabel && (importExportTree && !node.exportable)"><i>[{{translate.load("sbi.impexpdoc.notExportable")}}]</i></span>
 		</div>
 	</div>
 	<div class="menu-container"

@@ -103,7 +103,7 @@
    <column length="20" name="state_cons_cd"/>
   </property>
   <property generated="never" lazy="false" name="label" type="string">
-   <column length="20" name="label" not-null="true" unique="true"/>
+   <column length="100" name="label" not-null="true" unique="true"/>
   </property>
   <property generated="never" lazy="false" name="name" type="string">
    <column length="200" name="name" not-null="true"/>

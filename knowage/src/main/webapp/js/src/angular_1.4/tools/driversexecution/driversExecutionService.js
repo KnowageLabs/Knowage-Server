@@ -101,7 +101,7 @@
 
 				if(parameter.defaultValue != undefined && parameter.defaultValue != '' && parameter.defaultValue!= '[]'){
 					if (parameter.type == "NUM") parameter.parameterValue = parseInt(parameter.defaultValue);
-					else if (parameter.type == "DATE") parameter.parameterValue = Date.parse(parameter.defaultValue);
+					else if (parameter.type == "DATE") parameter.parameterValue = new Date(parameter.defaultValue.split("#")[0]);
 					else parameter.parameterValue = angular.copy(parameter.defaultValue);
 					parameter.parameterDescription = angular.copy(parameter.defaultValueDescription);
 					if(Array.isArray(parameter.parameterValue) && !Array.isArray(parameter.parameterDescription)){
@@ -150,7 +150,7 @@
 							parameter.parameterDescription = [];
 							executionService.resetParameterInnerLovData(parameter.children);
 						} else {
-							parameter.parameterValue = '';
+							delete parameter.parameterValue;
 							if(resetWithoutDefaultValue) parameter.parameterDescription = {};
 						}
 					}else {
@@ -158,12 +158,12 @@
 							parameter.parameterValue = [];
 							if(resetWithoutDefaultValue) parameter.parameterDescription = '';
 						} else {
-							parameter.parameterValue = '';
+							delete parameter.parameterValue;
 							if(resetWithoutDefaultValue) parameter.parameterDescription = {};
 						}
 					}
 				} else {
-					parameter.parameterValue = '';
+					delete parameter.parameterValue;
 					if(isParameterTypeDateRange(parameter) && parameter.datarange){
 						parameter.datarange.opt='';
 					}
@@ -240,10 +240,14 @@
 					if(z > 0) {
 						paramStrTree += ";";
 					}
-					paramArrayTree[z] = parameter.parameterValue[z];
+					var value = parameter.parameterValue[z].value ? parameter.parameterValue[z].value : parameter.parameterValue[z];
+					paramArrayTree[z] = value;
 					//modify description tree
 					if(typeof parameter.parameterDescription !== 'undefined'){
-						paramStrTree += parameter.parameterDescription[parameter.parameterValue[z]];
+						var descr = parameter.parameterDescription[value];
+						if (typeof descr == 'undefined') descr = parameter.parameterDescription[z];
+						if (typeof descr == 'undefined') descr = value;
+						paramStrTree += descr;
 					}
 					if (paramStrTree == 'undefined') paramStrTree = parameter.parameterValue[z];
 				}
@@ -419,13 +423,11 @@
 						if (currDriverDescValArr.length == 0) {
 							return false;
 						} else {
-							var allValuesSet = true;
 							for (var i in currDriverDescValArr) {
 								var curr = currDriverDescValArr[i];
 								if (curr.value == undefined) {
-									allValuesSet = false;
+									return false;
 								}
-								return allValuesSet;
 							}
 						}
 					}

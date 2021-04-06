@@ -33,8 +33,8 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 import it.eng.knowage.knowageapi.service.WidgetGalleryAPI;
 import it.eng.knowage.knowageapi.utils.StringUtilities;
-import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import spagobisecurity.SecurityServiceProxy;
+import it.eng.spagobi.services.security.SecurityServiceServiceProxy;
+import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 @Path("/1.0/widgetgallery")
 @Component
@@ -307,10 +307,15 @@ public class GalleryResource {
 		userToken = userToken.replace("Bearer ", "");
 		// String userId = jwtToken2userId(userToken);
 		String technicalToken = getTechnicalToken();
+		Context ctx;
+		try {
+			ctx = new InitialContext();
+			String serviceUrl = (String) ctx.lookup("java:/comp/env/service_url");
+			SecurityServiceServiceProxy proxy = new SecurityServiceServiceProxy(serviceUrl + "/services/SecurityService");
+			profile = proxy.getUserProfile(technicalToken, userToken);
+		} catch (Exception e) {
 
-		SecurityServiceProxy proxy = new SecurityServiceProxy("http://localhost:8080/knowage/services/SecurityService");
-		profile = proxy.getUserProfile(technicalToken, userToken);
-
+		}
 		return profile;
 	}
 }

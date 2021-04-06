@@ -287,7 +287,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.showUnlock = false;
 						$scope.showInfoBar = true;
 					}
-					if($scope.datasetRecords.rows && $scope.ngModel.settings.modalityValue != 'singleValue'){
+					if($scope.datasetRecords.rows && $scope.ngModel.settings.modalityValue != 'singleValue' && $scope.ngModel.settings.modalityValue != 'multiValue'){
 						$scope.datasetRecords.rows = $filter('orderBy')($scope.datasetRecords.rows, function(item){
 							if($scope.isSelected(item.column_1)) return 1;
 							if(!$scope.isDisabled(item.column_1)) return 2;

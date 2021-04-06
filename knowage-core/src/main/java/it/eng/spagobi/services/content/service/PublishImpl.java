@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,23 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.services.content.service;
+
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -27,31 +39,17 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.common.AbstractServiceImpl;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
-import sun.misc.BASE64Decoder;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 public class PublishImpl extends AbstractServiceImpl {
 
     static private Logger logger = Logger.getLogger(PublishImpl.class);
 
     /**
      * Publish template.
-     * 
+     *
      * @param token the token
      * @param user the user
      * @param attributes the attributes
-     * 
+     *
      * @return the string
      */
     public String publishTemplate(String token, String user, HashMap attributes) {
@@ -76,12 +74,12 @@ public class PublishImpl extends AbstractServiceImpl {
 
     private String publishTemplate(String user, HashMap attributes) {
 	logger.debug("IN");
-	BASE64Decoder decoder = new BASE64Decoder();
+	Base64.Decoder decoder = Base64.getDecoder();
 	String encodedTemplate = (String) attributes.get("TEMPLATE");
 	byte[] buffer = null;
 	try {
 
-	    buffer = decoder.decodeBuffer(encodedTemplate);
+	    buffer = decoder.decode(encodedTemplate);
 	    String template = new String(buffer);
 	    attributes.put("TEMPLATE", template);
 	    String label = (String) attributes.get("LABEL");
@@ -94,9 +92,6 @@ public class PublishImpl extends AbstractServiceImpl {
 	    }
 	    return "OK";
 	} catch (EMFUserError e) {
-	    logger.error("IOException when decode template", e);
-	    return "KO";
-	} catch (IOException e) {
 	    logger.error("IOException when decode template", e);
 	    return "KO";
 	} finally {
@@ -165,7 +160,7 @@ public class PublishImpl extends AbstractServiceImpl {
 	obj.setBiObjectTypeCode(domain.getValueCd());
 
 	obj.setBiObjectTypeID(typeIdInt);
-	
+
 	logger.debug("OUT");
 	return obj;
     }
@@ -228,13 +223,13 @@ public class PublishImpl extends AbstractServiceImpl {
 	ObjTemplate objTemp = new ObjTemplate();
 	objTemp.setName("etlTemplate.xml");
 	objTemp.setContent(template.getBytes());
-	
+
 	obj.setBiObjectTypeID(typeIdInt);
 	obj.setBiObjectTypeCode(type);
 
 	obj.setStateCode(state);
 	Integer valueId = null;
-	List l = (List)DAOFactory.getDomainDAO().loadListDomainsByType("STATE");
+	List l = DAOFactory.getDomainDAO().loadListDomainsByType("STATE");
 	if (!l.isEmpty()){
 		Iterator it = l.iterator();
 		while(it.hasNext()){
@@ -253,7 +248,7 @@ public class PublishImpl extends AbstractServiceImpl {
 	} catch (EMFUserError e1) {
 	    logger.error("Error while reading domain by type");
 	}
-	obj.setBiObjectTypeCode(domain.getValueCd());	
+	obj.setBiObjectTypeCode(domain.getValueCd());
 
 	List functionalities = new ArrayList();
 	try {
@@ -275,7 +270,7 @@ public class PublishImpl extends AbstractServiceImpl {
 
 	obj.setFunctionalities(funcs);
 	DAOFactory.getBIObjectDAO().insertBIObject(obj, objTemp);
-	
+
 	logger.debug("OUT");
     }
 

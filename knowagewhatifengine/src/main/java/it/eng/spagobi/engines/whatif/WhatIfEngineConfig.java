@@ -21,6 +21,7 @@ package it.eng.spagobi.engines.whatif;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -46,14 +47,13 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import sun.misc.BASE64Encoder;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
  */
 public class WhatIfEngineConfig {
 
-	private static final BASE64Encoder ENCODER = new BASE64Encoder();
+	private static final Base64.Encoder ENCODER = Base64.getEncoder();
 
 	private EnginConf engineConfig;
 
@@ -305,10 +305,10 @@ public class WhatIfEngineConfig {
 		String valueBase64 = null;
 		if (v != null) {
 			try {
-				valueBase64 = ENCODER.encode(v.getBytes("UTF-8"));
+				valueBase64 = ENCODER.encodeToString(v.getBytes("UTF-8"));
 			} catch (UnsupportedEncodingException e) {
 				logger.error("UTF-8 encoding not supported!!!!!", e);
-				valueBase64 = ENCODER.encode(v.getBytes());
+				valueBase64 = ENCODER.encodeToString(v.getBytes());
 			}
 		}
 		return valueBase64;

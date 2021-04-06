@@ -17,9 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.listener;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -28,6 +25,9 @@ import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.cometd.server.DefaultSecurityPolicy;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 
 /**
  * Add to web.xml
@@ -65,7 +65,7 @@ public class CometDSpagoBIAuthenticationPolicy extends DefaultSecurityPolicy {
 		}
 
 		String userChannel = CometServiceManager.getUserChannel(channel);
-		BayeuxContext context = server.getContext();
+		BayeuxContext context = message.getBayeuxContext();
 		UserProfile profile = (UserProfile) context.getHttpSessionAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		if (profile == null) {
 			return false;

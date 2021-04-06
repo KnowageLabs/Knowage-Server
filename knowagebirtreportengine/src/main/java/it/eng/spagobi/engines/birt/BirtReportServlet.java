@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -47,7 +48,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.eclipse.birt.report.IBirtConstants;
 import org.eclipse.birt.report.engine.api.EXCELRenderOption;
@@ -97,7 +97,6 @@ import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.SpagoBIAccessUtils;
 import it.eng.spagobi.utilities.callbacks.audit.AuditAccessUtils;
-import sun.misc.BASE64Decoder;
 
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
@@ -274,7 +273,7 @@ public class BirtReportServlet extends HttpServlet {
 		renderOption.setImageHandler(new HTMLServerImageHandler() {
 			@Override
 			protected String handleImage(IImage image, Object context, String prefix, boolean needMap) {
-				byte[] encodedBytes = Base64.encodeBase64(image.getImageData());
+				byte[] encodedBytes = Base64.getEncoder().encode(image.getImageData());
 				String embeddedImage = new String(encodedBytes);
 				String extension = image.getExtension().substring(1).toLowerCase(); // it starts with "."
 				return "data:image/" + extension + ";base64," + embeddedImage;
@@ -303,8 +302,8 @@ public class BirtReportServlet extends HttpServlet {
 		InputStream is = null;
 		byte[] templateContent = null;
 		try {
-			BASE64Decoder bASE64Decoder = new BASE64Decoder();
-			templateContent = bASE64Decoder.decodeBuffer(template.getContent());
+			Base64.Decoder bASE64Decoder = Base64.getDecoder();
+			templateContent = bASE64Decoder.decode(template.getContent());
 			is = new java.io.ByteArrayInputStream(templateContent);
 		} catch (Throwable t) {
 			logger.warn("Error on decompile", t);

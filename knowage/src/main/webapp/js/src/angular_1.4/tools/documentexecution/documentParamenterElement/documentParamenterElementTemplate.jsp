@@ -38,11 +38,16 @@
 			<md-button ng-disabled="datasetSettings" class="md-icon-button" id="{{::parameter.urlName}}" ng-click="popupLookupParameterDialog(parameter)">
 				<md-icon md-font-icon="fa fa-external-link"></md-icon>
 			</md-button>
-			<div flex>				
+			<div flex ng-if="isArray(parameter.parameterValue) && parameter.parameterValue.length > 0">
 				<md-chips ng-model="parameter.parameterValue" readonly="true">
 					<md-chip-template>
-						<strong>{{parameter.parameterDescription[$chip]}}</strong>
+						<strong>{{ descriptionOf($chip) }}</strong>
 					</md-chip-template>
+				</md-chips>
+			</div>
+			<div flex ng-if="!isArray(parameter.parameterValue) && !isBlank(parameter.parameterValue)">
+				<md-chips>
+					<md-chip><strong>{{parameter.parameterValue}}</strong></md-chip>
 				</md-chips>
 			</div>
 		</div>
@@ -184,7 +189,6 @@
 			<!-- single -->
 			<md-select ng-disabled="datasetSettings" ng-model="parameter.parameterValue" ng-class="{'requiredField':showRequiredFieldMessage(parameter), 'norequiredField': !showRequiredFieldMessage(parameter), 'mandatory':parameter.mandatory} "
 		        ng-change="toggleComboParameter(parameter)" ng-if="showDefaultValueAreValid(parameter) && !parameter.multivalue  && parameter.showOnPanel=='true'"> 
-				<md-option></md-option>
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
 					{{defaultParameter.label}}
 				</md-option>

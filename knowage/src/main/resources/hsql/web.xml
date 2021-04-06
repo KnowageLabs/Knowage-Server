@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-	<display-name>knowage</display-name>
-	<description>
-        This application is a portlet. It can not be used outside a portal.
-	</description>
 
+<web-app
+		id="knowage"
+		xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+		version="3.1" >
+
+	<display-name>knowage</display-name>
+	<description>Main app of the Knowage Suite</description>
 
 	<filter>
 		<filter-name>EncodingFilter</filter-name>
@@ -25,24 +30,24 @@
 		<filter-class>it.eng.spagobi.commons.filters.SpagoBICoreCheckSessionFilter</filter-class>
 	</filter>
 
-<!-- 
-    <servlet>
-      <servlet-name>jersey-serlvet</servlet-name>
-      <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
-        <init-param>
-             <param-name>jersey.config.server.provider.packages</param-name>
-             <param-value>it.eng;org.apache.clerezza</param-value>
-        </init-param>
-        <init-param>
-             <param-name>jersey.config.server.provider.scanning.recursive</param-name>
-             <param-value>true</param-value>
-        </init-param>
-    </servlet>
-    
-    <servlet-mapping>
-          <servlet-name>jersey-serlvet</servlet-name>
-          <url-pattern>/restful-services/*</url-pattern>
-    </servlet-mapping>
+	<!--
+	<servlet>
+		<servlet-name>jersey-serlvet</servlet-name>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+		<init-param>
+			 <param-name>jersey.config.server.provider.packages</param-name>
+			 <param-value>it.eng;org.apache.clerezza</param-value>
+		</init-param>
+		<init-param>
+			 <param-name>jersey.config.server.provider.scanning.recursive</param-name>
+			 <param-value>true</param-value>
+		</init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>jersey-serlvet</servlet-name>
+		<url-pattern>/restful-services/*</url-pattern>
+	</servlet-mapping>
 -->
 
 	<!-- START-CAS ${enable.cas.end}
@@ -56,7 +61,7 @@
 		<init-param>
 			<param-name>serverName</param-name>
 			<param-value>161.27.213.105:48081</param-value>
-		</init-param>    
+		</init-param>
 	</filter>
 
 	<filter>
@@ -105,7 +110,7 @@
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<url-pattern>/restful-services/publish</url-pattern>		
+		<url-pattern>/restful-services/publish</url-pattern>
 	</filter-mapping>
 
 	<!-- START-CAS ${enable.cas.end}
@@ -113,20 +118,20 @@
 		<filter-name>CAS Authentication Filter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
-	</filter-mapping>  
+	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
-	</filter-mapping>    
+	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
-	</filter-mapping>  
-	 ${enable.cas.start}  END-CAS --> 
+	</filter-mapping>
+	 ${enable.cas.start}  END-CAS -->
 
 	<!-- START OAUTH 2
 	<filter-mapping>
@@ -135,7 +140,7 @@
 	</filter-mapping>
  	END OAUTH 2 -->
 
-	<!-- HmacLoginFilter --> 
+	<!-- HmacLoginFilter -->
 	<filter>
 		<filter-name>HmacLoginFilter</filter-name>
 		<filter-class>it.eng.spagobi.commons.filters.HmacLoginFilter</filter-class>
@@ -148,7 +153,7 @@
 		<filter-name>HmacLoginFilter</filter-name>
 		<url-pattern>/restful-services/publish</url-pattern>
 	</filter-mapping>
-	
+
 	<filter-mapping>
 		<filter-name>ProfileFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
@@ -167,7 +172,7 @@
 		Link the key to all engines :
 			<ResourceLink name="hmacKey" global="hmacKey" type="java.lang.String"/>
 		Enable the filter uncommenting the following lines -->
-	<!-- HMAC filter--> 
+	<!-- HMAC filter-->
 	<filter>
 		<filter-name>HMACFilter</filter-name>
 		<filter-class>it.eng.spagobi.security.hmacfilter.HMACFilter</filter-class>
@@ -190,36 +195,32 @@
 	</listener>
 
 	<!-- EXO
-
-<listener>
-<listener-class>org.exoplatform.services.portletcontainer.impl.servlet.PortletApplicationListener</listener-class>
-</listener>
-
- EXO -->
+	<listener>
+		<listener-class>org.exoplatform.services.portletcontainer.impl.servlet.PortletApplicationListener</listener-class>
+	</listener>
+	EXO -->
 
 	<!-- START SERVLET DEFINITIONS -->
 
 	<!-- START-LIFERAY
-   <servlet>
-        <servlet-name>PortletWrapper</servlet-name>
-        <servlet-class>com.liferay.portal.kernel.servlet.PortletServlet</servlet-class>
-  </servlet>  
-END-LIFERAY -->
+	<servlet>
+		<servlet-name>PortletWrapper</servlet-name>
+		<servlet-class>com.liferay.portal.kernel.servlet.PortletServlet</servlet-class>
+	</servlet>
+	END-LIFERAY -->
 
 
 	<!-- servlet for change pwd management -->
 	<servlet>
 		<servlet-name>ChangePwdServlet</servlet-name>
-		<servlet-class>
-			it.eng.spagobi.commons.services.ChangePwdServlet
-		</servlet-class>
+		<servlet-class>it.eng.spagobi.commons.services.ChangePwdServlet</servlet-class>
 	</servlet>
-	
-		<!-- Notifications and CometD servlets-->
+
+	<!-- Notifications and CometD servlets-->
 	<servlet>
 		<servlet-name>NotifierServlet</servlet-name>
 		<servlet-class>it.eng.spagobi.tools.dataset.notifier.NotifierServlet</servlet-class>
-		 
+
 		<init-param>
 			<param-name>notifyUrl</param-name>
 			<param-value>http://localhost:8080/knowage/datasetNotifier</param-value>
@@ -227,27 +228,27 @@ END-LIFERAY -->
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
-      <servlet-name>cometDInitializer</servlet-name>
-      <servlet-class>it.eng.spagobi.tools.dataset.listener.CometDInitializer</servlet-class>
-      <load-on-startup>2</load-on-startup>
-    </servlet>
-  	<servlet>
-      <servlet-name>cometd</servlet-name>
-      <servlet-class>org.cometd.server.CometDServlet</servlet-class>
-      <init-param>
-        <param-name>ws.cometdURLMapping</param-name>
-        <param-value>/cometd/*</param-value>
-      </init-param>
-      <load-on-startup>1</load-on-startup>
-      <async-supported>true</async-supported>
-    </servlet>
-    
-    <servlet-mapping>
-      <servlet-name>cometd</servlet-name>
-      <url-pattern>/cometd/*</url-pattern>
-    </servlet-mapping>
-  	
-  	<servlet-mapping>
+		<servlet-name>cometDInitializer</servlet-name>
+		<servlet-class>it.eng.spagobi.tools.dataset.listener.CometDInitializer</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>cometd</servlet-name>
+		<servlet-class>org.cometd.server.CometDServlet</servlet-class>
+		<init-param>
+			<param-name>ws.cometdURLMapping</param-name>
+			<param-value>/cometd/*</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>cometd</servlet-name>
+		<url-pattern>/cometd/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
 		<servlet-name>NotifierServlet</servlet-name>
 		<url-pattern>/datasetNotifier</url-pattern>
 	</servlet-mapping>
@@ -260,16 +261,16 @@ END-LIFERAY -->
 
 	<servlet>
 		<servlet-name>QuartzInitializer</servlet-name>
-		<servlet-class>org.quartz.ee.servlet.QuartzInitializerServlet</servlet-class>     
+		<servlet-class>org.quartz.ee.servlet.QuartzInitializerServlet</servlet-class>
 		<init-param>
 			<param-name>shutdown-on-unload</param-name>
 			<param-value>true</param-value>
-		</init-param>	
+		</init-param>
 		<init-param>
 			<param-name>start-scheduler-on-load</param-name>
 			<param-value>false</param-value>
 		</init-param>
-		<load-on-startup>1</load-on-startup>	     
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 
 
@@ -286,14 +287,14 @@ END-LIFERAY -->
 		<servlet-name>AdapterHTTP</servlet-name>
 		<servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
 	</servlet>
-	
-		<!-- This will start up all Admin4J Servlets with standard defaults.
+
+	<!-- This will start up all Admin4J Servlets with standard defaults.
 	<servlet>
 		<servlet-name>Admin4J Index Servlet</servlet-name>
 		<servlet-class>net.admin4j.ui.servlets.Admin4JHomePageServlet</servlet-class>
-	 	<load-on-startup>1</load-on-startup>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 	<servlet-mapping>
 		<servlet-name>Admin4J Index Servlet</servlet-name>
 		<url-pattern>/admin4j/index</url-pattern>
@@ -301,9 +302,9 @@ END-LIFERAY -->
 	<servlet-mapping>
 		<servlet-name>Admin4J Index Servlet</servlet-name>
 		<url-pattern>/admin4j/index/*</url-pattern>
-	</servlet-mapping>  -->
-	
-		<!-- will ensure that standard Admin4J filters are invoked in the proper order.	
+	</servlet-mapping> -->
+
+	<!-- will ensure that standard Admin4J filters are invoked in the proper order.
 	<filter>
 		<filter-name>Admin4J Standard Filter</filter-name>
 		<filter-class>
@@ -315,19 +316,18 @@ END-LIFERAY -->
 			<param-value>true</param-value>
 		</init-param>
 	</filter>
-	
+
 	<filter-mapping>
 		<filter-name>Admin4J Standard Filter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping> -->
 
 	<!-- EXO
-<servlet>
-<servlet-name>PortletWrapper</servlet-name>
-<servlet-class>org.exoplatform.services.portletcontainer.impl.servlet.ServletWrapper</servlet-class>
-</servlet>  
-EXO -->
-
+	<servlet>
+		<servlet-name>PortletWrapper</servlet-name>
+		<servlet-class>org.exoplatform.services.portletcontainer.impl.servlet.ServletWrapper</servlet-class>
+	</servlet>
+	EXO -->
 
 	<!-- start axis servlet -->
 	<servlet>
@@ -340,6 +340,7 @@ EXO -->
 		<load-on-startup>100</load-on-startup>
 	</servlet>
 	<!-- end axis servlet -->
+
 	<servlet>
 		<servlet-name>StickyCaptcha</servlet-name>
 		<servlet-class>it.eng.spagobi.commons.services.KnowageCaptchaServlet</servlet-class>
@@ -351,17 +352,16 @@ EXO -->
 			<param-name>captcha-height</param-name>
 			<param-value>75</param-value>
 		</init-param>
-
 	</servlet>
 
 	<!-- START SERVLET MAPPINGS -->
 
 	<!-- START-LIFERAY
-    <servlet-mapping>
-        <servlet-name>PortletWrapper</servlet-name>
-        <url-pattern>/PortletWrapper</url-pattern>
-    </servlet-mapping>
-END-LIFERAY -->
+	<servlet-mapping>
+		<servlet-name>PortletWrapper</servlet-name>
+		<url-pattern>/PortletWrapper</url-pattern>
+	</servlet-mapping>
+	END-LIFERAY -->
 
 	<servlet-mapping>
 		<servlet-name>StickyCaptcha</servlet-name>
@@ -376,7 +376,7 @@ END-LIFERAY -->
 	<servlet-mapping>
 		<servlet-name>ExtendSessionServlet</servlet-name>
 		<url-pattern>/servlet/ExtendSession</url-pattern>
-	</servlet-mapping>  
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
@@ -404,8 +404,7 @@ END-LIFERAY -->
 	<!-- end axis servlet -->
 
 
-	<!-- END SERVLET MAPPINGS --> 
-
+	<!-- END SERVLET MAPPINGS -->
 
 	<!-- OTHER CONFIGURATIONS -->
 	<session-config>
@@ -416,25 +415,25 @@ END-LIFERAY -->
 		<welcome-file>index.htm</welcome-file>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-	<!-- 
-	  <error-page>
-	  	<exception-type>java.lang.Throwable</exception-type>
-	  	<location>/WEB-INF/jsp/commons/genericError.jsp</location>
-	  </error-page>
-		 
-	  <error-page>
-	  	<error-code>404</error-code>
-	  	<location>/WEB-INF/jsp/commons/genericError.jsp</location>
-	  </error-page>
-  
-	  <error-page>
-	  	<error-code>500</error-code>
-	  	<location>/WEB-INF/jsp/commons/genericError.jsp</location>
-	  </error-page>
-	
-  	<env-entry> 
-		<env-entry-name>resource_path</env-entry-name> 
-		<env-entry-type>java.lang.String</env-entry-type> 
+	<!--
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/WEB-INF/jsp/commons/genericError.jsp</location>
+	</error-page>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/jsp/commons/genericError.jsp</location>
+	</error-page>
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/jsp/commons/genericError.jsp</location>
+	</error-page>
+
+	<env-entry>
+		<env-entry-name>resource_path</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>C:\logx\knowage</env-entry-value>
 	</env-entry>
 	<env-entry>
@@ -456,8 +455,22 @@ END-LIFERAY -->
 		<env-entry-name>host_url</env-entry-name>
 		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>http://localhost:7001</env-entry-value>
-	</env-entry>	
--->
+	</env-entry>
+	-->
+
+	<!-- SOAP services -->
+	<listener>
+		<listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
+	</listener>
+	<servlet>
+		<servlet-name>SoapServlet</servlet-name>
+		<servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SoapServlet</servlet-name>
+		<url-pattern>/services/SecurityService</url-pattern>
+	</servlet-mapping>
 
 	<!-- START TOMCAT RES -->
 	<resource-ref id="knowageds_core">
@@ -469,5 +482,12 @@ END-LIFERAY -->
 		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
 	<!-- END TOMCAT RES -->
+
+	<!-- Multipart configuration -->
+	<multipart-config>
+		<max-file-size>524288000</max-file-size>
+		<max-request-size>524288000</max-request-size>
+		<file-size-threshold>104857600</file-size-threshold>
+	</multipart-config>
 
 </web-app>
