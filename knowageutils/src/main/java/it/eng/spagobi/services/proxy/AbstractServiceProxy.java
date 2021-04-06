@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,6 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.servlet.http.HttpSession;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
 
 import org.apache.log4j.Logger;
 
@@ -31,10 +33,9 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.security.SecurityService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
-import it.eng.spagobi.services.security.stub.SecurityService;
-import it.eng.spagobi.services.security.stub.SecurityServiceServiceLocator;
 
 /**
  * Abstract Class of all Proxy
@@ -43,7 +44,9 @@ public abstract class AbstractServiceProxy {
 
 	protected HttpSession session;
 
-	static private final String SERVICE_NAME = "AbstractServiceProxy";
+	private static final String SERVICE_NAME = "AbstractServiceProxy";
+
+	private static final QName SERVICE_QNAME = new QName("http://security.services.spagobi.eng.it/", "SecurityService");
 
 	protected URL serviceUrl = null;
 	protected String userId = null;
@@ -80,16 +83,15 @@ public abstract class AbstractServiceProxy {
 
 	private SecurityService lookUp() throws SecurityException {
 		SecurityService service;
-		SecurityServiceServiceLocator locator;
 
 		service = null;
 		try {
-			locator = new SecurityServiceServiceLocator();
-
 			if (serviceUrl != null) {
-				service = locator.getSecurityService(serviceUrl);
+				URL serviceUrlWithWsdl = new URL(serviceUrl.toString() + "?wsdl");
+
+				service = Service.create(serviceUrlWithWsdl, SERVICE_QNAME).getPort(SecurityService.class);
 			} else {
-				service = locator.getSecurityService();
+				service = Service.create(SERVICE_QNAME).getPort(SecurityService.class);
 			}
 		} catch (Throwable e) {
 			logger.error("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]");

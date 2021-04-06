@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,16 +17,21 @@
  */
 package it.eng.spagobi.services.proxy;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.services.security.exceptions.SecurityException;
-import it.eng.spagobi.services.security.stub.SecurityServiceServiceLocator;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import org.apache.log4j.Logger;
+import java.net.URL;
+import java.security.Principal;
 
 import javax.servlet.http.HttpSession;
-import java.security.Principal;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
+
+import org.apache.log4j.Logger;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.services.security.SecurityService;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.exceptions.SecurityException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  *
@@ -35,9 +40,11 @@ import java.security.Principal;
  */
 public final class SecurityServiceProxy extends AbstractServiceProxy {
 
-	static private final String SERVICE_NAME = "Security Service";
+	private static final String SERVICE_NAME = "Security Service";
 
-	static private Logger logger = Logger.getLogger(SecurityServiceProxy.class);
+	private static final QName SERVICE_QNAME = new QName("http://security.services.spagobi.eng.it/", "SecurityService");
+
+	private static Logger logger = Logger.getLogger(SecurityServiceProxy.class);
 
 	/**
 	 * Use this constructor.
@@ -63,18 +70,17 @@ public final class SecurityServiceProxy extends AbstractServiceProxy {
 	 * @throws SecurityException
 	 *             catch this if exist error
 	 */
-	private it.eng.spagobi.services.security.stub.SecurityService lookUp() throws SecurityException {
-		it.eng.spagobi.services.security.stub.SecurityService service;
-		SecurityServiceServiceLocator locator;
+	private SecurityService lookUp() throws SecurityException {
+		SecurityService service;
 
 		service = null;
 		try {
-			locator = new SecurityServiceServiceLocator();
-
 			if (serviceUrl != null) {
-				service = locator.getSecurityService(serviceUrl);
+				URL serviceUrlWithWsdl = new URL(serviceUrl.toString() + "?wsdl");
+
+				service = Service.create(serviceUrlWithWsdl, SERVICE_QNAME).getPort(SecurityService.class);
 			} else {
-				service = locator.getSecurityService();
+				service = Service.create(SERVICE_QNAME).getPort(SecurityService.class);
 			}
 		} catch (Throwable e) {
 			logger.error("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]");

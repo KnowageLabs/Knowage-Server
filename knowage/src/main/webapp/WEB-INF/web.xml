@@ -478,6 +478,20 @@
 	</env-entry>
 	-->
 
+	<!-- SOAP services -->
+	<listener>
+		<listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
+	</listener>
+	<servlet>
+		<servlet-name>SoapServlet</servlet-name>
+		<servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SoapServlet</servlet-name>
+		<url-pattern>/services/SecurityService</url-pattern>
+	</servlet-mapping>
+
 	<!-- START TOMCAT RES -->
 	<resource-ref id="knowageds_core">
 		<description>
