@@ -320,7 +320,9 @@
 			};
 
 			var parseDateParameterType = function(parameter){
-				var dateToSubmitFilter = $filter('date')(parameter.parameterValue || parameter.parameterDescription[0], sbiModule_config.serverDateFormat);
+				var dateToSubmitFilter = [];
+				if (parameter.parameterValue || (parameter.parameterDescription && parameter.parameterDescription[0]))
+					dateToSubmitFilter = $filter('date')(parameter.parameterValue || parameter.parameterDescription[0], sbiModule_config.serverDateFormat);
 				if( Object.prototype.toString.call( dateToSubmitFilter ) === '[object Array]' ) {
 					dateToSubmit = dateToSubmitFilter[0];
 				}else{
