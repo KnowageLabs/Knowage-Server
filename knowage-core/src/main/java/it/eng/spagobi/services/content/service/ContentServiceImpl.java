@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,8 @@ package it.eng.spagobi.services.content.service;
 import java.util.Base64;
 import java.util.HashMap;
 
+import javax.jws.WebService;
+
 import org.apache.log4j.Logger;
 
 import com.jamonapi.Monitor;
@@ -38,12 +40,23 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.services.common.AbstractServiceImpl;
+import it.eng.spagobi.services.content.ContentService;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 
-public class ContentServiceImpl extends AbstractServiceImpl {
+/**
+ * @author n.d.
+ * @author Marco Libanori
+ */
+@WebService(
+		name = "ContentServiceService",
+		portName = "ContentServicePort",
+		serviceName = "ContentService",
+		targetNamespace = "http://content.services.spagobi.eng.it/"
+	)
+public class ContentServiceImpl extends AbstractServiceImpl implements ContentService {
 
-	static private Logger logger = Logger.getLogger(ContentServiceImpl.class);
+	private static Logger logger = Logger.getLogger(ContentServiceImpl.class);
 
 	/**
 	 * Instantiates a new content service impl.
@@ -64,6 +77,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 	 *
 	 * @return the content
 	 */
+	@Override
 	public Content readTemplate(String token, String user, String document,
 			HashMap attributes) {
 
@@ -97,6 +111,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 	 *
 	 * @return the content
 	 */
+	@Override
 	public Content readTemplateByLabel(String token, String user, String label,
 			HashMap attributes) {
 
@@ -130,6 +145,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 	 *
 	 * @return the content
 	 */
+	@Override
 	public Content readSubObjectContent(String token, String user,
 			String subObjectId) {
 		logger.debug("IN");
@@ -164,6 +180,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 	 *
 	 * @return the content
 	 */
+	@Override
 	public Content readSubObjectContent(String token, String user,
 			String subObjectName, Integer objId) {
 		logger.debug("IN");
@@ -204,6 +221,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 	 *
 	 * @return the string
 	 */
+	@Override
 	public String saveSubObject(String token, String user, String documentiId,
 			String analysisName, String analysisDescription,
 			String visibilityBoolean, String content) {
@@ -250,6 +268,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 	 *
 	 * @return the string
 	 */
+	@Override
 	public String saveObjectTemplate(String token, String user,
 			String documentiId, String templateName, String content) {
 		logger.debug("IN");
@@ -291,6 +310,7 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 	 *
 	 * @return the content
 	 */
+	@Override
 	public Content downloadAll(String token, String user, String biobjectId,
 			String fileName) {
 		return null;
@@ -431,6 +451,21 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 
 	private Content downloadAll(String user, String biobjectId, String fileName) {
 		return null;
+	}
+
+	@Override
+	public String publishTemplate(String token, String user, HashMap attributes) {
+		throw new UnsupportedOperationException("Not implemented!");
+	}
+
+	@Override
+	public String mapCatalogue(String token, String user, String operation, String path, String featureName, String mapName) {
+		throw new UnsupportedOperationException("Not implemented!");
+	}
+
+	@Override
+	public Content readMap(String token, String user, String mapName) {
+		throw new UnsupportedOperationException("Not implemented!");
 	}
 
 }

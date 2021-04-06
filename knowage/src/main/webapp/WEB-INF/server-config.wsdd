@@ -43,18 +43,6 @@
   <parameter name="wsdlTargetNamespace" value="urn:spagobiexportrecords"/>
   <parameter name="wsdlServiceElement" value="ExportRecordsServiceService"/>
  </service>
- <service name="ContentService" provider="java:RPC">
-  <parameter name="wsdlServicePort" value="ContentService"/>
-  <parameter name="className" value="it.eng.spagobi.services.content.stub.ContentServiceSoapBindingSkeleton"/>
-  <parameter name="typeMappingVersion" value="1.2"/>
-  <parameter name="allowedMethods" value="*"/>
-  <parameter name="wsdlServiceElement" value="ContentServiceService"/>
-  <parameter name="wsdlTargetNamespace" value="urn:spagobicontent"/>
-  <parameter name="wsdlPortType" value="ContentService"/>
-  <parameter name="scope" value="Application"/>
-  <parameter name="schemaUnqualified" value="http://xml.apache.org/xml-soap,http://bo.content.services.spagobi.eng.it"/>
-  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns1:Content" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.services.content.bo.Content" xmlns:ns1="http://bo.content.services.spagobi.eng.it"/>
- </service>
  <service name="WSDataSetService" provider="java:RPC">
   <parameter name="wsdlServicePort" value="WSDataSetService"/>
   <parameter name="className" value="it.eng.spagobi.tools.dataset.wsconnectors.stub.WSDataSetServiceSoapBindingSkeleton"/>

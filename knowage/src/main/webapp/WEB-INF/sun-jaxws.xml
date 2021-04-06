@@ -16,4 +16,9 @@
 		implementation="it.eng.spagobi.services.audit.service.AuditServiceImpl"
 		url-pattern="/services/AuditService" />
 
+	<endpoint
+		name="ContentService"
+		implementation="it.eng.spagobi.services.content.service.ContentServiceImpl"
+		url-pattern="/services/ContentService" />
+
 </endpoints>

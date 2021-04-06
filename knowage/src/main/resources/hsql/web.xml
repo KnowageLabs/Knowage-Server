@@ -479,6 +479,10 @@
 		<servlet-name>SoapServlet</servlet-name>
 		<url-pattern>/services/AuditService</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SoapServlet</servlet-name>
+		<url-pattern>/services/ContentService</url-pattern>
+	</servlet-mapping>
 
 	<!-- START TOMCAT RES -->
 	<resource-ref id="knowageds_core">
