@@ -76,7 +76,7 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 			if (doc.objParameter && doc.objParameter.length > 0){
 				var docPa={};
 				angular.forEach(doc.objParameter,function(param){
-					this[param.urlName]=cockpitModule_utilstServices.getMultiValueParameterArray(param.value);
+					this[param.urlName]=cockpitModule_utilstServices.getDocumentWidgetDriverArray(param.value);
 				},docPa)
 				var assSel=cockpitModule_widgetSelection.getCurrentSelections(doc.DOCUMENT_LABEL)
 				if(assSel!=undefined && assSel.hasOwnProperty(doc.DOCUMENT_LABEL)){
