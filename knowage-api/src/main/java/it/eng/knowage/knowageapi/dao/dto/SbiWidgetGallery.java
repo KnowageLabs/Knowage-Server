@@ -33,13 +33,6 @@ public class SbiWidgetGallery implements Serializable {
 
 	private String description;
 
-	@Column(name = "LICENSE_NAME")
-	private String licenseName;
-
-	@Lob
-	@Column(name = "LICENSE_TEXT")
-	private String licenseText;
-
 	private String name;
 
 	private String organization;
@@ -113,22 +106,6 @@ public class SbiWidgetGallery implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public String getLicenseName() {
-		return this.licenseName;
-	}
-
-	public void setLicenseName(String licenseName) {
-		this.licenseName = licenseName;
-	}
-
-	public String getLicenseText() {
-		return this.licenseText;
-	}
-
-	public void setLicenseText(String licenseText) {
-		this.licenseText = licenseText;
 	}
 
 	public String getName() {

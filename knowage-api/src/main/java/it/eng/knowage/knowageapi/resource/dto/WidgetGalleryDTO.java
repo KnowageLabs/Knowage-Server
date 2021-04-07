@@ -16,8 +16,7 @@ public class WidgetGalleryDTO {
 	// TODO correctly image handling
 	private byte[] imageBase64Content = null;
 	private String image = null;
-	private String licenseText;
-	private String licenseName;
+
 	private String organization;
 	private String sbiversion;
 	private String template;
@@ -116,22 +115,6 @@ public class WidgetGalleryDTO {
 
 	public void setTags(List<String> tags) {
 		this.tags = tags;
-	}
-
-	public String getLicenseText() {
-		return licenseText;
-	}
-
-	public void setLicenseText(String licenseText) {
-		this.licenseText = licenseText;
-	}
-
-	public String getLicenseName() {
-		return licenseName;
-	}
-
-	public void setLicenseName(String licenseName) {
-		this.licenseName = licenseName;
 	}
 
 	public String getOrganization() {

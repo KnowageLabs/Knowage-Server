@@ -22,5 +22,7 @@ public interface SbiWidgetGalleryDao {
 
 	Collection<SbiWidgetGallery> findAllByTenant(String tenant);
 
+	Collection<SbiWidgetGallery> findAllByTenantAndType(String tenant, Collection<String> types);
+
 	int deleteByIdTenant(String id, String tenant);
 }

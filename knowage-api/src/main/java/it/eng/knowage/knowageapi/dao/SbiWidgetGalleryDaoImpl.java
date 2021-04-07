@@ -48,8 +48,6 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 				.setParameter("value1", sbiWidgetGallery.getUuid()).setParameter("value2", sbiWidgetGallery.getOrganization()).getSingleResult();
 		sbiWidgetGalleryFound.setAuthor(sbiWidgetGallery.getAuthor());
 		sbiWidgetGalleryFound.setDescription(sbiWidgetGallery.getDescription());
-		sbiWidgetGalleryFound.setLicenseText(sbiWidgetGallery.getLicenseText());
-		sbiWidgetGalleryFound.setLicenseName(sbiWidgetGallery.getLicenseName());
 		sbiWidgetGalleryFound.setName(sbiWidgetGallery.getName());
 		sbiWidgetGalleryFound.setOrganization(sbiWidgetGallery.getOrganization());
 		sbiWidgetGalleryFound.setPreviewImage(sbiWidgetGallery.getPreviewImage());
@@ -122,6 +120,14 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		em.merge(sbiWidgetGalleryFound);
 		em.getTransaction().commit();
 		return sbiWidgetGallery.getUuid();
+	}
+
+	@Override
+	public Collection<SbiWidgetGallery> findAllByTenantAndType(String tenant, Collection<String> types) {
+		Collection<SbiWidgetGallery> results = em
+				.createQuery("SELECT t FROM SbiWidgetGallery t where t.organization = :tenant and type=:valuesList", SbiWidgetGallery.class)
+				.setParameter("tenant", tenant).setParameter("valuesList", types).getResultList();
+		return results;
 	}
 
 }

@@ -17,18 +17,18 @@ public interface WidgetGalleryAPI {
 
 	WidgetGalleryDTO getWidgetsById(String id, String tenant) throws JSONException;
 
-	WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String licenseText, String licenseName, String organization,
-			String image, String sbiversion, String template, String userid, String tags);
+	WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String organization, String image, String sbiversion,
+			String template, String userid, String tags);
 
-	void updateGallery(String uuid, String name, String type, String author, String description, String licenseText, String licenseName, String organization,
-			String image, String sbiversion, String template, String userid, String tags);
+	void updateGallery(String uuid, String name, String type, String author, String description, String organization, String image, String sbiversion,
+			String template, String userid, String tags);
 
 	void updateGalleryCounter(SbiWidgetGallery newSbiWidgetGallery);
 
 	int deleteGallery(String id, String tenant);
 
-	WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String licenseText, String licenseName,
-			String organization, String image, String sbiversion, String template, String userid, String tags);
+	WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String organization, String image, String sbiversion,
+			String template, String userid, String tags);
 
 	List<SbiWidgetGalleryTag> createNewWidgetTagsByList(SbiWidgetGallery sbiWidgetGallery, String userid, String tags);
 

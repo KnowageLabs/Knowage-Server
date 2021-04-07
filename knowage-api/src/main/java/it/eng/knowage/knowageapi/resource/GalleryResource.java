@@ -85,7 +85,6 @@ public class GalleryResource {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public WidgetGalleryDTO widgetCreate(String body, @HeaderParam("Authorization") String token) {
-		Response response = null;
 		SpagoBIUserProfile profile = null;
 		String image = "";
 		String code = "";
@@ -124,8 +123,8 @@ public class GalleryResource {
 					licenseName = jsonCode.optString("licenseName");
 				profile = getUserProfile(token);
 
-				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, licenseText, licenseName,
-						profile.getOrganization(), image, "", body, userId, tags);
+				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, profile.getOrganization(), image, "", body, userId,
+						tags);
 
 			} catch (Exception e) {
 				throw new KnowageRuntimeException(e.getMessage());
@@ -141,7 +140,6 @@ public class GalleryResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public WidgetGalleryDTO widgetUpdate(String body, @HeaderParam("Authorization") String token, @PathParam("id") String widgetId) {
-		Response response = null;
 		SpagoBIUserProfile profile = null;
 		String image = "";
 		String code = "";
@@ -182,8 +180,8 @@ public class GalleryResource {
 				newSbiWidgetGallery = widgetGalleryService.getWidgetsById(widgetId, profile.getOrganization());
 				if (newSbiWidgetGallery != null) {
 
-					widgetGalleryService.updateGallery(newSbiWidgetGallery.getId(), label, type, userId, description, licenseText, licenseName,
-							profile.getOrganization(), image, "", body, userId, tags);
+					widgetGalleryService.updateGallery(newSbiWidgetGallery.getId(), label, type, userId, description, profile.getOrganization(), image, "",
+							body, userId, tags);
 				}
 
 			} catch (Exception e) {

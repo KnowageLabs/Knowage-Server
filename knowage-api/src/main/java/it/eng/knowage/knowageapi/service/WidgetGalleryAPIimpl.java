@@ -85,8 +85,6 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		toRet.setOrganization(sbiWidgetGallery.getOrganization());
 		toRet.setUsageCounter(sbiWidgetGallery.getUsageCounter());
 		List<SbiWidgetGalleryTag> tagList = sbiWidgetGallery.getSbiWidgetGalleryTags();
-		toRet.setLicenseText(sbiWidgetGallery.getLicenseText());
-		toRet.setLicenseName(sbiWidgetGallery.getLicenseName());
 		if (tagList != null && tagList.size() > 0) {
 			List<String> tags = new ArrayList<String>();
 			for (int i = 0; i < tagList.size(); i++) {
@@ -113,18 +111,15 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	@Override
-	public WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String licenseText, String licenseName,
-			String organization, String image, String sbiversion, String template, String userid, String tags) {
+	public WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String organization, String image, String sbiversion,
+			String template, String userid, String tags) {
 
-		WidgetGalleryDTO widgetGalleryDTO = createWidgetGalleryDTO(name, type, author, description, licenseText, licenseName, organization, image, sbiversion,
-				template, userid, tags);
+		WidgetGalleryDTO widgetGalleryDTO = createWidgetGalleryDTO(name, type, author, description, organization, image, sbiversion, template, userid, tags);
 
 		SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
 		newSbiWidgetGallery.setUuid(widgetGalleryDTO.getId());
 		newSbiWidgetGallery.setAuthor(author);
 		newSbiWidgetGallery.setDescription(description);
-		newSbiWidgetGallery.setLicenseText(licenseText);
-		newSbiWidgetGallery.setLicenseName(licenseName);
 		newSbiWidgetGallery.setName(name);
 		newSbiWidgetGallery.setOrganization(organization);
 		newSbiWidgetGallery.setPreviewImage(widgetGalleryDTO.getImage());
@@ -144,15 +139,13 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	@Override
-	public void updateGallery(String uuid, String name, String type, String author, String description, String licenseText, String licenseName,
-			String organization, String image, String sbiversion, String template, String userid, String tags) {
+	public void updateGallery(String uuid, String name, String type, String author, String description, String organization, String image, String sbiversion,
+			String template, String userid, String tags) {
 
 		SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
 		newSbiWidgetGallery.setUuid(uuid);
 		newSbiWidgetGallery.setAuthor(author);
 		newSbiWidgetGallery.setDescription(description);
-		newSbiWidgetGallery.setLicenseText(licenseText);
-		newSbiWidgetGallery.setLicenseName(licenseName);
 		newSbiWidgetGallery.setName(name);
 		newSbiWidgetGallery.setOrganization(organization);
 		newSbiWidgetGallery.setPreviewImage(image);
@@ -177,16 +170,14 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	@Override
-	public WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String licenseText, String licenseName,
-			String organization, String image, String sbiversion, String template, String userid, String tags) {
+	public WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String organization, String image,
+			String sbiversion, String template, String userid, String tags) {
 
 		UUID uuidGenerated = generateType1UUID();
 		WidgetGalleryDTO newSbiWidgetGallery = new WidgetGalleryDTO();
 		newSbiWidgetGallery.setId(uuidGenerated.toString());
 		newSbiWidgetGallery.setAuthor(author);
 		newSbiWidgetGallery.setDescription(description);
-		newSbiWidgetGallery.setLicenseText(licenseText);
-		newSbiWidgetGallery.setLicenseName(licenseName);
 		newSbiWidgetGallery.setName(name);
 		newSbiWidgetGallery.setOrganization(organization);
 		newSbiWidgetGallery.setImage(image);
@@ -264,4 +255,5 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		}
 		return canSee;
 	}
+
 }
