@@ -363,8 +363,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    }
 				  if (allElements[j] && allElements[j].hasAttribute("kn-selection-column")){
 					  	var columnSelectionLabel = allElements[j].getAttribute("kn-selection-column");
-					  	var columnSelectionValue = allElements[j].getAttribute("kn-selection-value");
-					  	if(columnSelectionValue.charAt(0) != "[") columnSelectionValue = "'"+columnSelectionValue+"'";
+					  	allElements[j].removeAttribute("kn-selection-column");
+					  	var columnSelectionValue = allElements[j].getAttribute("kn-selection-value").replace($scope.columnRegex, $scope.replacer);
+					  	allElements[j].removeAttribute("kn-selection-value");
+					  	if(isNaN(columnSelectionValue)) columnSelectionValue = "'"+columnSelectionValue+"'";
 					  	allElements[j].setAttribute("ng-click", columnSelectionValue ? "select('"+ columnSelectionLabel +"',"+columnSelectionValue +")" : "select('"+ columnSelectionLabel +"')");
 				    }
 				  j++;
