@@ -1388,27 +1388,52 @@ public class CrossTabHTMLSerializer {
 		}
 
 		if (percentOn.equals("row")) {
-			if (!crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
-				return 100 * value / Double.parseDouble(entries[i][offset + rowSumStartColumn]);
+			if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
+				return 100 * value / getRowTotal(entries, crossTab, rowSumStartColumn, i);
 			} else {
-				return 100 * value / Double.parseDouble(entries[i][rowSumStartColumn]);
+				return 100 * value / getRowTotal(entries, crossTab, offset + rowSumStartColumn, i);
 			}
 		} else {
 			if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
-				return 100 * value / Double.parseDouble(entries[offset + columnSumStartRow][j]);
+				return 100 * value / getColumnTotal(entries, crossTab, offset + columnSumStartRow, j);
 			} else {
 				return 100 * value / getColumnTotal(entries, crossTab, columnSumStartRow, j);
 			}
 		}
 	}
 
-	private Double getColumnTotal(String[][] matrix, CrossTab crossTab, int columnSumStartRow, int colIdx) {
-		if (crossTab.isCalculateTotalsOnRows()) { // if i have the totals row i can read the total value from there
-			return Double.parseDouble(matrix[columnSumStartRow][colIdx]);
+	private Double getColumnTotal(String[][] matrix, CrossTab crossTab, int totalsIdx, int colIdx) {
+		if (crossTab.isCalculateTotalsOnColumns()) { // if i have the totals row i can read the total value from there
+			return Double.parseDouble(matrix[totalsIdx][colIdx]);
 		} else { // otherwise i need to compute it
 			Double total = 0.0;
 			for (int i = 0; i < matrix.length; i++) {
-				Double value = Double.parseDouble(matrix[i][colIdx]);
+				Double value;
+				try {
+					value = Double.parseDouble(matrix[i][colIdx]);
+				} catch (NumberFormatException e) {
+					// if conversion fails it is an empty string
+					value = 0.0;
+				}
+				total += value;
+			}
+			return total;
+		}
+	}
+
+	private Double getRowTotal(String[][] matrix, CrossTab crossTab, int totalsIdx, int rowIdx) {
+		if (crossTab.isCalculateTotalsOnRows()) { // if i have the totals column i can read the total value from there
+			return Double.parseDouble(matrix[rowIdx][totalsIdx]);
+		} else { // otherwise i need to compute it
+			Double total = 0.0;
+			for (int j = 0; j < matrix[rowIdx].length; j++) {
+				Double value;
+				try {
+					value = Double.parseDouble(matrix[rowIdx][j]);
+				} catch (NumberFormatException e) {
+					// if conversion fails it is an empty string
+					value = 0.0;
+				}
 				total += value;
 			}
 			return total;
