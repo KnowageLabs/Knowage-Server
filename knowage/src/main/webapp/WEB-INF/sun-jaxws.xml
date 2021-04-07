@@ -31,4 +31,9 @@
 		implementation="it.eng.spagobi.services.datasource.service.DataSourceServiceImpl"
 		url-pattern="/services/DataSourceService" />
 
+	<endpoint
+		name="EventService"
+		implementation="it.eng.spagobi.services.event.service.EventServiceImpl"
+		url-pattern="/services/EventService" />
+
 </endpoints>

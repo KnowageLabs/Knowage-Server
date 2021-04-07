@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,6 +19,8 @@ package it.eng.spagobi.services.event.service;
 
 import java.util.List;
 
+import javax.jws.WebService;
+
 import org.apache.log4j.Logger;
 
 import com.jamonapi.Monitor;
@@ -30,30 +32,35 @@ import it.eng.spagobi.engines.drivers.handlers.IRolesHandler;
 import it.eng.spagobi.events.EventsManager;
 import it.eng.spagobi.events.bo.EventType;
 import it.eng.spagobi.services.common.AbstractServiceImpl;
+import it.eng.spagobi.services.event.EventService;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 
-public class EventServiceImpl extends AbstractServiceImpl {
+/**
+ * @author Marco Libanori
+ */
+@WebService(
+		name = "EventServiceService",
+		portName = "EventServicePort",
+		serviceName = "EventService",
+		targetNamespace = "http://event.services.spagobi.eng.it/"
+	)
+public class EventServiceImpl extends AbstractServiceImpl implements EventService {
 
-	static private Logger logger = Logger.getLogger(EventServiceImpl.class);
+	private static Logger logger = Logger.getLogger(EventServiceImpl.class);
 
 	/**
 	 * Fire event.
 	 *
-	 * @param token
-	 *            the token
-	 * @param user
-	 *            the user
-	 * @param description
-	 *            the description
-	 * @param parameters
-	 *            the parameters
-	 * @param rolesHandler
-	 *            the roles handler
-	 * @param type
-	 *            the type
+	 * @param token        the token
+	 * @param user         the user
+	 * @param description  the description
+	 * @param parameters   the parameters
+	 * @param rolesHandler the roles handler
+	 * @param type         the type
 	 *
 	 * @return the string
 	 */
+	@Override
 	public String fireEvent(String token, String user, String description, String parameters, String rolesHandler, String type) {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("spagobi.service.event.fireEvent");
