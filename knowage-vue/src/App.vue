@@ -33,7 +33,7 @@
 		},
 		created() {
 			axios
-				.get('/knowage/restful-services/2.0/currentuser')
+				.get('2.0/currentuser')
 				.then((response) => {
 					store.commit('setUser', response.data)
 
@@ -80,8 +80,6 @@
 					this.connection.onmessage = function(event) {
 						this.update(event)
 					}
-				} else {
-					this.connection.update()
 				}
 			}
 		},

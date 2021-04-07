@@ -44,7 +44,7 @@ describe('LanguageDialog', () => {
 		await mockWrapper.setProps({ visibility: true })
 		expect(mockWrapper.vm.visibility).toBe(true)
 
-		expect(axios.get).toHaveBeenCalledWith('/knowage/restful-services/2.0/languages')
+		expect(axios.get).toHaveBeenCalledWith('2.0/languages')
 		await flushPromises()
 		expect(mockWrapper.vm.languages.length).toBe(['it_IT', 'en_US', 'fr_FR', 'zh_CN#Hans'].length)
 

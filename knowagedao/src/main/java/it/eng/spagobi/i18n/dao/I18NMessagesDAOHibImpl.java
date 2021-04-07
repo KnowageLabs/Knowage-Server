@@ -400,7 +400,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			String hql = "from SbiDomains d where d.domainCd = :domainCd and d.valueCd = :valueCd";
 			Query query = curSession.createQuery(hql);
 			query.setString("domainCd", DOMAIN_CD);
-			query.setString("valueCd", langName.toUpperCase());
+			query.setString("valueCd", langName);
 			domain = (SbiDomains) query.uniqueResult();
 			domainId = domain.getValueId();
 		} catch (HibernateException e) {

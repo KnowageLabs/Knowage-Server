@@ -73,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											downloads: true
 										};
 										
-										$scope.socket = new WebSocket('ws://localhost:9999/knowage/webSocket/false');
+										$scope.socket = new WebSocket('ws://'+sbiModule_config.contextName+'/webSocket/false');
 										$scope.socket.send(JSON.stringify(message))
 									},function(error){
 										popupMessage(error)

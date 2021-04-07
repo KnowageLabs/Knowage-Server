@@ -144,7 +144,7 @@
 			}
 
 			axios
-				.get('/knowage/restful-services/3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale.replace('/_/g', '-')))
+				.get('3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale.replace('/_/g', '-')))
 				.then((response) => {
 					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
 					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities

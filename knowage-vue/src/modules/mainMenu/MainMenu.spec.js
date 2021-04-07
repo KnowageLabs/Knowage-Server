@@ -42,7 +42,7 @@ jest.mock('axios', () => ({
 
 describe('Kmenu', () => {
 	test('is administrator', async () => {
-		expect(axios.get).toHaveBeenCalledWith('/knowage/restful-services/3.0/menu/enduser?locale=' + wrapper.vm.localObject.locale)
+		expect(axios.get).toHaveBeenCalledWith('3.0/menu/enduser?locale=' + wrapper.vm.localObject.locale)
 		await flushPromises()
 		expect(wrapper.vm.technicalUserFunctionalities.length).not.toBe(0)
 	})

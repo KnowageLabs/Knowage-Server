@@ -67,7 +67,7 @@
 		watch: {
 			visibility(newVisibility) {
 				if (newVisibility && this.languages.length == 0) {
-					axios.get('/knowage/restful-services/2.0/languages').then(
+					axios.get('2.0/languages').then(
 						(response) => {
 							let languagesArray = response.data.sort()
 

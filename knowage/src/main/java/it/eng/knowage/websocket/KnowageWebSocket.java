@@ -154,6 +154,7 @@ public class KnowageWebSocket {
 		int total = newsManager.getAllNews(userProfile).size();
 
 		newsReadDao = DAOFactory.getSbiNewsReadDAO();
+		newsReadDao.setUserProfile(userProfile);
 		List<Integer> listOfReads = newsReadDao.getReadNews(userProfile);
 		int unread = total - listOfReads.size();
 

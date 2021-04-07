@@ -69,7 +69,7 @@
 				return formatDate(date, 'LLL')
 			},
 			getDownloads() {
-				axios.get('/knowage/restful-services/2.0/export/dataset?showAll=true').then(
+				axios.get('2.0/export/dataset?showAll=true').then(
 					(response) => {
 						console.log(response)
 						this.downloadsList = response.data
@@ -85,11 +85,11 @@
 				)
 			},
 			downloadContent(id) {
-				var encodedUri = encodeURI('knowage/restful-services/2.0/export/dataset/' + id)
+				var encodedUri = encodeURI('2.0/export/dataset/' + id)
 				download(encodedUri, null, null)
 			},
 			deleteAllDownloads() {
-				axios.delete('/knowage/restful-services/2.0/export').then(
+				axios.delete('2.0/export').then(
 					() => {
 						this.downloadsList = []
 					},
