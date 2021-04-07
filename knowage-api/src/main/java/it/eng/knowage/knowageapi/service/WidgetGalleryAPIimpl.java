@@ -49,26 +49,29 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	@Override
-	public List<WidgetGalleryDTO> getWidgetsByTenant(String tenant) throws JSONException {
+	public List<WidgetGalleryDTO> getWidgetsByTenant(SpagoBIUserProfile profile) throws JSONException {
+		List<WidgetGalleryDTO> ret = null;
+		if (this.canSeeGallery(profile)) {
+			List<SbiWidgetGallery> widgets = (List<SbiWidgetGallery>) sbiWidgetGalleryDao.findAllByTenant(profile.getOrganization());
 
-		List<SbiWidgetGallery> widgets = (List<SbiWidgetGallery>) sbiWidgetGalleryDao.findAllByTenant(tenant);
-
-		List<WidgetGalleryDTO> ret = widgets.stream().map(el -> {
-			try {
-				return mapTo(el);
-			} catch (JSONException e) {
-				throw new KnowageRuntimeException(e.getMessage());
-			}
-		}).collect(Collectors.toList());
-
+			ret = widgets.stream().map(el -> {
+				try {
+					return mapTo(el);
+				} catch (JSONException e) {
+					throw new KnowageRuntimeException(e.getMessage());
+				}
+			}).collect(Collectors.toList());
+		}
 		return ret;
 	}
 
 	@Override
-	public WidgetGalleryDTO getWidgetsById(String id, String tenant) throws JSONException {
-
-		SbiWidgetGallery widget = sbiWidgetGalleryDao.findByIdTenant(id, tenant);
-		updateGalleryCounter(widget);
+	public WidgetGalleryDTO getWidgetsById(String id, SpagoBIUserProfile profile) throws JSONException {
+		SbiWidgetGallery widget = null;
+		if (this.canSeeGallery(profile)) {
+			widget = sbiWidgetGalleryDao.findByIdTenant(id, profile.getOrganization());
+			updateGalleryCounter(widget);
+		}
 		return mapTo(widget);
 	}
 
@@ -111,52 +114,52 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	@Override
-	public WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String organization, String image, String sbiversion,
-			String template, String userid, String tags) {
-
-		WidgetGalleryDTO widgetGalleryDTO = createWidgetGalleryDTO(name, type, author, description, organization, image, sbiversion, template, userid, tags);
-
-		SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
-		newSbiWidgetGallery.setUuid(widgetGalleryDTO.getId());
-		newSbiWidgetGallery.setAuthor(author);
-		newSbiWidgetGallery.setDescription(description);
-		newSbiWidgetGallery.setName(name);
-		newSbiWidgetGallery.setOrganization(organization);
-		newSbiWidgetGallery.setPreviewImage(widgetGalleryDTO.getImage());
-		newSbiWidgetGallery.setSbiVersionIn(sbiversion);
-		newSbiWidgetGallery.setTemplate(template);
-		newSbiWidgetGallery.setTimeIn(Timestamp.from(Instant.now()));
-		newSbiWidgetGallery.setType(type);
-		newSbiWidgetGallery.setUserIn(userid);
-		newSbiWidgetGallery.setUsageCounter(1);
-		List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, userid, tags);
-		newSbiWidgetGallery.getSbiWidgetGalleryTags().addAll(tagList);
-
-		sbiWidgetGalleryDao.create(newSbiWidgetGallery);
-
+	public WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String image, String sbiversion, String template,
+			SpagoBIUserProfile profile, String tags) {
+		WidgetGalleryDTO widgetGalleryDTO = null;
+		if (this.canSeeGallery(profile)) {
+			widgetGalleryDTO = createWidgetGalleryDTO(name, type, author, description, image, sbiversion, template, profile, tags);
+			SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
+			newSbiWidgetGallery.setUuid(widgetGalleryDTO.getId());
+			newSbiWidgetGallery.setAuthor(author);
+			newSbiWidgetGallery.setDescription(description);
+			newSbiWidgetGallery.setName(name);
+			newSbiWidgetGallery.setOrganization(profile.getOrganization());
+			newSbiWidgetGallery.setPreviewImage(widgetGalleryDTO.getImage());
+			newSbiWidgetGallery.setSbiVersionIn(sbiversion);
+			newSbiWidgetGallery.setTemplate(template);
+			newSbiWidgetGallery.setTimeIn(Timestamp.from(Instant.now()));
+			newSbiWidgetGallery.setType(type);
+			newSbiWidgetGallery.setUserIn(profile.getUserId());
+			newSbiWidgetGallery.setUsageCounter(1);
+			List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, profile.getUserId(), tags);
+			newSbiWidgetGallery.getSbiWidgetGalleryTags().addAll(tagList);
+			sbiWidgetGalleryDao.create(newSbiWidgetGallery);
+		}
 		return widgetGalleryDTO;
 
 	}
 
 	@Override
-	public void updateGallery(String uuid, String name, String type, String author, String description, String organization, String image, String sbiversion,
-			String template, String userid, String tags) {
-
-		SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
-		newSbiWidgetGallery.setUuid(uuid);
-		newSbiWidgetGallery.setAuthor(author);
-		newSbiWidgetGallery.setDescription(description);
-		newSbiWidgetGallery.setName(name);
-		newSbiWidgetGallery.setOrganization(organization);
-		newSbiWidgetGallery.setPreviewImage(image);
-		newSbiWidgetGallery.setSbiVersionUp(sbiversion);
-		newSbiWidgetGallery.setTemplate(template);
-		newSbiWidgetGallery.setTimeUp(Timestamp.from(Instant.now()));
-		newSbiWidgetGallery.setType(type);
-		newSbiWidgetGallery.setUserUp(userid);
-		List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, userid, tags);
-		newSbiWidgetGallery.getSbiWidgetGalleryTags().addAll(tagList);
-		sbiWidgetGalleryDao.update(newSbiWidgetGallery);
+	public void updateGallery(String uuid, String name, String type, String author, String description, String image, String sbiversion, String template,
+			SpagoBIUserProfile profile, String tags) {
+		if (this.canSeeGallery(profile)) {
+			SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
+			newSbiWidgetGallery.setUuid(uuid);
+			newSbiWidgetGallery.setAuthor(author);
+			newSbiWidgetGallery.setDescription(description);
+			newSbiWidgetGallery.setName(name);
+			newSbiWidgetGallery.setOrganization(profile.getOrganization());
+			newSbiWidgetGallery.setPreviewImage(image);
+			newSbiWidgetGallery.setSbiVersionUp(sbiversion);
+			newSbiWidgetGallery.setTemplate(template);
+			newSbiWidgetGallery.setTimeUp(Timestamp.from(Instant.now()));
+			newSbiWidgetGallery.setType(type);
+			newSbiWidgetGallery.setUserUp(profile.getUserId());
+			List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, profile.getUserId(), tags);
+			newSbiWidgetGallery.getSbiWidgetGalleryTags().addAll(tagList);
+			sbiWidgetGalleryDao.update(newSbiWidgetGallery);
+		}
 	}
 
 	@Override
@@ -165,13 +168,16 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	@Override
-	public int deleteGallery(String id, String tenant) {
-		return sbiWidgetGalleryDao.deleteByIdTenant(id, tenant);
+	public int deleteGallery(String id, SpagoBIUserProfile profile) {
+		if (this.canSeeGallery(profile)) {
+			return sbiWidgetGalleryDao.deleteByIdTenant(id, profile.getOrganization());
+		}
+		return 0;
 	}
 
 	@Override
-	public WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String organization, String image,
-			String sbiversion, String template, String userid, String tags) {
+	public WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String image, String sbiversion,
+			String template, SpagoBIUserProfile profile, String tags) {
 
 		UUID uuidGenerated = generateType1UUID();
 		WidgetGalleryDTO newSbiWidgetGallery = new WidgetGalleryDTO();
@@ -179,13 +185,13 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		newSbiWidgetGallery.setAuthor(author);
 		newSbiWidgetGallery.setDescription(description);
 		newSbiWidgetGallery.setName(name);
-		newSbiWidgetGallery.setOrganization(organization);
+		newSbiWidgetGallery.setOrganization(profile.getOrganization());
 		newSbiWidgetGallery.setImage(image);
 		newSbiWidgetGallery.setSbiversion(sbiversion);
 		newSbiWidgetGallery.setTemplate(template);
 		newSbiWidgetGallery.setTimestamp(Timestamp.from(Instant.now()));
 		newSbiWidgetGallery.setType(type);
-		newSbiWidgetGallery.setUser(userid);
+		newSbiWidgetGallery.setUser(profile.getUserId());
 		return newSbiWidgetGallery;
 
 	}

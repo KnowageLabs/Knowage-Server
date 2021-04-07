@@ -53,9 +53,8 @@ public class GalleryResource {
 		List<WidgetGalleryDTO> widgetGalleryDTOs = null;
 		try {
 			profile = getUserProfile(token);
-			if (widgetGalleryService.canSeeGallery(profile)) {
-				widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenant(profile.getOrganization());
-			}
+			widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenant(profile);
+
 		} catch (Throwable e) {
 			throw new KnowageRuntimeException(e.getMessage());
 		}
@@ -72,7 +71,7 @@ public class GalleryResource {
 		WidgetGalleryDTO widgetGalleryDTO = null;
 		try {
 			profile = getUserProfile(token);
-			widgetGalleryDTO = widgetGalleryService.getWidgetsById(widgetId, profile.getOrganization());
+			widgetGalleryDTO = widgetGalleryService.getWidgetsById(widgetId, profile);
 		} catch (Throwable e) {
 			throw new KnowageRuntimeException(e.getMessage());
 		}
@@ -123,8 +122,7 @@ public class GalleryResource {
 					licenseName = jsonCode.optString("licenseName");
 				profile = getUserProfile(token);
 
-				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, profile.getOrganization(), image, "", body, userId,
-						tags);
+				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, image, "", body, profile, tags);
 
 			} catch (Exception e) {
 				throw new KnowageRuntimeException(e.getMessage());
@@ -177,11 +175,10 @@ public class GalleryResource {
 					licenseText = jsonCode.optString("licenseText");
 				if (jsonBody.has("licenseName"))
 					licenseName = jsonCode.optString("licenseName");
-				newSbiWidgetGallery = widgetGalleryService.getWidgetsById(widgetId, profile.getOrganization());
+				newSbiWidgetGallery = widgetGalleryService.getWidgetsById(widgetId, profile);
 				if (newSbiWidgetGallery != null) {
 
-					widgetGalleryService.updateGallery(newSbiWidgetGallery.getId(), label, type, userId, description, profile.getOrganization(), image, "",
-							body, userId, tags);
+					widgetGalleryService.updateGallery(newSbiWidgetGallery.getId(), label, type, userId, description, image, "", body, profile, tags);
 				}
 
 			} catch (Exception e) {
@@ -200,7 +197,7 @@ public class GalleryResource {
 		SpagoBIUserProfile profile = null;
 		try {
 			profile = getUserProfile(token);
-			int success = widgetGalleryService.deleteGallery(widgetId, profile.getOrganization());
+			int success = widgetGalleryService.deleteGallery(widgetId, profile);
 			if (success == 1)
 				response = Response.status(Response.Status.OK).build();
 			else {
