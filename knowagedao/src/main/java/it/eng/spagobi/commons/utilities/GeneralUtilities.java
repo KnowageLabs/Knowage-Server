@@ -35,6 +35,8 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.RequestContainer;
@@ -389,25 +391,25 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		return country;
 	}
 
-//	public static JSONArray getSupportedLocalesAsJSONArray() {
-//		logger.trace("IN");
-//		JSONArray toReturn = new JSONArray();
-//		try {
-//			List<Locale> locales = getSupportedLocales();
-//			Iterator<Locale> it = locales.iterator();
-//			while (it.hasNext()) {
-//				Locale locale = it.next();
-//				JSONObject localeJSON = new JSONObject();
-//				localeJSON.put("language", locale.getLanguage());
-//				localeJSON.put("country", locale.getCountry());
-//				toReturn.put(localeJSON);
-//			}
-//		} catch (Exception e) {
-//			logger.error("Error while retrieving supported locales as JSONArray", e);
-//		}
-//		logger.trace("OUT");
-//		return toReturn;
-//	}
+	public static JSONArray getSupportedLocalesAsJSONArray() {
+		logger.trace("IN");
+		JSONArray toReturn = new JSONArray();
+		try {
+			List<Locale> locales = getSupportedLocales();
+			Iterator<Locale> it = locales.iterator();
+			while (it.hasNext()) {
+				Locale locale = it.next();
+				JSONObject localeJSON = new JSONObject();
+				localeJSON.put("language", locale.getLanguage());
+				localeJSON.put("country", locale.getCountry());
+				toReturn.put(localeJSON);
+			}
+		} catch (Exception e) {
+			logger.error("Error while retrieving supported locales as JSONArray", e);
+		}
+		logger.trace("OUT");
+		return toReturn;
+	}
 
 	public static Locale getCurrentLocale(RequestContainer requestContainer) {
 		Locale locale = null;
