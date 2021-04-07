@@ -46,4 +46,9 @@
 		implementation="it.eng.spagobi.services.scheduler.service.SchedulerServiceImpl"
 		url-pattern="/services/SchedulerService" />
 
+	<endpoint
+		name="SbiDocumentService"
+		implementation="it.eng.spagobi.services.sbidocument.service.SbiDocumentServiceImpl"
+		url-pattern="/services/SbiDocumentService" />
+
 </endpoints>

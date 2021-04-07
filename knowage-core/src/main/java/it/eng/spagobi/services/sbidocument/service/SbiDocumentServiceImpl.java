@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,29 +11,38 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.services.sbidocument.service;
 
-import it.eng.spagobi.services.common.AbstractServiceImpl;
-import it.eng.spagobi.services.sbidocument.SbiDocumentService;
-import it.eng.spagobi.services.sbidocument.bo.SpagobiAnalyticalDriver;
-import it.eng.spagobi.services.security.exceptions.SecurityException;
+import javax.jws.WebService;
 
 import org.apache.log4j.Logger;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.spagobi.services.common.AbstractServiceImpl;
+import it.eng.spagobi.services.sbidocument.SbiDocumentService;
+import it.eng.spagobi.services.sbidocument.bo.SpagobiAnalyticalDriver;
+import it.eng.spagobi.services.security.exceptions.SecurityException;
+
 /**
  * @author Andrea Gioia
+ * @author Marco Libanori
  */
+@WebService(
+		name = "SbiDocumentServiceService",
+		portName = "SbiDocumentServicePort",
+		serviceName = "SbiDocumentService",
+		targetNamespace = "http://sbidocument.services.spagobi.eng.it/"
+	)
 public class SbiDocumentServiceImpl extends AbstractServiceImpl  implements SbiDocumentService {
-	 
+
 	private SbiDocumentSupplier supplier = new SbiDocumentSupplier();
-	    
+
 	static private Logger logger = Logger.getLogger(SbiDocumentServiceImpl.class);
 
 	/**
@@ -42,8 +51,9 @@ public class SbiDocumentServiceImpl extends AbstractServiceImpl  implements SbiD
     public SbiDocumentServiceImpl(){
     	super();
     }
-    
-    public SpagobiAnalyticalDriver[] getDocumentAnalyticalDrivers(String token, String user, Integer id, String language, String country){
+
+    @Override
+	public SpagobiAnalyticalDriver[] getDocumentAnalyticalDrivers(String token, String user, Integer id, String language, String country){
     	logger.debug("IN");
     	Monitor monitor = MonitorFactory.start("spagobi.service.sbidocument.getDocumentParameters");
     	try {
@@ -57,10 +67,11 @@ public class SbiDocumentServiceImpl extends AbstractServiceImpl  implements SbiD
     		this.unsetTenant();
     	    monitor.stop();
     	    logger.debug("OUT");
-    	}	
+    	}
     }
-    
-    public String getDocumentAnalyticalDriversJSON(String token, String user, Integer id, String language, String country){
+
+    @Override
+	public String getDocumentAnalyticalDriversJSON(String token, String user, Integer id, String language, String country){
     	logger.debug("IN");
     	Monitor monitor = MonitorFactory.start("spagobi.service.sbidocument.getDocumentParametersJSON");
     	try {
@@ -74,9 +85,9 @@ public class SbiDocumentServiceImpl extends AbstractServiceImpl  implements SbiD
     		this.unsetTenant();
     	    monitor.stop();
     	    logger.debug("OUT");
-    	}	
+    	}
     }
-    
-        
+
+
 
 }
