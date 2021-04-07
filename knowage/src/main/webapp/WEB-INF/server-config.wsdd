@@ -44,16 +44,6 @@
   <parameter name="scope" value="Application"/>
   <parameter name="schemaUnqualified" value="http://xml.apache.org/xml-soap"/>
  </service>
- <service name="MetamodelService" provider="java:RPC">
-  <parameter name="allowedMethods" value="*"/>
-  <parameter name="wsdlPortType" value="MetamodelService"/>
-  <parameter name="typeMappingVersion" value="1.2"/>
-  <parameter name="wsdlServicePort" value="MetamodelService"/>
-  <parameter name="className" value="it.eng.spagobi.services.metamodel.stub.MetamodelServiceSoapBindingSkeleton"/>
-  <parameter name="scope" value="Application"/>
-  <parameter name="wsdlTargetNamespace" value="urn:spagobimetamodel"/>
-  <parameter name="wsdlServiceElement" value="MetamodelServiceService"/>
- </service>
  <service name="MapsSDKService" provider="java:RPC">
   <requestFlow>
    <handler type="java:org.apache.ws.axis.security.WSDoAllReceiver">

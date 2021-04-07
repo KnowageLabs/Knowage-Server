@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,14 +17,17 @@
  */
 package it.eng.spagobi.services.proxy;
 
+import java.net.URL;
+
 import javax.activation.DataHandler;
 import javax.servlet.http.HttpSession;
-import javax.xml.rpc.ServiceException;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
 
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.services.metamodel.stub.MetamodelServiceServiceLocator;
+import it.eng.spagobi.services.metamodel.MetamodelService;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -36,9 +39,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public final class MetamodelServiceProxy extends AbstractServiceProxy {
 
-	static private final String SERVICE_NAME = "Metamodel Service";
+	private static final String SERVICE_NAME = "Metamodel Service";
 
-	static private Logger logger = Logger.getLogger(MetamodelServiceProxy.class);
+	private static final QName SERVICE_QNAME = new QName("http://metamodel.services.spagobi.eng.it/", "MetamodelService");
+
+	private static Logger logger = Logger.getLogger(MetamodelServiceProxy.class);
 
 	/**
 	 * use this i engine context only.
@@ -64,17 +69,18 @@ public final class MetamodelServiceProxy extends AbstractServiceProxy {
 		super();
 	}
 
-	private it.eng.spagobi.services.metamodel.stub.MetamodelService lookUp() throws SecurityException {
+	private MetamodelService lookUp() throws SecurityException {
 		try {
-			MetamodelServiceServiceLocator locator = new MetamodelServiceServiceLocator();
-			it.eng.spagobi.services.metamodel.stub.MetamodelService service = null;
+			MetamodelService service = null;
 			if (serviceUrl != null) {
-				service = locator.getMetamodelService(serviceUrl);
+				URL serviceUrlWithWsdl = new URL(serviceUrl.toString() + "?wsdl");
+
+				service = Service.create(serviceUrlWithWsdl, SERVICE_QNAME).getPort(MetamodelService.class);
 			} else {
-				service = locator.getMetamodelService();
+				service = Service.create(SERVICE_QNAME).getPort(MetamodelService.class);
 			}
 			return service;
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			logger.error("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]");
 			throw new SecurityException("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]", e);
 		}
