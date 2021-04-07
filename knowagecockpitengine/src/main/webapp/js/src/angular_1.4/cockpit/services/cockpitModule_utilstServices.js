@@ -36,4 +36,29 @@ angular.module("cockpitModule").service("cockpitModule_utilstServices",function(
 		return decodedValue;
 	}
 
+	//this method is for backward compatibility only
+	//it is used by document widget and should be refactored as soon as possible
+	this.getDocumentWidgetDriverArray=function(textVal){
+		if(textVal!=undefined){
+			var rightArray = [];
+			var adVal=angular.copy(textVal);
+			if(angular.isString(adVal)){
+				angular.forEach(cockpitModule_analyticalDrivers,function(val,item){
+					var valRegExp = new RegExp('\\{;\\{(.*)\\}(.*)\\}');
+					if(angular.isString(val) && valRegExp.test(val)) {
+						var matches = val.match(valRegExp);
+						var elements = matches[1].split(";");
+						rightArray = elements;
+					}
+					else {
+						var reg = new RegExp('\\$P\\{('+item+')\\}','g');
+						adVal=adVal.replace(reg, val);
+						rightArray[0] = adVal;
+					}
+				})
+			}
+			return rightArray;
+		}
+	}
+
 });
