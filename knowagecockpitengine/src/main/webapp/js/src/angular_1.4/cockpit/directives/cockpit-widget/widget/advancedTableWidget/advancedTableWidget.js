@@ -130,7 +130,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.isCalculated = $scope.ngModel.content.columnSelectedOfDataset[c].isCalculated;
 						}
 						
-						if(sortedDefault && sortedDefault[0].colId == fields[f].name){
+						if(sortedDefault && (sortedDefault[0].colId == fields[f].name || sortedDefault[0].colId == fields[f].name+"_1")){
 							tempCol.sort = sortedDefault[0].sort;
 						}
 
