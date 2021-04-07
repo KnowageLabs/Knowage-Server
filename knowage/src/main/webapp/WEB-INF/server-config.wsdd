@@ -176,16 +176,6 @@
   <arrayMapping innerType="ns43:SpagobiAnalyticalDriver" languageSpecificType="java:it.eng.spagobi.services.sbidocument.bo.SpagobiAnalyticalDriver[]" qname="ns42:ArrayOf_tns2_SpagobiAnalyticalDriver" xmlns:ns42="urn:spagobisbidocument" xmlns:ns43="http://bo.sbidocument.services.spagobi.eng.it"/>
   <arrayMapping innerType="xsd:anyType" languageSpecificType="java:java.lang.Object[]" qname="ns44:ArrayOf_xsd_anyType" xmlns:ns44="urn:spagobisbidocument" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
  </service>
- <service name="SchedulerService" provider="java:RPC">
-  <parameter name="allowedMethods" value="*"/>
-  <parameter name="typeMappingVersion" value="1.2"/>
-  <parameter name="wsdlPortType" value="SchedulerService"/>
-  <parameter name="scope" value="Application"/>
-  <parameter name="className" value="it.eng.spagobi.services.scheduler.stub.SchedulerServiceSoapBindingSkeleton"/>
-  <parameter name="wsdlServicePort" value="SchedulerService"/>
-  <parameter name="wsdlTargetNamespace" value="urn:spagobischeduler"/>
-  <parameter name="wsdlServiceElement" value="SchedulerServiceService"/>
- </service>
  <service name="DataSetsSDKService" provider="java:RPC">
   <requestFlow>
    <handler type="java:org.apache.ws.axis.security.WSDoAllReceiver">

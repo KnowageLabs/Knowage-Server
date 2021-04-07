@@ -41,4 +41,9 @@
 		implementation="it.eng.spagobi.services.metamodel.service.MetamodelServiceImpl"
 		url-pattern="/services/MetamodelService" />
 
+	<endpoint
+		name="SchedulerService"
+		implementation="it.eng.spagobi.services.scheduler.service.SchedulerServiceImpl"
+		url-pattern="/services/SchedulerService" />
+
 </endpoints>
