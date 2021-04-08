@@ -137,10 +137,10 @@ platforms:
   - windows
   - mac
   - linux
-releaseDate: '2020-03-24'
+releaseDate: '2021-04-06'
 roadmap: 'https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md'
 softwareType: standalone/web
-softwareVersion: 7.2.0
+softwareVersion: 7.4.2
 url: 'https://github.com/KnowageLabs/Knowage-Server.git'
 usedBy:
   - Azienda Unità Locale Sanitaria di Modena
