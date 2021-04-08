@@ -3,8 +3,7 @@
 </p>
 
 [![License: APGL](https://img.shields.io/github/license/KnowageLabs/Knowage-Server.svg)](https://opensource.org/licenses/AGPL-3.0)
-[![Docker badge](https://img.shields.io/docker/pulls/fiware/knowage-server-docker.svg)](https://hub.docker.com/r/fiware/knowage-server-docker)
-[![Support badge](https://nexus.lab.fiware.org/static/badges/stackoverflow/knowage.svg)](https://stackoverflow.com/questions/tagged/fiware-knowage)
+[![Docker badge](https://img.shields.io/docker/pulls/knowagelabs/knowage-server-docker.svg)](https://hub.docker.com/r/knowagelabs/knowage-server-docker/)
 <br>
 [![Documentation badge](https://img.shields.io/readthedocs/knowage.svg)](https://knowage.rtfd.io/)
 [![Build Status](https://travis-ci.com/KnowageLabs/Knowage-Server.svg?branch=master)](https://travis-ci.com/KnowageLabs/Knowage-Server)
@@ -23,7 +22,7 @@ as FIWARE-ready software enabler, being fully compliant with [FIWARE](https://ww
 architecture and GEs. For more information check the FIWARE Marketplace entry 
 for [Knowage](https://marketplace.fiware.org/pages/solutions/59611fb5573b7cb51c44ef68).
 
-|  :books: [Documentation](http://knowage.rtfd.io/) | :page_facing_up: [Site](https://www.knowage-suite.com/site/home/) | :mortar_board: [Academy](https://fiware-academy.readthedocs.io/en/latest/processing/knowage) | :whale: [Docker Hub](https://hub.docker.com/r/fiware/knowage-server-docker/) | :dart: [Roadmap](https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md) |
+|  :books: [Documentation](http://knowage.rtfd.io/) | :page_facing_up: [Site](https://www.knowage-suite.com/site/home/) | :whale: [Docker Hub](https://hub.docker.com/r/knowagelabs/knowage-server-docker/) | :dart: [Roadmap](https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md) |
 |---|---|---|---|---|
 
 
@@ -36,7 +35,6 @@ for [Knowage](https://marketplace.fiware.org/pages/solutions/59611fb5573b7cb51c4
 -   [Contributions](#contributions)
 -   [Documentation](#documentation)
 -   [More](#More)
--   [Quality Assurance](#quality-assurance)
 -   [Testing](#testing)
 -   [License](#license)
 
@@ -62,11 +60,7 @@ from different sources.
 Knowage is available on two versions:
 
 -   the community edition, with the whole set of analytical capabilities, it is
-    part of the software stack managed by [OW2](https://www.ow2.org/) and the
-    reference implementation of the Data Visualization GE in
-    [FIWARE](https://www.fiware.org/) (see the
-    [FIWARE catalogue entry](https://catalogue.fiware.org/enablers/data-visualization-knowage)
-    for details), as SpagoBI was;
+    part of the software stack managed by [OW2](https://www.ow2.org/) as SpagoBI was;
 -   the enterprise edition, provided and guaranteed directly from Engineering
     Group - the leading Italian software and services company - with a
     commercial offering and some facilities for the administrator.
@@ -99,25 +93,6 @@ The official documentantion is available at
 
 Please visit [the project website](http://www.knowage-suite.com) for information
 about the Enterprise Edition.
-
-## Quality Assurance
-
-This project is part of [FIWARE](https://fiware.org/) and has been rated as
-follows:
-
--   **Version Tested:**
-    ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Version&url=https://fiware.github.io/catalogue/json/knowage.json&query=$.version&colorB=blue)
--   **Documentation:**
-    ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Completeness&url=https://fiware.github.io/catalogue/json/knowage.json&query=$.docCompleteness&colorB=blue)
-    ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Usability&url=https://fiware.github.io/catalogue/json/knowage.json&query=$.docSoundness&colorB=blue)
--   **Responsiveness:**
-    ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Time%20to%20Respond&url=https://fiware.github.io/catalogue/json/knowage.json&query=$.timeToCharge&colorB=blue)
-    ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Time%20to%20Fix&url=https://fiware.github.io/catalogue/json/knowage.json&query=$.timeToFix&colorB=blue)
--   **FIWARE Testing:**
-    ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Tests%20Passed&url=https://fiware.github.io/catalogue/json/knowage.json&query=$.failureRate&colorB=blue)
-    ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Scalability&url=https://fiware.github.io/catalogue/json/knowage.json&query=$.scalability&colorB=blue)
-    ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Performance&url=https://fiware.github.io/catalogue/json/knowage.json&query=$.performance&colorB=blue)
-    ![ ](https://img.shields.io/badge/dynamic/json.svg?label=Stability&url=https://fiware.github.io/catalogue/json/knowage.json&query=$.stability&colorB=blue)
 
 ## Testing
 
