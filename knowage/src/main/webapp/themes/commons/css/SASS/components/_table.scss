@@ -64,6 +64,10 @@ kn-table {
 		tbody {
 			tr {
 				border-bottom: 1px solid lighten($ternaryColor,10%);
+				&.disabled {
+					background-color: lighten($ternaryColor,10%) !important;
+					color: darken($ternaryColor,20%);
+				}
 				td {
 					font-size: $baseFontSize;
 					&:first-child {

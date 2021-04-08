@@ -279,6 +279,9 @@ md-card.md-knowage-theme {
     &.flexCard{
       display: flex;
     }
+    &.disabled {
+		background-color: $ternaryColor !important;
+	}
 }
 
 md-tab-content md-content.md-knowage-theme {
