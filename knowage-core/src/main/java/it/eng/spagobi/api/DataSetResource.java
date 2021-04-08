@@ -591,10 +591,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	/**
 	 * Delete all versions for the selected dataset.
 	 *
-	 * <<<<<<< HEAD
-	 *
-	 * @param datasetId The datasetId of the selected dataset. =======
-	 * @param id        The ID of the selected dataset. >>>>>>> 3b18300e3a... [WIP KNOWAGE-5855] managing actions on datasets with relevant exceptions
+	 * @param datasetId The datasetId of the selected dataset.
 	 * @return Status of the request (OK status).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
