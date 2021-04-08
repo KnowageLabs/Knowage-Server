@@ -34,8 +34,6 @@ import ConfirmationService from 'primevue/confirmationservice'
 
 import i18n from '@/App.i18n'
 
-axios.defaults.baseURL = 'http://localhost:3000/knowage/restful-services'
-
 createApp(App)
 	.use(VueAxios, axios)
 	.use(store)

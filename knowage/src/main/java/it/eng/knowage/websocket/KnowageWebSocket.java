@@ -41,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.api.v2.export.Entry;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tenant.Tenant;
@@ -127,12 +128,21 @@ public class KnowageWebSocket {
 	private JSONObject handleDownloads() {
 		Utilities exportResourceUtilities = new Utilities();
 
-		int count = 0;
+		int total = 0;
+		long alreadyDownloaded = 0;
 		JSONObject downloads = null;
 		try {
-			count = exportResourceUtilities.countAllExportedFiles(true);
+			List<Entry> exportedFilesList = exportResourceUtilities.getAllExportedFiles(true);
+			total = exportedFilesList.size();
+			alreadyDownloaded = exportedFilesList.stream().filter(c -> c.isAlreadyDownloaded()).count();
 			downloads = new JSONObject();
-			downloads.put("count", count);
+
+			JSONObject countJSONObject = new JSONObject();
+
+			countJSONObject.put("total", total);
+			countJSONObject.put("alreadyDownloaded", alreadyDownloaded);
+
+			downloads.put("count", countJSONObject);
 
 		} catch (JSONException e) {
 			String message = "Error while creating download JSON message";

@@ -28,6 +28,9 @@ const store = createStore({
 		setDownloads(state, hasDownload) {
 			state.downloads = hasDownload
 		},
+		updateAlreadyDownloadedFiles(state) {
+			if (state.downloads.count.total > state.downloads.count.alreadyDownloaded) state.downloads.count.alreadyDownloaded++
+		},
 		setNews(state, hasNews) {
 			state.news = hasNews
 		}

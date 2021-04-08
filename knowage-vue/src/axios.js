@@ -2,6 +2,8 @@ import axios from 'axios'
 //import router from './App.routes.js'
 import authHelper from '@/helpers/commons/authHelper'
 
+axios.defaults.baseURL = process.env.VUE_APP_BASE_URL
+
 axios.interceptors.request.use(
 	(config) => {
 		config.headers.common['Accept'] = 'application/json; charset=utf-8'

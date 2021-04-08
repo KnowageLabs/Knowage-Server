@@ -277,7 +277,7 @@
 		<ITEM label="menu.news" requiredFunctionality="NewsVisualization"
 			conditionedView="news" iconCls="far fa-newspaper"
 			command="newsSelection" />
-		<ITEM label="menu.Download" conditionedView="download"
+		<ITEM label="menu.Download" conditionedView="downloads"
 			iconCls="fas fa-download" command="downloadsSelection" />
 
 
