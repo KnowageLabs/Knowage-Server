@@ -41,14 +41,14 @@ for [Knowage](https://marketplace.fiware.org/pages/solutions/59611fb5573b7cb51c4
 
 ## Modules available
 
-|                                                                                                                    | Name                   | Description                                                                                                              |
-| ------------------------------------------------------------------------------------------------------------------ | ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| <img src="http://www.knowage-suite.com/site/wp-content/uploads/2016/03/BD_txt-150x150.png" alt="BD" width="50px"/> | Big Data               | To analyse data stored on big data clusters or NoSQL databases                                                           |
-| <img src="http://www.knowage-suite.com/site/wp-content/uploads/2016/03/SI_txt-150x150.png" alt="SI" width="50px"/> | Smart Intelligence     | The usual business intelligence on structured data, but more oriented to self-service capabilities and agile prototyping |
-| <img src="http://www.knowage-suite.com/site/wp-content/uploads/2016/03/ER_txt-150x150.png" alt="ER" width="50px"/> | Enterprise Reporting   | To produce and distribute static reports                                                                                 |
-| <img src="http://www.knowage-suite.com/site/wp-content/uploads/2018/09/LI_txt-150x150.png" alt="LI" width="50px"/> | Location Intelligence  | To relate business data with spatial or geographical information                                                         |
-| <img src="http://www.knowage-suite.com/site/wp-content/uploads/2016/03/PM_txt-150x150.png" alt="PM" width="50px"/> | Performance Management | To manage KPIs and organize scorecards, to monitor your business in real-time                                            |
-| <img src="http://www.knowage-suite.com/site/wp-content/uploads/2016/03/PA_txt-150x150.png" alt="PA" width="50px"/> | Predictive Analysis    | To perform advanced analyses for forecasting and prescriptive purposes                                                   |
+|                                                   | Name                   | Description                                                                                                              |
+| ------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| ![BD](/images/modules/BD-40x40.jpg?raw=true "BD") | Big Data               | To analyse data stored on big data clusters or NoSQL databases                                                           |
+| ![SI](/images/modules/SI-40x40.jpg?raw=true "SI") | Smart Intelligence     | The usual business intelligence on structured data, but more oriented to self-service capabilities and agile prototyping |
+| ![ER](/images/modules/ER-40x40.jpg?raw=true "ER") | Enterprise Reporting   | To produce and distribute static reports                                                                                 |
+| ![LI](/images/modules/LI-40x40.jpg?raw=true "LI") | Location Intelligence  | To relate business data with spatial or geographical information                                                         |
+| ![PM](/images/modules/PM-40x40.jpg?raw=true "PM") | Performance Management | To manage KPIs and organize scorecards, to monitor your business in real-time                                            |
+| ![PA](/images/modules/PA-40x40.jpg?raw=true "PA") | Predictive Analysis    | To perform advanced analyses for forecasting and prescriptive purposes                                                   |
 
 Knowage supports a modern vision of the data analytics, providing new
 self-service capabilities that give autonomy to the end-user, now able to build
