@@ -65,7 +65,7 @@ class DataSetMainDTO {
 				ret = ExecuteAdHocUtility.hasGeoHierarchy(meta);
 			}
 		} catch (Exception e) {
-			logger.error("Error during check of Geo spatial column", e);
+			logger.warn("Error during check of Geo spatial column for dataset with id " + getId());
 		}
 
 		return ret;
