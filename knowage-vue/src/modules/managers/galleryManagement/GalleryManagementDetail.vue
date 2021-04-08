@@ -3,7 +3,7 @@
 		<Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
 			<template #left> Template {{ template.name }} </template>
 			<template #right>
-				<Button icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" @click="downloadTemplate" />
+				<Button icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" @click="downloadTemplate" :disabled="!template.id" />
 				<Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveTemplate" />
 				<Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate($event)" />
 			</template>
@@ -172,7 +172,7 @@
 						}
 					})
 				} else {
-					download(JSON.stringify(this.template), this.template.name + '.json', 'text/plain')
+					download(JSON.stringify(this.template), this.template.name + '.json', 'text/plain', () => {})
 				}
 			},
 			closeTemplate(): void {
@@ -181,13 +181,13 @@
 			loadTemplate(id?: string): void {
 				if (id) {
 					axios
-						.get(`${process.env.VUE_APP_API_PATH}1.0/widgetgallery/${id || this.id}`)
+						.get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + (id || this.id))
 						.then((response) => {
 							this.template = response.data
 						})
 						.catch((error) => console.error(error))
 				} else {
-					this.template = { code: { html: '', css: '', javascript: '', python: '' } } as GalleryTemplate
+					this.template = { type: 'html', code: { html: '', css: '', javascript: '', python: '' } } as GalleryTemplate
 				}
 			},
 			onCmCodeChange(): void {

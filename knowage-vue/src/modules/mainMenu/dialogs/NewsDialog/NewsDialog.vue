@@ -88,13 +88,13 @@
 			},
 			getNews(id) {
 				if (id != this.selectedNews.id) {
-					axios.get('2.0/news/' + id + '?isTechnical=false').then(
+					axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + id + '?isTechnical=false').then(
 						(response) => {
 							console.log(response)
 							this.selectedNews = response.data
 
 							if (!this.selectedNews.read) {
-								axios.post('2.0/newsRead/' + id).then(
+								axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/newsRead/' + id).then(
 									() => {
 										WS.send(JSON.stringify({ news: true }))
 									},
@@ -116,14 +116,14 @@
 			visibility(newVisibility) {
 				if (newVisibility && Object.keys(this.news).length === 0) {
 					let newsReadArray = Array<number>()
-					axios.get('2.0/newsRead').then(
+					axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/newsRead').then(
 						(response) => {
 							newsReadArray = response.data
 						},
 						(error) => console.error(error)
 					)
 
-					axios.get('2.0/news').then(
+					axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news').then(
 						(response) => {
 							var jsonData = {}
 							response.data.forEach(function(column: SingleNews) {

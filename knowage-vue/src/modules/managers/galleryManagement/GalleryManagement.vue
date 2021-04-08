@@ -65,7 +65,7 @@
 		methods: {
 			loadAllTemplates(): void {
 				this.axios
-					.get(`/knowage-api/api/1.0/widgetgallery`)
+					.get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery')
 					.then((response) => (this.galleryTemplates = response.data))
 					.catch((error) => console.error(error))
 			},

@@ -3,7 +3,7 @@
 		<DataTable :value="downloadsList" style="width:800px" :resizableColumns="true" columnResizeMode="fit | expand">
 			<Column v-for="(column, index) in columnDefs" v-bind:key="index" :field="column.field" :header="$t(column.headerName)" :bodyStyle="column.bodyStyle">
 				<template v-if="column.template" #body="slotProps">
-					<Button icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" @click="downloadContent(slotProps.data.id)" />
+					<Button icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" @click="downloadContent(slotProps.data)" />
 				</template>
 				<template v-else #body="slotProps">
 					<template v-if="column.type && column.type == 'date'">{{ getDate(slotProps.data[column.field]) }}</template
@@ -34,6 +34,7 @@
 	interface Download {
 		filename: string
 		startDate: Date
+		alreadyDownloaded: boolean
 	}
 
 	export default defineComponent({
@@ -69,27 +70,24 @@
 				return formatDate(date, 'LLL')
 			},
 			getDownloads() {
-				axios.get('2.0/export/dataset?showAll=true').then(
+				axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset?showAll=true').then(
 					(response) => {
 						console.log(response)
 						this.downloadsList = response.data
-
-						/* 						var alreadyDownloadedCount = 0
-						for (var idx in this.downloadsList) {
-							if (this.downloadsList[idx].alreadyDownloaded) alreadyDownloadedCount++
-						}
-
-						this.$store.commit('setDownloads', alreadyDownloadedCount) */
 					},
 					(error) => console.error(error)
 				)
 			},
-			downloadContent(id) {
-				var encodedUri = encodeURI('2.0/export/dataset/' + id)
-				download(encodedUri, null, null)
+			downloadContent(data) {
+				var encodedUri = encodeURI(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset/' + data.id)
+
+				download(encodedUri, null, null, () => {
+					if (data.alreadyDownloaded) this.$store.commit('updateAlreadyDownloadedFiles')
+					this.getDownloads()
+				})
 			},
 			deleteAllDownloads() {
-				axios.delete('2.0/export').then(
+				axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export').then(
 					() => {
 						this.downloadsList = []
 					},

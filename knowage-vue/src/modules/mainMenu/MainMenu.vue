@@ -29,7 +29,7 @@
 				<ul class="layout-menu">
 					<MainMenuAdmin :model="technicalUserFunctionalities" v-if="technicalUserFunctionalities && technicalUserFunctionalities.length > 0" @click="itemClick"></MainMenuAdmin>
 					<template v-for="(item, i) of allowedUserFunctionalities" :key="i">
-						<MainMenuItem :item="item" @click="itemClick" v-if="!item.conditionedView || (item.conditionedView == 'download' && downloads) || (item.conditionedView == 'news' && news)" :badge="getBadgeValue(item)"></MainMenuItem>
+						<MainMenuItem :item="item" @click="itemClick" v-if="!item.conditionedView || (item.conditionedView == 'downloads' && downloads) || (item.conditionedView == 'news' && news)" :badge="getBadgeValue(item)"></MainMenuItem>
 					</template>
 					<template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
 						<MainMenuItem :item="item" @click="itemClick"></MainMenuItem>
@@ -79,6 +79,7 @@
 				newsDisplay: false
 			}
 		},
+		emits: ['update:visibility'],
 		methods: {
 			info() {
 				this.display = !this.display
@@ -118,20 +119,14 @@
 				for (var idx in this.allowedUserFunctionalities) {
 					let menu = this.allowedUserFunctionalities[idx]
 					if (menu.conditionedView) {
-						if (menu.conditionedView == 'news' && this.news && this.news.count && this.news.count.unread) {
-							menu.badge = this.news.unread
-						}
-
-						if (menu.conditionedView == 'downloads' && this.downloads && this.downloads.count) {
-							menu.badge = this.downloads.count
-						}
+						menu.badge = this.getBadgeValue(menu)
 					}
 				}
 			},
 			getBadgeValue(item) {
-				if (item.conditionedView === 'download') return this.downloads && this.downloads.count
-
-				if (item.conditionedView === 'news') return this.news && this.news.count && this.news.count.unread
+				if (item.conditionedView === 'downloads') {
+					if (Object.keys(this.downloads).length !== 0) return this.downloads.count.total - this.downloads.count.alreadyDownloaded
+				} else if (item.conditionedView === 'news') return this.news && this.news.count && this.news.count.unread
 
 				return 0
 			}
@@ -144,7 +139,7 @@
 			}
 
 			axios
-				.get('3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale.replace('/_/g', '-')))
+				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale.replace('/_/g', '-')))
 				.then((response) => {
 					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
 					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities

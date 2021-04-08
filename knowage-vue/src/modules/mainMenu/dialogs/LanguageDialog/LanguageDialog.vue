@@ -67,7 +67,7 @@
 		watch: {
 			visibility(newVisibility) {
 				if (newVisibility && this.languages.length == 0) {
-					axios.get('2.0/languages').then(
+					axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages').then(
 						(response) => {
 							let languagesArray = response.data.sort()
 
