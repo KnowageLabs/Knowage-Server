@@ -66,7 +66,7 @@ public class ContentServiceImplSupplier {
 	 * @throws EMFUserError      the EMF user error
 	 * @throws EMFInternalError  the EMF internal error
 	 */
-	public Content readTemplate(String user, String document, HashMap parameters) throws SecurityException, EMFUserError, EMFInternalError {
+	public Content readTemplate(String user, String document, Map<String, ?> parameters) throws SecurityException, EMFUserError, EMFInternalError {
 		Content content;
 		BIObject biobj;
 
@@ -180,7 +180,7 @@ public class ContentServiceImplSupplier {
 	 * @throws EMFUserError      the EMF user error
 	 * @throws EMFInternalError  the EMF internal error
 	 */
-	public Content readTemplateByLabel(String user, String label, HashMap parameters) throws SecurityException, EMFUserError, EMFInternalError {
+	public Content readTemplateByLabel(String user, String label, Map<String, ?> parameters) throws SecurityException, EMFUserError, EMFInternalError {
 		Content content;
 		BIObject biobj;
 
@@ -261,7 +261,7 @@ public class ContentServiceImplSupplier {
 	 * @param parameters The execution parameters.
 	 * @return true if it is a call to retrieve a subreport
 	 */
-	private boolean isSubReportCall(BIObject biobj, HashMap parameters) {
+	private boolean isSubReportCall(BIObject biobj, Map<String, ?> parameters) {
 		logger.debug("IN");
 		try {
 			Engine engine = biobj.getEngine();
@@ -355,7 +355,7 @@ public class ContentServiceImplSupplier {
 	 * @throws EMFInternalError
 	 * @throws EMFUserError
 	 */
-	private void checkRequestCorrectness(String user, BIObject biobj, HashMap parameters) throws SecurityException, EMFInternalError, EMFUserError {
+	private void checkRequestCorrectness(String user, BIObject biobj, Map<String, ?> parameters) throws SecurityException, EMFInternalError, EMFUserError {
 		logger.debug("IN: user = [" + user + "], biobjectid = [" + biobj + "], parameters = [" + parameters + "]");
 		Monitor monitor = MonitorFactory.start("spagobi.service.ContentSupplier.checkRequestCorrectness");
 		try {

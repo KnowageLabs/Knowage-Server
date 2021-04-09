@@ -17,13 +17,12 @@
  */
 package it.eng.spagobi.services.content;
 
-import java.util.HashMap;
-
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 
 import it.eng.spagobi.services.content.bo.Content;
+import it.eng.spagobi.services.content.bo.ParametersWrapper;
 
 /**
  * This is the ContentService interfaces
@@ -41,7 +40,7 @@ public interface ContentService {
 	 * @param token
 	 * @return
 	 */
-	Content readTemplate(String token, String user, String document, HashMap attributes);
+	Content readTemplate(String token, String user, String document, ParametersWrapper attributes);
 
 	/**
 	 * get template by doc label
@@ -49,7 +48,7 @@ public interface ContentService {
 	 * @param token
 	 * @return
 	 */
-	Content readTemplateByLabel(String token, String user, String document, HashMap attributes);
+	Content readTemplateByLabel(String token, String user, String document, ParametersWrapper attributes);
 
 	/**
 	 *
@@ -120,7 +119,7 @@ public interface ContentService {
 	 * @param template          String
 	 * @return String
 	 */
-	String publishTemplate(String token, String user, HashMap attributes);
+	String publishTemplate(String token, String user, ParametersWrapper attributes);
 
 	/**
 	 * Replaces MapCatalogueManagerServlet !!!!

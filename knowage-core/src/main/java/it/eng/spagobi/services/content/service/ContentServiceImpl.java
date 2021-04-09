@@ -18,7 +18,6 @@
 package it.eng.spagobi.services.content.service;
 
 import java.util.Base64;
-import java.util.HashMap;
 
 import javax.jws.WebService;
 
@@ -42,6 +41,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.services.common.AbstractServiceImpl;
 import it.eng.spagobi.services.content.ContentService;
 import it.eng.spagobi.services.content.bo.Content;
+import it.eng.spagobi.services.content.bo.ParametersWrapper;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 
 /**
@@ -79,7 +79,7 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 	 */
 	@Override
 	public Content readTemplate(String token, String user, String document,
-			HashMap attributes) {
+			ParametersWrapper attributes) {
 
 		Monitor monitor = MonitorFactory
 				.start("spagobi.service.content.readTemplate");
@@ -88,7 +88,7 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
 			ContentServiceImplSupplier c = new ContentServiceImplSupplier();
-			return c.readTemplate(user, document, attributes);
+			return c.readTemplate(user, document, attributes.getMap());
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			return null;
@@ -113,7 +113,7 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 	 */
 	@Override
 	public Content readTemplateByLabel(String token, String user, String label,
-			HashMap attributes) {
+			ParametersWrapper attributes) {
 
 		Monitor monitor = MonitorFactory
 				.start("spagobi.service.content.readTemplate");
@@ -122,7 +122,7 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
 			ContentServiceImplSupplier c = new ContentServiceImplSupplier();
-			return c.readTemplateByLabel(user, label, attributes);
+			return c.readTemplateByLabel(user, label, attributes.getMap());
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			return null;
@@ -454,7 +454,7 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 	}
 
 	@Override
-	public String publishTemplate(String token, String user, HashMap attributes) {
+	public String publishTemplate(String token, String user, ParametersWrapper attributes) {
 		throw new UnsupportedOperationException("Not implemented!");
 	}
 

@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.spagobi.services.content.ContentService;
 import it.eng.spagobi.services.content.bo.Content;
+import it.eng.spagobi.services.content.bo.ParametersWrapper;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 
 /**
@@ -117,7 +118,9 @@ public final class ContentServiceProxy extends AbstractServiceProxy {
 			return null;
 		}
 		try {
-			return lookUp().readTemplate(readTicket(), userId, document, attributes);
+			ParametersWrapper _attributes = new ParametersWrapper();
+			_attributes.getMap().putAll(attributes);
+			return lookUp().readTemplate(readTicket(), userId, document, _attributes);
 		} catch (Exception e) {
 			logger.error("Error during service execution", e);
 
@@ -141,7 +144,9 @@ public final class ContentServiceProxy extends AbstractServiceProxy {
 			return null;
 		}
 		try {
-			return lookUp().readTemplateByLabel(readTicket(), userId, label, attributes);
+			ParametersWrapper _attributes = new ParametersWrapper();
+			_attributes.getMap().putAll(attributes);
+			return lookUp().readTemplateByLabel(readTicket(), userId, label, _attributes);
 		} catch (Exception e) {
 			logger.error("Error during service execution", e);
 
@@ -165,7 +170,9 @@ public final class ContentServiceProxy extends AbstractServiceProxy {
 			return null;
 		}
 		try {
-			return lookUp().publishTemplate(readTicket(), userId, attributes);
+			ParametersWrapper _attributes = new ParametersWrapper();
+			_attributes.getMap().putAll(attributes);
+			return lookUp().publishTemplate(readTicket(), userId, _attributes);
 		} catch (Exception e) {
 			logger.error("Error during service execution", e);
 
