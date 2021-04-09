@@ -60,6 +60,7 @@ import it.eng.knowage.engine.cockpit.api.crosstable.placeholder.MinAggregator;
 import it.eng.knowage.engine.cockpit.api.crosstable.placeholder.NotAvailablePlaceholder;
 import it.eng.knowage.engine.cockpit.api.crosstable.placeholder.NotDefinedAggregator;
 import it.eng.knowage.engine.cockpit.api.crosstable.placeholder.Placeholder;
+import it.eng.knowage.engine.cockpit.api.crosstable.placeholder.StringPlaceholder;
 import it.eng.knowage.engine.cockpit.api.crosstable.placeholder.SumAggregator;
 import it.eng.knowage.engine.cockpit.api.crosstable.placeholder.ValuePlaceholder;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -1006,8 +1007,13 @@ public class CrossTab {
 					}
 					if ((y * measuresLength + j) < columnsN && (y * measuresLength + j) >= 0) {
 						MeasureInfo measureInfo = measures.get(j);
-						ValuePlaceholder valuePlaceholder = new ValuePlaceholder(data.get(i + j), measureInfo);
-						dataMatrix[x][y * measuresLength + j] = valuePlaceholder;
+						Placeholder placeholder = NOT_AVAILABLE_PLACEHOLDER;
+						try {
+							placeholder = new ValuePlaceholder(data.get(i + j), measureInfo);
+						} catch (NumberFormatException e) {
+							placeholder = new StringPlaceholder(data.get(i + j), measureInfo);
+						}
+						dataMatrix[x][y * measuresLength + j] = placeholder;
 					}
 				}
 			}
