@@ -248,7 +248,7 @@ public final class ContentServiceProxy extends AbstractServiceProxy {
 			return null;
 		}
 		try {
-			return lookUp().readSubObjectContent(readTicket(), userId, nameSubObject, objId);
+			return lookUp().readSubObjectContentByObjId(readTicket(), userId, nameSubObject, objId);
 		} catch (Exception e) {
 			logger.error("Error during service execution", e);
 

@@ -181,7 +181,7 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 	 * @return the content
 	 */
 	@Override
-	public Content readSubObjectContent(String token, String user,
+	public Content readSubObjectContentByObjId(String token, String user,
 			String subObjectName, Integer objId) {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory

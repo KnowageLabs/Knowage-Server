@@ -67,7 +67,7 @@ public interface ContentService {
 	 * @param objId         Integer
 	 * @return Content
 	 */
-	Content readSubObjectContent(String token, String user, String nameSubObject, Integer objId);
+	Content readSubObjectContentByObjId(String token, String user, String nameSubObject, Integer objId);
 
 	/**
 	 *
