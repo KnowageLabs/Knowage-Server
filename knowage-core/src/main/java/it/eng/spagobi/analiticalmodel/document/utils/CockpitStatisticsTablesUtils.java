@@ -277,9 +277,11 @@ public class CockpitStatisticsTablesUtils {
 					JSONObject contDataset = filter.optJSONObject("dataset");
 					if (contDataset != null && contDataset.has("dsId")) {
 						Integer dsId = contDataset.optInt("dsId");
-						sbiCockpitWidget.setDsId(dsId);
-						datasetLabel = contDataset.optString("label");
-						logger.debug(String.format("Widget has dataset with id [%s] and label [%s] associated", dsId, datasetLabel));
+						if (dsId != 0) {
+							sbiCockpitWidget.setDsId(dsId);
+							datasetLabel = contDataset.optString("label");
+							logger.debug(String.format("Widget has dataset with id [%s] and label [%s] associated", dsId, datasetLabel));
+						}
 					}
 				}
 			}
@@ -323,9 +325,11 @@ public class CockpitStatisticsTablesUtils {
 					JSONObject layer = layers.getJSONObject(l);
 					if (layer != null && layer.has("dsId")) {
 						Integer dsId = layer.optInt("dsId");
-						dsIds.add(dsId);
-						datasetLabel = layer.optString("label");
-						logger.debug(String.format("Map widget has dataset with [%s] and label [%s] associated", dsId, datasetLabel));
+						if (dsId != 0) {
+							dsIds.add(dsId);
+							datasetLabel = layer.optString("label");
+							logger.debug(String.format("Map widget has dataset with [%s] and label [%s] associated", dsId, datasetLabel));
+						}
 					}
 				}
 			}
@@ -402,7 +406,7 @@ public class CockpitStatisticsTablesUtils {
 					JSONObject id = contDataset.optJSONObject("id");
 					if (id != null && id.has("dsId")) {
 						Integer oldId = id.optInt("dsId");
-						if (oldId != null) {
+						if (oldId != null && oldId != 0) {
 							logger.debug(String.format("Dataset id [%s] found in id.dsId property", oldId));
 							sbiCockpitWidget.setDsId(oldId);
 							datasetLabel = contDataset.optString("label");
@@ -474,7 +478,7 @@ public class CockpitStatisticsTablesUtils {
 		} else {
 			// html widget case: the datasetId is a simple property of widget obj
 			Integer oldId = widget.optInt("datasetId");
-			if (oldId != null) {
+			if (oldId != null && oldId != 0) {
 				sbiCockpitWidget.setDsId(oldId);
 				datasetLabel = widget.optString("label");
 				logger.debug(String.format("Widget has dataset with id [%s] and label [%s] associated", oldId, datasetLabel));
