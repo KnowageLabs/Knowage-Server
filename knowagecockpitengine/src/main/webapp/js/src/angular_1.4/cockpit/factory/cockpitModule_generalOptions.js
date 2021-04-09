@@ -270,6 +270,25 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 				      "output":"Integer",
 				      "type":sbiModule_translate.load("kn.cockpit.functions.type.aggregation")
 				   },
+	  			  {
+				      "syntax":"COUNT(DISTINCT "+sbiModule_translate.load("kn.generic.field")+" )",
+				      "description":sbiModule_translate.load("kn.cockpit.functions.aggregation.countdistinct"),
+				      "body":"COUNT(DISTINCT "+sbiModule_translate.load("kn.generic.field")+")",
+				      "name":"COUNT DISTINCT",
+				      "arguments":[
+				         {
+				            "name":"Field",
+				            "expected_value":"",
+				            "default_value":"",
+				            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.any"),
+				            "hidden":false,
+				            "type":null,
+				            "placeholder":""
+				         }
+				      ],
+				      "output":"Integer",
+				      "type":sbiModule_translate.load("kn.cockpit.functions.type.aggregation")
+				   },
 				   {
 				      "syntax":"AVG( "+sbiModule_translate.load("kn.generic.field")+" )",
 				      "description":sbiModule_translate.load("kn.cockpit.functions.aggregation.avg"),
