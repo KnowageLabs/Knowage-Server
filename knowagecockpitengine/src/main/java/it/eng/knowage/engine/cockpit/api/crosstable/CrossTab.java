@@ -2992,7 +2992,7 @@ public class CrossTab {
 	private int getColumnSubtreeNumberOfLeaves(int colIdx) {
 		if (columnsHeaderList.size() == 0) {
 			// i don't have any columns defined
-			return 1;
+			return measures.size();
 		}
 
 		if (treeLeaves == null)
