@@ -1,14 +1,17 @@
 package it.eng.spagobi.services.content.bo;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.HashMap;
 
 public class ParametersWrapper {
 
-	private final Map<String, ?> map = new LinkedHashMap<>();
+	private HashMap<String, ?> map = new HashMap<>();
 
-	public Map<String, ?> getMap() {
+	public HashMap<String, ?> getMap() {
 		return map;
+	}
+
+	public void setMap(HashMap<String, ?> map) {
+		this.map = map;
 	}
 
 }
