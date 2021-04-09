@@ -18,7 +18,7 @@
 	import store from '@/App.store'
 	import { mapState } from 'vuex'
 	import axios from 'axios'
-	import WS from '@/services/webSocket.js'
+	import WEB_SOCKET from '@/services/webSocket.js'
 
 	export default defineComponent({
 		components: {
@@ -26,11 +26,7 @@
 			MainMenu,
 			Toast
 		},
-		data() {
-			return {
-				connection: null
-			}
-		},
+
 		beforeMount() {
 			axios
 				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/currentuser')
@@ -64,9 +60,7 @@
 			newsDownloadHandler() {
 				console.log('Starting connection to WebSocket Server')
 
-				this.connection = WS
-
-				this.connection.update = function(event) {
+				WEB_SOCKET.update = function(event) {
 					if (event.data) {
 						let json = JSON.parse(event.data)
 						if (json.news) {
@@ -77,10 +71,10 @@
 						}
 					}
 				}
-				this.connection.onopen = function(event) {
+				WEB_SOCKET.onopen = function(event) {
 					this.update(event)
 				}
-				this.connection.onmessage = function(event) {
+				WEB_SOCKET.onmessage = function(event) {
 					this.update(event)
 				}
 			}
