@@ -81,13 +81,14 @@
 			downloadContent(data) {
 				var encodedUri = encodeURI(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset/' + data.id)
 
-				download(encodedUri, null, null).then(
-					() => {
-						if (data.alreadyDownloaded) this.$store.commit('updateAlreadyDownloadedFiles')
-						this.getDownloads()
-					},
-					(e) => console.log(e)
-				)
+				if (!data.alreadyDownloaded)
+					download(encodedUri, null, null).then(
+						() => {
+							this.$store.commit('updateAlreadyDownloadedFiles')
+							this.getDownloads()
+						},
+						(e) => console.log(e)
+					)
 			},
 			deleteAllDownloads() {
 				axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export').then(

@@ -1,18 +1,15 @@
 export function download(content, fileName, contentType): Promise<any> {
 	return new Promise((resolve, reject) => {
-		var a = document.createElement('a')
+		var href = ''
 		if (contentType) {
 			var file = new Blob([content], { type: contentType })
-			a.href = URL.createObjectURL(file)
+			href = window.URL.createObjectURL(file)
 		} else {
-			a.setAttribute('href', content)
-			document.body.appendChild(a)
+			href = content
 		}
 
-		if (fileName) a.setAttribute('download', fileName)
 		try {
-			a.click()
-			/* URL.revokeObjectURL(a.href) */
+			window.open(href)
 			resolve(true)
 		} catch (e) {
 			reject(e)
