@@ -172,7 +172,10 @@
 						}
 					})
 				} else {
-					download(JSON.stringify(this.template), this.template.name + '.json', 'text/plain', () => {})
+					download(JSON.stringify(this.template), this.template.name + '.json', 'text/plain').then(
+						() => {},
+						(e) => console.log(e)
+					)
 				}
 			},
 			closeTemplate(): void {
