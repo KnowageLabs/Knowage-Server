@@ -1,421 +1,437 @@
-/**
- * SpagoBIUserProfile.java
- *
- * This file was auto-generated from WSDL
- * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
- */
 
 package it.eng.spagobi.services.security;
 
-public class SpagoBIUserProfile  implements java.io.Serializable {
-    private it.eng.spagobi.services.security.SpagoBIUserProfileAttributesEntry[] attributes;
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
-    private java.lang.String[] functions;
 
-    private java.lang.Boolean isSuperadmin;
+/**
+ * <p>Java class for spagoBIUserProfile complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="spagoBIUserProfile">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="attributes">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;sequence>
+ *                   &lt;element name="entry" maxOccurs="unbounded" minOccurs="0">
+ *                     &lt;complexType>
+ *                       &lt;complexContent>
+ *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                           &lt;sequence>
+ *                             &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
+ *                             &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
+ *                           &lt;/sequence>
+ *                         &lt;/restriction>
+ *                       &lt;/complexContent>
+ *                     &lt;/complexType>
+ *                   &lt;/element>
+ *                 &lt;/sequence>
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *         &lt;element name="functions" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="isSuperadmin" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="organization" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="roles" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="uniqueIdentifier" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="userName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "spagoBIUserProfile", propOrder = {
+    "attributes",
+    "functions",
+    "isSuperadmin",
+    "organization",
+    "roles",
+    "uniqueIdentifier",
+    "userId",
+    "userName"
+})
+public class SpagoBIUserProfile {
 
-    private java.lang.String organization;
-
-    private java.lang.String[] roles;
-
-    private java.lang.String uniqueIdentifier;
-
-    private java.lang.String userId;
-
-    private java.lang.String userName;
-
-    public SpagoBIUserProfile() {
-    }
-
-    public SpagoBIUserProfile(
-           it.eng.spagobi.services.security.SpagoBIUserProfileAttributesEntry[] attributes,
-           java.lang.String[] functions,
-           java.lang.Boolean isSuperadmin,
-           java.lang.String organization,
-           java.lang.String[] roles,
-           java.lang.String uniqueIdentifier,
-           java.lang.String userId,
-           java.lang.String userName) {
-           this.attributes = attributes;
-           this.functions = functions;
-           this.isSuperadmin = isSuperadmin;
-           this.organization = organization;
-           this.roles = roles;
-           this.uniqueIdentifier = uniqueIdentifier;
-           this.userId = userId;
-           this.userName = userName;
-    }
-
+    @XmlElement(required = true)
+    protected SpagoBIUserProfile.Attributes attributes;
+    @XmlElement(nillable = true)
+    protected List<String> functions;
+    protected Boolean isSuperadmin;
+    protected String organization;
+    @XmlElement(nillable = true)
+    protected List<String> roles;
+    protected String uniqueIdentifier;
+    protected String userId;
+    protected String userName;
 
     /**
-     * Gets the attributes value for this SpagoBIUserProfile.
+     * Gets the value of the attributes property.
      * 
-     * @return attributes
+     * @return
+     *     possible object is
+     *     {@link SpagoBIUserProfile.Attributes }
+     *     
      */
-    public it.eng.spagobi.services.security.SpagoBIUserProfileAttributesEntry[] getAttributes() {
+    public SpagoBIUserProfile.Attributes getAttributes() {
         return attributes;
     }
 
+    /**
+     * Sets the value of the attributes property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link SpagoBIUserProfile.Attributes }
+     *     
+     */
+    public void setAttributes(SpagoBIUserProfile.Attributes value) {
+        this.attributes = value;
+    }
 
     /**
-     * Sets the attributes value for this SpagoBIUserProfile.
+     * Gets the value of the functions property.
      * 
-     * @param attributes
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the functions property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getFunctions().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
      */
-    public void setAttributes(it.eng.spagobi.services.security.SpagoBIUserProfileAttributesEntry[] attributes) {
-        this.attributes = attributes;
+    public List<String> getFunctions() {
+        if (functions == null) {
+            functions = new ArrayList<String>();
+        }
+        return this.functions;
     }
-
 
     /**
-     * Gets the functions value for this SpagoBIUserProfile.
+     * Gets the value of the isSuperadmin property.
      * 
-     * @return functions
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
      */
-    public java.lang.String[] getFunctions() {
-        return functions;
-    }
-
-
-    /**
-     * Sets the functions value for this SpagoBIUserProfile.
-     * 
-     * @param functions
-     */
-    public void setFunctions(java.lang.String[] functions) {
-        this.functions = functions;
-    }
-
-    public java.lang.String getFunctions(int i) {
-        return this.functions[i];
-    }
-
-    public void setFunctions(int i, java.lang.String _value) {
-        this.functions[i] = _value;
-    }
-
-
-    /**
-     * Gets the isSuperadmin value for this SpagoBIUserProfile.
-     * 
-     * @return isSuperadmin
-     */
-    public java.lang.Boolean getIsSuperadmin() {
+    public Boolean isIsSuperadmin() {
         return isSuperadmin;
     }
 
-
     /**
-     * Sets the isSuperadmin value for this SpagoBIUserProfile.
+     * Sets the value of the isSuperadmin property.
      * 
-     * @param isSuperadmin
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
      */
-    public void setIsSuperadmin(java.lang.Boolean isSuperadmin) {
-        this.isSuperadmin = isSuperadmin;
+    public void setIsSuperadmin(Boolean value) {
+        this.isSuperadmin = value;
     }
 
-
     /**
-     * Gets the organization value for this SpagoBIUserProfile.
+     * Gets the value of the organization property.
      * 
-     * @return organization
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getOrganization() {
+    public String getOrganization() {
         return organization;
     }
 
+    /**
+     * Sets the value of the organization property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setOrganization(String value) {
+        this.organization = value;
+    }
 
     /**
-     * Sets the organization value for this SpagoBIUserProfile.
+     * Gets the value of the roles property.
      * 
-     * @param organization
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the roles property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getRoles().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
      */
-    public void setOrganization(java.lang.String organization) {
-        this.organization = organization;
+    public List<String> getRoles() {
+        if (roles == null) {
+            roles = new ArrayList<String>();
+        }
+        return this.roles;
     }
-
 
     /**
-     * Gets the roles value for this SpagoBIUserProfile.
+     * Gets the value of the uniqueIdentifier property.
      * 
-     * @return roles
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String[] getRoles() {
-        return roles;
-    }
-
-
-    /**
-     * Sets the roles value for this SpagoBIUserProfile.
-     * 
-     * @param roles
-     */
-    public void setRoles(java.lang.String[] roles) {
-        this.roles = roles;
-    }
-
-    public java.lang.String getRoles(int i) {
-        return this.roles[i];
-    }
-
-    public void setRoles(int i, java.lang.String _value) {
-        this.roles[i] = _value;
-    }
-
-
-    /**
-     * Gets the uniqueIdentifier value for this SpagoBIUserProfile.
-     * 
-     * @return uniqueIdentifier
-     */
-    public java.lang.String getUniqueIdentifier() {
+    public String getUniqueIdentifier() {
         return uniqueIdentifier;
     }
 
-
     /**
-     * Sets the uniqueIdentifier value for this SpagoBIUserProfile.
+     * Sets the value of the uniqueIdentifier property.
      * 
-     * @param uniqueIdentifier
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setUniqueIdentifier(java.lang.String uniqueIdentifier) {
-        this.uniqueIdentifier = uniqueIdentifier;
+    public void setUniqueIdentifier(String value) {
+        this.uniqueIdentifier = value;
     }
 
-
     /**
-     * Gets the userId value for this SpagoBIUserProfile.
+     * Gets the value of the userId property.
      * 
-     * @return userId
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-
     /**
-     * Sets the userId value for this SpagoBIUserProfile.
+     * Sets the value of the userId property.
      * 
-     * @param userId
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setUserId(java.lang.String userId) {
-        this.userId = userId;
+    public void setUserId(String value) {
+        this.userId = value;
     }
 
-
     /**
-     * Gets the userName value for this SpagoBIUserProfile.
+     * Gets the value of the userName property.
      * 
-     * @return userName
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getUserName() {
+    public String getUserName() {
         return userName;
     }
 
-
     /**
-     * Sets the userName value for this SpagoBIUserProfile.
+     * Sets the value of the userName property.
      * 
-     * @param userName
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setUserName(java.lang.String userName) {
-        this.userName = userName;
+    public void setUserName(String value) {
+        this.userName = value;
     }
 
-    private java.lang.Object __equalsCalc = null;
-    public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof SpagoBIUserProfile)) return false;
-        SpagoBIUserProfile other = (SpagoBIUserProfile) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
-        if (__equalsCalc != null) {
-            return (__equalsCalc == obj);
-        }
-        __equalsCalc = obj;
-        boolean _equals;
-        _equals = true && 
-            ((this.attributes==null && other.getAttributes()==null) || 
-             (this.attributes!=null &&
-              java.util.Arrays.equals(this.attributes, other.getAttributes()))) &&
-            ((this.functions==null && other.getFunctions()==null) || 
-             (this.functions!=null &&
-              java.util.Arrays.equals(this.functions, other.getFunctions()))) &&
-            ((this.isSuperadmin==null && other.getIsSuperadmin()==null) || 
-             (this.isSuperadmin!=null &&
-              this.isSuperadmin.equals(other.getIsSuperadmin()))) &&
-            ((this.organization==null && other.getOrganization()==null) || 
-             (this.organization!=null &&
-              this.organization.equals(other.getOrganization()))) &&
-            ((this.roles==null && other.getRoles()==null) || 
-             (this.roles!=null &&
-              java.util.Arrays.equals(this.roles, other.getRoles()))) &&
-            ((this.uniqueIdentifier==null && other.getUniqueIdentifier()==null) || 
-             (this.uniqueIdentifier!=null &&
-              this.uniqueIdentifier.equals(other.getUniqueIdentifier()))) &&
-            ((this.userId==null && other.getUserId()==null) || 
-             (this.userId!=null &&
-              this.userId.equals(other.getUserId()))) &&
-            ((this.userName==null && other.getUserName()==null) || 
-             (this.userName!=null &&
-              this.userName.equals(other.getUserName())));
-        __equalsCalc = null;
-        return _equals;
-    }
-
-    private boolean __hashCodeCalc = false;
-    public synchronized int hashCode() {
-        if (__hashCodeCalc) {
-            return 0;
-        }
-        __hashCodeCalc = true;
-        int _hashCode = 1;
-        if (getAttributes() != null) {
-            for (int i=0;
-                 i<java.lang.reflect.Array.getLength(getAttributes());
-                 i++) {
-                java.lang.Object obj = java.lang.reflect.Array.get(getAttributes(), i);
-                if (obj != null &&
-                    !obj.getClass().isArray()) {
-                    _hashCode += obj.hashCode();
-                }
-            }
-        }
-        if (getFunctions() != null) {
-            for (int i=0;
-                 i<java.lang.reflect.Array.getLength(getFunctions());
-                 i++) {
-                java.lang.Object obj = java.lang.reflect.Array.get(getFunctions(), i);
-                if (obj != null &&
-                    !obj.getClass().isArray()) {
-                    _hashCode += obj.hashCode();
-                }
-            }
-        }
-        if (getIsSuperadmin() != null) {
-            _hashCode += getIsSuperadmin().hashCode();
-        }
-        if (getOrganization() != null) {
-            _hashCode += getOrganization().hashCode();
-        }
-        if (getRoles() != null) {
-            for (int i=0;
-                 i<java.lang.reflect.Array.getLength(getRoles());
-                 i++) {
-                java.lang.Object obj = java.lang.reflect.Array.get(getRoles(), i);
-                if (obj != null &&
-                    !obj.getClass().isArray()) {
-                    _hashCode += obj.hashCode();
-                }
-            }
-        }
-        if (getUniqueIdentifier() != null) {
-            _hashCode += getUniqueIdentifier().hashCode();
-        }
-        if (getUserId() != null) {
-            _hashCode += getUserId().hashCode();
-        }
-        if (getUserName() != null) {
-            _hashCode += getUserName().hashCode();
-        }
-        __hashCodeCalc = false;
-        return _hashCode;
-    }
-
-    // Type metadata
-    private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(SpagoBIUserProfile.class, true);
-
-    static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("http://security.services.spagobi.eng.it/", "spagoBIUserProfile"));
-        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("attributes");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "attributes"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://security.services.spagobi.eng.it/", ">>spagoBIUserProfile>attributes>entry"));
-        elemField.setNillable(false);
-        elemField.setItemQName(new javax.xml.namespace.QName("", "entry"));
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("functions");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "functions"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(true);
-        elemField.setMaxOccursUnbounded(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("isSuperadmin");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "isSuperadmin"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("organization");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "organization"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("roles");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "roles"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(true);
-        elemField.setMaxOccursUnbounded(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("uniqueIdentifier");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "uniqueIdentifier"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("userId");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "userId"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("userName");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "userName"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-    }
 
     /**
-     * Return type metadata object
+     * <p>Java class for anonymous complex type.
+     * 
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     * 
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;sequence>
+     *         &lt;element name="entry" maxOccurs="unbounded" minOccurs="0">
+     *           &lt;complexType>
+     *             &lt;complexContent>
+     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *                 &lt;sequence>
+     *                   &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
+     *                   &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
+     *                 &lt;/sequence>
+     *               &lt;/restriction>
+     *             &lt;/complexContent>
+     *           &lt;/complexType>
+     *         &lt;/element>
+     *       &lt;/sequence>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     * 
+     * 
      */
-    public static org.apache.axis.description.TypeDesc getTypeDesc() {
-        return typeDesc;
-    }
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = {
+        "entry"
+    })
+    public static class Attributes {
 
-    /**
-     * Get Custom Serializer
-     */
-    public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
-    }
+        protected List<SpagoBIUserProfile.Attributes.Entry> entry;
 
-    /**
-     * Get Custom Deserializer
-     */
-    public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+        /**
+         * Gets the value of the entry property.
+         * 
+         * <p>
+         * This accessor method returns a reference to the live list,
+         * not a snapshot. Therefore any modification you make to the
+         * returned list will be present inside the JAXB object.
+         * This is why there is not a <CODE>set</CODE> method for the entry property.
+         * 
+         * <p>
+         * For example, to add a new item, do as follows:
+         * <pre>
+         *    getEntry().add(newItem);
+         * </pre>
+         * 
+         * 
+         * <p>
+         * Objects of the following type(s) are allowed in the list
+         * {@link SpagoBIUserProfile.Attributes.Entry }
+         * 
+         * 
+         */
+        public List<SpagoBIUserProfile.Attributes.Entry> getEntry() {
+            if (entry == null) {
+                entry = new ArrayList<SpagoBIUserProfile.Attributes.Entry>();
+            }
+            return this.entry;
+        }
+
+
+        /**
+         * <p>Java class for anonymous complex type.
+         * 
+         * <p>The following schema fragment specifies the expected content contained within this class.
+         * 
+         * <pre>
+         * &lt;complexType>
+         *   &lt;complexContent>
+         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+         *       &lt;sequence>
+         *         &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
+         *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
+         *       &lt;/sequence>
+         *     &lt;/restriction>
+         *   &lt;/complexContent>
+         * &lt;/complexType>
+         * </pre>
+         * 
+         * 
+         */
+        @XmlAccessorType(XmlAccessType.FIELD)
+        @XmlType(name = "", propOrder = {
+            "key",
+            "value"
+        })
+        public static class Entry {
+
+            protected Object key;
+            protected Object value;
+
+            /**
+             * Gets the value of the key property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link Object }
+             *     
+             */
+            public Object getKey() {
+                return key;
+            }
+
+            /**
+             * Sets the value of the key property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link Object }
+             *     
+             */
+            public void setKey(Object value) {
+                this.key = value;
+            }
+
+            /**
+             * Gets the value of the value property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link Object }
+             *     
+             */
+            public Object getValue() {
+                return value;
+            }
+
+            /**
+             * Sets the value of the value property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link Object }
+             *     
+             */
+            public void setValue(Object value) {
+                this.value = value;
+            }
+
+        }
+
     }
 
 }

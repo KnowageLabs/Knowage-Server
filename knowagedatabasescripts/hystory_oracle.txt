@@ -897,8 +897,6 @@ CREATE TABLE SBI_WIDGET_GALLERY (
   TEMPLATE CLOB NULL, -- text with template as a JSON
   AUTHOR VARCHAR(100) NULL,
   USAGE_COUNTER INT NULL, -- counter to see how many times the widgets was used
-  LICENSE_NAME VARCHAR(100) NULL, -- license name of this widget, such as MIT/GPL/.... COMMERCIAL...
-  LICENSE_TEXT CLOB NULL, -- license header of this widget (as in any open source file/project)
 	USER_IN              VARCHAR2(100) NOT NULL,
 		USER_UP              VARCHAR2(100),
 		USER_DE              VARCHAR2(100),

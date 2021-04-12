@@ -31,7 +31,7 @@ import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 import it.eng.knowage.knowageapi.service.WidgetGalleryAPI;
 import it.eng.knowage.knowageapi.utils.StringUtilities;
-import it.eng.spagobi.services.security.SecurityServiceServiceProxy;
+import it.eng.spagobi.services.security.SecurityServiceService;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 @Path("/1.0/widgetgallery")
@@ -43,7 +43,8 @@ public class GalleryResource {
 	@Autowired
 	WidgetGalleryAPI widgetGalleryService;
 
-	// TODO: set FE roles and decide the BE roles management behaviour
+	@Autowired
+	SecurityServiceService securityServiceService;
 
 	@GET
 	@Path("/")
@@ -55,8 +56,8 @@ public class GalleryResource {
 			profile = getUserProfile(token);
 			widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenant(profile);
 
-		} catch (Throwable e) {
-			throw new KnowageRuntimeException(e.getMessage());
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e.getMessage(), e);
 		}
 
 		return widgetGalleryDTOs;
@@ -73,7 +74,7 @@ public class GalleryResource {
 			profile = getUserProfile(token);
 			widgetGalleryDTO = widgetGalleryService.getWidgetsById(widgetId, profile);
 		} catch (Throwable e) {
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e.getMessage(), e);
 		}
 
 		return widgetGalleryDTO;
@@ -125,7 +126,7 @@ public class GalleryResource {
 				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, image, "", body, profile, tags);
 
 			} catch (Exception e) {
-				throw new KnowageRuntimeException(e.getMessage());
+				throw new KnowageRuntimeException(e.getMessage(), e);
 			}
 
 		}
@@ -182,7 +183,7 @@ public class GalleryResource {
 				}
 
 			} catch (Exception e) {
-				throw new KnowageRuntimeException(e.getMessage());
+				throw new KnowageRuntimeException(e.getMessage(), e);
 			}
 		}
 		return newSbiWidgetGallery;
@@ -204,7 +205,7 @@ public class GalleryResource {
 				response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 			}
 		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e.getMessage(), e);
 		}
 
 		return response;
@@ -225,7 +226,7 @@ public class GalleryResource {
 					// .withExpiresAt(expiresAt)
 					.sign(algorithm);
 		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e.getMessage(), e);
 		}
 		return technicalToken;
 	}
@@ -242,7 +243,7 @@ public class GalleryResource {
 			Claim userIdClaim = decodedJWT.getClaim("user_id");
 			userId = userIdClaim.asString();
 		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException(e.getMessage(), e);
 		}
 		return userId;
 	}
@@ -251,14 +252,10 @@ public class GalleryResource {
 		SpagoBIUserProfile profile = null;
 		userToken = userToken.replace("Bearer ", "");
 		String technicalToken = getTechnicalToken();
-		Context ctx;
 		try {
-			ctx = new InitialContext();
-			String serviceUrl = (String) ctx.lookup("java:/comp/env/service_url");
-			SecurityServiceServiceProxy proxy = new SecurityServiceServiceProxy(serviceUrl + "/services/SecurityService");
-			profile = proxy.getUserProfile(technicalToken, userToken);
+			profile = securityServiceService.getUserProfile(technicalToken, userToken);
 		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage());
+			throw new KnowageRuntimeException("Impossible to get UserProfile from SOAP security service", e);
 		}
 		return profile;
 	}
