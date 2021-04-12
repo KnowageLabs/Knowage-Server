@@ -8,10 +8,10 @@ CodeMirror.defineSimpleMode("calculatedFieldMode", {
             token: ["keyword", "field", "keyword"]
         },{
         	// totals
-            regex: /((?:TOTAL_SUM|TOTAL_AVG|TOTAL_MIN|TOTAL_MAX|TOTAL_COUNT)\()(\"[a-zA-Z0-9\-\_\s]*\")(\))/,
+            regex: /((?:TOTAL_SUM|TOTAL_AVG|TOTAL_MIN|TOTAL_MAX|TOTAL_COUNT|TOTAL_COUNT_DISTINCT)\()(\"[a-zA-Z0-9\-\_\s]*\")(\))/,
             token: ["keyword", "field", "keyword"]
         },{
-            regex: /((?:TOTAL_SUM|TOTAL_AVG|TOTAL_MIN|TOTAL_MAX|TOTAL_COUNT)\()([a-zA-Z0-9\-\+\/\*\_\s\$\{\}\"]*)(\))/,
+            regex: /((?:TOTAL_SUM|TOTAL_AVG|TOTAL_MIN|TOTAL_MAX|TOTAL_COUNT|TOTAL_COUNT_DISTINCT)\()([a-zA-Z0-9\-\+\/\*\_\s\$\{\}\"]*)(\))/,
             token: ["keyword", "field", "keyword"]
         },{
         	// functions

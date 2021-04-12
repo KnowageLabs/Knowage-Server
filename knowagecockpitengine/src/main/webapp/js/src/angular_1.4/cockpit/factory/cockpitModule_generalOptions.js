@@ -399,6 +399,24 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 					      "output":"Number",
 					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals")
 				   },{
+					   "syntax":"TOTAL_COUNT_DISTINCT( "+sbiModule_translate.load("kn.generic.field")+" )",
+					      "description":sbiModule_translate.load("kn.cockpit.functions.total.count.distinct"),
+					      "body":"TOTAL_COUNT_DISTINCT("+sbiModule_translate.load("kn.generic.field")+")",
+					      "name":"TOTAL_COUNT_DISTINCT",
+					      "arguments":[
+					         {
+					            "name":"Field",
+					            "expected_value":"",
+					            "default_value":"",
+					            "argument_description":sbiModule_translate.load("kn.cockpit.functions.argument.number"),
+					            "hidden":false,
+					            "type":null,
+					            "placeholder":""
+					         }
+					      ],
+					      "output":"Number",
+					      "type":sbiModule_translate.load("kn.cockpit.functions.type.totals")
+				   },{
 					   "syntax":"NULLIF( "+sbiModule_translate.load("kn.generic.field")+" , "+sbiModule_translate.load("kn.generic.expression")+")",
 					      "description":sbiModule_translate.load("kn.cockpit.functions.nullif"),
 					      "body":"NULLIF("+sbiModule_translate.load("kn.generic.field")+", 0)",
