@@ -12,6 +12,8 @@ This Agreement:
 - clarifies that, to your knowledge, the technology you’ve submitted was developed by you and that you have authority to provide it;
 - grants to ENGINEERING Ingegneria Informatica S.p.A. a perpetual, worldwide, no-charge, royalty-free, irrevocable, non-exclusive copyright license to use your Contribution and every derivative work, according to Knowage license.
 
+This project is released with [Contributor Code of Conduct](./CODE_OF_CONDUCT.md). By participating in this project, you agree to abide by its terms.
+
 **Please read this document carefully before accepting its terms and conditions.**
 
 Definitions
