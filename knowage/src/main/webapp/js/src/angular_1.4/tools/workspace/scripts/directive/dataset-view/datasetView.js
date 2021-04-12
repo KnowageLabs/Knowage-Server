@@ -74,6 +74,16 @@
 			 $scope.selectDatasetAction({ds: item});
 		}
 
+		$scope.canLoadData = function(dataset) {
+			for (var i = 0; i < dataset.actions.length; i++) {
+				var action = dataset.actions[i];
+				if (action.name == 'loaddata') {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		$scope.cockpitDatasetColumn = [
 			{"headerName": sbiModule_translate.load('sbi.workspace.dataset.label'),"field":"label"},
 			{"headerName": sbiModule_translate.load('sbi.workspace.dataset.name'),"field":"name"},
@@ -93,7 +103,8 @@
 	        onGridSizeChanged: resizeColumns,
 	        onRowClicked: clickDataset,
 	        columnDefs : $scope.cockpitDatasetColumn,
-	        rowData: $scope.ngModel
+	        rowData: $scope.ngModel,
+	        getRowClass: rowClassRenderer
 		};
 
 		$scope.$watchCollection('ngModel',function(newValue,oldValue){
@@ -126,6 +137,12 @@
 					cell += '<span class="miniChip">'+params.value[i].name+'</span>';
 				}
 				return cell;
+			}
+		}
+
+		function rowClassRenderer(params) {
+			if (!$scope.canLoadData(params.data)) {
+				return "disabled";
 			}
 		}
 

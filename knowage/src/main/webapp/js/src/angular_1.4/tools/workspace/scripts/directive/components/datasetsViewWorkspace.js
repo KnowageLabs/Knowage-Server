@@ -751,6 +751,16 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	}
     }
 
+	$scope.canLoadData = function(dataset) {
+		for (var i = 0; i < dataset.actions.length; i++) {
+			var action = dataset.actions[i];
+			if (action.name == 'loaddata') {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	$scope.cloneDataset = function(dataset) {
 		sbiModule_restServices.promiseGet('1.0/datasets', dataset.label).then(function(response) {
 			var dataset = response.data[0];

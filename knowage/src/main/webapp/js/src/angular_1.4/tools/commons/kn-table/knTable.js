@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function() {
-	
+
 	angular
 		.module('knTable', ['ngMaterial','sbiModule'])
 		.directive('knTable', knTableDirective)
@@ -39,7 +39,7 @@
 	function knTableController($scope,sbiModule_config){
 		$scope.sortingColumn = $scope.columns[0].name;
 		$scope.sortingDirection = false;
-		
+
 		$scope.setDate = function(string){
 			return moment(string).locale(sbiModule_config.curr_language).format('LLL');
 		}
@@ -47,7 +47,7 @@
 			$scope.sortingDirection = column.name == $scope.sortingColumn ? !$scope.sortingDirection : false;
 			$scope.sortingColumn = column.name;
 		}
-		
+
 		$scope.clickFunctionWrapper = function(row,e){
 			$scope.selectedItem = row;
 			$scope.clickFunction({'item':row,'evt':e});

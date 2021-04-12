@@ -57,6 +57,7 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetFilter;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -70,6 +71,7 @@ public class DataSetResource {
 
 	private static final DataSetResourceAction ACTION_DETAIL = new DataSetResourceAction("detaildataset", "Dataset detail");
 	private static final DataSetResourceAction ACTION_DELETE = new DataSetResourceAction("delete", "Delete dataset");
+	private static final DataSetResourceAction ACTION_LOAD_DATA = new DataSetResourceAction("loaddata", "Load data");
 	private static final DataSetResourceAction ACTION_GEO_REPORT = new DataSetResourceAction("georeport", "Show Map");
 	private static final DataSetResourceAction ACTION_QBE = new DataSetResourceAction("qbe", "Show Qbe");
 
@@ -138,8 +140,8 @@ public class DataSetResource {
 				logger.info("Engine not found. ", r);
 			}
 
-			List<DataSetMainDTO> dataSets = getListOfGenericDatasets(offset, fetchSize, filters, ordering, tags).stream()
-					.map(DataSetMainDTO::new).collect(toList());
+			List<DataSetMainDTO> dataSets = getListOfGenericDatasets(offset, fetchSize, filters, ordering, tags).stream().map(DataSetMainDTO::new)
+					.collect(toList());
 
 			dataSets = (List<DataSetMainDTO>) putActions(dataSets, typeDoc);
 
@@ -158,8 +160,8 @@ public class DataSetResource {
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
 		try {
-			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadEnterpriseDataSets(offset, fetchSize, getUserProfile())
-					.stream().map(DataSetForWorkspaceDTO::new).collect(toList());
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadEnterpriseDataSets(offset, fetchSize, getUserProfile()).stream()
+					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
@@ -176,8 +178,8 @@ public class DataSetResource {
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getOwnedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 		try {
-			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDataSetsOwnedByUser(offset, fetchSize, getUserProfile(), true)
-					.stream().map(DataSetForWorkspaceDTO::new).collect(toList());
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDataSetsOwnedByUser(offset, fetchSize, getUserProfile(), true).stream()
+					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
@@ -197,9 +199,8 @@ public class DataSetResource {
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
 		try {
-			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO()
-					.loadDatasetsSharedWithUser(offset, fetchSize, getUserProfile(), true).stream().map(DataSetForWorkspaceDTO::new)
-					.collect(toList());
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDatasetsSharedWithUser(offset, fetchSize, getUserProfile(), true).stream()
+					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
@@ -217,8 +218,8 @@ public class DataSetResource {
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getUncertifiedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 		try {
-			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDatasetOwnedAndShared(offset, fetchSize, getUserProfile())
-					.stream().map(DataSetForWorkspaceDTO::new).collect(toList());
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDatasetOwnedAndShared(offset, fetchSize, getUserProfile()).stream()
+					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
@@ -317,8 +318,7 @@ public class DataSetResource {
 
 	}
 
-	private void addActions(DataSetMainDTO dataset, String typeDocWizard, UserProfile userProfile, boolean isQBEEnginePresent,
-			boolean isGeoEnginePresent) {
+	private void addActions(DataSetMainDTO dataset, String typeDocWizard, UserProfile userProfile, boolean isQBEEnginePresent, boolean isGeoEnginePresent) {
 		try {
 			List<DataSetResourceAction> actions = dataset.getActions();
 			String currDataSetOwner = dataset.getOwner();
@@ -344,6 +344,15 @@ public class DataSetResource {
 					}
 				}
 			}
+
+			try {
+				IDataSet actualDataset = DAOFactory.getDataSetDAO().loadDataSetById(dataset.getId());
+				new DatasetManagementAPI(getUserProfile()).canLoadData(actualDataset);
+				actions.add(ACTION_LOAD_DATA);
+			} catch (ActionNotPermittedException e) {
+				logger.warn("User " + getUserProfile().getUserId() + " cannot load data for dataset with label " + dataset.getLabel());
+			}
+
 		} catch (Exception ex) {
 			// TODO
 			throw new RuntimeException(ex);
