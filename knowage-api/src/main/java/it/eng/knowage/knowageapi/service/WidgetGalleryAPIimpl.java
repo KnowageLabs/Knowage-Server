@@ -200,25 +200,26 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	public List<SbiWidgetGalleryTag> createNewWidgetTagsByList(SbiWidgetGallery sbiWidgetGallery, String userid, String tags) {
 
 		List<SbiWidgetGalleryTag> tagList = new ArrayList<SbiWidgetGalleryTag>();
-		tags = tags.substring(1, tags.length() - 1);
+		if (tags.length() > 0) {
+			tags = tags.substring(1, tags.length() - 1);
 
-		String[] tagArray = tags.split(",");
+			String[] tagArray = tags.split(",");
 
-		for (int i = 0; i < tagArray.length; i++) {
+			for (int i = 0; i < tagArray.length; i++) {
 
-			tagArray[i] = tagArray[i].trim().replaceAll("\"", "");
-			SbiWidgetGalleryTag sbiWidgetGalleryTag = new SbiWidgetGalleryTag();
-			SbiWidgetGalleryTagId newId = new SbiWidgetGalleryTagId(tagArray[i], sbiWidgetGallery.getUuid());
-			sbiWidgetGalleryTag.setId(newId);
-			sbiWidgetGalleryTag.setOrganization(sbiWidgetGallery.getOrganization());
-			sbiWidgetGalleryTag.setSbiVersionIn("");
-			sbiWidgetGalleryTag.setTimeIn(Timestamp.from(Instant.now()));
-			sbiWidgetGalleryTag.setUserIn(userid);
-			sbiWidgetGalleryTag.setSbiWidgetGallery(sbiWidgetGallery);
+				tagArray[i] = tagArray[i].trim().replaceAll("\"", "");
+				SbiWidgetGalleryTag sbiWidgetGalleryTag = new SbiWidgetGalleryTag();
+				SbiWidgetGalleryTagId newId = new SbiWidgetGalleryTagId(tagArray[i], sbiWidgetGallery.getUuid());
+				sbiWidgetGalleryTag.setId(newId);
+				sbiWidgetGalleryTag.setOrganization(sbiWidgetGallery.getOrganization());
+				sbiWidgetGalleryTag.setSbiVersionIn("");
+				sbiWidgetGalleryTag.setTimeIn(Timestamp.from(Instant.now()));
+				sbiWidgetGalleryTag.setUserIn(userid);
+				sbiWidgetGalleryTag.setSbiWidgetGallery(sbiWidgetGallery);
 
-			tagList.add(sbiWidgetGalleryTag);
+				tagList.add(sbiWidgetGalleryTag);
+			}
 		}
-
 		return tagList;
 	}
 
