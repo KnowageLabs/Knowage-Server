@@ -22,8 +22,7 @@ as FIWARE-ready software enabler, being fully compliant with [FIWARE](https://ww
 architecture and GEs. For more information check the FIWARE Marketplace entry 
 for [Knowage](https://marketplace.fiware.org/pages/solutions/59611fb5573b7cb51c44ef68).
 
-|  :books: [Documentation](http://knowage.rtfd.io/) | :page_facing_up: [Site](https://www.knowage-suite.com/site/home/) | :whale: [Docker Hub](https://hub.docker.com/r/knowagelabs/knowage-server-docker/) | :dart: [Roadmap](https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md) |
-|---|---|---|---|---|
+|  :books: [Documentation](https://knowage-suite.rtfd.io/) | :page_facing_up: [Site](https://www.knowage-suite.com/site/home/) | :whale: [Docker Hub](https://hub.docker.com/r/knowagelabs/knowage-server-docker/) | :dart: [Roadmap](https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md) |
 
 
 ## Contents
