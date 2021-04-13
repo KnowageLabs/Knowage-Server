@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
@@ -44,6 +45,7 @@ public class GalleryResource {
 	WidgetGalleryAPI widgetGalleryService;
 
 	@Autowired
+	@Lazy
 	SecurityServiceService securityServiceService;
 
 	@GET
