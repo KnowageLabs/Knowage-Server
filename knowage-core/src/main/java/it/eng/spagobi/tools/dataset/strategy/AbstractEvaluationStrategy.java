@@ -97,19 +97,19 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 
 					Matcher m = getMatcherWithQuotes(formula);
 					while (m.find()) {
-						if (formula.contains(TOTAL_COUNT_DISTINCT)) {
-							totalFunctions.add(m.group(0).replace(TOTAL_COUNT_DISTINCT, "COUNT(DISTINCT") + ")");
+						if (m.group().contains(TOTAL_COUNT_DISTINCT)) {
+							totalFunctions.add(m.group().replace(TOTAL_COUNT_DISTINCT, "COUNT(DISTINCT") + ")");
 						} else {
-							totalFunctions.add(m.group(0).replace(TOTAL_PREFIX, ""));
+							totalFunctions.add(m.group().replace(TOTAL_PREFIX, ""));
 						}
 					}
 
 					m = getMatcherWithParameters(formula);
 					while (m.find()) {
-						if (formula.contains(TOTAL_COUNT_DISTINCT)) {
-							totalFunctions.add(m.group(0).replace(TOTAL_COUNT_DISTINCT, "COUNT(DISTINCT") + ")");
+						if (m.group().contains(TOTAL_COUNT_DISTINCT)) {
+							totalFunctions.add(m.group().replace(TOTAL_COUNT_DISTINCT, "COUNT(DISTINCT") + ")");
 						} else {
-							totalFunctions.add(m.group(0).replace(TOTAL_PREFIX, ""));
+							totalFunctions.add(m.group().replace(TOTAL_PREFIX, ""));
 						}
 					}
 				}
