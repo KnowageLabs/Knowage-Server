@@ -89,7 +89,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 			int maxRowCount) {
 
 		List<AbstractSelectionField> toReturnList = new ArrayList<AbstractSelectionField>();
-		Set<String> totalFunctions = new HashSet<String>();
+		Set<String> totalFunctionsSet = new HashSet<String>();
 		for (AbstractSelectionField abstractSelectionField : projections) {
 			if (abstractSelectionField instanceof DataStoreCalculatedField) {
 				String formula = ((DataStoreCalculatedField) abstractSelectionField).getFormula();
@@ -98,31 +98,31 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 					Matcher m = getMatcherWithQuotes(formula);
 					while (m.find()) {
 						if (m.group().contains(TOTAL_COUNT_DISTINCT)) {
-							totalFunctions.add(m.group().replace(TOTAL_COUNT_DISTINCT, "COUNT(DISTINCT") + ")");
+							totalFunctionsSet.add(m.group().replace(TOTAL_COUNT_DISTINCT, "COUNT(DISTINCT") + ")");
 						} else {
-							totalFunctions.add(m.group().replace(TOTAL_PREFIX, ""));
+							totalFunctionsSet.add(m.group().replace(TOTAL_PREFIX, ""));
 						}
 					}
 
 					m = getMatcherWithParameters(formula);
 					while (m.find()) {
 						if (m.group().contains(TOTAL_COUNT_DISTINCT)) {
-							totalFunctions.add(m.group().replace(TOTAL_COUNT_DISTINCT, "COUNT(DISTINCT") + ")");
+							totalFunctionsSet.add(m.group().replace(TOTAL_COUNT_DISTINCT, "COUNT(DISTINCT") + ")");
 						} else {
-							totalFunctions.add(m.group().replace(TOTAL_PREFIX, ""));
+							totalFunctionsSet.add(m.group().replace(TOTAL_PREFIX, ""));
 						}
 					}
 				}
 			}
 		}
 
-		if (!totalFunctions.isEmpty()) {
+		if (!totalFunctionsSet.isEmpty()) {
 
-			IDataStore totalsFunctionDataStore = executeTotalsFunctions(dataSet, totalFunctions, filter, maxRowCount);
+			IDataStore totalsFunctionDataStore = executeTotalsFunctions(dataSet, totalFunctionsSet, filter, maxRowCount);
 
 			HashMap<String, String> totalsMap = new HashMap<String, String>();
 			int i = 0;
-			for (String function : totalFunctions) {
+			for (String function : totalFunctionsSet) {
 				totalsMap.put(function, String.valueOf(totalsFunctionDataStore.getRecordAt(0).getFieldAt(i).getValue()));
 				i++;
 			}
@@ -135,7 +135,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 
 						for (String totalFunction : totalsMap.keySet()) {
 
-							if (formula.contains(TOTAL_COUNT_DISTINCT)) {
+							if (formula.contains(TOTAL_COUNT_DISTINCT) && totalFunction.startsWith("COUNT(DISTINCT")) {
 
 								boolean replaced = false;
 
