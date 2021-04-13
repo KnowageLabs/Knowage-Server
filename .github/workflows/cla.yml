@@ -21,7 +21,7 @@ jobs:
           path-to-signatures: 'cla-signatures/cla-assistant-version1/signatures.json'
           path-to-document: 'https://github.com/KnowageLabs/Knowage-Server/blob/master/CLA.md' # e.g. a CLA or a DCO document
           # branch should not be protected
-          branch: 'main'
+          branch: 'master'
           allowlist: dependabot,bot*
           use-dco-flag: false
 
