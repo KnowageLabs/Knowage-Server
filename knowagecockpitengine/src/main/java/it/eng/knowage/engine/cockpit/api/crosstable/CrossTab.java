@@ -417,8 +417,8 @@ public class CrossTab {
 
 		List<String> data = new ArrayList<String>();
 
-		columnsRoot = new Node("rootC");
-		rowsRoot = new Node("rootR");
+		columnsRoot = new Node(Node.CROSSTAB_NODE_COLUMN_ROOT);
+		rowsRoot = new Node(Node.CROSSTAB_NODE_ROW_ROOT);
 
 		JSONArray dataStoreMetadataFields = datastoreMetadata.getJSONArray("fields");
 
@@ -504,8 +504,8 @@ public class CrossTab {
 			cellCount = actualRows * actualColumns * measuresCount;
 		}
 
-//			columnsRoot.updateFathers();
-//			rowsRoot.updateFathers();
+//		columnsRoot.updateFathers();
+//		rowsRoot.updateFathers();
 
 		if (index < dataStoredata.length()) {
 			logger.debug("Crosstab cells number limit exceeded");
@@ -598,8 +598,8 @@ public class CrossTab {
 
 		// measure sort has priority on columns and rows
 		if (measuresSortKeysMap.size() > 0) {
-			Node orderedColumnsRoot = new Node("rootC");
-			Node orderedRowsRoot = new Node("rootR");
+			Node orderedColumnsRoot = new Node(Node.CROSSTAB_NODE_COLUMN_ROOT);
+			Node orderedRowsRoot = new Node(Node.CROSSTAB_NODE_ROW_ROOT);
 
 			Map<String, Double> orderedMeasures = sortMeasures(measuresSortKeysMap, measureToOrderMap, rowsCount, columnsCount, actualRows, actualColumns);
 			for (String key : orderedMeasures.keySet()) {
@@ -745,8 +745,8 @@ public class CrossTab {
 		columnCordinates = new LinkedList<String>();
 		List<String> data = new LinkedList<String>();
 
-		columnsRoot = new Node("rootC");
-		rowsRoot = new Node("rootR");
+		columnsRoot = new Node(Node.CROSSTAB_NODE_COLUMN_ROOT);
+		rowsRoot = new Node(Node.CROSSTAB_NODE_ROW_ROOT);
 
 		int cellCount = 0;
 		int actualRows = 0;

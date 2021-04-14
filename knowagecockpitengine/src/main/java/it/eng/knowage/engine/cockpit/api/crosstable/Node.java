@@ -38,6 +38,8 @@ public class Node implements Cloneable, Comparable<Node> {
 	public static final String CROSSTAB_NODE_JSON_KEY = "node_key";
 	public static final String CROSSTAB_NODE_JSON_DESCRIPTION = "node_description";
 	public static final String CROSSTAB_NODE_JSON_COLUMN = "node_column";
+	public static final String CROSSTAB_NODE_COLUMN_ROOT = "rootC";
+	public static final String CROSSTAB_NODE_ROW_ROOT = "rootR";
 
 	private String columnName = null;// column name
 	private final String value;// the value of the node
@@ -136,7 +138,14 @@ public class Node implements Cloneable, Comparable<Node> {
 	}
 
 	public void setChildren(List<Node> children) {
+		for (int i = 0; i < children.size(); i++) {
+			children.get(i).setFatherNode(this);
+		}
 		this.children = children;
+	}
+
+	private void setFatherNode(Node father) {
+		this.fatherNode = father;
 	}
 
 	public void addOrderedChild(Node child) {
@@ -165,6 +174,13 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	public boolean isChild(Node child) {
 		return children.contains(child);
+	}
+
+	public boolean isRoot() {
+		if (this.getDescription().equalsIgnoreCase(Node.CROSSTAB_NODE_COLUMN_ROOT) || this.getDescription().equalsIgnoreCase(Node.CROSSTAB_NODE_ROW_ROOT))
+			return true;
+		else
+			return false;
 	}
 
 	/**
@@ -341,9 +357,9 @@ public class Node implements Cloneable, Comparable<Node> {
 //	 * Update the fathers of this tree
 //	 */
 //	public void updateFathers() {
-//		for (int i = 0; i < childs.size(); i++) {
-//			childs.get(i).fatherNode = this;
-//			childs.get(i).updateFathers();
+//		for (int i = 0; i < children.size(); i++) {
+//			children.get(i).fatherNode = this;
+//			children.get(i).updateFathers();
 //		}
 //	}
 
@@ -394,20 +410,25 @@ public class Node implements Cloneable, Comparable<Node> {
 		return n;
 	}
 
+//	@Override
+//	public String toString() {
+//		String string;
+//
+//		if (children.size() == 0) {
+//			return "[C:" + String.valueOf(columnName) + "-V:" + value.toString() + "-D:" + description + "]";
+//		} else {
+//			string = "[C:" + String.valueOf(columnName) + "-V:" + value.toString() + "-D:" + description + ",[";
+//			for (int i = 0; i < children.size() - 1; i++) {
+//				string = string + children.get(i).toString() + ",";
+//			}
+//			string = string + children.get(children.size() - 1).toString() + "]]";
+//		}
+//		return string;
+//	}
+
 	@Override
 	public String toString() {
-		String string;
-
-		if (children.size() == 0) {
-			return "[C:" + String.valueOf(columnName) + "-V:" + value.toString() + "-D:" + description + "]";
-		} else {
-			string = "[C:" + String.valueOf(columnName) + "-V:" + value.toString() + "-D:" + description + ",[";
-			for (int i = 0; i < children.size() - 1; i++) {
-				string = string + children.get(i).toString() + ",";
-			}
-			string = string + children.get(children.size() - 1).toString() + "]]";
-		}
-		return string;
+		return "{C:" + String.valueOf(columnName) + "-V:" + value.toString() + "-D:" + description + "}";
 	}
 
 	/**
