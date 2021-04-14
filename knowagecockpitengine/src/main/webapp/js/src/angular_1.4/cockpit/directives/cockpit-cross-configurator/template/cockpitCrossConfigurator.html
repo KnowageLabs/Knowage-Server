@@ -77,7 +77,7 @@
                <md-input-container class="md-block" flex=25 
                   ng-if="ngModel.cross.outputParametersList[outputParameter.name].enabled==true">
                   <label>{{::translate.load("sbi.cockpit.cross.outputParameter.type")}}</label>
-                  <md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].type" >
+                  <md-select ng-model="ngModel.cross.outputParametersList[outputParameter.name].type" ng-change="cleanOutputParameterModel(ngModel.cross.outputParametersList[outputParameter.name])" >
                      <md-option ng-repeat="opt in outputParametersType" ng-value="opt.value" ng-hide="(crossImage || crossPython) && opt.value == 'dynamic'">
                         {{opt.label}}
                      </md-option>
