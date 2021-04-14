@@ -385,6 +385,11 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 			outPar.enabled=false;
 		}
 	}
+
+	$scope.cleanOutputParameterModel = function(outputParameter){
+		if (outputParameter.column) delete outputParameter.column;
+		if (outputParameter.dataset) delete outputParameter.dataset;
+	}
 }
 
 })();
