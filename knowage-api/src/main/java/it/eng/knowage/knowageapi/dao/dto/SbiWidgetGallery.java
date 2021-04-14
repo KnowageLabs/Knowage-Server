@@ -10,7 +10,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -37,7 +36,6 @@ public class SbiWidgetGallery implements Serializable {
 
 	private String organization;
 
-	@Lob
 	@Column(name = "PREVIEW_IMAGE")
 	private String previewImage;
 
@@ -50,7 +48,6 @@ public class SbiWidgetGallery implements Serializable {
 	@Column(name = "SBI_VERSION_UP")
 	private String sbiVersionUp;
 
-	@Lob
 	private String template;
 
 	@Column(name = "TIME_DE")
@@ -77,7 +74,7 @@ public class SbiWidgetGallery implements Serializable {
 	private String userUp;
 
 	// bi-directional many-to-one association to SbiWidgetGalleryTag
-	@OneToMany(mappedBy = "sbiWidgetGallery", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "sbiWidgetGallery", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private final List<SbiWidgetGalleryTag> sbiWidgetGalleryTags = new ArrayList<SbiWidgetGalleryTag>();
 
 	public SbiWidgetGallery() {

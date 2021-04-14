@@ -99,8 +99,6 @@ public class GalleryResource {
 		String javascript = "";
 		String python = "";
 		String userId = jwtToken2userId(token.replace("Bearer ", ""));
-		String licenseText = "";
-		String licenseName = "";
 		WidgetGalleryDTO newSbiWidgetGallery = null;
 		if (StringUtilities.isNotEmpty(body)) {
 			try {
@@ -109,7 +107,7 @@ public class GalleryResource {
 				name = jsonBody.getString("name");
 				if (jsonBody.has("description"))
 					description = jsonBody.getString("description");
-				if (jsonBody.has("tags"))
+				if (jsonBody.has("tags") && !jsonBody.getString("tags").equals("[]"))
 					tags = jsonBody.getString("tags");
 				if (jsonBody.has("image"))
 					image = jsonBody.getString("image");
@@ -119,10 +117,6 @@ public class GalleryResource {
 				javascript = jsonCode.getString("javascript");
 				python = jsonCode.getString("python");
 				css = jsonCode.getString("css");
-				if (jsonBody.has("licenseText"))
-					licenseText = jsonCode.optString("licenseText");
-				if (jsonBody.has("licenseName"))
-					licenseName = jsonCode.optString("licenseName");
 				profile = getUserProfile(token);
 
 				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, image, "", body, profile, tags);
@@ -153,8 +147,6 @@ public class GalleryResource {
 		String javascript = "";
 		String python = "";
 		String userId = jwtToken2userId(token.replace("Bearer ", ""));
-		String licenseText = "";
-		String licenseName = "";
 		WidgetGalleryDTO newSbiWidgetGallery = null;
 		if (StringUtilities.isNotEmpty(body)) {
 			try {
@@ -163,7 +155,7 @@ public class GalleryResource {
 				label = jsonBody.getString("name");
 				if (jsonBody.has("description"))
 					description = jsonBody.getString("description");
-				if (jsonBody.has("tags"))
+				if (jsonBody.has("tags") && !jsonBody.getString("tags").equals("[]"))
 					tags = jsonBody.getString("tags");
 				if (jsonBody.has("image"))
 					image = jsonBody.getString("image");
@@ -174,10 +166,6 @@ public class GalleryResource {
 				python = jsonCode.getString("python");
 				css = jsonCode.getString("css");
 				profile = getUserProfile(token);
-				if (jsonBody.has("licenseText"))
-					licenseText = jsonCode.optString("licenseText");
-				if (jsonBody.has("licenseName"))
-					licenseName = jsonCode.optString("licenseName");
 				newSbiWidgetGallery = widgetGalleryService.getWidgetsById(widgetId, profile);
 				if (newSbiWidgetGallery != null) {
 

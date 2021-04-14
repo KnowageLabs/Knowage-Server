@@ -133,7 +133,9 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			newSbiWidgetGallery.setUserIn(profile.getUserId());
 			newSbiWidgetGallery.setUsageCounter(1);
 			List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, profile.getUserId(), tags);
-			newSbiWidgetGallery.getSbiWidgetGalleryTags().addAll(tagList);
+			if (tagList != null) {
+				newSbiWidgetGallery.getSbiWidgetGalleryTags().addAll(tagList);
+			}
 			sbiWidgetGalleryDao.create(newSbiWidgetGallery);
 		}
 		return widgetGalleryDTO;
@@ -157,7 +159,8 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			newSbiWidgetGallery.setType(type);
 			newSbiWidgetGallery.setUserUp(profile.getUserId());
 			List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, profile.getUserId(), tags);
-			newSbiWidgetGallery.getSbiWidgetGalleryTags().addAll(tagList);
+			if (tagList != null)
+				newSbiWidgetGallery.getSbiWidgetGalleryTags().addAll(tagList);
 			sbiWidgetGalleryDao.update(newSbiWidgetGallery);
 		}
 	}
@@ -199,12 +202,13 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	@Override
 	public List<SbiWidgetGalleryTag> createNewWidgetTagsByList(SbiWidgetGallery sbiWidgetGallery, String userid, String tags) {
 
-		List<SbiWidgetGalleryTag> tagList = new ArrayList<SbiWidgetGalleryTag>();
+		List<SbiWidgetGalleryTag> tagList = null;
 		if (tags.length() > 0) {
 			tags = tags.substring(1, tags.length() - 1);
 
 			String[] tagArray = tags.split(",");
 
+			tagList = new ArrayList<SbiWidgetGalleryTag>();
 			for (int i = 0; i < tagArray.length; i++) {
 
 				tagArray[i] = tagArray[i].trim().replaceAll("\"", "");
