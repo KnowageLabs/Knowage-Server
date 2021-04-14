@@ -42,8 +42,18 @@ public class SchedulerServiceImpl extends AbstractServiceImpl implements Schedul
 
 	private static Logger logger = Logger.getLogger(SchedulerServiceImpl.class);
 
-	private ISchedulerServiceSupplier supplier = SchedulerServiceSupplierFactory
-			.getSupplier();
+	private ISchedulerServiceSupplier supplier = null;
+
+	/**
+	 * Lazy initialization of the supplier.
+	 */
+	private ISchedulerServiceSupplier getSupplier() {
+		if (supplier == null) {
+			supplier = SchedulerServiceSupplierFactory
+					.getSupplier();
+		}
+		return supplier;
+	}
 
 	/**
 	 * Gets the job list.
@@ -63,7 +73,7 @@ public class SchedulerServiceImpl extends AbstractServiceImpl implements Schedul
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			return supplier.getJobList();
+			return getSupplier().getJobList();
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
 			return null;
@@ -98,7 +108,7 @@ public class SchedulerServiceImpl extends AbstractServiceImpl implements Schedul
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			return supplier.getJobSchedulationList(jobName, jobGroup);
+			return getSupplier().getJobSchedulationList(jobName, jobGroup);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
 			return null;
@@ -133,7 +143,7 @@ public class SchedulerServiceImpl extends AbstractServiceImpl implements Schedul
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			return supplier.deleteSchedulation(triggerName, triggerGroup);
+			return getSupplier().deleteSchedulation(triggerName, triggerGroup);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
 			return null;
@@ -168,7 +178,7 @@ public class SchedulerServiceImpl extends AbstractServiceImpl implements Schedul
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			return supplier.deleteJob(jobName, jobGroupName);
+			return getSupplier().deleteJob(jobName, jobGroupName);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
 			return null;
@@ -200,7 +210,7 @@ public class SchedulerServiceImpl extends AbstractServiceImpl implements Schedul
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			return supplier.defineJob(xmlRequest);
+			return getSupplier().defineJob(xmlRequest);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
 			return null;
@@ -235,7 +245,7 @@ public class SchedulerServiceImpl extends AbstractServiceImpl implements Schedul
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			return supplier.getJobDefinition(jobName, jobGroup);
+			return getSupplier().getJobDefinition(jobName, jobGroup);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
 			return null;
@@ -267,7 +277,7 @@ public class SchedulerServiceImpl extends AbstractServiceImpl implements Schedul
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			return supplier.scheduleJob(xmlRequest);
+			return getSupplier().scheduleJob(xmlRequest);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
 			return null;
@@ -302,7 +312,7 @@ public class SchedulerServiceImpl extends AbstractServiceImpl implements Schedul
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			return supplier.getJobSchedulationDefinition(triggerName,
+			return getSupplier().getJobSchedulationDefinition(triggerName,
 					triggerGroup);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
@@ -338,7 +348,7 @@ public class SchedulerServiceImpl extends AbstractServiceImpl implements Schedul
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
-			return supplier.existJobDefinition(jobName, jobGroup);
+			return getSupplier().existJobDefinition(jobName, jobGroup);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
 			return null;
