@@ -58,6 +58,8 @@ public class SelectQueryVisitorFactory {
 			return new RedShiftSelectQueryVisitor(database);
 		case BIGQUERY:
 			return new BigQuerySelectQueryVisitor(database);
+		case SYNAPSE:
+			return new SynapseSelectQueryVisitor(database);
 		default:
 			throw new IllegalArgumentException("Dialect [" + dataSource.getHibDialectClass() + "] not supported");
 		}

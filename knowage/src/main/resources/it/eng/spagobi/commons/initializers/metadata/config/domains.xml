@@ -481,6 +481,10 @@
 		valueNm="sbidomains.nm.bigquery" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.bigquery" />
 		
+	<DOMAIN valueCd="org.hibernate.dialect.SynapseDialect"
+		valueNm="sbidomains.nm.synapse" domainCd="DIALECT_HIB"
+		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.synapse" />
+		
 	<DOMAIN valueCd="MEASURE" valueNm="sbidomains.nm.measure"
 		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.measure" />
 		

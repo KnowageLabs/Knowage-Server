@@ -63,6 +63,9 @@ public class JDBCDatasetFactory {
 		case BIGQUERY:
 			dataSet = new JDBCBigQueryDataSet();
 			break;
+		case SYNAPSE:
+			dataSet = new JDBCSynapseDataSet();
+			break;
 		default:
 			dataSet = new JDBCDataSet();
 		}

@@ -78,6 +78,8 @@ public abstract class DataBaseFactory {
 					return new RedShiftDataBase(dataSource);
 				case BIGQUERY:
 					return new BigQueryDataBase(dataSource);
+				case SYNAPSE:
+					return new SynapseDataBase(dataSource);
 				default:
 					throw new DataBaseException("Impossible to find a database implementation for [" + sqlDialect.toString() + "]");
 				}

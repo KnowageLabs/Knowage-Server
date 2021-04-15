@@ -60,6 +60,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCRedShiftDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCSynapseDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
@@ -445,8 +446,8 @@ public class DataSetFactory {
 				if (userProfile != null)
 					dataSourceDao.setUserProfile(userProfile);
 
-				/* WORKAROUND : in the past the datasource attribute was
-				 * dataSource and not dataSourceFlat.
+				/*
+				 * WORKAROUND : in the past the datasource attribute was dataSource and not dataSourceFlat.
 				 */
 				String dataSourceName = null;
 				if (jsonConf.has(DataSetConstants.DATA_SOURCE)) {
@@ -816,6 +817,8 @@ public class DataSetFactory {
 				ds = new JDBCRedShiftDataSet();
 			} else if (dialectToLowerCase.contains("BigQuery")) {
 				ds = new JDBCBigQueryDataSet();
+			} else if (dialectToLowerCase.contains("Synapse")) {
+				ds = new JDBCSynapseDataSet();
 			}
 		}
 		return (ds != null) ? ds : new JDBCDataSet();

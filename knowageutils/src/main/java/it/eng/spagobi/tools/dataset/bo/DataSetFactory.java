@@ -109,6 +109,8 @@ public class DataSetFactory {
 				className = JDBCRedShiftDataSet.class.getName();
 			} else if (dialectToLowerCase.contains("BigQuery")) {
 				className = JDBCBigQueryDataSet.class.getName();
+			} else if (dialectToLowerCase.contains("Synapse")) {
+				className = JDBCSynapseDataSet.class.getName();
 			}
 		}
 		try {
