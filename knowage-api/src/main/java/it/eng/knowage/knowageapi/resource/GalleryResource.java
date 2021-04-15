@@ -83,6 +83,22 @@ public class GalleryResource {
 
 	}
 
+	@GET
+	@Path("/widgets/{type}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public List<WidgetGalleryDTO> widgetType(@HeaderParam("Authorization") String token, @PathParam("type") String type) {
+		SpagoBIUserProfile profile = null;
+		List<WidgetGalleryDTO> widgetGalleryDTOs = null;
+		try {
+			profile = getUserProfile(token);
+			widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenantType(profile, type);
+		} catch (Throwable e) {
+			throw new KnowageRuntimeException(e.getMessage(), e);
+		}
+		return widgetGalleryDTOs;
+
+	}
+
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")

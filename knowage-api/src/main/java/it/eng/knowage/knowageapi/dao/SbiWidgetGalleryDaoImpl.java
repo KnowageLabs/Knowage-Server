@@ -123,10 +123,10 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 	}
 
 	@Override
-	public Collection<SbiWidgetGallery> findAllByTenantAndType(String tenant, Collection<String> types) {
+	public Collection<SbiWidgetGallery> findAllByTenantAndType(String tenant, String type) {
 		Collection<SbiWidgetGallery> results = em
-				.createQuery("SELECT t FROM SbiWidgetGallery t where t.organization = :tenant and type=:valuesList", SbiWidgetGallery.class)
-				.setParameter("tenant", tenant).setParameter("valuesList", types).getResultList();
+				.createQuery("SELECT t FROM SbiWidgetGallery t where t.organization = :tenant and type=:valueType", SbiWidgetGallery.class)
+				.setParameter("tenant", tenant).setParameter("valueType", type).getResultList();
 		return results;
 	}
 

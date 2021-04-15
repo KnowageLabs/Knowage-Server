@@ -29,6 +29,8 @@ public interface WidgetGalleryAPI {
 
 	List<WidgetGalleryDTO> getWidgetsByTenant(SpagoBIUserProfile profile) throws JSONException;
 
+	List<WidgetGalleryDTO> getWidgetsByTenantType(SpagoBIUserProfile profile, String type) throws JSONException;
+
 	WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String image, String sbiversion, String template,
 			SpagoBIUserProfile profile, String tags);
 

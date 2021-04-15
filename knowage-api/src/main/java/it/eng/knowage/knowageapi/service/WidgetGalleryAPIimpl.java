@@ -267,4 +267,21 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		return canSee;
 	}
 
+	@Override
+	public List<WidgetGalleryDTO> getWidgetsByTenantType(SpagoBIUserProfile profile, String type) throws JSONException {
+		List<WidgetGalleryDTO> ret = null;
+		if (this.canSeeGallery(profile)) {
+			List<SbiWidgetGallery> widgets = (List<SbiWidgetGallery>) sbiWidgetGalleryDao.findAllByTenantAndType(profile.getOrganization(), type);
+
+			ret = widgets.stream().map(el -> {
+				try {
+					return mapTo(el);
+				} catch (JSONException e) {
+					throw new KnowageRuntimeException(e.getMessage());
+				}
+			}).collect(Collectors.toList());
+		}
+		return ret;
+	}
+
 }
