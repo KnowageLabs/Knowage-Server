@@ -1,77 +1,78 @@
 {
-	"common": {
-		"close": "close",
-		"codingLanguages": {
-			"css": "css",
-			"html": "html",
-			"javascript": "javascript",
-			"python": "python"
-		},
-		"deleteAll": "delete all",
-		"description": "description",
-		"download": "download",
-		"error": {
-			"exceededSize": "Uploaded file exceedes max size {size}"
-		},
-		"image": "image",
-		"info": {
-			"noDataFound": "No data found",
-			"noElementSelected": "No element selected"
-		},
-		"information": "information",
-		"label": "label",
-		"loggedUser": "logged user",
-		"search": "search",
-		"tags": "tags",
-		"tenant": "tenant",
-		"type": "type",
-		"version": "version",
-		"warning": {}
-	},
-	"downloadsDialog": {
-		"columns": {
-			"creationDate": "Creation Date",
-			"fileName": "File Name",
-			"fileSize": "File Size"
-		},
-		"title": "Downloads"
-	},
-	"home": {
-		"test": "english"
-	},
-	"infoDialog": {
-		"aboutKnowage": "About Knowage",
-		"copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
-		"sourceCode": "Source code available on "
-	},
-	"language": {
-		"en_GB": "english (GB)",
-		"en_US": "english (US)",
-		"es_ES": "espanol",
-		"fr_FR": "french",
-		"it_IT": "italian",
-		"languageSelection": "Language Selection",
-		"pt_BR": "portuguese"
-	},
-	"managers": {
-		"widgetGallery": {
-			"hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
-			"importTemplate": "Import template",
-			"newTemplate": "New Template",
-			"noResults": "No templates available for the selected filter",
-			"title": "Gallery management"
-		}
-	},
-	"newsDialog": {
-		"description": "Description",
-		"expirationDate": "Expiration date",
-		"news": "news",
-		"notifications": "notifications",
-		"title": "Knowage news",
-		"warnings": "warnings"
-	},
-	"role": {
-		"defaultRolePlaceholder": "No default role selected",
-		"roleSelection": "Role Selection"
-	}
+  "common": {
+    "close": "close",
+    "codingLanguages": {
+      "css": "css",
+      "html": "html",
+      "javascript": "javascript",
+      "python": "python"
+    },
+    "deleteAll": "delete all",
+    "description": "description",
+    "download": "download",
+    "error": {
+      "exceededSize": "Uploaded file exceedes max size {size}"
+    },
+    "image": "image",
+    "info": {
+      "noDataFound": "No data found",
+      "noElementSelected": "No element selected"
+    },
+    "information": "information",
+    "label": "label",
+    "loggedUser": "logged user",
+    "search": "search",
+    "tags": "tags",
+    "tenant": "tenant",
+    "type": "type",
+    "version": "version",
+    "warning": {}
+  },
+  "downloadsDialog": {
+    "columns": {
+      "creationDate": "Creation Date",
+      "fileName": "File Name",
+      "fileSize": "File Size"
+    },
+    "title": "Downloads"
+  },
+  "home": {
+    "test": "english"
+  },
+  "infoDialog": {
+    "aboutKnowage": "About Knowage",
+    "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
+    "sourceCode": "Source code available on "
+  },
+  "language": {
+    "en_GB": "english (GB)",
+    "en_US": "english (US)",
+    "es_ES": "espanol",
+    "fr_FR": "french",
+    "it_IT": "italian",
+    "languageSelection": "Language Selection",
+    "pt_BR": "portuguese"
+  },
+  "managers": {
+    "widgetGallery": {
+      "hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
+      "importTemplate": "Import template",
+      "newTemplate": "New Template",
+      "noResults": "No templates available for the selected filter",
+      "outputType": "Output Type",
+      "title": "Gallery management"
+    }
+  },
+  "newsDialog": {
+    "description": "Description",
+    "expirationDate": "Expiration date",
+    "news": "news",
+    "notifications": "notifications",
+    "title": "Knowage news",
+    "warnings": "warnings"
+  },
+  "role": {
+    "defaultRolePlaceholder": "No default role selected",
+    "roleSelection": "Role Selection"
+  }
 }

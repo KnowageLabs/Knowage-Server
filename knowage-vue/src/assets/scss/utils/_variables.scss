@@ -1,20 +1,20 @@
-// COMMON COLORS VARIABLES
+// COMMON COLORS
 $color-default: #a7a7a7;
 $color-primary: #43749e;
 $color-secondary: #bbd6ed;
 $color-fab: #ce0651;
 $color-borders: #ccc;
 
-// COMMON FONT VARIABLES
+// COMMON FONT
 $font-family: Roboto, 'Helvetica Neue', Arial, sans-serif;
 
-// LIST VARIABLES
+// LIST
 $list-border-color: $color-borders;
 $list-item-selected-background-color: $color-secondary;
 $list-item-text-secondary-color: $color-default;
 $list-item-text-secondary-font-size: 0.8rem;
 
-// MENU VARIABLES
+// MENU
 $mainmenu-background-color: $color-primary;
 $mainmenu-box-shadow: 0px 4px 8px rgb(72, 72, 72);
 $mainmenu-highlight-color: $color-fab;
@@ -24,7 +24,11 @@ $mainmenu-panel-text-color: $color-primary;
 $mainmenu-profile-box-shadow: -3px 0 4px 0 black;
 $mainmenu-width: 58px;
 
-// TOOLBAR VARIABLES
+// PROGRESS BAR
+$progress-bar-background-color: rgba($color-secondary, 0.3);
+$progress-bar-foreground-color: $color-fab;
+
+// TOOLBAR
 $toolbar-height: 2.5rem;
 $toolbar-padding: 0 0.75rem;
 $toolbar-font-weight: 400;

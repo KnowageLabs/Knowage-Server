@@ -1,7 +1,7 @@
 {
   "allowedEditors": {
     "html": ["html", "css"],
-    "python": ["html", "python", "css"],
+    "python": ["python"],
     "chart": ["html", "javascript", "css"]
   },
   "editor": {

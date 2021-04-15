@@ -1,18 +1,18 @@
 <div class="gallery">
-	<div ng-show="loading" class="widgetSpinner" layout-fill>
-       <md-progress-circular  md-diameter="20px" md-mode='indeterminate'></md-progress-circular>
+	<div ng-show="loading" class="widgetSpinner" layout="row" layout-fill layout-align="center center">
+       <md-progress-circular  md-diameter="36px" md-mode='indeterminate'></md-progress-circular>
     </div>
 	<div layout="row" ng-show="!loading">
 		<md-input-container md-no-float flex style="margin:8px;">
 			<md-icon md-font-icon="fa fa-search"></md-icon> 
-			<input ng-model="searchText.label" type="text" placeholder="Search ">
+			<input ng-model="searchText.name" type="text" placeholder="Search ">
 		</md-input-container>
 	</div>
 	<div layout="row" layout-wrap ng-show="!loading">
 		<md-card class="galleryCard" ng-repeat="template in availableGallery| filter:searchText" ng-click="setSelectedTemplate(template)" flex="25">
 			<md-toolbar class="secondaryToolbar"> 
 		      <div class="md-toolbar-tools">
-		        <h2>{{template.label | i18n}}</h2>
+		        <h2>{{template.name | i18n}}</h2>
 		        <span flex></span>
 		      </div>
 		    </md-toolbar>

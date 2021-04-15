@@ -70,8 +70,10 @@ function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_tran
 	$scope.selectedTab = $scope.newModel.isNew ? 0 : 1;
 	
 	$scope.setGalleryTemplate = function(template){
-		$scope.newModel.htmlToRender = template.code.html;
-		$scope.newModel.cssToRender = template.code.css;
+		if(template){
+			$scope.newModel.htmlToRender = template.code.html;
+			$scope.newModel.cssToRender = template.code.css;
+		}
 		$scope.showGallery = false;
 		$scope.selectedTab = 1;
 	}

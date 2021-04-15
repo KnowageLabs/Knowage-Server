@@ -9,7 +9,7 @@
 	    <md-content flex layout="column">
 			<md-tabs flex md-border-bottom md-selected="selectedTab">
 				<md-tab label="gallery" ng-if="showGallery">
-		        	<gallery-selector widget-type="html" callback="setGalleryTemplate(template)"></gallery-selector>
+		        	<gallery-selector widget-type="html" callback="setGalleryTemplate(template)" no-items="setGalleryTemplate()"></gallery-selector>
 		     	</md-tab>
 				<md-tab label="{{translate.load('sbi.cockpit.dataset')}}" ng-disabled="showGallery">
 		        	<md-card>

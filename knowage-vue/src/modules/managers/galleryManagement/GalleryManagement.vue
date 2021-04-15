@@ -1,7 +1,7 @@
 <template>
   <div class="knPage">
     <div class="knPageContent p-grid p-m-0">
-      <div class="kn-list--column p-col-3 p-p-0">
+      <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
           <template #left>
             {{ $t('managers.widgetGallery.title') }}
@@ -11,7 +11,8 @@
             <Menu ref="menu" :model="addMenuItems" popup="true" />
           </template>
         </Toolbar>
-        <Listbox class="kn-list" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="['name', 'type', 'tags']" :emptyFilterMessage="$t('managers.widgetGallery.noResults')">
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <Listbox v-if="!loading" class="kn-list" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="['name', 'type', 'tags']" :emptyFilterMessage="$t('managers.widgetGallery.noResults')">
           <template #option="slotProps">
             <router-link class="kn-decoration-none" :to="{ name: 'gallerydetail', params: { id: slotProps.option.id } }" exact>
               <div class="kn-list-item">
@@ -26,7 +27,7 @@
           </template>
         </Listbox>
       </div>
-      <div class="p-col-9 p-p-0 p-m-0">
+      <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
         <router-view @saved="savedElement" />
       </div>
     </div>
@@ -52,6 +53,7 @@ export default defineComponent({
   data() {
     return {
       galleryTemplates: [],
+      loading: false,
       typeDescriptor: galleryDescriptor,
       addMenuItems: [
         { label: this.$t('managers.widgetGallery.newTemplate'), icon: 'fas fa-plus', command: () => this.newTemplate() },
@@ -64,10 +66,12 @@ export default defineComponent({
   },
   methods: {
     loadAllTemplates(): void {
+      this.loading = true
       this.axios
         .get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery')
         .then((response) => (this.galleryTemplates = response.data))
         .catch((error) => console.error(error))
+        .finally(() => (this.loading = false))
     },
     deleteTemplate(e, templateId): void {
       e.preventDefault()
