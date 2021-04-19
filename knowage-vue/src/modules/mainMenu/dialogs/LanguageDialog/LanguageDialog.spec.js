@@ -26,41 +26,39 @@ const mockWrapper = shallowMount(LanguageDialog, {
 	}
 })
 
-describe('LanguageDialog', () => {
-	test('is loaded empty', () => {
-		expect(mockWrapper.vm.languages.length).toBe(0)
-		expect(mockWrapper.vm.visibility).toBe(false)
-	})
-})
-
 jest.mock('axios', () => ({
 	get: jest.fn(() => Promise.resolve({ data: ['it_IT', 'en_US', 'fr_FR', 'zh_CN#Hans'] }))
 }))
 
 describe('LanguageDialog', () => {
-	test('language dialog is not populated', async () => {
-		expect(mockWrapper.vm.languages.length).toBe(0)
-		/* mockWrapper.vm.$emit('update:visibility', true) */
+
+	test('languages array is not populated', () => {
+		expect(mockWrapper.vm.languages.length).toBe(0)		//1)
+    });
+
+    test('language service has been called with', async () => {
 		await mockWrapper.setProps({ visibility: true })
-		expect(mockWrapper.vm.visibility).toBe(true)
-
-		expect(axios.get).toHaveBeenCalledWith('2.0/languages')
+        expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages')		//2)
 		await flushPromises()
-		expect(mockWrapper.vm.languages.length).toBe(['it_IT', 'en_US', 'fr_FR', 'zh_CN#Hans'].length)
+    });
 
-		for (var idx in mockWrapper.vm.languages) {
-			if (mockWrapper.vm.languages[idx].locale === mockWrapper.vm.localObject.locale) {
-				expect(mockWrapper.vm.languages[idx].disabled).toBe(true)
-			} else {
-				expect(mockWrapper.vm.languages[idx].disabled).toBe(false)
-			}
-		}
-	})
-})
+    test('language dialog is not populated', async () => {
+		await mockWrapper.setProps({ visibility: true })
+		expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages')		//2)
+		await flushPromises()
+		expect(mockWrapper.vm.languages.length).toBe(4)	//3)
+    });
 
-describe('LanguageDialog', () => {
-	it('Test click event', async () => {
-		mockWrapper.vm.changeLanguage({ locale: 'it_IT', disabled: false })
-		expect(mockWrapper.vm.$i18n.locale).toBe('it_IT')
-	})
+    test('language dialog is not populated', async () => {
+		await mockWrapper.setProps({ visibility: true })
+		expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages')		//2)
+		await flushPromises()
+		for (var idx in mockWrapper.vm.languages) {												//
+			if (mockWrapper.vm.languages[idx].locale === mockWrapper.vm.localObject.locale) {	//
+				expect(mockWrapper.vm.languages[idx].disabled).toBe(true)						//
+			} else {																			//4)
+				expect(mockWrapper.vm.languages[idx].disabled).toBe(false)						//
+			}																					//
+		}																						//
+	});
 })
