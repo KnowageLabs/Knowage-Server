@@ -51,4 +51,9 @@
 		implementation="it.eng.spagobi.services.sbidocument.service.SbiDocumentServiceImpl"
 		url-pattern="/services/SbiDocumentService" />
 
+	<endpoint
+		name="DocumentExecuteService"
+		implementation="it.eng.spagobi.services.execute.service.DocumentExecuteServiceImpl"
+		url-pattern="/services/DocumentExecuteService" />
+
 </endpoints>

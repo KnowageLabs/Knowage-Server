@@ -239,17 +239,6 @@
   <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns73:SDKDataSource" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.sdk.datasources.bo.SDKDataSource" xmlns:ns73="http://bo.datasources.sdk.spagobi.eng.it"/>
   <arrayMapping innerType="ns75:SDKDataSource" languageSpecificType="java:it.eng.spagobi.sdk.datasources.bo.SDKDataSource[]" qname="ns74:ArrayOf_tns2_SDKDataSource" xmlns:ns74="urn:spagobisdkdatasources" xmlns:ns75="http://bo.datasources.sdk.spagobi.eng.it"/>
  </service>
- <service name="DocumentExecuteService" provider="java:RPC">
-  <parameter name="wsdlServicePort" value="DocumentExecuteService"/>
-  <parameter name="className" value="it.eng.spagobi.services.execute.stub.DocumentExecuteServiceSoapBindingSkeleton"/>
-  <parameter name="typeMappingVersion" value="1.2"/>
-  <parameter name="allowedMethods" value="*"/>
-  <parameter name="wsdlServiceElement" value="DocumentExecuteServiceService"/>
-  <parameter name="wsdlTargetNamespace" value="urn:spagobiexecute"/>
-  <parameter name="wsdlPortType" value="DocumentExecuteService"/>
-  <parameter name="scope" value="Application"/>
-  <parameter name="schemaUnqualified" value="http://xml.apache.org/xml-soap"/>
- </service>
  <transport name="http">
   <requestFlow>
    <handler type="URLMapper"/>
