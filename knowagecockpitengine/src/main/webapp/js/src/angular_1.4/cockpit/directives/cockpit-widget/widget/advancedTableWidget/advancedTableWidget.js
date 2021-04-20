@@ -548,7 +548,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            			var tempValue = $filter('number')(params.value,0);
 	            		}else var tempValue = params.valueFormatted || params.value;
 	            		if((!params.style || !params.style['pinnedOnly']) && title) this.eGui.innerHTML ='<b style="margin-right: 4px;">'+title+'</b>';
+				if(params.colDef.cellStyle && params.colDef.cellStyle.prefix) this.eGui.innerHTML += params.colDef.cellStyle.prefix;
 	            		this.eGui.innerHTML += tempValue;
+				if(params.colDef.cellStyle && params.colDef.cellStyle.suffix) this.eGui.innerHTML += params.colDef.cellStyle.suffix;
             		}
 	    		}
             }
