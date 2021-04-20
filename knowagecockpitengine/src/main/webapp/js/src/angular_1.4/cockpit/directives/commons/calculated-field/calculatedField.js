@@ -145,24 +145,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		})
 
 		$scope.availableFormulaTypes = [];
-
-		if(additionalInfo && additionalInfo.nullifFunction && additionalInfo.nullifFunction.length > 0) $scope.nullifWarningLabel = additionalInfo.nullifFunction[0];
-
-		angular.forEach($scope.functions, function(value, key) {
-			if(value.type == $scope.translate.load("kn.cockpit.functions.type.functions")){
-				if(additionalInfo && additionalInfo.availableFunctions && additionalInfo.availableFunctions.length != 0){
-					if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
-				}
-			}else if ($scope.availableFormulaTypes.indexOf(value.type) === -1) $scope.availableFormulaTypes.push(value.type);
-		});
-
+		
 		$scope.checkFormulaAvailability = function(formula){
+				
+			if(formula.exclude && formula.exclude.indexOf(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId).type) != -1) return false;				
+				
 			if(formula.type == $scope.translate.load("kn.cockpit.functions.type.functions") && additionalInfo){
 				if(additionalInfo.availableFunctions.lenght > 0 && additionalInfo.availableFunctions.indexOf(formula.name) === -1) return false;
 			}
 			return true;
 		}
 
+		if(additionalInfo && additionalInfo.nullifFunction && additionalInfo.nullifFunction.length > 0) $scope.nullifWarningLabel = additionalInfo.nullifFunction[0];
+
+		angular.forEach($scope.functions, function(value, key) {
+			if(value.type == $scope.translate.load("kn.cockpit.functions.type.functions")){
+				if(additionalInfo && additionalInfo.availableFunctions && additionalInfo.availableFunctions.length != 0){
+					if ($scope.availableFormulaTypes.indexOf(value.type) === -1 && $scope.checkFormulaAvailability(value)) {
+							$scope.availableFormulaTypes.push(value.type);
+						}
+				}
+			} else if ($scope.availableFormulaTypes.indexOf(value.type) === -1 && $scope.checkFormulaAvailability(value)) {
+					$scope.availableFormulaTypes.push(value.type);
+				}
+		});
+
+		
 		//codemirror initializer
 		$scope.reloadCodemirror = false;
 		$scope.codemirrorLoaded = function(_editor) {

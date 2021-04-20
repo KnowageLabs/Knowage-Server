@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
@@ -245,11 +247,27 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 		for (int i = 0; i < metadata.getFieldCount(); i++) {
 
 			if (formula.contains(metadata.getFieldName(i)) || formula.contains(metadata.getFieldAlias(i))) {
+				String fieldToReplace = metadata.getFieldName(i);
 
 				if (formula.contains(metadata.getFieldAlias(i))) {
-					formula = formula.replaceAll(metadata.getFieldAlias(i), record.getFieldAt(i).getValue().toString());
-				} else
-					formula = formula.replaceAll(metadata.getFieldName(i), record.getFieldAt(i).getValue().toString());
+					fieldToReplace = metadata.getFieldAlias(i);
+				}
+				String pattern = "((?:AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\\()(" + fieldToReplace + ")(\\))";
+				Pattern r = Pattern.compile(pattern);
+
+				Matcher m = r.matcher(formula);
+
+				while (m.find()) {
+					formula = formula.replace(m.group(), record.getFieldAt(i).getValue().toString());
+				}
+
+				pattern = "((?:AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\\()([a-zA-Z0-9\\-\\+\\/\\*\\_\\s\\$\\{\\}\\\"]*)(\\))";
+				r = Pattern.compile(pattern);
+				m = r.matcher(formula);
+
+				while (m.find()) {
+					formula = formula.replace(m.group(), record.getFieldAt(i).getValue().toString());
+				}
 
 			}
 
