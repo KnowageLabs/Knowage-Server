@@ -1015,9 +1015,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	/**
-	 * @deprecated
-	 * TODO Delete
-	 * DONE
+	 * @deprecated TODO Delete DONE
 	 */
 	@Deprecated
 	@Override
@@ -1223,9 +1221,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	/**
-	 * @deprecated See {@link ISbiDataSetDAO}
-	 * TODO : Delete
-	 * DONE
+	 * @deprecated See {@link ISbiDataSetDAO} TODO : Delete DONE
 	 */
 	@Override
 	@Deprecated
@@ -1234,9 +1230,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	/**
-	 * @deprecated See {@link ISbiDataSetDAO}
-	 * TODO : Delete
-	 * DONE
+	 * @deprecated See {@link ISbiDataSetDAO} TODO : Delete DONE
 	 */
 	@Override
 	@Deprecated
@@ -1381,9 +1375,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	/**
-	 * @deprecated See {@link ISbiDataSetDAO}
-	 * TODO : Delete
-	 * DONE
+	 * @deprecated See {@link ISbiDataSetDAO} TODO : Delete DONE
 	 */
 	@Override
 	@Deprecated
@@ -1489,9 +1481,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	/**
-	 * @deprecated
-	 * TODO Delete
-	 * DONE
+	 * @deprecated TODO Delete DONE
 	 */
 	@Deprecated
 	@Override
@@ -1500,9 +1490,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	/**
-	 * @deprecated See {@link ISbiDataSetDAO}
-	 * TODO : Delete
-	 * DONE
+	 * @deprecated See {@link ISbiDataSetDAO} TODO : Delete DONE
 	 */
 	@Override
 	@Deprecated
@@ -1512,9 +1500,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	/**
-	 * @deprecated See {@link ISbiDataSetDAO}
-	 * TODO : Delete
-	 * DONE
+	 * @deprecated See {@link ISbiDataSetDAO} TODO : Delete DONE
 	 */
 	@Override
 	@Deprecated
@@ -1761,7 +1747,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 		return toReturn;
 	}
-
 
 	@Override
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize, String owner) {
@@ -2356,8 +2341,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	/**
-	 * @deprecated See {@link ISbiDataSetDAO}
-	 * TODO : Delete
+	 * @deprecated See {@link ISbiDataSetDAO} TODO : Delete
 	 */
 	@Override
 	@Deprecated
@@ -3030,13 +3014,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			List<SbiDataSet> listOfSbiDataset = cr.list();
 
-			ret = listOfSbiDataset.stream()
-					.map(e -> DataSetFactory.toDataSet(e, getUserProfile()))
-					.collect(toList());
+			ret = listOfSbiDataset.stream().map(e -> DataSetFactory.toDataSet(e, getUserProfile())).collect(toList());
 
-		} catch(Exception ex) {
-			LogMF.error(logger, "Error getting list of dataset with offset {0}, limit {1}, owner {2}, sorting column {3}, reverse {4} and tags {5}", new Object[] { offset, fetchSize, owner, sortByColumn, reverse, tagIds });
-		}finally {
+		} catch (Exception ex) {
+			LogMF.error(logger, "Error getting list of dataset with offset {0}, limit {1}, owner {2}, sorting column {3}, reverse {4} and tags {5}",
+					new Object[] { offset, fetchSize, owner, sortByColumn, reverse, tagIds });
+		} finally {
 			if (session != null) {
 				session.close();
 			}
