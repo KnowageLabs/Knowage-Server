@@ -1574,18 +1574,14 @@ public class ManageDataSetsForREST {
 			try {
 				IDataSet existingByName = dsDao.loadDataSetByName(ds.getName());
 				IDataSet existingByLabel = dsDao.loadDataSetByLabel(ds.getLabel());
-				if (existingByLabel != null) {
-					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.labelAlreadyExistent");
-				}
 
-				if (existingByName != null) {
-					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.nameAlreadyExistent");
-				}
 				if (id != null && !id.equals("") && !id.equals("0")) {
 					if (existingByName != null && !Integer.valueOf(id).equals(existingByName.getId())) {
 						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.nameAlreadyExistent");
 					}
-
+					if (existingByLabel != null && !Integer.valueOf(id).equals(existingByLabel.getId())) {
+						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.labelAlreadyExistent");
+					}
 					ds.setId(Integer.valueOf(id));
 					modifyPersistence(ds, logParam);
 					dsDao.modifyDataSet(ds);
@@ -1614,6 +1610,13 @@ public class ManageDataSetsForREST {
 				}
 				String operation = (id != null && !id.equals("") && !id.equals("0")) ? "DATA_SET.MODIFY" : "DATA_SET.ADD";
 				Boolean isFromSaveNoMetadata = json.optBoolean(DataSetConstants.IS_FROM_SAVE_NO_METADATA);
+				if (existingByLabel != null && !Integer.valueOf(id).equals(existingByLabel.getId())) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.labelAlreadyExistent");
+				}
+
+				if (existingByName != null && !Integer.valueOf(id).equals(existingByName.getId())) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.nameAlreadyExistent");
+				}
 				// handle insert of persistence and scheduling
 				if (!isFromSaveNoMetadata) {
 					auditlogger.info("[Start persisting metadata for dataset with id " + ds.getId() + "]");
@@ -1621,7 +1624,6 @@ public class ManageDataSetsForREST {
 					auditlogger.info("Metadata saved for dataset with id " + ds.getId() + "]");
 					auditlogger.info("[End persisting metadata for dataset with id " + ds.getId() + "]");
 				}
-
 				AuditLogUtilities.updateAudit(req, profile, operation, logParam, "OK");
 				dsDao.updateDatasetOlderVersion(ds);
 				return attributesResponseSuccessJSON.toString();
