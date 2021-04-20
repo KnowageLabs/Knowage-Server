@@ -1584,7 +1584,15 @@ public class ManageDataSetsForREST {
 			String id = json.optString(DataSetConstants.ID);
 			try {
 				IDataSet existingByName = dsDao.loadDataSetByName(ds.getName());
-				if (id != null && !id.equals("") && !id.equals("0") && existingByName != null) {
+				IDataSet existingByLabel = dsDao.loadDataSetByLabel(ds.getLabel());
+				if (existingByLabel != null) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.labelAlreadyExistent");
+				}
+
+				if (existingByName != null) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.nameAlreadyExistent");
+				}
+				if (id != null && !id.equals("") && !id.equals("0")) {
 					if (existingByName != null && !Integer.valueOf(id).equals(existingByName.getId())) {
 						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.nameAlreadyExistent");
 					}
@@ -1600,14 +1608,6 @@ public class ManageDataSetsForREST {
 					attributesResponseSuccessJSON.put("userIn", ds.getUserIn());
 					attributesResponseSuccessJSON.put("meta", new DataSetMetadataJSONSerializer().metadataSerializerChooser(ds.getDsMetadata()));
 				} else {
-					IDataSet existingByLabel = dsDao.loadDataSetByLabel(ds.getLabel());
-					if (existingByLabel != null) {
-						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.labelAlreadyExistent");
-					}
-
-					if (existingByName != null) {
-						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.nameAlreadyExistent");
-					}
 
 					Integer dsID = dsDao.insertDataSet(ds);
 					VersionedDataSet dsSaved = (VersionedDataSet) dsDao.loadDataSetById(dsID);
