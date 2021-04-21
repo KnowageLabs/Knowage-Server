@@ -14,8 +14,8 @@
 				<p>
 					<strong>{{ $t('common.tenant') }}:</strong> {{ user.organization }}
 				</p>
-				<p>{{ $t('InfoDialog.sourceCode') }} <a href="www.knowage-suite.com">Knowage Suite</a></p>
-				<p>{{ $t('InfoDialog.copyright', { year: currentYear }) }}</p>
+				<p>{{ $t('infoDialog.sourceCode') }} <a href="www.knowage-suite.com">Knowage Suite</a></p>
+				<p>{{ $t('infoDialog.copyright', { year: currentYear }) }}</p>
 			</div>
 		</div>
 		<template #footer>
