@@ -18,9 +18,11 @@
 
 package it.eng.spagobi.profiling.bo;
 
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.tenant.TenantManager;
@@ -44,8 +46,9 @@ public class UserInformationDTO {
 	private String emailAddress;
 	private Locale locale = null;
 	private Object userUniqueIdentifier = null;
+	private Collection roles = null;
 
-	public UserInformationDTO(UserProfile user) {
+	public UserInformationDTO(UserProfile user) throws EMFInternalError {
 		this.userId = String.valueOf(user.getUserId());
 		this.fullName = String.valueOf(user.getUserName());
 		this.isSuperadmin = user.getIsSuperadmin();
@@ -55,6 +58,7 @@ public class UserInformationDTO {
 		this.userUniqueIdentifier = user.getUserUniqueIdentifier();
 
 		this.locale = GeneralUtilities.getDefaultLocale();
+		this.roles = user.getRolesForUse();
 
 	}
 
@@ -136,6 +140,14 @@ public class UserInformationDTO {
 
 	public void setUserUniqueIdentifier(Object userUniqueIdentifier) {
 		this.userUniqueIdentifier = userUniqueIdentifier;
+	}
+
+	public Collection getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Collection roles) {
+		this.roles = roles;
 	}
 
 }

@@ -1,6 +1,6 @@
 <template>
 	<Dialog class="kn-dialog--toolbar--primary RoleDialog" v-bind:visible="visibility" footer="footer" :header="$t('role.roleSelection')" :closable="false" modal>
-		<Dropdown id="role" v-model="sessionRole" class="kn-material-input" @change="setDirty" :options="roles" :placeholder="$t('role.defaultRolePlaceholder')" />
+		<Dropdown id="role" v-model="sessionRole" class="kn-material-input" @change="setDirty" :options="user.roles" :placeholder="$t('role.defaultRolePlaceholder')" />
 		<template #footer>
 			<Button class="p-button-text kn-button" v-t="'common.close'" @click="closeDialog" />
 			<Button class="kn-button kn-button--primary" v-t="'common.save'" @click="changeRole" />
@@ -10,9 +10,10 @@
 
 <script lang="ts">
 	import { defineComponent } from 'vue'
+	import { mapState } from 'vuex'
+	import axios from 'axios'
 	import Dialog from 'primevue/dialog'
 	import Dropdown from 'primevue/dropdown'
-	import axios from 'axios'
 
 	export default defineComponent({
 		name: 'role-dialog',
@@ -22,8 +23,6 @@
 		},
 		data() {
 			return {
-				/* roles: Array<Role>() */
-				roles: ['', 'admin', 'Audit', 'user'],
 				sessionRole: ''
 			}
 		},
@@ -43,6 +42,7 @@
 				let headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
 				let data = this.formUrlEncoded({ ACTION_NAME: 'SET_SESSION_ROLE_ACTION', SELECTED_ROLE: this.sessionRole })
 				let postUrl = '/knowage/servlet/AdapterHTTP'
+
 				axios
 					.post(postUrl, data, { headers: headers })
 					.then(() => {
@@ -54,6 +54,11 @@
 			closeDialog() {
 				this.$emit('update:visibility', false)
 			}
+		},
+		computed: {
+			...mapState({
+				user: 'user'
+			})
 		}
 	})
 </script>
