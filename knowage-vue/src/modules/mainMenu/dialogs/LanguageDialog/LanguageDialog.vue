@@ -3,7 +3,7 @@
 		<Listbox class="kn-list countryList" :options="languages" optionDisabled="disabled">
 			<template #option="slotProps">
 				<div :class="['p-d-flex', 'p-ai-center', 'countryItem', slotProps.option.locale]" @click="changeLanguage(slotProps.option)">
-					<img :alt="slotProps.option.locale" :src="require('@/assets/images/flags/icon-' + slotProps.option.locale.toLowerCase() + '.png')" width="40" />
+					<img :alt="slotProps.option.locale" :src="require('@/assets/images/flags/' + slotProps.option.locale.toUpperCase().substring(3, 5) + '.png')" width="40" />
 					<div class="countryLabel">{{ $t(`language.${slotProps.option.locale}`) }}</div>
 					<span class="kn-flex"></span>
 					<i class="fas fa-check" v-if="slotProps.option.locale === $i18n.locale"></i>
@@ -47,13 +47,27 @@
 		emits: ['update:visibility'],
 		methods: {
 			changeLanguage(language) {
-				store.commit('setLocale', language.locale)
-				localStorage.setItem('locale', language.locale)
-				this.$i18n.locale = language.locale
 
-				this.closeDialog()
-				this.$router.go(0)
-				this.$forceUpdate()
+				let splittedLanguage = language.locale.split('_')
+
+				let url = '/knowage/servlet/AdapterHTTP?';
+				url += 'ACTION_NAME=CHANGE_LANGUAGE'
+				url += '&LANGUAGE_ID=' + splittedLanguage[0]
+				url += '&COUNTRY_ID=' + splittedLanguage[1].toUpperCase()
+				url += '&THEME_NAME=sbi_default'
+
+				axios.get(url).then(
+					() => {
+						store.commit('setLocale', language.locale)
+						localStorage.setItem('locale', language.locale)
+						this.$i18n.locale = language.locale
+
+						this.closeDialog()
+						this.$router.go(0)
+						this.$forceUpdate()
+					},
+						(error) => console.error(error)
+					)
 			},
 			closeDialog() {
 				this.$emit('update:visibility', false)
@@ -91,10 +105,11 @@
 	.countryList {
 		border: none;
 		border-radius: 0;
-		min-width: 200px;
-		max-height: 300px;
+		min-width: 250px;
+		max-height: 100%;
+		background-color: rgb(245, 245, 245);
 
-		&:deep() li.p-listbox-item {
+		&:deep(li.p-listbox-item) {
 			padding: 0rem 0rem;
 		}
 

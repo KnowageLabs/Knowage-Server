@@ -285,10 +285,10 @@
 
 	<CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES" name="LANGUAGES"
 		description="All languages supported" isActive="true"
-		valueCheck="[it,IT],[en,US],[fr,FR],[es,ES],[pt,BR]" valueType="STRING"
-		category="LANGUAGE_SUPPORTED" />
+		valueCheck="bg-BG,de-DE,en-GB,en-US,es-ES,fr-FR,it-IT,ja-JP,ko-KR,pt-BR,ru-RU,tr-TR,zh-Hans-CN"
+		valueType="STRING" category="LANGUAGE_SUPPORTED" />
 	<CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default"
-		name="default" description="default" isActive="true" valueCheck="en,US"
+		name="default" description="default" isActive="true" valueCheck="en-US"
 		valueType="STRING" category="LANGUAGE_SUPPORTED" />
 
 	<CONFIG label="SCRIPT_LANGUAGE_DEFAULT" name="SCRIPT LANGUAGE DEFAULT"

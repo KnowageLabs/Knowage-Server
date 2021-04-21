@@ -25,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.profiling.bo.UserInformationDTO;
@@ -38,7 +39,7 @@ public class CurrentUserResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public UserInformationDTO getCurrentUserInformation(@Context HttpServletRequest httpRequest) {
+	public UserInformationDTO getCurrentUserInformation(@Context HttpServletRequest httpRequest) throws EMFInternalError {
 
 		UserProfile userProfile = getUserProfile();
 

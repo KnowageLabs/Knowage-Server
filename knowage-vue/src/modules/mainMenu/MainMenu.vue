@@ -139,7 +139,7 @@
 			}
 
 			axios
-				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale.replace('/_/g', '-')))
+				.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale.replaceAll('_', '-')))
 				.then((response) => {
 					this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
 					this.technicalUserFunctionalities = response.data.technicalUserFunctionalities

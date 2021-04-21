@@ -7,7 +7,7 @@ import Button from 'primevue/button'
 
 const defaultLocale = 'en_US'
 
-const mockWrapper = shallowMount(LanguageDialog, {
+const wrapper = shallowMount(LanguageDialog, {
 	propsData: {
 		visibility: false,
 		languages: []
@@ -26,39 +26,39 @@ const mockWrapper = shallowMount(LanguageDialog, {
 	}
 })
 
+const mockedLanguagesArray = ['it_IT', 'en_US', 'fr_FR', 'zh_CN#Hans']
+
 jest.mock('axios', () => ({
-	get: jest.fn(() => Promise.resolve({ data: ['it_IT', 'en_US', 'fr_FR', 'zh_CN#Hans'] }))
+	get: jest.fn(() => Promise.resolve({ data: mockedLanguagesArray }))
 }))
 
 describe('LanguageDialog', () => {
 
 	test('languages array is not populated', () => {
-		expect(mockWrapper.vm.languages.length).toBe(0)		//1)
+		expect(wrapper.vm.languages.length).toBe(0)
     });
 
     test('language service has been called with', async () => {
-		await mockWrapper.setProps({ visibility: true })
-        expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages')		//2)
-		await flushPromises()
+		await wrapper.setProps({ visibility: true })
+        expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages')
     });
-
-    test('language dialog is not populated', async () => {
-		await mockWrapper.setProps({ visibility: true })
-		expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages')		//2)
+	
+	test('languages array is populated', async () => {
+		await axios.get
 		await flushPromises()
-		expect(mockWrapper.vm.languages.length).toBe(4)	//3)
-    });
-
-    test('language dialog is not populated', async () => {
-		await mockWrapper.setProps({ visibility: true })
-		expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages')		//2)
-		await flushPromises()
-		for (var idx in mockWrapper.vm.languages) {												//
-			if (mockWrapper.vm.languages[idx].locale === mockWrapper.vm.localObject.locale) {	//
-				expect(mockWrapper.vm.languages[idx].disabled).toBe(true)						//
-			} else {																			//4)
-				expect(mockWrapper.vm.languages[idx].disabled).toBe(false)						//
-			}																					//
-		}																						//
+		expect(wrapper.vm.languages.length).toBe(mockedLanguagesArray.length)
 	});
+
+	test('current locale language is the only disabled', async () => {
+		/* Languages is populated because previous test */
+		expect(wrapper.vm.languages.length).toBeGreaterThan(0)
+
+		for (var idx in wrapper.vm.languages) {
+			if (wrapper.vm.languages[idx].locale === wrapper.vm.localObject.locale) {
+				expect(wrapper.vm.languages[idx].disabled).toBe(true)
+			} else {
+				expect(wrapper.vm.languages[idx].disabled).toBe(false)
+			}
+		}
+	});  
 })

@@ -344,20 +344,31 @@
 	<DOMAIN valueCd="CREATION" valueNm="sbidomains.permissiononfolder.nm.create"
 		domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder"
 		valueDs="sbidomains.permissiononfolder.ds.create" />
-	<DOMAIN valueCd="it-IT" valueNm="Italian (IT)" domainCd="LANG"
-		domainNm="Language tag code" valueDs="Italian" />
-	<DOMAIN valueCd="es-ES" valueNm="Spanish (ES)" domainCd="LANG"
-		domainNm="Language tag code" valueDs="Spanish" />
-	<DOMAIN valueCd="en-US" valueNm="English (US)" domainCd="LANG"
-		domainNm="Language tag code" valueDs="English (US)" />
-	<DOMAIN valueCd="fr-FR" valueNm="French (FR)" domainCd="LANG"
-		domainNm="Language tag code" valueDs="French" />
-	<DOMAIN valueCd="pt-BR" valueNm="Portoguese (BR)" domainCd="LANG"
-		domainNm="Language tag code" valueDs="Portoguese" />
+
+	<DOMAIN valueCd="bg-BG" valueNm="Bulgarian (BG)" domainCd="LANG"
+		domainNm="Language tag code" valueDs="Bulgarian (BG)" />
 	<DOMAIN valueCd="de-DE" valueNm="Deutsch (DE)" domainCd="LANG"
 		domainNm="Language tag code" valueDs="Deutsch (DE)" />
 	<DOMAIN valueCd="en-GB" valueNm="English (GB)" domainCd="LANG"
 		domainNm="Language tag code" valueDs="English (GB)" />
+	<DOMAIN valueCd="en-US" valueNm="English (US)" domainCd="LANG"
+		domainNm="Language tag code" valueDs="English (US)" />
+	<DOMAIN valueCd="es-ES" valueNm="Spanish (ES)" domainCd="LANG"
+		domainNm="Language tag code" valueDs="Spanish (ES)" />
+	<DOMAIN valueCd="fr-FR" valueNm="French (FR)" domainCd="LANG"
+		domainNm="Language tag code" valueDs="French" />
+	<DOMAIN valueCd="it-IT" valueNm="Italian (IT)" domainCd="LANG"
+		domainNm="Language tag code" valueDs="Italian (IT)" />
+	<DOMAIN valueCd="ja-JP" valueNm="Japanese (JP)" domainCd="LANG"
+		domainNm="Language tag code" valueDs="Japanese (JP)" />
+	<DOMAIN valueCd="ko-KR" valueNm="Korean (KR)" domainCd="LANG"
+		domainNm="Language tag code" valueDs="Korean (KR)" />
+	<DOMAIN valueCd="ru-RU" valueNm="Russian (RU)" domainCd="LANG"
+		domainNm="Language tag code" valueDs="Russian (RU)" />
+	<DOMAIN valueCd="pt-BR" valueNm="Portoguese (BR)" domainCd="LANG"
+		domainNm="Language tag code" valueDs="Portoguese (BR)" />
+	<DOMAIN valueCd="tr-TR" valueNm="Turkish (TR)" domainCd="LANG"
+		domainNm="Language tag code" valueDs="Turkish (TR)" />
 	<DOMAIN valueCd="zh-Hans-CN" valueNm="Chinese (CH)" domainCd="LANG"
 		domainNm="Language tag code" valueDs="Chinese (CH)" />
 
