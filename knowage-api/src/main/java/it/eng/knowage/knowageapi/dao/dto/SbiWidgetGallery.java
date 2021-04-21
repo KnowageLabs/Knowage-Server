@@ -37,7 +37,7 @@ public class SbiWidgetGallery implements Serializable {
 	private String organization;
 
 	@Column(name = "PREVIEW_IMAGE")
-	private String previewImage;
+	private byte[] previewImage;
 
 	@Column(name = "SBI_VERSION_DE")
 	private String sbiVersionDe;
@@ -48,7 +48,7 @@ public class SbiWidgetGallery implements Serializable {
 	@Column(name = "SBI_VERSION_UP")
 	private String sbiVersionUp;
 
-	private String template;
+	private byte[] template;
 
 	@Column(name = "TIME_DE")
 	private Timestamp timeDe;
@@ -121,11 +121,11 @@ public class SbiWidgetGallery implements Serializable {
 		this.organization = organization;
 	}
 
-	public String getPreviewImage() {
+	public byte[] getPreviewImage() {
 		return this.previewImage;
 	}
 
-	public void setPreviewImage(String previewImage) {
+	public void setPreviewImage(byte[] previewImage) {
 		this.previewImage = previewImage;
 	}
 
@@ -153,11 +153,11 @@ public class SbiWidgetGallery implements Serializable {
 		this.sbiVersionUp = sbiVersionUp;
 	}
 
-	public String getTemplate() {
+	public byte[] getTemplate() {
 		return this.template;
 	}
 
-	public void setTemplate(String template) {
+	public void setTemplate(byte[] template) {
 		this.template = template;
 	}
 

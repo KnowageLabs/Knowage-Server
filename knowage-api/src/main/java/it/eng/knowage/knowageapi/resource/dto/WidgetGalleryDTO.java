@@ -1,6 +1,5 @@
 package it.eng.knowage.knowageapi.resource.dto;
 
-import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +12,6 @@ public class WidgetGalleryDTO {
 	private String description;
 	private String type;
 	private List<String> tags = new ArrayList<String>();
-	// TODO correctly image handling
-	private byte[] imageBase64Content = null;
 	private String image = null;
 
 	private String organization;
@@ -78,7 +75,7 @@ public class WidgetGalleryDTO {
 	}
 
 	public WidgetGalleryDTO(String id, String author, String name, String type, List<String> tags, String html, String javaScript, String python, String css,
-			String image) {
+			byte[] image) {
 		super();
 		this.id = id;
 		this.author = author;
@@ -89,8 +86,8 @@ public class WidgetGalleryDTO {
 		this.code.setHtml(html);
 		this.code.setJavascript(javaScript);
 		this.code.setPython(python);
-		this.imageBase64Content = image != null ? image.getBytes(Charset.forName("utf8")) : null;
-		this.image = image;
+		this.image = image != null ? new String(image) : null;
+
 	}
 
 	public WidgetGalleryDTO() {
@@ -103,14 +100,6 @@ public class WidgetGalleryDTO {
 
 	public void setImage(String image) {
 		this.image = image;
-	}
-
-	public byte[] getImageBase64Content() {
-		return imageBase64Content;
-	}
-
-	public void setImageBase64Content(byte[] imageBase64Content) {
-		this.imageBase64Content = imageBase64Content;
 	}
 
 	public void setTags(List<String> tags) {

@@ -84,7 +84,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		toRet.setName(sbiWidgetGallery.getName());
 		toRet.setDescription(sbiWidgetGallery.getDescription());
 		toRet.setType(sbiWidgetGallery.getType());
-		toRet.setImage(sbiWidgetGallery.getPreviewImage());
+		toRet.setImage(new String(sbiWidgetGallery.getPreviewImage()));
 		toRet.setOrganization(sbiWidgetGallery.getOrganization());
 		toRet.setUsageCounter(sbiWidgetGallery.getUsageCounter());
 		List<SbiWidgetGalleryTag> tagList = sbiWidgetGallery.getSbiWidgetGalleryTags();
@@ -95,10 +95,10 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			}
 			toRet.setTags(tags);
 		}
-		Code code = new Code();
-		JSONObject jsonBody;
 
-		jsonBody = new JSONObject(sbiWidgetGallery.getTemplate());
+		JSONObject jsonBody = new JSONObject(new String(sbiWidgetGallery.getTemplate()));
+
+		Code code = new Code();
 		JSONObject jsonCode = jsonBody.optJSONObject("code");
 		String html = jsonCode.getString("html");
 		String javascript = jsonCode.getString("javascript");
@@ -125,9 +125,9 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			newSbiWidgetGallery.setDescription(description);
 			newSbiWidgetGallery.setName(name);
 			newSbiWidgetGallery.setOrganization(profile.getOrganization());
-			newSbiWidgetGallery.setPreviewImage(widgetGalleryDTO.getImage());
+			newSbiWidgetGallery.setPreviewImage(widgetGalleryDTO.getImage().getBytes());
 			newSbiWidgetGallery.setSbiVersionIn(sbiversion);
-			newSbiWidgetGallery.setTemplate(template);
+			newSbiWidgetGallery.setTemplate(template.getBytes());
 			newSbiWidgetGallery.setTimeIn(Timestamp.from(Instant.now()));
 			newSbiWidgetGallery.setType(type);
 			newSbiWidgetGallery.setUserIn(profile.getUserId());
@@ -152,9 +152,9 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			newSbiWidgetGallery.setDescription(description);
 			newSbiWidgetGallery.setName(name);
 			newSbiWidgetGallery.setOrganization(profile.getOrganization());
-			newSbiWidgetGallery.setPreviewImage(image);
+			newSbiWidgetGallery.setPreviewImage(image.getBytes());
 			newSbiWidgetGallery.setSbiVersionUp(sbiversion);
-			newSbiWidgetGallery.setTemplate(template);
+			newSbiWidgetGallery.setTemplate(template.getBytes());
 			newSbiWidgetGallery.setTimeUp(Timestamp.from(Instant.now()));
 			newSbiWidgetGallery.setType(type);
 			newSbiWidgetGallery.setUserUp(profile.getUserId());
