@@ -153,7 +153,7 @@
 			min-height: 400px;
 			max-height: 600px;
 
-			&:deep() .p-tabview-title {
+			&:deep(.p-tabview-title) {
 				text-transform: uppercase;
 				margin: 0;
 				min-height: 40%;

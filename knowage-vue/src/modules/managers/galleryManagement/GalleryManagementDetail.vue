@@ -271,7 +271,7 @@ export default defineComponent({
       background-color: $color-secondary;
     }
   }
-  &:deep() .p-tabview {
+  &:deep(.p-tabview) {
     display: flex;
     flex-direction: column;
     .p-tabview-panels {
@@ -285,7 +285,7 @@ export default defineComponent({
       }
     }
   }
-  &:deep() .CodeMirror {
+  &:deep(.CodeMirror) {
     font-size: 0.8rem;
   }
   display: flex;
@@ -301,7 +301,7 @@ export default defineComponent({
     color: #aaaebc;
     text-transform: uppercase;
   }
-  &:deep() .imageUploader {
+  &:deep(.imageUploader) {
     .p-fileupload {
       display: inline-block;
       float: right;
@@ -329,7 +329,7 @@ export default defineComponent({
       flex: 1;
     }
   }
-  &:deep() .p-card-content {
+  &:deep(.p-card-content) {
     height: 210px;
   }
 }
