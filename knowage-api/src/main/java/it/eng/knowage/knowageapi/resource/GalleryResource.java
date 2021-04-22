@@ -114,6 +114,7 @@ public class GalleryResource {
 		String html = "";
 		String javascript = "";
 		String python = "";
+		String outputType = "";
 		String userId = jwtToken2userId(token.replace("Bearer ", ""));
 		WidgetGalleryDTO newSbiWidgetGallery = null;
 		if (StringUtilities.isNotEmpty(body)) {
@@ -134,8 +135,10 @@ public class GalleryResource {
 				python = jsonCode.getString("python");
 				css = jsonCode.getString("css");
 				profile = getUserProfile(token);
-
-				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, image, "", body, profile, tags);
+				if (jsonBody.has("outputType")) {
+					outputType = jsonBody.getString("outputType");
+				}
+				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, image, "", body, profile, tags, outputType);
 
 			} catch (Exception e) {
 				throw new KnowageRuntimeException(e.getMessage(), e);
@@ -163,6 +166,7 @@ public class GalleryResource {
 		String javascript = "";
 		String python = "";
 		String userId = jwtToken2userId(token.replace("Bearer ", ""));
+		String outputType = "";
 		WidgetGalleryDTO newSbiWidgetGallery = null;
 		if (StringUtilities.isNotEmpty(body)) {
 			try {
@@ -183,9 +187,13 @@ public class GalleryResource {
 				css = jsonCode.getString("css");
 				profile = getUserProfile(token);
 				newSbiWidgetGallery = widgetGalleryService.getWidgetsById(widgetId, profile);
+				if (jsonBody.has("outputType")) {
+					outputType = jsonBody.getString("outputType");
+				}
 				if (newSbiWidgetGallery != null) {
 
-					widgetGalleryService.updateGallery(newSbiWidgetGallery.getId(), label, type, userId, description, image, "", body, profile, tags);
+					widgetGalleryService.updateGallery(newSbiWidgetGallery.getId(), label, type, userId, description, image, "", body, profile, tags,
+							outputType);
 				}
 
 			} catch (Exception e) {

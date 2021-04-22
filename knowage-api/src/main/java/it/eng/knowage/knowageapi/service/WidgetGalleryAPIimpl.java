@@ -109,16 +109,17 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		code.setPython(python);
 		code.setHtml(html);
 		toRet.setCode(code);
+		toRet.setOutputType(sbiWidgetGallery.getOutputType());
 
 		return toRet;
 	}
 
 	@Override
 	public WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String image, String sbiversion, String template,
-			SpagoBIUserProfile profile, String tags) {
+			SpagoBIUserProfile profile, String tags, String outputType) {
 		WidgetGalleryDTO widgetGalleryDTO = null;
 		if (this.canSeeGallery(profile)) {
-			widgetGalleryDTO = createWidgetGalleryDTO(name, type, author, description, image, sbiversion, template, profile, tags);
+			widgetGalleryDTO = createWidgetGalleryDTO(name, type, author, description, image, sbiversion, template, profile, tags, outputType);
 			SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
 			newSbiWidgetGallery.setUuid(widgetGalleryDTO.getId());
 			newSbiWidgetGallery.setAuthor(author);
@@ -132,6 +133,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			newSbiWidgetGallery.setType(type);
 			newSbiWidgetGallery.setUserIn(profile.getUserId());
 			newSbiWidgetGallery.setUsageCounter(1);
+			newSbiWidgetGallery.setOutputType(outputType);
 			List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, profile.getUserId(), tags);
 			if (tagList != null) {
 				newSbiWidgetGallery.getSbiWidgetGalleryTags().addAll(tagList);
@@ -144,7 +146,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 
 	@Override
 	public void updateGallery(String uuid, String name, String type, String author, String description, String image, String sbiversion, String template,
-			SpagoBIUserProfile profile, String tags) {
+			SpagoBIUserProfile profile, String tags, String outputType) {
 		if (this.canSeeGallery(profile)) {
 			SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
 			newSbiWidgetGallery.setUuid(uuid);
@@ -158,6 +160,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			newSbiWidgetGallery.setTimeUp(Timestamp.from(Instant.now()));
 			newSbiWidgetGallery.setType(type);
 			newSbiWidgetGallery.setUserUp(profile.getUserId());
+			newSbiWidgetGallery.setOutputType(outputType);
 			List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, profile.getUserId(), tags);
 			if (tagList != null)
 				newSbiWidgetGallery.getSbiWidgetGalleryTags().addAll(tagList);
@@ -180,7 +183,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 
 	@Override
 	public WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String image, String sbiversion,
-			String template, SpagoBIUserProfile profile, String tags) {
+			String template, SpagoBIUserProfile profile, String tags, String outputType) {
 
 		UUID uuidGenerated = generateType1UUID();
 		WidgetGalleryDTO newSbiWidgetGallery = new WidgetGalleryDTO();
@@ -195,6 +198,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		newSbiWidgetGallery.setTimestamp(Timestamp.from(Instant.now()));
 		newSbiWidgetGallery.setType(type);
 		newSbiWidgetGallery.setUser(profile.getUserId());
+		newSbiWidgetGallery.setOutputType(outputType);
 		return newSbiWidgetGallery;
 
 	}

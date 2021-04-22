@@ -19,20 +19,20 @@ public interface WidgetGalleryAPI {
 
 	boolean canSeeGallery(SpagoBIUserProfile userProfile);
 
-	WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String image, String sbiversion, String template,
-			SpagoBIUserProfile profile, String tags);
-
-	void updateGallery(String uuid, String name, String type, String author, String description, String image, String sbiversion, String template,
-			SpagoBIUserProfile profile, String tags);
-
 	WidgetGalleryDTO getWidgetsById(String id, SpagoBIUserProfile profile) throws JSONException;
 
 	List<WidgetGalleryDTO> getWidgetsByTenant(SpagoBIUserProfile profile) throws JSONException;
 
 	List<WidgetGalleryDTO> getWidgetsByTenantType(SpagoBIUserProfile profile, String type) throws JSONException;
 
-	WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String image, String sbiversion, String template,
-			SpagoBIUserProfile profile, String tags);
-
 	int deleteGallery(String id, SpagoBIUserProfile profile);
+
+	WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String image, String sbiversion, String template,
+			SpagoBIUserProfile profile, String tags, String outputType);
+
+	void updateGallery(String uuid, String name, String type, String author, String description, String image, String sbiversion, String template,
+			SpagoBIUserProfile profile, String tags, String outputType);
+
+	WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String image, String sbiversion, String template,
+			SpagoBIUserProfile profile, String tags, String outputType);
 }

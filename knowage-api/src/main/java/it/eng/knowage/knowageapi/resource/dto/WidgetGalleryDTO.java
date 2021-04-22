@@ -21,6 +21,7 @@ public class WidgetGalleryDTO {
 	private String user;
 	private int usageCounter;
 	private Code code = new Code();
+	private String outputType;
 
 	public String getId() {
 		return id;
@@ -152,6 +153,14 @@ public class WidgetGalleryDTO {
 
 	public void setUsageCounter(int usageCounter) {
 		this.usageCounter = usageCounter;
+	}
+
+	public String getOutputType() {
+		return outputType;
+	}
+
+	public void setOutputType(String outputType) {
+		this.outputType = outputType;
 	}
 
 }

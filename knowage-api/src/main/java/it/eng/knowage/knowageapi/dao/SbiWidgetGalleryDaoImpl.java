@@ -56,6 +56,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		sbiWidgetGalleryFound.setTimeUp(Timestamp.from(Instant.now()));
 		sbiWidgetGalleryFound.setType(sbiWidgetGallery.getType());
 		sbiWidgetGalleryFound.setUserUp(sbiWidgetGallery.getUserUp());
+		sbiWidgetGalleryFound.setOutputType(sbiWidgetGallery.getOutputType());
 		int counter = sbiWidgetGallery.getUsageCounter() + 1;
 		sbiWidgetGalleryFound.setUsageCounter(counter);
 		sbiWidgetGalleryFound.getSbiWidgetGalleryTags().clear();

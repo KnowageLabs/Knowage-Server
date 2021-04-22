@@ -75,6 +75,9 @@ public class SbiWidgetGallery implements Serializable {
 	@Column(name = "USER_UP")
 	private String userUp;
 
+	@Column(name = "OUTPUT_TYPE")
+	private String outputType;
+
 	// bi-directional many-to-one association to SbiWidgetGalleryTag
 	@OneToMany(mappedBy = "sbiWidgetGallery", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private final List<SbiWidgetGalleryTag> sbiWidgetGalleryTags = new ArrayList<SbiWidgetGalleryTag>();
@@ -243,6 +246,14 @@ public class SbiWidgetGallery implements Serializable {
 		sbiWidgetGalleryTag.setSbiWidgetGallery(null);
 
 		return sbiWidgetGalleryTag;
+	}
+
+	public String getOutputType() {
+		return outputType;
+	}
+
+	public void setOutputType(String outputType) {
+		this.outputType = outputType;
 	}
 
 }
