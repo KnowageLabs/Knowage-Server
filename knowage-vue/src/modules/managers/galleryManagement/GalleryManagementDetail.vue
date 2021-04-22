@@ -43,7 +43,7 @@
               </div>
               <div class="p-col-12">
                 <span class="p-float-label kn-material-input">
-                  <Chips v-model="template.tags" @change="setDirty" allowDuplicate="false" />
+                  <Chips v-model="template.tags" @change="setDirty" :allowDuplicate="false" />
                   <label class="kn-material-input-label" for="tags">{{ $t('common.tags') }}</label>
                 </span>
               </div>
