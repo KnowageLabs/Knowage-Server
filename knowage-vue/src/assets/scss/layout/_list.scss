@@ -1,7 +1,7 @@
 .kn-list,
 .kn-list.p-listbox {
   &--column {
-    border: 1px solid $list-border-color;
+    border-right: 1px solid $list-border-color;
   }
   border: none;
   border-radius: 0;

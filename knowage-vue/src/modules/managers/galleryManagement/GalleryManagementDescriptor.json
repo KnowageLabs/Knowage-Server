@@ -61,6 +61,11 @@
     "html": { "className": "fab fa-html5", "style": { "background-color": "#c2185b", "color": "white" } },
     "python": { "className": "fab fa-python", "style": { "background-color": "#4caf50", "color": "white" } }
   },
+  "outputTypes": [
+    { "name": "HTML", "value": "html" },
+    { "name": "image", "value": "img" },
+    { "name": "Bokeh", "value": "bokeh" }
+  ],
   "types": [
     { "name": "HTML", "value": "html" },
     { "name": "Chart", "value": "chart" },

@@ -31,8 +31,8 @@
               </div>
               <div class="p-col-3" v-if="template.type === 'python'">
                 <span class="p-float-label">
-                  <Dropdown id="type" class="kn-material-input" v-model="template.type" @change="setDirty" :options="galleryDescriptor.types" optionLabel="name" optionValue="value" />
-                  <label class="kn-material-input-label" for="type">{{ $t('managers.widgetGallery.outputType') }}</label>
+                  <Dropdown id="outputType" class="kn-material-input" v-model="template.outputType" @change="setDirty" :options="galleryDescriptor.outputTypes" optionLabel="name" optionValue="value" />
+                  <label class="kn-material-input-label" for="outputType">{{ $t('managers.widgetGallery.outputType') }}</label>
                 </span>
               </div>
               <div class="p-col-12">
@@ -110,6 +110,7 @@ interface GalleryTemplate {
   name: string
   type: string
   description?: string
+  outputType?: string
   code: Code
   tags?: Array<string>
   image: string | ArrayBuffer
