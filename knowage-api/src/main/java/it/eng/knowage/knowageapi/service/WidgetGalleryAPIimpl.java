@@ -209,9 +209,14 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			String[] tagArray = tags.split(",");
 
 			tagList = new ArrayList<SbiWidgetGalleryTag>();
+			ArrayList<String> insertedTags = new ArrayList<String>();
 			for (int i = 0; i < tagArray.length; i++) {
 
 				tagArray[i] = tagArray[i].trim().replaceAll("\"", "");
+				if (insertedTags.contains(tagArray[i])) {
+					throw new KnowageRuntimeException("Cannot insert duplicate tags, please select different ones");
+				}
+				insertedTags.add(tagArray[i]);
 				SbiWidgetGalleryTag sbiWidgetGalleryTag = new SbiWidgetGalleryTag();
 				SbiWidgetGalleryTagId newId = new SbiWidgetGalleryTagId(tagArray[i], sbiWidgetGallery.getUuid());
 				sbiWidgetGalleryTag.setId(newId);
