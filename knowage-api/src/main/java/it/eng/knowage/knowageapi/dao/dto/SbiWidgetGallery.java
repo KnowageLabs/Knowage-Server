@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -36,7 +37,8 @@ public class SbiWidgetGallery implements Serializable {
 
 	private String organization;
 
-	@Column(name = "PREVIEW_IMAGE")
+	@Lob
+	@Column(name = "PREVIEW_IMAGE", length = 100000)
 	private byte[] previewImage;
 
 	@Column(name = "SBI_VERSION_DE")
