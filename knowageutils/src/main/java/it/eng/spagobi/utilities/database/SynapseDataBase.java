@@ -51,11 +51,11 @@ public class SynapseDataBase extends AbstractDataBase implements CacheDataBase {
 		if (javaTypeName.contains("java.lang.String") && getVarcharLength() <= MAX_VARCHAR_VALUE) {
 			toReturn = " VARCHAR (" + getVarcharLength() + ")";
 		} else if (javaTypeName.contains("java.lang.Byte")) {
-			toReturn = " INTEGER ";
+			toReturn = " INT ";
 		} else if (javaTypeName.contains("java.lang.Short")) {
-			toReturn = " INTEGER ";
+			toReturn = " INT ";
 		} else if (javaTypeName.contains("java.lang.Integer")) {
-			toReturn = " INTEGER ";
+			toReturn = " INT ";
 		} else if (javaTypeName.contains("java.lang.Long")) {
 			toReturn = " NUMERIC ";
 		} else if (javaTypeName.contains("java.lang.BigDecimal") || javaTypeName.contains("java.math.BigDecimal")) {
@@ -65,21 +65,21 @@ public class SynapseDataBase extends AbstractDataBase implements CacheDataBase {
 		} else if (javaTypeName.contains("java.lang.Float")) {
 			toReturn = " NUMERIC ";
 		} else if (javaTypeName.contains("java.lang.Boolean")) {
-			toReturn = " BOOLEAN ";
+			toReturn = " INT ";
 		} else if (javaTypeName.contains("java.sql.Date") || javaTypeName.contains("java.util.Date")) {
 			toReturn = " DATE ";
 		} else if (javaTypeName.toLowerCase().contains("timestamp")) {
-			toReturn = " TIMESTAMP ";
+			toReturn = " VARCHAR ";
 		} else if (javaTypeName.contains("java.sql.Time")) {
 			toReturn = " TIME ";
 		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
-			toReturn = " BYTEA ";
+			toReturn = " VARCHAR ";
 		} else if ((javaTypeName.contains("java.lang.String") && getVarcharLength() > MAX_VARCHAR_VALUE) || javaTypeName.contains("[C")
 				|| javaTypeName.contains("CLOB") || javaTypeName.contains("JSON") || javaTypeName.contains("Map") || javaTypeName.contains("List")) {
-			toReturn = " TEXT ";
+			toReturn = " VARCHAR ";
 		} else {
-			toReturn = " TEXT ";
-			logger.error("Cannot map java type [" + javaTypeName + "] to a valid database type. Set TEXT by default ");
+			toReturn = " VARCHAR ";
+			logger.error("Cannot map java type [" + javaTypeName + "] to a valid database type. Set VARCHAR by default ");
 		}
 
 		return toReturn;

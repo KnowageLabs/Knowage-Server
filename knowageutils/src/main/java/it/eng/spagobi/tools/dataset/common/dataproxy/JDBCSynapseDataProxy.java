@@ -113,7 +113,7 @@ public class JDBCSynapseDataProxy extends JDBCDataProxy {
 			Assert.assertNotNull(dialect, "Database dialect cannot be null");
 			try {
 
-				stmt = connection.createStatement();
+				stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
@@ -194,6 +194,10 @@ public class JDBCSynapseDataProxy extends JDBCDataProxy {
 
 		String statement = getStatement();
 		// if db is SQL server the query nees to be modified in case it contains ORDER BY clause
+		if (statement.toUpperCase().contains("ORDER BY")) {
+			logger.debug("we are in SQL SERVER and ORDER BY case");
+			statement = modifySQLServerQuery(statement);
+		}
 
 		String dialect = dataSource.getHibDialectClass();
 		logger.debug("Dialect is " + dialect);
@@ -339,42 +343,17 @@ public class JDBCSynapseDataProxy extends JDBCDataProxy {
 
 	@Override
 	public boolean isOffsetSupported() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean isFetchSizeSupported() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public String getStatement() {
-
-		if (fetchSize == -1) {
-			if (!this.statement.isEmpty()) {
-				this.statement = this.statement.replaceAll(";", "");
-				return this.statement;
-			}
-		}
-
-		StringBuilder newStatement = new StringBuilder();
-		if (!this.statement.isEmpty()) {
-			this.statement = this.statement.replaceAll(";", "");
-
-			newStatement.append("SELECT * FROM (").append(this.statement).append(")");
-
-			// TODO : could fetchSize be an Integer?
-			if (fetchSize > 0) {
-				newStatement.append(" LIMIT " + fetchSize);
-			}
-
-			// TODO : could offset be an Integer?
-			if (fetchSize > 0) {
-				newStatement.append(" OFFSET " + offset);
-			}
-		}
-
-		return newStatement.toString();
+		return new String(this.statement);
 	}
 
 	public String getOldStatement() {
