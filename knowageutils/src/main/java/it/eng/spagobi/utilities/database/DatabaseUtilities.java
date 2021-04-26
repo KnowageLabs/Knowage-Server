@@ -21,7 +21,7 @@ public class DatabaseUtilities {
 			throw new DataBaseException("Impossible to build the query to get used memory size for the target database");
 		}
 
-		IDataStore dataStore = ((IDataBase) database).getDataSource().executeStatement(query, 0, 0);
+		IDataStore dataStore = ((IDataBase) database).getDataSource().executeStatement(query, 0, 0, false);
 		if (dataStore.getRecordsCount() == 0) {
 			throw new DataBaseException("The execution of the query used to get used memory size returned no result [" + query + "]");
 		}
