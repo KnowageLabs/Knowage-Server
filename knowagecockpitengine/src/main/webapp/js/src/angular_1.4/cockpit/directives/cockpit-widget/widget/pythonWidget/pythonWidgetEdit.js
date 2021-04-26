@@ -318,7 +318,7 @@ function pythonWidgetEditControllerFunction(
 	$scope.setGalleryTemplate = function(template){
 		if(template){
 			$scope.newModel.pythonCode = template.code.python;
-			$scope.newModel.pythonOutputType = "img";
+			$scope.newModel.pythonOutputType = template.outputType;
 		}
 		$scope.showGallery = false;
 		$scope.selectedTab = 1;
