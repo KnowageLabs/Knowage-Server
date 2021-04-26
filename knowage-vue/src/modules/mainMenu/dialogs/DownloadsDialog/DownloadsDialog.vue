@@ -29,7 +29,7 @@
 	import DataTable from 'primevue/datatable'
 	import Dialog from 'primevue/dialog'
 	import descriptor from './DownloadsDialogDescriptor.json'
-	import { download } from '@/helpers/commons/fileHelper'
+	import { downloadDirect } from '@/helpers/commons/fileHelper'
 
 	interface Download {
 		filename: string
@@ -81,14 +81,10 @@
 			downloadContent(data) {
 				var encodedUri = encodeURI(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset/' + data.id)
 
-				if (!data.alreadyDownloaded)
-					download(encodedUri, null, null).then(
-						() => {
-							this.$store.commit('updateAlreadyDownloadedFiles')
-							this.getDownloads()
-						},
-						(e) => console.log(e)
-					)
+				if (!data.alreadyDownloaded) this.$store.commit('updateAlreadyDownloadedFiles')
+
+				downloadDirect(encodedUri, data.name + '.json')
+				this.getDownloads()
 			},
 			deleteAllDownloads() {
 				axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export').then(
