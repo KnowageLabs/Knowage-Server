@@ -15,6 +15,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
 /**
  * The persistent class for the sbi_widget_gallery database table.
  *
@@ -39,6 +41,7 @@ public class SbiWidgetGallery implements Serializable {
 
 	@Lob
 	@Column(name = "PREVIEW_IMAGE", length = 100000)
+	@Type(type = "org.hibernate.type.BinaryType")
 	private byte[] previewImage;
 
 	@Column(name = "SBI_VERSION_DE")
@@ -50,6 +53,9 @@ public class SbiWidgetGallery implements Serializable {
 	@Column(name = "SBI_VERSION_UP")
 	private String sbiVersionUp;
 
+	@Lob
+	@Column(name = "TEMPLATE", length = 100000)
+	@Type(type = "org.hibernate.type.BinaryType")
 	private byte[] template;
 
 	@Column(name = "TIME_DE")
