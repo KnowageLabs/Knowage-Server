@@ -24,15 +24,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabBuilder;
-import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabSerializationConstants;
 import it.eng.knowage.engine.cockpit.api.crosstable.NodeComparator;
 import it.eng.knowage.engine.cockpit.api.export.excel.crosstab.CrosstabXLSXExporter;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -42,8 +41,6 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 class WidgetXLSXExporter {
 
 	static private Logger logger = Logger.getLogger(WidgetXLSXExporter.class);
-
-	private static final int FETCH_SIZE = 50000;
 
 	ExcelExporter excelExporter;
 	String widgetType;
@@ -87,19 +84,7 @@ class WidgetXLSXExporter {
 		try {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
-			String widgetName = null;
-			JSONObject style = widget.optJSONObject("style");
-			if (style != null) {
-				JSONObject title = style.optJSONObject("title");
-				if (title != null) {
-					widgetName = title.optString("label");
-				} else {
-					JSONObject content = widget.optJSONObject("content");
-					if (content != null) {
-						widgetName = content.getString("name");
-					}
-				}
-			}
+			String widgetName = getWidgetName(widget);
 
 			JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget);
 			if (dataStore != null) {
@@ -118,31 +103,12 @@ class WidgetXLSXExporter {
 		try {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
-			String widgetName = null;
-			JSONObject style = widget.optJSONObject("style");
-			if (style != null) {
-				JSONObject title = style.optJSONObject("title");
-				if (title != null) {
-					widgetName = title.optString("label");
-				} else {
-					JSONObject content = widget.optJSONObject("content");
-					if (content != null) {
-						widgetName = content.getString("name");
-					}
-				}
-			}
-
+			String widgetName = getWidgetName(widget);
 			String cockpitSheetName = getCockpitSheetName(template, widgetId);
 			Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 
 			int offset = 0;
-			int fetchSize = FETCH_SIZE;
-			int maxFetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
-			if (fetchSize > maxFetchSize) {
-				logger.warn(
-						"Excel export FETCH_SIZE exceeds SPAGOBI.API.DATASET.MAX_ROWS_NUMBER environment variable. FETCH_SIZE value is being overwritten at runtime");
-				fetchSize = maxFetchSize;
-			}
+			int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
 			JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, fetchSize);
 			if (dataStore != null) {
 				int totalNumberOfRows = dataStore.getInt("results");
@@ -159,102 +125,12 @@ class WidgetXLSXExporter {
 		return 0;
 	}
 
-	private int exportCrossTabWidget() {
-		try {
-			JSONObject template = new JSONObject(templateString);
-			JSONObject widget = getWidgetById(template, widgetId);
-			String widgetName = null;
-			JSONObject style = widget.optJSONObject("style");
-			if (style != null) {
-				JSONObject title = style.optJSONObject("title");
-				if (title != null) {
-					widgetName = title.optString("label");
-				} else {
-					JSONObject content = widget.optJSONObject("content");
-					if (content != null) {
-						widgetName = content.getString("name");
-					}
-				}
-			}
-
-			JSONObject crosstabDefinition = optionsObj.getJSONObject("crosstabDefinition");
-			JSONArray measures = crosstabDefinition.optJSONArray("measures");
-			JSONObject variables = optionsObj.optJSONObject("variables");
-			Map<String, List<Threshold>> thresholdColorsMap = getThresholdColorsMap(measures);
-
-			CrosstabXLSXExporter crossTabExporter = new CrosstabXLSXExporter(null, variables, thresholdColorsMap);
-
-			JSONObject crosstabDefinitionJo = optionsObj.getJSONObject("crosstabDefinition");
-			JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
-			JSONObject crosstabStyleJo = (optionsObj.isNull("style")) ? new JSONObject() : optionsObj.getJSONObject("style");
-			crosstabDefinitionConfigJo.put("style", crosstabStyleJo);
-
-			JSONObject sortOptions = optionsObj.getJSONObject("sortOptions");
-
-			List<Map<String, Object>> columnsSortKeys;
-			List<Map<String, Object>> rowsSortKeys;
-			List<Map<String, Object>> measuresSortKeys;
-
-			// the id of the crosstab in the client configuration array
-			Integer myGlobalId;
-			JSONArray columnsSortKeysJo = sortOptions.optJSONArray("columnsSortKeys");
-			JSONArray rowsSortKeysJo = sortOptions.optJSONArray("rowsSortKeys");
-			JSONArray measuresSortKeysJo = sortOptions.optJSONArray("measuresSortKeys");
-			myGlobalId = sortOptions.optInt("myGlobalId");
-			columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
-			rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
-			measuresSortKeys = JSONUtils.toMap(measuresSortKeysJo);
-			if (optionsObj != null) {
-				logger.debug("Export cockpit crosstab optionsObj.toString(): " + optionsObj.toString());
-			}
-
-			Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
-			Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
-			Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
-			CrosstabBuilder builder = new CrosstabBuilder(excelExporter.getLocale(), crosstabDefinition, optionsObj.getJSONArray("jsonData"),
-					optionsObj.getJSONObject("metadata"), null);
-
-			CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
-			CreationHelper createHelper = wb.getCreationHelper();
-
-			int totalRowsNumber = cs.getTotalNumberOfRows();
-
-			int windowSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE"));
-			if (totalRowsNumber <= windowSize) {
-				// crosstab fits in memory
-				String cockpitSheetName = getCockpitSheetName(template, widgetId);
-				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
-				crossTabExporter.fillExcelSheetWithData(sheet, cs, createHelper, 0, excelExporter.getLocale());
-				return 1;
-			} else {
-				// export crosstab as generic widget
-				logger.warn("Crosstab [" + widgetId + "] has more rows than streaming windows size. It will be exported as a generic widget.");
-				return exportGenericWidget();
-			}
-
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Unable to export crosstab widget: " + widgetId, e);
-		}
-	}
-
 	private int exportMapWidget() {
 		int exportedSheets = 0;
 		try {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
-			String widgetName = null;
-			JSONObject style = widget.optJSONObject("style");
-			if (style != null) {
-				JSONObject title = style.optJSONObject("title");
-				if (title != null) {
-					widgetName = title.optString("label");
-				} else {
-					JSONObject content = widget.optJSONObject("content");
-					if (content != null) {
-						widgetName = content.getString("name");
-					}
-				}
-			}
+			String widgetName = getWidgetName(widget);
 
 			JSONArray dataStoreArray = excelExporter.getMultiDataStoreForWidget(template, widget);
 			for (int i = 0; i < dataStoreArray.length(); i++) {
@@ -273,6 +149,66 @@ class WidgetXLSXExporter {
 			throw new SpagoBIRuntimeException("Unable to export map widget: " + widgetId, e);
 		}
 		return exportedSheets;
+	}
+
+	private int exportCrossTabWidget() {
+		try {
+			JSONObject template = new JSONObject(templateString);
+			JSONObject widget = getWidgetById(template, widgetId);
+			String widgetName = getWidgetName(widget);
+
+			JSONObject crosstabDefinition = optionsObj.getJSONObject("crosstabDefinition");
+			CrossTab cs = buildCrossTab(crosstabDefinition);
+			CrosstabXLSXExporter crossTabExporter = buildCrossTabXLSXExporter(crosstabDefinition);
+
+			int totalRowsNumber = cs.getTotalNumberOfRows();
+			int windowSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE"));
+			if (totalRowsNumber <= windowSize) {
+				// crosstab fits in memory
+				String cockpitSheetName = getCockpitSheetName(template, widgetId);
+				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+				crossTabExporter.fillExcelSheetWithData(sheet, cs, wb.getCreationHelper(), 0, excelExporter.getLocale());
+				return 1;
+			} else {
+				// export crosstab as generic widget
+				logger.warn("Crosstab [" + widgetId + "] has more rows than streaming windows size. It will be exported as a generic widget.");
+				return exportGenericWidget();
+			}
+
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Unable to export crosstab widget: " + widgetId, e);
+		}
+	}
+
+	CrosstabXLSXExporter buildCrossTabXLSXExporter(JSONObject crosstabDefinition) throws JSONException {
+		JSONArray measures = crosstabDefinition.optJSONArray("measures");
+		Map<String, List<Threshold>> thresholdColorsMap = getThresholdColorsMap(measures);
+		JSONObject variables = optionsObj.optJSONObject("variables");
+		CrosstabXLSXExporter crossTabExporter = new CrosstabXLSXExporter(null, variables, thresholdColorsMap);
+		return crossTabExporter;
+	}
+
+	CrossTab buildCrossTab(JSONObject crosstabDefinition) throws JSONException {
+		// the id of the crosstab in the client configuration array
+		JSONObject sortOptions = optionsObj.getJSONObject("sortOptions");
+		JSONArray columnsSortKeysJo = sortOptions.optJSONArray("columnsSortKeys");
+		JSONArray rowsSortKeysJo = sortOptions.optJSONArray("rowsSortKeys");
+		JSONArray measuresSortKeysJo = sortOptions.optJSONArray("measuresSortKeys");
+		int myGlobalId = sortOptions.optInt("myGlobalId");
+		List<Map<String, Object>> columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
+		List<Map<String, Object>> rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
+		List<Map<String, Object>> measuresSortKeys = JSONUtils.toMap(measuresSortKeysJo);
+		if (optionsObj != null) {
+			logger.debug("Export cockpit crosstab optionsObj.toString(): " + optionsObj.toString());
+		}
+		Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
+		Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
+		Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
+		CrosstabBuilder builder = new CrosstabBuilder(excelExporter.getLocale(), crosstabDefinition, optionsObj.getJSONArray("jsonData"),
+				optionsObj.getJSONObject("metadata"), null);
+
+		CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
+		return cs;
 	}
 
 	private Map<String, List<Threshold>> getThresholdColorsMap(JSONArray measures) {
@@ -342,6 +278,23 @@ class WidgetXLSXExporter {
 			logger.error("Unable to retrieve cockpit sheet name from template", e);
 			return "";
 		}
+	}
+
+	private String getWidgetName(JSONObject widget) throws JSONException {
+		String widgetName = null;
+		JSONObject style = widget.optJSONObject("style");
+		if (style != null) {
+			JSONObject title = style.optJSONObject("title");
+			if (title != null) {
+				widgetName = title.optString("label");
+			} else {
+				JSONObject content = widget.optJSONObject("content");
+				if (content != null) {
+					widgetName = content.getString("name");
+				}
+			}
+		}
+		return widgetName;
 	}
 
 	private JSONObject getWidgetById(JSONObject template, long widgetId) {

@@ -57,7 +57,7 @@ public class ExcelExporterClient extends SimpleRestClient {
 		logger.debug("Response: [" + result + "]");
 		logger.debug("OUT");
 		if (result.has("errors"))
-			throw new SpagoBIRuntimeException("Error in data service: " + serviceUrl);
+			throw new SpagoBIRuntimeException("Error in data service for dataset: " + datasetLabel);
 		return result;
 	}
 }
