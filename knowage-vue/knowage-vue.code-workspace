@@ -31,7 +31,9 @@
 			"sortJSONValuesReverse": true,
 			"sortJSONType": true,
 			"sortJSONTypeReverse": true
-		}
+		},
+		"vetur.format.options.tabSize": 4,
+		"prettier.tabWidth": 4
 	},
 	"extensions": {
 		"recommendations": ["octref.vetur", "dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
