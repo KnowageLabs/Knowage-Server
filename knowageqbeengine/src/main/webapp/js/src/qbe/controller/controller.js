@@ -87,9 +87,11 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 			comunicator.sendMessage(saveObj);
 		}
 		if(message.qbeJSONQuery){
-	    	var qbeJsonObj = angular.fromJson(message.qbeJSONQuery)
-	    	$scope.fromDataset = true
-	    	$scope.editQueryObj = qbeJsonObj.catalogue.queries[0];
+			var qbeJsonObj = angular.fromJson(message.qbeJSONQuery)
+			$scope.fromDataset = true
+			$scope.editQueryObj = qbeJsonObj.catalogue.queries[0];
+			$scope.query = $scope.editQueryObj;
+			$scope.subqueriesModel.subqueries = $scope.editQueryObj.subqueries;
 		}
 		if(message.smartView != undefined) {
 			query_service.smartView = message.smartView;
@@ -491,12 +493,12 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 	});
 
 	var findWithAttr = function(array, attr, value) {
-	    for(var i = 0; i < array.length; i += 1) {
+		for(var i = 0; i < array.length; i += 1) {
 			if(array[i][attr] === value || angular.equals(array[i][attr], value)) {
-	            return i;
-	        }
-	    }
-	    return -1;
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	$scope.addField = function (field,calcField) {
