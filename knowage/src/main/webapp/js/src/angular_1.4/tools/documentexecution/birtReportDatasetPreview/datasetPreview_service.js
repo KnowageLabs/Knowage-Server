@@ -65,11 +65,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									data.parameters = previewDataset.pars;
 								}
 
-								sbiModule_restServices.promisePost("2.0/export/dataset/" + id,
-										"csv", data)
+								sbiModule_restServices.promisePost("2.0/export/dataset/" + id, "csv", data)
 								.then(
 									function(response){
 										popupMessage(response)
+										let message = {
+											downloads: true
+										};
+										
+										$scope.socket = new WebSocket('ws://'+sbiModule_config.contextName+'/webSocket/false');
+										$scope.socket.send(JSON.stringify(message))
 									},function(error){
 										popupMessage(error)
 									});

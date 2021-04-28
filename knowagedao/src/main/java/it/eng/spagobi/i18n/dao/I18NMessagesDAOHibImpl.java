@@ -122,19 +122,9 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			String localeId = null;
 
 			try {
-				localeId = locale.getISO3Language().toUpperCase();
+				localeId = locale.toLanguageTag();
 			} catch (Exception e) {
 				logger.warn("No iso code found for locale, set manually");
-			}
-			if (localeId == null) {
-				if (locale.getLanguage().toUpperCase().equals("US"))
-					localeId = "ENG";
-				else if (locale.getLanguage().toUpperCase().equals("IT"))
-					localeId = "ITA";
-				else if (locale.getLanguage().toUpperCase().equals("FR"))
-					localeId = "FRA";
-				else if (locale.getLanguage().toUpperCase().equals("ES"))
-					localeId = "ESP";
 			}
 
 			logger.debug("localeId=" + localeId);
@@ -410,7 +400,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			String hql = "from SbiDomains d where d.domainCd = :domainCd and d.valueCd = :valueCd";
 			Query query = curSession.createQuery(hql);
 			query.setString("domainCd", DOMAIN_CD);
-			query.setString("valueCd", langName.toUpperCase());
+			query.setString("valueCd", langName);
 			domain = (SbiDomains) query.uniqueResult();
 			domainId = domain.getValueId();
 		} catch (HibernateException e) {

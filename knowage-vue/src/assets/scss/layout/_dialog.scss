@@ -1,0 +1,37 @@
+.kn-dialog {
+	&--toolbar {
+		.p-dialog-header {
+			@extend .kn-toolbar;
+			border-top-right-radius: 0 !important;
+			border-top-left-radius: 0 !important;
+		}
+
+		&--primary {
+			@extend .kn-dialog--toolbar;
+
+			.p-dialog-header {
+				background-color: $toolbar-background-color-primary !important;
+				color: $toolbar-color-primary !important;
+
+				.p-dialog-title {
+					font-weight: $toolbar-font-weight !important;
+					font-size: $toolbar-font-size !important;
+				}
+			}
+		}
+
+		&--secondary {
+			@extend .kn-dialog--toolbar;
+
+			.p-dialog-header {
+				background-color: $toolbar-background-color-secondary !important;
+				color: $toolbar-color-secondary !important;
+
+				.p-dialog-title {
+					font-weight: $toolbar-font-weight !important;
+					font-size: $toolbar-font-size !important;
+				}
+			}
+		}
+	}
+}

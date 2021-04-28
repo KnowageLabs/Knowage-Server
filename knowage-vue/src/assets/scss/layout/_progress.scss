@@ -1,0 +1,8 @@
+.kn-progress-bar {
+  &.p-progressbar {
+    background: $progress-bar-background-color;
+    .p-progressbar-value {
+      background: $progress-bar-foreground-color;
+    }
+  }
+}

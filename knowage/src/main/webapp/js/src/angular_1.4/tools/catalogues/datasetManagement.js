@@ -2017,7 +2017,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				 $scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet);
 			 }
 
-		});
+		},
+
+			   			function(response) {
+			   				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			   			});
 	};
 
 	$scope.getDatasetParametersFromBusinessModel = function (selectedDataset){

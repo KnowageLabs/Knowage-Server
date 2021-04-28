@@ -52,7 +52,7 @@
 		//REST
 		$scope.getMessages = function(selectedTab) {
 			$scope.messages = [];
-			sbiModule_restServices.promiseGet("2.0/i18nMessages", "internationalization/?currLanguage="+selectedTab.iso3code)
+			sbiModule_restServices.promiseGet("2.0/i18nMessages", "internationalization/?currLanguage="+selectedTab.languageTag)
 				.then(function(response){
 					$scope.emptyMessage = {value:false, originalMessages:[]};
 					//For Default Language
@@ -86,7 +86,7 @@
 								} else {
 									// in case default message was not translated into current language, we add an empty translation message
 									var message = {
-										language : selectedTab.iso3code,
+										language : selectedTab.languageTag,
 										label : defMess.label,
 										defaultMessageCode : defMess.message,
 										message : ''
@@ -99,7 +99,7 @@
 						//If there is no messages in database, take Label and Message Code from Default one
 							$scope.defaultLangMessages.forEach(function(defMess){
 								var newMess = {};
-								newMess.language = selectedTab.iso3code;
+								newMess.language = selectedTab.languageTag;
 								newMess.label = defMess.label;
 								newMess.defaultMessageCode = defMess.message;
 								newMess.message = '';
@@ -143,7 +143,7 @@
 				if(toInsert.hasOwnProperty('defaultMessageCode')) {
 					delete toInsert.defaultMessageCode;
 				}
-				toInsert.language = langObj.iso3code;
+				toInsert.language = langObj.languageTag;
 				sbiModule_restServices.promisePost("2.0/i18nMessages", "", toInsert)
 					.then(function(response){
 						console.log("[POST]: SUCCESS!");

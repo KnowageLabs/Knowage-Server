@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -321,21 +322,12 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 */
 	public static Locale getStartingDefaultLocale() {
 		logger.trace("IN");
-		String country = null;
-		String language = null;
 		Locale locale = null;
 		SingletonConfig config = SingletonConfig.getInstance();
 		String languageConfig = config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
 		if (languageConfig != null) {
-			language = languageConfig.substring(0, 2);
-			country = languageConfig.substring(3);
-			if ((country == null) || country.trim().equals("") || (language == null) || language.trim().equals("")) {
-				logger.warn("Problem reading locale");
-			} else {
-				// set the locale!
-				locale = new Locale(language, country);
-				logger.trace("locale set to " + locale);
-			}
+			locale = Locale.forLanguageTag(languageConfig);
+			logger.trace("locale set to " + locale);
 		}
 
 		logger.trace("OUT");
@@ -350,24 +342,11 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	public static Locale getDefaultLocale() {
 		logger.trace("IN");
 		Locale locale = null;
-		String languageConfig = null;
 		try {
-			String country = null;
-			String language = null;
-			languageConfig = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
-			logger.trace("Default locale found: " + languageConfig);
-			if (languageConfig != null && !languageConfig.trim().equals("")) {
-				language = languageConfig.substring(0, 2);
-				country = languageConfig.substring(3);
-				if ((country == null) || country.trim().equals("") || (language == null) || language.trim().equals("")) {
-					country = "US";
-					language = "en";
-				}
-			} else {
-				country = "US";
-				language = "en";
-			}
-			locale = new Locale(language, country);
+			String defaultLanguageTag = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+			String languageTag = StringUtils.isNotBlank(defaultLanguageTag) ? defaultLanguageTag : "en-US";
+			logger.trace("Default locale found: " + languageTag);
+			locale = Locale.forLanguageTag(languageTag);
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Error while getting default locale", t);
 		}
@@ -378,23 +357,15 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	public static List<Locale> getSupportedLocales() {
 		logger.trace("IN");
 		List<Locale> toReturn = new ArrayList<Locale>();
-		String locales = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
-		if (locales != null && locales.length() > 0) {
-			// Iterator it = locales.iterator();
-			while (locales.length() > 1) {
-				String temp = locales;
-				String language = locales.substring(1, 3);
-				String country = locales.substring(4, 6);
-				if (locales.length() > 8) {
-					locales = temp.substring(8, locales.length());
-				} else {
-					locales = "0";
-				}
-				logger.trace("Found locale with language = [" + language + "] and country = [" + country + "]");
-				Locale locale = new Locale(language, country);
+		String supportedLanguages = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
+		if (StringUtils.isNotBlank(supportedLanguages)) {
+			for (String supportedLanguageTag : supportedLanguages.split(",", -1)) {
+				Locale locale = Locale.forLanguageTag(supportedLanguageTag);
+				logger.trace("Found locale with language = [" + locale.getLanguage() + "] and script = [" + locale.getScript() + "] and country = ["
+						+ locale.getCountry() + "]");
 				toReturn.add(locale);
-
 			}
+
 		} else {
 			logger.error("NO LOCALES CONFIGURED!!!");
 		}
@@ -445,10 +416,9 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		if (requestContainer != null) {
 			SessionContainer permSession = requestContainer.getSessionContainer().getPermanentContainer();
 			if (permSession != null) {
-				String language = (String) permSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-				String country = (String) permSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
-				if (language != null && country != null) {
-					locale = new Locale(language, country, "");
+				String languageTag = (String) permSession.getAttribute(SpagoBIConstants.AF_LANGUAGE_TAG);
+				if (StringUtils.isNotBlank(languageTag)) {
+					locale = Locale.forLanguageTag(languageTag);
 				}
 			}
 		}
@@ -458,17 +428,13 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	public static String getLocaleDateFormat(SessionContainer permSess) {
-		String language = (String) permSess.getAttribute("AF_LANGUAGE");
-		String country = (String) permSess.getAttribute("AF_COUNTRY");
-		String format = null;
+//		String language = (String) permSess.getAttribute("AF_LANGUAGE");
+//		String country = (String) permSess.getAttribute("AF_COUNTRY");
+		String languageTag = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE_TAG);
 		// if a particular language is specified take the corrisponding date-format
-		if (language != null) {
-			if (country == null) {
-				format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + language.toUpperCase() + ".format");
-			} else {
-				format = SingletonConfig.getInstance()
-						.getConfigValue("SPAGOBI.DATE-FORMAT-" + language.toUpperCase() + "_" + country.toUpperCase() + ".format");
-			}
+		String format = null;
+		if (languageTag != null) {
+			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + languageTag + ".format");
 		}
 		if (format == null) {
 			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.format");
@@ -479,17 +445,10 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	public static String getLocaleDateFormat(Locale locale) {
-		String language = locale.getLanguage();
-		String country = locale.getCountry();
 		String format = null;
 		// if a particular language is specified take the corrisponding date-format
-		if (language != null) {
-			if (country == null) {
-				format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + language.toUpperCase() + ".format");
-			} else {
-				format = SingletonConfig.getInstance()
-						.getConfigValue("SPAGOBI.DATE-FORMAT-" + language.toUpperCase() + "_" + country.toUpperCase() + ".format");
-			}
+		if (locale != null) {
+			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + locale.toLanguageTag() + ".format");
 		}
 		if (format == null) {
 			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.format");
@@ -500,17 +459,11 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	public static String getLocaleDateFormatForExtJs(SessionContainer permSess) {
-		String language = (String) permSess.getAttribute("AF_LANGUAGE");
-		String country = (String) permSess.getAttribute("AF_COUNTRY");
+		String languageTag = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE_TAG);
 		String format = null;
 		// if a particular language is specified take the corrisponding date-format
-		if (language != null) {
-			if (country == null) {
-				format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + language.toUpperCase() + ".extJsFormat");
-			} else {
-				format = SingletonConfig.getInstance()
-						.getConfigValue("SPAGOBI.DATE-FORMAT-" + language.toUpperCase() + "_" + country.toUpperCase() + ".extJsFormat");
-			}
+		if (languageTag != null) {
+			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + languageTag + ".format");
 		}
 		if (format == null) {
 			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.extJsFormat");

@@ -34,6 +34,8 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import it.eng.knowage.wapp.Environment;
+import it.eng.knowage.wapp.Version;
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -56,6 +58,7 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -130,12 +133,7 @@ public class LoginModule extends AbstractHttpModule {
 				logger.debug("User is authenticated");
 				// fill response
 				List lstMenu = MenuUtilities.getMenuItems(profile);
-				String url = "/themes/" + currTheme + "/jsp/";
-				if (UserUtilities.isTechnicalUser(profile)) {
-					url += "adminHome.jsp";
-				} else {
-					url += "userHome.jsp";
-				}
+				String url = "knowage-vue/index.html";
 				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
 				return;
@@ -348,16 +346,21 @@ public class LoginModule extends AbstractHttpModule {
 			}
 			// End writing log in the DB
 
-			List lstMenu = MenuUtilities.getMenuItems(profile);
-
-			String url = "/themes/" + currTheme + "/jsp/";
-			if (UserUtilities.isTechnicalUser(profile)) {
-				url += "adminHome.jsp";
-			} else {
-				url += "userHome.jsp";
+//			List lstMenu = MenuUtilities.getMenuItems(profile);
+//
+//			String url = "/themes/" + currTheme + "/jsp/";
+//			if (UserUtilities.isTechnicalUser(profile)) {
+//				url += "adminHome.jsp";
+//			} else {
+//				url += "userHome.jsp";
+//			}
+//			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+//			getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+			if(Version.getEnvironment() == Environment.PRODUCTION) {
+				getHttpResponse().sendRedirect("/knowage-vue");
+			}else {
+				getHttpResponse().sendRedirect("http://localhost:3000/knowage-vue");
 			}
-			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-			getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after request processed in each case
 			TenantManager.unset();
@@ -525,5 +528,11 @@ public class LoginModule extends AbstractHttpModule {
 
 	private boolean encriptedBefore72(SbiUser user) {
 		return user.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING);
+	}
+
+	public String getServiceHostUrl() {
+		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
+		return serviceURL;
 	}
 }

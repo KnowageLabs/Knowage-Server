@@ -308,9 +308,24 @@ function customChartWidgetEditControllerFunction(
         mode: {name: "javascript"},
         onLoad: $scope.codemirrorLoaded
     };
+    
+    $scope.showGallery = $scope.newModel.isNew;
+	$scope.selectedTab = $scope.newModel.isNew ? 0 : 1;
+	
+	$scope.setGalleryTemplate = function(template){
+		if(template){
+			$scope.newModel.html.code = template.code.html;
+			$scope.newModel.js.code = template.code.javascript;
+			$scope.newModel.css.code = template.code.css;
+
+		}
+		$scope.showGallery = false;
+		$scope.selectedTab = 1;
+	}
 
 	$scope.saveConfiguration=function(){
 		 mdPanelRef.close();
+		 if($scope.newModel.isNew) $scope.newModel.isNew = false;
 		 angular.copy($scope.newModel,model);
 		 $scope.$destroy();
 		 finishEdit.resolve();

@@ -66,6 +66,18 @@ function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_tran
 		
 	})
 	
+	$scope.showGallery = $scope.newModel.isNew;
+	$scope.selectedTab = $scope.newModel.isNew ? 0 : 1;
+	
+	$scope.setGalleryTemplate = function(template){
+		if(template){
+			$scope.newModel.htmlToRender = template.code.html;
+			$scope.newModel.cssToRender = template.code.css;
+		}
+		$scope.showGallery = false;
+		$scope.selectedTab = 1;
+	}
+	
 	
 	$scope.insertCode = function(tag){
 		var tempString = tag.tag;
@@ -114,6 +126,7 @@ function htmlWidgetEditControllerFunction($scope,finishEdit,model,sbiModule_tran
 
 	$scope.saveConfiguration=function(){
 		 mdPanelRef.close();
+		 if($scope.newModel.isNew) $scope.newModel.isNew = false;
 		 angular.copy($scope.newModel,model);
 		 $scope.$destroy();
 		 finishEdit.resolve();

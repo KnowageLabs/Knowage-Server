@@ -1,0 +1,11 @@
+.kn-material-input {
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+}
+
+label.kn-material-input-label {
+    color: $color-primary !important;
+    text-transform: capitalize;
+}

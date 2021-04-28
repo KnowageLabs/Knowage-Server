@@ -835,6 +835,15 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			Criteria criteria = aSession.createCriteria(SbiUser.class);
 			criteria.add(Restrictions.eq("userId", userId).ignoreCase());
 			SbiUser user = (SbiUser) criteria.uniqueResult();
+
+			if (user != null) {
+				Hibernate.initialize(user);
+				Hibernate.initialize(user.getSbiExtUserRoleses());
+				Hibernate.initialize(user.getSbiUserAttributeses());
+				for (SbiUserAttributes current : user.getSbiUserAttributeses()) {
+					Hibernate.initialize(current.getSbiAttribute());
+				}
+			}
 			LogMF.debug(logger, "OUT : returning [{0}]", user);
 			return user;
 		} finally {
@@ -847,6 +856,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			}
 			logger.debug("OUT");
 		}
+
 	}
 
 	@Override
@@ -867,7 +877,10 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 			total = users.size();
 			int indexStart = offset < 0 ? 0 : Math.min(offset, total - 1); // if totale = 0 --> indexStart = -1
-			int indexEnd = (fetchSize > 0) ? Math.min(indexStart + fetchSize - 1, total - 1) : total - 1; // if totale = 0 --> indexEnd = -1
+			int indexEnd = (fetchSize > 0) ? Math.min(indexStart + fetchSize - 1, total - 1) : total - 1; // if totale =
+																											// 0 -->
+																											// indexEnd
+																											// = -1
 
 			List<UserBO> results = new ArrayList<UserBO>();
 			if (total > 0) {

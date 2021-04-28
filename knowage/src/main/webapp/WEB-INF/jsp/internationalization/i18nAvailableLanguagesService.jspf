@@ -37,25 +37,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  	JSONArray langs = new JSONArray();
  	
 	IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
-	Config availableLangConfig = configsDao.loadConfigParametersByLabel("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
-	String availableLangLocale = availableLangConfig.getValueCheck();
-	String[] langArray = availableLangLocale.substring(1, availableLangLocale.length()-1).split("\\],\\[");
-	
   	Config defaultLangConfig = configsDao.loadConfigParametersByLabel("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
   	String defaultLangLocale = defaultLangConfig.getValueCheck();
-  	String[] defaultArray = defaultLangLocale.split(",");
-  	Locale defaultLocaleObj = new Locale(defaultArray[0], defaultArray[1]);  	
-  	String defaultLang = defaultLocaleObj.getISO3Language();
+  	Locale defaultLocaleObj = Locale.forLanguageTag(defaultLangLocale); 
   	
+	Config availableLangConfig = configsDao.loadConfigParametersByLabel("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
+	String availableLangLocale = availableLangConfig.getValueCheck();
+	String[] langArray = availableLangLocale.split(",");
+	
   	for(String language : langArray) {
   		JSONObject json = new JSONObject();
   		try {
-  			String[] tempArray = language.split(",");
-  			Locale tempLocaleObj = new Locale(tempArray[0], tempArray[1]);
+
+  			Locale tempLocaleObj = Locale.forLanguageTag(language);
   			String tempLang = tempLocaleObj.getISO3Language();
-  			json.put("language", tempLocaleObj.getDisplayLanguage(locale));
+  			json.put("language", String.format("%s(%s)", tempLocaleObj.getDisplayLanguage(locale), tempLocaleObj.getISO3Country() ));
   			json.put("iso3code", tempLang);
-  			if(tempLang.equals(defaultLang)) {
+  			json.put("languageTag", tempLocaleObj.toLanguageTag());
+  			if(tempLocaleObj.toLanguageTag().equals(defaultLangLocale)) {
   				json.put("defaultLanguage", true);
   			}
   			langs.put(json);

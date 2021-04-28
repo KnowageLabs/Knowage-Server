@@ -175,6 +175,7 @@ function pythonWidgetEditControllerFunction(
             return;
         }
 		mdPanelRef.close();
+		if($scope.newModel.isNew) $scope.newModel.isNew = false;
 		angular.copy($scope.newModel,model);
 		$scope.$destroy();
 		finishEdit.resolve();
@@ -309,6 +310,18 @@ function pythonWidgetEditControllerFunction(
 			}, function() {
 			});
 		}
+	}
+	
+	$scope.showGallery = $scope.newModel.isNew;
+	$scope.selectedTab = $scope.newModel.isNew ? 0 : 1;
+	
+	$scope.setGalleryTemplate = function(template){
+		if(template){
+			$scope.newModel.pythonCode = template.code.python;
+			$scope.newModel.pythonOutputType = template.outputType;
+		}
+		$scope.showGallery = false;
+		$scope.selectedTab = 1;
 	}
 
 	$scope.showAction = function(text) {

@@ -10,6 +10,38 @@
     height: 100%;
     background-color: $tabBackground;
 
+    .gallery {
+    	.galleryCard {
+    		cursor: pointer;
+    		transition: background-color .3s linear;
+    		&:hover {
+    			background-color: $secondaryColor;
+    		}
+    		md-card-content {
+    			position: relative;
+    			height: 150px;
+    			img {
+    				max-width: 100%;
+    				max-height: 150px;
+    			}
+    			.galleryTags {
+    				position: absolute;
+    				width: 100%;
+    				bottom: 0;
+    				height: 24px;
+    				left: 0;
+    				.chip {
+					    background-color: $ternaryColor;
+					    padding: 0 8px;
+					    border-radius: 20px;
+					    margin: 0 2px;
+					    font-size: $baseFontSize;
+    				}
+    			}
+    		}
+    	}
+    }
+
     .expandableSubheader {
 		outline: none;
 		cursor: pointer;

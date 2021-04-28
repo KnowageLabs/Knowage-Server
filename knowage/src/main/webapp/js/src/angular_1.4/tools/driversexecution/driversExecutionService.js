@@ -249,6 +249,7 @@
 						if (typeof descr == 'undefined') descr = value;
 						paramStrTree += descr;
 					}
+					if (paramStrTree == 'undefined') paramStrTree = parameter.parameterValue[z];
 				}
 				executionService.jsonDatumValue = paramArrayTree;
 				executionService.jsonDatumDesc = paramStrTree;

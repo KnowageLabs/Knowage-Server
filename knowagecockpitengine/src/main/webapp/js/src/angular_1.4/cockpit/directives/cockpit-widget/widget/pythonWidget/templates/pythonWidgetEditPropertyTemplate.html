@@ -8,11 +8,15 @@
 	    </md-toolbar>
 		 
 	    <md-content flex layout="column">
-			<md-tabs flex md-border-bottom md-selected="1">
+			<md-tabs flex md-border-bottom md-selected="selectedTab">
+			
+			<md-tab label="gallery" ng-if="showGallery">
+	        	<gallery-selector widget-type="python" callback="setGalleryTemplate(template)" no-items="setGalleryTemplate()"></gallery-selector>
+	     	</md-tab>
 			
 			<!-- DATASET TAB -->
 			
-			<md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
+			<md-tab label="{{translate.load('sbi.cockpit.dataset')}}" ng-disabled="showGallery">
 				<md-card>
 			     	<md-card-content layout="row" layout-align="space-around center">
 			     		<dataset-selector flex ng-model=newModel.dataset.dsId dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>
@@ -38,7 +42,7 @@
 		
 				<!-- EDITOR TAB -->
 			
-				<md-tab label="Python Editor">
+				<md-tab label="Python Editor" ng-disabled="showGallery">
 					
 					<md-content class="noPadding" layout="row" layout-fill>
 						<div layout="column" flex>
@@ -110,7 +114,7 @@
 		        
 		        <!-- ENVIRONMENT TAB -->
 		        
-		        <md-tab label="{{translate.load('sbi.cockpit.widget.python.environment')}}">
+		        <md-tab label="{{translate.load('sbi.cockpit.widget.python.environment')}}" ng-disabled="showGallery">
 		        	<md-card>
 					     	<md-card-content flex layout="row" layout-align="space-around center">
 					     	
@@ -146,14 +150,14 @@
 					</md-card>
 		        </md-tab>
 		        
-		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
+		        <md-tab label="{{translate.load('sbi.cockpit.style')}}" ng-disabled="showGallery">
 		        	<cockpit-style-configurator widget ng-model="newModel.style"></cockpit-style-configurator>
 		        </md-tab>
-		        <md-tab ng-if="newModel.pythonOutputType!='bokeh'" label="{{translate.load('sbi.cockpit.widget.table.cross')}}" >
+		        <md-tab ng-if="newModel.pythonOutputType!='bokeh'" label="{{translate.load('sbi.cockpit.widget.table.cross')}}" ng-disabled="showGallery">
 					<cockpit-cross-configurator widget ng-cloak ng-model="newModel.cross"></cockpit-cross-configurator>
 				</md-tab>
 		     	
-		     	<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
+		     	<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}" ng-disabled="showGallery">
 					<cockpit-filters-configuration ng-model-shared="newModel" ></cockpit-filters-configuration>
 				</md-tab>
 	      	</md-tabs>

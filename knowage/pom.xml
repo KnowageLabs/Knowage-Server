@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -12,19 +13,19 @@
 	<artifactId>knowage</artifactId>
 	<packaging>war</packaging>
 	<name>knowage</name>
-	
+
 	<build>
 		<finalName>knowage</finalName>
-	 	<pluginManagement>
-		    <plugins>
-		        <plugin>
-		            <artifactId>maven-war-plugin</artifactId>
-		            <configuration>
-		                <attachClasses>true</attachClasses>
-		                <classesClassifier>classes</classesClassifier>
-		            </configuration>
-		        </plugin>
-	
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-war-plugin</artifactId>
+					<configuration>
+						<attachClasses>true</attachClasses>
+						<classesClassifier>classes</classesClassifier>
+					</configuration>
+				</plugin>
+
 				<plugin>
 					<groupId>org.codehaus.cargo</groupId>
 					<artifactId>cargo-maven2-plugin</artifactId>
@@ -41,101 +42,103 @@
 						</configuration>
 					</configuration>
 				</plugin>
-		    </plugins>
-		  </pluginManagement>
-		  <plugins>
-		  		<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.6.0</version>
-					<executions>
-						<execution>		
-							<id>npm-update-version</id>
-						   <phase>process-sources</phase>
-	                  		<goals>
-		                    	<goal>exec</goal>
-		                  	</goals>
-		                  	<configuration>
-								<executable>npm</executable>
-			                    <arguments>
-		                      		<argument>version</argument>
-		                      		<argument>${project.version}</argument>
-		                      		<argument>--allow-same-version</argument>
-			                    </arguments>
-			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
-							</configuration>
-						</execution>
-						<execution>		
-							<id>npm-package-install</id>
-						   <phase>process-sources</phase>
-	                  		<goals>
-		                    	<goal>exec</goal>
-		                  	</goals>
-		                  	<configuration>
-								<executable>npm</executable>
-			                    <arguments>
-		                      		<argument>install</argument>
-			                    </arguments>
-			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
-							</configuration>
-						</execution>
-						<execution>		
-							<id>grunt-concat-dist</id>
-						   <phase>process-resources</phase>
-	                  		<goals>
-		                    	<goal>exec</goal>
-		                  	</goals>
-		                  	<configuration>
-								<executable>grunt</executable>
-			                    <arguments>
-		                      		<argument>knowage-concat</argument>
-			                    </arguments>
-			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
-							</configuration>
-						</execution>
-					</executions>
-		  	</plugin>
-		  </plugins>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>npm-update-version</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>version</argument>
+								<argument>${project.version}</argument>
+								<argument>--allow-same-version</argument>
+							</arguments>
+							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm-package-install</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>install</argument>
+							</arguments>
+							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>grunt-concat-dist</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>grunt</executable>
+							<arguments>
+								<argument>knowage-concat</argument>
+							</arguments>
+							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
-	
-	<profiles>			
+
+	<profiles>
 		<profile>
 			<id>development</id>
-            <activation>
-                <!-- this profile is active by default -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-           		<application.environment>development</application.environment>
-            </properties>
+			<activation>
+				<!-- this profile is active by default -->
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<application.environment>development</application.environment>
+			</properties>
 			<build>
 				<pluginManagement>
-				    <plugins>				        			
-				
-				    </plugins>
-				 </pluginManagement>
-				 <resources>
-			       <resource>
-			          <directory>src/main/resources</directory>
-			          <filtering>true</filtering>
-			       </resource>
-		   		 </resources>
+					<plugins>
+
+					</plugins>
+				</pluginManagement>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
+					</resource>
+				</resources>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>production</id>
-            <properties>
-           		<application.environment>production</application.environment>
-           		<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
-            </properties>
+			<properties>
+				<application.environment>production</application.environment>
+				<disable.console.logging>*/console.log = function() {}; console.warn
+					= function() {}; console.debug = function() {}; console.info =
+					function() {}; /*</disable.console.logging>
+			</properties>
 			<build>
 				<pluginManagement>
-				    <plugins>
-				        <plugin>
-				        	<groupId>org.apache.maven.plugins</groupId>
-				            <artifactId>maven-war-plugin</artifactId>
-				            <configuration>
+					<plugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-war-plugin</artifactId>
+							<configuration>
 								<warSourceExcludes>js/src/**,themes/commons/css/**</warSourceExcludes>
 								<webResources>
 									<resource>
@@ -143,20 +146,20 @@
 										<filtering>true</filtering>
 										<includes>
 											<include>**/angularImport.jsp</include>
-										</includes>										
+										</includes>
 									</resource>
-							        <resource>
-							          <directory>src/main/webapp/js/src</directory>
-							          <targetPath>js/src-${project.version}</targetPath>
-							        </resource>
-							         <resource>
-							          <directory>src/main/webapp/themes/commons/css</directory>
-							          <targetPath>themes/commons/css-${project.version}</targetPath>
-							        </resource>
-						      </webResources>
-				            </configuration>
-				        </plugin>
-			
+									<resource>
+										<directory>src/main/webapp/js/src</directory>
+										<targetPath>js/src-${project.version}</targetPath>
+									</resource>
+									<resource>
+										<directory>src/main/webapp/themes/commons/css</directory>
+										<targetPath>themes/commons/css-${project.version}</targetPath>
+									</resource>
+								</webResources>
+							</configuration>
+						</plugin>
+
 						<plugin>
 							<groupId>org.codehaus.cargo</groupId>
 							<artifactId>cargo-maven2-plugin</artifactId>
@@ -174,79 +177,79 @@
 							</configuration>
 						</plugin>
 
-				  		<plugin>
+						<plugin>
 							<groupId>org.codehaus.mojo</groupId>
 							<artifactId>exec-maven-plugin</artifactId>
 							<version>1.6.0</version>
 							<executions>
-								<execution>		
+								<execution>
 									<id>npm-package-install</id>
 									<phase>prepare-package</phase>
-			                  		<goals>
-				                    	<goal>exec</goal>
-				                  	</goals>
+									<goals>
+										<goal>exec</goal>
+									</goals>
 								</execution>
 							</executions>
 							<configuration>
 								<executable>npm</executable>
-			                    <arguments>
-		                      		<argument>install</argument>
-			                    </arguments>
-			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+								<arguments>
+									<argument>install</argument>
+								</arguments>
+								<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
 							</configuration>
-				  	</plugin>
-				  </plugins>
-				 </pluginManagement>
-				 <resources>
-			       <resource>
-			          <directory>src/main/resources</directory>
-			          <filtering>true</filtering>
-			       </resource>
-		   		 </resources>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
+					</resource>
+				</resources>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>hsql</id>
 			<build>
-			<plugins>
-				<plugin>
-					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.7</version>
-					<configuration>
-						<encoding>UTF-8</encoding>
-					</configuration>
-					<executions>
-						<execution>
-							<id>copy-hibernate</id>
-							<phase>prepare-package</phase>
-							<goals>
-								<goal>copy-resources</goal>
-							</goals>
-							<configuration>		
-								<outputDirectory>src-${project.version}/main/resources</outputDirectory>	
-								<resources>
-									<resource>
-										<directory>src-${project.version}/main/resources/hsql</directory>
-										<includes>
-											<include>hibernate.cfg.xml</include>
-											<include>quartz.properties</include>
-											<include>hazelcast.xml</include>
-										</includes>	
-									</resource>
-								</resources>
-								<overwrite>true</overwrite>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.7</version>
+						<configuration>
+							<encoding>UTF-8</encoding>
+						</configuration>
+						<executions>
+							<execution>
+								<id>copy-hibernate</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>src-${project.version}/main/resources</outputDirectory>
+									<resources>
+										<resource>
+											<directory>src-${project.version}/main/resources/hsql</directory>
+											<includes>
+												<include>hibernate.cfg.xml</include>
+												<include>quartz.properties</include>
+												<include>hazelcast.xml</include>
+											</includes>
+										</resource>
+									</resources>
+									<overwrite>true</overwrite>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
 
 	<dependencies>
-		
+
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-core</artifactId>
@@ -275,7 +278,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
@@ -292,84 +295,84 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
 			<version>2.7.2</version>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>serializer</artifactId>
 			<version>2.7.2</version>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowageoauth2securityprovider</artifactId>
 			<version>8.0.0-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowageldapsecurityprovider</artifactId>
 			<version>8.0.0-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowagegooglesecurityprovider</artifactId>
 			<version>8.0.0-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.portlet</groupId>
 			<artifactId>portlet-api</artifactId>
 			<version>2.0</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
 			<version>3.1.2.Final</version>
 			<scope>runtime</scope>
-        </dependency>
-        
+		</dependency>
+
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-validator-provider-11</artifactId>
 			<version>3.1.2.Final</version>
 			<scope>runtime</scope>
-        </dependency>
+		</dependency>
 
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-legacy</artifactId>
 			<version>3.1.2.Final</version>
 			<scope>runtime</scope>
-        </dependency>
-		
+		</dependency>
+
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-servlet-initializer</artifactId>
 			<version>3.1.2.Final</version>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>com.fasterxml.jackson.jaxrs</groupId>
-		    <artifactId>jackson-jaxrs-json-provider</artifactId>
-		    <version>2.9.2</version>
-		    <scope>runtime</scope>
+			<groupId>com.fasterxml.jackson.jaxrs</groupId>
+			<artifactId>jackson-jaxrs-json-provider</artifactId>
+			<version>2.9.2</version>
+			<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
@@ -382,10 +385,10 @@
 			<artifactId>fdsapi</artifactId>
 			<version>1.2</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/com.fdsapi/fdsapi -->
-	
-		
+
+
 
 		<dependency>
 			<groupId>oro</groupId>
@@ -405,7 +408,14 @@
 			<version>2.5</version>
 			<scope>compile</scope>
 		</dependency>
-		   
+
+		<dependency>
+		    <groupId>javax.websocket</groupId>
+		    <artifactId>javax.websocket-api</artifactId>
+		    <version>1.1</version>
+		    <scope>provided</scope>
+		</dependency>
+
 	</dependencies>
-	
+
 </project>

@@ -411,9 +411,9 @@
 		<session-timeout>30</session-timeout>
 	</session-config>
 	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>
-		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 	<!--
 	<error-page>
@@ -519,11 +519,6 @@
 	</resource-ref>
 	<!-- END TOMCAT RES -->
 
-	<!-- Multipart configuration -->
-	<multipart-config>
-		<max-file-size>524288000</max-file-size>
-		<max-request-size>524288000</max-request-size>
-		<file-size-threshold>104857600</file-size-threshold>
-	</multipart-config>
+
 
 </web-app>

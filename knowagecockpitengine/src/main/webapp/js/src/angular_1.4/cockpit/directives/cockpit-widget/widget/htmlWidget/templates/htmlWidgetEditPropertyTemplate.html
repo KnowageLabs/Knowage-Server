@@ -7,8 +7,11 @@
 	      </div>
 	    </md-toolbar>
 	    <md-content flex layout="column">
-			<md-tabs flex md-border-bottom md-selected="1">
-				<md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
+			<md-tabs flex md-border-bottom md-selected="selectedTab">
+				<md-tab label="gallery" ng-if="showGallery">
+		        	<gallery-selector widget-type="html" callback="setGalleryTemplate(template)" no-items="setGalleryTemplate()"></gallery-selector>
+		     	</md-tab>
+				<md-tab label="{{translate.load('sbi.cockpit.dataset')}}" ng-disabled="showGallery">
 		        	<md-card>
 		        		<md-card-content>
 		   					<dataset-selector ng-model="newModel.dataset.dsId" dataset-settings="newModel.settings" extended="true" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]"></dataset-selector>  
@@ -16,7 +19,7 @@
 		   			</md-card>	
 		     	</md-tab>
 		     	
-				<md-tab label="Editor Html">
+				<md-tab label="Editor Html" ng-disabled="showGallery">
 					<section layout="row">
 					<md-content class="noPadding" layout="row" layout-fill>
 						<div layout="column" flex>
@@ -84,15 +87,15 @@
 					    </section>
 		        </md-tab>
 		        
-		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
+		        <md-tab label="{{translate.load('sbi.cockpit.style')}}" ng-disabled="showGallery">
 		        	<cockpit-style-configurator widget ng-model="newModel.style"></cockpit-style-configurator>
 		        </md-tab>
 		     	
-		     	<md-tab label="{{translate.load('sbi.cockpit.widget.table.cross')}}" >
+		     	<md-tab label="{{translate.load('sbi.cockpit.widget.table.cross')}}" ng-disabled="showGallery">
 					<cockpit-cross-configurator widget ng-cloak ng-model="newModel.cross"></cockpit-cross-configurator>
 				</md-tab>
 		     	
-		     	<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}">
+		     	<md-tab label="{{::translate.load('sbi.cockpit.widget.table.filters')}}" ng-disabled="showGallery">
 					<cockpit-filters-configuration ng-model-shared="newModel" ></cockpit-filters-configuration>
 				</md-tab>
 		        
