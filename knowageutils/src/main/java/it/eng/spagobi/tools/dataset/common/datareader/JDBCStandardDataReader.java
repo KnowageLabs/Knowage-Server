@@ -121,8 +121,15 @@ public class JDBCStandardDataReader extends AbstractDataReader {
 				// The following invokation causes an error on Oracle:
 				// java.sql.SQLException: Nessuna riga corrente: relative rs.relative(getOffset());
 
-				rs.first();
-				rs.relative(getOffset() - 1);
+				if (rs.getType() == ResultSet.TYPE_FORWARD_ONLY) {
+					// TYPE_FORWARD_ONLY only supports next()
+					for (int i = 0; i < getOffset(); i++) {
+						rs.next();
+					}
+				} else {
+					rs.first();
+					rs.relative(getOffset() - 1);
+				}
 
 			} else {
 				logger.debug("Offset not set");

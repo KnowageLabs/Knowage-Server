@@ -47,7 +47,8 @@ public enum DatabaseDialect {
 	VERTICA("Vertica",	"org.hibernate.dialect.VerticaDialect", true, true, true, true),
 	METAMODEL("MetaModelDialect", "metamodel", true, false, false, true),
 	REDSHIFT("Amazon RedShift","org.hibernate.dialect.RedShiftDialect", true, true, true, true),
-	BIGQUERY("Google BigQuery","org.hibernate.dialect.BigQueryDialect", true, true, true, true);
+	BIGQUERY("Google BigQuery","org.hibernate.dialect.BigQueryDialect", true, true, true, true),
+	SYNAPSE("Azure Synapse","org.hibernate.dialect.SynapseDialect", true, true, true, true);
 	// @formatter:on
 
 	private final static HashMap<String, DatabaseDialect> dialects = new HashMap<>(DatabaseDialect.values().length);

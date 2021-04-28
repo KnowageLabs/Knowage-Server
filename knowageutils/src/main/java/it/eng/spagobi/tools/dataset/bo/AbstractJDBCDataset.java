@@ -42,6 +42,7 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCBigQueryDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCRedShiftDataProxy;
+import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCSynapseDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.AbstractDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JDBCStandardDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -172,9 +173,8 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 			dataProxy = getDataProxy();
 		}
 
-		if (!(dataProxy instanceof JDBCDataProxy)
-				&& !(dataProxy instanceof JDBCRedShiftDataProxy)
-				&& !(dataProxy instanceof JDBCBigQueryDataProxy)) {
+		if (!(dataProxy instanceof JDBCDataProxy) && !(dataProxy instanceof JDBCRedShiftDataProxy) && !(dataProxy instanceof JDBCBigQueryDataProxy)
+				&& !(dataProxy instanceof JDBCSynapseDataProxy)) {
 			throw new RuntimeException("DataProxy cannot be of type [" + dataProxy.getClass().getName() + "] in JDBCDataSet");
 		}
 
