@@ -238,10 +238,6 @@
 	 END jboss RES -->
 
 	<!-- Multipart configuration -->
-	<multipart-config>
-		<max-file-size>524288000</max-file-size>
-		<max-request-size>524288000</max-request-size>
-		<file-size-threshold>104857600</file-size-threshold>
-	</multipart-config>
+
 
 </web-app>

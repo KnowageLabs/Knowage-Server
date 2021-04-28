@@ -34,6 +34,8 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import it.eng.knowage.wapp.Environment;
+import it.eng.knowage.wapp.Version;
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -354,7 +356,11 @@ public class LoginModule extends AbstractHttpModule {
 //			}
 //			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 //			getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-			getHttpResponse().sendRedirect(getServiceHostUrl() + "/knowage-vue");
+			if(Version.getEnvironment() == Environment.PRODUCTION) {
+				getHttpResponse().sendRedirect("/knowage-vue");
+			}else {
+				getHttpResponse().sendRedirect("http://localhost:3000/knowage-vue");
+			}
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after request processed in each case
 			TenantManager.unset();

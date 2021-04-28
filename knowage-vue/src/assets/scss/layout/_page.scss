@@ -1,0 +1,8 @@
+.kn-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .kn-page-content {
+        flex: 1;
+    }
+}

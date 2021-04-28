@@ -1,0 +1,14 @@
+.kn-button {
+    background-color: $color-secondary;
+    color: white;
+    text-transform: uppercase;
+    &:hover:enabled {
+        color: $color-secondary;
+    }
+    &--primary {
+        background-color: $color-primary;
+    }
+    &.p-button-text {
+        background-color: transparent;
+    }
+}
