@@ -173,8 +173,8 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 				if (fieldAlias == null) {
 					fieldAlias = selectFields.get(i).getName();
 					fieldAlias = fieldAlias.replace(" ", "_");
-					fieldAlias = "`" + fieldAlias + "`";
 				}
+				fieldAlias = "`" + fieldAlias + "`";
 				queryString = m.replaceFirst(fieldAlias);
 
 			}
@@ -193,8 +193,8 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 				if (fieldAlias == null) {
 					fieldAlias = selectFields.get(i).getName();
 					fieldAlias = fieldAlias.replace(" ", "_");
-					fieldAlias = "`" + fieldAlias + "`";
 				}
+				fieldAlias = "`" + fieldAlias + "`";
 
 				if (selectFields.size() - 1 == i) {
 					int fromPosition = queryString.indexOf(" FROM ");
