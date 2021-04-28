@@ -5,7 +5,7 @@
 	"author": "knowage labs <knowage@eng.it>",
 	"scripts": {
 		"serve": "vue-cli-service serve --port 3000",
-		"build": "vue-cli-service build --mode production",
+		"build": "vue-cli-service build --mode production --no-clean",
 		"test:unit": "vue-cli-service test:unit --watch",
 		"lint": "vue-cli-service lint"
 	},

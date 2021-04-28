@@ -2,6 +2,7 @@ process.env.VUE_APP_VERSION = process.env.npm_package_version
 
 module.exports = {
 	publicPath: process.env.VUE_APP_PUBLIC_PATH,
+	outputDir: './src/main/webapp',
 	devServer: {
 		proxy: {
 			'^/knowage/restful-services/[0-9].0': {
