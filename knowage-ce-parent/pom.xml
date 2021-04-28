@@ -114,6 +114,7 @@
 		<module>../knowagebirtreportengine</module>
 		<module>../knowagedatabasescripts</module>
 		<module>../knowage-api</module>
+		<module>../knowage-vue</module>
 	</modules>
 
 	<build>

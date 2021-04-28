@@ -56,6 +56,7 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -71,6 +72,7 @@ import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.services.ChangeTheme;
+import it.eng.spagobi.wapp.util.MenuUtilities;
 
 public class LoginModule extends AbstractHttpModule {
 
@@ -128,16 +130,10 @@ public class LoginModule extends AbstractHttpModule {
 				// user is authenticated, nothing to do
 				logger.debug("User is authenticated");
 				// fill response
-//				List lstMenu = MenuUtilities.getMenuItems(profile);
-//				String url = "/themes/" + currTheme + "/jsp/";
-//				if (UserUtilities.isTechnicalUser(profile)) {
-//					url += "adminHome.jsp";
-//				} else {
-//					url += "userHome.jsp";
-//				}
-//				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-//				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-				getHttpResponse().sendRedirect("http://localhost:3000/knowage");
+				List lstMenu = MenuUtilities.getMenuItems(profile);
+				String url = "knowage-vue/index.html";
+				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
 				return;
 			} else {
 				// user must authenticate
@@ -358,7 +354,7 @@ public class LoginModule extends AbstractHttpModule {
 //			}
 //			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 //			getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-			getHttpResponse().sendRedirect("http://localhost:3000/knowage");
+			getHttpResponse().sendRedirect(getServiceHostUrl() + "/knowage-vue");
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after request processed in each case
 			TenantManager.unset();
@@ -526,5 +522,11 @@ public class LoginModule extends AbstractHttpModule {
 
 	private boolean encriptedBefore72(SbiUser user) {
 		return user.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING);
+	}
+
+	public String getServiceHostUrl() {
+		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
+		return serviceURL;
 	}
 }
