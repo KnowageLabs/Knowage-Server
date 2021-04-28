@@ -492,7 +492,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 	var findWithAttr = function(array, attr, value) {
 	    for(var i = 0; i < array.length; i += 1) {
-	        if(array[i][attr] === value) {
+			if(array[i][attr] === value || angular.equals(array[i][attr], value)) {
 	            return i;
 	        }
 	    }
