@@ -297,7 +297,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					var found = false;
 					for(var i = 0; i<$scope.ngModelShared.filters.length; i++){
 						var fil = $scope.ngModelShared.filters[i];
-						if(fil.dataset == $scope.newFilter.dataset && fil.colName == $scope.newFilter.colName){
+						if(fil.dataset.dsId == $scope.newFilter.dataset.dsId && fil.colName == $scope.newFilter.colName){
 							found = true;
 						}
 					}
