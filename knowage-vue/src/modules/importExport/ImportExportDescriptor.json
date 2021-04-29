@@ -1,8 +1,40 @@
 {
-    "functionalities": [
-        {
-            "name": "gallery",
-            "icon": "test"
-        }
-    ]
+	"functionalities": [
+		{
+			"icon": "test",
+			"name": "gallery"
+		}
+	],
+	"iconTypesMap": {
+		"chart": {
+			"className": "fab fa-js-square",
+			"style": {
+				"background-color": "#ffc107",
+				"border": "none",
+				"border-radius": "0",
+				"color": "white",
+				"height": "16px"
+			}
+		},
+		"html": {
+			"className": "fab fa-html5",
+			"style": {
+				"background-color": "#c2185b",
+				"border": "none",
+				"border-radius": "0",
+				"color": "white",
+				"height": "16px"
+			}
+		},
+		"python": {
+			"className": "fab fa-python",
+			"style": {
+				"background-color": "#4caf50",
+				"border": "none",
+				"border-radius": "0",
+				"color": "white",
+				"height": "16px"
+			}
+		}
+	}
 }
