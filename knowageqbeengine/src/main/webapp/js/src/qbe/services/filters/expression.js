@@ -79,6 +79,11 @@ filters.service('expression_service',function(){
 				nodeConstObj.value = '$F{' + advancedFilters[i].name + '}';
 				nodeConstObj.type = "NODE_CONST";
 				nodeConstObj.childNodes = [];
+				nodeConstObj.details = {}
+				nodeConstObj.details.leftOperandAlias = advancedFilters[i].leftValue;
+				nodeConstObj.details.operator = advancedFilters[i].operator;
+				nodeConstObj.details.entity = advancedFilters[i].entity;
+				nodeConstObj.details.rightOperandValue = advancedFilters[i].rightValue;
 				nodeConstArray.push(nodeConstObj);
 			}
 			if (advancedFilters.length==1){
