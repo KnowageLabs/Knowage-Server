@@ -1581,7 +1581,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		}
 
 		$scope.isPrecisionEnabled = function(){
-			return $scope.selectedColumn.style && $scope.selectedColumn.style.format != $scope.formatPattern[0];
+			return $scope.selectedColumn.style;
 		}
 
 		$scope.saveColumnStyleConfiguration = function(){
