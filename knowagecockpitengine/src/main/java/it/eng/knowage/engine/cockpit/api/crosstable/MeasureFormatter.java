@@ -166,7 +166,9 @@ public class MeasureFormatter {
 		} else {
 			NumberFormat nf = NumberFormat.getInstance(locale);
 			formatter = (DecimalFormat) nf;
-			formatter.applyPattern(pattern);
+//			formatter.applyPattern(pattern);
+			formatter.setMinimumFractionDigits(precision);
+			formatter.setMaximumFractionDigits(precision);
 		}
 
 		String toReturn = formatter.format(scaledValue);
