@@ -34,6 +34,11 @@
 		$scope.showCollaborationMenu = sbiModule_user.functionalities.indexOf("Collaboration")>-1;
 		$scope.browser = sbiModule_device.browser;
 
+		$interval(function(){
+			$scope.menuElementLength = angular.element( document.querySelector( '#menu md-menu-content' ) )[0].children.length;
+		},1000)
+		
+		
 		//NAVIGATOR WHEEL
 		$scope.navigatorVisibility = false;
 		$scope.toggleNavigator = function(e) {
