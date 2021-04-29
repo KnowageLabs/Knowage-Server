@@ -352,14 +352,14 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 
 		if (fetchSize == -1) {
 			if (!this.statement.isEmpty()) {
-				this.statement = this.statement.replaceAll(";", "");
+				this.statement = removeLastSemicolon(this.statement);
 				return this.statement;
 			}
 		}
 
 		String newStatement = "";
 		if (!this.statement.isEmpty()) {
-			this.statement = this.statement.replaceAll(";", "");
+			this.statement = removeLastSemicolon(this.statement);
 
 			String preQuery = "SELECT * FROM (";
 			newStatement = preQuery.concat(this.statement).concat(") OFFSET " + offset + " LIMIT " + fetchSize);
