@@ -2,11 +2,11 @@
     <div class="kn-importExport kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
             <template #left>
-                {{ $t('managers.widgetGallery.title') }}
+                {{ $t('importExport.title') }}
             </template>
             <template #right>
-                <Button class="kn-button p-button-text">import</Button>
-                <Button class="kn-button p-button-text">export</Button>
+                <Button class="kn-button p-button-text">{{ $t(common.import) }}</Button>
+                <Button class="kn-button p-button-text">{{ $t(common.export) }}</Button>
             </template>
         </Toolbar>
         <div class="kn-page-content p-grid p-m-0">
@@ -34,7 +34,11 @@ export default defineComponent({
         }
     },
     created() {},
-    methods: {}
+    methods: {
+        selectType(type) {
+            this.$router.push(type.route)
+        }
+    }
 })
 </script>
 

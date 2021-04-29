@@ -2,8 +2,9 @@
     "functionalities": [
         {
             "icon": "fas fa-paint-brush",
-            "name": "gallery",
-            "description": "export gallery templates"
+            "description": "importExport.gallery.description",
+            "route": "importexport/gallery",
+            "label": "importExport.gallery.label"
         }
     ],
     "iconTypesMap": {

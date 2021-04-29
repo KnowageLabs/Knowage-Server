@@ -1,8 +1,8 @@
 <template>
     <Card :class="['kn-tab-card--icon', 'selectable']">
         <template #content>
-            <span class="heading">{{ element.name }}</span>
-            <span v-if="element.description" class="subheading">{{ element.description }}</span>
+            <span class="heading">{{ $t(element.label) }}</span>
+            <span v-if="element.description" class="subheading">{{ $t(element.description) }}</span>
             <i :class="['icon', element.icon]"></i>
         </template>
     </Card>
