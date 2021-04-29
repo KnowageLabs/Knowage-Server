@@ -302,7 +302,7 @@ if(executionRoleNames.size() > 0) {
                     </md-button>
                     <%} %>
                     
-                    <md-menu-bar id="menu">
+                    <md-menu-bar id="menu" ng-show="menuElementLength > 0">
                         <md-menu>
                             <md-button id="menuButton" class="md-icon-button" aria-label="Menu" ng-click="$mdOpenMenu(); closeMdMenu();" >
                             	<md-tooltip direction="bottom">Menu</md-tooltip>
@@ -317,8 +317,8 @@ if(executionRoleNames.size() > 0) {
                                     </md-button>
                                 </md-menu-item>
                                                                               
-                                <span class="divider" ng-if="urlViewPointService.exportation.length>0">{{translate.load("sbi.execution.executionpage.toolbar.export")}}</span>
-                                <md-menu-item ng-if="urlViewPointService.exportation.length>0">  
+                                <span class="divider" ng-if="urlViewPointService.exportation.length>0 && cockpitEditing.documentMode != 'EDIT'">{{translate.load("sbi.execution.executionpage.toolbar.export")}}</span>
+                                <md-menu-item ng-if="urlViewPointService.exportation.length>0 && cockpitEditing.documentMode != 'EDIT'">  
                                     <md-menu>
                                         <md-menu-item class="md-indent">
                                             <md-icon class="fa fa-download"></md-icon>
