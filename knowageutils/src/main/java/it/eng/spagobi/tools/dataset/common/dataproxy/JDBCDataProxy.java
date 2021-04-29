@@ -380,6 +380,6 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		Assert.assertNotNull(query, "The query parameter cannot be null");
 
 		// This replaceAll(), in fact, replace only the last: see the $ in the regex.
-		return query.replaceAll(";\s*$", "");
+		return query.replaceAll(";\\s*$", "");
 	}
 }
