@@ -1,0 +1,46 @@
+.kn-tab-card {
+    position: relative;
+    height: 60px;
+    .p-card-body {
+        padding: 0 0 0 16px;
+        height: 100%;
+        .p-card-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+    }
+
+    .heading {
+        font-size: 1rem;
+        text-transform: uppercase;
+    }
+    .subheading {
+        font-size: 0.8rem;
+        color: $color-default;
+    }
+    &--icon {
+        @extend .kn-tab-card;
+        overflow: hidden;
+        i {
+            position: absolute;
+            top: 0;
+            right: -0.5rem;
+            font-size: 3rem;
+            color: $color-primary;
+        }
+    }
+    &.selectable {
+        cursor: pointer;
+        transition: background-color 0.3s ease-in;
+        &:hover,
+        &.selected {
+            background-color: $color-secondary;
+            .subheading {
+                color: $color-primary;
+            }
+        }
+    }
+}
