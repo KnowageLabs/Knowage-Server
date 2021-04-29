@@ -375,4 +375,11 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			logger.debug("OUT");
 		}
 	}
+
+	protected final String removeLastSemicolon(String query) {
+		Assert.assertNotNull(query, "The query parameter cannot be null");
+
+		// This replaceAll(), in fact, replace only the last: see the $ in the regex.
+		return query.replaceAll(";\s*$", "");
+	}
 }

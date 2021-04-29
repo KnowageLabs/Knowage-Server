@@ -352,14 +352,14 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 
 		if (fetchSize == -1) {
 			if (!this.statement.isEmpty()) {
-				this.statement = this.statement.replaceAll(";", "");
+				this.statement = removeLastSemicolon(this.statement);
 				return this.statement;
 			}
 		}
 
 		StringBuilder newStatement = new StringBuilder();
 		if (!this.statement.isEmpty()) {
-			this.statement = this.statement.replaceAll(";", "");
+			this.statement = removeLastSemicolon(this.statement);
 
 			newStatement.append("SELECT * FROM (")
 				.append(this.statement)
