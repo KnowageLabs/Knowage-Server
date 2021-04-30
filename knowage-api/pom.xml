@@ -10,7 +10,6 @@
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>knowage-api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>knowage-api</name>
 	<description>API knowage microservice project</description>
@@ -77,13 +76,11 @@
 			<version>3.3.0</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>1.1</version>
 		</dependency>
-
 
 	</dependencies>
 
