@@ -1,6 +1,6 @@
 let routes = [
     {
-        path: '/knowage-vue/importexport',
+        path: '/importexport',
         name: 'importexport',
         component: () => import('@/modules/importExport/ImportExport.vue'),
         children: [

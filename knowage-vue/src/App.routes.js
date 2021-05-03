@@ -5,12 +5,12 @@ import importExportRoutes from '@/modules/importExport/ImportExport.routes.js'
 
 const baseRoutes = [
     {
-        path: '/knowage-vue',
+        path: '/',
         name: 'home',
         component: () => import('@/views/Home.vue')
     },
     {
-        path: '/knowage-vue/about',
+        path: '/about',
         name: 'about',
         component: () => import('@/views/About.vue')
     },
@@ -50,7 +50,7 @@ const routes = baseRoutes.concat(managersRoutes).concat(importExportRoutes)
 
 const router = createRouter({
     base: process.env.VUE_APP_PUBLIC_PATH,
-    history: createWebHistory(),
+    history: createWebHistory(process.env.VUE_APP_PUBLIC_PATH),
     routes
 })
 
