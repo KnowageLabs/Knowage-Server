@@ -1,6 +1,6 @@
 <template>
-    <div class="kn-importExport kn-page">
-    		<div>
+	<div class="kn-importExport kn-page">
+		<div>
 			<Dialog class="kn-dialog--toolbar--primary exportDialog" v-model:visible="exportDisplay" :closable="false">
 				<template #header>
 					<h3>{{ $t('common.export') }}</h3>
@@ -16,53 +16,53 @@
 				</template>
 			</Dialog>
 		</div>
-        <ImportDialog v-model:visibility="displayImportDialog"></ImportDialog>
-        <Toolbar class="kn-toolbar kn-toolbar--primary">
-            <template #left>
-                {{ $t('importExport.title') }}
-            </template>
-            <template #right>
-                <Button class="kn-button p-button-text" @click="openImportDialog">{{ $t('common.import') }}</Button>
-                <Button class="kn-button p-button-text" @click="exportSelection" :disabled="isExportDisabled()">{{ $t('common.export') }}</Button>
-            </template>
-        </Toolbar>
-        <div class="kn-page-content p-grid p-m-0">
-            <div class="functionalities-container p-col-3 p-sm-3 p-md-2">
+		<ImportDialog v-model:visibility="displayImportDialog"></ImportDialog>
+		<Toolbar class="kn-toolbar kn-toolbar--primary">
+			<template #left>
+				{{ $t('importExport.title') }}
+			</template>
+			<template #right>
+				<Button class="kn-button p-button-text" @click="openImportDialog">{{ $t('common.import') }}</Button>
+				<Button class="kn-button p-button-text" @click="exportSelection" :disabled="isExportDisabled()">{{ $t('common.export') }}</Button>
+			</template>
+		</Toolbar>
+		<div class="kn-page-content p-grid p-m-0">
+			<div class="functionalities-container p-col-3 p-sm-3 p-md-2">
 				<KnTabCard :element="functionality" v-for="(functionality, index) in importExportDescriptor.functionalities" v-bind:key="index" @click="selectType(functionality)" :badge="selectedItems['gallery'].length"></KnTabCard>
-            </div>
-            <div class="p-col-9 p-sm-9 p-md-10 p-p-0 p-m-0">
+			</div>
+			<div class="p-col-9 p-sm-9 p-md-10 p-p-0 p-m-0">
 				<router-view @onItemSelected="getSelectedItems($event)" />
-            </div>
-        </div>
-    </div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-/* 	import axios from 'axios' */
-import importExportDescriptor from './ImportExportDescriptor.json'
-import Dialog from 'primevue/dialog'
-import ImportDialog from './ImportDialog.vue'
-import KnTabCard from '@/components/UI/KnTabCard.vue'
-import InputText from 'primevue/inputtext'
+	import { defineComponent } from 'vue'
+	/* 	import axios from 'axios' */
+	import importExportDescriptor from './ImportExportDescriptor.json'
+	import Dialog from 'primevue/dialog'
+	import ImportDialog from './ImportDialog.vue'
+	import KnTabCard from '@/components/UI/KnTabCard.vue'
+	import InputText from 'primevue/inputtext'
 
-export default defineComponent({
-    name: 'import-export',
-    components: { Dialog, KnTabCard, ImportDialog, InputText},
-    data() {
-        return {
-            importExportDescriptor: importExportDescriptor,
-            displayImportDialog: false,
-            exportDisplay: false,
-            fileName: '',
-			selectedItems: {
-				gallery: []
+	export default defineComponent({
+		name: 'import-export',
+		components: { Dialog, KnTabCard, ImportDialog, InputText },
+		data() {
+			return {
+				importExportDescriptor: importExportDescriptor,
+				displayImportDialog: false,
+				exportDisplay: false,
+				fileName: '',
+				selectedItems: {
+					gallery: []
+				}
 			}
-        }
-    },
-    emits: ['onItemSelected'],
-    methods: {
-    getSelectedItems(e) {
+		},
+		emits: ['onItemSelected'],
+		methods: {
+			getSelectedItems(e) {
 				this.selectedItems[e.functionality] = e.items
 			},
 			isExportDisabled() {
@@ -71,17 +71,16 @@ export default defineComponent({
 				}
 				return true
 			},
-        selectType(type): void {
-            this.$router.push(type.route)
-        },
-        openImportDialog(): void {
-            this.displayImportDialog = !this.displayImportDialog
-        },
-        exportSelection() {
-			this.exportDisplay = !this.exportDisplay
-			this.importDisplay = false
-		},
-		closeExport() {
+			selectType(type): void {
+				this.$router.push(type.route)
+			},
+			openImportDialog(): void {
+				this.displayImportDialog = !this.displayImportDialog
+			},
+			exportSelection() {
+				this.exportDisplay = !this.exportDisplay
+			},
+			closeExport() {
 				this.exportDisplay = false
 			},
 			startExport() {
@@ -91,14 +90,14 @@ export default defineComponent({
 				) */
 				console.log(this.selectedItems)
 			}
-    }
-})
+		}
+	})
 </script>
 
 <style lang="scss" scoped>
-.functionalities-container {
-    flex: 1;
-}
+	.functionalities-container {
+		flex: 1;
+	}
 
 	.exportDialogContent {
 		height: 100px !important;
