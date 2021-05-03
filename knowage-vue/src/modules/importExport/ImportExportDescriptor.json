@@ -37,7 +37,15 @@
 			"description": "importExport.gallery.description",
 			"icon": "fas fa-paint-brush",
 			"label": "importExport.gallery.label",
-			"route": "importexport/gallery"
+			"route": "importexport/gallery",
+			"type": "gallery"
+		},
+		{
+			"description": "importExport.gallery.description",
+			"icon": "fas fa-paint-brush",
+			"label": "importExport.gallery.label",
+			"route": "importexport/gallery",
+			"type": "doc"
 		}
 	],
 	"iconTypesMap": {

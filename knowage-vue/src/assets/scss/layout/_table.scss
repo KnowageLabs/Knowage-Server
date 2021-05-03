@@ -1,0 +1,13 @@
+.kn-table {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+
+	&:deep(.p-datatable-wrapper) {
+		height: 100%;
+
+		&:deep(.p-paginator-bottom) {
+			flex: 1;
+		}
+	}
+}

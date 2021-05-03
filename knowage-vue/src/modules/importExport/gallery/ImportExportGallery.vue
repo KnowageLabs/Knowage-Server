@@ -1,67 +1,64 @@
 <template>
 	<div>
 		<OverlayPanel ref="op" class="imageOverlayPanel">
-			<img :src="currentImage" alt="Nature Image" />
+			<img :src="currentImage" />
 		</OverlayPanel>
 	</div>
-	<Card style="height:100%">
-		<template #content>
-			<DataTable
-				ref="dt"
-				:value="templates"
-				v-model:selection="selectedTemplates"
-				v-model:filters="filters1"
-				class="p-datatable-sm"
-				dataKey="id"
-				:paginator="true"
-				:rows="10"
-				paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-				:rowsPerPageOptions="[5, 10, 15, 20]"
-				responsiveLayout="stack"
-				breakpoint="960px"
-				:currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}' })"
-				:globalFilterFields="['name', 'type', 'tags']"
-			>
-				<template #header>
-					<div class="table-header">
-						<span class="p-input-icon-left">
-							<i class="pi pi-search" />
-							<InputText class="kn-material-input" type="text" v-model="filters1['global'].value" :placeholder="$t('common.search', { first: { first } })" />
-						</span>
-					</div>
-				</template>
-				<template #empty>
-					{{ $t('common.info.noDataFound') }}
-				</template>
-				<template #loading>
-					{{ $t('common.info.dataLoading') }}
-				</template>
 
-				<Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
-				<Column field="name" header="Name" :sortable="true" :style="importExportDescriptor.export.gallery.column.name.style"></Column>
-				<Column field="type" header="Type" :sortable="true" :style="importExportDescriptor.export.gallery.column.type.style">
-					<template #body="{data}">
-						<Tag :style="importExportDescriptor.iconTypesMap[data.type].style"> {{ data.type.toUpperCase() }} </Tag>
-					</template>
-				</Column>
-
-				<Column field="tags" header="Tags" :sortable="true" :style="importExportDescriptor.export.gallery.column.tags.style">
-					<template #body="{data}">
-						<span class="p-float-label kn-material-input">
-							<Tag class="importExportTags" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
-						</span>
-					</template>
-				</Column>
-				<Column field="image" header="Image" :style="importExportDescriptor.export.gallery.column.image.style">
-					<template #body="{data}">
-						<span @click="togglePreview($event, data.id)">
-							<i class="fas fa-image" v-if="data.image.length > 0" />
-						</span>
-					</template>
-				</Column>
-			</DataTable>
+	<DataTable
+		ref="dt"
+		:value="templates"
+		v-model:selection="selectedGalleryItems"
+		v-model:filters="filters1"
+		class="p-datatable-sm kn-table"
+		dataKey="id"
+		:paginator="true"
+		:rows="10"
+		paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+		:rowsPerPageOptions="[10, 15, 20]"
+		responsiveLayout="stack"
+		breakpoint="960px"
+		:currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+		:globalFilterFields="['name', 'type', 'tags']"
+	>
+		<template #header>
+			<div class="table-header">
+				<span class="p-input-icon-left">
+					<i class="pi pi-search" />
+					<InputText class="kn-material-input" type="text" v-model="filters1['global'].value" :placeholder="$t('common.search')" badge="0" />
+				</span>
+			</div>
 		</template>
-	</Card>
+		<template #empty>
+			{{ $t('common.info.noDataFound') }}
+		</template>
+		<template #loading>
+			{{ $t('common.info.dataLoading') }}
+		</template>
+
+		<Column selectionMode="multiple" :exportable="false" :style="importExportDescriptor.export.gallery.column.selectionMode.style"></Column>
+		<Column field="name" header="Name" :sortable="true" :style="importExportDescriptor.export.gallery.column.name.style"></Column>
+		<Column field="type" header="Type" :sortable="true" :style="importExportDescriptor.export.gallery.column.type.style">
+			<template #body="{data}">
+				<Tag :style="importExportDescriptor.iconTypesMap[data.type].style"> {{ data.type.toUpperCase() }} </Tag>
+			</template>
+		</Column>
+
+		<Column field="tags" header="Tags" :sortable="true" :style="importExportDescriptor.export.gallery.column.tags.style">
+			<template #body="{data}">
+				<span class="p-float-label kn-material-input">
+					<Tag class="importExportTags" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
+				</span>
+			</template>
+		</Column>
+		<Column field="image" header="Image" :style="importExportDescriptor.export.gallery.column.image.style">
+			<template #body="{data}">
+				<span @click="togglePreview($event, data.id)">
+					<i class="fas fa-image" v-if="data.image.length > 0" />
+				</span>
+			</template>
+		</Column>
+	</DataTable>
 </template>
 
 <script lang="ts">
@@ -81,11 +78,11 @@
 			return {
 				importExportDescriptor: importExportDescriptor,
 				product: {},
-				selectedTemplates: null,
 				filters: {},
 				filters1: {},
 				currentImage: '',
-				templates: importExportDescriptor.templates
+				templates: importExportDescriptor.templates,
+				selectedGalleryItems: []
 			}
 		},
 		created() {
@@ -96,6 +93,7 @@
 				tags: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
 			}
 		},
+		emits: ['onItemSelected'],
 		methods: {
 			getCurrentTemplateImage(index) {
 				return this.templates[index].image
@@ -121,22 +119,29 @@
 				// @ts-ignore
 				this.$refs.op.toggle(event)
 			}
+		},
+		watch: {
+			selectedGalleryItems(newSelectedGalleryItems, oldSelectedGalleryItems) {
+				if (oldSelectedGalleryItems != newSelectedGalleryItems) {
+					this.$emit('onItemSelected', { items: this.selectedGalleryItems, functionality: 'gallery' })
+				}
+			}
 		}
 	})
 </script>
 
 <style lang="scss" scoped>
-	.importExportTags {
-		&:deep(.p-inputtext) {
-			border: none !important;
-			border-radius: 0;
-			width: 100%;
-		}
-	}
-
 	.imageOverlayPanel {
 		position: absolute !important;
 		top: 0px !important;
 		left: 0px !important;
+	}
+
+	.importExportTags {
+		background-color: $color-default;
+	}
+
+	.p-paginator p-component p-paginator-bottom {
+		height: 50px;
 	}
 </style>

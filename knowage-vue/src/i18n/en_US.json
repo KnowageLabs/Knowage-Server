@@ -1,5 +1,6 @@
 {
 	"common": {
+		"cancel": "cancel",
 		"close": "close",
 		"codingLanguages": {
 			"css": "css",
@@ -49,6 +50,7 @@
 		"test": "english"
 	},
 	"importExport": {
+		"filenamePlaceholder": "Enter filename here",
 		"gallery": {
 			"description": "export gallery templates",
 			"label": "gallery"
