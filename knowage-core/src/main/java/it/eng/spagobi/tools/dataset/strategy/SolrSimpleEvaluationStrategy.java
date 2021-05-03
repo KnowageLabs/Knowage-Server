@@ -117,4 +117,11 @@ public class SolrSimpleEvaluationStrategy extends AbstractSolrStrategy {
 		return dataStore;
 	}
 
+	@Override
+	protected boolean isDatasetEmpty(IDataSet dataSet, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
+			List<AbstractSelectionField> projections, int offset, int fetchSize, int maxRowCount) {
+		/* Not implemented for Solr dataset */
+		return false;
+	}
+
 }
