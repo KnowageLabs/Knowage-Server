@@ -6,9 +6,11 @@
         color: $color-secondary;
     }
     &--primary {
+        @extend .kn-button;
         background-color: $color-primary;
     }
     &.p-button-text {
         background-color: transparent;
+        color: inherit;
     }
 }

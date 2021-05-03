@@ -94,18 +94,4 @@
 	})
 </script>
 
-<style lang="scss" scoped>
-	.functionalities-container {
-		flex: 1;
-	}
-
-	.exportDialogContent {
-		height: 100px !important;
-		width: 300px !important;
-
-		&:deep(.fileNameInputText) {
-			margin-top: 5px;
-			width: 100%;
-		}
-	}
-</style>
+<style lang="scss" scoped></style>

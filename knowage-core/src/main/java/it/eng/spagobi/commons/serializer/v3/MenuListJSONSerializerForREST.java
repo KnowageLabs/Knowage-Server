@@ -67,6 +67,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	private static final String PLACEHOLDER_SPAGO_ADAPTER_HTTP = "${SPAGO_ADAPTER_HTTP}";
 	private static final String PLACEHOLDER_SPAGOBI_CONTEXT = "${SPAGOBI_CONTEXT}";
+	private static final String PLACEHOLDER_KNOWAGE_VUE_CONTEXT = "${KNOWAGE_VUE_CONTEXT}";
 	private static final String PLACEHOLDER_KNOWAGE_THEME = "${KNOWAGE_THEME}";
 
 	private static final String CONDITION = "condition";
@@ -92,6 +93,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	private static final String HREF_DOC_BROWSER_WORKSPACE = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_WORKSPACE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 
 	public String contextName = "";
+	public String vueContextName = "knowage-vue";
 	public String defaultThemePath = "/themes/sbi_default";
 
 	private IEngUserProfile userProfile;
@@ -449,6 +451,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						value = messageBuilder.getMessage((String) attribute.getValue(), locale);
 					} else if (attribute.getKey().equals(TO)) {
 						value = value.replace(PLACEHOLDER_SPAGOBI_CONTEXT, contextName);
+						value = value.replace(PLACEHOLDER_KNOWAGE_VUE_CONTEXT, vueContextName);
+						
 						value = value.replace(PLACEHOLDER_SPAGO_ADAPTER_HTTP, GeneralUtilities.getSpagoAdapterHttpUrl());
 
 						value = value.replace(PLACEHOLDER_KNOWAGE_THEME, currentTheme);
