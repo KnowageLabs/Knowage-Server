@@ -136,11 +136,11 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 									break;
 								}
 							}
-
-							/* If all fields values are null, the row is empty. So we return 0. */
-							if (allNulls)
-								resultNumber = 0;
 						}
+
+						/* If all fields values are null, the row is empty. So we return 0. */
+						if (allNulls)
+							resultNumber = 0;
 
 					} catch (DataBaseException e) {
 						throw new SpagoBIRuntimeException(e);

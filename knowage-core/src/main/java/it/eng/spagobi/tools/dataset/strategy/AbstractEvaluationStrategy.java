@@ -85,7 +85,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 					}
 				}
 			} else {
-				dataStore = new DataStore(dataSet.getMetadata());
+				dataStore = new DataStore();
 			}
 		}
 		return dataStore;
