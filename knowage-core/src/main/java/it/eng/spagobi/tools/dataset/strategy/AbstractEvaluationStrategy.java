@@ -64,22 +64,28 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 	@Override
 	public IDataStore executeQuery(List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
 			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
-		IDataStore dataStore;
+		IDataStore dataStore = null;
 		if (isUnsatisfiedFilter(filter)) {
 			dataStore = new DataStore(dataSet.getMetadata());
 		} else {
-			List<AbstractSelectionField> newProjections = applyTotalsFunctionsToFormulas(dataSet, projections, filter, maxRowCount);
-			dataStore = execute(newProjections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
-			IMetaData dataStoreToUseMeta = dataStore.getMetaData();
-			if (!isSummaryRowIncluded() && summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
-				int i = 0;
-				for (List<AbstractSelectionField> listProj : summaryRowProjections) {
-					List<AbstractSelectionField> replacedSelectionFieldsList = applyTotalsFunctionsToFormulas(dataSet, listProj, filter, maxRowCount);
+			/* [KNOWAGE-5909] - Check if dataset is empty, to avoid to apply total functions and execute */
+			if (!isDatasetEmpty(dataSet, filter, groups, sortings, projections, offset, fetchSize, maxRowCount)) {
 
-					IDataStore summaryRowDataStore = executeSummaryRow(replacedSelectionFieldsList, dataStoreToUseMeta, filter, maxRowCount);
-					appendSummaryRowToPagedDataStore(newProjections, replacedSelectionFieldsList, dataStore, summaryRowDataStore, i);
-					i++;
+				List<AbstractSelectionField> newProjections = applyTotalsFunctionsToFormulas(dataSet, projections, filter, maxRowCount);
+				dataStore = execute(newProjections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+				IMetaData dataStoreToUseMeta = dataStore.getMetaData();
+				if (!isSummaryRowIncluded() && summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
+					int i = 0;
+					for (List<AbstractSelectionField> listProj : summaryRowProjections) {
+						List<AbstractSelectionField> replacedSelectionFieldsList = applyTotalsFunctionsToFormulas(dataSet, listProj, filter, maxRowCount);
+
+						IDataStore summaryRowDataStore = executeSummaryRow(replacedSelectionFieldsList, dataStoreToUseMeta, filter, maxRowCount);
+						appendSummaryRowToPagedDataStore(newProjections, replacedSelectionFieldsList, dataStore, summaryRowDataStore, i);
+						i++;
+					}
 				}
+			} else {
+				dataStore = new DataStore();
 			}
 		}
 		return dataStore;
@@ -123,7 +129,10 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 			HashMap<String, String> totalsMap = new HashMap<String, String>();
 			int i = 0;
 			for (String function : totalFunctionsSet) {
-				totalsMap.put(function, String.valueOf(totalsFunctionDataStore.getRecordAt(0).getFieldAt(i).getValue()));
+				Object value = totalsFunctionDataStore.getRecordAt(0).getFieldAt(i).getValue();
+
+				// If dataset returns no data, value is set to 0
+				totalsMap.put(function, value == null ? "0" : String.valueOf(value));
 				i++;
 			}
 
@@ -286,4 +295,8 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	protected abstract boolean isDatasetEmpty(IDataSet dataSet, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
+			List<AbstractSelectionField> projections, int offset, int fetchSize, int maxRowCount);
+
 }
