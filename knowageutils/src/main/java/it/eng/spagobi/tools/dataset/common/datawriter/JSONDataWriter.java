@@ -374,13 +374,15 @@ public class JSONDataWriter implements IDataWriter {
 					try {
 						if (oracle.jdbc.OracleClob.class.isAssignableFrom(fieldMetaData.getType())
 								|| oracle.sql.CLOB.class.isAssignableFrom(fieldMetaData.getType())) { // Can we add a limit?
-							Reader r = ((Clob) field.getValue()).getCharacterStream();
-							StringBuffer buffer = new StringBuffer();
-							int ch;
-							while ((ch = r.read()) != -1) {
-								buffer.append("" + (char) ch);
+							if (field.getValue() != null) {
+								Reader r = ((Clob) field.getValue()).getCharacterStream();
+								StringBuffer buffer = new StringBuffer();
+								int ch;
+								while ((ch = r.read()) != -1) {
+									buffer.append("" + (char) ch);
+								}
+								fieldValue = buffer.toString();
 							}
-							fieldValue = buffer.toString();
 						} // provided
 					} catch (NoClassDefFoundError t) {
 						logger.debug("Class not found error", t);
