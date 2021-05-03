@@ -17,8 +17,8 @@ export function downloadPromise(content, fileName, contentType): Promise<any> {
 	})
 }
 
-export function downloadDirect(jsonData, filename) {
-	let blob = new Blob([jsonData], { type: 'text/plain;charset=utf-8;' })
+export function downloadDirect(jsonData, filename, contentType) {
+	let blob = new Blob([jsonData], { type: contentType })
 	if (navigator.msSaveBlob) {
 		// IE 10+
 		navigator.msSaveBlob(blob, filename)

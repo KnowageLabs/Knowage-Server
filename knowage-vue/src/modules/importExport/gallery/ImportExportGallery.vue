@@ -95,12 +95,10 @@
 		},
 		emits: ['onItemSelected'],
 		methods: {
-			getCurrentTemplateImage(index) {
-				return this.templates[index].image
-			},
 			togglePreview(event, id) {
 				this.currentImage = ''
 
+				/* Mocked: to remove! */
 				for (var idx in this.templates) {
 					if (this.templates[idx].id === id) {
 						this.currentImage = this.templates[idx].image

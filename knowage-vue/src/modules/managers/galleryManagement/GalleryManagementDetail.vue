@@ -181,7 +181,7 @@
 						}
 					})
 				} else {
-					downloadDirect(JSON.stringify(this.template), this.template.name + '.json')
+					downloadDirect(JSON.stringify(this.template), this.template.name, 'application/json')
 				}
 			},
 			closeTemplate(): void {
