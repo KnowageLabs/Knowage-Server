@@ -85,14 +85,14 @@ export default defineComponent({
                         .then(() => {
                             this.$store.commit('setInfo', { title: 'Deleted template', msg: 'template deleted' })
                             this.loadAllTemplates()
-                            if (templateId === this.$route.params.id) this.$router.push('/knowage/gallerymanagement')
+                            if (templateId === this.$route.params.id) this.$router.push('/gallerymanagement')
                         })
                         .catch((error) => console.error(error))
                 }
             })
         },
         newTemplate() {
-            this.$router.push('/knowage/gallerymanagement/newtemplate')
+            this.$router.push('/gallerymanagement/newtemplate')
         },
         savedElement() {
             this.loadAllTemplates()

@@ -30,9 +30,9 @@ public interface WidgetGalleryAPI {
 	WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String image, String sbiversion, String template,
 			SpagoBIUserProfile profile, String tags, String outputType);
 
-	void updateGallery(String uuid, String name, String type, String author, String description, String image, String sbiversion, String template,
+	void updateWidget(String uuid, String name, String type, String author, String description, String image, String sbiversion, String template,
 			SpagoBIUserProfile profile, String tags, String outputType);
 
-	WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String image, String sbiversion, String template,
+	WidgetGalleryDTO createNewWidget(String name, String type, String author, String description, String image, String sbiversion, String template,
 			SpagoBIUserProfile profile, String tags, String outputType);
 }

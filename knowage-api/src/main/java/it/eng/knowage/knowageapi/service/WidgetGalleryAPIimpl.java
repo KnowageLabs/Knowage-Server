@@ -115,7 +115,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	@Override
-	public WidgetGalleryDTO createNewGallery(String name, String type, String author, String description, String image, String sbiversion, String template,
+	public WidgetGalleryDTO createNewWidget(String name, String type, String author, String description, String image, String sbiversion, String template,
 			SpagoBIUserProfile profile, String tags, String outputType) {
 		WidgetGalleryDTO widgetGalleryDTO = null;
 		if (this.canSeeGallery(profile)) {
@@ -145,7 +145,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	@Override
-	public void updateGallery(String uuid, String name, String type, String author, String description, String image, String sbiversion, String template,
+	public void updateWidget(String uuid, String name, String type, String author, String description, String image, String sbiversion, String template,
 			SpagoBIUserProfile profile, String tags, String outputType) {
 		if (this.canSeeGallery(profile)) {
 			SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();

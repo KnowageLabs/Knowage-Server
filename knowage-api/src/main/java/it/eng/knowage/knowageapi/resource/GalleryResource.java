@@ -138,7 +138,7 @@ public class GalleryResource {
 				if (jsonBody.has("outputType")) {
 					outputType = jsonBody.getString("outputType");
 				}
-				newSbiWidgetGallery = widgetGalleryService.createNewGallery(name, type, userId, description, image, "", body, profile, tags, outputType);
+				newSbiWidgetGallery = widgetGalleryService.createNewWidget(name, type, userId, description, image, "", body, profile, tags, outputType);
 
 			} catch (Exception e) {
 				throw new KnowageRuntimeException(e.getMessage(), e);
@@ -192,7 +192,7 @@ public class GalleryResource {
 				}
 				if (newSbiWidgetGallery != null) {
 
-					widgetGalleryService.updateGallery(newSbiWidgetGallery.getId(), label, type, userId, description, image, "", body, profile, tags,
+					widgetGalleryService.updateWidget(newSbiWidgetGallery.getId(), label, type, userId, description, image, "", body, profile, tags,
 							outputType);
 				}
 
