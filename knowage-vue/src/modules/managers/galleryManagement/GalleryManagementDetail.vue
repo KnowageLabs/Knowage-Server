@@ -140,10 +140,10 @@ export default defineComponent({
     },
     data() {
         return {
-            dirty: false,
+            dirty: false as Boolean,
             files: [],
-            loading: false,
-            test: '',
+            loading: false as Boolean,
+            test: '' as String,
             galleryTemplates: [],
             template: {} as GalleryTemplate,
             galleryDescriptor: galleryDescriptor,
