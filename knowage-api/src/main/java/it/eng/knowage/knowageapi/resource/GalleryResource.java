@@ -1,13 +1,11 @@
 package it.eng.knowage.knowageapi.resource;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -20,6 +18,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -51,11 +51,11 @@ public class GalleryResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public List<WidgetGalleryDTO> widgetList(@HeaderParam("Authorization") String token) {
-		SpagoBIUserProfile profile = null;
+	public List<WidgetGalleryDTO> widgetList() {
 		List<WidgetGalleryDTO> widgetGalleryDTOs = null;
 		try {
-			profile = getUserProfile(token);
+			SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
+					RequestAttributes.SCOPE_REQUEST);
 			widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenant(profile);
 
 		} catch (Exception e) {
@@ -69,11 +69,11 @@ public class GalleryResource {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public WidgetGalleryDTO widget(@HeaderParam("Authorization") String token, @PathParam("id") String widgetId) {
-		SpagoBIUserProfile profile = null;
+	public WidgetGalleryDTO widget(@PathParam("id") String widgetId) {
 		WidgetGalleryDTO widgetGalleryDTO = null;
 		try {
-			profile = getUserProfile(token);
+			SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
+					RequestAttributes.SCOPE_REQUEST);
 			widgetGalleryDTO = widgetGalleryService.getWidgetsById(widgetId, profile);
 		} catch (Throwable e) {
 			throw new KnowageRuntimeException(e.getMessage(), e);
@@ -86,11 +86,11 @@ public class GalleryResource {
 	@GET
 	@Path("/widgets/{type}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public List<WidgetGalleryDTO> widgetType(@HeaderParam("Authorization") String token, @PathParam("type") String type) {
-		SpagoBIUserProfile profile = null;
+	public List<WidgetGalleryDTO> widgetType(@PathParam("type") String type) {
 		List<WidgetGalleryDTO> widgetGalleryDTOs = null;
 		try {
-			profile = getUserProfile(token);
+			SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
+					RequestAttributes.SCOPE_REQUEST);
 			widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenantType(profile, type);
 		} catch (Throwable e) {
 			throw new KnowageRuntimeException(e.getMessage(), e);
@@ -102,8 +102,7 @@ public class GalleryResource {
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public WidgetGalleryDTO widgetCreate(String body, @HeaderParam("Authorization") String token) {
-		SpagoBIUserProfile profile = null;
+	public WidgetGalleryDTO widgetCreate(String body) {
 		String image = "";
 		String code = "";
 		String name = "";
@@ -115,10 +114,13 @@ public class GalleryResource {
 		String javascript = "";
 		String python = "";
 		String outputType = "";
-		String userId = jwtToken2userId(token.replace("Bearer ", ""));
 		WidgetGalleryDTO newSbiWidgetGallery = null;
 		if (StringUtilities.isNotEmpty(body)) {
 			try {
+				SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
+						RequestAttributes.SCOPE_REQUEST);
+				String token = (String) RequestContextHolder.currentRequestAttributes().getAttribute("userToken", RequestAttributes.SCOPE_REQUEST);
+				String userId = jwtToken2userId(token.replace("Bearer ", ""));
 				JSONObject jsonBody = new JSONObject(body);
 				type = jsonBody.getString("type");
 				name = jsonBody.getString("name");
@@ -134,7 +136,6 @@ public class GalleryResource {
 				javascript = jsonCode.getString("javascript");
 				python = jsonCode.getString("python");
 				css = jsonCode.getString("css");
-				profile = getUserProfile(token);
 				if (jsonBody.has("outputType")) {
 					outputType = jsonBody.getString("outputType");
 				}
@@ -153,8 +154,7 @@ public class GalleryResource {
 	@POST
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public WidgetGalleryDTO widgetUpdate(String body, @HeaderParam("Authorization") String token, @PathParam("id") String widgetId) {
-		SpagoBIUserProfile profile = null;
+	public WidgetGalleryDTO widgetUpdate(String body, @PathParam("id") String widgetId) {
 		String image = "";
 		String code = "";
 		String label = "";
@@ -165,11 +165,15 @@ public class GalleryResource {
 		String html = "";
 		String javascript = "";
 		String python = "";
-		String userId = jwtToken2userId(token.replace("Bearer ", ""));
+
 		String outputType = "";
 		WidgetGalleryDTO newSbiWidgetGallery = null;
 		if (StringUtilities.isNotEmpty(body)) {
 			try {
+				SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
+						RequestAttributes.SCOPE_REQUEST);
+				String token = (String) RequestContextHolder.currentRequestAttributes().getAttribute("userToken", RequestAttributes.SCOPE_REQUEST);
+				String userId = jwtToken2userId(token.replace("Bearer ", ""));
 				JSONObject jsonBody = new JSONObject(body);
 				type = jsonBody.getString("type");
 				label = jsonBody.getString("name");
@@ -185,7 +189,6 @@ public class GalleryResource {
 				javascript = jsonCode.getString("javascript");
 				python = jsonCode.getString("python");
 				css = jsonCode.getString("css");
-				profile = getUserProfile(token);
 				newSbiWidgetGallery = widgetGalleryService.getWidgetsById(widgetId, profile);
 				if (jsonBody.has("outputType")) {
 					outputType = jsonBody.getString("outputType");
@@ -207,11 +210,11 @@ public class GalleryResource {
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response widgetDelete(String body, @HeaderParam("Authorization") String token, @PathParam("id") String widgetId) {
+	public Response widgetDelete(String body, @PathParam("id") String widgetId) {
 		Response response = null;
-		SpagoBIUserProfile profile = null;
 		try {
-			profile = getUserProfile(token);
+			SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
+					RequestAttributes.SCOPE_REQUEST);
 			int success = widgetGalleryService.deleteGallery(widgetId, profile);
 			if (success == 1)
 				response = Response.status(Response.Status.OK).build();
@@ -224,25 +227,6 @@ public class GalleryResource {
 
 		return response;
 
-	}
-
-	public static String getTechnicalToken() {
-		String technicalToken = null;
-		Context ctx;
-		try {
-			ctx = new InitialContext();
-			// Calendar calendar = Calendar.getInstance();
-			// calendar.add(Calendar.MINUTE, 5); // token for services will expire in 5 minutes
-			// Date expiresAt = calendar.getTime();
-			String key = (String) ctx.lookup("java:/comp/env/hmacKey");
-			Algorithm algorithm = Algorithm.HMAC256(key);
-			technicalToken = JWT.create().withIssuer("knowage")
-					// .withExpiresAt(expiresAt)
-					.sign(algorithm);
-		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage(), e);
-		}
-		return technicalToken;
 	}
 
 	public static String jwtToken2userId(String jwtToken) throws JWTVerificationException {
@@ -262,15 +246,4 @@ public class GalleryResource {
 		return userId;
 	}
 
-	public SpagoBIUserProfile getUserProfile(String userToken) throws RemoteException {
-		SpagoBIUserProfile profile = null;
-		userToken = userToken.replace("Bearer ", "");
-		String technicalToken = getTechnicalToken();
-		try {
-			profile = securityServiceService.getUserProfile(technicalToken, userToken);
-		} catch (Exception e) {
-			throw new KnowageRuntimeException("Impossible to get UserProfile from SOAP security service", e);
-		}
-		return profile;
-	}
 }
