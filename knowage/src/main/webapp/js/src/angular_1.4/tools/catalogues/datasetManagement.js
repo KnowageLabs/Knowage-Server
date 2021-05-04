@@ -75,6 +75,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 	$scope.$watch('parameterItems',function(newValue,oldValue){
 		$scope.datasetForm.$setValidity("duplicates",!$scope.hasDuplicates(newValue,'name'))
+		$scope.selectedDataSet.pars = $scope.parameterItems
 	},true)
 
 	$scope.hasDuplicates = function(array,property){
