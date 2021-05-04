@@ -9,7 +9,7 @@ axios.interceptors.request.use(
     (config) => {
         config.headers.common['Accept'] = 'application/json; charset=utf-8'
         config.headers.common['Content-Type'] = 'application/json; charset=utf-8'
-        if (localStorage.getItem('token')) config.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
+        if (localStorage.getItem('token')) config.headers.common[process.env.VUE_APP_DEFAULT_AUTH_HEADER] = 'Bearer ' + localStorage.getItem('token')
         return config
     },
     (error) => {
