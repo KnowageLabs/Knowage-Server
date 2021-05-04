@@ -257,7 +257,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				/*
 				 * Skip columns not in use.
 				 */
-				return el.hasOwnProperty("inUse") ? el.inUse : true;
+				return el.hasOwnProperty("inUse") && typeof el.inUse != "undefined" ? el.inUse : true;
 			})
 			.map(function(el) {
 				var tempObj = {"field": el.key,
