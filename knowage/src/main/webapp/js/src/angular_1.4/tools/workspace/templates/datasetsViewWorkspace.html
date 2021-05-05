@@ -176,15 +176,20 @@
 					<md-icon md-font-icon="fa fa-pencil"></md-icon>
 				</md-button>
 				 
-	          	<md-button ng-if="canLoadData(selectedDataSet) && !hasDrivers(selectedDataSet) && !hasParameters(selectedDataSet)" aria-label="Export Dataset to XLSX" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'XLSX')">
+	          	<md-button ng-if="canLoadData(selectedDataSet) && !hasDrivers(selectedDataSet) && !hasParameters(selectedDataSet) && selectedDataSet.dsTypeCd!='File'" aria-label="Export Dataset to XLSX" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'XLSX')">
 		           	<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
 	            	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.export.xlsx')}}</md-tooltip>
 	          	</md-button>
 	          	
-	          	<md-button ng-if="canLoadData(selectedDataSet) && !hasDrivers(selectedDataSet) && !hasParameters(selectedDataSet)" aria-label="Export Dataset to CSV" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'CSV')">
+	          	<md-button ng-if="canLoadData(selectedDataSet) && !hasDrivers(selectedDataSet) && !hasParameters(selectedDataSet) && selectedDataSet.dsTypeCd!='File'" aria-label="Export Dataset to CSV" class="md-icon-button" ng-click="exportDataset(selectedDataSet,'CSV')">
 		           	<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
 	            	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.export.csv')}}</md-tooltip>
-	          	</md-button>	        
+	          	</md-button>	
+	          	
+	          	<md-button ng-if="selectedDataSet.dsTypeCd=='File'" aria-label="Download File" class="md-icon-button" ng-click="downloadDatasetFile(selectedDataSet)">
+		           	<md-icon md-font-icon="fa fa-download"></md-icon>
+	            	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.download')}}</md-tooltip>
+	          	</md-button>       
 			
 				 <md-menu class="noMargin">
 			     	<md-button class="md-icon-button" ng-click="$mdOpenMenu()">
@@ -208,12 +213,6 @@
 				          	<md-button aria-label="Delete Dataset" ng-click="deleteDataset(selectedDataSet, $event)">
 				            	<md-icon md-font-icon="fa fa-trash" md-menu-align-target></md-icon>
 				            	{{translate.load('sbi.workspace.dataset.delete')}}
-				          	</md-button>
-				        </md-menu-item>				        
-				        <md-menu-item ng-show="selectedDataSet.dsTypeCd=='File'">
-				          	<md-button aria-label="Download Dataset" ng-click="downloadDatasetFile(selectedDataSet)">
-				            	<md-icon md-font-icon="fa fa-download" md-menu-align-target></md-icon>
-				            	{{translate.load('sbi.workspace.dataset.download')}}
 				          	</md-button>
 				        </md-menu-item>
 				        <md-divider></md-divider>

@@ -281,41 +281,44 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 			});
 	}
 
-	$scope.downloadDatasetFile = function(dataset) {
-		var params = {};
-		params.fileName = dataset.fileName;
-		params.type = dataset.fileType.toLowerCase();
-		var requestParams = '?' + $httpParamSerializer(params);
-		var config = {"responseType": "arraybuffer"};
-		sbiModule_restServices.promiseGet('2.0/datasets', 'download/file' + requestParams, undefined, config)
-			.then(function(response){
-				var mimeType = response.headers("Content-type");
-				var paramsString = response.headers("Content-Disposition");
-				if (mimeType == 'application/octet-stream' || paramsString == null) {
-					toastr.error('', sbiModule_translate.load("sbi.workspace.dataset.download.error"), $scope.toasterConfig);
-				} else {
-					var arrayParam = paramsString.split(';');
-					var fileName = "";
-					var fileType = "";
-					var extensionFile = "";
-					for (var i = 0; i< arrayParam.length; i++){
-						var p = arrayParam[i].toLowerCase();
-						if (p.includes("filename")){
-							fileName = arrayParam[i].split("=")[1];
-						}else if (p.includes("filetype")){
-							fileType = arrayParam[i].split("=")[1];
-						}else if (p.includes("extensionfile")){
-							extensionFile = arrayParam[i].split("=")[1];
+	$scope.downloadDatasetFile = function(ds) {
+		sbiModule_restServices.promiseGet('1.0/datasets', ds.label).then(function(response) {
+			var dataset = response.data[0];
+			var params = {};
+			params.dsLabel = dataset.label;
+			params.type = dataset.fileType.toLowerCase();
+			var requestParams = '?' + $httpParamSerializer(params);
+			var config = {"responseType": "arraybuffer"};
+			sbiModule_restServices.promiseGet('2.0/datasets', 'download/file' + requestParams, undefined, config)
+				.then(function(response){
+					var mimeType = response.headers("Content-type");
+					var paramsString = response.headers("Content-Disposition");
+					if (mimeType == 'application/octet-stream' || paramsString == null) {
+						toastr.error('', sbiModule_translate.load("sbi.workspace.dataset.download.error"), $scope.toasterConfig);
+					} else {
+						var arrayParam = paramsString.split(';');
+						var fileName = "";
+						var fileType = "";
+						var extensionFile = "";
+						for (var i = 0; i< arrayParam.length; i++){
+							var p = arrayParam[i].toLowerCase();
+							if (p.includes("filename")){
+								fileName = arrayParam[i].split("=")[1];
+							}else if (p.includes("filetype")){
+								fileType = arrayParam[i].split("=")[1];
+							}else if (p.includes("extensionfile")){
+								extensionFile = arrayParam[i].split("=")[1];
+							}
 						}
+						if (fileName && fileName.endsWith("." + extensionFile)){
+							fileName = fileName.split("." + extensionFile)[0];
+						}
+						sbiModule_download.getBlob(response.data, fileName, fileType, extensionFile);
 					}
-					if (fileName && fileName.endsWith("." + extensionFile)){
-						fileName = fileName.split("." + extensionFile)[0];
-					}
-					sbiModule_download.getBlob(response.data, fileName, fileType, extensionFile);
-				}
-			}, function(response){
-				toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
-			});
+				}, function(response){
+					toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+				});
+		});
 	}
 
 	$scope.showDatasetDetails = function() {
@@ -1231,7 +1234,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	        if(typeof $scope.dataset.pars !== 'undefined' && $scope.dataset.pars.length > 0) {
     	        	config.parameters = $scope.dataset.pars;
     	        }
-    	        config.options = { exports: ['CSV', 'XLSX'] };
+
+    	        if ($scope.dataset.dsTypeCd != "File") config.options = { exports: ['CSV', 'XLSX'] };
 
 				if($scope.dataset.drivers && $scope.dataset.drivers.length > 0){
 					config.drivers =  driversExecutionService.prepareDriversForSending($scope.drivers);
