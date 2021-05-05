@@ -192,12 +192,4 @@ class SolrEvaluationStrategy extends AbstractSolrStrategy {
 		return pagedDataStore;
 
 	}
-
-	@Override
-	protected boolean isDatasetEmpty(IDataSet dataSet, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
-			List<AbstractSelectionField> projections, int offset, int fetchSize, int maxRowCount) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }
