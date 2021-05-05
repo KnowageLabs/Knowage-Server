@@ -138,7 +138,7 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 	}
 
 	@Override
-	protected IDataStore executeTotalsFunctions(IDataSet dataSet, Set<String> totalFunctionsProjections, Filter filter, int maxRowCount) {
+	protected IDataStore executeTotalsFunctions(IDataSet dataSet, Set<String> totalFunctionsProjections, Filter filter, int maxRowCount, Set<String> indexes) {
 		try {
 
 			/*
@@ -146,7 +146,13 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 			 */
 			FlatDataSet flatDataSet = new FlatDataSet();
 			flatDataSet.setDataSource(cache.getDataSource());
+
 			CacheItem cacheItem = cache.getMetadata().getCacheItem(dataSet.getSignature());
+			if (cacheItem == null) { // probably dataset was not cached before
+				DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI();
+				datasetManagementAPI.putDataSetInCache(dataSet, cache, getEvaluationStrategy(), indexes);
+				cacheItem = cache.getMetadata().getCacheItem(dataSet.getSignature());
+			}
 			flatDataSet.setTableName(cacheItem.getTable());
 			flatDataSet.setMetadata(dataSet.getMetadata());
 

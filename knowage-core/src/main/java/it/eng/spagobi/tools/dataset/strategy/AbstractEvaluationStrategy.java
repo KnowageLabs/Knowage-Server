@@ -68,13 +68,13 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 		if (isUnsatisfiedFilter(filter)) {
 			dataStore = new DataStore(dataSet.getMetadata());
 		} else {
-			List<AbstractSelectionField> newProjections = applyTotalsFunctionsToFormulas(dataSet, projections, filter, maxRowCount);
+			List<AbstractSelectionField> newProjections = applyTotalsFunctionsToFormulas(dataSet, projections, filter, maxRowCount, indexes);
 			dataStore = execute(newProjections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 			IMetaData dataStoreToUseMeta = dataStore.getMetaData();
 			if (!isSummaryRowIncluded() && summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
 				int i = 0;
 				for (List<AbstractSelectionField> listProj : summaryRowProjections) {
-					List<AbstractSelectionField> replacedSelectionFieldsList = applyTotalsFunctionsToFormulas(dataSet, listProj, filter, maxRowCount);
+					List<AbstractSelectionField> replacedSelectionFieldsList = applyTotalsFunctionsToFormulas(dataSet, listProj, filter, maxRowCount, indexes);
 
 					IDataStore summaryRowDataStore = executeSummaryRow(replacedSelectionFieldsList, dataStoreToUseMeta, filter, maxRowCount);
 					appendSummaryRowToPagedDataStore(newProjections, replacedSelectionFieldsList, dataStore, summaryRowDataStore, i);
@@ -86,7 +86,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 	}
 
 	private List<AbstractSelectionField> applyTotalsFunctionsToFormulas(IDataSet dataSet, List<AbstractSelectionField> projections, Filter filter,
-			int maxRowCount) {
+			int maxRowCount, Set<String> indexes) {
 
 		List<AbstractSelectionField> toReturnList = new ArrayList<AbstractSelectionField>();
 		Set<String> totalFunctionsSet = new HashSet<String>();
@@ -118,7 +118,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 
 		if (!totalFunctionsSet.isEmpty()) {
 
-			IDataStore totalsFunctionDataStore = executeTotalsFunctions(dataSet, totalFunctionsSet, filter, maxRowCount);
+			IDataStore totalsFunctionDataStore = executeTotalsFunctions(dataSet, totalFunctionsSet, filter, maxRowCount, indexes);
 
 			HashMap<String, String> totalsMap = new HashMap<String, String>();
 			int i = 0;
@@ -282,7 +282,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 
 	}
 
-	protected IDataStore executeTotalsFunctions(IDataSet dataSet, Set<String> totalFunctionsProjections, Filter filter, int maxRowCount) {
+	protected IDataStore executeTotalsFunctions(IDataSet dataSet, Set<String> totalFunctionsProjections, Filter filter, int maxRowCount, Set<String> indexes) {
 		// TODO Auto-generated method stub
 		return null;
 	}
