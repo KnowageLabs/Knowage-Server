@@ -21,24 +21,18 @@ package it.eng.spagobi.tools.dataset.strategy;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
-import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBaseException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy {
 
@@ -98,60 +92,4 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 	protected abstract String getTableName() throws DataBaseException;
 
 	protected abstract IDataSource getDataSource();
-
-	@Override
-	protected boolean isDatasetEmpty(IDataSet dataSet, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
-			List<AbstractSelectionField> projections, int offset, int fetchSize, int maxRowCount) {
-
-		long resultNumber = 1;
-
-		/* If projections contains calculated fields and dataset is empty. */
-		if (dataSet instanceof VersionedDataSet) {
-
-			for (AbstractSelectionField abstractSelectionField : projections) {
-				if (abstractSelectionField instanceof DataStoreCalculatedField) {
-					List<AbstractSelectionField> projectionsNoCalculatedFields = projections.stream().filter(c -> c instanceof Projection)
-							.collect(Collectors.toList());
-					IDataStore dataStore;
-					try {
-						SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(projectionsNoCalculatedFields).from(getTableName())
-								.where(filter).groupBy(groups).orderBy(sortings);
-						dataStore = getDataSource().executeStatement(selectQuery, offset, fetchSize, maxRowCount, true);
-
-						resultNumber = dataStore.getRecordsCount();
-
-						boolean allNulls = true;
-						/*
-						 * [KNOWAGE-5909] - If all fields are null (i.e. when all fields are related to aggregation functions and DB is ORACLE)
-						 *
-						 * If dataset is empty, SELECT SUM(<field>), MIN(<field>) FROM <table_name> returns one row (NULL, NULL)
-						 */
-						if (resultNumber == 1) {
-
-							/* Looking for a not-null field value */
-							for (IField field : dataStore.getRecordAt(0).getFields()) {
-
-								if (field != null && field.getValue() != null) {
-									allNulls = false;
-									break;
-								}
-							}
-						}
-
-						/* If all fields values are null, the row is empty. So we return 0. */
-						if (allNulls)
-							resultNumber = 0;
-
-					} catch (DataBaseException e) {
-						throw new SpagoBIRuntimeException(e);
-					}
-					break;
-				}
-			}
-		}
-
-		return resultNumber == 0;
-
-	}
-
 }
