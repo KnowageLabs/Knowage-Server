@@ -185,7 +185,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.$watch('calculatedField.formulaEditor', function(newValue,oldValue){
 			if(newValue && newValue.match("/") && $scope.nullifWarningLabel){
 				$scope.showWarning = $scope.translate.load('kn.cockpit.calculatedfield.validation.division').replace("{0}", $scope.nullifWarningLabel);
-			}else {
+			}
+			if(newValue && !newValue.match(/(?:AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT|TOTAL_SUM|TOTAL_AVG|TOTAL_MIN|TOTAL_MAX|TOTAL_COUNT|TOTAL_COUNT_DISTINCT)+\(.+\)/gm)) {
+				$scope.showWarning =   $scope.translate.load('kn.cockpit.calculatedfield.validation.aggregationfunctions');
+			}
+			else {
 				$scope.showWarning = false;
 			}
 		})
