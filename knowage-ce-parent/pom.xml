@@ -358,6 +358,13 @@
 				<artifactId>cometd-java-server</artifactId>
 				<version>4.0.9</version>
 			</dependency>
+			
+			<!-- Replace Axis 1.4 -->
+			<dependency>
+				<groupId>com.sun.xml.ws</groupId>
+				<artifactId>jaxws-rt</artifactId>
+				<version>2.3.3</version>
+			</dependency>
 
 		</dependencies>
 
