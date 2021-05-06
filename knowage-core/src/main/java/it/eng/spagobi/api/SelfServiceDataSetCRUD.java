@@ -382,8 +382,8 @@ public class SelfServiceDataSetCRUD {
 			String meta = selfServiceDataSetDTO.getMeta();
 			// attributes for persisting dataset
 			String persist = selfServiceDataSetDTO.getPersist();
-			String persistTablePrefix = selfServiceDataSetDTO.getPersistTablePrefix();
-			String persistTableName = selfServiceDataSetDTO.getPersistTableName();
+			String tablePrefix = selfServiceDataSetDTO.getTablePrefix();
+			String tableName = selfServiceDataSetDTO.getTableName();
 
 			IDataSet ds = dao.loadDataSetByLabel(label);
 			IDataSet dsNew = recoverDataSetDetails(selfServiceDataSetDTO, ds, true);
@@ -405,8 +405,8 @@ public class SelfServiceDataSetCRUD {
 
 			// retrieve persist data
 			dsNew.setPersisted(Boolean.valueOf(persist));
-			if (persistTablePrefix != null)
-				dsNew.setPersistTableName(persistTablePrefix.toUpperCase() + persistTableName.toUpperCase());
+			if (tablePrefix != null)
+				dsNew.setPersistTableName(tablePrefix.toUpperCase() + tableName.toUpperCase());
 			else
 				dsNew.setPersistTableName(null);
 
@@ -437,9 +437,9 @@ public class SelfServiceDataSetCRUD {
 				// gets the dataset object informations
 				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsNew.getLabel());
 				dataset.setPersisted(true);
-				if ((persistTableName != null) && (persistTableName.length() > 0)) {
+				if ((tableName != null) && (tableName.length() > 0)) {
 					// use specified name
-					dataset.setPersistTableName(persistTablePrefix.toUpperCase() + persistTableName.toUpperCase());
+					dataset.setPersistTableName(tablePrefix.toUpperCase() + tableName.toUpperCase());
 				} else {
 					// otherwise use dataset name as table name
 					String name = selfServiceDataSetDTO.getName();
@@ -1371,6 +1371,10 @@ public class SelfServiceDataSetCRUD {
 
 			// set persist values
 			toReturn.setPersisted(dataSet.isPersisted());
+			if (dataSet.isPersisted()) {
+				toReturn.setDataSourceForReading(dataSet.getDataSourceForReading());
+				toReturn.setPersistTableName(dataSet.getPersistTableName());
+			}
 		}
 
 		// update general informations
