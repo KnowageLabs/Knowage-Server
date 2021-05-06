@@ -61,7 +61,7 @@ public interface ISbiDataSetDAO extends ISpagoBIDao {
 		return list(offset, fetchSize, null, null, false, Collections.EMPTY_LIST, null);
 	}
 
-	public List<SbiDataSet> list(int offset, int fetchSize, String owner, String sortByColumn, boolean reverse, List<Integer> tagIds, SbiDataSetFilter filter);
+	public List<SbiDataSet> list(int offset, int fetchSize, String owner, String sortByColumn, boolean reverse, List<Integer> tagIds, List<SbiDataSetFilter> filter);
 
 	public List<SbiDataSet> workspaceList(int offset, int fetchSize, String owner, boolean includeOwned, boolean includePublic, String scope, String type, Set<Domain> categoryList, String implementation, boolean showDerivedDatasets);
 

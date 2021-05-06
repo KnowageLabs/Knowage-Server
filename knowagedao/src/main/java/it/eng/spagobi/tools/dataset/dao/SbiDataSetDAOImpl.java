@@ -397,7 +397,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 	}
 
 	@Override
-	public List<SbiDataSet> list(int offset, int fetchSize, String owner, String sortByColumn, boolean reverse, List<Integer> tagIds, SbiDataSetFilter filter) {
+	public List<SbiDataSet> list(int offset, int fetchSize, String owner, String sortByColumn, boolean reverse, List<Integer> tagIds, List<SbiDataSetFilter> filter) {
 
 		Session session = null;
 		List<SbiDataSet> ret = Collections.emptyList();
@@ -626,23 +626,32 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 		cr.add(onlyActiveRestriction());
 	}
 
-	private void filterOn(Criteria cr, SbiDataSetFilter filter) {
-		if (filter != null) {
-			String typeFilter = filter.getType();
-			String columnFilter = filter.getColumn();
-			String valueFilter = filter.getValue();
+	private void filterOn(Criteria cr, List<SbiDataSetFilter> filters) {
+		if (filters != null && !filters.isEmpty()) {
 
-			switch (typeFilter) {
-			case "=":
-				cr.add(Restrictions.eq(columnFilter, valueFilter));
-				break;
-			case "like":
-				cr.add(Restrictions.like(columnFilter, "%" + valueFilter + "%").ignoreCase());
-				break;
-			default:
-				logger.warn("Invalid filter type: " + typeFilter);
-				break;
-			}
+			Disjunction disjunction = Restrictions.disjunction();
+
+			filters.forEach(filter -> {
+				String typeFilter = filter.getType();
+				String columnFilter = filter.getColumn();
+				String valueFilter = filter.getValue();
+
+				switch (typeFilter) {
+				case "=":
+					disjunction.add(Restrictions.eq(columnFilter, valueFilter));
+					break;
+				case "like":
+					disjunction.add(Restrictions.like(columnFilter, "%" + valueFilter + "%").ignoreCase());
+					break;
+				default:
+					logger.warn("Invalid filter type: " + typeFilter);
+					break;
+				}
+
+			});
+
+			cr.add(disjunction);
+
 		}
 	}
 
