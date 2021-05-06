@@ -82,6 +82,7 @@
 		<js.version>${project.version}</js.version>
 
 		<spring.boot>2.4.3</spring.boot>
+		<apache.poi>4.1.2</apache.poi>
 	</properties>
 
 	<modules>
@@ -338,17 +339,17 @@
 
 		<dependencies>
 
-			<dependency>
-				<groupId>org.apache.poi</groupId>
-				<artifactId>poi</artifactId>
-				<version>4.1.2</version>
-			</dependency>
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.apache.poi</groupId> -->
+<!-- 				<artifactId>poi</artifactId> -->
+<!-- 				<version>4.1.2</version> -->
+<!-- 			</dependency> -->
 
-			<dependency>
-				<groupId>org.apache.poi</groupId>
-				<artifactId>poi-ooxml</artifactId>
-				<version>4.1.2</version>
-			</dependency>
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.apache.poi</groupId> -->
+<!-- 				<artifactId>poi-ooxml</artifactId> -->
+<!-- 				<version>4.1.2</version> -->
+<!-- 			</dependency> -->
 			
 			<!-- CometD -->
 			<!-- 
