@@ -374,12 +374,16 @@ public class ExcelExporter {
 		Map<String, Object> map = new java.util.HashMap<String, Object>();
 		JSONArray multiDataStore = new JSONArray();
 		try {
+			JSONObject configuration = template.getJSONObject("configuration");
 			JSONArray datasetIds = widget.getJSONArray("datasetId");
 			for (int i = 0; i < datasetIds.length(); i++) {
 				int datasetId = datasetIds.getInt(i);
 				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 				String datasetLabel = dataset.getLabel();
 				JSONObject cockpitSelections = getMultiCockpitSelectionsFromBody(widget, datasetId);
+
+				if (getRealtimeFromWidget(datasetId, configuration))
+					map.put("nearRealtime", true);
 
 				JSONArray summaryRow = getSummaryRowFromWidget(widget);
 				if (summaryRow != null)
