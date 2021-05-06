@@ -20,6 +20,8 @@ package it.eng.spagobi.api.v3;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -38,6 +40,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.KnowageMonitor;
 import com.jamonapi.KnowageMonitorFactory;
 
@@ -117,10 +121,16 @@ public class DataSetResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public DataSetResourceResponseRoot<DataSetMainDTO> getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc,
 			@QueryParam("callback") String callback, @DefaultValue("-1") @QueryParam("offset") int offset,
-			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("filters") DataSetResourceFilter filters,
+			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("filters") String _filters,
 			@QueryParam("ordering") JSONObject ordering, @QueryParam("tags") List<Integer> tags) {
 
 		try (KnowageMonitor m = KnowageMonitorFactory.start("knowage.dataset.paginatedList")) {
+
+			List<DataSetResourceFilter> filters = Collections.emptyList();
+
+			if (_filters != null) {
+				filters = new ObjectMapper().readValue(_filters, new TypeReference<List<DataSetResourceFilter>>(){});
+			}
 
 			UserProfile userProfile = getUserProfile();
 
@@ -261,7 +271,7 @@ public class DataSetResource {
 		return UserProfileManager.getProfile();
 	}
 
-	protected List<SbiDataSet> getListOfGenericDatasets(int start, int limit, DataSetResourceFilter filters, JSONObject ordering, List<Integer> tags)
+	protected List<SbiDataSet> getListOfGenericDatasets(int start, int limit, List<DataSetResourceFilter> filters, JSONObject ordering, List<Integer> tags)
 			throws JSONException, EMFUserError {
 
 		List<SbiDataSet> items = null;
@@ -269,14 +279,16 @@ public class DataSetResource {
 		try {
 			String sortByColumn = null;
 			boolean reverse = false;
-			SbiDataSetFilter daoFilter = null;
+			List<SbiDataSetFilter> daoFilter = new ArrayList<>();
 			ISbiDataSetDAO dsDao = null;
 
 			dsDao = DAOFactory.getSbiDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
 
 			if (filters != null) {
-				daoFilter = ISbiDataSetDAO.createFilter(filters.getColumnFilter(), filters.getTypeFilter(), filters.getValueFilter());
+				filters.forEach(filter -> {
+					daoFilter.add(ISbiDataSetDAO.createFilter(filter.getColumnFilter(), filter.getTypeFilter(), filter.getValueFilter()));
+				});
 			}
 
 			if (ordering != null) {

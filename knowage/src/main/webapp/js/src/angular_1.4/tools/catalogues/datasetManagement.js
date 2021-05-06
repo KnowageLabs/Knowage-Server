@@ -1185,7 +1185,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
 		var queryParams = "offset="+start+"&fetchSize="+limit;
 		if(filter!=null && filter!=""){
-			var filters = {"columnFilter":"label","typeValueFilter":"","typeFilter":"like","valueFilter":filter};
+			var filters = [
+				{"columnFilter":"label","typeValueFilter":"","typeFilter":"like","valueFilter":filter},
+				{"columnFilter":"name","typeValueFilter":"","typeFilter":"like","valueFilter":filter}
+			];
 			queryParams = queryParams+"&filters="+angular.toJson(filters);
 		}
 		if(reverseOrdering!==null && reverseOrdering!==""){
