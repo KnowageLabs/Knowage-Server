@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -45,6 +46,7 @@ public class FlatDataSet extends ConfigurableDataSet {
 
 	private String tableName = null;
 	private IDataSource dataSource = null;
+	private IMetaData metadata;
 
 	public FlatDataSet() {
 		super();
@@ -86,6 +88,16 @@ public class FlatDataSet extends ConfigurableDataSet {
 	}
 
 	@Override
+	public void setMetadata(IMetaData metadata) {
+		this.metadata = metadata;
+	}
+
+	@Override
+	public IMetaData getMetadata() {
+		return this.metadata;
+	}
+
+	@Override
 	public IDataSource getDataSource() {
 		return dataSource;
 	}
@@ -115,8 +127,8 @@ public class FlatDataSet extends ConfigurableDataSet {
 
 	@Override
 	public void setConfiguration(String configuration) {
-		/* WORKAROUND : in the past the datasource attribute was
-		 * dataSource and not dataSourceFlat.
+		/*
+		 * WORKAROUND : in the past the datasource attribute was dataSource and not dataSourceFlat.
 		 */
 		String config = JSONUtils.escapeJsonString(configuration);
 		JSONObject jsonConf = ObjectUtils.toJSONObject(config);
