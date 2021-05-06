@@ -99,12 +99,14 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<scope>compile</scope>
+			<version>${apache.poi}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<scope>compile</scope>
+			<version>${apache.poi}</version>
 		</dependency>
 		
 		<dependency>
