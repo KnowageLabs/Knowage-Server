@@ -64,15 +64,8 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
 					<attachClasses>true</attachClasses>
 					<classesClassifier>classes</classesClassifier>
-					<webXml>src\main\webapp\WEB-INF\web.xml</webXml>
 				</configuration>
 			</plugin>
 
