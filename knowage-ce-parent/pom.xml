@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>it.eng.knowage</groupId>
-  <artifactId>knowage-ce-parent</artifactId>
-  <version>8.0.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>knowage-ce-parent</name>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>it.eng.knowage</groupId>
+	<artifactId>knowage-ce-parent</artifactId>
+	<version>8.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>knowage-ce-parent</name>
 
-  	<repositories>
+	<repositories>
 		<!-- We use SpagoBI repo on GitHub because we cannot find HBql library somewhere else -->
 		<repository>
 			<id>spagobi-releases</id>
@@ -80,11 +80,13 @@
 
 		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
 		<js.version>${project.version}</js.version>
+
+		<spring.boot>2.4.3</spring.boot>
 	</properties>
 
-  	<modules>
+	<modules>
 		<module>../jdbccore</module>
- 		<module>../knowageutilsjson</module>
+		<module>../knowageutilsjson</module>
 		<module>../knowageutils</module>
 		<module>../qbecore</module>
 		<module>../spagobi-cwm</module>
@@ -211,7 +213,7 @@
 						<excludes>
 							<exclude>**/*.pdf</exclude>
 							<exclude>**/*.zip</exclude>
-							<exclude>**/*.xlsm</exclude>							
+							<exclude>**/*.xlsm</exclude>
 						</excludes>
 						<filtering>true</filtering>
 					</resource>
@@ -227,7 +229,7 @@
 				</resources>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>oracle10</id>
 			<properties>
@@ -245,7 +247,7 @@
 						<excludes>
 							<exclude>**/*.pdf</exclude>
 							<exclude>**/*.zip</exclude>
-							<exclude>**/*.xlsm</exclude>							
+							<exclude>**/*.xlsm</exclude>
 						</excludes>
 						<filtering>true</filtering>
 					</resource>
@@ -261,7 +263,7 @@
 				</resources>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>postgres</id>
 			<properties>
@@ -279,7 +281,7 @@
 						<excludes>
 							<exclude>**/*.pdf</exclude>
 							<exclude>**/*.zip</exclude>
-							<exclude>**/*.xlsm</exclude>							
+							<exclude>**/*.xlsm</exclude>
 						</excludes>
 						<filtering>true</filtering>
 					</resource>
@@ -313,7 +315,7 @@
 						<excludes>
 							<exclude>**/*.pdf</exclude>
 							<exclude>**/*.zip</exclude>
-							<exclude>**/*.xlsm</exclude>							
+							<exclude>**/*.xlsm</exclude>
 						</excludes>
 						<filtering>true</filtering>
 					</resource>
