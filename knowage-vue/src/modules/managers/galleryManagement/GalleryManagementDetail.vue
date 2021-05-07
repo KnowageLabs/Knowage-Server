@@ -43,7 +43,7 @@
                             </div>
                             <div class="p-col-12">
                                 <span class="p-float-label kn-material-input">
-                                    <Chips v-model="template.tags" @change="setDirty" :allowDuplicate="false" />
+                                    <Chips v-model="template.tags" @add="setDirty" @remove="setDirty" :allowDuplicate="false" />
                                     <label class="kn-material-input-label" for="tags">{{ $t('common.tags') }}</label>
                                 </span>
                             </div>
@@ -103,25 +103,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Textarea from 'primevue/textarea'
 import galleryDescriptor from './GalleryManagementDescriptor.json'
-
-interface GalleryTemplate {
-    id: string
-    author: string
-    name: string
-    type: string
-    description?: string
-    outputType?: string
-    code: Code
-    tags?: Array<string>
-    image: string | ArrayBuffer
-}
-
-interface Code {
-    html: string
-    python: string
-    javascript: string
-    css: string
-}
+import { IGalleryTemplate } from './GalleryManagement'
 
 export default defineComponent({
     name: 'gallery-management-detail',
@@ -145,14 +127,13 @@ export default defineComponent({
             loading: false as Boolean,
             test: '' as String,
             galleryTemplates: [],
-            template: {} as GalleryTemplate,
+            template: {} as IGalleryTemplate,
             galleryDescriptor: galleryDescriptor,
             windowWidth: window.innerWidth,
             windowWidthBreakPoint: 1500
         }
     },
     created() {
-        this.dirty = false
         this.loadTemplate(this.id)
         window.addEventListener('resize', this.resizeHandler)
     },
@@ -164,20 +145,7 @@ export default defineComponent({
                     header: 'Confirmation',
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
-                        this.$toast.add({
-                            severity: 'info',
-                            summary: 'Confirmed',
-                            detail: 'You have accepted',
-                            life: 3000
-                        })
-                    },
-                    reject: () => {
-                        this.$toast.add({
-                            severity: 'info',
-                            summary: 'Rejected',
-                            detail: 'You have rejected',
-                            life: 3000
-                        })
+                        downloadDirect(JSON.stringify(this.template), this.template.name, 'application/json')
                     }
                 })
             } else {
@@ -188,7 +156,6 @@ export default defineComponent({
             this.$router.push('/gallerymanagement')
         },
         loadTemplate(id?: string): void {
-            this.dirty = false
             this.loading = true
             if (id) {
                 axios
@@ -197,10 +164,14 @@ export default defineComponent({
                         this.template = response.data
                     })
                     .catch((error) => console.error(error))
-                    .finally(() => (this.loading = false))
+                    .finally(() => {
+                        this.loading = false
+                        this.dirty = false
+                    })
             } else {
-                this.template = { type: 'html', code: { html: '', css: '', javascript: '', python: '' } } as GalleryTemplate
+                this.template = { type: 'html', code: { html: '', css: '', javascript: '', python: '' } } as IGalleryTemplate
                 this.loading = false
+                this.dirty = false
             }
         },
         onCmCodeChange(): void {
