@@ -24,7 +24,7 @@
 					};
 				$http.get('/knowage-api/api/1.0/widgetgallery/widgets/' + $scope.widgetType,
 						{headers:{
-							"Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
+							"x-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
 						}}
 				).then(function(resolve){
 					$scope.availableGallery = resolve.data;
