@@ -21,13 +21,8 @@
 
 		<dependencies>
 
-			<!-- 
-				Duplicated in:
-				  - knowage-api
-				  - knowage-vue
-				Cannot be placed in knowage-ce-parent because sets
-				a greater version of Hibernate deps. 
-			 -->
+			<!-- Duplicated in: - knowage-api - knowage-vue Cannot be placed in knowage-ce-parent 
+				because sets a greater version of Hibernate deps. -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
@@ -91,9 +86,11 @@
 			<version>1.1.0.Final</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
+			<version>5.4.28.Final</version>
 		</dependency>
 
 		<dependency>
@@ -112,7 +109,12 @@
 			<groupId>com.sun.xml.ws</groupId>
 			<artifactId>jaxws-rt</artifactId>
 		</dependency>
-
+	
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
