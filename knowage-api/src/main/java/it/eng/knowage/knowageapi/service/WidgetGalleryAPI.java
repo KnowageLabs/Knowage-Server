@@ -27,12 +27,7 @@ public interface WidgetGalleryAPI {
 
 	int deleteGallery(String id, SpagoBIUserProfile profile);
 
-	WidgetGalleryDTO createWidgetGalleryDTO(String name, String type, String author, String description, String image, String sbiversion, String template,
-			SpagoBIUserProfile profile, String tags, String outputType);
+	WidgetGalleryDTO updateWidget(WidgetGalleryDTO widgetGalleryDTO, String author, SpagoBIUserProfile profile);
 
-	void updateWidget(String uuid, String name, String type, String author, String description, String image, String sbiversion, String template,
-			SpagoBIUserProfile profile, String tags, String outputType);
-
-	WidgetGalleryDTO createNewWidget(String name, String type, String author, String description, String image, String sbiversion, String template,
-			SpagoBIUserProfile profile, String tags, String outputType);
+	WidgetGalleryDTO createNewWidget(WidgetGalleryDTO widgetGalleryDTO, String author, SpagoBIUserProfile profile);
 }

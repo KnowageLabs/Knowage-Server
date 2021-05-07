@@ -4,23 +4,52 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.Xss;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WidgetGalleryDTO {
 
 	private String id;
+
 	private String author;
+
+	@ExtendedAlphanumeric
+	@NotNull
+	@Xss
 	private String name;
+
+	@ExtendedAlphanumeric
+	@Xss
 	private String description;
+
 	private String type;
+
+	@ExtendedAlphanumeric
+	@Xss
 	private List<String> tags = new ArrayList<String>();
+
 	private String image = null;
 
 	private String organization;
 	private String sbiversion;
+
+	@ExtendedAlphanumeric
+	@Xss
 	private String template;
+
 	private Timestamp timestamp;
-	private String user;
+
 	private int usageCounter;
+
+	@ExtendedAlphanumeric
+	@Xss
 	private Code code = new Code();
+
 	private String outputType;
 
 	public String getId() {
@@ -137,14 +166,6 @@ public class WidgetGalleryDTO {
 
 	public void setTimestamp(Timestamp timestamp) {
 		this.timestamp = timestamp;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
 	}
 
 	public int getUsageCounter() {
