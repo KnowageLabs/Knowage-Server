@@ -9,11 +9,13 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.UUIDAlphanumericNoSpaces;
 import it.eng.spagobi.services.validation.Xss;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WidgetGalleryDTO {
 
+	@UUIDAlphanumericNoSpaces
 	private String id;
 
 	private String author;
