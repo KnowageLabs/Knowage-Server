@@ -1381,10 +1381,11 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 					$scope.datasetSearchText = '';
 					$scope.filterDataset = function(){
 						var tempDatasetList = $filter('filter')($scope.datasetList,function(value,index,array) {
-							return value["name"].indexOf($scope.datasetSearchText) != -1
-								|| value["label"].indexOf($scope.datasetSearchText) != -1
-								|| value["tags"].some(function(e) { return e.name == $scope.datasetSearchText; })
-								|| value["type"].indexOf($scope.datasetSearchText) != -1;
+							var lowercaseDatasetSearchText = angular.lowercase($scope.datasetSearchText);
+							return angular.lowercase(value["name"]).indexOf(lowercaseDatasetSearchText) != -1
+								|| angular.lowercase(value["label"]).indexOf(lowercaseDatasetSearchText) != -1
+								|| value["tags"].some(function(e) { return angular.lowercase(e.name).indexOf(lowercaseDatasetSearchText) != -1; })
+								|| angular.lowercase(value["type"]).indexOf(lowercaseDatasetSearchText) != -1;
 						});
 						$scope.cockpitDatasetGrid.api.setRowData(tempDatasetList);
 					}
