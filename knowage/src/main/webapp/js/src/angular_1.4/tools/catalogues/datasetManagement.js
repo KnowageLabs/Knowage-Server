@@ -3400,7 +3400,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						for(var f in fields){
 							if(typeof fields[f] != 'object') continue;
 							var tempCol = {"headerName":fields[f].header,"field":fields[f].name, "tooltipField":fields[f].name};
-							tempCol.headerComponentParams = {template: headerTemplate(fields[f].type)};
+							// If there is a subtype, show that
+							tempCol.headerComponentParams = {template: headerTemplate(fields[f].subtype || fields[f].type)};
 							columns.push(tempCol);
 						}
 						return columns;
