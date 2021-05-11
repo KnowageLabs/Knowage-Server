@@ -83,10 +83,10 @@ public class ModelPropertiesDAOFileImpl implements IModelPropertiesDAO {
 		return properties;
 	}
 
-	protected SimpleModelProperties loadQbePropertiesFormJarFile(JarFile jf){
+	protected SimpleModelProperties loadQbePropertiesFormJarFile(JarFile jf) {
 		Properties prop = null;
 
-		try{
+		try {
 			ZipEntry ze = jf.getEntry(PROPERTIES_FILE_NAME);
 			if (ze != null){
 				prop = new Properties();
@@ -97,8 +97,8 @@ public class ModelPropertiesDAOFileImpl implements IModelPropertiesDAO {
 			} else {
 				prop = new Properties();
 			}
-		} catch(IOException ioe){
-			ioe.printStackTrace();
+		} catch(IOException ioe) {
+			logger.info("Error reading " + PROPERTIES_FILE_NAME + " from JAR \"" + jf.getName() + "\"", ioe);
 			return new SimpleModelProperties();
 		}
 		return new SimpleModelProperties(prop);
