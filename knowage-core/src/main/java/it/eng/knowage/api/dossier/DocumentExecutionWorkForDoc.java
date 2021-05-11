@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -56,6 +57,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
@@ -227,6 +229,14 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 					serviceUrlBuilder.append("&IS_TECHNICAL_USER=true&DOCUMENT_NAME=");
 					serviceUrlBuilder.append(docName);
 					serviceUrlBuilder.append("&NEW_SESSION=TRUE&SBI_ENVIRONMENT=DOCBROWSER&IS_FOR_EXPORT=true&documentMode=VIEW&export=true&outputType=PNG");
+
+					Locale locale = GeneralUtilities.getDefaultLocale();
+
+					serviceUrlBuilder.append("&knowage_sys_country=" + locale.getCountry());
+					serviceUrlBuilder.append("&knowage_sys_language=" + locale.getLanguage());
+
+					serviceUrlBuilder.append("&SBI_LANGUAGE=" + locale.getLanguage());
+					serviceUrlBuilder.append("&SBI_COUNTRY=" + locale.getCountry());
 
 					RenderOptions renderOptions = RenderOptions.defaultOptions();
 					if (reportToUse.getSheetHeight() != null && !reportToUse.getSheetHeight().isEmpty() && reportToUse.getSheetWidth() != null
