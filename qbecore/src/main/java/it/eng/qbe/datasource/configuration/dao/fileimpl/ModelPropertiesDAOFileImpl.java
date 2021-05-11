@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -92,7 +92,7 @@ public class ModelPropertiesDAOFileImpl implements IModelPropertiesDAO {
 				prop = new Properties();
 				InputStream inputStream = jf.getInputStream(ze);
 				// Has a better management of keys with UTF-8 characters
-				InputStreamReader isr = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+				InputStreamReader isr = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
 				prop.load(isr);
 			} else {
 				prop = new Properties();
