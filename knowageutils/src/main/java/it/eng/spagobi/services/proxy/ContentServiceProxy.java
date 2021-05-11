@@ -26,9 +26,9 @@ import javax.xml.ws.Service;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.services.common.ParametersWrapper;
 import it.eng.spagobi.services.content.ContentService;
 import it.eng.spagobi.services.content.bo.Content;
-import it.eng.spagobi.services.content.bo.ParametersWrapper;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 
 /**

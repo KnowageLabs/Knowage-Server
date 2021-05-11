@@ -15,14 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.services.execute.bo;
+package it.eng.spagobi.services.common;
 
 import java.util.HashMap;
+
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import it.eng.spagobi.services.common.MapXmlJavaTypeAdater;
 
 public class ParametersWrapper {
 
 	private HashMap<String, ?> map = new HashMap<>();
 
+	@XmlJavaTypeAdapter(MapXmlJavaTypeAdater.class)
 	public HashMap<String, ?> getMap() {
 		return map;
 	}

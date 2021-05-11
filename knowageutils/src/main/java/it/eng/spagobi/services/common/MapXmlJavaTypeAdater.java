@@ -15,20 +15,29 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.services.content.bo;
+package it.eng.spagobi.services.common;
 
 import java.util.HashMap;
 
-public class ParametersWrapper {
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-	private HashMap<String, ?> map = new HashMap<>();
+import com.google.gson.Gson;
 
-	public HashMap<String, ?> getMap() {
-		return map;
+/**
+ * Map XML adapter that use JSON to serialize the {@link HashMap} through SOAP.
+ *
+ * @author Marco Libanori
+ */
+public class MapXmlJavaTypeAdater extends XmlAdapter<String, HashMap<String, ?>> {
+
+	@Override
+	public HashMap<String, ?> unmarshal(String v) throws Exception {
+		return new Gson().fromJson(v, HashMap.class);
 	}
 
-	public void setMap(HashMap<String, ?> map) {
-		this.map = map;
+	@Override
+	public String marshal(HashMap<String, ?> v) throws Exception {
+		return new Gson().toJson(v);
 	}
 
 }

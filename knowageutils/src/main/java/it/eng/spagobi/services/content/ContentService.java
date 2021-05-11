@@ -21,8 +21,8 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 
+import it.eng.spagobi.services.common.ParametersWrapper;
 import it.eng.spagobi.services.content.bo.Content;
-import it.eng.spagobi.services.content.bo.ParametersWrapper;
 
 /**
  * This is the ContentService interfaces

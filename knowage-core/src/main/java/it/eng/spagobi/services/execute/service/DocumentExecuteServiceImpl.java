@@ -20,8 +20,8 @@ package it.eng.spagobi.services.execute.service;
 
 import javax.jws.WebService;
 
+import it.eng.spagobi.services.common.ParametersWrapper;
 import it.eng.spagobi.services.execute.DocumentExecuteService;
-import it.eng.spagobi.services.execute.bo.ParametersWrapper;
 
 /**
  * @author Marco Libanori

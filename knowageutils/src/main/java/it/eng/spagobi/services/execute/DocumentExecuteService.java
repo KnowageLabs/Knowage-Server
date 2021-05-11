@@ -21,7 +21,7 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 
-import it.eng.spagobi.services.execute.bo.ParametersWrapper;
+import it.eng.spagobi.services.common.ParametersWrapper;
 
 /**
  * @author Angelo Bernabei angelo.bernabei@eng.it

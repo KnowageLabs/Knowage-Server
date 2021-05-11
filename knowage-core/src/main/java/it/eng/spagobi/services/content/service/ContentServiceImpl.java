@@ -39,9 +39,9 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.services.common.AbstractServiceImpl;
+import it.eng.spagobi.services.common.ParametersWrapper;
 import it.eng.spagobi.services.content.ContentService;
 import it.eng.spagobi.services.content.bo.Content;
-import it.eng.spagobi.services.content.bo.ParametersWrapper;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 
 /**
