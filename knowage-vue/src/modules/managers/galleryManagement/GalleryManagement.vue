@@ -12,7 +12,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-                <Listbox v-if="!loading" class="kn-list" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="['name', 'type', 'tags']" :emptyFilterMessage="$t('managers.widgetGallery.noResults')">
+                <Listbox v-if="!loading" class="kn-list--column" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="['name', 'type', 'tags']" :emptyFilterMessage="$t('managers.widgetGallery.noResults')">
                     <template #option="slotProps">
                         <router-link class="kn-decoration-none" :to="{ name: 'gallerydetail', params: { id: slotProps.option.id } }" exact>
                             <div class="kn-list-item">

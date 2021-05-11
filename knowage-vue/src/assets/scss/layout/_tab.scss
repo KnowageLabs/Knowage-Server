@@ -1,0 +1,8 @@
+.kn-tab {
+    display: flex;
+    flex-direction: column;
+    .p-tabview-panels {
+        flex: 1;
+        padding: 0;
+    }
+}
