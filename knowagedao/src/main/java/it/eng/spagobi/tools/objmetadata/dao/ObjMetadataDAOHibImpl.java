@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -39,6 +40,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a object metadata.
@@ -373,7 +375,10 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			logException(he);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			if (he instanceof ObjectNotFoundException)
+				throw he;
+			else
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -394,11 +399,12 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#insertObjMetadata(it.eng.spagobi.tools.objmetadata.bo.ObjMetadata)
 	 */
 	@Override
-	public void insertObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError {
+	public int insertObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError {
 
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
+		int toReturn;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -422,7 +428,7 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			hibMeta.setDataType(dataType);
 			hibMeta.setCreationDate(now);
 			updateSbiCommonInfo4Insert(hibMeta);
-			aSession.save(hibMeta);
+			toReturn = (int) aSession.save(hibMeta);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -436,6 +442,66 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			}
 			logger.debug("OUT");
 		}
+		return toReturn;
+	}
+
+	private Integer loadDataTypeIdByDomainValue(String domain) throws EMFUserError {
+
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer toReturn;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Criterion valueCriterion = Expression.eq("valueCd", domain);
+			Criterion domainCriterion = Expression.eq("domainCd", "OBJMETA_DATA_TYPE");
+			Criteria criteria = aSession.createCriteria(SbiDomains.class);
+			criteria.add(valueCriterion);
+			criteria.add(domainCriterion);
+
+			SbiDomains dataType = (SbiDomains) criteria.uniqueResult();
+
+			if (dataType == null) {
+				logger.error("The Domain with valueCd= " + domain + " does not exist.");
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
+			}
+
+			toReturn = dataType.getValueId();
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	@Override
+	public int insertOrUpdateObjMetadata(ObjMetadata objMetadata) throws EMFUserError {
+		Integer toReturn = -1;
+		objMetadata.setDataType(loadDataTypeIdByDomainValue(objMetadata.getDataTypeCode()));
+		if (objMetadata.getObjMetaId() != null) {
+			try {
+				modifyObjMetadata(objMetadata);
+				toReturn = objMetadata.getObjMetaId();
+			} catch (ObjectNotFoundException e) {
+				String message = "Cannot update item with id {" + objMetadata.getObjMetaId() + "} because it doesn't exist";
+				logger.error(message);
+				throw new SpagoBIRuntimeException(message);
+			}
+		} else {
+			toReturn = insertObjMetadata(objMetadata);
+		}
+		return toReturn;
 	}
 
 	/**
@@ -487,6 +553,12 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 				logger.debug("OUT");
 			}
 		}
+	}
+
+	@Override
+	public void eraseObjMetadataById(int id) throws EMFUserError {
+		ObjMetadata meta = this.loadObjMetaDataByID(id);
+		this.eraseObjMetadata(meta);
 	}
 
 	/**

@@ -91,7 +91,9 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void insertObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError;
+	public int insertObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError;
+
+	public int insertOrUpdateObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError;
 
 	/**
 	 * Implements the query to erase an object's metadata. All information needed is stored into the input <code>ObjMetadata</code> object.
@@ -101,6 +103,8 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	public void eraseObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError;
+
+	public void eraseObjMetadataById(int id) throws EMFUserError;
 
 	/**
 	 * Tells if a objMetadata is associated to any BI Objects. It is useful because a metadata cannot be deleted if it is used by one or more BI Objects.
