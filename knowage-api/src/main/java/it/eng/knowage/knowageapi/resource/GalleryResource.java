@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -37,6 +38,7 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 @Path("/1.0/widgetgallery")
 @Component
+@Validated
 public class GalleryResource {
 
 	static private Logger logger = Logger.getLogger(GalleryResource.class);

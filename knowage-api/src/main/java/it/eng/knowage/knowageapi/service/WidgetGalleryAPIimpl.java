@@ -84,7 +84,9 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		toRet.setName(sbiWidgetGallery.getName());
 		toRet.setDescription(sbiWidgetGallery.getDescription());
 		toRet.setType(sbiWidgetGallery.getType());
-		toRet.setImage(new String(sbiWidgetGallery.getPreviewImage()));
+		if (sbiWidgetGallery.getPreviewImage() != null) {
+			toRet.setImage(new String(sbiWidgetGallery.getPreviewImage()));
+		}
 		toRet.setOrganization(sbiWidgetGallery.getOrganization());
 		toRet.setUsageCounter(sbiWidgetGallery.getUsageCounter());
 		List<SbiWidgetGalleryTag> tagList = sbiWidgetGallery.getSbiWidgetGalleryTags();

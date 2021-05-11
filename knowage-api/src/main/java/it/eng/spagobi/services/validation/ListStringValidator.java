@@ -17,25 +17,31 @@
  */
 package it.eng.spagobi.services.validation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.List;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import javax.validation.constraints.Pattern;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
-@Pattern(regexp = "^([a-zA-Z0-9\\-\\_])*$", message = "it is not alphanumeric or it contains spaces")
-@Constraint(validatedBy = {})
-@Documented
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface AlphanumericNoSpaces {
-	String message() default "";
+public class ListStringValidator implements ConstraintValidator<ListStringConstraint, List<String>> {
 
-	Class<?>[] groups() default {};
+	@Override
+	public void initialize(ListStringConstraint arg0) {
+	}
 
-	Class<? extends Payload>[] payload() default {};
+	@Override
+	public boolean isValid(List<String> toValidate, ConstraintValidatorContext constraintContext) {
+		if (toValidate == null)
+			return true;
+
+		else {
+			for (String value : toValidate) {
+				if (!value.matches("^([a-zA-Z0-9\\\\-\\\\_])*$")) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
 }

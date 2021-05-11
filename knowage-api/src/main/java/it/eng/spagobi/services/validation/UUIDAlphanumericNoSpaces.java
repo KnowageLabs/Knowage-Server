@@ -30,7 +30,7 @@ import javax.validation.constraints.Pattern;
 @Pattern(regexp = "^([a-zA-Z0-9\\-\\_])*$", message = "it is not alphanumeric or it contains spaces")
 @Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(value = RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = UUIDValidator.class)
+@Constraint(validatedBy = UUIDAlphanumericNoSpacesValidator.class)
 @Documented
 public @interface UUIDAlphanumericNoSpaces {
 	String message() default "";

@@ -8,7 +8,9 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.AlphanumericNoSpaces;
+import it.eng.spagobi.services.validation.CodeConstraint;
+import it.eng.spagobi.services.validation.ListStringConstraint;
 import it.eng.spagobi.services.validation.UUIDAlphanumericNoSpaces;
 import it.eng.spagobi.services.validation.Xss;
 
@@ -20,19 +22,17 @@ public class WidgetGalleryDTO {
 
 	private String author;
 
-	@ExtendedAlphanumeric
+	@AlphanumericNoSpaces
 	@NotNull
 	@Xss
 	private String name;
 
-	@ExtendedAlphanumeric
 	@Xss
 	private String description;
 
 	private String type;
 
-	@ExtendedAlphanumeric
-	@Xss
+	@ListStringConstraint
 	private List<String> tags = new ArrayList<String>();
 
 	private String image = null;
@@ -40,16 +40,13 @@ public class WidgetGalleryDTO {
 	private String organization;
 	private String sbiversion;
 
-	@ExtendedAlphanumeric
-	@Xss
 	private String template;
 
 	private Timestamp timestamp;
 
 	private int usageCounter;
 
-	@ExtendedAlphanumeric
-	@Xss
+	@CodeConstraint
 	private Code code = new Code();
 
 	private String outputType;

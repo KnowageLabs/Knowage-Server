@@ -18,6 +18,9 @@
 
 package it.eng.knowage.knowageapi.resource.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Code {
 
 	private String html = "";
