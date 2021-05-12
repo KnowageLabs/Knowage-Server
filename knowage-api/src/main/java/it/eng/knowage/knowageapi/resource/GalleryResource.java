@@ -1,10 +1,12 @@
 package it.eng.knowage.knowageapi.resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.validation.Valid;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -15,6 +17,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -179,6 +184,43 @@ public class GalleryResource {
 			throw new KnowageRuntimeException(e.getMessage(), e);
 		}
 		return userId;
+	}
+
+	@POST
+	@Path("/import")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public WidgetGalleryDTO importSingleWidget(String file) {
+		WidgetGalleryDTO newSbiWidgetGallery = null;
+		SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
+				RequestAttributes.SCOPE_REQUEST);
+		String token = (String) RequestContextHolder.currentRequestAttributes().getAttribute("userToken", RequestAttributes.SCOPE_REQUEST);
+		String userId = jwtToken2userId(token.replace("Bearer ", ""));
+
+		try {
+			JSONObject jsonTemplate = new JSONObject(file);
+
+			String uuid = jsonTemplate.getString("id");
+
+			JSONArray tagsArray = jsonTemplate.getJSONArray("tags");
+			List<String> tags = new ArrayList<String>();
+			for (int i = 0; i < tagsArray.length(); i++) {
+				tags.add(tagsArray.getString(i));
+			}
+
+			newSbiWidgetGallery = new WidgetGalleryDTO(uuid, jsonTemplate.optString("author"), jsonTemplate.optString("name"), jsonTemplate.optString("type"),
+					tags, jsonTemplate.optString("html"), jsonTemplate.optString("javaScript"), jsonTemplate.optString("python"), jsonTemplate.optString("css"),
+					jsonTemplate.optString("image").getBytes());
+
+			String template = JsonConverter.objectToJson(newSbiWidgetGallery, WidgetGalleryDTO.class);
+			newSbiWidgetGallery.setTemplate(template);
+
+			newSbiWidgetGallery = widgetGalleryService.createOrUpdateWidget(newSbiWidgetGallery, userId, profile);
+
+		} catch (JSONException e) {
+			throw new KnowageRuntimeException(e.getMessage(), e);
+		}
+
+		return newSbiWidgetGallery;
 	}
 
 }

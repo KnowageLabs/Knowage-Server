@@ -274,4 +274,17 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		return ret;
 	}
 
+	@Override
+	public WidgetGalleryDTO createOrUpdateWidget(WidgetGalleryDTO widgetGalleryDTO, String author, SpagoBIUserProfile profile) throws JSONException {
+		WidgetGalleryDTO existingWidget = getWidgetsById(widgetGalleryDTO.getId(), profile);
+		WidgetGalleryDTO newSbiWidgetGallery = null;
+		if (existingWidget != null) {
+			newSbiWidgetGallery = createNewWidget(widgetGalleryDTO, profile.getUserId(), profile);
+		} else {
+			newSbiWidgetGallery = updateWidget(widgetGalleryDTO, profile.getUserId(), profile);
+		}
+
+		return newSbiWidgetGallery;
+	}
+
 }

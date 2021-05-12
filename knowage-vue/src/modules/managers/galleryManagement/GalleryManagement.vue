@@ -11,6 +11,7 @@
                         <Menu ref="menu" :model="addMenuItems" popup="true" />
                     </template>
                 </Toolbar>
+				<FileUpload mode="basic" name="file" :customUpload="true" @uploader="uploadTemplate" accept="application/json,application/zip" :multiple="false" />
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
                 <Listbox v-if="!loading" class="kn-list--column" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="['name', 'type', 'tags']" :emptyFilterMessage="$t('managers.widgetGallery.noResults')">
                     <template #option="slotProps">
@@ -36,29 +37,40 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 import Avatar from 'primevue/avatar'
 import FabButton from '@/components/UI/KnFabButton.vue'
+import { IGalleryTemplate } from './GalleryManagement'
 import Listbox from 'primevue/listbox'
 import Menu from 'primevue/menu'
 import galleryDescriptor from './GalleryManagementDescriptor.json'
+import FileUpload from 'primevue/fileupload'
 
 export default defineComponent({
     name: 'gallery-management',
     components: {
         Avatar,
         FabButton,
+		FileUpload,
         Listbox,
         Menu
     },
     data() {
         return {
-            galleryTemplates: [],
+			galleryTemplates: [] as Array<IGalleryTemplate>,
             loading: false,
             typeDescriptor: galleryDescriptor,
             addMenuItems: [
                 { label: this.$t('managers.widgetGallery.newTemplate'), icon: 'fas fa-plus', command: () => this.newTemplate() },
-                { label: this.$t('managers.widgetGallery.importTemplate'), icon: 'fas fa-file-import', command: () => {} }
-            ]
+				{
+					label: this.$t('managers.widgetGallery.importTemplate'),
+					icon: 'fas fa-file-import',
+					command: () => {
+						this.uploadTemplate()
+					}
+				}
+			],
+			importingTemplate: {} as string | ArrayBuffer
         }
     },
     created() {
@@ -101,7 +113,23 @@ export default defineComponent({
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.menu.toggle(event)
-        }
+        },
+		uploadTemplate(event): void {
+			var reader = new FileReader()
+			reader.onload = this.onReaderLoad
+			reader.readAsText(event.files[0])
+		},
+		onReaderLoad(event) {
+			try {
+				let json = JSON.parse(event.target.result)
+				axios.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/import', json).then(
+					() => {},
+					(error) => console.error(error)
+				)
+			} catch (e) {
+				console.log(e)
+			}
+		}
     }
 })
 </script>

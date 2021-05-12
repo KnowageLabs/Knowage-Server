@@ -30,4 +30,6 @@ public interface WidgetGalleryAPI {
 	WidgetGalleryDTO updateWidget(WidgetGalleryDTO widgetGalleryDTO, String author, SpagoBIUserProfile profile);
 
 	WidgetGalleryDTO createNewWidget(WidgetGalleryDTO widgetGalleryDTO, String author, SpagoBIUserProfile profile);
+
+	WidgetGalleryDTO createOrUpdateWidget(WidgetGalleryDTO widgetGalleryDTO, String author, SpagoBIUserProfile profile) throws JSONException;
 }
