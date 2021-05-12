@@ -27,9 +27,9 @@ public interface WidgetGalleryAPI {
 
 	int deleteGallery(String id, SpagoBIUserProfile profile);
 
-	WidgetGalleryDTO updateWidget(WidgetGalleryDTO widgetGalleryDTO, String author, SpagoBIUserProfile profile);
+	WidgetGalleryDTO updateWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile);
 
-	WidgetGalleryDTO createNewWidget(WidgetGalleryDTO widgetGalleryDTO, String author, SpagoBIUserProfile profile);
+	WidgetGalleryDTO makeNewWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile, boolean create);
 
-	WidgetGalleryDTO createOrUpdateWidget(WidgetGalleryDTO widgetGalleryDTO, String author, SpagoBIUserProfile profile) throws JSONException;
+	WidgetGalleryDTO importOrUpdateWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile) throws JSONException;
 }

@@ -105,122 +105,6 @@
 	import galleryDescriptor from './GalleryManagementDescriptor.json'
 	import { IGalleryTemplate } from './GalleryManagement'
 
-<<<<<<< Upstream, based on branch 'master' of https://github.com/KnowageLabs/Knowage-Server.git
-export default defineComponent({
-    name: 'gallery-management-detail',
-    components: {
-        Chips,
-        VCodeMirror,
-        Dropdown,
-        InputText,
-        TabView,
-        TabPanel,
-        Textarea
-    },
-    emits: ['saved'],
-    props: {
-        id: String
-    },
-    data() {
-        return {
-            dirty: false as Boolean,
-            files: [],
-            loading: false as Boolean,
-            test: '' as String,
-            galleryTemplates: [],
-            template: {} as IGalleryTemplate,
-            galleryDescriptor: galleryDescriptor,
-            windowWidth: window.innerWidth,
-            windowWidthBreakPoint: 1500
-        }
-    },
-    created() {
-        this.loadTemplate(this.id)
-        window.addEventListener('resize', this.resizeHandler)
-    },
-    methods: {
-        downloadTemplate(): void {
-            if (this.dirty) {
-                this.$confirm.require({
-                    message: 'Are you sure you want to proceed?',
-                    header: 'Confirmation',
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        downloadDirect(JSON.stringify(this.template), this.template.name, 'application/json')
-                    }
-                })
-            } else {
-                downloadDirect(JSON.stringify(this.template), this.template.name, 'application/json')
-            }
-        },
-        closeTemplate(): void {
-            this.$router.push('/gallerymanagement')
-        },
-        loadTemplate(id?: string): void {
-            this.loading = true
-            if (id) {
-                axios
-                    .get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + (id || this.id))
-                    .then((response) => {
-                        this.template = response.data
-                    })
-                    .catch((error) => console.error(error))
-                    .finally(() => {
-                        this.loading = false
-                        this.dirty = false
-                    })
-            } else {
-                this.template = { type: 'html', code: { html: '', css: '', javascript: '', python: '' } } as IGalleryTemplate
-                this.loading = false
-                this.dirty = false
-            }
-        },
-        onCmCodeChange(): void {
-            this.setDirty()
-        },
-        saveTemplate(): void {
-            let postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
-            axios
-                .post(process.env.VUE_APP_API_PATH + postUrl, this.template)
-                .then((response) => {
-                    this.$store.commit('setInfo', { title: 'Saved template', msg: 'template saved correctly' })
-                    this.$router.push('/gallerymanagement/' + response.data.id)
-                    this.$emit('saved')
-                })
-                .catch((error) => console.error(error))
-        },
-        setDirty(): void {
-            this.dirty = true
-        },
-        uploadFile(event): void {
-            const reader = new FileReader()
-            let self = this
-            reader.addEventListener(
-                'load',
-                function() {
-                    self.template.image = reader.result || ''
-                },
-                false
-            )
-            if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
-                reader.readAsDataURL(event.srcElement.files[0])
-                this.setDirty()
-            } else this.$store.commit('setError', { title: 'Error in file upload', msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
-        },
-        resizeHandler(): void {
-            this.windowWidth = window.innerWidth
-        }
-    },
-    watch: {
-        '$route.params.id': function(id) {
-            this.loadTemplate(id)
-        }
-    },
-    unmounted() {
-        window.removeEventListener('resize', this.resizeHandler)
-    }
-})
-=======
 	export default defineComponent({
 		name: 'gallery-management-detail',
 		components: {
@@ -319,6 +203,7 @@ export default defineComponent({
 				)
 				if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
 					reader.readAsDataURL(event.srcElement.files[0])
+					this.setDirty()
 				} else this.$store.commit('setError', { title: 'Error in file upload', msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
 			},
 			resizeHandler(): void {
@@ -334,7 +219,6 @@ export default defineComponent({
 			window.removeEventListener('resize', this.resizeHandler)
 		}
 	})
->>>>>>> 4d650b7 [KNOWAGE_TM-82] - Import single widget
 </script>
 
 <style lang="scss" scoped>

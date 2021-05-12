@@ -1,6 +1,5 @@
 package it.eng.knowage.knowageapi.resource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.Context;
@@ -17,9 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -61,10 +58,8 @@ public class GalleryResource {
 	public List<WidgetGalleryDTO> widgetList() {
 		List<WidgetGalleryDTO> widgetGalleryDTOs = null;
 		try {
-			SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
-					RequestAttributes.SCOPE_REQUEST);
+			SpagoBIUserProfile profile = getUserProfile();
 			widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenant(profile);
-
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e.getMessage(), e);
 		}
@@ -78,8 +73,7 @@ public class GalleryResource {
 	public WidgetGalleryDTO widget(@PathParam("id") String widgetId) {
 		WidgetGalleryDTO widgetGalleryDTO = null;
 		try {
-			SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
-					RequestAttributes.SCOPE_REQUEST);
+			SpagoBIUserProfile profile = getUserProfile();
 			widgetGalleryDTO = widgetGalleryService.getWidgetsById(widgetId, profile);
 		} catch (Throwable e) {
 			throw new KnowageRuntimeException(e.getMessage(), e);
@@ -94,8 +88,7 @@ public class GalleryResource {
 	public List<WidgetGalleryDTO> widgetType(@PathParam("type") String type) {
 		List<WidgetGalleryDTO> widgetGalleryDTOs = null;
 		try {
-			SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
-					RequestAttributes.SCOPE_REQUEST);
+			SpagoBIUserProfile profile = getUserProfile();
 			widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenantType(profile, type);
 		} catch (Throwable e) {
 			throw new KnowageRuntimeException(e.getMessage(), e);
@@ -108,13 +101,10 @@ public class GalleryResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public WidgetGalleryDTO widgetCreate(@Valid WidgetGalleryDTO newSbiWidgetGallery) {
 		try {
-			SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
-					RequestAttributes.SCOPE_REQUEST);
-			String token = (String) RequestContextHolder.currentRequestAttributes().getAttribute("userToken", RequestAttributes.SCOPE_REQUEST);
-			String userId = jwtToken2userId(token.replace("Bearer ", ""));
+			SpagoBIUserProfile profile = getUserProfile();
 			String template = JsonConverter.objectToJson(newSbiWidgetGallery, WidgetGalleryDTO.class);
 			newSbiWidgetGallery.setTemplate(template);
-			newSbiWidgetGallery = widgetGalleryService.createNewWidget(newSbiWidgetGallery, userId, profile);
+			newSbiWidgetGallery = widgetGalleryService.makeNewWidget(newSbiWidgetGallery, profile, true);
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e.getMessage(), e);
 		}
@@ -129,16 +119,14 @@ public class GalleryResource {
 
 		WidgetGalleryDTO newSbiWidgetGalleryToUpdate = null;
 		try {
-			SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
-					RequestAttributes.SCOPE_REQUEST);
-			String token = (String) RequestContextHolder.currentRequestAttributes().getAttribute("userToken", RequestAttributes.SCOPE_REQUEST);
-			String userId = jwtToken2userId(token.replace("Bearer ", ""));
+			SpagoBIUserProfile profile = getUserProfile();
+
 			String template = JsonConverter.objectToJson(newSbiWidgetGallery, WidgetGalleryDTO.class);
 			newSbiWidgetGallery.setTemplate(template);
 			newSbiWidgetGalleryToUpdate = widgetGalleryService.getWidgetsById(widgetId, profile);
 			if (newSbiWidgetGalleryToUpdate != null) {
 
-				newSbiWidgetGalleryToUpdate = widgetGalleryService.updateWidget(newSbiWidgetGallery, userId, profile);
+				newSbiWidgetGalleryToUpdate = widgetGalleryService.updateWidget(newSbiWidgetGallery, profile);
 			}
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e.getMessage(), e);
@@ -148,14 +136,19 @@ public class GalleryResource {
 
 	}
 
+	private SpagoBIUserProfile getUserProfile() {
+		SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
+				RequestAttributes.SCOPE_REQUEST);
+		return profile;
+	}
+
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response widgetDelete(@PathParam("id") String widgetId) {
 		Response response = null;
 		try {
-			SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
-					RequestAttributes.SCOPE_REQUEST);
+			SpagoBIUserProfile profile = getUserProfile();
 			int success = widgetGalleryService.deleteGallery(widgetId, profile);
 			if (success == 1)
 				response = Response.status(Response.Status.OK).build();
@@ -189,32 +182,13 @@ public class GalleryResource {
 	@POST
 	@Path("/import")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public WidgetGalleryDTO importSingleWidget(String file) {
-		WidgetGalleryDTO newSbiWidgetGallery = null;
-		SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
-				RequestAttributes.SCOPE_REQUEST);
-		String token = (String) RequestContextHolder.currentRequestAttributes().getAttribute("userToken", RequestAttributes.SCOPE_REQUEST);
-		String userId = jwtToken2userId(token.replace("Bearer ", ""));
+	public WidgetGalleryDTO importSingleWidget(@Valid WidgetGalleryDTO newSbiWidgetGallery) {
 
+		SpagoBIUserProfile profile = getUserProfile();
 		try {
-			JSONObject jsonTemplate = new JSONObject(file);
-
-			String uuid = jsonTemplate.getString("id");
-
-			JSONArray tagsArray = jsonTemplate.getJSONArray("tags");
-			List<String> tags = new ArrayList<String>();
-			for (int i = 0; i < tagsArray.length(); i++) {
-				tags.add(tagsArray.getString(i));
-			}
-
-			newSbiWidgetGallery = new WidgetGalleryDTO(uuid, jsonTemplate.optString("author"), jsonTemplate.optString("name"), jsonTemplate.optString("type"),
-					tags, jsonTemplate.optString("html"), jsonTemplate.optString("javaScript"), jsonTemplate.optString("python"), jsonTemplate.optString("css"),
-					jsonTemplate.optString("image").getBytes());
-
 			String template = JsonConverter.objectToJson(newSbiWidgetGallery, WidgetGalleryDTO.class);
 			newSbiWidgetGallery.setTemplate(template);
-
-			newSbiWidgetGallery = widgetGalleryService.createOrUpdateWidget(newSbiWidgetGallery, userId, profile);
+			newSbiWidgetGallery = widgetGalleryService.importOrUpdateWidget(newSbiWidgetGallery, profile);
 
 		} catch (JSONException e) {
 			throw new KnowageRuntimeException(e.getMessage(), e);

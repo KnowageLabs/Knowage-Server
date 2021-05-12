@@ -32,6 +32,9 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 
 	private static String GALLERY_FUNCTION = "WidgetGalleryManagement";
 
+	/**
+	 * This method gets all widgets within all tenants
+	 */
 	@Override
 	public List<WidgetGalleryDTO> getWidgets() throws JSONException {
 
@@ -48,6 +51,9 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		return ret;
 	}
 
+	/**
+	 * This method gets all widgets related the tenant set into profile
+	 */
 	@Override
 	public List<WidgetGalleryDTO> getWidgetsByTenant(SpagoBIUserProfile profile) throws JSONException {
 		List<WidgetGalleryDTO> ret = null;
@@ -65,14 +71,20 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		return ret;
 	}
 
+	/**
+	 * This method gets widget with @{id} within the tenant set into profile, or null
+	 */
 	@Override
 	public WidgetGalleryDTO getWidgetsById(String id, SpagoBIUserProfile profile) throws JSONException {
-		SbiWidgetGallery widget = null;
 		if (this.canSeeGallery(profile)) {
-			widget = sbiWidgetGalleryDao.findByIdTenant(id, profile.getOrganization());
-			updateGalleryCounter(widget);
+			SbiWidgetGallery widget = sbiWidgetGalleryDao.findByIdTenant(id, profile.getOrganization());
+			if (widget != null) {
+				updateGalleryCounter(widget);
+				return mapTo(widget);
+			}
 		}
-		return mapTo(widget);
+
+		return null;
 	}
 
 	private WidgetGalleryDTO mapTo(SbiWidgetGallery sbiWidgetGallery) throws JSONException {
@@ -117,12 +129,15 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	@Override
-	public WidgetGalleryDTO createNewWidget(WidgetGalleryDTO widgetGalleryDTO, String author, SpagoBIUserProfile profile) {
+	public WidgetGalleryDTO makeNewWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile, boolean create) {
 		if (this.canSeeGallery(profile)) {
-			widgetGalleryDTO.setId(generateType1UUID().toString());
+			if (create) {
+				widgetGalleryDTO.setId(generateType1UUID().toString());
+			}
+
 			SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
 			newSbiWidgetGallery.setUuid(widgetGalleryDTO.getId());
-			newSbiWidgetGallery.setAuthor(author);
+			newSbiWidgetGallery.setAuthor(profile.getUserId());
 			newSbiWidgetGallery.setDescription(widgetGalleryDTO.getDescription());
 			newSbiWidgetGallery.setName(widgetGalleryDTO.getName());
 			newSbiWidgetGallery.setOrganization(profile.getOrganization());
@@ -142,15 +157,18 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			sbiWidgetGalleryDao.create(newSbiWidgetGallery);
 		}
 		return widgetGalleryDTO;
+	}
 
+	public WidgetGalleryDTO importNewWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile) {
+		return makeNewWidget(widgetGalleryDTO, profile, false);
 	}
 
 	@Override
-	public WidgetGalleryDTO updateWidget(WidgetGalleryDTO widgetGalleryDTO, String author, SpagoBIUserProfile profile) {
+	public WidgetGalleryDTO updateWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile) {
 		if (this.canSeeGallery(profile)) {
 			SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
 			newSbiWidgetGallery.setUuid(widgetGalleryDTO.getId());
-			newSbiWidgetGallery.setAuthor(author);
+			newSbiWidgetGallery.setAuthor(profile.getUserId());
 			newSbiWidgetGallery.setDescription(widgetGalleryDTO.getDescription());
 			newSbiWidgetGallery.setName(widgetGalleryDTO.getName());
 			newSbiWidgetGallery.setOrganization(profile.getOrganization());
@@ -275,13 +293,13 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	@Override
-	public WidgetGalleryDTO createOrUpdateWidget(WidgetGalleryDTO widgetGalleryDTO, String author, SpagoBIUserProfile profile) throws JSONException {
+	public WidgetGalleryDTO importOrUpdateWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile) throws JSONException {
 		WidgetGalleryDTO existingWidget = getWidgetsById(widgetGalleryDTO.getId(), profile);
 		WidgetGalleryDTO newSbiWidgetGallery = null;
-		if (existingWidget != null) {
-			newSbiWidgetGallery = createNewWidget(widgetGalleryDTO, profile.getUserId(), profile);
+		if (existingWidget == null) {
+			newSbiWidgetGallery = importNewWidget(widgetGalleryDTO, profile);
 		} else {
-			newSbiWidgetGallery = updateWidget(widgetGalleryDTO, profile.getUserId(), profile);
+			newSbiWidgetGallery = updateWidget(widgetGalleryDTO, profile);
 		}
 
 		return newSbiWidgetGallery;
