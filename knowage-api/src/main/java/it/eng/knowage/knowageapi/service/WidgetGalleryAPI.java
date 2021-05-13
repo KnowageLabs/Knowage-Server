@@ -32,4 +32,43 @@ public interface WidgetGalleryAPI {
 	WidgetGalleryDTO makeNewWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile, boolean create);
 
 	WidgetGalleryDTO importOrUpdateWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile) throws JSONException;
+
+//	public default WidgetGalleryDTO updateSbiCommonInfo4Update(WidgetGalleryDTO obj, boolean useDefaultTenant) {
+//		obj.setTimeUp(new Date());
+//		obj.setSbiVersionUp(SbiCommonInfo.getVersion());
+//		obj.getCommonInfo().setUserUp(userID);
+//		String tenantId = this.getTenant();
+//		// sets the tenant if it is set and input object hasn't
+//		if (tenantId != null && obj.getCommonInfo().getOrganization() == null) {
+//			obj.getCommonInfo().setOrganization(tenantId);
+//		}
+//		if (obj.getCommonInfo().getOrganization() == null) {
+//			if (useDefaultTenant)
+//				obj.getCommonInfo().setOrganization(TENANT_DEFAULT);
+//			else
+//				throw new KnowageRuntimeException("Organization not set!!!");
+//		}
+//		return obj;
+//	}
+//
+//	public default WidgetGalleryDTO updateSbiCommonInfo4Insert(WidgetGalleryDTO obj) {
+//		obj.getCommonInfo().setTimeIn(new Date());
+//		obj.getCommonInfo().setSbiVersionIn(SbiCommonInfo.getVersion());
+//		obj.getCommonInfo().setUserIn(userID);
+//
+//		// sets the tenant if it is set and input object hasn't
+//		String tenantId = this.getTenant();
+//		if (tenantId != null && obj.getCommonInfo().getOrganization() == null) {
+//			obj.getCommonInfo().setOrganization(tenantId);
+//		}
+//
+//		if (obj.getCommonInfo().getOrganization() == null) {
+//			if (useDefaultTenant)
+//				obj.getCommonInfo().setOrganization(TENANT_DEFAULT);
+//			else
+//		if (obj.getCommonInfo().getOrganization() == null) {
+//			throw new KnowageRuntimeException("Organization not set!!!");
+//		}
+//		return obj;
+//	}
 }

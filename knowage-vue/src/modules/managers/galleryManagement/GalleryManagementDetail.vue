@@ -46,6 +46,7 @@
 									<Chips v-model="template.tags" @add="setDirty" @remove="setDirty" :allowDuplicate="false" />
 									<label class="kn-material-input-label" for="tags">{{ $t('common.tags') }}</label>
 								</span>
+								<small id="username1-help">{{ $t('managers.widgetGallery.tags.availableCharacters') }}</small>
 							</div>
 						</div>
 					</template>
@@ -141,8 +142,8 @@
 			downloadTemplate(): void {
 				if (this.dirty) {
 					this.$confirm.require({
-						message: 'Are you sure you want to proceed?',
-						header: 'Confirmation',
+						message: this.$t('managers.widgetGallery.templateIsNotSaved'),
+						header: this.$t('managers.widgetGallery.downloadTemplate'),
 						icon: 'pi pi-exclamation-triangle',
 						accept: () => {
 							downloadDirect(JSON.stringify(this.template), this.template.name, 'application/json')
@@ -178,15 +179,17 @@
 				this.setDirty()
 			},
 			saveTemplate(): void {
-				let postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
-				axios
-					.post(process.env.VUE_APP_API_PATH + postUrl, this.template)
-					.then((response) => {
-						this.$store.commit('setInfo', { title: 'Saved template', msg: 'template saved correctly' })
-						this.$router.push('/gallerymanagement/' + response.data.id)
-						this.$emit('saved')
-					})
-					.catch((error) => console.error(error))
+				if (this.validateTags()) {
+					let postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
+					axios
+						.post(process.env.VUE_APP_API_PATH + postUrl, this.template)
+						.then((response) => {
+							this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.saveTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullySaved') })
+							this.$router.push('/gallerymanagement/' + response.data.id)
+							this.$emit('saved')
+						})
+						.catch((error) => console.error(error))
+				}
 			},
 			setDirty(): void {
 				this.dirty = true
@@ -204,10 +207,23 @@
 				if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
 					reader.readAsDataURL(event.srcElement.files[0])
 					this.setDirty()
-				} else this.$store.commit('setError', { title: 'Error in file upload', msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
+				} else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
 			},
 			resizeHandler(): void {
 				this.windowWidth = window.innerWidth
+			},
+			validateTags(): Boolean {
+				const re = /^([a-zA-Z0-9\\-\\_])*$/g
+				for (var idx in this.template.tags) {
+					let currentTag = this.template.tags[idx]
+					const found = currentTag.match(re)
+					if (!found) {
+						this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('managers.widgetGallery.tags.tagIsNotValid', { tag: currentTag }) })
+						return false
+					}
+				}
+
+				return true
 			}
 		},
 		watch: {

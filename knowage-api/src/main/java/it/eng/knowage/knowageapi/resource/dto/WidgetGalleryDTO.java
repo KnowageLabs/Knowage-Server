@@ -32,7 +32,7 @@ public class WidgetGalleryDTO {
 
 	private String type;
 
-	@ListStringConstraint
+	@ListStringConstraint(message = "One or more tag is not valid")
 	private List<String> tags = new ArrayList<String>();
 
 	private String image = null;

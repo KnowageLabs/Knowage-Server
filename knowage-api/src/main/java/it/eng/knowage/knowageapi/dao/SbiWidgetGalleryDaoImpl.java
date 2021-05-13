@@ -46,9 +46,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		logger.debug("IN");
 
 		em.getTransaction().begin();
-		SbiWidgetGallery sbiWidgetGalleryFound = em
-				.createQuery("SELECT t FROM SbiWidgetGallery t where t.id = :value1 and t.organization = :value2", SbiWidgetGallery.class)
-				.setParameter("value1", sbiWidgetGallery.getUuid()).setParameter("value2", sbiWidgetGallery.getOrganization()).getSingleResult();
+		SbiWidgetGallery sbiWidgetGalleryFound = findByIdTenant(sbiWidgetGallery.getUuid(), sbiWidgetGallery.getOrganization());
 
 		sbiWidgetGalleryFound.setAuthor(sbiWidgetGallery.getAuthor());
 		sbiWidgetGalleryFound.setDescription(sbiWidgetGallery.getDescription());

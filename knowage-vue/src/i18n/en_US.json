@@ -12,7 +12,8 @@
 		"description": "description",
 		"download": "download",
 		"error": {
-			"exceededSize": "Uploaded file exceedes max size {size}"
+			"exceededSize": "Uploaded file exceedes max size {size}",
+			"uploading": "Error uploading "
 		},
 		"export": "export",
 		"image": "image",
@@ -73,12 +74,26 @@
 	},
 	"managers": {
 		"widgetGallery": {
+			"deleteTemplate": "Delete template",
+			"downloadTemplate": "Download template",
 			"hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
 			"importTemplate": "Import template",
-			"newTemplate": "New Template",
+			"newTemplate": "New template",
 			"noResults": "No templates available for the selected filter",
 			"outputType": "Output Type",
-			"title": "Gallery management"
+			"saveTemplate": "Save template",
+			"tags": {
+				"availableCharacters": "Allowed values for tags: uppercase and lowercase letters, numbers, '-', '_'. The space character is not allowed.",
+				"tagIsNotValid": "Tag ({tag}) is not valid'"
+			},
+			"templateDoYouWantToDeleteTemplate": "Do you want to delete this template?",
+			"templateIsNotSaved": "The template was not saved. Do you want to download it anyway?",
+			"templateSuccessfully": "Template successfully",
+			"templateSuccessfullyDeleted": "@:managers.widgetGallery.templateSuccessfully deleted",
+			"templateSuccessfullySaved": "@:managers.widgetGallery.templateSuccessfully saved",
+			"templateSuccessfullyUploaded": "@:managers.widgetGallery.templateSuccessfully uploaded",
+			"title": "Gallery management",
+			"uploadTemplate": "Upload template"
 		}
 	},
 	"newsDialog": {

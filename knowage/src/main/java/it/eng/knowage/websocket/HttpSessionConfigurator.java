@@ -30,6 +30,7 @@ public class HttpSessionConfigurator extends ServerEndpointConfig.Configurator {
 //		String user = request.getParameterMap().get("user").get(0);
 //		sec.getUserProperties().put(user, request.getHttpSession());
 
+		sec.getUserProperties().remove("HTTP_SESSION");
 		sec.getUserProperties().put("HTTP_SESSION", request.getHttpSession());
 //		System.out.println("modifyHandshake() User " + user + " with http session ID " + ((HttpSession) request.getHttpSession()).getId());
 	}
