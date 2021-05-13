@@ -121,7 +121,6 @@
     		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	*#
     	zoomType: 'xy',
-    	marginRight: 110,
     
         type: 'bubble',
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
@@ -1450,7 +1449,7 @@
 							#if($el.z!="")	
 								z: $el.z,
 							#end
-							#if($el.name!="")	
+							#if($el.has("name") && $el.name!="")	
 								name: "$escapeTool.javascript($el.name)",
 							#end
 							#foreach($customColor in $customColors)
