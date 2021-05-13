@@ -1342,9 +1342,17 @@ function cockpitChartWidgetControllerFunction(
        }
 
        else if( $scope.ngModel.content.chartTemplate.CHART.type==="SUNBURST"){
-        	   var parameters = event.selectParam_cross;
-
-        		return parameters;
+    	   	   var parameters;
+    	   	   if (event.selectParam_cross) parameters = event.selectParam_cross;
+    	   	   else {
+	    	   		parameters = {
+	        				"SERIE_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE[parseInt(event.point.series.name.split(" ")[1]) - 1].name,
+	        				"SERIE_VALUE":event.point.value,
+	        				"CATEGORY_VALUE":event.point.name,
+	        				"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY[(event.point.id.match(new RegExp("_", "g")) ).length-1].name
+	        		};
+    	   	   }
+        	   return parameters;
        }
 
        else if($scope.ngModel.content.chartTemplate.CHART.type==="SCATTER"){
