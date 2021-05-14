@@ -792,6 +792,9 @@ var execExternalCrossNavigation=function(outputParameters,inputParameters,target
 		}
 		currentScope = currentScope.$parent;
 	}
+	if(!currentScope){
+		currentScope = angular.element(document.querySelector('#documentFrame')).scope();
+	}
 	currentScope.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel,otherOutputParameters);
 };
 
