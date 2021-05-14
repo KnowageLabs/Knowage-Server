@@ -998,8 +998,8 @@
         		#if($labelAlign && $chartType != "radar")
         			align: "$labelAlign", 
         		#end
-	        		      		
-        		#if($rotation!="" &&  $rotation!="null" && $rotation.class.name == "java.lang.Integer")
+        		
+        		#if($rotation!="" &&  $rotation!="null" && ($rotation.class.name == "java.lang.Integer" || $rotation.class.name == "java.lang.String"))        		 	
         			rotation: $rotation,
     			#end
         	#end
