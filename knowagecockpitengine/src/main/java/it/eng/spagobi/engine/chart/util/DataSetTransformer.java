@@ -762,7 +762,6 @@ public class DataSetTransformer {
 		}
 		LinkedHashMap<String, String> pair = new LinkedHashMap<String, String>();
 		JSONObject jsonPair = null;
-		JSONObject cleanJson = null;
 		if (!columnIndex.equals("") && !groupByIndex.equals("")) {
 			for (Object object : dataRows) {
 				if (object instanceof LinkedHashMap) {
