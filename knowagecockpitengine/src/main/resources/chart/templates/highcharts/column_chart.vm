@@ -1802,7 +1802,6 @@
 	            #end
 	            #end
 	        connectNulls:true,
-	        legendIndex: $velocityCount,
 			data: [
 				#foreach($el in  $map.get($valueKey))
 							
