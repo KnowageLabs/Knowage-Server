@@ -64,28 +64,4 @@
 			</FIELDS>
 		</VALIDATION>
 	</SERVICE>
-	<SERVICE name="MANAGE_USER_ACTION" type="ACTION">
-		<VALIDATION blocking="false" validators="">
-			<CONDITIONS>
-				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="USER_INSERT"/>
-			</CONDITIONS>
-			<FIELDS>
-				<FIELD name="userId" label="userId">
-					<VALIDATOR validatorName="MANDATORY"/>	
-					<VALIDATOR validatorName="REGEXP" arg0="^[a-zA-Z0-9_\\\x2D]*$"/>				
-					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
-				</FIELD>
-				<FIELD name="fullName" label="fullName">
-		 	 		<VALIDATOR validatorName="MANDATORY"/>
-				  	<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
-					<VALIDATOR validatorName="MAXLENGTH" arg0="2550"/>
-				</FIELD>
-
-				<FIELD name="pwd" label="pwd">
-					<VALIDATOR validatorName="MAXLENGTH" arg0="150"/>
-				</FIELD>
-				
-			</FIELDS>
-		</VALIDATION>
-	</SERVICE>
 </VALIDATIONS>
