@@ -50,7 +50,7 @@
 #if($series.class.name == 'java.util.LinkedHashMap')
 	#set($workAroundNoPrint = $seriesMap.put($series.name , $series))
 	#if($series.column == $groupedSerie)
-		#set($groupedSerie = "$series.name.toLowerCase()"+"_"+"$series.groupingFunction.toLowerCase()")
+		#set($groupedSerie = "$series.name"+"_"+"$series.groupingFunction.toLowerCase()")
 	#end
 #else
 	#set($serieKeyFeed = 0)
@@ -63,8 +63,7 @@
 		
 		#if($serie.column == $groupedSerie)
 		
-		#set($groupedSerie = "$serie.name.toLowerCase()"+"_"+"$serie.groupingFunction.toLowerCase()")
-		
+		#set($groupedSerie = "$serie.name"+"_"+"$serie.groupingFunction.toLowerCase()")
 		#end
 	#end
 #end
@@ -73,10 +72,10 @@
 
 		#set($withgroup = "$serie.name"+"_"+"$serie.groupingFunction.toLowerCase()")
 			#if($serie.axis=='Z')
-			#set($serieForZAxis = $withgroup.toLowerCase())
+			#set($serieForZAxis = $withgroup)
 			#end
 			#if($serie.axis=='X')
-			#set($serieForXAxis = $withgroup.toLowerCase())
+			#set($serieForXAxis = $withgroup)
 			#set($xAxisTitle = $serie.name)
 			#end
 		#set($workAroundNoPrint = $seriesMapGroupingFunction.put($withgroup, $serie))
