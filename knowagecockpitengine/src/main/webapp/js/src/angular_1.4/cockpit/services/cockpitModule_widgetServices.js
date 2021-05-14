@@ -643,12 +643,20 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 							 if(categoryTag.name=="" && categoryTag.column!=""){
 								 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
 								 } else if(categoryTag.name!="" && categoryTag.column!="") {
-									 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+									 if (categoryTag.drillOrder) {
+										 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.drillOrder[categoryTag.column].orderColumn,orderType:categoryTag.drillOrder[categoryTag.column].orderType,stacked:"",stackedType:""});
+									 } else {
+										 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+									 }
 								 }
 
 							 if(categoryTag.groupbyNames!="") {
-								 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
-							 } else if (categoryTag.column!="") {
+								 if (categoryTag.drillOrder) {
+									 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:categoryTag.drillOrder[categoryTag.groupby].orderColumn,orderType:categoryTag.drillOrder[categoryTag.groupby].orderType,stacked:"",stackedType:""});
+								 } else {
+									 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
+								 }
+							} else if (categoryTag.column!="") {
 								 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
 							 }
 						}
