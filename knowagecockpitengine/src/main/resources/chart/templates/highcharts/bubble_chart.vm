@@ -4,7 +4,7 @@
 	#if($dataField.class.name == 'java.util.LinkedHashMap')
 		#set($dataFieldHeader = $datasettransformer.setGroupingFunctionToLowerCase($dataField.header))
 		#if(!$dataColumnsMapper.get($dataFieldHeader.toLowerCase()))
-    	#set($workAroundNoPrint = $dataColumnsMapper.put($dataFieldHeader.toLowerCase() , $dataField.name))
+    		#set($workAroundNoPrint = $dataColumnsMapper.put($dataFieldHeader, $dataField.name))
     	#end
 	#end
 #end

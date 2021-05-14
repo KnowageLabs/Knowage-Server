@@ -49,12 +49,14 @@ public class DataSetTransformer {
 
 		System.out.println("-----------------------");
 		System.out.println(object);
-		System.out.println(object.getClass().toString());
+		if (object != null)
+			System.out.println(object.getClass().toString());
 		System.out.println("-----------------------");
 
 		logger.debug("-----------------------");
 		logger.debug(object);
-		logger.debug(object.getClass().toString());
+		if (object != null)
+			logger.debug(object.getClass().toString());
 		logger.debug("-----------------------");
 
 	}
