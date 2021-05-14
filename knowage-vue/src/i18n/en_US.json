@@ -13,6 +13,9 @@
 		"download": "download",
 		"error": {
 			"exceededSize": "Uploaded file exceedes max size {size}",
+			"tags": {
+				"tagIsNotValid": "Tag ({tag}) is not valid'"
+			},
 			"uploading": "Error uploading "
 		},
 		"export": "export",

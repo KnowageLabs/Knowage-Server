@@ -213,16 +213,15 @@
 				this.windowWidth = window.innerWidth
 			},
 			validateTags(): Boolean {
-				const re = /^([a-zA-Z0-9\\-\\_])*$/g
+				const validationRegex = /^([a-zA-Z0-9\\-\\_])*$/g
 				for (var idx in this.template.tags) {
 					let currentTag = this.template.tags[idx]
-					const found = currentTag.match(re)
-					if (!found) {
-						this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('managers.widgetGallery.tags.tagIsNotValid', { tag: currentTag }) })
+					const valid = currentTag.match(validationRegex)
+					if (!valid) {
+						this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.tags.tagIsNotValid', { tag: currentTag }) })
 						return false
 					}
 				}
-
 				return true
 			}
 		},
