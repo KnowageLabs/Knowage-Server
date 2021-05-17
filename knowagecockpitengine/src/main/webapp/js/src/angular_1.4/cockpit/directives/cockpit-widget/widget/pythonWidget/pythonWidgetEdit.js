@@ -162,10 +162,6 @@ function pythonWidgetEditControllerFunction(
 	};
 
 	$scope.saveConfiguration = function () {
-		if(!$scope.checkDataset()){
-            $scope.showAction($scope.translate.load('kn.cockpit.python.errordataset'));
-            return;
-        }
 		if(!$scope.checkAliases()){
             $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
             return;
@@ -264,11 +260,6 @@ function pythonWidgetEditControllerFunction(
 
 	$scope.checkEnvironment = function(){
         if (!$scope.newModel.pythonAddress) return false;
-        else return true;
-    }
-
-	$scope.checkDataset = function(){
-        if (!$scope.newModel.dataset || !$scope.newModel.dataset.dsId) return false;
         else return true;
     }
 
