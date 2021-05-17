@@ -157,10 +157,6 @@ function RWidgetEditControllerFunction(
 	};
 
 	$scope.saveConfiguration = function () {
-		if(!$scope.checkDataset()){
-            $scope.showAction($scope.translate.load('kn.cockpit.R.errordataset'));
-            return;
-        }
 		if(!$scope.checkAliases()){
             $scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
             return;
@@ -258,11 +254,6 @@ function RWidgetEditControllerFunction(
 
 	$scope.checkEnvironment = function(){
         if (!$scope.newModel.RAddress) return false;
-        else return true;
-    }
-
-	$scope.checkDataset = function(){
-        if (!$scope.newModel.dataset || !$scope.newModel.dataset.dsId) return false;
         else return true;
     }
 
