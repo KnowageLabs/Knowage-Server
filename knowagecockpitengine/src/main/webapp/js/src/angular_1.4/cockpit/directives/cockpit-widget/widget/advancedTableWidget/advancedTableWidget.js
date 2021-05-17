@@ -88,6 +88,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		}
+		
+		var replacePlaceholders = function(text){
+			// variables
+			text = text.replace(/\$V\{([a-zA-Z0-9\_\-\.]+)\}/g, function(match,variable){
+				return cockpitModule_properties.VARIABLES[variable];
+			});
+			// parameters
+			text = text.replace(/\$P\{([a-zA-Z0-9\_\-\.]+)\}/g, function(match,parameter){
+				return cockpitModule_analyticalDrivers[parameter];
+			});
+			return text;
+		}
 
 		var _rowHeight;
 		if(!$scope.ngModel.settings){
@@ -123,7 +135,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.columnsNameArray.push(fields[f].name);
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,
 								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
-						tempCol.headerTooltip = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
+						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.enableCustomHeaderTooltip){
+							tempCol.headerTooltip = replacePlaceholders($scope.ngModel.content.columnSelectedOfDataset[c].style.customHeaderTooltip);
+						}else{
+							tempCol.headerTooltip = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
+						}
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
 
 						if ($scope.ngModel.content.columnSelectedOfDataset[c].isCalculated){

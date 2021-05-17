@@ -281,6 +281,17 @@
 									<input class="input_class" type="number" ng-model="selectedColumn.style.tooltip.precision" min="0"> 
 								</md-input-container>
 							</div>
+							<div layout="row" layout-align="start center">
+								<md-checkbox class="noMargin" ng-model="selectedColumn.style.enableCustomHeaderTooltip" aria-label="use custom header tooltip" layout="row" layout-align="start center">
+					            	{{::translate.load('sbi.cockpit.table.customHeaderTooltip')}}
+					            	<md-tooltip md-delay="500">{{::translate.load('sbi.cockpit.table.customHeaderTooltip')}}</md-tooltip>
+					          	</md-checkbox>
+								<md-input-container flex style="margin-left: 8px" class="md-block">
+									<label> {{::translate.load('sbi.cockpit.style.prefix')}}</label>
+									<textarea ng-model="selectedColumn.style.customHeaderTooltip" rows="2" ng-disabled="!selectedColumn.style.enableCustomHeaderTooltip"></textarea>
+									<div class="hint">{{::translate.load('sbi.cockpit.table.customHeaderTooltip.hint')}}</div>
+								</md-input-container>
+							</div>
 						</md-card-content>
 					</md-card>
 						
