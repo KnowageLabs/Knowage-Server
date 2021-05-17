@@ -281,6 +281,7 @@ $aggrid-border-color: #d9dcde;
 			line-height: 100%;
 			display: inline-flex;
 			align-items: center;
+			justify-content: inherit;
 			.inner-chart-bar {
 				height: 100%;
 				position: absolute;
