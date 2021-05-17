@@ -1487,6 +1487,18 @@
 					box-shadow: 0 1px 8px 0 rgba(0,0,0,.2),0 3px 4px 0 rgba(0,0,0,.14),0 3px 3px -2px rgba(0,0,0,.12)  !important;
 				}
 		}
+		.exampleRowThreshold{
+		    height: 32px;
+		    display: inline-flex;
+		    justify-content: start;
+		    align-items: center;
+		    margin: 0 16px;
+		    border-bottom: 1px solid $bordersColor;
+		    border-top: 1px solid $bordersColor;
+		    background-color: #FCFDFE;
+		    font-size: $tableFontSize;
+		    padding: 0 8px;
+		}
 		.filters {
 			.filterRow {
 				align-items: center;

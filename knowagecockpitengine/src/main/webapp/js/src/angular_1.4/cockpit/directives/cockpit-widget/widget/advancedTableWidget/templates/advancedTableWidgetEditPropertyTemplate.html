@@ -114,6 +114,70 @@
 								</div>
 							</div>
 							
+							<md-subheader class="noPadding">
+				   			 	<div layout="row" layout-align="start center" style="height:48px;padding-left:16px">
+		   							<md-switch ng-model="newModel.settings.rowThresholds.enabled"></md-switch> <span layout-padding>Row Thresholds</span>
+		   							<span flex></span>
+									<md-button ng-click="addRowThreshold()" ng-disabled="!newModel.settings.rowThresholds.enabled">
+										{{::translate.load('sbi.cockpit.widget.table.summary.add')}}
+										<md-tooltip md-delay="1000">{{::translate.load('sbi.cockpit.widget.table.summary.addtooltip')}}</md-tooltip>
+									</md-button>
+		   						</div>
+							</md-subheader>
+							<div ng-if="newModel.settings.rowThresholds.enabled && newModel.settings.rowThresholds.list.length > 0" layout="column">
+								<div ng-repeat="threshold in newModel.settings.rowThresholds.list track by $index" layout="row" style="padding:0 8px;" layout-align="start center">
+									<md-input-container flex class="md-block">
+					       				<label>Column</label>
+					       				<md-select ng-model="threshold.column">
+			          						<md-option ng-repeat="column in newModel.content.columnSelectedOfDataset" ng-value="column.name">{{column.alias}}</md-option>
+				       					</md-select>
+							    	</md-input-container>
+							    	<md-input-container flex class="md-block">
+					       				<label>Condition</label>
+					       				<md-select ng-model="threshold.condition">
+			          						<md-option ng-repeat="func in cockpitModule_generalOptions.conditions" ng-value="func">{{func}}</md-option>
+				       					</md-select>
+							    	</md-input-container>
+							    	<md-input-container flex class="md-block">
+					       				<label>Compare value type</label>
+					       				<md-select ng-model="threshold.compareValueType">
+			          						<md-option ng-repeat="func in cockpitModule_generalOptions.compareValueTypes" ng-value="func.value">{{func.label}}</md-option>
+				       					</md-select>
+							    	</md-input-container>
+							    	
+							    	<md-input-container flex class="md-block" ng-if="threshold.compareValueType == 'variable'">
+					       				<label>Compare value</label>
+					       				<md-select ng-model="threshold.compareValue">
+			          						<md-option ng-repeat="variable in cockpitModule_template.configuration.variables" ng-value="variable.name">{{variable.name}}</md-option>
+				       					</md-select>
+			       					</md-input-container>
+				       					
+			       					<md-input-container flex class="md-block" ng-if="threshold.compareValueType == 'parameter'">
+					       				<label>Compare value</label>
+				       					<md-select ng-model="threshold.compareValue">
+			          						<md-option ng-repeat="(key,value) in cockpitModule_analyticalDrivers" ng-value="key">{{key}}</md-option>
+				       					</md-select>
+							    	</md-input-container>
+							    
+							    	<md-input-container flex class="md-block" ng-if="!threshold.compareValueType || threshold.compareValueType == 'static'"">
+					       				<label>Compare value</label>
+					       				<input type="text" ng-model="threshold.compareValue" />
+							    	</md-input-container>
+							    	
+							    	<div flex class="exampleRowThreshold" ng-style="threshold.style">
+							    		example
+							    	</div>
+							    	
+							    	<md-button class="md-icon-button" ng-click="setRowThresholdStyle($index)">
+							    		<md-icon md-font-icon="fa fa-paint-brush"></md-icon>
+							    	</md-button>
+							    	
+							    	<md-button class="md-icon-button" ng-click="removeRowThreshold($index)">
+							    		<md-icon md-font-icon="fa fa-trash"></md-icon>
+							    	</md-button>
+								</div>
+							</div>
+							
 				     	</md-card-content>
 				    </md-card>
 				</md-tab>

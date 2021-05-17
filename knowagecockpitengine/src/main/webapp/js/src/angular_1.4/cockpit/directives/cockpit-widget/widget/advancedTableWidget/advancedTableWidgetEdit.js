@@ -20,6 +20,8 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
+	$scope.cockpitModule_analyticalDrivers = cockpitModule_analyticalDrivers;
+	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
 	$scope.availableSummaryAggregations = ["SUM","AVG","COUNT","COUNT_DISTINCT", "MAX", "MIN"];
 	$scope.typesMap = cockpitModule_generalOptions.typesMap;
@@ -316,6 +318,41 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			}, function() {
 			});
 	}
+	
+	$scope.setRowThresholdStyle = function(index){
+		$mdDialog.show({
+			templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/rowThresholdStyle.html',
+			parent : angular.element(document.body),
+			clickOutsideToClose:true,
+			escapeToClose :true,
+			preserveScope: false,
+			autoWrap:false,
+			fullscreen: true,
+			locals:{style : $scope.newModel.settings.rowThresholds.list[index].style},
+			controller: function(scope,sbiModule_translate,cockpitModule_generalOptions,$mdDialog,style){
+				scope.translate = sbiModule_translate;
+				scope.tempStyle = angular.copy(style);
+				scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
+				
+				scope.colorPickerOptions = {
+					placeholder:scope.translate.load('sbi.cockpit.color.select'),
+					format:'rgb'
+				}
+				
+				scope.cancel = function(){
+					$mdDialog.cancel();
+				}
+
+				scope.save = function(){
+					$mdDialog.hide(scope.tempStyle);
+				}
+			}
+		}).then(function(tempStyle) {
+			$scope.newModel.settings.rowThresholds.list[index].style = tempStyle;
+		}, function() {
+			console.log("Selected column:", $scope.selectedColumn);
+		});
+	}
 
 	function columnsGroupController(scope,sbiModule_translate,cockpitModule_generalOptions,$mdDialog,model){
 		scope.translate=sbiModule_translate;
@@ -515,6 +552,14 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	$scope.removeSummaryRow = function(i){
 		$scope.newModel.settings.summary.list.splice(i,1);
 	}
+	
+	$scope.addRowThreshold = function(){
+		$scope.newModel.settings.rowThresholds.list.push({});
+	}
+	
+	$scope.removeRowThreshold = function(i){
+		$scope.newModel.settings.rowThresholds.list.splice(i,1);
+	}
 
 	$scope.checkForPinnedColumns = function(columns){
 		for(var k in columns){
@@ -529,6 +574,12 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 				$scope.showNoPinnedColumnWarning = $scope.checkForPinnedColumns($scope.newModel.content.columnSelectedOfDataset);
 			}
 			if(!$scope.newModel.settings.summary.list) $scope.newModel.settings.summary.list = [{}];
+		}
+	})
+	
+	$scope.$watch('newModel.settings.rowThresholds.enabled',function(newValue,oldValue){
+		if(newValue){
+			if(!$scope.newModel.settings.rowThresholds.list) $scope.newModel.settings.rowThresholds.list = [];
 		}
 	})
 

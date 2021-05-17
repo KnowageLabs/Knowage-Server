@@ -168,6 +168,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:sbiModule_translate.load('kn.variables.setheader'),value:'header'}
 		 ],
 		 conditions : ['>','<','==','>=','<=','!='],
+		 compareValueTypes : [{value:"static",label:"static"},{value:"variable",label:"variable"},{value:"parameter",label:"parameter"}],
 		 htmlRegex : /[&<>"'àáâãäèéêëìíòóùú\\/]/g,
 		 htmlEscapes:{
 		        '&': '&amp;',
