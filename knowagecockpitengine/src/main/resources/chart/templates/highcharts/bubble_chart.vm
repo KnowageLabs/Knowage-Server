@@ -1,10 +1,12 @@
 #set($dataFields = $data.metaData.fields) ## columns of data table
 #set($dataColumnsMapper = {})
+#set($dataColumnsMapperForGrouping = {})
 #foreach ($dataField in $dataFields) ## conversion column name to internal column name
 	#if($dataField.class.name == 'java.util.LinkedHashMap')
 		#set($dataFieldHeader = $datasettransformer.setGroupingFunctionToLowerCase($dataField.header))
 		#if(!$dataColumnsMapper.get($dataFieldHeader.toLowerCase()))
-    		#set($workAroundNoPrint = $dataColumnsMapper.put($dataFieldHeader, $dataField.name))
+    		#set($workAroundNoPrint = $dataColumnsMapper.put($dataFieldHeader , $dataField.name))
+    		#set($workAroundNoPrintGrouping = $dataColumnsMapperForGrouping.put($dataFieldHeader , $dataField.name))
     	#end
 	#end
 #end
@@ -51,6 +53,7 @@
 	#set($workAroundNoPrint = $seriesMap.put($series.name , $series))
 	#if($series.column == $groupedSerie)
 		#set($groupedSerie = "$series.name"+"_"+"$series.groupingFunction.toLowerCase()")
+		#set($groupedSerieForGrouping = "$series.name"+"_"+"$series.groupingFunction.toLowerCase()")
 	#end
 #else
 	#set($serieKeyFeed = 0)
@@ -64,6 +67,7 @@
 		#if($serie.column == $groupedSerie)
 		
 		#set($groupedSerie = "$serie.name"+"_"+"$serie.groupingFunction.toLowerCase()")
+		#set($groupedSerieForGrouping = "$serie.name"+"_"+"$serie.groupingFunction.toLowerCase()")
 		#end
 	#end
 #end
@@ -73,9 +77,11 @@
 		#set($withgroup = "$serie.name"+"_"+"$serie.groupingFunction.toLowerCase()")
 			#if($serie.axis=='Z')
 			#set($serieForZAxis = $withgroup)
+			#set($serieForZAxisGrouping = $withgroup)
 			#end
 			#if($serie.axis=='X')
 			#set($serieForXAxis = $withgroup)
+			#set($serieForXAxisGrouping = $withgroup)
 			#set($xAxisTitle = $serie.name)
 			#end
 		#set($workAroundNoPrint = $seriesMapGroupingFunction.put($withgroup, $serie))
@@ -854,7 +860,7 @@
 		## Calling the method for reconfiguring the original data about the ordering column and its category values		
 		
 		#if($chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
-		#set($map = $datasettransformer.prepareDataForGroupingBubble($rows, $dataColumnsMapper, $categorieColumns, $groupedSerie,$serieForZAxis,$serieForXAxis, $coloredCategory))
+		#set($map = $datasettransformer.prepareDataForGroupingBubble($rows, $dataColumnsMapperForGrouping, $categorieColumns, $groupedSerieForGrouping ,$serieForZAxisGrouping,$serieForXAxisGrouping, $coloredCategory))
      
 		#end
 
@@ -1156,7 +1162,7 @@
     #foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
 	    #set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
-	   	#set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName.toLowerCase())) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"	
+	   	#set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"	
 	#end
 
   	#set ($counter = 0)
@@ -1197,7 +1203,7 @@
 	    	connectNulls:true,
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction.toLowerCase()#{else}sum#end")
-	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName.toLowerCase())) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
+	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
 
 	    		#foreach($row in $rows)
 					#if( $row.get($serieColumnsMapped))
