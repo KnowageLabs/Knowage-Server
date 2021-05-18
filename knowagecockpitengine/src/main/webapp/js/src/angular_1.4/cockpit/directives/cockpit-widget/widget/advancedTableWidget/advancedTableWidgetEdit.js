@@ -16,10 +16,13 @@ angular
 	.module('cockpitModule')
 	.controller('advancedTableWidgetEditControllerFunction',advancedTableWidgetEditControllerFunction)
 
-function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,cockpitModule_datasetServices,cockpitModule_generalOptions, cockpitModule_analyticalDrivers, sbiModule_restServices,cockpitModule_template){
+function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,cockpitModule_datasetServices,cockpitModule_generalOptions, cockpitModule_analyticalDrivers, sbiModule_restServices,cockpitModule_template, cockpitModule_properties){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
+	$scope.cockpitModule_properties = cockpitModule_properties;
+	$scope.rowThresholdsConditions = cockpitModule_generalOptions.conditions;
+	if($scope.rowThresholdsConditions.indexOf('IN') == -1) $scope.rowThresholdsConditions.push('IN');
 	$scope.cockpitModule_analyticalDrivers = cockpitModule_analyticalDrivers;
 	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
@@ -32,6 +35,10 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			$scope.allHidden = false;
 			break;
 		}
+	}
+	
+	$scope.isObject = function(item){
+		return typeof item == 'object';
 	}
 
 	function uuidv4() {
@@ -354,6 +361,15 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		});
 	}
 
+	$scope.setRowThresholdFormula = function(index){
+		if(typeof $scope.newModel.settings.rowThresholds.list[index].formula != "undefined") delete $scope.newModel.settings.rowThresholds.list[index].formula;
+		else $scope.newModel.settings.rowThresholds.list[index].formula = "";
+	}
+	
+	$scope.hasFormula = function(threshold){
+		return threshold.formula || threshold.formula == '';
+	}
+	
 	function columnsGroupController(scope,sbiModule_translate,cockpitModule_generalOptions,$mdDialog,model){
 		scope.translate=sbiModule_translate;
 		scope.cockpitModule_generalOptions = cockpitModule_generalOptions;

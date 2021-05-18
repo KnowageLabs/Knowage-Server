@@ -124,6 +124,11 @@ md-checkbox.md-knowage-theme.md-checked ._md-icon {
   background-color: $baseColor;
 }
 
+.md-button.md-knowage-theme {
+  .active {
+    color: $baseColor;
+  }
+}
 
 .md-button.md-knowage-theme.md-warn.md-raised:not([disabled]) {
   background-color: $fabPrimaryColor;

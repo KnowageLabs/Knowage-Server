@@ -89,14 +89,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 		
-		var replacePlaceholders = function(text){
+		var replacePlaceholders = function(text, data){
+			function adaptToType(value) {
+				return isNaN(value) ? '"'+value+'"' : value;
+			}
 			// variables
 			text = text.replace(/\$V\{([a-zA-Z0-9\_\-\.]+)\}/g, function(match,variable){
-				return cockpitModule_properties.VARIABLES[variable];
+				return adaptToType(cockpitModule_properties.VARIABLES[variable]);
+			});
+			// fields
+			text = text.replace(/\$F\{([a-zA-Z0-9\_\-\.]+)\}/g, function(match,field){
+				return adaptToType(data[field]);
 			});
 			// parameters
 			text = text.replace(/\$P\{([a-zA-Z0-9\_\-\.]+)\}/g, function(match,parameter){
-				return cockpitModule_analyticalDrivers[parameter];
+				return adaptToType(cockpitModule_analyticalDrivers[parameter]);
 			});
 			return text;
 		}
@@ -689,39 +696,55 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var validThresholds = [];
 			for(var k in $scope.ngModel.settings.rowThresholds.list){
 				var threshold = angular.copy($scope.ngModel.settings.rowThresholds.list[k]);
-				
-				// getting the value to compare with
-				var valueToCompare;
-				if(threshold.compareValueType == 'static') valueToCompare = threshold.compareValue;
-				if(threshold.compareValueType == 'variable') valueToCompare = cockpitModule_properties.VARIABLES[threshold.compareValue];
-				if(threshold.compareValueType == 'parameter') valueToCompare = cockpitModule_analyticalDrivers[threshold.compareValue];
-				
-				// getting the condition to compare with and comparing
-				var fullfilledCondition = false;
-				switch(threshold.condition){
-				case '==':
-					fullfilledCondition = data[threshold.column] == valueToCompare;
-					break;
-				case '>=':
-					fullfilledCondition = data[threshold.column] >= valueToCompare;
-					break;
-				case '<=':
-					fullfilledCondition = data[threshold.column] <= valueToCompare;
-					break;
-				case '>':
-					fullfilledCondition = data[threshold.column] > valueToCompare;
-				case '<':
-					fullfilledCondition = data[threshold.column] < valueToCompare;
-				case '!=':
-					fullfilledCondition = data[threshold.column] != valueToCompare;
+				if(typeof threshold.formula != 'undefined'){
+					threshold.formula = replacePlaceholders(threshold.formula, data);
+					if(eval(threshold.formula)){
+						// changing border color property to override ag-grid default behaviour
+						if(threshold.style['border-bottom-color']) threshold.style['border-bottom'] = "1px solid "+threshold.style['border-bottom-color'];
+						if(threshold.style['border-top-color']) threshold.style['border-top'] = "1px solid "+threshold.style['border-top-color'];
+						validThresholds.push(threshold.style)
+					}
 				}
-				
-				if(fullfilledCondition){
-					// changing border color property to override ag-grid default behaviour
-					if(threshold.style['border-bottom-color']) threshold.style['border-bottom'] = "1px solid "+threshold.style['border-bottom-color'];
-					if(threshold.style['border-top-color']) threshold.style['border-top'] = "1px solid "+threshold.style['border-top-color'];
-					if(threshold.condition == '==') return threshold.style;
-					else validThresholds.push(threshold.style)
+				else{
+					// getting the value to compare with
+					var valueToCompare;
+					if(threshold.compareValueType == 'static') valueToCompare = threshold.compareValue;
+					if(threshold.compareValueType == 'variable') {
+						if(threshold.compareValueKey) valueToCompare = cockpitModule_properties.VARIABLES[threshold.compareValue][threshold.compareValueKey];
+						else valueToCompare = cockpitModule_properties.VARIABLES[threshold.compareValue];
+					}
+					if(threshold.compareValueType == 'parameter') valueToCompare = cockpitModule_analyticalDrivers[threshold.compareValue];
+					
+					// getting the condition to compare with and comparing
+					var fullfilledCondition = false;
+					switch(threshold.condition){
+					case '==':
+						fullfilledCondition = data[threshold.column] == valueToCompare;
+						break;
+					case '>=':
+						fullfilledCondition = data[threshold.column] >= valueToCompare;
+						break;
+					case '<=':
+						fullfilledCondition = data[threshold.column] <= valueToCompare;
+						break;
+					case 'IN':
+						fullfilledCondition = valueToCompare.split(',').indexOf(data[threshold.column]) != -1;
+						break;
+					case '>':
+						fullfilledCondition = data[threshold.column] > valueToCompare;
+					case '<':
+						fullfilledCondition = data[threshold.column] < valueToCompare;
+					case '!=':
+						fullfilledCondition = data[threshold.column] != valueToCompare;
+					}
+					
+					if(fullfilledCondition){
+						// changing border color property to override ag-grid default behaviour
+						if(threshold.style['border-bottom-color']) threshold.style['border-bottom'] = "1px solid "+threshold.style['border-bottom-color'];
+						if(threshold.style['border-top-color']) threshold.style['border-top'] = "1px solid "+threshold.style['border-top-color'];
+						if(threshold.condition == '==') return threshold.style;
+						else validThresholds.push(threshold.style)
+					}
 				}
 			}
 			return validThresholds[0];
