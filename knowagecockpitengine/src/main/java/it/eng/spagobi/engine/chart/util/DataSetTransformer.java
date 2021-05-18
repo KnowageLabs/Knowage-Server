@@ -928,10 +928,14 @@ public class DataSetTransformer {
 
 			String primCateg = categorieColumns.get("column");
 			String primColumn = dataColumnsMapper.get((categorieColumns).get("column"));
+			if (primColumn == null)
+				primColumn = dataColumnsMapper.get((categorieColumns).get("column").toLowerCase());
 			String seriaColumn = null;
 			String seria = null;
 			if (categorieColumns.get("groupby") != null && categorieColumns.get("groupby") != "") {
 				seriaColumn = dataColumnsMapper.get(categorieColumns.get("groupby"));
+				if (seriaColumn == null)
+					seriaColumn = dataColumnsMapper.get(categorieColumns.get("groupby").toLowerCase());
 				seria = categorieColumns.get("groupby");
 			} else {
 				seriaColumn = primColumn;
