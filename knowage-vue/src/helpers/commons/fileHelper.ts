@@ -37,3 +37,28 @@ export function downloadDirect(jsonData, filename, contentType) {
 		}
 	}
 }
+
+export function getBlob(response, fileName, fileExtension) {
+	console.log(fileName)
+	console.log(fileExtension)
+	var data = response.data
+	var mimeType = response.headers['content-type']
+	var contentDisposition = response.headers['content-disposition']
+	var fileAndExtension = contentDisposition.match(/(?!([\b attachment;filename= \b])).*(?=)/g)[0]
+	var blob = new Blob([data], { type: mimeType })
+	var urlCreator = window.URL || window.webkitURL /* || window.mozURL || window.msURL */
+	var url = urlCreator !== undefined ? urlCreator.createObjectURL(blob) : JSON.stringify(blob)
+
+	if (window.navigator.msSaveBlob) {
+		window.navigator.msSaveBlob(blob, fileAndExtension) // The user only has the option of clicking the Save button.
+	} else {
+		var link = document.createElement('a')
+		document.body.appendChild(link)
+		link.download = fileAndExtension
+		link.href = url
+		link.target = '_blank'
+		link.click()
+
+		document.body.removeChild(link)
+	}
+}

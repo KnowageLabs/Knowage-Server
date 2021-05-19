@@ -83,6 +83,21 @@ public class GalleryResource {
 	}
 
 	@GET
+	@Path("/image/{widgetId}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String widgetImageByWidgetId(@PathParam("widgetId") String widgetId) {
+		WidgetGalleryDTO widgetGalleryDTO = null;
+		try {
+			SpagoBIUserProfile profile = getUserProfile();
+			widgetGalleryDTO = widgetGalleryService.getWidgetsById(widgetId, profile);
+		} catch (Throwable e) {
+			throw new KnowageRuntimeException(e.getMessage(), e);
+		}
+		return widgetGalleryDTO.getImage();
+
+	}
+
+	@GET
 	@Path("/widgets/{type}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public List<WidgetGalleryDTO> widgetType(@PathParam("type") String type) {
