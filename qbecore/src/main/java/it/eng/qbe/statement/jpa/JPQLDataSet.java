@@ -19,6 +19,7 @@ package it.eng.qbe.statement.jpa;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +31,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Filter;
@@ -102,7 +102,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		javax.persistence.Query jpqlQuery = entityManager.createQuery(statementStr);
 
 		if (this.isCalculateResultNumberOnLoadEnabled()) {
-			resultNumber = getResultNumber(jpqlQuery);
+			resultNumber = getResultNumber(filteredStatement);
 			logger.info("Number of fetched records: " + resultNumber + " for query " + filteredStatement.getQueryString());
 			overflow = (maxResults > 0) && (resultNumber >= maxResults);
 		}
@@ -238,10 +238,12 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		return ret;
 	}
 
-	private int getResultNumber(Query jpqlQuery) {
+	private int getResultNumber(IStatement filteredStatement) {
 		int resultNumber = 0;
 		try {
-			resultNumber = jpqlQuery.getResultList().size();
+			String sqlQueryString = filteredStatement.getSqlQueryString();
+			BigInteger singleResult = (BigInteger) getEntityMananger().createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") AS COUNT_INLINE_VIEW").getSingleResult();
+			resultNumber = singleResult.intValue();
 		} catch (Exception e) {
 			throw new RuntimeException("Impossible to get result number", e);
 		}
