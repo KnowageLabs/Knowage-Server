@@ -101,7 +101,7 @@ export default defineComponent({
                         .then(() => {
                             this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.deleteTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyDeleted') })
                             this.loadAllTemplates()
-                            if (templateId === this.$route.params.id) this.$router.push('/gallerymanagement')
+                            if (templateId === this.$route.params.id) this.$router.push('/gallery-management')
                         })
                         .catch((error) => console.error(error))
                 }
