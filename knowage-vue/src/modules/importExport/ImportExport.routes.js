@@ -1,7 +1,7 @@
 let routes = [
     {
-        path: '/importexport',
-        name: 'importexport',
+        path: '/import-export',
+        name: 'import-export',
         component: () => import('@/modules/importExport/ImportExport.vue'),
         children: [
             {
