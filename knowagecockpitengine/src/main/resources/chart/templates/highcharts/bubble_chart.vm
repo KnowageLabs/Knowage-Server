@@ -17,7 +17,7 @@
 #set($categorieColumns.name = $categorieColumns.column)
 #end
 #if($chart.isCockpitEngine=="true")
-#set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.name.toLowerCase())) ## "product" -> "column_3"
+#set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.name)) ## "product" -> "column_3"
 #end
 #set($drillable = "false")
 #set($cliccable = "false")
@@ -1215,6 +1215,9 @@
 
 						#end
 						#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
+						$datasettransformer.print($categorieColumnsMapped)
+						$datasettransformer.print($serieCategoryName)
+						
 						#set( $serieCategoryName = $escapeTool.javascript($serieCategoryName))
 
 						{
