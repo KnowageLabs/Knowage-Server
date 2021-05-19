@@ -366,7 +366,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
   		$scope.pageChanged($scope.totalPages);
 	}
 	$scope.start = 0;
-	$scope.itemsPerPage = 25;
+	$scope.itemsPerPage = 20;
 
 	$scope.firstExecution = true;
 
@@ -650,7 +650,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 					}
 
-					$scope.changeDatasetPage($scope.itemsPerPage,$scope.currentPageNumber)
 					$scope.closePanel = function () {
 
 						angular.copy(null,$scope.changeDatasetPage)
