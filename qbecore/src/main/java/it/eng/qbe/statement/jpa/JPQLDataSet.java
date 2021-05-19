@@ -242,7 +242,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		int resultNumber = 0;
 		try {
 			String sqlQueryString = filteredStatement.getSqlQueryString();
-			BigInteger singleResult = (BigInteger) getEntityMananger().createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") AS COUNT_INLINE_VIEW").getSingleResult();
+			BigInteger singleResult = (BigInteger) getEntityMananger().createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") COUNT_INLINE_VIEW").getSingleResult();
 			resultNumber = singleResult.intValue();
 		} catch (Exception e) {
 			throw new RuntimeException("Impossible to get result number", e);
