@@ -1,0 +1,80 @@
+<div layout-fill class="overlayGray" layout="row" layout-align="center center">
+<md-dialog aria-label="table configuration" ng-cloak  layout="column" class="width80">
+	<md-toolbar class="secondaryToolbar" layout="row">
+		<div class="md-toolbar-tools">
+			<h1>Row Threshold Style</h1>
+		</div>
+	</md-toolbar>
+	<md-dialog-content flex style="min-height:250px">
+	
+	<md-card>
+		<md-card-content layout="column">
+			<div layout="row">
+				<md-input-container class="md-block" flex>
+					<label>Horizontal alignment</label>
+					<md-select ng-model="tempStyle['justify-content']">
+						<md-option ng-repeat="fs in cockpitModule_generalOptions.flexJustifyContent" ng-value="fs.value">{{fs.label}}</md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.style.font.family")}}</label>
+					<md-select ng-model="tempStyle['font-family']">
+						<md-option ng-repeat="fs in cockpitModule_generalOptions.fontFamily" ng-value="fs.value"><span ng-style="{'font-family':fs.value}">{{fs.label}}</span></md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.style.titles.font.size")}}</label>
+					<input ng-model="tempStyle['font-size']" type="text"/>
+					<div class="hint">{{::translate.load('sbi.cockpit.style.fontSize.hint')}}</div>
+				</md-input-container>
+			</div>
+			
+			<div layout="row">
+				<md-input-container class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.style.font.style")}}</label>
+					<md-select ng-model="tempStyle['font-style']">
+						<md-option ng-repeat="fst in cockpitModule_generalOptions.fontStyle" ng-value="fst.value"><span ng-style="{'font-style':fst.value}">{{fst.label}}</span></md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.style.titles.font.weight")}}</label>
+					<md-select ng-model="tempStyle['font-weight']">
+						<md-option ng-repeat="fw in cockpitModule_generalOptions.fontWeight" ng-value="fw.value"><span ng-style="{'font-weight':fw.value}">{{fw.label}}</span></md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.style.titles.font.color")}}</label>
+					<color-picker options="colorPickerOptions" ng-model="tempStyle['color']"></color-picker> 
+				</md-input-container>
+				<md-input-container class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.style.titles.background.color")}}</label>
+					<color-picker options="colorPickerOptions" ng-model="tempStyle['background-color']"></color-picker> 
+				</md-input-container>
+			</div>
+			
+			<div layout="row">
+				<md-input-container class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.style.titles.bordertop.color")}}</label>
+					<color-picker options="colorPickerOptions" ng-model="tempStyle['border-top-color']"></color-picker> 
+				</md-input-container>
+				<md-input-container class="md-block" flex>
+					<label>{{::translate.load("sbi.cockpit.style.titles.borderbottom.color")}}</label>
+					<color-picker options="colorPickerOptions" ng-model="tempStyle['border-bottom-color']"></color-picker> 
+				</md-input-container>
+			</div>
+				
+		</md-card-content>
+	</md-card>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="cancel()" >
+        {{::translate.load('sbi.generic.cancel')}}
+      </md-button>
+      <md-button class="md-raised md-primary" ng-click="save()" >
+        {{::translate.load('sbi.generic.save')}}
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>
+</div>
