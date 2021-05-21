@@ -269,6 +269,13 @@
 							</md-subheader>
 							<div ng-if="newModel.settings.rowThresholds.enabled && newModel.settings.rowThresholds.list.length > 0" layout="column">
 								<div ng-repeat="threshold in newModel.settings.rowThresholds.list track by $index" layout="row" style="padding:0 8px;" layout-align="start center">
+									<md-button class="md-icon-button" ng-click="moveRowThreshold($index,'up')" ng-if="newModel.settings.rowThresholds.list.length > 1" ng-disabled="$first">
+							    		<md-icon md-font-icon="fa fa-arrow-up"></md-icon>
+							    	</md-button>
+							    	<md-button class="md-icon-button" ng-click="moveRowThreshold($index,'down')" ng-if="newModel.settings.rowThresholds.list.length > 1" ng-disabled="$last">
+							    		<md-icon md-font-icon="fa fa-arrow-down"></md-icon>
+							    	</md-button>
+							    	
 									<md-button class="md-icon-button" ng-click="setRowThresholdFormula($index)">
 							    		<md-icon ng-class="{'active':hasFormula(threshold)}" md-font-icon="fa fa-code"></md-icon>
 							    		<md-tooltip md-delay="500">{{::translate.load('sbi.cockpit.widget.table.rowthreshold.formula.tooltip')}}</md-tooltip>
