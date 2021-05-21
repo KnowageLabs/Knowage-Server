@@ -89,9 +89,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 		
-		var replacePlaceholders = function(text, data){
+		var replacePlaceholders = function(text, data, skipAdapting){
 			function adaptToType(value) {
-				return isNaN(value) ? '"'+value+'"' : value;
+				if(skipAdapting) return value;
+				else return isNaN(value) ? '"'+value+'"' : value;
 			}
 			// variables
 			text = text.replace(/\$V\{([a-zA-Z0-9\_\-\.]+)\}/g, function(match,variable){
@@ -143,7 +144,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var tempCol = {"headerName":$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias,
 								"field":fields[f].name,"measure":$scope.ngModel.content.columnSelectedOfDataset[c].fieldType};
 						if($scope.ngModel.content.columnSelectedOfDataset[c].style && $scope.ngModel.content.columnSelectedOfDataset[c].style.enableCustomHeaderTooltip){
-							tempCol.headerTooltip = replacePlaceholders($scope.ngModel.content.columnSelectedOfDataset[c].style.customHeaderTooltip);
+							tempCol.headerTooltip = replacePlaceholders($scope.ngModel.content.columnSelectedOfDataset[c].style.customHeaderTooltip, null, true);
 						}else{
 							tempCol.headerTooltip = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
 						}

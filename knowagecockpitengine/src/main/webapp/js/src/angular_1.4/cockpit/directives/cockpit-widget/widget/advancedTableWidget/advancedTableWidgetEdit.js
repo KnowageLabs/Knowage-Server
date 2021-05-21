@@ -366,6 +366,18 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 		else $scope.newModel.settings.rowThresholds.list[index].formula = "";
 	}
 	
+	$scope.moveRowThreshold = function(index,direction){
+		var arr = $scope.newModel.settings.rowThresholds.list;
+		var new_index = direction == 'up' ? (index-1) : (index+1);
+		if (new_index >= arr.length) {
+	        var k = new_index - arr.length + 1;
+	        while (k--) {
+	            arr.push(undefined);
+	        }
+	    }
+	    arr.splice(new_index, 0, arr.splice(index, 1)[0]);
+	}
+	
 	$scope.hasFormula = function(threshold){
 		return threshold.formula || threshold.formula == '';
 	}
