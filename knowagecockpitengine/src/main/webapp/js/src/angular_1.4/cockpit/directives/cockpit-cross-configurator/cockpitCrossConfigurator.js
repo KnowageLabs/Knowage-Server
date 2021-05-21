@@ -159,8 +159,9 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	}
 
 	$scope.addLink = function(){
-		if($scope.ngModel.link.links) $scope.ngModel.link.links.push({});
-		else $scope.ngModel.link.links = [{}];
+		var emptyLink = $scope.crossPivot ? {interactionType:'allRow'} : {}; 
+		if($scope.ngModel.link.links) $scope.ngModel.link.links.push(emptyLink);
+		else $scope.ngModel.link.links = [emptyLink];
 	}
 
 	$scope.deleteLink = function($index){

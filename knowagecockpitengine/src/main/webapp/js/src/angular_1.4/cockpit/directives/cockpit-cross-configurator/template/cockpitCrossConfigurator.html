@@ -261,7 +261,7 @@
             </div>
          </md-card-content>
       </md-card>
-      <md-card ng-if="crossTable">
+      <md-card ng-if="crossTable || crossPivot">
          <md-subheader class="switchSubheader noPadding buttonSubheader">
             <md-switch ng-model="ngModel.link.enable" ng-change="toggleEnabled('link')"></md-switch>
             <span flex>Link</span>
@@ -276,7 +276,7 @@
          </md-card-content>
          <div layout="column" ng-if="ngModel.link.enable && ngModel.link.links" class="linkContainer" ng-repeat="link in ngModel.link.links track by $index">
             <div layout="row">
-               <md-input-container class="md-block" flex>
+               <md-input-container class="md-block" flex ng-if="!crossPivot">
                   <label>{{::translate.load('kn.crossconfigurator.interactiontype')}}</label>
                   <md-select ng-model="link.interactionType">
                      <md-option></md-option>
@@ -353,11 +353,18 @@
                      <input ng-model="parameter.value" type="text" />
                   </md-input-container>
                   <!-- column if dynamic -->
-                  <md-input-container class="md-block" ng-if="parameter.bindType == 'dynamic'" flex>
+                  <md-input-container class="md-block" ng-if="parameter.bindType == 'dynamic' && crossTable" flex>
                      <label>{{::translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
                      <md-select ng-model="parameter.column" >
                         <md-option value="column_name_mode"><i>{{::translate.load('sbi.cockpit.cross.outputParameter.selectedcolumnname')}}</i></md-option>
                         <md-option ng-repeat="c in crossTableModel.content.columnSelectedOfDataset" ng-value="c.name">{{c.name}}</md-option>
+                     </md-select>
+                  </md-input-container>
+                   <md-input-container class="md-block" ng-if="parameter.bindType == 'dynamic' && crossPivot" flex>
+                     <label>{{::translate.load("sbi.cockpit.cross.outputParameter.column")}}</label>
+                     <md-select ng-model="parameter.column" >
+                     	<md-option value="measure_name"><i>measure_name</i></md-option>
+                        <md-option ng-repeat="c in allCategories" ng-value="c.alias">{{c.alias}}</md-option>
                      </md-select>
                   </md-input-container>
                   <!-- driver -->

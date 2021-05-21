@@ -1082,10 +1082,23 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 							if(parameter.bindType == 'jwt') paramValue = sbiModule_user.userUniqueIdentifier;
 							if(parameter.bindType == 'dynamic') {
 								if(parameter.column && parameter.column != 'column_name_mode') {
-									for(var c in $scope.ngModel.content.columnSelectedOfDataset){
-										if($scope.ngModel.content.columnSelectedOfDataset[c].name == parameter.column) {
-											paramValue = row[$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow];
-											break;
+									if(parameter.column == 'measure_name'){
+										paramValue = modalColumn;
+									}else if(model.type=='static-pivot-table'){
+										if (Array.isArray(columnName)){
+											var index = columnName.indexOf(parameter.column);
+											if(index != -1) paramValue = columnValue[index];
+										}else if(parameter.column == columnName){
+											paramValue = columnValue;
+										}
+										
+									}
+									else{
+										for(var c in $scope.ngModel.content.columnSelectedOfDataset){
+											if($scope.ngModel.content.columnSelectedOfDataset[c].name == parameter.column) {
+												paramValue = row[$scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow];
+												break;
+											}
 										}
 									}
 								}
