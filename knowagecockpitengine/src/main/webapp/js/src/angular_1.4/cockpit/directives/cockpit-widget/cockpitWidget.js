@@ -1109,7 +1109,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 								if(selectionsObj && selectionsObj.length > 0){
 									var found = false;
 									for(var i = 0; i < selectionsObj.length && found == false; i++){
-										if(selectionsObj[i].ds == parameter.dataset && selectionsObj[i].columnName == parameter.column){
+										if(selectionsObj[i].ds == parameter.dataset && selectionsObj[i].columnName.toLowerCase() == parameter.column.toLowerCase() ){
 											paramValue = selectionsObj[i].value;
 											found = true;
 										}
