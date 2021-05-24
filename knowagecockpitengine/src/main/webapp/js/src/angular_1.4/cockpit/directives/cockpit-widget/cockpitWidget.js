@@ -1751,7 +1751,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 	};
 
 	$scope.exportToExcel = function(event, ngModel, options) {
-		cockpitModule_exportWidgetService.exportWidgetToExcel('xlsx', ngModel, options);
+		cockpitModule_exportWidgetService.exportWidgetToExcel('xlsx', angular.copy(ngModel), options);
 	}
 
 	$scope.getPerWidgetDatasetIds = function() {
