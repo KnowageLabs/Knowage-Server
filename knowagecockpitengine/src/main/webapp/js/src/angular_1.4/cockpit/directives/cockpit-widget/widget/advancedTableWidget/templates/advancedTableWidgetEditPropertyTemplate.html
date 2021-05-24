@@ -324,7 +324,7 @@
 				       					<md-input-container flex class="md-block" ng-if="threshold.compareValueType == 'parameter'">
 						       				<label>{{::translate.load('sbi.cockpit.widget.table.rowthreshold.comparevalue')}}</label>
 					       					<md-select ng-model="threshold.compareValue">
-				          						<md-option ng-repeat="(key,value) in cockpitModule_analyticalDrivers" ng-value="key">{{key}}</md-option>
+				          						<md-option ng-repeat="driver in formattedAnalyticalDrivers" ng-value="driver.value">{{driver.name}}</md-option>
 					       					</md-select>
 								    	</md-input-container>
 								    

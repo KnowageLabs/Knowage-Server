@@ -104,7 +104,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			});
 			// parameters
 			text = text.replace(/\$P\{([a-zA-Z0-9\_\-\.]+)\}/g, function(match,parameter){
-				return adaptToType(cockpitModule_analyticalDrivers[parameter]);
+				var parameterKey = cockpitModule_analyticalDrivers[parameter+'_description'] ? parameter+'_description' : parameter;
+				return adaptToType(cockpitModule_analyticalDrivers[parameterKey]);
 			});
 			return text;
 		}
@@ -714,7 +715,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if(threshold.compareValueKey) valueToCompare = cockpitModule_properties.VARIABLES[threshold.compareValue][threshold.compareValueKey];
 						else valueToCompare = cockpitModule_properties.VARIABLES[threshold.compareValue];
 					}
-					if(threshold.compareValueType == 'parameter') valueToCompare = cockpitModule_analyticalDrivers[threshold.compareValue];
+					if(threshold.compareValueType == 'parameter') {
+						var parameterKey = cockpitModule_analyticalDrivers[threshold.compareValue+'_description'] ? threshold.compareValue+'_description' : threshold.compareValue;
+						valueToCompare = cockpitModule_analyticalDrivers[parameterKey];
+					}
 					
 					// getting the condition to compare with and comparing
 					var fullfilledCondition = false;

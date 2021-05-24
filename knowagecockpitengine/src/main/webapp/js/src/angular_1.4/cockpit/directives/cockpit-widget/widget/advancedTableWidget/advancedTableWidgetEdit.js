@@ -16,14 +16,22 @@ angular
 	.module('cockpitModule')
 	.controller('advancedTableWidgetEditControllerFunction',advancedTableWidgetEditControllerFunction)
 
-function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,cockpitModule_datasetServices,cockpitModule_generalOptions, cockpitModule_analyticalDrivers, sbiModule_restServices,cockpitModule_template, cockpitModule_properties){
+function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q,model,sbiModule_translate,$mdDialog,mdPanelRef,$mdToast,cockpitModule_datasetServices,cockpitModule_generalOptions, cockpitModule_analyticalDrivers,cockpitModule_analyticalDriversUrls, sbiModule_restServices,cockpitModule_template, cockpitModule_properties){
 	$scope.translate=sbiModule_translate;
 	$scope.newModel = angular.copy(model);
 	$scope.cockpitModule_generalOptions = cockpitModule_generalOptions;
 	$scope.cockpitModule_properties = cockpitModule_properties;
 	$scope.rowThresholdsConditions = cockpitModule_generalOptions.conditions;
 	if($scope.rowThresholdsConditions.indexOf('IN') == -1) $scope.rowThresholdsConditions.push('IN');
-	$scope.cockpitModule_analyticalDrivers = cockpitModule_analyticalDrivers;
+	function getAnalyticalDrivers(){
+		var tempAnalyticalDrivers = [];
+		for(var k in cockpitModule_analyticalDriversUrls){
+			var url = cockpitModule_analyticalDriversUrls[k].url;
+			tempAnalyticalDrivers.push({name:k, value:url});
+		}
+		return tempAnalyticalDrivers;
+	}
+	$scope.formattedAnalyticalDrivers = getAnalyticalDrivers();
 	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.availableAggregations = ["NONE","SUM","AVG","MAX","MIN","COUNT","COUNT_DISTINCT"];
 	$scope.availableSummaryAggregations = ["SUM","AVG","COUNT","COUNT_DISTINCT", "MAX", "MIN"];
