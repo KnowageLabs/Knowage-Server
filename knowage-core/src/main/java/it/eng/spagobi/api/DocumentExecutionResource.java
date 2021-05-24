@@ -185,9 +185,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String label = requestVal.getString("label");
 		String role = requestVal.getString("role");
 		String modality = requestVal.optString("modality");
-		String displayToolbar = requestVal.optString("displayToolbar");
-		String snapshotId = requestVal.optString("snapshotId");
-		String subObjectID = requestVal.optString("subObjectID");
 
 		String engineParam = "";
 
@@ -198,7 +195,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String cockpitSelections = requestVal.optString("COCKPIT_SELECTIONS");
 
 		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
-		JSONObject menuParameters = requestVal.optJSONObject("menuParameters"); // parameters setted when open document from menu
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
 		SessionContainer aSessionContainer = aRequestContainer.getSessionContainer();
@@ -237,10 +233,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParametersToSend, locale);
-			errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
-					executingRole, modality, jsonParametersToSend, locale);
 
-			engineParam = BuildEngineUrlString(requestVal, obj, req, isForExport, cockpitSelections);
+			if (!isOLAPSubObjectExecution(obj, requestVal)) {
+				// in case of the execution of an OLAP subobject, we skip the validations on drivers for now
+				// TODO implement validation also for OLAP subobjects
+				errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
+						executingRole, modality, jsonParametersToSend, locale);
+			}
+
+			engineParam = buildEngineUrlString(requestVal, obj, req, isForExport, cockpitSelections);
 
 			url += "&SBI_EXECUTION_ID=" + sbiExecutionId;
 			url += engineParam;
@@ -280,7 +281,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return Response.ok(resultAsMap).build();
 	}
 
-	private String BuildEngineUrlString(JSONObject reqVal, BIObject obj, HttpServletRequest req, String isForExport, String cockpitSelections)
+	private boolean isOLAPSubObjectExecution(BIObject obj, JSONObject requestAsJSON) throws JSONException {
+		String subObjectId = null;
+		JSONObject parameters = requestAsJSON.getJSONObject("parameters");
+		if (parameters.length() > 0) {
+			subObjectId = parameters.optString("subobj_id");
+		}
+		String documentTypeCode = obj.getBiObjectTypeCode();
+		return documentTypeCode.equals(SpagoBIConstants.OLAP_TYPE_CODE) && !StringUtilities.isEmpty(subObjectId);
+	}
+
+	private String buildEngineUrlString(JSONObject reqVal, BIObject obj, HttpServletRequest req, String isForExport, String cockpitSelections)
 			throws JSONException {
 		Monitor buildEngineUrlStringMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildEngineUrlString");
 

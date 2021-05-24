@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 
 import com.jamonapi.Monitor;
@@ -49,6 +50,7 @@ import it.eng.spagobi.engines.drivers.chart.ChartDriver;
 import it.eng.spagobi.engines.drivers.kpi.KpiDriver;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
+import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 
 public class ContentServiceImplSupplier {
@@ -379,6 +381,7 @@ public class ContentServiceImplSupplier {
 				logger.error("Current user cannot execute the required document");
 				throw new SecurityException("Current user cannot execute the required document");
 			}
+
 			Integer id = biobj.getId();
 			// get the correct roles for execution
 			List correctRoles = null;
@@ -394,6 +397,13 @@ public class ContentServiceImplSupplier {
 			if (parameters == null) {
 				logger.debug("Input parameters map is null. It will be considered as an empty map");
 				parameters = new HashMap();
+			}
+
+			if (isOLAPSubObjectExecution(parameters)) {
+				// in case of the execution of an OLAP subobject, we skip the validations on drivers for now
+				// TODO implement validation also for OLAP subobjects
+				logger.debug("Current request is for OLAP subobject, skipping drivers validation");
+				return;
 			}
 
 			String roleName = (String) parameters.get("SBI_EXECUTION_ROLE");
@@ -428,6 +438,14 @@ public class ContentServiceImplSupplier {
 			monitor.stop();
 			logger.debug("OUT");
 		}
+	}
+
+	private boolean isOLAPSubObjectExecution(HashMap parameters) {
+		Object subObjectId = parameters.get(AbstractEngineStartAction.SUBOBJ_ID);
+		// in case subobject id is there and it is an integer, then it is an OLAP subobject execution request
+		boolean toReturn = subObjectId != null && GenericValidator.isInt(subObjectId.toString());
+		logger.debug("Current request is for OLAP subobject? " + toReturn);
+		return toReturn;
 	}
 
 }
