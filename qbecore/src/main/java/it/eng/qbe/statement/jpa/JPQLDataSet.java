@@ -19,7 +19,6 @@ package it.eng.qbe.statement.jpa;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -242,7 +241,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		int resultNumber = 0;
 		try {
 			String sqlQueryString = filteredStatement.getSqlQueryString();
-			BigInteger singleResult = (BigInteger) getEntityMananger().createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") COUNT_INLINE_VIEW").getSingleResult();
+			Number singleResult = (Number) getEntityMananger().createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") COUNT_INLINE_VIEW").getSingleResult();
 			resultNumber = singleResult.intValue();
 		} catch (Exception e) {
 			throw new RuntimeException("Impossible to get result number", e);
