@@ -440,7 +440,7 @@ public class ContentServiceImplSupplier {
 		}
 	}
 
-	private boolean isOLAPSubObjectExecution(HashMap parameters) {
+	private boolean isOLAPSubObjectExecution(Map<String, ?> parameters) {
 		Object subObjectId = parameters.get(AbstractEngineStartAction.SUBOBJ_ID);
 		// in case subobject id is there and it is an integer, then it is an OLAP subobject execution request
 		boolean toReturn = subObjectId != null && GenericValidator.isInt(subObjectId.toString());
