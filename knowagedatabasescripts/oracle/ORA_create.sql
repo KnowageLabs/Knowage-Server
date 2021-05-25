@@ -3150,7 +3150,7 @@ CREATE TABLE SBI_WIDGET_GALLERY (
   DESCRIPTION VARCHAR(500) NULL,
   TYPE VARCHAR(45) NULL, -- HTML/CUSTOM CHART/PYTHON/R
   PREVIEW_IMAGE BLOB NULL, -- binary of preview file
-  TEMPLATE CLOB NULL, -- text with template as a JSON
+  TEMPLATE BLOB NULL, -- text with template as a JSON
   AUTHOR VARCHAR(100) NULL,
   USAGE_COUNTER INT NULL, -- counter to see how many times the widgets was used
   USER_IN              VARCHAR2(100) NOT NULL,
