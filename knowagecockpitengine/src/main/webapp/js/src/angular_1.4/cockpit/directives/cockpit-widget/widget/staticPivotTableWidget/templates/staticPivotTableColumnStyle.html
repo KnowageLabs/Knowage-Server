@@ -68,15 +68,16 @@
 						<md-input-container ng-if="selectedColumn.fieldType=='MEASURE' || selectedColumn.fieldType=='CALCULATED_FIELD'" flex>
 							<md-tooltip md-delay="500"> {{::translate.load('sbi.cockpit.aggregationwindow.selectAggregation.tooltip')}} </md-tooltip>
 							<label>{{::translate.load('sbi.cockpit.aggregationwindow.selectAggregation')}}</label>
-							<md-select ng-model="selectedColumn.funct">
-								<md-option ng-repeat="agF in availableAggregationFunctions" ng-value="agF.value" >
+							<md-select ng-model="selectedColumn.funct" ng-change="setExcludeFromTotal(selectedColumn)">
+								<md-option ng-repeat="agF in cockpitModule_generalOptions.aggregationFunctions" ng-value="agF.value" >
 								{{agF.label}}
 								</md-option>
 							</md-select>
 						</md-input-container>
 						<md-input-container ng-if="selectedColumn.fieldType=='MEASURE' || selectedColumn.fieldType=='CALCULATED_FIELD'" flex>
-							<md-checkbox flex ng-model="selectedColumn.excludeFromTotalAndSubtotal">{{::translate.load("sbi.cockpit.aggregationwindow.excludeFromTotalAndSubtotal")}}</md-checkbox>
+							<md-checkbox flex ng-disabled="isExcludeFromTotalEnabled()" ng-model="selectedColumn.excludeFromTotalAndSubtotal">{{::translate.load("sbi.cockpit.aggregationwindow.excludeFromTotalAndSubtotal")}}</md-checkbox>
 						</md-input-container>
+						<div class="kn-info" ng-if="isExcludeFromTotalEnabled()" flex>{{translate.load("sbi.cockpit.aggregationwindow.excludeFromTotalAndSubtotal.info")}}</div>
 					</div>			
 					
 				</div>
