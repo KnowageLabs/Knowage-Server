@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app id="knowagetalendengine"
+<web-app
+		id="knowagetalendengine"
 		xmlns="http://xmlns.jcp.org/xml/ns/javaee"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
-		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-		version="3.1" >
+		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+		version="4.0" >
 
 	<display-name>knowagetalendengine</display-name>
 	<description>Knowage Talend Engine</description>
@@ -252,12 +253,5 @@
 		<exception-type>java.lang.Throwable</exception-type>
 		<location>/html/error.html</location>
 	</error-page>
-
-	<!-- Multipart configuration -->
-	<multipart-config>
-		<max-file-size>524288000</max-file-size>
-		<max-request-size>524288000</max-request-size>
-		<file-size-threshold>104857600</file-size-threshold>
-	</multipart-config>
 
 </web-app>

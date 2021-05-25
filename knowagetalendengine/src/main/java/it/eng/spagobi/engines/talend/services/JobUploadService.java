@@ -49,68 +49,6 @@ public class JobUploadService extends AbstractEngineStartServlet {
 
 	private static transient Logger logger = Logger.getLogger(JobUploadService.class);
 
-	@Override
-	public void doService( EngineStartServletIOManager servletIOManager ) throws SpagoBIEngineException {
-
-//		boolean isMultipart;
-//		FileItemFactory factory;
-//		ServletFileUpload upload;
-//		JobDeploymentDescriptor jobDeploymentDescriptor;
-//
-//		logger.debug("IN");
-//
-//		try {
-//
-//			auditServiceStartEvent();
-//
-//
-//			//  Check that we have a file upload request
-//			isMultipart = ServletFileUpload.isMultipartContent( servletIOManager.getRequest() );
-//
-//			// Create a factory for disk-based file items
-//			factory = new DiskFileItemFactory();
-//
-//			// Create a new file upload handler
-//			upload = new ServletFileUpload(factory);
-//
-//			// Parse the request
-//			List items = null;
-//			try {
-//				items = upload.parseRequest(servletIOManager.getRequest());
-//			} catch (FileUploadException e) {
-//				throw new SpagoBIEngineException("Impossible to upload file", "impossible.to.upload.file", e );
-//			}
-//
-//			jobDeploymentDescriptor = getJobsDeploymetDescriptor(items);
-//
-//			// Process the uploaded items
-//			Iterator iter = items.iterator();
-//			while (iter.hasNext()) {
-//			    FileItem item = (FileItem) iter.next();
-//			    if (item.isFormField()) {
-//			        processFormField(item);
-//			    } else {
-//			        String[] jobNames = processUploadedFile(item, jobDeploymentDescriptor);
-//			        if(TalendEngine.getConfig().isAutoPublishActive()) {
-//			        	if(jobNames == null) continue;
-//				        for(int i = 0; i < jobNames.length; i++) {
-//				        	publishOnSpagoBI(servletIOManager, jobDeploymentDescriptor.getLanguage(), jobDeploymentDescriptor.getProject(), jobNames[i]);
-//				        }
-//			        }
-//			    }
-//			}
-//
-//			servletIOManager.tryToWriteBackToClient( "OK" );
-//
-//		} catch (Exception e){
-//			throw new SpagoBIEngineException("An error occurred while executing [JobUploadService]", "an.unpredicted.error.occured", e);
-//		} finally {
-//			logger.debug("OUT");
-//		}
-
-		throw new UnsupportedOperationException("Not supported on Tomcat 10");
-	}
-
 	public void auditServiceStartEvent() {
 		logger.info("EXECUTION_STARTED: " + new Date(System.currentTimeMillis()));
 	}
@@ -124,20 +62,18 @@ public class JobUploadService extends AbstractEngineStartServlet {
 	}
 
 	public String getUserIdentifier() {
-    	return USER;
-    }
-
-
+		return USER;
+	}
 
 	private JobDeploymentDescriptor getJobsDeploymetDescriptor(List items) {
 		JobDeploymentDescriptor jobDeploymentDescriptor = null;
 
 		Iterator iter = items.iterator();
 		while (iter.hasNext()) {
-		    FileItem item = (FileItem) iter.next();
-		    if (!item.isFormField()) {
-		    	String fieldName = item.getFieldName();
-		    	if(fieldName.equalsIgnoreCase("deploymentDescriptor")) {
+			FileItem item = (FileItem) iter.next();
+			if (!item.isFormField()) {
+				String fieldName = item.getFieldName();
+				if(fieldName.equalsIgnoreCase("deploymentDescriptor")) {
 		    		jobDeploymentDescriptor = new JobDeploymentDescriptor();
 		    		try {
 		    			jobDeploymentDescriptor.load(item.getInputStream());
@@ -157,7 +93,6 @@ public class JobUploadService extends AbstractEngineStartServlet {
 
 	private void processFormField(FileItem item) {
 		// TODO Auto-generated method stub
-
 	}
 
 	private String[] processUploadedFile(FileItem item, JobDeploymentDescriptor jobDeploymentDescriptor) throws ZipException, IOException, SpagoBIEngineException {

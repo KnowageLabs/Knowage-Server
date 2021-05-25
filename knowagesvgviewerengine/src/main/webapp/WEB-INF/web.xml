@@ -5,11 +5,12 @@
 		xmlns="http://xmlns.jcp.org/xml/ns/javaee"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
-		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-		version="3.1" >
+		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+		version="4.0" >
 
-	<description>SpagoBI - SpagoBIGeoReportEngine</description>
 	<display-name>knowagesvgviewerengine</display-name>
+	<description>Knowage SVG Viewer Engine</description>
+
 	<filter>
 		<filter-name>EncodingFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
@@ -159,12 +160,5 @@
 	<welcome-file-list>
 		<welcome-file>/html/index.html</welcome-file>
 	</welcome-file-list>
-
-	<!-- Multipart configuration -->
-	<multipart-config>
-		<max-file-size>524288000</max-file-size>
-		<max-request-size>524288000</max-request-size>
-		<file-size-threshold>104857600</file-size-threshold>
-	</multipart-config>
 
 </web-app>
