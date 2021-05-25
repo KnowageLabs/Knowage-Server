@@ -1228,6 +1228,8 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 							item.iconCls = "measure";
 							item.funct = "NONE";
 
+							if (item.formula && item.formula.toLowerCase().indexOf('count(distinct') !== -1) item.excludeFromTotalAndSubtotal = true;
+
 							$scope.localModel.content.crosstabDefinition.measures.push(item);
 
 						}
@@ -1479,9 +1481,20 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 			return newArray;
 		}
 
-		$scope.availableAggregationFunctions = $scope.cockpitModule_generalOptions.aggregationFunctions.filter(function(el) {
-			return el.value != "COUNT_DISTINCT";
-		});
+		$scope.isExcludeFromTotalEnabled = function() {
+			if ($scope.selectedColumn.funct == "COUNT_DISTINCT") return true;
+			else if ($scope.selectedColumn.formula && $scope.selectedColumn.formula.toLowerCase().indexOf('count(distinct') !== -1) return true;
+			else return false;
+		}
+
+		$scope.setExcludeFromTotal = function(selectedColumn) {
+			if(selectedColumn && selectedColumn.funct == "COUNT_DISTINCT") {
+				selectedColumn.excludeFromTotalAndSubtotal = true;
+				return true;
+			}
+			return false;
+		}
+
 		$scope.availableIcons = setChunks(knModule_fontIconsService.icons,4);
 		$scope.conditions=['>','<','==','>=','<=','!='];
 
