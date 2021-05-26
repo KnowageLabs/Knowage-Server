@@ -4,11 +4,13 @@
 			"column": {
 				"image": {
 					"style": {
+						"header": "Image",
 						"text-align": "center",
 						"width": "5%"
 					}
 				},
 				"name": {
+					"header": "Name",
 					"style": {
 						"width": "35%"
 					}
@@ -19,11 +21,13 @@
 					}
 				},
 				"tags": {
+					"header": "Tags",
 					"style": {
 						"width": "45%"
 					}
 				},
 				"type": {
+					"header": "Type",
 					"style": {
 						"text-align": "center",
 						"width": "10%"

@@ -5,7 +5,8 @@
 				<p>Drag and drop files to here to upload.</p>
 			</template>
 		</FileUpload> -->
-		<input ref="inputFile" id="inputFile" type="file" @change="onUpload" accept="application/zip" />
+		<input label="Select file" ref="inputFile" id="inputFile" type="file" @change="onUpload" accept="application/zip" :triggerInput="trigger" />
+		<!-- <KnInputFile v-bind:ref="refs" label="Select file" visibility="true" :changeFunction="onUpload" accept="application/zip" :triggerInput="trigger" /> -->
 		<template #footer>
 			<Button class="p-button-text kn-button" v-t="'common.close'" @click="closeDialog" />
 			<Button class="kn-button kn-button--primary" v-t="'common.import'" @click="emitImport" />

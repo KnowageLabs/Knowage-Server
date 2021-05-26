@@ -1,10 +1,9 @@
 <template>
-	<div>
+	<span>
 		<OverlayPanel ref="op" class="imageOverlayPanel">
 			<img :src="currentImage" />
 		</OverlayPanel>
-	</div>
-	<ProgressBar mode="indeterminate" style="height: .3em" v-if="loading" />
+	</span>
 	<DataTable
 		ref="dt"
 		:value="templates"
@@ -37,21 +36,21 @@
 		</template>
 
 		<Column selectionMode="multiple" :exportable="false" :style="importExportDescriptor.export.gallery.column.selectionMode.style"></Column>
-		<Column field="name" header="Name" :sortable="true" :style="importExportDescriptor.export.gallery.column.name.style"></Column>
-		<Column field="type" header="Type" :sortable="true" :style="importExportDescriptor.export.gallery.column.type.style">
+		<Column field="name" :header="importExportDescriptor.export.gallery.column.name.header" :sortable="true" :style="importExportDescriptor.export.gallery.column.name.style"></Column>
+		<Column field="type" :header="importExportDescriptor.export.gallery.column.type.header" :sortable="true" :style="importExportDescriptor.export.gallery.column.type.style">
 			<template #body="{data}">
 				<Tag :style="importExportDescriptor.iconTypesMap[data.type].style"> {{ data.type.toUpperCase() }} </Tag>
 			</template>
 		</Column>
 
-		<Column field="tags" header="Tags" :sortable="true" :style="importExportDescriptor.export.gallery.column.tags.style">
+		<Column field="tags" :header="importExportDescriptor.export.gallery.column.tags.header" :sortable="true" :style="importExportDescriptor.export.gallery.column.tags.style">
 			<template #body="{data}">
 				<span class="p-float-label kn-material-input">
 					<Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
 				</span>
 			</template>
 		</Column>
-		<Column field="image" header="Image" :style="importExportDescriptor.export.gallery.column.image.style">
+		<Column field="image" :header="importExportDescriptor.export.gallery.column.image.header" :style="importExportDescriptor.export.gallery.column.image.style">
 			<template #body="{data}">
 				<span @click="togglePreview($event, data.id)">
 					<i class="fas fa-image" v-if="data.image.length > 0" />
@@ -69,20 +68,22 @@
 	import { FilterMatchMode, FilterOperator } from 'primevue/api'
 	import InputText from 'primevue/inputtext'
 	import OverlayPanel from 'primevue/overlaypanel'
-	import ProgressBar from 'primevue/progressbar'
+
 	import Tag from 'primevue/tag'
 	import importExportDescriptor from '../ImportExportDescriptor.json'
 	import { IGalleryTemplate } from '@/modules/managers/galleryManagement/GalleryManagement'
 
 	export default defineComponent({
 		name: 'import-export-gallery',
-		components: { Column, DataTable, InputText, OverlayPanel, ProgressBar, Tag },
+		components: { Column, DataTable, InputText, OverlayPanel, Tag },
+		props: {
+			isLoading: Boolean
+		},
 		data() {
 			return {
 				currentImage: '',
 				filters: {},
 				importExportDescriptor: importExportDescriptor,
-				loading: false as Boolean,
 				product: {},
 				selectedGalleryItems: [],
 				templates: [] as Array<IGalleryTemplate>
@@ -97,15 +98,15 @@
 			}
 			this.loadAllTemplates()
 		},
-		emits: ['onItemSelected'],
+		emits: ['onItemSelected', 'update:isLoading'],
 		methods: {
 			loadAllTemplates(): void {
-				this.loading = true
+				this.$emit('update:isLoading', false)
 				this.axios
 					.get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery')
 					.then((response) => (this.templates = response.data))
 					.catch((error) => console.error(error))
-					.finally(() => (this.loading = false))
+					.finally(() => this.$emit('update:isLoading', false))
 			},
 			togglePreview(event, id) {
 				this.currentImage = ''

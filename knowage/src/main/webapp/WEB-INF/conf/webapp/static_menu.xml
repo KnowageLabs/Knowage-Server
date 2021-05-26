@@ -168,7 +168,10 @@
 
 		<GROUP_ITEM id="8000" label="menu.ServerManager"
 			toBeLicensed="true" iconCls="fa fa-2x fa-cogs">
-
+			
+			<ITEM label="menu.ImportExport"
+				requiredFunctionality="ImportExport"
+				to="/import-export" />
 			<ITEM id="8001" label="menu.TenantMan"
 				requiredFunctionality="TenantManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp" />
