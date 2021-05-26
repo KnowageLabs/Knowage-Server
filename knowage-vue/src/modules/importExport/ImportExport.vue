@@ -11,11 +11,12 @@
 				<Button class="kn-button p-button-text" @click="openExportDialog" :disabled="isExportDisabled()">{{ $t('common.export') }}</Button>
 			</template>
 		</Toolbar>
+		<ProgressBar mode="indeterminate" class="kn-progress-bar" :v-if="isLoading" />
 		<div class="kn-page-content p-grid p-m-0">
 			<div v-if="importExportDescriptor.functionalities.length > 1" class="functionalities-container p-col-3 p-sm-3 p-md-2">
 				<KnTabCard :element="functionality" :selected="functionality.route === $route.path" v-for="(functionality, index) in importExportDescriptor.functionalities" v-bind:key="index" @click="selectType(functionality)" :badge="selectedItems['gallery'].length"></KnTabCard>
 			</div>
-			<div class="p-col">
+			<div class="p-col p-pt-0">
 				<router-view @onItemSelected="getSelectedItems($event)" />
 			</div>
 		</div>
@@ -24,16 +25,17 @@
 
 <script lang="ts">
 	import { defineComponent } from 'vue'
-	import { downloadDirect } from '@/helpers/commons/fileHelper'
 	import axios from 'axios'
 	import importExportDescriptor from './ImportExportDescriptor.json'
 	import ExportDialog from './ExportDialog.vue'
 	import ImportDialog from './ImportDialog.vue'
+	import ProgressBar from 'primevue/progressbar'
 	import KnTabCard from '@/components/UI/KnTabCard.vue'
+	import { downloadDirect } from '@/helpers/commons/fileHelper'
 
 	export default defineComponent({
 		name: 'import-export',
-		components: { ExportDialog, KnTabCard, ImportDialog },
+		components: { ExportDialog, KnTabCard, ImportDialog, ProgressBar },
 		data() {
 			return {
 				importExportDescriptor: importExportDescriptor,
@@ -45,7 +47,7 @@
 				}
 			}
 		},
-		emits: ['onItemSelected'],
+		emits: ['onItemSelected', 'update:isLoading'],
 		methods: {
 			getSelectedItems(e) {
 				this.selectedItems[e.functionality] = e.items
@@ -66,23 +68,34 @@
 				this.displayExportDialog = !this.displayExportDialog
 			},
 			startExport(fileName: string): void {
-				axios.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery-ee/export/bulk', this.streamlineSelectedItemsArray(fileName)).then(
-					(response) => {
-						if (response.data.errors) {
-							this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
-							/* closing dialog */
-							this.openExportDialog()
-						} else {
-							downloadDirect(response.data, fileName, 'application/zip')
+				axios
+					.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery-ee/export/bulk', this.streamlineSelectedItemsArray(fileName), {
+						responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
+
+						headers: {
+							'Content-Type': 'application/json',
+							Accept: 'application/zip; charset=utf-8'
 						}
-					},
-					(error) => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t(error) })
-				)
+					})
+					.then(
+						(response) => {
+							if (response.data.errors) {
+								this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
+								/* closing dialog */
+								this.openExportDialog()
+							} else {
+								var contentDisposition = response.headers['content-disposition']
+								var fileAndExtension = contentDisposition.match(/(?!([\b attachment;filename= \b])).*(?=)/g)[0]
+								var completeFileName = fileAndExtension.replaceAll('"', '')
+								downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
+							}
+						},
+						(error) => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t(error) })
+					)
 			},
 			startImport(uploadedFiles): void {
 				var formData = new FormData()
 				formData.append('file', uploadedFiles.files)
-				formData.append('modality', 'cucu')
 				axios
 					.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery-ee/import/bulk', formData, {
 						headers: {
