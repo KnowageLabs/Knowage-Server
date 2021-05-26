@@ -16,6 +16,7 @@ import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.ORACLE_
 import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.ORIENT;
 import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.POSTGRESQL;
 import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.REDSHIFT;
+import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.SPANNER;
 import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.SPARKSQL;
 import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.SQLSERVER;
 import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.SYNAPSE;
@@ -49,7 +50,7 @@ public class DatasetFunctionsConfig {
 		map.put(AVAILABLE_FUNCTIONS, availableFunctions);
 
 		Stream.of(HIVE2, MONGO, DB2, IMPALA, MYSQL, MYSQL_INNODB, ORACLE_9I10G, ORACLE, POSTGRESQL, SPARKSQL, SQLSERVER, ORACLE_SPATIAL, TERADATA, VERTICA,
-				REDSHIFT, BIGQUERY, SYNAPSE).forEach(e -> functionsConfigurationMap.put(e.getValue(), map));
+				REDSHIFT, BIGQUERY, SYNAPSE, SPANNER).forEach(e -> functionsConfigurationMap.put(e.getValue(), map));
 	}
 
 	public List<String> getAvailableFunctions(String dialect) {

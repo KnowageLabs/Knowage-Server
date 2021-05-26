@@ -503,6 +503,10 @@
 		valueNm="sbidomains.nm.synapse" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.synapse" />
 		
+	<DOMAIN valueCd="org.hibernate.dialect.SpannerDialect"
+		valueNm="sbidomains.nm.spanner" domainCd="DIALECT_HIB"
+		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.spanner" />
+		
 	<DOMAIN valueCd="MEASURE" valueNm="sbidomains.nm.measure"
 		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.measure" />
 		
