@@ -60,6 +60,8 @@ public class SelectQueryVisitorFactory {
 			return new BigQuerySelectQueryVisitor(database);
 		case SYNAPSE:
 			return new SynapseSelectQueryVisitor(database);
+		case SPANNER:
+			return new SpannerSelectQueryVisitor(database);
 		default:
 			throw new IllegalArgumentException("Dialect [" + dataSource.getHibDialectClass() + "] not supported");
 		}

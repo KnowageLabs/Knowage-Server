@@ -111,6 +111,8 @@ public class DataSetFactory {
 				className = JDBCBigQueryDataSet.class.getName();
 			} else if (dialectToLowerCase.contains("Synapse")) {
 				className = JDBCSynapseDataSet.class.getName();
+			} else if (dialectToLowerCase.contains("Spanner")) {
+				className = JDBCSpannerDataSet.class.getName();
 			}
 		}
 		try {

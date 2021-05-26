@@ -60,6 +60,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCRedShiftDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCSpannerDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCSynapseDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
@@ -819,6 +820,8 @@ public class DataSetFactory {
 				ds = new JDBCBigQueryDataSet();
 			} else if (dialectToLowerCase.contains("Synapse")) {
 				ds = new JDBCSynapseDataSet();
+			} else if (dialectToLowerCase.contains("Spanner")) {
+				ds = new JDBCSpannerDataSet();
 			}
 		}
 		return (ds != null) ? ds : new JDBCDataSet();

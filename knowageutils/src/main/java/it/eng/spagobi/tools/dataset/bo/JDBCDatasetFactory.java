@@ -66,6 +66,9 @@ public class JDBCDatasetFactory {
 		case SYNAPSE:
 			dataSet = new JDBCSynapseDataSet();
 			break;
+		case SPANNER:
+			dataSet = new JDBCSpannerDataSet();
+			break;
 		default:
 			dataSet = new JDBCDataSet();
 		}
