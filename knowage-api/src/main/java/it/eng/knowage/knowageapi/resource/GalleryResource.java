@@ -2,8 +2,6 @@ package it.eng.knowage.knowageapi.resource;
 
 import java.util.List;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -23,13 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
-
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
 
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
@@ -175,23 +166,6 @@ public class GalleryResource {
 		}
 		return response;
 
-	}
-
-	public static String jwtToken2userId(String jwtToken) throws JWTVerificationException {
-		String userId = null;
-		Context ctx;
-		try {
-			ctx = new InitialContext();
-			String key = (String) ctx.lookup("java:/comp/env/hmacKey");
-			Algorithm algorithm = Algorithm.HMAC256(key);
-			JWTVerifier verifier = JWT.require(algorithm).build();
-			DecodedJWT decodedJWT = verifier.verify(jwtToken);
-			Claim userIdClaim = decodedJWT.getClaim("user_id");
-			userId = userIdClaim.asString();
-		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage(), e);
-		}
-		return userId;
 	}
 
 	@POST

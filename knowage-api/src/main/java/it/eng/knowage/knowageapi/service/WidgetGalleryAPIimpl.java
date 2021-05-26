@@ -22,6 +22,7 @@ import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTagId;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.resource.dto.Code;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
+import it.eng.spagobi.filters.XSSRequestWrapper;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 @Component
@@ -135,6 +136,22 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 				widgetGalleryDTO.setId(generateType1UUID().toString());
 			}
 
+			// Validating CODES with whitelist
+			Code code = widgetGalleryDTO.getCode();
+			try {
+				String htmlCode = stripXSSObject(code.getHtml());
+				JSONObject jsonBody = new JSONObject(new String(widgetGalleryDTO.getTemplate()));
+				JSONObject jsonCode = jsonBody.optJSONObject("code");
+				jsonCode.put("html", htmlCode);
+				jsonCode.put("python", widgetGalleryDTO.getCode().getPython());
+				jsonCode.put("css", widgetGalleryDTO.getCode().getCss());
+				jsonCode.put("javascript", widgetGalleryDTO.getCode().getJavascript());
+				jsonBody.put("code", jsonCode);
+				widgetGalleryDTO.setTemplate(jsonBody.toString());
+			} catch (JSONException e) {
+				throw new KnowageRuntimeException(e.getMessage());
+			}
+
 			SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
 			newSbiWidgetGallery.setUuid(widgetGalleryDTO.getId());
 			newSbiWidgetGallery.setAuthor(profile.getUserId());
@@ -167,6 +184,23 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	@Override
 	public WidgetGalleryDTO updateWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile) {
 		if (this.canSeeGallery(profile)) {
+
+			// Validating CODES with whitelist
+			Code code = widgetGalleryDTO.getCode();
+			try {
+				String htmlCode = stripXSSObject(code.getHtml());
+				JSONObject jsonBody = new JSONObject(new String(widgetGalleryDTO.getTemplate()));
+				JSONObject jsonCode = jsonBody.optJSONObject("code");
+				jsonCode.put("html", htmlCode);
+				jsonCode.put("python", widgetGalleryDTO.getCode().getPython());
+				jsonCode.put("css", widgetGalleryDTO.getCode().getCss());
+				jsonCode.put("javascript", widgetGalleryDTO.getCode().getJavascript());
+				jsonBody.put("code", jsonCode);
+				widgetGalleryDTO.setTemplate(jsonBody.toString());
+			} catch (JSONException e) {
+				throw new KnowageRuntimeException(e.getMessage());
+			}
+
 			SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
 			newSbiWidgetGallery.setUuid(widgetGalleryDTO.getId());
 			newSbiWidgetGallery.setAuthor(profile.getUserId());
@@ -306,4 +340,10 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		return newSbiWidgetGallery;
 	}
 
+	public static String stripXSSObject(String o) throws JSONException {
+		if (o instanceof String) {
+			o = XSSRequestWrapper.stripXSS(o);
+		}
+		return o;
+	}
 }
