@@ -98,6 +98,7 @@
 		<module>../knowageoauth2securityprovider</module>
 		<module>../knowageldapsecurityprovider</module>
 		<module>../knowagegooglesecurityprovider</module>
+		<module>../knowageazuresecurityprovider</module>
 		<module>../knowage</module>
 		<module>../knowagecockpitengine</module>
 		<module>../knowagekpiengine</module>
