@@ -59,6 +59,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,14 +75,17 @@ import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.BusinessModelOpenUtils;
 import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.handlers.BusinessModelDriverRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.BusinessModelRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentDriverRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DriversRuntimeLoaderFactory;
+import it.eng.spagobi.analiticalmodel.document.handlers.OLAPSubobjectExecutionValidationAPI;
 import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -105,6 +109,7 @@ import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
@@ -234,9 +239,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParametersToSend, locale);
 
-			if (!isOLAPSubObjectExecution(obj, requestVal)) {
+			if (isOLAPSubObjectExecution(obj, requestVal)) {
+				Integer subobjectId = requestVal.getJSONObject("parameters").getInt("subobj_id");
+				checkOLAPSubObjectExecution(subobjectId, this.getUserProfile());
 				// in case of the execution of an OLAP subobject, we skip the validations on drivers for now
 				// TODO implement validation also for OLAP subobjects
+				logger.debug("Current request is for OLAP subobject");
+			} else {
 				errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 						executingRole, modality, jsonParametersToSend, locale);
 			}
@@ -287,8 +296,22 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		if (parameters.length() > 0) {
 			subObjectId = parameters.optString("subobj_id");
 		}
-		String documentTypeCode = obj.getBiObjectTypeCode();
-		return documentTypeCode.equals(SpagoBIConstants.OLAP_TYPE_CODE) && !StringUtilities.isEmpty(subObjectId);
+		boolean isOLAPDocument = obj.getBiObjectTypeCode().equals(SpagoBIConstants.OLAP_TYPE_CODE);
+		// in case subobject id is there and it is an integer, then it is an OLAP subobject execution request
+		boolean toReturn = isOLAPDocument && subObjectId != null && GenericValidator.isInt(subObjectId.toString());
+		logger.debug("Current request is for OLAP subobject? " + toReturn);
+		return toReturn;
+	}
+
+	private void checkOLAPSubObjectExecution(Integer subobjectId, IEngUserProfile profile) throws SecurityException {
+		UserProfile userProfile = (UserProfile) profile;
+		SubObject subobject = null;
+		try {
+			subobject = DAOFactory.getSubObjectDAO().getSubObject(subobjectId);
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Cannot load subobject details; subobject id is [" + subobjectId + "]", e);
+		}
+		new OLAPSubobjectExecutionValidationAPI(userProfile).checkExecutionPermission(subobject);
 	}
 
 	private String buildEngineUrlString(JSONObject reqVal, BIObject obj, HttpServletRequest req, String isForExport, String cockpitSelections)

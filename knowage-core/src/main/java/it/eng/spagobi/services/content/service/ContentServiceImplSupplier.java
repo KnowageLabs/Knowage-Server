@@ -34,9 +34,11 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.ISubreportDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.analiticalmodel.document.handlers.OLAPSubobjectExecutionValidationAPI;
 import it.eng.spagobi.commons.bo.Subreport;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -51,6 +53,7 @@ import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import sun.misc.BASE64Encoder;
 
 public class ContentServiceImplSupplier {
@@ -365,7 +368,14 @@ public class ContentServiceImplSupplier {
 				logger.error("No document specified");
 				return;
 			}
+
 			logger.debug("Input document: id=[" + biobj.getId() + "], name=[" + biobj.getName() + "], label=[" + biobj.getLabel() + "]");
+
+			if (parameters == null) {
+				logger.debug("Input parameters map is null. It will be considered as an empty map");
+				parameters = new HashMap();
+			}
+
 			// creates the user profile
 			IEngUserProfile profile = null;
 			try {
@@ -373,6 +383,15 @@ public class ContentServiceImplSupplier {
 			} catch (Exception e) {
 				logger.error("An error occurred while creating the profile of user [" + user + "]");
 				throw new SecurityException("An error occurred while creating the profile of user [" + user + "]", e);
+			}
+
+			if (isOLAPSubObjectExecution(biobj, parameters)) {
+				Integer subobjectId = Integer.parseInt(parameters.get(AbstractEngineStartAction.SUBOBJ_ID).toString());
+				checkOLAPSubObjectExecution(subobjectId, profile);
+				// in case of the execution of an OLAP subobject, we skip the validations on drivers for now
+				// TODO implement validation also for OLAP subobjects
+				logger.debug("Current request is for OLAP subobject");
+				return;
 			}
 
 			// Check if the user can execute the document
@@ -393,18 +412,6 @@ public class ContentServiceImplSupplier {
 				correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id);
 			logger.debug("correct roles for execution retrived " + correctRoles);
 			// at this point correctRoles must contains at least one role, since the user can execute the document
-
-			if (parameters == null) {
-				logger.debug("Input parameters map is null. It will be considered as an empty map");
-				parameters = new HashMap();
-			}
-
-			if (isOLAPSubObjectExecution(parameters)) {
-				// in case of the execution of an OLAP subobject, we skip the validations on drivers for now
-				// TODO implement validation also for OLAP subobjects
-				logger.debug("Current request is for OLAP subobject, skipping drivers validation");
-				return;
-			}
 
 			String roleName = (String) parameters.get("SBI_EXECUTION_ROLE");
 			if (roleName != null) {
@@ -440,10 +447,22 @@ public class ContentServiceImplSupplier {
 		}
 	}
 
-	private boolean isOLAPSubObjectExecution(HashMap parameters) {
+	private void checkOLAPSubObjectExecution(Integer subobjectId, IEngUserProfile profile) throws SecurityException {
+		UserProfile userProfile = (UserProfile) profile;
+		SubObject subobject = null;
+		try {
+			subobject = DAOFactory.getSubObjectDAO().getSubObject(subobjectId);
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Cannot load subobject details; subobject id is [" + subobjectId + "]", e);
+		}
+		new OLAPSubobjectExecutionValidationAPI(userProfile).checkExecutionPermission(subobject);
+	}
+
+	private boolean isOLAPSubObjectExecution(BIObject biobj, HashMap parameters) {
 		Object subObjectId = parameters.get(AbstractEngineStartAction.SUBOBJ_ID);
+		boolean isOLAPDocument = biobj.getBiObjectTypeCode().equals(SpagoBIConstants.OLAP_TYPE_CODE);
 		// in case subobject id is there and it is an integer, then it is an OLAP subobject execution request
-		boolean toReturn = subObjectId != null && GenericValidator.isInt(subObjectId.toString());
+		boolean toReturn = isOLAPDocument && subObjectId != null && GenericValidator.isInt(subObjectId.toString());
 		logger.debug("Current request is for OLAP subobject? " + toReturn);
 		return toReturn;
 	}
