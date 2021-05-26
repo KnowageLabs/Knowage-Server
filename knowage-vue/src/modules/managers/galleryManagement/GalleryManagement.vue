@@ -13,7 +13,18 @@
                 </Toolbar>
                 <KnInputFile label="" :changeFunction="uploadTemplate" accept="application/json,application/zip" :triggerInput="triggerInput" />
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-                <Listbox v-if="!loading" class="kn-list--column" :options="galleryTemplates" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="['name', 'type', 'tags']" :emptyFilterMessage="$t('managers.widgetGallery.noResults')">
+                <Listbox
+                    v-if="!loading"
+                    class="kn-list--column"
+                    :options="galleryTemplates"
+                    listStyle="max-height:calc(100% - 62px)"
+                    :filter="true"
+                    :filterPlaceholder="$t('common.search')"
+                    optionLabel="name"
+                    filterMatchMode="contains"
+                    :filterFields="['name', 'type', 'tags']"
+                    :emptyFilterMessage="$t('managers.widgetGallery.noResults')"
+                >
                     <template #option="slotProps">
                         <router-link class="kn-decoration-none" :to="{ name: 'gallery-detail', params: { id: slotProps.option.id } }" exact>
                             <div class="kn-list-item">
