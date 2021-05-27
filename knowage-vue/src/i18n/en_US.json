@@ -105,6 +105,11 @@
             "uploadTemplate": "Upload template"
         }
     },
+    "menu": {
+		"admin": {
+			"importExport": "Import/Export"
+		}
+	},
     "newsDialog": {
         "description": "Description",
         "expirationDate": "Expiration date",

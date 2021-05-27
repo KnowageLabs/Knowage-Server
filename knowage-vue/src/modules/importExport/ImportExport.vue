@@ -11,13 +11,13 @@
 				<Button class="kn-button p-button-text" @click="openExportDialog" :disabled="isExportDisabled()">{{ $t('common.export') }}</Button>
 			</template>
 		</Toolbar>
-		<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="false" />
+		<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 		<div class="kn-page-content p-grid p-m-0">
 			<div v-if="importExportDescriptor.functionalities.length > 1" class="functionalities-container p-col-3 p-sm-3 p-md-2">
 				<KnTabCard :element="functionality" :selected="functionality.route === $route.path" v-for="(functionality, index) in importExportDescriptor.functionalities" v-bind:key="index" @click="selectType(functionality)" :badge="selectedItems['gallery'].length"></KnTabCard>
 			</div>
 			<div class="p-col p-pt-0">
-				<router-view @onItemSelected="getSelectedItems($event)" />
+				<router-view v-model:loading="loading" @onItemSelected="getSelectedItems($event)" />
 			</div>
 		</div>
 	</div>
@@ -42,12 +42,13 @@
 				displayImportDialog: false,
 				displayExportDialog: false,
 				fileName: '',
+				loading: false,
 				selectedItems: {
 					gallery: []
 				}
 			}
 		},
-		emits: ['onItemSelected', 'update:isLoading'],
+		emits: ['onItemSelected'],
 		methods: {
 			getSelectedItems(e) {
 				this.selectedItems[e.functionality] = e.items

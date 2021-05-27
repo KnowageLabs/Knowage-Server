@@ -98,15 +98,17 @@
 			}
 			this.loadAllTemplates()
 		},
-		emits: ['onItemSelected', 'update:isLoading'],
+		emits: ['onItemSelected', 'update:loading'],
 		methods: {
 			loadAllTemplates(): void {
-				this.$emit('update:isLoading', false)
+				this.$emit('update:loading', true)
 				this.axios
 					.get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery')
 					.then((response) => (this.templates = response.data))
 					.catch((error) => console.error(error))
-					.finally(() => this.$emit('update:isLoading', false))
+					.finally(() => {
+						this.$emit('update:loading', false)
+					})
 			},
 			togglePreview(event, id) {
 				this.currentImage = ''

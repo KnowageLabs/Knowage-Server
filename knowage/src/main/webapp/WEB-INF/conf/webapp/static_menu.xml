@@ -169,7 +169,7 @@
 		<GROUP_ITEM id="8000" label="menu.ServerManager"
 			toBeLicensed="true" iconCls="fa fa-2x fa-cogs">
 			
-			<ITEM label="menu.ImportExport"
+			<ITEM label="menu.admin.importExport"
 				requiredFunctionality="ImportExport"
 				to="/import-export" />
 			<ITEM id="8001" label="menu.TenantMan"

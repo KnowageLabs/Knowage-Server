@@ -11,12 +11,12 @@
             <div class="p-grid p-megamenu-data">
                 <div v-for="(column, columnIndex) of model" :key="column.label + '_column_' + columnIndex" :class="getColumnClassName(model)">
                     <ul class="p-megamenu-submenu">
-                        <li role="presentation">{{ column.label }}</li>
+						<li role="presentation">{{ $t(column.label) }}</li>
                         <template v-for="(item, i) of column.items" :key="item.label + i.toString()">
                             <li role="none" :style="item.style" :class="searched(item.label)">
                                 <router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, href }">
                                     <a :href="href" role="menuitem" @click="onLeafClick($event, item, navigate)">
-                                        <span class="p-menuitem-text">{{ item.label }}</span>
+										<span class="p-menuitem-text">{{ $t(item.label) }}</span>
                                     </a>
                                 </router-link>
                                 <a v-else :href="item.url" :target="item.target" role="menuitem" :tabindex="item.disabled ? null : '0'">
