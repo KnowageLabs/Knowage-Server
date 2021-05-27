@@ -438,13 +438,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
 			}else return params.value;
 		}
+		
 
-		$scope.showHiddenValues = function(e,values){
+		$scope.showHiddenValues = function(e,values,multi){
 			e.stopImmediatePropagation();
 			e.preventDefault();
 		    $mdDialog.show({
 		      controller: function($scope, listValues, sbiModule_translate){
 		    	  $scope.translate = sbiModule_translate;
+		    	  $scope.multi = multi;
 		    	  $scope.listValues = listValues;
 		    	  $scope.close = function(){
 		    		  $mdDialog.hide();
@@ -499,7 +501,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.bulkSelection){
 				this.manageMultiSelection(params);
 			}
-			if(typeof tempValue != "undefined" && this.eGui.innerHTML == '') this.eGui.innerHTML = ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
+			if(typeof tempValue != "undefined" && this.eGui.innerHTML == '') {
+				this.eGui.innerHTML = ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
+				if(params.colDef.style && params.colDef.style.maxChars && params.value.length > params.colDef.style.maxChars){
+					this.eGui.style["display"] = "inline-flex";
+					this.eGui.style["width"] = "100%";
+					this.eGui.innerHTML += '<span class="flex"></span><i class="fa fa-search maxcharsButton"></i>';
+					this.eButton = this.eGui.querySelector('.maxcharsButton');
+					this.eventListener = function(e) {
+				        $scope.showHiddenValues(e,params.value, false);
+				    };
+				    this.eButton.addEventListener('click', this.eventListener);
+				}
+			}
 		}
 
 		cellRenderer.prototype.getGui = function() {
@@ -542,7 +556,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					this.eGui.innerHTML += '<i class="fa fa-search maxcharsButton"></i>';
 					this.eButton = this.eGui.querySelector('.maxcharsButton');
 					this.eventListener = function(e) {
-				        $scope.showHiddenValues(e,params.value);
+				        $scope.showHiddenValues(e,params.value, true);
 				    };
 				    this.eButton.addEventListener('click', this.eventListener);
 				}
