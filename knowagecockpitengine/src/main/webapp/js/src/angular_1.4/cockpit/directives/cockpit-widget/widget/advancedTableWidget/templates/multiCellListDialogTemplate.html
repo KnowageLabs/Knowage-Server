@@ -1,4 +1,4 @@
-<md-dialog>
+<md-dialog class="textContainerDialog">
 	<md-toolbar>
       <div class="md-toolbar-tools">
         <h2>{{translate.load('kn.multicell.values')}}</h2>
@@ -7,11 +7,13 @@
     </md-toolbar>
     
     <md-dialog-content>
-    	<md-list class="kn-smallList">
+    	<p ng-if="!multi">{{listValues}}</p>
+    	<md-list class="kn-smallList" ng-if="multi">
 			<md-list-item ng-repeat="value in listValues">
           		<span>{{value}}</span>
          	</md-list-item>
-        <md-list>
+        </md-list>
+        
     </md-dialog-content>
 
     <md-dialog-actions layout="row">
