@@ -93,14 +93,14 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		WidgetGalleryDTO toRet = new WidgetGalleryDTO();
 
 		toRet.setAuthor(sbiWidgetGallery.getAuthor());
-		toRet.setId(sbiWidgetGallery.getUuid());
+		toRet.setId(sbiWidgetGallery.getId().getUuid());
 		toRet.setName(sbiWidgetGallery.getName());
 		toRet.setDescription(sbiWidgetGallery.getDescription());
 		toRet.setType(sbiWidgetGallery.getType());
 		if (sbiWidgetGallery.getPreviewImage() != null) {
 			toRet.setImage(new String(sbiWidgetGallery.getPreviewImage()));
 		}
-		toRet.setOrganization(sbiWidgetGallery.getOrganization());
+		toRet.setOrganization(sbiWidgetGallery.getId().getOrganization());
 		toRet.setUsageCounter(sbiWidgetGallery.getUsageCounter());
 		List<SbiWidgetGalleryTag> tagList = sbiWidgetGallery.getSbiWidgetGalleryTags();
 		if (tagList != null && tagList.size() > 0) {
@@ -153,11 +153,11 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			}
 
 			SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
-			newSbiWidgetGallery.setUuid(widgetGalleryDTO.getId());
+			newSbiWidgetGallery.getId().setUuid(widgetGalleryDTO.getId());
 			newSbiWidgetGallery.setAuthor(profile.getUserId());
 			newSbiWidgetGallery.setDescription(widgetGalleryDTO.getDescription());
 			newSbiWidgetGallery.setName(widgetGalleryDTO.getName());
-			newSbiWidgetGallery.setOrganization(profile.getOrganization());
+			newSbiWidgetGallery.getId().setOrganization(profile.getOrganization());
 			newSbiWidgetGallery.setPreviewImage(widgetGalleryDTO.getImage() != null ? widgetGalleryDTO.getImage().getBytes() : "".getBytes());
 			newSbiWidgetGallery.setSbiVersionIn("");
 			newSbiWidgetGallery.setTemplate(widgetGalleryDTO.getTemplate().getBytes());
@@ -202,11 +202,11 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			}
 
 			SbiWidgetGallery newSbiWidgetGallery = new SbiWidgetGallery();
-			newSbiWidgetGallery.setUuid(widgetGalleryDTO.getId());
+			newSbiWidgetGallery.getId().setUuid(widgetGalleryDTO.getId());
 			newSbiWidgetGallery.setAuthor(profile.getUserId());
 			newSbiWidgetGallery.setDescription(widgetGalleryDTO.getDescription());
 			newSbiWidgetGallery.setName(widgetGalleryDTO.getName());
-			newSbiWidgetGallery.setOrganization(profile.getOrganization());
+			newSbiWidgetGallery.getId().setOrganization(profile.getOrganization());
 			newSbiWidgetGallery.setPreviewImage(widgetGalleryDTO.getImage() != null ? widgetGalleryDTO.getImage().getBytes() : "".getBytes());
 			newSbiWidgetGallery.setSbiVersionIn("");
 			newSbiWidgetGallery.setTemplate(widgetGalleryDTO.getTemplate().getBytes());
@@ -256,9 +256,10 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 				}
 				insertedTags.add(tagArray[i]);
 				SbiWidgetGalleryTag sbiWidgetGalleryTag = new SbiWidgetGalleryTag();
-				SbiWidgetGalleryTagId newId = new SbiWidgetGalleryTagId(tagArray[i], sbiWidgetGallery.getUuid());
+				SbiWidgetGalleryTagId newId = new SbiWidgetGalleryTagId(sbiWidgetGallery.getId().getUuid(), tagArray[i],
+						sbiWidgetGallery.getId().getOrganization());
 				sbiWidgetGalleryTag.setId(newId);
-				sbiWidgetGalleryTag.setOrganization(sbiWidgetGallery.getOrganization());
+				sbiWidgetGalleryTag.getId().setOrganization(sbiWidgetGallery.getId().getOrganization());
 				sbiWidgetGalleryTag.setSbiVersionIn("");
 				sbiWidgetGalleryTag.setTimeIn(Timestamp.from(Instant.now()));
 				sbiWidgetGalleryTag.setUserIn(userid);

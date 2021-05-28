@@ -7,12 +7,14 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.PrimaryKeyJoinColumns;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -22,14 +24,13 @@ import org.hibernate.annotations.Type;
  *
  */
 @Entity
-@Table(name = "sbi_widget_gallery")
+@Table(name = "SBI_WIDGET_GALLERY")
 @NamedQuery(name = "SbiWidgetGallery.findAll", query = "SELECT s FROM SbiWidgetGallery s")
 public class SbiWidgetGallery implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name = "UUID")
-	private String uuid;
+//	@Id
+//	private String uuid;
 
 	private String author;
 
@@ -37,7 +38,9 @@ public class SbiWidgetGallery implements Serializable {
 
 	private String name;
 
-	private String organization;
+//	private String organization;
+	@EmbeddedId
+	private SbiWidgetGalleryId id;
 
 	@Lob
 	@Column(name = "PREVIEW_IMAGE", length = 100000)
@@ -85,19 +88,13 @@ public class SbiWidgetGallery implements Serializable {
 	private String outputType;
 
 	// bi-directional many-to-one association to SbiWidgetGalleryTag
-	@OneToMany(mappedBy = "sbiWidgetGallery", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "sbiWidgetGallery", targetEntity = SbiWidgetGalleryTag.class, orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@PrimaryKeyJoinColumns({ @PrimaryKeyJoinColumn(name = "UUID", referencedColumnName = "WIDGET_ID"),
+			@PrimaryKeyJoinColumn(name = "ORGANIZATION", referencedColumnName = "ORGANIZATION") })
 	private final List<SbiWidgetGalleryTag> sbiWidgetGalleryTags = new ArrayList<SbiWidgetGalleryTag>();
 
 	public SbiWidgetGallery() {
-	}
-
-	@Column(columnDefinition = "uuid", updatable = false)
-	public String getUuid() {
-		return this.uuid;
-	}
-
-	public void setUuid(String id) {
-		this.uuid = id;
+		id = new SbiWidgetGalleryId();
 	}
 
 	public String getAuthor() {
@@ -122,14 +119,6 @@ public class SbiWidgetGallery implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getOrganization() {
-		return this.organization;
-	}
-
-	public void setOrganization(String organization) {
-		this.organization = organization;
 	}
 
 	public byte[] getPreviewImage() {
@@ -242,14 +231,14 @@ public class SbiWidgetGallery implements Serializable {
 
 	public SbiWidgetGalleryTag addSbiWidgetGalleryTag(SbiWidgetGalleryTag sbiWidgetGalleryTag) {
 		getSbiWidgetGalleryTags().add(sbiWidgetGalleryTag);
-		sbiWidgetGalleryTag.setSbiWidgetGallery(this);
+//		sbiWidgetGalleryTag.setSbiWidgetGallery(this);
 
 		return sbiWidgetGalleryTag;
 	}
 
 	public SbiWidgetGalleryTag removeSbiWidgetGalleryTag(SbiWidgetGalleryTag sbiWidgetGalleryTag) {
 		getSbiWidgetGalleryTags().remove(sbiWidgetGalleryTag);
-		sbiWidgetGalleryTag.setSbiWidgetGallery(null);
+//		sbiWidgetGalleryTag.setSbiWidgetGallery(null);
 
 		return sbiWidgetGalleryTag;
 	}
@@ -260,6 +249,14 @@ public class SbiWidgetGallery implements Serializable {
 
 	public void setOutputType(String outputType) {
 		this.outputType = outputType;
+	}
+
+	public SbiWidgetGalleryId getId() {
+		return id;
+	}
+
+	public void setId(SbiWidgetGalleryId id) {
+		this.id = id;
 	}
 
 }

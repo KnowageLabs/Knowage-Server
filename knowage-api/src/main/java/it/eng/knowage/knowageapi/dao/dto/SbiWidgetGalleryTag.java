@@ -7,8 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
@@ -17,12 +17,10 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "sbi_widget_gallery_tags")
+@Table(name = "SBI_WIDGET_GALLERY_TAGS")
 @NamedQuery(name = "SbiWidgetGalleryTag.findAll", query = "SELECT s FROM SbiWidgetGalleryTag s")
 public class SbiWidgetGalleryTag implements Serializable {
 	private static final long serialVersionUID = 1L;
-
-	private String organization;
 
 	@Column(name = "SBI_VERSION_DE")
 	private String sbiVersionDe;
@@ -55,12 +53,13 @@ public class SbiWidgetGalleryTag implements Serializable {
 	private String userUp;
 
 	// bi-directional many-to-one association to SbiWidgetGallery
-	@MapsId("widgetId")
+	@JoinColumns({ @JoinColumn(name = "WIDGET_ID", referencedColumnName = "UUID", insertable = false, updatable = false),
+			@JoinColumn(name = "ORGANIZATION", referencedColumnName = "ORGANIZATION", insertable = false, updatable = false) })
 	@ManyToOne
-	@JoinColumn(name = "WIDGET_ID")
 	private SbiWidgetGallery sbiWidgetGallery;
 
 	public SbiWidgetGalleryTag() {
+		id = new SbiWidgetGalleryTagId();
 	}
 
 	public SbiWidgetGalleryTagId getId() {
@@ -69,14 +68,6 @@ public class SbiWidgetGalleryTag implements Serializable {
 
 	public void setId(SbiWidgetGalleryTagId id) {
 		this.id = id;
-	}
-
-	public String getOrganization() {
-		return this.organization;
-	}
-
-	public void setOrganization(String organization) {
-		this.organization = organization;
 	}
 
 	public String getSbiVersionDe() {

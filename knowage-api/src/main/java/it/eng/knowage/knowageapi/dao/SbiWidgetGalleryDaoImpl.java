@@ -38,7 +38,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		// persist the entity
 		em.persist(sbiWidgetGallery);
 		em.getTransaction().commit();
-		return sbiWidgetGallery.getUuid();
+		return sbiWidgetGallery.getId().getUuid();
 	}
 
 	@Override
@@ -46,12 +46,12 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		logger.debug("IN");
 
 		em.getTransaction().begin();
-		SbiWidgetGallery sbiWidgetGalleryFound = findByIdTenant(sbiWidgetGallery.getUuid(), sbiWidgetGallery.getOrganization());
+		SbiWidgetGallery sbiWidgetGalleryFound = findByIdTenant(sbiWidgetGallery.getId().getUuid(), sbiWidgetGallery.getId().getOrganization());
 
 		sbiWidgetGalleryFound.setAuthor(sbiWidgetGallery.getAuthor());
 		sbiWidgetGalleryFound.setDescription(sbiWidgetGallery.getDescription());
 		sbiWidgetGalleryFound.setName(sbiWidgetGallery.getName());
-		sbiWidgetGalleryFound.setOrganization(sbiWidgetGallery.getOrganization());
+		sbiWidgetGalleryFound.getId().setOrganization(sbiWidgetGallery.getId().getOrganization());
 		sbiWidgetGalleryFound.setPreviewImage(sbiWidgetGallery.getPreviewImage());
 		sbiWidgetGalleryFound.setSbiVersionIn(sbiWidgetGallery.getSbiVersionIn());
 		sbiWidgetGalleryFound.setTemplate(sbiWidgetGallery.getTemplate());
@@ -67,7 +67,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		em.getTransaction().commit();
 
 		logger.debug("OUT");
-		return sbiWidgetGallery.getUuid();
+		return sbiWidgetGallery.getId().getUuid();
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		logger.debug("IN");
 
 		em.getTransaction().begin();
-		int isSuccessful = em.createQuery("DELETE FROM SbiWidgetGallery p where p.uuid=:uuid").setParameter("uuid", id).executeUpdate();
+		int isSuccessful = em.createQuery("DELETE FROM SbiWidgetGallery p where p.id.uuid=:uuid").setParameter("uuid", id).executeUpdate();
 		em.getTransaction().commit();
 
 		logger.debug("OUT");
@@ -100,7 +100,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 
 		SbiWidgetGallery result = null;
 		List<SbiWidgetGallery> resultList = em
-				.createQuery("SELECT t FROM SbiWidgetGallery t where t.id = :value1 and t.organization = :value2", SbiWidgetGallery.class)
+				.createQuery("SELECT t FROM SbiWidgetGallery t where t.id.uuid = :value1 and t.id.organization = :value2", SbiWidgetGallery.class)
 				.setParameter("value1", id).setParameter("value2", tenant).getResultList();
 		if (resultList.size() == 1)
 			result = resultList.get(0);
@@ -113,7 +113,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 	public Collection<SbiWidgetGallery> findAllByTenant(String tenant) {
 		logger.debug("IN");
 
-		Collection<SbiWidgetGallery> results = em.createQuery("SELECT t FROM SbiWidgetGallery t where t.organization = :value2", SbiWidgetGallery.class)
+		Collection<SbiWidgetGallery> results = em.createQuery("SELECT t FROM SbiWidgetGallery t where t.id.organization = :value2", SbiWidgetGallery.class)
 				.setParameter("value2", tenant).getResultList();
 
 		logger.debug("OUT");
@@ -124,7 +124,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 	public int deleteByIdTenant(String id, String tenant) {
 		logger.debug("IN");
 		em.getTransaction().begin();
-		int isSuccessful = em.createQuery("DELETE FROM SbiWidgetGallery p where p.uuid=:uuid and p.organization = :tenant").setParameter("uuid", id)
+		int isSuccessful = em.createQuery("DELETE FROM SbiWidgetGallery p where p.id.uuid=:uuid and p.id.organization = :tenant").setParameter("uuid", id)
 				.setParameter("tenant", tenant).executeUpdate();
 		em.getTransaction().commit();
 
@@ -137,22 +137,23 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		logger.debug("IN");
 		em.getTransaction().begin();
 		SbiWidgetGallery sbiWidgetGalleryFound = em
-				.createQuery("SELECT t FROM SbiWidgetGallery t where t.id = :value1 and t.organization = :value2", SbiWidgetGallery.class)
-				.setParameter("value1", sbiWidgetGallery.getUuid()).setParameter("value2", sbiWidgetGallery.getOrganization()).getSingleResult();
+				.createQuery("SELECT t FROM SbiWidgetGallery t where t.id.uuid = :value1 and t.id.organization = :value2", SbiWidgetGallery.class)
+				.setParameter("value1", sbiWidgetGallery.getId().getUuid()).setParameter("value2", sbiWidgetGallery.getId().getOrganization())
+				.getSingleResult();
 
 		int counter = sbiWidgetGallery.getUsageCounter() + 1;
 		sbiWidgetGalleryFound.setUsageCounter(counter);
 		em.merge(sbiWidgetGalleryFound);
 		em.getTransaction().commit();
 		logger.debug("OUT");
-		return sbiWidgetGallery.getUuid();
+		return sbiWidgetGallery.getId().getUuid();
 	}
 
 	@Override
 	public Collection<SbiWidgetGallery> findAllByTenantAndType(String tenant, String type) {
 		logger.debug("IN");
 		Collection<SbiWidgetGallery> results = em
-				.createQuery("SELECT t FROM SbiWidgetGallery t where t.organization = :tenant and type=:valueType", SbiWidgetGallery.class)
+				.createQuery("SELECT t FROM SbiWidgetGallery t where t.id.organization = :tenant and type=:valueType", SbiWidgetGallery.class)
 				.setParameter("tenant", tenant).setParameter("valueType", type).getResultList();
 		logger.debug("OUT");
 		return results;
