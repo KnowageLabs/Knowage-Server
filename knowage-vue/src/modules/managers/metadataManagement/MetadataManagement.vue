@@ -11,35 +11,34 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div class="p-col">
-                    <Listbox
-                        v-if="!loading"
-                        class="kn-list--column"
-                        :options="metadataList"
-                        :filter="true"
-                        :filterPlaceholder="$t('common.search')"
-                        optionLabel="name"
-                        filterMatchMode="contains"
-                        :filterFields="metadataManagementDescriptor.filterFields"
-                        :emptyFilterMessage="$t('managers.widgetGallery.noResults')"
-                        @change="showForm"
-                        data-test="metadata-list"
-                    >
-                        <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                        <template #option="slotProps">
-                            <div class="kn-list-item" data-test="list-item">
-                                <div class="kn-list-item-text">
-                                    <span>{{ slotProps.option.name }}</span>
-                                    <span class="kn-list-item-text-secondary">{{ slotProps.option.dataType }}</span>
-                                </div>
-                                <Button icon="pi pi-trash" class="p-button-link p-button-sm" @click="deleteMetadataConfirm(slotProps.option.id)" :data-test="'delete-button'" />
+                <Listbox
+                    v-if="!loading"
+                    class="kn-list--column"
+                    :options="metadataList"
+                    :filter="true"
+                    :filterPlaceholder="$t('common.search')"
+                    optionLabel="name"
+                    filterMatchMode="contains"
+                    :filterFields="metadataManagementDescriptor.filterFields"
+                    :emptyFilterMessage="$t('managers.widgetGallery.noResults')"
+                    @change="showForm"
+                    data-test="metadata-list"
+                >
+                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                    <template #option="slotProps">
+                        <div class="kn-list-item" data-test="list-item">
+                            <div class="kn-list-item-text">
+                                <span>{{ slotProps.option.name }}</span>
+                                <span class="kn-list-item-text-secondary">{{ slotProps.option.dataType }}</span>
                             </div>
-                        </template>
-                    </Listbox>
-                </div>
+                            <Button icon="pi pi-trash" class="p-button-link p-button-sm" @click="deleteMetadataConfirm(slotProps.option.id)" :data-test="'delete-button'" />
+                        </div>
+                    </template>
+                </Listbox>
             </div>
-            <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0" v-if="formVisible" data-test="metadata-form">
-                <MetadataManagementDetail :model="selectedMetadata" @close="closeForm" @saved="reloadMetadata" @touched="touched = true"></MetadataManagementDetail>
+            <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
+                <KnHint :title="'managers.metadata.title'" :hint="'managers.metadata.hint'" v-if="!formVisible"></KnHint>
+                <MetadataManagementDetail :model="selectedMetadata" @close="closeForm" @saved="reloadMetadata" @touched="touched = true" v-if="formVisible" data-test="metadata-form"></MetadataManagementDetail>
             </div>
         </div>
     </div>
@@ -50,13 +49,14 @@ import { defineComponent } from 'vue'
 import { iMetadata } from './MetadataManagement'
 import axios from 'axios'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
+import KnHint from '@/components/UI/KnHint.vue'
 import Listbox from 'primevue/listbox'
 import metadataManagementDescriptor from './MetadataManagementDescriptor.json'
 import MetadataManagementDetail from './MetadataManagementDetail.vue'
 
 export default defineComponent({
     name: 'metadata-management',
-    components: { KnFabButton, Listbox, MetadataManagementDetail },
+    components: { KnFabButton, Listbox, MetadataManagementDetail, KnHint },
     data() {
         return {
             metadataManagementDescriptor: metadataManagementDescriptor,
