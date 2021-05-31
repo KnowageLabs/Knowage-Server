@@ -8,6 +8,7 @@ const messages = {
 	en_US: require('@/i18n/en_US.json'),
 	es_ES: require('@/i18n/es_ES.json'),
 	fr_FR: require('@/i18n/fr_FR.json'),
+	hu_HU: require('@/i18n/hu_HU.json'),
 	it_IT: require('@/i18n/it_IT.json'),
 	ja_JP: require('@/i18n/ja_JP.json'),
 	ko_KR: require('@/i18n/ko_KR.json'),
