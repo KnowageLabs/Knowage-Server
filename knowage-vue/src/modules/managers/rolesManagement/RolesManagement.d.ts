@@ -1,7 +1,7 @@
 export interface iRole {
-    id: string
+    id?: string
     name: string
-    description: string,
+    description?: string,
     roleTypeCD?: string,
     isPublic?: boolean,
     roleMetaModelCategories?: Array

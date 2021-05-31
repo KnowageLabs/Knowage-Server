@@ -55,8 +55,11 @@ export default defineComponent({
         this.role = { ...this.selectedRole } as any
     },
     watch: {
-        selectedRole() {
-            this.role = { ...this.selectedRole } as any
+        selectedRole: {
+            handler: function(value) {
+                this.role = { ...value } as any
+            },
+            deep: true
         }
     },
     methods: {

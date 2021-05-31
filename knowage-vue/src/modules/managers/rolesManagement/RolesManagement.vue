@@ -32,7 +32,7 @@
                                     <span>{{ slotProps.option.name }}</span>
                                     <span class="kn-list-item-text-secondary">{{ slotProps.option.roleTypeCD }}</span>
                                 </div>
-                                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click="deleteRoleConfirm(slotProps.option.id)" data-test="delete-button" />
+                                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteRoleConfirm(slotProps.option.id)" data-test="delete-button" />
                             </div>
                         </template>
                     </Listbox>

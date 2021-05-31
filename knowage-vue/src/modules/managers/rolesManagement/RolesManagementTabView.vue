@@ -103,8 +103,8 @@ export default defineComponent({
         }
     },
     watch: {
-        id(value) {
-            value ? this.loadSelectedRole() : (this.selectedRole = {} as iRole)
+        id() {
+            this.loadSelectedRole()
             this.clearSelectedLists()
         }
     },
@@ -218,6 +218,8 @@ export default defineComponent({
                         }
                     })
                 })
+            } else {
+                this.selectedRole = { ...rolesManagementTabViewDescriptor.newRoleDefaultValues, name: '' }
             }
             this.loading = false
         },
