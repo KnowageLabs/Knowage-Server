@@ -31,7 +31,7 @@
         "label": "label",
         "loggedUser": "logged user",
         "name": "name",
-		"new": "new",
+        "new": "new",
         "save": "save",
         "search": "search",
         "table": {
@@ -42,22 +42,22 @@
         "tags": "tags",
         "tenant": "tenant",
         "toast": {
-			"createTitle": "Created",
-			"deleteConfirmTitle": "Confirm Delete?",
-			"deleteTitle": "Deleted",
-			"deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
-			"deleteSuccess": "Item was deleted successfully",
-			"success": "Operation succeeded",
+            "createTitle": "Created",
+            "deleteConfirmTitle": "Confirm Delete?",
+            "deleteTitle": "Deleted",
+            "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
+            "deleteSuccess": "Item was deleted successfully",
+            "success": "Operation succeeded",
             "unsavedChangesHeader": "Unsaved changes",
-			"unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
-			"updateTitle": "Updated"
-		},
-		"type": "type",
-		"validation": {
-			"regex": "Invalid format",
-			"maximumCharacters": "The maximum length allowed is {max}",
-			"required": "{fieldName} is required"
-		},
+            "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
+            "updateTitle": "Updated"
+        },
+        "type": "type",
+        "validation": {
+            "regex": "Invalid format",
+            "maximumCharacters": "The maximum length allowed is {max}",
+            "required": "{fieldName} is required"
+        },
         "version": "version",
         "warning": {}
     },
@@ -100,6 +100,9 @@
         "pt_BR": "portuguese"
     },
     "managers": {
+        "metadata": {
+            "title": "Metadata list"
+        },
         "widgetGallery": {
             "deleteTemplate": "Delete template",
             "downloadTemplate": "Download template",
@@ -124,10 +127,10 @@
         }
     },
     "menu": {
-		"admin": {
-			"importExport": "Import/Export"
-		}
-	},
+        "admin": {
+            "importExport": "Import/Export"
+        }
+    },
     "newsDialog": {
         "description": "Description",
         "expirationDate": "Expiration date",

@@ -1,0 +1,22 @@
+{
+    "validations": {
+        "metadata": [
+            {
+                "fieldName": "label",
+                "validators": [{ "key": "required" }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "name",
+                "validators": [{ "key": "required" }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "description",
+                "validators": [{ "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "dataType",
+                "validators": [{ "key": "required" }]
+            }
+        ]
+    }
+}

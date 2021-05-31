@@ -1,0 +1,26 @@
+{
+    "filterFields": ["name", "dataType"],
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        },
+        "success": "common.toast.success"
+    },
+    "metadataTypes": [
+        {
+            "name": "SHORT_TEXT",
+            "value": "SHORT_TEXT"
+        },
+        {
+            "name": "LONG_TEXT",
+            "value": "LONG_TEXT"
+        },
+        {
+            "name": "FILE",
+            "value": "FILE"
+        }
+    ]
+}
