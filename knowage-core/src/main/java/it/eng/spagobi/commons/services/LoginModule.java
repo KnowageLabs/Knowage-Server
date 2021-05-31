@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.commons.services;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
@@ -133,9 +134,8 @@ public class LoginModule extends AbstractHttpModule {
 				logger.debug("User is authenticated");
 				// fill response
 				List lstMenu = MenuUtilities.getMenuItems(profile);
-				String url = "knowage-vue/index.html";
 				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+				redirectToKnowageVue();
 				return;
 			} else {
 				// user must authenticate
@@ -346,27 +346,21 @@ public class LoginModule extends AbstractHttpModule {
 			}
 			// End writing log in the DB
 
-//			List lstMenu = MenuUtilities.getMenuItems(profile);
-//
-//			String url = "/themes/" + currTheme + "/jsp/";
-//			if (UserUtilities.isTechnicalUser(profile)) {
-//				url += "adminHome.jsp";
-//			} else {
-//				url += "userHome.jsp";
-//			}
-//			servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-//			getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-			if(Version.getEnvironment() == Environment.PRODUCTION) {
-				getHttpResponse().sendRedirect("/knowage-vue");
-			}else {
-				getHttpResponse().sendRedirect("http://localhost:3000/knowage-vue");
-			}
+			redirectToKnowageVue();
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after request processed in each case
 			TenantManager.unset();
 		}
 
 		logger.debug("OUT");
+	}
+
+	private void redirectToKnowageVue() throws IOException {
+		if(Version.getEnvironment() == Environment.PRODUCTION) {
+			getHttpResponse().sendRedirect("/knowage-vue");
+		}else {
+			getHttpResponse().sendRedirect("http://localhost:3000/knowage-vue");
+		}
 	}
 
 	private void checkIfIsBefore72AuthMethod(SourceBean response, MessageBuilder msgBuilder, Locale locale, SbiUser user) throws SourceBeanException {
