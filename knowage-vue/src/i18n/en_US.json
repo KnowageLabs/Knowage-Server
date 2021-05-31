@@ -30,6 +30,8 @@
         "information": "information",
         "label": "label",
         "loggedUser": "logged user",
+        "name": "name",
+		"new": "new",
         "save": "save",
         "search": "search",
         "table": {
@@ -39,7 +41,23 @@
         },
         "tags": "tags",
         "tenant": "tenant",
-        "type": "type",
+        "toast": {
+			"createTitle": "Created",
+			"deleteConfirmTitle": "Confirm Delete?",
+			"deleteTitle": "Deleted",
+			"deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
+			"deleteSuccess": "Item was deleted successfully",
+			"success": "Operation succeeded",
+            "unsavedChangesHeader": "Unsaved changes",
+			"unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
+			"updateTitle": "Updated"
+		},
+		"type": "type",
+		"validation": {
+			"regex": "Invalid format",
+			"maximumCharacters": "The maximum length allowed is {max}",
+			"required": "{fieldName} is required"
+		},
         "version": "version",
         "warning": {}
     },

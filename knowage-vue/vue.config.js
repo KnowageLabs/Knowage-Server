@@ -9,6 +9,10 @@ module.exports = {
                 target: process.env.VUE_APP_HOST_URL,
                 changeOrigin: true
             },
+            '^/knowage/restful-services/': {
+                target: process.env.VUE_APP_HOST_URL,
+                changeOrigin: true
+            },
             '^/knowage-api/api/': {
                 target: process.env.VUE_APP_HOST_URL,
                 changeOrigin: true
