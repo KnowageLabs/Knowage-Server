@@ -2,9 +2,7 @@
     <div class="kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
             <template #left>
-                <b style="text-transform: uppercase">
-                    {{ $t('managers.configurationManagement.title') }}
-                </b>
+                {{ $t('managers.configurationManagement.title') }}
             </template>
             <template #right>
                 <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
