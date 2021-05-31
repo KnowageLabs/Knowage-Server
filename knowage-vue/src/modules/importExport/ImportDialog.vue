@@ -1,6 +1,6 @@
 <template>
 	<Dialog class="kn-dialog--toolbar--primary importExportDialog" v-bind:visible="visibility" footer="footer" :header="$t('common.import')" :closable="false" modal>
-		<FileUpload name="demo[]" :chooseLabel="$t('common.choose')" :customUpload="true" @uploader="onUpload" auto="true" :maxFileSize="1000000" accept="application/zip">
+		<FileUpload name="demo[]" :chooseLabel="$t('common.choose')" :customUpload="true" @uploader="onUpload" auto="true" :maxFileSize="10000000" accept="application/zip">
 			<template #empty>
 				<p>{{ $t('common.dragAndDropFilesHere') }}</p>
 			</template>

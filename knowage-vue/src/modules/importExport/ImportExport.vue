@@ -95,7 +95,7 @@
 					)
 			},
 			async startImport(uploadedFiles) {
-				if (uploadedFiles.files && uploadedFiles.files.length > 0) {
+				if (uploadedFiles.files || uploadedFiles.files.length > 0) {
 					var formData = new FormData()
 					formData.append('file', uploadedFiles.files)
 					await axios
