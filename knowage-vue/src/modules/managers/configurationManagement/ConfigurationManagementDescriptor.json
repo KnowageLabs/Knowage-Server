@@ -1,0 +1,132 @@
+{
+    "columns": [
+        {
+            "field": "label",
+            "header": "managers.configurationManagement.headers.label"
+        },
+        {
+            "field": "name",
+            "header": "managers.configurationManagement.headers.name"
+        },
+        {
+            "field": "category",
+            "header": "managers.configurationManagement.headers.category"
+        },
+        {
+            "field": "active",
+            "header": "managers.configurationManagement.headers.active"
+        }
+    ],
+    "table": {
+        "column": {
+            "style": {
+                "width": "18%",
+                "word-break": "break-all"
+            }
+        },
+        "iconColumn": {
+            "style": {
+                "width": "10%",
+                "text-align": "end"
+            }
+        }
+    },
+    "globalFilterFields": ["label", "name", "category", "active"],
+    "form": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "pField": {
+        "style": {
+            "margin-bottom": "40px"
+        }
+    },
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        },
+        "success": "common.toast.success"
+    },
+    "isActive": [
+        {
+            "name": "True",
+            "value": true
+        },
+        {
+            "name": "False",
+            "value": false
+        }
+    ],
+    "valueType": [
+        {
+            "name": "NUM",
+            "value": 407
+        },
+        {
+            "name": "STRING",
+            "value": 408
+        }
+    ],
+    "category": [
+        {
+            "name": "SECURITY",
+            "value": "SECURITY"
+        },
+        {
+            "name": "GENERIC_CONFIGURATION",
+            "value": "GENERIC_CONFIGURATION"
+        },
+        {
+            "name": "DATE-FORMAT",
+            "value": "DATE-FORMAT"
+        },
+        {
+            "name": "ORGANIZATIONAL-UNIT",
+            "value": "ORGANIZATIONAL-UNIT"
+        },
+        {
+            "name": "THEMES",
+            "value": "THEMES"
+        },
+        {
+            "name": "LANGUAGE_SUPPORTED",
+            "value": "LANGUAGE_SUPPORTED"
+        },
+        {
+            "name": "SCRIPT_LANGUAGE",
+            "value": "SCRIPT_LANGUAGE"
+        },
+        {
+            "name": "MAIL",
+            "value": "MAIL"
+        },
+        {
+            "name": "SOCIAL_CONFIGURATION",
+            "value": "SOCIAL_CONFIGURATION"
+        },
+        {
+            "name": "IMAGE_GALLERY",
+            "value": "IMAGE_GALLERY"
+        },
+        {
+            "name": "PYTHON_CONFIGURATION",
+            "value": "PYTHON_CONFIGURATION"
+        },
+        {
+            "name": "R_CONFIGURATION",
+            "value": "R_CONFIGURATION"
+        },
+        {
+            "name": "SOLR_CONFIGURATION",
+            "value": "SOLR_CONFIGURATION"
+        },
+        {
+            "name": "REST_CONFIGURATION",
+            "value": "REST_CONFIGURATION"
+        }
+    ]
+}
