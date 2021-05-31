@@ -1,3 +1,20 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.knowage.knowageapi.dao;
 // default package
 
@@ -65,7 +82,6 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		sbiWidgetGalleryFound.getSbiWidgetGalleryTags().addAll(sbiWidgetGallery.getSbiWidgetGalleryTags());
 		em.merge(sbiWidgetGalleryFound);
 		em.getTransaction().commit();
-
 		logger.debug("OUT");
 		return sbiWidgetGallery.getId().getUuid();
 	}
@@ -124,23 +140,18 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 	public int deleteByIdTenant(String id, String tenant) {
 		logger.debug("IN");
 		em.getTransaction().begin();
-		int isSuccessful = em.createQuery("DELETE FROM SbiWidgetGallery p where p.id.uuid=:uuid and p.id.organization = :tenant").setParameter("uuid", id)
-				.setParameter("tenant", tenant).executeUpdate();
+		SbiWidgetGallery sbiGallery = findByIdTenant(id, tenant);
+		em.remove(sbiGallery);
 		em.getTransaction().commit();
-
 		logger.debug("OUT");
-		return isSuccessful;
+		return 1;
 	}
 
 	@Override
 	public String updateCounter(SbiWidgetGallery sbiWidgetGallery) {
 		logger.debug("IN");
 		em.getTransaction().begin();
-		SbiWidgetGallery sbiWidgetGalleryFound = em
-				.createQuery("SELECT t FROM SbiWidgetGallery t where t.id.uuid = :value1 and t.id.organization = :value2", SbiWidgetGallery.class)
-				.setParameter("value1", sbiWidgetGallery.getId().getUuid()).setParameter("value2", sbiWidgetGallery.getId().getOrganization())
-				.getSingleResult();
-
+		SbiWidgetGallery sbiWidgetGalleryFound = findByIdTenant(sbiWidgetGallery.getId().getUuid(), sbiWidgetGallery.getId().getOrganization());
 		int counter = sbiWidgetGallery.getUsageCounter() + 1;
 		sbiWidgetGalleryFound.setUsageCounter(counter);
 		em.merge(sbiWidgetGalleryFound);
