@@ -6,7 +6,7 @@
 			</div>
 		</div>
 		<template #footer>
-			<Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="closeDialog" />
+			<Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="closeDialog" />
 			<Button class="kn-button kn-button--primary" :label="$t('common.export')" autofocus :disabled="fileName && fileName.length == 0" @click="emitExport" />
 		</template>
 	</Dialog>
@@ -42,6 +42,9 @@
 		min-width: 600px;
 		width: 60%;
 		max-width: 1200px;
+		.fileNameInputText {
+			margin: 5px;
+		}
 		.p-fileupload-buttonbar {
 			border: none;
 			.p-button:not(.p-fileupload-choose) {
