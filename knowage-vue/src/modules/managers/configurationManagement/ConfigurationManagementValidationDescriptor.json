@@ -3,26 +3,85 @@
         "configuration": [
             {
                 "fieldName": "label",
-                "validators": [{ "key": "required" }, { "key": "maximumCharacters", "validator": { "type": "maxLength", "params": { "max": 100 } } }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
             },
             {
                 "fieldName": "name",
-                "validators": [{ "key": "required" }, { "key": "maximumCharacters", "validator": { "type": "maxLength", "params": { "max": 100 } } }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
             },
             {
                 "fieldName": "description",
                 "validators": [
-                    { "key": "maximumCharacters", "validator": { "type": "maxLength", "params": { "max": 500 } } },
-                    { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 500
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
                 ]
             },
             {
                 "fieldName": "active",
-                "validators": [{ "key": "required" }]
+                "validators": []
+            },
+            {
+                "fieldName": "valueCheck",
+                "validators": []
             },
             {
                 "fieldName": "category",
-                "validators": [{ "key": "required" }]
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
             }
         ]
     }

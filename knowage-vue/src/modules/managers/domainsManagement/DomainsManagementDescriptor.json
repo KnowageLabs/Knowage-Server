@@ -21,7 +21,21 @@
             "header": "managers.domainsManagement.valueDescription"
         }
     ],
+    "form": {
+        "style": {
+            "width": "60vw"
+        }
+    },
     "globalFilterFields": ["valueCd", "valueName", "domainCode", "domainName", "valueDescription"],
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
     "table": {
         "column": {
             "style": {
@@ -31,22 +45,9 @@
         },
         "iconColumn": {
             "style": {
-                "text-align": "end"
+                "text-align": "end",
+                "width": "5%"
             }
         }
-    },
-    "form": {
-        "style": {
-            "width": "60vw"
-        }
-    },
-    "operation": {
-        "insert": {
-            "toastTitle": "common.toast.createTitle"
-        },
-        "update": {
-            "toastTitle": "common.toast.updateTitle"
-        },
-        "success": "common.toast.success"
     }
 }

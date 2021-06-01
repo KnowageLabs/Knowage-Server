@@ -142,7 +142,7 @@ export default defineComponent({
     props: {
         model: {
             type: Object,
-            requried: false
+            required: false
         }
     },
     emits: ['close', 'saved', 'touched'],

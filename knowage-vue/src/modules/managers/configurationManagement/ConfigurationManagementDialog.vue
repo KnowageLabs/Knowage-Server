@@ -97,16 +97,17 @@
             </div>
 
             <div class="p-field" :style="configurationManagementDescriptor.pField.style">
+                <span class="p-float-label">
+                    <InputText id="description" class="kn-material-input" type="text" v-model.trim="v$.configuration.valueCheck.$model" @blur="v$.configuration.valueCheck.$touch()" />
+                    <label for="description" class="kn-material-input-label"> {{ $t('managers.configurationManagement.headers.valueCheck') }} </label>
+                </span>
+            </div>
+
+            <div class="p-field" :style="configurationManagementDescriptor.pField.style">
                 <div class="p-field-checkbox">
                     <Checkbox id="isActive" v-model="v$.configuration.active.$model" :binary="true" />
-                    <label for="isActive"> {{ $t('managers.configurationManagement.headers.active') }} *</label>
+                    <label for="isActive"> {{ $t('managers.configurationManagement.headers.active') }}</label>
                 </div>
-                <KnValidationMessages
-                    :vComp="v$.configuration.active"
-                    :additionalTranslateParams="{
-                        fieldName: $t('managers.configurationManagement.headers.active')
-                    }"
-                ></KnValidationMessages>
             </div>
         </form>
 

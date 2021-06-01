@@ -49,9 +49,12 @@ j<template>
                         {{ $t('common.info.dataLoading') }}
                     </template>
 
-                    <Column v-for="col of domainsManagementDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="domainsManagementDescriptor.table.column.style" :sortable="true">
+                    <Column v-for="col of domainsManagementDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="domainsManagementDescriptor.table.column.style" :sortable="true" class="kn-truncated">
                         <template #filter="{filterModel}">
                             <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                        </template>
+                        <template #body="slotProps">
+                            <span :title="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
                         </template>
                     </Column>
                     <Column :style="domainsManagementDescriptor.table.iconColumn.style">

@@ -48,13 +48,15 @@
                         {{ $t('common.info.noDataFound') }}
                     </template>
                     <template #loading v-if="loading">
-                        test
                         {{ $t('common.info.dataLoading') }}
                     </template>
 
-                    <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :style="configurationManagementDescriptor.table.column.style">
+                    <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :style="col.style" class="kn-truncated">
                         <template #filter="{ filterModel }">
                             <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                        </template>
+                        <template #body="slotProps">
+                            <span :title="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
                         </template>
                     </Column>
                     <Column :style="configurationManagementDescriptor.table.iconColumn.style" @rowClick="false">
@@ -111,6 +113,10 @@ export default defineComponent({
                     constraints: [filterDefault]
                 },
                 category: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                valueCheck: {
                     operator: FilterOperator.AND,
                     constraints: [filterDefault]
                 },
