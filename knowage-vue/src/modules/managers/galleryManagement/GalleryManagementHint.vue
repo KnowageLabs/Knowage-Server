@@ -1,41 +1,13 @@
 <template>
-  <div class="galleryHint hint">
-      <Card class="galleryHintContent">
-        <template #title>
-            <i class="far fa-life-ring galleryHintIcon"></i> {{$t('managers.widgetGallery.title')}}
-        </template>
-        <template #content>
-            {{$t('managers.widgetGallery.hint')}}
-        </template>
-    </Card>
-  </div>
+    <KnHint :title="'managers.widgetGallery.title'" :hint="'managers.widgetGallery.hint'"></KnHint>
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
+import { defineComponent } from 'vue'
+import KnHint from '@/components/UI/KnHint.vue'
 
-    export default defineComponent({
-        name: 'gallery-hint',
-
-    })
+export default defineComponent({
+    name: 'gallery-hint',
+    components: { KnHint }
+})
 </script>
-
-<style lang="scss" scoped>
-    .galleryHint{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-
-        .galleryHintContent{
-            border-radius: 0;
-            width: 90%;
-        }
-
-        .galleryHintIcon{
-            font-size: 3rem;
-        }
-    }
-
-</style>

@@ -10,7 +10,7 @@ j<template>
         </Toolbar>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
         <div class="kn-page-content p-grid p-m-0">
-            <div class="p-col">
+            <div class="p-col" v-if="!loading">
                 <DataTable
                     :value="domains"
                     :paginator="true"

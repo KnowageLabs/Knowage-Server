@@ -10,61 +10,59 @@
         </Toolbar>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
         <div class="kn-page-content p-grid p-m-0">
-            <div v-if="!loading">
-                <div class="p-col">
-                    <DataTable
-                        :value="configurations"
-                        :paginator="true"
-                        :loading="loading"
-                        :rows="20"
-                        class="p-datatable-sm kn-table"
-                        dataKey="id"
-                        v-model:filters="filters"
-                        filterDisplay="menu"
-                        :globalFilterFields="configurationManagementDescriptor.globalFilterFields"
-                        :rowsPerPageOptions="[10, 15, 20]"
-                        responsiveLayout="stack"
-                        breakpoint="960px"
-                        :currentPageReportTemplate="
-                            $t('common.table.footer.paginated', {
-                                first: '{first}',
-                                last: '{last}',
-                                totalRecords: '{totalRecords}'
-                            })
-                        "
-                        data-test="configurations-table"
-                        v-model:selection="selectedConfiguration"
-                        selectionMode="single"
-                        @rowSelect="showForm"
-                    >
-                        <template #header>
-                            <div class="table-header">
-                                <span class="p-input-icon-left">
-                                    <i class="pi pi-search" />
-                                    <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
-                                </span>
-                            </div>
-                        </template>
-                        <template #empty>
-                            {{ $t('common.info.noDataFound') }}
-                        </template>
-                        <template #loading v-if="loading">
-                            test
-                            {{ $t('common.info.dataLoading') }}
-                        </template>
+            <div class="p-col" v-if="!loading">
+                <DataTable
+                    :value="configurations"
+                    :paginator="true"
+                    :loading="loading"
+                    :rows="20"
+                    class="p-datatable-sm kn-table"
+                    dataKey="id"
+                    v-model:filters="filters"
+                    filterDisplay="menu"
+                    :globalFilterFields="configurationManagementDescriptor.globalFilterFields"
+                    :rowsPerPageOptions="[10, 15, 20]"
+                    responsiveLayout="stack"
+                    breakpoint="960px"
+                    :currentPageReportTemplate="
+                        $t('common.table.footer.paginated', {
+                            first: '{first}',
+                            last: '{last}',
+                            totalRecords: '{totalRecords}'
+                        })
+                    "
+                    data-test="configurations-table"
+                    v-model:selection="selectedConfiguration"
+                    selectionMode="single"
+                    @rowSelect="showForm"
+                >
+                    <template #header>
+                        <div class="table-header">
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search" />
+                                <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                            </span>
+                        </div>
+                    </template>
+                    <template #empty>
+                        {{ $t('common.info.noDataFound') }}
+                    </template>
+                    <template #loading v-if="loading">
+                        test
+                        {{ $t('common.info.dataLoading') }}
+                    </template>
 
-                        <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :style="configurationManagementDescriptor.table.column.style">
-                            <template #filter="{ filterModel }">
-                                <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
-                            </template>
-                        </Column>
-                        <Column :style="configurationManagementDescriptor.table.iconColumn.style" @rowClick="false">
-                            <template #body="slotProps">
-                                <Button icon="pi pi-trash" class="p-button-link" @click="showDeleteDialog(slotProps.data.id)" :data-test="'delete-button'" />
-                            </template>
-                        </Column>
-                    </DataTable>
-                </div>
+                    <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :style="configurationManagementDescriptor.table.column.style">
+                        <template #filter="{ filterModel }">
+                            <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                        </template>
+                    </Column>
+                    <Column :style="configurationManagementDescriptor.table.iconColumn.style" @rowClick="false">
+                        <template #body="slotProps">
+                            <Button icon="pi pi-trash" class="p-button-link" @click="showDeleteDialog(slotProps.data.id)" :data-test="'delete-button'" />
+                        </template>
+                    </Column>
+                </DataTable>
             </div>
             <div v-if="formVisible">
                 <ConfigurationManagementDialog :model="selectedConfiguration" @created="reload" @close="closeForm" data-test="configuration-form"></ConfigurationManagementDialog>

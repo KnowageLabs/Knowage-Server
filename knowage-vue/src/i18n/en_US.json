@@ -115,14 +115,14 @@
 			},
 			"title": "Configuration Management"
         },
-      "domainsManagement": {
-            "title": "Domains Management",
-            "valueCode": "Value code",
-            "valueName": "Value name",
+        "domainsManagement": {
             "domainCode": "Domain code",
             "domainName": "Domain name",
-            "valueDescription": "Value description"
-      },
+            "title": "Domains Management",
+            "valueCode": "Value code",
+            "valueDescription": "Value description",
+            "valueName": "Value name"
+        },
         "metadata": {
             "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Metadata Management"

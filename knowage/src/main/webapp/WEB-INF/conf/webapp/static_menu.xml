@@ -155,7 +155,7 @@
 				to="/configuration-management" />
 			<ITEM id="7002" label="menu.Domain"
 				requiredFunctionality="DomainManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/domain/domainManagement.jsp" />
+				to="/domains-management" />
 
 			<ITEM id="7003" label="Exporters menu"
 				requiredFunctionality="ExportersCatalogue"
