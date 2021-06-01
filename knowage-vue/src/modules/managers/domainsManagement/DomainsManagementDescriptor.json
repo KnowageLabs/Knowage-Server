@@ -36,6 +36,11 @@
             "toastTitle": "common.toast.updateTitle"
         }
     },
+    "pField": {
+        "style": {
+            "margin-bottom": "40px"
+        }
+    },
     "table": {
         "column": {
             "style": {

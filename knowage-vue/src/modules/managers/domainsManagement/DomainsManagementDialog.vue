@@ -1,7 +1,7 @@
 <template>
     <Dialog :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :header="formHeader" :closable="false" :style="domainsManagementDescriptor.form.style">
         <form class="p-fluid p-m-5" ref="domain-form">
-            <div class="p-field">
+            <div class="p-field" :style="domainsManagementDescriptor.pField.style">
                 <span class="p-float-label">
                     <InputText
                         id="valueCd"
@@ -20,7 +20,7 @@
                 <KnValidationMessages :vComp="v$.domain.valueCd" :additionalTranslateParams="{ fieldName: $t('managers.domainsManagement.valueCode') }"></KnValidationMessages>
             </div>
 
-            <div class="p-field">
+            <div class="p-field" :style="domainsManagementDescriptor.pField.style">
                 <span class="p-float-label">
                     <InputText
                         id="valueName"
@@ -39,7 +39,7 @@
                 <KnValidationMessages :vComp="v$.domain.valueName" :additionalTranslateParams="{ fieldName: $t('managers.domainsManagement.valueName') }"></KnValidationMessages>
             </div>
 
-            <div class="p-field">
+            <div class="p-field" :style="domainsManagementDescriptor.pField.style">
                 <span class="p-float-label">
                     <InputText
                         id="domainCode"
@@ -58,7 +58,7 @@
                 <KnValidationMessages :vComp="v$.domain.domainCode" :additionalTranslateParams="{ fieldName: $t('managers.domainsManagement.domainCode') }"></KnValidationMessages>
             </div>
 
-            <div class="p-field">
+            <div class="p-field" :style="domainsManagementDescriptor.pField.style">
                 <span class="p-float-label">
                     <InputText
                         id="domainName"
@@ -80,7 +80,7 @@
                 <KnValidationMessages :vComp="v$.domain.domainName" :additionalTranslateParams="{ fieldName: $t('managers.domainsManagement.domainName') }"></KnValidationMessages>
             </div>
 
-            <div class="p-field">
+            <div class="p-field" :style="domainsManagementDescriptor.pField.style">
                 <span class="p-float-label">
                     <InputText
                         id="valueDescription"
