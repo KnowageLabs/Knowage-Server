@@ -26,7 +26,6 @@
                         }"
                     />
                 </div>
-
                 <div class="p-field" :style="tabViewDescriptor.pField.style">
                     <span class="p-float-label">
                         <InputText
@@ -53,28 +52,78 @@
                         }"
                     />
                 </div>
-
                 <div class="p-field">
                     <span class="p-float-label">
-                        <FileUpload name="file" url="./upload.php" @upload="onUpload">
-                            <template #empty>
+                        <FileUpload mode="basic" name="file" url="./upload.php" @upload="onUpload" />
+                        <!-- <template #empty>
                                 <p>Drag and drop files to here to upload.</p>
                             </template>
-                        </FileUpload>
+                        </FileUpload> -->
                     </span>
                 </div>
             </form>
-            <!-- === SCHEMA === <br />{{ this.schema }} <br /><br />
-            === SELECTED === <br />{{ this.selectedSchema }} -->
         </template>
     </Card>
-    <Card :style="tabViewDescriptor.card.style">
+    <Card :style="tabViewDescriptor.tableCard.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
                     Saved versions
                 </template>
             </Toolbar>
+        </template>
+        <template #content>
+            <div v-if="!loading">
+                <div class="p-col">
+                    <DataTable
+                        :value="versions"
+                        :paginator="true"
+                        :loading="loading"
+                        :rows="10"
+                        class="p-datatable-sm kn-table"
+                        dataKey="id"
+                        :rowsPerPageOptions="[5, 10, 15]"
+                        responsiveLayout="stack"
+                        breakpoint="960px"
+                        :currentPageReportTemplate="
+                            $t('common.table.footer.paginated', {
+                                first: '{first}',
+                                last: '{last}',
+                                totalRecords: '{totalRecords}'
+                            })
+                        "
+                        data-test="configurations-table"
+                        v-model:selection="selectedVersion"
+                    >
+                        <template #header>
+                            <div class="table-header">
+                                <span class="p-input-icon-left">
+                                    <i class="pi pi-search" />
+                                    <InputText class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                                </span>
+                            </div>
+                        </template>
+                        <template #empty>
+                            {{ $t('common.info.noDataFound') }}
+                        </template>
+                        <template #loading v-if="loading">
+                            test
+                            {{ $t('common.info.dataLoading') }}
+                        </template>
+                        <Column selectionMode="single" :header="$t('managers.mondrianSchemasManagement.headers.active')" headerStyle="width: 3em"></Column>
+                        <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :style="detailDescriptor.table.column.style">
+                            <template #filter="{ filterModel }">
+                                <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                            </template>
+                        </Column>
+                        <Column :style="detailDescriptor.table.iconColumn.style" @rowClick="false">
+                            <template>
+                                <Button icon="pi pi-trash" class="p-button-link" />
+                            </template>
+                        </Column>
+                    </DataTable>
+                </div>
+            </div>
         </template>
     </Card>
 </template>
@@ -83,20 +132,25 @@
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { iSchema } from '../MondrianSchemas'
+import { filterDefault } from '@/helpers/commons/filterHelper'
 import axios from 'axios'
 import useValidate from '@vuelidate/core'
 import tabViewDescriptor from '../MondrianSchemasTabViewDescriptor.json'
-import validationDescriptor from './MondrianSchemasDetailDescriptor.json'
+import detailDescriptor from './MondrianSchemasDetailDescriptor.json'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Card from 'primevue/card'
 import FileUpload from 'primevue/fileupload'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
 
 export default defineComponent({
     name: 'detail-tab',
     components: {
         Card,
         KnValidationMessages,
-        FileUpload
+        FileUpload,
+        DataTable,
+        Column
     },
     props: {
         selectedSchema: {
@@ -109,16 +163,20 @@ export default defineComponent({
         return {
             loading: false,
             tabViewDescriptor,
-            validationDescriptor,
+            detailDescriptor,
             v$: useValidate() as any,
             schema: {} as iSchema,
             versions: {} as any,
-            selectedVersion: null
+            selectedVersion: null,
+            columns: detailDescriptor.columns
         }
     },
+    filters: {
+        global: [filterDefault]
+    } as Object,
     validations() {
         return {
-            schema: createValidations('schema', validationDescriptor.validations.schema)
+            schema: createValidations('schema', detailDescriptor.validations.schema)
         }
     },
     mounted() {

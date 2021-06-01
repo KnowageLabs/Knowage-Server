@@ -10,5 +10,33 @@
                 "validators": [{ "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
             }
         ]
+    },
+    "columns": [
+        {
+            "field": "fileName",
+            "header": "managers.mondrianSchemasManagement.headers.fileName"
+        },
+        {
+            "field": "creationUser",
+            "header": "managers.mondrianSchemasManagement.headers.creator"
+        },
+        {
+            "field": "creationDate",
+            "header": "managers.mondrianSchemasManagement.headers.creationDate"
+        }
+    ],
+    "table": {
+        "column": {
+            "style": {
+                "width": "18%",
+                "word-break": "break-all"
+            }
+        },
+        "iconColumn": {
+            "style": {
+                "width": "10%",
+                "text-align": "end"
+            }
+        }
     }
 }

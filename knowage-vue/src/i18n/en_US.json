@@ -125,6 +125,12 @@
         "mondrianSchemasManagement": {
             "title": "OLAP schemas' catalogue",
             "noResults": "No schemas' available for the selected filter.",
+            "headers": {
+                "active": "Active",
+                "fileName": "File Name",
+                "creator": "Creator",
+                "creationDate": "Creation Date"
+            },
             "detail": {
                 "title": "Detail",
                 "name": "Name",

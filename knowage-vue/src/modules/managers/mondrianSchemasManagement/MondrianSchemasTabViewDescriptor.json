@@ -12,7 +12,14 @@
     },
     "card": {
         "style": {
-            "height": "40vh",
+            "height": "18em",
+            "width": "100%",
+            "margin-bottom": "2em"
+        }
+    },
+    "tableCard": {
+        "style": {
+            "height": "40em",
             "width": "100%",
             "margin-bottom": "2em"
         }
