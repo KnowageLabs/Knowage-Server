@@ -1,0 +1,14 @@
+{
+    "validations": {
+        "schema": [
+            {
+                "fieldName": "name",
+                "validators": [{ "key": "required" }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "description",
+                "validators": [{ "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            }
+        ]
+    }
+}
