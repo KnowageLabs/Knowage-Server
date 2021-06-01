@@ -231,6 +231,8 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			newSbiWidgetGallery.setType(widgetGalleryDTO.getType());
 			newSbiWidgetGallery.setUserIn(profile.getUserId());
 			newSbiWidgetGallery.setOutputType(widgetGalleryDTO.getOutputType());
+			newSbiWidgetGallery.getSbiWidgetGalleryTags().clear();
+
 			String tags = widgetGalleryDTO.getTags().toString().equals("[]") ? "" : widgetGalleryDTO.getTags().toString();
 			List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, profile.getUserId(), tags);
 			if (tagList != null) {

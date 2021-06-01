@@ -1,6 +1,7 @@
 {
     "common": {
         "cancel": "cancel",
+		"choose": "choose",
         "close": "close",
         "codingLanguages": {
             "css": "css",
@@ -11,6 +12,7 @@
         "deleteAll": "delete all",
         "description": "description",
         "download": "download",
+		"dragAndDropFilesHere": "Drag and drop files here.",
         "error": {
             "downloading": "Error downloading ",
             "exceededSize": "Uploaded file exceedes max size {size}",
@@ -44,18 +46,19 @@
         "toast": {
             "createTitle": "Created",
             "deleteConfirmTitle": "Confirm Delete?",
-            "deleteTitle": "Deleted",
             "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
             "deleteSuccess": "Item was deleted successfully",
+			"deleteTitle": "Deleted",
             "success": "Operation succeeded",
             "unsavedChangesHeader": "Unsaved changes",
             "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
             "updateTitle": "Updated"
         },
         "type": "type",
+		"uploading": "Uploading",
         "validation": {
+			"maximumCharacters": "The maximum length allowed is {max}",
             "regex": "Invalid format",
-            "maximumCharacters": "The maximum length allowed is {max}",
             "required": "{fieldName} is required"
         },
         "version": "version",
@@ -101,16 +104,16 @@
     },
     "managers": {
         "configurationManagement": {
-            "title": "Configuration Management",
             "createNewHeader": "Create new configuration",
             "headers": {
+				"active": "Is active",
+				"category": "Category",
+				"description": "Description",
                 "label": "Label",
                 "name": "Name",
-                "valueCheck": "Value Check",
-                "category": "Category",
-                "active": "Is active",
-                "description": "Description"
-            }
+				"valueCheck": "Value Check"
+			},
+			"title": "Configuration Management"
         },
       "domainsManagement": {
             "title": "Domains Management",

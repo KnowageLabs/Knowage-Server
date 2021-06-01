@@ -248,14 +248,14 @@ public class SbiWidgetGallery implements Serializable {
 
 	public SbiWidgetGalleryTag addSbiWidgetGalleryTag(SbiWidgetGalleryTag sbiWidgetGalleryTag) {
 		getSbiWidgetGalleryTags().add(sbiWidgetGalleryTag);
-//		sbiWidgetGalleryTag.setSbiWidgetGallery(this);
+		sbiWidgetGalleryTag.setSbiWidgetGallery(this);
 
 		return sbiWidgetGalleryTag;
 	}
 
 	public SbiWidgetGalleryTag removeSbiWidgetGalleryTag(SbiWidgetGalleryTag sbiWidgetGalleryTag) {
 		getSbiWidgetGalleryTags().remove(sbiWidgetGalleryTag);
-//		sbiWidgetGalleryTag.setSbiWidgetGallery(null);
+		sbiWidgetGalleryTag.setSbiWidgetGallery(null);
 
 		return sbiWidgetGalleryTag;
 	}
