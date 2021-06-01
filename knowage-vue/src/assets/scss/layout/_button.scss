@@ -1,13 +1,28 @@
-.kn-button {
+.kn-button,
+.p-button.kn-button {
     background-color: $color-secondary;
     color: white;
     text-transform: uppercase;
+    border-radius: 2px;
+    padding: 0.75rem 2rem;
     &:hover:enabled {
         color: $color-secondary;
     }
     &--primary {
         @extend .kn-button;
         background-color: $color-primary;
+        &:hover:enabled {
+            color: $button-text-color;
+            background-color: lighten($color-primary, 10%);
+        }
+    }
+    &--secondary {
+        @extend .kn-button;
+        background-color: $color-default;
+        &:hover:enabled {
+            color: $button-text-color;
+            background-color: lighten($color-default, 10%);
+        }
     }
     &.p-button-text {
         background-color: transparent;

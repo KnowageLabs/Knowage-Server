@@ -100,13 +100,29 @@
         "pt_BR": "portuguese"
     },
     "managers": {
-        "domainsManagement": {
+        "configurationManagement": {
+            "title": "Configuration Management",
+            "createNewHeader": "Create new configuration",
+            "headers": {
+                "label": "Label",
+                "name": "Name",
+                "valueCheck": "Value Check",
+                "category": "Category",
+                "active": "Is active",
+                "description": "Description"
+            }
+        },
+      "domainsManagement": {
             "title": "Domains Management",
             "valueCode": "Value code",
             "valueName": "Value name",
             "domainCode": "Domain code",
             "domainName": "Domain name",
             "valueDescription": "Value description"
+      },
+        "metadata": {
+            "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "title": "Metadata Management"
         },
         "widgetGallery": {
             "deleteTemplate": "Delete template",

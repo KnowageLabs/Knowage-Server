@@ -7,6 +7,7 @@ const store = createStore({
 			user: {},
 			error: {},
 			info: {},
+			warning: {},
 			downloads: {},
 			locale: {},
 			news: {}
@@ -21,6 +22,9 @@ const store = createStore({
 		},
 		setInfo(state, info) {
 			state.info = { title: info.title, msg: info.msg }
+		},
+		setWarning(state, warning) {
+			state.warning = { title: warning.title, msg: warning.msg }
 		},
 		setLocale(state, locale) {
 			state.locale = locale
