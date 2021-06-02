@@ -1,0 +1,8 @@
+{
+    "filterFields": ["title", "description"],
+    "iconTypesMap": {
+        "News": { "className": "far fa-newspaper" },
+        "Notification": { "className": "fas fa-envelope" },
+        "Warning": { "className": "fas fa-exclamation-circle" }
+    }
+}

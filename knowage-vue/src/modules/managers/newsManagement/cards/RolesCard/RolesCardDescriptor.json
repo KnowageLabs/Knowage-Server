@@ -1,0 +1,18 @@
+{
+    "column": {
+        "header": {
+            "style": {
+                "width": "70%",
+                "text-transform": "capitalize"
+            }
+        },
+        "style": {
+            "width": "30%"
+        }
+    },
+    "card": {
+        "style": {
+            "margin": "2rem"
+        }
+    }
+}

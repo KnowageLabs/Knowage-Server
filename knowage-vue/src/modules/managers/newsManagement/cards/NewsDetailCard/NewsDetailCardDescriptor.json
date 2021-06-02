@@ -1,0 +1,41 @@
+{
+    "card": {
+        "style": {
+            "margin": "2rem"
+        }
+    },
+    "newsTypes": [
+        {
+            "id": 1,
+            "value": "News"
+        },
+        {
+            "id": 2,
+            "value": "Notification"
+        },
+        {
+            "id": 3,
+            "value": "Warning"
+        }
+    ],
+    "input": {
+        "title": {
+            "style": {
+                "width": "50%",
+                "margin": "0.5rem"
+            }
+        },
+        "expirationDate": {
+            "style": {
+                "width": "20%",
+                "margin": "0.5rem"
+            }
+        },
+        "type": {
+            "style": {
+                "width": "30%",
+                "margin": "0.5rem"
+            }
+        }
+    }
+}

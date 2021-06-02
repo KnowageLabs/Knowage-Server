@@ -1,0 +1,26 @@
+{
+    "validations": {
+        "news": [
+            {
+                "fieldName": "title",
+                "validators": [{ "key": "required" }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "expirationDate",
+                "validators": [{ "key": "required" }]
+            },
+            {
+                "fieldName": "type",
+                "validators": [{ "key": "required" }]
+            },
+            {
+                "fieldName": "description",
+                "validators": [{ "key": "required" }]
+            },
+            {
+                "fieldName": "html",
+                "validators": [{ "key": "required" }]
+            }
+        ]
+    }
+}
