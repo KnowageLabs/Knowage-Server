@@ -128,6 +128,44 @@
             "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Metadata Management"
         },
+        "profileAttributesManagement": {
+            "title": "Profile Attributes",
+            "name": "Name",
+            "description": "Description",
+            "validation": {
+              "extendedAlphanumeric": "Invalid format",
+              "maximumCharacters": "The maximum length allowed is {length}",
+              "required": "{field} is required"
+            },
+            "unsavedChangesHeader": "Unsaved changes",
+            "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
+            "valueDescription": "Value description",
+            "confirmDeleteMessage": "Are you sure you want to delete the selected {item}?",
+            "confirmUnsavedChangesMessage": "You have not saved your recent changes. Continue without saving?",
+            "info": {
+              "saveMessage": "Attribute saved",
+              "saveTitle": "Save attribute",
+              "createMessage": "Attribute created",
+              "createTitle": "Create attribute",
+              "deleteMessage": "Attribute deleted",
+              "deleteTitle": "Delete attribute",
+              "updateMessage": "Attribute updated",
+              "updateTitle": "Update attribute"
+            },
+            "form": {
+              "name": "Name",
+              "description": "Description",
+              "dataType": "Data type",
+              "manualInput": "Manual input",
+              "lov": "Lov",
+              "multiValue": "Multivalue",
+              "allowUser": "Allow user to see field",
+              "syntax": {
+                "simple" : "Simple",
+                "complex": "Complex"
+              }
+            }
+        },
         "widgetGallery": {
             "deleteTemplate": "Delete template",
             "downloadTemplate": "Download template",
