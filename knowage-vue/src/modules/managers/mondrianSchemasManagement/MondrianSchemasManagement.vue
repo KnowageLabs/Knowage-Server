@@ -40,7 +40,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view @touched="touched = true" @closed="touched = false" />
+                <router-view @touched="touched = true" @closed="touched = false" @inserted="reloadPage" />
             </div>
         </div>
     </div>

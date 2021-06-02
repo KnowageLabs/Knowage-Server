@@ -8,6 +8,10 @@
             {
                 "fieldName": "description",
                 "validators": [{ "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "type",
+                "validators": [{ "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
             }
         ]
     },

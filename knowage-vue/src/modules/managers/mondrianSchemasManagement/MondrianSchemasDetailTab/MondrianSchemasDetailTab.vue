@@ -15,7 +15,6 @@
                             maxLength="100"
                             @blur="v$.schema.name.$touch()"
                             @input="onFieldChange('name', $event.target.value)"
-                            data-test="name-input"
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('managers.mondrianSchemasManagement.detail.name') }} * </label>
                     </span>
@@ -39,7 +38,6 @@
                             maxLength="500"
                             @blur="v$.schema.description.$touch()"
                             @input="onFieldChange('description', $event.target.value)"
-                            data-test="description-input"
                         />
                         <label for="description" class="kn-material-input-label">
                             {{ $t('managers.mondrianSchemasManagement.detail.description') }}
@@ -54,13 +52,14 @@
                 </div>
                 <div class="p-field">
                     <span class="p-float-label">
-                        <FileUpload mode="basic" name="file" url="./upload.php" @upload="onUpload" />
+                        <FileUpload mode="basic" name="file" url="http://localhost:8080/knowage/restful-services/2.0/mondrianSchemasResource/26/versions" @upload="onUpload" />
                         <!-- <template #empty>
                                 <p>Drag and drop files to here to upload.</p>
                             </template>
                         </FileUpload> -->
                     </span>
                 </div>
+                <!-- <InputText id="type" class="kn-material-input" type="text" v-model.trim="v$.schema.type.$model" @input="onFieldChange('type', $event.target.value)" /> -->
             </form>
         </template>
     </Card>
@@ -73,33 +72,15 @@
             </Toolbar>
         </template>
         <template #content>
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
             <div v-if="!loading">
                 <div class="p-col">
-                    <DataTable
-                        :value="versions"
-                        :paginator="true"
-                        :loading="loading"
-                        :rows="10"
-                        class="p-datatable-sm kn-table"
-                        dataKey="id"
-                        :rowsPerPageOptions="[5, 10, 15]"
-                        responsiveLayout="stack"
-                        breakpoint="960px"
-                        :currentPageReportTemplate="
-                            $t('common.table.footer.paginated', {
-                                first: '{first}',
-                                last: '{last}',
-                                totalRecords: '{totalRecords}'
-                            })
-                        "
-                        data-test="configurations-table"
-                        v-model:selection="selectedVersion"
-                    >
+                    <DataTable :value="versions" :scrollable="true" scrollHeight="45vh" :loading="loading" :rows="7" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" v-model:selection="selectedVersion" v-model:filters="filters">
                         <template #header>
                             <div class="table-header">
                                 <span class="p-input-icon-left">
                                     <i class="pi pi-search" />
-                                    <InputText class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                                    <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" badge="0" />
                                 </span>
                             </div>
                         </template>
@@ -117,8 +98,9 @@
                             </template>
                         </Column>
                         <Column :style="detailDescriptor.table.iconColumn.style" @rowClick="false">
-                            <template>
-                                <Button icon="pi pi-trash" class="p-button-link" />
+                            <template #body="slotProps">
+                                <Button icon="pi pi-download" class="p-button-link" />
+                                <Button icon="pi pi-trash" class="p-button-link" @click="showDeleteDialog(slotProps.data.id)" />
                             </template>
                         </Column>
                     </DataTable>
@@ -131,7 +113,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
-import { iSchema } from '../MondrianSchemas'
+import { iSchema, iVersion } from '../MondrianSchemas'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import axios from 'axios'
 import useValidate from '@vuelidate/core'
@@ -167,13 +149,13 @@ export default defineComponent({
             v$: useValidate() as any,
             schema: {} as iSchema,
             versions: {} as any,
-            selectedVersion: null,
-            columns: detailDescriptor.columns
+            selectedVersion: {} as iVersion,
+            columns: detailDescriptor.columns,
+            filters: {
+                global: [filterDefault]
+            } as Object
         }
     },
-    filters: {
-        global: [filterDefault]
-    } as Object,
     validations() {
         return {
             schema: createValidations('schema', detailDescriptor.validations.schema)
@@ -202,6 +184,26 @@ export default defineComponent({
                     this.versions = response.data
                 })
                 .finally(() => (this.loading = false))
+        },
+        showDeleteDialog(versionId: number) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteConfirmTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteVersion(versionId)
+            })
+        },
+        onUpload() {
+            this.$toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 })
+        },
+        async deleteVersion(versionId: number) {
+            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.schema.id}` + '/versions/' + versionId).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.deleteTitle'),
+                    msg: this.$t('common.toast.deleteSuccess')
+                })
+                this.loadVersions()
+            })
         }
     }
 })

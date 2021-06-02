@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #left>{{ selectedSchema.name }} </template>
         <template #right>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>
     </Toolbar>
@@ -13,6 +13,7 @@
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
                 </template>
+                {{ selectedSchema }}
 
                 <MondrianSchemasDetailTab :selectedSchema="selectedSchema" @fieldChanged="onFieldChange" />
             </TabPanel>
@@ -42,7 +43,7 @@ export default defineComponent({
         TabPanel,
         MondrianSchemasDetailTab
     },
-    emits: ['touched', 'closed'],
+    emits: ['touched', 'closed', 'inserted'],
     props: {
         id: {
             type: String,
@@ -52,6 +53,7 @@ export default defineComponent({
     data() {
         return {
             loading: false,
+            operation: 'insert',
             tabViewDescriptor: tabViewDescriptor,
             selectedSchema: {} as iSchema,
             v$: useValidate() as any
@@ -68,6 +70,7 @@ export default defineComponent({
     watch: {
         id() {
             this.loadSelectedSchema()
+            console.log('activated')
         }
     },
     methods: {
@@ -88,6 +91,34 @@ export default defineComponent({
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.id}`).then((response) => (this.selectedSchema = response.data))
             }
             this.loading = false
+        },
+        async handleSubmit() {
+            if (this.v$.$invalid) {
+                return
+            }
+            this.selectedSchema.type = 'MONDRIAN_SCHEMA'
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/`
+            if (this.selectedSchema.id) {
+                this.operation = 'update'
+                url += this.selectedSchema.id
+            }
+            if (this.operation === 'insert') {
+                await axios.post(url, this.selectedSchema).then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),
+                        msg: this.$t(this.tabViewDescriptor.operation.success)
+                    })
+                    this.$emit('inserted')
+                })
+            } else {
+                await axios.put(url, this.selectedSchema).then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),
+                        msg: this.$t(this.tabViewDescriptor.operation.success)
+                    })
+                    this.$emit('inserted')
+                })
+            }
         }
     }
 })
