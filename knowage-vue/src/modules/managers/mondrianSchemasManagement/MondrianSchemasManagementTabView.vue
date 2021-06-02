@@ -89,6 +89,8 @@ export default defineComponent({
             this.loading = true
             if (this.id) {
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.id}`).then((response) => (this.selectedSchema = response.data))
+            } else {
+                this.selectedSchema = {} as iSchema
             }
             this.loading = false
         },
