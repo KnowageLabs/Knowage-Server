@@ -27,7 +27,6 @@ export function createValidations(key: string, validations: IValidation[], custo
     validations.forEach((validation) => {
         validationObject[validation.fieldName] = addValidators(validation.validators, customValidators)
     })
-    console.log('validators object', validationObject)
     return validationObject
 }
 
@@ -43,10 +42,8 @@ function addValidators(validations: IValdatorInfo[], customValidators: ICustomVa
 function getValidatorFunction(validatorName: string, customValidators: ICustomValidatorMap, validator?: IValidator) {
     switch (validatorName) {
         case 'required':
-            console.log('vracam required')
             return required
         case 'maxLength':
-            console.log('maxLength: params:', validator?.params)
             return maxLength(validator?.params.max)
         case 'minLength':
             return minLength(validator?.params.min)
@@ -61,7 +58,6 @@ function getValidatorFunction(validatorName: string, customValidators: ICustomVa
         case 'email':
             return email
         default: {
-            console.log(`Searching for custom validator ${validatorName}`)
             const customValidator = customValidators[validatorName]
             if (customValidators[validatorName]) {
                 return customValidator
