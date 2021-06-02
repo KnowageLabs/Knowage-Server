@@ -19,7 +19,8 @@
                     <span>{{ slotProps.option.userId }}</span>
                     <span class="kn-list-item-text-secondary">{{ slotProps.option.fullName }}</span>
                 </div>
-                <Button icon="pi pi-trash" class="p-button-link p-button-sm" @click="onUserDelete(slotProps.option.id)" :data-test="'delete-button'" />
+                <Button v-if="slotProps.option.failedLoginAttempts >=3" icon="pi pi-lock" class="p-button-danger p-button-text"/>
+                <Button icon="pi pi-trash" class="p-button-link p-button-sm" @click="onUserDelete(slotProps.option.id)" :data-test="'deleteBtn'" />
             </div>
         </template>
     </Listbox>
@@ -58,7 +59,7 @@ export default defineComponent({
     data() {
         return {
             listUsers: [] as iUser[],
-            load: false,
+            load: false as Boolean,
             selectedUser: null as iUser | null,
             usersManagementDescriptor: usersManagementDescriptor
         }

@@ -37,6 +37,7 @@ import Dropdown from 'primevue/dropdown'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import rolesTabDescriptor from './RolesTabDescriptor.json'
+import { iRole } from '../UsersManagement'
 
 export default defineComponent({
     name: 'roles-tab',
@@ -56,12 +57,12 @@ export default defineComponent({
         return {
             defaultRole: null,
             rolesTabDescriptor,
-            selectedRoles: [] as any[]
+            selectedRoles: [] as iRole[]
         }
     },
     watch: {
         selected: {
-            handler: function(selected) {
+            handler: function(selected : iRole[]) {
                 this.selectedRoles = selected
             }
         },

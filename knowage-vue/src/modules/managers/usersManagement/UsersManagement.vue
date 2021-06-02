@@ -12,7 +12,7 @@
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <div v-if="!loading">
-                    <UsersListBox :users="users" :loading="loading" @selectedUser="onUserSelect" @deleteUser="onUserDelete" data-test="users-listbox"></UsersListBox>
+                    <UsersListBox :users="users" :loading="loading" @selectedUser="onUserSelect" @deleteUser="onUserDelete" data-test="users-list"></UsersListBox>
                 </div>
             </div>
 

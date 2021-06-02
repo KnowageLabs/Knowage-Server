@@ -132,9 +132,7 @@ describe("Users Management loading", () => {
     expect(wrapper.vm.loading).toBe(true);
     expect(wrapper.find('[data-test="progress-bar"]').exists()).toBe(true);
   });
-  it("shows error toast if service returns error", async () => {
-    // not in this component
-  });
+
   it('shows "no data" label when loaded empty', async () => {
     axios.get.mockReturnValueOnce(
       Promise.resolve({
@@ -144,24 +142,22 @@ describe("Users Management loading", () => {
     const wrapper = factory();
     await flushPromises();
     expect(wrapper.vm.users.length).toBe(0);
-    expect(wrapper.find('[data-test="users-table"]').html()).toContain(
+    expect(wrapper.find('[data-test="users-list"]').html()).toContain(
       "common.info.noDataFound"
     );
   });
 });
 
 describe("Users Management", () => {
+
   it("deletes user clicking on delete icon", async () => {
     const wrapper = factory();
     await flushPromises();
-    const deleteButton = wrapper.find('[data-test="delete-button"]');
+    const deleteButton = wrapper.find('[data-test="deleteBtn"]');
     await deleteButton.trigger("click");
     expect($confirm.require).toHaveBeenCalledTimes(1);
-
-    await wrapper.vm.deleteUser(1);
-
+    await wrapper.vm.onUserDelete(1);
     await wrapper.vm.loadAllUsers();
-    expect(wrapper.vm.loading).toBe(false);
   });
 
   it("opens empty form when the '+' button is clicked", async () => {
@@ -174,8 +170,9 @@ describe("Users Management", () => {
   it("shows form when a row is clicked", async () => {
     const wrapper = factory();
     await flushPromises();
-    const dataTable = wrapper.find('[data-test="users-table"]');
-    await dataTable.find("tr td").trigger("click");
+    const datalist = wrapper.find('[data-test="users-list"]');
+    
+    await datalist.find("ul li").trigger("click");
 
     expect(wrapper.vm.hiddenForm).toBe(false);
     expect(wrapper.vm.userDetailsForm).toStrictEqual({
@@ -209,49 +206,47 @@ describe("Users Management", () => {
   });
 });
 
-describe("Users Management Search", () => {
-  it("filters the list if a label (or other column) is provided", async () => {
-    const wrapper = factory();
-    await flushPromises();
-    const dataTable = wrapper.find('[data-test="users-table"]');
-    const inputSearch = wrapper.find('[data-test="search-input"]');
 
-    expect(dataTable.html()).toContain("biadmin");
-    expect(dataTable.html()).toContain("bidemo");
-    expect(dataTable.html()).toContain("bidev");
-    
-    expect(dataTable.html()).toContain("Knowage Administrator");
-    expect(dataTable.html()).toContain("Knowage Demo User");
-    expect(dataTable.html()).toContain("Knowage Developer");
+describe('Users Management Search', () => {
+  it('filters the list if a label or name is provided', async () => {
+      const wrapper = factory()
+      await flushPromises()
+      const usersList = wrapper.find('[data-test="users-list"]')
+      const searchInput = usersList.find('input')
 
-    // userID
-    await inputSearch.setValue("biadmin");
-    expect(dataTable.html()).not.toContain("bidev");
-    expect(dataTable.html()).toContain("Knowage Administrator");
+      expect(usersList.html()).toContain('biadmin')
+      expect(usersList.html()).toContain('bidemo')
+      expect(usersList.html()).toContain('bidev')
 
-    // Full Name
-    await inputSearch.setValue("Knowage Administrator");
-    expect(dataTable.html()).not.toContain("bidemo");
-    expect(dataTable.html()).toContain("Knowage Administrator");
+      // User Id
+      await searchInput.setValue('biadmin')
+      await usersList.trigger('filter')
+      expect(usersList.html()).toContain('biadmin')
+      expect(usersList.html()).not.toContain('bidemo')
+      expect(usersList.html()).not.toContain('bidev')
 
-  });
+      // Full Name
+      await searchInput.setValue('Knowage Administrator')
+      await usersList.trigger('filter')
+      expect(usersList.html()).not.toContain('Knowage Demo User')
+      expect(usersList.html()).not.toContain('Knowage Developer')
+      expect(usersList.html()).toContain('Knowage Administrator')
+  })
+  it('returns no data if the label is not present', async () => {
+      const wrapper = factory()
+      await flushPromises()
+      const usersList = wrapper.find('[data-test="users-list"]')
+      const searchInput = usersList.find('input')
 
-  it("returns no data if the label is not present", async () => {
-    const wrapper = factory();
-    await flushPromises();
-    const dataTable = wrapper.find('[data-test="users-table"]');
-    const inputSearch = wrapper.find('[data-test="search-input"]');
+      expect(usersList.html()).toContain('biadmin')
+      expect(usersList.html()).toContain('bidemo')
+      expect(usersList.html()).toContain('bidev')
 
-    expect(dataTable.html()).toContain("biadmin");
-    expect(dataTable.html()).toContain("bidemo");
-    expect(dataTable.html()).toContain("bidev");
+      await searchInput.setValue('not present value')
+      await usersList.trigger('filter')
 
-    await inputSearch.setValue("not present value");
-    expect(dataTable.html()).not.toContain("biadmin");
-    expect(dataTable.html()).not.toContain("bidemo");
-    expect(dataTable.html()).not.toContain("bidev");
-    expect(wrapper.find('[data-test="users-table"]').html()).toContain(
-      "common.info.noDataFound"
-    );
-  });
-});
+      expect(usersList.html()).not.toContain('biadmin')
+      expect(usersList.html()).not.toContain('bidemo')
+      expect(usersList.html()).not.toContain('bidev')
+  })
+})

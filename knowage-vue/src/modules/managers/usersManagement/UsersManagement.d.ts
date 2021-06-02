@@ -13,7 +13,7 @@ export interface iUser {
     failedLoginAttempts: number
     blockedByFailedLoginAttempts: boolean
     sbiExtUserRoleses: Array<iRole>
-    sbiUserAttributeses: Object<iAttribute>
+    sbiUserAttributeses: iAttribute
 }
 
 export interface iRole {
@@ -23,13 +23,17 @@ export interface iRole {
 }
 
 export interface iAttribute {
-    //TODO: Da li je ovo nekada null?
     attributeId: number
     attributeName: string
     attributeDescription: string | null
-    allowUser: number | null
-    multivalue: number | null
-    syntax: number | null
+    allowUser: Boolean | null
+    multivalue: Boolean | null
+    syntax: Boolean | null
     lovId: number | null
-    value: Object | null
+    value: iValue | null
+}
+
+export interface iValue {
+    name: string
+    type: string
 }

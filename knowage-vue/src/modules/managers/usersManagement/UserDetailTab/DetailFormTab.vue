@@ -2,7 +2,7 @@
     <Card style="width: 100%; margin-bottom: 2em">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left> {{ $t('managers.usersManagement.detail').toUpperCase() }} -{{ formInsert }} </template>
+                <template #left> {{ $t('managers.usersManagement.detail').toUpperCase() }} </template>
             </Toolbar>
         </template>
         <template #content>
@@ -23,7 +23,6 @@
                             <label for="userId">{{ $t('managers.usersManagement.form.userId') }} *</label>
                         </span>
                     </div>
-
                     <KnValidationMessages :vComp="vobj.userDetailsForm.userId" :additionalTranslateParams="{ fieldName: $t('managers.usersManagement.form.userId') }"></KnValidationMessages>
                 </div>
 
@@ -34,7 +33,6 @@
                             <label for="fullName">{{ $t('managers.usersManagement.form.fullName') }} *</label>
                         </span>
                     </div>
-
                     <KnValidationMessages :vComp="vobj.userDetailsForm.fullName" :additionalTranslateParams="{ fieldName: $t('managers.usersManagement.form.fullName') }"></KnValidationMessages>
                 </div>
 
@@ -68,7 +66,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-// import { required, sameAs, minLength } from '@vuelidate/validators'
 import useValidate from '@vuelidate/core'
 import Card from 'primevue/card'
 import InlineMessage from 'primevue/inlinemessage'
@@ -108,9 +105,9 @@ export default defineComponent({
             v$: useValidate() as any,
             userDetailsForm: {} as any,
             defaultRole: null,
-            hiddenForm: true,
-            disableUsername: true,
-            loading: false
+            hiddenForm: true as Boolean,
+            disableUsername: true as Boolean,
+            loading: false as Boolean
         }
     },
     methods: {
