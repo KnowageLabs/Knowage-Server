@@ -30,6 +30,7 @@
           :selectedAttribute="attribute"
           @refreshRecordSet="loadAllAttributes"
           @closesForm="closeForm"
+          @dataChanged="dirty=true"
         ></ProfileAttributesForm>
       </div>
     </div>
@@ -62,6 +63,7 @@ export default defineComponent({
       columns: ProfileAttributesManagementDescriptor.columns,
       loading: false as Boolean,
       hideForm: false as Boolean,
+      dirty: false as Boolean
     };
   },
   async created() {
@@ -78,10 +80,26 @@ export default defineComponent({
         .finally(() => (this.loading = false));
     },
     onAttributeSelect(attribute: iAttribute) {
+      if (this.dirty) {
+         this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.dirty = false
+                        this.prepareFormData(attribute)
+                    }
+                })
+      } else {
+        this.prepareFormData(attribute)
+      }
+    },
+    prepareFormData(attribute: iAttribute) {
       this.attribute = { ...attribute };
       if (this.hideForm) {
         this.hideForm = false;
       }
+
     },
     onAttributeDelete(id: number) {
       this.deleteAttribute(id);

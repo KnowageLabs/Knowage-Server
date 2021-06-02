@@ -34,7 +34,7 @@
                   id="attributeName"
                   type="text"
                   v-model.trim="v$.attribute.attributeName.$model"
-                  @blur="v$.attribute.attributeName.$touch()"
+                  @change="onDataChange(v$.attribute.attributeName)"
                   class="p-inputtext p-component kn-material-input"
                 />
                 <label for="attributeName">{{ $t("managers.profileAttributesManagement.form.name") }} *</label>
@@ -50,7 +50,7 @@
                   id="attributeDescription"
                   type="text"
                   v-model.trim="v$.attribute.attributeDescription.$model"
-                  @blur="v$.attribute.attributeDescription.$touch()"
+                  @blur="onDataChange(v$.attribute.attributeDescription)"
                   class="p-inputtext p-component kn-material-input"
                 />
                 <label for="attributeDescription">{{ $t("managers.profileAttributesManagement.form.description") }} *</label>
@@ -69,6 +69,7 @@
                   optionLabel="name"
                   optionValue="value"
                   class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
+                  @change="onDataChange(v$.attribute.value)"
                 />
                 <label for="dataType">{{ $t("managers.profileAttributesManagement.form.dataType") }} *</label>
               </span>
@@ -107,7 +108,7 @@
                   :options="lovs"
                   optionLabel="name"
                   optionValue="id"
-                  :onChange="checkSyntax"
+                  @change="onLoveDropdownChange"
                   class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
                 />
                 <label for="attributeDescription">{{ $t("managers.profileAttributesManagement.form.lov") }} *</label>
@@ -117,13 +118,13 @@
 
           <div class="p-inputgroup p-col-6 p-sm-12 p-md-6">
             <div class="p-field-radiobutton p-col-6 p-sm-12 p-md-6">
-              <InputSwitch v-model="v$.attribute.multivalue.$model" :onInput="checkSyntax()" />
+              <InputSwitch v-model="v$.attribute.multivalue.$model" :onInput="checkSyntax()" @change="onDataChange(v$.attribute.multivalue)" />
               <i class="p-ml-2 pi pi-bars"></i>
               <label for="multiValue">{{ $t("managers.profileAttributesManagement.form.multiValue") }}</label>
             </div>
 
             <div class="p-field-radiobutton p-col-6 p-sm-12 p-md-6">
-              <InputSwitch v-model="v$.attribute.allowUser.$model" />
+              <InputSwitch v-model="v$.attribute.allowUser.$model"  @change="onDataChange(v$.attribute.allowUser)" />
               <i class="p-ml-2 pi pi-eye"></i>
               <label for="multiValue">{{ $t("managers.profileAttributesManagement.form.allowUser") }}</label>
             </div>
@@ -137,6 +138,7 @@
                   name="syntax"
                   :value="false"
                   v-model="v$.attribute.syntax.$model"
+                  @change="onDataChange(v$.attribute.syntax)"
                 />
                 <label class="p-m-2" for="simple">{{ $t("managers.profileAttributesManagement.form.syntax.simple") }}</label>
                 <div class="p-mt-2" v-if="v$.attribute.syntax.$model === false">
@@ -149,6 +151,7 @@
                   name="syntax"
                   :value="true"
                   v-model="v$.attribute.syntax.$model"
+                  @change="onDataChange(v$.attribute.syntax)"
                 />
                 <label class="p-m-2" for="complex">{{ $t("managers.profileAttributesManagement.form.syntax.complex") }}</label>
                 <div class="p-m-2" v-if="v$.attribute.syntax.$model === true">
@@ -207,7 +210,7 @@ export default defineComponent({
       },
     },
   },
-  emits: ["refreshRecordSet", "closesForm"],
+  emits: ["refreshRecordSet", "closesForm", "dataChanged"],
   data() {
     return {
       v$: useValidate() as any,
@@ -259,17 +262,9 @@ export default defineComponent({
         this.attribute.value = "NUM";
       }
       if (this.attribute.attributeId != null) {
-        response = await axios.put(
-          this.apiUrl + "attributes/" + this.attribute.attributeId,
-          this.attribute,
-          ProfileAttributesManagementDescriptor.headers
-        );
+        response = await axios.put( this.apiUrl + "attributes/" + this.attribute.attributeId, this.attribute, ProfileAttributesManagementDescriptor.headers );
       } else {
-        response = await axios.post(
-          this.apiUrl + "attributes/",
-          this.attribute,
-          ProfileAttributesManagementDescriptor.headers
-        );
+        response = await axios.post( this.apiUrl + "attributes/", this.attribute, ProfileAttributesManagementDescriptor.headers );
       }
       if (response.status == 200) {
         if (response.data.errors) {
@@ -333,6 +328,7 @@ export default defineComponent({
     showLovDropdown() {
       this.disableLovs();
       this.LovSelectHidden = false;
+      this.$emit('dataChanged');
     },
     disableLovs() {
       this.enableLov = false;
@@ -342,6 +338,14 @@ export default defineComponent({
       this.enableLov = true;
       this.disableLov = false;
     },
+    onDataChange(v$Comp) {
+      v$Comp.$touch()
+      this.$emit('dataChanged')
+    },
+    onLoveDropdownChange() {
+      this.checkSyntax();
+      this.$emit('dataChanged')
+    }
   },
 });
 </script>
