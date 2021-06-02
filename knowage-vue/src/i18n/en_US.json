@@ -59,7 +59,8 @@
         "validation": {
             "maximumCharacters": "The maximum length allowed is {max}",
             "regex": "Invalid format",
-            "required": "{fieldName} is required"
+            "required": "{fieldName} is required",
+            "minLength": "This field should have at least {min} characters"
         },
         "version": "version",
         "warning": {}

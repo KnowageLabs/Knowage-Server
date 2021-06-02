@@ -1,5 +1,6 @@
 import { email, maxLength, maxValue, minLength, minValue, required } from '@vuelidate/validators'
 import { extendedAlphanumeric } from '@/helpers/commons/regexHelper'
+import { ValidationRule } from '@vuelidate/core'
 
 export interface IValidator {
     type: string
@@ -8,6 +9,7 @@ export interface IValidator {
 
 export interface IValdatorInfo {
     key: string
+    translateBaseKey?: string
     validator?: IValidator
 }
 
@@ -16,26 +18,29 @@ export interface IValidation {
     validators: IValdatorInfo[]
 }
 
-export function createValidations(key: string, validations: IValidation[]) {
+export interface ICustomValidatorMap {
+    [type: string]: Function | ValidationRule
+}
+
+export function createValidations(key: string, validations: IValidation[], customValidators: ICustomValidatorMap = {}) {
     const validationObject = {}
     validations.forEach((validation) => {
-        validationObject[validation.fieldName] = addValidators(validation.validators)
+        validationObject[validation.fieldName] = addValidators(validation.validators, customValidators)
     })
     console.log('validators object', validationObject)
     return validationObject
 }
 
-function addValidators(validations: IValdatorInfo[]) {
+function addValidators(validations: IValdatorInfo[], customValidators: ICustomValidatorMap) {
     const validatorsObject = {}
     validations.forEach((validatorInfo) => {
-        validatorsObject[validatorInfo.key] = getValidatorFunction(validatorInfo.validator ? validatorInfo.validator.type : validatorInfo.key, validatorInfo.validator)
+        validatorsObject[validatorInfo.key] = getValidatorFunction(validatorInfo.validator ? validatorInfo.validator.type : validatorInfo.key, customValidators, validatorInfo.validator)
     })
 
     return validatorsObject
 }
 
-function getValidatorFunction(validatorName: string, validator?: IValidator) {
-    console.log(validatorName)
+function getValidatorFunction(validatorName: string, customValidators: ICustomValidatorMap, validator?: IValidator) {
     switch (validatorName) {
         case 'required':
             console.log('vracam required')
@@ -44,7 +49,7 @@ function getValidatorFunction(validatorName: string, validator?: IValidator) {
             console.log('maxLength: params:', validator?.params)
             return maxLength(validator?.params.max)
         case 'minLength':
-            return minLength(validator?.params.length)
+            return minLength(validator?.params.min)
         case 'minValue':
             return minValue(validator?.params.min)
         case 'maxValue':
@@ -55,6 +60,16 @@ function getValidatorFunction(validatorName: string, validator?: IValidator) {
             return valueListValidator(validator?.params.valueList)
         case 'email':
             return email
+        default: {
+            console.log(`Searching for custom validator ${validatorName}`)
+            const customValidator = customValidators[validatorName]
+            if (customValidators[validatorName]) {
+                return customValidator
+            } else {
+                console.log(`Validator ${validatorName} with name NOT FOUND`)
+            }
+            break
+        }
     }
 }
 
