@@ -1,10 +1,14 @@
 <template>
-    <div class="newsHint">
-        <Card class="newsHintContent">
-            <template #content>
+    <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
+        <template #left>{{ $t('managers.newsManagement.detailTitle') }}</template>
+    </Toolbar>
+    <div class="p-d-flex p-ai-center p-jc-center hint-container">
+        <div class="p-d-flex p-flex-column">
+            <img :src="require('@/assets/images/newspaper.svg')" height="100" width="100" />
+            <div>
                 {{ $t('managers.newsManagement.noNewsSelected') }}
-            </template>
-        </Card>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -17,16 +21,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.newsHint {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-
-    .newsHintContent {
-        border-radius: 0;
-        width: 90%;
-    }
+.hint-container {
+    height: 70vh;
 }
 </style>

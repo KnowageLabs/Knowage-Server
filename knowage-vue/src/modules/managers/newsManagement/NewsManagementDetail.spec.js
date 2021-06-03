@@ -74,11 +74,14 @@ afterEach(() => {
 })
 
 describe('News Management Detail', () => {
-    xit('save button is disabled if a mandatory input is empty', () => {
+    it('save button is disabled if a mandatory input is empty', () => {
         const wrapper = factory()
-        expect(wrapper.vm.selectedNews).toStrictEqual({})
 
-        expect(wrapper.vm.buttonDisabled).toBe(true)
+        expect(wrapper.vm.selectedNews).toStrictEqual({
+            type: 1,
+            roles: []
+        })
+        expect(wrapper.vm.invalid).toBe(true)
     })
 
     it('loads correct news and shows succes info if it is saved', async () => {
@@ -89,7 +92,6 @@ describe('News Management Detail', () => {
 
         expect(wrapper.vm.selectedNews).toStrictEqual({ ...mockedNews, expirationDate: '10/02/2019' })
 
-        wrapper.vm.v$.$invalid = false
         wrapper.vm.handleSubmit()
 
         await flushPromises()
@@ -106,7 +108,6 @@ describe('News Management Detail', () => {
         wrapper.vm.selectedNews = mockedNews
         delete wrapper.vm.selectedNews.id
 
-        wrapper.vm.v$.$invalid = false
         wrapper.vm.handleSubmit()
 
         await flushPromises()

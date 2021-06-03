@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ $t('managers.newsManagement.detailTitle') }}</template>
         <template #right>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="buttonDisabled" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="invalid" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
         </template>
     </Toolbar>
@@ -23,7 +23,6 @@ import moment from 'moment'
 import NewsDetailCard from './cards/NewsDetailCard/NewsDetailCard.vue'
 import newsManagementDetailDescriptor from './NewsManagementDetailDescriptor.json'
 import RolesCard from './cards/RolesCard/RolesCard.vue'
-import useValidate from '@vuelidate/core'
 
 export default defineComponent({
     components: {
@@ -40,16 +39,18 @@ export default defineComponent({
     data() {
         return {
             newsManagementDetailDescriptor,
-            selectedNews: {} as iNews,
+            selectedNews: {
+                type: 1,
+                roles: []
+            } as iNews,
             roleList: [] as iRole[],
             loading: false,
-            operation: 'insert',
-            v$: useValidate() as any
+            operation: 'insert'
         }
     },
     computed: {
-        buttonDisabled(): any {
-            return this.v$.$invalid
+        invalid(): any {
+            return this.selectedNews.title == null || this.selectedNews.expirationDate == null || this.selectedNews.description == null || this.selectedNews.type == null
         }
     },
     watch: {
@@ -68,7 +69,8 @@ export default defineComponent({
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/news/${this.id}?isTechnical=true`).then((response) => (this.selectedNews = { ...response.data, expirationDate: moment(response.data.expirationDate).format('MM/DD/YYYY') }))
             } else {
                 this.selectedNews = {
-                    type: 1
+                    type: 1,
+                    roles: []
                 } as iNews
             }
             this.loading = false
@@ -83,7 +85,7 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         async handleSubmit() {
-            if (this.v$.$invalid) {
+            if (this.invalid) {
                 return
             }
 
@@ -93,7 +95,7 @@ export default defineComponent({
                 this.operation = 'update'
             }
 
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', this.selectedNews).then(() => {
+            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...this.selectedNews, expirationDate: moment(this.selectedNews.expirationDate).valueOf() }).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t(this.newsManagementDetailDescriptor.operation[this.operation].toastTitle),
                     msg: this.$t(this.newsManagementDetailDescriptor.operation.success)

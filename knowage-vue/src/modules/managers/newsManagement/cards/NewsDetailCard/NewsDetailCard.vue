@@ -50,7 +50,7 @@
                                 }"
                                 :showIcon="true"
                                 @blur="v$.news.expirationDate.$touch()"
-                                @dateSelect="onFieldChange('expirationDate', moment($event).unix())"
+                                @dateSelect="onFieldChange('expirationDate', moment($event).valueOf())"
                                 data-test="expiration-input"
                             />
                             <label for="expirationDate" id="calendar-label"> {{ $t('managers.newsManagement.form.expirationDate') }} * </label>
