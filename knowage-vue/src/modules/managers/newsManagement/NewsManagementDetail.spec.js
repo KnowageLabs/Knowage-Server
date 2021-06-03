@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
+import moment from 'moment'
 import NewsManagementDetail from './NewsManagementDetail.vue'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
@@ -97,7 +98,7 @@ describe('News Management Detail', () => {
         await flushPromises()
 
         expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: '10/02/2019' })
+        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: moment(mockedNews.expirationDate).valueOf() })
         expect($store.commit).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
         expect($router.replace).toHaveBeenCalledWith('/news-management')
@@ -113,7 +114,7 @@ describe('News Management Detail', () => {
         await flushPromises()
 
         expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', mockedNews)
+        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: moment(mockedNews.expirationDate).valueOf() })
         expect($store.commit).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
         expect($router.replace).toHaveBeenCalledWith('/news-management')
