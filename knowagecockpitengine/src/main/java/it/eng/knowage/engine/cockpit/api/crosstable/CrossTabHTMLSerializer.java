@@ -776,8 +776,6 @@ public class CrossTabHTMLSerializer {
 		List<MeasureInfo> measuresInfo = crossTab.getMeasures();
 		List<SourceBean> measureHeaders = new ArrayList<SourceBean>();
 		List<String> columnsSpecification = crossTab.getColumnsSpecification();
-		boolean isDataNoStandardStyle = false;
-
 		Monitor internalserializeData1 = null;
 		Monitor internalserializeData2 = null;
 		Monitor internalserializeData3 = null;
@@ -917,16 +915,8 @@ public class CrossTabHTMLSerializer {
 							if (textColor != null && !textColor.isEmpty())
 								dataStyle += "color:" + textColor + ";";
 						}
-						// if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
-						if (!dataStyle.equals(DEFAULT_STYLE)) {
-							aColumn.setAttribute(STYLE_ATTRIBUTE, dataStyle);
-							classType += "NoStandardStyle";
-							isDataNoStandardStyle = true;
-							aColumn.setAttribute(CLASS_ATTRIBUTE, "dataNoStandardStyle");
-						} else {
-							isDataNoStandardStyle = false;
-							aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
-						}
+
+						aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
 
 					} else {
 						String totalStyle = getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "text-align");
@@ -1072,11 +1062,7 @@ public class CrossTabHTMLSerializer {
 					}
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
-					if (isDataNoStandardStyle)
-						aColumn.setAttribute(CLASS_ATTRIBUTE, "dataNoStandardStyle");
-					else
-						aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
-
+					aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
 					aColumn.setCharacters(text);
 				}
 				aRow.setAttribute(aColumn);
