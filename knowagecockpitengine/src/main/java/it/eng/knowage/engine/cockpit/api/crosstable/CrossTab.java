@@ -582,7 +582,7 @@ public class CrossTab {
 							if (columnPathArray != null && entryParents != null && Arrays.deepEquals(columnPathArray, entryParents)) {
 								measureToOrderMap.put(valueLbl, value);
 							} else {
-								double dummyValue = direction == -1 ? Double.MIN_VALUE : Double.MAX_VALUE;
+								double dummyValue = direction == -1 ? -Double.MAX_VALUE : Double.MAX_VALUE;
 								measureToOrderMap.put(valueLbl, dummyValue);
 							}
 						}
@@ -3107,9 +3107,8 @@ public class CrossTab {
 
 	private Map<String, Double> sortMeasures(Map<Integer, NodeComparator> sortKeys, Map<String, Double> values, int rowsCount, int columnsCount, int totRows,
 			int totColumns) {
-		Map<String, Double> valuesCopy = new HashMap<String, Double>(values);
-		Map toReturn = new LinkedHashMap<String, Double>();
-		List valuesToOrder = new ArrayList();
+		Map<String, Double> toReturn = new LinkedHashMap<String, Double>();
+		List<Double> valuesToOrder = new ArrayList<Double>();
 
 		ValueComparator comparator = null;
 		if (sortKeys != null) {
@@ -3125,9 +3124,8 @@ public class CrossTab {
 
 		// sort measure on rows
 		for (int c = 0; c < values.size(); c++) {
-			List valuesForCategory = getRowsCategoryValues(valuesCopy, rowsCount);
+			List<Double> valuesForCategory = new ArrayList<Double>(values.values());
 			if (valuesForCategory.size() == 0) {
-//				valuesToOrder.add(new Double("0")); //no value to order
 				continue;
 			}
 			if (valuesForCategory.size() > 0 && comparator != null) {
@@ -3141,43 +3139,9 @@ public class CrossTab {
 
 		// reproduce order to original map
 		for (int v = 0; v < valuesToOrder.size(); v++) {
-			Double value = (Double) valuesToOrder.get(v);
+			Double value = valuesToOrder.get(v);
 			String valueLabel = getLabelFromValue(value, values);
 			toReturn.put(valueLabel, value);
-		}
-
-		return toReturn;
-	}
-
-	/**
-	 * Returns the sorted sub-list on values considering the father category's value
-	 *
-	 * @param key
-	 * @param values
-	 * @param numCategories
-	 * @return
-	 */
-	private List getRowsCategoryValues(Map<String, Double> values, int numCategories) {
-		List toReturn = new ArrayList();
-		Map<String, Double> valuesCopy = (Map<String, Double>) ((HashMap<String, Double>) values).clone();
-
-		String parentValue = "";
-		for (String key : valuesCopy.keySet()) {
-			String[] measureInfo = key.split(PATH_SEPARATOR);
-
-			if (parentValue.equals("") && numCategories > 1)
-				parentValue = measureInfo[numCategories - 1]; // parentValue is setted only with more categories
-			if (!parentValue.equals("") && measureInfo[numCategories - 1].equalsIgnoreCase(parentValue)) {
-				// if it's last category level and the parent is the same add value to the list, else returns the list
-				toReturn.add(valuesCopy.get(key));
-				values.remove(key);
-			} else if (numCategories == 1) {
-				// only one category case: put directly the value in the list to order
-				toReturn.add(valuesCopy.get(key));
-				values.remove(key);
-			}
-			// else
-			// break; //it must continue because the input list coudn't be sorted on previous categories
 		}
 
 		return toReturn;
