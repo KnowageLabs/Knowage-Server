@@ -2,8 +2,14 @@ export interface iNews {
     id: string,
     title: string,
     description: string,
-    type: any,
-    html: string,
-    expirationDate: number | string,
-    active: boolean
+    type: number,
+    roles?: Array,
+    html?: string,
+    expirationDate?: number | string,
+    active?: boolean
+}
+
+export interface iRole {
+    id: number,
+    name: string
 }

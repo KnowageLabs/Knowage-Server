@@ -2,7 +2,7 @@
     "column": {
         "header": {
             "style": {
-                "width": "70%",
+                "min-width": "70%",
                 "text-transform": "capitalize"
             }
         },
@@ -12,7 +12,10 @@
     },
     "card": {
         "style": {
-            "margin": "2rem"
+            "margin": "1rem"
         }
+    },
+    "table": {
+        "scrollHeight": "200px"
     }
 }

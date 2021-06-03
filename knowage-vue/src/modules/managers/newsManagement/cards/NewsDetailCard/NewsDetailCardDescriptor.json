@@ -1,21 +1,21 @@
 {
     "card": {
         "style": {
-            "margin": "2rem"
+            "margin": "1rem"
         }
     },
     "newsTypes": [
         {
-            "id": 1,
-            "value": "News"
+            "value": 1,
+            "name": "News"
         },
         {
-            "id": 2,
-            "value": "Notification"
+            "value": 2,
+            "name": "Notification"
         },
         {
-            "id": 3,
-            "value": "Warning"
+            "value": 3,
+            "name": "Warning"
         }
     ],
     "input": {
@@ -36,6 +36,11 @@
                 "width": "30%",
                 "margin": "0.5rem"
             }
+        }
+    },
+    "editor": {
+        "style": {
+            "height": "260px"
         }
     }
 }

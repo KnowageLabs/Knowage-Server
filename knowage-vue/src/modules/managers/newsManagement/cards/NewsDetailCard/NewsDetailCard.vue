@@ -12,7 +12,7 @@
             </Toolbar>
         </template>
         <template #content>
-            <form class="p-fluid p-m-5">
+            <form class="p-fluid p-m-2">
                 <div class="p-field p-d-flex">
                     <div :style="newsDetailCardDescriptor.input.title.style">
                         <span class="p-float-label">
@@ -74,21 +74,12 @@
                                 }"
                                 v-model="v$.news.type.$model"
                                 :options="newsDetailCardDescriptor.newsTypes"
-                                placeholder=" "
+                                optionLabel="name"
+                                optionValue="value"
                                 @before-show="v$.news.type.$touch()"
                                 @change="onFieldChange('type', $event.value)"
                             >
-                                <template #value="slotProps">
-                                    <div v-if="slotProps.value">
-                                        <span>{{ slotProps.value.value }}</span>
-                                    </div>
-                                </template>
-                                <template #option="slotProps">
-                                    <div>
-                                        <span>{{ slotProps.option.value }}</span>
-                                    </div>
-                                </template></Dropdown
-                            >
+                            </Dropdown>
                             <label for="type" class="kn-material-input-label">{{ $t('managers.newsManagement.form.type') }} * </label>
                         </span>
                         <KnValidationMessages
@@ -102,6 +93,7 @@
                 </div>
 
                 <div class="p-field">
+                    <label for="description" class="kn-material-input-label"> {{ $t('managers.newsManagement.form.description') }} * </label>
                     <span class="p-float-label">
                         <Textarea
                             id="description"
@@ -113,42 +105,29 @@
                             :autoResize="true"
                             maxLength="140"
                             rows="2"
+                            :placeholder="$t('managers.newsManagement.form.descriptionPlaceholder')"
                             @blur="v$.news.description.$touch()"
                             @input="onFieldChange('description', $event.target.value)"
                             data-test="description-input"
                         />
-                        <div class="p-text-right">
-                            <small id="description-help">{{ descriptionHelp }}</small>
-                        </div>
-                        <label for="description" class="kn-material-input-label"> {{ $t('managers.newsManagement.form.description') }} * </label>
                     </span>
-                    <KnValidationMessages
-                        :vComp="v$.news.description"
-                        :additionalTranslateParams="{
-                            fieldName: $t('managers.newsManagement.form.description')
-                        }"
-                    />
+                    <div class="p-d-flex p-flex-row p-jc-between">
+                        <div>
+                            <KnValidationMessages
+                                :vComp="v$.news.description"
+                                :additionalTranslateParams="{
+                                    fieldName: $t('managers.newsManagement.form.description')
+                                }"
+                            />
+                        </div>
+                        <small id="description-help">{{ descriptionHelp }}</small>
+                    </div>
                 </div>
 
                 <div class="p-field">
                     <span>
-                        <Editor
-                            id="html"
-                            v-model="v$.news.html.$model"
-                            editorStyle="height: 320px"
-                            :class="{
-                                'p-invalid': v$.news.html.$invalid && v$.news.html.$dirty
-                            }"
-                            @blur="v$.news.html.$touch()"
-                            @text-change="onFieldChange('html', $event)"
-                        />
+                        <Editor id="html" v-model="news.html" :editorStyle="newsDetailCardDescriptor.editor.style" @text-change="onFieldChange('html', $event.htmlValue)" />
                     </span>
-                    <KnValidationMessages
-                        :vComp="v$.news.html"
-                        :additionalTranslateParams="{
-                            fieldName: $t('managers.newsManagement.form.html')
-                        }"
-                    />
                 </div>
             </form>
         </template>
@@ -209,24 +188,12 @@ export default defineComponent({
         }
     },
     async created() {
-        this.news = { ...this.selectedNews } as iNews
-        if (!this.news?.type) {
-            this.news.type = {
-                id: 1,
-                value: 'News'
-            }
-        }
+        this.loadNews()
     },
     watch: {
         selectedNews() {
             this.v$.$reset()
-            this.news = { ...this.selectedNews } as iNews
-            if (!this.news?.type) {
-                this.news.type = {
-                    id: 1,
-                    value: 'News'
-                }
-            }
+            this.loadNews()
         }
     },
     methods: {
@@ -237,6 +204,12 @@ export default defineComponent({
         onActiveChange() {
             console.log('active' + ' ==> ', this.news.active)
             this.$emit('fieldChanged', { fieldName: 'active', value: this.news.active })
+        },
+        loadNews() {
+            this.news = { ...this.selectedNews } as iNews
+            if (!this.news?.type) {
+                this.news.type = 1
+            }
         }
     }
 })

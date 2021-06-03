@@ -15,7 +15,7 @@
                 dataKey="id"
                 :rows="20"
                 :scrollable="true"
-                scrollHeight="200px"
+                :scrollHeight="rolesCardDescriptor.table.scrollHeight"
                 responsiveLayout="stack"
                 breakpoint="960px"
                 @rowSelect="setDirty"
@@ -36,6 +36,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iRole } from '../../NewsManagement'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -56,20 +57,23 @@ export default defineComponent({
     data() {
         return {
             rolesCardDescriptor,
-            selectedCategories: [] as any
+            selectedCategories: [] as iRole[]
         }
     },
     watch: {
         selected() {
-            this.selectedCategories = this.selected
+            this.loadSelectedCategories()
         }
     },
     created() {
-        this.selectedCategories = this.selected
+        this.loadSelectedCategories()
     },
     methods: {
         setDirty() {
             this.$emit('changed', this.selectedCategories)
+        },
+        loadSelectedCategories() {
+            this.selectedCategories = this.selected as iRole[]
         }
     }
 })

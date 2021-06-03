@@ -16,10 +16,6 @@
             {
                 "fieldName": "description",
                 "validators": [{ "key": "required" }]
-            },
-            {
-                "fieldName": "html",
-                "validators": [{ "key": "required" }]
             }
         ]
     }

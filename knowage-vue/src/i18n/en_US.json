@@ -105,6 +105,7 @@
             "detailTitle": "News Detail",
             "form": {
                 "description": "Description",
+                "descriptionPlaceholder": "This is the text that will appear on the news notification",
                 "expirationDate": "Expiration Date",
                 "title": "News Title",
                 "type": "News Type"

@@ -53,11 +53,9 @@ import { defineComponent } from 'vue'
 import { iNews } from './NewsManagement'
 import Avatar from 'primevue/avatar'
 import axios from 'axios'
-import newsManagementDescriptor from './NewsManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
-
-// TODO add avatar to list-view
+import newsManagementDescriptor from './NewsManagementDescriptor.json'
 
 export default defineComponent({
     name: 'news-management',
@@ -81,10 +79,9 @@ export default defineComponent({
         async loadAllNews() {
             this.loading = true
             await axios
-                .get('http://localhost:3000/knowage-vue/data/news.json')
-                // .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news')
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news')
                 .then((response) => {
-                    this.newsList = response.data.data
+                    this.newsList = response.data
                 })
                 .finally(() => (this.loading = false))
         },

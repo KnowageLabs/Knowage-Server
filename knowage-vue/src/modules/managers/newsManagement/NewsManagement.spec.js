@@ -12,19 +12,19 @@ const mockedNews = [
         id: 1,
         title: 'Test',
         description: 'Test',
-        type: 'News'
+        type: 1
     },
     {
         id: 2,
         title: 'Dummy news',
         description: 'Dummy description',
-        type: 'Notification'
+        type: 2
     },
     {
         id: 3,
         title: 'Another news',
         description: 'Another description',
-        type: 'Warning'
+        type: 3
     }
 ]
 
@@ -122,7 +122,6 @@ describe('News Management', () => {
 })
 
 describe('News Management Search', () => {
-    // TODO ask about this one (type or description)
     it('filters the list if a Title (or description) is provided', async () => {
         const wrapper = factory()
         await flushPromises()
