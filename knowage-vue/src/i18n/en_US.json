@@ -131,17 +131,8 @@
         "profileAttributesManagement": {
             "title": "Profile Attributes",
             "name": "Name",
-            "description": "Description",
-            "validation": {
-              "extendedAlphanumeric": "Invalid format",
-              "maximumCharacters": "The maximum length allowed is {length}",
-              "required": "{field} is required"
-            },
-            "unsavedChangesHeader": "Unsaved changes",
-            "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
+            "description": "Description",            
             "valueDescription": "Value description",
-            "confirmDeleteMessage": "Are you sure you want to delete the selected {item}?",
-            "confirmUnsavedChangesMessage": "You have not saved your recent changes. Continue without saving?",
             "info": {
               "saveMessage": "Attribute saved",
               "saveTitle": "Save attribute",

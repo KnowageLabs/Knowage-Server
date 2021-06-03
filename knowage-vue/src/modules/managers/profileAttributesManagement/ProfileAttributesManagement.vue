@@ -122,13 +122,8 @@ export default defineComponent({
     },
     async deleteAttribute(id: number) {
       this.$confirm.require({
-        message: this.$t(
-          "managers.profileAttributesManagement.confirmDeleteMessage",
-          {
-            item: "attribute",
-          }
-        ),
-        header: this.$t("common.confirmation"),
+        message: this.$t('common.toast.deleteMessage'),
+        header: this.$t('common.toast.deleteConfirmTitle'),
         icon: "pi pi-exclamation-triangle",
         accept: async () => {
           this.loading = true;
