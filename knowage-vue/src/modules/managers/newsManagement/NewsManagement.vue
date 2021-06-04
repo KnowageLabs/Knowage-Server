@@ -78,10 +78,13 @@ export default defineComponent({
     methods: {
         async loadAllNews() {
             this.loading = true
+            this.newsList = []
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news')
                 .then((response) => {
-                    this.newsList = response.data
+                    response.data.map((news: iNews) => {
+                        this.newsList.push({ ...news, newsType: this.setNewsType(news.type) })
+                    })
                 })
                 .finally(() => (this.loading = false))
         },
@@ -106,7 +109,10 @@ export default defineComponent({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteNews(newsId)
+                accept: () => {
+                    this.touched = false
+                    this.deleteNews(newsId)
+                }
             })
         },
         async deleteNews(newsId: number) {
@@ -122,6 +128,16 @@ export default defineComponent({
         pageReload() {
             this.touched = false
             this.loadAllNews()
+        },
+        setNewsType(type: number) {
+            switch (type) {
+                case 1:
+                    return 'News'
+                case 2:
+                    return 'Notification'
+                case 3:
+                    return 'Warning'
+            }
         }
     }
 })

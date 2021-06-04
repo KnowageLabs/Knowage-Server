@@ -4,7 +4,7 @@
     </Toolbar>
     <div class="p-d-flex p-ai-center p-jc-center hint-container">
         <div class="p-d-flex p-flex-column">
-            <img :src="require('@/assets/images/newspaper.svg')" height="100" width="100" />
+            <img :src="require('@/assets/images/news/newspaper.svg')" height="100" width="100" />
             <div>
                 {{ $t('managers.newsManagement.noNewsSelected') }}
             </div>

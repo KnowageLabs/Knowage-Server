@@ -16,13 +16,13 @@ const mockedNews = [
     },
     {
         id: 2,
-        title: 'Dummy news',
+        title: 'Dummy item',
         description: 'Dummy description',
         type: 2
     },
     {
         id: 3,
-        title: 'Another news',
+        title: 'Another item',
         description: 'Another description',
         type: 3
     }
@@ -129,22 +129,29 @@ describe('News Management Search', () => {
         const searchInput = newsList.find('input')
 
         expect(newsList.html()).toContain('Test')
-        expect(newsList.html()).toContain('Dummy news')
-        expect(newsList.html()).toContain('Another news')
+        expect(newsList.html()).toContain('Dummy item')
+        expect(newsList.html()).toContain('Another item')
 
         // Title
-        await searchInput.setValue('news')
+        await searchInput.setValue('item')
         await newsList.trigger('filter')
         expect(newsList.html()).not.toContain('Test')
-        expect(newsList.html()).toContain('Dummy news')
-        expect(newsList.html()).toContain('Another news')
+        expect(newsList.html()).toContain('Dummy item')
+        expect(newsList.html()).toContain('Another item')
 
         // Descrpiton
         await searchInput.setValue('Test')
         await newsList.trigger('filter')
         expect(newsList.html()).toContain('Test')
-        expect(newsList.html()).not.toContain('Dummy news')
-        expect(newsList.html()).not.toContain('Another news')
+        expect(newsList.html()).not.toContain('Dummy item')
+        expect(newsList.html()).not.toContain('Another item')
+
+        // News type
+        await searchInput.setValue('Warning')
+        await newsList.trigger('filter')
+        expect(newsList.html()).not.toContain('Test')
+        expect(newsList.html()).not.toContain('Dummy item')
+        expect(newsList.html()).toContain('Another item')
     })
     it('returns no data if the Title is not present', async () => {
         const wrapper = factory()
@@ -153,14 +160,14 @@ describe('News Management Search', () => {
         const searchInput = newsList.find('input')
 
         expect(newsList.html()).toContain('Test')
-        expect(newsList.html()).toContain('Dummy news')
-        expect(newsList.html()).toContain('Another news')
+        expect(newsList.html()).toContain('Dummy item')
+        expect(newsList.html()).toContain('Another item')
 
         await searchInput.setValue('not present value')
         await newsList.trigger('filter')
 
         expect(newsList.html()).not.toContain('Test')
-        expect(newsList.html()).not.toContain('Dummy news')
-        expect(newsList.html()).not.toContain('Another news')
+        expect(newsList.html()).not.toContain('Dummy item')
+        expect(newsList.html()).not.toContain('Another item')
     })
 })

@@ -3,6 +3,7 @@ export interface iNews {
     title: string,
     description: string,
     type: number,
+    newsType?: string,
     roles?: Array,
     html?: string,
     expirationDate?: number | string,

@@ -1,5 +1,5 @@
 {
-    "filterFields": ["title", "description"],
+    "filterFields": ["title", "description", "newsType"],
     "iconTypesMap": {
         "1": { "className": "far fa-newspaper" },
         "2": { "className": "fas fa-envelope" },
