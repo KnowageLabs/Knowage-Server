@@ -76,9 +76,6 @@
 	export default defineComponent({
 		name: 'import-export-gallery',
 		components: { Column, DataTable, InputText, OverlayPanel, Tag },
-		props: {
-			isLoading: Boolean
-		},
 		data() {
 			return {
 				currentImage: '',

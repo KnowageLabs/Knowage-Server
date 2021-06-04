@@ -1,41 +1,41 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		"prettier.semi": false,
-		"prettier.useEditorConfig": false,
-		"scss.lint.float": "warning",
-		"vetur.format.defaultFormatter.css": "prettier",
-		"scss.lint.important": "warning",
-		"prettier.printWidth": 300,
-		"prettier.singleQuote": true,
-		"vetur.format.defaultFormatter.html": "prettier",
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"eslint.format.enable": true,
-		"prettier.trailingComma": "none",
-		"editor.formatOnSave": true,
-		"editor.codeActionsOnSave": {
-			"source.fixAll.sortJSON": true
-		},
-		"sortJSON.contextMenu": {
-			"sortJSON": true,
-			"sortJSONReverse": true,
-			"sortJSONKeyLength": true,
-			"sortJSONKeyLengthReverse": true,
-			"sortJSONAlphaNum": true,
-			"sortJSONAlphaNumReverse": true,
-			"sortJSONValues": true,
-			"sortJSONValuesReverse": true,
-			"sortJSONType": true,
-			"sortJSONTypeReverse": true
-		},
-		"vetur.format.options.tabSize": 4,
-		"prettier.tabWidth": 4
-	},
-	"extensions": {
-		"recommendations": ["octref.vetur", "dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
-	}
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "prettier.semi": false,
+        "prettier.useEditorConfig": false,
+        "scss.lint.float": "warning",
+        "vetur.format.defaultFormatter.css": "prettier",
+        "scss.lint.important": "warning",
+        "prettier.printWidth": 300,
+        "prettier.singleQuote": true,
+        "vetur.format.defaultFormatter.html": "prettier",
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "eslint.format.enable": true,
+        "prettier.trailingComma": "none",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.sortJSON": true
+        },
+        "sortJSON.contextMenu": {
+            "sortJSON": true,
+            "sortJSONReverse": true,
+            "sortJSONKeyLength": true,
+            "sortJSONKeyLengthReverse": true,
+            "sortJSONAlphaNum": true,
+            "sortJSONAlphaNumReverse": true,
+            "sortJSONValues": true,
+            "sortJSONValuesReverse": true,
+            "sortJSONType": true,
+            "sortJSONTypeReverse": true
+        },
+        "vetur.format.options.tabSize": 4,
+        "prettier.tabWidth": 4
+    },
+    "extensions": {
+        "recommendations": ["octref.vetur", "dbaeumer.vscode-eslint", "esbenp.prettier-vscode", "richie5um2.vscode-sort-json"]
+    }
 }

@@ -1,6 +1,7 @@
 {
     "common": {
         "cancel": "cancel",
+        "choose": "choose",
         "close": "close",
         "codingLanguages": {
             "css": "css",
@@ -11,6 +12,7 @@
         "deleteAll": "delete all",
         "description": "description",
         "download": "download",
+        "dragAndDropFilesHere": "Drag and drop files here.",
         "error": {
             "downloading": "Error downloading ",
             "exceededSize": "Uploaded file exceedes max size {size}",
@@ -44,19 +46,21 @@
         "toast": {
             "createTitle": "Created",
             "deleteConfirmTitle": "Confirm Delete?",
-            "deleteTitle": "Deleted",
             "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
             "deleteSuccess": "Item was deleted successfully",
+            "deleteTitle": "Deleted",
             "success": "Operation succeeded",
             "unsavedChangesHeader": "Unsaved changes",
             "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
             "updateTitle": "Updated"
         },
         "type": "type",
+        "uploading": "Uploading",
         "validation": {
-            "regex": "Invalid format",
             "maximumCharacters": "The maximum length allowed is {max}",
-            "required": "{fieldName} is required"
+            "regex": "Invalid format",
+            "required": "{fieldName} is required",
+            "minLength": "This field should have at least {min} characters"
         },
         "version": "version",
         "warning": {}
@@ -100,6 +104,30 @@
         "pt_BR": "portuguese"
     },
     "managers": {
+        "configurationManagement": {
+            "createNewHeader": "Create new configuration",
+            "headers": {
+                "active": "Is active",
+                "category": "Category",
+                "description": "Description",
+                "label": "Label",
+                "name": "Name",
+                "valueCheck": "Value"
+            },
+            "title": "Configuration Management"
+        },
+        "domainsManagement": {
+            "domainCode": "Domain code",
+            "domainName": "Domain name",
+            "title": "Domains Management",
+            "valueCode": "Value code",
+            "valueDescription": "Value description",
+            "valueName": "Value name"
+        },
+        "metadata": {
+            "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "title": "Metadata Management"
+        },
         "newsManagement": {
             "active": "Active",
             "detailTitle": "News Detail",

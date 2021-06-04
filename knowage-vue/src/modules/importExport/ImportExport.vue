@@ -1,7 +1,7 @@
 <template>
 	<div class="kn-importExport kn-page">
-		<ImportDialog v-bind:visibility="displayImportDialog" @import="startImport"></ImportDialog>
-		<ExportDialog v-bind:visibility="displayExportDialog" @export="startExport"></ExportDialog>
+		<ImportDialog v-model:visibility="displayImportDialog" @import="startImport"></ImportDialog>
+		<ExportDialog v-model:visibility="displayExportDialog" @export="startExport"></ExportDialog>
 		<Toolbar class="kn-toolbar kn-toolbar--primary">
 			<template #left>
 				{{ $t('importExport.title') }}
@@ -68,8 +68,8 @@
 			openExportDialog(): void {
 				this.displayExportDialog = !this.displayExportDialog
 			},
-			startExport(fileName: string): void {
-				axios
+			async startExport(fileName: string) {
+				await axios
 					.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery-ee/export/bulk', this.streamlineSelectedItemsArray(fileName), {
 						responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
@@ -94,27 +94,31 @@
 						(error) => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t(error) })
 					)
 			},
-			startImport(uploadedFiles): void {
-				var formData = new FormData()
-				formData.append('file', uploadedFiles.files)
-				axios
-					.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery-ee/import/bulk', formData, {
-						headers: {
-							'Content-Type': 'multipart/form-data'
-						}
-					})
-					.then(
-						(response) => {
-							if (response.data.errors) {
-								this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.errorCreatingPackage') })
-								/* closing dialog */
-								this.openImportDialog()
-							} else {
-								this.$store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
+			async startImport(uploadedFiles) {
+				if (uploadedFiles.files || uploadedFiles.files.length > 0) {
+					var formData = new FormData()
+					formData.append('file', uploadedFiles.files)
+					await axios
+						.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery-ee/import/bulk', formData, {
+							headers: {
+								'Content-Type': 'multipart/form-data'
 							}
-						},
-						(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
-					)
+						})
+						.then(
+							(response) => {
+								if (response.data.errors) {
+									this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.errorCreatingPackage') })
+									/* closing dialog */
+									this.openImportDialog()
+								} else {
+									this.$store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
+								}
+							},
+							(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
+						)
+				} else {
+					this.$store.commit('setWarning', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
+				}
 			},
 			streamlineSelectedItemsArray(fileName) {
 				let selectedItemsToBE = {} as JSON

@@ -1,31 +1,37 @@
 .kn-decoration-none {
-	text-decoration: none;
-	color: inherit;
+    text-decoration: none;
+    color: inherit;
 }
 
 .kn-height-full {
-	height: 100%;
+    height: 100%;
 }
 
 .kn-hide {
-	display: none;
+    display: none;
 }
 
 .kn-flex {
-	flex: 1;
+    flex: 1;
 }
 
 .kn-no-select {
-	-webkit-touch-callout: none; /* iOS Safari */
-	-webkit-user-select: none; /* Safari */
-	-khtml-user-select: none; /* Konqueror HTML */
-	-moz-user-select: none; /* Old versions of Firefox */
-	-ms-user-select: none; /* Internet Explorer/Edge */
-	user-select: none; /* Non-prefixed version, currently
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
 .kn-no-decoration {
-	text-decoration: none;
-	color: inherit;
+    text-decoration: none;
+    color: inherit;
+}
+
+.kn-truncated {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }

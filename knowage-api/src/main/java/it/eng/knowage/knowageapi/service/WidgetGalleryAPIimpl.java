@@ -1,3 +1,20 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.knowage.knowageapi.service;
 
 import java.sql.Timestamp;
@@ -214,6 +231,8 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			newSbiWidgetGallery.setType(widgetGalleryDTO.getType());
 			newSbiWidgetGallery.setUserIn(profile.getUserId());
 			newSbiWidgetGallery.setOutputType(widgetGalleryDTO.getOutputType());
+			newSbiWidgetGallery.getSbiWidgetGalleryTags().clear();
+
 			String tags = widgetGalleryDTO.getTags().toString().equals("[]") ? "" : widgetGalleryDTO.getTags().toString();
 			List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, profile.getUserId(), tags);
 			if (tagList != null) {
