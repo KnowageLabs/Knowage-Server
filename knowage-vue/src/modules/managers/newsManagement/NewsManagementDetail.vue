@@ -19,7 +19,6 @@
 import { defineComponent } from 'vue'
 import { iNews, iRole } from './NewsManagement'
 import axios from 'axios'
-import moment from 'moment'
 import NewsDetailCard from './cards/NewsDetailCard/NewsDetailCard.vue'
 import newsManagementDetailDescriptor from './NewsManagementDetailDescriptor.json'
 import RolesCard from './cards/RolesCard/RolesCard.vue'
@@ -66,7 +65,7 @@ export default defineComponent({
         async loadSelectedNews() {
             this.loading = true
             if (this.id) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/news/${this.id}?isTechnical=true`).then((response) => (this.selectedNews = { ...response.data, expirationDate: moment(response.data.expirationDate).format('MM/DD/YYYY') }))
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/news/${this.id}?isTechnical=true`).then((response) => (this.selectedNews = { ...response.data, expirationDate: new Date(response.data.expirationDate) }))
             } else {
                 this.selectedNews = {
                     type: 1,
@@ -89,13 +88,11 @@ export default defineComponent({
                 return
             }
 
-            console.log(this.selectedNews)
-
             if (this.selectedNews.id) {
                 this.operation = 'update'
             }
 
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...this.selectedNews, expirationDate: moment(this.selectedNews.expirationDate).valueOf() }).then(() => {
+            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...this.selectedNews, expirationDate: new Date(this.selectedNews.expirationDate as string).valueOf() }).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t(this.newsManagementDetailDescriptor.operation[this.operation].toastTitle),
                     msg: this.$t(this.newsManagementDetailDescriptor.operation.success)
@@ -116,7 +113,6 @@ export default defineComponent({
             this.$emit('touched')
         },
         onFieldChange(event: any) {
-            console.log(event.fieldName)
             this.selectedNews[event.fieldName] = event.value
             this.$emit('touched')
         }

@@ -50,7 +50,7 @@
                                 }"
                                 :showIcon="true"
                                 @blur="v$.news.expirationDate.$touch()"
-                                @dateSelect="onFieldChange('expirationDate', moment($event).valueOf())"
+                                @dateSelect="onFieldChange('expirationDate', $event.valueOf())"
                                 data-test="expiration-input"
                             />
                             <label for="expirationDate" id="calendar-label"> {{ $t('managers.newsManagement.form.expirationDate') }} * </label>
@@ -198,11 +198,9 @@ export default defineComponent({
     },
     methods: {
         onFieldChange(fieldName: string, value: any) {
-            console.log(fieldName + ' ==> ', value)
             this.$emit('fieldChanged', { fieldName, value })
         },
         onActiveChange() {
-            console.log('active' + ' ==> ', this.news.active)
             this.$emit('fieldChanged', { fieldName: 'active', value: this.news.active })
         },
         loadNews() {

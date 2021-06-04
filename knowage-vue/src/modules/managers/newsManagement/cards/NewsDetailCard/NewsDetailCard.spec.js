@@ -5,8 +5,8 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import InputText from 'primevue/inputtext'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import moment from 'moment'
 import NewsDetailCard from './NewsDetailCard.vue'
+import PrimeVue from 'primevue/config'
 import Textarea from 'primevue/textarea'
 import Toolbar from 'primevue/toolbar'
 
@@ -19,13 +19,14 @@ const mockedNews = {
         value: 'News'
     },
     html: '<p>Test</p>',
-    expirationDate: moment.unix(1622622803).format('MM/DD/YYYY'),
+    expirationDate: new Date('2019-10-02 00:00:00.0'),
     active: true
 }
 
 const factory = () => {
     return mount(NewsDetailCard, {
         global: {
+            plugins: [PrimeVue],
             stubs: {
                 Calendar,
                 Card,
@@ -57,7 +58,7 @@ describe('Role Detail Tab', () => {
 
         expect(activeInput.html()).toContain('aria-checked="true"')
         expect(titleInput.wrapperElement._value).toBe('First news')
-        expect(expirationInput.wrapperElement._value).toBe(moment.unix(1622622803).format('MM/DD/YYYY'))
+        expect(expirationInput.wrapperElement._value).toBe('10/02/2019')
         expect(descriptionInput.wrapperElement._value).toBe('Description')
     })
 
