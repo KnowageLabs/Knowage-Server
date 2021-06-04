@@ -59,7 +59,7 @@ public class SelectQueryVisitorFactory {
 		case BIGQUERY:
 			return new BigQuerySelectQueryVisitor(database);
 		case SYNAPSE:
-			return new SynapseSelectQueryVisitor(database);
+			return new SqlServerSelectQueryVisitor(database);
 		case SPANNER:
 			return new SpannerSelectQueryVisitor(database);
 		default:
