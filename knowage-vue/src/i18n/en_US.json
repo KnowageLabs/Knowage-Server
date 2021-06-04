@@ -104,6 +104,15 @@
         "pt_BR": "portuguese"
     },
     "managers": {
+        "cacheManagement": {
+            "availableMemory": "Available memory",
+            "availableMemoryPercentage": "Available memory percentage",
+            "cacheEnabled": "Cache enabled",
+            "numberOfCachedObjects": "Number of cached objects",
+            "runtimeInformationTitle": "Runtime information",
+            "totalMemory": "Total memory",
+            "usedMemory": "Used Memory"
+        },
         "configurationManagement": {
             "createNewHeader": "Create new configuration",
             "headers": {
