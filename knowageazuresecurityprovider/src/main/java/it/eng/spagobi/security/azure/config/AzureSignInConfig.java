@@ -15,12 +15,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.security.google.config;
+package it.eng.spagobi.security.azure.config;
 
 import org.apache.log4j.Logger;
 
 public class AzureSignInConfig {
 
 	static private Logger logger = Logger.getLogger(AzureSignInConfig.class);
+
+	public static boolean isEnabled() {
+		return true;
+	}
 
 }
