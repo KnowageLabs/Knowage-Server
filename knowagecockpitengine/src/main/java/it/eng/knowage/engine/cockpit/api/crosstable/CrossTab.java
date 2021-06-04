@@ -579,7 +579,8 @@ public class CrossTab {
 							 * WARNING : in fact the following causes some sort of filtering when a record doesn't match the measure a user sorts for. The
 							 * else-branch adds a dummy value to records that don't match to let them appear on the crosstable.
 							 */
-							if (columnPathArray != null && entryParents != null && Arrays.deepEquals(columnPathArray, entryParents)) {
+							if (columnPathArray != null && entryParents != null && Arrays.deepEquals(columnPathArray, entryParents)
+									&& colName.equalsIgnoreCase(alias2Metadata.get(measureLabel).optString("name"))) {
 								measureToOrderMap.put(valueLbl, value);
 							} else {
 								double dummyValue = direction == -1 ? -Double.MAX_VALUE : Double.MAX_VALUE;
