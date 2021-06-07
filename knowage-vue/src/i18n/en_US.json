@@ -58,9 +58,9 @@
         "uploading": "Uploading",
         "validation": {
             "maximumCharacters": "The maximum length allowed is {max}",
+            "minLength": "This field should have at least {min} characters",
             "regex": "Invalid format",
-            "required": "{fieldName} is required",
-            "minLength": "This field should have at least {min} characters"
+            "required": "{fieldName} is required"
         },
         "version": "version",
         "warning": {}
@@ -127,6 +127,36 @@
         "metadata": {
             "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Metadata Management"
+        },
+        "profileAttributesManagement": {
+            "description": "Description",
+            "form": {
+                "allowUser": "Allow user to see field",
+                "dataType": "Data type",
+                "description": "Description",
+                "lov": "Lov",
+                "manualInput": "Manual input",
+                "multiValue": "Multivalue",
+                "name": "Name",
+                "syntax": {
+                    "complex": "Complex",
+                    "simple": "Simple"
+                }
+            },
+            "hint": "Profile attributes allows you to better define different users properties. It's possible to change the name, the description or the types. It's also possible to get a value from a LOV. <br> Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "info": {
+                "createMessage": "Attribute created",
+                "createTitle": "Create attribute",
+                "deleteMessage": "Attribute deleted",
+                "deleteTitle": "Delete attribute",
+                "saveMessage": "Attribute saved",
+                "saveTitle": "Save attribute",
+                "updateMessage": "Attribute updated",
+                "updateTitle": "Update attribute"
+            },
+            "name": "Name",
+            "title": "Profile Attributes Management",
+            "valueDescription": "Value description"
         },
         "widgetGallery": {
             "deleteTemplate": "Delete template",

@@ -33,7 +33,7 @@
                                     <span>{{ slotProps.option.name }}</span>
                                     <span class="kn-list-item-text-secondary">{{ slotProps.option.author }}</span>
                                 </div>
-                                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain kn-gallery-slotProps.option.type" @click="deleteTemplate($event, slotProps.option.id)" />
+                                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deleteTemplate($event, slotProps.option.id)" />
                             </div>
                         </router-link>
                     </template>
