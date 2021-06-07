@@ -330,6 +330,13 @@
 			<version>8.0.0-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowageazuresecurityprovider</artifactId>
+			<version>8.0.0-SNAPSHOT</version>
+			<scope>runtime</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.portlet</groupId>

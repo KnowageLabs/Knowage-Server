@@ -17,14 +17,60 @@
  */
 package it.eng.spagobi.security.azure.config;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Properties;
+
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class AzureSignInConfig {
 
 	static private Logger logger = Logger.getLogger(AzureSignInConfig.class);
 
+	static protected final String AZURE_AUTHENTICATION_CONFIG = "azure.signin.config";
+
+	static protected final String AZURE_CLIENT_ID = "client_id";
+
+	static protected Properties properties = new Properties();
+
+	static {
+		try {
+			String filename = System.getProperty(AZURE_AUTHENTICATION_CONFIG);
+			if (filename != null) {
+				logger.info("Retrieved " + AZURE_AUTHENTICATION_CONFIG + " system property. Azure SignIn configuration file is: [" + filename + "]");
+				try {
+					properties.load(new FileInputStream(filename));
+				} catch (FileNotFoundException e) {
+					logger.error("Could not find file with Azure Sign-In config: file [" + filename + "] not found");
+					throw new SpagoBIRuntimeException("Could not find file with Azure Sign-In config: file [" + filename + "] not found", e);
+				} catch (Exception e) {
+					logger.error("Could not read file with Azure Sign-In config [" + filename + "]");
+					throw new SpagoBIRuntimeException("Could not read file with Azure Sign-In config [" + filename + "] not found", e);
+				}
+				String clientId = properties.getProperty(AZURE_CLIENT_ID);
+				logger.debug("Azure Sign-In Client ID is [" + clientId + "]");
+				Assert.assertNotBlank(clientId, "Azure Sing-In Client ID was not found!");
+			}
+		} catch (Exception e) {
+			logger.error("Error while loading Azure Sing-In configuration file", e);
+			throw new SpagoBIRuntimeException("Error while loading Azure Sing-In configuration file", e);
+		}
+	}
+
 	public static boolean isEnabled() {
-		return true;
+		boolean toReturn = properties.containsKey(AZURE_CLIENT_ID);
+		LogMF.debug(logger, "Azure Sign-In enabled: {0}", toReturn);
+		return toReturn;
+	}
+
+	public static String getClientId() {
+		String toReturn = properties.getProperty(AZURE_CLIENT_ID);
+		LogMF.debug(logger, "Azure Sign-In Client ID: {0}", toReturn);
+		return toReturn;
 	}
 
 }
