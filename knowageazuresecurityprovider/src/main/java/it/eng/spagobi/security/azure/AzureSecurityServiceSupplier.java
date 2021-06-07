@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.spagobi.security;
+package it.eng.spagobi.security.azure;
 
 import java.net.MalformedURLException;
 
@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 
 import com.microsoft.aad.msal4j.PublicClientApplication;
 
+import it.eng.spagobi.security.InternalSecurityServiceSupplierImpl;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 
