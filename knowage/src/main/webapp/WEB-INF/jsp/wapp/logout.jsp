@@ -60,14 +60,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                  frameborder='0' >
 </iframe> 
 
-<iframe id='invalidSessionChart'
-                 name='invalidSessionChart'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>chartengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe> 
-
 <iframe id='invalidSessionWhatIf'
                  name='invalidSessionChart'
                  src='<%=KnowageSystemConfiguration.getKnowageContext()%>whatifengine/invalidateSession.jsp'
@@ -124,21 +116,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                  frameborder='0' >
 </iframe>
 
-<iframe id='invalidSessionNetwork'
-                 name='invalidSessionNetwork'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>networkengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe> 
-
-<iframe id='invalidSessionDataMining'
-                 name='invalidSessionDataMining'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>dataminingengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe> 
 <%
 
 boolean backUrlB=false;
