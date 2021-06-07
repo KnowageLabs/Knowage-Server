@@ -162,6 +162,78 @@
 		<script src="https://apis.google.com/js/platform.js" async defer></script>
 		<meta name="google-signin-client_id" content="<%= GoogleSignInConfig.getClientId() %>">
 		<% } %>
+		
+		<% if (true) {%>
+		<%-- Resources for Azure Sign-In authentication --%>
+		<script>
+			const msalConfig = {
+				    auth: {
+				        clientId: "54994f1f-389c-4a87-b38a-933803d03709",
+				        authority: "https://login.microsoftonline.com/angelobernabeieng.onmicrosoft.com/"
+				    },
+				    cache: {
+				        cacheLocation: "sessionStorage", // This configures where your cache will be stored
+				        storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
+				    },
+				    system: {
+				        loggerOptions: {
+				            loggerCallback: (level, message, containsPii) => {
+				                if (containsPii) {	
+				                    return;	
+				                }
+				                switch (level) {	
+				                    case msal.LogLevel.Error:	
+				                        console.error(message);	
+				                        return;	
+				                    case msal.LogLevel.Info:	
+				                        console.info(message);	
+				                        return;	
+				                    case msal.LogLevel.Verbose:	
+				                        console.debug(message);	
+				                        return;	
+				                    case msal.LogLevel.Warning:	
+				                        console.warn(message);	
+				                        return;	
+				                }
+				            }
+				        }
+				    }
+			};
+			
+			// Add here scopes for id token to be used at MS Identity Platform endpoints.
+			const loginRequest = {
+			    scopes: ["User.Read"]
+			};
+		
+			function onAzureSignIn() {
+				myMSALObj = new msal.PublicClientApplication(msalConfig);
+				myMSALObj.loginPopup(loginRequest).then(handleResponse);
+			}
+			
+			function handleResponse(resp) {
+			    if (resp !== null) {
+			        accountId = resp.account.homeAccountId;
+			        myMSALObj.setActiveAccount(resp.account);
+			        //showWelcomeMessage(resp.account);
+			        debugger;
+			    } else {
+			        // need to call getAccount here?
+			        const currentAccounts = myMSALObj.getAllAccounts();
+			        if (!currentAccounts || currentAccounts.length < 1) {
+			            return;
+			        } else if (currentAccounts.length > 1) {
+			            // Add choose account code here
+			        } else if (currentAccounts.length === 1) {
+			            const activeAccount = currentAccounts[0];
+			            myMSALObj.setActiveAccount(activeAccount);
+			            accountId = activeAccount.homeAccountId;
+			            //showWelcomeMessage(activeAccount);
+			        }
+			    }
+			}
+		</script>
+		<script type="text/javascript" src="https://alcdn.msauth.net/browser/2.0.0-beta.0/js/msal-browser.js" integrity="sha384-r7Qxfs6PYHyfoBR6zG62DGzptfLBxnREThAlcJyEfzJ4dq5rqExc1Xj3TPFE/9TH" crossorigin="anonymous" async defer></script>
+		<% } %>
 	</head>
 
   	<body class="kn-login">
@@ -176,8 +248,11 @@
             		<%-- Google button for authentication --%>
 	           		<div class="g-signin2" data-onsuccess="onSignIn"></div>
 	           	
-                <% } else { %>
-            	
+                <% } else if (true){ %>
+            		<%-- Azure button for authentication --%>
+	           		<button onclick="onAzureSignIn()">Sign in with Microsoft</button>
+	           		
+            	<% } else { %>
             	
             	<div class="col-xs-8">
            			<form class="form-signin"  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
