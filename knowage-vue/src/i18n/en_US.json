@@ -125,6 +125,10 @@
         "mondrianSchemasManagement": {
             "title": "OLAP schemas' catalogue",
             "noResults": "No schemas' available for the selected filter.",
+            "uploadingVersion": "Uploading version...",
+            "uploadOk": "New version uploaded successfully",
+            "updatingWorkflow": "Updating workflow...",
+            "workflowOk": "Workflow updated successfully",
             "headers": {
                 "active": "Active",
                 "fileName": "File Name",
@@ -134,10 +138,13 @@
             "detail": {
                 "title": "Detail",
                 "name": "Name",
-                "description": "Description"
+                "description": "Description",
+                "savedVersions": "Saved versions"
             },
-            "workflow": {
-                "title": "Work Flow"
+            "workFlow": {
+                "title": "Work Flow",
+                "availableUsers": "Available Users",
+                "userWf": "Users Work Flow"
             }
         }
     },

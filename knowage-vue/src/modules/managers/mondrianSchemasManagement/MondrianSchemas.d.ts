@@ -3,6 +3,7 @@ export interface iSchema {
     name: string
     description?: string,
     type: string
+    currentContentId: number
 }
 
 export interface iVersion {
