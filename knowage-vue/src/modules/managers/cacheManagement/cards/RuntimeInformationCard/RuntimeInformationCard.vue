@@ -1,5 +1,5 @@
 <template>
-    <Card>
+    <Card class="p-m-3">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
@@ -8,16 +8,16 @@
             </Toolbar>
         </template>
         <template #content>
-            <div>
-                <div>
+            <div class="p-d-flex p-flex-row">
+                <div class="information-container">
                     <p>{{ $t('managers.cacheManagement.cacheEnabled') }} {{ cache.cleaningEnabled }}</p>
                     <p>{{ $t('managers.cacheManagement.totalMemory') }} {{ cache.totalMemory }}</p>
                     <p>{{ $t('managers.cacheManagement.availableMemory') }} {{ cache.availableMemory }}</p>
                     <p>{{ $t('managers.cacheManagement.numberOfCachedObjects') }} {{ cache.cachedObjectsCount }}</p>
                     <p>{{ $t('managers.cacheManagement.availableMemoryPercentage') }} {{ cache.availableMemoryPercentage }}</p>
                 </div>
-                <div>
-                    <Chart type="pie" :data="chartData" />
+                <div class="information-container">
+                    <Chart type="pie" :data="cacheData" />
                 </div>
             </div>
         </template>
@@ -41,27 +41,26 @@ export default defineComponent({
         item: {
             type: Object,
             required: true
+        },
+        chartData: {
+            type: Object,
+            required: true
         }
     },
     data() {
         return {
             runtimeInformationCardDescriptor,
             cache: {} as iCache,
-            chartData: {
-                labels: [this.$t('managers.cacheManagement.availableMemory'), this.$t('managers.cacheManagement.usedMemory')],
-                datasets: [
-                    {
-                        label: 'My First dataset',
-                        backgroundColor: '#42A5F5',
-                        data: [100, 1 - 99]
-                    }
-                ]
-            }
+            cacheData: this.loadChart()
         }
     },
     watch: {
         item() {
             this.loadCache()
+        },
+        chartData() {
+            this.loadChart()
+            console.log('CHART DATA:', this.chartData)
         }
     },
     created() {
@@ -70,7 +69,24 @@ export default defineComponent({
     methods: {
         loadCache() {
             this.cache = { ...this.item } as iCache
+        },
+        loadChart() {
+            this.cacheData = {
+                labels: [this.$t('managers.cacheManagement.availableMemory'), this.$t('managers.cacheManagement.usedMemory')],
+                datasets: [
+                    {
+                        backgroundColor: ['#43749e', '#bbd6ed'],
+                        data: this.chartData as any
+                    }
+                ]
+            }
         }
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.information-container {
+    flex: 1;
+}
+</style>

@@ -58,9 +58,9 @@
         "uploading": "Uploading",
         "validation": {
             "maximumCharacters": "The maximum length allowed is {max}",
+            "minLength": "This field should have at least {min} characters",
             "regex": "Invalid format",
-            "required": "{fieldName} is required",
-            "minLength": "This field should have at least {min} characters"
+            "required": "{fieldName} is required"
         },
         "version": "version",
         "warning": {}
@@ -107,11 +107,33 @@
         "cacheManagement": {
             "availableMemory": "Available memory",
             "availableMemoryPercentage": "Available memory percentage",
+            "cacheDimensionSingleDataset": "% of cache dimension for a single dataset",
             "cacheEnabled": "Cache enabled",
+            "daily": "DAILY",
+            "discard": "Discard",
+            "every_10_mins": "EVERY 10 MINS",
+            "every_15_mins": "EVERY 15 MINS",
+            "every_20_mins": "EVERY 20 MINS",
+            "every_30_mins": "EVERY 30 MINS",
+            "frequencyOfCleaningDaemon": "Frequency of cleaning daemon",
+            "generalSettings": "General settings",
+            "hazelcastTimeToLock": "Timeout (seconds) to acquire a lock (Hazelcast)",
+            "hazelcastTimeToReleaseLock": "Timeout value (seconds) to release a lock (Hazelcast)",
+            "hourly": "HOURLY",
+            "maximumPercentOfCacheCleaningQuota": "Maximum percent of cache cleaning quota",
+            "monthly": "MONTHLY",
+            "none": "NONE",
             "numberOfCachedObjects": "Number of cached objects",
+            "prefixForCacheTablesName": "Prefix for cache tables name",
             "runtimeInformationTitle": "Runtime information",
+            "timeToCreateTempTable": "Time (seconds) to create temporary table for the dataset",
+            "timeToLock": "Timeout (seconds) to acquire a lock",
+            "totalBytesAvailableForCache": "Total megabytes available for cache",
             "totalMemory": "Total memory",
-            "usedMemory": "Used Memory"
+            "ttlForCachedDataset": "Time To Live (seconds from last access) for cached datasets",
+            "usedMemory": "Used Memory",
+            "weekly": "WEEKLY",
+            "yearly": "YEARLY"
         },
         "configurationManagement": {
             "createNewHeader": "Create new configuration",
