@@ -2,9 +2,7 @@
     <div class="kn-hint hint">
         <Card class="kn-hintContent">
             <template #title> <i class="far fa-life-ring kn-hintIcon"></i> {{ $t(title) }} </template>
-            <template #content>
-                {{ $t(hint) }}
-            </template>
+            <template #content> <div v-html="$t(hint)"></div></template>
         </Card>
     </div>
 </template>
