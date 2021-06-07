@@ -35,6 +35,8 @@ public class AzureSignInConfig {
 
 	static protected final String AZURE_CLIENT_ID = "client_id";
 
+	static protected final String IS_ENABLED = "enabled";
+
 	static protected Properties properties = new Properties();
 
 	static {
@@ -62,9 +64,9 @@ public class AzureSignInConfig {
 	}
 
 	public static boolean isEnabled() {
-		boolean toReturn = properties.containsKey(AZURE_CLIENT_ID);
-		LogMF.debug(logger, "Azure Sign-In enabled: {0}", toReturn);
-		return toReturn;
+		String enabled = properties.getProperty(IS_ENABLED, "false");
+		LogMF.debug(logger, "Azure Sign-In enabled: {0}", enabled);
+		return new Boolean(enabled);
 	}
 
 	public static String getClientId() {

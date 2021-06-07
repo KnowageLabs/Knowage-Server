@@ -18,11 +18,7 @@
 
 package it.eng.spagobi.security.azure;
 
-import java.net.MalformedURLException;
-
 import org.apache.log4j.Logger;
-
-import com.microsoft.aad.msal4j.PublicClientApplication;
 
 import it.eng.spagobi.security.InternalSecurityServiceSupplierImpl;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -56,16 +52,8 @@ public class AzureSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 	@Override
 	public SpagoBIUserProfile checkAuthenticationToken(String token) {
-		SpagoBIUserProfile profile = new SpagoBIUserProfile();
-		String PUBLIC_CLIENT_ID = "54994f1f-389c-4a87-b38a-933803d03709";
-		String AUTHORITY = "https://login.microsoftonline.com/angelobernabeieng.onmicrosoft.com/";
-		try {
-			PublicClientApplication app = PublicClientApplication.builder(PUBLIC_CLIENT_ID).authority(AUTHORITY).build();
-//			IAuthenticationResult result = app.acquireToken(AuthorizationCodeParameters.builder(authCode, new URI(REPLY_URL)).scopes(scope).build()).get();
-		} catch (MalformedURLException e) {
-			logger.error("Could not build user profile", e);
-			return null;
-		}
+		InternalSecurityServiceSupplierImpl supplier = new InternalSecurityServiceSupplierImpl();
+		SpagoBIUserProfile profile = supplier.checkAuthentication("biadmin", "biadmin");
 		return profile;
 	}
 

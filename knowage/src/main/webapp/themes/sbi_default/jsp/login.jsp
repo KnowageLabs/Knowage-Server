@@ -173,31 +173,8 @@
 				        authority: "https://login.microsoftonline.com/angelobernabeieng.onmicrosoft.com/"
 				    },
 				    cache: {
-				        cacheLocation: "sessionStorage", // This configures where your cache will be stored
+				        cacheLocation: "localStorage", // This configures where your cache will be stored
 				        storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
-				    },
-				    system: {
-				        loggerOptions: {
-				            loggerCallback: (level, message, containsPii) => {
-				                if (containsPii) {	
-				                    return;	
-				                }
-				                switch (level) {	
-				                    case msal.LogLevel.Error:	
-				                        console.error(message);	
-				                        return;	
-				                    case msal.LogLevel.Info:	
-				                        console.info(message);	
-				                        return;	
-				                    case msal.LogLevel.Verbose:	
-				                        console.debug(message);	
-				                        return;	
-				                    case msal.LogLevel.Warning:	
-				                        console.warn(message);	
-				                        return;	
-				                }
-				            }
-				        }
 				    }
 			};
 			
@@ -211,26 +188,18 @@
 				myMSALObj.loginPopup(loginRequest).then(handleResponse);
 			}
 			
-			function handleResponse(resp) {
-			    if (resp !== null) {
-			        accountId = resp.account.homeAccountId;
-			        myMSALObj.setActiveAccount(resp.account);
-			        //showWelcomeMessage(resp.account);
-			        debugger;
-			    } else {
-			        // need to call getAccount here?
-			        const currentAccounts = myMSALObj.getAllAccounts();
-			        if (!currentAccounts || currentAccounts.length < 1) {
-			            return;
-			        } else if (currentAccounts.length > 1) {
-			            // Add choose account code here
-			        } else if (currentAccounts.length === 1) {
-			            const activeAccount = currentAccounts[0];
-			            myMSALObj.setActiveAccount(activeAccount);
-			            accountId = activeAccount.homeAccountId;
-			            //showWelcomeMessage(activeAccount);
-			        }
-			    }
+			function handleResponse(response) {
+				$.post("/knowage/servlet/AdapterHTTP", {
+					  "ACTION_NAME": "LOGIN_ACTION_BY_TOKEN",
+					  "NEW_SESSION" : true,
+					  "token" : response.accessToken
+				}).done(function( data ) {
+					  // reload current page, in order to keep input GET parameters (such as required document and so on)
+					  location.reload();
+				}).fail(function (error) {
+					  $("#kn-infoerror-message").show();
+					  $(".kn-infoerror").html("Authentication failed. Please check if you are to allowed to enter this application.");
+				});
 			}
 		</script>
 		<script type="text/javascript" src="https://alcdn.msauth.net/browser/2.0.0-beta.0/js/msal-browser.js" integrity="sha384-r7Qxfs6PYHyfoBR6zG62DGzptfLBxnREThAlcJyEfzJ4dq5rqExc1Xj3TPFE/9TH" crossorigin="anonymous" async defer></script>
