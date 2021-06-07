@@ -18,10 +18,12 @@
                         <span class="p-float-label">
                             <InputText id="prefixForCacheTablesName" class="kn-material-input" type="text" v-model.trim="settings.prefixForCacheTablesName" data-test="prefix-input" />
                             <label for="prefixForCacheTablesName" class="kn-material-input-label"> {{ $t('managers.cacheManagement.prefixForCacheTablesName') }}</label>
+                            <span>{{ settings.prefixForCacheTablesName }}</span>
                         </span>
                         <span>
                             <label for="limitForClean" class="kn-material-input-label"> {{ $t('managers.cacheManagement.maximumPercentOfCacheCleaningQuota') }}</label>
-                            <InputNumber id="limitForClean" inputClass="kn-material-input" v-model.trim="settings.limitForClean" :min="0" :max="100" :useGrouping="false" data-test="clean-limit-input" />
+                            <InputNumber id="limitForClean" inputClass="kn-material-input" v-model="bla" :min="0" :max="100" :useGrouping="false" data-test="clean-limit-input" />
+                            <span>{{ bla }}</span>
                         </span>
                         <span>
                             <label for="schedulingFullClean" class="kn-material-input-label"> {{ $t('managers.cacheManagement.frequencyOfCleaningDaemon') }}</label>
@@ -33,7 +35,6 @@
                                 </template>
                                 <template #option="slotProps">
                                     <div>
-                                        <!-- <span>{{ $t(slotProps.option.label) }}</span> -->
                                         <span>{{ $t(slotProps.option.label) }}</span>
                                     </div>
                                 </template></Dropdown
@@ -94,6 +95,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
 import generalSettingsCardDescriptor from './GeneralSettingsCardDescriptor.json'
@@ -115,10 +117,12 @@ export default defineComponent({
             type: Object
         }
     },
+    emits: ['inserted'],
     data() {
         return {
             generalSettingsCardDescriptor,
             settings: {} as any,
+            bla: 23,
             datasource: {},
             datasourceOptions: [] as any
         }
@@ -152,7 +156,7 @@ export default defineComponent({
         save() {
             this.saveConfigurationOptions()
         },
-        saveConfigurationOptions() {
+        async saveConfigurationOptions() {
             const configurations = [
                 {
                     label: 'SPAGOBI.CACHE.NAMEPREFIX',
@@ -160,7 +164,7 @@ export default defineComponent({
                 },
                 {
                     label: 'SPAGOBI.CACHE.SPACE_AVAILABLE',
-                    value: this.settings.spaceAvailable
+                    value: this.settings.spaceAvailable * 1048576
                 },
                 {
                     label: 'SPAGOBI.CACHE.LIMIT_FOR_CLEAN',
@@ -168,8 +172,8 @@ export default defineComponent({
                 },
                 {
                     label: 'SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN',
-                    value: this.settings.schedulingFullClean,
-                    id: ''
+                    value: this.settings.schedulingFullClean.value,
+                    id: this.settings.schedulingFullClean.value
                 },
                 {
                     label: 'SPAGOBI.CACHE.LIMIT_FOR_STORE',
@@ -197,7 +201,16 @@ export default defineComponent({
                 }
             ]
 
-            console.log(configurations)
+            console.log('Save settings: ', this.settings)
+            console.log('Save configuration: ', configurations)
+
+            await axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/conf', configurations).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.success'),
+                    msg: this.$t('common.toast.updateTitle')
+                })
+                this.$emit('inserted')
+            })
         },
         test() {
             console.log(this.settings)
