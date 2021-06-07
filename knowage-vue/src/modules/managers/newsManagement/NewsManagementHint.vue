@@ -1,27 +1,13 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-        <template #left>{{ $t('managers.newsManagement.detailTitle') }}</template>
-    </Toolbar>
-    <div class="p-d-flex p-ai-center p-jc-center hint-container">
-        <div class="p-d-flex p-flex-column">
-            <img :src="require('@/assets/images/news/newspaper.svg')" height="100" width="100" />
-            <div>
-                {{ $t('managers.newsManagement.noNewsSelected') }}
-            </div>
-        </div>
-    </div>
+    <KnHint :title="'managers.newsManagement.title'" :hint="'managers.newsManagement.hint'"></KnHint>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import KnHint from '@/components/UI/KnHint.vue'
 
 export default defineComponent({
-    name: 'news-management-hint'
+    name: 'news-hint',
+    components: { KnHint }
 })
 </script>
-
-<style lang="scss" scoped>
-.hint-container {
-    height: 70vh;
-}
-</style>

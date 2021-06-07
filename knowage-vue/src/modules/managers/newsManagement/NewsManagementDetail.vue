@@ -3,7 +3,7 @@
         <template #left>{{ $t('managers.newsManagement.detailTitle') }}</template>
         <template #right>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="invalid" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" data-test="close-button" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
@@ -44,6 +44,7 @@ export default defineComponent({
             } as iNews,
             roleList: [] as iRole[],
             loading: false,
+            touched: false,
             operation: 'insert'
         }
     },
@@ -102,7 +103,23 @@ export default defineComponent({
             })
         },
         setDirty() {
+            this.touched = true
             this.$emit('touched')
+        },
+        closeTemplateConfirm() {
+            if (!this.touched) {
+                this.closeTemplate()
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.closeTemplate()
+                    }
+                })
+            }
         },
         closeTemplate() {
             this.$router.push('/news-management')
@@ -110,10 +127,12 @@ export default defineComponent({
         },
         setSelectedRoles(roles: iRole[]) {
             this.selectedNews.roles = roles
+            this.touched = true
             this.$emit('touched')
         },
         onFieldChange(event: any) {
             this.selectedNews[event.fieldName] = event.value
+            this.touched = true
             this.$emit('touched')
         }
     }
