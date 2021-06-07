@@ -59,7 +59,8 @@
         "validation": {
             "maximumCharacters": "The maximum length allowed is {max}",
             "regex": "Invalid format",
-            "required": "{fieldName} is required"
+            "required": "{fieldName} is required",
+            "minLength": "This field should have at least {min} characters"
         },
         "version": "version",
         "warning": {}
@@ -126,6 +127,35 @@
         "metadata": {
             "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Metadata Management"
+        },
+        "profileAttributesManagement": {
+            "title": "Profile Attributes",
+            "name": "Name",
+            "description": "Description",            
+            "valueDescription": "Value description",
+            "info": {
+              "saveMessage": "Attribute saved",
+              "saveTitle": "Save attribute",
+              "createMessage": "Attribute created",
+              "createTitle": "Create attribute",
+              "deleteMessage": "Attribute deleted",
+              "deleteTitle": "Delete attribute",
+              "updateMessage": "Attribute updated",
+              "updateTitle": "Update attribute"
+            },
+            "form": {
+              "name": "Name",
+              "description": "Description",
+              "dataType": "Data type",
+              "manualInput": "Manual input",
+              "lov": "Lov",
+              "multiValue": "Multivalue",
+              "allowUser": "Allow user to see field",
+              "syntax": {
+                "simple" : "Simple",
+                "complex": "Complex"
+              }
+            }
         },
         "widgetGallery": {
             "deleteTemplate": "Delete template",
