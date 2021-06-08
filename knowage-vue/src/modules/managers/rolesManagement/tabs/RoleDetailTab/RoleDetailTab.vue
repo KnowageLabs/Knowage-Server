@@ -17,12 +17,12 @@
                             @input="onFieldChange('name', $event.target.value)"
                             data-test="name-input"
                         />
-                        <label for="name" class="kn-material-input-label"> {{ $t('managers.rolesManagement.detail.name') }} * </label>
+                        <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
                     <KnValidationMessages
                         :vComp="v$.role.name"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.rolesManagement.detail.name')
+                            fieldName: $t('common.name')
                         }"
                     />
                 </div>
@@ -70,13 +70,13 @@
                             data-test="description-input"
                         />
                         <label for="description" class="kn-material-input-label">
-                            {{ $t('managers.rolesManagement.detail.description') }}
+                            {{ $t('common.description') }}
                         </label>
                     </span>
                     <KnValidationMessages
                         :vComp="v$.role.description"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.rolesManagement.detail.description')
+                            fieldName: $t('common.description')
                         }"
                     />
                 </div>

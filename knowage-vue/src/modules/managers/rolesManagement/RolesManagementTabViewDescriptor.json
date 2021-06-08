@@ -85,7 +85,7 @@
         { "dbname": "RUN_SNAPSHOTS", "label": "runSnapshot", "visible": false, "category": "SEE", "fieldName": "ableToRunSnapshots" }
     ],
     "categories": [
-        { "name": "managers.rolesManagement.authorizations.name.save", "categoryName": "SAVE" },
+        { "name": "common.save", "categoryName": "SAVE" },
         { "name": "managers.rolesManagement.authorizations.name.see", "categoryName": "SEE" },
         { "name": "managers.rolesManagement.authorizations.name.send", "categoryName": "SEND" },
         { "name": "managers.rolesManagement.authorizations.name.build", "categoryName": "BUILD" },
@@ -93,7 +93,7 @@
         { "name": "managers.rolesManagement.authorizations.name.enable", "categoryName": "ENABLE" },
         { "name": "managers.rolesManagement.authorizations.name.widgets", "categoryName": "WIDGETS" },
         { "name": "managers.rolesManagement.authorizations.name.items", "categoryName": "ITEMS" },
-        { "name": "managers.rolesManagement.authorizations.name.export", "categoryName": "EXPORT" }
+        { "name": "common.export", "categoryName": "EXPORT" }
     ],
     "newRoleDefaultValues": {
         "ableToSaveIntoPersonalFolder": true,

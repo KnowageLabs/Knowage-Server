@@ -110,7 +110,6 @@
             "authorizations": {
                 "title": "Authorizations",
                 "name": {
-                    "save": "Save",
                     "see": "See",
                     "send": "Send",
                     "build": "Build",
@@ -118,7 +117,6 @@
                     "enable": "Enable",
                     "widgets": "Widgets",
                     "items": "Items for user menu",
-                    "export": "Export",
                     "enterprise": "Enterprise",
                     "savePersonalFolder": "Save into My Workspace",
                     "saveSubobj": "Save OLAP View",
@@ -166,15 +164,9 @@
             },
             "detail": {
                 "title": "Detail",
-                "name": "Name",
                 "code": "Code",
-                "description": "Description",
                 "roleTypeID": "Role Type",
                 "isPublic": "Is public role?"
-            },
-            "table": {
-                "name": "Name",
-                "description": "Description"
             },
             "rolesDropdown": {
                 "ADMIN": "Administrator",
