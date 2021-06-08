@@ -59,6 +59,8 @@ export default defineComponent({
     methods: {
         async loadAllAttributes() {
             this.loading = true
+            this.hideForm = true
+            this.dirty = false
             await axios
                 .get(this.apiUrl + 'attributes')
                 .then((response) => {
@@ -66,7 +68,7 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-        onAttributeSelect(attribute: iAttribute) {
+        onAttributeSelect(attribute?: iAttribute) {
             if (this.dirty) {
                 this.$confirm.require({
                     message: this.$t('common.toast.unsavedChangesMessage'),
@@ -74,18 +76,20 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.dirty = false
-                        this.prepareFormData(attribute)
+                        if ( attribute) this.prepareFormData(attribute)
+                        else this.hideForm = true
                     }
                 })
             } else {
-                this.prepareFormData(attribute)
+                if (attribute) this.prepareFormData(attribute)
+                else this.hideForm = true
             }
         },
-        prepareFormData(attribute: iAttribute) {
-            this.attribute = { ...attribute }
+        prepareFormData(attribute: iAttribute) {            
             if (this.hideForm) {
                 this.hideForm = false
             }
+             this.attribute = { ...attribute }
         },
         onAttributeDelete(id: number) {
             this.deleteAttribute(id)
@@ -104,7 +108,8 @@ export default defineComponent({
             }
         },
         closeForm() {
-            this.hideForm = true
+            // this.hideForm = true
+            this.onAttributeSelect()
         },
         async deleteAttribute(id: number) {
             this.$confirm.require({

@@ -9,7 +9,7 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-
+    
     <div class="p-grid p-m-0 p-fluid">
         <div class="p-col-12">
             <Card>
@@ -38,10 +38,11 @@
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <Dropdown id="dataType" v-model="v$.attribute.value.$model" :options="attributeTypeValues" optionLabel="name" optionValue="value" class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input" @change="onDataChange(v$.attribute.value)" />
-                                    <label for="dataType">{{ $t('managers.profileAttributesManagement.form.dataType') }} *</label>
+                                    <Dropdown id="dataType" v-model="v$.attribute.value.$model" @before-show="setDirty(v$.attribute.value)"  :options="attributeTypeValues" optionLabel="name" optionValue="value" class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input" @change="onDataChange(v$.attribute.value)" />
+                                    <label for="dataType">{{ $t('managers.profileAttributesManagement.form.dataType') }} *</label>                                    
                                 </span>
                             </div>
+                            <KnValidationMessages :vComp="v$.attribute.value" :additionalTranslateParams="{ fieldName: $t('managers.profileAttributesManagement.form.dataType') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-inputgroup p-col-6 p-sm-12 p-md-6">
@@ -65,14 +66,16 @@
                                         optionLabel="name"
                                         optionValue="id"
                                         @change="onLoveDropdownChange"
+                                        @before-show="setDirty(v$.attribute.lovId)"                                       
                                         :filter="true"
-                                        placeholder="Select a Country"
+                                        :placeholder="$t('managers.profileAttributesManagement.form.lovPlaceholder')"
                                         :showClear="true"
                                         class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
                                     />
-                                    <label for="attributeDescription">{{ $t('managers.profileAttributesManagement.form.lov') }} *</label>
-                                </span>
+                                    <label for="attributeDescription">{{ $t('managers.profileAttributesManagement.form.lov') }} *</label>                                    
+                                </span>                                
                             </div>
+                            <KnValidationMessages :vComp="v$.attribute.lovId" :additionalTranslateParams="{ fieldName: $t('managers.profileAttributesManagement.form.lov') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-inputgroup p-col-6 p-sm-12 p-md-6">
@@ -92,14 +95,14 @@
                         <div class="p-col-6 p-sm-12 p-md-6" :hidden="syntaxSelectHidden">
                             <div class="p-grid p-ai-start vertical-container">
                                 <div class="p-col">
-                                    <RadioButton id="simple" name="syntax" :value="false" v-model="v$.attribute.syntax.$model" @change="onDataChange(v$.attribute.syntax)" />
+                                    <RadioButton id="simple" name="syntax" value="false" v-model="v$.attribute.syntax.$model" @change="onDataChange(v$.attribute.syntax)" />
                                     <label class="p-m-2" for="simple">{{ $t('managers.profileAttributesManagement.form.syntax.simple') }}</label>
                                     <div class="p-mt-2" v-if="v$.attribute.syntax.$model === false">
                                         * Simple = ('Italy','USA','Serbia', ...)
                                     </div>
                                 </div>
                                 <div class="p-col">
-                                    <RadioButton id="complex" name="syntax" :value="true" v-model="v$.attribute.syntax.$model" @change="onDataChange(v$.attribute.syntax)" />
+                                    <RadioButton id="complex" name="syntax" value="true" v-model="v$.attribute.syntax.$model" @change="onDataChange(v$.attribute.syntax)" />
                                     <label class="p-m-2" for="complex">{{ $t('managers.profileAttributesManagement.form.syntax.complex') }}</label>
                                     <div class="p-m-2" v-if="v$.attribute.syntax.$model === true">
                                         * Complex = {;{Italy;USA;Serbia; ...}}
@@ -119,7 +122,7 @@ import { defineComponent } from 'vue'
 import axios, { AxiosResponse } from 'axios'
 import { iAttribute, iLov } from './ProfileAttributesManagement'
 import useValidate from '@vuelidate/core'
-import { createValidations } from '@/helpers/commons/validationHelper'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import RadioButton from 'primevue/radiobutton'
@@ -149,11 +152,8 @@ export default defineComponent({
     watch: {
         selectedAttribute: {
             handler: function(attribute) {
-                if (attribute.attributeId === null) {
-                    this.resetForm()
-                    return
-                }
-                this.populateForm(attribute)
+                this.v$.$reset();
+                this.loadAttribute(attribute)
             }
         }
     },
@@ -177,14 +177,23 @@ export default defineComponent({
         }
     },
     validations() {
+        const customValidators: ICustomValidatorMap = {
+            'custom-required': (value) => {
+                return this.enableLov || value
+            },         
+        }
         return {
-            attribute: createValidations('attribute', profileAttributesManagementValidationDescriptor.validations.attribute)
+            attribute: createValidations('attribute', profileAttributesManagementValidationDescriptor.validations.attribute, customValidators)
         }
     },
     async created() {
         await this.loadLovs()
+        if ( this.selectedAttribute)  { this.loadAttribute(this.selectedAttribute)}
     },
     methods: {
+        onLoveBlur() {
+            this.v$.attribute.lovId.$touch();
+        },
         async loadLovs() {
             this.loading = true
             await axios
@@ -198,7 +207,7 @@ export default defineComponent({
             Object.keys(this.attribute).forEach((k) => delete this.attribute[k])
         },
         showForm() {
-            this.hideLovDropdown()
+            this.hideLovDropdown(false)
             this.syntaxSelectHidden = true
             this.resetForm()
             this.hideForm = false
@@ -242,7 +251,7 @@ export default defineComponent({
             }
         },
         populateForm(attribute: iAttribute) {
-            this.hideLovDropdown()
+            this.hideLovDropdown(false)
             this.hideForm = false
 
             this.attribute = { ...attribute }
@@ -255,7 +264,7 @@ export default defineComponent({
 
             if (attribute.lovId !== null) {
                 this.disableLovs()
-                this.showLovDropdown()
+                this.showLovDropdown(false)
             } else {
                 this.enableLovs()
             }
@@ -267,15 +276,16 @@ export default defineComponent({
                 this.syntaxSelectHidden = true
             }
         },
-        hideLovDropdown() {
+        hideLovDropdown(emitChange = true) {
             this.attribute.lovId = null
             this.enableLovs()
             this.LovSelectHidden = true
+            if (emitChange) this.$emit('dataChanged')
         },
-        showLovDropdown() {
+        showLovDropdown(emitChange = true) {
             this.disableLovs()
             this.LovSelectHidden = false
-            this.$emit('dataChanged')
+            if (emitChange) this.$emit('dataChanged')
         },
         disableLovs() {
             this.enableLov = false
@@ -291,6 +301,17 @@ export default defineComponent({
         },
         onLoveDropdownChange() {
             this.checkSyntax()
+            this.$emit('dataChanged')
+        },
+        loadAttribute(attribute) {
+            if (attribute.attributeId === null) {
+                    this.resetForm()
+                    return
+                }
+                this.populateForm(attribute)
+        },
+        setDirty(v$Comp) {
+            v$Comp.$touch();
             this.$emit('dataChanged')
         }
     }
