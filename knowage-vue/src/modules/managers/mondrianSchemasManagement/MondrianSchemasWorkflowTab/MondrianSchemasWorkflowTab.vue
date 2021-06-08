@@ -6,6 +6,7 @@
             </template>
             <template #targetHeader>
                 {{ $t('managers.mondrianSchemasManagement.workFlow.userWf') }}
+                <Button icon="pi pi-play" class="p-button-sm" />
             </template>
             <template #item="slotProps">
                 <div>
