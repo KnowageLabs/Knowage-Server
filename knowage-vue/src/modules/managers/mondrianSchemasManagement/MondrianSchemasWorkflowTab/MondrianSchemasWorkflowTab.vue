@@ -1,28 +1,34 @@
 <template>
     <div>
-        <PickList v-model="availableUsersList" @move-to-target="onUserChange" @move-to-source="onUserChange" @reorder="onUserChange" @move-all-to-target="onUserChange">
+        <PickList v-model="availableUsersList" listStyle="height:500px" :disabled="true" @move-to-target="onUserChange" @move-to-source="onUserChange" @reorder="onUserChange">
             <template #sourceHeader>
                 {{ $t('managers.mondrianSchemasManagement.workFlow.availableUsers') }}
             </template>
             <template #targetHeader>
                 {{ $t('managers.mondrianSchemasManagement.workFlow.userWf') }}
-                <Button v-if="isStartedWf === false" v-tooltip.top="'Enter your username'" icon="pi pi-play" class="p-button-sm" @click="startWorkflow" />
+                <span :style="workflowDescriptor.style.targetIcon" v-tooltip.top="tooltipValue">
+                    <Button :disabled="disableButton()" icon="pi pi-play" @click="startWorkflow" />
+                </span>
             </template>
             <template #item="slotProps">
-                <div>
-                    <h4 class="p-mb-2">{{ slotProps.item.userId }}</h4>
-                    <span>{{ slotProps.item.fullName }}</span>
+                <div :style="workflowDescriptor.style.listItem">
+                    <div :style="workflowDescriptor.style.listItemDetail">
+                        <h4 class="p-mb-2">{{ slotProps.item.userId }}</h4>
+                        <span>{{ slotProps.item.fullName }}</span>
+                    </div>
+                    <div :style="workflowDescriptor.style.icon">
+                        <i v-if="slotProps.item.id === this.userInProg" class="pi pi-check" />
+                    </div>
                 </div>
             </template>
         </PickList>
-        {{ availableUsersList[1] }}
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iSchema } from '../MondrianSchemas'
-import tabViewDescriptor from '../MondrianSchemasTabViewDescriptor.json'
+import workflowDescriptor from './MondrianSchemasWorkflowDescriptor.json'
 import PickList from 'primevue/picklist'
 import axios from 'axios'
 import Tooltip from 'primevue/tooltip'
@@ -42,11 +48,13 @@ export default defineComponent({
     emits: ['changed', 'selectedUsersChanged'],
     data() {
         return {
-            tabViewDescriptor,
+            workflowDescriptor,
             availableUsersList: [] as any[],
             schema: {} as iSchema,
             isStartedWf: false,
-            userInProg: null as any
+            isButtonDisabled: false,
+            userInProg: null as any,
+            tooltipValue: ''
         }
     },
 
@@ -66,10 +74,7 @@ export default defineComponent({
         }
     },
     methods: {
-        onUserChange(event) {
-            console.log(event)
-            console.log('==========================')
-            console.log(this.availableUsersList[1])
+        onUserChange() {
             let selectedUsers = this.availableUsersList[1]
             this.$emit('selectedUsersChanged', selectedUsers)
             this.$emit('changed')
@@ -86,6 +91,7 @@ export default defineComponent({
                     console.log(this.userInProg)
                 } else {
                     this.isStartedWf = false
+                    this.userInProg = null
                     console.log('------------------------ isWorkflowStarted ------------------------')
                     console.log(this.isStartedWf)
                 }
@@ -117,10 +123,30 @@ export default defineComponent({
                 })
                 .then(this.isWorkflowStarted)
         },
+
+        // DISABLE PLAY BUTTON & MANAGE TOOLTIP| because :disabled is not reactive :( ==========================
         disableButton() {
+            console.log('$$$$$$$$$$$$$$$$$$$$$$ disableButton $$$$$$$$$$$$$$$$$$$$$$')
             if (!this.schema.id) {
-                return 'Schema is not created'
+                console.log('BUTTON DISABLED')
+                this.tooltipValue = this.$t('managers.mondrianSchemasManagement.workFlow.tooltips.noSchema')
+                return true
+            } else {
+                if (this.availableUsersList[1].length == 0) {
+                    console.log('BUTTON DISABLED NO ARRAY' + this.availableUsersList[1])
+                    this.tooltipValue = this.$t('managers.mondrianSchemasManagement.workFlow.tooltips.noWfUsers')
+                    return true
+                } else {
+                    if (this.isStartedWf === true) {
+                        console.log('BUTTON DISABLED BECAUSE WORKFLOW ID: ' + this.isStartedWf)
+                        this.tooltipValue = this.$t('managers.mondrianSchemasManagement.workFlow.tooltips.wfInProgress')
+                        return true
+                    }
+                }
             }
+            console.log('BUTTON NOT DISABLED')
+            this.tooltipValue = ''
+            return false
         }
     }
 })

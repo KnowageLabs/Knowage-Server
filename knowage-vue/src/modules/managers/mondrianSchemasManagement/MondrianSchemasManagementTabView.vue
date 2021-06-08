@@ -20,7 +20,6 @@
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.workFlow.title') }}</span>
                 </template>
-                {{ availableUsersList[1] }}
 
                 <MondrianSchemasWorkflowTab :selectedSchema="selectedSchema" :usersList="availableUsersList" @selectedUsersChanged="onSelectedUsersChange" @changed="emitTouched" />
             </TabPanel>
@@ -62,7 +61,6 @@ export default defineComponent({
             v$: useValidate() as any,
             allUsers: [] as any,
             wfSelectedUserList: [] as any,
-            wfSelectedUserListToChange: [] as any,
             availableUsersList: [] as any,
             versionToSave: null as any,
             reloadVersionTable: false

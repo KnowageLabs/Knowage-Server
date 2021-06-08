@@ -137,14 +137,17 @@
             },
             "detail": {
                 "title": "Detail",
-                "name": "Name",
-                "description": "Description",
                 "savedVersions": "Saved versions"
             },
             "workFlow": {
                 "title": "Work Flow",
                 "availableUsers": "Available Users",
-                "userWf": "Users Work Flow"
+                "userWf": "Users Work Flow",
+                "tooltips": {
+                    "noSchema": "Schema is not created!",
+                    "wfInProgress": "Workflow is in progress!",
+                    "noWfUsers": "No users saved in workflow!"
+                }
             }
         }
     },

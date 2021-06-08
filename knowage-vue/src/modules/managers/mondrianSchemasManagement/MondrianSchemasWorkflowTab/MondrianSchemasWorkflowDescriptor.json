@@ -1,1 +1,25 @@
-{}
+{
+    "style": {
+        "targetHeader": {
+            "color": "blue"
+        },
+        "listItem": {
+            "display": "flex",
+            "align-items": "center",
+            "paddding": ".5rem",
+            "width": "100%",
+            "height": "50px"
+        },
+        "listItemDetail": {
+            "flex": "1 1 0"
+        },
+        "icon": {
+            "display": "flex",
+            "flex-direction": "column",
+            "align-items": "flex-end"
+        },
+        "targetIcon": {
+            "margin-left": "70%"
+        }
+    }
+}

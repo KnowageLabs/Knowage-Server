@@ -17,12 +17,12 @@
                             @input="onFieldChange('name', $event.target.value)"
                             data-test="name-input"
                         />
-                        <label for="name" class="kn-material-input-label"> {{ $t('managers.mondrianSchemasManagement.detail.name') }} * </label>
+                        <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
                     <KnValidationMessages
                         :vComp="v$.schema.name"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.mondrianSchemasManagement.detail.name')
+                            fieldName: $t('common.name')
                         }"
                     />
                 </div>
@@ -42,19 +42,19 @@
                             data-test="description-input"
                         />
                         <label for="description" class="kn-material-input-label">
-                            {{ $t('managers.mondrianSchemasManagement.detail.description') }}
+                            {{ $t('common.description') }}
                         </label>
                     </span>
                     <KnValidationMessages
                         :vComp="v$.schema.description"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.mondrianSchemasManagement.detail.description')
+                            fieldName: $t('common.description')
                         }"
                     />
                 </div>
                 <div class="p-field">
                     <span class="p-float-label">
-                        <KnInputFile label="" :changeFunction="onVersionUpload" accept="" :visibility="true" />
+                        <KnInputFile label="" :changeFunction="onVersionUpload" accept=".csv, .xml" :visibility="true" />
                     </span>
                 </div>
             </form>
@@ -76,7 +76,7 @@
                         v-if="!loading"
                         :value="versions"
                         :scrollable="true"
-                        scrollHeight="45vh"
+                        scrollHeight="40vh"
                         :loading="loading"
                         :rows="7"
                         class="p-datatable-sm kn-table"
