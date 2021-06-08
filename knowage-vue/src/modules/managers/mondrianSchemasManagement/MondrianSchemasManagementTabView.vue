@@ -20,11 +20,9 @@
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.workFlow.title') }}</span>
                 </template>
-                <!-- {{ allUsers }}
-                {{ wfSelectedUserList }} -->
-                {{ availableUsersList }}
+                {{ availableUsersList[1] }}
 
-                <MondrianSchemasWorkflowTab :usersList="availableUsersList" @selectedUsersChanged="onSelectedUsersChange" />
+                <MondrianSchemasWorkflowTab :selectedSchema="selectedSchema" :usersList="availableUsersList" @selectedUsersChanged="onSelectedUsersChange" @changed="emitTouched" />
             </TabPanel>
         </TabView>
     </div>
@@ -72,8 +70,6 @@ export default defineComponent({
     },
     async created() {
         await this.loadAllUsers()
-        console.log('========================= USERS =======================')
-        console.log(this.allUsers)
         this.loadSelectedSchema()
         this.clearAvailableUsersList()
     },
@@ -90,32 +86,37 @@ export default defineComponent({
     },
     methods: {
         // EVENTS TO EMIT & onEmited ==========================
+        emitTouched() {
+            this.$emit('touched')
+        },
         closeTemplate() {
-            console.log('Template Closed')
+            // console.log('Template Closed')
             this.$router.push('/schemas')
             this.$emit('closed')
         },
         onFieldChange(event) {
-            console.log('Field Changed')
             this.selectedSchema[event.fieldName] = event.value
+            // console.log('Field Changed')
             this.$emit('touched')
         },
         onVersionChange(event) {
             this.selectedSchema.currentContentId = event
-            console.log('Version Changed')
-            console.log(this.selectedSchema.currentContentId)
+            // console.log('Version Changed')
+            // console.log(this.selectedSchema.currentContentId)
             this.$emit('touched')
         },
         onSelectedUsersChange(event) {
-            console.log('Selected User Changed')
             this.availableUsersList[1] = event
-            console.log(this.availableUsersList[1])
+            // console.log('Selected User Changed')
+            // console.log(this.availableUsersList[1])
             this.$emit('touched')
         },
 
         // LOAD WORKFLOW USERS ==========================
         async loadAllUsers() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/users`).then((response) => (this.allUsers = response.data))
+            console.log('------------------------ loadAllUsers ------------------------')
+            console.log(this.allUsers)
         },
 
         // LOAD SELECTED SCHEMA ==========================
@@ -134,9 +135,9 @@ export default defineComponent({
 
         // CREATE WORKFLOW DATA ==========================
         createAvailableUsersList() {
-            console.log('selectedSchema ====================================================')
+            console.log('------------------------ selectedSchema ------------------------')
             console.log(this.selectedSchema)
-            console.log('wfSelectedUserList R A W ====================================================')
+            console.log('------------------- wfSelectedUserList RAW -------------------')
             console.log(this.wfSelectedUserList)
 
             const listOfSelectedUsers = this.wfSelectedUserList.map((userId) => this.allUsers.find((user) => userId === user.id))
@@ -151,13 +152,13 @@ export default defineComponent({
             })
             this.availableUsersList = [listOfAvailableUsers, listOfSelectedUsers]
 
-            console.log('availableUsersList 2D ARRAY ====================================================')
+            console.log('----------------- availableUsersList 2D Array -----------------')
             console.log(this.availableUsersList)
         },
 
         // CREATE WORKFLOW DATA ==========================
         clearAvailableUsersList() {
-            console.log('clearAvailableUsersList ========')
+            console.log('--------------------- clearAvailableUsersList ---------------------')
             console.log(this.allUsers)
             this.availableUsersList = [this.allUsers, []]
         },
@@ -185,7 +186,7 @@ export default defineComponent({
 
         // UPDATE WORKFLOW USERS FROM WORKFLOW TAB ==========================
         async updateWorkflow(response) {
-            console.log('WORKFLOW RESPONSE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+            console.log('------------------------ updateWorkflow(response) ------------------------')
             console.log(response)
             let newSchemaId = response.data.id
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/update`
@@ -230,6 +231,7 @@ export default defineComponent({
             )
         },
 
+        // onSaveSuccess ==========================
         async onSaveSuccess(response) {
             this.selectedSchema.id = response.data.id
             await this.uploadFile()

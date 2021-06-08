@@ -15,6 +15,7 @@
                             maxLength="100"
                             @blur="v$.schema.name.$touch()"
                             @input="onFieldChange('name', $event.target.value)"
+                            data-test="name-input"
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('managers.mondrianSchemasManagement.detail.name') }} * </label>
                     </span>
@@ -38,6 +39,7 @@
                             maxLength="500"
                             @blur="v$.schema.description.$touch()"
                             @input="onFieldChange('description', $event.target.value)"
+                            data-test="description-input"
                         />
                         <label for="description" class="kn-material-input-label">
                             {{ $t('managers.mondrianSchemasManagement.detail.description') }}
