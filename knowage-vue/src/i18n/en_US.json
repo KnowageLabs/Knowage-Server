@@ -79,7 +79,7 @@
             "qa": "support forum"
         },
         "welcome": "Welcome to Knowage",
-        "welcomeText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque tristique convallis urna, sed ultrices turpis viverra iaculis. <br>Proin libero arcu, euismod at ante eu, ornare porta leo. Phasellus non quam in neque dignissim interdum sed quis nibh. Praesent sodales sagittis odio a finibus. Nullam nec urna ac turpis efficitur gravida eu vitae arcu. Aliquam odio nibh, porta sit amet ornare mollis, vehicula non felis. <br> Ut nibh metus, semper eu tempus vel, pellentesque sed dui. Vestibulum mattis bibendum eros quis interdum."
+        "welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
     },
     "importExport": {
         "filenamePlaceholder": "Enter filename here",
