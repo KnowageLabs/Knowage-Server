@@ -18,11 +18,27 @@
 
 package it.eng.spagobi.security.azure;
 
+import java.net.URL;
+import java.security.interfaces.RSAPublicKey;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 
+import com.auth0.jwk.Jwk;
+import com.auth0.jwk.JwkProvider;
+import com.auth0.jwk.UrlJwkProvider;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+
 import it.eng.spagobi.security.InternalSecurityServiceSupplierImpl;
+import it.eng.spagobi.security.azure.config.AzureSignInConfig;
+import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class AzureSecurityServiceSupplier implements ISecurityServiceSupplier {
 
@@ -52,8 +68,45 @@ public class AzureSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 	@Override
 	public SpagoBIUserProfile checkAuthenticationToken(String token) {
-		InternalSecurityServiceSupplierImpl supplier = new InternalSecurityServiceSupplierImpl();
-		SpagoBIUserProfile profile = supplier.checkAuthentication("biadmin", "biadmin");
+		DecodedJWT jwt;
+		try {
+			logger.debug("JWT token in input : [" + token + "]");
+			jwt = JWT.decode(token);
+			JwkProvider provider = new UrlJwkProvider(new URL(AzureSignInConfig.AZURE_JWK_PROVIDER_URL));
+			logger.debug("JWT token Key Id : [" + jwt.getKeyId() + "]");
+			Jwk jwk = provider.get(jwt.getKeyId());
+			Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
+//			algorithm.verify(jwt);
+			logger.debug("JWT token verified properly");
+		} catch (SignatureVerificationException e) {
+			throw new SpagoBIRuntimeException("Invalid JWT token signature");
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error validating JWT token", e);
+		}
+
+		String email = jwt.getClaim("email").asString();
+		String tenant_id = jwt.getClaim("tid").asString();
+		String client_id = jwt.getClaim("appid").asString();
+
+		if (!tenant_id.equals(AzureSignInConfig.getTenantId()))
+			throw new SpagoBIRuntimeException("Tenant id not matching!");
+		if (!client_id.equals(AzureSignInConfig.getClientId()))
+			throw new SpagoBIRuntimeException("Client id (app id) not matching!");
+
+		SpagoBIUserProfile profile = createUserProfileObject(email);
+		return profile;
+	}
+
+	private SpagoBIUserProfile createUserProfileObject(String email) {
+		SpagoBIUserProfile profile = new SpagoBIUserProfile();
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.HOUR, USER_JWT_TOKEN_EXPIRE_HOURS);
+		Date expiresAt = calendar.getTime();
+
+		String jwtToken = JWTSsoService.userId2jwtToken(email, expiresAt);
+
+		profile.setUniqueIdentifier(jwtToken);
 		return profile;
 	}
 

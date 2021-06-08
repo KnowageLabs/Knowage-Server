@@ -31,9 +31,13 @@ public class AzureSignInConfig {
 
 	static private Logger logger = Logger.getLogger(AzureSignInConfig.class);
 
+	static public final String AZURE_JWK_PROVIDER_URL = "https://login.microsoftonline.com/common/discovery/keys";
+
 	static protected final String AZURE_AUTHENTICATION_CONFIG = "azure.signin.config";
 
 	static protected final String AZURE_CLIENT_ID = "client_id";
+
+	static protected final String AZURE_TENANT_ID = "tenant_id";
 
 	static protected final String IS_ENABLED = "enabled";
 
@@ -72,6 +76,12 @@ public class AzureSignInConfig {
 	public static String getClientId() {
 		String toReturn = properties.getProperty(AZURE_CLIENT_ID);
 		LogMF.debug(logger, "Azure Sign-In Client ID: {0}", toReturn);
+		return toReturn;
+	}
+
+	public static String getTenantId() {
+		String toReturn = properties.getProperty(AZURE_TENANT_ID);
+		LogMF.debug(logger, "Azure Sign-In Tenant ID: {0}", toReturn);
 		return toReturn;
 	}
 
