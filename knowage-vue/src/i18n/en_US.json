@@ -135,6 +135,7 @@
                 "dataType": "Data type",
                 "description": "Description",
                 "lov": "Lov",
+                "lovPlaceholder": "Select a Lov",
                 "manualInput": "Manual input",
                 "multiValue": "Multivalue",
                 "name": "Name",
