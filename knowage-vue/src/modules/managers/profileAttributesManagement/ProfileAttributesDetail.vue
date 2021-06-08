@@ -138,7 +138,7 @@ export default defineComponent({
     props: {
         selectedAttribute: {
             type: Object,
-            requried: true
+            required: true
         }
     },
     computed: {
