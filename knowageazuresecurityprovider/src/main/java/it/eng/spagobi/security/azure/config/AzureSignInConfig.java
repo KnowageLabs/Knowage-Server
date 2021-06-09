@@ -85,4 +85,8 @@ public class AzureSignInConfig {
 		return toReturn;
 	}
 
+	public static String getAuthorityId() {
+		return "https://login.microsoftonline.com/" + getTenantId() + "/";
+	}
+
 }
