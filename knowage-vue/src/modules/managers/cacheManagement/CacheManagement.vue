@@ -2,7 +2,7 @@
     <div class="kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
             <template #left>
-                CACHE MANAGEMENT
+                {{ $t('managers.cacheManagement.title') }}
             </template>
         </Toolbar>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
@@ -11,7 +11,7 @@
                 <RuntimeInformationCard :item="cache" :chartData="chartData"></RuntimeInformationCard>
             </div>
             <div class="p-col-6 p-sm-12 p-md-6 p-p-0">
-                <GeneralSettingsCard :item="settings" :datasources="datasources" :selectedDatasource="selectedDatasource" @inserted="pageReload"></GeneralSettingsCard>
+                <GeneralSettingsCard v-if="!loading" :item="settings" :datasources="datasources" :selectedDatasource="selectedDatasource" @inserted="pageReload"></GeneralSettingsCard>
             </div>
             <div class="p-col-12 p-sm-12 p-p-0">
                 <DatasetTableCard :datasetMetadataList="datasetMetadataList" :loading="loading" @deleted="loadDatasetsMetadata"></DatasetTableCard>
@@ -50,14 +50,6 @@ export default defineComponent({
         this.loading = true
         await this.loadCache()
         await this.loadDataSources()
-        console.log('Datasources: ', this.datasources)
-        // TODO pitati za ovo
-        if (this.selectedDatasource === null) {
-            this.$store.commit('setInfo', {
-                title: 'TITLE',
-                msg: 'No default datasource set, cannot display cache runtime information!'
-            })
-        }
         await this.loadSettings()
         await this.loadDatasetsMetadata()
         this.loading = false
@@ -95,6 +87,13 @@ export default defineComponent({
                     }
                 })
             })
+
+            if (this.selectedDatasource === null) {
+                this.$store.commit('setError', {
+                    title: this.$t('managers.cacheManagement.noDefaultDatasetTitle'),
+                    msg: this.$t('managers.cacheManagement.noDefaultDataset')
+                })
+            }
         },
         async loadDatasetsMetadata() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/meta').then((response) => (this.datasetMetadataList = response.data))

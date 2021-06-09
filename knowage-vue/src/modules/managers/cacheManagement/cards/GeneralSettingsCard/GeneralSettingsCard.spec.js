@@ -159,6 +159,7 @@ describe('Cache Management General Settings', () => {
         await flushPromises()
 
         expect(axios.put).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/conf', { configurations: expectedConfiguration })
+        expect($store.commit).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
     })
 })

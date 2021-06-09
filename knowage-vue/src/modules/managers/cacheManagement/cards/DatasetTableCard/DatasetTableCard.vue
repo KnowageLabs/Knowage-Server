@@ -11,22 +11,7 @@
             </Toolbar>
         </template>
         <template #content>
-            <DataTable
-                :value="datasets"
-                :loading="loading"
-                class="p-datatable-sm kn-table"
-                dataKey="signature"
-                responsiveLayout="stack"
-                breakpoint="960px"
-                :currentPageReportTemplate="
-                    $t('common.table.footer.paginated', {
-                        first: '{first}',
-                        last: '{last}',
-                        totalRecords: '{totalRecords}'
-                    })
-                "
-                data-test="dataset-table"
-            >
+            <DataTable :value="datasets" :loading="loading" class="p-datatable-sm kn-table" dataKey="signature" responsiveLayout="stack" breakpoint="960px" data-test="dataset-table">
                 <template #empty>
                     {{ $t('managers.cacheManagement.metadataUnavailable') }}
                 </template>
@@ -62,10 +47,12 @@ export default defineComponent({
     },
     props: {
         datasetMetadataList: {
-            type: Array
+            type: Array,
+            required: true
         },
         loading: {
-            type: Boolean
+            type: Boolean,
+            required: true
         }
     },
     emits: ['deleted'],
@@ -77,7 +64,7 @@ export default defineComponent({
     },
     computed: {
         cleanAllDisabled(): boolean {
-            return this.datasets.length == 0
+            return this.datasets.length === 0
         }
     },
     watch: {
@@ -93,22 +80,17 @@ export default defineComponent({
             this.datasets = this.datasetMetadataList as iMeta[]
         },
         async cleanAll() {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee').then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
-                })
-                this.$emit('deleted')
-            })
+            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee').then(() => this.emitDeleteSuccess())
         },
         async deleteDataset(signature: string) {
-            await axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: [signature] }).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
-                })
-                this.$emit('deleted')
+            await axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: [signature] }).then(() => this.emitDeleteSuccess())
+        },
+        emitDeleteSuccess() {
+            this.$store.commit('setInfo', {
+                title: this.$t('common.toast.deleteTitle'),
+                msg: this.$t('common.toast.deleteSuccess')
             })
+            this.$emit('deleted')
         }
     }
 })

@@ -83,7 +83,7 @@ export default defineComponent({
                 datasets: [
                     {
                         backgroundColor: ['#43749e', '#bbd6ed'],
-                        data: this.chartData as any
+                        data: this.chartData
                     }
                 ]
             }
