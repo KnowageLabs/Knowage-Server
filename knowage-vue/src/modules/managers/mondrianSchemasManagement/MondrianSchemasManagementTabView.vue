@@ -3,7 +3,7 @@
         <template #left>{{ selectedSchema.name }} </template>
         <template #right>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
@@ -63,7 +63,8 @@ export default defineComponent({
             wfSelectedUserList: [] as any,
             availableUsersList: [] as any,
             versionToSave: null as any,
-            reloadVersionTable: false
+            reloadVersionTable: false,
+            touched: false
         }
     },
     async created() {
@@ -73,6 +74,9 @@ export default defineComponent({
     },
     computed: {
         buttonDisabled(): any {
+            if (!this.selectedSchema.id && !this.versionToSave) {
+                return true
+            }
             return this.v$.$invalid
         }
     },
@@ -85,6 +89,7 @@ export default defineComponent({
     methods: {
         // EVENTS TO EMIT & onEmited ==========================
         emitTouched() {
+            this.touched = true
             this.$emit('touched')
         },
         closeTemplate() {
@@ -95,19 +100,38 @@ export default defineComponent({
         onFieldChange(event) {
             this.selectedSchema[event.fieldName] = event.value
             // console.log('Field Changed')
+            this.touched = true
             this.$emit('touched')
         },
         onVersionChange(event) {
             this.selectedSchema.currentContentId = event
             // console.log('Version Changed')
             // console.log(this.selectedSchema.currentContentId)
+            this.touched = true
             this.$emit('touched')
         },
         onSelectedUsersChange(event) {
             this.availableUsersList[1] = event
             // console.log('Selected User Changed')
             // console.log(this.availableUsersList[1])
+            this.touched = true
             this.$emit('touched')
+        },
+
+        closeTemplateConfirm() {
+            if (!this.touched) {
+                this.closeTemplate()
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.closeTemplate()
+                    }
+                })
+            }
         },
 
         // LOAD WORKFLOW USERS ==========================

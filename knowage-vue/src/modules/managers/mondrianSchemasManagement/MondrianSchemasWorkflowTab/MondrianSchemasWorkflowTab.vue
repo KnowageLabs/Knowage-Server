@@ -1,6 +1,6 @@
 <template>
     <div>
-        <PickList v-model="availableUsersList" listStyle="height:500px" :disabled="true" @move-to-target="onUserChange" @move-to-source="onUserChange" @reorder="onUserChange">
+        <PickList v-model="availableUsersList" class="picklist" listStyle="height: 50rem" @move-to-target="onUserChange" @move-to-source="onUserChange" @reorder="onUserChange">
             <template #sourceHeader>
                 {{ $t('managers.mondrianSchemasManagement.workFlow.availableUsers') }}
             </template>
@@ -151,3 +151,4 @@ export default defineComponent({
     }
 })
 </script>
+<style scoped></style>
