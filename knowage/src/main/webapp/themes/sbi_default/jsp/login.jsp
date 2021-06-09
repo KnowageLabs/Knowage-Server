@@ -167,10 +167,10 @@
 		<% if (AzureSignInConfig.isEnabled()) {%>
 		<%-- Resources for Azure Sign-In authentication --%>
 		<script>
-			const msalConfig = {
+			var msalConfig = {
 				    auth: {
-				        clientId: "54994f1f-389c-4a87-b38a-933803d03709",
-				        authority: "https://login.microsoftonline.com/angelobernabeieng.onmicrosoft.com/"
+				        clientId: "<%= AzureSignInConfig.getClientId() %>",
+				        authority: "<%= AzureSignInConfig.getAuthorityId() %>"
 				    },
 				    cache: {
 				        cacheLocation: "localStorage", // This configures where your cache will be stored
@@ -179,7 +179,7 @@
 			};
 			
 			// Add here scopes for id token to be used at MS Identity Platform endpoints.
-			const loginRequest = {
+			var loginRequest = {
 			    scopes: ["User.Read"]
 			};
 		
@@ -220,7 +220,7 @@
 	           	
                 <% } else if (AzureSignInConfig.isEnabled()){ %>
             		<%-- Azure button for authentication --%>
-	           		<button onclick="onAzureSignIn()">Sign in with Microsoft</button>
+	           		<button class="bsk-btn bsk-btn-default" onclick="onAzureSignIn()"><object type="image/svg+xml" data="https://s3-eu-west-1.amazonaws.com/cdn-testing.web.bas.ac.uk/scratch/bas-style-kit/ms-pictogram/ms-pictogram.svg"></object>Sign In</button>
 	           		
             	<% } else { %>
             	
