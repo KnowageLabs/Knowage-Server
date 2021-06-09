@@ -29,6 +29,7 @@
 	import Dialog from 'primevue/dialog'
 	import { mapState } from 'vuex'
 	import moment from 'moment'
+	import axios from 'axios'
 
 	export default defineComponent({
 		name: 'InfoDialog',
@@ -45,9 +46,20 @@
 				currentVersion: process.env.VUE_APP_VERSION
 			}
 		},
+		mounted() {
+			this.licenseInformation()
+		},
 		methods: {
 			closeDialog() {
 				this.$emit('update:visibility', false)
+			},
+			licenseInformation() {
+				axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then(function(response) {
+					for (var idx in response.data.hosts) {
+						console.log('Hardware ID: ' + response.data.hosts[idx]['hardwareId'])
+						console.log('Host Name: ' + response.data.hosts[idx]['hostName'])
+					}
+				})
 			}
 		},
 		computed: {

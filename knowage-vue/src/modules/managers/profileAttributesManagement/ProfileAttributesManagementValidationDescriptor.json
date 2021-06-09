@@ -1,0 +1,76 @@
+{
+    "validations": {
+        "attribute": [
+            {
+                "fieldName": "attributeName",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "type": "maxLength",
+                            "params": {
+                                "max": 255
+                            }
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "attributeDescription",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "type": "maxLength",
+                            "params": {
+                                "max": 500
+                            }
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "value",
+                "validators": []
+            },
+            {
+                "fieldName": "lov",
+                "validators": []
+            },
+            {
+                "fieldName": "lovId",
+                "validators": []
+            },
+            {
+                "fieldName": "multivalue",
+                "validators": []
+            },
+            {
+                "fieldName": "allowUser",
+                "validators": []
+            },
+            {
+                "fieldName": "syntax",
+                "validators": []
+            }
+        ]
+    }
+}
