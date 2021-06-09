@@ -236,8 +236,8 @@ export default defineComponent({
             this.formInsert = false
             if (this.dirty) {
                 this.$confirm.require({
-                    message: this.$t('managers.usersManagement.unsavedChangesMessage'),
-                    header: this.$t('managers.usersManagement.unsavedChangesHeader'),
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.populateForms(userSelected)
@@ -273,7 +273,20 @@ export default defineComponent({
             return this.roles ? [...this.roles.filter((role) => userRoles && userRoles.find((userRoleId) => role.id === userRoleId))] : []
         },
         closeForm() {
-            this.hiddenForm = true
+            if (this.dirty) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.hiddenForm = true
+                        this.dirty = false
+                    },
+                    reject: () => {}
+                })
+            } else {
+                this.hiddenForm = true
+            }
         }
     }
 })
