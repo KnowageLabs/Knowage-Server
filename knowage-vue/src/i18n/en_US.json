@@ -146,7 +146,7 @@
                 "tooltips": {
                     "noSchema": "Schema is not created!",
                     "wfInProgress": "Workflow is in progress!",
-                    "noWfUsers": "No users saved in workflow!"
+                    "noWfUsers": "Save users in workflow!"
                 }
             }
         }

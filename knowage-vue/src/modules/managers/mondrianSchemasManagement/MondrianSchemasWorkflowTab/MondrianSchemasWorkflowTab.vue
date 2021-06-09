@@ -1,27 +1,84 @@
 <template>
-    <div>
-        <PickList v-model="availableUsersList" class="picklist" listStyle="height: 50rem" @move-to-target="onUserChange" @move-to-source="onUserChange" @reorder="onUserChange">
-            <template #sourceHeader>
-                {{ $t('managers.mondrianSchemasManagement.workFlow.availableUsers') }}
-            </template>
-            <template #targetHeader>
-                {{ $t('managers.mondrianSchemasManagement.workFlow.userWf') }}
-                <span :style="workflowDescriptor.style.targetIcon" v-tooltip.top="tooltipValue">
-                    <Button :disabled="disableButton()" icon="pi pi-play" @click="startWorkflow" />
-                </span>
-            </template>
-            <template #item="slotProps">
-                <div :style="workflowDescriptor.style.listItem">
-                    <div :style="workflowDescriptor.style.listItemDetail">
-                        <h4 class="p-mb-2">{{ slotProps.item.userId }}</h4>
-                        <span>{{ slotProps.item.fullName }}</span>
-                    </div>
-                    <div :style="workflowDescriptor.style.icon">
-                        <i v-if="slotProps.item.id === this.userInProg" class="pi pi-check" />
-                    </div>
-                </div>
-            </template>
-        </PickList>
+    <div class="p-d-flex">
+        <div class="kn-list--column p-col-6">
+            <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                <template #left>
+                    {{ $t('managers.mondrianSchemasManagement.workFlow.availableUsers') }}
+                </template>
+            </Toolbar>
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+            <div class="p-col">
+                <Listbox
+                    v-if="!loading"
+                    class="kn-list--column"
+                    :options="availableUsersList[0]"
+                    :filter="true"
+                    :filterPlaceholder="$t('common.search')"
+                    optionLabel="name"
+                    filterMatchMode="contains"
+                    :filterFields="workflowDescriptor.filterFields"
+                    :emptyFilterMessage="$t('common.info.noDataFound')"
+                    @change="showForm"
+                    data-test="userList1-list"
+                >
+                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                    <template #option="slotProps">
+                        <div class="kn-list-item" :class="{ disableCursor: isStartedWf }" @click="addUserToWf(slotProps.option.id)" data-test="userList1-item">
+                            <div class="kn-list-item-text">
+                                <span>{{ slotProps.option.userId }}</span>
+                                <span class="kn-list-item-text-secondary">{{ slotProps.option.fullName }}</span>
+                            </div>
+                        </div>
+                    </template>
+                </Listbox>
+            </div>
+        </div>
+
+        <div class="kn-list--column p-col-6 ">
+            <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                <template #left>
+                    {{ $t('managers.mondrianSchemasManagement.workFlow.userWf') }}
+                </template>
+                <template #right>
+                    <span v-tooltip.top="tooltipValue">
+                        <Button :disabled="disableButton()" icon="pi pi-play" @click="startWorkflow" />
+                    </span>
+                </template>
+            </Toolbar>
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+            <div class="p-col">
+                <Listbox
+                    v-if="!loading"
+                    class="kn-list--column"
+                    :options="availableUsersList[1]"
+                    :filter="true"
+                    :filterPlaceholder="$t('common.search')"
+                    optionLabel="name"
+                    filterMatchMode="contains"
+                    :filterFields="workflowDescriptor.filterFields"
+                    :emptyFilterMessage="$t('common.info.noDataFound')"
+                    @change="showForm"
+                    data-test="userList2-list"
+                >
+                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                    <template #option="slotProps">
+                        <div class="kn-list-item" :class="{ disableCursor: isStartedWf }" @click="removeFromList(slotProps.option.id)" data-test="userList2-item">
+                            <div class="kn-list-item-text">
+                                <span>{{ slotProps.option.userId }}</span>
+                                <span class="kn-list-item-text-secondary">{{ slotProps.option.fullName }}</span>
+                            </div>
+                            <div v-if="!isStartedWf">
+                                <Button icon="pi pi-arrow-circle-up" class="p-button-link" @click.stop="moveUpList(slotProps.option.id)" />
+                                <Button icon="pi pi-arrow-circle-down" class="p-button-link" @click.stop="moveDownList(slotProps.option.id)" />
+                            </div>
+                            <div v-if="isStartedWf">
+                                <i v-if="slotProps.option.id === userInProg" class="pi pi-check-circle" :style="workflowDescriptor.style.icon" />
+                            </div>
+                        </div>
+                    </template>
+                </Listbox>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -29,7 +86,8 @@
 import { defineComponent } from 'vue'
 import { iSchema } from '../MondrianSchemas'
 import workflowDescriptor from './MondrianSchemasWorkflowDescriptor.json'
-import PickList from 'primevue/picklist'
+import Listbox from 'primevue/listbox'
+
 import axios from 'axios'
 import Tooltip from 'primevue/tooltip'
 
@@ -39,7 +97,7 @@ export default defineComponent({
         tooltip: Tooltip
     },
     components: {
-        PickList
+        Listbox
     },
     props: {
         usersList: Array,
@@ -54,7 +112,8 @@ export default defineComponent({
             isStartedWf: false,
             isButtonDisabled: false,
             userInProg: null as any,
-            tooltipValue: ''
+            tooltipValue: '',
+            isChanged: false
         }
     },
 
@@ -70,12 +129,14 @@ export default defineComponent({
         },
         selectedSchema() {
             this.schema = { ...this.selectedSchema } as iSchema
+            this.isChanged = false
             this.isWorkflowStarted()
         }
     },
     methods: {
         onUserChange() {
             let selectedUsers = this.availableUsersList[1]
+            this.isChanged = true
             this.$emit('selectedUsersChanged', selectedUsers)
             this.$emit('changed')
         },
@@ -132,7 +193,7 @@ export default defineComponent({
                 this.tooltipValue = this.$t('managers.mondrianSchemasManagement.workFlow.tooltips.noSchema')
                 return true
             } else {
-                if (this.availableUsersList[1].length == 0) {
+                if (this.availableUsersList[1].length == 0 || this.isChanged) {
                     console.log('BUTTON DISABLED NO ARRAY' + this.availableUsersList[1])
                     this.tooltipValue = this.$t('managers.mondrianSchemasManagement.workFlow.tooltips.noWfUsers')
                     return true
@@ -147,8 +208,64 @@ export default defineComponent({
             console.log('BUTTON NOT DISABLED')
             this.tooltipValue = ''
             return false
+        },
+
+        // LIST MANAGEMENT METHODS ==========================
+        moveUpList(userId) {
+            const index = this.availableUsersList[1].findIndex((user) => user.id === userId)
+            if (index === 0) {
+                return
+            } else {
+                const user = this.availableUsersList[1][index]
+                this.availableUsersList[1].splice(index, 1)
+                this.availableUsersList[1].splice(index - 1, 0, user)
+                this.onUserChange()
+            }
+        },
+        moveDownList(userId) {
+            const index = this.availableUsersList[1].findIndex((user) => user.id === userId)
+            if (index === this.availableUsersList[1].length - 1) {
+                return
+            } else {
+                const user = this.availableUsersList[1][index]
+                this.availableUsersList[1].splice(index, 1)
+                this.availableUsersList[1].splice(index + 1, 0, user)
+                this.onUserChange()
+            }
+        },
+        removeFromList(userId) {
+            if (this.isStartedWf) {
+                return
+            }
+            const index = this.availableUsersList[1].findIndex((user) => user.id === userId)
+            if (index >= 0) {
+                const user = this.availableUsersList[1][index]
+                this.availableUsersList[1].splice(index, 1)
+                this.availableUsersList[0].push(user)
+                this.onUserChange()
+            }
+        },
+
+        addUserToWf(userId) {
+            if (this.isStartedWf) {
+                return
+            }
+            const index = this.availableUsersList[0].findIndex((user) => user.id === userId)
+            if (index >= 0) {
+                const user = this.availableUsersList[0][index]
+                this.availableUsersList[0].splice(index, 1)
+                this.availableUsersList[1].push(user)
+                this.onUserChange()
+            }
         }
     }
 })
 </script>
-<style scoped></style>
+<style scoped>
+.disableCursor {
+    cursor: not-allowed;
+}
+::v-deep(.p-toolbar-group-right) {
+    height: 100%;
+}
+</style>

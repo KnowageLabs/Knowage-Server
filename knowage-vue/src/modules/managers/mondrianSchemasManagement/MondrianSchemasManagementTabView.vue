@@ -112,8 +112,8 @@ export default defineComponent({
         },
         onSelectedUsersChange(event) {
             this.availableUsersList[1] = event
-            // console.log('Selected User Changed')
-            // console.log(this.availableUsersList[1])
+            console.log('Selected User Changed')
+            console.log(this.availableUsersList[1])
             this.touched = true
             this.$emit('touched')
         },
@@ -271,7 +271,13 @@ export default defineComponent({
             }
             this.$emit('inserted')
             this.loadSelectedSchema()
+            this.touched = false
         }
     }
 })
 </script>
+<style scoped>
+::v-deep(.p-toolbar-group-right) {
+    height: 100%;
+}
+</style>

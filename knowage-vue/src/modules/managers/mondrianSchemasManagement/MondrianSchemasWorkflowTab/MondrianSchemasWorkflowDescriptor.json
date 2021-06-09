@@ -1,4 +1,5 @@
 {
+    "filterFields": ["fullName"],
     "style": {
         "targetHeader": {
             "color": "blue"
@@ -16,7 +17,8 @@
         "icon": {
             "display": "flex",
             "flex-direction": "column",
-            "align-items": "flex-end"
+            "align-items": "flex-end",
+            "color": "green"
         },
         "targetIcon": {
             "margin-left": "70%"
