@@ -18,6 +18,7 @@
 
   
 <%@page import="it.eng.spagobi.security.google.config.GoogleSignInConfig"%>
+<%@page import="it.eng.spagobi.security.azure.config.AzureSignInConfig"%>
 <%@ page language="java"
          extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"
          contentType="text/html; charset=UTF-8"
@@ -163,7 +164,7 @@
 		<meta name="google-signin-client_id" content="<%= GoogleSignInConfig.getClientId() %>">
 		<% } %>
 		
-		<% if (true) {%>
+		<% if (AzureSignInConfig.isEnabled()) {%>
 		<%-- Resources for Azure Sign-In authentication --%>
 		<script>
 			const msalConfig = {
@@ -248,7 +249,7 @@
             		<%-- Google button for authentication --%>
 	           		<div class="g-signin2" data-onsuccess="onSignIn"></div>
 	           	
-                <% } else if (true){ %>
+                <% } else if (AzureSignInConfig.isEnabled()){ %>
             		<%-- Azure button for authentication --%>
 	           		<button onclick="onAzureSignIn()">Sign in with Microsoft</button>
 	           		
