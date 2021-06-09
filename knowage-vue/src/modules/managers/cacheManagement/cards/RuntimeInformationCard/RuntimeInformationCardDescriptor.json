@@ -1,5 +1,7 @@
 {
-    "style": {
-        "flex": "1"
+    "card": {
+        "style": {
+            "height": "95%"
+        }
     }
 }

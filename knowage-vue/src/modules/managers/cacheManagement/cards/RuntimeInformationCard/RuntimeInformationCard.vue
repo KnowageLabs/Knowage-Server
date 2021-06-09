@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-m-3">
+    <Card class="p-m-2" :style="runtimeInformationCardDescriptor.card.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
@@ -9,15 +9,15 @@
         </template>
         <template #content>
             <div class="p-d-flex p-flex-row">
-                <div class="information-container">
-                    <p>{{ $t('managers.cacheManagement.cacheEnabled') }} {{ cache.cleaningEnabled }}</p>
-                    <p>{{ $t('managers.cacheManagement.totalMemory') }} {{ cache.totalMemory }}</p>
-                    <p>{{ $t('managers.cacheManagement.availableMemory') }} {{ cache.availableMemory }}</p>
-                    <p>{{ $t('managers.cacheManagement.numberOfCachedObjects') }} {{ cache.cachedObjectsCount }}</p>
-                    <p>{{ $t('managers.cacheManagement.availableMemoryPercentage') }} {{ cache.availableMemoryPercentage }}</p>
+                <div class="kn-flex">
+                    <p>{{ $t('managers.cacheManagement.cacheEnabled') }}: {{ cache.cleaningEnabled }}</p>
+                    <p>{{ $t('managers.cacheManagement.totalMemory') }}: {{ totalMemory }}</p>
+                    <p>{{ $t('managers.cacheManagement.availableMemory') }}: {{ availableMemory }}</p>
+                    <p>{{ $t('managers.cacheManagement.numberOfCachedObjects') }}: {{ cache.cachedObjectsCount }}</p>
+                    <p>{{ $t('managers.cacheManagement.availableMemoryPercentage') }}: {{ cache.availableMemoryPercentage }}%</p>
                 </div>
-                <div class="information-container">
-                    <Chart type="pie" :data="cacheData" />
+                <div class="kn-flex">
+                    <Chart type="pie" :data="cacheData" data-test="chart" />
                 </div>
             </div>
         </template>
@@ -60,7 +60,14 @@ export default defineComponent({
         },
         chartData() {
             this.loadChart()
-            console.log('CHART DATA:', this.chartData)
+        }
+    },
+    computed: {
+        totalMemory(): string {
+            return (this.cache.totalMemory / 1048576).toFixed(2) + ' MB'
+        },
+        availableMemory(): string {
+            return (this.cache.availableMemory / 1048576).toFixed(2) + ' MB'
         }
     },
     created() {
@@ -84,9 +91,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss" scoped>
-.information-container {
-    flex: 1;
-}
-</style>

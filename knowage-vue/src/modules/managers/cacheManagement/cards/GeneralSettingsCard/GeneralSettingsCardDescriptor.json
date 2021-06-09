@@ -1,4 +1,9 @@
 {
+    "card": {
+        "style": {
+            "height": "95%"
+        }
+    },
     "schedulingTypes": [
         {
             "label": "managers.cacheManagement.none",

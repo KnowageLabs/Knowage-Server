@@ -11,10 +11,10 @@
                 <RuntimeInformationCard :item="cache" :chartData="chartData"></RuntimeInformationCard>
             </div>
             <div class="p-col-6 p-sm-12 p-md-6 p-p-0">
-                <GeneralSettingsCard :item="settings" :datasources="datasources" :selectedDatasource="selectedDatasource"></GeneralSettingsCard>
+                <GeneralSettingsCard :item="settings" :datasources="datasources" :selectedDatasource="selectedDatasource" @inserted="pageReload"></GeneralSettingsCard>
             </div>
             <div class="p-col-12 p-sm-12 p-p-0">
-                TABLE
+                <DatasetTableCard :datasetMetadataList="datasetMetadataList" :loading="loading" @deleted="loadDatasetsMetadata"></DatasetTableCard>
             </div>
         </div>
     </div>
@@ -22,14 +22,16 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iCache } from './CacheManagement'
+import { iCache, iMeta, iSettings } from './CacheManagement'
 import axios from 'axios'
+import DatasetTableCard from './cards/DatasetTableCard/DatasetTableCard.vue'
 import GeneralSettingsCard from './cards/GeneralSettingsCard/GeneralSettingsCard.vue'
 import RuntimeInformationCard from './cards/RuntimeInformationCard/RuntimeInformationCard.vue'
 
 export default defineComponent({
     name: 'cache-management',
     components: {
+        DatasetTableCard,
         GeneralSettingsCard,
         RuntimeInformationCard
     },
@@ -38,12 +40,14 @@ export default defineComponent({
             cache: {} as iCache,
             loading: false,
             chartData: [] as any,
-            settings: {} as any,
+            datasetMetadataList: [] as iMeta[],
+            settings: {} as iSettings,
             selectedDatasource: null as any,
             datasources: [] as any
         }
     },
     async created() {
+        this.loading = true
         await this.loadCache()
         await this.loadDataSources()
         console.log('Datasources: ', this.datasources)
@@ -55,22 +59,18 @@ export default defineComponent({
             })
         }
         await this.loadSettings()
-        console.log('Settings: ', this.settings)
+        await this.loadDatasetsMetadata()
+        this.loading = false
     },
     methods: {
         async loadCache() {
-            this.loading = true
-            await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee')
-                .then((response) => {
-                    this.cache = response.data
-                    this.chartData = [this.cache.availableMemoryPercentage, 100 - this.cache.availableMemoryPercentage]
-                })
-                .finally(() => (this.loading = false))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee').then((response) => {
+                this.cache = response.data
+                this.chartData = [this.cache.availableMemoryPercentage, 100 - this.cache.availableMemoryPercentage]
+            })
         },
         async loadSettings() {
-            this.loading = true
-            const tempSettings = {} as any
+            const tempSettings = {} as iSettings
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.NAMEPREFIX').then((response) => (tempSettings.prefixForCacheTablesName = response.data.valueCheck))
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.LIMIT_FOR_CLEAN').then((response) => (tempSettings.limitForClean = +response.data.valueCheck))
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN').then((response) => (tempSettings.schedulingFullClean = { label: response.data.valueCheck, value: response.data.valueCheck }))
@@ -82,7 +82,6 @@ export default defineComponent({
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.HAZELCAST.TIMEOUT').then((response) => (tempSettings.hazelcastTimeout = +response.data.valueCheck))
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/label/SPAGOBI.CACHE.HAZELCAST.LEASETIME').then((response) => (tempSettings.hazelcastLeaseTime = +response.data.valueCheck))
             this.settings = { ...tempSettings }
-            this.loading = false
         },
         async loadDataSources() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/?type=cache').then((response) => {
@@ -96,6 +95,17 @@ export default defineComponent({
                     }
                 })
             })
+        },
+        async loadDatasetsMetadata() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/meta').then((response) => (this.datasetMetadataList = response.data))
+        },
+        async pageReload() {
+            this.loading = true
+            await this.loadCache()
+            await this.loadDataSources()
+            await this.loadSettings()
+            await this.loadDatasetsMetadata()
+            this.loading = false
         }
     }
 })

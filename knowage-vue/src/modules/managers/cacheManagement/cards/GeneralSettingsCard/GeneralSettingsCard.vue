@@ -1,32 +1,47 @@
 <template>
-    <Card class="p-m-3">
+    <Card class="p-m-2" :style="generalSettingsCardDescriptor.card.style">
         <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--primary">
+            <Toolbar class="kn-toolbar kn-toolbar--primary p-toolbar-group-right">
                 <template #left>
                     {{ $t('managers.cacheManagement.generalSettings') }}
                 </template>
                 <template #right>
-                    <Button class="kn-button p-button-text p-button-rounded" @click="save">{{ $t('common.save') }}</Button>
-                    <Button class="kn-button p-button-text p-button-rounded" @click="test">{{ $t('managers.cacheManagement.discard') }}</Button>
+                    <Button class="kn-button p-button-text p-button-rounded" @click="save" data-test="save-button">{{ $t('common.save') }}</Button>
+                    <Button class="kn-button p-button-text p-button-rounded" @click="discardChanges" data-test="reset-button">{{ $t('managers.cacheManagement.discard') }}</Button>
                 </template>
             </Toolbar>
         </template>
         <template #content>
             <form class="p-fluid p-m-2">
                 <div class="p-fluid p-formgrid p-grid">
-                    <div class="p-field p-col">
-                        <span class="p-float-label">
+                    <div id="prefix-input-container" class="p-field p-col-6">
+                        <span id="prefix-input-container" class="p-float-label field-container">
                             <InputText id="prefixForCacheTablesName" class="kn-material-input" type="text" v-model.trim="settings.prefixForCacheTablesName" data-test="prefix-input" />
                             <label for="prefixForCacheTablesName" class="kn-material-input-label"> {{ $t('managers.cacheManagement.prefixForCacheTablesName') }}</label>
-                            <span>{{ settings.prefixForCacheTablesName }}</span>
                         </span>
+                    </div>
+                    <div class="p-field p-col-6">
                         <span>
-                            <label for="limitForClean" class="kn-material-input-label"> {{ $t('managers.cacheManagement.maximumPercentOfCacheCleaningQuota') }}</label>
-                            <InputNumber id="limitForClean" inputClass="kn-material-input" v-model="bla" :min="0" :max="100" :useGrouping="false" data-test="clean-limit-input" />
-                            <span>{{ bla }}</span>
+                            <label for="spaceAvailable" class="kn-material-input-label small-label"> {{ $t('managers.cacheManagement.totalBytesAvailableForCache') }}</label>
+                            <InputNumber id="spaceAvailable" inputClass="kn-material-input" v-model.trim="settings.spaceAvailable" :min="0" :useGrouping="false" @input="onInputNumberChange('spaceAvailable', $event.value)" data-test="space-available-input" />
+                            <small id="spaceAvailable-hint">{{ formatCacheDimension(settings.spaceAvailable) }}</small>
                         </span>
+                    </div>
+                    <div class="p-field p-col-6">
                         <span>
-                            <label for="schedulingFullClean" class="kn-material-input-label"> {{ $t('managers.cacheManagement.frequencyOfCleaningDaemon') }}</label>
+                            <label for="limitForClean" class="kn-material-input-label small-label"> {{ $t('managers.cacheManagement.maximumPercentOfCacheCleaningQuota') }}</label>
+                            <InputNumber id="limitForClean" inputClass="kn-material-input" v-model="settings.limitForClean" :min="0" :max="100" :useGrouping="false" @input="onInputNumberChange('limitForClean', $event.value)" data-test="clean-limit-input" />
+                        </span>
+                    </div>
+                    <div class="p-field p-col-6">
+                        <span>
+                            <label for="cacheLimitForStore" class="kn-material-input-label small-label"> {{ $t('managers.cacheManagement.cacheDimensionSingleDataset') }}</label>
+                            <InputNumber id="cacheLimitForStore" inputClass="kn-material-input" v-model.trim="settings.cacheLimitForStore" :min="0" :max="100" :useGrouping="false" @input="onInputNumberChange('cacheLimitForStore', $event.value)" data-test="cache-limit-input" />
+                        </span>
+                    </div>
+                    <div class="p-field p-col-6">
+                        <span>
+                            <label for="schedulingFullClean" class="kn-material-input-label small-label"> {{ $t('managers.cacheManagement.frequencyOfCleaningDaemon') }}</label>
                             <Dropdown id="schedulingFullClean" class="kn-material-input" v-model="settings.schedulingFullClean" :options="generalSettingsCardDescriptor.schedulingTypes">
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value">
@@ -40,27 +55,10 @@
                                 </template></Dropdown
                             >
                         </span>
-                        <span>
-                            <label for="lastAccessTtl" class="kn-material-input-label"> {{ $t('managers.cacheManagement.ttlForCachedDataset') }}</label>
-                            <InputNumber id="lastAccessTtl" inputClass="kn-material-input" v-model.trim="settings.lastAccessTtl" :useGrouping="false" data-test="last-access-ttl-input" />
-                        </span>
-                        <span>
-                            <label for="createAndPersistTimeout" class="kn-material-input-label"> {{ $t('managers.cacheManagement.timeToCreateTempTable') }}</label>
-                            <InputNumber id="createAndPersistTimeout" inputClass="kn-material-input" v-model.trim="settings.createAndPersistTimeout" :useGrouping="false" data-test="timeout-input" />
-                        </span>
                     </div>
-
-                    <div class="p-field p-col">
+                    <div class="p-field p-col-6">
                         <span>
-                            <label for="spaceAvailable" class="kn-material-input-label"> {{ $t('managers.cacheManagement.totalBytesAvailableForCache') }}</label>
-                            <InputNumber id="spaceAvailable" inputClass="kn-material-input" v-model.trim="settings.spaceAvailable" :min="0" :useGrouping="false" data-test="space-available-input" />
-                        </span>
-                        <span>
-                            <label for="cacheLimitForStore" class="kn-material-input-label"> {{ $t('managers.cacheManagement.cacheDimensionSingleDataset') }}</label>
-                            <InputNumber id="cacheLimitForStore" inputClass="kn-material-input" v-model.trim="settings.cacheLimitForStore" :min="0" :max="100" :useGrouping="false" data-test="cache-limit-input" />
-                        </span>
-                        <span>
-                            <label for="datasource" class="kn-material-input-label"> {{ $t('managers.cacheManagement.frequencyOfCleaningDaemon') }}</label>
+                            <label for="datasource" class="kn-material-input-label small-label"> {{ $t('managers.cacheManagement.targetDatasource') }}</label>
                             <Dropdown id="datasource" class="kn-material-input" v-model="datasource" :options="datasourceOptions">
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value">
@@ -74,17 +72,36 @@
                                 </template></Dropdown
                             >
                         </span>
+                    </div>
+                    <div class="p-field p-col-6">
                         <span>
-                            <label for="sqldbCacheTimeout" class="kn-material-input-label"> {{ $t('managers.cacheManagement.timeToLock') }}</label>
-                            <InputNumber id="sqldbCacheTimeout" inputClass="kn-material-input" v-model.trim="settings.sqldbCacheTimeout" :useGrouping="false" data-test="sqldb-timeout-input" />
+                            <label for="lastAccessTtl" class="kn-material-input-label small-label"> {{ $t('managers.cacheManagement.ttlForCachedDataset') }}</label>
+                            <InputNumber id="lastAccessTtl" inputClass="kn-material-input" v-model.trim="settings.lastAccessTtl" :useGrouping="false" @input="onInputNumberChange('lastAccessTtl', $event.value)" data-test="last-access-ttl-input" />
                         </span>
+                    </div>
+                    <div class="p-field p-col-6">
                         <span>
-                            <label for="hazelcastTimeout" class="kn-material-input-label"> {{ $t('managers.cacheManagement.hazelcastTimeToLock') }}</label>
-                            <InputNumber id="hazelcastTimeout" inputClass="kn-material-input" v-model.trim="settings.hazelcastTimeout" :useGrouping="false" data-test="hazelcast-timeout-input" />
+                            <label for="sqldbCacheTimeout" class="kn-material-input-label small-label"> {{ $t('managers.cacheManagement.timeToLock') }}</label>
+                            <InputNumber id="sqldbCacheTimeout" inputClass="kn-material-input" v-model.trim="settings.sqldbCacheTimeout" :useGrouping="false" @input="onInputNumberChange('sqldbCacheTimeout', $event.value)" data-test="sqldb-timeout-input" />
                         </span>
+                    </div>
+                    <div class="p-field p-col-6">
                         <span>
-                            <label for="hazelcastLeaseTime" class="kn-material-input-label"> {{ $t('managers.cacheManagement.hazelcastTimeToReleaseLock') }}</label>
-                            <InputNumber id="hazelcastLeaseTime" inputClass="kn-material-input" v-model.trim="settings.hazelcastLeaseTime" :useGrouping="false" data-test="hazelcast-lease-time-input" />
+                            <label for="createAndPersistTimeout" class="kn-material-input-label small-label"> {{ $t('managers.cacheManagement.timeToCreateTempTable') }}</label>
+                            <InputNumber id="createAndPersistTimeout" inputClass="kn-material-input" v-model.trim="settings.createAndPersistTimeout" :useGrouping="false" @input="onInputNumberChange('createAndPersistTimeout', $event.value)" data-test="timeout-input" />
+                        </span>
+                    </div>
+                    <div class="p-field p-col-6">
+                        <span>
+                            <label for="hazelcastTimeout" class="kn-material-input-label small-label"> {{ $t('managers.cacheManagement.hazelcastTimeToLock') }}</label>
+                            <InputNumber id="hazelcastTimeout" inputClass="kn-material-input" v-model.trim="settings.hazelcastTimeout" :useGrouping="false" @input="onInputNumberChange('hazelcastTimeout', $event.value)" data-test="hazelcast-timeout-input" />
+                        </span>
+                    </div>
+                    <div class="p-field p-col-6"></div>
+                    <div class="p-field p-col-6">
+                        <span>
+                            <label for="hazelcastLeaseTime" class="kn-material-input-label small-label"> {{ $t('managers.cacheManagement.hazelcastTimeToReleaseLock') }}</label>
+                            <InputNumber id="hazelcastLeaseTime" inputClass="kn-material-input" v-model.trim="settings.hazelcastLeaseTime" :useGrouping="false" @input="onInputNumberChange('hazelcastLeaseTime', $event.value)" data-test="hazelcast-lease-time-input" />
                         </span>
                     </div>
                 </div>
@@ -95,6 +112,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iSettings } from '../../CacheManagement'
 import axios from 'axios'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
@@ -121,8 +139,7 @@ export default defineComponent({
     data() {
         return {
             generalSettingsCardDescriptor,
-            settings: {} as any,
-            bla: 23,
+            settings: {} as iSettings,
             datasource: {},
             datasourceOptions: [] as any
         }
@@ -130,6 +147,7 @@ export default defineComponent({
     watch: {
         item() {
             this.loadSettings()
+            console.log('SETTINGS', this.settings);
         },
         datasources() {
             this.loadDatasources()
@@ -145,7 +163,7 @@ export default defineComponent({
     },
     methods: {
         loadSettings() {
-            this.settings = { ...this.item }
+            this.settings = { ...this.item } as iSettings
         },
         loadDatasources() {
             this.datasourceOptions = this.datasources as any
@@ -153,8 +171,11 @@ export default defineComponent({
         loadDatasource() {
             this.datasource = { ...this.selectedDatasource }
         },
-        save() {
-            this.saveConfigurationOptions()
+        async save() {
+            await this.removeCache()
+            await this.saveDatasource()
+            await this.saveConfigurationOptions()
+            this.$emit('inserted')
         },
         async saveConfigurationOptions() {
             const configurations = [
@@ -204,17 +225,62 @@ export default defineComponent({
             console.log('Save settings: ', this.settings)
             console.log('Save configuration: ', configurations)
 
-            await axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/conf', configurations).then(() => {
+            await axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/conf', { configurations }).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.success'),
                     msg: this.$t('common.toast.updateTitle')
                 })
-                this.$emit('inserted')
             })
         },
-        test() {
-            console.log(this.settings)
+        async saveDatasource() {
+            await axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources', { ...this.datasource, writeDefault: true }).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.success'),
+                    msg: this.$t('common.toast.updateTitle')
+                })
+            })
+        },
+        async removeCache() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/remove')
+        },
+        onInputNumberChange(field: string, value: number) {
+            this.settings[field] = value
+        },
+        discardChanges() {
+            this.loadSettings()
+            this.loadDatasources()
+        },
+        formatCacheDimension(size: number) {
+            if (isNaN(size)) return 0
+
+            if (size < 1024) return size.toFixed(2) + ' MB'
+
+            size /= 1024
+
+            if (size < 1024) return '~' + size.toFixed(2) + ' GB'
+
+            size /= 1024
+
+            return '~' + size.toFixed(2) + ' TB'
         }
     }
 })
 </script>
+
+<style lang="scss" scoped>
+::v-deep(.p-toolbar-group-right) {
+    height: 100%;
+}
+
+#prefix-input-container {
+    margin-top: 0.6rem;
+}
+
+.small-label {
+    font-size: 0.9rem;
+}
+
+#spaceAvailable-hint {
+    font-size: 0.6rem;
+}
+</style>
