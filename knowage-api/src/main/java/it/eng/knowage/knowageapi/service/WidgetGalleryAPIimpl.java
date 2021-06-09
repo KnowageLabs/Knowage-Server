@@ -128,7 +128,10 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			toRet.setTags(tags);
 		}
 
-		JSONObject jsonBody = new JSONObject(new String(sbiWidgetGallery.getTemplate()));
+		JSONObject jsonBody = new JSONObject();
+		byte[] template = sbiWidgetGallery.getTemplate();
+		if (template != null)
+			jsonBody = new JSONObject(new String(template));
 
 		Code code = new Code();
 		JSONObject jsonCode = jsonBody.optJSONObject("code");
