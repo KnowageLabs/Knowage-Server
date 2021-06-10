@@ -120,8 +120,8 @@ export default defineComponent({
       });
     },
     async deleteTenant(selectedTenant: Object) {
-      let url = "http://localhost:8080/knowage/restful-services/multitenant/";
-      await axios.delete(url, selectedTenant).then(() => {
+      let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + "multitenant";
+      await axios.delete(url, { data: selectedTenant }).then(() => {
         this.$store.commit("setInfo", {
           title: this.$t("common.toast.deleteTitle"),
           msg: this.$t("common.toast.deleteSuccess"),
