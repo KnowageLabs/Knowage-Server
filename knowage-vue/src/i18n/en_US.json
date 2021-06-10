@@ -158,6 +158,19 @@
             "title": "Profile Attributes Management",
             "valueDescription": "Value description"
         },
+        "tenantManagement": {
+            "title": "Tenant Management",
+
+            "detail": {
+                "title": "Detail"
+            },
+            "productTypes": {
+                "title": "Product Types"
+            },
+            "dataSource": {
+                "title": "Data Source"
+            }
+        },
         "widgetGallery": {
             "deleteTemplate": "Delete template",
             "downloadTemplate": "Download template",
