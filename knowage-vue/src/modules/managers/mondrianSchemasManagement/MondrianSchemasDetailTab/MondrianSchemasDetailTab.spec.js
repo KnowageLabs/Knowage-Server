@@ -5,6 +5,9 @@ import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import MondrianSchemasDetailTab from './MondrianSchemasDetailTab.vue'
+import ProgressBar from 'primevue/progressbar'
+import Toolbar from 'primevue/toolbar'
+import Button from 'primevue/button'
 
 const mockedSchema = {
     id: 1,
@@ -17,14 +20,14 @@ jest.mock('axios')
 
 axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
 
-const factory = (selectedSchema) => {
+const factory = () => {
     return mount(MondrianSchemasDetailTab, {
-        props: {
-            selectedSchema
-        },
         global: {
             stubs: {
                 Card,
+                ProgressBar,
+                Toolbar,
+                Button,
                 KnValidationMessages,
                 InputText
             },

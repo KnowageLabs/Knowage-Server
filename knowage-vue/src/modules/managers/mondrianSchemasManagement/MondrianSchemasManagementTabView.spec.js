@@ -13,19 +13,6 @@ import TabPanel from 'primevue/tabpanel'
 import TabView from 'primevue/tabview'
 import Toolbar from 'primevue/toolbar'
 
-const mockedSchema = {
-    id: 1,
-    name: 'Main Schema',
-    description: 'big bonk',
-    type: 'MONDRIAN_SCHEMA'
-}
-
-jest.mock('axios')
-
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedSchema }))
-
-axios.post.mockImplementation(() => Promise.resolve())
-
 const $store = {
     commit: jest.fn()
 }
@@ -58,16 +45,21 @@ const factory = () => {
     })
 }
 
-afterEach(() => {
-    jest.clearAllMocks()
-})
-
 describe('Mondrian Schema Management Tab View', () => {
     it('switches to Workflow tab if Workflow  is clicked', async () => {
         const wrapper = factory()
 
         await flushPromises()
-        await wrapper.find('.p-tabview-nav li:nth-child(2)').trigger('click')
+        await wrapper.find('.p-tabview-nav li:nth-child(1)').trigger('click')
+
+        console.log('--------------- NAV 1 ------------------')
+        console.log(wrapper.find('.p-tabview-nav li:nth-child(1)').html())
+
+        console.log('--------------- NAV 2 ------------------')
+        console.log(wrapper.find('.p-tabview-nav li:nth-child(2)').html())
+
+        expect(wrapper.find('.p-tabview-nav li:nth-child(1)').html()).toContain('aria-selected="true"')
+        expect(wrapper.find('.p-tabview-nav li:nth-child(2)').html()).toContain('aria-selected="false"')
     })
 
     it('save button is disabled if a mandatory input is empty', () => {

@@ -223,8 +223,6 @@ export default defineComponent({
                 (response) => {
                     if (response.data.errors) {
                         this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.errorCreatingPackage') })
-                        console.log('ERROR RESPONSE:')
-                        console.log(response)
                     } else {
                         this.$store.commit('setInfo', { title: this.$t('managers.mondrianSchemasManagement.uploadingVersion'), msg: this.$t('managers.mondrianSchemasManagement.uploadOk') })
                     }

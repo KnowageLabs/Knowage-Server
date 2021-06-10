@@ -19,12 +19,7 @@
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
-                    <KnValidationMessages
-                        :vComp="v$.schema.name"
-                        :additionalTranslateParams="{
-                            fieldName: $t('common.name')
-                        }"
-                    />
+                    <KnValidationMessages :vComp="v$.schema.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
                 </div>
                 <div class="p-field" :style="tabViewDescriptor.pField.style">
                     <span class="p-float-label">
@@ -45,12 +40,7 @@
                             {{ $t('common.description') }}
                         </label>
                     </span>
-                    <KnValidationMessages
-                        :vComp="v$.schema.description"
-                        :additionalTranslateParams="{
-                            fieldName: $t('common.description')
-                        }"
-                    />
+                    <KnValidationMessages :vComp="v$.schema.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
                 </div>
                 <div class="p-field">
                     <span class="p-float-label">
@@ -189,7 +179,6 @@ export default defineComponent({
         }
     },
     methods: {
-        // EVENTS TO EMIT ==========================
         onFieldChange(fieldName: string, value: any) {
             this.$emit('fieldChanged', { fieldName, value })
         },
@@ -202,7 +191,6 @@ export default defineComponent({
             this.$emit('versionUploaded', uploadedVersion)
         },
 
-        // LOAD VERSIONS ==========================
         async loadVersions() {
             this.loading = true
             await axios
@@ -215,7 +203,6 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
 
-        // DOWNLOAD VERSION ==========================
         async downloadVersion(versionId) {
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.schema.id}` + `/versions/${versionId}` + `/file`, {
@@ -238,7 +225,6 @@ export default defineComponent({
                 )
         },
 
-        // DELETE VERSION ==========================
         showDeleteDialog(versionId: number) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
