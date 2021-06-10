@@ -17,8 +17,11 @@ jest.mock('axios')
 
 axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
 
-const factory = () => {
+const factory = (selectedSchema) => {
     return mount(MondrianSchemasDetailTab, {
+        props: {
+            selectedSchema
+        },
         global: {
             stubs: {
                 Card,

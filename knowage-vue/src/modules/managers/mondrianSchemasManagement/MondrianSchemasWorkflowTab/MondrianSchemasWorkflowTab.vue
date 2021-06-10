@@ -147,14 +147,9 @@ export default defineComponent({
                 if (response.data > 0) {
                     this.isStartedWf = true
                     this.userInProg = response.data
-                    console.log('------------------------ isWorkflowStarted ------------------------')
-                    console.log(this.isStartedWf)
-                    console.log(this.userInProg)
                 } else {
                     this.isStartedWf = false
                     this.userInProg = null
-                    console.log('------------------------ isWorkflowStarted ------------------------')
-                    console.log(this.isStartedWf)
                 }
             })
         },
@@ -174,8 +169,6 @@ export default defineComponent({
                         console.log('ERROR RESPONSE:')
                         console.log(response)
                     } else {
-                        console.log('START WORKFLOW RESPONSE OMFG')
-                        console.log(response)
                         this.$store.commit('setInfo', {
                             title: this.$t('managers.mondrianSchemasManagement.updatingWorkflow'),
                             msg: this.$t('managers.mondrianSchemasManagement.workflowOk')
@@ -187,25 +180,20 @@ export default defineComponent({
 
         // DISABLE PLAY BUTTON & MANAGE TOOLTIP| because :disabled is not reactive :( ==========================
         disableButton() {
-            console.log('$$$$$$$$$$$$$$$$$$$$$$ disableButton $$$$$$$$$$$$$$$$$$$$$$')
             if (!this.schema.id) {
-                console.log('BUTTON DISABLED')
                 this.tooltipValue = this.$t('managers.mondrianSchemasManagement.workFlow.tooltips.noSchema')
                 return true
             } else {
                 if (this.availableUsersList[1].length == 0 || this.isChanged) {
-                    console.log('BUTTON DISABLED NO ARRAY' + this.availableUsersList[1])
                     this.tooltipValue = this.$t('managers.mondrianSchemasManagement.workFlow.tooltips.noWfUsers')
                     return true
                 } else {
                     if (this.isStartedWf === true) {
-                        console.log('BUTTON DISABLED BECAUSE WORKFLOW ID: ' + this.isStartedWf)
                         this.tooltipValue = this.$t('managers.mondrianSchemasManagement.workFlow.tooltips.wfInProgress')
                         return true
                     }
                 }
             }
-            console.log('BUTTON NOT DISABLED')
             this.tooltipValue = ''
             return false
         },

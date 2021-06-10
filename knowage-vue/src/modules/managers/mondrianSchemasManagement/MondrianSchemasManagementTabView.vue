@@ -93,27 +93,21 @@ export default defineComponent({
             this.$emit('touched')
         },
         closeTemplate() {
-            // console.log('Template Closed')
             this.$router.push('/schemas')
             this.$emit('closed')
         },
         onFieldChange(event) {
             this.selectedSchema[event.fieldName] = event.value
-            // console.log('Field Changed')
             this.touched = true
             this.$emit('touched')
         },
         onVersionChange(event) {
             this.selectedSchema.currentContentId = event
-            // console.log('Version Changed')
-            // console.log(this.selectedSchema.currentContentId)
             this.touched = true
             this.$emit('touched')
         },
         onSelectedUsersChange(event) {
             this.availableUsersList[1] = event
-            console.log('Selected User Changed')
-            console.log(this.availableUsersList[1])
             this.touched = true
             this.$emit('touched')
         },
@@ -137,8 +131,6 @@ export default defineComponent({
         // LOAD WORKFLOW USERS ==========================
         async loadAllUsers() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/users`).then((response) => (this.allUsers = response.data))
-            console.log('------------------------ loadAllUsers ------------------------')
-            console.log(this.allUsers)
         },
 
         // LOAD SELECTED SCHEMA ==========================
@@ -157,11 +149,6 @@ export default defineComponent({
 
         // CREATE WORKFLOW DATA ==========================
         createAvailableUsersList() {
-            console.log('------------------------ selectedSchema ------------------------')
-            console.log(this.selectedSchema)
-            console.log('------------------- wfSelectedUserList RAW -------------------')
-            console.log(this.wfSelectedUserList)
-
             const listOfSelectedUsers = this.wfSelectedUserList.map((userId) => this.allUsers.find((user) => userId === user.id))
             const listOfAvailableUsers = this.allUsers.filter((user) => {
                 const ind = this.wfSelectedUserList.findIndex((userId) => user.id === userId)
@@ -173,15 +160,10 @@ export default defineComponent({
                 return false
             })
             this.availableUsersList = [listOfAvailableUsers, listOfSelectedUsers]
-
-            console.log('----------------- availableUsersList 2D Array -----------------')
-            console.log(this.availableUsersList)
         },
 
         // CREATE WORKFLOW DATA ==========================
         clearAvailableUsersList() {
-            console.log('--------------------- clearAvailableUsersList ---------------------')
-            console.log(this.allUsers)
             this.availableUsersList = [this.allUsers, []]
         },
 
@@ -208,8 +190,6 @@ export default defineComponent({
 
         // UPDATE WORKFLOW USERS FROM WORKFLOW TAB ==========================
         async updateWorkflow(response) {
-            console.log('------------------------ updateWorkflow(response) ------------------------')
-            console.log(response)
             let newSchemaId = response.data.id
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/update`
             await axios
