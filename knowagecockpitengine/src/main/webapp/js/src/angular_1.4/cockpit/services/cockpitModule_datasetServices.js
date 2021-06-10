@@ -1244,8 +1244,10 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 								}
 							}
 						}
-						if (typeof parameters[parameter][0] == "string" ) {
-							splittedValues = parameters[parameter][0].split(',');
+						if (typeof parameters[parameter][0] == "string" ) {			
+							if (this.checkMultivalueParam(parameter)) {				
+							splittedValues = parameters[parameter][0].split('\',\'');
+							}
 						}
 
 						// CASE 1 [pippo , pluto]
@@ -1287,6 +1289,20 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 		return output;
 	}
 
+   this.checkMultivalueParam = function (parameter) {
+		if(Array.isArray(cockpitModule_properties.PARAMETERS)){
+			for (var parame in cockpitModule_properties.PARAMETERS) {		 
+				if (parame[parameter].name == parameter) {
+				return parame.PARAMETERS[parameter].multiValue;
+				}
+			}
+		} 
+		else {
+			if (cockpitModule_properties.PARAMETERS[parameter].name == parameter) {
+				return cockpitModule_properties.PARAMETERS[parameter].multiValue;
+			}
+		}	
+    }
 	// returns the internationalized template
 	this.getI18NTemplate = function (chartTemplate) {
 		var clone = angular.copy(chartTemplate);
