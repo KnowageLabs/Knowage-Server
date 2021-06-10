@@ -111,6 +111,7 @@
             "cacheDimensionSingleDataset": "% of cache dimension for a single dataset",
             "cacheEnabled": "Cache enabled",
             "cleanAll": "Clean all",
+            "cleanAllMessage": "All items will be deleted. Are you sure you want to continue with this operation?",
             "daily": "DAILY",
             "dimension": "Dimension (byte)",
             "discard": "Discard",

@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-m-2" :style="generalSettingsCardDescriptor.card.style">
+    <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-toolbar-group-right">
                 <template #left>
@@ -134,7 +134,7 @@ export default defineComponent({
         },
         datasources: {
             type: Array,
-            requried: true
+            required: true
         },
         selectedDatasource: {
             value: [Object, null],

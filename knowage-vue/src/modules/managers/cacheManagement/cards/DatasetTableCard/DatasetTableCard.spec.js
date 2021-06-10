@@ -32,6 +32,10 @@ const $store = {
     commit: jest.fn()
 }
 
+const $confirm = {
+    require: jest.fn()
+}
+
 const factory = (datasetMetadataList) => {
     return mount(DatasetTableCard, {
         props: {
@@ -42,7 +46,8 @@ const factory = (datasetMetadataList) => {
             stubs: { Button, Card, Column, DataTable, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store
+                $store,
+                $confirm
             }
         }
     })
@@ -74,6 +79,8 @@ describe('Cache Management Dataset Table', () => {
         await wrapper.find('[data-test="clean-all-button"]').trigger('click')
         await flushPromises()
 
+        await wrapper.vm.cleanAll()
+
         expect(axios.delete).toHaveBeenCalledTimes(1)
         expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee')
         expect($store.commit).toHaveBeenCalledTimes(1)
@@ -85,6 +92,8 @@ describe('Cache Management Dataset Table', () => {
 
         await wrapper.find('[data-test="delete-button"]').trigger('click')
         await flushPromises()
+
+        await wrapper.vm.deleteDataset(mockedDatasetMetadata[0].signature)
 
         expect(axios.put).toHaveBeenCalledTimes(1)
         expect(axios.put).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: ['0b78ecae01d62da1c1604f75086478f9332e1491c677d4353f8c27cee3800c79'] })

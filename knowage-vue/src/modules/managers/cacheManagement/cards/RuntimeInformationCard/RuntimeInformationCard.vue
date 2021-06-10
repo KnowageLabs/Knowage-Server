@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-m-2" :style="runtimeInformationCardDescriptor.card.style">
+    <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
@@ -8,7 +8,7 @@
             </Toolbar>
         </template>
         <template #content>
-            <div class="p-d-flex p-flex-row">
+            <div class="p-d-flex p-flex-column">
                 <div class="kn-flex">
                     <p>{{ $t('managers.cacheManagement.cacheEnabled') }}: {{ cache.cleaningEnabled }}</p>
                     <p>{{ $t('managers.cacheManagement.totalMemory') }}: {{ totalMemory }}</p>
@@ -29,7 +29,6 @@ import { defineComponent } from 'vue'
 import { iCache } from '../../CacheManagement'
 import Card from 'primevue/card'
 import Chart from 'primevue/chart'
-import runtimeInformationCardDescriptor from './RuntimeInformationCardDescriptor.json'
 
 export default defineComponent({
     name: 'runtime-information-card',
@@ -49,7 +48,6 @@ export default defineComponent({
     },
     data() {
         return {
-            runtimeInformationCardDescriptor,
             cache: {} as iCache,
             cacheData: this.loadChart()
         }

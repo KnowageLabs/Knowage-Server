@@ -6,7 +6,7 @@
                     {{ $t('managers.cacheManagement.addRemoveDataset') }}
                 </template>
                 <template #right>
-                    <Button class="kn-button p-button-text p-button-rounded" :disabled="cleanAllDisabled" @click="cleanAll" data-test="clean-all-button">{{ $t('managers.cacheManagement.cleanAll') }}</Button>
+                    <Button class="kn-button p-button-text p-button-rounded" :disabled="cleanAllDisabled" @click="cleanAllConfirm" data-test="clean-all-button">{{ $t('managers.cacheManagement.cleanAll') }}</Button>
                 </template>
             </Toolbar>
         </template>
@@ -21,7 +21,7 @@
                 <Column v-for="col of datasetTableCardDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" class="kn-truncated"> </Column>
                 <Column :style="datasetTableCardDescriptor.table.iconColumn.style">
                     <template #body="slotProps">
-                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteDataset(slotProps.data.signature)" data-test="delete-button" />
+                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteDatasetConfirm(slotProps.data.signature)" data-test="delete-button" />
                     </template>
                 </Column>
             </DataTable>
@@ -79,8 +79,24 @@ export default defineComponent({
         loadDatasets() {
             this.datasets = this.datasetMetadataList as iMeta[]
         },
+        cleanAllConfirm() {
+            this.$confirm.require({
+                message: this.$t('managers.cacheManagement.cleanAllMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.cleanAll()
+            })
+        },
         async cleanAll() {
             await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee').then(() => this.emitDeleteSuccess())
+        },
+        deleteDatasetConfirm(signature: string) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteDataset(signature)
+            })
         },
         async deleteDataset(signature: string) {
             await axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: [signature] }).then(() => this.emitDeleteSuccess())
