@@ -31,7 +31,7 @@ public class AzureSignInConfig {
 
 	static private Logger logger = Logger.getLogger(AzureSignInConfig.class);
 
-	static public final String AZURE_JWK_PROVIDER_URL = "https://login.microsoftonline.com/common/discovery/keys";
+	static private final String AZURE_AUTHENTICATION_BASE_URL = "https://login.microsoftonline.com/";
 
 	static protected final String AZURE_AUTHENTICATION_CONFIG = "azure.signin.config";
 
@@ -86,7 +86,15 @@ public class AzureSignInConfig {
 	}
 
 	public static String getAuthorityId() {
-		return "https://login.microsoftonline.com/" + getTenantId() + "/";
+		String toReturn = AZURE_AUTHENTICATION_BASE_URL + getTenantId();
+		LogMF.debug(logger, "Azure Sign-In Authority ID: {0}", toReturn);
+		return toReturn;
+	}
+
+	public static String getJwkProviderUrl() {
+		String toReturn = AZURE_AUTHENTICATION_BASE_URL + getTenantId() + "/discovery/v2.0/keys";
+		LogMF.debug(logger, "Azure JWK provider url: {0}", toReturn);
+		return toReturn;
 	}
 
 }

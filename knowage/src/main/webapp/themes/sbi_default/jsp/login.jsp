@@ -178,9 +178,14 @@
 				    }
 			};
 			
-			// Add here scopes for id token to be used at MS Identity Platform endpoints.
+			/**
+			 * Scopes you add here will be prompted for user consent during sign-in.
+			 * By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
+			 * For more information about OIDC scopes, visit: 
+			 * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
+			 */
 			var loginRequest = {
-			    scopes: ["User.Read"]
+			    scopes: ["User.Read", "email"]
 			};
 		
 			function onAzureSignIn() {
@@ -192,7 +197,7 @@
 				$.post("/knowage/servlet/AdapterHTTP", {
 					  "ACTION_NAME": "LOGIN_ACTION_BY_TOKEN",
 					  "NEW_SESSION" : true,
-					  "token" : response.accessToken
+					  "token" : response.idToken
 				}).done(function( data ) {
 					  // reload current page, in order to keep input GET parameters (such as required document and so on)
 					  location.reload();
@@ -220,6 +225,7 @@
 	           	
                 <% } else if (AzureSignInConfig.isEnabled()){ %>
             		<%-- Azure button for authentication --%>
+            		<link rel="msstylesheet" href="https://cdn.web.bas.ac.uk/bas-style-kit/0.5.0/css/bas-style-kit.min.css">
 	           		<button class="bsk-btn bsk-btn-default" onclick="onAzureSignIn()"><object type="image/svg+xml" data="https://s3-eu-west-1.amazonaws.com/cdn-testing.web.bas.ac.uk/scratch/bas-style-kit/ms-pictogram/ms-pictogram.svg"></object>Sign In</button>
 	           		
             	<% } else { %>

@@ -72,11 +72,11 @@ public class AzureSecurityServiceSupplier implements ISecurityServiceSupplier {
 		try {
 			logger.debug("JWT token in input : [" + token + "]");
 			jwt = JWT.decode(token);
-			JwkProvider provider = new UrlJwkProvider(new URL(AzureSignInConfig.AZURE_JWK_PROVIDER_URL));
+			JwkProvider provider = new UrlJwkProvider(new URL(AzureSignInConfig.getJwkProviderUrl()));
 			logger.debug("JWT token Key Id : [" + jwt.getKeyId() + "]");
 			Jwk jwk = provider.get(jwt.getKeyId());
 			Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
-//			algorithm.verify(jwt);
+			algorithm.verify(jwt);
 			logger.debug("JWT token verified properly");
 		} catch (SignatureVerificationException e) {
 			throw new SpagoBIRuntimeException("Invalid JWT token signature");
@@ -86,12 +86,9 @@ public class AzureSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 		String email = jwt.getClaim("email").asString();
 		String tenant_id = jwt.getClaim("tid").asString();
-		String client_id = jwt.getClaim("appid").asString();
 
 		if (!tenant_id.equals(AzureSignInConfig.getTenantId()))
 			throw new SpagoBIRuntimeException("Tenant id not matching!");
-		if (!client_id.equals(AzureSignInConfig.getClientId()))
-			throw new SpagoBIRuntimeException("Client id (app id) not matching!");
 
 		SpagoBIUserProfile profile = createUserProfileObject(email);
 		return profile;
