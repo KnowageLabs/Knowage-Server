@@ -10,25 +10,21 @@ import Toolbar from 'primevue/toolbar'
 const mockedUsers = [
     {
         id: 1,
-        name: 'bitest',
-        description: 'Knowage Test User'
+        userId: 'bitest',
+        fullName: 'Knowage Test User'
     },
     {
         id: 2,
-        name: 'wolelo',
-        description: 'Random User'
+        userId: 'biadmin',
+        fullName: 'Knowage Administrator'
     },
     {
         id: 3,
         name: 'Test 123',
-        description: 'Another Test User'
+        userId: 'mbalestri',
+        fullName: 'MARCO BALESTRI'
     }
 ]
-
-jest.mock('axios')
-
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedUsers }))
-axios.delete.mockImplementation(() => Promise.resolve())
 
 const $confirm = {
     require: jest.fn()
@@ -67,6 +63,13 @@ afterEach(() => {
 })
 
 describe('Mondrian Schema Workflow Tab', () => {
+    it("shows 'no data' label when loaded empty", () => {
+        const wrapper = factory([], [])
+
+        expect(wrapper.props('availableUsersList[0]').length).toBe(0)
+
+        expect(wrapper.find('[data-test="userList1-list"]').html()).toContain('common.info.noDataFound')
+    })
     it('clicking on an left side user it will be put in the right side', async () => {})
     it('clicking on an right side user it will be put in the left side', async () => {})
 })
