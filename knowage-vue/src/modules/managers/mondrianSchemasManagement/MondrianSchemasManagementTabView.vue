@@ -185,7 +185,9 @@ export default defineComponent({
                 this.selectedSchema.id = response.data.id
             }
             await this.uploadFile()
-            await this.updateWorkflow(this.selectedSchema.id)
+            if (this.isWorkflowChanged === true) {
+                await this.updateWorkflow(this.selectedSchema.id)
+            }
 
             this.versionToSave = null
             if (this.operation === 'insert') {
