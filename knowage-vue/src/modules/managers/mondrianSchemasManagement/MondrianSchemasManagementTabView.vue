@@ -90,9 +90,6 @@ export default defineComponent({
         id() {
             this.loadSelectedSchema()
             this.isWorkflowChanged = false
-            if (!this.id) {
-                this.clearAvailableUsersList()
-            }
         }
     },
     methods: {
@@ -139,7 +136,6 @@ export default defineComponent({
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/users`).then((response) => (this.allUsers = response.data))
         },
         async loadSelectedSchema() {
-            console.log('----------------------- loadSelectedSchema() -----------------------')
             this.loading = true
             if (this.id) {
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.id}`).then((response) => (this.selectedSchema = response.data))
@@ -151,20 +147,22 @@ export default defineComponent({
             this.loading = false
         },
         createAvailableUsersList() {
-            const listOfSelectedUsers = this.wfSelectedUserList.map((userId) => this.allUsers.find((user) => userId === user.id))
-            const listOfAvailableUsers = this.allUsers.filter((user) => {
-                const ind = this.wfSelectedUserList.findIndex((userId) => user.id === userId)
-                if (ind < 0) {
-                    return true
-                } else {
-                    this.wfSelectedUserList.splice(ind, 1)
-                }
-                return false
-            })
+            const listOfSelectedUsers = [] as any[]
+            const listOfAvailableUsers = [
+                ...this.allUsers.filter((user) => {
+                    const ind = this.wfSelectedUserList.findIndex((userId) => user.id === userId)
+                    if (ind < 0) {
+                        return true
+                    } else {
+                        listOfSelectedUsers.push(user)
+                        return false
+                    }
+                })
+            ]
             this.availableUsersList = [listOfAvailableUsers, listOfSelectedUsers]
         },
         clearAvailableUsersList() {
-            this.availableUsersList = [this.allUsers, []]
+            this.availableUsersList = [[...this.allUsers], []]
         },
         async handleSubmit() {
             if (this.v$.$invalid) {
