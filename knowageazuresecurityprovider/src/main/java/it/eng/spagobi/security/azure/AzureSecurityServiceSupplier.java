@@ -86,9 +86,12 @@ public class AzureSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 		String email = jwt.getClaim("email").asString();
 		String tenant_id = jwt.getClaim("tid").asString();
+		String client_id = jwt.getClaim("aud").asString();
 
 		if (!tenant_id.equals(AzureSignInConfig.getTenantId()))
 			throw new SpagoBIRuntimeException("Tenant id not matching!");
+		if (!client_id.equals(AzureSignInConfig.getClientId()))
+			throw new SpagoBIRuntimeException("Client id not matching!");
 
 		SpagoBIUserProfile profile = createUserProfileObject(email);
 		return profile;

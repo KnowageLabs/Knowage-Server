@@ -178,14 +178,8 @@
 				    }
 			};
 			
-			/**
-			 * Scopes you add here will be prompted for user consent during sign-in.
-			 * By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
-			 * For more information about OIDC scopes, visit: 
-			 * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
-			 */
 			var loginRequest = {
-			    scopes: ["User.Read", "email"]
+			    scopes: ["User.Read", "email", "openid", "profile"]
 			};
 		
 			function onAzureSignIn() {
@@ -225,8 +219,8 @@
 	           	
                 <% } else if (AzureSignInConfig.isEnabled()){ %>
             		<%-- Azure button for authentication --%>
-            		<link rel="msstylesheet" href="https://cdn.web.bas.ac.uk/bas-style-kit/0.5.0/css/bas-style-kit.min.css">
-	           		<button class="bsk-btn bsk-btn-default" onclick="onAzureSignIn()"><object type="image/svg+xml" data="https://s3-eu-west-1.amazonaws.com/cdn-testing.web.bas.ac.uk/scratch/bas-style-kit/ms-pictogram/ms-pictogram.svg"></object>Sign In</button>
+            		<link rel="stylesheet" href="https://cdn.web.bas.ac.uk/bas-style-kit/0.5.0/css/bas-style-kit.min.css">
+	           		<button class="bsk-btn bsk-btn-default" onclick="onAzureSignIn()"><object type="image/svg+xml" data="https://s3-eu-west-1.amazonaws.com/cdn-testing.web.bas.ac.uk/scratch/bas-style-kit/ms-pictogram/ms-pictogram.svg" style="height: 1em; width: 1em; top: .125em; position: relative;"></object> Sign In</button>
 	           		
             	<% } else { %>
             	
