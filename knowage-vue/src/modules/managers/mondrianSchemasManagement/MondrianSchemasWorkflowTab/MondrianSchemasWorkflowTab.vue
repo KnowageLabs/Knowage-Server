@@ -73,7 +73,6 @@
             </div>
         </div>
     </div>
-    {{ usersList }}
 </template>
 
 <script lang="ts">
@@ -145,18 +144,20 @@ export default defineComponent({
             this.$emit('changed')
         },
         async isWorkflowStarted() {
-            // ako ovde stavim if, kad pogledam nekog usera kome je startovan workflow, i onda odem da kreiram novog, polja su mu zakljucana jer se isStartedWf nije resetovo
-            // if (this.schema.id) {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/isStarted/${this.schema.id}`).then((response) => {
-                if (response.data > 0) {
-                    this.isStartedWf = true
-                    this.userInProg = response.data
-                } else {
-                    this.isStartedWf = false
-                    this.userInProg = null
-                }
-            })
-            // }
+            if (this.schema.id) {
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/isStarted/${this.schema.id}`).then((response) => {
+                    if (response.data > 0) {
+                        this.isStartedWf = true
+                        this.userInProg = response.data
+                    } else {
+                        this.isStartedWf = false
+                        this.userInProg = null
+                    }
+                })
+            } else {
+                this.isStartedWf = false
+                this.userInProg = null
+            }
         },
         async startWorkflow() {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/startWorkflow/${this.schema.id}`

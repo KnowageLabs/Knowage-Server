@@ -20,7 +20,6 @@
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.workFlow.title') }}</span>
                 </template>
-                {{ availableUsersList }}
                 <MondrianSchemasWorkflowTab :isChanged="isWorkflowChanged" :selectedSchema="selectedSchema" :usersList="availableUsersList" @selectedUsersChanged="onSelectedUsersChange" @changed="emitTouched" />
             </TabPanel>
         </TabView>
@@ -142,21 +141,17 @@ export default defineComponent({
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/${this.id}`).then((response) => (this.wfSelectedUserList = response.data))
             } else {
                 this.selectedSchema = {} as iSchema
+                this.wfSelectedUserList = []
             }
             this.createAvailableUsersList()
             this.loading = false
         },
         createAvailableUsersList() {
-            const listOfSelectedUsers = [] as any[]
+            const listOfSelectedUsers = this.wfSelectedUserList.map((userId) => this.allUsers.find((user) => user.id === userId))
             const listOfAvailableUsers = [
                 ...this.allUsers.filter((user) => {
                     const ind = this.wfSelectedUserList.findIndex((userId) => user.id === userId)
-                    if (ind < 0) {
-                        return true
-                    } else {
-                        listOfSelectedUsers.push(user)
-                        return false
-                    }
+                    return ind < 0
                 })
             ]
             this.availableUsersList = [listOfAvailableUsers, listOfSelectedUsers]
