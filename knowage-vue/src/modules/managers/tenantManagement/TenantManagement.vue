@@ -1,162 +1,155 @@
 <template>
-  <div class="kn-page">
-    <div class="kn-page-content p-grid p-m-0">
-      <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
-        <Toolbar class="kn-toolbar kn-toolbar--primary">
-          <template #left>
-            {{ $t("managers.tenantManagement.title") }}
-          </template>
-          <template #right>
-            <FabButton
-              icon="fas fa-plus"
-              @click="showForm"
-              data-test="open-form-button"
-            />
-          </template>
-        </Toolbar>
-        <ProgressBar
-          mode="indeterminate"
-          class="kn-progress-bar"
-          v-if="loading"
-          data-test="progress-bar"
-        />
-        <div class="p-col">
-          <Listbox
-            v-if="!loading"
-            class="kn-list--column"
-            :options="multitenants"
-            :filter="true"
-            :filterPlaceholder="$t('common.search')"
-            optionLabel="name"
-            filterMatchMode="contains"
-            :filterFields="tenantsDescriptor.filterFields"
-            :emptyFilterMessage="$t('managers.tenantsManagement.noResults')"
-            @change="showForm"
-            data-test="tenants-list"
-          >
-            <template #empty>{{ $t("common.info.noDataFound") }}</template>
-            <template #option="slotProps">
-              <div class="kn-list-item" data-test="list-item">
-                <div class="kn-list-item-text">
-                  <span>{{ slotProps.option.MULTITENANT_NAME }}</span>
-                  <span class="kn-list-item-text-secondary">{{
-                    slotProps.option.MULTITENANT_THEME
-                  }}</span>
+    <div class="kn-page">
+        <div class="kn-page-content p-grid p-m-0">
+            <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
+                <Toolbar class="kn-toolbar kn-toolbar--primary">
+                    <template #left>
+                        {{ $t('managers.tenantManagement.title') }}
+                    </template>
+                    <template #right>
+                        <FabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button" />
+                    </template>
+                </Toolbar>
+                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <div class="p-col">
+                    <Listbox
+                        v-if="!loading"
+                        class="kn-list--column"
+                        :options="multitenants"
+                        :filter="true"
+                        :filterPlaceholder="$t('common.search')"
+                        optionLabel="name"
+                        filterMatchMode="contains"
+                        :filterFields="tenantsDescriptor.filterFields"
+                        :emptyFilterMessage="$t('managers.tenantsManagement.noResults')"
+                        @change="showForm"
+                        data-test="tenants-list"
+                    >
+                        <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                        <template #option="slotProps">
+                            <div class="kn-list-item" data-test="list-item">
+                                <div class="kn-list-item-text">
+                                    <span>{{ slotProps.option.MULTITENANT_NAME }}</span>
+                                    <span class="kn-list-item-text-secondary">{{ slotProps.option.MULTITENANT_THEME }}</span>
+                                </div>
+                                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteTenantConfirm(slotProps.option)" data-test="delete-button" />
+                            </div>
+                        </template>
+                    </Listbox>
                 </div>
-                <Button
-                  icon="far fa-trash-alt"
-                  class="p-button-link p-button-sm"
-                  @click.stop="deleteTenantConfirm(slotProps.option)"
-                  data-test="delete-button"
-                />
-              </div>
-            </template>
-          </Listbox>
-        </div>
-      </div>
+            </div>
 
-      <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-        <!-- {{ multitenants }} -->
-        <router-view
-          :selectedTenant="selTenant"
-          @touched="touched = true"
-          @closed="touched = false"
-          @inserted="pageReload"
-        />
-      </div>
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
+                <!-- {{ multitenants }} -->
+                <router-view :selectedTenant="selTenant" @touched="touched = true" @closed="touched = false" @inserted="pageReload" />
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { iMultitenant } from "./TenantManagement";
-import axios from "axios";
-import tenantsDescriptor from "./TenantManagementDescriptor.json";
-import FabButton from "@/components/UI/KnFabButton.vue";
-import Listbox from "primevue/listbox";
+import { defineComponent } from 'vue'
+import { iMultitenant } from './TenantManagement'
+import axios from 'axios'
+import tenantsDescriptor from './TenantManagementDescriptor.json'
+import FabButton from '@/components/UI/KnFabButton.vue'
+import Listbox from 'primevue/listbox'
 
 export default defineComponent({
-  name: "tenant-management",
-  components: {
-    FabButton,
-    Listbox,
-  },
-  data() {
-    return {
-      multitenants: [] as iMultitenant[],
-      selTenant: {} as iMultitenant,
-      tenantsDescriptor,
-      loading: false,
-      touched: false,
-      hiddenForm: false,
-      dirty: false,
-    };
-  },
-  async created() {
-    await this.loadAllTenants();
-  },
-  methods: {
-    async loadAllTenants() {
-      this.loading = true;
-      let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + "multitenant";
-      await axios
-        .get(url)
-        .then((response) => {
-          console.log("------------- multitenants ----------------");
-          this.multitenants = response.data.root;
-          console.log(response);
-        })
-        .finally(() => (this.loading = false));
+    name: 'tenant-management',
+    components: {
+        FabButton,
+        Listbox
     },
-    deleteTenantConfirm(selectedTenant: Object) {
-      console.log("------------- selectedTenant TO DELETE ----------------");
-      console.log(selectedTenant);
-      this.$confirm.require({
-        message: this.$t("common.toast.deleteMessage"),
-        header: this.$t("common.toast.deleteTitle"),
-        icon: "pi pi-exclamation-triangle",
-        accept: () => this.deleteTenant(selectedTenant),
-      });
+    data() {
+        return {
+            multitenants: [] as iMultitenant[],
+            selTenant: {} as iMultitenant,
+            listOfThemes: [] as any,
+            tenantsDescriptor,
+            loading: false,
+            touched: false,
+            hiddenForm: false,
+            dirty: false
+        }
     },
-    async deleteTenant(selectedTenant: Object) {
-      let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + "multitenant";
-      await axios.delete(url, { data: selectedTenant }).then(() => {
-        this.$store.commit("setInfo", {
-          title: this.$t("common.toast.deleteTitle"),
-          msg: this.$t("common.toast.deleteSuccess"),
-        });
-        this.$router.push("/tenants");
-        this.loadAllTenants();
-      });
+    async created() {
+        await this.loadAllTenants()
+        await this.loadAllThemes()
     },
-    showForm(event: any) {
-      const path = event.value
-        ? `/tenants/${event.value.MULTITENANT_ID}`
-        : "/tenants/new-tenant";
-      console.log(event);
-      this.selTenant = event.value;
-      console.log("------------- selectedTenant ----------------");
-      console.log(this.selTenant);
+    methods: {
+        async loadAllTenants() {
+            this.loading = true
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant'
+            await axios
+                .get(url)
+                .then((response) => {
+                    console.log('------------- loadAllTenants() ----------------')
+                    this.multitenants = response.data.root
+                    console.log(this.multitenants)
+                })
+                .finally(() => (this.loading = false))
+        },
+        async loadAllThemes() {
+            this.loading = true
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant/themes'
+            await axios
+                .get(url)
+                .then((response) => {
+                    console.log('------------- loadAllThemes() ----------------')
+                    this.listOfThemes = response.data.root
+                    console.log(this.listOfThemes)
+                })
+                .finally(() => (this.loading = false))
+        },
+        async loadAllDataSources() {},
+        async loadAllProductTypes() {},
+        deleteTenantConfirm(selectedTenant: Object) {
+            console.log('------------- selectedTenant TO DELETE ----------------')
+            console.log(selectedTenant)
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteTenant(selectedTenant)
+            })
+        },
+        async deleteTenant(selectedTenant: Object) {
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant'
+            await axios.delete(url, { data: selectedTenant }).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.deleteTitle'),
+                    msg: this.$t('common.toast.deleteSuccess')
+                })
+                this.$router.push('/tenants')
+                this.loadAllTenants()
+            })
+        },
+        showForm(event: any) {
+            const path = event.value ? `/tenants/${event.value.MULTITENANT_ID}` : '/tenants/new-tenant'
+            console.log(event)
+            this.selTenant = event.value
+            console.log('------------- selectedTenant ----------------')
+            console.log(this.selTenant)
 
-      if (!this.touched) {
-        this.$router.push(path);
-      } else {
-        this.$confirm.require({
-          message: this.$t("common.toast.unsavedChangesMessage"),
-          header: this.$t("common.toast.unsavedChangesHeader"),
-          icon: "pi pi-exclamation-triangle",
-          accept: () => {
-            this.touched = false;
-            this.$router.push(path);
-          },
-        });
-      }
-    },
-    pageReload() {
-      this.touched = false;
-      this.loadAllTenants();
-    },
-  },
-});
+            if (!this.touched) {
+                this.$router.push(path)
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.$router.push(path)
+                    }
+                })
+            }
+        },
+        pageReload() {
+            this.touched = false
+            this.loadAllTenants()
+        }
+    }
+})
 </script>
