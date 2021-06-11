@@ -18,22 +18,27 @@
 (function() {
 	'use strict';
 
-	angular.module('RegistryDocument', [ 'ngMaterial', 'registryConfig', 'sbiModule' ])
+	angular.module('RegistryDocument', [ 'ngMaterial', 'registryConfig', 'sbiModule', 'registry_date_time_picker' ])
 			.config(
-					[
-							'$mdThemingProvider',
-							'$httpProvider',
-							function($mdThemingProvider, $httpProvider) {
-								$mdThemingProvider.theme('knowage');
-								$mdThemingProvider.setDefaultTheme('knowage');
-								$httpProvider.interceptors
-										.push('httpInterceptor');
+					['$mdThemingProvider',
+					'$httpProvider',
+					function($mdThemingProvider, $httpProvider) {
+						$mdThemingProvider.theme('knowage');
+						$mdThemingProvider.setDefaultTheme('knowage');
+						$httpProvider.interceptors
+								.push('httpInterceptor');
 
-							} ])
+					}])
 			.filter('momentDate', function() {
 				  return function(input, currLanguage) {
 					return input ? moment(input).locale(currLanguage).format("L") : '';
 			  };
+			})
+			.filter('momentDateAndTime', function() {			
+				  return function(input, currLanguage) {
+					return input ? moment(input).locale(currLanguage).format("L") + ' ' +
+					moment(input).locale(currLanguage).format("HH:mm:ss") : '';
+				};
 			})
 			.controller('RegistryController', ['$scope','registryConfigService', 'registryCRUDService',
 								'regFilterGetData', 'sbiModule_messaging','sbiModule_translate', 'sbiModule_config', '$mdDialog', '$filter', 'orderByFilter','registryPaginationService',
@@ -153,6 +158,7 @@
 				$scope.columnFieldTypes.forEach(function(columnType) {
 					if(columnType.header === column.field) {
 						column.dataType = columnType.type;
+						column.subType =  columnType.subtype;
 					}
 				});
 
@@ -335,17 +341,17 @@
         };
 
         $scope.isItSummaryRow = function(rows,indexF,index,columns){
-        		var row = rows[indexF];
-        		var columnField = columns[index].field;
-        		if(index > 0){
-        		var previousColumnField=columns[index-1].field;
-        		}else{
-        			var previousColumnField = null;
-        		}
-        		var previousFieldValue = row[previousColumnField];
-        		var fieldValue = row[columnField];
+			var row = rows[indexF];
+			var columnField = columns[index].field;
+			if(index > 0){
+			var previousColumnField=columns[index-1].field;
+			}else{
+				var previousColumnField = null;
+			}
+			var previousFieldValue = row[previousColumnField];
+			var fieldValue = row[columnField];
 
-        		return  (previousFieldValue === '      ' && fieldValue !== '      ' );
+			return  (previousFieldValue === '      ' && fieldValue !== '      ' );
         };
 
 
@@ -554,8 +560,9 @@
 		};
 		
 		$scope.resetDateField = function (e, row, col) {
-			e.preventDefault();
 			row[col.field] = null;
+			e.preventDefault();
+			e.stopPropagation();
 		}
 		
 		$scope.allADFilters = function() {
@@ -593,12 +600,12 @@
 			for (var i = 0; i < $scope.selectedRow.length; i++) {
 				for(var property in $scope.selectedRow[i]) {
 	        		if(!$scope.selectedRow[i].id && $scope.selectedRow[i][property] && typeof $scope.selectedRow[i][property].getMonth === 'function') {
-	        			$scope.selectedRow[i][property].setTime($scope.selectedRow[i][property].getTime() - new Date().getTimezoneOffset()*60*1000);
+						//var time = $scope.selectedRow[i][property].getTime();
+						//$scope.selectedRow[i][property].setTime(time + new Date().getTimezoneOffset()*60*1000);
 	    	        }
 	        		if($scope.selectedRow[i].$newRow) delete $scope.selectedRow[i].$newRow;
-	        	}
-
-
+					
+				}
 			}
 			registryCRUD.update($scope.selectedRow).then(function(response) {
 	     	   	readData($scope.formParams);
@@ -625,13 +632,11 @@
 			}
 			
 			$mdDialog.show(confirm).then(function() {
-					registryCRUD.delete(row).then(function(response) {
-						sbiMessaging.showInfoMessage($scope.sbiTranslate.load("kn.registry.registryDocument.delete.success"), $scope.sbiTranslate.load("kn.registry.registryDocument.success"));
-						$scope.deleteRow(row.$$hashKey);
-					});
+				registryCRUD.delete(row).then(function(response) {
+					sbiMessaging.showInfoMessage($scope.sbiTranslate.load("kn.registry.registryDocument.delete.success"), $scope.sbiTranslate.load("kn.registry.registryDocument.success"));
+					$scope.deleteRow(row.$$hashKey);
 				});
-
-
+			});
 		};
 
 		$scope.isArray = angular.isArray;
@@ -660,6 +665,10 @@
 				if (angular.equals(columnTitle, value.header) && value.defaultValue) {
 					defaultValue =  value.defaultValue;
 					return;
+				}
+				
+				if (angular.equals(columnTitle, value.header) && value.type == 'date' && value.subtype == 'timestamp') {
+					defaultValue = new Date();
 				}
 			});
 			
@@ -740,7 +749,7 @@
         	var namesOfDateColumns =[];
         	for(var i = 0 ; i <columns.length ; i++){
         		if(columns[i].type === 'date'){
-        			namesOfDateColumns.push(columns[i].header);
+        			namesOfDateColumns.push({header: columns[i].header, subType: columns[i].subtype});
         		}
         	}
         	return namesOfDateColumns;
@@ -749,14 +758,19 @@
         var dateRowsFilter= function(columnNames,rows){
         	for(var i = 0 ; i<columnNames.length ;  i++){
         		for(var j = 0 ; j < rows.length; j++){
-        			if(!isNaN(new Date(rows[j][columnNames[i]]))){
-        				rows[j][columnNames[i]]= new Date((rows[j][columnNames[i]]));//.replace(/ /g,'T')
-        			}
+					var value  = rows[j][columnNames[i].header]
+					if(value == '') value = null;
+					
+					if(value !=null) {
+						var rowDate = new Date(value);
+						if(!isNaN(rowDate)){							
+							rows[j][columnNames[i].header]= rowDate;//.replace(/ /g,'T')
+							//rows[j][columnNames[i].header].setTime(rowDate.getTime() - new Date().getTimezoneOffset()*60*1000);
+						}
+					}
         		}
         	}
-        	return rows;
+			return rows;
         }
-
-
 	}
 })();
