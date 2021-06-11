@@ -38,7 +38,6 @@
                     </Listbox>
                 </div>
             </div>
-
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <router-view @touched="touched = true" @closed="touched = false" @inserted="reloadPage" />
             </div>
@@ -72,7 +71,6 @@ export default defineComponent({
         await this.loadAllSchemas()
     },
     methods: {
-        // LOAD AVAILABLE SCHEMAS ==========================
         async loadAllSchemas() {
             this.loading = true
             await axios
@@ -82,8 +80,6 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-
-        // SHOW RIGHT SIDE ==========================
         showForm(event: any) {
             const path = event.value ? `/schemas/${event.value.id}` : '/schemas/new-schema'
 
@@ -101,8 +97,6 @@ export default defineComponent({
                 })
             }
         },
-
-        // SHOW DIALOG TO DELETE ==========================
         deleteSchemaConfirm(schemaId: number) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
@@ -111,8 +105,6 @@ export default defineComponent({
                 accept: () => this.deleteSchema(schemaId)
             })
         },
-
-        // DELETE SCHEMA ==========================
         async deleteSchema(schemaId: number) {
             await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/mondrianSchemasResource/' + schemaId).then(() => {
                 this.$store.commit('setInfo', {

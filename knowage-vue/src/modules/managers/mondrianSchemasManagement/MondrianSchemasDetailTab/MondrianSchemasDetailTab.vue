@@ -44,7 +44,7 @@
                 </div>
                 <div class="p-field">
                     <span class="p-float-label">
-                        <KnInputFile label="" :changeFunction="onVersionUpload" accept=".csv, .xml" :visibility="true" />
+                        <KnInputFile label="" :changeFunction="onVersionUpload" accept=".csv" :visibility="true" />
                     </span>
                 </div>
             </form>
@@ -93,6 +93,11 @@
                         </template>
                         <Column selectionMode="single" :header="$t('managers.mondrianSchemasManagement.headers.active')" headerStyle="width: 3em"></Column>
                         <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :style="detailDescriptor.table.column.style"> </Column>
+                        <Column field="creationDate" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" dataType="date">
+                            <template #body="{data}">
+                                {{ formatDate(data.creationDate) }}
+                            </template>
+                        </Column>
                         <Column :style="detailDescriptor.table.iconColumn.style" @rowClick="false">
                             <template #body="slotProps">
                                 <Button icon="pi pi-download" class="p-button-link" @click="downloadVersion(slotProps.data.id)" />
@@ -113,6 +118,7 @@ import { iSchema, iVersion } from '../MondrianSchemas'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import axios from 'axios'
+import moment from 'moment'
 import useValidate from '@vuelidate/core'
 import tabViewDescriptor from '../MondrianSchemasTabViewDescriptor.json'
 import detailDescriptor from './MondrianSchemasDetailDescriptor.json'
@@ -145,11 +151,12 @@ export default defineComponent({
     data() {
         return {
             loading: false,
+            moment,
             tabViewDescriptor,
             detailDescriptor,
             v$: useValidate() as any,
             schema: {} as iSchema,
-            versions: {} as any,
+            versions: [] as any,
             selectedVersion: null as iVersion | null,
             columns: detailDescriptor.columns,
             filters: {
@@ -190,8 +197,11 @@ export default defineComponent({
             let uploadedVersion = event.target.files[0]
             this.$emit('versionUploaded', uploadedVersion)
         },
-
         async loadVersions() {
+            if (!this.schema.id) {
+                this.versions = []
+                return
+            }
             this.loading = true
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.schema.id}` + '/versions')
@@ -202,7 +212,6 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-
         async downloadVersion(versionId) {
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.schema.id}` + `/versions/${versionId}` + `/file`, {
@@ -215,6 +224,7 @@ export default defineComponent({
                         if (response.data.errors) {
                             this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
                         } else {
+                            this.$store.commit('setInfo', { title: this.$t('managers.mondrianSchemasManagement.toast.downloadFile.downloaded'), msg: this.$t('managers.mondrianSchemasManagement.toast.downloadFile.ok') })
                             var contentDisposition = response.headers['content-disposition']
                             var fileAndExtension = contentDisposition.match(/(?!([\b attachment;filename= \b])).*(?=)/g)[0]
                             var completeFileName = fileAndExtension.replaceAll('"', '')
@@ -224,7 +234,6 @@ export default defineComponent({
                     (error) => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t(error) })
                 )
         },
-
         showDeleteDialog(versionId: number) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
@@ -241,6 +250,10 @@ export default defineComponent({
                 })
                 this.loadVersions()
             })
+        },
+        formatDate(date) {
+            let fDate = new Date(date)
+            return fDate.toLocaleString()
         }
     }
 })

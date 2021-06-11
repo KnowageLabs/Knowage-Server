@@ -23,10 +23,6 @@
         {
             "field": "creationUser",
             "header": "managers.mondrianSchemasManagement.headers.creator"
-        },
-        {
-            "field": "creationDate",
-            "header": "managers.mondrianSchemasManagement.headers.creationDate"
         }
     ],
     "table": {

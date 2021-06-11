@@ -125,10 +125,27 @@
         "mondrianSchemasManagement": {
             "title": "OLAP schemas' catalogue",
             "noResults": "No schemas' available for the selected filter.",
-            "uploadingVersion": "Uploading version...",
-            "uploadOk": "New version uploaded successfully",
-            "updatingWorkflow": "Updating workflow...",
-            "workflowOk": "Workflow updated successfully",
+            "toast": {
+                "schema": {
+                    "error": "Error creating schema"
+                },
+                "uploadFile": {
+                    "uploaded": "Version Uploaded",
+                    "ok": "New version uploaded successfully",
+                    "error": "Error uploading version"
+                },
+                "downloadFile": {
+                    "downloaded": "Version Downloaded",
+                    "ok": "New version downloaded successfully"
+                },
+                "workflow": {
+                    "updated": "Workflow Updated",
+                    "ok": "Workflow updated successfully",
+                    "started": "Workflow Started",
+                    "startedOk": "Workflow started successfully",
+                    "startFailed": "Error starting workflow"
+                }
+            },
             "headers": {
                 "active": "Active",
                 "fileName": "File Name",

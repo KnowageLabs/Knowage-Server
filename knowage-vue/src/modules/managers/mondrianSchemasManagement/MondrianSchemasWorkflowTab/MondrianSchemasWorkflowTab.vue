@@ -30,7 +30,6 @@
                 </Listbox>
             </div>
         </div>
-
         <div class="kn-list--column p-col-6 ">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
@@ -56,7 +55,7 @@
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
-                        <div class="kn-list-item" @click="removeUserFromWfList(slotProps.option.id)" data-test="userList2-item">
+                        <div class="kn-list-item" :class="{ disableCursor: isStartedWf }" @click="removeUserFromWfList(slotProps.option.id)" data-test="userList2-item">
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.userId }}</span>
                                 <span class="kn-list-item-text-secondary">{{ slotProps.option.fullName }}</span>
@@ -74,6 +73,7 @@
             </div>
         </div>
     </div>
+    {{ usersList }}
 </template>
 
 <script lang="ts">
@@ -81,7 +81,6 @@ import { defineComponent } from 'vue'
 import { iSchema } from '../MondrianSchemas'
 import workflowDescriptor from './MondrianSchemasWorkflowDescriptor.json'
 import Listbox from 'primevue/listbox'
-
 import axios from 'axios'
 import Tooltip from 'primevue/tooltip'
 
@@ -95,7 +94,8 @@ export default defineComponent({
     },
     props: {
         usersList: Array,
-        selectedSchema: Object
+        selectedSchema: Object,
+        isChanged: Boolean
     },
     computed: {
         disableButton() {
@@ -119,8 +119,7 @@ export default defineComponent({
             schema: {} as iSchema,
             isStartedWf: false,
             isButtonDisabled: false,
-            userInProg: null as any,
-            isChanged: false
+            userInProg: null as any
         }
     },
 
@@ -136,19 +135,18 @@ export default defineComponent({
         },
         selectedSchema() {
             this.schema = { ...this.selectedSchema } as iSchema
-            this.isChanged = false
             this.isWorkflowStarted()
         }
     },
     methods: {
         onUserChange() {
             let selectedUsers = this.availableUsersList[1]
-            this.isChanged = true
             this.$emit('selectedUsersChanged', selectedUsers)
             this.$emit('changed')
         },
-
         async isWorkflowStarted() {
+            // ako ovde stavim if, kad pogledam nekog usera kome je startovan workflow, i onda odem da kreiram novog, polja su mu zakljucana jer se isStartedWf nije resetovo
+            // if (this.schema.id) {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/isStarted/${this.schema.id}`).then((response) => {
                 if (response.data > 0) {
                     this.isStartedWf = true
@@ -158,29 +156,24 @@ export default defineComponent({
                     this.userInProg = null
                 }
             })
+            // }
         },
-
         async startWorkflow() {
-            if (!this.schema.id) {
-                this.$store.commit('setError', { title: 'Schema not created', msg: 'Cannot start workflow without schema' })
-                return
-            }
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/startWorkflow/${this.schema.id}`
             await axios
                 .put(url)
                 .then((response) => {
                     if (response.data.errors) {
-                        this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: response.data.errors[0].message })
+                        this.$store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.workflow.startFailed'), msg: response.data.errors[0].message })
                     } else {
                         this.$store.commit('setInfo', {
-                            title: this.$t('managers.mondrianSchemasManagement.updatingWorkflow'),
-                            msg: this.$t('managers.mondrianSchemasManagement.workflowOk')
+                            title: this.$t('managers.mondrianSchemasManagement.toast.workflow.started'),
+                            msg: this.$t('managers.mondrianSchemasManagement.toast.workflow.startedOk')
                         })
                     }
                 })
                 .then(this.isWorkflowStarted)
         },
-
         moveUpList(userId) {
             const index = this.availableUsersList[1].findIndex((user) => user.id === userId)
             if (index > 0) {
@@ -199,15 +192,12 @@ export default defineComponent({
                 this.onUserChange()
             }
         },
-
         removeUserFromWfList(userId) {
             if (!this.isStartedWf) this.moveUser(userId, this.availableUsersList[1], this.availableUsersList[0])
         },
-
         addUserToWfList(userId) {
             if (!this.isStartedWf) this.moveUser(userId, this.availableUsersList[0], this.availableUsersList[1])
         },
-
         moveUser(userId, sourceList, targetList) {
             const index = sourceList.findIndex((user) => user.id === userId)
             if (index >= 0) {

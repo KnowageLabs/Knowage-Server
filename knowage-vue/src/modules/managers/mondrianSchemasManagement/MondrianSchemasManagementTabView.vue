@@ -20,8 +20,8 @@
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.workFlow.title') }}</span>
                 </template>
-
-                <MondrianSchemasWorkflowTab :selectedSchema="selectedSchema" :usersList="availableUsersList" @selectedUsersChanged="onSelectedUsersChange" @changed="emitTouched" />
+                {{ availableUsersList }}
+                <MondrianSchemasWorkflowTab :isChanged="isWorkflowChanged" :selectedSchema="selectedSchema" :usersList="availableUsersList" @selectedUsersChanged="onSelectedUsersChange" @changed="emitTouched" />
             </TabPanel>
         </TabView>
     </div>
@@ -55,7 +55,6 @@ export default defineComponent({
     data() {
         return {
             loading: false,
-            operation: 'insert',
             tabViewDescriptor: tabViewDescriptor,
             selectedSchema: {} as iSchema,
             v$: useValidate() as any,
@@ -64,7 +63,8 @@ export default defineComponent({
             availableUsersList: [] as any,
             versionToSave: null as any,
             reloadVersionTable: false,
-            touched: false
+            touched: false,
+            isWorkflowChanged: false
         }
     },
     async created() {
@@ -78,18 +78,27 @@ export default defineComponent({
                 return true
             }
             return this.v$.$invalid
+        },
+        operation() {
+            if (this.id) {
+                return 'update'
+            }
+            return 'insert'
         }
     },
     watch: {
         id() {
             this.loadSelectedSchema()
-            this.clearAvailableUsersList()
+            this.isWorkflowChanged = false
+            if (!this.id) {
+                this.clearAvailableUsersList()
+            }
         }
     },
     methods: {
-        // EVENTS TO EMIT & onEmited ==========================
         emitTouched() {
             this.touched = true
+            this.isWorkflowChanged = true
             this.$emit('touched')
         },
         closeTemplate() {
@@ -111,7 +120,6 @@ export default defineComponent({
             this.touched = true
             this.$emit('touched')
         },
-
         closeTemplateConfirm() {
             if (!this.touched) {
                 this.closeTemplate()
@@ -127,27 +135,21 @@ export default defineComponent({
                 })
             }
         },
-
-        // LOAD WORKFLOW USERS ==========================
         async loadAllUsers() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/users`).then((response) => (this.allUsers = response.data))
         },
-
-        // LOAD SELECTED SCHEMA ==========================
         async loadSelectedSchema() {
+            console.log('----------------------- loadSelectedSchema() -----------------------')
             this.loading = true
             if (this.id) {
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.id}`).then((response) => (this.selectedSchema = response.data))
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/${this.id}`).then((response) => (this.wfSelectedUserList = response.data))
-
-                this.createAvailableUsersList()
             } else {
                 this.selectedSchema = {} as iSchema
             }
+            this.createAvailableUsersList()
             this.loading = false
         },
-
-        // CREATE WORKFLOW DATA ==========================
         createAvailableUsersList() {
             const listOfSelectedUsers = this.wfSelectedUserList.map((userId) => this.allUsers.find((user) => userId === user.id))
             const listOfAvailableUsers = this.allUsers.filter((user) => {
@@ -161,13 +163,9 @@ export default defineComponent({
             })
             this.availableUsersList = [listOfAvailableUsers, listOfSelectedUsers]
         },
-
-        // CREATE WORKFLOW DATA ==========================
         clearAvailableUsersList() {
             this.availableUsersList = [this.allUsers, []]
         },
-
-        // SEND SUBMIT REQUEST ==========================
         async handleSubmit() {
             if (this.v$.$invalid) {
                 return
@@ -175,43 +173,46 @@ export default defineComponent({
             this.selectedSchema.type = 'MONDRIAN_SCHEMA'
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/`
             if (this.selectedSchema.id) {
-                this.operation = 'update'
                 url += this.selectedSchema.id
             }
             await this.createOrUpdate(url).then((response) => {
-                this.onSaveSuccess(response)
+                if (response.data.errors) {
+                    this.$store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.schema.error'), msg: response.data.errors })
+                } else {
+                    this.$store.commit('setInfo', { title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle), msg: this.$t(this.tabViewDescriptor.operation.success) })
+                    this.onSaveSuccess(response)
+                }
             })
         },
-
-        // DETERMINE IF ITS CREATING NEW OR UPDATING ==========================
         async createOrUpdate(url) {
             return this.operation === 'update' ? axios.put(url, this.selectedSchema) : axios.post(url, this.selectedSchema)
         },
+        async onSaveSuccess(response) {
+            if (this.operation === 'insert') {
+                this.selectedSchema.id = response.data.id
+            }
+            await this.uploadFile()
+            await this.updateWorkflow(this.selectedSchema.id)
 
-        // UPDATE WORKFLOW USERS FROM WORKFLOW TAB ==========================
-        async updateWorkflow(response) {
-            let newSchemaId = response.data.id
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/update`
-            await axios
-                .put(
-                    url,
-                    { modelId: newSchemaId, workflowArr: this.availableUsersList[1] },
-                    {
-                        headers: {
-                            Accept: 'application/json, text/plain, */*'
-                        }
-                    }
-                )
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('managers.mondrianSchemasManagement.updatingWorkflow'),
-                        msg: this.$t('managers.mondrianSchemasManagement.workflowOk')
-                    })
-                    this.$emit('inserted')
-                })
+            this.versionToSave = null
+            if (this.operation === 'insert') {
+                this.$router.push(`/schemas/${this.selectedSchema.id}`)
+            } else {
+                this.reloadVersionTable = true
+            }
+            this.isWorkflowChanged = false
+            this.$emit('inserted')
+            this.touched = false
         },
-
-        // UPLOAD FILE PASSED FROM WORKFLOW TAB ==========================
+        async updateWorkflow(schemaId) {
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/update`
+            await axios.put(url, { modelId: schemaId, workflowArr: this.availableUsersList[1] }, { headers: { Accept: 'application/json, text/plain, */*' } }).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('managers.mondrianSchemasManagement.toast.workflow.updated'),
+                    msg: this.$t('managers.mondrianSchemasManagement.toast.workflow.ok')
+                })
+            })
+        },
         async uploadFile() {
             if (!this.versionToSave) {
                 return
@@ -219,37 +220,13 @@ export default defineComponent({
             var formData = new FormData()
             formData.append('file', this.versionToSave)
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.selectedSchema.id}` + '/versions'
-            await axios.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then(
-                (response) => {
-                    if (response.data.errors) {
-                        this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.errorCreatingPackage') })
-                    } else {
-                        this.$store.commit('setInfo', { title: this.$t('managers.mondrianSchemasManagement.uploadingVersion'), msg: this.$t('managers.mondrianSchemasManagement.uploadOk') })
-                    }
-                },
-                (error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
-            )
-        },
-
-        // onSaveSuccess ==========================
-        async onSaveSuccess(response) {
-            this.selectedSchema.id = response.data.id
-            await this.uploadFile()
-            await this.updateWorkflow(response)
-
-            this.versionToSave = null
-            this.$store.commit('setInfo', {
-                title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),
-                msg: this.$t(this.tabViewDescriptor.operation.success)
+            await axios.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((response) => {
+                if (response.data.errors) {
+                    this.$store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.error'), msg: response.data.errors })
+                } else {
+                    this.$store.commit('setInfo', { title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.uploaded'), msg: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.ok') })
+                }
             })
-            if (this.operation === 'insert') {
-                this.$router.push(`/schemas/${this.selectedSchema.id}`)
-            } else {
-                this.reloadVersionTable = true
-            }
-            this.$emit('inserted')
-            this.loadSelectedSchema()
-            this.touched = false
         }
     }
 })
