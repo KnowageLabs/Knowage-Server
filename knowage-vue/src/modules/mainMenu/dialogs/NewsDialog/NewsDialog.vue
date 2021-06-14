@@ -3,8 +3,8 @@
         <TabView class="knTab kn-tab" @tab-click="emptySelectedNews()">
             <TabPanel v-for="(type, index) in news" v-bind:key="index" :header="$t(typeDescriptor.newsType[index].label)">
                 <div class="knPageContent p-grid p-m-0 p-p-0">
-                    <div class="p-col-5 ">
-                        <Listbox class="kn-list" :options="news[index]" optionLabel="title" style="width:20rem" listStyle="max-height:250px">
+                    <div class="p-col-4 p-p-0">
+                        <Listbox class="kn-list" :options="news[index]" optionLabel="title" listStyle="max-height:250px">
                             <template #option="slotProps">
                                 <div class="kn-list-item" @click="getNews(slotProps.option.id)">
                                     <Avatar :icon="typeDescriptor.newsType[slotProps.option.type].className" shape="circle" size="medium" :style="typeDescriptor.newsType[slotProps.option.type].style" />
@@ -15,7 +15,8 @@
                             </template>
                         </Listbox>
                     </div>
-                    <div class="p-col-7 p-flex-column newsContainer" v-if="Object.keys(selectedNews).length != 0">
+                    <div class="p-col-8 p-flex-column newsContainer p-p-0" v-if="Object.keys(selectedNews).length != 0">
+                        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                         <h4>
                             <div class="p-col">
                                 {{ $t('newsDialog.description') }}: <span class="h4-text">{{ selectedNews.description }}</span>
@@ -33,7 +34,7 @@
             </TabPanel>
         </TabView>
         <template #footer>
-            <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.close') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="closeDialog"><ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" /> {{ $t('common.close') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -68,7 +69,8 @@ export default defineComponent({
         return {
             typeDescriptor: newsDialogDescriptor,
             selectedNews: {} as SingleNews,
-            news: {}
+            news: {},
+            loading: true
         }
     },
     created() {},
@@ -86,13 +88,14 @@ export default defineComponent({
         closeDialog() {
             this.$emit('update:visibility', false)
         },
-        getNews(id) {
+        async getNews(id) {
             if (id != this.selectedNews.id) {
-                axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + id + '?isTechnical=false').then(
+                this.loading = true
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + id + '?isTechnical=false').then(
                     (response) => {
                         console.log(response)
                         this.selectedNews = response.data
-
+                        this.loading = false
                         if (!this.selectedNews.read) {
                             axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/newsRead/' + id).then(
                                 () => {
@@ -102,7 +105,9 @@ export default defineComponent({
                             )
                         }
                     },
-                    (error) => console.error(error)
+                    () => {
+                        this.loading = false
+                    }
                 )
             }
         }
@@ -150,8 +155,20 @@ export default defineComponent({
 }
 .knTab {
     &.p-tabview {
+        display: flex;
+        flex-direction: column;
         min-height: 400px;
         max-height: 600px;
+        &:deep(.p-tabview-panels) {
+            padding: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        &:deep(.p-tabview-panel) {
+            flex: 1;
+            display: flex;
+        }
 
         &:deep(.p-tabview-title) {
             text-transform: uppercase;
@@ -164,14 +181,19 @@ export default defineComponent({
     }
 }
 .knPageContent {
+    flex: 1;
     min-width: 800px;
     max-width: 1200px;
     width: 800px;
-    height: 75%;
+    & > div {
+        overflow: auto;
+        &:first-child {
+            border-right: 1px solid $color-borders;
+        }
+    }
 }
-
-.kn-list-column {
-    border-right: 1px solid #ccc;
+.kn-list {
+    border-right: none !important;
 }
 
 .h4-text {
