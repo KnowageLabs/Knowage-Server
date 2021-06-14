@@ -299,6 +299,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		WidgetGalleryDTO toRet = new WidgetGalleryDTO();
 
 		toRet.setAuthor(sbiWidgetGallery.getAuthor());
+		toRet.setDescription(sbiWidgetGallery.getDescription());
 		toRet.setId(sbiWidgetGallery.getId().getUuid());
 		toRet.setName(sbiWidgetGallery.getName());
 		toRet.setType(sbiWidgetGallery.getType());

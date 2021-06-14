@@ -1,6 +1,7 @@
 .kn-toolbar {
 	border-radius: 0 !important;
 	height: $toolbar-height;
+	min-height: $toolbar-height;
 	font-weight: $toolbar-font-weight !important;
 	font-size: $toolbar-font-size !important;
 	border: none;
