@@ -127,6 +127,32 @@
 		}
 	}
 
+	.btn-signin-azure {
+		display: inline-block;
+		padding: 6px 12px;
+		margin-bottom: 0;
+		font-size: 16px;
+		font-weight: normal;
+		line-height: 1.42857;
+		text-align: center;
+		white-space: nowrap;
+		vertical-align: middle;
+		touch-action: manipulation;
+		cursor: pointer;
+		background-image: none;
+		border: 1px solid transparent;
+		border-radius: 0;
+		color: #333;
+		background-color: #eee;
+		border-color: #eee;
+	}
+
+	.btn-signin-azure:hover {
+		color: #333;
+		background-color: #d5d5d5;
+		border-color: #cfcfcf;
+	}
+
 	.btn.btn-signin {
 	    background-color: $fabPrimaryColor;
 	    padding: 0px;
