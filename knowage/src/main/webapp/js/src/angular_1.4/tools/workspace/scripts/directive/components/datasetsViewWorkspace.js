@@ -756,10 +756,12 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     }
 
 	$scope.canLoadData = function(dataset) {
-		for (var i = 0; i < dataset.actions.length; i++) {
-			var action = dataset.actions[i];
-			if (action.name == 'loaddata') {
-				return true;
+		if (dataset && dataset.actions) {
+			for (var i = 0; i < dataset.actions.length; i++) {
+				var action = dataset.actions[i];
+				if (action.name == 'loaddata') {
+					return true;
+				}
 			}
 		}
 		return false;
