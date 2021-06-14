@@ -8,6 +8,7 @@
                             id="MULTITENANT_NAME"
                             class="kn-material-input"
                             type="text"
+                            disabled="disableField"
                             v-model.trim="v$.tenant.MULTITENANT_NAME.$model"
                             :class="{
                                 'p-invalid': v$.tenant.MULTITENANT_NAME.$invalid && v$.tenant.MULTITENANT_NAME.$dirty
@@ -17,12 +18,12 @@
                             @input="onFieldChange('MULTITENANT_NAME', $event.target.value)"
                             data-test="name-input"
                         />
-                        <label for="MULTITENANT_NAME" class="kn-material-input-label"> {{ $t('managers.tenantManagement.detail.MULTITENANT_NAME') }} * </label>
+                        <label for="MULTITENANT_NAME" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
                     <KnValidationMessages
                         :vComp="v$.tenant.MULTITENANT_NAME"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.tenantManagement.detail.MULTITENANT_NAME')
+                            fieldName: $t('common.name')
                         }"
                     />
                 </div>
@@ -32,12 +33,15 @@
                         <Dropdown
                             id="MULTITENANT_THEME"
                             class="kn-material-input"
+                            :options="themes"
+                            optionLabel="VALUE_CHECK"
+                            optionValue="VALUE_CHECK"
                             v-model="v$.tenant.MULTITENANT_THEME.$model"
                             :class="{
                                 'p-invalid': v$.tenant.MULTITENANT_THEME.$invalid && v$.tenant.MULTITENANT_THEME.$dirty
                             }"
                             @before-show="v$.tenant.MULTITENANT_THEME.$touch()"
-                            @change="onRoleTypeChange('MULTITENANT_THEME', 'roleTypeCD', $event)"
+                            @change="onFieldChange('MULTITENANT_THEME', $event.value)"
                         >
                         </Dropdown>
                         <label for="MULTITENANT_THEME" class="kn-material-input-label"> {{ $t('managers.tenantManagement.detail.theme') }} * </label>
@@ -64,6 +68,7 @@ import useValidate from '@vuelidate/core'
 import tabViewDescriptor from '../TenantManagementTabViewDescriptor.json'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import tenantDetailValidationDescriptor from './TenantDetailValidationDescriptor.json'
+import { iMultitenant } from '../../TenantManagement'
 
 export default defineComponent({
     name: 'detail-tab',
@@ -76,6 +81,15 @@ export default defineComponent({
         selectedTenant: {
             type: Object,
             requried: false
+        },
+        listOfThemes: [] as any
+    },
+    computed: {
+        disableField() {
+            if (this.selectedTenant) {
+                return true
+            }
+            return false
         }
     },
     emits: ['fieldChanged', 'roleTypeChanged'],
@@ -83,10 +97,9 @@ export default defineComponent({
         return {
             tabViewDescriptor,
             tenantDetailValidationDescriptor,
-            translatedRoleTypes: [] as any,
             v$: useValidate() as any,
-            roleTypes: [] as any,
-            tenant: {} as any
+            tenant: {} as iMultitenant,
+            themes: [] as any
         }
     },
     validations() {
@@ -98,15 +111,20 @@ export default defineComponent({
         if (this.selectedTenant) {
             this.tenant = { ...this.selectedTenant } as any
         }
+        this.themes = [...this.listOfThemes] as any
     },
     watch: {
         selectedTenant() {
             this.v$.$reset()
             this.tenant = { ...this.selectedTenant } as any
+        },
+        listOfThemes() {
+            this.themes = [...this.listOfThemes] as any
         }
     },
     methods: {
         onFieldChange(fieldName: string, value: any) {
+            console.log(value)
             this.$emit('fieldChanged', { fieldName, value })
         }
     }

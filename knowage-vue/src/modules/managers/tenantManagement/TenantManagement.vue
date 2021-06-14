@@ -40,7 +40,6 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <!-- {{ multitenants }} -->
                 <router-view :selectedTenant="selTenant" @touched="touched = true" @closed="touched = false" @inserted="pageReload" />
             </div>
         </div>
@@ -66,6 +65,8 @@ export default defineComponent({
             multitenants: [] as iMultitenant[],
             selTenant: {} as iMultitenant,
             listOfThemes: [] as any,
+            listOfDataSources: [] as any,
+            listOfProductTypes: [] as any,
             tenantsDescriptor,
             loading: false,
             touched: false,
@@ -74,39 +75,24 @@ export default defineComponent({
         }
     },
     async created() {
-        await this.loadAllTenants()
-        await this.loadAllThemes()
+        await this.loadTenants()
     },
     methods: {
-        async loadAllTenants() {
-            this.loading = true
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant'
-            await axios
-                .get(url)
-                .then((response) => {
-                    console.log('------------- loadAllTenants() ----------------')
-                    this.multitenants = response.data.root
-                    console.log(this.multitenants)
-                })
-                .finally(() => (this.loading = false))
+        loadData(dataType: string) {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`).finally(() => (this.loading = false))
         },
-        async loadAllThemes() {
+        async loadTenants() {
             this.loading = true
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant/themes'
-            await axios
-                .get(url)
-                .then((response) => {
-                    console.log('------------- loadAllThemes() ----------------')
-                    this.listOfThemes = response.data.root
-                    console.log(this.listOfThemes)
-                })
-                .finally(() => (this.loading = false))
+            await this.loadData('').then((response) => {
+                // console.log('------------- loadAllTenants() ----------------')
+                this.multitenants = response.data.root
+                // console.log(this.multitenants)
+            })
+            this.loading = false
         },
-        async loadAllDataSources() {},
-        async loadAllProductTypes() {},
         deleteTenantConfirm(selectedTenant: Object) {
-            console.log('------------- selectedTenant TO DELETE ----------------')
-            console.log(selectedTenant)
+            // console.log('------------- selectedTenant TO DELETE ----------------')
+            // console.log(selectedTenant)
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
@@ -122,15 +108,15 @@ export default defineComponent({
                     msg: this.$t('common.toast.deleteSuccess')
                 })
                 this.$router.push('/tenants')
-                this.loadAllTenants()
+                this.pageReload()
             })
         },
         showForm(event: any) {
             const path = event.value ? `/tenants/${event.value.MULTITENANT_ID}` : '/tenants/new-tenant'
-            console.log(event)
+            // console.log(event)
             this.selTenant = event.value
-            console.log('------------- selectedTenant ----------------')
-            console.log(this.selTenant)
+            // console.log('------------- selectedTenant ----------------')
+            // console.log(this.selTenant)
 
             if (!this.touched) {
                 this.$router.push(path)
@@ -148,7 +134,7 @@ export default defineComponent({
         },
         pageReload() {
             this.touched = false
-            this.loadAllTenants()
+            this.loadTenants()
         }
     }
 })

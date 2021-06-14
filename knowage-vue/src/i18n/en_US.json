@@ -162,7 +162,8 @@
             "title": "Tenant Management",
 
             "detail": {
-                "title": "Detail"
+                "title": "Detail",
+                "theme": "Theme"
             },
             "productTypes": {
                 "title": "Product Types"
