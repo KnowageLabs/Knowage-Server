@@ -16,7 +16,15 @@ function generateDatamartOptionsController(sbiModule_translate, sbiModule_restSe
 	$scope.buildDatamart = function(){
 
 		sbiModule_restServices.alterContextPath(sbiModule_config.contextMetaName);
-		sbiModule_restServices.promiseGet("1.0/metaWeb", "buildModel/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userId+"&model="+$scope.modelName+"&schema="+$scope.schemaName+"&catalog="+$scope.catalogName+"&registry="+$scope.isGeneratedForRegistry+"&includeSources="+$scope.includeSources)
+		var endOfTheURL = "buildModel/"+$scope.selectedBusinessModel.id
+			+"?user_id=" + sbiModule_user.userId
+			+"&model=" + encodeURIComponent($scope.modelName)
+			+"&schema=" + $scope.schemaName
+			+"&catalog=" + $scope.catalogName
+			+"&registry=" + $scope.isGeneratedForRegistry
+			+"&includeSources=" + $scope.includeSources;
+
+		sbiModule_restServices.promiseGet("1.0/metaWeb", endOfTheURL)
 		.then(
 				function(response) {
 					//ok case
