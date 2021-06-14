@@ -52,10 +52,7 @@ describe('Mondrian Schema Management Tab View', () => {
         await flushPromises()
         await wrapper.find('.p-tabview-nav li:nth-child(1)').trigger('click')
 
-        console.log('--------------- NAV 1 ------------------')
         console.log(wrapper.find('.p-tabview-nav li:nth-child(1)').html())
-
-        console.log('--------------- NAV 2 ------------------')
         console.log(wrapper.find('.p-tabview-nav li:nth-child(2)').html())
 
         expect(wrapper.find('.p-tabview-nav li:nth-child(1)').html()).toContain('aria-selected="true"')
