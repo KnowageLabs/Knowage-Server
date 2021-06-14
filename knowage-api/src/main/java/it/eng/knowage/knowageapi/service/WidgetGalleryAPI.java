@@ -30,7 +30,7 @@ public interface WidgetGalleryAPI {
 
 	List<WidgetGalleryDTO> getWidgets() throws JSONException;
 
-	void updateGalleryCounter(SbiWidgetGallery newSbiWidgetGallery);
+//	WidgetGalleryDTO updateGalleryCounter(SbiWidgetGallery newSbiWidgetGallery);
 
 	List<SbiWidgetGalleryTag> createNewWidgetTagsByList(SbiWidgetGallery sbiWidgetGallery, String userid, String tags);
 
