@@ -11,7 +11,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div class="p-col">
+                <div>
                     <Listbox
                         v-if="!loading"
                         class="kn-list--column"
@@ -32,14 +32,15 @@
                                     <span>{{ slotProps.option.name }}</span>
                                     <span class="kn-list-item-text-secondary">{{ slotProps.option.description }}</span>
                                 </div>
-                                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteSchemaConfirm(slotProps.option.id)" data-test="delete-button" />
+                                <Button icon="pi pi-trash" class="p-button-link" @click.stop="deleteSchemaConfirm(slotProps.option.id)" data-test="delete-button" />
                             </div>
                         </template>
                     </Listbox>
                 </div>
             </div>
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view @touched="touched = true" @closed="touched = false" @inserted="reloadPage" />
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
+                <router-view @touched="touched = true" @closed="closeForm" @inserted="reloadPage" />
+                <KnHint :title="'managers.mondrianSchemasManagement.hintTitle'" :hint="'managers.mondrianSchemasManagement.hint'" v-if="!formVisible" />
             </div>
         </div>
     </div>
@@ -51,18 +52,21 @@ import { iSchema } from './MondrianSchemas'
 import axios from 'axios'
 import mondrianDescriptor from './MondrianSchemasManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
+import KnHint from '@/components/UI/KnHint.vue'
 import Listbox from 'primevue/listbox'
 
 export default defineComponent({
     name: 'mondrian-schemas-management',
     components: {
         FabButton,
-        Listbox
+        Listbox,
+        KnHint
     },
     data() {
         return {
             loading: false,
             touched: false,
+            formVisible: false,
             schemas: [] as iSchema[],
             mondrianDescriptor: mondrianDescriptor
         }
@@ -85,6 +89,7 @@ export default defineComponent({
 
             if (!this.touched) {
                 this.$router.push(path)
+                this.setHint(event)
             } else {
                 this.$confirm.require({
                     message: this.$t('common.toast.unsavedChangesMessage'),
@@ -93,6 +98,7 @@ export default defineComponent({
                     accept: () => {
                         this.touched = false
                         this.$router.push(path)
+                        this.setHint(event)
                     }
                 })
             }
@@ -115,8 +121,18 @@ export default defineComponent({
                 this.loadAllSchemas()
             })
         },
+        closeForm() {
+            this.touched = false
+            this.formVisible = false
+        },
+        setHint(event: any) {
+            if (event) {
+                this.formVisible = true
+            }
+        },
         reloadPage() {
             this.touched = false
+            this.formVisible = false
             this.loadAllSchemas()
         }
     }

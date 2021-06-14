@@ -87,7 +87,9 @@ export default defineComponent({
     },
     watch: {
         id() {
+            this.v$.$reset()
             this.loadSelectedSchema()
+            this.touched = false
             this.isWorkflowChanged = false
         }
     },
@@ -226,8 +228,3 @@ export default defineComponent({
     }
 })
 </script>
-<style scoped>
-::v-deep(.p-toolbar-group-right) {
-    height: 100%;
-}
-</style>

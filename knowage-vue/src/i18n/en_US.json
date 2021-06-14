@@ -138,48 +138,50 @@
             "title": "Metadata Management"
         },
         "mondrianSchemasManagement": {
-            "title": "OLAP schemas' catalogue",
+            "detail": {
+                "savedVersions": "Saved versions",
+                "title": "Detail"
+            },
+            "headers": {
+                "active": "Active",
+                "creationDate": "Creation Date",
+                "creator": "Creator",
+                "fileName": "File Name"
+            },
+            "hint": "placeholder, please add a description",
+            "hintTitle": "Mondrian Schema Management",
             "noResults": "No schemas' available for the selected filter.",
+            "title": "OLAP schemas' catalogue",
             "toast": {
-                "schema": {
-                    "error": "Error creating schema"
-                },
-                "uploadFile": {
-                    "uploaded": "Version Uploaded",
-                    "ok": "New version uploaded successfully",
-                    "error": "Error uploading version"
-                },
                 "downloadFile": {
                     "downloaded": "Version Downloaded",
                     "ok": "New version downloaded successfully"
                 },
+                "schema": {
+                    "error": "Error creating schema"
+                },
+                "uploadFile": {
+                    "error": "Error uploading version",
+                    "ok": "New version uploaded successfully",
+                    "uploaded": "Version Uploaded"
+                },
                 "workflow": {
-                    "updated": "Workflow Updated",
                     "ok": "Workflow updated successfully",
+                    "startFailed": "Error starting workflow",
                     "started": "Workflow Started",
                     "startedOk": "Workflow started successfully",
-                    "startFailed": "Error starting workflow"
+                    "updated": "Workflow Updated"
                 }
-            },
-            "headers": {
-                "active": "Active",
-                "fileName": "File Name",
-                "creator": "Creator",
-                "creationDate": "Creation Date"
-            },
-            "detail": {
-                "title": "Detail",
-                "savedVersions": "Saved versions"
             },
             "workFlow": {
-                "title": "Work Flow",
                 "availableUsers": "Available Users",
-                "userWf": "Users Work Flow",
+                "title": "Work Flow",
                 "tooltips": {
                     "noSchema": "Schema is not created!",
-                    "wfInProgress": "Workflow is in progress!",
-                    "noWfUsers": "Save users in workflow!"
-                }
+                    "noWfUsers": "Save users in workflow!",
+                    "wfInProgress": "Workflow is in progress!"
+                },
+                "userWf": "Users Work Flow"
             }
         },
         "profileAttributesManagement": {
