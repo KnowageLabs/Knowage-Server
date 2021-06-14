@@ -40,7 +40,7 @@
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
                 <router-view @touched="touched = true" @closed="closeForm" @inserted="reloadPage" />
-                <KnHint :title="'managers.mondrianSchemasManagement.hintTitle'" :hint="'managers.mondrianSchemasManagement.hint'" v-if="!formVisible" />
+                <KnHint :title="'managers.mondrianSchemasManagement.hintTitle'" :hint="'managers.mondrianSchemasManagement.hint'" v-if="toggleHint" />
             </div>
         </div>
     </div>
@@ -62,11 +62,18 @@ export default defineComponent({
         Listbox,
         KnHint
     },
+    computed: {
+        toggleHint() {
+            if (this.$route.fullPath == '/schemas') {
+                return true
+            }
+            return false
+        }
+    },
     data() {
         return {
             loading: false,
             touched: false,
-            formVisible: false,
             schemas: [] as iSchema[],
             mondrianDescriptor: mondrianDescriptor
         }
@@ -89,7 +96,6 @@ export default defineComponent({
 
             if (!this.touched) {
                 this.$router.push(path)
-                this.setHint(event)
             } else {
                 this.$confirm.require({
                     message: this.$t('common.toast.unsavedChangesMessage'),
@@ -98,7 +104,6 @@ export default defineComponent({
                     accept: () => {
                         this.touched = false
                         this.$router.push(path)
-                        this.setHint(event)
                     }
                 })
             }
@@ -123,16 +128,9 @@ export default defineComponent({
         },
         closeForm() {
             this.touched = false
-            this.formVisible = false
-        },
-        setHint(event: any) {
-            if (event) {
-                this.formVisible = true
-            }
         },
         reloadPage() {
             this.touched = false
-            this.formVisible = false
             this.loadAllSchemas()
         }
     }
