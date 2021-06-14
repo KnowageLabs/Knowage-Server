@@ -1,12 +1,7 @@
-export interface iFolder {
+export interface iFile {
     id: number,
     name: string,
-    biObjects: Array,
-    exportable?: boolean
-}
-
-export interface iDocument {
-    id: number,
-    name: string,
+    parentId?: number,
+    biObjects?: Array,
     exportable?: boolean
 }
