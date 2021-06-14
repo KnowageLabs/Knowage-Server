@@ -11,32 +11,30 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div class="p-col">
-                    <Listbox
-                        v-if="!loading"
-                        class="kn-list--column"
-                        :options="multitenants"
-                        :filter="true"
-                        :filterPlaceholder="$t('common.search')"
-                        optionLabel="name"
-                        filterMatchMode="contains"
-                        :filterFields="tenantsDescriptor.filterFields"
-                        :emptyFilterMessage="$t('managers.tenantsManagement.noResults')"
-                        @change="showForm"
-                        data-test="tenants-list"
-                    >
-                        <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                        <template #option="slotProps">
-                            <div class="kn-list-item" data-test="list-item">
-                                <div class="kn-list-item-text">
-                                    <span>{{ slotProps.option.MULTITENANT_NAME }}</span>
-                                    <span class="kn-list-item-text-secondary">{{ slotProps.option.MULTITENANT_THEME }}</span>
-                                </div>
-                                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteTenantConfirm(slotProps.option)" data-test="delete-button" />
+                <Listbox
+                    v-if="!loading"
+                    class="kn-list--column"
+                    :options="multitenants"
+                    :filter="true"
+                    :filterPlaceholder="$t('common.search')"
+                    optionLabel="name"
+                    filterMatchMode="contains"
+                    :filterFields="tenantsDescriptor.filterFields"
+                    :emptyFilterMessage="$t('managers.tenantsManagement.noResults')"
+                    @change="showForm"
+                    data-test="tenants-list"
+                >
+                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                    <template #option="slotProps">
+                        <div class="kn-list-item" data-test="list-item">
+                            <div class="kn-list-item-text">
+                                <span>{{ slotProps.option.MULTITENANT_NAME }}</span>
+                                <span class="kn-list-item-text-secondary">{{ slotProps.option.MULTITENANT_THEME }}</span>
                             </div>
-                        </template>
-                    </Listbox>
-                </div>
+                            <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteTenantConfirm(slotProps.option)" data-test="delete-button" />
+                        </div>
+                    </template>
+                </Listbox>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
@@ -77,34 +75,30 @@ export default defineComponent({
     },
     async created() {
         await this.loadTenants()
-        await this.getLicences()
+        // await this.getLicences()
     },
     methods: {
         loadData(dataType: string) {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`).finally(() => (this.loading = false))
         },
-        async getLicences() {
-            return axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`)
-                .then((response) => {
-                    var host = response.data.hosts[0].hostName
-                    var licenses = response.data.licenses[host]
-                    this.listOfavailableLicenses = licenses
-                })
-                .finally(() => (this.loading = false))
-        },
+        // async getLicences() {
+        // return axios
+        //     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`)
+        //     .then((response) => {
+        //         var host = response.data.hosts[0].hostName
+        //         var licenses = response.data.licenses[host]
+        //         this.listOfavailableLicenses = licenses
+        //     })
+        //     .finally(() => (this.loading = false))
+        // },
         async loadTenants() {
             this.loading = true
             await this.loadData('').then((response) => {
-                // console.log('------------- loadAllTenants() ----------------')
                 this.multitenants = response.data.root
-                // console.log(this.multitenants)
             })
             this.loading = false
         },
         deleteTenantConfirm(selectedTenant: Object) {
-            // console.log('------------- selectedTenant TO DELETE ----------------')
-            // console.log(selectedTenant)
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
@@ -125,10 +119,7 @@ export default defineComponent({
         },
         showForm(event: any) {
             const path = event.value ? `/tenants/${event.value.MULTITENANT_ID}` : '/tenants/new-tenant'
-            // console.log(event)
             this.selTenant = event.value
-            // console.log('------------- selectedTenant ----------------')
-            // console.log(this.selTenant)
 
             if (!this.touched) {
                 this.$router.push(path)

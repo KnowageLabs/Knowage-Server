@@ -136,8 +136,6 @@ export default defineComponent({
                 var productTypes = response.data.root
 
                 this.listOfSelectedProducts = []
-                this.filterArrayByTargetArr(productTypes, this.availableLicenses)
-                console.log(productTypes)
                 this.copySelectedElement(productTypes, this.listOfSelectedProducts)
 
                 // console.log('this.listOfSelectedProducts:', this.listOfSelectedProducts)
