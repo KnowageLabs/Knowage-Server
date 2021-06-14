@@ -28,13 +28,13 @@
                                             <Calendar
                                                 id="expirationDate"
                                                 class="kn-material-input"
-                                                type="text"
                                                 v-model="selectedDate"
                                                 :class="{
                                                     'p-invalid': !selectedDate
                                                 }"
                                                 :showIcon="true"
                                                 :maxDate="maxDate"
+                                                :manualInput="false"
                                                 data-test="date-input"
                                             />
                                             <label for="expirationDate" class="kn-material-input-label"> {{ $t('managers.templatePruning.selectDate') }} * </label>
@@ -75,7 +75,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iFile } from './TemplatePruning'
+import { iFile, iNode } from './TemplatePruning'
 import axios from 'axios'
 import Card from 'primevue/card'
 import Calendar from 'primevue/calendar'
@@ -91,12 +91,13 @@ export default defineComponent({
     data() {
         return {
             selectedDate: new Date(),
-            folderStructure: [] as any[],
+            folderStructure: [] as iFile[],
             documents: [] as iFile[],
-            selectedDocuments: [] as iFile[],
+            nodes: [] as iNode[],
+            tempNodes: [],
+            selectedDocuments: {},
             documentSelectionVisible: false,
-            loading: false,
-            nodes: [] as any[]
+            loading: false
         }
     },
     computed: {
@@ -104,7 +105,7 @@ export default defineComponent({
             return new Date()
         },
         filterDisabled(): boolean {
-            return this.selectedDate === null
+            return !this.selectedDate
         },
         documentSelectionMessage(): string {
             return this.documents.length != 0 ? this.$t('managers.templatePruning.documentSelectionMessage') : this.$t('managers.templatePruning.noDocuments')
@@ -113,7 +114,7 @@ export default defineComponent({
             return this.documents.length > 0
         },
         deleteDisabled(): boolean {
-            return this.selectedDocuments.length === 0
+            return Object.keys(this.selectedDocuments).length === 0
         }
     },
     methods: {
@@ -125,38 +126,41 @@ export default defineComponent({
             await this.loadDocuments(this.selectedDate)
             await this.loadFolderStructure()
             this.createNodeTree()
-            this.loading = false
+
+            for (let i = 0; i < this.nodes.length; i++) {
+                this.filterDocuments(this.nodes[i], this.nodes as any)
+            }
+
             this.documentSelectionVisible = true
+            this.loading = false
         },
         async loadFolderStructure() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/folders?includeDocs=true').then((response) => {
-                this.folderStructure = response.data
-            })
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/folders?includeDocs=true').then((response) => (this.folderStructure = response.data))
         },
         async loadDocuments(date: Date) {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents?date=${this.formatDate(date)}`).then((response) => (this.documents = response.data))
         },
         createNodeTree() {
             this.nodes = []
-            const foldersWithoutParents = [] as any
-            this.folderStructure.map((folder: any) => {
-                const tempFolder = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as any, data: { name: folder.name, hasDocuments: false }, exportable: false }
-                tempFolder.children = foldersWithoutParents.filter((folder: any) => tempFolder.id === folder.parentId)
+            const foldersWithoutParents = [] as iNode[]
+            this.folderStructure.map((folder: iFile) => {
+                const tempFolder = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: { name: folder.name, hasDocuments: false } }
+                tempFolder.children = foldersWithoutParents.filter((folder: iNode) => tempFolder.id === folder.parentId)
                 folder.biObjects.map((document: iFile) => {
-                    const index = this.documents.findIndex((el: iFile) => el.id === document.id)
+                    const index = this.documents.findIndex((file: iFile) => file.id === document.id)
                     if (index >= 0) {
                         tempFolder.data.hasDocuments = true
-                        tempFolder.children.push({ key: document.id, icon: 'pi pi-file', id: document.id, label: document.name, data: document.name, exportable: false })
+                        tempFolder.children.push({ key: document.id, icon: 'pi pi-file', id: document.id, label: document.name, data: document.name })
                     }
                 })
 
                 if (tempFolder.parentId) {
-                    let parentFolder = null as any
+                    let parentFolder = null as iNode | null
                     for (let i = 0; i < this.nodes.length; i++) {
                         parentFolder = this.findParentFolder(tempFolder, this.nodes[i])
                         if (parentFolder) {
                             parentFolder.data.hasDocuments = true
-                            parentFolder.children.push(tempFolder)
+                            parentFolder.children?.push(tempFolder)
                             break
                         }
                     }
@@ -167,41 +171,41 @@ export default defineComponent({
                     this.nodes.push(tempFolder)
                 }
             })
-            for (let i = 0; i < this.nodes.length; i++) {
-                this.filterDocuments(this.nodes[i], this.nodes)
-            }
         },
-        findParentFolder(folderToAdd, folderToSearch) {
+        findParentFolder(folderToAdd: iNode, folderToSearch: iNode) {
             if (folderToAdd.parentId === folderToSearch.id) {
                 return folderToSearch
             } else {
-                let tempFolder = null
-                for (let i = 0; i < folderToSearch.children.length; i++) {
-                    tempFolder = this.findParentFolder(folderToAdd, folderToSearch.children[i])
-                    if (tempFolder) {
-                        break
+                let tempFolder = null as iNode | null
+                if (folderToSearch.children) {
+                    for (let i = 0; i < folderToSearch.children.length; i++) {
+                        tempFolder = this.findParentFolder(folderToAdd, folderToSearch.children[i])
+                        if (tempFolder) {
+                            break
+                        }
                     }
                 }
+
                 return tempFolder
             }
         },
-        filterDocuments(folder, parentFolder) {
-            if (folder.data.hasDocuments) {
-                for (let i = 0; i < folder.children.length; i++) {
+        filterDocuments(folder: iNode, parentFolder: any) {
+            if (folder.data.hasDocuments && folder.children) {
+                for (let i = folder.children.length - 1; i >= 0; i--) {
                     this.filterDocuments(folder.children[i], folder)
                 }
             } else {
                 if (folder.children) {
                     const array = parentFolder.children ? parentFolder.children : parentFolder
-                    const index = array.findIndex((el: any) => el.id === folder.id)
+                    const index = array.findIndex((node: iNode) => node.id === folder.id)
                     array.splice(index, 1)
                 }
             }
         },
-        setOpenFolderIcon(node: any) {
+        setOpenFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder-open'
         },
-        setClosedFolderIcon(node: any) {
+        setClosedFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder'
         },
         deleteConfirm() {
@@ -213,19 +217,21 @@ export default defineComponent({
             })
         },
         async deleteDocuments() {
-            const documentsToDelete = [] as any
-            Object.keys(this.selectedDocuments).map((document: any) => {
-                if (!isNaN(document)) {
-                    documentsToDelete.push({ id: +document, data: this.formatDate(this.selectedDate) })
-                }
-            })
+            const documentsToDelete = [] as { id: number; data: string }[]
+            if (this.selectedDocuments) {
+                Object.keys(this.selectedDocuments as {}).map((id: any) => {
+                    if (!isNaN(id)) {
+                        documentsToDelete.push({ id: +id, data: this.formatDate(this.selectedDate) })
+                    }
+                })
+            }
 
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'template/deleteTemplate', documentsToDelete).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
-                this.selectedDocuments = []
+                this.selectedDocuments = {}
                 this.loadDocumentSelection()
             })
         }

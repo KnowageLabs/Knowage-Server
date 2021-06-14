@@ -5,3 +5,13 @@ export interface iFile {
     biObjects?: Array,
     exportable?: boolean
 }
+
+export interface iNode {
+    key: number | string,
+    icon: string,
+    id: number,
+    parentId?: number,
+    label: string,
+    children?: iNode[],
+    data: string | any
+}
