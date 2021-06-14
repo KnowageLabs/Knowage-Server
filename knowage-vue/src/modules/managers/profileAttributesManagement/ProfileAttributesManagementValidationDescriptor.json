@@ -49,7 +49,9 @@
             },
             {
                 "fieldName": "value",
-                "validators": []
+                "validators": [{
+                    "key": "required"
+                }]
             },
             {
                 "fieldName": "lov",
@@ -57,7 +59,9 @@
             },
             {
                 "fieldName": "lovId",
-                "validators": []
+                "validators": [
+                    { "key": "required", "validator": { "type": "custom-required" } }
+                ]
             },
             {
                 "fieldName": "multivalue",

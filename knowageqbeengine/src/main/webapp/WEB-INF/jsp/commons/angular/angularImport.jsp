@@ -55,6 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- Angular time picker -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourcePath(qbeEngineContext, "/js/lib/registry-date-time-picker/registryDateTimePicker.js")%>"></script> 
 
 
 

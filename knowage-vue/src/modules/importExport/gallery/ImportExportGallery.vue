@@ -53,7 +53,7 @@
 		<Column field="image" :header="importExportDescriptor.export.gallery.column.image.header" :style="importExportDescriptor.export.gallery.column.image.style">
 			<template #body="{data}">
 				<span @click="togglePreview($event, data.id)">
-					<i class="fas fa-image" v-if="data.image.length > 0" />
+					<i class="fas fa-image" v-if="data.image && data.image.length > 0" />
 				</span>
 			</template>
 		</Column>
