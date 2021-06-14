@@ -1,6 +1,7 @@
 {
     "common": {
         "cancel": "cancel",
+        "choose": "choose",
         "close": "close",
         "codingLanguages": {
             "css": "css",
@@ -11,6 +12,8 @@
         "deleteAll": "delete all",
         "description": "description",
         "download": "download",
+        "downloading": "Downloading",
+        "dragAndDropFilesHere": "Drag and drop files here.",
         "error": {
             "downloading": "Error downloading ",
             "exceededSize": "Uploaded file exceedes max size {size}",
@@ -44,18 +47,20 @@
         "toast": {
             "createTitle": "Created",
             "deleteConfirmTitle": "Confirm Delete?",
-            "deleteTitle": "Deleted",
             "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
             "deleteSuccess": "Item was deleted successfully",
+            "deleteTitle": "Deleted",
             "success": "Operation succeeded",
             "unsavedChangesHeader": "Unsaved changes",
             "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
             "updateTitle": "Updated"
         },
         "type": "type",
+        "uploading": "Uploading",
         "validation": {
-            "regex": "Invalid format",
             "maximumCharacters": "The maximum length allowed is {max}",
+            "minLength": "This field should have at least {min} characters",
+            "regex": "Invalid format",
             "required": "{fieldName} is required"
         },
         "version": "version",
@@ -75,13 +80,21 @@
             "qa": "support forum"
         },
         "welcome": "Welcome to Knowage",
-        "welcomeText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque tristique convallis urna, sed ultrices turpis viverra iaculis. <br>Proin libero arcu, euismod at ante eu, ornare porta leo. Phasellus non quam in neque dignissim interdum sed quis nibh. Praesent sodales sagittis odio a finibus. Nullam nec urna ac turpis efficitur gravida eu vitae arcu. Aliquam odio nibh, porta sit amet ornare mollis, vehicula non felis. <br> Ut nibh metus, semper eu tempus vel, pellentesque sed dui. Vestibulum mattis bibendum eros quis interdum."
+        "welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
     },
     "importExport": {
+        "export": {
+            "completedWithErrors": "Export completed with errors. Please read logs for further information.",
+            "successfullyCompleted": "Export successfully completed"
+        },
         "filenamePlaceholder": "Enter filename here",
         "gallery": {
             "description": "export gallery templates",
             "label": "gallery"
+        },
+        "import": {
+            "completedWithErrors": "Import completed with errors. Please read logs for further information.",
+            "successfullyCompleted": "Import successfully completed"
         },
         "title": "Import/Export"
     },
@@ -100,27 +113,29 @@
         "pt_BR": "portuguese"
     },
     "managers": {
-        "widgetGallery": {
-            "deleteTemplate": "Delete template",
-            "downloadTemplate": "Download template",
-            "hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
-            "importTemplate": "Import template",
-            "newTemplate": "New template",
-            "noResults": "No templates available for the selected filter",
-            "outputType": "Output Type",
-            "saveTemplate": "Save template",
-            "tags": {
-                "availableCharacters": "Allowed values for tags: uppercase and lowercase letters, numbers, '-', '_'. The space character is not allowed.",
-                "tagIsNotValid": "Tag ({tag}) is not valid'"
+        "configurationManagement": {
+            "createNewHeader": "Create new configuration",
+            "headers": {
+                "active": "Is active",
+                "category": "Category",
+                "description": "Description",
+                "label": "Label",
+                "name": "Name",
+                "valueCheck": "Value"
             },
-            "templateDoYouWantToDeleteTemplate": "Do you want to delete this template?",
-            "templateIsNotSaved": "The template was not saved. Do you want to download it anyway?",
-            "templateSuccessfully": "Template successfully",
-            "templateSuccessfullyDeleted": "@:managers.widgetGallery.templateSuccessfully deleted",
-            "templateSuccessfullySaved": "@:managers.widgetGallery.templateSuccessfully saved",
-            "templateSuccessfullyUploaded": "@:managers.widgetGallery.templateSuccessfully uploaded",
-            "title": "Gallery management",
-            "uploadTemplate": "Upload template"
+            "title": "Configuration Management"
+        },
+        "domainsManagement": {
+            "domainCode": "Domain code",
+            "domainName": "Domain name",
+            "title": "Domains Management",
+            "valueCode": "Value code",
+            "valueDescription": "Value description",
+            "valueName": "Value name"
+        },
+        "metadata": {
+            "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "title": "Metadata Management"
         },
         "mondrianSchemasManagement": {
             "title": "OLAP schemas' catalogue",
@@ -166,6 +181,59 @@
                     "noWfUsers": "Save users in workflow!"
                 }
             }
+        },
+        "profileAttributesManagement": {
+            "description": "Description",
+            "form": {
+                "allowUser": "Allow user to see field",
+                "dataType": "Data type",
+                "description": "Description",
+                "lov": "Lov",
+                "lovPlaceholder": "Select a Lov",
+                "manualInput": "Manual input",
+                "multiValue": "Multivalue",
+                "name": "Name",
+                "syntax": {
+                    "complex": "Complex",
+                    "simple": "Simple"
+                }
+            },
+            "hint": "Profile attributes allows you to better define different users properties. It's possible to change the name, the description or the types. It's also possible to get a value from a LOV. <br> Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "info": {
+                "createMessage": "Attribute created",
+                "createTitle": "Create attribute",
+                "deleteMessage": "Attribute deleted",
+                "deleteTitle": "Delete attribute",
+                "saveMessage": "Attribute saved",
+                "saveTitle": "Save attribute",
+                "updateMessage": "Attribute updated",
+                "updateTitle": "Update attribute"
+            },
+            "name": "Name",
+            "title": "Profile Attributes Management",
+            "valueDescription": "Value description"
+        },
+        "widgetGallery": {
+            "deleteTemplate": "Delete template",
+            "downloadTemplate": "Download template",
+            "hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
+            "importTemplate": "Import template",
+            "newTemplate": "New template",
+            "noResults": "No templates available for the selected filter",
+            "outputType": "Output Type",
+            "saveTemplate": "Save template",
+            "tags": {
+                "availableCharacters": "Allowed values for tags: uppercase and lowercase letters, numbers, '-', '_'. The space character is not allowed.",
+                "tagIsNotValid": "Tag ({tag}) is not valid'"
+            },
+            "templateDoYouWantToDeleteTemplate": "Do you want to delete this template?",
+            "templateIsNotSaved": "The template was not saved. Do you want to download it anyway?",
+            "templateSuccessfully": "Template successfully",
+            "templateSuccessfullyDeleted": "@:managers.widgetGallery.templateSuccessfully deleted",
+            "templateSuccessfullySaved": "@:managers.widgetGallery.templateSuccessfully saved",
+            "templateSuccessfullyUploaded": "@:managers.widgetGallery.templateSuccessfully uploaded",
+            "title": "Gallery management",
+            "uploadTemplate": "Upload template"
         }
     },
     "menu": {

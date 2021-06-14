@@ -152,10 +152,10 @@
 				/> -->
 			<ITEM id="7001" label="menu.Config"
 				requiredFunctionality="ConfigManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/config/configManagement.jsp" />
+				to="/configuration-management" />
 			<ITEM id="7002" label="menu.Domain"
 				requiredFunctionality="DomainManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/domain/domainManagement.jsp" />
+				to="/domains-management" />
 
 			<ITEM id="7003" label="Exporters menu"
 				requiredFunctionality="ExportersCatalogue"
@@ -169,7 +169,7 @@
 		<GROUP_ITEM id="8000" label="menu.ServerManager"
 			toBeLicensed="true" iconCls="fa fa-2x fa-cogs">
 			
-			<ITEM label="menu.admin.importExport"
+			<ITEM id="8014" label="menu.admin.importExport"
 				requiredFunctionality="ImportExport"
 				to="/import-export" />
 			<ITEM id="8001" label="menu.TenantMan"
@@ -206,7 +206,7 @@
 				requiredFunctionality="InstallConfig"
 				to="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig" />
 			<ITEM id="8012" label="menu.license"
-				requiredFunctionality="LicenseManagement" to="showLicenseDialog" />
+				requiredFunctionality="LicenseManagement" to="showLicenseDialog"/>
 			<ITEM id="8013" label="menu.event"
 				requiredFunctionality="EventsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/event/eventLogsApp.jsp" />

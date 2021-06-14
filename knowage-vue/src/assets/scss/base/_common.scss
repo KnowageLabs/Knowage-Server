@@ -29,3 +29,15 @@
 	text-decoration: none;
 	color: inherit;
 }
+
+.kn-router-view {
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.kn-truncated {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}

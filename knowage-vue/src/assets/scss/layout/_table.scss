@@ -1,13 +1,22 @@
 .kn-table {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 
-	&:deep(.p-datatable-wrapper) {
-		height: 100%;
+    .p-datatable-wrapper {
+        height: 100%;
+        .p-paginator-bottom {
+            flex: 1;
+        }
+    }
 
-		&:deep(.p-paginator-bottom) {
-			flex: 1;
-		}
-	}
+    .p-button {
+        &.p-button-icon-only {
+            padding: 0;
+            .p-button-icon {
+                color: $button-icon-color-default;
+                padding: 4px;
+            }
+        }
+    }
 }
