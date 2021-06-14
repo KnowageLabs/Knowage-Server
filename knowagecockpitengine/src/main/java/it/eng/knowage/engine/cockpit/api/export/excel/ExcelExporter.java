@@ -25,6 +25,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -83,7 +84,8 @@ public class ExcelExporter {
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
 	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
 	private static final int SHEET_NAME_MAX_LEN = 31;
-	private static final String OUTPUT_FILE_DATE_FORMAT = "m/d/yy";
+	private static final String DATE_FORMAT = "dd/MM/yyyy";
+	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 
 	// used only for scheduled export
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap, String requestURL) {
@@ -616,9 +618,13 @@ public class ExcelExporter {
 			CellStyle floatCellStyle = wb.createCellStyle();
 			floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
 
-			DateFormat dateFormat = new SimpleDateFormat();
+			DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 			CellStyle dateCellStyle = wb.createCellStyle();
-			dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(OUTPUT_FILE_DATE_FORMAT));
+			dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
+
+			SimpleDateFormat timeStampFormat = new SimpleDateFormat(TIMESTAMP_FORMAT, getLocale());
+			CellStyle tsCellStyle = wb.createCellStyle();
+			tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
 
 			// FILL RECORDS
 			int isGroup = mapGroupsAndColumns.isEmpty() ? 0 : 1;
@@ -659,11 +665,24 @@ public class ExcelExporter {
 						case "date":
 							try {
 								if (!s.trim().isEmpty()) {
-									cell.setCellValue(dateFormat.parse(s));
+									Date date = dateFormat.parse(s);
+									cell.setCellValue(date);
+									cell.setCellStyle(dateCellStyle);
 								}
-								cell.setCellStyle(dateCellStyle);
 							} catch (Exception e) {
 								logger.debug("Date will be exported as string due to error: ", e);
+								cell.setCellValue(s);
+							}
+							break;
+						case "timestamp":
+							try {
+								if (!s.trim().isEmpty()) {
+									Date ts = timeStampFormat.parse(s);
+									cell.setCellValue(ts);
+									cell.setCellStyle(tsCellStyle);
+								}
+							} catch (Exception e) {
+								logger.debug("Timestamp will be exported as string due to error: ", e);
 								cell.setCellValue(s);
 							}
 							break;
