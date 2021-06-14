@@ -8,7 +8,7 @@
                             id="MULTITENANT_NAME"
                             class="kn-material-input"
                             type="text"
-                            disabled="disableField"
+                            :disabled="disableField"
                             v-model.trim="v$.tenant.MULTITENANT_NAME.$model"
                             :class="{
                                 'p-invalid': v$.tenant.MULTITENANT_NAME.$invalid && v$.tenant.MULTITENANT_NAME.$dirty
@@ -86,9 +86,7 @@ export default defineComponent({
     },
     computed: {
         disableField() {
-            if (this.selectedTenant) {
-                return true
-            }
+            if (this.tenant.MULTITENANT_ID) return true
             return false
         }
     },

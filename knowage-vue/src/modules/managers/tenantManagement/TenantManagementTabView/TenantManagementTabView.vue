@@ -3,7 +3,7 @@
         <template #left>{{ tenant.MULTITENANT_NAME }}</template>
         <template #right>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="buttonDisabled" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
@@ -35,6 +35,7 @@
                 <ProductTypes :title="$t('managers.tenantManagement.dataSource.title')" :dataList="listOfDataSources" :selectedData="listOfSelectedDataSources" @changed="setSelectedDataSources($event)" />
             </TabPanel>
         </TabView>
+        {{ availableLicenses }}
     </div>
 </template>
 <script lang="ts">
@@ -59,17 +60,20 @@ export default defineComponent({
         selectedTenant: {
             type: Object,
             required: false
-        }
+        },
+        licenses: Array
     },
     emits: ['touched', 'closed', 'inserted'],
     data() {
         return {
             tabViewDescriptor,
             loading: false,
+            touched: false,
             operation: 'insert',
             v$: useValidate() as any,
             tenant: {} as iMultitenant,
             listOfThemes: [] as any,
+            availableLicenses: [] as any,
             listOfProductTypes: [] as any,
             listOfSelectedProducts: [] as any,
             listOfDataSources: [] as any,
@@ -85,6 +89,7 @@ export default defineComponent({
         if (this.selectedTenant) {
             this.tenant = { ...this.selectedTenant } as iMultitenant
         }
+        this.availableLicenses = this.licenses
         this.loadAllData()
         this.getTenantData()
     },
@@ -92,12 +97,16 @@ export default defineComponent({
         selectedTenant() {
             this.tenant = { ...this.selectedTenant } as iMultitenant
             this.getTenantData()
+        },
+        licenses() {
+            this.availableLicenses = this.licenses
         }
     },
     methods: {
         loadData(dataType: string) {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`).finally(() => (this.loading = false))
         },
+
         async loadAllData() {
             this.loading = true
             await this.loadData('/themes').then((response) => {
@@ -125,8 +134,11 @@ export default defineComponent({
             await this.loadData(`/producttypes?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response) => {
                 // console.log('------------- getTenantData(): PRODUCT TYPES ----------------')
                 var productTypes = response.data.root
+                var host = this.availableLicenses.hosts[0].hostName
+                var licenses = this.availableLicenses.data.licenses[host]
 
                 this.listOfSelectedProducts = []
+                this.filterArrayByTargetArr(productTypes, licenses)
                 this.copySelectedElement(productTypes, this.listOfSelectedProducts)
 
                 // console.log('this.listOfSelectedProducts:', this.listOfSelectedProducts)
@@ -148,6 +160,18 @@ export default defineComponent({
                     selected.push(source[i])
                 }
             }
+        },
+        filterArrayByTargetArr(sourceArr, targetArr) {
+            var newArr = sourceArr.filter(function(elem) {
+                if (
+                    targetArr.find(function(target) {
+                        return elem.LABEL == target.product
+                    })
+                )
+                    return true
+                else return false
+            })
+            return newArr
         },
 
         // OVO POPRAVITI GRESKE NA BE
@@ -188,15 +212,33 @@ export default defineComponent({
         },
         onFieldChange(event) {
             this.tenant[event.fieldName] = event.value
+            this.touched = true
             this.$emit('touched')
         },
         setSelectedProducts(categories: any[]) {
             this.listOfSelectedProducts = categories
+            this.touched = true
             this.$emit('touched')
         },
         setSelectedDataSources(categories: any[]) {
             this.listOfSelectedDataSources = categories
+            this.touched = true
             this.$emit('touched')
+        },
+        closeTemplateConfirm() {
+            if (!this.touched) {
+                this.closeTemplate()
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.closeTemplate()
+                    }
+                })
+            }
         }
     }
 })

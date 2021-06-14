@@ -40,7 +40,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view :selectedTenant="selTenant" @touched="touched = true" @closed="touched = false" @inserted="pageReload" />
+                <router-view :selectedTenant="selTenant" :licenses="listOfavailableLicenses" @touched="touched = true" @closed="touched = false" @inserted="pageReload" />
             </div>
         </div>
     </div>
@@ -67,6 +67,7 @@ export default defineComponent({
             listOfThemes: [] as any,
             listOfDataSources: [] as any,
             listOfProductTypes: [] as any,
+            listOfavailableLicenses: [] as any,
             tenantsDescriptor,
             loading: false,
             touched: false,
@@ -76,10 +77,19 @@ export default defineComponent({
     },
     async created() {
         await this.loadTenants()
+        await this.getLicences()
     },
     methods: {
         loadData(dataType: string) {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`).finally(() => (this.loading = false))
+        },
+        async getLicences() {
+            return axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`)
+                .then((response) => {
+                    this.listOfavailableLicenses = response.data.licenses
+                })
+                .finally(() => (this.loading = false))
         },
         async loadTenants() {
             this.loading = true
