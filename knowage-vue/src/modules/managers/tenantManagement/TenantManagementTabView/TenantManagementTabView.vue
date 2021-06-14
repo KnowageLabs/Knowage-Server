@@ -134,11 +134,10 @@ export default defineComponent({
             await this.loadData(`/producttypes?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response) => {
                 // console.log('------------- getTenantData(): PRODUCT TYPES ----------------')
                 var productTypes = response.data.root
-                var host = this.availableLicenses.hosts[0].hostName
-                var licenses = this.availableLicenses.data.licenses[host]
 
                 this.listOfSelectedProducts = []
-                this.filterArrayByTargetArr(productTypes, licenses)
+                this.filterArrayByTargetArr(productTypes, this.availableLicenses)
+                console.log(productTypes)
                 this.copySelectedElement(productTypes, this.listOfSelectedProducts)
 
                 // console.log('this.listOfSelectedProducts:', this.listOfSelectedProducts)
@@ -162,19 +161,18 @@ export default defineComponent({
             }
         },
         filterArrayByTargetArr(sourceArr, targetArr) {
-            var newArr = sourceArr.filter(function(elem) {
+            var newArr = sourceArr.filter((elem) => {
                 if (
-                    targetArr.find(function(target) {
-                        return elem.LABEL == target.product
+                    targetArr.find((target) => {
+                        return elem.LABEL === target.product
                     })
                 )
                     return true
-                else return false
+                return false
             })
             return newArr
         },
 
-        // OVO POPRAVITI GRESKE NA BE
         async handleSubmit() {
             if (this.v$.$invalid) {
                 return
@@ -182,16 +180,13 @@ export default defineComponent({
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant/save'
 
             let tenantToSave = {} as iTenantToSave
-
             tenantToSave.MULTITENANT_ID = this.tenant.MULTITENANT_ID ? '' + this.tenant.MULTITENANT_ID : ''
             tenantToSave.MULTITENANT_NAME = this.tenant.MULTITENANT_NAME
             tenantToSave.MULTITENANT_THEME = this.tenant.MULTITENANT_THEME
-
             tenantToSave.DS_LIST = this.listOfSelectedDataSources.map((dataSource) => {
                 delete dataSource.CHECKED
                 return dataSource
             })
-
             tenantToSave.PRODUCT_TYPE_LIST = this.listOfSelectedProducts.map((productType) => {
                 delete productType.CHECKED
                 return productType

@@ -87,7 +87,9 @@ export default defineComponent({
             return axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`)
                 .then((response) => {
-                    this.listOfavailableLicenses = response.data.licenses
+                    var host = response.data.hosts[0].hostName
+                    var licenses = response.data.licenses[host]
+                    this.listOfavailableLicenses = licenses
                 })
                 .finally(() => (this.loading = false))
         },
