@@ -94,7 +94,6 @@ export default defineComponent({
             folderStructure: [] as iFile[],
             documents: [] as iFile[],
             nodes: [] as iNode[],
-            tempNodes: [],
             selectedDocuments: {},
             documentSelectionVisible: false,
             loading: false
