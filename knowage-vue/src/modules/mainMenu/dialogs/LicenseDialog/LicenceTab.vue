@@ -15,9 +15,9 @@
                     <span class="kn-list-item-text-secondary">{{ $t('licenseDialog.licenseId') }}</span>
                     <span>{{ slotProps.option.licenseId }}</span>
                 </div>
-                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" />
-                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" />
-                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" />
+                <Button icon="pi pi-download" class="p-button-link" />
+                <Button icon="pi pi-pencil" class="p-button-link" />
+                <Button icon="pi pi-trash" class="p-button-link" />
             </div>
         </template>
     </Listbox>

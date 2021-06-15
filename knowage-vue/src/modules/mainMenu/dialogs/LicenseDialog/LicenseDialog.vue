@@ -5,7 +5,7 @@
         </template>
         <TabView class="knTab kn-tab">
             <TabPanel>
-                <LicenceTab :licenses="licenses['DESKTOP-53JSLPH']"></LicenceTab>
+                <LicenceTab :licenses="licenses['DESKTOP-MG3LIEH']"></LicenceTab>
             </TabPanel>
         </TabView>
         <template #footer>
