@@ -4,7 +4,9 @@
             {{ $t('licenceDialog.title') + ' - MyHostName:' + ' TO DO' }}
         </template>
         <TabView class="knTab kn-tab">
-            <TabPanel></TabPanel>
+            <TabPanel>
+                <LicenceTab :licenses="licenses['DESKTOP-53JSLPH']"></LicenceTab>
+            </TabPanel>
         </TabView>
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.ok') }}</Button>
@@ -17,12 +19,13 @@ import { defineComponent } from 'vue'
 import { iHost, iLicense } from './License'
 import Dialog from 'primevue/dialog'
 import axios from 'axios'
+import LicenceTab from './LicenceTab.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'license-dialog',
-    components: { Dialog, TabView, TabPanel },
+    components: { Dialog, LicenceTab, TabView, TabPanel },
     data() {
         return {
             hosts: [] as iHost[],
