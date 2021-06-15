@@ -1,10 +1,1 @@
-{
-    "imagesMap": {
-        "KnowageBD": "@/assets/images/licenseImages/KnowageBD.png",
-        "KnowageER": "@/assets/images/licenseImages/KnowageER.png",
-        "KnowageLI": "@/assets/images/licenseImages/KnowageLI.png",
-        "KnowagePA": "@/assets/images/licenseImages/KnowagePA.png",
-        "KnowagePM": "@/assets/images/licenseImages/KnowagePM.png",
-        "KnowageSI": "@/assets/images/licenseImages/KnowageSI.png"
-    }
-}
+{}
