@@ -122,14 +122,11 @@ export default defineComponent({
         },
         async loadDocumentSelection() {
             this.loading = true
+            this.selectedDocuments = {}
             await this.loadDocuments(this.selectedDate)
             await this.loadFolderStructure()
             this.createNodeTree()
-
-            for (let i = 0; i < this.nodes.length; i++) {
-                this.filterDocuments(this.nodes[i], this.nodes as any)
-            }
-
+            this.removeEmptyFolders()
             this.documentSelectionVisible = true
             this.loading = false
         },
@@ -141,35 +138,41 @@ export default defineComponent({
         },
         createNodeTree() {
             this.nodes = []
-            const foldersWithoutParents = [] as iNode[]
-            this.folderStructure.map((folder: iFile) => {
-                const tempFolder = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: { name: folder.name, hasDocuments: false } }
-                tempFolder.children = foldersWithoutParents.filter((folder: iNode) => tempFolder.id === folder.parentId)
-                folder.biObjects.map((document: iFile) => {
-                    const index = this.documents.findIndex((file: iFile) => file.id === document.id)
-                    if (index >= 0) {
-                        tempFolder.data.hasDocuments = true
-                        tempFolder.children.push({ key: document.id, icon: 'pi pi-file', id: document.id, label: document.name, data: document.name })
-                    }
-                })
+            const foldersWithMissingParent = [] as iNode[]
+            this.folderStructure.forEach((folder: iFile) => {
+                const node = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: { name: folder.name, hasDocuments: false } }
+                node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId)
 
-                if (tempFolder.parentId) {
-                    let parentFolder = null as iNode | null
-                    for (let i = 0; i < this.nodes.length; i++) {
-                        parentFolder = this.findParentFolder(tempFolder, this.nodes[i])
-                        if (parentFolder) {
-                            parentFolder.data.hasDocuments = true
-                            parentFolder.children?.push(tempFolder)
-                            break
-                        }
-                    }
-                    if (!parentFolder) {
-                        foldersWithoutParents.push(tempFolder)
-                    }
-                } else {
-                    this.nodes.push(tempFolder)
+                this.attachDocumentsToNode(folder, node)
+                this.attachFolderToTree(node, foldersWithMissingParent)
+            })
+        },
+        attachDocumentsToNode(folder: iFile, node: iNode) {
+            folder.biObjects.forEach((document: iFile) => {
+                const index = this.documents.findIndex((file: iFile) => file.id === document.id)
+                if (index >= 0) {
+                    node.data.hasDocuments = true
+                    node.children?.push({ key: document.id, icon: 'pi pi-file', id: document.id, label: document.name, data: document.name })
                 }
             })
+        },
+        attachFolderToTree(folder: iNode, foldersWithMissingParent: iNode[]) {
+            if (folder.parentId) {
+                let parentFolder = null as iNode | null
+                for (let i = 0; i < this.nodes.length; i++) {
+                    parentFolder = this.findParentFolder(folder, this.nodes[i])
+                    if (parentFolder) {
+                        parentFolder.data.hasDocuments = true
+                        parentFolder.children?.push(folder)
+                        break
+                    }
+                }
+                if (!parentFolder) {
+                    foldersWithMissingParent.push(folder)
+                }
+            } else {
+                this.nodes.push(folder)
+            }
         },
         findParentFolder(folderToAdd: iNode, folderToSearch: iNode) {
             if (folderToAdd.parentId === folderToSearch.id) {
@@ -201,6 +204,11 @@ export default defineComponent({
                 }
             }
         },
+        removeEmptyFolders() {
+            for (let i = 0; i < this.nodes.length; i++) {
+                this.filterDocuments(this.nodes[i], this.nodes as any)
+            }
+        },
         setOpenFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder-open'
         },
@@ -218,7 +226,7 @@ export default defineComponent({
         async deleteDocuments() {
             const documentsToDelete = [] as { id: number; data: string }[]
             if (this.selectedDocuments) {
-                Object.keys(this.selectedDocuments as {}).map((id: any) => {
+                Object.keys(this.selectedDocuments as {}).forEach((id: any) => {
                     if (!isNaN(id)) {
                         documentsToDelete.push({ id: +id, data: this.formatDate(this.selectedDate) })
                     }
