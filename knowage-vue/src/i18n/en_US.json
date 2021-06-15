@@ -176,9 +176,12 @@
                 "theme": "Theme",
                 "title": "Detail"
             },
+            "hint": "placeholder, please change hint to your liking",
+            "hintTitle": "Tenant Management",
             "productTypes": {
                 "title": "Product Types"
             },
+            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are",
             "title": "Tenant Management"
         },
         "widgetGallery": {

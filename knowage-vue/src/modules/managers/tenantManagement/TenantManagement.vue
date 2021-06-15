@@ -20,7 +20,7 @@
                     optionLabel="name"
                     filterMatchMode="contains"
                     :filterFields="tenantsDescriptor.filterFields"
-                    :emptyFilterMessage="$t('managers.tenantsManagement.noResults')"
+                    :emptyFilterMessage="$t('common.info.noDataFound')"
                     @change="showForm"
                     data-test="tenants-list"
                 >
@@ -38,7 +38,16 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view :selectedTenant="selTenant" :licenses="listOfavailableLicenses" @touched="touched = true" @closed="touched = false" @inserted="pageReload" />
+                <Dialog header="INFO" v-model:visible="displayModal" :modal="true">
+                    <p class="p-m-0">
+                        {{ $t('managers.tenantManagement.tenantSaved') + ' "' + this.savedTenantName + '_admin"' }}
+                    </p>
+                    <template #footer>
+                        <Button label="OK" icon="pi pi-check" @click="displayModal = false" autofocus />
+                    </template>
+                </Dialog>
+                <router-view :selectedTenant="selTenant" :licenses="listOfavailableLicenses" @touched="touched = true" @closed="touched = false" @inserted="pageReload" @showDialog="displayInfoDialog" />
+                <KnHint :title="'managers.tenantManagement.hintTitle'" :hint="'managers.tenantManagement.hint'" v-if="toggleHint" />
             </div>
         </div>
     </div>
@@ -51,12 +60,24 @@ import axios from 'axios'
 import tenantsDescriptor from './TenantManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
+import Dialog from 'primevue/dialog'
+import KnHint from '@/components/UI/KnHint.vue'
 
 export default defineComponent({
     name: 'tenant-management',
     components: {
         FabButton,
-        Listbox
+        Listbox,
+        Dialog,
+        KnHint
+    },
+    computed: {
+        toggleHint() {
+            if (this.$route.fullPath == '/tenants') {
+                return true
+            }
+            return false
+        }
     },
     data() {
         return {
@@ -66,10 +87,12 @@ export default defineComponent({
             listOfDataSources: [] as any,
             listOfProductTypes: [] as any,
             listOfavailableLicenses: [] as any,
+            savedTenantName: '',
             tenantsDescriptor,
             loading: false,
             touched: false,
             hiddenForm: false,
+            displayModal: false,
             dirty: false
         }
     },
@@ -139,6 +162,10 @@ export default defineComponent({
         pageReload() {
             this.touched = false
             this.loadTenants()
+        },
+        displayInfoDialog(event) {
+            this.savedTenantName = event.toLowerCase()
+            this.displayModal = true
         }
     }
 })

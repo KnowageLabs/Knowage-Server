@@ -33,7 +33,6 @@
                 <ProductTypes :title="$t('managers.tenantManagement.dataSource.title')" :dataList="listOfDataSources" :selectedData="listOfSelectedDataSources" @changed="setSelectedDataSources($event)" />
             </TabPanel>
         </TabView>
-        {{ availableLicenses }}
     </div>
 </template>
 <script lang="ts">
@@ -61,7 +60,7 @@ export default defineComponent({
         },
         licenses: Array
     },
-    emits: ['touched', 'closed', 'inserted'],
+    emits: ['touched', 'closed', 'inserted', 'showDialog'],
     data() {
         return {
             tabViewDescriptor,
@@ -115,9 +114,25 @@ export default defineComponent({
             })
             await this.loadData('/producttypes').then((response) => {
                 this.listOfProductTypes = response.data.root
+                this.filterArrayByTargetArr(this.listOfProductTypes, this.availableLicenses)
             })
             this.loading = false
         },
+
+        filterArrayByTargetArr(sourceArr, targetArr) {
+            var newArr = sourceArr.filter((elem) => {
+                if (
+                    targetArr.find((target) => {
+                        return elem.LABEL == target.product
+                    })
+                )
+                    return true
+                else return false
+            })
+            console.log(newArr)
+            this.listOfProductTypes = newArr
+        },
+
         async getTenantData() {
             this.loading = true
             this.listOfSelectedProducts = null
@@ -171,6 +186,9 @@ export default defineComponent({
                     msg: this.$t(this.tabViewDescriptor.operation.success)
                 })
                 this.$emit('inserted')
+                if (tenantToSave.MULTITENANT_ID == '') {
+                    this.$emit('showDialog', tenantToSave.MULTITENANT_NAME)
+                }
                 this.$router.replace('/tenants')
             })
         },

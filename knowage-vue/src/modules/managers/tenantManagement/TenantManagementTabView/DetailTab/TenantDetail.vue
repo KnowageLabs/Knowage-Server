@@ -61,7 +61,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
-// import axios from 'axios'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import useValidate from '@vuelidate/core'

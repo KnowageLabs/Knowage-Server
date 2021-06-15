@@ -28,7 +28,6 @@
                 <Column selectionMode="multiple" :style="tabViewDescriptor.column.style" dataKey="ID"></Column>
                 <Column field="LABEL" :header="$t('common.name')" :style="tabViewDescriptor.column.header.style"></Column>
             </DataTable>
-            {{ selectedCategories }}
         </template>
     </Card>
 </template>
