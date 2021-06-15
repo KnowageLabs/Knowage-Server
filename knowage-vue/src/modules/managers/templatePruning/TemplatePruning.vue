@@ -7,7 +7,10 @@
                 </template>
             </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-            <div id="cards-container" class="kn-page-contentp-grid p-m-0">
+            <div v-if="loading" id="spinner">
+                <ProgressSpinner />
+            </div>
+            <div id="cards-container" class="kn-page-contentp-grid p-m-0" v-else>
                 <div class="p-col-12">
                     <Card>
                         <template #header>
@@ -79,6 +82,7 @@ import { iFile, iNode } from './TemplatePruning'
 import axios from 'axios'
 import Card from 'primevue/card'
 import Calendar from 'primevue/calendar'
+import ProgressSpinner from 'primevue/progressspinner'
 import Tree from 'primevue/tree'
 
 export default defineComponent({
@@ -86,6 +90,7 @@ export default defineComponent({
     components: {
         Calendar,
         Card,
+        ProgressSpinner,
         Tree
     },
     data() {
@@ -217,7 +222,7 @@ export default defineComponent({
         },
         deleteConfirm() {
             this.$confirm.require({
-                message: this.$t('managers.templatePruning.deleteConfirmMessage'),
+                message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => this.deleteDocuments()
@@ -253,5 +258,19 @@ export default defineComponent({
 
 #document-tree {
     border: 0;
+}
+
+#spinner {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.7;
+    background-color: #fff;
+    z-index: 99;
 }
 </style>
