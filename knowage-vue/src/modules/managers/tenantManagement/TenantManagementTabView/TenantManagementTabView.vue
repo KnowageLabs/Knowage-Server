@@ -13,7 +13,7 @@
                 <template #header>
                     <span>{{ $t('managers.tenantManagement.detail.title') }}</span>
                 </template>
-                {{ tenant }}
+
                 <TenantDetail :selectedTenant="tenant" :listOfThemes="listOfThemes" @fieldChanged="onFieldChange" />
             </TabPanel>
 
@@ -21,7 +21,6 @@
                 <template #header>
                     <span>{{ $t('managers.tenantManagement.productTypes.title') }}</span>
                 </template>
-                {{ listOfSelectedProducts }}
 
                 <ProductTypes :title="$t('managers.tenantManagement.productTypes.title')" :dataList="listOfProductTypes" :selectedData="listOfSelectedProducts" @changed="setSelectedProducts($event)" />
             </TabPanel>
@@ -30,7 +29,6 @@
                 <template #header>
                     <span>{{ $t('managers.tenantManagement.dataSource.title') }}</span>
                 </template>
-                {{ listOfSelectedDataSources }}
 
                 <ProductTypes :title="$t('managers.tenantManagement.dataSource.title')" :dataList="listOfDataSources" :selectedData="listOfSelectedDataSources" @changed="setSelectedDataSources($event)" />
             </TabPanel>
@@ -46,7 +44,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import tabViewDescriptor from './TenantManagementTabViewDescriptor.json'
 import TenantDetail from './DetailTab/TenantDetail.vue'
-import ProductTypes from './ProductTypesTab/SelectionTable.vue'
+import ProductTypes from './SelectionTableTab/SelectionTable.vue'
 import useValidate from '@vuelidate/core'
 
 export default defineComponent({
@@ -110,19 +108,13 @@ export default defineComponent({
         async loadAllData() {
             this.loading = true
             await this.loadData('/themes').then((response) => {
-                // console.log('------------- loadAllThemes() ----------------')
                 this.listOfThemes = response.data.root
-                // console.log(this.listOfThemes)
             })
             await this.loadData('/datasources').then((response) => {
-                // console.log('------------- loadAllDataSources() ----------------')
                 this.listOfDataSources = response.data.root
-                // console.log(this.listOfDataSources)
             })
             await this.loadData('/producttypes').then((response) => {
-                // console.log('------------- loadAllProductTypes() ----------------')
                 this.listOfProductTypes = response.data.root
-                // console.log(this.listOfProductTypes)
             })
             this.loading = false
         },
@@ -130,24 +122,19 @@ export default defineComponent({
             this.loading = true
             this.listOfSelectedProducts = null
             this.listOfSelectedDataSources = null
+            this.touched = false
 
             await this.loadData(`/producttypes?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response) => {
-                // console.log('------------- getTenantData(): PRODUCT TYPES ----------------')
                 var productTypes = response.data.root
 
                 this.listOfSelectedProducts = []
                 this.copySelectedElement(productTypes, this.listOfSelectedProducts)
-
-                // console.log('this.listOfSelectedProducts:', this.listOfSelectedProducts)
             })
             await this.loadData(`/datasources?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response) => {
-                // console.log('------------- getTenantData(): DATA SOURCES ----------------')
                 var dataSources = response.data.root
 
                 this.listOfSelectedDataSources = []
                 this.copySelectedElement(dataSources, this.listOfSelectedDataSources)
-
-                // console.log('this.listOfSelectedDataSources:', this.listOfSelectedDataSources)
             })
             this.loading = false
         },
@@ -157,18 +144,6 @@ export default defineComponent({
                     selected.push(source[i])
                 }
             }
-        },
-        filterArrayByTargetArr(sourceArr, targetArr) {
-            var newArr = sourceArr.filter((elem) => {
-                if (
-                    targetArr.find((target) => {
-                        return elem.LABEL === target.product
-                    })
-                )
-                    return true
-                return false
-            })
-            return newArr
         },
 
         async handleSubmit() {

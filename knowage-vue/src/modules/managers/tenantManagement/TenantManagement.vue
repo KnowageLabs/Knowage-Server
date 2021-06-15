@@ -75,22 +75,22 @@ export default defineComponent({
     },
     async created() {
         await this.loadTenants()
-        // await this.getLicences()
+        await this.getLicences()
     },
     methods: {
         loadData(dataType: string) {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`).finally(() => (this.loading = false))
         },
-        // async getLicences() {
-        // return axios
-        //     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`)
-        //     .then((response) => {
-        //         var host = response.data.hosts[0].hostName
-        //         var licenses = response.data.licenses[host]
-        //         this.listOfavailableLicenses = licenses
-        //     })
-        //     .finally(() => (this.loading = false))
-        // },
+        async getLicences() {
+            return axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`)
+                .then((response) => {
+                    var host = response.data.hosts[0].hostName
+                    var licenses = response.data.licenses[host]
+                    this.listOfavailableLicenses = licenses
+                })
+                .finally(() => (this.loading = false))
+        },
         async loadTenants() {
             this.loading = true
             await this.loadData('').then((response) => {
@@ -119,10 +119,10 @@ export default defineComponent({
         },
         showForm(event: any) {
             const path = event.value ? `/tenants/${event.value.MULTITENANT_ID}` : '/tenants/new-tenant'
-            this.selTenant = event.value
 
             if (!this.touched) {
                 this.$router.push(path)
+                this.selTenant = event.value
             } else {
                 this.$confirm.require({
                     message: this.$t('common.toast.unsavedChangesMessage'),
@@ -131,6 +131,7 @@ export default defineComponent({
                     accept: () => {
                         this.touched = false
                         this.$router.push(path)
+                        this.selTenant = event.value
                     }
                 })
             }

@@ -122,7 +122,6 @@ export default defineComponent({
     },
     methods: {
         onFieldChange(fieldName: string, value: any) {
-            console.log(value)
             this.$emit('fieldChanged', { fieldName, value })
         }
     }

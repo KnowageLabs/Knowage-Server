@@ -87,8 +87,6 @@ describe('Tenant Management', () => {
         const wrapper = factory()
         await flushPromises()
 
-        console.log('wrapper.vm ============================')
-        console.log(wrapper.vm.multitenants)
         expect(wrapper.vm.multitenants.length).toBe(3)
 
         const deleteButton = wrapper.find('[data-test="delete-button"]')
@@ -100,63 +98,19 @@ describe('Tenant Management', () => {
         expect(axios.delete).toHaveBeenCalledTimes(1)
         expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant', { data: 1 })
     })
-    //     it('changes url when the "+" button is clicked', async () => {
-    //         const wrapper = factory()
-    //         const openButton = wrapper.find('[data-test="open-form-button"]')
+    it('opens empty detail form when the ' + ' button is clicked', async () => {
+        const wrapper = factory()
+        const openButton = wrapper.find('[data-test="open-form-button"]')
 
-    //         await openButton.trigger('click')
+        await openButton.trigger('click')
 
-    //         expect($router.push).toHaveBeenCalledWith('/roles/new-role')
-    //     })
-    //     it('changes url with clicked row id when a row is clicked', async () => {
-    //         const wrapper = factory()
-    //         await flushPromises()
-    //         await wrapper.find('[data-test="list-item"]').trigger('click')
+        expect($router.push).toHaveBeenCalledWith('/tenants/new-tenant')
+    })
+    it('opens filled detail when a row is clicked', async () => {
+        const wrapper = factory()
+        await flushPromises()
+        await wrapper.find('[data-test="list-item"]').trigger('click')
 
-    //         expect($router.push).toHaveBeenCalledWith('/roles/' + 1)
-    //     })
+        expect($router.push).toHaveBeenCalledWith('/tenants/' + 1)
+    })
 })
-
-// describe('Roles Management Search', () => {
-//     it('filters the list if a label (or other column) is provided', async () => {
-//         const wrapper = factory()
-//         await flushPromises()
-//         const rolesList = wrapper.find('[data-test="roles-list"]')
-//         const searchInput = rolesList.find('input')
-
-//         expect(rolesList.html()).toContain('/kte/admin')
-//         expect(rolesList.html()).toContain('user')
-//         expect(rolesList.html()).toContain('dev')
-
-//         // Name
-//         await searchInput.setValue('user')
-//         await rolesList.trigger('filter')
-//         expect(rolesList.html()).not.toContain('/kte/admin')
-//         expect(rolesList.html()).toContain('user')
-//         expect(rolesList.html()).not.toContain('dev')
-
-//         // Role Type
-//         await searchInput.setValue('TEST_ROLE')
-//         await rolesList.trigger('filter')
-//         expect(rolesList.html()).not.toContain('/kte/admin')
-//         expect(rolesList.html()).toContain('user')
-//         expect(rolesList.html()).not.toContain('dev')
-//     })
-//     it('returns no data if the label is not present', async () => {
-//         const wrapper = factory()
-//         await flushPromises()
-//         const rolesList = wrapper.find('[data-test="roles-list"]')
-//         const searchInput = rolesList.find('input')
-
-//         expect(rolesList.html()).toContain('/kte/admin')
-//         expect(rolesList.html()).toContain('user')
-//         expect(rolesList.html()).toContain('dev')
-
-//         await searchInput.setValue('not present value')
-//         await rolesList.trigger('filter')
-
-//         expect(rolesList.html()).not.toContain('/kte/admin')
-//         expect(rolesList.html()).not.toContain('user')
-//         expect(rolesList.html()).not.toContain('dev')
-//     })
-// })
