@@ -46,8 +46,8 @@
                         <Button label="OK" icon="pi pi-check" @click="displayModal = false" autofocus />
                     </template>
                 </Dialog>
-                <router-view :selectedTenant="selTenant" :licenses="listOfavailableLicenses" @touched="touched = true" @closed="touched = false" @inserted="pageReload" @showDialog="displayInfoDialog" />
-                <KnHint :title="'managers.tenantManagement.hintTitle'" :hint="'managers.tenantManagement.hint'" v-if="toggleHint" />
+                <router-view :selectedTenant="selTenant" :licenses="listOfavailableLicenses" @touched="touched = true" @closed="onFormClose" @inserted="pageReload" @showDialog="displayInfoDialog" />
+                <KnHint :title="'managers.tenantManagement.hintTitle'" :hint="'managers.tenantManagement.hint'" v-if="hintVisible" />
             </div>
         </div>
     </div>
@@ -71,14 +71,6 @@ export default defineComponent({
         Dialog,
         KnHint
     },
-    computed: {
-        toggleHint() {
-            if (this.$route.fullPath == '/tenants') {
-                return true
-            }
-            return false
-        }
-    },
     data() {
         return {
             multitenants: [] as iMultitenant[],
@@ -91,9 +83,8 @@ export default defineComponent({
             tenantsDescriptor,
             loading: false,
             touched: false,
-            hiddenForm: false,
             displayModal: false,
-            dirty: false
+            hintVisible: true
         }
     },
     async created() {
@@ -142,6 +133,7 @@ export default defineComponent({
         },
         showForm(event: any) {
             const path = event.value ? `/tenants/${event.value.MULTITENANT_ID}` : '/tenants/new-tenant'
+            this.hintVisible = false
 
             if (!this.touched) {
                 this.$router.push(path)
@@ -161,11 +153,12 @@ export default defineComponent({
         },
         pageReload() {
             this.touched = false
+            this.hintVisible = true
             this.loadTenants()
         },
-        displayInfoDialog(event) {
-            this.savedTenantName = event.toLowerCase()
-            this.displayModal = true
+        onFormClose() {
+            this.touched = false
+            this.hintVisible = true
         }
     }
 })
