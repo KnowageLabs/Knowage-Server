@@ -45,6 +45,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.functionscatalog.utils.CatalogFunctionException;
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionTransformer;
 import it.eng.knowage.parsers.CaseChangingCharStream;
 import it.eng.knowage.parsers.SQLiteLexer;
@@ -144,6 +145,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * TODO is isNearRealtime really needed? It comes from frontend, isn't it a specific info of the dataset?
+	 * 
 	 * @deprecated
 	 */
 	@Deprecated
@@ -155,8 +157,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
 			String aggregations, String summaryRow, int offset, int fetchSize, Set<String> indexes, String widgetName) {
-		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, null,
-				null, indexes, widgetName);
+		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, null, null,
+				indexes, widgetName);
 	}
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
@@ -288,6 +290,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			throw v;
 		} catch (ParametersNotValorizedException p) {
 			throw p;
+		} catch (CatalogFunctionException c) {
+			throw c;
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {

@@ -787,7 +787,11 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				$scope.resultDataGrid.api.setColumnDefs(resultColumnDefs);
 				$scope.resultDataGrid.api.setRowData(response.data.rows);
 			}, function(error){
-				sbiModule_messaging.showErrorMessage("Error during dataset execution","Data service error");
+				if (error.data.service == "PythonEngine") {
+					sbiModule_messaging.showErrorMessage(error.data.errors[0].message,"Python Engine error");
+				} else {
+					sbiModule_messaging.showErrorMessage("Error during dataset execution","Data service error");
+				}
 			});
 		}
 
