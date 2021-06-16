@@ -38,4 +38,8 @@ class DataSetResourceSimpleFacade {
 	public String getName() {
 		return dataset.getName();
 	}
+
+	public String getDsType() {
+		return dataset.getDsType();
+	}
 }
