@@ -23,7 +23,6 @@
                 </template>
 
                 <ProductTypes :title="$t('managers.tenantManagement.productTypes.title')" :dataList="listOfProductTypes" :selectedData="listOfSelectedProducts" @changed="setSelectedProducts($event)" />
-                {{ listOfSelectedProducts }}
             </TabPanel>
 
             <TabPanel>
@@ -32,7 +31,6 @@
                 </template>
 
                 <ProductTypes :title="$t('managers.tenantManagement.dataSource.title')" :dataList="listOfDataSources" :selectedData="listOfSelectedDataSources" @changed="setSelectedDataSources($event)" />
-                {{ listOfSelectedDataSources }}
             </TabPanel>
         </TabView>
     </div>
@@ -92,7 +90,6 @@ export default defineComponent({
             this.tenant = { ...this.selectedTenant } as iMultitenant
         }
         this.availableLicenses = this.licenses
-        console.log('lol', this.listOfSelectedDataSources.length)
         this.loadAllData()
         this.getTenantData()
     },
@@ -127,7 +124,6 @@ export default defineComponent({
 
         filterArrayByTargetArr(sourceArr, targetArr) {
             var newArr = sourceArr.filter((elem) => targetArr.find((target) => elem.LABEL == target.product))
-            console.log(newArr)
             this.listOfProductTypes = newArr
         },
 
