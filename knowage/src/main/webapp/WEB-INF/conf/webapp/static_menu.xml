@@ -162,7 +162,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/exportersCatalogue.jsp" />
 			<ITEM id="7004" label="menu.MetadataMan"
 				requiredFunctionality="ObjMetadataManagement"
-				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListObjMetadataPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
+				to="/metadata-management" />
 		</GROUP_ITEM>
 
 
