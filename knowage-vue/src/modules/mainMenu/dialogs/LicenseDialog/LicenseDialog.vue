@@ -10,8 +10,7 @@
                 <template #header>
                     <span>{{ host.hostName }}</span>
                 </template>
-
-                <LicenceTab :licenses="licenses[host.hostName]" :host="host"></LicenceTab>
+                <LicenceTab :licenses="licenses[host.hostName]" :host="host" @reloadList="loadLicenses"></LicenceTab>
             </TabPanel>
         </TabView>
         <template #footer>
@@ -43,8 +42,6 @@ export default defineComponent({
     },
     async created() {
         await this.loadLicenses()
-        console.log('HOSTS: ', this.hosts)
-        console.log('LICENSES: ', this.licenses)
     },
     props: {
         visibility: Boolean

@@ -120,6 +120,7 @@
         "downloadLicense": "Download License",
         "errorLicense": "Error deleting license",
         "errorMessage": "An error blocked the license deleting action. If the problem persist contact the administrator.",
+        "errorExists": "The license already exists.",
         "hardwareId": "Hardware Id",
         "hostName": "Host name",
         "invalidLicense": "Invalid License",
@@ -129,6 +130,7 @@
         "title": "License Management",
         "updateLicense": "Update license",
         "validLicense": "Valid License",
+        "wrongType": "You have chosen wrong type of license",
         "warningBeforeDelete": "You are attempting to remove {0} license. This operation cannot be undone. After deletion, you will have to log in again."
     },
     "managers": {
