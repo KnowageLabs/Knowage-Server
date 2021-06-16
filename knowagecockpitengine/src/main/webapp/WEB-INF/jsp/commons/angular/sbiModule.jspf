@@ -155,7 +155,9 @@ sbiM.config(['$httpProvider',function ($httpProvider) {
     		var parentWindow = parent;
     		function setParentUrl(currentWindow, parentWindow){
     			if(parentWindow == currentWindow){
-        			parentWindow.location = loginUrl;
+    				parentWindow.parent.postMessage({
+    					'status': 401
+    				     }, "*")
         		}else{
         			currentWindow = parentWindow;
     				parentWindow = currentWindow.parent;

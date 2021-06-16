@@ -460,7 +460,12 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 	*/
 	
 	var genericErrorHandling = function(data, status, headers, config, deferred) {
-			deferred.reject(data, status, headers, config);		  		
+		if(data.status == 401){
+			redirectToLoginUrl()
+		}else{
+			deferred.reject(data, status, headers, config);	
+		}
+				  		
 	};
 	
 		var loginUrl = '<%= KnowageSystemConfiguration.getKnowageContext() %>'; // login url, used when session is expired
@@ -472,7 +477,9 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 	    		var parentWindow = parent;
 	    		function setParentUrl(currentWindow, parentWindow){
 	    			if(parentWindow == currentWindow){
-	        			parentWindow.location = loginUrl;
+	    				parentWindow.parent.postMessage({
+	    					'status': 401
+	    				     }, "*")
 	        		}else{
 	        			currentWindow = parentWindow;
 	    				parentWindow = currentWindow.parent;
