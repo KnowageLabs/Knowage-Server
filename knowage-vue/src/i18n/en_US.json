@@ -114,10 +114,22 @@
         "pt_BR": "portuguese"
     },
     "licenseDialog": {
+        "changeLicense": "Change License",
+        "dataRequired": "This data is required to generate/update licenses",
+        "deleteLicense": "Delete License",
+        "downloadLicense": "Download License",
+        "errorLicense": "Error deleting license",
+        "errorMessage": "An error blocked the license deleting action. If the problem persist contact the administrator.",
+        "hardwareId": "Hardware Id",
+        "hostName": "Host name",
         "invalidLicense": "Invalid License",
         "licenseId": "License Id",
+        "noLicenses": "No licenses available",
+        "numberOfCpu": "Number of CPUs",
         "title": "License Management",
-        "validLicense": "Valid License"
+        "updateLicense": "Update license",
+        "validLicense": "Valid License",
+        "warningBeforeDelete": "You are attempting to remove {0} license. This operation cannot be undone. After deletion, you will have to log in again."
     },
     "managers": {
         "configurationManagement": {
