@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import axios from 'axios'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import FabButton from '@/components/UI/KnFabButton.vue'
@@ -23,10 +24,24 @@ const mockedLicenses = [
     }
 ]
 
-const factory = (licenses) => {
+const mockedHost = {
+    hostName: 'DESKTOP-TEST12',
+    hardwareId: '123456789qwertyuiopasdfghhjklzxcvbnm123456789qwertyuiopasdfghjkl'
+}
+
+jest.mock('axios', () => ({
+    get: jest.fn(() => Promise.resolve({ data: [] }))
+}))
+
+const $store = {
+    commit: jest.fn()
+}
+
+const factory = (licenses, host) => {
     return mount(LicenceTab, {
         props: {
-            licenses
+            licenses,
+            host
         },
         global: {
             stubs: {
@@ -38,7 +53,8 @@ const factory = (licenses) => {
                 Toolbar
             },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $store
             }
         }
     })
@@ -46,20 +62,27 @@ const factory = (licenses) => {
 
 describe('License management', () => {
     it("shows a 'no license available' if no license is returned", () => {
-        const wrapper = factory([])
+        const wrapper = factory([], {})
 
         expect(wrapper.html()).toContain('licenseDialog.noLicense')
     })
     it('shows a list of available license when loaded', () => {
-        const wrapper = factory(mockedLicenses)
+        const wrapper = factory(mockedLicenses, mockedHost)
 
         expect(wrapper.vm.licensesList).toStrictEqual(mockedLicenses)
         expect(wrapper.html()).toContain('KnowageSI')
         expect(wrapper.html()).toContain('KnowagePA')
     })
-    xit('shows the technical informations of the used machine (hostName, hardwareId,cores)', () => {})
+    it('shows the technical informations of the used machine (hostName, hardwareId, cores)', () => {
+        const wrapper = factory(mockedLicenses, mockedHost)
+        const hostInfo = wrapper.find('[data-test="host-info"]')
+
+        expect(wrapper.vm.host).toStrictEqual(mockedHost)
+        expect(hostInfo.html()).toContain('DESKTOP-TEST12')
+        expect(hostInfo.html()).toContain('123456789qwertyuiopasdfghhjklzxcvbnm123456789qwertyuiopasdfghjkl')
+    })
     it("shows the 'invalid license' label id a license is outdated", () => {
-        const wrapper = factory(mockedLicenses)
+        const wrapper = factory(mockedLicenses, mockedHost)
 
         expect(wrapper.vm.licensesList).toStrictEqual(mockedLicenses)
         expect(wrapper.html()).toContain('KnowagePA')
@@ -67,5 +90,11 @@ describe('License management', () => {
     })
     xit('clicking on the + button a file input dialog appears', () => {})
     xit('clicking on the edit button a file input dialog appears', () => {})
-    xit('clicking on the download button a file download dialog appears', () => {})
+    it('clicking on the download button a file download dialog appears', async () => {
+        const wrapper = factory(mockedLicenses, mockedHost)
+
+        await wrapper.find('[data-test="download-button"]').trigger('click')
+
+        expect(axios.get).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/download/DESKTOP-TEST12/KnowageSI', { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } })
+    })
 })

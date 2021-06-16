@@ -1,5 +1,5 @@
 <template>
-    <div id="host-info">
+    <div id="host-info" data-test="host-info">
         <div id="host-labels">
             <p>{{ $t('licenseDialog.hostName') }}</p>
             <p>{{ $t('licenseDialog.hardwareId') }}</p>
@@ -114,10 +114,13 @@ export default defineComponent({
                             this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
                         } else {
                             this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
-                            var contentDisposition = response.headers['content-disposition']
-                            var fileAndExtension = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)[1]
-                            var completeFileName = fileAndExtension.replaceAll('"', '')
-                            downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
+                            if (response.headers) {
+                                var contentDisposition = response.headers['content-disposition']
+                                var fileAndExtension = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)[1]
+                                var completeFileName = fileAndExtension.replaceAll('"', '')
+
+                                downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
+                            }
                         }
                     },
                     (error) => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t(error) })
