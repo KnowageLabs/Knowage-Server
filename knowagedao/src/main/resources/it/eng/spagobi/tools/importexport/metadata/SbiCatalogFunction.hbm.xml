@@ -4,8 +4,8 @@
 <!-- Generated 10-mag-2016 14.47.58 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="it.eng.spagobi.functions.metadata.SbiCatalogFunction" table="SBI_CATALOG_FUNCTION">
-        <id name="functionId" type="int">
-            <column name="FUNCTION_ID" />
+        <id name="functionUuid" type="string">
+            <column name="FUNCTION_UUID" length="100" />
         </id>
         <property name="name" type="string">
             <column name="NAME" length="100" not-null="true" />

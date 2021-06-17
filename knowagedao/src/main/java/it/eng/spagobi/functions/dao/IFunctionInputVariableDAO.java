@@ -22,6 +22,7 @@
 package it.eng.spagobi.functions.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import it.eng.spagobi.functions.metadata.SbiFunctionInputVariable;
 
@@ -35,6 +36,6 @@ public interface IFunctionInputVariableDAO {
 	 * @param functionId
 	 * @return
 	 */
-	List<SbiFunctionInputVariable> loadFunctionInputVariableByFunctionId(int functionId);
+	List<SbiFunctionInputVariable> loadFunctionInputVariableByFunctionUuid(UUID functionUuid);
 
 }

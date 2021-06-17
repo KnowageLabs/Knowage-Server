@@ -2,6 +2,7 @@ package it.eng.spagobi.functions.dao;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
@@ -12,16 +13,16 @@ import it.eng.spagobi.utilities.CatalogFunction;
 
 public interface ICatalogFunctionDAO extends ISpagoBIDao {
 
-	public int insertCatalogFunction(CatalogFunction catalogFunction, Map<String, String> inputColumns, Map<String, ? extends IInputVariable> inputVariables,
+	public UUID insertCatalogFunction(CatalogFunction catalogFunction, Map<String, String> inputColumns, Map<String, ? extends IInputVariable> inputVariables,
 			Map<String, ? extends IOutputColumn> outputColumns) throws EMFUserError;
 
 	public List<SbiCatalogFunction> loadAllCatalogFunctions();
 
-	public int updateCatalogFunction(CatalogFunction updatedCatalogFunction, int id);
+	public UUID updateCatalogFunction(CatalogFunction updatedCatalogFunction, UUID uuid);
 
-	public void deleteCatalogFunction(int id);
+	public void deleteCatalogFunction(UUID uuid);
 
-	public SbiCatalogFunction getCatalogFunctionById(int id);
+	public SbiCatalogFunction getCatalogFunctionByUuid(UUID uuid);
 
 	public SbiCatalogFunction getCatalogFunctionByLabel(String label);
 

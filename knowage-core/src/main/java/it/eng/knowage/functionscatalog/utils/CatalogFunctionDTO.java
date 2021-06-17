@@ -30,7 +30,7 @@ import it.eng.spagobi.services.validation.Xss;
 
 public class CatalogFunctionDTO {
 
-	private Integer id;
+	private String label;
 	private String name;
 	private String owner;
 	private String description;
@@ -40,21 +40,11 @@ public class CatalogFunctionDTO {
 	private String onlineScript;
 	private String offlineScriptTrainModel;
 	private String offlineScriptUseModel;
-	private String label;
 	private String type;
 	private List<InputVariableDTO> inputVariables = new ArrayList<InputVariableDTO>();
 	private List<InputColumnDTO> inputColumns = new ArrayList<InputColumnDTO>();
 	private List<OutputColumnDTO> outputColumns = new ArrayList<OutputColumnDTO>();
 	private List<String> keywords = new ArrayList<String>();
-
-	public Integer getId() {
-		return id;
-	}
-
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 	@ExtendedAlphanumeric
 	public String getName() {

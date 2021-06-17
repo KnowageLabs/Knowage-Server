@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -549,7 +550,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 					// save associations between functions and documents
 					try {
 						IEngineDriver driver = (IEngineDriver) Class.forName(driverName).newInstance();
-						ArrayList<Integer> functionsAssociated = driver.getFunctionsAssociated(templateContent);
+						ArrayList<UUID> functionsAssociated = driver.getFunctionsAssociated(templateContent);
 						IBIObjFunctionDAO biObjFunctionDAO = DAOFactory.getBIObjFunctionDAO();
 						if (functionsAssociated != null && !functionsAssociated.isEmpty()) {
 							biObjFunctionDAO.updateObjectFunctions(biObject, functionsAssociated, aSession);

@@ -1,29 +1,30 @@
 package it.eng.spagobi.functions.metadata;
 
+import java.util.UUID;
+
 public class SbiFunctionOutputColumnId implements java.io.Serializable {
 
-	private int functionId;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -7848549421815500755L;
+	private UUID functionUuid;
 	private String colName;
-
-	// private int versionNum;
-	// private String organization;
 
 	public SbiFunctionOutputColumnId() {
 	}
 
-	public SbiFunctionOutputColumnId(int functionId, String colName/* , int versionNum , String organization */) {
-		this.functionId = functionId;
+	public SbiFunctionOutputColumnId(UUID functionUuid, String colName) {
+		this.functionUuid = functionUuid;
 		this.colName = colName;
-		// this.versionNum = versionNum;
-		// this.organization = organization;
 	}
 
-	public int getFunctionId() {
-		return this.functionId;
+	public UUID getFunctionUuid() {
+		return this.functionUuid;
 	}
 
-	public void setFunctionId(int functionId) {
-		this.functionId = functionId;
+	public void setFunctionUuid(UUID functionUuid) {
+		this.functionUuid = functionUuid;
 	}
 
 	public String getColName() {
@@ -34,22 +35,12 @@ public class SbiFunctionOutputColumnId implements java.io.Serializable {
 		this.colName = colName;
 	}
 
-	/*
-	 * public int getVersionNum() { return this.versionNum; }
-	 *
-	 * public void setVersionNum(int versionNum) { this.versionNum = versionNum; }
-	 *
-	 * public String getOrganization() { return this.organization; }
-	 *
-	 * public void setOrganization(String organization) { this.organization = organization; }
-	 */
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((colName == null) ? 0 : colName.hashCode());
-		result = prime * result + functionId;
+		result = prime * result + ((functionUuid == null) ? 0 : functionUuid.hashCode());
 		return result;
 	}
 
@@ -65,7 +56,10 @@ public class SbiFunctionOutputColumnId implements java.io.Serializable {
 				return false;
 		} else if (!colName.equals(other.colName))
 			return false;
-		if (functionId != other.functionId)
+		if (functionUuid == null) {
+			if (other.functionUuid != null)
+				return false;
+		} else if (!functionUuid.equals(other.functionUuid))
 			return false;
 		return true;
 	}

@@ -22,6 +22,7 @@
 package it.eng.spagobi.functions.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -41,7 +42,7 @@ public class FunctionOutputColumnDAOImpl extends AbstractHibernateDAO implements
 	static private Logger logger = Logger.getLogger(FunctionOutputColumnDAOImpl.class);
 
 	@Override
-	public List<SbiFunctionOutputColumn> loadFunctionOutputColumnByFunctionId(int functionId) {
+	public List<SbiFunctionOutputColumn> loadFunctionOutputColumnByFunctionUuid(UUID functionUuid) {
 
 		logger.debug("IN");
 		Session session = null;
@@ -52,7 +53,7 @@ public class FunctionOutputColumnDAOImpl extends AbstractHibernateDAO implements
 
 			StringBuilder query = new StringBuilder();
 			query.append("from SbiFunctionOutputColumn sfiv ");
-			query.append("where sfiv.sbiCatalogFunction.functionId =" + functionId);
+			query.append("where sfiv.sbiCatalogFunction.functionUuid =" + functionUuid);
 
 			Query hibQuery = session.createQuery(query.toString());
 

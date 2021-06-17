@@ -80,12 +80,9 @@ public class GenericDriver extends AbstractEngineDriver implements IEngineDriver
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param biobject
-	 *            the biobject
+	 * @param profile  Profile of the user
+	 * @param roleName the name of the execution role
+	 * @param biobject the biobject
 	 */
 	@Override
 	public Map getParameterMap(Object biobject, IEngUserProfile profile, String roleName) {
@@ -110,14 +107,10 @@ public class GenericDriver extends AbstractEngineDriver implements IEngineDriver
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param subObject
-	 *            SubObject to execute
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param object
-	 *            the object
+	 * @param subObject SubObject to execute
+	 * @param profile   Profile of the user
+	 * @param roleName  the name of the execution role
+	 * @param object    the object
 	 */
 	@Override
 	public Map getParameterMap(Object object, Object subObject, IEngUserProfile profile, String roleName) {
@@ -161,8 +154,7 @@ public class GenericDriver extends AbstractEngineDriver implements IEngineDriver
 	/**
 	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
 	 *
-	 * @param biobj
-	 *            BIObject to execute
+	 * @param biobj BIObject to execute
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map getMap(BIObject biobj, IEngUserProfile profile) {
@@ -245,10 +237,8 @@ public class GenericDriver extends AbstractEngineDriver implements IEngineDriver
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
 	 *
-	 * @param biobj
-	 *            BIOBject to execute
-	 * @param pars
-	 *            Map of the parameters for the execution call
+	 * @param biobj BIOBject to execute
+	 * @param pars  Map of the parameters for the execution call
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map addBIParameters(BIObject biobj, Map pars) {
@@ -285,10 +275,8 @@ public class GenericDriver extends AbstractEngineDriver implements IEngineDriver
 	/**
 	 * Add into the map the BIObject's outputparameters names
 	 *
-	 * @param biobj
-	 *            BIOBject to execute
-	 * @param pars
-	 *            Map of the parameters for the execution call
+	 * @param biobj BIOBject to execute
+	 * @param pars  Map of the parameters for the execution call
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map addOutputParameters(BIObject biobj, Map pars) {
@@ -345,12 +333,9 @@ public class GenericDriver extends AbstractEngineDriver implements IEngineDriver
 	/**
 	 * Function not implemented. Thid method should not be called
 	 *
-	 * @param biobject
-	 *            The BIOBject to edit
-	 * @param profile
-	 *            the profile
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @param biobject The BIOBject to edit
+	 * @param profile  the profile
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -361,12 +346,9 @@ public class GenericDriver extends AbstractEngineDriver implements IEngineDriver
 	/**
 	 * Function not implemented. Thid method should not be called
 	 *
-	 * @param biobject
-	 *            The BIOBject to edit
-	 * @param profile
-	 *            the profile
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @param biobject The BIOBject to edit
+	 * @param profile  the profile
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -431,14 +413,6 @@ public class GenericDriver extends AbstractEngineDriver implements IEngineDriver
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	@Override
-	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
-		// catalog functions can be used only inside cockpits
-		// therefore the default implementation is to return an empty list
-		// CockpitEngine will have its own implementation
-		return new ArrayList<Integer>();
 	}
 
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)

@@ -22,6 +22,7 @@
 package it.eng.spagobi.functions.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -41,7 +42,7 @@ public class FunctionInputVariableDAOImpl extends AbstractHibernateDAO implement
 	static private Logger logger = Logger.getLogger(FunctionInputVariableDAOImpl.class);
 
 	@Override
-	public List<SbiFunctionInputVariable> loadFunctionInputVariableByFunctionId(int functionId) {
+	public List<SbiFunctionInputVariable> loadFunctionInputVariableByFunctionUuid(UUID functionUuid) {
 
 		logger.debug("IN");
 		Session session = null;
@@ -52,7 +53,7 @@ public class FunctionInputVariableDAOImpl extends AbstractHibernateDAO implement
 
 			StringBuilder query = new StringBuilder();
 			query.append("from SbiFunctionInputVariable sfiv ");
-			query.append("where sfiv.id.functionId = " + functionId);
+			query.append("where sfiv.id.functionUuid = " + functionUuid);
 
 			Query hibQuery = session.createQuery(query.toString());
 

@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -145,7 +146,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * TODO is isNearRealtime really needed? It comes from frontend, isn't it a specific info of the dataset?
-	 * 
+	 *
 	 * @deprecated
 	 */
 	@Deprecated
@@ -271,8 +272,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 					where, groups, sortings, summaryRowArray, offset, fetchSize, maxRowCount, indexes);
 
 			// if required apply function from catalog
-			int catalogFuncId = getCatalogFunctionId(projections);
-			if (catalogFuncId != -1) {
+			UUID catalogFuncId = getCatalogFunctionUuid(projections);
+			if (catalogFuncId != null) {
 				JSONObject catalogFunctionConfig = getCatalogFunctionConfiguration(projections);
 				IDataStoreTransformer functionTransformer = new CatalogFunctionTransformer(catalogFuncId, catalogFunctionConfig);
 				functionTransformer.transform(dataStore);
@@ -300,17 +301,17 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private int getCatalogFunctionId(List<AbstractSelectionField> projections) {
-		int id = -1;
+	private UUID getCatalogFunctionUuid(List<AbstractSelectionField> projections) {
+		UUID uuid = null;
 		for (AbstractSelectionField p : projections) {
 			if (p instanceof DataStoreCatalogFunctionField) {
-				int oldId = id;
-				id = ((DataStoreCatalogFunctionField) p).getCatalogFunctionId();
-				if (oldId != -1 && oldId != id)
+				UUID oldUuid = uuid;
+				uuid = ((DataStoreCatalogFunctionField) p).getCatalogFunctionUuid();
+				if (oldUuid != null && oldUuid != uuid)
 					throw new SpagoBIRuntimeException("Only one function supported");
 			}
 		}
-		return id;
+		return uuid;
 	}
 
 	private JSONObject getCatalogFunctionConfiguration(List<AbstractSelectionField> projections) {
@@ -482,9 +483,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			function = AggregationFunctions.get("NONE");
 		}
 		if (jsonObject.has("catalogFunctionId")) { // check if the column is coming from catalog function
-			int catalogFuncId = jsonObject.getInt("catalogFunctionId");
+			UUID catalogFuncUuid = UUID.fromString(jsonObject.getString("catalogFunctionId"));
 			JSONObject catalogFuncConf = jsonObject.getJSONObject("catalogFunctionConfig");
-			projection = new DataStoreCatalogFunctionField(function, columnAlias, columnAlias, catalogFuncId, catalogFuncConf);
+			projection = new DataStoreCatalogFunctionField(function, columnAlias, columnAlias, catalogFuncUuid, catalogFuncConf);
 		} else if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
 			if (jsonObject.has("formula")) {
 				String formula = jsonObject.optString("formula");
