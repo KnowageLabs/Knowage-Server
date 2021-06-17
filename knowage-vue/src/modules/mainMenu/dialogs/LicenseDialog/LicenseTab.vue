@@ -14,7 +14,7 @@
     <Toolbar class="kn-toolbar p-mb-2">
         <template #right>
             <FabButton icon="fas fa-plus" :style="licenseDialogDescriptor.fabButton.style" v-tooltip.top="$t('licenseDialog.dataRequired')" @click="setUploadType('', false)" data-test="new-button" />
-            <KnInputFile label="" v-if="!uploading" :changeFunction="uploadLicense" accept=".lic" :triggerInput="triggerUpload" :inputId="'inputLicense'" />
+            <KnInputFile label="" v-if="!uploading" :changeFunction="uploadLicense" accept=".lic" :triggerInput="triggerUpload" />
         </template>
     </Toolbar>
     <Listbox class="kn-list--column" :style="licenseDialogDescriptor.list.style" :options="licensesList">
