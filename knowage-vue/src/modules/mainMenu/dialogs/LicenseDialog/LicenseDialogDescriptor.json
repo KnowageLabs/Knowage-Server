@@ -1,0 +1,17 @@
+{
+    "card": {
+        "style": {
+            "width": "50vw"
+        }
+    },
+    "fabButton": {
+        "style": {
+            "color": "white"
+        }
+    },
+    "list": {
+        "style": {
+            "height": "50vh"
+        }
+    }
+}
