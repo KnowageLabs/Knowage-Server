@@ -167,7 +167,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	}
 
-	function catalogFunctionDialogController($scope,sbiModule_translate,cockpitModule_template,cockpitModule_catalogFunctionService,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,buildCrossTabColumns,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
+	function catalogFunctionDialogController($scope,$sce,sbiModule_translate,cockpitModule_template,cockpitModule_catalogFunctionService,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,buildCrossTabColumns,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
 		$scope.model = model;
 		$scope.selectedFunction = actualItem ? angular.copy(actualItem) : {};
@@ -175,6 +175,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		var typesMap = {'STRING': "fa fa-quote-right", 'NUMBER': "fa fa-hashtag", 'DATE': 'fa fa-calendar'};
 		$scope.rEnvironments = cockpitModule_catalogFunctionService.rEnvironments;
 		$scope.pythonEnvironments = cockpitModule_catalogFunctionService.pythonEnvironments;
+
+		$scope.textToHtml=function(text){
+			return $sce.trustAsHtml(text);
+		}
 
 		$scope.functionsGrid = {
 		        enableColResize: false,
