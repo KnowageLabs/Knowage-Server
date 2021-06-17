@@ -227,8 +227,8 @@ export default defineComponent({
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.toast.deleteSuccess')
                         })
+                        this.$emit('reloadList')
                     }
-                    this.$emit('reloadList')
                 })
                 .finally(() => this.logout())
         }
