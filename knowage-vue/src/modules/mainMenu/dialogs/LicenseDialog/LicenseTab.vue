@@ -14,7 +14,7 @@
     <Toolbar class="kn-toolbar p-mb-2">
         <template #right>
             <FabButton icon="fas fa-plus" :style="licenseDialogDescriptor.fabButton.style" v-tooltip.top="$t('licenseDialog.dataRequired')" @click="setUploadType('', false)" data-test="new-button" />
-            <KnInputFile label="" v-if="!uploading" :changeFunction="uploadLicense" accept=".lic" :triggerInput="triggerInput" />
+            <KnInputFile label="" v-if="!uploading" :changeFunction="uploadLicense" accept=".lic" :triggerInput="triggerUpload" :inputId="'inputLicense'" />
         </template>
     </Toolbar>
     <Listbox class="kn-list--column" :style="licenseDialogDescriptor.list.style" :options="licensesList">
@@ -56,6 +56,7 @@ import KnInputFile from '@/components/UI/KnInputFile.vue'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import Tooltip from 'primevue/tooltip'
+import auth from '@/helpers/commons/authHelper'
 
 export default defineComponent({
     name: 'license-tab',
@@ -85,7 +86,7 @@ export default defineComponent({
             licenseDialogDescriptor,
             licensesList: [] as iLicense[],
             selectedHost: {} as iHost,
-            triggerInput: false,
+            triggerUpload: false,
             displayWarning: false,
             existingLicenseName: '',
             isForUpdate: Boolean as any,
@@ -106,6 +107,9 @@ export default defineComponent({
         this.loadHost()
     },
     methods: {
+        logout() {
+            auth.logout()
+        },
         loadLicenses() {
             this.licensesList = this.licenses as iLicense[]
         },
@@ -151,10 +155,10 @@ export default defineComponent({
         },
 
         setUploadType(productName, value) {
-            this.triggerInput = false
+            this.triggerUpload = false
             this.isForUpdate = value
             this.existingLicenseName = productName
-            setTimeout(() => (this.triggerInput = true), 200)
+            setTimeout(() => (this.triggerUpload = true), 200)
         },
         uploadLicense(event) {
             this.uploading = true
@@ -162,11 +166,11 @@ export default defineComponent({
             if (this.isForUpdate && !uploadedFiles.name.includes(this.existingLicenseName)) {
                 this.errorMessage = this.$t('licenseDialog.wrongType')
                 this.displayWarning = true
-                this.triggerInput = false
+                this.triggerUpload = false
             } else {
                 this.startUpload(uploadedFiles)
             }
-            this.triggerInput = false
+            this.triggerUpload = false
             setTimeout(() => (this.uploading = false), 200)
         },
         async startUpload(uploadedFiles) {
@@ -194,7 +198,7 @@ export default defineComponent({
                     }
                     this.$emit('reloadList')
                 })
-                .finally(() => (this.triggerInput = false))
+                .finally(() => (this.triggerUpload = false))
         },
 
         showDeleteDialog(licenseName) {
@@ -226,6 +230,7 @@ export default defineComponent({
                     }
                     this.$emit('reloadList')
                 })
+                .finally(() => this.logout())
         }
     }
 })
