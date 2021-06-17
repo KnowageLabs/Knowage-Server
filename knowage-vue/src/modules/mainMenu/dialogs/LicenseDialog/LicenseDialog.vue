@@ -2,7 +2,7 @@
     <Dialog class="kn-dialog--toolbar--primary" :style="licenseDialogDescriptor.card.style" v-bind:visible="visibility" footer="footer" :closable="false" modal>
         <template #header> {{ $t('licenseDialog.title') }} </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-        <div v-if="hosts.length === 0">
+        <div v-if="!hosts || hosts.length === 0">
             <p>{{ $t('licenseDialog.noLicenses') }}</p>
         </div>
         <TabView class="kn-tab">

@@ -153,8 +153,6 @@ export default defineComponent({
                 this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
                 this.commonUserFunctionalities = response.data.commonUserFunctionalities
                 this.allowedUserFunctionalities = response.data.allowedUserFunctionalities
-                // HARDCODED
-                this.allowedUserFunctionalities.push({ label: 'License', conditionedView: 'license', iconCls: 'far fa-user', command: 'licenseSelection' } as any)
                 this.updateNewsAndDownload()
             })
             .catch((error) => console.error(error))

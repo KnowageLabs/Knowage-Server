@@ -206,7 +206,7 @@
 				requiredFunctionality="InstallConfig"
 				to="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig" />
 			<ITEM id="8012" label="menu.license"
-				requiredFunctionality="LicenseManagement" to="showLicenseDialog"/>
+				requiredFunctionality="LicenseManagement" command="licenseSelection"/>
 			<ITEM id="8013" label="menu.event"
 				requiredFunctionality="EventsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/event/eventLogsApp.jsp" />
