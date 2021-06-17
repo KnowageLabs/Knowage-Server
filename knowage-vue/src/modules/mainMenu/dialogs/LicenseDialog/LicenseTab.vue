@@ -149,10 +149,12 @@ export default defineComponent({
                         })
                 )
         },
+
         setUploadType(productName, value) {
+            this.triggerInput = false
             this.isForUpdate = value
             this.existingLicenseName = productName
-            this.triggerInput = true
+            setTimeout(() => (this.triggerInput = true), 200)
         },
         uploadLicense(event) {
             this.uploading = true
@@ -165,7 +167,7 @@ export default defineComponent({
                 this.startUpload(uploadedFiles)
             }
             this.triggerInput = false
-            setTimeout(() => (this.uploading = false), 300)
+            setTimeout(() => (this.uploading = false), 200)
         },
         async startUpload(uploadedFiles) {
             var formData = new FormData()
@@ -194,6 +196,7 @@ export default defineComponent({
                 })
                 .finally(() => (this.triggerInput = false))
         },
+
         showDeleteDialog(licenseName) {
             this.$confirm.require({
                 message: this.$t('licenseDialog.warningBeforeDelete'),
