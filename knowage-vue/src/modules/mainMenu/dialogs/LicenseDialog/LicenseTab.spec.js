@@ -147,6 +147,6 @@ describe('License management', () => {
 
         await wrapper.vm.deleteLicense('KnowageSI')
 
-        expect(axios.get).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/delete/DESKTOP-TEST12/KnowageSI')
+        expect(axios.get).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/delete/DESKTOP-TEST12/KnowageSI', { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } })
     })
 })
