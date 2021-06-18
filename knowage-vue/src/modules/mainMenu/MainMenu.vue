@@ -151,6 +151,7 @@ export default defineComponent({
             .then((response) => {
                 this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
                 this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
+                this.technicalUserFunctionalities.push({ label: 'Server Manager', iconCls: 'fa fa-2x fa-cogs', items: [{ label: 'license management', command: 'licenseSelection' }] })
                 this.commonUserFunctionalities = response.data.commonUserFunctionalities
                 this.allowedUserFunctionalities = response.data.allowedUserFunctionalities
                 this.updateNewsAndDownload()
@@ -185,6 +186,7 @@ interface MenuItem {
     items?: Array<MenuItem> | Array<Array<MenuItem>>
     conditionedView?: string
     badge?: number
+    command?: string
 }
 </script>
 
