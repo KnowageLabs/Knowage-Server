@@ -11,13 +11,13 @@
             <p>{{ 'NUMBER OF CPU PLACEHOLDER' }}</p>
         </div>
     </div>
-    <Toolbar class="kn-toolbar p-mb-2">
+    <Toolbar class="kn-toolbar--transparent p-mb-2">
         <template #right>
             <FabButton icon="fas fa-plus" :style="licenseDialogDescriptor.fabButton.style" v-tooltip.top="$t('licenseDialog.dataRequired')" @click="setUploadType('', false)" data-test="new-button" />
             <KnInputFile label="" v-if="!uploading" :changeFunction="uploadLicense" accept=".lic" :triggerInput="triggerUpload" />
         </template>
     </Toolbar>
-    <Listbox class="kn-list--column" :style="licenseDialogDescriptor.list.style" :options="licensesList">
+    <Listbox class="kn-list--column kn-list-no-border-right" :style="licenseDialogDescriptor.list.style" :options="licensesList">
         <template #empty>{{ $t('licenseDialog.noLicenses') }}</template>
         <template #option="slotProps">
             <div class="kn-list-item" data-test="list-item">
@@ -117,7 +117,7 @@ export default defineComponent({
             this.selectedHost = { ...this.host } as iHost
         },
         setLicenseClass(status: string) {
-            return status === 'LICENSE_VALID' ? 'valid' : 'invalid'
+            return status === 'LICENSE_VALID' ? 'kn-text-success' : 'kn-text-error'
         },
         licenseText(status: string) {
             return status === 'LICENSE_VALID' ? this.$t('licenseDialog.validLicense') : this.$t('licenseDialog.invalidLicense')
@@ -237,12 +237,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.valid {
-    color: #4caf50 !important;
-}
-.invalid {
-    color: red !important;
-}
 #host-info {
     font-size: 0.7rem;
     padding: 0.5rem;
