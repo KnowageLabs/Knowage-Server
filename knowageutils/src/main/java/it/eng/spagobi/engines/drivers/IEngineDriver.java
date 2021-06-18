@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 import org.json.JSONException;
 
@@ -113,7 +112,7 @@ public interface IEngineDriver {
 
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException;
 
-	public ArrayList<UUID> getFunctionsAssociated(byte[] contentTemplate) throws JSONException;
+	public ArrayList<String> getFunctionsAssociated(byte[] contentTemplate) throws JSONException;
 
 	public List<DefaultOutputParameter> getDefaultOutputParameters();
 

@@ -20,6 +20,7 @@ package it.eng.knowage.functionscatalog.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,6 +31,7 @@ import it.eng.spagobi.services.validation.Xss;
 
 public class CatalogFunctionDTO {
 
+	private UUID id;
 	private String label;
 	private String name;
 	private String owner;
@@ -45,6 +47,14 @@ public class CatalogFunctionDTO {
 	private List<InputColumnDTO> inputColumns = new ArrayList<InputColumnDTO>();
 	private List<OutputColumnDTO> outputColumns = new ArrayList<OutputColumnDTO>();
 	private List<String> keywords = new ArrayList<String>();
+
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
 
 	@ExtendedAlphanumeric
 	public String getName() {

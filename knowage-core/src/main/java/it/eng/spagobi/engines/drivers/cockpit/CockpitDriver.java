@@ -19,7 +19,6 @@ package it.eng.spagobi.engines.drivers.cockpit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -76,10 +75,10 @@ public class CockpitDriver extends GenericDriver {
 	}
 
 	@Override
-	public ArrayList<UUID> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
+	public ArrayList<String> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
 		logger.debug("IN");
 
-		ArrayList<UUID> functionUuids = new ArrayList<UUID>();
+		ArrayList<String> functionUuids = new ArrayList<String>();
 		JSONObject templateContent = getTemplateAsJsonObject(contentTemplate);
 		if (templateContent == null) {
 			logger.error("Template content non returned. Impossible get associated functions. Check the template!");
@@ -110,7 +109,7 @@ public class CockpitDriver extends GenericDriver {
 					for (int k = 0; k < columnSelectedOfDataset.length(); k++) {
 						JSONObject column = columnSelectedOfDataset.getJSONObject(k);
 						if (column.has("boundFunction")) {
-							UUID funcUuid = UUID.fromString(column.getJSONObject("boundFunction").getString("id"));
+							String funcUuid = column.getJSONObject("boundFunction").getString("id");
 							if (!functionUuids.contains(funcUuid))
 								functionUuids.add(funcUuid);
 						}

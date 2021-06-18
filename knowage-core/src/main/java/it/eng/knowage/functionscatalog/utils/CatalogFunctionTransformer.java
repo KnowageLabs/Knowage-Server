@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -57,7 +56,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
  */
 public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 
-	private final UUID functionUuid;
+	private final String functionUuid;
 	private SbiCatalogFunction function;
 	private final JSONObject functionConfiguration;
 	private Map<String, String> inputColumns;
@@ -69,7 +68,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 
 	private static transient Logger logger = Logger.getLogger(CatalogFunctionTransformer.class);
 
-	public CatalogFunctionTransformer(UUID functionUuid, JSONObject catalogFunctionConfig) {
+	public CatalogFunctionTransformer(String functionUuid, JSONObject catalogFunctionConfig) {
 		this.functionUuid = functionUuid;
 		this.functionConfiguration = catalogFunctionConfig;
 		init();

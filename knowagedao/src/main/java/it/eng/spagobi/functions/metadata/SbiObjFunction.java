@@ -1,7 +1,5 @@
 package it.eng.spagobi.functions.metadata;
 
-import java.util.UUID;
-
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
@@ -11,7 +9,7 @@ public class SbiObjFunction extends SbiHibernateModel {
 
 	private Integer biObjFunctionId;
 	private SbiObjects sbiObject;
-	private UUID functionUuid;
+	private String functionUuid;
 
 	/**
 	 * default constructor.
@@ -44,11 +42,11 @@ public class SbiObjFunction extends SbiHibernateModel {
 		this.sbiObject = sbiObject;
 	}
 
-	public UUID getFunctionUuid() {
+	public String getFunctionUuid() {
 		return functionUuid;
 	}
 
-	public void setFunctionUuid(UUID functionUuid) {
+	public void setFunctionUuid(String functionUuid) {
 		this.functionUuid = functionUuid;
 	}
 }

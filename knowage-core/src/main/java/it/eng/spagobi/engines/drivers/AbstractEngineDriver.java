@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -281,11 +280,11 @@ public class AbstractEngineDriver {
 		return content;
 	}
 
-	public ArrayList<UUID> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
+	public ArrayList<String> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
 		// catalog functions can be used only inside cockpits
 		// therefore the default implementation is to return an empty list
 		// CockpitEngine will have its own implementation
-		return new ArrayList<UUID>();
+		return new ArrayList<String>();
 	}
 
 	public List<DefaultOutputParameter> getDefaultOutputParameters() {

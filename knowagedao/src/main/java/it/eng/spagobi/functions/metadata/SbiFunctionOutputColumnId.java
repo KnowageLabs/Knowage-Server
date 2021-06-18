@@ -1,29 +1,27 @@
 package it.eng.spagobi.functions.metadata;
 
-import java.util.UUID;
-
 public class SbiFunctionOutputColumnId implements java.io.Serializable {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = -7848549421815500755L;
-	private UUID functionUuid;
+	private String functionUuid;
 	private String colName;
 
 	public SbiFunctionOutputColumnId() {
 	}
 
-	public SbiFunctionOutputColumnId(UUID functionUuid, String colName) {
+	public SbiFunctionOutputColumnId(String functionUuid, String colName) {
 		this.functionUuid = functionUuid;
 		this.colName = colName;
 	}
 
-	public UUID getFunctionUuid() {
+	public String getFunctionUuid() {
 		return this.functionUuid;
 	}
 
-	public void setFunctionUuid(UUID functionUuid) {
+	public void setFunctionUuid(String functionUuid) {
 		this.functionUuid = functionUuid;
 	}
 

@@ -22,7 +22,6 @@
 package it.eng.spagobi.functions.dao;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -42,7 +41,7 @@ public class FunctionInputVariableDAOImpl extends AbstractHibernateDAO implement
 	static private Logger logger = Logger.getLogger(FunctionInputVariableDAOImpl.class);
 
 	@Override
-	public List<SbiFunctionInputVariable> loadFunctionInputVariableByFunctionUuid(UUID functionUuid) {
+	public List<SbiFunctionInputVariable> loadFunctionInputVariableByFunctionUuid(String functionUuid) {
 
 		logger.debug("IN");
 		Session session = null;

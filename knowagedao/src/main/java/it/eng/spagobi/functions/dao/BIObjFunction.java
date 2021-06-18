@@ -1,7 +1,6 @@
 package it.eng.spagobi.functions.dao;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 
@@ -17,7 +16,7 @@ public class BIObjFunction implements Serializable {
 
 	private Integer biObjFunctionId;
 	private BIObject biObject;
-	private UUID functionUuid;
+	private String functionUuid;
 
 	public Integer getBiObjFunctionId() {
 		return biObjFunctionId;
@@ -35,11 +34,11 @@ public class BIObjFunction implements Serializable {
 		this.biObject = biObject;
 	}
 
-	public UUID getFunctionUuid() {
+	public String getFunctionUuid() {
 		return functionUuid;
 	}
 
-	public void setFunctionUuid(UUID functionUuid) {
+	public void setFunctionUuid(String functionUuid) {
 		this.functionUuid = functionUuid;
 	}
 }

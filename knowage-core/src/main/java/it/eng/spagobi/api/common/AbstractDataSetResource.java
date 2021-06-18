@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -272,7 +271,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 					where, groups, sortings, summaryRowArray, offset, fetchSize, maxRowCount, indexes);
 
 			// if required apply function from catalog
-			UUID catalogFuncId = getCatalogFunctionUuid(projections);
+			String catalogFuncId = getCatalogFunctionUuid(projections);
 			if (catalogFuncId != null) {
 				JSONObject catalogFunctionConfig = getCatalogFunctionConfiguration(projections);
 				IDataStoreTransformer functionTransformer = new CatalogFunctionTransformer(catalogFuncId, catalogFunctionConfig);
@@ -301,11 +300,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private UUID getCatalogFunctionUuid(List<AbstractSelectionField> projections) {
-		UUID uuid = null;
+	private String getCatalogFunctionUuid(List<AbstractSelectionField> projections) {
+		String uuid = null;
 		for (AbstractSelectionField p : projections) {
 			if (p instanceof DataStoreCatalogFunctionField) {
-				UUID oldUuid = uuid;
+				String oldUuid = uuid;
 				uuid = ((DataStoreCatalogFunctionField) p).getCatalogFunctionUuid();
 				if (oldUuid != null && oldUuid != uuid)
 					throw new SpagoBIRuntimeException("Only one function supported");
@@ -483,7 +482,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			function = AggregationFunctions.get("NONE");
 		}
 		if (jsonObject.has("catalogFunctionId")) { // check if the column is coming from catalog function
-			UUID catalogFuncUuid = UUID.fromString(jsonObject.getString("catalogFunctionId"));
+			String catalogFuncUuid = jsonObject.getString("catalogFunctionId");
 			JSONObject catalogFuncConf = jsonObject.getJSONObject("catalogFunctionConfig");
 			projection = new DataStoreCatalogFunctionField(function, columnAlias, columnAlias, catalogFuncUuid, catalogFuncConf);
 		} else if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {

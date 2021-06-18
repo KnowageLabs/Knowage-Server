@@ -13,7 +13,7 @@ import it.eng.spagobi.commons.metadata.SbiHibernateModel;
  */
 public class SbiCatalogFunction extends SbiHibernateModel {
 
-	private final UUID uuid = UUID.randomUUID();
+	private String functionUuid;
 	private String name;
 	private String description;
 	private String benchmarks;
@@ -33,8 +33,16 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 	public SbiCatalogFunction() {
 	}
 
-	public UUID getUuid() {
-		return this.uuid;
+	public SbiCatalogFunction(UUID uuid) {
+		this.functionUuid = uuid.toString();
+	}
+
+	public String getFunctionUuid() {
+		return this.functionUuid;
+	}
+
+	public void setFunctionUuid(String functionUuid) {
+		this.functionUuid = functionUuid;
 	}
 
 	public String getName() {

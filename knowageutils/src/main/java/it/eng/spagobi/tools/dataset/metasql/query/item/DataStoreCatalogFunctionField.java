@@ -1,7 +1,5 @@
 package it.eng.spagobi.tools.dataset.metasql.query.item;
 
-import java.util.UUID;
-
 import org.json.JSONObject;
 
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
@@ -10,10 +8,10 @@ public class DataStoreCatalogFunctionField extends AbstractCatalogFunctionField 
 
 	private final String alias;
 	private final IAggregationFunction aggregationFunction;
-	private final UUID catalogFunctionUuid;
+	private final String catalogFunctionUuid;
 	private final JSONObject catalogFunctionConfig;
 
-	public DataStoreCatalogFunctionField(IAggregationFunction aggregationFunction, String columnName, String alias, UUID catalogFunctionUuid,
+	public DataStoreCatalogFunctionField(IAggregationFunction aggregationFunction, String columnName, String alias, String catalogFunctionUuid,
 			JSONObject config) {
 		this.aggregationFunction = aggregationFunction;
 		this.name = columnName;
@@ -30,7 +28,7 @@ public class DataStoreCatalogFunctionField extends AbstractCatalogFunctionField 
 		return aggregationFunction;
 	}
 
-	public UUID getCatalogFunctionUuid() {
+	public String getCatalogFunctionUuid() {
 		return catalogFunctionUuid;
 	}
 

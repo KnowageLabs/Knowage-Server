@@ -173,7 +173,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		} else {
 			if ($scope.saveOrUpdateFlag == "save") {
 				body = $scope.shownFunction;
-				if (!body.id || body.id == "") body.id = -1;
 
 				sbiModule_restServices.post("2.0/functions-catalog", "insert", body).then(
 					function(result) {

@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -197,7 +196,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			Map<String, IOutputColumn> outputColumns = toOutputColumnsMap(funcDTO.getOutputColumns());
 
 			ICatalogFunctionDAO catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
-			UUID catalogFunctionUuid = catalogFunctionDAO.insertCatalogFunction(itemToInsert, inputColumns, inputVariables, outputColumns);
+			String catalogFunctionUuid = catalogFunctionDAO.insertCatalogFunction(itemToInsert, inputColumns, inputVariables, outputColumns);
 
 			logger.debug("Catalog function ID equals to [" + catalogFunctionUuid + "]");
 			response.put("id", catalogFunctionUuid);
@@ -212,7 +211,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String updateCatalogFunction(@PathParam("id") UUID uuid, @Valid CatalogFunctionDTO funcDTO) {
+	public String updateCatalogFunction(@PathParam("id") String uuid, @Valid CatalogFunctionDTO funcDTO) {
 		logger.debug("IN");
 		JSONObject response = new JSONObject();
 
@@ -250,7 +249,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@Path("/delete/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String deleteCatalogFunction(@PathParam("id") UUID uuid) {
+	public String deleteCatalogFunction(@PathParam("id") String uuid) {
 		logger.debug("IN");
 
 		if (!hasPermission(uuid)) {
@@ -282,10 +281,10 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	private JSONObject sbiFunctionToJsonObject(SbiCatalogFunction sbiFunction) {
 
 		JSONObject ret = null;
-		boolean hasPermission = hasPermission(sbiFunction.getUuid());
+		boolean hasPermission = hasPermission(sbiFunction.getFunctionUuid());
 		try {
 			ret = new JSONObject();
-			ret.put("id", sbiFunction.getUuid());
+			ret.put("id", sbiFunction.getFunctionUuid());
 			ret.put("name", sbiFunction.getName());
 			ret.put("description", sbiFunction.getDescription());
 			ret.put("benchmarks", sbiFunction.getBenchmarks());
@@ -349,7 +348,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		return ret;
 	}
 
-	private boolean hasPermission(UUID functionUuid) {
+	private boolean hasPermission(String functionUuid) {
 		UserProfile profile = getUserProfile();
 		if (UserUtilities.hasAdministratorRole(profile)) {
 			return true;

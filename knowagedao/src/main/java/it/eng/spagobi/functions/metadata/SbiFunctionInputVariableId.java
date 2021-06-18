@@ -1,7 +1,5 @@
 package it.eng.spagobi.functions.metadata;
 
-import java.util.UUID;
-
 // Generated 10-mag-2016 14.47.57 by Hibernate Tools 3.4.0.CR1
 
 /**
@@ -13,22 +11,22 @@ public class SbiFunctionInputVariableId implements java.io.Serializable {
 	 *
 	 */
 	private static final long serialVersionUID = 5802951016348664288L;
-	private UUID functionUuid;
+	private String functionUuid;
 	private String varName;
 
 	public SbiFunctionInputVariableId() {
 	}
 
-	public SbiFunctionInputVariableId(UUID functionUuid, String varName) {
+	public SbiFunctionInputVariableId(String functionUuid, String varName) {
 		this.functionUuid = functionUuid;
 		this.varName = varName;
 	}
 
-	public UUID getFunctionUuid() {
+	public String getFunctionUuid() {
 		return this.functionUuid;
 	}
 
-	public void setFunctionUuid(UUID functionUuid) {
+	public void setFunctionUuid(String functionUuid) {
 		this.functionUuid = functionUuid;
 	}
 

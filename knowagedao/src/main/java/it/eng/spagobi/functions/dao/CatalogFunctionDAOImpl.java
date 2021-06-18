@@ -85,10 +85,10 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	}
 
 	@Override
-	public UUID insertCatalogFunction(CatalogFunction catalogFunction, Map<String, String> inputColumns, Map<String, ? extends IInputVariable> inputVariables,
+	public String insertCatalogFunction(CatalogFunction catalogFunction, Map<String, String> inputColumns, Map<String, ? extends IInputVariable> inputVariables,
 			Map<String, ? extends IOutputColumn> outputColumns) {
 
-		UUID catalogFunctionUuid;
+		String catalogFunctionUuid;
 		Session session;
 		Transaction transaction;
 
@@ -107,9 +107,11 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			}
 			SbiCatalogFunction hibMap = toSbiFunctionCatalog(catalogFunction);
 			updateSbiCommonInfo4Insert(hibMap);
-			catalogFunctionUuid = (UUID) session.save(hibMap);
+			catalogFunctionUuid = (String) session.save(hibMap);
 
-			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.load(SbiCatalogFunction.class, catalogFunctionUuid);
+			List l = session.createQuery("from SbiCatalogFunction").list();
+
+			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.load(SbiCatalogFunction.class, catalogFunctionUuid.toString());
 
 			hibCatFunction.setSbiFunctionInputVariables(getSbiFunctionInputVariablesSet(inputVariables, hibCatFunction));
 			hibCatFunction.setSbiFunctionOutputColumns(getSbiFunctionOutputColumnsSet(outputColumns, hibCatFunction));
@@ -143,7 +145,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		for (String varName : inputVariables.keySet()) {
 			String value = inputVariables.get(varName).getValue();
 			String type = inputVariables.get(varName).getType();
-			var = new SbiFunctionInputVariable(new SbiFunctionInputVariableId(sbiCatalogFunction.getUuid(), varName), sbiCatalogFunction, type, value);
+			var = new SbiFunctionInputVariable(new SbiFunctionInputVariableId(sbiCatalogFunction.getFunctionUuid(), varName), sbiCatalogFunction, type, value);
 			updateSbiCommonInfo4Insert(var);
 			inputVarSet.add(var);
 		}
@@ -158,7 +160,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 
 		for (String colName : inputColumns.keySet()) {
 			String value = inputColumns.get(colName);
-			col = new SbiFunctionInputColumn(new SbiFunctionInputColumnId(sbiCatalogFunction.getUuid(), colName), sbiCatalogFunction, value);
+			col = new SbiFunctionInputColumn(new SbiFunctionInputColumnId(sbiCatalogFunction.getFunctionUuid(), colName), sbiCatalogFunction, value);
 			updateSbiCommonInfo4Insert(col);
 			inputColSet.add(col);
 		}
@@ -175,7 +177,8 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		for (String colName : outputColumns.keySet()) {
 			String fieldType = outputColumns.get(colName).getFieldType();
 			String type = outputColumns.get(colName).getType();
-			col = new SbiFunctionOutputColumn(new SbiFunctionOutputColumnId(sbiCatalogFunction.getUuid(), colName), sbiCatalogFunction, fieldType, type);
+			col = new SbiFunctionOutputColumn(new SbiFunctionOutputColumnId(sbiCatalogFunction.getFunctionUuid(), colName), sbiCatalogFunction, fieldType,
+					type);
 			updateSbiCommonInfo4Insert(col);
 			outputColSet.add(col);
 		}
@@ -185,7 +188,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 
 	private SbiCatalogFunction toSbiFunctionCatalog(CatalogFunction functionItem) {
 
-		SbiCatalogFunction hibFunctionCatalogItem = new SbiCatalogFunction();
+		SbiCatalogFunction hibFunctionCatalogItem = new SbiCatalogFunction(UUID.randomUUID());
 		hibFunctionCatalogItem.setBenchmarks(functionItem.getBenchmarks());
 		hibFunctionCatalogItem.setFamily(functionItem.getFamily());
 		hibFunctionCatalogItem.setLanguage(functionItem.getLanguage());
@@ -206,7 +209,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	}
 
 	@Override
-	public UUID updateCatalogFunction(CatalogFunction updatedCatalogFunction, UUID uuid) {
+	public String updateCatalogFunction(CatalogFunction updatedCatalogFunction, String uuid) {
 
 		Session session;
 		Transaction transaction;
@@ -225,7 +228,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
-			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, uuid);
+			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, uuid.toString());
 
 			updateOutputColumns(hibCatFunction, session, updatedCatalogFunction);
 			updateInputVariables(hibCatFunction, session, updatedCatalogFunction);
@@ -294,7 +297,8 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		Set<SbiFunctionInputColumn> hibColsSet = hibCatFunction.getSbiFunctionInputColumns();
 		for (String colName : updatedCatalogFunction.getInputColumns().keySet()) {
 			String colType = updatedCatalogFunction.getInputColumns().get(colName);
-			SbiFunctionInputColumn col = new SbiFunctionInputColumn(new SbiFunctionInputColumnId(hibCatFunction.getUuid(), colName), hibCatFunction, colType);
+			SbiFunctionInputColumn col = new SbiFunctionInputColumn(new SbiFunctionInputColumnId(hibCatFunction.getFunctionUuid(), colName), hibCatFunction,
+					colType);
 			updateSbiCommonInfo4Insert(col);
 			hibColsSet.add(col);
 		}
@@ -332,7 +336,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		for (String colName : updatedCatalogFunction.getOutputColumns().keySet()) {
 			String colFieldType = updatedCatalogFunction.getOutputColumns().get(colName).getFieldType();
 			String colType = updatedCatalogFunction.getOutputColumns().get(colName).getType();
-			SbiFunctionOutputColumn col = new SbiFunctionOutputColumn(new SbiFunctionOutputColumnId(hibCatFunction.getUuid(), colName), hibCatFunction,
+			SbiFunctionOutputColumn col = new SbiFunctionOutputColumn(new SbiFunctionOutputColumnId(hibCatFunction.getFunctionUuid(), colName), hibCatFunction,
 					colFieldType, colType);
 			updateSbiCommonInfo4Insert(col);
 			hibColsSet.add(col);
@@ -371,8 +375,8 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		for (String varName : updatedCatalogFunction.getInputVariables().keySet()) {
 			String varType = updatedCatalogFunction.getInputVariables().get(varName).getType();
 			String varValue = updatedCatalogFunction.getInputVariables().get(varName).getValue();
-			SbiFunctionInputVariable var = new SbiFunctionInputVariable(new SbiFunctionInputVariableId(hibCatFunction.getUuid(), varName), hibCatFunction,
-					varType, varValue);
+			SbiFunctionInputVariable var = new SbiFunctionInputVariable(new SbiFunctionInputVariableId(hibCatFunction.getFunctionUuid(), varName),
+					hibCatFunction, varType, varValue);
 			updateSbiCommonInfo4Insert(var);
 			hibVarsSet.add(var);
 		}
@@ -380,7 +384,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	}
 
 	@Override
-	public void deleteCatalogFunction(UUID uuid) {
+	public void deleteCatalogFunction(String uuid) {
 
 		Session session;
 		Transaction transaction;
@@ -413,7 +417,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				throw fiue;
 			}
 
-			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, uuid);
+			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, uuid.toString());
 			session.delete(hibCatFunction);
 
 			transaction.commit();
@@ -436,7 +440,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	}
 
 	@Override
-	public SbiCatalogFunction getCatalogFunctionByUuid(UUID uuid) {
+	public SbiCatalogFunction getCatalogFunctionByUuid(String uuid) {
 
 		Session session;
 		Transaction transaction = null;
@@ -450,7 +454,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			session = getSession();
 			Assert.assertNotNull(session, "session cannot be null");
 			transaction = session.beginTransaction();
-			sbiCatalogFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, uuid);
+			sbiCatalogFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, uuid.toString());
 			transaction.commit();
 
 		} catch (Throwable t) {
