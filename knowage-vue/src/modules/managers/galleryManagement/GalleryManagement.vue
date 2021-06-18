@@ -28,12 +28,12 @@
                     <template #option="slotProps">
                         <router-link class="kn-decoration-none" :to="{ name: 'gallery-detail', params: { id: slotProps.option.id } }" exact>
                             <div class="kn-list-item">
-                                <Avatar :icon="typeDescriptor.iconTypesMap[slotProps.option.type].className" shape="circle" size="medium" :style="typeDescriptor.iconTypesMap[slotProps.option.type].style" />
+                                <Avatar :icon="typeDescriptor.iconTypesMap[slotProps.option.type].className" shape="circle" size="medium" :style="typeDescriptor.iconTypesMap[slotProps.option.type].style" v-tooltip.bottom="slotProps.option.type" />
                                 <div class="kn-list-item-text">
                                     <span>{{ slotProps.option.name }}</span>
                                     <span class="kn-list-item-text-secondary kn-truncated" v-tooltip="slotProps.option.description">{{ slotProps.option.description }}</span>
                                 </div>
-                                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deleteTemplate($event, slotProps.option.id)" />
+                                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deleteTemplate($event, slotProps.option.id)" v-tooltip.bottom="$t('common.delete')" />
                             </div>
                         </router-link>
                     </template>
