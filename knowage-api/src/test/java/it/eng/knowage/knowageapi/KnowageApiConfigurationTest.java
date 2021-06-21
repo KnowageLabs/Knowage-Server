@@ -30,18 +30,16 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.Scope;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
-import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImpl;
+import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImplTest;
 
 @Configuration
-@Profile("production")
+@Profile("test")
 @ComponentScan("it.eng.knowage.knowageapi")
-public class KnowageApiConfiguration {
+public class KnowageApiConfigurationTest {
 
 	@Bean
 	@Qualifier("knowage-gallery")
@@ -68,20 +66,23 @@ public class KnowageApiConfiguration {
 	}
 
 	@Bean
-	@Scope(scopeName = WebApplicationContext.SCOPE_REQUEST)
+	// Cannot be used in tests -> @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST)
 	public BusinessRequestContext businessRequestContext() {
-		return new BusinessRequestContext();
+		BusinessRequestContext businessRequestContext = new BusinessRequestContext();
+		businessRequestContext.setUsername("biadmin");
+		businessRequestContext.setOrganization("DEFAULT_TENANT");
+		return businessRequestContext;
+	}
+
+	@Bean
+	public FunctionCatalogAPI functionCatalogAPI() {
+		return new FunctionCatalogAPIImplTest();
 	}
 
 	@Lazy
 	@Bean
 	public SecurityServiceFactory securityService() throws NamingException, MalformedURLException {
-		return new SecurityServiceFactory();
-	}
-
-	@Bean
-	public FunctionCatalogAPI functionCatalogAPI() {
-		return new FunctionCatalogAPIImpl();
+		return new SecurityServiceFactoryTest();
 	}
 
 	@Bean(name = "multipartResolver")
