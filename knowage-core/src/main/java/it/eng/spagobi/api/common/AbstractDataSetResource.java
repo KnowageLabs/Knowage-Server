@@ -306,7 +306,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			if (p instanceof DataStoreCatalogFunctionField) {
 				String oldUuid = uuid;
 				uuid = ((DataStoreCatalogFunctionField) p).getCatalogFunctionUuid();
-				if (oldUuid != null && oldUuid != uuid)
+				if (oldUuid != null && !oldUuid.equals(uuid))
 					throw new SpagoBIRuntimeException("Only one function supported");
 			}
 		}
