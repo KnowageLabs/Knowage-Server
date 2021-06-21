@@ -670,6 +670,16 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 
 	   	 	$scope.dataset = response.data[0];
 
+	   	 	//the controller expects an object structure which is different from the one returned by the service, so we make some arrangements at runtime
+	   	 	if($scope.dataset.isPersisted) {
+		   	 	$scope.dataset.persist = $scope.dataset.isPersisted;
+		   	 	delete $scope.dataset.isPersisted;
+	   	 	}
+	   	 	if($scope.dataset.persistTableName) {
+		   	 	$scope.dataset.tableName = $scope.dataset.persistTableName;
+		   	 	delete $scope.dataset.persistTableName;
+	   	 	}
+
 			// Set the flag for editing the current dataaset (file)
 			$scope.editingDatasetFile = true;
 			$mdDialog.show({
