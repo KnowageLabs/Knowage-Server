@@ -20,8 +20,8 @@
                         <div class="p-grid">
                             <div class="p-col-6">
                                 <span class="p-float-label">
-                                    <InputText id="label" class="kn-material-input" type="text" v-model="template.name" @change="setDirty" />
-                                    <label class="kn-material-input-label" for="label">{{ $t('common.label') }}</label>
+                                    <InputText id="name" class="kn-material-input" type="text" v-model="template.name" @change="setDirty" />
+                                    <label class="kn-material-input-label" for="name">{{ $t('common.name') }}</label>
                                 </span>
                             </div>
                             <div :class="template.type === 'python' ? 'p-col-3' : 'p-col-6'">
