@@ -41,6 +41,7 @@ import it.eng.knowage.knowageapi.dao.dto.SbiFunctionInputColumn;
 import it.eng.knowage.knowageapi.dao.dto.SbiFunctionInputVariable;
 import it.eng.knowage.knowageapi.dao.dto.SbiFunctionOutputColumn;
 import it.eng.knowage.knowageapi.dao.dto.SbiObjFunction;
+import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 
 /**
  * @author Marco Libanori
@@ -73,7 +74,7 @@ class SbiCatalogFunctionDaoTest {
 	}
 
 	@Test
-	void create() throws SerialException, SQLException {
+	void create() throws SerialException, SQLException, KnowageBusinessException {
 
 		String label = RandomStringUtils.randomAlphanumeric(12);
 
@@ -131,12 +132,13 @@ class SbiCatalogFunctionDaoTest {
 
 		transaction.commit();
 
+		SbiCatalogFunction find = dao.find(n.getFunctionId());
 
 
 		transaction = em.getTransaction();
 		transaction.begin();
 
-		dao.delete(n.getFunctionId());
+		dao.delete(find.getFunctionId());
 
 		transaction.commit();
 	}

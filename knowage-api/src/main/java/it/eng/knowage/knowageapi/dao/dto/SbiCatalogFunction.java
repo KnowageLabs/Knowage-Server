@@ -18,6 +18,7 @@
 package it.eng.knowage.knowageapi.dao.dto;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.Nullable;
 import javax.persistence.Basic;
@@ -29,6 +30,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -42,6 +45,9 @@ import org.hibernate.annotations.ParamDef;
 
 import it.eng.knowage.knowageapi.dao.listener.TenantListener;
 
+/**
+ * @author Marco Libanori
+ */
 @Entity
 @Table(name = "SBI_CATALOG_FUNCTION")
 @EntityListeners(TenantListener.class)
@@ -49,6 +55,9 @@ import it.eng.knowage.knowageapi.dao.listener.TenantListener;
 		@ParamDef(name = "organization", type = "string")
 })
 @Filter(name = "organization", condition = "organization like :organization")
+@NamedQueries({
+	@NamedQuery(name = "SbiCatalogFunction.delete", query = "DELETE FROM SbiCatalogFunction q WHERE q.functionId = :functionId")
+})
 public class SbiCatalogFunction extends AbstractEntity {
 
 	@Id
@@ -121,19 +130,19 @@ public class SbiCatalogFunction extends AbstractEntity {
 
 	@OneToMany(mappedBy = "function", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@PrimaryKeyJoinColumn(name = "FUNCTION_UUID", referencedColumnName = "FUNCTION_UUID")
-	private Set<SbiFunctionInputColumn> inputColumns;
+	private Set<SbiFunctionInputColumn> inputColumns = new TreeSet<>();
 
 	@OneToMany(mappedBy = "function", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@PrimaryKeyJoinColumn(name = "FUNCTION_UUID", referencedColumnName = "FUNCTION_UUID")
-	private Set<SbiFunctionOutputColumn> outputColumns;
+	private Set<SbiFunctionOutputColumn> outputColumns = new TreeSet<>();
 
 	@OneToMany(mappedBy = "function", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@PrimaryKeyJoinColumn(name = "FUNCTION_UUID", referencedColumnName = "FUNCTION_UUID")
-	private Set<SbiFunctionInputVariable> inputVariables;
+	private Set<SbiFunctionInputVariable> inputVariables = new TreeSet<>();
 
-//	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)
-//	@JoinColumn(name = "FUNCTION_UUID")
-//	private Set<SbiObjFunction> objFunctions;
+	@OneToMany(mappedBy = "function", orphanRemoval = false, fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@PrimaryKeyJoinColumn(name = "FUNCTION_UUID", referencedColumnName = "FUNCTION_UUID")
+	private Set<SbiObjFunction> objFunctions = new TreeSet<>();
 
 	public String getFunctionId() {
 		return functionId;
@@ -261,6 +270,143 @@ public class SbiCatalogFunction extends AbstractEntity {
 
 	public void setInputVariables(Set<SbiFunctionInputVariable> inputVariables) {
 		this.inputVariables = inputVariables;
+	}
+
+	public Set<SbiObjFunction> getObjFunctions() {
+		return objFunctions;
+	}
+
+	public void setObjFunctions(Set<SbiObjFunction> objFunctions) {
+		this.objFunctions = objFunctions;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((benchmarks == null) ? 0 : benchmarks.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((family == null) ? 0 : family.hashCode());
+		result = prime * result + ((functionId == null) ? 0 : functionId.hashCode());
+		result = prime * result + ((inputColumns == null) ? 0 : inputColumns.hashCode());
+		result = prime * result + ((inputVariables == null) ? 0 : inputVariables.hashCode());
+		result = prime * result + ((keywords == null) ? 0 : keywords.hashCode());
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		result = prime * result + ((language == null) ? 0 : language.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((objFunctions == null) ? 0 : objFunctions.hashCode());
+		result = prime * result + ((offlineScriptTrain == null) ? 0 : offlineScriptTrain.hashCode());
+		result = prime * result + ((offlineScriptUse == null) ? 0 : offlineScriptUse.hashCode());
+		result = prime * result + ((onlineScript == null) ? 0 : onlineScript.hashCode());
+		result = prime * result + ((outputColumns == null) ? 0 : outputColumns.hashCode());
+		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SbiCatalogFunction other = (SbiCatalogFunction) obj;
+		if (benchmarks == null) {
+			if (other.benchmarks != null)
+				return false;
+		} else if (!benchmarks.equals(other.benchmarks))
+			return false;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (family == null) {
+			if (other.family != null)
+				return false;
+		} else if (!family.equals(other.family))
+			return false;
+		if (functionId == null) {
+			if (other.functionId != null)
+				return false;
+		} else if (!functionId.equals(other.functionId))
+			return false;
+		if (inputColumns == null) {
+			if (other.inputColumns != null)
+				return false;
+		} else if (!inputColumns.equals(other.inputColumns))
+			return false;
+		if (inputVariables == null) {
+			if (other.inputVariables != null)
+				return false;
+		} else if (!inputVariables.equals(other.inputVariables))
+			return false;
+		if (keywords == null) {
+			if (other.keywords != null)
+				return false;
+		} else if (!keywords.equals(other.keywords))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (language == null) {
+			if (other.language != null)
+				return false;
+		} else if (!language.equals(other.language))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (objFunctions == null) {
+			if (other.objFunctions != null)
+				return false;
+		} else if (!objFunctions.equals(other.objFunctions))
+			return false;
+		if (offlineScriptTrain == null) {
+			if (other.offlineScriptTrain != null)
+				return false;
+		} else if (!offlineScriptTrain.equals(other.offlineScriptTrain))
+			return false;
+		if (offlineScriptUse == null) {
+			if (other.offlineScriptUse != null)
+				return false;
+		} else if (!offlineScriptUse.equals(other.offlineScriptUse))
+			return false;
+		if (onlineScript == null) {
+			if (other.onlineScript != null)
+				return false;
+		} else if (!onlineScript.equals(other.onlineScript))
+			return false;
+		if (outputColumns == null) {
+			if (other.outputColumns != null)
+				return false;
+		} else if (!outputColumns.equals(other.outputColumns))
+			return false;
+		if (owner == null) {
+			if (other.owner != null)
+				return false;
+		} else if (!owner.equals(other.owner))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "SbiCatalogFunction [functionId=" + functionId + ", name=" + name + ", description=" + description + ", language=" + language + ", owner="
+				+ owner + ", keywords=" + keywords + ", type=" + type + ", label=" + label + ", benchmarks=" + benchmarks + ", family=" + family
+				+ ", onlineScript=" + onlineScript + ", offlineScriptTrain=" + offlineScriptTrain + ", offlineScriptUse=" + offlineScriptUse + ", inputColumns="
+				+ inputColumns + ", outputColumns=" + outputColumns + ", inputVariables=" + inputVariables + ", objFunctions=" + objFunctions + "]";
 	}
 
 }

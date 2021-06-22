@@ -18,6 +18,8 @@
 package it.eng.knowage.knowageapi;
 
 import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -44,7 +46,9 @@ public class KnowageApiConfigurationTest {
 	@Bean
 	@Qualifier("knowage-gallery")
 	public EntityManagerFactory entityManagerFactoryForWidgetGallery() {
-		return Persistence.createEntityManagerFactory("knowage-gallery");
+		Map<String, Object> properties = getEntityManagerFactoriesProperties();
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("knowage-gallery", properties);
+		return emf;
 	}
 
 	@Bean
@@ -56,7 +60,9 @@ public class KnowageApiConfigurationTest {
 	@Bean
 	@Qualifier("knowage-functioncatalog")
 	public EntityManagerFactory entityManagerFactoryForWidgetFunctionCatalog() {
-		return Persistence.createEntityManagerFactory("knowage-functioncatalog");
+		Map<String, Object> properties = getEntityManagerFactoriesProperties();
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("knowage-functioncatalog", properties);
+		return emf;
 	}
 
 	@Bean
@@ -65,8 +71,18 @@ public class KnowageApiConfigurationTest {
 		return emf.createEntityManager();
 	}
 
+	private Map<String, Object> getEntityManagerFactoriesProperties() {
+		Map<String, Object> properties = new HashMap<>();
+
+		properties.put("javax.persistence.jdbc.url", "jdbc:mariadb://localhost:3310/knowage_master");
+		properties.put("javax.persistence.jdbc.driver", "org.mariadb.jdbc.Driver");
+		properties.put("javax.persistence.jdbc.user", "root");
+		properties.put("javax.persistence.jdbc.password", "root");
+		return properties;
+	}
+
 	@Bean
-	// Cannot be used in tests -> @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST)
+	// @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST) cannot be used in tests
 	public BusinessRequestContext businessRequestContext() {
 		BusinessRequestContext businessRequestContext = new BusinessRequestContext();
 		businessRequestContext.setUsername("biadmin");
