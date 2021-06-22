@@ -214,7 +214,7 @@ export default defineComponent({
             this.windowWidth = window.innerWidth
         },
         validateTags(): Boolean {
-            const validationRegex = /^([a-zA-Z0-9\\-\\_])*$/g
+            const validationRegex = /^([a-zA-Z0-9-_])*$/g
             for (var idx in this.template.tags) {
                 let currentTag = this.template.tags[idx]
                 const valid = currentTag.match(validationRegex)
