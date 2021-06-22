@@ -32,7 +32,8 @@ module.exports = function(grunt) {
 	        		 'js/lib/angular/color-picker/tinycolor-min.js',
 	        		 'js/lib/angular/color-picker/tinygradient.min.js',
 	        		 'js/lib/angular/color-picker/angularjs-color-picker.js',
-	        		 'js/lib/xml2js/xml2json.js'
+	        		 'js/lib/xml2js/xml2json.js',
+	        		 'js/lib/angular/angular-base64/angular-base64.min.js'
 	        	 ],
 	        	 'dist/knowage-modules-bundle.js': [
 	        		 'node_modules/moment/min/moment-with-locales.min.js',
