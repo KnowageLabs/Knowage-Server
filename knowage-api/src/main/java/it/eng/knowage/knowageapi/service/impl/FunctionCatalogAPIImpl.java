@@ -25,6 +25,10 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import it.eng.knowage.knowageapi.dao.dto.SbiCatalogFunction;
+import it.eng.knowage.knowageapi.error.KnowageBusinessException;
+import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
+import it.eng.knowage.knowageapi.mapper.FunctionCompleteDTO2SbiCatalogFunction;
 import it.eng.knowage.knowageapi.mapper.SbiFunctionCatalog2FunctionCompleteDTO;
 import it.eng.knowage.knowageapi.mapper.SbiFunctionCatalog2FunctionDTO;
 import it.eng.knowage.knowageapi.repository.SbiCatalogFunctionRepository;
@@ -39,35 +43,50 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 
 	private static final SbiFunctionCatalog2FunctionDTO TO_FUNCTION_DTO = new SbiFunctionCatalog2FunctionDTO();
 	private static final SbiFunctionCatalog2FunctionCompleteDTO TO_FUNCTION_COMPLETE_DTO = new SbiFunctionCatalog2FunctionCompleteDTO();
+	private static final FunctionCompleteDTO2SbiCatalogFunction TO_SBI_CATALOG_FUNCTION = new FunctionCompleteDTO2SbiCatalogFunction();
 
 	@Autowired
 	private SbiCatalogFunctionRepository repository;
 
 	@Override
 	public List<FunctionDTO> find(String searchStr) {
-		return repository.findAll(searchStr).stream().map(TO_FUNCTION_DTO).collect(toList());
+		return repository.findAll(searchStr)
+				.stream()
+				.map(TO_FUNCTION_DTO)
+				.collect(toList());
 	}
 
 	@Override
 	public FunctionCompleteDTO get(UUID id) {
-		return Optional.of(repository.find(id.toString())).map(TO_FUNCTION_COMPLETE_DTO).orElseThrow(RuntimeException::new);
+		return Optional.of(repository.find(id.toString()))
+				.map(TO_FUNCTION_COMPLETE_DTO)
+				.orElseThrow(() -> new KnowageRuntimeException("Function with id " + id + " not found"));
 	}
 
 	@Override
-	public FunctionCompleteDTO create(FunctionCompleteDTO functionCatalog) {
-		// TODO Auto-generated method stub
-		return null;
+	public FunctionCompleteDTO create(FunctionCompleteDTO function) {
+		SbiCatalogFunction beFunction = Optional.of(function)
+				.map(TO_SBI_CATALOG_FUNCTION)
+				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));
+
+		return Optional.of(repository.create(beFunction))
+				.map(TO_FUNCTION_COMPLETE_DTO)
+				.get();
 	}
 
 	@Override
-	public FunctionCompleteDTO update(FunctionCompleteDTO functionCatalog) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public FunctionCompleteDTO update(FunctionCompleteDTO function) {
+		SbiCatalogFunction beFunction = Optional.of(function)
+				.map(TO_SBI_CATALOG_FUNCTION)
+				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));
+
+		return Optional.of(repository.update(beFunction))
+				.map(TO_FUNCTION_COMPLETE_DTO)
+				.get();	}
 
 	@Override
-	public void delete(UUID id) {
-		// TODO Auto-generated method stub
+	public void delete(UUID id) throws KnowageBusinessException {
+		repository.delete(id.toString());
 	}
 
 }

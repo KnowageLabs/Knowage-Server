@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package it.eng.knowage.knowageapi.repository;
 
 import java.util.List;
@@ -28,6 +27,7 @@ import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.dao.SbiCatalogFunctionDao;
 import it.eng.knowage.knowageapi.dao.dto.SbiCatalogFunction;
+import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 
 /**
  * @author Marco Libanori
@@ -50,8 +50,16 @@ public class SbiCatalogFunctionRepository {
 		return dao.find(id);
 	}
 
+	public SbiCatalogFunction create(SbiCatalogFunction function) {
+		return dao.create(function);
+	}
+
+	public SbiCatalogFunction update(SbiCatalogFunction function) {
+		return dao.update(function);
+	}
+
 	@Transactional(value = TxType.REQUIRED)
-	public void delete(String id) {
+	public void delete(String id) throws KnowageBusinessException {
 		dao.delete(id);
 	}
 

@@ -1,45 +1,52 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
- *
+
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.knowageapi.service;
-
-import java.util.List;
-import java.util.UUID;
-
-import it.eng.knowage.knowageapi.error.KnowageBusinessException;
-import it.eng.knowage.knowageapi.resource.dto.FunctionCompleteDTO;
-import it.eng.knowage.knowageapi.resource.dto.FunctionDTO;
+package it.eng.knowage.knowageapi.resource.dto;
 
 /**
  * @author Marco Libanori
  */
-public interface FunctionCatalogAPI {
+public class FunctionInputVariableDTO {
 
-	default List<FunctionDTO> find() {
-		return find(null);
+	private String name;
+	private String type;
+	private String value;
+
+	public String getName() {
+		return name;
 	}
 
-	List<FunctionDTO> find(String search);
+	public void setName(String varName) {
+		this.name = varName;
+	}
 
-	FunctionCompleteDTO get(UUID id);
+	public String getType() {
+		return type;
+	}
 
-	FunctionCompleteDTO create(FunctionCompleteDTO functionCatalog);
+	public void setType(String type) {
+		this.type = type;
+	}
 
-	FunctionCompleteDTO update(FunctionCompleteDTO functionCatalog);
+	public String getValue() {
+		return value;
+	}
 
-	void delete(UUID id) throws KnowageBusinessException;
+	public void setValue(String value) {
+		this.value = value;
+	}
 }

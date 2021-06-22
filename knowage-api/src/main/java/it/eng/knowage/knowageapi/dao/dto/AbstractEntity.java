@@ -137,4 +137,90 @@ public class AbstractEntity {
 	public void setOrganization(String organization) {
 		this.organization = organization;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((organization == null) ? 0 : organization.hashCode());
+		result = prime * result + ((sbiVersionDe == null) ? 0 : sbiVersionDe.hashCode());
+		result = prime * result + ((sbiVersionIn == null) ? 0 : sbiVersionIn.hashCode());
+		result = prime * result + ((sbiVersionUp == null) ? 0 : sbiVersionUp.hashCode());
+		result = prime * result + ((timeDe == null) ? 0 : timeDe.hashCode());
+		result = prime * result + ((timeIn == null) ? 0 : timeIn.hashCode());
+		result = prime * result + ((timeUp == null) ? 0 : timeUp.hashCode());
+		result = prime * result + ((userDe == null) ? 0 : userDe.hashCode());
+		result = prime * result + ((userIn == null) ? 0 : userIn.hashCode());
+		result = prime * result + ((userUp == null) ? 0 : userUp.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AbstractEntity other = (AbstractEntity) obj;
+		if (organization == null) {
+			if (other.organization != null)
+				return false;
+		} else if (!organization.equals(other.organization))
+			return false;
+		if (sbiVersionDe == null) {
+			if (other.sbiVersionDe != null)
+				return false;
+		} else if (!sbiVersionDe.equals(other.sbiVersionDe))
+			return false;
+		if (sbiVersionIn == null) {
+			if (other.sbiVersionIn != null)
+				return false;
+		} else if (!sbiVersionIn.equals(other.sbiVersionIn))
+			return false;
+		if (sbiVersionUp == null) {
+			if (other.sbiVersionUp != null)
+				return false;
+		} else if (!sbiVersionUp.equals(other.sbiVersionUp))
+			return false;
+		if (timeDe == null) {
+			if (other.timeDe != null)
+				return false;
+		} else if (!timeDe.equals(other.timeDe))
+			return false;
+		if (timeIn == null) {
+			if (other.timeIn != null)
+				return false;
+		} else if (!timeIn.equals(other.timeIn))
+			return false;
+		if (timeUp == null) {
+			if (other.timeUp != null)
+				return false;
+		} else if (!timeUp.equals(other.timeUp))
+			return false;
+		if (userDe == null) {
+			if (other.userDe != null)
+				return false;
+		} else if (!userDe.equals(other.userDe))
+			return false;
+		if (userIn == null) {
+			if (other.userIn != null)
+				return false;
+		} else if (!userIn.equals(other.userIn))
+			return false;
+		if (userUp == null) {
+			if (other.userUp != null)
+				return false;
+		} else if (!userUp.equals(other.userUp))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "AbstractEntity [sbiVersionDe=" + sbiVersionDe + ", sbiVersionIn=" + sbiVersionIn + ", sbiVersionUp=" + sbiVersionUp + ", timeDe=" + timeDe
+				+ ", timeIn=" + timeIn + ", timeUp=" + timeUp + ", userDe=" + userDe + ", userIn=" + userIn + ", userUp=" + userUp + ", organization="
+				+ organization + "]";
+	}
 }

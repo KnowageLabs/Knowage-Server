@@ -32,6 +32,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,24 +84,26 @@ public class FunctionCatalog {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public FunctionCompleteDTO create(FunctionCompleteDTO function) {
+	public Response create(FunctionCompleteDTO function) {
 		try {
-			return api.create(function);
+			FunctionCompleteDTO create = api.create(function);
+			return Response.ok(create).build();
 		} catch (Exception e) {
 			LOGGER.error("Error getting function with id " + Optional.of(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
-			throw e;
+			return Response.serverError().build();
 		}
 	}
 
 	@DELETE
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void delete(@PathParam("id") UUID id) {
+	public Response delete(@PathParam("id") UUID id) {
 		try {
 			api.delete(id);
+			return Response.ok().build();
 		} catch (Exception e) {
 			LOGGER.error("Error deleting function with id " + String.valueOf(id), e);
-			throw e;
+			return Response.serverError().build();
 		}
 	}
 
@@ -108,9 +111,10 @@ public class FunctionCatalog {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public FunctionCompleteDTO update(FunctionCompleteDTO function) {
+	public Response update(FunctionCompleteDTO function) {
 		try {
-			return api.update(function);
+			FunctionCompleteDTO ret = api.update(function);
+			return Response.ok(ret).build();
 		} catch (Exception e) {
 			LOGGER.error("Error updating function with id " + Optional.of(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
 			throw e;

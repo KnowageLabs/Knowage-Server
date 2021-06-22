@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.dao.dto.SbiCatalogFunction;
+import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 
 /**
  * @author Marco Libanori
@@ -81,12 +82,43 @@ public class SbiCatalogFunctionDaoImpl implements SbiCatalogFunctionDao {
 	}
 
 	@Override
-	public void delete(String id) {
+	public void delete(String id) throws KnowageBusinessException {
 		init();
 
 		SbiCatalogFunction function = em.find(SbiCatalogFunction.class, id);
 
-		em.remove(function);
+		if (!function.getObjFunctions().isEmpty()) {
+			throw new KnowageBusinessException("Function with id " + id + " cannot be deleted because it's referenced by other objects");
+		}
+
+		function.getInputColumns().forEach(e -> {
+			Query query = em.createNamedQuery("SbiFunctionInputColumn.delete");
+			query.setParameter("colName", e.getId().getColName());
+			query.setParameter("functionId", e.getId().getFunctionId());
+
+			query.executeUpdate();
+		});
+
+		function.getInputVariables().forEach(e -> {
+			Query query = em.createNamedQuery("SbiFunctionInputVariable.delete");
+			query.setParameter("varName", e.getId().getVarName());
+			query.setParameter("functionId", e.getId().getFunctionId());
+
+			query.executeUpdate();
+		});
+
+		function.getOutputColumns().forEach(e -> {
+			Query query = em.createNamedQuery("SbiFunctionOutputColumn.delete");
+			query.setParameter("colName", e.getId().getColName());
+			query.setParameter("functionId", e.getId().getFunctionId());
+
+			query.executeUpdate();
+		});
+
+		Query query = em.createNamedQuery("SbiCatalogFunction.delete");
+		query.setParameter("functionId", function.getFunctionId());
+
+		query.executeUpdate();
 	}
 
 	@Override

@@ -17,12 +17,29 @@
  */
 package it.eng.knowage.knowageapi.resource.dto;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author Marco Libanori
+ */
 public class FunctionCompleteDTO {
 
 	private UUID id;
 	private String name;
+	private String benchmark;
+	private String description;
+	private String family;
+	private final List<FunctionInputColumnDTO> inputColumns = new ArrayList<>();
+	private final List<FunctionInputVariableDTO> inputVariables = new ArrayList<>();
+	private final List<String> keywords = new ArrayList<>();
+	private String label;
+	private String offlineScriptTrain;
+	private String offlineScriptUse;
+	private String onlineScript;
+	private final List<FunctionOutputColumnDTO> outputColumns = new ArrayList<>();
+	private String owner;
 
 	public UUID getId() {
 		return id;
@@ -68,6 +85,86 @@ public class FunctionCompleteDTO {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	public String getBenchmark() {
+		return benchmark;
+	}
+
+	public void setBenchmark(String benchmark) {
+		this.benchmark = benchmark;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getFamily() {
+		return family;
+	}
+
+	public void setFamily(String family) {
+		this.family = family;
+	}
+
+	public List<FunctionInputColumnDTO> getInputColumns() {
+		return inputColumns;
+	}
+
+	public List<FunctionInputVariableDTO> getInputVariables() {
+		return inputVariables;
+	}
+
+	public List<String> getKeywords() {
+		return keywords;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getOfflineScriptTrain() {
+		return offlineScriptTrain;
+	}
+
+	public void setOfflineScriptTrain(String offlineScriptTrain) {
+		this.offlineScriptTrain = offlineScriptTrain;
+	}
+
+	public String getOfflineScriptUse() {
+		return offlineScriptUse;
+	}
+
+	public void setOfflineScriptUse(String offlineScriptUse) {
+		this.offlineScriptUse = offlineScriptUse;
+	}
+
+	public String getOnlineScript() {
+		return onlineScript;
+	}
+
+	public void setOnlineScript(String onlineScript) {
+		this.onlineScript = onlineScript;
+	}
+
+	public List<FunctionOutputColumnDTO> getOutputColumns() {
+		return outputColumns;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 }
