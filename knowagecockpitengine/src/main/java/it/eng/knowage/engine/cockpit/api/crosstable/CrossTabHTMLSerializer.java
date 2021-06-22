@@ -918,7 +918,7 @@ public class CrossTabHTMLSerializer {
 								dataStyle += "color:" + textColor + ";";
 						}
 						// if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
-						if (!dataStyle.equals(DEFAULT_STYLE)) {
+						if (!isStandardStyle(dataStyle)) {
 							aColumn.setAttribute(STYLE_ATTRIBUTE, dataStyle);
 							classType += "NoStandardStyle";
 							isDataNoStandardStyle = true;
@@ -1084,6 +1084,18 @@ public class CrossTabHTMLSerializer {
 			table.setAttribute(aRow);
 		}
 		return table;
+	}
+
+	boolean isStandardStyle(String style) {
+		if (style.equals(DEFAULT_STYLE))
+			return true;
+		else {
+			// we consider the style to be standard even if the measure format is set
+			String remainder = style.replace(DEFAULT_STYLE, "");
+			if (remainder.equals("format:#.###,##") || remainder.equals("format:#,###.##"))
+				return true;
+		}
+		return false;
 	}
 
 	List<Measure> getSubtotalsMeasures(List<Measure> allMeasures) throws JSONException {
