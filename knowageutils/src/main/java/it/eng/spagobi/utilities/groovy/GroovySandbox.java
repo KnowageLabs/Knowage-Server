@@ -74,7 +74,7 @@ public class GroovySandbox {
 
 	private final static Class<?>[] CONSTANT_TYTPE_CLASSES_WHITELIST = new Class[] { Integer.class, Float.class, Long.class, Double.class, BigDecimal.class,
 			Integer.TYPE, Long.TYPE, Float.TYPE, Double.TYPE, Character.TYPE, Byte.TYPE, String.class, BigInteger.class, Object.class, Character.class,
-			Byte.class };
+			Byte.class, DateTimeFormatter.class };
 
 	private final Class<?>[] addedClasses;
 
