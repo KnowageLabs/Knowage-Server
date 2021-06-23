@@ -2,57 +2,89 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #left>{{ datasource.label }}</template>
         <template #right>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="buttonDisabled" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <Card :style="dataSourceDescriptor.card.style">
         <template #content>
+            {{ datasource }}
+
             <form class="p-fluid p-m-5">
-                <!-- LABEL -->
-                <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                    <span class="p-float-label">
-                        <InputText
-                            id="label"
-                            class="kn-material-input"
-                            type="text"
-                            :disabled="disableField"
-                            v-model.trim="v$.datasource.label.$model"
-                            :class="{
-                                'p-invalid': v$.datasource.label.$invalid && v$.datasource.label.$dirty
+                <div class="p-fluid p-formgrid p-grid">
+                    <!-- LABEL disabled if readOnly or editing and existing datasource-->
+                    <div class="p-field p-col-12 p-md-6" :style="dataSourceDescriptor.pField.style">
+                        <span class="p-float-label">
+                            <InputText
+                                id="label"
+                                class="kn-material-input"
+                                type="text"
+                                maxLength="100"
+                                v-model.trim="v$.datasource.label.$model"
+                                :class="{
+                                    'p-invalid': v$.datasource.label.$invalid && v$.datasource.label.$dirty
+                                }"
+                                @blur="v$.datasource.label.$touch()"
+                                @input="onFieldChange"
+                                :disabled="readOnly || disableLabelField"
+                            />
+                            <label for="label" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
+                        </span>
+                        <KnValidationMessages
+                            class="p-mt-1"
+                            :vComp="v$.datasource.label"
+                            :additionalTranslateParams="{
+                                fieldName: $t('common.name')
                             }"
-                            maxLength="100"
-                            @blur="v$.datasource.label.$touch()"
-                            @input="onFieldChange('label', $event.target.value)"
-                            data-test="name-input"
                         />
-                        <label for="label" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
-                    </span>
-                    <KnValidationMessages
-                        :vComp="v$.datasource.label"
-                        :additionalTranslateParams="{
-                            fieldName: $t('common.name')
-                        }"
-                    />
+                    </div>
+
+                    <!-- DIALECT disabled if readOnly -->
+                    <!-- need to show whole object on selection -->
+                    <div class="p-field p-col-12 p-md-6" :style="dataSourceDescriptor.pField.style">
+                        <span class="p-float-label">
+                            <Dropdown
+                                id="dialectName"
+                                class="kn-material-input"
+                                :options="availableDatabases"
+                                optionLabel="databaseDialect.name"
+                                optionValue="databaseDialect.value"
+                                v-model="v$.datasource.dialectName.$model"
+                                :class="{
+                                    'p-invalid': v$.datasource.dialectName.$invalid && v$.datasource.dialectName.$dirty
+                                }"
+                                @before-show="v$.datasource.dialectName.$touch()"
+                                @change="selectDatabase"
+                                :disabled="readOnly"
+                            />
+                            <label for="dialectName" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.dialect') }} * </label>
+                        </span>
+                        <KnValidationMessages
+                            class="p-mt-1"
+                            :vComp="v$.datasource.dialectName"
+                            :additionalTranslateParams="{
+                                fieldName: $t('managers.dataSourceManagement.form.dialect')
+                            }"
+                        />
+                    </div>
                 </div>
 
-                <!-- DESCRIPTION -->
+                <!-- DESCRIPTION disabled if readOnly-->
                 <div class="p-field" :style="dataSourceDescriptor.pField.style">
                     <span class="p-float-label">
                         <InputText
                             id="descr"
                             class="kn-material-input"
                             type="text"
-                            :disabled="disableField"
+                            maxLength="160"
                             v-model.trim="v$.datasource.descr.$model"
                             :class="{
                                 'p-invalid': v$.datasource.descr.$invalid && v$.datasource.descr.$dirty
                             }"
-                            maxLength="160"
                             @blur="v$.datasource.descr.$touch()"
-                            @input="onFieldChange('descr', $event.target.value)"
-                            data-test="name-input"
+                            @input="onFieldChange"
+                            :disabled="readOnly"
                         />
                         <label for="descr" class="kn-material-input-label"> {{ $t('common.description') }} * </label>
                     </span>
@@ -64,57 +96,30 @@
                     />
                 </div>
 
-                <!-- DIALECT -->
-                <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                    <span class="p-float-label">
-                        <Dropdown
-                            id="dialectName"
-                            class="kn-material-input"
-                            :options="availableDatabases"
-                            optionLabel="databaseDialect.name"
-                            optionValue="databaseDialect.value"
-                            v-model="v$.datasource.dialectName.$model"
-                            :class="{
-                                'p-invalid': v$.datasource.dialectName.$invalid && v$.datasource.dialectName.$dirty
-                            }"
-                            @before-show="v$.datasource.dialectName.$touch()"
-                            @change="onFieldChange('dialectName', $event.value)"
-                        />
-                        <label for="dialectName" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.dialect') }} * </label>
-                    </span>
-                    <KnValidationMessages
-                        :vComp="v$.datasource.dialectName"
-                        :additionalTranslateParams="{
-                            fieldName: $t('managers.dataSourceManagement.form.dialect')
-                        }"
-                    />
-                </div>
-
+                <!-- MULTISCHEMA disabled if readOnly, hidden if type is not JNDI -->
                 <div v-if="jdbcOrJndi.type == 'JNDI'">
-                    <!-- MULTISCHEMA -->
                     <div class="p-field" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
-                            <Checkbox id="multiSchema" v-model="datasource.multiSchema" :binary="true" />
+                            <Checkbox id="multiSchema" v-model="datasource.multiSchema" :binary="true" :disabled="readOnly" />
                             <label for="multiSchema" class="kn-material-input-label" :style="dataSourceDescriptor.checkboxLabel.style"> {{ $t('managers.dataSourceManagement.form.multischema') }} </label>
                         </span>
                     </div>
 
-                    <!-- SCHEMA ATTRIBUTE -->
+                    <!-- SCHEMA ATTRIBUTE disabled if readOnly -->
                     <div class="p-field" :style="dataSourceDescriptor.pField.style" v-if="datasource.multiSchema">
                         <span class="p-float-label">
                             <InputText
                                 id="schemaAttribute"
                                 class="kn-material-input"
                                 type="text"
-                                :disabled="disableField"
+                                maxLength="45"
                                 v-model.trim="v$.datasource.schemaAttribute.$model"
                                 :class="{
                                     'p-invalid': v$.datasource.schemaAttribute.$invalid && v$.datasource.schemaAttribute.$dirty
                                 }"
-                                maxLength="45"
                                 @blur="v$.datasource.schemaAttribute.$touch()"
-                                @input="onFieldChange('schemaAttribute', $event.target.value)"
-                                data-test="name-input"
+                                @input="onFieldChange"
+                                :disabled="readOnly"
                             />
                             <label for="schemaAttribute" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.schemaAttribute') }} </label>
                         </span>
@@ -127,53 +132,58 @@
                     </div>
                 </div>
 
-                <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                    <!-- READ ONLY -->
-                    <label class="kn-material-input-label">{{ $t('managers.dataSourceManagement.form.readOnly') }}</label>
+                <!-- READ ONLY CONTAINER -->
+                <label class="kn-material-input-label">{{ $t('managers.dataSourceManagement.form.readOnly') }}</label>
+                <div class="p-field p-formgroup-inline p-mb-3 p-mt-2" :style="dataSourceDescriptor.pField.style">
+                    <!-- READ ONLY BUTTON disabled if datasource.writeDefault is true || if readOnly -->
                     <div class="p-field-radiobutton">
-                        <RadioButton id="readOnly" :value="true" v-model="datasource.readOnly" :disabled="datasource.writeDefault" />
+                        <RadioButton id="readOnly" :value="true" v-model="datasource.readOnly" :disabled="datasource.writeDefault || readOnly" />
                         <label for="readOnly">{{ $t('managers.dataSourceManagement.form.readOnly') }}</label>
                     </div>
+                    <!-- READ AND WRITE BUTTON disabled if !selectedDatabase.cacheSupported || if readOnly -->
+                    <!-- naci nacin da izvucem selected database objekat iz dropdowna -->
                     <div class="p-field-radiobutton">
-                        <RadioButton id="readAndWrite" :value="false" v-model="datasource.readOnly" />
+                        <RadioButton id="readAndWrite" :value="false" v-model="datasource.readOnly" :disabled="readOnly" />
                         <label for="readAndWrite">{{ $t('managers.dataSourceManagement.form.readAndWrite') }}</label>
                     </div>
-
-                    <!-- WRITE DEFAULT -->
+                    <!-- WRITE DEFAULT/USE AS CACHE  disabled if readOnly || !selectedDatabase.cacheSupported || selectedDataSource.readOnly == true -->
                     <span class="p-float-label" v-if="!datasource.readOnly">
-                        <Checkbox id="writeDefault" v-model="datasource.writeDefault" :binary="true" :disabled="datasource.readOnly" />
+                        <Checkbox id="writeDefault" v-model="datasource.writeDefault" :binary="true" :disabled="datasource.readOnly || readOnly" />
                         <label for="writeDefault" :style="dataSourceDescriptor.checkboxLabel.style"> {{ $t('managers.dataSourceManagement.form.writeDefault') }} </label>
                     </span>
                 </div>
 
-                <!-- TYPE -->
-                <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                    <label class="kn-material-input-label">{{ $t('common.type') }}</label>
+                <!-- TYPE CONTAINER-->
+                <label class="kn-material-input-label">{{ $t('common.type') }}</label>
+                <div class="p-field p-formgroup-inline p-mt-2" :style="dataSourceDescriptor.pField.style">
+                    <!-- JDBC disabled if readOnly -->
                     <div class="p-field-radiobutton">
-                        <RadioButton id="JDBC" :value="'JDBC'" v-model="jdbcOrJndi.type" />
+                        <RadioButton id="JDBC" :value="'JDBC'" v-model="jdbcOrJndi.type" :disabled="readOnly" />
                         <label for="JDBC">JDBC</label>
                     </div>
+                    <!-- JNDI disabled if readOnly && user is NOT SUPERADMIN-->
                     <div class="p-field-radiobutton">
-                        <RadioButton id="readAndWrite" :value="'JNDI'" v-model="jdbcOrJndi.type" />
+                        <RadioButton id="readAndWrite" :value="'JNDI'" v-model="jdbcOrJndi.type" :disabled="readOnly && !currentUser.isSuperadmin" />
                         <label for="JNDI">JNDI</label>
                     </div>
                 </div>
 
-                <!-- JNDI -->
+                <!-- JNDI OPTIONS disabled if readOnly || type isnt JNDI-->
                 <div class="p-field" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JNDI'">
                     <span class="p-float-label">
                         <InputText
                             id="jndi"
                             class="kn-material-input"
                             type="text"
+                            maxLength="160"
                             v-model.trim="v$.datasource.jndi.$model"
                             :class="{
                                 'p-invalid': v$.datasource.jndi.$invalid && v$.datasource.jndi.$dirty
                             }"
-                            maxLength="160"
                             @blur="v$.datasource.jndi.$touch()"
-                            @input="onFieldChange('jndi', $event.target.value)"
-                            data-test="name-input"
+                            @input="onFieldChange"
+                            v-tooltip.top="$t('managers.dataSourceManagement.form.jndiInfo')"
+                            :disabled="readOnly"
                         />
                         <label for="jndi" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.jndi') }} * </label>
                     </span>
@@ -184,52 +194,23 @@
                         }"
                     />
                 </div>
-
-                <!-- JDBC -->
-                <div class="p-field" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JDBC'">
-                    <!-- URL -->
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                        <span class="p-float-label">
-                            <InputText
-                                id="urlConnection"
-                                class="kn-material-input"
-                                type="text"
-                                v-model.trim="v$.datasource.urlConnection.$model"
-                                :class="{
-                                    'p-invalid': v$.datasource.urlConnection.$invalid && v$.datasource.urlConnection.$dirty
-                                }"
-                                maxLength="500"
-                                @blur="v$.datasource.urlConnection.$touch()"
-                                @input="onFieldChange('urlConnection', $event.target.value)"
-                                data-test="name-input"
-                            />
-                            <label for="urlConnection" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.urlConnection') }} * </label>
-                        </span>
-                        <KnValidationMessages
-                            :vComp="v$.datasource.urlConnection"
-                            :additionalTranslateParams="{
-                                fieldName: $t('managers.dataSourceManagement.form.urlConnection')
-                            }"
-                        />
-                    </div>
-                </div>
-
-                <!-- USER -->
-                <div class="p-field" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JDBC'">
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
+                <!-- JDBC options disabled if readOnly || type isnt JDBC -->
+                <!-- USER & PASSWORD CONTAINER -->
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-12 p-md-6" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JDBC'">
                         <span class="p-float-label">
                             <InputText
                                 id="user"
                                 class="kn-material-input"
                                 type="text"
+                                maxLength="50"
                                 v-model.trim="v$.datasource.user.$model"
                                 :class="{
                                     'p-invalid': v$.datasource.user.$invalid && v$.datasource.user.$dirty
                                 }"
-                                maxLength="50"
                                 @blur="v$.datasource.user.$touch()"
-                                @input="onFieldChange('user', $event.target.value)"
-                                data-test="name-input"
+                                @input="onFieldChange"
+                                :disabled="readOnly"
                             />
                             <label for="user" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.user') }}</label>
                         </span>
@@ -240,25 +221,20 @@
                             }"
                         />
                     </div>
-                </div>
 
-                <!-- PASSWORD -->
-                <div class="p-field" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JDBC'">
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
+                    <!-- PASSWORD, nesto je cudno uradjeno u source kodu, treba da se razjasni -->
+                    <div class="p-field p-col-12 p-md-6" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JDBC'">
                         <span class="p-float-label">
                             <InputText
                                 id="pwd"
                                 class="kn-material-input"
                                 type="password"
-                                placeholder="Only If Changed"
-                                v-model.trim="v$.datasource.pwd.$model"
-                                :class="{
-                                    'p-invalid': v$.datasource.pwd.$invalid && v$.datasource.pwd.$dirty
-                                }"
                                 maxLength="50"
+                                v-model.trim="v$.datasource.pwd.$model"
+                                :class="{ 'p-invalid': v$.datasource.pwd.$invalid && v$.datasource.pwd.$dirty }"
                                 @blur="v$.datasource.pwd.$touch()"
-                                @input="onFieldChange('pwd', $event.target.value)"
-                                data-test="name-input"
+                                @input="onFieldChange"
+                                :disabled="readOnly"
                             />
                             <label for="pwd" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.pwd') }}</label>
                         </span>
@@ -271,58 +247,81 @@
                     </div>
                 </div>
 
-                <!-- DRIVER -->
+                <!-- URL disabled if readOnly -->
                 <div class="p-field" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JDBC'">
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                        <span class="p-float-label">
-                            <InputText
-                                id="driver"
-                                class="kn-material-input"
-                                type="text"
-                                v-model.trim="v$.datasource.driver.$model"
-                                :class="{
-                                    'p-invalid': v$.datasource.driver.$invalid && v$.datasource.driver.$dirty
-                                }"
-                                maxLength="50"
-                                @blur="v$.datasource.driver.$touch()"
-                                @input="onFieldChange('driver', $event.target.value)"
-                                data-test="name-input"
-                            />
-                            <label for="driver" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.driver') }} * </label>
-                        </span>
-                        <KnValidationMessages
-                            :vComp="v$.datasource.driver"
-                            :additionalTranslateParams="{
-                                fieldName: $t('managers.dataSourceManagement.form.driver')
+                    <span class="p-float-label">
+                        <InputText
+                            id="urlConnection"
+                            class="kn-material-input"
+                            type="text"
+                            maxLength="500"
+                            v-model.trim="v$.datasource.urlConnection.$model"
+                            :class="{
+                                'p-invalid': v$.datasource.urlConnection.$invalid && v$.datasource.urlConnection.$dirty
                             }"
+                            @blur="v$.datasource.urlConnection.$touch()"
+                            @input="onFieldChange"
+                            :disabled="readOnly"
                         />
-                    </div>
+                        <label for="urlConnection" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.urlConnection') }} * </label>
+                    </span>
+                    <KnValidationMessages
+                        :vComp="v$.datasource.urlConnection"
+                        :additionalTranslateParams="{
+                            fieldName: $t('managers.dataSourceManagement.form.urlConnection')
+                        }"
+                    />
                 </div>
 
-                {{ datasource }}
+                <!-- DRIVER disabled if readOnly -->
+                <div class="p-field" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JDBC'">
+                    <span class="p-float-label">
+                        <InputText
+                            id="driver"
+                            class="kn-material-input"
+                            type="text"
+                            maxLength="50"
+                            v-model.trim="v$.datasource.driver.$model"
+                            :class="{
+                                'p-invalid': v$.datasource.driver.$invalid && v$.datasource.driver.$dirty
+                            }"
+                            @blur="v$.datasource.driver.$touch()"
+                            @input="onFieldChange"
+                            :disabled="readOnly"
+                        />
+                        <label for="driver" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.driver') }} * </label>
+                    </span>
+                    <KnValidationMessages
+                        :vComp="v$.datasource.driver"
+                        :additionalTranslateParams="{
+                            fieldName: $t('managers.dataSourceManagement.form.driver')
+                        }"
+                    />
+                </div>
             </form>
         </template>
     </Card>
 
     <div v-if="jdbcOrJndi.type == 'JDBC'">
-        <DataSourceAdvancedOptions :advancedOptions="jdbcPoolConfiguration" @fieldChanged="onAdvancedOptionsChange" />
+        <DataSourceAdvancedOptions :advancedOptions="jdbcPoolConfiguration" :isReadOnly="readOnly" @fieldChanged="onAdvancedOptionsChange" />
     </div>
 </template>
 
 <script lang="ts">
+/* eslint-disable no-prototype-builtins */
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
-import Card from 'primevue/card'
+import axios from 'axios'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import useValidate from '@vuelidate/core'
 import dataSourceDescriptor from '../DataSourceDescriptor.json'
 import dataSourceDetailValidationDescriptor from './DataSourceDetailValidationDescriptor.json'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import DataSourceAdvancedOptions from '../DataSourceAdvancedOptions/DataSourceAdvancedOptions.vue'
 import Dropdown from 'primevue/dropdown'
 import RadioButton from 'primevue/radiobutton'
 import Checkbox from 'primevue/checkbox'
-import DataSourceAdvancedOptions from '../DataSourceAdvancedOptions/DataSourceAdvancedOptions.vue'
-// import Accordion from 'primevue/accordion'
-// import AccordionTab from 'primevue/accordiontab'
+import Card from 'primevue/card'
+import Tooltip from 'primevue/tooltip'
 
 export default defineComponent({
     components: {
@@ -332,28 +331,38 @@ export default defineComponent({
         RadioButton,
         Checkbox,
         DataSourceAdvancedOptions
-        // Accordion,
-        // AccordionTab
     },
     props: {
         selectedDatasource: {
             type: Object,
             required: false
         },
+        user: {
+            type: Object,
+            required: false
+        },
         databases: Array
     },
-    emits: ['touched', 'closed', 'inserted', 'fieldChanged'],
+    directives: {
+        tooltip: Tooltip
+    },
+    emits: ['touched', 'closed', 'inserted'],
+    computed: {},
     data() {
         return {
-            dataSourceDescriptor,
-            loading: false,
-            touched: false,
-            operation: 'insert',
             v$: useValidate() as any,
+            dataSourceDescriptor,
+            operation: 'insert',
             datasource: {} as any,
             availableDatabases: [] as any,
+            // selectedDatabase: {} as any,
             jdbcOrJndi: {} as any,
-            jdbcPoolConfiguration: {} as any
+            jdbcPoolConfiguration: {} as any,
+            currentUser: {} as any,
+            loading: false,
+            touched: false,
+            readOnly: false,
+            disableLabelField: false
         }
     },
     validations() {
@@ -361,32 +370,90 @@ export default defineComponent({
             datasource: createValidations('datasource', dataSourceDetailValidationDescriptor.validations.datasource)
         }
     },
-    computed: {},
     mounted() {
+        this.currentUser = { ...this.user } as any
+        this.availableDatabases = this.databases
         if (this.selectedDatasource) {
             this.datasource = { ...this.selectedDatasource } as any
             this.jdbcPoolConfiguration = this.datasource.jdbcPoolConfiguration as any
+            this.connectionType()
+            this.isReadOnly()
         }
-        this.availableDatabases = this.databases
     },
     watch: {
         selectedDatasource() {
             this.datasource = { ...this.selectedDatasource } as any
             this.jdbcPoolConfiguration = this.datasource.jdbcPoolConfiguration as any
             this.connectionType()
+            this.isReadOnly()
         },
         databases() {
             this.availableDatabases = this.databases
+        },
+        user() {
+            this.currentUser = { ...this.user } as any
         }
     },
     methods: {
-        closeTemplate() {
-            this.$router.push('/datasource')
-            this.$emit('closed')
+        connectionType() {
+            if (this.datasource.driver) {
+                this.jdbcOrJndi.type = 'JDBC'
+            }
+            if (this.datasource.jndi != undefined && this.datasource.jndi != '') {
+                this.jdbcOrJndi.type = 'JNDI'
+            }
+            console.log(this.jdbcOrJndi.type)
         },
-        onFieldChange(fieldName: string, value: any) {
-            this.$emit('fieldChanged', { fieldName, value })
+
+        isReadOnly() {
+            if (this.selectedDatasource) {
+                this.disableLabelField = true
+                //spojiti 2 ifa nakon testiranja
+                if (this.currentUser.isSuperadmin) {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('IS SUPER ADMIN!')
+                    })
+                    this.readOnly = false
+                } else if (this.currentUser.userId == this.datasource.owner && (!this.datasource.hasOwnProperty('jndi') || this.datasource.jndi == '')) {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('YOU ARE THE OWNER')
+                    })
+                    this.readOnly = false
+                } else {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('Information'),
+                        msg: this.$t('You are not the owner of this catalog.')
+                    })
+                    this.readOnly = true
+                }
+            } else {
+                this.readOnly = false
+                this.disableLabelField = false
+            }
         },
+        //moguce resenje za selectedDatabase
+        // selectDatabase(selectedDatabaseName) {
+        //     this.availableDatabases.forEach((database) => {
+        //         if (database.databaseDialect.value == selectedDatabaseName.value) {
+        //             this.selectedDatabase = database
+        //         }
+        //     })
+        //     console.log('selectedDatabase', this.selectedDatabase)
+        // },
+
+        async handleSubmit() {
+            if (this.v$.$invalid) {
+                console.log('validError', this.v$)
+                return
+            }
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'datasourcestest/2.0/test/'
+
+            await axios.post(url, this.datasource).then(() => {
+                this.$emit('inserted')
+                this.$router.replace('/datasource')
+            })
+        },
+
         closeTemplateConfirm() {
             if (!this.touched) {
                 this.closeTemplate()
@@ -402,20 +469,19 @@ export default defineComponent({
                 })
             }
         },
-        connectionType() {
-            if (this.datasource.driver) {
-                this.jdbcOrJndi.type = 'JDBC'
-            }
-            if (this.datasource.jndi != undefined && this.datasource.jndi != '') {
-                this.jdbcOrJndi.type = 'JNDI'
-            }
-            console.log(this.jdbcOrJndi.type)
-        },
         onAdvancedOptionsChange(event) {
             this.datasource.jdbcPoolConfiguration[event.fieldName] = event.value
             this.touched = true
             this.$emit('touched')
         },
+        onFieldChange() {
+            console.log('CHANGED')
+            this.$emit('touched')
+        },
+        closeTemplate() {
+            this.$router.push('/datasource')
+            this.$emit('closed')
+        }
     }
 })
 </script>

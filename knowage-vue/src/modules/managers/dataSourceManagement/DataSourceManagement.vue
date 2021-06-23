@@ -15,9 +15,9 @@
                     v-if="!loading"
                     class="kn-list--column"
                     :options="datasources"
+                    optionLabel="label"
                     :filter="true"
                     :filterPlaceholder="$t('common.search')"
-                    optionLabel="label"
                     filterMatchMode="contains"
                     :filterFields="dataSourceDescriptor.filterFields"
                     :emptyFilterMessage="$t('common.info.noDataFound')"
@@ -31,13 +31,13 @@
                                 <span>{{ slotProps.option.label }}</span>
                                 <span class="kn-list-item-text-secondary">{{ slotProps.option.descr }}</span>
                             </div>
-                            <Button icon="far fa-trash-alt" class="p-button-link" @click.stop="deleteDatasourceConfirm(slotProps.option.dsId)" data-test="delete-button" />
+                            <Button icon="far fa-trash-alt" class="p-button-link" v-if="slotProps.option.owner == this.user.userId || this.user.isSuperadmin" @click.stop="deleteDatasourceConfirm(slotProps.option.dsId)" data-test="delete-button" />
                         </div>
                     </template>
                 </Listbox>
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view :selectedDatasource="selDatasource" :databases="listOfAvailableDatabases" @touched="touched = true" @closed="onFormClose" @inserted="reloadPage" />
+                <router-view :selectedDatasource="selDatasource" :databases="listOfAvailableDatabases" :user="user" @touched="touched = true" @closed="onFormClose" @inserted="reloadPage" />
                 <KnHint :title="'managers.dataSourceManagement.hintTitle'" :hint="'managers.dataSourceManagement.hint'" v-if="hintVisible" />
             </div>
         </div>
@@ -45,6 +45,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable no-prototype-builtins */
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import dataSourceDescriptor from './DataSourceDescriptor.json'
@@ -62,18 +63,20 @@ export default defineComponent({
     },
     data() {
         return {
-            loading: false,
-            touched: false,
-            hintVisible: true,
+            dataSourceDescriptor,
             datasources: [] as any[],
             selDatasource: {} as any,
             listOfAvailableDatabases: [] as any,
-            dataSourceDescriptor
+            user: {} as any,
+            loading: false,
+            touched: false,
+            hintVisible: true
         }
     },
     async created() {
         await this.getAllDatasources()
         await this.getAllDatabases()
+        await this.getCurrentUser()
     },
     methods: {
         async getAllDatasources() {
@@ -82,9 +85,21 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources')
                 .then((response) => {
                     this.datasources = response.data
+                    this.convertToSeconds(this.datasources)
+                    console.log(this.datasources)
                 })
                 .finally(() => (this.loading = false))
         },
+        convertToSeconds(dataSourceArr) {
+            dataSourceArr.forEach((dataSource) => {
+                if (dataSource.hasOwnProperty('jdbcPoolConfiguration')) {
+                    dataSource.jdbcPoolConfiguration.maxWait = dataSource.jdbcPoolConfiguration.maxWait / 1000
+                    dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns = dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns / 1000
+                    dataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis = dataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis / 1000
+                }
+            })
+        },
+
         async getAllDatabases() {
             return axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/databases`)
@@ -93,6 +108,17 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
+
+        async getCurrentUser() {
+            return axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/currentuser`)
+                .then((response) => {
+                    this.user = response.data
+                    console.log('user', this.user)
+                })
+                .finally(() => (this.loading = false))
+        },
+
         showForm(event: any) {
             const path = event.value ? `/datasource/${event.value.dsId}` : '/datasource/new-datasource'
             this.hintVisible = false
@@ -113,6 +139,7 @@ export default defineComponent({
                 })
             }
         },
+
         deleteDatasourceConfirm(datasourceId: number) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
@@ -131,6 +158,7 @@ export default defineComponent({
                 this.getAllDatasources()
             })
         },
+
         reloadPage() {
             this.touched = false
             this.hintVisible = true

@@ -8,22 +8,23 @@
 
         <template #content>
             <form class="p-fluid p-m-3">
-                <!-- MAX TOTAL -->
-                <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
+                <div class="p-field p-formgroup-inline">
+                    <!-- MAX TOTAL -->
+                    <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="maxTotal"
                                 class="kn-material-input"
                                 type="number"
+                                maxLength="20"
                                 v-model.trim="v$.jdbcPoolConfiguration.maxTotal.$model"
                                 :class="{
                                     'p-invalid': v$.jdbcPoolConfiguration.maxTotal.$invalid && v$.jdbcPoolConfiguration.maxTotal.$dirty
                                 }"
-                                maxLength="20"
                                 @blur="v$.jdbcPoolConfiguration.maxTotal.$touch()"
                                 @input="onFieldChange('maxTotal', $event.target.value)"
                                 v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.maxTotalInfo')"
+                                :disabled="readOnly"
                             />
                             <label for="maxTotal" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.maxTotal') }} * </label>
                         </span>
@@ -34,24 +35,23 @@
                             }"
                         />
                     </div>
-                </div>
 
-                <!-- MAX WAIT -->
-                <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
+                    <!-- MAX WAIT -->
+                    <div class="p-field p-col-12 p-md-5 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="maxWait"
                                 class="kn-material-input"
                                 type="number"
+                                maxLength="30"
                                 v-model.trim="v$.jdbcPoolConfiguration.maxWait.$model"
                                 :class="{
                                     'p-invalid': v$.jdbcPoolConfiguration.maxWait.$invalid && v$.jdbcPoolConfiguration.maxWait.$dirty
                                 }"
-                                maxLength="30"
                                 @blur="v$.jdbcPoolConfiguration.maxWait.$touch()"
                                 @input="onFieldChange('maxWait', $event.target.value)"
                                 v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.maxWaitInfo')"
+                                :disabled="readOnly"
                             />
                             <label for="maxWait" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.maxWait') }} * </label>
                         </span>
@@ -62,23 +62,22 @@
                             }"
                         />
                     </div>
-                </div>
-                <!-- abandonedTimeout -->
-                <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
+                    <!-- abandonedTimeout -->
+                    <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="abandonedTimeout"
                                 class="kn-material-input"
                                 type="number"
+                                maxLength="20"
                                 v-model.trim="v$.jdbcPoolConfiguration.abandonedTimeout.$model"
                                 :class="{
                                     'p-invalid': v$.jdbcPoolConfiguration.abandonedTimeout.$invalid && v$.jdbcPoolConfiguration.abandonedTimeout.$dirty
                                 }"
-                                maxLength="20"
                                 @blur="v$.jdbcPoolConfiguration.abandonedTimeout.$touch()"
                                 @input="onFieldChange('abandonedTimeout', $event.target.value)"
                                 v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.abandonedTimeoutInfo')"
+                                :disabled="readOnly"
                             />
                             <label for="abandonedTimeout" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.abandonedTimeout') }} * </label>
                         </span>
@@ -89,23 +88,22 @@
                             }"
                         />
                     </div>
-                </div>
-                <!--timeBetweenEvictionRuns -->
-                <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
+                    <!--timeBetweenEvictionRuns -->
+                    <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="timeBetweenEvictionRuns"
                                 class="kn-material-input"
                                 type="number"
+                                maxLength="30"
                                 v-model.trim="v$.jdbcPoolConfiguration.timeBetweenEvictionRuns.$model"
                                 :class="{
                                     'p-invalid': v$.jdbcPoolConfiguration.timeBetweenEvictionRuns.$invalid && v$.jdbcPoolConfiguration.timeBetweenEvictionRuns.$dirty
                                 }"
-                                maxLength="30"
                                 @blur="v$.jdbcPoolConfiguration.timeBetweenEvictionRuns.$touch()"
                                 @input="onFieldChange('timeBetweenEvictionRuns', $event.target.value)"
                                 v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.timeBetweenEvictionRunsInfo')"
+                                :disabled="readOnly"
                             />
                             <label for="timeBetweenEvictionRuns" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.timeBetweenEvictionRuns') }} * </label>
                         </span>
@@ -116,20 +114,19 @@
                             }"
                         />
                     </div>
-                </div>
-                <!-- minEvictableIdleTimeMillis -->
-                <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
+                    <!-- minEvictableIdleTimeMillis -->
+                    <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="minEvictableIdleTimeMillis"
                                 class="kn-material-input"
+                                :disabled="readOnly"
                                 type="number"
+                                maxLength="30"
                                 v-model.trim="v$.jdbcPoolConfiguration.minEvictableIdleTimeMillis.$model"
                                 :class="{
                                     'p-invalid': v$.jdbcPoolConfiguration.minEvictableIdleTimeMillis.$invalid && v$.jdbcPoolConfiguration.minEvictableIdleTimeMillis.$dirty
                                 }"
-                                maxLength="30"
                                 @blur="v$.jdbcPoolConfiguration.minEvictableIdleTimeMillis.$touch()"
                                 @input="onFieldChange('minEvictableIdleTimeMillis', $event.target.value)"
                                 v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.minEvictableIdleTimeMillisInfo')"
@@ -147,51 +144,50 @@
 
                 <!-- VALIDATION QUERY -->
                 <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                        <span class="p-float-label">
-                            <InputText
-                                id="validationQuery"
-                                class="kn-material-input"
-                                type="text"
-                                v-model.trim="v$.jdbcPoolConfiguration.validationQuery.$model"
-                                :class="{
-                                    'p-invalid': v$.jdbcPoolConfiguration.validationQuery.$invalid && v$.jdbcPoolConfiguration.validationQuery.$dirty
-                                }"
-                                maxLength="200"
-                                @blur="v$.jdbcPoolConfiguration.validationQuery.$touch()"
-                                @input="onFieldChange('validationQuery', $event.target.value)"
-                                v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.validationQueryInfo')"
-                            />
-                            <label for="validationQuery" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.validationQuery') }} </label>
-                        </span>
-                        <KnValidationMessages
-                            :vComp="v$.jdbcPoolConfiguration.validationQuery"
-                            :additionalTranslateParams="{
-                                fieldName: $t('managers.dataSourceManagement.form.advancedOptions.validationQuery')
+                    <span class="p-float-label">
+                        <InputText
+                            id="validationQuery"
+                            class="kn-material-input"
+                            :disabled="readOnly"
+                            type="text"
+                            v-model.trim="v$.jdbcPoolConfiguration.validationQuery.$model"
+                            :class="{
+                                'p-invalid': v$.jdbcPoolConfiguration.validationQuery.$invalid && v$.jdbcPoolConfiguration.validationQuery.$dirty
                             }"
+                            maxLength="200"
+                            @blur="v$.jdbcPoolConfiguration.validationQuery.$touch()"
+                            @input="onFieldChange('validationQuery', $event.target.value)"
+                            v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.validationQueryInfo')"
                         />
-                    </div>
+                        <label for="validationQuery" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.validationQuery') }} </label>
+                    </span>
+                    <KnValidationMessages
+                        :vComp="v$.jdbcPoolConfiguration.validationQuery"
+                        :additionalTranslateParams="{
+                            fieldName: $t('managers.dataSourceManagement.form.advancedOptions.validationQuery')
+                        }"
+                    />
                 </div>
 
                 <div class="p-field-checkbox">
-                    <Checkbox id="removeAbandonedOnBorrow" v-model="jdbcPoolConfiguration.removeAbandonedOnBorrow" :binary="true" @change="onFieldChange('removeAbandonedOnBorrow', jdbcPoolConfiguration.removeAbandonedOnBorrow)" />
-                    <label for="removeAbandonedOnBorrow">Remove Abandoned On Borrow </label>
+                    <Checkbox id="removeAbandonedOnBorrow" v-model="jdbcPoolConfiguration.removeAbandonedOnBorrow" :disabled="readOnly" :binary="true" @change="onFieldChange('removeAbandonedOnBorrow', jdbcPoolConfiguration.removeAbandonedOnBorrow)" />
+                    <label for="removeAbandonedOnBorrow" v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.removeAbandonedOnBorrowInfo')">{{ $t('managers.dataSourceManagement.form.advancedOptions.removeAbandonedOnBorrow') }} </label>
                 </div>
                 <div class="p-field-checkbox">
-                    <Checkbox id="removeAbandonedOnMaintenance" v-model="jdbcPoolConfiguration.removeAbandonedOnMaintenance" :binary="true" @change="onFieldChange('removeAbandonedOnMaintenance', jdbcPoolConfiguration.removeAbandonedOnMaintenance)" />
-                    <label for="removeAbandonedOnMaintenance">Remove Abandoned On Maintenance</label>
+                    <Checkbox id="removeAbandonedOnMaintenance" v-model="jdbcPoolConfiguration.removeAbandonedOnMaintenance" :disabled="readOnly" :binary="true" @change="onFieldChange('removeAbandonedOnMaintenance', jdbcPoolConfiguration.removeAbandonedOnMaintenance)" />
+                    <label for="removeAbandonedOnMaintenance" v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.removeAbandonedOnMaintenanceInfo')">{{ $t('managers.dataSourceManagement.form.advancedOptions.removeAbandonedOnMaintenance') }}</label>
                 </div>
                 <div class="p-field-checkbox">
-                    <Checkbox id="logAbandoned" v-model="jdbcPoolConfiguration.logAbandoned" :binary="true" @change="onFieldChange('logAbandoned', jdbcPoolConfiguration.logAbandoned)" />
-                    <label for="logAbandoned">Log Abandoned</label>
+                    <Checkbox id="logAbandoned" v-model="jdbcPoolConfiguration.logAbandoned" :disabled="readOnly" :binary="true" @change="onFieldChange('logAbandoned', jdbcPoolConfiguration.logAbandoned)" />
+                    <label for="logAbandoned" v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.logAbandonedInfo')">{{ $t('managers.dataSourceManagement.form.advancedOptions.logAbandoned') }}</label>
                 </div>
                 <div class="p-field-checkbox">
-                    <Checkbox id="testOnReturn" v-model="jdbcPoolConfiguration.testOnReturn" :binary="true" @change="onFieldChange('testOnReturn', jdbcPoolConfiguration.testOnReturn)" />
-                    <label for="testOnReturn">Test On Return</label>
+                    <Checkbox id="testOnReturn" v-model="jdbcPoolConfiguration.testOnReturn" :disabled="readOnly" :binary="true" @change="onFieldChange('testOnReturn', jdbcPoolConfiguration.testOnReturn)" />
+                    <label for="testOnReturn" v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.testOnReturnInfo')">{{ $t('managers.dataSourceManagement.form.advancedOptions.testOnReturn') }}</label>
                 </div>
                 <div class="p-field-checkbox">
-                    <Checkbox id="testWhileIdle" v-model="jdbcPoolConfiguration.testWhileIdle" :binary="true" @change="onFieldChange('testWhileIdle', jdbcPoolConfiguration.testWhileIdle)" />
-                    <label for="testWhileIdle">Test While Idle </label>
+                    <Checkbox id="testWhileIdle" v-model="jdbcPoolConfiguration.testWhileIdle" :disabled="readOnly" :binary="true" @change="onFieldChange('testWhileIdle', jdbcPoolConfiguration.testWhileIdle)" />
+                    <label for="testWhileIdle" v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.testWhileIdleInfo')">{{ $t('managers.dataSourceManagement.form.advancedOptions.testWhileIdle') }} </label>
                 </div>
             </form>
         </template>
@@ -220,7 +216,8 @@ export default defineComponent({
         advancedOptions: {
             type: Object,
             requried: false
-        }
+        },
+        isReadOnly: Boolean
     },
     directives: {
         tooltip: Tooltip
@@ -233,7 +230,8 @@ export default defineComponent({
             v$: useValidate() as any,
             dataSourceDetailValidationDescriptor,
             dataSourceDescriptor,
-            jdbcPoolConfiguration: {} as any
+            jdbcPoolConfiguration: {} as any,
+            readOnly: false
         }
     },
     validations() {
@@ -245,11 +243,15 @@ export default defineComponent({
         if (this.advancedOptions) {
             this.jdbcPoolConfiguration = { ...this.advancedOptions } as any
         }
+        this.readOnly = this.isReadOnly
     },
     watch: {
         advancedOptions() {
             this.v$.$reset()
             this.jdbcPoolConfiguration = { ...this.advancedOptions } as any
+        },
+        isReadOnly() {
+            this.readOnly = this.isReadOnly
         }
     },
     methods: {
