@@ -180,7 +180,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 				<md-button title="{{translate.load('sbi.documentbrowser.execute')}}"
 					aria-label="Execute Document" class="md-icon-button"
-					ng-click="executeDocument(selectedDocument,$event)"> <md-icon
+					ng-click="executeDocument(selectedDocument)"> <md-icon
 					md-font-icon="fa fa-play-circle"></md-icon> </md-button>
 				<%
 					if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])
