@@ -1,0 +1,70 @@
+{
+    "input": {
+        "filterOperation": {
+            "style": {
+                "margin": "0.5rem",
+                "width": "50%"
+            }
+        },
+        "logicalOperator": {
+            "style": {
+                "margin": "0.5rem",
+                "width": "20%"
+            }
+        },
+        "parFather": {
+            "style": {
+                "margin": "0.5rem",
+                "width": "30%"
+            }
+        }
+    },
+    "logicalOperators": [
+        {
+            "name": "AND",
+            "value": "AND"
+        },
+        {
+            "name": "OR",
+            "value": "OR"
+        }
+    ],
+    "operations": [
+        {
+            "name": "equal",
+            "value": "equal"
+        },
+        {
+            "name": "greater",
+            "value": "greater"
+        },
+        {
+            "name": "greaterequal",
+            "value": "greaterequal"
+        },
+        {
+            "name": "less",
+            "value": "less"
+        },
+        {
+            "name": "lessequal",
+            "value": "lessequal"
+        },
+        {
+            "name": "contains",
+            "value": "contains"
+        },
+        {
+            "name": "not contains",
+            "value": "not contains"
+        },
+        {
+            "name": "starts with",
+            "value": "starts with"
+        },
+        {
+            "name": "ends with",
+            "value": "ends with"
+        }
+    ]
+}
