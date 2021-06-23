@@ -68,7 +68,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			query.append("select sbf from SbiCatalogFunction sbf ");
 			query.append(", SbiObjFunction sof ");
 			query.append("where sbf.functionUuid=sof.functionUuid ");
-			query.append("and sof.functionUuid = " + biobjId);
+			query.append("and sof.sbiObject.biobjId = " + biobjId);
 
 			Query hibQuery = session.createQuery(query.toString());
 
