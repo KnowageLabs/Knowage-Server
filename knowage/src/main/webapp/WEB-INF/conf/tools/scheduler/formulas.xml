@@ -17,7 +17,7 @@
 	<FORMULA name="getCurrentYear" description="#scheduler.formulas.getCurrentYear">
 	<![CDATA[
 	int year = java.time.ZonedDateTime.now().getYear();
-	String yearhStr = year.toString();
+	String yearStr = year.toString();
 	return yearStr;
 	]]>
 	</FORMULA>
