@@ -93,6 +93,9 @@ export default defineComponent({
     },
     watch: {
         async id() {
+            await this.loadAnalyticalDrivers()
+            await this.loadCategories()
+            await this.loadDatasources()
             await this.loadSelectedBusinessModelData()
         }
     },
@@ -106,6 +109,7 @@ export default defineComponent({
         console.log('SELECTED BUSINESS MODEL: ', this.selectedBusinessModel)
         console.log('SELECTED BUSINESS VERSIONS: ', this.businessModelVersions)
         console.log('CATEGORIES: ', this.categories)
+        console.log('ANALYTICAL DRIVERS: ', this.analyticalDrivers)
     },
     methods: {
         async loadSelectedBusinessModelData() {

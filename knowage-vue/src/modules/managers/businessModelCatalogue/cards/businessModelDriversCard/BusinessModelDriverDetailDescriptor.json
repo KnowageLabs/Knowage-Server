@@ -6,7 +6,7 @@
                 "width": "50%"
             }
         },
-        "logicalOperator": {
+        "logicOperator": {
             "style": {
                 "margin": "0.5rem",
                 "width": "20%"
@@ -19,7 +19,7 @@
             }
         }
     },
-    "logicalOperators": [
+    "logicOperator": [
         {
             "name": "AND",
             "value": "AND"
@@ -29,6 +29,15 @@
             "value": "OR"
         }
     ],
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
     "operations": [
         {
             "name": "equal",

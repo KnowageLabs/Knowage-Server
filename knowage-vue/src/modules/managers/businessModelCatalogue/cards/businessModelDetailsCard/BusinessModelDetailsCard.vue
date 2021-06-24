@@ -109,18 +109,32 @@
                 </div>
 
                 <div class="p-d-flex p-flex-row">
-                    <div></div>
-                    <div>
-                        <InputSwitch id="enable-metadata" class="p-mr-2" v-model="showMetaWeb" />
-                        <label for="enable-metadata" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.enableMetaweb') }}</label>
+                    <div class="input-container" v-if="!metaWebVisible">
+                        <label for="upload" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.uploadFile') }}:</label>
+                        <KnInputFile :changeFunction="uploadFile" :visibility="true" />
                     </div>
-                    <div>
-                        <InputSwitch id="model-lock" class="p-mr-2" v-model="businessModel.modelLocked" />
-                        <label for="model-lock" class="kn-material-input-label">{{ businessModel.modelLocked ? $t('managers.buisnessModelCatalogue.unlockModel') : $t('managers.buisnessModelCatalogue.lockModel') }}</label>
+                    <div class="input-container" v-else>
+                        <Button class="kn-button kn-button--primary" :label="$t('managers.buisnessModelCatalogue.metaWeb')" @click="test"></Button>
+                    </div>
+                    <div class="input-container">
+                        <div class="p-d-flex p-flex-row">
+                            <div>
+                                <InputSwitch id="enable-metadata" class="p-mr-2" v-model="metaWebVisible" />
+                                <label for="enable-metadata" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.enableMetaweb') }}</label>
+                            </div>
+                            <div>
+                                <InputSwitch id="model-lock" class="p-mr-2" v-model="businessModel.modelLocked" />
+                                <label for="model-lock" class="kn-material-input-label">{{ businessModel.modelLocked ? $t('managers.buisnessModelCatalogue.unlockModel') : $t('managers.buisnessModelCatalogue.lockModel') }}</label>
+                            </div>
+                        </div>
+                        <div>
+                            <InputSwitch id="model-lock" class="p-mr-2" v-model="businessModel.smartView" />
+                            <label for="model-lock" class="kn-material-input-label" v-tooltip.bottom="$t('managers.buisnessModelCatalogue.smartViewTooltip')">{{ businessModel.smartView ? $t('managers.buisnessModelCatalogue.smartView') : $t('managers.buisnessModelCatalogue.advancedView') }}</label>
+                        </div>
                     </div>
                 </div>
 
-                <div class="p-mt-5" v-if="showMetaWeb">
+                <div class="p-mt-5" v-if="metaWebVisible">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
                         <template #left>
                             {{ $t('managers.buisnessModelCatalogue.configurationTablePrefixTitle') }}
@@ -139,6 +153,7 @@
                                             'p-invalid': v$.businessModel.tablePrefixLike.$invalid && v$.businessModel.tablePrefixLike.$dirty
                                         }"
                                         maxLength="500"
+                                        v-tooltip.bottom="$t('managers.buisnessModelCatalogue.tablePrefixLikeExampleTooltip')"
                                         @blur="v$.businessModel.tablePrefixLike.$touch()"
                                     />
                                     <label for="label" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.tablePrefixLike') }}</label>
@@ -161,7 +176,7 @@
                                             'p-invalid': v$.businessModel.tablePrefixNotLike.$invalid && v$.businessModel.tablePrefixNotLike.$dirty
                                         }"
                                         maxLength="500"
-                                        v-tooltip.bottom="'test'"
+                                        v-tooltip.bottom="$t('managers.buisnessModelCatalogue.tablePrefixNotLikeExampleTooltip')"
                                         @blur="v$.businessModel.tablePrefixNotLike.$touch()"
                                     />
                                     <label for="label" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.tablePrefixNotLike') }}</label>
@@ -177,6 +192,10 @@
                     </div>
                 </div>
             </form>
+
+            <div v-if="showMetaWeb">
+                <iframe style="height: 1000px; width: 1500px" src="http://localhost:3000/knowage-vue/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/businessModelCatalogue.jsp"></iframe>
+            </div>
         </template>
     </Card>
 </template>
@@ -188,7 +207,9 @@ import { createValidations } from '@/helpers/commons/validationHelper'
 import businessModelDetailsCardValidation from './BusinessModelDetailsCardValidation.json'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
+// import IframeRenderer from '@/modules/commons/IframeRenderer.vue'
 import InputSwitch from 'primevue/inputswitch'
+import KnInputFile from '@/components/UI/KnInputFile.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import useValidate from '@vuelidate/core'
 
@@ -198,6 +219,7 @@ export default defineComponent({
         Card,
         Dropdown,
         InputSwitch,
+        KnInputFile,
         KnValidationMessages
     },
     props: {
@@ -237,6 +259,7 @@ export default defineComponent({
             businessModel: {} as iBusinessModel,
             categories: [] as any[],
             datasources: [] as any[],
+            metaWebVisible: false,
             showMetaWeb: false,
             touched: false,
             v$: useValidate() as any
@@ -256,7 +279,18 @@ export default defineComponent({
         },
         loadDatasources() {
             this.datasources = this.datasourcesMeta as any[]
+        },
+        uploadFile() {},
+        test() {
+            console.log('CALLLLLLLLLLLLLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED')
+            this.showMetaWeb = true
         }
     }
 })
 </script>
+
+<style scoped>
+.input-container {
+    flex: 0.5;
+}
+</style>

@@ -34,14 +34,13 @@
         </Card>
 
         <div class="p-col-6 p-p-0 p-m-0">
-            <BuisnessModelDriverDetail :selectedDriver="selectedDriver" :formVisible="formVisible" :driverOptions="analyticalDrivers" :businessModelDrivers="businessModelDrivers" :dataDependencies="dataDependencies"></BuisnessModelDriverDetail>
+            <BuisnessModelDriverDetail :businessModelId="id" :selectedDriver="selectedDriver" :formVisible="formVisible" :driverOptions="analyticalDrivers" :businessModelDrivers="businessModelDrivers"></BuisnessModelDriverDetail>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
 import BuisnessModelDriverDetail from './BusinessModelDriverDetail.vue'
 import Card from 'primevue/card'
 import Listbox from 'primevue/listbox'
@@ -72,7 +71,6 @@ export default defineComponent({
             businessModelDrivers: [] as any[],
             analyticalDrivers: [] as any[],
             selectedDriver: null as any,
-            dataDependencies: [] as any[],
             formVisible: false,
             touched: false
         }
@@ -100,9 +98,6 @@ export default defineComponent({
         showForm(event: any) {
             this.selectedDriver = event.value ?? {}
 
-            if (this.selectedDriver) {
-                this.loadDataDependencies()
-            }
             this.selectedDriver.parameter = this.analyticalDrivers.find((driver) => driver.id === this.selectedDriver.parameter.id)
 
             if (!this.touched) {
@@ -138,9 +133,7 @@ export default defineComponent({
                 this.businessModelDrivers[currentDriverIndex] = temp
             }
         },
-        async loadDataDependencies() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/datadependencies?driverId=${this.selectedDriver.id}`).then((response) => (this.dataDependencies = response.data))
-        },
+
         deleteDriver(driverId: number) {
             const currentDriverIndex = this.businessModelDrivers.findIndex((driver) => driver.id === driverId)
             this.businessModelDrivers.splice(currentDriverIndex, 1)
