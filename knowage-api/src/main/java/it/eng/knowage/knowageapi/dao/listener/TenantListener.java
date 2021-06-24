@@ -54,7 +54,7 @@ public class TenantListener {
 		LOGGER.warn("Setting persistence tenant data for: " + entity);
 
 		entity.setOrganization(TenantListener.business.getOrganization());
-		entity.setSbiVersionIn("7.4.5"); // TODO
+		entity.setSbiVersionIn(TenantListener.business.getVersion());
 		entity.setTimeIn(Instant.now());
 		entity.setUserIn(TenantListener.business.getUsername());
 	}
@@ -63,7 +63,7 @@ public class TenantListener {
 	public void preUpdate(AbstractEntity entity) {
 		LOGGER.warn("Setting updating tenant data for: " + entity);
 
-		entity.setSbiVersionUp("7.4.5"); // TODO
+		entity.setSbiVersionUp(TenantListener.business.getVersion());
 		entity.setTimeUp(Instant.now());
 		entity.setUserUp(TenantListener.business.getUsername());
 	}
@@ -72,7 +72,7 @@ public class TenantListener {
 	public void preRemove(AbstractEntity entity) {
 		LOGGER.warn("Setting removing tenant data for: " + entity);
 
-		entity.setSbiVersionDe("7.4.5"); // TODO
+		entity.setSbiVersionDe(TenantListener.business.getVersion());
 		entity.setTimeDe(Instant.now());
 		entity.setUserDe(TenantListener.business.getUsername());
 	}

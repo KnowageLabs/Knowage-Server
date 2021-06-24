@@ -27,6 +27,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -82,9 +83,8 @@ public class KnowageApiConfigurationTest {
 	}
 
 	@Bean
-	// @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST) cannot be used in tests
-	public BusinessRequestContext businessRequestContext() {
-		BusinessRequestContext businessRequestContext = new BusinessRequestContext();
+	public BusinessRequestContext businessRequestContext(@Value("application.version") String version) {
+		BusinessRequestContext businessRequestContext = new BusinessRequestContext(version);
 		businessRequestContext.setUsername("biadmin");
 		businessRequestContext.setOrganization("DEFAULT_TENANT");
 		return businessRequestContext;

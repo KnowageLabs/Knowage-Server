@@ -29,9 +29,16 @@ public class BusinessRequestContext {
 
 	private UUID uuid = UUID.randomUUID();
 
+	private final String version;
+
 	private String username;
 
 	private String organization;
+
+	public BusinessRequestContext(String version) {
+		super();
+		this.version = version.replaceAll("SNAPSHOT", "S");
+	}
 
 	public UUID getUuid() {
 		return uuid;
@@ -55,5 +62,9 @@ public class BusinessRequestContext {
 
 	public void setOrganization(String organization) {
 		this.organization = organization;
+	}
+
+	public String getVersion() {
+		return version;
 	}
 }

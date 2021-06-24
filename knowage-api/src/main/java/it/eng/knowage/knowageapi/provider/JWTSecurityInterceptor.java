@@ -39,6 +39,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
+import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.utils.ConfigSingleton;
 import it.eng.spagobi.services.security.SecurityServiceService;
@@ -60,6 +61,9 @@ public class JWTSecurityInterceptor implements ContainerRequestFilter, Container
 	@Lazy
 	SecurityServiceService securityServiceService;
 
+	@Autowired
+	private BusinessRequestContext businessRequestContext;
+
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		logger.info("FILTER IN");
@@ -70,6 +74,10 @@ public class JWTSecurityInterceptor implements ContainerRequestFilter, Container
 		String technicalToken = getTechnicalToken();
 		try {
 			profile = securityServiceService.getUserProfile(technicalToken, noBearerUserToken);
+
+			businessRequestContext.setUsername(profile.getUserId());
+			businessRequestContext.setOrganization(profile.getOrganization());
+
 			RequestContextHolder.currentRequestAttributes().setAttribute("userProfile", profile, RequestAttributes.SCOPE_REQUEST);
 			RequestContextHolder.currentRequestAttributes().setAttribute("userToken", userToken, RequestAttributes.SCOPE_REQUEST);
 		} catch (Exception e) {

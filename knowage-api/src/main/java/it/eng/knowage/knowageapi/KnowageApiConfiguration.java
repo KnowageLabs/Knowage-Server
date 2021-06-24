@@ -25,6 +25,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -68,8 +69,8 @@ public class KnowageApiConfiguration {
 
 	@Bean
 	@RequestScope
-	public BusinessRequestContext businessRequestContext() {
-		return new BusinessRequestContext();
+	public BusinessRequestContext businessRequestContext(@Value("application.version") String version) {
+		return new BusinessRequestContext(version);
 	}
 
 	@Lazy
