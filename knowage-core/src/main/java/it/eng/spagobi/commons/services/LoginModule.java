@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.services;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
@@ -356,10 +357,13 @@ public class LoginModule extends AbstractHttpModule {
 	}
 
 	private void redirectToKnowageVue() throws IOException {
-		if(Version.getEnvironment() == Environment.PRODUCTION) {
+		if (Version.getEnvironment() == Environment.PRODUCTION) {
 			getHttpResponse().sendRedirect("/knowage-vue");
-		}else {
-			getHttpResponse().sendRedirect("http://localhost:3000/knowage-vue");
+		} else {
+			URL url = new URL(getHttpRequest().getRequestURL().toString());
+			URL newUrl = new URL("http", url.getHost(), 3000, "/knowage-vue");
+
+			getHttpResponse().sendRedirect(newUrl.toString());
 		}
 	}
 
