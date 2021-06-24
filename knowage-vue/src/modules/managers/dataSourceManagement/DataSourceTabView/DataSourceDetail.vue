@@ -2,6 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #left>{{ datasource.label }}</template>
         <template #right>
+            <Button icon="pi pi-info" class="p-button-text p-button-rounded p-button-plain" @click="testDataSource" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
@@ -55,7 +56,7 @@
                                     'p-invalid': v$.datasource.dialectName.$invalid && v$.datasource.dialectName.$dirty
                                 }"
                                 @before-show="v$.datasource.dialectName.$touch()"
-                                @change="selectDatabase"
+                                @change="selectDatabase($event.value)"
                                 :disabled="readOnly"
                             />
                             <label for="dialectName" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.dialect') }} * </label>
@@ -132,23 +133,20 @@
                     </div>
                 </div>
 
-                <!-- READ ONLY CONTAINER -->
                 <label class="kn-material-input-label">{{ $t('managers.dataSourceManagement.form.readOnly') }}</label>
                 <div class="p-field p-formgroup-inline p-mb-3 p-mt-2" :style="dataSourceDescriptor.pField.style">
-                    <!-- READ ONLY BUTTON disabled if datasource.writeDefault is true || if readOnly -->
                     <div class="p-field-radiobutton">
                         <RadioButton id="readOnly" :value="true" v-model="datasource.readOnly" :disabled="datasource.writeDefault || readOnly" />
                         <label for="readOnly">{{ $t('managers.dataSourceManagement.form.readOnly') }}</label>
                     </div>
                     <!-- READ AND WRITE BUTTON disabled if !selectedDatabase.cacheSupported || if readOnly -->
-                    <!-- naci nacin da izvucem selected database objekat iz dropdowna -->
                     <div class="p-field-radiobutton">
-                        <RadioButton id="readAndWrite" :value="false" v-model="datasource.readOnly" :disabled="readOnly" />
+                        <RadioButton id="readAndWrite" :value="false" v-model="datasource.readOnly" :disabled="readOnly || !selectedDatabase.cacheSupported" />
                         <label for="readAndWrite">{{ $t('managers.dataSourceManagement.form.readAndWrite') }}</label>
                     </div>
-                    <!-- WRITE DEFAULT/USE AS CACHE  disabled if readOnly || !selectedDatabase.cacheSupported || selectedDataSource.readOnly == true -->
+                    <!-- WRITE DEFAULT/USE AS CACHE  readOnly || !selectedDatabase.cacheSupported || selectedDataSource.readOnly == 1) || !isSuperAdminFunction() -->
                     <span class="p-float-label" v-if="!datasource.readOnly">
-                        <Checkbox id="writeDefault" v-model="datasource.writeDefault" :binary="true" :disabled="datasource.readOnly || readOnly" />
+                        <Checkbox id="writeDefault" v-model="datasource.writeDefault" :binary="true" :disabled="readOnly || !selectedDatabase.cacheSupported || datasource.readOnly || !currentUser.isSuperadmin" />
                         <label for="writeDefault" :style="dataSourceDescriptor.checkboxLabel.style"> {{ $t('managers.dataSourceManagement.form.writeDefault') }} </label>
                     </span>
                 </div>
@@ -205,21 +203,14 @@
                                 type="text"
                                 maxLength="50"
                                 v-model.trim="v$.datasource.user.$model"
-                                :class="{
-                                    'p-invalid': v$.datasource.user.$invalid && v$.datasource.user.$dirty
-                                }"
+                                :class="{ 'p-invalid': v$.datasource.user.$invalid && v$.datasource.user.$dirty }"
                                 @blur="v$.datasource.user.$touch()"
                                 @input="onFieldChange"
                                 :disabled="readOnly"
                             />
                             <label for="user" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.user') }}</label>
                         </span>
-                        <KnValidationMessages
-                            :vComp="v$.datasource.user"
-                            :additionalTranslateParams="{
-                                fieldName: $t('managers.dataSourceManagement.form.user')
-                            }"
-                        />
+                        <KnValidationMessages :vComp="v$.datasource.user" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.user') }" />
                     </div>
 
                     <!-- PASSWORD, nesto je cudno uradjeno u source kodu, treba da se razjasni -->
@@ -341,7 +332,8 @@ export default defineComponent({
             type: Object,
             required: false
         },
-        databases: Array
+        databases: Array,
+        id: String
     },
     directives: {
         tooltip: Tooltip
@@ -355,7 +347,7 @@ export default defineComponent({
             operation: 'insert',
             datasource: {} as any,
             availableDatabases: [] as any,
-            // selectedDatabase: {} as any,
+            selectedDatabase: {} as any,
             jdbcOrJndi: {} as any,
             jdbcPoolConfiguration: {} as any,
             currentUser: {} as any,
@@ -374,21 +366,23 @@ export default defineComponent({
         this.currentUser = { ...this.user } as any
         this.availableDatabases = this.databases
         if (this.selectedDatasource) {
-            this.datasource = { ...this.selectedDatasource } as any
-            this.jdbcPoolConfiguration = this.datasource.jdbcPoolConfiguration as any
-            this.connectionType()
-            this.isReadOnly()
+            this.loadExistingDataSourceValues()
+        } else {
+            this.createNewDataSourceValues()
         }
     },
     watch: {
-        selectedDatasource() {
-            this.datasource = { ...this.selectedDatasource } as any
-            this.jdbcPoolConfiguration = this.datasource.jdbcPoolConfiguration as any
-            this.connectionType()
-            this.isReadOnly()
+        id() {
+            if (this.id == undefined) {
+                this.createNewDataSourceValues()
+            } else {
+                this.loadExistingDataSourceValues()
+            }
         },
         databases() {
             this.availableDatabases = this.databases
+            this.selectDatabase(this.datasource.dialectName)
+            this.isReadOnly()
         },
         user() {
             this.currentUser = { ...this.user } as any
@@ -402,55 +396,73 @@ export default defineComponent({
             if (this.datasource.jndi != undefined && this.datasource.jndi != '') {
                 this.jdbcOrJndi.type = 'JNDI'
             }
-            console.log(this.jdbcOrJndi.type)
+        },
+
+        createNewDataSourceValues() {
+            this.jdbcOrJndi.type = 'JDBC'
+            this.jdbcPoolConfiguration = dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration
+            this.datasource = dataSourceDescriptor.newDataSourceValues
+            this.disableLabelField = false
+        },
+
+        loadExistingDataSourceValues() {
+            this.datasource = { ...this.selectedDatasource } as any
+            this.jdbcPoolConfiguration = this.datasource.jdbcPoolConfiguration as any
+            this.disableLabelField = true
+            this.connectionType()
+            this.selectDatabase(this.datasource.dialectName)
+            this.isReadOnly()
+        },
+
+        selectDatabase(selectedDatabaseDialect) {
+            this.availableDatabases.forEach((database) => {
+                if (database.databaseDialect.value == selectedDatabaseDialect) {
+                    this.selectedDatabase = database
+                }
+            })
+            if (!this.selectedDatabase.cacheSupported) {
+                this.datasource.writeDefault = false
+                this.datasource.readOnly = true
+            }
         },
 
         isReadOnly() {
             if (this.selectedDatasource) {
-                this.disableLabelField = true
-                //spojiti 2 ifa nakon testiranja
-                if (this.currentUser.isSuperadmin) {
+                if (this.currentUser.isSuperadmin || (this.currentUser.userId == this.datasource.owner && (!this.datasource.hasOwnProperty('jndi') || this.datasource.jndi == ''))) {
                     this.$store.commit('setInfo', {
-                        title: this.$t('IS SUPER ADMIN!')
-                    })
-                    this.readOnly = false
-                } else if (this.currentUser.userId == this.datasource.owner && (!this.datasource.hasOwnProperty('jndi') || this.datasource.jndi == '')) {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('YOU ARE THE OWNER')
+                        title: this.$t('YOU ARE THE OWNER or SUPERADMIN')
                     })
                     this.readOnly = false
                 } else {
                     this.$store.commit('setInfo', {
                         title: this.$t('Information'),
-                        msg: this.$t('You are not the owner of this catalog.')
+                        msg: this.$t('managers.dataSourceManagement.form.notOwner')
                     })
                     this.readOnly = true
                 }
             } else {
                 this.readOnly = false
-                this.disableLabelField = false
             }
         },
-        //moguce resenje za selectedDatabase
-        // selectDatabase(selectedDatabaseName) {
-        //     this.availableDatabases.forEach((database) => {
-        //         if (database.databaseDialect.value == selectedDatabaseName.value) {
-        //             this.selectedDatabase = database
-        //         }
-        //     })
-        //     console.log('selectedDatabase', this.selectedDatabase)
-        // },
 
-        async handleSubmit() {
-            if (this.v$.$invalid) {
-                console.log('validError', this.v$)
-                return
-            }
+        async testDataSource() {
+            // if (this.v$.$invalid) {
+            //     console.log('validError', this.v$)
+            //     return
+            // }
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'datasourcestest/2.0/test/'
+            let dsToSave = {} as any
+            dsToSave = this.datasource
+            dsToSave.type = this.jdbcOrJndi.type
 
-            await axios.post(url, this.datasource).then(() => {
-                this.$emit('inserted')
-                this.$router.replace('/datasource')
+            await axios.post(url, dsToSave).then((response) => {
+                if (response.data.error) {
+                    this.$store.commit('setError', { title: this.$t('managers.dataSourceManagement.form.errorTitle'), msg: response.data.error })
+                    console.log(response.data)
+                } else {
+                    this.$store.commit('setInfo', { msg: this.$t('managers.dataSourceManagement.form.testOk') })
+                    console.log(response.data)
+                }
             })
         },
 

@@ -22,6 +22,33 @@
         }
     },
     "filterFields": ["label", "descr"],
+    "newDataSourceValues": {
+        "descr": "",
+        "dialectName": "",
+        "driver": "",
+        "jdbcPoolConfiguration": {
+            "abandonedTimeout": 60,
+            "logAbandoned": true,
+            "maxTotal": 20,
+            "maxWait": 60,
+            "minEvictableIdleTimeMillis": 60,
+            "removeAbandonedOnBorrow": true,
+            "removeAbandonedOnMaintenance": true,
+            "testOnReturn": true,
+            "testWhileIdle": true,
+            "timeBetweenEvictionRuns": 10,
+            "validationQuery": ""
+        },
+        "jndi": "",
+        "label": "",
+        "multiSchema": false,
+        "pwd": "",
+        "readOnly": true,
+        "schemaAttribute": "",
+        "urlConnection": "",
+        "user": "",
+        "writeDefault": false
+    },
     "operation": {
         "insert": {
             "toastTitle": "common.toast.createTitle"

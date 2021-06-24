@@ -152,6 +152,9 @@
                     "validationQuery": "Validation Query (optional)",
                     "validationQueryInfo": "The SQL query that will be used to validate connections from this pool before returning them to the caller. If specified, this query does not have to return any data, it just can't throw a SQLException. The default value is null. If not specified, connections will be validation by the isValid() method. Example values are SELECT 1(mysql), select 1 from dual(oracle), SELECT 1(MS Sql Server)"
                 },
+                "testOk": "Tested parameters are correct!",
+                "errorTitle": "Connection KO",
+                "notOwner": "You are not the owner of this data source.",
                 "dialect": "Dialect",
                 "driver": "Driver",
                 "jndi": "JNDI Name",

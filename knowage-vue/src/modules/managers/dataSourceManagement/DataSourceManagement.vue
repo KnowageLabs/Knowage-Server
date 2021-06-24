@@ -86,7 +86,6 @@ export default defineComponent({
                 .then((response) => {
                     this.datasources = response.data
                     this.convertToSeconds(this.datasources)
-                    console.log(this.datasources)
                 })
                 .finally(() => (this.loading = false))
         },
