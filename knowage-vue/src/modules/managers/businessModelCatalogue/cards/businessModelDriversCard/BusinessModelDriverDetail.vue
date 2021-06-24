@@ -133,8 +133,8 @@
     </Card>
 
     <div v-if="conditionFormVisible">
-        <Dialog :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :header="$t('managers.buisnessModelCatalogue.driverDataConditions')" :closable="false">
-            <div>
+        <Dialog class="p-fluid kn-dialog--toolbar--primary" :style="businessModelDriverDetailDescriptor.conditionDialog.style" :visible="true" :modal="true" :header="$t('managers.buisnessModelCatalogue.driverDataConditions')" :closable="false">
+            <div id="operationInfo">
                 <p>{{ $t('managers.buisnessModelCatalogue.operationInfo', { driver: driver.label }) }}</p>
             </div>
             <form class="p-fluid p-m-5">
@@ -456,7 +456,6 @@ export default defineComponent({
                 accept: () => this.deleteConditions(condition)
             })
         },
-        // conditionId: condition.id, useModeId: condition.useModeId, filterColumn: condition.filterColumn
         async deleteConditions(condition: any) {
             console.log('CONDITIONSSSSSSS for delete', condition)
             condition.modalities.forEach((mode: any) => {
@@ -489,5 +488,18 @@ export default defineComponent({
 <style lang="scss" scoped>
 .mode-inputs {
     flex: 0.5;
+}
+#operationInfo {
+    margin-top: 2rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    border: 1px solid rgba(59, 103, 140, 0.1);
+    background-color: #eaf0f6;
+
+    p {
+        margin: 0.3rem;
+    }
 }
 </style>

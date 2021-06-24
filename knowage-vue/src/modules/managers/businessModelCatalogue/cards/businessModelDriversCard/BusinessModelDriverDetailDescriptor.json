@@ -1,4 +1,9 @@
 {
+    "conditionDialog": {
+        "style": {
+            "min-width": "60%"
+        }
+    },
     "input": {
         "filterOperation": {
             "style": {
