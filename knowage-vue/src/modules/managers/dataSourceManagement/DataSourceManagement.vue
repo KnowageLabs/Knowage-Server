@@ -155,6 +155,7 @@ export default defineComponent({
                 this.$router.push('/datasource')
                 this.getAllDatasources()
             })
+            this.hintVisible = true
         },
 
         reloadPage() {

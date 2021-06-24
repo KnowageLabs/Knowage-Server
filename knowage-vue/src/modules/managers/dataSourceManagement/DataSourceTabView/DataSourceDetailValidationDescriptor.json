@@ -10,17 +10,6 @@
                 ]
             },
             {
-                "fieldName": "descr",
-                "validators": [
-                    {
-                        "key": "regex",
-                        "validator": {
-                            "type": "extendedAlphanumericRegex"
-                        }
-                    }
-                ]
-            },
-            {
                 "fieldName": "dialectName",
                 "validators": [
                     {
@@ -43,12 +32,9 @@
                 "fieldName": "jndi",
                 "validators": [
                     {
-                        "key": "required"
-                    },
-                    {
-                        "key": "regex",
+                        "key": "required",
                         "validator": {
-                            "type": "extendedAlphanumericRegex"
+                            "type": "jndi-name-required"
                         }
                     }
                 ]
@@ -57,28 +43,9 @@
                 "fieldName": "urlConnection",
                 "validators": [
                     {
-                        "key": "required"
-                    }
-                ]
-            },
-            {
-                "fieldName": "user",
-                "validators": [
-                    {
-                        "key": "regex",
+                        "key": "required",
                         "validator": {
-                            "type": "extendedAlphanumericRegex"
-                        }
-                    }
-                ]
-            },
-            {
-                "fieldName": "pwd",
-                "validators": [
-                    {
-                        "key": "regex",
-                        "validator": {
-                            "type": "extendedAlphanumericRegex"
+                            "type": "jdbc-data-required"
                         }
                     }
                 ]
@@ -87,7 +54,10 @@
                 "fieldName": "driver",
                 "validators": [
                     {
-                        "key": "required"
+                        "key": "required",
+                        "validator": {
+                            "type": "jdbc-data-required"
+                        }
                     }
                 ]
             }
@@ -130,17 +100,6 @@
                 "validators": [
                     {
                         "key": "required"
-                    }
-                ]
-            },
-            {
-                "fieldName": "validationQuery",
-                "validators": [
-                    {
-                        "key": "regex",
-                        "validator": {
-                            "type": "extendedAlphanumericRegex"
-                        }
                     }
                 ]
             }

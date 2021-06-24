@@ -121,5 +121,6 @@ describe('Data Source management', () => {
             label: 'ds_cache',
             descr: 'ds_cache'
         })
+        expect(wrapper.vm.disableLabelField).toBe(true)
     })
 })

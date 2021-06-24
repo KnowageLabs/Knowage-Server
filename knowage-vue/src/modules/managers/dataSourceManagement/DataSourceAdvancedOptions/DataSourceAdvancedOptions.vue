@@ -151,23 +151,13 @@
                             class="kn-material-input"
                             :disabled="readOnly"
                             type="text"
-                            v-model.trim="v$.jdbcPoolConfiguration.validationQuery.$model"
-                            :class="{
-                                'p-invalid': v$.jdbcPoolConfiguration.validationQuery.$invalid && v$.jdbcPoolConfiguration.validationQuery.$dirty
-                            }"
+                            v-model.trim="jdbcPoolConfiguration.validationQuery"
                             maxLength="200"
-                            @blur="v$.jdbcPoolConfiguration.validationQuery.$touch()"
                             @input="onFieldChange('validationQuery', $event.target.value)"
                             v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.validationQueryInfo')"
                         />
                         <label for="validationQuery" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.validationQuery') }} </label>
                     </span>
-                    <KnValidationMessages
-                        :vComp="v$.jdbcPoolConfiguration.validationQuery"
-                        :additionalTranslateParams="{
-                            fieldName: $t('managers.dataSourceManagement.form.advancedOptions.validationQuery')
-                        }"
-                    />
                 </div>
 
                 <div class="p-field-checkbox">
