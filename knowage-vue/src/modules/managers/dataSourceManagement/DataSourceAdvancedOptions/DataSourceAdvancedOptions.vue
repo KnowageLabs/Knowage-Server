@@ -7,6 +7,7 @@
         </template>
 
         <template #content>
+            {{ jdbcPoolConfiguration }}
             <form class="p-fluid p-m-3">
                 <div class="p-field p-formgroup-inline">
                     <!-- MAX TOTAL -->
@@ -256,7 +257,6 @@ export default defineComponent({
     },
     methods: {
         onFieldChange(fieldName: string, value: any) {
-            console.log(value)
             this.$emit('fieldChanged', { fieldName, value })
         }
     }

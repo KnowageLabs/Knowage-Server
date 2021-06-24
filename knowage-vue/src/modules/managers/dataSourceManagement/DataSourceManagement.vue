@@ -22,7 +22,7 @@
                     :filterFields="dataSourceDescriptor.filterFields"
                     :emptyFilterMessage="$t('common.info.noDataFound')"
                     @change="showForm"
-                    data-test="datasources-list"
+                    data-test="datasource-list"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
@@ -51,7 +51,6 @@ import axios from 'axios'
 import dataSourceDescriptor from './DataSourceDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnHint from '@/components/UI/KnHint.vue'
-
 import Listbox from 'primevue/listbox'
 
 export default defineComponent({
@@ -90,11 +89,12 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         convertToSeconds(dataSourceArr) {
-            dataSourceArr.forEach((dataSource) => {
+            // dataSourceArr.forEach((dataSource) => {
+            Array.prototype.forEach.call(dataSourceArr, (dataSource) => {
                 if (dataSource.hasOwnProperty('jdbcPoolConfiguration')) {
-                    dataSource.jdbcPoolConfiguration.maxWait = dataSource.jdbcPoolConfiguration.maxWait / 1000
-                    dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns = dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns / 1000
-                    dataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis = dataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis / 1000
+                    dataSource.jdbcPoolConfiguration.maxWait /= 1000
+                    dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns /= 1000
+                    dataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis /= 1000
                 }
             })
         },
@@ -113,7 +113,6 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/currentuser`)
                 .then((response) => {
                     this.user = response.data
-                    console.log('user', this.user)
                 })
                 .finally(() => (this.loading = false))
         },
@@ -161,6 +160,7 @@ export default defineComponent({
         reloadPage() {
             this.touched = false
             this.hintVisible = true
+            this.$router.push('/datasource')
             this.getAllDatasources()
         },
         onFormClose() {

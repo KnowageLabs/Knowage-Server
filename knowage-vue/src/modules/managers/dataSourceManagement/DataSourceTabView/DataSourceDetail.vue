@@ -2,8 +2,8 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #left>{{ datasource.label }}</template>
         <template #right>
-            <Button icon="pi pi-info" class="p-button-text p-button-rounded p-button-plain" @click="testDataSource" />
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" />
+            <Button icon="pi pi-info" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly" @click="testDataSource" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
@@ -339,12 +339,18 @@ export default defineComponent({
         tooltip: Tooltip
     },
     emits: ['touched', 'closed', 'inserted'],
-    computed: {},
+    computed: {
+        operation() {
+            if (this.id) {
+                return 'update'
+            }
+            return 'insert'
+        }
+    },
     data() {
         return {
             v$: useValidate() as any,
             dataSourceDescriptor,
-            operation: 'insert',
             datasource: {} as any,
             availableDatabases: [] as any,
             selectedDatabase: {} as any,
@@ -400,18 +406,25 @@ export default defineComponent({
 
         createNewDataSourceValues() {
             this.jdbcOrJndi.type = 'JDBC'
-            this.jdbcPoolConfiguration = dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration
-            this.datasource = dataSourceDescriptor.newDataSourceValues
+            this.jdbcPoolConfiguration = { ...dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration }
+            this.datasource = { ...dataSourceDescriptor.newDataSourceValues }
             this.disableLabelField = false
         },
 
         loadExistingDataSourceValues() {
+            console.log('loadExistingDataSourceValues() {')
             this.datasource = { ...this.selectedDatasource } as any
-            this.jdbcPoolConfiguration = this.datasource.jdbcPoolConfiguration as any
+            this.jdbcPoolConfiguration = { ...this.datasource.jdbcPoolConfiguration } as any
             this.disableLabelField = true
             this.connectionType()
             this.selectDatabase(this.datasource.dialectName)
             this.isReadOnly()
+        },
+
+        convertToMili(dsToSave) {
+            dsToSave.jdbcPoolConfiguration.maxWait *= 1000
+            dsToSave.jdbcPoolConfiguration.timeBetweenEvictionRuns *= 1000
+            dsToSave.jdbcPoolConfiguration.minEvictableIdleTimeMillis *= 1000
         },
 
         selectDatabase(selectedDatabaseDialect) {
@@ -450,12 +463,15 @@ export default defineComponent({
             //     console.log('validError', this.v$)
             //     return
             // }
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'datasourcestest/2.0/test/'
-            let dsToSave = {} as any
-            dsToSave = this.datasource
-            dsToSave.type = this.jdbcOrJndi.type
+            var url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'datasourcestest/2.0/test/'
+            var dsToTest = {} as any
+            dsToTest = { ...this.datasource }
+            dsToTest.type = this.jdbcOrJndi.type
+            if (dsToTest.hasOwnProperty('jdbcPoolConfiguration')) {
+                this.convertToMili(dsToTest)
+            }
 
-            await axios.post(url, dsToSave).then((response) => {
+            await axios.post(url, dsToTest).then((response) => {
                 if (response.data.error) {
                     this.$store.commit('setError', { title: this.$t('managers.dataSourceManagement.form.errorTitle'), msg: response.data.error })
                     console.log(response.data)
@@ -464,6 +480,30 @@ export default defineComponent({
                     console.log(response.data)
                 }
             })
+        },
+
+        async createOrUpdate(url, dsToSave) {
+            return this.operation === 'update' ? axios.put(url, dsToSave) : axios.post(url, dsToSave)
+        },
+
+        async handleSubmit() {
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/'
+            let dsToSave = {} as any
+            dsToSave = { ...this.datasource }
+            // delete dsToSave.type
+            if (dsToSave.hasOwnProperty('jdbcPoolConfiguration')) {
+                this.convertToMili(dsToSave)
+            }
+
+            await this.createOrUpdate(url, dsToSave).then((response) => {
+                if (response.data.errors) {
+                    this.$store.commit('setError', { title: 'Error', msg: response.data.error })
+                } else {
+                    this.$store.commit('setInfo', { title: 'Ok', msg: 'Saved OK' })
+                }
+            })
+            this.$emit('inserted')
+            this.touched = false
         },
 
         closeTemplateConfirm() {
