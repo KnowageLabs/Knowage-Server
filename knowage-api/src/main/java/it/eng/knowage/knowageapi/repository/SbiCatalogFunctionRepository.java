@@ -50,10 +50,12 @@ public class SbiCatalogFunctionRepository {
 		return dao.find(id);
 	}
 
+	@Transactional(value = TxType.REQUIRED)
 	public SbiCatalogFunction create(SbiCatalogFunction function) {
 		return dao.create(function);
 	}
 
+	@Transactional(value = TxType.REQUIRED)
 	public SbiCatalogFunction update(SbiCatalogFunction function) {
 		return dao.update(function);
 	}
