@@ -10,8 +10,6 @@
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <Card :style="dataSourceDescriptor.card.style">
         <template #content>
-            {{ datasource }}
-
             <form class="p-fluid p-m-5">
                 <div class="p-fluid p-formgrid p-grid">
                     <div class="p-field p-col-12 p-md-6" :style="dataSourceDescriptor.pField.style">
@@ -39,7 +37,6 @@
                             }"
                         />
                     </div>
-
                     <div class="p-field p-col-12 p-md-6" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <Dropdown
@@ -82,7 +79,6 @@
                             <label for="multiSchema" class="kn-material-input-label" :style="dataSourceDescriptor.checkboxLabel.style"> {{ $t('managers.dataSourceManagement.form.multischema') }} </label>
                         </span>
                     </div>
-
                     <div class="p-field" :style="dataSourceDescriptor.pField.style" v-if="datasource.multiSchema">
                         <span class="p-float-label">
                             <InputText
@@ -168,7 +164,6 @@
                             <label for="user" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.user') }}</label>
                         </span>
                     </div>
-
                     <div class="p-field p-col-12 p-md-6" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JDBC'">
                         <span class="p-float-label">
                             <InputText id="pwd" class="kn-material-input" type="password" maxLength="50" v-model.trim="datasource.pwd" @input="onFieldChange" :disabled="readOnly" />
@@ -240,11 +235,11 @@
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import axios from 'axios'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import useValidate from '@vuelidate/core'
 import dataSourceDescriptor from '../DataSourceDescriptor.json'
 import dataSourceDetailValidationDescriptor from './DataSourceDetailValidationDescriptor.json'
 import DataSourceAdvancedOptions from '../DataSourceAdvancedOptions/DataSourceAdvancedOptions.vue'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Dropdown from 'primevue/dropdown'
 import RadioButton from 'primevue/radiobutton'
 import Checkbox from 'primevue/checkbox'
@@ -252,6 +247,12 @@ import Card from 'primevue/card'
 import Tooltip from 'primevue/tooltip'
 
 export default defineComponent({
+    emits: ['touched', 'closed', 'inserted'],
+
+    directives: {
+        tooltip: Tooltip
+    },
+
     components: {
         Card,
         KnValidationMessages,
@@ -260,6 +261,7 @@ export default defineComponent({
         Checkbox,
         DataSourceAdvancedOptions
     },
+
     props: {
         selectedDatasource: {
             type: Object,
@@ -272,10 +274,36 @@ export default defineComponent({
         databases: Array,
         id: String
     },
-    directives: {
-        tooltip: Tooltip
+
+    mounted() {
+        this.currentUser = { ...this.user } as any
+        this.availableDatabases = this.databases
+        if (this.selectedDatasource) {
+            this.loadExistingDataSourceValues()
+        } else {
+            this.createNewDataSourceValues()
+        }
     },
-    emits: ['touched', 'closed', 'inserted'],
+
+    watch: {
+        id() {
+            if (this.id == undefined) {
+                this.createNewDataSourceValues()
+            } else {
+                this.loadExistingDataSourceValues()
+            }
+            this.touched = false
+        },
+        databases() {
+            this.availableDatabases = this.databases
+            this.selectDatabase(this.datasource.dialectName)
+            this.isReadOnly()
+        },
+        user() {
+            this.currentUser = { ...this.user } as any
+        }
+    },
+
     computed: {
         operation() {
             if (this.id) {
@@ -290,6 +318,7 @@ export default defineComponent({
             return false
         }
     },
+
     data() {
         return {
             v$: useValidate() as any,
@@ -322,33 +351,6 @@ export default defineComponent({
         return validationObject
     },
 
-    mounted() {
-        this.currentUser = { ...this.user } as any
-        this.availableDatabases = this.databases
-        if (this.selectedDatasource) {
-            this.loadExistingDataSourceValues()
-        } else {
-            this.createNewDataSourceValues()
-        }
-    },
-    watch: {
-        id() {
-            if (this.id == undefined) {
-                this.createNewDataSourceValues()
-            } else {
-                this.loadExistingDataSourceValues()
-            }
-            this.touched = false
-        },
-        databases() {
-            this.availableDatabases = this.databases
-            this.selectDatabase(this.datasource.dialectName)
-            this.isReadOnly()
-        },
-        user() {
-            this.currentUser = { ...this.user } as any
-        }
-    },
     methods: {
         connectionType() {
             if (this.datasource.driver) {
@@ -375,6 +377,24 @@ export default defineComponent({
             this.isReadOnly()
         },
 
+        convertToMili(dsToSave) {
+            dsToSave.jdbcPoolConfiguration.maxWait *= 1000
+            dsToSave.jdbcPoolConfiguration.timeBetweenEvictionRuns *= 1000
+            dsToSave.jdbcPoolConfiguration.minEvictableIdleTimeMillis *= 1000
+        },
+
+        selectDatabase(selectedDatabaseDialect) {
+            this.availableDatabases.forEach((database) => {
+                if (database.databaseDialect.value == selectedDatabaseDialect) {
+                    this.selectedDatabase = database
+                }
+            })
+            if (!this.selectedDatabase.cacheSupported) {
+                this.datasource.writeDefault = false
+                this.datasource.readOnly = true
+            }
+        },
+
         clearType() {
             if (!this.datasource.hasOwnProperty('dsId')) {
                 if (this.jdbcOrJndi.type == 'JDBC') {
@@ -398,30 +418,14 @@ export default defineComponent({
             }
         },
 
-        convertToMili(dsToSave) {
-            dsToSave.jdbcPoolConfiguration.maxWait *= 1000
-            dsToSave.jdbcPoolConfiguration.timeBetweenEvictionRuns *= 1000
-            dsToSave.jdbcPoolConfiguration.minEvictableIdleTimeMillis *= 1000
-        },
-
-        selectDatabase(selectedDatabaseDialect) {
-            this.availableDatabases.forEach((database) => {
-                if (database.databaseDialect.value == selectedDatabaseDialect) {
-                    this.selectedDatabase = database
-                }
-            })
-            if (!this.selectedDatabase.cacheSupported) {
-                this.datasource.writeDefault = false
-                this.datasource.readOnly = true
-            }
-        },
-
         isReadOnly() {
             if (this.selectedDatasource) {
                 if (this.currentUser.isSuperadmin || (this.currentUser.userId == this.datasource.owner && (!this.datasource.hasOwnProperty('jndi') || this.datasource.jndi == ''))) {
+                    //need for demo purposes, to be removed after peer review.
                     this.$store.commit('setInfo', {
                         title: this.$t('YOU ARE THE OWNER or SUPERADMIN')
                     })
+                    // -----------------------------------------------------
                     this.readOnly = false
                 } else {
                     this.$store.commit('setInfo', {
@@ -440,9 +444,6 @@ export default defineComponent({
             var dsToTest = {} as any
             dsToTest = { ...this.datasource }
             dsToTest.type = this.jdbcOrJndi.type
-            if (dsToTest.hasOwnProperty('jdbcPoolConfiguration')) {
-                this.convertToMili(dsToTest)
-            }
 
             await axios.post(url, dsToTest).then((response) => {
                 if (response.data.error) {

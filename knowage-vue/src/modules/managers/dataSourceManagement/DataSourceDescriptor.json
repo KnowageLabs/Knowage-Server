@@ -22,6 +22,68 @@
         }
     },
     "filterFields": ["label", "descr"],
+    "iconTypesMap": {
+        "MongoDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "hive": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.BigQueryDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.DB2400Dialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.Hive2Dialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.MySQLDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.MySQLInnoDBDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.Oracle9Dialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.OracleDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.PostgreSQLDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.RedShiftDialect": {
+            "dbIcon": "far fa-newspaper"
+        },
+        "org.hibernate.dialect.SQLServerDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.SynapseDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.TeradataDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.VerticaDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.cassandra": {
+            "dbIcon": "fas fa-envelope"
+        },
+        "org.hibernate.dialect.impala": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.sparksql": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernatespatial.oracle.CustomOracleSpatialDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "orient": {
+            "dbIcon": "fas fa-exclamation-circle"
+        }
+    },
     "newDataSourceValues": {
         "descr": "",
         "dialectName": "",

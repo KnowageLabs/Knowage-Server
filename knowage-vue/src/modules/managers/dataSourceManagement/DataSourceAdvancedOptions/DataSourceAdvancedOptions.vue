@@ -10,7 +10,6 @@
             {{ jdbcPoolConfiguration }}
             <form class="p-fluid p-m-3">
                 <div class="p-field p-formgroup-inline">
-                    <!-- MAX TOTAL -->
                     <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
@@ -36,8 +35,6 @@
                             }"
                         />
                     </div>
-
-                    <!-- MAX WAIT -->
                     <div class="p-field p-col-12 p-md-5 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
@@ -63,7 +60,6 @@
                             }"
                         />
                     </div>
-                    <!-- abandonedTimeout -->
                     <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
@@ -89,7 +85,6 @@
                             }"
                         />
                     </div>
-                    <!--timeBetweenEvictionRuns -->
                     <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
@@ -115,7 +110,6 @@
                             }"
                         />
                     </div>
-                    <!-- minEvictableIdleTimeMillis -->
                     <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
@@ -142,20 +136,9 @@
                         />
                     </div>
                 </div>
-
-                <!-- VALIDATION QUERY -->
                 <div class="p-field" :style="dataSourceDescriptor.pField.style">
                     <span class="p-float-label">
-                        <InputText
-                            id="validationQuery"
-                            class="kn-material-input"
-                            :disabled="readOnly"
-                            type="text"
-                            v-model.trim="jdbcPoolConfiguration.validationQuery"
-                            maxLength="200"
-                            @input="onFieldChange('validationQuery', $event.target.value)"
-                            v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.validationQueryInfo')"
-                        />
+                        <InputText id="validationQuery" class="kn-material-input" :disabled="readOnly" type="text" v-model.trim="jdbcPoolConfiguration.validationQuery" maxLength="200" @input="onFieldChange('validationQuery', $event.target.value)" />
                         <label for="validationQuery" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.validationQuery') }} </label>
                     </span>
                 </div>
@@ -213,8 +196,6 @@ export default defineComponent({
     directives: {
         tooltip: Tooltip
     },
-
-    computed: {},
     emits: ['fieldChanged'],
     data() {
         return {

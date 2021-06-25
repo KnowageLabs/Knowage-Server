@@ -27,6 +27,8 @@
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
                         <div class="kn-list-item" data-test="list-item">
+                            <Avatar :icon="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].dbIcon" shape="circle" size="medium" />
+                            <!-- {{ slotProps.option.dialectName }} -->
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.label }}</span>
                                 <span class="kn-list-item-text-secondary">{{ slotProps.option.descr }}</span>
@@ -52,12 +54,14 @@ import dataSourceDescriptor from './DataSourceDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import Listbox from 'primevue/listbox'
+import Avatar from 'primevue/avatar'
 
 export default defineComponent({
     name: 'datasources-management',
     components: {
         FabButton,
         Listbox,
+        Avatar,
         KnHint
     },
     data() {
@@ -78,27 +82,6 @@ export default defineComponent({
         await this.getCurrentUser()
     },
     methods: {
-        async getAllDatasources() {
-            this.loading = true
-            await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources')
-                .then((response) => {
-                    this.datasources = response.data
-                    this.convertToSeconds(this.datasources)
-                })
-                .finally(() => (this.loading = false))
-        },
-        convertToSeconds(dataSourceArr) {
-            // dataSourceArr.forEach((dataSource) => {
-            Array.prototype.forEach.call(dataSourceArr, (dataSource) => {
-                if (dataSource.hasOwnProperty('jdbcPoolConfiguration')) {
-                    dataSource.jdbcPoolConfiguration.maxWait /= 1000
-                    dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns /= 1000
-                    dataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis /= 1000
-                }
-            })
-        },
-
         async getAllDatabases() {
             return axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/databases`)
@@ -115,6 +98,26 @@ export default defineComponent({
                     this.user = response.data
                 })
                 .finally(() => (this.loading = false))
+        },
+
+        async getAllDatasources() {
+            this.loading = true
+            await axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources')
+                .then((response) => {
+                    this.datasources = response.data
+                    this.convertToSeconds(this.datasources)
+                })
+                .finally(() => (this.loading = false))
+        },
+        convertToSeconds(dataSourceArr) {
+            Array.prototype.forEach.call(dataSourceArr, (dataSource) => {
+                if (dataSource.hasOwnProperty('jdbcPoolConfiguration')) {
+                    dataSource.jdbcPoolConfiguration.maxWait /= 1000
+                    dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns /= 1000
+                    dataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis /= 1000
+                }
+            })
         },
 
         showForm(event: any) {
