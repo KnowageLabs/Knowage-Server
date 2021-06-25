@@ -29,7 +29,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -73,7 +72,6 @@ public class SbiCatalogFunction extends AbstractEntity {
 	private String name;
 
 	@Column(name = "DESCRIPTION")
-	@Lob
 	@Basic(fetch = FetchType.EAGER)
 	@NotNull
 	private String description;
