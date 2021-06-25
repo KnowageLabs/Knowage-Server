@@ -2,7 +2,9 @@ export interface iBusinessModel {
     id: number,
     name: string,
     description: string,
-    category: number
+    category: number,
+    modelLocked: boolean,
+    smartView: boolean
 }
 
 export interface iBusinessModelVersion {

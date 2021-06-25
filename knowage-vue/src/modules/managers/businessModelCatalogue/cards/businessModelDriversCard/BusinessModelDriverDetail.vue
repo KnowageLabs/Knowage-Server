@@ -8,7 +8,8 @@
             </Toolbar>
         </template>
         <template #content>
-            <form class="p-fluid p-m-5" v-if="selectedDriver">
+            <BusinessModelDriverHint v-if="!selectedDriver"></BusinessModelDriverHint>
+            <form class="p-fluid p-m-5" v-else>
                 <div class="p-field">
                     <span class="p-float-label">
                         <InputText
@@ -21,6 +22,7 @@
                             }"
                             maxLength="40"
                             @blur="v$.driver.label.$touch()"
+                            @change="setChanged"
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.driverTitle') }} * </label>
                     </span>
@@ -81,6 +83,7 @@
                             }"
                             maxLength="20"
                             @blur="v$.driver.parameterUrlName.$touch()"
+                            @change="setDirty"
                         />
                         <label for="parameterUrlName" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.driversUrl') }} * </label>
                     </span>
@@ -94,7 +97,7 @@
                 </div>
 
                 <div class="p-field p-mt-2">
-                    <InputSwitch id="driver-multivalue " class="p-mr-2" v-model="driver.multivalue" />
+                    <InputSwitch id="driver-multivalue " class="p-mr-2" v-model="driver.multivalue" @change="setDirty" />
                     <i class="fa fa-list p-mr-2" />
                     <label for="driver-multivalue " class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.multivalue') }}</label>
                 </div>
@@ -102,7 +105,7 @@
         </template>
     </Card>
 
-    <Card>
+    <Card v-if="selectedDriver">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
@@ -218,6 +221,7 @@ import { createValidations, ICustomValidatorMap } from '@/helpers/commons/valida
 import axios from 'axios'
 import businessModelDriverDetailDescriptor from './BusinessModelDriverDetailDescriptor.json'
 import businessModelDriverDetailValidationDescriptor from './BusinessModelDriverDetailValidationDescriptor.json'
+import BusinessModelDriverHint from './BusinessModelDriverHint.vue'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Dialog from 'primevue/dialog'
@@ -230,6 +234,7 @@ import useValidate from '@vuelidate/core'
 export default defineComponent({
     name: 'business-model-driver-detail-card',
     components: {
+        BusinessModelDriverHint,
         Card,
         Checkbox,
         Dialog,
@@ -377,7 +382,7 @@ export default defineComponent({
         },
         handleSubmit() {
             console.log('MODALITIES', this.modalities)
-
+            console.log('CONDITION PASSED', this.condition)
             if (this.condition.id) {
                 this.operation = 'update'
             }
@@ -396,37 +401,49 @@ export default defineComponent({
                         this.sendRequest(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, conditionForPost)
                     }
                 })
-                this.loadDataDependencies()
-                this.loadModes()
-                this.loadLovs()
-                this.conditionFormVisible = false
             })
         },
         async sendRequest(url: string, condition: any) {
             if (this.operation === 'insert') {
-                return await axios.post(url, condition).then((response) => {
-                    if (response.data.errors) {
-                        this.errorMessage = response.data.errors[0].message
-                        this.displayWarning = true
-                    } else {
-                        this.$store.commit('setInfo', {
-                            title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
-                            msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
-                        })
-                    }
-                })
+                return axios
+                    .post(url, condition)
+                    .then((response) => {
+                        if (response.data.errors) {
+                            this.errorMessage = response.data.errors[0].message
+                            this.displayWarning = true
+                        } else {
+                            this.$store.commit('setInfo', {
+                                title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
+                                msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
+                            })
+                        }
+                    })
+                    .finally(() => {
+                        this.loadDataDependencies()
+                        this.loadModes()
+                        this.loadLovs()
+                        this.conditionFormVisible = false
+                    })
             } else {
-                return await axios.put(url, condition).then((response) => {
-                    if (response.data.errors) {
-                        this.errorMessage = response.data.errors[0].message
-                        this.displayWarning = true
-                    } else {
-                        this.$store.commit('setInfo', {
-                            title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
-                            msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
-                        })
-                    }
-                })
+                return axios
+                    .put(url, condition)
+                    .then((response) => {
+                        if (response.data.errors) {
+                            this.errorMessage = response.data.errors[0].message
+                            this.displayWarning = true
+                        } else {
+                            this.$store.commit('setInfo', {
+                                title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
+                                msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
+                            })
+                        }
+                    })
+                    .finally(() => {
+                        this.loadDataDependencies()
+                        this.loadModes()
+                        this.loadLovs()
+                        this.conditionFormVisible = false
+                    })
             }
         },
         showForm(event: any) {
@@ -444,6 +461,9 @@ export default defineComponent({
                 this.condition = {}
             }
             this.conditionFormVisible = true
+        },
+        setChanged() {
+            this.driver.status = 'CHANGED'
         },
         closeForm() {
             this.conditionFormVisible = false

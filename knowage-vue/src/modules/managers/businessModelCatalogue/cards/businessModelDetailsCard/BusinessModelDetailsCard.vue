@@ -21,6 +21,7 @@
                             }"
                             maxLength="100"
                             @blur="v$.businessModel.name.$touch()"
+                            @input="onFieldChange('name', $event.target.value)"
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
@@ -43,6 +44,7 @@
                             }"
                             maxLength="500"
                             @blur="v$.businessModel.description.$touch()"
+                            @input="onFieldChange('description', $event.target.value)"
                         />
                         <label for="description" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.description') }}</label>
                     </span>
@@ -65,6 +67,7 @@
                             v-model="v$.businessModel.category.$model"
                             :options="categories"
                             @before-show="v$.businessModel.category.$touch()"
+                            @change="onFieldChange('category', $event.value.VALUE_ID)"
                         >
                             <template #value="slotProps">
                                 <div v-if="slotProps.value">
@@ -90,8 +93,9 @@
                                 'p-invalid': v$.businessModel.dataSourceLabel.$invalid && v$.businessModel.dataSourceLabel.$dirty
                             }"
                             v-model="v$.businessModel.dataSourceLabel.$model"
-                            :options="categories"
+                            :options="datasources"
                             @before-show="v$.businessModel.dataSourceLabel.$touch()"
+                            @change="onFieldChange('dataSourceLabel', $event.value)"
                         >
                             <template #value="slotProps">
                                 <div v-if="slotProps.value">
@@ -104,7 +108,7 @@
                                 </div>
                             </template>
                         </Dropdown>
-                        <label for="dataSourceLabel" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.analyticalDriver') }} * </label>
+                        <label for="dataSourceLabel" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.dataSource') }} * </label>
                     </span>
                 </div>
 
@@ -118,17 +122,17 @@
                     </div>
                     <div class="input-container">
                         <div class="p-d-flex p-flex-row">
-                            <div>
+                            <div v-if="selectedBusinessModel.id">
                                 <InputSwitch id="enable-metadata" class="p-mr-2" v-model="metaWebVisible" />
                                 <label for="enable-metadata" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.enableMetaweb') }}</label>
                             </div>
                             <div>
-                                <InputSwitch id="model-lock" class="p-mr-2" v-model="businessModel.modelLocked" />
+                                <InputSwitch id="model-lock" class="p-mr-2" v-model="businessModel.modelLocked" @change="onLockedChange" />
                                 <label for="model-lock" class="kn-material-input-label">{{ businessModel.modelLocked ? $t('managers.buisnessModelCatalogue.unlockModel') : $t('managers.buisnessModelCatalogue.lockModel') }}</label>
                             </div>
                         </div>
                         <div>
-                            <InputSwitch id="model-lock" class="p-mr-2" v-model="businessModel.smartView" />
+                            <InputSwitch id="model-lock" class="p-mr-2" v-model="businessModel.smartView" @change="onSmartViewChange" />
                             <label for="model-lock" class="kn-material-input-label" v-tooltip.bottom="$t('managers.buisnessModelCatalogue.smartViewTooltip')">{{ businessModel.smartView ? $t('managers.buisnessModelCatalogue.smartView') : $t('managers.buisnessModelCatalogue.advancedView') }}</label>
                         </div>
                     </div>
@@ -236,7 +240,7 @@ export default defineComponent({
             requried: true
         }
     },
-    emits: ['fieldChanged'],
+    emits: ['fieldChanged', 'fileUploaded'],
     watch: {
         selectedBusinessModel() {
             this.v$.$reset()
@@ -273,14 +277,29 @@ export default defineComponent({
     methods: {
         loadBusinessModel() {
             this.businessModel = { ...this.selectedBusinessModel } as iBusinessModel
+            console.log('LOADED BM', this.businessModel)
         },
         loadCategories() {
             this.categories = this.domainCategories as any[]
         },
         loadDatasources() {
+            console.log('BEFORE CALLED LOADDATASOURCES', this.datasourcesMeta)
             this.datasources = this.datasourcesMeta as any[]
+            console.log('AFTER CALLED LOADDATASOURCES', this.datasources)
         },
-        uploadFile() {},
+        uploadFile(event) {
+            this.$emit('fileUploaded', event.target.files[0])
+        },
+        onFieldChange(fieldName: string, value: any) {
+            console.log(fieldName, '  =>  ', value)
+            this.$emit('fieldChanged', { fieldName, value })
+        },
+        onLockedChange() {
+            this.$emit('fieldChanged', { fieldName: 'modelLocked', value: this.businessModel.modelLocked })
+        },
+        onSmartViewChange() {
+            this.$emit('fieldChanged', { fieldName: 'smartView', value: this.businessModel.smartView })
+        },
         test() {
             console.log('CALLLLLLLLLLLLLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED')
             this.showMetaWeb = true

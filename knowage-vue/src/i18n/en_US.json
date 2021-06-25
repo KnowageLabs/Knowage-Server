@@ -115,6 +115,7 @@
     },
     "managers": {
         "buisnessModelCatalogue": {
+            "dataSource": "Data Source",
             "add": "Add",
             "addCondition": "Add Condition",
             "advancedView": "Use Advanced view as QBE default",
@@ -146,6 +147,7 @@
             "metadata": "Metadata",
             "modality": "Modality",
             "multivalue": "Multivalue",
+            "noDriverSelected": "No driver selected",
             "operationInfo": "Filter operator is used for comparing a column value of the AD {driver} and the value of the AD on which it depends",
             "savedVersions": "Saved versions",
             "setActiveVersion": "Set active version",

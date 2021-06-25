@@ -24,7 +24,7 @@
                                     </div>
                                     <Button v-if="slotProps.option.id !== businessModelDrivers[0].id" icon="fa fa-arrow-up" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'UP')" />
                                     <Button v-if="slotProps.option.id !== businessModelDrivers[businessModelDrivers.length - 1].id" icon="fa fa-arrow-down" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'DOWN')" />
-                                    <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteDriver(slotProps.option.id)" />
+                                    <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteDriver(slotProps.index)" />
                                 </div>
                             </template>
                         </Listbox>
@@ -66,9 +66,11 @@ export default defineComponent({
             required: true
         }
     },
+    emits: ['delete'],
     data() {
         return {
             businessModelDrivers: [] as any[],
+            driversForDelete: [] as any[],
             analyticalDrivers: [] as any[],
             selectedDriver: null as any,
             formVisible: false,
@@ -96,9 +98,16 @@ export default defineComponent({
             this.analyticalDrivers = this.driversOptions
         },
         showForm(event: any) {
-            this.selectedDriver = event.value ?? {}
+            if (event.value) {
+                this.selectedDriver = event.value
+            } else {
+                this.selectedDriver = { biMetaModelID: this.id }
+                this.businessModelDrivers.push(this.selectedDriver)
+            }
 
-            this.selectedDriver.parameter = this.analyticalDrivers.find((driver) => driver.id === this.selectedDriver.parameter.id)
+            if (this.selectedDriver.parameter) {
+                this.selectedDriver.parameter = this.analyticalDrivers.find((driver) => driver.id === this.selectedDriver.parameter.id)
+            }
 
             if (!this.touched) {
                 this.formVisible = true
@@ -133,10 +142,12 @@ export default defineComponent({
                 this.businessModelDrivers[currentDriverIndex] = temp
             }
         },
-
-        deleteDriver(driverId: number) {
-            const currentDriverIndex = this.businessModelDrivers.findIndex((driver) => driver.id === driverId)
-            this.businessModelDrivers.splice(currentDriverIndex, 1)
+        deleteDriver(index: any) {
+            if (this.businessModelDrivers[index].id) {
+                this.driversForDelete.push(this.businessModelDrivers[index])
+            }
+            this.businessModelDrivers.splice(index, 1)
+            this.$emit('delete', this.driversForDelete)
         }
     }
 })
