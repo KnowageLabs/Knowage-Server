@@ -123,6 +123,39 @@ class SbiCatalogFunctionDaoTest {
 		assertEquals(true, true);
 	}
 
+	@Test
+	void update() throws SerialException, SQLException, KnowageBusinessException {
+
+		SbiCatalogFunction n = createRandomName();
+
+		EntityTransaction transaction = em.getTransaction();
+		transaction.begin();
+
+		n = dao.create(n);
+
+		transaction.commit();
+
+		n.getInputColumns().clear();
+		n.getInputVariables().clear();
+		n.getOutputColumns().clear();
+
+		transaction = em.getTransaction();
+		transaction.begin();
+
+		dao.update(n);
+
+		transaction.commit();
+
+		transaction = em.getTransaction();
+		transaction.begin();
+
+		dao.delete(n.getFunctionId());
+
+		transaction.commit();
+
+		assertEquals(true, true);
+	}
+
 	private SbiCatalogFunction store(SbiCatalogFunction toStore) {
 		toStore = dao.create(toStore);
 		return toStore;

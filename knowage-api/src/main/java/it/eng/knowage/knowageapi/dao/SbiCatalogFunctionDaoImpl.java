@@ -26,6 +26,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.Filter;
@@ -60,14 +61,19 @@ public class SbiCatalogFunctionDaoImpl implements SbiCatalogFunctionDao {
 		CriteriaQuery<SbiCatalogFunction> q = cb.createQuery(SbiCatalogFunction.class);
 		Root<SbiCatalogFunction> root = q.from(SbiCatalogFunction.class);
 
-		Path<String> nameCol = root.get("name");
-
 		q = q.select(root);
 
 		if (isNotEmpty(searchStr)) {
+			Path<String> nameCol = root.get("name");
+			Path<String> labelCol = root.get("label");
+
 			String val = String.format("%%%s%%", searchStr);
 
-			q = q.where(cb.like(nameCol, val));
+			Predicate nameLike = cb.like(nameCol, val);
+			Predicate labelLike = cb.like(labelCol, val);
+
+			q = q.where(cb.or(nameLike, labelLike));
+
 		}
 
 		Query query = em.createQuery(q);
@@ -123,20 +129,20 @@ public class SbiCatalogFunctionDaoImpl implements SbiCatalogFunctionDao {
 
 	@Override
 	public SbiCatalogFunction update(SbiCatalogFunction function) {
-		// TODO
-		return null;
-	}
-
-	private void init() {
-		Session session = em.unwrap(Session.class);
-		Filter filter = session.enableFilter("organization");
-		filter.setParameter("organization", business.getOrganization());
+		em.merge(function);
+		return function;
 	}
 
 	@Override
 	public SbiCatalogFunction create(SbiCatalogFunction function) {
 		em.persist(function);
 		return function;
+	}
+
+	private void init() {
+		Session session = em.unwrap(Session.class);
+		Filter filter = session.enableFilter("organization");
+		filter.setParameter("organization", business.getOrganization());
 	}
 
 }
