@@ -83,7 +83,7 @@ public class KnowageApiConfigurationTest {
 	}
 
 	@Bean
-	public BusinessRequestContext businessRequestContext(@Value("application.version") String version) {
+	public BusinessRequestContext businessRequestContext(@Value("${application.version}") String version) {
 		BusinessRequestContext businessRequestContext = new BusinessRequestContext(version);
 		businessRequestContext.setUsername("biadmin");
 		businessRequestContext.setOrganization("DEFAULT_TENANT");
