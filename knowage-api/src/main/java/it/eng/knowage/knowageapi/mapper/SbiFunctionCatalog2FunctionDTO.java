@@ -1,5 +1,8 @@
 package it.eng.knowage.knowageapi.mapper;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -14,11 +17,15 @@ public class SbiFunctionCatalog2FunctionDTO implements Function<SbiCatalogFuncti
 
 		String functionId = t.getFunctionId();
 		String name = t.getName();
+		String type = t.getType();
+		List<String> keywords = Arrays.asList(Optional.of(t.getKeywords()).orElse("").split(","));
 
 		UUID transformedFuntionId = UUID.fromString(functionId);
 
 		ret.setId(transformedFuntionId);
 		ret.setName(name);
+		ret.setType(type);
+		ret.getKeywords().addAll(keywords);
 
 		return ret;
 	}
