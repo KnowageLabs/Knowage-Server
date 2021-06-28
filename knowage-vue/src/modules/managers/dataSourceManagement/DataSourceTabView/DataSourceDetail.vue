@@ -29,13 +29,7 @@
                             />
                             <label for="label" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                         </span>
-                        <KnValidationMessages
-                            class="p-mt-1"
-                            :vComp="v$.datasource.label"
-                            :additionalTranslateParams="{
-                                fieldName: $t('common.name')
-                            }"
-                        />
+                        <KnValidationMessages class="p-mt-1" :vComp="v$.datasource.label" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
                     </div>
                     <div class="p-field p-col-12 p-md-6" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
@@ -55,13 +49,7 @@
                             />
                             <label for="dialectName" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.dialect') }} * </label>
                         </span>
-                        <KnValidationMessages
-                            class="p-mt-1"
-                            :vComp="v$.datasource.dialectName"
-                            :additionalTranslateParams="{
-                                fieldName: $t('managers.dataSourceManagement.form.dialect')
-                            }"
-                        />
+                        <KnValidationMessages class="p-mt-1" :vComp="v$.datasource.dialectName" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.dialect') }" />
                     </div>
                 </div>
 
@@ -95,12 +83,7 @@
                             />
                             <label for="schemaAttribute" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.schemaAttribute') }} </label>
                         </span>
-                        <KnValidationMessages
-                            :vComp="v$.datasource.schemaAttribute"
-                            :additionalTranslateParams="{
-                                fieldName: $t('managers.dataSourceManagement.form.schemaAttribute')
-                            }"
-                        />
+                        <KnValidationMessages :vComp="v$.datasource.schemaAttribute" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.schemaAttribute') }" />
                     </div>
                 </div>
 
@@ -150,12 +133,7 @@
                         />
                         <label for="jndi" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.jndi') }} * </label>
                     </span>
-                    <KnValidationMessages
-                        :vComp="v$.datasource.jndi"
-                        :additionalTranslateParams="{
-                            fieldName: $t('managers.dataSourceManagement.form.jndi')
-                        }"
-                    />
+                    <KnValidationMessages :vComp="v$.datasource.jndi" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.jndi') }" />
                 </div>
                 <div class="p-fluid p-formgrid p-grid">
                     <div class="p-field p-col-12 p-md-6" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JDBC'">
@@ -189,12 +167,7 @@
                         />
                         <label for="urlConnection" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.urlConnection') }} * </label>
                     </span>
-                    <KnValidationMessages
-                        :vComp="v$.datasource.urlConnection"
-                        :additionalTranslateParams="{
-                            fieldName: $t('managers.dataSourceManagement.form.urlConnection')
-                        }"
-                    />
+                    <KnValidationMessages :vComp="v$.datasource.urlConnection" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.urlConnection') }" />
                 </div>
 
                 <div class="p-field" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JDBC'">
@@ -214,12 +187,7 @@
                         />
                         <label for="driver" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.driver') }} * </label>
                     </span>
-                    <KnValidationMessages
-                        :vComp="v$.datasource.driver"
-                        :additionalTranslateParams="{
-                            fieldName: $t('managers.dataSourceManagement.form.driver')
-                        }"
-                    />
+                    <KnValidationMessages :vComp="v$.datasource.driver" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.driver') }" />
                 </div>
             </form>
         </template>
@@ -297,7 +265,7 @@ export default defineComponent({
         databases() {
             this.availableDatabases = this.databases
             this.selectDatabase(this.datasource.dialectName)
-            this.isReadOnly()
+            this.checkIfReadOnly()
         },
         user() {
             this.currentUser = { ...this.user } as any
@@ -337,13 +305,12 @@ export default defineComponent({
     },
 
     validations() {
+        const jndiTypeRequired = (jndiType) => (value) => {
+            return this.jdbcOrJndi.type != jndiType || value
+        }
         const customValidators: ICustomValidatorMap = {
-            'jndi-name-required': (value) => {
-                return this.jdbcOrJndi.type != 'JNDI' || value
-            },
-            'jdbc-data-required': (value) => {
-                return this.jdbcOrJndi.type != 'JDBC' || value
-            }
+            'jndi-name-required': jndiTypeRequired('JNDI'),
+            'jdbc-data-required': jndiTypeRequired('JDBC')
         }
         const validationObject = {
             datasource: createValidations('datasource', dataSourceDetailValidationDescriptor.validations.datasource, customValidators)
@@ -352,7 +319,7 @@ export default defineComponent({
     },
 
     methods: {
-        connectionType() {
+        setConnetionType() {
             if (this.datasource.driver) {
                 this.jdbcOrJndi.type = 'JDBC'
             }
@@ -372,9 +339,9 @@ export default defineComponent({
             this.datasource = { ...this.selectedDatasource } as any
             this.jdbcPoolConfiguration = { ...this.datasource.jdbcPoolConfiguration } as any
             this.disableLabelField = true
-            this.connectionType()
+            this.setConnetionType()
             this.selectDatabase(this.datasource.dialectName)
-            this.isReadOnly()
+            this.checkIfReadOnly()
         },
 
         convertToMili(dsToSave) {
@@ -418,7 +385,7 @@ export default defineComponent({
             }
         },
 
-        isReadOnly() {
+        checkIfReadOnly() {
             if (this.selectedDatasource) {
                 if (this.currentUser.isSuperadmin || (this.currentUser.userId == this.datasource.owner && (!this.datasource.hasOwnProperty('jndi') || this.datasource.jndi == ''))) {
                     //need for demo purposes, to be removed after peer review.

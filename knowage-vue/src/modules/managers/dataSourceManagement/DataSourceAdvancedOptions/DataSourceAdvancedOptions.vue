@@ -28,12 +28,7 @@
                             />
                             <label for="maxTotal" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.maxTotal') }} * </label>
                         </span>
-                        <KnValidationMessages
-                            :vComp="v$.jdbcPoolConfiguration.maxTotal"
-                            :additionalTranslateParams="{
-                                fieldName: $t('managers.dataSourceManagement.form.advancedOptions.maxTotal')
-                            }"
-                        />
+                        <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.maxTotal" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.maxTotal') }" />
                     </div>
                     <div class="p-field p-col-12 p-md-5 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
@@ -53,12 +48,7 @@
                             />
                             <label for="maxWait" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.maxWait') }} * </label>
                         </span>
-                        <KnValidationMessages
-                            :vComp="v$.jdbcPoolConfiguration.maxWait"
-                            :additionalTranslateParams="{
-                                fieldName: $t('managers.dataSourceManagement.form.advancedOptions.maxWait')
-                            }"
-                        />
+                        <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.maxWait" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.maxWait') }" />
                     </div>
                     <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
@@ -78,12 +68,7 @@
                             />
                             <label for="abandonedTimeout" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.abandonedTimeout') }} * </label>
                         </span>
-                        <KnValidationMessages
-                            :vComp="v$.jdbcPoolConfiguration.abandonedTimeout"
-                            :additionalTranslateParams="{
-                                fieldName: $t('managers.dataSourceManagement.form.advancedOptions.abandonedTimeout')
-                            }"
-                        />
+                        <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.abandonedTimeout" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.abandonedTimeout') }" />
                     </div>
                     <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
@@ -103,12 +88,7 @@
                             />
                             <label for="timeBetweenEvictionRuns" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.timeBetweenEvictionRuns') }} * </label>
                         </span>
-                        <KnValidationMessages
-                            :vComp="v$.jdbcPoolConfiguration.timeBetweenEvictionRuns"
-                            :additionalTranslateParams="{
-                                fieldName: $t('managers.dataSourceManagement.form.advancedOptions.timeBetweenEvictionRuns')
-                            }"
-                        />
+                        <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.timeBetweenEvictionRuns" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.timeBetweenEvictionRuns') }" />
                     </div>
                     <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
@@ -128,12 +108,7 @@
                             />
                             <label for="minEvictableIdleTimeMillis" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.minEvictableIdleTimeMillis') }} </label>
                         </span>
-                        <KnValidationMessages
-                            :vComp="v$.jdbcPoolConfiguration.minEvictableIdleTimeMillis"
-                            :additionalTranslateParams="{
-                                fieldName: $t('managers.dataSourceManagement.form.advancedOptions.minEvictableIdleTimeMillis')
-                            }"
-                        />
+                        <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.minEvictableIdleTimeMillis" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.minEvictableIdleTimeMillis') }" />
                     </div>
                 </div>
                 <div class="p-field" :style="dataSourceDescriptor.pField.style">
