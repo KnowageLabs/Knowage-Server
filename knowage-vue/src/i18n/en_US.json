@@ -119,6 +119,7 @@
             "addCondition": "Add Condition",
             "advancedView": "Use Advanced view as QBE default",
             "analyticalDriver": "Analytical driver",
+            "analyticalDriverPlaceholder": "Select analytical driver",
             "browse": "Browse",
             "check": "Add correlation with this use mode",
             "configurationTablePrefixTitle": "Meta Web Configuration",

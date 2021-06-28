@@ -35,7 +35,8 @@
 
             <TabPanel>
                 <template #header v-if="id">
-                    <span>{{ $t('managers.buisnessModelCatalogue.drivers') }} {{ invalidDrivers }}</span>
+                    <span>{{ $t('managers.buisnessModelCatalogue.drivers') }}</span>
+                    <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
                 </template>
 
                 <BusinessModelDriversCard v-if="id" :id="selectedBusinessModel.id" :drivers="drivers" :driversOptions="analyticalDrivers" @delete="setDriversForDelete"></BusinessModelDriversCard>
@@ -48,6 +49,7 @@
 import { defineComponent } from 'vue'
 import { iBusinessModel, iBusinessModelVersion } from './BusinessModelCatalogue'
 import axios from 'axios'
+import Badge from 'primevue/badge'
 import BusinessModelDetailsCard from './cards/businessModelDetailsCard/BusinessModelDetailsCard.vue'
 import BusinessModelDriversCard from './cards/businessModelDriversCard/BusinessModelDriversCard.vue'
 import BusinessModelVersionsCard from './cards/businessModelVersionsCard/BusinessModelVersionsCard.vue'
@@ -59,6 +61,7 @@ import useValidate from '@vuelidate/core'
 export default defineComponent({
     name: 'business-model-catalogue-detail',
     components: {
+        Badge,
         BusinessModelDetailsCard,
         BusinessModelDriversCard,
         BusinessModelVersionsCard,
@@ -110,13 +113,13 @@ export default defineComponent({
     async created() {
         await this.loadUser()
         await this.loadPage()
-        console.log('SELECTED BUSINESS MODEL: ', this.selectedBusinessModel)
-        console.log('SELECTED BUSINESS VERSIONS: ', this.businessModelVersions)
-        console.log('CATEGORIES: ', this.categories)
-        console.log('DATASOURCES: ', this.datasources)
-        console.log('ANALYTICAL DRIVERS: ', this.analyticalDrivers)
-        console.log('DRIVERS: ', this.drivers)
-        console.log('USER: ', this.user)
+        // console.log('SELECTED BUSINESS MODEL: ', this.selectedBusinessModel)
+        // console.log('SELECTED BUSINESS VERSIONS: ', this.businessModelVersions)
+        // console.log('CATEGORIES: ', this.categories)
+        // console.log('DATASOURCES: ', this.datasources)
+        // console.log('ANALYTICAL DRIVERS: ', this.analyticalDrivers)
+        // console.log('DRIVERS: ', this.drivers)
+        // console.log('USER: ', this.user)
     },
     methods: {
         async loadUser() {
@@ -179,34 +182,32 @@ export default defineComponent({
 
             this.drivers.forEach((driver) => {
                 if (driver.status === 'CHANGED') {
+                    delete driver.status
+                    delete driver.numberOfErrors
                     if (driver.id) {
-                        console.log('EDITED DRIVER!!! ', driver)
-                        delete driver.status
                         this.updateDriver(driver)
                     } else {
-                        console.log('NEW DRIVER!!! ', driver)
-                        delete driver.status
                         this.saveDriver(driver)
                     }
                 }
             })
 
             // BM SUBMIT
-            console.log('SELECTED BM FOR SUBMIT', this.selectedBusinessModel)
-            if (this.selectedBusinessModel.id) {
-                await this.updateBusinessModel()
-            } else {
-                await this.saveBusinessModel()
-            }
+            // console.log('SELECTED BM FOR SUBMIT', this.selectedBusinessModel)
+            // if (this.selectedBusinessModel.id) {
+            //     await this.updateBusinessModel()
+            // } else {
+            //     await this.saveBusinessModel()
+            // }
 
-            console.log('SLECTED BM ID AFTER POST', this.selectedBusinessModel.id)
-            console.log('UPLOADED FILE', this.uploadedFile)
-            if (this.selectedBusinessModel.id && this.uploadedFile) {
-                console.log('called upload')
-                await this.uploadFile()
-            }
+            // console.log('SLECTED BM ID AFTER POST', this.selectedBusinessModel.id)
+            // console.log('UPLOADED FILE', this.uploadedFile)
+            // if (this.selectedBusinessModel.id && this.uploadedFile) {
+            //     console.log('called upload')
+            //     await this.uploadFile()
+            // }
 
-            console.log('test', this.selectedBusinessModel)
+            // console.log('test', this.selectedBusinessModel)
         },
         async saveBusinessModel() {
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.fullName }).then((response) => {

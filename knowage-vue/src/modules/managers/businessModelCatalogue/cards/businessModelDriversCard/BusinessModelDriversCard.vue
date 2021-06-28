@@ -105,7 +105,7 @@ export default defineComponent({
             if (event.value) {
                 this.selectedDriver = event.value
             } else {
-                this.selectedDriver = { biMetaModelID: this.id, numberOfErrors: 1 }
+                this.selectedDriver = { biMetaModelID: this.id, modifiable: 0, priority: this.businessModelDrivers.length + 1, required: true, visible: true, multivalue: false, numberOfErrors: 1 }
                 this.businessModelDrivers.push(this.selectedDriver)
             }
 
@@ -140,6 +140,7 @@ export default defineComponent({
             }
             this.businessModelDrivers.splice(index, 1)
             this.$emit('delete', this.driversForDelete)
+            this.selectedDriver = null
         }
     }
 })

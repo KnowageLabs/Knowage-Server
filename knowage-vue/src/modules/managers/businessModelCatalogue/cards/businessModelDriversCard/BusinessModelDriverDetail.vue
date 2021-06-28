@@ -35,7 +35,8 @@
                 </div>
 
                 <div class="p-field">
-                    <span class="p-float-label">
+                    <span>
+                        <label for="parameter" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.analyticalDriver') }} * </label>
                         <Dropdown
                             id="parameter"
                             class="kn-material-input"
@@ -44,6 +45,7 @@
                             }"
                             v-model="v$.driver.parameter.$model"
                             :options="analyticalDrivers"
+                            :placeholder="$t('managers.buisnessModelCatalogue.analyticalDriverPlaceholder')"
                             :filter="true"
                             @before-show="v$.driver.parameter.$touch()"
                             @change="setChanged"
@@ -59,7 +61,6 @@
                                 </div>
                             </template>
                         </Dropdown>
-                        <label for="parameter" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.analyticalDriver') }} * </label>
                     </span>
 
                     <KnValidationMessages
@@ -330,6 +331,12 @@ export default defineComponent({
     methods: {
         loadSelectedDriver() {
             this.driver = this.selectedDriver
+
+            if (!this.selectedDriver.id) {
+                this.v$.driver.label.$touch()
+                this.v$.driver.parameter.$touch()
+                this.v$.driver.parameterUrlName.$touch()
+            }
         },
         loadAnalyticalDrivers() {
             this.analyticalDrivers = this.driverOptions as any[]
