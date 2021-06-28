@@ -11,7 +11,6 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div class="p-col">
                     <Listbox
                         v-if="!loading"
                         class="kn-list--column"
@@ -32,14 +31,13 @@
                                     <span>{{ slotProps.option.name }}</span>
                                     <span class="kn-list-item-text-secondary">{{ slotProps.option.roleTypeCD }}</span>
                                 </div>
-                                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteRoleConfirm(slotProps.option.id)" data-test="delete-button" />
+                                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteRoleConfirm(slotProps.option.id)" data-test="delete-button" />
                             </div>
                         </template>
                     </Listbox>
-                </div>
             </div>
 
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
                 <router-view @touched="touched = true" @closed="touched = false" @inserted="pageReload" />
             </div>
         </div>
@@ -84,7 +82,7 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         showForm(event: any) {
-            const path = event.value ? `/roles/${event.value.id}` : '/roles/new-role'
+            const path = event.value ? `/roles-management/${event.value.id}` : '/roles-management/new-role'
 
             if (!this.touched) {
                 this.$router.push(path)
@@ -114,7 +112,7 @@ export default defineComponent({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
-                this.$router.push('/roles')
+                this.$router.push('/roles-management')
                 this.loadAllRoles()
             })
         },

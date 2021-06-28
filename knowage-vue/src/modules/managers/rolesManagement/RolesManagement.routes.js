@@ -1,9 +1,13 @@
 let routes = [
     {
-        path: '/roles',
-        name: 'roles',
+        path: '/roles-management',
+        name: 'roles-management',
         component: () => import('@/modules/managers/rolesManagement/RolesManagement.vue'),
         children: [
+             {
+                path: '',
+                component: () => import('@/modules/managers/rolesManagement/RolesManagementHint.vue')
+            },
             {
                 path: 'new-role',
                 name: 'new-role',

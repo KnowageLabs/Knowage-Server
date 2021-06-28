@@ -1,5 +1,5 @@
 <template>
-    <Card>
+    <Card class="kn-card no-padding">
         <template #content>
             <div v-for="(category, index) of rolesManagementTabViewDescriptor.categories" :key="index">
                 <template v-if="authorizationCBs[category.categoryName] && authorizationCBs[category.categoryName].length">

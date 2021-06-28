@@ -1,4 +1,11 @@
 {
+    "card": {
+        "style": {
+            "height": "100%",
+            "margin-bottom": "2em",
+            "width": "100%"
+        }
+    },
     "column": {
         "header": {
             "style": {
@@ -7,13 +14,6 @@
         },
         "style": {
             "width": "50%"
-        }
-    },
-    "card": {
-        "style": {
-            "height": "100vh",
-            "width": "100%",
-            "margin-bottom": "2em"
         }
     }
 }

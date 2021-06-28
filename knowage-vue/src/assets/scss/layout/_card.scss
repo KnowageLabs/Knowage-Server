@@ -1,0 +1,11 @@
+.p-card.kn-card{
+    &.no-padding {
+        .p-card-body {
+            padding: 0 0 8px 0;
+            .p-card-content {
+                padding: 0 0 8px 0;
+            }
+        }
+        
+    }
+}

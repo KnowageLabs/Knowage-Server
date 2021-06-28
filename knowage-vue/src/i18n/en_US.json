@@ -156,9 +156,22 @@
             "valueDescription": "Value description",
             "valueName": "Value name"
         },
+        "menu": {
+            "admin": {
+                "importExport": "Import/Export"
+            }
+        },
         "metadata": {
             "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Metadata Management"
+        },
+        "newsDialog": {
+            "description": "Description",
+            "expirationDate": "Expiration date",
+            "news": "news",
+            "notifications": "notifications",
+            "title": "Knowage news",
+            "warnings": "warnings"
         },
         "profileAttributesManagement": {
             "description": "Description",
@@ -191,81 +204,87 @@
             "title": "Profile Attributes Management",
             "valueDescription": "Value description"
         },
-      "rolesManagement": {
-            "noResults": "No roles available for the selected filter",
-            "businessModels": "Business models",
-            "categories": "Categories",
-            "dataSets": "Data sets",
-            "kpiCategories": "KPI Categories",
-            "title": "Roles Management",
+        "role": {
+            "defaultRolePlaceholder": "No default role selected",
+            "roleSelection": "Role Selection"
+        },
+        "rolesManagement": {
             "authorizations": {
-                "title": "Authorizations",
                 "name": {
-                    "see": "See",
-                    "send": "Send",
                     "build": "Build",
-                    "manage": "Manage",
-                    "enable": "Enable",
-                    "widgets": "Widgets",
-                    "items": "Items for user menu",
-                    "enterprise": "Enterprise",
-                    "savePersonalFolder": "Save into My Workspace",
-                    "saveSubobj": "Save OLAP View",
-                    "seeViewpoints": "View Saved Parameters",
-                    "sendMail": "Send Mail",
                     "buildQbe": "Build QbE Queries",
-                    "manageUsers": "Users",
-                    "manageKpiValue": "Manage Kpi Value",
-                    "manageInternationalization": "Manage Internationalization",
-                    "enableDatasetPersistence": "Dataset Persistence",
-                    "enableFederatedDataset": "Federated Dataset",
-                    "enableToRate": "Rate Documents",
-                    "enableToPrint": "Print Documents",
-                    "enableToCopyAndEmbed": "Copy and Embed link",
-                    "editPythonScripts": "Edit Python/R Scripts",
                     "createCustomChart": "Create custom chart",
-                    "seeDocBrowser": "View Document Browser",
-                    "seeMyData": "View 'My Data'",
-                    "seeMyWorkspace": "View My Workspace",
                     "createDocuments": "Create Documents",
                     "createSelfSelviceCockpit": "Create Cockpit report",
                     "createSelfSelviceGeoreport": "Create Geographic report",
                     "createSelfSelviceKpi": "Create KPI report",
-                    "functionsCatalogUsage": "Functions Catalog Usage",
-                    "seeNotes": "View Notes",
-                    "saveMeta": "Save Metadata",
-                    "seeMeta": "View Metadata",
-                    "seeSnapshot": "View Scheduled execution",
-                    "runSnapshot": "Run Scheduled execution",
-                    "manageGlossaryTechnical": "Manage Glossary Technical",
-                    "manageGlossaryBusiness": "Manage Glossary Business",
-                    "manageCalendar": "Manage Calendar",
-                    "seeSubobj": "See subobject",
-                    "seeFavourites": "See favourites",
-                    "saveRemember": "Save to remember",
-                    "seeToDoList": "See ToDo list",
-                    "doMassiveExport": "Do massive export",
-                    "seeSubscriptions": "See subscriptions",
                     "createSocialAnalysis": "Create social analysis",
-                    "viewSocialAnalysis": "View social analysis",
+                    "doMassiveExport": "Do massive export",
+                    "editPythonScripts": "Edit Python/R Scripts",
+                    "enable": "Enable",
+                    "enableDatasetPersistence": "Dataset Persistence",
+                    "enableFederatedDataset": "Federated Dataset",
+                    "enableToCopyAndEmbed": "Copy and Embed link",
+                    "enableToPrint": "Print Documents",
+                    "enableToRate": "Rate Documents",
+                    "enterprise": "Enterprise",
+                    "functionsCatalogUsage": "Functions Catalog Usage",
                     "hierarchiesManagement": "Manage Hierarchies",
+                    "items": "Items for user menu",
+                    "manage": "Manage",
+                    "manageCalendar": "Manage Calendar",
+                    "manageGlossaryBusiness": "Manage Glossary Business",
+                    "manageGlossaryTechnical": "Manage Glossary Technical",
+                    "manageInternationalization": "Manage Internationalization",
+                    "manageKpiValue": "Manage Kpi Value",
+                    "manageUsers": "Users",
+                    "manageWidgetGallery": "Manage widget gallery",
                     "newsVisualization": "News Visualization",
-                    "manageWidgetGallery": "Manage widget gallery"
-                }
+                    "runSnapshot": "Run Scheduled execution",
+                    "saveMeta": "Save Metadata",
+                    "savePersonalFolder": "Save into My Workspace",
+                    "saveRemember": "Save to remember",
+                    "saveSubobj": "Save OLAP View",
+                    "see": "See",
+                    "seeDocBrowser": "View Document Browser",
+                    "seeFavourites": "See favourites",
+                    "seeMeta": "View Metadata",
+                    "seeMyData": "View 'My Data'",
+                    "seeMyWorkspace": "View My Workspace",
+                    "seeNotes": "View Notes",
+                    "seeSnapshot": "View Scheduled execution",
+                    "seeSubobj": "See subobject",
+                    "seeSubscriptions": "See subscriptions",
+                    "seeToDoList": "See ToDo list",
+                    "seeViewpoints": "View Saved Parameters",
+                    "send": "Send",
+                    "sendMail": "Send Mail",
+                    "viewSocialAnalysis": "View social analysis",
+                    "widgets": "Widgets"
+                },
+                "title": "Authorizations"
             },
+            "businessModels": "Business models",
+            "categories": "Categories",
+            "dataSets": "Data sets",
             "detail": {
-                "title": "Detail",
                 "code": "Code",
+                "isPublic": "Is public role?",
                 "roleTypeID": "Role Type",
-                "isPublic": "Is public role?"
+                "title": "Detail"
             },
+            "hint": "The roles allows you to choose the permission and authorizations for the Knowage roles in your tenant. To view the details of a role, select one on the side, or press the \"+\" button to add a new one.",
+            "kpiCategories": "KPI Categories",
+            "noResults": "No roles available for the selected filter",
             "rolesDropdown": {
                 "ADMIN": "Administrator",
-                "USER": "User",
-                "TEST_ROLE": "Test User",
+                "DEV_ROLE": "Developer",
                 "MODEL_ADMIN": "Model Administrator",
-                "DEV_ROLE": "Developer"
+                "TEST_ROLE": "Test User",
+                "USER": "User"
             },
+            "title": "Roles Management"
+        },
         "widgetGallery": {
             "deleteTemplate": "Delete template",
             "downloadTemplate": "Download template",
@@ -288,22 +307,5 @@
             "title": "Gallery management",
             "uploadTemplate": "Upload template"
         }
-    },
-    "menu": {
-        "admin": {
-            "importExport": "Import/Export"
-        }
-    },
-    "newsDialog": {
-        "description": "Description",
-        "expirationDate": "Expiration date",
-        "news": "news",
-        "notifications": "notifications",
-        "title": "Knowage news",
-        "warnings": "warnings"
-    },
-    "role": {
-        "defaultRolePlaceholder": "No default role selected",
-        "roleSelection": "Role Selection"
     }
 }

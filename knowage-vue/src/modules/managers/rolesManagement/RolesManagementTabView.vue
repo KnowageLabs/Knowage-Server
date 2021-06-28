@@ -7,8 +7,8 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <div class="card">
-        <TabView class="tabview-custom" data-test="tab-view">
+    <div class="rolesDetail">
+        <TabView class="tabview-custom kn-tab" data-test="tab-view">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.rolesManagement.detail.title') }}</span>
@@ -49,7 +49,7 @@
                 <DomainCategoryTab :title="$t('managers.rolesManagement.kpiCategories')" :categoryList="kpiCategoriesList" :selected="selectedKPICategories" @changed="setSelectedKPICategories($event)"></DomainCategoryTab>
             </TabPanel>
         </TabView>
-    </div>
+        </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -227,7 +227,7 @@ export default defineComponent({
             this.$emit('touched')
         },
         closeTemplate() {
-            this.$router.push('/roles')
+            this.$router.push('/roles-management')
             this.$emit('closed')
         },
         indexInList(category: iCategory, list: iCategory[]) {
@@ -289,3 +289,11 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss" scoped>
+.rolesDetail {
+    overflow: auto;
+    flex: 1;
+    display: flex;
+    flex-direction:column;
+}
+</style>

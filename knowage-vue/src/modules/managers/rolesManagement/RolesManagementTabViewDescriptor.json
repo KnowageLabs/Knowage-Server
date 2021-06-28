@@ -1,4 +1,397 @@
 {
+    "EEAuthorizations": [
+        {
+            "category": "SEE",
+            "dbname": "SEE_NOTES",
+            "fieldName": "ableToSeeNotes",
+            "label": "seeNotes",
+            "visible": false
+        },
+        {
+            "category": "SEE",
+            "dbname": "SEE_METADATA",
+            "fieldName": "ableToSeeMetadata",
+            "label": "seeMeta",
+            "visible": false
+        },
+        {
+            "category": "SAVE",
+            "dbname": "SAVE_METADATA",
+            "fieldName": "ableToSaveMetadata",
+            "label": "saveMeta",
+            "visible": false
+        },
+        {
+            "category": "MANAGE",
+            "dbname": "MANAGE_GLOSSARY_BUSINESS",
+            "fieldName": "ableToManageGlossaryBusiness",
+            "label": "manageGlossaryBusiness",
+            "visible": false
+        },
+        {
+            "category": "MANAGE",
+            "dbname": "MANAGE_GLOSSARY_TECHNICAL",
+            "fieldName": "ableToManageGlossaryTechnical",
+            "label": "manageGlossaryTechnical",
+            "visible": false
+        },
+        {
+            "category": "MANAGE",
+            "dbname": "MANAGE_CALENDAR",
+            "fieldName": "ableToManageCalendar",
+            "label": "manageCalendar",
+            "visible": false
+        },
+        {
+            "category": "SEE",
+            "dbname": "SEE_SNAPSHOTS",
+            "fieldName": "ableToSeeSnapshots",
+            "label": "seeSnapshot",
+            "visible": false
+        },
+        {
+            "category": "SEE",
+            "dbname": "RUN_SNAPSHOTS",
+            "fieldName": "ableToRunSnapshots",
+            "label": "runSnapshot",
+            "visible": false
+        }
+    ],
+    "authorizations": [
+        {
+            "category": "SEE",
+            "dbname": "SEE_SUBOBJECTS",
+            "fieldName": "ableToSeeSubobjects",
+            "label": "managers.rolesManagement.authorizations.name.seeSubobj",
+            "visible": false
+        },
+        {
+            "category": "SAVE",
+            "dbname": "SAVE_REMEMBER_ME",
+            "fieldName": "ableToSaveRememberMe",
+            "label": "managers.rolesManagement.authorizations.name.saveRemember",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "SEE_FAVOURITES",
+            "fieldName": "ableToSeeFavourites",
+            "label": "managers.rolesManagement.authorizations.name.seeFavourites",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "SEE_TODO_LIST",
+            "fieldName": "ableToSeeToDoList",
+            "label": "managers.rolesManagement.authorizations.name.seeToDoList",
+            "visible": false
+        },
+        {
+            "category": "EXPORT",
+            "dbname": "DO_MASSIVE_EXPORT",
+            "fieldName": "ableToDoMassiveExport",
+            "label": "managers.rolesManagement.authorizations.name.doMassiveExport",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "SEE_SUBSCRIPTIONS",
+            "fieldName": "ableToSeeSubscriptions",
+            "label": "managers.rolesManagement.authorizations.name.seeSubscriptions",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "CREATE_SOCIAL_ANALYSIS",
+            "fieldName": "ableToCreateSocialAnalysis",
+            "label": "managers.rolesManagement.authorizations.name.createSocialAnalysis",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "VIEW_SOCIAL_ANALYSIS",
+            "fieldName": "ableToViewSocialAnalysis",
+            "label": "managers.rolesManagement.authorizations.name.viewSocialAnalysis",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "HIERARCHIES_MANAGEMENT",
+            "fieldName": "ableToHierarchiesManagement",
+            "label": "managers.rolesManagement.authorizations.name.hierarchiesManagement",
+            "visible": false
+        },
+        {
+            "category": "SAVE",
+            "dbname": "SAVE_INTO_FOLDER",
+            "fieldName": "ableToSaveIntoPersonalFolder",
+            "label": "managers.rolesManagement.authorizations.name.savePersonalFolder",
+            "visible": false
+        },
+        {
+            "category": "SAVE",
+            "dbname": "SAVE_SUBOBJECTS",
+            "fieldName": "ableToSaveSubobjects",
+            "label": "managers.rolesManagement.authorizations.name.saveSubobj",
+            "visible": false
+        },
+        {
+            "category": "SEE",
+            "dbname": "SEE_VIEWPOINTS",
+            "fieldName": "ableToSeeViewpoints",
+            "label": "managers.rolesManagement.authorizations.name.seeViewpoints",
+            "visible": false
+        },
+        {
+            "category": "SEND",
+            "dbname": "SEND_MAIL",
+            "fieldName": "ableToSendMail",
+            "label": "managers.rolesManagement.authorizations.name.sendMail",
+            "visible": false
+        },
+        {
+            "category": "BUILD",
+            "dbname": "BUILD_QBE_QUERY",
+            "fieldName": "ableToBuildQbeQuery",
+            "label": "managers.rolesManagement.authorizations.name.buildQbe",
+            "visible": false
+        },
+        {
+            "category": "MANAGE",
+            "dbname": "MANAGE_USERS",
+            "fieldName": "ableToManageUsers",
+            "label": "managers.rolesManagement.authorizations.name.manageUsers",
+            "visible": false
+        },
+        {
+            "category": "MANAGE",
+            "dbname": "MANAGE_KPI_VALUE",
+            "fieldName": "ableToManageKpiValue",
+            "label": "managers.rolesManagement.authorizations.name.manageKpiValue",
+            "visible": false
+        },
+        {
+            "category": "MANAGE",
+            "dbname": "MANAGE_INTERNATIONALIZATION",
+            "fieldName": "ableToManageInternationalization",
+            "label": "managers.rolesManagement.authorizations.name.manageInternationalization",
+            "visible": false
+        },
+        {
+            "category": "ENABLE",
+            "dbname": "ENABLE_DATASET_PERSISTENCE",
+            "fieldName": "ableToEnableDatasetPersistence",
+            "label": "managers.rolesManagement.authorizations.name.enableDatasetPersistence",
+            "visible": false
+        },
+        {
+            "category": "ENABLE",
+            "dbname": "ENABLE_FEDERATED_DATASET",
+            "fieldName": "ableToEnableFederatedDataset",
+            "label": "managers.rolesManagement.authorizations.name.enableFederatedDataset",
+            "visible": false
+        },
+        {
+            "category": "ENABLE",
+            "dbname": "ENABLE_TO_RATE",
+            "fieldName": "ableToEnableRate",
+            "label": "managers.rolesManagement.authorizations.name.enableToRate",
+            "visible": false
+        },
+        {
+            "category": "ENABLE",
+            "dbname": "ENABLE_TO_PRINT",
+            "fieldName": "ableToEnablePrint",
+            "label": "managers.rolesManagement.authorizations.name.enableToPrint",
+            "visible": false
+        },
+        {
+            "category": "ENABLE",
+            "dbname": "ENABLE_TO_COPY_AND_EMBED",
+            "fieldName": "ableToEnableCopyAndEmbed",
+            "label": "managers.rolesManagement.authorizations.name.enableToCopyAndEmbed",
+            "visible": false
+        },
+        {
+            "category": "WIDGETS",
+            "dbname": "EDIT_PYTHON_SCRIPTS",
+            "fieldName": "ableToEditPythonScripts",
+            "label": "managers.rolesManagement.authorizations.name.editPythonScripts",
+            "visible": false
+        },
+        {
+            "category": "WIDGETS",
+            "dbname": "CREATE_CUSTOM_CHART",
+            "fieldName": "ableToCreateCustomChart",
+            "label": "managers.rolesManagement.authorizations.name.createCustomChart",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "SEE_DOCUMENT_BROWSER",
+            "enableForRole": [
+                27
+            ],
+            "fieldName": "ableToSeeDocumentBrowser",
+            "label": "managers.rolesManagement.authorizations.name.seeDocBrowser",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "SEE_MY_DATA",
+            "enableForRole": [
+                27
+            ],
+            "fieldName": "ableToSeeMyData",
+            "label": "managers.rolesManagement.authorizations.name.seeMyData",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "SEE_MY_WORKSPACE",
+            "enableForRole": [
+                27
+            ],
+            "fieldName": "ableToSeeMyWorkspace",
+            "label": "managers.rolesManagement.authorizations.name.seeMyWorkspace",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "CREATE_DOCUMENTS",
+            "fieldName": "ableToCreateDocuments",
+            "label": "managers.rolesManagement.authorizations.name.createDocuments",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "CREATE_SELF_SERVICE_COCKPIT",
+            "fieldName": "ableToCreateSelfServiceCockpit",
+            "label": "managers.rolesManagement.authorizations.name.createSelfSelviceCockpit",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "CREATE_SELF_SERVICE_GEOREPORT",
+            "fieldName": "ableToCreateSelfServiceGeoreport",
+            "label": "managers.rolesManagement.authorizations.name.createSelfSelviceGeoreport",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "CREATE_SELF_SERVICE_KPI",
+            "fieldName": "ableToCreateSelfServiceKpi",
+            "label": "managers.rolesManagement.authorizations.name.createSelfSelviceKpi",
+            "visible": false
+        },
+        {
+            "category": "ITEMS",
+            "dbname": "FUNCTIONS_CATALOG_USAGE",
+            "fieldName": "ableToUseFunctionsCatalog",
+            "label": "managers.rolesManagement.authorizations.name.functionsCatalogUsage",
+            "visible": false
+        },
+        {
+            "category": "SEE",
+            "dbname": "SEE_NOTES",
+            "fieldName": "ableToSeeNotes",
+            "label": "managers.rolesManagement.authorizations.name.seeNotes",
+            "visible": false
+        },
+        {
+            "category": "SEE",
+            "dbname": "SEE_METADATA",
+            "fieldName": "ableToSeeMetadata",
+            "label": "managers.rolesManagement.authorizations.name.seeMeta",
+            "visible": false
+        },
+        {
+            "category": "SAVE",
+            "dbname": "SAVE_METADATA",
+            "fieldName": "ableToSaveMetadata",
+            "label": "managers.rolesManagement.authorizations.name.saveMeta",
+            "visible": false
+        },
+        {
+            "category": "MANAGE",
+            "dbname": "MANAGE_GLOSSARY_BUSINESS",
+            "fieldName": "ableToManageGlossaryBusiness",
+            "label": "managers.rolesManagement.authorizations.name.manageGlossaryBusiness",
+            "visible": false
+        },
+        {
+            "category": "MANAGE",
+            "dbname": "MANAGE_GLOSSARY_TECHNICAL",
+            "fieldName": "ableToManageGlossaryTechnical",
+            "label": "managers.rolesManagement.authorizations.name.manageGlossaryTechnical",
+            "visible": false
+        },
+        {
+            "category": "MANAGE",
+            "dbname": "MANAGE_CALENDAR",
+            "fieldName": "ableToManageCalendar",
+            "label": "managers.rolesManagement.authorizations.name.manageCalendar",
+            "visible": false
+        },
+        {
+            "category": "SEE",
+            "dbname": "SEE_SNAPSHOTS",
+            "fieldName": "ableToSeeSnapshots",
+            "label": "managers.rolesManagement.authorizations.name.seeSnapshot",
+            "visible": false
+        },
+        {
+            "category": "SEE",
+            "dbname": "RUN_SNAPSHOTS",
+            "fieldName": "ableToRunSnapshots",
+            "label": "managers.rolesManagement.authorizations.name.runSnapshot",
+            "visible": false
+        }
+    ],
+    "card": {
+        "style": {
+            "margin-bottom": "2em",
+            "width": "100%"
+        }
+    },
+    "categories": [
+        {
+            "categoryName": "SAVE",
+            "name": "common.save"
+        },
+        {
+            "categoryName": "SEE",
+            "name": "managers.rolesManagement.authorizations.name.see"
+        },
+        {
+            "categoryName": "SEND",
+            "name": "managers.rolesManagement.authorizations.name.send"
+        },
+        {
+            "categoryName": "BUILD",
+            "name": "managers.rolesManagement.authorizations.name.build"
+        },
+        {
+            "categoryName": "MANAGE",
+            "name": "managers.rolesManagement.authorizations.name.manage"
+        },
+        {
+            "categoryName": "ENABLE",
+            "name": "managers.rolesManagement.authorizations.name.enable"
+        },
+        {
+            "categoryName": "WIDGETS",
+            "name": "managers.rolesManagement.authorizations.name.widgets"
+        },
+        {
+            "categoryName": "ITEMS",
+            "name": "managers.rolesManagement.authorizations.name.items"
+        },
+        {
+            "categoryName": "EXPORT",
+            "name": "common.export"
+        }
+    ],
     "column": {
         "header": {
             "style": {
@@ -10,105 +403,34 @@
             "width": "50%"
         }
     },
-    "card": {
-        "style": {
-            "height": "100vh",
-            "width": "100%",
-            "margin-bottom": "2em"
+    "newRoleDefaultValues": {
+        "ableToBuildQbeQuery": true,
+        "ableToCreateDocuments": true,
+        "ableToCreateSelfServiceCockpit": true,
+        "ableToCreateSelfServiceGeoreport": true,
+        "ableToCreateSelfServiceKpi": true,
+        "ableToEnableDatasetPersistence": true,
+        "ableToEnableFederatedDataset": true,
+        "ableToSaveIntoPersonalFolder": true,
+        "ableToSaveSubobjects": true,
+        "ableToSeeDocumentBrowser": true,
+        "ableToSeeMyData": true,
+        "ableToSeeMyWorkspace": true,
+        "ableToSeeViewpoints": true,
+        "ableToSendMail": true
+    },
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
         }
     },
     "pField": {
         "style": {
             "margin-bottom": "40px"
         }
-    },
-    "operation": {
-        "insert": {
-            "toastTitle": "common.toast.createTitle"
-        },
-        "update": {
-            "toastTitle": "common.toast.updateTitle"
-        },
-        "success": "common.toast.success"
-    },
-    "authorizations": [
-        { "dbname": "SEE_SUBOBJECTS", "label": "managers.rolesManagement.authorizations.name.seeSubobj", "visible": false, "category": "SEE", "fieldName": "ableToSeeSubobjects" },
-        { "dbname": "SAVE_REMEMBER_ME", "label": "managers.rolesManagement.authorizations.name.saveRemember", "visible": false, "category": "SAVE", "fieldName": "ableToSaveRememberMe" },
-        { "dbname": "SEE_FAVOURITES", "label": "managers.rolesManagement.authorizations.name.seeFavourites", "visible": false, "category": "ITEMS", "fieldName": "ableToSeeFavourites" },
-        { "dbname": "SEE_TODO_LIST", "label": "managers.rolesManagement.authorizations.name.seeToDoList", "visible": false, "category": "ITEMS", "fieldName": "ableToSeeToDoList" },
-        { "dbname": "DO_MASSIVE_EXPORT", "label": "managers.rolesManagement.authorizations.name.doMassiveExport", "visible": false, "category": "EXPORT", "fieldName": "ableToDoMassiveExport" },
-        { "dbname": "SEE_SUBSCRIPTIONS", "label": "managers.rolesManagement.authorizations.name.seeSubscriptions", "visible": false, "category": "ITEMS", "fieldName": "ableToSeeSubscriptions" },
-        { "dbname": "CREATE_SOCIAL_ANALYSIS", "label": "managers.rolesManagement.authorizations.name.createSocialAnalysis", "visible": false, "category": "ITEMS", "fieldName": "ableToCreateSocialAnalysis" },
-        { "dbname": "VIEW_SOCIAL_ANALYSIS", "label": "managers.rolesManagement.authorizations.name.viewSocialAnalysis", "visible": false, "category": "ITEMS", "fieldName": "ableToViewSocialAnalysis" },
-        { "dbname": "HIERARCHIES_MANAGEMENT", "label": "managers.rolesManagement.authorizations.name.hierarchiesManagement", "visible": false, "category": "ITEMS", "fieldName": "ableToHierarchiesManagement" },
-
-        { "dbname": "SAVE_INTO_FOLDER", "label": "managers.rolesManagement.authorizations.name.savePersonalFolder", "visible": false, "category": "SAVE", "fieldName": "ableToSaveIntoPersonalFolder" },
-        { "dbname": "SAVE_SUBOBJECTS", "label": "managers.rolesManagement.authorizations.name.saveSubobj", "visible": false, "category": "SAVE", "fieldName": "ableToSaveSubobjects" },
-        { "dbname": "SEE_VIEWPOINTS", "label": "managers.rolesManagement.authorizations.name.seeViewpoints", "visible": false, "category": "SEE", "fieldName": "ableToSeeViewpoints" },
-        { "dbname": "SEND_MAIL", "label": "managers.rolesManagement.authorizations.name.sendMail", "visible": false, "category": "SEND", "fieldName": "ableToSendMail" },
-        { "dbname": "BUILD_QBE_QUERY", "label": "managers.rolesManagement.authorizations.name.buildQbe", "visible": false, "category": "BUILD", "fieldName": "ableToBuildQbeQuery" },
-        { "dbname": "MANAGE_USERS", "label": "managers.rolesManagement.authorizations.name.manageUsers", "visible": false, "category": "MANAGE", "fieldName": "ableToManageUsers" },
-        { "dbname": "MANAGE_KPI_VALUE", "label": "managers.rolesManagement.authorizations.name.manageKpiValue", "visible": false, "category": "MANAGE", "fieldName": "ableToManageKpiValue" },
-        { "dbname": "MANAGE_INTERNATIONALIZATION", "label": "managers.rolesManagement.authorizations.name.manageInternationalization", "visible": false, "category": "MANAGE", "fieldName": "ableToManageInternationalization" },
-        { "dbname": "ENABLE_DATASET_PERSISTENCE", "label": "managers.rolesManagement.authorizations.name.enableDatasetPersistence", "visible": false, "category": "ENABLE", "fieldName": "ableToEnableDatasetPersistence" },
-        { "dbname": "ENABLE_FEDERATED_DATASET", "label": "managers.rolesManagement.authorizations.name.enableFederatedDataset", "visible": false, "category": "ENABLE", "fieldName": "ableToEnableFederatedDataset" },
-        { "dbname": "ENABLE_TO_RATE", "label": "managers.rolesManagement.authorizations.name.enableToRate", "visible": false, "category": "ENABLE", "fieldName": "ableToEnableRate" },
-        { "dbname": "ENABLE_TO_PRINT", "label": "managers.rolesManagement.authorizations.name.enableToPrint", "visible": false, "category": "ENABLE", "fieldName": "ableToEnablePrint" },
-        { "dbname": "ENABLE_TO_COPY_AND_EMBED", "label": "managers.rolesManagement.authorizations.name.enableToCopyAndEmbed", "visible": false, "category": "ENABLE", "fieldName": "ableToEnableCopyAndEmbed" },
-        { "dbname": "EDIT_PYTHON_SCRIPTS", "label": "managers.rolesManagement.authorizations.name.editPythonScripts", "visible": false, "category": "WIDGETS", "fieldName": "ableToEditPythonScripts" },
-        { "dbname": "CREATE_CUSTOM_CHART", "label": "managers.rolesManagement.authorizations.name.createCustomChart", "visible": false, "category": "WIDGETS", "fieldName": "ableToCreateCustomChart" },
-        { "dbname": "SEE_DOCUMENT_BROWSER", "label": "managers.rolesManagement.authorizations.name.seeDocBrowser", "visible": false, "category": "ITEMS", "fieldName": "ableToSeeDocumentBrowser", "enableForRole": [27] },
-        { "dbname": "SEE_MY_DATA", "label": "managers.rolesManagement.authorizations.name.seeMyData", "visible": false, "category": "ITEMS", "fieldName": "ableToSeeMyData", "enableForRole": [27] },
-        { "dbname": "SEE_MY_WORKSPACE", "label": "managers.rolesManagement.authorizations.name.seeMyWorkspace", "visible": false, "category": "ITEMS", "fieldName": "ableToSeeMyWorkspace", "enableForRole": [27] },
-        { "dbname": "CREATE_DOCUMENTS", "label": "managers.rolesManagement.authorizations.name.createDocuments", "visible": false, "category": "ITEMS", "fieldName": "ableToCreateDocuments" },
-        { "dbname": "CREATE_SELF_SERVICE_COCKPIT", "label": "managers.rolesManagement.authorizations.name.createSelfSelviceCockpit", "visible": false, "category": "ITEMS", "fieldName": "ableToCreateSelfServiceCockpit" },
-        { "dbname": "CREATE_SELF_SERVICE_GEOREPORT", "label": "managers.rolesManagement.authorizations.name.createSelfSelviceGeoreport", "visible": false, "category": "ITEMS", "fieldName": "ableToCreateSelfServiceGeoreport" },
-        { "dbname": "CREATE_SELF_SERVICE_KPI", "label": "managers.rolesManagement.authorizations.name.createSelfSelviceKpi", "visible": false, "category": "ITEMS", "fieldName": "ableToCreateSelfServiceKpi" },
-        { "dbname": "FUNCTIONS_CATALOG_USAGE", "label": "managers.rolesManagement.authorizations.name.functionsCatalogUsage", "visible": false, "category": "ITEMS", "fieldName": "ableToUseFunctionsCatalog" },
-        { "dbname": "SEE_NOTES", "label": "managers.rolesManagement.authorizations.name.seeNotes", "visible": false, "category": "SEE", "fieldName": "ableToSeeNotes" },
-        { "dbname": "SEE_METADATA", "label": "managers.rolesManagement.authorizations.name.seeMeta", "visible": false, "category": "SEE", "fieldName": "ableToSeeMetadata" },
-        { "dbname": "SAVE_METADATA", "label": "managers.rolesManagement.authorizations.name.saveMeta", "visible": false, "category": "SAVE", "fieldName": "ableToSaveMetadata" },
-        { "dbname": "MANAGE_GLOSSARY_BUSINESS", "label": "managers.rolesManagement.authorizations.name.manageGlossaryBusiness", "visible": false, "category": "MANAGE", "fieldName": "ableToManageGlossaryBusiness" },
-        { "dbname": "MANAGE_GLOSSARY_TECHNICAL", "label": "managers.rolesManagement.authorizations.name.manageGlossaryTechnical", "visible": false, "category": "MANAGE", "fieldName": "ableToManageGlossaryTechnical" },
-        { "dbname": "MANAGE_CALENDAR", "label": "managers.rolesManagement.authorizations.name.manageCalendar", "visible": false, "category": "MANAGE", "fieldName": "ableToManageCalendar" },
-        { "dbname": "SEE_SNAPSHOTS", "label": "managers.rolesManagement.authorizations.name.seeSnapshot", "visible": false, "category": "SEE", "fieldName": "ableToSeeSnapshots" },
-        { "dbname": "RUN_SNAPSHOTS", "label": "managers.rolesManagement.authorizations.name.runSnapshot", "visible": false, "category": "SEE", "fieldName": "ableToRunSnapshots" }
-    ],
-    "EEAuthorizations": [
-        { "dbname": "SEE_NOTES", "label": "seeNotes", "visible": false, "category": "SEE", "fieldName": "ableToSeeNotes" },
-        { "dbname": "SEE_METADATA", "label": "seeMeta", "visible": false, "category": "SEE", "fieldName": "ableToSeeMetadata" },
-        { "dbname": "SAVE_METADATA", "label": "saveMeta", "visible": false, "category": "SAVE", "fieldName": "ableToSaveMetadata" },
-        { "dbname": "MANAGE_GLOSSARY_BUSINESS", "label": "manageGlossaryBusiness", "visible": false, "category": "MANAGE", "fieldName": "ableToManageGlossaryBusiness" },
-        { "dbname": "MANAGE_GLOSSARY_TECHNICAL", "label": "manageGlossaryTechnical", "visible": false, "category": "MANAGE", "fieldName": "ableToManageGlossaryTechnical" },
-        { "dbname": "MANAGE_CALENDAR", "label": "manageCalendar", "visible": false, "category": "MANAGE", "fieldName": "ableToManageCalendar" },
-        { "dbname": "SEE_SNAPSHOTS", "label": "seeSnapshot", "visible": false, "category": "SEE", "fieldName": "ableToSeeSnapshots" },
-        { "dbname": "RUN_SNAPSHOTS", "label": "runSnapshot", "visible": false, "category": "SEE", "fieldName": "ableToRunSnapshots" }
-    ],
-    "categories": [
-        { "name": "common.save", "categoryName": "SAVE" },
-        { "name": "managers.rolesManagement.authorizations.name.see", "categoryName": "SEE" },
-        { "name": "managers.rolesManagement.authorizations.name.send", "categoryName": "SEND" },
-        { "name": "managers.rolesManagement.authorizations.name.build", "categoryName": "BUILD" },
-        { "name": "managers.rolesManagement.authorizations.name.manage", "categoryName": "MANAGE" },
-        { "name": "managers.rolesManagement.authorizations.name.enable", "categoryName": "ENABLE" },
-        { "name": "managers.rolesManagement.authorizations.name.widgets", "categoryName": "WIDGETS" },
-        { "name": "managers.rolesManagement.authorizations.name.items", "categoryName": "ITEMS" },
-        { "name": "common.export", "categoryName": "EXPORT" }
-    ],
-    "newRoleDefaultValues": {
-        "ableToSaveIntoPersonalFolder": true,
-        "ableToSaveSubobjects": true,
-        "ableToSeeViewpoints": true,
-        "ableToSendMail": true,
-        "ableToBuildQbeQuery": true,
-        "ableToEnableDatasetPersistence": true,
-        "ableToEnableFederatedDataset": true,
-        "ableToSeeDocumentBrowser": true,
-        "ableToSeeMyData": true,
-        "ableToSeeMyWorkspace": true,
-        "ableToCreateDocuments": true,
-        "ableToCreateSelfServiceCockpit": true,
-        "ableToCreateSelfServiceGeoreport": true,
-        "ableToCreateSelfServiceKpi": true
     }
 }

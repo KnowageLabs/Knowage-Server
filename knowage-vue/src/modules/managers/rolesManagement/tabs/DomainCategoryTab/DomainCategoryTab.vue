@@ -1,5 +1,5 @@
 <template>
-    <Card :style="domainCategoryTabDescriptor.card.style">
+    <Card class="domainCard" :style="domainCategoryTabDescriptor.card.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #left>
@@ -75,3 +75,17 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss" scoped>
+.domainCard {
+    &:deep(.p-card-body){
+        height: calc(100% - 35px);
+        .p-card-content {
+            height: 100%;
+            padding-bottom: 0;
+            .p-paginator-bottom {
+                border: none;
+            }
+        }
+    }
+}
+</style>
