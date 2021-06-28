@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,33 +15,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.services.validation;
 
-import java.util.List;
+/**
+ *
+ */
+package it.eng.spagobi.commons.serializer.v3;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
-public class ListStringValidator implements ConstraintValidator<ListStringConstraint, List<String>> {
-
-	@Override
-	public void initialize(ListStringConstraint arg0) {
-	}
-
-	@Override
-	public boolean isValid(List<String> toValidate, ConstraintValidatorContext constraintContext) {
-		if (toValidate == null)
-			return true;
-
-		else {
-			for (String value : toValidate) {
-				if (!value.matches("^([a-zA-Z0-9\\-\\_])*$")) {
-					return false;
-				}
-			}
-		}
-
-		return true;
-	}
-
+/**
+ * @author albnale
+ *
+ */
+public enum MenuType {
+	TECHNICAL_USER_FUNCTIONALITIES, COMMON_USER_FUNCTIONALITIES, ALLOWED_USER_FUNCTIONALITIES, DYNAMIC_USER_FUNCTIONALITIES;
 }

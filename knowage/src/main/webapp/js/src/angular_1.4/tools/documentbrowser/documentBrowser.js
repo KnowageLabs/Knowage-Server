@@ -9,7 +9,7 @@ app
 		[ '$window','$mdMedia', '$scope', '$http', '$mdSidenav',
 		  '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices',
 		  'sbiModule_config', 'setFocus','$timeout', '$cookies',
-		  'sbiModule_user','$interval','$q','$filter','sbiModule_i18n',documentBrowserFunction]);
+		  'sbiModule_user','$interval','$q','$filter','sbiModule_i18n','knModule_aggridLabels',documentBrowserFunction]);
 
 
 
@@ -17,7 +17,7 @@ function documentBrowserFunction($window,
 		$mdMedia, $scope, $http, $mdSidenav,
 		$mdDialog, sbiModule_translate, sbiModule_restServices,
 		sbiModule_config, setFocus,$timeout, $cookies,
-		sbiModule_user,$interval,$q,$filter,sbiModule_i18n) {
+		sbiModule_user,$interval,$q,$filter,sbiModule_i18n,knModule_aggridLabels) {
 
 	$scope.translate=sbiModule_translate;
 	$scope.i18n=sbiModule_i18n;
@@ -73,7 +73,8 @@ function documentBrowserFunction($window,
 	        	sortable: true,
 	        	filter: true,
 	        	resizable: true
-	        }
+	        },
+	        localeText: knModule_aggridLabels
 	};
 
 	$scope.searchResultGrid = {
@@ -85,7 +86,8 @@ function documentBrowserFunction($window,
 	        	filter: true,
 	        	resizable: true
 	        },
-	        columnDefs : $scope.columns
+	        columnDefs : $scope.columns,
+	        localeText: knModule_aggridLabels
 	}
 
 	$scope.documentBrowserGrid.onGridReady = function(){
