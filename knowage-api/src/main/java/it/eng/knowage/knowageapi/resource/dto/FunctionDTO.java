@@ -28,6 +28,7 @@ public class FunctionDTO {
 
 	private UUID id;
 	private String name;
+	private String label;
 	private String type;
 	private final List<String> keywords = new ArrayList<>();
 
@@ -57,6 +58,14 @@ public class FunctionDTO {
 
 	public List<String> getKeywords() {
 		return keywords;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	@Override
@@ -106,4 +115,5 @@ public class FunctionDTO {
 	public String toString() {
 		return "FunctionDTO [id=" + id + ", name=" + name + ", type=" + type + ", keywords=" + keywords + "]";
 	}
+
 }
