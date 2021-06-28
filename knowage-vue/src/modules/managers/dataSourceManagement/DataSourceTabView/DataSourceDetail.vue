@@ -8,6 +8,7 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <Message severity="info" v-if="showOwnerMessage">{{ ownerMessage }}</Message>
     <Card :style="dataSourceDescriptor.card.style">
         <template #content>
             <form class="p-fluid p-m-5">
@@ -55,8 +56,8 @@
 
                 <div class="p-field" :style="dataSourceDescriptor.pField.style">
                     <span class="p-float-label">
-                        <InputText id="descr" class="kn-material-input" type="text" maxLength="160" v-model.trim="datasource.descr" @blur="v$.datasource.descr.$touch()" @input="onFieldChange" :disabled="readOnly" />
-                        <label for="descr" class="kn-material-input-label"> {{ $t('common.description') }} * </label>
+                        <InputText id="descr" class="kn-material-input" type="text" maxLength="160" v-model.trim="datasource.descr" @input="onFieldChange" :disabled="readOnly" />
+                        <label for="descr" class="kn-material-input-label"> {{ $t('common.description') }} </label>
                     </span>
                 </div>
 
@@ -97,7 +98,7 @@
                         <RadioButton id="readAndWrite" :value="false" v-model="datasource.readOnly" :disabled="readOnly || !selectedDatabase.cacheSupported" />
                         <label for="readAndWrite">{{ $t('managers.dataSourceManagement.form.readAndWrite') }}</label>
                     </div>
-                    <span class="p-float-label" v-if="!datasource.readOnly">
+                    <span class="p-float-label" v-if="currentUser.isSuperadmin">
                         <Checkbox id="writeDefault" v-model="datasource.writeDefault" :binary="true" :disabled="readOnly || !selectedDatabase.cacheSupported || datasource.readOnly || !currentUser.isSuperadmin" />
                         <label for="writeDefault" :style="dataSourceDescriptor.checkboxLabel.style"> {{ $t('managers.dataSourceManagement.form.writeDefault') }} </label>
                     </span>
@@ -110,7 +111,7 @@
                         <label for="JDBC">JDBC</label>
                     </div>
                     <div class="p-field-radiobutton">
-                        <RadioButton id="readAndWrite" :value="'JNDI'" v-model="jdbcOrJndi.type" @change="clearType" :disabled="readOnly && !currentUser.isSuperadmin" />
+                        <RadioButton id="readAndWrite" :value="'JNDI'" v-model="jdbcOrJndi.type" @change="clearType" :disabled="readOnly || !currentUser.isSuperadmin" />
                         <label for="JNDI">JNDI</label>
                     </div>
                 </div>
@@ -213,6 +214,7 @@ import RadioButton from 'primevue/radiobutton'
 import Checkbox from 'primevue/checkbox'
 import Card from 'primevue/card'
 import Tooltip from 'primevue/tooltip'
+import Message from 'primevue/message'
 
 export default defineComponent({
     emits: ['touched', 'closed', 'inserted'],
@@ -227,6 +229,7 @@ export default defineComponent({
         Dropdown,
         RadioButton,
         Checkbox,
+        Message,
         DataSourceAdvancedOptions
     },
 
@@ -297,6 +300,8 @@ export default defineComponent({
             jdbcOrJndi: {} as any,
             jdbcPoolConfiguration: {} as any,
             currentUser: {} as any,
+            ownerMessage: '',
+            showOwnerMessage: false,
             loading: false,
             touched: false,
             readOnly: false,
@@ -333,6 +338,7 @@ export default defineComponent({
             this.jdbcPoolConfiguration = { ...dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration }
             this.datasource = { ...dataSourceDescriptor.newDataSourceValues }
             this.disableLabelField = false
+            this.checkIfReadOnly()
         },
 
         loadExistingDataSourceValues() {
@@ -388,17 +394,11 @@ export default defineComponent({
         checkIfReadOnly() {
             if (this.selectedDatasource) {
                 if (this.currentUser.isSuperadmin || (this.currentUser.userId == this.datasource.owner && (!this.datasource.hasOwnProperty('jndi') || this.datasource.jndi == ''))) {
-                    //need for demo purposes, to be removed after peer review.
-                    this.$store.commit('setInfo', {
-                        title: this.$t('YOU ARE THE OWNER or SUPERADMIN')
-                    })
-                    // -----------------------------------------------------
+                    this.showOwnerMessage = false
                     this.readOnly = false
                 } else {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('Information'),
-                        msg: this.$t('managers.dataSourceManagement.form.notOwner')
-                    })
+                    this.ownerMessage = this.$t('managers.dataSourceManagement.form.notOwner')
+                    this.showOwnerMessage = true
                     this.readOnly = true
                 }
             } else {

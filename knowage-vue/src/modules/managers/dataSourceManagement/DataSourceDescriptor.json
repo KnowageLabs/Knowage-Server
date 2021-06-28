@@ -7,7 +7,8 @@
     },
     "checkboxLabel": {
         "style": {
-            "margin-left": "15px"
+            "margin-left": "15px",
+            "width": "100px"
         }
     },
     "column": {

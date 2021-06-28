@@ -1,46 +1,44 @@
 <template>
-    <div class="kn-page">
-        <div class="kn-page-content p-grid p-m-0">
-            <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
-                <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
-                        {{ $t('managers.dataSourceManagement.title') }}
-                    </template>
-                    <template #right>
-                        <FabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button" />
-                    </template>
-                </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <Listbox
-                    v-if="!loading"
-                    class="kn-list--column"
-                    :options="datasources"
-                    optionLabel="label"
-                    :filter="true"
-                    :filterPlaceholder="$t('common.search')"
-                    filterMatchMode="contains"
-                    :filterFields="dataSourceDescriptor.filterFields"
-                    :emptyFilterMessage="$t('common.info.noDataFound')"
-                    @change="showForm"
-                    data-test="datasource-list"
-                >
-                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                    <template #option="slotProps">
-                        <div class="kn-list-item" data-test="list-item">
-                            <Avatar :icon="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].dbIcon" shape="circle" size="medium" />
-                            <div class="kn-list-item-text">
-                                <span>{{ slotProps.option.label }}</span>
-                                <span class="kn-list-item-text-secondary">{{ slotProps.option.descr }}</span>
-                            </div>
-                            <Button icon="far fa-trash-alt" class="p-button-link" v-if="slotProps.option.owner == this.user.userId || this.user.isSuperadmin" @click.stop="deleteDatasourceConfirm(slotProps.option.dsId)" data-test="delete-button" />
+    <div class="kn-page-content p-grid p-m-0">
+        <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
+            <Toolbar class="kn-toolbar kn-toolbar--primary">
+                <template #left>
+                    {{ $t('managers.dataSourceManagement.title') }}
+                </template>
+                <template #right>
+                    <FabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button" />
+                </template>
+            </Toolbar>
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+            <Listbox
+                v-if="!loading"
+                class="kn-list--column"
+                :options="datasources"
+                optionLabel="label"
+                :filter="true"
+                :filterPlaceholder="$t('common.search')"
+                filterMatchMode="contains"
+                :filterFields="dataSourceDescriptor.filterFields"
+                :emptyFilterMessage="$t('common.info.noDataFound')"
+                @change="showForm"
+                data-test="datasource-list"
+            >
+                <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                <template #option="slotProps">
+                    <div class="kn-list-item" data-test="list-item">
+                        <Avatar :icon="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].dbIcon" shape="circle" size="medium" />
+                        <div class="kn-list-item-text">
+                            <span>{{ slotProps.option.label }}</span>
+                            <span class="kn-list-item-text-secondary">{{ slotProps.option.descr }}</span>
                         </div>
-                    </template>
-                </Listbox>
-            </div>
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view :selectedDatasource="selDatasource" :databases="listOfAvailableDatabases" :user="user" @touched="touched = true" @closed="onFormClose" @inserted="reloadPage" />
-                <KnHint :title="'managers.dataSourceManagement.hintTitle'" :hint="'managers.dataSourceManagement.hint'" v-if="hintVisible" />
-            </div>
+                        <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" v-if="slotProps.option.owner == this.user.userId || this.user.isSuperadmin" @click.stop="deleteDatasourceConfirm(slotProps.option.dsId)" data-test="delete-button" />
+                    </div>
+                </template>
+            </Listbox>
+        </div>
+        <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
+            <router-view :selectedDatasource="selDatasource" :databases="listOfAvailableDatabases" :user="user" @touched="touched = true" @closed="onFormClose" @inserted="reloadPage" />
+            <KnHint :title="'managers.dataSourceManagement.hintTitle'" :hint="'managers.dataSourceManagement.hint'" v-if="hintVisible" />
         </div>
     </div>
 </template>

@@ -7,10 +7,9 @@
         </template>
 
         <template #content>
-            {{ jdbcPoolConfiguration }}
             <form class="p-fluid p-m-3">
-                <div class="p-field p-formgroup-inline">
-                    <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
+                <div class="p-formgroup-inline">
+                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="maxTotal"
@@ -30,7 +29,7 @@
                         </span>
                         <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.maxTotal" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.maxTotal') }" />
                     </div>
-                    <div class="p-field p-col-12 p-md-5 p-lg-2" :style="dataSourceDescriptor.pField.style">
+                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="maxWait"
@@ -50,7 +49,7 @@
                         </span>
                         <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.maxWait" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.maxWait') }" />
                     </div>
-                    <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
+                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="abandonedTimeout"
@@ -70,7 +69,7 @@
                         </span>
                         <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.abandonedTimeout" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.abandonedTimeout') }" />
                     </div>
-                    <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
+                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="timeBetweenEvictionRuns"
@@ -90,7 +89,7 @@
                         </span>
                         <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.timeBetweenEvictionRuns" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.timeBetweenEvictionRuns') }" />
                     </div>
-                    <div class="p-field p-col-12 p-md-6 p-lg-2" :style="dataSourceDescriptor.pField.style">
+                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="minEvictableIdleTimeMillis"
