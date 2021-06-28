@@ -49,9 +49,9 @@ import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
 @Path("/1.0/functioncatalog")
 @Component
 @Validated
-public class FunctionCatalog {
+public class FunctionCatalogResource {
 
-	private static final Logger LOGGER = Logger.getLogger(FunctionCatalog.class);
+	private static final Logger LOGGER = Logger.getLogger(FunctionCatalogResource.class);
 
 	@Autowired
 	private FunctionCatalogAPI api;
