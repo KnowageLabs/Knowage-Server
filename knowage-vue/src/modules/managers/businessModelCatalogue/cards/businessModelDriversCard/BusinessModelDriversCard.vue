@@ -19,7 +19,12 @@
                             <template #option="slotProps">
                                 <div class="kn-list-item">
                                     <div class="kn-list-item-text">
-                                        <span>{{ slotProps.option.label }}</span>
+                                        <span
+                                            :class="{
+                                                'driver-invalid': slotProps.option.numberOfErrors > 0
+                                            }"
+                                            >{{ slotProps.option.label }}</span
+                                        >
                                         <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option.parameterUrlName }}</span>
                                     </div>
                                     <Button v-if="slotProps.option.id !== businessModelDrivers[0].id" icon="fa fa-arrow-up" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'UP')" />
@@ -73,8 +78,7 @@ export default defineComponent({
             driversForDelete: [] as any[],
             analyticalDrivers: [] as any[],
             selectedDriver: null as any,
-            formVisible: false,
-            touched: false
+            formVisible: false
         }
     },
     watch: {
@@ -101,7 +105,7 @@ export default defineComponent({
             if (event.value) {
                 this.selectedDriver = event.value
             } else {
-                this.selectedDriver = { biMetaModelID: this.id }
+                this.selectedDriver = { biMetaModelID: this.id, numberOfErrors: 1 }
                 this.businessModelDrivers.push(this.selectedDriver)
             }
 
@@ -109,19 +113,7 @@ export default defineComponent({
                 this.selectedDriver.parameter = this.analyticalDrivers.find((driver) => driver.id === this.selectedDriver.parameter.id)
             }
 
-            if (!this.touched) {
-                this.formVisible = true
-            } else {
-                this.$confirm.require({
-                    message: this.$t('common.toast.unsavedChangesMessage'),
-                    header: this.$t('common.toast.unsavedChangesHeader'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.touched = false
-                        this.formVisible = true
-                    }
-                })
-            }
+            this.formVisible = true
         },
         movePriority(driverId: number, direction: 'UP' | 'DOWN') {
             const currentDriverIndex = this.businessModelDrivers.findIndex((driver) => driver.id === driverId)
@@ -152,3 +144,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.driver-invalid {
+    color: red;
+}
+</style>

@@ -115,7 +115,6 @@
     },
     "managers": {
         "buisnessModelCatalogue": {
-            "dataSource": "Data Source",
             "add": "Add",
             "addCondition": "Add Condition",
             "advancedView": "Use Advanced view as QBE default",
@@ -123,6 +122,7 @@
             "browse": "Browse",
             "check": "Add correlation with this use mode",
             "configurationTablePrefixTitle": "Meta Web Configuration",
+            "dataSource": "Data Source",
             "description": "Description",
             "details": "Details",
             "downloadJar": "Download jar",
@@ -137,6 +137,7 @@
             "driversUrlNotUnique": "The Url name must be unique",
             "enableMetaweb": "Enable Meta Web",
             "filterOperator": "Filter operator",
+            "generate": "Generate",
             "importConfirm": "Confirm import of metadata informations?",
             "importMetadata": "Import Metadata",
             "importProgress": "Importing Metadata in progress...",
@@ -149,6 +150,7 @@
             "multivalue": "Multivalue",
             "noDriverSelected": "No driver selected",
             "operationInfo": "Filter operator is used for comparing a column value of the AD {driver} and the value of the AD on which it depends",
+            "prefixTooltip": "Prefixes considered ONLY at meta tool table list retrieval",
             "savedVersions": "Saved versions",
             "setActiveVersion": "Set active version",
             "smartView": "Use Smart view as QBE default",

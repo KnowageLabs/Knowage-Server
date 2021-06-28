@@ -1,10 +1,13 @@
 export interface iBusinessModel {
     id: number,
     name: string,
+    dataSourceId: number,
     description: string,
-    category: number,
+    category: any,
     modelLocked: boolean,
-    smartView: boolean
+    smartView: boolean,
+    tablePrefixLike?: string,
+    tablePrefixNotLike?: string
 }
 
 export interface iBusinessModelVersion {

@@ -117,9 +117,15 @@
                         <label for="upload" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.uploadFile') }}:</label>
                         <KnInputFile :changeFunction="uploadFile" :visibility="true" />
                     </div>
-                    <div class="input-container" v-else>
-                        <Button class="kn-button kn-button--primary" :label="$t('managers.buisnessModelCatalogue.metaWeb')" @click="test"></Button>
+                    <div class="input-container p-d-flex p-flex-row" v-else>
+                        <div>
+                            <Button class="kn-button kn-button--primary" :label="$t('managers.buisnessModelCatalogue.metaWeb')" @click="goToMetaWeb"></Button>
+                        </div>
+                        <div v-if="toGenerate">
+                            <Button class="kn-button kn-button--primary" :label="$t('managers.buisnessModelCatalogue.generate')" @click="generate"></Button>
+                        </div>
                     </div>
+
                     <div class="input-container">
                         <div class="p-d-flex p-flex-row">
                             <div v-if="selectedBusinessModel.id">
@@ -132,8 +138,8 @@
                             </div>
                         </div>
                         <div>
-                            <InputSwitch id="model-lock" class="p-mr-2" v-model="businessModel.smartView" @change="onSmartViewChange" />
-                            <label for="model-lock" class="kn-material-input-label" v-tooltip.bottom="$t('managers.buisnessModelCatalogue.smartViewTooltip')">{{ businessModel.smartView ? $t('managers.buisnessModelCatalogue.smartView') : $t('managers.buisnessModelCatalogue.advancedView') }}</label>
+                            <InputSwitch id="smart-view" class="p-mr-2" v-model="businessModel.smartView" @change="onSmartViewChange" />
+                            <label for="smart-view" class="kn-material-input-label" v-tooltip.bottom="$t('managers.buisnessModelCatalogue.smartViewTooltip')">{{ businessModel.smartView ? $t('managers.buisnessModelCatalogue.smartView') : $t('managers.buisnessModelCatalogue.advancedView') }}</label>
                         </div>
                     </div>
                 </div>
@@ -142,6 +148,9 @@
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
                         <template #left>
                             {{ $t('managers.buisnessModelCatalogue.configurationTablePrefixTitle') }}
+                        </template>
+                        <template #right>
+                               <i class="fa fa-info-circle" v-tooltip.bottom="$t('managers.buisnessModelCatalogue.prefixTooltip')"></i>
                         </template>
                     </Toolbar>
                     <div class="p-fluid p-m-5">
@@ -159,6 +168,7 @@
                                         maxLength="500"
                                         v-tooltip.bottom="$t('managers.buisnessModelCatalogue.tablePrefixLikeExampleTooltip')"
                                         @blur="v$.businessModel.tablePrefixLike.$touch()"
+                                        @input="onFieldChange('tablePrefixLike', $event.target.value)"
                                     />
                                     <label for="label" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.tablePrefixLike') }}</label>
                                 </span>
@@ -182,6 +192,7 @@
                                         maxLength="500"
                                         v-tooltip.bottom="$t('managers.buisnessModelCatalogue.tablePrefixNotLikeExampleTooltip')"
                                         @blur="v$.businessModel.tablePrefixNotLike.$touch()"
+                                        @input="onFieldChange('tablePrefixNotLike', $event.target.value)"
                                     />
                                     <label for="label" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.tablePrefixNotLike') }}</label>
                                 </span>
@@ -198,7 +209,7 @@
             </form>
 
             <div v-if="showMetaWeb">
-                <iframe style="height: 1000px; width: 1500px" src="http://localhost:3000/knowage-vue/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/businessModelCatalogue.jsp"></iframe>
+                <iframe :src="metaModelUrl"></iframe>
             </div>
         </template>
     </Card>
@@ -208,8 +219,10 @@
 import { defineComponent } from 'vue'
 import { iBusinessModel } from '../../BusinessModelCatalogue'
 import { createValidations } from '@/helpers/commons/validationHelper'
+import businessModelDetailsCardDescriptor from './BusinessModelDetailsCardDescriptor.json'
 import businessModelDetailsCardValidation from './BusinessModelDetailsCardValidation.json'
 import Card from 'primevue/card'
+// import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 // import IframeRenderer from '@/modules/commons/IframeRenderer.vue'
 import InputSwitch from 'primevue/inputswitch'
@@ -238,6 +251,12 @@ export default defineComponent({
         datasourcesMeta: {
             type: Array,
             requried: true
+        },
+        userToken: {
+            type: String
+        },
+        toGenerate: {
+            type: Boolean
         }
     },
     emits: ['fieldChanged', 'fileUploaded'],
@@ -245,6 +264,7 @@ export default defineComponent({
         selectedBusinessModel() {
             this.v$.$reset()
             this.loadBusinessModel()
+            console.log('TO GENERATE', this.toGenerate)
         },
         domainCategories() {
             this.loadCategories()
@@ -253,12 +273,26 @@ export default defineComponent({
             this.loadDatasources()
         }
     },
+    computed: {
+        metaModelUrl(): any {
+            const url =
+                'http://localhost:8080/knowage' +
+                `/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${this.userToken}&bmId=${this.businessModel.id}` +
+                `&bmName=${encodeURIComponent(this.businessModel.name)}` +
+                (this.businessModel.tablePrefixLike ? '&tablePrefixLike=' + this.businessModel.tablePrefixLike : '') +
+                (this.businessModel.tablePrefixNotLike ? '&tablePrefixNotLike=' + this.businessModel.tablePrefixNotLike : '')
+
+            console.log('METAWEB URL', url)
+            return url
+        }
+    },
     created() {
         this.loadBusinessModel()
         this.loadCategories()
     },
     data() {
         return {
+            businessModelDetailsCardDescriptor,
             businessModelDetailsCardValidation,
             businessModel: {} as iBusinessModel,
             categories: [] as any[],
@@ -300,16 +334,30 @@ export default defineComponent({
         onSmartViewChange() {
             this.$emit('fieldChanged', { fieldName: 'smartView', value: this.businessModel.smartView })
         },
-        test() {
-            console.log('CALLLLLLLLLLLLLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED')
+        goToMetaWeb() {
             this.showMetaWeb = true
-        }
+        },
+        generate() {}
     }
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .input-container {
     flex: 0.5;
+}
+
+#metaweb-page {
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    width: 100%;
+    border: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    z-index: 999999;
+    height: 100%;
 }
 </style>

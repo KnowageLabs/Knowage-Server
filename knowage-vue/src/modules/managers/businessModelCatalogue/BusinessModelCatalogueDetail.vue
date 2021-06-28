@@ -14,7 +14,7 @@
                     <span>{{ $t('managers.buisnessModelCatalogue.details') }}</span>
                 </template>
 
-                <BusinessModelDetailsCard :selectedBusinessModel="selectedBusinessModel" :domainCategories="categories" :datasourcesMeta="datasources" @fieldChanged="onFieldChange" @fileUploaded="uploadedFile = $event"></BusinessModelDetailsCard>
+                <BusinessModelDetailsCard :selectedBusinessModel="selectedBusinessModel" :domainCategories="categories" :datasourcesMeta="datasources" :userToken="userToken" :toGenerate="toGenerate" @fieldChanged="onFieldChange" @fileUploaded="uploadedFile = $event"></BusinessModelDetailsCard>
             </TabPanel>
 
             <TabPanel>
@@ -35,7 +35,7 @@
 
             <TabPanel>
                 <template #header v-if="id">
-                    <span>{{ $t('managers.buisnessModelCatalogue.drivers') }}</span>
+                    <span>{{ $t('managers.buisnessModelCatalogue.drivers') }} {{ invalidDrivers }}</span>
                 </template>
 
                 <BusinessModelDriversCard v-if="id" :id="selectedBusinessModel.id" :drivers="drivers" :driversOptions="analyticalDrivers" @delete="setDriversForDelete"></BusinessModelDriversCard>
@@ -75,6 +75,7 @@ export default defineComponent({
     emits: ['touched', 'closed', 'inserted'],
     data() {
         return {
+            user: null as any,
             selectedBusinessModel: {} as iBusinessModel,
             businessModelVersions: [] as iBusinessModelVersion[],
             analyticalDrivers: [],
@@ -82,6 +83,7 @@ export default defineComponent({
             driversForDelete: [] as any[],
             categories: [] as any[],
             datasources: [] as any[],
+            toGenerate: false,
             uploadedFile: null as any,
             loading: false,
             touched: false,
@@ -92,6 +94,12 @@ export default defineComponent({
     computed: {
         buttonDisabled(): any {
             return this.v$.$invalid
+        },
+        userToken(): string {
+            return this.user ? this.user.userUniqueIdentifier : ''
+        },
+        invalidDrivers(): number {
+            return this.drivers.filter((driver: any) => driver.numberOfErrors > 0).length
         }
     },
     watch: {
@@ -100,6 +108,7 @@ export default defineComponent({
         }
     },
     async created() {
+        await this.loadUser()
         await this.loadPage()
         console.log('SELECTED BUSINESS MODEL: ', this.selectedBusinessModel)
         console.log('SELECTED BUSINESS VERSIONS: ', this.businessModelVersions)
@@ -107,17 +116,19 @@ export default defineComponent({
         console.log('DATASOURCES: ', this.datasources)
         console.log('ANALYTICAL DRIVERS: ', this.analyticalDrivers)
         console.log('DRIVERS: ', this.drivers)
+        console.log('USER: ', this.user)
     },
     methods: {
+        async loadUser() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/currentuser`).then((response) => (this.user = response.data))
+        },
         async loadSelectedBusinessModelData() {
             if (this.id) {
                 await this.loadselectedBusinessModel()
                 await this.loadVersions()
                 await this.loadDrivers()
 
-                const index = this.categories.findIndex((category) => category.VALUE_ID === this.selectedBusinessModel.category)
-                this.selectedBusinessModel = { ...this.selectedBusinessModel, category: this.categories[index] }
-                console.log('BM CATEGORY', this.selectedBusinessModel.category)
+                this.formatBusinessModelAnalyticalDriver()
             } else {
                 this.selectedBusinessModel = { modelLocked: false, smartView: false } as iBusinessModel
                 this.businessModelVersions = []
@@ -129,13 +140,16 @@ export default defineComponent({
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}`).then((response) => (this.selectedBusinessModel = response.data))
         },
         async loadVersions() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/`).then((response) => (this.businessModelVersions = response.data.versions))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/`).then((response) => {
+                this.businessModelVersions = response.data.versions
+                this.toGenerate = response.data.togenerate
+            })
         },
         async loadDrivers() {
             this.drivers = []
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/drivers`).then((response) =>
                 response.data.forEach((driver: any) => {
-                    this.drivers.push({ ...driver, status: 'NOT_CHANGED' })
+                    this.drivers.push({ ...driver, status: 'NOT_CHANGED', numberOfErrors: 0 })
                 })
             )
         },
@@ -148,6 +162,11 @@ export default defineComponent({
         async loadDatasources() {
             this.datasources = []
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/?type=meta').then((response) => response.data.forEach((datasource) => this.datasources.push(datasource.label)))
+        },
+        formatBusinessModelAnalyticalDriver() {
+            const index = this.categories.findIndex((category) => category.VALUE_ID === this.selectedBusinessModel.category)
+            this.selectedBusinessModel = { ...this.selectedBusinessModel, category: this.categories[index] }
+            console.log('BM CATEGORY', this.selectedBusinessModel.category)
         },
         setDriversForDelete(drivers: any) {
             this.driversForDelete = drivers
@@ -174,10 +193,15 @@ export default defineComponent({
 
             // BM SUBMIT
             console.log('SELECTED BM FOR SUBMIT', this.selectedBusinessModel)
-            await this.saveBusinessModel()
+            if (this.selectedBusinessModel.id) {
+                await this.updateBusinessModel()
+            } else {
+                await this.saveBusinessModel()
+            }
+
             console.log('SLECTED BM ID AFTER POST', this.selectedBusinessModel.id)
             console.log('UPLOADED FILE', this.uploadedFile)
-            if (this.selectedBusinessModel.id) {
+            if (this.selectedBusinessModel.id && this.uploadedFile) {
                 console.log('called upload')
                 await this.uploadFile()
             }
@@ -185,14 +209,30 @@ export default defineComponent({
             console.log('test', this.selectedBusinessModel)
         },
         async saveBusinessModel() {
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', this.selectedBusinessModel).then((response) => {
+            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.fullName }).then((response) => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t('common.toast.success')
                 })
-
                 this.selectedBusinessModel = response.data
             })
+        },
+        async updateBusinessModel() {
+            console.log('BM FOR PUT', this.selectedBusinessModel)
+            // TODO Mozda skloniti, proveriti nakon reload-a
+            if (this.selectedBusinessModel.category.VALUE_ID) {
+                this.selectedBusinessModel.category = this.selectedBusinessModel.category.VALUE_ID
+            }
+            await axios
+                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.selectedBusinessModel.id}`, this.selectedBusinessModel)
+                .then((response) => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.selectedBusinessModel = response.data
+                })
+                .finally(() => this.formatBusinessModelAnalyticalDriver())
         },
         async uploadFile() {
             const formData = new FormData()
@@ -202,7 +242,7 @@ export default defineComponent({
                 if (response.data.errors) {
                     this.$store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.error'), msg: response.data.errors })
                 } else {
-                    this.$store.commit('setInfo', { title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.uploaded'), msg: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.ok') })
+                    this.$store.commit('setInfo', { title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.uploaded'), msg: 'FILE UPLOADED' })
                 }
             })
         },

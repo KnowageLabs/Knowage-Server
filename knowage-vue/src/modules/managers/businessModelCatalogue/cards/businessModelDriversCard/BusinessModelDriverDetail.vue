@@ -46,7 +46,7 @@
                             :options="analyticalDrivers"
                             :filter="true"
                             @before-show="v$.driver.parameter.$touch()"
-                            @change="setDirty"
+                            @change="setChanged"
                         >
                             <template #value="slotProps">
                                 <div v-if="slotProps.value">
@@ -83,7 +83,7 @@
                             }"
                             maxLength="20"
                             @blur="v$.driver.parameterUrlName.$touch()"
-                            @change="setDirty"
+                            @change="setChanged"
                         />
                         <label for="parameterUrlName" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.driversUrl') }} * </label>
                     </span>
@@ -97,7 +97,7 @@
                 </div>
 
                 <div class="p-field p-mt-2">
-                    <InputSwitch id="driver-multivalue " class="p-mr-2" v-model="driver.multivalue" @change="setDirty" />
+                    <InputSwitch id="driver-multivalue " class="p-mr-2" v-model="driver.multivalue" @change="setChanged" />
                     <i class="fa fa-list p-mr-2" />
                     <label for="driver-multivalue " class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.multivalue') }}</label>
                 </div>
@@ -464,6 +464,7 @@ export default defineComponent({
         },
         setChanged() {
             this.driver.status = 'CHANGED'
+            this.driver.numberOfErrors = this.v$.$errors.length
         },
         closeForm() {
             this.conditionFormVisible = false
@@ -494,9 +495,6 @@ export default defineComponent({
                 this.loadModes()
                 this.loadLovs()
             })
-        },
-        setDirty(): void {
-            this.$emit('touched')
         },
         test() {
             console.log('TEST check', this.selectedModes)
