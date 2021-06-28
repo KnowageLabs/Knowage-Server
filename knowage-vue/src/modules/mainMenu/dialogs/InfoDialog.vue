@@ -45,11 +45,6 @@
 				currentVersion: process.env.VUE_APP_VERSION
 			}
 		},
-		methods: {
-			closeDialog() {
-				this.$emit('update:visibility', false)
-			}
-		},
 		computed: {
 			...mapState({
 				user: 'user'

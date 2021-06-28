@@ -238,6 +238,8 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 					oldRecord.appendField(newField);
 				}
 			}
+		} catch (CatalogFunctionException e) {
+			throw e;
 		} catch (Exception e) {
 			logger.error("Error transforming records: ", e);
 			throw new SpagoBIRuntimeException("Error transforming records: ", e);

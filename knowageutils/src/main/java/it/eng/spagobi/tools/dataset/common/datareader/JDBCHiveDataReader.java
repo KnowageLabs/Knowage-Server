@@ -17,6 +17,13 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
+import java.sql.Ref;
+import java.sql.ResultSet;
+import java.sql.SQLDataException;
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -28,12 +35,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Monica Franceschini (monica.franceschini@eng.it)
@@ -107,14 +108,18 @@ public class JDBCHiveDataReader extends AbstractDataReader {
 				columnCount = rs.getMetaData().getColumnCount();
 
 				for (columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+					String fieldName = rs.getMetaData().getColumnLabel(columnIndex);
 					fieldMeta = new FieldMetadata();
 
-					Object columnValue = rs.getObject(columnIndex);
+					Object columnValue = null;
+					try {
+						columnValue = rs.getObject(columnIndex);
+					} catch (SQLDataException e) {
+						logger.warn("Skipping column " + fieldName + " because of the following error" , e);
+					}
 					IField field = new Field(columnValue);
 
 					record.appendField(field);
-
-					String fieldName = rs.getMetaData().getColumnLabel(columnIndex);
 
 					logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]");
 					if (dataStore.getMetaData().getFieldIndex(fieldName) == -1) {

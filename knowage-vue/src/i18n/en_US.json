@@ -1,6 +1,7 @@
 {
     "common": {
         "cancel": "cancel",
+        "choose": "choose",
         "close": "close",
         "codingLanguages": {
             "css": "css",
@@ -8,9 +9,12 @@
             "javascript": "javascript",
             "python": "python"
         },
+        "delete": "delete",
         "deleteAll": "delete all",
         "description": "description",
         "download": "download",
+        "downloading": "Downloading",
+        "dragAndDropFilesHere": "Drag and drop files here.",
         "error": {
             "downloading": "Error downloading ",
             "exceededSize": "Uploaded file exceedes max size {size}",
@@ -32,6 +36,7 @@
         "loggedUser": "logged user",
         "name": "name",
         "new": "new",
+        "ok": "ok",
         "save": "save",
         "search": "search",
         "table": {
@@ -44,18 +49,21 @@
         "toast": {
             "createTitle": "Created",
             "deleteConfirmTitle": "Confirm Delete?",
-            "deleteTitle": "Deleted",
             "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
             "deleteSuccess": "Item was deleted successfully",
+            "deleteTitle": "Deleted",
             "success": "Operation succeeded",
             "unsavedChangesHeader": "Unsaved changes",
             "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
             "updateTitle": "Updated"
         },
         "type": "type",
+        "upload": "upload",
+        "uploading": "Uploading",
         "validation": {
-            "regex": "Invalid format",
             "maximumCharacters": "The maximum length allowed is {max}",
+            "minLength": "This field should have at least {min} characters",
+            "regex": "Invalid format",
             "required": "{fieldName} is required"
         },
         "version": "version",
@@ -75,13 +83,21 @@
             "qa": "support forum"
         },
         "welcome": "Welcome to Knowage",
-        "welcomeText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque tristique convallis urna, sed ultrices turpis viverra iaculis. <br>Proin libero arcu, euismod at ante eu, ornare porta leo. Phasellus non quam in neque dignissim interdum sed quis nibh. Praesent sodales sagittis odio a finibus. Nullam nec urna ac turpis efficitur gravida eu vitae arcu. Aliquam odio nibh, porta sit amet ornare mollis, vehicula non felis. <br> Ut nibh metus, semper eu tempus vel, pellentesque sed dui. Vestibulum mattis bibendum eros quis interdum."
+        "welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
     },
     "importExport": {
+        "export": {
+            "completedWithErrors": "Export completed with errors. Please read logs for further information.",
+            "successfullyCompleted": "Export successfully completed"
+        },
         "filenamePlaceholder": "Enter filename here",
         "gallery": {
             "description": "export gallery templates",
             "label": "gallery"
+        },
+        "import": {
+            "completedWithErrors": "Import completed with errors. Please read logs for further information.",
+            "successfullyCompleted": "Import successfully completed"
         },
         "title": "Import/Export"
     },
@@ -99,8 +115,83 @@
         "languageSelection": "Language Selection",
         "pt_BR": "portuguese"
     },
+    "licenseDialog": {
+        "changeLicense": "Change License",
+        "dataRequired": "This data is required to generate/update licenses",
+        "deleteLicense": "Delete License",
+        "downloadLicense": "Download License",
+        "errorExists": "The license already exists.",
+        "errorLicense": "Error deleting license",
+        "errorMessage": "An error blocked the license deleting action. If the problem persist contact the administrator.",
+        "hardwareId": "Hardware Id",
+        "hostName": "Host name",
+        "invalidLicense": "Invalid License",
+        "licenseId": "License Id",
+        "noLicenses": "No licenses available",
+        "numberOfCpu": "Number of CPUs",
+        "title": "License Management",
+        "updateLicense": "Update license",
+        "validLicense": "Valid License",
+        "warningBeforeDelete": "You are attempting to remove {0} license. This operation cannot be undone. After deletion, you will have to log in again.",
+        "wrongType": "You have chosen wrong type of license"
+    },
     "managers": {
-        "rolesManagement": {
+        "configurationManagement": {
+            "createNewHeader": "Create new configuration",
+            "headers": {
+                "active": "Is active",
+                "category": "Category",
+                "description": "Description",
+                "label": "Label",
+                "name": "Name",
+                "valueCheck": "Value"
+            },
+            "title": "Configuration Management"
+        },
+        "domainsManagement": {
+            "domainCode": "Domain code",
+            "domainName": "Domain name",
+            "title": "Domains Management",
+            "valueCode": "Value code",
+            "valueDescription": "Value description",
+            "valueName": "Value name"
+        },
+        "metadata": {
+            "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "title": "Metadata Management"
+        },
+        "profileAttributesManagement": {
+            "description": "Description",
+            "form": {
+                "allowUser": "Allow user to see field",
+                "dataType": "Data type",
+                "description": "Description",
+                "lov": "Lov",
+                "lovPlaceholder": "Select a Lov",
+                "manualInput": "Manual input",
+                "multiValue": "Multivalue",
+                "name": "Name",
+                "syntax": {
+                    "complex": "Complex",
+                    "simple": "Simple"
+                }
+            },
+            "hint": "Profile attributes allows you to better define different users properties. It's possible to change the name, the description or the types. It's also possible to get a value from a LOV. <br> Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "info": {
+                "createMessage": "Attribute created",
+                "createTitle": "Create attribute",
+                "deleteMessage": "Attribute deleted",
+                "deleteTitle": "Delete attribute",
+                "saveMessage": "Attribute saved",
+                "saveTitle": "Save attribute",
+                "updateMessage": "Attribute updated",
+                "updateTitle": "Update attribute"
+            },
+            "name": "Name",
+            "title": "Profile Attributes Management",
+            "valueDescription": "Value description"
+        },
+      "rolesManagement": {
             "noResults": "No roles available for the selected filter",
             "businessModels": "Business models",
             "categories": "Categories",
@@ -174,8 +265,7 @@
                 "TEST_ROLE": "Test User",
                 "MODEL_ADMIN": "Model Administrator",
                 "DEV_ROLE": "Developer"
-            }
-        },
+            },
         "widgetGallery": {
             "deleteTemplate": "Delete template",
             "downloadTemplate": "Download template",

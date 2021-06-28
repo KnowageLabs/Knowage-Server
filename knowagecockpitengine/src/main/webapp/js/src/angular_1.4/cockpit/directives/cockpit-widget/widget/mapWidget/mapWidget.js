@@ -1714,6 +1714,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.getPerWidgetDatasetIds = function() {
 			return $scope.ngModel.content.layers.map(function(e) { return e.dataset.id.dsId; });
 		}
+		
+		// Manage resize of the window
+		window.addEventListener('resize', function(){
+			setTimeout( function() { if ($scope.map) { $scope.map.updateSize(); } }, 200);
+		});
 
 	}
 

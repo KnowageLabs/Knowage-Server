@@ -1,3 +1,20 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.knowage.knowageapi.service;
 
 import java.sql.Timestamp;
@@ -5,10 +22,10 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,16 +55,8 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	 */
 	@Override
 	public List<WidgetGalleryDTO> getWidgets() throws JSONException {
-
-		List<SbiWidgetGallery> widgets = (List<SbiWidgetGallery>) sbiWidgetGalleryDao.findAll();
-
-		List<WidgetGalleryDTO> ret = widgets.stream().map(el -> {
-			try {
-				return mapTo(el);
-			} catch (JSONException e) {
-				throw new KnowageRuntimeException(e.getMessage());
-			}
-		}).collect(Collectors.toList());
+		List<WidgetGalleryDTO> ret = null;
+		ret = (List<WidgetGalleryDTO>) sbiWidgetGalleryDao.findAll();
 
 		return ret;
 	}
@@ -59,16 +68,9 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	public List<WidgetGalleryDTO> getWidgetsByTenant(SpagoBIUserProfile profile) throws JSONException {
 		List<WidgetGalleryDTO> ret = null;
 		if (this.canSeeGallery(profile)) {
-			List<SbiWidgetGallery> widgets = (List<SbiWidgetGallery>) sbiWidgetGalleryDao.findAllByTenant(profile.getOrganization());
-
-			ret = widgets.stream().map(el -> {
-				try {
-					return mapTo(el);
-				} catch (JSONException e) {
-					throw new KnowageRuntimeException(e.getMessage());
-				}
-			}).collect(Collectors.toList());
+			ret = (List<WidgetGalleryDTO>) sbiWidgetGalleryDao.findAllByTenant(profile.getOrganization());
 		}
+
 		return ret;
 	}
 
@@ -77,56 +79,15 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	 */
 	@Override
 	public WidgetGalleryDTO getWidgetsById(String id, SpagoBIUserProfile profile) throws JSONException {
+		WidgetGalleryDTO widget = null;
 		if (this.canSeeGallery(profile)) {
-			SbiWidgetGallery widget = sbiWidgetGalleryDao.findByIdTenant(id, profile.getOrganization());
-			if (widget != null) {
-				updateGalleryCounter(widget);
-				return mapTo(widget);
-			}
+			widget = sbiWidgetGalleryDao.findByIdTenant(id, profile.getOrganization());
+//			if (widget != null) {
+//				return updateGalleryCounter(widget);
+//			}
 		}
 
-		return null;
-	}
-
-	private WidgetGalleryDTO mapTo(SbiWidgetGallery sbiWidgetGallery) throws JSONException {
-
-		WidgetGalleryDTO toRet = new WidgetGalleryDTO();
-
-		toRet.setAuthor(sbiWidgetGallery.getAuthor());
-		toRet.setId(sbiWidgetGallery.getId().getUuid());
-		toRet.setName(sbiWidgetGallery.getName());
-		toRet.setDescription(sbiWidgetGallery.getDescription());
-		toRet.setType(sbiWidgetGallery.getType());
-		if (sbiWidgetGallery.getPreviewImage() != null) {
-			toRet.setImage(new String(sbiWidgetGallery.getPreviewImage()));
-		}
-		toRet.setOrganization(sbiWidgetGallery.getId().getOrganization());
-		toRet.setUsageCounter(sbiWidgetGallery.getUsageCounter());
-		List<SbiWidgetGalleryTag> tagList = sbiWidgetGallery.getSbiWidgetGalleryTags();
-		if (tagList != null && tagList.size() > 0) {
-			List<String> tags = new ArrayList<String>();
-			for (int i = 0; i < tagList.size(); i++) {
-				tags.add(tagList.get(i).getId().getTag());
-			}
-			toRet.setTags(tags);
-		}
-
-		JSONObject jsonBody = new JSONObject(new String(sbiWidgetGallery.getTemplate()));
-
-		Code code = new Code();
-		JSONObject jsonCode = jsonBody.optJSONObject("code");
-		String html = jsonCode.getString("html");
-		String javascript = jsonCode.getString("javascript");
-		String python = jsonCode.getString("python");
-		String css = jsonCode.getString("css");
-		code.setCss(css);
-		code.setJavascript(javascript);
-		code.setPython(python);
-		code.setHtml(html);
-		toRet.setCode(code);
-		toRet.setOutputType(sbiWidgetGallery.getOutputType());
-
-		return toRet;
+		return widget;
 	}
 
 	@Override
@@ -214,6 +175,8 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			newSbiWidgetGallery.setType(widgetGalleryDTO.getType());
 			newSbiWidgetGallery.setUserIn(profile.getUserId());
 			newSbiWidgetGallery.setOutputType(widgetGalleryDTO.getOutputType());
+			newSbiWidgetGallery.getSbiWidgetGalleryTags().clear();
+
 			String tags = widgetGalleryDTO.getTags().toString().equals("[]") ? "" : widgetGalleryDTO.getTags().toString();
 			List<SbiWidgetGalleryTag> tagList = createNewWidgetTagsByList(newSbiWidgetGallery, profile.getUserId(), tags);
 			if (tagList != null) {
@@ -224,10 +187,10 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		return widgetGalleryDTO;
 	}
 
-	@Override
-	public void updateGalleryCounter(SbiWidgetGallery newSbiWidgetGallery) {
-		sbiWidgetGalleryDao.updateCounter(newSbiWidgetGallery);
-	}
+//	@Override
+//	public WidgetGalleryDTO updateGalleryCounter(SbiWidgetGallery newSbiWidgetGallery) {
+//		return sbiWidgetGalleryDao.updateCounter(newSbiWidgetGallery);
+//	}
 
 	@Override
 	public int deleteGallery(String id, SpagoBIUserProfile profile) {
@@ -313,19 +276,11 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 
 	@Override
 	public List<WidgetGalleryDTO> getWidgetsByTenantType(SpagoBIUserProfile profile, String type) throws JSONException {
-		List<WidgetGalleryDTO> ret = null;
+		Collection<WidgetGalleryDTO> ret = null;
 		if (this.canSeeGallery(profile)) {
-			List<SbiWidgetGallery> widgets = (List<SbiWidgetGallery>) sbiWidgetGalleryDao.findAllByTenantAndType(profile.getOrganization(), type);
-
-			ret = widgets.stream().map(el -> {
-				try {
-					return mapTo(el);
-				} catch (JSONException e) {
-					throw new KnowageRuntimeException(e.getMessage());
-				}
-			}).collect(Collectors.toList());
+			ret = sbiWidgetGalleryDao.findAllByTenantAndType(profile.getOrganization(), type);
 		}
-		return ret;
+		return (List<WidgetGalleryDTO>) ret;
 	}
 
 	@Override

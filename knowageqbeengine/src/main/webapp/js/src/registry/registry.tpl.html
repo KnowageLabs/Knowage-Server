@@ -91,17 +91,17 @@
                            <div layout="row" class="clickable" ng-click="addColumnOptions(col, row, $mdOpenMenu)">  
                               <span ng-if="col.dataType === 'int' && row[col.field] != ''">{{row[col.field] | number}}</span>
                               <span ng-if="col.dataType === 'int' && row[col.field] == ''">{{row[col.field]}}</span>
-                              <span ng-if="col.dataType === 'date' && row[col.field] != ''"> {{row[col.field] | momentDate:currLanguage}} </span>                                  	
-                              <span ng-if="col.dataType === 'date' && row[col.field] == ''"> {{row[col.field]}} </span>
+                              <span ng-if="col.dataType === 'date' && col.subType === 'timestamp' && row[col.field] != ''"> {{row[col.field] | momentDateAndTime:currLanguage}} </span>                                	
+                              <span ng-if="col.dataType === 'date' && col.subType != 'timestamp' &&  row[col.field] == ''"> {{row[col.field]}} </span>
                               <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
                               <span ng-if="col.dataType === 'float'"> {{row[col.field] | decimal:col.format}} </span>                                                                             
                            </div>
-                           <md-menu-content width="5" class="customContentMenu" >
-                              <md-menu-item layout="row" layout-align="start center">
+                           <md-menu-content width="6" class="customContentMenu" >
+                              <md-menu-item layout="row" style="height:100%" >
                                  <md-input-container class="md-icon-float md-block">
                                     <div ng-if="col.dataType !== 'date'">
                                        <input type="{{setDataType(col.dataType)}}" step="{{getStep(col.dataType)}}" name="textField" ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null"  aria-label="data change"
-                                          ng-if="col.editor=='TEXT' && col.dataType !== 'boolean'">                                              	                                                	                                                                                                 	                                                  	                                                                                                                                                                                                                                      
+                                          ng-if="col.editor=='TEXT' && col.dataType !== 'boolean'">  
                                        <div ng-if="row.selected && !isDependentColumn(col)">
                                           <md-select ng-model="row[col.field]" aria-label="data change" ng-if="col.editor=='COMBO'" ng-change="notifyAboutDependency(col, $event)">
                                              <md-option ng-repeat="opt in comboColumnOptions[col.field] track by $index" value="{{opt.column_1}}">{{opt.column_1}}</md-option>
@@ -113,10 +113,13 @@
                                           </md-select>
                                        </div>
                                     </div>
-                                    <div ng-if="col.dataType === 'date'" layout="row">
-                                       <md-datepicker ng-init="row[col.field] = row[col.field] || null" ng-model="row[col.field]"  step="{{getStep(col.dataType)}}"
+ 									<div ng-if="col.dataType === 'date' && col.subType !== 'timestamp'" layout="row">
+                                       <md-datepicker ng-init="row[col.field] = row[col.field] || null" ng-model="row[col.field]" step="{{getStep(col.dataType)}}"
                                           name="dateField"  ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"> </md-datepicker>
                                        <md-icon md-font-icon="fa fa-times" ng-click="resetDateField($event, row, col);"></md-icon>
+                                    </div>
+                                    <div ng-if="col.dataType === 'date' && col.subType === 'timestamp'" layout="row" layout-align="space-around center">
+										<registry-date-time-picker ng-model="row[col.field]"></registry-date-time-picker>
                                     </div>
                                  </md-input-container>
                               </md-menu-item>
@@ -152,13 +155,14 @@
                         <md-menu ng-if="col.editable && col.dataType !== 'boolean' && row[col.field] !== '      ' && !isItSummaryRow(data,indexF,$index,columns)">
                            <div layout="row" class="clickable" ng-click="addColumnOptions(col, row, $mdOpenMenu)">                                    	
                               <span ng-if="col.dataType === 'int'">{{row[col.field] | number}}</span>  
-                              <span ng-if="col.dataType === 'date'">  {{row[col.field] | momentDate:currLanguage}}  </span>                                  	
+                              <span ng-if="col.dataType === 'date' && col.subType === 'timestamp' && row[col.field] != ''"> {{row[col.field] | momentDateAndTime:currLanguage}} </span>
+                              <span ng-if="col.dataType === 'date' && col.subType != 'timestamp' &&  row[col.field] == ''"> {{row[col.field]}} </span>                                  	
                               <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
                               <span ng-if="col.dataType === 'float'">   {{row[col.field] |  decimal:col.format}}  </span>                                                                        
                            </div>
-                           <md-menu-content width="5" class="customContentMenu" ng-click="setSelected(row)">
-                              <md-menu-item layout="row" layout-align="start center">
-                                 <md-input-container class="md-icon-float md-block">
+                           <md-menu-content width="6" class="customContentMenu" ng-click="setSelected(row)" >
+                              <md-menu-item layout="row"  style="height:100%" >
+                                 <md-input-container class="md-icon-float md-block" >
                                     <div ng-if="col.dataType !== 'date'">
                                        <input type="{{setDataType(col.dataType)}}" step="{{getStep(col.dataType)}}" name="textField" ng-model="row[col.field]" ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"
                                           ng-if="col.editor=='TEXT' && col.dataType !== 'boolean'"> 
@@ -173,10 +177,13 @@
                                           </md-select>
                                        </div>
                                     </div>
-                                    <div ng-if="col.dataType === 'date'" layout="row">
+                                    <div ng-if="col.dataType === 'date' && col.subType !== 'timestamp'" layout="row">
                                        <md-datepicker ng-init="row[col.field] = row[col.field] || null" ng-model="row[col.field]" step="{{getStep(col.dataType)}}"
                                           name="dateField"  ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"> </md-datepicker>
                                        <md-icon md-font-icon="fa fa-times" ng-click="resetDateField($event, row, col);"></md-icon>
+                                    </div>
+                                    <div ng-if="col.dataType === 'date' && col.subType === 'timestamp'" layout="row" layout-align="space-around center">
+										<registry-date-time-picker ng-model="row[col.field]"></registry-date-time-picker>
                                     </div>
                                  </md-input-container>
                               </md-menu-item>

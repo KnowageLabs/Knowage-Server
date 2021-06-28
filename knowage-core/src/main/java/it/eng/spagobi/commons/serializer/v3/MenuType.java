@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2021-present Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,14 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.spagobi.tools.dataset.metasql.query.visitor;
+/**
+ *
+ */
+package it.eng.spagobi.commons.serializer.v3;
 
-import it.eng.spagobi.utilities.database.IDataBase;
-
-public class SynapseSelectQueryVisitor extends AbstractSelectQueryVisitor {
-
-	public SynapseSelectQueryVisitor(IDataBase database) {
-		super(database);
-	}
-
+/**
+ * @author albnale
+ *
+ */
+public enum MenuType {
+	TECHNICAL_USER_FUNCTIONALITIES, COMMON_USER_FUNCTIONALITIES, ALLOWED_USER_FUNCTIONALITIES, DYNAMIC_USER_FUNCTIONALITIES;
 }

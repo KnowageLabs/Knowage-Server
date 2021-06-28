@@ -61,6 +61,7 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
+import it.eng.knowage.functionscatalog.utils.CatalogFunctionException;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -735,6 +736,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			timing.stop();
 			return getDataStore(label, parameters, driversRuntimeMap, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize,
 					isNearRealtime, options, columns, widgetName);
+		} catch (CatalogFunctionException e) {
+			throw e;
 		} catch (Exception e) {
 			logger.error("Error loading dataset data from " + label, e);
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);

@@ -17,9 +17,11 @@
  */
 package it.eng.spagobi.commons.serializer.v3;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
@@ -102,11 +104,32 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	private Set<Integer> technicalUserMenuIds = new HashSet<Integer>();
 
+	/*
+	 * Menus that are available to non-administrator users but have the required functionality. The map contains the pair (label, id of the technical menu of
+	 * which it is a duplicate).
+	 */
+	private Map<String, Integer> allowedMenuToNotDuplicate = new HashMap<String, Integer>();
+
 	public MenuListJSONSerializerForREST(IEngUserProfile userProfile, HttpSession session, String currentTheme) {
 		Assert.assertNotNull(userProfile, "User profile in input is null");
 		this.setUserProfile(userProfile);
 		this.setHttpSession(session);
 		this.currentTheme = currentTheme;
+
+		allowedMenuToNotDuplicate.put("menu.Users", 2003);
+		allowedMenuToNotDuplicate.put("menu.HierarchiesEditor", 5003);
+		allowedMenuToNotDuplicate.put("menu.glossary.technical", 4007);
+		allowedMenuToNotDuplicate.put("menu.glossary.business", 4008);
+		allowedMenuToNotDuplicate.put("menu.cross.definition", 5005);
+		allowedMenuToNotDuplicate.put("menu.calendar", 4010);
+		allowedMenuToNotDuplicate.put("menu.lovs.management", 3002);
+		allowedMenuToNotDuplicate.put("menu.template.management", 8002);
+		allowedMenuToNotDuplicate.put("menu.importexport.document", 8003);
+		allowedMenuToNotDuplicate.put("menu.importexport.resources", null);
+		allowedMenuToNotDuplicate.put("menu.importexport.users", 8005);
+		allowedMenuToNotDuplicate.put("menu.importexport.glossary", 8009);
+		allowedMenuToNotDuplicate.put("menu.importexport.catalog", 8007);
+		allowedMenuToNotDuplicate.put("menu.i18n", 9001);
 	}
 
 	@Override
@@ -160,7 +183,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		logger.debug("IN");
 
-		JSONArray userMenu = createMenu(menuDefinitionFile, locale, technicalUserMenuJSONArray, ALLOWED_USER_FUNCTIONALITIES, false);
+		JSONArray userMenu = createMenu(menuDefinitionFile, locale, technicalUserMenuJSONArray, MenuType.ALLOWED_USER_FUNCTIONALITIES);
 
 		logger.debug("OUT");
 
@@ -172,7 +195,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		logger.debug("IN");
 
-		JSONArray commonUserFunctionalitiesMenu = createMenu(menuDefinitionFile, locale, technicalUserMenuJSONArray, COMMON_USER_FUNCTIONALITIES, false);
+		JSONArray commonUserFunctionalitiesMenu = createMenu(menuDefinitionFile, locale, technicalUserMenuJSONArray, MenuType.COMMON_USER_FUNCTIONALITIES);
 
 		logger.debug("OUT");
 
@@ -184,7 +207,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		logger.debug("IN");
 
-		JSONArray technicalUserMenu = createMenu(menuDefinitionFile, locale, technicalUserMenuJSONArray, TECHNICAL_USER_FUNCTIONALITIES, true);
+		JSONArray technicalUserMenu = createMenu(menuDefinitionFile, locale, technicalUserMenuJSONArray, MenuType.TECHNICAL_USER_FUNCTIONALITIES);
 
 		logger.debug("OUT");
 
@@ -271,47 +294,70 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return menuUserList;
 	}
 
-	private JSONArray createMenu(SourceBean menuDefinitionFile, Locale locale, JSONArray technicalUserMenuJSONArray, String attribute,
-			boolean isTechnicalUserMenu) throws JSONException, EMFInternalError {
+	private JSONArray createMenu(SourceBean menuDefinitionFile, Locale locale, JSONArray technicalUserMenuJSONArray, MenuType menuType)
+			throws JSONException, EMFInternalError {
 		MessageBuilder messageBuilder = new MessageBuilder();
-		List attributeList = menuDefinitionFile.getAttributeAsList(attribute);
-		return buildMenuTreeBranch(locale, messageBuilder, attributeList, technicalUserMenuJSONArray, isTechnicalUserMenu);
+		List attributeList = menuDefinitionFile.getAttributeAsList(menuType.name());
+		return buildMenuTreeBranch(locale, messageBuilder, attributeList, technicalUserMenuJSONArray, menuType);
 	}
 
 	private JSONArray buildMenuTreeBranch(Locale locale, MessageBuilder messageBuilder, List attributeList, JSONArray technicalUserMenuJSONArray,
-			boolean isTechnicalUserMenu) throws JSONException, EMFInternalError {
+			MenuType menuType) throws JSONException, EMFInternalError {
 		JSONArray tempMenuList = new JSONArray();
 		List funcs = (List) userProfile.getFunctionalities();
 
-		if (isTechnicalUserMenu) {
+		if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
 			for (Object domain : attributeList) {
 
 				List menuCategory = ((SourceBean) domain).getAttributeAsList(GROUP_ITEM);
 
 				for (Object groupItem : menuCategory) {
 
-					if (isLicensedMenu(((SourceBean) groupItem))) {
+					SourceBean groupItemSB = (SourceBean) groupItem;
 
-						List itemsSBList = ((SourceBean) groupItem).getAttributeAsList(ITEM);
+					boolean isLicensedMenu = isLicensedMenu(groupItemSB);
 
-						JSONArray children = createItemsArray(locale, messageBuilder, funcs, technicalUserMenuJSONArray, itemsSBList, isTechnicalUserMenu);
+					if (isLicensedMenu) {
+
+						List itemsSBList = groupItemSB.getAttributeAsList(ITEM);
+
+						JSONArray children = createItemsArray(locale, messageBuilder, funcs, technicalUserMenuJSONArray, itemsSBList, menuType);
 
 						if (children.length() > 0) {
 
 							SourceBean objSB = (SourceBean) groupItem;
-							JSONObject groupItemJSON = createMenuNode(locale, messageBuilder, objSB, isTechnicalUserMenu);
+							JSONObject groupItemJSON = createMenuNode(locale, messageBuilder, objSB, menuType);
 							groupItemJSON.put(ITEMS, children);
 
 							tempMenuList.put(groupItemJSON);
 						}
-					}
-				}
+					} else if (!isLicensedMenu && isEnterpriseEdition() && groupItemSB.getAttribute("id").equals("8000")) {
 
+						List itemsSBList = groupItemSB.getAttributeAsList(ITEM);
+						JSONObject groupItemJSON = createMenuNode(locale, messageBuilder, groupItemSB, menuType);
+
+						for (Object object : itemsSBList) {
+							SourceBean objectSB = (SourceBean) object;
+
+							if (objectSB.getAttribute("id").equals("8012")) {
+								JSONArray children = new JSONArray();
+								JSONObject licenseMenu = createMenuNode(locale, messageBuilder, objectSB, menuType);
+								children.put(licenseMenu);
+								groupItemJSON.put(ITEMS, children);
+								tempMenuList.put(groupItemJSON);
+								break;
+							}
+						}
+
+					}
+
+				}
 			}
+
 		} else {
 			for (Object domain : attributeList) {
 				List itemsSBList = ((SourceBean) domain).getAttributeAsList(ITEM);
-				JSONArray children = createItemsArray(locale, messageBuilder, funcs, technicalUserMenuJSONArray, itemsSBList, isTechnicalUserMenu);
+				JSONArray children = createItemsArray(locale, messageBuilder, funcs, technicalUserMenuJSONArray, itemsSBList, menuType);
 				tempMenuList = children;
 			}
 		}
@@ -320,16 +366,18 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private JSONArray createItemsArray(Locale locale, MessageBuilder messageBuilder, List funcs, JSONArray technicalUserMenuJSONArray, List itemsSBList,
-			boolean isTechnicalUserMenu) throws JSONException, EMFInternalError {
+			MenuType menuType) throws JSONException, EMFInternalError {
 		JSONArray items = new JSONArray();
 		for (Object item : itemsSBList) {
 
 			SourceBean itemSB = (SourceBean) item;
+
 			if (!isInTechnicalUserMenu(technicalUserMenuJSONArray, itemSB, messageBuilder, locale)) {
+
+				String condition = (String) itemSB.getAttribute(CONDITION);
 
 				boolean addElement = true;
 
-				String condition = (String) itemSB.getAttribute(CONDITION);
 				String requiredFunctionality = (String) itemSB.getAttribute(REQUIRED_FUNCTIONALITY);
 
 				/* ALL_USERS or ALLOWED_USER_FUNCTIONALITIES */
@@ -342,14 +390,46 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						addElement = false;
 				}
 
+				addElement &= isUserMenuFotNotAdminToAdd(menuType, itemSB);
+
 				if (addElement) {
-					JSONObject menu = createMenuNode(locale, messageBuilder, itemSB, isTechnicalUserMenu);
+					JSONObject menu = createMenuNode(locale, messageBuilder, itemSB, menuType);
 					items.put(menu);
+				}
+			}
+
+		}
+
+		return items;
+	}
+
+	/**
+	 *
+	 * @param menuType
+	 * @param itemSB
+	 *
+	 *                 Method to know if the menu is part of the allowed user functionality that must be added even if the user is not an administrator
+	 */
+	private boolean isUserMenuFotNotAdminToAdd(MenuType menuType, SourceBean itemSB) {
+		boolean isToAdd = true;
+		List containedAttributes = itemSB.getContainedAttributes();
+		for (Object objAttribute : containedAttributes) {
+			SourceBeanAttribute attribute = (SourceBeanAttribute) objAttribute;
+
+			if (attribute.getKey().equals(LABEL)) {
+				String menuLabel = (String) attribute.getValue();
+				// allowed user menu to add only if it is not admin and functionality is permitted in any case
+				if (menuType == MenuType.ALLOWED_USER_FUNCTIONALITIES) {
+					Integer technicalMenuId = allowedMenuToNotDuplicate.get(menuLabel);
+					if (technicalMenuId != null && technicalUserMenuIds.contains(technicalMenuId)) {
+						isToAdd = false;
+						break;
+					}
 				}
 			}
 		}
 
-		return items;
+		return isToAdd;
 	}
 
 	private boolean isInTechnicalUserMenu(JSONArray technicalUserMenuJSONArray, SourceBean itemSB, MessageBuilder messageBuilder, Locale locale)
@@ -380,6 +460,15 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		}
 
 		return isLicensed;
+	}
+
+	private boolean isEnterpriseEdition() {
+		try {
+			Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
 	}
 
 	private boolean menuConditionIsSatisfied(SourceBean itemSB) throws EMFInternalError {
@@ -434,7 +523,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return isSatisfied;
 	}
 
-	private JSONObject createMenuNode(Locale locale, MessageBuilder messageBuilder, SourceBean itemSB, boolean isTechnicalUserMenu) throws JSONException {
+	private JSONObject createMenuNode(Locale locale, MessageBuilder messageBuilder, SourceBean itemSB, MenuType menuType) throws JSONException {
 		JSONObject menu = new JSONObject();
 
 		List containedAttributes = itemSB.getContainedAttributes();
@@ -447,12 +536,14 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				String value = (String) attribute.getValue();
 				if (!attribute.getKey().equals(REQUIRED_FUNCTIONALITY) && !attribute.getKey().equals(CONDITION) && !attribute.getKey().equals(TO_BE_LICENSED)
 						&& !attribute.getKey().equals(ID)) {
+
 					if (attribute.getKey().equals(LABEL)) {
-						value = messageBuilder.getMessage((String) attribute.getValue(), locale);
+						String menuLabel = (String) attribute.getValue();
+						value = messageBuilder.getMessage(menuLabel, locale);
 					} else if (attribute.getKey().equals(TO)) {
 						value = value.replace(PLACEHOLDER_SPAGOBI_CONTEXT, contextName);
 						value = value.replace(PLACEHOLDER_KNOWAGE_VUE_CONTEXT, vueContextName);
-						
+
 						value = value.replace(PLACEHOLDER_SPAGO_ADAPTER_HTTP, GeneralUtilities.getSpagoAdapterHttpUrl());
 
 						value = value.replace(PLACEHOLDER_KNOWAGE_THEME, currentTheme);
@@ -462,7 +553,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				}
 
 			}
-			if (isTechnicalUserMenu) {
+			if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
 				String strId = (String) itemSB.getAttribute(ID);
 				if (strId != null) {
 					Integer id = Integer.valueOf(strId);
@@ -616,10 +707,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		temp2.put(TO, contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId());
 	}
 
-	private boolean isAbleTo(String func, List funcs) {
-		return funcs.contains(func);
-	}
-
 	public IEngUserProfile getUserProfile() {
 		return userProfile;
 	}
@@ -634,6 +721,17 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	public void setHttpSession(HttpSession httpSession) {
 		this.httpSession = httpSession;
+	}
+
+	private boolean isAbleTo(String func, List funcs) {
+		boolean toReturn = false;
+		for (int i = 0; i < funcs.size(); i++) {
+			if (func.equals(funcs.get(i))) {
+				toReturn = true;
+				break;
+			}
+		}
+		return toReturn;
 	}
 
 }

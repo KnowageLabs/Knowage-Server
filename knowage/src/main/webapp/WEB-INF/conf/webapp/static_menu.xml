@@ -152,24 +152,24 @@
 				/> -->
 			<ITEM id="7001" label="menu.Config"
 				requiredFunctionality="ConfigManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/config/configManagement.jsp" />
+				to="/configuration-management" />
 			<ITEM id="7002" label="menu.Domain"
 				requiredFunctionality="DomainManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/domain/domainManagement.jsp" />
+				to="/domains-management" />
 
 			<ITEM id="7003" label="Exporters menu"
 				requiredFunctionality="ExportersCatalogue"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/exportersCatalogue.jsp" />
 			<ITEM id="7004" label="menu.MetadataMan"
 				requiredFunctionality="ObjMetadataManagement"
-				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListObjMetadataPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
+				to="/metadata-management" />
 		</GROUP_ITEM>
 
 
 		<GROUP_ITEM id="8000" label="menu.ServerManager"
 			toBeLicensed="true" iconCls="fa fa-2x fa-cogs">
 			
-			<ITEM label="menu.admin.importExport"
+			<ITEM id="8014" label="menu.admin.importExport"
 				requiredFunctionality="ImportExport"
 				to="/import-export" />
 			<ITEM id="8001" label="menu.TenantMan"
@@ -206,7 +206,7 @@
 				requiredFunctionality="InstallConfig"
 				to="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig" />
 			<ITEM id="8012" label="menu.license"
-				requiredFunctionality="LicenseManagement" to="showLicenseDialog" />
+				requiredFunctionality="LicenseManagement" command="licenseSelection"/>
 			<ITEM id="8013" label="menu.event"
 				requiredFunctionality="EventsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/event/eventLogsApp.jsp" />
@@ -238,49 +238,83 @@
 	</COMMON_USER_FUNCTIONALITIES>
 
 
-	<ALLOWED_USER_FUNCTIONALITIES>
-		<ITEM label="menu.Browser" requiredFunctionality="SeeDocBrowser"
+	<ALLOWED_USER_FUNCTIONALITIES id="10000">
+		<ITEM id="10001" label="menu.Browser" requiredFunctionality="SeeDocBrowser"
 			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 			iconCls="far fa-folder-open" />
 
-		<ITEM label="menu.workspace"
-
+		<ITEM id="10002" label="menu.workspace"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp"
 			iconCls="fas fa-briefcase" />
 
-		<ITEM label="menu.myAccount" condition="my_account"
+		<ITEM id="10003" label="menu.myAccount" condition="my_account"
 			to="${SPAGOBI_CONTEXT}/restful-services/signup/prepareUpdate"
 			iconCls="fas fa-address-card" />
 
-		<!-- <ITEM label="menu.HierarchiesEditor" requiredFunctionality="HierarchiesManagement" 
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp" 
-			iconCls="fas fa-sitemap" /> <ITEM label="menu.glossary.technical" requiredFunctionality="ManageGlossaryTechnical" 
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp" 
-			iconCls="fas fa-book" /> <ITEM label="menu.glossary.business" requiredFunctionality="ManageGlossaryBusiness" 
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp" 
-			iconCls="fas fa-building" /> <ITEM label="menu.calendar" requiredFunctionality="ManageCalendar" 
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/calendar/calendarTemplate.jsp" 
-			iconCls="fas fa-calendar" /> <ITEM label="menu.lovs.management" requiredFunctionality="LovsManagement" 
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp" 
-			iconCls="fas fa-list" /> <ITEM label="menu.template.management" requiredFunctionality="TemplateManagement" 
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp" 
-			iconCls="insert_drive_file" /> <ITEM label="menu.importexport.document" requiredFunctionality="ImpExpDocument" 
-			toBeLicensed="true" to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp" 
-			iconCls="description" /> <ITEM label="menu.importexport.resources" requiredFunctionality="ImpExpResources" 
-			toBeLicensed="true" to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp" 
-			iconCls="rotate_90_degrees_ccw" /> <ITEM label="menu.importexport.users" 
-			requiredFunctionality="ImpExpUsers" toBeLicensed="true" to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp" 
-			iconCls="portrait" /> <ITEM label="menu.importexport.glossary" requiredFunctionality="ImpExpGlossary" 
-			toBeLicensed="true" to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp" 
-			iconCls="portrait" /> <ITEM label="menu.importexport.catalog" requiredFunctionality="ImpExpCatalog" 
-			toBeLicensed="true" to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp" 
-			iconCls="style" /> <ITEM label="menu.i18n" requiredFunctionality="ManageInternationalization" 
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp" 
-			iconCls="fas fa-flag" /> -->
-		<ITEM label="menu.news" requiredFunctionality="NewsVisualization"
+		<ITEM id="10004" label="menu.Users"
+			requiredFunctionality="FinalUsersManagement"
+			iconCls="fa fa-users"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp" />
+		
+		<ITEM id="10005" label="menu.HierarchiesEditor"
+			requiredFunctionality="HierarchiesManagement"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp"
+			iconCls="fas fa-sitemap" />
+		<ITEM id="10006" label="menu.FunctionsCatalog"
+			requiredFunctionality="FunctionsCatalogUsage"
+			iconCls="fa fa-cubes"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/functionsCatalog/functionsCatalog.jsp" />
+	
+		<ITEM id="10007" label="menu.glossary.technical"
+			requiredFunctionality="ManageGlossaryTechnical"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp"
+			iconCls="fas fa-book" />
+		<ITEM id="10008" label="menu.glossary.business"
+			requiredFunctionality="ManageGlossaryBusiness"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp"
+			iconCls="fas fa-building" />
+		<ITEM id="10009" label="menu.cross.definition"
+			requiredFunctionality="ManageCrossNavigation"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp" />
+		<ITEM id="10010" label="menu.calendar" requiredFunctionality="ManageCalendar"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/calendar/calendarTemplate.jsp"
+			iconCls="fas fa-calendar" />
+		<ITEM id="10011" label="menu.lovs.management"
+			requiredFunctionality="LovsManagement"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp"
+			iconCls="fas fa-list" />
+<!--	<ITEM id="10012" label="menu.template.management"
+			requiredFunctionality="TemplateManagement"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp"
+			iconCls="insert_drive_file" />
+		<ITEM id="10013" label="menu.importexport.document"
+			requiredFunctionality="ImpExpDocument" toBeLicensed="true"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp"
+			iconCls="description" />
+		<ITEM id="10014" label="menu.importexport.resources"
+			requiredFunctionality="ImpExpResources" toBeLicensed="true"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp"
+			iconCls="rotate_90_degrees_ccw" />
+		<ITEM id="10015" label="menu.importexport.users"
+			requiredFunctionality="ImpExpUsers" toBeLicensed="true"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp"
+			iconCls="portrait" />
+		<ITEM id="10016" label="menu.importexport.glossary"
+			requiredFunctionality="ImpExpGlossary" toBeLicensed="true"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp"
+			iconCls="portrait" />
+		<ITEM id="10017" label="menu.importexport.catalog"
+			requiredFunctionality="ImpExpCatalog" toBeLicensed="true"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp"
+			iconCls="style" /> -->
+		<ITEM id="10018" label="menu.i18n"
+			requiredFunctionality="ManageInternationalization"
+			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/internationalization/internationalization.jsp"
+			iconCls="fas fa-flag" />
+		<ITEM id="10019" label="menu.news" requiredFunctionality="NewsVisualization"
 			conditionedView="news" iconCls="far fa-newspaper"
 			command="newsSelection" />
-		<ITEM label="menu.Download" conditionedView="downloads"
+		<ITEM id="10020" label="menu.Download" conditionedView="downloads"
 			iconCls="fas fa-download" command="downloadsSelection" />
 
 

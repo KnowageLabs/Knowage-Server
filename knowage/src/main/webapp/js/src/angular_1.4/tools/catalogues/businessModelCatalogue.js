@@ -767,7 +767,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 							+ "datasourceId=" + dsId
 							+ "&user_id=" + sbiModule_user.userUniqueIdentifier
 							+ "&bmId=" + $scope.selectedBusinessModel.id
-							+ "&bmName=" + $scope.selectedBusinessModel.name
+							+ "&bmName=" + encodeURIComponent($scope.selectedBusinessModel.name)
 							+ (($scope.selectedBusinessModel.tablePrefixLike) ? "&tablePrefixLike=" + $scope.selectedBusinessModel.tablePrefixLike : "")
 							+ (($scope.selectedBusinessModel.tablePrefixNotLike) ? "&tablePrefixNotLike=" + $scope.selectedBusinessModel.tablePrefixNotLike : "")
 						}

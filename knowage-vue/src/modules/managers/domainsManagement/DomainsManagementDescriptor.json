@@ -1,0 +1,58 @@
+{
+    "columns": [
+        {
+            "field": "valueCd",
+            "header": "managers.domainsManagement.valueCode"
+        },
+        {
+            "field": "valueName",
+            "header": "managers.domainsManagement.valueName"
+        },
+        {
+            "field": "domainCode",
+            "header": "managers.domainsManagement.domainCode"
+        },
+        {
+            "field": "domainName",
+            "header": "managers.domainsManagement.domainName"
+        },
+        {
+            "field": "valueDescription",
+            "header": "managers.domainsManagement.valueDescription"
+        }
+    ],
+    "form": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "globalFilterFields": ["valueCd", "valueName", "domainCode", "domainName", "valueDescription"],
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "pField": {
+        "style": {
+            "margin-bottom": "40px"
+        }
+    },
+    "table": {
+        "column": {
+            "style": {
+                "width": "18%",
+                "word-break": "break-all"
+            }
+        },
+        "iconColumn": {
+            "style": {
+                "text-align": "end",
+                "width": "5%"
+            }
+        }
+    }
+}

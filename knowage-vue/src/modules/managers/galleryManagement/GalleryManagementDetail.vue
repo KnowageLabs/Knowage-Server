@@ -1,14 +1,15 @@
 <template>
+    <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
+        <template #left> Template {{ template.name }} </template>
+        <template #right>
+            <Button icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.download')" @click="downloadTemplate" :disabled="!template.id" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" :disabled="!dirty" @click="saveTemplate" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeTemplate($event)" />
+        </template>
+    </Toolbar>
+    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+
     <div class="managerDetail">
-        <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-            <template #left> Template {{ template.name }} </template>
-            <template #right>
-                <Button icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" @click="downloadTemplate" :disabled="!template.id" />
-                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="!dirty" @click="saveTemplate" />
-                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate($event)" />
-            </template>
-        </Toolbar>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <div class="p-grid p-m-0 p-fluid">
             <div class="p-col-9">
                 <Card>
@@ -19,8 +20,8 @@
                         <div class="p-grid">
                             <div class="p-col-6">
                                 <span class="p-float-label">
-                                    <InputText id="label" class="kn-material-input" type="text" v-model="template.name" @change="setDirty" />
-                                    <label class="kn-material-input-label" for="label">{{ $t('common.label') }}</label>
+                                    <InputText id="name" class="kn-material-input" type="text" v-model="template.name" @change="setDirty" />
+                                    <label class="kn-material-input-label" for="name">{{ $t('common.name') }}</label>
                                 </span>
                             </div>
                             <div :class="template.type === 'python' ? 'p-col-3' : 'p-col-6'">
@@ -37,7 +38,7 @@
                             </div>
                             <div class="p-col-12">
                                 <span class="p-float-label">
-                                    <Textarea v-model="template.description" class="kn-material-input" :autoResize="true" id="description" rows="3" @change="setDirty" />
+                                    <Textarea v-model="template.description" class="kn-material-input" style="resize:none" id="description" rows="3" @change="setDirty" />
                                     <label class="kn-material-input-label" for="description">{{ $t('common.description') }}</label>
                                 </span>
                             </div>
@@ -57,7 +58,7 @@
                     <template #title>
                         {{ $t('common.image') }}
                         <input id="inputImage" type="file" @change="uploadFile" accept="image/png, image/jpeg" />
-                        <label for="inputImage">
+                        <label for="inputImage" v-tooltip.bottom="$t('common.upload')">
                             <i class="pi pi-upload" />
                         </label>
                     </template>
@@ -213,7 +214,7 @@ export default defineComponent({
             this.windowWidth = window.innerWidth
         },
         validateTags(): Boolean {
-            const validationRegex = /^([a-zA-Z0-9\\-\\_])*$/g
+            const validationRegex = /^([a-zA-Z0-9-_])*$/g
             for (var idx in this.template.tags) {
                 let currentTag = this.template.tags[idx]
                 const valid = currentTag.match(validationRegex)
@@ -238,6 +239,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .managerDetail {
+    overflow: auto;
+    flex: 1;
+
     #inputImage {
         display: none;
     }
