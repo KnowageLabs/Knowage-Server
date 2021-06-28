@@ -12,7 +12,7 @@
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" data-test="list-item">
-                        <i :class="versionIcon(slotProps.option.active)" />
+                        <RadioButton name="active" :value="slotProps.option" v-model="activeVersion" @change="test($event)"></RadioButton>
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.fileName }}</span>
                             <span class="kn-list-item-text-secondary">{{ creationDate(slotProps.option.creationDate) }}</span>
@@ -38,13 +38,15 @@ import axios from 'axios'
 import Card from 'primevue/card'
 import Listbox from 'primevue/listbox'
 import Menu from 'primevue/menu'
+import RadioButton from 'primevue/radiobutton'
 
 export default defineComponent({
     name: 'metadata-card',
     components: {
         Card,
         Listbox,
-        Menu
+        Menu,
+        RadioButton
     },
     props: {
         id: {
@@ -68,18 +70,22 @@ export default defineComponent({
     data() {
         return {
             businessModelVersions: [] as iBusinessModelVersion[],
-            items: [] as { label: string; icon: string; command: Function }[]
+            items: [] as { label: string; icon: string; command: Function }[],
+            activeVersion: { active: false }
         }
     },
     methods: {
         loadVersions() {
-            this.businessModelVersions = this.versions as iBusinessModelVersion[]
+            this.businessModelVersions = [] as iBusinessModelVersion[]
+            this.versions.forEach((version: any) => {
+                if (version.active) {
+                    this.activeVersion = version
+                }
+                this.businessModelVersions.push(version)
+            })
         },
         creationDate(date: string) {
             return formatDate(date, 'DD/MM/yyyy HH:mm:ss')
-        },
-        versionIcon(active: Boolean) {
-            return active ? 'fa fa-check' : 'fa fa-history'
         },
         toggle(event: any, version: iBusinessModelVersion) {
             this.createMenuItems(version)
@@ -89,9 +95,6 @@ export default defineComponent({
         },
         createMenuItems(version: iBusinessModelVersion) {
             this.items = []
-            if (!version.active) {
-                this.items.push({ label: this.$t('managers.buisnessModelCatalogue.setActiveVersion'), icon: 'fa fa-check-circle', command: () => this.setActive(version) })
-            }
             if (version.hasContent && !version.hasLog) {
                 this.items.push({ label: this.$t('managers.buisnessModelCatalogue.downloadJar'), icon: 'fa fa-file-archive-o', command: () => this.downloadFile(version.id, 'JAR') })
             }
@@ -103,12 +106,14 @@ export default defineComponent({
             }
             this.items.push({ label: this.$t('common.delete'), icon: 'far fa-trash-alt', command: () => this.deleteVersionConfirm(version.id) })
         },
-        setActive(activeVersion: iBusinessModelVersion) {
+        test(event) {
+            console.log('RADIO EVENT', event)
             const previousActiveVersion = this.businessModelVersions.find((version: iBusinessModelVersion) => version.active === true)
             if (previousActiveVersion) {
                 previousActiveVersion.active = false
             }
-            activeVersion.active = true
+
+            this.activeVersion.active = true
         },
         async downloadFile(versionId: number, filetype: string) {
             await axios

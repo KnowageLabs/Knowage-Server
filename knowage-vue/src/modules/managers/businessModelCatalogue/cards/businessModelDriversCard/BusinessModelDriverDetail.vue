@@ -22,7 +22,7 @@
                             }"
                             maxLength="40"
                             @blur="v$.driver.label.$touch()"
-                            @change="setChanged"
+                            @input="setChanged"
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.driverTitle') }} * </label>
                     </span>
@@ -84,7 +84,7 @@
                             }"
                             maxLength="20"
                             @blur="v$.driver.parameterUrlName.$touch()"
-                            @change="setChanged"
+                            @input="setChanged"
                         />
                         <label for="parameterUrlName" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.driversUrl') }} * </label>
                     </span>
@@ -113,7 +113,7 @@
                     {{ $t('managers.buisnessModelCatalogue.driverDataConditions') }}
                 </template>
                 <template #right>
-                    <Button class="kn-button p-button-text" @click="showForm">{{ $t('managers.buisnessModelCatalogue.addCondition') }}</Button>
+                    <Button class="kn-button p-button-text" @click="showForm" :disabled="modes.length === 0">{{ $t('managers.buisnessModelCatalogue.addCondition') }}</Button>
                 </template>
             </Toolbar>
         </template>
@@ -180,7 +180,7 @@
                     <p>{{ $t('managers.buisnessModelCatalogue.modality') + ': ' + mode.name }}</p>
                     <div class="p-d-flex">
                         <div class="mode-inputs">
-                            <Checkbox :value="mode.useID" v-model="selectedModes" @click="test" />
+                            <Checkbox :value="mode.useID" v-model="selectedModes" />
                             <label>{{ $t('managers.buisnessModelCatalogue.check') }}</label>
                         </div>
                         <div class="mode-inputs">
@@ -306,6 +306,7 @@ export default defineComponent({
             lovs: [] as any[],
             modes: [] as any[],
             selectedModes: [] as any,
+            modesToDelete: [] as any,
             modalities: {} as any,
             touched: false,
             conditionFormVisible: false,
@@ -409,48 +410,35 @@ export default defineComponent({
                     }
                 })
             })
+
+            // TODO pitati za cekanje svih (prebaciti u for?)
+            this.loadData()
         },
-        async sendRequest(url: string, condition: any) {
+        sendRequest(url: string, condition: any) {
             if (this.operation === 'insert') {
-                return axios
-                    .post(url, condition)
-                    .then((response) => {
-                        if (response.data.errors) {
-                            this.errorMessage = response.data.errors[0].message
-                            this.displayWarning = true
-                        } else {
-                            this.$store.commit('setInfo', {
-                                title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
-                                msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
-                            })
-                        }
-                    })
-                    .finally(() => {
-                        this.loadDataDependencies()
-                        this.loadModes()
-                        this.loadLovs()
-                        this.conditionFormVisible = false
-                    })
+                return axios.post(url, condition).then((response) => {
+                    if (response.data.errors) {
+                        this.errorMessage = response.data.errors[0].message
+                        this.displayWarning = true
+                    } else {
+                        this.$store.commit('setInfo', {
+                            title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
+                            msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
+                        })
+                    }
+                })
             } else {
-                return axios
-                    .put(url, condition)
-                    .then((response) => {
-                        if (response.data.errors) {
-                            this.errorMessage = response.data.errors[0].message
-                            this.displayWarning = true
-                        } else {
-                            this.$store.commit('setInfo', {
-                                title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
-                                msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
-                            })
-                        }
-                    })
-                    .finally(() => {
-                        this.loadDataDependencies()
-                        this.loadModes()
-                        this.loadLovs()
-                        this.conditionFormVisible = false
-                    })
+                return axios.put(url, condition).then((response) => {
+                    if (response.data.errors) {
+                        this.errorMessage = response.data.errors[0].message
+                        this.displayWarning = true
+                    } else {
+                        this.$store.commit('setInfo', {
+                            title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
+                            msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
+                        })
+                    }
+                })
             }
         },
         showForm(event: any) {
@@ -498,13 +486,14 @@ export default defineComponent({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
-                this.loadDataDependencies()
-                this.loadModes()
-                this.loadLovs()
+                this.loadData()
             })
         },
-        test() {
-            console.log('TEST check', this.selectedModes)
+        loadData() {
+            this.loadDataDependencies()
+            this.loadModes()
+            this.loadLovs()
+            this.conditionFormVisible = false
         }
     }
 })

@@ -150,7 +150,7 @@
                             {{ $t('managers.buisnessModelCatalogue.configurationTablePrefixTitle') }}
                         </template>
                         <template #right>
-                               <i class="fa fa-info-circle" v-tooltip.bottom="$t('managers.buisnessModelCatalogue.prefixTooltip')"></i>
+                            <i class="fa fa-info-circle" v-tooltip.bottom="$t('managers.buisnessModelCatalogue.prefixTooltip')"></i>
                         </template>
                     </Toolbar>
                     <div class="p-fluid p-m-5">
@@ -277,13 +277,11 @@ export default defineComponent({
         metaModelUrl(): any {
             const url =
                 'http://localhost:8080/knowage' +
-                `/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${this.userToken}&bmId=${this.businessModel.id}` +
-                `&bmName=${encodeURIComponent(this.businessModel.name)}` +
-                (this.businessModel.tablePrefixLike ? '&tablePrefixLike=' + this.businessModel.tablePrefixLike : '') +
-                (this.businessModel.tablePrefixNotLike ? '&tablePrefixNotLike=' + this.businessModel.tablePrefixNotLike : '')
-
+                `/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp?datasourceId=${this.businessModel.dataSourceId}
+    `
             console.log('METAWEB URL', url)
-            return url
+
+            return 'http://localhost:8080/knowagemeta/restful-services/1.0/pages/edit?datasourceId=4&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmlhZG1pbiIsImV4cCI6MTYyNDkxNzk2Nn0.Y7-Fz7XIrwkIn8mgEpHJJPKQYznyEGAU8kMtpuTNhLM&bmId=2&bmName=MODEL_WITH_3_DRIVERS'
         }
     },
     created() {
