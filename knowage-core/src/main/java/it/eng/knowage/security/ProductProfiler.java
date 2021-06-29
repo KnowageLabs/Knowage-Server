@@ -2,7 +2,9 @@ package it.eng.knowage.security;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -90,6 +92,21 @@ public class ProductProfiler {
 				logger.error("Error while filtering datasets by product: ", e);
 			}
 			return toReturn;
+		}
+	}
+
+	public static Set<String> filterAuthorizationsByProduct(List<String> authorizations) {
+		if (isCommunity) {
+			return new HashSet<String>(authorizations);
+		} else {
+			Set<String> filteredAuthorizations = new HashSet<String>();
+			try {
+				Method filterAuthorizationsByProductMethod = productProfilerEE.getMethod("filterAuthorizationsByProduct", List.class);
+				filteredAuthorizations = (Set<String>) filterAuthorizationsByProductMethod.invoke(productProfilerEE, authorizations);
+			} catch (Exception e) {
+				logger.error("Error while filtering authorizations by product: ", e);
+			}
+			return filteredAuthorizations;
 		}
 	}
 
