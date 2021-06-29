@@ -156,9 +156,22 @@
             "valueDescription": "Value description",
             "valueName": "Value name"
         },
+        "menu": {
+            "admin": {
+                "importExport": "Import/Export"
+            }
+        },
         "metadata": {
             "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Metadata Management"
+        },
+        "newsDialog": {
+            "description": "Description",
+            "expirationDate": "Expiration date",
+            "news": "news",
+            "notifications": "notifications",
+            "title": "Knowage news",
+            "warnings": "warnings"
         },
         "profileAttributesManagement": {
             "description": "Description",
@@ -191,6 +204,118 @@
             "title": "Profile Attributes Management",
             "valueDescription": "Value description"
         },
+        "role": {
+            "defaultRolePlaceholder": "No default role selected",
+            "roleSelection": "Role Selection"
+        },
+        "rolesManagement": {
+            "authorizations": {
+                "name": {
+                    "build": "Build",
+                    "buildQbe": "Build QbE Queries",
+                    "createCustomChart": "Create custom chart",
+                    "createDocuments": "Create Documents",
+                    "createSelfSelviceCockpit": "Create Cockpit report",
+                    "createSelfSelviceGeoreport": "Create Geographic report",
+                    "createSelfSelviceKpi": "Create KPI report",
+                    "createSocialAnalysis": "Create social analysis",
+                    "doMassiveExport": "Do massive export",
+                    "editPythonScripts": "Edit Python/R Scripts",
+                    "enable": "Enable",
+                    "enableDatasetPersistence": "Dataset Persistence",
+                    "enableFederatedDataset": "Federated Dataset",
+                    "enableToCopyAndEmbed": "Copy and Embed link",
+                    "enableToPrint": "Print Documents",
+                    "enableToRate": "Rate Documents",
+                    "enterprise": "Enterprise",
+                    "functionsCatalogUsage": "Functions Catalog Usage",
+                    "hierarchiesManagement": "Manage Hierarchies",
+                    "items": "Items for user menu",
+                    "manage": "Manage",
+                    "manageCalendar": "Manage Calendar",
+                    "manageGlossaryBusiness": "Manage Glossary Business",
+                    "manageGlossaryTechnical": "Manage Glossary Technical",
+                    "manageInternationalization": "Manage Internationalization",
+                    "manageKpiValue": "Manage Kpi Value",
+                    "manageUsers": "Users",
+                    "manageWidgetGallery": "Manage widget gallery",
+                    "newsVisualization": "News Visualization",
+                    "runSnapshot": "Run Scheduled execution",
+                    "saveMeta": "Save Metadata",
+                    "savePersonalFolder": "Save into My Workspace",
+                    "saveRemember": "Save to remember",
+                    "saveSubobj": "Save OLAP View",
+                    "see": "See",
+                    "seeDocBrowser": "View Document Browser",
+                    "seeFavourites": "See favourites",
+                    "seeMeta": "View Metadata",
+                    "seeMyData": "View 'My Data'",
+                    "seeMyWorkspace": "View My Workspace",
+                    "seeNotes": "View Notes",
+                    "seeSnapshot": "View Scheduled execution",
+                    "seeSubobj": "See subobject",
+                    "seeSubscriptions": "See subscriptions",
+                    "seeToDoList": "See ToDo list",
+                    "seeViewpoints": "View Saved Parameters",
+                    "send": "Send",
+                    "sendMail": "Send Mail",
+                    "viewSocialAnalysis": "View social analysis",
+                    "widgets": "Widgets"
+                },
+                "title": "Authorizations"
+            },
+            "businessModels": "Business models",
+            "categories": "Categories",
+            "dataSets": "Data sets",
+            "detail": {
+                "code": "Code",
+                "isPublic": "Is public role?",
+                "roleTypeID": "Role Type",
+                "title": "Detail"
+            },
+            "hint": "The roles allows you to choose the permission and authorizations for the Knowage roles in your tenant. To view the details of a role, select one on the side, or press the \"+\" button to add a new one.",
+            "kpiCategories": "KPI Categories",
+            "noResults": "No roles available for the selected filter",
+            "rolesDropdown": {
+                "ADMIN": "Administrator",
+                "DEV_ROLE": "Developer",
+                "MODEL_ADMIN": "Model Administrator",
+                "TEST_ROLE": "Test User",
+                "USER": "User"
+            },
+            "title": "Roles Management"
+        },
+        "usersManagement": {
+            "attributes": "Attributes",
+            "blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
+            "defaultRoleInfo": "Select a role if you want to set it as the default. If no role is selected, it will be possible switch between roles from the Knowage Administration menu",
+            "detail": "Detail",
+            "form": {
+                "defaultRole": "Default role",
+                "fullName": "Full Name",
+                "password": "Password",
+                "passwordConfirm": "Confirm Password",
+                "userId": "User ID"
+            },
+            "fullName": "Full Name",
+            "hint": "The users management allows you to read the user details and to set the user roles. To view the details of an user, select one on the side, or press the \"+\" button to add a new one.",
+            "info": {
+                "createMessage": "User created",
+                "createTitle": "Create user",
+                "deleteMessage": "User deleted",
+                "deleteTitle": "Delete user",
+                "updateMessage": "User updated",
+                "updateTitle": "Update user"
+            },
+            "roles": "Roles",
+            "title": "Users management",
+            "unlockUser": "Unlock user",
+            "userId": "User ID",
+            "validation": {
+                "sameAsPassword": "Username must be the same as password"
+            },
+            "valueDescription": "Value description"
+        },
         "widgetGallery": {
             "deleteTemplate": "Delete template",
             "downloadTemplate": "Download template",
@@ -213,22 +338,5 @@
             "title": "Gallery management",
             "uploadTemplate": "Upload template"
         }
-    },
-    "menu": {
-        "admin": {
-            "importExport": "Import/Export"
-        }
-    },
-    "newsDialog": {
-        "description": "Description",
-        "expirationDate": "Expiration date",
-        "news": "news",
-        "notifications": "notifications",
-        "title": "Knowage news",
-        "warnings": "warnings"
-    },
-    "role": {
-        "defaultRolePlaceholder": "No default role selected",
-        "roleSelection": "Role Selection"
     }
 }

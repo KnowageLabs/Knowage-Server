@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.tools.datasource.dao.IDataSourceDAO"%>
 <%@page import="it.eng.spagobi.user.UserProfileManager"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
+<%@page import="it.eng.knowage.security.ProductProfiler"%>
 
 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/documentdetails/services/resourceService.js")%>"></script>
@@ -82,8 +83,8 @@ IBIObjectDAO documentDao = DAOFactory.getBIObjectDAO();
 IParameterDAO analyticalDriversDao = DAOFactory.getParameterDAO();
 IDataSetDAO datasetDAO = DAOFactory.getDataSetDAO();
 IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
-List types =  domainDao.loadListDomainsByTypeAndTenant("BIOBJ_TYPE");
-List engines =  engineDao.loadAllEnginesByTenant();
+List types =  ProductProfiler.filterDocumentTypesByProduct(domainDao.loadListDomainsByTypeAndTenant("BIOBJ_TYPE"));
+List engines =  ProductProfiler.filterEnginesByProduct(engineDao.loadAllEnginesByTenant());
 List states = domainDao.loadListDomainsByType("STATE");
 List<Parameter> analyticalDrivers = analyticalDriversDao.loadAllParameters();
 

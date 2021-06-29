@@ -265,13 +265,15 @@ function pythonWidgetEditControllerFunction(
 
 	$scope.checkAliases = function(){
         var columns = $scope.newModel.content.columnSelectedOfDataset;
-        for(var i = 0; i < columns.length - 1; i++){
-            for(var j = i + 1; j < columns.length; j++){
-                if(columns[i].alias == columns[j].alias){
-                    return false;
-                }
-            }
-        }
+        if (columns) {
+	        for(var i = 0; i < columns.length - 1; i++){
+	            for(var j = i + 1; j < columns.length; j++){
+	                if(columns[i].alias == columns[j].alias){
+	                    return false;
+	                }
+	            }
+	        }
+		}
         return true;
     }
 
@@ -302,10 +304,10 @@ function pythonWidgetEditControllerFunction(
 			});
 		}
 	}
-	
+
 	$scope.showGallery = $scope.newModel.isNew;
 	$scope.selectedTab = $scope.newModel.isNew ? 0 : 1;
-	
+
 	$scope.setGalleryTemplate = function(template){
 		if(template){
 			$scope.newModel.pythonCode = template.code.python;
