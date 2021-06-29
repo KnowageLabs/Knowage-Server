@@ -1,5 +1,6 @@
 {
 	"common": {
+		"back": "back",
 		"cancel": "cancel",
 		"choose": "choose",
 		"close": "close",
@@ -35,6 +36,7 @@
 		"loggedUser": "logged user",
 		"name": "name",
 		"new": "new",
+		"next": "next",
 		"save": "save",
 		"search": "search",
 		"table": {
@@ -83,6 +85,10 @@
 		"welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
 	},
 	"importExport": {
+		"catalogFunction": {
+			"description": "export functions from catalog",
+			"label": "functions"
+		},
 		"export": {
 			"completedWithErrors": "Export completed with errors. Please read logs for further information.",
 			"successfullyCompleted": "Export successfully completed"
@@ -93,7 +99,22 @@
 			"label": "gallery"
 		},
 		"import": {
+			"catalogFunction": {
+				"column": {
+					"keywords": "Keywords",
+					"label": "Label",
+					"name": "Name",
+					"type": "Type"
+				}
+			},
 			"completedWithErrors": "Import completed with errors. Please read logs for further information.",
+			"gallery": {
+				"column": {
+					"name": "Name",
+					"tags": "Tags",
+					"type": "Type"
+				}
+			},
 			"successfullyCompleted": "Import successfully completed"
 		},
 		"title": "Import/Export"
