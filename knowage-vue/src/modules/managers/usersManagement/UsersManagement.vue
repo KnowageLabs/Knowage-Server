@@ -16,36 +16,37 @@
                 </div>
             </div>
 
+            <KnHint :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'" v-if="hiddenForm"></KnHint>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" :hidden="hiddenForm">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
                     <template #left>
                         {{ userDetailsForm.userId }}
                     </template>
                     <template #right>
-                        <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" :disabled="v$.userDetailsForm.$invalid" @click="saveUser" />
-                        <Button class="kn-button p-button-text p-button-rounded" icon="pi pi-times" @click="closeForm" />
+                        <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="v$.userDetailsForm.$invalid" @click="saveUser" />
+                        <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeForm" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <div class="card">
-                    <TabView class="tabview-custom" ref="usersFormTab">
+                    <TabView class="tabview-custom kn-tab" ref="usersFormTab">
                         <TabPanel>
                             <template #header>
-                                <span>{{ $t('managers.usersManagement.detail').toUpperCase() }}</span>
+                                <span>{{ $t('managers.usersManagement.detail') }}</span>
                             </template>
                             <DetailFormTab :formInsert="formInsert" :formValues="userDetailsForm" :vobj="v$" :disabledUID="disableUsername" @dataChanged="dirty = true" @unlock="unlockUser($event)"></DetailFormTab>
                         </TabPanel>
 
                         <TabPanel>
                             <template #header>
-                                <span>{{ $t('managers.usersManagement.roles').toUpperCase() }}</span>
+                                <span>{{ $t('managers.usersManagement.roles') }}</span>
                             </template>
                             <RolesTab :defRole="defaultRole" :rolesList="roles" :selected="selectedRoles" @changed="setSelectedRoles($event)" @setDefaultRole="setDefaultRoleValue($event)"></RolesTab>
                         </TabPanel>
 
                         <TabPanel>
                             <template #header>
-                                <span>{{ $t('managers.usersManagement.attributes').toUpperCase() }}</span>
+                                <span>{{ $t('managers.usersManagement.attributes') }}</span>
                             </template>
                             <UserAttributesForm :attributes="attributes" v-model="attributesForm" @formDirty="onFormDirty"></UserAttributesForm>
                         </TabPanel>
@@ -65,6 +66,7 @@ import axios from 'axios'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
+import KnHint from '@/components/UI/KnHint.vue'
 import RolesTab from './UserRolesTab/RolesTab.vue'
 import DetailFormTab from './UserDetailTab/DetailFormTab.vue'
 import UsersListBox from './UsersListBox.vue'
@@ -74,7 +76,7 @@ import { sameAs } from '@vuelidate/validators'
 
 export default defineComponent({
     name: 'user-management',
-    components: { UsersListBox, TabView, TabPanel, KnFabButton, RolesTab, DetailFormTab, UserAttributesForm },
+    components: { UsersListBox, TabView, TabPanel, KnFabButton, KnHint, RolesTab, DetailFormTab, UserAttributesForm },
     data() {
         return {
             v$: useValidate() as any,

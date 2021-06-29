@@ -5,7 +5,7 @@
                 <template #header>
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
                         <template #left>
-                            {{ $t('managers.usersManagement.roles').toUpperCase() }}
+                            {{ $t('managers.usersManagement.roles') }}
                         </template>
                     </Toolbar>
                 </template>
@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <p>
-                        {{ $t('managers.usersManagement.defaultRoleInfo') }}
+                        <Message severity="info">{{ $t('managers.usersManagement.defaultRoleInfo') }}</Message>
                     </p>
                     <DataTable :value="rolesList" v-model:selection="selectedRoles" class="p-datatable-sm kn-table" dataKey="id" :paginator="true" :rows="20" responsiveLayout="stack" breakpoint="960px" @rowSelect="onRowSelect" @rowUnselect="onRowUnselect">
                         <template #empty>
@@ -40,6 +40,7 @@ import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Message from 'primevue/message'
 import rolesTabDescriptor from './RolesTabDescriptor.json'
 import { iRole } from '../UsersManagement'
 
@@ -49,7 +50,8 @@ export default defineComponent({
         Card,
         Column,
         DataTable,
-        Dropdown
+        Dropdown,
+        Message
     },
     props: {
         defRole: Number,

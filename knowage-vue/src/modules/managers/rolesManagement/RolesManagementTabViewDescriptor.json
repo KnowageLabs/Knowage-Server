@@ -229,9 +229,7 @@
         {
             "category": "ITEMS",
             "dbname": "SEE_DOCUMENT_BROWSER",
-            "enableForRole": [
-                27
-            ],
+            "enableForRole": [27],
             "fieldName": "ableToSeeDocumentBrowser",
             "label": "managers.rolesManagement.authorizations.name.seeDocBrowser",
             "visible": false
@@ -239,9 +237,7 @@
         {
             "category": "ITEMS",
             "dbname": "SEE_MY_DATA",
-            "enableForRole": [
-                27
-            ],
+            "enableForRole": [27],
             "fieldName": "ableToSeeMyData",
             "label": "managers.rolesManagement.authorizations.name.seeMyData",
             "visible": false
@@ -249,9 +245,7 @@
         {
             "category": "ITEMS",
             "dbname": "SEE_MY_WORKSPACE",
-            "enableForRole": [
-                27
-            ],
+            "enableForRole": [27],
             "fieldName": "ableToSeeMyWorkspace",
             "label": "managers.rolesManagement.authorizations.name.seeMyWorkspace",
             "visible": false
@@ -426,11 +420,6 @@
         "success": "common.toast.success",
         "update": {
             "toastTitle": "common.toast.updateTitle"
-        }
-    },
-    "pField": {
-        "style": {
-            "margin-bottom": "40px"
         }
     }
 }

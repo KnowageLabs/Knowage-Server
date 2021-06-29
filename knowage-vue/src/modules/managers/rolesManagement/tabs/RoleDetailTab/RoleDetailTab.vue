@@ -2,7 +2,7 @@
     <Card :style="rolesManagementTabViewDescriptor.card.style">
         <template #content>
             <form class="p-fluid p-m-5">
-                <div class="p-field" :style="rolesManagementTabViewDescriptor.pField.style">
+                <div class="p-field">
                     <span class="p-float-label">
                         <InputText
                             id="name"
@@ -27,7 +27,7 @@
                     />
                 </div>
 
-                <div class="p-field" :style="rolesManagementTabViewDescriptor.pField.style">
+                <div class="p-field">
                     <span class="p-float-label">
                         <InputText
                             id="code"
@@ -54,7 +54,7 @@
                     />
                 </div>
 
-                <div class="p-field" :style="rolesManagementTabViewDescriptor.pField.style">
+                <div class="p-field">
                     <span class="p-float-label">
                         <InputText
                             id="description"
@@ -81,7 +81,7 @@
                     />
                 </div>
 
-                <div class="p-field" :style="rolesManagementTabViewDescriptor.pField.style">
+                <div class="p-field">
                     <span class="p-float-label">
                         <Dropdown
                             id="roleTypeID"
@@ -107,7 +107,7 @@
                     />
                 </div>
 
-                <div class="p-field" :style="rolesManagementTabViewDescriptor.pField.style">
+                <div class="p-field">
                     <span class="p-field-checkbox">
                         <Checkbox id="isPublic" name="isPublic" v-model="role.isPublic" @change="onFieldChange('isPublic', role.isPublic)" :binary="true" data-test="is-public-checkbox" />
                         <label for="isPublic">

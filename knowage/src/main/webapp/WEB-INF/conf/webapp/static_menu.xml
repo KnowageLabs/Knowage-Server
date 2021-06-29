@@ -254,7 +254,7 @@
 		<ITEM id="10004" label="menu.Users"
 			requiredFunctionality="FinalUsersManagement"
 			iconCls="fa fa-users"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp" />
+			to="/users-management/" />
 		
 		<ITEM id="10005" label="menu.HierarchiesEditor"
 			requiredFunctionality="HierarchiesManagement"

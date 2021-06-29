@@ -1,22 +1,24 @@
 <template>
-    <div class="p-grid   p-fluid p-jc-center kn-height-full">
+    <div class="p-grid p-fluid p-jc-center kn-height-full">
         <div class="p-col-12">
             <Card style="width: 100%; margin-bottom: 2em">
                 <template #header>
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
                         <template #left>
-                            {{ $t('managers.usersManagement.attributes').toUpperCase() }}
+                            {{ $t('managers.usersManagement.attributes') }}
                         </template>
                     </Toolbar>
                 </template>
                 <template #content>
-                    <div class="p-field" v-for="attribute in attributes" :key="attribute.attributeId">
-                        <div class="p-inputgroup" v-if="modelValue[attribute.attributeId]">
-                            <span class="p-float-label">
-                                <InputText class="p-inputtext p-component kn-material-input" :id="attribute.attributeId" @input="onInputChange(attribute, $event.target.value)" type="text" v-model="userAttributesForm[attribute.attributeId][attribute.attributeName]" />
-                                <label :for="attribute.attributeName">{{ attribute.attributeName }}</label>
-                            </span>
-                            <Button icon="pi pi-trash" class="p-button-link" @click="eraseAttribute(attribute)" />
+                    <div class="p-m-5">
+                        <div class="p-field" v-for="attribute in attributes" :key="attribute.attributeId">
+                            <div class="p-inputgroup" v-if="modelValue[attribute.attributeId]">
+                                <span class="p-float-label">
+                                    <InputText class="p-inputtext p-component kn-material-input" :id="attribute.attributeId" @input="onInputChange(attribute, $event.target.value)" type="text" v-model="userAttributesForm[attribute.attributeId][attribute.attributeName]" />
+                                    <label :for="attribute.attributeName">{{ attribute.attributeName }}</label>
+                                </span>
+                                <Button icon="pi pi-times-circle" class="p-button-text p-button-rounded p-button-plain" @click="eraseAttribute(attribute)" />
+                            </div>
                         </div>
                     </div>
                 </template>

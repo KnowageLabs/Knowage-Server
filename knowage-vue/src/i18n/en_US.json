@@ -285,20 +285,20 @@
             },
             "title": "Roles Management"
         },
-       "usersManagement": {
-            "title": "Users list",
-            "userId": "User ID",
-            "fullName": "Full Name",
-            "validation": {
-                "sameAsPassword": "Username must be the same as password"                
-            },
-            "detail": "Detail",
-            "roles": "Roles",
+        "usersManagement": {
             "attributes": "Attributes",
-            "unlockUser": "Unlock user",
             "blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
             "defaultRoleInfo": "Select a role if you want to set it as the default. If no role is selected, it will be possible switch between roles from the Knowage Administration menu",
-            "valueDescription": "Value description",
+            "detail": "Detail",
+            "form": {
+                "defaultRole": "Default role",
+                "fullName": "Full Name",
+                "password": "Password",
+                "passwordConfirm": "Confirm Password",
+                "userId": "User ID"
+            },
+            "fullName": "Full Name",
+            "hint": "The users management allows you to read the user details and to set the user roles. To view the details of an user, select one on the side, or press the \"+\" button to add a new one.",
             "info": {
                 "createMessage": "User created",
                 "createTitle": "Create user",
@@ -307,14 +307,15 @@
                 "updateMessage": "User updated",
                 "updateTitle": "Update user"
             },
-            "form": {
-                "defaultRole": "Default role",
-                "userId": "User ID",
-                "fullName": "Full Name",
-                "password": "Password",
-                "passwordConfirm": "Confirm Password"
-            }
-      },
+            "roles": "Roles",
+            "title": "Users management",
+            "unlockUser": "Unlock user",
+            "userId": "User ID",
+            "validation": {
+                "sameAsPassword": "Username must be the same as password"
+            },
+            "valueDescription": "Value description"
+        },
         "widgetGallery": {
             "deleteTemplate": "Delete template",
             "downloadTemplate": "Download template",

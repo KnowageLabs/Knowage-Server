@@ -4,7 +4,7 @@
             <Card>
                 <template #header>
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left> {{ $t('managers.usersManagement.detail').toUpperCase() }} </template>
+                        <template #left> {{ $t('managers.usersManagement.detail') }} </template>
                     </Toolbar>
                 </template>
                 <template #content>
@@ -13,11 +13,11 @@
                             <InlineMessage severity="warn">{{ $t('managers.usersManagement.blockedUserInfo') }}</InlineMessage>
                         </div>
                         <div class="p-col-3 p-md-3">
-                            <Button @click="unlockUser" icon="pi pi-lock-open" :label="$t('managers.usersManagement.unlockUser').toUpperCase()" />
+                            <Button @click="unlockUser" icon="pi pi-lock-open" :label="$t('managers.usersManagement.unlockUser')" />
                         </div>
                     </div>
 
-                    <form ref="detail-form">
+                    <form ref="detail-form" class="p-m-5">
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
