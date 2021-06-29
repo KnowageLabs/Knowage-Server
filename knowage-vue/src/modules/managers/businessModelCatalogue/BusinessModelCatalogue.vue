@@ -10,7 +10,7 @@
                         <FabButton icon="fas fa-plus" @click="showForm" />
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <div class="p-col">
                     <Listbox
                         v-if="!loading"
@@ -24,6 +24,7 @@
                         :filterFields="businessModelCatalogueDescriptor.filterFields"
                         :emptyFilterMessage="$t('common.info.noDataFound')"
                         @change="showForm"
+                        data-test="bm-list"
                     >
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">

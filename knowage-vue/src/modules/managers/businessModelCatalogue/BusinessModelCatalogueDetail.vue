@@ -14,7 +14,7 @@
                     <span>{{ $t('managers.buisnessModelCatalogue.details') }}</span>
                 </template>
 
-                <BusinessModelDetailsCard :selectedBusinessModel="selectedBusinessModel" :domainCategories="categories" :datasourcesMeta="datasources" :userToken="userToken" :toGenerate="toGenerate" @fieldChanged="onFieldChange" @fileUploaded="uploadedFile = $event"></BusinessModelDetailsCard>
+                <BusinessModelDetailsCard :selectedBusinessModel="selectedBusinessModel" :domainCategories="categories" :datasourcesMeta="datasources" :user="user" :toGenerate="toGenerate" @fieldChanged="onFieldChange" @fileUploaded="uploadedFile = $event"></BusinessModelDetailsCard>
             </TabPanel>
 
             <TabPanel>
@@ -98,9 +98,6 @@ export default defineComponent({
         buttonDisabled(): any {
             return this.v$.$invalid
         },
-        userToken(): string {
-            return this.user ? this.user.userUniqueIdentifier : ''
-        },
         invalidDrivers(): number {
             return this.drivers.filter((driver: any) => driver.numberOfErrors > 0).length
         }
@@ -119,7 +116,7 @@ export default defineComponent({
         // console.log('DATASOURCES: ', this.datasources)
         // console.log('ANALYTICAL DRIVERS: ', this.analyticalDrivers)
         // console.log('DRIVERS: ', this.drivers)
-        // console.log('USER: ', this.user)
+        console.log('USER: ', this.user)
     },
     methods: {
         async loadUser() {
@@ -208,6 +205,10 @@ export default defineComponent({
             // }
 
             // console.log('test', this.selectedBusinessModel)
+
+            console.log('BM Versions in SUBMIT: ', this.businessModelVersions)
+            const activeBusinessModelVersion = this.businessModelVersions.find((version) => version.active === true)
+            this.saveActiveVersion(activeBusinessModelVersion)
         },
         async saveBusinessModel() {
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.fullName }).then((response) => {
@@ -234,6 +235,14 @@ export default defineComponent({
                     this.selectedBusinessModel = response.data
                 })
                 .finally(() => this.formatBusinessModelAnalyticalDriver())
+        },
+        saveActiveVersion(businessModelVersion) {
+            axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${businessModelVersion.id}/`).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.updateTitle'),
+                    msg: this.$t('common.toast.success')
+                })
+            })
         },
         async uploadFile() {
             const formData = new FormData()

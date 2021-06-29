@@ -119,10 +119,11 @@
                     </div>
                     <div class="input-container p-d-flex p-flex-row" v-else>
                         <div>
+                            <!-- TODO: after finishing metaweb functionality in later sprint -->
                             <Button class="kn-button kn-button--primary" :label="$t('managers.buisnessModelCatalogue.metaWeb')" @click="goToMetaWeb"></Button>
                         </div>
                         <div v-if="toGenerate">
-                            <Button class="kn-button kn-button--primary" :label="$t('managers.buisnessModelCatalogue.generate')" @click="generate"></Button>
+                            <Button class="kn-button kn-button--primary" :label="$t('managers.buisnessModelCatalogue.generate')" @click="generateDatamartVisible = true"></Button>
                         </div>
                     </div>
 
@@ -211,6 +212,8 @@
             <div v-if="showMetaWeb">
                 <iframe :src="metaModelUrl"></iframe>
             </div>
+
+            <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false"></GenerateDatamartCard>
         </template>
     </Card>
 </template>
@@ -224,6 +227,7 @@ import businessModelDetailsCardValidation from './BusinessModelDetailsCardValida
 import Card from 'primevue/card'
 // import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
+import GenerateDatamartCard from './GenerateDatamartCard.vue'
 // import IframeRenderer from '@/modules/commons/IframeRenderer.vue'
 import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
@@ -235,6 +239,7 @@ export default defineComponent({
     components: {
         Card,
         Dropdown,
+        GenerateDatamartCard,
         InputSwitch,
         KnInputFile,
         KnValidationMessages
@@ -252,8 +257,8 @@ export default defineComponent({
             type: Array,
             requried: true
         },
-        userToken: {
-            type: String
+        user: {
+            type: Object
         },
         toGenerate: {
             type: Boolean
@@ -275,13 +280,12 @@ export default defineComponent({
     },
     computed: {
         metaModelUrl(): any {
-            const url =
-                'http://localhost:8080/knowage' +
-                `/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp?datasourceId=${this.businessModel.dataSourceId}
-    `
-            console.log('METAWEB URL', url)
-
-            return 'http://localhost:8080/knowagemeta/restful-services/1.0/pages/edit?datasourceId=4&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmlhZG1pbiIsImV4cCI6MTYyNDkxNzk2Nn0.Y7-Fz7XIrwkIn8mgEpHJJPKQYznyEGAU8kMtpuTNhLM&bmId=2&bmName=MODEL_WITH_3_DRIVERS'
+            //         const url =
+            //             'http://localhost:8080/knowage' +
+            //             `/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp?datasourceId=${this.businessModel.dataSourceId}
+            // `
+            //         console.log('METAWEB URL', url)
+            return '/knowagemeta/restful-services/1.0/pages/edit?datasourceId=4&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmlhZG1pbiIsImV4cCI6MTYyNDkxNzk2Nn0.Y7-Fz7XIrwkIn8mgEpHJJPKQYznyEGAU8kMtpuTNhLM&bmId=2&bmName=MODEL_WITH_3_DRIVERS'
         }
     },
     created() {
@@ -297,6 +301,7 @@ export default defineComponent({
             datasources: [] as any[],
             metaWebVisible: false,
             showMetaWeb: false,
+            generateDatamartVisible: false,
             touched: false,
             v$: useValidate() as any
         }
@@ -334,8 +339,7 @@ export default defineComponent({
         },
         goToMetaWeb() {
             this.showMetaWeb = true
-        },
-        generate() {}
+        }
     }
 })
 </script>

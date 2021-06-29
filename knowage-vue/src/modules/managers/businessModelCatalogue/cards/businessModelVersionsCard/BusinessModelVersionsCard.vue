@@ -11,8 +11,8 @@
             <Listbox class="kn-list" :options="businessModelVersions">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
-                    <div class="kn-list-item" data-test="list-item">
-                        <RadioButton name="active" :value="slotProps.option" v-model="activeVersion" @change="test($event)"></RadioButton>
+                    <div class="kn-list-item">
+                        <RadioButton name="active" :value="slotProps.option" v-model="activeVersion" @change="setActive"></RadioButton>
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.fileName }}</span>
                             <span class="kn-list-item-text-secondary">{{ creationDate(slotProps.option.creationDate) }}</span>
@@ -71,6 +71,7 @@ export default defineComponent({
         return {
             businessModelVersions: [] as iBusinessModelVersion[],
             items: [] as { label: string; icon: string; command: Function }[],
+            previousActiveVersion: { active: false },
             activeVersion: { active: false }
         }
     },
@@ -79,6 +80,7 @@ export default defineComponent({
             this.businessModelVersions = [] as iBusinessModelVersion[]
             this.versions.forEach((version: any) => {
                 if (version.active) {
+                    this.previousActiveVersion = version
                     this.activeVersion = version
                 }
                 this.businessModelVersions.push(version)
@@ -106,13 +108,9 @@ export default defineComponent({
             }
             this.items.push({ label: this.$t('common.delete'), icon: 'far fa-trash-alt', command: () => this.deleteVersionConfirm(version.id) })
         },
-        test(event) {
-            console.log('RADIO EVENT', event)
-            const previousActiveVersion = this.businessModelVersions.find((version: iBusinessModelVersion) => version.active === true)
-            if (previousActiveVersion) {
-                previousActiveVersion.active = false
-            }
-
+        setActive() {
+            this.previousActiveVersion.active = false
+            this.previousActiveVersion = this.activeVersion
             this.activeVersion.active = true
         },
         async downloadFile(versionId: number, filetype: string) {
