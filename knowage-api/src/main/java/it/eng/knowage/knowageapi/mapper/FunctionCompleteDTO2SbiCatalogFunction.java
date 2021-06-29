@@ -91,6 +91,7 @@ public class FunctionCompleteDTO2SbiCatalogFunction implements Function<Function
 		ret.setKeywords(beKeywords);
 		ret.setLabel(t.getLabel());
 		ret.setName(t.getName());
+		ret.setType(t.getType());
 		// ret.getObjFunctions() not mapped
 		ret.setOfflineScriptTrain(t.getOfflineScriptTrain());
 		ret.setOfflineScriptUse(t.getOfflineScriptUse());

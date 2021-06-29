@@ -20,6 +20,8 @@ package it.eng.knowage.knowageapi.context;
 
 import java.util.UUID;
 
+import it.eng.spagobi.services.security.SpagoBIUserProfile;
+
 /**
  * Holds business data from the request.
  *
@@ -34,6 +36,10 @@ public class BusinessRequestContext {
 	private String username;
 
 	private String organization;
+
+	private SpagoBIUserProfile userProfile;
+
+	private String userToken;
 
 	public BusinessRequestContext(String version) {
 		super();
@@ -66,5 +72,21 @@ public class BusinessRequestContext {
 
 	public String getVersion() {
 		return version;
+	}
+
+	public SpagoBIUserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(SpagoBIUserProfile userProfile) {
+		this.userProfile = userProfile;
+	}
+
+	public String getUserToken() {
+		return userToken;
+	}
+
+	public void setUserToken(String userToken) {
+		this.userToken = userToken;
 	}
 }

@@ -19,6 +19,8 @@ package it.eng.knowage.knowageapi;
 
 import java.net.MalformedURLException;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -89,6 +91,11 @@ public class KnowageApiConfiguration {
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
 		multipartResolver.setMaxUploadSize(100000);
 		return multipartResolver;
+	}
+
+	@Bean
+	public Context context() throws NamingException {
+		return new InitialContext();
 	}
 
 }

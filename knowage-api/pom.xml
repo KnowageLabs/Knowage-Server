@@ -42,8 +42,12 @@
 
 		<dependencies>
 
-			<!-- Duplicated in: - knowage-api - knowage-vue Cannot be placed in knowage-ce-parent 
-				because sets a greater version of Hibernate deps. -->
+			<!-- 
+				Duplicated in:
+					- knowage-api
+					- knowage-vue
+				Cannot be placed in knowage-ce-parent because sets a greater version of Hibernate deps.
+			 -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
@@ -200,6 +204,13 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.h-thurow</groupId>
+			<artifactId>simple-jndi</artifactId>
+			<version>0.23.0</version>
 			<scope>test</scope>
 		</dependency>
 

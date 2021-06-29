@@ -80,6 +80,7 @@ public class SbiFunctionCatalog2FunctionCompleteDTO implements Function<SbiCatal
 		ret.getInputVariables().addAll(feInputVars);
 		ret.getKeywords().addAll(feKeywords);
 		ret.getOutputColumns().addAll(feOutputCols);
+		ret.setType(t.getType());
 
 		return ret;
 	}
