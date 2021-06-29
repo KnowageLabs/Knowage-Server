@@ -225,7 +225,6 @@ public class MetaData implements IMetaData, Cloneable {
 		}
 	}
 
-	@JsonIgnore
 	public void setFieldsMeta(List<IFieldMetaData> fieldsMeta) {
 		this.fieldsMeta = fieldsMeta;
 	}
