@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	angular.module('cockpitModule').directive('catalogFunction',function(){
 		return{
-			template:   '<button class="md-button md-knowage-theme" ng-click="addNewCatalogFunction()" ng-disabled="isFunctionInUse() && !selectedItem" ng-class="{\'md-icon-button\':selectedItem && !insideMenu}">'+
+			template:   '<button class="md-button md-knowage-theme" ng-if="canUseFunctions" ng-click="addNewCatalogFunction()" ng-disabled="isFunctionInUse() && !selectedItem" ng-class="{\'md-icon-button\':selectedItem && !insideMenu}">'+
 						'	<md-icon md-font-icon="fas fa-square-root-alt" ng-if="selectedItem"></md-icon>'+
 						'	<span ng-if="!selectedItem">{{::translate.load("sbi.cockpit.widgets.table.catalogFunctions.add")}}</span>'+
 						'	<span ng-if="selectedItem && insideMenu">{{::translate.load("sbi.cockpit.widgets.table.catalogFunctions.edit")}}</span>'+
@@ -43,6 +43,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	function catalogFunctionController($scope,sbiModule_translate,sbiModule_restServices,cockpitModule_catalogFunctionService,$q,$mdDialog,cockpitModule_datasetServices,$mdToast){
 		$scope.translate = sbiModule_translate;
+
+		sbiModule_restServices.restToRootProject();
+		sbiModule_restServices.promiseGet('2.0/backendservices/productprofiler/cockpit/functions', "")
+		.then(function(response){
+			if (response.data) $scope.canUseFunctions = true;
+			else $scope.canUseFunctions = false;
+		}, function(error){
+			$scope.canUseFunctions = false;
+		});
 
 		function buildCrossTabColumns(crosstabDefinition){
 			var columnsArray = [];
