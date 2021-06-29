@@ -71,7 +71,7 @@
 
 			<Button v-if="step == 0" v-bind:visible="visibility" class="kn-button kn-button--primary" v-t="'common.next'" :disabled="uploadedFiles && uploadedFiles.length == 0" @click="goToChooseElement(uploadedFiles)" />
 			<span v-if="step == 1">
-				<Button v-bind:visible="visibility" class="kn-button kn-button--secondary" v-t="'common.back'" @click="goBack"/>
+				<Button v-bind:visible="visibility" class="kn-button kn-button--secondary" v-t="'common.back'" @click="resetToFirstStep"/>
 				<Button v-bind:visible="visibility" class="kn-button kn-button--primary" v-t="'common.import'" :disabled="isImportDisabled()" @click="startImport"
 			/></span>
 		</template>
@@ -79,6 +79,7 @@
 </template>
 
 <script lang="ts">
+	import axios from 'axios'
 	import { defineComponent } from 'vue'
 	import { FilterMatchMode, FilterOperator } from 'primevue/api'
 	import { IColumn } from './ImportExport'
@@ -105,17 +106,17 @@
 				fileName: '',
 				filters: {},
 				loading: false,
-				packageItems: importExportDescriptor.mockedCatalogFunctions.entities,
-				/*packageItems: {
-						 					gallery: [],
-						catalogFunction: []
-					}*/ selectedItems: {
+
+				packageItems: {
+					gallery: [],
+					catalogFunction: []
+				},
+				selectedItems: {
 					gallery: [],
 					catalogFunction: []
 				},
 				step: 0,
-				token: importExportDescriptor.mockedCatalogFunctions.token,
-				items: [{ label: 'Upload file' }, { label: 'Choose Elements' }]
+				token: ''
 			}
 		},
 		emits: ['update:visibility', 'import'],
@@ -147,7 +148,7 @@
 				this.selectedItems[e.functionality] = e.items
 			},
 			closeDialog(): void {
-				this.goBack()
+				this.resetToFirstStep()
 				this.$emit('update:visibility', false)
 			},
 			onUpload(data) {
@@ -167,74 +168,86 @@
 				}
 				return true
 			},
-			async goToChooseElement() {
+			async goToChooseElement(uploadedFiles) {
 				if (this.uploadedFiles.length == 1) {
 					this.loading = true
 					this.step = 1
 
-					/* 					var formData = new FormData()
-						formData.append('file', uploadedFiles.files)
-						await axios
-							.post(process.env.VUE_APP_API_PATH + '1.0/import/upload', formData, {
-								headers: {
-									'Content-Type': 'multipart/form-data'
+					var formData = new FormData()
+					formData.append('file', uploadedFiles[0])
+					await axios
+						.post(process.env.VUE_APP_API_PATH + '1.0/import/upload', formData, {
+							headers: {
+								'Content-Type': 'multipart/form-data'
+							}
+						})
+						.then(
+							(response) => {
+								if (response.data.errors) {
+									this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
+								} else {
+									this.packageItems = response.data.entries
+									this.token = response.data.token
+									this.step = 1
 								}
-							})
-							.then(
-								(response) => {
-									if (response.data.errors) {
-										this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
-									} else {
-										this.packageItems = response.data.entities
-										this.token = response.data.token
-															this.step = 1
-									}
-								},
-								(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
-							) */
+							},
+							(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
+						)
 					this.loading = false
 				} else {
 					this.$store.commit('setWarning', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
 				}
 			},
 			async startImport() {
-				let obj = this.streamlineSelectedItemsArray()
-				console.log(obj)
 				this.loading = true
-				/* await axios.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery-ee/import/bulk', obj).then(
+				await axios
+					.post(process.env.VUE_APP_API_PATH + '1.0/import/bulk', this.streamlineSelectedItemsArray(), {
+						headers: {
+							// Overwrite Axios's automatically set Content-Type
+							'Content-Type': 'application/json'
+						}
+					})
+					.then(
 						(response) => {
 							if (response.data.errors) {
 								this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
 							} else {
 								this.$store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('importExport.import.successfullyCompleted') })
+								this.closeDialog()
 							}
 						},
 						(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
-					) */
+					)
 				this.loading = false
 			},
-			async goBack() {
+			async resetToFirstStep() {
 				this.step = 0
-				this.token = ''
-				this.uploadedFiles = []
-				/* await axios.post(process.env.VUE_APP_API_PATH + '1.0/import/cleanup', this.token).then((response) => {
-						if (response.data.errors) {
-							console.log('Error during cleanup')
-						} else {
-							this.token = ''
-						}
-					}) */
+				this.selectedItems = {
+					gallery: [],
+					catalogFunction: []
+				}
+				if (this.token != '') {
+					this.uploadedFiles = []
+					await axios.get(process.env.VUE_APP_API_PATH + '1.0/import/cleanup', { params: { token: this.token } }).then(
+						(response) => {
+							if (!response.data.errors) {
+								this.token = ''
+							}
+						},
+						(error) => console.log(error)
+					)
+				}
 			},
 			streamlineSelectedItemsArray(): JSON {
 				let selectedItemsToBE = {} as JSON
-				selectedItemsToBE['datetime'] = new Date()
+				selectedItemsToBE['selectedItems'] = {}
 				for (var category in this.selectedItems) {
 					for (var k in this.selectedItems[category]) {
-						if (!selectedItemsToBE[category]) {
-							selectedItemsToBE[category] = []
+						if (!selectedItemsToBE['selectedItems'][category]) {
+							selectedItemsToBE['selectedItems'][category] = []
 						}
 
-						selectedItemsToBE[category].push(this.selectedItems[category][k].id)
+						selectedItemsToBE['selectedItems'][category].push(this.selectedItems[category][k].id)
 					}
 				}
 
