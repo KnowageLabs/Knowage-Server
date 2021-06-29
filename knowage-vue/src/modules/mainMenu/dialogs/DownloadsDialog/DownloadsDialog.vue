@@ -1,3 +1,4 @@
+  
 <template>
 	<Dialog class="kn-dialog--toolbar--primary RoleDialog" v-bind:visible="visibility" footer="footer" :header="$t('downloadsDialog.title')" :closable="false" modal>
 		<DataTable :value="downloadsList" style="width:800px" :resizableColumns="true" columnResizeMode="fit | expand">
@@ -30,13 +31,11 @@
 	import Dialog from 'primevue/dialog'
 	import descriptor from './DownloadsDialogDescriptor.json'
 	import { downloadDirect } from '@/helpers/commons/fileHelper'
-
 	interface Download {
 		filename: string
 		startDate: Date
 		alreadyDownloaded: boolean
 	}
-
 	export default defineComponent({
 		name: 'role-dialog',
 		components: {
@@ -80,9 +79,7 @@
 			},
 			downloadContent(data) {
 				var encodedUri = encodeURI(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset/' + data.id)
-
 				if (!data.alreadyDownloaded) this.$store.commit('updateAlreadyDownloadedFiles')
-
 				downloadDirect(encodedUri, data.name, 'application/json')
 				this.getDownloads()
 			},

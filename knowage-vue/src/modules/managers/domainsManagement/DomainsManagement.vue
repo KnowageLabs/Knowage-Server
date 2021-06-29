@@ -1,4 +1,4 @@
-j<template>
+<template>
     <div class="kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
             <template #left>

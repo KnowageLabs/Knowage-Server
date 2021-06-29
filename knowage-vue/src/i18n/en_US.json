@@ -9,9 +9,11 @@
             "javascript": "javascript",
             "python": "python"
         },
+        "delete": "delete",
         "deleteAll": "delete all",
         "description": "description",
         "download": "download",
+        "downloading": "Downloading",
         "dragAndDropFilesHere": "Drag and drop files here.",
         "error": {
             "downloading": "Error downloading ",
@@ -34,6 +36,7 @@
         "loggedUser": "logged user",
         "name": "name",
         "new": "new",
+        "ok": "ok",
         "save": "save",
         "search": "search",
         "table": {
@@ -55,6 +58,7 @@
             "updateTitle": "Updated"
         },
         "type": "type",
+        "upload": "upload",
         "uploading": "Uploading",
         "validation": {
             "maximumCharacters": "The maximum length allowed is {max}",
@@ -79,13 +83,21 @@
             "qa": "support forum"
         },
         "welcome": "Welcome to Knowage",
-        "welcomeText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque tristique convallis urna, sed ultrices turpis viverra iaculis. <br>Proin libero arcu, euismod at ante eu, ornare porta leo. Phasellus non quam in neque dignissim interdum sed quis nibh. Praesent sodales sagittis odio a finibus. Nullam nec urna ac turpis efficitur gravida eu vitae arcu. Aliquam odio nibh, porta sit amet ornare mollis, vehicula non felis. <br> Ut nibh metus, semper eu tempus vel, pellentesque sed dui. Vestibulum mattis bibendum eros quis interdum."
+        "welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
     },
     "importExport": {
+        "export": {
+            "completedWithErrors": "Export completed with errors. Please read logs for further information.",
+            "successfullyCompleted": "Export successfully completed"
+        },
         "filenamePlaceholder": "Enter filename here",
         "gallery": {
             "description": "export gallery templates",
             "label": "gallery"
+        },
+        "import": {
+            "completedWithErrors": "Import completed with errors. Please read logs for further information.",
+            "successfullyCompleted": "Import successfully completed"
         },
         "title": "Import/Export"
     },
@@ -102,6 +114,26 @@
         "it_IT": "italian",
         "languageSelection": "Language Selection",
         "pt_BR": "portuguese"
+    },
+    "licenseDialog": {
+        "changeLicense": "Change License",
+        "dataRequired": "This data is required to generate/update licenses",
+        "deleteLicense": "Delete License",
+        "downloadLicense": "Download License",
+        "errorExists": "The license already exists.",
+        "errorLicense": "Error deleting license",
+        "errorMessage": "An error blocked the license deleting action. If the problem persist contact the administrator.",
+        "hardwareId": "Hardware Id",
+        "hostName": "Host name",
+        "invalidLicense": "Invalid License",
+        "licenseId": "License Id",
+        "noLicenses": "No licenses available",
+        "numberOfCpu": "Number of CPUs",
+        "title": "License Management",
+        "updateLicense": "Update license",
+        "validLicense": "Valid License",
+        "warningBeforeDelete": "You are attempting to remove {0} license. This operation cannot be undone. After deletion, you will have to log in again.",
+        "wrongType": "You have chosen wrong type of license"
     },
     "managers": {
         "configurationManagement": {
@@ -124,9 +156,22 @@
             "valueDescription": "Value description",
             "valueName": "Value name"
         },
+        "menu": {
+            "admin": {
+                "importExport": "Import/Export"
+            }
+        },
         "metadata": {
             "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Metadata Management"
+        },
+        "newsDialog": {
+            "description": "Description",
+            "expirationDate": "Expiration date",
+            "news": "news",
+            "notifications": "notifications",
+            "title": "Knowage news",
+            "warnings": "warnings"
         },
         "profileAttributesManagement": {
             "description": "Description",
@@ -135,6 +180,7 @@
                 "dataType": "Data type",
                 "description": "Description",
                 "lov": "Lov",
+                "lovPlaceholder": "Select a Lov",
                 "manualInput": "Manual input",
                 "multiValue": "Multivalue",
                 "name": "Name",
@@ -158,7 +204,88 @@
             "title": "Profile Attributes Management",
             "valueDescription": "Value description"
         },
-        "usersManagement": {
+        "role": {
+            "defaultRolePlaceholder": "No default role selected",
+            "roleSelection": "Role Selection"
+        },
+        "rolesManagement": {
+            "authorizations": {
+                "name": {
+                    "build": "Build",
+                    "buildQbe": "Build QbE Queries",
+                    "createCustomChart": "Create custom chart",
+                    "createDocuments": "Create Documents",
+                    "createSelfSelviceCockpit": "Create Cockpit report",
+                    "createSelfSelviceGeoreport": "Create Geographic report",
+                    "createSelfSelviceKpi": "Create KPI report",
+                    "createSocialAnalysis": "Create social analysis",
+                    "doMassiveExport": "Do massive export",
+                    "editPythonScripts": "Edit Python/R Scripts",
+                    "enable": "Enable",
+                    "enableDatasetPersistence": "Dataset Persistence",
+                    "enableFederatedDataset": "Federated Dataset",
+                    "enableToCopyAndEmbed": "Copy and Embed link",
+                    "enableToPrint": "Print Documents",
+                    "enableToRate": "Rate Documents",
+                    "enterprise": "Enterprise",
+                    "functionsCatalogUsage": "Functions Catalog Usage",
+                    "hierarchiesManagement": "Manage Hierarchies",
+                    "items": "Items for user menu",
+                    "manage": "Manage",
+                    "manageCalendar": "Manage Calendar",
+                    "manageGlossaryBusiness": "Manage Glossary Business",
+                    "manageGlossaryTechnical": "Manage Glossary Technical",
+                    "manageInternationalization": "Manage Internationalization",
+                    "manageKpiValue": "Manage Kpi Value",
+                    "manageUsers": "Users",
+                    "manageWidgetGallery": "Manage widget gallery",
+                    "newsVisualization": "News Visualization",
+                    "runSnapshot": "Run Scheduled execution",
+                    "saveMeta": "Save Metadata",
+                    "savePersonalFolder": "Save into My Workspace",
+                    "saveRemember": "Save to remember",
+                    "saveSubobj": "Save OLAP View",
+                    "see": "See",
+                    "seeDocBrowser": "View Document Browser",
+                    "seeFavourites": "See favourites",
+                    "seeMeta": "View Metadata",
+                    "seeMyData": "View 'My Data'",
+                    "seeMyWorkspace": "View My Workspace",
+                    "seeNotes": "View Notes",
+                    "seeSnapshot": "View Scheduled execution",
+                    "seeSubobj": "See subobject",
+                    "seeSubscriptions": "See subscriptions",
+                    "seeToDoList": "See ToDo list",
+                    "seeViewpoints": "View Saved Parameters",
+                    "send": "Send",
+                    "sendMail": "Send Mail",
+                    "viewSocialAnalysis": "View social analysis",
+                    "widgets": "Widgets"
+                },
+                "title": "Authorizations"
+            },
+            "businessModels": "Business models",
+            "categories": "Categories",
+            "dataSets": "Data sets",
+            "detail": {
+                "code": "Code",
+                "isPublic": "Is public role?",
+                "roleTypeID": "Role Type",
+                "title": "Detail"
+            },
+            "hint": "The roles allows you to choose the permission and authorizations for the Knowage roles in your tenant. To view the details of a role, select one on the side, or press the \"+\" button to add a new one.",
+            "kpiCategories": "KPI Categories",
+            "noResults": "No roles available for the selected filter",
+            "rolesDropdown": {
+                "ADMIN": "Administrator",
+                "DEV_ROLE": "Developer",
+                "MODEL_ADMIN": "Model Administrator",
+                "TEST_ROLE": "Test User",
+                "USER": "User"
+            },
+            "title": "Roles Management"
+        },
+       "usersManagement": {
             "title": "Users list",
             "userId": "User ID",
             "fullName": "Full Name",
@@ -187,7 +314,7 @@
                 "password": "Password",
                 "passwordConfirm": "Confirm Password"
             }
-        },
+      },
         "widgetGallery": {
             "deleteTemplate": "Delete template",
             "downloadTemplate": "Download template",
@@ -210,22 +337,5 @@
             "title": "Gallery management",
             "uploadTemplate": "Upload template"
         }
-    },
-    "menu": {
-        "admin": {
-            "importExport": "Import/Export"
-        }
-    },
-    "newsDialog": {
-        "description": "Description",
-        "expirationDate": "Expiration date",
-        "news": "news",
-        "notifications": "notifications",
-        "title": "Knowage news",
-        "warnings": "warnings"
-    },
-    "role": {
-        "defaultRolePlaceholder": "No default role selected",
-        "roleSelection": "Role Selection"
     }
 }

@@ -174,6 +174,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				cn.setBreadcrumb(nd.getSimpleNavigation().getBreadcrumb());
 				cn.setType(nd.getSimpleNavigation().getType());
 				cn.setPopupOptions(nd.getSimpleNavigation().getPopupOptions());
+				cn.setFromDocId(nd.getSimpleNavigation().getFromDocId());
+				cn.setToDocId(nd.getSimpleNavigation().getToDocId());
 				if (cn.getSbiCrossNavigationPars() != null) {
 					cn.getSbiCrossNavigationPars().clear();
 				} else {

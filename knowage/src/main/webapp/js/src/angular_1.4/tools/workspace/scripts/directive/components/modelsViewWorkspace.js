@@ -81,21 +81,13 @@
 				businessModel.parametersData.documentParameters = bmOpen_urlViewPointService.listOfDrivers;
 				var modelName= businessModel.name;
 				var dataSource=businessModel.dataSourceLabel;
+				var dataSourceId=businessModel.dataSourceId;
 				var url = datasetParameters.qbeFromBMServiceUrl
-				+'&MODEL_NAME='+modelName
-				+'&DATA_SOURCE_LABEL='+ dataSource
-				+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
-
-			var modelName= businessModel.name;
-			var dataSource=businessModel.dataSourceLabel;
-			var dataSourceId=businessModel.dataSourceId;
-			var url = datasetParameters.qbeFromBMServiceUrl
-			+'&MODEL_NAME='+modelName
-			+'&DATA_SOURCE_LABEL='+ dataSource
-			+'&DATA_SOURCE_ID='+ dataSourceId
-			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
-
-			$qbeViewer.openQbeInterfaceFromModel($scope,url,businessModel);
+					+'&MODEL_NAME=' + encodeURIComponent(modelName)
+					+'&DATA_SOURCE_LABEL=' + dataSource
+					+'&DATA_SOURCE_ID=' + dataSourceId+(isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
+	
+				$qbeViewer.openQbeInterfaceFromModel($scope,url,businessModel);
 
 			})
 		}

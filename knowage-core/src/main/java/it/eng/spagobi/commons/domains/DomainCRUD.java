@@ -34,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.security.ProductProfiler;
 import it.eng.spago.base.Constants;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
@@ -80,6 +81,9 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 			if (type.equals("DIALECT_HIB")) {
 				filterDataSourceDomains(domains);
 			}
+			if (type.equals("DATA_SET_TYPE")) {
+				filterDataSetDomains(domains);
+			}
 			domainsJSONArray = translate(domains, getLocale(req));
 			domainsJSONObject.put("domains", domainsJSONArray);
 
@@ -108,6 +112,17 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 				if (SqlUtils.isBigDataDialect(domain.getValueCd())) {
 					iterator.remove();
 				}
+			}
+		}
+	}
+
+	private void filterDataSetDomains(List<Domain> domains) throws EMFInternalError {
+		Iterator<Domain> iterator = domains.iterator();
+		while (iterator.hasNext()) {
+			Domain domain = iterator.next();
+			String valueName = domain.getValueName();
+			if (!ProductProfiler.canCreateDataset(valueName)) {
+				iterator.remove();
 			}
 		}
 	}

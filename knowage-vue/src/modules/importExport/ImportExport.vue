@@ -81,15 +81,16 @@
 					.then(
 						(response) => {
 							if (response.data.errors) {
-								this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
-								/* closing dialog */
-								this.openExportDialog()
+								this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
 							} else {
 								var contentDisposition = response.headers['content-disposition']
 								var fileAndExtension = contentDisposition.match(/(?!([\b attachment;filename= \b])).*(?=)/g)[0]
 								var completeFileName = fileAndExtension.replaceAll('"', '')
 								downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
+								this.$store.commit('setInfo', { title: this.$t('common.downloading'), msg: this.$t('importExport.export.successfullyCompleted') })
 							}
+							/* closing dialog */
+							this.openExportDialog()
 						},
 						(error) => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t(error) })
 					)
@@ -107,12 +108,12 @@
 						.then(
 							(response) => {
 								if (response.data.errors) {
-									this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.errorCreatingPackage') })
-									/* closing dialog */
-									this.openImportDialog()
+									this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
 								} else {
-									this.$store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
+									this.$store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('importExport.import.successfullyCompleted') })
 								}
+								/* closing dialog */
+								this.openImportDialog()
 							},
 							(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
 						)

@@ -2,42 +2,131 @@
 <FORMULAS>
 	<FORMULA name="getCurrentDayOfTheMonth" description="#scheduler.formulas.getCurrentDayOfTheMonth">
 	<![CDATA[
-	Date now = new Date();
-	int day = now.getDate();
+	int day = java.time.ZonedDateTime.now().getDayOfMonth();
 	String dayStr = day.toString();
 	return dayStr;
 	]]>
 	</FORMULA>
 	<FORMULA name="getCurrentMonthOfTheYear" description="#scheduler.formulas.getCurrentMonthOfTheYear">
 	<![CDATA[
-	Date now = new Date();
-	int month = now.getMonth() + 1;
+	int month = java.time.ZonedDateTime.now().getMonth().getValue();
 	String monthStr = month.toString();
 	return monthStr;
 	]]>
 	</FORMULA>
 	<FORMULA name="getCurrentYear" description="#scheduler.formulas.getCurrentYear">
 	<![CDATA[
-	Date now = new Date();
-	int year = now.getYear() + 1900;
+	int year = java.time.ZonedDateTime.now().getYear();
 	String yearStr = year.toString();
 	return yearStr;
 	]]>
 	</FORMULA>
+
+
+
+
+
+
 	<FORMULA name="getCurrentDate" description="#scheduler.formulas.getCurrentDate">
 	<![CDATA[
-	Date now = new Date();
-  String DATE_FORMAT = "dd/MM/yyyy";
-  java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(DATE_FORMAT);
-  return sdf.format(now);
+	String DATE_FORMAT = "dd/MM/yyyy";
+	return java.time.ZonedDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern(DATE_FORMAT));
 	]]>
 	</FORMULA>
 	<FORMULA name="getCurrentDateTime" description="#scheduler.formulas.getCurrentDateTime">
 	<![CDATA[
-	Date now = new Date();
-  String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
-  java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(DATE_FORMAT);
-  return sdf.format(now);
+	String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	return java.time.ZonedDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern(DATE_FORMAT));
 	]]>
 	</FORMULA>
+
+	<FORMULA name="getCurrentDateTimeMinusOneMonth" description="#scheduler.formulas.getCurrentDateTimeMinusOneMonth">
+	<![CDATA[
+	String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	return java.time.ZonedDateTime.now().minusMonths(1).format(java.time.format.DateTimeFormatter.ofPattern(DATE_FORMAT));
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentDateTimePlusOneMonth" description="#scheduler.formulas.getCurrentDateTimePlusOneMonth">
+	<![CDATA[
+	String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	return java.time.ZonedDateTime.now().plusMonths(1).format(java.time.format.DateTimeFormatter.ofPattern(DATE_FORMAT));
+	]]>
+	</FORMULA>
+
+	<FORMULA name="getCurrentDateTimeMinusThreeMonths" description="#scheduler.formulas.getCurrentDateTimeMinusThreeMonths">
+	<![CDATA[
+	String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	return java.time.ZonedDateTime.now().minusMonths(3).format(java.time.format.DateTimeFormatter.ofPattern(DATE_FORMAT));
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentDateTimePlusThreeMonths" description="#scheduler.formulas.getCurrentDateTimePlusThreeMonths">
+	<![CDATA[
+	String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	return java.time.ZonedDateTime.now().plusMonths(3).format(java.time.format.DateTimeFormatter.ofPattern(DATE_FORMAT));
+	]]>
+	</FORMULA>
+
+	<FORMULA name="getCurrentDateTimeMinusOneYear" description="#scheduler.formulas.getCurrentDateTimeMinusOneYear">
+	<![CDATA[
+	String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	return java.time.ZonedDateTime.now().minusYears(1).format(java.time.format.DateTimeFormatter.ofPattern(DATE_FORMAT));
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentDateTimePlusOneYear" description="#scheduler.formulas.getCurrentDateTimePlusOneYear">
+	<![CDATA[
+	String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	return java.time.ZonedDateTime.now().plusYears(1).format(java.time.format.DateTimeFormatter.ofPattern(DATE_FORMAT));
+	]]>
+	</FORMULA>
+
+
+
+
+
+
+
+	<FORMULA name="getCurrentDateISO8601" description="#scheduler.formulas.getCurrentDateISO8601">
+	<![CDATA[
+	return java.time.ZonedDateTime.now().format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE);
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentDateTimeISO8601" description="#scheduler.formulas.getCurrentDateTimeISO8601">
+	<![CDATA[
+	return java.time.ZonedDateTime.now().format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+	]]>
+	</FORMULA>
+
+	<FORMULA name="getCurrentDateTimeMinusOneMonthISO8601" description="#scheduler.formulas.getCurrentDateTimeMinusOneMonthISO8601">
+	<![CDATA[
+	return java.time.ZonedDateTime.now().minusMonths(1).format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentDateTimePlusOneMonthISO8601" description="#scheduler.formulas.getCurrentDateTimePlusOneMonthISO8601">
+	<![CDATA[
+	return java.time.ZonedDateTime.now().plusMonths(1).format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+	]]>
+	</FORMULA>
+
+	<FORMULA name="getCurrentDateTimeMinusThreeMonthsISO8601" description="#scheduler.formulas.getCurrentDateTimeMinusThreeMonthsISO8601">
+	<![CDATA[
+	return java.time.ZonedDateTime.now().minusMonths(3).format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentDateTimePlusThreeMonthsISO8601" description="#scheduler.formulas.getCurrentDateTimePlusThreeMonthsISO8601">
+	<![CDATA[
+	return java.time.ZonedDateTime.now().plusMonths(3).format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+	]]>
+	</FORMULA>
+
+	<FORMULA name="getCurrentDateTimeMinusOneYearISO8601" description="#scheduler.formulas.getCurrentDateTimeMinusOneYearISO8601">
+	<![CDATA[
+	return java.time.ZonedDateTime.now().minusYears(1).format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentDateTimePlusOneYearISO8601" description="#scheduler.formulas.getCurrentDateTimePlusOneYearISO8601">
+	<![CDATA[
+	return java.time.ZonedDateTime.now().plusYears(1).format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+	]]>
+	</FORMULA>
+
 </FORMULAS>
