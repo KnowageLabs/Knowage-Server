@@ -209,9 +209,12 @@
                 </div>
             </form>
 
-            <div v-if="showMetaWeb">
+            <Dialog :style="{ height: '100vh', width: '100vw' }" :visible="showMetaWeb" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
                 <iframe :src="metaModelUrl"></iframe>
-            </div>
+            </Dialog>
+            <!-- <div id="metaweb-page" v-if="showMetaWeb">
+                <iframe :src="metaModelUrl"></iframe>
+            </div> -->
 
             <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false"></GenerateDatamartCard>
         </template>
@@ -225,7 +228,7 @@ import { createValidations } from '@/helpers/commons/validationHelper'
 import businessModelDetailsCardDescriptor from './BusinessModelDetailsCardDescriptor.json'
 import businessModelDetailsCardValidation from './BusinessModelDetailsCardValidation.json'
 import Card from 'primevue/card'
-// import Dialog from 'primevue/dialog'
+import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import GenerateDatamartCard from './GenerateDatamartCard.vue'
 // import IframeRenderer from '@/modules/commons/IframeRenderer.vue'
@@ -238,6 +241,7 @@ export default defineComponent({
     name: 'business-model-detail-card',
     components: {
         Card,
+        Dialog,
         Dropdown,
         GenerateDatamartCard,
         InputSwitch,
@@ -251,14 +255,15 @@ export default defineComponent({
         },
         domainCategories: {
             type: Array,
-            requried: true
+            required: true
         },
         datasourcesMeta: {
             type: Array,
-            requried: true
+            required: true
         },
         user: {
-            type: Object
+            type: Object,
+            required: true
         },
         toGenerate: {
             type: Boolean
@@ -280,17 +285,26 @@ export default defineComponent({
     },
     computed: {
         metaModelUrl(): any {
-            //         const url =
-            //             'http://localhost:8080/knowage' +
-            //             `/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp?datasourceId=${this.businessModel.dataSourceId}
-            // `
-            //         console.log('METAWEB URL', url)
-            return '/knowagemeta/restful-services/1.0/pages/edit?datasourceId=4&user_id=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmlhZG1pbiIsImV4cCI6MTYyNDkxNzk2Nn0.Y7-Fz7XIrwkIn8mgEpHJJPKQYznyEGAU8kMtpuTNhLM&bmId=2&bmName=MODEL_WITH_3_DRIVERS'
+            const url = `/knowagemeta/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${this.user.userUniqueIdentifier}&bmId=${this.businessModel.id}&bmName=${this.businessModel.name}`
+            console.log('URL ', url)
+            return url
         }
     },
     created() {
+        window.addEventListener('message', (event: any) => {
+            if (event.action == 'closeDialog') {
+                this.showMetaWeb = false
+            }
+        })
         this.loadBusinessModel()
         this.loadCategories()
+    },
+    unmounted() {
+        window.removeEventListener('message', (event: any) => {
+            if (event.action == 'closeDialog') {
+                this.showMetaWeb = false
+            }
+        })
     },
     data() {
         return {
