@@ -84,6 +84,9 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 
 	@Override
 	public SbiCatalogFunction find(String id) {
+
+		init();
+
 		return em.find(SbiCatalogFunction.class, id);
 	}
 
@@ -134,6 +137,9 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 
 	@Override
 	public SbiCatalogFunction update(SbiCatalogFunction function) {
+
+		init();
+
 		preUpdate(function);
 		function.getInputColumns().forEach(this::preUpdate);
 		function.getInputVariables().forEach(this::preUpdate);
@@ -145,6 +151,8 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 
 	@Override
 	public SbiCatalogFunction create(SbiCatalogFunction function) {
+
+		init();
 
 		preInsert(function);
 		function.getInputColumns().forEach(this::preInsert);
