@@ -9,7 +9,7 @@ public class SbiObjFunction extends SbiHibernateModel {
 
 	private Integer biObjFunctionId;
 	private SbiObjects sbiObject;
-	private Integer functionId;
+	private String functionUuid;
 
 	/**
 	 * default constructor.
@@ -42,11 +42,11 @@ public class SbiObjFunction extends SbiHibernateModel {
 		this.sbiObject = sbiObject;
 	}
 
-	public Integer getFunctionId() {
-		return functionId;
+	public String getFunctionUuid() {
+		return functionUuid;
 	}
 
-	public void setFunctionId(Integer functionId) {
-		this.functionId = functionId;
+	public void setFunctionUuid(String functionUuid) {
+		this.functionUuid = functionUuid;
 	}
 }

@@ -266,14 +266,6 @@ public class JasperReportDriver extends AbstractEngineDriver implements IEngineD
 		return null;
 	}
 
-	@Override
-	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
-		// catalog functions can be used only inside cockpits
-		// therefore the default implementation is to return an empty list
-		// CockpitEngine will have its own implementation
-		return new ArrayList<Integer>();
-	}
-
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	@Override
 	public List<DefaultOutputParameter> getSpecificOutputParameters(List categories) {
