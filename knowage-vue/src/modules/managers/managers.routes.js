@@ -2,6 +2,7 @@ import galleryManagementRoutes from '@/modules/managers/galleryManagement/Galler
 import configurationManagementRoutes from '@/modules/managers/configurationManagement/ConfigurationManagement.routes.js'
 import domainsManagementRoutes from '@/modules/managers/domainsManagement/DomainsManagement.routes.js'
 import metadataManagementRoutes from '@/modules/managers/metadataManagement/MetadataManagement.routes.js'
+import usersManagementRoutes from '@/modules/managers/usersManagement/UsersManagement.routes.js'
 import profileAttributesRoutes from '@/modules/managers/profileAttributesManagement/ProfileAttributesManagement.routes.js'
 import rolesManagementRoutes from '@/modules/managers/rolesManagement/RolesManagement.routes.js'
 
@@ -11,6 +12,7 @@ const routes = baseRoutes.concat(galleryManagementRoutes)
   .concat(configurationManagementRoutes)
   .concat(domainsManagementRoutes)
   .concat(metadataManagementRoutes)
+  .concat(usersManagementRoutes)
   .concat(profileAttributesRoutes)
   .concat(rolesManagementRoutes)
 
