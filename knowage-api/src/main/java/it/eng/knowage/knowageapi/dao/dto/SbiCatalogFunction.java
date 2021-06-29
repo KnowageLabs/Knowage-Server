@@ -25,7 +25,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -42,14 +41,11 @@ import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.ParamDef;
 
-import it.eng.knowage.knowageapi.dao.listener.TenantListener;
-
 /**
  * @author Marco Libanori
  */
 @Entity
 @Table(name = "SBI_CATALOG_FUNCTION")
-@EntityListeners(TenantListener.class)
 @FilterDef(name = "organization", parameters = {
 		@ParamDef(name = "organization", type = "string")
 })

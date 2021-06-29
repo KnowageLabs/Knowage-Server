@@ -84,6 +84,16 @@ public class KnowageApiConfigurationTest {
 		properties.put("javax.persistence.jdbc.driver", "org.mariadb.jdbc.Driver");
 		properties.put("javax.persistence.jdbc.user", "root");
 		properties.put("javax.persistence.jdbc.password", "root");
+
+//		properties.put("javax.persistence.jdbc.url", "jdbc:postgresql://localhost:5432/knowage_master");
+//		properties.put("javax.persistence.jdbc.driver", "org.mariadb.jdbc.Driver");
+//		properties.put("javax.persistence.jdbc.user", "knowage_master");
+//		properties.put("javax.persistence.jdbc.password", "knowage_master");
+//		properties.put("hibernate.archive.autodetection", "class");
+//		properties.put("hibernate.show_sql", "true");
+//		properties.put("hibernate.format_sql", "true");
+//		properties.put("hbm2ddl.auto", "create");
+
 		return properties;
 	}
 

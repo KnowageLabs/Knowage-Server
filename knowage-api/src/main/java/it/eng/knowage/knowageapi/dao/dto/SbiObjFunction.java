@@ -20,7 +20,6 @@ package it.eng.knowage.knowageapi.dao.dto;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -33,14 +32,11 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
-import it.eng.knowage.knowageapi.dao.listener.TenantListener;
-
 /**
  * @author Marco Libanori
  */
 @Entity
 @Table(name = "SBI_OBJ_FUNCTION")
-@EntityListeners(TenantListener.class)
 @FilterDef(name = "organization", parameters = {
 		@ParamDef(name = "organization", type = "string")
 })

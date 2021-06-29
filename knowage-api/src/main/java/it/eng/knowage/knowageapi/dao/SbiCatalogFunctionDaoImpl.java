@@ -43,10 +43,10 @@ import it.eng.knowage.knowageapi.error.KnowageBusinessException;
  * @author Marco Libanori
  */
 @Component
-public class SbiCatalogFunctionDaoImpl implements SbiCatalogFunctionDao {
+public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCatalogFunctionDao {
 
 	@Autowired
-	private BusinessRequestContext business;
+	private BusinessRequestContext businessRequestContext;
 
 	@Autowired
 	@Qualifier("knowage-functioncatalog")
@@ -93,6 +93,11 @@ public class SbiCatalogFunctionDaoImpl implements SbiCatalogFunctionDao {
 
 		SbiCatalogFunction function = em.find(SbiCatalogFunction.class, id);
 
+		preDelete(function);
+		function.getInputColumns().forEach(this::preDelete);
+		function.getInputVariables().forEach(this::preDelete);
+		function.getOutputColumns().forEach(this::preDelete);
+
 		if (!function.getObjFunctions().isEmpty()) {
 			throw new KnowageBusinessException("Function with id " + id + " cannot be deleted because it's referenced by other objects");
 		}
@@ -129,12 +134,23 @@ public class SbiCatalogFunctionDaoImpl implements SbiCatalogFunctionDao {
 
 	@Override
 	public SbiCatalogFunction update(SbiCatalogFunction function) {
+		preUpdate(function);
+		function.getInputColumns().forEach(this::preUpdate);
+		function.getInputVariables().forEach(this::preUpdate);
+		function.getOutputColumns().forEach(this::preUpdate);
+
 		em.merge(function);
 		return function;
 	}
 
 	@Override
 	public SbiCatalogFunction create(SbiCatalogFunction function) {
+
+		preInsert(function);
+		function.getInputColumns().forEach(this::preInsert);
+		function.getInputVariables().forEach(this::preInsert);
+		function.getOutputColumns().forEach(this::preInsert);
+
 		em.persist(function);
 		return function;
 	}
@@ -142,7 +158,7 @@ public class SbiCatalogFunctionDaoImpl implements SbiCatalogFunctionDao {
 	private void init() {
 		Session session = em.unwrap(Session.class);
 		Filter filter = session.enableFilter("organization");
-		filter.setParameter("organization", business.getOrganization());
+		filter.setParameter("organization", businessRequestContext.getOrganization());
 	}
 
 }

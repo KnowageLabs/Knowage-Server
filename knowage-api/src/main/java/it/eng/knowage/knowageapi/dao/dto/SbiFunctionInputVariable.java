@@ -24,7 +24,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -38,14 +37,11 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
-import it.eng.knowage.knowageapi.dao.listener.TenantListener;
-
 /**
  * @author Marco Libanori
  */
 @Entity
 @Table(name = "SBI_FUNCTION_INPUT_VARIABLE")
-@EntityListeners(TenantListener.class)
 @FilterDef(name = "organization", parameters = {
 		@ParamDef(name = "organization", type = "string")
 })
