@@ -17,8 +17,6 @@
  */
 package it.eng.knowage.knowageapi;
 
-import java.net.MalformedURLException;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -77,7 +75,7 @@ public class KnowageApiConfiguration {
 
 	@Lazy
 	@Bean
-	public SecurityServiceFactory securityService() throws NamingException, MalformedURLException {
+	public SecurityServiceFactory securityService() {
 		return new SecurityServiceFactory();
 	}
 
