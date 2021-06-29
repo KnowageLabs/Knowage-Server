@@ -19,32 +19,60 @@ package it.eng.knowage.knowageapi;
 
 import java.net.MalformedURLException;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Profile;
+import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
+import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImpl;
+
 @Configuration
+@Profile("production")
 @ComponentScan("it.eng.knowage.knowageapi")
 public class KnowageApiConfiguration {
 
 	@Bean
 	@Qualifier("knowage-gallery")
-	public EntityManagerFactory entityManagerFactory() {
+	public EntityManagerFactory entityManagerFactoryForWidgetGallery() {
 		return Persistence.createEntityManagerFactory("knowage-gallery");
 	}
 
 	@Bean
 	@Qualifier("knowage-gallery")
-	public EntityManager entityManager(@Qualifier("knowage-gallery") EntityManagerFactory emf) {
+	public EntityManager entityManagerForWidgetGallery(@Qualifier("knowage-gallery") EntityManagerFactory emf) {
 		return emf.createEntityManager();
+	}
+
+	@Bean
+	@Qualifier("knowage-functioncatalog")
+	public EntityManagerFactory entityManagerFactoryForWidgetFunctionCatalog() {
+		return Persistence.createEntityManagerFactory("knowage-functioncatalog");
+	}
+
+	@Bean
+	@Qualifier("knowage-functioncatalog")
+	public EntityManager entityManagerForWidgetFunctionCatalog(@Qualifier("knowage-functioncatalog") EntityManagerFactory emf) {
+		return emf.createEntityManager();
+	}
+
+	@Bean
+	@RequestScope
+	public BusinessRequestContext businessRequestContext(@Value("application.version") String version) {
+		return new BusinessRequestContext(version);
 	}
 
 	@Lazy
@@ -53,11 +81,21 @@ public class KnowageApiConfiguration {
 		return new SecurityServiceFactory();
 	}
 
+	@Bean
+	public FunctionCatalogAPI functionCatalogAPI() {
+		return new FunctionCatalogAPIImpl();
+	}
+
 	@Bean(name = "multipartResolver")
 	public CommonsMultipartResolver multipartResolver() {
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
 		multipartResolver.setMaxUploadSize(100000);
 		return multipartResolver;
+	}
+
+	@Bean
+	public Context context() throws NamingException {
+		return new InitialContext();
 	}
 
 }

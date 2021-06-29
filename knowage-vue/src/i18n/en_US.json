@@ -1,342 +1,232 @@
 {
-    "common": {
-        "cancel": "cancel",
-        "choose": "choose",
-        "close": "close",
-        "codingLanguages": {
-            "css": "css",
-            "html": "html",
-            "javascript": "javascript",
-            "python": "python"
-        },
-        "delete": "delete",
-        "deleteAll": "delete all",
-        "description": "description",
-        "download": "download",
-        "downloading": "Downloading",
-        "dragAndDropFilesHere": "Drag and drop files here.",
-        "error": {
-            "downloading": "Error downloading ",
-            "exceededSize": "Uploaded file exceedes max size {size}",
-            "tags": {
-                "tagIsNotValid": "Tag ({tag}) is not valid'"
-            },
-            "uploading": "Error uploading "
-        },
-        "export": "export",
-        "image": "image",
-        "import": "import",
-        "info": {
-            "dataLoading": "Loading data. Please wait.",
-            "noDataFound": "No data found",
-            "noElementSelected": "No element selected"
-        },
-        "information": "information",
-        "label": "label",
-        "loggedUser": "logged user",
-        "name": "name",
-        "new": "new",
-        "ok": "ok",
-        "save": "save",
-        "search": "search",
-        "table": {
-            "footer": {
-                "paginated": "Showing {first} to {last} of {totalRecords}"
-            }
-        },
-        "tags": "tags",
-        "tenant": "tenant",
-        "toast": {
-            "createTitle": "Created",
-            "deleteConfirmTitle": "Confirm Delete?",
-            "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
-            "deleteSuccess": "Item was deleted successfully",
-            "deleteTitle": "Deleted",
-            "success": "Operation succeeded",
-            "unsavedChangesHeader": "Unsaved changes",
-            "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
-            "updateTitle": "Updated"
-        },
-        "type": "type",
-        "upload": "upload",
-        "uploading": "Uploading",
-        "validation": {
-            "maximumCharacters": "The maximum length allowed is {max}",
-            "minLength": "This field should have at least {min} characters",
-            "regex": "Invalid format",
-            "required": "{fieldName} is required"
-        },
-        "version": "version",
-        "warning": {}
-    },
-    "downloadsDialog": {
-        "columns": {
-            "creationDate": "Creation Date",
-            "fileName": "File Name",
-            "fileSize": "File Size"
-        },
-        "title": "Downloads"
-    },
-    "home": {
-        "button": {
-            "documentation": "documentation",
-            "qa": "support forum"
-        },
-        "welcome": "Welcome to Knowage",
-        "welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
-    },
-    "importExport": {
-        "export": {
-            "completedWithErrors": "Export completed with errors. Please read logs for further information.",
-            "successfullyCompleted": "Export successfully completed"
-        },
-        "filenamePlaceholder": "Enter filename here",
-        "gallery": {
-            "description": "export gallery templates",
-            "label": "gallery"
-        },
-        "import": {
-            "completedWithErrors": "Import completed with errors. Please read logs for further information.",
-            "successfullyCompleted": "Import successfully completed"
-        },
-        "title": "Import/Export"
-    },
-    "infoDialog": {
-        "aboutKnowage": "About Knowage",
-        "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
-        "sourceCode": "Source code available on "
-    },
-    "language": {
-        "en_GB": "english (GB)",
-        "en_US": "english (US)",
-        "es_ES": "espanol",
-        "fr_FR": "french",
-        "it_IT": "italian",
-        "languageSelection": "Language Selection",
-        "pt_BR": "portuguese"
-    },
-    "licenseDialog": {
-        "changeLicense": "Change License",
-        "dataRequired": "This data is required to generate/update licenses",
-        "deleteLicense": "Delete License",
-        "downloadLicense": "Download License",
-        "errorExists": "The license already exists.",
-        "errorLicense": "Error deleting license",
-        "errorMessage": "An error blocked the license deleting action. If the problem persist contact the administrator.",
-        "hardwareId": "Hardware Id",
-        "hostName": "Host name",
-        "invalidLicense": "Invalid License",
-        "licenseId": "License Id",
-        "noLicenses": "No licenses available",
-        "numberOfCpu": "Number of CPUs",
-        "title": "License Management",
-        "updateLicense": "Update license",
-        "validLicense": "Valid License",
-        "warningBeforeDelete": "You are attempting to remove {0} license. This operation cannot be undone. After deletion, you will have to log in again.",
-        "wrongType": "You have chosen wrong type of license"
-    },
-    "managers": {
-        "configurationManagement": {
-            "createNewHeader": "Create new configuration",
-            "headers": {
-                "active": "Is active",
-                "category": "Category",
-                "description": "Description",
-                "label": "Label",
-                "name": "Name",
-                "valueCheck": "Value"
-            },
-            "title": "Configuration Management"
-        },
-        "domainsManagement": {
-            "domainCode": "Domain code",
-            "domainName": "Domain name",
-            "title": "Domains Management",
-            "valueCode": "Value code",
-            "valueDescription": "Value description",
-            "valueName": "Value name"
-        },
-        "menu": {
-            "admin": {
-                "importExport": "Import/Export"
-            }
-        },
-        "metadata": {
-            "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-            "title": "Metadata Management"
-        },
-        "newsDialog": {
-            "description": "Description",
-            "expirationDate": "Expiration date",
-            "news": "news",
-            "notifications": "notifications",
-            "title": "Knowage news",
-            "warnings": "warnings"
-        },
-        "profileAttributesManagement": {
-            "description": "Description",
-            "form": {
-                "allowUser": "Allow user to see field",
-                "dataType": "Data type",
-                "description": "Description",
-                "lov": "Lov",
-                "lovPlaceholder": "Select a Lov",
-                "manualInput": "Manual input",
-                "multiValue": "Multivalue",
-                "name": "Name",
-                "syntax": {
-                    "complex": "Complex",
-                    "simple": "Simple"
-                }
-            },
-            "hint": "Profile attributes allows you to better define different users properties. It's possible to change the name, the description or the types. It's also possible to get a value from a LOV. <br> Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-            "info": {
-                "createMessage": "Attribute created",
-                "createTitle": "Create attribute",
-                "deleteMessage": "Attribute deleted",
-                "deleteTitle": "Delete attribute",
-                "saveMessage": "Attribute saved",
-                "saveTitle": "Save attribute",
-                "updateMessage": "Attribute updated",
-                "updateTitle": "Update attribute"
-            },
-            "name": "Name",
-            "title": "Profile Attributes Management",
-            "valueDescription": "Value description"
-        },
-        "role": {
-            "defaultRolePlaceholder": "No default role selected",
-            "roleSelection": "Role Selection"
-        },
-        "rolesManagement": {
-            "authorizations": {
-                "name": {
-                    "build": "Build",
-                    "buildQbe": "Build QbE Queries",
-                    "createCustomChart": "Create custom chart",
-                    "createDocuments": "Create Documents",
-                    "createSelfSelviceCockpit": "Create Cockpit report",
-                    "createSelfSelviceGeoreport": "Create Geographic report",
-                    "createSelfSelviceKpi": "Create KPI report",
-                    "createSocialAnalysis": "Create social analysis",
-                    "doMassiveExport": "Do massive export",
-                    "editPythonScripts": "Edit Python/R Scripts",
-                    "enable": "Enable",
-                    "enableDatasetPersistence": "Dataset Persistence",
-                    "enableFederatedDataset": "Federated Dataset",
-                    "enableToCopyAndEmbed": "Copy and Embed link",
-                    "enableToPrint": "Print Documents",
-                    "enableToRate": "Rate Documents",
-                    "enterprise": "Enterprise",
-                    "functionsCatalogUsage": "Functions Catalog Usage",
-                    "hierarchiesManagement": "Manage Hierarchies",
-                    "items": "Items for user menu",
-                    "manage": "Manage",
-                    "manageCalendar": "Manage Calendar",
-                    "manageGlossaryBusiness": "Manage Glossary Business",
-                    "manageGlossaryTechnical": "Manage Glossary Technical",
-                    "manageInternationalization": "Manage Internationalization",
-                    "manageKpiValue": "Manage Kpi Value",
-                    "manageUsers": "Users",
-                    "manageWidgetGallery": "Manage widget gallery",
-                    "newsVisualization": "News Visualization",
-                    "runSnapshot": "Run Scheduled execution",
-                    "saveMeta": "Save Metadata",
-                    "savePersonalFolder": "Save into My Workspace",
-                    "saveRemember": "Save to remember",
-                    "saveSubobj": "Save OLAP View",
-                    "see": "See",
-                    "seeDocBrowser": "View Document Browser",
-                    "seeFavourites": "See favourites",
-                    "seeMeta": "View Metadata",
-                    "seeMyData": "View 'My Data'",
-                    "seeMyWorkspace": "View My Workspace",
-                    "seeNotes": "View Notes",
-                    "seeSnapshot": "View Scheduled execution",
-                    "seeSubobj": "See subobject",
-                    "seeSubscriptions": "See subscriptions",
-                    "seeToDoList": "See ToDo list",
-                    "seeViewpoints": "View Saved Parameters",
-                    "send": "Send",
-                    "sendMail": "Send Mail",
-                    "viewSocialAnalysis": "View social analysis",
-                    "widgets": "Widgets"
-                },
-                "title": "Authorizations"
-            },
-            "businessModels": "Business models",
-            "categories": "Categories",
-            "dataSets": "Data sets",
-            "detail": {
-                "code": "Code",
-                "isPublic": "Is public role?",
-                "roleTypeID": "Role Type",
-                "title": "Detail"
-            },
-            "hint": "The roles allows you to choose the permission and authorizations for the Knowage roles in your tenant. To view the details of a role, select one on the side, or press the \"+\" button to add a new one.",
-            "kpiCategories": "KPI Categories",
-            "noResults": "No roles available for the selected filter",
-            "rolesDropdown": {
-                "ADMIN": "Administrator",
-                "DEV_ROLE": "Developer",
-                "MODEL_ADMIN": "Model Administrator",
-                "TEST_ROLE": "Test User",
-                "USER": "User"
-            },
-            "title": "Roles Management"
-        },
-        "usersManagement": {
-            "attributes": "Attributes",
-            "blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
-            "defaultRoleInfo": "Select a role if you want to set it as the default. If no role is selected, it will be possible switch between roles from the Knowage Administration menu",
-            "detail": "Detail",
-            "form": {
-                "defaultRole": "Default role",
-                "fullName": "Full Name",
-                "password": "Password",
-                "passwordConfirm": "Confirm Password",
-                "userId": "User ID"
-            },
-            "fullName": "Full Name",
-            "hint": "The users management allows you to read the user details and to set the user roles. To view the details of an user, select one on the side, or press the \"+\" button to add a new one.",
-            "info": {
-                "createMessage": "User created",
-                "createTitle": "Create user",
-                "deleteMessage": "User deleted",
-                "deleteTitle": "Delete user",
-                "updateMessage": "User updated",
-                "updateTitle": "Update user"
-            },
-            "roles": "Roles",
-            "title": "Users management",
-            "unlockUser": "Unlock user",
-            "userId": "User ID",
-            "validation": {
-                "sameAsPassword": "Username must be the same as password"
-            },
-            "valueDescription": "Value description"
-        },
-        "widgetGallery": {
-            "deleteTemplate": "Delete template",
-            "downloadTemplate": "Download template",
-            "hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
-            "importTemplate": "Import template",
-            "newTemplate": "New template",
-            "noResults": "No templates available for the selected filter",
-            "outputType": "Output Type",
-            "saveTemplate": "Save template",
-            "tags": {
-                "availableCharacters": "Allowed values for tags: uppercase and lowercase letters, numbers, '-', '_'. The space character is not allowed.",
-                "tagIsNotValid": "Tag ({tag}) is not valid'"
-            },
-            "templateDoYouWantToDeleteTemplate": "Do you want to delete this template?",
-            "templateIsNotSaved": "The template was not saved. Do you want to download it anyway?",
-            "templateSuccessfully": "Template successfully",
-            "templateSuccessfullyDeleted": "@:managers.widgetGallery.templateSuccessfully deleted",
-            "templateSuccessfullySaved": "@:managers.widgetGallery.templateSuccessfully saved",
-            "templateSuccessfullyUploaded": "@:managers.widgetGallery.templateSuccessfully uploaded",
-            "title": "Gallery management",
-            "uploadTemplate": "Upload template"
-        }
-    }
+	"common": {
+		"back": "back",
+		"cancel": "cancel",
+		"choose": "choose",
+		"close": "close",
+		"codingLanguages": {
+			"css": "css",
+			"html": "html",
+			"javascript": "javascript",
+			"python": "python"
+		},
+		"deleteAll": "delete all",
+		"description": "description",
+		"download": "download",
+		"downloading": "Downloading",
+		"dragAndDropFilesHere": "Drag and drop files here.",
+		"error": {
+			"downloading": "Error downloading ",
+			"exceededSize": "Uploaded file exceedes max size {size}",
+			"tags": {
+				"tagIsNotValid": "Tag ({tag}) is not valid'"
+			},
+			"uploading": "Error uploading "
+		},
+		"export": "export",
+		"image": "image",
+		"import": "import",
+		"info": {
+			"dataLoading": "Loading data. Please wait.",
+			"noDataFound": "No data found",
+			"noElementSelected": "No element selected"
+		},
+		"information": "information",
+		"label": "label",
+		"loggedUser": "logged user",
+		"name": "name",
+		"new": "new",
+		"next": "next",
+		"save": "save",
+		"search": "search",
+		"table": {
+			"footer": {
+				"paginated": "Showing {first} to {last} of {totalRecords}"
+			}
+		},
+		"tags": "tags",
+		"tenant": "tenant",
+		"toast": {
+			"createTitle": "Created",
+			"deleteConfirmTitle": "Confirm Delete?",
+			"deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
+			"deleteSuccess": "Item was deleted successfully",
+			"deleteTitle": "Deleted",
+			"success": "Operation succeeded",
+			"unsavedChangesHeader": "Unsaved changes",
+			"unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
+			"updateTitle": "Updated"
+		},
+		"type": "type",
+		"uploading": "Uploading",
+		"validation": {
+			"maximumCharacters": "The maximum length allowed is {max}",
+			"minLength": "This field should have at least {min} characters",
+			"regex": "Invalid format",
+			"required": "{fieldName} is required"
+		},
+		"version": "version",
+		"warning": {}
+	},
+	"downloadsDialog": {
+		"columns": {
+			"creationDate": "Creation Date",
+			"fileName": "File Name",
+			"fileSize": "File Size"
+		},
+		"title": "Downloads"
+	},
+	"home": {
+		"button": {
+			"documentation": "documentation",
+			"qa": "support forum"
+		},
+		"welcome": "Welcome to Knowage",
+		"welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
+	},
+	"importExport": {
+		"catalogFunction": {
+			"description": "export functions from catalog",
+			"label": "functions"
+		},
+		"export": {
+			"completedWithErrors": "Export completed with errors. Please read logs for further information.",
+			"successfullyCompleted": "Export successfully completed"
+		},
+		"filenamePlaceholder": "Enter filename here",
+		"gallery": {
+			"description": "export gallery templates",
+			"label": "gallery"
+		},
+		"import": {
+			"catalogFunction": {
+				"column": {
+					"keywords": "Keywords",
+					"label": "Label",
+					"name": "Name",
+					"type": "Type"
+				}
+			},
+			"completedWithErrors": "Import completed with errors. Please read logs for further information.",
+			"gallery": {
+				"column": {
+					"name": "Name",
+					"tags": "Tags",
+					"type": "Type"
+				}
+			},
+			"successfullyCompleted": "Import successfully completed"
+		},
+		"title": "Import/Export"
+	},
+	"infoDialog": {
+		"aboutKnowage": "About Knowage",
+		"copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
+		"sourceCode": "Source code available on "
+	},
+	"language": {
+		"en_GB": "english (GB)",
+		"en_US": "english (US)",
+		"es_ES": "espanol",
+		"fr_FR": "french",
+		"it_IT": "italian",
+		"languageSelection": "Language Selection",
+		"pt_BR": "portuguese"
+	},
+	"managers": {
+		"configurationManagement": {
+			"createNewHeader": "Create new configuration",
+			"headers": {
+				"active": "Is active",
+				"category": "Category",
+				"description": "Description",
+				"label": "Label",
+				"name": "Name",
+				"valueCheck": "Value"
+			},
+			"title": "Configuration Management"
+		},
+		"domainsManagement": {
+			"domainCode": "Domain code",
+			"domainName": "Domain name",
+			"title": "Domains Management",
+			"valueCode": "Value code",
+			"valueDescription": "Value description",
+			"valueName": "Value name"
+		},
+		"metadata": {
+			"hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+			"title": "Metadata Management"
+		},
+		"profileAttributesManagement": {
+			"description": "Description",
+			"form": {
+				"allowUser": "Allow user to see field",
+				"dataType": "Data type",
+				"description": "Description",
+				"lov": "Lov",
+				"lovPlaceholder": "Select a Lov",
+				"manualInput": "Manual input",
+				"multiValue": "Multivalue",
+				"name": "Name",
+				"syntax": {
+					"complex": "Complex",
+					"simple": "Simple"
+				}
+			},
+			"hint": "Profile attributes allows you to better define different users properties. It's possible to change the name, the description or the types. It's also possible to get a value from a LOV. <br> Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+			"info": {
+				"createMessage": "Attribute created",
+				"createTitle": "Create attribute",
+				"deleteMessage": "Attribute deleted",
+				"deleteTitle": "Delete attribute",
+				"saveMessage": "Attribute saved",
+				"saveTitle": "Save attribute",
+				"updateMessage": "Attribute updated",
+				"updateTitle": "Update attribute"
+			},
+			"name": "Name",
+			"title": "Profile Attributes Management",
+			"valueDescription": "Value description"
+		},
+		"widgetGallery": {
+			"deleteTemplate": "Delete template",
+			"downloadTemplate": "Download template",
+			"hint": "The templates allow you to access ready-made elements to proceed more quickly to the creation of dashboards. To view the details of a template, select one of those on the side, or press the \"+\" button to add or import one.",
+			"importTemplate": "Import template",
+			"newTemplate": "New template",
+			"noResults": "No templates available for the selected filter",
+			"outputType": "Output Type",
+			"saveTemplate": "Save template",
+			"tags": {
+				"availableCharacters": "Allowed values for tags: uppercase and lowercase letters, numbers, '-', '_'. The space character is not allowed.",
+				"tagIsNotValid": "Tag ({tag}) is not valid'"
+			},
+			"templateDoYouWantToDeleteTemplate": "Do you want to delete this template?",
+			"templateIsNotSaved": "The template was not saved. Do you want to download it anyway?",
+			"templateSuccessfully": "Template successfully",
+			"templateSuccessfullyDeleted": "@:managers.widgetGallery.templateSuccessfully deleted",
+			"templateSuccessfullySaved": "@:managers.widgetGallery.templateSuccessfully saved",
+			"templateSuccessfullyUploaded": "@:managers.widgetGallery.templateSuccessfully uploaded",
+			"title": "Gallery management",
+			"uploadTemplate": "Upload template"
+		}
+	},
+	"menu": {
+		"admin": {
+			"importExport": "Import/Export"
+		}
+	},
+	"newsDialog": {
+		"description": "Description",
+		"expirationDate": "Expiration date",
+		"news": "news",
+		"notifications": "notifications",
+		"title": "Knowage news",
+		"warnings": "warnings"
+	},
+	"role": {
+		"defaultRolePlaceholder": "No default role selected",
+		"roleSelection": "Role Selection"
+	}
 }
