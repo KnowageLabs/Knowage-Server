@@ -71,7 +71,7 @@ public class KnowageApiConfiguration {
 
 	@Bean
 	@RequestScope
-	public BusinessRequestContext businessRequestContext(@Value("application.version") String version) {
+	public BusinessRequestContext businessRequestContext(@Value("${application.version}") String version) {
 		return new BusinessRequestContext(version);
 	}
 
