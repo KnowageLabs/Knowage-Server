@@ -15,7 +15,7 @@ public class SbiFunctionCatalog2FunctionDTO implements Function<SbiCatalogFuncti
 	public FunctionDTO apply(SbiCatalogFunction t) {
 		FunctionDTO ret = new FunctionDTO();
 
-		String functionId = t.getFunctionId();
+		String functionId = t.getId().getFunctionId();
 		String name = t.getName();
 		String type = t.getType();
 		List<String> keywords = Arrays.asList(Optional.of(t.getKeywords()).orElse("").split(","));

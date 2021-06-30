@@ -17,57 +17,45 @@
  */
 package it.eng.knowage.knowageapi.dao.dto;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 
 /**
  * @author Marco Libanori
  */
 @Entity
 @Table(name = "SBI_FUNCTION_OUTPUT_COLUMN")
-@FilterDef(name = "organization", parameters = {
-		@ParamDef(name = "organization", type = "string")
-})
-@Filter(name = "organization", condition = "organization like :organization")
-@NamedQueries({
-	@NamedQuery(name = "SbiFunctionOutputColumn.delete", query = "DELETE FROM SbiFunctionOutputColumn q WHERE q.id.colName = :colName AND q.id.functionId = :functionId")
-})
 public class SbiFunctionOutputColumn extends AbstractEntity {
 
 	@Embeddable
-	public static class Pk implements Serializable {
+	public static class Pk implements AbstractSbiCatalogFunctionForeignKey {
 
 		private static final long serialVersionUID = -292836728995936381L;
 
-		@Column(name = "FUNCTION_UUID", insertable = false, updatable = false)
-		private String functionId;
+		@ManyToOne
+		@JoinColumn(name = "FUNCTION_UUID", referencedColumnName = "FUNCTION_UUID", insertable = false, updatable = false)
+		@JoinColumn(name = "ORGANIZATION", referencedColumnName = "ORGANIZATION", insertable = false, updatable = false)
+		private SbiCatalogFunction function;
 
-		@Column(name = "COL_NAME", nullable = false, updatable = false)
+		@Column(name = "COL_NAME")
 		@Size(max = 100)
 		private String colName;
 
-		public String getFunctionId() {
-			return functionId;
+		@Override
+		public SbiCatalogFunction getFunction() {
+			return function;
 		}
 
-		public void setFunctionId(String functionId) {
-			this.functionId = functionId;
+		@Override
+		public void setFunction(SbiCatalogFunction function) {
+			this.function = function;
 		}
 
 		public String getColName() {
@@ -83,7 +71,7 @@ public class SbiFunctionOutputColumn extends AbstractEntity {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((colName == null) ? 0 : colName.hashCode());
-			result = prime * result + ((functionId == null) ? 0 : functionId.hashCode());
+			result = prime * result + ((function == null) ? 0 : function.hashCode());
 			return result;
 		}
 
@@ -101,28 +89,23 @@ public class SbiFunctionOutputColumn extends AbstractEntity {
 					return false;
 			} else if (!colName.equals(other.colName))
 				return false;
-			if (functionId == null) {
-				if (other.functionId != null)
+			if (function == null) {
+				if (other.function != null)
 					return false;
-			} else if (!functionId.equals(other.functionId))
+			} else if (!function.equals(other.function))
 				return false;
 			return true;
 		}
 
 		@Override
 		public String toString() {
-			return "Pk [functionId=" + functionId + ", colName=" + colName + "]";
+			return "Pk [function=" + function + ", colName=" + colName + "]";
 		}
 
 	}
 
 	@EmbeddedId
 	private Pk id = new Pk();
-
-	@ManyToOne
-	@JoinColumn(name = "FUNCTION_UUID", referencedColumnName = "FUNCTION_UUID", insertable = false, updatable = false)
-	@MapsId("functionId")
-	private SbiCatalogFunction function;
 
 	@Column(name = "COL_TYPE")
 	@NotNull
@@ -140,14 +123,6 @@ public class SbiFunctionOutputColumn extends AbstractEntity {
 
 	public void setId(Pk id) {
 		this.id = id;
-	}
-
-	public SbiCatalogFunction getFunction() {
-		return function;
-	}
-
-	public void setFunction(SbiCatalogFunction function) {
-		this.function = function;
 	}
 
 	public String getColType() {

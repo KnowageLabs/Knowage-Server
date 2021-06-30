@@ -18,13 +18,10 @@
 		<non-jta-data-source>java:comp/env/jdbc/knowage</non-jta-data-source>
 		
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiCatalogFunction</class>
-		<class>it.eng.knowage.knowageapi.dao.dto.SbiFunctionInputVariableId</class>
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiFunctionInputVariable</class>
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiObjFunction</class>
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiFunctionInputColumn</class>
-		<class>it.eng.knowage.knowageapi.dao.dto.SbiFunctionInputColumnId</class>
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiFunctionOutputColumn</class>
-		<class>it.eng.knowage.knowageapi.dao.dto.SbiFunctionOutputColumnId</class>
 
 	</persistence-unit>
 

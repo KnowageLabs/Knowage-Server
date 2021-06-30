@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.dao.dto.AbstractEntity;
-import it.eng.knowage.knowageapi.dao.dto.SbiCommonInfo;
 
 /**
  * @author Marco Libanori
@@ -34,24 +33,20 @@ abstract class AbstractDaoImpl {
 	private BusinessRequestContext businessRequestContext;
 
 	protected final void preInsert(AbstractEntity entity) {
-		SbiCommonInfo commonInfo = entity.getCommonInfo();
-		commonInfo.setOrganization(businessRequestContext.getOrganization());
-		commonInfo.setSbiVersionIn(businessRequestContext.getVersion());
-		commonInfo.setTimeIn(Instant.now());
-		commonInfo.setUserIn(businessRequestContext.getUsername());
+		entity.setSbiVersionIn(businessRequestContext.getVersion());
+		entity.setTimeIn(Instant.now());
+		entity.setUserIn(businessRequestContext.getUsername());
 	}
 
 	protected final void preUpdate(AbstractEntity entity) {
-		SbiCommonInfo commonInfo = entity.getCommonInfo();
-		commonInfo.setSbiVersionUp(businessRequestContext.getVersion());
-		commonInfo.setTimeUp(Instant.now());
-		commonInfo.setUserUp(businessRequestContext.getUsername());
+		entity.setSbiVersionUp(businessRequestContext.getVersion());
+		entity.setTimeUp(Instant.now());
+		entity.setUserUp(businessRequestContext.getUsername());
 	}
 
 	protected final void preDelete(AbstractEntity entity) {
-		SbiCommonInfo commonInfo = entity.getCommonInfo();
-		commonInfo.setSbiVersionDe(businessRequestContext.getVersion());
-		commonInfo.setTimeDe(Instant.now());
-		commonInfo.setUserDe(businessRequestContext.getUsername());
+		entity.setSbiVersionDe(businessRequestContext.getVersion());
+		entity.setTimeDe(Instant.now());
+		entity.setUserDe(businessRequestContext.getUsername());
 	}
 }

@@ -59,7 +59,7 @@ public class SbiFunctionCatalog2FunctionCompleteDTO implements Function<SbiCatal
 				.map(TO_FUNCTION_OUTPUT_COLUMN)
 				.collect(toList());
 
-		String functionId = t.getFunctionId();
+		String functionId = t.getId().getFunctionId();
 		String name = t.getName();
 
 		UUID feFuntionId = UUID.fromString(functionId);

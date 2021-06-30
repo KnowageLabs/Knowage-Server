@@ -87,11 +87,11 @@ class SbiCatalogFunctionDaoTest {
 			transaction = em.getTransaction();
 			transaction.begin();
 
-			dao.delete(nonMatching1.getFunctionId());
-			dao.delete(nonMatching2.getFunctionId());
+			dao.delete(nonMatching1);
+			dao.delete(nonMatching2);
 
 			for (SbiCatalogFunction e : all) {
-				dao.delete(e.getFunctionId());
+				dao.delete(e);
 			}
 
 			transaction.commit();
@@ -110,13 +110,13 @@ class SbiCatalogFunctionDaoTest {
 
 		transaction.commit();
 
-		SbiCatalogFunction find = dao.find(n.getFunctionId());
+		SbiCatalogFunction find = dao.find(n.getId());
 
 
 		transaction = em.getTransaction();
 		transaction.begin();
 
-		dao.delete(find.getFunctionId());
+		dao.delete(find);
 
 		transaction.commit();
 
@@ -149,7 +149,7 @@ class SbiCatalogFunctionDaoTest {
 		transaction = em.getTransaction();
 		transaction.begin();
 
-		dao.delete(n.getFunctionId());
+		dao.delete(n);
 
 		transaction.commit();
 
@@ -180,23 +180,23 @@ class SbiCatalogFunctionDaoTest {
 		SbiFunctionInputColumn inCol = new SbiFunctionInputColumn();
 		inCol.setColType("type");
 		inCol.getId().setColName("name");
-		inCol.setFunction(n);
+		inCol.getId().setFunction(n);
 
 		inputColumns.add(inCol);
 
 		SbiFunctionOutputColumn outCol = new SbiFunctionOutputColumn();
 		outCol.setColFieldType("type");
 		outCol.setColType("type");
-		outCol.setFunction(n);
 		outCol.getId().setColName("name");
+		outCol.getId().setFunction(n);
 
 		outputColumns.add(outCol);
 
 		SbiFunctionInputVariable inVar = new SbiFunctionInputVariable();
-		inVar.setFunction(n);
 		inVar.getId().setVarName("name");
 		inVar.setVarType("type");
 		inVar.setVarValue("value");
+		inVar.getId().setFunction(n);
 
 		inputVariables.add(inVar);
 
