@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery</class>
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag</class>
-
+		
 	</persistence-unit>
 
 	<persistence-unit name="knowage-functioncatalog" transaction-type="RESOURCE_LOCAL">

@@ -139,6 +139,8 @@ class SbiCatalogFunctionDaoTest {
 		n.getInputVariables().clear();
 		n.getOutputColumns().clear();
 
+		n = dao.find(n.getId());
+
 		transaction = em.getTransaction();
 		transaction.begin();
 

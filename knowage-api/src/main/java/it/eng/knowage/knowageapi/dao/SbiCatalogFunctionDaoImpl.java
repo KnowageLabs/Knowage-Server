@@ -22,6 +22,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -30,7 +31,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
@@ -46,8 +46,7 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 	@Autowired
 	private BusinessRequestContext businessRequestContext;
 
-	@Autowired
-	@Qualifier("knowage-functioncatalog")
+	@PersistenceContext(unitName = "knowage-functioncatalog")
 	private EntityManager em;
 
 	@Override
@@ -123,6 +122,7 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 		function.getOutputColumns().forEach(this::preUpdate);
 
 		em.merge(function);
+
 		return function;
 	}
 
@@ -137,6 +137,7 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 		function.getOutputColumns().forEach(this::preInsert);
 
 		em.persist(function);
+
 		return function;
 	}
 

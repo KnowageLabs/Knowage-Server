@@ -10,6 +10,7 @@
 		
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery</class>
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag</class>
+
 	</persistence-unit>
 
 	<persistence-unit name="knowage-functioncatalog" transaction-type="RESOURCE_LOCAL">

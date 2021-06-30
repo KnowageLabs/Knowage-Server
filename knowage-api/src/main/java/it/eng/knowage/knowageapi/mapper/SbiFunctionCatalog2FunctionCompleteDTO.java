@@ -71,6 +71,7 @@ public class SbiFunctionCatalog2FunctionCompleteDTO implements Function<SbiCatal
 		ret.setFamily(t.getFamily());
 		ret.setId(feFuntionId);
 		ret.setLabel(t.getLabel());
+		ret.setLanguage(t.getLanguage());
 		ret.setName(name);
 		ret.setOfflineScriptTrain(t.getOfflineScriptTrain());
 		ret.setOfflineScriptUse(t.getOfflineScriptUse());
