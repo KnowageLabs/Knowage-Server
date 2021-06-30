@@ -7,7 +7,7 @@
                         {{ $t('managers.buisnessModelCatalogue.title') }}
                     </template>
                     <template #right>
-                        <FabButton icon="fas fa-plus" @click="showForm" />
+                        <FabButton icon="fas fa-plus" @click="showForm" data-test="new-button" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
@@ -28,12 +28,12 @@
                     >
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
-                            <div class="kn-list-item">
+                            <div class="kn-list-item" data-test="list-item">
                                 <div class="kn-list-item-text">
                                     <span>{{ slotProps.option.name }}</span>
                                     <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option.description }}</span>
                                 </div>
-                                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteBusinessModelConfirm(slotProps.option.id)" />
+                                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteBusinessModelConfirm(slotProps.option.id)" data-test="delete-button" />
                             </div>
                         </template>
                     </Listbox>
@@ -41,7 +41,8 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view @touched="touched = true" @closed="touched = false" @inserted="pageReload" />
+                <KnHint :title="'managers.buisnessModelCatalogue.title'" :hint="'managers.buisnessModelCatalogue.hint'" v-if="showHint" data-test="bm-hint"></KnHint>
+                <router-view @touched="touched = true" @closed="onClose" @inserted="pageReload" />
             </div>
         </div>
     </div>
@@ -53,18 +54,21 @@ import { iBusinessModel } from './BusinessModelCatalogue'
 import axios from 'axios'
 import businessModelCatalogueDescriptor from './BusinessModelCatalogueDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
+import KnHint from '@/components/UI/KnHint.vue'
 import Listbox from 'primevue/listbox'
 
 export default defineComponent({
     name: 'business-model-catalogue',
     components: {
         FabButton,
-        Listbox
+        Listbox,
+        KnHint
     },
     data() {
         return {
             businessModelCatalogueDescriptor,
             businessModelList: [] as iBusinessModel[],
+            showHint: true,
             touched: false,
             loading: false
         }
@@ -81,7 +85,7 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         showForm(event: any) {
-            console.log(event.value)
+            this.showHint = false
             const path = event.value ? `/business-model-catalogue/${event.value.id}` : '/business-model-catalogue/new-business-model'
             if (!this.touched) {
                 this.$router.push(path)
@@ -121,6 +125,10 @@ export default defineComponent({
         pageReload() {
             this.touched = false
             this.loadAllCatalogues()
+        },
+        onClose() {
+            this.touched = false
+            this.showHint = true
         }
     }
 })

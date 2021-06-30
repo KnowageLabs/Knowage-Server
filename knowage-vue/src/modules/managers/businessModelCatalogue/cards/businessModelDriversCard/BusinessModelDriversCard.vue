@@ -14,7 +14,7 @@
             <template #content>
                 <div class="kn-list--column">
                     <div class="p-col">
-                        <Listbox class="kn-list" :options="businessModelDrivers" listStyle="max-height:calc(100% - 62px)" @change="showForm">
+                        <Listbox class="kn-list" :options="businessModelDrivers" listStyle="max-height:calc(100% - 62px)" @change="showForm" data-test="driver-list">
                             <template #empty>{{ $t('common.info.noDataFound') }}</template>
                             <template #option="slotProps">
                                 <div class="kn-list-item">
@@ -29,7 +29,7 @@
                                     </div>
                                     <Button v-if="slotProps.option.id !== businessModelDrivers[0].id" icon="fa fa-arrow-up" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'UP')" />
                                     <Button v-if="slotProps.option.id !== businessModelDrivers[businessModelDrivers.length - 1].id" icon="fa fa-arrow-down" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'DOWN')" />
-                                    <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteDriver(slotProps.index)" />
+                                    <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteDriverConfirm(slotProps.index)" />
                                 </div>
                             </template>
                         </Listbox>
@@ -46,6 +46,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iBusinessModelDriver } from '../../BusinessModelCatalogue'
 import BuisnessModelDriverDetail from './BusinessModelDriverDetail.vue'
 import Card from 'primevue/card'
 import Listbox from 'primevue/listbox'
@@ -74,10 +75,10 @@ export default defineComponent({
     emits: ['delete'],
     data() {
         return {
-            businessModelDrivers: [] as any[],
-            driversForDelete: [] as any[],
+            businessModelDrivers: [] as iBusinessModelDriver[],
+            driversForDelete: [] as iBusinessModelDriver[],
             analyticalDrivers: [] as any[],
-            selectedDriver: null as any,
+            selectedDriver: null as iBusinessModelDriver | null,
             formVisible: false
         }
     },
@@ -92,11 +93,11 @@ export default defineComponent({
     },
     created() {
         this.loadDrivers()
+        this.loadAnalyticalDrivers()
     },
     methods: {
         loadDrivers() {
             this.businessModelDrivers = this.drivers as any[]
-            console.log(this.businessModelDrivers)
         },
         loadAnalyticalDrivers() {
             this.analyticalDrivers = this.driversOptions
@@ -109,8 +110,10 @@ export default defineComponent({
                 this.businessModelDrivers.push(this.selectedDriver)
             }
 
-            if (this.selectedDriver.parameter) {
-                this.selectedDriver.parameter = this.analyticalDrivers.find((driver) => driver.id === this.selectedDriver.parameter.id)
+            if (this.selectedDriver && this.selectedDriver.parameter) {
+                this.selectedDriver.parameter = this.analyticalDrivers.find((driver) => {
+                    return driver.id === this.selectedDriver?.parameter?.id
+                })
             }
 
             this.formVisible = true
@@ -134,7 +137,15 @@ export default defineComponent({
                 this.businessModelDrivers[currentDriverIndex] = temp
             }
         },
-        deleteDriver(index: any) {
+        deleteDriverConfirm(index: number) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteDriver(index)
+            })
+        },
+        deleteDriver(index: number) {
             if (this.businessModelDrivers[index].id) {
                 this.driversForDelete.push(this.businessModelDrivers[index])
             }

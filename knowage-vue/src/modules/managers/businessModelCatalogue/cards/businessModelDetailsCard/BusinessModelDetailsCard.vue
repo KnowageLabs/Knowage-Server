@@ -20,8 +20,10 @@
                                 'p-invalid': v$.businessModel.name.$invalid && v$.businessModel.name.$dirty
                             }"
                             maxLength="100"
+                            :disabled="businessModel.id"
                             @blur="v$.businessModel.name.$touch()"
                             @input="onFieldChange('name', $event.target.value)"
+                            data-test="name-input"
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
@@ -45,6 +47,7 @@
                             maxLength="500"
                             @blur="v$.businessModel.description.$touch()"
                             @input="onFieldChange('description', $event.target.value)"
+                            data-test="description-input"
                         />
                         <label for="description" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.description') }}</label>
                     </span>
@@ -57,7 +60,8 @@
                 </div>
 
                 <div class="p-field">
-                    <span class="p-float-label">
+                    <span>
+                        <label for="category" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.analyticalDriver') }} * </label>
                         <Dropdown
                             id="category"
                             class="kn-material-input"
@@ -66,6 +70,7 @@
                             }"
                             v-model="v$.businessModel.category.$model"
                             :options="categories"
+                            :placeholder="$t('managers.buisnessModelCatalogue.analyticalDriverPlaceholder')"
                             @before-show="v$.businessModel.category.$touch()"
                             @change="onFieldChange('category', $event.value.VALUE_ID)"
                         >
@@ -80,12 +85,18 @@
                                 </div>
                             </template>
                         </Dropdown>
-                        <label for="category" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.analyticalDriver') }} * </label>
                     </span>
+                    <KnValidationMessages
+                        :vComp="v$.businessModel.category"
+                        :additionalTranslateParams="{
+                            fieldName: $t('managers.buisnessModelCatalogue.analyticalDriver')
+                        }"
+                    />
                 </div>
 
                 <div class="p-field">
-                    <span class="p-float-label">
+                    <span>
+                        <label for="dataSourceLabel" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.dataSource') }} * </label>
                         <Dropdown
                             id="dataSourceLabel"
                             class="kn-material-input"
@@ -94,6 +105,7 @@
                             }"
                             v-model="v$.businessModel.dataSourceLabel.$model"
                             :options="datasources"
+                            :placeholder="$t('managers.buisnessModelCatalogue.dataSourceLabelPlaceholder')"
                             @before-show="v$.businessModel.dataSourceLabel.$touch()"
                             @change="onFieldChange('dataSourceLabel', $event.value)"
                         >
@@ -108,8 +120,13 @@
                                 </div>
                             </template>
                         </Dropdown>
-                        <label for="dataSourceLabel" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.dataSource') }} * </label>
                     </span>
+                    <KnValidationMessages
+                        :vComp="v$.businessModel.dataSourceLabel"
+                        :additionalTranslateParams="{
+                            fieldName: $t('managers.buisnessModelCatalogue.dataSource')
+                        }"
+                    />
                 </div>
 
                 <div class="p-d-flex p-flex-row">
@@ -118,19 +135,18 @@
                         <KnInputFile :changeFunction="uploadFile" :visibility="true" />
                     </div>
                     <div class="input-container p-d-flex p-flex-row" v-else>
-                        <div>
-                            <!-- TODO: after finishing metaweb functionality in later sprint -->
-                            <Button class="kn-button kn-button--primary" :label="$t('managers.buisnessModelCatalogue.metaWeb')" @click="goToMetaWeb"></Button>
+                        <div class="p-m-2">
+                            <Button class="kn-button kn-button--primary" :label="$t('managers.buisnessModelCatalogue.metaWeb')" @click="goToMetaWeb" data-test="metaweb-button"></Button>
                         </div>
-                        <div v-if="toGenerate">
+                        <div class="p-m-2" v-if="toGenerate">
                             <Button class="kn-button kn-button--primary" :label="$t('managers.buisnessModelCatalogue.generate')" @click="generateDatamartVisible = true"></Button>
                         </div>
                     </div>
 
                     <div class="input-container">
                         <div class="p-d-flex p-flex-row">
-                            <div v-if="selectedBusinessModel.id">
-                                <InputSwitch id="enable-metadata" class="p-mr-2" v-model="metaWebVisible" />
+                            <div v-if="selectedBusinessModel.id" class="p-mr-2">
+                                <InputSwitch id="enable-metadata" class="p-mr-2" v-model="metaWebVisible" data-test="metaweb-switch" />
                                 <label for="enable-metadata" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.enableMetaweb') }}</label>
                             </div>
                             <div>
@@ -138,7 +154,7 @@
                                 <label for="model-lock" class="kn-material-input-label">{{ businessModel.modelLocked ? $t('managers.buisnessModelCatalogue.unlockModel') : $t('managers.buisnessModelCatalogue.lockModel') }}</label>
                             </div>
                         </div>
-                        <div>
+                        <div class="p-mt-2">
                             <InputSwitch id="smart-view" class="p-mr-2" v-model="businessModel.smartView" @change="onSmartViewChange" />
                             <label for="smart-view" class="kn-material-input-label" v-tooltip.bottom="$t('managers.buisnessModelCatalogue.smartViewTooltip')">{{ businessModel.smartView ? $t('managers.buisnessModelCatalogue.smartView') : $t('managers.buisnessModelCatalogue.advancedView') }}</label>
                         </div>
@@ -157,7 +173,7 @@
                     <div class="p-fluid p-m-5">
                         <div class="p-field p-d-flex">
                             <div class="kn-flex">
-                                <span class="p-float-label">
+                                <span class="p-float-label p-mr-2">
                                     <InputText
                                         id="tablePrefixLike"
                                         class="kn-material-input"
@@ -170,6 +186,7 @@
                                         v-tooltip.bottom="$t('managers.buisnessModelCatalogue.tablePrefixLikeExampleTooltip')"
                                         @blur="v$.businessModel.tablePrefixLike.$touch()"
                                         @input="onFieldChange('tablePrefixLike', $event.target.value)"
+                                        data-test="prefix-input"
                                     />
                                     <label for="label" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.tablePrefixLike') }}</label>
                                 </span>
@@ -194,6 +211,7 @@
                                         v-tooltip.bottom="$t('managers.buisnessModelCatalogue.tablePrefixNotLikeExampleTooltip')"
                                         @blur="v$.businessModel.tablePrefixNotLike.$touch()"
                                         @input="onFieldChange('tablePrefixNotLike', $event.target.value)"
+                                        data-test="prefix-not-like-input"
                                     />
                                     <label for="label" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.tablePrefixNotLike') }}</label>
                                 </span>
@@ -212,9 +230,6 @@
             <Dialog :style="{ height: '100vh', width: '100vw' }" :visible="showMetaWeb" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
                 <iframe :src="metaModelUrl"></iframe>
             </Dialog>
-            <!-- <div id="metaweb-page" v-if="showMetaWeb">
-                <iframe :src="metaModelUrl"></iframe>
-            </div> -->
 
             <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false"></GenerateDatamartCard>
         </template>
@@ -231,14 +246,13 @@ import Card from 'primevue/card'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import GenerateDatamartCard from './GenerateDatamartCard.vue'
-// import IframeRenderer from '@/modules/commons/IframeRenderer.vue'
 import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import useValidate from '@vuelidate/core'
 
 export default defineComponent({
-    name: 'business-model-detail-card',
+    name: 'business-model-details-card',
     components: {
         Card,
         Dialog,
@@ -274,7 +288,6 @@ export default defineComponent({
         selectedBusinessModel() {
             this.v$.$reset()
             this.loadBusinessModel()
-            console.log('TO GENERATE', this.toGenerate)
         },
         domainCategories() {
             this.loadCategories()
@@ -286,7 +299,6 @@ export default defineComponent({
     computed: {
         metaModelUrl(): any {
             const url = `/knowagemeta/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${this.user.userUniqueIdentifier}&bmId=${this.businessModel.id}&bmName=${this.businessModel.name}`
-            console.log('URL ', url)
             return url
         }
     },
@@ -294,6 +306,8 @@ export default defineComponent({
         window.addEventListener('message', (event: any) => {
             if (event.action == 'closeDialog') {
                 this.showMetaWeb = false
+                this.loadBusinessModel()
+                this.loadCategories()
             }
         })
         this.loadBusinessModel()
@@ -328,21 +342,17 @@ export default defineComponent({
     methods: {
         loadBusinessModel() {
             this.businessModel = { ...this.selectedBusinessModel } as iBusinessModel
-            console.log('LOADED BM', this.businessModel)
         },
         loadCategories() {
             this.categories = this.domainCategories as any[]
         },
         loadDatasources() {
-            console.log('BEFORE CALLED LOADDATASOURCES', this.datasourcesMeta)
             this.datasources = this.datasourcesMeta as any[]
-            console.log('AFTER CALLED LOADDATASOURCES', this.datasources)
         },
         uploadFile(event) {
             this.$emit('fileUploaded', event.target.files[0])
         },
         onFieldChange(fieldName: string, value: any) {
-            console.log(fieldName, '  =>  ', value)
             this.$emit('fieldChanged', { fieldName, value })
         },
         onLockedChange() {

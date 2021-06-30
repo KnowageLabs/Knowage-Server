@@ -2,12 +2,12 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ selectedBusinessModel.name }} </template>
         <template #right>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" data-test="submit-button" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <div class="card">
+    <div class="card" v-else>
         <TabView class="tabview-custom">
             <TabPanel>
                 <template #header>
@@ -30,7 +30,7 @@
                     <span>{{ $t('managers.buisnessModelCatalogue.savedVersions') }}</span>
                 </template>
 
-                <BusinessModelVersionsCard :id="selectedBusinessModel.id" :versions="businessModelVersions" @deleted="loadVersions"></BusinessModelVersionsCard>
+                <BusinessModelVersionsCard :id="selectedBusinessModel.id" :versions="businessModelVersions" @touched="setDirty" @deleted="loadVersions"></BusinessModelVersionsCard>
             </TabPanel>
 
             <TabPanel>
@@ -96,7 +96,7 @@ export default defineComponent({
     },
     computed: {
         buttonDisabled(): any {
-            return this.v$.$invalid
+            return this.invalidDrivers > 0 || !this.selectedBusinessModel.name || !this.selectedBusinessModel.category || !this.selectedBusinessModel.dataSourceLabel
         },
         invalidDrivers(): number {
             return this.drivers.filter((driver: any) => driver.numberOfErrors > 0).length
@@ -110,13 +110,6 @@ export default defineComponent({
     async created() {
         await this.loadUser()
         await this.loadPage()
-        // console.log('SELECTED BUSINESS MODEL: ', this.selectedBusinessModel)
-        // console.log('SELECTED BUSINESS VERSIONS: ', this.businessModelVersions)
-        // console.log('CATEGORIES: ', this.categories)
-        // console.log('DATASOURCES: ', this.datasources)
-        // console.log('ANALYTICAL DRIVERS: ', this.analyticalDrivers)
-        // console.log('DRIVERS: ', this.drivers)
-        console.log('USER: ', this.user)
     },
     methods: {
         async loadUser() {
@@ -166,16 +159,34 @@ export default defineComponent({
         formatBusinessModelAnalyticalDriver() {
             const index = this.categories.findIndex((category) => category.VALUE_ID === this.selectedBusinessModel.category)
             this.selectedBusinessModel = { ...this.selectedBusinessModel, category: this.categories[index] }
-            console.log('BM CATEGORY', this.selectedBusinessModel.category)
         },
         setDriversForDelete(drivers: any) {
             this.driversForDelete = drivers
         },
         async handleSubmit() {
-            console.log('DRIVERS IN SUBMIT', this.drivers)
-            console.log('DRIVERS IN SUBMIT FOR DELETE', this.driversForDelete)
+            console.log('SELECTED BM FOR SUBMIT', this.selectedBusinessModel)
+            if (this.selectedBusinessModel.id) {
+                await this.updateBusinessModel()
+            } else {
+                await this.saveBusinessModel()
+            }
+
+            console.log('SLECTED BM ID AFTER POST', this.selectedBusinessModel.id)
+            console.log('UPLOADED FILE', this.uploadedFile)
+            if (this.selectedBusinessModel.id && this.uploadedFile) {
+                console.log('called upload')
+                await this.uploadFile()
+            }
+
+            console.log('test', this.selectedBusinessModel)
+
+            console.log('BM Versions in SUBMIT: ', this.businessModelVersions)
+            if (this.businessModelVersions.length > 0) {
+                const activeBusinessModelVersion = this.businessModelVersions.find((version) => version.active === true)
+                this.saveActiveVersion(activeBusinessModelVersion)
+            }
+
             this.driversForDelete.forEach((driver) => this.deleteDriver(driver.id))
-            console.log('DRIVERS AFTER SUBMIT FOR DELETE', this.driversForDelete)
 
             this.drivers.forEach((driver) => {
                 if (driver.status === 'CHANGED') {
@@ -189,26 +200,8 @@ export default defineComponent({
                 }
             })
 
-            // BM SUBMIT
-            // console.log('SELECTED BM FOR SUBMIT', this.selectedBusinessModel)
-            // if (this.selectedBusinessModel.id) {
-            //     await this.updateBusinessModel()
-            // } else {
-            //     await this.saveBusinessModel()
-            // }
-
-            // console.log('SLECTED BM ID AFTER POST', this.selectedBusinessModel.id)
-            // console.log('UPLOADED FILE', this.uploadedFile)
-            // if (this.selectedBusinessModel.id && this.uploadedFile) {
-            //     console.log('called upload')
-            //     await this.uploadFile()
-            // }
-
-            // console.log('test', this.selectedBusinessModel)
-
-            console.log('BM Versions in SUBMIT: ', this.businessModelVersions)
-            const activeBusinessModelVersion = this.businessModelVersions.find((version) => version.active === true)
-            this.saveActiveVersion(activeBusinessModelVersion)
+            this.loadPage()
+            this.touched = false
         },
         async saveBusinessModel() {
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.fullName }).then((response) => {
@@ -292,7 +285,7 @@ export default defineComponent({
             this.$emit('touched')
         },
         closeTemplate() {
-            // this.$router.push('')
+            this.$router.push('/business-model-catalogue')
             this.$emit('closed')
         }
     }

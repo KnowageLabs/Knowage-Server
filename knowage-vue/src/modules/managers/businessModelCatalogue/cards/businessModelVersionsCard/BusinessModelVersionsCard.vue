@@ -8,10 +8,10 @@
             </Toolbar>
         </template>
         <template #content>
-            <Listbox class="kn-list" :options="businessModelVersions">
-                <template #empty>{{ $t('common.info.noDataFound') }}</template>
+            <Listbox class="kn-list" :options="businessModelVersions" data-test="versions-list">
+                <template #empty>{{ $t('managers.buisnessModelCatalogue.noSavedVersions') }}</template>
                 <template #option="slotProps">
-                    <div class="kn-list-item">
+                    <div class="kn-list-item" :data-test="'version-' + slotProps.option.id">
                         <RadioButton name="active" :value="slotProps.option" v-model="activeVersion" @change="setActive"></RadioButton>
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.fileName }}</span>
@@ -50,7 +50,7 @@ export default defineComponent({
     },
     props: {
         id: {
-            type: String,
+            type: Number,
             required: true
         },
         versions: {
@@ -58,7 +58,7 @@ export default defineComponent({
             required: true
         }
     },
-    emits: ['deleted'],
+    emits: ['touched', 'deleted'],
     watch: {
         versions() {
             this.loadVersions()
@@ -112,6 +112,7 @@ export default defineComponent({
             this.previousActiveVersion.active = false
             this.previousActiveVersion = this.activeVersion
             this.activeVersion.active = true
+            this.$emit('touched')
         },
         async downloadFile(versionId: number, filetype: string) {
             await axios

@@ -3,6 +3,7 @@ export interface iBusinessModel {
     name: string,
     dataSourceId: number,
     description: string,
+    dataSourceLabel: string,
     category: any,
     modelLocked: boolean,
     smartView: boolean,
@@ -21,8 +22,15 @@ export interface iBusinessModelVersion {
 }
 
 export interface iBusinessModelDriver {
-    id: number,
-    label: string,
-    parameter: Object,
-    parameterUrlName: string
+    id?: number,
+    biMetaModelID: number,
+    label?: string,
+    parameter?: { id: number, label: string, name: string },
+    parameterUrlName?: string,
+    priority: number,
+    multivalue: Boolean,
+    modifiable: number,
+    required: Boolean,
+    visible: Boolean,
+    numberOfErrors?: number
 }

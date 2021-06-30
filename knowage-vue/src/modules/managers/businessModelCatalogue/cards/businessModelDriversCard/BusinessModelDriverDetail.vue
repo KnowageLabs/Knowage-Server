@@ -8,7 +8,7 @@
             </Toolbar>
         </template>
         <template #content>
-            <BusinessModelDriverHint v-if="!selectedDriver"></BusinessModelDriverHint>
+            <KnHint :title="'managers.buisnessModelCatalogue.drivers'" :hint="'managers.buisnessModelCatalogue.noDriverSelected'" v-if="!selectedDriver" data-test="driver-hint"></KnHint>
             <form class="p-fluid p-m-5" v-else>
                 <div class="p-field">
                     <span class="p-float-label">
@@ -23,6 +23,7 @@
                             maxLength="40"
                             @blur="v$.driver.label.$touch()"
                             @input="setChanged"
+                            data-test="label-input"
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.driverTitle') }} * </label>
                     </span>
@@ -48,7 +49,7 @@
                             :placeholder="$t('managers.buisnessModelCatalogue.analyticalDriverPlaceholder')"
                             :filter="true"
                             @before-show="v$.driver.parameter.$touch()"
-                            @change="setChanged"
+                            @change="showAnalyticalDropdownConfirm"
                         >
                             <template #value="slotProps">
                                 <div v-if="slotProps.value">
@@ -85,6 +86,7 @@
                             maxLength="20"
                             @blur="v$.driver.parameterUrlName.$touch()"
                             @input="setChanged"
+                            data-test="parameterUrlName-input"
                         />
                         <label for="parameterUrlName" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.driversUrl') }} * </label>
                     </span>
@@ -222,12 +224,12 @@ import { createValidations, ICustomValidatorMap } from '@/helpers/commons/valida
 import axios from 'axios'
 import businessModelDriverDetailDescriptor from './BusinessModelDriverDetailDescriptor.json'
 import businessModelDriverDetailValidationDescriptor from './BusinessModelDriverDetailValidationDescriptor.json'
-import BusinessModelDriverHint from './BusinessModelDriverHint.vue'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
+import KnHint from '@/components/UI/KnHint.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Listbox from 'primevue/listbox'
 import useValidate from '@vuelidate/core'
@@ -235,12 +237,12 @@ import useValidate from '@vuelidate/core'
 export default defineComponent({
     name: 'business-model-driver-detail-card',
     components: {
-        BusinessModelDriverHint,
         Card,
         Checkbox,
         Dialog,
         Dropdown,
         InputSwitch,
+        KnHint,
         KnValidationMessages,
         Listbox
     },
@@ -249,7 +251,7 @@ export default defineComponent({
             type: Number
         },
         selectedDriver: {
-            type: Object,
+            value: [Object, null],
             required: true
         },
         formVisible: {
@@ -269,13 +271,13 @@ export default defineComponent({
     watch: {
         async selectedDriver() {
             this.loadSelectedDriver()
-            if (this.selectedDriver) {
+            if (this.driver) {
                 await this.loadDataDependencies()
-                await this.loadModes()
-                await this.loadLovs()
+                if (this.driver.parameter) {
+                    await this.loadModes()
+                    await this.loadLovs()
+                }
             }
-            console.log('MODES: ', this.modes)
-            console.log('LOVS: ', this.lovs)
         },
         driverOptions() {
             this.loadAnalyticalDrivers()
@@ -300,6 +302,7 @@ export default defineComponent({
             businessModelDriverDetailValidationDescriptor,
             driver: null as any,
             drivers: [] as any[],
+            oldDropdownValue: null,
             analyticalDrivers: [] as any[],
             condition: {} as any,
             conditions: [] as any[],
@@ -331,12 +334,18 @@ export default defineComponent({
     },
     methods: {
         loadSelectedDriver() {
+            this.oldDropdownValue = null
             this.driver = this.selectedDriver
 
-            if (!this.selectedDriver.id) {
-                this.v$.driver.label.$touch()
-                this.v$.driver.parameter.$touch()
-                this.v$.driver.parameterUrlName.$touch()
+            if (this.driver) {
+                if (this.driver.parameter) {
+                    this.oldDropdownValue = this.driver.parameter
+                }
+                if (!this.driver.id) {
+                    this.v$.driver.label.$touch()
+                    this.v$.driver.parameter.$touch()
+                    this.v$.driver.parameterUrlName.$touch()
+                }
             }
         },
         loadAnalyticalDrivers() {
@@ -347,7 +356,7 @@ export default defineComponent({
         },
         async loadDataDependencies() {
             this.conditions = []
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies?driverId=${this.selectedDriver.id}`).then((response) =>
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies?driverId=${this.driver.id}`).then((response) =>
                 response.data.forEach((condition: any) => {
                     const index = this.conditions.findIndex((cond) => cond.parFatherId === condition.parFatherId && cond.filterOperation == condition.filterOperation && cond.logicOperator == condition.logicOperator)
                     condition.modalities = []
@@ -359,13 +368,12 @@ export default defineComponent({
                     }
                 })
             )
-            console.log('CONDITIONS!: ', this.conditions)
         },
         async loadModes() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.selectedDriver.parameter.id}/modes`).then((response) => (this.modes = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver.parameter.id}/modes`).then((response) => (this.modes = response.data))
         },
         async loadLovs() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.selectedDriver.parameter.id}/lovs`).then((response) => (this.lovs = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver.parameter.id}/lovs`).then((response) => (this.lovs = response.data))
         },
         getLovs(lovId: number) {
             const index = this.lovs.findIndex((lov) => lov.id === lovId)
@@ -385,12 +393,24 @@ export default defineComponent({
 
             return !(index > -1)
         },
+        showAnalyticalDropdownConfirm() {
+            if (this.oldDropdownValue) {
+                this.$confirm.require({
+                    message: this.$t('managers.buisnessModelCatalogue.analyticalDropdownConfirm'),
+                    header: this.$t('common.toast.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.deleteAllConditions(),
+                    reject: () => this.resetDrodpwonValue()
+                })
+            }
+        },
+        resetDrodpwonValue() {
+            this.driver.parameter = this.oldDropdownValue
+        },
         async saveCondition(condition: any) {
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, condition).finally(() => (this.conditionFormVisible = false))
         },
         handleSubmit() {
-            console.log('MODALITIES', this.modalities)
-            console.log('CONDITION PASSED', this.condition)
             if (this.condition.id) {
                 this.operation = 'update'
             }
@@ -399,7 +419,7 @@ export default defineComponent({
                 Object.keys(this.modalities).forEach((modalityId) => {
                     console.log(modalityId + ' ========== ' + id)
                     if (+modalityId === id) {
-                        const conditionForPost = { ...this.condition, parFatherId: this.condition.parFather.id, parFatherUrlName: this.selectedDriver.parameterUrlName, parId: this.selectedDriver.id, useModeId: +modalityId, filterColumn: this.modalities[id] }
+                        const conditionForPost = { ...this.condition, parFatherId: this.condition.parFather.id, parFatherUrlName: this.driver.parameterUrlName, parId: this.driver.id, useModeId: +modalityId, filterColumn: this.modalities[id] }
                         if (!conditionForPost.prog) {
                             conditionForPost.prog = 0
                         }
@@ -449,8 +469,6 @@ export default defineComponent({
                     this.selectedModes.push(modality.useModeId)
                     this.modalities[modality.useModeId] = modality.filterColumn
                 })
-                console.log('SELECTED CONDITION', this.condition)
-                console.log('SELECTED MODES', this.selectedModes)
             } else {
                 this.selectedModes = []
                 this.condition = {}
@@ -473,13 +491,11 @@ export default defineComponent({
             })
         },
         async deleteConditions(condition: any) {
-            console.log('CONDITIONSSSSSSS for delete', condition)
             condition.modalities.forEach((mode: any) => {
                 this.deleteCondition({ ...condition, id: mode.conditionId, useModeId: mode.useModeId, filterColumn: mode.filterColumn })
             })
         },
         async deleteCondition(condition: any) {
-            console.log('CONDITION for delete', condition)
             delete condition.modalities
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies/delete`, condition).then(() => {
                 this.$store.commit('setInfo', {
@@ -488,6 +504,10 @@ export default defineComponent({
                 })
                 this.loadData()
             })
+        },
+        deleteAllConditions() {
+            this.oldDropdownValue = this.driver.parameter
+            this.conditions.forEach((condition) => this.deleteCondition(condition))
         },
         loadData() {
             this.loadDataDependencies()
