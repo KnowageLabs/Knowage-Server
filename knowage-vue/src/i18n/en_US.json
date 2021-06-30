@@ -14,7 +14,7 @@
 		"description": "description",
 		"download": "download",
 		"downloading": "Downloading",
-		"dragAndDropFilesHere": "Drag and drop files here.",
+		"dragAndDropFileHere": "Drag and drop file here.",
 		"error": {
 			"downloading": "Error downloading ",
 			"exceededSize": "Uploaded file exceedes max size {size}",
