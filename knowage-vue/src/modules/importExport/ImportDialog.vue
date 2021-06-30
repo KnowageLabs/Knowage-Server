@@ -20,7 +20,7 @@
 						:value="packageItems[functionality.type]"
 						v-model:selection="selectedItems[functionality.type]"
 						v-model:filters="filters"
-						class="p-datatable-sm kn-table"
+						class="p-datatable-sm kn-table functionalityTable"
 						dataKey="id"
 						:paginator="true"
 						:rows="10"
@@ -29,6 +29,7 @@
 						breakpoint="960px"
 						:currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
 						:globalFilterFields="['name', 'type', 'tags', 'keywords']"
+						:loading="loading"
 					>
 						<template #header>
 							<div class="table-header">
@@ -105,7 +106,6 @@
 				fileName: '',
 				filters: {},
 				loading: false,
-
 				packageItems: {
 					gallery: [],
 					catalogFunction: []
@@ -136,6 +136,10 @@
 						(response) => {
 							if (!response.data.errors) {
 								this.token = ''
+								this.packageItems = {
+									gallery: [],
+									catalogFunction: []
+								}
 							}
 						},
 						(error) => console.log(error)
@@ -149,14 +153,12 @@
 				this.$emit('import', { files: this.uploadedFiles })
 			},
 			getData(type): Array<IColumn> {
-				this.loading = true
 				let columns = this.importExportDescriptor['import'][type]['column']
 				columns.sort(function(a, b) {
 					if (a.position > b.position) return 1
 					if (a.position < b.position) return -1
 					return 0
 				})
-				this.loading = false
 				return columns
 			},
 			getPackageItems(e) {
@@ -222,12 +224,16 @@
 					gallery: [],
 					catalogFunction: []
 				}
+				this.packageItems = {
+					gallery: [],
+					catalogFunction: []
+				}
 				this.cleanTempDirectory()
 			},
 
-			async startImport() {
-				this.loading = true
-				await axios
+			startImport() {
+				this.$store.commit('setLoading', true)
+				axios
 					.post(process.env.VUE_APP_API_PATH + '1.0/import/bulk', this.streamlineSelectedItemsArray(), {
 						headers: {
 							// Overwrite Axios's automatically set Content-Type
@@ -237,16 +243,17 @@
 					.then(
 						(response) => {
 							if (response.data.errors) {
-								this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
+								this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
 							} else {
-								this.$store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('importExport.import.successfullyCompleted') })
+								this.$store.commit('setInfo', { title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
 							}
-						},
-						(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
-					)
 
+							this.$store.commit('setLoading', false)
+						},
+						(error) => this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t(error) })
+					)
+				this.token = ''
 				this.resetAndClose()
-				this.loading = false
 			},
 
 			streamlineSelectedItemsArray(): JSON {
@@ -285,6 +292,11 @@
 			.p-fileupload-choose {
 				@extend .kn-button--primary;
 			}
+		}
+
+		.functionalityTable {
+			min-height: 400px;
+			height: 40%;
 		}
 	}
 	.importExportTags {
