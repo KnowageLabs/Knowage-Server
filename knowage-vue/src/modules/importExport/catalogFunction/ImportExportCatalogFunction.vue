@@ -31,10 +31,10 @@
 		</template>
 
 		<Column selectionMode="multiple" :exportable="false" :style="importExportDescriptor.export.catalogFunction.column.selectionMode.style"></Column>
-		<Column field="name" :header="importExportDescriptor.export.catalogFunction.column.name.header" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.name.style"></Column>
-		<Column field="type" :header="importExportDescriptor.export.catalogFunction.column.type.header" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.type.style"> </Column>
+		<Column field="name" :header="$t(importExportDescriptor.export.catalogFunction.column.name.header)" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.name.style"></Column>
+		<Column field="type" :header="$t(importExportDescriptor.export.catalogFunction.column.type.header)" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.type.style"> </Column>
 
-		<Column field="keywords" :header="importExportDescriptor.export.catalogFunction.column.keywords.header" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.keywords.style">
+		<Column field="keywords" :header="$t(importExportDescriptor.export.catalogFunction.column.keywords.header)" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.keywords.style">
 			<template #body="{data}">
 				<span class="p-float-label kn-material-input">
 					<Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.keywords" v-bind:key="index" rounded :value="tag"> </Tag>

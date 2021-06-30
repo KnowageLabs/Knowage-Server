@@ -14,7 +14,7 @@
 		"description": "description",
 		"download": "download",
 		"downloading": "Downloading",
-		"dragAndDropFilesHere": "Drag and drop files here.",
+		"dragAndDropFileHere": "Drag and drop file here.",
 		"error": {
 			"downloading": "Error downloading ",
 			"exceededSize": "Uploaded file exceedes max size {size}",
@@ -86,6 +86,12 @@
 	},
 	"importExport": {
 		"catalogFunction": {
+			"column": {
+				"keywords": "Keywords",
+				"label": "Label",
+				"name": "Name",
+				"type": "Type"
+			},
 			"description": "export functions from catalog",
 			"label": "functions"
 		},
@@ -95,26 +101,17 @@
 		},
 		"filenamePlaceholder": "Enter filename here",
 		"gallery": {
+			"column": {
+				"image": "Image",
+				"name": "Name",
+				"tags": "Tags",
+				"type": "Type"
+			},
 			"description": "export gallery templates",
 			"label": "gallery"
 		},
 		"import": {
-			"catalogFunction": {
-				"column": {
-					"keywords": "Keywords",
-					"label": "Label",
-					"name": "Name",
-					"type": "Type"
-				}
-			},
 			"completedWithErrors": "Import completed with errors. Please read logs for further information.",
-			"gallery": {
-				"column": {
-					"name": "Name",
-					"tags": "Tags",
-					"type": "Type"
-				}
-			},
 			"successfullyCompleted": "Import successfully completed"
 		},
 		"title": "Import/Export"

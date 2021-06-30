@@ -4,14 +4,14 @@
 			"column": {
 				"keywords": {
 					"field": "keywords",
-					"header": "Keywords",
+					"header": "importExport.catalogFunction.column.keywords",
 					"style": {
 						"width": "35%"
 					}
 				},
 				"name": {
 					"field": "name",
-					"header": "Name",
+					"header": "importExport.catalogFunction.column.name",
 					"style": {
 						"width": "30%"
 					}
@@ -25,7 +25,7 @@
 				},
 				"type": {
 					"field": "type",
-					"header": "Type",
+					"header": "importExport.catalogFunction.column.type",
 					"style": {
 						"width": "20%"
 					}
@@ -36,7 +36,7 @@
 			"column": {
 				"image": {
 					"field": "image",
-					"header": "Image",
+					"header": "importExport.gallery.column.image",
 					"style": {
 						"text-align": "center",
 						"width": "5%"
@@ -44,7 +44,7 @@
 				},
 				"name": {
 					"field": "name",
-					"header": "Name",
+					"header": "importExport.gallery.column.name",
 					"style": {
 						"width": "35%"
 					}
@@ -58,14 +58,14 @@
 				},
 				"tags": {
 					"field": "tags",
-					"header": "Tags",
+					"header": "importExport.gallery.column.tags",
 					"style": {
 						"width": "45%"
 					}
 				},
 				"type": {
 					"field": "type",
-					"header": "Type",
+					"header": "importExport.gallery.column.type",
 					"style": {
 						"text-align": "center",
 						"width": "10%"
@@ -127,7 +127,7 @@
 			"column": [
 				{
 					"field": "label",
-					"header": "importExport.import.catalogFunction.column.label",
+					"header": "importExport.catalogFunction.column.label",
 					"position": 2,
 					"style": {
 						"width": "25%"
@@ -136,7 +136,7 @@
 				{
 					"displayType": "functionKeywords",
 					"field": "keywords",
-					"header": "importExport.import.catalogFunction.column.keywords",
+					"header": "importExport.catalogFunction.column.keywords",
 					"position": 4,
 					"style": {
 						"width": "35%"
@@ -144,7 +144,7 @@
 				},
 				{
 					"field": "name",
-					"header": "importExport.import.catalogFunction.column.name",
+					"header": "importExport.catalogFunction.column.name",
 					"position": 1,
 					"style": {
 						"width": "25%"
@@ -160,7 +160,7 @@
 				},
 				{
 					"field": "type",
-					"header": "importExport.import.catalogFunction.column.type",
+					"header": "importExport.catalogFunction.column.type",
 					"position": 3,
 					"style": {
 						"width": "20%"
@@ -172,7 +172,7 @@
 			"column": [
 				{
 					"field": "name",
-					"header": "importExport.import.gallery.column.name",
+					"header": "importExport.gallery.column.name",
 					"position": 1,
 					"style": {
 						"width": "35%"
@@ -189,7 +189,7 @@
 				{
 					"displayType": "widgetTags",
 					"field": "tags",
-					"header": "importExport.import.gallery.column.tags",
+					"header": "importExport.gallery.column.tags",
 					"position": 3,
 					"style": {
 						"width": "45%"
@@ -198,7 +198,7 @@
 				{
 					"displayType": "widgetGalleryType",
 					"field": "type",
-					"header": "importExport.import.gallery.column.type",
+					"header": "importExport.gallery.column.type",
 					"position": 2,
 					"style": {
 						"text-align": "center",
