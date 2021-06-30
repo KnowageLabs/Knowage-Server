@@ -1,4 +1,14 @@
 {
+    "defaultLanguageColumns": [
+        {
+            "field": "label",
+            "header": "common.label"
+        },
+        {
+            "field": "message",
+            "header": "managers.internationalizationManagement.table.messageCode"
+        }
+    ],
     "defaultMessage": {
         "label": "",
         "language": "",
@@ -45,6 +55,22 @@
             "iso3code": "deu",
             "language": "German(DEU)",
             "languageTag": "de-DE"
+        }
+    ],
+    "notDefaultLanguageColumns": [
+        {
+            "disabled": true,
+            "field": "label",
+            "header": "common.label"
+        },
+        {
+            "disabled": true,
+            "field": "defaultMessageCode",
+            "header": "managers.internationalizationManagement.table.defaultMessage"
+        },
+        {
+            "field": "message",
+            "header": "managers.internationalizationManagement.table.messageCode"
         }
     ]
 }
