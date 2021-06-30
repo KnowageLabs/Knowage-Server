@@ -167,7 +167,7 @@
 
 
 		<GROUP_ITEM id="8000" label="menu.ServerManager"
-			toBeLicensed="true" iconCls="fa fa-2x fa-cogs">
+			toBeLicensed="" iconCls="fa fa-2x fa-cogs">
 			
 			<ITEM id="8014" label="menu.admin.importExport"
 				requiredFunctionality="ImportExport"
@@ -189,6 +189,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp" />
 			<ITEM id="8006" label="menu.ImpExpKpis"
 				requiredFunctionality="ImpExpKpis"
+				toBeLicensed="KnowagePA"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportKpis/importExportKpis.jsp" />
 			<ITEM id="8007" label="menu.ImpExpCatalog"
 				requiredFunctionality="ImpExpCatalog"
@@ -201,6 +202,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportGlossary/importExportGlossaryTemplate.jsp" />
 			<ITEM id="8010" label="menu.ImpExpAlerts"
 				requiredFunctionality="ImpExpAlerts"
+				toBeLicensed="KnowagePA"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportAlerts/importExportAlerts.jsp" />
 			<ITEM id="8011" label="menu.InstallConf"
 				requiredFunctionality="InstallConfig"
