@@ -164,23 +164,17 @@ export default defineComponent({
             this.driversForDelete = drivers
         },
         async handleSubmit() {
-            console.log('SELECTED BM FOR SUBMIT', this.selectedBusinessModel)
             if (this.selectedBusinessModel.id) {
                 await this.updateBusinessModel()
             } else {
                 await this.saveBusinessModel()
             }
 
-            console.log('SLECTED BM ID AFTER POST', this.selectedBusinessModel.id)
-            console.log('UPLOADED FILE', this.uploadedFile)
             if (this.selectedBusinessModel.id && this.uploadedFile) {
                 console.log('called upload')
                 await this.uploadFile()
             }
 
-            console.log('test', this.selectedBusinessModel)
-
-            console.log('BM Versions in SUBMIT: ', this.businessModelVersions)
             if (this.businessModelVersions.length > 0) {
                 const activeBusinessModelVersion = this.businessModelVersions.find((version) => version.active === true)
                 this.saveActiveVersion(activeBusinessModelVersion)

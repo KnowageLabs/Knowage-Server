@@ -123,14 +123,18 @@ export default defineComponent({
 
             if (direction === 'UP') {
                 this.businessModelDrivers[currentDriverIndex - 1].priority++
+                this.businessModelDrivers[currentDriverIndex - 1].status = 'CHANGED'
                 this.businessModelDrivers[currentDriverIndex].priority--
+                this.businessModelDrivers[currentDriverIndex].status = 'CHANGED'
 
                 const temp = this.businessModelDrivers[currentDriverIndex - 1]
                 this.businessModelDrivers[currentDriverIndex - 1] = this.businessModelDrivers[currentDriverIndex]
                 this.businessModelDrivers[currentDriverIndex] = temp
             } else {
                 this.businessModelDrivers[currentDriverIndex + 1].priority--
+                this.businessModelDrivers[currentDriverIndex + 1].status = 'CHANGED'
                 this.businessModelDrivers[currentDriverIndex].priority++
+                this.businessModelDrivers[currentDriverIndex].status = 'CHANGED'
 
                 const temp = this.businessModelDrivers[currentDriverIndex + 1]
                 this.businessModelDrivers[currentDriverIndex + 1] = this.businessModelDrivers[currentDriverIndex]
