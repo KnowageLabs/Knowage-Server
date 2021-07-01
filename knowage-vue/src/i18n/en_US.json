@@ -87,9 +87,9 @@
 	"importExport": {
 		"catalogFunction": {
 			"column": {
-				"keywords": "Keywords",
 				"label": "Label",
 				"name": "Name",
+				"tags": "Keywords",
 				"type": "Type"
 			},
 			"description": "export functions from catalog",
@@ -131,6 +131,10 @@
 		"pt_BR": "portuguese"
 	},
 	"managers": {
+		"catalogFunction": {
+			"hint": "The import/export functionality allows you to bulk insert/extract data from your tenant. \n Select the category to view the items present. \n Click on @:common.import if you want to import a package. \n Select the items and click  @:common.export if you want to download them in a zip archive.",
+			"title": "Import/Export"
+		},
 		"configurationManagement": {
 			"createNewHeader": "Create new configuration",
 			"headers": {

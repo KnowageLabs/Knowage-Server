@@ -71,7 +71,7 @@
 			},
 			async startExport(fileName: string) {
 				await axios
-					.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery-ee/export/bulk', this.streamlineSelectedItemsArray(fileName), {
+					.post(process.env.VUE_APP_API_PATH + '1.0/export/bulk', this.streamlineSelectedItemsArray(fileName), {
 						responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
 						headers: {
@@ -104,19 +104,17 @@
 
 			streamlineSelectedItemsArray(fileName): JSON {
 				let selectedItemsToBE = {} as JSON
-				selectedItemsToBE['fileName'] = fileName
-				selectedItemsToBE['knowageVersion'] = process.env.VUE_APP_VERSION
-				selectedItemsToBE['datetime'] = new Date()
+				selectedItemsToBE['selectedItems'] = {}
 				for (var category in this.selectedItems) {
 					for (var k in this.selectedItems[category]) {
-						if (!selectedItemsToBE[category]) {
-							selectedItemsToBE[category] = []
+						if (!selectedItemsToBE['selectedItems'][category]) {
+							selectedItemsToBE['selectedItems'][category] = []
 						}
-						let obj = { id: this.selectedItems[category][k].id }
-						selectedItemsToBE[category].push(obj)
+
+						selectedItemsToBE['selectedItems'][category].push(this.selectedItems[category][k].id)
 					}
 				}
-
+				selectedItemsToBE['filename'] = fileName
 				return selectedItemsToBE
 			}
 		}
