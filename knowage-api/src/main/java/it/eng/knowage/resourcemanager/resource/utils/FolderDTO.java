@@ -20,7 +20,7 @@ package it.eng.knowage.resourcemanager.resource.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomFolder {
+public class FolderDTO {
 
 	private String label;
 
@@ -30,9 +30,13 @@ public class CustomFolder {
 
 //	List<CustomFile> files;
 
-	List<CustomFolder> children;
+	List<FolderDTO> children;
 
-	public CustomFolder(String name) {
+	public FolderDTO() {
+		super();
+	}
+
+	public FolderDTO(String name) {
 //		files = new ArrayList<>();
 		children = new ArrayList<>();
 		this.label = name;
@@ -55,17 +59,17 @@ public class CustomFolder {
 //		this.files.add(file);
 //	}
 
-	public List<CustomFolder> getChildren() {
+	public List<FolderDTO> getChildren() {
 		return children;
 	}
 
-	public void addChildren(CustomFolder folder) {
+	public void addChildren(FolderDTO folder) {
 		this.children.add(folder);
 	}
 
 	@Override
 	public String toString() {
-		return "CustomFolder [label=" + label + ", children=" + children + "]";
+		return "FolderDTO [label=" + label + ", children=" + children + "]";
 	}
 
 //	public String getIcon() {

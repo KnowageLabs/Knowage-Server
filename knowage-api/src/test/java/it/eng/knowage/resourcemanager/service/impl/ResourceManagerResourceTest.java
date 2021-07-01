@@ -36,7 +36,7 @@ import org.springframework.test.context.ActiveProfiles;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.eng.knowage.resourcemanager.resource.utils.CustomFolder;
+import it.eng.knowage.resourcemanager.resource.utils.FolderDTO;
 
 /**
  * @author Matteo Massarotto
@@ -51,8 +51,8 @@ public class ResourceManagerResourceTest {
 
 	@Test
 	void getTree(@Value("${test.resourcepath}") String resourcePath) {
-		CustomFolder parentFolder = new CustomFolder(resourcePath);
-		CustomFolder mylist = null;
+		FolderDTO parentFolder = new FolderDTO(resourcePath);
+		FolderDTO mylist = null;
 //		parentFolder.setKey(counter + "");
 		LOGGER.debug("Starting resource path json tree testing");
 
@@ -72,6 +72,9 @@ public class ResourceManagerResourceTest {
 			JSONArray jsArr = ja.getJSONArray("children");
 			JSONObject jo = new JSONObject();
 			jo.put("root", jsArr);
+
+			// RootFolderDTO newRootFolder = new RootFolderDTO(mylist);
+
 			LOGGER.debug(jo.toString(4));
 			// LOGGER.debug(ja.toString(4));
 			LOGGER.debug("END");
@@ -81,43 +84,43 @@ public class ResourceManagerResourceTest {
 		}
 	}
 
-	private static void parseFolders(CustomFolder e) {
+	private static void parseFolders(FolderDTO e) {
 		setFolderLevel(e, 0, 0);
 	}
 
-	private static void setFolderLevel(CustomFolder e, int lvl, int count) {
+	private static void setFolderLevel(FolderDTO e, int lvl, int count) {
 		e.setKey(lvl + "-" + count);
 		count = 0;
 		if (e.getChildren() != null && e.getChildren().size() > 0) {
 			lvl++;
-			for (CustomFolder emp : e.getChildren()) {
+			for (FolderDTO emp : e.getChildren()) {
 				count++;
 				setFolderLevel(emp, lvl, count);
 			}
 		}
 	}
 
-	private static void clearFolders(CustomFolder e, String path) {
+	private static void clearFolders(FolderDTO e, String path) {
 		changeFolderPath(e, path);
 	}
 
-	private static void changeFolderPath(CustomFolder e, String path) {
+	private static void changeFolderPath(FolderDTO e, String path) {
 		e.setLabel(e.getLabel().replace(path, ""));
 		if (e.getChildren() != null && e.getChildren().size() > 0) {
-			for (CustomFolder emp : e.getChildren()) {
+			for (FolderDTO emp : e.getChildren()) {
 				changeFolderPath(emp, path);
 			}
 		}
 	}
 
-	public static CustomFolder createTree(CustomFolder parentFolder) throws IOException {
+	public static FolderDTO createTree(FolderDTO parentFolder) throws IOException {
 		File node = new File(parentFolder.getLabel());
 		if (node.isDirectory()) {
 			String[] subNote = node.list();
 			for (String filename : subNote) {
 				String path = node + "\\" + filename;
 				if (new File(path).isDirectory()) {
-					CustomFolder folder = new CustomFolder(path);
+					FolderDTO folder = new FolderDTO(path);
 					parentFolder.addChildren(folder);
 					createTree(folder);
 				} else {

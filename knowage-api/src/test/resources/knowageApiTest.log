@@ -1,0 +1,22 @@
+29 giu 2021 15:56:19,309 DEBUG it.eng.knowage.knowageapi.service.impl.ResourceManagerResourceTest.getTree:40 - Starting resource path json tree testing
+29 giu 2021 15:56:33,390 DEBUG it.eng.knowage.knowageapi.service.impl.ResourceManagerResourceTest.getTree:58 - {"root": [{
+    "children": [
+        {
+            "children": [],
+            "label": "\\A\\B\\C",
+            "key": "2-1"
+        },
+        {
+            "children": [{
+                "children": [],
+                "label": "\\A\\B\\D\\E",
+                "key": "3-1"
+            }],
+            "label": "\\A\\B\\D",
+            "key": "2-2"
+        }
+    ],
+    "label": "\\A\\B",
+    "key": "1-1"
+}]}
+29 giu 2021 15:56:33,390 DEBUG it.eng.knowage.knowageapi.service.impl.ResourceManagerResourceTest.getTree:60 - END

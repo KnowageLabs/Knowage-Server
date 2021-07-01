@@ -39,7 +39,7 @@ import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImpl;
 
 @Configuration
 @Profile("production")
-@ComponentScan("it.eng.knowage.knowageapi")
+@ComponentScan({ "it.eng.knowage.knowageapi", "it.eng.knowage.resourcemanager" })
 public class KnowageApiConfiguration {
 
 	@Bean
