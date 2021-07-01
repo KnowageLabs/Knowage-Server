@@ -79,7 +79,6 @@ export default defineComponent({
         this.loadBusinessModel()
         this.loadUser()
         await this.loadModelInfo()
-        console.log('schema ' + this.schemaName + '    catalog ' + this.catalogName)
     },
     data() {
         return {
@@ -103,11 +102,7 @@ export default defineComponent({
             this.currentUser = this.user
         },
         async loadModelInfo() {
-            console.log('LOAD MODEL INFO: ')
-            console.log('BM: ', this.businessModel)
-            console.log('User: ', this.user)
             await axios.get(`/knowagemeta/restful-services/1.0/metaWeb/modelInfos/${this.businessModel.id}?user_id=${this.user.userUniqueIdentifier}`).then((response) => {
-                console.log('RESPONSE DATA ', response.data)
                 if (response.data.schemaName) {
                     this.schemaName = response.data.schemaName
                 }

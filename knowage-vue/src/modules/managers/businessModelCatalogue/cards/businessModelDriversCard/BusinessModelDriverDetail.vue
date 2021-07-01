@@ -414,11 +414,9 @@ export default defineComponent({
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, condition).finally(() => (this.conditionFormVisible = false))
         },
         async handleSubmit() {
-            // console.log('CONDITION FOR SUMBIT', this.condition)
             if (this.condition.id) {
                 this.operation = 'update'
             }
-            console.log('ORIGINAL MODALITIES', this.originalModalities)
 
             const modalityKeys = Object.keys(this.modalities)
             for (let i = 0; i < this.selectedModes.length; i++) {
@@ -432,14 +430,11 @@ export default defineComponent({
                             useModeId: +modalityKeys[j],
                             filterColumn: this.modalities[this.selectedModes[i]]
                         }
-                        console.log('CONDITION FOR POST', conditionForPost)
 
                         if (this.operation === 'update') {
                             const index = this.originalModalities.findIndex((modality) => {
-                                console.log(modality.conditionId + ' ==== ' + conditionForPost.id)
                                 return modality.conditionId === conditionForPost.id
                             })
-                            console.log('INDEX', index)
                             if (index > -1) {
                                 this.originalModalities.splice(index, 1)
                             }
@@ -456,7 +451,6 @@ export default defineComponent({
                 }
             }
 
-            console.log('ORIGINAL MODALITIES AFTER', this.originalModalities)
             this.originalModalities.forEach((modality) => {
                 this.deleteCondition({
                     ...this.condition,
@@ -517,8 +511,6 @@ export default defineComponent({
                 }
             }
             this.conditionFormVisible = true
-            console.log('THIS SELECETED', this.condition)
-            console.log('SHOW FORM ORIGINAL MOD', this.originalModalities)
         },
         setChanged() {
             if (this.driver) {
@@ -543,7 +535,6 @@ export default defineComponent({
             })
         },
         async deleteCondition(condition: any) {
-            console.log('CONDITION DELETE!!!', condition)
             delete condition.parFather
             delete condition.modalities
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies/delete`, condition).then(() => {

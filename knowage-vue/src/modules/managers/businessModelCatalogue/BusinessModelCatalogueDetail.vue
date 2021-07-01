@@ -180,7 +180,6 @@ export default defineComponent({
             }
 
             if (this.selectedBusinessModel.id && this.uploadedFile) {
-                console.log('called upload')
                 await this.uploadFile()
             }
 
@@ -217,8 +216,6 @@ export default defineComponent({
             })
         },
         async updateBusinessModel() {
-            console.log('BM FOR PUT', this.selectedBusinessModel)
-            // TODO Mozda skloniti, proveriti nakon reload-a
             if (this.selectedBusinessModel.category.VALUE_ID) {
                 this.selectedBusinessModel.category = this.selectedBusinessModel.category.VALUE_ID
             }
@@ -245,11 +242,10 @@ export default defineComponent({
             const formData = new FormData()
             formData.append('file', this.uploadedFile)
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.selectedBusinessModel.id}/versions`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((response) => {
-                // TODO CHANGE ERRORS
                 if (response.data.errors) {
-                    this.$store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.error'), msg: response.data.errors })
+                    this.$store.commit('setError', { title: this.$t('managers.buisnessModelCatalogue.toast.uploadFile'), msg: response.data.errors })
                 } else {
-                    this.$store.commit('setInfo', { title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.uploaded'), msg: 'FILE UPLOADED' })
+                    this.$store.commit('setInfo', { title: this.$t('managers.buisnessModelCatalogue.uploadFile'), msg: this.$t('managers.buisnessModelCatalogue.uploadFileSuccess') })
                 }
             })
         },
@@ -279,7 +275,6 @@ export default defineComponent({
             await this.loadDatasources()
             await this.loadSelectedBusinessModelData()
             this.loading = false
-            console.log(this.datasources)
         },
         onFieldChange(event: any) {
             this.selectedBusinessModel[event.fieldName] = event.value
