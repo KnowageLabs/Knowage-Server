@@ -17,58 +17,36 @@
  */
 package it.eng.knowage.knowageapi.dao.dto;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 
 /**
  * @author Marco Libanori
  */
 @Entity
 @Table(name = "SBI_FUNCTION_INPUT_COLUMN")
-@FilterDef(name = "organization", parameters = {
-		@ParamDef(name = "organization", type = "string")
-})
-@Filter(name = "organization", condition = "organization like :organization")
-@NamedQueries({
-	@NamedQuery(name = "SbiFunctionInputColumn.delete", query = "DELETE FROM SbiFunctionInputColumn q WHERE q.id.colName = :colName AND q.id.functionId = :functionId")
-})
 public class SbiFunctionInputColumn extends AbstractEntity {
 
 	@Embeddable
-	public static class Pk implements Serializable {
+	public static class Pk implements AbstractSbiCatalogFunctionForeignKey {
 
 		private static final long serialVersionUID = -7475483116085747667L;
 
-		@Column(name = "FUNCTION_UUID", insertable = false, updatable = false)
-		private String functionId;
+		@ManyToOne
+		@JoinColumn(name = "FUNCTION_UUID", referencedColumnName = "FUNCTION_UUID", insertable = false, updatable = false)
+		@JoinColumn(name = "ORGANIZATION", referencedColumnName = "ORGANIZATION", insertable = false, updatable = false)
+		private SbiCatalogFunction function;
 
-		@Column(name = "COL_NAME", nullable = false, updatable = false)
+		@Column(name = "COL_NAME", insertable = true, updatable = true, nullable = false)
 		@Size(max = 100)
 		private String colName;
-
-		public String getFunctionId() {
-			return functionId;
-		}
-
-		public void setFunctionId(String functionId) {
-			this.functionId = functionId;
-		}
 
 		public String getColName() {
 			return colName;
@@ -79,11 +57,21 @@ public class SbiFunctionInputColumn extends AbstractEntity {
 		}
 
 		@Override
+		public SbiCatalogFunction getFunction() {
+			return function;
+		}
+
+		@Override
+		public void setFunction(SbiCatalogFunction function) {
+			this.function = function;
+		}
+
+		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((colName == null) ? 0 : colName.hashCode());
-			result = prime * result + ((functionId == null) ? 0 : functionId.hashCode());
+			result = prime * result + ((function == null) ? 0 : function.hashCode());
 			return result;
 		}
 
@@ -101,28 +89,23 @@ public class SbiFunctionInputColumn extends AbstractEntity {
 					return false;
 			} else if (!colName.equals(other.colName))
 				return false;
-			if (functionId == null) {
-				if (other.functionId != null)
+			if (function == null) {
+				if (other.function != null)
 					return false;
-			} else if (!functionId.equals(other.functionId))
+			} else if (!function.equals(other.function))
 				return false;
 			return true;
 		}
 
 		@Override
 		public String toString() {
-			return "Pk [functionId=" + functionId + ", colName=" + colName + "]";
+			return "Pk [function=" + function + ", colName=" + colName + "]";
 		}
 
 	}
 
 	@EmbeddedId
 	private Pk id = new Pk();
-
-	@ManyToOne
-	@JoinColumn(name = "FUNCTION_UUID", referencedColumnName = "FUNCTION_UUID", insertable = false, updatable = false)
-	@MapsId("functionId")
-	private SbiCatalogFunction function;
 
 	@Column(name = "COL_TYPE")
 	@NotNull
@@ -135,14 +118,6 @@ public class SbiFunctionInputColumn extends AbstractEntity {
 
 	public void setId(Pk id) {
 		this.id = id;
-	}
-
-	public SbiCatalogFunction getFunction() {
-		return function;
-	}
-
-	public void setFunction(SbiCatalogFunction function) {
-		this.function = function;
 	}
 
 	public String getColType() {

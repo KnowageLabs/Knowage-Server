@@ -35,6 +35,7 @@ public class FunctionCompleteDTO {
 	private final List<FunctionInputVariableDTO> inputVariables = new ArrayList<>();
 	private final List<String> keywords = new ArrayList<>();
 	private String label;
+	private String language;
 	private String offlineScriptTrain;
 	private String offlineScriptUse;
 	private String onlineScript;
@@ -175,6 +176,14 @@ public class FunctionCompleteDTO {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 }

@@ -15,34 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.knowageapi.dao;
+package it.eng.knowage.knowageapi.dao.dto;
 
-import java.util.List;
-
-import it.eng.knowage.knowageapi.dao.dto.SbiCatalogFunction;
-import it.eng.knowage.knowageapi.error.KnowageBusinessException;
+import java.io.Serializable;
 
 /**
  * @author Marco Libanori
  */
-public interface SbiCatalogFunctionDao {
+public interface AbstractSbiCatalogFunctionForeignKey extends Serializable {
 
-	default List<SbiCatalogFunction> findAll() {
-		return findAll(null);
-	}
+	SbiCatalogFunction getFunction();
 
-	List<SbiCatalogFunction> findAll(String searchStr);
-
-	SbiCatalogFunction find(SbiCatalogFunction.Pk id);
-
-	SbiCatalogFunction create(SbiCatalogFunction function);
-
-	SbiCatalogFunction update(SbiCatalogFunction function);
-
-	/**
-	 * @throws KnowageBusinessException If the function cannot be deleted
-	 *   because referenced by other objects
-	 */
-	void delete(SbiCatalogFunction id) throws KnowageBusinessException;
+	void setFunction(SbiCatalogFunction function);
 
 }
