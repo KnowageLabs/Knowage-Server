@@ -47,20 +47,32 @@ public class SbiCatalogFunctionRepository {
 	}
 
 	public SbiCatalogFunction find(String id) {
-		return dao.find(id);
+		SbiCatalogFunction.Pk realId = new SbiCatalogFunction.Pk();
+
+		realId.setFunctionId(id);
+
+		return dao.find(realId);
 	}
 
+	@Transactional(value = TxType.REQUIRED)
 	public SbiCatalogFunction create(SbiCatalogFunction function) {
 		return dao.create(function);
 	}
 
+	@Transactional(value = TxType.REQUIRED)
 	public SbiCatalogFunction update(SbiCatalogFunction function) {
 		return dao.update(function);
 	}
 
 	@Transactional(value = TxType.REQUIRED)
 	public void delete(String id) throws KnowageBusinessException {
-		dao.delete(id);
+
+		SbiCatalogFunction.Pk realId = new SbiCatalogFunction.Pk();
+
+		realId.setFunctionId(id);
+
+		SbiCatalogFunction entity = dao.find(realId);
+		dao.delete(entity);
 	}
 
 }

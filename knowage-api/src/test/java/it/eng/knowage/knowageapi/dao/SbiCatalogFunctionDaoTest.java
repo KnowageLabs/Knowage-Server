@@ -18,7 +18,6 @@
 package it.eng.knowage.knowageapi.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -61,21 +60,116 @@ class SbiCatalogFunctionDaoTest {
 	void getAll() {
 		List<SbiCatalogFunction> all = dao.findAll();
 
-		System.out.println(all);
-
-		assertNotEquals(0, all.size());
+		assertEquals(true, true);
 	}
 
 	@Test
-	void getNothing() {
-		List<SbiCatalogFunction> all = dao.findAll("nothing");
+	void mathing() throws KnowageBusinessException {
 
-		assertEquals(0, all.size());
+		EntityTransaction transaction = em.getTransaction();
+		transaction.begin();
+
+		SbiCatalogFunction nonMatching1 = createRandomName();
+		SbiCatalogFunction nonMatching2 = createRandomName();
+		SbiCatalogFunction matching = create("match");
+
+		nonMatching1 = store(nonMatching1);
+		nonMatching2 = store(nonMatching2);
+		matching = store(matching);
+
+		transaction.commit();
+
+		List<SbiCatalogFunction> all = dao.findAll("match");
+
+		try {
+			assertEquals(1, all.size());
+		} finally {
+			transaction = em.getTransaction();
+			transaction.begin();
+
+			dao.delete(nonMatching1);
+			dao.delete(nonMatching2);
+
+			for (SbiCatalogFunction e : all) {
+				dao.delete(e);
+			}
+
+			transaction.commit();
+		}
 	}
 
 	@Test
 	void create() throws SerialException, SQLException, KnowageBusinessException {
 
+		SbiCatalogFunction n = createRandomName();
+
+		EntityTransaction transaction = em.getTransaction();
+		transaction.begin();
+
+		n = dao.create(n);
+
+		transaction.commit();
+
+		SbiCatalogFunction find = dao.find(n.getId());
+
+
+		transaction = em.getTransaction();
+		transaction.begin();
+
+		dao.delete(find);
+
+		transaction.commit();
+
+		assertEquals(true, true);
+	}
+
+	@Test
+	void update() throws SerialException, SQLException, KnowageBusinessException {
+
+		SbiCatalogFunction n = createRandomName();
+
+		EntityTransaction transaction = em.getTransaction();
+		transaction.begin();
+
+		n = dao.create(n);
+
+		transaction.commit();
+
+		n.getInputColumns().clear();
+		n.getInputVariables().clear();
+		n.getOutputColumns().clear();
+
+		n = dao.find(n.getId());
+
+		transaction = em.getTransaction();
+		transaction.begin();
+
+		dao.update(n);
+
+		transaction.commit();
+
+		transaction = em.getTransaction();
+		transaction.begin();
+
+		dao.delete(n);
+
+		transaction.commit();
+
+		assertEquals(true, true);
+	}
+
+	private SbiCatalogFunction store(SbiCatalogFunction toStore) {
+		toStore = dao.create(toStore);
+		return toStore;
+	}
+
+	private SbiCatalogFunction createRandomName() {
+		String name = RandomStringUtils.randomAlphanumeric(12);
+
+		return create(name);
+	}
+
+	private SbiCatalogFunction create(String name) {
 		String label = RandomStringUtils.randomAlphanumeric(12);
 
 		SbiCatalogFunction n = new SbiCatalogFunction();
@@ -88,23 +182,23 @@ class SbiCatalogFunctionDaoTest {
 		SbiFunctionInputColumn inCol = new SbiFunctionInputColumn();
 		inCol.setColType("type");
 		inCol.getId().setColName("name");
-		inCol.setFunction(n);
+		inCol.getId().setFunction(n);
 
 		inputColumns.add(inCol);
 
 		SbiFunctionOutputColumn outCol = new SbiFunctionOutputColumn();
 		outCol.setColFieldType("type");
 		outCol.setColType("type");
-		outCol.setFunction(n);
 		outCol.getId().setColName("name");
+		outCol.getId().setFunction(n);
 
 		outputColumns.add(outCol);
 
 		SbiFunctionInputVariable inVar = new SbiFunctionInputVariable();
-		inVar.setFunction(n);
 		inVar.getId().setVarName("name");
 		inVar.setVarType("type");
 		inVar.setVarValue("value");
+		inVar.getId().setFunction(n);
 
 		inputVariables.add(inVar);
 
@@ -116,7 +210,7 @@ class SbiCatalogFunctionDaoTest {
 		n.setKeywords("keyword");
 		n.setLabel(label);
 		n.setLanguage("language");
-		n.setName("name");
+		n.setName(name);
 //		n.setObjFunctions(objFunctions);
 		n.setOfflineScriptTrain("offlineScriptTrain");
 		n.setOfflineScriptUse("offlineScriptUse");
@@ -125,22 +219,7 @@ class SbiCatalogFunctionDaoTest {
 		n.setOwner("biadmin");
 		n.setType("type");
 
-		EntityTransaction transaction = em.getTransaction();
-		transaction.begin();
-
-		n = dao.create(n);
-
-		transaction.commit();
-
-		SbiCatalogFunction find = dao.find(n.getFunctionId());
-
-
-		transaction = em.getTransaction();
-		transaction.begin();
-
-		dao.delete(find.getFunctionId());
-
-		transaction.commit();
+		return n;
 	}
 
 }

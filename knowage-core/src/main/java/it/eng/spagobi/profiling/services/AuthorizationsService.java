@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.profiling.services;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.knowage.security.ProductProfiler;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -62,7 +62,7 @@ public class AuthorizationsService {
 				List<Integer> productTypeIds = tenantsDAO.loadSelectedProductTypesIds(organization);
 				IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 				List<String> authorizationsWithDuplicates = roleDAO.loadAllAuthorizationsNamesByProductTypes(productTypeIds);
-				Set<String> authorizations = new HashSet<String>(authorizationsWithDuplicates);
+				Set<String> authorizations = ProductProfiler.filterAuthorizationsByProduct(authorizationsWithDuplicates);
 				JSONArray authorizationsJSONArray = new JSONArray();
 
 				for (String authorization : authorizations) {

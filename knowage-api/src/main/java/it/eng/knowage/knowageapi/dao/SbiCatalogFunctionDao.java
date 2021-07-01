@@ -33,7 +33,7 @@ public interface SbiCatalogFunctionDao {
 
 	List<SbiCatalogFunction> findAll(String searchStr);
 
-	SbiCatalogFunction find(String id);
+	SbiCatalogFunction find(SbiCatalogFunction.Pk id);
 
 	SbiCatalogFunction create(SbiCatalogFunction function);
 
@@ -43,6 +43,6 @@ public interface SbiCatalogFunctionDao {
 	 * @throws KnowageBusinessException If the function cannot be deleted
 	 *   because referenced by other objects
 	 */
-	void delete(String id) throws KnowageBusinessException;
+	void delete(SbiCatalogFunction id) throws KnowageBusinessException;
 
 }

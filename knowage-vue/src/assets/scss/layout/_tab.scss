@@ -1,8 +1,26 @@
 .kn-tab {
     display: flex;
     flex-direction: column;
+    flex: 1;
     .p-tabview-panels {
         flex: 1;
         padding: 0;
+        .p-tabview-panel {
+            height: 100%;
+        }
     }
+    &.p-tabview {
+    .p-tabview-nav {
+        .p-tabview-ink-bar {
+            background-color: $color-primary;
+        }
+        li.p-highlight{
+            .p-tabview-nav-link {
+                color: $color-primary;
+            }
+        } 
+    }
+} 
 }
+
+

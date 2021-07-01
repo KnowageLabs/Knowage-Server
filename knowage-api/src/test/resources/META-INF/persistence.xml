@@ -25,20 +25,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery</class>
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag</class>
-
+		
 	</persistence-unit>
 
 	<persistence-unit name="knowage-functioncatalog" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiCatalogFunction</class>
-		<class>it.eng.knowage.knowageapi.dao.dto.SbiFunctionInputVariableId</class>
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiFunctionInputVariable</class>
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiObjFunction</class>
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiFunctionInputColumn</class>
-		<class>it.eng.knowage.knowageapi.dao.dto.SbiFunctionInputColumn$Pk</class>
 		<class>it.eng.knowage.knowageapi.dao.dto.SbiFunctionOutputColumn</class>
-		<class>it.eng.knowage.knowageapi.dao.dto.SbiFunctionOutputColumn$Pk</class>
 
 	</persistence-unit>
 
