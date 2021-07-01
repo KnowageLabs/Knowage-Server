@@ -275,6 +275,7 @@ export default defineComponent({
             await this.loadDatasources()
             await this.loadSelectedBusinessModelData()
             this.loading = false
+            console.log(this.datasources)
         },
         onFieldChange(event: any) {
             this.selectedBusinessModel[event.fieldName] = event.value

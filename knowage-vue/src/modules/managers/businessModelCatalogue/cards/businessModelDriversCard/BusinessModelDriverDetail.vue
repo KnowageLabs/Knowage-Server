@@ -180,9 +180,9 @@
                 <div v-for="mode in modes" :key="mode.useID">
                     <hr />
                     <p>{{ $t('managers.buisnessModelCatalogue.modality') + ': ' + mode.name }}</p>
-                    <div class="p-d-flex">
+                    <div class="p-d-flex p-ai-center">
                         <div class="mode-inputs">
-                            <Checkbox :value="mode.useID" v-model="selectedModes" />
+                            <Checkbox class="p-mr-2" :value="mode.useID" v-model="selectedModes" />
                             <label>{{ $t('managers.buisnessModelCatalogue.check') }}</label>
                         </div>
                         <div class="mode-inputs">
@@ -220,6 +220,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iBusinessModelDriver } from '../../BusinessModelCatalogue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import axios from 'axios'
 import businessModelDriverDetailDescriptor from './BusinessModelDriverDetailDescriptor.json'
@@ -300,12 +301,13 @@ export default defineComponent({
         return {
             businessModelDriverDetailDescriptor,
             businessModelDriverDetailValidationDescriptor,
-            driver: null as any,
-            drivers: [] as any[],
-            oldDropdownValue: null,
+            driver: null as iBusinessModelDriver | null,
+            drivers: [] as iBusinessModelDriver[],
+            oldDropdownValue: null as any,
             analyticalDrivers: [] as any[],
             condition: {} as any,
             conditions: [] as any[],
+            originalModalities: [] as any[],
             lovs: [] as any[],
             modes: [] as any[],
             selectedModes: [] as any,
@@ -335,7 +337,7 @@ export default defineComponent({
     methods: {
         loadSelectedDriver() {
             this.oldDropdownValue = null
-            this.driver = this.selectedDriver
+            this.driver = this.selectedDriver as iBusinessModelDriver
 
             if (this.driver) {
                 if (this.driver.parameter) {
@@ -356,7 +358,7 @@ export default defineComponent({
         },
         async loadDataDependencies() {
             this.conditions = []
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies?driverId=${this.driver.id}`).then((response) =>
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies?driverId=${this.driver?.id}`).then((response) =>
                 response.data.forEach((condition: any) => {
                     const index = this.conditions.findIndex((cond) => cond.parFatherId === condition.parFatherId && cond.filterOperation == condition.filterOperation && cond.logicOperator == condition.logicOperator)
                     condition.modalities = []
@@ -370,10 +372,10 @@ export default defineComponent({
             )
         },
         async loadModes() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver.parameter.id}/modes`).then((response) => (this.modes = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/modes`).then((response) => (this.modes = response.data))
         },
         async loadLovs() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver.parameter.id}/lovs`).then((response) => (this.lovs = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/lovs`).then((response) => (this.lovs = response.data))
         },
         getLovs(lovId: number) {
             const index = this.lovs.findIndex((lov) => lov.id === lovId)
@@ -386,12 +388,11 @@ export default defineComponent({
             const index = this.selectedModes.findIndex((id: any) => {
                 return id === modeId
             })
-            return !(index > -1)
+            return index === -1
         },
         urlNotUnique(url: string) {
-            const index = this.drivers.findIndex((driver) => driver.parameterUrlName === url && driver.id != this.driver.id)
-
-            return !(index > -1)
+            const index = this.drivers.findIndex((driver) => driver.parameterUrlName === url && driver.id != this.driver?.id)
+            return index === -1
         },
         showAnalyticalDropdownConfirm() {
             if (this.oldDropdownValue) {
@@ -405,33 +406,58 @@ export default defineComponent({
             }
         },
         resetDrodpwonValue() {
-            this.driver.parameter = this.oldDropdownValue
+            if (this.driver) {
+                this.driver.parameter = this.oldDropdownValue
+            }
         },
         async saveCondition(condition: any) {
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, condition).finally(() => (this.conditionFormVisible = false))
         },
-        handleSubmit() {
+        async handleSubmit() {
+            console.log('CONDITION FOR SUMBIT', this.condition)
             if (this.condition.id) {
                 this.operation = 'update'
             }
+            console.log('ORIGINAL MODALITIES', this.originalModalities)
 
-            this.selectedModes.forEach((id: number) => {
-                Object.keys(this.modalities).forEach((modalityId) => {
-                    console.log(modalityId + ' ========== ' + id)
-                    if (+modalityId === id) {
-                        const conditionForPost = { ...this.condition, parFatherId: this.condition.parFather.id, parFatherUrlName: this.driver.parameterUrlName, parId: this.driver.id, useModeId: +modalityId, filterColumn: this.modalities[id] }
+            const modalityKeys = Object.keys(this.modalities)
+            for (let i = 0; i < this.selectedModes.length; i++) {
+                for (let j = 0; j < modalityKeys.length; j++) {
+                    if (this.selectedModes[i] === +modalityKeys[j]) {
+                        const conditionForPost = {
+                            ...this.condition,
+                            parFatherId: this.condition.parFather.id,
+                            parFatherUrlName: (this.selectedDriver as iBusinessModelDriver).parameterUrlName,
+                            parId: (this.selectedDriver as iBusinessModelDriver).id,
+                            useModeId: +modalityKeys[j],
+                            filterColumn: this.modalities[this.selectedModes[i]]
+                        }
+
+                        if (this.operation === 'update') {
+                            const index = this.originalModalities.findIndex((modality) => {
+                                console.log(modality.conditionId + ' ==== ' + conditionForPost.id)
+                                return modality.conditionId === conditionForPost.id
+                            })
+                            console.log('INDEX', index)
+                            if (index > -1) {
+                                this.originalModalities.splice(index, 1)
+                            }
+                        }
+
                         if (!conditionForPost.prog) {
                             conditionForPost.prog = 0
                         }
                         conditionForPost.prog++
                         delete conditionForPost.parFather
                         delete conditionForPost.modalities
-                        this.sendRequest(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, conditionForPost)
+                        await this.sendRequest(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, conditionForPost)
                     }
-                })
-            })
+                }
+            }
 
-            // TODO pitati za cekanje svih (prebaciti u for?)
+            console.log('ORIGINAL MODALITIES AFTER', this.originalModalities)
+            this.originalModalities.forEach((modality) => this.deleteCondition(modality))
+
             this.loadData()
         },
         sendRequest(url: string, condition: any) {
@@ -464,20 +490,29 @@ export default defineComponent({
         showForm(event: any) {
             if (event.value) {
                 this.selectedModes = []
+                this.originalModalities = []
                 this.condition = { ...event.value, parFather: this.selectedDriver }
                 this.condition.modalities.forEach((modality: any) => {
+                    this.originalModalities.push(modality)
                     this.selectedModes.push(modality.useModeId)
                     this.modalities[modality.useModeId] = modality.filterColumn
                 })
             } else {
                 this.selectedModes = []
-                this.condition = {}
+                this.condition = {
+                    parFather: this.drivers[0],
+                    filterOperation: 'equal',
+                    logicOperator: 'AND'
+                }
             }
             this.conditionFormVisible = true
+            console.log('THIS SELECETED', this.condition)
         },
         setChanged() {
-            this.driver.status = 'CHANGED'
-            this.driver.numberOfErrors = this.v$.$errors.length
+            if (this.driver) {
+                this.driver.status = 'CHANGED'
+                this.driver.numberOfErrors = this.v$.$errors.length
+            }
         },
         closeForm() {
             this.conditionFormVisible = false
@@ -506,13 +541,17 @@ export default defineComponent({
             })
         },
         deleteAllConditions() {
-            this.oldDropdownValue = this.driver.parameter
+            this.setChanged()
+            this.oldDropdownValue = this.driver?.parameter
             this.conditions.forEach((condition) => this.deleteCondition(condition))
         },
         loadData() {
             this.loadDataDependencies()
             this.loadModes()
             this.loadLovs()
+            this.selectedModes = []
+            this.condition = {}
+            this.operation = 'insert'
             this.conditionFormVisible = false
         }
     }

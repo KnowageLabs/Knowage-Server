@@ -32,5 +32,6 @@ export interface iBusinessModelDriver {
     modifiable: number,
     required: Boolean,
     visible: Boolean,
-    numberOfErrors?: number
+    numberOfErrors?: number,
+    status?: string
 }

@@ -312,6 +312,7 @@ export default defineComponent({
         })
         this.loadBusinessModel()
         this.loadCategories()
+        this.loadDatasources()
     },
     unmounted() {
         window.removeEventListener('message', (event: any) => {
