@@ -17,11 +17,11 @@
  */
 package it.eng.knowage.resourcemanager.resource.utils;
 
-public class CustomFile {
+public class FileDTO {
 
 	private String name;
 
-	public CustomFile(String name) {
+	public FileDTO(String name) {
 		this.name = name;
 	}
 

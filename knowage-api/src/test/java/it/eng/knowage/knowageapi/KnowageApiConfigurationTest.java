@@ -80,20 +80,10 @@ public class KnowageApiConfigurationTest {
 	private Map<String, Object> getEntityManagerFactoriesProperties() {
 		Map<String, Object> properties = new HashMap<>();
 
-		properties.put("javax.persistence.jdbc.url", "jdbc:mariadb://localhost:3310/knowage_master");
-		properties.put("javax.persistence.jdbc.driver", "org.mariadb.jdbc.Driver");
-		properties.put("javax.persistence.jdbc.user", "root");
-		properties.put("javax.persistence.jdbc.password", "root");
-
-//		properties.put("javax.persistence.jdbc.url", "jdbc:postgresql://localhost:5432/knowage_master");
-//		properties.put("javax.persistence.jdbc.driver", "org.mariadb.jdbc.Driver");
-//		properties.put("javax.persistence.jdbc.user", "knowage_master");
-//		properties.put("javax.persistence.jdbc.password", "knowage_master");
-//		properties.put("hibernate.archive.autodetection", "class");
-//		properties.put("hibernate.show_sql", "true");
-//		properties.put("hibernate.format_sql", "true");
-//		properties.put("hbm2ddl.auto", "create");
-
+		properties.put("javax.persistence.jdbc.url", "jdbc:oracle:thin:@localhost:1521:xe");
+		properties.put("javax.persistence.jdbc.driver", "oracle.jdbc.driver.OracleDriver");
+		properties.put("javax.persistence.jdbc.user", "knowage");
+		properties.put("javax.persistence.jdbc.password", "knowage");
 		return properties;
 	}
 
