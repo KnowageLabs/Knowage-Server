@@ -3,5 +3,5 @@ export interface ICatalogFunctionTemplate {
 	name: string
 	type: string
 	description?: string
-	keywords?: Array<string>
+	tags?: Array<string>
 }
