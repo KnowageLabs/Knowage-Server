@@ -705,7 +705,7 @@
 
 			var mapFilterSrc =
 				sbiModule_config.contextName + '/restful-services/publish?PUBLISHER='
-					+ '/WEB-INF/jsp/behaviouralmodel/analyticaldriver/mapFilter/geoMapFilter.jsp?'
+					+ 'geoMapFilter?'
 					+ 'SELECTEDLAYER=' + parameter.selectedLayer
 					+ '&SELECTEDLAYERPROP=' + parameter.selectedLayerProp
 					+ '&MULTIVALUE=' + parameter.multivalue

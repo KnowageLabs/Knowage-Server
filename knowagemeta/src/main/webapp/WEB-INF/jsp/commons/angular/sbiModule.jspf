@@ -566,7 +566,7 @@ sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModu
 		$mdDialog.show({
 			controller: function($scope,$mdDialog,translate){
     	  		$scope.translate=translate;
-    	  		$scope.url= sbiModule_config.contextName + '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?'+data;
+    	  		$scope.url= sbiModule_config.contextName + '/restful-services/publish?PUBLISHER=glossaryHelpOnline?'+data;
     	  		$scope.close = function() {
    		    		$mdDialog.hide();
    		  		};

@@ -26,6 +26,7 @@ import javax.ws.rs.core.Context;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.ResourcePublisherMapping;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 /**
@@ -47,21 +48,16 @@ public class PublisherService extends AbstractSpagoBIResource {
 
 	private static Logger logger = Logger.getLogger(PublisherService.class);
 	private static final String PUBLISHER = "PUBLISHER";
-	private static final String JSP_PATH = "/WEB-INF/jsp/";
 
 	@GET
 	public void publish() {
 
 		try {
 
-			String publisher = request.getParameter(PUBLISHER);
+			String publisherKey = request.getParameter(PUBLISHER);
 
-			if (!isPublisherValid(publisher)) {
-				logger.error("The user " + getUserProfile().getUserId() + " is trying to read a secured file content using publisher");
-				throw new IllegalAccessException("Unauthorized access to a system resource.");
-			}
-
-			if (publisher != null) {
+			if (publisherKey != null) {
+				String publisher = ResourcePublisherMapping.get(publisherKey);
 				request.getRequestDispatcher(publisher).forward(request, response);
 			}
 
@@ -69,11 +65,6 @@ public class PublisherService extends AbstractSpagoBIResource {
 			logger.error("Error forwarding request", e);
 			throw new SpagoBIServiceException("publish", e.getMessage());
 		}
-	}
-
-	/* Vulnerability patch: allows only jsp publishing */
-	private boolean isPublisherValid(String publisher) {
-		return publisher != null && publisher.matches("^/WEB-INF/jsp/((?!\\.\\.\\\\).*)\\.jsp(\\?.*)?$");
 	}
 
 }
