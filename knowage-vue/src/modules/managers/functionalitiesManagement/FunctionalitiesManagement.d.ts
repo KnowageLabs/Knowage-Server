@@ -6,3 +6,12 @@ export interface iFunctionality {
     codType: string,
     code: string
 }
+
+export interface iNode {
+    id: number,
+    key: number,
+    parentId?: number,
+    label: string,
+    children?: iNode[],
+    data: string
+}

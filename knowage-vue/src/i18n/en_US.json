@@ -156,6 +156,9 @@
             "valueDescription": "Value description",
             "valueName": "Value name"
         },
+        "functionalitiesManagement": {
+            "title": "functionalities tree"
+        },
         "menu": {
             "admin": {
                 "importExport": "Import/Export"
