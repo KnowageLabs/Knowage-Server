@@ -157,6 +157,8 @@
             "valueName": "Value name"
         },
         "functionalitiesManagement": {
+            "moveDown ": " Move down",
+            "moveUp": " Move up",
             "title": "functionalities tree"
         },
         "menu": {

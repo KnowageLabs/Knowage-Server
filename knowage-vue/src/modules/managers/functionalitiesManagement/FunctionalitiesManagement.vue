@@ -15,11 +15,13 @@
                 <div>
                     <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @node-select="setSelected($event)" data-test="functionality-tree">
                         <template #default="slotProps">
-                            <div class="p-d-flex p-flex-row p-ai-center">
+                            <div class="p-d-flex p-flex-row p-ai-center" @mouseover="test[slotProps.node.id] = true" @mouseleave="test[slotProps.node.id] = false">
                                 <span>{{ slotProps.node.label }}</span>
-                                <Button v-if="canBeMovedUp(slotProps.node)" icon="fa fa-arrow-up" class="p-button-link p-button-sm" @click.stop="moveUp(slotProps.node.id)" />
-                                <Button v-if="canBeMovedDown" icon="fa fa-arrow-down" class="p-button-link p-button-sm" @click.stop="moveDown(slotProps.node.id)" />
-                                <Button v-if="canBeDeleted(slotProps.node)" icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteFunctionalityConfirm(slotProps.node.id)" data-test="delete-button" />
+                                <div v-show="test[slotProps.node.id]">
+                                    <Button v-if="canBeMovedUp(slotProps.node.data)" icon="fa fa-arrow-up" v-tooltip.top="$t('managers.functionalitiesManagement.moveUp')" class="p-button-link p-button-sm" @click.stop="moveUp(slotProps.node.id)" />
+                                    <Button v-if="canBeMovedDown(slotProps.node.data)" icon="fa fa-arrow-down" v-tooltip.top="$t('managers.functionalitiesManagement.moveDown ')" class="p-button-link p-button-sm" @click.stop="moveDown(slotProps.node.id)" />
+                                    <Button v-if="canBeDeleted(slotProps.node)" icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-link p-button-sm" @click.stop="deleteFunctionalityConfirm(slotProps.node.id)" data-test="delete-button" />
+                                </div>
                             </div>
                         </template>
                     </Tree>
@@ -54,7 +56,8 @@ export default defineComponent({
             selectedFunctionality: null as iFunctionality | null,
             expandedKeys: {},
             touched: false,
-            loading: false
+            loading: false,
+            test: []
         }
     },
     async created() {
@@ -140,7 +143,6 @@ export default defineComponent({
         },
         setSelected(functionality: iFunctionality) {
             this.selectedFunctionality = functionality
-            console.log('SELECTED FUNCTIONALITY: ', this.selectedFunctionality)
         },
         canBeMovedUp(functionality: iFunctionality) {
             return functionality.prog !== 1
@@ -149,8 +151,19 @@ export default defineComponent({
             axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveUp/${functionalityId}`)
             this.loadPage()
         },
-        canBeMovedDown() {
-            // TODO
+        canBeMovedDown(functionality: iFunctionality) {
+            let canBeMoved = false
+            this.functionalities.forEach((currentFunctionality) => {
+                if (functionality.parentId === currentFunctionality.parentId && functionality.prog < currentFunctionality.prog) {
+                    canBeMoved = true
+                }
+            })
+
+            return canBeMoved
+        },
+        moveDown(functionalityId: number) {
+            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveDown/${functionalityId}`)
+            this.loadPage()
         },
         canBeDeleted(functionality: iFunctionality) {
             return functionality.parentId && functionality.codType !== 'LOW_FUNCT'
