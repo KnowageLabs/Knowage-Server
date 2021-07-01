@@ -5,15 +5,18 @@ import metadataManagementRoutes from '@/modules/managers/metadataManagement/Meta
 import usersManagementRoutes from '@/modules/managers/usersManagement/UsersManagement.routes.js'
 import profileAttributesRoutes from '@/modules/managers/profileAttributesManagement/ProfileAttributesManagement.routes.js'
 import rolesManagementRoutes from '@/modules/managers/rolesManagement/RolesManagement.routes.js'
+import functionalitiesManagementRoutes from '@/modules/managers/functionalitiesManagement/FunctionalitiesManagement.routes.js'
 
 const baseRoutes = []
 
-const routes = baseRoutes.concat(galleryManagementRoutes)
-  .concat(configurationManagementRoutes)
-  .concat(domainsManagementRoutes)
-  .concat(metadataManagementRoutes)
-  .concat(usersManagementRoutes)
-  .concat(profileAttributesRoutes)
-  .concat(rolesManagementRoutes)
+const routes = baseRoutes
+    .concat(galleryManagementRoutes)
+    .concat(configurationManagementRoutes)
+    .concat(domainsManagementRoutes)
+    .concat(metadataManagementRoutes)
+    .concat(usersManagementRoutes)
+    .concat(profileAttributesRoutes)
+    .concat(rolesManagementRoutes)
+    .concat(functionalitiesManagementRoutes)
 
 export default routes
