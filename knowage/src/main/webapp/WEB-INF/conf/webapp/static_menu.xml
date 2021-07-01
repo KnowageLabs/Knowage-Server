@@ -20,7 +20,7 @@
 
 			<ITEM id="2001" label="menu.Attributes"
 				requiredFunctionality="ProfileManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/profileAttributesManagement.jsp" />
+				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=profileAttributesManagement" />
 			<ITEM id="2002" label="menu.Roles"
 				requiredFunctionality="ProfileManagement"
 				to="/roles-management" />

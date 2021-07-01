@@ -58,6 +58,10 @@ public class PublisherService extends AbstractSpagoBIResource {
 
 			if (publisherKey != null) {
 				String publisher = ResourcePublisherMapping.get(publisherKey);
+				if (publisher == null) {
+					logger.error("The user " + getUserProfile().getUserId() + "is trying to read a secured file content using publisher");
+					throw new IllegalAccessException("Unauthorized access to a system resource");
+				}
 				request.getRequestDispatcher(publisher).forward(request, response);
 			}
 
