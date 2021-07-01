@@ -1,9 +1,9 @@
 <template>
 	<Dialog class="kn-dialog--toolbar--primary importExportDialog" v-bind:visible="visibility" footer="footer" :header="$t('common.import')" :closable="false" modal>
 		<div v-if="step == 0">
-			<FileUpload name="demo[]" :chooseLabel="$t('common.choose')" :customUpload="true" @uploader="onUpload" @remove="onDelete" auto="true" :maxFileSize="10000000" accept="application/zip, application/x-zip-compressed">
+			<FileUpload name="demo[]" :chooseLabel="$t('common.choose')" :customUpload="true" @uploader="onUpload" @remove="onDelete" auto="true" :maxFileSize="10000000" accept="application/zip, application/x-zip-compressed" :multiple="false" :fileLimit="1">
 				<template #empty>
-					<p>{{ $t('common.dragAndDropFilesHere') }}</p>
+					<p>{{ $t('common.dragAndDropFileHere') }}</p>
 				</template>
 			</FileUpload>
 		</div>
@@ -13,23 +13,23 @@
 					<template #header>
 						{{ $t(functionality.label).toUpperCase() }}
 
-						<Badge v-if="selectedItems[functionality.type].length && selectedItems[functionality.type].length > 0" :value="selectedItems[functionality.type].length"></Badge>
+						<Badge class="p-ml-1" v-if="selectedItems[functionality.type].length && selectedItems[functionality.type].length > 0" :value="selectedItems[functionality.type].length"></Badge>
 					</template>
 					<DataTable
 						ref="dt"
 						:value="packageItems[functionality.type]"
 						v-model:selection="selectedItems[functionality.type]"
 						v-model:filters="filters"
-						class="p-datatable-sm kn-table"
+						class="p-datatable-sm kn-table functionalityTable"
 						dataKey="id"
 						:paginator="true"
 						:rows="10"
 						paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-						:rowsPerPageOptions="[10]"
 						responsiveLayout="stack"
 						breakpoint="960px"
 						:currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
 						:globalFilterFields="['name', 'type', 'tags', 'keywords']"
+						:loading="loading"
 					>
 						<template #header>
 							<div class="table-header">
@@ -67,7 +67,7 @@
 		</div>
 
 		<template #footer>
-			<Button v-bind:visible="visibility" class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="closeDialog" />
+			<Button v-bind:visible="visibility" class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="resetAndClose" />
 
 			<Button v-if="step == 0" v-bind:visible="visibility" class="kn-button kn-button--primary" v-t="'common.next'" :disabled="uploadedFiles && uploadedFiles.length == 0" @click="goToChooseElement(uploadedFiles)" />
 			<span v-if="step == 1">
@@ -106,7 +106,6 @@
 				fileName: '',
 				filters: {},
 				loading: false,
-
 				packageItems: {
 					gallery: [],
 					catalogFunction: []
@@ -130,15 +129,36 @@
 			}
 		},
 		methods: {
+			async cleanTempDirectory() {
+				if (this.token != '') {
+					this.uploadedFiles = []
+					await axios.get(process.env.VUE_APP_API_PATH + '1.0/import/cleanup', { params: { token: this.token } }).then(
+						(response) => {
+							if (!response.data.errors) {
+								this.token = ''
+								this.packageItems = {
+									gallery: [],
+									catalogFunction: []
+								}
+							}
+						},
+						(error) => console.log(error)
+					)
+				}
+			},
+			closeDialog(): void {
+				this.$emit('update:visibility', false)
+			},
+			emitImport(): void {
+				this.$emit('import', { files: this.uploadedFiles })
+			},
 			getData(type): Array<IColumn> {
-				this.loading = true
 				let columns = this.importExportDescriptor['import'][type]['column']
 				columns.sort(function(a, b) {
 					if (a.position > b.position) return 1
 					if (a.position < b.position) return -1
 					return 0
 				})
-				this.loading = false
 				return columns
 			},
 			getPackageItems(e) {
@@ -146,27 +166,6 @@
 			},
 			getSelectedItems(e) {
 				this.selectedItems[e.functionality] = e.items
-			},
-			closeDialog(): void {
-				this.resetToFirstStep()
-				this.$emit('update:visibility', false)
-			},
-			onUpload(data) {
-				// eslint-disable-next-line
-				// @ts-ignore
-				this.uploadedFiles[0] = data.files[0]
-			},
-			onDelete(idx) {
-				this.uploadedFiles.splice(idx)
-			},
-			emitImport(): void {
-				this.$emit('import', { files: this.uploadedFiles })
-			},
-			isImportDisabled(): Boolean {
-				for (var idx in this.selectedItems) {
-					if (this.selectedItems[idx].length > 0) return false
-				}
-				return true
 			},
 			async goToChooseElement(uploadedFiles) {
 				if (this.uploadedFiles.length == 1) {
@@ -198,9 +197,43 @@
 					this.$store.commit('setWarning', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
 				}
 			},
-			async startImport() {
-				this.loading = true
-				await axios
+			isImportDisabled(): Boolean {
+				for (var idx in this.selectedItems) {
+					if (this.selectedItems[idx].length > 0) return false
+				}
+				return true
+			},
+			onDelete(idx) {
+				this.uploadedFiles.splice(idx)
+			},
+			onUpload(data) {
+				// eslint-disable-next-line
+				// @ts-ignore
+				this.uploadedFiles[0] = data.files[0]
+			},
+			resetAndClose(): void {
+				this.resetToFirstStep()
+				this.closeDialog()
+			},
+			resetSearchFilter(): void {
+				this.filters['global'].value = ''
+			},
+			async resetToFirstStep() {
+				this.step = 0
+				this.selectedItems = {
+					gallery: [],
+					catalogFunction: []
+				}
+				this.packageItems = {
+					gallery: [],
+					catalogFunction: []
+				}
+				this.cleanTempDirectory()
+			},
+
+			startImport() {
+				this.$store.commit('setLoading', true)
+				axios
 					.post(process.env.VUE_APP_API_PATH + '1.0/import/bulk', this.streamlineSelectedItemsArray(), {
 						headers: {
 							// Overwrite Axios's automatically set Content-Type
@@ -210,34 +243,19 @@
 					.then(
 						(response) => {
 							if (response.data.errors) {
-								this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
+								this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
 							} else {
-								this.$store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('importExport.import.successfullyCompleted') })
-								this.closeDialog()
+								this.$store.commit('setInfo', { title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
 							}
+
+							this.$store.commit('setLoading', false)
 						},
-						(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
+						(error) => this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t(error) })
 					)
-				this.loading = false
+				this.token = ''
+				this.resetAndClose()
 			},
-			async resetToFirstStep() {
-				this.step = 0
-				this.selectedItems = {
-					gallery: [],
-					catalogFunction: []
-				}
-				if (this.token != '') {
-					this.uploadedFiles = []
-					await axios.get(process.env.VUE_APP_API_PATH + '1.0/import/cleanup', { params: { token: this.token } }).then(
-						(response) => {
-							if (!response.data.errors) {
-								this.token = ''
-							}
-						},
-						(error) => console.log(error)
-					)
-				}
-			},
+
 			streamlineSelectedItemsArray(): JSON {
 				let selectedItemsToBE = {} as JSON
 				selectedItemsToBE['selectedItems'] = {}
@@ -254,9 +272,6 @@
 				selectedItemsToBE['token'] = this.token
 
 				return selectedItemsToBE
-			},
-			resetSearchFilter(): void {
-				this.filters['global'].value = ''
 			}
 		}
 	})
@@ -278,16 +293,16 @@
 				@extend .kn-button--primary;
 			}
 		}
+
+		.functionalityTable {
+			min-height: 400px;
+			height: 40%;
+		}
 	}
 	.importExportTags {
 		background-color: $color-default;
 	}
 	.thirdButton {
 		float: left;
-	}
-	.importExportImport {
-		min-height: 600px;
-		height: 60%;
-		max-height: 1200px;
 	}
 </style>

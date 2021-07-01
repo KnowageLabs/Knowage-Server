@@ -23,10 +23,10 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=profileAttributesManagement" />
 			<ITEM id="2002" label="menu.Roles"
 				requiredFunctionality="ProfileManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/rolesManagement.jsp" />
+				to="/roles-management" />
 			<ITEM id="2003" label="menu.Users"
 				requiredFunctionality="ProfileManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp" />
+				to="/user-management" />
 			<ITEM id="2004" label="menu.menuconfiguration"
 				requiredFunctionality="MenuManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=menuConfiguration" />
@@ -249,7 +249,7 @@
 		<ITEM id="10004" label="menu.Users"
 			requiredFunctionality="FinalUsersManagement"
 			iconCls="fa fa-users"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp" />
+			to="/users-management/" />
 		
 		<ITEM id="10005" label="menu.HierarchiesEditor"
 			requiredFunctionality="HierarchiesManagement"

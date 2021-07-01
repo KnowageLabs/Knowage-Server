@@ -53,7 +53,7 @@ public class FunctionCompleteDTO2SbiCatalogFunction implements Function<Function
 				.map(TO_SBI_FUNCTION_INPUT_COLUMN)
 				.map(e -> {
 					// Very important!
-					e.setFunction(ret);
+					e.getId().setFunction(ret);
 					return e;
 				})
 				.collect(toList());
@@ -63,7 +63,7 @@ public class FunctionCompleteDTO2SbiCatalogFunction implements Function<Function
 				.map(TO_SBI_FUNCTION_INPUT_VARIABLE)
 				.map(e -> {
 					// Very important!
-					e.setFunction(ret);
+					e.getId().setFunction(ret);
 					return e;
 				})
 				.collect(toList());
@@ -73,7 +73,7 @@ public class FunctionCompleteDTO2SbiCatalogFunction implements Function<Function
 				.map(TO_SBI_FUNCTION_OUTPUT_COLUMN)
 				.map(e -> {
 					// Very important!
-					e.setFunction(ret);
+					e.getId().setFunction(ret);
 					return e;
 				})
 				.collect(toList());
@@ -85,19 +85,20 @@ public class FunctionCompleteDTO2SbiCatalogFunction implements Function<Function
 		ret.setBenchmarks(t.getBenchmark());
 		ret.setDescription(t.getDescription());
 		ret.setFamily(t.getFamily());
-		ret.setFunctionId(functionId);
 		ret.getInputColumns().addAll(beInputCols);
 		ret.getInputVariables().addAll(beInputVars);
 		ret.setKeywords(beKeywords);
 		ret.setLabel(t.getLabel());
+		ret.setLanguage(t.getLanguage());
 		ret.setName(t.getName());
 		ret.setType(t.getType());
 		// ret.getObjFunctions() not mapped
 		ret.setOfflineScriptTrain(t.getOfflineScriptTrain());
 		ret.setOfflineScriptUse(t.getOfflineScriptUse());
 		ret.setOnlineScript(t.getOnlineScript());
-		ret.getOutputColumns().addAll(beOutputCols);
 		ret.setOwner(t.getOwner());
+		ret.getOutputColumns().addAll(beOutputCols);
+		ret.getId().setFunctionId(functionId);
 		// organization and other technical fields are managed by the DAO
 
 		return ret;

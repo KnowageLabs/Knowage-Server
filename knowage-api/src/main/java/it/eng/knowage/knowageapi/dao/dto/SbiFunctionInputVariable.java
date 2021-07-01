@@ -17,7 +17,7 @@
  */
 package it.eng.knowage.knowageapi.dao.dto;
 
-import java.io.Serializable;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -26,65 +26,55 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 
 /**
  * @author Marco Libanori
  */
 @Entity
 @Table(name = "SBI_FUNCTION_INPUT_VARIABLE")
-@FilterDef(name = "organization", parameters = {
-		@ParamDef(name = "organization", type = "string")
-})
-@Filter(name = "organization", condition = "organization like :organization")
-@NamedQueries({
-	@NamedQuery(name = "SbiFunctionInputVariable.delete", query = "DELETE FROM SbiFunctionInputVariable q WHERE q.id.varName = :varName AND q.id.functionId = :functionId")
-})
-public class SbiFunctionInputVariable extends AbstractEntity {
+public class SbiFunctionInputVariable extends AbstractEntity implements Comparable<SbiFunctionInputVariable> {
 
 	@Embeddable
-	public static class Pk implements Serializable {
+	public static class Pk implements AbstractSbiCatalogFunctionForeignKey {
 
 		private static final long serialVersionUID = 7914853138663962169L;
 
-		@Column(name = "FUNCTION_UUID", insertable = false, updatable = false)
-		private String functionId;
+		@ManyToOne
+		@JoinColumn(name = "FUNCTION_UUID", referencedColumnName = "FUNCTION_UUID", insertable = false, updatable = false)
+		@JoinColumn(name = "ORGANIZATION", referencedColumnName = "ORGANIZATION", insertable = false, updatable = false)
+		private SbiCatalogFunction function;
 
-		@Column(name = "VAR_NAME", nullable = false, updatable = false)
+		@Column(name = "VAR_NAME")
 		@Size(max = 100)
 		private String varName;
 
-		public String getFunctionId() {
-			return functionId;
+		@Override
+		public SbiCatalogFunction getFunction() {
+			return function;
 		}
 
-		public void setFunctionId(String functionId) {
-			this.functionId = functionId;
+		@Override
+		public void setFunction(SbiCatalogFunction function) {
+			this.function = function;
 		}
 
 		public String getVarName() {
 			return varName;
 		}
 
-		public void setVarName(String colName) {
-			this.varName = colName;
+		public void setVarName(String varName) {
+			this.varName = varName;
 		}
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
+			result = prime * result + ((function == null) ? 0 : function.hashCode());
 			result = prime * result + ((varName == null) ? 0 : varName.hashCode());
-			result = prime * result + ((functionId == null) ? 0 : functionId.hashCode());
 			return result;
 		}
 
@@ -97,33 +87,28 @@ public class SbiFunctionInputVariable extends AbstractEntity {
 			if (getClass() != obj.getClass())
 				return false;
 			Pk other = (Pk) obj;
+			if (function == null) {
+				if (other.function != null)
+					return false;
+			} else if (!function.equals(other.function))
+				return false;
 			if (varName == null) {
 				if (other.varName != null)
 					return false;
 			} else if (!varName.equals(other.varName))
-				return false;
-			if (functionId == null) {
-				if (other.functionId != null)
-					return false;
-			} else if (!functionId.equals(other.functionId))
 				return false;
 			return true;
 		}
 
 		@Override
 		public String toString() {
-			return "Pk [functionId=" + functionId + ", varName=" + varName + "]";
+			return "Pk [function=" + function + ", varName=" + varName + "]";
 		}
 
 	}
 
 	@EmbeddedId
 	private Pk id = new Pk();
-
-	@ManyToOne
-	@JoinColumn(name = "FUNCTION_UUID", referencedColumnName = "FUNCTION_UUID", insertable = false, updatable = false)
-	@MapsId("functionId")
-	private SbiCatalogFunction function;
 
 	@Column(name = "VAR_VALUE")
 	@NotNull
@@ -141,14 +126,6 @@ public class SbiFunctionInputVariable extends AbstractEntity {
 
 	public void setId(Pk id) {
 		this.id = id;
-	}
-
-	public SbiCatalogFunction getFunction() {
-		return function;
-	}
-
-	public void setFunction(SbiCatalogFunction function) {
-		this.function = function;
 	}
 
 	public String getVarValue() {
@@ -207,6 +184,14 @@ public class SbiFunctionInputVariable extends AbstractEntity {
 	@Override
 	public String toString() {
 		return "SbiFunctionInputVariable [id=" + id + ", varValue=" + varValue + ", varType=" + varType + "]";
+	}
+
+	@Override
+	public int compareTo(SbiFunctionInputVariable o) {
+		String thisVarName = Optional.of(this.id).map(e -> e.varName).orElse("");
+		String otheVarName = Optional.of(o).map(e -> o.id).map(e -> e.varName).orElse("");
+
+		return thisVarName.compareTo(otheVarName);
 	}
 
 }

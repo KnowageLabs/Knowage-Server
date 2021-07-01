@@ -1,0 +1,19 @@
+{
+    "card": {
+        "style": {
+            "height": "100%",
+            "margin-bottom": "2em",
+            "width": "100%"
+        }
+    },
+    "column": {
+        "header": {
+            "style": {
+                "text-transform": "capitalize"
+            }
+        },
+        "style": {
+            "width": "50%"
+        }
+    }
+}

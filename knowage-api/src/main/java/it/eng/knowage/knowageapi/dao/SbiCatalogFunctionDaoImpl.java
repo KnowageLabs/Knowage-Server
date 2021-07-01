@@ -22,6 +22,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -29,10 +30,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.Filter;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
@@ -48,14 +46,11 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 	@Autowired
 	private BusinessRequestContext businessRequestContext;
 
-	@Autowired
-	@Qualifier("knowage-functioncatalog")
+	@PersistenceContext(unitName = "knowage-functioncatalog")
 	private EntityManager em;
 
 	@Override
 	public List<SbiCatalogFunction> findAll(String searchStr) {
-
-		init();
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<SbiCatalogFunction> q = cb.createQuery(SbiCatalogFunction.class);
@@ -63,6 +58,9 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 
 		q = q.select(root);
 
+		Path<String> organizationCol = root.get("id").get("organization");
+
+		Predicate searchPredicate = null;
 		if (isNotEmpty(searchStr)) {
 			Path<String> nameCol = root.get("name");
 			Path<String> labelCol = root.get("label");
@@ -72,9 +70,15 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 			Predicate nameLike = cb.like(nameCol, val);
 			Predicate labelLike = cb.like(labelCol, val);
 
-			q = q.where(cb.or(nameLike, labelLike));
+			searchPredicate = cb.or(nameLike, labelLike);
 
+		} else {
+			searchPredicate = cb.and();
 		}
+
+		Predicate organizationEquals = cb.equal(organizationCol, businessRequestContext.getOrganization());
+
+		q = q.where(cb.and(organizationEquals, searchPredicate));
 
 		Query query = em.createQuery(q);
 		List<SbiCatalogFunction> ret = query.getResultList();
@@ -83,18 +87,17 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 	}
 
 	@Override
-	public SbiCatalogFunction find(String id) {
+	public SbiCatalogFunction find(SbiCatalogFunction.Pk id) {
 
-		init();
+		id.setOrganization(businessRequestContext.getOrganization());
 
 		return em.find(SbiCatalogFunction.class, id);
 	}
 
 	@Override
-	public void delete(String id) throws KnowageBusinessException {
-		init();
+	public void delete(SbiCatalogFunction function) throws KnowageBusinessException {
 
-		SbiCatalogFunction function = em.find(SbiCatalogFunction.class, id);
+		function.getId().setOrganization(businessRequestContext.getOrganization());
 
 		preDelete(function);
 		function.getInputColumns().forEach(this::preDelete);
@@ -102,43 +105,16 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 		function.getOutputColumns().forEach(this::preDelete);
 
 		if (!function.getObjFunctions().isEmpty()) {
-			throw new KnowageBusinessException("Function with id " + id + " cannot be deleted because it's referenced by other objects");
+			throw new KnowageBusinessException("Function with id " + function.getId() + " cannot be deleted because it's referenced by other objects");
 		}
 
-		function.getInputColumns().forEach(e -> {
-			Query query = em.createNamedQuery("SbiFunctionInputColumn.delete");
-			query.setParameter("colName", e.getId().getColName());
-			query.setParameter("functionId", e.getId().getFunctionId());
-
-			query.executeUpdate();
-		});
-
-		function.getInputVariables().forEach(e -> {
-			Query query = em.createNamedQuery("SbiFunctionInputVariable.delete");
-			query.setParameter("varName", e.getId().getVarName());
-			query.setParameter("functionId", e.getId().getFunctionId());
-
-			query.executeUpdate();
-		});
-
-		function.getOutputColumns().forEach(e -> {
-			Query query = em.createNamedQuery("SbiFunctionOutputColumn.delete");
-			query.setParameter("colName", e.getId().getColName());
-			query.setParameter("functionId", e.getId().getFunctionId());
-
-			query.executeUpdate();
-		});
-
-		Query query = em.createNamedQuery("SbiCatalogFunction.delete");
-		query.setParameter("functionId", function.getFunctionId());
-
-		query.executeUpdate();
+		em.remove(function);
 	}
 
 	@Override
 	public SbiCatalogFunction update(SbiCatalogFunction function) {
 
-		init();
+		function.getId().setOrganization(businessRequestContext.getOrganization());
 
 		preUpdate(function);
 		function.getInputColumns().forEach(this::preUpdate);
@@ -146,13 +122,14 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 		function.getOutputColumns().forEach(this::preUpdate);
 
 		em.merge(function);
+
 		return function;
 	}
 
 	@Override
 	public SbiCatalogFunction create(SbiCatalogFunction function) {
 
-		init();
+		function.getId().setOrganization(businessRequestContext.getOrganization());
 
 		preInsert(function);
 		function.getInputColumns().forEach(this::preInsert);
@@ -160,13 +137,8 @@ public class SbiCatalogFunctionDaoImpl extends AbstractDaoImpl implements SbiCat
 		function.getOutputColumns().forEach(this::preInsert);
 
 		em.persist(function);
-		return function;
-	}
 
-	private void init() {
-		Session session = em.unwrap(Session.class);
-		Filter filter = session.enableFilter("organization");
-		filter.setParameter("organization", businessRequestContext.getOrganization());
+		return function;
 	}
 
 }

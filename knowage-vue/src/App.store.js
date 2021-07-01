@@ -10,7 +10,8 @@ const store = createStore({
 			warning: {},
 			downloads: {},
 			locale: {},
-			news: {}
+			news: {},
+			loading: false
 		}
 	},
 	mutations: {
@@ -22,6 +23,9 @@ const store = createStore({
 		},
 		setInfo(state, info) {
 			state.info = { title: info.title, msg: info.msg }
+		},
+		setLoading(state, loading) {
+			state.loading = loading
 		},
 		setWarning(state, warning) {
 			state.warning = { title: warning.title, msg: warning.msg }
