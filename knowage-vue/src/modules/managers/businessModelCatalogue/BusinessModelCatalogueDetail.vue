@@ -14,7 +14,16 @@
                     <span>{{ $t('managers.buisnessModelCatalogue.details') }}</span>
                 </template>
 
-                <BusinessModelDetailsCard :selectedBusinessModel="selectedBusinessModel" :domainCategories="categories" :datasourcesMeta="datasources" :user="user" :toGenerate="toGenerate" @fieldChanged="onFieldChange" @fileUploaded="uploadedFile = $event"></BusinessModelDetailsCard>
+                <BusinessModelDetailsCard
+                    :selectedBusinessModel="selectedBusinessModel"
+                    :domainCategories="categories"
+                    :datasourcesMeta="datasources"
+                    :user="user"
+                    :toGenerate="toGenerate"
+                    @fieldChanged="onFieldChange"
+                    @fileUploaded="uploadedFile = $event"
+                    @datamartGenerated="loadPage"
+                ></BusinessModelDetailsCard>
             </TabPanel>
 
             <TabPanel>
@@ -196,6 +205,7 @@ export default defineComponent({
 
             this.loadPage()
             this.touched = false
+            this.$emit('inserted')
         },
         async saveBusinessModel() {
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.fullName }).then((response) => {

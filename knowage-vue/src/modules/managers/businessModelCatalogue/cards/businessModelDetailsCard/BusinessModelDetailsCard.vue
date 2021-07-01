@@ -231,7 +231,7 @@
                 <iframe :src="metaModelUrl"></iframe>
             </Dialog>
 
-            <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false"></GenerateDatamartCard>
+            <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false" @generated="onDatamartGenerated"></GenerateDatamartCard>
         </template>
     </Card>
 </template>
@@ -283,7 +283,7 @@ export default defineComponent({
             type: Boolean
         }
     },
-    emits: ['fieldChanged', 'fileUploaded'],
+    emits: ['fieldChanged', 'fileUploaded', 'datamartGenerated'],
     watch: {
         selectedBusinessModel() {
             this.v$.$reset()
@@ -364,6 +364,9 @@ export default defineComponent({
         },
         goToMetaWeb() {
             this.showMetaWeb = true
+        },
+        onDatamartGenerated() {
+            this.$emit('datamartGenerated')
         }
     }
 })

@@ -69,7 +69,7 @@ export default defineComponent({
             required: true
         }
     },
-    emits: ['close'],
+    emits: ['generated', 'close'],
     watch: {
         businessModel() {
             this.loadBusinessModel()
@@ -106,7 +106,6 @@ export default defineComponent({
             console.log('LOAD MODEL INFO: ')
             console.log('BM: ', this.businessModel)
             console.log('User: ', this.user)
-            // TODO change
             await axios.get(`/knowagemeta/restful-services/1.0/metaWeb/modelInfos/${this.businessModel.id}?user_id=${this.user.userUniqueIdentifier}`).then((response) => {
                 console.log('RESPONSE DATA ', response.data)
                 if (response.data.schemaName) {
@@ -118,7 +117,6 @@ export default defineComponent({
             })
         },
         generateDatamart() {
-            // TODO change
             const url =
                 `/knowagemeta/restful-services/1.0/metaWeb/buildModel/${this.businessModel.id}?user_id=${this.user.userId}` +
                 `&model=${encodeURIComponent(this.modelName)}&schema=${this.schemaName}&catalog=${this.catalogName}&registry=${this.isGeneratedForRegistry}&includeSources=${this.includeSources}`
@@ -127,7 +125,7 @@ export default defineComponent({
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t('common.toast.success')
                 })
-                this.$emit('close')
+                this.$emit('generated')
             })
         },
         closeTemplate() {
