@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.knowageapi.dao.dto;
 
+import java.util.Optional;
+
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -32,7 +34,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "SBI_OBJ_FUNCTION")
-public class SbiObjFunction extends AbstractEntity {
+public class SbiObjFunction extends AbstractEntity implements Comparable<SbiObjFunction> {
 
 	@Embeddable
 	public static class Pk implements AbstractSbiCatalogFunctionForeignKey {
@@ -171,6 +173,14 @@ public class SbiObjFunction extends AbstractEntity {
 	@Override
 	public String toString() {
 		return "SbiObjFunction [id=" + id + ", metaVersion=" + metaVersion + "]";
+	}
+
+	@Override
+	public int compareTo(SbiObjFunction o) {
+		Integer thisId = Optional.of(this.id).map(e -> e.id).orElse(0);
+		Integer otherId = Optional.of(o).map(e -> e.id).map(e -> e.id).orElse(0);
+
+		return thisId.compareTo(otherId);
 	}
 
 }

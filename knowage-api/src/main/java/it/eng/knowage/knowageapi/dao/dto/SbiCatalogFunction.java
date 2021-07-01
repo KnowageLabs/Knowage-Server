@@ -18,6 +18,7 @@
 package it.eng.knowage.knowageapi.dao.dto;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -44,7 +45,7 @@ import org.hibernate.annotations.GenericGenerator;
  */
 @Entity
 @Table(name = "SBI_CATALOG_FUNCTION")
-public class SbiCatalogFunction extends AbstractEntity implements Serializable {
+public class SbiCatalogFunction extends AbstractEntity implements Serializable, Comparable<SbiCatalogFunction> {
 
 	private static final long serialVersionUID = 4051466729110598951L;
 
@@ -439,6 +440,14 @@ public class SbiCatalogFunction extends AbstractEntity implements Serializable {
 				+ ", keywords=" + keywords + ", type=" + type + ", label=" + label + ", benchmarks=" + benchmarks + ", family=" + family + ", onlineScript="
 				+ onlineScript + ", offlineScriptTrain=" + offlineScriptTrain + ", offlineScriptUse=" + offlineScriptUse + ", inputColumns=" + inputColumns
 				+ ", outputColumns=" + outputColumns + ", inputVariables=" + inputVariables + ", objFunctions=" + objFunctions + "]";
+	}
+
+	@Override
+	public int compareTo(SbiCatalogFunction o) {
+		String thisLabel = Optional.of(this.label).orElse("");
+		String otherLabel = Optional.of(o).map(e -> e.label).orElse("");
+
+		return thisLabel.compareTo(otherLabel);
 	}
 
 }

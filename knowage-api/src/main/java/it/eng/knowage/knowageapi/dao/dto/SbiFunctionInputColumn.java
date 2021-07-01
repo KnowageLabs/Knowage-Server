@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.knowageapi.dao.dto;
 
+import java.util.Optional;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
@@ -32,7 +34,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "SBI_FUNCTION_INPUT_COLUMN")
-public class SbiFunctionInputColumn extends AbstractEntity {
+public class SbiFunctionInputColumn extends AbstractEntity implements Comparable<SbiFunctionInputColumn> {
 
 	@Embeddable
 	public static class Pk implements AbstractSbiCatalogFunctionForeignKey {
@@ -162,6 +164,14 @@ public class SbiFunctionInputColumn extends AbstractEntity {
 	@Override
 	public String toString() {
 		return "SbiFunctionInputColumn [id=" + id + ", colType=" + colType + "]";
+	}
+
+	@Override
+	public int compareTo(SbiFunctionInputColumn o) {
+		String thisColName = Optional.of(this.id).map(e -> e.colName).orElse("");
+		String otherColName = Optional.of(o).map(e -> e.id).map(e -> e.colName).orElse("");
+
+		return thisColName.compareTo(otherColName);
 	}
 
 }

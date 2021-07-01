@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.knowageapi.dao.dto;
 
+import java.util.Optional;
+
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -33,7 +35,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "SBI_FUNCTION_INPUT_VARIABLE")
-public class SbiFunctionInputVariable extends AbstractEntity {
+public class SbiFunctionInputVariable extends AbstractEntity implements Comparable<SbiFunctionInputVariable> {
 
 	@Embeddable
 	public static class Pk implements AbstractSbiCatalogFunctionForeignKey {
@@ -182,6 +184,14 @@ public class SbiFunctionInputVariable extends AbstractEntity {
 	@Override
 	public String toString() {
 		return "SbiFunctionInputVariable [id=" + id + ", varValue=" + varValue + ", varType=" + varType + "]";
+	}
+
+	@Override
+	public int compareTo(SbiFunctionInputVariable o) {
+		String thisVarName = Optional.of(this.id).map(e -> e.varName).orElse("");
+		String otheVarName = Optional.of(o).map(e -> o.id).map(e -> e.varName).orElse("");
+
+		return thisVarName.compareTo(otheVarName);
 	}
 
 }
