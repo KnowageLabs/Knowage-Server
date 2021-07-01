@@ -153,6 +153,7 @@
             "lockModel": "Lock model",
             "logicOperator": "Logical operator",
             "lovsColumn": "LOV's column",
+            "lovsColumnSelect": "Select LOV's Column",
             "metaWeb": "Meta Web",
             "metadata": "Metadata",
             "modality": "Modality",
