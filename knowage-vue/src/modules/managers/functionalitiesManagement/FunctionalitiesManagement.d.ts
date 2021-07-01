@@ -4,7 +4,8 @@ export interface iFunctionality {
     name: string,
     description: string,
     codType: string,
-    code: string
+    code: string,
+    prog: number
 }
 
 export interface iNode {
@@ -12,6 +13,6 @@ export interface iNode {
     key: number,
     parentId?: number,
     label: string,
-    children?: iNode[],
-    data: string
+    children: iNode[],
+    data: iFunctionality
 }

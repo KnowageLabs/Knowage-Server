@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
         <div class="kn-page-content p-grid p-m-0">
-            <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
+            <div class="p-col-4 p-sm-4 p-md-3 p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
                         {{ $t('managers.functionalitiesManagement.title') }}
@@ -11,8 +11,18 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div class="p-col">
-                    <Tree id="document-tree" :value="nodes" selectionMode="single" v-model:selectionKeys="selectedFunctionality" data-test="functionality-tree"></Tree>
+
+                <div>
+                    <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @node-select="setSelected($event)" data-test="functionality-tree">
+                        <template #default="slotProps">
+                            <div class="p-d-flex p-flex-row p-ai-center">
+                                <span>{{ slotProps.node.label }}</span>
+                                <Button v-if="canBeMovedUp(slotProps.node)" icon="fa fa-arrow-up" class="p-button-link p-button-sm" @click.stop="moveUp(slotProps.node.id)" />
+                                <Button v-if="canBeMovedDown" icon="fa fa-arrow-down" class="p-button-link p-button-sm" @click.stop="moveDown(slotProps.node.id)" />
+                                <Button v-if="canBeDeleted(slotProps.node)" icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteFunctionalityConfirm(slotProps.node.id)" data-test="delete-button" />
+                            </div>
+                        </template>
+                    </Tree>
                 </div>
             </div>
 
@@ -42,21 +52,19 @@ export default defineComponent({
             rolesShort: [] as { id: number; name: 'string' }[],
             nodes: [] as iNode[],
             selectedFunctionality: null as iFunctionality | null,
+            expandedKeys: {},
             touched: false,
             loading: false
         }
     },
     async created() {
-        this.loading = true
-        await this.loadFunctionalities()
-        await this.loadRolesShort()
-        this.createNodeTree()
-        this.loading = false
+        await this.loadPage()
         console.log('Functionalities: ', this.functionalities)
         console.log('Roles short: ', this.rolesShort)
     },
     methods: {
         async loadFunctionalities() {
+            // await axios.get('data/demo_data.json').then((response) => (this.functionalities = response.data))
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/').then((response) => (this.functionalities = response.data))
         },
         async loadRolesShort() {
@@ -64,20 +72,35 @@ export default defineComponent({
         },
         createNodeTree() {
             this.nodes = []
+            const foldersWithMissingParent = [] as iNode[]
             this.functionalities.forEach((functionality: iFunctionality) => {
-                const node = { key: functionality.id, id: functionality.id, parentId: functionality.parentId, label: functionality.name, children: [], data: functionality.name }
-                this.attachFolderToTree(node)
+                const node = { key: functionality.id, id: functionality.id, parentId: functionality.parentId, label: functionality.name, children: [] as iNode[], data: functionality }
+                node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId)
+
+                this.attachFolderToTree(node, foldersWithMissingParent)
             })
         },
-        attachFolderToTree(folder: iNode) {
+        attachFolderToTree(folder: iNode, foldersWithMissingParent: iNode[]) {
             if (folder.parentId) {
                 let parentFolder = null as iNode | null
+
+                for (let i = 0; i < foldersWithMissingParent.length; i++) {
+                    if (folder.parentId === foldersWithMissingParent[i].id) {
+                        foldersWithMissingParent[i].children.push(folder)
+                        break
+                    }
+                }
+
                 for (let i = 0; i < this.nodes.length; i++) {
                     parentFolder = this.findParentFolder(folder, this.nodes[i])
                     if (parentFolder) {
                         parentFolder.children?.push(folder)
                         break
                     }
+                }
+
+                if (!parentFolder) {
+                    foldersWithMissingParent.push(folder)
                 }
             } else {
                 this.nodes.push(folder)
@@ -98,6 +121,75 @@ export default defineComponent({
                 }
                 return tempFolder
             }
+        },
+        expandAll() {
+            for (let node of this.nodes) {
+                this.expandNode(node)
+            }
+
+            this.expandedKeys = { ...this.expandedKeys }
+        },
+        expandNode(node: iNode) {
+            if (node.children && node.children.length) {
+                this.expandedKeys[node.key] = true
+
+                for (let child of node.children) {
+                    this.expandNode(child)
+                }
+            }
+        },
+        setSelected(functionality: iFunctionality) {
+            this.selectedFunctionality = functionality
+            console.log('SELECTED FUNCTIONALITY: ', this.selectedFunctionality)
+        },
+        canBeMovedUp(functionality: iFunctionality) {
+            return functionality.prog !== 1
+        },
+        moveUp(functionalityId: number) {
+            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveUp/${functionalityId}`)
+            this.loadPage()
+        },
+        canBeMovedDown() {
+            // TODO
+        },
+        canBeDeleted(functionality: iFunctionality) {
+            return functionality.parentId && functionality.codType !== 'LOW_FUNCT'
+        },
+        deleteFunctionalityConfirm(functionalityId: number) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.touched = false
+                    this.deleteFunctionality(functionalityId)
+                }
+            })
+        },
+        async deleteFunctionality(functionalityId: number) {
+            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityId}`).then((response) => {
+                if (response.data.errors) {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: response.data.errors[0].message
+                    })
+                } else {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                }
+
+                this.loadPage()
+            })
+        },
+        async loadPage() {
+            this.loading = true
+            await this.loadFunctionalities()
+            await this.loadRolesShort()
+            this.createNodeTree()
+            this.expandAll()
+            this.loading = false
         }
     }
 })
