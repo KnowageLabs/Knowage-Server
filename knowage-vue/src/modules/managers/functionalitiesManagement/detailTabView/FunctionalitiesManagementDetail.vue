@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #left> {{ selectedFolder.name }} </template>
         <template #right>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" data-test="submit-button" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>
     </Toolbar>
@@ -22,7 +22,7 @@
                             maxLength="100"
                             @blur="v$.selectedFolder.code.$touch()"
                             @input="$emit('touched')"
-                            data-test="label-input"
+                            data-test="code-input"
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
                     </span>
@@ -46,6 +46,7 @@
                             maxLength="255"
                             @blur="v$.selectedFolder.name.$touch()"
                             @input="$emit('touched')"
+                            data-test="name-input"
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
@@ -58,7 +59,7 @@
                 </div>
                 <div class="p-field" :style="detailDescriptor.pField.style">
                     <span class="p-float-label">
-                        <InputText id="description" class="kn-material-input" type="text" v-model.trim="selectedFolder.description" maxLength="255" @input="$emit('touched')" />
+                        <InputText id="description" class="kn-material-input" type="text" v-model.trim="selectedFolder.description" maxLength="255" @input="$emit('touched')" data-test="description-input" />
                         <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                     </span>
                 </div>
@@ -71,23 +72,23 @@
             <DataTable :value="roles" dataKey="id" class="p-datatable-sm kn-table" responsiveLayout="scroll">
                 <Column field="name" header="Roles" :sortable="true" />
                 <Column header="Development">
-                    <template #body="slotProps">
-                        <Checkbox v-model="checked[slotProps]" value="Development" @click="test" />
+                    <template #body>
+                        <Checkbox v-model="checked" value="Development" @click="test" />
                     </template>
                 </Column>
                 <Column header="Test">
                     <template #body>
-                        <Checkbox v-model="checked[slotProps]" value="Test" @click="test" />
+                        <Checkbox v-model="checked" value="Test" @click="test" />
                     </template>
                 </Column>
                 <Column header="Execution">
                     <template #body>
-                        <Checkbox v-model="checked[slotProps]" value="Execution" @click="test" />
+                        <Checkbox v-model="checked" value="Execution" @click="test" />
                     </template>
                 </Column>
                 <Column header="Creation">
                     <template #body>
-                        <Checkbox v-model="checked[slotProps]" value="Creation" @click="test" />
+                        <Checkbox v-model="checked" value="Creation" @click="test" />
                     </template>
                 </Column>
                 <Column @rowClick="false">
@@ -137,6 +138,11 @@ export default defineComponent({
             checked: [] as any
         }
     },
+    computed: {
+        buttonDisabled(): Boolean {
+            return this.v$.$invalid
+        }
+    },
     validations() {
         return {
             selectedFolder: createValidations('selectedFolder', validationDescriptor.validations.selectedFolder)
@@ -151,6 +157,7 @@ export default defineComponent({
             this.v$.$reset()
             this.selectedFolder = { ...this.functionality }
             console.log(this.selectedFolder)
+            console.log(this.roles)
         },
         rolesShort() {
             this.roles = [...this.rolesShort]

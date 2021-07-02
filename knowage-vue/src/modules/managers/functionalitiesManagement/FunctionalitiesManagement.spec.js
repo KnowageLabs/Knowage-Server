@@ -162,7 +162,7 @@ describe('Functionalities', () => {
 
         expect(wrapper.vm.selectedFunctionality).toBe(null)
     })
-    it('shows a detail if one item is seletected from the tree', async () => {
+    it('shows a detail if one item is selected from the tree', async () => {
         const wrapper = factory()
 
         await flushPromises()
