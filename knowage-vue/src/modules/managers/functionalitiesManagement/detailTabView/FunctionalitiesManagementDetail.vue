@@ -72,22 +72,22 @@
                 <Column field="name" header="Roles" :sortable="true" />
                 <Column header="Development">
                     <template #body="slotProps">
-                        <Checkbox v-model="checked[slotProps.data.id]" value="Development" @click="test" />
+                        <Checkbox v-model="checked[slotProps]" value="Development" @click="test" />
                     </template>
                 </Column>
                 <Column header="Test">
                     <template #body>
-                        <Checkbox v-model="checked[slotProps.data.id]" value="Test" @click="test" />
+                        <Checkbox v-model="checked[slotProps]" value="Test" @click="test" />
                     </template>
                 </Column>
                 <Column header="Execution">
                     <template #body>
-                        <Checkbox v-model="checked[slotProps.data.id]" value="Execution" @click="test" />
+                        <Checkbox v-model="checked[slotProps]" value="Execution" @click="test" />
                     </template>
                 </Column>
                 <Column header="Creation">
                     <template #body>
-                        <Checkbox v-model="checked[slotProps.data.id]" value="Creation" @click="test" />
+                        <Checkbox v-model="checked[slotProps]" value="Creation" @click="test" />
                     </template>
                 </Column>
                 <Column @rowClick="false">
