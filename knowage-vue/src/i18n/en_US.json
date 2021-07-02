@@ -159,6 +159,13 @@
         "functionalitiesManagement": {
             "moveDown ": " Move down",
             "moveUp": " Move up",
+            "table": {
+                "creationHeader": "Creation",
+                "developmentHeader": "Development",
+                "executionHeader": "Execution",
+                "nameHeader": "Name",
+                "testHeader": "Test"
+            },
             "title": "functionalities tree"
         },
         "menu": {

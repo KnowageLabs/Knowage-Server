@@ -5,6 +5,24 @@
             "width": "100%"
         }
     },
+    "columns": [
+        {
+            "field": "name",
+            "header": "managers.functionalitiesManagement.table.nameHeader"
+        },
+        {
+            "header": "managers.functionalitiesManagement.table.developmentHeader"
+        },
+        {
+            "header": "managers.functionalitiesManagement.table.testHeader"
+        },
+        {
+            "header": "managers.functionalitiesManagement.table.executionHeader"
+        },
+        {
+            "header": "managers.functionalitiesManagement.table.creationHeader"
+        }
+    ],
     "pField": {
         "style": {
             "margin-bottom": "40px"

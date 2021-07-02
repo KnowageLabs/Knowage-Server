@@ -64,6 +64,40 @@
             {{ selectedFolder }}
         </template>
     </Card>
+    <Card :style="detailDescriptor.card.style">
+        <template #content>
+            {{ roles }}
+            <DataTable :value="roles" dataKey="id" class="p-datatable-sm kn-table" responsiveLayout="scroll">
+                <Column field="name" header="Roles" :sortable="true" />
+                <Column header="Development">
+                    <template #body="slotProps">
+                        <Checkbox v-model="checked[slotProps.data.id]" value="Development" @click="test" />
+                    </template>
+                </Column>
+                <Column header="Test">
+                    <template #body>
+                        <Checkbox v-model="checked[slotProps.data.id]" value="Test" @click="test" />
+                    </template>
+                </Column>
+                <Column header="Execution">
+                    <template #body>
+                        <Checkbox v-model="checked[slotProps.data.id]" value="Execution" @click="test" />
+                    </template>
+                </Column>
+                <Column header="Creation">
+                    <template #body>
+                        <Checkbox v-model="checked[slotProps.data.id]" value="Creation" @click="test" />
+                    </template>
+                </Column>
+                <Column @rowClick="false">
+                    <template #body>
+                        <Button icon="pi pi-check" class="p-button-link" />
+                        <Button icon="pi pi-times" class="p-button-link" />
+                    </template>
+                </Column>
+            </DataTable>
+        </template>
+    </Card>
 </template>
 
 <script lang="ts">
@@ -74,14 +108,21 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import detailDescriptor from './FunctionalitiesManagementDetailDescriptor.json'
 import validationDescriptor from './FunctionalitiesManagementValidation.json'
 import Card from 'primevue/card'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Checkbox from 'primevue/checkbox'
 
 export default defineComponent({
     emits: ['close'],
     props: {
-        functionality: Object
+        functionality: Object,
+        rolesShort: Array as any
     },
     components: {
         Card,
+        DataTable,
+        Column,
+        Checkbox,
         KnValidationMessages
     },
     data() {
@@ -90,8 +131,9 @@ export default defineComponent({
             detailDescriptor,
             validationDescriptor,
             formVisible: false,
-            loading: false,
-            selectedFolder: {} as any
+            selectedFolder: {} as any,
+            roles: [] as any,
+            checked: [] as any
         }
     },
     validations() {
@@ -101,16 +143,34 @@ export default defineComponent({
     },
     created() {
         this.selectedFolder = { ...this.functionality }
+        this.roles = [...this.rolesShort]
     },
     watch: {
         functionality() {
             this.selectedFolder = { ...this.functionality }
             console.log(this.selectedFolder)
+        },
+        rolesShort() {
+            this.roles = [...this.rolesShort]
         }
     },
     methods: {
         closeTemplate() {
             this.$emit('close')
+        },
+
+        test() {
+            console.log(this.checked)
+        },
+
+        isChecked(row, criteria) {
+            if (this.selectedFolder[criteria] != undefined) {
+                for (var j = 0; j < this.selectedFolder[criteria].length; j++) {
+                    if (this.selectedFolder[criteria][j].name == row.name) {
+                        this.checked[row.id].push()
+                    }
+                }
+            }
         }
     }
 })
