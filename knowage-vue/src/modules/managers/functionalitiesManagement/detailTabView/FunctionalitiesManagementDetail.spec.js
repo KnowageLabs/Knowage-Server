@@ -22,7 +22,6 @@ const mockedFunctionality = {
     ],
     devRoles: [
         { id: 1, name: 'dev' },
-        { id: 2, name: 'user' },
         { id: 3, name: 'admin' }
     ],
     execRoles: [
@@ -32,7 +31,6 @@ const mockedFunctionality = {
     ],
     testRoles: [
         { id: 1, name: 'dev' },
-        { id: 2, name: 'user' },
         { id: 3, name: 'admin' }
     ]
 }
@@ -136,5 +134,53 @@ describe('Functionalities Detail', () => {
         expect(nameInput.exists()).toBe(false)
         expect(codeInput.exists()).toBe(false)
         expect(descriptionInput.exists()).toBe(false)
+    })
+    it("select all the row if the 'select all' button is clicked", async () => {
+        const wrapper = factory()
+
+        console.log(wrapper.vm.roles)
+        expect(wrapper.vm.roles[1]).toStrictEqual({
+            creation: true,
+            development: false,
+            execution: true,
+            id: 2,
+            name: 'user',
+            test: false
+        })
+
+        await wrapper.find('[data-test="check-all-2"]').trigger('click')
+
+        expect(wrapper.vm.roles[1]).toStrictEqual({
+            creation: true,
+            development: true,
+            execution: true,
+            id: 2,
+            name: 'user',
+            test: true
+        })
+    })
+    it("deselect all the row if the 'deselect all' button is clicked", async () => {
+        const wrapper = factory()
+
+        console.log(wrapper.vm.roles)
+        expect(wrapper.vm.roles[0]).toStrictEqual({
+            creation: true,
+            development: true,
+            execution: true,
+            id: 1,
+            name: 'dev',
+            test: true
+        })
+
+        await wrapper.find('[data-test="uncheck-all-1"]').trigger('click')
+
+        expect(wrapper.vm.roles[0]).toStrictEqual({
+            creation: false,
+            development: false,
+            execution: false,
+            id: 1,
+            name: 'dev',
+            test: false
+        })
     })
 })

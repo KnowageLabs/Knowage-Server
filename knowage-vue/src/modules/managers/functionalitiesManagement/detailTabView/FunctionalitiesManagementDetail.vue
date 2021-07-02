@@ -94,8 +94,8 @@
                     </Column>
                     <Column @rowClick="false">
                         <template #body="slotProps">
-                            <Button icon="pi pi-check" class="p-button-link" @click="checkAll(slotProps.data)" />
-                            <Button icon="pi pi-times" class="p-button-link" @click="uncheckAll(slotProps.data)" />
+                            <Button icon="pi pi-check" class="p-button-link" @click="checkAll(slotProps.data)" :data-test="'check-all-' + slotProps.data.id" />
+                            <Button icon="pi pi-times" class="p-button-link" @click="uncheckAll(slotProps.data)" :data-test="'uncheck-all-' + slotProps.data.id" />
                         </template>
                     </Column>
                 </DataTable>
@@ -175,9 +175,9 @@ export default defineComponent({
                 const tempRole = { id: role.id, name: role.name, development: false, test: false, execution: false, creation: false }
 
                 this.roleIsChecked(tempRole, this.selectedFolder.devRoles, 'development')
-                this.roleIsChecked(tempRole, this.selectedFolder.devRoles, 'test')
-                this.roleIsChecked(tempRole, this.selectedFolder.devRoles, 'execution')
-                this.roleIsChecked(tempRole, this.selectedFolder.devRoles, 'creation')
+                this.roleIsChecked(tempRole, this.selectedFolder.testRoles, 'test')
+                this.roleIsChecked(tempRole, this.selectedFolder.execRoles, 'execution')
+                this.roleIsChecked(tempRole, this.selectedFolder.createRoles, 'creation')
 
                 this.roles.push(tempRole)
             })
