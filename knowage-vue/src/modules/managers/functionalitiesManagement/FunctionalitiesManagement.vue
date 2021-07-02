@@ -11,7 +11,6 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-
                 <div>
                     <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @node-select="setSelected($event)" data-test="functionality-tree">
                         <template #default="slotProps">
@@ -64,8 +63,8 @@ export default defineComponent({
     },
     async created() {
         await this.loadPage()
-        console.log('Functionalities: ', this.functionalities)
-        console.log('Roles short: ', this.rolesShort)
+        // console.log('Functionalities: ', this.functionalities)
+        // console.log('Roles short: ', this.rolesShort)
     },
     methods: {
         async loadFunctionalities() {
