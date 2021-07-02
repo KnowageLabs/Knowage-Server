@@ -93,9 +93,9 @@
                         </template>
                     </Column>
                     <Column @rowClick="false">
-                        <template #body>
-                            <Button icon="pi pi-check" class="p-button-link" />
-                            <Button icon="pi pi-times" class="p-button-link" />
+                        <template #body="slotProps">
+                            <Button icon="pi pi-check" class="p-button-link" @click="checkAll(slotProps.data)" />
+                            <Button icon="pi pi-times" class="p-button-link" @click="uncheckAll(slotProps.data)" />
                         </template>
                     </Column>
                 </DataTable>
@@ -192,14 +192,19 @@ export default defineComponent({
         test(role) {
             console.log('ROLE AFTER CHECK: ', role)
         },
-        isChecked(row, criteria) {
-            if (this.selectedFolder[criteria] != undefined) {
-                for (var j = 0; j < this.selectedFolder[criteria].length; j++) {
-                    if (this.selectedFolder[criteria][j].name == row.name) {
-                        this.checked[row.id].push()
-                    }
-                }
-            }
+        checkAll(role) {
+            var checkedRole = role
+            checkedRole.development = true
+            checkedRole.test = true
+            checkedRole.execution = true
+            checkedRole.creation = true
+        },
+        uncheckAll(role) {
+            var checkedRole = role
+            checkedRole.development = false
+            checkedRole.test = false
+            checkedRole.execution = false
+            checkedRole.creation = false
         }
     }
 })
