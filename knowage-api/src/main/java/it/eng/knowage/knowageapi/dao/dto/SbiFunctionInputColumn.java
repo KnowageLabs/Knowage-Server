@@ -168,8 +168,8 @@ public class SbiFunctionInputColumn extends AbstractEntity implements Comparable
 
 	@Override
 	public int compareTo(SbiFunctionInputColumn o) {
-		String thisColName = Optional.of(this.id).map(e -> e.colName).orElse("");
-		String otherColName = Optional.of(o).map(e -> e.id).map(e -> e.colName).orElse("");
+		String thisColName = Optional.ofNullable(this.id).map(e -> e.colName).orElse("");
+		String otherColName = Optional.ofNullable(o).map(e -> e.id).map(e -> e.colName).orElse("");
 
 		return thisColName.compareTo(otherColName);
 	}

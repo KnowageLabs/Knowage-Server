@@ -187,8 +187,8 @@ public class SbiFunctionOutputColumn extends AbstractEntity implements Comparabl
 
 	@Override
 	public int compareTo(SbiFunctionOutputColumn o) {
-		String thisColName = Optional.of(this.id).map(e -> e.colName).orElse("");
-		String otheColName = Optional.of(this).map(e -> e.id).map(e -> e.colName).orElse("");
+		String thisColName = Optional.ofNullable(this.id).map(e -> e.colName).orElse("");
+		String otheColName = Optional.ofNullable(this).map(e -> e.id).map(e -> e.colName).orElse("");
 
 		return thisColName.compareTo(otheColName);
 	}
