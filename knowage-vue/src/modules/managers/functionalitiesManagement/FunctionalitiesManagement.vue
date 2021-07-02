@@ -17,7 +17,7 @@
                         <template #default="slotProps">
                             <div class="p-d-flex p-flex-row p-ai-center" @mouseover="test[slotProps.node.id] = true" @mouseleave="test[slotProps.node.id] = false">
                                 <span>{{ slotProps.node.label }}</span>
-                                <div v-show="test[slotProps.node.id]">
+                                <div v-show="test[slotProps.node.id]" class="p-ml-2">
                                     <Button v-if="canBeMovedUp(slotProps.node.data)" icon="fa fa-arrow-up" v-tooltip.top="$t('managers.functionalitiesManagement.moveUp')" class="p-button-link p-button-sm" @click.stop="moveUp(slotProps.node.id)" />
                                     <Button v-if="canBeMovedDown(slotProps.node.data)" icon="fa fa-arrow-down" v-tooltip.top="$t('managers.functionalitiesManagement.moveDown ')" class="p-button-link p-button-sm" @click.stop="moveDown(slotProps.node.id)" />
                                     <Button v-if="canBeDeleted(slotProps.node)" icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-link p-button-sm" @click.stop="deleteFunctionalityConfirm(slotProps.node.id)" data-test="delete-button" />
@@ -40,6 +40,7 @@ import { defineComponent } from 'vue'
 import { iFunctionality, iNode } from './FunctionalitiesManagement'
 import axios from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
+import functionalitiesManagementDescriptor from './FunctionalitiesManagementDescriptor.json'
 import Tree from 'primevue/tree'
 
 export default defineComponent({
@@ -50,6 +51,7 @@ export default defineComponent({
     },
     data() {
         return {
+            functionalitiesManagementDescriptor,
             functionalities: [] as iFunctionality[],
             rolesShort: [] as { id: number; name: 'string' }[],
             nodes: [] as iNode[],
@@ -77,7 +79,7 @@ export default defineComponent({
             this.nodes = []
             const foldersWithMissingParent = [] as iNode[]
             this.functionalities.forEach((functionality: iFunctionality) => {
-                const node = { key: functionality.id, id: functionality.id, parentId: functionality.parentId, label: functionality.name, children: [] as iNode[], data: functionality }
+                const node = { key: functionality.id, id: functionality.id, parentId: functionality.parentId, label: functionality.name, children: [] as iNode[], data: functionality, style: this.functionalitiesManagementDescriptor.node.style }
                 node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId)
 
                 this.attachFolderToTree(node, foldersWithMissingParent)
