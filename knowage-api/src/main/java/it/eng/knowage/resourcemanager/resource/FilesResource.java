@@ -89,8 +89,8 @@ public class FilesResource {
 	@GET
 	@Path("/metadata/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public FileDTO metadata(@PathParam("path") String path) {
-		FileDTO file = null;
+	public FileDTO getMetadata(@PathParam("path") String path) {
+		FileDTO file = null; // TODO: METADATA DTO
 		return file;
 	}
 
