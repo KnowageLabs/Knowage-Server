@@ -51,6 +51,7 @@ import it.eng.knowage.parsers.CaseChangingCharStream;
 import it.eng.knowage.parsers.SQLiteLexer;
 import it.eng.knowage.parsers.SQLiteParser;
 import it.eng.knowage.parsers.ThrowingErrorListener;
+import it.eng.knowage.security.ProductProfiler;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFInternalError;
@@ -273,6 +274,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			// if required apply function from catalog
 			String catalogFuncId = getCatalogFunctionUuid(projections);
 			if (catalogFuncId != null) {
+				Assert.assertTrue(ProductProfiler.canUseFunctions(), "Cannot use catalog functions with current product");
 				JSONObject catalogFunctionConfig = getCatalogFunctionConfiguration(projections);
 				IDataStoreTransformer functionTransformer = new CatalogFunctionTransformer(catalogFuncId, catalogFunctionConfig);
 				functionTransformer.transform(dataStore);

@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	angular.module('cockpitModule').directive('catalogFunction',function(){
 		return{
-			template:   '<button class="md-button md-knowage-theme" ng-if="canUseFunctions" ng-click="addNewCatalogFunction()" ng-disabled="isFunctionInUse() && !selectedItem" ng-class="{\'md-icon-button\':selectedItem && !insideMenu}">'+
+			template:   '<button class="md-button md-knowage-theme" ng-click="addNewCatalogFunction()" ng-disabled="isFunctionInUse() && !selectedItem" ng-class="{\'md-icon-button\':selectedItem && !insideMenu}">'+
 						'	<md-icon md-font-icon="fas fa-square-root-alt" ng-if="selectedItem"></md-icon>'+
 						'	<span ng-if="!selectedItem">{{::translate.load("sbi.cockpit.widgets.table.catalogFunctions.add")}}</span>'+
 						'	<span ng-if="selectedItem && insideMenu">{{::translate.load("sbi.cockpit.widgets.table.catalogFunctions.edit")}}</span>'+
@@ -116,6 +116,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.addNewCatalogFunction = function(){
+			if(!$scope.canUseFunctions) {
+				$scope.toastifyMsg('warning',$scope.translate.load("sbi.cockpit.widgets.table.catalogFunctions.function.error.notallowedtousefunctions"));
+				return;
+			}
 			var deferred = $q.defer();
 			var promise;
 			if ($scope.currentRow) {
@@ -173,6 +177,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}, function() {
 			});
 			promise = deferred.promise;
+		}
+
+		$scope.toastifyMsg = function(type,msg){
+			Toastify({
+				text: msg,
+				duration: 10000,
+				close: true,
+				className: 'kn-' + type + 'Toast',
+				stopOnFocus: true
+			}).showToast();
 		}
 	}
 
