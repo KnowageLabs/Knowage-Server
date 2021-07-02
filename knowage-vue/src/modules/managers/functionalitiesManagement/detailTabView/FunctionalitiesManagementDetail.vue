@@ -21,6 +21,7 @@
                             }"
                             maxLength="100"
                             @blur="v$.selectedFolder.code.$touch()"
+                            @input="$emit('touched')"
                             data-test="label-input"
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
@@ -44,6 +45,7 @@
                             }"
                             maxLength="255"
                             @blur="v$.selectedFolder.name.$touch()"
+                            @input="$emit('touched')"
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
@@ -56,12 +58,11 @@
                 </div>
                 <div class="p-field" :style="detailDescriptor.pField.style">
                     <span class="p-float-label">
-                        <InputText id="description" class="kn-material-input" type="text" v-model.trim="selectedFolder.description" maxLength="255" />
+                        <InputText id="description" class="kn-material-input" type="text" v-model.trim="selectedFolder.description" maxLength="255" @input="$emit('touched')" />
                         <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                     </span>
                 </div>
             </form>
-            {{ selectedFolder }}
         </template>
     </Card>
     <Card :style="detailDescriptor.card.style">
@@ -113,7 +114,7 @@ import Column from 'primevue/column'
 import Checkbox from 'primevue/checkbox'
 
 export default defineComponent({
-    emits: ['close'],
+    emits: ['touched', 'close'],
     props: {
         functionality: Object,
         rolesShort: Array as any
@@ -147,6 +148,7 @@ export default defineComponent({
     },
     watch: {
         functionality() {
+            this.v$.$reset()
             this.selectedFolder = { ...this.functionality }
             console.log(this.selectedFolder)
         },
