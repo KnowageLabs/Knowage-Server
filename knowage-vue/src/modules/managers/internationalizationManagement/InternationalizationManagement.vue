@@ -173,6 +173,7 @@ export default defineComponent({
             }
         },
 
+        /*  TODO: (Code review) - MEtoda ima veliku kompleksnost, probati da se razbije na vise metoda. */
         //prikazi poruke u datatable
         getMessages(selectedTab) {
             this.messages = []
@@ -186,6 +187,7 @@ export default defineComponent({
                         if (response.data.length == 0) {
                             this.addEmptyLabel()
                         } else {
+                            /* TODO: (Code review)  - Razmotriti da li ova dve promenljive trebaju da imaju referancu na isti niz.   */
                             this.defaultLangMessages = response.data
                             // angular.copy(defaultLangMessages, messages) dal je ovo tacno?
                             this.messages = response.data
@@ -196,6 +198,7 @@ export default defineComponent({
                         if (response.data.length != 0) {
                             this.defaultLangMessages.forEach((defMess) => {
                                 // searching if default message was translated into current language
+                                /*  TODO: (Code review) - OVaj deo na dole nije dobar. Zasto raditi filter i uzeti onda prvi objekat kada postoji find i find index metoda   */
                                 var translatedMessageArray = response.data.filter((item) => {
                                     return item.label == defMess.label
                                 })
@@ -243,7 +246,7 @@ export default defineComponent({
                 return axios.post(url, toSave)
             }
         },
-
+        /*  TODO: (Code review) -- Prebaciti parametre za title i msg u translation files  */
         saveLabel(langObj, message) {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages'
             var toSave = { ...message }
