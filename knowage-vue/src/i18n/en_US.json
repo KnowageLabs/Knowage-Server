@@ -186,6 +186,33 @@
 			"title": "Profile Attributes Management",
 			"valueDescription": "Value description"
 		},
+		"menuConfigurationManagement": {
+            "description": "Description",
+            "form": {
+                "name": "Name",
+                "menuNodeContent": "Menu node content",
+                "staticPage": "HTML Page",
+                "document": "Related document",
+                "objParameters": "Document parameters",
+                "externalApplicationUrl": "Application's url",
+                "initialPath": "Open workspace on:",
+                "functionality": "Choose Functionality"
+            },
+            "hint": "Menu configuration allows you to manage menu entries.",
+            "info": {
+                "createMessage": "Menu item created",
+                "createTitle": "Create menu item",
+                "deleteMessage": "Menu item deleted",
+                "deleteTitle": "Delete menu item",
+                "saveMessage": "Menu item saved",
+                "saveTitle": "Save menu item",
+                "updateMessage": "Menu item updated",
+                "updateTitle": "Update menu item"
+            },
+            "title": "List of menus",
+            "roles": "Roles",
+            "selectDocument": "Select document"
+        },
 		"widgetGallery": {
 			"deleteTemplate": "Delete template",
 			"downloadTemplate": "Download template",

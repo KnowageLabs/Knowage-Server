@@ -1,0 +1,149 @@
+<template>
+  <div style="margin-bottom: 1em">
+    <Button
+      class="p-button-text p-button-rounded p-button-plain"
+      type="button"
+      icon="pi pi-plus"
+      :label="$t('common.expand')"
+      @click="expandAll"
+    />
+    <Button
+      class="p-button-text p-button-rounded p-button-plain"
+      type="button"
+      icon="pi pi-minus"
+      :label="$t('common.collapse')"
+      @click="collapseAll"
+    />
+  </div>
+  <Tree
+    :value="nodes"
+    :expandedKeys="expandedKeys"
+    selectionMode="single"
+    v-model:selectionKeys="selectedNodeKey"
+    :metaKeySelection="false"
+    @node-select="onNodeSelect"
+    data-test="document-browser-tree"
+  ></Tree>
+</template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import Tree from "primevue/tree";
+import axios from "axios";
+export default defineComponent({
+  name: "document-browser-tree",
+  components: {
+    Tree,
+  },
+  emits: ["selectedDocumentNode"],
+  props: {
+    selected: null,
+    loading: Boolean,
+  },
+  watch: {
+    selected: {
+      handler: function (select) {
+        let flattenTree = this.flattenTree(this.nodes[0], "childs");
+        for (let node of flattenTree) {
+          if (node.path == select) {
+            let selectionObj: any = {};
+            selectionObj[node.id] = true;
+            this.selectedNodeKey = selectionObj;
+          }
+        }
+      },
+    },
+    loading: {
+      handler: function (l) {
+        this.load = l;
+      },
+    },
+  },
+  data() {
+    return {
+      apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + "2.0/",
+      load: false as Boolean,
+      preselectNode: null as any | null,
+      nodes: [] as any[],
+      expandedKeys: {},
+      selectedNodeKey: null as any | null,
+    };
+  },
+  async created() {
+    await this.loadFunctionalities();
+  },
+  methods: {
+    flattenTree(root, key) {
+      let flatten = [Object.assign({}, root)];
+      delete flatten[0][key];
+
+      if (root[key] && root[key].length > 0) {
+        return flatten.concat(
+          root[key]
+            .map((child) => this.flattenTree(child, key))
+            .reduce((a, b) => a.concat(b), [])
+        );
+      }
+
+      return flatten;
+    },
+    expandAll() {
+      for (let node of this.nodes) {
+        this.expandNode(node);
+      }
+      this.expandedKeys = { ...this.expandedKeys };
+    },
+    collapseAll() {
+      this.expandedKeys = {};
+    },
+    expandNode(node) {
+      if (node.children && node.children.length) {
+        this.expandedKeys[node.key] = true;
+
+        for (let child of node.children) {
+          this.expandNode(child);
+        }
+      }
+    },
+    onNodeSelect(node) {
+      this.$emit("selectedDocumentNode", node.path);
+    },
+    async loadFunctionalities() {
+      this.load = true;
+      await axios
+        .get(this.apiUrl + "menu/functionalities")
+        .then((response) => {
+          this.nodes = response.data.functionality.map((item) => {
+            item.label = item.name;
+            item.key = item.id;
+            item.children = item.childs;
+            item.icon = "pi pi-fw pi-folder";
+
+            if (item.childs) {
+              item.childs.forEach(function (element) {
+                element.label = element.name;
+                element.key = element.id;
+                element.children = element.childs;
+                element.icon = "pi pi-fw pi-folder";
+
+                if (element.childs) {
+                  element.childs.forEach(function (element) {
+                    element.label = element.name;
+                    element.key = element.id;
+                    element.children = element.childs;
+                    element.icon = "pi pi-fw pi-folder";
+                  });
+                }
+              });
+            }
+            return item;
+          });
+        })
+        .finally(() => {
+          this.load = false;
+          this.expandAll();
+        });
+    },
+  },
+});
+</script>

@@ -1,0 +1,123 @@
+<template>
+  <Tree
+    :loading="load"
+    :value="menuElements"
+    selectionMode="single"
+    v-model:selectionKeys="selectedMenuNode"
+    :metaKeySelection="false"
+    @node-select="onNodeSelect"
+    data-test="menu-nodes-tree"
+  >
+    <template #empty>{{ $t("common.info.noDataFound") }}</template>
+    <template #default="slotProps">
+      <div class="kn-list-item">
+        <div class="kn-list-item-text">
+          <span>{{ slotProps.node.name }}</span>
+        </div>
+        <div v-if="slotProps.node.level > 1 && slotProps.node.parentId != null">
+          <Button
+            icon="far fa-trash-alt"
+            class="p-button-text p-button-rounded p-button-plain p-ml-5"
+            @click="deleteMenuNode(slotProps.node.menuId)"
+            data-test="delete-button"
+          />
+        </div>
+        <div v-if="slotProps.node.parentId != null">
+          <Button
+            icon="pi pi-sort-alt"
+            class="p-button-text p-button-rounded p-button-plain p-ml-1"
+            @click="changeWithFather(slotProps.node.menuId)"
+            data-test="change-with-father-button"
+          />
+        </div>
+
+        <div v-if="slotProps.node.level > 1 && slotProps.node.prog > 1">
+          <Button
+            icon="pi pi-arrow-up"
+            class="p-button-text p-button-rounded p-button-plain p-ml-1"
+            @click="moveUp(slotProps.node.menuId)"
+            data-test="move-up-button"
+          />
+        </div>
+        <div v-if="slotProps.node.level == 1">
+          <Button
+            icon="pi pi-arrow-down"
+            class="p-button-text p-button-rounded p-button-plain p-ml-1"
+            @click="moveDown(slotProps.node.menuId)"
+            data-test="move-down-button"
+          />
+        </div>
+      </div>
+    </template>
+  </Tree>
+</template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import Tree from "primevue/tree";
+import { iMenuNode } from "./MenuConfiguration";
+import { arrayToTree } from "./arrayToTree";
+export default defineComponent({
+  name: "menu-nodes-tree",
+  components: {
+    Tree,
+  },
+  emits: [
+    "selectedMenuNode",
+    "deleteMenuNode",
+    "changeWithFather",
+    "moveUp",
+    "moveDown",
+  ],
+  props: {
+    elements: Array,
+    loading: Boolean,
+  },
+  watch: {
+    elements: {
+      handler: function (element) {
+        element = element.map((item) => {
+          item.label = item.name;
+          item.id = item.menuId;
+          item.key = item.menuId;
+          return item;
+        });
+
+        this.menuElements = arrayToTree(element, { dataField: null });
+      },
+    },
+    loading: {
+      handler: function (l) {
+        this.load = l;
+      },
+    },
+  },
+  data() {
+    return {
+      load: false as Boolean,
+      menuElements: [] as any[],
+      selectedMenuNode: null as iMenuNode | null,
+    };
+  },
+  methods: {
+    deleteMenuNode(elementID: number) {
+      this.$emit("deleteMenuNode", elementID);
+    },
+    changeWithFather(elementID: number) {
+      this.$emit("changeWithFather", elementID);
+    },
+    moveUp(elementID: number) {
+      this.$emit("moveUp", elementID);
+    },
+    moveDown(elementID: number) {
+      this.$emit("moveDown", elementID);
+    },
+    onElementSelect(event: any) {
+      this.$emit("selectedMenuNode", event.value);
+    },
+    onNodeSelect(node: iMenuNode) {
+      this.$emit("selectedMenuNode", node);
+    },
+  },
+});
+</script>

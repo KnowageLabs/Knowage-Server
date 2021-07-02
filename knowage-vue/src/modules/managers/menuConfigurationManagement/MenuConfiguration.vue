@@ -1,0 +1,189 @@
+<template>
+  <div class="kn-page">
+    <div class="kn-page-content p-grid p-m-0">
+      <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
+        <Toolbar class="kn-toolbar kn-toolbar--primary">
+          <template #left>
+            {{ $t("managers.menuConfigurationManagement.title") }}
+          </template>
+          <template #right>
+            <KnFabButton
+              icon="fas fa-plus"
+              @click="showForm()"
+              data-test="open-form-button"
+            ></KnFabButton>
+          </template>
+        </Toolbar>
+        <ProgressBar
+          mode="indeterminate"
+          class="kn-progress-bar"
+          v-if="loading"
+          data-test="progress-bar"
+        />
+        <MenuNodesTree
+          :elements="menuNodes"
+          :loading="loading"
+          @deleteMenuNode="onNodeDelete"
+          @selectedMenuNode="onNodeSelect"
+          @changeWithFather="onChangeWithFather"
+          @moveUp="onMoveUp"
+          @moveDown="onMoveDown"
+          data-test="menu-nodes-tree"
+        ></MenuNodesTree>
+      </div>
+
+      <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
+        <KnHint :title="'managers.menuConfigurationManagement.title'" :hint="'managers.menuConfigurationManagement.hint'" v-if="hideForm"></KnHint>
+        <MenuElementsDetail
+          :selectedMenuNode="selectedMenuNode"
+          @refreshRecordSet="loadMenuNodes"
+          @closesForm="closeForm"
+          @dataChanged="dirty = true"
+          v-if="!hideForm"
+        ></MenuElementsDetail>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import axios from "axios";
+import KnFabButton from "@/components/UI/KnFabButton.vue";
+import KnHint from "@/components/UI/KnHint.vue";
+import { iMenuNode } from "./MenuConfiguration";
+import MenuNodesTree from "./MenuNodesTree.vue";
+import MenuElementsDetail from "./MenuElementsDetail.vue";
+export default defineComponent({
+  name: "menu-configuration",
+  components: {
+    MenuNodesTree,
+    MenuElementsDetail,
+    KnFabButton,
+    KnHint,
+  },
+  data() {
+    return {
+      apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + "2.0/",
+      menuNodes: [] as iMenuNode[],
+      selectedMenuNode: {} as any,
+      loading: false as Boolean,
+      hideForm: true as Boolean,
+      dirty: false as Boolean,
+    };
+  },
+  async created() {
+    await this.loadMenuNodes();
+  },
+  methods: {
+    showForm() {
+      this.hideForm = false;
+      this.selectedMenuNode = {};
+    },
+    closeForm() {
+      this.hideForm = true;
+    },
+    async loadMenuNodes() {
+      this.loading = true;
+      this.hideForm = true;
+      this.dirty = false;
+      await axios
+        .get(this.apiUrl + "menu")
+        .then((response) => {
+          this.menuNodes = response.data;
+        })
+        .finally(() => (this.loading = false));
+    },
+    onNodeSelect(menuNode?: iMenuNode) {
+      if (this.dirty) {
+        this.$confirm.require({
+          message: this.$t("common.toast.unsavedChangesMessage"),
+          header: this.$t("common.toast.unsavedChangesHeader"),
+          icon: "pi pi-exclamation-triangle",
+          accept: () => {
+            this.dirty = false;
+            if (menuNode) this.prepareFormData(menuNode);
+            else this.hideForm = true;
+          },
+        });
+      } else {
+        if (menuNode) this.prepareFormData(menuNode);
+        else this.hideForm = true;
+      }
+    },
+    onNodeDelete(id: number) {
+      this.deleteNode(id);
+    },
+    onChangeWithFather(id: number) {
+      this.changeWithFather(id);
+    },
+     onMoveUp(id: number) {
+      this.moveUp(id);
+    },
+    onMoveDown(id: number) {
+      this.moveDown(id);
+    },
+    async changeWithFather(id: number) {
+      this.loading = true;
+      this.axios
+        .get(this.apiUrl + "menu/changeWithFather/" + id)
+        .then(() => {
+          this.loadMenuNodes();
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    async moveUp(id: number) {
+      this.loading = true;
+      this.axios
+        .get(this.apiUrl + "menu/moveUp/" + id)
+        .then(() => {
+          this.loadMenuNodes();
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    async moveDown(id: number) {
+      this.loading = true;
+      this.axios
+        .get(this.apiUrl + "menu/moveDown/" + id)
+        .then(() => {
+          this.loadMenuNodes();
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    async deleteNode(id: number) {
+      this.$confirm.require({
+        message: this.$t("common.toast.deleteMessage"),
+        header: this.$t("common.toast.deleteConfirmTitle"),
+        icon: "pi pi-exclamation-triangle",
+        accept: async () => {
+          this.loading = true;
+          this.axios
+            .delete(this.apiUrl + "menu/" + id)
+            .then(() => {
+              this.$store.commit("setInfo", {
+                title: this.$t("managers.menuConfigurationManagement.info.deleteTitle"),
+                msg: this.$t("managers.menuConfigurationManagement.info.deleteMessage"),
+              });
+              this.loadMenuNodes();
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        },
+      });
+    },
+    prepareFormData(menuNode: iMenuNode) {
+      if (this.hideForm) {
+        this.hideForm = false;
+      }
+      this.selectedMenuNode = { ...menuNode };
+    },
+  },
+});
+</script>
