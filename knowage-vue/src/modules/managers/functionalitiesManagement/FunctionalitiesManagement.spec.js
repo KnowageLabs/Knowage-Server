@@ -9,33 +9,37 @@ import Toolbar from 'primevue/toolbar'
 import Tree from 'primevue/tree'
 
 const mockedFunctionalities = [
-    { id: 1, parentId: null, name: 'Functionalities' },
+    { id: 1, parentId: null, name: 'Functionalities', prog: 1 },
     {
         id: 2,
         parentId: 1,
-        name: 'Test'
+        name: 'Test',
+        prog: 1
     },
     {
         id: 3,
         parentId: 1,
-        name: 'Other'
+        name: 'Other',
+        prog: 2
     },
     {
         id: 4,
-        parentId: 2,
-        name: 'Options'
+        parentId: 1,
+        name: 'Options',
+        prog: 3
     },
     {
         id: 5,
         parentId: null,
-        name: 'Root Test Folder'
+        name: 'Root Test Folder',
+        prog: 1
     }
 ]
 
 jest.mock('axios')
 
 axios.get.mockImplementation(() => Promise.resolve({ data: mockedFunctionalities }))
-axios.delete.mockImplementation(() => Promise.resolve())
+axios.delete.mockImplementation(() => Promise.resolve({ data: [] }))
 
 afterEach(() => {
     jest.clearAllMocks()
@@ -100,9 +104,37 @@ describe('Functionalities', () => {
 
         expect(wrapper.vm.functionalities.length).toBe(5)
         expect(wrapper.vm.nodes.length).toBe(2)
-        expect(wrapper.vm.expandedKeys).toStrictEqual({ '1': true, '2': true })
+        expect(wrapper.vm.expandedKeys).toStrictEqual({ '1': true })
         expect(tree.html()).toContain('Functionalities')
         expect(tree.html()).toContain('Test')
         expect(tree.html()).toContain('Other')
+    })
+
+    it('ask a confirm if delete button is clicked', async () => {
+        const wrapper = factory()
+
+        await flushPromises()
+
+        expect(wrapper.vm.functionalities.length).toBe(5)
+
+        await wrapper.find('[data-test="delete-button-3"]').trigger('click')
+
+        expect($confirm.require).toHaveBeenCalledTimes(1)
+
+        await wrapper.vm.deleteFunctionality(3)
+        expect(axios.delete).toHaveBeenCalledTimes(1)
+        expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/' + 3)
+        expect($store.commit).toHaveBeenCalledTimes(1)
+    })
+    it('moves the item up in the tree if the move up button is clicked', async () => {
+        const wrapper = factory()
+
+        await flushPromises()
+
+        expect(wrapper.vm.functionalities.length).toBe(5)
+
+        await wrapper.find('[data-test="move-up-button-3"]').trigger('click')
+
+        expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/moveUp/' + 3)
     })
 })
