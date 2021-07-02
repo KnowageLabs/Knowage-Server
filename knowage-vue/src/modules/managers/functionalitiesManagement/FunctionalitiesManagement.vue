@@ -28,8 +28,8 @@
                 </div>
             </div>
 
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <h1>OSTALO</h1>
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" v-if="formVisible">
+                <FunctionalitiesManagementDetail :functionality="selectedFunctionality.data" @close="formVisible = false" />
             </div>
         </div>
     </div>
@@ -38,6 +38,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iFunctionality, iNode } from './FunctionalitiesManagement'
+import FunctionalitiesManagementDetail from './detailTabView/FunctionalitiesManagementDetail.vue'
 import axios from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Tree from 'primevue/tree'
@@ -45,6 +46,7 @@ import Tree from 'primevue/tree'
 export default defineComponent({
     name: 'functionalities-management',
     components: {
+        FunctionalitiesManagementDetail,
         FabButton,
         Tree
     },
@@ -57,7 +59,8 @@ export default defineComponent({
             expandedKeys: {},
             touched: false,
             loading: false,
-            test: []
+            test: [],
+            formVisible: false
         }
     },
     async created() {
@@ -143,6 +146,7 @@ export default defineComponent({
         },
         setSelected(functionality: iFunctionality) {
             this.selectedFunctionality = functionality
+            this.formVisible = true
         },
         canBeMovedUp(functionality: iFunctionality) {
             return functionality.prog !== 1
