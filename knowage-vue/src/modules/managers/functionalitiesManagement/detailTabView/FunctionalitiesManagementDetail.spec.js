@@ -105,4 +105,13 @@ describe('Functionalities Detail', () => {
         expect(wrapper.vm.buttonDisabled).toBe(true)
         expect(wrapper.find('[data-test="submit-button"]').element.disabled).toBe(true)
     })
+
+    it('shows a selectable list of available roles', () => {
+        const wrapper = factory()
+        const rolesTable = wrapper.find('[data-test="roles-table"]')
+
+        expect(rolesTable.html()).toContain('dev')
+        expect(rolesTable.html()).toContain('user')
+        expect(rolesTable.html()).toContain('admin')
+    })
 })

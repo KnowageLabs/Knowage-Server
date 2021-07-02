@@ -6,100 +6,102 @@
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>
     </Toolbar>
-    <Card :style="detailDescriptor.card.style">
-        <template #content>
-            <form class="p-fluid p-m-3">
-                <div class="p-field" :style="detailDescriptor.pField.style">
-                    <span class="p-float-label">
-                        <InputText
-                            id="label"
-                            class="kn-material-input"
-                            type="text"
-                            v-model.trim="v$.selectedFolder.code.$model"
-                            :class="{
-                                'p-invalid': v$.selectedFolder.code.$invalid && v$.selectedFolder.code.$dirty
+    <div v-if="selectedFolder.parentId">
+        <Card :style="detailDescriptor.card.style">
+            <template #content>
+                <form class="p-fluid p-m-3">
+                    <div class="p-field" :style="detailDescriptor.pField.style">
+                        <span class="p-float-label">
+                            <InputText
+                                id="label"
+                                class="kn-material-input"
+                                type="text"
+                                v-model.trim="v$.selectedFolder.code.$model"
+                                :class="{
+                                    'p-invalid': v$.selectedFolder.code.$invalid && v$.selectedFolder.code.$dirty
+                                }"
+                                maxLength="100"
+                                @blur="v$.selectedFolder.code.$touch()"
+                                @input="$emit('touched')"
+                                data-test="code-input"
+                            />
+                            <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
+                        </span>
+                        <KnValidationMessages
+                            :vComp="v$.selectedFolder.code"
+                            :additionalTranslateParams="{
+                                fieldName: $t('common.label')
                             }"
-                            maxLength="100"
-                            @blur="v$.selectedFolder.code.$touch()"
-                            @input="$emit('touched')"
-                            data-test="code-input"
                         />
-                        <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
-                    </span>
-                    <KnValidationMessages
-                        :vComp="v$.selectedFolder.code"
-                        :additionalTranslateParams="{
-                            fieldName: $t('common.label')
-                        }"
-                    />
-                </div>
-                <div class="p-field" :style="detailDescriptor.pField.style">
-                    <span class="p-float-label">
-                        <InputText
-                            id="name"
-                            class="kn-material-input"
-                            type="text"
-                            v-model.trim="v$.selectedFolder.name.$model"
-                            :class="{
-                                'p-invalid': v$.selectedFolder.name.$invalid && v$.selectedFolder.name.$dirty
+                    </div>
+                    <div class="p-field" :style="detailDescriptor.pField.style">
+                        <span class="p-float-label">
+                            <InputText
+                                id="name"
+                                class="kn-material-input"
+                                type="text"
+                                v-model.trim="v$.selectedFolder.name.$model"
+                                :class="{
+                                    'p-invalid': v$.selectedFolder.name.$invalid && v$.selectedFolder.name.$dirty
+                                }"
+                                maxLength="255"
+                                @blur="v$.selectedFolder.name.$touch()"
+                                @input="$emit('touched')"
+                                data-test="name-input"
+                            />
+                            <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
+                        </span>
+                        <KnValidationMessages
+                            :vComp="v$.selectedFolder.name"
+                            :additionalTranslateParams="{
+                                fieldName: $t('common.name')
                             }"
-                            maxLength="255"
-                            @blur="v$.selectedFolder.name.$touch()"
-                            @input="$emit('touched')"
-                            data-test="name-input"
                         />
-                        <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
-                    </span>
-                    <KnValidationMessages
-                        :vComp="v$.selectedFolder.name"
-                        :additionalTranslateParams="{
-                            fieldName: $t('common.name')
-                        }"
-                    />
-                </div>
-                <div class="p-field" :style="detailDescriptor.pField.style">
-                    <span class="p-float-label">
-                        <InputText id="description" class="kn-material-input" type="text" v-model.trim="selectedFolder.description" maxLength="255" @input="$emit('touched')" data-test="description-input" />
-                        <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
-                    </span>
-                </div>
-            </form>
-        </template>
-    </Card>
-    <Card :style="detailDescriptor.card.style">
-        <template #content>
-            {{ roles }}
-            <DataTable :value="roles" dataKey="id" class="p-datatable-sm kn-table" responsiveLayout="scroll">
-                <Column field="name" header="Roles" :sortable="true" />
-                <Column header="Development">
-                    <template #body="slotProps">
-                        <Checkbox v-model="slotProps.data.development" :binary="true" @click="test(slotProps.data)" />
-                    </template>
-                </Column>
-                <Column header="Test">
-                    <template #body="slotProps">
-                        <Checkbox v-model="slotProps.data.test" :binary="true" @click="test(slotProps.data)" />
-                    </template>
-                </Column>
-                <Column header="Execution">
-                    <template #body="slotProps">
-                        <Checkbox v-model="slotProps.data.execution" :binary="true" @click="test(slotProps.data)" />
-                    </template>
-                </Column>
-                <Column header="Creation">
-                    <template #body="slotProps">
-                        <Checkbox v-model="slotProps.data.creation" :binary="true" @click="test(slotProps.data)" />
-                    </template>
-                </Column>
-                <Column @rowClick="false">
-                    <template #body>
-                        <Button icon="pi pi-check" class="p-button-link" />
-                        <Button icon="pi pi-times" class="p-button-link" />
-                    </template>
-                </Column>
-            </DataTable>
-        </template>
-    </Card>
+                    </div>
+                    <div class="p-field" :style="detailDescriptor.pField.style">
+                        <span class="p-float-label">
+                            <InputText id="description" class="kn-material-input" type="text" v-model.trim="selectedFolder.description" maxLength="255" @input="$emit('touched')" data-test="description-input" />
+                            <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
+                        </span>
+                    </div>
+                </form>
+            </template>
+        </Card>
+        <Card :style="detailDescriptor.card.style">
+            <template #content>
+                {{ roles }}
+                <DataTable :value="roles" dataKey="id" class="p-datatable-sm kn-table" responsiveLayout="scroll" data-test="roles-table">
+                    <Column field="name" header="Roles" :sortable="true" />
+                    <Column header="Development">
+                        <template #body="slotProps">
+                            <Checkbox v-model="slotProps.data.development" :binary="true" @click="test(slotProps.data)" />
+                        </template>
+                    </Column>
+                    <Column header="Test">
+                        <template #body="slotProps">
+                            <Checkbox v-model="slotProps.data.test" :binary="true" @click="test(slotProps.data)" />
+                        </template>
+                    </Column>
+                    <Column header="Execution">
+                        <template #body="slotProps">
+                            <Checkbox v-model="slotProps.data.execution" :binary="true" @click="test(slotProps.data)" />
+                        </template>
+                    </Column>
+                    <Column header="Creation">
+                        <template #body="slotProps">
+                            <Checkbox v-model="slotProps.data.creation" :binary="true" @click="test(slotProps.data)" />
+                        </template>
+                    </Column>
+                    <Column @rowClick="false">
+                        <template #body>
+                            <Button icon="pi pi-check" class="p-button-link" />
+                            <Button icon="pi pi-times" class="p-button-link" />
+                        </template>
+                    </Column>
+                </DataTable>
+            </template>
+        </Card>
+    </div>
 </template>
 
 <script lang="ts">
@@ -172,29 +174,20 @@ export default defineComponent({
             this.rolesShort.forEach((role: any) => {
                 const tempRole = { id: role.id, name: role.name, development: false, test: false, execution: false, creation: false }
 
-                let index = this.selectedFolder.devRoles.findIndex((currentRole: any) => role.id === currentRole.id)
-                if (index > -1) {
-                    tempRole.development = true
-                }
-
-                index = this.selectedFolder.testRoles.findIndex((currentRole: any) => role.id === currentRole.id)
-                if (index > -1) {
-                    tempRole.test = true
-                }
-
-                index = this.selectedFolder.execRoles.findIndex((currentRole: any) => role.id === currentRole.id)
-                if (index > -1) {
-                    tempRole.execution = true
-                }
-
-                index = this.selectedFolder.createRoles.findIndex((currentRole: any) => role.id === currentRole.id)
-                if (index > -1) {
-                    tempRole.creation = true
-                }
+                this.roleIsChecked(tempRole, this.selectedFolder.devRoles, 'development')
+                this.roleIsChecked(tempRole, this.selectedFolder.devRoles, 'test')
+                this.roleIsChecked(tempRole, this.selectedFolder.devRoles, 'execution')
+                this.roleIsChecked(tempRole, this.selectedFolder.devRoles, 'creation')
 
                 this.roles.push(tempRole)
             })
             console.log('ROLES: ', this.roles)
+        },
+        roleIsChecked(role: any, roles: [], roleField: string) {
+            const index = roles.findIndex((currentRole: any) => role.id === currentRole.id)
+            if (index > -1) {
+                role[roleField] = true
+            }
         },
         test(role) {
             console.log('ROLE AFTER CHECK: ', role)
