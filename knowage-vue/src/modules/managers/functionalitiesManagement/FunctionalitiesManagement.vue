@@ -7,18 +7,25 @@
                         {{ $t('managers.functionalitiesManagement.title') }}
                     </template>
                     <template #right>
-                        <FabButton icon="fas fa-plus" data-test="new-button" />
+                        <FabButton icon="fas fa-plus" @click="showForm" data-test="new-button" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <div>
-                    <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @node-select="setSelected($event)" data-test="functionality-tree">
+                    <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @node-select="showForm($event)" data-test="functionality-tree">
                         <template #default="slotProps">
-                            <div class="p-d-flex p-flex-row p-ai-center" @mouseover="test[slotProps.node.id] = true" @mouseleave="test[slotProps.node.id] = false">
+                            <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false">
                                 <span>{{ slotProps.node.label }}</span>
-                                <div v-show="test[slotProps.node.id]" class="p-ml-2">
+                                <div v-show="buttonsVisible[slotProps.node.id]" class="p-ml-2">
                                     <Button v-if="canBeMovedUp(slotProps.node.data)" icon="fa fa-arrow-up" v-tooltip.top="$t('managers.functionalitiesManagement.moveUp')" class="p-button-link p-button-sm" @click.stop="moveUp(slotProps.node.id)" :data-test="'move-up-button-' + slotProps.node.id" />
-                                    <Button v-if="canBeMovedDown(slotProps.node.data)" icon="fa fa-arrow-down" v-tooltip.top="$t('managers.functionalitiesManagement.moveDown ')" class="p-button-link p-button-sm" @click.stop="moveDown(slotProps.node.id)" :data-test="'move-down-button-' + slotProps.node.id" />
+                                    <Button
+                                        v-if="canBeMovedDown(slotProps.node.data)"
+                                        icon="fa fa-arrow-down"
+                                        v-tooltip.top="$t('managers.functionalitiesManagement.moveDown ')"
+                                        class="p-button-link p-button-sm"
+                                        @click.stop="moveDown(slotProps.node.id)"
+                                        :data-test="'move-down-button-' + slotProps.node.id"
+                                    />
                                     <Button v-if="canBeDeleted(slotProps.node)" icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-link p-button-sm" @click.stop="deleteFunctionalityConfirm(slotProps.node.id)" :data-test="'delete-button-' + slotProps.node.id" />
                                 </div>
                             </div>
@@ -28,7 +35,8 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" v-if="formVisible">
-                <FunctionalitiesManagementDetail :functionality="selectedFunctionality.data" @close="formVisible = false" />
+                <KnHint :title="'managers.buisnessModelCatalogue.title'" :hint="'managers.buisnessModelCatalogue.hint'" v-if="showHint" data-test="bm-hint"></KnHint>
+                <FunctionalitiesManagementDetail :functionality="selectedFunctionality.data" @touched="touched = true" @close="formVisible = false" />
             </div>
         </div>
     </div>
@@ -58,9 +66,10 @@ export default defineComponent({
             nodes: [] as iNode[],
             selectedFunctionality: null as iFunctionality | null,
             expandedKeys: {},
+            showHint: true,
             touched: false,
             loading: false,
-            test: [],
+            buttonsVisible: [],
             formVisible: false
         }
     },
@@ -136,6 +145,7 @@ export default defineComponent({
 
             this.expandedKeys = { ...this.expandedKeys }
         },
+
         expandNode(node: iNode) {
             if (node.children && node.children.length) {
                 this.expandedKeys[node.key] = true
@@ -145,8 +155,27 @@ export default defineComponent({
                 }
             }
         },
+        showForm(functionality: iFunctionality) {
+            if (!this.touched) {
+                this.setSelected(functionality)
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.setSelected(functionality)
+                    }
+                })
+            }
+        },
         setSelected(functionality: iFunctionality) {
-            this.selectedFunctionality = functionality
+            console.log('setSelected: ', functionality)
+            if (functionality) {
+                this.selectedFunctionality = functionality
+            }
+
             this.formVisible = true
         },
         canBeMovedUp(functionality: iFunctionality) {

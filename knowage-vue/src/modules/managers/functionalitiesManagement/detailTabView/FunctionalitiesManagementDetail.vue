@@ -21,6 +21,7 @@
                             }"
                             maxLength="100"
                             @blur="v$.selectedFolder.code.$touch()"
+                            @input="$emit('touched')"
                             data-test="label-input"
                         />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
@@ -61,7 +62,6 @@
                     </span>
                 </div>
             </form>
-            {{ selectedFolder }}
         </template>
     </Card>
 </template>
@@ -76,7 +76,7 @@ import validationDescriptor from './FunctionalitiesManagementValidation.json'
 import Card from 'primevue/card'
 
 export default defineComponent({
-    emits: ['close'],
+    emits: ['touched', 'close'],
     props: {
         functionality: Object
     },
