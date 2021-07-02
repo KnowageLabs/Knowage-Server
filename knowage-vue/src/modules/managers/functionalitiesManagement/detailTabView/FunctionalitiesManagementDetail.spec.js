@@ -114,4 +114,27 @@ describe('Functionalities Detail', () => {
         expect(rolesTable.html()).toContain('user')
         expect(rolesTable.html()).toContain('admin')
     })
+
+    it("shows no other input if 'empty' content is selected ", async () => {
+        const wrapper = factory()
+
+        await wrapper.setProps({
+            functionality: {
+                id: 1,
+                parentId: null,
+                name: 'Demos name',
+                code: 'Demos code',
+                description: 'Demos description'
+            }
+        })
+
+        const nameInput = wrapper.find('[data-test="name-input"]')
+        const codeInput = wrapper.find('[data-test="code-input"]')
+        const descriptionInput = wrapper.find('[data-test="description-input"]')
+
+        expect(wrapper.vm.selectedFolder.parentId).toBe(null)
+        expect(nameInput.exists()).toBe(false)
+        expect(codeInput.exists()).toBe(false)
+        expect(descriptionInput.exists()).toBe(false)
+    })
 })

@@ -6,7 +6,7 @@
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>
     </Toolbar>
-    <div v-if="selectedFolder.parentId">
+    <div v-if="!selectedFolder.id || selectedFolder.parentId">
         <Card :style="detailDescriptor.card.style">
             <template #content>
                 <form class="p-fluid p-m-3">
