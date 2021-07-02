@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -47,6 +48,7 @@ import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
  * @author Hibernate Tools
  */
 @Component
+@Transactional
 public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 
 	private static final Logger logger = Logger.getLogger(SbiWidgetGalleryDaoImpl.class.getName());

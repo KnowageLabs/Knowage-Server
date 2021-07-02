@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.knowageapi.service;
+package it.eng.knowage.knowageapi.service.impl;
 
 import java.sql.Timestamp;
 import java.time.Duration;
@@ -39,6 +39,7 @@ import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTagId;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.resource.dto.Code;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
+import it.eng.knowage.knowageapi.service.WidgetGalleryAPI;
 import it.eng.spagobi.filters.XSSRequestWrapper;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 

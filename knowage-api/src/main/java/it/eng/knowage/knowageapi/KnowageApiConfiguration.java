@@ -17,40 +17,106 @@
  */
 package it.eng.knowage.knowageapi;
 
-import java.net.MalformedURLException;
-
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.FlushModeType;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
+import org.springframework.data.transaction.ChainedTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
+import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImpl;
+
 @Configuration
+@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+@Profile("production")
 @ComponentScan("it.eng.knowage.knowageapi")
 public class KnowageApiConfiguration {
 
 	@Bean
 	@Qualifier("knowage-gallery")
-	public EntityManagerFactory entityManagerFactory() {
-		return Persistence.createEntityManagerFactory("knowage-gallery");
+	public LocalEntityManagerFactoryBean entityManagerFactoryForWidgetGallery() {
+		LocalEntityManagerFactoryBean factoryBean = new LocalEntityManagerFactoryBean();
+		factoryBean.setPersistenceUnitName("knowage-gallery");
+		return factoryBean;
 	}
 
 	@Bean
 	@Qualifier("knowage-gallery")
-	public EntityManager entityManager(@Qualifier("knowage-gallery") EntityManagerFactory emf) {
-		return emf.createEntityManager();
+	public EntityManager entityManagerForWidgetGallery(@Qualifier("knowage-gallery") EntityManagerFactory emf) {
+		EntityManager em = emf.createEntityManager();
+		em.setFlushMode(FlushModeType.COMMIT);
+		return em;
+	}
+
+	@Primary
+	@Bean
+	@Qualifier("knowage-functioncatalog")
+	public LocalEntityManagerFactoryBean entityManagerFactoryForWidgetFunctionCatalog() {
+		LocalEntityManagerFactoryBean factoryBean = new LocalEntityManagerFactoryBean();
+		factoryBean.setPersistenceUnitName("knowage-functioncatalog");
+		return factoryBean;
+	}
+
+	@Bean
+	@Qualifier("knowage-functioncatalog")
+	public EntityManager entityManagerForWidgetFunctionCatalog(@Qualifier("knowage-functioncatalog") EntityManagerFactory emf) {
+		EntityManager em = emf.createEntityManager();
+		em.setFlushMode(FlushModeType.COMMIT);
+		return em;
+	}
+
+	@Bean("knowage-gallery")
+	public PlatformTransactionManager platformTransactionManagerForWidgetGallery(@Qualifier("knowage-gallery") EntityManagerFactory emf) {
+		return new JpaTransactionManager(emf);
+	}
+
+	@Bean("knowage-functioncatalog")
+	public PlatformTransactionManager platformTransactionManagerForFunctionCatalog(@Qualifier("knowage-functioncatalog") EntityManagerFactory emf) {
+		return new JpaTransactionManager(emf);
+	}
+
+	@Primary
+	@Bean
+	public PlatformTransactionManager mainTransactionManager(
+			@Qualifier("knowage-gallery") PlatformTransactionManager ptm1,
+			@Qualifier("knowage-functioncatalog") PlatformTransactionManager ptm2) {
+		return new ChainedTransactionManager(ptm1, ptm2);
+	}
+
+	@Bean
+	@RequestScope
+	public BusinessRequestContext businessRequestContext(@Value("${application.version}") String version) {
+		return new BusinessRequestContext(version);
 	}
 
 	@Lazy
 	@Bean
-	public SecurityServiceFactory securityService() throws NamingException, MalformedURLException {
+	public SecurityServiceFactory securityService() {
 		return new SecurityServiceFactory();
+	}
+
+	@Bean
+	public FunctionCatalogAPI functionCatalogAPI() {
+		return new FunctionCatalogAPIImpl();
 	}
 
 	@Bean(name = "multipartResolver")
@@ -58,6 +124,11 @@ public class KnowageApiConfiguration {
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
 		multipartResolver.setMaxUploadSize(100000);
 		return multipartResolver;
+	}
+
+	@Bean
+	public Context context() throws NamingException {
+		return new InitialContext();
 	}
 
 }

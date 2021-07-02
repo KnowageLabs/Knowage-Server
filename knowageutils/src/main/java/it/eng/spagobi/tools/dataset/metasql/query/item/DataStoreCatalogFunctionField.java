@@ -8,14 +8,15 @@ public class DataStoreCatalogFunctionField extends AbstractCatalogFunctionField 
 
 	private final String alias;
 	private final IAggregationFunction aggregationFunction;
-	private final int catalogFunctionId;
+	private final String catalogFunctionUuid;
 	private final JSONObject catalogFunctionConfig;
 
-	public DataStoreCatalogFunctionField(IAggregationFunction aggregationFunction, String columnName, String alias, int catalogFunctionId, JSONObject config) {
+	public DataStoreCatalogFunctionField(IAggregationFunction aggregationFunction, String columnName, String alias, String catalogFunctionUuid,
+			JSONObject config) {
 		this.aggregationFunction = aggregationFunction;
 		this.name = columnName;
 		this.alias = alias;
-		this.catalogFunctionId = catalogFunctionId;
+		this.catalogFunctionUuid = catalogFunctionUuid;
 		this.catalogFunctionConfig = config;
 	}
 
@@ -27,8 +28,8 @@ public class DataStoreCatalogFunctionField extends AbstractCatalogFunctionField 
 		return aggregationFunction;
 	}
 
-	public int getCatalogFunctionId() {
-		return catalogFunctionId;
+	public String getCatalogFunctionUuid() {
+		return catalogFunctionUuid;
 	}
 
 	public JSONObject getCatalogFunctionConfig() {

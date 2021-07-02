@@ -28,6 +28,7 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -51,8 +52,7 @@ public abstract class AbstractServiceImpl {
 	/**
 	 * check the ticket used for verify the user authentication
 	 *
-	 * @param ticket
-	 *            String
+	 * @param ticket String
 	 * @return String
 	 * @throws SecurityException
 	 */
@@ -90,6 +90,10 @@ public abstract class AbstractServiceImpl {
 		TenantManager.unset();
 	}
 
+	protected void unsetUserProfile() {
+		UserProfileManager.unset();
+	}
+
 	protected IEngUserProfile setTenantByUserId(String jwtToken) {
 		logger.debug("IN");
 		try {
@@ -110,6 +114,31 @@ public abstract class AbstractServiceImpl {
 		} catch (Exception e) {
 			logger.error("Cannot set tenant", e);
 			throw new SpagoBIRuntimeException("Cannot set tenant", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	protected IEngUserProfile setUserProfileByUserId(String jwtToken) {
+		logger.debug("IN");
+		try {
+			if (UserProfile.isSchedulerUser(jwtToken)) {
+				UserProfile scheduler = UserProfile.createSchedulerUserProfile(jwtToken);
+				UserProfileManager.setProfile(scheduler);
+				return scheduler;
+			} else if (PublicProfile.isPublicUser(jwtToken)) {
+				String userId = JWTSsoService.jwtToken2userId(jwtToken);
+				SpagoBIUserProfile pub = PublicProfile.createPublicUserProfile(userId);
+				UserProfile publicProfile = new UserProfile(pub);
+				UserProfileManager.setProfile(publicProfile);
+				return publicProfile;
+			}
+			UserProfile profile = (UserProfile) UserUtilities.getUserProfile(jwtToken);
+			UserProfileManager.setProfile(profile);
+			return profile;
+		} catch (Exception e) {
+			logger.error("Cannot set user profile", e);
+			throw new SpagoBIRuntimeException("Cannot set user profile", e);
 		} finally {
 			logger.debug("OUT");
 		}
