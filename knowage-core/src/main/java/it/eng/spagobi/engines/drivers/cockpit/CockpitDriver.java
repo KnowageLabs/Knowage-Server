@@ -75,14 +75,14 @@ public class CockpitDriver extends GenericDriver {
 	}
 
 	@Override
-	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
+	public ArrayList<String> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
 		logger.debug("IN");
 
-		ArrayList<Integer> functionIds = new ArrayList<Integer>();
+		ArrayList<String> functionUuids = new ArrayList<String>();
 		JSONObject templateContent = getTemplateAsJsonObject(contentTemplate);
 		if (templateContent == null) {
 			logger.error("Template content non returned. Impossible get associated functions. Check the template!");
-			return functionIds;
+			return functionUuids;
 		}
 
 		JSONArray sheets = templateContent.getJSONArray("sheets");
@@ -109,9 +109,9 @@ public class CockpitDriver extends GenericDriver {
 					for (int k = 0; k < columnSelectedOfDataset.length(); k++) {
 						JSONObject column = columnSelectedOfDataset.getJSONObject(k);
 						if (column.has("boundFunction")) {
-							int funcId = column.getJSONObject("boundFunction").getInt("id");
-							if (!functionIds.contains(funcId))
-								functionIds.add(funcId);
+							String funcUuid = column.getJSONObject("boundFunction").getString("id");
+							if (!functionUuids.contains(funcUuid))
+								functionUuids.add(funcUuid);
 						}
 					}
 				}
@@ -119,7 +119,7 @@ public class CockpitDriver extends GenericDriver {
 		}
 
 		logger.debug("OUT");
-		return functionIds;
+		return functionUuids;
 	}
 
 	@Override

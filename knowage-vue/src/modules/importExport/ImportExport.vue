@@ -1,6 +1,6 @@
 <template>
 	<div class="kn-importExport kn-page">
-		<ImportDialog v-model:visibility="displayImportDialog" @import="startImport"></ImportDialog>
+		<ImportDialog v-model:visibility="displayImportDialog"></ImportDialog>
 		<ExportDialog v-model:visibility="displayExportDialog" @export="startExport"></ExportDialog>
 		<Toolbar class="kn-toolbar kn-toolbar--primary">
 			<template #left>
@@ -14,7 +14,7 @@
 		<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 		<div class="kn-page-content p-grid p-m-0">
 			<div v-if="importExportDescriptor.functionalities.length > 1" class="functionalities-container p-col-3 p-sm-3 p-md-2">
-				<KnTabCard :element="functionality" :selected="functionality.route === $route.path" v-for="(functionality, index) in importExportDescriptor.functionalities" v-bind:key="index" @click="selectType(functionality)" :badge="selectedItems['gallery'].length"></KnTabCard>
+				<KnTabCard :element="functionality" :selected="functionality.route === $route.path" v-for="(functionality, index) in importExportDescriptor.functionalities" v-bind:key="index" @click="selectType(functionality)" :badge="selectedItems[functionality.type].length"> </KnTabCard>
 			</div>
 			<div class="p-col p-pt-0">
 				<router-view v-model:loading="loading" @onItemSelected="getSelectedItems($event)" />
@@ -44,7 +44,8 @@
 				fileName: '',
 				loading: false,
 				selectedItems: {
-					gallery: []
+					gallery: [],
+					catalogFunction: []
 				}
 			}
 		},
@@ -89,50 +90,30 @@
 								downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
 								this.$store.commit('setInfo', { title: this.$t('common.downloading'), msg: this.$t('importExport.export.successfullyCompleted') })
 							}
+
+							this.selectedItems = {
+								gallery: [],
+								catalogFunction: []
+							}
 							/* closing dialog */
 							this.openExportDialog()
 						},
 						(error) => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t(error) })
 					)
 			},
-			async startImport(uploadedFiles) {
-				if (uploadedFiles.files || uploadedFiles.files.length > 0) {
-					var formData = new FormData()
-					formData.append('file', uploadedFiles.files)
-					await axios
-						.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery-ee/import/bulk', formData, {
-							headers: {
-								'Content-Type': 'multipart/form-data'
-							}
-						})
-						.then(
-							(response) => {
-								if (response.data.errors) {
-									this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
-								} else {
-									this.$store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('importExport.import.successfullyCompleted') })
-								}
-								/* closing dialog */
-								this.openImportDialog()
-							},
-							(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
-						)
-				} else {
-					this.$store.commit('setWarning', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
-				}
-			},
-			streamlineSelectedItemsArray(fileName) {
+
+			streamlineSelectedItemsArray(fileName): JSON {
 				let selectedItemsToBE = {} as JSON
 				selectedItemsToBE['fileName'] = fileName
 				selectedItemsToBE['knowageVersion'] = process.env.VUE_APP_VERSION
 				selectedItemsToBE['datetime'] = new Date()
 				for (var category in this.selectedItems) {
-					if (!selectedItemsToBE[category]) {
-						selectedItemsToBE[category] = { ids: [] }
-					}
-
 					for (var k in this.selectedItems[category]) {
-						selectedItemsToBE[category].ids.push(this.selectedItems[category][k].id)
+						if (!selectedItemsToBE[category]) {
+							selectedItemsToBE[category] = []
+						}
+						let obj = { id: this.selectedItems[category][k].id }
+						selectedItemsToBE[category].push(obj)
 					}
 				}
 

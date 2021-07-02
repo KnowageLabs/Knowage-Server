@@ -10,7 +10,6 @@ import it.eng.spagobi.functions.metadata.IOutputColumn;
 
 public class CatalogFunction {
 
-	private int functionId;
 	private String name;
 	private String description;
 	private String benchmarks;
@@ -28,35 +27,7 @@ public class CatalogFunction {
 
 	private List<String> keywords = new ArrayList<String>();
 
-	public CatalogFunction(int functionId, String name, String description, String language, String benchmarks, String family, String onlineScript,
-			String offlineScriptTrain, String offlineScriptUse, String owner, String label, String type, Map<String, IInputVariable> inputVariables,
-			Map<String, String> inputColumns, Map<String, IOutputColumn> outputColumns, List<String> keywords) {
-		super();
-		this.functionId = functionId;
-		this.name = name;
-		this.description = description;
-		this.language = language;
-		this.onlineScript = onlineScript;
-		this.offlineScriptTrain = offlineScriptTrain;
-		this.offlineScriptUse = offlineScriptUse;
-		this.owner = owner;
-		this.label = label;
-		this.type = type;
-		this.inputVariables = inputVariables;
-		this.inputColumns = inputColumns;
-		this.outputColumns = outputColumns;
-		this.keywords = keywords;
-	}
-
 	public CatalogFunction() {
-	}
-
-	public int getFunctionId() {
-		return functionId;
-	}
-
-	public void setFunctionId(int functionId) {
-		this.functionId = functionId;
 	}
 
 	public String getName() {

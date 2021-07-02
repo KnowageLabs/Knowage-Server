@@ -86,7 +86,7 @@
 					+'&MODEL_NAME=' + encodeURIComponent(modelName)
 					+'&DATA_SOURCE_LABEL=' + dataSource
 					+'&DATA_SOURCE_ID=' + dataSourceId+(isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
-	
+
 				$qbeViewer.openQbeInterfaceFromModel($scope,url,businessModel);
 
 			})
@@ -327,7 +327,6 @@
 //			console.log(federation);
 			var id = federation.federation_id;
 			var label = federation.label;
-			//$window.location.href=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp&id="+id+"&label="+label;
 
 			$mdDialog.show({
 				scope:$scope,
@@ -475,9 +474,9 @@
 			if(federation!==undefined){
 				var id =federation.federation_id;
 				var label = federation.label;
-				$scope.iframeUrl=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp&id="+id+"&label="+label;
+				$scope.iframeUrl=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=federatedDatasetBusiness&id="+id+"&label="+label;
 			}else{
-				$scope.iframeUrl=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp";
+				$scope.iframeUrl=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=federatedDatasetBusiness";
 			}
 
 		}

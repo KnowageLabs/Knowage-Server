@@ -110,4 +110,34 @@ public class ProductProfiler {
 		}
 	}
 
+	public static boolean canCreateWidget(String type) {
+		if (isCommunity) {
+			return true;
+		} else {
+			boolean toReturn = false;
+			try {
+				Method canCreateWidgetMethod = productProfilerEE.getMethod("canCreateWidget", String.class);
+				toReturn = (boolean) canCreateWidgetMethod.invoke(productProfilerEE, type);
+			} catch (Exception e) {
+				logger.error("Error while filtering widgets by product: ", e);
+			}
+			return toReturn;
+		}
+	}
+
+	public static boolean canUseFunctions() {
+		if (isCommunity) {
+			return true;
+		} else {
+			boolean toReturn = false;
+			try {
+				Method canUseFunctionsMethod = productProfilerEE.getMethod("canUseFunctions");
+				toReturn = (boolean) canUseFunctionsMethod.invoke(productProfilerEE);
+			} catch (Exception e) {
+				logger.error("Error while profiling catalog functions usage by product: ", e);
+			}
+			return toReturn;
+		}
+	}
+
 }
