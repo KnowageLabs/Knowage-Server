@@ -58,29 +58,29 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 
 	@Override
 	public FunctionCompleteDTO get(UUID id) {
-		return Optional.of(repository.find(id.toString()))
+		return Optional.ofNullable(repository.find(id.toString()))
 				.map(TO_FUNCTION_COMPLETE_DTO)
 				.orElseThrow(() -> new KnowageRuntimeException("Function with id " + id + " not found"));
 	}
 
 	@Override
 	public FunctionCompleteDTO create(FunctionCompleteDTO function) {
-		SbiCatalogFunction beFunction = Optional.of(function)
+		SbiCatalogFunction beFunction = Optional.ofNullable(function)
 				.map(TO_SBI_CATALOG_FUNCTION)
 				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));
 
-		return Optional.of(repository.create(beFunction))
+		return Optional.ofNullable(repository.create(beFunction))
 				.map(TO_FUNCTION_COMPLETE_DTO)
 				.get();
 	}
 
 	@Override
 	public FunctionCompleteDTO update(FunctionCompleteDTO function) {
-		SbiCatalogFunction beFunction = Optional.of(function)
+		SbiCatalogFunction beFunction = Optional.ofNullable(function)
 				.map(TO_SBI_CATALOG_FUNCTION)
 				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));
 
-		return Optional.of(repository.update(beFunction))
+		return Optional.ofNullable(repository.update(beFunction))
 				.map(TO_FUNCTION_COMPLETE_DTO)
 				.get();	}
 

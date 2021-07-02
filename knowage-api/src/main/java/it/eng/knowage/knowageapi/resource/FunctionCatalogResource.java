@@ -89,7 +89,7 @@ public class FunctionCatalogResource {
 			FunctionCompleteDTO create = api.create(function);
 			return Response.ok(create).build();
 		} catch (Exception e) {
-			LOGGER.error("Error getting function with id " + Optional.of(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
+			LOGGER.error("Error getting function with id " + Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
 			return Response.serverError().build();
 		}
 	}
@@ -116,7 +116,7 @@ public class FunctionCatalogResource {
 			FunctionCompleteDTO ret = api.update(function);
 			return Response.ok(ret).build();
 		} catch (Exception e) {
-			LOGGER.error("Error updating function with id " + Optional.of(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
+			LOGGER.error("Error updating function with id " + Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
 			throw e;
 		}
 	}

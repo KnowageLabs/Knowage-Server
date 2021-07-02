@@ -1230,7 +1230,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			SQLMapper sqlMapper = (SQLMapper) mapperClass.newInstance();
 			dataCon = new DataConnection(con, "2.1", sqlMapper);
 		} catch (Exception e) {
-			String conAsString = Optional.of(con).map(Connection::toString).orElse("null");
+			String conAsString = Optional.ofNullable(con).map(Connection::toString).orElse("null");
 			logger.error("Error while getting Data Source from connection " + conAsString, e);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "cannot build spago DataConnection object");
 		}

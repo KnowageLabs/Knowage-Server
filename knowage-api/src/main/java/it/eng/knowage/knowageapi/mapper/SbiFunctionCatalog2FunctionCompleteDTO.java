@@ -64,7 +64,7 @@ public class SbiFunctionCatalog2FunctionCompleteDTO implements Function<SbiCatal
 
 		UUID feFuntionId = UUID.fromString(functionId);
 		// TODO : fix the split on ','
-		List<String> feKeywords = Arrays.asList(Optional.of(t.getKeywords()).orElse("").split(","));
+		List<String> feKeywords = Arrays.asList(Optional.ofNullable(t.getKeywords()).orElse("").split(","));
 
 		ret.setBenchmark(t.getBenchmarks());
 		ret.setDescription(t.getDescription());

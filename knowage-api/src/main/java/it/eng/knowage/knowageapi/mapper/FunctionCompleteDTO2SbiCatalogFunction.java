@@ -44,7 +44,7 @@ public class FunctionCompleteDTO2SbiCatalogFunction implements Function<Function
 	public SbiCatalogFunction apply(FunctionCompleteDTO t) {
 		SbiCatalogFunction ret = new SbiCatalogFunction();
 
-		String functionId = Optional.of(t.getId())
+		String functionId = Optional.ofNullable(t.getId())
 				.map(UUID::toString)
 				.orElse(null);
 
