@@ -55,6 +55,7 @@
             "success": "Operation succeeded",
             "unsavedChangesHeader": "Unsaved changes",
             "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
+            "updateSuccess": "Item was updated successfully",
             "updateTitle": "Updated"
         },
         "type": "type",

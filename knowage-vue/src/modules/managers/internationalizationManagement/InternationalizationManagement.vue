@@ -1,5 +1,5 @@
 <template>
-    <TabView @tab-click="switchTabConfirm($event.index)" lazy data-test="tab-view">
+    <TabView @tab-click="switchTabConfirm($event.index)" v-model:activeIndex="activeTab" lazy data-test="tab-view">
         <TabPanel v-for="language in languages" :key="language">
             <template #header>
                 {{ language.language }}
@@ -7,10 +7,6 @@
             </template>
             <div class="p-fluid card">
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-
-                <!-- da pitamo dal ovo zele, ovo sam stavio umesto dirty dialoga na tab, posto ne postoji nacin da blokiram promenu taba kada se klikne na njega -->
-                <Message v-show="dirty">You have unsaved changes</Message>
-
                 <DataTable v-if="!loading" editMode="cell" :value="messages" :scrollable="true" scrollHeight="40vh" :loading="loading" :rows="15" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
                     <template #header class="p-fluid">
                         <div class="table-header">
@@ -70,7 +66,6 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
-import Message from 'primevue/message'
 
 export default defineComponent({
     name: 'internationalization-management',
@@ -80,8 +75,7 @@ export default defineComponent({
         Column,
         DataTable,
         Checkbox,
-        Button,
-        Message
+        Button
     },
 
     computed: {
@@ -106,6 +100,8 @@ export default defineComponent({
             defaultLangMessages: [] as any,
             showOnlyEmptyFields: false,
             dirty: false,
+            activeTab: 0,
+            previousActiveTab: -1,
             filters: {
                 global: [filterDefault]
             } as Object
@@ -134,12 +130,10 @@ export default defineComponent({
                     this.defaultLanguage = this.languages[language]
                 }
             }
-            //stavi defaultni jezik kao prvi tab
             this.languages.unshift(this.languages.splice(defaultLanguageIndex, 1)[0])
             this.selectLanguage(0)
         },
 
-        //dodaj novi red u tabelu
         addEmptyLabel() {
             var tempMessage = {
                 language: '',
@@ -149,16 +143,16 @@ export default defineComponent({
             this.messages.unshift(tempMessage)
         },
 
-        //selektuj jezik kada kliknes na tab
         selectLanguage(index) {
             var selectedTab = this.languages[index]
             this.selectedLanguage = this.languages[index]
             this.getMessages(selectedTab)
         },
 
-        //resenje za dirty, ako uspem da disablujem promenu taba na klik
         switchTabConfirm(index) {
             if (!this.dirty) {
+                this.activeTab = index
+                this.previousActiveTab = this.activeTab
                 this.selectLanguage(index)
             } else {
                 this.$confirm.require({
@@ -167,68 +161,74 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.dirty = false
+                        this.activeTab = index
                         this.selectLanguage(index)
+                    },
+                    reject: () => {
+                        this.activeTab = this.previousActiveTab
                     }
                 })
             }
         },
 
-        /*  TODO: (Code review) - MEtoda ima veliku kompleksnost, probati da se razbije na vise metoda. */
-        //prikazi poruke u datatable
+        setDataForDefaultLanguage(response) {
+            if (response.data.length == 0) {
+                this.addEmptyLabel()
+            } else {
+                this.defaultLangMessages = response.data
+                this.messages = response.data
+            }
+        },
+
+        setEmptyDatatableData(selectedTab) {
+            this.defaultLangMessages.forEach((defMess) => {
+                var newMess = {} as any
+                newMess.language = selectedTab.languageTag
+                newMess.label = defMess.label
+                newMess.defaultMessageCode = defMess.message
+                newMess.message = ''
+                this.messages.push(newMess)
+            })
+        },
+
+        setFilledDatatableData(response, selectedTab) {
+            this.defaultLangMessages.forEach((defMess) => {
+                var translatedMessage = response.data.find((item) => {
+                    return item.label == defMess.label
+                })
+                if (translatedMessage) {
+                    translatedMessage.defaultMessageCode = defMess.message
+                    this.messages.push(translatedMessage)
+                } else {
+                    var message = {
+                        language: selectedTab.languageTag,
+                        label: defMess.label,
+                        defaultMessageCode: defMess.message,
+                        message: ''
+                    }
+                    this.messages.push(message)
+                }
+            })
+        },
+
+        checkForMessages(response, selectedTab) {
+            if (response.data.length != 0) {
+                this.setFilledDatatableData(response, selectedTab)
+            } else {
+                this.setEmptyDatatableData(selectedTab)
+            }
+        },
+
         getMessages(selectedTab) {
             this.messages = []
             this.loading = true
             return axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization/?currLanguage=' + selectedTab.languageTag)
                 .then((response) => {
-                    //For Default Language
                     if (selectedTab.defaultLanguage) {
-                        //If database is empty show one row of input fields
-                        if (response.data.length == 0) {
-                            this.addEmptyLabel()
-                        } else {
-                            /* TODO: (Code review)  - Razmotriti da li ova dve promenljive trebaju da imaju referancu na isti niz.   */
-                            this.defaultLangMessages = response.data
-                            // angular.copy(defaultLangMessages, messages) dal je ovo tacno?
-                            this.messages = response.data
-                        }
-                        //For other languages
+                        this.setDataForDefaultLanguage(response)
                     } else {
-                        //If there are some messages in database
-                        if (response.data.length != 0) {
-                            this.defaultLangMessages.forEach((defMess) => {
-                                // searching if default message was translated into current language
-                                /*  TODO: (Code review) - OVaj deo na dole nije dobar. Zasto raditi filter i uzeti onda prvi objekat kada postoji find i find index metoda   */
-                                var translatedMessageArray = response.data.filter((item) => {
-                                    return item.label == defMess.label
-                                })
-
-                                if (translatedMessageArray[0]) {
-                                    // in case default message was translated into current language, we add the default translation message as a reference for translators
-                                    translatedMessageArray[0].defaultMessageCode = defMess.message
-                                    this.messages.push(translatedMessageArray[0])
-                                } else {
-                                    // in case default message was not translated into current language, we add an empty translation message
-                                    var message = {
-                                        language: selectedTab.languageTag,
-                                        label: defMess.label,
-                                        defaultMessageCode: defMess.message,
-                                        message: ''
-                                    }
-                                    this.messages.push(message)
-                                }
-                            })
-                        } else {
-                            //If there are no messages in database, take Label and Message Code from Default one
-                            this.defaultLangMessages.forEach((defMess) => {
-                                var newMess = {} as any
-                                newMess.language = selectedTab.languageTag
-                                newMess.label = defMess.label
-                                newMess.defaultMessageCode = defMess.message
-                                newMess.message = ''
-                                this.messages.push(newMess)
-                            })
-                        }
+                        this.checkForMessages(response, selectedTab)
                     }
                     this.allMessages = [...this.messages]
                 })
@@ -246,25 +246,22 @@ export default defineComponent({
                 return axios.post(url, toSave)
             }
         },
-        /*  TODO: (Code review) -- Prebaciti parametre za title i msg u translation files  */
+
         saveLabel(langObj, message) {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages'
             var toSave = { ...message }
             delete toSave.dirty
             this.saveOrUpdateMessage(url, toSave, langObj).then((response) => {
                 if (response.data.errors) {
-                    this.$store.commit('setError', { title: 'error', msg: response.data.errors })
+                    this.$store.commit('setError', { msg: response.data.errors })
                 } else {
-                    this.$store.commit('setInfo', { title: 'ok', msg: 'ok' })
+                    this.$store.commit('setInfo', { msg: this.$t('common.toast.updateSuccess') })
                 }
-                if (langObj.defaultLanguage) {
-                    this.getMessages(langObj)
-                }
+                this.getMessages(langObj)
             })
             this.dirty = false
         },
 
-        //nisam mogao vise da uprostim od ovoga zbog razlicitih poruka, verovatno moze jos
         deleteLabelConfirm(langObj, message) {
             if (message.id) {
                 let url = ''
