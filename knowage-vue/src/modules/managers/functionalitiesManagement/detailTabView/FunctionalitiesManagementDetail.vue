@@ -72,23 +72,23 @@
             <DataTable :value="roles" dataKey="id" class="p-datatable-sm kn-table" responsiveLayout="scroll">
                 <Column field="name" header="Roles" :sortable="true" />
                 <Column header="Development">
-                    <template #body>
-                        <Checkbox v-model="checked" value="Development" @click="test" />
+                    <template #body="slotProps">
+                        <Checkbox v-model="slotProps.data.development" :binary="true" @click="test(slotProps.data)" />
                     </template>
                 </Column>
                 <Column header="Test">
-                    <template #body>
-                        <Checkbox v-model="checked" value="Test" @click="test" />
+                    <template #body="slotProps">
+                        <Checkbox v-model="slotProps.data.test" :binary="true" @click="test(slotProps.data)" />
                     </template>
                 </Column>
                 <Column header="Execution">
-                    <template #body>
-                        <Checkbox v-model="checked" value="Execution" @click="test" />
+                    <template #body="slotProps">
+                        <Checkbox v-model="slotProps.data.execution" :binary="true" @click="test(slotProps.data)" />
                     </template>
                 </Column>
                 <Column header="Creation">
-                    <template #body>
-                        <Checkbox v-model="checked" value="Creation" @click="test" />
+                    <template #body="slotProps">
+                        <Checkbox v-model="slotProps.data.creation" :binary="true" @click="test(slotProps.data)" />
                     </template>
                 </Column>
                 <Column @rowClick="false">
@@ -150,7 +150,7 @@ export default defineComponent({
     },
     created() {
         this.selectedFolder = { ...this.functionality }
-        this.roles = [...this.rolesShort]
+        this.loadRoles()
     },
     watch: {
         functionality() {
@@ -160,18 +160,45 @@ export default defineComponent({
             console.log(this.roles)
         },
         rolesShort() {
-            this.roles = [...this.rolesShort]
+            this.loadRoles()
         }
     },
     methods: {
         closeTemplate() {
             this.$emit('close')
         },
+        loadRoles() {
+            this.roles = []
+            this.rolesShort.forEach((role: any) => {
+                const tempRole = { id: role.id, name: role.name, development: false, test: false, execution: false, creation: false }
 
-        test() {
-            console.log(this.checked)
+                let index = this.selectedFolder.devRoles.findIndex((currentRole: any) => role.id === currentRole.id)
+                if (index > -1) {
+                    tempRole.development = true
+                }
+
+                index = this.selectedFolder.testRoles.findIndex((currentRole: any) => role.id === currentRole.id)
+                if (index > -1) {
+                    tempRole.test = true
+                }
+
+                index = this.selectedFolder.execRoles.findIndex((currentRole: any) => role.id === currentRole.id)
+                if (index > -1) {
+                    tempRole.execution = true
+                }
+
+                index = this.selectedFolder.createRoles.findIndex((currentRole: any) => role.id === currentRole.id)
+                if (index > -1) {
+                    tempRole.creation = true
+                }
+
+                this.roles.push(tempRole)
+            })
+            console.log('ROLES: ', this.roles)
         },
-
+        test(role) {
+            console.log('ROLE AFTER CHECK: ', role)
+        },
         isChecked(row, criteria) {
             if (this.selectedFolder[criteria] != undefined) {
                 for (var j = 0; j < this.selectedFolder[criteria].length; j++) {
