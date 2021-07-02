@@ -157,9 +157,10 @@
             "valueName": "Value name"
         },
         "functionalitiesManagement": {
+            "hint": "No functionality selected",
             "moveDown ": " Move down",
             "moveUp": " Move up",
-            "title": "functionalities tree"
+            "title": "Functionalities tree"
         },
         "menu": {
             "admin": {

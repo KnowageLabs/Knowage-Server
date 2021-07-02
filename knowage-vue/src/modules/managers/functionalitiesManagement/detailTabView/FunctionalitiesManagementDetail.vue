@@ -45,6 +45,7 @@
                             }"
                             maxLength="255"
                             @blur="v$.selectedFolder.name.$touch()"
+                            @input="$emit('touched')"
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
@@ -57,7 +58,7 @@
                 </div>
                 <div class="p-field" :style="detailDescriptor.pField.style">
                     <span class="p-float-label">
-                        <InputText id="description" class="kn-material-input" type="text" v-model.trim="selectedFolder.description" maxLength="255" />
+                        <InputText id="description" class="kn-material-input" type="text" v-model.trim="selectedFolder.description" maxLength="255" @input="$emit('touched')" />
                         <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                     </span>
                 </div>
@@ -104,6 +105,7 @@ export default defineComponent({
     },
     watch: {
         functionality() {
+            this.v$.$reset()
             this.selectedFolder = { ...this.functionality }
             console.log(this.selectedFolder)
         }

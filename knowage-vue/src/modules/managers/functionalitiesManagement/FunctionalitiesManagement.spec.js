@@ -1,9 +1,11 @@
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import Button from 'primevue/button'
+import Card from 'primevue/card'
 import FunctionalitiesManagement from './FunctionalitiesManagement.vue'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import flushPromises from 'flush-promises'
+import KnHint from '@/components/UI/KnHint.vue'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 import Tree from 'primevue/tree'
@@ -59,7 +61,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            stubs: { Button, FabButton, ProgressBar, Toolbar, Tree },
+            stubs: { Button, Card, FabButton, FunctionalitiesManagementDetail: true, KnHint, ProgressBar, Toolbar, Tree },
             mocks: {
                 $t: (msg) => msg,
                 $store,
@@ -109,7 +111,12 @@ describe('Functionalities', () => {
         expect(tree.html()).toContain('Test')
         expect(tree.html()).toContain('Other')
     })
+    it('shows an hint if no item is selected from the tree', () => {
+        const wrapper = factory()
 
+        expect(wrapper.vm.showHint).toBe(true)
+        expect(wrapper.find('[data-test="functionality-hint"]').exists()).toBe(true)
+    })
     it('ask a confirm if delete button is clicked', async () => {
         const wrapper = factory()
 
@@ -147,5 +154,23 @@ describe('Functionalities', () => {
         await wrapper.find('[data-test="move-down-button-3"]').trigger('click')
 
         expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/moveDown/' + 3)
+    })
+    it('shows an empty detail if add new button is clicked', async () => {
+        const wrapper = factory()
+
+        await wrapper.find('[data-test="new-button"]').trigger('click')
+
+        expect(wrapper.vm.selectedFunctionality).toBe(null)
+    })
+    it('shows a detail if one item is seletected from the tree', async () => {
+        const wrapper = factory()
+
+        await flushPromises()
+
+        expect(wrapper.vm.functionalities.length).toBe(5)
+        console.log(wrapper.html())
+        await wrapper.find('[data-test="tree-item-3"]').trigger('click')
+
+        expect(wrapper.vm.selectedFunctionality).toStrictEqual({ id: 3, name: 'Other', parentId: 1, prog: 2 })
     })
 })

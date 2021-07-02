@@ -7,14 +7,14 @@
                         {{ $t('managers.functionalitiesManagement.title') }}
                     </template>
                     <template #right>
-                        <FabButton icon="fas fa-plus" @click="showForm" data-test="new-button" />
+                        <FabButton icon="fas fa-plus" @click="showForm(null)" data-test="new-button" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <div>
-                    <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @node-select="showForm($event)" data-test="functionality-tree">
+                    <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @node-select="showForm($event.data)" data-test="functionality-tree">
                         <template #default="slotProps">
-                            <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false">
+                            <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
                                 <span>{{ slotProps.node.label }}</span>
                                 <div v-show="buttonsVisible[slotProps.node.id]" class="p-ml-2">
                                     <Button v-if="canBeMovedUp(slotProps.node.data)" icon="fa fa-arrow-up" v-tooltip.top="$t('managers.functionalitiesManagement.moveUp')" class="p-button-link p-button-sm" @click.stop="moveUp(slotProps.node.id)" :data-test="'move-up-button-' + slotProps.node.id" />
@@ -34,9 +34,9 @@
                 </div>
             </div>
 
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" v-if="formVisible">
-                <KnHint :title="'managers.buisnessModelCatalogue.title'" :hint="'managers.buisnessModelCatalogue.hint'" v-if="showHint" data-test="bm-hint"></KnHint>
-                <FunctionalitiesManagementDetail :functionality="selectedFunctionality.data" @touched="touched = true" @close="formVisible = false" />
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
+                <KnHint :title="'managers.functionalitiesManagement.title'" :hint="'managers.functionalitiesManagement.hint'" v-if="showHint" data-test="functionality-hint"></KnHint>
+                <FunctionalitiesManagementDetail v-if="formVisible" :functionality="selectedFunctionality" @touched="touched = true" @close="onClose" />
             </div>
         </div>
     </div>
@@ -49,6 +49,7 @@ import FunctionalitiesManagementDetail from './detailTabView/FunctionalitiesMana
 import axios from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import functionalitiesManagementDescriptor from './FunctionalitiesManagementDescriptor.json'
+import KnHint from '@/components/UI/KnHint.vue'
 import Tree from 'primevue/tree'
 
 export default defineComponent({
@@ -56,6 +57,7 @@ export default defineComponent({
     components: {
         FunctionalitiesManagementDetail,
         FabButton,
+        KnHint,
         Tree
     },
     data() {
@@ -156,6 +158,8 @@ export default defineComponent({
             }
         },
         showForm(functionality: iFunctionality) {
+            this.showHint = false
+            console.log(functionality)
             if (!this.touched) {
                 this.setSelected(functionality)
             } else {
@@ -170,12 +174,13 @@ export default defineComponent({
                 })
             }
         },
+        onClose() {
+            this.touched = false
+            this.formVisible = false
+            this.showHint = true
+        },
         setSelected(functionality: iFunctionality) {
-            console.log('setSelected: ', functionality)
-            if (functionality) {
-                this.selectedFunctionality = functionality
-            }
-
+            this.selectedFunctionality = functionality
             this.formVisible = true
         },
         canBeMovedUp(functionality: iFunctionality) {
