@@ -176,6 +176,7 @@
             "title": "Business Models' catalogue",
             "unlockModel": "Unlock model",
             "uploadFile": "Upload File",
+            "uploadFileSuccess": "File uploaded",
             "value": "value of the parameter"
         },
         "configurationManagement": {
