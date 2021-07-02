@@ -140,7 +140,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			List<SbiCatalogFunction> allFunctions = fcDAO.loadAllCatalogFunctions();
 			List<SbiCatalogFunction> filteredFunctions = new ArrayList<SbiCatalogFunction>();
 			for (SbiCatalogFunction func : allFunctions) {
-				if (func.getType().equals(type)) {
+				if (func.getType() != null && func.getType().equals(type)) {
 					filteredFunctions.add(func);
 				}
 			}
