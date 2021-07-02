@@ -137,4 +137,15 @@ describe('Functionalities', () => {
 
         expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/moveUp/' + 3)
     })
+    it('moves the item down in the tree if the move down button is clicked', async () => {
+        const wrapper = factory()
+
+        await flushPromises()
+
+        expect(wrapper.vm.functionalities.length).toBe(5)
+
+        await wrapper.find('[data-test="move-down-button-3"]').trigger('click')
+
+        expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/moveDown/' + 3)
+    })
 })
