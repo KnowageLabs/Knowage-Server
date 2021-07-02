@@ -17,14 +17,13 @@
  */
 package it.eng.knowage.resourcemanager.resource;
 
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.Files;
 
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -39,8 +38,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import it.eng.knowage.resourcemanager.resource.utils.FileDTO;
-import it.eng.knowage.resourcemanager.resource.utils.FolderDTO;
+import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.resourcemanager.resource.utils.RootFolderDTO;
 import it.eng.knowage.resourcemanager.service.ResourceManagerAPI;
 import it.eng.spagobi.services.security.SecurityServiceService;
@@ -68,84 +66,64 @@ public class FoldersResource {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public RootFolderDTO getFolders() {
-		RootFolderDTO folders = resourceManagerAPIservice.getFolders(null);
+		SpagoBIUserProfile profile = getUserProfile();
+		RootFolderDTO folders = resourceManagerAPIservice.getFolders(profile, null);
 		return folders;
 	}
 
 	@POST
-	@Path("/{path}")
+	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public FolderDTO createFolder(@Valid FolderDTO newFolder, @PathParam("path") String path) {
-
-		return null;
-	}
-
-	@GET
-	@Path("/download/folder/{path}")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response downloadFolder(@QueryParam("path") String path) {
-		return null;
-	}
-
-	// Files Management
-
-	/**
-	 * @param path
-	 * @return list of files, one of them could be "metadata.json", it will be excluded
-	 */
-	@GET
-	@Path("/files/{path}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<FileDTO> files(@PathParam("path") String path) {
-		List<FileDTO> files = null;
-		return files;
-	}
-
-	@GET
-	@Path("/download/file/{path}")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response downloadFiles(@QueryParam("path") String path) {
-		return null;
+	public Response createFolder(@QueryParam("path") String path) {
+		Response response = null;
+		try {
+			SpagoBIUserProfile profile = getUserProfile();
+			boolean create = resourceManagerAPIservice.createFolder(path, profile);
+			if (create)
+				response = Response.status(Response.Status.OK).build();
+			else {
+				response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e.getMessage());
+		}
+		return response;
 	}
 
 	@POST
-	@Path("/uploadfile")
-	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
-	public Response uploadFile() {
-		return null;
-
-	}
-
-	@GET
-	@Path("/metadata/{path}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public FileDTO metadata(@PathParam("path") String path) {
-		FileDTO file = null;
-		return file;
-	}
-
-	@PUT
-	@Path("/metadata/{path}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public FileDTO saveMetadata(@Valid FileDTO fileDTO, @PathParam("path") String path) {
-		return null;
-	}
-
-	@POST
-	@Path("/metadata/{path}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public FileDTO addMetadata(@Valid FileDTO fileDTO, @PathParam("path") String path) {
-		return null;
+	@Path("/download/{path}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces("application/zip")
+	public Response downloadFolder(@PathParam("path") String path) {
+		SpagoBIUserProfile profile = getUserProfile();
+		java.nio.file.Path exportArchive = resourceManagerAPIservice.getDownloadPath(path, profile);
+		String filename = exportArchive.getFileName() + ".zip";
+		try {
+			return Response.ok(exportArchive.toFile()).header("Content-length", "" + Files.size(exportArchive))
+					.header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename)).build();
+		} catch (IOException e) {
+			throw new KnowageRuntimeException("Error calculating file size for " + exportArchive, e);
+		}
 	}
 
 	// Common methods
 
 	@DELETE
-	@Path("/{path}")
+	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("path") String path) {
+	public Response delete(@QueryParam("path") String path) {
 		Response response = null;
-
+		try {
+			SpagoBIUserProfile profile = getUserProfile();
+			boolean create = resourceManagerAPIservice.deleteFolder(path, profile);
+			if (create)
+				response = Response.status(Response.Status.OK).build();
+			else {
+				response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e.getMessage());
+		}
 		return response;
 
 	}
