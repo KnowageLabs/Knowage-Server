@@ -446,7 +446,17 @@ export default defineComponent({
                         conditionForPost.prog++
                         delete conditionForPost.parFather
                         delete conditionForPost.modalities
-                        await this.sendRequest(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, conditionForPost)
+                        await this.sendRequest(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, conditionForPost).then((response) => {
+                            if (response.data.errors) {
+                                this.errorMessage = response.data.errors[0].message
+                                this.displayWarning = true
+                            } else {
+                                this.$store.commit('setInfo', {
+                                    title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
+                                    msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
+                                })
+                            }
+                        })
                     }
                 }
             }
@@ -468,29 +478,9 @@ export default defineComponent({
         },
         sendRequest(url: string, condition: any) {
             if (this.operation === 'insert') {
-                return axios.post(url, condition).then((response) => {
-                    if (response.data.errors) {
-                        this.errorMessage = response.data.errors[0].message
-                        this.displayWarning = true
-                    } else {
-                        this.$store.commit('setInfo', {
-                            title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
-                            msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
-                        })
-                    }
-                })
+                return axios.post(url, condition)
             } else {
-                return axios.put(url, condition).then((response) => {
-                    if (response.data.errors) {
-                        this.errorMessage = response.data.errors[0].message
-                        this.displayWarning = true
-                    } else {
-                        this.$store.commit('setInfo', {
-                            title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
-                            msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
-                        })
-                    }
-                })
+                return axios.put(url, condition)
             }
         },
         showForm(event: any) {
