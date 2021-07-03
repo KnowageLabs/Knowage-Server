@@ -1,19 +1,7 @@
 <template>
   <div style="margin-bottom: 1em">
-    <Button
-      class="p-button-text p-button-rounded p-button-plain"
-      type="button"
-      icon="pi pi-plus"
-      :label="$t('common.expand')"
-      @click="expandAll"
-    />
-    <Button
-      class="p-button-text p-button-rounded p-button-plain"
-      type="button"
-      icon="pi pi-minus"
-      :label="$t('common.collapse')"
-      @click="collapseAll"
-    />
+    <Button class="p-button-text p-button-rounded p-button-plain" type="button" icon="pi pi-plus" :label="$t('common.expand')" @click="expandAll"/>
+    <Button class="p-button-text p-button-rounded p-button-plain" type="button" icon="pi pi-minus" :label="$t('common.collapse')" @click="collapseAll"/>
   </div>
   <Tree
     :value="nodes"
@@ -42,14 +30,19 @@ export default defineComponent({
   },
   watch: {
     selected: {
-      handler: function (select) {
-        let flattenTree = this.flattenTree(this.nodes[0], "childs");
-        for (let node of flattenTree) {
-          if (node.path == select) {
-            let selectionObj: any = {};
-            selectionObj[node.id] = true;
-            this.selectedNodeKey = selectionObj;
+     handler: function (select) {
+       if(select && this.nodes[0]){
+        var pos = select.indexOf("/");
+        if (pos != -1) {
+          let flattenTree = this.flattenTree(this.nodes[0], "childs");
+          for (let node of flattenTree) {
+            if (node.path == select) {
+              let selectionObj: any = {};
+              selectionObj[node.id] = true;
+              this.selectedNodeKey = selectionObj;
+            }
           }
+        }
         }
       },
     },
@@ -76,15 +69,9 @@ export default defineComponent({
     flattenTree(root, key) {
       let flatten = [Object.assign({}, root)];
       delete flatten[0][key];
-
       if (root[key] && root[key].length > 0) {
-        return flatten.concat(
-          root[key]
-            .map((child) => this.flattenTree(child, key))
-            .reduce((a, b) => a.concat(b), [])
-        );
+        return flatten.concat(root[key].map((child) => this.flattenTree(child, key)).reduce((a, b) => a.concat(b), []));
       }
-
       return flatten;
     },
     expandAll() {

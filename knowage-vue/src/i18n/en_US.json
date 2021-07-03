@@ -4,6 +4,8 @@
 		"cancel": "cancel",
 		"choose": "choose",
 		"close": "close",
+		"expand": "Expand",
+		"collapse": "Collapse",
 		"codingLanguages": {
 			"css": "css",
 			"html": "html",
@@ -211,7 +213,8 @@
             },
             "title": "List of menus",
             "roles": "Roles",
-            "selectDocument": "Select document"
+            "selectDocument": "Select document",
+			"chooseIcon": "Choose Icon"
         },
 		"widgetGallery": {
 			"deleteTemplate": "Delete template",
