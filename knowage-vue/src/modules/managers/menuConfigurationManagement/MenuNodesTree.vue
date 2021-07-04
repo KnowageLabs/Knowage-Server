@@ -2,6 +2,7 @@
   <Tree
     :loading="load"
     :value="menuElements"
+    :expandedKeys="expandedKeys"
     selectionMode="single"
     v-model:selectionKeys="selectedMenuNode"
     :metaKeySelection="false"
@@ -15,37 +16,17 @@
           <span>{{ slotProps.node.name }}</span>
         </div>
         <div v-if="slotProps.node.level > 1 && slotProps.node.parentId != null">
-          <Button
-            icon="far fa-trash-alt"
-            class="p-button-text p-button-rounded p-button-plain p-ml-5"
-            @click="deleteMenuNode(slotProps.node.menuId)"
-            data-test="delete-button"
-          />
+          <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-5" @click="deleteMenuNode(slotProps.node.menuId)" data-test="delete-button"/>
         </div>
         <div v-if="slotProps.node.parentId != null">
-          <Button
-            icon="pi pi-sort-alt"
-            class="p-button-text p-button-rounded p-button-plain p-ml-1"
-            @click="changeWithFather(slotProps.node.menuId)"
-            data-test="change-with-father-button"
-          />
+          <Button icon="pi pi-sort-alt" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="changeWithFather(slotProps.node.menuId)" data-test="change-with-father-button"/>
         </div>
 
         <div v-if="slotProps.node.level > 1 && slotProps.node.prog > 1">
-          <Button
-            icon="pi pi-arrow-up"
-            class="p-button-text p-button-rounded p-button-plain p-ml-1"
-            @click="moveUp(slotProps.node.menuId)"
-            data-test="move-up-button"
-          />
+          <Button icon="pi pi-arrow-up" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="moveUp(slotProps.node.menuId)" data-test="move-up-button"/>
         </div>
         <div v-if="slotProps.node.level == 1">
-          <Button
-            icon="pi pi-arrow-down"
-            class="p-button-text p-button-rounded p-button-plain p-ml-1"
-            @click="moveDown(slotProps.node.menuId)"
-            data-test="move-down-button"
-          />
+          <Button icon="pi pi-arrow-down" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="moveDown(slotProps.node.menuId)" data-test="move-down-button"/>
         </div>
       </div>
     </template>
@@ -62,13 +43,7 @@ export default defineComponent({
   components: {
     Tree,
   },
-  emits: [
-    "selectedMenuNode",
-    "deleteMenuNode",
-    "changeWithFather",
-    "moveUp",
-    "moveDown",
-  ],
+  emits: ["selectedMenuNode", "deleteMenuNode", "changeWithFather", "moveUp", "moveDown"],
   props: {
     elements: Array,
     loading: Boolean,
@@ -84,6 +59,7 @@ export default defineComponent({
         });
 
         this.menuElements = arrayToTree(element, { dataField: null });
+        this.expandAll();
       },
     },
     loading: {
@@ -96,10 +72,26 @@ export default defineComponent({
     return {
       load: false as Boolean,
       menuElements: [] as any[],
+      expandedKeys: [] as any[],
       selectedMenuNode: null as iMenuNode | null,
     };
   },
   methods: {
+    expandAll() {
+      for (let node of this.menuElements) {
+        this.expandNode(node);
+      }
+      this.expandedKeys = { ...this.expandedKeys };
+    },
+     expandNode(node) {
+      if (node.children && node.children.length) {
+        this.expandedKeys[node.key] = true;
+
+        for (let child of node.children) {
+          this.expandNode(child);
+        }
+      }
+    },
     deleteMenuNode(elementID: number) {
       this.$emit("deleteMenuNode", elementID);
     },

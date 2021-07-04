@@ -209,7 +209,9 @@
                 "saveMessage": "Menu item saved",
                 "saveTitle": "Save menu item",
                 "updateMessage": "Menu item updated",
-                "updateTitle": "Update menu item"
+                "updateTitle": "Update menu item",
+				"errorTitle": "Error",
+				"errorMessage": "Error saving menu item"
             },
             "title": "List of menus",
             "roles": "Roles",

@@ -11,7 +11,7 @@ export interface iMenuNode {
   hasChildren: Boolean,
   hideSliders: Boolean,
   hideToolbar: Boolean,
-  icon: iIcon,
+  icon: iIcon | null,
   iconCls: string | null,
   iconPath: string | null,
   initialPath: any | null,
@@ -39,10 +39,9 @@ export interface iIcon {
   id: number,
   category: string,
   className: string,
-  fontFamily: string,
-  fontWeight: number,
+  src: string | null,
   label: string,
-  unicode: string
+  unicode: string | null,
   visible: Boolean
 }
 

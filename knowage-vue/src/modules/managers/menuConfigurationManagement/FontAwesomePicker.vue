@@ -1,20 +1,10 @@
 <template>
-  <Dialog
-    :header="$t('managers.menuConfigurationManagement.chooseIcon')"
-    v-model:visible="modalShown"
-    :style="{ width: '50vw' }"
-    :modal="true"
-  >
+  <Dialog :header="$t('managers.menuConfigurationManagement.chooseIcon')" v-model:visible="modalShown" :style="{ width: '50vw' }" :modal="true">
     <div id="iconPicker">
       <div class="p-mt-2 p-field">
         <div class="p-inputgroup">
           <span class="p-float-label">
-            <InputText
-              id="searchIcon"
-              type="text"
-              @keyup="filterIcons($event)"
-              class="p-inputtext p-component kn-material-input"
-            />
+            <InputText id="searchIcon" type="text" @keyup="filterIcons($event)" class="p-inputtext p-component kn-material-input"/>
             <label for="searchIcon">{{ $t("common.search") }}</label>
           </span>
         </div>
@@ -23,13 +13,7 @@
       <div class="p-mt-4">
         <div class="iconPicker__icons">
           <p>fontawesome</p>
-          <a
-            href="#"
-            @click.stop.prevent="getIcon(icon.value, icon.name)"
-            :class="`item ${selected === icon.name ? 'selected' : ''}`"
-            v-for="icon in icons"
-            :key="icon.value"
-          >
+          <a href="#" @click.stop.prevent="getIcon(icon)" :class="`item ${selected === icon.name ? 'selected' : ''}`" v-for="icon in icons" :key="icon.value">
             <i :class="'fas fa-' + icon.name"></i>
           </a>
         </div>
@@ -47,7 +31,7 @@ import Dialog from "primevue/dialog";
 import icons from "./icons";
 export default {
   name: "FontAwesomePicker",
-  emits: ["selectIcon", "chooseIcon", "closeFontAwesomeModal"],
+  emits: ["chooseIcon", "closeFontAwesomeModal"],
   components: { Dialog },
   props: ["showModal"],
   watch: {
@@ -61,24 +45,18 @@ export default {
     return {
       modalShown: false as Boolean,
       selected: "" as string,
+      chosenIcon: {},
       icons,
     };
   },
   methods: {
-    getIcon(icon, key) {
-      this.selected = key;
-      this.selectIcon(icon.toUpperCase());
-    },
-    selectIcon(value) {
-      const result = {
-        className: this.selected,
-        cssValue: value,
-      };
-      this.$emit("selectIcon", result);
+    getIcon(icon) {
+      this.selected = icon.name;
+      this.chosenIcon = icon;
     },
     chooseIcon() {
-      if (this.selected) {
-        this.$emit("chooseIcon", "fas fa-" + this.selected);
+      if (this.chosenIcon) {
+        this.$emit("chooseIcon", this.chosenIcon);
       }
     },
     closeModal(){

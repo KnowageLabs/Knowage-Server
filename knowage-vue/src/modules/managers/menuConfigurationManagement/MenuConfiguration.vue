@@ -78,7 +78,22 @@ export default defineComponent({
   methods: {
     showForm() {
       this.hideForm = false;
+      if(Object.keys(this.selectedMenuNode).length === 0 && this.selectedMenuNode.constructor === Object){
       this.selectedMenuNode = {};
+      this.initMenuNode();
+      }else{
+        let selectedNode = this.selectedMenuNode;
+        this.selectedMenuNode = {};
+        this.initMenuNode();
+        this.selectedMenuNode.parentId = selectedNode.id;
+      }
+    },
+    initMenuNode(){
+      this.selectedMenuNode.level=0;
+      this.selectedMenuNode.icon = {};
+      this.selectedMenuNode.custIcon = this.selectedMenuNode.externalApplicationUrl = this.selectedMenuNode.functionality= this.selectedMenuNode.initialPath = 
+      this.selectedMenuNode.objId = this.selectedMenuNode.objParameters = this.selectedMenuNode.staticPage = this.selectedMenuNode.parentId = null;
+      this.selectedMenuNode.hideSliders = this.selectedMenuNode.hideToolbar = this.selectedMenuNode.viewIcons = false;
     },
     closeForm() {
       this.hideForm = true;

@@ -224,7 +224,7 @@ export default defineComponent({
       this.hideForm = false;
     },
     toggleDocument() {
-      this.functionalityHidden = this.functionalityHidden = this.documentHidden = this.externalAppHidden = this.documentTreeHidden = this.workspaceInitialHidden = true;
+      this.functionalityHidden = this.staticPageHidden = this.documentHidden = this.externalAppHidden = this.documentTreeHidden = this.workspaceInitialHidden = true;
       this.documentHidden = false;
     },
     toggleStaticPage() {
@@ -275,12 +275,20 @@ export default defineComponent({
     closeFontAwesomeSelectionModal(){
       this.chooseIconModalShown = false;
     },
-    onIconSelect(selectedIcon){
-      this.selectedIcon = "fas fa-"+selectedIcon.className;
-      this.menuNode.icon.className = this.selectedIcon;
-    },
     onChoosenIcon(choosenIcon){
-    this.selectedIcon = this.menuNode.icon.className = choosenIcon;
+      if(this.menuNode.icon == null){
+        this.menuNode.icon = {
+          id: choosenIcon.id,
+          className: "fas fa-"+ choosenIcon.name,
+          unicode: choosenIcon.value,
+          category: "solid",
+          label: "",
+          src: "",
+          visible: true
+        }
+      }
+    this.selectedIcon = this.menuNode.icon.className =  "fas fa-" + choosenIcon.name;
+    this.menuNode.icon.id = choosenIcon.id;
     this.closeFontAwesomeSelectionModal();
     },
     onDocumentSelect(document) {
@@ -298,7 +306,7 @@ export default defineComponent({
       }
       if (response.status == 200) {
         if (response.data.errors) {
-          console.log(response.data.errors);
+            this.$store.commit("setError", { title: this.$t("managers.menuConfigurationManagement.info.errorTitle"), msg: this.$t("managers.menuConfigurationManagement.info.errorMessage") });
         } else {
           this.$store.commit("setInfo", { title: this.$t("managers.menuConfigurationManagement.info.saveTitle"), msg: this.$t("managers.menuConfigurationManagement.info.saveMessage") });
         }
