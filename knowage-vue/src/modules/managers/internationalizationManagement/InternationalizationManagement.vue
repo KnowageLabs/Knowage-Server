@@ -62,6 +62,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
+import { iLanguage, iMessage } from './InternationalizationManagement'
 import intDescriptor from './InternationalizationManagementDescriptor.json'
 import axios from 'axios'
 import TabView from 'primevue/tabview'
@@ -96,12 +97,12 @@ export default defineComponent({
         return {
             loading: false,
             intDescriptor,
-            languages: intDescriptor.languages,
-            defaultLanguage: {} as any,
-            selectedLanguage: {} as any,
-            messages: [] as any,
-            allMessages: [] as any,
-            defaultLangMessages: [] as any,
+            languages: [] as iLanguage[],
+            defaultLanguage: {} as iLanguage,
+            selectedLanguage: {} as iLanguage,
+            messages: [] as iMessage[],
+            allMessages: [] as iMessage[],
+            defaultLangMessages: [] as iMessage[],
             showOnlyEmptyFields: false,
             dirty: false,
             activeTab: 0,
@@ -112,6 +113,7 @@ export default defineComponent({
         }
     },
     async created() {
+        await this.getLanguages()
         this.setDefaultLanguage()
         this.getMessages(this.defaultLanguage)
     },
@@ -239,6 +241,18 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
 
+        async getLanguages() {
+            this.loading = true
+            return axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/internationalization/languages')
+                .then((response) => {
+                    console.log('REQUEST', response.data.wrappedObject)
+                    console.log('DESCRIPTRO', this.languages)
+                    this.languages = response.data.wrappedObject
+                })
+                .finally(() => (this.loading = false))
+        },
+
         saveOrUpdateMessage(url, toSave, langObj) {
             if (toSave.id) {
                 delete toSave.defaultMessageCode
@@ -253,7 +267,7 @@ export default defineComponent({
 
         saveLabel(langObj, message) {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages'
-            var toSave = { ...message }
+            var toSave = { ...message } as iMessage
             delete toSave.dirty
             this.saveOrUpdateMessage(url, toSave, langObj).then((response) => {
                 if (response.data.errors) {

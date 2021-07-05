@@ -1,7 +1,5 @@
 import { mount } from '@vue/test-utils'
-// import axios from 'axios'
 import Button from 'primevue/button'
-// import flushPromises from 'flush-promises'
 import InternationalizationManagement from './InternationalizationManagement.vue'
 import InputText from 'primevue/inputtext'
 import ProgressBar from 'primevue/progressbar'

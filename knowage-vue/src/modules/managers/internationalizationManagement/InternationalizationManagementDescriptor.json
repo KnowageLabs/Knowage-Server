@@ -14,49 +14,6 @@
         "language": "",
         "message": ""
     },
-    "languages": [
-        {
-            "iso3code": "ita",
-            "language": "Italian(ITA)",
-            "languageTag": "it-IT"
-        },
-        {
-            "defaultLanguage": true,
-            "iso3code": "eng",
-            "language": "English(USA)",
-            "languageTag": "en-US"
-        },
-        {
-            "iso3code": "fra",
-            "language": "French(FRA)",
-            "languageTag": "fr-FR"
-        },
-        {
-            "iso3code": "spa",
-            "language": "Spanish(ESP)",
-            "languageTag": "es-ES"
-        },
-        {
-            "iso3code": "por",
-            "language": "Portugese(BRA)",
-            "languageTag": "pt-BR"
-        },
-        {
-            "iso3code": "eng",
-            "language": "English(GBR)",
-            "languageTag": "en-GB"
-        },
-        {
-            "iso3code": "zho",
-            "language": "Chinese(CHN)",
-            "languageTag": "zh-Hans-CN"
-        },
-        {
-            "iso3code": "deu",
-            "language": "German(DEU)",
-            "languageTag": "de-DE"
-        }
-    ],
     "notDefaultLanguageColumns": [
         {
             "disabled": true,
