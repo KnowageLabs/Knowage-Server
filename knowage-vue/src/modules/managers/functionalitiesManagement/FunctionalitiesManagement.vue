@@ -239,7 +239,7 @@ export default defineComponent({
                         msg: this.$t('common.toast.deleteSuccess')
                     })
                 }
-
+                this.selectedFunctionality = null
                 this.loadPage()
             })
         },
