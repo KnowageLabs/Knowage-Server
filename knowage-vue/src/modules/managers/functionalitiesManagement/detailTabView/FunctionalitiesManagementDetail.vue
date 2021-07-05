@@ -165,6 +165,7 @@ export default defineComponent({
             this.loading = true
             this.v$.$reset()
             this.selectedFolder = { ...this.functionality }
+            this.loadRoles()
             await this.loadParentFolder()
             console.log(this.selectedFolder)
             console.log(this.roles)
@@ -194,15 +195,19 @@ export default defineComponent({
         },
         async loadParentFolder() {
             if (this.selectedFolder.id) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.selectedFolder.id}`).then((response) => (this.parentFolder = response.data))
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.selectedFolder.parentId}`).then((response) => (this.parentFolder = response.data))
+            } else {
+                this.parentFolder = this.selectedFolder
             }
         },
         roleIsChecked(role: any, roles: [], roleField: string) {
             console.log('ROLES', roles)
-            const index = roles.findIndex((currentRole: any) => role.id === currentRole.id)
+            if (roles) {
+                const index = roles.findIndex((currentRole: any) => role.id === currentRole.id)
 
-            if (index > -1) {
-                role[roleField] = true
+                if (index > -1) {
+                    role[roleField] = true
+                }
             }
         },
         isCheckable(role: any, roleField: string) {
