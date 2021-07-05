@@ -72,8 +72,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	public static transient Logger logger = Logger.getLogger(FunctionsCatalogResource.class);
 
-	public static String DATA_MINING_ENGINE_SUFFIX = "dataminingengine";
-
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
