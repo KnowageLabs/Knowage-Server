@@ -35,9 +35,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
+import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.resourcemanager.resource.utils.RootFolderDTO;
 import it.eng.knowage.resourcemanager.service.ResourceManagerAPI;
@@ -57,6 +56,9 @@ public class FoldersResource {
 	@Autowired
 	ResourceManagerAPI resourceManagerAPIservice;
 
+	@Autowired
+	BusinessRequestContext businessContext;
+
 	// Folders management
 
 	/**
@@ -66,7 +68,7 @@ public class FoldersResource {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public RootFolderDTO getFolders() {
-		SpagoBIUserProfile profile = getUserProfile();
+		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		RootFolderDTO folders = resourceManagerAPIservice.getFolders(profile, null);
 		return folders;
 	}
@@ -77,7 +79,7 @@ public class FoldersResource {
 	public Response createFolder(@QueryParam("path") String path) {
 		Response response = null;
 		try {
-			SpagoBIUserProfile profile = getUserProfile();
+			SpagoBIUserProfile profile = businessContext.getUserProfile();
 			boolean create = resourceManagerAPIservice.createFolder(path, profile);
 			if (create)
 				response = Response.status(Response.Status.OK).build();
@@ -95,7 +97,7 @@ public class FoldersResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/zip")
 	public Response downloadFolder(@PathParam("path") String path) {
-		SpagoBIUserProfile profile = getUserProfile();
+		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		java.nio.file.Path exportArchive = resourceManagerAPIservice.getDownloadPath(path, profile);
 		String filename = exportArchive.getFileName() + ".zip";
 		try {
@@ -114,7 +116,7 @@ public class FoldersResource {
 	public Response delete(@QueryParam("path") String path) {
 		Response response = null;
 		try {
-			SpagoBIUserProfile profile = getUserProfile();
+			SpagoBIUserProfile profile = businessContext.getUserProfile();
 			boolean create = resourceManagerAPIservice.delete(path, profile);
 			if (create)
 				response = Response.status(Response.Status.OK).build();
@@ -126,12 +128,6 @@ public class FoldersResource {
 		}
 		return response;
 
-	}
-
-	private SpagoBIUserProfile getUserProfile() {
-		SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
-				RequestAttributes.SCOPE_REQUEST);
-		return profile;
 	}
 
 }

@@ -35,9 +35,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
+import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.resourcemanager.resource.utils.FileDTO;
 import it.eng.knowage.resourcemanager.resource.utils.MetadataDTO;
@@ -58,6 +57,9 @@ public class FilesResource {
 	@Autowired
 	ResourceManagerAPI resourceManagerAPIservice;
 
+	@Autowired
+	BusinessRequestContext businessContext;
+
 	// Files Management
 
 	/**
@@ -68,13 +70,13 @@ public class FilesResource {
 	@Path("/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<FileDTO> files(@PathParam("path") String path) {
-		SpagoBIUserProfile profile = getUserProfile();
+		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		List<FileDTO> files = resourceManagerAPIservice.getListOfFiles(path, profile);
 		return files;
 	}
 
 	@GET
-	@Path("/download/file/{path}")
+	@Path("/download/file/")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response downloadFiles(@QueryParam("path") String path) {
 		return null;
@@ -118,7 +120,7 @@ public class FilesResource {
 	public Response delete(@PathParam("path") String path) {
 		Response response = null;
 		try {
-			SpagoBIUserProfile profile = getUserProfile();
+			SpagoBIUserProfile profile = businessContext.getUserProfile();
 			boolean create = resourceManagerAPIservice.delete(path, profile);
 			if (create)
 				response = Response.status(Response.Status.OK).build();
@@ -130,12 +132,6 @@ public class FilesResource {
 		}
 		return response;
 
-	}
-
-	private SpagoBIUserProfile getUserProfile() {
-		SpagoBIUserProfile profile = (SpagoBIUserProfile) RequestContextHolder.currentRequestAttributes().getAttribute("userProfile",
-				RequestAttributes.SCOPE_REQUEST);
-		return profile;
 	}
 
 }
