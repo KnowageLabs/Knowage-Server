@@ -7,7 +7,7 @@
                         {{ $t('managers.functionalitiesManagement.title') }}
                     </template>
                     <template #right>
-                        <FabButton icon="fas fa-plus" @click="showForm(null)" data-test="new-button" />
+                        <FabButton v-if="selectedFunctionality" icon="fas fa-plus" @click="showForm(null)" data-test="new-button" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
