@@ -20,11 +20,7 @@ package it.eng.knowage.knowageapi;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.FlushModeType;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -51,54 +47,27 @@ import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImpl;
 @ComponentScan({ "it.eng.knowage.knowageapi", "it.eng.knowage.resourcemanager" })
 public class KnowageApiConfiguration {
 
-	@Bean
-	@Qualifier("knowage-gallery")
+	@Primary /* just to prevent Spring error */
+	@Bean("knowage-gallery")
 	public LocalEntityManagerFactoryBean entityManagerFactoryForWidgetGallery() {
 		LocalEntityManagerFactoryBean factoryBean = new LocalEntityManagerFactoryBean();
 		factoryBean.setPersistenceUnitName("knowage-gallery");
 		return factoryBean;
 	}
 
-	@Bean
-	@Qualifier("knowage-gallery")
-	public EntityManager entityManagerForWidgetGallery(@Qualifier("knowage-gallery") EntityManagerFactory emf) {
-		EntityManager em = emf.createEntityManager();
-		em.setFlushMode(FlushModeType.COMMIT);
-		return em;
-	}
-
-	@Primary
-	@Bean
-	@Qualifier("knowage-functioncatalog")
+	@Bean("knowage-functioncatalog")
 	public LocalEntityManagerFactoryBean entityManagerFactoryForWidgetFunctionCatalog() {
 		LocalEntityManagerFactoryBean factoryBean = new LocalEntityManagerFactoryBean();
 		factoryBean.setPersistenceUnitName("knowage-functioncatalog");
 		return factoryBean;
 	}
 
-	@Bean
-	@Qualifier("knowage-functioncatalog")
-	public EntityManager entityManagerForWidgetFunctionCatalog(@Qualifier("knowage-functioncatalog") EntityManagerFactory emf) {
-		EntityManager em = emf.createEntityManager();
-		em.setFlushMode(FlushModeType.COMMIT);
-		return em;
-	}
-
-	@Bean("knowage-gallery")
-	public PlatformTransactionManager platformTransactionManagerForWidgetGallery(@Qualifier("knowage-gallery") EntityManagerFactory emf) {
-		return new JpaTransactionManager(emf);
-	}
-
-	@Bean("knowage-functioncatalog")
-	public PlatformTransactionManager platformTransactionManagerForFunctionCatalog(@Qualifier("knowage-functioncatalog") EntityManagerFactory emf) {
-		return new JpaTransactionManager(emf);
-	}
-
 	@Primary
 	@Bean
-	public PlatformTransactionManager mainTransactionManager(@Qualifier("knowage-gallery") PlatformTransactionManager ptm1,
-			@Qualifier("knowage-functioncatalog") PlatformTransactionManager ptm2) {
-		return new ChainedTransactionManager(ptm1, ptm2);
+	public PlatformTransactionManager mainTransactionManager() {
+		return new ChainedTransactionManager(
+				new JpaTransactionManager(entityManagerFactoryForWidgetGallery().getObject()),
+				new JpaTransactionManager(entityManagerFactoryForWidgetFunctionCatalog().getObject()));
 	}
 
 	@Bean
