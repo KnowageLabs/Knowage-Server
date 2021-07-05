@@ -64,6 +64,7 @@
                             <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                         </span>
                     </div>
+                    {{ selectedFolder }}
                 </form>
             </template>
         </Card>
@@ -118,7 +119,7 @@ import Column from 'primevue/column'
 import Checkbox from 'primevue/checkbox'
 
 export default defineComponent({
-    emits: ['touched', 'close'],
+    emits: ['touched', 'close', 'inserted'],
     props: {
         functionality: Object,
         rolesShort: Array as any
@@ -146,6 +147,12 @@ export default defineComponent({
     computed: {
         buttonDisabled(): Boolean {
             return this.v$.$invalid
+        },
+        operation() {
+            if (this.selectedFolder.id) {
+                return 'update'
+            }
+            return 'insert'
         }
     },
     validations() {
@@ -183,7 +190,14 @@ export default defineComponent({
         loadRoles() {
             this.roles = []
             this.rolesShort.forEach((role: any) => {
-                const tempRole = { id: role.id, name: role.name, development: false, test: false, execution: false, creation: false }
+                const tempRole = {
+                    id: role.id,
+                    name: role.name,
+                    development: false,
+                    test: false,
+                    execution: false,
+                    creation: false
+                }
 
                 this.roleIsChecked(tempRole, this.selectedFolder.devRoles, 'development')
                 this.roleIsChecked(tempRole, this.selectedFolder.testRoles, 'test')
@@ -226,6 +240,49 @@ export default defineComponent({
             }
 
             return checkable
+        },
+        prepareFunctionalityToSend(functionalityToSend) {
+            var roles = [...this.roles]
+            var functionality = functionalityToSend
+            functionality.codeType = functionality.codType
+
+            delete functionality.codType
+            delete functionality.biObjects
+
+            this.emptyFunctionalityRoles(functionality)
+
+            roles.forEach((role) => {
+                if (role.development) functionality.devRoles.push(role)
+                if (role.test) functionality.testRoles.push(role)
+                if (role.execution) functionality.execRoles.push(role)
+                if (role.creation) functionality.createRoles.push(role)
+            })
+            console.log('insertSelectedRolesIntoFunctionality', functionality)
+        },
+        emptyFunctionalityRoles(functionality) {
+            functionality.devRoles = []
+            functionality.testRoles = []
+            functionality.execRoles = []
+            functionality.createRoles = []
+        },
+        async createOrUpdate(functionalityToSend) {
+            return this.operation === 'update' ? axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityToSend.id}`, functionalityToSend) : axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/', functionalityToSend)
+        },
+        async handleSubmit() {
+            if (this.v$.$invalid) {
+                return
+            }
+            let functionalityToSend = { ...this.selectedFolder }
+            this.prepareFunctionalityToSend(functionalityToSend)
+
+            await this.createOrUpdate(functionalityToSend).then((response) => {
+                if (response.data.errors) {
+                    this.$store.commit('setError', { title: 'Error', msg: response.data.error })
+                } else {
+                    this.$store.commit('setInfo', { title: 'Ok', msg: 'Saved OK' })
+                }
+            })
+            this.$emit('inserted')
         },
         test(role) {
             console.log('ROLE AFTER CHECK: ', role)
