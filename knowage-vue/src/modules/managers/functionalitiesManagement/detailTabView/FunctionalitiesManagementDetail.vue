@@ -280,7 +280,7 @@ export default defineComponent({
                 if (response.data.errors) {
                     this.$store.commit('setError', { title: 'Error', msg: response.data.error })
                 } else {
-                    this.$store.commit('setInfo', { title: 'Ok', msg: 'Saved OK' })
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
                 }
             })
             this.dirty = false

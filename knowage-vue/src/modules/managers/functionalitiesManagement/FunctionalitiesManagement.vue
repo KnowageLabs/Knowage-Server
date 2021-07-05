@@ -87,6 +87,7 @@ export default defineComponent({
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/').then((response) => (this.functionalities = response.data))
         },
         async loadRolesShort() {
+            this.rolesShort = []
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/short/').then((response) => (this.rolesShort = response.data))
         },
         createNodeTree() {
