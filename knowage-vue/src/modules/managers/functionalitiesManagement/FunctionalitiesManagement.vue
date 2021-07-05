@@ -253,6 +253,7 @@ export default defineComponent({
             await this.loadRolesShort()
             this.createNodeTree()
             this.expandAll()
+            this.touched = false
             this.loading = false
         }
     }

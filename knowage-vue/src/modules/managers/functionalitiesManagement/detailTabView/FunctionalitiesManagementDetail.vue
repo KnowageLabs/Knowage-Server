@@ -64,12 +64,12 @@
                             <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                         </span>
                     </div>
+                    {{ selectedFolder }}
                 </form>
             </template>
         </Card>
         <Card :style="detailDescriptor.card.style">
             <template #content>
-                {{ roles }}
                 <DataTable v-if="!loading" :value="roles" dataKey="id" class="p-datatable-sm kn-table" responsiveLayout="scroll" data-test="roles-table">
                     <Column field="name" :header="$t('managers.functionalitiesManagement.roles')" :sortable="true" />
                     <Column :header="$t('managers.functionalitiesManagement.development')">
@@ -141,7 +141,6 @@ export default defineComponent({
             parentFolder: null as any,
             roles: [] as any,
             checked: [] as any,
-            operation: 'insert',
             loading: false,
             dirty: false
         }
@@ -150,12 +149,6 @@ export default defineComponent({
         buttonDisabled(): Boolean {
             return this.v$.$invalid
         }
-    },
-    operation() {
-        if (this.selectedFolder.id) {
-            return 'update'
-        }
-        return 'insert'
     },
     validations() {
         return {
@@ -257,7 +250,7 @@ export default defineComponent({
                 functionalityToSend.codeType = this.parentFolder.codType
                 functionalityToSend.parentId = this.parentFolder.id
                 functionalityToSend.path = this.parentFolder.path + '/' + functionalityToSend.name
-                functionalityToSend.description = ''
+                if (!functionalityToSend.description) functionalityToSend.description = ''
             }
         },
 
@@ -268,7 +261,7 @@ export default defineComponent({
             functionality.createRoles = []
         },
         async createOrUpdate(functionalityToSend) {
-            return functionalityToSend.id ? axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityToSend.id}`, functionalityToSend) : axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/', functionalityToSend)
+            return this.selectedFolder.id ? axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityToSend.id}`, functionalityToSend) : axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/', functionalityToSend)
         },
         async handleSubmit() {
             if (this.v$.$invalid) {
