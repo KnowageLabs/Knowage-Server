@@ -17,18 +17,31 @@
  */
 package it.eng.knowage.resourcemanager.service.impl;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.utils.ContextPropertiesConfig;
@@ -43,6 +56,10 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	private static final Logger LOGGER = Logger.getLogger(ResourceManagerAPIImpl.class);
 	int count = 0;
 	private static Map<String, List<String>> foldersForDevs = new HashMap<>();
+	private PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**/*");
+
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	static {
 		List<String> folders = new ArrayList<String>();
@@ -177,15 +194,20 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	@Override
 	public boolean createFolder(String path, SpagoBIUserProfile profile) {
 		String totalPath = getTotalPath(path, profile);
-		File file = new File(totalPath);
-		// Creating the directory
-		boolean bool = file.mkdir();
-		if (bool) {
-			LOGGER.info("Directory created successfully");
-		} else {
-			LOGGER.info("Sorry couldn’t create specified directory");
+		String rootElement = path.split("/")[0];
+		String rootPath = getTotalPath(rootElement, profile);
+		boolean bool = false;
+		String workDir = Paths.get(rootPath).toString();
+		if (canSee(workDir, profile)) {
+			File file = new File(totalPath);
+			// Creating the directory
+			bool = file.mkdir();
+			if (bool) {
+				LOGGER.info("Directory created successfully");
+			} else {
+				LOGGER.info("Sorry couldn’t create specified directory");
+			}
 		}
-
 		return bool;
 	}
 
@@ -212,10 +234,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	@Override
 	public Path getDownloadPath(String path, SpagoBIUserProfile profile) {
 		String workDir = getWorkDirectory(profile);
+		java.nio.file.Path workingPath = null;
 		java.nio.file.Path pathToReturn = null;
 		String directoryFullPath = workDir + File.separator + path;
 
-		pathToReturn = Paths.get(directoryFullPath);
+		workingPath = Paths.get(directoryFullPath);
+
+		pathToReturn = createZipFile(path, workingPath);
 
 		return pathToReturn;
 	}
@@ -241,4 +266,53 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		return totalPath;
 	}
 
+	public Path createZipFile(String fileName, java.nio.file.Path fullPath) {
+
+		try {
+			Path tempDirectory = Files.createTempDirectory("knowage-zip");
+			Path tempFile = Files.createTempFile("knowage-zip", fileName);
+
+			try (ZipOutputStream ret = new ZipOutputStream(Files.newOutputStream(tempFile))) {
+
+				File fileDest = new File(tempDirectory.toString() + File.separator + fileName);
+				FileUtils.copyDirectory(fullPath.toFile(), fileDest);
+				List<Path> files = Files.walk(tempDirectory).collect(toList());
+
+				for (Path currPath : files) {
+
+					Path relativize = tempDirectory.relativize(currPath);
+					if (Files.isDirectory(currPath)) {
+						ZipEntry zipEntry = new ZipEntry(relativize.toString() + "/");
+						ret.putNextEntry(zipEntry);
+					} else {
+						ZipEntry zipEntry = new ZipEntry(relativize.toString());
+						ret.putNextEntry(zipEntry);
+						InputStream currPathInputStream = Files.newInputStream(currPath);
+						copy(currPathInputStream, ret);
+					}
+					ret.closeEntry();
+				}
+			}
+
+			cleanUpTempDirectory(tempDirectory);
+
+			return tempFile;
+
+		} catch (IOException e) {
+			throw new KnowageRuntimeException("Error creating export ZIP archive", e);
+		}
+	}
+
+	private void copy(InputStream source, OutputStream target) throws IOException {
+		byte[] buf = new byte[8192];
+		int length;
+		while ((length = source.read(buf)) > 0) {
+			target.write(buf, 0, length);
+		}
+	}
+
+	private void cleanUpTempDirectory(Path tempDirectory) throws IOException {
+		// Common way to delete recursively
+		Files.walk(tempDirectory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+	}
 }
