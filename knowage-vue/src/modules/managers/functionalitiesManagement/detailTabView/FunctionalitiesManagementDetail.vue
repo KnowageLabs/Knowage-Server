@@ -142,7 +142,8 @@ export default defineComponent({
             roles: [] as any,
             checked: [] as any,
             operation: 'insert',
-            loading: false
+            loading: false,
+            dirty: false
         }
     },
     computed: {
@@ -194,7 +195,14 @@ export default defineComponent({
             console.log('PARENT FOLDER', this.parentFolder)
             console.log('TEMP FOLDER', tempFolder)
             this.rolesShort.forEach((role: any) => {
-                const tempRole = { id: role.id, name: role.name, development: false, test: false, execution: false, creation: false }
+                const tempRole = {
+                    id: role.id,
+                    name: role.name,
+                    development: false,
+                    test: false,
+                    execution: false,
+                    creation: false
+                }
 
                 this.roleIsChecked(tempRole, tempFolder.devRoles, 'development')
                 this.roleIsChecked(tempRole, tempFolder.testRoles, 'test')
@@ -230,7 +238,6 @@ export default defineComponent({
                     }
                 })
             }
-
             return checkable
         },
         prepareFunctionalityToSend(functionalityToSend) {
@@ -246,8 +253,14 @@ export default defineComponent({
                 if (role.execution) functionality.execRoles.push(role)
                 if (role.creation) functionality.createRoles.push(role)
             })
-            console.log('insertSelectedRolesIntoFunctionality', functionality)
+            if (!functionalityToSend.id) {
+                functionalityToSend.codeType = this.parentFolder.codType
+                functionalityToSend.parentId = this.parentFolder.id
+                functionalityToSend.path = this.parentFolder.path + '/' + functionalityToSend.name
+                functionalityToSend.description = ''
+            }
         },
+
         emptyFunctionalityRoles(functionality) {
             functionality.devRoles = []
             functionality.testRoles = []
@@ -255,7 +268,7 @@ export default defineComponent({
             functionality.createRoles = []
         },
         async createOrUpdate(functionalityToSend) {
-            return this.operation === 'update' ? axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityToSend.id}`, functionalityToSend) : axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/', functionalityToSend)
+            return functionalityToSend.id ? axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityToSend.id}`, functionalityToSend) : axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/', functionalityToSend)
         },
         async handleSubmit() {
             if (this.v$.$invalid) {
@@ -270,6 +283,7 @@ export default defineComponent({
                     this.$store.commit('setInfo', { title: 'Ok', msg: 'Saved OK' })
                 }
             })
+            this.dirty = false
             this.$emit('inserted')
         },
         checkAll(role) {
