@@ -15,19 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.knowageapi.dao;
+package it.eng.knowage.knowageapi.repository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.sql.SQLException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceContext;
-import javax.sql.rowset.serial.SerialException;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
@@ -47,119 +40,24 @@ import it.eng.knowage.knowageapi.error.KnowageBusinessException;
  */
 @SpringBootTest
 @ActiveProfiles("test")
-class SbiCatalogFunctionDaoTest {
+class SbiCatalogFunctionRepositoryTest {
 
 	@Autowired
-	private SbiCatalogFunctionDao dao;
-
-	@PersistenceContext(unitName = "knowage-functioncatalog")
-	private EntityManager em;
+	private SbiCatalogFunctionRepository repository;
 
 	@Test
-	void getAll() {
-		List<SbiCatalogFunction> all = dao.findAll();
+	void createAndDelete() throws KnowageBusinessException {
 
-		assertEquals(true, true);
-	}
+		SbiCatalogFunction function = createRandomName();
 
-	@Test
-	void mathing() throws KnowageBusinessException {
+		function = repository.create(function);
 
-		EntityTransaction transaction = em.getTransaction();
-		transaction.begin();
+		String functionId = function.getId().getFunctionId();
+		repository.delete(functionId);
 
-		SbiCatalogFunction nonMatching1 = createRandomName();
-		SbiCatalogFunction nonMatching2 = createRandomName();
-		SbiCatalogFunction matching = create("match");
+		function = repository.find(functionId);
 
-		nonMatching1 = store(nonMatching1);
-		nonMatching2 = store(nonMatching2);
-		matching = store(matching);
-
-		transaction.commit();
-
-		List<SbiCatalogFunction> all = dao.findAll("match");
-
-		try {
-			assertEquals(1, all.size());
-		} finally {
-			transaction = em.getTransaction();
-			transaction.begin();
-
-			dao.delete(nonMatching1);
-			dao.delete(nonMatching2);
-
-			for (SbiCatalogFunction e : all) {
-				dao.delete(e);
-			}
-
-			transaction.commit();
-		}
-	}
-
-	@Test
-	void create() throws SerialException, SQLException, KnowageBusinessException {
-
-		SbiCatalogFunction n = createRandomName();
-
-		EntityTransaction transaction = em.getTransaction();
-		transaction.begin();
-
-		n = dao.create(n);
-
-		transaction.commit();
-
-		SbiCatalogFunction find = dao.find(n.getId());
-
-
-		transaction = em.getTransaction();
-		transaction.begin();
-
-		dao.delete(find);
-
-		transaction.commit();
-
-		assertEquals(true, true);
-	}
-
-	@Test
-	void update() throws SerialException, SQLException, KnowageBusinessException {
-
-		SbiCatalogFunction n = createRandomName();
-
-		EntityTransaction transaction = em.getTransaction();
-		transaction.begin();
-
-		n = dao.create(n);
-
-		transaction.commit();
-
-		n.getInputColumns().clear();
-		n.getInputVariables().clear();
-		n.getOutputColumns().clear();
-
-		n = dao.find(n.getId());
-
-		transaction = em.getTransaction();
-		transaction.begin();
-
-		dao.update(n);
-
-		transaction.commit();
-
-		transaction = em.getTransaction();
-		transaction.begin();
-
-		dao.delete(n);
-
-		transaction.commit();
-
-		assertEquals(true, true);
-	}
-
-	private SbiCatalogFunction store(SbiCatalogFunction toStore) {
-		toStore = dao.create(toStore);
-		return toStore;
+		assertNull(function);
 	}
 
 	private SbiCatalogFunction createRandomName() {
