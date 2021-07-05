@@ -181,15 +181,13 @@ export default defineComponent({
 
                 this.roles.push(tempRole)
             })
-            console.log('ROLES: ', this.roles)
         },
         roleIsChecked(role: any, roles: [], roleField: string) {
-            if (roles) {
-                const index = roles.findIndex((currentRole: any) => role.id === currentRole.id)
+            console.log('ROLES', roles)
+            const index = roles.findIndex((currentRole: any) => role.id === currentRole.id)
 
-                if (index > -1) {
-                    role[roleField] = true
-                }
+            if (index > -1) {
+                role[roleField] = true
             }
         },
         test(role) {
