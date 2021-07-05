@@ -71,23 +71,23 @@
             <template #content>
                 {{ roles }}
                 <DataTable v-if="!loading" :value="roles" dataKey="id" class="p-datatable-sm kn-table" responsiveLayout="scroll" data-test="roles-table">
-                    <Column field="name" header="Roles" :sortable="true" />
-                    <Column header="Development">
+                    <Column field="name" :header="$t('managers.functionalitiesManagement.roles')" :sortable="true" />
+                    <Column :header="$t('managers.functionalitiesManagement.development')">
                         <template #body="slotProps">
                             <Checkbox v-model="slotProps.data.development" :binary="true" :disabled="!isCheckable(slotProps.data, 'devRoles')" />
                         </template>
                     </Column>
-                    <Column header="Test">
+                    <Column :header="$t('managers.functionalitiesManagement.test')">
                         <template #body="slotProps">
                             <Checkbox v-model="slotProps.data.test" :binary="true" :disabled="!isCheckable(slotProps.data, 'testRoles')" />
                         </template>
                     </Column>
-                    <Column header="Execution">
+                    <Column :header="$t('managers.functionalitiesManagement.execution')">
                         <template #body="slotProps">
                             <Checkbox v-model="slotProps.data.execution" :binary="true" :disabled="!isCheckable(slotProps.data, 'execRoles')" />
                         </template>
                     </Column>
-                    <Column header="Creation">
+                    <Column :header="$t('managers.functionalitiesManagement.creation')">
                         <template #body="slotProps">
                             <Checkbox v-model="slotProps.data.creation" :binary="true" :disabled="!isCheckable(slotProps.data, 'createRoles')" aria-colcount="" />
                         </template>

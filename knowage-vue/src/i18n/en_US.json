@@ -157,9 +157,13 @@
             "valueName": "Value name"
         },
         "functionalitiesManagement": {
+            "creation": "Creation",
+            "development": "Development",
+            "execution": "Execution",
             "hint": "No functionality selected",
             "moveDown ": " Move down",
             "moveUp": " Move up",
+            "roles": "Roles",
             "table": {
                 "creationHeader": "Creation",
                 "developmentHeader": "Development",
@@ -167,6 +171,7 @@
                 "nameHeader": "Name",
                 "testHeader": "Test"
             },
+            "test": "Test",
             "title": "Functionalities tree"
         },
         "menu": {
