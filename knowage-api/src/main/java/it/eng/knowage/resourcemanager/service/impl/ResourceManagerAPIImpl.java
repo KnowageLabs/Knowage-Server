@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.utils.ContextPropertiesConfig;
+import it.eng.knowage.resourcemanager.resource.utils.FileDTO;
 import it.eng.knowage.resourcemanager.resource.utils.FolderDTO;
 import it.eng.knowage.resourcemanager.resource.utils.RootFolderDTO;
 import it.eng.knowage.resourcemanager.service.ResourceManagerAPI;
@@ -175,9 +176,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	// if (canSee(pathToWork, profile)) ...
 	@Override
 	public boolean createFolder(String path, SpagoBIUserProfile profile) {
-
-		String pathToWork = getWorkDirectory(profile);
-		String totalPath = pathToWork + File.separator + path;
+		String totalPath = getTotalPath(path, profile);
 		File file = new File(totalPath);
 		// Creating the directory
 		boolean bool = file.mkdir();
@@ -191,17 +190,22 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public boolean deleteFolder(String path, SpagoBIUserProfile profile) {
-		// TODO Auto-generated method stub
-
-		String pathToWork = getWorkDirectory(profile);
-		String totalPath = pathToWork + File.separator + path;
-		try {
-			FileUtils.deleteDirectory(new File(totalPath));
-		} catch (IOException e) {
-			throw new KnowageRuntimeException(e.getMessage());
+	public boolean delete(String path, SpagoBIUserProfile profile) {
+		String totalPath = getTotalPath(path, profile);
+		File file = new File(totalPath);
+		if (file.isDirectory()) {
+			try {
+				FileUtils.deleteDirectory(new File(totalPath));
+			} catch (IOException e) {
+				throw new KnowageRuntimeException(e.getMessage());
+			}
+		} else {
+			try {
+				FileUtils.forceDelete(file);
+			} catch (IOException e) {
+				throw new KnowageRuntimeException(e.getMessage());
+			}
 		}
-
 		return false;
 	}
 
@@ -214,6 +218,27 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		pathToReturn = Paths.get(directoryFullPath);
 
 		return pathToReturn;
+	}
+
+	@Override
+	public List<FileDTO> getListOfFiles(String path, SpagoBIUserProfile profile) {
+		String totalPath = getTotalPath(path, profile);
+		File folder = new File(totalPath);
+		File[] listOfFiles = folder.listFiles();
+		List<FileDTO> returnList = new ArrayList<FileDTO>();
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile()) {
+				LOGGER.debug("File " + listOfFiles[i].getName());
+				returnList.add(new FileDTO(listOfFiles[i].getName()));
+			}
+		}
+		return returnList;
+	}
+
+	public String getTotalPath(String path, SpagoBIUserProfile profile) {
+		String pathToWork = getWorkDirectory(profile);
+		String totalPath = pathToWork + File.separator + path;
+		return totalPath;
 	}
 
 }

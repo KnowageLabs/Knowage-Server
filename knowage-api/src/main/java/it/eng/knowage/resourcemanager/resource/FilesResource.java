@@ -19,7 +19,6 @@ package it.eng.knowage.resourcemanager.resource;
 
 import java.util.List;
 
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -39,7 +38,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.resourcemanager.resource.utils.FileDTO;
+import it.eng.knowage.resourcemanager.resource.utils.MetadataDTO;
 import it.eng.knowage.resourcemanager.service.ResourceManagerAPI;
 import it.eng.spagobi.services.security.SecurityServiceService;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
@@ -67,7 +68,8 @@ public class FilesResource {
 	@Path("/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<FileDTO> files(@PathParam("path") String path) {
-		List<FileDTO> files = null;
+		SpagoBIUserProfile profile = getUserProfile();
+		List<FileDTO> files = resourceManagerAPIservice.getListOfFiles(path, profile);
 		return files;
 	}
 
@@ -97,14 +99,14 @@ public class FilesResource {
 	@PUT
 	@Path("/metadata/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public FileDTO saveMetadata(@Valid FileDTO fileDTO, @PathParam("path") String path) {
+	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @PathParam("path") String path) {
 		return null;
 	}
 
 	@POST
 	@Path("/metadata/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public FileDTO addMetadata(@Valid FileDTO fileDTO, @PathParam("path") String path) {
+	public MetadataDTO addMetadata(MetadataDTO fileDTO, @PathParam("path") String path) {
 		return null;
 	}
 
@@ -115,7 +117,17 @@ public class FilesResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete(@PathParam("path") String path) {
 		Response response = null;
-
+		try {
+			SpagoBIUserProfile profile = getUserProfile();
+			boolean create = resourceManagerAPIservice.delete(path, profile);
+			if (create)
+				response = Response.status(Response.Status.OK).build();
+			else {
+				response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e.getMessage());
+		}
 		return response;
 
 	}
