@@ -1,7 +1,6 @@
 <template>
   <div style="margin-bottom: 1em">
-    <Button class="p-button-text p-button-rounded p-button-plain" type="button" icon="pi pi-plus" :label="$t('common.expand')" @click="expandAll"/>
-    <Button class="p-button-text p-button-rounded p-button-plain" type="button" icon="pi pi-minus" :label="$t('common.collapse')" @click="collapseAll"/>
+  <ToggleButton v-model="checked2" :onLabel="$t('common.expand')" :offLabel="$t('common.collapse')" onIcon="pi pi-plus" offIcon="pi pi-minus" style="width: 10em" @click="toggleExpandCollapse" />
   </div>
   <Tree
     :value="nodes"
@@ -16,12 +15,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import ToggleButton from 'primevue/togglebutton';
 import Tree from "primevue/tree";
 import axios from "axios";
 export default defineComponent({
   name: "document-browser-tree",
   components: {
-    Tree,
+    Tree, ToggleButton
   },
   emits: ["selectedDocumentNode"],
   props: {
@@ -35,13 +35,7 @@ export default defineComponent({
         var pos = select.indexOf("/");
         if (pos != -1) {
           let flattenTree = this.flattenTree(this.nodes[0], "childs");
-          for (let node of flattenTree) {
-            if (node.path == select) {
-              let selectionObj: any = {};
-              selectionObj[node.id] = true;
-              this.selectedNodeKey = selectionObj;
-            }
-          }
+          this.preselectNodeKey(flattenTree, select);
         }
         }
       },
@@ -74,19 +68,34 @@ export default defineComponent({
       }
       return flatten;
     },
+    preselectNodeKey(flatArray, select) {
+      for (let node of flatArray) {
+        if (node.path == select) {
+          let selectionObj: any = {};
+          selectionObj[node.id] = true;
+          this.selectedNodeKey = selectionObj;
+        }
+      }
+    },
+    toggleExpandCollapse(){
+      if(Object.keys(this.expandedKeys).length === 0){
+        this.expandAll();
+      }else{
+        this.collapseAll();
+      }
+    },
     expandAll() {
       for (let node of this.nodes) {
         this.expandNode(node);
       }
       this.expandedKeys = { ...this.expandedKeys };
     },
-    collapseAll() {
+    collapseAll(){
       this.expandedKeys = {};
     },
     expandNode(node) {
       if (node.children && node.children.length) {
         this.expandedKeys[node.key] = true;
-
         for (let child of node.children) {
           this.expandNode(child);
         }

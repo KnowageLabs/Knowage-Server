@@ -29,15 +29,17 @@
             <div class="p-field">
               <div class="p-inputgroup">
                 <span class="p-float-label">
-                  <InputText id="descr" type="text" v-model.trim="v$.menuNode.descr.$model" @blur="onDataChange(v$.menuNode.descr)" class="p-inputtext p-component kn-material-input"/>
-                  <Button v-if="menuNode.level == 1"><i :class="selectedIcon"></i></Button>
+                  <InputText id="descr" type="text" v-model.trim="v$.menuNode.descr.$model" @blur="onDataChange(v$.menuNode.descr)" class="p-inputtext p-component kn-material-input" aria-describedby="descr-help"/>
+                  <Button v-if="menuNode.level == 1 && menuNode.icon!=null" icon="pi pi-times" @click="clearSelectedIcon" />
+                  <Button v-if="menuNode.level == 1 && menuNode.icon!=null"><i :class="selectedIcon"></i></Button>
                   <Button v-if="menuNode.level == 1" class="p-button" @click="openFontAwesomeSelectionModal()">{{ $t("managers.menuConfigurationManagement.chooseIcon").toUpperCase() }}</Button>
                   <label for="descr">{{ $t("managers.menuConfigurationManagement.description") }} *</label>
                 </span>
               </div>
+              <small id="descr-help">{{ $t("managers.menuConfigurationManagement.descrHelp") }}</small>
               <KnValidationMessages :vComp="v$.menuNode.descr" :additionalTranslateParams="{ fieldName: $t('managers.menuConfigurationManagement.description') }"></KnValidationMessages>
             </div>
-
+            
             <FontAwesomePicker :showModal="chooseIconModalShown" @chooseIcon="onChoosenIcon" @closeFontAwesomeModal="closeFontAwesomeSelectionModal"></FontAwesomePicker>
 
             <div class="p-field">
@@ -58,7 +60,7 @@
                   <label for="staticPage">{{ $t("managers.menuConfigurationManagement.form.staticPage") }} *</label>
                 </span>
               </div>
-              <KnValidationMessages :vComp="v$.menuNode.menuNodeContent" :additionalTranslateParams="{ fieldName: $t('managers.menuConfigurationManagement.form.menuNodeContent') }"></KnValidationMessages>
+              <KnValidationMessages :vComp="v$.menuNode.staticPage" :additionalTranslateParams="{ fieldName: $t('managers.menuConfigurationManagement.form.staticPage') }"></KnValidationMessages>
               </div>
             </div>
 
@@ -79,8 +81,7 @@
                     <InputText id="selectedDocument" type="text" v-model.trim="v$.menuNode.document.$model" @blur="onDataChange(v$.menuNode.document)" class="p-inputtext p-component kn-material-input"/>
                     <InputText :hidden="true" id="objId" type="text" v-model.trim="v$.menuNode.objId.$model" @blur="onDataChange(v$.menuNode.objId)" class="p-inputtext p-component kn-material-input"/>
                     <Button icon="pi pi-search" class="p-button" @click="openRelatedDocumentModal()"/>
-                    <label for="objId">{{ $t("managers.menuConfigurationManagement.form.document") }} *</label
-                    >
+                    <label for="objId">{{ $t("managers.menuConfigurationManagement.form.document") }} *</label>
                   </span>
                 </div>
               </div>
@@ -127,7 +128,7 @@
         </template>
       </Card>
 
-      <RolesTab :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)" v-if="!hideForm"></RolesTab>
+      <RolesCard :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)" v-if="!hideForm"></RolesCard>
     </div>
   </div>
 </template>
@@ -142,14 +143,14 @@ import Dropdown from "primevue/dropdown";
 import Dialog from "primevue/dialog";
 import RelatedDocumentList from "./RelatedDocumentList.vue";
 import DocumentBrowserTree from "./DocumentBrowserTree.vue";
-import FontAwesomePicker from "./FontAwesomePicker.vue";
-import RolesTab from "./RolesTab.vue";
+import FontAwesomePicker from "./FontAwesomeIconPicker.vue";
+import RolesCard from "./RolesCard.vue";
 import KnValidationMessages from "@/components/UI/KnValidatonMessages.vue";
 import MenuConfigurationDescriptor from "./MenuConfigurationDescriptor.json";
 import MenuConfigurationValidationDescriptor from "./MenuConfigurationValidationDescriptor.json";
 export default defineComponent({
   name: "profile-attributes-detail",
-  components: { Dropdown, DocumentBrowserTree, RolesTab, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker },
+  components: { Dropdown, DocumentBrowserTree, RolesCard, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker },
   props: {
     selectedMenuNode: {
       type: Object,
@@ -223,8 +224,12 @@ export default defineComponent({
       this.resetForm();
       this.hideForm = false;
     },
+    clearSelectedIcon(){
+      this.selectedIcon = "";
+      this.menuNode.icon = null;
+    },
     toggleDocument() {
-      this.functionalityHidden = this.staticPageHidden = this.documentHidden = this.externalAppHidden = this.documentTreeHidden = this.workspaceInitialHidden = true;
+      this.functionalityHidden = this.staticPageHidden = this.externalAppHidden = this.documentTreeHidden = this.workspaceInitialHidden = true;
       this.documentHidden = false;
     },
     toggleStaticPage() {
@@ -238,11 +243,8 @@ export default defineComponent({
     toggleFunctionality() {
       this.externalAppHidden = this.documentHidden = this.staticPageHidden = true;
       this.functionalityHidden = false;
-      if (this.menuNode.functionality == "WorkspaceManagement") {
-        this.toggleWorkspaceInitial();
-      } else if (this.menuNode.functionality == "DocumentUserBrowser") {
-        this.toggleDocumentTreeSelect();
-      }
+           if (this.menuNode.functionality == "WorkspaceManagement") { this.toggleWorkspaceInitial(); } 
+      else if (this.menuNode.functionality == "DocumentUserBrowser") { this.toggleDocumentTreeSelect(); }
     },
     toggleEmpty() {
       this.functionalityHidden  = this.externalAppHidden = this.documentHidden = this.staticPageHidden = this.documentTreeHidden = this.workspaceInitialHidden = true;
@@ -263,11 +265,8 @@ export default defineComponent({
       else { this.toggleEmpty(); }
     },
     onFunctionalityTypeChange(functionality) {
-      if (functionality.$model == "WorkspaceManagement") {
-        this.toggleWorkspaceInitial();
-      } else if (functionality.$model == "DocumentUserBrowser") {
-        this.toggleDocumentTreeSelect();
-      }
+           if (functionality.$model == "WorkspaceManagement") { this.toggleWorkspaceInitial(); }
+      else if (functionality.$model == "DocumentUserBrowser") {  this.toggleDocumentTreeSelect(); }
     },
     openFontAwesomeSelectionModal(){
       this.chooseIconModalShown = true;

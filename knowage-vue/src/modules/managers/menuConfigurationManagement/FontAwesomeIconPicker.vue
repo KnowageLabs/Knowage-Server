@@ -1,5 +1,5 @@
 <template>
-  <Dialog :header="$t('managers.menuConfigurationManagement.chooseIcon')" v-model:visible="modalShown" :style="{ width: '50vw' }" :modal="true">
+  <Dialog :header="$t('managers.menuConfigurationManagement.chooseIcon')" v-model:visible="modalShown" :style="{ width: '50vw' }" :modal="true" :closable="false">
     <div id="iconPicker">
       <div class="p-mt-2 p-field">
         <div class="p-inputgroup">
@@ -21,7 +21,7 @@
     </div>
     <template #footer>
       <Button label="Cancel" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
-      <Button label="Choose" icon="pi pi-check" @click="chooseIcon" autofocus />
+      <Button label="Choose" icon="pi pi-check" :disabled="!selected!=''" @click="chooseIcon" autofocus />
     </template>
   </Dialog>
 </template>

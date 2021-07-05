@@ -1,4 +1,5 @@
 <template>
+  <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="load" data-test="progress-bar"/>
   <Listbox
     v-if="!load"
     class="kn-list--column"
@@ -28,6 +29,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import ProgressBar from 'primevue/progressbar';
 import Listbox from "primevue/listbox";
 import MenuConfigurationRelatedDocumentsDescriptor from "./MenuConfigurationRelatedDocumentsDescriptor.json";
 import axios from "axios";
@@ -35,7 +37,7 @@ import axios from "axios";
 export default defineComponent({
   name: "related-documents-list",
   components: {
-    Listbox,
+    Listbox, ProgressBar
   },
   emits: ["selectedDocument"],
   props: {

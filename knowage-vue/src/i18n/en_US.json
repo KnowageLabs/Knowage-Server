@@ -201,6 +201,7 @@
                 "functionality": "Choose Functionality"
             },
             "hint": "Menu configuration allows you to manage menu entries.",
+			"descrHelp": "This value will be displayed in the main menu.",
             "info": {
                 "createMessage": "Menu item created",
                 "createTitle": "Create menu item",
