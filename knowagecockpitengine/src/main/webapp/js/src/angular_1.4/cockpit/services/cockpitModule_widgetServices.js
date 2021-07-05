@@ -637,7 +637,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					}
 					else {
 						if(categoryTag.groupby=="" && categoryTag.column!=""){
-							categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+							if (categoryTag.drillOrder) {
+								categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.drillOrder[categoryTag.column].orderColumn,orderType:categoryTag.drillOrder[categoryTag.column].orderType,stacked:"",stackedType:""});
+							} else {
+								categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
+							}
 						} else {
 
 							 if(categoryTag.name=="" && categoryTag.column!=""){
