@@ -158,6 +158,8 @@ describe('Functionalities', () => {
     it('shows an empty detail if add new button is clicked', async () => {
         const wrapper = factory()
 
+        await flushPromises()
+        await wrapper.find('[data-test="tree-item-3"]').trigger('click')
         await wrapper.find('[data-test="new-button"]').trigger('click')
 
         expect(wrapper.vm.selectedFunctionality).toBe(null)
@@ -168,7 +170,6 @@ describe('Functionalities', () => {
         await flushPromises()
 
         expect(wrapper.vm.functionalities.length).toBe(5)
-        console.log(wrapper.html())
         await wrapper.find('[data-test="tree-item-3"]').trigger('click')
 
         expect(wrapper.vm.selectedFunctionality).toStrictEqual({ id: 3, name: 'Other', parentId: 1, prog: 2 })
