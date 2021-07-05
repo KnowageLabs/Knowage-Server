@@ -184,9 +184,12 @@ export default defineComponent({
             console.log('ROLES: ', this.roles)
         },
         roleIsChecked(role: any, roles: [], roleField: string) {
-            const index = roles.findIndex((currentRole: any) => role.id === currentRole.id)
-            if (index > -1) {
-                role[roleField] = true
+            if (roles) {
+                const index = roles.findIndex((currentRole: any) => role.id === currentRole.id)
+
+                if (index > -1) {
+                    role[roleField] = true
+                }
             }
         },
         test(role) {
