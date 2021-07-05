@@ -123,7 +123,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var deferred = $q.defer();
 			var promise;
 			if ($scope.currentRow) {
-				$scope.currentFunction = $scope.currentRow.boundFunction
+				$scope.currentFunction = $scope.currentRow.boundFunction;
 			}
 
 			$mdDialog.show({
