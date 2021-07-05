@@ -8,6 +8,7 @@
             <div class="p-fluid card">
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <DataTable v-if="!loading" editMode="cell" :value="messages" :scrollable="true" scrollHeight="40vh" :loading="loading" :rows="15" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
+                    <!-- treba da se smanjim width searchbara, i postavi checkbox pored njega ali iako smanjim width search bara, kao da zauzima ceo prostor... -->
                     <template #header class="p-fluid">
                         <div class="table-header">
                             <div class="p-field-checkbox">
@@ -27,6 +28,7 @@
                         <InputText type="text" v-model="filterModel.value" class="p-column-filter" />
                     </template>
 
+                    <!-- ova kolona treba da ima duzinu samo ove ikonice... sta god sam pokusao nisam mogao da je promenim -->
                     <Column>
                         <template #body="slotProps">
                             <i class="pi pi-flag" v-if="slotProps.data['dirty']"></i>
@@ -40,6 +42,7 @@
                         </template>
                     </Column>
 
+                    <!-- ova kolona isto treba da ima duzinu samo ovih ikonica koje se nalaze u njoj -->
                     <Column>
                         <template #header>
                             <Button v-if="language.defaultLanguage" :label="this.$t('managers.internationalizationManagement.table.addLabel')" class="p-button-link" @click="addEmptyLabel" />
@@ -47,7 +50,7 @@
                         <template #body="slotProps">
                             <Button icon="pi pi-save" class="p-button-link" @click="saveLabel(language, slotProps.data)" />
                             <Button v-if="language.defaultLanguage" icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" />
-                            <Button v-if="language.defaultLanguage" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" />
+                            <Button v-if="!language.defaultLanguage" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" />
                         </template>
                     </Column>
                 </DataTable>
