@@ -227,8 +227,8 @@
                 </div>
             </form>
 
-            <Dialog :style="{ height: '100vh', width: '100vw' }" :visible="showMetaWeb" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
-                <iframe :src="metaModelUrl"></iframe>
+            <Dialog :contentStyle="businessModelDetailsCardDescriptor.dialog.style" :visible="showMetaWeb" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+                <iframe :style="businessModelDetailsCardDescriptor.iframe.style" :src="metaModelUrl"></iframe>
             </Dialog>
 
             <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false" @generated="onDatamartGenerated"></GenerateDatamartCard>
@@ -374,19 +374,5 @@ export default defineComponent({
 <style lang="scss" scoped>
 .input-container {
     flex: 0.5;
-}
-
-#metaweb-page {
-    position: fixed;
-    top: 0px;
-    bottom: 0px;
-    right: 0px;
-    width: 100%;
-    border: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    z-index: 999999;
-    height: 100%;
 }
 </style>

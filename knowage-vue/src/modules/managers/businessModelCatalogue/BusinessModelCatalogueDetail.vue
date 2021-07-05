@@ -100,6 +100,7 @@ export default defineComponent({
             loading: false,
             touched: false,
             operation: 'insert',
+            uploadingError: false,
             v$: useValidate() as any
         }
     },
@@ -179,19 +180,24 @@ export default defineComponent({
                 await this.saveBusinessModel()
             }
 
-            if (this.selectedBusinessModel.id && this.uploadedFile) {
+            if (this.selectedBusinessModel.id && this.uploadedFile && !this.uploadingError) {
+                console.log('UPLODADED FILE', this.uploadedFile)
                 await this.uploadFile()
             }
 
-            if (this.businessModelVersions.length > 0) {
+            if (this.businessModelVersions.length > 0 && !this.uploadingError) {
                 const activeBusinessModelVersion = this.businessModelVersions.find((version) => version.active === true)
                 this.saveActiveVersion(activeBusinessModelVersion)
             }
 
-            this.driversForDelete.forEach((driver) => this.deleteDriver(driver.id))
+            this.driversForDelete.forEach((driver) => {
+                if (!this.uploadingError) {
+                    this.deleteDriver(driver.id)
+                }
+            })
 
             this.drivers.forEach((driver) => {
-                if (driver.status === 'CHANGED') {
+                if (driver.status === 'CHANGED' && !this.uploadingError) {
                     delete driver.status
                     delete driver.numberOfErrors
                     if (driver.id) {
@@ -202,17 +208,28 @@ export default defineComponent({
                 }
             })
 
+            if (!this.uploadingError) {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.updateTitle'),
+                    msg: this.$t('common.toast.success')
+                })
+            }
             this.loadPage()
             this.touched = false
             this.$emit('inserted')
+            this.uploadingError = false
+        },
+        setUploadingError(title: string, message: string) {
+            this.uploadingError = true
+            this.$store.commit('setError', { title: this.$t('common.toast.' + title), msg: message })
         },
         async saveBusinessModel() {
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.fullName }).then((response) => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.createTitle'),
-                    msg: this.$t('common.toast.success')
-                })
-                this.selectedBusinessModel = response.data
+                if (response.data.errors) {
+                    this.setUploadingError('createTitle', response.data.errors[0].message)
+                } else {
+                    this.selectedBusinessModel = response.data
+                }
             })
         },
         async updateBusinessModel() {
@@ -222,20 +239,19 @@ export default defineComponent({
             await axios
                 .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.selectedBusinessModel.id}`, this.selectedBusinessModel)
                 .then((response) => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: this.$t('common.toast.success')
-                    })
-                    this.selectedBusinessModel = response.data
+                    if (response.data.errors) {
+                        this.setUploadingError('updateTitle', response.data.errors[0].message)
+                    } else {
+                        this.selectedBusinessModel = response.data
+                    }
                 })
                 .finally(() => this.formatBusinessModelAnalyticalDriver())
         },
         saveActiveVersion(businessModelVersion) {
-            axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${businessModelVersion.id}/`).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.updateTitle'),
-                    msg: this.$t('common.toast.success')
-                })
+            axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${businessModelVersion.id}/`).then((response) => {
+                if (response.data.errors) {
+                    this.setUploadingError('updateTitle', response.data.errors[0].message)
+                }
             })
         },
         async uploadFile() {
@@ -246,27 +262,30 @@ export default defineComponent({
                     this.$store.commit('setError', { title: this.$t('managers.buisnessModelCatalogue.toast.uploadFile'), msg: response.data.errors })
                 } else {
                     this.$store.commit('setInfo', { title: this.$t('managers.buisnessModelCatalogue.uploadFile'), msg: this.$t('managers.buisnessModelCatalogue.uploadFileSuccess') })
+                    this.uploadedFile = null
                 }
             })
         },
         saveDriver(driver: any) {
-            axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/drivers`, { ...driver, parID: driver.parameter.id }).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.createTitle'),
-                    msg: this.$t('common.toast.success')
-                })
+            axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/drivers`, { ...driver, parID: driver.parameter.id }).then((response) => {
+                if (response.data.errors) {
+                    this.setUploadingError('saveTitle', response.data.errors[0].message)
+                }
             })
         },
         updateDriver(driver: any) {
-            axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/drivers/${driver.id}`, { ...driver, parID: driver.parameter.id }).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.updateTitle'),
-                    msg: this.$t('common.toast.success')
-                })
+            axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/drivers/${driver.id}`, { ...driver, parID: driver.parameter.id }).then((response) => {
+                if (response.data.errors) {
+                    this.setUploadingError('updateTitle', response.data.errors[0].message)
+                }
             })
         },
         deleteDriver(driverId: number) {
-            axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/drivers/${driverId}`)
+            axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/drivers/${driverId}`).then((response) => {
+                if (response.data.errors) {
+                    this.setUploadingError('deleteTitle', response.data.errors[0].message)
+                }
+            })
         },
         async loadPage() {
             this.loading = true

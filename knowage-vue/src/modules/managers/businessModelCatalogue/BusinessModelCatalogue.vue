@@ -11,33 +11,32 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div class="p-col">
-                    <Listbox
-                        v-if="!loading"
-                        class="kn-list"
-                        :options="businessModelList"
-                        listStyle="max-height:calc(100% - 62px)"
-                        :filter="true"
-                        :filterPlaceholder="$t('common.search')"
-                        optionLabel="name"
-                        filterMatchMode="contains"
-                        :filterFields="businessModelCatalogueDescriptor.filterFields"
-                        :emptyFilterMessage="$t('common.info.noDataFound')"
-                        @change="showForm"
-                        data-test="bm-list"
-                    >
-                        <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                        <template #option="slotProps">
-                            <div class="kn-list-item" data-test="list-item">
-                                <div class="kn-list-item-text">
-                                    <span>{{ slotProps.option.name }}</span>
-                                    <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option.description }}</span>
-                                </div>
-                                <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteBusinessModelConfirm(slotProps.option.id)" data-test="delete-button" />
+
+                <Listbox
+                    v-if="!loading"
+                    class="kn-list"
+                    :options="businessModelList"
+                    listStyle="max-height:calc(100% - 62px)"
+                    :filter="true"
+                    :filterPlaceholder="$t('common.search')"
+                    optionLabel="name"
+                    filterMatchMode="contains"
+                    :filterFields="businessModelCatalogueDescriptor.filterFields"
+                    :emptyFilterMessage="$t('common.info.noDataFound')"
+                    @change="showForm"
+                    data-test="bm-list"
+                >
+                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                    <template #option="slotProps">
+                        <div class="kn-list-item" data-test="list-item">
+                            <div class="kn-list-item-text">
+                                <span>{{ slotProps.option.name }}</span>
+                                <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option.description }}</span>
                             </div>
-                        </template>
-                    </Listbox>
-                </div>
+                            <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteBusinessModelConfirm(slotProps.option.id)" data-test="delete-button" />
+                        </div>
+                    </template>
+                </Listbox>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">

@@ -1,4 +1,4 @@
-<template>
+span<template>
     <div class="kn-page-content p-grid p-m-0">
         <Card class="p-col-6 p-p-0">
             <template #header>
@@ -12,29 +12,25 @@
                 </Toolbar>
             </template>
             <template #content>
-                <div class="kn-list--column">
-                    <div class="p-col">
-                        <Listbox class="kn-list" :options="businessModelDrivers" listStyle="max-height:calc(100% - 62px)" @change="showForm" data-test="driver-list">
-                            <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                            <template #option="slotProps">
-                                <div class="kn-list-item">
-                                    <div class="kn-list-item-text">
-                                        <span
-                                            :class="{
-                                                'driver-invalid': slotProps.option.numberOfErrors > 0
-                                            }"
-                                            >{{ slotProps.option.label }}</span
-                                        >
-                                        <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option.parameterUrlName }}</span>
-                                    </div>
-                                    <Button v-if="slotProps.option.id !== businessModelDrivers[0].id" icon="fa fa-arrow-up" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'UP')" />
-                                    <Button v-if="slotProps.option.id !== businessModelDrivers[businessModelDrivers.length - 1].id" icon="fa fa-arrow-down" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'DOWN')" />
-                                    <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteDriverConfirm(slotProps.index)" />
-                                </div>
-                            </template>
-                        </Listbox>
-                    </div>
-                </div>
+                <Listbox class="kn-list" :options="businessModelDrivers" listStyle="max-height:calc(100% - 62px)" @change="showForm" data-test="driver-list">
+                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                    <template #option="slotProps">
+                        <div class="kn-list-item">
+                            <div class="kn-list-item-text">
+                                <span
+                                    :class="{
+                                        'driver-invalid': slotProps.option.numberOfErrors > 0
+                                    }"
+                                    >{{ slotProps.option.label }}</span
+                                >
+                                <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option.parameterUrlName }}</span>
+                            </div>
+                            <Button v-if="slotProps.option.id !== businessModelDrivers[0].id" icon="fa fa-arrow-up" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'UP')" />
+                            <Button v-if="slotProps.option.id !== businessModelDrivers[businessModelDrivers.length - 1].id" icon="fa fa-arrow-down" class="p-button-link p-button-sm" @click.stop="movePriority(slotProps.option.id, 'DOWN')" />
+                            <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteDriverConfirm(slotProps.index)" />
+                        </div>
+                    </template>
+                </Listbox>
             </template>
         </Card>
 
