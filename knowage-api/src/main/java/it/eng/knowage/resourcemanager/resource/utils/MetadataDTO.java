@@ -15,25 +15,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.resourcemanager.service;
+package it.eng.knowage.resourcemanager.resource.utils;
 
-import java.util.List;
+public class MetadataDTO {
 
-import it.eng.knowage.resourcemanager.resource.utils.FileDTO;
-import it.eng.knowage.resourcemanager.resource.utils.RootFolderDTO;
-import it.eng.spagobi.services.security.SpagoBIUserProfile;
+	private String name;
 
-public interface ResourceManagerAPI {
+	public MetadataDTO(String name) {
+		this.name = name;
+	}
 
-	public RootFolderDTO getFolders(SpagoBIUserProfile profile, String path);
+	public String getName() {
+		return name;
+	}
 
-	boolean canSee(String path, SpagoBIUserProfile profile);
+	public void setName(String name) {
+		this.name = name;
+	}
 
-	boolean createFolder(String path, SpagoBIUserProfile profile);
+	@Override
+	public String toString() {
+		return "CustomFile [name=" + name + "]";
+	}
 
-	boolean delete(String path, SpagoBIUserProfile profile);
-
-	java.nio.file.Path getDownloadPath(String path, SpagoBIUserProfile profile);
-
-	public List<FileDTO> getListOfFiles(String path, SpagoBIUserProfile profile);
 }

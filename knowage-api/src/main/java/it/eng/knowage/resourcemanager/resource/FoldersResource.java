@@ -115,7 +115,7 @@ public class FoldersResource {
 		Response response = null;
 		try {
 			SpagoBIUserProfile profile = getUserProfile();
-			boolean create = resourceManagerAPIservice.deleteFolder(path, profile);
+			boolean create = resourceManagerAPIservice.delete(path, profile);
 			if (create)
 				response = Response.status(Response.Status.OK).build();
 			else {
