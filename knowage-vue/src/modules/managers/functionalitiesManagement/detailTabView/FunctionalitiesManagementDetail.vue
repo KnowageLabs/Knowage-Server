@@ -64,7 +64,6 @@
                             <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                         </span>
                     </div>
-                    {{ selectedFolder }}
                 </form>
             </template>
         </Card>
@@ -75,22 +74,22 @@
                     <Column field="name" header="Roles" :sortable="true" />
                     <Column header="Development">
                         <template #body="slotProps">
-                            <Checkbox v-model="slotProps.data.development" :binary="true" :disabled="!isCheckable(slotProps.data, 'devRoles')" @click="test(slotProps.data)" />
+                            <Checkbox v-model="slotProps.data.development" :binary="true" :disabled="!isCheckable(slotProps.data, 'devRoles')" />
                         </template>
                     </Column>
                     <Column header="Test">
                         <template #body="slotProps">
-                            <Checkbox v-model="slotProps.data.test" :binary="true" :disabled="!isCheckable(slotProps.data, 'testRoles')" @click="test(slotProps.data)" />
+                            <Checkbox v-model="slotProps.data.test" :binary="true" :disabled="!isCheckable(slotProps.data, 'testRoles')" />
                         </template>
                     </Column>
                     <Column header="Execution">
                         <template #body="slotProps">
-                            <Checkbox v-model="slotProps.data.execution" :binary="true" :disabled="!isCheckable(slotProps.data, 'execRoles')" @click="test(slotProps.data)" />
+                            <Checkbox v-model="slotProps.data.execution" :binary="true" :disabled="!isCheckable(slotProps.data, 'execRoles')" />
                         </template>
                     </Column>
                     <Column header="Creation">
                         <template #body="slotProps">
-                            <Checkbox v-model="slotProps.data.creation" :binary="true" :disabled="!isCheckable(slotProps.data, 'createRoles')" aria-colcount="" @click="test(slotProps.data)" />
+                            <Checkbox v-model="slotProps.data.creation" :binary="true" :disabled="!isCheckable(slotProps.data, 'createRoles')" aria-colcount="" />
                         </template>
                     </Column>
                     <Column @rowClick="false">
@@ -122,7 +121,8 @@ export default defineComponent({
     emits: ['touched', 'close', 'inserted'],
     props: {
         functionality: Object,
-        rolesShort: Array as any
+        rolesShort: Array as any,
+        parentId: Number
     },
     components: {
         Card,
@@ -141,19 +141,20 @@ export default defineComponent({
             parentFolder: null as any,
             roles: [] as any,
             checked: [] as any,
+            operation: 'insert',
             loading: false
         }
     },
     computed: {
         buttonDisabled(): Boolean {
             return this.v$.$invalid
-        },
-        operation() {
-            if (this.selectedFolder.id) {
-                return 'update'
-            }
-            return 'insert'
         }
+    },
+    operation() {
+        if (this.selectedFolder.id) {
+            return 'update'
+        }
+        return 'insert'
     },
     validations() {
         return {
@@ -163,8 +164,8 @@ export default defineComponent({
     async created() {
         this.loading = true
         this.selectedFolder = { ...this.functionality }
-        this.loadRoles()
         await this.loadParentFolder()
+        this.loadRoles()
         this.loading = false
     },
     watch: {
@@ -172,11 +173,10 @@ export default defineComponent({
             this.loading = true
             this.v$.$reset()
             this.selectedFolder = { ...this.functionality }
-            this.loadRoles()
             await this.loadParentFolder()
-            console.log(this.selectedFolder)
-            console.log(this.roles)
-            console.log('PARENT FOLDER: ', this.parentFolder)
+            this.loadRoles()
+            // console.log(this.selectedFolder)
+            // console.log(this.roles)
             this.loading = false
         },
         rolesShort() {
@@ -189,33 +189,25 @@ export default defineComponent({
         },
         loadRoles() {
             this.roles = []
+            const tempFolder = this.selectedFolder.id ? this.selectedFolder : this.parentFolder
+            console.log('PARENT ID', this.parentId)
+            console.log('PARENT FOLDER', this.parentFolder)
+            console.log('TEMP FOLDER', tempFolder)
             this.rolesShort.forEach((role: any) => {
-                const tempRole = {
-                    id: role.id,
-                    name: role.name,
-                    development: false,
-                    test: false,
-                    execution: false,
-                    creation: false
-                }
+                const tempRole = { id: role.id, name: role.name, development: false, test: false, execution: false, creation: false }
 
-                this.roleIsChecked(tempRole, this.selectedFolder.devRoles, 'development')
-                this.roleIsChecked(tempRole, this.selectedFolder.testRoles, 'test')
-                this.roleIsChecked(tempRole, this.selectedFolder.execRoles, 'execution')
-                this.roleIsChecked(tempRole, this.selectedFolder.createRoles, 'creation')
+                this.roleIsChecked(tempRole, tempFolder.devRoles, 'development')
+                this.roleIsChecked(tempRole, tempFolder.testRoles, 'test')
+                this.roleIsChecked(tempRole, tempFolder.execRoles, 'execution')
+                this.roleIsChecked(tempRole, tempFolder.createRoles, 'creation')
 
                 this.roles.push(tempRole)
             })
         },
         async loadParentFolder() {
-            if (this.selectedFolder.id) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.selectedFolder.parentId}`).then((response) => (this.parentFolder = response.data))
-            } else {
-                this.parentFolder = this.selectedFolder
-            }
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.parentId}`).then((response) => (this.parentFolder = response.data))
         },
         roleIsChecked(role: any, roles: [], roleField: string) {
-            console.log('ROLES', roles)
             if (roles) {
                 const index = roles.findIndex((currentRole: any) => role.id === currentRole.id)
 
@@ -225,14 +217,14 @@ export default defineComponent({
             }
         },
         isCheckable(role: any, roleField: string) {
-            console.log('isCheckable ROLE', role)
-            console.log('THIS PARENT FOLDER!!!!!!!', this.parentFolder)
+            // console.log('isCheckable ROLE', role)
+            // console.log('THIS PARENT FOLDER!!!!!!!', this.parentFolder)
             let checkable = false
             if (this.selectedFolder.path === '/Functionalities') {
                 checkable = true
             } else if (this.parentFolder[roleField] && this.parentFolder[roleField].length > 0) {
                 this.parentFolder[roleField].forEach((currentRole) => {
-                    console.log(role.name + ' === ' + currentRole.name)
+                    // console.log(role.name + ' === ' + currentRole.name)
                     if (role.name === currentRole.name) {
                         checkable = true
                     }
@@ -245,12 +237,9 @@ export default defineComponent({
             var roles = [...this.roles]
             var functionality = functionalityToSend
             functionality.codeType = functionality.codType
-
             delete functionality.codType
             delete functionality.biObjects
-
             this.emptyFunctionalityRoles(functionality)
-
             roles.forEach((role) => {
                 if (role.development) functionality.devRoles.push(role)
                 if (role.test) functionality.testRoles.push(role)
@@ -274,7 +263,6 @@ export default defineComponent({
             }
             let functionalityToSend = { ...this.selectedFolder }
             this.prepareFunctionalityToSend(functionalityToSend)
-
             await this.createOrUpdate(functionalityToSend).then((response) => {
                 if (response.data.errors) {
                     this.$store.commit('setError', { title: 'Error', msg: response.data.error })
@@ -283,9 +271,6 @@ export default defineComponent({
                 }
             })
             this.$emit('inserted')
-        },
-        test(role) {
-            console.log('ROLE AFTER CHECK: ', role)
         },
         checkAll(role) {
             var checkedRole = role

@@ -7,12 +7,12 @@
                         {{ $t('managers.functionalitiesManagement.title') }}
                     </template>
                     <template #right>
-                        <FabButton v-if="selectedFunctionality" icon="fas fa-plus" @click="showForm(null)" data-test="new-button" />
+                        <FabButton v-if="selectedFunctionality" icon="fas fa-plus" @click="showForm(null, selectedFunctionality.id)" data-test="new-button" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <div>
-                    <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @node-select="showForm($event.data)" data-test="functionality-tree">
+                    <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @node-select="showForm($event.data, $event.data.parentId)" data-test="functionality-tree">
                         <template #default="slotProps">
                             <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
                                 <span>{{ slotProps.node.label }}</span>
@@ -36,7 +36,7 @@
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <KnHint :title="'managers.functionalitiesManagement.title'" :hint="'managers.functionalitiesManagement.hint'" v-if="showHint" data-test="functionality-hint"></KnHint>
-                <FunctionalitiesManagementDetail v-if="formVisible" :functionality="selectedFunctionality" :rolesShort="rolesShort" @touched="touched = true" @close="onClose" />
+                <FunctionalitiesManagementDetail v-if="formVisible" :functionality="selectedFunctionality" :parentId="functionalityParentId" :rolesShort="rolesShort" @touched="touched = true" @close="onClose" />
             </div>
         </div>
     </div>
@@ -67,6 +67,7 @@ export default defineComponent({
             rolesShort: [] as { id: number; name: 'string' }[],
             nodes: [] as iNode[],
             selectedFunctionality: null as iFunctionality | null,
+            functionalityParentId: null as number | null,
             expandedKeys: {},
             showHint: true,
             touched: false,
@@ -165,9 +166,11 @@ export default defineComponent({
                 }
             }
         },
-        showForm(functionality: iFunctionality) {
+        showForm(functionality: iFunctionality, parentId: number) {
             this.showHint = false
             console.log(functionality)
+            console.log(parentId)
+            this.functionalityParentId = parentId
             if (!this.touched) {
                 this.setSelected(functionality)
             } else {
