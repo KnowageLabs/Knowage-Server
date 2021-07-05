@@ -70,26 +70,26 @@
         <Card :style="detailDescriptor.card.style">
             <template #content>
                 {{ roles }}
-                <DataTable :value="roles" dataKey="id" class="p-datatable-sm kn-table" responsiveLayout="scroll" data-test="roles-table">
+                <DataTable v-if="!loading" :value="roles" dataKey="id" class="p-datatable-sm kn-table" responsiveLayout="scroll" data-test="roles-table">
                     <Column field="name" header="Roles" :sortable="true" />
                     <Column header="Development">
                         <template #body="slotProps">
-                            <Checkbox v-model="slotProps.data.development" :binary="true" @click="test(slotProps.data)" />
+                            <Checkbox v-model="slotProps.data.development" :binary="true" :disabled="!isCheckable(slotProps.data, 'devRoles')" @click="test(slotProps.data)" />
                         </template>
                     </Column>
                     <Column header="Test">
                         <template #body="slotProps">
-                            <Checkbox v-model="slotProps.data.test" :binary="true" @click="test(slotProps.data)" />
+                            <Checkbox v-model="slotProps.data.test" :binary="true" :disabled="!isCheckable(slotProps.data, 'testRoles')" @click="test(slotProps.data)" />
                         </template>
                     </Column>
                     <Column header="Execution">
                         <template #body="slotProps">
-                            <Checkbox v-model="slotProps.data.execution" :binary="true" @click="test(slotProps.data)" />
+                            <Checkbox v-model="slotProps.data.execution" :binary="true" :disabled="!isCheckable(slotProps.data, 'execRoles')" @click="test(slotProps.data)" />
                         </template>
                     </Column>
                     <Column header="Creation">
                         <template #body="slotProps">
-                            <Checkbox v-model="slotProps.data.creation" :binary="true" @click="test(slotProps.data)" />
+                            <Checkbox v-model="slotProps.data.creation" :binary="true" :disabled="!isCheckable(slotProps.data, 'createRoles')" aria-colcount="" @click="test(slotProps.data)" />
                         </template>
                     </Column>
                     <Column @rowClick="false">
@@ -107,6 +107,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
+import axios from 'axios'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import detailDescriptor from './FunctionalitiesManagementDetailDescriptor.json'
@@ -136,8 +137,10 @@ export default defineComponent({
             validationDescriptor,
             formVisible: false,
             selectedFolder: {} as any,
+            parentFolder: null as any,
             roles: [] as any,
-            checked: [] as any
+            checked: [] as any,
+            loading: false
         }
     },
     computed: {
@@ -150,16 +153,23 @@ export default defineComponent({
             selectedFolder: createValidations('selectedFolder', validationDescriptor.validations.selectedFolder)
         }
     },
-    created() {
+    async created() {
+        this.loading = true
         this.selectedFolder = { ...this.functionality }
         this.loadRoles()
+        await this.loadParentFolder()
+        this.loading = false
     },
     watch: {
-        functionality() {
+        async functionality() {
+            this.loading = true
             this.v$.$reset()
             this.selectedFolder = { ...this.functionality }
+            await this.loadParentFolder()
             console.log(this.selectedFolder)
             console.log(this.roles)
+            console.log('PARENT FOLDER: ', this.parentFolder)
+            this.loading = false
         },
         rolesShort() {
             this.loadRoles()
@@ -182,6 +192,11 @@ export default defineComponent({
                 this.roles.push(tempRole)
             })
         },
+        async loadParentFolder() {
+            if (this.selectedFolder.id) {
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.selectedFolder.id}`).then((response) => (this.parentFolder = response.data))
+            }
+        },
         roleIsChecked(role: any, roles: [], roleField: string) {
             console.log('ROLES', roles)
             const index = roles.findIndex((currentRole: any) => role.id === currentRole.id)
@@ -189,6 +204,23 @@ export default defineComponent({
             if (index > -1) {
                 role[roleField] = true
             }
+        },
+        isCheckable(role: any, roleField: string) {
+            console.log('isCheckable ROLE', role)
+            console.log('THIS PARENT FOLDER!!!!!!!', this.parentFolder)
+            let checkable = false
+            if (this.selectedFolder.path === '/Functionalities') {
+                checkable = true
+            } else if (this.parentFolder[roleField] && this.parentFolder[roleField].length > 0) {
+                this.parentFolder[roleField].forEach((currentRole) => {
+                    console.log(role.name + ' === ' + currentRole.name)
+                    if (role.name === currentRole.name) {
+                        checkable = true
+                    }
+                })
+            }
+
+            return checkable
         },
         test(role) {
             console.log('ROLE AFTER CHECK: ', role)
