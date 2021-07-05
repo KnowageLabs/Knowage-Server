@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
@@ -6,12 +7,13 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import flushPromises from 'flush-promises'
 import FunctionalitiesManagementDetail from './FunctionalitiesManagementDetail.vue'
 import Toolbar from 'primevue/toolbar'
 
 const mockedFunctionality = {
-    id: 1,
-    parentId: 2,
+    id: 2,
+    parentId: 1,
     name: 'Demos name',
     code: 'Demos code',
     description: 'Demos description',
@@ -35,11 +37,44 @@ const mockedFunctionality = {
     ]
 }
 
+const mockedParentFunctionality = {
+    id: 1,
+    parentId: null,
+    name: 'Functionalities',
+    code: 'Functionalities',
+    description: 'Functionalities',
+    createRoles: [
+        { id: 1, name: 'dev' },
+        { id: 2, name: 'user' },
+        { id: 3, name: 'admin' }
+    ],
+    devRoles: [
+        { id: 1, name: 'dev' },
+        { id: 2, name: 'user' },
+        { id: 3, name: 'admin' }
+    ],
+    execRoles: [
+        { id: 1, name: 'dev' },
+        { id: 2, name: 'user' },
+        { id: 3, name: 'admin' }
+    ],
+    testRoles: [
+        { id: 1, name: 'dev' },
+        { id: 2, name: 'user' },
+        { id: 3, name: 'admin' }
+    ]
+}
+
 const mockedRoles = [
     { id: 1, name: 'dev' },
     { id: 2, name: 'user' },
     { id: 3, name: 'admin' }
 ]
+
+jest.mock('axios')
+
+axios.get.mockImplementation(() => Promise.resolve({ data: mockedParentFunctionality }))
+axios.post.mockImplementation(() => Promise.resolve())
 
 const $store = {
     commit: jest.fn()
@@ -49,7 +84,8 @@ const factory = () => {
     return mount(FunctionalitiesManagementDetail, {
         props: {
             functionality: mockedFunctionality,
-            rolesShort: mockedRoles
+            rolesShort: mockedRoles,
+            parentId: 1
         },
         global: {
             stubs: { Button, Card, Checkbox, Column, DataTable, InputText, KnValidationMessages, Toolbar },
@@ -104,8 +140,11 @@ describe('Functionalities Detail', () => {
         expect(wrapper.find('[data-test="submit-button"]').element.disabled).toBe(true)
     })
 
-    it('shows a selectable list of available roles', () => {
+    it('shows a selectable list of available roles', async () => {
         const wrapper = factory()
+
+        await flushPromises()
+
         const rolesTable = wrapper.find('[data-test="roles-table"]')
 
         expect(rolesTable.html()).toContain('dev')
@@ -113,7 +152,7 @@ describe('Functionalities Detail', () => {
         expect(rolesTable.html()).toContain('admin')
     })
 
-    it("shows no other input if 'empty' content is selected ", async () => {
+    it('shows an empty detail if top level functionality is clicked', async () => {
         const wrapper = factory()
 
         await wrapper.setProps({
@@ -138,7 +177,8 @@ describe('Functionalities Detail', () => {
     it("select all the row if the 'select all' button is clicked", async () => {
         const wrapper = factory()
 
-        console.log(wrapper.vm.roles)
+        await flushPromises()
+
         expect(wrapper.vm.roles[1]).toStrictEqual({
             creation: true,
             development: false,
@@ -162,7 +202,8 @@ describe('Functionalities Detail', () => {
     it("deselect all the row if the 'deselect all' button is clicked", async () => {
         const wrapper = factory()
 
-        console.log(wrapper.vm.roles)
+        await flushPromises()
+
         expect(wrapper.vm.roles[0]).toStrictEqual({
             creation: true,
             development: true,
@@ -182,5 +223,15 @@ describe('Functionalities Detail', () => {
             name: 'dev',
             test: false
         })
+    })
+    it('saves functionality when save button is clicked', async () => {
+        const wrapper = factory()
+
+        expect(wrapper.vm.selectedFolder).toStrictEqual(mockedFunctionality)
+
+        await flushPromises()
+        await wrapper.find('[data-test="submit-button"]').trigger('click')
+
+        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/')
     })
 })

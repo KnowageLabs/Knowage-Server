@@ -191,9 +191,9 @@ export default defineComponent({
         loadRoles() {
             this.roles = []
             const tempFolder = this.selectedFolder.id ? this.selectedFolder : this.parentFolder
-            console.log('PARENT ID', this.parentId)
-            console.log('PARENT FOLDER', this.parentFolder)
-            console.log('TEMP FOLDER', tempFolder)
+            // console.log('PARENT ID', this.parentId)
+            // console.log('PARENT FOLDER', this.parentFolder)
+            // console.log('TEMP FOLDER', tempFolder)
             this.rolesShort.forEach((role: any) => {
                 const tempRole = {
                     id: role.id,
@@ -228,7 +228,7 @@ export default defineComponent({
             // console.log('isCheckable ROLE', role)
             // console.log('THIS PARENT FOLDER!!!!!!!', this.parentFolder)
             let checkable = false
-            if (this.selectedFolder.path === '/Functionalities') {
+            if (this.parentFolder.path === '/Functionalities') {
                 checkable = true
             } else if (this.parentFolder[roleField] && this.parentFolder[roleField].length > 0) {
                 this.parentFolder[roleField].forEach((currentRole) => {
