@@ -46,7 +46,8 @@
                         </template>
                         <template #body="slotProps">
                             <Button icon="pi pi-save" class="p-button-link" @click="saveLabel(language, slotProps.data)" />
-                            <Button icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" />
+                            <Button v-if="language.defaultLanguage" icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" />
+                            <Button v-if="language.defaultLanguage" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" />
                         </template>
                     </Column>
                 </DataTable>
