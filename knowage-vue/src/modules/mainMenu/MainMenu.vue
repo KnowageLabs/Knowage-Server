@@ -5,7 +5,7 @@
         <RoleDialog v-model:visibility="roleDisplay"></RoleDialog>
         <DownloadsDialog v-model:visibility="downloadsDisplay"></DownloadsDialog>
         <NewsDialog v-model:visibility="newsDisplay"></NewsDialog>
-        <LicenseDialog v-model:visibility="licenseDisplay" v-if="user.currentUser.isSuperadmin"></LicenseDialog>
+        <LicenseDialog v-model:visibility="licenseDisplay"></LicenseDialog>
         <div class="menu-scroll-content">
             <div>
                 <div class="profile">
