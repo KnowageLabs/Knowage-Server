@@ -239,6 +239,8 @@ export default defineComponent({
                     })
                 }
                 this.selectedFunctionality = null
+                this.formVisible = false
+                this.showHint = true
                 this.loadPage(null)
             })
         },
