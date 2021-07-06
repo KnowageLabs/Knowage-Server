@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.resourcemanager.resource;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -69,7 +71,7 @@ public class FilesResource {
 	@GET
 	@Path("/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<FileDTO> files(@PathParam("path") String path) {
+	public List<FileDTO> getFiles(@PathParam("path") String path) {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		List<FileDTO> files = resourceManagerAPIservice.getListOfFiles(path, profile);
 		return files;
@@ -78,8 +80,26 @@ public class FilesResource {
 	@GET
 	@Path("/download/file/")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response downloadFiles(@QueryParam("path") String path) {
-		return null;
+	public Response downloadFiles(@QueryParam("list") List<String> listOfPaths) {
+		SpagoBIUserProfile profile = businessContext.getUserProfile();
+		if (listOfPaths.size() == 1) {
+			java.nio.file.Path file = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, false);
+			try {
+				return Response.ok(file.toFile()).header("Content-length", "" + Files.size(file))
+						.header("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getFileName())).build();
+			} catch (IOException e) {
+				throw new KnowageRuntimeException("Error calculating file size for " + file, e);
+			}
+		} else {
+			java.nio.file.Path zipFile = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, true);
+			String filename = zipFile.getFileName() + ".zip";
+			try {
+				return Response.ok(zipFile.toFile()).header("Content-length", "" + Files.size(zipFile))
+						.header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename)).build();
+			} catch (IOException e) {
+				throw new KnowageRuntimeException("Error calculating file size for " + zipFile, e);
+			}
+		}
 	}
 
 	@POST
@@ -93,8 +113,8 @@ public class FilesResource {
 	@GET
 	@Path("/metadata/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public FileDTO getMetadata(@PathParam("path") String path) {
-		FileDTO file = null; // TODO: METADATA DTO
+	public MetadataDTO getMetadata(@PathParam("path") String path) {
+		MetadataDTO file = null; // TODO: METADATA DTO
 		return file;
 	}
 
