@@ -127,8 +127,6 @@
           </form>
         </template>
       </Card>
-
-      <RolesCard :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)" v-if="!hideForm"></RolesCard>
     </div>
   </div>
 </template>
@@ -136,7 +134,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios, { AxiosResponse } from "axios";
-import { iMenuNode, iRole } from "./MenuConfiguration";
+import { iMenuNode } from "./MenuConfiguration";
 import useValidate from "@vuelidate/core";
 import { createValidations } from "@/helpers/commons/validationHelper";
 import Dropdown from "primevue/dropdown";
@@ -144,17 +142,20 @@ import Dialog from "primevue/dialog";
 import RelatedDocumentList from "./RelatedDocumentList.vue";
 import DocumentBrowserTree from "./DocumentBrowserTree.vue";
 import FontAwesomePicker from "./FontAwesomeIconPicker.vue";
-import RolesCard from "./RolesCard.vue";
+
 import KnValidationMessages from "@/components/UI/KnValidatonMessages.vue";
 import MenuConfigurationDescriptor from "./MenuConfigurationDescriptor.json";
 import MenuConfigurationValidationDescriptor from "./MenuConfigurationValidationDescriptor.json";
 export default defineComponent({
   name: "profile-attributes-detail",
-  components: { Dropdown, DocumentBrowserTree, RolesCard, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker },
+  components: { Dropdown, DocumentBrowserTree, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker },
   props: {
     selectedMenuNode: {
       type: Object,
       required: true,
+    },
+        selectedRoles: {
+      type: Array
     },
   },
   computed: {
@@ -167,6 +168,11 @@ export default defineComponent({
       handler: function (node) {
         this.v$.$reset();
         this.loadNode(node);
+      },
+    },
+      selectedRoles: {
+      handler: function (roles) {
+        this.menuNode.roles = roles;
       },
     },
   },
@@ -187,8 +193,6 @@ export default defineComponent({
       dirty: false as Boolean,
       displayModal: false as Boolean,
       chooseIconModalShown: false as Boolean,
-      roles: [] as iRole[],
-      selectedRoles: [] as iRole[],
       relatedDocuments: [],
       selectedRelatedDocument: null as string | null,
       selectedIcon: null as string | null,
@@ -205,7 +209,6 @@ export default defineComponent({
     };
   },
   async created() {
-    await this.loadRoles();
     if (this.selectedMenuNode) {
       this.loadNode(this.selectedMenuNode);
     }
@@ -313,11 +316,6 @@ export default defineComponent({
       this.$emit("refreshRecordSet");
       this.resetForm();
     },
-    async loadRoles() {
-      this.loading = this.hideForm = true;
-      this.dirty = false;
-      await axios.get(this.apiUrl + "roles").then((response) => { this.roles = response.data; }).finally(() => (this.loading = false));
-    },
     closeForm() {
       this.$emit("closesForm");
     },
@@ -358,10 +356,7 @@ export default defineComponent({
       }
       this.populateForm(menuNode);
     },
-    setSelectedRoles(roles: iRole[]) {
-      this.selectedRoles = roles;
-      this.menuNode.roles = roles;
-    },
+
     onSelectedDocumentNode(documentInitialPath) {
       this.menuNode.initialPath = documentInitialPath;
     },

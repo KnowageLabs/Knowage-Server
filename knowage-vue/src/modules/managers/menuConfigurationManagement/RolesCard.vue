@@ -8,7 +8,6 @@
       </Toolbar>
     </template>
     <template #content>
-
       <DataTable
         :value="rolesList"
         v-model:selection="selectedRoles"
@@ -55,7 +54,7 @@ export default defineComponent({
   },
   watch: {
     selected: {
-      handler: function (selected) {
+      handler: function (selected: iRole[]) {
         this.selectedRoles = selected;
       },
     },

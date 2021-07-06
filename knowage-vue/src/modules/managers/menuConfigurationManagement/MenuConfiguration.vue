@@ -35,12 +35,15 @@
       <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
         <KnHint :title="'managers.menuConfigurationManagement.title'" :hint="'managers.menuConfigurationManagement.hint'" v-if="hideForm"></KnHint>
         <MenuElementsDetail
+          :selectedRoles="selectedMenuNode.roles"
           :selectedMenuNode="selectedMenuNode"
           @refreshRecordSet="loadMenuNodes"
           @closesForm="closeForm"
           @dataChanged="dirty = true"
           v-if="!hideForm"
         ></MenuElementsDetail>
+
+         <RolesCard :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
       </div>
     </div>
   </div>
@@ -54,6 +57,8 @@ import KnHint from "@/components/UI/KnHint.vue";
 import { iMenuNode } from "./MenuConfiguration";
 import MenuNodesTree from "./MenuNodesTree.vue";
 import MenuElementsDetail from "./MenuElementsDetail.vue";
+import RolesCard from "./RolesCard.vue";
+import { iRole } from "../usersManagement/UsersManagement";
 export default defineComponent({
   name: "menu-configuration",
   components: {
@@ -61,6 +66,7 @@ export default defineComponent({
     MenuElementsDetail,
     KnFabButton,
     KnHint,
+    RolesCard
   },
   data() {
     return {
@@ -70,12 +76,19 @@ export default defineComponent({
       loading: false as Boolean,
       hideForm: true as Boolean,
       dirty: false as Boolean,
+      roles: [] as iRole[]
     };
   },
   async created() {
     await this.loadMenuNodes();
+    await this.loadRoles();
   },
   methods: {
+    async loadRoles() {
+      this.loading = this.hideForm = true;
+      this.dirty = false;
+      await axios.get(this.apiUrl + "roles").then((response) => { this.roles = response.data; }).finally(() => (this.loading = false));
+    },
     showForm() {
       this.hideForm = false;
       if(Object.keys(this.selectedMenuNode).length === 0 && this.selectedMenuNode.constructor === Object){
@@ -170,6 +183,9 @@ export default defineComponent({
         .finally(() => {
           this.loading = false;
         });
+    },
+    setSelectedRoles(roles: iRole[]) {
+      this.selectedMenuNode.roles = roles;
     },
     async deleteNode(id: number) {
       this.$confirm.require({

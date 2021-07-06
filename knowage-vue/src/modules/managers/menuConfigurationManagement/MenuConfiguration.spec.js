@@ -526,38 +526,16 @@ describe("menu configuration management loading", () => {
     expect(wrapper.find('[data-test="progress-bar"]').exists()).toBe(true);
   });
 
-  it('shows "no data" label when loaded empty', async () => {
-    axios.get.mockReturnValueOnce(
-      Promise.resolve({
-        data: [],
-      })
-    );
-    const wrapper = factory();
-    await flushPromises();
-    expect(wrapper.vm.menuNodes.length).toBe(0);
-    expect(wrapper.find('[data-test="menu-nodes-tree"]').html()).toContain(
-      "common.info.noDataFound"
-    );
-  });
+
 });
 
 describe("menu configuration management", () => {
-
-  it("deletes menu node clicking on delete icon", async () => {
-    const wrapper = factory();
-    await flushPromises();
-    const deleteButton = wrapper.find('[data-test="deleteBtn"]');
-    await deleteButton.trigger("click");
-    expect($confirm.require).toHaveBeenCalledTimes(1);
-    await wrapper.vm.onNodeDelete(1);
-    await wrapper.vm.loadMenuNodes();
-  });
 
   it("opens empty form when the '+' button is clicked", async () => {
     const wrapper = factory();
     const openButton = wrapper.find('[data-test="open-form-button"]');
     await openButton.trigger("click");
-    expect(wrapper.vm.hiddenForm).toBe(false);
+    expect(wrapper.vm.hideForm).toBe(false);
   });
 
  
