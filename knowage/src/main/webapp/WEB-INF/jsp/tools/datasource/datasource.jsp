@@ -275,6 +275,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										  			
 										  			<div layout="row">
 										  				<md-input-container flex="90" class="md-block">
+															<label>{{translate.load("sbi.datasource.type.jdbc.maxIdle")}}</label>
+															<input type="number" ng-init="selectedDataSource.jdbcPoolConfiguration.maxIdle = 30" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.maxIdle"
+																ng-maxlength="30" ng-readonly="readOnly">
+														</md-input-container>
+														<md-icon ng-click="showMaxIdleInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
+										  			</div>
+										  			
+										  			<div layout="row">
+										  				<md-input-container flex="90" class="md-block">
 															<label>{{translate.load("sbi.datasource.type.jdbc.minEvictableIdleTimeMillis")}}</label>
 															<input type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis"
 																ng-maxlength="30" ng-readonly="readOnly">
@@ -292,6 +301,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 																ng-maxlength="200" ng-readonly="readOnly">														
 														</md-input-container>
 														<md-icon ng-click="showValidationQueryInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
+										  			</div>
+										  			
+										  			<div layout="row">
+										  				<md-input-container flex="90" class="md-block">
+															<label>{{translate.load("sbi.datasource.type.jdbc.validationQueryTimeout")}}</label>
+															<input type="number" ng-change="setDirty()" ng-model="selectedDataSource.jdbcPoolConfiguration.validationQueryTimeout"
+																ng-maxlength="30" ng-readonly="readOnly">														
+														</md-input-container>
+														<md-icon ng-click="showValidationQueryTimeoutInfo($event)" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 										  			</div>
 										  			
 										  			<div layout="row">
