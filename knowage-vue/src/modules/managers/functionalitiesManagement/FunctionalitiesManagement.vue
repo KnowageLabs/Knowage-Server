@@ -78,12 +78,9 @@ export default defineComponent({
     },
     async created() {
         await this.loadPage(null)
-        // console.log('Functionalities: ', this.functionalities)
-        // console.log('Roles short: ', this.rolesShort)
     },
     methods: {
         async loadFunctionalities() {
-            // await axios.get('data/demo_data.json').then((response) => (this.functionalities = response.data))
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/').then((response) => (this.functionalities = response.data))
         },
         async loadRolesShort() {
@@ -169,8 +166,6 @@ export default defineComponent({
         },
         showForm(functionality: iFunctionality, parentId: number) {
             this.showHint = false
-            console.log(functionality)
-            console.log(parentId)
             this.functionalityParentId = parentId
             if (!this.touched) {
                 this.setSelected(functionality)
@@ -248,7 +243,6 @@ export default defineComponent({
             })
         },
         async loadPage(functionalityId: any) {
-            console.log('ID!!!!!!!!!!!!!!!!!', functionalityId)
             this.loading = true
             await this.loadFunctionalities()
             await this.loadRolesShort()

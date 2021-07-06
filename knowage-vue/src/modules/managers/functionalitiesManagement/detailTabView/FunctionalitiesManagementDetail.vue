@@ -64,7 +64,6 @@
                             <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                         </span>
                     </div>
-                    {{ selectedFolder }}
                 </form>
             </template>
         </Card>
@@ -74,22 +73,22 @@
                     <Column field="name" :header="$t('managers.functionalitiesManagement.roles')" :sortable="true" />
                     <Column :header="$t('managers.functionalitiesManagement.development')">
                         <template #body="slotProps">
-                            <Checkbox v-model="slotProps.data.development" :binary="true" :disabled="!isCheckable(slotProps.data, 'devRoles')" />
+                            <Checkbox v-model="slotProps.data.development" :binary="true" :disabled="!slotProps.data['devRoles'].checkable" />
                         </template>
                     </Column>
                     <Column :header="$t('managers.functionalitiesManagement.test')">
                         <template #body="slotProps">
-                            <Checkbox v-model="slotProps.data.test" :binary="true" :disabled="!isCheckable(slotProps.data, 'testRoles')" />
+                            <Checkbox v-model="slotProps.data.test" :binary="true" :disabled="!slotProps.data['testRoles'].checkable" />
                         </template>
                     </Column>
                     <Column :header="$t('managers.functionalitiesManagement.execution')">
                         <template #body="slotProps">
-                            <Checkbox v-model="slotProps.data.execution" :binary="true" :disabled="!isCheckable(slotProps.data, 'execRoles')" />
+                            <Checkbox v-model="slotProps.data.execution" :binary="true" :disabled="!slotProps.data['execRoles'].checkable" />
                         </template>
                     </Column>
                     <Column :header="$t('managers.functionalitiesManagement.creation')">
                         <template #body="slotProps">
-                            <Checkbox v-model="slotProps.data.creation" :binary="true" :disabled="!isCheckable(slotProps.data, 'createRoles')" aria-colcount="" />
+                            <Checkbox v-model="slotProps.data.creation" :binary="true" :disabled="!slotProps.data['createRoles'].checkable" />
                         </template>
                     </Column>
                     <Column @rowClick="false">
@@ -169,8 +168,6 @@ export default defineComponent({
             this.selectedFolder = { ...this.functionality }
             await this.loadParentFolder()
             this.loadRoles()
-            // console.log(this.selectedFolder)
-            // console.log(this.roles)
             this.loading = false
         },
         rolesShort() {
@@ -184,9 +181,6 @@ export default defineComponent({
         loadRoles() {
             this.roles = []
             const tempFolder = this.selectedFolder.id ? this.selectedFolder : this.parentFolder
-            // console.log('PARENT ID', this.parentId)
-            // console.log('PARENT FOLDER', this.parentFolder)
-            // console.log('TEMP FOLDER', tempFolder)
             this.rolesShort.forEach((role: any) => {
                 const tempRole = {
                     id: role.id,
@@ -196,12 +190,14 @@ export default defineComponent({
                     execution: false,
                     creation: false
                 }
-
                 this.roleIsChecked(tempRole, tempFolder.devRoles, 'development')
                 this.roleIsChecked(tempRole, tempFolder.testRoles, 'test')
                 this.roleIsChecked(tempRole, tempFolder.execRoles, 'execution')
                 this.roleIsChecked(tempRole, tempFolder.createRoles, 'creation')
 
+                for (let field of ['devRoles', 'testRoles', 'execRoles', 'createRoles']) {
+                    this.isCheckable(tempRole, field)
+                }
                 this.roles.push(tempRole)
             })
         },
@@ -218,42 +214,39 @@ export default defineComponent({
             }
         },
         isCheckable(role: any, roleField: string) {
-            // console.log('isCheckable ROLE', role)
-            // console.log('THIS PARENT FOLDER!!!!!!!', this.parentFolder)
-            let checkable = false
+            role[roleField] = { checkable: false }
             if (this.parentFolder.path === '/Functionalities') {
-                checkable = true
+                role[roleField].checkable = true
             } else if (this.parentFolder[roleField] && this.parentFolder[roleField].length > 0) {
                 this.parentFolder[roleField].forEach((currentRole) => {
-                    // console.log(role.name + ' === ' + currentRole.name)
                     if (role.name === currentRole.name) {
-                        checkable = true
+                        role[roleField].checkable = true
                     }
                 })
             }
-            return checkable
         },
         prepareFunctionalityToSend(functionalityToSend) {
             var roles = [...this.roles]
-            var functionality = functionalityToSend
-            functionality.codeType = functionality.codType
-            delete functionality.codType
-            delete functionality.biObjects
-            this.emptyFunctionalityRoles(functionality)
+            functionalityToSend.codeType = functionalityToSend.codType
+            delete functionalityToSend.codType
+            delete functionalityToSend.biObjects
+            this.emptyFunctionalityRoles(functionalityToSend)
             roles.forEach((role) => {
-                if (role.development) functionality.devRoles.push(role)
-                if (role.test) functionality.testRoles.push(role)
-                if (role.execution) functionality.execRoles.push(role)
-                if (role.creation) functionality.createRoles.push(role)
+                if (role.development) functionalityToSend.devRoles.push(role)
+                if (role.test) functionalityToSend.testRoles.push(role)
+                if (role.execution) functionalityToSend.execRoles.push(role)
+                if (role.creation) functionalityToSend.createRoles.push(role)
             })
             if (!functionalityToSend.id) {
-                functionalityToSend.codeType = this.parentFolder.codType
-                functionalityToSend.parentId = this.parentFolder.id
-                functionalityToSend.path = this.parentFolder.path + '/' + functionalityToSend.name
-                if (!functionalityToSend.description) functionalityToSend.description = ''
+                this.prepareNewFunctionality(functionalityToSend)
             }
         },
-
+        prepareNewFunctionality(functionalityToSend) {
+            functionalityToSend.codeType = this.parentFolder.codType
+            functionalityToSend.parentId = this.parentFolder.id
+            functionalityToSend.path = this.parentFolder.path + '/' + functionalityToSend.name
+            if (!functionalityToSend.description) functionalityToSend.description = ''
+        },
         emptyFunctionalityRoles(functionality) {
             functionality.devRoles = []
             functionality.testRoles = []
@@ -279,22 +272,23 @@ export default defineComponent({
             })
             this.dirty = false
         },
+        checkSingleRole(role, roleField, checkboxField, value) {
+            if (role[roleField].checkable) {
+                role[checkboxField] = value
+            }
+        },
         checkAll(role) {
-            var checkedRole = role
-            checkedRole.development = true
-            checkedRole.test = true
-            checkedRole.execution = true
-            checkedRole.creation = true
+            this.checkSingleRole(role, 'createRoles', 'creation', true)
+            this.checkSingleRole(role, 'devRoles', 'development', true)
+            this.checkSingleRole(role, 'execRoles', 'execution', true)
+            this.checkSingleRole(role, 'testRoles', 'test', true)
         },
         uncheckAll(role) {
-            var checkedRole = role
-            checkedRole.development = false
-            checkedRole.test = false
-            checkedRole.execution = false
-            checkedRole.creation = false
+            this.checkSingleRole(role, 'createRoles', 'creation', false)
+            this.checkSingleRole(role, 'devRoles', 'development', false)
+            this.checkSingleRole(role, 'execRoles', 'execution', false)
+            this.checkSingleRole(role, 'testRoles', 'test', false)
         }
     }
 })
 </script>
-
-<style lang="scss" scoped></style>

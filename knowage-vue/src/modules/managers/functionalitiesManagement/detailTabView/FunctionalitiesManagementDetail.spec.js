@@ -74,7 +74,7 @@ const mockedRoles = [
 jest.mock('axios')
 
 axios.get.mockImplementation(() => Promise.resolve({ data: mockedParentFunctionality }))
-axios.post.mockImplementation(() => Promise.resolve())
+axios.put.mockImplementation(() => Promise.resolve({ data: mockedFunctionality }))
 
 const $store = {
     commit: jest.fn()
@@ -180,6 +180,18 @@ describe('Functionalities Detail', () => {
         await flushPromises()
 
         expect(wrapper.vm.roles[1]).toStrictEqual({
+            createRoles: {
+                checkable: true
+            },
+            devRoles: {
+                checkable: true
+            },
+            testRoles: {
+                checkable: true
+            },
+            execRoles: {
+                checkable: true
+            },
             creation: true,
             development: false,
             execution: true,
@@ -191,6 +203,18 @@ describe('Functionalities Detail', () => {
         await wrapper.find('[data-test="check-all-2"]').trigger('click')
 
         expect(wrapper.vm.roles[1]).toStrictEqual({
+            createRoles: {
+                checkable: true
+            },
+            devRoles: {
+                checkable: true
+            },
+            testRoles: {
+                checkable: true
+            },
+            execRoles: {
+                checkable: true
+            },
             creation: true,
             development: true,
             execution: true,
@@ -205,6 +229,18 @@ describe('Functionalities Detail', () => {
         await flushPromises()
 
         expect(wrapper.vm.roles[0]).toStrictEqual({
+            createRoles: {
+                checkable: true
+            },
+            devRoles: {
+                checkable: true
+            },
+            testRoles: {
+                checkable: true
+            },
+            execRoles: {
+                checkable: true
+            },
             creation: true,
             development: true,
             execution: true,
@@ -216,6 +252,18 @@ describe('Functionalities Detail', () => {
         await wrapper.find('[data-test="uncheck-all-1"]').trigger('click')
 
         expect(wrapper.vm.roles[0]).toStrictEqual({
+            createRoles: {
+                checkable: true
+            },
+            devRoles: {
+                checkable: true
+            },
+            testRoles: {
+                checkable: true
+            },
+            execRoles: {
+                checkable: true
+            },
             creation: false,
             development: false,
             execution: false,
@@ -232,6 +280,7 @@ describe('Functionalities Detail', () => {
         await flushPromises()
         await wrapper.find('[data-test="submit-button"]').trigger('click')
 
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/')
+        expect(axios.put).toHaveBeenCalledTimes(1)
+        expect(wrapper.emitted()).toHaveProperty('inserted')
     })
 })
