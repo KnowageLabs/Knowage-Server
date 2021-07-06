@@ -14,6 +14,11 @@
         "language": "",
         "message": ""
     },
+    "headerStyles": {
+        "buttonsHeaderStyle": "width: 5.5%",
+        "dirtyHeaderStyle": "width: 2%",
+        "searchBoxStyle": "width: 20%"
+    },
     "notDefaultLanguageColumns": [
         {
             "disabled": true,

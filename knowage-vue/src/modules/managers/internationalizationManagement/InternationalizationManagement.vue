@@ -3,22 +3,21 @@
         <TabPanel v-for="language in languages" :key="language">
             <template #header>
                 {{ language.language }}
-                <span v-if="language.defaultLanguage">{{ this.$t('managers.internationalizationManagement.defaultLanguage') }}</span>
+                <span v-if="language.defaultLanguage">{{ $t('managers.internationalizationManagement.defaultLanguage') }}</span>
             </template>
             <div class="p-fluid card">
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <DataTable v-if="!loading" editMode="cell" :value="messages" :scrollable="true" scrollHeight="40vh" :loading="loading" :rows="15" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
-                    <!-- treba da se smanjim width searchbara, i postavi checkbox pored njega ali iako smanjim width search bara, kao da zauzima ceo prostor... -->
-                    <template #header class="p-fluid">
-                        <div class="table-header">
-                            <div class="p-field-checkbox">
-                                <Checkbox id="findEmptyFields" :binary="true" v-model="showOnlyEmptyFields" @change="filterEmptyMessages" data-test="checkbox" />
-                                <label for="findEmptyFields">{{ this.$t('managers.internationalizationManagement.showBlankMessages') }}</label>
-                            </div>
-                            <span class="p-input-icon-left">
+                <DataTable v-if="!loading" editMode="cell" :value="messages" :loading="loading" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
+                    <template #header>
+                        <div class="table-header p-d-flex">
+                            <span class="p-input-icon-left p-mr-3" :style="intDescriptor.headerStyles.searchBoxStyle">
                                 <i class="pi pi-search" />
                                 <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                             </span>
+                            <div class="p-field-checkbox p-mt-4">
+                                <Checkbox id="findEmptyFields" :binary="true" v-model="showOnlyEmptyFields" @change="filterEmptyMessages" data-test="checkbox" />
+                                <label for="findEmptyFields">{{ $t('managers.internationalizationManagement.showBlankMessages') }}</label>
+                            </div>
                         </div>
                     </template>
                     <template #empty>
@@ -28,8 +27,7 @@
                         <InputText type="text" v-model="filterModel.value" class="p-column-filter" />
                     </template>
 
-                    <!-- ova kolona treba da ima duzinu samo ove ikonice... sta god sam pokusao nisam mogao da je promenim -->
-                    <Column>
+                    <Column :headerStyle="intDescriptor.headerStyles.dirtyHeaderStyle">
                         <template #body="slotProps">
                             <i class="pi pi-flag" v-if="slotProps.data['dirty']"></i>
                         </template>
@@ -42,10 +40,9 @@
                         </template>
                     </Column>
 
-                    <!-- ova kolona isto treba da ima duzinu samo ovih ikonica koje se nalaze u njoj -->
-                    <Column>
+                    <Column :headerStyle="intDescriptor.headerStyles.buttonsHeaderStyle">
                         <template #header>
-                            <Button v-if="language.defaultLanguage" :label="this.$t('managers.internationalizationManagement.table.addLabel')" class="p-button-link" @click="addEmptyLabel" />
+                            <Button v-if="language.defaultLanguage" :label="$t('managers.internationalizationManagement.table.addLabel')" class="p-button-link" @click="addEmptyLabel" />
                         </template>
                         <template #body="slotProps">
                             <Button icon="pi pi-save" class="p-button-link" @click="saveLabel(language, slotProps.data)" />
