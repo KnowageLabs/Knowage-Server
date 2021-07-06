@@ -74,7 +74,7 @@ const mockedRoles = [
 jest.mock('axios')
 
 axios.get.mockImplementation(() => Promise.resolve({ data: mockedParentFunctionality }))
-axios.post.mockImplementation(() => Promise.resolve())
+axios.put.mockImplementation(() => Promise.resolve({ data: mockedFunctionality }))
 
 const $store = {
     commit: jest.fn()
@@ -232,6 +232,7 @@ describe('Functionalities Detail', () => {
         await flushPromises()
         await wrapper.find('[data-test="submit-button"]').trigger('click')
 
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/')
+        expect(axios.put).toHaveBeenCalledTimes(1)
+        expect(wrapper.emitted()).toHaveProperty('inserted')
     })
 })
