@@ -28,19 +28,24 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.eng.knowage.resourcemanager.KnowageResourceManagerConfigurationTest;
 import it.eng.knowage.resourcemanager.resource.utils.FolderDTO;
 
 /**
  * @author Matteo Massarotto
  */
+
+@ContextConfiguration(classes = KnowageResourceManagerConfigurationTest.class)
 @SpringBootTest
 @Component
 @ActiveProfiles("test")
@@ -48,6 +53,9 @@ public class ResourceManagerResourceTest {
 
 	static List<String> allList = new ArrayList<String>();
 	private static final Logger LOGGER = Logger.getLogger(ResourceManagerResourceTest.class);
+
+	@Autowired
+	ObjectMapper mapper;
 
 	@Test
 	void getTree(@Value("${test.resourcepath}") String resourcePath) {
@@ -65,7 +73,7 @@ public class ResourceManagerResourceTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ObjectMapper mapper = new ObjectMapper();
+
 		try {
 			String tree = mapper.writeValueAsString(mylist);
 			JSONObject ja = new JSONObject(tree);

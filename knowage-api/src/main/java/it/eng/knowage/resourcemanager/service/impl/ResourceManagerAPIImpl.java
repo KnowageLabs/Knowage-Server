@@ -63,16 +63,15 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	static {
 		List<String> folders = new ArrayList<String>();
-		folders.add("MODELS");
-		folders.add("TALEND");
-		folders.add("STATIC_MENU");
-		folders.add("LAYER");
+		folders.add("models");
+		folders.add("talend");
+		folders.add("static_menu");
+		folders.add("layer");
 		folders.add("jasper_messages");
 		folders.add("hierarchies");
 		folders.add("birt_messages");
 		folders.add("dataset");
 		foldersForDevs.put("DEV", folders);
-		foldersForDevs.put("TEST", folders);
 	}
 
 	@Override
@@ -89,13 +88,12 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			if (path == null)
 				path = totalPath;
 			Path f = Paths.get(path);
-			mylist = createTree(parentFolder);
+			mylist = createTree(parentFolder, profile);
 			parseFolders(mylist);
 			clearFolders(mylist, f.getParent().toString());
 			newRootFolder = new RootFolderDTO(mylist);
 			String rootFolder = totalF.toString().replace(f.getParent().toString(), "");
 			newRootFolder.getRoot().setLabel(rootFolder);
-			boolean canSee = canSee(f.getParent().toString(), profile);
 
 		} catch (IOException e) {
 			throw new KnowageRuntimeException(e.getMessage());
@@ -139,16 +137,31 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		}
 	}
 
-	public FolderDTO createTree(FolderDTO parentFolder) throws IOException {
+	public FolderDTO createTree(FolderDTO parentFolder, SpagoBIUserProfile profile) throws IOException {
 		File node = new File(parentFolder.getLabel());
-		if (node.isDirectory()) {
+		Path nodePath = Paths.get(node.getAbsolutePath());
+		Path workDir = Paths.get(getWorkDirectory(profile));
+		boolean canSee = true;
+		if (nodePath.getParent().equals(workDir)) {
+			if (!canSee(nodePath, profile)) {
+				canSee = false;
+			}
+		}
+		if (node.isDirectory() && canSee) {
 			String[] subNote = node.list();
 			for (String filename : subNote) {
 				String path = node + "\\" + filename;
-				if (new File(path).isDirectory()) {
+				Path pathNode = Paths.get(path);
+				boolean canSeeNode = true;
+				if (pathNode.getParent().equals(workDir)) {
+					if (!canSee(pathNode, profile)) {
+						canSeeNode = false;
+					}
+				}
+				if (new File(path).isDirectory() && canSeeNode) {
 					FolderDTO folder = new FolderDTO(path);
 					parentFolder.addChildren(folder);
-					createTree(folder);
+					createTree(folder, profile);
 				} else {
 					// parentFolder.addFile(new CustomFile(path));
 				}
@@ -158,14 +171,20 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public boolean canSee(String path, SpagoBIUserProfile profile) {
+	public boolean canSee(Path path, SpagoBIUserProfile profile) {
 		boolean canSee = false;
 		if (profile.isIsSuperadmin() || hasAdministratorRole(profile)) {
 			return true;
 		} else {
 			for (String function : profile.getFunctions()) {
-				if (function.equalsIgnoreCase("RESOURCE_FUNCTION")) {
-					canSee = true;
+				// functionality must be present
+//				if (function.equalsIgnoreCase("RESOURCE_FUNCTION")) {
+//					canSee = true;
+//				}
+			}
+			if (hasDevRole(profile)) {
+				if (foldersForDevs.get("DEV").contains(path.getFileName().toString())) {
+					return true;
 				}
 			}
 		}
@@ -174,7 +193,6 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	public static boolean hasAdministratorRole(SpagoBIUserProfile profile) {
-
 		try {
 			for (String role : profile.getRoles()) {
 				if (role.equals("admin")) {
@@ -183,10 +201,21 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			}
 			return false;
 		} catch (Exception e) {
-
+			throw new KnowageRuntimeException(e.getMessage());
 		}
+	}
 
-		return false;
+	public static boolean hasDevRole(SpagoBIUserProfile profile) {
+		try {
+			for (String role : profile.getRoles()) {
+				if (role.equals("dev")) {
+					return true;
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e.getMessage());
+		}
 	}
 
 	// if user can't work with directory it is not necessary
@@ -194,11 +223,9 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	@Override
 	public boolean createFolder(String path, SpagoBIUserProfile profile) {
 		String totalPath = getTotalPath(path, profile);
-		String rootElement = path.split("/")[0];
-		String rootPath = getTotalPath(rootElement, profile);
 		boolean bool = false;
-		String workDir = Paths.get(rootPath).toString();
-		if (canSee(workDir, profile)) {
+		String workDir = getWorkBaseDirByPath(path, profile);
+		if (canSee(Paths.get(workDir), profile)) {
 			File file = new File(totalPath);
 			// Creating the directory
 			bool = file.mkdir();
@@ -214,35 +241,65 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	@Override
 	public boolean delete(String path, SpagoBIUserProfile profile) {
 		String totalPath = getTotalPath(path, profile);
-		File file = new File(totalPath);
-		if (file.isDirectory()) {
-			try {
-				FileUtils.deleteDirectory(new File(totalPath));
-			} catch (IOException e) {
-				throw new KnowageRuntimeException(e.getMessage());
-			}
-		} else {
-			try {
-				FileUtils.forceDelete(file);
-			} catch (IOException e) {
-				throw new KnowageRuntimeException(e.getMessage());
+		boolean bool = false;
+		String workDir = getWorkBaseDirByPath(path, profile);
+		if (canSee(Paths.get(workDir), profile)) {
+			File file = new File(totalPath);
+			if (file.isDirectory()) {
+				try {
+					FileUtils.deleteDirectory(new File(totalPath));
+				} catch (IOException e) {
+					throw new KnowageRuntimeException(e.getMessage());
+				}
+			} else {
+				try {
+					FileUtils.forceDelete(file);
+				} catch (IOException e) {
+					throw new KnowageRuntimeException(e.getMessage());
+				}
 			}
 		}
 		return false;
 	}
 
 	@Override
-	public Path getDownloadPath(String path, SpagoBIUserProfile profile) {
-		String workDir = getWorkDirectory(profile);
+	public Path getDownloadFolderPath(String path, SpagoBIUserProfile profile) {
+		String workDirr = getWorkBaseDirByPath(path, profile);
 		java.nio.file.Path workingPath = null;
 		java.nio.file.Path pathToReturn = null;
-		String directoryFullPath = workDir + File.separator + path;
+		if (canSee(Paths.get(workDirr), profile)) {
+			String workDir = getWorkDirectory(profile);
+			String directoryFullPath = workDir + File.separator + path;
 
-		workingPath = Paths.get(directoryFullPath);
+			workingPath = Paths.get(directoryFullPath);
 
-		pathToReturn = createZipFile(path, workingPath);
-
+			pathToReturn = createZipFile(path, workingPath);
+		}
 		return pathToReturn;
+	}
+
+	@Override
+	public Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) {
+		java.nio.file.Path pathToReturn = null;
+		if (multi) {
+
+		} else {
+			String pathFile = path.get(0);
+			String workDirr = getWorkBaseDirByPath(pathFile, profile);
+
+			if (canSee(Paths.get(workDirr), profile)) {
+				String workDir = getWorkDirectory(profile);
+				pathToReturn = Paths.get(workDir + File.separator + path);
+			}
+		}
+		return pathToReturn;
+	}
+
+	public String getWorkBaseDirByPath(String path, SpagoBIUserProfile profile) {
+		String rootElement = path.split("/")[0];
+		String rootPath = getTotalPath(rootElement, profile);
+		String workDirr = Paths.get(rootPath).toString();
+		return workDirr;
 	}
 
 	@Override
@@ -251,10 +308,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		File folder = new File(totalPath);
 		File[] listOfFiles = folder.listFiles();
 		List<FileDTO> returnList = new ArrayList<FileDTO>();
-		for (int i = 0; i < listOfFiles.length; i++) {
-			if (listOfFiles[i].isFile()) {
-				LOGGER.debug("File " + listOfFiles[i].getName());
-				returnList.add(new FileDTO(listOfFiles[i].getName()));
+		String workDir = getWorkBaseDirByPath(path, profile);
+		if (canSee(Paths.get(workDir), profile)) {
+			for (int i = 0; i < listOfFiles.length; i++) {
+				if (listOfFiles[i].isFile()) {
+					LOGGER.debug("File " + listOfFiles[i].getName());
+					returnList.add(new FileDTO(listOfFiles[i].getName()));
+				}
 			}
 		}
 		return returnList;

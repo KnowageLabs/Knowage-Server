@@ -1,5 +1,5 @@
-29 giu 2021 15:56:19,309 DEBUG it.eng.knowage.knowageapi.service.impl.ResourceManagerResourceTest.getTree:40 - Starting resource path json tree testing
-29 giu 2021 15:56:33,390 DEBUG it.eng.knowage.knowageapi.service.impl.ResourceManagerResourceTest.getTree:58 - {"root": [{
+06 lug 2021 09:43:33,410 DEBUG it.eng.knowage.resourcemanager.service.impl.ResourceManagerResourceTest.getTree:66 - Starting resource path json tree testing
+06 lug 2021 09:43:33,470 DEBUG it.eng.knowage.resourcemanager.service.impl.ResourceManagerResourceTest.getTree:87 - {"root": [{
     "children": [
         {
             "children": [],
@@ -19,4 +19,4 @@
     "label": "\\A\\B",
     "key": "1-1"
 }]}
-29 giu 2021 15:56:33,390 DEBUG it.eng.knowage.knowageapi.service.impl.ResourceManagerResourceTest.getTree:60 - END
+06 lug 2021 09:43:33,470 DEBUG it.eng.knowage.resourcemanager.service.impl.ResourceManagerResourceTest.getTree:89 - END

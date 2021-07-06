@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.resourcemanager.service;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import it.eng.knowage.resourcemanager.resource.utils.FileDTO;
@@ -27,13 +28,15 @@ public interface ResourceManagerAPI {
 
 	public RootFolderDTO getFolders(SpagoBIUserProfile profile, String path);
 
-	boolean canSee(String path, SpagoBIUserProfile profile);
-
 	boolean createFolder(String path, SpagoBIUserProfile profile);
 
 	boolean delete(String path, SpagoBIUserProfile profile);
 
-	java.nio.file.Path getDownloadPath(String path, SpagoBIUserProfile profile);
+	java.nio.file.Path getDownloadFolderPath(String path, SpagoBIUserProfile profile);
 
 	public List<FileDTO> getListOfFiles(String path, SpagoBIUserProfile profile);
+
+	java.nio.file.Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi);
+
+	boolean canSee(Path path, SpagoBIUserProfile profile);
 }

@@ -98,7 +98,7 @@ public class FoldersResource {
 	@Produces("application/zip")
 	public Response downloadFolder(@PathParam("path") String path) {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
-		java.nio.file.Path exportArchive = resourceManagerAPIservice.getDownloadPath(path, profile);
+		java.nio.file.Path exportArchive = resourceManagerAPIservice.getDownloadFolderPath(path, profile);
 		String filename = exportArchive.getFileName() + ".zip";
 		try {
 			return Response.ok(exportArchive.toFile()).header("Content-length", "" + Files.size(exportArchive))
