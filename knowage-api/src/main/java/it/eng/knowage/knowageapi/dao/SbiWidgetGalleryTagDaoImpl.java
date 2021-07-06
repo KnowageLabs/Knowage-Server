@@ -22,6 +22,8 @@ import java.util.Collection;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -38,12 +40,12 @@ public class SbiWidgetGalleryTagDaoImpl implements SbiWidgetGalleryTagDao {
 	private EntityManager em;
 
 	@Override
+	@Transactional(value = TxType.REQUIRED)
 	public SbiWidgetGalleryTagId create(SbiWidgetGalleryTag sbiWidgetGalleryTag) {
 
-		em.getTransaction().begin();
 		// persist the entity
 		em.persist(sbiWidgetGalleryTag);
-		em.getTransaction().commit();
+
 		return sbiWidgetGalleryTag.getId();
 	}
 
