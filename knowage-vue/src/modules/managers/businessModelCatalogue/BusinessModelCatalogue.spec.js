@@ -46,6 +46,8 @@ const $router = {
     replace: jest.fn()
 }
 
+const $route = { path: '/business-model-catalogue' }
+
 const factory = () => {
     return mount(BusinessModelCatalogue, {
         global: {
@@ -63,7 +65,8 @@ const factory = () => {
                 $t: (msg) => msg,
                 $store,
                 $confirm,
-                $router
+                $router,
+                $route
             }
         }
     })
