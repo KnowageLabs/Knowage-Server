@@ -194,8 +194,7 @@ export default defineComponent({
             return functionality.prog !== 1
         },
         moveUp(functionalityId: number) {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveUp/${functionalityId}`)
-            this.loadPage(null)
+            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveUp/${functionalityId}`).then(() => this.loadPage(null))
         },
         canBeMovedDown(functionality: iFunctionality) {
             let canBeMoved = false
@@ -208,8 +207,7 @@ export default defineComponent({
             return canBeMoved
         },
         moveDown(functionalityId: number) {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveDown/${functionalityId}`)
-            this.loadPage(null)
+            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveDown/${functionalityId}`).then(() => this.loadPage(null))
         },
         canBeDeleted(functionality: iFunctionality) {
             return functionality.parentId && functionality.codType !== 'LOW_FUNCT'
