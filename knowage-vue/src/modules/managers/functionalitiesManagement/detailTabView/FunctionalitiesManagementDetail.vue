@@ -274,10 +274,10 @@ export default defineComponent({
                     this.$store.commit('setError', { title: 'Error', msg: response.data.error })
                 } else {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                    this.$emit('inserted', response.data.id)
                 }
             })
             this.dirty = false
-            this.$emit('inserted')
         },
         checkAll(role) {
             var checkedRole = role

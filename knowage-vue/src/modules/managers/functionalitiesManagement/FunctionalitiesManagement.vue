@@ -36,7 +36,7 @@
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <KnHint :title="'managers.functionalitiesManagement.title'" :hint="'managers.functionalitiesManagement.hint'" v-if="showHint" data-test="functionality-hint"></KnHint>
-                <FunctionalitiesManagementDetail v-if="formVisible" :functionality="selectedFunctionality" :parentId="functionalityParentId" :rolesShort="rolesShort" @touched="touched = true" @close="onClose" @inserted="loadPage" />
+                <FunctionalitiesManagementDetail v-if="formVisible" :functionality="selectedFunctionality" :parentId="functionalityParentId" :rolesShort="rolesShort" @touched="touched = true" @close="onClose" @inserted="loadPage($event)" />
             </div>
         </div>
     </div>
@@ -77,7 +77,7 @@ export default defineComponent({
         }
     },
     async created() {
-        await this.loadPage()
+        await this.loadPage(null)
         // console.log('Functionalities: ', this.functionalities)
         // console.log('Roles short: ', this.rolesShort)
     },
@@ -200,7 +200,7 @@ export default defineComponent({
         },
         moveUp(functionalityId: number) {
             axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveUp/${functionalityId}`)
-            this.loadPage()
+            this.loadPage(null)
         },
         canBeMovedDown(functionality: iFunctionality) {
             let canBeMoved = false
@@ -214,7 +214,7 @@ export default defineComponent({
         },
         moveDown(functionalityId: number) {
             axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveDown/${functionalityId}`)
-            this.loadPage()
+            this.loadPage(null)
         },
         canBeDeleted(functionality: iFunctionality) {
             return functionality.parentId && functionality.codType !== 'LOW_FUNCT'
@@ -244,15 +244,18 @@ export default defineComponent({
                     })
                 }
                 this.selectedFunctionality = null
-                this.loadPage()
+                this.loadPage(null)
             })
         },
-        async loadPage() {
+        async loadPage(functionalityId: any) {
+            console.log('ID!!!!!!!!!!!!!!!!!', functionalityId)
             this.loading = true
             await this.loadFunctionalities()
             await this.loadRolesShort()
             this.createNodeTree()
             this.expandAll()
+            const id = functionalityId ? functionalityId : this.selectedFunctionality?.id
+            this.selectedFunctionality = this.functionalities.find((functionality) => functionality.id === id) as any
             this.touched = false
             this.loading = false
         }
