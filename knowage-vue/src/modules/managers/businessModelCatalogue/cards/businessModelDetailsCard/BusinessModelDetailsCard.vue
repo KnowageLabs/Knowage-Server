@@ -227,7 +227,7 @@
                 </div>
             </form>
 
-            <Dialog :contentStyle="businessModelDetailsCardDescriptor.dialog.style" :visible="showMetaWeb" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+            <Dialog :contentStyle="businessModelDetailsCardDescriptor.dialog.style" :visible="showMetaWeb" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
                 <iframe :style="businessModelDetailsCardDescriptor.iframe.style" :src="metaModelUrl"></iframe>
             </Dialog>
 
@@ -374,5 +374,13 @@ export default defineComponent({
 <style lang="scss" scoped>
 .input-container {
     flex: 0.5;
+}
+</style>
+<style lang="scss">
+.full-screen-dialog.p-dialog {
+    max-height: 100%;
+}
+.full-screen-dialog.p-dialog .p-dialog-content {
+    padding: 0;
 }
 </style>
