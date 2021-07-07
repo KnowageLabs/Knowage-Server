@@ -143,7 +143,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
                 var alert = $mdDialog.alert()
                 .title(title)
                 .content(messageText)
-                .ok('Close');
+                .ok(sbiModule_translate.load('sbi.generic.close'));
                   $mdDialog
                     .show( alert )
                     .finally(function() {
@@ -162,6 +162,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
         	         ,controller: DialogController
         	      });
         	      function DialogController(scope, $mdDialog, languages) {
+        	    	scope.translate = sbiModule_translate;
         	        scope.languages = languages;
         	        scope.closeDialog = function() {
         	          $mdDialog.hide();

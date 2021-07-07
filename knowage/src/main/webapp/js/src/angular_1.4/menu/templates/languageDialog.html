@@ -1,7 +1,7 @@
 <md-dialog aria-label="List dialog" ng-cloak flex=10 id="languageDialog"> 
 	<md-toolbar>
 		<div class="md-toolbar-tools">
-	    	<h2>Select Language</h2>
+	    	<h2>{{translate.load('kn.languageselection.selectLanguage')}}</h2>
 	  	</div>
 	</md-toolbar>
 	<md-dialog-content>
@@ -16,7 +16,7 @@
  	</md-dialog-content>
  	 <md-dialog-actions layout="row">
       <md-button class="md-raised" ng-click="closeDialog()" >
-          Close
+          {{translate.load('kn.generic.close')}}
       </md-button>
     </md-dialog-actions>
 </md-dialog>
