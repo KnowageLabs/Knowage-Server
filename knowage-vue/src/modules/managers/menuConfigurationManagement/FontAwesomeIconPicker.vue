@@ -33,10 +33,12 @@ export default {
   name: "FontAwesomePicker",
   emits: ["chooseIcon", "closeFontAwesomeModal"],
   components: { Dialog },
-  props: ["showModal"],
+    props: {
+    showModal: Boolean,
+  },
   watch: {
     showModal: {
-      handler: function (show) {
+      handler: function (show : Boolean) {
         this.modalShown = show;
       },
     },

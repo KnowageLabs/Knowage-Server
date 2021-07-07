@@ -84,6 +84,7 @@
                     <label for="objId">{{ $t("managers.menuConfigurationManagement.form.document") }} *</label>
                   </span>
                 </div>
+                <KnValidationMessages :vComp="v$.menuNode.document" :additionalTranslateParams="{ fieldName: $t('managers.menuConfigurationManagement.form.document') }"></KnValidationMessages>
               </div>
 
               <div class="p-field">

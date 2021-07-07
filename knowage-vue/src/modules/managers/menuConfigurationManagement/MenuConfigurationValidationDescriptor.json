@@ -12,7 +12,7 @@
                         "validator": {
                             "type": "maxLength",
                             "params": {
-                                "max": 255
+                                "max": 100
                             }
                         }
                     },
@@ -35,7 +35,7 @@
                         "validator": {
                             "type": "maxLength",
                             "params": {
-                                "max": 500
+                                "max": 100
                             }
                         }
                     },
@@ -49,7 +49,11 @@
             },
             {
                 "fieldName": "menuNodeContent",
-                "validators": []
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
             },
             {
                 "fieldName": "staticPage",
@@ -57,7 +61,17 @@
             },
             {
                 "fieldName": "externalApplicationUrl",
-                "validators": []
+                "validators": [
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "type": "maxLength",
+                            "params": {
+                                "max": 100
+                            }
+                        }
+                    }
+                ]
             },
             {
                 "fieldName": "functionality",
@@ -69,11 +83,31 @@
             },
             {
                 "fieldName": "document",
-                "validators": []
+                "validators": [
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "type": "maxLength",
+                            "params": {
+                                "max": 100
+                            }
+                        }
+                    }
+                ]
             },
             {
                 "fieldName": "objParameters",
-                "validators": []
+                "validators": [
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "type": "maxLength",
+                            "params": {
+                                "max": 1000
+                            }
+                        }
+                    }
+                ]
             },
             {
                 "fieldName": "initialPath",
