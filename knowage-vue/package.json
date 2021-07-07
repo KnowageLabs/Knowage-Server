@@ -6,7 +6,7 @@
     "scripts": {
         "serve": "vue-cli-service serve --port 3000",
         "build": "vue-cli-service build --mode production --no-clean",
-        "test:unit": "vue-cli-service test:unit --watchAll",
+        "test:unit": "vue-cli-service test:unit --watch",
         "lint": "vue-cli-service lint"
     },
     "main": "main.ts",
