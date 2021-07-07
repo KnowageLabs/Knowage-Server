@@ -16,17 +16,17 @@
           <span>{{ slotProps.node.name }}</span>
         </div>
         <div v-if="slotProps.node.level > 1 && slotProps.node.parentId != null">
-          <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-5" @click="deleteMenuNode(slotProps.node.menuId)" data-test="delete-button"/>
+          <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-5" @click="deleteMenuNode(slotProps.node.menuId)" :data-test="'delete-button-' + slotProps.node.menuId"/>
         </div>
         <div v-if="slotProps.node.parentId != null">
-          <Button icon="pi pi-sort-alt" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="changeWithFather(slotProps.node.menuId)" data-test="change-with-father-button"/>
+          <Button icon="pi pi-sort-alt" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="changeWithFather(slotProps.node.menuId)" :data-test="'change-with-father-button-' + slotProps.node.menuId"/>
         </div>
 
         <div v-if="slotProps.node.level > 1 && slotProps.node.prog > 1">
-          <Button icon="pi pi-arrow-up" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="moveUp(slotProps.node.menuId)" data-test="move-up-button"/>
+          <Button icon="pi pi-arrow-up" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="moveUp(slotProps.node.menuId)" :data-test="'move-up-button-'+ slotProps.node.menuId"/>
         </div>
         <div v-if="slotProps.node.level == 1">
-          <Button icon="pi pi-arrow-down" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="moveDown(slotProps.node.menuId)" data-test="move-down-button"/>
+          <Button icon="pi pi-arrow-down" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="moveDown(slotProps.node.menuId)" :data-test="'move-down-button-'+ slotProps.node.menuId"/>
         </div>
       </div>
     </template>

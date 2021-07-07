@@ -1,5 +1,5 @@
 <template>
-  <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="load" data-test="progress-bar"/>
+  <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="load" data-test="related-docs-progress-bar"/>
   <Listbox
     v-if="!load"
     class="kn-list--column"
