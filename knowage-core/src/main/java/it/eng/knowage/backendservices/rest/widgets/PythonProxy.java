@@ -20,7 +20,9 @@ package it.eng.knowage.backendservices.rest.widgets;
 
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -49,6 +51,42 @@ public class PythonProxy extends AbstractDataSetResource {
 	HttpMethod methodGet = HttpMethod.valueOf("Get");
 
 	static protected Logger logger = Logger.getLogger(PythonProxy.class);
+
+	@POST
+	@Path("/edit/{output_type}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.EDIT_PYTHON_SCRIPTS })
+	public Response editWidget(@PathParam("output_type") String outputType, PythonWidgetDTO pythonWidgetDTO) {
+		String pythonAddress = null, body = null, datastore = null;
+		it.eng.spagobi.utilities.rest.RestUtilities.Response pythonResponse = null;
+
+		try {
+			String dsLabel = pythonWidgetDTO.getDatasetLabel();
+			Map<String, Object> drivers = pythonWidgetDTO.getDrivers();
+			if (dsLabel != null) {
+				datastore = getDataStore(dsLabel, pythonWidgetDTO.getParameters(), drivers, pythonWidgetDTO.getSelections(), null, -1,
+						pythonWidgetDTO.getAggregations(), null, -1, -1, null, null);
+			}
+			body = PythonUtils.createPythonEngineRequestBody(datastore, dsLabel, pythonWidgetDTO.getScript(), drivers, pythonWidgetDTO.getOutputVariable());
+			pythonAddress = PythonUtils.getPythonAddress(pythonWidgetDTO.getEnvironmentLabel());
+			pythonResponse = RestUtilities.makeRequest(methodPost, pythonAddress + "2.0/widget/" + outputType, headers, body);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while making request to python engine", e);
+		}
+
+		if (pythonResponse == null || pythonResponse.getStatusCode() != 200) {
+			return Response.status(400).build();
+		} else {
+			JSONObject toReturn;
+			try {
+				toReturn = new JSONObject().put("result", pythonResponse.getResponseBody());
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("error while creating response json", e);
+			}
+			return Response.ok(toReturn.toString()).build();
+		}
+	}
 
 	@GET
 	@Path("/libraries/{env_label}")

@@ -60,9 +60,9 @@ def get_knowage_token(headers):
     return user_id
 
 def get_dataset(data):
-    dataset_name = data.get('dataset')
-    datastore_request = data['datastore_request']
-    return dataset_name, datastore_request
+    dataset_name = data.get('dataset_label')
+    datastore = json.loads(data.get('datastore'))
+    return dataset_name, datastore
 
 def get_analytical_drivers(data):
     drivers = data.get("drivers")
@@ -124,13 +124,13 @@ def datastore_to_dataframe(metadata, rows):
     #save data as dataframe
     df = pd.DataFrame(rows)
     if not df.empty:
+        # drop first column (redundant)
+        if 'id' in df.columns:
+            df.drop(columns=['id'], inplace=True)
         # assign column names
         df.columns = column_names
         #cast types
         df = df.astype(column_types)
-        #drop first column (redundant)
-        if 'id' in df.columns:
-            df.drop(columns=['id'], inplace=True)
     return df
 
 def dataframe_to_datastore(df):
