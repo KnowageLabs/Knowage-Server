@@ -45,7 +45,10 @@
 										<md-option ng-value="1.0">100%</md-option>
 									</md-select>
 								</md-input-container>
-								<md-switch ng-model="newModel.content.showScale" aria-label="{{translate.load('sbi.cockpit.map.showScale')}}">{{translate.load('sbi.cockpit.map.showScale')}}</md-switch>
+								<md-input-container layout="row">
+									<md-switch ng-model="newModel.content.showScale" aria-label="{{translate.load('sbi.cockpit.map.showScale')}}">{{translate.load('sbi.cockpit.map.showScale')}}</md-switch>
+									<md-switch ng-model="newModel.content.autoCentering" aria-label="{{translate.load('sbi.cockpit.map.autoCentering')}}">{{translate.load('sbi.cockpit.map.autoCentering')}}</md-switch>
+								</md-input-container>
 							</md-card-content>
 						</md-card>
 					</md-content>
