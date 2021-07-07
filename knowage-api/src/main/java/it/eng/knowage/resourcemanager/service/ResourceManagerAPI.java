@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.resourcemanager.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -39,4 +41,8 @@ public interface ResourceManagerAPI {
 	java.nio.file.Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi);
 
 	boolean canSee(Path path, SpagoBIUserProfile profile);
+
+	void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException;
+
+	void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException;
 }

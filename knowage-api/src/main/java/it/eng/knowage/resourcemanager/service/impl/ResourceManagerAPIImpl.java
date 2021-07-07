@@ -19,7 +19,10 @@ package it.eng.knowage.resourcemanager.service.impl;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,10 +33,12 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
@@ -178,9 +183,9 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		} else {
 			for (String function : profile.getFunctions()) {
 				// functionality must be present
-//				if (function.equalsIgnoreCase("RESOURCE_FUNCTION")) {
-//					canSee = true;
-//				}
+				// if (function.equalsIgnoreCase("RESOURCE_FUNCTION")) {
+				// canSee = true;
+				// }
 			}
 			if (hasDevRole(profile)) {
 				if (foldersForDevs.get("DEV").contains(path.getFileName().toString())) {
@@ -282,14 +287,14 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	public Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) {
 		java.nio.file.Path pathToReturn = null;
 		if (multi) {
-
+			pathToReturn = createZipFileOfFiles(path, profile);
 		} else {
 			String pathFile = path.get(0);
 			String workDirr = getWorkBaseDirByPath(pathFile, profile);
 
 			if (canSee(Paths.get(workDirr), profile)) {
 				String workDir = getWorkDirectory(profile);
-				pathToReturn = Paths.get(workDir + File.separator + path);
+				pathToReturn = Paths.get(workDir + File.separator + pathFile);
 			}
 		}
 		return pathToReturn;
@@ -318,6 +323,37 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			}
 		}
 		return returnList;
+	}
+
+	@Override
+	public void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException {
+
+		String workDirr = getWorkBaseDirByPath(path, profile);
+
+		Path filePath = Paths.get(getTotalPath(path, profile));
+
+		if (canSee(Paths.get(workDirr), profile)) {
+			Files.createFile(filePath);
+			Path tempArchive = filePath.getParent().resolve(filePath.getFileName());
+			FileUtils.copyInputStreamToFile(archiveInputStream, tempArchive.toFile());
+		}
+	}
+
+	@Override
+	public void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException {
+
+		String workDirr = getWorkBaseDirByPath(path, profile);
+		String totalPath = getTotalPath(path, profile);
+		Path filePath = Paths.get(totalPath);
+		String totalPathDestinationDir = filePath.getParent().toFile().getAbsolutePath();
+		if (canSee(Paths.get(workDirr), profile)) {
+			Files.createFile(filePath);
+			Path tempArchive = filePath.getParent().resolve(filePath.getFileName());
+			File zipFile = tempArchive.toFile();
+			FileUtils.copyInputStreamToFile(archiveInputStream, zipFile);
+			extractFolder(zipFile.getAbsolutePath(), totalPathDestinationDir);
+		}
+
 	}
 
 	public String getTotalPath(String path, SpagoBIUserProfile profile) {
@@ -363,6 +399,96 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		}
 	}
 
+	public Path createZipFileOfFiles(List<String> fullPaths, SpagoBIUserProfile profile) {
+
+		try {
+			Path tempDirectory = Files.createTempDirectory("knowage-zip");
+			Path tempFile = Files.createTempFile("knowage-zip", "temp");
+
+			try (ZipOutputStream ret = new ZipOutputStream(Files.newOutputStream(tempFile))) {
+
+				File fileDest = new File(tempDirectory.toString());
+				for (String path : fullPaths) {
+					String workDir = getWorkDirectory(profile);
+					FileUtils.copyFileToDirectory(new File(workDir + File.separator + path), fileDest);
+				}
+				List<Path> files = Files.walk(tempDirectory).collect(toList());
+
+				for (Path currPath : files) {
+
+					Path relativize = tempDirectory.relativize(currPath);
+					if (Files.isDirectory(currPath)) {
+						ZipEntry zipEntry = new ZipEntry(relativize.toString() + "/");
+						ret.putNextEntry(zipEntry);
+					} else {
+						ZipEntry zipEntry = new ZipEntry(relativize.toString());
+						ret.putNextEntry(zipEntry);
+						InputStream currPathInputStream = Files.newInputStream(currPath);
+						copy(currPathInputStream, ret);
+					}
+					ret.closeEntry();
+				}
+			}
+
+			cleanUpTempDirectory(tempDirectory);
+
+			return tempFile;
+
+		} catch (IOException e) {
+			throw new KnowageRuntimeException("Error creating export ZIP archive", e);
+		}
+	}
+
+	private void extractFolder(String zipFile, String extractFolder) {
+		try {
+			int BUFFER = 2048;
+			File file = new File(zipFile);
+
+			ZipFile zip = new ZipFile(file);
+			String newPath = extractFolder;
+
+			new File(newPath).mkdir();
+			Enumeration zipFileEntries = zip.entries();
+
+			// Process each entry
+			while (zipFileEntries.hasMoreElements()) {
+				// grab a zip file entry
+				ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
+				String currentEntry = entry.getName();
+
+				File destFile = new File(newPath, currentEntry);
+				// destFile = new File(newPath, destFile.getName());
+				File destinationParent = destFile.getParentFile();
+
+				// create the parent directory structure if needed
+				destinationParent.mkdirs();
+
+				if (!entry.isDirectory()) {
+					BufferedInputStream is = new BufferedInputStream(zip.getInputStream(entry));
+					int currentByte;
+					// establish buffer for writing file
+					byte data[] = new byte[BUFFER];
+
+					// write the current file to disk
+					FileOutputStream fos = new FileOutputStream(destFile);
+					BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
+
+					// read and write until last byte is encountered
+					while ((currentByte = is.read(data, 0, BUFFER)) != -1) {
+						dest.write(data, 0, currentByte);
+					}
+					dest.flush();
+					dest.close();
+					is.close();
+				}
+
+			}
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e.getMessage());
+		}
+
+	}
+
 	private void copy(InputStream source, OutputStream target) throws IOException {
 		byte[] buf = new byte[8192];
 		int length;
@@ -375,4 +501,5 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		// Common way to delete recursively
 		Files.walk(tempDirectory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
 	}
+
 }

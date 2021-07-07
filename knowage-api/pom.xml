@@ -164,6 +164,23 @@
 
 		<!-- TESTING DEPENDENCIES -->
 
+		<!-- https://mvnrepository.com/artifact/org.jboss.resteasy/resteasy-multipart-provider -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-multipart-provider</artifactId>
+			<version>4.6.0.Final</version>
+		</dependency>
+		
+		<!-- 
+			   ____        _          __             _            _       
+			  / __ \      | |        / _|           | |          | |      
+			 | |  | |_ __ | |_   _  | |_ ___  _ __  | |_ ___  ___| |_ ___ 
+			 | |  | | '_ \| | | | | |  _/ _ \| '__| | __/ _ \/ __| __/ __|
+			 | |__| | | | | | |_| | | || (_) | |    | ||  __/\__ \ |_\__ \
+			  \____/|_| |_|_|\__, | |_| \___/|_|     \__\___||___/\__|___/
+			                  __/ |                                       
+			                 |___/                                        
+		 -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
