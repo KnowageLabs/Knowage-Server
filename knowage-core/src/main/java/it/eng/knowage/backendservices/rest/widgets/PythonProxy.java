@@ -33,8 +33,11 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spagobi.api.common.AbstractDataSetResource;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.services.content.service.ContentServiceImplSupplier;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
@@ -58,6 +61,28 @@ public class PythonProxy extends AbstractDataSetResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { SpagoBIConstants.EDIT_PYTHON_SCRIPTS })
 	public Response editWidget(@PathParam("output_type") String outputType, PythonWidgetDTO pythonWidgetDTO) {
+		return executeWidget(outputType, pythonWidgetDTO);
+	}
+
+	@POST
+	@Path("/view/{output_type}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response viewWidget(@PathParam("output_type") String outputType, PythonWidgetDTO pythonWidgetDTO) {
+		try {
+			UserProfile userProfile = UserProfileManager.getProfile();
+			String userId = (String) userProfile.getUserUniqueIdentifier();
+			ContentServiceImplSupplier supplier = new ContentServiceImplSupplier();
+			String script = PythonUtils.getScriptFromTemplate(
+					supplier.readTemplate(userId, pythonWidgetDTO.getDocumentId(), pythonWidgetDTO.getDrivers()).getContent(), pythonWidgetDTO.getWidgetId());
+			pythonWidgetDTO.setScript(script);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot retrieve script from template", e);
+		}
+		return executeWidget(outputType, pythonWidgetDTO);
+	}
+
+	private Response executeWidget(String outputType, PythonWidgetDTO pythonWidgetDTO) {
 		String pythonAddress = null, body = null, datastore = null;
 		it.eng.spagobi.utilities.rest.RestUtilities.Response pythonResponse = null;
 

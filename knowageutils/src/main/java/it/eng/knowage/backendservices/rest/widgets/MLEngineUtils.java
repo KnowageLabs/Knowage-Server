@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -62,5 +63,29 @@ public abstract class MLEngineUtils {
 			throw new SpagoBIRuntimeException("error while converting json to dataframe format", e);
 		}
 		return newDataframe.toString();
+	}
+
+	static String getScriptFromTemplate(String base64template, String widgetId) {
+		JSONObject templateJson;
+		try {
+			byte[] decodedBytes = Base64.decodeBase64(base64template);
+			templateJson = new JSONObject(new String(decodedBytes, "UTF-8"));
+			JSONArray sheets = (JSONArray) templateJson.get("sheets");
+			for (int i = 0; i < sheets.length(); i++) {
+				JSONObject sheet = sheets.getJSONObject(i);
+				JSONArray widgets = (JSONArray) sheet.get("widgets");
+				for (int j = 0; j < widgets.length(); j++) {
+					JSONObject widget = widgets.getJSONObject(j);
+					String id = widget.getString("id");
+					if (id.equals(widgetId)) {
+						return widget.getJSONObject("pythonConf").getString("script");
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("error while retrieving code from template");
+			throw new SpagoBIRuntimeException("error while retrieving code from template", e);
+		}
+		throw new SpagoBIRuntimeException("Couldn't retrieve code from template for widgetId [" + widgetId + "]");
 	}
 }

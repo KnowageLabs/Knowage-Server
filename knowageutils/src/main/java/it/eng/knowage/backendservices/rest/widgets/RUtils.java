@@ -88,7 +88,7 @@ public class RUtils extends MLEngineUtils {
 		return jsonBody.toString();
 	}
 
-	static String getRCodeFromTemplate(String base64template, String widgetId) {
+	static String getScriptFromTemplate(String base64template, String widgetId) {
 		JSONObject templateJson;
 		try {
 			byte[] decodedBytes = Base64.decodeBase64(base64template);

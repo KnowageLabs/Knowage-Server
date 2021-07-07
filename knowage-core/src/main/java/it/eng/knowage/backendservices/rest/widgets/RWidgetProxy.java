@@ -79,7 +79,7 @@ public class RWidgetProxy extends DataSetResource {
 			drivers = RUtils.createDriversMap(driversAsString);
 			aggregations = requestBody.get("aggregations");
 			selections = requestBody.get("selections");
-			script = RUtils.getRCodeFromTemplate(supplier.readTemplate(userId, documentId, drivers).getContent(), widgetId);
+			script = RUtils.getScriptFromTemplate(supplier.readTemplate(userId, documentId, drivers).getContent(), widgetId);
 		} catch (Exception e) {
 			logger.error("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]");
 			throw new SpagoBIRuntimeException("error while retrieving request information for userId [" + userId + "] and documentId [" + documentId + "]", e);

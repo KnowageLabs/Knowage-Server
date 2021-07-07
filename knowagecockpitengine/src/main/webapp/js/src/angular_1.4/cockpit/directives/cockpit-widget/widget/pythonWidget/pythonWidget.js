@@ -146,17 +146,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.sendData = function () {
 			if (cockpitModule_properties.EDIT_MODE == true) {
-				$scope.sendDataEditMode();
+				$scope.sendDataByMode("edit");
 	    	}
 	    	else {
-	    		$scope.sendDataViewMode();
+	    		$scope.sendDataByMode("view");
 	    	}
 		}
 
-		$scope.setPythonParameters = function () {
-			//get user_id from parameters and use it for authentication in python
-			$scope.encodedUserId = sbiModule_user.userUniqueIdentifier;
-	        $scope.drivers = cockpitModule_analyticalDrivers;
+		$scope.buildRequestParameters = function () {
 			//if there is a dataset selected save its label
 			if ($scope.ngModel.dataset != undefined && !angular.equals({}, $scope.ngModel.dataset)) {
 				$scope.dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
@@ -179,20 +176,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
-		$scope.sendDataEditMode = function () { //send code and data to python and retrieve result as img or html/js
-			$scope.setPythonParameters();
+		$scope.sendDataByMode = function(mode) { //send code and data to python and retrieve result as img or html/js
+			$scope.buildRequestParameters();
 	        var body = {
 	        				'datasetLabel': $scope.datasetLabel,
 	        				'environmentLabel' : $scope.ngModel.pythonConf.environment,
-		    				'script' : $scope.ngModel.pythonConf.script,
 		    				'outputVariable' : $scope.ngModel.pythonConf.outputVariable,
-		    				'drivers' : $scope.drivers,
+		    				'drivers' : cockpitModule_analyticalDrivers,
 		    				'aggregations' : JSON.stringify($scope.aggregations),
 		    				'parameters' : JSON.stringify($scope.parameters),
 		    				'selections': JSON.stringify($scope.selections)
-		    			};
+		    	};
+
+	        if (mode == "edit") {
+	        	body.script = $scope.ngModel.pythonConf.script;
+	        } else {
+	        	body.documentId =  $scope.documentId;
+	        	body.widgetId =  $scope.ngModel.id;
+	        }
+
 	        sbiModule_restServices.restToRootProject();
-			sbiModule_restServices.promisePost("2.0/backendservices/widgets/python/edit", $scope.ngModel.pythonConf.outputType, body)
+			sbiModule_restServices.promisePost("2.0/backendservices/widgets/python/" + mode, $scope.ngModel.pythonConf.outputType, body)
 			.then(function(response){ //success
 	            $scope.pythonOutput = $sce.trustAsHtml(response.data.result);
 	            if ($scope.ngModel.pythonConf.outputType != 'img') {
@@ -200,77 +204,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 	            $scope.hideWidgetSpinner();
 			},function(response){ //failed
-		    	$scope.pythonOutput = 'Error: ' + $sce.trustAsHtml(response.data);
+				if (mode == "edit")
+					$scope.pythonOutput = 'Error: ' + $sce.trustAsHtml(response.data);
+				else
+					$scope.pythonOutput = 'Python Error'
 		    	if ($scope.ngModel.pythonConf.outputType != 'img') {
 					$scope.createIframe();
 				}
 		    	$scope.hideWidgetSpinner();
 			})
-
-		}
-
-//		$scope.sendDataEditMode = function () { //send code and data to python and retrieve result as img or html/js
-//			$scope.setPythonParameters();
-//		    $http({
-//		        url: $scope.ngModel.pythonAddress + "/widget/edit/" + $scope.ngModel.pythonOutputType,
-//		        method: "POST",
-//		        headers: {'Content-Type': 'application/json',
-//		        		  'Knowage-Authorization': $scope.encodedUserId},
-//
-//		        data: { 'dataset': $scope.datasetLabel,
-//		        		'script' : $scope.ngModel.pythonCode,
-//		        		'output_variable' : $scope.ngModel.pythonOutput,
-//		        		'widget_id' :  $scope.ngModel.id,
-//		        		'document_id' :  $scope.documentId,
-//		        		"drivers" : $scope.drivers,
-//		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'parameters': $scope.parameters,'selections': $scope.selections})}
-//		    })
-//		    .then(function(response) { //success
-//		            $scope.pythonOutput = $sce.trustAsHtml(response.data);
-//		            if ($scope.ngModel.pythonOutputType != 'img') {
-//						$scope.createIframe();
-//					}
-//		            $scope.hideWidgetSpinner();
-//		    },
-//		    function(response) { //failed
-//		    	$scope.pythonOutput = 'Error: ' + $sce.trustAsHtml(response.data);
-//		    	if ($scope.ngModel.pythonOutputType != 'img') {
-//					$scope.createIframe();
-//				}
-//		    	$scope.hideWidgetSpinner();
-//		    });
-//
-//		}
-
-		$scope.sendDataViewMode = function () { //send code and data to python and retrieve result as img or html/js
-			$scope.setPythonParameters();
-		    $http({
-		        url: $scope.ngModel.pythonAddress + "/widget/view/" + $scope.ngModel.pythonConf.outputType,
-		        method: "POST",
-		        headers: {'Content-Type': 'application/json',
-		        		  'Knowage-Authorization': $scope.encodedUserId},
-
-		        data: { 'dataset': $scope.datasetLabel,
-		        		'output_variable' : $scope.ngModel.pythonConf.outputVariable,
-		        		'widget_id' :  $scope.ngModel.id,
-		        		'document_id' :  $scope.documentId,
-		        		"drivers" : $scope.drivers,
-		        		'datastore_request': JSON.stringify({"aggregations": $scope.aggregations, 'parameters': $scope.parameters, 'selections': $scope.selections})}
-		    })
-		    .then(function(response) { //success
-		            $scope.pythonOutput = $sce.trustAsHtml(response.data);
-		            if ($scope.ngModel.pythonConf.outputType != 'img') {
-						$scope.createIframe();
-					}
-		            $scope.hideWidgetSpinner();
-		    },
-		    function(response) { //failed
-		    	$scope.pythonOutput = 'Python Error';
-		    	if ($scope.ngModel.pythonConf.outputType != 'img') {
-					$scope.createIframe();
-				}
-		    	$scope.hideWidgetSpinner();
-		    });
 
 		}
 

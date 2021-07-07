@@ -35,6 +35,8 @@ public class PythonWidgetDTO {
 	private String parameters;
 	private String aggregations;
 	private String selections;
+	private String documentId;
+	private String widgetId;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@ExtendedAlphanumeric
@@ -104,6 +106,24 @@ public class PythonWidgetDTO {
 
 	public void setSelections(String selections) {
 		this.selections = selections;
+	}
+
+	public String getDocumentId() {
+		return documentId;
+	}
+
+	public void setDocumentId(String documentId) {
+		this.documentId = documentId;
+	}
+
+	@ExtendedAlphanumeric
+	public String getWidgetId() {
+		return widgetId;
+	}
+
+	@ExtendedAlphanumeric
+	public void setWidgetId(String widgetId) {
+		this.widgetId = widgetId;
 	}
 
 }
