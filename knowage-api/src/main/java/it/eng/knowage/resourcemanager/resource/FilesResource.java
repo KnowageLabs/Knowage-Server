@@ -18,11 +18,15 @@
 package it.eng.knowage.resourcemanager.resource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -34,11 +38,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.resourcemanager.resource.utils.FileDTO;
 import it.eng.knowage.resourcemanager.resource.utils.MetadataDTO;
@@ -77,10 +84,11 @@ public class FilesResource {
 		return files;
 	}
 
-	@GET
-	@Path("/download/file/")
+	@POST
+	@Path("/download")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response downloadFiles(@QueryParam("list") List<String> listOfPaths) {
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response downloadFiles(List<String> listOfPaths) {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		if (listOfPaths.size() == 1) {
 			java.nio.file.Path file = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, false);
@@ -103,10 +111,46 @@ public class FilesResource {
 	}
 
 	@POST
-	@Path("/uploadfile")
-	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
-	public Response uploadFile() {
-		return null;
+	@Path("/uploadFile")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response uploadFile(MultipartFormDataInput multipartFormDataInput, @QueryParam("path") String path,
+			@DefaultValue("false") @QueryParam("extract") boolean extract) throws KnowageBusinessException {
+		SpagoBIUserProfile profile = businessContext.getUserProfile();
+		Map<String, List<InputPart>> formDataMap = multipartFormDataInput.getFormDataMap();
+
+		if (!formDataMap.containsKey("file")) {
+			throw new KnowageBusinessException("Cannot find the file part in input");
+		}
+
+		InputPart inputPart = formDataMap.get("file").get(0);
+		MediaType mediaType = inputPart.getMediaType();
+
+		if (!Arrays.asList("application/x-zip-compressed", "application/zip").contains(mediaType.toString())) {
+			try (InputStream is = inputPart.getBody(InputStream.class, null)) {
+
+				resourceManagerAPIservice.importFile(is, path, profile);
+				return Response.status(Response.Status.OK).build();
+
+			} catch (IOException e) {
+				throw new KnowageRuntimeException(e.getMessage());
+			}
+		} else {
+			try (InputStream is = inputPart.getBody(InputStream.class, null)) {
+
+				if (extract) {
+					resourceManagerAPIservice.importFileAndExtract(is, path, profile);
+
+				} else {
+					resourceManagerAPIservice.importFile(is, path, profile);
+				}
+
+				return Response.status(Response.Status.OK).build();
+
+			} catch (IOException e) {
+				throw new KnowageRuntimeException(e.getMessage());
+			}
+		}
 
 	}
 
