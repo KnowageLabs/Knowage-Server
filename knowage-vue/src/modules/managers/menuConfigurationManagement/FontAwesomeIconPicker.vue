@@ -26,27 +26,25 @@
   </Dialog>
 </template>
 
-<script lang="ts">
+<script>
 import Dialog from "primevue/dialog";
 import icons from "./icons";
 export default {
   name: "FontAwesomePicker",
   emits: ["chooseIcon", "closeFontAwesomeModal"],
   components: { Dialog },
-    props: {
-    showModal: Boolean,
-  },
+  props: ["showModal"],
   watch: {
     showModal: {
-      handler: function (show : Boolean) {
+      handler: function (show) {
         this.modalShown = show;
       },
     },
   },
   data() {
     return {
-      modalShown: false as Boolean,
-      selected: "" as string,
+      modalShown: false,
+      selected: "",
       chosenIcon: {},
       icons,
     };
@@ -66,7 +64,7 @@ export default {
     },
     filterIcons(event) {
       const search = event.target.value.trim();
-      let filter = [] as any;
+      let filter = [];
       if (search.length > 3) {
         filter = icons.filter((item) => {
           const regex = new RegExp(search, "gi");
