@@ -228,7 +228,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$timeout','sbiModule_config',
 
 				} else {
 					$scope.openAside = false;
-					$scope.showAlert('Role Selection','You currently have only one role');
+					$scope.showAlert(sbiModule_translate.load('sbi.browser.defaultRole.roleSelection'), sbiModule_translate.load('sbi.browser.defaultRole.oneRoleOnly'));
 				}
 			}
 
