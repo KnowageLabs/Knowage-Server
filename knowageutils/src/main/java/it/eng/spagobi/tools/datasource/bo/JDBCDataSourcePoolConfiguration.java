@@ -64,7 +64,7 @@ public class JDBCDataSourcePoolConfiguration implements Serializable {
 
 	@Xss
 	@Size(max = 30)
-	private Long validationQueryTimeout;
+	private Integer validationQueryTimeout;
 
 	private Boolean removeAbandonedOnBorrow;
 	private Boolean removeAbandonedOnMaintenance;
@@ -86,7 +86,7 @@ public class JDBCDataSourcePoolConfiguration implements Serializable {
 	}
 
 	public JDBCDataSourcePoolConfiguration(Integer maxTotal, Long maxWait, Integer maxIdle, Integer abandonedTimeout, Long timeBetweenEvictionRuns,
-			Long minEvictableIdleTimeMillis, String validationQuery, Long validationQueryTimeout, Boolean removeAbandonedOnBorrow,
+			Long minEvictableIdleTimeMillis, String validationQuery, Integer validationQueryTimeout, Boolean removeAbandonedOnBorrow,
 			Boolean removeAbandonedOnMaintenance, Boolean logAbandoned, Boolean testOnReturn, Boolean testWhileIdle) {
 		super();
 		this.maxTotal = maxTotal;
@@ -160,11 +160,11 @@ public class JDBCDataSourcePoolConfiguration implements Serializable {
 		this.validationQuery = validationQuery;
 	}
 
-	public Long getValidationQueryTimeout() {
+	public Integer getValidationQueryTimeout() {
 		return validationQueryTimeout;
 	}
 
-	public void setValidationQueryTimeout(Long validationQueryTimeout) {
+	public void setValidationQueryTimeout(Integer validationQueryTimeout) {
 		this.validationQueryTimeout = validationQueryTimeout;
 	}
 
