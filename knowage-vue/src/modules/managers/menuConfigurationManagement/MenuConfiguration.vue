@@ -25,6 +25,7 @@
           :loading="loading"
           @deleteMenuNode="onNodeDelete"
           @selectedMenuNode="onNodeSelect"
+          @unselectedMenuNode="onNodeUnselect"
           @changeWithFather="onChangeWithFather"
           @moveUp="onMoveUp"
           @moveDown="onMoveDown"
@@ -43,7 +44,7 @@
           v-if="!hideForm"
         ></MenuElementsDetail>
 
-         <RolesCard :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
+         <RolesCard :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)" v-if="showForm"></RolesCard>
       </div>
     </div>
   </div>
@@ -104,6 +105,7 @@ export default defineComponent({
     initMenuNode(){
       this.selectedMenuNode.level=0;
       this.selectedMenuNode.icon = {};
+      this.selectedMenuNode.roles = [];
       this.selectedMenuNode.custIcon = this.selectedMenuNode.externalApplicationUrl = this.selectedMenuNode.functionality= this.selectedMenuNode.initialPath = 
       this.selectedMenuNode.objId = this.selectedMenuNode.objParameters = this.selectedMenuNode.staticPage = this.selectedMenuNode.parentId = null;
       this.selectedMenuNode.hideSliders = this.selectedMenuNode.hideToolbar = this.selectedMenuNode.viewIcons = false;
@@ -138,6 +140,10 @@ export default defineComponent({
         if (menuNode) this.prepareFormData(menuNode);
         else this.hideForm = true;
       }
+    },
+    onNodeUnselect(){
+      this.selectedMenuNode = {};
+      this.initMenuNode();
     },
     onNodeDelete(id: number) {
       this.deleteNode(id);

@@ -7,12 +7,13 @@
     v-model:selectionKeys="selectedMenuNode"
     :metaKeySelection="false"
     @node-select="onNodeSelect"
+    @nodeUnselect="onNodeUnselect"
     data-test="menu-nodes-tree"
   >
     <template #empty>{{ $t("common.info.noDataFound") }}</template>
     <template #default="slotProps">
       <div class="kn-list-item">
-        <div class="kn-list-item-text">
+        <div class="kn-list-item-text" :data-test="'menu-nodes-tree-item-' + slotProps.node.menuId">
           <span>{{ slotProps.node.name }}</span>
         </div>
         <div v-if="slotProps.node.level > 1 && slotProps.node.parentId != null">
@@ -43,7 +44,7 @@ export default defineComponent({
   components: {
     Tree,
   },
-  emits: ["selectedMenuNode", "deleteMenuNode", "changeWithFather", "moveUp", "moveDown"],
+  emits: ["selectedMenuNode", "unselectedMenuNode", "deleteMenuNode", "changeWithFather", "moveUp", "moveDown"],
   props: {
     elements: Array,
     loading: Boolean,
@@ -110,6 +111,10 @@ export default defineComponent({
     onNodeSelect(node: iMenuNode) {
       this.$emit("selectedMenuNode", node);
     },
+    onNodeUnselect(node: iMenuNode) {
+      this.$emit("unselectedMenuNode", node);
+    },
+    
   },
 });
 </script>
