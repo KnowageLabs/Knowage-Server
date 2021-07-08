@@ -17,16 +17,23 @@
                             <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
                                 <span>{{ slotProps.node.label }}</span>
                                 <div v-show="buttonsVisible[slotProps.node.id]" class="p-ml-2">
-                                    <Button v-if="canBeMovedUp(slotProps.node.data)" icon="fa fa-arrow-up" v-tooltip.top="$t('managers.functionalitiesManagement.moveUp')" class="p-button-link p-button-sm" @click.stop="moveUp(slotProps.node.id)" :data-test="'move-up-button-' + slotProps.node.id" />
+                                    <Button
+                                        v-if="canBeMovedUp(slotProps.node.data)"
+                                        icon="fa fa-arrow-up"
+                                        v-tooltip.top="$t('managers.functionalitiesManagement.moveUp')"
+                                        class="p-button-link p-button-sm p-p-0"
+                                        @click.stop="moveUp(slotProps.node.id)"
+                                        :data-test="'move-up-button-' + slotProps.node.id"
+                                    />
                                     <Button
                                         v-if="canBeMovedDown(slotProps.node.data)"
                                         icon="fa fa-arrow-down"
                                         v-tooltip.top="$t('managers.functionalitiesManagement.moveDown ')"
-                                        class="p-button-link p-button-sm"
+                                        class="p-button-link p-button-sm p-p-0"
                                         @click.stop="moveDown(slotProps.node.id)"
                                         :data-test="'move-down-button-' + slotProps.node.id"
                                     />
-                                    <Button v-if="canBeDeleted(slotProps.node)" icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-link p-button-sm" @click.stop="deleteFunctionalityConfirm(slotProps.node.id)" :data-test="'delete-button-' + slotProps.node.id" />
+                                    <Button v-if="canBeDeleted(slotProps.node)" icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-link p-button-sm p-p-0" @click.stop="deleteFunctionalityConfirm(slotProps.node.id)" :data-test="'delete-button-' + slotProps.node.id" />
                                 </div>
                             </div>
                         </template>
