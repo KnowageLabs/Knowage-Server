@@ -18,7 +18,7 @@
 
 import jwt
 from datetime import datetime
-from app.utilities import constants
+from app.utilities import configs
 
 def jwt_token_to_python_script(token):
     try:
@@ -34,6 +34,6 @@ def jwt_token_to_python_script(token):
     return True, script
 
 def get_hmac_key():
-    with open(constants.HMACKEY_FILE, "rb") as f:
+    with open(configs.HMACKEY_FILE, "rb") as f:
         key = f.read()
     return key
