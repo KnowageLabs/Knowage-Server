@@ -56,9 +56,9 @@ import axios from "axios";
 import KnFabButton from "@/components/UI/KnFabButton.vue";
 import KnHint from "@/components/UI/KnHint.vue";
 import { iMenuNode } from "./MenuConfiguration";
-import MenuNodesTree from "./MenuNodesTree.vue";
-import MenuElementsDetail from "./MenuElementsDetail.vue";
-import RolesCard from "./RolesCard.vue";
+import MenuNodesTree from "./MenuNodesTree/MenuNodesTree.vue";
+import MenuElementsDetail from "./ElementDetailsCard/MenuElementsDetail.vue";
+import RolesCard from "./RolesCard/RolesCard.vue";
 import { iRole } from "../usersManagement/UsersManagement";
 export default defineComponent({
   name: "menu-configuration",

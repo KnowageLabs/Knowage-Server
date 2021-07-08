@@ -1,4 +1,20 @@
-import {Item, TreeItem, Config} from "./MenuConfiguration";
+interface Item {
+    [key: string]: any;
+  }
+  
+  interface TreeItem {
+    [key: string]: Item | TreeItem[] | any;
+  }
+  
+  interface Config {
+    id: string;
+    parentId: string;
+    dataField: string | null;
+    childrenField: string;
+    throwIfOrphans: boolean;
+    rootParentIds: { [rootParentId: string]: true };
+    nestedIds: boolean;
+  }
 
 const defaultConfig: Config = {
   id: "id",

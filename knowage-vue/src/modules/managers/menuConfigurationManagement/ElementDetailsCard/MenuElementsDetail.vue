@@ -135,17 +135,17 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios, { AxiosResponse } from "axios";
-import { iMenuNode } from "./MenuConfiguration";
+import { iMenuNode } from "../MenuConfiguration";
 import useValidate from "@vuelidate/core";
 import { createValidations } from "@/helpers/commons/validationHelper";
 import Dropdown from "primevue/dropdown";
 import Dialog from "primevue/dialog";
-import RelatedDocumentList from "./RelatedDocumentList.vue";
-import DocumentBrowserTree from "./DocumentBrowserTree.vue";
-import FontAwesomePicker from "./FontAwesomeIconPicker.vue";
+import RelatedDocumentList from "../RelatedDocumentsList/RelatedDocumentList.vue";
+import DocumentBrowserTree from "../DocumentBrowserTree/DocumentBrowserTree.vue";
+import FontAwesomePicker from "../FontAwesomeIconPicker/FontAwesomeIconPicker.vue";
 
 import KnValidationMessages from "@/components/UI/KnValidatonMessages.vue";
-import MenuConfigurationDescriptor from "./MenuConfigurationDescriptor.json";
+import MenuConfigurationDescriptor from "../MenuConfigurationDescriptor.json";
 import MenuConfigurationValidationDescriptor from "./MenuConfigurationValidationDescriptor.json";
 export default defineComponent({
   name: "profile-attributes-detail",

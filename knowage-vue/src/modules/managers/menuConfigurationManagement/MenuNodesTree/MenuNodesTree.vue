@@ -37,8 +37,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import Tree from "primevue/tree";
-import { iMenuNode } from "./MenuConfiguration";
-import { arrayToTree } from "./arrayToTree";
+import { iMenuNode } from "../MenuConfiguration";
+import { arrayToTree } from '@/helpers/commons/arrayToTreeHelper'
 export default defineComponent({
   name: "menu-nodes-tree",
   components: {

@@ -16,8 +16,17 @@
     v-model:selectionKeys="preselectedNodeKey"
     :metaKeySelection="false"
     @node-select="onNodeSelect"
-    data-test="document-browser-tree"
-  ></Tree>
+    :data-test="document-browser-tree"
+  >
+    <template #empty>{{ $t("common.info.noDataFound") }}</template>
+    <template #default="slotProps">
+      <div class="kn-list-item">
+        <div class="kn-list-item-text" :data-test="'document-browser-tree-item-' + slotProps.node.id">
+          <span>{{ slotProps.node.name }}</span>
+        </div>
+      </div>
+    </template>
+    </Tree>
 </template>
 
 <script lang="ts">
@@ -103,7 +112,9 @@ export default defineComponent({
       for (let node of this.nodes) {
         this.expandNode(node);
       }
+     
       this.expandedKeys = { ...this.expandedKeys };
+       console.log(this.expandedKeys)
     },
     collapseAll() {
       this.expandedKeys = {};

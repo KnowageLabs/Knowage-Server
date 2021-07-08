@@ -15,8 +15,8 @@
   >
     <template #empty>{{ $t("common.info.noDataFound") }}</template>
     <template #option="slotProps">
-      <div class="kn-list-item" data-test="list-item">
-        <div class="kn-list-item-text">
+      <div class="kn-list-item">
+        <div class="kn-list-item-text" :data-test="'related-documents-list-item'+ slotProps.option.ID">
           <span>{{ slotProps.option.DOCUMENT_NAME }}</span>
           <span class="kn-list-item-text-secondary">{{
             slotProps.option.DOCUMENT_DESCR
@@ -31,7 +31,7 @@
 import { defineComponent } from "vue";
 import ProgressBar from 'primevue/progressbar';
 import Listbox from "primevue/listbox";
-import MenuConfigurationRelatedDocumentsDescriptor from "./MenuConfigurationRelatedDocumentsDescriptor.json";
+import MenuConfigurationRelatedDocumentsDescriptor from "./RelatedDocumentsDescriptor.json";
 import axios from "axios";
 
 export default defineComponent({

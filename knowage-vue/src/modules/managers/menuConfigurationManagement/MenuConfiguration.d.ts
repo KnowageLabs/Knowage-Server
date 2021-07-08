@@ -50,21 +50,3 @@ export interface iRole {
   name: string;
   value: string;
 }
-
-export interface Item {
-  [key: string]: any;
-}
-
-export interface TreeItem {
-  [key: string]: Item | TreeItem[] | any;
-}
-
-export interface Config {
-  id: string;
-  parentId: string;
-  dataField: string | null;
-  childrenField: string;
-  throwIfOrphans: boolean;
-  rootParentIds: { [rootParentId: string]: true };
-  nestedIds: boolean;
-}

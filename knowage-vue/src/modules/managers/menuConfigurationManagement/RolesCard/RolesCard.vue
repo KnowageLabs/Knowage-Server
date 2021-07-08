@@ -33,7 +33,7 @@ import { defineComponent } from "vue";
 import Card from "primevue/card";
 import Column from "primevue/column";
 import DataTable from "primevue/datatable";
-import { iRole } from "./MenuConfiguration";
+import { iRole } from "../MenuConfiguration";
 
 export default defineComponent({
   name: "roles-tab",
