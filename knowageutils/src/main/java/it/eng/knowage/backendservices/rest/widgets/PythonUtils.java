@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spagobi.commons.IConfiguration;
@@ -56,6 +57,11 @@ public class PythonUtils extends MLEngineUtils {
 			throw new SpagoBIRuntimeException("error while creating request body for Python engine", e);
 		}
 		return jsonBody.toString();
+	}
+
+	public static String getScriptFromTemplate(String base64template, String widgetId) throws JSONException {
+		JSONObject widgetConf = getWidgetConfFromTemplate(base64template, widgetId);
+		return widgetConf.getJSONObject("pythonConf").getString("script");
 	}
 
 }

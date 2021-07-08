@@ -65,7 +65,7 @@ public abstract class MLEngineUtils {
 		return newDataframe.toString();
 	}
 
-	static String getScriptFromTemplate(String base64template, String widgetId) {
+	static JSONObject getWidgetConfFromTemplate(String base64template, String widgetId) {
 		JSONObject templateJson;
 		try {
 			byte[] decodedBytes = Base64.decodeBase64(base64template);
@@ -78,7 +78,7 @@ public abstract class MLEngineUtils {
 					JSONObject widget = widgets.getJSONObject(j);
 					String id = widget.getString("id");
 					if (id.equals(widgetId)) {
-						return widget.getJSONObject("pythonConf").getString("script");
+						return widget;
 					}
 				}
 			}

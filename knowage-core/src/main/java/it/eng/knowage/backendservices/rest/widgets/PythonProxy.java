@@ -28,6 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -100,16 +101,16 @@ public class PythonProxy extends AbstractDataSetResource {
 			throw new SpagoBIRuntimeException("Error while making request to python engine", e);
 		}
 
-		if (pythonResponse == null || pythonResponse.getStatusCode() != 200) {
-			return Response.status(400).build();
-		} else {
-			JSONObject toReturn;
-			try {
-				toReturn = new JSONObject().put("result", pythonResponse.getResponseBody());
-			} catch (Exception e) {
-				throw new SpagoBIRuntimeException("error while creating response json", e);
+		try {
+			if (pythonResponse == null || pythonResponse.getStatusCode() != 200) {
+				JSONObject toReturn = new JSONObject().put("error", pythonResponse.getResponseBody());
+				return Response.status(Status.BAD_REQUEST).entity(toReturn.toString()).build();
+			} else {
+				JSONObject toReturn = new JSONObject().put("result", pythonResponse.getResponseBody());
+				return Response.ok(toReturn.toString()).build();
 			}
-			return Response.ok(toReturn.toString()).build();
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while creating response json", e);
 		}
 	}
 

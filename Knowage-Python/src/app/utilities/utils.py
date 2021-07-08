@@ -61,7 +61,9 @@ def get_knowage_token(headers):
 
 def get_dataset(data):
     dataset_name = data.get('dataset_label')
-    datastore = json.loads(data.get('datastore'))
+    datastore = None
+    if data.get('datastore') != None:
+        datastore = json.loads(data.get('datastore'))
     return dataset_name, datastore
 
 def get_analytical_drivers(data):

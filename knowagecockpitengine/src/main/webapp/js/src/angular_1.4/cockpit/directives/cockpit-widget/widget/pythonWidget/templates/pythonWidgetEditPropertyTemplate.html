@@ -55,12 +55,8 @@
 								          <md-option ng-repeat="key in outputTypesKeys" value="{{outputTypes[key]}}">{{key}}</md-option>
 								      </md-select>
 									</md-input-container>
-									<md-input-container flex class="md-block" ng-if="newModel.pythonConf.outputType == 'img'">
+									<md-input-container flex class="md-block">
 									  <label>{{translate.load('kn.cockpit.python.outputFileName')}}</label>
-									  <input type="text" ng-model="newModel.pythonConf.outputVariable">
-									</md-input-container>
-									<md-input-container flex class="md-block" ng-if="newModel.pythonConf.outputType == 'html'">
-									  <label>{{translate.load('kn.cockpit.python.outputVariableName')}}</label>
 									  <input type="text" ng-model="newModel.pythonConf.outputVariable">
 									</md-input-container>
 								</md-card-content>

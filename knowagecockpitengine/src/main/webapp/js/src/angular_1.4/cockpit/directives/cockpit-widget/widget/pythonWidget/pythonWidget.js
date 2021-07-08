@@ -205,7 +205,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            $scope.hideWidgetSpinner();
 			},function(response){ //failed
 				if (mode == "edit")
-					$scope.pythonOutput = 'Error: ' + $sce.trustAsHtml(response.data);
+					$scope.pythonOutput = 'Error: ' + $sce.trustAsHtml(response.data.error);
 				else
 					$scope.pythonOutput = 'Python Error'
 		    	if ($scope.ngModel.pythonConf.outputType != 'img') {
