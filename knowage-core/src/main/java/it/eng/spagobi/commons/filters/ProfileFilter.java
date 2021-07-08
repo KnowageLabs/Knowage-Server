@@ -208,6 +208,7 @@ public class ProfileFilter implements Filter {
 	}
 
 	private String getUserIdInWebModeWithoutSSO(HttpServletRequest httpRequest) {
+		SpagoBIUserProfile profile = null;
 		UsernamePasswordCredentials credentials = this.findUserCredentials(httpRequest);
 		if (credentials != null) {
 			logger.debug("User credentials found.");
@@ -217,7 +218,7 @@ public class ProfileFilter implements Filter {
 			}
 			logger.debug("Authenticating user ...");
 			try {
-				this.authenticate(credentials);
+				profile = this.authenticate(credentials);
 				logger.debug("User authenticated");
 				httpRequest.getSession().setAttribute(SsoServiceInterface.SILENT_LOGIN, Boolean.TRUE);
 			} catch (Throwable t) {
@@ -228,11 +229,11 @@ public class ProfileFilter implements Filter {
 			logger.debug("User credentials not found.");
 		}
 
-		String userId = credentials != null ? credentials.getUserName() : null;
+		String userId = profile != null ? profile.getUniqueIdentifier() : null;
 		return userId;
 	}
 
-	private void authenticate(UsernamePasswordCredentials credentials) throws Throwable {
+	private SpagoBIUserProfile authenticate(UsernamePasswordCredentials credentials) throws Throwable {
 		logger.debug("IN: userId = " + credentials.getUserName());
 		try {
 			ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
@@ -241,6 +242,7 @@ public class ProfileFilter implements Filter {
 				logger.error("Authentication failed for user " + credentials.getUserName());
 				throw new SecurityException("Authentication failed");
 			}
+			return profile;
 		} catch (Throwable t) {
 			logger.error("Error while authenticating userId = " + credentials.getUserName(), t);
 			throw t;
