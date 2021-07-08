@@ -19,7 +19,7 @@
 from flask import Blueprint, request
 import base64
 import os
-from app.utilities import utils, security, constants
+from app.utilities import utils
 import logging
 
 widget = Blueprint('widget', __name__)
