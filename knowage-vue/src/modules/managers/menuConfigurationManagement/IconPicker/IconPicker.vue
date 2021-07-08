@@ -1,5 +1,8 @@
 <template>
   <Dialog :header="$t('managers.menuConfigurationManagement.chooseIcon')" v-model:visible="modalShown" :style="{ width: '50vw' }" :modal="true" :closable="false">
+    
+    <Base64 @imageSrcBase64="onBase64ImageSelection"></Base64>
+
     <div id="iconPicker">
       <div class="p-mt-2 p-field">
         <div class="p-inputgroup">
@@ -21,18 +24,19 @@
     </div>
     <template #footer>
       <Button label="Cancel" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
-      <Button label="Choose" icon="pi pi-check" :disabled="!selected!=''" @click="chooseIcon" autofocus />
+      <Button label="Choose" icon="pi pi-check" @click="chooseIcon" autofocus />
     </template>
   </Dialog>
 </template>
 
 <script>
+import Base64 from "./Base64.vue";
 import Dialog from "primevue/dialog";
 import icons from "./icons";
 export default {
-  name: "FontAwesomePicker",
+  name: "IconPicker",
   emits: ["chooseIcon", "closeFontAwesomeModal"],
-  components: { Dialog },
+  components: { Dialog, Base64 },
   props: ["showModal"],
   watch: {
     showModal: {
@@ -77,6 +81,10 @@ export default {
         this.icons = filter;
       }
     },
+    onBase64ImageSelection(image){
+      this.choosenIcon = image;
+      this.$emit("chooseIcon", image);
+    }
   },
 };
 </script>

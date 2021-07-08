@@ -2,7 +2,7 @@ export interface iMenuNode {
   adminsMenu: Boolean,
   clickable: Boolean,
   code: number | null,
-  custIcon: string | null,
+  custIcon: iIcon | null,
   depth: string | null,
   descr: string | null,
   externalApplicationUrl: string | null,
@@ -36,7 +36,7 @@ export interface iMenuNode {
 }
 
 export interface iIcon {
-  id: number,
+  id: number | null,
   category: string,
   className: string,
   src: string | null,

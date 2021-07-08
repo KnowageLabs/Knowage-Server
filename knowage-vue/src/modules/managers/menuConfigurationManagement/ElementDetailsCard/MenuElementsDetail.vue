@@ -31,6 +31,7 @@
                 <span class="p-float-label">
                   <InputText id="descr" type="text" v-model.trim="v$.menuNode.descr.$model" @blur="onDataChange(v$.menuNode.descr)" class="p-inputtext p-component kn-material-input" aria-describedby="descr-help"/>
                   <Button v-if="menuNode.level == 1 && menuNode.icon!=null" icon="pi pi-times" @click="clearSelectedIcon" />
+                  <Button v-if="menuNode.level == 1 && menuNode.custIcon!=null"><img style="max-height: 26px; max-width: 26px;" :src="selectedIcon"/></Button>
                   <Button v-if="menuNode.level == 1 && menuNode.icon!=null"><i :class="selectedIcon"></i></Button>
                   <Button v-if="menuNode.level == 1" class="p-button" @click="openFontAwesomeSelectionModal()">{{ $t("managers.menuConfigurationManagement.chooseIcon").toUpperCase() }}</Button>
                   <label for="descr">{{ $t("managers.menuConfigurationManagement.description") }} *</label>
@@ -142,7 +143,7 @@ import Dropdown from "primevue/dropdown";
 import Dialog from "primevue/dialog";
 import RelatedDocumentList from "../RelatedDocumentsList/RelatedDocumentList.vue";
 import DocumentBrowserTree from "../DocumentBrowserTree/DocumentBrowserTree.vue";
-import FontAwesomePicker from "../FontAwesomeIconPicker/FontAwesomeIconPicker.vue";
+import FontAwesomePicker from "../IconPicker/IconPicker.vue";
 
 import KnValidationMessages from "@/components/UI/KnValidatonMessages.vue";
 import MenuConfigurationDescriptor from "../MenuConfigurationDescriptor.json";
@@ -278,21 +279,42 @@ export default defineComponent({
     closeFontAwesomeSelectionModal(){
       this.chooseIconModalShown = false;
     },
-    onChoosenIcon(choosenIcon){
-      if(this.menuNode.icon == null){
-        this.menuNode.icon = {
-          id: choosenIcon.id,
-          className: "fas fa-"+ choosenIcon.name,
-          unicode: choosenIcon.value,
-          category: "solid",
-          label: "",
-          src: "",
-          visible: true
-        }
+    setBase64Image(base64image) {
+      console.log(base64image)
+    this.menuNode.icon = null;
+        this.menuNode.custIcon = {
+          id: null,
+          className: "custom",
+          unicode: null,
+          category: "custom",
+          label: "logo.png",
+          src: base64image,
+          visible: true,
+        };
+        this.selectedIcon = base64image;
+    },
+    onChoosenIcon(choosenIcon) {
+      if (typeof choosenIcon == "string") {
+        this.setBase64Image(choosenIcon);
+      } else {
+
+          this.menuNode.icon = {
+            id: choosenIcon.id,
+            className: "fas fa-" + choosenIcon.name,
+            unicode: choosenIcon.value,
+            category: "solid",
+            label: "",
+            src: null,
+            visible: true,
+          };
+        
+        this.menuNode.custIcon = null;
+        this.selectedIcon = this.menuNode.icon.className =
+          "fas fa-" + choosenIcon.name;
+        this.menuNode.icon.id = choosenIcon.id;
       }
-    this.selectedIcon = this.menuNode.icon.className =  "fas fa-" + choosenIcon.name;
-    this.menuNode.icon.id = choosenIcon.id;
-    this.closeFontAwesomeSelectionModal();
+
+      this.closeFontAwesomeSelectionModal();
     },
     onDocumentSelect(document) {
       this.menuNode.objId = document.DOCUMENT_ID;
@@ -329,7 +351,12 @@ export default defineComponent({
       if(menuNode.objId){
       this.getDocumentNameByID(menuNode.objId);
       }
-      if(menuNode.icon != null){
+
+      if(menuNode.custIcon != null){
+        //var base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+      this.selectedIcon = menuNode.custIcon.src;
+      }
+     else if(menuNode.icon != null){
       this.selectedIcon = menuNode.icon.className;
       }else{
         this.selectedIcon = null;
