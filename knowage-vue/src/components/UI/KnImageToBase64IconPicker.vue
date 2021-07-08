@@ -9,7 +9,7 @@
 <script>
 export default {
   name: "image-to-base64-icon",
-  emits: ["selectedImageBase64"],
+  emits: ["selectedImageBase64", "wrongInput"],
   data() {
     return {
       image: "",
@@ -24,6 +24,7 @@ export default {
         this.createBase64Image(selectedImage);
       } else {
         this.$toast.add({severity:'error', summary: this.$t('common.error.incompatibleType'), detail:this.$t('common.error.allowedFileTypes') + ' .ico, .svg, .png', life: 5000});
+        this.$emit("wrongInput", true);
       }
     },
     createBase64Image(fileObject) {
@@ -36,6 +37,7 @@ export default {
     },
     sendImageToParent() {
       const { image } = this;
+      this.$emit("wrongInput", false);
       this.$emit("selectedImageBase64", image);
     },
     isFileImage(file) {

@@ -1,7 +1,7 @@
 <template>
   <Dialog :header="$t('managers.menuConfigurationManagement.chooseIcon')" v-model:visible="modalShown" :style="{ width: '50vw' }" :modal="true" :closable="false">
     
-    <ImageToBase64Icon @selectedImageBase64="onBase64ImageSelection"></ImageToBase64Icon>
+    <KnImageToBase64IconPicker @selectedImageBase64="onBase64ImageSelection" @wrongInput="toggleDisableChooseButton"></KnImageToBase64IconPicker>
 
     <div id="iconPicker">
       <div class="p-mt-2 p-field">
@@ -24,20 +24,20 @@
     </div>
     <template #footer>
       <Button label="Cancel" icon="pi pi-times" @click="closeModal" class="p-button-text"/>
-      <Button label="Choose" icon="pi pi-check" @click="chooseIcon" autofocus />
+      <Button label="Choose" icon="pi pi-check" :disabled="disableChoosen" @click="chooseIcon" autofocus />
     </template>
   </Dialog>
 </template>
 
 <script>
-import ImageToBase64Icon from "./ImageToBase64Icon.vue";
+import KnImageToBase64IconPicker from '@/components/UI/KnImageToBase64IconPicker.vue'
 import Dialog from "primevue/dialog";
 import icons from "./icons";
 import { defineComponent } from "vue";
 export default defineComponent({
   name: "IconPicker",
   emits: ["chooseIcon", "closeFontAwesomeModal"],
-  components: { Dialog, ImageToBase64Icon },
+  components: { Dialog, KnImageToBase64IconPicker },
   props: ["showModal"],
   watch: {
     showModal: {
@@ -49,6 +49,7 @@ export default defineComponent({
   data() {
     return {
       modalShown: false,
+      disableChoosen: false,
       selected: "",
       chosenIcon: {},
       icons,
@@ -58,6 +59,7 @@ export default defineComponent({
     getIcon(icon) {
       this.selected = icon.name;
       this.chosenIcon = icon;
+      this.disableChoosen = false;
     },
     chooseIcon() {
       if (this.chosenIcon) {
@@ -81,6 +83,9 @@ export default defineComponent({
       if (filter.length > 0) {
         this.icons = filter;
       }
+    },
+    toggleDisableChooseButton(value){
+      this.disableChoosen = value;
     },
     onBase64ImageSelection(image){
       this.choosenIcon = image;
