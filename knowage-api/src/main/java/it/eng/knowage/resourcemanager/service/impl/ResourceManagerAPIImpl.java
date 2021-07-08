@@ -46,13 +46,16 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.utils.ContextPropertiesConfig;
-import it.eng.knowage.resourcemanager.resource.utils.FileDTO;
-import it.eng.knowage.resourcemanager.resource.utils.FolderDTO;
-import it.eng.knowage.resourcemanager.resource.utils.RootFolderDTO;
+import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
+import it.eng.knowage.resourcemanager.resource.dto.FolderDTO;
+import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
+import it.eng.knowage.resourcemanager.resource.dto.RootFolderDTO;
 import it.eng.knowage.resourcemanager.service.ResourceManagerAPI;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
@@ -101,6 +104,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			newRootFolder.getRoot().setLabel(rootFolder);
 
 		} catch (IOException e) {
+			LOGGER.error("[ResourceManagerAPIImpl], [getFolders], ", e);
 			throw new KnowageRuntimeException(e.getMessage());
 		}
 		return newRootFolder;
@@ -246,7 +250,6 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	@Override
 	public boolean delete(String path, SpagoBIUserProfile profile) {
 		String totalPath = getTotalPath(path, profile);
-		boolean bool = false;
 		String workDir = getWorkBaseDirByPath(path, profile);
 		if (canSee(Paths.get(workDir), profile)) {
 			File file = new File(totalPath);
@@ -264,7 +267,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -275,9 +278,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		if (canSee(Paths.get(workDirr), profile)) {
 			String workDir = getWorkDirectory(profile);
 			String directoryFullPath = workDir + File.separator + path;
-
 			workingPath = Paths.get(directoryFullPath);
-
 			pathToReturn = createZipFile(path, workingPath);
 		}
 		return pathToReturn;
@@ -329,7 +330,6 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	public void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException {
 
 		String workDirr = getWorkBaseDirByPath(path, profile);
-
 		Path filePath = Paths.get(getTotalPath(path, profile));
 
 		if (canSee(Paths.get(workDirr), profile)) {
@@ -500,6 +500,60 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	private void cleanUpTempDirectory(Path tempDirectory) throws IOException {
 		// Common way to delete recursively
 		Files.walk(tempDirectory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+	}
+
+	private boolean isStartingFromModel(String path, SpagoBIUserProfile profile) {
+		Path workModelDir = Paths.get(getWorkDirectory(profile));
+		Path modelPath = Paths.get(workModelDir + File.separator + "model");
+		return modelPath.equals(Paths.get(path));
+	}
+
+	@Override
+	public MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) {
+		String workPath = getWorkBaseDirByPath(path, profile);
+		MetadataDTO metadata = null;
+		Path totalPath = Paths.get(getTotalPath(path, profile) + File.separator + "metadata.json");
+
+		if (isStartingFromModel(workPath, profile) && canSee(Paths.get(workPath), profile)) {
+
+			try {
+				// create object mapper instance
+				ObjectMapper mapper = new ObjectMapper();
+				metadata = mapper.readValue(totalPath.toFile(), MetadataDTO.class);
+
+			} catch (Exception ex) {
+				throw new KnowageRuntimeException(ex.getMessage());
+			}
+
+		}
+
+		return metadata;
+	}
+
+	/**
+	 * JSONObject jsonCode = new JSONObject(); jsonCode.put("name", fileDTO.getName()); jsonCode.put("version", fileDTO.getVersion()); jsonCode.put("type",
+	 * fileDTO.getType()); jsonCode.put("opensource", fileDTO.isOpensource()); jsonCode.put("description", fileDTO.getDescription()); jsonCode.put("accuracy",
+	 * fileDTO.getAccuracy()); jsonCode.put("usage", fileDTO.getUsage()); jsonCode.put("format", fileDTO.getFormat()); jsonCode.put("image",
+	 * fileDTO.getImage());
+	 */
+	@Override
+	public MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) {
+
+		String workPath = getWorkBaseDirByPath(path, profile);
+		if (isStartingFromModel(workPath, profile) && canSee(Paths.get(workPath), profile)) {
+			Path totalPath = Paths.get(getTotalPath(path, profile) + File.separator + "metadata.json");
+			ObjectMapper objectMapper = new ObjectMapper();
+			try {
+				objectMapper.writeValue(totalPath.toFile(), fileDTO);
+			} catch (JsonGenerationException e) {
+				throw new KnowageRuntimeException(e.getMessage());
+			} catch (JsonMappingException e) {
+				throw new KnowageRuntimeException(e.getMessage());
+			} catch (IOException e) {
+				throw new KnowageRuntimeException(e.getMessage());
+			}
+		}
+		return fileDTO;
 	}
 
 }

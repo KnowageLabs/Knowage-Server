@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.resourcemanager.resource.utils;
+package it.eng.knowage.resourcemanager.resource.dto;
 
 public class MetadataDTO {
 
@@ -25,7 +25,7 @@ public class MetadataDTO {
 
 	private String type;
 
-	private boolean openSource;
+	private boolean opensource;
 
 	private String description;
 
@@ -36,6 +36,10 @@ public class MetadataDTO {
 	private String format;
 
 	private String image;
+
+	public MetadataDTO() {
+		super();
+	}
 
 	public MetadataDTO(String name) {
 		this.name = name;
@@ -70,12 +74,12 @@ public class MetadataDTO {
 		this.type = type;
 	}
 
-	public boolean isOpenSource() {
-		return openSource;
+	public boolean isOpensource() {
+		return opensource;
 	}
 
-	public void setOpenSource(boolean openSource) {
-		this.openSource = openSource;
+	public void setOpensource(boolean opensource) {
+		this.opensource = opensource;
 	}
 
 	public String getDescription() {

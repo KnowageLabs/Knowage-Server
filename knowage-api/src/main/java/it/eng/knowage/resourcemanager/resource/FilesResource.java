@@ -29,9 +29,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -47,8 +45,8 @@ import org.springframework.stereotype.Component;
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
-import it.eng.knowage.resourcemanager.resource.utils.FileDTO;
-import it.eng.knowage.resourcemanager.resource.utils.MetadataDTO;
+import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
+import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
 import it.eng.knowage.resourcemanager.service.ResourceManagerAPI;
 import it.eng.spagobi.services.security.SecurityServiceService;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
@@ -78,7 +76,7 @@ public class FilesResource {
 	@GET
 	@Path("/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<FileDTO> getFiles(@PathParam("path") String path) {
+	public List<FileDTO> getFiles(@QueryParam("path") String path) {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		List<FileDTO> files = resourceManagerAPIservice.getListOfFiles(path, profile);
 		return files;
@@ -155,25 +153,21 @@ public class FilesResource {
 	}
 
 	@GET
-	@Path("/metadata/{path}")
+	@Path("/metadata")
 	@Produces(MediaType.APPLICATION_JSON)
-	public MetadataDTO getMetadata(@PathParam("path") String path) {
-		MetadataDTO file = null; // TODO: METADATA DTO
+	public MetadataDTO getMetadata(@QueryParam("path") String path) {
+		SpagoBIUserProfile profile = businessContext.getUserProfile();
+		MetadataDTO file = resourceManagerAPIservice.getMetadata(path, profile);
 		return file;
 	}
 
-	@PUT
-	@Path("/metadata/{path}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @PathParam("path") String path) {
-		return null;
-	}
-
 	@POST
-	@Path("/metadata/{path}")
+	@Path("/metadata")
 	@Produces(MediaType.APPLICATION_JSON)
-	public MetadataDTO addMetadata(MetadataDTO fileDTO, @PathParam("path") String path) {
-		return null;
+	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @QueryParam("path") String path) {
+		SpagoBIUserProfile profile = businessContext.getUserProfile();
+		MetadataDTO file = resourceManagerAPIservice.saveMetadata(fileDTO, path, profile);
+		return file;
 	}
 
 	// Common methods
@@ -181,12 +175,12 @@ public class FilesResource {
 	@DELETE
 	@Path("/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("path") String path) {
+	public Response delete(@QueryParam("path") String path) {
 		Response response = null;
 		try {
 			SpagoBIUserProfile profile = businessContext.getUserProfile();
-			boolean create = resourceManagerAPIservice.delete(path, profile);
-			if (create)
+			boolean ok = resourceManagerAPIservice.delete(path, profile);
+			if (ok)
 				response = Response.status(Response.Status.OK).build();
 			else {
 				response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

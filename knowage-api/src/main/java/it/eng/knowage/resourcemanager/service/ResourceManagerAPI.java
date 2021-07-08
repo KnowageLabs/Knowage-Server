@@ -22,8 +22,9 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
-import it.eng.knowage.resourcemanager.resource.utils.FileDTO;
-import it.eng.knowage.resourcemanager.resource.utils.RootFolderDTO;
+import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
+import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
+import it.eng.knowage.resourcemanager.resource.dto.RootFolderDTO;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 public interface ResourceManagerAPI {
@@ -45,4 +46,8 @@ public interface ResourceManagerAPI {
 	void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException;
 
 	void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException;
+
+	MetadataDTO getMetadata(String path, SpagoBIUserProfile profile);
+
+	MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile);
 }

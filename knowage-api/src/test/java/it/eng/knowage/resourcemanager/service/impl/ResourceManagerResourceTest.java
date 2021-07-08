@@ -39,7 +39,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.knowage.resourcemanager.KnowageResourceManagerConfigurationTest;
-import it.eng.knowage.resourcemanager.resource.utils.FolderDTO;
+import it.eng.knowage.resourcemanager.resource.dto.FolderDTO;
 
 /**
  * @author Matteo Massarotto
