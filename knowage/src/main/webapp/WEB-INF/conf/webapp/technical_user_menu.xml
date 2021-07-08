@@ -182,12 +182,12 @@
 	</ITEM>
 	
 	<ITEM 	code="doc_admin_angular" 	
-			title="#menu.DocumentDev"
+			title="#menu.Browser"
 			functionality="DocumentDevManagement"
 			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION"
 			iconCls="fa fa-2x fa-folder-o"/>
 	<ITEM 	code="doc_test_angular" 	
-			title="#menu.DocumentTest"
+			title="#menu.Browser"
 			functionality="DocumentTestManagement"
 			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION"
 			iconCls="fa fa-2x fa-folder-o"/>
