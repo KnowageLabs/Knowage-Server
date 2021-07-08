@@ -139,7 +139,7 @@
 													<md-checkbox ng-model="column.properties.showTooltip" ng-change="setTooltipCol(layer,column)"  aria-label="Show column on tooltip" />
 												</td>
 												<td style="display: flex;justify-content: center;">
-													<md-switch ng-if="column.fieldType == 'ATTRIBUTE'" ng-model="column.properties.modal" class="noMargin" ng-change="setModalColumn(column,layer)" aria-label="modal" ng-disabled="!column.properties.aggregateBy"></md-switch>
+													<md-switch ng-if="column.fieldType == 'ATTRIBUTE' || column.fieldType == 'SPATIAL_ATTRIBUTE'" ng-model="column.properties.modal" class="noMargin" ng-change="setModalColumn(column,layer)" aria-label="modal" ng-disabled="!column.properties.aggregateBy"></md-switch>
 												</td>
 												<td style="text-align:center" class="multiTableAction">
 
