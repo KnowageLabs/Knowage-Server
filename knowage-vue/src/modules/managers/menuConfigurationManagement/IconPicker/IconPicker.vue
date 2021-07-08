@@ -1,7 +1,7 @@
 <template>
   <Dialog :header="$t('managers.menuConfigurationManagement.chooseIcon')" v-model:visible="modalShown" :style="{ width: '50vw' }" :modal="true" :closable="false">
     
-    <Base64 @imageSrcBase64="onBase64ImageSelection"></Base64>
+    <ImageToBase64Icon @selectedImageBase64="onBase64ImageSelection"></ImageToBase64Icon>
 
     <div id="iconPicker">
       <div class="p-mt-2 p-field">
@@ -30,13 +30,14 @@
 </template>
 
 <script>
-import Base64 from "./Base64.vue";
+import ImageToBase64Icon from "./ImageToBase64Icon.vue";
 import Dialog from "primevue/dialog";
 import icons from "./icons";
-export default {
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "IconPicker",
   emits: ["chooseIcon", "closeFontAwesomeModal"],
-  components: { Dialog, Base64 },
+  components: { Dialog, ImageToBase64Icon },
   props: ["showModal"],
   watch: {
     showModal: {
@@ -86,7 +87,7 @@ export default {
       this.$emit("chooseIcon", image);
     }
   },
-};
+});
 </script>
 
 <style>

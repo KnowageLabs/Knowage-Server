@@ -19,6 +19,8 @@
 		"dragAndDropFileHere": "Drag and drop file here.",
 		"error": {
 			"downloading": "Error downloading ",
+			"incompatibleType": "Incompatible file type",
+			"allowedFileTypes": "File type allowed are {types}",
 			"exceededSize": "Uploaded file exceedes max size {size}",
 			"tags": {
 				"tagIsNotValid": "Tag ({tag}) is not valid'"

@@ -7,19 +7,10 @@
             {{ $t("managers.menuConfigurationManagement.title") }}
           </template>
           <template #right>
-            <KnFabButton
-              icon="fas fa-plus"
-              @click="showForm()"
-              data-test="open-form-button"
-            ></KnFabButton>
+            <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
           </template>
         </Toolbar>
-        <ProgressBar
-          mode="indeterminate"
-          class="kn-progress-bar"
-          v-if="loading"
-          data-test="progress-bar"
-        />
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar"/>
         <MenuNodesTree
           :elements="menuNodes"
           :loading="loading"
@@ -41,10 +32,10 @@
           @refreshRecordSet="loadMenuNodes"
           @closesForm="closeForm"
           @dataChanged="dirty = true"
-          v-if="!hideForm"
+          :hidden="hideForm"
         ></MenuElementsDetail>
 
-         <RolesCard :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)" v-if="showForm"></RolesCard>
+         <RolesCard :hidden="hideForm" :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
       </div>
     </div>
   </div>

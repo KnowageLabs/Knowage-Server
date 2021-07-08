@@ -13,17 +13,14 @@
     <template #empty>{{ $t("common.info.noDataFound") }}</template>
     <template #default="slotProps">
       <div class="kn-list-item">
-        <div
-          class="kn-list-item-text"
-          :data-test="'menu-nodes-tree-item-' + slotProps.node.menuId"
-        >
+        <div class="kn-list-item-text" :data-test="'menu-nodes-tree-item-' + slotProps.node.menuId">
           <span>{{ slotProps.node.name }}</span>
         </div>
 
         <Button
           v-if="canBeDeleted(slotProps.node)"
           icon="far fa-trash-alt"
-          class="p-button-text p-button-rounded p-button-plain p-ml-5"
+            class="p-button-link p-button-sm p-p-0"
           @click="deleteMenuNode(slotProps.node.menuId)"
           :data-test="'delete-button-' + slotProps.node.menuId"
         />
@@ -31,7 +28,7 @@
         <div v-if="slotProps.node.parentId != null">
           <Button
             icon="pi pi-sort-alt"
-            class="p-button-text p-button-rounded p-button-plain p-ml-1"
+              class="p-button-link p-button-sm p-p-0"
             @click="changeWithFather(slotProps.node.menuId)"
             :data-test="'change-with-father-button-' + slotProps.node.menuId"
           />
@@ -40,7 +37,7 @@
         <Button
           v-if="canBeMovedUp(slotProps.node)"
           icon="pi pi-arrow-up"
-          class="p-button-text p-button-rounded p-button-plain p-ml-1"
+            class="p-button-link p-button-sm p-p-0"
           @click="moveUp(slotProps.node.menuId)"
           :data-test="'move-up-button-' + slotProps.node.menuId"
         />
@@ -48,7 +45,7 @@
         <Button
           v-if="canBeMovedDown(slotProps.node)"
           icon="pi pi-arrow-down"
-          class="p-button-text p-button-rounded p-button-plain p-ml-1"
+            class="p-button-link p-button-sm p-p-0"
           @click="moveDown(slotProps.node.menuId)"
           :data-test="'move-down-button-' + slotProps.node.menuId"
         />

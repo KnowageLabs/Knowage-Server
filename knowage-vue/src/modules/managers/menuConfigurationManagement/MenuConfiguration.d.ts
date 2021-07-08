@@ -50,3 +50,11 @@ export interface iRole {
   name: string;
   value: string;
 }
+
+export interface iDocument {
+  DOCUMENT_ID: number | null;
+  DOCUMENT_LABEL: string;
+  DOCUMENT_NAME: string;
+  DOCUMENT_DESCR: string;
+  DOCUMENT_AUTH: string;
+}

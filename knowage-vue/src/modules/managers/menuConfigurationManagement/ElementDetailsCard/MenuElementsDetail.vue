@@ -30,10 +30,10 @@
               <div class="p-inputgroup">
                 <span class="p-float-label">
                   <InputText id="descr" type="text" v-model.trim="v$.menuNode.descr.$model" @blur="onDataChange(v$.menuNode.descr)" class="p-inputtext p-component kn-material-input" aria-describedby="descr-help"/>
-                  <Button v-if="menuNode.level == 1 && menuNode.icon!=null" icon="pi pi-times" @click="clearSelectedIcon" />
-                  <Button v-if="menuNode.level == 1 && menuNode.custIcon!=null"><img style="max-height: 26px; max-width: 26px;" :src="selectedIcon"/></Button>
-                  <Button v-if="menuNode.level == 1 && menuNode.icon!=null"><i :class="selectedIcon"></i></Button>
-                  <Button v-if="menuNode.level == 1" class="p-button" @click="openFontAwesomeSelectionModal()">{{ $t("managers.menuConfigurationManagement.chooseIcon").toUpperCase() }}</Button>
+                  <Button v-if="isIconSelectorShown(menuNode) && (menuNode.icon != null || menuNode.custIcon != null)" icon="pi pi-times" @click="clearSelectedIcon" />
+                  <Button v-if="isCustomIconShown(menuNode)"><img style="max-height: 26px; max-width: 26px;" :src="selectedIcon"/></Button>
+                  <Button v-if="isFaIconShown(menuNode)"><i :class="selectedIcon"></i></Button>
+                  <Button v-if="isIconSelectorShown(menuNode)" class="p-button" @click="openFontAwesomeSelectionModal()">{{ $t("managers.menuConfigurationManagement.chooseIcon").toUpperCase() }}</Button>
                   <label for="descr">{{ $t("managers.menuConfigurationManagement.description") }} *</label>
                 </span>
               </div>
@@ -231,6 +231,7 @@ export default defineComponent({
     },
     clearSelectedIcon(){
       this.selectedIcon = "";
+      this.menuNode.custIcon = null;
       this.menuNode.icon = null;
     },
     toggleDocument() {
@@ -250,6 +251,15 @@ export default defineComponent({
       this.functionalityHidden = false;
            if (this.menuNode.functionality == "WorkspaceManagement") { this.toggleWorkspaceInitial(); } 
       else if (this.menuNode.functionality == "DocumentUserBrowser") { this.toggleDocumentTreeSelect(); }
+    },
+    isIconSelectorShown(node : iMenuNode){
+      if(node.level == 1){ return true; }
+    },
+    isFaIconShown(node : iMenuNode){
+      if(node.level == 1 && node.icon!=null){ return true; }
+    },
+    isCustomIconShown(node : iMenuNode){
+      if(node.level == 1 && node.custIcon!=null){ return true; }
     },
     toggleEmpty() {
       this.functionalityHidden  = this.externalAppHidden = this.documentHidden = this.staticPageHidden = this.documentTreeHidden = this.workspaceInitialHidden = true;
