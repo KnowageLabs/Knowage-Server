@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
-import it.eng.knowage.resourcemanager.resource.utils.RootFolderDTO;
+import it.eng.knowage.resourcemanager.resource.dto.RootFolderDTO;
 import it.eng.knowage.resourcemanager.service.ResourceManagerAPI;
 import it.eng.spagobi.services.security.SecurityServiceService;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
