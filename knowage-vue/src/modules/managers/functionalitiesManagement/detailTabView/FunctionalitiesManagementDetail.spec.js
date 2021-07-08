@@ -195,6 +195,7 @@ describe('Functionalities Detail', () => {
             creation: true,
             development: false,
             execution: true,
+            isButtonDisabled: false,
             id: 2,
             name: 'user',
             test: false
@@ -218,6 +219,7 @@ describe('Functionalities Detail', () => {
             creation: true,
             development: true,
             execution: true,
+            isButtonDisabled: false,
             id: 2,
             name: 'user',
             test: true
@@ -244,6 +246,7 @@ describe('Functionalities Detail', () => {
             creation: true,
             development: true,
             execution: true,
+            isButtonDisabled: false,
             id: 1,
             name: 'dev',
             test: true
@@ -267,6 +270,7 @@ describe('Functionalities Detail', () => {
             creation: false,
             development: false,
             execution: false,
+            isButtonDisabled: false,
             id: 1,
             name: 'dev',
             test: false

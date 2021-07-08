@@ -93,8 +93,8 @@
                     </Column>
                     <Column @rowClick="false">
                         <template #body="slotProps">
-                            <Button icon="pi pi-check" class="p-button-link" @click="checkAll(slotProps.data)" :data-test="'check-all-' + slotProps.data.id" />
-                            <Button icon="pi pi-times" class="p-button-link" @click="uncheckAll(slotProps.data)" :data-test="'uncheck-all-' + slotProps.data.id" />
+                            <Button icon="pi pi-check" class="p-button-link" @click="checkAll(slotProps.data)" :disabled="slotProps.data.isButtonDisabled" :data-test="'check-all-' + slotProps.data.id" />
+                            <Button icon="pi pi-times" class="p-button-link" @click="uncheckAll(slotProps.data)" :disabled="slotProps.data.isButtonDisabled" :data-test="'uncheck-all-' + slotProps.data.id" />
                         </template>
                     </Column>
                 </DataTable>
@@ -188,7 +188,8 @@ export default defineComponent({
                     development: false,
                     test: false,
                     execution: false,
-                    creation: false
+                    creation: false,
+                    isButtonDisabled: false
                 }
                 this.roleIsChecked(tempRole, tempFolder.devRoles, 'development')
                 this.roleIsChecked(tempRole, tempFolder.testRoles, 'test')
@@ -198,6 +199,9 @@ export default defineComponent({
                 for (let field of ['devRoles', 'testRoles', 'execRoles', 'createRoles']) {
                     this.isCheckable(tempRole, field)
                 }
+
+                if (tempRole['devRoles'].checkable == false && tempRole['testRoles'].checkable == false && tempRole['execRoles'].checkable == false && tempRole['createRoles'].checkable == false) tempRole.isButtonDisabled = true
+
                 this.roles.push(tempRole)
             })
         },
