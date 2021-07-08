@@ -13,22 +13,45 @@
     <template #empty>{{ $t("common.info.noDataFound") }}</template>
     <template #default="slotProps">
       <div class="kn-list-item">
-        <div class="kn-list-item-text" :data-test="'menu-nodes-tree-item-' + slotProps.node.menuId">
+        <div
+          class="kn-list-item-text"
+          :data-test="'menu-nodes-tree-item-' + slotProps.node.menuId"
+        >
           <span>{{ slotProps.node.name }}</span>
         </div>
-        <div v-if="slotProps.node.level > 1 && slotProps.node.parentId != null">
-          <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-5" @click="deleteMenuNode(slotProps.node.menuId)" :data-test="'delete-button-' + slotProps.node.menuId"/>
-        </div>
+
+        <Button
+          v-if="canBeDeleted(slotProps.node)"
+          icon="far fa-trash-alt"
+          class="p-button-text p-button-rounded p-button-plain p-ml-5"
+          @click="deleteMenuNode(slotProps.node.menuId)"
+          :data-test="'delete-button-' + slotProps.node.menuId"
+        />
+
         <div v-if="slotProps.node.parentId != null">
-          <Button icon="pi pi-sort-alt" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="changeWithFather(slotProps.node.menuId)" :data-test="'change-with-father-button-' + slotProps.node.menuId"/>
+          <Button
+            icon="pi pi-sort-alt"
+            class="p-button-text p-button-rounded p-button-plain p-ml-1"
+            @click="changeWithFather(slotProps.node.menuId)"
+            :data-test="'change-with-father-button-' + slotProps.node.menuId"
+          />
         </div>
 
-        <div v-if="slotProps.node.level > 1 && slotProps.node.prog > 1">
-          <Button icon="pi pi-arrow-up" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="moveUp(slotProps.node.menuId)" :data-test="'move-up-button-'+ slotProps.node.menuId"/>
-        </div>
-        <div v-if="slotProps.node.level == 1">
-          <Button icon="pi pi-arrow-down" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="moveDown(slotProps.node.menuId)" :data-test="'move-down-button-'+ slotProps.node.menuId"/>
-        </div>
+        <Button
+          v-if="canBeMovedUp(slotProps.node)"
+          icon="pi pi-arrow-up"
+          class="p-button-text p-button-rounded p-button-plain p-ml-1"
+          @click="moveUp(slotProps.node.menuId)"
+          :data-test="'move-up-button-' + slotProps.node.menuId"
+        />
+
+        <Button
+          v-if="canBeMovedDown(slotProps.node)"
+          icon="pi pi-arrow-down"
+          class="p-button-text p-button-rounded p-button-plain p-ml-1"
+          @click="moveDown(slotProps.node.menuId)"
+          :data-test="'move-down-button-' + slotProps.node.menuId"
+        />
       </div>
     </template>
   </Tree>
@@ -38,13 +61,20 @@
 import { defineComponent } from "vue";
 import Tree from "primevue/tree";
 import { iMenuNode } from "../MenuConfiguration";
-import { arrayToTree } from '@/helpers/commons/arrayToTreeHelper'
+import { arrayToTree } from "@/helpers/commons/arrayToTreeHelper";
 export default defineComponent({
   name: "menu-nodes-tree",
   components: {
     Tree,
   },
-  emits: ["selectedMenuNode", "unselectedMenuNode", "deleteMenuNode", "changeWithFather", "moveUp", "moveDown"],
+  emits: [
+    "selectedMenuNode",
+    "unselectedMenuNode",
+    "deleteMenuNode",
+    "changeWithFather",
+    "moveUp",
+    "moveDown",
+  ],
   props: {
     elements: Array,
     loading: Boolean,
@@ -84,7 +114,7 @@ export default defineComponent({
       }
       this.expandedKeys = { ...this.expandedKeys };
     },
-     expandNode(node) {
+    expandNode(node) {
       if (node.children && node.children.length) {
         this.expandedKeys[node.key] = true;
 
@@ -92,6 +122,24 @@ export default defineComponent({
           this.expandNode(child);
         }
       }
+    },
+    canBeMovedUp(node: iMenuNode) {
+      return node.prog !== 1;
+    },
+    canBeMovedDown(node: iMenuNode) {
+      let canBeMoved = false;
+      this.menuElements.forEach((currentNode) => {
+        if (
+          node.parentId === currentNode.parentId &&
+          node.prog < currentNode.prog
+        ) {
+          canBeMoved = true;
+        }
+      });
+      return canBeMoved;
+    },
+    canBeDeleted(node: iMenuNode) {
+      return node.parentId;
     },
     deleteMenuNode(elementID: number) {
       this.$emit("deleteMenuNode", elementID);
@@ -114,7 +162,6 @@ export default defineComponent({
     onNodeUnselect(node: iMenuNode) {
       this.$emit("unselectedMenuNode", node);
     },
-    
   },
 });
 </script>
