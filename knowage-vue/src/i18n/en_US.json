@@ -121,6 +121,15 @@
         "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
     },
+    "kpi": {
+        "measureDefinition": {
+            "category": "Kpi Categories",
+            "hint": "No measures found",
+            "measureName": "Measure name",
+            "rulesName": "Rules name",
+            "title": "Measure list"
+        }
+    },
     "language": {
         "en_GB": "english (GB)",
         "en_US": "english (US)",

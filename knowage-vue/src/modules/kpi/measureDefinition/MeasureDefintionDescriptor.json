@@ -1,0 +1,24 @@
+{
+    "columns": [
+        {
+            "field": "alias",
+            "header": "kpi.measureDefinition.measureName",
+            "style": {}
+        },
+        {
+            "field": "rule",
+            "header": "managers.cacheManagement.rulesName",
+            "style": {}
+        },
+        {
+            "field": "categoryName",
+            "header": "managers.cacheManagement.category",
+            "style": {}
+        },
+        {
+            "field": "author",
+            "header": "managers.cacheManagement.dimension",
+            "style": {}
+        }
+    ]
+}
