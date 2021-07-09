@@ -11,6 +11,7 @@
             "javascript": "javascript",
             "python": "python"
         },
+        "copyOf": "Copy of",
         "deleteAll": "delete all",
         "description": "description",
         "download": "download",
