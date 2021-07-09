@@ -11,6 +11,7 @@
             "javascript": "javascript",
             "python": "python"
         },
+        "copyOf": "Copy of",
         "deleteAll": "delete all",
         "description": "description",
         "download": "download",
@@ -125,10 +126,10 @@
     },
     "kpi": {
         "measureDefinition": {
-            "newMeasure": "New Measure",
             "category": "Kpi Categories",
             "hint": "No measures found",
             "measureName": "Measure name",
+            "newMeasure": "New Measure",
             "rulesName": "Rules name",
             "title": "Measure list"
         }
