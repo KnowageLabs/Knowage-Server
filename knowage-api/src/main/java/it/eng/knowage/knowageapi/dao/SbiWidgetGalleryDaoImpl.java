@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
@@ -32,8 +33,6 @@ import javax.transaction.Transactional.TxType;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
@@ -54,8 +53,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 
 	private static final Logger logger = Logger.getLogger(SbiWidgetGalleryDaoImpl.class.getName());
 
-	@Autowired
-	@Qualifier("knowage-gallery")
+	@PersistenceContext(unitName = "knowage-gallery")
 	private EntityManager em;
 
 	@Override

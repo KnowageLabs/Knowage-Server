@@ -20,13 +20,13 @@
 
 			<ITEM id="2001" label="menu.Attributes"
 				requiredFunctionality="ProfileManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=profileAttributesManagement" />
+				to="/profile-attributes-management" />
 			<ITEM id="2002" label="menu.Roles"
 				requiredFunctionality="ProfileManagement"
 				to="/roles-management" />
 			<ITEM id="2003" label="menu.Users"
 				requiredFunctionality="ProfileManagement"
-				to="/user-management" />
+				to="/users-management" />
 			<ITEM id="2004" label="menu.menuconfiguration"
 				requiredFunctionality="MenuManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=menuConfiguration" />

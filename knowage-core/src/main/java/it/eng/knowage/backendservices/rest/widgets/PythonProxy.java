@@ -20,19 +20,25 @@ package it.eng.knowage.backendservices.rest.widgets;
 
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spagobi.api.common.AbstractDataSetResource;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.services.content.service.ContentServiceImplSupplier;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
@@ -49,6 +55,64 @@ public class PythonProxy extends AbstractDataSetResource {
 	HttpMethod methodGet = HttpMethod.valueOf("Get");
 
 	static protected Logger logger = Logger.getLogger(PythonProxy.class);
+
+	@POST
+	@Path("/edit/{output_type}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.EDIT_PYTHON_SCRIPTS })
+	public Response editWidget(@PathParam("output_type") String outputType, PythonWidgetDTO pythonWidgetDTO) {
+		return executeWidget(outputType, pythonWidgetDTO);
+	}
+
+	@POST
+	@Path("/view/{output_type}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response viewWidget(@PathParam("output_type") String outputType, PythonWidgetDTO pythonWidgetDTO) {
+		try {
+			UserProfile userProfile = UserProfileManager.getProfile();
+			String userId = (String) userProfile.getUserUniqueIdentifier();
+			ContentServiceImplSupplier supplier = new ContentServiceImplSupplier();
+			String script = PythonUtils.getScriptFromTemplate(
+					supplier.readTemplate(userId, pythonWidgetDTO.getDocumentId(), pythonWidgetDTO.getDrivers()).getContent(), pythonWidgetDTO.getWidgetId());
+			pythonWidgetDTO.setScript(script);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot retrieve script from template", e);
+		}
+		return executeWidget(outputType, pythonWidgetDTO);
+	}
+
+	private Response executeWidget(String outputType, PythonWidgetDTO pythonWidgetDTO) {
+		String pythonAddress = null, body = null, datastore = null;
+		it.eng.spagobi.utilities.rest.RestUtilities.Response pythonResponse = null;
+
+		try {
+			String dsLabel = pythonWidgetDTO.getDatasetLabel();
+			Map<String, Object> drivers = pythonWidgetDTO.getDrivers();
+			if (dsLabel != null) {
+				datastore = getDataStore(dsLabel, pythonWidgetDTO.getParameters(), drivers, pythonWidgetDTO.getSelections(), null, -1,
+						pythonWidgetDTO.getAggregations(), null, -1, -1, null, null);
+			}
+			body = PythonUtils.createPythonEngineRequestBody(datastore, dsLabel, pythonWidgetDTO.getScript(), drivers, pythonWidgetDTO.getOutputVariable());
+			pythonAddress = PythonUtils.getPythonAddress(pythonWidgetDTO.getEnvironmentLabel());
+			pythonResponse = RestUtilities.makeRequest(methodPost, pythonAddress + "2.0/widget/" + outputType, headers, body);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while making request to python engine", e);
+		}
+
+		try {
+			if (pythonResponse == null || pythonResponse.getStatusCode() != 200) {
+				JSONObject toReturn = new JSONObject().put("error", pythonResponse.getResponseBody());
+				return Response.status(Status.BAD_REQUEST).entity(toReturn.toString()).build();
+			} else {
+				JSONObject toReturn = new JSONObject().put("result", pythonResponse.getResponseBody());
+				return Response.ok(toReturn.toString()).build();
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while creating response json", e);
+		}
+	}
 
 	@GET
 	@Path("/libraries/{env_label}")
