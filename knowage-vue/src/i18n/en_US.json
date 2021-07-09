@@ -48,6 +48,7 @@
         "tags": "tags",
         "tenant": "tenant",
         "toast": {
+            "cloneConfirmTitle": "Confirm item clone?",
             "createTitle": "Created",
             "deleteConfirmTitle": "Confirm Delete?",
             "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
