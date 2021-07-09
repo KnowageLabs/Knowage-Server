@@ -7,7 +7,7 @@
                         {{ $t('kpi.measureDefinition.title') }}
                     </template>
                     <template #right>
-                        <KnFabButton icon="fas fa-plus" @click="showForm" data-test="new-button" />
+                        <KnFabButton icon="fas fa-plus" @click="showForm(null, false)" data-test="new-button" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
@@ -20,11 +20,11 @@
                     :loading="loading"
                     class="p-datatable-sm kn-table"
                     dataKey="id"
-                    :sortable="true"
                     v-model:filters="filters"
                     :globalFilterFields="measureDefintionDescriptor.globalFilterFields"
                     responsiveLayout="stack"
                     breakpoint="960px"
+                    @rowClick="showForm($event.data, false)"
                     data-test="measures-table"
                 >
                     <template #loading>
@@ -38,7 +38,7 @@
                             </span>
                         </div>
                     </template>
-                    <Column v-for="col of measureDefintionDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" class="kn-truncated"> </Column>
+                    <Column class="kn-truncated" :style="col.style" v-for="col of measureDefintionDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>
                     <Column :style="measureDefintionDescriptor.table.iconColumn.style">
                         <template #body="slotProps">
                             <Button icon="pi pi-copy" class="p-button-link" @click="cloneKpiConfirm(slotProps.data)" data-test="clone-button" />
@@ -107,8 +107,18 @@ export default defineComponent({
                 })
             )
         },
-        // cloneKpiConfirm(measure: iMeasure) {},
-        cloneKpi() {},
+        showForm(measure: iMeasure, clone: Boolean) {
+            console.log('EVENT Data: ', measure)
+            const path = measure ? `/measure-definition/edit?id=${measure.ruleId}&ruleVersion=${measure.ruleVersion}&clone=${clone}` : '/measure-definition/new-measure-definition'
+            this.$router.push(path)
+        },
+        cloneKpiConfirm(measure: iMeasure) {
+            this.$confirm.require({
+                header: this.$t('common.toast.cloneConfirmTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.showForm(measure, true)
+            })
+        },
         deleteMeasureConfirm(measure: iMeasure) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),

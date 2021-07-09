@@ -125,6 +125,7 @@
     },
     "kpi": {
         "measureDefinition": {
+            "newMeasure": "New Measure",
             "category": "Kpi Categories",
             "hint": "No measures found",
             "measureName": "Measure name",
