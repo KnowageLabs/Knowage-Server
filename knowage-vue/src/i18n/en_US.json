@@ -1,5 +1,6 @@
 {
     "common": {
+        "author": "Author",
         "back": "back",
         "cancel": "cancel",
         "choose": "choose",
