@@ -308,6 +308,9 @@ function pythonWidgetEditControllerFunction(
 	$scope.selectedTab = $scope.newModel.isNew ? 0 : 1;
 
 	$scope.setGalleryTemplate = function(template){
+		if (!$scope.newModel.pythonConf) {
+			$scope.newModel.pythonConf = {};
+		}
 		if(template){
 			$scope.newModel.pythonConf.script = template.code.python;
 			$scope.newModel.pythonConf.outputType = template.outputType;

@@ -121,11 +121,12 @@ public class PythonProxy extends AbstractDataSetResource {
 	public Response libraries(@PathParam("env_label") String envLabel) {
 		logger.debug("IN");
 		it.eng.spagobi.utilities.rest.RestUtilities.Response response = null;
+		String pythonAddress = null;
 		try {
-			String pythonAddress = PythonUtils.getPythonAddress(envLabel);
+			pythonAddress = PythonUtils.getPythonAddress(envLabel);
 			response = RestUtilities.makeRequest(methodGet, pythonAddress + "dataset/libraries", headers, null);
 		} catch (Exception e) {
-			logger.error("cannot retrieve list of available libraries from Python engine");
+			logger.error("cannot retrieve list of available libraries from Python engine at address [" + pythonAddress + "]");
 			throw new SpagoBIRuntimeException("cannot retrieve list of available libraries from Python engine", e);
 		}
 		if (response == null || response.getStatusCode() != 200) {
