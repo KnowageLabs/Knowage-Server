@@ -1,24 +1,32 @@
 {
     "columns": [
         {
+            "field": "rule",
+            "header": "kpi.measureDefinition.rulesName",
+            "style": {}
+        },
+        {
             "field": "alias",
             "header": "kpi.measureDefinition.measureName",
             "style": {}
         },
         {
-            "field": "rule",
-            "header": "managers.cacheManagement.rulesName",
-            "style": {}
-        },
-        {
             "field": "categoryName",
-            "header": "managers.cacheManagement.category",
+            "header": "kpi.measureDefinition.category",
             "style": {}
         },
         {
             "field": "author",
-            "header": "managers.cacheManagement.dimension",
+            "header": "common.author",
             "style": {}
         }
-    ]
+    ],
+    "globalFilterFields": ["alias", "rule", "categoryName", "author"],
+    "table": {
+        "iconColumn": {
+            "style": {
+                "text-align": "end"
+            }
+        }
+    }
 }

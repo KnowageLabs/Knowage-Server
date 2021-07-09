@@ -12,14 +12,37 @@
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <KnHint v-if="measuresList.length === 0" :title="'kpi.measureDefinition.title'" :hint="'kpi.measureDefinition.hint'" data-test="measure-hint"></KnHint>
-                <DataTable v-else :value="measuresList" :loading="loading" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="measures-table">
+                <DataTable
+                    v-else
+                    :value="measuresList"
+                    rowGroupMode="rowspan"
+                    groupRowsBy="rule"
+                    :loading="loading"
+                    class="p-datatable-sm kn-table"
+                    dataKey="id"
+                    :sortable="true"
+                    v-model:filters="filters"
+                    :globalFilterFields="measureDefintionDescriptor.globalFilterFields"
+                    responsiveLayout="stack"
+                    breakpoint="960px"
+                    data-test="measures-table"
+                >
                     <template #loading>
                         {{ $t('common.info.dataLoading') }}
                     </template>
+                    <template #header>
+                        <div class="table-header p-d-flex">
+                            <span class="p-input-icon-left p-mr-3">
+                                <i class="pi pi-search" />
+                                <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                            </span>
+                        </div>
+                    </template>
                     <Column v-for="col of measureDefintionDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" class="kn-truncated"> </Column>
-                    <Column :style="datasetTableCardDescriptor.table.iconColumn.style">
+                    <Column :style="measureDefintionDescriptor.table.iconColumn.style">
                         <template #body="slotProps">
-                            <Button icon="pi pi-trash" class="p-button-link" @click="deleteDatasetConfirm(slotProps.data.signature)" data-test="delete-button" />
+                            <Button icon="pi pi-copy" class="p-button-link" @click="cloneKpiConfirm(slotProps.data)" data-test="clone-button" />
+                            <Button icon="pi pi-trash" class="p-button-link" @click="deleteMeasureConfirm(slotProps.data)" data-test="delete-button" />
                         </template>
                     </Column>
                 </DataTable>
@@ -31,6 +54,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iMeasure } from './MeasureDefinition'
+import { filterDefault } from '@/helpers/commons/filterHelper'
 import axios from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -50,20 +74,57 @@ export default defineComponent({
         return {
             measureDefintionDescriptor,
             measuresList: [] as iMeasure[],
+            filters: { global: [filterDefault] } as Object,
             loading: false
         }
     },
     async created() {
-        await this.loadMeasures()
-        console.log('MEASURES: ', this.measuresList)
+        await this.loadPage()
     },
     methods: {
-        async loadMeasures() {
+        async loadPage() {
             this.loading = true
-            await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listMeasure')
-                .then((response) => (this.measuresList = response.data))
-                .finally(() => (this.loading = false))
+            await this.loadMeasures()
+            this.loading = false
+            console.log('MEASURES: ', this.measuresList)
+        },
+        async loadMeasures() {
+            this.measuresList = []
+            // await axios.get('data/measures.json').then((response) =>
+            //     response.data.forEach((measure) => {
+            //         if (measure.category) {
+            //             measure.categoryName = measure.translatedValueName
+            //         }
+            //         this.measuresList.push(measure)
+            //     })
+            // )
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listMeasure').then((response) =>
+                response.data.forEach((measure) => {
+                    if (measure.category) {
+                        measure.categoryName = measure.translatedValueName
+                    }
+                    this.measuresList.push(measure)
+                })
+            )
+        },
+        // cloneKpiConfirm(measure: iMeasure) {},
+        cloneKpi() {},
+        deleteMeasureConfirm(measure: iMeasure) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteMeasure(measure)
+            })
+        },
+        async deleteMeasure(measure: iMeasure) {
+            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${measure.ruleId}/${measure.ruleVersion}/deleteRule`).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.deleteTitle'),
+                    msg: this.$t('common.toast.deleteSuccess')
+                })
+                this.loadPage()
+            })
         }
     }
 })
