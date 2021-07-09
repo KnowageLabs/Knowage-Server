@@ -90,14 +90,6 @@ export default defineComponent({
         },
         async loadMeasures() {
             this.measuresList = []
-            // await axios.get('data/measures.json').then((response) =>
-            //     response.data.forEach((measure) => {
-            //         if (measure.category) {
-            //             measure.categoryName = measure.translatedValueName
-            //         }
-            //         this.measuresList.push(measure)
-            //     })
-            // )
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listMeasure').then((response) =>
                 response.data.forEach((measure) => {
                     if (measure.category) {
@@ -115,7 +107,6 @@ export default defineComponent({
         cloneKpiConfirm(measure: iMeasure) {
             this.$confirm.require({
                 header: this.$t('common.toast.cloneConfirmTitle'),
-                icon: 'pi pi-exclamation-triangle',
                 accept: () => this.showForm(measure, true)
             })
         },
