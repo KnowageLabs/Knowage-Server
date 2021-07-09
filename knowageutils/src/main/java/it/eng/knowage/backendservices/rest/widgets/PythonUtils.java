@@ -48,7 +48,7 @@ public class PythonUtils extends MLEngineUtils {
 		JSONObject jsonBody = new JSONObject();
 		try {
 			jsonBody.put("datastore", datastore);
-			jsonBody.put("script", script);
+			jsonBody.put("script", getScriptJwtToken(script));
 			jsonBody.put("output_variable", outputVariable);
 			jsonBody.put("dataset_label", dsLabel);
 			jsonBody.put("drivers", drivers);

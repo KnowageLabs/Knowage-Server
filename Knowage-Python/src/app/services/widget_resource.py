@@ -19,7 +19,7 @@
 from flask import Blueprint, request
 import base64
 import os
-from app.utilities import utils
+from app.utilities import security, utils
 import logging
 
 widget = Blueprint('widget', __name__)
@@ -30,11 +30,16 @@ def python_widget_execute(output_type):
     # retrieve input parameters
     try:
         request_body = request.get_json(force=True);
-        script, output_file = utils.get_widget_config(request_body)
+        token, output_file = utils.get_widget_config(request_body)
+        isAuthenticated, script = security.jwt_token_to_python_script(token)
         dataset_name, datastore = utils.get_dataset(request_body)
         drivers = utils.get_analytical_drivers(request_body)
     except Exception as e:
         return raise_error("Error during request decoding: {}".format(e), e)
+
+    if not isAuthenticated:
+        logging.error("Unauthorized access")
+        return "Unauthorized", 401
 
     # resolve analytical drivers
     for d in drivers:

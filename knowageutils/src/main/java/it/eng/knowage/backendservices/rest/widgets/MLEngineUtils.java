@@ -18,6 +18,8 @@
 
 package it.eng.knowage.backendservices.rest.widgets;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,13 +29,14 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public abstract class MLEngineUtils {
 
 	private static Logger logger = Logger.getLogger(MLEngineUtils.class);
 
-	public static String dataStore2DataFrame(String knowageDs) {
+	static String dataStore2DataFrame(String knowageDs) {
 		JSONObject oldDataset;
 		JSONArray newDataframe = new JSONArray();
 		try {
@@ -87,5 +90,13 @@ public abstract class MLEngineUtils {
 			throw new SpagoBIRuntimeException("error while retrieving code from template", e);
 		}
 		throw new SpagoBIRuntimeException("Couldn't retrieve code from template for widgetId [" + widgetId + "]");
+	}
+
+	static String getScriptJwtToken(String script) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MINUTE, 5);
+		Date expiresAt = calendar.getTime();
+		String jwtToken = JWTSsoService.pythonScript2jwtToken(script, expiresAt);
+		return jwtToken;
 	}
 }
