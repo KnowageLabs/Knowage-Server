@@ -1,3 +1,3 @@
 {
-    "filterFields": ["MULTITENANT_NAME"]
+    "filterFields": ["name"]
 }

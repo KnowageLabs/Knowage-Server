@@ -124,6 +124,15 @@
         "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
     },
+    "kpi": {
+        "kpiDefinition": {
+            "cardinalityTtitle": "Cardinality",
+            "formulaTitle": "Formula",
+            "hint": "Change the hint to your liking",
+            "hintTitle": "Kpi Definition",
+            "tresholdTitle": "Treshold"
+        }
+    },
     "language": {
         "en_GB": "english (GB)",
         "en_US": "english (US)",

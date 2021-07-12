@@ -4,7 +4,7 @@
             <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
-                        {{ $t('kpi.kpiDefinition.title') }}
+                        {{ $t('kpi.kpiDefinition.hintTitle') }}
                     </template>
                     <template #right>
                         <FabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button" />
@@ -39,7 +39,7 @@
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <router-view @touched="touched = true" @closed="onFormClose" @inserted="pageReload" @showDialog="displayInfoDialog" />
-                <KnHint :title="'managers.kpi.kpiDefinition.hintTitle'" :hint="'managers.kpi.kpiDefinition.hint'" v-if="hintVisible" />
+                <KnHint :title="'kpi.kpiDefinition.hintTitle'" :hint="'kpi.kpiDefinition.hint'" v-if="hintVisible" />
             </div>
         </div>
     </div>
