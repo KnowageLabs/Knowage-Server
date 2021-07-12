@@ -127,12 +127,12 @@ export default defineComponent({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
-                this.$router.push('/tenants')
+                this.$router.push('/tenants-management')
                 this.pageReload()
             })
         },
         showForm(event: any) {
-            const path = event.value ? `/tenants/${event.value.MULTITENANT_ID}` : '/tenants/new-tenant'
+            const path = event.value ? `/tenants-management/${event.value.MULTITENANT_ID}` : '/tenants-management/new-tenant'
             this.hintVisible = false
 
             if (!this.touched) {

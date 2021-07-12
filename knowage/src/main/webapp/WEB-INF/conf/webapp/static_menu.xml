@@ -167,7 +167,7 @@
 				to="/import-export" />
 			<ITEM id="8001" label="menu.TenantMan"
 				requiredFunctionality="TenantManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=multitenantManagementAngular" />
+				to="/tenants-management" />
 			<ITEM id="8002" label="menu.TemplateManagement"
 				requiredFunctionality="TemplateManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=templateManagement" />

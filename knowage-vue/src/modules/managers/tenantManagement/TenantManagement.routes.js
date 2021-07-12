@@ -1,7 +1,7 @@
 let routes = [
     {
-        path: '/tenants',
-        name: 'tenants',
+        path: '/tenants-management',
+        name: 'tenants-management',
         component: () => import('@/modules/managers/tenantManagement/TenantManagement.vue'),
         children: [
             {

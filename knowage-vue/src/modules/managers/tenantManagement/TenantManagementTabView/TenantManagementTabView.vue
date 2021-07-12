@@ -167,7 +167,7 @@ export default defineComponent({
                     msg: this.$t(this.tabViewDescriptor.operation.success)
                 })
                 this.$emit('inserted')
-                this.$router.replace('/tenants')
+                this.$router.replace('/tenants-management')
             })
         },
 
@@ -188,7 +188,7 @@ export default defineComponent({
         },
 
         closeTemplate() {
-            this.$router.push('/tenants')
+            this.$router.push('/tenants-management')
             this.$emit('closed')
         },
 

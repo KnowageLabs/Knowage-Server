@@ -278,7 +278,7 @@
                 "theme": "Theme",
                 "title": "Detail"
             },
-            "hint": "placeholder, please change hint to your liking",
+            "hint": "Tenants management allows you to define different tenants and set name and settings for each one. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "hintTitle": "Tenant Management",
             "productTypes": {
                 "title": "Product Types"
