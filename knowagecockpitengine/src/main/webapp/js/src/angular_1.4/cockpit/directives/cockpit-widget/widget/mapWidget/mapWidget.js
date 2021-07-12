@@ -635,7 +635,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			layer.setZIndex(
 					/* a little offset to get space for background */
 					10 + /* then */ layerDef.order*1000);
-			layer.modalSelectionColumn = layerDef.modalSelectionColumn || getDefaultModalSelectionColumn(layerDef);
+			layer.modalSelectionColumn = layerDef.modalSelectionColumn;
 			layer.hasShownDetails = layerDef.hasShownDetails;
 			layer.isHeatmap = isHeatmap;
 			layer.isCluster = isCluster;
@@ -1680,16 +1680,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return layer && layer.targetDefault || false;
 		}
 
-		function getDefaultModalSelectionColumn(layerDef) {
-			return layerDef.dataset
-				.metadata
-				.fieldsMeta
-				.find(function(field) {
-						return field.fieldType == 'SPATIAL_ATTRIBUTE';
-					})
-				.name;
-		}
-
 		// In edit mode, if a remove dataset from cokpit it has to be deleted also from widget
 		if (cockpitModule_properties.EDIT_MODE) {
 			$scope.$watchCollection("cockpitModule_template.configuration.datasets", function (newValue, oldValue, $scope) {
@@ -1714,6 +1704,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.getPerWidgetDatasetIds = function() {
 			return $scope.ngModel.content.layers.map(function(e) { return e.dataset.id.dsId; });
 		}
+		
+		// Manage resize of the window
+		window.addEventListener('resize', function(){
+			setTimeout( function() { if ($scope.map) { $scope.map.updateSize(); } }, 200);
+		});
 
 	}
 

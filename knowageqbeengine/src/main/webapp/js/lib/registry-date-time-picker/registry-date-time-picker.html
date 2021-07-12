@@ -1,0 +1,100 @@
+ <style>
+registry-date-time-picker input[type="number"]::-webkit-outer-spin-button,
+	registry-date-time-picker input[type="number"]::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+registry-date-time-picker input[type="number"] {
+	-moz-appearance: textfield;
+	width: 25px;
+	border: none;
+	text-align: center;
+}
+
+registry-date-time-picker .md-button.spinButton {
+	height: 14px;
+	min-width: 2px;
+	min-height: 2px;
+	background-color: transparent;
+	box-shadow: none;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+registry-date-time-picker .md-button.spinButton md-icon {
+	color: black;
+	width: 100%;
+}
+
+registry-date-time-picker span.dividerTime {
+	line-height: 44px;
+	margin: 0 5px;
+}
+
+registry-date-time-picker md-select {
+	margin: 0px;
+}
+
+registry-date-time-picker md-select .md-select-value {
+	border: none;
+	margin-bottom: 5px;
+	margin-left: 6px;
+}
+
+registry-date-time-picker md-select .md-select-value .md-select-icon {
+	display: none;
+}
+</style>
+
+<div layout="row">
+	<div layout="row">
+		<md-datepicker ng-init="date = getDate()" ng-model="date" ng-change="setDate(date)" step="{{getStep(col.dataType)}}"
+			name="dateField"   aria-label="data change" md-prevent-menu-close="md-prevent-menu-close"> </md-datepicker>
+		<md-icon md-font-icon="fa fa-times" ng-click="reset()" md-prevent-menu-close="md-prevent-menu-close"></md-icon>
+	</div>
+	<div layout="row">
+		<div layout="column">
+			<md-button ng-click="alterHours(true)" type="button" aria-label="menu" class="md-icon-button spinButton " md-prevent-menu-close="md-prevent-menu-close" >
+				<md-icon  md-font-icon="fa fa-caret-up" ></md-icon>
+			</md-button>
+			
+			<input id="hoursInput-{{id}}"    type="number"  ng-model="getHours()" ng-blur="checkHoursValid()">
+			
+			<md-button ng-click="alterHours(false)" type="button" aria-label="menu" class="md-icon-button spinButton " md-prevent-menu-close="md-prevent-menu-close">
+				<md-icon   md-font-icon="fa fa-caret-down" ></md-icon>
+			</md-button>
+		</div>
+		<span class="dividerTime">:</span>
+	  
+		<div layout="column">
+			<md-button ng-click="alterMinutes(true)" type="button" aria-label="menu" class="md-icon-button spinButton " md-prevent-menu-close="md-prevent-menu-close">
+				<md-icon   md-font-icon="fa fa-caret-up" ></md-icon>
+			</md-button>
+			
+			<input id="minInput-{{id}}"   type="number"  ng-model="getMinutes()"  ng-blur="checkMinuitesValid()">
+			
+			<md-button ng-click="alterMinutes(false)" type="button" aria-label="menu" class="md-icon-button spinButton " md-prevent-menu-close="md-prevent-menu-close">
+				<md-icon   md-font-icon="fa fa-caret-down" ></md-icon>
+			</md-button>
+		</div>
+
+		<span class="dividerTime">:</span>
+		<div layout="column">
+			<md-button ng-click="alterSeconds(true)" type="button" aria-label="menu" class="md-icon-button spinButton " md-prevent-menu-close="md-prevent-menu-close">
+				<md-icon   md-font-icon="fa fa-caret-up" ></md-icon>
+			</md-button>
+			
+			<input id="secondsInput-{{id}}"  type="number"  ng-model="getSeconds()"  ng-blur="checkSecondsValid()">
+			
+			<md-button ng-click="alterSeconds(false)" type="button" aria-label="menu" class="md-icon-button spinButton " md-prevent-menu-close="md-prevent-menu-close">
+				<md-icon   md-font-icon="fa fa-caret-down" ></md-icon>
+			</md-button>
+		</div>
+	<!-- 	<md-select aria-label="aria-label" ng-model="ampm" ng-change="alterNgModel()"> -->
+	<!-- 		<md-option value="AM" >AM</md-option>  -->
+	<!-- 		<md-option value="PM">PM</md-option>  -->
+	<!-- 	</md-select>  -->
+	</div>
+</div>

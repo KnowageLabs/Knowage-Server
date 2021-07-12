@@ -460,39 +460,39 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 	*/
 	
 	var genericErrorHandling = function(data, status, headers, config, deferred) {
-		if(data.status==401){
-			console.log("request unauthorized");
-			redirectToLoginUrl();
+		if(data.status == 401){
+			redirectToLoginUrl()
 		}else{
 			deferred.reject(data, status, headers, config);	
 		}
-			
-		  		
+				  		
 	};
 	
-	var redirectToLoginUrl = function() {
-    	var sessionExpiredSpagoBIJSFound = false;
-    	try {
-    		var currentWindow = window;
-    		var parentWindow = parent;
-    		while (parentWindow != currentWindow) {
-    			if (parentWindow.sessionExpiredSpagoBIJS) {
-    				parentWindow.location = loginUrl;
-    				sessionExpiredSpagoBIJSFound = true;
-    				break;
-    			} else {
-    				currentWindow = parentWindow;
-    				parentWindow = currentWindow.parent;
-    			}
-    		}
-    	} catch (err) {
-    		console.log(err);
-    	}
-    	
-    	if (!sessionExpiredSpagoBIJSFound) {
-    		window.location = loginUrl;
-    	}
-    };
+		var loginUrl = '<%= KnowageSystemConfiguration.getKnowageContext() %>'; // login url, used when session is expired
+
+		var redirectToLoginUrl = function() {
+	    	var sessionExpiredSpagoBIJSFound = false;
+	    	try {
+	    		var currentWindow = window;
+	    		var parentWindow = parent;
+	    		function setParentUrl(currentWindow, parentWindow){
+	    			if(parentWindow == currentWindow){
+	    				parentWindow.parent.postMessage({
+	    					'status': 401
+	    				     }, "*")
+	        		}else{
+	        			currentWindow = parentWindow;
+	    				parentWindow = currentWindow.parent;
+	    				setParentUrl(currentWindow,parentWindow);
+	        		}
+	    		}
+	    		setParentUrl(currentWindow, parentWindow);
+	    		
+	    	} catch (err) {
+	    		console.log(err);
+	    	}
+
+	    };
 	
 	var handleResponse = function(data, status, headers, config, deferred) {
 		if(data.data != null){
@@ -889,7 +889,7 @@ sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModu
 		$mdDialog.show({
 			controller: function($scope,$mdDialog,translate){
     	  		$scope.translate=translate;
-    	  		$scope.url= sbiModule_config.contextName + '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?'+data;
+    	  		$scope.url= sbiModule_config.contextName + '/restful-services/publish?PUBLISHER=glossaryHelpOnline?'+data;
     	  		$scope.close = function() {
    		    		$mdDialog.hide();
    		  		};

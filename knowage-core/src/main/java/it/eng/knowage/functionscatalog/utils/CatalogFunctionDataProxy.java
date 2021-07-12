@@ -66,15 +66,14 @@ public class CatalogFunctionDataProxy extends AbstractDataProxy {
 			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody.toString());
 			String responseBody = response.getResponseBody();
 			if (response.getStatusCode() != HttpStatus.SC_OK) {
-				throw new RESTDataProxyException(
-						String.format("The response status is not ok: status=%d, response=%s", response.getStatusCode(), responseBody));
+				throw new CatalogFunctionException(responseBody);
 			}
 			Assert.assertNotNull(responseBody, "responseBody is null");
 			dataReader.setCalculateResultNumberEnabled(true);
 			IDataStore res = dataReader.read(responseBody);
 			Assert.assertNotNull(res, "datastore is null");
 			return res;
-		} catch (RESTDataProxyException e) {
+		} catch (CatalogFunctionException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new RESTDataProxyException(e);

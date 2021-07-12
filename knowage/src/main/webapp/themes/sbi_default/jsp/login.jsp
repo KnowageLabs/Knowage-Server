@@ -18,6 +18,7 @@
 
   
 <%@page import="it.eng.spagobi.security.google.config.GoogleSignInConfig"%>
+<%@page import="it.eng.spagobi.security.azure.config.AzureSignInConfig"%>
 <%@ page language="java"
          extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"
          contentType="text/html; charset=UTF-8"
@@ -162,6 +163,46 @@
 		<script src="https://apis.google.com/js/platform.js" async defer></script>
 		<meta name="google-signin-client_id" content="<%= GoogleSignInConfig.getClientId() %>">
 		<% } %>
+		
+		<% if (AzureSignInConfig.isEnabled()) {%>
+		<%-- Resources for Azure Sign-In authentication --%>
+		<script>
+			var msalConfig = {
+				    auth: {
+				        clientId: "<%= AzureSignInConfig.getClientId() %>",
+				        authority: "<%= AzureSignInConfig.getAuthorityId() %>"
+				    },
+				    cache: {
+				        cacheLocation: "localStorage", // This configures where your cache will be stored
+				        storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
+				    }
+			};
+			
+			var loginRequest = {
+			    scopes: ["User.Read", "email", "openid", "profile"]
+			};
+		
+			function onAzureSignIn() {
+				myMSALObj = new msal.PublicClientApplication(msalConfig);
+				myMSALObj.loginPopup(loginRequest).then(handleResponse);
+			}
+			
+			function handleResponse(response) {
+				$.post("/knowage/servlet/AdapterHTTP", {
+					  "ACTION_NAME": "LOGIN_ACTION_BY_TOKEN",
+					  "NEW_SESSION" : true,
+					  "token" : response.idToken
+				}).done(function( data ) {
+					  // reload current page, in order to keep input GET parameters (such as required document and so on)
+					  location.reload();
+				}).fail(function (error) {
+					  $("#kn-infoerror-message").show();
+					  $(".kn-infoerror").html("Authentication failed. Please check if you are to allowed to enter this application.");
+				});
+			}
+		</script>
+		<script type="text/javascript" src="https://alcdn.msauth.net/browser/2.0.0-beta.0/js/msal-browser.js" integrity="sha384-r7Qxfs6PYHyfoBR6zG62DGzptfLBxnREThAlcJyEfzJ4dq5rqExc1Xj3TPFE/9TH" crossorigin="anonymous" async defer></script>
+		<% } %>
 	</head>
 
   	<body class="kn-login">
@@ -176,8 +217,13 @@
             		<%-- Google button for authentication --%>
 	           		<div class="g-signin2" data-onsuccess="onSignIn"></div>
 	           	
-                <% } else { %>
-            	
+                <% } else if (AzureSignInConfig.isEnabled()){ %>
+            		<%-- Azure button for authentication --%>
+	           		<button class="btn-signin-azure" onclick="onAzureSignIn()">
+						<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" style="height: 1em; width: 1em; top: .125em; position: relative;"><title>MS-SymbolLockup</title><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg> Sign In
+	           		</button>
+	           		
+            	<% } else { %>
             	
             	<div class="col-xs-8">
            			<form class="form-signin"  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">

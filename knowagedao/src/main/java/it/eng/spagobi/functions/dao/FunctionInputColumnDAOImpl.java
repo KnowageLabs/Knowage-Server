@@ -41,7 +41,7 @@ public class FunctionInputColumnDAOImpl extends AbstractHibernateDAO implements 
 	static private Logger logger = Logger.getLogger(FunctionInputColumnDAOImpl.class);
 
 	@Override
-	public List<SbiFunctionInputColumn> loadFunctionInputColumnByFunctionId(int functionId) {
+	public List<SbiFunctionInputColumn> loadFunctionInputColumnByFunctionUuid(String functionUuid) {
 
 		logger.debug("IN");
 		Session session = null;
@@ -52,7 +52,7 @@ public class FunctionInputColumnDAOImpl extends AbstractHibernateDAO implements 
 
 			StringBuilder query = new StringBuilder();
 			query.append("from SbiFunctionInputColumn sfiv ");
-			query.append("where sfiv.sbiCatalogFunction.functionId = " + functionId);
+			query.append("where sfiv.sbiCatalogFunction.functionUuid = " + functionUuid);
 
 			Query hibQuery = session.createQuery(query.toString());
 

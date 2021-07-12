@@ -98,7 +98,6 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		String fileExtension = null;
 		IStatement statement = null;
 		ITransaction transaction = null;
-		Connection connection = null;
 		// HQL2SQLStatementRewriter queryRewriter = null;
 		String jpaQueryStr = null;
 		String sqlQuery = null;
@@ -180,31 +179,34 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			logger.debug("Exctracting fields ...");
 
 			IDataSource dataSource = (IDataSource) getEngineInstance().getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
-			connection = dataSource.getConnection();
 
-			fieldsReader = new SQLFieldsReader(sqlQuery, connection);
+			try (Connection connection = dataSource.getConnection()) {
 
-			try {
-				extractedFields = fieldsReader.readFields();
-			} catch (Exception e) {
-				logger.debug("Impossible to extract fields from query");
-				throw new SpagoBIEngineException("Impossible to extract fields from query: " + jpaQueryStr, e);
-			}
+				fieldsReader = new SQLFieldsReader(sqlQuery, connection);
 
-			logger.debug("Fields extracted succesfully");
+				try {
+					extractedFields = fieldsReader.readFields();
+				} catch (Exception e) {
+					logger.debug("Impossible to extract fields from query");
+					throw new SpagoBIEngineException("Impossible to extract fields from query: " + jpaQueryStr, e);
+				}
 
-			Assert.assertTrue(query.getSimpleSelectFields(true).size() + query.getInLineCalculatedSelectFields(true).size() == extractedFields.size(),
-					"The number of fields extracted from query resultset cannot be different from the number of fields specified into the query select clause");
+				logger.debug("Fields extracted succesfully");
 
-			decorateExtractedFields(extractedFields, query);
+				Assert.assertTrue(query.getSimpleSelectFields(true).size() + query.getInLineCalculatedSelectFields(true).size() == extractedFields.size(),
+						"The number of fields extracted from query resultset cannot be different from the number of fields specified into the query select clause");
 
-			params = new HashMap();
-			params.put("pagination", getPaginationParamVaue(mimeType));
+				decorateExtractedFields(extractedFields, query);
 
-			if (isXlsx(mimeType)) {
-				exportIntoXLSX(writeBackResponseInline, mimeType, statement, sqlQuery, extractedFields, exportLimit);
-			} else if (isCsv(mimeType)) {
-				exportIntoCSV(writeBackResponseInline, mimeType, fileExtension, transaction, sqlQuery);
+				params = new HashMap();
+				params.put("pagination", getPaginationParamVaue(mimeType));
+
+				if (isXlsx(mimeType)) {
+					exportIntoXLSX(writeBackResponseInline, mimeType, statement, sqlQuery, extractedFields, exportLimit);
+				} else if (isCsv(mimeType)) {
+					exportIntoCSV(writeBackResponseInline, mimeType, fileExtension, transaction, sqlQuery);
+				}
+
 			}
 
 		} catch (Throwable t) {

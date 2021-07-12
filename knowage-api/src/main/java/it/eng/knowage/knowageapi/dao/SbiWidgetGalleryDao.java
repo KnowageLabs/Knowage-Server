@@ -20,6 +20,7 @@ package it.eng.knowage.knowageapi.dao;
 import java.util.Collection;
 
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
+import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 
 public interface SbiWidgetGalleryDao {
 
@@ -27,19 +28,19 @@ public interface SbiWidgetGalleryDao {
 
 	String update(SbiWidgetGallery sbiWidgetGallery);
 
-	String updateCounter(SbiWidgetGallery sbiWidgetGallery);
+//	WidgetGalleryDTO updateCounter(SbiWidgetGallery sbiWidgetGallery);
 
-	SbiWidgetGallery findById(String id);
+	WidgetGalleryDTO findById(String id);
 
-	Collection<SbiWidgetGallery> findAll();
+	Collection<WidgetGalleryDTO> findAll();
 
-	int deleteById(String id);
+	WidgetGalleryDTO findByIdTenant(String id, String tenant);
 
-	SbiWidgetGallery findByIdTenant(String id, String tenant);
+	SbiWidgetGallery findByIdTenantSbiWidgetGallery(String id, String tenant);
 
-	Collection<SbiWidgetGallery> findAllByTenant(String tenant);
+	Collection<WidgetGalleryDTO> findAllByTenant(String tenant);
 
-	Collection<SbiWidgetGallery> findAllByTenantAndType(String tenant, String type);
+	Collection<WidgetGalleryDTO> findAllByTenantAndType(String tenant, String type);
 
 	int deleteByIdTenant(String id, String tenant);
 

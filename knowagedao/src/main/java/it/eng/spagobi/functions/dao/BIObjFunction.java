@@ -16,7 +16,7 @@ public class BIObjFunction implements Serializable {
 
 	private Integer biObjFunctionId;
 	private BIObject biObject;
-	private Integer functionId;
+	private String functionUuid;
 
 	public Integer getBiObjFunctionId() {
 		return biObjFunctionId;
@@ -34,11 +34,11 @@ public class BIObjFunction implements Serializable {
 		this.biObject = biObject;
 	}
 
-	public Integer getFunctionId() {
-		return functionId;
+	public String getFunctionUuid() {
+		return functionUuid;
 	}
 
-	public void setFunctionId(Integer functionId) {
-		this.functionId = functionId;
+	public void setFunctionUuid(String functionUuid) {
+		this.functionUuid = functionUuid;
 	}
 }

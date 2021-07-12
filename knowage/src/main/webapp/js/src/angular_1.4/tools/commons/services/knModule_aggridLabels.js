@@ -19,7 +19,27 @@ angular.module('sbiModule')
 	.factory('knModule_aggridLabels',
 		function(sbiModule_translate) {
 			return {
-				'noRowsToShow': sbiModule_translate.load('kn.table.norows')
+				noRowsToShow: sbiModule_translate.load('kn.table.norows'),
+				// Number Filter & Text Filter
+			    filterOoo: sbiModule_translate.load('kn.aggrid.filterOoo'),
+			    equals: sbiModule_translate.load('kn.aggrid.equals'),
+			    notEqual: sbiModule_translate.load('kn.aggrid.notEqual'),
+			    empty: sbiModule_translate.load('kn.aggrid.empty'),
+
+			    // Number Filter
+			    lessThan: sbiModule_translate.load('kn.aggrid.lessThan'),
+			    greaterThan: sbiModule_translate.load('kn.aggrid.greaterThan'),
+			    lessThanOrEqual: sbiModule_translate.load('kn.aggrid.lessThanOrEqual'),
+			    greaterThanOrEqual: sbiModule_translate.load('kn.aggrid.greaterThanOrEqual'),
+			    inRange: sbiModule_translate.load('kn.aggrid.inRange'),
+			    inRangeStart: sbiModule_translate.load('kn.aggrid.inRangeStart'),
+			    inRangeEnd: sbiModule_translate.load('kn.aggrid.inRangeEnd'),
+
+			    // Text Filter
+			    contains: sbiModule_translate.load('sbi.lookup.Contains'),
+			    notContains: sbiModule_translate.load('sbi.lookup.NotContains'),
+			    startsWith: sbiModule_translate.load('sbi.lookup.StartsWith'),
+			    endsWith: sbiModule_translate.load('sbi.lookup.EndsWith')
 			}
 	});
 })();

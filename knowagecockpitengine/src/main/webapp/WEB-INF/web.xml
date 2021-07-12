@@ -237,7 +237,4 @@
 	</context-param>
 	 END jboss RES -->
 
-	<!-- Multipart configuration -->
-
-
 </web-app>

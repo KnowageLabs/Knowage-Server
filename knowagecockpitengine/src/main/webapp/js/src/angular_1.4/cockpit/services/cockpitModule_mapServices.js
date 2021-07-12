@@ -298,117 +298,39 @@
 		}
 
 		ms.updateCoordinatesAndZoom = function(model, map, l, setValues){
-				var coord;
-				var zoom;
-				var source;
+			var coord;
+			var zoom;
+			var source;
 
-				/*
-				 * WORKAROUND : Fix center point for widgets with WKT layer saved
-				 * before the commit 44eff10
-				 */
-				if (!(model.content.currentView.center instanceof Array)
-						|| (model.content.currentView.center instanceof Array
-								&& isNaN(model.content.currentView.center[0]))) {
-					model.content.currentView.center = [0,0];
+			/*
+			 * WORKAROUND : Fix center point for widgets with WKT layer saved
+			 * before the commit 44eff10
+			 */
+			if (!(model.content.currentView.center instanceof Array)
+					|| (model.content.currentView.center instanceof Array
+							&& isNaN(model.content.currentView.center[0]))) {
+				model.content.currentView.center = [0,0];
+			}
+
+			var currView = map.getView();
+			if (model.content.autoCentering) {
+				source = l.getSource();
+
+				if (setValues) {
+					currView.fit(source.getExtent());
+				}
+			} else if (model.content.currentView.center[0] == 0 && model.content.currentView.center[1] == 0) {
+				source = l.getSource();
+
+				if (setValues) {
+					currView.fit(source.getExtent());
 				}
 
-				if (model.content.currentView.center[0] == 0 && model.content.currentView.center[1] == 0){
-					if (l.getSource() && l.getSource().getSource)
-						source = l.getSource().getSource(); //cluster case
-					else
-						source = l.getSource();
+				//update coordinates and zoom within the template
+				model.content.currentView.center = currView.getCenter();
+				model.content.currentView.zoom = currView.getZoom();
 
-					if (source.getFeatures().length>0){
-						if (source.getFeatures()[0].get("isWKT")){
-
-							var toSum = function(a,b) {
-								return [a[0]+b[0], a[1]+b[1]];
-							};
-
-							var geometry = source.getFeatures()[0].getGeometry();
-							if (geometry instanceof ol.geom.GeometryCollection) {
-
-								var coords = [];
-
-								// Center the map on all coordinates of all geometries
-								for (var i=0; i<geometry.getGeometries().length; i++) {
-									var coordinates = geometry.getGeometries()[i].getCoordinates();
-									// Coordinates can be an Array<Number> or Array<Array<Number>>
-									if (coordinates[0] instanceof Array) {
-										for (var j=0; j<coordinates.length; j++) {
-											coords.push(coordinates[j]);
-										}
-									} else {
-										coords.push(coordinates);
-									}
-								}
-								var length = coords.length;
-								coord = coords.reduce(toSum)
-									.map(function(element, index, array) {
-										return array[index] / length;
-									});
-
-							} else if (geometry instanceof ol.geom.LineString) {
-
-								var coordsMatrix = geometry.getCoordinates();
-								var length = coordsMatrix.length;
-
-								coord = coordsMatrix.reduce(toSum)
-									.map(function(element, index, array) {
-										return array[index] / length;
-									});
-
-							} else if (geometry instanceof ol.geom.Polygon) {
-
-								var coordsMatrix = geometry.getCoordinates();
-								var coords = [];
-
-								for (var i in coordsMatrix) {
-									var currCoordArray = coordsMatrix[i];
-									for (var j in currCoordArray) {
-										var currCoord = currCoordArray[j];
-										coords.push(currCoord);
-									}
-
-								}
-
-								var length = coords.length;
-								coord = coords.reduce(toSum)
-									.map(function(element, index, array) {
-										return array[index] / length;
-									});
-
-							} else if(geometry instanceof ol.geom.Point) {
-								coord = geometry.getCoordinates();
-							} else {
-								console.log("Cannot determine the center of geomerty: " + geometry);
-							}
-
-						} else {
-							//string && json
-							if (source.getFeatures()[0].getGeometry().getType().toUpperCase() == 'POINT')
-								coord = source.getFeatures()[0].getGeometry().getCoordinates();
-							else if (source.getFeatures()[0].getGeometry().getType().toUpperCase() == 'MULTIPOLYGON')
-								coord = source.getFeatures()[0].getGeometry().getCoordinates()[0][0][0];
-							else
-								coord = source.getFeatures()[0].getGeometry().getCoordinates()[0][0];
-						}
-					}
-					if(source.getFeatures().length>35){
-						zoom = 4;
-					}else{
-						zoom = 5;
-					}
-
-					//update coordinates and zoom within the template
-					model.content.currentView.center = coord;
-					model.content.currentView.zoom = zoom;
-
-					if (setValues){
-						map.getView().setCenter(coord);
-						map.getView().setZoom(zoom);
-					}
-				}
+			}
 		}
 
 

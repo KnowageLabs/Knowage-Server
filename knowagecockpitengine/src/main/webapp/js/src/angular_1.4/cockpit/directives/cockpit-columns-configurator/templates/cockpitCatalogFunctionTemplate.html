@@ -19,11 +19,11 @@
         		<div ng-show="selectedFunction">
         			<div ng-show="selectedFunction.description">
 	        			<md-subheader> {{::translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.description')}} </md-subheader>
-	        			<p layout-padding> {{selectedFunction.description}} </p>
+	        			<p style="margin: 0.5em" ng-bind-html="textToHtml(selectedFunction.description)"></p>
 	        		</div>
 	        		<div ng-show="selectedFunction.benchmarks">
 	        			<md-subheader> {{::translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.benchmarks')}} </md-subheader>
-        				<p layout-padding> {{selectedFunction.benchmarks}} </p>
+        				<p style="margin: 0.5em" ng-bind-html="textToHtml(selectedFunction.benchmarks)"></p>
         			</div>
         			<div ng-show="selectedFunction.inputColumns.length>0" style="min-height:200px;">
         				<md-subheader> {{::translate.load('sbi.cockpit.widgets.table.catalogFunctions.function.columnsSettings')}} </md-subheader>

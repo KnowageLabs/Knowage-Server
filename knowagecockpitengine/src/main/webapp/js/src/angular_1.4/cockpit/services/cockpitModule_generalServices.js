@@ -125,6 +125,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 						        .action('X')
 						        .hideDelay(3000));
 						cockpitModule_properties.DOCUMENT_ID=response.data.id;
+						window.parent.postMessage(cockpitModule_properties);
 					},
 					function(response){
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.error"));

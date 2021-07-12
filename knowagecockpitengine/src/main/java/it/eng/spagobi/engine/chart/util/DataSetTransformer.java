@@ -796,7 +796,9 @@ public class DataSetTransformer {
 		try {
 			String columnForGroupingSerie = "";
 			if (!groupSeriesBool) {
-				columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
+				if (dataColumnsMapper.get(groupedSerie) != null) {
+					columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
+				}
 			}
 
 			removeOrderColumn(dataColumnsMapper, drillOrder, categorieColumns);

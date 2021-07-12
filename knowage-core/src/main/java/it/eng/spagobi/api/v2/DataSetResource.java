@@ -61,6 +61,8 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
+import it.eng.knowage.functionscatalog.utils.CatalogFunctionException;
+import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -485,7 +487,9 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	private void setDriversIntoDsJSONConfig(IDataSet dataSet, SbiDataSet ds, JSONObject jsonSbiDataSet) throws Exception {
 		dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
-		if (dataSet instanceof QbeDataSet) {
+		if (dataSet instanceof FederatedDataSet) {
+			// Yes, we doesn't need to load the model
+		} else if (dataSet instanceof QbeDataSet) {
 			try {
 				Boolean loadDSwithDrivers = true;
 				ArrayList<HashMap<String, Object>> drivers = null;
@@ -495,7 +499,7 @@ public class DataSetResource extends AbstractDataSetResource {
 					jsonSbiDataSet.put("drivers", drivers);
 				}
 			} catch (Exception e) {
-				LogMF.error(logger, "Error loading dataset {0} with id {1}", new String[] { ds.getName(), ds.getId().getDsId().toString() });
+				LogMF.error(logger, e, "Error loading dataset {0} with id {1}", new String[] { ds.getName(), ds.getId().getDsId().toString() });
 				throw e;
 			}
 		}
@@ -735,6 +739,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			timing.stop();
 			return getDataStore(label, parameters, driversRuntimeMap, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize,
 					isNearRealtime, options, columns, widgetName);
+		} catch (CatalogFunctionException e) {
+			throw e;
 		} catch (Exception e) {
 			logger.error("Error loading dataset data from " + label, e);
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);

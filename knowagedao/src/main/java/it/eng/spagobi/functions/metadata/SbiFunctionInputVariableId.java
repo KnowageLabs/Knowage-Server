@@ -7,23 +7,27 @@ package it.eng.spagobi.functions.metadata;
  */
 public class SbiFunctionInputVariableId implements java.io.Serializable {
 
-	private int functionId;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 5802951016348664288L;
+	private String functionUuid;
 	private String varName;
 
 	public SbiFunctionInputVariableId() {
 	}
 
-	public SbiFunctionInputVariableId(int functionId, String varName) {
-		this.functionId = functionId;
+	public SbiFunctionInputVariableId(String functionUuid, String varName) {
+		this.functionUuid = functionUuid;
 		this.varName = varName;
 	}
 
-	public int getFunctionId() {
-		return this.functionId;
+	public String getFunctionUuid() {
+		return this.functionUuid;
 	}
 
-	public void setFunctionId(int functionId) {
-		this.functionId = functionId;
+	public void setFunctionUuid(String functionUuid) {
+		this.functionUuid = functionUuid;
 	}
 
 	public String getVarName() {
@@ -35,25 +39,31 @@ public class SbiFunctionInputVariableId implements java.io.Serializable {
 	}
 
 	@Override
-	public boolean equals(Object other) {
-		if ((this == other))
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		if ((other == null))
+		if (!(obj instanceof SbiFunctionInputVariableId))
 			return false;
-		if (!(other instanceof SbiFunctionInputVariableId))
+		SbiFunctionInputVariableId other = (SbiFunctionInputVariableId) obj;
+		if (functionUuid == null) {
+			if (other.functionUuid != null)
+				return false;
+		} else if (!functionUuid.equals(other.functionUuid))
 			return false;
-		SbiFunctionInputVariableId castOther = (SbiFunctionInputVariableId) other;
-
-		return (this.getFunctionId() == castOther.getFunctionId()) && ((this.getVarName() == castOther.getVarName())
-				|| (this.getVarName() != null && castOther.getVarName() != null && this.getVarName().equals(castOther.getVarName())));
+		if (varName == null) {
+			if (other.varName != null)
+				return false;
+		} else if (!varName.equals(other.varName))
+			return false;
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		int result = 17;
-
-		result = 37 * result + this.getFunctionId();
-		result = 37 * result + (getVarName() == null ? 0 : this.getVarName().hashCode());
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((functionUuid == null) ? 0 : functionUuid.hashCode());
+		result = prime * result + ((varName == null) ? 0 : varName.hashCode());
 		return result;
 	}
 

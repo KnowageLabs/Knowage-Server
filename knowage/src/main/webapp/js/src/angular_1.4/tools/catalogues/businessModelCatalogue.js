@@ -760,14 +760,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					clickOutsideToClose:true,
 					escapeToClose :true,
 					fullscreen: true,
-//					locals:{url:sbiModule_config.contextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp&datasourceId='+dsId}
-//					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name}
 					locals:{
 						url : sbiModule_config.contextMetaName + "/restful-services/1.0/pages/edit?"
 							+ "datasourceId=" + dsId
 							+ "&user_id=" + sbiModule_user.userUniqueIdentifier
 							+ "&bmId=" + $scope.selectedBusinessModel.id
-							+ "&bmName=" + $scope.selectedBusinessModel.name
+							+ "&bmName=" + encodeURIComponent($scope.selectedBusinessModel.name)
 							+ (($scope.selectedBusinessModel.tablePrefixLike) ? "&tablePrefixLike=" + $scope.selectedBusinessModel.tablePrefixLike : "")
 							+ (($scope.selectedBusinessModel.tablePrefixNotLike) ? "&tablePrefixNotLike=" + $scope.selectedBusinessModel.tablePrefixNotLike : "")
 						}

@@ -34,12 +34,6 @@ public class SelfServiceDataSetDTO {
 	@FormParam("persist")
 	private String persist;
 
-	@FormParam("persistTablePrefix")
-	private String persistTablePrefix;
-
-	@FormParam("persistTableName")
-	private String persistTableName;
-
 	@FormParam("tablePrefix")
 	private String tablePrefix;
 
@@ -144,29 +138,12 @@ public class SelfServiceDataSetDTO {
 		this.persist = persist;
 	}
 
-	public String getPersistTablePrefix() {
-		return persistTablePrefix;
-	}
-
-	public void setPersistTablePrefix(String persistTablePrefix) {
-		this.persistTablePrefix = persistTablePrefix;
-	}
-
 	public String getTablePrefix() {
 		return tablePrefix;
 	}
 
 	public void setTablePrefix(String tablePrefix) {
 		this.tablePrefix = tablePrefix;
-	}
-
-	@Size(max = 50)
-	public String getPersistTableName() {
-		return persistTableName;
-	}
-
-	public void setPersistTableName(String persistTableName) {
-		this.persistTableName = persistTableName;
 	}
 
 	@Size(max = 50)
