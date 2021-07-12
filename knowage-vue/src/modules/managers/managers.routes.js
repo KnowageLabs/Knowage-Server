@@ -7,6 +7,7 @@ import profileAttributesRoutes from '@/modules/managers/profileAttributesManagem
 import rolesManagementRoutes from '@/modules/managers/rolesManagement/RolesManagement.routes.js'
 import cacheManagementRoutes from '@/modules/managers/cacheManagement/CacheManagement.routes.js'
 import newsManagementRoutes from '@/modules/managers/newsManagement/NewsManagement.routes.js'
+import tenantManagementRoutes from '@/modules/managers/tenantManagement/TenantManagement.routes.js'
 
 const baseRoutes = []
 
@@ -20,5 +21,6 @@ const routes = baseRoutes
     .concat(rolesManagementRoutes)
     .concat(cacheManagementRoutes)
     .concat(newsManagementRoutes)
+    .concat(tenantManagementRoutes)
 
 export default routes
