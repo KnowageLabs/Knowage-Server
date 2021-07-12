@@ -39,6 +39,7 @@
         "name": "name",
         "new": "new",
         "next": "next",
+        "run": "Run",
         "save": "save",
         "search": "search",
         "table": {
