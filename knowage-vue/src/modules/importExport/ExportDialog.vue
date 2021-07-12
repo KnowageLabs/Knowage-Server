@@ -1,9 +1,10 @@
 <template>
 	<Dialog class="kn-dialog--toolbar--primary exportDialog" v-bind:visible="visibility" :header="$t('common.export')" :closable="false" modal>
 		<div class="exportDialogContent">
-			<div class="p-field">
-				<InputText class="kn-material-input fileNameInputText" type="text" v-model="fileName" maxlength="50" :placeholder="$t('importExport.filenamePlaceholder')" />
-			</div>
+			<span class="p-float-label">
+				<InputText class="kn-material-input fileNameInputText" type="text" v-model="fileName" maxlength="50" />
+				<label class="kn-material-input-label" for="label">{{ $t('importExport.filenamePlaceholder') }}</label>
+			</span>
 		</div>
 		<template #footer>
 			<Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="closeDialog" />
@@ -42,14 +43,18 @@
 		min-width: 600px;
 		width: 60%;
 		max-width: 1200px;
-		.fileNameInputText {
-			margin: 5px;
-		}
+
 		.p-fileupload-buttonbar {
 			border: none;
 			.p-button:not(.p-fileupload-choose) {
 				display: none;
 			}
 		}
+	}
+	.fileNameInputText {
+		width: 100%;
+	}
+	.exportDialogContent {
+		padding: 16px;
 	}
 </style>

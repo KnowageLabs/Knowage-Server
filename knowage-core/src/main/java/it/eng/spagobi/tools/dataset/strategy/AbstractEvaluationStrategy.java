@@ -38,7 +38,9 @@ import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
@@ -66,7 +68,29 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
 		IDataStore dataStore;
 		if (isUnsatisfiedFilter(filter)) {
-			dataStore = new DataStore(dataSet.getMetadata());
+			/*
+			 * In this case we should check if there are aggregation alias and add them to right names for metadata fields.
+			 */
+			IMetaData metadata = dataSet.getMetadata();
+			IMetaData newMeta = new MetaData();
+			for (AbstractSelectionField selec : projections) {
+				for (int i = 0; i < metadata.getFieldsMeta().size(); i++) {
+					IFieldMetaData meta = (IFieldMetaData) metadata.getFieldsMeta().get(i);
+					if (selec.getName().equals(meta.getName())) {
+						if (selec instanceof Projection) {
+							Projection selP = (Projection) selec;
+							meta.setAlias(selP.getAlias());
+							newMeta.addFiedMeta(meta);
+						} else if (selec instanceof DataStoreCalculatedField) {
+							DataStoreCalculatedField selP = (DataStoreCalculatedField) selec;
+							meta.setAlias(selP.getAlias());
+							newMeta.addFiedMeta(meta);
+						}
+					}
+				}
+
+			}
+			dataStore = new DataStore(newMeta);
 		} else {
 			List<AbstractSelectionField> newProjections = applyTotalsFunctionsToFormulas(dataSet, projections, filter, maxRowCount, indexes);
 			dataStore = execute(newProjections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);

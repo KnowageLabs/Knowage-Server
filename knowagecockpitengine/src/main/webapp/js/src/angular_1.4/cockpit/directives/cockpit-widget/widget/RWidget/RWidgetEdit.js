@@ -259,12 +259,14 @@ function RWidgetEditControllerFunction(
 
 	$scope.checkAliases = function(){
         var columns = $scope.newModel.content.columnSelectedOfDataset;
-        for(var i = 0; i < columns.length - 1; i++){
-            for(var j = i + 1; j < columns.length; j++){
-                if(columns[i].alias == columns[j].alias){
-                    return false;
-                }
-            }
+        if (columns) {
+	        for(var i = 0; i < columns.length - 1; i++){
+	            for(var j = i + 1; j < columns.length; j++){
+	                if(columns[i].alias == columns[j].alias){
+	                    return false;
+	                }
+	            }
+	        }
         }
         return true;
     }

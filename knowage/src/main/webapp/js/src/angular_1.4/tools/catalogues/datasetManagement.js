@@ -4004,16 +4004,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		  scope:$scope,
 		  preserveScope: true,
 	      controller: DialogLinkDataSetController,
-	      templateUrl: sbiModule_config.contextName +"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/LinkDatasetIFrame.jsp",
+	      templateUrl: sbiModule_config.contextName +"/restful-services/publish?PUBLISHER=LinkDatasetIFrame",
 	      clickOutsideToClose:true,
 	      escapeToClose :true,
 	      fullscreen: true
 	    })
-    	//document.location.href = sbiModule_config.contextName + "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+$scope.selectedDataSet.id+"&label="+$scope.selectedDataSet.label;
     }
 
     function DialogLinkDataSetController($scope,$mdDialog,sbiModule_config){
-    	$scope.iframeUrl = sbiModule_config.contextName + "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+$scope.selectedDataSet.id+"&label="+$scope.selectedDataSet.label;
+    	$scope.iframeUrl = sbiModule_config.contextName + "/restful-services/publish?PUBLISHER=linkDataset&id="+$scope.selectedDataSet.id+"&label="+$scope.selectedDataSet.label;
 		$scope.cancelDialog = function() {
 
 			$mdDialog.cancel();

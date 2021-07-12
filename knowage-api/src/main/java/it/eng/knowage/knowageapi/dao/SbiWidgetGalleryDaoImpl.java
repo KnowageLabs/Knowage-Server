@@ -25,13 +25,14 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
@@ -47,29 +48,27 @@ import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
  * @author Hibernate Tools
  */
 @Component
+@Transactional
 public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 
 	private static final Logger logger = Logger.getLogger(SbiWidgetGalleryDaoImpl.class.getName());
 
-	@Autowired
-	@Qualifier("knowage-gallery")
+	@PersistenceContext(unitName = "knowage-gallery")
 	private EntityManager em;
 
 	@Override
+	@Transactional(value = TxType.REQUIRED)
 	public String create(SbiWidgetGallery sbiWidgetGallery) {
 
-		em.getTransaction().begin();
 		// persist the entity
 		em.persist(sbiWidgetGallery);
-		em.getTransaction().commit();
 		return sbiWidgetGallery.getId().getUuid();
 	}
 
 	@Override
+	@Transactional(value = TxType.REQUIRED)
 	public String update(SbiWidgetGallery sbiWidgetGallery) {
 		logger.debug("IN");
-
-		em.getTransaction().begin();
 
 		SbiWidgetGallery sbiWidgetGalleryFound = null;
 		List<SbiWidgetGallery> resultList = em
@@ -95,7 +94,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		sbiWidgetGalleryFound.getSbiWidgetGalleryTags().clear();
 		sbiWidgetGalleryFound.getSbiWidgetGalleryTags().addAll(sbiWidgetGallery.getSbiWidgetGalleryTags());
 		em.merge(sbiWidgetGalleryFound);
-		em.getTransaction().commit();
+
 		logger.debug("OUT");
 		return sbiWidgetGallery.getId().getUuid();
 	}
@@ -164,9 +163,10 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 	}
 
 	@Override
+	@Transactional(value = TxType.REQUIRED)
 	public Collection<WidgetGalleryDTO> findAllByTenant(String tenant) {
 		logger.debug("IN");
-		em.getTransaction().begin();
+
 		List<WidgetGalleryDTO> galeryDtoss = new ArrayList<WidgetGalleryDTO>();
 		Collection<SbiWidgetGallery> results = em.createQuery("SELECT t FROM SbiWidgetGallery t where t.id.organization = :value2", SbiWidgetGallery.class)
 				.setParameter("value2", tenant).getResultList();
@@ -178,15 +178,15 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 				throw new KnowageRuntimeException(e.getMessage());
 			}
 		}
-		em.getTransaction().commit();
+
 		logger.debug("OUT");
 		return galeryDtoss;
 	}
 
 	@Override
+	@Transactional(value = TxType.REQUIRED)
 	public int deleteByIdTenant(String id, String tenant) {
 		logger.debug("IN");
-		em.getTransaction().begin();
 
 		SbiWidgetGallery result = null;
 		List<SbiWidgetGallery> resultList = em
@@ -197,42 +197,16 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		}
 
 		em.remove(result);
-		em.getTransaction().commit();
+
 		logger.debug("OUT");
 		return 1;
 	}
 
-//	@Override
-//	public WidgetGalleryDTO updateCounter(SbiWidgetGallery sbiWidgetGallery) {
-//		logger.debug("IN");
-//		em.getTransaction().begin();
-//		WidgetGalleryDTO returnValue = null;
-//		SbiWidgetGallery sbiWidgetGalleryFound = null;
-//		List<SbiWidgetGallery> resultList = em
-//				.createQuery("SELECT t FROM SbiWidgetGallery t where t.id.uuid = :value1 and t.id.organization = :value2", SbiWidgetGallery.class)
-//				.setParameter("value1", sbiWidgetGallery.getId().getUuid()).setParameter("value2", sbiWidgetGallery.getId().getOrganization()).getResultList();
-//		if (resultList.size() == 1) {
-//			sbiWidgetGalleryFound = resultList.get(0);
-//		}
-//
-//		int counter = sbiWidgetGallery.getUsageCounter() + 1;
-//		sbiWidgetGalleryFound.setUsageCounter(counter);
-//		em.merge(sbiWidgetGalleryFound);
-//		em.getTransaction().commit();
-//		try {
-//			returnValue = mapTo(sbiWidgetGalleryFound);
-//		} catch (JSONException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		logger.debug("OUT");
-//		return returnValue;
-//	}
-
 	@Override
+	@Transactional(value = TxType.REQUIRED)
 	public Collection<WidgetGalleryDTO> findAllByTenantAndType(String tenant, String type) {
 		logger.debug("IN");
-		em.getTransaction().begin();
+
 		Collection<SbiWidgetGallery> results = em
 				.createQuery("SELECT t FROM SbiWidgetGallery t where t.id.organization = :tenant and type=:valueType", SbiWidgetGallery.class)
 				.setParameter("tenant", tenant).setParameter("valueType", type).getResultList();
@@ -245,7 +219,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 				throw new KnowageRuntimeException(e.getMessage());
 			}
 		}
-		em.getTransaction().commit();
+
 		logger.debug("OUT");
 		return galeryDtoss;
 	}
@@ -299,6 +273,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		WidgetGalleryDTO toRet = new WidgetGalleryDTO();
 
 		toRet.setAuthor(sbiWidgetGallery.getAuthor());
+		toRet.setDescription(sbiWidgetGallery.getDescription());
 		toRet.setId(sbiWidgetGallery.getId().getUuid());
 		toRet.setName(sbiWidgetGallery.getName());
 		toRet.setType(sbiWidgetGallery.getType());

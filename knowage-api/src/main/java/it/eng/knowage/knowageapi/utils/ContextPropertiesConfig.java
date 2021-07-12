@@ -41,6 +41,7 @@ public class ContextPropertiesConfig {
 
 	@Autowired
 	public ContextPropertiesConfig(@Value("${jndi.lookup.hmackey}") String hmacKey, @Value("${jndi.lookup.resourcepath}") String resourcePathKey) {
+		// TODO : values for static attributes shouldn't not be injected in a non-static way
 		this.hmacKey = hmacKey;
 		this.resourcePathKey = resourcePathKey;
 	}

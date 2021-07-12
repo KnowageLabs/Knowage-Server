@@ -776,6 +776,8 @@ public class CrossTabHTMLSerializer {
 		List<MeasureInfo> measuresInfo = crossTab.getMeasures();
 		List<SourceBean> measureHeaders = new ArrayList<SourceBean>();
 		List<String> columnsSpecification = crossTab.getColumnsSpecification();
+		boolean isDataNoStandardStyle = false;
+
 		Monitor internalserializeData1 = null;
 		Monitor internalserializeData2 = null;
 		Monitor internalserializeData3 = null;
@@ -915,8 +917,16 @@ public class CrossTabHTMLSerializer {
 							if (textColor != null && !textColor.isEmpty())
 								dataStyle += "color:" + textColor + ";";
 						}
-
-						aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
+						// if (!dataStyle.equals(DEFAULT_STYLE + DEFAULT_HEADER_STYLE + DEFAULT_CENTER_ALIGN) ) {
+						if (!isStandardStyle(dataStyle)) {
+							aColumn.setAttribute(STYLE_ATTRIBUTE, dataStyle);
+							classType += "NoStandardStyle";
+							isDataNoStandardStyle = true;
+							aColumn.setAttribute(CLASS_ATTRIBUTE, "dataNoStandardStyle");
+						} else {
+							isDataNoStandardStyle = false;
+							aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
+						}
 
 					} else {
 						String totalStyle = getConfiguratedElementStyle(null, cellType, measureConfig, crossTab, "text-align");
@@ -1062,7 +1072,11 @@ public class CrossTabHTMLSerializer {
 					}
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
-					aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
+					if (isDataNoStandardStyle)
+						aColumn.setAttribute(CLASS_ATTRIBUTE, "dataNoStandardStyle");
+					else
+						aColumn.setAttribute(CLASS_ATTRIBUTE, "data");
+
 					aColumn.setCharacters(text);
 				}
 				aRow.setAttribute(aColumn);
@@ -1070,6 +1084,18 @@ public class CrossTabHTMLSerializer {
 			table.setAttribute(aRow);
 		}
 		return table;
+	}
+
+	boolean isStandardStyle(String style) {
+		if (style.equals(DEFAULT_STYLE))
+			return true;
+		else {
+			// we consider the style to be standard even if the measure format is set
+			String remainder = style.replace(DEFAULT_STYLE, "");
+			if (remainder.equals("format:#.###,##") || remainder.equals("format:#,###.##"))
+				return true;
+		}
+		return false;
 	}
 
 	List<Measure> getSubtotalsMeasures(List<Measure> allMeasures) throws JSONException {

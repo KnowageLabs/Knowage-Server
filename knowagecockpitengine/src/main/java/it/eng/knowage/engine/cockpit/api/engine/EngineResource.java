@@ -159,7 +159,7 @@ public class EngineResource extends AbstractCockpitEngineResource {
 		ret.add(Widget.builder().withName("Selector").withDescKey("sbi.cockpit.editor.newwidget.description.selector").withImg("9.png")
 				.withCssClass("fa fa-caret-square-o-down").withType("selector").withTag("selector").build());
 
-		if (functionalities.contains(EDIT_PYTHON_SCRIPTS)) {
+		if (functionalities.contains(EDIT_PYTHON_SCRIPTS) && isWidgetAllowedByProduct("Python/R")) {
 			ret.add(Widget.builder().withName("Python").withDescKey("sbi.cockpit.editor.newwidget.description.python").withImg("10.png")
 					.withCssClass("fab fa-python").withType("python").withTag("python").build());
 
@@ -167,17 +167,29 @@ public class EngineResource extends AbstractCockpitEngineResource {
 					.withType("r").withTag("r").build());
 		}
 
-		if (functionalities.contains(DISCOVERY_WIDGET_USE)) {
+		if (functionalities.contains(DISCOVERY_WIDGET_USE) && isWidgetAllowedByProduct("Discovery")) {
 
 			ret.add(Widget.builder().withName("Discovery").withDescKey("sbi.cockpit.editor.newwidget.description.discovery")/* TODO : .withImg(???) */
 					.withCssClass("fa fa-rocket").withType("discovery").withTag("discovery").build());
 		}
-		if (functionalities.contains(CREATE_CUSTOM_CHART)) {
+		if (functionalities.contains(CREATE_CUSTOM_CHART) && isWidgetAllowedByProduct("CustomChart")) {
 			ret.add(Widget.builder().withName("Custom Chart").withDescKey("sbi.cockpit.editor.newwidget.description.custom.chart").withImg("4.png")
 					.withCssClass("fas fa-bezier-curve").withType("customchart").withTag("customChart").build());
 		}
 
 		return ret;
+	}
+
+	private boolean isWidgetAllowedByProduct(String type) {
+		boolean toReturn = false;
+		try {
+			ProductProfilerClient profiler = new ProductProfilerClient();
+			String userId = (String) UserProfileManager.getProfile().getUserUniqueIdentifier();
+			toReturn = profiler.isAllowedToCreateWidget(userId, type);
+		} catch (Exception e) {
+			logger.warn("Error while profiling Python Widget permissions");
+		}
+		return toReturn;
 	}
 }
 

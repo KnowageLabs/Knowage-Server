@@ -153,22 +153,21 @@ sbiM.config(['$httpProvider',function ($httpProvider) {
     	try {
     		var currentWindow = window;
     		var parentWindow = parent;
-    		while (parentWindow != currentWindow) {
-    			if (parentWindow.sessionExpiredSpagoBIJS) {
-    				parentWindow.location = loginUrl;
-    				sessionExpiredSpagoBIJSFound = true;
-    				break;
-    			} else {
-    				currentWindow = parentWindow;
+    		function setParentUrl(currentWindow, parentWindow){
+    			if(parentWindow == currentWindow){
+    				parentWindow.parent.postMessage({
+    					'status': 401
+    				     }, "*")
+        		}else{
+        			currentWindow = parentWindow;
     				parentWindow = currentWindow.parent;
-    			}
+    				setParentUrl(currentWindow,parentWindow);
+        		}
     		}
+    		setParentUrl(currentWindow, parentWindow);
+    		
     	} catch (err) {
     		console.log(err);
-    	}
-    	
-    	if (!sessionExpiredSpagoBIJSFound) {
-    		window.location = loginUrl;
     	}
     };
 }]);
@@ -789,7 +788,7 @@ sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModu
 		$mdDialog.show({
 			controller: function($scope,$mdDialog,translate){
     	  		$scope.translate=translate;
-    	  		$scope.url= sbiModule_config.contextName + '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?'+data;
+    	  		$scope.url= sbiModule_config.contextName + '/restful-services/publish?PUBLISHER=glossaryHelpOnline?'+data;
     	  		$scope.close = function() {
    		    		$mdDialog.hide();
    		  		};

@@ -3,6 +3,7 @@ package it.eng.knowage.mail;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
@@ -22,6 +23,7 @@ import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
  * <pre>
  * <ul>
  * <li>USER_%02d</li>
+ * <li>FROM_%02d</li>
  * <li>PASSWORD_%02d</li>
  * <li>TO_%02d</li>
  * <li>HOST_%02d</li>
@@ -34,6 +36,7 @@ import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
  * <pre>
  * <ul>
  * <li>USER_01=myuser</li>
+ * <li>FROM_01=myuser</li>
  * <li>PASSWORD_01=mypass</li>
  * <li>TO_01=to@domain.com</li>
  * <li>HOST_01=myhost</li>
@@ -51,6 +54,7 @@ public class MailSessionBuilderTest {
 
 	private static class Data {
 		String user = null;
+		String from = null;
 		String password = null;
 		String to = null;
 		String host = null;
@@ -69,6 +73,7 @@ public class MailSessionBuilderTest {
 			String suffix = String.format("%02d", i);
 
 			String userKey = "USER_" + suffix;
+			String fromKey = "FROM_" + suffix;
 			String passwordKey = "PASSWORD_" + suffix;
 			String toKey = "TO_" + suffix;
 			String hostKey = "HOST_" + suffix;
@@ -79,6 +84,7 @@ public class MailSessionBuilderTest {
 				Data data = new Data();
 
 				data.user = getenv.get(userKey);
+				data.from = Optional.ofNullable(getenv.get(fromKey)).orElse(data.user);
 				data.password = getenv.get(passwordKey);
 				data.to = getenv.get(toKey);
 				data.host = getenv.get(hostKey);
@@ -102,7 +108,7 @@ public class MailSessionBuilderTest {
 			SessionFacade sessionFacade = MailSessionBuilder.newInstance()
 				.setHost(data.host)
 				.setPort(data.port)
-				.setFromAddress(data.user)
+				.setFromAddress(data.from)
 				.setUser(data.user)
 				.setPassword(data.password)
 				.setSecurityMode(data.security)

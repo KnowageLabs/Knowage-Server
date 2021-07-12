@@ -94,7 +94,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				parameterStr=jsonToURI(outputParameter);
 			}
 			targetUrl= sbiModule_config.contextName
-			+ '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp'
+			+ '/restful-services/publish?PUBLISHER=documentExecutionNg'
 			+ '&OBJECT_ID=' + doc.document.id
 			+ '&OBJECT_LABEL=' + doc.document.label
 			+ '&SELECTED_ROLE=' + selectedRole.name

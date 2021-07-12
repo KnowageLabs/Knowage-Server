@@ -24,6 +24,8 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import it.eng.spagobi.services.validation.AlphanumericNoSpaces;
 import it.eng.spagobi.services.validation.CodeConstraint;
@@ -32,6 +34,7 @@ import it.eng.spagobi.services.validation.UUIDAlphanumericNoSpaces;
 import it.eng.spagobi.services.validation.Xss;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(Include.NON_NULL)
 public class WidgetGalleryDTO {
 
 	@UUIDAlphanumericNoSpaces

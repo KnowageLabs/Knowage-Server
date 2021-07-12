@@ -1,0 +1,333 @@
+<template>
+    <div class="kn-page">
+        <div class="kn-page-content p-grid p-m-0">
+            <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
+                <Toolbar class="kn-toolbar kn-toolbar--primary">
+                    <template #left>
+                        {{ $t('managers.usersManagement.title') }}
+                    </template>
+                    <template #right>
+                        <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
+                    </template>
+                </Toolbar>
+                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <div v-if="!loading">
+                    <UsersListBox :users="users" :loading="loading" @selectedUser="onUserSelect" @deleteUser="onUserDelete" data-test="users-list"></UsersListBox>
+                </div>
+            </div>
+
+            <KnHint :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'" v-if="hiddenForm"></KnHint>
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" :hidden="hiddenForm">
+                <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                    <template #left>
+                        {{ userDetailsForm.userId }}
+                    </template>
+                    <template #right>
+                        <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="v$.userDetailsForm.$invalid" @click="saveUser" />
+                        <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeForm" />
+                    </template>
+                </Toolbar>
+                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <div class="card">
+                    <TabView class="tabview-custom kn-tab" ref="usersFormTab">
+                        <TabPanel>
+                            <template #header>
+                                <span>{{ $t('managers.usersManagement.detail') }}</span>
+                            </template>
+                            <DetailFormTab :formInsert="formInsert" :formValues="userDetailsForm" :vobj="v$" :disabledUID="disableUsername" @dataChanged="dirty = true" @unlock="unlockUser($event)"></DetailFormTab>
+                        </TabPanel>
+
+                        <TabPanel>
+                            <template #header>
+                                <span>{{ $t('managers.usersManagement.roles') }}</span>
+                            </template>
+                            <RolesTab :defRole="defaultRole" :rolesList="roles" :selected="selectedRoles" @changed="setSelectedRoles($event)" @setDefaultRole="setDefaultRoleValue($event)"></RolesTab>
+                        </TabPanel>
+
+                        <TabPanel>
+                            <template #header>
+                                <span>{{ $t('managers.usersManagement.attributes') }}</span>
+                            </template>
+                            <UserAttributesForm :attributes="attributes" v-model="attributesForm" @formDirty="onFormDirty"></UserAttributesForm>
+                        </TabPanel>
+                    </TabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+import { iUser, iRole, iAttribute } from './UsersManagement'
+import useValidate from '@vuelidate/core'
+import axios from 'axios'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
+import KnHint from '@/components/UI/KnHint.vue'
+import RolesTab from './UserRolesTab/RolesTab.vue'
+import DetailFormTab from './UserDetailTab/DetailFormTab.vue'
+import UsersListBox from './UsersListBox.vue'
+import UserAttributesForm from './UserAttributesTab/UserAttributesForm.vue'
+import detailFormTabValidationDescriptor from './UserDetailTab/DetailFormTabValidationDescriptor.json'
+import { sameAs } from '@vuelidate/validators'
+
+export default defineComponent({
+    name: 'user-management',
+    components: { UsersListBox, TabView, TabPanel, KnFabButton, KnHint, RolesTab, DetailFormTab, UserAttributesForm },
+    data() {
+        return {
+            v$: useValidate() as any,
+            apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+            users: [] as iUser[],
+            roles: [] as iRole[],
+            detailFormTabValidationDescriptor: detailFormTabValidationDescriptor,
+            attributes: [],
+            userDetailsForm: {} as any,
+            dirty: false,
+            formInsert: true,
+            attributesForm: {},
+            tempAttributes: {},
+            defaultRole: null,
+            hiddenForm: true,
+            disableUsername: true,
+            loading: false,
+            selectedRoles: [] as iRole[]
+        }
+    },
+    validations() {
+        const customValidators: ICustomValidatorMap = {
+            'custom-required': (value) => {
+                return !this.formInsert || value
+            },
+            'custom-sameAs': sameAs(this.userDetailsForm.password)
+        }
+        const validationObject = {
+            userDetailsForm: createValidations('userDetailsForm', detailFormTabValidationDescriptor.validations.userDetailsForm, customValidators)
+        }
+
+        return validationObject
+    },
+    async created() {
+        await this.loadAllUsers()
+        await this.loadAllRoles()
+        await this.loadAllAttributes()
+    },
+    methods: {
+        async loadAllUsers() {
+            this.loading = true
+            axios
+                .get(this.apiUrl + 'users')
+                .then((response) => {
+                    this.users = response.data
+                })
+                .finally(() => (this.loading = false))
+        },
+        async loadAllRoles() {
+            this.loading = true
+            await axios
+                .get(this.apiUrl + 'roles')
+                .then((response) => {
+                    this.roles = response.data
+                })
+                .finally(() => (this.loading = false))
+        },
+        async loadAllAttributes() {
+            this.loading = true
+            await axios
+                .get(this.apiUrl + 'attributes')
+                .then((response) => {
+                    this.attributes = response.data
+                })
+                .finally(() => (this.loading = false))
+        },
+        setDefaultRoleValue(defaultRole: any) {
+            this.defaultRole = defaultRole
+        },
+        setSelectedRoles(roles: iRole[]) {
+            this.selectedRoles = roles
+            this.v$.$reset()
+        },
+        async showForm() {
+            this.tempAttributes = {}
+            this.attributesForm = {}
+            this.disableUsername = false
+            this.hiddenForm = false
+            this.selectedRoles = []
+            // TODO: Izmestiti ove pocetne vrednosti u descriptor ???
+            this.userDetailsForm.id = null
+            this.userDetailsForm.userId = ''
+            this.userDetailsForm.fullName = ''
+            this.userDetailsForm.failedLoginAttempts = 0
+            this.userDetailsForm.sbiExtUserRoleses = []
+            this.userDetailsForm.sbiUserAttributeses = {}
+
+            this.formInsert = true
+            this.dirty = false
+            this.v$.$reset()
+
+            this.populateForms(this.userDetailsForm)
+        },
+        getRoleId() {
+            let defaultRoleId: any
+            this.selectedRoles.length == 1 ? (defaultRoleId = this.selectedRoles[0]) : (defaultRoleId = this.defaultRole)
+
+            if (typeof defaultRoleId === 'object') {
+                defaultRoleId = defaultRoleId.id
+            }
+            return defaultRoleId
+        },
+        formatUserObject() {
+            delete this.userDetailsForm.passwordConfirm
+            this.userDetailsForm['defaultRoleId'] = this.getRoleId()
+            this.userDetailsForm['sbiUserAttributeses'] = { ...this.attributesForm }
+            this.userDetailsForm['sbiExtUserRoleses'] = this.selectedRoles ? [...this.selectedRoles.map((selRole) => selRole.id)] : []
+        },
+        onFormDirty() {
+            this.dirty = true
+        },
+        saveOrUpdateUser(user: iUser) {
+            const endpointPath = `${process.env.VUE_APP_RESTFUL_SERVICES_PATH}/2.0/users`
+            return this.userDetailsForm.id ? axios.put<iUser>(`${endpointPath}/${user.id}`, user) : axios.post<iUser>(endpointPath, user)
+        },
+        async saveUser() {
+            this.loading = true
+            this.formatUserObject()
+            this.saveOrUpdateUser(this.userDetailsForm)
+                .then(() => {
+                    this.dirty = false
+                    this.loadAllUsers()
+                    this.$store.commit('setInfo', {
+                        title: this.$t('managers.usersManagement.info.createTitle'),
+                        msg: this.$t('managers.usersManagement.info.createMessage')
+                    })
+                })
+                .catch((error) => {
+                    console.log(error.response)
+                })
+                .finally(() => {
+                    this.loading = false
+                })
+        },
+        onUserDelete(id: number) {
+            this.loading = true
+            axios
+                .delete(`${process.env.VUE_APP_RESTFUL_SERVICES_PATH}/2.0/users/${id}`)
+                .then(() => {
+                    this.loadAllUsers()
+                    this.$store.commit('setInfo', {
+                        title: this.$t('managers.usersManagement.info.deleteTitle'),
+                        msg: this.$t('managers.usersManagement.info.deleteMessage')
+                    })
+                })
+                .catch((error) => {
+                    console.log(error.response)
+                })
+                .finally(() => {
+                    this.hiddenForm = true
+                    this.loading = false
+                })
+        },
+        async unlockUser() {
+            this.userDetailsForm.failedLoginAttempts = 0
+            await this.saveUser()
+        },
+        async onUserSelect(userSelected: any) {
+            this.formInsert = false
+            if (this.dirty) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.populateForms(userSelected)
+                        this.dirty = false
+                    },
+                    reject: () => {}
+                })
+            } else {
+                this.populateForms(userSelected)
+            }
+        },
+        populateForms(userObj: any) {
+            this.dirty = false
+            this.attributesForm = {}
+            this.hiddenForm = false
+            this.disableUsername = true
+            this.defaultRole = userObj.defaultRoleId
+            this.selectedRoles = this.getSelectedUserRoles(userObj.sbiExtUserRoleses)
+            this.userDetailsForm = { ...userObj }
+            this.populateAttributesForm(userObj.sbiUserAttributeses)
+        },
+        // TODO: na new se ne sklanjaju stare vrednosti
+        populateAttributesForm(userAttributeValues: any) {
+            const tmp = {}
+            this.attributes.forEach((attribute: iAttribute) => {
+                let obj = {}
+                obj[attribute.attributeName] = userAttributeValues && userAttributeValues[attribute.attributeId] ? userAttributeValues[attribute.attributeId][attribute.attributeName] : null
+                tmp[attribute.attributeId] = obj
+            })
+            this.attributesForm = { ...tmp }
+        },
+        getSelectedUserRoles(userRoles: number[]) {
+            return this.roles ? [...this.roles.filter((role) => userRoles && userRoles.find((userRoleId) => role.id === userRoleId))] : []
+        },
+        closeForm() {
+            if (this.dirty) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.hiddenForm = true
+                        this.dirty = false
+                    },
+                    reject: () => {}
+                })
+            } else {
+                this.hiddenForm = true
+            }
+        }
+    }
+})
+</script>
+
+<style lang="scss" scoped>
+.table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @media screen and (max-width: 960px) {
+        align-items: start;
+    }
+}
+
+.record-image {
+    width: 50px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.p-dialog .record-image {
+    width: 50px;
+    margin: 0 auto 2rem auto;
+    display: block;
+}
+
+.confirmation-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+@media screen and (max-width: 960px) {
+    ::v-deep(.p-toolbar) {
+        flex-wrap: wrap;
+
+        .p-button {
+            margin-bottom: 0.25rem;
+        }
+    }
+}
+</style>

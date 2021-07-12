@@ -49,8 +49,8 @@
             <column name="biobj_id" not-null="true" />
         </many-to-one>
   
-           <property name="functionId" type="integer">
-           <column  name="function_id" not-null="true"/>
+           <property name="functionUuid" type="string">
+           <column  name="function_uuid" length="100" not-null="true"/>
           </property>
 
         <filter name="tenantFilter" condition="organization=:tenant"/>  

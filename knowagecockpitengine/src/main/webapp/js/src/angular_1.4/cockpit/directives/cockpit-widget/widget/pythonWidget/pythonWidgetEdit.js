@@ -43,25 +43,31 @@ function pythonWidgetEditControllerFunction(
 	$scope.newModel = angular.copy(model);
 	$scope.formattedAnalyticalDrivers = [];
 
-	$scope.setLibraries = function () {
-		$http({
-	        url: $scope.newModel.pythonAddress + "/widget/edit/libraries",
-	        method: "GET",
-	        headers: {'Content-Type': 'application/json',
-	        		  'Authorization': $scope.encodedUserId}
-	    })
-	    .then(function(response) { //success
-	            $scope.newModel.libraries = response.data;
-	    },
-	    function(response) { //failed
-	    });
-  	}
+	$scope.setEnvironment = function () {
+		$scope.libraries = [];
+		sbiModule_restServices.restToRootProject();
+		sbiModule_restServices.promiseGet('2.0/backendservices/widgets/python/libraries', $scope.newModel.pythonConf.environment)
+		.then(function(response){
+			$scope.libraries = JSON.parse(response.data.result);
+		}, function(error){
+			$scope.toastifyMsg('warning','Cannot retrieve libraries list');
+		});
+	}
+
+	$scope.toastifyMsg = function(type,msg){
+		Toastify({
+			text: msg,
+			duration: 10000,
+			close: true,
+			className: 'kn-' + type + 'Toast',
+			stopOnFocus: true
+		}).showToast();
+	}
 
 	sbiModule_restServices.restToRootProject();
 	sbiModule_restServices.promiseGet('2.0/configs/category', 'PYTHON_CONFIGURATION')
 	.then(function(response){
-		$scope.newModel.pythonEnvs = $scope.buildEnvironments(response.data);
-		$scope.newModel.pythonEnvsKeys = Object.keys($scope.newModel.pythonEnvs);
+		$scope.pythonEnvs = Object.keys($scope.buildEnvironments(response.data));
 	}, function(error){
 	});
 
@@ -79,23 +85,16 @@ function pythonWidgetEditControllerFunction(
 		return toReturn;
 	}
 
-	$scope.newModel.outputTypes = {
+	$scope.outputTypes = {
         "Image":"img",
         "HTML":"html",
-        "Bokeh application":"bokeh",
 	};
 
-	$scope.newModel.outputTypesKeys = Object.keys($scope.newModel.outputTypes);
+	$scope.outputTypesKeys = Object.keys($scope.outputTypes);
 
 	$scope.toggleTag = function(tag){
 		tag.opened = !tag.opened;
 	}
-
-	$scope.$watch('newModel.pythonOutputType',function(newValue,oldValue){
-		if (newValue == "bokeh") {
-			$scope.newModel.cross = {};
-		}
-	})
 
 	$scope.$watch('newModel.dataset.dsId',function(newValue,oldValue){
 		if(newValue){
@@ -126,7 +125,7 @@ function pythonWidgetEditControllerFunction(
 		}
 		$scope.helper = cockpitModule_helperDescriptors.pythonHelperJSON(newValue, ds_label, $scope.dataset ? $scope.dataset.metadata.fieldsMeta : null, $scope.formattedAnalyticalDrivers, $scope.aggregations, $scope.newModel.cross, $scope.availableDatasets);
 
-	})
+	});
 
 	$scope.insertCode = function(tag){
 		var tempString = tag.tag;
@@ -139,8 +138,8 @@ function pythonWidgetEditControllerFunction(
 				});
 			}else tempString = tempString.replace('%%'+tag.inputs[i].name+'%%','');
 		}
-		if($scope.newModel.pythonCode) $scope.newModel.pythonCode += tempString;
-		else  $scope.newModel.pythonCode = tempString;
+		if($scope.newModel.pythonConf.script) $scope.newModel.pythonConf.script += tempString;
+		else  $scope.newModel.pythonConf.script = tempString;
 	}
 
 	$scope.editorOptionsPython = {
@@ -259,19 +258,21 @@ function pythonWidgetEditControllerFunction(
 	  }
 
 	$scope.checkEnvironment = function(){
-        if (!$scope.newModel.pythonAddress) return false;
+        if (!$scope.newModel.pythonConf.environment) return false;
         else return true;
     }
 
 	$scope.checkAliases = function(){
         var columns = $scope.newModel.content.columnSelectedOfDataset;
-        for(var i = 0; i < columns.length - 1; i++){
-            for(var j = i + 1; j < columns.length; j++){
-                if(columns[i].alias == columns[j].alias){
-                    return false;
-                }
-            }
-        }
+        if (columns) {
+	        for(var i = 0; i < columns.length - 1; i++){
+	            for(var j = i + 1; j < columns.length; j++){
+	                if(columns[i].alias == columns[j].alias){
+	                    return false;
+	                }
+	            }
+	        }
+		}
         return true;
     }
 
@@ -302,14 +303,17 @@ function pythonWidgetEditControllerFunction(
 			});
 		}
 	}
-	
+
 	$scope.showGallery = $scope.newModel.isNew;
 	$scope.selectedTab = $scope.newModel.isNew ? 0 : 1;
-	
+
 	$scope.setGalleryTemplate = function(template){
+		if (!$scope.newModel.pythonConf) {
+			$scope.newModel.pythonConf = {};
+		}
 		if(template){
-			$scope.newModel.pythonCode = template.code.python;
-			$scope.newModel.pythonOutputType = template.outputType;
+			$scope.newModel.pythonConf.script = template.code.python;
+			$scope.newModel.pythonConf.outputType = template.outputType;
 		}
 		$scope.showGallery = false;
 		$scope.selectedTab = 1;

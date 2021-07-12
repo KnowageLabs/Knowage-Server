@@ -54,18 +54,22 @@ public class ProfiledLdapSecurityServiceSupplier implements ISecurityServiceSupp
 			}
 
 			String ldapPrefix = StringUtils.isBlank(authModeValueFromUserAttribute) ? "" : String.format("%s.", authModeValueFromUserAttribute);
-			SpagoBIUserProfile spagoBIUserProfile = new LdapSecurityServiceSupplier(ldapPrefix).checkAuthentication(userId, psw);
+			boolean propertiesAreValid = true;
 
-			/* To be backwards compatible with old versions */
-			if (spagoBIUserProfile == null && ATTRIBUTE_AUTHENTICATION_MODE_LDAP.equals(authModeValueFromUserAttribute)) {
-				String message = String.format(
-						"auth_mode = [%s]. No LDAP found using prefix [%s]. Trying to use default empty prefix for backwards compatibility.",
+			// LDAP value is used also when auth_mode is empty (blank)
+			if (ATTRIBUTE_AUTHENTICATION_MODE_LDAP.equals(authModeValueFromUserAttribute)) {
+				propertiesAreValid = new LdapSecurityServiceSupplier(ldapPrefix).checkProperties();
+			}
+
+			if (!propertiesAreValid) {
+				String message = String.format("auth_mode = [%s]. No LDAP found using prefix [%s]. Default empty prefix will be used.",
 						authModeValueFromUserAttribute, ldapPrefix);
 				logger.warn(message);
-				return new LdapSecurityServiceSupplier("").checkAuthentication(userId, psw);
-			} else {
-				return spagoBIUserProfile;
+				ldapPrefix = "";
 			}
+
+			SpagoBIUserProfile spagoBIUserProfile = new LdapSecurityServiceSupplier(ldapPrefix).checkAuthentication(userId, psw);
+			return spagoBIUserProfile;
 		}
 
 	}

@@ -12,16 +12,16 @@ import it.eng.spagobi.utilities.CatalogFunction;
 
 public interface ICatalogFunctionDAO extends ISpagoBIDao {
 
-	public int insertCatalogFunction(CatalogFunction catalogFunction, Map<String, String> inputColumns, Map<String, ? extends IInputVariable> inputVariables,
+	public String insertCatalogFunction(CatalogFunction catalogFunction, Map<String, String> inputColumns, Map<String, ? extends IInputVariable> inputVariables,
 			Map<String, ? extends IOutputColumn> outputColumns) throws EMFUserError;
 
 	public List<SbiCatalogFunction> loadAllCatalogFunctions();
 
-	public int updateCatalogFunction(CatalogFunction updatedCatalogFunction, int id);
+	public String updateCatalogFunction(CatalogFunction updatedCatalogFunction, String uuid);
 
-	public void deleteCatalogFunction(int id);
+	public void deleteCatalogFunction(String uuid);
 
-	public SbiCatalogFunction getCatalogFunctionById(int id);
+	public SbiCatalogFunction getCatalogFunctionByUuid(String uuid);
 
 	public SbiCatalogFunction getCatalogFunctionByLabel(String label);
 
