@@ -186,7 +186,7 @@
             "targetDatasource": "Target datasource",
             "timeToCreateTempTable": "Time (seconds) to create temporary table for the dataset",
             "timeToLock": "Timeout (seconds) to acquire a lock",
-            "title": "Cache information",
+            "title": "Cache management",
             "totalBytesAvailableForCache": "Total megabytes available for cache",
             "totalMemory": "Total memory",
             "ttlForCachedDataset": "Time To Live (seconds from last access) for cached datasets",

@@ -108,7 +108,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=hierarchiesEditor" />
 			<ITEM id="5004" label="menu.CacheManagement"
 				requiredFunctionality="CacheManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=cacheHome" />
+				to="/cache-management" />
 			<ITEM id="5005" label="menu.cross.definition"
 				requiredFunctionality="ManageCrossNavigation"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=crossDefinition" />
