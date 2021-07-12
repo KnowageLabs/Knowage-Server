@@ -15,6 +15,7 @@ const routes = baseRoutes
     .concat(configurationManagementRoutes)
     .concat(domainsManagementRoutes)
     .concat(metadataManagementRoutes)
+    .concat(usersManagementRoutes)
     .concat(profileAttributesRoutes)
     .concat(rolesManagementRoutes)
     .concat(cacheManagementRoutes)

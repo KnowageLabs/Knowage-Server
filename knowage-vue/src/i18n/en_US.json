@@ -232,7 +232,7 @@
                 "title": "News Title",
                 "type": "News Type"
             },
-            "hint": "This is the placeholder.",
+            "hint": "The news management page allows you to create news and notifications for the user. Creating a news or enabling one will show the notification to end users menu. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "noResults": "No roles available for the selected filter",
             "role": "Role",
             "roles": "Roles permissions",

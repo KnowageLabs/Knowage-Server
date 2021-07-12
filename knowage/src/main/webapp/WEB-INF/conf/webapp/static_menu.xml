@@ -117,7 +117,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=alertDefinition" />
 			<ITEM id="5007" label="menu.NewsManagement"
 				requiredFunctionality="NewsManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=newsManagement" />
+				to="/news-management" />
 			<ITEM label="menu.WidgetGalleryManagement"
 				to="/gallery-management" />
 		</GROUP_ITEM>

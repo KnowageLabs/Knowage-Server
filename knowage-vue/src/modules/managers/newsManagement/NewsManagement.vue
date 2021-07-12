@@ -11,7 +11,6 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div class="p-col">
                     <Listbox
                         v-if="!loading"
                         class="kn-list--column"
@@ -38,7 +37,6 @@
                             </div>
                         </template>
                     </Listbox>
-                </div>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
