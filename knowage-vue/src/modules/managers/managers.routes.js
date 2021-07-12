@@ -6,16 +6,18 @@ import usersManagementRoutes from '@/modules/managers/usersManagement/UsersManag
 import profileAttributesRoutes from '@/modules/managers/profileAttributesManagement/ProfileAttributesManagement.routes.js'
 import rolesManagementRoutes from '@/modules/managers/rolesManagement/RolesManagement.routes.js'
 import cacheManagementRoutes from '@/modules/managers/cacheManagement/CacheManagement.routes.js'
+import newsManagementRoutes from '@/modules/managers/newsManagement/NewsManagement.routes.js'
 
 const baseRoutes = []
 
-const routes = baseRoutes.concat(galleryManagementRoutes)
-  .concat(configurationManagementRoutes)
-  .concat(domainsManagementRoutes)
-  .concat(metadataManagementRoutes)
-  .concat(usersManagementRoutes)
-  .concat(profileAttributesRoutes)
-  .concat(rolesManagementRoutes)
-  .concat(cacheManagementRoutes)
+const routes = baseRoutes
+    .concat(galleryManagementRoutes)
+    .concat(configurationManagementRoutes)
+    .concat(domainsManagementRoutes)
+    .concat(metadataManagementRoutes)
+    .concat(profileAttributesRoutes)
+    .concat(rolesManagementRoutes)
+    .concat(cacheManagementRoutes)
+    .concat(newsManagementRoutes)
 
 export default routes
