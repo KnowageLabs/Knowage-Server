@@ -1,0 +1,12 @@
+{
+    "columns": [
+        {
+            "field": "kpiName",
+            "header": "KPI name"
+        },
+        {
+            "field": "value",
+            "header": "Value"
+        }
+    ]
+}

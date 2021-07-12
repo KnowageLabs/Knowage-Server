@@ -33,17 +33,41 @@
                     </form>
                 </template>
             </Card>
+            <Card>
+                <template #header>
+                    <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                        <template #left>
+                            Apply Target on Kpi
+                        </template>
+                    </Toolbar>
+                </template>
+                <template #content>
+                    <DataTable class="p-datatable-sm kn-table">
+                        <template #empty>
+                            {{ $t('common.info.noDataFound') }}
+                        </template>
+                        <template #loading>
+                            {{ $t('common.info.dataLoading') }}
+                        </template>
+
+                        <!-- <Column v-for="col of targetDefinitionDetailDecriptor.columns" :field="col.field" :header="col.header" :key="col.field" class="kn-truncated"> </Column> -->
+                    </DataTable>
+                </template>
+            </Card>
         </div>
     </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iTargetDefinition } from './TargetDefinition'
+import targetDefinitionDetailDecriptor from './TargetDefinitionDetailDescriptor.json'
 import Calendar from 'primevue/calendar'
+import DataTable from 'primevue/datatable'
 export default defineComponent({
     name: 'target-definition-detail',
     components: {
-        Calendar
+        Calendar,
+        DataTable
     },
     props: {
         model: {
@@ -54,7 +78,8 @@ export default defineComponent({
     data() {
         return {
             target: {} as iTargetDefinition,
-            selectedDate: new Date()
+            selectedDate: new Date(),
+            targetDefinitionDetailDecriptor: targetDefinitionDetailDecriptor
         }
     },
     watch: {
