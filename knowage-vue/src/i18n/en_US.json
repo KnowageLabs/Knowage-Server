@@ -127,9 +127,12 @@
     "kpi": {
         "measureDefinition": {
             "category": "Kpi Categories",
+            "dataSource": "Data Source",
             "hint": "No measures found",
             "measureName": "Measure name",
+            "metadata": "Metadata",
             "newMeasure": "New Measure",
+            "query": "Query",
             "rulesName": "Rules name",
             "title": "Measure list"
         }
