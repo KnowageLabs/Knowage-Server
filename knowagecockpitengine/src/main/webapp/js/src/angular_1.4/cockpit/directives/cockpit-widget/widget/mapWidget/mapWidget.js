@@ -605,7 +605,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 			cockpitModule_mapThematizerServices.setActiveConf($scope.ngModel.id + "|" + layerDef.name, layerDef);
-			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data); //add legend to internal structure
+			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data, $scope.ngModel.style.legend); //add legend to internal structure
 			if (layerDef.visualizationType == 'choropleth') $scope.getLegend($scope.ngModel.id);
 			var layer;
 			if (isCluster) {
@@ -1122,7 +1122,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    	config.defaultIndicator = elem.name;
 
 		    	cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name +'|'+ elem.name, values);
-		    	cockpitModule_mapThematizerServices.updateLegend(layerID, values);
+		    	cockpitModule_mapThematizerServices.updateLegend(layerID, values,$scope.ngModel.style.legend);
 
 		    	$scope.getLegend($scope.ngModel.id);
 			}
@@ -1553,7 +1553,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if (!(prop.name in props)) {
 				return null;
 			}
-		
+
 			var currProp = props[prop.name];
 			var currPropValue = currProp.value;
 			var ret = "";
@@ -1704,7 +1704,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.getPerWidgetDatasetIds = function() {
 			return $scope.ngModel.content.layers.map(function(e) { return e.dataset.id.dsId; });
 		}
-		
+
 		// Manage resize of the window
 		window.addEventListener('resize', function(){
 			setTimeout( function() { if ($scope.map) { $scope.map.updateSize(); } }, 200);
