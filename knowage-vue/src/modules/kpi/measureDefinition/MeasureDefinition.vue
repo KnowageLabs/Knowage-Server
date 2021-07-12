@@ -17,6 +17,8 @@
                     :value="measuresList"
                     rowGroupMode="rowspan"
                     groupRowsBy="rule"
+                    :paginator="true"
+                    :rows="15"
                     :loading="loading"
                     class="p-datatable-sm kn-table"
                     dataKey="id"

@@ -7,9 +7,19 @@
                     <label for="dataSourceLabel" class="kn-material-input-label">{{ $t('kpi.measureDefinition.dataSource') }}</label>
                 </span>
             </div>
-            <VCodeMirror ref="codeMirror" v-if="selectedRule.dataSource" class="flex" v-model:value="code" :options="options" @keyup="onKeyUp" />
+            <div v-if="selectedRule.dataSource">
+                <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
+                    <template #right>
+                        <Button class="kn-button p-button-text p-button-rounded" @click="previewVisible = true">{{ $t('kpi.measureDefinition.preview') }}</Button>
+                    </template>
+                </Toolbar>
+                <VCodeMirror ref="codeMirror" class="flex" v-model:value="code" :options="options" @keyup="onKeyUp" />
+            </div>
+            {{ selectedRule }}
         </template>
     </Card>
+
+    <PreviewDialog v-if="previewVisible" :currentRule="selectedRule" :placeholders="placeholders" @close="previewVisible = false"></PreviewDialog>
 </template>
 
 <script lang="ts">
@@ -21,10 +31,11 @@ import axios from 'axios'
 import queryCardDescriptor from './QueryCardDescriptor.json'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
+import PreviewDialog from './PreviewDialog.vue'
 
 export default defineComponent({
     name: 'query-card',
-    components: { Card, Dropdown, VCodeMirror },
+    components: { Card, Dropdown, VCodeMirror, PreviewDialog },
     props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array } },
     emits: ['touched'],
     data() {
@@ -48,7 +59,8 @@ export default defineComponent({
                     'Ctrl-Space': this.keyAssistFunc
                 } as any,
                 hintOptions: { tables: this.datasourceStructure }
-            }
+            },
+            previewVisible: false
         }
     },
     async mounted() {
@@ -80,6 +92,7 @@ export default defineComponent({
             this.codeMirror.options.hintOptions = { tables: this.datasourceStructure }
             // this.codeMirror.options.hintOptions = { test: { radi: null } }
             console.log('CODE MIRROR OPTIONS', this.codeMirror.options.hintOptions)
+            // console.log('TEEEEEEEEEEEST', this.codeMirror)
         },
         setupCodeMirror() {
             this.codeMirror = (this.$refs.codeMirror as any).editor as any
@@ -175,6 +188,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+::v-deep(.p-toolbar-group-right) {
+    height: 100%;
+}
+
 #dataSource {
     width: 100%;
 }

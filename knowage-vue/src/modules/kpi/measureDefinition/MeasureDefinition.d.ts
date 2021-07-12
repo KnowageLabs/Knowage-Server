@@ -33,9 +33,9 @@ export interface iRule {
 }
 
 export interface iPlaceholder {
-    id: number,
+    id?: number,
     name: string,
-    ruleId: number | null,
+    ruleId?: number | null,
     value: string | null
 }
 
