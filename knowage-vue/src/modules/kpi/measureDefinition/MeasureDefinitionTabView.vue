@@ -14,7 +14,7 @@
                     <span>{{ $t('kpi.measureDefinition.query') }}</span>
                 </template>
 
-                <QueryCard :rule="rule" :datasourcesList="datasourcesList"></QueryCard>
+                <QueryCard :rule="rule" :datasourcesList="datasourcesList" :aliases="availableAliasList" :placeholders="placeholdersList"></QueryCard>
             </TabPanel>
 
             <TabPanel>
@@ -53,6 +53,9 @@ export default defineComponent({
         return {
             rule: {} as iRule,
             datasourcesList: [] as iDatasource[],
+            availableAliasList: [],
+            notAvailableAliasList: [],
+            placeholdersList: [],
             loading: false,
             touched: false
         }
@@ -74,7 +77,12 @@ export default defineComponent({
         if (index > -1) {
             this.rule.dataSource = this.datasourcesList[index]
         }
+        await this.loadAliases()
+        await this.loadPlaceholders()
         this.loading = false
+        console.log('ALISASES available: ', this.availableAliasList)
+        console.log('ALISASES not available: ', this.notAvailableAliasList)
+        console.log('PLACEHOLDERS: ', this.placeholdersList)
     },
     methods: {
         async loadSelectedRule() {
@@ -82,6 +90,15 @@ export default defineComponent({
         },
         async loadDataSources() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `datasources/?onlySqlLike=true`).then((response) => (this.datasourcesList = response.data.root))
+        },
+        async loadAliases() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listAvailableAlias`).then((response) => {
+                this.availableAliasList = response.data.available
+                this.notAvailableAliasList = response.data.notAvailable
+            })
+        },
+        async loadPlaceholders() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listPlaceholder`).then((response) => (this.placeholdersList = response.data))
         },
         closeTemplate() {
             const path = '/measure-definition'
