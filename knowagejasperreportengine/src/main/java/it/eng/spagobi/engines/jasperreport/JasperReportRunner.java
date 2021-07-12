@@ -311,7 +311,7 @@ public class JasperReportRunner {
 			monitorSubReport.stop();
 			// set classloader
 			ClassLoader previous = Thread.currentThread().getContextClassLoader();
-			ClassLoader current = URLClassLoader.newInstance(new URL[] { getJRCompilationDir(servletContext, prefixDirTemplate).toURL() }, previous);
+			ClassLoader current = URLClassLoader.newInstance(new URL[] { getJRCompilationDir(servletContext, prefixDirTemplate).toURI().toURL() }, previous);
 			Thread.currentThread().setContextClassLoader(current);
 
 			// Create the virtualizer
@@ -1064,7 +1064,7 @@ public class JasperReportRunner {
 								jarFile = new File(destDir + entry.getName());
 								ClassLoader previous = Thread.currentThread().getContextClassLoader();
 								DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
-								// ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURL()}, previous);
+								// ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, previous);
 								Thread.currentThread().setContextClassLoader(dcl);
 							}
 							if (entry.getName().endsWith(".jrxml")) {
@@ -1097,7 +1097,7 @@ public class JasperReportRunner {
 				// adds the subreport's folder to the classpath
 				/*
 				 * ClassLoader previous = Thread.currentThread().getContextClassLoader(); ClassLoader current = URLClassLoader.newInstance( new URL[]{
-				 * getJRCompilationDir(servletContext, masterIds + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint()).toURL() },
+				 * getJRCompilationDir(servletContext, masterIds + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint()).toURI().toURL() },
 				 * previous);
 				 */
 				// Thread.currentThread().setContextClassLoader(current);
@@ -1108,8 +1108,8 @@ public class JasperReportRunner {
 			URL[] urls = new URL[files.length];
 			for (int j = 0; j < files.length; j++) {
 				// adds the subreport's folder to the classpath
-				urls[j] = files[j].getParentFile().toURL();
-				logger.debug("Added url [" + files[j].getParentFile().toURL() + "] to classloader");
+				urls[j] = files[j].getParentFile().toURI().toURL();
+				logger.debug("Added url [" + files[j].getParentFile().toURI().toURL() + "] to classloader");
 			}
 			ClassLoader previous = Thread.currentThread().getContextClassLoader();
 			ClassLoader current = URLClassLoader.newInstance(urls, previous);

@@ -56,7 +56,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
  */
 public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 
-	private final int functionId;
+	private final String functionUuid;
 	private SbiCatalogFunction function;
 	private final JSONObject functionConfiguration;
 	private Map<String, String> inputColumns;
@@ -68,8 +68,8 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 
 	private static transient Logger logger = Logger.getLogger(CatalogFunctionTransformer.class);
 
-	public CatalogFunctionTransformer(int functionId, JSONObject catalogFunctionConfig) {
-		this.functionId = functionId;
+	public CatalogFunctionTransformer(String functionUuid, JSONObject catalogFunctionConfig) {
+		this.functionUuid = functionUuid;
 		this.functionConfiguration = catalogFunctionConfig;
 		init();
 	}
@@ -136,10 +136,10 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 	private void initFunction() {
 		ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
 		fcDAO.setUserProfile(profile);
-		function = fcDAO.getCatalogFunctionById(functionId);
+		function = fcDAO.getCatalogFunctionByUuid(functionUuid);
 		if (function == null) {
-			logger.error("Couldn't retrieve function: " + functionId);
-			throw new SpagoBIRuntimeException("Couldn't retrieve function: " + functionId);
+			logger.error("Couldn't retrieve function: " + functionUuid);
+			throw new SpagoBIRuntimeException("Couldn't retrieve function: " + functionUuid);
 		}
 	}
 
@@ -203,7 +203,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		return toReturn;
 	}
 
-	String getScriptJwtToken() {
+	private String getScriptJwtToken() {
 		String script = function.getOnlineScript();
 		// replace keywords
 		for (String colName : inputColumns.keySet()) {
@@ -218,7 +218,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MINUTE, 5);
 		Date expiresAt = calendar.getTime();
-		String jwtToken = JWTSsoService.catalogFunction2jwtToken(script, expiresAt);
+		String jwtToken = JWTSsoService.pythonScript2jwtToken(script, expiresAt);
 
 		return jwtToken;
 	}
@@ -238,6 +238,8 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 					oldRecord.appendField(newField);
 				}
 			}
+		} catch (CatalogFunctionException e) {
+			throw e;
 		} catch (Exception e) {
 			logger.error("Error transforming records: ", e);
 			throw new SpagoBIRuntimeException("Error transforming records: ", e);

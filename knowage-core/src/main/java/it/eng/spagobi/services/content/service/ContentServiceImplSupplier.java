@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.security.ProductProfiler;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -52,6 +53,7 @@ import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class ContentServiceImplSupplier {
 	static private Logger logger = Logger.getLogger(ContentServiceImplSupplier.class);
@@ -86,6 +88,10 @@ public class ContentServiceImplSupplier {
 		try {
 			Integer id = new Integer(document);
 			biobj = DAOFactory.getBIObjectDAO().loadBIObjectById(id);
+			// check if document can be executed accordingly to EE product mappings
+			if (!ProductProfiler.canExecuteDocument(biobj)) {
+				throw new SpagoBIRuntimeException("This document cannot be executed within the current product!");
+			}
 			// only if the user is not Scheduler or Workflow system user or it
 			// is a call to retrieve a subreport,
 			// check visibility on document and parameter values
@@ -162,6 +168,9 @@ public class ContentServiceImplSupplier {
 			throw e;
 		} catch (EMFInternalError e) {
 			logger.error("EMFUserError", e);
+			throw e;
+		} catch (Exception e) {
+			logger.error("Generic error", e);
 			throw e;
 		} finally {
 			logger.debug("OUT");

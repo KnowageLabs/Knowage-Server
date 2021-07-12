@@ -173,7 +173,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		} else {
 			if ($scope.saveOrUpdateFlag == "save") {
 				body = $scope.shownFunction;
-				if (!body.id || body.id == "") body.id = -1;
 
 				sbiModule_restServices.post("2.0/functions-catalog", "insert", body).then(
 					function(result) {
@@ -597,18 +596,27 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		        paginationAutoPageSize: true,
 		        columnDefs: [
 		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.dataset'), field:'label'},
-		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.datasettype'), field:'dsTypeCd'}],
+		        	{headerName: $scope.translate.load('sbi.functionscatalog.functionpreview.datasettype'), field:'dsType'}],
 		        rowData: $scope.datasetList
 		}
 
 		function initDatasets(){
-			sbiModule_restServices.promiseGet('1.0/datasets','')
+			sbiModule_restServices.promiseGet('3.0/datasets','')
 			.then(function(response){
-				$scope.datasetList = response.data.root;
+				$scope.datasetList = filterDatasetList(response.data.root);
 				$scope.datasetsGrid.api.setRowData($scope.datasetList);
 				resizeDatasets();
 			}, function(error){
 			});
+		}
+
+		function filterDatasetList(dsList){
+			var filteredList = [];
+			for (var i in dsList) {
+				if (dsList[i].dsType!="Python/R")
+					filteredList.push(dsList[i]);
+			}
+			return filteredList;
 		}
 
 		function resizeDatasets(){
@@ -616,23 +624,25 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		}
 
 		function selectDataset(props){
-			$scope.selectedDataset = props.api.getSelectedRows()[0];
-			$scope.selectedDatasetColumns = getDatasetColumns($scope.selectedDataset);
-			$scope.selectedFunction = angular.copy(selectedFunction);
-			$scope.$apply();
-			if ($scope.columnsGrid.api) {
-				$scope.columnDefs[2].cellEditorParams.values = $scope.selectedDatasetColumns;
-				$scope.columnsGrid.api.setColumnDefs($scope.columnDefs);
-				$scope.columnsGrid.api.setRowData($scope.selectedFunction.inputColumns);
-			}
+			var dsLabel = props.data.label;
+			sbiModule_restServices.promiseGet('2.0/datasets',dsLabel)
+			.then(function(response){
+				$scope.selectedDataset = response.data[0];
+				$scope.selectedDatasetColumns = getDatasetColumns($scope.selectedDataset);
+				$scope.selectedFunction = angular.copy(selectedFunction);
+				if ($scope.columnsGrid.api) {
+					$scope.columnDefs[2].cellEditorParams.values = $scope.selectedDatasetColumns;
+					$scope.columnsGrid.api.setColumnDefs($scope.columnDefs);
+					$scope.columnsGrid.api.setRowData($scope.selectedFunction.inputColumns);
+				}
+			}, function(error){
+			});
 		}
 
 		function getDatasetColumns(ds){
 			var toReturn = [];
 			var allColumns = ds.meta.columns;
 			for (var i=0; i<allColumns.length; i=i+3) {
-//				var type = allColumns[i].pvalue;
-//				var fieldType = allColumns[i+1].pvalue;
 				var alias = allColumns[i+2].pvalue;
 				toReturn.push(alias);
 			}
@@ -787,7 +797,11 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				$scope.resultDataGrid.api.setColumnDefs(resultColumnDefs);
 				$scope.resultDataGrid.api.setRowData(response.data.rows);
 			}, function(error){
-				sbiModule_messaging.showErrorMessage("Error during dataset execution","Data service error");
+				if (error.data.service == "PythonEngine") {
+					sbiModule_messaging.showErrorMessage(error.data.errors[0].message,"Python Engine error");
+				} else {
+					sbiModule_messaging.showErrorMessage("Error during dataset execution","Data service error");
+				}
 			});
 		}
 

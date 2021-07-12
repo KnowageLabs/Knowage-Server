@@ -366,7 +366,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
   		$scope.pageChanged($scope.totalPages);
 	}
 	$scope.start = 0;
-	$scope.itemsPerPage = 20;
+	$scope.itemsPerPage = 25;
 
 	$scope.firstExecution = true;
 

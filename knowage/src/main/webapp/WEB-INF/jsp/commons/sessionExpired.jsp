@@ -57,21 +57,25 @@ if (header != null && header.equals("Ext")) {
 	try {
 		var currentWindow = window;
 		var parentWindow = parent;
-		while (parentWindow != currentWindow) {
-			if (parentWindow.sessionExpiredSpagoBIJS) {
-				parentWindow.location = '<%= KnowageSystemConfiguration.getKnowageContext() %>';
-				sessionExpiredSpagoBIJSFound = true;
-				break;
-			} else {
-				currentWindow = parentWindow;
+		function setParentUrl(currentWindow, parentWindow){
+			if(parentWindow == currentWindow){
+				parentWindow.parent.postMessage({
+					'status': 401
+				     }, "*")
+    		}else{
+    			currentWindow = parentWindow;
 				parentWindow = currentWindow.parent;
-			}
+				setParentUrl(currentWindow,parentWindow);
+    		}
 		}
-	} catch (err) {}
-	
-	if (!sessionExpiredSpagoBIJSFound) {
-		window.location = '<%= KnowageSystemConfiguration.getKnowageContext() %>';
+		setParentUrl(currentWindow, parentWindow);
+	} catch (err) {
+		if (!sessionExpiredSpagoBIJSFound) {
+			window.location = '<%= KnowageSystemConfiguration.getKnowageContext() %>';
+		}
 	}
+	
+	
 	</script>
 	<%
 }

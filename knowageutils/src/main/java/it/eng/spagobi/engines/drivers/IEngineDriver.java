@@ -112,7 +112,7 @@ public interface IEngineDriver {
 
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException;
 
-	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException;
+	public ArrayList<String> getFunctionsAssociated(byte[] contentTemplate) throws JSONException;
 
 	public List<DefaultOutputParameter> getDefaultOutputParameters();
 

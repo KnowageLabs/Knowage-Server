@@ -19,6 +19,13 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Period;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,11 +69,12 @@ public class GroovySandbox {
 			HashMap.class, Set.class, Map.class, Math.class, TreeSet.class, Arrays.class, Collections.class, DateFormat.class, SimpleDateFormat.class,
 			DecimalFormat.class, NumberFormat.class, MessageFormat.class, TreeSet.class, TreeMap.class, DataSetVariable.class, java.sql.Date.class, Time.class,
 			Timestamp.class, Blob.class, NClob.class, StringBuilder.class, StringBuffer.class, Float.class, Double.class, Long.class, BigDecimal.class,
-			String.class, BigInteger.class, Integer.class, Character.class, Byte.class };
+			String.class, BigInteger.class, Integer.class, Character.class, Byte.class, LocalDate.class, LocalTime.class, LocalDateTime.class, ZonedDateTime.class,
+			Instant.class, Period.class, DateTimeFormatter.class };
 
 	private final static Class<?>[] CONSTANT_TYTPE_CLASSES_WHITELIST = new Class[] { Integer.class, Float.class, Long.class, Double.class, BigDecimal.class,
 			Integer.TYPE, Long.TYPE, Float.TYPE, Double.TYPE, Character.TYPE, Byte.TYPE, String.class, BigInteger.class, Object.class, Character.class,
-			Byte.class };
+			Byte.class, DateTimeFormatter.class };
 
 	private final Class<?>[] addedClasses;
 

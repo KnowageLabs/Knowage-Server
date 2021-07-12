@@ -201,7 +201,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			File[] compiledSubreports = compileSubreports();
 			monitorSubReport.stop();
 			ClassLoader previous = Thread.currentThread().getContextClassLoader();
-			ClassLoader current = URLClassLoader.newInstance(new URL[] { getCacheDir(prefixDirTemplate).toURL() }, previous);
+			ClassLoader current = URLClassLoader.newInstance(new URL[] { getCacheDir(prefixDirTemplate).toURI().toURL() }, previous);
 			Thread.currentThread().setContextClassLoader(current);
 
 			logger.debug("Filling report ...");
@@ -643,7 +643,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 								jarFile = new File(destDir + entry.getName());
 								ClassLoader previous = Thread.currentThread().getContextClassLoader();
 								DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
-								// ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURL()}, previous);
+								// ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, previous);
 								Thread.currentThread().setContextClassLoader(dcl);
 							}
 							if (entry.getName().endsWith(".jrxml")) {
@@ -681,8 +681,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			URL[] urls = new URL[files.length];
 			for (int j = 0; j < files.length; j++) {
 				// adds the subreport's folder to the classpath
-				urls[j] = files[j].getParentFile().toURL();
-				logger.debug("Added url [" + files[j].getParentFile().toURL() + "] to classloader");
+				urls[j] = files[j].getParentFile().toURI().toURL();
+				logger.debug("Added url [" + files[j].getParentFile().toURI().toURL() + "] to classloader");
 			}
 			ClassLoader previous = Thread.currentThread().getContextClassLoader();
 			ClassLoader current = URLClassLoader.newInstance(urls, previous);
