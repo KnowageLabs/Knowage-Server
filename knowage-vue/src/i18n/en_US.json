@@ -3,6 +3,7 @@
         "author": "Author",
         "back": "back",
         "cancel": "cancel",
+        "category": "Category",
         "choose": "choose",
         "close": "close",
         "codingLanguages": {
@@ -127,6 +128,7 @@
     },
     "kpi": {
         "measureDefinition": {
+            "alias": "Alias",
             "category": "Kpi Categories",
             "dataSource": "Data Source",
             "filters": "Filters",
@@ -137,6 +139,7 @@
             "preview": "Preview",
             "query": "Query",
             "rulesName": "Rules name",
+            "tipology": "Tipology",
             "title": "Measure list"
         }
     },

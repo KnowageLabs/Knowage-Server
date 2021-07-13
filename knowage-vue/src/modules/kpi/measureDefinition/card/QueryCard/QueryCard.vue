@@ -13,12 +13,10 @@
                         <Button class="kn-button p-button-text p-button-rounded" @click="previewVisible = true">{{ $t('kpi.measureDefinition.preview') }}</Button>
                     </template>
                 </Toolbar>
-                <VCodeMirror ref="codeMirror" class="flex" v-model:value="code" :options="options" @keyup="onKeyUp" />
+                <VCodeMirror ref="codeMirror" v-model:value="code" :autoHeight="true" :options="options" @keyup="onKeyUp" />
             </div>
-            {{ selectedRule }}
         </template>
     </Card>
-
     <PreviewDialog v-if="previewVisible" :currentRule="selectedRule" :placeholders="placeholders" @close="previewVisible = false"></PreviewDialog>
 </template>
 
@@ -92,7 +90,7 @@ export default defineComponent({
             this.codeMirror.options.hintOptions = { tables: this.datasourceStructure }
             // this.codeMirror.options.hintOptions = { test: { radi: null } }
             console.log('CODE MIRROR OPTIONS', this.codeMirror.options.hintOptions)
-            // console.log('TEEEEEEEEEEEST', this.codeMirror)
+            console.log('TEEEEEEEEEEEST', this.codeMirror)
         },
         setupCodeMirror() {
             this.codeMirror = (this.$refs.codeMirror as any).editor as any

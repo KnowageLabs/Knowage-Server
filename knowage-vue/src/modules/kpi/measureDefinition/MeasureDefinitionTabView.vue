@@ -21,7 +21,8 @@
                 <template #header>
                     <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
                 </template>
-                Rule: {{ rule }}
+
+                <MetadataCard :currentRule="rule" :tipologiesType="domainsKpiRuleoutput" :domainsTemporalLevel="domainsTemporalLevel" :categories="domainsKpiMeasures"></MetadataCard>
             </TabPanel>
         </TabView>
     </div>
@@ -31,13 +32,14 @@
 import { defineComponent } from 'vue'
 import { iDatasource, iRule } from './MeasureDefinition'
 import axios from 'axios'
+import MetadataCard from './card/MetadataCard/MetadataCard.vue'
 import QueryCard from './card/QueryCard/QueryCard.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'rule-definition-detail',
-    components: { QueryCard, TabView, TabPanel },
+    components: { MetadataCard, QueryCard, TabView, TabPanel },
     props: {
         id: {
             type: String
@@ -56,6 +58,9 @@ export default defineComponent({
             availableAliasList: [],
             notAvailableAliasList: [],
             placeholdersList: [],
+            domainsKpiRuleoutput: [],
+            domainsTemporalLevel: [],
+            domainsKpiMeasures: [],
             loading: false,
             touched: false
         }
@@ -79,10 +84,11 @@ export default defineComponent({
         }
         await this.loadAliases()
         await this.loadPlaceholders()
+        await this.loadDomainsData()
         this.loading = false
-        console.log('ALISASES available: ', this.availableAliasList)
-        console.log('ALISASES not available: ', this.notAvailableAliasList)
-        console.log('PLACEHOLDERS: ', this.placeholdersList)
+        // console.log('ALISASES available: ', this.availableAliasList)
+        // console.log('ALISASES not available: ', this.notAvailableAliasList)
+        // console.log('PLACEHOLDERS: ', this.placeholdersList)
     },
     methods: {
         async loadSelectedRule() {
@@ -99,6 +105,14 @@ export default defineComponent({
         },
         async loadPlaceholders() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listPlaceholder`).then((response) => (this.placeholdersList = response.data))
+        },
+        async loadDomainsData() {
+            await this.loadDomainsByCode('KPI_RULEOUTPUT_TYPE').then((response) => (this.domainsKpiRuleoutput = response.data))
+            await this.loadDomainsByCode('TEMPORAL_LEVEL').then((response) => (this.domainsTemporalLevel = response.data))
+            await this.loadDomainsByCode('KPI_MEASURE_CATEGORY').then((response) => (this.domainsKpiMeasures = response.data))
+        },
+        loadDomainsByCode(code: string) {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${code}`)
         },
         closeTemplate() {
             const path = '/measure-definition'

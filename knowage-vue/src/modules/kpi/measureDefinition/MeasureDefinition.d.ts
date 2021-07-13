@@ -5,7 +5,7 @@ export interface iMeasure {
     rule: string,
     ruleId: number,
     ruleVersion: number,
-    category: string,
+    category: iDomain,
     hierarchy: string,
     type: string,
     author: string,
