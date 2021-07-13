@@ -8,5 +8,23 @@
             "field": "value",
             "header": "Value"
         }
+    ],
+    "columnsAllKPI": [
+        {
+            "field": "kpiName",
+            "header": "KPI name"
+        },
+        {
+            "field": "kpiCategory",
+            "header": "Category"
+        },
+        {
+            "field": "kpiDate",
+            "header": "Date"
+        },
+        {
+            "field": "kpiAuthor",
+            "header": "Author"
+        }
     ]
 }

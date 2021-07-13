@@ -18,3 +18,11 @@ export interface iCategory {
     translatedValueName?: string
     translatedValueDescription?: string
 }
+
+export interface iKpi {
+    kpiId: number | null
+    kpiName: string
+    kpiVersion: number
+    targetId: number | null
+    value: number
+}

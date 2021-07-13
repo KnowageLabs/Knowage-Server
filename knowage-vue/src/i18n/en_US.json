@@ -124,6 +124,14 @@
         "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
     },
+    "kpi": {
+        "targetDefinition": {
+            "addKpiBtn": "Add KPI association",
+            "applyTargetonKPI": "Apply Target on Kpi",
+            "title": "Target definition",
+            "titleAddAssociations": "Add KPI associations"
+        }
+    },
     "language": {
         "en_GB": "english (GB)",
         "en_US": "english (US)",
