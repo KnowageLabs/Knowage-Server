@@ -127,10 +127,11 @@ export default defineComponent({
             touched: false,
             loading: false,
             isAliasVisible: false,
-            listTresholdVisible: true,
+            listTresholdVisible: false,
             selectedKpi: {} as any,
             measureList: [] as any,
-            tresholdList: [] as any
+            tresholdList: [] as any,
+            severityOptions: [] as any
         }
     },
     watch: {
@@ -148,6 +149,21 @@ export default defineComponent({
             if (this.id) {
                 await axios
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.version}/loadKpi`)
+                    .then((response) => {
+                        this.selectedKpi = { ...response.data }
+                        console.log('selectedKpi: ', this.selectedKpi)
+                    })
+                    .finally(() => (this.loading = false))
+            } else {
+                this.selectedKpi = {} as any
+            }
+        },
+
+        async getSeverityOptions() {
+            this.loading = true
+            if (this.id) {
+                await axios
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/SEVERITY`)
                     .then((response) => {
                         this.selectedKpi = { ...response.data }
                         console.log('selectedKpi: ', this.selectedKpi)

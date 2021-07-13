@@ -41,6 +41,42 @@
                     <KnValidationMessages class="p-mt-1" :vComp="v$.threshold.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
                 </div>
             </form>
+            {{ threshold }}
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+            <DataTable :value="threshold.thresholdValues" :loading="loading" editMode="cell" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="messages-table">
+                <Column field="label" header="Label">
+                    <template #editor="slotProps">
+                        <InputText v-model="slotProps.data[slotProps.column.props.field]" />
+                    </template>
+                </Column>
+                <Column field="minValue" header="Min">
+                    <template #editor="slotProps">
+                        <InputNumber v-model="slotProps.data[slotProps.column.props.field]" />
+                    </template>
+                </Column>
+                <Column field="includeMin" header="Include Min">
+                    <template #body="slotProps">
+                        <Checkbox v-model="slotProps.data[slotProps.column.props.field]" :binary="true" />
+                    </template>
+                </Column>
+                <Column field="maxValue" header="Max">
+                    <template #editor="slotProps">
+                        <InputNumber v-model="slotProps.data[slotProps.column.props.field]" />
+                    </template>
+                </Column>
+                <Column field="includeMax" header="Include Max">
+                    <template #body="slotProps">
+                        <Checkbox v-model="slotProps.data[slotProps.column.props.field]" :binary="true" />
+                    </template>
+                </Column>
+                <Column field="severityId" header="Severity">
+                    <Dropdown v-model="slotProps.data[slotProps.column.props.field]" :options="statuses" optionLabel="label" optionValue="value" placeholder="Select a Status">
+                        <template #option="slotProps">
+                            <span :class="'product-badge status-' + slotProps.option.value.toLowerCase()">{{ slotProps.option.label }}</span>
+                        </template>
+                    </Dropdown>
+                </Column>
+            </DataTable>
         </template>
     </Card>
 </template>
@@ -52,12 +88,21 @@ import useValidate from '@vuelidate/core'
 import Card from 'primevue/card'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import tabViewDescriptor from '../KpiDefinitionDetailDescriptor.json'
+import tresholdTabDescriptor from './KpiDefinitionThresholdTabDescriptor.json'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import Checkbox from 'primevue/checkbox'
+import InputNumber from 'primevue/inputnumber'
 
 export default defineComponent({
     name: 'treshold-tab',
     components: {
         Card,
-        KnValidationMessages
+        KnValidationMessages,
+        Column,
+        DataTable,
+        Checkbox,
+        InputNumber
     },
     props: {
         selectedKpi: Object
@@ -67,10 +112,13 @@ export default defineComponent({
         return {
             v$: useValidate() as any,
             tabViewDescriptor,
+            tresholdTabDescriptor,
             kpi: {} as any,
             threshold: {} as any,
+            thresholdValues: [] as any,
             loading: false,
-            touched: false
+            touched: false,
+            columns: tresholdTabDescriptor.datatableColumns
         }
     },
 

@@ -1,0 +1,32 @@
+{
+    "datatableColumns": [
+        {
+            "field": "label",
+            "header": "common.label"
+        },
+        {
+            "field": "minValue",
+            "header": "minValue"
+        },
+        {
+            "field": "includeMin",
+            "header": "includeMin"
+        },
+        {
+            "field": "maxValue",
+            "header": "color"
+        },
+        {
+            "field": "includeMax",
+            "header": "color"
+        },
+        {
+            "field": "severityId",
+            "header": "color"
+        },
+        {
+            "field": "color",
+            "header": "color"
+        }
+    ]
+}
