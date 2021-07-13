@@ -270,6 +270,15 @@
             "title": "Profile Attributes Management",
             "valueDescription": "Value description"
         },
+        "templatePruning": {
+            "documentSelection": "Document Selection",
+            "documentSelectionMessage": "Select the documents you want to delete whose template is older than the date entered above",
+            "enterDateMessage": "Enter a date from which the templates will be maintained",
+            "noDocuments": "No available documents",
+            "referenceDate": "Reference Date",
+            "selectDate": "Select Date",
+            "title": "Template Pruning"
+        },
         "tenantManagement": {
             "dataSource": {
                 "title": "Data Source"
