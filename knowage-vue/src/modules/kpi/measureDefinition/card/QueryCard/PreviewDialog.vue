@@ -120,7 +120,6 @@ export default defineComponent({
                 this.rule.placeholders = []
             }
         },
-        runQuery() {},
         closeTemplate() {
             this.$emit('close')
         }

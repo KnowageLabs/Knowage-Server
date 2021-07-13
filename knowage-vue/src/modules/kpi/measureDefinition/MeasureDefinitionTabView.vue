@@ -2,13 +2,13 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ rule.id ? rule.name : $t('kpi.measureDefinition.newMeasure') }} </template>
         <template #right>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" data-test="submit-button" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="submitConfirm" data-test="submit-button" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <div class="card" v-else>
-        <TabView>
+        <TabView v-model:activeIndex="activeTab" @tab-change="setTabChanged($event.index)">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('kpi.measureDefinition.query') }}</span>
@@ -17,29 +17,70 @@
                 <QueryCard :rule="rule" :datasourcesList="datasourcesList" :aliases="availableAliasList" :placeholders="placeholdersList"></QueryCard>
             </TabPanel>
 
-            <TabPanel>
+            <TabPanel :disabled="metadataDisabled">
                 <template #header>
                     <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
                 </template>
 
-                <MetadataCard :currentRule="rule" :tipologiesType="domainsKpiRuleoutput" :domainsTemporalLevel="domainsTemporalLevel" :categories="domainsKpiMeasures"></MetadataCard>
+                <MetadataCard
+                    :currentRule="rule"
+                    :tipologiesType="domainsKpiRuleoutput"
+                    :domainsTemporalLevel="domainsTemporalLevel"
+                    :categories="domainsKpiMeasures"
+                    :availableAliases="availableAliasList"
+                    :notAvailableAliasList="notAvailableAliasList"
+                    :changed="tabChanged"
+                    @close="activeTab = 0"
+                ></MetadataCard>
             </TabPanel>
         </TabView>
     </div>
+
+    <Dialog :contentStyle="metadataDefinitionTabViewDescriptor.dialog.style" :header="$t('kpi.measureDefinition.saveInProgress')" :visible="showSaveDialog" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+        <div class="p-field p-m-2">
+            <span class="p-float-label">
+                <InputText class="kn-material-input" type="text" v-model.trim="rule.name" />
+                <label class="kn-material-input-label"> {{ $t('common.name') }} </label>
+            </span>
+        </div>
+        <Toolbar v-if="newAlias.length > 0 || reusedAlias.length > 0" class="kn-toolbar kn-toolbar--primary">
+            <template #left>
+                {{ $t('kpi.measureDefinition.alias') }}
+            </template>
+        </Toolbar>
+        <div v-f="newAlias.length > 0">
+            <h2>{{ $t('common.new') }}</h2>
+            <Chip v-for="alias in newAlias" :key="alias.id" :label="alias.name"></Chip>
+        </div>
+        <div v-f="reusedAlias.length > 0">
+            <h2>{{ $t('common.reused') }}</h2>
+            <Chip v-for="alias in reusedAlias" :key="alias.id" :label="alias.name"></Chip>
+        </div>
+
+        <template #footer>
+            <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="showSaveDialog = false"></Button>
+            <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="handleSubmit"></Button>
+        </template>
+    </Dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iDatasource, iRule } from './MeasureDefinition'
 import axios from 'axios'
+import Chip from 'primevue/chip'
+import Dialog from 'primevue/dialog'
 import MetadataCard from './card/MetadataCard/MetadataCard.vue'
+import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDescriptor.json'
 import QueryCard from './card/QueryCard/QueryCard.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
+// TODO Fix title
+
 export default defineComponent({
     name: 'rule-definition-detail',
-    components: { MetadataCard, QueryCard, TabView, TabPanel },
+    components: { Chip, Dialog, MetadataCard, QueryCard, TabView, TabPanel },
     props: {
         id: {
             type: String
@@ -53,6 +94,7 @@ export default defineComponent({
     },
     data() {
         return {
+            metadataDefinitionTabViewDescriptor,
             rule: {} as iRule,
             datasourcesList: [] as iDatasource[],
             availableAliasList: [],
@@ -61,11 +103,35 @@ export default defineComponent({
             domainsKpiRuleoutput: [],
             domainsTemporalLevel: [],
             domainsKpiMeasures: [],
+            newAlias: [],
+            reusedAlias: [],
+            newPlaceholder: [],
+            reusedPlaceholder: [],
+            activeTab: 0,
+            tabChanged: false,
             loading: false,
-            touched: false
+            touched: false,
+            showSaveDialog: false
         }
     },
-    computed: {},
+    computed: {
+        metadataDisabled() {
+            let disabled = false
+            console.log('TEESTSTSTSTS', this.rule.dataSource)
+            if (!this.rule.dataSource) {
+                disabled = true
+            }
+            if (this.rule.placeholders?.length > 0) {
+                this.rule.placeholders.forEach((placeholder) => {
+                    if (!placeholder.value) {
+                        disabled = true
+                    }
+                })
+            }
+            return disabled
+        }
+    },
+
     async created() {
         // console.log('ID: ', this.id)
         // console.log('Rule Version: ', this.ruleVersion)
@@ -76,6 +142,7 @@ export default defineComponent({
         }
         if (this.clone === 'true') {
             this.rule.name = this.$t('common.copyOf') + ' ' + this.rule.name
+            delete this.rule.id
         }
         await this.loadDataSources()
         const index = this.datasourcesList.findIndex((datasource: iDatasource) => this.rule.dataSourceId === datasource.DATASOURCE_ID)
@@ -86,8 +153,8 @@ export default defineComponent({
         await this.loadPlaceholders()
         await this.loadDomainsData()
         this.loading = false
-        // console.log('ALISASES available: ', this.availableAliasList)
-        // console.log('ALISASES not available: ', this.notAvailableAliasList)
+        // console.log('ALISASES FOR RULE available: ', this.availableAliasesForRule)
+        // console.log('ALISASESFOR RULE  not available: ', this.notAvailableAliasesForRule)
         // console.log('PLACEHOLDERS: ', this.placeholdersList)
     },
     methods: {
@@ -98,7 +165,12 @@ export default defineComponent({
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `datasources/?onlySqlLike=true`).then((response) => (this.datasourcesList = response.data.root))
         },
         async loadAliases() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listAvailableAlias`).then((response) => {
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listAvailableAlias`
+            console.log('RULE TEEEEEST', this.rule)
+            if (this.rule.id) {
+                url += `?ruleId=${this.id}&ruleVersion=${this.ruleVersion}`
+            }
+            await axios.get(url).then((response) => {
                 this.availableAliasList = response.data.available
                 this.notAvailableAliasList = response.data.notAvailable
             })
@@ -114,6 +186,29 @@ export default defineComponent({
         loadDomainsByCode(code: string) {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${code}`)
         },
+        setTabChanged(tabIndex: any) {
+            this.activeTab = tabIndex
+            if (tabIndex === 1) {
+                this.tabChanged = !this.tabChanged
+            }
+        },
+        submitConfirm() {
+            if (!this.touched) {
+                this.showSaveDialog = true
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.showSaveDialog = true
+                    }
+                })
+            }
+            console.log('caaaaled', this.showSaveDialog)
+        },
+        handleSubmit() {},
         closeTemplate() {
             const path = '/measure-definition'
             if (!this.touched) {

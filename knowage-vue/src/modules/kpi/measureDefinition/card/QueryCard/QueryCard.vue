@@ -63,10 +63,10 @@ export default defineComponent({
     },
     async mounted() {
         this.loadRule()
-        console.log('QueryCard Selected Rule: ', this.selectedRule)
-        console.log('QueryCard Datsources: ', this.datasourcesList)
-        console.log('QueryCard Options: ', this.options)
-        console.log('MOUNTED', this.$refs.codeMirror)
+        // console.log('QueryCard Selected Rule: ', this.selectedRule)
+        // console.log('QueryCard Datsources: ', this.datasourcesList)
+        //console.log('QueryCard Options: ', this.options)
+        //console.log('MOUNTED', this.$refs.codeMirror)
         await this.loadDataSourceStructure()
     },
     methods: {
@@ -80,17 +80,17 @@ export default defineComponent({
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/structure/${this.selectedRule.dataSource.DATASOURCE_ID}`).then((response) => (this.datasourceStructure = response.data))
             }
             this.$emit('touched')
-            console.log('DATASOURCE STRUCTURE: ', this.datasourceStructure)
+            //console.log('DATASOURCE STRUCTURE: ', this.datasourceStructure)
             // console.log('ALISASES: ', this.aliases)
-            console.log('PLACEHOLDERS: ', this.placeholders)
+            // console.log('PLACEHOLDERS: ', this.placeholders)
 
             this.setupCodeMirror()
 
-            console.log('HINT LIST: ', this.hintList)
+            // console.log('HINT LIST: ', this.hintList)
             this.codeMirror.options.hintOptions = { tables: this.datasourceStructure }
             // this.codeMirror.options.hintOptions = { test: { radi: null } }
-            console.log('CODE MIRROR OPTIONS', this.codeMirror.options.hintOptions)
-            console.log('TEEEEEEEEEEEST', this.codeMirror)
+            // console.log('CODE MIRROR OPTIONS', this.codeMirror.options.hintOptions)
+            // console.log('TEEEEEEEEEEEST', this.codeMirror)
         },
         setupCodeMirror() {
             this.codeMirror = (this.$refs.codeMirror as any).editor as any

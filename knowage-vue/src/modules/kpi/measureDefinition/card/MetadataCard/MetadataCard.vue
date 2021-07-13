@@ -1,5 +1,10 @@
 <template>
-    <DataTable class="editable-cells-tablekn-table" :value="rule.ruleOutputs" editMode="cell" dataKey="id" responsiveLayout="stack" breakpoint="960px">
+    <DataTable v-if="!metadataError" class="editable-cells-tablekn-table" :value="rule.ruleOutputs" editMode="cell" dataKey="id" responsiveLayout="stack" breakpoint="960px">
+        <Column>
+            <template #body="slotProps">
+                <i v-if="!rule.id" :class="showAliasIcon(slotProps.data.alias)"></i>
+            </template>
+        </Column>
         <Column class="kn-truncated" field="alias" :header="$t('kpi.measureDefinition.alias')"> </Column>
         <Column class="kn-truncated" field="type" :header="$t('kpi.measureDefinition.tipology')">
             <template #editor="slotProps">
@@ -41,20 +46,32 @@
             </template>
         </Column>
     </DataTable>
+
+    <Dialog :contentStyle="metadataCardDescriptor.dialog.style" :visible="metadataError" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+        <h1>{{ $t('kpi.measureDefinition.metadataError') + ' ' + $t('kpi.measureDefinition.wrongQuery') }}</h1>
+        <p>{{ metadataError }}</p>
+        <template #footer>
+            <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeMetadataErrorDialog"></Button>
+        </template>
+    </Dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iMeasure, iRule } from '../../MeasureDefinition'
+import axios from 'axios'
 import AutoComplete from 'primevue/autocomplete'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import metadataCardDescriptor from './MetadataCardDescriptor.json'
 
+// TODO Change header for last column
+
 export default defineComponent({
     name: 'metadata-card',
-    components: { AutoComplete, Column, Dropdown, DataTable },
+    components: { AutoComplete, Column, Dialog, Dropdown, DataTable },
     props: {
         currentRule: {
             type: Object,
@@ -69,6 +86,23 @@ export default defineComponent({
         categories: {
             type: Array,
             required: true
+        },
+        availableAliases: {
+            type: Array,
+            required: true
+        },
+        notAvailableAliasList: {
+            type: Array,
+            required: true
+        },
+        changed: {
+            type: Boolean
+        }
+    },
+    emits: ['close'],
+    watch: {
+        async changed() {
+            await this.loadMetadata()
         }
     },
     data() {
@@ -77,14 +111,18 @@ export default defineComponent({
             rule: {
                 ruleOutputs: [] as iMeasure[]
             } as iRule,
-            filteredCategories: [] as any[]
+            filteredCategories: [] as any[],
+            metadataError: null
         }
     },
-    async created() {
+
+    async mounted() {
         this.loadRule()
-        console.log('Domains 1: ', this.tipologiesType)
-        console.log('Domains 2: ', this.domainsTemporalLevel)
-        console.log('Domains 3: ', this.categories)
+        //console.log('Domains 1: ', this.tipologiesType)
+        //console.log('Domains 2: ', this.domainsTemporalLevel)
+        //console.log('Domains 3: ', this.categories)
+        console.log('ALIASES AVAILABLE ', this.availableAliases)
+        console.log('ALIASES NOT AVAILABLE : ', this.notAvailableAliasList)
     },
     methods: {
         loadRule() {
@@ -97,7 +135,54 @@ export default defineComponent({
                     ruleOutput.hierarchy = { valueCd: '' }
                 }
             })
-            // console.log('RULE: ', this.rule)
+            console.log('RULE: ', this.rule)
+        },
+        async loadMetadata() {
+            console.log('callllled')
+            const tempDatasource = this.rule.dataSource
+            delete this.rule.dataSource
+            const postData = { rule: this.rule, maxItem: 10 }
+            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData).then((response) => {
+                console.log('RESPONSE!!!', response)
+                if (response.data.errors) {
+                    this.metadataError = response.data.errors[0].message
+                }
+            })
+            this.rule.dataSource = tempDatasource
+            console.log('METADATA ERROR', this.metadataError)
+        },
+        showAliasIcon(alias: any) {
+            console.log('ALIAS: ', alias)
+            if (!this.aliasExists(alias) && !this.aliasUsedByMeasure(alias)) {
+                console.log('ALIAS doesnt Exist!')
+                return 'fa fa-exclamation-triangle'
+            }
+            if (this.aliasUsedByMeasure(alias)) {
+                console.log('ALIAS USED!')
+                return 'fa fa-exclamation-triangle alertIconUsedAlias'
+            }
+        },
+        aliasExists(name: string) {
+            let exists = false
+            this.availableAliases.forEach((alias: any) => {
+                //console.log('Exists: ' + alias.name.toUpperCase() + ' === ' + name.toUpperCase())
+                if (alias.name.toUpperCase() === name.toUpperCase()) {
+                    // console.log('ALIAS Exists!')
+                    exists = true
+                }
+            })
+            return exists
+        },
+        aliasUsedByMeasure(name: string) {
+            let used = false
+            this.notAvailableAliasList.forEach((alias: any) => {
+                //console.log('Used: ' + alias.name.toUpperCase() + ' === ' + name.toUpperCase())
+                if (alias.name.toUpperCase() === name.toUpperCase()) {
+                    //console.log('ALIAS USED!')
+                    used = true
+                }
+            })
+            return used
         },
         searchCategories(event) {
             setTimeout(() => {
@@ -110,7 +195,17 @@ export default defineComponent({
                 }
             }, 250)
             // console.log('FILTERED CATEGORIES: ', this.filteredCategories)
+        },
+        closeMetadataErrorDialog() {
+            this.metadataError = null
+            this.$emit('close')
         }
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.alertIconUsedAlias {
+    color: #f44246;
+}
+</style>

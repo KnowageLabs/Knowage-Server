@@ -40,6 +40,7 @@
         "name": "name",
         "new": "new",
         "next": "next",
+        "reused": "Reused",
         "run": "Run",
         "save": "save",
         "search": "search",
@@ -135,12 +136,15 @@
             "hint": "No measures found",
             "measureName": "Measure name",
             "metadata": "Metadata",
+            "metadataError": "Errors while attempting to load the metadata.",
             "newMeasure": "New Measure",
             "preview": "Preview",
             "query": "Query",
             "rulesName": "Rules name",
+            "saveInProgress": "Save in progress",
             "tipology": "Tipology",
-            "title": "Measure list"
+            "title": "Measure list",
+            "wrongQuery": "Wrong query"
         }
     },
     "language": {
