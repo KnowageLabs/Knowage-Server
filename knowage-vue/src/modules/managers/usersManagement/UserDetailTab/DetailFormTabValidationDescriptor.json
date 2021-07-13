@@ -1,0 +1,28 @@
+{
+    "validations": {
+        "userDetailsForm": [
+            {
+                "fieldName": "userId",
+                "validators": [{ "key": "required" }]
+            },
+            {
+                "fieldName": "fullName",
+                "validators": [{ "key": "required" }]
+            },
+            {
+                "fieldName": "password",
+                "validators": [
+                    { "key": "minLength", "validator": { "type": "minLength", "params": { "min": 6 } } },
+                    { "key": "required", "validator": { "type": "custom-required" } }
+                ]
+            },
+            {
+                "fieldName": "passwordConfirm",
+                "validators": [
+                    { "key": "required", "validator": { "type": "custom-required" } },
+                    { "key": "sameAsPassword", "translateBaseKey": "usersManagement.validation", "validator": { "type": "custom-sameAs" } }
+                ]
+            }
+        ]
+    }
+}

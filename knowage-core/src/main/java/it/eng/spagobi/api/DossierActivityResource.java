@@ -188,6 +188,10 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			final FormFile file = multipartFormDataInput.getFormFileParameterValues("file")[0];
 			String fileName = file.getFileName();
 			archiveBytes = file.getContent();
+			File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier");
+			if (!dossierDir.exists()) {
+				dossierDir.mkdir();
+			}
 			File f = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + fileName);
 			FileOutputStream outputStream = new FileOutputStream(f);
 			outputStream.write(archiveBytes);

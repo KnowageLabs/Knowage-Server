@@ -11,12 +11,6 @@
 		classNm="it.eng.spagobi.engines.officedocument.SpagoBIOfficeDocumentInternalEngine"
 		biobjTypeCd="OFFICE_DOC" useDataSet="false" useDataSource="false"
 		encrypt="0" />
-	<ENGINE label="knowagecompositedoce" name="Document Composition Engine"
-		descr="Document Composition Engine" mainUrl="" driverNm=""
-		engineTypeCd="INT"
-		classNm="it.eng.spagobi.engines.documentcomposition.SpagoBIDocumentCompositionInternalEngine"
-		biobjTypeCd="DOCUMENT_COMPOSITE" useDataSet="false" useDataSource="false"
-		encrypt="0" />
 	<ENGINE label="knowagekpiengine" name="Kpi Engine" descr="Kpi Engine"
 		mainUrl="/knowagekpiengine/restful-services/1.0/pages/execute" 
 		engineTypeCd="EXT" classNm=""
@@ -44,11 +38,6 @@
 		mainUrl="/knowagetalendengine/JobRunService" driverNm="it.eng.spagobi.engines.drivers.talend.TalendDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="ETL" useDataSet="false"
 		useDataSource="true" encrypt="0" />
-	<ENGINE label="knowagedataminingengine" name="Data-mining Engine"
-		descr="Data-mining Engine" mainUrl="/knowagedataminingengine/restful-services/start"
-		secnUrl="/knowagedataminingengine/DataMiningServlet" driverNm="it.eng.spagobi.engines.drivers.datamining.DataMiningDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="DATA_MINING" useDataSet="false"
-		useDataSource="true" encrypt="0" />
 	<ENGINE label="knowageprocessengine" name="Process Engine" descr="Process Engine"
 		mainUrl="/knowagecommonjengine/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.commonj.CommonjDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="ETL" useDataSet="false"
@@ -60,10 +49,6 @@
 	<ENGINE label="knowagesvgviewerengine" name="SVG Viewer Engine" descr="SVG Viewer Engine"
 		mainUrl="/knowagesvgviewerengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.svgviewer.SvgViewerDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="MAP" useDataSet="false"
-		useDataSource="false" encrypt="0" />
-	<ENGINE label="knowagechartengine" name="Chart Engine" descr="Chart Engine"
-		mainUrl="/knowagecockpitengine/api/1.0/chart/pages/execute" driverNm="it.eng.spagobi.engines.drivers.chart.ChartDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="CHART" useDataSet="true"
 		useDataSource="false" encrypt="0" />
 	<ENGINE label="knowagecockpitengine" name="Cockpit Engine" descr="Cockpit Engine"
 		mainUrl="/knowagecockpitengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.cockpit.CockpitDriver"

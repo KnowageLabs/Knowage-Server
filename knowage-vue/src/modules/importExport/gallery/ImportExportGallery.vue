@@ -36,21 +36,21 @@
 		</template>
 
 		<Column selectionMode="multiple" :exportable="false" :style="importExportDescriptor.export.gallery.column.selectionMode.style"></Column>
-		<Column field="name" :header="importExportDescriptor.export.gallery.column.name.header" :sortable="true" :style="importExportDescriptor.export.gallery.column.name.style"></Column>
-		<Column field="type" :header="importExportDescriptor.export.gallery.column.type.header" :sortable="true" :style="importExportDescriptor.export.gallery.column.type.style">
+		<Column field="name" :header="$t(importExportDescriptor.export.gallery.column.name.header)" :sortable="true" :style="importExportDescriptor.export.gallery.column.name.style"></Column>
+		<Column field="type" :header="$t(importExportDescriptor.export.gallery.column.type.header)" :sortable="true" :style="importExportDescriptor.export.gallery.column.type.style">
 			<template #body="{data}">
 				<Tag :style="importExportDescriptor.iconTypesMap[data.type].style"> {{ data.type.toUpperCase() }} </Tag>
 			</template>
 		</Column>
 
-		<Column field="tags" :header="importExportDescriptor.export.gallery.column.tags.header" :sortable="true" :style="importExportDescriptor.export.gallery.column.tags.style">
+		<Column field="tags" :header="$t(importExportDescriptor.export.gallery.column.tags.header)" :sortable="true" :style="importExportDescriptor.export.gallery.column.tags.style">
 			<template #body="{data}">
 				<span class="p-float-label kn-material-input">
 					<Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
 				</span>
 			</template>
 		</Column>
-		<Column field="image" :header="importExportDescriptor.export.gallery.column.image.header" :style="importExportDescriptor.export.gallery.column.image.style">
+		<Column field="image" :header="$t(importExportDescriptor.export.gallery.column.image.header)" :style="importExportDescriptor.export.gallery.column.image.style">
 			<template #body="{data}">
 				<span @click="togglePreview($event, data.id)">
 					<i class="fas fa-image" v-if="data.image && data.image.length > 0" />

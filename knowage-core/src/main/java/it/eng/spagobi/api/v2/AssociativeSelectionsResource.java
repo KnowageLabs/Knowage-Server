@@ -35,7 +35,6 @@ import org.jgrapht.graph.Pseudograph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -211,15 +210,14 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 						JSONObject filterJsonObject = jsonArray.optJSONObject(i);
 						if (filterJsonObject != null && filterJsonObject.has("filterOperator")) {
 							String label = filterJsonObject.optString("dataset");
-							if (filterJsonObject.optString("dataset")!= null ) {
+							if (filterJsonObject.optString("dataset") != null) {
 								try {
-								JSONObject obj = filterJsonObject.getJSONObject("dataset"); 
-								if (obj instanceof JSONObject) {
-									label = ((JSONObject) obj).getString("label");
-								}
-								}
-								catch (Exception e) {
-									//continue
+									JSONObject obj = filterJsonObject.getJSONObject("dataset");
+									if (obj instanceof JSONObject) {
+										label = obj.getString("label");
+									}
+								} catch (Exception e) {
+									// continue
 								}
 							}
 							dataSetInFilter = getDataSetDAO().loadDataSetByLabel(label);
@@ -295,7 +293,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				datasetSelectionParameters = datasetParameters.get(selectionsFilters.get(selectionsFilters.size() - 1).getDataset().getLabel());
 			}
 			filtersList = this.calculateMinMaxFilters(selectionsFilters.get(selectionsFilters.size() - 1).getDataset(), true, datasetSelectionParameters,
-					filtersList, selectionsFilters, userprofile);
+					filtersList, selectionsFilters, userprofile, associationGroup);
 
 			String strategy = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIVE_LOGIC_STRATEGY);
 			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, selectionsFilters, filtersList,
@@ -331,7 +329,6 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 	private void fixAssociationGroup(AssociationGroup associationGroup) {
 		IDataSetDAO dataSetDAO = getDataSetDAO();
-
 		Map<String, IMetaData> dataSetLabelToMedaData = new HashMap<>();
 		for (Association association : associationGroup.getAssociations()) {
 			if (association.getDescription().contains(".")) {
@@ -339,7 +336,6 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 					String fieldName = field.getFieldName();
 					if (fieldName.contains(":")) {
 						String dataSetLabel = field.getLabel();
-
 						IMetaData metadata = null;
 						if (dataSetLabelToMedaData.containsKey(dataSetLabel)) {
 							metadata = dataSetLabelToMedaData.get(dataSetLabel);
@@ -347,7 +343,6 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 							metadata = dataSetDAO.loadDataSetByLabel(dataSetLabel).getMetadata();
 							dataSetLabelToMedaData.put(dataSetLabel, metadata);
 						}
-
 						for (int i = 0; i < metadata.getFieldCount(); i++) {
 							IFieldMetaData fieldMeta = metadata.getFieldMeta(i);
 							String alias = fieldMeta.getAlias();
@@ -365,40 +360,29 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 	// FIXME
 	public List<SimpleFilter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<SimpleFilter> filters,
-			List<SimpleFilter> likeFilters, UserProfile userprofile) throws JSONException {
-
+			List<SimpleFilter> likeFilters, UserProfile userprofile, AssociationGroup associationGroup) throws JSONException {
 		logger.debug("IN");
-
 		List<SimpleFilter> newFilters = new ArrayList<>(filters);
-
 		List<Integer> minMaxFilterIndexes = new ArrayList<>();
 		List<AbstractSelectionField> minMaxProjections = new ArrayList<>();
-
 		List<Filter> noMinMaxFilters = new ArrayList<>();
-
 		for (int i = 0; i < filters.size(); i++) {
 			Filter filter = filters.get(i);
 			if (filter instanceof SimpleFilter) {
 				SimpleFilter simpleFilter = (SimpleFilter) filter;
 				SimpleFilterOperator operator = simpleFilter.getOperator();
-
 				if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator)) {
-
 					if (dataSet.getLabel().equals(((SimpleFilter) filter).getDataset().getLabel())) {
 						logger.debug("Min filter found at index [" + i + "]");
 						minMaxFilterIndexes.add(i);
-
 						String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
 						Projection projection = new Projection(AggregationFunctions.MIN_FUNCTION, dataSet, columnName);
 						minMaxProjections.add(projection);
 					}
-
 				} else if (SimpleFilterOperator.EQUALS_TO_MAX.equals(operator)) {
-
 					if (dataSet.getLabel().equals(((SimpleFilter) filter).getDataset().getLabel())) {
 						logger.debug("Max filter found at index [" + i + "]");
 						minMaxFilterIndexes.add(i);
-
 						String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
 						Projection projection = new Projection(AggregationFunctions.MAX_FUNCTION, dataSet, columnName, columnName);
 						minMaxProjections.add(projection);
@@ -413,25 +397,20 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 		if (minMaxFilterIndexes.size() > 0) {
 			logger.debug("MIN/MAX filter found");
-
-			Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
-
+			List<SimpleFilter> filtersToUse = setRightColumnsFromAssociations(associationGroup, dataSet, likeFilters);
+			Filter where = getWhereFilter(noMinMaxFilters, filtersToUse);
 			IDataStore dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1, userprofile);
 			if (dataStore == null) {
 				String errorMessage = "Error in getting min and max filters values";
 				logger.error(errorMessage);
 				throw new SpagoBIRuntimeException(errorMessage);
 			}
-
 			logger.debug("MIN/MAX filter values calculated");
-
 			for (int i = 0; i < minMaxProjections.size(); i++) {
 				Projection projection = (Projection) minMaxProjections.get(i);
 				String alias = projection.getAlias();
 				String errorMessage = "MIN/MAX value for field [" + alias + "] not found";
-
 				int index = minMaxFilterIndexes.get(i);
-
 				List values = dataStore.getFieldValues(i);
 				if (values == null) {
 					logger.error(errorMessage);
@@ -449,7 +428,6 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				}
 			}
 		}
-
 		logger.debug("OUT");
 		return newFilters;
 	}
@@ -458,7 +436,6 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 			List<AbstractSelectionField> projections, Filter filter, int maxRowCount, UserProfile userprofile) throws JSONException {
 		dataSet.setParametersMap(parametersValues);
 		dataSet.resolveParameters();
-
 		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userprofile);
 		return strategy.executeSummaryRowQuery(projections, filter, maxRowCount);
 	}
@@ -479,6 +456,42 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 			where = new OrFilter(likeFilters);
 		}
 		return where;
+	}
+
+	/*
+	 * Method used for guarantee that filters use the same column names of dataset fields (with associations it could change)
+	 */
+	public List<SimpleFilter> setRightColumnsFromAssociations(AssociationGroup associationGroup, IDataSet dataSet, List<SimpleFilter> filters) {
+		List<SimpleFilter> filtersToReturn = new ArrayList<SimpleFilter>();
+		if (filters.size() > 0) {
+			for (SimpleFilter simpleFilter : filters) {
+				InFilter filter = (InFilter) simpleFilter;
+				List<Projection> projectionsToAdd = new ArrayList<Projection>();
+				for (Projection proj : filter.getProjections()) {
+					String nameToAdd = findRightNameFromAssociation(proj, associationGroup, dataSet);
+					Projection projNew = new Projection(dataSet, nameToAdd);
+					projectionsToAdd.add(projNew);
+
+				}
+				InFilter filterToAdd = new InFilter(projectionsToAdd, filter.getOperands());
+				filtersToReturn.add(filterToAdd);
+			}
+		}
+		return filtersToReturn;
+
+	}
+
+	public String findRightNameFromAssociation(Projection projection, AssociationGroup associationGroup, IDataSet newDataSet) {
+		String newName = "";
+		IDataSet dataset = projection.getDataset();
+		for (Association association : associationGroup.getAssociations()) {
+			Field field = association.getField(dataset.getName());
+			if (projection.getName().equals(field.getFieldName())) {
+				Field newfield = association.getField(newDataSet.getName());
+				newName = newfield.getFieldName();
+			}
+		}
+		return newName;
 	}
 
 }

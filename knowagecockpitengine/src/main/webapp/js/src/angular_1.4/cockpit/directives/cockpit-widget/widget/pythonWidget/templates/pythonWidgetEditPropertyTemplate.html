@@ -51,17 +51,13 @@
 						     	<md-card-content layout="row" layout-align="space-around center">
 						     		<md-input-container flex class="md-block">
 									  <label>{{translate.load('kn.cockpit.python.outputType')}}</label>
-									  <md-select ng-model="newModel.pythonOutputType">
-								          <md-option ng-repeat="key in newModel.outputTypesKeys" value="{{newModel.outputTypes[key]}}">{{key}}</md-option>
+									  <md-select ng-model="newModel.pythonConf.outputType">
+								          <md-option ng-repeat="key in outputTypesKeys" value="{{outputTypes[key]}}">{{key}}</md-option>
 								      </md-select>
 									</md-input-container>
-									<md-input-container flex class="md-block" ng-if="newModel.pythonOutputType == 'img'">
+									<md-input-container flex class="md-block">
 									  <label>{{translate.load('kn.cockpit.python.outputFileName')}}</label>
-									  <input type="text" ng-model="newModel.pythonOutput">
-									</md-input-container>
-									<md-input-container flex class="md-block" ng-if="newModel.pythonOutputType == 'html'">
-									  <label>{{translate.load('kn.cockpit.python.outputVariableName')}}</label>
-									  <input type="text" ng-model="newModel.pythonOutput">
+									  <input type="text" ng-model="newModel.pythonConf.outputVariable">
 									</md-input-container>
 								</md-card-content>
 							</md-card>
@@ -74,7 +70,7 @@
 							      </div>
 							    </md-toolbar>
 								<md-card-content class="noPadding">
-								<textarea id="python" ui-codemirror="editorOptionsPython" ng-model="newModel.pythonCode" ui-refresh="newModel.pythonCode" flex></textarea>
+								<textarea id="python" ui-codemirror="editorOptionsPython" ng-model="newModel.pythonConf.script" ui-refresh="newModel.pythonConf.script" flex></textarea>
 								</md-card-content>
 							</md-card>
 						</div>
@@ -120,8 +116,8 @@
 					     	
 					     		<md-input-container flex class="md-block">
 								  <label>{{translate.load('kn.cockpit.python.environment')}}</label>
-								  <md-select ng-model="newModel.pythonAddress" ng-change="setLibraries()">
-							          <md-option ng-repeat="key in newModel.pythonEnvsKeys" value="{{newModel.pythonEnvs[key]}}">{{key}}</md-option>
+								  <md-select ng-model="newModel.pythonConf.environment" ng-change="setEnvironment()">
+							          <md-option ng-repeat="key in pythonEnvs" value="{{key}}">{{key}}</md-option>
 							      </md-select>
 								</md-input-container>
 							</md-card-content>
@@ -139,7 +135,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="lib in newModel.libraries" ng-if="newModel.libraries">
+									<tr ng-repeat="lib in libraries" ng-if="libraries">
 										<td>{{lib.name}}</td>
 										<td>{{lib.version}}</td>
 									</tr>
@@ -153,7 +149,7 @@
 		        <md-tab label="{{translate.load('sbi.cockpit.style')}}" ng-disabled="showGallery">
 		        	<cockpit-style-configurator widget ng-model="newModel.style"></cockpit-style-configurator>
 		        </md-tab>
-		        <md-tab ng-if="newModel.pythonOutputType!='bokeh'" label="{{translate.load('sbi.cockpit.widget.table.cross')}}" ng-disabled="showGallery">
+		        <md-tab label="{{translate.load('sbi.cockpit.widget.table.cross')}}" ng-disabled="showGallery">
 					<cockpit-cross-configurator widget ng-cloak ng-model="newModel.cross"></cockpit-cross-configurator>
 				</md-tab>
 		     	

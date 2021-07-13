@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import authHelper from '@/helpers/commons/authHelper'
 export default {
     name: 'IframeRenderer',
     props: {
@@ -11,6 +12,16 @@ export default {
     data() {
         return {
             baseUrl: process.env.VUE_APP_HOST_URL || window.location.origin
+        }
+    },
+    created() {
+        window.addEventListener('message', this.receiveMessage)
+    },
+    methods: {
+        receiveMessage(event) {
+            if (event && event.data && event.data.status === 401) {
+                authHelper.logout()
+            }
         }
     }
 }

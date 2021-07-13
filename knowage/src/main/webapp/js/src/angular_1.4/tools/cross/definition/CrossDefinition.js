@@ -222,6 +222,9 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 						ctr.detail.fromPars = data;
 						loadOutputParameters(item.DOCUMENT_ID,function(data){
 							ctr.detail.fromPars = ctr.detail.fromPars.concat(data);
+							for (var idx in ctr.detail.toPars) {
+								ctr.removeLink(ctr.detail.toPars[idx].id);
+							}
 							closeDialog();
 						});
 					});
@@ -235,6 +238,9 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					ctr.detail.simpleNavigation.toDoc = item.DOCUMENT_NAME;
 					loadInputParameters(item.DOCUMENT_LABEL,function(data){
 						ctr.detail.toPars = data;
+						for (var idx in ctr.detail.toPars) {
+							ctr.removeLink(ctr.detail.toPars[idx].id);
+						}
 						closeDialog();
 					});
 				});

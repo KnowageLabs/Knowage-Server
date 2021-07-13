@@ -44,6 +44,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	function catalogFunctionController($scope,sbiModule_translate,sbiModule_restServices,cockpitModule_catalogFunctionService,$q,$mdDialog,cockpitModule_datasetServices,$mdToast){
 		$scope.translate = sbiModule_translate;
 
+		sbiModule_restServices.restToRootProject();
+		sbiModule_restServices.promiseGet('2.0/backendservices/productprofiler/cockpit/functions', "")
+		.then(function(response){
+			if (response.data) $scope.canUseFunctions = true;
+			else $scope.canUseFunctions = false;
+		}, function(error){
+			$scope.canUseFunctions = false;
+		});
+
 		function buildCrossTabColumns(crosstabDefinition){
 			var columnsArray = [];
 			for (var c in crosstabDefinition.columns) {
@@ -107,10 +116,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.addNewCatalogFunction = function(){
+			if(!$scope.canUseFunctions) {
+				$scope.toastifyMsg('warning',$scope.translate.load("sbi.cockpit.widgets.table.catalogFunctions.function.error.notallowedtousefunctions"));
+				return;
+			}
 			var deferred = $q.defer();
 			var promise;
 			if ($scope.currentRow) {
-				$scope.currentFunction = $scope.currentRow.boundFunction
+				$scope.currentFunction = $scope.currentRow.boundFunction;
 			}
 
 			$mdDialog.show({
@@ -165,9 +178,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			});
 			promise = deferred.promise;
 		}
+
+		$scope.toastifyMsg = function(type,msg){
+			Toastify({
+				text: msg,
+				duration: 10000,
+				close: true,
+				className: 'kn-' + type + 'Toast',
+				stopOnFocus: true
+			}).showToast();
+		}
 	}
 
-	function catalogFunctionDialogController($scope,sbiModule_translate,cockpitModule_template,cockpitModule_catalogFunctionService,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,buildCrossTabColumns,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
+	function catalogFunctionDialogController($scope,$sce,sbiModule_translate,cockpitModule_template,cockpitModule_catalogFunctionService,sbiModule_restServices,$mdDialog,$q,promise,model,actualItem,callbackUpdateGrid,callbackUpdateAlias,additionalInfo,measuresListFunc,callbackAddTo,buildCrossTabColumns,cockpitModule_datasetServices,cockpitModule_generalOptions,$timeout, cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
 		$scope.model = model;
 		$scope.selectedFunction = actualItem ? angular.copy(actualItem) : {};
@@ -175,6 +198,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		var typesMap = {'STRING': "fa fa-quote-right", 'NUMBER': "fa fa-hashtag", 'DATE': 'fa fa-calendar'};
 		$scope.rEnvironments = cockpitModule_catalogFunctionService.rEnvironments;
 		$scope.pythonEnvironments = cockpitModule_catalogFunctionService.pythonEnvironments;
+
+		$scope.textToHtml=function(text){
+			return $sce.trustAsHtml(text);
+		}
 
 		$scope.functionsGrid = {
 		        enableColResize: false,

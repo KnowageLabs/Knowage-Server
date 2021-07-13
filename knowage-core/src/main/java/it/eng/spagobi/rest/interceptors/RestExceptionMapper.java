@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.functionscatalog.utils.CatalogFunctionException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 /**
@@ -87,9 +88,10 @@ public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
 			}
 
 			errorMessage = localizedMessage;
-		} else {
-			errorMessage = localizedMessage;
+		} else if (t instanceof CatalogFunctionException) {
+			errorService = "PythonEngine";
 		}
+		errorMessage = localizedMessage;
 
 		JSONObject error = new JSONObject();
 		JSONObject serializedMessages = new JSONObject();

@@ -31,7 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			'ui.codemirror',
 			'ui.tree',
 			'knTable',
-			'agGrid'
+			'agGrid',
+			'ab-base64'
 		]
 	);
 
@@ -56,11 +57,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			"sbiModule_device",
 			"$filter",
 			"$mdPanel",
+			"base64",
 			lovsManagementFunction
 		]
 	);
 
-	function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_config, $timeout, sbiModule_user, sbiModule_device, $filter, $mdPanel) {
+	function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_config, $timeout, sbiModule_user, sbiModule_device, $filter, $mdPanel,base64) {
 		/**
 		 * =====================
 		 * ===== Variables =====
@@ -865,11 +867,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		var decode = function (item) {
 			try {
 				if (item.lovProvider.SCRIPTLOV) {
-					item.lovProvider.SCRIPTLOV.SCRIPT = atob(item.lovProvider.SCRIPTLOV.SCRIPT);
+					item.lovProvider.SCRIPTLOV.SCRIPT = base64.decode(item.lovProvider.SCRIPTLOV.SCRIPT);
 					item.lovProvider.SCRIPTLOV.SCRIPT = escapeXml(item.lovProvider.SCRIPTLOV.SCRIPT);
 				}
 				if (item.lovProvider.QUERY) {
-					item.lovProvider.QUERY.decoded_STMT = atob(item.lovProvider.QUERY.STMT);
+					item.lovProvider.QUERY.decoded_STMT = base64.decode(item.lovProvider.QUERY.STMT);
 					item.lovProvider.QUERY.decoded_STMT = escapeXml(item.lovProvider.QUERY.decoded_STMT);
 				}
 			} catch (err) {

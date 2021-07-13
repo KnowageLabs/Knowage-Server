@@ -72,8 +72,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	public static transient Logger logger = Logger.getLogger(FunctionsCatalogResource.class);
 
-	public static String DATA_MINING_ENGINE_SUFFIX = "dataminingengine";
-
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -140,7 +138,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			List<SbiCatalogFunction> allFunctions = fcDAO.loadAllCatalogFunctions();
 			List<SbiCatalogFunction> filteredFunctions = new ArrayList<SbiCatalogFunction>();
 			for (SbiCatalogFunction func : allFunctions) {
-				if (func.getType().equals(type)) {
+				if (func.getType() != null && func.getType().equals(type)) {
 					filteredFunctions.add(func);
 				}
 			}
@@ -187,7 +185,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String insertCatalogFunction(@Valid CatalogFunctionDTO funcDTO) throws IOException {
 		logger.debug("IN");
-		int catalogFunctionId = -1;
 		JSONObject response = new JSONObject();
 		try {
 			List<String> keywords = funcDTO.getKeywords();
@@ -197,10 +194,10 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			Map<String, IOutputColumn> outputColumns = toOutputColumnsMap(funcDTO.getOutputColumns());
 
 			ICatalogFunctionDAO catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
-			catalogFunctionId = catalogFunctionDAO.insertCatalogFunction(itemToInsert, inputColumns, inputVariables, outputColumns);
+			String catalogFunctionUuid = catalogFunctionDAO.insertCatalogFunction(itemToInsert, inputColumns, inputVariables, outputColumns);
 
-			logger.debug("Catalog function ID equals to [" + catalogFunctionId + "]");
-			response.put("id", catalogFunctionId);
+			logger.debug("Catalog function ID equals to [" + catalogFunctionUuid + "]");
+			response.put("id", catalogFunctionUuid);
 		} catch (EMFUserError | JSONException e) {
 			throw new SpagoBIServiceException("Error while insert catalog function", e);
 		}
@@ -212,11 +209,11 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String updateCatalogFunction(@PathParam("id") int id, @Valid CatalogFunctionDTO funcDTO) {
+	public String updateCatalogFunction(@PathParam("id") String uuid, @Valid CatalogFunctionDTO funcDTO) {
 		logger.debug("IN");
 		JSONObject response = new JSONObject();
 
-		if (!hasPermission(id)) {
+		if (!hasPermission(uuid)) {
 			throw new SpagoBIRuntimeException("You are not owner or administrator. Permission denied.");
 		}
 
@@ -233,15 +230,15 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			ICatalogFunctionDAO catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
 			catalogFunctionDAO.setUserProfile(getUserProfile());
 
-			SbiCatalogFunction oldFunction = catalogFunctionDAO.getCatalogFunctionById(id);
+			SbiCatalogFunction oldFunction = catalogFunctionDAO.getCatalogFunctionByUuid(uuid);
 			if (oldFunction == null) {
-				throw new SpagoBIRuntimeException("no old function in db with Id:" + id);
+				throw new SpagoBIRuntimeException("no old function in db with Id:" + uuid);
 			}
-			catalogFunctionDAO.updateCatalogFunction(itemToInsert, id);
+			catalogFunctionDAO.updateCatalogFunction(itemToInsert, uuid);
 
 			response.put("Response", "OK");
 		} catch (JSONException e) {
-			throw new SpagoBIServiceException("Error while update catalog function " + id, e);
+			throw new SpagoBIServiceException("Error while update catalog function " + uuid, e);
 		}
 		return response.toString();
 	}
@@ -250,10 +247,10 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@Path("/delete/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String deleteCatalogFunction(@PathParam("id") int id) {
+	public String deleteCatalogFunction(@PathParam("id") String uuid) {
 		logger.debug("IN");
 
-		if (!hasPermission(id)) {
+		if (!hasPermission(uuid)) {
 			throw new SpagoBIRuntimeException("You are not owner or administrator. Permission denied.");
 		}
 
@@ -262,7 +259,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		try {
 			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
 			fcDAO.setUserProfile(getUserProfile());
-			fcDAO.deleteCatalogFunction(id);
+			fcDAO.deleteCatalogFunction(uuid);
 			retObj.put("Response", "OK");
 		} catch (FunctionInUseException fiue) {
 			try {
@@ -271,7 +268,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				throw new SpagoBIRuntimeException(e);
 			}
 		} catch (Exception e) {
-			String message = "Error while deleting the function with id: " + id;
+			String message = "Error while deleting the function with uuid: " + uuid;
 			logger.error(message, e);
 			throw new SpagoBIRuntimeException(message, e);
 		}
@@ -282,10 +279,10 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	private JSONObject sbiFunctionToJsonObject(SbiCatalogFunction sbiFunction) {
 
 		JSONObject ret = null;
-		boolean hasPermission = hasPermission(sbiFunction.getFunctionId());
+		boolean hasPermission = hasPermission(sbiFunction.getFunctionUuid());
 		try {
 			ret = new JSONObject();
-			ret.put("id", sbiFunction.getFunctionId());
+			ret.put("id", sbiFunction.getFunctionUuid());
 			ret.put("name", sbiFunction.getName());
 			ret.put("description", sbiFunction.getDescription());
 			ret.put("benchmarks", sbiFunction.getBenchmarks());
@@ -349,16 +346,16 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		return ret;
 	}
 
-	private boolean hasPermission(int functionId) {
+	private boolean hasPermission(String functionUuid) {
 		UserProfile profile = getUserProfile();
 		if (UserUtilities.hasAdministratorRole(profile)) {
 			return true;
 		} else { // is a developer
 			ICatalogFunctionDAO catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
 			catalogFunctionDAO.setUserProfile(profile);
-			SbiCatalogFunction function = catalogFunctionDAO.getCatalogFunctionById(functionId);
+			SbiCatalogFunction function = catalogFunctionDAO.getCatalogFunctionByUuid(functionUuid);
 			if (function == null) {
-				throw new SpagoBIRuntimeException("Impossible to find a function with ID [" + functionId + "]. Cannot update or delete.");
+				throw new SpagoBIRuntimeException("Impossible to find a function with ID [" + functionUuid + "]. Cannot update or delete.");
 			} else {
 				String userId = (String) profile.getUserId();
 				if (function.getOwner().equals(userId)) {
