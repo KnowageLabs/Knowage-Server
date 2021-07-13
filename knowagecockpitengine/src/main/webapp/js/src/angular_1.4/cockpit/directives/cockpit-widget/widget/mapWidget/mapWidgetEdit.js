@@ -39,6 +39,7 @@ function mapWidgetEditControllerFunction(
 	$scope.datasetsAdditionalInfos = {};
 	$scope.availableAggregationFunctionsForMeasures = ['SUM','AVG','MIN','MAX','COUNT'];
 	$scope.availableAggregationFunctionsForSpatialAttribute = ['MIN','MAX','COUNT'];
+	$scope.availableLegendAlignments = ['Left', 'Center', 'Right'];
 	$scope.availableBackgroundLayers = [];
 	$scope.availableOperators = [{'label':'==','value':'=='},{'label':'!=','value':'!='},{'label':'<','value':'<','range':true},{'label':'>','value':'>','range':true},{'label':'<=','value':'<=','range':true},{'label':'>=','value':'>=','range':true}];
 	$scope.availableChoroplethOperators = [{'label':'>=','value':'>='},{'label':'<','value':'<'}];

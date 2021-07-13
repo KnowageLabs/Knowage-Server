@@ -178,6 +178,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.zoomControl = undefined; // Zoom control on map
 		$scope.scaleControl = undefined; // Scale indicator
 		$scope.mouseWheelZoomInteraction = undefined; // Manage the mouse wheel on map
+		$scope.isShowLegend = true; //legend is on by default
 		$scope.i18n = sbiModule_i18n;
 
 		$scope.i18n.loadI18nMap();
@@ -1703,6 +1704,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.getPerWidgetDatasetIds = function() {
 			return $scope.ngModel.content.layers.map(function(e) { return e.dataset.id.dsId; });
+		}
+
+		$scope.hideLegend = function() {
+			$scope.isShowLegend = false;
+		}
+
+		$scope.showLegend = function() {
+			$scope.isShowLegend = true;
 		}
 
 		// Manage resize of the window

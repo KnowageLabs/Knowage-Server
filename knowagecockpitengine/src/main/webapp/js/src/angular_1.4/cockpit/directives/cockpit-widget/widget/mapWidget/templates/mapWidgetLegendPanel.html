@@ -1,5 +1,6 @@
 <!-- legend panel -->
-<div  class="mapWidgetLegend" ng-class="{'ranges': legend[0].method=='CLASSIFY_BY_RANGES'}" style="padding:10px;">
+<div  class="mapWidgetLegend" ng-class="{'ranges': legend[0].method=='CLASSIFY_BY_RANGES'}" ng-show="isShowLegend"">
+	<button style="position:absolute; top:0; right:0;" ng-click="hideLegend()"><md-icon md-font-icon="fas fa-chevron-down"></button>
 	<div ng-repeat="legendElem in legend">
 		<div layout="column" ng-if="legendElem.method!='CLASSIFY_BY_RANGES' && getLayerVisibility(legendElem.layer)">
 			<span class="legendLayerLabel" flex>&nbsp;{{legendElem.alias}}</span>
@@ -17,4 +18,8 @@
 			</div>
 		</div>
 	</div>
+</div>
+<!-- fake panel when legend is hidden -->
+<div  class="mapWidgetLegend" ng-class="{'ranges': legend[0].method=='CLASSIFY_BY_RANGES'}" ng-show="!isShowLegend"">
+	<button style="position:absolute; top:0; right:0;" ng-click="showLegend()"><md-icon md-font-icon="fas fa-chevron-up"></md-icon></button>
 </div>
