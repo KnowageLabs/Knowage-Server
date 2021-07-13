@@ -18,7 +18,7 @@
 
 package it.eng.knowage.backendservices.rest;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -41,7 +41,7 @@ public class DocumentTemplateResource {
 	@POST
 	@Path("/{document_id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String readTemplate(@PathParam("document_id") Integer documentId, HashMap<String, String> params) {
+	public String readTemplate(@PathParam("document_id") Integer documentId, Map<String, String> params) {
 		logger.debug("IN");
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String userId = (String) userProfile.getUserUniqueIdentifier();

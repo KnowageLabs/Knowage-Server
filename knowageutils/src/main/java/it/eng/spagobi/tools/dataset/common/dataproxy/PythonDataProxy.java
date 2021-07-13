@@ -98,7 +98,7 @@ public class PythonDataProxy extends AbstractDataProxy {
 			Calendar calendar = Calendar.getInstance();
 			calendar.add(Calendar.MINUTE, 5);
 			Date expiresAt = calendar.getTime();
-			String jwtToken = JWTSsoService.pythonDataset2jwtToken(pythonScript, expiresAt);
+			String jwtToken = JWTSsoService.pythonScript2jwtToken(pythonScript, expiresAt);
 			json.put("script", jwtToken);
 			json.put("df_name", dataframeName);
 			if (parameters != null) {

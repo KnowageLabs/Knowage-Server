@@ -48,12 +48,7 @@ import it.eng.spagobi.services.security.exceptions.SecurityException;
  * @author n.d.
  * @author Marco Libanori
  */
-@WebService(
-		name = "ContentServiceService",
-		portName = "ContentServicePort",
-		serviceName = "ContentService",
-		targetNamespace = "http://content.services.spagobi.eng.it/"
-	)
+@WebService(name = "ContentServiceService", portName = "ContentServicePort", serviceName = "ContentService", targetNamespace = "http://content.services.spagobi.eng.it/")
 public class ContentServiceImpl extends AbstractServiceImpl implements ContentService {
 
 	private static Logger logger = Logger.getLogger(ContentServiceImpl.class);
@@ -68,25 +63,21 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 	/**
 	 * Read template.
 	 *
-	 * @param token
-	 *            the token
-	 * @param user
-	 *            the user
-	 * @param document
-	 *            the document
+	 * @param token    the token
+	 * @param user     the user
+	 * @param document the document
 	 *
 	 * @return the content
 	 */
 	@Override
-	public Content readTemplate(String token, String user, String document,
-			ParametersWrapper attributes) {
+	public Content readTemplate(String token, String user, String document, ParametersWrapper attributes) {
 
-		Monitor monitor = MonitorFactory
-				.start("spagobi.service.content.readTemplate");
+		Monitor monitor = MonitorFactory.start("spagobi.service.content.readTemplate");
 		logger.debug("IN");
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
+			this.setUserProfileByUserId(user);
 			ContentServiceImplSupplier c = new ContentServiceImplSupplier();
 			return c.readTemplate(user, document, attributes.getMap());
 		} catch (Exception e) {
@@ -94,6 +85,7 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 			return null;
 		} finally {
 			this.unsetTenant();
+			this.unsetUserProfile();
 			monitor.stop();
 			logger.debug("OUT");
 		}
@@ -102,21 +94,16 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 	/**
 	 * Read template by label.
 	 *
-	 * @param token
-	 *            the token
-	 * @param user
-	 *            the user
-	 * @param document
-	 *            the document
+	 * @param token    the token
+	 * @param user     the user
+	 * @param document the document
 	 *
 	 * @return the content
 	 */
 	@Override
-	public Content readTemplateByLabel(String token, String user, String label,
-			ParametersWrapper attributes) {
+	public Content readTemplateByLabel(String token, String user, String label, ParametersWrapper attributes) {
 
-		Monitor monitor = MonitorFactory
-				.start("spagobi.service.content.readTemplate");
+		Monitor monitor = MonitorFactory.start("spagobi.service.content.readTemplate");
 		logger.debug("IN");
 		try {
 			validateTicket(token, user);
@@ -136,21 +123,16 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 	/**
 	 * Read sub object content.
 	 *
-	 * @param token
-	 *            the token
-	 * @param user
-	 *            the user
-	 * @param subObjectId
-	 *            the sub object id
+	 * @param token       the token
+	 * @param user        the user
+	 * @param subObjectId the sub object id
 	 *
 	 * @return the content
 	 */
 	@Override
-	public Content readSubObjectContent(String token, String user,
-			String subObjectId) {
+	public Content readSubObjectContent(String token, String user, String subObjectId) {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory
-				.start("spagobi.service.content.readSubObjectContent");
+		Monitor monitor = MonitorFactory.start("spagobi.service.content.readSubObjectContent");
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
@@ -169,23 +151,17 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 	/**
 	 * Read sub object content.
 	 *
-	 * @param token
-	 *            the token
-	 * @param user
-	 *            the user
-	 * @param subObjectName
-	 *            the sub object name
-	 * @param objId
-	 *            the object id
+	 * @param token         the token
+	 * @param user          the user
+	 * @param subObjectName the sub object name
+	 * @param objId         the object id
 	 *
 	 * @return the content
 	 */
 	@Override
-	public Content readSubObjectContentByObjId(String token, String user,
-			String subObjectName, Integer objId) {
+	public Content readSubObjectContentByObjId(String token, String user, String subObjectName, Integer objId) {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory
-				.start("spagobi.service.content.readSubObjectContent");
+		Monitor monitor = MonitorFactory.start("spagobi.service.content.readSubObjectContent");
 		try {
 			validateTicket(token, user);
 			this.setTenantByUserId(user);
@@ -204,43 +180,31 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 	/**
 	 * Save sub object.
 	 *
-	 * @param token
-	 *            the token
-	 * @param user
-	 *            the user
-	 * @param documentiId
-	 *            the documenti id
-	 * @param analysisName
-	 *            the analysis name
-	 * @param analysisDescription
-	 *            the analysis description
-	 * @param visibilityBoolean
-	 *            the visibility boolean
-	 * @param content
-	 *            the content
+	 * @param token               the token
+	 * @param user                the user
+	 * @param documentiId         the documenti id
+	 * @param analysisName        the analysis name
+	 * @param analysisDescription the analysis description
+	 * @param visibilityBoolean   the visibility boolean
+	 * @param content             the content
 	 *
 	 * @return the string
 	 */
 	@Override
-	public String saveSubObject(String token, String user, String documentiId,
-			String analysisName, String analysisDescription,
-			String visibilityBoolean, String content) {
+	public String saveSubObject(String token, String user, String documentiId, String analysisName, String analysisDescription, String visibilityBoolean,
+			String content) {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory
-				.start("spagobi.service.content.saveSubObject");
+		Monitor monitor = MonitorFactory.start("spagobi.service.content.saveSubObject");
 		try {
 			validateTicket(token, user);
-			IEngUserProfile profile = GeneralUtilities
-					.createNewUserProfile(user);
-			if (!profile.getFunctionalities().contains(
-					SpagoBIConstants.SAVE_SUBOBJECT_FUNCTIONALITY)) {
+			IEngUserProfile profile = GeneralUtilities.createNewUserProfile(user);
+			if (!profile.getFunctionalities().contains(SpagoBIConstants.SAVE_SUBOBJECT_FUNCTIONALITY)) {
 				logger.debug("KO - User " + user + " cannot save subobjects");
 				return "KO - You cannot save subobjects";
 			}
 			this.setTenantByUserProfile(profile);
 			String userId = ((UserProfile) profile).getUserId().toString();
-			return saveSubObject(userId, documentiId, analysisName,
-					analysisDescription, visibilityBoolean, content);
+			return saveSubObject(userId, documentiId, analysisName, analysisDescription, visibilityBoolean, content);
 		} catch (Throwable t) {
 			logger.error("Error while saving object template", t);
 			return null;
@@ -255,31 +219,22 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 	/**
 	 * Save object template.
 	 *
-	 * @param token
-	 *            the token
-	 * @param user
-	 *            the user
-	 * @param documentiId
-	 *            the documenti id
-	 * @param templateName
-	 *            the template name
-	 * @param content
-	 *            the content
+	 * @param token        the token
+	 * @param user         the user
+	 * @param documentiId  the documenti id
+	 * @param templateName the template name
+	 * @param content      the content
 	 *
 	 * @return the string
 	 */
 	@Override
-	public String saveObjectTemplate(String token, String user,
-			String documentiId, String templateName, String content) {
+	public String saveObjectTemplate(String token, String user, String documentiId, String templateName, String content) {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory
-				.start("spagobi.service.content.saveObjectTemplate");
+		Monitor monitor = MonitorFactory.start("spagobi.service.content.saveObjectTemplate");
 		try {
 			validateTicket(token, user);
-			IEngUserProfile profile = GeneralUtilities
-					.createNewUserProfile(user);
-			if (!profile.getFunctionalities().contains(
-					SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+			IEngUserProfile profile = GeneralUtilities.createNewUserProfile(user);
+			if (!profile.getFunctionalities().contains(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
 				logger.debug("KO - User " + user + " cannot save templates");
 				return "KO - You cannot save templates";
 			}
@@ -299,20 +254,15 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 	/**
 	 * Download all.
 	 *
-	 * @param token
-	 *            the token
-	 * @param user
-	 *            the user
-	 * @param biobjectId
-	 *            the biobject id
-	 * @param fileName
-	 *            the file name
+	 * @param token      the token
+	 * @param user       the user
+	 * @param biobjectId the biobject id
+	 * @param fileName   the file name
 	 *
 	 * @return the content
 	 */
 	@Override
-	public Content downloadAll(String token, String user, String biobjectId,
-			String fileName) {
+	public Content downloadAll(String token, String user, String biobjectId, String fileName) {
 		return null;
 	}
 
@@ -341,14 +291,12 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 		return null;
 	}
 
-	private Content readSubObjectContent(String user, String subObjectName,
-			Integer objId) {
+	private Content readSubObjectContent(String user, String subObjectName, Integer objId) {
 		logger.debug("IN");
 		Content content = new Content();
 		try {
 			ISubObjectDAO subdao = DAOFactory.getSubObjectDAO();
-			SubObject subobj = subdao.getSubObjectByNameAndBIObjectId(
-					subObjectName, objId);
+			SubObject subobj = subdao.getSubObjectByNameAndBIObjectId(subObjectName, objId);
 			byte[] cont = subobj.getContent();
 			Base64.Encoder bASE64Encoder = Base64.getEncoder();
 			content.setContent(bASE64Encoder.encodeToString(cont));
@@ -365,9 +313,7 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 		return null;
 	}
 
-	private String saveSubObject(String user, String documentiId,
-			String analysisName, String analysisDescription,
-			String visibilityBoolean, String content) {
+	private String saveSubObject(String user, String documentiId, String analysisName, String analysisDescription, String visibilityBoolean, String content) {
 		logger.debug("IN");
 		try {
 			ISubObjectDAO subdao = DAOFactory.getSubObjectDAO();
@@ -377,14 +323,12 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 
 			// gets subobj if yet presents
 			Integer id = null;
-			SubObject objSub = subdao.getSubObjectByNameAndBIObjectId(
-					analysisName, docId);
+			SubObject objSub = subdao.getSubObjectByNameAndBIObjectId(analysisName, docId);
 			if (objSub != null) {
 				id = objSub.getId();
 				// check ability to modify:
 				if (!user.equals(objSub.getOwner())) {
-					logger.debug("KO - User " + user
-							+ " cannot modify subobjects");
+					logger.debug("KO - User " + user + " cannot modify subobjects");
 					return "KO - You cannot modify subobjects";
 				}
 				subobjExists = true;
@@ -423,8 +367,7 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 		}
 	}
 
-	private String saveObjectTemplate(String user, String documentiId,
-			String templateName, String content) {
+	private String saveObjectTemplate(String user, String documentiId, String templateName, String content) {
 		logger.debug("IN");
 		try {
 			IBIObjectDAO objdao = DAOFactory.getBIObjectDAO();

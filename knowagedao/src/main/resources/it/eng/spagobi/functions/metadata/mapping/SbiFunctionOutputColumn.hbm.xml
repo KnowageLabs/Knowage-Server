@@ -5,15 +5,15 @@
 <hibernate-mapping>
     <class name="it.eng.spagobi.functions.metadata.SbiFunctionOutputColumn" table="SBI_FUNCTION_OUTPUT_COLUMN">
         <composite-id name="id" class="it.eng.spagobi.functions.metadata.SbiFunctionOutputColumnId">
-            <key-property name="functionId" type="int">
-                <column name="FUNCTION_ID" />
+            <key-property name="functionUuid" type="string">
+                <column name="FUNCTION_UUID" length="100" />
             </key-property>
             <key-property name="colName" type="string">
                 <column name="COL_NAME" length="100" />
             </key-property>
         </composite-id>
         <many-to-one name="sbiCatalogFunction" class="it.eng.spagobi.functions.metadata.SbiCatalogFunction" update="false" insert="false" fetch="select">
-            <column name="FUNCTION_ID" not-null="true" />
+            <column name="FUNCTION_UUID" length="100" not-null="true" />
         </many-to-one>
         
         <property name="colFieldType" type="string">

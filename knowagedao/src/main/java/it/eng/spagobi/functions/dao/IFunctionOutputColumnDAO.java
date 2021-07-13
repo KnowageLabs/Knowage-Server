@@ -35,6 +35,6 @@ public interface IFunctionOutputColumnDAO {
 	 * @param functionId
 	 * @return
 	 */
-	List<SbiFunctionOutputColumn> loadFunctionOutputColumnByFunctionId(int functionId);
+	List<SbiFunctionOutputColumn> loadFunctionOutputColumnByFunctionUuid(String functionUuid);
 
 }

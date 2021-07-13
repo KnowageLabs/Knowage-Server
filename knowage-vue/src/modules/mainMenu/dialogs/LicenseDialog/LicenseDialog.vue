@@ -10,7 +10,7 @@
                 <template #header>
                     <span>{{ host.hostName }}</span>
                 </template>
-                <LicenceTab :licenses="licenses[host.hostName]" :host="host" @reloadList="loadLicenses"></LicenceTab>
+                <LicenceTab :licenses="licenses[host.hostName]" :host="host" :cpunumber="cpuNumber" @reloadList="loadLicenses"></LicenceTab>
             </TabPanel>
         </TabView>
         <template #footer>
@@ -28,12 +28,14 @@ import licenseDialogDescriptor from './LicenseDialogDescriptor.json'
 import LicenceTab from './LicenseTab.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import { mapState } from 'vuex'
 
 export default defineComponent({
     name: 'license-dialog',
     components: { Dialog, LicenceTab, TabView, TabPanel },
     data() {
         return {
+            cpuNumber: Number,
             licenseDialogDescriptor,
             hosts: [] as iHost[],
             licenses: {} as { [key: string]: iLicense[] },
@@ -41,7 +43,7 @@ export default defineComponent({
         }
     },
     async created() {
-        await this.loadLicenses()
+        if (this.user & this.user.isSuperAdmin) await this.loadLicenses()
     },
     props: {
         visibility: Boolean
@@ -58,9 +60,15 @@ export default defineComponent({
                 .then((response) => {
                     this.hosts = response.data.hosts
                     this.licenses = response.data.licenses
+                    this.cpuNumber = response.data.cpuNumber
                 })
                 .finally(() => (this.loading = false))
         }
+    },
+    computed: {
+        ...mapState({
+            user: 'user'
+        })
     }
 })
 </script>

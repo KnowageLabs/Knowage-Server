@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.commons.utilities.ObjectsAccessVerifier"%>
 <%@page import="it.eng.spagobi.engines.config.bo.Engine"%>
 <%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
+<%@page import="it.eng.knowage.security.ProductProfiler"%>
 <%@page import="java.util.Enumeration"%>
 
 <%@page import="it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO"%>
@@ -52,6 +53,7 @@ String isForExport = null;
 String cockpitSelections = null;
 String documentType = null;
 boolean isNotOlapDoc = true;
+boolean canExecuteDocument = true;
 
 // author: danristo
 String executedFrom = null;
@@ -120,6 +122,8 @@ try{
         executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(obj.getLabel(), userProfile);        
     }
     
+    canExecuteDocument = ProductProfiler.canExecuteDocument(obj);
+    
 }catch (Exception e) {
     e.printStackTrace();
 }
@@ -141,7 +145,7 @@ boolean isAbleToExecuteActionSnapshot = userProfile.isAbleToExecuteAction(SpagoB
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <% 
-if(executionRoleNames.size() > 0) {
+if(executionRoleNames.size() > 0 && canExecuteDocument) {
 %>
     <head>
         <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
@@ -769,8 +773,19 @@ if(executionRoleNames.size() > 0) {
             function cantExecuteDocumentController(
                     $scope, $mdDialog, sbiModule_translate, $documentBrowserScope) {
                 
-                var errorMessage = sbiModule_translate.load('sbi.execution.error.novalidrole');
+            	<% 
+            	if(!canExecuteDocument) {
+            	%>
+                	var errorMessage = sbiModule_translate.load('sbi.execution.error.novalidproduct');
+                <%
+            	} else {
+                %>
+                	var errorMessage = sbiModule_translate.load('sbi.execution.error.novalidrole');
+                <%
+            	}
+            	%>
                 var okMessage = sbiModule_translate.load('sbi.general.ok');
+                
                 
                 $mdDialog.show(
                     $mdDialog.alert()

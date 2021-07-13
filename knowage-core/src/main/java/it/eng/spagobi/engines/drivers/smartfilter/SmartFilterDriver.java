@@ -484,14 +484,6 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 		return null;
 	}
 
-	@Override
-	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
-		// catalog functions can be used only inside cockpits
-		// therefore the default implementation is to return an empty list
-		// CockpitEngine will have its own implementation
-		return new ArrayList<Integer>();
-	}
-
 	public String composeSmartFilterTemplate(String smartFilterDef, String smartFilterQuery, String smartFilterValues) throws SourceBeanException {
 		/*
 		 * SourceBean templateSB = new SourceBean(TAG_WORKSHEET); templateSB.setAttribute(ATTRIBUTE_VERSION, CURRENT_VERSION); SourceBean confSB =
