@@ -21,8 +21,6 @@
                 <template #header>
                     <span>{{ $t('kpi.kpiDefinition.cardinalityTtitle') }}</span>
                 </template>
-
-                {{ selectedKpi }}
             </TabPanel>
 
             <TabPanel>
@@ -30,7 +28,7 @@
                     <span>{{ $t('kpi.kpiDefinition.tresholdTitle') }}</span>
                 </template>
 
-                <KpiDefinitionThresholdTab :selectedKpi="selectedKpi" @thresholdFieldChanged="onThresholdFieldChange" />
+                <KpiDefinitionThresholdTab :selectedKpi="selectedKpi" :severityOptions="severityOptions" :loading="loading" @thresholdFieldChanged="onThresholdFieldChange" />
             </TabPanel>
         </TabView>
 
@@ -141,6 +139,7 @@ export default defineComponent({
     },
     async created() {
         this.loadSelectedKpi()
+        this.getSeverityOptions()
         this.loadAllData()
     },
     methods: {
@@ -161,17 +160,13 @@ export default defineComponent({
 
         async getSeverityOptions() {
             this.loading = true
-            if (this.id) {
-                await axios
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/SEVERITY`)
-                    .then((response) => {
-                        this.selectedKpi = { ...response.data }
-                        console.log('selectedKpi: ', this.selectedKpi)
-                    })
-                    .finally(() => (this.loading = false))
-            } else {
-                this.selectedKpi = {} as any
-            }
+            await axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/SEVERITY`)
+                .then((response) => {
+                    this.severityOptions = { ...response.data }
+                    console.log('severityOptions: ', this.selectedKpi)
+                })
+                .finally(() => (this.loading = false))
         },
 
         createGetUrl(dataType: string) {

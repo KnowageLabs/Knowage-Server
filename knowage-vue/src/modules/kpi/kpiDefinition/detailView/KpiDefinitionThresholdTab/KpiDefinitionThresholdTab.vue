@@ -41,9 +41,9 @@
                     <KnValidationMessages class="p-mt-1" :vComp="v$.threshold.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
                 </div>
             </form>
-            {{ threshold }}
+            {{ kpi.threshold }}
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <DataTable :value="threshold.thresholdValues" :loading="loading" editMode="cell" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="messages-table">
+            <DataTable v-if="!loading" :value="kpi.threshold.thresholdValues" :loading="loading" editMode="cell" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="messages-table">
                 <Column field="label" header="Label">
                     <template #editor="slotProps">
                         <InputText v-model="slotProps.data[slotProps.column.props.field]" />
@@ -70,12 +70,35 @@
                     </template>
                 </Column>
                 <Column field="severityId" header="Severity">
-                    <Dropdown v-model="slotProps.data[slotProps.column.props.field]" :options="statuses" optionLabel="label" optionValue="value" placeholder="Select a Status">
-                        <template #option="slotProps">
-                            <span :class="'product-badge status-' + slotProps.option.value.toLowerCase()">{{ slotProps.option.label }}</span>
-                        </template>
-                    </Dropdown>
+                    <template #editor="slotProps">
+                        <Dropdown v-model="slotProps.data[slotProps.column.props.field]" :options="severityOptions" optionLabel="valueCd" optionValue="valueId">
+                            <template #option="slotProps">
+                                <span>{{ slotProps.option.valueCd }}</span>
+                            </template>
+                        </Dropdown>
+                    </template>
+                    <template #body="slotProps">
+                        {{ slotProps.data[slotProps.column.props.field] }}
+                    </template>
                 </Column>
+                <Column class="p-d-inline-flex" field="color" header="Color">
+                    <template #body="slotProps">
+                        <ColorPicker v-model="slotProps.data[slotProps.column.props.field]" format="hex" />
+                        <span>{{ slotProps.data[slotProps.column.props.field] }}</span>
+                    </template>
+                    <template #editor="slotProps">
+                        <ColorPicker v-model="slotProps.data[slotProps.column.props.field]" format="hex" />
+                        <InputText v-model="slotProps.data[slotProps.column.props.field]" />
+                    </template>
+                </Column>
+                <!-- <Column :headerStyle="tresholdTabDescriptor.datatableStyle.buttonsHeaderStyle">
+                    <template #header>
+                        <Button label="Threshold List" class="p-button-link" @click="addEmptyLabel" />
+                    </template>
+                    <template #body="">
+                        <Button icon="pi pi-trash" class="p-button-link" />
+                    </template>
+                </Column> -->
             </DataTable>
         </template>
     </Card>
@@ -93,19 +116,16 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Checkbox from 'primevue/checkbox'
 import InputNumber from 'primevue/inputnumber'
+import ColorPicker from 'primevue/colorpicker'
+import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     name: 'treshold-tab',
-    components: {
-        Card,
-        KnValidationMessages,
-        Column,
-        DataTable,
-        Checkbox,
-        InputNumber
-    },
+    components: { Card, KnValidationMessages, Column, DataTable, Checkbox, InputNumber, ColorPicker, Dropdown },
     props: {
-        selectedKpi: Object
+        selectedKpi: Object,
+        severityOptions: Array,
+        loading: Boolean
     },
     emits: ['thresholdFieldChanged', 'activeVersionChanged'],
     data() {
@@ -115,8 +135,6 @@ export default defineComponent({
             tresholdTabDescriptor,
             kpi: {} as any,
             threshold: {} as any,
-            thresholdValues: [] as any,
-            loading: false,
             touched: false,
             columns: tresholdTabDescriptor.datatableColumns
         }

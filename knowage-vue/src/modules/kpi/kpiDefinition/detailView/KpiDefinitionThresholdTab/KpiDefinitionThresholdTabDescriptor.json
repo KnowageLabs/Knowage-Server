@@ -28,5 +28,8 @@
             "field": "color",
             "header": "color"
         }
-    ]
+    ],
+    "datatableStyle": {
+        "buttonsHeaderStyle": "width: 5.5%"
+    }
 }
