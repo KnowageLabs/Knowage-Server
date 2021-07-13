@@ -30,6 +30,38 @@
         }
     ],
     "datatableStyle": {
-        "buttonsHeaderStyle": "width: 5.5%"
+        "smallHeaderStyle": {
+            "width": "5.5%"
+        },
+        "checkboxHeaderStyle": "width: 8%"
+    },
+    "validations": {
+        "kpi": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "description",
+                "validators": [
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
     }
 }

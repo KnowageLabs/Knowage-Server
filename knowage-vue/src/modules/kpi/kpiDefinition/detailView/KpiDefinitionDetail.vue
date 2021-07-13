@@ -138,35 +138,29 @@ export default defineComponent({
         }
     },
     async created() {
-        this.loadSelectedKpi()
-        this.getSeverityOptions()
+        // this.getSeverityOptions()
         this.loadAllData()
+        // this.loadSelectedKpi()
     },
     methods: {
         async loadSelectedKpi() {
             this.loading = true
             if (this.id) {
-                await axios
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.version}/loadKpi`)
-                    .then((response) => {
-                        this.selectedKpi = { ...response.data }
-                        console.log('selectedKpi: ', this.selectedKpi)
-                    })
-                    .finally(() => (this.loading = false))
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.version}/loadKpi`).then((response) => {
+                    this.selectedKpi = { ...response.data }
+                    console.log('selectedKpi: ', this.selectedKpi)
+                })
             } else {
                 this.selectedKpi = {} as any
             }
+            this.loading = false
         },
 
         async getSeverityOptions() {
-            this.loading = true
-            await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/SEVERITY`)
-                .then((response) => {
-                    this.severityOptions = { ...response.data }
-                    console.log('severityOptions: ', this.selectedKpi)
-                })
-                .finally(() => (this.loading = false))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/SEVERITY`).then((response) => {
+                this.severityOptions = { ...response.data }
+                console.log('severityOptions: ', this.selectedKpi)
+            })
         },
 
         createGetUrl(dataType: string) {
@@ -182,6 +176,8 @@ export default defineComponent({
                 this.tresholdList = [...response.data]
                 console.log('listThreshold: ', this.tresholdList)
             })
+            await this.getSeverityOptions()
+            await this.loadSelectedKpi()
             this.loading = false
         },
 

@@ -30,34 +30,5 @@
         "style": {
             "margin-bottom": "40px"
         }
-    },
-    "validations": {
-        "kpi": [
-            {
-                "fieldName": "name",
-                "validators": [
-                    {
-                        "key": "required"
-                    },
-                    {
-                        "key": "regex",
-                        "validator": {
-                            "type": "extendedAlphanumericRegex"
-                        }
-                    }
-                ]
-            },
-            {
-                "fieldName": "description",
-                "validators": [
-                    {
-                        "key": "regex",
-                        "validator": {
-                            "type": "extendedAlphanumericRegex"
-                        }
-                    }
-                ]
-            }
-        ]
     }
 }
