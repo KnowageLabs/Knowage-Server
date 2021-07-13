@@ -10,6 +10,7 @@
             "javascript": "javascript",
             "python": "python"
         },
+        "delete": "delete",
         "deleteAll": "delete all",
         "description": "description",
         "download": "download",

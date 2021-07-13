@@ -170,7 +170,7 @@
 				to="/tenants-management" />
 			<ITEM id="8002" label="menu.TemplateManagement"
 				requiredFunctionality="TemplateManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=templateManagement" />
+				to="/template-pruning" />
 			<ITEM id="8003" label="menu.ImpExpDocument"
 				requiredFunctionality="ImpExpDocument"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportDocuments" />
