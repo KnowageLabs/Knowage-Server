@@ -1,5 +1,5 @@
 <template>
-    <TabView @tab-click="switchTabConfirm($event.index)" v-model:activeIndex="activeTab" lazy data-test="tab-view">
+    <TabView @tab-click="switchTabConfirm($event.index)" v-model:activeIndex="activeTab" lazy data-test="tab-view" class="internationalization-management kn-tab">
         <TabPanel v-for="language in languages" :key="language">
             <template #header>
                 {{ language.language }}
@@ -7,7 +7,7 @@
             </template>
             <div class="p-fluid card">
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <DataTable v-if="!loading" editMode="cell" :value="messages" :loading="loading" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
+                <DataTable v-if="!loading" editMode="cell" :value="messages" :loading="loading" class="p-datatable kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
                     <template #header>
                         <div class="table-header p-d-flex">
                             <span class="p-input-icon-left p-mr-3" :style="intDescriptor.headerStyles.searchBoxStyle">
@@ -33,21 +33,26 @@
                         </template>
                     </Column>
 
-                    <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true">
+                    <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :class="{ disabledColumn: col.disabled, editableColumn: !col.disabled }">
+                        <template #body="slotProps">
+                            <span :class="{ disabledCell: col.disabled, 'kn-disabled-text': col.disabled, editableCell: !col.disabled }">{{ slotProps.data[slotProps.column.props.field] }}</span>
+                        </template>
                         <template #editor="slotProps">
-                            <InputText v-model="slotProps.data[slotProps.column.props.field]" v-if="!col.disabled" @input="atFieldChange(slotProps)" />
-                            <span id="disabledMessageField" v-if="col.disabled">{{ slotProps.data[slotProps.column.props.field] }}</span>
+                            <InputText v-model="slotProps.data[slotProps.column.props.field]" v-if="!col.disabled" @input="atFieldChange(slotProps)" class="p-p-2" />
+                            <span class="disabledEditableField kn-disabled-text" v-if="col.disabled">{{ slotProps.data[slotProps.column.props.field] }}</span>
                         </template>
                     </Column>
 
                     <Column :headerStyle="intDescriptor.headerStyles.buttonsHeaderStyle">
                         <template #header>
-                            <Button v-if="language.defaultLanguage" :label="$t('managers.internationalizationManagement.table.addLabel')" class="p-button-link" @click="addEmptyLabel" />
+                            <Button v-if="language.defaultLanguage" :label="$t('managers.internationalizationManagement.table.addLabel')" class="p-button kn-button--primary" @click="addEmptyLabel" />
                         </template>
                         <template #body="slotProps">
-                            <Button icon="pi pi-save" class="p-button-link" @click="saveLabel(language, slotProps.data)" />
-                            <Button v-if="language.defaultLanguage" icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" />
-                            <Button v-if="!language.defaultLanguage" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" />
+                            <div class="p-d-flex p-jc-center p-ai-center">
+                                <Button icon="pi pi-save" class="p-button-link" @click="saveLabel(language, slotProps.data)" v-tooltip.top="$t('common.save')" />
+                                <Button v-if="language.defaultLanguage" icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" v-tooltip.top="$t('common.delete')" />
+                                <Button v-if="!language.defaultLanguage" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" v-tooltip.top="$t('common.cancel')" />
+                            </div>
                         </template>
                     </Column>
                 </DataTable>
@@ -316,3 +321,20 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss">
+.internationalization-management {
+    .disabledCell,
+    .disabledColumn,
+    .disabledEditableField {
+        cursor: not-allowed;
+    }
+    .editableCell,
+    .editableColumn {
+        cursor: pointer;
+    }
+    .p-datatable .p-datatable-tbody > tr:hover {
+        background-color: $color-selected;
+    }
+}
+</style>

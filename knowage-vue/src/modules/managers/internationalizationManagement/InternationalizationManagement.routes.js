@@ -1,7 +1,7 @@
 let routes = [
     {
-        path: '/language',
-        name: 'language',
+        path: '/internationalization-management',
+        name: 'internationalization-management',
         component: () => import('@/modules/managers/internationalizationManagement/InternationalizationManagement.vue')
     }
 ]

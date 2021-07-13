@@ -280,7 +280,7 @@
 			iconCls="fas fa-list" />
 		<ITEM id="10018" label="menu.i18n"
 			requiredFunctionality="ManageInternationalization"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=internationalization"
+			to="/internationalization-management"
 			iconCls="fas fa-flag" />
 		<ITEM id="10019" label="menu.news" requiredFunctionality="NewsVisualization"
 			conditionedView="news" iconCls="far fa-newspaper"

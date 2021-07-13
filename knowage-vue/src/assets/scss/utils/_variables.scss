@@ -3,6 +3,8 @@ $color-default: #a7a7a7;
 $color-primary: #43749e;
 $color-secondary: #bbd6ed;
 $color-fab: #ce0651;
+$color-disabled: #a0a0a0;
+$color-selected: lighten($color-secondary, 5%);
 $color-borders: #ccc;
 $color-success: #74a748;
 $color-error: #d32f2f;
