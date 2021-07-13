@@ -56,6 +56,7 @@
             "success": "Operation succeeded",
             "unsavedChangesHeader": "Unsaved changes",
             "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
+            "updateSuccess": "Item was updated successfully",
             "updateTitle": "Updated"
         },
         "type": "type",
@@ -218,6 +219,24 @@
             "valueCode": "Value code",
             "valueDescription": "Value description",
             "valueName": "Value name"
+        },
+        "internationalizationManagement": {
+            "defaultLanguage": "(Default)",
+            "delete": {
+                "cantDelete": "Default Message can be deleted only on Default Tab. You can't delete Default Message here.",
+                "deleteConfirm": "Are You sure You want to delete this message?",
+                "deleteDefault": "Note: Deleting Default Message will delete all other messages with this Label. Are You sure You want to delete this message?",
+                "deleteDefaultTitle": "Delete Default Message",
+                "deleteMessage": "Are You sure You want to delete this message?",
+                "deleteMessageTitle": "Delete Message",
+                "deleteOk": "Deleted successfully"
+            },
+            "showBlankMessages": "Show Only Blank Fields",
+            "table": {
+                "addLabel": "Add Label",
+                "defaultMessage": "Default Message Code",
+                "messageCode": "Message Code"
+            }
         },
         "metadata": {
             "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
