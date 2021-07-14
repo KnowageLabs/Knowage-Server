@@ -14,7 +14,7 @@
                     <span>{{ $t('kpi.measureDefinition.query') }}</span>
                 </template>
 
-                <QueryCard :rule="rule" :datasourcesList="datasourcesList" :aliases="availableAliasList" :placeholders="placeholdersList" @queryChanged="queryChanged = true"></QueryCard>
+                <QueryCard :rule="rule" :datasourcesList="datasourcesList" :aliases="availableAliasList" :placeholders="placeholdersList" :columns="columns" :rows="rows" @queryChanged="queryChanged = true" @loadPreview="previewQuery(false, true)"></QueryCard>
             </TabPanel>
 
             <TabPanel :disabled="metadataDisabled">
@@ -200,7 +200,7 @@ export default defineComponent({
         async setTabChanged(tabIndex: any) {
             this.activeTab = tabIndex
             if (tabIndex === 1) {
-                await this.previewQuery(false)
+                await this.previewQuery(false, false)
 
                 this.rule.ruleOutputs.forEach((ruleOutput: any) => {
                     this.setAliasIcon(ruleOutput)
@@ -264,7 +264,7 @@ export default defineComponent({
             })
             return used
         },
-        async previewQuery(save: boolean) {
+        async previewQuery(save: boolean, hasPlaceholders: boolean) {
             // console.log('RULE: ', this.rule)
             const tempDatasource = this.rule.dataSource
             if (this.rule.dataSource) {
@@ -274,7 +274,7 @@ export default defineComponent({
             if (this.rule.definition) {
                 this.loadPlaceholder()
             }
-            if (this.rule.placeholders && this.rule.placeholders.length === 0) {
+            if ((this.rule.placeholders && this.rule.placeholders.length === 0) || hasPlaceholders) {
                 const postData = { rule: this.rule, maxItem: 10 }
                 await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData).then((response) => {
                     if (response.data.errors) {
@@ -413,7 +413,7 @@ export default defineComponent({
         },
         submitConfirm() {
             if (!this.queryChanged) {
-                this.previewQuery(true)
+                this.previewQuery(true, false)
             } else {
                 this.$confirm.require({
                     message: this.$t('kpi.measureDefinition.metadataChangedMessage'),
@@ -421,7 +421,7 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.queryChanged = false
-                        this.previewQuery(true)
+                        this.previewQuery(true, false)
                     }
                 })
             }

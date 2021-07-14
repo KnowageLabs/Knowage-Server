@@ -10,14 +10,14 @@
             <div v-if="selectedRule.dataSource">
                 <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
                     <template #right>
-                        <Button class="kn-button p-button-text p-button-rounded" @click="previewVisible = true">{{ $t('kpi.measureDefinition.preview') }}</Button>
+                        <Button class="kn-button p-button-text p-button-rounded" @click="showPreview">{{ $t('kpi.measureDefinition.preview') }}</Button>
                     </template>
                 </Toolbar>
                 <VCodeMirror ref="codeMirror" v-model:value="code" :autoHeight="true" :options="options" @keyup="onKeyUp" />
             </div>
         </template>
     </Card>
-    <PreviewDialog v-if="previewVisible" :currentRule="selectedRule" :placeholders="placeholders" @close="previewVisible = false"></PreviewDialog>
+    <PreviewDialog v-if="previewVisible" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :rows="rows" @close="previewVisible = false" @loadPreview="$emit('loadPreview')"></PreviewDialog>
 </template>
 
 <script lang="ts">
@@ -34,8 +34,8 @@ import PreviewDialog from './PreviewDialog.vue'
 export default defineComponent({
     name: 'query-card',
     components: { Card, Dropdown, VCodeMirror, PreviewDialog },
-    props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array } },
-    emits: ['touched', 'queryChanged'],
+    props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array }, columns: { type: Array }, rows: { type: Array } },
+    emits: ['touched', 'queryChanged', 'loadPreview'],
     data() {
         return {
             queryCardDescriptor,
@@ -183,6 +183,12 @@ export default defineComponent({
             }
             this.selectedRule.definition = this.code
             this.$emit('queryChanged')
+        },
+        showPreview() {
+            this.$emit('loadPreview')
+            this.previewVisible = true
+            console.log('QUERY CARD EMITS')
+            console.log('QUERY CARD ROWS', this.rows)
         }
     }
 })
