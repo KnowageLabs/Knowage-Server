@@ -138,7 +138,10 @@
             "minInclude": "Include Min",
             "severity": "Severity",
             "thresholdReused": "Warning: this threshold is used elsewhere. Any change will affect other KPIs. Please consider creating a clone",
-            "tresholdTitle": "Treshold"
+            "tresholdTitle": "Treshold",
+            "thresholdAlreadyPresent": "Threshold is already defined",
+            "confirmOverride": "Are you sure to override it?",
+            "reusedTitle": "Threshold used by other kpi"
         }
     },
     "language": {

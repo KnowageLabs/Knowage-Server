@@ -118,7 +118,6 @@ export default defineComponent({
             if (this.id) {
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.version}/loadKpi`).then((response) => {
                     this.selectedKpi = { ...response.data }
-                    console.log('selectedKpi: ', this.selectedKpi)
                 })
             } else {
                 this.selectedKpi = {} as any
@@ -168,7 +167,6 @@ export default defineComponent({
             }
         },
         onThresholdFieldChange(event) {
-            console.log(event)
             this.selectedKpi.threshold[event.fieldName] = event.value
             this.touched = true
             this.$emit('touched')

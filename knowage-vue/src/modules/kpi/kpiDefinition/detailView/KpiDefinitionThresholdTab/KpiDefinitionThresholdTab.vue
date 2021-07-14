@@ -3,8 +3,9 @@
         <template #content>
             <Message v-if="kpi.threshold.usedByKpi" severity="info" :closable="false" :style="tresholdTabDescriptor.styles.message">
                 {{ $t('kpi.kpiDefinition.thresholdReused') }}
-                <Button :label="$t('kpi.kpiDefinition.clone')" />
+                <Button :label="$t('kpi.kpiDefinition.clone')" @click="cloneExistingThreshold" />
             </Message>
+
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12 p-md-4" :style="tabViewDescriptor.pField.style">
                     <span class="p-float-label">
@@ -14,17 +15,16 @@
                             type="text"
                             maxLength="100"
                             v-model.trim="v$.threshold.name.$model"
-                            :class="{
-                                'p-invalid': v$.threshold.name.$invalid && v$.threshold.name.$dirty
-                            }"
+                            :class="{ 'p-invalid': v$.threshold.name.$invalid && v$.threshold.name.$dirty }"
                             @blur="v$.threshold.name.$touch()"
-                            @input="onThresholdFieldChange('name', $event.target.value)"
+                            @change="onThresholdFieldChange('name', $event.target.value)"
                             data-test="name-input"
                         />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.threshold.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
                 </div>
+
                 <div class="p-field p-col-12 p-md-4" :style="tabViewDescriptor.pField.style">
                     <span class="p-float-label">
                         <InputText
@@ -33,17 +33,16 @@
                             type="text"
                             maxLength="500"
                             v-model.trim="v$.threshold.description.$model"
-                            :class="{
-                                'p-invalid': v$.threshold.description.$invalid && v$.threshold.description.$dirty
-                            }"
+                            :class="{ 'p-invalid': v$.threshold.description.$invalid && v$.threshold.description.$dirty }"
                             @blur="v$.threshold.description.$touch()"
-                            @input="onThresholdFieldChange('description', $event.target.value)"
+                            @change="onThresholdFieldChange('description', $event.target.value)"
                             data-test="description-input"
                         />
                         <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.threshold.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
                 </div>
+
                 <div class="p-field p-col-12 p-md-4" :style="tabViewDescriptor.pField.style">
                     <span class="p-float-label">
                         <Dropdown id="type" class="kn-material-input" v-model="threshold.typeId" :options="thresholdTypeList" optionLabel="translatedValueName" optionValue="valueId" @change="setTypeCd">
@@ -121,15 +120,17 @@
                         <Button icon="pi pi-trash" class="p-button-link" @click="deleteThresholdItemConfirm(slotProps.index)" />
                     </template>
                 </Column>
+
                 <template #footer>
                     <Button label="Add New Threshold Item" class="p-button-link" :style="tresholdTabDescriptor.styles.table.footer" @click="addNewThresholdItem" />
                 </template>
             </DataTable>
             <div class="p-mt-6">
-                {{ thresholdTypeList }}
+                {{ kpi.threshold }}
             </div>
         </template>
     </Card>
+
     <Sidebar class="mySidebar" v-model:visible="thresholdListVisible" position="right">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
             <template #left>Threshholds List</template>
@@ -139,11 +140,10 @@
             :options="thresholdsList"
             :filter="true"
             :filterPlaceholder="$t('common.search')"
-            optionLabel="name"
             filterMatchMode="contains"
             :filterFields="tabViewDescriptor.filterFields"
             :emptyFilterMessage="$t('common.info.noDataFound')"
-            @change="showForm"
+            @change="confirmToLoadThreshold"
             data-test="kpi-list"
         >
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -157,9 +157,23 @@
             </template>
         </Listbox>
     </Sidebar>
+
+    <Dialog class="kn-dialog--toolbar--primary importExportDialog" v-bind:visible="overrideDialogVisible" footer="footer" :header="$t('kpi.kpiDefinition.reusedTitle')" :closable="false" modal>
+        <p class="p-mt-4">
+            {{ $t('kpi.kpiDefinition.thresholdReused') }}
+        </p>
+        <template #footer>
+            <div class="p-d-flex p-jc-center">
+                <Button class="kn-button kn-button--primary" label="CANCEL" @click="overrideDialogVisible = false" />
+                <Button class="kn-button kn-button--primary" label="USE IT" @click="cloneSelectedThreshold" />
+                <Button class="kn-button kn-button--primary" label="CLONE" @click="cloneSelectedThreshold" />
+            </div>
+        </template>
+    </Dialog>
 </template>
 
 <script lang="ts">
+import axios from 'axios'
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
@@ -175,23 +189,15 @@ import Column from 'primevue/column'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import ColorPicker from 'primevue/colorpicker'
+import Dialog from 'primevue/dialog'
 
 export default defineComponent({
     name: 'treshold-tab',
-    components: {
-        KnValidationMessages,
-        Card,
-        Sidebar,
-        Listbox,
-        Message,
-        DataTable,
-        Column,
-        Checkbox,
-        Dropdown,
-        ColorPicker
-    },
+    components: { KnValidationMessages, Card, Sidebar, Listbox, Message, DataTable, Column, Checkbox, Dropdown, ColorPicker, Dialog },
     props: {
-        selectedKpi: Object,
+        selectedKpi: {
+            type: Object as any
+        },
         thresholdsList: Array,
         severityOptions: {
             type: Array as any,
@@ -211,7 +217,9 @@ export default defineComponent({
             tresholdTabDescriptor,
             kpi: {} as any,
             threshold: {} as any,
+            thresholdToClone: {} as any,
             thresholdListVisible: false,
+            overrideDialogVisible: false,
             touched: false
         }
     },
@@ -224,13 +232,13 @@ export default defineComponent({
 
     mounted() {
         if (this.selectedKpi) {
-            this.kpi = { ...this.selectedKpi } as any
+            this.kpi = this.selectedKpi as any
             this.threshold = this.kpi.threshold
         }
     },
     watch: {
         selectedKpi() {
-            this.kpi = { ...this.selectedKpi } as any
+            this.kpi = this.selectedKpi as any
             this.threshold = this.kpi.threshold
         }
     },
@@ -238,25 +246,30 @@ export default defineComponent({
         onThresholdFieldChange(fieldName: string, value: any) {
             this.$emit('thresholdFieldChanged', { fieldName, value })
         },
+
         onRowReorder(event) {
             this.kpi.threshold.thresholdValues = event.value
             this.kpi.threshold.thresholdValues.forEach((_, index) => {
                 this.kpi.threshold.thresholdValues[index].position = index + 1
             })
         },
+
         setSeverityCd(event, data) {
             const index = this.severityOptions.findIndex((SO: any) => SO.valueId === event.value)
             data.severityCd = index >= 0 ? this.severityOptions[index].valueCd : ''
         },
+
         setTypeCd(event) {
             const index = this.thresholdTypeList.findIndex((SO: any) => SO.valueId === event.value)
             this.threshold.type = index >= 0 ? this.thresholdTypeList[index].translatedValueName : ''
         },
+
         addNewThresholdItem() {
             const newThreshold = tresholdTabDescriptor.newThreshold
             newThreshold.position = this.kpi.threshold.thresholdValues.length + 1
             this.kpi.threshold.thresholdValues.push(newThreshold)
         },
+
         deleteThresholdItemConfirm(index) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
@@ -267,6 +280,41 @@ export default defineComponent({
         },
         deleteThresholdItem(index) {
             this.kpi.threshold.thresholdValues.splice(index, 1)
+        },
+
+        confirmToLoadThreshold(event) {
+            if (this.kpi.threshold.thresholdValues.length == 0 || this.kpi.threshold === tresholdTabDescriptor.newThreshold) {
+                this.loadSelectedThreshold(event)
+            } else {
+                this.$confirm.require({
+                    message: this.$t('kpi.kpiDefinition.confirmOverride'),
+                    header: this.$t('kpi.kpiDefinition.thresholdAlreadyPresent'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.loadSelectedThreshold(event)
+                })
+            }
+        },
+        loadSelectedThreshold(event) {
+            this.thresholdToClone = []
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold?kpiId=${this.selectedKpi.id}`).then((response) => {
+                this.thresholdToClone = response.data
+                this.thresholdToClone.usedByKpi ? (this.overrideDialogVisible = true) : this.cloneSelectedThreshold()
+            })
+        },
+        cloneSelectedThreshold() {
+            if (this.thresholdToClone.usedByKpi) {
+                this.thresholdToClone.name += ' (' + this.$t('kpi.kpiDefinition.clone') + ')'
+                this.thresholdToClone.id = undefined
+            }
+            this.kpi.threshold = this.thresholdToClone
+            this.threshold = this.kpi.threshold
+            this.thresholdListVisible = false
+            this.overrideDialogVisible = false
+        },
+        cloneExistingThreshold() {
+            this.kpi.threshold.name += ' (' + this.$t('kpi.kpiDefinition.clone') + ')'
+            this.kpi.threshold.id = undefined
+            this.kpi.threshold.usedByKpi = false
         }
     }
 })
