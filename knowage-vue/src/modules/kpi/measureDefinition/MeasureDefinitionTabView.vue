@@ -22,16 +22,7 @@
                     <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
                 </template>
 
-                <MetadataCard
-                    :currentRule="rule"
-                    :tipologiesType="domainsKpiRuleoutput"
-                    :domainsTemporalLevel="domainsTemporalLevel"
-                    :categories="domainsKpiMeasures"
-                    :availableAliases="availableAliasList"
-                    :notAvailableAliasList="notAvailableAliasList"
-                    :changed="tabChanged"
-                    @close="activeTab = 0"
-                ></MetadataCard>
+                <MetadataCard :currentRule="rule" :tipologiesType="domainsKpiRuleoutput" :domainsTemporalLevel="domainsTemporalLevel" :categories="domainsKpiMeasures"></MetadataCard>
             </TabPanel>
         </TabView>
     </div>
@@ -158,6 +149,7 @@ export default defineComponent({
         if (this.id && this.ruleVersion) {
             await this.loadSelectedRule()
         }
+
         if (this.clone === 'true') {
             this.rule.name = this.$t('common.copyOf') + ' ' + this.rule.name
             delete this.rule.id
@@ -174,6 +166,7 @@ export default defineComponent({
         // console.log('ALISASES FOR RULE available: ', this.availableAliasesForRule)
         // console.log('ALISASESFOR RULE  not available: ', this.notAvailableAliasesForRule)
         // console.log('PLACEHOLDERS: ', this.placeholdersList)
+        console.log('RULE BOJAN', this.rule)
     },
     methods: {
         async loadSelectedRule() {
@@ -204,10 +197,26 @@ export default defineComponent({
         loadDomainsByCode(code: string) {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${code}`)
         },
-        setTabChanged(tabIndex: any) {
+        async setTabChanged(tabIndex: any) {
             this.activeTab = tabIndex
             if (tabIndex === 1) {
-                this.tabChanged = !this.tabChanged
+                await this.previewQuery(false)
+
+                this.rule.ruleOutputs.forEach((ruleOutput: any) => {
+                    this.setAliasIcon(ruleOutput)
+                    if (!ruleOutput.category) {
+                        ruleOutput.category = { valueCd: '' }
+                    }
+                    if (!ruleOutput.hierarchy) {
+                        ruleOutput.hierarchy = { valueCd: '' }
+                    }
+                })
+
+                console.log('ERROR MESSAGE: ', this.errorMessage)
+                if (this.errorMessage) {
+                    console.log('STIGAO!!!')
+                    this.activeTab = 0
+                }
             }
         },
         setNewAliases() {
@@ -223,10 +232,20 @@ export default defineComponent({
             })
             console.log('NEW ALIASES', this.newAlias)
         },
+        setAliasIcon(ruleOutput: any) {
+            console.log('SET ALIAS ICON: ', ruleOutput.alias)
+            if (!this.aliasExists(ruleOutput.alias) && !this.aliasUsedByMeasure(ruleOutput.alias)) {
+                console.log('ALIAS doesnt Exist!')
+                ruleOutput.aliasIcon = 'fa fa-exclamation-triangle icon-missing'
+            }
+            if (this.aliasUsedByMeasure(ruleOutput.alias)) {
+                ruleOutput.aliasIcon = 'fa fa-exclamation-triangle icon-used'
+            }
+        },
         aliasExists(name: string) {
             let exists = false
             this.availableAliasList.forEach((alias: any) => {
-                console.log('Exists: ' + alias.name.toUpperCase() + ' === ' + name.toUpperCase())
+                // console.log('Exists: ' + alias.name.toUpperCase() + ' === ' + name.toUpperCase())
                 if (alias.name.toUpperCase() === name.toUpperCase()) {
                     // console.log('ALIAS Exists!')
                     exists = true
@@ -234,7 +253,18 @@ export default defineComponent({
             })
             return exists
         },
-        async prepareForSave() {
+        aliasUsedByMeasure(name: string) {
+            let used = false
+            this.notAvailableAliasList.forEach((alias: any) => {
+                //console.log('Used: ' + alias.name.toUpperCase() + ' === ' + name.toUpperCase())
+                if (alias.name.toUpperCase() === name.toUpperCase()) {
+                    //console.log('ALIAS USED!')
+                    used = true
+                }
+            })
+            return used
+        },
+        async previewQuery(save: boolean) {
             // console.log('RULE: ', this.rule)
             const tempDatasource = this.rule.dataSource
             if (this.rule.dataSource) {
@@ -259,7 +289,10 @@ export default defineComponent({
             // console.log('Submit error', this.errorMessage)
             this.setNewAliases()
             console.log('Rule after prepare', this.rule)
-            await this.preSaveRule()
+            if (save) {
+                await this.preSaveRule()
+            }
+
             this.rule.dataSource = tempDatasource
         },
         async preSaveRule() {
@@ -380,7 +413,7 @@ export default defineComponent({
         },
         submitConfirm() {
             if (!this.queryChanged) {
-                this.prepareForSave()
+                this.previewQuery(true)
             } else {
                 this.$confirm.require({
                     message: this.$t('kpi.measureDefinition.metadataChangedMessage'),
@@ -388,7 +421,7 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.queryChanged = false
-                        this.prepareForSave()
+                        this.previewQuery(true)
                     }
                 })
             }

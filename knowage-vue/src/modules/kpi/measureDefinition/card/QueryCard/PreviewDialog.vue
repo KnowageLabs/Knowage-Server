@@ -107,7 +107,7 @@ export default defineComponent({
             console.log('QUery error', this.queryError)
         },
         loadPlaceholder() {
-            const placeholder = this.currentRule.definition.match(/@\w*/g)
+            const placeholder = this.rule.definition.match(/@\w*/g)
             console.log('PLACEHOLDER ', placeholder)
             if (placeholder != null) {
                 for (let i = 0; i < placeholder.length; i++) {
