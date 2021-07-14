@@ -18,10 +18,6 @@
 	    };
 	});
 
-	app.factory("dialogScope",function(){
-		return window.parent.angular.element(window.frameElement).scope() || {};
-	})
-
 	app.service("metaModelServices",function(sbiModule_jsonServices){
 		var bms=this;
 		this.metaModelObserver; //the observer on the original object without the $parent
@@ -112,9 +108,9 @@
 		}
 	})
 
-	app.controller('checkModelController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail','$mdDialog','$window','incorrectRelationships','dataToSend', checkModelControllerFunction ]);
+	app.controller('checkModelController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','metaModelServices','$interval','$angularListDetail','$mdDialog','$window','incorrectRelationships','dataToSend', checkModelControllerFunction ]);
 
-	function checkModelControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval,$angularListDetail,$mdDialog,$window,incorrectRelationships,dataToSend) {
+	function checkModelControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,metaModelServices,$interval,$angularListDetail,$mdDialog,$window,incorrectRelationships,dataToSend) {
 		$scope.incorrectRelationships=incorrectRelationships;
 		$scope.translate=sbiModule_translate;
 		$scope.dataToSend = dataToSend;
@@ -138,11 +134,11 @@
 
 	}
 
-	app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail','$mdDialog','$window','sbiModule_config','sbiModule_user', metaDefinitionControllerFunction ]);
+	app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','metaModelServices','$interval','$angularListDetail','$mdDialog','$window','sbiModule_config','sbiModule_user', metaDefinitionControllerFunction ]);
 
 
 
-	function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval,$angularListDetail,$mdDialog,$window,sbiModule_user) {
+	function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,metaModelServices,$interval,$angularListDetail,$mdDialog,$window,sbiModule_user) {
 		$scope.translate = sbiModule_translate;
 		$scope.physicalModelTreeInterceptor = {};
 		$scope.businessModelTreeInterceptor = {};
@@ -242,7 +238,7 @@
 			 .ok(sbiModule_translate.load("sbi.general.continue"))
 			 .cancel(sbiModule_translate.load("sbi.general.cancel"));
 			   $mdDialog.show(confirm).then(function() {
-				   dialogScope.closeMetaWeb();
+				   window.parent.postMessage({"action":"closeDialog"}, '*');
 			   });
 
 

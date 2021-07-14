@@ -61,7 +61,7 @@
     <APPLICATION code="FinalUsersManagement" 
                  title="#menu.Users"  
                  functionality="FinalUsersManagement" 
-                 link="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+                 link="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=usersManagement?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
                  iconUrl="${SPAGOBI_CONTEXT}/img/wapp/users.png">
     </APPLICATION>
     
@@ -75,7 +75,7 @@
     <APPLICATION code="FunctionsCatalog" 
 	             title="#menu.FunctionsCatalog"  
 	             functionality="FunctionsCatalog" 
-	             link="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/functionsCatalog/functionsCatalog.jsp" 
+	             link="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=functionsCatalog" 
 	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/bidocuments16.png">
 	</APPLICATION>
 	

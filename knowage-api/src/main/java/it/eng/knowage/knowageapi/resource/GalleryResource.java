@@ -18,6 +18,7 @@
 package it.eng.knowage.knowageapi.resource;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -31,7 +32,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -51,7 +51,7 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 @Validated
 public class GalleryResource {
 
-	static private Logger logger = Logger.getLogger(GalleryResource.class);
+	private static final Logger LOGGER = Logger.getLogger(GalleryResource.class);
 
 	@Autowired
 	WidgetGalleryAPI widgetGalleryService;
@@ -69,7 +69,7 @@ public class GalleryResource {
 			SpagoBIUserProfile profile = getUserProfile();
 			widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenant(profile);
 		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage(), e);
+			throw new KnowageRuntimeException(e);
 		}
 		return widgetGalleryDTOs;
 
@@ -83,8 +83,8 @@ public class GalleryResource {
 		try {
 			SpagoBIUserProfile profile = getUserProfile();
 			widgetGalleryDTO = widgetGalleryService.getWidgetsById(widgetId, profile);
-		} catch (Throwable e) {
-			throw new KnowageRuntimeException(e.getMessage(), e);
+		} catch (Exception e) {
+			throw new KnowageRuntimeException("Error getting widget with id " + Optional.ofNullable(widgetId).orElse("null"), e);
 		}
 		return widgetGalleryDTO;
 
@@ -98,8 +98,8 @@ public class GalleryResource {
 		try {
 			SpagoBIUserProfile profile = getUserProfile();
 			widgetGalleryDTO = widgetGalleryService.getWidgetsById(widgetId, profile);
-		} catch (Throwable e) {
-			throw new KnowageRuntimeException(e.getMessage(), e);
+		} catch (Exception e) {
+			throw new KnowageRuntimeException("Error getting widget with id " + String.valueOf(widgetId), e);
 		}
 		return widgetGalleryDTO.getImage();
 
@@ -113,8 +113,8 @@ public class GalleryResource {
 		try {
 			SpagoBIUserProfile profile = getUserProfile();
 			widgetGalleryDTOs = widgetGalleryService.getWidgetsByTenantType(profile, type);
-		} catch (Throwable e) {
-			throw new KnowageRuntimeException(e.getMessage(), e);
+		} catch (Exception e) {
+			throw new KnowageRuntimeException("Error getting widget of type " + String.valueOf(type), e);
 		}
 		return widgetGalleryDTOs;
 	}
@@ -129,7 +129,7 @@ public class GalleryResource {
 			newSbiWidgetGallery.setTemplate(template);
 			newSbiWidgetGallery = widgetGalleryService.makeNewWidget(newSbiWidgetGallery, profile, true);
 		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage(), e);
+			throw new KnowageRuntimeException("Cannot create widget " + Optional.ofNullable(newSbiWidgetGallery).map(WidgetGalleryDTO::getName).orElse("null"), e);
 		}
 		return newSbiWidgetGallery;
 
@@ -152,7 +152,7 @@ public class GalleryResource {
 				newSbiWidgetGalleryToUpdate = widgetGalleryService.updateWidget(newSbiWidgetGallery, profile);
 			}
 		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage(), e);
+			throw new KnowageRuntimeException("Error updating widget with id " + String.valueOf(widgetId), e);
 		}
 
 		return newSbiWidgetGalleryToUpdate;
@@ -179,7 +179,7 @@ public class GalleryResource {
 				throw new KnowageRuntimeException("Cannot delete object with id: " + widgetId);
 			}
 		} catch (Exception e) {
-			throw new KnowageRuntimeException(e.getMessage(), e);
+			throw new KnowageRuntimeException("Error deleting widget with id " + String.valueOf(widgetId), e);
 		}
 		return response;
 
@@ -196,8 +196,8 @@ public class GalleryResource {
 			newSbiWidgetGallery.setTemplate(template);
 			newSbiWidgetGallery = widgetGalleryService.importOrUpdateWidget(newSbiWidgetGallery, profile);
 
-		} catch (JSONException e) {
-			throw new KnowageRuntimeException(e.getMessage(), e);
+		} catch (Exception e) {
+			throw new KnowageRuntimeException("Cannot import widget " + Optional.ofNullable(newSbiWidgetGallery).map(WidgetGalleryDTO::getName).orElse("null"), e);
 		}
 
 		return newSbiWidgetGallery;

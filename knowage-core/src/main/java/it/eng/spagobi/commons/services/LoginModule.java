@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.services;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
@@ -35,8 +36,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
-import it.eng.knowage.wapp.Environment;
-import it.eng.knowage.wapp.Version;
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -88,6 +87,18 @@ public class LoginModule extends AbstractHttpModule {
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 
 	public static final String PAGE_NAME = "LoginPage";
+
+	private static final String VUE_ENVIRONMENT = "vue.environment";
+	private static boolean isProduction = true;
+
+	static {
+		String vueEnvironment = System.getProperty(VUE_ENVIRONMENT);
+		logger.info("Retrieved " + VUE_ENVIRONMENT + " system property. Vue environment is: [" + vueEnvironment + "]");
+		if (vueEnvironment != null && vueEnvironment.equalsIgnoreCase("development")) {
+			logger.info("Setting production mode to off. Development mode is now enabled.");
+			isProduction = false;
+		}
+	}
 
 	/**
 	 * Service.
@@ -356,10 +367,13 @@ public class LoginModule extends AbstractHttpModule {
 	}
 
 	private void redirectToKnowageVue() throws IOException {
-		if(Version.getEnvironment() == Environment.PRODUCTION) {
+		if (isProduction) {
 			getHttpResponse().sendRedirect("/knowage-vue");
-		}else {
-			getHttpResponse().sendRedirect("http://localhost:3000/knowage-vue");
+		} else {
+			URL url = new URL(getHttpRequest().getRequestURL().toString());
+			URL newUrl = new URL("http", url.getHost(), 3000, "/knowage-vue");
+
+			getHttpResponse().sendRedirect(newUrl.toString());
 		}
 	}
 

@@ -28,6 +28,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -63,20 +64,15 @@ public class AbstractEngineDriver {
 	/**
 	 * Applys changes for security reason if necessary
 	 *
-	 * @param pars
-	 *            The map of parameters
+	 * @param pars The map of parameters
 	 * @return The map of parameters to send to the engine
 	 */
 	protected Map applySecurity(Map pars, IEngUserProfile profile) {
 		logger.debug("IN");
 		/*
-		 * String active
-		 * =SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
-		 * String userId=(String)profile.getUserUniqueIdentifier(); if (active
-		 * != null && active.equalsIgnoreCase("true") &&
-		 * !((UserProfile)profile).isSchedulerUser(userId)){ logger.debug(
-		 * "I don't put the UserId information in the URL"); }else { if
-		 * (((UserProfile) profile).getUserUniqueIdentifier() != null) {
+		 * String active =SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE"); String userId=(String)profile.getUserUniqueIdentifier(); if
+		 * (active != null && active.equalsIgnoreCase("true") && !((UserProfile)profile).isSchedulerUser(userId)){ logger.debug(
+		 * "I don't put the UserId information in the URL"); }else { if (((UserProfile) profile).getUserUniqueIdentifier() != null) {
 		 */
 		pars.put(SsoServiceInterface.USER_ID, ((UserProfile) profile).getUserUniqueIdentifier());
 		// }
@@ -88,8 +84,7 @@ public class AbstractEngineDriver {
 	}
 
 	/**
-	 * get the description of the parameter and create a new biparameter to pass
-	 * at the engine with url parameter_name+DESCRIPTION_SUFFIX
+	 * get the description of the parameter and create a new biparameter to pass at the engine with url parameter_name+DESCRIPTION_SUFFIX
 	 *
 	 * @param biobj
 	 * @param pars
@@ -112,8 +107,7 @@ public class AbstractEngineDriver {
 					biobjPar = (BIObjectParameter) it.next();
 					logger.debug("Manage parameter: " + biobjPar.getParameterUrlName());
 					/*
-					 * value = (String) biobjPar.getParameterValues().get(0);
-					 * pars.put(biobjPar.getParameterUrlName(), value);
+					 * value = (String) biobjPar.getParameterValues().get(0); pars.put(biobjPar.getParameterUrlName(), value);
 					 */
 					description = parValuesEncoder.encodeDescription(biobjPar);
 					if (description != null) {
@@ -133,15 +127,12 @@ public class AbstractEngineDriver {
 	/**
 	 * Returns the template elaborated.
 	 *
-	 * @param byte[]
-	 *            the template
-	 * @param profile
-	 *            the profile
+	 * @param byte[]  the template
+	 * @param profile the profile
 	 *
 	 * @return the byte[] with the modification of the document template
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	public byte[] ElaborateTemplate(byte[] template) throws InvalidOperationRequest {
 		logger.warn("Default call. No elaborations are applied to the template.");
@@ -287,6 +278,13 @@ public class AbstractEngineDriver {
 
 		logger.debug("OUT");
 		return content;
+	}
+
+	public ArrayList<String> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
+		// catalog functions can be used only inside cockpits
+		// therefore the default implementation is to return an empty list
+		// CockpitEngine will have its own implementation
+		return new ArrayList<String>();
 	}
 
 	public List<DefaultOutputParameter> getDefaultOutputParameters() {

@@ -4,6 +4,10 @@
     border-radius: 0;
     border-right: 1px solid $list-border-color;
 
+    &.kn-list-no-border-right {
+        border-right: none;
+    }
+
     &--column {
         @extend .kn-list;
         height: 100vh;

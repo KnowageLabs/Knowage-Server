@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -217,6 +218,7 @@ public class MetaData implements IMetaData, Cloneable {
 		return fieldsMeta;
 	}
 
+	@JsonSetter
 	public void setFieldsMeta(FieldMetadata[] fieldsMeta) {
 		this.fieldsMeta = new ArrayList<IFieldMetaData>(fieldsMeta.length);
 

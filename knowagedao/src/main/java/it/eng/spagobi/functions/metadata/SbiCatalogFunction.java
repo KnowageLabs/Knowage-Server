@@ -2,6 +2,7 @@ package it.eng.spagobi.functions.metadata;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 // Generated 10-mag-2016 14.47.57 by Hibernate Tools 3.4.0.CR1
 
@@ -12,7 +13,7 @@ import it.eng.spagobi.commons.metadata.SbiHibernateModel;
  */
 public class SbiCatalogFunction extends SbiHibernateModel {
 
-	private Integer functionId;
+	private String functionUuid;
 	private String name;
 	private String description;
 	private String benchmarks;
@@ -32,27 +33,16 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 	public SbiCatalogFunction() {
 	}
 
-	public SbiCatalogFunction(int functionId, String name, String description, String benchmarks, String language, String family, String script, String owner,
-			String keywords, String label, String type) {
-		this.functionId = functionId;
-		this.name = name;
-		this.description = description;
-		this.benchmarks = benchmarks;
-		this.family = family;
-		this.language = language;
-		this.onlineScript = script;
-		this.owner = owner;
-		this.keywords = keywords;
-		this.label = label;
-		this.type = type;
+	public SbiCatalogFunction(UUID uuid) {
+		this.functionUuid = uuid.toString();
 	}
 
-	public Integer getFunctionId() {
-		return this.functionId;
+	public String getFunctionUuid() {
+		return this.functionUuid;
 	}
 
-	public void setFunctionId(Integer functionId) {
-		this.functionId = functionId;
+	public void setFunctionUuid(String functionUuid) {
+		this.functionUuid = functionUuid;
 	}
 
 	public String getName() {

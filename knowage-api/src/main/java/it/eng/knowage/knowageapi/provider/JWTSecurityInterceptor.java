@@ -21,7 +21,6 @@ import java.io.IOException;
 
 import javax.annotation.Priority;
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -39,6 +38,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
+import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.utils.ConfigSingleton;
 import it.eng.spagobi.services.security.SecurityServiceService;
@@ -49,27 +49,39 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 @Component
 public class JWTSecurityInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
 
-	static private Logger logger = Logger.getLogger(JWTSecurityInterceptor.class);
+	private static final Logger LOGGER = Logger.getLogger(JWTSecurityInterceptor.class);
 
 	@Override
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-		logger.info("FILTER OUT");
+		LOGGER.info("FILTER OUT");
 	}
 
 	@Autowired
 	@Lazy
 	SecurityServiceService securityServiceService;
 
+	@Autowired
+	private BusinessRequestContext businessRequestContext;
+
+	@Autowired
+	private Context ctx;
+
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
-		logger.info("FILTER IN");
+		LOGGER.info("FILTER IN");
 		String userToken = requestContext.getHeaderString(ConfigSingleton.getInstance().getAuthorizationHeaderName());
-		logger.info("header: " + userToken);
+		LOGGER.info("header: " + userToken);
 		SpagoBIUserProfile profile = null;
 		String noBearerUserToken = userToken.replace("Bearer ", "");
 		String technicalToken = getTechnicalToken();
 		try {
 			profile = securityServiceService.getUserProfile(technicalToken, noBearerUserToken);
+
+			businessRequestContext.setUsername(profile.getUserId());
+			businessRequestContext.setOrganization(profile.getOrganization());
+			businessRequestContext.setUserProfile(profile);
+			businessRequestContext.setUserToken(userToken);
+
 			RequestContextHolder.currentRequestAttributes().setAttribute("userProfile", profile, RequestAttributes.SCOPE_REQUEST);
 			RequestContextHolder.currentRequestAttributes().setAttribute("userToken", userToken, RequestAttributes.SCOPE_REQUEST);
 		} catch (Exception e) {
@@ -77,18 +89,12 @@ public class JWTSecurityInterceptor implements ContainerRequestFilter, Container
 		}
 	}
 
-	public static String getTechnicalToken() {
+	public String getTechnicalToken() {
 		String technicalToken = null;
-		Context ctx;
 		try {
-			ctx = new InitialContext();
-			// Calendar calendar = Calendar.getInstance();
-			// calendar.add(Calendar.MINUTE, 5); // token for services will expire in 5 minutes
-			// Date expiresAt = calendar.getTime();
 			String key = (String) ctx.lookup("java:/comp/env/hmacKey");
 			Algorithm algorithm = Algorithm.HMAC256(key);
 			technicalToken = JWT.create().withIssuer("knowage")
-					// .withExpiresAt(expiresAt)
 					.sign(algorithm);
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e.getMessage(), e);
