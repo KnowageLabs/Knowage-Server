@@ -62,7 +62,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=businessModelCatalogue" />
 			<ITEM id="4002" label="menu.MondrianCatalogue"
 				requiredFunctionality="ArtifactCatalogueManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=mondrianSchemasCatalogue?requiredFunctionality=MONDRIAN_SCHEMA&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
+				to="/mondrian-schemas-management" />
 			<ITEM id="4003" label="menu.MapCat"
 				requiredFunctionality="MapCatalogueManagement"
 				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListMapsPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />

@@ -32,7 +32,7 @@
                                     <span>{{ slotProps.option.name }}</span>
                                     <span class="kn-list-item-text-secondary">{{ slotProps.option.description }}</span>
                                 </div>
-                                <Button icon="pi pi-trash" class="p-button-link" @click.stop="deleteSchemaConfirm(slotProps.option.id)" data-test="delete-button" />
+                                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteSchemaConfirm(slotProps.option.id)" data-test="delete-button" />
                             </div>
                         </template>
                     </Listbox>
@@ -64,7 +64,7 @@ export default defineComponent({
     },
     computed: {
         toggleHint() {
-            if (this.$route.fullPath == '/schemas') {
+            if (this.$route.fullPath == '/mondrian-schemas-management') {
                 return true
             }
             return false
@@ -92,7 +92,7 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         showForm(event: any) {
-            const path = event.value ? `/schemas/${event.value.id}` : '/schemas/new-schema'
+            const path = event.value ? `/mondrian-schemas-management/${event.value.id}` : '/mondrian-schemas-management/new-schema'
 
             if (!this.touched) {
                 this.$router.push(path)
@@ -122,7 +122,7 @@ export default defineComponent({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
-                this.$router.push('/schemas')
+                this.$router.push('/mondrian-schemas-management')
                 this.loadAllSchemas()
             })
         },

@@ -100,7 +100,7 @@ export default defineComponent({
             this.$emit('touched')
         },
         closeTemplate() {
-            this.$router.push('/schemas')
+            this.$router.push('/mondrian-schemas-management')
             this.$emit('closed')
         },
         onFieldChange(event) {
@@ -140,7 +140,7 @@ export default defineComponent({
             this.loading = true
             if (this.id) {
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.id}`).then((response) => (this.selectedSchema = response.data))
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/${this.id}`).then((response) => (this.wfSelectedUserList = response.data))
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/${this.id}`).then((response: any) => (this.wfSelectedUserList = response.data.errors ? [] : response.data))
             } else {
                 this.selectedSchema = {} as iSchema
                 this.wfSelectedUserList = []
@@ -193,7 +193,7 @@ export default defineComponent({
 
             this.versionToSave = null
             if (this.operation === 'insert') {
-                this.$router.push(`/schemas/${this.selectedSchema.id}`)
+                this.$router.push(`/mondrian-schemas-management/${this.selectedSchema.id}`)
             } else {
                 this.reloadVersionTable = true
             }

@@ -1,7 +1,7 @@
 let routes = [
     {
-        path: '/schemas',
-        name: 'schemas',
+        path: '/mondrian-schemas-management',
+        name: 'mondrian-schemas-management',
         component: () => import('@/modules/managers/mondrianSchemasManagement/MondrianSchemasManagement.vue'),
         children: [
             {

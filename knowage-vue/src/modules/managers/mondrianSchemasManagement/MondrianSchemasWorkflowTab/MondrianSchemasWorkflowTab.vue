@@ -1,5 +1,5 @@
 <template>
-    <Card>
+    <Card class="workflow">
         <template #content>
             <div class="p-d-flex">
                 <div class="kn-list--column" :style="workflowDescriptor.style.workflowList">
@@ -39,7 +39,7 @@
                         </template>
                         <template #right>
                             <span v-tooltip.top="$t(tooltipValue)">
-                                <Button :disabled="disableButton" icon="pi pi-play" @click="startWorkflow" />
+                                <Button :disabled="disableButton" icon="pi pi-play" class="p-button-rounded" @click="startWorkflow" />
                             </span>
                         </template>
                     </Toolbar>
@@ -217,7 +217,15 @@ export default defineComponent({
     }
 })
 </script>
-<style scoped>
+<style lang="scss" scoped>
+.workflow {
+    :deep(.p-card-body) {
+        padding: 0;
+        .p-card-content {
+            padding: 0;
+        }
+    }
+}
 .disableCursor {
     cursor: not-allowed;
 }

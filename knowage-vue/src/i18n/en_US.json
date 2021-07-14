@@ -256,7 +256,7 @@
             "hint": "placeholder, please add a description",
             "hintTitle": "Mondrian Schema Management",
             "noResults": "No schemas' available for the selected filter.",
-            "title": "OLAP schemas' catalogue",
+            "title": "Mondrian schemas catalogue",
             "toast": {
                 "downloadFile": {
                     "downloaded": "Version Downloaded",
