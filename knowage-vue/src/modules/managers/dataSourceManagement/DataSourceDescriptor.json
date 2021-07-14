@@ -1,0 +1,129 @@
+{
+    "card": {
+        "style": {
+            "margin-bottom": "2em",
+            "width": "100%"
+        }
+    },
+    "checkboxLabel": {
+        "style": {
+            "margin-left": "15px",
+            "width": "100px"
+        }
+    },
+    "column": {
+        "header": {
+            "style": {
+                "display": "flex",
+                "flex-direction": "column"
+            }
+        },
+        "style": {
+            "width": "50%"
+        }
+    },
+    "filterFields": ["label", "descr"],
+    "iconTypesMap": {
+        "MongoDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "hive": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.BigQueryDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.DB2400Dialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.Hive2Dialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.MySQLDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.MySQLInnoDBDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.Oracle9Dialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.OracleDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.PostgreSQLDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.RedShiftDialect": {
+            "dbIcon": "far fa-newspaper"
+        },
+        "org.hibernate.dialect.SQLServerDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.SynapseDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.TeradataDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.VerticaDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.cassandra": {
+            "dbIcon": "fas fa-envelope"
+        },
+        "org.hibernate.dialect.impala": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernate.dialect.sparksql": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "org.hibernatespatial.oracle.CustomOracleSpatialDialect": {
+            "dbIcon": "fas fa-exclamation-circle"
+        },
+        "orient": {
+            "dbIcon": "fas fa-exclamation-circle"
+        }
+    },
+    "newDataSourceValues": {
+        "descr": "",
+        "dialectName": "",
+        "driver": "",
+        "jdbcPoolConfiguration": {
+            "abandonedTimeout": 60,
+            "logAbandoned": true,
+            "maxTotal": 20,
+            "maxWait": 60,
+            "minEvictableIdleTimeMillis": 60,
+            "removeAbandonedOnBorrow": true,
+            "removeAbandonedOnMaintenance": true,
+            "testOnReturn": true,
+            "testWhileIdle": true,
+            "timeBetweenEvictionRuns": 10,
+            "validationQuery": ""
+        },
+        "jndi": "",
+        "label": "",
+        "multiSchema": false,
+        "pwd": "",
+        "readOnly": true,
+        "schemaAttribute": "",
+        "urlConnection": "",
+        "user": "",
+        "writeDefault": false
+    },
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "pField": {
+        "style": {
+            "margin-bottom": "40px"
+        }
+    }
+}
