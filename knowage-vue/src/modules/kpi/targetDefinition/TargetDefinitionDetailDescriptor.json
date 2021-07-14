@@ -26,5 +26,6 @@
             "field": "kpiAuthor",
             "header": "Author"
         }
-    ]
+    ],
+    "globalFilterFields": ["kpiName", "kpiCategory", "kpiDate", "kpiAuthor"]
 }

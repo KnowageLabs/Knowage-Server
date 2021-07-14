@@ -14,19 +14,20 @@
                 <Listbox v-if="!loading" class="kn-list--column" :options="targetList" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="targetDefinitionDecriptor.filterFields" emptyFilterMessage="noResults" @change="showForm">
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
-                        <div class="kn-list-item" data-test="list-item">
+                        <div class="kn-list-item">
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.name }}</span>
                                 <span class="kn-list-item-text-secondary">{{ formatDate(slotProps.option.startValidity) }} - {{ formatDate(slotProps.option.endValidity) }}</span>
                             </div>
-                            <Button icon="far fa-copy" class="p-button-text p-button-rounded p-button-plain" @click.stop="cloneTargetConfirm(slotProps.option.id)" data-test="clone-button" />
+                            <Button icon="far fa-copy" class="p-button-text p-button-rounded p-button-plain" @click.stop="cloneTargetConfirm(slotProps.option)" data-test="clone-button" />
                             <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteTargetConfirm(slotProps.option.id)" data-test="delete-button" />
                         </div>
                     </template>
                 </Listbox>
             </div>
-            <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
-                <TargetDefinitionDetail :model="selectedTarget" v-if="formVisible" @close="closeForm" @touched="touched = true"></TargetDefinitionDetail>
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
+                <KnHint :title="'kpi.targetDefinition.title'" :hint="'test'" v-if="showHint" data-test="bm-hint"></KnHint>
+                <router-view @close="closeForm" @touched="touched = true" />
             </div>
         </div>
     </div>
@@ -37,26 +38,31 @@ import { iTargetDefinition } from './TargetDefinition'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import targetDefinitionDecriptor from './TargetDefinitionDescriptor.json'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
+import KnHint from '@/components/UI/KnHint.vue'
 import Listbox from 'primevue/listbox'
 import axios from 'axios'
-import TargetDefinitionDetail from './TargetDefinitionDetail.vue'
 
 export default defineComponent({
     name: 'target-definition',
-    components: { KnFabButton, Listbox, TargetDefinitionDetail },
+    components: { KnFabButton, Listbox, KnHint },
     data() {
         return {
             targetList: [] as iTargetDefinition[],
             selectedTarget: {} as iTargetDefinition,
             loading: false,
+            showHint: true,
             formVisible: false,
             touched: false,
             targetDefinitionDecriptor: targetDefinitionDecriptor,
             formatDate: formatDate
         }
     },
-    created() {
-        this.loadAllMetadata()
+    async created() {
+        console.log('ROUTE PATH: ', this.$route.path)
+        if (this.$route.path !== '/target-definition') {
+            this.showHint = false
+        }
+        await this.loadAllMetadata()
     },
     methods: {
         async loadAllMetadata() {
@@ -80,8 +86,10 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         showForm(target: any) {
+            this.showHint = false
+            const path = target.value ? `/target-definition/${target.value.id}` : '/target-definition/new-target-definition'
             if (!this.touched) {
-                this.setSelectedTarget(target)
+                this.$router.push(path)
             } else {
                 this.$confirm.require({
                     message: this.$t('common.toast.unsavedChangesMessage'),
@@ -89,7 +97,7 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.touched = false
-                        this.setSelectedTarget(target)
+                        this.$router.push(path)
                     }
                 })
             }
@@ -101,12 +109,32 @@ export default defineComponent({
             this.formVisible = true
         },
         deleteTargetConfirm(targetId: number) {
-            console.log('Delete', targetId)
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteTarget(targetId)
+            })
         },
-        cloneTargetConfirm(targetId: number) {
-            console.log('Clone', targetId)
+        async deleteTarget(targetId: number) {
+            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + targetId + '/deleteTarget').then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.deleteTitle'),
+                    msg: this.$t('common.toast.deleteSuccess')
+                })
+                this.closeForm()
+                this.loadAllMetadata()
+            })
+        },
+        cloneTargetConfirm(target: number) {
+            this.$confirm.require({
+                header: this.$t('common.toast.cloneConfirmTitle'),
+                accept: () => this.showForm(target)
+            })
         },
         closeForm() {
+            console.log('close')
+            this.showHint = true
             this.formVisible = false
         }
     }

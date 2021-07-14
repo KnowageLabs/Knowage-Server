@@ -4,7 +4,7 @@ export interface iTargetDefinition {
     startValidity: Date
     endValidity: Date
     author: string
-    values?: Array
+    values?: iValues
     category: iCategory
 }
 
@@ -19,10 +19,13 @@ export interface iCategory {
     translatedValueDescription?: string
 }
 
-export interface iKpi {
+export interface iValues {
     kpiId: number | null
-    kpiName: string
-    kpiVersion: number
-    targetId: number | null
-    value: number
+    kpiVersion?: number
+    kpiName?: string
+    kpiCataegory?: string
+    kpiDate?: Date
+    kpiAuthor: string
+    targetId?: number | null
+    value?: number
 }
