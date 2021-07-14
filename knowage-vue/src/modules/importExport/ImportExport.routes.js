@@ -6,7 +6,7 @@ let routes = [
 		children: [
 			{
 				path: '',
-				component: () => import('@/modules/importExport/gallery/ImportExportGallery.vue')
+				component: () => import('@/modules/importExport/ImportExportHint.vue')
 			},
 			{
 				path: 'gallery',

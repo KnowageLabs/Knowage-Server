@@ -72,7 +72,8 @@ public class KnowageApiConfigurationTest {
 	@Primary
 	@Bean
 	public PlatformTransactionManager mainTransactionManager() {
-		return new ChainedTransactionManager(new JpaTransactionManager(entityManagerFactoryForWidgetGallery().getObject()),
+		return new ChainedTransactionManager(
+				new JpaTransactionManager(entityManagerFactoryForWidgetGallery().getObject()),
 				new JpaTransactionManager(entityManagerFactoryForWidgetFunctionCatalog().getObject()));
 	}
 

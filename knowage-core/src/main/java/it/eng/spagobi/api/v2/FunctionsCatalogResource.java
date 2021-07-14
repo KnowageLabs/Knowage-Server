@@ -72,8 +72,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	public static transient Logger logger = Logger.getLogger(FunctionsCatalogResource.class);
 
-	public static String DATA_MINING_ENGINE_SUFFIX = "dataminingengine";
-
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -140,7 +138,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			List<SbiCatalogFunction> allFunctions = fcDAO.loadAllCatalogFunctions();
 			List<SbiCatalogFunction> filteredFunctions = new ArrayList<SbiCatalogFunction>();
 			for (SbiCatalogFunction func : allFunctions) {
-				if (func.getType().equals(type)) {
+				if (func.getType() != null && func.getType().equals(type)) {
 					filteredFunctions.add(func);
 				}
 			}

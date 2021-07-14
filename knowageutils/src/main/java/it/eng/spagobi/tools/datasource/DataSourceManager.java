@@ -58,6 +58,9 @@ public abstract class DataSourceManager {
 		pool.setPassword(dataSource.getPwd());
 		pool.setMaxTotal(dataSource.getJdbcPoolConfiguration().getMaxTotal());
 		pool.setMaxWaitMillis(dataSource.getJdbcPoolConfiguration().getMaxWait());
+		Integer maxIdle = dataSource.getJdbcPoolConfiguration().getMaxIdle();
+		if (maxIdle != null)
+			pool.setMaxIdle(maxIdle);
 		pool.setRemoveAbandonedOnBorrow(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnBorrow());
 		pool.setRemoveAbandonedOnMaintenance(dataSource.getJdbcPoolConfiguration().getRemoveAbandonedOnMaintenance());
 		pool.setRemoveAbandonedTimeout(dataSource.getJdbcPoolConfiguration().getAbandonedTimeout());
@@ -67,6 +70,9 @@ public abstract class DataSourceManager {
 		pool.setTimeBetweenEvictionRunsMillis(dataSource.getJdbcPoolConfiguration().getTimeBetweenEvictionRuns());
 		pool.setMinEvictableIdleTimeMillis(dataSource.getJdbcPoolConfiguration().getMinEvictableIdleTimeMillis());
 		pool.setValidationQuery(dataSource.getJdbcPoolConfiguration().getValidationQuery());
+		Integer validationQueryTimeout = dataSource.getJdbcPoolConfiguration().getValidationQueryTimeout();
+		if (validationQueryTimeout != null)
+			pool.setValidationQueryTimeout(validationQueryTimeout);
 
 		dataSources.put(dataSource, pool);
 	}

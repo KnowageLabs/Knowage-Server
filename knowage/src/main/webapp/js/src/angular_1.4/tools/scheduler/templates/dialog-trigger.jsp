@@ -15,7 +15,7 @@
 	<md-dialog-content layout="column" style="max-height:810px; ">
 	
 		<md-tabs class="mozScroll hideTabs" md-dynamic-height md-border-bottom>
-			<md-tab id="eventTabDetail" label="{{::translate.load('sbi.generic.details')}}">
+			<md-tab id="eventTabDetail" label="{{::translate.load('sbi.scheduler.schedulation.events.detail')}}">
 				<md-content class="md-padding internalContent" layout="column" >
 					<md-input-container  class="md-block">
 						<label>{{::translate.load("scheduler.schedname","component_scheduler_messages")}}</label>

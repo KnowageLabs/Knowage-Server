@@ -222,7 +222,7 @@
 	<CONFIGURATOR path="/WEB-INF/conf/config/cache.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/data_access.xml" />    
 	<CONFIGURATOR path="/WEB-INF/conf/config/dispatchers.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/initializers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/ce-initializers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/statements.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/tracing.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/portletinitializers.xml" />
