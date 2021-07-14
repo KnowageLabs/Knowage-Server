@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
+import it.eng.knowage.knowageapi.error.KnowageKNDA001Exception;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
 import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
 import it.eng.knowage.resourcemanager.resource.dto.RootFolderDTO;
@@ -29,25 +30,25 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 public interface ResourceManagerAPI {
 
-	public RootFolderDTO getFolders(SpagoBIUserProfile profile, String path);
+	public RootFolderDTO getFolders(SpagoBIUserProfile profile, String path) throws KnowageKNDA001Exception;
 
-	boolean createFolder(String path, SpagoBIUserProfile profile);
+	boolean createFolder(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception;
 
-	boolean delete(String path, SpagoBIUserProfile profile);
+	boolean delete(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception;
 
-	java.nio.file.Path getDownloadFolderPath(String path, SpagoBIUserProfile profile);
+	java.nio.file.Path getDownloadFolderPath(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception;
 
-	public List<FileDTO> getListOfFiles(String path, SpagoBIUserProfile profile);
+	public List<FileDTO> getListOfFiles(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception;
 
-	java.nio.file.Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi);
+	java.nio.file.Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws KnowageKNDA001Exception;
 
 	boolean canSee(Path path, SpagoBIUserProfile profile);
 
-	void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException;
+	void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, KnowageKNDA001Exception;
 
-	void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException;
+	void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, KnowageKNDA001Exception;
 
-	MetadataDTO getMetadata(String path, SpagoBIUserProfile profile);
+	MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception;
 
-	MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile);
+	MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception;
 }

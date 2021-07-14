@@ -50,6 +50,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.eng.knowage.knowageapi.error.KnowageKNDA001Exception;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.utils.ContextPropertiesConfig;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
@@ -83,7 +84,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public RootFolderDTO getFolders(SpagoBIUserProfile profile, String path) {
+	public RootFolderDTO getFolders(SpagoBIUserProfile profile, String path) throws KnowageKNDA001Exception {
 
 		String totalPath = getWorkDirectory(profile);
 		Path totalF = Paths.get(totalPath);
@@ -126,10 +127,14 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		}
 	}
 
-	public String getWorkDirectory(SpagoBIUserProfile profile) {
+	public String getWorkDirectory(SpagoBIUserProfile profile) throws KnowageKNDA001Exception {
 		String resourcePathBase = ContextPropertiesConfig.getResourcePath();
 		String tenant = profile.getOrganization();
 		String totalPath = resourcePathBase + File.separator + tenant;
+		Path dirPath = Paths.get(totalPath);
+		if (!Files.exists(dirPath)) {
+			throw new KnowageKNDA001Exception();
+		}
 		return totalPath;
 	}
 
@@ -146,7 +151,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		}
 	}
 
-	public FolderDTO createTree(FolderDTO parentFolder, SpagoBIUserProfile profile) throws IOException {
+	public FolderDTO createTree(FolderDTO parentFolder, SpagoBIUserProfile profile) throws IOException, KnowageKNDA001Exception {
 		File node = new File(parentFolder.getLabel());
 		Path nodePath = Paths.get(node.getAbsolutePath());
 		Path workDir = Paths.get(getWorkDirectory(profile));
@@ -230,7 +235,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	// if user can't work with directory it is not necessary
 	// if (canSee(pathToWork, profile)) ...
 	@Override
-	public boolean createFolder(String path, SpagoBIUserProfile profile) {
+	public boolean createFolder(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception {
 		String totalPath = getTotalPath(path, profile);
 		boolean bool = false;
 		String workDir = getWorkBaseDirByPath(path, profile);
@@ -248,7 +253,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public boolean delete(String path, SpagoBIUserProfile profile) {
+	public boolean delete(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception {
 		String totalPath = getTotalPath(path, profile);
 		String workDir = getWorkBaseDirByPath(path, profile);
 		if (canSee(Paths.get(workDir), profile)) {
@@ -271,7 +276,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public Path getDownloadFolderPath(String path, SpagoBIUserProfile profile) {
+	public Path getDownloadFolderPath(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception {
 		String workDirr = getWorkBaseDirByPath(path, profile);
 		java.nio.file.Path workingPath = null;
 		java.nio.file.Path pathToReturn = null;
@@ -285,7 +290,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) {
+	public Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws KnowageKNDA001Exception {
 		java.nio.file.Path pathToReturn = null;
 		if (multi) {
 			pathToReturn = createZipFileOfFiles(path, profile);
@@ -301,7 +306,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		return pathToReturn;
 	}
 
-	public String getWorkBaseDirByPath(String path, SpagoBIUserProfile profile) {
+	public String getWorkBaseDirByPath(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception {
 		String rootElement = path.split("/")[0];
 		String rootPath = getTotalPath(rootElement, profile);
 		String workDirr = Paths.get(rootPath).toString();
@@ -309,7 +314,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public List<FileDTO> getListOfFiles(String path, SpagoBIUserProfile profile) {
+	public List<FileDTO> getListOfFiles(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception {
 		String totalPath = getTotalPath(path, profile);
 		File folder = new File(totalPath);
 		File[] listOfFiles = folder.listFiles();
@@ -327,7 +332,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException {
+	public void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, KnowageKNDA001Exception {
 
 		String workDirr = getWorkBaseDirByPath(path, profile);
 		Path filePath = Paths.get(getTotalPath(path, profile));
@@ -340,7 +345,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException {
+	public void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, KnowageKNDA001Exception {
 
 		String workDirr = getWorkBaseDirByPath(path, profile);
 		String totalPath = getTotalPath(path, profile);
@@ -356,7 +361,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	}
 
-	public String getTotalPath(String path, SpagoBIUserProfile profile) {
+	public String getTotalPath(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception {
 		String pathToWork = getWorkDirectory(profile);
 		String totalPath = pathToWork + File.separator + path;
 		return totalPath;
@@ -399,7 +404,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		}
 	}
 
-	public Path createZipFileOfFiles(List<String> fullPaths, SpagoBIUserProfile profile) {
+	public Path createZipFileOfFiles(List<String> fullPaths, SpagoBIUserProfile profile) throws KnowageKNDA001Exception {
 
 		try {
 			Path tempDirectory = Files.createTempDirectory("knowage-zip");
@@ -502,14 +507,14 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		Files.walk(tempDirectory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
 	}
 
-	private boolean isStartingFromModel(String path, SpagoBIUserProfile profile) {
+	private boolean isStartingFromModel(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception {
 		Path workModelDir = Paths.get(getWorkDirectory(profile));
 		Path modelPath = Paths.get(workModelDir + File.separator + "model");
 		return modelPath.equals(Paths.get(path));
 	}
 
 	@Override
-	public MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) {
+	public MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception {
 		String workPath = getWorkBaseDirByPath(path, profile);
 		MetadataDTO metadata = null;
 		Path totalPath = Paths.get(getTotalPath(path, profile) + File.separator + "metadata.json");
@@ -535,9 +540,11 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	 * fileDTO.getType()); jsonCode.put("opensource", fileDTO.isOpensource()); jsonCode.put("description", fileDTO.getDescription()); jsonCode.put("accuracy",
 	 * fileDTO.getAccuracy()); jsonCode.put("usage", fileDTO.getUsage()); jsonCode.put("format", fileDTO.getFormat()); jsonCode.put("image",
 	 * fileDTO.getImage());
+	 *
+	 * @throws KnowageKNDA001Exception
 	 */
 	@Override
-	public MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) {
+	public MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws KnowageKNDA001Exception {
 
 		String workPath = getWorkBaseDirByPath(path, profile);
 		if (isStartingFromModel(workPath, profile) && canSee(Paths.get(workPath), profile)) {
