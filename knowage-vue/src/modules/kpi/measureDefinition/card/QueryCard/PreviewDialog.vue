@@ -146,6 +146,7 @@ export default defineComponent({
         },
         closeQueryErrorDialog() {
             this.queryError = null
+            this.$emit('close')
         }
     }
 })

@@ -35,7 +35,7 @@ export default defineComponent({
     name: 'query-card',
     components: { Card, Dropdown, VCodeMirror, PreviewDialog },
     props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array } },
-    emits: ['touched'],
+    emits: ['touched', 'queryChanged'],
     data() {
         return {
             queryCardDescriptor,
@@ -182,6 +182,7 @@ export default defineComponent({
                 CodeMirror.showHint(this.codeMirror, CodeMirror.hint.placeholder)
             }
             this.selectedRule.definition = this.code
+            this.$emit('queryChanged')
         }
     }
 })

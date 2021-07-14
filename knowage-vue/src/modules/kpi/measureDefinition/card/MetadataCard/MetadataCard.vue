@@ -188,6 +188,7 @@ export default defineComponent({
             console.log('RULE AFTER METHOD!!!', this.rule)
         },
         ruleOutputIndexOfColumnName(columnName: string) {
+            console.log('TEEEEEEEEEEST', this.rule.ruleOutputs)
             for (let i = 0; i < this.rule.ruleOutputs.length; i++) {
                 if (this.rule.ruleOutputs[i].alias.toUpperCase() === columnName.toUpperCase()) {
                     return i

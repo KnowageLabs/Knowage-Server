@@ -14,7 +14,7 @@
                     <span>{{ $t('kpi.measureDefinition.query') }}</span>
                 </template>
 
-                <QueryCard :rule="rule" :datasourcesList="datasourcesList" :aliases="availableAliasList" :placeholders="placeholdersList"></QueryCard>
+                <QueryCard :rule="rule" :datasourcesList="datasourcesList" :aliases="availableAliasList" :placeholders="placeholdersList" @queryChanged="queryChanged = true"></QueryCard>
             </TabPanel>
 
             <TabPanel :disabled="metadataDisabled">
@@ -49,18 +49,26 @@
             </template>
         </Toolbar>
         <div v-if="newAlias.length > 0">
-            <h2>{{ $t('common.new') }}</h2>
-            <Chip v-for="alias in newAlias" :key="alias.id" :label="alias.name"></Chip>
+            <h4>{{ $t('common.new') }}</h4>
+            <Chip v-for="alias in newAlias" :key="alias.id" :label="alias"></Chip>
         </div>
-        <!--
+
         <div v-if="reusedAlias.length > 0">
-            <h2>{{ $t('common.reused') }}</h2>
-            <Chip v-for="alias in reusedAlias" :key="alias.id" :label="alias.name"></Chip>
-        </div> -->
+            <h4>{{ $t('common.reused') }}</h4>
+            <Chip v-for="alias in reusedAlias" :key="alias.id" :label="alias"></Chip>
+        </div>
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="showSaveDialog = false"></Button>
-            <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="handleSubmit"></Button>
+            <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="saveRule"></Button>
+        </template>
+    </Dialog>
+
+    <Dialog :modal="true" :visible="errorMessage" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
+        <h1>{{ $t('kpi.measureDefinition.metadataError') + ' ' + $t('kpi.measureDefinition.wrongQuery') }}</h1>
+        <p>{{ errorMessage }}</p>
+        <template #footer>
+            <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeerrorMessageDialog"></Button>
         </template>
     </Dialog>
 </template>
@@ -97,7 +105,8 @@ export default defineComponent({
         return {
             metadataDefinitionTabViewDescriptor,
             rule: {
-                definition: 'SELECT\n\nFROM\n\nWHERE',
+                // definition: 'SELECT\n\nFROM\n\nWHERE',
+                definition: "SELECT account_id as bla FROM account WHERE account_description = 'Assets'",
                 ruleOutputs: [] as iMeasure[]
             } as iRule,
             datasourcesList: [] as iDatasource[],
@@ -112,16 +121,21 @@ export default defineComponent({
             newPlaceholder: [],
             reusedPlaceholder: [],
             activeTab: 0,
+            columns: [] as any[],
+            rows: [],
+            errorMessage: null as null | string,
+            errorTitle: null as null | string,
             tabChanged: false,
             loading: false,
             touched: false,
-            showSaveDialog: false
+            showSaveDialog: false,
+            operation: 'create',
+            queryChanged: false
         }
     },
     computed: {
         metadataDisabled() {
             let disabled = false
-            console.log('TEESTSTSTSTS', this.rule.dataSource)
             if (!this.rule.dataSource) {
                 disabled = true
             }
@@ -170,7 +184,7 @@ export default defineComponent({
         },
         async loadAliases() {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listAvailableAlias`
-            console.log('RULE TEEEEEST', this.rule)
+            // console.log('RULE TEEEEEST', this.rule)
             if (this.rule.id) {
                 url += `?ruleId=${this.id}&ruleVersion=${this.ruleVersion}`
             }
@@ -198,37 +212,191 @@ export default defineComponent({
         },
         setNewAliases() {
             console.log('SET NEW ALIASES')
-            console.log('RULE ', this.rule)
             this.newAlias = []
+            this.reusedAlias = []
             this.rule.ruleOutputs.forEach((ruleOutput: any) => {
-                this.availableAliasList.forEach((alias: any) => {
-                    console.log('NEW ALIAS: ' + alias.name.toUpperCase() + ' === ' + ruleOutput.toUpperCase())
-                    if (alias.name.toUpperCase() === ruleOutput.toUpperCase()) {
-                        console.log('NEW ALIAS', alias.name)
-                        this.newAlias.push(alias)
-                    }
-                })
+                if (this.aliasExists(ruleOutput.alias)) {
+                    this.reusedAlias.push(ruleOutput.alias)
+                } else {
+                    this.newAlias.push(ruleOutput.alias)
+                }
             })
+            console.log('NEW ALIASES', this.newAlias)
         },
-        submitConfirm() {
-            if (!this.touched) {
-                this.showSaveDialog = true
-                this.setNewAliases()
-            } else {
-                this.$confirm.require({
-                    message: this.$t('common.toast.unsavedChangesMessage'),
-                    header: this.$t('common.toast.unsavedChangesHeader'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.touched = false
-                        this.showSaveDialog = true
-                        this.setNewAliases()
+        aliasExists(name: string) {
+            let exists = false
+            this.availableAliasList.forEach((alias: any) => {
+                console.log('Exists: ' + alias.name.toUpperCase() + ' === ' + name.toUpperCase())
+                if (alias.name.toUpperCase() === name.toUpperCase()) {
+                    // console.log('ALIAS Exists!')
+                    exists = true
+                }
+            })
+            return exists
+        },
+        async prepareForSave() {
+            // console.log('RULE: ', this.rule)
+            const tempDatasource = this.rule.dataSource
+            if (this.rule.dataSource) {
+                this.rule.dataSourceId = this.rule.dataSource.DATASOURCE_ID
+            }
+            delete this.rule.dataSource
+            if (this.rule.definition) {
+                this.loadPlaceholder()
+            }
+            if (this.rule.placeholders && this.rule.placeholders.length === 0) {
+                const postData = { rule: this.rule, maxItem: 10 }
+                await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData).then((response) => {
+                    if (response.data.errors) {
+                        this.errorMessage = response.data.errors[0].message
+                    } else {
+                        this.columns = response.data.columns
+                        this.rows = response.data.rows
+                        this.columnToRuleOutputs()
                     }
                 })
             }
-            console.log('caaaaled', this.showSaveDialog)
+            // console.log('Submit error', this.errorMessage)
+            this.setNewAliases()
+            console.log('Rule after prepare', this.rule)
+            await this.preSaveRule()
+            this.rule.dataSource = tempDatasource
         },
-        handleSubmit() {},
+        async preSaveRule() {
+            delete this.rule.dataSource
+
+            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/preSaveRule', this.rule).then((response) => {
+                if (this.rule.ruleOutputs.length === 0) {
+                    this.errorTitle = this.$t('kpi.measureDefinition.presaveErrors.metadataMissing')
+                    this.errorMessage = this.$t('kpi.measureDefinition.presaveErrors.metadataMissingText')
+                }
+
+                let measurePresent = false
+                this.rule.ruleOutputs.forEach((ruleOutput: any) => {
+                    if (ruleOutput.type.valueCd === 'TEMPORAL_ATTRIBUTE' && ruleOutput.hierarchy === null) {
+                        this.errorTitle = this.$t('kpi.measureDefinition.presaveErrors.noTemporalattributSet')
+                        this.errorMessage = this.$t('kpi.measureDefinition.presaveErrors.missingTemporalattributText')
+                    } else if (ruleOutput.type.valueCd === 'MEASURE') {
+                        measurePresent = true
+                    }
+                })
+
+                if (!measurePresent) {
+                    this.errorTitle = this.$t('kpi.measureDefinition.presaveErrors.noMeasureSet')
+                    this.errorMessage = this.$t('kpi.measureDefinition.presaveErrors.metadataMissingText')
+                }
+
+                console.log('PRESAVE RESPONSE: ', response)
+                if (response.data.errors) {
+                    this.errorTitle = null
+                    this.errorMessage = response.data.errors[0]
+                }
+
+                if (!this.errorMessage) {
+                    this.showSaveDialog = true
+                }
+            })
+        },
+        async saveRule() {
+            if (this.rule.id) {
+                this.operation = 'update'
+            }
+
+            delete this.rule.dataSource
+            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveRule', this.rule).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.' + this.operation + 'Title'),
+                    msg: this.$t('common.toast.success')
+                })
+                this.$router.replace('/measure-definition')
+            })
+        },
+        columnToRuleOutputs() {
+            const tempMetadatas = [] as any[]
+            // console.log('METADATA COLUMNS: ', this.columns)
+            for (let index in this.columns) {
+                tempMetadatas.push(this.columns[index].label.toUpperCase())
+                if (this.ruleOutputIndexOfColumnName(this.columns[index].label) === -1) {
+                    let type = this.domainsKpiRuleoutput[1]
+                    if (this.columns[index].type === 'int' || this.columns[index].type == 'float') {
+                        type = this.domainsKpiRuleoutput[0]
+                    }
+                    this.rule.ruleOutputs.push({
+                        alias: this.columns[index].label,
+                        type: type
+                    })
+                }
+            }
+            for (let index = 0; index < this.rule.ruleOutputs.length; index++) {
+                if (tempMetadatas.indexOf(this.rule.ruleOutputs[index].alias.toUpperCase()) === -1) {
+                    this.rule.ruleOutputs.splice(index, 1)
+                    index--
+                }
+            }
+            // console.log('RULE AFTER METHOD!!!', this.rule)
+        },
+        ruleOutputIndexOfColumnName(columnName: string) {
+            for (let i = 0; i < this.rule.ruleOutputs.length; i++) {
+                if (this.rule.ruleOutputs[i].alias.toUpperCase() === columnName.toUpperCase()) {
+                    return i
+                }
+            }
+            return -1
+        },
+        loadPlaceholder() {
+            const placeholder = this.rule.definition.match(/@\w*/g)
+            // console.log('PLACEHOLDER ', placeholder)
+            if (placeholder != null) {
+                for (let i = 0; i < placeholder.length; i++) {
+                    const placeholderName = placeholder[i].substring(1, placeholder[i].length)
+                    let tempPlaceholder = this.rule.placeholders.find((tempPlaceholder) => {
+                        // console.log(tempPlaceholder.name + ' === ' + placeholderName)
+                        return tempPlaceholder.name === placeholderName
+                    })
+                    // console.log('TEMP PLACEHOLDER', tempPlaceholder)
+                    if (!tempPlaceholder) {
+                        tempPlaceholder = this.placeholdersList.find((placeholder: any) => placeholder.name === tempPlaceholder?.name) as any
+                        if (tempPlaceholder == undefined) {
+                            const newPlaceholder = {
+                                name: placeholderName,
+                                value: ''
+                            }
+                            this.rule.placeholders.push(newPlaceholder)
+                        } else {
+                            this.rule.placeholders.push(tempPlaceholder)
+                        }
+                    }
+                    // console.log('RULE PLACEHOLDERS: ', this.rule.placeholders)
+                    for (let index = 0; index < this.rule.placeholders.length; index++) {
+                        if (placeholder.indexOf('@' + this.rule.placeholders[index].name) == -1) {
+                            this.rule.placeholders.splice(index, 1)
+                            index--
+                        }
+                    }
+                }
+            } else {
+                this.rule.placeholders = []
+            }
+        },
+        submitConfirm() {
+            if (!this.queryChanged) {
+                this.prepareForSave()
+            } else {
+                this.$confirm.require({
+                    message: this.$t('kpi.measureDefinition.metadataChangedMessage'),
+                    header: this.$t('kpi.measureDefinition.metadataChangedTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.queryChanged = false
+                        this.prepareForSave()
+                    }
+                })
+            }
+            // console.log('caaaaled', this.showSaveDialog)
+        },
+        closeerrorMessageDialog() {
+            this.errorMessage = null
+        },
         closeTemplate() {
             const path = '/measure-definition'
             if (!this.touched) {
@@ -248,3 +416,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.error-dialog {
+    width: 60vw;
+}
+</style>

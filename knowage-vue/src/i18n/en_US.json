@@ -129,6 +129,8 @@
     },
     "kpi": {
         "measureDefinition": {
+            "metadataChangedTitle": "Metadata changed",
+            "metadataChangedMessage": "Please note that metadata have been automatically modified due to query changing. Do you want to continue?",
             "alias": "Alias",
             "category": "Kpi Categories",
             "dataSource": "Data Source",
@@ -138,6 +140,13 @@
             "metadata": "Metadata",
             "metadataError": "Errors while attempting to load the metadata.",
             "newMeasure": "New Measure",
+            "presaveErrors": {
+                "metadataMissing": "Missing metadata",
+                "metadataMissingText": "Manage them in the metadata tab.",
+                "missingTemporalattributText": "Set a Hierarchy Level",
+                "noTemporalattributSet": "Missing value temporal Attribute",
+                "noMeasureSet": "No measure set"
+            },
             "preview": "Preview",
             "query": "Query",
             "rulesName": "Rules name",
