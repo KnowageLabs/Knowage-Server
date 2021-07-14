@@ -35,6 +35,6 @@ public interface IFunctionInputVariableDAO {
 	 * @param functionId
 	 * @return
 	 */
-	List<SbiFunctionInputVariable> loadFunctionInputVariableByFunctionId(int functionId);
+	List<SbiFunctionInputVariable> loadFunctionInputVariableByFunctionUuid(String functionUuid);
 
 }

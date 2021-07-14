@@ -1,28 +1,28 @@
 {
-	"newsType": {
-		"1": {
-			"className": "fas fa-rss",
-			"label": "newsDialog.news",
-			"style": {
-				"background-color": "#ffc107",
-				"color": "white"
-			}
-		},
-		"2": {
-			"className": "far fa-bell",
-			"label": "newsDialog.notifications",
-			"style": {
-				"background-color": "#c2185b",
-				"color": "white"
-			}
-		},
-		"3": {
-			"className": "fas fa-exclamation-triangle",
-			"label": "newsDialog.warnings",
-			"style": {
-				"background-color": "#cccccc",
-				"color": "white"
-			}
-		}
-	}
+    "newsType": {
+        "1": {
+            "className": "fas fa-rss",
+            "label": "newsDialog.news",
+            "style": {
+                "background-color": "#ffc107",
+                "color": "white"
+            }
+        },
+        "2": {
+            "className": "far fa-bell",
+            "label": "newsDialog.notifications",
+            "style": {
+                "background-color": "#c2185b",
+                "color": "white"
+            }
+        },
+        "3": {
+            "className": "fas fa-exclamation-triangle",
+            "label": "newsDialog.warnings",
+            "style": {
+                "background-color": "#cccccc",
+                "color": "white"
+            }
+        }
+    }
 }

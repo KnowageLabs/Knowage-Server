@@ -61,7 +61,7 @@ angular.module('documentExecutionMasterModule',  [ 'ngMaterial', 'sbiModule','cr
 		}
 
 		var url = sbiModule_config.contextName + isPublic
-			+ '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp'
+			+ '/restful-services/publish?PUBLISHER=documentExecutionNg'
 			+ '&OBJECT_ID=' + sourceDocumentExecProperties.OBJECT_ID
 			+ '&OBJECT_LABEL=' + sourceDocumentExecProperties.OBJECT_LABEL
 			+ '&MENU_PARAMETERS=' + encodeURIComponent(JSON.stringify(menuParams)).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&")
