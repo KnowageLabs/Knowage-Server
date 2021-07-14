@@ -212,7 +212,7 @@
 			iconCls="fa fa-flag">
 			<ITEM id="9001" label="menu.manageI18n"
 				requiredFunctionality="ManageInternationalization"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=internationalization"
+				to="/internationalization-management"
 				iconCls="fa fa-2x fa-flag" />
 		</GROUP_ITEM>
 	</TECHNICAL_USER_FUNCTIONALITIES>
