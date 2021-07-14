@@ -40,19 +40,19 @@
             "dbIcon": "fas fa-exclamation-circle"
         },
         "org.hibernate.dialect.MySQLDialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-mariadb"
         },
         "org.hibernate.dialect.MySQLInnoDBDialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-mariadb"
         },
         "org.hibernate.dialect.Oracle9Dialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-oracle"
         },
         "org.hibernate.dialect.OracleDialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-oracle"
         },
         "org.hibernate.dialect.PostgreSQLDialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-postgresql"
         },
         "org.hibernate.dialect.RedShiftDialect": {
             "dbIcon": "far fa-newspaper"
@@ -64,10 +64,10 @@
             "dbIcon": "fas fa-exclamation-circle"
         },
         "org.hibernate.dialect.TeradataDialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-teradata"
         },
         "org.hibernate.dialect.VerticaDialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-vertica"
         },
         "org.hibernate.dialect.cassandra": {
             "dbIcon": "fas fa-envelope"
@@ -79,10 +79,10 @@
             "dbIcon": "fas fa-exclamation-circle"
         },
         "org.hibernatespatial.oracle.CustomOracleSpatialDialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-oracle"
         },
         "orient": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-orientdb"
         }
     },
     "newDataSourceValues": {

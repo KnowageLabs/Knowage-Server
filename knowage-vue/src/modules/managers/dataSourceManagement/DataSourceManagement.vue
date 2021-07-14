@@ -36,9 +36,8 @@
                 </template>
             </Listbox>
         </div>
-        <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
+        <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column kn-height-full-vertical">
             <router-view :selectedDatasource="selDatasource" :databases="listOfAvailableDatabases" :user="user" @touched="touched = true" @closed="onFormClose" @inserted="reloadPage" />
-            <KnHint :title="'managers.dataSourceManagement.hintTitle'" :hint="'managers.dataSourceManagement.hint'" v-if="hintVisible" />
         </div>
     </div>
 </template>
@@ -49,7 +48,6 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import dataSourceDescriptor from './DataSourceDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
-import KnHint from '@/components/UI/KnHint.vue'
 import Listbox from 'primevue/listbox'
 import Avatar from 'primevue/avatar'
 
@@ -58,8 +56,7 @@ export default defineComponent({
     components: {
         FabButton,
         Listbox,
-        Avatar,
-        KnHint
+        Avatar
     },
     data() {
         return {
@@ -69,8 +66,7 @@ export default defineComponent({
             listOfAvailableDatabases: [] as any,
             user: {} as any,
             loading: false,
-            touched: false,
-            hintVisible: true
+            touched: false
         }
     },
     async created() {
@@ -118,8 +114,7 @@ export default defineComponent({
         },
 
         showForm(event: any) {
-            const path = event.value ? `/datasource/${event.value.dsId}` : '/datasource/new-datasource'
-            this.hintVisible = false
+            const path = event.value ? `/datasource-management/${event.value.dsId}` : '/datasource-management/new-datasource'
 
             if (!this.touched) {
                 this.$router.push(path)
@@ -152,21 +147,18 @@ export default defineComponent({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
-                this.$router.push('/datasource')
+                this.$router.push('/datasource-management')
                 this.getAllDatasources()
             })
-            this.hintVisible = true
         },
 
         reloadPage() {
             this.touched = false
-            this.hintVisible = true
-            this.$router.push('/datasource')
+            this.$router.push('/datasource-management')
             this.getAllDatasources()
         },
         onFormClose() {
             this.touched = false
-            this.hintVisible = true
         }
     }
 })

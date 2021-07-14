@@ -9,7 +9,7 @@
 				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListEnginesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
 			<ITEM id="1002" label="menu.DataSourceMan"
 				requiredFunctionality="DataSourceManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=datasource" />
+				to="/datasource-management" />
 			<ITEM id="1003" label="menu.DataSetMan"
 				requiredFunctionality="DatasetManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=datasetManagement" />

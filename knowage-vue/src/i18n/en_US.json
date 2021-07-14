@@ -255,9 +255,8 @@
                 "user": "User",
                 "writeDefault": "Use as cache"
             },
-            "hint": "Placeholder, please change at will.",
-            "hintTitle": "Data Source Management",
-            "title": "Data Source"
+            "hint": "The datasources allows you to define an 'access point' for your document data. It's possible to change the type, the dialect and to set the url or settings. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "title": "Data Source Management"
         },
         "domainsManagement": {
             "domainCode": "Domain code",
