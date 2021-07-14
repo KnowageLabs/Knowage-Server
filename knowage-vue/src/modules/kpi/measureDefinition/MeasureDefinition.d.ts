@@ -1,15 +1,13 @@
 export interface iMeasure {
-    id: number,
+    id?: number,
     alias: string,
-    aliasId: number,
-    rule: string,
-    ruleId: number,
-    ruleVersion: number,
-    category: iDomain,
-    hierarchy: string,
-    type: string,
-    author: string,
-    dateCreation: number
+    aliasId?: number,
+    rule?: string,
+    ruleId?: number,
+    ruleVersion?: number,
+    category?: iDomain,
+    hierarchy?: string,
+    type: any,
 }
 
 export interface iDomain {

@@ -48,14 +48,15 @@
                 {{ $t('kpi.measureDefinition.alias') }}
             </template>
         </Toolbar>
-        <div v-f="newAlias.length > 0">
+        <div v-if="newAlias.length > 0">
             <h2>{{ $t('common.new') }}</h2>
             <Chip v-for="alias in newAlias" :key="alias.id" :label="alias.name"></Chip>
         </div>
-        <div v-f="reusedAlias.length > 0">
+        <!--
+        <div v-if="reusedAlias.length > 0">
             <h2>{{ $t('common.reused') }}</h2>
             <Chip v-for="alias in reusedAlias" :key="alias.id" :label="alias.name"></Chip>
-        </div>
+        </div> -->
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="showSaveDialog = false"></Button>
@@ -66,7 +67,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iDatasource, iRule } from './MeasureDefinition'
+import { iDatasource, iMeasure, iRule } from './MeasureDefinition'
 import axios from 'axios'
 import Chip from 'primevue/chip'
 import Dialog from 'primevue/dialog'
@@ -95,7 +96,10 @@ export default defineComponent({
     data() {
         return {
             metadataDefinitionTabViewDescriptor,
-            rule: {} as iRule,
+            rule: {
+                definition: 'SELECT\n\nFROM\n\nWHERE',
+                ruleOutputs: [] as iMeasure[]
+            } as iRule,
             datasourcesList: [] as iDatasource[],
             availableAliasList: [],
             notAvailableAliasList: [],
@@ -103,8 +107,8 @@ export default defineComponent({
             domainsKpiRuleoutput: [],
             domainsTemporalLevel: [],
             domainsKpiMeasures: [],
-            newAlias: [],
-            reusedAlias: [],
+            newAlias: [] as any[],
+            reusedAlias: [] as any[],
             newPlaceholder: [],
             reusedPlaceholder: [],
             activeTab: 0,
@@ -192,9 +196,24 @@ export default defineComponent({
                 this.tabChanged = !this.tabChanged
             }
         },
+        setNewAliases() {
+            console.log('SET NEW ALIASES')
+            console.log('RULE ', this.rule)
+            this.newAlias = []
+            this.rule.ruleOutputs.forEach((ruleOutput: any) => {
+                this.availableAliasList.forEach((alias: any) => {
+                    console.log('NEW ALIAS: ' + alias.name.toUpperCase() + ' === ' + ruleOutput.toUpperCase())
+                    if (alias.name.toUpperCase() === ruleOutput.toUpperCase()) {
+                        console.log('NEW ALIAS', alias.name)
+                        this.newAlias.push(alias)
+                    }
+                })
+            })
+        },
         submitConfirm() {
             if (!this.touched) {
                 this.showSaveDialog = true
+                this.setNewAliases()
             } else {
                 this.$confirm.require({
                     message: this.$t('common.toast.unsavedChangesMessage'),
@@ -203,6 +222,7 @@ export default defineComponent({
                     accept: () => {
                         this.touched = false
                         this.showSaveDialog = true
+                        this.setNewAliases()
                     }
                 })
             }

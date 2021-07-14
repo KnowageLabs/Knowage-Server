@@ -93,8 +93,9 @@ export default defineComponent({
             // console.log('TEEEEEEEEEEEST', this.codeMirror)
         },
         setupCodeMirror() {
-            this.codeMirror = (this.$refs.codeMirror as any).editor as any
             //  console.log('QueryCard EDITOR: ', CodeMirror)
+            this.codeMirror = (this.$refs.codeMirror as any).editor as any
+
             CodeMirror.registerHelper('hint', 'alias', () => {
                 var cur = this.codeMirror.getCursor()
                 var tok = this.codeMirror.getTokenAt(cur)
@@ -180,6 +181,7 @@ export default defineComponent({
             if (tok.string == '@') {
                 CodeMirror.showHint(this.codeMirror, CodeMirror.hint.placeholder)
             }
+            this.selectedRule.definition = this.code
         }
     }
 })
@@ -192,5 +194,9 @@ export default defineComponent({
 
 #dataSource {
     width: 100%;
+}
+
+.error-dialog {
+    width: 60vw;
 }
 </style>

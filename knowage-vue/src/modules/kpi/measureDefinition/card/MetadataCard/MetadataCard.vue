@@ -42,7 +42,7 @@
                 </Dropdown>
             </template>
             <template #body="slotProps">
-                {{ slotProps.data.type.valueCd != 'TEMPORAL_ATTRIBUTE' ? slotProps.data['category'].valueCd : slotProps.data['hierarchy'].valueCd }}
+                {{ slotProps.data.type.valueCd != 'TEMPORAL_ATTRIBUTE' ? slotProps.data['category']?.valueCd : slotProps.data['hierarchy']?.valueCd }}
             </template>
         </Column>
     </DataTable>
@@ -67,7 +67,7 @@ import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import metadataCardDescriptor from './MetadataCardDescriptor.json'
 
-// TODO Change header for last column
+// TODO Change header for last column, add tooltips maybe?
 
 export default defineComponent({
     name: 'metadata-card',
@@ -78,7 +78,8 @@ export default defineComponent({
             required: true
         },
         tipologiesType: {
-            type: Array
+            type: Array,
+            required: true
         },
         domainsTemporalLevel: {
             type: Array
@@ -112,6 +113,8 @@ export default defineComponent({
                 ruleOutputs: [] as iMeasure[]
             } as iRule,
             filteredCategories: [] as any[],
+            columns: [] as any[],
+            rows: [],
             metadataError: null
         }
     },
@@ -127,39 +130,80 @@ export default defineComponent({
     methods: {
         loadRule() {
             this.rule = this.currentRule as iRule
-            this.rule.ruleOutputs.forEach((ruleOutput: any) => {
-                if (!ruleOutput.category) {
-                    ruleOutput.category = { valueCd: '' }
-                }
-                if (!ruleOutput.hierarchy) {
-                    ruleOutput.hierarchy = { valueCd: '' }
-                }
-            })
+            if (this.rule.ruleOutputs) {
+                this.rule.ruleOutputs.forEach((ruleOutput: any) => {
+                    if (!ruleOutput.category) {
+                        ruleOutput.category = { valueCd: '' }
+                    }
+                    if (!ruleOutput.hierarchy) {
+                        ruleOutput.hierarchy = { valueCd: '' }
+                    }
+                })
+            }
             console.log('RULE: ', this.rule)
         },
         async loadMetadata() {
             console.log('callllled')
             const tempDatasource = this.rule.dataSource
+            if (this.rule.dataSource) {
+                this.rule.dataSourceId = this.rule.dataSource.DATASOURCE_ID
+            }
             delete this.rule.dataSource
             const postData = { rule: this.rule, maxItem: 10 }
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData).then((response) => {
                 console.log('RESPONSE!!!', response)
                 if (response.data.errors) {
                     this.metadataError = response.data.errors[0].message
+                } else {
+                    this.columns = response.data.columns
+                    this.rows = response.data.rows
+                    this.columnToRuleOutputs()
                 }
             })
             this.rule.dataSource = tempDatasource
             console.log('METADATA ERROR', this.metadataError)
         },
+        columnToRuleOutputs() {
+            const tempMetadatas = [] as any[]
+            console.log('METADATA COLUMNS: ', this.columns)
+            for (let index in this.columns) {
+                tempMetadatas.push(this.columns[index].label.toUpperCase())
+                if (this.ruleOutputIndexOfColumnName(this.columns[index].label) === -1) {
+                    let type = this.tipologiesType[1]
+                    if (this.columns[index].type === 'int' || this.columns[index].type == 'float') {
+                        type = this.tipologiesType[0]
+                    }
+                    this.rule.ruleOutputs.push({
+                        alias: this.columns[index].label,
+                        type: type
+                    })
+                }
+            }
+            for (let index = 0; index < this.rule.ruleOutputs.length; index++) {
+                if (tempMetadatas.indexOf(this.rule.ruleOutputs[index].alias.toUpperCase()) === -1) {
+                    this.rule.ruleOutputs.splice(index, 1)
+                    index--
+                }
+            }
+            console.log('RULE AFTER METHOD!!!', this.rule)
+        },
+        ruleOutputIndexOfColumnName(columnName: string) {
+            for (let i = 0; i < this.rule.ruleOutputs.length; i++) {
+                if (this.rule.ruleOutputs[i].alias.toUpperCase() === columnName.toUpperCase()) {
+                    return i
+                }
+            }
+            return -1
+        },
         showAliasIcon(alias: any) {
             console.log('ALIAS: ', alias)
             if (!this.aliasExists(alias) && !this.aliasUsedByMeasure(alias)) {
                 console.log('ALIAS doesnt Exist!')
-                return 'fa fa-exclamation-triangle'
+                return 'fa fa-exclamation-triangle icon-missing'
             }
             if (this.aliasUsedByMeasure(alias)) {
                 console.log('ALIAS USED!')
-                return 'fa fa-exclamation-triangle alertIconUsedAlias'
+                return 'fa fa-exclamation-triangle icon-used'
             }
         },
         aliasExists(name: string) {
@@ -205,7 +249,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.alertIconUsedAlias {
+.icon-used {
     color: #f44246;
+}
+
+.icon-missing {
+    color: #ffeb38;
 }
 </style>
