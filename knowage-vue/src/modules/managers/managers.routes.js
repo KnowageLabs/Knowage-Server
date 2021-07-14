@@ -10,7 +10,7 @@ import newsManagementRoutes from '@/modules/managers/newsManagement/NewsManageme
 import tenantManagementRoutes from '@/modules/managers/tenantManagement/TenantManagement.routes.js'
 import templatePruningRoutes from '@/modules/managers/templatePruning/TemplatePruning.routes.js'
 import internationalizationManagementRoutes from '@/modules/managers/internationalizationManagement/InternationalizationManagement.routes.js'
-
+import mondrianSchemasManagementRoutes from '@/modules/managers/mondrianSchemasManagement/MondrianSchemasManagement.routes.js'
 
 const baseRoutes = []
 
@@ -27,5 +27,6 @@ const routes = baseRoutes
     .concat(tenantManagementRoutes)
     .concat(templatePruningRoutes)
     .concat(internationalizationManagementRoutes)
+  .concat(mondrianSchemasManagementRoutes)
 
 export default routes

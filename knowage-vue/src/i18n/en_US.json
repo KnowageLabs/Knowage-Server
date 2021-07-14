@@ -242,6 +242,53 @@
             "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Metadata Management"
         },
+        "mondrianSchemasManagement": {
+            "detail": {
+                "savedVersions": "Saved versions",
+                "title": "Detail"
+            },
+            "headers": {
+                "active": "Active",
+                "creationDate": "Creation Date",
+                "creator": "Creator",
+                "fileName": "File Name"
+            },
+            "hint": "placeholder, please add a description",
+            "hintTitle": "Mondrian Schema Management",
+            "noResults": "No schemas' available for the selected filter.",
+            "title": "OLAP schemas' catalogue",
+            "toast": {
+                "downloadFile": {
+                    "downloaded": "Version Downloaded",
+                    "ok": "New version downloaded successfully"
+                },
+                "schema": {
+                    "error": "Error creating schema"
+                },
+                "uploadFile": {
+                    "error": "Error uploading version",
+                    "ok": "New version uploaded successfully",
+                    "uploaded": "Version Uploaded"
+                },
+                "workflow": {
+                    "ok": "Workflow updated successfully",
+                    "startFailed": "Error starting workflow",
+                    "started": "Workflow Started",
+                    "startedOk": "Workflow started successfully",
+                    "updated": "Workflow Updated"
+                }
+            },
+            "workFlow": {
+                "availableUsers": "Available Users",
+                "title": "Work Flow",
+                "tooltips": {
+                    "noSchema": "Schema is not created!",
+                    "noWfUsers": "Save users in workflow!",
+                    "wfInProgress": "Workflow is in progress!"
+                },
+                "userWf": "Users Work Flow"
+            }
+        },
         "newsManagement": {
             "active": "Active",
             "detailTitle": "News Detail",
