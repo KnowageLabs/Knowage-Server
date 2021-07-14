@@ -24,11 +24,12 @@
             </TabPanel>
 
             <TabPanel>
+                {{ selectedKpi.threshold }}
                 <template #header>
                     <span>{{ $t('kpi.kpiDefinition.tresholdTitle') }}</span>
                 </template>
 
-                <KpiDefinitionThresholdTab :selectedKpi="selectedKpi" :severityOptions="severityOptions" :loading="loading" @thresholdFieldChanged="onThresholdFieldChange" />
+                <KpiDefinitionThresholdTab :selectedKpi="selectedKpi" :thresholdsList="tresholdList" :severityOptions="severityOptions" :thresholdTypeList="thresholdTypeList" :loading="loading" @thresholdFieldChanged="onThresholdFieldChange" />
             </TabPanel>
         </TabView>
 
@@ -59,34 +60,6 @@
             </Listbox>
         </div>
     </div>
-
-    <Sidebar class="mySidebar" v-model:visible="listTresholdVisible" :dismissable="false" :modal="false" position="right">
-        <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>Threshholds List</template>
-        </Toolbar>
-        <Listbox
-            class="kn-list--column"
-            :options="tresholdList"
-            :filter="true"
-            :filterPlaceholder="$t('common.search')"
-            optionLabel="name"
-            filterMatchMode="contains"
-            :filterFields="tabViewDescriptor.filterFields"
-            :emptyFilterMessage="$t('common.info.noDataFound')"
-            @change="showForm"
-            data-test="kpi-list"
-        >
-            <template #empty>{{ $t('common.info.noDataFound') }}</template>
-            <template #option="slotProps">
-                <div class="kn-list-item" data-test="list-item">
-                    <div class="kn-list-item-text">
-                        <span>{{ slotProps.option.name }}</span>
-                        <span class="kn-list-item-text-secondary">{{ slotProps.option.description }}</span>
-                    </div>
-                </div>
-            </template>
-        </Listbox>
-    </Sidebar>
 </template>
 
 <script lang="ts">
@@ -97,11 +70,10 @@ import tabViewDescriptor from './KpiDefinitionDetailDescriptor.json'
 import KpiDefinitionThresholdTab from './KpiDefinitionThresholdTab/KpiDefinitionThresholdTab.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
-import Sidebar from 'primevue/sidebar'
 import Listbox from 'primevue/listbox'
 
 export default defineComponent({
-    components: { TabView, TabPanel, Sidebar, Listbox, KpiDefinitionThresholdTab },
+    components: { TabView, TabPanel, Listbox, KpiDefinitionThresholdTab },
     props: {
         id: {
             type: String,
@@ -125,11 +97,11 @@ export default defineComponent({
             touched: false,
             loading: false,
             isAliasVisible: false,
-            listTresholdVisible: false,
             selectedKpi: {} as any,
             measureList: [] as any,
             tresholdList: [] as any,
-            severityOptions: [] as any
+            severityOptions: [] as any,
+            thresholdTypeList: [] as any
         }
     },
     watch: {
@@ -138,9 +110,7 @@ export default defineComponent({
         }
     },
     async created() {
-        // this.getSeverityOptions()
         this.loadAllData()
-        // this.loadSelectedKpi()
     },
     methods: {
         async loadSelectedKpi() {
@@ -156,27 +126,28 @@ export default defineComponent({
             this.loading = false
         },
 
-        async getSeverityOptions() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/SEVERITY`).then((response) => {
-                this.severityOptions = { ...response.data }
-                console.log('severityOptions: ', this.selectedKpi)
-            })
+        createGetThresholdsDataUrl(dataType: string) {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${dataType}`)
         },
 
-        createGetUrl(dataType: string) {
+        createGetKpiDataUrl(dataType: string) {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${dataType}`)
         },
+
         async loadAllData() {
             this.loading = true
-            await this.createGetUrl('listMeasure').then((response) => {
+            await this.createGetKpiDataUrl('listMeasure').then((response) => {
                 this.measureList = [...response.data]
-                console.log('listMeasure: ', this.measureList)
             })
-            await this.createGetUrl('listThreshold').then((response) => {
+            await this.createGetKpiDataUrl('listThreshold').then((response) => {
                 this.tresholdList = [...response.data]
-                console.log('listThreshold: ', this.tresholdList)
             })
-            await this.getSeverityOptions()
+            await this.createGetThresholdsDataUrl('SEVERITY').then((response) => {
+                this.severityOptions = [...response.data]
+            })
+            await this.createGetThresholdsDataUrl('THRESHOLD_TYPE').then((response) => {
+                this.thresholdTypeList = [...response.data]
+            })
             await this.loadSelectedKpi()
             this.loading = false
         },

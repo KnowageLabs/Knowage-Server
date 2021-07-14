@@ -1,39 +1,36 @@
 {
-    "datatableColumns": [
-        {
-            "field": "label",
-            "header": "common.label"
+    "newThreshold": {
+        "color": "#00FFFF",
+        "includeMax": false,
+        "includeMin": false,
+        "label": "",
+        "maxValue": "",
+        "minValue": "",
+        "position": ""
+    },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "margin-bottom": "3%",
+            "text-align": "center"
         },
-        {
-            "field": "minValue",
-            "header": "minValue"
-        },
-        {
-            "field": "includeMin",
-            "header": "includeMin"
-        },
-        {
-            "field": "maxValue",
-            "header": "color"
-        },
-        {
-            "field": "includeMax",
-            "header": "color"
-        },
-        {
-            "field": "severityId",
-            "header": "color"
-        },
-        {
-            "field": "color",
-            "header": "color"
+        "table": {
+            "checkbox": {
+                "justify-content": "center"
+            },
+            "footer": {
+                "float": "right"
+            },
+            "inputNumber": {
+                "width": "5%"
+            },
+            "inputText": {
+                "text-align": "center",
+                "width": "7em"
+            }
         }
-    ],
-    "datatableStyle": {
-        "smallHeaderStyle": {
-            "width": "5.5%"
-        },
-        "checkboxHeaderStyle": "width: 8%"
     },
     "validations": {
         "kpi": [

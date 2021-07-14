@@ -127,9 +127,17 @@
     "kpi": {
         "kpiDefinition": {
             "cardinalityTtitle": "Cardinality",
+            "clone": "Clone",
+            "color": "Color",
             "formulaTitle": "Formula",
             "hint": "Change the hint to your liking",
             "hintTitle": "Kpi Definition",
+            "max": "Max",
+            "maxInclude": "Include Max",
+            "min": "Min",
+            "minInclude": "Include Min",
+            "severity": "Severity",
+            "thresholdReused": "Warning: this threshold is used elsewhere. Any change will affect other KPIs. Please consider creating a clone",
             "tresholdTitle": "Treshold"
         }
     },

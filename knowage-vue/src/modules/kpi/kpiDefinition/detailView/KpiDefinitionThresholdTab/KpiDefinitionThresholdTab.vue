@@ -1,13 +1,12 @@
 <template>
     <Card v-if="!loading" :style="tabViewDescriptor.card.style">
         <template #content>
-            <Message v-if="false" severity="info">
-                THRESHOLD USED BY OTHER KPI WARNING: THIS THRESHOLD IS USED ELSEWHERE. ANY CHANGE WILL AFFECT OTHER KPIS. PLEASE CONSIDER CREATING A CLONE
-                <Button label="CLONE" />
+            <Message v-if="kpi.threshold.usedByKpi" severity="info" :closable="false" :style="tresholdTabDescriptor.styles.message">
+                {{ $t('kpi.kpiDefinition.thresholdReused') }}
+                <Button :label="$t('kpi.kpiDefinition.clone')" />
             </Message>
-            {{ kpi.threshold.usedByKpi }}
             <form class="p-fluid p-formgrid p-grid">
-                <div class="p-field p-col-12 p-md-6" :style="tabViewDescriptor.pField.style">
+                <div class="p-field p-col-12 p-md-4" :style="tabViewDescriptor.pField.style">
                     <span class="p-float-label">
                         <InputText
                             id="name"
@@ -26,7 +25,7 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.threshold.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
                 </div>
-                <div class="p-field p-col-12 p-md-6" :style="tabViewDescriptor.pField.style">
+                <div class="p-field p-col-12 p-md-4" :style="tabViewDescriptor.pField.style">
                     <span class="p-float-label">
                         <InputText
                             id="description"
@@ -45,22 +44,119 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.threshold.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
                 </div>
+                <div class="p-field p-col-12 p-md-4" :style="tabViewDescriptor.pField.style">
+                    <span class="p-float-label">
+                        <Dropdown id="type" class="kn-material-input" v-model="threshold.typeId" :options="thresholdTypeList" optionLabel="translatedValueName" optionValue="valueId" @change="setTypeCd">
+                            <template #option="slotProps">
+                                <span>{{ slotProps.option.translatedValueName }}</span>
+                            </template>
+                        </Dropdown>
+                        <label for="type" class="kn-material-input-label">{{ $t('common.type') }}</label>
+                    </span>
+                </div>
             </form>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <DataTable v-if="!loading" :value="kpi.threshold.thresholdValues" :loading="loading" :resizableColumns="true" editMode="cell" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="messages-table">
-                <Column field="label" header="Label" :style="{ width: '10%' }">
+            <DataTable v-if="!loading" :value="kpi.threshold.thresholdValues" :loading="loading" editMode="cell" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder" data-test="messages-table">
+                <Column :rowReorder="true" headerStyle="width: 3rem" :reorderableColumn="false" />
+
+                <Column field="label" :header="$t('common.label')">
                     <template #editor="slotProps">
                         <InputText v-model="slotProps.data['label']" />
                     </template>
                 </Column>
-                <Column field="label" header="Label">
+
+                <Column field="minValue" :header="$t('kpi.kpiDefinition.min')">
                     <template #editor="slotProps">
-                        <InputText v-model="slotProps.data['label']" />
+                        <InputText v-model="slotProps.data['minValue']" type="number" />
                     </template>
                 </Column>
+
+                <Column field="includeMin" :header="$t('kpi.kpiDefinition.minInclude')">
+                    <template #body="slotProps">
+                        <Checkbox v-model="slotProps.data['includeMin']" :binary="true" />
+                    </template>
+                </Column>
+
+                <Column field="maxValue" :header="$t('kpi.kpiDefinition.max')">
+                    <template #editor="slotProps">
+                        <InputText v-model="slotProps.data['maxValue']" type="number" />
+                    </template>
+                </Column>
+
+                <Column field="includeMax" :header="$t('kpi.kpiDefinition.maxInclude')">
+                    <template #body="slotProps">
+                        <Checkbox v-model="slotProps.data['includeMax']" :binary="true" />
+                    </template>
+                </Column>
+
+                <Column field="severityId" header="Severity">
+                    <template #editor="slotProps">
+                        <Dropdown v-model="slotProps.data['severityId']" :options="severityOptions" optionLabel="valueCd" optionValue="valueId" placeholder="Select Severity" @change="setSeverityCd($event, slotProps.data)">
+                            <template #option="slotProps">
+                                <span>{{ slotProps.option.valueCd }}</span>
+                            </template>
+                        </Dropdown>
+                    </template>
+                    <template #body="slotProps">
+                        {{ slotProps.data['severityCd'] }}
+                    </template>
+                </Column>
+
+                <Column field="color" :header="$t('kpi.kpiDefinition.color')">
+                    <template #body="slotProps">
+                        <ColorPicker v-model="slotProps.data['color']" format="hex" />
+                        <span>{{ slotProps.data['color'] }}</span>
+                    </template>
+                    <template #editor="slotProps">
+                        <ColorPicker v-model="slotProps.data['color']" format="hex" />
+                        <InputText v-model="slotProps.data['color']" />
+                    </template>
+                </Column>
+
+                <Column header style="text-align:right">
+                    <template #header>
+                        <Button label="Threshold List" class="p-button-link" @click="thresholdListVisible = true" />
+                    </template>
+                    <template #body="slotProps">
+                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteThresholdItemConfirm(slotProps.index)" />
+                    </template>
+                </Column>
+                <template #footer>
+                    <Button label="Add New Threshold Item" class="p-button-link" :style="tresholdTabDescriptor.styles.table.footer" @click="addNewThresholdItem" />
+                </template>
             </DataTable>
+            <div class="p-mt-6">
+                {{ thresholdTypeList }}
+            </div>
         </template>
     </Card>
+    <Sidebar class="mySidebar" v-model:visible="thresholdListVisible" position="right">
+        <Toolbar class="kn-toolbar kn-toolbar--secondary">
+            <template #left>Threshholds List</template>
+        </Toolbar>
+        <Listbox
+            class="kn-list--column"
+            :options="thresholdsList"
+            :filter="true"
+            :filterPlaceholder="$t('common.search')"
+            optionLabel="name"
+            filterMatchMode="contains"
+            :filterFields="tabViewDescriptor.filterFields"
+            :emptyFilterMessage="$t('common.info.noDataFound')"
+            @change="showForm"
+            data-test="kpi-list"
+        >
+            <template #empty>{{ $t('common.info.noDataFound') }}</template>
+            <template #option="slotProps">
+                <div class="kn-list-item" data-test="list-item">
+                    <div class="kn-list-item-text">
+                        <span>{{ slotProps.option.name }}</span>
+                        <span class="kn-list-item-text-secondary">{{ slotProps.option.description }}</span>
+                    </div>
+                </div>
+            </template>
+        </Listbox>
+    </Sidebar>
 </template>
 
 <script lang="ts">
@@ -69,32 +165,42 @@ import { createValidations } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
 import tabViewDescriptor from '../KpiDefinitionDetailDescriptor.json'
 import tresholdTabDescriptor from './KpiDefinitionThresholdTabDescriptor.json'
-// import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Card from 'primevue/card'
+import Sidebar from 'primevue/sidebar'
+import Listbox from 'primevue/listbox'
 import Message from 'primevue/message'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-// import Checkbox from 'primevue/checkbox'
-// import InputNumber from 'primevue/inputnumber'
-// import ColorPicker from 'primevue/colorpicker'
-// import Dropdown from 'primevue/dropdown'
+import Checkbox from 'primevue/checkbox'
+import Dropdown from 'primevue/dropdown'
+import ColorPicker from 'primevue/colorpicker'
 
 export default defineComponent({
     name: 'treshold-tab',
     components: {
-        // KnValidationMessages
+        KnValidationMessages,
         Card,
+        Sidebar,
+        Listbox,
         Message,
         DataTable,
-        Column
-        // Checkbox,
-        // InputNumber,
-        // ColorPicker,
-        // Dropdown,
+        Column,
+        Checkbox,
+        Dropdown,
+        ColorPicker
     },
     props: {
         selectedKpi: Object,
-        severityOptions: Array,
+        thresholdsList: Array,
+        severityOptions: {
+            type: Array as any,
+            required: false
+        },
+        thresholdTypeList: {
+            type: Array as any,
+            required: false
+        },
         loading: Boolean
     },
     emits: ['thresholdFieldChanged', 'activeVersionChanged'],
@@ -105,8 +211,8 @@ export default defineComponent({
             tresholdTabDescriptor,
             kpi: {} as any,
             threshold: {} as any,
-            touched: false,
-            columns: tresholdTabDescriptor.datatableColumns
+            thresholdListVisible: false,
+            touched: false
         }
     },
 
@@ -131,6 +237,36 @@ export default defineComponent({
     methods: {
         onThresholdFieldChange(fieldName: string, value: any) {
             this.$emit('thresholdFieldChanged', { fieldName, value })
+        },
+        onRowReorder(event) {
+            this.kpi.threshold.thresholdValues = event.value
+            this.kpi.threshold.thresholdValues.forEach((_, index) => {
+                this.kpi.threshold.thresholdValues[index].position = index + 1
+            })
+        },
+        setSeverityCd(event, data) {
+            const index = this.severityOptions.findIndex((SO: any) => SO.valueId === event.value)
+            data.severityCd = index >= 0 ? this.severityOptions[index].valueCd : ''
+        },
+        setTypeCd(event) {
+            const index = this.thresholdTypeList.findIndex((SO: any) => SO.valueId === event.value)
+            this.threshold.type = index >= 0 ? this.thresholdTypeList[index].translatedValueName : ''
+        },
+        addNewThresholdItem() {
+            const newThreshold = tresholdTabDescriptor.newThreshold
+            newThreshold.position = this.kpi.threshold.thresholdValues.length + 1
+            this.kpi.threshold.thresholdValues.push(newThreshold)
+        },
+        deleteThresholdItemConfirm(index) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteThresholdItem(index)
+            })
+        },
+        deleteThresholdItem(index) {
+            this.kpi.threshold.thresholdValues.splice(index, 1)
         }
     }
 })

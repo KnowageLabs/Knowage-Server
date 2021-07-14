@@ -11,19 +11,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <Listbox
-                    v-if="!loading"
-                    class="kn-list--column"
-                    :options="kpiList"
-                    :filter="true"
-                    :filterPlaceholder="$t('common.search')"
-                    optionLabel="name"
-                    filterMatchMode="contains"
-                    :filterFields="kpiDescriptor.filterFields"
-                    :emptyFilterMessage="$t('common.info.noDataFound')"
-                    @change="showForm"
-                    data-test="kpi-list"
-                >
+                <Listbox v-if="!loading" class="kn-list--column" :options="kpiList" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="name" :emptyFilterMessage="$t('common.info.noDataFound')" @change="showForm" data-test="kpi-list">
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
                         <div class="kn-list-item" data-test="list-item">
