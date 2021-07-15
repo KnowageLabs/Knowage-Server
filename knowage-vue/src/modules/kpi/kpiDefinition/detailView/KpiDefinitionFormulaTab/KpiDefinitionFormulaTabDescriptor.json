@@ -1,0 +1,14 @@
+{
+    "codeMirrorOptions": {
+        "autofocus": true,
+        "gutters": ["CodeMirror-lint-markers"],
+        "indentWithTabs": true,
+        "lineNumbers": true,
+        "lineWrapping": true,
+        "lint": true,
+        "matchBrackets": true,
+        "mode": "text/x-mathematica",
+        "smartIndent": true,
+        "theme": "eclipse"
+    }
+}

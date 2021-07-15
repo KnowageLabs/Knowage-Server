@@ -5,15 +5,15 @@
             "width": "100%"
         }
     },
-    "column": {
-        "header": {
-            "style": {
-                "display": "flex",
-                "flex-direction": "column"
-            }
-        },
-        "style": {
-            "width": "50%"
+    "emptyKpi": {
+        "cardinality": "{\"measureList\":[],\"checkedAttribute\":{}}",
+        "definition": "",
+        "id": "undefined",
+        "name": "",
+        "placeholder": "",
+        "threshold": {
+            "description": "",
+            "thresholdValues": []
         }
     },
     "filterFields": ["alias", "name"],

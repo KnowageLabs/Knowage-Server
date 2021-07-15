@@ -9,17 +9,7 @@
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12 p-md-4" :style="tabViewDescriptor.pField.style">
                     <span class="p-float-label">
-                        <InputText
-                            id="name"
-                            class="kn-material-input"
-                            type="text"
-                            maxLength="100"
-                            v-model.trim="v$.threshold.name.$model"
-                            :class="{ 'p-invalid': v$.threshold.name.$invalid && v$.threshold.name.$dirty }"
-                            @blur="v$.threshold.name.$touch()"
-                            @change="onThresholdFieldChange('name', $event.target.value)"
-                            data-test="name-input"
-                        />
+                        <InputText id="name" class="kn-material-input" type="text" maxLength="100" v-model.trim="v$.threshold.name.$model" :class="{ 'p-invalid': v$.threshold.name.$invalid && v$.threshold.name.$dirty }" @blur="v$.threshold.name.$touch()" data-test="name-input" />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.threshold.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
@@ -27,17 +17,7 @@
 
                 <div class="p-field p-col-12 p-md-4" :style="tabViewDescriptor.pField.style">
                     <span class="p-float-label">
-                        <InputText
-                            id="description"
-                            class="kn-material-input"
-                            type="text"
-                            maxLength="500"
-                            v-model.trim="v$.threshold.description.$model"
-                            :class="{ 'p-invalid': v$.threshold.description.$invalid && v$.threshold.description.$dirty }"
-                            @blur="v$.threshold.description.$touch()"
-                            @change="onThresholdFieldChange('description', $event.target.value)"
-                            data-test="description-input"
-                        />
+                        <InputText id="description" class="kn-material-input" type="text" maxLength="500" v-model.trim="v$.threshold.description.$model" :class="{ 'p-invalid': v$.threshold.description.$invalid && v$.threshold.description.$dirty }" @blur="v$.threshold.description.$touch()" />
                         <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.threshold.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
@@ -55,7 +35,7 @@
                 </div>
             </form>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <DataTable v-if="!loading" :value="kpi.threshold.thresholdValues" :loading="loading" editMode="cell" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder" data-test="messages-table">
+            <DataTable v-if="!loading" :value="kpi.threshold.thresholdValues" :loading="loading" editMode="cell" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" @rowReorder="setPositionOnReorder" data-test="messages-table">
                 <Column :rowReorder="true" headerStyle="width: 3rem" :reorderableColumn="false" />
 
                 <Column field="label" :header="$t('common.label')">
@@ -90,15 +70,13 @@
 
                 <Column field="severityId" header="Severity">
                     <template #editor="slotProps">
-                        <Dropdown v-model="slotProps.data['severityId']" :options="severityOptions" optionLabel="valueCd" optionValue="valueId" placeholder="Select Severity" @change="setSeverityCd($event, slotProps.data)">
+                        <Dropdown v-model="slotProps.data['severityId']" :options="severityOptions" optionLabel="valueCd" optionValue="valueId" @change="setSeverityCd($event, slotProps.data)">
                             <template #option="slotProps">
                                 <span>{{ slotProps.option.valueCd }}</span>
                             </template>
                         </Dropdown>
                     </template>
-                    <template #body="slotProps">
-                        {{ slotProps.data['severityCd'] }}
-                    </template>
+                    <template #body="slotProps">{{ slotProps.data['severityCd'] }} </template>
                 </Column>
 
                 <Column field="color" :header="$t('kpi.kpiDefinition.color')">
@@ -125,9 +103,7 @@
                     <Button label="Add New Threshold Item" class="p-button-link" :style="tresholdTabDescriptor.styles.table.footer" @click="addNewThresholdItem" />
                 </template>
             </DataTable>
-            <div class="p-mt-6">
-                {{ kpi.threshold }}
-            </div>
+            <div class="p-mt-6">{{ kpi.threshold }}</div>
         </template>
     </Card>
 
@@ -135,17 +111,7 @@
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
             <template #left>Threshholds List</template>
         </Toolbar>
-        <Listbox
-            class="kn-list--column"
-            :options="thresholdsList"
-            :filter="true"
-            :filterPlaceholder="$t('common.search')"
-            filterMatchMode="contains"
-            :filterFields="tabViewDescriptor.filterFields"
-            :emptyFilterMessage="$t('common.info.noDataFound')"
-            @change="confirmToLoadThreshold"
-            data-test="kpi-list"
-        >
+        <Listbox class="kn-list--column" :options="thresholdsList" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="tabViewDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')" @change="confirmToLoadThreshold">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
                 <div class="kn-list-item" data-test="list-item">
@@ -159,9 +125,7 @@
     </Sidebar>
 
     <Dialog class="kn-dialog--toolbar--primary importExportDialog" v-bind:visible="overrideDialogVisible" footer="footer" :header="$t('kpi.kpiDefinition.reusedTitle')" :closable="false" modal>
-        <p class="p-mt-4">
-            {{ $t('kpi.kpiDefinition.thresholdReused') }}
-        </p>
+        <p class="p-mt-4">{{ $t('kpi.kpiDefinition.thresholdReused') }}</p>
         <template #footer>
             <div class="p-d-flex p-jc-center">
                 <Button class="kn-button kn-button--primary" label="CANCEL" @click="overrideDialogVisible = false" />
@@ -243,11 +207,7 @@ export default defineComponent({
         }
     },
     methods: {
-        onThresholdFieldChange(fieldName: string, value: any) {
-            this.$emit('thresholdFieldChanged', { fieldName, value })
-        },
-
-        onRowReorder(event) {
+        setPositionOnReorder(event) {
             this.kpi.threshold.thresholdValues = event.value
             this.kpi.threshold.thresholdValues.forEach((_, index) => {
                 this.kpi.threshold.thresholdValues[index].position = index + 1
@@ -265,7 +225,7 @@ export default defineComponent({
         },
 
         addNewThresholdItem() {
-            const newThreshold = tresholdTabDescriptor.newThreshold
+            const newThreshold = { ...tresholdTabDescriptor.newThreshold }
             newThreshold.position = this.kpi.threshold.thresholdValues.length + 1
             this.kpi.threshold.thresholdValues.push(newThreshold)
         },

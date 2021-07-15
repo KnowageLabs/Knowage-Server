@@ -14,7 +14,8 @@
                 <template #header>
                     <span>{{ $t('kpi.kpiDefinition.formulaTitle') }}</span>
                 </template>
-                {{ selectedKpi }}
+                <!-- {{ selectedKpi }} -->
+                <KpiDefinitionFormulaTab :selectedKpi="selectedKpi" :measures="measureList" :loading="loading" />
             </TabPanel>
 
             <TabPanel>
@@ -24,7 +25,6 @@
             </TabPanel>
 
             <TabPanel>
-                {{ selectedKpi.threshold }}
                 <template #header>
                     <span>{{ $t('kpi.kpiDefinition.tresholdTitle') }}</span>
                 </template>
@@ -68,12 +68,13 @@ import { defineComponent } from 'vue'
 import useValidate from '@vuelidate/core'
 import tabViewDescriptor from './KpiDefinitionDetailDescriptor.json'
 import KpiDefinitionThresholdTab from './KpiDefinitionThresholdTab/KpiDefinitionThresholdTab.vue'
+import KpiDefinitionFormulaTab from './KpiDefinitionFormulaTab/KpiDefinitionFormulaTab.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Listbox from 'primevue/listbox'
 
 export default defineComponent({
-    components: { TabView, TabPanel, Listbox, KpiDefinitionThresholdTab },
+    components: { TabView, TabPanel, Listbox, KpiDefinitionThresholdTab, KpiDefinitionFormulaTab },
     props: {
         id: {
             type: String,
@@ -104,13 +105,13 @@ export default defineComponent({
             thresholdTypeList: [] as any
         }
     },
+    async created() {
+        this.loadAllData()
+    },
     watch: {
         id() {
             this.loadSelectedKpi()
         }
-    },
-    async created() {
-        this.loadAllData()
     },
     methods: {
         async loadSelectedKpi() {
@@ -120,7 +121,7 @@ export default defineComponent({
                     this.selectedKpi = { ...response.data }
                 })
             } else {
-                this.selectedKpi = {} as any
+                this.selectedKpi = { ...tabViewDescriptor.emptyKpi }
             }
             this.loading = false
         },
