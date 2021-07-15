@@ -25,64 +25,140 @@
     "filterFields": ["label", "descr"],
     "iconTypesMap": {
         "MongoDialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-database"
         },
         "hive": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-apache-hive",
+            "style": {
+                "background-color": "#f44336",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.BigQueryDialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-google-big-query",
+            "style": {
+                "background-color": "#e91e63",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.DB2400Dialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-google-spanner",
+            "style": {
+                "background-color": "#e91e63",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.Hive2Dialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-apache-hive",
+            "style": {
+                "background-color": "#9c27b0",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.MySQLDialect": {
-            "dbIcon": "db-mariadb"
+            "dbIcon": "db-mariadb",
+            "style": {
+                "background-color": "#673ab7",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.MySQLInnoDBDialect": {
-            "dbIcon": "db-mariadb"
+            "dbIcon": "db-mariadb",
+            "style": {
+                "background-color": "#3f51b5",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.Oracle9Dialect": {
-            "dbIcon": "db-oracle"
+            "dbIcon": "db-oracle",
+            "style": {
+                "background-color": "#2196f3",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.OracleDialect": {
-            "dbIcon": "db-oracle"
+            "dbIcon": "db-oracle",
+            "style": {
+                "background-color": "#2196f3",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.PostgreSQLDialect": {
-            "dbIcon": "db-postgresql"
+            "dbIcon": "db-Postgresql",
+            "style": {
+                "background-color": "#03a9f4",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.RedShiftDialect": {
-            "dbIcon": "far fa-newspaper"
+            "dbIcon": "db-AWS-Redshift",
+            "style": {
+                "background-color": "#00bcd4",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.SQLServerDialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-microsoft-sql",
+            "style": {
+                "background-color": "#009688",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.SynapseDialect": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-azure-synapse",
+            "style": {
+                "background-color": "#4caf50",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.TeradataDialect": {
-            "dbIcon": "db-teradata"
+            "dbIcon": "db-teradata",
+            "style": {
+                "background-color": "#8bc34a",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.VerticaDialect": {
-            "dbIcon": "db-vertica"
+            "dbIcon": "db-vertica",
+            "style": {
+                "background-color": "#ff9800",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.cassandra": {
-            "dbIcon": "fas fa-envelope"
+            "dbIcon": "db-apache-cassandra",
+            "style": {
+                "background-color": "#ff9800",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.impala": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-apache-impala",
+            "style": {
+                "background-color": "#ff5722",
+                "color": "white"
+            }
         },
         "org.hibernate.dialect.sparksql": {
-            "dbIcon": "fas fa-exclamation-circle"
+            "dbIcon": "db-apache-spark",
+            "style": {
+                "background-color": "#ffc107",
+                "color": "white"
+            }
         },
         "org.hibernatespatial.oracle.CustomOracleSpatialDialect": {
-            "dbIcon": "db-oracle"
+            "dbIcon": "db-oracle",
+            "style": {
+                "background-color": "#2196f3",
+                "color": "white"
+            }
         },
         "orient": {
-            "dbIcon": "db-orientdb"
+            "dbIcon": "db-orientdb",
+            "style": {
+                "background-color": "#ffeb3b",
+                "color": "white"
+            }
         }
     },
     "newDataSourceValues": {

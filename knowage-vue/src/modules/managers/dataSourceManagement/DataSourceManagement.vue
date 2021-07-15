@@ -26,7 +26,7 @@
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" data-test="list-item">
-                        <Avatar :icon="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].dbIcon" shape="circle" size="medium" />
+                        <Avatar :icon="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].dbIcon" shape="circle" size="medium" :style="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].style" v-tooltip="slotProps.option.dialectName" />
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.label }}</span>
                             <span class="kn-list-item-text-secondary">{{ slotProps.option.descr }}</span>
