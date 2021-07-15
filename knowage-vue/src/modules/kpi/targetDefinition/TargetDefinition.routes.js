@@ -10,9 +10,9 @@ let routes = [
                 component: () => import('@/modules/kpi/targetDefinition/TargetDefinitionDetail.vue')
             },
             {
-                path: ':id',
+                path: '/target-definition/edit',
                 name: 'edit-target-definition',
-                props: true,
+                props: (route) => ({ id: route.query.id, clone: route.query.clone }),
                 component: () => import('@/modules/kpi/targetDefinition/TargetDefinitionDetail.vue')
             }
         ]
@@ -20,3 +20,10 @@ let routes = [
 ]
 
 export default routes
+
+// {
+//     path: '/measure-definition/edit',
+//     name: 'edit-measure-definition',
+//     props: (route) => ({ id: route.query.id, ruleVersion: route.query.ruleVersion, clone: route.query.clone }),
+//     component: () => import('@/modules/kpi/measureDefinition/MeasureDefinitionTabView.vue')
+// }

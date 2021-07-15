@@ -7,11 +7,22 @@
                         {{ $t('kpi.targetDefinition.title') }}
                     </template>
                     <template #right>
-                        <KnFabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button"></KnFabButton>
+                        <KnFabButton icon="fas fa-plus" @click="showForm(null, false)" data-test="open-form-button"></KnFabButton>
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <Listbox v-if="!loading" class="kn-list--column" :options="targetList" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="targetDefinitionDecriptor.filterFields" emptyFilterMessage="noResults" @change="showForm">
+                <Listbox
+                    v-if="!loading"
+                    class="kn-list--column"
+                    :options="targetList"
+                    :filter="true"
+                    :filterPlaceholder="$t('common.search')"
+                    optionLabel="name"
+                    filterMatchMode="contains"
+                    :filterFields="targetDefinitionDecriptor.filterFields"
+                    emptyFilterMessage="noResults"
+                    @change="showForm($event.value, false)"
+                >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
                         <div class="kn-list-item">
@@ -27,7 +38,7 @@
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
                 <KnHint :title="'kpi.targetDefinition.title'" :hint="'test'" v-if="showHint" data-test="bm-hint"></KnHint>
-                <router-view @close="closeForm" @touched="touched = true" />
+                <router-view @close="closeForm" @touched="touched = true" @saved="reloadMetadata" />
             </div>
         </div>
     </div>
@@ -67,27 +78,28 @@ export default defineComponent({
     methods: {
         async loadAllMetadata() {
             this.loading = true
-            this.targetList = []
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/listTarget')
-                .then((response) =>
-                    response.data.map((target: any) => {
-                        this.targetList.push({
-                            id: target.id,
-                            name: target.name,
-                            startValidity: new Date(target.startValidity),
-                            endValidity: new Date(target.endValidity),
-                            author: target.author,
-                            values: target.values,
-                            category: target.category
-                        })
-                    })
+                .then(
+                    (response) =>
+                        (this.targetList = response.data.map((target: any) => {
+                            return {
+                                id: target.id,
+                                name: target.name,
+                                startValidity: new Date(target.startValidity),
+                                endValidity: new Date(target.endValidity),
+                                author: target.author,
+                                values: target.values,
+                                category: target.category
+                            }
+                        }))
                 )
                 .finally(() => (this.loading = false))
         },
-        showForm(target: any) {
+        showForm(target: any, clone: Boolean) {
             this.showHint = false
-            const path = target.value ? `/target-definition/${target.value.id}` : '/target-definition/new-target-definition'
+            console.log('target:101', target)
+            const path = target ? `/target-definition/edit?id=${target.id}&clone=${clone}` : '/target-definition/new-target-definition'
             if (!this.touched) {
                 this.$router.push(path)
             } else {
@@ -126,16 +138,36 @@ export default defineComponent({
                 this.loadAllMetadata()
             })
         },
-        cloneTargetConfirm(target: number) {
+        cloneTargetConfirm(target: any) {
             this.$confirm.require({
                 header: this.$t('common.toast.cloneConfirmTitle'),
-                accept: () => this.showForm(target)
+                accept: () => this.showForm(target, true)
             })
         },
         closeForm() {
-            console.log('close')
+            if (!this.touched) {
+                this.handleClose()
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.handleClose()
+                    }
+                })
+            }
+        },
+        handleClose() {
             this.showHint = true
             this.formVisible = false
+            this.$router.push('/target-definition')
+        },
+        reloadMetadata() {
+            this.handleClose()
+            this.touched = false
+            this.loadAllMetadata()
         }
     }
 })

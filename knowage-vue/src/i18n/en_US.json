@@ -129,7 +129,9 @@
             "addKpiBtn": "Add KPI association",
             "applyTargetonKPI": "Apply Target on Kpi",
             "endDate": "End validity date",
+            "kpiCategory": "Category",
             "name": "Name",
+            "saveTarget": "Save target",
             "startDate": "Start validity date",
             "title": "Target definition",
             "titleAddAssociations": "Add KPI associations"

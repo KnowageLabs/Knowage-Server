@@ -27,5 +27,14 @@
             "header": "Author"
         }
     ],
-    "globalFilterFields": ["kpiName", "kpiCategory", "kpiDate", "kpiAuthor"]
+    "globalFilterFields": ["kpiName", "kpiCategory", "kpiDate", "kpiAuthor"],
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    }
 }
