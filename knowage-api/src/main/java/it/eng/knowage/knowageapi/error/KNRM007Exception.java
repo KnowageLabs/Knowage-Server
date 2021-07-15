@@ -21,18 +21,18 @@ package it.eng.knowage.knowageapi.error;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KNDA011Exception extends KnowageBusinessException {
+public class KNRM007Exception extends KnowageBusinessException {
 
 	/*
 	 * Error Code
 	 */
-	private String code = "KN-RM-011";
+	private String code = "KN-RM-007";
 
 	/*
 	 * User oriented description of the exception. It is usually prompted to the user. Instead the message passed to the constructor is developer oriented and
 	 * it should be just logged.
 	 */
-	private String description = "Impossible to read metadata";
+	private String description = "Impossible to delete file";
 
 	/*
 	 * A list of possible solutions to the problem that have caused the exception
@@ -44,7 +44,7 @@ public class KNDA011Exception extends KnowageBusinessException {
 	 *
 	 * @param message Text of the exception
 	 */
-	public KNDA011Exception(String message) {
+	public KNRM007Exception(String message) {
 		super(message);
 	}
 
@@ -54,7 +54,7 @@ public class KNDA011Exception extends KnowageBusinessException {
 	 * @param message Text of the exception
 	 * @param ex      previous Throwable object
 	 */
-	public KNDA011Exception(String message, Throwable ex) {
+	public KNRM007Exception(String message, Throwable ex) {
 		super(message, ex);
 	}
 

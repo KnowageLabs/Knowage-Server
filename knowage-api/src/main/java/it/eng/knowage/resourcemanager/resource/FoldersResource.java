@@ -38,6 +38,9 @@ import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.error.KNRM001Exception;
+import it.eng.knowage.knowageapi.error.KNRM002Exception;
+import it.eng.knowage.knowageapi.error.KNRM005Exception;
+import it.eng.knowage.knowageapi.error.KNRM008Exception;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.resourcemanager.resource.dto.RootFolderDTO;
 import it.eng.knowage.resourcemanager.service.ResourceManagerAPI;
@@ -65,17 +68,20 @@ public class FoldersResource {
 	/**
 	 * @return folders JSON tree from resource folder
 	 * @throws KNRM001Exception
+	 * @throws KNRM002Exception
 	 */
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public RootFolderDTO getFolders() throws KNRM001Exception {
+	public RootFolderDTO getFolders() throws KNRM001Exception, KNRM002Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		RootFolderDTO folders = null;
 		try {
 			folders = resourceManagerAPIservice.getFolders(profile, null);
 		} catch (KNRM001Exception k) {
 			throw new KNRM001Exception("");
+		} catch (KNRM002Exception e) {
+			throw new KNRM002Exception("");
 		}
 		return folders;
 	}
@@ -103,7 +109,7 @@ public class FoldersResource {
 	@Path("/download/{path}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/zip")
-	public Response downloadFolder(@PathParam("path") String path) throws KNRM001Exception {
+	public Response downloadFolder(@PathParam("path") String path) throws KNRM001Exception, KNRM008Exception, KNRM005Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		java.nio.file.Path exportArchive = resourceManagerAPIservice.getDownloadFolderPath(path, profile);
 		String filename = exportArchive.getFileName() + ".zip";

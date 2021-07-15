@@ -44,6 +44,8 @@ import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.error.KNRM001Exception;
+import it.eng.knowage.knowageapi.error.KNRM003Exception;
+import it.eng.knowage.knowageapi.error.KNRM008Exception;
 import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
@@ -74,11 +76,12 @@ public class FilesResource {
 	 * @param path
 	 * @return list of files, one of them could be "metadata.json", it will be excluded
 	 * @throws KNRM001Exception
+	 * @throws KNRM003Exception
 	 */
 	@GET
 	@Path("/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<FileDTO> getFiles(@QueryParam("path") String path) throws KNRM001Exception {
+	public List<FileDTO> getFiles(@QueryParam("path") String path) throws KNRM001Exception, KNRM003Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		List<FileDTO> files = resourceManagerAPIservice.getListOfFiles(path, profile);
 		return files;
@@ -88,7 +91,7 @@ public class FilesResource {
 	@Path("/download")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response downloadFiles(List<String> listOfPaths) throws KNRM001Exception {
+	public Response downloadFiles(List<String> listOfPaths) throws KNRM001Exception, KNRM008Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		if (listOfPaths.size() == 1) {
 			java.nio.file.Path file = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, false);

@@ -21,18 +21,18 @@ package it.eng.knowage.knowageapi.error;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KNDA009Exception extends KnowageBusinessException {
+public class KNRM010Exception extends KnowageBusinessException {
 
 	/*
 	 * Error Code
 	 */
-	private String code = "KN-RM-009";
+	private String code = "KN-RM-010";
 
 	/*
 	 * User oriented description of the exception. It is usually prompted to the user. Instead the message passed to the constructor is developer oriented and
 	 * it should be just logged.
 	 */
-	private String description = "Impossible to upload file";
+	private String description = "Impossible to save metadata";
 
 	/*
 	 * A list of possible solutions to the problem that have caused the exception
@@ -44,7 +44,7 @@ public class KNDA009Exception extends KnowageBusinessException {
 	 *
 	 * @param message Text of the exception
 	 */
-	public KNDA009Exception(String message) {
+	public KNRM010Exception(String message) {
 		super(message);
 	}
 
@@ -54,7 +54,7 @@ public class KNDA009Exception extends KnowageBusinessException {
 	 * @param message Text of the exception
 	 * @param ex      previous Throwable object
 	 */
-	public KNDA009Exception(String message, Throwable ex) {
+	public KNRM010Exception(String message, Throwable ex) {
 		super(message, ex);
 	}
 

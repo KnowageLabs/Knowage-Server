@@ -46,11 +46,19 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.knowage.knowageapi.error.KNRM001Exception;
+import it.eng.knowage.knowageapi.error.KNRM002Exception;
+import it.eng.knowage.knowageapi.error.KNRM003Exception;
+import it.eng.knowage.knowageapi.error.KNRM004Exception;
+import it.eng.knowage.knowageapi.error.KNRM005Exception;
+import it.eng.knowage.knowageapi.error.KNRM006Exception;
+import it.eng.knowage.knowageapi.error.KNRM007Exception;
+import it.eng.knowage.knowageapi.error.KNRM008Exception;
+import it.eng.knowage.knowageapi.error.KNRM009Exception;
+import it.eng.knowage.knowageapi.error.KNRM010Exception;
+import it.eng.knowage.knowageapi.error.KNRM011Exception;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.utils.ContextPropertiesConfig;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
@@ -84,7 +92,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public RootFolderDTO getFolders(SpagoBIUserProfile profile, String path) throws KNRM001Exception {
+	public RootFolderDTO getFolders(SpagoBIUserProfile profile, String path) throws KNRM001Exception, KNRM002Exception {
 		String totalPath = null;
 		try {
 			totalPath = getWorkDirectory(profile);
@@ -239,25 +247,29 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	// if user can't work with directory it is not necessary
 	// if (canSee(pathToWork, profile)) ...
 	@Override
-	public boolean createFolder(String path, SpagoBIUserProfile profile) throws KNRM001Exception {
-		String totalPath = getTotalPath(path, profile);
+	public boolean createFolder(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM004Exception {
 		boolean bool = false;
-		String workDir = getWorkBaseDirByPath(path, profile);
-		if (canSee(Paths.get(workDir), profile)) {
-			File file = new File(totalPath);
-			// Creating the directory
-			bool = file.mkdir();
-			if (bool) {
-				LOGGER.info("Directory created successfully");
-			} else {
-				LOGGER.info("Sorry couldn’t create specified directory");
+		try {
+			String totalPath = getTotalPath(path, profile);
+			String workDir = getWorkBaseDirByPath(path, profile);
+			if (canSee(Paths.get(workDir), profile)) {
+				File file = new File(totalPath);
+				// Creating the directory
+				bool = file.mkdir();
+				if (bool) {
+					LOGGER.info("Directory created successfully");
+				} else {
+					LOGGER.info("Sorry couldn’t create specified directory");
+				}
 			}
+		} catch (Exception e) {
+			throw new KNRM004Exception(e.getMessage());
 		}
 		return bool;
 	}
 
 	@Override
-	public boolean delete(String path, SpagoBIUserProfile profile) throws KNRM001Exception {
+	public boolean delete(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM006Exception, KNRM007Exception {
 		String totalPath = getTotalPath(path, profile);
 		String workDir = getWorkBaseDirByPath(path, profile);
 		if (canSee(Paths.get(workDir), profile)) {
@@ -266,13 +278,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				try {
 					FileUtils.deleteDirectory(new File(totalPath));
 				} catch (IOException e) {
-					throw new KnowageRuntimeException(e.getMessage());
+					throw new KNRM006Exception(e.getMessage());
 				}
 			} else {
 				try {
 					FileUtils.forceDelete(file);
 				} catch (IOException e) {
-					throw new KnowageRuntimeException(e.getMessage());
+					throw new KNRM007Exception(e.getMessage());
 				}
 			}
 		}
@@ -280,32 +292,40 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public Path getDownloadFolderPath(String path, SpagoBIUserProfile profile) throws KNRM001Exception {
-		String workDirr = getWorkBaseDirByPath(path, profile);
+	public Path getDownloadFolderPath(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM005Exception {
 		java.nio.file.Path workingPath = null;
 		java.nio.file.Path pathToReturn = null;
-		if (canSee(Paths.get(workDirr), profile)) {
-			String workDir = getWorkDirectory(profile);
-			String directoryFullPath = workDir + File.separator + path;
-			workingPath = Paths.get(directoryFullPath);
-			pathToReturn = createZipFile(path, workingPath);
+		try {
+			String workDirr = getWorkBaseDirByPath(path, profile);
+			if (canSee(Paths.get(workDirr), profile)) {
+				String workDir = getWorkDirectory(profile);
+				String directoryFullPath = workDir + File.separator + path;
+				workingPath = Paths.get(directoryFullPath);
+				pathToReturn = createZipFile(path, workingPath);
+			}
+		} catch (Exception e) {
+			throw new KNRM005Exception(e.getMessage());
 		}
 		return pathToReturn;
 	}
 
 	@Override
-	public Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws KNRM001Exception {
+	public Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws KNRM001Exception, KNRM008Exception {
 		java.nio.file.Path pathToReturn = null;
-		if (multi) {
-			pathToReturn = createZipFileOfFiles(path, profile);
-		} else {
-			String pathFile = path.get(0);
-			String workDirr = getWorkBaseDirByPath(pathFile, profile);
+		try {
+			if (multi) {
+				pathToReturn = createZipFileOfFiles(path, profile);
+			} else {
+				String pathFile = path.get(0);
+				String workDirr = getWorkBaseDirByPath(pathFile, profile);
 
-			if (canSee(Paths.get(workDirr), profile)) {
-				String workDir = getWorkDirectory(profile);
-				pathToReturn = Paths.get(workDir + File.separator + pathFile);
+				if (canSee(Paths.get(workDirr), profile)) {
+					String workDir = getWorkDirectory(profile);
+					pathToReturn = Paths.get(workDir + File.separator + pathFile);
+				}
 			}
+		} catch (Exception e) {
+			throw new KNRM008Exception(e.getMessage());
 		}
 		return pathToReturn;
 	}
@@ -318,33 +338,41 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public List<FileDTO> getListOfFiles(String path, SpagoBIUserProfile profile) throws KNRM001Exception {
-		String totalPath = getTotalPath(path, profile);
-		File folder = new File(totalPath);
-		File[] listOfFiles = folder.listFiles();
+	public List<FileDTO> getListOfFiles(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM003Exception {
 		List<FileDTO> returnList = new ArrayList<FileDTO>();
-		String workDir = getWorkBaseDirByPath(path, profile);
-		if (canSee(Paths.get(workDir), profile)) {
-			for (int i = 0; i < listOfFiles.length; i++) {
-				if (listOfFiles[i].isFile()) {
-					LOGGER.debug("File " + listOfFiles[i].getName());
-					returnList.add(new FileDTO(listOfFiles[i].getName()));
+		try {
+			String totalPath = getTotalPath(path, profile);
+			File folder = new File(totalPath);
+			File[] listOfFiles = folder.listFiles();
+			String workDir = getWorkBaseDirByPath(path, profile);
+			if (canSee(Paths.get(workDir), profile)) {
+				for (int i = 0; i < listOfFiles.length; i++) {
+					if (listOfFiles[i].isFile()) {
+						LOGGER.debug("File " + listOfFiles[i].getName());
+						returnList.add(new FileDTO(listOfFiles[i].getName()));
+					}
 				}
 			}
+		} catch (Exception e) {
+			throw new KNRM003Exception("");
 		}
 		return returnList;
 	}
 
 	@Override
-	public void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, KNRM001Exception {
+	public void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, KNRM001Exception, KNRM009Exception {
 
-		String workDirr = getWorkBaseDirByPath(path, profile);
-		Path filePath = Paths.get(getTotalPath(path, profile));
+		try {
+			String workDirr = getWorkBaseDirByPath(path, profile);
+			Path filePath = Paths.get(getTotalPath(path, profile));
 
-		if (canSee(Paths.get(workDirr), profile)) {
-			Files.createFile(filePath);
-			Path tempArchive = filePath.getParent().resolve(filePath.getFileName());
-			FileUtils.copyInputStreamToFile(archiveInputStream, tempArchive.toFile());
+			if (canSee(Paths.get(workDirr), profile)) {
+				Files.createFile(filePath);
+				Path tempArchive = filePath.getParent().resolve(filePath.getFileName());
+				FileUtils.copyInputStreamToFile(archiveInputStream, tempArchive.toFile());
+			}
+		} catch (Exception e) {
+			throw new KNRM009Exception(e.getMessage());
 		}
 	}
 
@@ -518,22 +546,20 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws KNRM001Exception {
-		String workPath = getWorkBaseDirByPath(path, profile);
+	public MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM011Exception {
 		MetadataDTO metadata = null;
-		Path totalPath = Paths.get(getTotalPath(path, profile) + File.separator + "metadata.json");
+		try {
+			String workPath = getWorkBaseDirByPath(path, profile);
+			Path totalPath = Paths.get(getTotalPath(path, profile) + File.separator + "metadata.json");
 
-		if (isStartingFromModel(workPath, profile) && canSee(Paths.get(workPath), profile)) {
-
-			try {
+			if (isStartingFromModel(workPath, profile) && canSee(Paths.get(workPath), profile)) {
 				// create object mapper instance
 				ObjectMapper mapper = new ObjectMapper();
 				metadata = mapper.readValue(totalPath.toFile(), MetadataDTO.class);
 
-			} catch (Exception ex) {
-				throw new KnowageRuntimeException(ex.getMessage());
 			}
-
+		} catch (Exception ex) {
+			throw new KNRM011Exception(ex.getMessage());
 		}
 
 		return metadata;
@@ -546,23 +572,20 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	 * fileDTO.getImage());
 	 *
 	 * @throws KNRM001Exception
+	 * @throws KNRM010Exception
 	 */
 	@Override
-	public MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws KNRM001Exception {
-
-		String workPath = getWorkBaseDirByPath(path, profile);
-		if (isStartingFromModel(workPath, profile) && canSee(Paths.get(workPath), profile)) {
-			Path totalPath = Paths.get(getTotalPath(path, profile) + File.separator + "metadata.json");
-			ObjectMapper objectMapper = new ObjectMapper();
-			try {
+	public MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM010Exception {
+		try {
+			String workPath = getWorkBaseDirByPath(path, profile);
+			if (isStartingFromModel(workPath, profile) && canSee(Paths.get(workPath), profile)) {
+				Path totalPath = Paths.get(getTotalPath(path, profile) + File.separator + "metadata.json");
+				ObjectMapper objectMapper = new ObjectMapper();
 				objectMapper.writeValue(totalPath.toFile(), fileDTO);
-			} catch (JsonGenerationException e) {
-				throw new KnowageRuntimeException(e.getMessage());
-			} catch (JsonMappingException e) {
-				throw new KnowageRuntimeException(e.getMessage());
-			} catch (IOException e) {
-				throw new KnowageRuntimeException(e.getMessage());
 			}
+		} catch (Exception e) {
+			throw new KNRM010Exception(e.getMessage());
+
 		}
 		return fileDTO;
 	}
