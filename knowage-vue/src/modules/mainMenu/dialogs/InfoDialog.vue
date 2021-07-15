@@ -14,7 +14,7 @@
                 <p>
                     <strong>{{ $t('common.tenant') }}:</strong> {{ user.organization }}
                 </p>
-                <p>{{ $t('infoDialog.sourceCode') }} <a href="www.knowage-suite.com">Knowage Suite</a></p>
+                <p>{{ $t('infoDialog.sourceCode') }} <a href="https://www.knowage-suite.com">Knowage Suite</a></p>
                 <p>{{ $t('infoDialog.copyright', { year: currentYear }) }}</p>
             </div>
         </div>
@@ -56,7 +56,6 @@ export default defineComponent({
         })
     }
 })
-
 </script>
 
 <style scoped lang="scss">
