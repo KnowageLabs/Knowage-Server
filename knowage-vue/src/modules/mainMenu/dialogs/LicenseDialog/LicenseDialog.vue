@@ -14,7 +14,7 @@
             </TabPanel>
         </TabView>
         <template #footer>
-            <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.ok') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.close') }}</Button>
         </template>
     </Dialog>
 </template>
