@@ -21,12 +21,12 @@ package it.eng.knowage.knowageapi.error;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KnowageKNDA002Exception extends Exception {
+public class KNRM002Exception extends KnowageBusinessException {
 
 	/*
 	 * Error Code
 	 */
-	private String code = "KN-DA-002";
+	private String code = "KN-RM-002";
 
 	/*
 	 * User oriented description of the exception. It is usually prompted to the user. Instead the message passed to the constructor is developer oriented and
@@ -44,7 +44,7 @@ public class KnowageKNDA002Exception extends Exception {
 	 *
 	 * @param message Text of the exception
 	 */
-	public KnowageKNDA002Exception(String message) {
+	public KNRM002Exception(String message) {
 		super(message);
 	}
 
@@ -54,10 +54,11 @@ public class KnowageKNDA002Exception extends Exception {
 	 * @param message Text of the exception
 	 * @param ex      previous Throwable object
 	 */
-	public KnowageKNDA002Exception(String message, Throwable ex) {
+	public KNRM002Exception(String message, Throwable ex) {
 		super(message, ex);
 	}
 
+	@Override
 	public String getRootCause() {
 		String rootCause;
 		Throwable rootException;
@@ -73,14 +74,17 @@ public class KnowageKNDA002Exception extends Exception {
 		return rootCause;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
+	@Override
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	@Override
 	public List getHints() {
 		if (hints == null) {
 			hints = new ArrayList();
@@ -90,6 +94,7 @@ public class KnowageKNDA002Exception extends Exception {
 		return hints;
 	}
 
+	@Override
 	public void addHint(String hint) {
 		getHints().add(hint);
 	}

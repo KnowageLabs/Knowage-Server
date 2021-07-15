@@ -43,8 +43,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.knowageapi.error.KNRM001Exception;
 import it.eng.knowage.knowageapi.error.KnowageBusinessException;
-import it.eng.knowage.knowageapi.error.KnowageKNDA001Exception;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
 import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
@@ -73,12 +73,12 @@ public class FilesResource {
 	/**
 	 * @param path
 	 * @return list of files, one of them could be "metadata.json", it will be excluded
-	 * @throws KnowageKNDA001Exception
+	 * @throws KNRM001Exception
 	 */
 	@GET
 	@Path("/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<FileDTO> getFiles(@QueryParam("path") String path) throws KnowageKNDA001Exception {
+	public List<FileDTO> getFiles(@QueryParam("path") String path) throws KNRM001Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		List<FileDTO> files = resourceManagerAPIservice.getListOfFiles(path, profile);
 		return files;
@@ -88,7 +88,7 @@ public class FilesResource {
 	@Path("/download")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response downloadFiles(List<String> listOfPaths) throws KnowageKNDA001Exception {
+	public Response downloadFiles(List<String> listOfPaths) throws KNRM001Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		if (listOfPaths.size() == 1) {
 			java.nio.file.Path file = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, false);
@@ -115,7 +115,7 @@ public class FilesResource {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response uploadFile(MultipartFormDataInput multipartFormDataInput, @QueryParam("path") String path,
-			@DefaultValue("false") @QueryParam("extract") boolean extract) throws KnowageBusinessException, KnowageKNDA001Exception {
+			@DefaultValue("false") @QueryParam("extract") boolean extract) throws KnowageBusinessException, KNRM001Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		Map<String, List<InputPart>> formDataMap = multipartFormDataInput.getFormDataMap();
 
@@ -157,7 +157,7 @@ public class FilesResource {
 	@GET
 	@Path("/metadata")
 	@Produces(MediaType.APPLICATION_JSON)
-	public MetadataDTO getMetadata(@QueryParam("path") String path) throws KnowageKNDA001Exception {
+	public MetadataDTO getMetadata(@QueryParam("path") String path) throws KNRM001Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		MetadataDTO file = resourceManagerAPIservice.getMetadata(path, profile);
 		return file;
@@ -166,7 +166,7 @@ public class FilesResource {
 	@POST
 	@Path("/metadata")
 	@Produces(MediaType.APPLICATION_JSON)
-	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @QueryParam("path") String path) throws KnowageKNDA001Exception {
+	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @QueryParam("path") String path) throws KNRM001Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		MetadataDTO file = resourceManagerAPIservice.saveMetadata(fileDTO, path, profile);
 		return file;

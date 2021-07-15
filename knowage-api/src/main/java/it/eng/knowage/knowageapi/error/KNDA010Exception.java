@@ -21,18 +21,18 @@ package it.eng.knowage.knowageapi.error;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KnowageKNDA006Exception extends Exception {
+public class KNDA010Exception extends KnowageBusinessException {
 
 	/*
 	 * Error Code
 	 */
-	private String code = "KN-DA-006";
+	private String code = "KN-RM-010";
 
 	/*
 	 * User oriented description of the exception. It is usually prompted to the user. Instead the message passed to the constructor is developer oriented and
 	 * it should be just logged.
 	 */
-	private String description = "Impossible to delete folder";
+	private String description = "Impossible to save metadata";
 
 	/*
 	 * A list of possible solutions to the problem that have caused the exception
@@ -44,7 +44,7 @@ public class KnowageKNDA006Exception extends Exception {
 	 *
 	 * @param message Text of the exception
 	 */
-	public KnowageKNDA006Exception(String message) {
+	public KNDA010Exception(String message) {
 		super(message);
 	}
 
@@ -54,10 +54,11 @@ public class KnowageKNDA006Exception extends Exception {
 	 * @param message Text of the exception
 	 * @param ex      previous Throwable object
 	 */
-	public KnowageKNDA006Exception(String message, Throwable ex) {
+	public KNDA010Exception(String message, Throwable ex) {
 		super(message, ex);
 	}
 
+	@Override
 	public String getRootCause() {
 		String rootCause;
 		Throwable rootException;
@@ -73,14 +74,17 @@ public class KnowageKNDA006Exception extends Exception {
 		return rootCause;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
+	@Override
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	@Override
 	public List getHints() {
 		if (hints == null) {
 			hints = new ArrayList();
@@ -90,6 +94,7 @@ public class KnowageKNDA006Exception extends Exception {
 		return hints;
 	}
 
+	@Override
 	public void addHint(String hint) {
 		getHints().add(hint);
 	}
