@@ -43,7 +43,7 @@ export default defineComponent({
         }
     },
     async created() {
-        if (this.user & this.user.isSuperAdmin) await this.loadLicenses()
+        if (this.user && this.user.isSuperAdmin) await this.loadLicenses()
     },
     props: {
         visibility: Boolean
