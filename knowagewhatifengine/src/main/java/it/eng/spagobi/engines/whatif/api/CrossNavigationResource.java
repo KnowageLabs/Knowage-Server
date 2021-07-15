@@ -97,11 +97,19 @@ public class CrossNavigationResource extends AbstractWhatIfEngineService {
 			// adds the calculated fields before getting the link
 			model.applyCal();
 
+			boolean suppressEmpty = modelConfig.getSuppressEmpty();
+			// workaround for KNOWAGE-6070: we temporarily disable NON EMPTY clause to let ordinal computation work
+			modelConfig.setSuppressEmpty(false);
+
 			applyConfiguration(modelConfig, model);
 
 			SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model.getCellSet();
 			SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(ordinal);
 			jsFunction = CrossNavigationManager.buildCrossNavigationUrl(cellWrapper, ei);
+
+			// workaround for KNOWAGE-6070: we temporarily disabled NON EMPTY clause to let ordinal computation work, now we restore it
+			modelConfig.setSuppressEmpty(suppressEmpty);
+			applyConfiguration(modelConfig, model);
 
 			// restore the query without calculated fields
 			model.restoreQuery();
