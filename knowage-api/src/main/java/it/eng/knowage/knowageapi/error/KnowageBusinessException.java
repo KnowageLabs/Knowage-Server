@@ -17,10 +17,27 @@
  */
 package it.eng.knowage.knowageapi.error;
 
+import java.util.List;
+
 /**
  * @author Marco Libanori
  */
 public class KnowageBusinessException extends KnowageException {
+	/*
+	 * Error Code
+	 */
+	private String code = "KN-DA-001";
+
+	/*
+	 * User oriented description of the exception. It is usually prompted to the user. Instead the message passed to the constructor is developer oriented and
+	 * it should be just logged.
+	 */
+	private String description = "The tenant repository is missing";
+
+	/*
+	 * A list of possible solutions to the problem that have caused the exception
+	 */
+	private List hints;
 
 	private static final long serialVersionUID = 2696409463468997530L;
 
@@ -30,6 +47,37 @@ public class KnowageBusinessException extends KnowageException {
 
 	public KnowageBusinessException(String message) {
 		super(message);
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
+	public List getHints() {
+		return hints;
+	}
+
+	public void setHints(List hints) {
+		this.hints = hints;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 }

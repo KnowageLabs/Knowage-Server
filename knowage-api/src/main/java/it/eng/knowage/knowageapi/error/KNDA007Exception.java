@@ -21,18 +21,18 @@ package it.eng.knowage.knowageapi.error;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KnowageKNDA001Exception extends Exception {
+public class KNDA007Exception extends KnowageBusinessException {
 
 	/*
 	 * Error Code
 	 */
-	private String code = "KN-DA-001";
+	private String code = "KN-RM-007";
 
 	/*
 	 * User oriented description of the exception. It is usually prompted to the user. Instead the message passed to the constructor is developer oriented and
 	 * it should be just logged.
 	 */
-	private String description = "The tenant repository is missing";
+	private String description = "Impossible to delete file";
 
 	/*
 	 * A list of possible solutions to the problem that have caused the exception
@@ -44,12 +44,8 @@ public class KnowageKNDA001Exception extends Exception {
 	 *
 	 * @param message Text of the exception
 	 */
-	public KnowageKNDA001Exception(String message) {
+	public KNDA007Exception(String message) {
 		super(message);
-	}
-
-	public KnowageKNDA001Exception() {
-		super();
 	}
 
 	/**
@@ -58,10 +54,11 @@ public class KnowageKNDA001Exception extends Exception {
 	 * @param message Text of the exception
 	 * @param ex      previous Throwable object
 	 */
-	public KnowageKNDA001Exception(String message, Throwable ex) {
+	public KNDA007Exception(String message, Throwable ex) {
 		super(message, ex);
 	}
 
+	@Override
 	public String getRootCause() {
 		String rootCause;
 		Throwable rootException;
@@ -77,33 +74,29 @@ public class KnowageKNDA001Exception extends Exception {
 		return rootCause;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
+	@Override
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	@Override
 	public List getHints() {
 		if (hints == null) {
-			hints = new ArrayList<String>();
-			String hint = "Contact the administrator to initialize the repository";
+			hints = new ArrayList();
+			String hint = "Contact the administrator to check the repository permission";
 			hints.add(hint);
 		}
 		return hints;
 	}
 
+	@Override
 	public void addHint(String hint) {
 		getHints().add(hint);
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
 	}
 
 }
