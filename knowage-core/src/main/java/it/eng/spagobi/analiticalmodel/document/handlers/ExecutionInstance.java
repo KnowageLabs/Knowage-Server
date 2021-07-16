@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -1394,6 +1395,9 @@ public class ExecutionInstance implements Serializable {
 			}
 			if (locale.getCountry() != null) {
 				mapPars.put(SpagoBIConstants.SBI_COUNTRY, locale.getCountry());
+			}
+			if (StringUtils.isNotBlank(locale.getScript())) {
+				mapPars.put(SpagoBIConstants.SBI_SCRIPT, locale.getScript());
 			}
 		}
 	}

@@ -17,15 +17,9 @@
  */
 package it.eng.spagobi.engines.whatif.common;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.whatif.WhatIfEngine;
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +30,13 @@ import javax.ws.rs.core.Context;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.whatif.WhatIfEngine;
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 @Path("/start-standalone")
 public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineService {
@@ -81,8 +82,8 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 				servletRequest.getRequestDispatcher(REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 			} catch (Exception e) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
-						+ REQUEST_DISPATCHER_URL, e);
+				throw new SpagoBIEngineRuntimeException(
+						"Error starting the What-If engine: error while forwarding the execution to the jsp " + REQUEST_DISPATCHER_URL, e);
 			}
 
 		} catch (Exception e) {
@@ -110,7 +111,12 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 			String language = this.getServletRequest().getParameter(LANGUAGE);
 			String country = this.getServletRequest().getParameter(COUNTRY);
 			if (StringUtils.isNotEmpty(language) && StringUtils.isNotEmpty(country)) {
-				toReturn = new Locale(language, country);
+				Builder builder = new Builder().setLanguage(language).setRegion(country);
+				String script = getAttributeAsString(SCRIPT);
+				if (StringUtils.isNotBlank(script)) {
+					builder.setScript(script);
+				}
+				toReturn = builder.build();
 			} else {
 				logger.error("Language and country not specified in request. Considering default locale that is " + DEFAULT_LOCALE.toString());
 				toReturn = DEFAULT_LOCALE;

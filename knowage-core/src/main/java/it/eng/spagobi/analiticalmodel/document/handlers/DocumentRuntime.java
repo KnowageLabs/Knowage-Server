@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
@@ -66,6 +67,9 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 			}
 			if (locale.getCountry() != null) {
 				mapPars.put(SpagoBIConstants.SBI_COUNTRY, locale.getCountry());
+			}
+			if (StringUtils.isNotBlank(locale.getScript())) {
+				mapPars.put(SpagoBIConstants.SBI_SCRIPT, locale.getScript());
 			}
 		}
 	}

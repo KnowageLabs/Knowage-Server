@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -60,7 +61,8 @@ public class I18nResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/") // i18nmessages/
 	@Produces(MediaType.APPLICATION_JSON)
-	public String loadI18NFromDB(@QueryParam("currLanguage") String currLanguage, @QueryParam("currCountry") String currCountry) {
+	public String loadI18NFromDB(@QueryParam("currLanguage") String currLanguage, @QueryParam("currCountry") String currCountry,
+			@QueryParam("currScript") String currScript) {
 
 		JSONObject toReturn = new JSONObject();
 		if (currLanguage.endsWith("/")) {
@@ -68,10 +70,17 @@ public class I18nResource extends AbstractSpagoBIResource {
 		}
 		try {
 			Locale locale = null;
-			if (StringUtils.isNotBlank(currLanguage) && StringUtils.isNotBlank(currCountry)) {
+			if (StringUtils.isNotBlank(currLanguage) && StringUtils.isNotBlank(currLanguage)) {
 
-//				locale = Locale.forLanguageTag(languageConfig);
-				locale = new Locale(currLanguage, currCountry);
+//				locale = Locale.forLanguageTag(currLanguage);
+
+				Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
+
+				if (StringUtils.isNotBlank(currScript)) {
+					tmpLocale.setScript(currScript);
+				}
+
+				locale = tmpLocale.build();
 			} else {
 				locale = GeneralUtilities.getDefaultLocale();
 			}

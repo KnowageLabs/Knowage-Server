@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -125,8 +126,7 @@ public class JasperReportRunner {
 	/**
 	 * Class Constructor.
 	 *
-	 * @param session
-	 *            the session
+	 * @param session the session
 	 */
 	public JasperReportRunner(HttpSession session) {
 		super();
@@ -135,20 +135,13 @@ public class JasperReportRunner {
 	/**
 	 * This method, known all input information, runs a report with JasperReport inside SpagoBI. iIt is the Jasper Report Engine's core method.
 	 *
-	 * @param parameters
-	 *            The input parameters map
-	 * @param servletContext
-	 *            The java servlet context object
-	 * @param servletResponse
-	 *            The java http servlet response object
-	 * @param conn
-	 *            the conn
-	 * @param out
-	 *            the out
-	 * @param servletRequest
-	 *            the servlet request
-	 * @throws Exception
-	 *             If any Exception occurred
+	 * @param parameters      The input parameters map
+	 * @param servletContext  The java servlet context object
+	 * @param servletResponse The java http servlet response object
+	 * @param conn            the conn
+	 * @param out             the out
+	 * @param servletRequest  the servlet request
+	 * @throws Exception If any Exception occurred
 	 */
 	public void runReport(Connection conn, Map parameters, OutputStream out, ServletContext servletContext, HttpServletResponse servletResponse,
 			HttpServletRequest servletRequest) throws Exception {
@@ -271,8 +264,14 @@ public class JasperReportRunner {
 				Locale locale = null;
 				String language = (String) parameters.get("SBI_LANGUAGE");
 				String country = (String) parameters.get("SBI_COUNTRY");
+
+				Builder builder = new Builder().setLanguage(language).setRegion(country);
+				String script = (String) parameters.get("SBI_SCRIPT");
+				if (org.apache.commons.lang.StringUtils.isNotBlank(script)) {
+					builder.setScript(script);
+				}
+				locale = builder.build();
 				logger.debug("Internazionalization in " + language);
-				locale = new Locale(language, country, "");
 
 				parameters.put("REPORT_LOCALE", locale);
 
@@ -493,8 +492,7 @@ public class JasperReportRunner {
 	/**
 	 * Build a classpath variable appending all the jar files founded into the specified directory.
 	 *
-	 * @param libDir
-	 *            JR lib-dir to scan for find jar files to include into the classpath variable
+	 * @param libDir JR lib-dir to scan for find jar files to include into the classpath variable
 	 * @return the classpath used by JasperReprorts Engine (by default equals to WEB-INF/lib)
 	 */
 	private String buildJRClasspathValue(String libDir) {
@@ -538,10 +536,8 @@ public class JasperReportRunner {
 	/**
 	 * Gets the virtualizer. (the slowest)
 	 *
-	 * @param tmpDirectory
-	 *            the tmp directory
-	 * @param servletContext
-	 *            the servlet context
+	 * @param tmpDirectory   the tmp directory
+	 * @param servletContext the servlet context
 	 * @return the virtualizer
 	 */
 	public JRFileVirtualizer getVirtualizer(String tmpDirectory, ServletContext servletContext) {
@@ -579,10 +575,8 @@ public class JasperReportRunner {
 	/**
 	 * Gets the swap virtualizer. (the fastest)
 	 *
-	 * @param tmpDirectory
-	 *            the tmp directory
-	 * @param servletContext
-	 *            the servlet context
+	 * @param tmpDirectory   the tmp directory
+	 * @param servletContext the servlet context
 	 * @return the virtualizer
 	 */
 	public JRSwapFileVirtualizer getSwapVirtualizer(String tmpDirectory, ServletContext servletContext) {
@@ -622,10 +616,8 @@ public class JasperReportRunner {
 	/**
 	 * Gets the gZip virtualizer (it works in memory: slower).
 	 *
-	 * @param tmpDirectory
-	 *            the tmp directory
-	 * @param servletContext
-	 *            the servlet context
+	 * @param tmpDirectory   the tmp directory
+	 * @param servletContext the servlet context
 	 * @return the virtualizer
 	 */
 	public JRGzipVirtualizer getGzipVirtualizer() {
@@ -995,7 +987,8 @@ public class JasperReportRunner {
 				String masterIds = (String) params.get("prefixName");
 
 				// check if the subreport is cached into file system
-				String dirTemplate = getJRTempDirName(servletContext, masterIds + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint());
+				String dirTemplate = getJRTempDirName(servletContext,
+						masterIds + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint());
 				logger.debug("dirTemplate is equal to [" + dirTemplate + "]");
 
 				// boolean exists = (new File(dirTemplate + subreportMeta.getTemplateName() + ".jasper")).exists();
@@ -1097,8 +1090,8 @@ public class JasperReportRunner {
 				// adds the subreport's folder to the classpath
 				/*
 				 * ClassLoader previous = Thread.currentThread().getContextClassLoader(); ClassLoader current = URLClassLoader.newInstance( new URL[]{
-				 * getJRCompilationDir(servletContext, masterIds + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint()).toURI().toURL() },
-				 * previous);
+				 * getJRCompilationDir(servletContext, masterIds + System.getProperty("file.separator") +
+				 * subreportMeta.getTemplateFingerprint()).toURI().toURL() }, previous);
 				 */
 				// Thread.currentThread().setContextClassLoader(current);
 

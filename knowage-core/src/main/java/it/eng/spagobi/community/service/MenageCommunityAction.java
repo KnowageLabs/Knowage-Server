@@ -19,6 +19,7 @@ package it.eng.spagobi.community.service;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Locale.Builder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -27,6 +28,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,6 +44,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.community.bo.CommunityManager;
@@ -67,12 +70,21 @@ public class MenageCommunityAction {
 			SessionContainer aSessionContainer = reqCont.getSessionContainer();
 
 			SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
-			String curr_language = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-			String curr_country = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
 
-			if (curr_language != null && curr_country != null && !curr_language.equals("") && !curr_country.equals("")) {
-				locale = new Locale(curr_language, curr_country, "");
-			}
+			String currLanguage = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+			String currCountry = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+			String currScript = (String) permanentSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
+			if (currLanguage != null && currCountry != null) {
+				Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
+
+				if (StringUtils.isNotBlank(currScript)) {
+					tmpLocale.setScript(currScript);
+				}
+
+				locale = tmpLocale.build();
+			} else
+				locale = GeneralUtilities.getDefaultLocale();
+
 		}
 
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);

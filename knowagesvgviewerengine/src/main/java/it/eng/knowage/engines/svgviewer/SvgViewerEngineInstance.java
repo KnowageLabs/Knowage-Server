@@ -55,8 +55,8 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 	// ENVIRONMENT VARIABLES
 	// private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
 	// "SBI_HOST", "DOCUMENT_ID", "country", "language", "user_id" };
-	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE", "DOCUMENT_ID",
-			COUNTRY, LANGUAGE, "user_id" };
+	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SCIRPT", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
+			"DOCUMENT_ID", COUNTRY, LANGUAGE, "user_id" };
 	private JSONObject guiSettings;
 	private JSONObject docProperties;
 	private List<String> includes;
