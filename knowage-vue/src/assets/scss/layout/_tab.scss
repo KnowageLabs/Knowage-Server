@@ -10,17 +10,18 @@
         }
     }
     &.p-tabview {
-    .p-tabview-nav {
-        .p-tabview-ink-bar {
-            background-color: $color-primary;
-        }
-        li.p-highlight{
+        .p-tabview-nav {
             .p-tabview-nav-link {
-                color: $color-primary;
+                text-transform: capitalize;
             }
-        } 
+            .p-tabview-ink-bar {
+                background-color: $color-primary;
+            }
+            li.p-highlight {
+                .p-tabview-nav-link {
+                    color: $color-primary;
+                }
+            }
+        }
     }
-} 
 }
-
-
