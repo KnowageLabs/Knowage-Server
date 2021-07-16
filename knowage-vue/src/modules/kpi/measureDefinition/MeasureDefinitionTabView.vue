@@ -1,10 +1,10 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-        <template #left>{{ rule.id ? rule.name : $t('kpi.measureDefinition.newMeasure') }} </template>
+        <template #left>{{ title }} </template>
         <template #right>
             <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.alias')" @click="aliasesVisible = !aliasesVisible" data-test="submit-button" />
             <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.placeholder')" @click="placeholderVisible = !placeholderVisible" data-test="submit-button" />
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="submitConfirm" data-test="submit-button" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="metadataDisabled" @click="submitConfirm" data-test="submit-button" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
         </template>
     </Toolbar>
@@ -25,7 +25,7 @@
                         <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
                     </template>
 
-                    <MetadataCard :currentRule="rule" :tipologiesType="domainsKpiRuleoutput" :domainsTemporalLevel="domainsTemporalLevel" :categories="domainsKpiMeasures"></MetadataCard>
+                    <MetadataCard :currentRule="rule" :tipologiesType="domainsKpiRuleoutput" :domainsTemporalLevel="domainsTemporalLevel" :categories="domainsKpiMeasures" @touched="setTouched"></MetadataCard>
                 </TabPanel>
             </TabView>
         </div>
@@ -119,13 +119,11 @@
         </Toolbar>
 
         <div v-if="newPlaceholder.length > 0">
-            {{ newPlaceholder }}
             <h4>{{ $t('common.new') }}</h4>
             <Chip v-for="placeholder in newPlaceholder" class="p-m-2" :key="placeholder.id" :label="placeholder"></Chip>
         </div>
 
         <div v-if="reusedPlaceholder.length > 0">
-            {{ reusedPlaceholder }}
             <h4>{{ $t('common.reused') }}</h4>
             <Chip v-for="placeholder in reusedPlaceholder" class="p-m-2" :key="placeholder.id" :label="placeholder"></Chip>
         </div>
@@ -136,8 +134,7 @@
         </template>
     </Dialog>
 
-    <Dialog :modal="true" :visible="errorMessage" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
-        <h1>{{ $t('kpi.measureDefinition.metadataError') + ' ' + $t('kpi.measureDefinition.wrongQuery') }}</h1>
+    <Dialog :style="metadataDefinitionTabViewDescriptor.dialog.style" :modal="true" :visible="errorMessage" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
         <p>{{ errorMessage }}</p>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeErrorMessageDialog"></Button>
@@ -157,8 +154,6 @@ import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDesc
 import QueryCard from './card/QueryCard/QueryCard.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
-
-// TODO Fix title
 
 export default defineComponent({
     name: 'measure-definition-detail',
@@ -213,6 +208,9 @@ export default defineComponent({
         }
     },
     computed: {
+        title(): string {
+            return this.clone || this.id ? this.rule.name : this.$t('kpi.measureDefinition.newMeasure')
+        },
         metadataDisabled(): Boolean {
             let disabled = false
             if (!this.rule.dataSource) {
@@ -397,10 +395,12 @@ export default defineComponent({
             if (this.rule.definition) {
                 this.loadPlaceholder()
             }
-            if ((this.rule.placeholders && this.rule.placeholders.length === 0) || hasPlaceholders) {
+            console.log('RULE BEFORE QUERY ', this.rule)
+            if ((this.rule.placeholders && this.rule.placeholders.length === 0) || !hasPlaceholders) {
                 const postData = { rule: this.rule, maxItem: 10 }
                 await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData).then((response) => {
                     if (response.data.errors) {
+                        this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
                         this.errorMessage = response.data.errors[0].message
                     } else {
                         this.columns = response.data.columns
@@ -409,11 +409,11 @@ export default defineComponent({
                     }
                 })
             }
-            // console.log('Submit error', this.errorMessage)
+            console.log('Submit error', this.errorMessage)
             this.setNewAliases()
             this.setNewPlaceholders()
             console.log('Rule after prepare', this.rule)
-            if (save) {
+            if (save && !this.errorMessage) {
                 await this.preSaveRule()
             }
 
@@ -601,6 +601,9 @@ export default defineComponent({
                 array = array.sort((a: any, b: any) => (a.name < b.name ? 1 : -1))
                 this[type] = 'DESC'
             }
+        },
+        setTouched() {
+            this.touched = true
         }
     }
 })

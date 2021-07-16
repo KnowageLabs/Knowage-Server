@@ -96,14 +96,18 @@ export default defineComponent({
             this.setupCodeMirror()
 
             // console.log('HINT LIST: ', this.hintList)
-            this.codeMirror.options.hintOptions = { tables: this.datasourceStructure }
+            if (this.codeMirror && this.codeMirror.options) {
+                this.codeMirror.options.hintOptions = { tables: this.datasourceStructure }
+            }
             // this.codeMirror.options.hintOptions = { test: { radi: null } }
             // console.log('CODE MIRROR OPTIONS', this.codeMirror.options.hintOptions)
             // console.log('TEEEEEEEEEEEST', this.codeMirror)
         },
         setupCodeMirror() {
             //  console.log('QueryCard EDITOR: ', CodeMirror)
-            this.codeMirror = (this.$refs.codeMirror as any).editor as any
+            if (this.$refs.codeMirror) {
+                this.codeMirror = (this.$refs.codeMirror as any).editor as any
+            }
 
             CodeMirror.registerHelper('hint', 'alias', () => {
                 var cur = this.codeMirror.getCursor()

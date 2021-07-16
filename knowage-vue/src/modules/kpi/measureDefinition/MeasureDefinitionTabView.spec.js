@@ -1,14 +1,35 @@
 import { mount } from '@vue/test-utils'
+import { VCodeMirror } from 'vue3-code-mirror'
+import axios from 'axios'
 import AutoComplete from 'primevue/autocomplete'
+import Chip from 'primevue/chip'
+import CodeMirror from 'codemirror'
 import Column from 'primevue/column'
+import Dialog from 'primevue/dialog'
+import Listbox from 'primevue/listbox'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
-import MetadataCard from './MetadataCard.vue'
+import MeasureDefinitionTabView from './MeasureDefinitionTabView.vue'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/monokai.css'
+import 'codemirror/theme/eclipse.css'
+import 'codemirror/addon/hint/show-hint.css'
+import 'codemirror/addon/hint/show-hint.js'
+import 'codemirror/addon/hint/sql-hint.js'
+import 'codemirror/mode/htmlmixed/htmlmixed.js'
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/python/python.js'
+import 'codemirror/mode/xml/xml.js'
+import 'codemirror/mode/sql/sql.js'
 
 const mockedRule = {
+    id: 1,
     ruleOutputs: [
         {
-            alias: 'Demo alias',
+            alias: 'asdasda',
             aliasId: 491,
             author: 'demo_admin',
             category: {
@@ -50,11 +71,11 @@ const mockedRule = {
 }
 
 const factory = () => {
-    return mount(MetadataCard, {
+    return mount(MeasureDefinitionTabView, {
         props: {
-            currentRule: mockedRule,
-            tipologiesType: [],
-            categories: []
+            id: 1,
+            ruleVersion: 1,
+            clone: false
         },
 
         global: {
@@ -63,9 +84,18 @@ const factory = () => {
             },
             stubs: {
                 AutoComplete,
+                Chip,
                 Column,
                 DataTable,
-                Dropdown
+                Dialog,
+                Dropdown,
+                MetadataCard: true,
+                Listbox,
+                QueryCard: true,
+                VCodeMirror,
+                CodeMirror,
+                TabView,
+                TabPanel
             },
             mocks: {
                 $t: (msg) => msg
@@ -74,32 +104,18 @@ const factory = () => {
     })
 }
 
+jest.mock('axios')
+
+axios.get.mockImplementation(() => Promise.resolve({ data: mockedRule }))
+
 afterEach(() => {
     jest.clearAllMocks()
 })
 
-describe('Metadata Card', () => {
-    it('shows a table with correct aliases', async () => {
+describe('Metadata Definition Tab View', () => {
+    it('test', async () => {
         const wrapper = factory()
 
-        await wrapper.setProps({ currentRule: mockedRule })
-
-        const dataTable = wrapper.find('[data-test="metadata-table"]')
-
-        expect(wrapper.vm.rule).toStrictEqual(mockedRule)
-        expect(dataTable.html()).toContain('Demo alias')
-        expect(dataTable.html()).toContain('Category one')
-        expect(dataTable.html()).toContain('Category two')
-    })
-    it('shows a warning on a metadata row if the row has a new alias', async () => {
-        const wrapper = factory()
-
-        await wrapper.setProps({ currentRule: mockedRule })
-
-        const dataTable = wrapper.find('[data-test="metadata-table"]')
-
-        expect(wrapper.vm.rule).toStrictEqual(mockedRule)
-        expect(dataTable.html()).toContain('Demo alias 2')
-        expect(dataTable.html()).toContain('icon-used')
+        console.log(wrapper.html())
     })
 })

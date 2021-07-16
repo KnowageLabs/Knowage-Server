@@ -68,6 +68,9 @@ const $router = {
 const factory = () => {
     return mount(MeasureDefinition, {
         global: {
+            directives: {
+                tooltip() {}
+            },
             stubs: {
                 Button,
                 Card,
