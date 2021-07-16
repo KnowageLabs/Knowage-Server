@@ -8,6 +8,7 @@ import Listbox from 'primevue/listbox'
 import ProgressBar from 'primevue/progressbar'
 import TargetDefinition from './TargetDefinition.vue'
 import Toolbar from 'primevue/toolbar'
+import KnHint from '@/components/UI/KnHint.vue'
 
 const mockedTarget = [
     {
@@ -74,7 +75,7 @@ const $confirm = {
     require: jest.fn()
 }
 
-const $route = { path: '/business-model-catalogue' }
+const $route = { path: '/target-definition' }
 
 const $router = {
     push: jest.fn(),
@@ -96,6 +97,7 @@ const factory = () => {
                 Listbox,
                 ProgressBar,
                 Toolbar,
+                KnHint,
                 routerView: true
             },
             mocks: {
@@ -133,4 +135,37 @@ describe('Target Definition loading', () => {
         expect(wrapper.vm.targetList.length).toBe(0)
         expect(wrapper.find('[data-test="target-list"]').html()).toContain('common.info.noDataFound')
     })
+})
+describe('Target Definition List', () => {
+    it('shows an hint when no item is selected', () => {
+        const wrapper = factory()
+
+        expect(wrapper.vm.showHint).toBe(true)
+        expect(wrapper.find('[data-test="target-hint"]').exists()).toBe(true)
+    })
+    it('deletes target when clicking on delete icon', async () => {
+        const wrapper = factory()
+
+        await flushPromises()
+
+        expect(wrapper.vm.targetList.length).toBe(3)
+
+        await wrapper.find('[data-test="delete-button"]').trigger('click')
+
+        expect($confirm.require).toHaveBeenCalledTimes(1)
+
+        await wrapper.vm.deleteTarget(88)
+        expect(axios.delete).toHaveBeenCalledTimes(1)
+        expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + 88 + '/deleteTarget')
+        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect($router.replace).toHaveBeenCalledWith('/target-definition')
+    })
+    it("opens empty detail form when the '+' button is clicked", async () => {
+        const wrapper = factory()
+
+        await wrapper.find('[data-test="open-form-button"]').trigger('click')
+
+        expect($router.push).toHaveBeenCalledWith('/target-definition/new-target-definition')
+    })
+    // it("open filled detail when an item is clicked", () => {});
 })

@@ -38,7 +38,7 @@
                 </Listbox>
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
-                <KnHint :title="'kpi.targetDefinition.title'" :hint="'kpi.targetDefinition.hint'" v-if="showHint" data-test="bm-hint"></KnHint>
+                <KnHint :title="'kpi.targetDefinition.title'" :hint="'kpi.targetDefinition.hint'" v-if="showHint" data-test="target-hint"></KnHint>
                 <router-view @close="closeForm" @touched="touched = true" @saved="reloadMetadata" />
             </div>
         </div>
@@ -163,7 +163,7 @@ export default defineComponent({
         handleClose() {
             this.showHint = true
             this.formVisible = false
-            this.$router.push('/target-definition')
+            this.$router.replace('/target-definition')
         },
         reloadMetadata() {
             this.handleClose()
