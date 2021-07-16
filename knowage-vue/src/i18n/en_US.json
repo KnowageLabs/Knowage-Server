@@ -1,5 +1,6 @@
 {
     "common": {
+        "author": "Author",
         "back": "back",
         "cancel": "cancel",
         "choose": "choose",
@@ -10,6 +11,7 @@
             "javascript": "javascript",
             "python": "python"
         },
+        "copyOf": "Copy of",
         "delete": "delete",
         "deleteAll": "delete all",
         "description": "description",
@@ -38,6 +40,7 @@
         "name": "name",
         "new": "new",
         "next": "next",
+        "run": "Run",
         "save": "save",
         "search": "search",
         "table": {
@@ -48,6 +51,7 @@
         "tags": "tags",
         "tenant": "tenant",
         "toast": {
+            "cloneConfirmTitle": "Confirm item clone?",
             "createTitle": "Created",
             "deleteConfirmTitle": "Confirm Delete?",
             "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
