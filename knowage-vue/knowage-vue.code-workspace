@@ -33,7 +33,10 @@
             "sortJSONTypeReverse": true
         },
         "vetur.format.options.tabSize": 4,
-        "prettier.tabWidth": 4
+        "prettier.tabWidth": 4,
+        "[vue]": {
+            "editor.defaultFormatter": "esbenp.prettier-vscode"
+        }
     },
     "extensions": {
         "recommendations": ["octref.vetur", "dbaeumer.vscode-eslint", "esbenp.prettier-vscode", "richie5um2.vscode-sort-json"]
