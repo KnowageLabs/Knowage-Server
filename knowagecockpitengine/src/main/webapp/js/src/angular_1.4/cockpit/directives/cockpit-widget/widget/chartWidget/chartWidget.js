@@ -50,6 +50,7 @@ angular.module('cockpitModule')
 											// /api/1.0/pages/
 		+ "&SBI_LANGUAGE=" + sbiModule_config.curr_language
 		+ "&SBI_COUNTRY=" + sbiModule_config.curr_country
+		+ "SBI_SCRIPT=" + sbiModule_config.curr_script
 		+ "&user_id=" + sbiModule_user.userId
 		,testUrl: '/' + sbiModule_config.chartEngineContextName
 		+ "/api/1.0/chart/pages/executeTest"};// changed by Dragan was

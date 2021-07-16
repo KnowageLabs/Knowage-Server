@@ -83,6 +83,10 @@
             "documentation": "documentation",
             "qa": "support forum"
         },
+		"connectYourData": "connect your data",
+		"createYourAnalysis": "create your analysis",
+		"queryYourData": "query your data",
+		"saveAndShare": "save and share",
         "welcome": "Welcome to Knowage",
         "welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
     },

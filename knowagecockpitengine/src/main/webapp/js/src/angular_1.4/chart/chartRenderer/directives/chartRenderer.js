@@ -63,7 +63,12 @@ angular.module('chartRendererModule')
 				scope.chartSonifyService;
 
 				scope.renderChart = function(chartConf, jsonData,selectionsAndParams){
-					var locale = sbiModule_config.curr_language + "-" + sbiModule_config.curr_country;
+					var script = sbiModule_config.curr_script;
+					var locale = sbiModule_config.curr_language + "-";
+					if(script && script!=""){
+						locale += script + "-";
+					}
+					locale += sbiModule_config.curr_country;
 					if(scope.chartConf){
 						scope.chartInitializer.initChartLibrary(element[0],	'drillup', sbiModule_config.dec, sbiModule_config.thous);
 						if(scope.chartTemplate.CHART.COLORPALETTE.COLORCopy){

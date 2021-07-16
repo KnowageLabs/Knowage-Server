@@ -19,11 +19,13 @@
 package it.eng.spagobi.utilities.engines.rest;
 
 import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -113,13 +115,20 @@ public abstract class AbstractRestService {
 		Locale locale = null;
 		HttpSession httpSession = getHttpSession();
 		if (httpSession != null) {
-			Object countryO = httpSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
-			Object languageO = httpSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-			String country = countryO != null ? countryO.toString() : null;
-			String language = languageO != null ? languageO.toString() : null;
-			if (country != null && language != null) {
-				locale = new Locale(language, country);
-			}
+
+			String currLanguage = (String) httpSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+			String currCountry = (String) httpSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+			String currScript = (String) httpSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
+			if (currLanguage != null && currCountry != null) {
+				Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
+
+				if (StringUtils.isNotBlank(currScript)) {
+					tmpLocale.setScript(currScript);
+				}
+
+				locale = tmpLocale.build();
+			} else
+				locale = new Locale("en_US");
 		}
 		return locale;
 	}

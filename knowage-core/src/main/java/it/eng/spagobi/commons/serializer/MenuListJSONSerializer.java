@@ -669,8 +669,10 @@ public class MenuListJSONSerializer implements Serializer {
 					url = url.substring(0, url.length() - 1);
 					url = url.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
 					// if (!GeneralUtilities.isSSOEnabled()) {
-					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE
-							+ "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "'";
+					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString();
+					url += "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage();
+					url += "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry();
+					url += "&" + SpagoBIConstants.SBI_SCRIPT + "=" + locale.getScript() + "'";
 					/*
 					 * } else { url = url + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" +
 					 * locale.getCountry() + "'"; }

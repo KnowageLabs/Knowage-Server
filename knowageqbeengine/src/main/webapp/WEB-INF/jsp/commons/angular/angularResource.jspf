@@ -89,7 +89,13 @@ author:...
    	String mappings = userProfile.getFunctionalities().contains("Qbe_calendar") ? "mappings.js" : "mappings2.js";
    	String language =(String) request.getParameter(SpagoBIConstants.SBI_LANGUAGE);
    	String country =(String) request.getParameter(SpagoBIConstants.SBI_COUNTRY);
-   	locale = new Locale(language,country);
+   	
+	Builder builder = new Builder().setLanguage(language).setRegion(country);
+	String script  = (String)getEnv().get(SpagoBIConstants.SBI_SCRIPT);
+	if(org.apache.commons.lang.StringUtils.isNotBlank(script)) {
+		builder.setScript(script);
+	}
+	locale = builder.build();
    
    	String userUniqueIdentifier="";
    	String userId="";

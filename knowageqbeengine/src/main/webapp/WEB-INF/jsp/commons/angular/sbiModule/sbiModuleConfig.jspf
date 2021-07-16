@@ -25,6 +25,7 @@ angular.module('sbiModule')
 		    port: '<%= request.getServerPort()%>',
 		    curr_country: '<%=locale.getCountry()%>',
 	    	curr_language: '<%=locale.getLanguage()%>',
+ 		    curr_script: '<%=locale.getScript()%>',
 			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
 	    	externalBasePath:"<%= KnowageSystemConfiguration.getKnowageContext()%>",
 	    	sbiExecutionID:'<%=request.getParameter(SpagoBIConstants.SBI_EXECUTION_ID)%>',
