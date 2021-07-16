@@ -21,19 +21,28 @@ package it.eng.spagobi.security;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.ldap.commons.LdapUser;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.security.exceptions.LDAPAuthenticationFailed;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -49,39 +58,38 @@ public class FullLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier
 	private static final String ROLES_FIELD = "USER_ROLES_ATTRIBUTE_FIELD";
 	private static final String SUPERADMIN_ATTRIBUTE = "SUPERADMIN_ATTRIBUTE";
 
+	private final Properties properties;
+
+	public FullLdapSecurityServiceSupplier() {
+		properties = getConfig();
+	}
+
 	@Override
 	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
 		logger.debug("IN: userId = [" + userId + "]");
-		InitialDirContext ctx = null;
 		try {
-			Properties properties = getConfig();
 			Boolean searchUserBefore = new Boolean(properties.getProperty(ldapPrefix + SEARCH_USER_BEFORE));
 			String distinguishName = searchUserBefore ? findUserDistinguishName(userId) : userId;
 			logger.debug("Binding with distinguishName [" + distinguishName + "] ...");
-			ctx = bindWithCredentials(distinguishName, psw);
-			validateUser(userId, ctx, distinguishName);
-			logger.debug("Authentication successfull for user [" + userId + "].");
-			SpagoBIUserProfile toReturn = getUserProfile(userId, ctx, distinguishName);
-			logger.debug("Profile object created for user [" + userId + "].");
+			LdapUser ldapUser = bindLdapUserWithCredentials(userId, distinguishName, psw);
+			logger.debug("Building profile object for user [" + userId + "]");
+			SpagoBIUserProfile toReturn = getUserProfile(ldapUser);
 			return toReturn;
 		} catch (Exception e) {
 			logger.error("LDAP authentication failed for user [" + userId + "]", e);
 			return null;
-		} finally {
-			if (ctx != null) {
-				try {
-					ctx.close();
-				} catch (NamingException e) {
-					logger.error("An error occurred while closing context", e);
-				}
-			}
 		}
 	}
 
-	private void validateUser(String userId, InitialDirContext ctx, String distinguishName) throws LDAPAuthenticationFailed {
-		Properties properties = getConfig();
-		String filter = properties.getProperty(ldapPrefix + AUTHENTICATION_FILTER);
+	private LdapUser bindLdapUserWithCredentials(String userId, String distinguishName, String psw) throws LDAPAuthenticationFailed {
+		Hashtable<String, Object> env = getContextEnv(distinguishName, psw);
+		InitialDirContext ctx = null;
+		Attributes ldapUserAttributes = null;
 		try {
+			// check credentials
+			ctx = new InitialDirContext(env);
+			// validate authentication filter
+			String filter = properties.getProperty(ldapPrefix + AUTHENTICATION_FILTER);
 			if (filter != null && !filter.isEmpty()) {
 				logger.debug("Validating dn: {" + distinguishName + "} against filter: {" + filter + "}");
 				SearchControls ctrls = new SearchControls();
@@ -91,66 +99,99 @@ public class FullLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier
 					throw new LDAPAuthenticationFailed("Validation filter not satisfied for user [" + userId + "]");
 				}
 			}
+			logger.debug("User [" + userId + "] validation successfully completed");
+			// retrieve LDAP attributes
+			ldapUserAttributes = ctx.getAttributes(distinguishName);
 		} catch (NamingException e) {
-			throw new SpagoBIRuntimeException("Error while validating filter for user [" + userId + "]", e);
+			throw new LDAPAuthenticationFailed("Authentication NOT successfull for user [" + userId + "]", e);
+		} finally {
+			if (ctx != null) {
+				try {
+					ctx.close();
+				} catch (NamingException e) {
+					logger.error("An error occurred while closing context", e);
+				}
+			}
 		}
+		logger.debug("Authentication successfull for user [" + userId + "]");
+		return new LdapUser(distinguishName, userId, ldapUserAttributes);
 	}
 
-	private SpagoBIUserProfile getUserProfile(String userId, InitialDirContext ctx, String distinguishName) {
+	private Hashtable<String, Object> getContextEnv(String distinguishName, String psw) {
+		Hashtable<String, Object> env = new Hashtable<String, Object>();
+		env.put(Context.INITIAL_CONTEXT_FACTORY, properties.getProperty(ldapPrefix + "INITIAL_CONTEXT_FACTORY"));
+		env.put(Context.PROVIDER_URL, properties.getProperty(ldapPrefix + "PROVIDER_URL"));
+		env.put(Context.SECURITY_AUTHENTICATION, properties.getProperty(ldapPrefix + "SECURITY_AUTHENTICATION"));
+		env.put(Context.SECURITY_PRINCIPAL, distinguishName);
+		env.put(Context.SECURITY_CREDENTIALS, psw);
+		env.put("javax.security.sasl.qop", "auth-conf");
+		env.put("javax.security.sasl.strength", "high");
+		return env;
+	}
+
+	private SpagoBIUserProfile getUserProfile(LdapUser ldapUser) {
 		SpagoBIUserProfile profile = new SpagoBIUserProfile();
-		Properties properties = getConfig();
-		String ldapAttributeName = properties.getProperty(ldapPrefix + ROLES_ATTRIBUTE);
 		try {
-			NamingEnumeration<?> ldapAttributes = ctx.getAttributes(distinguishName).get(ldapAttributeName).getAll();
-			List<String> ldapRoles = getLdapRoles(ldapAttributes);
-			profile.setRoles(toKnowageRoles(ldapRoles));
-			profile.setUniqueIdentifier(getUserUniqueIdentifier(userId));
-			profile.setUserId(userId);
-			profile.setUserName(userId);
+			profile.setRoles(getRoles(ldapUser));
+			profile.setAttributes(getProfileAttributes(ldapUser));
+			profile.setUniqueIdentifier(getUserUniqueIdentifier(ldapUser.getUserId()));
+			profile.setUserId(ldapUser.getUserId());
+			profile.setUserName(ldapUser.getUserId());
 			profile.setOrganization("DEFAULT_TENANT");
-			profile.setIsSuperadmin(getIsSuperadmin(ldapRoles));
+			profile.setIsSuperadmin(getIsSuperAdmin(ldapUser));
 		} catch (NamingException e) {
-			throw new SpagoBIRuntimeException("Error while building profile for user [" + userId + "]", e);
+			throw new SpagoBIRuntimeException("Error while building profile for user [" + ldapUser.getUserId() + "]", e);
 		}
+		logger.debug("Profile object created for user [" + ldapUser.getUserId() + "]");
 		return profile;
 	}
 
-	private String[] toKnowageRoles(List<String> ldapRoles) {
+	private HashMap getProfileAttributes(LdapUser ldapUser) {
+		Map<String, String> toReturn = new HashMap<String, String>();
+		try {
+			logger.debug("Getting profile attributes for user [" + ldapUser.getUserId() + "]");
+			List<SbiAttribute> profileAttributes = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
+			for (SbiAttribute attr : profileAttributes) {
+				String attrName = attr.getAttributeName();
+				logger.debug("Searching for attribute [" + attrName + "] in LDAP");
+				Attribute attrValue = ldapUser.getAttribute(attrName);
+				if (ldapUser.getAttribute(attrName) != null) {
+					logger.debug("Adding new profile attribute to user profile: {" + attrName + "," + attrValue.toString() + "}");
+					toReturn.put(attrName, attrValue.toString());
+				}
+			}
+		} catch (EMFUserError e) {
+			logger.error("Error while retrieving profile attributes, returning null.");
+			return null;
+		}
+		return (HashMap) toReturn;
+	}
+
+	private String[] getRoles(LdapUser ldapUser) throws NamingException {
 		List<String> toReturn = new ArrayList<String>();
+		String rolesAttributeName = properties.getProperty(ldapPrefix + ROLES_ATTRIBUTE);
 		IRoleDAO roleDao = DAOFactory.getRoleDAO();
-		for (String role : ldapRoles) {
+
+		logger.debug("Getting roles for user [" + ldapUser.getUserId() + "]");
+		NamingEnumeration<?> ldapRoles = ldapUser.getAttribute(rolesAttributeName).getAll();
+		while (ldapRoles.hasMore()) {
+			String entry = (String) ldapRoles.next();
+			String ldapRole = getRoleFromLdapEntry(entry);
+			logger.debug("Retrieved role: {" + ldapRole + "} from LDAP entry: {" + entry + "}");
 			try {
-				if (roleDao.loadByName(role) != null) {
-					toReturn.add(role);
+				if (ldapRole != null && roleDao.loadByName(ldapRole) != null) {
+					logger.debug("Adding role [" + ldapRole + "] to user profile");
+					toReturn.add(ldapRole);
 				}
 			} catch (Exception e) {
-				logger.debug("Skipping role {" + role + "}", e);
+				logger.debug("Skipping role {" + ldapRole + "} because of an exception:", e);
 				continue;
 			}
 		}
 		return toReturn.toArray(new String[0]);
 	}
 
-	private List<String> getLdapRoles(NamingEnumeration<?> rolesList) throws NamingException {
-		List<String> toReturn = new ArrayList<String>();
-		while (rolesList.hasMore()) {
-			String entry = (String) rolesList.next();
-			String ldapRole = getAttributeFromLdapEntry(entry);
-			logger.debug("Retrieved role: {" + ldapRole + "} from LDAP");
-			try {
-				if (ldapRole != null) {
-					toReturn.add(ldapRole);
-				}
-			} catch (Exception e) {
-				logger.debug("Skipping role {" + ldapRole + "}", e);
-				continue;
-			}
-		}
-		return toReturn;
-	}
-
-	private String getAttributeFromLdapEntry(String entry) {
-		Properties properties = getConfig();
+	private String getRoleFromLdapEntry(String entry) {
 		String rolesField = properties.getProperty(ldapPrefix + ROLES_FIELD);
 		try {
 			String[] entries = entry.split(",");
@@ -175,10 +216,9 @@ public class FullLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier
 		return jwtToken;
 	}
 
-	private boolean getIsSuperadmin(List<String> ldapRoles) {
-		Properties properties = getConfig();
+	private boolean getIsSuperAdmin(LdapUser ldapUser) {
 		String superAdminLdapAttribute = properties.getProperty(ldapPrefix + SUPERADMIN_ATTRIBUTE);
-		if (ldapRoles.stream().anyMatch(s -> s.equalsIgnoreCase(superAdminLdapAttribute)))
+		if (ldapUser.getAttribute(superAdminLdapAttribute) != null)
 			return true;
 		return false;
 	}
