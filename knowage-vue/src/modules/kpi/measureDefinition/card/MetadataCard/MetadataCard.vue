@@ -1,14 +1,17 @@
 <template>
-    <DataTable v-if="!metadataError" class="editable-cells-tablekn-table" :value="rule.ruleOutputs" editMode="cell" dataKey="id" responsiveLayout="stack" breakpoint="960px">
-        <Column>
+    <DataTable v-if="!metadataError" class="p-datatable-sm kn-table" :value="rule.ruleOutputs" editMode="cell" dataKey="id" responsiveLayout="stack" breakpoint="960px" data-test="metadata-table">
+        <template #empty>
+            No records found.
+        </template>
+        <Column :style="metadataCardDescriptor.table.iconColumn.style">
             <template #body="slotProps">
-                <i v-if="slotProps.data.aliasIcon" :class="slotProps.data.aliasIcon"></i>
+                <i v-if="slotProps.data.aliasIcon" :class="slotProps.data.aliasIcon" v-tooltip.top="alisIconTooltip(slotProps.data.aliasIcon)"></i>
             </template>
         </Column>
         <Column class="kn-truncated" field="alias" :header="$t('kpi.measureDefinition.alias')"> </Column>
         <Column class="kn-truncated" field="type" :header="$t('kpi.measureDefinition.tipology')">
             <template #editor="slotProps">
-                <Dropdown v-model="slotProps.data['type']" :options="tipologiesType">
+                <Dropdown v-model="slotProps.data['type']" :options="tipologiesType" @change="tipologyChanged($event.value)">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <span>{{ slotProps.value['valueCd'] }}</span>
@@ -27,12 +30,15 @@
         </Column>
         <Column :header="$t('common.category')">
             <template #editor="slotProps">
-                <AutoComplete v-if="slotProps.data.type.valueCd != 'TEMPORAL_ATTRIBUTE'" v-model="slotProps.data['category'].valueCd" :suggestions="filteredCategories" field="valueCd" @complete="searchCategories($event)" />
-                <Dropdown v-else v-model="slotProps.data['hierarchy']" :options="domainsTemporalLevel">
+                <AutoComplete class="p-inputtext-sm" v-if="slotProps.data.type.valueCd != 'TEMPORAL_ATTRIBUTE'" v-model="slotProps.data['category'].valueCd" :suggestions="filteredCategories" field="valueCd" @complete="searchCategories($event)" />
+                <Dropdown v-else v-model="slotProps.data['hierarchy']" :options="domainsTemporalLevel" :placeholder="$t('kpi.measureDefinition.temporalAttributePlaceholder')">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <span>{{ slotProps.value['valueCd'] }}</span>
                         </div>
+                        <span v-else>
+                            {{ slotProps.placeholder }}
+                        </span>
                     </template>
                     <template #option="slotProps">
                         <div>
@@ -56,8 +62,6 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
 import metadataCardDescriptor from './MetadataCardDescriptor.json'
-
-// TODO Change header for last column, add tooltips maybe?
 
 export default defineComponent({
     name: 'metadata-card',
@@ -89,27 +93,17 @@ export default defineComponent({
             metadataError: null
         }
     },
-
     async mounted() {
         this.loadRule()
         //console.log('Domains 1: ', this.tipologiesType)
         //console.log('Domains 2: ', this.domainsTemporalLevel)
         //console.log('Domains 3: ', this.categories)
+        console.log('MOUNTED RULE!!!!', this.rule)
     },
     methods: {
         loadRule() {
             this.rule = this.currentRule as iRule
-            if (this.rule.ruleOutputs) {
-                this.rule.ruleOutputs.forEach((ruleOutput: any) => {
-                    if (!ruleOutput.category) {
-                        ruleOutput.category = { valueCd: '' }
-                    }
-                    if (!ruleOutput.hierarchy) {
-                        ruleOutput.hierarchy = { valueCd: '' }
-                    }
-                })
-            }
-            console.log('RULE: ', this.rule)
+            // console.log('RULE PRIMARY: ', this.rule)
         },
         searchCategories(event) {
             setTimeout(() => {
@@ -122,6 +116,13 @@ export default defineComponent({
                 }
             }, 250)
             // console.log('FILTERED CATEGORIES: ', this.filteredCategories)
+        },
+        alisIconTooltip(iconClass: string) {
+            if (iconClass.includes('icon-used')) {
+                return this.$t('kpi.measureDefinition.aliasUsed')
+            } else if (iconClass.includes('icon-missing')) {
+                return this.$t('kpi.measureDefinition.aliasMissing')
+            }
         }
     }
 })

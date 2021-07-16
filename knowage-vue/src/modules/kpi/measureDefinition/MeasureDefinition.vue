@@ -44,7 +44,7 @@
                     <Column :style="measureDefintionDescriptor.table.iconColumn.style">
                         <template #body="slotProps">
                             <Button icon="pi pi-copy" class="p-button-link" @click="cloneKpiConfirm(slotProps.data)" data-test="clone-button" />
-                            <Button icon="pi pi-trash" class="p-button-link" @click="deleteMeasureConfirm(slotProps.data)" data-test="delete-button" />
+                            <Button icon="pi pi-trash" class="p-button-link" @click="deleteMeasureConfirm(slotProps.data)" :data-test="'delete-button-' + slotProps.data.id" />
                         </template>
                     </Column>
                 </DataTable>
@@ -88,7 +88,6 @@ export default defineComponent({
             this.loading = true
             await this.loadMeasures()
             this.loading = false
-            console.log('MEASURES: ', this.measuresList)
         },
         async loadMeasures() {
             this.measuresList = []
@@ -102,7 +101,6 @@ export default defineComponent({
             )
         },
         showForm(measure: iMeasure, clone: Boolean) {
-            console.log('EVENT Data: ', measure)
             const path = measure ? `/measure-definition/edit?id=${measure.ruleId}&ruleVersion=${measure.ruleVersion}&clone=${clone}` : '/measure-definition/new-measure-definition'
             this.$router.push(path)
         },

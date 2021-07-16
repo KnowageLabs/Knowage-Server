@@ -5,18 +5,17 @@ export interface iMeasure {
     rule?: string,
     ruleId?: number,
     ruleVersion?: number,
+    aliasIcon?: string,
     category?: iDomain,
+    hierarchy?: iDomain,
     hierarchy?: string,
     type: any,
 }
 
 export interface iDomain {
-    valueId: number,
+    valueId?: number,
     valueCd: string,
-    valueName: string,
-    valueDescription: string,
-    domainCode: string,
-    domainName: string
+    valueName?: string,
 }
 
 export interface iRule {

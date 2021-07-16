@@ -34,7 +34,7 @@ import PreviewDialog from './PreviewDialog.vue'
 export default defineComponent({
     name: 'query-card',
     components: { Card, Dropdown, VCodeMirror, PreviewDialog },
-    props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array }, columns: { type: Array }, rows: { type: Array } },
+    props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array }, columns: { type: Array }, rows: { type: Array }, codeInput: { type: String } },
     emits: ['touched', 'queryChanged', 'loadPreview'],
     data() {
         return {
@@ -58,7 +58,16 @@ export default defineComponent({
                 } as any,
                 hintOptions: { tables: this.datasourceStructure }
             },
-            previewVisible: false
+            previewVisible: false,
+            cursorPosition: null
+        }
+    },
+    watch: {
+        codeInput() {
+            this.cursorPosition = this.codeMirror.getCursor()
+            // console.log('CURSOR POSITION', this.cursorPosition)
+            // console.log('ALIAS NAME', this.aliasName)
+            this.codeMirror.replaceRange(this.codeInput, this.cursorPosition)
         }
     },
     async mounted() {

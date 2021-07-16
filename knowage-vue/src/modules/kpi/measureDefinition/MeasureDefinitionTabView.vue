@@ -2,29 +2,92 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ rule.id ? rule.name : $t('kpi.measureDefinition.newMeasure') }} </template>
         <template #right>
+            <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.alias')" @click="aliasesVisible = !aliasesVisible" data-test="submit-button" />
+            <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.placeholder')" @click="placeholderVisible = !placeholderVisible" data-test="submit-button" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="submitConfirm" data-test="submit-button" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <div class="card" v-else>
-        <TabView v-model:activeIndex="activeTab" @tab-change="setTabChanged($event.index)">
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('kpi.measureDefinition.query') }}</span>
+    <div class="p-d-flex p-flex-row">
+        <div class="card kn-flex" v-if="!loading">
+            <TabView v-model:activeIndex="activeTab" @tab-change="setTabChanged($event.index)">
+                <TabPanel>
+                    <template #header>
+                        <span>{{ $t('kpi.measureDefinition.query') }}</span>
+                    </template>
+
+                    <QueryCard :rule="rule" :datasourcesList="datasourcesList" :aliases="availableAliasList" :placeholders="placeholdersList" :columns="columns" :rows="rows" :codeInput="codeInput" @queryChanged="queryChanged = true" @loadPreview="previewQuery(false, true)"></QueryCard>
+                </TabPanel>
+
+                <TabPanel :disabled="metadataDisabled">
+                    <template #header>
+                        <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
+                    </template>
+
+                    <MetadataCard :currentRule="rule" :tipologiesType="domainsKpiRuleoutput" :domainsTemporalLevel="domainsTemporalLevel" :categories="domainsKpiMeasures"></MetadataCard>
+                </TabPanel>
+            </TabView>
+        </div>
+        <div v-if="aliasesVisible" class="listbox">
+            <Toolbar class="kn-toolbar kn-toolbar--primary">
+                <template #left>{{ $t('kpi.measureDefinition.alias') }}</template>
+                <template #right>
+                    <Button class="p-button-text p-button-rounded kn-button" :label="$t('common.sort')" @click="sortArray(availableAliasList, aliasSorted)" />
                 </template>
-
-                <QueryCard :rule="rule" :datasourcesList="datasourcesList" :aliases="availableAliasList" :placeholders="placeholdersList" :columns="columns" :rows="rows" @queryChanged="queryChanged = true" @loadPreview="previewQuery(false, true)"></QueryCard>
-            </TabPanel>
-
-            <TabPanel :disabled="metadataDisabled">
-                <template #header>
-                    <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
+            </Toolbar>
+            <Listbox
+                class="kn-list"
+                :options="availableAliasList"
+                :listStyle="metadataDefinitionTabViewDescriptor.listBox.style"
+                :filter="true"
+                :filterPlaceholder="$t('common.search')"
+                optionLabel="name"
+                filterMatchMode="contains"
+                :filterFields="metadataDefinitionTabViewDescriptor.aliasFilterFields"
+                :emptyFilterMessage="$t('common.info.noDataFound')"
+                @change="setCodeInput($event.value.name)"
+            >
+                <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                <template #option="slotProps">
+                    <div class="kn-list-item">
+                        <div class="kn-list-item-text">
+                            <span>{{ slotProps.option.name }}</span>
+                        </div>
+                    </div>
+                </template></Listbox
+            >
+        </div>
+        <div v-if="placeholderVisible" class="listbox">
+            <Toolbar class="kn-toolbar kn-toolbar--primary">
+                <template #left>{{ $t('kpi.measureDefinition.placeholder') }}</template>
+                <template #right>
+                    <Button class="p-button-text p-button-rounded kn-button" :label="$t('common.sort')" @click="sortArray(placeholdersList, placeholderVisible)" />
                 </template>
+            </Toolbar>
 
-                <MetadataCard :currentRule="rule" :tipologiesType="domainsKpiRuleoutput" :domainsTemporalLevel="domainsTemporalLevel" :categories="domainsKpiMeasures"></MetadataCard>
-            </TabPanel>
-        </TabView>
+            <Listbox
+                class="kn-list"
+                :options="placeholdersList"
+                listStyle="max-height:calc(100% - 62px)"
+                :filter="true"
+                :filterPlaceholder="$t('common.search')"
+                optionLabel="name"
+                filterMatchMode="contains"
+                :filterFields="metadataDefinitionTabViewDescriptor.placeholderFilterFields"
+                :emptyFilterMessage="$t('common.info.noDataFound')"
+                @change="setCodeInput($event.value.name)"
+            >
+                <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                <template #option="slotProps">
+                    <div class="kn-list-item">
+                        <div class="kn-list-item-text">
+                            <span>{{ slotProps.option.name }}</span>
+                        </div>
+                    </div>
+                </template></Listbox
+            >
+        </div>
     </div>
 
     <Dialog :contentStyle="metadataDefinitionTabViewDescriptor.dialog.style" :header="$t('kpi.measureDefinition.saveInProgress')" :visible="showSaveDialog" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
@@ -41,17 +104,35 @@
         </Toolbar>
         <div v-if="newAlias.length > 0">
             <h4>{{ $t('common.new') }}</h4>
-            <Chip v-for="alias in newAlias" :key="alias.id" :label="alias"></Chip>
+            <Chip v-for="alias in newAlias" class="p-m-2" :key="alias.id" :label="alias"></Chip>
         </div>
 
         <div v-if="reusedAlias.length > 0">
             <h4>{{ $t('common.reused') }}</h4>
-            <Chip v-for="alias in reusedAlias" :key="alias.id" :label="alias"></Chip>
+            <Chip v-for="alias in reusedAlias" class="p-m-2" :key="alias.id" :label="alias"></Chip>
+        </div>
+
+        <Toolbar v-if="newPlaceholder.length > 0 || reusedPlaceholder.length > 0" class="kn-toolbar kn-toolbar--primary">
+            <template #left>
+                {{ $t('kpi.measureDefinition.placeholder') }}
+            </template>
+        </Toolbar>
+
+        <div v-if="newPlaceholder.length > 0">
+            {{ newPlaceholder }}
+            <h4>{{ $t('common.new') }}</h4>
+            <Chip v-for="placeholder in newPlaceholder" class="p-m-2" :key="placeholder.id" :label="placeholder"></Chip>
+        </div>
+
+        <div v-if="reusedPlaceholder.length > 0">
+            {{ reusedPlaceholder }}
+            <h4>{{ $t('common.reused') }}</h4>
+            <Chip v-for="placeholder in reusedPlaceholder" class="p-m-2" :key="placeholder.id" :label="placeholder"></Chip>
         </div>
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="showSaveDialog = false"></Button>
-            <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="saveRule"></Button>
+            <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="saveRule" :disabled="saveRuleButtonDisabled"></Button>
         </template>
     </Dialog>
 
@@ -59,17 +140,18 @@
         <h1>{{ $t('kpi.measureDefinition.metadataError') + ' ' + $t('kpi.measureDefinition.wrongQuery') }}</h1>
         <p>{{ errorMessage }}</p>
         <template #footer>
-            <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeerrorMessageDialog"></Button>
+            <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeErrorMessageDialog"></Button>
         </template>
     </Dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iDatasource, iMeasure, iRule } from './MeasureDefinition'
+import { iDatasource, iMeasure, iRule, iPlaceholder } from './MeasureDefinition'
 import axios from 'axios'
 import Chip from 'primevue/chip'
 import Dialog from 'primevue/dialog'
+import Listbox from 'primevue/listbox'
 import MetadataCard from './card/MetadataCard/MetadataCard.vue'
 import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDescriptor.json'
 import QueryCard from './card/QueryCard/QueryCard.vue'
@@ -79,8 +161,8 @@ import TabPanel from 'primevue/tabpanel'
 // TODO Fix title
 
 export default defineComponent({
-    name: 'rule-definition-detail',
-    components: { Chip, Dialog, MetadataCard, QueryCard, TabView, TabPanel },
+    name: 'measure-definition-detail',
+    components: { Chip, Dialog, Listbox, MetadataCard, QueryCard, TabView, TabPanel },
     props: {
         id: {
             type: String
@@ -97,8 +179,9 @@ export default defineComponent({
             metadataDefinitionTabViewDescriptor,
             rule: {
                 // definition: 'SELECT\n\nFROM\n\nWHERE',
-                definition: "SELECT account_id as bla FROM account WHERE account_description = 'Assets'",
-                ruleOutputs: [] as iMeasure[]
+                definition: "SELECT * FROM account WHERE account_description = '@Description' AND  account_description = '@Test'",
+                ruleOutputs: [] as iMeasure[],
+                placeholders: [] as iPlaceholder[]
             } as iRule,
             datasourcesList: [] as iDatasource[],
             availableAliasList: [],
@@ -109,23 +192,28 @@ export default defineComponent({
             domainsKpiMeasures: [],
             newAlias: [] as any[],
             reusedAlias: [] as any[],
-            newPlaceholder: [],
-            reusedPlaceholder: [],
+            newPlaceholder: [] as any[],
+            reusedPlaceholder: [] as any[],
             activeTab: 0,
             columns: [] as any[],
             rows: [],
-            errorMessage: null as null | string,
-            errorTitle: null as null | string,
+            errorMessage: null as string | null,
+            errorTitle: null as string | null,
             tabChanged: false,
             loading: false,
             touched: false,
             showSaveDialog: false,
             operation: 'create',
-            queryChanged: false
+            queryChanged: false,
+            aliasesVisible: false,
+            placeholderVisible: false,
+            codeInput: null as string | null,
+            aliasSorted: 'DESC',
+            placeholdersSorted: 'DESC'
         }
     },
     computed: {
-        metadataDisabled() {
+        metadataDisabled(): Boolean {
             let disabled = false
             if (!this.rule.dataSource) {
                 disabled = true
@@ -138,9 +226,11 @@ export default defineComponent({
                 })
             }
             return disabled
+        },
+        saveRuleButtonDisabled(): Boolean {
+            return !this.rule.name
         }
     },
-
     async created() {
         // console.log('ID: ', this.id)
         // console.log('Rule Version: ', this.ruleVersion)
@@ -199,28 +289,27 @@ export default defineComponent({
         },
         async setTabChanged(tabIndex: any) {
             this.activeTab = tabIndex
-            if (tabIndex === 1) {
-                await this.previewQuery(false, false)
+            await this.previewQuery(false, false)
+            console.log('METADATA TAB RULE ', this.rule)
 
-                this.rule.ruleOutputs.forEach((ruleOutput: any) => {
-                    this.setAliasIcon(ruleOutput)
-                    if (!ruleOutput.category) {
-                        ruleOutput.category = { valueCd: '' }
-                    }
-                    if (!ruleOutput.hierarchy) {
-                        ruleOutput.hierarchy = { valueCd: '' }
-                    }
-                })
-
-                console.log('ERROR MESSAGE: ', this.errorMessage)
-                if (this.errorMessage) {
-                    console.log('STIGAO!!!')
-                    this.activeTab = 0
+            this.rule.ruleOutputs.forEach((ruleOutput: any) => {
+                this.setAliasIcon(ruleOutput)
+                if (!ruleOutput.category) {
+                    ruleOutput.category = { valueCd: '' }
                 }
+                // if (!ruleOutput.hierarchy) {
+                //     ruleOutput.hierarchy = { valueCd: null }
+                // }
+            })
+
+            console.log('ERROR MESSAGE: ', this.errorMessage)
+            if (this.errorMessage) {
+                console.log('STIGAO!!!')
+                this.activeTab = 0
             }
         },
         setNewAliases() {
-            console.log('SET NEW ALIASES')
+            // console.log('SET NEW ALIASES')
             this.newAlias = []
             this.reusedAlias = []
             this.rule.ruleOutputs.forEach((ruleOutput: any) => {
@@ -230,7 +319,36 @@ export default defineComponent({
                     this.newAlias.push(ruleOutput.alias)
                 }
             })
-            console.log('NEW ALIASES', this.newAlias)
+            this.newAlias.sort()
+            this.reusedAlias.sort()
+            // console.log('NEW ALIASES', this.newAlias)
+        },
+        setNewPlaceholders() {
+            // console.log('SET NEW ALIASES')
+            this.newPlaceholder = []
+            this.reusedPlaceholder = []
+            this.rule.placeholders.forEach((placeholder: any) => {
+                if (this.placeholderExists(placeholder.name)) {
+                    this.reusedPlaceholder.push(placeholder.name)
+                } else {
+                    this.newPlaceholder.push(placeholder.name)
+                }
+            })
+            this.newPlaceholder.sort()
+            this.reusedPlaceholder.sort()
+            // console.log('NEW PLACEHOLDERS', this.newPlaceholder)
+        },
+        placeholderExists(name: string) {
+            console.log('PLACEHOLDER EXISTS: ', this.rule)
+            let exists = false
+            this.placeholdersList.forEach((placeholder: any) => {
+                console.log('Placeholder Exists: ' + placeholder.name.toUpperCase() + ' === ' + name.toUpperCase())
+                if (placeholder.name.toUpperCase() === name.toUpperCase()) {
+                    // console.log('ALIAS Exists!')
+                    exists = true
+                }
+            })
+            return exists
         },
         setAliasIcon(ruleOutput: any) {
             console.log('SET ALIAS ICON: ', ruleOutput.alias)
@@ -266,6 +384,11 @@ export default defineComponent({
         },
         async previewQuery(save: boolean, hasPlaceholders: boolean) {
             // console.log('RULE: ', this.rule)
+            const tempRuleOutputs = this.rule.ruleOutputs
+            this.rule.ruleOutputs.forEach((ruleOutput) => {
+                delete ruleOutput.aliasIcon
+                ruleOutput.category = { valueCd: ruleOutput.category?.valueCd as string }
+            })
             const tempDatasource = this.rule.dataSource
             if (this.rule.dataSource) {
                 this.rule.dataSourceId = this.rule.dataSource.DATASOURCE_ID
@@ -288,15 +411,23 @@ export default defineComponent({
             }
             // console.log('Submit error', this.errorMessage)
             this.setNewAliases()
+            this.setNewPlaceholders()
             console.log('Rule after prepare', this.rule)
             if (save) {
                 await this.preSaveRule()
             }
 
             this.rule.dataSource = tempDatasource
+            this.rule.ruleOutputs = tempRuleOutputs
         },
         async preSaveRule() {
+            const tempDataSource = this.rule.dataSource
+            const tempRuleOutputs = this.rule.ruleOutputs
             delete this.rule.dataSource
+            this.rule.ruleOutputs.forEach((ruleOutput) => {
+                delete ruleOutput.aliasIcon
+                ruleOutput.category = { valueCd: ruleOutput.category?.valueCd as string }
+            })
 
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/preSaveRule', this.rule).then((response) => {
                 if (this.rule.ruleOutputs.length === 0) {
@@ -329,11 +460,20 @@ export default defineComponent({
                     this.showSaveDialog = true
                 }
             })
+
+            this.rule.dataSource = tempDataSource
+            this.rule.ruleOutputs = tempRuleOutputs
         },
         async saveRule() {
             if (this.rule.id) {
                 this.operation = 'update'
             }
+
+            delete this.rule.dataSource
+            this.rule.ruleOutputs.forEach((ruleOutput) => {
+                delete ruleOutput.aliasIcon
+                ruleOutput.category = { valueCd: ruleOutput.category?.valueCd as string }
+            })
 
             delete this.rule.dataSource
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveRule', this.rule).then(() => {
@@ -377,6 +517,7 @@ export default defineComponent({
             return -1
         },
         loadPlaceholder() {
+            console.log('RULE IN LOAD PLACEHOLDER', this.rule)
             const placeholder = this.rule.definition.match(/@\w*/g)
             // console.log('PLACEHOLDER ', placeholder)
             if (placeholder != null) {
@@ -427,7 +568,7 @@ export default defineComponent({
             }
             // console.log('caaaaled', this.showSaveDialog)
         },
-        closeerrorMessageDialog() {
+        closeErrorMessageDialog() {
             this.errorMessage = null
         },
         closeTemplate() {
@@ -445,6 +586,21 @@ export default defineComponent({
                     }
                 })
             }
+        },
+        setCodeInput(input: string) {
+            console.log('setCodeInput: ', input)
+            if (this.activeTab === 0) {
+                this.codeInput = input
+            }
+        },
+        sortArray(array: [], type: string) {
+            if (this[type] === 'DESC') {
+                array = array.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
+                this[type] = 'ASC'
+            } else {
+                array = array.sort((a: any, b: any) => (a.name < b.name ? 1 : -1))
+                this[type] = 'DESC'
+            }
         }
     }
 })
@@ -453,5 +609,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 .error-dialog {
     width: 60vw;
+}
+.listbox {
+    width: 320px;
 }
 </style>

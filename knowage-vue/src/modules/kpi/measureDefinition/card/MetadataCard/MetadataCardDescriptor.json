@@ -3,5 +3,12 @@
         "style": {
             "width": "60vw"
         }
+    },
+    "table": {
+        "iconColumn": {
+            "style": {
+                "width": "5%"
+            }
+        }
     }
 }
