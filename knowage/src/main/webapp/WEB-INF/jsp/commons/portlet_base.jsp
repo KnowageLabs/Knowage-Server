@@ -57,7 +57,8 @@ The following directive catches exceptions thrown by jsps, must be commented in 
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 
-<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="org.apache.commons.lang.StringUtils"%>
+<%@page import="java.util.Locale.Builder" %>
 
 <!-- IMPORT TAG LIBRARY  -->
 <%@ taglib uri="/WEB-INF/tlds/spagobi.tld" prefix="spagobi"%>

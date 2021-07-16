@@ -44,7 +44,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineStartServletIOManager"%>
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
-<%@page import="org.apache.commons.lang.StringUtils" %>
 
 
 

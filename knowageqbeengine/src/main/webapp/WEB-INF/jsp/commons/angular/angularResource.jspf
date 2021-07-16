@@ -50,6 +50,7 @@ author:...
 <%@page import="org.json.JSONArray"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
+<%@page import="java.util.Locale.Builder" %>
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -91,8 +92,8 @@ author:...
    	String country =(String) request.getParameter(SpagoBIConstants.SBI_COUNTRY);
    	
 	Builder builder = new Builder().setLanguage(language).setRegion(country);
-	String script  = (String)getEnv().get(SpagoBIConstants.SBI_SCRIPT);
-	if(org.apache.commons.lang.StringUtils.isNotBlank(script)) {
+	String script  = (String) request.getParameter(SpagoBIConstants.SBI_SCRIPT);
+	if(script!=null && !script.isEmpty()) {
 		builder.setScript(script);
 	}
 	locale = builder.build();
