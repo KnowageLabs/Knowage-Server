@@ -28,6 +28,12 @@
                 "validators": [
                     {
                         "key": "required"
+                    },
+                    {
+                        "key": "is_after_date",
+                        "validator": {
+                            "type": "is-after-date"
+                        }
                     }
                 ]
             }

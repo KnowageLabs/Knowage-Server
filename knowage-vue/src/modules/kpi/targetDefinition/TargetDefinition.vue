@@ -22,6 +22,7 @@
                     :filterFields="targetDefinitionDecriptor.filterFields"
                     emptyFilterMessage="noResults"
                     @change="showForm($event.value, false)"
+                    data-test="target-list"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
@@ -37,7 +38,7 @@
                 </Listbox>
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
-                <KnHint :title="'kpi.targetDefinition.title'" :hint="'test'" v-if="showHint" data-test="bm-hint"></KnHint>
+                <KnHint :title="'kpi.targetDefinition.title'" :hint="'kpi.targetDefinition.hint'" v-if="showHint" data-test="bm-hint"></KnHint>
                 <router-view @close="closeForm" @touched="touched = true" @saved="reloadMetadata" />
             </div>
         </div>

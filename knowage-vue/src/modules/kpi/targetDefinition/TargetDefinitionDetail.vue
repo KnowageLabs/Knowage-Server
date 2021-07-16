@@ -16,6 +16,7 @@
                                     id="name"
                                     class="kn-material-input"
                                     type="text"
+                                    maxLength="100"
                                     v-model.trim="v$.target.name.$model"
                                     :class="{
                                         'p-invalid': v$.target.name.$invalid && v$.target.name.$dirty
@@ -61,7 +62,7 @@
                                         />
                                         <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.endDate') }} * </label>
                                     </span>
-                                    <KnValidationMessages :vComp="v$.target.endValidity" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.endDate') }"></KnValidationMessages>
+                                    <KnValidationMessages :vComp="v$.target.endValidity" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.endDate') }" :specificTranslateKeys="{ is_after_date: 'kpi.targetDefinition.endDateBeforeStart' }"></KnValidationMessages>
                                 </div>
                             </div>
                         </div>
@@ -94,8 +95,11 @@
 
                         <Column field="kpiName" header="KPI name" key="kpiName" class="kn-truncated"></Column>
                         <Column field="value" header="Value" key="value" class="kn-truncated">
+                            <template #body="slotProps">
+                                {{ slotProps.data[slotProps.column.props.field] }}
+                            </template>
                             <template #editor="slotProps">
-                                <InputNumber v-model="slotProps.data[slotProps.column.field]" showButtons />
+                                <InputNumber v-model="slotProps.data[slotProps.column.props.field]" showButtons />
                             </template>
                         </Column>
                         <Column>
@@ -162,7 +166,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { FilterOperator } from 'primevue/api'
@@ -206,7 +210,7 @@ export default defineComponent({
             targetDefinitionValidationDescriptor,
             kpi: [] as iValues[],
             filteredKpi: [] as iValues[],
-            selectedKpi: [] as any,
+            selectedKpi: [] as iValues[],
             categories: [] as iCategory[],
             filteredCategory: [] as iCategory[],
             selectedCategory: null,
@@ -241,8 +245,13 @@ export default defineComponent({
         }
     },
     validations() {
+        const customValidators: ICustomValidatorMap = {
+            'is-after-date': () => {
+                return this.target && this.target.startValidity && this.target.endValidity && this.target.startValidity < this.target.endValidity
+            }
+        }
         return {
-            target: createValidations('target', targetDefinitionValidationDescriptor.validations.target)
+            target: createValidations('target', targetDefinitionValidationDescriptor.validations.target, customValidators)
         }
     },
     created() {
@@ -332,7 +341,12 @@ export default defineComponent({
             console.log('filtered', this.filteredCategory)
         },
         showCategoryDialog() {
-            if (this.v$.$invalid) {
+            if (this.kpi.length < 1) {
+                this.$store.commit('setError', {
+                    title: this.$t('kpi.targetDefinition.noKpi'),
+                    msg: this.$t('kpi.targetDefinition.noKpiMessage')
+                })
+            } else if (this.v$.$invalid) {
                 console.log(this.v$)
                 this.v$.$touch()
             } else {
@@ -341,8 +355,6 @@ export default defineComponent({
             }
         },
         async handleSubmit() {
-            console.log('submit')
-
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/saveTarget'
 
             this.target.values = this.kpi.map((kpi: iValues) => {
@@ -383,6 +395,13 @@ export default defineComponent({
         addKpi() {
             this.kpi.push(...this.selectedKpi)
             this.kpiDialogVisible = false
+            if (this.selectedKpi.length > 0) {
+                this.$store.commit('setInfo', {
+                    title: this.$t('kpi.targetDefinition.kpiAddedTitile'),
+                    msg: this.$t('kpi.targetDefinition.kpiAddedMessage')
+                })
+            }
+            this.selectedKpi = []
         },
         async checkId() {
             if (this.id) {
