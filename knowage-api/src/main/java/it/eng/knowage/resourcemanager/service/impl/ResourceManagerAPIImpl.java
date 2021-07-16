@@ -114,7 +114,6 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			Path fullP = Paths.get(fullPath);
 			mylist = createTree(parentFolder, profile);
 			parseFolders(mylist);
-//			clearFolders(mylist, fullP.getParent().toString());
 			newRootFolder = new RootFolderDTO(mylist);
 			String rootFolder = fullP.toString().replace(fullP.getParent().toString(), "");
 			rootFolder = rootFolder.substring(rootFolder.lastIndexOf(File.separator) + 1);
@@ -133,10 +132,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	private void setFolderLevel(FolderDTO e) {
 		e.setKey("" + count);
-		// count = 0;
 		count++;
 		if (e.getChildren() != null && e.getChildren().size() > 0) {
-			// lvl++;
 			for (FolderDTO emp : e.getChildren()) {
 				setFolderLevel(emp);
 			}
@@ -152,19 +149,6 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			throw new KNRM001Exception("");
 		}
 		return totalPath;
-	}
-
-	private void clearFolders(FolderDTO e, String path) {
-		changeFolderPath(e, path);
-	}
-
-	private void changeFolderPath(FolderDTO e, String path) {
-		e.setLabel(e.getLabel().replace(path, ""));
-		if (e.getChildren() != null && e.getChildren().size() > 0) {
-			for (FolderDTO emp : e.getChildren()) {
-				changeFolderPath(emp, path);
-			}
-		}
 	}
 
 	public FolderDTO createTree(FolderDTO parentFolder, SpagoBIUserProfile profile) throws IOException, KNRM001Exception {
@@ -207,7 +191,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			return true;
 		} else {
 			for (String function : profile.getFunctions()) {
-				// functionality must be present
+				// TODO: functionality must be present
 				// if (function.equalsIgnoreCase("RESOURCE_FUNCTION")) {
 				// canSee = true;
 				// }
@@ -480,12 +464,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		}
 	}
 
-	private void extractFolder(String zipFile, String extractFolder) {
+	private void extractFolder(String zipFile, String extractFolder) throws IOException {
+		ZipFile zip = null;
 		try {
 			int BUFFER = 2048;
 			File file = new File(zipFile);
 
-			ZipFile zip = new ZipFile(file);
+			zip = new ZipFile(file);
 			String newPath = extractFolder;
 
 			new File(newPath).mkdir();
@@ -524,8 +509,10 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				}
 
 			}
-		} catch (Exception e) {
+		} catch (Exception e) { // TODO: change it for error handling
 			throw new KnowageRuntimeException(e.getMessage());
+		} finally {
+			zip.close();
 		}
 
 	}
