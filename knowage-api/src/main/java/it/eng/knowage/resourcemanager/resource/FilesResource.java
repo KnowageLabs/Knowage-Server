@@ -46,6 +46,8 @@ import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.error.KNRM001Exception;
 import it.eng.knowage.knowageapi.error.KNRM003Exception;
 import it.eng.knowage.knowageapi.error.KNRM008Exception;
+import it.eng.knowage.knowageapi.error.KNRM010Exception;
+import it.eng.knowage.knowageapi.error.KNRM011Exception;
 import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
@@ -160,7 +162,7 @@ public class FilesResource {
 	@GET
 	@Path("/metadata")
 	@Produces(MediaType.APPLICATION_JSON)
-	public MetadataDTO getMetadata(@QueryParam("path") String path) throws KNRM001Exception {
+	public MetadataDTO getMetadata(@QueryParam("path") String path) throws KNRM001Exception, KNRM011Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		MetadataDTO file = resourceManagerAPIservice.getMetadata(path, profile);
 		return file;
@@ -169,7 +171,7 @@ public class FilesResource {
 	@POST
 	@Path("/metadata")
 	@Produces(MediaType.APPLICATION_JSON)
-	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @QueryParam("path") String path) throws KNRM001Exception {
+	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @QueryParam("path") String path) throws KNRM001Exception, KNRM010Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		MetadataDTO file = resourceManagerAPIservice.saveMetadata(fileDTO, path, profile);
 		return file;

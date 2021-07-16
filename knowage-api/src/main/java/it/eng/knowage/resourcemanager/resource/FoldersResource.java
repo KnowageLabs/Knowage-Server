@@ -77,9 +77,9 @@ public class FoldersResource {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		RootFolderDTO folders = null;
 		try {
-			folders = resourceManagerAPIservice.getFolders(profile, null);
+			folders = resourceManagerAPIservice.getFolders(profile, "models");
 		} catch (KNRM001Exception k) {
-			throw new KNRM001Exception("");
+			throw new KNRM001Exception(""); // TODO: We have to understand how to handle technical messages inside business errors, how can we show them?
 		} catch (KNRM002Exception e) {
 			throw new KNRM002Exception("");
 		}

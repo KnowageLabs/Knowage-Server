@@ -70,6 +70,7 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 @Component
 public class ResourceManagerAPIImpl implements ResourceManagerAPI {
+	private static final String MODELS = "models";
 	private static final Logger LOGGER = Logger.getLogger(ResourceManagerAPIImpl.class);
 	int count = 0;
 	private static Map<String, List<String>> foldersForDevs = new HashMap<>();
@@ -80,7 +81,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	static {
 		List<String> folders = new ArrayList<String>();
-		folders.add("models");
+		folders.add(MODELS);
 		folders.add("talend");
 		folders.add("static_menu");
 		folders.add("layer");
@@ -99,21 +100,24 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		} catch (KNRM001Exception k) {
 			throw new KNRM001Exception("");
 		}
-		Path totalF = Paths.get(totalPath);
-		FolderDTO parentFolder = new FolderDTO(totalPath);
 		FolderDTO mylist = null;
 		RootFolderDTO newRootFolder = null;
-
+		String fullPath = null;
 		LOGGER.debug("Starting resource path json tree testing");
 		try {
-			if (path == null)
-				path = totalPath;
-			Path f = Paths.get(path);
+			if (path == null) {
+				fullPath = totalPath;
+			} else {
+				fullPath = totalPath + File.separator + path;
+			}
+			FolderDTO parentFolder = new FolderDTO(fullPath);
+			Path fullP = Paths.get(fullPath);
 			mylist = createTree(parentFolder, profile);
 			parseFolders(mylist);
-			clearFolders(mylist, f.getParent().toString());
+//			clearFolders(mylist, fullP.getParent().toString());
 			newRootFolder = new RootFolderDTO(mylist);
-			String rootFolder = totalF.toString().replace(f.getParent().toString(), "");
+			String rootFolder = fullP.toString().replace(fullP.getParent().toString(), "");
+			rootFolder = rootFolder.substring(rootFolder.lastIndexOf(File.separator) + 1);
 			newRootFolder.getRoot().setLabel(rootFolder);
 
 		} catch (IOException e) {
@@ -164,7 +168,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	public FolderDTO createTree(FolderDTO parentFolder, SpagoBIUserProfile profile) throws IOException, KNRM001Exception {
-		File node = new File(parentFolder.getLabel());
+		File node = new File(parentFolder.getFullPath());
 		Path nodePath = Paths.get(node.getAbsolutePath());
 		Path workDir = Paths.get(getWorkDirectory(profile));
 		boolean canSee = true;
@@ -176,7 +180,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		if (node.isDirectory() && canSee) {
 			String[] subNote = node.list();
 			for (String filename : subNote) {
-				String path = node + "\\" + filename;
+				String path = node + File.separator + filename;
 				Path pathNode = Paths.get(path);
 				boolean canSeeNode = true;
 				if (pathNode.getParent().equals(workDir)) {
@@ -541,7 +545,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	private boolean isStartingFromModel(String path, SpagoBIUserProfile profile) throws KNRM001Exception {
 		Path workModelDir = Paths.get(getWorkDirectory(profile));
-		Path modelPath = Paths.get(workModelDir + File.separator + "model");
+		Path modelPath = Paths.get(workModelDir + File.separator + MODELS);
 		return modelPath.equals(Paths.get(path));
 	}
 
