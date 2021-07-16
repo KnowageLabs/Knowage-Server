@@ -17,47 +17,34 @@
  */
 package it.eng.knowage.resourcemanager.resource.dto;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
- *
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 public class FolderDTO {
 
 	private String label;
 
 	private String key;
 
-//	private String icon;
+	@JsonIgnore
+	private String fullPath;
 
-//	List<CustomFile> files;
-
-	List<FolderDTO> children;
+	@JsonInclude(Include.NON_EMPTY)
+	private List<FolderDTO> children;
 
 	public FolderDTO() {
 		super();
 	}
 
 	public FolderDTO(String name) {
-//		files = new ArrayList<>();
 		children = new ArrayList<>();
-		this.label = name;
-//		this.icon = "far fa-folder";
+		this.label = name.substring(name.lastIndexOf(File.separator) + 1);
+		this.fullPath = name;
 	}
 
 	public String getLabel() {
@@ -67,14 +54,6 @@ public class FolderDTO {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-
-//	public List<CustomFile> getFiles() {
-//		return files;
-//	}
-
-//	public void addFile(CustomFile file) {
-//		this.files.add(file);
-//	}
 
 	public List<FolderDTO> getChildren() {
 		return children;
@@ -89,16 +68,16 @@ public class FolderDTO {
 		return "FolderDTO [label=" + label + ", children=" + children + "]";
 	}
 
-//	public String getIcon() {
-//		return icon;
-//	}
-//
-//	public void setIcon(String icon) {
-//		this.icon = icon;
-//	}
-
 	public String getKey() {
 		return key;
+	}
+
+	public String getFullPath() {
+		return fullPath;
+	}
+
+	public void setFullPath(String fullPath) {
+		this.fullPath = fullPath;
 	}
 
 	public void setKey(String key) {

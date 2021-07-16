@@ -87,14 +87,14 @@ public class KnowageBusinessExceptionMapper implements ExceptionMapper<KnowageBu
 			error.put(ERROR_MESSAGE, errorMessage);
 			errors.put(error);
 			if (hints != null && !hints.isEmpty()) {
-				int i = 0;
-				for (String hint : hints) {
-					i++;
-					JSONObject hintJSON = new JSONObject();
-					hintJSON.put("hint " + i, hint);
-					hintsJson.put(hintJSON);
-				}
-				error.put("hints", hintsJson);
+//				int i = 0;
+//				for (String hint : hints) {
+//					i++;
+//					String[] hintArray = new String[1];
+//					hintArray[0] = hint;
+//					hintsJson.put(hintJSON);
+//				}
+				error.put("hints", hints);
 			}
 			serializedMessages.put(ERROR_MESSAGES, errors);
 		} catch (JSONException e1) {
