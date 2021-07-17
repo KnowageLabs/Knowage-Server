@@ -78,14 +78,12 @@
                     </Toolbar>
                 </template>
                 <template #footer>
-                    <div class="table-footer">
-                        <span class="p-input-icon-left">
-                            <Button class="kn-button kn-button--secondary" @click="addKpiDialog()">{{ $t('kpi.targetDefinition.addKpiBtn') }}</Button>
-                        </span>
+                    <div class="p-d-inline-flex">
+                        <Button class="kn-button kn-button--secondary " @click="addKpiDialog()">{{ $t('kpi.targetDefinition.addKpiBtn') }}</Button>
                     </div>
                 </template>
                 <template #content>
-                    <DataTable :value="kpi" :loading="loading" class="editable-cells-table" dataKey="id" responsiveLayout="stack" editMode="cell">
+                    <DataTable :value="kpi" :loading="loading" class="editable-cells-table" dataKey="id" responsiveLayout="stack" editMode="cell" :scrollable="true" scrollHeight="400px">
                         <template #empty>
                             {{ $t('common.info.noDataFound') }}
                         </template>
@@ -93,8 +91,8 @@
                             {{ $t('common.info.dataLoading') }}
                         </template>
 
-                        <Column field="kpiName" header="KPI name" key="kpiName" class="kn-truncated"></Column>
-                        <Column field="value" header="Value" key="value" class="kn-truncated">
+                        <Column field="kpiName" :header="$t('kpi.targetDefinition.kpiName')" key="kpiName" :sortable="true" class="kn-truncated" :style="targetDefinitionDetailDecriptor.table.column.style"></Column>
+                        <Column field="value" :header="$t('kpi.targetDefinition.kpiValue')" key="value" :sortable="true" class="kn-truncated" :style="targetDefinitionDetailDecriptor.table.column.style">
                             <template #body="slotProps">
                                 {{ slotProps.data[slotProps.column.props.field] }}
                             </template>
@@ -102,7 +100,7 @@
                                 <InputNumber v-model="slotProps.data[slotProps.column.props.field]" showButtons />
                             </template>
                         </Column>
-                        <Column>
+                        <Column :style="targetDefinitionDetailDecriptor.table.iconColumn.style">
                             <template #body="slotProps">
                                 <Button icon="pi pi-trash" class="p-button-link" @click="deleteKpi(slotProps.data)" />
                             </template>
@@ -117,7 +115,7 @@
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0">
                 <template #right>
                     <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="addKpi" />
-                    <Button class="kn-button p-button-text p-button-rounded" icon="pi pi-times" @click="closeKpiDialog" />
+                    <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="closeKpiDialog" />
                 </template>
             </Toolbar>
         </template>
@@ -151,14 +149,16 @@
             </template>
 
             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-            <Column v-for="col of targetDefinitionDetailDecriptor.columnsAllKPI" :field="col.field" :header="col.header" :key="col.field" class="kn-truncated"> </Column>
+            <Column v-for="col of targetDefinitionDetailDecriptor.columnsAllKPI" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" class="kn-truncated"> </Column>
         </DataTable>
     </Dialog>
     <Dialog :header="$t('kpi.targetDefinition.saveTarget')" v-model:visible="categoryDialogVisiable" :modal="true" :closable="true" class="p-fluid kn-dialog--toolbar--primary">
-        <span class="p-float-label">
-            <AutoComplete id="category" v-model="target.category" :suggestions="filteredCategory" @complete="searchCategory($event)" field="valueName" />
-            <label for="category" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.kpiCategory') }} * </label>
-        </span>
+        <div class="p-pt-3">
+            <span class="p-float-label">
+                <AutoComplete id="category" v-model="target.category" :suggestions="filteredCategory" @complete="searchCategory($event)" field="valueName" />
+                <label for="category" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.kpiCategory') }}</label>
+            </span>
+        </div>
         <template #footer>
             <Button label="Apply" icon="pi pi-check" @click="handleSubmit" />
         </template>
@@ -384,6 +384,7 @@ export default defineComponent({
         },
         deleteKpi(kpiSelected: any) {
             this.kpi.splice(this.kpi.indexOf(kpiSelected), 1)
+            this.setDirty()
         },
         addKpiDialog() {
             this.loadKpi()
@@ -400,6 +401,7 @@ export default defineComponent({
                     title: this.$t('kpi.targetDefinition.kpiAddedTitile'),
                     msg: this.$t('kpi.targetDefinition.kpiAddedMessage')
                 })
+                this.setDirty()
             }
             this.selectedKpi = []
         },

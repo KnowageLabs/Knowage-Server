@@ -1,30 +1,20 @@
 {
-    "columns": [
-        {
-            "field": "kpiName",
-            "header": "KPI name"
-        },
-        {
-            "field": "value",
-            "header": "Value"
-        }
-    ],
     "columnsAllKPI": [
         {
             "field": "kpiName",
-            "header": "KPI name"
+            "header": "kpi.targetDefinition.kpiName"
         },
         {
             "field": "kpiCategory",
-            "header": "Category"
+            "header": "kpi.targetDefinition.kpiCategory"
         },
         {
             "field": "kpiDate",
-            "header": "Date"
+            "header": "kpi.targetDefinition.kpiDate"
         },
         {
             "field": "kpiAuthor",
-            "header": "Author"
+            "header": "kpi.targetDefinition.kpiAuthor"
         }
     ],
     "globalFilterFields": ["kpiName", "kpiCategory", "kpiDate", "kpiAuthor"],
@@ -35,6 +25,20 @@
         "success": "common.toast.success",
         "update": {
             "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "table": {
+        "column": {
+            "style": {
+                "width": "45%",
+                "word-break": "break-all"
+            }
+        },
+        "iconColumn": {
+            "style": {
+                "text-align": "end",
+                "width": "5%"
+            }
         }
     }
 }
