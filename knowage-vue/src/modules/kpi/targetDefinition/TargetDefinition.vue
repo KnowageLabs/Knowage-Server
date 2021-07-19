@@ -68,7 +68,6 @@ export default defineComponent({
         }
     },
     async created() {
-        console.log('ROUTE PATH: ', this.$route.path)
         if (this.$route.path !== '/target-definition') {
             this.showHint = false
         }
@@ -97,7 +96,6 @@ export default defineComponent({
         },
         showForm(target: any, clone: Boolean) {
             this.showHint = false
-            console.log('target:101', target)
             const path = target ? `/target-definition/edit?id=${target.id}&clone=${clone}` : '/target-definition/new-target-definition'
             if (!this.touched) {
                 this.$router.push(path)

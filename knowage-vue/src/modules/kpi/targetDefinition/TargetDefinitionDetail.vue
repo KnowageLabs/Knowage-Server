@@ -342,7 +342,6 @@ export default defineComponent({
                 .finally(() => console.log(this.categories))
         },
         searchCategory(event) {
-            console.log(event)
             setTimeout(() => {
                 if (!event.query.trim().length) {
                     this.filteredCategory = [...this.categories]
@@ -352,7 +351,6 @@ export default defineComponent({
                     })
                 }
             }, 250)
-            console.log('filtered', this.filteredCategory)
         },
         showCategoryDialog() {
             if (this.kpi.length < 1) {
@@ -378,11 +376,9 @@ export default defineComponent({
                     targetId: kpi.targetId
                 }
             })
-            console.log(this.target)
             let operation = this.target.id ? 'update' : 'insert'
             this.categoryDialogVisiable = true
             await axios.post(url, this.target).then((response) => {
-                console.log('RESPONSE', response)
                 if (response.data.errors != undefined && response.data.errors.length > 0) {
                     this.categoryDialogVisiable = false
                     this.$store.commit('setError', {
