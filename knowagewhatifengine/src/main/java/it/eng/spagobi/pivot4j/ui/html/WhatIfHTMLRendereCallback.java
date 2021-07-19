@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
 import org.olap4j.Position;
@@ -424,7 +425,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					int positionId = getOrdinalNoSubset(context.getCell().getOrdinal());
 					String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
 					attributes.put("src", pathToImages + "cross-navigation.png");
-					attributes.put("ng-click", "cellClickCreateCrossNavigationMenu('" + positionId + "');$event.stopPropagation();");
+					String coordinatesAsString = StringUtils.join(context.getCell().getCoordinateList(), ",");
+					attributes.put("ng-click", "cellClickCreateCrossNavigationMenu('" + coordinatesAsString + "');$event.stopPropagation();");
 					attributes.put("id", id);
 					startElement("img", attributes);
 					endElement("img");

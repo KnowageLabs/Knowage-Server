@@ -203,7 +203,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		return toReturn;
 	}
 
-	String getScriptJwtToken() {
+	private String getScriptJwtToken() {
 		String script = function.getOnlineScript();
 		// replace keywords
 		for (String colName : inputColumns.keySet()) {
@@ -218,7 +218,7 @@ public class CatalogFunctionTransformer extends AbstractDataStoreTransformer {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MINUTE, 5);
 		Date expiresAt = calendar.getTime();
-		String jwtToken = JWTSsoService.catalogFunction2jwtToken(script, expiresAt);
+		String jwtToken = JWTSsoService.pythonScript2jwtToken(script, expiresAt);
 
 		return jwtToken;
 	}
