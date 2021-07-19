@@ -13,6 +13,7 @@
             "python": "python"
         },
         "copyOf": "Copy of",
+        "date": "Date",
         "deleteAll": "delete all",
         "description": "description",
         "download": "download",
@@ -129,8 +130,12 @@
     },
     "kpi": {
         "kpiScheduler": {
+            "addKpiAssociation": "Add KPI associations",
+            "frequency": "Frequency",
             "hint": "No KPI selected",
+            "kpiName": "KPI Name",
             "newScheduler": "New Scheduler",
+            "saveKpiAssociation": "Save new KPI",
             "title": "Scheduler List"
         }
     },

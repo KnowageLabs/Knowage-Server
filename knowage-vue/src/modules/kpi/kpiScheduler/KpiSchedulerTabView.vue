@@ -14,7 +14,7 @@
                     <span>{{ $t('common.kpi') }}</span>
                 </template>
 
-                <KpiCard :kpis="selectedSchedule.kpis" @touched="setTouched"></KpiCard>
+                <KpiCard :kpis="selectedSchedule.kpis" :allKpiList="kpiList" @touched="setTouched"></KpiCard>
             </TabPanel>
 
             <TabPanel>
@@ -27,7 +27,9 @@
 
             <TabPanel>
                 <template #header>
-                    <span>FREQUENCY</span>
+                    <span>{{ $t('kpi.kpiScheduler.frequency ') }}</span>
+
+                    <FrequencyCard></FrequencyCard>
                 </template>
             </TabPanel>
 
@@ -43,12 +45,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import KpiCard from './card/KpiCard.vue'
+import KpiCard from './card/KpiCard/KpiCard.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
-    name: 'name',
+    name: 'kpi-scheduler-tab-view',
     components: { KpiCard, TabView, TabPanel },
     props: {
         id: { type: String },
@@ -61,6 +63,7 @@ export default defineComponent({
             domainsKpiPlaceholderType: [] as any[],
             domainsKpiPlaceholderFunction: [] as any[],
             lovs: [] as any[],
+            kpiList: [] as any[],
             loading: false,
             touched: false
         }
@@ -91,11 +94,13 @@ export default defineComponent({
             }
             await this.loadDomainsData()
             await this.loadLovs()
+            await this.loadKpiList()
             this.loading = false
 
             // console.log('KPI_PLACEHOLDER_TYPE', this.domainsKpiPlaceholderType)
             // console.log('KPI_PLACEHOLDER_FUNC', this.domainsKpiPlaceholderFunction)
             // console.log('LOVS', this.lovs)
+            console.log('ALL KPI LIST', this.kpiList)
         },
         async loadSchedule() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/loadSchedulerKPI`).then((response) => (this.selectedSchedule = response.data))
@@ -109,6 +114,9 @@ export default defineComponent({
         },
         async loadLovs() {
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/').then((response) => (this.lovs = response.data))
+        },
+        async loadKpiList() {
+            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi').then((response) => (this.kpiList = response.data))
         },
         setTouched() {
             this.touched = true

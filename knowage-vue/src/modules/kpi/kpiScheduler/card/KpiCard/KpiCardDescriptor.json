@@ -11,6 +11,11 @@
             "style": {}
         }
     ],
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
     "globalFilterFields": ["name"],
     "table": {
         "iconColumn": {
