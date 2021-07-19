@@ -13,11 +13,7 @@
             "python": "python"
         },
         "copyOf": "Copy of",
-<<<<<<< HEAD
-        "date": "Date",
-=======
         "delete": "delete",
->>>>>>> f9d35f19322741e389a7c8694c81c7a3854461ec
         "deleteAll": "delete all",
         "description": "description",
         "download": "download",
