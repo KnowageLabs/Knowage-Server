@@ -18,6 +18,10 @@
 
 package it.eng.spagobi.engines.whatif.api;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -84,11 +88,15 @@ public class CrossNavigationResource extends AbstractWhatIfEngineService {
 	 * @return the js function
 	 */
 	@POST
-	@Path("/getCrossNavigationUrl/{ordinal}")
+	@Path("/getCrossNavigationUrl/{coordinates}")
 	@Produces("text/html; charset=UTF-8")
 
-	public String getCrossNavigationUrl(@PathParam("ordinal") int ordinal) {
+	public String getCrossNavigationUrl(@PathParam("coordinates") String coordinatesAsString) {
 		logger.debug("IN");
+
+		List<String> list = Arrays.asList(coordinatesAsString.split(","));
+		List<Integer> coordinates = list.stream().map(s -> Integer.parseInt(s)).collect(Collectors.toList());
+
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		ModelConfig modelConfig = ei.getModelConfig();
@@ -100,7 +108,7 @@ public class CrossNavigationResource extends AbstractWhatIfEngineService {
 			applyConfiguration(modelConfig, model);
 
 			SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model.getCellSet();
-			SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(ordinal);
+			SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(coordinates);
 			jsFunction = CrossNavigationManager.buildCrossNavigationUrl(cellWrapper, ei);
 
 			// restore the query without calculated fields

@@ -7,12 +7,20 @@
     height: 100%;
 }
 
+.kn-height-full-vertical {
+    height: 100vh;
+}
+
 .kn-hide {
     display: none;
 }
 
 .kn-flex {
     flex: 1;
+}
+
+.kn-overflow-y {
+    overflow-y: auto;
 }
 
 .kn-no-select {
