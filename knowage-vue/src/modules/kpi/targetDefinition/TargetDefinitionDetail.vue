@@ -106,7 +106,7 @@
                         </Column>
                         <Column :style="targetDefinitionDetailDecriptor.table.iconColumn.style">
                             <template #body="slotProps">
-                                <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click="deleteKpi(slotProps.data)" />
+                                <Button icon="pi pi-trash" class="p-button-link" @click="deleteKpi(slotProps.data)" />
                             </template>
                         </Column>
                     </DataTable>

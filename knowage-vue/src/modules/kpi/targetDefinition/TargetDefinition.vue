@@ -32,7 +32,7 @@
                                 <span class="kn-list-item-text-secondary">{{ formatDate(slotProps.option.startValidity) }} - {{ formatDate(slotProps.option.endValidity) }}</span>
                             </div>
                             <Button icon="far fa-copy" class="p-button-text p-button-rounded p-button-plain" @click.stop="cloneTargetConfirm(slotProps.option)" data-test="clone-button" />
-                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteTargetConfirm(slotProps.option.id)" v-tooltip.top="$t('common.delete')" data-test="delete-button" />
+                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteTargetConfirm(slotProps.option.id)" data-test="delete-button" />
                         </div>
                     </template>
                 </Listbox>
