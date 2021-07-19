@@ -169,6 +169,14 @@ function pythonWidgetEditControllerFunction(
             $scope.showAction($scope.translate.load('kn.cockpit.python.errorenvironment'));
             return;
         }
+		if(!$scope.checkOutputType()){
+            $scope.showAction($scope.translate.load('kn.cockpit.python.errorOutputType'));
+            return;
+        }
+		if(!$scope.checkOutputVariable()){
+            $scope.showAction($scope.translate.load('kn.cockpit.python.errorOutputFile'));
+            return;
+        }
 		mdPanelRef.close();
 		if($scope.newModel.isNew) $scope.newModel.isNew = false;
 		angular.copy($scope.newModel,model);
@@ -259,6 +267,16 @@ function pythonWidgetEditControllerFunction(
 
 	$scope.checkEnvironment = function(){
         if (!$scope.newModel.pythonConf.environment) return false;
+        else return true;
+    }
+
+	$scope.checkOutputType = function(){
+        if (!$scope.newModel.pythonConf.outputType) return false;
+        else return true;
+    }
+
+	$scope.checkOutputVariable = function(){
+        if (!$scope.newModel.pythonConf.outputVariable) return false;
         else return true;
     }
 
