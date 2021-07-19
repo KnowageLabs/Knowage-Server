@@ -27,10 +27,10 @@
 
             <TabPanel>
                 <template #header>
-                    <span>{{ $t('kpi.kpiScheduler.frequency ') }}</span>
-
-                    <FrequencyCard></FrequencyCard>
+                    <span>{{ $t('kpi.kpiScheduler.frequency') }}</span>
                 </template>
+
+                <FrequencyCard :frequency="selectedSchedule.frequency"></FrequencyCard>
             </TabPanel>
 
             <TabPanel>
@@ -45,13 +45,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import FrequencyCard from './card/FrequencyCard/FrequencyCard.vue'
 import KpiCard from './card/KpiCard/KpiCard.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'kpi-scheduler-tab-view',
-    components: { KpiCard, TabView, TabPanel },
+    components: { FrequencyCard, KpiCard, TabView, TabPanel },
     props: {
         id: { type: String },
         clone: { type: String }
