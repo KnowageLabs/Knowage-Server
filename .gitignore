@@ -75,6 +75,10 @@ package-lock.json
 
 # zanata folder
 .zanata-cache/
+
+#knowage-vue folder (not used in versions <8.0)
+knowage-vue/*
+
 Knowage-Python/pythonwebservice/app/utilities/__pycache__/
 
 Knowage-Python/pythonwebservice/app/__pycache__/
@@ -94,3 +98,5 @@ Knowage-R/configs.R
 Knowage-R/.Rhistory
 
 Knowage-R/.RData
+
+Knowage-Python/src/hmackey
