@@ -3,6 +3,7 @@
         "author": "Author",
         "back": "back",
         "cancel": "cancel",
+        "category": "Category",
         "choose": "choose",
         "close": "close",
         "codingLanguages": {
@@ -12,6 +13,7 @@
             "python": "python"
         },
         "copyOf": "Copy of",
+        "date": "Date",
         "deleteAll": "delete all",
         "description": "description",
         "download": "download",
@@ -34,6 +36,7 @@
             "noElementSelected": "No element selected"
         },
         "information": "information",
+        "kpi": "KPI",
         "label": "label",
         "loggedUser": "logged user",
         "name": "name",
@@ -71,6 +74,50 @@
         },
         "version": "version",
         "warning": {}
+    },
+    "cron": {
+        "april": "April",
+        "august": "August",
+        "day": "Day",
+        "days": "Days",
+        "december": "December",
+        "endDate": "End date",
+        "everyHour": "Every Hour",
+        "everyMinute": "Every Minute",
+        "everyMonth": "Every Month",
+        "everyWeekday": "Every Weekday",
+        "everyday": "Every Day",
+        "february": "February",
+        "friday": "Friday",
+        "hour": "Hour",
+        "hours": "Hours",
+        "january": "January",
+        "july": "July",
+        "june": "June",
+        "march": "March",
+        "may": "May",
+        "minute": "Minute",
+        "minutes": "Minutes",
+        "monday": "Monday",
+        "month": "Month",
+        "months": "Months",
+        "nextExecution": "Next execution",
+        "november": "November",
+        "october": "October",
+        "saturday": "Saturday",
+        "selectDays": "Select day(s)",
+        "selectHours": "Select hour(s)",
+        "selectMinutes": "Select minute(s)",
+        "selectMonths": "Select month(s)",
+        "selectWeekdays": "Select weekday(s)",
+        "september": "September",
+        "startDate": "Start date",
+        "sunday": "Sunday",
+        "thursday": "Thursday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "weekday": "Weekday",
+        "weekdays": "Weekdays"
     },
     "downloadsDialog": {
         "columns": {
@@ -124,6 +171,17 @@
         "aboutKnowage": "About Knowage",
         "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
+    },
+    "kpi": {
+        "kpiScheduler": {
+            "addKpiAssociation": "Add KPI associations",
+            "frequency": "Frequency",
+            "hint": "No KPI selected",
+            "kpiName": "KPI Name",
+            "newScheduler": "New Scheduler",
+            "saveKpiAssociation": "Save new KPI",
+            "title": "Scheduler List"
+        }
     },
     "language": {
         "en_GB": "english (GB)",
