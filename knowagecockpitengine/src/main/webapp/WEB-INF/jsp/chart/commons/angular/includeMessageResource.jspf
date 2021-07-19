@@ -51,7 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     messageResource.setCurrentLocale('<%=GeneralUtilities.getAngularPropertiesFileName(locale, "_")%>');
     
     //en_US has already been loaded: if current locale is en_US it is not necessary to load it again
-    if ('<%=GeneralUtilities.getAngularPropertiesFileName(locale, "_")%>'!='en_US')
+    if ('<%=GeneralUtilities.getAngularPropertiesFileName(locale, "_")%>'!='en_US') {
     	messageResource.load('messages', function(){});
     }
 </script>
