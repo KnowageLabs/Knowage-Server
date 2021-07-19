@@ -371,14 +371,14 @@
 		    return weight;
 		}
 
-		mts.getLegend = function (referenceId){
+		mts.getLegend = function (referenceId, visualizationType){
 			var toReturn = [];
 			for (l in mts.activeLegend){
 				var colors = "";
 				var limits = [];
 				var tmpLayerName = l.split("|");
 				if (tmpLayerName[0] == referenceId && mts.activeLegend[l] && mts.activeLegend[l].choroplet){
-					if (mts.activeLegend[l].method=="CLASSIFY_BY_RANGES") {
+					if (mts.activeLegend[l].method=="CLASSIFY_BY_RANGES" || visualizationType == 'Range') {
 						var ranges = [];
 						for (c in mts.activeLegend[l].choroplet){
 							var tmpConf = mts.activeLegend[l].choroplet[c];

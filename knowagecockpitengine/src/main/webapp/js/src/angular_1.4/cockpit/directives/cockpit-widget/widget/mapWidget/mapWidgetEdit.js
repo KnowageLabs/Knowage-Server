@@ -39,13 +39,19 @@ function mapWidgetEditControllerFunction(
 	$scope.datasetsAdditionalInfos = {};
 	$scope.availableAggregationFunctionsForMeasures = ['SUM','AVG','MIN','MAX','COUNT'];
 	$scope.availableAggregationFunctionsForSpatialAttribute = ['MIN','MAX','COUNT'];
-	$scope.availableLegendAlignments = ['Left', 'Center', 'Right'];
 	$scope.availableBackgroundLayers = [];
 	$scope.availableOperators = [{'label':'==','value':'=='},{'label':'!=','value':'!='},{'label':'<','value':'<','range':true},{'label':'>','value':'>','range':true},{'label':'<=','value':'<=','range':true},{'label':'>=','value':'>=','range':true}];
 	$scope.availableChoroplethOperators = [{'label':'>=','value':'>='},{'label':'<','value':'<'}];
 	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},{"name":"choropleth","enabled":true,"class":"choropleth"}];
 	$scope.uploadImg = {};
 	$scope.widgetSpinner = false;
+	$scope.availableLegendAlignments = ['Left', 'Center', 'Right'];
+	if (!$scope.newModel.style.legend.alignment)
+		$scope.newModel.style.legend.alignment = "Left"; // init legend alignment
+	$scope.availableVisualizationTypes = ['Linear Gradient', 'Range'];
+	if (!$scope.newModel.style.legend.visualizationType)
+		$scope.newModel.style.legend.visualizationType = 'Linear Gradient'; // init legend visualizationType
+
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
 	}

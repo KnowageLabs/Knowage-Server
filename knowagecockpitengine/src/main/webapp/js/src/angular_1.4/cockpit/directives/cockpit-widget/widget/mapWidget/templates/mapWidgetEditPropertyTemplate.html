@@ -136,6 +136,12 @@
 											<md-option ng-repeat="pos in availableLegendAlignments" ng-value="pos">{{pos}}</md-option>
 										</md-select>
 									</md-input-container>
+									<md-input-container class="md-block" flex>
+										<label>{{::translate.load("sbi.cockpit.map.edit.legend.visualizationType")}}</label>
+										<md-select ng-model="newModel.style.legend.visualizationType">
+											<md-option ng-repeat="vis in availableVisualizationTypes" ng-value="vis">{{vis}}</md-option>
+										</md-select>
+									</md-input-container>
 						   		</div>
 						   	</div>
 				       </md-card-content>
