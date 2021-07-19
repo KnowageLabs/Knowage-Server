@@ -145,6 +145,7 @@
             "noKpi": "No KPI selected",
             "noKpiMessage": "At least one KPI must be associated",
             "saveTarget": "Save target",
+            "savingError": "Errors occurred while saving Target",
             "startDate": "Start validity date",
             "title": "Target definition",
             "titleAddAssociations": "Add KPI associations"

@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0">
         <template #right>
-            <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="showCategoryDialog" />
+            <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" :disabled="buttonDisabled" @click="showCategoryDialog" />
             <Button class="kn-button p-button-text p-button-rounded" icon="pi pi-times" @click="closeTemplate" />
         </template>
     </Toolbar>
@@ -30,39 +30,43 @@
                         </div>
                         <div class="kn-flex">
                             <div class="p-d-flex p-jc-between">
-                                <span class="p-float-label">
-                                    <Calendar
-                                        id="startDate"
-                                        class="kn-material-input"
-                                        v-model="v$.target.startValidity.$model"
-                                        :class="{
-                                            'p-invalid': v$.target.startValidity.$invalid && v$.target.startValidity.$dirty
-                                        }"
-                                        :showIcon="true"
-                                        :manualInput="false"
-                                        @date-select="setDirty"
-                                        @blur="v$.target.startValidity.$touch()"
-                                    />
-                                    <label for="startDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.startDate') }} * </label>
-                                </span>
-                                <KnValidationMessages :vComp="v$.target.startValidity" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.startDate') }"></KnValidationMessages>
-                                <div class="p-d-flex">
+                                <div>
                                     <span class="p-float-label">
                                         <Calendar
-                                            id="endDate"
+                                            id="startDate"
                                             class="kn-material-input"
-                                            v-model="v$.target.endValidity.$model"
+                                            v-model="v$.target.startValidity.$model"
                                             :class="{
-                                                'p-invalid': v$.target.endValidity.$invalid && v$.target.endValidity.$dirty
+                                                'p-invalid': v$.target.startValidity.$invalid && v$.target.startValidity.$dirty
                                             }"
                                             :showIcon="true"
                                             :manualInput="false"
                                             @date-select="setDirty"
-                                            @blur="v$.target.endValidity.$touch()"
+                                            @blur="v$.target.startValidity.$touch()"
                                         />
-                                        <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.endDate') }} * </label>
+                                        <label for="startDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.startDate') }} * </label>
                                     </span>
-                                    <KnValidationMessages :vComp="v$.target.endValidity" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.endDate') }" :specificTranslateKeys="{ is_after_date: 'kpi.targetDefinition.endDateBeforeStart' }"></KnValidationMessages>
+                                    <KnValidationMessages :vComp="v$.target.startValidity" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.startDate') }"></KnValidationMessages>
+                                </div>
+                                <div class="p-d-flex">
+                                    <div>
+                                        <span class="p-float-label">
+                                            <Calendar
+                                                id="endDate"
+                                                class="kn-material-input"
+                                                v-model="v$.target.endValidity.$model"
+                                                :class="{
+                                                    'p-invalid': v$.target.endValidity.$invalid && v$.target.endValidity.$dirty
+                                                }"
+                                                :showIcon="true"
+                                                :manualInput="false"
+                                                @date-select="setDirty"
+                                                @blur="v$.target.endValidity.$touch()"
+                                            />
+                                            <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.endDate') }} * </label>
+                                        </span>
+                                        <KnValidationMessages :vComp="v$.target.endValidity" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.endDate') }" :specificTranslateKeys="{ is_after_date: 'kpi.targetDefinition.endDateBeforeStart' }"></KnValidationMessages>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -83,9 +87,9 @@
                     </div>
                 </template>
                 <template #content>
-                    <DataTable :value="kpi" :loading="loading" class="editable-cells-table" dataKey="id" responsiveLayout="stack" editMode="cell" :scrollable="true" scrollHeight="400px">
+                    <DataTable :value="kpi" :loading="loading" class="editable-cells-table" dataKey="id" responsiveLayout="stack" editMode="cell" :scrollable="true" scrollHeight="400px" data-test="selected-kpi-table">
                         <template #empty>
-                            {{ $t('common.info.noDataFound') }}
+                            {{ $t('common.info.noElementSelected') }}
                         </template>
                         <template #loading>
                             {{ $t('common.info.dataLoading') }}
@@ -102,7 +106,7 @@
                         </Column>
                         <Column :style="targetDefinitionDetailDecriptor.table.iconColumn.style">
                             <template #body="slotProps">
-                                <Button icon="pi pi-trash" class="p-button-link" @click="deleteKpi(slotProps.data)" />
+                                <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click="deleteKpi(slotProps.data)" />
                             </template>
                         </Column>
                     </DataTable>
@@ -110,14 +114,19 @@
             </Card>
         </div>
     </div>
-    <Dialog :visible="kpiDialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
+    <Dialog :header="$t('kpi.targetDefinition.addKpiBtn')" :visible="kpiDialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
         <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0">
-                <template #right>
-                    <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="addKpi" />
-                    <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="closeKpiDialog" />
-                </template>
-            </Toolbar>
+            <div>
+                <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0">
+                    <template #left>
+                        {{ $t('kpi.targetDefinition.addKpiBtn') }}
+                    </template>
+                    <template #right>
+                        <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="addKpi" />
+                        <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="closeKpiDialog" />
+                    </template>
+                </Toolbar>
+            </div>
         </template>
         <DataTable
             :paginator="true"
@@ -153,14 +162,14 @@
         </DataTable>
     </Dialog>
     <Dialog :header="$t('kpi.targetDefinition.saveTarget')" v-model:visible="categoryDialogVisiable" :modal="true" :closable="true" class="p-fluid kn-dialog--toolbar--primary">
-        <div class="p-pt-3">
+        <div class="p-pt-4">
             <span class="p-float-label">
                 <AutoComplete id="category" v-model="target.category" :suggestions="filteredCategory" @complete="searchCategory($event)" field="valueName" />
                 <label for="category" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.kpiCategory') }}</label>
             </span>
         </div>
         <template #footer>
-            <Button label="Apply" icon="pi pi-check" @click="handleSubmit" />
+            <Button label="Apply" icon="pi pi-check" class="kn-button kn-button--primary " @click="handleSubmit" />
         </template>
     </Dialog>
 </template>
@@ -252,6 +261,11 @@ export default defineComponent({
         }
         return {
             target: createValidations('target', targetDefinitionValidationDescriptor.validations.target, customValidators)
+        }
+    },
+    computed: {
+        buttonDisabled(): any {
+            return this.v$.$invalid || this.kpi.length < 1
         }
     },
     created() {
@@ -347,7 +361,6 @@ export default defineComponent({
                     msg: this.$t('kpi.targetDefinition.noKpiMessage')
                 })
             } else if (this.v$.$invalid) {
-                console.log(this.v$)
                 this.v$.$touch()
             } else {
                 this.loadCategory()
@@ -368,12 +381,21 @@ export default defineComponent({
             console.log(this.target)
             let operation = this.target.id ? 'update' : 'insert'
             this.categoryDialogVisiable = true
-            await axios.post(url, this.target).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t(this.targetDefinitionDetailDecriptor.operation[operation].toastTitle),
-                    msg: this.$t(this.targetDefinitionDetailDecriptor.operation.success)
-                })
-                this.$emit('saved')
+            await axios.post(url, this.target).then((response) => {
+                console.log('RESPONSE', response)
+                if (response.data.errors != undefined && response.data.errors.length > 0) {
+                    this.categoryDialogVisiable = false
+                    this.$store.commit('setError', {
+                        title: this.$t('kpi.targetDefinition.savingError'),
+                        msg: response.data.errors[0].message
+                    })
+                } else {
+                    this.$store.commit('setInfo', {
+                        title: this.$t(this.targetDefinitionDetailDecriptor.operation[operation].toastTitle),
+                        msg: this.$t(this.targetDefinitionDetailDecriptor.operation.success)
+                    })
+                    this.$emit('saved')
+                }
             })
         },
         closeTemplate() {

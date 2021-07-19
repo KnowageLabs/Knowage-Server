@@ -26,13 +26,13 @@
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
-                        <div class="kn-list-item">
+                        <div class="kn-list-item" data-test="list-item">
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.name }}</span>
                                 <span class="kn-list-item-text-secondary">{{ formatDate(slotProps.option.startValidity) }} - {{ formatDate(slotProps.option.endValidity) }}</span>
                             </div>
                             <Button icon="far fa-copy" class="p-button-text p-button-rounded p-button-plain" @click.stop="cloneTargetConfirm(slotProps.option)" data-test="clone-button" />
-                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteTargetConfirm(slotProps.option.id)" data-test="delete-button" />
+                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteTargetConfirm(slotProps.option.id)" v-tooltip.top="$t('common.delete')" data-test="delete-button" />
                         </div>
                     </template>
                 </Listbox>
@@ -60,10 +60,8 @@ export default defineComponent({
     data() {
         return {
             targetList: [] as iTargetDefinition[],
-            selectedTarget: {} as iTargetDefinition,
             loading: false,
             showHint: true,
-            formVisible: false,
             touched: false,
             targetDefinitionDecriptor: targetDefinitionDecriptor,
             formatDate: formatDate
@@ -115,12 +113,6 @@ export default defineComponent({
                 })
             }
         },
-        setSelectedTarget(target: any) {
-            if (target) {
-                this.selectedTarget = target.value
-            }
-            this.formVisible = true
-        },
         deleteTargetConfirm(targetId: number) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
@@ -162,7 +154,6 @@ export default defineComponent({
         },
         handleClose() {
             this.showHint = true
-            this.formVisible = false
             this.$router.replace('/target-definition')
         },
         reloadMetadata() {

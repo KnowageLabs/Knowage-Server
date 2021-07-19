@@ -167,5 +167,11 @@ describe('Target Definition List', () => {
 
         expect($router.push).toHaveBeenCalledWith('/target-definition/new-target-definition')
     })
-    // it("open filled detail when an item is clicked", () => {});
+    it('open filled detail when an item is clicked', async () => {
+        const wrapper = factory()
+
+        await flushPromises()
+        await wrapper.find('[data-test="list-item"]').trigger('click')
+        expect($router.push).toHaveBeenCalledWith(`/target-definition/edit?id=88&clone=false`)
+    })
 })
