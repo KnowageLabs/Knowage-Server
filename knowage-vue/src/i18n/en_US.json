@@ -3,6 +3,7 @@
         "author": "Author",
         "back": "back",
         "cancel": "cancel",
+        "category": "Category",
         "choose": "choose",
         "close": "close",
         "codingLanguages": {
@@ -34,6 +35,7 @@
             "noElementSelected": "No element selected"
         },
         "information": "information",
+        "kpi": "KPI",
         "label": "label",
         "loggedUser": "logged user",
         "name": "name",
@@ -124,6 +126,13 @@
         "aboutKnowage": "About Knowage",
         "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
+    },
+    "kpi": {
+        "kpiScheduler": {
+            "hint": "No KPI selected",
+            "newScheduler": "New Scheduler",
+            "title": "Scheduler List"
+        }
     },
     "language": {
         "en_GB": "english (GB)",
