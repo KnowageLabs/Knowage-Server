@@ -318,6 +318,25 @@
 				width:50px;
 				text-align: left;
 			}
+			&.left{
+				left:0%; 
+				transform: translate(-0%, 0%);
+			}
+			&.center{
+				left:50%; 
+				transform: translate(-50%, 0%);
+			}
+			&.right{
+				left:100%; 
+				transform: translate(-100%, 0%);
+			}
+			.toggleButton{
+				position:absolute; 
+				top:0; 
+				right:0; 
+				background:none; 
+				border:none;
+			}
 		}
 		.mapOptionsSidenav {
 	    	.indicatorOptions {

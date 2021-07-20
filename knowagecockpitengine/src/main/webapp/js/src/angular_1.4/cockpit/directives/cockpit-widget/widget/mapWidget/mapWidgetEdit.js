@@ -45,9 +45,9 @@ function mapWidgetEditControllerFunction(
 	$scope.visualizationTypes = [{"name":"markers","enabled":true,"class":"markers"},{"name":"clusters","enabled":true,"class":"clusters"},{"name":"heatmap","enabled":true,"class":"heatmap"},{"name":"choropleth","enabled":true,"class":"choropleth"}];
 	$scope.uploadImg = {};
 	$scope.widgetSpinner = false;
-	$scope.availableLegendAlignments = ['Left', 'Center', 'Right'];
+	$scope.availableLegendAlignments = ['left', 'center', 'right'];
 	if (!$scope.newModel.style.legend.alignment)
-		$scope.newModel.style.legend.alignment = "Left"; // init legend alignment
+		$scope.newModel.style.legend.alignment = "left"; // init legend alignment
 	$scope.availableVisualizationTypes = ['Linear Gradient', 'Range'];
 	if (!$scope.newModel.style.legend.visualizationType)
 		$scope.newModel.style.legend.visualizationType = 'Linear Gradient'; // init legend visualizationType
