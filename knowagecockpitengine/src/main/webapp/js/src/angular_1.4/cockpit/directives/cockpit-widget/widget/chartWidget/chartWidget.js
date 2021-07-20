@@ -180,11 +180,11 @@ function cockpitChartWidgetControllerFunction(
 
 	$scope.$on('changeChart', function (event, data) {
 		setAggregationsOnChartEngine($scope.ngModel.content,sbiModule_util)
-		$scope.$broadcast("changeChartType",data);
+		$scope.$broadcast("changedChartType",data);
 	});
 
 	$scope.$on('changedChartType', function (event, data){
-		$scope.ngModel.content.chartTemplate.CHART = data.CHART
+		$scope.ngModel.content.chartTemplate.CHART.type = data.type;
 		$scope.refreshWidget(undefined,'init', true);
 	});
 	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType,dataAndChartConf){
