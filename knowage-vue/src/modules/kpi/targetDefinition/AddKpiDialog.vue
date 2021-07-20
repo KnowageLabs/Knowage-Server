@@ -19,7 +19,7 @@
             :rowsPerPageOptions="[10, 15, 20]"
             v-model:selection="selectedKpi"
             :value="kpi"
-            :loading="loading"
+            :loading="loadingKpi"
             class="p-datatable-sm kn-table"
             dataKey="kpiId"
             responsiveLayout="stack"
@@ -51,6 +51,7 @@
 import { defineComponent, PropType } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Dialog from 'primevue/dialog'
 import { iValues } from './TargetDefinition'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { FilterOperator } from 'primevue/api'
@@ -60,7 +61,8 @@ export default defineComponent({
     name: 'add-kpi-dialog',
     components: {
         DataTable,
-        Column
+        Column,
+        Dialog
     },
     props: {
         dialogVisible: {
@@ -70,12 +72,15 @@ export default defineComponent({
         kpi: {
             type: Array as PropType<iValues[]>,
             required: false
+        },
+        loadingKpi: {
+            type: Boolean,
+            default: false
         }
     },
-    emits: ['close'],
+    emits: ['close', 'add'],
     data() {
         return {
-            loading: false,
             selectedKpi: [] as iValues[],
             targetDefinitionDetailDecriptor: targetDefinitionDetailDecriptor,
             filters: {
@@ -106,6 +111,8 @@ export default defineComponent({
     methods: {
         addKpi() {
             console.log(this.selectedKpi)
+            this.$emit('add', this.selectedKpi)
+            this.selectedKpi = []
         },
         closeKpiDialog() {
             this.$emit('close')

@@ -7,7 +7,8 @@
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center">
         <div class="p-col-9">
-            <Card>
+            <target-definition-form v-model="target" :vcomp="v$.target"></target-definition-form>
+            <!-- <Card>
                 <template #content>
                     <form class="p-fluid p-m-5">
                         <div class="p-field">
@@ -72,7 +73,7 @@
                         </div>
                     </form>
                 </template>
-            </Card>
+            </Card> -->
             <Card>
                 <template #header>
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -114,56 +115,7 @@
             </Card>
         </div>
     </div>
-
-    <add-kpi-dialog :kpi="filteredKpi" :dialogVisible="kpiDialogVisible" @close="closeKpiDialog"></add-kpi-dialog>
-
-    <!-- <Dialog :header="$t('kpi.targetDefinition.addKpiBtn')" :visible="kpiDialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
-        <template #header>
-            <div>
-                <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0">
-                    <template #left>
-                        {{ $t('kpi.targetDefinition.addKpiBtn') }}
-                    </template>
-                    <template #right>
-                        <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="addKpi" />
-                        <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="closeKpiDialog" />
-                    </template>
-                </Toolbar>
-            </div>
-        </template>
-        <DataTable
-            :paginator="true"
-            :rows="15"
-            :rowsPerPageOptions="[10, 15, 20]"
-            v-model:selection="selectedKpi"
-            :value="filteredKpi"
-            :loading="loadingAllKpi"
-            class="p-datatable-sm kn-table"
-            dataKey="kpiId"
-            responsiveLayout="stack"
-            v-model:filters="filters"
-            filterDisplay="menu"
-            :globalFilterFields="targetDefinitionDetailDecriptor.globalFilterFields"
-        >
-            <template #header>
-                <div class="table-header">
-                    <span class="p-input-icon-left">
-                        <i class="pi pi-search" />
-                        <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
-                    </span>
-                </div>
-            </template>
-            <template #empty>
-                {{ $t('common.info.noDataFound') }}
-            </template>
-            <template #loading>
-                {{ $t('common.info.dataLoading') }}
-            </template>
-
-            <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-            <Column v-for="col of targetDefinitionDetailDecriptor.columnsAllKPI" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" class="kn-truncated"> </Column>
-        </DataTable>
-    </Dialog> -->
+    <add-kpi-dialog :kpi="filteredKpi" :dialogVisible="kpiDialogVisible" :loadingKpi="loadingAllKpi" @close="closeKpiDialog" @add="addKpi"></add-kpi-dialog>
     <Dialog :header="$t('kpi.targetDefinition.saveTarget')" v-model:visible="categoryDialogVisiable" :modal="true" :closable="true" class="p-fluid kn-dialog--toolbar--primary">
         <div class="p-pt-4">
             <span class="p-float-label">
@@ -180,33 +132,33 @@
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { formatDate } from '@/helpers/commons/localeHelper'
-import { filterDefault } from '@/helpers/commons/filterHelper'
-import { FilterOperator } from 'primevue/api'
 import AutoComplete from 'primevue/autocomplete'
 import targetDefinitionDetailDecriptor from './TargetDefinitionDetailDescriptor.json'
 import targetDefinitionValidationDescriptor from './TargetDefinitionValidationDescriptor.json'
 import Column from 'primevue/column'
-import Calendar from 'primevue/calendar'
+//import Calendar from 'primevue/calendar'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import InputNumber from 'primevue/inputnumber'
 import axios from 'axios'
 import { iCategory, iTargetDefinition, iValues } from './TargetDefinition'
 import useValidate from '@vuelidate/core'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+//import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import AddKpiDialog from './AddKpiDialog.vue'
+import TargetDefinitionForm from './TargetDefinitionForm.vue'
 
 export default defineComponent({
     name: 'target-definition-detail',
     components: {
-        Calendar,
+        //Calendar,
         DataTable,
         Column,
         Dialog,
-        KnValidationMessages,
+        //KnValidationMessages,
         AutoComplete,
         InputNumber,
-        AddKpiDialog
+        AddKpiDialog,
+        TargetDefinitionForm
     },
     props: {
         id: {
@@ -224,7 +176,6 @@ export default defineComponent({
             targetDefinitionValidationDescriptor,
             kpi: [] as iValues[],
             filteredKpi: [] as iValues[],
-            selectedKpi: [] as iValues[],
             categories: [] as iCategory[],
             filteredCategory: [] as iCategory[],
             selectedCategory: null,
@@ -232,30 +183,7 @@ export default defineComponent({
             loadingAllKpi: false,
             kpiDialogVisible: false,
             categoryDialogVisiable: false,
-            v$: useValidate() as any,
-            filters: {
-                global: [filterDefault],
-                kpiName: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                kpiCategory: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                domainCode: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                kpiDate: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                kpiAuthor: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                }
-            } as Object
+            v$: useValidate() as any
         }
     },
     validations() {
@@ -416,17 +344,16 @@ export default defineComponent({
         closeKpiDialog() {
             this.kpiDialogVisible = false
         },
-        addKpi() {
-            this.kpi.push(...this.selectedKpi)
+        addKpi(selectedKpi: iValues[]) {
+            this.kpi.push(...selectedKpi)
             this.kpiDialogVisible = false
-            if (this.selectedKpi.length > 0) {
+            if (selectedKpi.length > 0) {
                 this.$store.commit('setInfo', {
                     title: this.$t('kpi.targetDefinition.kpiAddedTitile'),
                     msg: this.$t('kpi.targetDefinition.kpiAddedMessage')
                 })
                 this.setDirty()
             }
-            this.selectedKpi = []
         },
         async checkId() {
             if (this.id) {
