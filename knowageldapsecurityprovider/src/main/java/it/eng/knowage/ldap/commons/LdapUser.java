@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,20 +15,38 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.security.exceptions;
 
-import javax.naming.NamingException;
+package it.eng.knowage.ldap.commons;
 
-public class LDAPAuthenticationFailed extends Exception {
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
 
-	private static final long serialVersionUID = 5240152507244577380L;
+public class LdapUser {
 
-	public LDAPAuthenticationFailed(String message, NamingException e) {
-		super(message, e);
+	String distinguishName;
+	String userId;
+	Attributes attributes;
+
+	public LdapUser(String distinguishName, String userId, Attributes attributes) {
+		super();
+		this.distinguishName = distinguishName;
+		this.userId = userId;
+		this.attributes = attributes;
 	}
 
-	public LDAPAuthenticationFailed(String message) {
-		super(message);
+	public String getDistinguishName() {
+		return distinguishName;
 	}
 
+	public String getUserId() {
+		return userId;
+	}
+
+	public Attributes getAttributes() {
+		return attributes;
+	}
+
+	public Attribute getAttribute(String name) {
+		return attributes.get(name);
+	}
 }
