@@ -90,49 +90,6 @@
         </div>
     </div>
 
-    <!-- <Dialog :contentStyle="metadataDefinitionTabViewDescriptor.dialog.style" :header="$t('kpi.measureDefinition.saveInProgress')" :visible="showSaveDialog" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
-        <div class="p-field p-m-2">
-            <span class="p-float-label">
-                <InputText class="kn-material-input" type="text" v-model.trim="rule.name" />
-                <label class="kn-material-input-label"> {{ $t('common.name') }} </label>
-            </span>
-        </div>
-        <Toolbar v-if="newAlias.length > 0 || reusedAlias.length > 0" class="kn-toolbar kn-toolbar--primary">
-            <template #left>
-                {{ $t('kpi.measureDefinition.alias') }}
-            </template>
-        </Toolbar>
-        <div v-if="newAlias.length > 0">
-            <h4>{{ $t('common.new') }}</h4>
-            <Chip v-for="alias in newAlias" class="p-m-2" :key="alias.id" :label="alias"></Chip>
-        </div>
-
-        <div v-if="reusedAlias.length > 0">
-            <h4>{{ $t('common.reused') }}</h4>
-            <Chip v-for="alias in reusedAlias" class="p-m-2" :key="alias.id" :label="alias"></Chip>
-        </div>
-
-        <Toolbar v-if="newPlaceholder.length > 0 || reusedPlaceholder.length > 0" class="kn-toolbar kn-toolbar--primary">
-            <template #left>
-                {{ $t('kpi.measureDefinition.placeholder') }}
-            </template>
-        </Toolbar>
-
-        <div v-if="newPlaceholder.length > 0">
-            <h4>{{ $t('common.new') }}</h4>
-            <Chip v-for="placeholder in newPlaceholder" class="p-m-2" :key="placeholder.id" :label="placeholder"></Chip>
-        </div>
-
-        <div v-if="reusedPlaceholder.length > 0">
-            <h4>{{ $t('common.reused') }}</h4>
-            <Chip v-for="placeholder in reusedPlaceholder" class="p-m-2" :key="placeholder.id" :label="placeholder"></Chip>
-        </div>
-
-        <template #footer>
-            <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="showSaveDialog = false"></Button>
-            <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="saveRule" :disabled="saveRuleButtonDisabled"></Button>
-        </template>
-    </Dialog> -->
     <SubmitDialog v-if="showSaveDialog" :ruleName="rule.name" :newAlias="newAlias" :reusedAlias="reusedAlias" :newPlaceholder="newPlaceholder" :reusedPlaceholder="reusedPlaceholder" @close="showSaveDialog = false" @save="saveRule($event)"></SubmitDialog>
 
     <Dialog :style="metadataDefinitionTabViewDescriptor.dialog.style" :modal="true" :visible="errorMessage" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
@@ -228,9 +185,6 @@ export default defineComponent({
         }
     },
     async created() {
-        // console.log('ID: ', this.id)
-        // console.log('Rule Version: ', this.ruleVersion)
-        // console.log('Clone: ', this.clone)
         this.loading = true
         if (this.id && this.ruleVersion) {
             await this.loadSelectedRule()
@@ -249,10 +203,6 @@ export default defineComponent({
         await this.loadPlaceholders()
         await this.loadDomainsData()
         this.loading = false
-        // console.log('ALISASES FOR RULE available: ', this.availableAliasesForRule)
-        // console.log('ALISASESFOR RULE  not available: ', this.notAvailableAliasesForRule)
-        // console.log('PLACEHOLDERS: ', this.placeholdersList)
-        console.log('RULE BOJAN', this.rule)
     },
     methods: {
         async loadSelectedRule() {
@@ -263,7 +213,6 @@ export default defineComponent({
         },
         async loadAliases() {
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listAvailableAlias`
-            // console.log('RULE TEEEEEST', this.rule)
             if (this.rule.id) {
                 url += `?ruleId=${this.id}&ruleVersion=${this.ruleVersion}`
             }
@@ -286,26 +235,19 @@ export default defineComponent({
         async setTabChanged(tabIndex: any) {
             this.activeTab = tabIndex
             await this.previewQuery(false, false)
-            console.log('METADATA TAB RULE ', this.rule)
 
             this.rule.ruleOutputs.forEach((ruleOutput: any) => {
                 this.setAliasIcon(ruleOutput)
                 if (!ruleOutput.category) {
                     ruleOutput.category = { valueCd: '' }
                 }
-                // if (!ruleOutput.hierarchy) {
-                //     ruleOutput.hierarchy = { valueCd: null }
-                // }
             })
 
-            console.log('ERROR MESSAGE: ', this.errorMessage)
             if (this.errorMessage) {
-                console.log('STIGAO!!!')
                 this.activeTab = 0
             }
         },
         setNewAliases() {
-            // console.log('SET NEW ALIASES')
             this.newAlias = []
             this.reusedAlias = []
             this.rule.ruleOutputs.forEach((ruleOutput: any) => {
@@ -317,10 +259,8 @@ export default defineComponent({
             })
             this.newAlias.sort()
             this.reusedAlias.sort()
-            // console.log('NEW ALIASES', this.newAlias)
         },
         setNewPlaceholders() {
-            // console.log('SET NEW ALIASES')
             this.newPlaceholder = []
             this.reusedPlaceholder = []
             this.rule.placeholders.forEach((placeholder: any) => {
@@ -332,24 +272,18 @@ export default defineComponent({
             })
             this.newPlaceholder.sort()
             this.reusedPlaceholder.sort()
-            // console.log('NEW PLACEHOLDERS', this.newPlaceholder)
         },
         placeholderExists(name: string) {
-            console.log('PLACEHOLDER EXISTS: ', this.rule)
             let exists = false
             this.placeholdersList.forEach((placeholder: any) => {
-                console.log('Placeholder Exists: ' + placeholder.name.toUpperCase() + ' === ' + name.toUpperCase())
                 if (placeholder.name.toUpperCase() === name.toUpperCase()) {
-                    // console.log('ALIAS Exists!')
                     exists = true
                 }
             })
             return exists
         },
         setAliasIcon(ruleOutput: any) {
-            console.log('SET ALIAS ICON: ', ruleOutput.alias)
             if (!this.aliasExists(ruleOutput.alias) && !this.aliasUsedByMeasure(ruleOutput.alias)) {
-                console.log('ALIAS doesnt Exist!')
                 ruleOutput.aliasIcon = 'fa fa-exclamation-triangle icon-missing'
             }
             if (this.aliasUsedByMeasure(ruleOutput.alias)) {
@@ -359,9 +293,7 @@ export default defineComponent({
         aliasExists(name: string) {
             let exists = false
             this.availableAliasList.forEach((alias: any) => {
-                // console.log('Exists: ' + alias.name.toUpperCase() + ' === ' + name.toUpperCase())
                 if (alias.name.toUpperCase() === name.toUpperCase()) {
-                    // console.log('ALIAS Exists!')
                     exists = true
                 }
             })
@@ -370,17 +302,13 @@ export default defineComponent({
         aliasUsedByMeasure(name: string) {
             let used = false
             this.notAvailableAliasList.forEach((alias: any) => {
-                //console.log('Used: ' + alias.name.toUpperCase() + ' === ' + name.toUpperCase())
                 if (alias.name.toUpperCase() === name.toUpperCase()) {
-                    //console.log('ALIAS USED!')
                     used = true
                 }
             })
             return used
         },
         async previewQuery(save: boolean, hasPlaceholders: boolean) {
-            // console.log('RULE: ', this.rule)
-            console.log('CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALED')
             const tempRuleOutputs = this.rule.ruleOutputs
             this.rule.ruleOutputs.forEach((ruleOutput) => {
                 delete ruleOutput.aliasIcon
@@ -394,7 +322,6 @@ export default defineComponent({
             if (this.rule.definition) {
                 this.loadPlaceholder()
             }
-            console.log('RULE BEFORE QUERY ', this.rule)
             if ((this.rule.placeholders && this.rule.placeholders.length === 0) || hasPlaceholders) {
                 const postData = { rule: this.rule, maxItem: 10 }
                 await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData).then((response) => {
@@ -408,10 +335,8 @@ export default defineComponent({
                     }
                 })
             }
-            console.log('Submit error', this.errorMessage)
             this.setNewAliases()
             this.setNewPlaceholders()
-            console.log('Rule after prepare', this.rule)
             if (save && !this.errorMessage) {
                 await this.preSaveRule()
             }
@@ -449,7 +374,6 @@ export default defineComponent({
                     this.errorMessage = this.$t('kpi.measureDefinition.presaveErrors.metadataMissingText')
                 }
 
-                console.log('PRESAVE RESPONSE: ', response)
                 if (response.data.errors) {
                     this.errorTitle = null
                     this.errorMessage = response.data.errors[0]
@@ -486,7 +410,7 @@ export default defineComponent({
         },
         columnToRuleOutputs() {
             const tempMetadatas = [] as any[]
-            // console.log('METADATA COLUMNS: ', this.columns)
+
             for (let index in this.columns) {
                 tempMetadatas.push(this.columns[index].label.toUpperCase())
                 if (this.ruleOutputIndexOfColumnName(this.columns[index].label) === -1) {
@@ -506,7 +430,6 @@ export default defineComponent({
                     index--
                 }
             }
-            // console.log('RULE AFTER METHOD!!!', this.rule)
         },
         ruleOutputIndexOfColumnName(columnName: string) {
             for (let i = 0; i < this.rule.ruleOutputs.length; i++) {
@@ -517,17 +440,12 @@ export default defineComponent({
             return -1
         },
         loadPlaceholder() {
-            console.log('RULE IN LOAD PLACEHOLDER', this.rule)
             const placeholder = this.rule.definition.match(/@\w*/g)
-            // console.log('PLACEHOLDER ', placeholder)
             if (placeholder != null) {
                 for (let i = 0; i < placeholder.length; i++) {
                     const placeholderName = placeholder[i].substring(1, placeholder[i].length)
-                    let tempPlaceholder = this.rule.placeholders.find((tempPlaceholder) => {
-                        // console.log(tempPlaceholder.name + ' === ' + placeholderName)
-                        return tempPlaceholder.name === placeholderName
-                    })
-                    // console.log('TEMP PLACEHOLDER', tempPlaceholder)
+                    let tempPlaceholder = this.rule.placeholders.find((tempPlaceholder) => tempPlaceholder.name === placeholderName)
+
                     if (!tempPlaceholder) {
                         tempPlaceholder = this.placeholdersList.find((placeholder: any) => placeholder.name === tempPlaceholder?.name) as any
                         if (tempPlaceholder == undefined) {
@@ -540,7 +458,7 @@ export default defineComponent({
                             this.rule.placeholders.push(tempPlaceholder)
                         }
                     }
-                    // console.log('RULE PLACEHOLDERS: ', this.rule.placeholders)
+
                     for (let index = 0; index < this.rule.placeholders.length; index++) {
                         if (placeholder.indexOf('@' + this.rule.placeholders[index].name) == -1) {
                             this.rule.placeholders.splice(index, 1)
@@ -566,7 +484,6 @@ export default defineComponent({
                     }
                 })
             }
-            // console.log('caaaaled', this.showSaveDialog)
         },
         closeErrorMessageDialog() {
             this.errorMessage = null
@@ -588,7 +505,6 @@ export default defineComponent({
             }
         },
         setCodeInput(input: string) {
-            console.log('setCodeInput: ', input)
             if (this.activeTab === 0) {
                 this.codeInput = input
             }
