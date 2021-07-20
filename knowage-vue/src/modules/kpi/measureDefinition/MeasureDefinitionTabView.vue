@@ -292,7 +292,9 @@ export default defineComponent({
                         this.columns = response.data.columns
                         this.rows = response.data.rows
                         this.columnToRuleOutputs()
-                        this.preview = true
+                        if (this.activeTab === 0) {
+                            this.preview = true
+                        }
                     }
                 })
             }
@@ -336,7 +338,7 @@ export default defineComponent({
                 }
 
                 if (response.data.errors) {
-                    this.errorTitle = null
+                    this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
                     this.errorMessage = response.data.errors[0]
                 }
 
