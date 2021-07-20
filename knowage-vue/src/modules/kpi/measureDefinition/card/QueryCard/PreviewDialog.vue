@@ -2,6 +2,9 @@
     <Dialog :style="previewDialogDescriptor.dialog.style" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :header="$t('kpi.measureDefinition.preview')" :closable="false">
         <div class="p-d-flex">
             <DataTable :value="rows" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px">
+                <template #empty>
+                    {{ $t('common.info.noDataFound') }}
+                </template>
                 <Column class="kn-truncated" v-for="col of columns" :field="col.name" :header="col.label" :key="col.field" :sortable="true"> </Column>
             </DataTable>
             <div v-if="this.rule.placeholders && this.rule.placeholders.length > 0" class="p-col-3">

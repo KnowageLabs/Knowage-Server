@@ -90,7 +90,7 @@
         </div>
     </div>
 
-    <Dialog :contentStyle="metadataDefinitionTabViewDescriptor.dialog.style" :header="$t('kpi.measureDefinition.saveInProgress')" :visible="showSaveDialog" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <!-- <Dialog :contentStyle="metadataDefinitionTabViewDescriptor.dialog.style" :header="$t('kpi.measureDefinition.saveInProgress')" :visible="showSaveDialog" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div class="p-field p-m-2">
             <span class="p-float-label">
                 <InputText class="kn-material-input" type="text" v-model.trim="rule.name" />
@@ -132,7 +132,8 @@
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="showSaveDialog = false"></Button>
             <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="saveRule" :disabled="saveRuleButtonDisabled"></Button>
         </template>
-    </Dialog>
+    </Dialog> -->
+    <SubmitDialog v-if="showSaveDialog" :ruleName="rule.name" :newAlias="newAlias" :reusedAlias="reusedAlias" :newPlaceholder="newPlaceholder" :reusedPlaceholder="reusedPlaceholder" @close="showSaveDialog = false" @save="saveRule($event)"></SubmitDialog>
 
     <Dialog :style="metadataDefinitionTabViewDescriptor.dialog.style" :modal="true" :visible="errorMessage" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
         <p>{{ errorMessage }}</p>
@@ -146,18 +147,18 @@
 import { defineComponent } from 'vue'
 import { iDatasource, iMeasure, iRule, iPlaceholder } from './MeasureDefinition'
 import axios from 'axios'
-import Chip from 'primevue/chip'
 import Dialog from 'primevue/dialog'
 import Listbox from 'primevue/listbox'
 import MetadataCard from './card/MetadataCard/MetadataCard.vue'
 import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDescriptor.json'
 import QueryCard from './card/QueryCard/QueryCard.vue'
+import SubmitDialog from './SubmitDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'measure-definition-detail',
-    components: { Chip, Dialog, Listbox, MetadataCard, QueryCard, TabView, TabPanel },
+    components: { Dialog, Listbox, MetadataCard, QueryCard, SubmitDialog, TabView, TabPanel },
     props: {
         id: {
             type: String
@@ -224,9 +225,6 @@ export default defineComponent({
                 })
             }
             return disabled
-        },
-        saveRuleButtonDisabled(): Boolean {
-            return !this.rule.name
         }
     },
     async created() {
@@ -465,7 +463,8 @@ export default defineComponent({
             this.rule.dataSource = tempDataSource
             this.rule.ruleOutputs = tempRuleOutputs
         },
-        async saveRule() {
+        async saveRule(ruleName: string) {
+            this.rule.name = ruleName
             if (this.rule.id) {
                 this.operation = 'update'
             }
