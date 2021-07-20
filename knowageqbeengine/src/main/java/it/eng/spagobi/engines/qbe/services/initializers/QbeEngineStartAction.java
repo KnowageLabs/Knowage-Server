@@ -50,6 +50,7 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
+	public static final String SCRIPT = "SCRIPT";
 
 	// SESSION PARAMETRES
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
@@ -161,7 +162,7 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());
-
+			setAttribute(SCRIPT, locale.getScript());
 			setAttribute(IS_FEDERATED, isFederated());
 
 			if (getServiceRequest().containsAttribute(IS_TECHNICAL_USER)) {
