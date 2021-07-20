@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary">
         <template #left>{{ header }}</template>
         <template #right>
-            <i :class="iconClass" @click="sortArray"></i>
+            <i :class="iconClass" @click="sortArray" data-test="sort-icon"></i>
         </template>
     </Toolbar>
     <Listbox
@@ -19,7 +19,7 @@
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
         <template #option="slotProps">
-            <div class="kn-list-item">
+            <div class="kn-list-item" :data-test="'list-item-' + slotProps.option.id">
                 <div class="kn-list-item-text">
                     <span>{{ slotProps.option.name }}</span>
                 </div>

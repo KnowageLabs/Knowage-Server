@@ -10,7 +10,7 @@
             <div v-if="selectedRule.dataSource">
                 <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
                     <template #right>
-                        <Button class="kn-button p-button-text p-button-rounded" @click="showPreview">{{ $t('kpi.measureDefinition.preview') }}</Button>
+                        <Button class="kn-button p-button-text p-button-rounded" @click="showPreview" :disabled="previewDisabled">{{ $t('kpi.measureDefinition.preview') }}</Button>
                     </template>
                 </Toolbar>
                 <VCodeMirror ref="codeMirror" v-model:value="code" :autoHeight="true" :options="options" @keyup="onKeyUp" />
@@ -62,20 +62,19 @@ export default defineComponent({
             cursorPosition: null
         }
     },
+    computed: {
+        previewDisabled(): Boolean {
+            return !this.code
+        }
+    },
     watch: {
         codeInput() {
             this.cursorPosition = this.codeMirror.getCursor()
-            // console.log('CURSOR POSITION', this.cursorPosition)
-            // console.log('ALIAS NAME', this.aliasName)
             this.codeMirror.replaceRange(this.codeInput, this.cursorPosition)
         }
     },
     async mounted() {
         this.loadRule()
-        // console.log('QueryCard Selected Rule: ', this.selectedRule)
-        // console.log('QueryCard Datsources: ', this.datasourcesList)
-        //console.log('QueryCard Options: ', this.options)
-        //console.log('MOUNTED', this.$refs.codeMirror)
         await this.loadDataSourceStructure()
     },
     methods: {
@@ -84,27 +83,18 @@ export default defineComponent({
             this.code = this.rule.definition ?? ''
         },
         async loadDataSourceStructure() {
-            // console.log('SELECTED DATASOURCE', this.selectedRule.dataSource)
             if (this.selectedRule.dataSource) {
                 await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/structure/${this.selectedRule.dataSource.DATASOURCE_ID}`).then((response) => (this.datasourceStructure = response.data))
             }
             this.$emit('touched')
-            //console.log('DATASOURCE STRUCTURE: ', this.datasourceStructure)
-            // console.log('ALISASES: ', this.aliases)
-            // console.log('PLACEHOLDERS: ', this.placeholders)
 
             this.setupCodeMirror()
 
-            // console.log('HINT LIST: ', this.hintList)
             if (this.codeMirror && this.codeMirror.options) {
                 this.codeMirror.options.hintOptions = { tables: this.datasourceStructure }
             }
-            // this.codeMirror.options.hintOptions = { test: { radi: null } }
-            // console.log('CODE MIRROR OPTIONS', this.codeMirror.options.hintOptions)
-            // console.log('TEEEEEEEEEEEST', this.codeMirror)
         },
         setupCodeMirror() {
-            //  console.log('QueryCard EDITOR: ', CodeMirror)
             if (this.$refs.codeMirror) {
                 this.codeMirror = (this.$refs.codeMirror as any).editor as any
             }
@@ -143,19 +133,15 @@ export default defineComponent({
             })
         },
         keyAssistFunc() {
-            console.log('RADI')
             if (this.isAlias()) {
-                console.log('isAlias called!!!!!!!!!!')
                 CodeMirror.showHint(this.codeMirror, CodeMirror.hint.alias)
             } else if (this.isPlaceholder()) {
-                console.log('isPlaceholder called!!!!!!!!!!')
                 CodeMirror.showHint(this.codeMirror, CodeMirror.hint.placeholder)
             } else {
                 CodeMirror.showHint(this.codeMirror, CodeMirror.hint.autocomplete)
             }
         },
         isAlias() {
-            console.log('CODE MIRROR', this.codeMirror)
             const cursor = this.codeMirror.getCursor()
             let token = this.codeMirror.getTokenAt(cursor)
 
@@ -200,8 +186,6 @@ export default defineComponent({
         showPreview() {
             this.$emit('loadPreview')
             this.previewVisible = true
-            console.log('QUERY CARD EMITS')
-            console.log('QUERY CARD ROWS', this.rows)
         }
     }
 })

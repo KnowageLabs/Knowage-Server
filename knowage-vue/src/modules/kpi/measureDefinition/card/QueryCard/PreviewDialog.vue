@@ -69,13 +69,10 @@ export default defineComponent({
     },
     methods: {
         loadRule() {
-            // console.log('RULE: ', this.rule)
             this.rule = this.currentRule as iRule
         },
         loadPreview() {
             this.$emit('loadPreview')
-            console.log('PREVIEW DIALOG EMITS')
-            console.log('PREVIEW DIALOG ROWS', this.rows)
         },
         closeTemplate() {
             this.$emit('close')

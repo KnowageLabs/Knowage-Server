@@ -79,7 +79,6 @@ export default defineComponent({
             metadataDefinitionTabViewDescriptor,
             rule: {
                 definition: 'SELECT\n\nFROM\n\nWHERE',
-                // definition: "SELECT * FROM account WHERE account_description = '@Description' AND  account_description = '@Test'",
                 ruleOutputs: [] as iMeasure[],
                 placeholders: [] as iPlaceholder[]
             } as iRule,
