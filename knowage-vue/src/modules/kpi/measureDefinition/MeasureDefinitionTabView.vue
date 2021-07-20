@@ -382,6 +382,7 @@ export default defineComponent({
         },
         async previewQuery(save: boolean, hasPlaceholders: boolean) {
             // console.log('RULE: ', this.rule)
+            console.log('CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALED')
             const tempRuleOutputs = this.rule.ruleOutputs
             this.rule.ruleOutputs.forEach((ruleOutput) => {
                 delete ruleOutput.aliasIcon
@@ -396,7 +397,7 @@ export default defineComponent({
                 this.loadPlaceholder()
             }
             console.log('RULE BEFORE QUERY ', this.rule)
-            if ((this.rule.placeholders && this.rule.placeholders.length === 0) || !hasPlaceholders) {
+            if ((this.rule.placeholders && this.rule.placeholders.length === 0) || hasPlaceholders) {
                 const postData = { rule: this.rule, maxItem: 10 }
                 await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData).then((response) => {
                     if (response.data.errors) {
