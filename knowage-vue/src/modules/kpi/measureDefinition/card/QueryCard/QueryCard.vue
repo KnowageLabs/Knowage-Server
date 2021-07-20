@@ -110,12 +110,12 @@ export default defineComponent({
             }
 
             CodeMirror.registerHelper('hint', 'alias', () => {
-                var cur = this.codeMirror.getCursor()
-                var tok = this.codeMirror.getTokenAt(cur)
-                var start = tok.string.trim() == '' ? tok.start + 1 : tok.start
-                var end = tok.end
-                var hintList = [] as any
-                for (var key in this.aliases) {
+                const cur = this.codeMirror.getCursor()
+                const tok = this.codeMirror.getTokenAt(cur)
+                const start = tok.string.trim() == '' ? tok.start + 1 : tok.start
+                const end = tok.end
+                const hintList = [] as any
+                for (const key in this.aliases) {
                     if (tok.string.trim() == '' || this.aliases[key].name.startsWith(tok.string)) {
                         hintList.push(this.aliases[key].name)
                     }
@@ -124,13 +124,13 @@ export default defineComponent({
             })
 
             CodeMirror.registerHelper('hint', 'placeholder', () => {
-                var cur = this.codeMirror.getCursor()
-                var tok = this.codeMirror.getTokenAt(cur)
-                var start = tok.start + 1
-                var end = tok.end
-                var str = tok.string.substring(1, tok.string.length)
-                var hintList = [] as any
-                for (var key in this.placeholders) {
+                const cur = this.codeMirror.getCursor()
+                const tok = this.codeMirror.getTokenAt(cur)
+                const start = tok.start + 1
+                const end = tok.end
+                const str = tok.string.substring(1, tok.string.length)
+                const hintList = [] as any
+                for (const key in this.placeholders) {
                     if (str == '' || this.placeholders[key].name.toUpperCase().startsWith(str.toUpperCase())) {
                         hintList.push(this.placeholders[key].name)
                     }
@@ -156,23 +156,23 @@ export default defineComponent({
         },
         isAlias() {
             console.log('CODE MIRROR', this.codeMirror)
-            var cursor = this.codeMirror.getCursor()
-            var token = this.codeMirror.getTokenAt(cursor)
+            const cursor = this.codeMirror.getCursor()
+            let token = this.codeMirror.getTokenAt(cursor)
 
             if (token.string.trim() != '') {
-                var tmpCursor = CodeMirror.Pos(cursor.line, token.start)
+                const tmpCursor = CodeMirror.Pos(cursor.line, token.start)
                 tmpCursor.ch = token.start
                 token = this.codeMirror.getTokenAt(tmpCursor)
             }
 
-            var beforeCursor = CodeMirror.Pos(cursor.line, token.start)
+            const beforeCursor = CodeMirror.Pos(cursor.line, token.start)
             beforeCursor.ch = token.start
-            var beforeToken = this.codeMirror.getTokenAt(beforeCursor)
+            const beforeToken = this.codeMirror.getTokenAt(beforeCursor)
 
             if (beforeToken.string.toLowerCase() == 'as') {
-                var text = this.codeMirror.getDoc().getRange(CodeMirror.Pos(0, 0), beforeCursor)
+                const text = this.codeMirror.getDoc().getRange(CodeMirror.Pos(0, 0), beforeCursor)
 
-                var patt = new RegExp(/^((.*\)\s*select)|(\s*select)) ((?!FROM).)* AS$/gi)
+                const patt = new RegExp(/^((.*\)\s*select)|(\s*select)) ((?!FROM).)* AS$/gi)
                 if (!patt.test(text.replace(/\n/g, ' '))) {
                     return false
                 } else {
@@ -182,15 +182,15 @@ export default defineComponent({
             return false
         },
         isPlaceholder() {
-            var cursor = this.codeMirror.getCursor()
-            var token = this.codeMirror.getTokenAt(cursor)
+            const cursor = this.codeMirror.getCursor()
+            const token = this.codeMirror.getTokenAt(cursor)
             if (token.string.startsWith('@')) {
                 return true
             }
         },
         onKeyUp() {
-            var cur = this.codeMirror.getCursor()
-            var tok = this.codeMirror.getTokenAt(cur)
+            const cur = this.codeMirror.getCursor()
+            const tok = this.codeMirror.getTokenAt(cur)
             if (tok.string == '@') {
                 CodeMirror.showHint(this.codeMirror, CodeMirror.hint.placeholder)
             }
