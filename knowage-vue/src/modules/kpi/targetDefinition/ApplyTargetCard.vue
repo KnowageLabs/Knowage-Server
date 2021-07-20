@@ -44,11 +44,14 @@ import { defineComponent, PropType } from 'vue'
 import { iValues } from './TargetDefinition'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import InputNumber from 'primevue/inputnumber'
+import targetDefinitionDetailDecriptor from './TargetDefinitionDetailDescriptor.json'
 export default defineComponent({
     name: 'apply-target-card',
     components: {
         DataTable,
-        Column
+        Column,
+        InputNumber
     },
     props: {
         loadingKpi: {
@@ -60,13 +63,26 @@ export default defineComponent({
             required: false
         }
     },
+    data() {
+        return {
+            selectedKpi: [] as iValues[],
+            targetDefinitionDetailDecriptor: targetDefinitionDetailDecriptor
+        }
+    },
+    watch: {
+        kpi() {
+            this.selectedKpi = this.kpi?.map((o) => ({ ...o })) as iValues[]
+        }
+    },
     methods: {
         addKpiDialog() {
             this.$emit('showDialog')
+        },
+        deleteKpi(selected: iValues) {
+            console.log(selected)
+            this.selectedKpi.splice(this.selectedKpi.indexOf(selected), 1)
+            this.$emit('kpiChanged', this.selectedKpi)
         }
-        // deleteKpi(kpiSelected: any) {
-        //     this.kpi.splice(this.kpi.indexOf(kpiSelected), 1)
-        // },
     }
 })
 </script>

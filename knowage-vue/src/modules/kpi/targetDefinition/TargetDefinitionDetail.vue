@@ -7,112 +7,8 @@
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center">
         <div class="p-col-9">
-            <target-definition-form v-model="target" :vcomp="v$.target"></target-definition-form>
-            <!-- <Card>
-                <template #content>
-                    <form class="p-fluid p-m-5">
-                        <div class="p-field">
-                            <span class="p-float-label">
-                                <InputText
-                                    id="name"
-                                    class="kn-material-input"
-                                    type="text"
-                                    maxLength="100"
-                                    v-model.trim="v$.target.name.$model"
-                                    :class="{
-                                        'p-invalid': v$.target.name.$invalid && v$.target.name.$dirty
-                                    }"
-                                    @change="setDirty"
-                                    @blur="v$.target.name.$touch()"
-                                />
-                                <label for="name" class="kn-material-input-label">Name * </label>
-                            </span>
-                            <KnValidationMessages :vComp="v$.target.name" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.name') }"></KnValidationMessages>
-                        </div>
-                        <div class="kn-flex">
-                            <div class="p-d-flex p-jc-between">
-                                <div>
-                                    <span class="p-float-label">
-                                        <Calendar
-                                            id="startDate"
-                                            class="kn-material-input"
-                                            v-model="v$.target.startValidity.$model"
-                                            :class="{
-                                                'p-invalid': v$.target.startValidity.$invalid && v$.target.startValidity.$dirty
-                                            }"
-                                            :showIcon="true"
-                                            :manualInput="false"
-                                            @date-select="setDirty"
-                                            @blur="v$.target.startValidity.$touch()"
-                                        />
-                                        <label for="startDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.startDate') }} * </label>
-                                    </span>
-                                    <KnValidationMessages :vComp="v$.target.startValidity" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.startDate') }"></KnValidationMessages>
-                                </div>
-                                <div class="p-d-flex">
-                                    <div>
-                                        <span class="p-float-label">
-                                            <Calendar
-                                                id="endDate"
-                                                class="kn-material-input"
-                                                v-model="v$.target.endValidity.$model"
-                                                :class="{
-                                                    'p-invalid': v$.target.endValidity.$invalid && v$.target.endValidity.$dirty
-                                                }"
-                                                :showIcon="true"
-                                                :manualInput="false"
-                                                @date-select="setDirty"
-                                                @blur="v$.target.endValidity.$touch()"
-                                            />
-                                            <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.endDate') }} * </label>
-                                        </span>
-                                        <KnValidationMessages :vComp="v$.target.endValidity" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.endDate') }" :specificTranslateKeys="{ is_after_date: 'kpi.targetDefinition.endDateBeforeStart' }"></KnValidationMessages>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </template>
-            </Card> -->
-            <Card>
-                <template #header>
-                    <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left>
-                            {{ $t('kpi.targetDefinition.applyTargetonKPI') }}
-                        </template>
-                    </Toolbar>
-                </template>
-                <template #footer>
-                    <div class="p-d-inline-flex">
-                        <Button class="kn-button kn-button--secondary " @click="addKpiDialog()">{{ $t('kpi.targetDefinition.addKpiBtn') }}</Button>
-                    </div>
-                </template>
-                <template #content>
-                    <DataTable :value="kpi" :loading="loading" class="editable-cells-table" dataKey="id" responsiveLayout="stack" editMode="cell" :scrollable="true" scrollHeight="400px" data-test="selected-kpi-table">
-                        <template #empty>
-                            {{ $t('common.info.noElementSelected') }}
-                        </template>
-                        <template #loading>
-                            {{ $t('common.info.dataLoading') }}
-                        </template>
-
-                        <Column field="kpiName" :header="$t('kpi.targetDefinition.kpiName')" key="kpiName" :sortable="true" class="kn-truncated" :style="targetDefinitionDetailDecriptor.table.column.style"></Column>
-                        <Column field="value" :header="$t('kpi.targetDefinition.kpiValue')" key="value" :sortable="true" class="kn-truncated" :style="targetDefinitionDetailDecriptor.table.column.style">
-                            <template #body="slotProps">
-                                {{ slotProps.data[slotProps.column.props.field] }}
-                            </template>
-                            <template #editor="slotProps">
-                                <InputNumber v-model="slotProps.data[slotProps.column.props.field]" showButtons />
-                            </template>
-                        </Column>
-                        <Column :style="targetDefinitionDetailDecriptor.table.iconColumn.style">
-                            <template #body="slotProps">
-                                <Button icon="pi pi-trash" class="p-button-link" @click="deleteKpi(slotProps.data)" />
-                            </template>
-                        </Column>
-                    </DataTable>
-                </template>
-            </Card>
+            <target-definition-form :selectedTarget="target" @valueChanged="updateTarget" :vcomp="v$.target"></target-definition-form>
+            <apply-target-card :kpi="kpi" @kpiChanged="updateKpi" @showDialog="addKpiDialog"></apply-target-card>
         </div>
     </div>
     <add-kpi-dialog :kpi="filteredKpi" :dialogVisible="kpiDialogVisible" :loadingKpi="loadingAllKpi" @close="closeKpiDialog" @add="addKpi"></add-kpi-dialog>
@@ -135,30 +31,22 @@ import { formatDate } from '@/helpers/commons/localeHelper'
 import AutoComplete from 'primevue/autocomplete'
 import targetDefinitionDetailDecriptor from './TargetDefinitionDetailDescriptor.json'
 import targetDefinitionValidationDescriptor from './TargetDefinitionValidationDescriptor.json'
-import Column from 'primevue/column'
-//import Calendar from 'primevue/calendar'
-import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
-import InputNumber from 'primevue/inputnumber'
 import axios from 'axios'
 import { iCategory, iTargetDefinition, iValues } from './TargetDefinition'
 import useValidate from '@vuelidate/core'
-//import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import AddKpiDialog from './AddKpiDialog.vue'
 import TargetDefinitionForm from './TargetDefinitionForm.vue'
+import ApplyTargetCard from './ApplyTargetCard.vue'
 
 export default defineComponent({
     name: 'target-definition-detail',
     components: {
-        //Calendar,
-        DataTable,
-        Column,
         Dialog,
-        //KnValidationMessages,
         AutoComplete,
-        InputNumber,
         AddKpiDialog,
-        TargetDefinitionForm
+        TargetDefinitionForm,
+        ApplyTargetCard
     },
     props: {
         id: {
@@ -216,6 +104,14 @@ export default defineComponent({
         }
     },
     methods: {
+        updateTarget(event) {
+            this.target[event.fieldName] = event.value
+            this.setDirty()
+        },
+        updateKpi(event) {
+            console.log(event)
+            this.kpi = event
+        },
         async loadTarget() {
             this.loading = true
             await axios
@@ -338,6 +234,7 @@ export default defineComponent({
             this.setDirty()
         },
         addKpiDialog() {
+            console.log('showDialog')
             this.loadKpi()
             this.kpiDialogVisible = true
         },
