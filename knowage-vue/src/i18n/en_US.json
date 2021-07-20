@@ -175,17 +175,7 @@
         "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
     },
-    "kpi": {
-        "kpiScheduler": {
-            "addKpiAssociation": "Add KPI associations",
-            "frequency": "Frequency",
-            "hint": "No KPI selected",
-            "kpiName": "KPI Name",
-            "newScheduler": "New Scheduler",
-            "saveKpiAssociation": "Save new KPI",
-            "title": "Scheduler List"
-        }
-    },
+    "kpi": {},
     "language": {
         "en_GB": "english (GB)",
         "en_US": "english (US)",
