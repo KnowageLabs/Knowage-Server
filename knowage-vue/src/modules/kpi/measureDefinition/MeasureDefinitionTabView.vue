@@ -30,63 +30,10 @@
             </TabView>
         </div>
         <div v-if="aliasesVisible" class="listbox">
-            <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>{{ $t('kpi.measureDefinition.alias') }}</template>
-                <template #right>
-                    <Button class="p-button-text p-button-rounded kn-button" :label="$t('common.sort')" @click="sortArray(availableAliasList, aliasSorted)" />
-                </template>
-            </Toolbar>
-            <Listbox
-                class="kn-list"
-                :options="availableAliasList"
-                :listStyle="metadataDefinitionTabViewDescriptor.listBox.style"
-                :filter="true"
-                :filterPlaceholder="$t('common.search')"
-                optionLabel="name"
-                filterMatchMode="contains"
-                :filterFields="metadataDefinitionTabViewDescriptor.aliasFilterFields"
-                :emptyFilterMessage="$t('common.info.noDataFound')"
-                @change="setCodeInput($event.value.name)"
-            >
-                <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                <template #option="slotProps">
-                    <div class="kn-list-item">
-                        <div class="kn-list-item-text">
-                            <span>{{ slotProps.option.name }}</span>
-                        </div>
-                    </div>
-                </template></Listbox
-            >
+            <FilterList :header="$t('kpi.measureDefinition.alias')" :list="availableAliasList" @selected="setCodeInput($event)"></FilterList>
         </div>
         <div v-if="placeholderVisible" class="listbox">
-            <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>{{ $t('kpi.measureDefinition.placeholder') }}</template>
-                <template #right>
-                    <Button class="p-button-text p-button-rounded kn-button" :label="$t('common.sort')" @click="sortArray(placeholdersList, placeholderVisible)" />
-                </template>
-            </Toolbar>
-
-            <Listbox
-                class="kn-list"
-                :options="placeholdersList"
-                listStyle="max-height:calc(100% - 62px)"
-                :filter="true"
-                :filterPlaceholder="$t('common.search')"
-                optionLabel="name"
-                filterMatchMode="contains"
-                :filterFields="metadataDefinitionTabViewDescriptor.placeholderFilterFields"
-                :emptyFilterMessage="$t('common.info.noDataFound')"
-                @change="setCodeInput($event.value.name)"
-            >
-                <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                <template #option="slotProps">
-                    <div class="kn-list-item">
-                        <div class="kn-list-item-text">
-                            <span>{{ slotProps.option.name }}</span>
-                        </div>
-                    </div>
-                </template></Listbox
-            >
+            <FilterList :header="$t('kpi.measureDefinition.placeholder')" :list="placeholdersList" @selected="setCodeInput($event)"></FilterList>
         </div>
     </div>
 
@@ -105,7 +52,7 @@ import { defineComponent } from 'vue'
 import { iDatasource, iMeasure, iRule, iPlaceholder } from './MeasureDefinition'
 import axios from 'axios'
 import Dialog from 'primevue/dialog'
-import Listbox from 'primevue/listbox'
+import FilterList from './FilterList.vue'
 import MetadataCard from './card/MetadataCard/MetadataCard.vue'
 import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDescriptor.json'
 import QueryCard from './card/QueryCard/QueryCard.vue'
@@ -115,7 +62,7 @@ import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'measure-definition-detail',
-    components: { Dialog, Listbox, MetadataCard, QueryCard, SubmitDialog, TabView, TabPanel },
+    components: { Dialog, FilterList, MetadataCard, QueryCard, SubmitDialog, TabView, TabPanel },
     props: {
         id: {
             type: String

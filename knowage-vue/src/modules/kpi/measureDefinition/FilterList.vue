@@ -1,0 +1,76 @@
+<template>
+    <Toolbar class="kn-toolbar kn-toolbar--primary">
+        <template #left>{{ header }}</template>
+        <template #right>
+            <i :class="iconClass" @click="sortArray"></i>
+        </template>
+    </Toolbar>
+    <Listbox
+        class="kn-list"
+        :options="filters"
+        :listStyle="metadataDefinitionTabViewDescriptor.listBox.style"
+        :filter="true"
+        :filterPlaceholder="$t('common.search')"
+        optionLabel="name"
+        filterMatchMode="contains"
+        :filterFields="metadataDefinitionTabViewDescriptor.aliasFilterFields"
+        :emptyFilterMessage="$t('common.info.noDataFound')"
+        @change="$emit('selected', $event.value.name)"
+    >
+        <template #empty>{{ $t('common.info.noDataFound') }}</template>
+        <template #option="slotProps">
+            <div class="kn-list-item">
+                <div class="kn-list-item-text">
+                    <span>{{ slotProps.option.name }}</span>
+                </div>
+            </div>
+        </template></Listbox
+    >
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+import Listbox from 'primevue/listbox'
+import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDescriptor.json'
+
+export default defineComponent({
+    name: 'filter-list',
+    components: { Listbox },
+    props: { header: { type: String }, list: { type: Array } },
+    emits: ['selected'],
+    data() {
+        return {
+            metadataDefinitionTabViewDescriptor,
+            filters: [],
+            sorted: 'DESC'
+        }
+    },
+    computed: {
+        iconClass(): String {
+            return this.sorted === 'DESC' ? 'pi pi-arrow-down' : 'pi pi-arrow-up'
+        }
+    },
+    watch: {
+        list() {
+            this.loadList()
+        }
+    },
+    created() {
+        this.loadList()
+    },
+    methods: {
+        loadList() {
+            this.filters = this.list as any
+        },
+        sortArray() {
+            if (this.sorted === 'DESC') {
+                this.filters = this.filters.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
+                this.sorted = 'ASC'
+            } else {
+                this.filters = this.filters.sort((a: any, b: any) => (a.name < b.name ? 1 : -1))
+                this.sorted = 'DESC'
+            }
+        }
+    }
+})
+</script>
