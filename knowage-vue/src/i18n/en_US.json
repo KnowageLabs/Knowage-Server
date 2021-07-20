@@ -42,9 +42,11 @@
         "name": "name",
         "new": "new",
         "next": "next",
+        "reused": "Reused",
         "run": "Run",
         "save": "save",
         "search": "search",
+        "sort": "sort",
         "table": {
             "footer": {
                 "paginated": "Showing {first} to {last} of {totalRecords}"
