@@ -23,7 +23,7 @@ dataset = Blueprint('dataset', __name__)
 #url: knowage_addr:port/dataset
 
 @dataset.route('', methods = ['POST'])
-def python_dataset_edit():
+def python_dataset_execute():
     # retrieve input parameters
     try:
         data = request.get_json()

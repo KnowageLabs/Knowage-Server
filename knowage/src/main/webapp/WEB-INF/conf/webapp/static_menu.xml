@@ -9,7 +9,7 @@
 				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListEnginesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
 			<ITEM id="1002" label="menu.DataSourceMan"
 				requiredFunctionality="DataSourceManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=datasource" />
+				to="/datasource-management" />
 			<ITEM id="1003" label="menu.DataSetMan"
 				requiredFunctionality="DatasetManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=datasetManagement" />
@@ -62,7 +62,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=businessModelCatalogue" />
 			<ITEM id="4002" label="menu.MondrianCatalogue"
 				requiredFunctionality="ArtifactCatalogueManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=mondrianSchemasCatalogue?requiredFunctionality=MONDRIAN_SCHEMA&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
+				to="/mondrian-schemas-management" />
 			<ITEM id="4003" label="menu.MapCat"
 				requiredFunctionality="MapCatalogueManagement"
 				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListMapsPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
@@ -108,7 +108,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=hierarchiesEditor" />
 			<ITEM id="5004" label="menu.CacheManagement"
 				requiredFunctionality="CacheManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=cacheHome" />
+				to="/cache-management" />
 			<ITEM id="5005" label="menu.cross.definition"
 				requiredFunctionality="ManageCrossNavigation"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=crossDefinition" />
@@ -117,7 +117,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=alertDefinition" />
 			<ITEM id="5007" label="menu.NewsManagement"
 				requiredFunctionality="NewsManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=newsManagement" />
+				to="/news-management" />
 			<ITEM label="menu.WidgetGalleryManagement"
 				to="/gallery-management" />
 		</GROUP_ITEM>
@@ -167,10 +167,10 @@
 				to="/import-export" />
 			<ITEM id="8001" label="menu.TenantMan"
 				requiredFunctionality="TenantManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=multitenantManagementAngular" />
+				to="/tenants-management" />
 			<ITEM id="8002" label="menu.TemplateManagement"
 				requiredFunctionality="TemplateManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=templateManagement" />
+				to="/template-pruning" />
 			<ITEM id="8003" label="menu.ImpExpDocument"
 				requiredFunctionality="ImpExpDocument"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportDocuments" />
@@ -212,7 +212,7 @@
 			iconCls="fa fa-flag">
 			<ITEM id="9001" label="menu.manageI18n"
 				requiredFunctionality="ManageInternationalization"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=internationalization"
+				to="/internationalization-management"
 				iconCls="fa fa-2x fa-flag" />
 		</GROUP_ITEM>
 	</TECHNICAL_USER_FUNCTIONALITIES>
@@ -280,7 +280,7 @@
 			iconCls="fas fa-list" />
 		<ITEM id="10018" label="menu.i18n"
 			requiredFunctionality="ManageInternationalization"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=internationalization"
+			to="/internationalization-management"
 			iconCls="fas fa-flag" />
 		<ITEM id="10019" label="menu.news" requiredFunctionality="NewsVisualization"
 			conditionedView="news" iconCls="far fa-newspaper"
