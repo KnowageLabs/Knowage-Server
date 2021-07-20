@@ -17,7 +17,7 @@
             </div>
         </template>
     </Card>
-    <PreviewDialog v-if="previewVisible" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :rows="rows" @close="previewVisible = false" @loadPreview="$emit('loadPreview')"></PreviewDialog>
+    <PreviewDialog v-if="previewVisible && preview" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :rows="rows" @close="previewVisible = false" @loadPreview="$emit('loadPreview')"></PreviewDialog>
 </template>
 
 <script lang="ts">
@@ -34,7 +34,7 @@ import PreviewDialog from './PreviewDialog.vue'
 export default defineComponent({
     name: 'query-card',
     components: { Card, Dropdown, VCodeMirror, PreviewDialog },
-    props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array }, columns: { type: Array }, rows: { type: Array }, codeInput: { type: String } },
+    props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array }, columns: { type: Array }, rows: { type: Array }, codeInput: { type: String }, preview: { type: Boolean } },
     emits: ['touched', 'queryChanged', 'loadPreview'],
     data() {
         return {
@@ -71,6 +71,9 @@ export default defineComponent({
         codeInput() {
             this.cursorPosition = this.codeMirror.getCursor()
             this.codeMirror.replaceRange(this.codeInput, this.cursorPosition)
+        },
+        preview(value) {
+            this.previewVisible = value
         }
     },
     async mounted() {

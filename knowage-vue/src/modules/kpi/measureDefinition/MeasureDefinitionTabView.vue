@@ -17,7 +17,18 @@
                         <span>{{ $t('kpi.measureDefinition.query') }}</span>
                     </template>
 
-                    <QueryCard :rule="rule" :datasourcesList="datasourcesList" :aliases="availableAliasList" :placeholders="placeholdersList" :columns="columns" :rows="rows" :codeInput="codeInput" @queryChanged="queryChanged = true" @loadPreview="previewQuery(false, true)"></QueryCard>
+                    <QueryCard
+                        :rule="rule"
+                        :datasourcesList="datasourcesList"
+                        :aliases="availableAliasList"
+                        :placeholders="placeholdersList"
+                        :columns="columns"
+                        :rows="rows"
+                        :codeInput="codeInput"
+                        :preview="preview"
+                        @queryChanged="queryChanged = true"
+                        @loadPreview="previewQuery(false, true)"
+                    ></QueryCard>
                 </TabPanel>
 
                 <TabPanel :disabled="metadataDisabled">
@@ -39,7 +50,7 @@
 
     <SubmitDialog v-if="showSaveDialog" :ruleName="rule.name" :newAlias="newAlias" :reusedAlias="reusedAlias" :newPlaceholder="newPlaceholder" :reusedPlaceholder="reusedPlaceholder" @close="showSaveDialog = false" @save="saveRule($event)"></SubmitDialog>
 
-    <Dialog :style="metadataDefinitionTabViewDescriptor.dialog.style" :modal="true" :visible="errorMessage" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
+    <Dialog :style="metadataDefinitionTabViewDescriptor.dialog.style" :modal="true" :visible="errorDialogVisible" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
         <p>{{ errorMessage }}</p>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeErrorMessageDialog"></Button>
@@ -107,8 +118,7 @@ export default defineComponent({
             aliasesVisible: false,
             placeholderVisible: false,
             codeInput: null as string | null,
-            aliasSorted: 'DESC',
-            placeholdersSorted: 'DESC'
+            preview: true
         }
     },
     computed: {
@@ -128,6 +138,9 @@ export default defineComponent({
                 })
             }
             return disabled
+        },
+        errorDialogVisible(): Boolean {
+            return this.errorMessage ? true : false
         }
     },
     async created() {
@@ -274,10 +287,12 @@ export default defineComponent({
                     if (response.data.errors) {
                         this.errorTitle = this.$t('kpi.measureDefinition.metadataError') + ' ' + this.$t('kpi.measureDefinition.wrongQuery')
                         this.errorMessage = response.data.errors[0].message
+                        this.preview = false
                     } else {
                         this.columns = response.data.columns
                         this.rows = response.data.rows
                         this.columnToRuleOutputs()
+                        this.preview = true
                     }
                 })
             }
