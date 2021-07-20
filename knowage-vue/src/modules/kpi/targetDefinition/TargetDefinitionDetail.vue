@@ -114,7 +114,10 @@
             </Card>
         </div>
     </div>
-    <Dialog :header="$t('kpi.targetDefinition.addKpiBtn')" :visible="kpiDialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
+
+    <add-kpi-dialog :kpi="filteredKpi" :dialogVisible="kpiDialogVisible" @close="closeKpiDialog"></add-kpi-dialog>
+
+    <!-- <Dialog :header="$t('kpi.targetDefinition.addKpiBtn')" :visible="kpiDialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
         <template #header>
             <div>
                 <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0">
@@ -160,7 +163,7 @@
             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
             <Column v-for="col of targetDefinitionDetailDecriptor.columnsAllKPI" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" class="kn-truncated"> </Column>
         </DataTable>
-    </Dialog>
+    </Dialog> -->
     <Dialog :header="$t('kpi.targetDefinition.saveTarget')" v-model:visible="categoryDialogVisiable" :modal="true" :closable="true" class="p-fluid kn-dialog--toolbar--primary">
         <div class="p-pt-4">
             <span class="p-float-label">
@@ -191,6 +194,7 @@ import axios from 'axios'
 import { iCategory, iTargetDefinition, iValues } from './TargetDefinition'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import AddKpiDialog from './AddKpiDialog.vue'
 
 export default defineComponent({
     name: 'target-definition-detail',
@@ -201,7 +205,8 @@ export default defineComponent({
         Dialog,
         KnValidationMessages,
         AutoComplete,
-        InputNumber
+        InputNumber,
+        AddKpiDialog
     },
     props: {
         id: {
