@@ -96,7 +96,9 @@ export default defineComponent({
             // console.log('KpiCard KPI: ', this.kpisList)
         },
         loadSelectedKpiAssociations() {
-            this.selectedKpiAssociations = [...this.kpisList] as any[]
+            if (this.kpisList) {
+                this.selectedKpiAssociations = [...this.kpisList] as any[]
+            }
         },
         deleteKpiAssociationConfirm(id: number) {
             this.$confirm.require({

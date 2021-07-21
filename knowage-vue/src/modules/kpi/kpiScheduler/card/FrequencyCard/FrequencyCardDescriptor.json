@@ -2,23 +2,23 @@
     "dayOptions": [
         {
             "name": "First",
-            "value": "First"
+            "value": 1
         },
         {
             "name": "Second",
-            "value": "Second"
+            "value": 2
         },
         {
             "name": "Third",
-            "value": "Third"
+            "value": 3
         },
         {
             "name": "Fourth",
-            "value": "Fourth"
+            "value": 4
         },
         {
             "name": "Last",
-            "value": "Last"
+            "value": 5
         }
     ],
     "intervals": [
@@ -32,15 +32,15 @@
         },
         {
             "name": "Daily Execution",
-            "value": "daily"
+            "value": "day"
         },
         {
             "name": "Weekly Execution",
-            "value": "weekly"
+            "value": "week"
         },
         {
             "name": "Monthly Execution",
-            "value": "monthly"
+            "value": "month"
         }
     ],
     "monthOptions": [

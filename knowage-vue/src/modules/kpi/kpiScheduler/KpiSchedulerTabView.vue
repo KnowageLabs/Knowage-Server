@@ -104,7 +104,12 @@ export default defineComponent({
             console.log('ALL KPI LIST', this.kpiList)
         },
         async loadSchedule() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/loadSchedulerKPI`).then((response) => (this.selectedSchedule = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/loadSchedulerKPI`).then((response) => {
+                this.selectedSchedule = response.data
+                if (this.selectedSchedule.frequency.cron) {
+                    this.selectedSchedule.frequency.cron = JSON.parse(this.selectedSchedule.frequency.cron)
+                }
+            })
         },
         async loadDomainsData() {
             await this.loadDomainsByCode('KPI_PLACEHOLDER_TYPE').then((response) => (this.domainsKpiPlaceholderType = response.data))
