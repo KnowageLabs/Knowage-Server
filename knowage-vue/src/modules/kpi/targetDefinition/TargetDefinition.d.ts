@@ -9,9 +9,9 @@ export interface iTargetDefinition {
 }
 
 export interface iCategory {
-    valueId: number | null
+    valueId?: number | null
     valueCd?: string
-    valueName: string
+    valueName?: string
     valueDescription?: string
     domainCode?: string
     domainName?: string
