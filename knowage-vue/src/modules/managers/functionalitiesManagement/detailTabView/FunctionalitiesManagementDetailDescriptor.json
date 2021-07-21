@@ -1,0 +1,146 @@
+{
+    "card": {
+        "style": {
+            "margin-bottom": "2em",
+            "width": "100%"
+        }
+    },
+    "columns": [
+        {
+            "field": "name",
+            "header": "managers.functionalitiesManagement.table.nameHeader"
+        },
+        {
+            "header": "managers.functionalitiesManagement.table.developmentHeader"
+        },
+        {
+            "header": "managers.functionalitiesManagement.table.testHeader"
+        },
+        {
+            "header": "managers.functionalitiesManagement.table.executionHeader"
+        },
+        {
+            "header": "managers.functionalitiesManagement.table.creationHeader"
+        }
+    ],
+    "pField": {
+        "style": {
+            "margin-bottom": "40px"
+        }
+    },
+    "selectedFolder": {
+        "biObjects": [],
+        "codType": "LOW_FUNCT",
+        "code": "Functionalities",
+        "createRoles": [
+            {
+                "id": 1,
+                "name": "dev"
+            },
+            {
+                "id": 2,
+                "name": "test"
+            },
+            {
+                "id": 3,
+                "name": "user"
+            },
+            {
+                "id": 4,
+                "name": "admin"
+            },
+            {
+                "id": 5,
+                "name": "modeladmin"
+            },
+            {
+                "id": 6,
+                "name": "demo"
+            }
+        ],
+        "description": "workspace",
+        "devRoles": [
+            {
+                "id": 1,
+                "name": "dev"
+            },
+            {
+                "id": 2,
+                "name": "test"
+            },
+            {
+                "id": 3,
+                "name": "user"
+            },
+            {
+                "id": 4,
+                "name": "admin"
+            },
+            {
+                "id": 5,
+                "name": "modeladmin"
+            },
+            {
+                "id": 6,
+                "name": "demo"
+            }
+        ],
+        "execRoles": [
+            {
+                "id": 1,
+                "name": "dev"
+            },
+            {
+                "id": 2,
+                "name": "test"
+            },
+            {
+                "id": 3,
+                "name": "user"
+            },
+            {
+                "id": 4,
+                "name": "admin"
+            },
+            {
+                "id": 5,
+                "name": "modeladmin"
+            },
+            {
+                "id": 6,
+                "name": "demo"
+            }
+        ],
+        "id": 1,
+        "name": "Marco",
+        "parentId": 1,
+        "path": "/Functionalities/Marco",
+        "prog": 1,
+        "testRoles": [
+            {
+                "id": 1,
+                "name": "dev"
+            },
+            {
+                "id": 2,
+                "name": "test"
+            },
+            {
+                "id": 3,
+                "name": "user"
+            },
+            {
+                "id": 4,
+                "name": "admin"
+            },
+            {
+                "id": 5,
+                "name": "modeladmin"
+            },
+            {
+                "id": 6,
+                "name": "demo"
+            }
+        ]
+    }
+}
