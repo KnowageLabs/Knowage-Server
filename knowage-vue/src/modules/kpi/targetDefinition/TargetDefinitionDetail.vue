@@ -165,10 +165,7 @@ export default defineComponent({
                 .finally(() => (this.loadingAllKpi = false))
         },
         async loadCategory() {
-            await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/listByCode/KPI_TARGET_CATEGORY')
-                .then((response) => (this.categories = response.data))
-                .finally(() => console.log(this.categories))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/listByCode/KPI_TARGET_CATEGORY').then((response) => (this.categories = response.data))
         },
         searchCategory(event) {
             setTimeout(() => {
