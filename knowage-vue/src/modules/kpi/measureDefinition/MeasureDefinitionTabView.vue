@@ -281,6 +281,7 @@ export default defineComponent({
             if (this.rule.definition) {
                 this.loadPlaceholder()
             }
+
             if ((this.rule.placeholders && this.rule.placeholders.length === 0) || hasPlaceholders) {
                 const postData = { rule: this.rule, maxItem: 10 }
                 await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData).then((response) => {
@@ -404,13 +405,15 @@ export default defineComponent({
         },
         loadPlaceholder() {
             const placeholder = this.rule.definition.match(/@\w*/g)
+
             if (placeholder != null) {
                 for (let i = 0; i < placeholder.length; i++) {
                     const placeholderName = placeholder[i].substring(1, placeholder[i].length)
-                    let tempPlaceholder = this.rule.placeholders.find((tempPlaceholder) => tempPlaceholder.name === placeholderName)
+
+                    let tempPlaceholder = this.rule.placeholders.find((tempPlaceholder) => tempPlaceholder.name.toUpperCase() === placeholderName.toUpperCase())
 
                     if (!tempPlaceholder) {
-                        tempPlaceholder = this.placeholdersList.find((placeholder: any) => placeholder.name === tempPlaceholder?.name) as any
+                        tempPlaceholder = this.placeholdersList.find((placeholder: any) => placeholder.name.toUpperCase() === placeholderName.toUpperCase()) as any
                         if (tempPlaceholder == undefined) {
                             const newPlaceholder = {
                                 name: placeholderName,
@@ -468,7 +471,6 @@ export default defineComponent({
             }
         },
         setCodeInput(event: any) {
-            console.log('LIST TYPE', event.type)
             if (this.activeTab === 0) {
                 this.codeInput = event.type === 'placeholder' ? '@' + event.value : event.value
             }
