@@ -57,8 +57,8 @@ public class PythonDataProxy extends AbstractDataProxy {
 
 	public PythonDataProxy(String address, String pythonScript, String dataframeName, String parameters, Map<String, String> requestHeaders, String offsetParam,
 			String fetchSizeParam, String maxResultsParam) {
-		Helper.checkNotNull(address, "address");
-		Helper.checkNotEmpty(address, "address");
+//		Helper.checkNotNull(address, "address");
+//		Helper.checkNotEmpty(address, "address");
 		// cab be empty
 		Helper.checkNotNull(requestHeaders, "requestHeaders");
 		// can be null, can't empty
