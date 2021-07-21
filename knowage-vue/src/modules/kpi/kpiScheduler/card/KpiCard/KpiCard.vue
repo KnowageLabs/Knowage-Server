@@ -88,7 +88,7 @@ export default defineComponent({
         this.loadKpis()
         this.loadSelectedKpiAssociations()
         // console.log('KPI CARD ALL KPI: ', this.allKpiList)
-        console.log('selectedKpiAssociations: ', this.selectedKpiAssociations)
+        // console.log('selectedKpiAssociations: ', this.selectedKpiAssociations)
     },
     methods: {
         loadKpis() {
@@ -109,7 +109,7 @@ export default defineComponent({
             })
         },
         async deleteKpiAssociation(id: number) {
-            console.log('ASSOCIATION ID FOR DELETE: ', id)
+            // console.log('ASSOCIATION ID FOR DELETE: ', id)
             const index = this.kpisList.findIndex((kpi: any) => kpi.id === id)
             if (index > -1) {
                 this.kpisList.splice(index, 1)
@@ -117,7 +117,7 @@ export default defineComponent({
             this.loadSelectedKpiAssociations()
         },
         addKpiAssociations() {
-            console.log('addKpiAssociation()')
+            // console.log('addKpiAssociation()')
             this.kpisList = [...this.selectedKpiAssociations]
             this.addKpiAssociationVisible = false
         },

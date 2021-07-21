@@ -35,8 +35,10 @@
 
             <TabPanel>
                 <template #header>
-                    <span>EXECUTE</span>
+                    <span>{{ $t('kpi.kpiScheduler.execute') }}</span>
                 </template>
+
+                <ExecuteCard :selectedSchedule="selectedSchedule"></ExecuteCard>
             </TabPanel>
         </TabView>
     </div>
@@ -45,6 +47,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import ExecuteCard from './card/ExecuteCard/ExecuteCard.vue'
 import FrequencyCard from './card/FrequencyCard/FrequencyCard.vue'
 import KpiCard from './card/KpiCard/KpiCard.vue'
 import TabView from 'primevue/tabview'
@@ -52,7 +55,7 @@ import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'kpi-scheduler-tab-view',
-    components: { FrequencyCard, KpiCard, TabView, TabPanel },
+    components: { ExecuteCard, FrequencyCard, KpiCard, TabView, TabPanel },
     props: {
         id: { type: String },
         clone: { type: String }
@@ -90,7 +93,7 @@ export default defineComponent({
             } else {
                 this.selectedSchedule = {}
             }
-            if (this.clone) {
+            if (this.clone === 'true') {
                 delete this.selectedSchedule.id
             }
             await this.loadDomainsData()
@@ -101,7 +104,7 @@ export default defineComponent({
             // console.log('KPI_PLACEHOLDER_TYPE', this.domainsKpiPlaceholderType)
             // console.log('KPI_PLACEHOLDER_FUNC', this.domainsKpiPlaceholderFunction)
             // console.log('LOVS', this.lovs)
-            console.log('ALL KPI LIST', this.kpiList)
+            // console.log('ALL KPI LIST', this.kpiList)
         },
         async loadSchedule() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/loadSchedulerKPI`).then((response) => {
@@ -119,10 +122,10 @@ export default defineComponent({
             return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${code}`)
         },
         async loadLovs() {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/').then((response) => (this.lovs = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/').then((response) => (this.lovs = response.data))
         },
         async loadKpiList() {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi').then((response) => (this.kpiList = response.data))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi').then((response) => (this.kpiList = response.data))
         },
         setTouched() {
             this.touched = true

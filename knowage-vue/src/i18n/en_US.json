@@ -1,5 +1,6 @@
 {
     "common": {
+        "apply": "Apply",
         "author": "Author",
         "back": "back",
         "cancel": "cancel",
@@ -38,6 +39,7 @@
         "information": "information",
         "kpi": "KPI",
         "label": "label",
+        "load": "Load",
         "loggedUser": "logged user",
         "name": "name",
         "new": "new",
@@ -187,13 +189,23 @@
     "kpi": {
         "kpiScheduler": {
             "addKpiAssociation": "Add KPI associations",
+            "deleteAndInsert": "Delete and Insert",
+            "errorCount": "Error Count",
             "every": "Every",
+            "execute": "Execute",
+            "executionType": "Execution Type",
             "frequency": "Frequency",
             "hint": "No KPI selected",
+            "insertAndUpdate": "Insert and Update",
             "kpiName": "KPI Name",
+            "logExecution": "Log Execution",
             "newScheduler": "New Scheduler",
+            "numberOfExecutions": "Number of Executions",
             "saveKpiAssociation": "Save new KPI",
-            "title": "Scheduler List"
+            "successCount": "Success Count",
+            "timeRun": "TimeRun",
+            "title": "Scheduler List",
+            "totalCount": "Total Count"
         }
     },
     "language": {
