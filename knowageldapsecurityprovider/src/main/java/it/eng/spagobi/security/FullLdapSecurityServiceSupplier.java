@@ -47,6 +47,7 @@ import it.eng.spagobi.security.exceptions.LDAPAuthenticationFailed;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class FullLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
@@ -57,6 +58,7 @@ public class FullLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier
 	private static final String ROLES_ATTRIBUTE = "USER_ROLES_ATTRIBUTE_NAME";
 	private static final String ROLES_FIELD = "USER_ROLES_ATTRIBUTE_FIELD";
 	private static final String SUPERADMIN_ATTRIBUTE = "SUPERADMIN_ATTRIBUTE";
+	private static final String SUPERADMIN_ATTRIBUTE_VALUE = "SUPERADMIN_ATTRIBUTE_VALUE";
 
 	private final Properties properties;
 
@@ -73,6 +75,7 @@ public class FullLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier
 			logger.debug("Binding with distinguishName [" + distinguishName + "] ...");
 			LdapUser ldapUser = bindLdapUserWithCredentials(userId, distinguishName, psw);
 			logger.debug("Building profile object for user [" + userId + "]");
+			Assert.assertNotNull(ldapUser, "ldapUser is null");
 			SpagoBIUserProfile toReturn = getUserProfile(ldapUser);
 			return toReturn;
 		} catch (Exception e) {
@@ -217,10 +220,16 @@ public class FullLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier
 	}
 
 	private boolean getIsSuperAdmin(LdapUser ldapUser) {
-		String superAdminLdapAttribute = properties.getProperty(ldapPrefix + SUPERADMIN_ATTRIBUTE);
-		if (ldapUser.getAttribute(superAdminLdapAttribute) != null)
-			return true;
-		return false;
+		try {
+			String superAdminLdapAttribute = properties.getProperty(ldapPrefix + SUPERADMIN_ATTRIBUTE);
+			String superAdminValue = properties.getProperty(ldapPrefix + SUPERADMIN_ATTRIBUTE_VALUE);
+			if (ldapUser.getAttribute(superAdminLdapAttribute).get().toString().equalsIgnoreCase(superAdminValue))
+				return true;
+			return false;
+		} catch (Exception e) {
+			logger.error("Error while checking superadmin permissions for user [" + ldapUser.getUserId() + "]", e);
+			return false;
+		}
 	}
 
 }
