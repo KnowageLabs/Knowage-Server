@@ -132,7 +132,7 @@ export default defineComponent({
     },
     watch: {
         repeatInterval() {
-            console.log('REPEAT INTERVAL: ', this.repeatInterval)
+            // console.log('REPEAT INTERVAL: ', this.repeatInterval)
             switch (this.repeatInterval) {
                 case 'minute':
                     this.fillParameterOptions(60)
@@ -165,7 +165,7 @@ export default defineComponent({
                 this.parameter = null
                 this.updateCronAdvancedMonthRepetition()
             }
-            console.log('THIS PARAMETER EEE', this.parameter)
+            // console.log('THIS PARAMETER EEE', this.parameter)
         },
         simpleDay(value) {
             if (value) {
@@ -185,7 +185,7 @@ export default defineComponent({
     },
     methods: {
         loadFrequency() {
-            console.log('FREQUENCY: ', this.frequency)
+            // console.log('FREQUENCY: ', this.frequency)
 
             this.currentFrequency = this.frequency as any
             this.startDate = new Date(this.frequency.startDate)
@@ -229,8 +229,8 @@ export default defineComponent({
                 }
             }
 
-            console.log('PARAMETER', this.parameter)
-            console.log('repeatInterval', this.repeatInterval)
+            // console.log('PARAMETER', this.parameter)
+            // console.log('repeatInterval', this.repeatInterval)
         },
         fillParameterOptions(number: number) {
             this.parameterOptions = []

@@ -14,15 +14,15 @@
                     <span>{{ $t('common.kpi') }}</span>
                 </template>
 
-                <KpiCard :kpis="selectedSchedule.kpis" :allKpiList="kpiList" @touched="setTouched"></KpiCard>
+                <KpiCard :kpis="selectedSchedule.kpis" :allKpiList="kpiList" @touched="setTouched" @kpiAdded="onKpiAdded($event)"></KpiCard>
             </TabPanel>
 
             <TabPanel>
                 <template #header>
-                    <span>FILTERS</span>
+                    <span>{{ $t('kpi.kpiScheduler.filters') }}</span>
                 </template>
 
-                {{ selectedSchedule }}
+                <FiltersCard :selectedSchedule="selectedSchedule" :allKpiList="kpiList"></FiltersCard>
             </TabPanel>
 
             <TabPanel>
@@ -48,6 +48,7 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import ExecuteCard from './card/ExecuteCard/ExecuteCard.vue'
+import FiltersCard from './card/FiltersCard/FiltersCard.vue'
 import FrequencyCard from './card/FrequencyCard/FrequencyCard.vue'
 import KpiCard from './card/KpiCard/KpiCard.vue'
 import TabView from 'primevue/tabview'
@@ -55,7 +56,7 @@ import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'kpi-scheduler-tab-view',
-    components: { ExecuteCard, FrequencyCard, KpiCard, TabView, TabPanel },
+    components: { ExecuteCard, FiltersCard, FrequencyCard, KpiCard, TabView, TabPanel },
     props: {
         id: { type: String },
         clone: { type: String }
@@ -113,6 +114,7 @@ export default defineComponent({
                     this.selectedSchedule.frequency.cron = JSON.parse(this.selectedSchedule.frequency.cron)
                 }
             })
+            console.log('SELECTED SCHEDULE AFTER LOAD', this.selectedSchedule)
         },
         async loadDomainsData() {
             await this.loadDomainsByCode('KPI_PLACEHOLDER_TYPE').then((response) => (this.domainsKpiPlaceholderType = response.data))
@@ -146,6 +148,11 @@ export default defineComponent({
                     }
                 })
             }
+        },
+        onKpiAdded(kpiList: []) {
+            console.log(kpiList)
+            // this.selectedSchedule = { ...this.selectedSchedule, kpis: kpiList }
+            // console.log('TEST ON KPI ADDED', this.selectedSchedule.kpis)
         }
     }
 })

@@ -140,9 +140,6 @@ export default defineComponent({
                 })
                 this.loadPage()
             })
-        },
-        cloneSchedule(schedule: any) {
-            console.log(schedule)
         }
     }
 })
@@ -150,6 +147,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 ::v-deep(.p-chip-text) {
-    font-size: 0.7rem;
+    font-size: 0.5rem;
 }
 </style>

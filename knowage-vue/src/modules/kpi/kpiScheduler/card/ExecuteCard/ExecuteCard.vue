@@ -92,13 +92,13 @@ export default defineComponent({
     created() {
         this.loadSelectedSchedule()
         this.loadLogExecutionList()
-        console.log('SELECTED SCHEDULE', this.selectedSchedule)
-        console.log('LOG EXEC LIST', this.logExecutionList)
+        // console.log('SELECTED SCHEDULE', this.selectedSchedule)
+        // console.log('LOG EXEC LIST', this.logExecutionList)
     },
     methods: {
         loadSelectedSchedule() {
             this.schedule = this.selectedSchedule as any
-            console.log('SELECTED SCH. DELTA', this.schedule.delta)
+            // console.log('SELECTED SCH. DELTA', this.schedule.delta)
         },
         loadLogExecutionList() {
             if (this.selectedSchedule) {

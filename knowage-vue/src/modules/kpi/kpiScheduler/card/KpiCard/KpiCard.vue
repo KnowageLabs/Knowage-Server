@@ -74,7 +74,7 @@ export default defineComponent({
     name: 'kpi-card',
     components: { Card, Column, DataTable, Dialog },
     props: { kpis: { type: Array }, allKpiList: { type: Array } },
-    emits: ['touched'],
+    emits: ['touched', 'kpiAdded'],
     data() {
         return {
             kpiCardDescriptor,
@@ -120,6 +120,7 @@ export default defineComponent({
             // console.log('addKpiAssociation()')
             this.kpisList = [...this.selectedKpiAssociations]
             this.addKpiAssociationVisible = false
+            this.$emit('kpiAdded', this.kpisList)
         },
         getFormatedDate(date: any) {
             return formatDate(date, 'YYYY-MM-DD')

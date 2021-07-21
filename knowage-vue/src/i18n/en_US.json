@@ -194,6 +194,7 @@
             "every": "Every",
             "execute": "Execute",
             "executionType": "Execution Type",
+            "filters": "Filters",
             "frequency": "Frequency",
             "hint": "No KPI selected",
             "insertAndUpdate": "Insert and Update",
