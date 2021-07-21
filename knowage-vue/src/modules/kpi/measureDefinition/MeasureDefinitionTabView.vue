@@ -17,7 +17,7 @@
                         <span>{{ $t('kpi.measureDefinition.query') }}</span>
                     </template>
 
-                    <QueryCard
+                    <MeasureDefinitionQueryCard
                         :rule="rule"
                         :datasourcesList="datasourcesList"
                         :aliases="availableAliasList"
@@ -28,7 +28,7 @@
                         :preview="preview"
                         @queryChanged="queryChanged = true"
                         @loadPreview="previewQuery(false, true)"
-                    ></QueryCard>
+                    ></MeasureDefinitionQueryCard>
                 </TabPanel>
 
                 <TabPanel :disabled="metadataDisabled">
@@ -36,19 +36,19 @@
                         <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
                     </template>
 
-                    <MetadataCard :currentRule="rule" :tipologiesType="domainsKpiRuleoutput" :domainsTemporalLevel="domainsTemporalLevel" :categories="domainsKpiMeasures" @touched="setTouched"></MetadataCard>
+                    <MeasureDefinitionMetadataCard :currentRule="rule" :tipologiesType="domainsKpiRuleoutput" :domainsTemporalLevel="domainsTemporalLevel" :categories="domainsKpiMeasures" @touched="setTouched"></MeasureDefinitionMetadataCard>
                 </TabPanel>
             </TabView>
         </div>
         <div v-if="aliasesVisible" class="listbox">
-            <FilterList :header="$t('kpi.measureDefinition.alias')" :list="availableAliasList" listType="alias" @selected="setCodeInput($event)"></FilterList>
+            <MeasureDefinitionFilterList :header="$t('kpi.measureDefinition.alias')" :list="availableAliasList" listType="alias" @selected="setCodeInput($event)"></MeasureDefinitionFilterList>
         </div>
         <div v-if="placeholderVisible" class="listbox">
-            <FilterList :header="$t('kpi.measureDefinition.placeholder')" :list="placeholdersList" listType="placeholder" @selected="setCodeInput($event)"></FilterList>
+            <MeasureDefinitionFilterList :header="$t('kpi.measureDefinition.placeholder')" :list="placeholdersList" listType="placeholder" @selected="setCodeInput($event)"></MeasureDefinitionFilterList>
         </div>
     </div>
 
-    <SubmitDialog v-if="showSaveDialog" :ruleName="rule.name" :newAlias="newAlias" :reusedAlias="reusedAlias" :newPlaceholder="newPlaceholder" :reusedPlaceholder="reusedPlaceholder" @close="showSaveDialog = false" @save="saveRule($event)"></SubmitDialog>
+    <MeasureDefinitionSubmitDialog v-if="showSaveDialog" :ruleName="rule.name" :newAlias="newAlias" :reusedAlias="reusedAlias" :newPlaceholder="newPlaceholder" :reusedPlaceholder="reusedPlaceholder" @close="showSaveDialog = false" @save="saveRule($event)"></MeasureDefinitionSubmitDialog>
 
     <Dialog :style="metadataDefinitionTabViewDescriptor.dialog.style" :modal="true" :visible="errorDialogVisible" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
         <p>{{ errorMessage }}</p>
@@ -63,17 +63,17 @@ import { defineComponent } from 'vue'
 import { iDatasource, iMeasure, iRule, iPlaceholder } from './MeasureDefinition'
 import axios from 'axios'
 import Dialog from 'primevue/dialog'
-import FilterList from './FilterList.vue'
-import MetadataCard from './card/MetadataCard/MetadataCard.vue'
+import MeasureDefinitionFilterList from './MeasureDefinitionFilterList.vue'
+import MeasureDefinitionMetadataCard from './card/MeasureDefinitionMetadataCard/MeasureDefinitionMetadataCard.vue'
 import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDescriptor.json'
-import QueryCard from './card/QueryCard/QueryCard.vue'
-import SubmitDialog from './SubmitDialog.vue'
+import MeasureDefinitionQueryCard from './card/MeasureDefinitionQueryCard/MeasureDefinitionQueryCard.vue'
+import MeasureDefinitionSubmitDialog from './MeasureDefinitionSubmitDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'measure-definition-detail',
-    components: { Dialog, FilterList, MetadataCard, QueryCard, SubmitDialog, TabView, TabPanel },
+    components: { Dialog, MeasureDefinitionFilterList, MeasureDefinitionMetadataCard, MeasureDefinitionQueryCard, MeasureDefinitionSubmitDialog, TabView, TabPanel },
     props: {
         id: {
             type: String

@@ -8,7 +8,7 @@
         <Column class="kn-truncated" field="alias" :header="$t('kpi.measureDefinition.alias')"> </Column>
         <Column class="kn-truncated" field="type" :header="$t('kpi.measureDefinition.tipology')">
             <template #editor="slotProps">
-                <Dropdown v-model="slotProps.data['type']" :options="tipologiesType" @change="$emit('touched')">
+                <Dropdown class="p-mr-2" v-model="slotProps.data['type']" :options="tipologiesType" @change="$emit('touched')">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <span>{{ slotProps.value['valueCd'] }}</span>
@@ -19,16 +19,18 @@
                             <span>{{ slotProps.option.valueCd }}</span>
                         </div>
                     </template>
-                </Dropdown></template
-            >
+                </Dropdown>
+                <i class="pi pi-pencil edit-icon"
+            /></template>
             <template #body="slotProps">
                 {{ slotProps.data.type.translatedValueName }}
+                <i class="pi pi-pencil edit-icon" />
             </template>
         </Column>
         <Column :header="$t('common.category')">
             <template #editor="slotProps">
                 <AutoComplete
-                    class="p-inputtext-sm"
+                    class="p-inputtext-sm p-mr-2"
                     v-if="slotProps.data.type.valueCd != 'TEMPORAL_ATTRIBUTE'"
                     v-model="slotProps.data['category'].valueCd"
                     :suggestions="filteredCategories"
@@ -37,7 +39,7 @@
                     @input="$emit('touched')"
                     @item-select="setRuleCategory($event.value, slotProps.data)"
                 />
-                <Dropdown v-else v-model="slotProps.data['hierarchy']" :options="domainsTemporalLevel" :placeholder="$t('kpi.measureDefinition.temporalAttributePlaceholder')" @change="$emit('touched')">
+                <Dropdown class="p-mr-2" v-else v-model="slotProps.data['hierarchy']" :options="domainsTemporalLevel" :placeholder="$t('kpi.measureDefinition.temporalAttributePlaceholder')" @change="$emit('touched')">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <span>{{ slotProps.value['valueCd'] }}</span>
@@ -52,9 +54,11 @@
                         </div>
                     </template>
                 </Dropdown>
+                <i class="pi pi-pencil edit-icon" />
             </template>
             <template #body="slotProps">
-                {{ slotProps.data.type.valueCd != 'TEMPORAL_ATTRIBUTE' ? slotProps.data['category']?.valueCd : slotProps.data['hierarchy']?.valueCd }}
+                <span class="p-mr-2">{{ slotProps.data.type.valueCd != 'TEMPORAL_ATTRIBUTE' ? slotProps.data['category']?.valueCd : slotProps.data['hierarchy']?.valueCd }}</span>
+                <i class="pi pi-pencil edit-icon" />
             </template>
         </Column>
     </DataTable>
@@ -67,10 +71,10 @@ import AutoComplete from 'primevue/autocomplete'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
-import metadataCardDescriptor from './MetadataCardDescriptor.json'
+import metadataCardDescriptor from './MeasureDefinitionMetadataCardDescriptor.json'
 
 export default defineComponent({
-    name: 'metadata-card',
+    name: 'measure-definition-metadata-card',
     components: { AutoComplete, Column, Dropdown, DataTable },
     props: {
         currentRule: {
@@ -139,5 +143,9 @@ export default defineComponent({
 
 .icon-missing {
     color: #ffeb38;
+}
+
+.edit-icon {
+    font-size: 0.7rem;
 }
 </style>

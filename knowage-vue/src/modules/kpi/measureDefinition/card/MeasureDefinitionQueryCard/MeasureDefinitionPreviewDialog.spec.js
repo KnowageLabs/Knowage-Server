@@ -3,7 +3,7 @@ import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
-import PreviewDialog from './PreviewDialog.vue'
+import MeasureDefinitionPreviewDialog from './MeasureDefinitionPreviewDialog.vue'
 import Toolbar from 'primevue/toolbar'
 
 const mockedRule = {
@@ -59,7 +59,7 @@ const mockedColumns = [
 const mockedRows = [{ id: 1, column_1: 1000, column_2: '', column_3: 'Assets' }]
 
 const factory = () => {
-    return mount(PreviewDialog, {
+    return mount(MeasureDefinitionPreviewDialog, {
         props: {
             currentRule: mockedRule,
             placeholders: [],

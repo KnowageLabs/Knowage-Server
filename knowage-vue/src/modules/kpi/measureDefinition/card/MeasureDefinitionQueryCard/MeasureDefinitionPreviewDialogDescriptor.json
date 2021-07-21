@@ -1,5 +1,8 @@
 {
     "dialog": {
+        "contentStyle": {
+            "min-height": "400px"
+        },
         "style": {
             "width": "80vw"
         }

@@ -17,7 +17,7 @@
             </div>
         </template>
     </Card>
-    <PreviewDialog v-if="previewVisible && preview" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :rows="rows" @close="previewVisible = false" @loadPreview="$emit('loadPreview')"></PreviewDialog>
+    <MeasureDefinitionPreviewDialog v-if="previewVisible && preview" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :rows="rows" @close="previewVisible = false" @loadPreview="$emit('loadPreview')"></MeasureDefinitionPreviewDialog>
 </template>
 
 <script lang="ts">
@@ -26,14 +26,14 @@ import { iRule } from '../../MeasureDefinition'
 import { VCodeMirror } from 'vue3-code-mirror'
 import CodeMirror from 'codemirror'
 import axios from 'axios'
-import queryCardDescriptor from './QueryCardDescriptor.json'
+import queryCardDescriptor from './MeasureDefinitionQueryCardDescriptor.json'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
-import PreviewDialog from './PreviewDialog.vue'
+import MeasureDefinitionPreviewDialog from './MeasureDefinitionPreviewDialog.vue'
 
 export default defineComponent({
-    name: 'query-card',
-    components: { Card, Dropdown, VCodeMirror, PreviewDialog },
+    name: 'measure-definition-query-card',
+    components: { Card, Dropdown, VCodeMirror, MeasureDefinitionPreviewDialog },
     props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array }, columns: { type: Array }, rows: { type: Array }, codeInput: { type: String }, preview: { type: Boolean } },
     emits: ['touched', 'queryChanged', 'loadPreview'],
     data() {

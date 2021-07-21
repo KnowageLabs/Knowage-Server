@@ -34,7 +34,7 @@ import Listbox from 'primevue/listbox'
 import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDescriptor.json'
 
 export default defineComponent({
-    name: 'filter-list',
+    name: 'measure-definition-filter-list',
     components: { Listbox },
     props: { header: { type: String }, list: { type: Array }, listType: { type: String } },
     emits: ['selected'],

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import Listbox from 'primevue/listbox'
-import FilterList from './FilterList.vue'
+import MeasureDefinitionFilterList from './MeasureDefinitionFilterList.vue'
 import Toolbar from 'primevue/toolbar'
 
 const mockedFilter = [
@@ -23,7 +23,7 @@ const mockedFilter = [
 ]
 
 const factory = () => {
-    return mount(FilterList, {
+    return mount(MeasureDefinitionFilterList, {
         props: {
             list: mockedFilter
         },

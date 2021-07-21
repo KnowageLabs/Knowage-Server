@@ -23,7 +23,7 @@
                     class="p-datatable-sm kn-table"
                     dataKey="id"
                     v-model:filters="filters"
-                    :globalFilterFields="measureDefintionDescriptor.globalFilterFields"
+                    :globalFilterFields="measureDefinitionDescriptor.globalFilterFields"
                     responsiveLayout="stack"
                     breakpoint="960px"
                     @rowClick="showForm($event.data, false)"
@@ -40,8 +40,8 @@
                             </span>
                         </div>
                     </template>
-                    <Column class="kn-truncated" :style="col.style" v-for="col of measureDefintionDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>
-                    <Column :style="measureDefintionDescriptor.table.iconColumn.style">
+                    <Column class="kn-truncated" :style="col.style" v-for="col of measureDefinitionDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>
+                    <Column :style="measureDefinitionDescriptor.table.iconColumn.style">
                         <template #body="slotProps">
                             <Button icon="pi pi-copy" class="p-button-link" @click="cloneKpiConfirm(slotProps.data)" data-test="clone-button" />
                             <Button icon="pi pi-trash" class="p-button-link" @click="deleteMeasureConfirm(slotProps.data)" :data-test="'delete-button-' + slotProps.data.id" />
@@ -62,7 +62,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnHint from '@/components/UI/KnHint.vue'
-import measureDefintionDescriptor from './MeasureDefintionDescriptor.json'
+import measureDefinitionDescriptor from './MeasureDefinitionDescriptor.json'
 
 export default defineComponent({
     name: 'measure-definition',
@@ -74,7 +74,7 @@ export default defineComponent({
     },
     data() {
         return {
-            measureDefintionDescriptor,
+            measureDefinitionDescriptor,
             measuresList: [] as iMeasure[],
             filters: { global: [filterDefault] } as Object,
             loading: false

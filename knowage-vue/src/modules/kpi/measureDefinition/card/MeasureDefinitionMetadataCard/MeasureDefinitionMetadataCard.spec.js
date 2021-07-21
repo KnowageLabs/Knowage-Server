@@ -3,7 +3,7 @@ import AutoComplete from 'primevue/autocomplete'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
-import MetadataCard from './MetadataCard.vue'
+import MeasureDefinitionMetadataCard from './MeasureDefinitionMetadataCard.vue'
 
 const mockedRule = {
     ruleOutputs: [
@@ -50,7 +50,7 @@ const mockedRule = {
 }
 
 const factory = () => {
-    return mount(MetadataCard, {
+    return mount(MeasureDefinitionMetadataCard, {
         props: {
             currentRule: mockedRule,
             tipologiesType: [],

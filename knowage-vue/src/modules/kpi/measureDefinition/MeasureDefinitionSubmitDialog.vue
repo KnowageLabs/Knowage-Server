@@ -51,7 +51,7 @@ import Dialog from 'primevue/dialog'
 import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDescriptor.json'
 
 export default defineComponent({
-    name: 'submit-dialog',
+    name: 'measure-definition-submit-dialog',
     components: { Chip, Dialog },
     props: { ruleName: { type: String }, newAlias: { type: Array }, reusedAlias: { type: Array }, newPlaceholder: { type: Array }, reusedPlaceholder: { type: Array } },
     emits: ['close'],

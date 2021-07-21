@@ -1,5 +1,5 @@
 <template>
-    <Dialog :style="previewDialogDescriptor.dialog.style" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :header="$t('kpi.measureDefinition.preview')" :closable="false">
+    <Dialog :style="previewDialogDescriptor.dialog.style" :contentStyle="previewDialogDescriptor.dialog.contentStyle" :visible="true" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :header="$t('kpi.measureDefinition.preview')" :closable="false">
         <div class="p-d-flex">
             <DataTable :value="rows" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px">
                 <template #empty>
@@ -40,10 +40,10 @@ import { iRule } from '../../MeasureDefinition'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
-import previewDialogDescriptor from './PreviewDialogDescriptor.json'
+import previewDialogDescriptor from './MeasureDefinitionPreviewDialogDescriptor.json'
 
 export default defineComponent({
-    name: 'preview-dialog',
+    name: 'measure-definition-preview-dialog',
     components: { Column, DataTable, Dialog },
     props: {
         currentRule: {
