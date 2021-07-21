@@ -41,10 +41,10 @@
             </TabView>
         </div>
         <div v-if="aliasesVisible" class="listbox">
-            <FilterList :header="$t('kpi.measureDefinition.alias')" :list="availableAliasList" @selected="setCodeInput($event)"></FilterList>
+            <FilterList :header="$t('kpi.measureDefinition.alias')" :list="availableAliasList" listType="alias" @selected="setCodeInput($event)"></FilterList>
         </div>
         <div v-if="placeholderVisible" class="listbox">
-            <FilterList :header="$t('kpi.measureDefinition.placeholder')" :list="placeholdersList" @selected="setCodeInput($event)"></FilterList>
+            <FilterList :header="$t('kpi.measureDefinition.placeholder')" :list="placeholdersList" listType="placeholder" @selected="setCodeInput($event)"></FilterList>
         </div>
     </div>
 
@@ -467,9 +467,10 @@ export default defineComponent({
                 })
             }
         },
-        setCodeInput(input: string) {
+        setCodeInput(event: any) {
+            console.log('LIST TYPE', event.type)
             if (this.activeTab === 0) {
-                this.codeInput = input
+                this.codeInput = event.type === 'placeholder' ? '@' + event.value : event.value
             }
         },
         sortArray(array: [], type: string) {

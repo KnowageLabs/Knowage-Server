@@ -65,6 +65,6 @@ describe('Filter List', () => {
         await wrapper.find('[data-test="list-item-1"]').trigger('click')
 
         expect(wrapper.emitted()).toHaveProperty('selected')
-        expect(wrapper.emitted().selected[0][0]).toStrictEqual('Test')
+        expect(wrapper.emitted().selected[0][0]).toStrictEqual({ type: undefined, value: 'Test' })
     })
 })

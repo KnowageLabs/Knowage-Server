@@ -15,7 +15,7 @@
         filterMatchMode="contains"
         :filterFields="metadataDefinitionTabViewDescriptor.aliasFilterFields"
         :emptyFilterMessage="$t('common.info.noDataFound')"
-        @change="$emit('selected', $event.value.name)"
+        @change="$emit('selected', { value: $event.value.name, type: listType })"
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
         <template #option="slotProps">
@@ -36,7 +36,7 @@ import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDesc
 export default defineComponent({
     name: 'filter-list',
     components: { Listbox },
-    props: { header: { type: String }, list: { type: Array } },
+    props: { header: { type: String }, list: { type: Array }, listType: { type: String } },
     emits: ['selected'],
     data() {
         return {
