@@ -469,12 +469,16 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				List<Projection> projectionsToAdd = new ArrayList<Projection>();
 				for (Projection proj : filter.getProjections()) {
 					String nameToAdd = findRightNameFromAssociation(proj, associationGroup, dataSet);
-					Projection projNew = new Projection(dataSet, nameToAdd);
-					projectionsToAdd.add(projNew);
+					if (nameToAdd != null && !nameToAdd.isEmpty()) {
+						Projection projNew = new Projection(dataSet, nameToAdd);
+						projectionsToAdd.add(projNew);
+					}
 
 				}
-				InFilter filterToAdd = new InFilter(projectionsToAdd, filter.getOperands());
-				filtersToReturn.add(filterToAdd);
+				if (projectionsToAdd.size() > 0) {
+					InFilter filterToAdd = new InFilter(projectionsToAdd, filter.getOperands());
+					filtersToReturn.add(filterToAdd);
+				}
 			}
 		}
 		return filtersToReturn;

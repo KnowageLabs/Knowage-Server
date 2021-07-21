@@ -21,15 +21,17 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.security.ProductProfiler;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -52,6 +54,7 @@ import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class ContentServiceImplSupplier {
 	static private Logger logger = Logger.getLogger(ContentServiceImplSupplier.class);
@@ -86,6 +89,10 @@ public class ContentServiceImplSupplier {
 		try {
 			Integer id = new Integer(document);
 			biobj = DAOFactory.getBIObjectDAO().loadBIObjectById(id);
+			// check if document can be executed accordingly to EE product mappings
+			if (!ProductProfiler.canExecuteDocument(biobj)) {
+				throw new SpagoBIRuntimeException("This document cannot be executed within the current product!");
+			}
 			// only if the user is not Scheduler or Workflow system user or it
 			// is a call to retrieve a subreport,
 			// check visibility on document and parameter values
@@ -126,8 +133,12 @@ public class ContentServiceImplSupplier {
 						logger.debug("Not locale informations found in parameters... Not setted it at this time.");
 					} else {
 						logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
-						Locale locale = new Locale(language, country);
-						aEngineDriver.applyLocale(locale);
+						Builder builder = new Builder().setLanguage(language).setRegion(country);
+						String script = (String) parameters.get(SpagoBIConstants.SBI_SCRIPT);
+						if (StringUtils.isNotBlank(script)) {
+							builder.setScript(script);
+						}
+						aEngineDriver.applyLocale(builder.build());
 					}
 					logger.warn("Calling elaborateTemplate method defined into the driver ... ");
 
@@ -162,6 +173,9 @@ public class ContentServiceImplSupplier {
 			throw e;
 		} catch (EMFInternalError e) {
 			logger.error("EMFUserError", e);
+			throw e;
+		} catch (Exception e) {
+			logger.error("Generic error", e);
 			throw e;
 		} finally {
 			logger.debug("OUT");
@@ -221,8 +235,12 @@ public class ContentServiceImplSupplier {
 						logger.debug("Not locale informations found in parameters... Not setted it at this time.");
 					} else {
 						logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
-						Locale locale = new Locale(language, country);
-						aEngineDriver.applyLocale(locale);
+						Builder builder = new Builder().setLanguage(language).setRegion(country);
+						String script = (String) parameters.get(SpagoBIConstants.SBI_SCRIPT);
+						if (StringUtils.isNotBlank(script)) {
+							builder.setScript(script);
+						}
+						aEngineDriver.applyLocale(builder.build());
 					}
 					logger.warn("Calling elaborateTemplate method defined into the driver ... ");
 					byte[] elabTemplate = aEngineDriver.ElaborateTemplate(template);

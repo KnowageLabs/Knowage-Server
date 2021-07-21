@@ -1,5 +1,6 @@
 {
     "common": {
+        "back": "back",
         "cancel": "cancel",
         "choose": "choose",
         "close": "close",
@@ -14,7 +15,7 @@
         "description": "description",
         "download": "download",
         "downloading": "Downloading",
-        "dragAndDropFilesHere": "Drag and drop files here.",
+        "dragAndDropFileHere": "Drag and drop file here.",
         "error": {
             "downloading": "Error downloading ",
             "exceededSize": "Uploaded file exceedes max size {size}",
@@ -36,7 +37,7 @@
         "loggedUser": "logged user",
         "name": "name",
         "new": "new",
-        "ok": "ok",
+        "next": "next",
         "save": "save",
         "search": "search",
         "table": {
@@ -55,10 +56,10 @@
             "success": "Operation succeeded",
             "unsavedChangesHeader": "Unsaved changes",
             "unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
+            "updateSuccess": "Item was updated successfully",
             "updateTitle": "Updated"
         },
         "type": "type",
-        "upload": "upload",
         "uploading": "Uploading",
         "validation": {
             "maximumCharacters": "The maximum length allowed is {max}",
@@ -82,16 +83,36 @@
             "documentation": "documentation",
             "qa": "support forum"
         },
+        "connectYourData": "connect your data",
+        "createYourAnalysis": "create your analysis",
+        "queryYourData": "query your data",
+        "saveAndShare": "save and share",
         "welcome": "Welcome to Knowage",
         "welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
     },
     "importExport": {
+        "catalogFunction": {
+            "column": {
+                "label": "Label",
+                "name": "Name",
+                "tags": "Keywords",
+                "type": "Type"
+            },
+            "description": "export functions from catalog",
+            "label": "functions"
+        },
         "export": {
             "completedWithErrors": "Export completed with errors. Please read logs for further information.",
             "successfullyCompleted": "Export successfully completed"
         },
         "filenamePlaceholder": "Enter filename here",
         "gallery": {
+            "column": {
+                "image": "Image",
+                "name": "Name",
+                "tags": "Tags",
+                "type": "Type"
+            },
             "description": "export gallery templates",
             "label": "gallery"
         },
@@ -136,6 +157,53 @@
         "wrongType": "You have chosen wrong type of license"
     },
     "managers": {
+        "cacheManagement": {
+            "addRemoveDataset": "Add/Remove dataset",
+            "availableMemory": "Available memory",
+            "availableMemoryPercentage": "Available memory percentage",
+            "cacheDimensionSingleDataset": "% of cache dimension for a single dataset",
+            "cacheEnabled": "Cache enabled",
+            "cleanAll": "Clean all",
+            "cleanAllMessage": "All items will be deleted. Are you sure you want to continue with this operation?",
+            "daily": "DAILY",
+            "dimension": "Dimension (byte)",
+            "discard": "Discard",
+            "every_10_mins": "EVERY 10 MINS",
+            "every_15_mins": "EVERY 15 MINS",
+            "every_20_mins": "EVERY 20 MINS",
+            "every_30_mins": "EVERY 30 MINS",
+            "frequencyOfCleaningDaemon": "Frequency of cleaning daemon",
+            "generalSettings": "General settings",
+            "hazelcastTimeToLock": "Timeout (seconds) to acquire a lock (Hazelcast)",
+            "hazelcastTimeToReleaseLock": "Timeout value (seconds) to release a lock (Hazelcast)",
+            "hourly": "HOURLY",
+            "maximumPercentOfCacheCleaningQuota": "Maximum percent of cache cleaning quota",
+            "metadataUnavailable": "Metadata are not available",
+            "monthly": "MONTHLY",
+            "name": "Name",
+            "noDefaultDataset": "No default datasource set, cannot display cache runtime information!",
+            "noDefaultDatasetTitle": "No default datasource",
+            "none": "NONE",
+            "numberOfCachedObjects": "Number of cached objects",
+            "prefixForCacheTablesName": "Prefix for cache tables name",
+            "runtimeInformationTitle": "Runtime information",
+            "signature": "Signature",
+            "table": "Table",
+            "targetDatasource": "Target datasource",
+            "timeToCreateTempTable": "Time (seconds) to create temporary table for the dataset",
+            "timeToLock": "Timeout (seconds) to acquire a lock",
+            "title": "Cache management",
+            "totalBytesAvailableForCache": "Total megabytes available for cache",
+            "totalMemory": "Total memory",
+            "ttlForCachedDataset": "Time To Live (seconds from last access) for cached datasets",
+            "usedMemory": "Used Memory",
+            "weekly": "WEEKLY",
+            "yearly": "YEARLY"
+        },
+        "catalogFunction": {
+            "hint": "The import/export functionality allows you to bulk insert/extract data from your tenant. \n Select the category to view the items present. \n Click on @:common.import if you want to import a package. \n Select the items and click  @:common.export if you want to download them in a zip archive.",
+            "title": "Import/Export"
+        },
         "configurationManagement": {
             "createNewHeader": "Create new configuration",
             "headers": {
@@ -147,6 +215,56 @@
                 "valueCheck": "Value"
             },
             "title": "Configuration Management"
+        },
+        "dataSourceManagement": {
+            "form": {
+                "advancedOptions": {
+                    "abandonedTimeout": "Abandoned Timeout",
+                    "abandonedTimeoutInfo": "Timeout in seconds before an abandoned (in use) connection can be removed. The value should be set to the longest running query your applications might have.",
+                    "logAbandoned": "Log Abandoned",
+                    "logAbandonedInfo": "Flag to log stack traces for application code which abandoned a Statement or Connection. Logging of abandoned Statements and Connections adds overhead for every Connection open or new Statement because a stack trace has to be generated.",
+                    "maxIdle": "Max Idle",
+                    "maxIdleInfo": "The maximum number of connections that should be kept in the pool at all times. Idle connections are checked periodically and connections that have been idle for longer than (Min Evictable Idle Time) will be released.",
+                    "maxTotal": "Max Total",
+                    "maxTotalInfo": "Sets the maximum total number of idle and borrows connections that can be active at the same time.",
+                    "maxWait": "Max Wait",
+                    "maxWaitInfo": "The maximum number of seconds that the pool will wait (when there are no available connections) for a connection to be returned before throwing an exception.",
+                    "minEvictableIdleTimeMillis": "Min Evictable Idle Time",
+                    "minEvictableIdleTimeMillisInfo": "The minimum amount of time, in milliseconds, an object may sit idle in the pool before it is eligible for eviction.",
+                    "removeAbandonedOnBorrow": "Remove Abandoned On Borrow",
+                    "removeAbandonedOnBorrowInfo": "Flag to remove abandoned connections if they exceed the Remove Abandoned Timeout when borrowObject is invoked. If set to true a connection is considered abandoned and eligible for removal if it has not been used for more than 'Remove Abandoned Timeout' seconds.",
+                    "removeAbandonedOnMaintenance": "Remove Abandoned On Maintenance",
+                    "removeAbandonedOnMaintenanceInfo": "Flag to remove abandoned connections if they exceed the Remove Abandoned Timeout during pool maintenance. If set to true a connection is considered abandoned and eligible for removal if it has not been used for more than 'Remove Abandoned Timeout' seconds.",
+                    "testOnReturn": "Test On Return",
+                    "testOnReturnInfo": "Returns the value of the testOnReturn property. Returns true if objects are validated before being returned to the pool.",
+                    "testWhileIdle": "Test While Idle",
+                    "testWhileIdleInfo": "Returns the value of the testWhileIdle property. Returns true if objects examined by the idle object evictor are validated.",
+                    "timeBetweenEvictionRuns": "Time Between Eviction Runs",
+                    "timeBetweenEvictionRunsInfo": "The number of seconds to sleep between runs of the idle connection validation/cleaner thread. This value should not be set under 1 second. It dictates how often we check for idle, abandoned connections, and how often we validate idle connections.",
+                    "title": "Advanced Options",
+                    "validationQuery": "Validation Query (optional)",
+                    "validationQueryInfo": "The SQL query that will be used to validate connections from this pool before returning them to the caller. If specified, this query does not have to return any data, it just can't throw a SQLException. The default value is null. If not specified, connections will be validation by the isValid() method. Example values are SELECT 1(mysql), select 1 from dual(oracle), SELECT 1(MS Sql Server)",
+                    "validationQueryTimeout": "Validation Query Timeout",
+                    "validationQueryTimeoutInfo": "The timeout in seconds before a connection validation queries fail. A value less than or equal to zero will disable this feature."
+                },
+                "dialect": "Dialect",
+                "driver": "Driver",
+                "errorTitle": "Connection KO",
+                "jndi": "JNDI Name",
+                "jndiInfo": "For the data source configuration you should specify the connection pool configured inside the application server. For example: Tomcat: java:comp/env/jdbc/foodmart; JBoss: jdbc/foodmart.",
+                "multischema": "Multischema",
+                "notOwner": "You are not the owner of this data source.",
+                "pwd": "Password (Only If Changed)",
+                "readAndWrite": "Read and write",
+                "readOnly": "Read Only",
+                "schemaAttribute": "Multischema Attribute",
+                "testOk": "Tested parameters are correct!",
+                "urlConnection": "URL",
+                "user": "User",
+                "writeDefault": "Use as cache"
+            },
+            "hint": "The datasources allows you to define an 'access point' for your document data. It's possible to change the type, the dialect and to set the url or settings. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "title": "Data Source Management"
         },
         "domainsManagement": {
             "domainCode": "Domain code",
@@ -174,22 +292,91 @@
             "test": "Test",
             "title": "Functionalities tree"
         },
-        "menu": {
-            "admin": {
-                "importExport": "Import/Export"
+        "internationalizationManagement": {
+            "defaultLanguage": "(Default)",
+            "delete": {
+                "cantDelete": "Default Message can be deleted only on Default Tab. You can't delete Default Message here.",
+                "deleteConfirm": "Are You sure You want to delete this message?",
+                "deleteDefault": "Note: Deleting Default Message will delete all other messages with this Label. Are You sure You want to delete this message?",
+                "deleteDefaultTitle": "Delete Default Message",
+                "deleteMessage": "Are You sure You want to delete this message?",
+                "deleteMessageTitle": "Delete Message",
+                "deleteOk": "Deleted successfully"
+            },
+            "showBlankMessages": "Show Only Blank Fields",
+            "table": {
+                "addLabel": "Add Label",
+                "defaultMessage": "Default Message Code",
+                "messageCode": "Message Code"
             }
         },
         "metadata": {
             "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Metadata Management"
         },
-        "newsDialog": {
-            "description": "Description",
-            "expirationDate": "Expiration date",
-            "news": "news",
-            "notifications": "notifications",
-            "title": "Knowage news",
-            "warnings": "warnings"
+        "mondrianSchemasManagement": {
+            "detail": {
+                "savedVersions": "Saved versions",
+                "title": "Detail"
+            },
+            "headers": {
+                "active": "Active",
+                "creationDate": "Creation Date",
+                "creator": "Creator",
+                "fileName": "File Name"
+            },
+            "hint": "placeholder, please add a description",
+            "hintTitle": "Mondrian Schema Management",
+            "noResults": "No schemas' available for the selected filter.",
+            "title": "Mondrian schemas catalogue",
+            "toast": {
+                "downloadFile": {
+                    "downloaded": "Version Downloaded",
+                    "ok": "New version downloaded successfully"
+                },
+                "schema": {
+                    "error": "Error creating schema"
+                },
+                "uploadFile": {
+                    "error": "Error uploading version",
+                    "ok": "New version uploaded successfully",
+                    "uploaded": "Version Uploaded"
+                },
+                "workflow": {
+                    "ok": "Workflow updated successfully",
+                    "startFailed": "Error starting workflow",
+                    "started": "Workflow Started",
+                    "startedOk": "Workflow started successfully",
+                    "updated": "Workflow Updated"
+                }
+            },
+            "workFlow": {
+                "availableUsers": "Available Users",
+                "title": "Work Flow",
+                "tooltips": {
+                    "noSchema": "Schema is not created!",
+                    "noWfUsers": "Save users in workflow!",
+                    "wfInProgress": "Workflow is in progress!"
+                },
+                "userWf": "Users Work Flow"
+            }
+        },
+        "newsManagement": {
+            "active": "Active",
+            "detailTitle": "News Detail",
+            "form": {
+                "description": "Description",
+                "descriptionPlaceholder": "This is the text that will appear on the news notification",
+                "expirationDate": "Expiration Date",
+                "title": "News Title",
+                "type": "News Type"
+            },
+            "hint": "The news management page allows you to create news and notifications for the user. Creating a news or enabling one will show the notification to end users menu. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "noResults": "No roles available for the selected filter",
+            "role": "Role",
+            "roles": "Roles permissions",
+            "settings": "News Settings",
+            "title": "News Management"
         },
         "profileAttributesManagement": {
             "description": "Description",
@@ -221,10 +408,6 @@
             "name": "Name",
             "title": "Profile Attributes Management",
             "valueDescription": "Value description"
-        },
-        "role": {
-            "defaultRolePlaceholder": "No default role selected",
-            "roleSelection": "Role Selection"
         },
         "rolesManagement": {
             "authorizations": {
@@ -291,7 +474,7 @@
                 "roleTypeID": "Role Type",
                 "title": "Detail"
             },
-            "hint": "The roles allows you to choose the permission and authorizations for the Knowage roles in your tenant. To view the details of a role, select one on the side, or press the \"+\" button to add a new one.",
+            "hint": "Roles allows you to specify different users properties and authorizations. It's possible to change the role name, the roles authorizations and dataset visibility. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "kpiCategories": "KPI Categories",
             "noResults": "No roles available for the selected filter",
             "rolesDropdown": {
@@ -303,36 +486,30 @@
             },
             "title": "Roles Management"
         },
-        "usersManagement": {
-            "attributes": "Attributes",
-            "blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
-            "defaultRoleInfo": "Select a role if you want to set it as the default. If no role is selected, it will be possible switch between roles from the Knowage Administration menu",
-            "detail": "Detail",
-            "form": {
-                "defaultRole": "Default role",
-                "fullName": "Full Name",
-                "password": "Password",
-                "passwordConfirm": "Confirm Password",
-                "userId": "User ID"
+        "templatePruning": {
+            "documentSelection": "Document Selection",
+            "documentSelectionMessage": "Select the documents you want to delete whose template is older than the date entered above",
+            "enterDateMessage": "Enter a date from which the templates will be maintained",
+            "noDocuments": "No available documents",
+            "referenceDate": "Reference Date",
+            "selectDate": "Select Date",
+            "title": "Template Pruning"
+        },
+        "tenantManagement": {
+            "dataSource": {
+                "title": "Data Source"
             },
-            "fullName": "Full Name",
-            "hint": "The users management allows you to read the user details and to set the user roles. To view the details of an user, select one on the side, or press the \"+\" button to add a new one.",
-            "info": {
-                "createMessage": "User created",
-                "createTitle": "Create user",
-                "deleteMessage": "User deleted",
-                "deleteTitle": "Delete user",
-                "updateMessage": "User updated",
-                "updateTitle": "Update user"
+            "detail": {
+                "theme": "Theme",
+                "title": "Detail"
             },
-            "roles": "Roles",
-            "title": "Users management",
-            "unlockUser": "Unlock user",
-            "userId": "User ID",
-            "validation": {
-                "sameAsPassword": "Username must be the same as password"
+            "hint": "Tenants management allows you to define different tenants and set name and settings for each one. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "hintTitle": "Tenant Management",
+            "productTypes": {
+                "title": "Product Types"
             },
-            "valueDescription": "Value description"
+            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are",
+            "title": "Tenant Management"
         },
         "widgetGallery": {
             "deleteTemplate": "Delete template",
@@ -356,5 +533,22 @@
             "title": "Gallery management",
             "uploadTemplate": "Upload template"
         }
+    },
+    "menu": {
+        "admin": {
+            "importExport": "Import/Export"
+        }
+    },
+    "newsDialog": {
+        "description": "Description",
+        "expirationDate": "Expiration date",
+        "news": "news",
+        "notifications": "notifications",
+        "title": "Knowage news",
+        "warnings": "warnings"
+    },
+    "role": {
+        "defaultRolePlaceholder": "No default role selected",
+        "roleSelection": "Role Selection"
     }
 }

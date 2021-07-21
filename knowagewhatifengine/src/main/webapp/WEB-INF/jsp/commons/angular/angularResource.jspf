@@ -48,7 +48,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE                                                              --%>
 <%-- ---------------------------------------------------------------------- --%>
@@ -76,7 +75,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        String editModeCurrentContentId = null;
        ExecutionSession es = new ExecutionSession(request, request.getSession());
        String curr_language=(String)es.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-  		String curr_country=(String)es.getAttribute(SpagoBIConstants.AF_COUNTRY);
+	   String curr_country=(String)es.getAttribute(SpagoBIConstants.AF_COUNTRY);
+	   String curr_script=(String)es.getAttribute(SpagoBIConstants.AF_SCRIPT);
        
       whatIfEngineInstance = (WhatIfEngineInstance)es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE );
 

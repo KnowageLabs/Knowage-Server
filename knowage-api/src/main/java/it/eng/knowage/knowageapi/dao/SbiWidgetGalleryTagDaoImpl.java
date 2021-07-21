@@ -18,13 +18,14 @@
 package it.eng.knowage.knowageapi.dao;
 
 import java.util.Collection;
-import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag;
@@ -33,19 +34,18 @@ import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTagId;
 @Component
 public class SbiWidgetGalleryTagDaoImpl implements SbiWidgetGalleryTagDao {
 
-	private static final Logger logger = Logger.getLogger(SbiWidgetGalleryDaoImpl.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(SbiWidgetGalleryDaoImpl.class);
 
-	@Autowired
-	@Qualifier("knowage-gallery")
+	@PersistenceContext(unitName = "knowage-gallery")
 	private EntityManager em;
 
 	@Override
+	@Transactional(value = TxType.REQUIRED)
 	public SbiWidgetGalleryTagId create(SbiWidgetGalleryTag sbiWidgetGalleryTag) {
 
-		em.getTransaction().begin();
 		// persist the entity
 		em.persist(sbiWidgetGalleryTag);
-		em.getTransaction().commit();
+
 		return sbiWidgetGalleryTag.getId();
 	}
 

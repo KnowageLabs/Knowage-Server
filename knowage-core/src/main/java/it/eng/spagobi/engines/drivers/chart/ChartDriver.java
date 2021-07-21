@@ -17,6 +17,22 @@
  */
 package it.eng.spagobi.engines.drivers.chart;
 
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Locale.Builder;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
@@ -40,20 +56,6 @@ import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 import it.eng.spagobi.utilities.assertion.Assert;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-
 /**
  * Driver Implementation (IEngineDriver Interface) for Chart External Engine.
  */
@@ -63,15 +65,11 @@ public class ChartDriver extends GenericDriver {
 	private Locale locale;
 
 	/**
-	 * Returns a map of parameters which will be send in the request to the
-	 * engine application.
+	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param analyticalDocument
-	 *            the biobject
+	 * @param profile            Profile of the user
+	 * @param roleName           the name of the execution role
+	 * @param analyticalDocument the biobject
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
@@ -100,17 +98,12 @@ public class ChartDriver extends GenericDriver {
 	}
 
 	/**
-	 * Returns a map of parameters which will be send in the request to the
-	 * engine application.
+	 * Returns a map of parameters which will be send in the request to the engine application.
 	 *
-	 * @param analyticalDocumentSubObject
-	 *            SubObject to execute
-	 * @param profile
-	 *            Profile of the user
-	 * @param roleName
-	 *            the name of the execution role
-	 * @param analyticalDocument
-	 *            the object
+	 * @param analyticalDocumentSubObject SubObject to execute
+	 * @param profile                     Profile of the user
+	 * @param roleName                    the name of the execution role
+	 * @param analyticalDocument          the object
 	 *
 	 * @return Map The map of the execution call parameters
 	 */
@@ -123,15 +116,12 @@ public class ChartDriver extends GenericDriver {
 	/**
 	 * Function not implemented. Thid method should not be called
 	 *
-	 * @param biobject
-	 *            The BIOBject to edit
-	 * @param profile
-	 *            the profile
+	 * @param biobject The BIOBject to edit
+	 * @param profile  the profile
 	 *
 	 * @return the edits the document template build url
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -159,15 +149,12 @@ public class ChartDriver extends GenericDriver {
 	/**
 	 * Function not implemented. Thid method should not be called
 	 *
-	 * @param biobject
-	 *            The BIOBject to edit
-	 * @param profile
-	 *            the profile
+	 * @param biobject The BIOBject to edit
+	 * @param profile  the profile
 	 *
 	 * @return the new document template build url
 	 *
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
+	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
@@ -279,10 +266,20 @@ public class ChartDriver extends GenericDriver {
 			if (this.locale == null) {
 				RequestContainer requestContainer = RequestContainer.getRequestContainer();
 				SessionContainer permanentSession = requestContainer.getSessionContainer().getPermanentContainer();
-				String language = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-				String country = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
-				logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
-				this.locale = new Locale(language, country);
+				String currLanguage = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+				String currCountry = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+				String currScript = (String) permanentSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
+				if (currLanguage != null && currCountry != null) {
+					Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
+
+					if (StringUtils.isNotBlank(currScript)) {
+						tmpLocale.setScript(currScript);
+					}
+
+					locale = tmpLocale.build();
+				} else
+					locale = GeneralUtilities.getDefaultLocale();
+
 			}
 			return locale;
 		} catch (Exception e) {
@@ -404,8 +401,7 @@ public class ChartDriver extends GenericDriver {
 	/**
 	 * Replaces all messages reading by i18n table.
 	 *
-	 * @param sb
-	 *            the source bean
+	 * @param sb the source bean
 	 */
 	private void replaceAllMessages(SourceBeanAttribute sb) {
 		try {
@@ -456,8 +452,7 @@ public class ChartDriver extends GenericDriver {
 	}
 
 	/**
-	 * Custom method provided for the preparation of the output parameters for
-	 * the SUNBURST chart type.
+	 * Custom method provided for the preparation of the output parameters for the SUNBURST chart type.
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -479,10 +474,8 @@ public class ChartDriver extends GenericDriver {
 	}
 
 	/**
-	 * When the type of the chart document is one of those that should have
-	 * these default output parameters (listed below), but some of those are not
-	 * needed (in special cases, for types such as WORDCLOUD, PARALLEL and
-	 * CHORD), remove them from the list of available output parameters.
+	 * When the type of the chart document is one of those that should have these default output parameters (listed below), but some of those are not needed (in
+	 * special cases, for types such as WORDCLOUD, PARALLEL and CHORD), remove them from the list of available output parameters.
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */

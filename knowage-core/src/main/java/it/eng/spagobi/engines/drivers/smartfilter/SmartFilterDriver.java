@@ -23,8 +23,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -440,10 +442,20 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 			Locale locale = null;
 			RequestContainer requestContainer = RequestContainer.getRequestContainer();
 			SessionContainer permanentSession = requestContainer.getSessionContainer().getPermanentContainer();
-			String language = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-			String country = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
-			logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
-			locale = new Locale(language, country);
+			String currLanguage = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+			String currCountry = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+			String currScript = (String) permanentSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
+			if (currLanguage != null && currCountry != null) {
+				Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
+
+				if (StringUtils.isNotBlank(currScript)) {
+					tmpLocale.setScript(currScript);
+				}
+
+				locale = tmpLocale.build();
+			} else
+				locale = GeneralUtilities.getDefaultLocale();
+
 			return locale;
 		} catch (Exception e) {
 			logger.error("Error while getting locale; using default one", e);
@@ -482,14 +494,6 @@ public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDr
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public ArrayList<Integer> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
-		// catalog functions can be used only inside cockpits
-		// therefore the default implementation is to return an empty list
-		// CockpitEngine will have its own implementation
-		return new ArrayList<Integer>();
 	}
 
 	public String composeSmartFilterTemplate(String smartFilterDef, String smartFilterQuery, String smartFilterValues) throws SourceBeanException {

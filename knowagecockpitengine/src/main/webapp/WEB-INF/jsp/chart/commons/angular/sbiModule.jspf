@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    port: '<%= request.getServerPort()%>',
 		    curr_country: '<%= curr_country %>',
 	    	curr_language: '<%= curr_language%>',
+	    	curr_script: '<%= curr_script%>'
 			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
 	    	externalBasePath:"<%= KnowageSystemConfiguration.getKnowageContext()%>"	,
 	    	thous: '<%= GeneralUtilities.getGroupingSeparator(locale)%>',
@@ -502,12 +503,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        
 	    	loadI18nMap : function(locale){
 	    		sbiModule_restServices.restToRootProject();
-	    		var promise = sbiModule_restServices.promiseGet("2.0/i18nMessages","?currCountry="+sbiModule_config.curr_country+"&currLanguage="+sbiModule_config.curr_language).then(
+			
+	    		var script = angular.copy(sbiModule_config.curr_script);
+			
+    			var promise = sbiModule_restServices.promiseGet("2.0/i18nMessages",
+    				"?currCountry="+sbiModule_config.curr_country+
+    				"&currLanguage="+sbiModule_config.curr_language+
+    				"&currScript="+script.replaceAll('-','')
+    				).then(
 	    				function(response){
 	    					self.i18nMap = response.data;
-	    			},function(response){
-	    				alert("Errore "+response.data.errors[0].message);
-	    			});
+		    			},function(response){
+		    				alert("Errore "+response.data.errors[0].message);
+		    			}
+	    			);
+    			
 	    		return promise;
 	    	},
 	        

@@ -263,6 +263,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 					DOCUMENT_LABEL: sbiModule_cockpitDocument.docLabel,
 					SBI_COUNTRY: sbiModule_config.curr_country,
 					SBI_LANGUAGE: sbiModule_config.curr_language,
+					SBI_SCRIPT: sbiModule_config.curr_script,
 					COCKPIT_SELECTIONS: [],
 					COCKPIT_VARIABLES: []
 			}
