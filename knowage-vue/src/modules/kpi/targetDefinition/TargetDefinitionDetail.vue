@@ -108,9 +108,8 @@ export default defineComponent({
             this.target[event.fieldName] = event.value
             this.setDirty()
         },
-        updateKpi(event) {
-            console.log(event)
-            this.kpi = event
+        updateKpi(updatedKPIs) {
+            this.kpi = [...updatedKPIs]
         },
         async loadTarget() {
             this.loading = true
@@ -242,7 +241,7 @@ export default defineComponent({
             this.kpiDialogVisible = false
         },
         addKpi(selectedKpi: iValues[]) {
-            this.kpi.push(...selectedKpi)
+            this.kpi = [...this.kpi, ...selectedKpi]
             this.kpiDialogVisible = false
             if (selectedKpi.length > 0) {
                 this.$store.commit('setInfo', {

@@ -1,17 +1,15 @@
 <template>
-    <Dialog :header="$t('kpi.targetDefinition.addKpiBtn')" :visible="dialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
+    <Dialog :header="$t('kpi.targetDefinition.addKpiBtn')" :breakpoints="targetDefinitionDetailDescriptor.dialog.breakpoints" :style="targetDefinitionDetailDescriptor.dialog.style" :visible="dialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
         <template #header>
-            <div>
-                <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0">
-                    <template #left>
-                        {{ $t('kpi.targetDefinition.addKpiBtn') }}
-                    </template>
-                    <template #right>
-                        <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="addKpi" />
-                        <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="closeKpiDialog" />
-                    </template>
-                </Toolbar>
-            </div>
+            <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
+                <template #left>
+                    {{ $t('kpi.targetDefinition.addKpiBtn') }}
+                </template>
+                <template #right>
+                    <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="addKpi" />
+                    <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="closeKpiDialog" />
+                </template>
+            </Toolbar>
         </template>
         <DataTable
             :paginator="true"
@@ -25,7 +23,7 @@
             responsiveLayout="stack"
             v-model:filters="filters"
             filterDisplay="menu"
-            :globalFilterFields="targetDefinitionDetailDecriptor.globalFilterFields"
+            :globalFilterFields="targetDefinitionDetailDescriptor.globalFilterFields"
         >
             <template #header>
                 <div class="table-header">
@@ -43,7 +41,12 @@
             </template>
 
             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-            <Column v-for="col of targetDefinitionDetailDecriptor.columnsAllKPI" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" class="kn-truncated"> </Column>
+            <Column v-for="col of targetDefinitionDetailDescriptor.columnsAllKPI" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" class="kn-truncated">
+                <template #body="slotProps">
+                    <span v-if="!col.dateField">{{ slotProps.data[slotProps.column.props.field] }}</span>
+                    <span v-else>{{ formatDate(slotProps.data[slotProps.column.props.field]) }}</span>
+                </template>
+            </Column>
         </DataTable>
     </Dialog>
 </template>
@@ -55,7 +58,8 @@ import Dialog from 'primevue/dialog'
 import { iValues } from './TargetDefinition'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { FilterOperator } from 'primevue/api'
-import targetDefinitionDetailDecriptor from './TargetDefinitionDetailDescriptor.json'
+import targetDefinitionDetailDescriptor from './TargetDefinitionDetailDescriptor.json'
+import { formatDate } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'add-kpi-dialog',
@@ -82,7 +86,7 @@ export default defineComponent({
     data() {
         return {
             selectedKpi: [] as iValues[],
-            targetDefinitionDetailDecriptor: targetDefinitionDetailDecriptor,
+            targetDefinitionDetailDescriptor: targetDefinitionDetailDescriptor,
             filters: {
                 global: [filterDefault],
                 kpiName: {
@@ -105,7 +109,8 @@ export default defineComponent({
                     operator: FilterOperator.AND,
                     constraints: [filterDefault]
                 }
-            } as Object
+            } as Object,
+            formatDate: formatDate
         }
     },
     methods: {

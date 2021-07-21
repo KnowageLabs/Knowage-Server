@@ -13,7 +13,7 @@
             </div>
         </template>
         <template #content>
-            <DataTable :value="kpi" :loading="loadingKpi" class="editable-cells-table" dataKey="id" responsiveLayout="stack" editMode="cell" :scrollable="true" scrollHeight="400px" data-test="selected-kpi-table">
+            <DataTable :value="selectedKpi" :loading="loadingKpi" class="editable-cells-table" dataKey="id" editMode="cell" :scrollable="true" scrollHeight="400px" data-test="selected-kpi-table">
                 <template #empty>
                     {{ $t('common.info.noElementSelected') }}
                 </template>
@@ -21,7 +21,7 @@
                     {{ $t('common.info.dataLoading') }}
                 </template>
 
-                <Column field="kpiName" :header="$t('kpi.targetDefinition.kpiName')" key="kpiName" :sortable="true" class="kn-truncated" :style="targetDefinitionDetailDecriptor.table.column.style"></Column>
+                <Column field="kpiName" :header="$t('kpi.targetDefinition.kpiName')" key="kpiName" :sortable="true" class="kn-truncated" :headerStyle="targetDefinitionDetailDecriptor.table.column.style" :style="targetDefinitionDetailDecriptor.table.column.style"></Column>
                 <Column field="value" :header="$t('kpi.targetDefinition.kpiValue')" key="value" :sortable="true" class="kn-truncated" :style="targetDefinitionDetailDecriptor.table.column.style">
                     <template #body="slotProps">
                         {{ slotProps.data[slotProps.column.props.field] }}
@@ -71,6 +71,7 @@ export default defineComponent({
     },
     watch: {
         kpi() {
+            console.log('KPI WATCH')
             this.selectedKpi = this.kpi?.map((o) => ({ ...o })) as iValues[]
         }
     },
@@ -79,10 +80,20 @@ export default defineComponent({
             this.$emit('showDialog')
         },
         deleteKpi(selected: iValues) {
-            console.log(selected)
-            this.selectedKpi.splice(this.selectedKpi.indexOf(selected), 1)
-            this.$emit('kpiChanged', this.selectedKpi)
+            const index = this.selectedKpi.findIndex((selectedKpi) => {
+                return selectedKpi.kpiId === selected.kpiId
+            })
+            if (index >= 0) {
+                this.selectedKpi.splice(index, 1)
+                this.$emit('kpiChanged', this.selectedKpi)
+            }
         }
     }
 })
 </script>
+<style scoped>
+::v-deep(.editable-cells-table td.p-cell-editing) {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+</style>
