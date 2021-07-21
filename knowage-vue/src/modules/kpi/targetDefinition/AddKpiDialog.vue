@@ -115,7 +115,6 @@ export default defineComponent({
     },
     methods: {
         addKpi() {
-            console.log(this.selectedKpi)
             this.$emit('add', this.selectedKpi)
             this.selectedKpi = []
         },

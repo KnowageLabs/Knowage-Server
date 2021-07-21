@@ -27,7 +27,7 @@
                         {{ slotProps.data[slotProps.column.props.field] }}
                     </template>
                     <template #editor="slotProps">
-                        <InputNumber v-model="slotProps.data[slotProps.column.props.field]" showButtons />
+                        <InputNumber v-model="slotProps.data[slotProps.column.props.field]" showButtons @input="valueEdited" />
                     </template>
                 </Column>
                 <Column :style="targetDefinitionDetailDecriptor.table.iconColumn.style">
@@ -71,7 +71,6 @@ export default defineComponent({
     },
     watch: {
         kpi() {
-            console.log('KPI WATCH')
             this.selectedKpi = this.kpi?.map((o) => ({ ...o })) as iValues[]
         }
     },
@@ -87,6 +86,9 @@ export default defineComponent({
                 this.selectedKpi.splice(index, 1)
                 this.$emit('kpiChanged', this.selectedKpi)
             }
+        },
+        valueEdited() {
+            this.$emit('kpiChanged', this.selectedKpi)
         }
     }
 })

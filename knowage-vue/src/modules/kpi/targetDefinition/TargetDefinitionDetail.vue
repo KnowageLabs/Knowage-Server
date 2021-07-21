@@ -66,7 +66,7 @@ export default defineComponent({
             filteredKpi: [] as iValues[],
             categories: [] as iCategory[],
             filteredCategory: [] as iCategory[],
-            selectedCategory: null,
+            selectedCategory: {} as iCategory,
             loading: false,
             loadingAllKpi: false,
             kpiDialogVisible: false,
@@ -110,6 +110,7 @@ export default defineComponent({
         },
         updateKpi(updatedKPIs) {
             this.kpi = [...updatedKPIs]
+            this.setDirty()
         },
         async loadTarget() {
             this.loading = true
@@ -175,7 +176,7 @@ export default defineComponent({
                     this.filteredCategory = [...this.categories]
                 } else {
                     this.filteredCategory = this.categories.filter((category) => {
-                        return category.valueName.toLowerCase().startsWith(event.query.toLowerCase())
+                        return category.valueName && category.valueName.toLowerCase().startsWith(event.query.toLowerCase())
                     })
                 }
             }, 250)
@@ -194,6 +195,7 @@ export default defineComponent({
             }
         },
         async handleSubmit() {
+            this.categoryDialogVisiable = false
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/saveTarget'
 
             this.target.values = this.kpi.map((kpi: iValues) => {
@@ -204,8 +206,14 @@ export default defineComponent({
                     targetId: kpi.targetId
                 }
             })
+            if (typeof this.target.category !== 'object') {
+                const valueCd = this.target.category
+                this.target.category = {
+                    valueCd: valueCd
+                }
+            }
             let operation = this.target.id ? 'update' : 'insert'
-            this.categoryDialogVisiable = true
+
             await axios.post(url, this.target).then((response) => {
                 if (response.data.errors != undefined && response.data.errors.length > 0) {
                     this.categoryDialogVisiable = false
@@ -233,7 +241,6 @@ export default defineComponent({
             this.setDirty()
         },
         addKpiDialog() {
-            console.log('showDialog')
             this.loadKpi()
             this.kpiDialogVisible = true
         },
