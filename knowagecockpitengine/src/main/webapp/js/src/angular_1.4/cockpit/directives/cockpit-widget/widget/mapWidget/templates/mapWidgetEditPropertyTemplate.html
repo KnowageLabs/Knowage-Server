@@ -133,7 +133,7 @@
 						   			<md-input-container class="md-block" flex>
 										<label>{{::translate.load("sbi.cockpit.map.edit.legend.alignment")}}</label>
 										<md-select ng-model="newModel.style.legend.alignment">
-											<md-option ng-repeat="pos in availableLegendAlignments" ng-value="pos">{{pos}}</md-option>
+											<md-option ng-repeat="pos in availableLegendAlignments" ng-value="pos.value">{{pos.label}}</md-option>
 										</md-select>
 									</md-input-container>
 									<md-input-container class="md-block" flex>

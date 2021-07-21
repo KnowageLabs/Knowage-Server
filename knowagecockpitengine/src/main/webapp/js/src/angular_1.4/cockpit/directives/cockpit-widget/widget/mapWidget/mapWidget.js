@@ -607,7 +607,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			cockpitModule_mapThematizerServices.setActiveConf($scope.ngModel.id + "|" + layerDef.name, layerDef);
 			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data, $scope.ngModel.style.legend); //add legend to internal structure
-			if (layerDef.visualizationType == 'choropleth') $scope.getLegend($scope.ngModel.id, $scope.ngModel.style.legend.visualizationType);
+			if (layerDef.visualizationType == 'choropleth') {
+				if ($scope.ngModel.style.legend)
+					$scope.getLegend($scope.ngModel.id, $scope.ngModel.style.legend.visualizationType);
+				else
+					$scope.getLegend($scope.ngModel.id);
+			}
 			var layer;
 			if (isCluster) {
 				var clusterSource = new ol.source.Cluster({source: featuresSource
@@ -1083,6 +1088,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	var l = $scope.getLayerByName(n);
 	    	if (!l || !l.getVisible) return; //do nothing
 	    	return l.getVisible();
+	    }
+
+	    $scope.getVisibleLayersCount = function(){
+	    	var visibleLayersCount = 0;
+	    	for (var i=0; i<$scope.layers.length; i++) {
+	    		var l = $scope.layers[i].layer;
+	    		if (l && l.getVisible && l.getVisible()) {
+	    			visibleLayersCount++;
+	    		}
+	    	}
+	    	return visibleLayersCount;
 	    }
 
 	    $scope.getIndicatorVisibility = function(l,n){
