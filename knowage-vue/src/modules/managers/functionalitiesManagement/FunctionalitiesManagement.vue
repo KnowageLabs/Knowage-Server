@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
         <div class="kn-page-content p-grid p-m-0">
-            <div class="p-col-4 p-sm-4 p-md-3 p-p-0">
+            <div class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
                         {{ $t('managers.functionalitiesManagement.title') }}
@@ -11,37 +11,29 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div>
-                    <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @node-select="showForm($event.data, $event.data.parentId)" data-test="functionality-tree">
-                        <template #default="slotProps">
-                            <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
-                                <span>{{ slotProps.node.label }}</span>
-                                <div v-show="buttonsVisible[slotProps.node.id]" class="p-ml-2">
-                                    <Button
-                                        v-if="canBeMovedUp(slotProps.node.data)"
-                                        icon="fa fa-arrow-up"
-                                        v-tooltip.top="$t('managers.functionalitiesManagement.moveUp')"
-                                        class="p-button-link p-button-sm p-p-0"
-                                        @click.stop="moveUp(slotProps.node.id)"
-                                        :data-test="'move-up-button-' + slotProps.node.id"
-                                    />
-                                    <Button
-                                        v-if="canBeMovedDown(slotProps.node.data)"
-                                        icon="fa fa-arrow-down"
-                                        v-tooltip.top="$t('managers.functionalitiesManagement.moveDown ')"
-                                        class="p-button-link p-button-sm p-p-0"
-                                        @click.stop="moveDown(slotProps.node.id)"
-                                        :data-test="'move-down-button-' + slotProps.node.id"
-                                    />
-                                    <Button v-if="canBeDeleted(slotProps.node)" icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-link p-button-sm p-p-0" @click.stop="deleteFunctionalityConfirm(slotProps.node.id)" :data-test="'delete-button-' + slotProps.node.id" />
-                                </div>
+
+                <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @node-select="showForm($event.data, $event.data.parentId)" data-test="functionality-tree" class="kn-tree kn-flex">
+                    <template #default="slotProps">
+                        <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
+                            <span>{{ slotProps.node.label }}</span>
+                            <div v-show="buttonsVisible[slotProps.node.id]" class="p-ml-2">
+                                <Button v-if="canBeMovedUp(slotProps.node.data)" icon="fa fa-arrow-up" v-tooltip.top="$t('managers.functionalitiesManagement.moveUp')" class="p-button-link p-button-sm p-p-0" @click.stop="moveUp(slotProps.node.id)" :data-test="'move-up-button-' + slotProps.node.id" />
+                                <Button
+                                    v-if="canBeMovedDown(slotProps.node.data)"
+                                    icon="fa fa-arrow-down"
+                                    v-tooltip.top="$t('managers.functionalitiesManagement.moveDown ')"
+                                    class="p-button-link p-button-sm p-p-0"
+                                    @click.stop="moveDown(slotProps.node.id)"
+                                    :data-test="'move-down-button-' + slotProps.node.id"
+                                />
+                                <Button v-if="canBeDeleted(slotProps.node)" icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-link p-button-sm p-p-0" @click.stop="deleteFunctionalityConfirm(slotProps.node.id)" :data-test="'delete-button-' + slotProps.node.id" />
                             </div>
-                        </template>
-                    </Tree>
-                </div>
+                        </div>
+                    </template>
+                </Tree>
             </div>
 
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-height-full-vertical">
                 <KnHint :title="'managers.functionalitiesManagement.title'" :hint="'managers.functionalitiesManagement.hint'" v-if="showHint" data-test="functionality-hint"></KnHint>
                 <FunctionalitiesManagementDetail v-if="formVisible" :functionality="selectedFunctionality" :parentId="functionalityParentId" :rolesShort="rolesShort" @touched="touched = true" @close="onClose" @inserted="loadPage($event)" />
             </div>

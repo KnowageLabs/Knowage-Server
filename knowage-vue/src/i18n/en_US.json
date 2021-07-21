@@ -278,7 +278,7 @@
             "creation": "Creation",
             "development": "Development",
             "execution": "Execution",
-            "hint": "No functionality selected",
+            "hint": "The functionalities management page allows you to create folders to contain the users reports and documents. It's also possible to set the folders visibility depending on the users roles. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "moveDown ": " Move down",
             "moveUp": " Move up",
             "roles": "Roles",
@@ -290,7 +290,7 @@
                 "testHeader": "Test"
             },
             "test": "Test",
-            "title": "Functionalities tree"
+            "title": "Functionalities management"
         },
         "internationalizationManagement": {
             "defaultLanguage": "(Default)",

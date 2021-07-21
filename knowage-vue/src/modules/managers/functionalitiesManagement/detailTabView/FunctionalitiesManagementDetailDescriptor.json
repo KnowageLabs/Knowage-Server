@@ -1,28 +1,9 @@
 {
-    "card": {
+    "checkboxColumns": {
         "style": {
-            "margin-bottom": "2em",
-            "width": "100%"
+            "width": "100px"
         }
     },
-    "columns": [
-        {
-            "field": "name",
-            "header": "managers.functionalitiesManagement.table.nameHeader"
-        },
-        {
-            "header": "managers.functionalitiesManagement.table.developmentHeader"
-        },
-        {
-            "header": "managers.functionalitiesManagement.table.testHeader"
-        },
-        {
-            "header": "managers.functionalitiesManagement.table.executionHeader"
-        },
-        {
-            "header": "managers.functionalitiesManagement.table.creationHeader"
-        }
-    ],
     "pField": {
         "style": {
             "margin-bottom": "40px"

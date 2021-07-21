@@ -6,8 +6,8 @@
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>
     </Toolbar>
-    <div v-if="!selectedFolder.id || selectedFolder.parentId">
-        <Card :style="detailDescriptor.card.style">
+    <div v-if="!selectedFolder.id || selectedFolder.parentId" class="kn-detail">
+        <Card class="p-m-3">
             <template #content>
                 <form class="p-fluid p-m-3">
                     <div class="p-field" :style="detailDescriptor.pField.style">
@@ -67,34 +67,36 @@
                 </form>
             </template>
         </Card>
-        <Card :style="detailDescriptor.card.style">
+        <Card class="p-m-3">
             <template #content>
                 <DataTable v-if="!loading" :value="roles" dataKey="id" class="p-datatable-sm kn-table" responsiveLayout="scroll" data-test="roles-table">
                     <Column field="name" :header="$t('managers.functionalitiesManagement.roles')" :sortable="true" />
-                    <Column :header="$t('managers.functionalitiesManagement.development')">
+                    <Column :header="$t('managers.functionalitiesManagement.development')" :style="detailDescriptor.checkboxColumns.style">
                         <template #body="slotProps">
                             <Checkbox v-model="slotProps.data.development" :binary="true" :disabled="!slotProps.data['devRoles'].checkable" />
                         </template>
                     </Column>
-                    <Column :header="$t('managers.functionalitiesManagement.test')">
+                    <Column :header="$t('managers.functionalitiesManagement.test')" :style="detailDescriptor.checkboxColumns.style">
                         <template #body="slotProps">
                             <Checkbox v-model="slotProps.data.test" :binary="true" :disabled="!slotProps.data['testRoles'].checkable" />
                         </template>
                     </Column>
-                    <Column :header="$t('managers.functionalitiesManagement.execution')">
+                    <Column :header="$t('managers.functionalitiesManagement.execution')" :style="detailDescriptor.checkboxColumns.style">
                         <template #body="slotProps">
                             <Checkbox v-model="slotProps.data.execution" :binary="true" :disabled="!slotProps.data['execRoles'].checkable" />
                         </template>
                     </Column>
-                    <Column :header="$t('managers.functionalitiesManagement.creation')">
+                    <Column :header="$t('managers.functionalitiesManagement.creation')" :style="detailDescriptor.checkboxColumns.style">
                         <template #body="slotProps">
                             <Checkbox v-model="slotProps.data.creation" :binary="true" :disabled="!slotProps.data['createRoles'].checkable" />
                         </template>
                     </Column>
                     <Column @rowClick="false">
                         <template #body="slotProps">
-                            <Button icon="pi pi-check" class="p-button-link" @click="checkAll(slotProps.data)" :disabled="slotProps.data.isButtonDisabled" :data-test="'check-all-' + slotProps.data.id" />
-                            <Button icon="pi pi-times" class="p-button-link" @click="uncheckAll(slotProps.data)" :disabled="slotProps.data.isButtonDisabled" :data-test="'uncheck-all-' + slotProps.data.id" />
+                            <div class="p-d-flex p-jc-end">
+                                <Button icon="pi pi-check" class="p-button-link" @click="checkAll(slotProps.data)" :disabled="slotProps.data.isButtonDisabled" :data-test="'check-all-' + slotProps.data.id" />
+                                <Button icon="pi pi-times" class="p-button-link" @click="uncheckAll(slotProps.data)" :disabled="slotProps.data.isButtonDisabled" :data-test="'uncheck-all-' + slotProps.data.id" />
+                            </div>
                         </template>
                     </Column>
                 </DataTable>
