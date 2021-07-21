@@ -13,7 +13,7 @@
             </div>
         </template>
         <template #content>
-            <DataTable :value="selectedKpi" :loading="loadingKpi" class="editable-cells-table" dataKey="id" editMode="cell" :scrollable="true" scrollHeight="400px" data-test="selected-kpi-table">
+            <DataTable :value="selectedKpi" :loading="loadingKpi" class="editable-cells-table" dataKey="id" editMode="cell" responsiveLayout="stack" breakpoint="960px" data-test="selected-kpi-table">
                 <template #empty>
                     {{ $t('common.info.noElementSelected') }}
                 </template>
@@ -21,8 +21,8 @@
                     {{ $t('common.info.dataLoading') }}
                 </template>
 
-                <Column field="kpiName" :header="$t('kpi.targetDefinition.kpiName')" key="kpiName" :sortable="true" class="kn-truncated" :headerStyle="targetDefinitionDetailDecriptor.table.column.style" :style="targetDefinitionDetailDecriptor.table.column.style"></Column>
-                <Column field="value" :header="$t('kpi.targetDefinition.kpiValue')" key="value" :sortable="true" class="kn-truncated" :style="targetDefinitionDetailDecriptor.table.column.style">
+                <Column field="kpiName" :header="$t('kpi.targetDefinition.kpiName')" key="kpiName" :sortable="true" class="kn-truncated" :headerStyle="targetDefinitionDetailDecriptor.table.column.style"></Column>
+                <Column field="value" :header="$t('kpi.targetDefinition.kpiValue')" key="value" :sortable="true" class="kn-truncated" :headerStyle="targetDefinitionDetailDecriptor.table.column.style">
                     <template #body="slotProps">
                         {{ slotProps.data[slotProps.column.props.field] }}
                     </template>
@@ -30,7 +30,7 @@
                         <InputNumber v-model="slotProps.data[slotProps.column.props.field]" showButtons />
                     </template>
                 </Column>
-                <Column :style="targetDefinitionDetailDecriptor.table.iconColumn.style">
+                <Column headerStyle="targetDefinitionDetailDecriptor.table.iconColumn.style" :style="targetDefinitionDetailDecriptor.table.iconColumn.style">
                     <template #body="slotProps">
                         <Button icon="pi pi-trash" class="p-button-link" @click="deleteKpi(slotProps.data)" />
                     </template>
