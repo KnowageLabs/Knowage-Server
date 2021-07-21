@@ -12,7 +12,7 @@
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
 
-                <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" @node-select="showForm($event.data, $event.data.parentId)" data-test="functionality-tree" class="kn-tree kn-flex">
+                <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" :filter="true" filterMode="lenient" @node-select="showForm($event.data, $event.data.parentId)" data-test="functionality-tree" class="kn-tree kn-flex">
                     <template #default="slotProps">
                         <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
                             <span>{{ slotProps.node.label }}</span>
