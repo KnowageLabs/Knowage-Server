@@ -23,9 +23,7 @@
 
                 <Column field="kpiName" :header="$t('kpi.targetDefinition.kpiName')" key="kpiName" :sortable="true" class="kn-truncated" :headerStyle="targetDefinitionDetailDecriptor.table.column.style"></Column>
                 <Column field="value" :header="$t('kpi.targetDefinition.kpiValue')" key="value" :sortable="true" class="kn-truncated" :headerStyle="targetDefinitionDetailDecriptor.table.column.style">
-                    <template #body="slotProps">
-                        {{ slotProps.data[slotProps.column.props.field] }}
-                    </template>
+                    <template #body="slotProps"> {{ slotProps.data[slotProps.column.props.field] }} <i class="pi pi-pencil"></i> </template>
                     <template #editor="slotProps">
                         <InputNumber v-model="slotProps.data[slotProps.column.props.field]" showButtons @input="valueEdited" />
                     </template>

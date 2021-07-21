@@ -5,6 +5,10 @@ let routes = [
         component: () => import('@/modules/kpi/targetDefinition/TargetDefinition.vue'),
         children: [
             {
+                path: '',
+                component: () => import('@/modules/kpi/targetDefinition/TargetDefinitionHint.vue')
+            },
+            {
                 path: 'new-target-definition',
                 name: 'new-target-definition',
                 component: () => import('@/modules/kpi/targetDefinition/TargetDefinitionDetail.vue')

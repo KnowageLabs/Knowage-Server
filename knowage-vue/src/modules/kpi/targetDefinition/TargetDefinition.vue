@@ -38,7 +38,6 @@
                 </Listbox>
             </div>
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
-                <KnHint :title="'kpi.targetDefinition.title'" :hint="'kpi.targetDefinition.hint'" v-if="showHint" data-test="target-hint"></KnHint>
                 <router-view @close="closeForm" @touched="touched = true" @saved="reloadMetadata" />
             </div>
         </div>
@@ -50,27 +49,22 @@ import { iTargetDefinition } from './TargetDefinition'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import targetDefinitionDecriptor from './TargetDefinitionDescriptor.json'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
-import KnHint from '@/components/UI/KnHint.vue'
 import Listbox from 'primevue/listbox'
 import axios from 'axios'
 
 export default defineComponent({
     name: 'target-definition',
-    components: { KnFabButton, Listbox, KnHint },
+    components: { KnFabButton, Listbox },
     data() {
         return {
             targetList: [] as iTargetDefinition[],
             loading: false,
-            showHint: true,
             touched: false,
             targetDefinitionDecriptor: targetDefinitionDecriptor,
             formatDate: formatDate
         }
     },
     async created() {
-        if (this.$route.path !== '/target-definition') {
-            this.showHint = false
-        }
         await this.loadAllMetadata()
     },
     methods: {
@@ -95,7 +89,6 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         showForm(target: any, clone: Boolean) {
-            this.showHint = false
             const path = target ? `/target-definition/edit?id=${target.id}&clone=${clone}` : '/target-definition/new-target-definition'
             if (!this.touched) {
                 this.$router.push(path)
@@ -151,11 +144,10 @@ export default defineComponent({
             }
         },
         handleClose() {
-            this.showHint = true
             this.$router.replace('/target-definition')
         },
-        reloadMetadata() {
-            this.handleClose()
+        reloadMetadata(id) {
+            this.$router.replace(`/target-definition/edit?id=${id}&clone=${false}`)
             this.touched = false
             this.loadAllMetadata()
         }

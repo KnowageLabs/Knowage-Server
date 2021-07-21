@@ -223,7 +223,7 @@ export default defineComponent({
                         title: this.$t(this.targetDefinitionDetailDecriptor.operation[operation].toastTitle),
                         msg: this.$t(this.targetDefinitionDetailDecriptor.operation.success)
                     })
-                    this.$emit('saved')
+                    this.$emit('saved', response.data.id)
                 }
             })
         },

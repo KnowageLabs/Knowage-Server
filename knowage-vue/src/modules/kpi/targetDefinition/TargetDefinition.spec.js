@@ -138,10 +138,11 @@ describe('Target Definition loading', () => {
 })
 describe('Target Definition List', () => {
     it('shows an hint when no item is selected', () => {
-        const wrapper = factory()
+        // const wrapper = factory()
 
-        expect(wrapper.vm.showHint).toBe(true)
-        expect(wrapper.find('[data-test="target-hint"]').exists()).toBe(true)
+        // // expect(wrapper.vm.showHint).toBe(true)
+        // expect(wrapper.find('[data-test="target-hint"]').exists()).toBe(true)
+        expect($router.push).toHaveBeenCalledWith('/target-definition')
     })
     it('deletes target when clicking on delete icon', async () => {
         const wrapper = factory()
