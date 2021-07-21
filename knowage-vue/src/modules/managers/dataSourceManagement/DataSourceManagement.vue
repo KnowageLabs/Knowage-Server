@@ -26,7 +26,13 @@
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" data-test="list-item">
-                        <Avatar :icon="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].dbIcon" shape="circle" size="medium" :style="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].style" v-tooltip="slotProps.option.dialectName" />
+                        <Avatar
+                            :icon="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].dbIcon"
+                            shape="circle"
+                            size="medium"
+                            :style="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].style"
+                            v-tooltip="dataSourceDescriptor.iconTypesMap[slotProps.option.dialectName].tooltip"
+                        />
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.label }}</span>
                             <span class="kn-list-item-text-secondary">{{ slotProps.option.descr }}</span>
@@ -109,6 +115,8 @@ export default defineComponent({
                     dataSource.jdbcPoolConfiguration.maxWait /= 1000
                     dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns /= 1000
                     dataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis /= 1000
+                    if (dataSource.jdbcPoolConfiguration.maxIdle === null) dataSource.jdbcPoolConfiguration.maxIdle = dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration.maxIdle
+                    if (dataSource.jdbcPoolConfiguration.validationQueryTimeout === null) dataSource.jdbcPoolConfiguration.validationQueryTimeout = dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration.validationQueryTimeout
                 }
             })
         },
