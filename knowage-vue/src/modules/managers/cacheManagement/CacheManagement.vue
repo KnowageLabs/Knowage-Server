@@ -1,12 +1,12 @@
 <template>
-    <div class="kn-page">
+    <div class="cache-management kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
             <template #left>
                 {{ $t('managers.cacheManagement.title') }}
             </template>
         </Toolbar>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="showProgressBar" data-test="progress-bar" />
-        <div class="p-grid p-m-2">
+        <div class="p-grid">
             <div class="p-col-4 p-sm-12 p-md-4 p-p-0">
                 <RuntimeInformationCard v-if="selectedDatasource" :item="cache" :chartData="chartData"></RuntimeInformationCard>
             </div>
@@ -150,3 +150,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.cache-management.kn-page {
+    overflow: auto;
+}
+</style>
