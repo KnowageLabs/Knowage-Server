@@ -29,27 +29,6 @@
             </DataTable>
         </template>
     </Card>
-
-    <Card v-if="!loading" :style="tabViewDescriptor.style.card">
-        <template #content>
-            {{ kpi.cardinality.measureList }}
-        </template>
-    </Card>
-
-    <Card v-if="!loading" :style="tabViewDescriptor.style.card">
-        <template #content>
-            {{ attributesList }}
-            <br />
-            {{ formulaChanged }}
-            {{ oldFormula }}
-            <br />
-            pKPI ID: {{ previousKpiId }}
-        </template>
-    </Card>
-
-    <Button label="createFormulaToShow" class="p-button-link" @click="createFormulaToShow" />
-    <Button label="getAllMeasure" class="p-button-link" @click="getAllMeasure" />
-    <Button label="logKpi" class="p-button-link" @click="logKpi" />
 </template>
 
 <script lang="ts">
@@ -160,7 +139,6 @@ export default defineComponent({
                             var numberKeys = Object.keys(obj2)
 
                             if (numberKeys.length != Object.keys(obj['attributes']).length) {
-                                console.log('ENTERING 2nd if')
                                 for (var k = numberKeys.length + 1; k <= Object.keys(obj['attributes']).length; k++) {
                                     var obj3 = this.kpi.cardinality.measureList[j]['attributes']
                                     obj3[Object.keys(obj['attributes'])[k - 1]] = obj['attributes'][Object.keys(obj['attributes'])[k - 1]]
@@ -331,16 +309,6 @@ export default defineComponent({
                     this.kpi.cardinality.checkedAttribute.attributeIntersection[key] = true
                 }
             }
-        },
-        logKpi() {
-            console.log('kpi: ', this.kpi)
-        },
-        logProps(props) {
-            console.log('props: : ', props)
-        },
-        logMouseover(event, slotProps) {
-            console.log('MOUSEVEOR: : ', event)
-            console.log('MOUSEVEOR: PROPS ', slotProps)
         }
     }
 })

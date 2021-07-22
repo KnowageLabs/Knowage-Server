@@ -30,12 +30,6 @@
             </div>
         </template>
     </Dialog>
-
-    <Button label="print html" class="p-button-link" @click="loadKPI" />
-    <Button label="parse formula" class="p-button-link" @click="checkFormulaForErrors" />
-    <Button label="logKpi" class="p-button-link" @click="logKpi" />
-
-    <div class="p-mt-6">{{ kpi }}</div>
 </template>
 
 <script lang="ts">
@@ -500,9 +494,6 @@ export default defineComponent({
                 }
             }
             return {}
-        },
-        logKpi() {
-            console.log('kpi: ', this.kpi)
         }
     }
 })

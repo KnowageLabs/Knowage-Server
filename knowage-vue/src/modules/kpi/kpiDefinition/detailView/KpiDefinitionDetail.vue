@@ -19,8 +19,6 @@
                     </template>
 
                     <KpiDefinitionFormulaTab :selectedKpi="selectedKpi" :measures="measureList" :loading="loading" :aliasToInput="aliasToInput" :checkFormula="checkFormula" :activeTab="activeTab" @updateFormulaToSave="onUpdateFormulaToSave" @errorInFormula="ifErrorInFormula" @touched="setTouched" />
-
-                    f to save{{ formulaToSave }}
                 </TabPanel>
 
                 <TabPanel>
@@ -95,7 +93,6 @@
                 <div>
                     <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="showSaveDialog = false" />
                     <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="saveKpi" />
-                    <Button class="kn-button kn-button--primary" label="log" @click="logKpiToSave" />
                 </div>
             </template>
         </Dialog>
@@ -125,7 +122,7 @@ export default defineComponent({
             return this.v$.$invalid
         }
     },
-    emits: ['touched', 'closed', 'inserted'],
+    emits: ['touched', 'closed', 'saved'],
     data() {
         return {
             v$: useValidate() as any,
@@ -200,7 +197,9 @@ export default defineComponent({
                 this.selectedKpi = { ...tabViewDescriptor.emptyKpi }
             }
         },
-
+        onUpdateFormulaToSave(event) {
+            this.formulaToSave = event
+        },
         setTouched() {
             this.touched = true
         },
@@ -270,43 +269,26 @@ export default defineComponent({
             }, 250)
         },
 
-        onUpdateFormulaToSave(event) {
-            this.formulaToSave = event
-            this.touched = true
-            console.log('onUpdateFormulaToSave', this.formulaToSave)
-        },
-
         async saveKpi() {
+            this.showSaveDialog = false
+            this.touched = false
             this.kpiToSave = { ...this.selectedKpi }
-            console.log('COPIED KPI TO SAVE: ', this.selectedKpi)
-
-            //workign with definition
             if (typeof this.kpiToSave.definition === 'object') {
                 this.kpiToSave.definition.formula = this.formulaToSave
 
                 this.kpiToSave.definition = JSON.stringify(this.kpiToSave.definition)
-                console.log('STRINGIFIED DEFINITION: ')
             }
-
-            //working with cardinality
             if (typeof this.kpiToSave.cardinality === 'object') {
                 this.kpiToSave.cardinality = JSON.stringify(this.kpiToSave.cardinality)
-                console.log('STRINGIFIED CARDINALITY: ')
             }
-
-            console.log('FINAL BEFORE SENDING', this.kpiToSave)
-
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveKpi', this.kpiToSave).then((response) => {
                 if (response.data.errors) {
                     this.$store.commit('setError', { msg: response.data.errors })
                 } else {
                     this.$store.commit('setInfo', { msg: 'Saved Succesfuly!' })
+                    this.$emit('saved')
                 }
             })
-        },
-
-        logKpiToSave() {
-            console.log(this.kpiToSave)
         }
     }
 })

@@ -123,7 +123,6 @@
                     <Button label="Add New Threshold Item" class="p-button-link" :style="tresholdTabDescriptor.styles.table.footer" @click="addNewThresholdItem" />
                 </template>
             </DataTable>
-            <div class="p-mt-6">{{ kpi.threshold }}</div>
         </template>
     </Card>
 
@@ -193,12 +192,6 @@ export default defineComponent({
         }
     },
 
-    // mounted() {
-    //     if (this.selectedKpi) {
-    //         this.kpi = this.selectedKpi as any
-    //         this.threshold = this.kpi.threshold
-    //     }
-    // },
     watch: {
         selectedKpi() {
             this.kpi = this.selectedKpi as any
