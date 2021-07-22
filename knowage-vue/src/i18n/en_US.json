@@ -179,7 +179,11 @@
         "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
     },
-    "kpi": {},
+    "kpi": {
+        "alert": {
+            "title": "Alert"
+        }
+    },
     "language": {
         "en_GB": "english (GB)",
         "en_US": "english (US)",
