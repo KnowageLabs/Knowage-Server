@@ -27,7 +27,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view :cloneKpiId="cloneKpiId" :cloneKpiVersion="cloneKpiVersion" @touched="touched = true" @closed="onFormClose" @saved="onKpiSave" @showDialog="displayInfoDialog" />
+                <router-view :cloneKpiId="cloneKpiId" :cloneKpiVersion="cloneKpiVersion" @touched="touched = true" @closed="onFormClose" @kpiUpdated="touched = false" @kpiCreated="onKpiCreated" @showDialog="displayInfoDialog" />
                 <KnHint :title="'kpi.kpiDefinition.hintTitle'" :hint="'kpi.kpiDefinition.hint'" v-if="hintVisible" />
             </div>
         </div>
@@ -121,11 +121,17 @@ export default defineComponent({
             let fDate = new Date(date)
             return fDate.toLocaleString()
         },
-        onKpiSave() {
-            this.$router.push('/kpidef')
+        async onKpiCreated(event) {
+            await this.getKpiList()
+
+            let kpiToLoad = this.kpiList.find((kpi) => {
+                if (kpi.name === event) return true
+            })
+            const path = `/kpidef/${kpiToLoad.id}/${kpiToLoad.version}`
+            this.$router.push(path)
+
             this.touched = false
-            this.hintVisible = true
-            this.getKpiList()
+            this.hintVisible = false
         },
         emitCopyKpi(kpiId, kpiVersion) {
             this.$router.push('/kpidef/new-kpi')

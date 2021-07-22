@@ -122,7 +122,7 @@ export default defineComponent({
             return this.v$.$invalid
         }
     },
-    emits: ['touched', 'closed', 'saved'],
+    emits: ['touched', 'closed', 'kpiCreated', 'kpiUpdated'],
     data() {
         return {
             v$: useValidate() as any,
@@ -286,7 +286,7 @@ export default defineComponent({
                     this.$store.commit('setError', { msg: response.data.errors })
                 } else {
                     this.$store.commit('setInfo', { msg: 'Saved Succesfuly!' })
-                    this.$emit('saved')
+                    this.kpiToSave.id ? this.$emit('kpiCreated', this.kpiToSave.name) : this.$emit('kpiUpdated')
                 }
             })
         }
