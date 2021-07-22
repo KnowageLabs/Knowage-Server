@@ -20,7 +20,7 @@
                     optionLabel="name"
                     filterMatchMode="contains"
                     :filterFields="targetDefinitionDecriptor.filterFields"
-                    emptyFilterMessage="noResults"
+                    :emptyFilterMessage="$t('common.info.noDataFound')"
                     @change="showForm($event.value, false)"
                     data-test="target-list"
                 >
