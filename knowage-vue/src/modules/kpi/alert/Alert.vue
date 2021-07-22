@@ -20,6 +20,8 @@
                                 <span class="kn-list-item-text-secondary">{{ slotProps.option.status }}</span>
                             </div>
                             <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click="deleteAlertConfirm(slotProps.option.id)" :data-test="'delete-button'" />
+                            <Button v-if="slotProps.option.status == 'SUSPENDED'" icon="pi pi-play" class="p-button-text p-button-rounded p-button-plain" @click="handleStatus(slotProps.option)" :data-test="'resume-button'" />
+                            <Button v-if="slotProps.option.status == 'ACTIVE'" icon="pi pi-pause" class="p-button-text p-button-rounded p-button-plain" @click="handleStatus(slotProps.option)" :data-test="'suspend-button'" />
                         </div>
                     </template>
                 </Listbox>
@@ -69,6 +71,34 @@ export default defineComponent({
         },
         showForm() {
             console.log(this.alertList)
+        },
+        deleteAlertConfirm(alertId: number) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteAlert(alertId)
+            })
+        },
+        async deleteAlert(id: number) {
+            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/' + id + '/delete').then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.deleteTitle'),
+                    msg: this.$t('common.toast.deleteSuccess')
+                })
+                this.loadAllAlerts()
+            })
+        },
+        async handleStatus(alert) {
+            if (alert.status == 'EXPIRED') {
+                console.log('EXPIRED')
+            } else {
+                var data = (alert.status == 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger') + '?jobGroup=ALERT_JOB_GROUP&triggerGroup=ALERT_JOB_GROUP&jobName=' + alert.id + '&triggerName=' + alert.id
+
+                console.log('data:', data)
+                await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + data)
+                this.loadAllAlerts()
+            }
         }
     }
 })
