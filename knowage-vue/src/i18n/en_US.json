@@ -10,6 +10,7 @@
             "javascript": "javascript",
             "python": "python"
         },
+        "collapse": "collapse",
         "delete": "delete",
         "deleteAll": "delete all",
         "description": "description",
@@ -17,13 +18,16 @@
         "downloading": "Downloading",
         "dragAndDropFileHere": "Drag and drop file here.",
         "error": {
+            "allowedFileTypes": "File type allowed are {types}",
             "downloading": "Error downloading ",
             "exceededSize": "Uploaded file exceedes max size {size}",
+            "incompatibleType": "Incompatible file type",
             "tags": {
                 "tagIsNotValid": "Tag ({tag}) is not valid'"
             },
             "uploading": "Error uploading "
         },
+        "expand": "expand",
         "export": "export",
         "image": "image",
         "import": "import",
@@ -309,6 +313,37 @@
                 "defaultMessage": "Default Message Code",
                 "messageCode": "Message Code"
             }
+        },
+        "menuConfigurationManagement": {
+            "chooseIcon": "Choose Icon",
+            "descrHelp": "This value will be displayed in the main menu.",
+            "description": "Description",
+            "form": {
+                "document": "Related document",
+                "externalApplicationUrl": "Application's url",
+                "functionality": "Choose Functionality",
+                "initialPath": "Open workspace on:",
+                "menuNodeContent": "Menu node content",
+                "name": "Name",
+                "objParameters": "Document parameters",
+                "staticPage": "HTML Page"
+            },
+            "hint": "Menu configuration allows you to manage menu entries.",
+            "info": {
+                "createMessage": "Menu item created",
+                "createTitle": "Create menu item",
+                "deleteMessage": "Menu item deleted",
+                "deleteTitle": "Delete menu item",
+                "errorMessage": "Error saving menu item",
+                "errorTitle": "Error",
+                "saveMessage": "Menu item saved",
+                "saveTitle": "Save menu item",
+                "updateMessage": "Menu item updated",
+                "updateTitle": "Update menu item"
+            },
+            "roles": "Roles",
+            "selectDocument": "Select document",
+            "title": "List of menus"
         },
         "metadata": {
             "hint": "The metadata allows you to access and write metadata inside your users document. It's possible to change the type between the allowed ones and to name and describe it. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
