@@ -51,6 +51,7 @@
         },
         "tags": "tags",
         "tenant": "tenant",
+        "test": "test",
         "toast": {
             "createTitle": "Created",
             "deleteConfirmTitle": "Confirm Delete?",
@@ -293,7 +294,6 @@
                 "nameHeader": "Name",
                 "testHeader": "Test"
             },
-            "test": "Test",
             "title": "Functionalities management"
         },
         "internationalizationManagement": {
