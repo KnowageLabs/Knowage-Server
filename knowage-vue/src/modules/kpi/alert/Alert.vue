@@ -19,10 +19,13 @@
                                 <span>{{ slotProps.option.name }}</span>
                                 <span class="kn-list-item-text-secondary">{{ slotProps.option.status }}</span>
                             </div>
-                            <Button icon="pi pi-trash" class="p-button-link p-button-sm" @click="deleteAlertConfirm(slotProps.option.id)" :data-test="'delete-button'" />
+                            <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click="deleteAlertConfirm(slotProps.option.id)" :data-test="'delete-button'" />
                         </div>
                     </template>
                 </Listbox>
+            </div>
+            <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
+                <router-view />
             </div>
         </div>
     </div>

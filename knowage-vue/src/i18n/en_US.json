@@ -181,6 +181,7 @@
     },
     "kpi": {
         "alert": {
+            "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Alert"
         }
     },
