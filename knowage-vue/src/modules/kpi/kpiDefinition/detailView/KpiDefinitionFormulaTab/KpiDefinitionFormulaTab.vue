@@ -1,28 +1,58 @@
 <template>
-    <VCodeMirror v-if="!loading" ref="codeMirror" v-model:value="kpi.definition.formula" :autoHeight="true" :options="codeMirrorOptions" @keyup="onKeyUp" @mousedown="onMouseDown" />
+    <VCodeMirror v-if="!loading" ref="codeMirror" class="CodeMirrorMathematica" v-model:value="kpi.definition.formula" :autoHeight="true" :options="codeMirrorOptions" @keyup="onKeyUp" @mousedown="onMouseDown" />
+
+    <Dialog class="kn-dialog--toolbar--primary importExportDialog" footer="footer" v-bind:visible="functionDialogVisible" :closable="false" modal>
+        <template #header>
+            <h4>{{ $t('kpi.kpiDefinition.formulaDialogHeader') }} {{ this.dialogHeaderInfo.functionName }}</h4>
+        </template>
+
+        <div class="p-mt-4 p-ml-4">
+            <div class="p-field-radiobutton">
+                <RadioButton id="SUM" name="city" value="SUM" v-model="selectedFunctionalities" />
+                <label for="SUM">SUM</label>
+            </div>
+            <div class="p-field-radiobutton">
+                <RadioButton id="MAX" name="city" value="MAX" v-model="selectedFunctionalities" />
+                <label for="MAX">MAX</label>
+            </div>
+            <div class="p-field-radiobutton">
+                <RadioButton id="MIN" name="city" value="MIN" v-model="selectedFunctionalities" />
+                <label for="MIN">MIN</label>
+            </div>
+            <div class="p-field-radiobutton">
+                <RadioButton id="COUNT" name="city" value="COUNT" v-model="selectedFunctionalities" />
+                <label for="COUNT">COUNT</label>
+            </div>
+        </div>
+        <template #footer>
+            <div>
+                <Button class="kn-button kn-button--secondary" :label="$t('common.apply')" @click="openFunctionPicker" />
+            </div>
+        </template>
+    </Dialog>
+
     <Button label="print html" class="p-button-link" @click="loadKPI" />
-    <Button label="parse formula" class="p-button-link" @click="parseFormula" />
-    <!-- <div class="p-mt-6">{{ kpi.definition }}</div> -->
+    <Button label="parse formula" class="p-button-link" @click="checkFormulaForErrors" />
+    <Button label="logKpi" class="p-button-link" @click="logKpi" />
+
+    <div class="p-mt-6">{{ kpi }}</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { VCodeMirror } from 'vue3-code-mirror'
+import tabViewDescriptor from '../KpiDefinitionDetailDescriptor.json'
 import CodeMirror from 'codemirror'
+import Dialog from 'primevue/dialog'
+import RadioButton from 'primevue/radiobutton'
 
 export default defineComponent({
-    components: { VCodeMirror },
-    props: {
-        selectedKpi: Object as any,
-        measures: { type: Array as any },
-        loading: Boolean
-    },
-    computed: {},
+    components: { VCodeMirror, Dialog, RadioButton },
+    props: { selectedKpi: Object as any, measures: { type: Array as any }, aliasToInput: { type: String }, checkFormula: { type: Boolean }, activeTab: { type: Number }, loading: Boolean },
+    emits: ['touched', 'errorInFormula', 'updateFormulaToSave'],
+
     data() {
         return {
-            kpi: {} as any,
-            text: '',
-            codeMirror: {} as any,
             codeMirrorOptions: {
                 mode: 'text/x-mathematica',
                 indentWithTabs: true,
@@ -38,6 +68,11 @@ export default defineComponent({
                     'Ctrl-Space': this.keyAssistFunc
                 } as any
             },
+            tabViewDescriptor,
+            kpi: {} as any,
+            codeMirror: {} as any,
+            previousTabIndex: 0 as any,
+            dialogHeaderInfo: {} as any,
             measuresToJSON: [] as any,
             functionsTOJSON: [] as any,
             formula: '',
@@ -45,51 +80,114 @@ export default defineComponent({
             formulaSimple: '',
             token: '',
             selectedFunctionalities: 'SUM',
-            formulaForDB: {} as any
+            functionDialogVisible: false,
+            cursorPosition: null
         }
     },
 
-    async created() {},
-
     mounted() {
         if (this.selectedKpi) {
-            this.kpi = { ...this.selectedKpi } as any
+            this.kpi = this.selectedKpi as any
         }
         this.registerCodeMirrorHelper()
     },
 
     watch: {
         selectedKpi() {
-            this.kpi = { ...this.selectedKpi } as any
-            this.kpi.definition = JSON.parse(this.kpi.definition)
-            console.log('watcher: selectedKpi()', this.kpi.definition)
+            this.kpi = this.selectedKpi as any
+            if (this.kpi.definition != '') {
+                this.kpi.definition = JSON.parse(this.kpi.definition)
+            }
+
+            //mora da se nadje resenje za load kpi, za sada je u timeout dok se ne ucita
+            setTimeout(() => {
+                this.loadKPI()
+            }, 500)
+        },
+        aliasToInput() {
+            this.cursorPosition = this.codeMirror.getCursor()
+            this.codeMirror.replaceRange(' ' + this.aliasToInput, this.cursorPosition)
+            this.$emit('touched')
+        },
+        activeTab() {
+            if (this.previousTabIndex === 0 && this.activeTab != 0) {
+                this.checkFormulaForErrors()
+            }
+            this.previousTabIndex = this.activeTab
         }
     },
 
     methods: {
+        openFunctionPicker() {
+            var cur = this.codeMirror.getCursor()
+            var token = this.codeMirror.getTokenAt(cur)
+
+            while (token.string.trim() == '') {
+                cur.ch = cur.ch + 1
+                token = this.codeMirror.getTokenAt(cur)
+            }
+
+            while (token.type == 'operator' || token.type == 'bracket' || token.type == 'number') {
+                cur.ch = cur.ch + 1
+                token = this.codeMirror.getTokenAt(cur)
+            }
+
+            while (token.string.trim() == '') {
+                cur.ch = cur.ch + 1
+                token = this.codeMirror.getTokenAt(cur)
+            }
+
+            if (this.selectedFunctionalities != '') {
+                var arr = this.codeMirror.findMarksAt({ line: this.codeMirror.getCursor().line, ch: token.end })
+                for (var i = 0; i < arr.length; i++) {
+                    arr[i].clear()
+                }
+            }
+            if (this.selectedFunctionalities == 'MAX') {
+                this.codeMirror.markText({ line: this.codeMirror.getCursor().line, ch: token.start }, { line: this.codeMirror.getCursor().line, ch: token.end }, { className: 'cm-m-max', atomic: true })
+            } else if (this.selectedFunctionalities == 'MIN') {
+                this.codeMirror.markText({ line: this.codeMirror.getCursor().line, ch: token.start }, { line: this.codeMirror.getCursor().line, ch: token.end }, { className: 'cm-m-min', atomic: true })
+            } else if (this.selectedFunctionalities == 'COUNT') {
+                this.codeMirror.markText({ line: this.codeMirror.getCursor().line, ch: token.start }, { line: this.codeMirror.getCursor().line, ch: token.end }, { className: 'cm-m-count', atomic: true })
+            } else if (this.selectedFunctionalities == 'SUM') {
+                this.codeMirror.markText({ line: this.codeMirror.getCursor().line, ch: token.start }, { line: this.codeMirror.getCursor().line, ch: token.end }, { className: 'cm-m-sum', atomic: true })
+            }
+            this.functionDialogVisible = false
+            this.checkError(this.codeMirror, token)
+        },
+
+        checkError(cm, token) {
+            var flag = false
+
+            if (this.measureInList(token.string, this.measures) == -1) {
+                flag = true
+            }
+            if (flag) cm.markText({ line: cm.getCursor().line, ch: token.start }, { line: cm.getCursor().line, ch: token.end }, { className: 'error_word' })
+
+            document.querySelectorAll('.CodeMirrorMathematica .CodeMirror-code span.error_word ').forEach((element) => element.setAttribute('target', 'Measure Missing'))
+        },
+
         registerCodeMirrorHelper() {
-            CodeMirror.registerHelper('hint', 'measures', (mirror) => {
-                var cur = mirror.getCursor()
-                var tok = mirror.getTokenAt(cur)
+            CodeMirror.registerHelper('hint', 'measures', () => {
+                var cur = this.codeMirror.getCursor()
+                var tok = this.codeMirror.getTokenAt(cur)
                 var start = tok.string.trim() == '' ? tok.start + 1 : tok.start
                 var end = tok.end
 
-                var hintList = [] as any
+                var hint = [] as any
 
                 for (var i = 0; i < this.measures.length; i++) {
                     if (tok.string.trim() == '' || this.measures[i].alias.startsWith(tok.string)) {
-                        hintList.push(this.measures[i].alias)
+                        hint.push(this.measures[i].alias)
                     }
                 }
-                return { list: hintList, from: CodeMirror.Pos(cur.line, start), to: CodeMirror.Pos(cur.line, end) }
+                return { list: hint, from: CodeMirror.Pos(cur.line, start), to: CodeMirror.Pos(cur.line, end) }
             })
         },
 
-        //codemirror loaded (setting up events) ================
         onKeyUp(event) {
-            console.log(event)
-
             var cm = this.codeMirror
+            this.$emit('touched')
 
             if ((event.keyIdentifier != undefined && event.keyIdentifier != 'U+0008' && event.keyIdentifier != 'Left' && event.keyIdentifier != 'Right') || (event.key != undefined && event.key != 'Backspace' && event.key != 'Left' && event.key != 'Right')) {
                 var cur = cm.getCursor()
@@ -106,9 +204,6 @@ export default defineComponent({
         },
 
         onMouseDown(event) {
-            console.log(event)
-
-            event.srcElement = event.target || event.srcElement
             for (var i = 0; i < event.srcElement.classList.length; i++) {
                 this.token = event.srcElement.innerHTML
                 if (event.srcElement.classList[i] == 'cm-m-max') {
@@ -127,27 +222,26 @@ export default defineComponent({
             }
             var className = event.srcElement.className
             if (className.startsWith('cm-keyword') || className.startsWith('cm-variable-2')) {
-                //prikazi dijalog ovde?
-                console.log('Prikazi Dijalog?')
+                this.dialogHeaderInfo.functionName = event.srcElement.innerHTML
+                this.functionDialogVisible = true
             }
         },
 
         keyAssistFunc() {
-            console.log('keyAssistFunc() {')
             CodeMirror.showHint(this.codeMirror, CodeMirror.hint.measures)
         },
 
         loadKPI() {
+            if (!this.$refs.codeMirror) return
             this.codeMirror = (this.$refs.codeMirror as any).editor as any
 
             setTimeout(() => {
                 this.codeMirror.refresh()
             }, 0)
-
             this.codeMirror.setValue('')
             this.codeMirror.clearHistory()
-
             this.codeMirror.setValue(this.kpi.definition.formulaSimple)
+
             this.changeIndexWithMeasures(this.kpi.definition.functions, this.codeMirror)
         },
         changeIndexWithMeasures(functions, codeMirror) {
@@ -156,10 +250,7 @@ export default defineComponent({
                 var arrayOfLines = this.removeSpace(codeMirror.getLineTokens(i))
                 for (var j = 0; j < arrayOfLines.length; j++) {
                     var token = arrayOfLines[j]
-                    console.log('token', token)
                     if (token.type == 'keyword' || token.type == 'variable-2') {
-                        console.log('tokentype keywoard or smth')
-
                         var className = functions[counter]
                         counter++
                         if (className == 'MAX') {
@@ -202,8 +293,7 @@ export default defineComponent({
             return -1
         },
 
-        //proverava da li je query ok? ako nije vrati korisnika na Formula tab
-        parseFormula() {
+        checkFormulaForErrors() {
             this.reset()
             var countOpenBracket = 0
             var countCloseBracket = 0
@@ -223,80 +313,74 @@ export default defineComponent({
                                 var token_before = array[j - 1]
                                 if (token_before.type == 'keyword' || token_before.type == 'variable-2') {
                                     if (token.type == 'keyword' || token.type == 'number' || token.type == 'variable-2' || token.string == '(') {
-                                        //	var line = i+1;
-                                        flag = false
-                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator' + line) })
+                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator') + line })
+                                        this.$emit('errorInFormula', true)
                                         this.reset()
-                                        // this.selectedTab.tab = 0
+                                        flag = false
                                         break FORFirst
                                     }
                                 }
                                 if (token_before.type == 'operator') {
                                     if (token.type == 'operator' || token.string == ')') {
-                                        flag = false
-                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed' + line) })
+                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
+                                        this.$emit('errorInFormula', true)
                                         this.reset()
-                                        //this.selectedTab.tab = 0
+                                        flag = false
                                         break FORFirst
                                     }
                                 }
                                 if (token_before.type == 'number') {
                                     if (token.type == 'number' || token.string == '(' || token.type == 'keyword' || token.type == 'variable-2') {
-                                        //		var line = i+1;
-                                        flag = false
-                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed' + line) })
+                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
+                                        this.$emit('errorInFormula', true)
                                         this.reset()
-                                        //this.selectedTab.tab = 0
+                                        flag = false
                                         break FORFirst
                                     }
                                 }
                                 if (token_before.type == 'bracket') {
-                                    //	var line = i+1;
                                     if ((token.string == ')' && token_before.string == '(') || (token.string == '(' && token_before.string == ')')) {
+                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
+                                        this.$emit('errorInFormula', true)
                                         flag = false
-                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed' + line) })
-                                        //this.selectedTab.tab = 0
                                         break FORFirst
                                     }
                                     if (token_before.string == ')') {
                                         if (token.type == 'keyword' || token.type == 'number' || token.type == 'variable-2') {
-                                            this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator' + line) })
+                                            this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator') })
+                                            this.$emit('errorInFormula', true)
                                             this.reset()
                                             flag = false
-                                            //this.selectedTab.tab = 0
                                             break FORFirst
                                         }
                                     }
                                 }
                                 if (token_before.string == '(') {
                                     if (token.type == 'operator') {
-                                        flag = false
-                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed' + line) })
-
+                                        this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
+                                        this.$emit('errorInFormula', true)
                                         this.reset()
-                                        //this.selectedTab.tab = 0
+                                        flag = false
                                         break FORFirst
                                     }
                                 }
                             }
                             if (j == array.length - 1) {
-                                //last token
                                 if (token.type == 'operator') {
-                                    this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed' + line) })
+                                    this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
+                                    this.$emit('errorInFormula', true)
                                     this.reset()
                                     flag = false
-                                    //this.selectedTab.tab = 0
                                     break FORFirst
                                 }
                             }
                             if (token.type == 'operator') {
                                 //operator
                                 if (j == 0) {
-                                    //	var line = i+1;
-                                    this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed' + line) })
+                                    this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.malformed') + line })
+                                    this.$emit('errorInFormula', true)
                                     this.reset()
                                     flag = false
-                                    //this.selectedTab.tab = 0
                                     break FORFirst
                                 } else {
                                     this.formula = this.formula + token.string
@@ -320,22 +404,19 @@ export default defineComponent({
                             } else {
                                 //error no function associated
                                 this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingfunctions') })
-
+                                this.$emit('errorInFormula', true)
                                 this.reset()
                                 flag = false
-                                //this.selectedTab.tab = 0
                                 break FORFirst
                             }
                         } else {
                             if (j - 1 >= 0) {
                                 token_before = array[j - 1]
                                 if (token_before.type == 'number' || token_before.type == 'keyword' || token_before.type == 'variable-2') {
-                                    //		var line = i+1;
-                                    flag = false
                                     this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingoperator') })
-
+                                    this.$emit('errorInFormula', true)
                                     this.reset()
-                                    //this.selectedTab.tab = 0
+                                    flag = false
                                     break FORFirst
                                 }
                             }
@@ -344,12 +425,11 @@ export default defineComponent({
                                 var className = arr[k]['className']
                                 if (this.measureInList(token.string, this.measures) == -1) {
                                     this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.generic') })
-
-                                    //this.selectedTab.tab = 0
+                                    this.$emit('errorInFormula', true)
                                     this.reset()
                                     flag = false
                                 }
-                                if (className == 'codeMirror-m-max') {
+                                if (className == 'cm-m-max') {
                                     numMeasures++
                                     this.measuresToJSON.push(token.string)
                                     this.functionsTOJSON.push('MAX')
@@ -358,7 +438,7 @@ export default defineComponent({
                                     this.formula = this.formula + string
                                     this.formulaDecoded = this.formulaDecoded + 'MAX(' + token.string + ')'
                                     this.formulaSimple = this.formulaSimple + token.string
-                                } else if (className == 'codeMirror-m-min') {
+                                } else if (className == 'cm-m-min') {
                                     numMeasures++
                                     this.measuresToJSON.push(token.string)
                                     this.functionsTOJSON.push('MIN')
@@ -367,7 +447,7 @@ export default defineComponent({
                                     this.formula = this.formula + string
                                     this.formulaDecoded = this.formulaDecoded + 'MIN(' + token.string + ')'
                                     this.formulaSimple = this.formulaSimple + token.string
-                                } else if (className == 'codeMirror-m-count') {
+                                } else if (className == 'cm-m-count') {
                                     numMeasures++
                                     this.measuresToJSON.push(token.string)
                                     this.functionsTOJSON.push('COUNT')
@@ -376,7 +456,7 @@ export default defineComponent({
                                     this.formula = this.formula + string
                                     this.formulaDecoded = this.formulaDecoded + 'COUNT(' + token.string + ')'
                                     this.formulaSimple = this.formulaSimple + token.string
-                                } else if (className == 'codeMirror-m-sum') {
+                                } else if (className == 'cm-m-sum') {
                                     numMeasures++
                                     this.measuresToJSON.push(token.string)
                                     this.functionsTOJSON.push('SUM')
@@ -387,9 +467,9 @@ export default defineComponent({
                                     this.formulaSimple = this.formulaSimple + token.string
                                 } else if (className == 'error_word') {
                                     this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.generic') })
+                                    this.$emit('errorInFormula', true)
                                     this.reset()
                                     flag = false
-                                    //this.selectedTab.tab = 0
                                     break FORFirst
                                 }
                             }
@@ -397,27 +477,32 @@ export default defineComponent({
                     }
                 }
             }
+            if (flag) this.$emit('errorInFormula', false)
             if (countOpenBracket != countCloseBracket && flag) {
-                this.reset()
-                //this.selectedTab.tab = 0
                 this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingbracket') })
+                this.$emit('errorInFormula', true)
+                this.reset()
             } else {
                 if (numMeasures == 0 && flag) {
-                    this.reset()
-                    //this.selectedTab.tab = 0
                     this.$store.commit('setInfo', { msg: this.$t('kpi.kpiDefinition.errorformula.missingmeasure') })
+                    this.$emit('errorInFormula', true)
+                    this.reset()
                 }
                 if (this.formula != '' && flag) {
-                    this.formulaForDB['formula'] = this.formula
-                    this.formulaForDB['measures'] = this.measuresToJSON
-                    this.formulaForDB['functions'] = this.functionsTOJSON
-                    this.formulaForDB['formulaDecoded'] = this.formulaDecoded
-                    this.formulaForDB['formulaSimple'] = this.formulaSimple
-                    return this.formulaForDB
+                    this.kpi.definition['formula'] = this.formula
+                    this.kpi.definition['measures'] = this.measuresToJSON
+                    this.kpi.definition['functions'] = this.functionsTOJSON
+                    this.kpi.definition['formulaDecoded'] = this.formulaDecoded
+                    this.kpi.definition['formulaSimple'] = this.formulaSimple
+                    this.$emit('updateFormulaToSave', this.formula)
+                    this.loadKPI()
+                    return this.kpi.definition
                 }
             }
             return {}
-            //this.selectedTab.tab = 0
+        },
+        logKpi() {
+            console.log('kpi: ', this.kpi)
         }
     }
 })
@@ -446,17 +531,17 @@ span.cm-variable-2::after,
     color: green;
 }
 
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-max::before,
-.MAX::before {
-    content: 'MAX(';
-    color: green;
-}
-
 .MAX,
 .MIN,
 .COUNT,
 .SUM {
     color: #80004c;
+}
+
+.CodeMirrorMathematica .CodeMirror-code span.cm-m-max::before,
+.MAX::before {
+    content: 'MAX(';
+    color: green;
 }
 
 .CodeMirrorMathematica .CodeMirror-code span.cm-m-min::before,
@@ -475,5 +560,11 @@ span.cm-variable-2::after,
 .SUM::before {
     content: 'Σ(';
     color: green;
+}
+
+.error_word {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sJDw4cOCW1/KIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAHElEQVQI12NggIL/DAz/GdA5/xkY/qPKMDAwAADLZwf5rvm+LQAAAABJRU5ErkJggg==');
+    background-position: left bottom;
+    background-repeat: repeat-x;
 }
 </style>

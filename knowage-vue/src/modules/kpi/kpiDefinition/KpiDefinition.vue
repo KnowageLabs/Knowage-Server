@@ -19,6 +19,7 @@
                                 <span>{{ slotProps.option.name }}</span>
                                 <span class="kn-list-item-text-secondary">{{ formatDate(slotProps.option.dateCreation) }}</span>
                             </div>
+                            <Button icon="far fa-copy" class="p-button-text p-button-rounded p-button-plain" @click.stop="emitCopyKpi(slotProps.option.id, slotProps.option.version)" data-test="copy-button" />
                             <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteKpiConfirm(slotProps.option.id, slotProps.option.version)" data-test="delete-button" />
                         </div>
                     </template>
@@ -26,7 +27,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view @touched="touched = true" @closed="onFormClose" @inserted="pageReload" @showDialog="displayInfoDialog" />
+                <router-view :cloneKpiId="cloneKpiId" :cloneKpiVersion="cloneKpiVersion" @touched="touched = true" @closed="onFormClose" @inserted="pageReload" @showDialog="displayInfoDialog" />
                 <KnHint :title="'kpi.kpiDefinition.hintTitle'" :hint="'kpi.kpiDefinition.hint'" v-if="hintVisible" />
             </div>
         </div>
@@ -36,7 +37,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
-import kpiDescriptor from './KpiDefinitionDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import KnHint from '@/components/UI/KnHint.vue'
@@ -49,12 +49,15 @@ export default defineComponent({
     },
     data() {
         return {
-            kpiList: [] as any,
-            kpiDescriptor,
             loading: false,
             touched: false,
             displayModal: false,
-            hintVisible: true
+            hintVisible: true,
+            cloneKpi: false,
+            kpiList: [] as any,
+            kpiToClone: {} as any,
+            cloneKpiId: Number,
+            cloneKpiVersion: Number
         }
     },
     async created() {
@@ -117,6 +120,13 @@ export default defineComponent({
         formatDate(date) {
             let fDate = new Date(date)
             return fDate.toLocaleString()
+        },
+        emitCopyKpi(kpiId, kpiVersion) {
+            this.$router.push('/kpidef/new-kpi')
+            setTimeout(() => {
+                this.cloneKpiId = kpiId
+                this.cloneKpiVersion = kpiVersion
+            }, 200)
         }
     }
 })

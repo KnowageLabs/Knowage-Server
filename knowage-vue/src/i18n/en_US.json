@@ -5,6 +5,7 @@
         "cancel": "cancel",
         "choose": "choose",
         "close": "close",
+        "apply": "apply",
         "codingLanguages": {
             "css": "css",
             "html": "html",
@@ -127,8 +128,22 @@
     "kpi": {
         "kpiDefinition": {
             "cardinalityTtitle": "Cardinality",
+            "aliasToolbarTitle": "Alias",
+            "enableVersioning": "Enable Versioning ",
+            "addKpiAssociations":"Add KPI associations",
+            "formulaDialogHeader":"Select type Function for",
             "clone": "Clone",
             "color": "Color",
+            "confirmOverride": "Are you sure to override it?",
+            "copyOf": "Copy of ",
+            "errorformula": {
+                "generic": "Error Formula. Measures Missing..",
+                "malformed": "Error Formula. Malformed Formula at line: ",
+                "missingbracket": "Error Formula. Missing Bracket",
+                "missingfunctions": "Error Formula. Associated function to all measures",
+                "missingmeasure": "Insert at least one measure",
+                "missingoperator": "Error Formula. Operator missing at line: "
+            },
             "formulaTitle": "Formula",
             "hint": "Change the hint to your liking",
             "hintTitle": "Kpi Definition",
@@ -136,12 +151,11 @@
             "maxInclude": "Include Max",
             "min": "Min",
             "minInclude": "Include Min",
+            "reusedTitle": "Threshold used by other kpi",
             "severity": "Severity",
-            "thresholdReused": "Warning: this threshold is used elsewhere. Any change will affect other KPIs. Please consider creating a clone",
-            "tresholdTitle": "Treshold",
             "thresholdAlreadyPresent": "Threshold is already defined",
-            "confirmOverride": "Are you sure to override it?",
-            "reusedTitle": "Threshold used by other kpi"
+            "thresholdReused": "Warning: this threshold is used elsewhere. Any change will affect other KPIs. Please consider creating a clone",
+            "tresholdTitle": "Treshold"
         }
     },
     "language": {

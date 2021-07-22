@@ -17,18 +17,8 @@
             "text-align": "center"
         },
         "table": {
-            "checkbox": {
-                "justify-content": "center"
-            },
             "footer": {
                 "float": "right"
-            },
-            "inputNumber": {
-                "width": "5%"
-            },
-            "inputText": {
-                "text-align": "center",
-                "width": "7em"
             }
         }
     },

@@ -1,5 +1,5 @@
 <template>
-    <Card v-if="!loading" :style="tabViewDescriptor.card.style">
+    <Card v-if="!loading" :style="tabViewDescriptor.style.card">
         <template #content>
             <Message v-if="kpi.threshold.usedByKpi" severity="info" :closable="false" :style="tresholdTabDescriptor.styles.message">
                 {{ $t('kpi.kpiDefinition.thresholdReused') }}
@@ -7,23 +7,43 @@
             </Message>
 
             <form class="p-fluid p-formgrid p-grid">
-                <div class="p-field p-col-12 p-md-4" :style="tabViewDescriptor.pField.style">
+                <div class="p-field p-col-12 p-md-4">
                     <span class="p-float-label">
-                        <InputText id="name" class="kn-material-input" type="text" maxLength="100" v-model.trim="v$.threshold.name.$model" :class="{ 'p-invalid': v$.threshold.name.$invalid && v$.threshold.name.$dirty }" @blur="v$.threshold.name.$touch()" data-test="name-input" />
+                        <InputText
+                            id="name"
+                            class="kn-material-input"
+                            type="text"
+                            maxLength="100"
+                            v-model.trim="v$.threshold.name.$model"
+                            :class="{ 'p-invalid': v$.threshold.name.$invalid && v$.threshold.name.$dirty }"
+                            @blur="v$.threshold.name.$touch()"
+                            @change="$emit('touched')"
+                            data-test="name-input"
+                        />
                         <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.threshold.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
                 </div>
 
-                <div class="p-field p-col-12 p-md-4" :style="tabViewDescriptor.pField.style">
+                <div class="p-field p-col-12 p-md-4">
                     <span class="p-float-label">
-                        <InputText id="description" class="kn-material-input" type="text" maxLength="500" v-model.trim="v$.threshold.description.$model" :class="{ 'p-invalid': v$.threshold.description.$invalid && v$.threshold.description.$dirty }" @blur="v$.threshold.description.$touch()" />
+                        <InputText
+                            id="description"
+                            class="kn-material-input"
+                            type="text"
+                            maxLength="500"
+                            v-model.trim="v$.threshold.description.$model"
+                            :class="{ 'p-invalid': v$.threshold.description.$invalid && v$.threshold.description.$dirty }"
+                            @blur="v$.threshold.description.$touch()"
+                            @change="$emit('touched')"
+                            data-test="description-input"
+                        />
                         <label for="description" class="kn-material-input-label">{{ $t('common.description') }}</label>
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.threshold.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
                 </div>
 
-                <div class="p-field p-col-12 p-md-4" :style="tabViewDescriptor.pField.style">
+                <div class="p-field p-col-12 p-md-4">
                     <span class="p-float-label">
                         <Dropdown id="type" class="kn-material-input" v-model="threshold.typeId" :options="thresholdTypeList" optionLabel="translatedValueName" optionValue="valueId" @change="setTypeCd">
                             <template #option="slotProps">
@@ -40,31 +60,31 @@
 
                 <Column field="label" :header="$t('common.label')">
                     <template #editor="slotProps">
-                        <InputText v-model="slotProps.data['label']" />
+                        <InputText v-model="slotProps.data['label']" @change="$emit('touched')" />
                     </template>
                 </Column>
 
                 <Column field="minValue" :header="$t('kpi.kpiDefinition.min')">
                     <template #editor="slotProps">
-                        <InputText v-model="slotProps.data['minValue']" type="number" />
+                        <InputText v-model="slotProps.data['minValue']" type="number" @change="$emit('touched')" />
                     </template>
                 </Column>
 
                 <Column field="includeMin" :header="$t('kpi.kpiDefinition.minInclude')">
                     <template #body="slotProps">
-                        <Checkbox v-model="slotProps.data['includeMin']" :binary="true" />
+                        <Checkbox v-model="slotProps.data['includeMin']" :binary="true" @change="$emit('touched')" />
                     </template>
                 </Column>
 
                 <Column field="maxValue" :header="$t('kpi.kpiDefinition.max')">
                     <template #editor="slotProps">
-                        <InputText v-model="slotProps.data['maxValue']" type="number" />
+                        <InputText v-model="slotProps.data['maxValue']" type="number" @change="$emit('touched')" />
                     </template>
                 </Column>
 
                 <Column field="includeMax" :header="$t('kpi.kpiDefinition.maxInclude')">
                     <template #body="slotProps">
-                        <Checkbox v-model="slotProps.data['includeMax']" :binary="true" />
+                        <Checkbox v-model="slotProps.data['includeMax']" :binary="true" @change="$emit('touched')" />
                     </template>
                 </Column>
 
@@ -81,12 +101,12 @@
 
                 <Column field="color" :header="$t('kpi.kpiDefinition.color')">
                     <template #body="slotProps">
-                        <ColorPicker v-model="slotProps.data['color']" format="hex" />
+                        <ColorPicker v-model="slotProps.data['color']" format="hex" @change="$emit('touched')" />
                         <span>{{ slotProps.data['color'] }}</span>
                     </template>
                     <template #editor="slotProps">
-                        <ColorPicker v-model="slotProps.data['color']" format="hex" />
-                        <InputText v-model="slotProps.data['color']" />
+                        <ColorPicker v-model="slotProps.data['color']" format="hex" @change="$emit('touched')" />
+                        <InputText v-model="slotProps.data['color']" @change="$emit('touched')" />
                     </template>
                 </Column>
 
@@ -156,24 +176,10 @@ import ColorPicker from 'primevue/colorpicker'
 import Dialog from 'primevue/dialog'
 
 export default defineComponent({
-    name: 'treshold-tab',
     components: { KnValidationMessages, Card, Sidebar, Listbox, Message, DataTable, Column, Checkbox, Dropdown, ColorPicker, Dialog },
-    props: {
-        selectedKpi: {
-            type: Object as any
-        },
-        thresholdsList: Array,
-        severityOptions: {
-            type: Array as any,
-            required: false
-        },
-        thresholdTypeList: {
-            type: Array as any,
-            required: false
-        },
-        loading: Boolean
-    },
-    emits: ['thresholdFieldChanged', 'activeVersionChanged'],
+    props: { selectedKpi: { type: Object as any }, thresholdsList: Array, severityOptions: { type: Array as any, required: false }, thresholdTypeList: { type: Array as any, required: false }, loading: Boolean },
+    emits: ['touched'],
+
     data() {
         return {
             v$: useValidate() as any,
@@ -183,8 +189,20 @@ export default defineComponent({
             threshold: {} as any,
             thresholdToClone: {} as any,
             thresholdListVisible: false,
-            overrideDialogVisible: false,
-            touched: false
+            overrideDialogVisible: false
+        }
+    },
+
+    // mounted() {
+    //     if (this.selectedKpi) {
+    //         this.kpi = this.selectedKpi as any
+    //         this.threshold = this.kpi.threshold
+    //     }
+    // },
+    watch: {
+        selectedKpi() {
+            this.kpi = this.selectedKpi as any
+            this.threshold = this.kpi.threshold
         }
     },
 
@@ -194,18 +212,6 @@ export default defineComponent({
         }
     },
 
-    mounted() {
-        if (this.selectedKpi) {
-            this.kpi = this.selectedKpi as any
-            this.threshold = this.kpi.threshold
-        }
-    },
-    watch: {
-        selectedKpi() {
-            this.kpi = this.selectedKpi as any
-            this.threshold = this.kpi.threshold
-        }
-    },
     methods: {
         setPositionOnReorder(event) {
             this.kpi.threshold.thresholdValues = event.value
@@ -256,7 +262,10 @@ export default defineComponent({
         },
         loadSelectedThreshold(event) {
             this.thresholdToClone = []
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold?kpiId=${this.selectedKpi.id}`).then((response) => {
+            let url = ''
+            this.kpi.id ? (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold?kpiId=${this.selectedKpi.id}`) : (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold`)
+
+            return axios.get(url).then((response) => {
                 this.thresholdToClone = response.data
                 this.thresholdToClone.usedByKpi ? (this.overrideDialogVisible = true) : this.cloneSelectedThreshold()
             })
@@ -279,3 +288,9 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+// vdeep not working correctly,this is a working solution for the thresholds list padding...
+.mySidebar.p-sidebar {
+    padding: 0rem;
+}
+</style>
