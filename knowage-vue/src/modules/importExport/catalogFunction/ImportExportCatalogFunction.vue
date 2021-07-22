@@ -13,7 +13,7 @@
 		responsiveLayout="stack"
 		breakpoint="960px"
 		:currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-		:globalFilterFields="['name', 'type', 'keywords']"
+		:globalFilterFields="['name', 'type', 'tags']"
 	>
 		<template #header>
 			<div class="table-header">
@@ -34,10 +34,10 @@
 		<Column field="name" :header="$t(importExportDescriptor.export.catalogFunction.column.name.header)" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.name.style"></Column>
 		<Column field="type" :header="$t(importExportDescriptor.export.catalogFunction.column.type.header)" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.type.style"> </Column>
 
-		<Column field="keywords" :header="$t(importExportDescriptor.export.catalogFunction.column.keywords.header)" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.keywords.style">
+		<Column field="tags" :header="$t(importExportDescriptor.export.catalogFunction.column.tags.header)" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.tags.style">
 			<template #body="{data}">
 				<span class="p-float-label kn-material-input">
-					<Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.keywords" v-bind:key="index" rounded :value="tag"> </Tag>
+					<Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
 				</span>
 			</template>
 		</Column>
@@ -73,7 +73,7 @@
 				global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 				name: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
 				type: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-				keywords: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
+				tags: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
 			}
 			this.loadAllFunctions()
 		},

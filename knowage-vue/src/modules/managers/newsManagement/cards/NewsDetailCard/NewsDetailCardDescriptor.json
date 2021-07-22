@@ -1,0 +1,46 @@
+{
+    "card": {
+        "style": {
+            "margin": "1rem"
+        }
+    },
+    "newsTypes": [
+        {
+            "value": 1,
+            "name": "News"
+        },
+        {
+            "value": 2,
+            "name": "Notification"
+        },
+        {
+            "value": 3,
+            "name": "Warning"
+        }
+    ],
+    "input": {
+        "title": {
+            "style": {
+                "width": "50%",
+                "margin": "0.5rem"
+            }
+        },
+        "expirationDate": {
+            "style": {
+                "width": "20%",
+                "margin": "0.5rem"
+            }
+        },
+        "type": {
+            "style": {
+                "width": "30%",
+                "margin": "0.5rem"
+            }
+        }
+    },
+    "editor": {
+        "style": {
+            "height": "260px"
+        }
+    }
+}

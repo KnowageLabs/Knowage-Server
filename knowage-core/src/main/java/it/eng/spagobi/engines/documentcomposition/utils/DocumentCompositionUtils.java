@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
@@ -256,8 +257,14 @@ public class DocumentCompositionUtils {
 				if (country == null) {
 					country = sContainer.getAttribute("SBI_COUNTRY");
 				}
+
 				if (language != null && country != null) {
 					urlReturn += "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + language + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + country;
+
+					String script = (String) sContainer.getAttribute("AF_SCRIPT");
+					if (StringUtils.isNotBlank(script)) {
+						urlReturn += "&" + SpagoBIConstants.SBI_SCRIPT + "=" + script;
+					}
 				}
 			}
 

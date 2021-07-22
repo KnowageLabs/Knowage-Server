@@ -177,8 +177,8 @@ public class SbiObjFunction extends AbstractEntity implements Comparable<SbiObjF
 
 	@Override
 	public int compareTo(SbiObjFunction o) {
-		Integer thisId = Optional.of(this.id).map(e -> e.id).orElse(0);
-		Integer otherId = Optional.of(o).map(e -> e.id).map(e -> e.id).orElse(0);
+		Integer thisId = Optional.ofNullable(this.id).map(e -> e.id).orElse(0);
+		Integer otherId = Optional.ofNullable(o).map(e -> e.id).map(e -> e.id).orElse(0);
 
 		return thisId.compareTo(otherId);
 	}

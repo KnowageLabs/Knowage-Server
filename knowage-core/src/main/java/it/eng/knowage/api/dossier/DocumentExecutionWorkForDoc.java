@@ -237,6 +237,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 					serviceUrlBuilder.append("&SBI_LANGUAGE=" + locale.getLanguage());
 					serviceUrlBuilder.append("&SBI_COUNTRY=" + locale.getCountry());
+					serviceUrlBuilder.append("&SBI_SCRIPT=" + locale.getScript());
 
 					RenderOptions renderOptions = RenderOptions.defaultOptions();
 					if (reportToUse.getSheetHeight() != null && !reportToUse.getSheetHeight().isEmpty() && reportToUse.getSheetWidth() != null
@@ -415,7 +416,10 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 			throws IOException {
 
 		String outFolderPath = SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution" + File.separator + randomKey + File.separator;
-
+		File dossierExDir = new File(SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution");
+		if (!dossierExDir.exists()) {
+			dossierExDir.mkdir();
+		}
 		File outFolder = new File(outFolderPath);
 
 		byte[] buffer = new byte[1024];

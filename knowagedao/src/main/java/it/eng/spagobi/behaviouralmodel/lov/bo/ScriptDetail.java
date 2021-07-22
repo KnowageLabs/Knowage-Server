@@ -53,6 +53,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	public static final String SBI_BINDINGS_LANGUAGE = "SBI_LANGUAGE";
 	public static final String SBI_BINDINGS_COUNTRY = "SBI_COUNTRY";
+	public static final String SBI_BINDINGS_SCRIPT = "SBI_SCRIPT";
 	public static final String SBI_BINDINGS_DATE_FORMAT = "SBI_DATE_FORMAT";
 
 	/**
@@ -76,11 +77,9 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	/**
 	 * constructor.
 	 *
-	 * @param dataDefinition
-	 *            xml representation of the script lov
+	 * @param dataDefinition xml representation of the script lov
 	 *
-	 * @throws SourceBeanException
-	 *             the source bean exception
+	 * @throws SourceBeanException the source bean exception
 	 */
 	public ScriptDetail(String dataDefinition) throws SourceBeanException {
 		loadFromXML(dataDefinition);
@@ -89,11 +88,9 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	/**
 	 * loads the lov from an xml string.
 	 *
-	 * @param dataDefinition
-	 *            the xml definition of the lov
+	 * @param dataDefinition the xml definition of the lov
 	 *
-	 * @throws SourceBeanException
-	 *             the source bean exception
+	 * @throws SourceBeanException the source bean exception
 	 */
 	@Override
 	public void loadFromXML(String dataDefinition) throws SourceBeanException {
@@ -265,6 +262,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put(SBI_BINDINGS_LANGUAGE, locale.getLanguage());
 		map.put(SBI_BINDINGS_COUNTRY, locale.getCountry());
+		map.put(SBI_BINDINGS_SCRIPT, locale.getScript());
 		map.put(SBI_BINDINGS_DATE_FORMAT, dateFormat);
 		return map;
 	}
@@ -294,8 +292,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	/**
 	 * checks if the result is formatted in the right xml structure
 	 *
-	 * @param result
-	 *            the result of the lov
+	 * @param result the result of the lov
 	 * @return true if the result is formatted correctly false otherwise
 	 */
 	public boolean checkSintax(String result) {
@@ -330,8 +327,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	 *
 	 * @return list of profile attribute names
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	// public List getProfileAttributeNames() throws Exception {
 	// List names = new ArrayList();
@@ -360,8 +356,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	 *
 	 * @return list of profile attribute names
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Override
 	public List getProfileAttributeNames() throws Exception {
@@ -388,8 +383,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	 *
 	 * @return set of parameter names
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Override
 	public Set<String> getParameterNames() throws Exception {
@@ -416,8 +410,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	 *
 	 * @return true if the lov require one or more profile attributes, false otherwise
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Override
 	public boolean requireProfileAttributes() throws Exception {
@@ -435,8 +428,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	/**
 	 * In case the result of the string is not structured as expected wrap the result into the right xml envelope
 	 *
-	 * @param result
-	 *            the result of the script
+	 * @param result the result of the script
 	 * @return
 	 */
 	public String convertResult(String result) {
@@ -463,8 +455,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	/**
 	 * Set the string of the script.
 	 *
-	 * @param script
-	 *            the string of the script
+	 * @param script the string of the script
 	 */
 	public void setScript(String script) {
 		this.script = script;
@@ -474,13 +465,11 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	 * Splits an XML string by using some <code>SourceBean</code> object methods in order to obtain the source <code>ScriptDetail</code> objects whom XML has
 	 * been built.
 	 *
-	 * @param dataDefinition
-	 *            The XML input String
+	 * @param dataDefinition The XML input String
 	 *
 	 * @return The corrispondent <code>ScriptDetail</code> object
 	 *
-	 * @throws SourceBeanException
-	 *             If a SourceBean Exception occurred
+	 * @throws SourceBeanException If a SourceBean Exception occurred
 	 */
 	public static ScriptDetail fromXML(String dataDefinition) throws SourceBeanException {
 		ScriptDetail scriptDet = new ScriptDetail(dataDefinition);

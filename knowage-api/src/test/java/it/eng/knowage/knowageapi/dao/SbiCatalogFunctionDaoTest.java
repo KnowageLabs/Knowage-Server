@@ -26,12 +26,12 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
 import javax.sql.rowset.serial.SerialException;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -52,8 +52,7 @@ class SbiCatalogFunctionDaoTest {
 	@Autowired
 	private SbiCatalogFunctionDao dao;
 
-	@Autowired
-	@Qualifier("knowage-functioncatalog")
+	@PersistenceContext(unitName = "knowage-functioncatalog")
 	private EntityManager em;
 
 	@Test

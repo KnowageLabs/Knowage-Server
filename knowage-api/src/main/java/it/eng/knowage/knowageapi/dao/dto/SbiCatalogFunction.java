@@ -444,8 +444,8 @@ public class SbiCatalogFunction extends AbstractEntity implements Serializable, 
 
 	@Override
 	public int compareTo(SbiCatalogFunction o) {
-		String thisLabel = Optional.of(this.label).orElse("");
-		String otherLabel = Optional.of(o).map(e -> e.label).orElse("");
+		String thisLabel = Optional.ofNullable(this.label).orElse("");
+		String otherLabel = Optional.ofNullable(o).map(e -> e.label).orElse("");
 
 		return thisLabel.compareTo(otherLabel);
 	}

@@ -1,0 +1,12 @@
+.kn-tree {
+    &.p-tree {
+        border: none;
+        border-right: 1px solid $tree-border-color;
+        border-radius: 0;
+        .p-tree-filter-container {
+            .p-tree-filter {
+                border-radius: 0;
+            }
+        }
+    }
+}

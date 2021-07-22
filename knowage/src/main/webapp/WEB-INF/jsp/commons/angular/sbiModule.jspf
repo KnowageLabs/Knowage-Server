@@ -41,6 +41,7 @@ sbiM.factory('sbiModule_config',function(){
     	host: window.location.origin,
     	curr_country: '<%= curr_country %>',
     	curr_language: '<%= curr_language%>',
+    	curr_script: '<%= curr_script %>',
     	 
     	<%--     	currTheme: '<%= currTheme %>', --%>
 		<%-- 	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>, --%>
@@ -743,14 +744,21 @@ sbiM.service('sbiModule_i18n', function(sbiModule_config, sbiModule_restServices
     		if(self.i18nMap){
     			resolve(self.i18nMap);
 			}else{
+				
+			var script = angular.copy(sbiModule_config.curr_script);
     		
-    		sbiModule_restServices.promiseGet("2.0/i18nMessages","?currCountry="+sbiModule_config.curr_country+"&currLanguage="+sbiModule_config.curr_language).then(
-    				function(response){
-    					self.i18nMap = response.data;
-    					resolve(self.i18nMap);
-    			},function(response){
-    				alert("Error: "+response.data.errors[0].message);
-    			});
+    		sbiModule_restServices.promiseGet("2.0/i18nMessages",
+    				"?currCountry="+sbiModule_config.curr_country+
+    				"&currLanguage="+sbiModule_config.curr_language+
+    				"&currScript="+script.replaceAll('-','')
+    				).then(
+	    				function(response){
+	    					self.i18nMap = response.data;
+	    					resolve(self.i18nMap);
+		    			},function(response){
+		    				alert("Error: "+response.data.errors[0].message);
+		    			}
+		    		);
 			}
     	});
     	},
@@ -1161,5 +1169,5 @@ sbiM.service('messageHandlerValidatorService',function(){
 </script>
 
 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular-localization/" + curr_language + "-" + curr_country + ".js")%>"></script>
+<script type="text/javascript" src="<%=KnowageSystemConfiguration.getKnowageContext()%><%= GeneralUtilities.getAngularPropertiesFileName(curr_language,curr_script,curr_country,"-")%>"></script>
 	 

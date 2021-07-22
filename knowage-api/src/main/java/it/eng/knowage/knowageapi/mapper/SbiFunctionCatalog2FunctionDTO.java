@@ -18,7 +18,7 @@ public class SbiFunctionCatalog2FunctionDTO implements Function<SbiCatalogFuncti
 		String functionId = t.getId().getFunctionId();
 		String name = t.getName();
 		String type = t.getType();
-		List<String> keywords = Arrays.asList(Optional.of(t.getKeywords()).orElse("").split(","));
+		List<String> keywords = Arrays.asList(Optional.ofNullable(t.getKeywords()).orElse("").split(","));
 
 		UUID transformedFuntionId = UUID.fromString(functionId);
 

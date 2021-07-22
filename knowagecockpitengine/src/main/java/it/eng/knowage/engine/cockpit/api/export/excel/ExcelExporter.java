@@ -49,6 +49,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.engine.cockpit.api.export.excel.exporters.IWidgetExporter;
+import it.eng.knowage.engine.cockpit.api.export.excel.exporters.WidgetExporterFactory;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFUserError;
@@ -207,7 +209,7 @@ public class ExcelExporter {
 				JSONObject optionsObj = new JSONObject();
 				if (options != null && !options.isEmpty())
 					optionsObj = new JSONObject(options);
-				WidgetXLSXExporter widgetExporter = new WidgetXLSXExporter(this, widgetType, templateString, widgetId, wb, optionsObj);
+				IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString, widgetId, wb, optionsObj);
 				exportedSheets = widgetExporter.export();
 			} else {
 				// export whole cockpit
@@ -349,22 +351,24 @@ public class ExcelExporter {
 	}
 
 	private int exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj) {
+		String widgetId = null;
 		int exportedSheets = 0;
-		try {
-			for (int i = 0; i < widgetsJson.length(); i++) {
+		for (int i = 0; i < widgetsJson.length(); i++) {
+			try {
 				JSONObject currWidget = widgetsJson.getJSONObject(i);
-				String widgetId = currWidget.getString("id");
+				widgetId = currWidget.getString("id");
 				String widgetType = currWidget.getString("type");
 				if (Arrays.asList(WIDGETS_TO_IGNORE).contains(widgetType.toLowerCase()))
 					continue;
 				JSONObject currWidgetOptions = new JSONObject();
 				if (optionsObj.has(widgetId))
 					currWidgetOptions = optionsObj.getJSONObject(widgetId);
-				WidgetXLSXExporter widgetExporter = new WidgetXLSXExporter(this, widgetType, templateString, Long.parseLong(widgetId), wb, currWidgetOptions);
+				IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString, Long.parseLong(widgetId), wb,
+						currWidgetOptions);
 				exportedSheets += widgetExporter.export();
+			} catch (Exception e) {
+				logger.error("Error while exporting widget [" + widgetId + "]", e);
 			}
-		} catch (Exception e) {
-			logger.error("Error while exporting cockpit. Operation aborted.", e);
 		}
 		return exportedSheets;
 	}
@@ -378,7 +382,7 @@ public class ExcelExporter {
 		}
 	}
 
-	protected JSONArray getMultiDataStoreForWidget(JSONObject template, JSONObject widget) {
+	public JSONArray getMultiDataStoreForWidget(JSONObject template, JSONObject widget) {
 		Map<String, Object> map = new java.util.HashMap<String, Object>();
 		JSONArray multiDataStore = new JSONArray();
 		try {
@@ -413,12 +417,12 @@ public class ExcelExporter {
 		return multiDataStore;
 	}
 
-	protected JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget) {
+	public JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget) {
 		// if pagination is disabled offset = 0, fetchSize = -1
 		return getDataStoreForWidget(template, widget, 0, -1);
 	}
 
-	protected JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget, int offset, int fetchSize) {
+	public JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget, int offset, int fetchSize) {
 		Map<String, Object> map = new java.util.HashMap<String, Object>();
 		JSONObject datastore = null;
 		try {
@@ -533,12 +537,12 @@ public class ExcelExporter {
 		return cockpitSelections;
 	}
 
-	protected void createAndFillExcelSheet(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) {
+	public void createAndFillExcelSheet(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) {
 		Sheet newSheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 		fillSheetWithData(dataStore, wb, newSheet, widgetName, 0);
 	}
 
-	protected void fillSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset) {
+	public void fillSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset) {
 		try {
 			JSONObject metadata = dataStore.getJSONObject("metaData");
 			JSONArray columns = metadata.getJSONArray("fields");
@@ -789,7 +793,7 @@ public class ExcelExporter {
 		}
 	}
 
-	protected Sheet createUniqueSafeSheet(Workbook wb, String widgetName, String cockpitSheetName) {
+	public Sheet createUniqueSafeSheet(Workbook wb, String widgetName, String cockpitSheetName) {
 		Sheet sheet;
 		String sheetName;
 		try {
@@ -1108,7 +1112,7 @@ public class ExcelExporter {
 		}
 	}
 
-	protected Locale getLocale() {
+	public Locale getLocale() {
 		return locale;
 	}
 

@@ -31,7 +31,7 @@
 	import ImportDialog from './ImportDialog.vue'
 	import ProgressBar from 'primevue/progressbar'
 	import KnTabCard from '@/components/UI/KnTabCard.vue'
-	import { downloadDirect } from '@/helpers/commons/fileHelper'
+	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
 
 	export default defineComponent({
 		name: 'import-export',
@@ -71,7 +71,7 @@
 			},
 			async startExport(fileName: string) {
 				await axios
-					.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery-ee/export/bulk', this.streamlineSelectedItemsArray(fileName), {
+					.post(process.env.VUE_APP_API_PATH + '1.0/export/bulk', this.streamlineSelectedItemsArray(fileName), {
 						responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
 						headers: {
@@ -84,10 +84,7 @@
 							if (response.data.errors) {
 								this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
 							} else {
-								var contentDisposition = response.headers['content-disposition']
-								var fileAndExtension = contentDisposition.match(/(?!([\b attachment;filename= \b])).*(?=)/g)[0]
-								var completeFileName = fileAndExtension.replaceAll('"', '')
-								downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
+								downloadDirectFromResponse(response)
 								this.$store.commit('setInfo', { title: this.$t('common.downloading'), msg: this.$t('importExport.export.successfullyCompleted') })
 							}
 
@@ -98,25 +95,23 @@
 							/* closing dialog */
 							this.openExportDialog()
 						},
-						(error) => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t(error) })
+						() => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
 					)
 			},
 
 			streamlineSelectedItemsArray(fileName): JSON {
 				let selectedItemsToBE = {} as JSON
-				selectedItemsToBE['fileName'] = fileName
-				selectedItemsToBE['knowageVersion'] = process.env.VUE_APP_VERSION
-				selectedItemsToBE['datetime'] = new Date()
+				selectedItemsToBE['selectedItems'] = {}
 				for (var category in this.selectedItems) {
 					for (var k in this.selectedItems[category]) {
-						if (!selectedItemsToBE[category]) {
-							selectedItemsToBE[category] = []
+						if (!selectedItemsToBE['selectedItems'][category]) {
+							selectedItemsToBE['selectedItems'][category] = []
 						}
-						let obj = { id: this.selectedItems[category][k].id }
-						selectedItemsToBE[category].push(obj)
+
+						selectedItemsToBE['selectedItems'][category].push(this.selectedItems[category][k].id)
 					}
 				}
-
+				selectedItemsToBE['filename'] = fileName
 				return selectedItemsToBE
 			}
 		}

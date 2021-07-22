@@ -50,6 +50,7 @@ angular.module('cockpitModule')
 											// /api/1.0/pages/
 		+ "&SBI_LANGUAGE=" + sbiModule_config.curr_language
 		+ "&SBI_COUNTRY=" + sbiModule_config.curr_country
+		+ "SBI_SCRIPT=" + sbiModule_config.curr_script
 		+ "&user_id=" + sbiModule_user.userId
 		,testUrl: '/' + sbiModule_config.chartEngineContextName
 		+ "/api/1.0/chart/pages/executeTest"};// changed by Dragan was
@@ -180,11 +181,11 @@ function cockpitChartWidgetControllerFunction(
 
 	$scope.$on('changeChart', function (event, data) {
 		setAggregationsOnChartEngine($scope.ngModel.content,sbiModule_util)
-		$scope.$broadcast("changeChartType",data);
+		$scope.$broadcast("changedChartType",data);
 	});
 
 	$scope.$on('changedChartType', function (event, data){
-		$scope.ngModel.content.chartTemplate.CHART = data.CHART
+		$scope.ngModel.content.chartTemplate.CHART.type = data.type;
 		$scope.refreshWidget(undefined,'init', true);
 	});
 	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType,dataAndChartConf){

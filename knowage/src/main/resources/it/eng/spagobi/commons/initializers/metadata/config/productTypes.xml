@@ -2,13 +2,10 @@
 <PRODUCT_TYPES>
 	<PRODUCT_TYPE label="KnowageBD" active="true">
 		<ENGINE label="knowageofficeengine" />
-		<ENGINE label="knowagecompositedoce" />
-		<ENGINE label="knowagechartengine" />
 		<ENGINE label="knowagecockpitengine" />
 		<ENGINE label="knowageqbeengine" />
 		<ENGINE label="knowageprocessengine" />
 		<ENGINE label="knowagegisengine" />
-		<ENGINE label="knowagedataminingengine" />
 		<ENGINE label="knowagetalendengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageSI" active="true">
@@ -16,7 +13,6 @@
 		<ENGINE label="knowageqbeengine" />
 		<ENGINE label="knowagetalendengine" />
 		<ENGINE label="knowageprocessengine" />
-		<ENGINE label="knowagechartengine" />
 		<ENGINE label="knowagecockpitengine" />
 		<ENGINE label="knowageolapengine" />
 	</PRODUCT_TYPE>
@@ -27,16 +23,13 @@
 		<ENGINE label="knowagedossierengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowagePM" active="true">
-		<ENGINE label="knowagecompositedoce" />
 		<ENGINE label="knowagekpiengine" />
-		<ENGINE label="knowagechartengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageLI" active="true">
 		<ENGINE label="knowagesvgviewerengine" />
 		<ENGINE label="knowagegisengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowagePA" active="true">
-		<ENGINE label="knowagedataminingengine" />
 		<ENGINE label="knowagewhatifengine" />
 		<ENGINE label="knowageolapengine" />
 	</PRODUCT_TYPE>

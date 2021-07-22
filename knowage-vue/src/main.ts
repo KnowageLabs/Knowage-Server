@@ -21,6 +21,7 @@ import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import 'primeflex/primeflex.css'
+import '@/assets/css/dialects-icons.css'
 
 import ToastService from 'primevue/toastservice'
 import Button from 'primevue/button'
@@ -36,21 +37,21 @@ import ConfirmationService from 'primevue/confirmationservice'
 import i18n from '@/App.i18n'
 
 createApp(App)
-  .use(VueAxios, axios)
-  .use(store)
-  .use(router)
-  .use(i18n)
-  .use(PrimeVue)
-  .use(ToastService)
-  .use(ConfirmationService)
+    .use(VueAxios, axios)
+    .use(store)
+    .use(router)
+    .use(i18n)
+    .use(PrimeVue)
+    .use(ToastService)
+    .use(ConfirmationService)
 
-  .directive('badge', BadgeDirective)
-  .directive('tooltip', Tooltip)
+    .directive('badge', BadgeDirective)
+    .directive('tooltip', Tooltip)
 
-  .component('Button', Button)
-  .component('Card', Card)
-  .component('InputText', InputText)
-  .component('ProgressBar', ProgressBar)
-  .component('Toolbar', Toolbar)
+    .component('Button', Button)
+    .component('Card', Card)
+    .component('InputText', InputText)
+    .component('ProgressBar', ProgressBar)
+    .component('Toolbar', Toolbar)
 
-  .mount('#app')
+    .mount('#app')
