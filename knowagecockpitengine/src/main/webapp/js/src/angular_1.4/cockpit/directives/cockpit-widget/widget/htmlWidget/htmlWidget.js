@@ -402,17 +402,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			})
 		}
 
-		$scope.checkParamsPlaceholders = function(rawHtml){
-			return $q(function(resolve, reject) {
-				var resultHtml = rawHtml.replace($scope.paramsRegex, function(match, p1) {
-					var paramLabel = cockpitModule_analyticalDrivers[p1+'_description'] ? p1+'_description' : p1;
-					p1 = cockpitModule_analyticalDrivers[paramLabel] || null;
-					return p1;
-				});
-				resolve(resultHtml);
-			})
-		}
-
 		//Replacers
 		$scope.activeSelectionsReplacer = function(match,column){
 			if(cockpitModule_template.getSelections() && cockpitModule_template.getSelections().length > 0){
@@ -453,9 +442,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.ifConditionParamsReplacer = function(match, p1){
-			var textToReturn = (cockpitModule_analyticalDrivers[p1] || null);
-			if(typeof(cockpitModule_analyticalDrivers[p1]) == 'string'){
-				textToReturn = '\''+$scope.addslashes(cockpitModule_analyticalDrivers[p1])+'\''
+			var paramLabel = cockpitModule_analyticalDrivers[p1+'_description'] ? p1+'_description' : p1;
+			var textToReturn = cockpitModule_analyticalDrivers[paramLabel] || null;
+			if(typeof(textToReturn) == 'string'){
+				textToReturn = '\''+$scope.addslashes(textToReturn)+'\''
 			}
 			return textToReturn;
 		}
@@ -478,8 +468,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		}
 		$scope.paramsReplacer = function(match, p1){
-			p1 = cockpitModule_analyticalDrivers[p1] || null;
-			return p1;
+			var paramLabel = cockpitModule_analyticalDrivers[p1+'_description'] ? p1+'_description' : p1;
+			p1 = cockpitModule_analyticalDrivers[paramLabel] || null;
+			return $scope.addslashes(p1);
 		}
 
 		$scope.variablesReplacer = function(match, p1, p2){
