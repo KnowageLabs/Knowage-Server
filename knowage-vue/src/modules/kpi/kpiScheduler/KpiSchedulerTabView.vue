@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
         <template #left>{{ this.clone || this.id ? this.selectedSchedule.name : this.$t('kpi.kpiScheduler.newScheduler') }} </template>
         <template #right>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" data-test="submit-button" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="saveDialogVisible = true" data-test="submit-button" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
         </template>
     </Toolbar>
@@ -22,7 +22,7 @@
                     <span>{{ $t('kpi.kpiScheduler.filters') }}</span>
                 </template>
 
-                <FiltersCard :selectedSchedule="selectedSchedule" :allKpiList="kpiList"></FiltersCard>
+                <FiltersCard :formatedFilters="formatedFilters" :placeholderType="domainsKpiPlaceholderType" :temporalType="domainsKpiPlaceholderFunction" :lovs="lovs"></FiltersCard>
             </TabPanel>
 
             <TabPanel>
@@ -42,6 +42,8 @@
             </TabPanel>
         </TabView>
     </div>
+
+    <KpiSchedulerSaveDialog v-if="saveDialogVisible" :schedulerName="selectedSchedule.name" @save="saveScheduler($event)" @close="saveDialogVisible = false"></KpiSchedulerSaveDialog>
 </template>
 
 <script lang="ts">
@@ -51,12 +53,13 @@ import ExecuteCard from './card/ExecuteCard/ExecuteCard.vue'
 import FiltersCard from './card/FiltersCard/FiltersCard.vue'
 import FrequencyCard from './card/FrequencyCard/FrequencyCard.vue'
 import KpiCard from './card/KpiCard/KpiCard.vue'
+import KpiSchedulerSaveDialog from './KpiSchedulerSaveDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'kpi-scheduler-tab-view',
-    components: { ExecuteCard, FiltersCard, FrequencyCard, KpiCard, TabView, TabPanel },
+    components: { ExecuteCard, FiltersCard, FrequencyCard, KpiCard, KpiSchedulerSaveDialog, TabView, TabPanel },
     props: {
         id: { type: String },
         clone: { type: String }
@@ -71,8 +74,11 @@ export default defineComponent({
             kpiList: [] as any[],
             kpiIds: [] as any[],
             filters: [] as any[],
+            formatedFilters: {} as any,
             loading: false,
-            touched: false
+            touched: false,
+            saveDialogVisible: false,
+            operation: 'create'
         }
     },
     computed: {
@@ -171,12 +177,13 @@ export default defineComponent({
             console.log('FILTERS', this.filters)
         },
         addMissingPlaceholder() {
-            console.log('CALLLED addMissingPlaceholder')
+            // console.log('CALLLED addMissingPlaceholder')
+            this.formatedFilters = []
             const keys = Object.keys(this.filters)
             for (let i = 0; i < keys.length; i++) {
                 if (this.selectedSchedule.filters.length > 0) {
                     const tempPlaceholders = [] as any[]
-                    console.log('SCHEDULER FILTERS', this.selectedSchedule.filters)
+                    // console.log('SCHEDULER FILTERS', this.selectedSchedule.filters)
                     // Check if returned filter is in selected schedule filters
                     for (let id in this.selectedSchedule.filters) {
                         // console.log(this.scheduler.filters[id].kpiName + ' == ' + keys[i])
@@ -214,17 +221,17 @@ export default defineComponent({
                     for (let j = 0; j < array.length; j++) {
                         temp = null
                         for (let tempPLaceholder in tempPlaceholders) {
-                            console.log('ARRAY ELEMENT KEYS: ', Object.keys(array[j]))
-                            console.log('TEMP PLACEHOLDER: ', tempPLaceholder)
-                            console.log(Object.keys(array[j])[0] + ' === ' + tempPlaceholders[tempPLaceholder].placeholderName)
+                            // console.log('ARRAY ELEMENT KEYS: ', Object.keys(array[j]))
+                            // console.log('TEMP PLACEHOLDER: ', tempPLaceholder)
+                            // console.log(Object.keys(array[j])[0] + ' === ' + tempPlaceholders[tempPLaceholder].placeholderName)
                             if (Object.keys(array[j])[0] == tempPlaceholders[tempPLaceholder].placeholderName) {
-                                console.log('MMM - FOUND!!!')
-                                temp = tempPLaceholder
+                                // console.log('MMM - FOUND!!!')
+                                temp = tempPlaceholders[tempPLaceholder]
                                 break
                             }
                         }
 
-                        console.log('MMM - TEMP BEFORE PUSH', temp)
+                        // console.log('MMM - TEMP BEFORE PUSH', temp)
                         // Add new filter to scheduler
                         if (temp == null) {
                             const objType = { valueCd: 'FIXED_VALUE', valueId: 355 }
@@ -239,15 +246,29 @@ export default defineComponent({
                             obj.kpiVersion = (this.kpiList[index2] as any).version
 
                             this.selectedSchedule.filters.push(obj)
+
+                            // TODO izdvoji u metodu
+                            if (this.formatedFilters[obj.kpiName]) {
+                                this.formatedFilters[obj.kpiName].push(obj)
+                            } else {
+                                this.formatedFilters[obj.kpiName] = [obj]
+                            }
+                        } else {
+                            // console.log('BBB - TEMP', temp)
+                            if (this.formatedFilters[temp.kpiName]) {
+                                this.formatedFilters[temp.kpiName].push(temp)
+                            } else {
+                                this.formatedFilters[temp.kpiName] = [temp]
+                            }
                         }
                     }
                 } else {
                     // Scheduler doesn't have filters, add new ones
-                    console.log('UUU - Start')
+                    // console.log('UUU - Start')
                     this.selectedSchedule['filters'] = []
                     const objType = { valueCd: 'FIXED_VALUE', valueId: 355 }
                     const array = JSON.parse(this.filters[keys[i]])
-                    console.log('UUU - Array', array)
+                    //  console.log('UUU - Array', array)
                     for (let k = 0; k < array.length; k++) {
                         const obj = {} as any
                         obj.kpiName = keys[i]
@@ -259,10 +280,17 @@ export default defineComponent({
                         obj.kpiVersion = (this.kpiList[index2] as any).version
 
                         this.selectedSchedule.filters.push(obj)
+
+                        if (this.formatedFilters[obj.kpiName]) {
+                            this.formatedFilters[obj.kpiName].push(obj)
+                        } else {
+                            this.formatedFilters[obj.kpiName] = [obj]
+                        }
                     }
                 }
             }
             console.log('SCHEDULE AFTER FILTERS MAPPING', this.selectedSchedule)
+            console.log('FORMATED FILTERS FILTERS MAPPING', this.formatedFilters)
         },
         indexInList(item, list, param) {
             for (let i = 0; i < list.length; i++) {
@@ -272,6 +300,38 @@ export default defineComponent({
                 }
             }
             return -1
+        },
+        async saveScheduler(schedulerName: string) {
+            this.saveDialogVisible = false
+            this.loading = true
+            this.selectedSchedule.name = schedulerName
+            // console.log('JSON STRINGIGY', JSON.stringify(this.selectedSchedule.frequency.cron))
+            this.selectedSchedule.frequency.cron = JSON.stringify(this.selectedSchedule.frequency.cron)
+
+            this.selectedSchedule.filters.forEach((filter: any) => {
+                console.log('MAIN filter', filter)
+                if (filter.type.valueCd === 'LOV') {
+                    filter.value = this.getLovValue(filter.value)
+                }
+            })
+
+            if (this.selectedSchedule.id) {
+                this.operation = 'update'
+            }
+
+            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveSchedulerKPI', this.selectedSchedule).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.' + this.operation + 'Title'),
+                    msg: this.$t('common.toast.success')
+                })
+            })
+
+            this.loading = false
+        },
+        getLovValue(value: string) {
+            // console.log('FC - Value ', value)
+            const tempLov = this.lovs.find((lov: any) => lov.name === value) as any
+            return tempLov ? tempLov.label : ''
         }
     }
 })
