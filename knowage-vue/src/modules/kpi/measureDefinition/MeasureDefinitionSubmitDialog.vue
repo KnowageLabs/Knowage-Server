@@ -38,7 +38,7 @@
         </div>
 
         <template #footer>
-            <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="this.$emit('close')"></Button>
+            <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="$emit('close')"></Button>
             <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="$emit('save', name)" :disabled="saveRuleButtonDisabled"></Button>
         </template>
     </Dialog>

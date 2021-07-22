@@ -11,7 +11,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <KnHint v-if="measuresList.length === 0" :title="'kpi.measureDefinition.title'" :hint="'kpi.measureDefinition.hint'" data-test="measure-hint"></KnHint>
+                <KnHint v-if="measuresList.length === 0 && !loading" :title="'kpi.measureDefinition.title'" :hint="'kpi.measureDefinition.hint'" data-test="measure-hint"></KnHint>
                 <DataTable
                     v-else
                     :value="measuresList"
