@@ -93,7 +93,7 @@ export default defineComponent({
             if (alert.status == 'EXPIRED') {
                 console.log('EXPIRED')
             } else {
-                var data = (alert.status == 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger') + '?jobGroup=ALERT_JOB_GROUP&triggerGroup=ALERT_JOB_GROUP&jobName=' + alert.id + '&triggerName=' + alert.id
+                var data = 'scheduler/' + (alert.status == 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger') + '?jobGroup=ALERT_JOB_GROUP&triggerGroup=ALERT_JOB_GROUP&jobName=' + alert.id + '&triggerName=' + alert.id
 
                 console.log('data:', data)
                 await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + data)
