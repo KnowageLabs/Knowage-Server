@@ -19,8 +19,10 @@ package it.eng.spagobi.analiticalmodel.execution.service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
@@ -193,8 +195,14 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 		parametersMap.put("ACTION_NAME", actionToCall);
 		parametersMap.put("NEW_SESSION", "TRUE");
 
-		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, getLocale().getLanguage());
-		parametersMap.put(SpagoBIConstants.SBI_COUNTRY, getLocale().getCountry());
+		Locale locale = getLocale();
+
+		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, locale.getLanguage());
+		parametersMap.put(SpagoBIConstants.SBI_COUNTRY, locale.getCountry());
+
+		if (StringUtils.isNotBlank(locale.getScript())) {
+			parametersMap.put(SpagoBIConstants.SBI_SCRIPT, locale.getScript());
+		}
 
 		// if (!GeneralUtilities.isSSOEnabled()) {
 		UserProfile userProfile = (UserProfile) getUserProfile();

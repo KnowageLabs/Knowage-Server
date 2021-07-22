@@ -7,8 +7,17 @@
     height: 100%;
 }
 
+.kn-detail {
+    overflow: auto;
+    flex: 1;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
+
 .kn-height-full-vertical {
     height: 100vh;
+    overflow: hidden;
 }
 
 .kn-hide {

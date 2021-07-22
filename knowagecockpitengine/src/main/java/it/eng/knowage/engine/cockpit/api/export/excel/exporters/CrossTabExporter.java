@@ -1,6 +1,22 @@
-package it.eng.knowage.engine.cockpit.api.export.excel.crosstab;
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package it.eng.knowage.engine.cockpit.api.export.excel.exporters;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 /* SpagoBI, the Open Source Business Intelligence suite
 
@@ -27,20 +43,28 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.CellType;
 import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.MeasureInfo;
+import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabBuilder;
 import it.eng.knowage.engine.cockpit.api.crosstable.MeasureFormatter;
 import it.eng.knowage.engine.cockpit.api.crosstable.MeasureScaleFactorOption;
 import it.eng.knowage.engine.cockpit.api.crosstable.Node;
+import it.eng.knowage.engine.cockpit.api.crosstable.NodeComparator;
+import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
 import it.eng.knowage.engine.cockpit.api.export.excel.Threshold;
 import it.eng.qbe.serializer.SerializationException;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
 /**
@@ -50,10 +74,10 @@ import it.eng.spagobi.utilities.messages.EngineMessageBundle;
  *
  * @author Alberto Ghedin (alberto.ghedin@eng.it), Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class CrosstabXLSExporter {
+public class CrossTabExporter extends GenericExporter implements IWidgetExporter {
 
 	/** Logger component. */
-	public static transient Logger logger = Logger.getLogger(CrosstabXLSExporter.class);
+	public static transient Logger logger = Logger.getLogger(CrossTabExporter.class);
 
 	/** Configuration properties */
 	public static final String PROPERTY_HEADER_FONT_SIZE = "HEADER_FONT_SIZE";
@@ -87,7 +111,7 @@ public class CrosstabXLSExporter {
 	private Map<String, List<Threshold>> thresholdColorsMap;
 	private JSONObject variables = new JSONObject();
 
-	public CrosstabXLSExporter(Properties properties, JSONObject variables) {
+	public CrossTabExporter(Properties properties, JSONObject variables) {
 		super();
 		if (properties == null) {
 			this.properties = new Properties();
@@ -97,7 +121,7 @@ public class CrosstabXLSExporter {
 		this.variables = variables;
 	}
 
-	public CrosstabXLSExporter(Properties properties, JSONObject variables, Map<String, List<Threshold>> thresholdColorsMap) {
+	public CrossTabExporter(Properties properties, JSONObject variables, Map<String, List<Threshold>> thresholdColorsMap) {
 		super();
 		if (properties == null) {
 			this.properties = new Properties();
@@ -112,6 +136,10 @@ public class CrosstabXLSExporter {
 		this.variables = variables;
 	}
 
+	public CrossTabExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options) {
+		super(excelExporter, widgetType, templateString, widgetId, wb, options);
+	}
+
 	public void setProperty(String propertyName, Object propertyValue) {
 		this.properties.put(propertyName, propertyValue);
 	}
@@ -120,7 +148,7 @@ public class CrosstabXLSExporter {
 		return this.properties.get(propertyName);
 	}
 
-	public int fillExcelSheetWithData(Sheet sheet, CrossTab cs, CreationHelper createHelper, int startRow, Locale locale)
+	private int fillExcelSheetWithData(Sheet sheet, CrossTab cs, CreationHelper createHelper, int startRow, Locale locale)
 			throws SerializationException, JSONException {
 		int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
 		int rowsDepth = cs.getRowsRoot().getSubTreeDepth();
@@ -193,7 +221,7 @@ public class CrosstabXLSExporter {
 					cell.setCellType(this.getCellTypeNumeric());
 					int measureIdx = j % cs.getMeasures().size();
 					String measureId = getMeasureId(cs, measureIdx);
-					CellStyle style = getStyle(decimals, decimalFormats, sheet, createHelper, cs.getCellType(i, j), measureId, value);
+					CellStyle style = getStyle(decimals, sheet, createHelper, cs.getCellType(i, j), measureId, value);
 					cell.setCellStyle(style);
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
@@ -557,16 +585,7 @@ public class CrosstabXLSExporter {
 		return false;
 	}
 
-	public CellStyle getStyle(int j, Map<Integer, CellStyle> decimalFormats, Sheet sheet, CreationHelper createHelper, CellType celltype, String measureId,
-			Double value) {
-		// XLSX manages thresholds background colours, XLS does not
-		if (this instanceof CrosstabXLSXExporter)
-			return getStyleForXLSX(j, sheet, createHelper, celltype, measureId, value);
-		else
-			return getStyleForXLS(j, decimalFormats, sheet, createHelper, celltype);
-	}
-
-	public CellStyle getStyleForXLSX(int j, Sheet sheet, CreationHelper createHelper, CellType celltype, String measureId, Double value) {
+	public CellStyle getStyle(int j, Sheet sheet, CreationHelper createHelper, CellType celltype, String measureId, Double value) {
 
 		if (celltype.equals(CellType.CF)) {
 			j = this.getCalculatedFieldDecimals();
@@ -602,53 +621,6 @@ public class CrosstabXLSExporter {
 		return cellStyle;
 	}
 
-	public CellStyle getStyleForXLS(int j, Map<Integer, CellStyle> decimalFormats, Sheet sheet, CreationHelper createHelper, CellType celltype) {
-
-		int mapPosition = j;
-
-		if (celltype.equals(CellType.TOTAL)) {
-			mapPosition = j + 90000;
-		} else if (celltype.equals(CellType.SUBTOTAL)) {
-			mapPosition = j + 80000;
-		} else if (celltype.equals(CellType.CF)) {
-			mapPosition = j + 60000;
-		}
-
-		if (decimalFormats.get(mapPosition) != null)
-			return decimalFormats.get(mapPosition);
-
-		if (celltype.equals(CellType.CF)) {
-			j = this.getCalculatedFieldDecimals();
-		}
-
-		String decimals = "";
-
-		for (int i = 0; i < j; i++) {
-			decimals += "0";
-		}
-
-		CellStyle cellStyle = this.buildDataCellStyle(sheet);
-		DataFormat df = createHelper.createDataFormat();
-		String format = "#,##0";
-		if (decimals.length() > 0) {
-			format += "." + decimals;
-		}
-		cellStyle.setDataFormat(df.getFormat(format));
-
-		if (celltype.equals(CellType.TOTAL)) {
-			cellStyle.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
-		}
-		if (celltype.equals(CellType.CF)) {
-			cellStyle.setFillForegroundColor(IndexedColors.DARK_YELLOW.getIndex());
-		}
-		if (celltype.equals(CellType.SUBTOTAL)) {
-			cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-		}
-
-		decimalFormats.put(mapPosition, cellStyle);
-		return cellStyle;
-	}
-
 	private XSSFColor getThresholdColor(String measureId, Double value) {
 		Color white = new Color(255, 255, 255);
 		List<Threshold> thresholds = thresholdColorsMap.get(measureId);
@@ -669,6 +641,116 @@ public class CrosstabXLSExporter {
 			return DEFAULT_CALCULATED_FIELD_DECIMALS;
 		}
 		return decimals;
+	}
+
+	@Override
+	public int export() {
+		try {
+			JSONObject template = new JSONObject(templateString);
+			JSONObject widget = getWidgetById(template, widgetId);
+			String widgetName = getWidgetName(widget);
+
+			JSONObject crosstabDefinition = optionsObj.getJSONObject("crosstabDefinition");
+			CrossTab cs = buildCrossTab(crosstabDefinition);
+			initExporter(crosstabDefinition);
+
+			int totalRowsNumber = cs.getTotalNumberOfRows();
+			int windowSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE"));
+			if (totalRowsNumber <= windowSize) {
+				// crosstab fits in memory
+				String cockpitSheetName = getCockpitSheetName(template, widgetId);
+				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+				fillExcelSheetWithData(sheet, cs, wb.getCreationHelper(), 0, excelExporter.getLocale());
+				return 1;
+			} else {
+				// export crosstab as generic widget
+				logger.warn("Crosstab [" + widgetId + "] has more rows than streaming windows size. It will be exported as a generic widget.");
+				return super.export();
+			}
+
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Unable to export crosstab widget: " + widgetId, e);
+		}
+	}
+
+	private void initExporter(JSONObject crosstabDefinition) throws JSONException {
+		JSONArray measures = crosstabDefinition.optJSONArray("measures");
+		Map<String, List<Threshold>> thresholdColorsMap = getThresholdColorsMap(measures);
+		JSONObject variables = optionsObj.optJSONObject("variables");
+		this.properties = new Properties();
+		this.variables = variables;
+		this.thresholdColorsMap = thresholdColorsMap;
+	}
+
+	private Map<String, List<Threshold>> getThresholdColorsMap(JSONArray measures) {
+		Map<String, List<Threshold>> toReturn = new HashMap<String, List<Threshold>>();
+		try {
+			for (int i = 0; i < measures.length(); i++) {
+				JSONObject measure = measures.getJSONObject(i);
+				String id = measure.getString("id");
+				if (!measure.has("ranges"))
+					continue;
+				JSONArray ranges = measure.getJSONArray("ranges");
+				List<Threshold> allThresholds = new ArrayList<Threshold>();
+				for (int j = 0; j < ranges.length(); j++) {
+					JSONObject range = ranges.getJSONObject(j);
+					String operator = range.getString("operator");
+					if (!operator.equals("none")) {
+						Double value = range.getDouble("value");
+						String color = range.getString("background-color");
+						Threshold threshold = new Threshold(operator, value, color);
+						allThresholds.add(threshold);
+					}
+				}
+				toReturn.put(id, allThresholds);
+			}
+		} catch (Exception e) {
+			logger.error("Unable to build threshold color map", e);
+			Map<String, List<Threshold>> emptyMap = new HashMap<String, List<Threshold>>();
+			return emptyMap;
+		}
+		return toReturn;
+	}
+
+	private CrossTab buildCrossTab(JSONObject crosstabDefinition) throws JSONException {
+		// the id of the crosstab in the client configuration array
+		JSONObject sortOptions = optionsObj.getJSONObject("sortOptions");
+		JSONArray columnsSortKeysJo = sortOptions.optJSONArray("columnsSortKeys");
+		JSONArray rowsSortKeysJo = sortOptions.optJSONArray("rowsSortKeys");
+		JSONArray measuresSortKeysJo = sortOptions.optJSONArray("measuresSortKeys");
+		int myGlobalId = sortOptions.optInt("myGlobalId");
+		List<Map<String, Object>> columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
+		List<Map<String, Object>> rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
+		List<Map<String, Object>> measuresSortKeys = JSONUtils.toMap(measuresSortKeysJo);
+		if (optionsObj != null) {
+			logger.debug("Export cockpit crosstab optionsObj.toString(): " + optionsObj.toString());
+		}
+		Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
+		Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
+		Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
+		CrosstabBuilder builder = new CrosstabBuilder(excelExporter.getLocale(), crosstabDefinition, optionsObj.getJSONArray("jsonData"),
+				optionsObj.getJSONObject("metadata"), null);
+
+		CrossTab cs = builder.getSortedCrosstabObj(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
+		return cs;
+	}
+
+	private Map<Integer, NodeComparator> toComparatorMap(List<Map<String, Object>> sortKeyMap) {
+		Map<Integer, NodeComparator> sortKeys = new HashMap<Integer, NodeComparator>();
+
+		for (int s = 0; s < sortKeyMap.size(); s++) {
+			Map<String, Object> sMap = sortKeyMap.get(s);
+			NodeComparator nc = new NodeComparator();
+
+			nc.setParentValue((String) sMap.get("parentValue"));
+			nc.setMeasureLabel((String) sMap.get("measureLabel"));
+			if (sMap.get("direction") != null) {
+				// the values in sMap sometimes have decimal part (es. "1.0"), so we need to parse them as double and then convert them to int
+				nc.setDirection(Double.valueOf(sMap.get("direction").toString()).intValue());
+				sortKeys.put(Double.valueOf(sMap.get("column").toString()).intValue(), nc);
+			}
+		}
+		return sortKeys;
 	}
 
 }

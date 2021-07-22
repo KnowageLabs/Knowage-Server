@@ -45,6 +45,7 @@ import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.ConfigurationException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class PythonDataSet extends ConfigurableDataSet {
 
@@ -120,25 +121,14 @@ public class PythonDataSet extends ConfigurableDataSet {
 	}
 
 	private void initDataProxy(JSONObject jsonConf) {
-		String restAddress;
-		Map<String, String> requestHeaders;
-		String pythonDatasetType = getProp(PythonDataSetConstants.PYTHON_DATASET_TYPE, jsonConf, true);
+		String restAddress = "";
+		Map<String, String> requestHeaders = null;
 		try {
 			requestHeaders = getRequestHeadersPropMap(PythonDataSetConstants.REST_REQUEST_HEADERS, jsonConf);
-			String pythonAddress = null;
 			JSONObject pythonEnv = new JSONObject(getProp(PythonDataSetConstants.PYTHON_ENVIRONMENT, jsonConf, false));
-			String label = pythonEnv.get("label").toString();
-			if ("python".equals(pythonDatasetType)) {
-				pythonAddress = PythonUtils.getPythonAddress(label);
-			} else if ("r".equals(pythonDatasetType)) {
-				pythonAddress = RUtils.getRAddress(label);
-			} else {
-				throw new IllegalStateException("Invalid Python Dataset Type: " + pythonDatasetType);
-			}
-			restAddress = pythonAddress.replaceAll("/+$", "") + "/dataset";
-
+			restAddress = getRestAddressFromConf(pythonEnv, jsonConf);
 		} catch (Exception e) {
-			throw new ConfigurationException("Problems in configuration of data proxy", e);
+			throw new SpagoBIRuntimeException("Problems in configuration of data proxy", e);
 		}
 		String pythonScript = getProp(PythonDataSetConstants.PYTHON_SCRIPT, jsonConf, true);
 		String parameters = getProp(PythonDataSetConstants.PYTHON_SCRIPT_PARAMETERS, jsonConf, true);
@@ -149,6 +139,27 @@ public class PythonDataSet extends ConfigurableDataSet {
 		String maxResults = getProp(PythonDataSetConstants.REST_MAX_RESULTS, jsonConf, true);
 
 		setDataProxy(new PythonDataProxy(restAddress, pythonScript, dataframeName, parameters, requestHeaders, offset, fetchSize, maxResults));
+	}
+
+	private String getRestAddressFromConf(JSONObject pythonEnv, JSONObject jsonConf) {
+		String toReturn = "";
+		try {
+			String pythonAddress = null;
+			String pythonDatasetType = getProp(PythonDataSetConstants.PYTHON_DATASET_TYPE, jsonConf, true);
+			String label = pythonEnv.get("label").toString();
+			if ("python".equals(pythonDatasetType)) {
+				pythonAddress = PythonUtils.getPythonAddress(label);
+			} else if ("r".equals(pythonDatasetType)) {
+				pythonAddress = RUtils.getRAddress(label);
+			} else {
+				throw new IllegalStateException("Invalid Python Dataset Type: " + pythonDatasetType);
+			}
+			toReturn = pythonAddress.replaceAll("/+$", "") + "/dataset";
+		} catch (Exception e) {
+			logger.error("Cannot retrieve python address from configuration.", e);
+			return "";
+		}
+		return toReturn;
 	}
 
 	private JSONObject getJSONConfig() {

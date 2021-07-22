@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 import java.util.Set;
 
@@ -239,8 +240,15 @@ public class WhatIfEngineAbstractStartAction extends AbstractEngineStartRestServ
 		try {
 			String language = this.getServletRequest().getParameter(LANGUAGE);
 			String country = this.getServletRequest().getParameter(COUNTRY);
+			String script = this.getServletRequest().getParameter(SCRIPT);
+			logger.debug("Locale parameters received: language = [" + language + "] ; country = [" + country + "]");
+
 			if (StringUtils.isNotEmpty(language) && StringUtils.isNotEmpty(country)) {
-				toReturn = new Locale(language, country);
+				Builder builder = new Builder().setLanguage(language).setRegion(country);
+				if (StringUtils.isNotBlank(script)) {
+					builder.setScript(script);
+				}
+				toReturn = builder.build();
 			} else {
 				logger.warn("Language and country not specified in request. Considering default locale that is " + DEFAULT_LOCALE.toString());
 				toReturn = DEFAULT_LOCALE;

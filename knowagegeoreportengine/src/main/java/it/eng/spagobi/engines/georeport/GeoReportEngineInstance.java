@@ -43,8 +43,8 @@ import it.eng.spagobi.utilities.json.JSONUtils;
  */
 public class GeoReportEngineInstance extends AbstractEngineInstance {
 	// ENVIRONMENT VARIABLES
-	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE", "DOCUMENT_ID",
-			COUNTRY, LANGUAGE, "user_id" };
+	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SCRIPT", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
+			"DOCUMENT_ID", COUNTRY, LANGUAGE, "user_id" };
 	private JSONObject guiSettings;
 	private JSONObject docProperties;
 	private final List<String> includes;

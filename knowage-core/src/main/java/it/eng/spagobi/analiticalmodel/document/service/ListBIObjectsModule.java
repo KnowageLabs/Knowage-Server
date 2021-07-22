@@ -22,7 +22,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Locale.Builder;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.RequestContainer;
@@ -57,7 +59,7 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.dispatching.service.list.basic.IFaceBasicListService#getList(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
 	@Override
@@ -69,11 +71,18 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		initialPath = (String) request.getAttribute(TreeObjectsModule.PATH_SUBTREE);
 
-		String language = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-		String country = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
-		if (language != null && country != null)
-			locale = new Locale(language, country, "");
-		else
+		String currLanguage = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+		String currCountry = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+		String currScript = (String) permanentSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
+		if (currLanguage != null && currCountry != null) {
+			Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
+
+			if (StringUtils.isNotBlank(currScript)) {
+				tmpLocale.setScript(currScript);
+			}
+
+			locale = tmpLocale.build();
+		} else
 			locale = GeneralUtilities.getDefaultLocale();
 
 		String currentFieldOrder = (request.getAttribute("FIELD_ORDER") == null || ((String) request.getAttribute("FIELD_ORDER")).equals("")) ? ""
@@ -154,7 +163,7 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param profile
 	 * @param obj
 	 * @return

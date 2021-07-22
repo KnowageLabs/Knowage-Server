@@ -12,6 +12,8 @@ import templatePruningRoutes from '@/modules/managers/templatePruning/TemplatePr
 import internationalizationManagementRoutes from '@/modules/managers/internationalizationManagement/InternationalizationManagement.routes.js'
 import mondrianSchemasManagementRoutes from '@/modules/managers/mondrianSchemasManagement/MondrianSchemasManagement.routes.js'
 import dataSourceRoutes from '@/modules/managers/dataSourceManagement/DataSourceManagement.routes.js'
+import functionalitiesManagementRoutes from '@/modules/managers/functionalitiesManagement/FunctionalitiesManagement.routes.js'
+
 
 const baseRoutes = []
 
@@ -30,5 +32,6 @@ const routes = baseRoutes
     .concat(internationalizationManagementRoutes)
     .concat(mondrianSchemasManagementRoutes)
     .concat(dataSourceRoutes)
+    .concat(functionalitiesManagementRoutes)
 
 export default routes
