@@ -433,6 +433,7 @@ export default defineComponent({
             }
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/'
             let dsToSave = {} as any
+            if (!this.datasource.multischema && this.datasource.schemaAttribute) delete this.datasource.schemaAttribute
             dsToSave = { ...this.datasource }
 
             if (dsToSave.hasOwnProperty('jdbcPoolConfiguration')) {
