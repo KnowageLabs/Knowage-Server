@@ -11,7 +11,18 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <Listbox v-if="!loading" class="kn-list--column" :options="alertList" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="name" filterMatchMode="contains" :filterFields="alertDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+                <Listbox
+                    v-if="!loading"
+                    class="kn-list--column"
+                    :options="alertList"
+                    :filter="true"
+                    :filterPlaceholder="$t('common.search')"
+                    optionLabel="name"
+                    filterMatchMode="contains"
+                    :filterFields="alertDescriptor.filterFields"
+                    :emptyFilterMessage="$t('common.info.noDataFound')"
+                    @change="showForm"
+                >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
                         <div class="kn-list-item" data-test="list-item">
@@ -27,13 +38,14 @@
                 </Listbox>
             </div>
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
-                <router-view />
+                <router-view @close="closeForm" @touched="touched = true" />
             </div>
         </div>
     </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iAlert } from './Alert'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import axios from 'axios'
@@ -45,8 +57,9 @@ export default defineComponent({
     data() {
         return {
             alertDescriptor: alertDescriptor,
-            alertList: [],
-            loading: false
+            alertList: [] as iAlert[],
+            loading: false,
+            touched: false
         }
     },
     created() {
@@ -69,8 +82,10 @@ export default defineComponent({
                 )
                 .finally(() => (this.loading = false))
         },
-        showForm() {
-            console.log(this.alertList)
+        showForm(alert: any) {
+            console.log(alert)
+            const path = alert.value ? `/alert/${alert.value.id}` : `/alert/new-alert`
+            this.$router.push(path)
         },
         deleteAlertConfirm(alertId: number) {
             this.$confirm.require({
@@ -99,6 +114,24 @@ export default defineComponent({
                 await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + data)
                 this.loadAllAlerts()
             }
+        },
+        closeForm() {
+            if (!this.touched) {
+                this.handleClose()
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.handleClose()
+                    }
+                })
+            }
+        },
+        handleClose() {
+            this.$router.replace('/alert')
         }
     }
 })
