@@ -42,8 +42,8 @@ export default defineComponent({
             loading: false
         }
     },
-    async created() {
-        if (this.user && this.user.isSuperAdmin) await this.loadLicenses()
+    async mounted() {
+        await this.loadLicenses()
     },
     props: {
         visibility: Boolean

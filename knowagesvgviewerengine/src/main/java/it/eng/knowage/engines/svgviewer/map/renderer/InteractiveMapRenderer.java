@@ -129,17 +129,13 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Render dsvg map.
 	 *
-	 * @param mapProvider
-	 *            the map provider
-	 * @param datamartProvider
-	 *            the datamart provider
-	 * @param includeScript
-	 *            the include script
+	 * @param mapProvider      the map provider
+	 * @param datamartProvider the datamart provider
+	 * @param includeScript    the include script
 	 *
 	 * @return the file
 	 *
-	 * @throws SvgViewerEngineException
-	 *             the geo engine exception
+	 * @throws SvgViewerEngineException the geo engine exception
 	 */
 	private File renderDSVGMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, boolean includeScript) throws SvgViewerEngineRuntimeException {
 
@@ -281,6 +277,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				}
 				localeJSON.put("language", locale.getLanguage());
 				localeJSON.put("country", locale.getCountry());
+				localeJSON.put("script", locale.getScript());
 				DecimalFormatSymbols dfs = new DecimalFormatSymbols(locale);
 				localeJSON.put("decimalSeparator", new Character(dfs.getDecimalSeparator()).toString());
 				localeJSON.put("groupingSeparator", new Character(dfs.getGroupingSeparator()).toString());
@@ -353,15 +350,12 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Render svg map.
 	 *
-	 * @param mapProvider
-	 *            the map provider
-	 * @param datamartProvider
-	 *            the datamart provider
+	 * @param mapProvider      the map provider
+	 * @param datamartProvider the datamart provider
 	 *
 	 * @return the file
 	 *
-	 * @throws SvgViewerEngineException
-	 *             the geo engine exception
+	 * @throws SvgViewerEngineException the geo engine exception
 	 */
 	private File renderSVGMap(IMapProvider mapProvider, IDataMartProvider datamartProvider) throws SvgViewerEngineRuntimeException {
 		SVGDocument targetMap;
@@ -427,10 +421,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Decorate map. Used ONLY with renderDSVGMap().
 	 *
-	 * @param targetMap
-	 *            the target map
-	 * @param datamart
-	 *            the datamart
+	 * @param targetMap the target map
+	 * @param datamart  the datamart
 	 */
 	private void decorateMap(SVGDocument targetMap, SVGDocument masterMap, IDataMartProvider datamartProvider, DataMart dataMart, IMapProvider mapProvider) {
 
@@ -674,12 +666,9 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Decorate map. Used ONLY with renderSVGMap().
 	 *
-	 * @param masterMap
-	 *            the master map
-	 * @param targetMap
-	 *            the target map
-	 * @param datamart
-	 *            the datamart
+	 * @param masterMap the master map
+	 * @param targetMap the target map
+	 * @param datamart  the datamart
 	 */
 	private void decorateMap(SVGDocument masterMap, SVGDocument targetMap, DataMart datamart) {
 
@@ -1104,10 +1093,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Gets the gradient colour range.
 	 *
-	 * @param base_color
-	 *            the base_color
-	 * @param num_group
-	 *            the num_group
+	 * @param base_color the base_color
+	 * @param num_group  the num_group
 	 *
 	 * @return the gradient colour range
 	 */
@@ -1159,16 +1146,11 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Add label to the centroide
 	 *
-	 * @param masterMap
-	 *            the svg content
-	 * @param centroide
-	 *            the centroide svg element
-	 * @param labelGroup
-	 *            the svg label group element
-	 * @param aRecord
-	 *            the record with values
-	 * @param labelField
-	 *            the label field
+	 * @param masterMap  the svg content
+	 * @param centroide  the centroide svg element
+	 * @param labelGroup the svg label group element
+	 * @param aRecord    the record with values
+	 * @param labelField the label field
 	 */
 	private void addLabels(SVGDocument masterMap, Element centroide, Element labelGroup, IRecord aRecord, IField labelField) {
 		logger.debug("IN");
@@ -1219,13 +1201,10 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Show or hide elements through the specific column value
 	 *
-	 * @param masterMap
-	 *            the svg content
+	 * @param masterMap         the svg content
 	 *
-	 * @param geoIdField
-	 *            the element id field
-	 * @param visibilityIdField
-	 *            the visibility field
+	 * @param geoIdField        the element id field
+	 * @param visibilityIdField the visibility field
 	 */
 	private void showElements(SVGDocument masterMap, IField geoIdField, IField visibilityIdField) {
 		logger.debug("IN");
@@ -1303,13 +1282,10 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Adds the data.
 	 *
-	 * @param datastore
-	 *            the data store
+	 * @param datastore the data store
 	 *
-	 * @param child
-	 *            the child element
-	 * @param record
-	 *            the record with data
+	 * @param child     the child element
+	 * @param record    the record with data
 	 */
 	private void addData(IDataStore dataStore, Element child, IRecord record) {
 		logger.debug("IN");
@@ -1345,13 +1321,10 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Adds the cross data link.
 	 *
-	 * @param datastore
-	 *            the data store
+	 * @param datastore the data store
 	 *
-	 * @param child
-	 *            the child element
-	 * @param record
-	 *            the record with data
+	 * @param child     the child element
+	 * @param record    the record with data
 	 */
 	private JSONArray addCrossData(List listCrossNav, IRecord record, IMetaData dataStoreMeta, IDataMartProvider datamartProvider, IMapProvider mapProvider)
 			throws Exception {
@@ -1408,12 +1381,9 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Adds the tooltip.
 	 *
-	 * @param listTooltip
-	 *            the tooltip object
-	 * @param record
-	 *            the record with data
-	 * @param dataStoreMeta
-	 *            the data store
+	 * @param listTooltip   the tooltip object
+	 * @param record        the record with data
+	 * @param dataStoreMeta the data store
 	 */
 	private String addTooltip(List listTooltip, IRecord record, IMetaData dataStoreMeta) {
 		logger.debug("IN");
@@ -1434,12 +1404,9 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Adds the info content.
 	 *
-	 * @param listInfo
-	 *            the info object
-	 * @param record
-	 *            the record with data
-	 * @param dataStoreMeta
-	 *            the data store
+	 * @param listInfo      the info object
+	 * @param record        the record with data
+	 * @param dataStoreMeta the data store
 	 */
 	private String addInfoText(List listInfo, IRecord record, IMetaData dataStoreMeta) {
 		logger.debug("IN");
@@ -1460,18 +1427,12 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Adds the href elements and click events
 	 *
-	 * @param targetMap
-	 *            the target svg
-	 * @param featureElement
-	 *            the svg element to manage
-	 * @param elementId
-	 *            the svg element id
-	 * @param drillId
-	 *            the drill id
-	 * @param linkUrl
-	 *            the link url
-	 * @param linkType
-	 *            the link type ('cross' or 'drill')
+	 * @param targetMap      the target svg
+	 * @param featureElement the svg element to manage
+	 * @param elementId      the svg element id
+	 * @param drillId        the drill id
+	 * @param linkUrl        the link url
+	 * @param linkType       the link type ('cross' or 'drill')
 	 *
 	 */
 	private void addHRefLinksCross(SVGDocument targetMap, Element featureElement, JSONArray JSONValues, JSONArray JSONCross,
@@ -1537,12 +1498,9 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Adds the tooltip events
 	 *
-	 * @param featureElement
-	 *            the svg element to manage
-	 * @param elementId
-	 *            the svg element id
-	 * @param tooltip
-	 *            the tooltip value
+	 * @param featureElement the svg element to manage
+	 * @param elementId      the svg element id
+	 * @param tooltip        the tooltip value
 	 *
 	 */
 	private void addTooltipEvents(Element featureElement, String tooltip, String elementId) {
@@ -1561,8 +1519,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Include scripts.
 	 *
-	 * @param doc
-	 *            the doc
+	 * @param doc the doc
 	 */
 	private void includeScripts(SVGDocument doc) {
 		Element scriptInit = doc.getElementById("included_scripts");
@@ -1597,8 +1554,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Import scripts.
 	 *
-	 * @param doc
-	 *            the doc
+	 * @param doc the doc
 	 */
 	private void importScripts(SVGDocument doc) {
 		importScipt(doc, "helper_functions.js");
@@ -1629,10 +1585,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Include script.
 	 *
-	 * @param buffer
-	 *            the buffer
-	 * @param scriptName
-	 *            the script name
+	 * @param buffer     the buffer
+	 * @param scriptName the script name
 	 */
 	private void includeScript(StringBuffer buffer, String scriptName) {
 		try {
@@ -1715,10 +1669,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Sets the main map bkg rect dimension.
 	 *
-	 * @param masterMap
-	 *            the master map
-	 * @param targetMap
-	 *            the target map
+	 * @param masterMap the master map
+	 * @param targetMap the target map
 	 */
 	public void setMainMapBkgRectDimension(SVGDocument masterMap, SVGDocument targetMap) {
 		String viewBox = targetMap.getRootElement().getAttribute("viewBox");
@@ -1737,8 +1689,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Gets the measures configuration script.
 	 *
-	 * @param datamart
-	 *            the datamart
+	 * @param datamart the datamart
 	 *
 	 * @return the measures configuration script
 	 * @throws JSONException
@@ -1869,10 +1820,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Gets the layers configuration script.
 	 *
-	 * @param doc
-	 *            the doc
-	 * @param targetLayer
-	 *            the target layer
+	 * @param doc         the doc
+	 * @param targetLayer the target layer
 	 *
 	 * @return the layers configuration script
 	 * @throws JSONException
@@ -1910,8 +1859,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	/**
 	 * Gets the master map file.
 	 *
-	 * @param interactiveMasterMap
-	 *            the interactive master map
+	 * @param interactiveMasterMap the interactive master map
 	 *
 	 * @return the master map file
 	 */
@@ -1930,8 +1878,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *
 	 * @return the temporary file
 	 *
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public File getTempFile() throws IOException {
 		String tempDirName = null;

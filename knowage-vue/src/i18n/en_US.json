@@ -135,6 +135,10 @@
             "documentation": "documentation",
             "qa": "support forum"
         },
+        "connectYourData": "connect your data",
+        "createYourAnalysis": "create your analysis",
+        "queryYourData": "query your data",
+        "saveAndShare": "save and share",
         "welcome": "Welcome to Knowage",
         "welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
     },
@@ -272,12 +276,14 @@
                     "abandonedTimeoutInfo": "Timeout in seconds before an abandoned (in use) connection can be removed. The value should be set to the longest running query your applications might have.",
                     "logAbandoned": "Log Abandoned",
                     "logAbandonedInfo": "Flag to log stack traces for application code which abandoned a Statement or Connection. Logging of abandoned Statements and Connections adds overhead for every Connection open or new Statement because a stack trace has to be generated.",
+                    "maxIdle": "Max Idle",
+                    "maxIdleInfo": "The maximum number of connections that should be kept in the pool at all times. Idle connections are checked periodically and connections that have been idle for longer than (Min Evictable Idle Time) will be released.",
                     "maxTotal": "Max Total",
                     "maxTotalInfo": "Sets the maximum total number of idle and borrows connections that can be active at the same time.",
                     "maxWait": "Max Wait",
                     "maxWaitInfo": "The maximum number of seconds that the pool will wait (when there are no available connections) for a connection to be returned before throwing an exception.",
                     "minEvictableIdleTimeMillis": "Min Evictable Idle Time",
-                    "minEvictableIdleTimeMillisInfo": "The minimum amount of time an object may sit idle in the pool before it is eligible for eviction.",
+                    "minEvictableIdleTimeMillisInfo": "The minimum amount of time, in milliseconds, an object may sit idle in the pool before it is eligible for eviction.",
                     "removeAbandonedOnBorrow": "Remove Abandoned On Borrow",
                     "removeAbandonedOnBorrowInfo": "Flag to remove abandoned connections if they exceed the Remove Abandoned Timeout when borrowObject is invoked. If set to true a connection is considered abandoned and eligible for removal if it has not been used for more than 'Remove Abandoned Timeout' seconds.",
                     "removeAbandonedOnMaintenance": "Remove Abandoned On Maintenance",
@@ -290,7 +296,9 @@
                     "timeBetweenEvictionRunsInfo": "The number of seconds to sleep between runs of the idle connection validation/cleaner thread. This value should not be set under 1 second. It dictates how often we check for idle, abandoned connections, and how often we validate idle connections.",
                     "title": "Advanced Options",
                     "validationQuery": "Validation Query (optional)",
-                    "validationQueryInfo": "The SQL query that will be used to validate connections from this pool before returning them to the caller. If specified, this query does not have to return any data, it just can't throw a SQLException. The default value is null. If not specified, connections will be validation by the isValid() method. Example values are SELECT 1(mysql), select 1 from dual(oracle), SELECT 1(MS Sql Server)"
+                    "validationQueryInfo": "The SQL query that will be used to validate connections from this pool before returning them to the caller. If specified, this query does not have to return any data, it just can't throw a SQLException. The default value is null. If not specified, connections will be validation by the isValid() method. Example values are SELECT 1(mysql), select 1 from dual(oracle), SELECT 1(MS Sql Server)",
+                    "validationQueryTimeout": "Validation Query Timeout",
+                    "validationQueryTimeoutInfo": "The timeout in seconds before a connection validation queries fail. A value less than or equal to zero will disable this feature."
                 },
                 "dialect": "Dialect",
                 "driver": "Driver",
@@ -318,6 +326,24 @@
             "valueCode": "Value code",
             "valueDescription": "Value description",
             "valueName": "Value name"
+        },
+        "functionalitiesManagement": {
+            "creation": "Creation",
+            "development": "Development",
+            "execution": "Execution",
+            "hint": "The functionalities management page allows you to create folders to contain the users reports and documents. It's also possible to set the folders visibility depending on the users roles. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "moveDown ": " Move down",
+            "moveUp": " Move up",
+            "roles": "Roles",
+            "table": {
+                "creationHeader": "Creation",
+                "developmentHeader": "Development",
+                "executionHeader": "Execution",
+                "nameHeader": "Name",
+                "testHeader": "Test"
+            },
+            "test": "Test",
+            "title": "Functionalities management"
         },
         "internationalizationManagement": {
             "defaultLanguage": "(Default)",

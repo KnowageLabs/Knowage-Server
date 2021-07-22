@@ -195,11 +195,11 @@ public class WhatIfEngineAnalysisState extends EngineAnalysisState {
 				EngineConstants.ENV_CONTENT_SERVICE_PROXY, EngineConstants.ENV_AUDIT_SERVICE_PROXY, EngineConstants.ENV_DATASET_PROXY,
 				EngineConstants.ENV_DATASOURCE_PROXY, EngineConstants.ENV_ARTIFACT_PROXY, EngineConstants.ENV_LOCALE, SpagoBIConstants.SBI_ARTIFACT_VERSION_ID,
 				SpagoBIConstants.SBI_ARTIFACT_ID, SpagoBIConstants.SBI_ARTIFACT_STATUS, SpagoBIConstants.SBI_ARTIFACT_LOCKER, "template", "document",
-				"spagobicontext", "BACK_END_SPAGOBI_CONTEXT", "userId", "auditId", "SBI_LANGUAGE", "SBI_ENVIRONMENT", "DEFAULT_DATASOURCE_FOR_WRITING_LABEL",
-				"DOCUMENT_DESCRIPTION", "knowage_sys_country", "SBI_EXECUTION_ID", "knowage_sys_language", "DOCUMENT_LABEL", "DOCUMENT_NAME",
-				"DOCUMENT_IS_PUBLIC", "SBI_COUNTRY", "SBI_EXECUTION_ROLE", "SPAGOBI_AUDIT_ID", "DOCUMENT_FUNCTIONALITIES", "EDIT_MODE",
-				"DOCUMENT_OUTPUT_PARAMETERS", "IS_TECHNICAL_USER", "DOCUMENT_VERSION", "DOCUMENT_AUTHOR", "DOCUMENT_COMMUNITIES", "DOCUMENT_IS_VISIBLE",
-				"documentMode", "user_id", "timereloadurl" };
+				"spagobicontext", "BACK_END_SPAGOBI_CONTEXT", "userId", "auditId", "SBI_LANGUAGE", "SBI_SCIRPT", "SBI_ENVIRONMENT",
+				"DEFAULT_DATASOURCE_FOR_WRITING_LABEL", "DOCUMENT_DESCRIPTION", "knowage_sys_country", "SBI_EXECUTION_ID", "knowage_sys_language",
+				"DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "SBI_COUNTRY", "SBI_EXECUTION_ROLE", "SPAGOBI_AUDIT_ID", "DOCUMENT_FUNCTIONALITIES",
+				"EDIT_MODE", "DOCUMENT_OUTPUT_PARAMETERS", "IS_TECHNICAL_USER", "DOCUMENT_VERSION", "DOCUMENT_AUTHOR", "DOCUMENT_COMMUNITIES",
+				"DOCUMENT_IS_VISIBLE", "documentMode", "user_id", "timereloadurl" };
 
 		for (int i = 0; i < keysToRemove.length; i++) {
 			env.remove(keysToRemove[i]);
