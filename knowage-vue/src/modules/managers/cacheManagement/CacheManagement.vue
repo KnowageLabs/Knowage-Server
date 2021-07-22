@@ -6,7 +6,7 @@
             </template>
         </Toolbar>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="showProgressBar" data-test="progress-bar" />
-        <div class="p-grid">
+        <div class="p-d-flex p-flex-wrap kn-page-content">
             <div class="p-col-4 p-sm-12 p-md-4 p-p-0">
                 <RuntimeInformationCard v-if="selectedDatasource" :item="cache" :chartData="chartData"></RuntimeInformationCard>
             </div>
@@ -150,9 +150,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss" scoped>
-.cache-management.kn-page {
-    overflow: auto;
-}
-</style>
