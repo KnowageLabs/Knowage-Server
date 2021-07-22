@@ -54,20 +54,20 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 	static protected String LDAP_AUTHENTICATION_CONFIG = "ldap.config";
 
-	private static final String SEARCH_USER_BEFORE_PSW = "SEARCH_USER_BEFORE_PSW";
-	private static final String SEARCH_USER_BEFORE_USER = "SEARCH_USER_BEFORE_USER";
-	private static final String SEARCH_USER_BEFORE = "SEARCH_USER_BEFORE";
-	private static final String SEARCH_USER_BEFORE_FILTER = "SEARCH_USER_BEFORE_FILTER";
+	protected static final String SEARCH_USER_BEFORE_PSW = "SEARCH_USER_BEFORE_PSW";
+	protected static final String SEARCH_USER_BEFORE_USER = "SEARCH_USER_BEFORE_USER";
+	protected static final String SEARCH_USER_BEFORE = "SEARCH_USER_BEFORE";
+	protected static final String SEARCH_USER_BEFORE_FILTER = "SEARCH_USER_BEFORE_FILTER";
 
-	private static final String INITIAL_CONTEXT_FACTORY = "INITIAL_CONTEXT_FACTORY";
-	private static final String PROVIDER_URL = "PROVIDER_URL";
-	private static final String SECURITY_AUTHENTICATION = "SECURITY_AUTHENTICATION";
-	private static final String DN_PREFIX = "DN_PREFIX";
-	private static final String DN_POSTFIX = "DN_POSTFIX";
+	protected static final String INITIAL_CONTEXT_FACTORY = "INITIAL_CONTEXT_FACTORY";
+	protected static final String PROVIDER_URL = "PROVIDER_URL";
+	protected static final String SECURITY_AUTHENTICATION = "SECURITY_AUTHENTICATION";
+	protected static final String DN_PREFIX = "DN_PREFIX";
+	protected static final String DN_POSTFIX = "DN_POSTFIX";
 
 	protected static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 
-	private String ldapPrefix = "";
+	protected String ldapPrefix = "";
 
 	public LdapSecurityServiceSupplier() {
 
@@ -141,7 +141,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 		return propertiesAreValid;
 	}
 
-	private SpagoBIUserProfile getUserProfile(String userId) {
+	protected SpagoBIUserProfile getUserProfile(String userId) {
 
 		Assert.assertNotNull(userId, "User id in input cannot be null");
 

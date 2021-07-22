@@ -11,7 +11,7 @@
             <div class="p-grid p-megamenu-data">
                 <div v-for="(column, columnIndex) of model" :key="column.label + '_column_' + columnIndex" :class="getColumnClassName(model)">
                     <ul class="p-megamenu-submenu">
-                        <li role="presentation">{{ $t(column.label) }}</li>
+                        <li role="presentation" class="kn-truncated" v-tooltip.top="$t(column.label)">{{ $t(column.label) }}</li>
                         <template v-for="(item, i) of column.items" :key="item.label + i.toString()">
                             <li role="none" :style="item.style" :class="searched(item.label)">
                                 <router-link v-if="item.to && !item.disabled" :to="item.to" custom v-slot="{ navigate, href }">

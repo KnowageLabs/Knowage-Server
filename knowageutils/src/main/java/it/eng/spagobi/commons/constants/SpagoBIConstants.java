@@ -38,6 +38,7 @@ public class SpagoBIConstants {
 	public static final String EXECUTION_ROLE = "SBI_EXECUTION_ROLE";
 	public static final String SBI_LANGUAGE = "SBI_LANGUAGE";
 	public static final String SBI_COUNTRY = "SBI_COUNTRY";
+	public static final String SBI_SCRIPT = "SBI_SCRIPT";
 	public static final String EXECUTE_DOCUMENT_ACTION = "EXECUTE_DOCUMENT_ACTION";
 	public static final String SBI_ENVIRONMENT = "SBI_ENVIRONMENT";
 
@@ -334,12 +335,14 @@ public class SpagoBIConstants {
 
 	public static final String COUNTRY = "country";
 	public static final String LANGUAGE = "language";
+	public static final String SCRIPT = "script";
 
 	// public static final String CURRENT_COUNTRY = "AF_COUNTRY";
 
 	public static final String CURRENT_LANGUAGE = "CURRENT_LANGUAGE";
 	public static final String AF_LANGUAGE = "AF_LANGUAGE";
 	public static final String AF_COUNTRY = "AF_COUNTRY";
+	public static final String AF_SCRIPT = "AF_SCRIPT";
 	public static final String AF_LANGUAGE_TAG = "AF_LANGUAGE_TAG";
 
 	public static final String TEMPLATE_ID = "TEMPLATE_ID";

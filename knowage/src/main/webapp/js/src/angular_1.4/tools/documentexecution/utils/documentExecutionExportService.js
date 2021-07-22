@@ -57,8 +57,9 @@
 				var docName = '&documentName='+execProperties.executionInstance.OBJECT_LABEL;
 				var sbiExeRole = '&SBI_EXECUTION_ROLE='+execProperties.selectedRole.name;
 				var country = '&SBI_COUNTRY='+sbiModule_config.curr_country;
-				var idDocument = '&document='+ execProperties.executionInstance.OBJECT_ID;
 				var language = '&SBI_LANGUAGE='+sbiModule_config.curr_language;
+				var script = '&SBI_SCRIPT='+sbiModule_config.curr_script;
+				var idDocument = '&document='+ execProperties.executionInstance.OBJECT_ID;
 				var dateFormat = '&dateformat='+sbiModule_config.serverDateFormat;
 				var controller ='&SBI_SPAGO_CONTROLLER='+sbiModule_config.adapterPathNoContext;
 				var userUniqueIdentifier = '&user_id='+sbiModule_user.userUniqueIdentifier;
@@ -110,7 +111,7 @@
 						}
 					}
 				}
-				var exportationUrl =  docName + sbiExeRole + country + idDocument + language + dateFormat + controller + userUniqueIdentifier + sbiExeId + isFromCross + sbiEnv + outputType + paramsFilter + paramsExportType;
+				var exportationUrl =  docName + sbiExeRole + country + idDocument + language + script + dateFormat + controller + userUniqueIdentifier + sbiExeId + isFromCross + sbiEnv + outputType + paramsFilter + paramsExportType;
 				var url = encodeURIComponent(exportationUrl).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 				exportUrl = urlService + url;
 			}

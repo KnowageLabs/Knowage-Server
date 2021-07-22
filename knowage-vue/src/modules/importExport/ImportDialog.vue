@@ -129,13 +129,11 @@
 				if (this.token != '') {
 					this.uploadedFiles = []
 					await axios.get(process.env.VUE_APP_API_PATH + '1.0/import/cleanup', { params: { token: this.token } }).then(
-						(response) => {
-							if (!response.data.errors) {
-								this.token = ''
-								this.packageItems = {
-									gallery: [],
-									catalogFunction: []
-								}
+						() => {
+							this.token = ''
+							this.packageItems = {
+								gallery: [],
+								catalogFunction: []
 							}
 						},
 						(error) => console.log(error)
@@ -178,15 +176,11 @@
 						})
 						.then(
 							(response) => {
-								if (response.data.errors) {
-									this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
-								} else {
-									this.packageItems = response.data.entries
-									this.token = response.data.token
-									this.step = 1
-								}
+								this.packageItems = response.data.entries
+								this.token = response.data.token
+								this.step = 1
 							},
-							(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
+							() => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
 						)
 					this.loading = false
 				} else {
@@ -237,16 +231,12 @@
 						}
 					})
 					.then(
-						(response) => {
-							if (response.data.errors) {
-								this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
-							} else {
-								this.$store.commit('setInfo', { title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
-							}
+						() => {
+							this.$store.commit('setInfo', { title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
 
 							this.$store.commit('setLoading', false)
 						},
-						(error) => this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t(error) })
+						() => this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
 					)
 				this.token = ''
 				this.resetAndClose()

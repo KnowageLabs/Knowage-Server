@@ -423,6 +423,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return null;
 		}
+		
+		$scope.addslashes = function( str ) {
+		    return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+		}
 
 		$scope.calcReplacer = function(match,p1,min,max,precision,format){
 			var result = eval(p1);
@@ -440,7 +444,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			else if($scope.htmlDataset && $scope.htmlDataset.rows[row||0] && typeof($scope.htmlDataset.rows[row||0][columnInfo.name])!='undefined' && $scope.htmlDataset.rows[row||0][columnInfo.name] !== ""){
 				var columnValue = $scope.htmlDataset.rows[row||0][columnInfo.name];
-				if(typeof columnValue == 'string') columnValue = columnValue.replace("'","\\'");
+				if(typeof columnValue == 'string') columnValue = $scope.addslashes(columnValue);
 				p1 = columnInfo.type == 'string' ? '\''+columnValue+'\'' : columnValue;
 			}else {
 				p1 = null;
@@ -451,7 +455,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.ifConditionParamsReplacer = function(match, p1){
 			var textToReturn = (cockpitModule_analyticalDrivers[p1] || null);
 			if(typeof(cockpitModule_analyticalDrivers[p1]) == 'string'){
-				textToReturn = '\''+cockpitModule_analyticalDrivers[p1].replace("'","\\'")+'\''
+				textToReturn = '\''+$scope.addslashes(cockpitModule_analyticalDrivers[p1])+'\''
 			}
 			return textToReturn;
 		}

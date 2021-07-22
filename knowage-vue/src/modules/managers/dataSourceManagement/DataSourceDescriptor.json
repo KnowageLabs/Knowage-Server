@@ -32,133 +32,160 @@
             "style": {
                 "background-color": "#f44336",
                 "color": "white"
-            }
+            },
+            "tooltip": "Hive"
         },
         "org.hibernate.dialect.BigQueryDialect": {
             "dbIcon": "db-google-big-query",
             "style": {
                 "background-color": "#e91e63",
                 "color": "white"
-            }
+            },
+            "tooltip": "Big Query"
         },
         "org.hibernate.dialect.DB2400Dialect": {
             "dbIcon": "db-google-spanner",
             "style": {
                 "background-color": "#e91e63",
                 "color": "white"
-            }
+            },
+            "tooltip": "Google Spanner"
         },
         "org.hibernate.dialect.Hive2Dialect": {
             "dbIcon": "db-apache-hive",
             "style": {
                 "background-color": "#9c27b0",
                 "color": "white"
-            }
+            },
+            "tooltip": "Hive"
         },
         "org.hibernate.dialect.MySQLDialect": {
             "dbIcon": "db-mariadb",
             "style": {
                 "background-color": "#673ab7",
                 "color": "white"
-            }
+            },
+            "tooltip": "MySql"
         },
         "org.hibernate.dialect.MySQLInnoDBDialect": {
             "dbIcon": "db-mariadb",
             "style": {
                 "background-color": "#3f51b5",
                 "color": "white"
-            }
+            },
+            "tooltip": "MySql - InnoDB"
         },
         "org.hibernate.dialect.Oracle9Dialect": {
             "dbIcon": "db-oracle",
             "style": {
                 "background-color": "#2196f3",
                 "color": "white"
-            }
+            },
+            "tooltip": "Oracle9"
         },
         "org.hibernate.dialect.OracleDialect": {
             "dbIcon": "db-oracle",
             "style": {
                 "background-color": "#2196f3",
                 "color": "white"
-            }
+            },
+            "tooltip": "Oracle"
         },
         "org.hibernate.dialect.PostgreSQLDialect": {
             "dbIcon": "db-Postgresql",
             "style": {
                 "background-color": "#03a9f4",
                 "color": "white"
-            }
+            },
+            "tooltip": "PostgreSQL"
         },
         "org.hibernate.dialect.RedShiftDialect": {
             "dbIcon": "db-AWS-Redshift",
             "style": {
                 "background-color": "#00bcd4",
                 "color": "white"
-            }
+            },
+            "tooltip": "Amazon RedShift"
         },
         "org.hibernate.dialect.SQLServerDialect": {
             "dbIcon": "db-microsoft-sql",
             "style": {
                 "background-color": "#009688",
                 "color": "white"
-            }
+            },
+            "tooltip": "MS SQL Server"
+        },
+        "org.hibernate.dialect.SpannerDialect": {
+            "dbIcon": "db-google-spanner",
+            "style": {
+                "background-color": "#e91e63",
+                "color": "white"
+            },
+            "tooltip": "Google Spanner"
         },
         "org.hibernate.dialect.SynapseDialect": {
             "dbIcon": "db-azure-synapse",
             "style": {
                 "background-color": "#4caf50",
                 "color": "white"
-            }
+            },
+            "tooltip": "Azure Synapse"
         },
         "org.hibernate.dialect.TeradataDialect": {
             "dbIcon": "db-teradata",
             "style": {
                 "background-color": "#8bc34a",
                 "color": "white"
-            }
+            },
+            "tooltip": "Teradata"
         },
         "org.hibernate.dialect.VerticaDialect": {
             "dbIcon": "db-vertica",
             "style": {
                 "background-color": "#ff9800",
                 "color": "white"
-            }
+            },
+            "tooltip": "Vertica"
         },
         "org.hibernate.dialect.cassandra": {
             "dbIcon": "db-apache-cassandra",
             "style": {
                 "background-color": "#ff9800",
                 "color": "white"
-            }
+            },
+            "tooltip": "Cassandra"
         },
         "org.hibernate.dialect.impala": {
             "dbIcon": "db-apache-impala",
             "style": {
                 "background-color": "#ff5722",
                 "color": "white"
-            }
+            },
+            "tooltip": "Impala"
         },
         "org.hibernate.dialect.sparksql": {
             "dbIcon": "db-apache-spark",
             "style": {
                 "background-color": "#ffc107",
                 "color": "white"
-            }
+            },
+            "tooltip": "SparkSql"
         },
         "org.hibernatespatial.oracle.CustomOracleSpatialDialect": {
             "dbIcon": "db-oracle",
             "style": {
                 "background-color": "#2196f3",
                 "color": "white"
-            }
+            },
+            "tooltip": "Oracle Spatial"
         },
         "orient": {
             "dbIcon": "db-orientdb",
             "style": {
                 "background-color": "#ffeb3b",
                 "color": "white"
-            }
+            },
+            "tooltip": "OrientDB"
         }
     },
     "newDataSourceValues": {
@@ -166,17 +193,19 @@
         "dialectName": "",
         "driver": "",
         "jdbcPoolConfiguration": {
-            "abandonedTimeout": 60,
+            "abandonedTimeout": 300,
             "logAbandoned": true,
-            "maxTotal": 20,
-            "maxWait": 60,
-            "minEvictableIdleTimeMillis": 60,
+            "maxIdle": 30,
+            "maxTotal": 100,
+            "maxWait": 10,
+            "minEvictableIdleTimeMillis": 300,
             "removeAbandonedOnBorrow": true,
             "removeAbandonedOnMaintenance": true,
             "testOnReturn": true,
             "testWhileIdle": true,
-            "timeBetweenEvictionRuns": 10,
-            "validationQuery": ""
+            "timeBetweenEvictionRuns": 300,
+            "validationQuery": "",
+            "validationQueryTimeout": 300
         },
         "jndi": "",
         "label": "",

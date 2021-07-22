@@ -8,7 +8,7 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <Message severity="info" v-if="showOwnerMessage">{{ ownerMessage }}</Message>
+    <Message severity="info" v-if="showOwnerMessage" class="p-m-3">{{ ownerMessage }}</Message>
     <div class="kn-overflow-y kn-flex p-p-3">
         <Card :style="dataSourceDescriptor.card.style">
             <template #content>

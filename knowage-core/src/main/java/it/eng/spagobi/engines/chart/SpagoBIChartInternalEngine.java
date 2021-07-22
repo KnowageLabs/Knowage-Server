@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,28 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.chart;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Locale.Builder;
+import java.util.Map;
+import java.util.Random;
+import java.util.Vector;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
@@ -29,7 +46,6 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -50,21 +66,6 @@ import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 import it.eng.spagobi.utilities.json.JSONTemplateUtils;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-import java.util.Vector;
-
-import org.apache.log4j.Logger;
-import org.jfree.chart.ChartUtilities;
-import org.jfree.chart.JFreeChart;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 /**
  * Internal Engine * @author Giulio Gavardi giulio.gavardi@eng.it
  */
@@ -79,12 +80,11 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	public static final String HIGHCHART_TEMPLATE = "HIGHCHART";
 
 	/**
-	 * This method is used to execute a chart code way and returning the image
-	 * chart execution Pay attention that must get the parameters from BiObject
-	 * in order to filter categories and series
-	 * 
+	 * This method is used to execute a chart code way and returning the image chart execution Pay attention that must get the parameters from BiObject in order
+	 * to filter categories and series
+	 *
 	 * All the parameters must be taken not from request but from BiObject
-	 * 
+	 *
 	 * @param requestContainer
 	 * @param obj
 	 * @param response
@@ -259,18 +259,28 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 	}
 
+	@Override
 	public void execute(RequestContainer requestContainer, BIObject obj, SourceBean response) throws EMFUserError {
 
 		SessionContainer session = requestContainer.getSessionContainer();
 		IEngUserProfile userProfile = (IEngUserProfile) session.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		String userId = (String) ((UserProfile) userProfile).getUserId();
 
 		Locale locale = GeneralUtilities.getDefaultLocale();
-		String lang = (String) session.getPermanentContainer().getAttribute(SpagoBIConstants.AF_LANGUAGE);
-		String country = (String) session.getPermanentContainer().getAttribute(SpagoBIConstants.AF_COUNTRY);
-		if (lang != null && country != null) {
-			locale = new Locale(lang, country, "");
-		}
+
+		String currLanguage = (String) session.getPermanentContainer().getAttribute(SpagoBIConstants.AF_LANGUAGE);
+		String currCountry = (String) session.getPermanentContainer().getAttribute(SpagoBIConstants.AF_COUNTRY);
+		String currScript = (String) session.getPermanentContainer().getAttribute(SpagoBIConstants.AF_SCRIPT);
+		if (currLanguage != null && currCountry != null) {
+			Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
+
+			if (StringUtils.isNotBlank(currScript)) {
+				tmpLocale.setScript(currScript);
+			}
+
+			locale = tmpLocale.build();
+		} else
+			locale = GeneralUtilities.getDefaultLocale();
+
 		// defines the chart type for the correct execution
 		ResponseContainer responseContainer = ResponseContainer.getResponseContainer();
 		EMFErrorHandler errorHandler = responseContainer.getErrorHandler();
@@ -312,18 +322,12 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 	/**
 	 * Executes the document and populates the response.
-	 * 
-	 * @param requestContainer
-	 *            The <code>RequestContainer</code>chartImp object (the session
-	 *            can be retrieved from this object)
-	 * @param obj
-	 *            The <code>BIObject</code> representing the document to be
-	 *            executed
-	 * @param response
-	 *            The response <code>SourceBean</code> to be populated
-	 * 
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 *
+	 * @param requestContainer The <code>RequestContainer</code>chartImp object (the session can be retrieved from this object)
+	 * @param obj              The <code>BIObject</code> representing the document to be executed
+	 * @param response         The response <code>SourceBean</code> to be populated
+	 *
+	 * @throws EMFUserError the EMF user error
 	 */
 
 	public void executeChart(RequestContainer requestContainer, BIObject obj, SourceBean response, IEngUserProfile userProfile, Locale locale)
@@ -514,22 +518,16 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	}
 
 	/**
-	 * The <code>SpagoBIDashboardInternalEngine</code> cannot manage subobjects
-	 * so this method must not be invoked.
-	 * 
-	 * @param requestContainer
-	 *            The <code>RequestContainer</code> object (the session can be
-	 *            retrieved from this object)
-	 * @param obj
-	 *            The <code>BIObject</code> representing the document
-	 * @param response
-	 *            The response <code>SourceBean</code> to be populated
-	 * @param subObjectInfo
-	 *            An object describing the subobject to be executed
-	 * 
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * The <code>SpagoBIDashboardInternalEngine</code> cannot manage subobjects so this method must not be invoked.
+	 *
+	 * @param requestContainer The <code>RequestContainer</code> object (the session can be retrieved from this object)
+	 * @param obj              The <code>BIObject</code> representing the document
+	 * @param response         The response <code>SourceBean</code> to be populated
+	 * @param subObjectInfo    An object describing the subobject to be executed
+	 *
+	 * @throws EMFUserError the EMF user error
 	 */
+	@Override
 	public void executeSubObject(RequestContainer requestContainer, BIObject obj, SourceBean response, Object subObjectInfo) throws EMFUserError {
 		// it cannot be invoked
 		logger.error("SpagoBIDashboardInternalEngine cannot exec subobjects.");
@@ -538,22 +536,17 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
-	 * @param requestContainer
-	 *            The <code>RequestContainer</code> object (the session can be
-	 *            retrieved from this object)
-	 * @param response
-	 *            The response <code>SourceBean</code> to be populated
-	 * @param obj
-	 *            the obj
-	 * 
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 *
+	 * @param requestContainer The <code>RequestContainer</code> object (the session can be retrieved from this object)
+	 * @param response         The response <code>SourceBean</code> to be populated
+	 * @param obj              the obj
+	 *
+	 * @throws InvalidOperationRequest the invalid operation request
+	 * @throws EMFUserError            the EMF user error
 	 */
-	public void handleNewDocumentTemplateCreation(RequestContainer requestContainer, BIObject obj, SourceBean response) throws EMFUserError,
-			InvalidOperationRequest {
+	@Override
+	public void handleNewDocumentTemplateCreation(RequestContainer requestContainer, BIObject obj, SourceBean response)
+			throws EMFUserError, InvalidOperationRequest {
 		logger.error("SpagoBIDashboardInternalEngine cannot build document template.");
 		throw new InvalidOperationRequest();
 
@@ -561,20 +554,15 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
-	 * @param requestContainer
-	 *            The <code>RequestContainer</code> object (the session can be
-	 *            retrieved from this object)
-	 * @param response
-	 *            The response <code>SourceBean</code> to be populated
-	 * @param obj
-	 *            the obj
-	 * 
-	 * @throws InvalidOperationRequest
-	 *             the invalid operation request
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 *
+	 * @param requestContainer The <code>RequestContainer</code> object (the session can be retrieved from this object)
+	 * @param response         The response <code>SourceBean</code> to be populated
+	 * @param obj              the obj
+	 *
+	 * @throws InvalidOperationRequest the invalid operation request
+	 * @throws EMFUserError            the EMF user error
 	 */
+	@Override
 	public void handleDocumentTemplateEdit(RequestContainer requestContainer, BIObject obj, SourceBean response) throws EMFUserError, InvalidOperationRequest {
 		logger.error("SpagoBIDashboardInternalEngine cannot build document template.");
 		throw new InvalidOperationRequest();
@@ -610,9 +598,8 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	}
 
 	/**
-	 * COnverts from BIObject Parameters to a map, in presence of multi value
-	 * merge with ,
-	 * 
+	 * COnverts from BIObject Parameters to a map, in presence of multi value merge with ,
+	 *
 	 * @param obj
 	 * @return
 	 */
@@ -666,9 +653,8 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	}
 
 	/**
-	 * COnverts from BIObject Parameters to a map, in presence of multi value
-	 * merge with ,
-	 * 
+	 * COnverts from BIObject Parameters to a map, in presence of multi value merge with ,
+	 *
 	 * @param obj
 	 * @return
 	 */

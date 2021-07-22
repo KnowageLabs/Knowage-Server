@@ -793,7 +793,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					src = src.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
 					// if (!GeneralUtilities.isSSOEnabled()) {
 					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE
-							+ "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "'";
+							+ "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry();
+					url += "&" + SpagoBIConstants.SBI_SCRIPT + "=" + locale.getScript() + "'";
 				}
 				temp2.put(SRC, src);
 				temp2.put(HREF, url + ", '" + path + "')");

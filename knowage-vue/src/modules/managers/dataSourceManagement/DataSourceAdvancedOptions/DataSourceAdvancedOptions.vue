@@ -8,8 +8,8 @@
 
         <template #content>
             <form class="p-fluid p-m-3">
-                <div class="p-formgroup-inline">
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
+                <div class="p-formgrid p-grid">
+                    <div class="p-field p-col-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="maxTotal"
@@ -29,7 +29,7 @@
                         </span>
                         <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.maxTotal" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.maxTotal') }" />
                     </div>
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
+                    <div class="p-field p-col-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="maxWait"
@@ -49,7 +49,22 @@
                         </span>
                         <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.maxWait" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.maxWait') }" />
                     </div>
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
+                    <div class="p-field p-col-2" :style="dataSourceDescriptor.pField.style">
+                        <span class="p-float-label">
+                            <InputText
+                                id="maxIdle"
+                                class="kn-material-input"
+                                type="number"
+                                maxLength="30"
+                                v-model.trim="jdbcPoolConfiguration.maxIdle"
+                                @input="onFieldChange('maxIdle', $event.target.value)"
+                                v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.maxIdleInfo')"
+                                :disabled="readOnly"
+                            />
+                            <label for="maxWait" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.maxIdle') }} * </label>
+                        </span>
+                    </div>
+                    <div class="p-field p-col-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="abandonedTimeout"
@@ -69,7 +84,7 @@
                         </span>
                         <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.abandonedTimeout" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.abandonedTimeout') }" />
                     </div>
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
+                    <div class="p-field p-col-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="timeBetweenEvictionRuns"
@@ -89,7 +104,7 @@
                         </span>
                         <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.timeBetweenEvictionRuns" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.timeBetweenEvictionRuns') }" />
                     </div>
-                    <div class="p-field" :style="dataSourceDescriptor.pField.style">
+                    <div class="p-field p-col-2" :style="dataSourceDescriptor.pField.style">
                         <span class="p-float-label">
                             <InputText
                                 id="minEvictableIdleTimeMillis"
@@ -110,13 +125,29 @@
                         <KnValidationMessages :vComp="v$.jdbcPoolConfiguration.minEvictableIdleTimeMillis" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.advancedOptions.minEvictableIdleTimeMillis') }" />
                     </div>
                 </div>
-                <div class="p-field" :style="dataSourceDescriptor.pField.style">
-                    <span class="p-float-label">
-                        <InputText id="validationQuery" class="kn-material-input" :disabled="readOnly" type="text" v-model.trim="jdbcPoolConfiguration.validationQuery" maxLength="200" @input="onFieldChange('validationQuery', $event.target.value)" />
-                        <label for="validationQuery" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.validationQuery') }} </label>
-                    </span>
+                <div class="p-formgrid p-grid">
+                    <div class="p-field p-col-9" :style="dataSourceDescriptor.pField.style">
+                        <span class="p-float-label">
+                            <InputText id="validationQuery" class="kn-material-input" :disabled="readOnly" type="text" v-model.trim="jdbcPoolConfiguration.validationQuery" maxLength="200" @input="onFieldChange('validationQuery', $event.target.value)" />
+                            <label for="validationQuery" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.validationQuery') }} </label>
+                        </span>
+                    </div>
+                    <div class="p-field p-col-3" :style="dataSourceDescriptor.pField.style">
+                        <span class="p-float-label">
+                            <InputText
+                                id="validationQueryTimeout"
+                                class="kn-material-input"
+                                :disabled="readOnly"
+                                type="number"
+                                maxLength="30"
+                                v-model.trim="jdbcPoolConfiguration.validationQueryTimeout"
+                                @input="onFieldChange('validationQueryTimeout', $event.target.value)"
+                                v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.validationQueryTimeoutInfo')"
+                            />
+                            <label for="validationQueryTimeout" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.advancedOptions.validationQueryTimeout') }} </label>
+                        </span>
+                    </div>
                 </div>
-
                 <div class="p-field-checkbox">
                     <Checkbox id="removeAbandonedOnBorrow" v-model="jdbcPoolConfiguration.removeAbandonedOnBorrow" :disabled="readOnly" :binary="true" @change="onFieldChange('removeAbandonedOnBorrow', jdbcPoolConfiguration.removeAbandonedOnBorrow)" />
                     <label for="removeAbandonedOnBorrow" v-tooltip.top="$t('managers.dataSourceManagement.form.advancedOptions.removeAbandonedOnBorrowInfo')">{{ $t('managers.dataSourceManagement.form.advancedOptions.removeAbandonedOnBorrow') }} </label>

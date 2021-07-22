@@ -261,6 +261,11 @@ public class ExecutionProxy {
 				mapPars.put(SpagoBIConstants.SBI_LANGUAGE, language);
 			}
 
+			if (!mapPars.containsKey(SpagoBIConstants.SBI_SCRIPT)) {
+				String script = locale.getScript();
+				mapPars.put(SpagoBIConstants.SBI_SCRIPT, script);
+			}
+
 			// set userId in particular cases (backend operations)
 			if (SEND_MAIL_MODALITY.equals(modality) || EXPORT_MODALITY.equals(modality) || SpagoBIConstants.MASSIVE_EXPORT_MODALITY.equals(modality)) {
 				mapPars.put(SsoServiceInterface.USER_ID, ((UserProfile) profile).getUserUniqueIdentifier());

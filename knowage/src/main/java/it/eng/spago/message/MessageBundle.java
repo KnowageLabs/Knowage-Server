@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,21 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spago.message;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Locale.Builder;
+import java.util.ResourceBundle;
+
+import org.apache.commons.lang.StringUtils;
 
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
@@ -25,13 +35,6 @@ import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spagobi.utilities.messages.UTF8Control;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 /**
  * Questa classe permette il recupero di stringhe censite in alcuni files di properties. Modifications by Davide Zerbetto on Jan 7th 2015: management of UTF-8
  * properties files.
@@ -40,6 +43,7 @@ public class MessageBundle {
 
 	private static final String DEFAULT_USER_LANGUAGE = "COMMON.default_user_language";
 	private static final String DEFAULT_USER_COUNTRY = "COMMON.default_user_country";
+	private static final String DEFAULT_USER_SCRIPT = "COMMON.default_user_script";
 	private static final String DEFAULT_BUNDLE = "messages";
 	private static HashMap bundles = null;
 	private static List bundlesNames = null;
@@ -52,8 +56,10 @@ public class MessageBundle {
 	public static Locale getUserLocale() {
 		String language = null;
 		String country = null;
+		String script = null;
 		Object defaultLanguage = ConfigSingleton.getInstance().getAttribute(DEFAULT_USER_LANGUAGE);
 		Object defaultCountry = ConfigSingleton.getInstance().getAttribute(DEFAULT_USER_COUNTRY);
+		Object defaultScript = ConfigSingleton.getInstance().getAttribute(DEFAULT_USER_SCRIPT);
 		RequestContainer requestContainer = RequestContainer.getRequestContainer();
 		if (requestContainer == null)
 			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "MessageBundle::getMessage: requestContainer nullo");
@@ -61,6 +67,7 @@ public class MessageBundle {
 			SessionContainer sessionContainer = requestContainer.getSessionContainer().getPermanentContainer();
 			language = (String) sessionContainer.getAttribute(Constants.USER_LANGUAGE);
 			country = (String) sessionContainer.getAttribute(Constants.USER_COUNTRY);
+			script = (String) sessionContainer.getAttribute("USER_SCRIPT");
 		} // if (requestContainer != null)
 		if (language == null) {
 			// TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
@@ -84,7 +91,15 @@ public class MessageBundle {
 				country = "US";
 			}
 		} // if (country == null)
-		Locale currentLocale = new Locale(language, country);
+		if (script == null) {
+
+			if (defaultScript != null) {
+				script = (String) defaultScript;
+			} else {
+				script = "";
+			}
+		}
+		Locale currentLocale = new Builder().setLanguage(language).setRegion(country).setScript(script).build();
 		return currentLocale;
 	}
 
@@ -92,8 +107,7 @@ public class MessageBundle {
 	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
 	 * <p>
 	 *
-	 * @param code
-	 *            il codice associato alla stringa.
+	 * @param code il codice associato alla stringa.
 	 * @return la stringa recuperata da un file di properties.
 	 */
 	public static String getMessage(String code) {
@@ -104,10 +118,8 @@ public class MessageBundle {
 	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
 	 * <p>
 	 *
-	 * @param code
-	 *            il codice associato alla stringa.
-	 * @param params
-	 *            lista dei placeholder da sostituire nel messaggio.
+	 * @param code   il codice associato alla stringa.
+	 * @param params lista dei placeholder da sostituire nel messaggio.
 	 * @return la stringa recuperata da un file di properties.
 	 */
 	public static String getMessage(String code, List params) {
@@ -118,10 +130,8 @@ public class MessageBundle {
 	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
 	 * <p>
 	 *
-	 * @param code
-	 *            il codice associato alla stringa.
-	 * @param bundle
-	 *            il bundle da cui recuperare la stringa.
+	 * @param code   il codice associato alla stringa.
+	 * @param bundle il bundle da cui recuperare la stringa.
 	 * @return la stringa recuperata da un file di properties.
 	 */
 	public static String getMessage(String code, String bundle) {
@@ -137,12 +147,9 @@ public class MessageBundle {
 	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
 	 * <p>
 	 *
-	 * @param code
-	 *            il codice associato alla stringa.
-	 * @param bundle
-	 *            il bundle da cui recuperare la stringa.
-	 * @param params
-	 *            lista dei placeholder da sostituire nel messaggio.
+	 * @param code   il codice associato alla stringa.
+	 * @param bundle il bundle da cui recuperare la stringa.
+	 * @param params lista dei placeholder da sostituire nel messaggio.
 	 * @return la stringa recuperata da un file di properties.
 	 */
 	public static String getMessage(String code, String bundle, List params) {
@@ -153,10 +160,8 @@ public class MessageBundle {
 	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
 	 * <p>
 	 *
-	 * @param code
-	 *            il codice associato alla stringa.
-	 * @param bundle
-	 *            il bundle da cui recuperare la stringa.
+	 * @param code   il codice associato alla stringa.
+	 * @param bundle il bundle da cui recuperare la stringa.
 	 * @return la stringa recuperata da un file di properties.
 	 */
 	public static String getMessage(final String code, final String bundle, final Locale userLocale) {
@@ -167,7 +172,12 @@ public class MessageBundle {
 		if (userLocale.equals(Locale.US)) {
 			bundleKey = bundle;
 		} else {
-			bundleKey = bundle + "_" + userLocale.getLanguage() + "_" + userLocale.getCountry();
+			bundleKey = bundle + "_" + userLocale.getLanguage();
+			String script = userLocale.getScript();
+			if (StringUtils.isNotBlank(script)) {
+				bundleKey += "_" + script;
+			}
+			bundleKey += "_" + userLocale.getCountry();
 		}
 		// end modifications by Alessandro Portosa: managing properties files according to Zanata needs
 		ResourceBundle messages = null;
@@ -186,12 +196,12 @@ public class MessageBundle {
 				}
 				// end modifications by Alessandro Portosa: managing properties files according to Zanata needs
 				// end modifications by Davide Zerbetto: managing UTF-8 properties files
+				// Put bundle in cache
+				bundles.put(bundleKey, messages);
 			} catch (java.util.MissingResourceException ex) {
 				// Bundle non esistente
 			}
 
-			// Put bundle in cache
-			bundles.put(bundleKey, messages);
 		}
 
 		if (messages == null) {
@@ -213,10 +223,8 @@ public class MessageBundle {
 	 * Questo metodo recupera una stringa individuata da un codice e da alcune proprietà dell'utente che ha richiesto il servizio (language,country).
 	 * <p>
 	 *
-	 * @param code
-	 *            il codice associato alla stringa.
-	 * @param bundle
-	 *            il bundle da cui recuperare la stringa.
+	 * @param code   il codice associato alla stringa.
+	 * @param bundle il bundle da cui recuperare la stringa.
 	 * @return la stringa recuperata da un file di properties.
 	 */
 	public static String getMessage(final String code, final Locale userLocale) {
@@ -235,8 +243,7 @@ public class MessageBundle {
 	/**
 	 * Add a bundle name in the lookup list.
 	 *
-	 * @param bundleName
-	 *            Name of the bundle to add to the lookup list.
+	 * @param bundleName Name of the bundle to add to the lookup list.
 	 */
 	public static void addBundleName(final String bundleName) {
 		if (!bundlesNames.contains(bundleName)) {
@@ -249,8 +256,7 @@ public class MessageBundle {
 	 * the search fails it searches in the path "action.<action name>.code" or "page.<page name>.code" in the files enlisted in messages.xml, and if it fails
 	 * again it searches in the path "code" in the files enlisted in messages.xml.
 	 *
-	 * @param code
-	 *            Identifier of the message
+	 * @param code              Identifier of the message
 	 * @param responseContainer
 	 * @return The message
 	 */
@@ -277,10 +283,8 @@ public class MessageBundle {
 	/**
 	 * Replace the placeholders with the elements supplied in the list
 	 *
-	 * @param message
-	 *            Original message
-	 * @param params
-	 *            Value to sbstitute for placeholders
+	 * @param message Original message
+	 * @param params  Value to sbstitute for placeholders
 	 * @return Modified message
 	 */
 	public static String substituteParams(String message, List params) {
