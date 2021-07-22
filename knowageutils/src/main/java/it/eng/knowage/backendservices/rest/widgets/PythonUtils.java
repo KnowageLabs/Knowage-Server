@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import it.eng.spagobi.commons.IConfiguration;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.utilities.exceptions.ConfigurationException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class PythonUtils extends MLEngineUtils {
@@ -35,13 +36,13 @@ public class PythonUtils extends MLEngineUtils {
 	public static final String PYTHON_ENVIRONMENT_CATEGORY = "PYTHON_CONFIGURATION";
 
 	public static String getPythonAddress(String envLabel) {
-		List<IConfiguration> allRConfigs = SingletonConfig.getInstance().getConfigsValueByCategory(PYTHON_ENVIRONMENT_CATEGORY);
-		for (IConfiguration cfg : allRConfigs) {
+		List<IConfiguration> allPythonConfigs = SingletonConfig.getInstance().getConfigsValueByCategory(PYTHON_ENVIRONMENT_CATEGORY);
+		for (IConfiguration cfg : allPythonConfigs) {
 			if (cfg.getLabel().equals(envLabel)) {
 				return cfg.getValueCheck() + "/";
 			}
 		}
-		throw new SpagoBIRuntimeException("Cannot retrieve Python address from label [" + envLabel + "]");
+		throw new ConfigurationException("Cannot retrieve Python address from label [" + envLabel + "]");
 	}
 
 	public static String createPythonEngineRequestBody(String datastore, String dsLabel, String script, Map<String, Object> drivers, String outputVariable) {

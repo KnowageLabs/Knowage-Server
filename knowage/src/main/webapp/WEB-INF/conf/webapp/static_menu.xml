@@ -32,7 +32,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=menuConfiguration" />
 			<ITEM id="2005" label="menu.FunctMan"
 				requiredFunctionality="FunctionalitiesManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=functionalitiesManagement" />
+				to="/functionalities-management" />
 			<ITEM id="2006" label="menu.community.mng"
 				requiredFunctionality="CommunityManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=ManageCommunity" />

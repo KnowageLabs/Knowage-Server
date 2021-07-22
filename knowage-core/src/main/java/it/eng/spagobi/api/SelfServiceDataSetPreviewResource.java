@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -387,15 +389,21 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 	@Override
 	public Locale buildLocaleFromSession() {
 		Locale locale = null;
-		Object countryO = getHttpSession().getAttribute(SpagoBIConstants.AF_COUNTRY);
-		Object languageO = getHttpSession().getAttribute(SpagoBIConstants.AF_LANGUAGE);
-		String country = countryO != null ? countryO.toString() : null;
-		String language = languageO != null ? languageO.toString() : null;
-		if (country != null && language != null) {
-			locale = new Locale(language, country);
-		} else {
-			locale = Locale.ENGLISH;
-		}
+
+		String currLanguage = (String) getHttpSession().getAttribute(SpagoBIConstants.AF_LANGUAGE);
+		String currCountry = (String) getHttpSession().getAttribute(SpagoBIConstants.AF_COUNTRY);
+		String currScript = (String) getHttpSession().getAttribute(SpagoBIConstants.AF_SCRIPT);
+		if (currLanguage != null && currCountry != null) {
+			Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
+
+			if (StringUtils.isNotBlank(currScript)) {
+				tmpLocale.setScript(currScript);
+			}
+
+			locale = tmpLocale.build();
+		} else
+			locale = GeneralUtilities.getDefaultLocale();
+
 		return locale;
 	}
 

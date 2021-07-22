@@ -27,4 +27,8 @@ public class LDAPAuthenticationFailed extends Exception {
 		super(message, e);
 	}
 
+	public LDAPAuthenticationFailed(String message) {
+		super(message);
+	}
+
 }

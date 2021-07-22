@@ -178,6 +178,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.zoomControl = undefined; // Zoom control on map
 		$scope.scaleControl = undefined; // Scale indicator
 		$scope.mouseWheelZoomInteraction = undefined; // Manage the mouse wheel on map
+		$scope.isShowLegend = true; //legend is on by default
 		$scope.i18n = sbiModule_i18n;
 
 		$scope.i18n.loadI18nMap();
@@ -460,8 +461,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //############################################## SPECIFIC MAP WIDGET METHODS #########################################################################
 
-	    $scope.getLegend = function(referenceId){
-	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId);
+	    $scope.getLegend = function(referenceId, visualizationType){
+	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId, visualizationType);
 	    }
 
 		function syncDatasetMetadata(layerDef) {
@@ -605,8 +606,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 			cockpitModule_mapThematizerServices.setActiveConf($scope.ngModel.id + "|" + layerDef.name, layerDef);
-			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data); //add legend to internal structure
-			if (layerDef.visualizationType == 'choropleth') $scope.getLegend($scope.ngModel.id);
+			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data, $scope.ngModel.style.legend); //add legend to internal structure
+			if (layerDef.visualizationType == 'choropleth') {
+				if ($scope.ngModel.style.legend)
+					$scope.getLegend($scope.ngModel.id, $scope.ngModel.style.legend.visualizationType);
+				else
+					$scope.getLegend($scope.ngModel.id);
+			}
 			var layer;
 			if (isCluster) {
 				var clusterSource = new ol.source.Cluster({source: featuresSource
@@ -1084,6 +1090,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    	return l.getVisible();
 	    }
 
+	    $scope.getVisibleLayersCount = function(){
+	    	var visibleLayersCount = 0;
+	    	for (var i=0; i<$scope.layers.length; i++) {
+	    		var l = $scope.layers[i].layer;
+	    		if (l && l.getVisible && l.getVisible()) {
+	    			visibleLayersCount++;
+	    		}
+	    	}
+	    	return visibleLayersCount;
+	    }
+
 	    $scope.getIndicatorVisibility = function(l,n){
 	    	for (lpos in  $scope.ngModel.content.layers){
 	    		if ( $scope.ngModel.content.layers[lpos].name == l)
@@ -1122,9 +1139,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    	config.defaultIndicator = elem.name;
 
 		    	cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name +'|'+ elem.name, values);
-		    	cockpitModule_mapThematizerServices.updateLegend(layerID, values);
+		    	cockpitModule_mapThematizerServices.updateLegend(layerID, values,$scope.ngModel.style.legend);
 
-		    	$scope.getLegend($scope.ngModel.id);
+		    	$scope.getLegend($scope.ngModel.id, $scope.ngModel.style.legend.visualizationType);
 			}
 
 			layer.getSource().changed();
@@ -1553,7 +1570,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if (!(prop.name in props)) {
 				return null;
 			}
-		
+
 			var currProp = props[prop.name];
 			var currPropValue = currProp.value;
 			var ret = "";
@@ -1704,7 +1721,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.getPerWidgetDatasetIds = function() {
 			return $scope.ngModel.content.layers.map(function(e) { return e.dataset.id.dsId; });
 		}
-		
+
+		$scope.hideLegend = function() {
+			$scope.isShowLegend = false;
+		}
+
+		$scope.showLegend = function() {
+			$scope.isShowLegend = true;
+		}
+
 		// Manage resize of the window
 		window.addEventListener('resize', function(){
 			setTimeout( function() { if ($scope.map) { $scope.map.updateSize(); } }, 200);

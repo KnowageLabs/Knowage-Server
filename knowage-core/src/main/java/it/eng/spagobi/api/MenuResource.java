@@ -17,14 +17,6 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.serializer.MenuListJSONSerializerForREST;
-import it.eng.spagobi.services.exceptions.ExceptionUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.wapp.util.MenuUtilities;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,6 +31,13 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.serializer.MenuListJSONSerializerForREST;
+import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.wapp.util.MenuUtilities;
+
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
@@ -50,6 +49,7 @@ import org.json.JSONObject;
 
 @Path("/1.0/menu")
 @ManageAuthorization
+@Deprecated
 public class MenuResource extends AbstractSpagoBIResource {
 
 	public static transient Logger logger = Logger.getLogger(MenuResource.class);

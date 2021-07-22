@@ -22,9 +22,12 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -34,6 +37,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -51,6 +55,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.FileUtilities;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
@@ -247,17 +252,34 @@ public class FileServiceDataSetCRUD {
 
 		// Build locale (try taking in request otherwse in session)
 
-		Object languageO = req.getParameter(SpagoBIConstants.AF_LANGUAGE);
-		Object countryO = req.getParameter(SpagoBIConstants.AF_COUNTRY);
+//		Object languageO = req.getParameter(SpagoBIConstants.AF_LANGUAGE);
+//		Object countryO = req.getParameter(SpagoBIConstants.AF_COUNTRY);
+//
+//		if (languageO == null || countryO == null) {
+//			languageO = req.getSession().getAttribute(SpagoBIConstants.AF_LANGUAGE);
+//			countryO = req.getSession().getAttribute(SpagoBIConstants.AF_COUNTRY);
+//		}
+//		String sbiLanguage = languageO != null ? languageO.toString() : "en";
+//		String sbiCountry = countryO != null ? countryO.toString() : "En";
 
-		if (languageO == null || countryO == null) {
-			languageO = req.getSession().getAttribute(SpagoBIConstants.AF_LANGUAGE);
-			countryO = req.getSession().getAttribute(SpagoBIConstants.AF_COUNTRY);
-		}
-		String sbiLanguage = languageO != null ? languageO.toString() : "en";
-		String sbiCountry = countryO != null ? countryO.toString() : "En";
+		HttpSession permanentSession = req.getSession();
 
-		logger.debug("Language retrieved: [" + sbiLanguage + "]; country retrieved: [" + sbiCountry + "]");
+		Locale locale = null;
+		String currLanguage = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+		String currCountry = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+		String currScript = (String) permanentSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
+		if (currLanguage != null && currCountry != null) {
+			Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
+
+			if (StringUtils.isNotBlank(currScript)) {
+				tmpLocale.setScript(currScript);
+			}
+
+			locale = tmpLocale.build();
+		} else
+			locale = GeneralUtilities.getDefaultLocale();
+
+		logger.debug("Language retrieved: [" + currLanguage + "]; country retrieved: [" + currCountry + "]");
 
 		url = protocol + "://" + host + ":" + port + "/" + qbeContext;
 
@@ -268,8 +290,9 @@ public class FileServiceDataSetCRUD {
 		url += "&dataset_label=" + dataSet.getLabel();
 		url += "&datasource_label=" + dataSourceLabel;
 		url += "&NEW_SESSION=TRUE";
-		url += "&SBI_LANGUAGE=" + sbiLanguage;
-		url += "&SBI_COUNTRY=" + sbiCountry;
+		url += "&SBI_LANGUAGE=" + currLanguage;
+		url += "&SBI_COUNTRY=" + currCountry;
+		url += "&SBI_SCRIPT=" + currScript;
 
 		logger.debug("URL to call");
 		java.net.URI location = new java.net.URI(url);

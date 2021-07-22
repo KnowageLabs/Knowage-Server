@@ -68,6 +68,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.eng.spagobi.commons.bo.AccessibilityPreferences" %>
 <%@page import="it.eng.spagobi.commons.bo.SessionUserProfile"%>
+<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="java.util.Locale.Builder" %>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -148,11 +150,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	String curr_language=(String)permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
 	String curr_country=(String)permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+	String sessScript = (String) permanentSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
+	String curr_script = (sessScript!=null && !sessScript.isEmpty()) ? sessScript : "";
 	Locale locale = null;
 	
+	if (curr_language != null && curr_country != null	&& !curr_language.equals("") && !curr_country.equals("")) {
+		Builder tmpLocale = new Locale.Builder().setLanguage(curr_language).setRegion(curr_country);
 
-	if(curr_language!=null && curr_country!=null && !curr_language.equals("") && !curr_country.equals("")){
-		locale=new Locale(curr_language, curr_country, "");
+		if (StringUtils.isNotBlank(curr_script)) {
+			tmpLocale.setScript(curr_script);
+		}
+
+		locale = tmpLocale.build();
 	}
 	else {	
 	if (sbiMode.equals("PORTLET")) {
@@ -283,6 +292,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         	currTheme: '<%= currTheme %>',
         	curr_country: '<%= curr_country %>',
         	curr_language: '<%= curr_language%>',
+        	curr_script: '<%= curr_script%>',
         	contextName: '<%= KnowageSystemConfiguration.getKnowageContext() %>',
         	adapterPath: '<%= KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
         	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>,
