@@ -24,10 +24,3 @@ let routes = [
 ]
 
 export default routes
-
-// {
-//     path: '/measure-definition/edit',
-//     name: 'edit-measure-definition',
-//     props: (route) => ({ id: route.query.id, ruleVersion: route.query.ruleVersion, clone: route.query.clone }),
-//     component: () => import('@/modules/kpi/measureDefinition/MeasureDefinitionTabView.vue')
-// }

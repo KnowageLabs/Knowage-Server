@@ -1,7 +1,6 @@
 <template>
     <Card>
         <template #content>
-            <h3>{{ modelValue }}</h3>
             <form class="p-fluid p-m-5" v-if="target">
                 <div class="p-field">
                     <span class="p-float-label">
@@ -18,7 +17,7 @@
                             }"
                             @blur="vcomp.name.$touch()"
                         />
-                        <label for="name" class="kn-material-input-label">Name * </label>
+                        <label for="name" class="kn-material-input-label">{{ $t('kpi.targetDefinition.name') }} * </label>
                     </span>
                     <KnValidationMessages :vComp="vcomp.name" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.name') }"></KnValidationMessages>
                 </div>
