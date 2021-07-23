@@ -45,6 +45,7 @@ export default defineComponent({
         return {
             selectedAlert: {} as iAlert,
             listeners: [] as iListener[],
+            jsonOptions: {},
             alertValidationDescriptor: alertValidationDescriptor,
             v$: useValidate() as any
         }
@@ -60,6 +61,8 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/' + this.id + '/load')
                 .then((response) => {
                     this.selectedAlert = { ...response.data }
+                    this.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '')
+                    console.log('jsonParse', this.jsonOptions)
                 })
                 .finally(() => console.log('selected', this.selectedAlert))
         },
