@@ -1,16 +1,16 @@
 <template>
-    <Card>
+    <Card :style="alertDescriptor.styles.basicCard" class="p-m-3">
         <template #content>
             <form class="p-fluid p-m-5">
-                <div class="p-d-flex p-jc-between">
-                    <div class="p-field">
+                <div class="p-d-flex p-jc-start">
+                    <div class="p-field" :style="alertDescriptor.styles.inputFields">
                         <span class="p-float-label">
                             <InputNumber id="noOfEvents" v-model="alert.eventBeforeTriggerAction" showButtons @input="valueChanged('eventBeforeTriggerAction', $event.value)" />
                             <label for="noOfEvents" class="kn-material-input-label">{{ $t('kpi.alert.noOfEvents') }}</label>
                         </span>
                     </div>
                     <div class="p-field-checkbox">
-                        <Checkbox id="execution" v-model="alert.singleExecution" :binary="true" @click="valueChanged('eventBeforeTriggerAction', $event)" />
+                        <Checkbox id="execution" v-model="alert.singleExecution" :binary="true" @click="valueChanged('singleExecution', $event)" />
                         <label for="execution">{{ $t('kpi.alert.execution') }}</label>
                     </div>
                 </div>
@@ -23,6 +23,7 @@ import { defineComponent, PropType } from 'vue'
 import { iAlert } from '../Alert'
 import InputNumber from 'primevue/inputnumber'
 import Checkbox from 'primevue/checkbox'
+import alertDescriptor from '../AlertDescriptor.json'
 export default defineComponent({
     name: 'events-card',
     components: { InputNumber, Checkbox },
@@ -41,7 +42,8 @@ export default defineComponent({
     },
     data() {
         return {
-            alert: {} as iAlert
+            alert: {} as iAlert,
+            alertDescriptor
         }
     },
     methods: {

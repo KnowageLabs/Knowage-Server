@@ -6,12 +6,8 @@
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center">
-        <div class="p-col-9">
-            <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.alert"></name-card>
-        </div>
-        <div class="p-col-9">
-            <events-card :selectedAlert="selectedAlert" @valueChanged="updateAlert"></events-card>
-        </div>
+        <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.alert"></name-card>
+        <events-card :selectedAlert="selectedAlert" @valueChanged="updateAlert"></events-card>
     </div>
 </template>
 <script lang="ts">
@@ -61,7 +57,7 @@ export default defineComponent({
             await axios
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/' + this.id + '/load')
                 .then((response) => {
-                    this.selectedAlert = response.data
+                    this.selectedAlert = { ...response.data }
                 })
                 .finally(() => console.log('selected', this.selectedAlert))
         },
@@ -75,7 +71,12 @@ export default defineComponent({
         },
         updateAlert(event) {
             console.log(event)
-            this.selectedAlert[event.fieldName] = event.value
+            if (event.fieldName == 'singleExecution') {
+                this.selectedAlert.singleExecution = !this.selectedAlert.singleExecution
+            } else {
+                this.selectedAlert[event.fieldName] = event.value
+            }
+
             //this.setDirty()
         },
         handleSubmit() {
@@ -86,7 +87,7 @@ export default defineComponent({
             if (this.id) {
                 await this.loadAlert()
             } else {
-                this.selectedAlert = { id: null }
+                this.selectedAlert = { id: null, singleExecution: false }
             }
             this.v$.$reset()
         },

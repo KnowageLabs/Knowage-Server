@@ -1,9 +1,9 @@
 <template>
-    <Card>
+    <Card style="width:100%" class="p-m-3">
         <template #content>
             <form class="p-fluid p-m-5">
                 <div class="p-d-flex p-jc-between">
-                    <div class="p-field">
+                    <div class="p-field" :style="alertDescriptor.styles.inputFields">
                         <span class="p-float-label">
                             <InputText
                                 v-bind="$attrs"
@@ -21,7 +21,7 @@
                         </span>
                         <KnValidationMessages :vComp="vcomp.name" :additionalTranslateParams="{ fieldName: $t('kpi.alert.name') }"></KnValidationMessages>
                     </div>
-                    <div class="p-field">
+                    <div class="p-field" :style="alertDescriptor.styles.inputFields">
                         <span class="p-float-label">
                             <Dropdown
                                 v-bind="$attrs"
@@ -36,7 +36,7 @@
                                 }"
                                 @blur="vcomp.alertListener.$touch()"
                             />
-                            <label for="category" class="kn-material-input-label"> {{ $t('kpi.alert.kpiListener') }} * </label>
+                            <label for="listener" class="kn-material-input-label"> {{ $t('kpi.alert.kpiListener') }} * </label>
                         </span>
                         <KnValidationMessages :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages>
                     </div>
@@ -50,6 +50,7 @@ import { defineComponent, PropType } from 'vue'
 import { iAlert, iListener } from '../Alert'
 import Dropdown from 'primevue/dropdown'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import alertDescriptor from '../AlertDescriptor.json'
 export default defineComponent({
     name: 'name-card',
     components: { Dropdown, KnValidationMessages },
@@ -72,7 +73,8 @@ export default defineComponent({
     },
     data() {
         return {
-            alert: {} as iAlert
+            alert: {} as iAlert,
+            alertDescriptor
         }
     },
     methods: {

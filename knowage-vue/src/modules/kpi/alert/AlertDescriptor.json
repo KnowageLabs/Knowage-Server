@@ -1,3 +1,11 @@
 {
-    "filterFields": ["name"]
+    "filterFields": ["name"],
+    "styles": {
+        "basicCard": {
+            "width": "100%"
+        },
+        "inputFields": {
+            "width": "45%"
+        }
+    }
 }
