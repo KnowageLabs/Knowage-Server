@@ -13,9 +13,9 @@
                         {{ slotProps.data }}
                     </template>
                 </Column>
-                <Column v-for="measure of kpi.cardinality.measureList" :key="measure" :style="tabViewDescriptor.style.cardinalityTable">
+                <Column v-for="measure of kpi.cardinality.measureList" :key="measure">
                     <template #header>
-                        <div>{{ measure.measureName }}</div>
+                        <div :style="tabViewDescriptor.style.cardinalityColumn">{{ measure.measureName }}</div>
                     </template>
                     <template #body="slotProps">
                         <div class="measureCell" v-if="measureHaveAttribute(slotProps.data, slotProps.column.key)" @click="toggleCell(slotProps.data, slotProps.column.key)">
@@ -27,6 +27,18 @@
                     </template>
                 </Column>
             </DataTable>
+        </template>
+    </Card>
+
+    <Card v-if="!loading">
+        <template #content>
+            <div>{{ kpi.cardinality.measureList }}</div>
+        </template>
+    </Card>
+
+    <Card v-if="!loading">
+        <template #content>
+            <div>{{ attributesList }}</div>
         </template>
     </Card>
 </template>
@@ -103,6 +115,7 @@ export default defineComponent({
         },
 
         getAllMeasure() {
+            console.log(' getAllMeasure() {-----------------------------')
             this.attributesList = []
             if (this.kpi.cardinality != undefined && this.kpi.cardinality != null) {
                 if (typeof this.kpi.cardinality !== 'object') {
@@ -122,25 +135,38 @@ export default defineComponent({
         },
 
         async retryNewAttributes() {
+            // console.log('sync retryNewAttributes() {-----------------------------')
             var definition = {}
             for (var i = 0; i < this.kpi.definition.measures.length; i++) {
                 var meas = this.kpi.definition.measures[i]
                 definition[i] = meas
             }
+            // console.log('---------- DEFINITION', definition)
+            // console.log('---------- this.kpi.cardinality.measureList: ', this.kpi.cardinality.measureList)
+
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/buildCardinalityMatrix', definition).then((response) => {
-                if (this.formulaChanged) this.kpi.cardinality.measureList = response.data
+                if (this.formulaChanged) {
+                    this.kpi.cardinality.measureList = [...response.data]
+                    console.log('FORMULA CHANGED')
+                }
 
                 for (var i = 0; i < response.data.length; i++) {
                     //check if missing attribute
                     var obj = response.data[i]
                     for (var j = 0; j < this.kpi.cardinality.measureList.length; j++) {
+                        // console.log(obj['measureName'] + '==' + this.kpi.cardinality.measureList[j]['measureName'])
                         if (obj['measureName'] == this.kpi.cardinality.measureList[j]['measureName']) {
+                            console.log('MATCHED, 1 IF --------------------')
+
                             var obj2 = this.kpi.cardinality.measureList[j]['attributes']
                             var numberKeys = Object.keys(obj2)
 
                             if (numberKeys.length != Object.keys(obj['attributes']).length) {
-                                for (var k = numberKeys.length + 1; k <= Object.keys(obj['attributes']).length; k++) {
+                                console.log('MATCHED, 2 IF --------------------', Object.keys(obj['attributes']).length)
+
+                                for (var k = 0; k <= Object.keys(obj['attributes']).length; k++) {
                                     var obj3 = this.kpi.cardinality.measureList[j]['attributes']
+                                    console.log('OBJ 3 --------------------', obj3)
                                     obj3[Object.keys(obj['attributes'])[k - 1]] = obj['attributes'][Object.keys(obj['attributes'])[k - 1]]
                                     if (this.attributesList.indexOf(Object.keys(obj['attributes'])[k - 1]) == -1) {
                                         this.attributesList.push(Object.keys(obj['attributes'])[k - 1])

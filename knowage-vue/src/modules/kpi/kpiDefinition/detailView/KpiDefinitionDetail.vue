@@ -286,7 +286,7 @@ export default defineComponent({
                     this.$store.commit('setError', { msg: response.data.errors })
                 } else {
                     this.$store.commit('setInfo', { msg: 'Saved Succesfuly!' })
-                    this.kpiToSave.id ? this.$emit('kpiCreated', this.kpiToSave.name) : this.$emit('kpiUpdated')
+                    this.kpiToSave.id === undefined ? this.$emit('kpiCreated', this.kpiToSave.name) : this.$emit('kpiUpdated')
                 }
             })
         }

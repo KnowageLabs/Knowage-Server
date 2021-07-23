@@ -26,7 +26,7 @@
                 </Listbox>
             </div>
 
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
+            <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <router-view :cloneKpiId="cloneKpiId" :cloneKpiVersion="cloneKpiVersion" @touched="touched = true" @closed="onFormClose" @kpiUpdated="touched = false" @kpiCreated="onKpiCreated" @showDialog="displayInfoDialog" />
                 <KnHint :title="'kpi.kpiDefinition.hintTitle'" :hint="'kpi.kpiDefinition.hint'" v-if="hintVisible" />
             </div>

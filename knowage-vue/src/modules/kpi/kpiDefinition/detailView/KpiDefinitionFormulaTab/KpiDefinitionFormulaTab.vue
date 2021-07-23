@@ -84,6 +84,7 @@ export default defineComponent({
             this.kpi = this.selectedKpi as any
         }
         this.registerCodeMirrorHelper()
+        this.loadKPI()
     },
 
     watch: {
@@ -92,11 +93,7 @@ export default defineComponent({
             if (this.kpi.definition != '') {
                 this.kpi.definition = JSON.parse(this.kpi.definition)
             }
-
-            //mora da se nadje resenje za load kpi, za sada je u timeout dok se ne ucita
-            setTimeout(() => {
-                this.loadKPI()
-            }, 500)
+            this.loadKPI()
         },
         aliasToInput() {
             this.cursorPosition = this.codeMirror.getCursor()
@@ -226,17 +223,20 @@ export default defineComponent({
         },
 
         loadKPI() {
-            if (!this.$refs.codeMirror) return
-            this.codeMirror = (this.$refs.codeMirror as any).editor as any
+            const interval = setInterval(() => {
+                if (!this.$refs.codeMirror) return
+                this.codeMirror = (this.$refs.codeMirror as any).editor as any
 
-            setTimeout(() => {
-                this.codeMirror.refresh()
-            }, 0)
-            this.codeMirror.setValue('')
-            this.codeMirror.clearHistory()
-            this.codeMirror.setValue(this.kpi.definition.formulaSimple)
+                setTimeout(() => {
+                    this.codeMirror.refresh()
+                }, 0)
+                this.codeMirror.setValue('')
+                this.codeMirror.clearHistory()
+                this.codeMirror.setValue(this.kpi.definition.formulaSimple)
 
-            this.changeIndexWithMeasures(this.kpi.definition.functions, this.codeMirror)
+                this.changeIndexWithMeasures(this.kpi.definition.functions, this.codeMirror)
+                clearInterval(interval)
+            }, 200)
         },
         changeIndexWithMeasures(functions, codeMirror) {
             var counter = 0

@@ -29,6 +29,10 @@
             "margin-bottom": "2em",
             "text-align": "center"
         },
+        "cardinalityColumn": {
+            "text-align": "center",
+            "width": "100%"
+        },
         "cardinalityTable": {
             "text-align": "center"
         },

@@ -126,7 +126,7 @@
         </template>
     </Card>
 
-    <Sidebar class="mySidebar" v-model:visible="thresholdListVisible" position="right">
+    <Sidebar class="mySidebar" v-model:visible="thresholdListVisible" :showCloseIcon="false" position="right">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
             <template #left>Threshholds List</template>
         </Toolbar>
