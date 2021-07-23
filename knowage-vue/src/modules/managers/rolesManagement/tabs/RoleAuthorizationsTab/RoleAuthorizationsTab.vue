@@ -10,8 +10,8 @@
                     </Toolbar>
                     <div v-for="(authCBInfo, index) of authorizationCBs[category.categoryName]" :key="index">
                         <div class="p-field-checkbox p-m-3">
-                            <Checkbox id="binary" v-model="role[authCBInfo.fieldName]" :binary="true" :disabled="authCBInfo.enableForRole && !authCBInfo.enableForRole.includes(role.roleTypeID)" @change="authChanged(authCBInfo.fieldName, role[authCBInfo.fieldName])" />
-                            <label for="binary">{{ $t(authCBInfo.label) }}</label>
+                            <Checkbox :id="category.categoryName + '_' + index" v-model="role[authCBInfo.fieldName]" :binary="true" :disabled="authCBInfo.enableForRole && !authCBInfo.enableForRole.includes(role.roleTypeID)" @change="authChanged(authCBInfo.fieldName, role[authCBInfo.fieldName])" />
+                            <label :for="category.categoryName + '_' + index">{{ $t(authCBInfo.label) }}</label>
                         </div>
                     </div>
                 </template>
