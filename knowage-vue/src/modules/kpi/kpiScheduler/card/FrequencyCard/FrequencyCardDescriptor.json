@@ -1,4 +1,9 @@
 {
+    "advancedDayDropdown": {
+        "style": {
+            "width": "100px"
+        }
+    },
     "dayOptions": [
         {
             "name": "First",

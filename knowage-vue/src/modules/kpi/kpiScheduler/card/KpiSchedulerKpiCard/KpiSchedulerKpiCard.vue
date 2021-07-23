@@ -1,11 +1,11 @@
 <template>
     <Card>
         <template #content>
-            <div id="expired-schedule" v-if="showExpired && expired">
+            <div id="expired-schedule" v-if="showExpired && expired" data-test="expired-warning">
                 <p>{{ $t('kpi.kpiScheduler.expiredInterval') }}</p>
                 <i class="fa fa-times-circle" @click="showExpired = false"></i>
             </div>
-            <DataTable :value="kpisList" class="p-datatable-sm kn-table" dataKey="id" v-model:filters="filters" :globalFilterFields="kpiCardDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px">
+            <DataTable :value="kpisList" class="p-datatable-sm kn-table" dataKey="id" v-model:filters="filters" :globalFilterFields="kpiCardDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px" data-test="kpi-table">
                 <template #header>
                     <div class="table-header p-d-flex p-ai-center">
                         <span id="search-container" class="p-input-icon-left p-mr-3">
@@ -64,23 +64,24 @@
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import { iKpi } from '../../KpiScheduler'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
-import kpiCardDescriptor from './KpiCardDescriptor.json'
+import kpiCardDescriptor from './KpiSchedulerKpiCardDescriptor.json'
 
 export default defineComponent({
-    name: 'kpi-card',
+    name: 'kpi-scheduler-kpi-card',
     components: { Card, Column, DataTable, Dialog },
     props: { expired: { type: Boolean }, kpis: { type: Array }, allKpiList: { type: Array } },
     emits: ['touched', 'kpiAdded'],
     data() {
         return {
             kpiCardDescriptor,
-            kpisList: [] as any[],
+            kpisList: [] as iKpi[],
             filters: { global: [filterDefault] } as Object,
-            selectedKpiAssociations: [] as any[],
+            selectedKpiAssociations: [] as iKpi[],
             addKpiAssociationVisible: false,
             showExpired: true
         }
@@ -93,12 +94,12 @@ export default defineComponent({
     },
     methods: {
         loadKpis() {
-            this.kpisList = this.kpis as any[]
+            this.kpisList = this.kpis as iKpi[]
             // console.log('KpiCard KPI: ', this.kpisList)
         },
         loadSelectedKpiAssociations() {
             if (this.kpisList) {
-                this.selectedKpiAssociations = [...this.kpisList] as any[]
+                this.selectedKpiAssociations = [...this.kpisList] as iKpi[]
             }
         },
         deleteKpiAssociationConfirm(id: number) {
@@ -111,10 +112,11 @@ export default defineComponent({
         },
         async deleteKpiAssociation(id: number) {
             // console.log('ASSOCIATION ID FOR DELETE: ', id)
-            const index = this.kpisList.findIndex((kpi: any) => kpi.id === id)
+            const index = this.kpisList.findIndex((kpi: iKpi) => kpi.id === id)
             if (index > -1) {
                 this.kpisList.splice(index, 1)
             }
+            this.$emit('touched')
             this.loadSelectedKpiAssociations()
         },
         addKpiAssociations() {

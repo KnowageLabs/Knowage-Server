@@ -9,18 +9,18 @@
         </template>
         <template #content>
             <div class="p-d-flex p-flex-row">
-                <Dropdown id="valueCd" class="kn-material-input p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" optionLabel="valueCd" optionValue="valueCd" v-model="currentFilter.type.valueCd" :options="placeholderType" @change="currentFilter.value = null" />
+                <Dropdown id="valueCd" class="kn-material-input p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" optionLabel="valueCd" optionValue="valueCd" v-model="currentFilter.type.valueCd" :options="placeholderType" @change="resetValue" />
 
                 <div v-if="currentFilter.type.valueCd === 'FIXED_VALUE'">
                     <span class="p-float-label">
-                        <InputText class="kn-material-input" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" v-model.trim="currentFilter.value" />
+                        <InputText class="kn-material-input" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" v-model.trim="currentFilter.value" @input="$emit('touched')" />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.value') }} * </label>
                     </span>
                 </div>
 
                 <div v-else-if="currentFilter.type.valueCd === 'TEMPORAL_FUNCTIONS'">
                     <span class="p-float-label">
-                        <Dropdown id="valueCd" class="kn-material-input p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" optionLabel="valueCd" optionValue="valueCd" v-model="currentFilter.value" :options="temporalType" />
+                        <Dropdown id="valueCd" class="kn-material-input p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" optionLabel="valueCd" optionValue="valueCd" v-model="currentFilter.value" :options="temporalType" @change="$emit('touched')" />
                     </span>
                 </div>
 
@@ -36,6 +36,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iFilter, iLov } from '../../KpiScheduler'
 import AutoComplete from 'primevue/autocomplete'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
@@ -45,11 +46,12 @@ export default defineComponent({
     name: 'filters-card',
     components: { AutoComplete, Card, Dropdown },
     props: { filter: { type: Object }, placeholderType: { type: Array }, temporalType: { type: Array }, lovs: { type: Array, required: true } },
+    emits: ['touched'],
     data() {
         return {
             kpiSchedulerFilterDetailCardDescriptor,
-            currentFilter: {} as any,
-            filteredLovs: [] as any[]
+            currentFilter: {} as iFilter,
+            filteredLovs: [] as iLov[]
         }
     },
     watch: {
@@ -62,33 +64,38 @@ export default defineComponent({
     },
     methods: {
         loadFilter() {
-            this.currentFilter = this.filter as any[]
+            this.currentFilter = this.filter as iFilter
             if (this.currentFilter.type.valueCd === 'LOV') {
-                this.currentFilter.value = this.getLovValue(this.currentFilter.value)
+                this.currentFilter.value = this.getLovValue(this.currentFilter.value as string)
             }
         },
 
         searchCategories(event) {
             setTimeout(() => {
                 if (!event.query.trim().length) {
-                    this.filteredLovs = [...this.lovs] as any[]
+                    this.filteredLovs = [...this.lovs] as { id: number; name: string; label: string }[]
                 } else {
                     this.filteredLovs = this.lovs.filter((lov: any) => {
                         return lov.name.toLowerCase().startsWith(event.query.toLowerCase())
-                    })
+                    }) as iLov[]
                 }
             }, 250)
         },
-        setLovValue(value: any, filter: any) {
+        setLovValue(value: iLov, filter: iFilter) {
             // console.log('FIlter', filter)
             // console.log('value', value)
             // console.log('RETURNED VALUE', this.getLovValue(value.label))
             filter.value = this.getLovValue(value.label)
+            this.$emit('touched')
         },
         getLovValue(value: string) {
             // console.log('FC - Value ', value)
-            const tempLov = this.lovs.find((lov: any) => lov.label === value) as any
+            const tempLov = this.lovs.find((lov: any) => lov.label === value) as iLov
             return tempLov ? tempLov.name : ''
+        },
+        resetValue() {
+            this.currentFilter.value = null
+            this.$emit('touched')
         }
     }
 })

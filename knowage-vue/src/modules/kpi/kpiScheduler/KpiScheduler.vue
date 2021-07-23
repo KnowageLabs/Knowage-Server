@@ -36,16 +36,16 @@
                                     <Chip class="p-m-1" v-tooltip.top="slotProps.option.kpiNames" v-for="(kpiName, index) in slotProps.option.kpiNames.split(',')" :key="index" :label="kpiName"></Chip>
                                 </div>
                             </div>
-                            <Button icon="pi pi-copy" class="p-button-link" @click.stop="showForm(slotProps.option, true)" data-test="clone-button" />
-                            <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteScheduleConfirm(slotProps.option.id)" data-test="delete-button" />
-                            <Button :icon="playIcon(slotProps.option.jobStatus)" class="p-button-link" @click="startSchedule(slotProps.option)" data-test="clone-button" />
+                            <Button icon="pi pi-copy" class="p-button-link" @click.stop="showForm(slotProps.option, true)" />
+                            <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteScheduleConfirm(slotProps.option.id)" :data-test="'delete-button-' + slotProps.option.id" />
+                            <Button :icon="playIcon(slotProps.option.jobStatus)" class="p-button-link" @click="startSchedule(slotProps.option)" />
                         </div>
                     </template>
                 </Listbox>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <router-view @touched="touched = true" @closed="onClose" @inserted="pageReload" />
+                <router-view @touched="touched = true" @closed="touched = false" @inserted="loadPage" />
             </div>
         </div>
     </div>
@@ -53,6 +53,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iKpiSchedule } from './KpiScheduler'
 import axios from 'axios'
 import Chip from 'primevue/chip'
 import kpiSchedulerDescriptor from './KpiSchedulerDescriptor.json'
@@ -65,14 +66,15 @@ export default defineComponent({
     data() {
         return {
             kpiSchedulerDescriptor,
-            schedulerList: [],
+            schedulerList: [] as iKpiSchedule[],
             loading: false,
             touched: false
         }
     },
+
     async created() {
         await this.loadPage()
-        console.log('SCHEDULER LIST: ', this.schedulerList)
+        // console.log('SCHEDULER LIST: ', this.schedulerList)
     },
     methods: {
         async loadAllSchedules() {
@@ -81,12 +83,17 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listSchedulerKPI')
                 .then((response) => {
                     this.schedulerList = response.data
-                    this.schedulerList.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
+                    this.schedulerList.sort((a: iKpiSchedule, b: iKpiSchedule) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1))
                 })
                 .finally(() => (this.loading = false))
         },
         async loadPage() {
+            this.loading = true
             await this.loadAllSchedules()
+            // const id = schedulerId ? schedulerId : this.selectedScheduler.id
+            // this.selectedScheduler = this.schedulerList.find((scheduler: iScheduler) => scheduler.id === id)
+            this.touched = false
+            this.loading = false
         },
         playIcon(jobStatus: string) {
             // console.log('jobStatus: ', jobStatus)
@@ -94,7 +101,7 @@ export default defineComponent({
         },
         showForm(event: any, clone: boolean) {
             clone = clone ? true : false
-            console.log('SCHEDULE: ', event)
+            // console.log('SCHEDULE: ', event)
             const path = event.id ? `/kpi-scheduler/edit-kpi-schedule?id=${event.id}&clone=${clone}` : '/kpi-scheduler/new-kpi-schedule'
             if (!this.touched) {
                 this.$router.push(path)
@@ -110,9 +117,8 @@ export default defineComponent({
                 })
             }
         },
-        startSchedule(schedule: any) {
-            console.log('SCHEDULE: ', schedule)
-
+        startSchedule(schedule: iKpiSchedule) {
+            // console.log('SCHEDULE: ', schedule)
             const query = '?jobGroup=KPI_SCHEDULER_GROUP&triggerGroup=KPI_SCHEDULER_GROUP&jobName=' + schedule.id + '&triggerName=' + schedule.id
             const action = schedule.jobStatus.toUpperCase() === 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger'
             axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduler/' + action + query).then((response) => {
@@ -136,6 +142,7 @@ export default defineComponent({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
+                this.$router.push('/kpi-scheduler')
                 this.loadPage()
             })
         }

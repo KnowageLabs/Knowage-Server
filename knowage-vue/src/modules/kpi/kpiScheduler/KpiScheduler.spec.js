@@ -2,46 +2,32 @@ import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
+import Chip from 'primevue/chip'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import flushPromises from 'flush-promises'
 import Listbox from 'primevue/listbox'
-import MeasureDefinition from './MeasureDefinition.vue'
+import KpiScheduler from './KpiScheduler.vue'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 
 const mockedSchedulers = [
     {
         id: 1,
-        alias: 'd_profit',
-        rule: 'DEMO',
-        ruleId: 1,
-        ruleVersion: 1,
-        category: {
-            valueCd: 'SALES'
-        },
-        author: 'demo_admin'
+        name: 'PROFIT',
+        jobStatus: 'EXPIRED',
+        kpiNames: 'CUSTOMER PARTICIPATION STD, RETENTION RATE, RETENTION RATE STD'
     },
     {
         id: 2,
-        alias: 'd_profittability',
-        rule: 'BOJAN',
-        ruleId: 2,
-        ruleVersion: 1,
-        category: {
-            valueCd: 'SALES'
-        },
-        author: 'demo_admin'
+        name: 'MARKUP',
+        jobStatus: 'ACTIVE',
+        kpiNames: 'YEARLY TURNOVER, % OF EMPLOYEE TRAINED'
     },
     {
         id: 3,
-        alias: 'd_store_cost',
-        rule: 'BOJAN',
-        ruleId: 2,
-        ruleVersion: 2,
-        category: {
-            valueCd: 'SALES'
-        },
-        author: 'demo_admin'
+        name: 'ROTATION',
+        jobStatus: 'SUSPENDED',
+        kpiNames: 'OPERATING PROFIT MARGIN STD'
     }
 ]
 
@@ -63,7 +49,7 @@ const $router = {
 }
 
 const factory = () => {
-    return mount(MeasureDefinition, {
+    return mount(KpiScheduler, {
         global: {
             directives: {
                 tooltip() {}
@@ -71,12 +57,12 @@ const factory = () => {
             stubs: {
                 Button,
                 Card,
+                Chip,
                 FabButton,
-                InputText,
                 Listbox,
-                KnHint,
                 ProgressBar,
-                Toolbar
+                Toolbar,
+                routerView: true
             },
             mocks: {
                 $t: (msg) => msg,
@@ -92,54 +78,70 @@ afterEach(() => {
     jest.clearAllMocks()
 })
 
-describe('Measure Definition loading', () => {
+describe('KPI Scheduler loading', () => {
     it('show progress bar when loading', () => {
         const wrapper = factory()
 
         expect(wrapper.vm.loading).toBe(true)
         expect(wrapper.find('[data-test="progress-bar"]').exists()).toBe(true)
     })
-    it('the list shows an hint component when loaded empty', async () => {
-        axios.get.mockReturnValueOnce(Promise.resolve({ data: [] }))
+    it('the list shows "no data" label when loaded empty', async () => {
+        axios.get.mockReturnValueOnce(
+            Promise.resolve({
+                data: []
+            })
+        )
+
         const wrapper = factory()
 
         await flushPromises()
 
-        expect(wrapper.vm.measuresList.length).toBe(0)
-        expect(wrapper.find('[data-test="measure-hint"]').exists()).toBe(true)
+        expect(wrapper.vm.schedulerList.length).toBe(0)
+        expect(wrapper.html()).toContain('common.info.noDataFound')
+    })
+    it('the list shows kpi schedulers when loaded', async () => {
+        const wrapper = factory()
+
+        await flushPromises()
+
+        expect(wrapper.vm.schedulerList.length).toBe(3)
+        expect(wrapper.html()).toContain('PROFIT')
+        expect(wrapper.html()).toContain('MARKUP')
+        expect(wrapper.html()).toContain('ROTATION')
+        expect(wrapper.html()).toContain('YEARLY TURNOVER')
     })
 })
 
-describe('Measure Definition', () => {
+describe('KPI Scheduler list', () => {
     it('shows a prompt when user click on a rule delete button to delete it and deletes it', async () => {
         const wrapper = factory()
 
         await flushPromises()
 
-        expect(wrapper.vm.measuresList.length).toBe(3)
+        expect(wrapper.vm.schedulerList.length).toBe(3)
 
         await wrapper.find('[data-test="delete-button-1"]').trigger('click')
 
         expect($confirm.require).toHaveBeenCalledTimes(1)
 
-        await wrapper.vm.deleteMeasure(mockedMeasures[0])
+        await wrapper.vm.deleteSchedule(mockedSchedulers[0].id)
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/1/1/deleteRule')
+        expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/2/deleteKpiScheduler')
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
-    it('calls the correct route when clicking on the add button', async () => {
+    it("changes url when the when the '+' button is clicked", async () => {
         const wrapper = factory()
 
         await wrapper.find('[data-test="new-button"]').trigger('click')
 
-        expect($router.push).toHaveBeenCalledWith('/measure-definition/new-measure-definition')
+        expect($router.push).toHaveBeenCalledWith('/kpi-scheduler/new-kpi-schedule')
     })
-    it('calls the correct route when clicking on a row', async () => {
+    it('changes url with clicked row id when a row is clicked', async () => {
         const wrapper = factory()
 
         await flushPromises()
-        await wrapper.find('[data-test="measures-table"] tr td').trigger('click')
+        await wrapper.find('[data-test="list-item"]').trigger('click')
 
-        expect($router.push).toHaveBeenCalledWith('/measure-definition/edit?id=1&ruleVersion=1&clone=false')
+        expect($router.push).toHaveBeenCalledWith('/kpi-scheduler/edit-kpi-schedule?id=2&clone=false')
     })
 })

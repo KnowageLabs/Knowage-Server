@@ -10,7 +10,7 @@
             </template>
             <template #content>
                 <div class="p-d-flex p-flex-row p-flex-wrap">
-                    <KpiSchedulerFilterDetailCard class="p-m-2" v-for="filter in formatedFilters[kpiName]" :key="filter.id" :filter="filter" :placeholderType="placeholderType" :temporalType="temporalType" :lovs="lovs"></KpiSchedulerFilterDetailCard>
+                    <KpiSchedulerFilterDetailCard class="p-m-2" v-for="filter in formatedFilters[kpiName]" :key="filter.id" :filter="filter" :placeholderType="placeholderType" :temporalType="temporalType" :lovs="lovs" @touched="$emit('touched')"></KpiSchedulerFilterDetailCard>
                 </div>
             </template>
         </Card>
@@ -19,18 +19,20 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iFilter, iLov } from '../../KpiScheduler'
 import Card from 'primevue/card'
 import KpiSchedulerFilterDetailCard from './KpiSchedulerFilterDetailCard.vue'
 
 export default defineComponent({
-    name: 'filters-card',
+    name: 'kpi-scheduler-filters-card',
     components: { Card, KpiSchedulerFilterDetailCard },
     props: { formatedFilters: { type: Object, required: true }, placeholderType: { type: Array }, temporalType: { type: Array }, lovs: { type: Array, required: true } },
+    emits: ['touched'],
     data() {
         return {
-            filters: [] as any[],
-            kpiNames: [] as any[],
-            filteredLovs: [] as any[]
+            filters: [] as iFilter[],
+            kpiNames: [] as string[],
+            filteredLovs: [] as iLov[]
         }
     },
     watch: {

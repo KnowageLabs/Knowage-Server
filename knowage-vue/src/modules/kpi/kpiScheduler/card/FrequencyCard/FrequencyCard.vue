@@ -84,12 +84,12 @@
                         </div>
                         <div v-if="simpleMonth" class="p-mt-2">
                             <label for="parameterMonth" class="kn-material-input-label p-m-2"> {{ $t('kpi.kpiScheduler.every') }}</label>
-                            <Dropdown class="kn-material-input" optionLabel="name" optionValue="value" v-model="parameter" :options="parameterOptions" @change="updateCronSimpleMonthRepetition" />
+                            <Dropdown class="kn-material-input" optionLabel="name" optionValue="value" v-model="parameter" :options="parameterOptions" @change="updateCronSimpleMonthRepetition(true)" />
                             <label for="parameterMonth" class="kn-material-input-label p-m-2"> {{ $t('cron.months') }}</label>
                         </div>
                         <div v-else class="p-mt-2">
                             <label class="kn-material-input-label p-m-2"> {{ $t('cron.inMonth') }}</label>
-                            <MultiSelect class="kn-material-input" optionLabel="name" optionValue="value" v-model="selectedMonths" :options="parameterOptions" @change="updateCronAdvancedMonthRepetition" />
+                            <MultiSelect class="kn-material-input" optionLabel="name" optionValue="value" v-model="selectedMonths" :options="parameterOptions" @change="updateCronAdvancedMonthRepetition(true)" />
                         </div>
                     </div>
                     <div class="p-m-2">
@@ -98,11 +98,11 @@
                         <span>{{ $t('cron.simple') }}</span>
                         <div v-if="simpleDay" class="p-mt-2">
                             <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.theDay') }}</label>
-                            <Dropdown class="kn-material-input" optionLabel="name" optionValue="value" v-model="simpleDayParameter" :options="dayOptions" @change="updateCronSimpleDayRepetition" />
+                            <Dropdown class="kn-material-input" optionLabel="name" optionValue="value" v-model="simpleDayParameter" :options="dayOptions" @change="updateCronSimpleDayRepetition(true)" />
                         </div>
                         <div v-else class="p-mt-2">
                             <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.theWeek') }}</label>
-                            <Dropdown class="kn-material-input" optionLabel="name" optionValue="value" v-model="parameterDay" :options="frequencyCardDescriptor.dayOptions" @change="updateCronAdvancedDayRepetition" />
+                            <Dropdown class="kn-material-input" :style="frequencyCardDescriptor.advancedDayDropdown.style" optionLabel="name" optionValue="value" v-model="parameterDay" :options="frequencyCardDescriptor.dayOptions" @change="updateCronAdvancedDayRepetition(true)" />
                             <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.inDay') }}</label>
                             <MultiSelect class="kn-material-input" optionLabel="name" optionValue="value" v-model="selectedDays" :options="dayOptions" @change="updateCronAdvancedDayRepetition" />
                         </div>
@@ -119,6 +119,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 // import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+import { iFrequency } from '../../KpiScheduler'
 import Calendar from 'primevue/calendar'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
@@ -146,10 +147,11 @@ export default defineComponent({
             required: true
         }
     },
+    emits: ['touched', 'cronValid'],
     data() {
         return {
             frequencyCardDescriptor,
-            currentFrequency: {} as any,
+            currentFrequency: {} as iFrequency,
             startDate: null as Date | null,
             endDate: null as Date | null,
             startTime: null as Date | null,
@@ -171,23 +173,21 @@ export default defineComponent({
     },
     computed: {
         validDates() {
+            let valid = true
             const startDate = this.currentFrequency.startDate
             const now = new Date()
             const endDate = this.currentFrequency.endDate
 
-            if (!endDate) {
-                return true
+            if (endDate && endDate.valueOf() < now.valueOf()) {
+                valid = false
             }
 
-            if (endDate.valueOf() < now.valueOf()) {
-                return false
+            if (endDate && endDate.valueOf() < startDate.valueOf()) {
+                valid = false
             }
 
-            if (endDate.valueOf() < startDate.valueOf()) {
-                return false
-            }
-
-            return true
+            this.$emit('cronValid', valid)
+            return valid
         }
     },
     // validations() {
@@ -229,12 +229,12 @@ export default defineComponent({
                 this.fillParameterOptions(12)
                 delete this.currentFrequency.cron.parameter.months
                 this.parameter = 1 as any
-                this.updateCronSimpleMonthRepetition()
+                this.updateCronSimpleMonthRepetition(false)
             } else {
                 this.parameterOptions = this.frequencyCardDescriptor.monthOptions
                 delete this.currentFrequency.cron.parameter.numRepetition
                 this.parameter = null
-                this.updateCronAdvancedMonthRepetition()
+                this.updateCronAdvancedMonthRepetition(false)
             }
             // console.log('THIS PARAMETER EEE', this.parameter)
         },
@@ -243,11 +243,11 @@ export default defineComponent({
                 this.fillDayOptions()
                 delete this.currentFrequency.cron.parameter.weeks
                 delete this.currentFrequency.cron.parameter.days
-                this.updateCronSimpleDayRepetition()
+                this.updateCronSimpleDayRepetition(false)
             } else {
                 this.dayOptions = this.frequencyCardDescriptor.weeklyOptions
                 delete this.currentFrequency.cron.parameter.dayRepetition
-                this.updateCronAdvancedDayRepetition()
+                this.updateCronAdvancedDayRepetition(false)
             }
         }
     },
@@ -344,38 +344,53 @@ export default defineComponent({
                 }
             }
             console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
+            this.$emit('touched')
         },
         updateCronNumberOfRepetition() {
             console.log('PARAMETER AFTER CHANGE', this.parameter)
             console.log('CROOOOOOOOOOON', this.currentFrequency.cron)
             this.currentFrequency.cron = { type: this.currentFrequency.cron.type, parameter: { numRepetition: this.parameter } }
+            this.$emit('touched')
             console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },
         updateCronDays() {
             console.log('selectedDays AFTER CHANGE', this.selectedDays)
             this.currentFrequency.cron = { type: this.currentFrequency.cron.type, parameter: { days: this.selectedDays } }
+            this.$emit('touched')
             console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },
-        updateCronSimpleMonthRepetition() {
+        updateCronSimpleMonthRepetition(touched: boolean) {
             console.log('PARAMETER AFTER CHANGE', this.parameter)
             this.currentFrequency.cron.parameter.numRepetition = this.parameter
+            if (touched) {
+                this.$emit('touched')
+            }
             console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },
-        updateCronSimpleDayRepetition() {
+        updateCronSimpleDayRepetition(touched: boolean) {
             console.log('PARAMETER AFTER CHANGE', this.simpleDayParameter)
             this.currentFrequency.cron.parameter.dayRepetition = this.simpleDayParameter
+            if (touched) {
+                this.$emit('touched')
+            }
             console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },
-        updateCronAdvancedMonthRepetition() {
+        updateCronAdvancedMonthRepetition(touched: boolean) {
             console.log('PARAMETER AFTER CHANGE', this.selectedMonths)
             this.currentFrequency.cron.parameter.months = this.selectedMonths
+            if (touched) {
+                this.$emit('touched')
+            }
             console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },
-        updateCronAdvancedDayRepetition() {
+        updateCronAdvancedDayRepetition(touched: boolean) {
             console.log('PARAMETERS AFTER CHANGE', this.parameterDay)
             console.log('PARAMETERS AFTER CHANGE', this.selectedDays)
             this.currentFrequency.cron.parameter.weeks = this.parameterDay
             this.currentFrequency.cron.parameter.days = this.selectedDays
+            if (touched) {
+                this.$emit('touched')
+            }
             console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },
         setDate(type: string) {
@@ -392,6 +407,7 @@ export default defineComponent({
                 this.currentFrequency[type] = date + time
             }
 
+            this.$emit('touched')
             console.log('NEW DATE', this.currentFrequency[type])
             console.log('NEW FREQ', this.currentFrequency)
         }

@@ -194,7 +194,7 @@
     "kpi": {
         "kpiScheduler": {
             "addKpiAssociation": "Add KPI associations",
-            "dateError": "Start date must be before end date!",
+            "dateError": "Start date must be before end date. End date must be in future.",
             "deleteAndInsert": "Delete and Insert",
             "errorCount": "Error Count",
             "every": "Every",
@@ -203,7 +203,7 @@
             "expiredInterval": "The schedulation has expired",
             "filters": "Filters",
             "frequency": "Frequency",
-            "hint": "No kpi schedulers found",
+            "hint": "No kpi schedulers selected",
             "insertAndUpdate": "Insert and Update",
             "kpiName": "KPI Name",
             "logExecution": "Log Execution",

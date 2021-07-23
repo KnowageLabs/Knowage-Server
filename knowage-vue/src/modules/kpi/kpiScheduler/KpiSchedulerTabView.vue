@@ -14,7 +14,7 @@
                     <span>{{ $t('common.kpi') }}</span>
                 </template>
 
-                <KpiCard :expired="selectedSchedule.jobStatus === 'EXPIRED'" :kpis="selectedSchedule.kpis" :allKpiList="kpiList" @touched="setTouched" @kpiAdded="onKpiAdded($event)"></KpiCard>
+                <KpiSchedulerKpiCard :expired="selectedSchedule.jobStatus === 'EXPIRED'" :kpis="selectedSchedule.kpis" :allKpiList="kpiList" @touched="setTouched" @kpiAdded="onKpiAdded($event)"></KpiSchedulerKpiCard>
             </TabPanel>
 
             <TabPanel v-if="Object.keys(this.formatedFilters).length > 0">
@@ -22,7 +22,7 @@
                     <span>{{ $t('kpi.kpiScheduler.filters') }}</span>
                 </template>
 
-                <FiltersCard :formatedFilters="formatedFilters" :placeholderType="domainsKpiPlaceholderType" :temporalType="domainsKpiPlaceholderFunction" :lovs="lovs"></FiltersCard>
+                <KpiSchedulerFiltersCard :formatedFilters="formatedFilters" :placeholderType="domainsKpiPlaceholderType" :temporalType="domainsKpiPlaceholderFunction" :lovs="lovs" @touched="setTouched"></KpiSchedulerFiltersCard>
             </TabPanel>
 
             <TabPanel>
@@ -30,7 +30,7 @@
                     <span>{{ $t('kpi.kpiScheduler.frequency') }}</span>
                 </template>
 
-                <FrequencyCard :frequency="selectedSchedule.frequency"></FrequencyCard>
+                <FrequencyCard :frequency="selectedSchedule.frequency" @touched="setTouched" @cronValid="setCronValid($event)"></FrequencyCard>
             </TabPanel>
 
             <TabPanel>
@@ -38,14 +38,14 @@
                     <span>{{ $t('kpi.kpiScheduler.execute') }}</span>
                 </template>
 
-                <ExecuteCard :selectedSchedule="selectedSchedule"></ExecuteCard>
+                <KpiSchedulerExecuteCard :selectedSchedule="selectedSchedule" @touched="setTouched"></KpiSchedulerExecuteCard>
             </TabPanel>
         </TabView>
     </div>
 
     <KpiSchedulerSaveDialog v-if="saveDialogVisible" :schedulerName="selectedSchedule.name" @save="saveScheduler($event)" @close="saveDialogVisible = false"></KpiSchedulerSaveDialog>
 
-    <Dialog :style="kpiSchedulerTabViewDescriptor.errorDialog.style" :modal="true" :visible="errorDialogVisible" :header="$t('common.toast.' + this.operation + 'Title')" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
+    <Dialog :style="kpiSchedulerTabViewDescriptor.errorDialog.style" :modal="true" :visible="errorDialogVisible" :header="$t('common.toast.' + this.operation + 'Title')" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false" data-test="save-dialog">
         <p>{{ errorMessage }}</p>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="errorMessage = null"></Button>
@@ -57,10 +57,10 @@
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import Dialog from 'primevue/dialog'
-import ExecuteCard from './card/ExecuteCard/ExecuteCard.vue'
-import FiltersCard from './card/FiltersCard/FiltersCard.vue'
+import KpiSchedulerExecuteCard from './card/KpiSchedulerExecuteCard/KpiSchedulerExecuteCard.vue'
+import KpiSchedulerFiltersCard from './card/KpiSchedulerFiltersCard/KpiSchedulerFiltersCard.vue'
 import FrequencyCard from './card/FrequencyCard/FrequencyCard.vue'
-import KpiCard from './card/KpiCard/KpiCard.vue'
+import KpiSchedulerKpiCard from './card/KpiSchedulerKpiCard/KpiSchedulerKpiCard.vue'
 import KpiSchedulerSaveDialog from './KpiSchedulerSaveDialog.vue'
 import kpiSchedulerTabViewDescriptor from './KpiSchedulerTabViewDescriptor.json'
 import TabView from 'primevue/tabview'
@@ -68,12 +68,12 @@ import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'kpi-scheduler-tab-view',
-    components: { Dialog, ExecuteCard, FiltersCard, FrequencyCard, KpiCard, KpiSchedulerSaveDialog, TabView, TabPanel },
+    components: { Dialog, KpiSchedulerExecuteCard, KpiSchedulerFiltersCard, FrequencyCard, KpiSchedulerKpiCard, KpiSchedulerSaveDialog, TabView, TabPanel },
     props: {
         id: { type: String },
         clone: { type: String }
     },
-    emits: ['touched'],
+    emits: ['touched', 'inserted'],
     data() {
         return {
             kpiSchedulerTabViewDescriptor,
@@ -89,12 +89,13 @@ export default defineComponent({
             touched: false,
             saveDialogVisible: false,
             errorMessage: null as string | null,
-            operation: 'create'
+            operation: 'create',
+            validCron: true
         }
     },
     computed: {
         buttonDisabled(): Boolean {
-            return false
+            return !this.selectedSchedule.delta || !this.selectedSchedule.kpis || this.selectedSchedule.kpis.length == 0 || this.validCron == false || this.loading
         },
         errorDialogVisible(): Boolean {
             return this.errorMessage ? true : false
@@ -116,6 +117,7 @@ export default defineComponent({
             } else {
                 this.selectedSchedule = {
                     kpis: [],
+                    delta: true,
                     filters: [],
                     frequency: {
                         cron: { type: 'minute', parameter: { numRepetition: '1' } },
@@ -128,6 +130,7 @@ export default defineComponent({
             }
             if (this.clone === 'true') {
                 delete this.selectedSchedule.id
+                this.selectedSchedule.name = 'Copy of ' + this.selectedSchedule.name
             }
             await this.loadDomainsData()
             await this.loadLovs()
@@ -142,6 +145,7 @@ export default defineComponent({
             // console.log('LOVS', this.lovs)
             // console.log('ALL KPI LIST', this.kpiList)
             console.log('FORMATED FILTERS', this.formatedFilters)
+            console.log('SELECTED SCHEDULE', this.selectedSchedule)
         },
         async loadSchedule() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/loadSchedulerKPI`).then((response) => {
@@ -186,10 +190,12 @@ export default defineComponent({
             }
         },
         async onKpiAdded(kpiList: []) {
+            this.touched = true
             this.selectedSchedule = { ...this.selectedSchedule, kpis: kpiList }
             this.loadKpiIds()
             await this.loadFilters()
             this.addMissingPlaceholder()
+
             // console.log('TEST ON KPI ADDED', this.selectedSchedule.kpis)
         },
         loadKpiIds() {
@@ -341,6 +347,10 @@ export default defineComponent({
                 }
             })
 
+            if (this.schedulerInvalid()) {
+                return
+            }
+
             if (this.selectedSchedule.id) {
                 this.operation = 'update'
             }
@@ -353,15 +363,23 @@ export default defineComponent({
                         title: this.$t('common.toast.' + this.operation + 'Title'),
                         msg: this.$t('common.toast.success')
                     })
+                    this.$router.push(`/kpi-scheduler/edit-kpi-schedule?id=${response.data.id}&clone=false`)
+                    this.loadPage()
+                    this.$emit('inserted')
                 }
             })
 
             this.loading = false
+            console.log('aaaa SELECTED SCHEDULER AFTER SAVE', this.selectedSchedule)
         },
         getLovValue(value: string) {
             // console.log('FC - Value ', value)
             const tempLov = this.lovs.find((lov: any) => lov.name === value) as any
             return tempLov ? tempLov.label : ''
+        },
+        setCronValid(value: boolean) {
+            console.log('VALID CRON', value)
+            this.validCron = value
         },
         schedulerInvalid() {
             if (!this.selectedSchedule.delta) {
@@ -373,10 +391,10 @@ export default defineComponent({
                 return true
             }
 
-            // if (this.isValidCronFrequency.status == false) {
-            //     this.errorMessage = this.$t('kpi.kpiScheduler.missingExecuteValue')
-            //     return true
-            // }
+            if (this.validCron == false) {
+                this.errorMessage = this.$t('kpi.kpiScheduler.dateError')
+                return true
+            }
 
             return false
         }

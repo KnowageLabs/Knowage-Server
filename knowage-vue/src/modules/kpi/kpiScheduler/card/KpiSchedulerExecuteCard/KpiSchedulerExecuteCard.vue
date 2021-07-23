@@ -9,11 +9,11 @@
         </template>
         <template #content>
             <div class="p-field-radiobutton">
-                <RadioButton id="delta-with-update" name="delta" :value="true" v-model="schedule.delta" />
+                <RadioButton id="delta-with-update" name="delta" :value="true" v-model="schedule.delta" @click="$emit('touched')" />
                 <label for="delta-with-update">{{ $t('kpi.kpiScheduler.insertAndUpdate') }}</label>
             </div>
             <div class="p-field-radiobutton">
-                <RadioButton id="delta-with-delete" name="delta" :value="false" v-model="schedule.delta" />
+                <RadioButton id="delta-with-delete" name="delta" :value="false" v-model="schedule.delta" @click="$emit('touched')" />
                 <label for="delta-with-delete">{{ $t('kpi.kpiScheduler.deleteAndInsert') }}</label>
             </div>
         </template>
@@ -27,7 +27,7 @@
             </Toolbar>
         </template>
         <template #content>
-            <DataTable :value="executionList" :paginator="true" :rowsPerPageOptions="[10, 20, 50]" :rows="10" :loading="loading" class="p-datatable-sm kn-table p-m-1" dataKey="id" responsiveLayout="stack" breakpoint="960px" @rowClick="showForm($event.data, false)">
+            <DataTable :value="executionList" :paginator="true" :rowsPerPageOptions="[10, 20, 50]" :rows="10" :loading="loading" class="p-datatable-sm kn-table p-m-1" dataKey="id" responsiveLayout="stack" breakpoint="960px" @rowClick="showForm($event.data, false)" data-test="executions-table">
                 <template #loading>
                     {{ $t('common.info.dataLoading') }}
                 </template>
@@ -62,31 +62,31 @@
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
+import { iKpiSchedule, iExecution } from '../../KpiScheduler'
 import axios from 'axios'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import InputNumber from 'primevue/inputnumber'
 import RadioButton from 'primevue/radiobutton'
-import executeCardDescriptor from './ExecuteCardDescriptor.json'
+import executeCardDescriptor from './KpiSchedulerExecuteCardDescriptor.json'
 
 export default defineComponent({
-    name: 'execute-card',
+    name: 'kpi-scheduler-execute-card',
     components: { Card, Column, DataTable, InputNumber, RadioButton },
     props: {
         selectedSchedule: {
             type: Object
-        },
-        logExecutionList: {
-            type: Array
         }
     },
+    emits: ['touched'],
     data() {
         return {
             executeCardDescriptor,
-            schedule: {} as any,
-            executionList: [] as any[],
-            numberOfLogs: 10
+            schedule: {} as iKpiSchedule,
+            executionList: [] as iExecution[],
+            numberOfLogs: 10,
+            loading: false
         }
     },
     created() {
@@ -97,12 +97,17 @@ export default defineComponent({
     },
     methods: {
         loadSelectedSchedule() {
-            this.schedule = this.selectedSchedule as any
+            this.schedule = this.selectedSchedule as iKpiSchedule
             // console.log('SELECTED SCH. DELTA', this.schedule.delta)
         },
         loadLogExecutionList() {
-            if (this.selectedSchedule && this.selectedSchedule.id) {
-                axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.selectedSchedule.id}/${this.numberOfLogs}/logExecutionList`).then((response) => (this.executionList = response.data))
+            if (this.schedule && this.schedule.id) {
+                console.log('CALLEEEEEEEEEEEEEEEEED')
+                this.loading = true
+                axios
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.schedule.id}/${this.numberOfLogs}/logExecutionList`)
+                    .then((response) => (this.executionList = response.data))
+                    .finally(() => (this.loading = false))
             }
         },
         getFormatedDate(date: any) {
