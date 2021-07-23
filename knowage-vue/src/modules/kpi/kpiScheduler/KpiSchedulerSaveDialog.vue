@@ -8,7 +8,7 @@
                     v-model.trim="name"
                     max="40"
                     :class="{
-                        'p-invalid': name.length == 0 && nameDirty
+                        'p-invalid': name && name.length == 0 && nameDirty
                     }"
                     @blur="nameDirty = true"
                 />
@@ -39,7 +39,7 @@ export default defineComponent({
     data() {
         return {
             kpiSchedulerTabViewDescriptor,
-            name: null as String | null,
+            name: '' as String,
             nameDirty: false
         }
     },

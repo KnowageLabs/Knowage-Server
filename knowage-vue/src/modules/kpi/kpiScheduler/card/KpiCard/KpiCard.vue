@@ -1,9 +1,13 @@
 <template>
     <Card>
         <template #content>
+            <div id="expired-schedule" v-if="showExpired && expired">
+                <p>{{ $t('kpi.kpiScheduler.expiredInterval') }}</p>
+                <i class="fa fa-times-circle" @click="showExpired = false"></i>
+            </div>
             <DataTable :value="kpisList" class="p-datatable-sm kn-table" dataKey="id" v-model:filters="filters" :globalFilterFields="kpiCardDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px">
                 <template #header>
-                    <div class="table-header p-d-flex">
+                    <div class="table-header p-d-flex p-ai-center">
                         <span id="search-container" class="p-input-icon-left p-mr-3">
                             <i class="pi pi-search" />
                             <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
@@ -22,13 +26,13 @@
 
             <Dialog :style="kpiCardDescriptor.dialog.style" :visible="addKpiAssociationVisible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
                 <template #header>
-                    <Toolbar class="kn-toolbar kn-toolbar--primary">
+                    <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                         <template #left>
                             {{ $t('kpi.kpiScheduler.saveKpiAssociation') }}
                         </template>
                         <template #right>
-                            <Button class="kn-button kn-button--primary p-m-2" :label="$t('common.close')" @click="closeKpiAssociations"></Button>
-                            <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="addKpiAssociations"></Button>
+                            <Button class="p-button-sm kn-button kn-button--primary p-m-2" :label="$t('common.close')" @click="closeKpiAssociations"></Button>
+                            <Button class="p-button-sm kn-button kn-button--primary" :label="$t('common.save')" @click="addKpiAssociations"></Button>
                         </template>
                     </Toolbar>
                 </template>
@@ -51,10 +55,6 @@
                     </Column>
                     <Column class="kn-truncated" field="author" :header="$t('common.author')" key="author" :sortable="true"> </Column>
                 </DataTable>
-                <template #footer>
-                    <Button class="kn-button kn-button--primary" :label="$t('common.close')" @click="closeKpiAssociations"></Button>
-                    <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="addKpiAssociations"></Button>
-                </template>
             </Dialog>
         </template>
     </Card>
@@ -73,7 +73,7 @@ import kpiCardDescriptor from './KpiCardDescriptor.json'
 export default defineComponent({
     name: 'kpi-card',
     components: { Card, Column, DataTable, Dialog },
-    props: { kpis: { type: Array }, allKpiList: { type: Array } },
+    props: { expired: { type: Boolean }, kpis: { type: Array }, allKpiList: { type: Array } },
     emits: ['touched', 'kpiAdded'],
     data() {
         return {
@@ -81,7 +81,8 @@ export default defineComponent({
             kpisList: [] as any[],
             filters: { global: [filterDefault] } as Object,
             selectedKpiAssociations: [] as any[],
-            addKpiAssociationVisible: false
+            addKpiAssociationVisible: false,
+            showExpired: true
         }
     },
     created() {
@@ -148,5 +149,19 @@ export default defineComponent({
 
 #add-kpi-associations-button {
     flex: 0.2;
+    height: 2.3rem;
+}
+
+#expired-schedule {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rgba(251, 192, 45, 0.5);
+    background-color: #fef5dc;
+    p {
+        margin: 0.3rem;
+    }
 }
 </style>

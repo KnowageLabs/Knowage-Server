@@ -6,5 +6,10 @@
         "style": {
             "width": "40vw"
         }
+    },
+    "errorDialog": {
+        "style": {
+            "width": "60vw"
+        }
     }
 }

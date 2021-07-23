@@ -1,0 +1,31 @@
+{
+    "validations": {
+        "currentFrequency": [
+            {
+                "fieldName": "startDate",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "custom_date",
+                        "validator": {
+                            "type": "custom-date"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "endDate",
+                "validators": [
+                    {
+                        "key": "custom_date",
+                        "validator": {
+                            "type": "custom-date"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

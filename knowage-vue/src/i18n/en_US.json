@@ -194,17 +194,22 @@
     "kpi": {
         "kpiScheduler": {
             "addKpiAssociation": "Add KPI associations",
+            "dateError": "Start date must be before end date!",
             "deleteAndInsert": "Delete and Insert",
             "errorCount": "Error Count",
             "every": "Every",
             "execute": "Execute",
             "executionType": "Execution Type",
+            "expiredInterval": "The schedulation has expired",
             "filters": "Filters",
             "frequency": "Frequency",
-            "hint": "No KPI selected",
+            "hint": "No kpi schedulers found",
             "insertAndUpdate": "Insert and Update",
             "kpiName": "KPI Name",
             "logExecution": "Log Execution",
+            "missingExecuteValue": "Error:you must set \"EXECUTION TYPE\" in Execute tab",
+            "missingKpiList": "Error:you must set the Kpi list in KPI tab",
+            "missingRepeatInterval": "Error:you must set 'Repeat Interval' in Frequency tab",
             "newScheduler": "New Scheduler",
             "numberOfExecutions": "Number of Executions",
             "saveKpiAssociation": "Save new KPI",
@@ -212,7 +217,8 @@
             "successCount": "Success Count",
             "timeRun": "TimeRun",
             "title": "Scheduler List",
-            "totalCount": "Total Count"
+            "totalCount": "Total Count",
+            "wrongCronInterval": "Error: the schedulation set will never be executed"
         }
     },
     "language": {

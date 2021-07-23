@@ -101,7 +101,7 @@ export default defineComponent({
             // console.log('SELECTED SCH. DELTA', this.schedule.delta)
         },
         loadLogExecutionList() {
-            if (this.selectedSchedule) {
+            if (this.selectedSchedule && this.selectedSchedule.id) {
                 axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.selectedSchedule.id}/${this.numberOfLogs}/logExecutionList`).then((response) => (this.executionList = response.data))
             }
         },

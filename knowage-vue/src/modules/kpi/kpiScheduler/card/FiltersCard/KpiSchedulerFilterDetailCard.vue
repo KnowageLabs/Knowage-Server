@@ -9,24 +9,24 @@
         </template>
         <template #content>
             <div class="p-d-flex p-flex-row">
-                <Dropdown id="valueCd" class="kn-material-input p-mr-2" optionLabel="valueCd" optionValue="valueCd" v-model="currentFilter.type.valueCd" :options="placeholderType" @change="currentFilter.value = null" />
+                <Dropdown id="valueCd" class="kn-material-input p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" optionLabel="valueCd" optionValue="valueCd" v-model="currentFilter.type.valueCd" :options="placeholderType" @change="currentFilter.value = null" />
 
                 <div v-if="currentFilter.type.valueCd === 'FIXED_VALUE'">
                     <span class="p-float-label">
-                        <InputText class="kn-material-input" v-model.trim="currentFilter.value" />
+                        <InputText class="kn-material-input" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" v-model.trim="currentFilter.value" />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.value') }} * </label>
                     </span>
                 </div>
 
                 <div v-else-if="currentFilter.type.valueCd === 'TEMPORAL_FUNCTIONS'">
                     <span class="p-float-label">
-                        <Dropdown id="valueCd" class="kn-material-input p-mr-2" optionLabel="valueCd" optionValue="valueCd" v-model="currentFilter.value" :options="temporalType" />
+                        <Dropdown id="valueCd" class="kn-material-input p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" optionLabel="valueCd" optionValue="valueCd" v-model="currentFilter.value" :options="temporalType" />
                     </span>
                 </div>
 
                 <div v-else-if="currentFilter.type.valueCd === 'LOV'">
                     <span class="p-float-label">
-                        <AutoComplete class="p-inputtext-sm p-mr-2" v-model="currentFilter.value" :suggestions="filteredLovs" field="name" :forceSelection="true" @complete="searchCategories($event)" @item-select="setLovValue($event.value, filter)" />
+                        <AutoComplete class="p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" v-model="currentFilter.value" :suggestions="filteredLovs" field="name" :forceSelection="true" @complete="searchCategories($event)" @item-select="setLovValue($event.value, filter)" />
                     </span>
                 </div>
             </div>
@@ -39,6 +39,7 @@ import { defineComponent } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
+import kpiSchedulerFilterDetailCardDescriptor from './KpiSchedulerFilterDetailCardDescriptor.json'
 
 export default defineComponent({
     name: 'filters-card',
@@ -46,6 +47,7 @@ export default defineComponent({
     props: { filter: { type: Object }, placeholderType: { type: Array }, temporalType: { type: Array }, lovs: { type: Array, required: true } },
     data() {
         return {
+            kpiSchedulerFilterDetailCardDescriptor,
             currentFilter: {} as any,
             filteredLovs: [] as any[]
         }

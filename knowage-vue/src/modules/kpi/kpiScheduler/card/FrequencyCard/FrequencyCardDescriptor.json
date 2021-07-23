@@ -21,6 +21,11 @@
             "value": 5
         }
     ],
+    "intervalInput": {
+        "style": {
+            "min-width": "200px"
+        }
+    },
     "intervals": [
         {
             "name": "Per minute Execution",

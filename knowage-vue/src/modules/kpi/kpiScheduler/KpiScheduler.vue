@@ -32,8 +32,8 @@
                                     <i :class="kpiSchedulerDescriptor.iconTypesMap[slotProps.option.jobStatus]"></i>
                                     <span class="p-ml-2">{{ slotProps.option.name }}</span>
                                 </div>
-                                <div>
-                                    <Chip class="p-m-1" v-for="(kpiName, index) in slotProps.option.kpiNames.split(',')" :key="index" :label="kpiName"></Chip>
+                                <div class="p-d-flex p-flex-row kn-truncated">
+                                    <Chip class="p-m-1" v-tooltip.top="slotProps.option.kpiNames" v-for="(kpiName, index) in slotProps.option.kpiNames.split(',')" :key="index" :label="kpiName"></Chip>
                                 </div>
                             </div>
                             <Button icon="pi pi-copy" class="p-button-link" @click.stop="showForm(slotProps.option, true)" data-test="clone-button" />
@@ -45,7 +45,6 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <KnHint :title="'kpi.kpiScheduler.title'" :hint="'kpi.kpiScheduler.hint'" v-if="schedulerList.length === 0 && !loading" data-test="bm-hint"></KnHint>
                 <router-view @touched="touched = true" @closed="onClose" @inserted="pageReload" />
             </div>
         </div>
@@ -58,12 +57,11 @@ import axios from 'axios'
 import Chip from 'primevue/chip'
 import kpiSchedulerDescriptor from './KpiSchedulerDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
-import KnHint from '@/components/UI/KnHint.vue'
 import Listbox from 'primevue/listbox'
 
 export default defineComponent({
     name: 'kpi-scheduler',
-    components: { Chip, FabButton, KnHint, Listbox },
+    components: { Chip, FabButton, Listbox },
     data() {
         return {
             kpiSchedulerDescriptor,
@@ -73,7 +71,7 @@ export default defineComponent({
         }
     },
     async created() {
-        await this.loadAllSchedules()
+        await this.loadPage()
         console.log('SCHEDULER LIST: ', this.schedulerList)
     },
     methods: {

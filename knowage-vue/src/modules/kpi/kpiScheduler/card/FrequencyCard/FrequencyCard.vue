@@ -1,33 +1,67 @@
 <template>
     <Card>
         <template #content>
-            <div class="p-d-flex">
+            <div class="p-d-flex p-jc-around p-mt-2">
                 <label for="startDate" class="kn-material-input-label p-m-2"> {{ $t('cron.startDate') + ':' }}</label>
                 <span>
-                    <Calendar id="startDate" class="kn-material-input" v-model="startDate" :showIcon="true" :manualInput="false" @date-select="setDate('startDate')" />
+                    <Calendar
+                        id="startDate"
+                        class="kn-material-input"
+                        v-model="startDate"
+                        :class="{
+                            'p-invalid': !validDates
+                        }"
+                        :showIcon="true"
+                        :manualInput="false"
+                        @date-select="setDate('startDate')"
+                    />
+                    <div v-if="!validDates" class="p-error p-grid">
+                        <small class="p-col-12">
+                            {{ $t('kpi.kpiScheduler.dateError') }}
+                        </small>
+                    </div>
                 </span>
                 <label for="startTime" class="kn-material-input-label p-m-2"> {{ $t('cron.startTime') + ':' }}</label>
+
                 <span>
-                    <Calendar id="startTime" class="kn-material-input" v-model="startTime" :showIcon="true" :manualInput="false" :timeOnly="true" hourFormat="24" @date-select="setDate('startDate')" />
+                    <Calendar id="startTime" class="kn-material-input" v-model="startTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" @date-select="setDate('startDate')" />
                 </span>
             </div>
 
-            <div class="p-d-flex">
+            <div class="p-d-flex  p-jc-around  p-mt-2">
                 <label for="endDate" class="kn-material-input-label p-m-2"> {{ $t('cron.endDate') + ':' }}</label>
                 <span class="p-float-label">
-                    <Calendar id="endDate" class="kn-material-input" v-model="endDate" :showIcon="true" :manualInput="false" @date-select="setDate('endDate')" />
+                    <Calendar
+                        id="endDate"
+                        class="kn-material-input"
+                        v-model="endDate"
+                        :class="{
+                            'p-invalid': !validDates
+                        }"
+                        :showIcon="true"
+                        :manualInput="false"
+                        @date-select="setDate('endDate')"
+                    />
+                    <div v-if="!validDates" class="p-error p-grid">
+                        <small class="p-col-12">
+                            {{ $t('kpi.kpiScheduler.dateError') }}
+                        </small>
+                    </div>
                 </span>
+
                 <label for="endTime" class="kn-material-input-label p-m-2"> {{ $t('cron.endTime') + ':' }}</label>
                 <span>
-                    <Calendar id="endTime" class="kn-material-input" v-model="endTime" :showIcon="true" :manualInput="false" :timeOnly="true" hourFormat="24" @date-select="setDate('endDate')" />
+                    <Calendar id="endTime" class="kn-material-input" v-model="endTime" :manualInput="false" :timeOnly="true" hourFormat="24" :inline="true" @date-select="setDate('endDate')" />
                 </span>
             </div>
 
-            <div class="p-d-flex">
-                <label for="endDate" class="kn-material-input-label p-m-2"> {{ $t('cron.repeatInterval') + ':' }}</label>
-                <span>
-                    <Dropdown id="repeatInterval" class="kn-material-input" optionLabel="name" optionValue="value" v-model="repeatInterval" :options="frequencyCardDescriptor.intervals" @change="updateCronInterval" />
-                </span>
+            <div class="p-d-flex p-mt-4">
+                <div class="p-mr-4">
+                    <label for="endDate" class="kn-material-input-label p-m-2"> {{ $t('cron.repeatInterval') + ':' }}</label>
+                    <span>
+                        <Dropdown id="repeatInterval" class="kn-material-input" :style="frequencyCardDescriptor.intervalInput.style" optionLabel="name" optionValue="value" v-model="repeatInterval" :options="frequencyCardDescriptor.intervals" @change="updateCronInterval" />
+                    </span>
+                </div>
 
                 <div v-if="repeatInterval === 'minute' || repeatInterval === 'hour' || repeatInterval === 'day'">
                     <label for="parameter" class="kn-material-input-label p-m-2"> {{ $t('kpi.kpiScheduler.every') }}</label>
@@ -48,12 +82,12 @@
                             <InputSwitch class="p-mr-2" v-model="simpleMonth" />
                             <span>{{ $t('cron.simple') }}</span>
                         </div>
-                        <div v-if="simpleMonth">
+                        <div v-if="simpleMonth" class="p-mt-2">
                             <label for="parameterMonth" class="kn-material-input-label p-m-2"> {{ $t('kpi.kpiScheduler.every') }}</label>
                             <Dropdown class="kn-material-input" optionLabel="name" optionValue="value" v-model="parameter" :options="parameterOptions" @change="updateCronSimpleMonthRepetition" />
                             <label for="parameterMonth" class="kn-material-input-label p-m-2"> {{ $t('cron.months') }}</label>
                         </div>
-                        <div v-else>
+                        <div v-else class="p-mt-2">
                             <label class="kn-material-input-label p-m-2"> {{ $t('cron.inMonth') }}</label>
                             <MultiSelect class="kn-material-input" optionLabel="name" optionValue="value" v-model="selectedMonths" :options="parameterOptions" @change="updateCronAdvancedMonthRepetition" />
                         </div>
@@ -62,11 +96,11 @@
                         <span class="p-mr-2">{{ $t('cron.advanced') }}</span>
                         <InputSwitch class="p-mr-2" v-model="simpleDay" />
                         <span>{{ $t('cron.simple') }}</span>
-                        <div v-if="simpleDay">
+                        <div v-if="simpleDay" class="p-mt-2">
                             <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.theDay') }}</label>
                             <Dropdown class="kn-material-input" optionLabel="name" optionValue="value" v-model="simpleDayParameter" :options="dayOptions" @change="updateCronSimpleDayRepetition" />
                         </div>
-                        <div v-else>
+                        <div v-else class="p-mt-2">
                             <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.theWeek') }}</label>
                             <Dropdown class="kn-material-input" optionLabel="name" optionValue="value" v-model="parameterDay" :options="frequencyCardDescriptor.dayOptions" @change="updateCronAdvancedDayRepetition" />
                             <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.inDay') }}</label>
@@ -84,13 +118,17 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+// import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import Calendar from 'primevue/calendar'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import frequencyCardDescriptor from './FrequencyCardDescriptor.json'
+// import frequencyCarValidationdDescriptor from './FrequencyCardValidationDescriptor.json'
+// import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import MultiSelect from 'primevue/multiselect'
+import useValidate from '@vuelidate/core'
 
 export default defineComponent({
     name: 'frequency-card',
@@ -127,9 +165,42 @@ export default defineComponent({
             dayOptions: [] as any[],
             selectedDays: [] as any,
             selectedMonths: [] as any,
-            simpleDayParameter: null as Number | null
+            simpleDayParameter: null as Number | null,
+            v$: useValidate() as any
         }
     },
+    computed: {
+        validDates() {
+            const startDate = this.currentFrequency.startDate
+            const now = new Date()
+            const endDate = this.currentFrequency.endDate
+
+            if (!endDate) {
+                return true
+            }
+
+            if (endDate.valueOf() < now.valueOf()) {
+                return false
+            }
+
+            if (endDate.valueOf() < startDate.valueOf()) {
+                return false
+            }
+
+            return true
+        }
+    },
+    // validations() {
+    //     const customValidators: ICustomValidatorMap = {
+    //         'custom-date': () => {
+    //             return this.validDates()
+    //         }
+    //     }
+    //     const validationObject = {
+    //         currentFrequency: createValidations('currentFrequency', frequencyCarValidationdDescriptor.validations.currentFrequency, customValidators)
+    //     }
+    //     return validationObject
+    // },
     watch: {
         repeatInterval() {
             // console.log('REPEAT INTERVAL: ', this.repeatInterval)
@@ -182,22 +253,28 @@ export default defineComponent({
     },
     async created() {
         this.loadFrequency()
+        console.log('CURRENT FEQUENCY', this.currentFrequency)
+        console.log('v$', this.v$.frequency)
     },
     methods: {
         loadFrequency() {
             // console.log('FREQUENCY: ', this.frequency)
 
             this.currentFrequency = this.frequency as any
-            this.startDate = new Date(this.frequency.startDate)
-            this.endDate = new Date(this.frequency.endDate)
-            this.startTime = new Date(this.frequency.startDate)
-            this.endTime = new Date(this.frequency.endDate)
+
+            this.startDate = new Date(this.currentFrequency.startDate)
+            this.startTime = new Date(this.currentFrequency.startDate)
+
+            if (this.currentFrequency.endDate) {
+                this.endDate = new Date(this.currentFrequency.endDate)
+                this.endTime = new Date(this.currentFrequency.endDate)
+            }
 
             this.currentFrequency.startTime = ''
             this.currentFrequency.endTime = ''
 
             if (!this.currentFrequency.cron) {
-                return
+                this.currentFrequency.cron = { type: 'minute', parameter: { numRepetition: '1' } }
             }
 
             this.repeatInterval = this.currentFrequency.cron.type
@@ -229,8 +306,8 @@ export default defineComponent({
                 }
             }
 
-            // console.log('PARAMETER', this.parameter)
-            // console.log('repeatInterval', this.repeatInterval)
+            console.log('PARAMETER', this.parameter)
+            console.log('repeatInterval', this.repeatInterval)
         },
         fillParameterOptions(number: number) {
             this.parameterOptions = []
@@ -252,7 +329,7 @@ export default defineComponent({
         },
         updateCronInterval() {
             console.log('REPEAT INTERVAL', this.repeatInterval)
-            this.currentFrequency.cron.type = this.repeatInterval
+            this.currentFrequency.cron ? (this.currentFrequency.cron.type = this.repeatInterval) : (this.currentFrequency.cron = { type: this.repeatInterval })
             switch (this.repeatInterval) {
                 case 'minute':
                 case 'hour':
@@ -270,6 +347,7 @@ export default defineComponent({
         },
         updateCronNumberOfRepetition() {
             console.log('PARAMETER AFTER CHANGE', this.parameter)
+            console.log('CROOOOOOOOOOON', this.currentFrequency.cron)
             this.currentFrequency.cron = { type: this.currentFrequency.cron.type, parameter: { numRepetition: this.parameter } }
             console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },

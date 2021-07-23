@@ -5,6 +5,10 @@ const routes = [
         component: () => import('@/modules/kpi/kpiScheduler/KpiScheduler.vue'),
         children: [
             {
+                path: '',
+                component: () => import('@/modules/kpi/kpiScheduler/KpiSchedulerHint.vue')
+            },
+            {
                 path: 'new-kpi-schedule',
                 name: 'new-kpi-schedule',
                 component: () => import('@/modules/kpi/kpiScheduler/KpiSchedulerTabView.vue')
