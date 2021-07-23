@@ -18,7 +18,7 @@
                         />
                         <label for="name" class="kn-material-input-label">{{ $t('kpi.alert.name') }} * </label>
                     </span>
-                    <KnValidationMessages :vComp="vcomp.name" :additionalTranslateParams="{ fieldName: $t('kpi.alert.name') }"></KnValidationMessages>
+                    <KnValidationMessages class="p-mt-1" :vComp="vcomp.name" :additionalTranslateParams="{ fieldName: $t('kpi.alert.name') }"></KnValidationMessages>
                 </div>
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
@@ -37,7 +37,7 @@
                         />
                         <label for="listener" class="kn-material-input-label"> {{ $t('kpi.alert.kpiListener') }} * </label>
                     </span>
-                    <KnValidationMessages :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages>
+                    <KnValidationMessages class="p-mt-1" :vComp="vcomp.alertListener" :additionalTranslateParams="{ fieldName: $t('kpi.alert.kpiListener') }"></KnValidationMessages>
                 </div>
             </form>
         </template>
