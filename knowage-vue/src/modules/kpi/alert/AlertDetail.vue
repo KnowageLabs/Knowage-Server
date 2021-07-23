@@ -9,6 +9,9 @@
         <div class="p-col-9">
             <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.alert"></name-card>
         </div>
+        <div class="p-col-9">
+            <events-card :selectedAlert="selectedAlert" @valueChanged="updateAlert"></events-card>
+        </div>
     </div>
 </template>
 <script lang="ts">
@@ -19,9 +22,10 @@ import useValidate from '@vuelidate/core'
 import NameCard from './Cards/NameCard.vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import alertValidationDescriptor from './AlertValidationDescriptor.json'
+import EventsCard from './Cards/EventsCard.vue'
 export default defineComponent({
     name: 'alert-details',
-    components: { NameCard },
+    components: { NameCard, EventsCard },
     props: {
         id: {
             type: String,
@@ -70,11 +74,13 @@ export default defineComponent({
                 .finally(() => console.log('selected', this.selectedAlert))
         },
         updateAlert(event) {
+            console.log(event)
             this.selectedAlert[event.fieldName] = event.value
             //this.setDirty()
         },
         handleSubmit() {
             console.log(this.selectedAlert)
+            //console.log('>>>>>', this.v$)
         },
         async checkId() {
             if (this.id) {
@@ -82,6 +88,7 @@ export default defineComponent({
             } else {
                 this.selectedAlert = { id: null }
             }
+            this.v$.$reset()
         },
         closeTemplate() {
             this.$emit('close')
