@@ -6,7 +6,7 @@
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center">
-        <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.alert"></name-card>
+        <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert"></name-card>
         <events-card :selectedAlert="selectedAlert" @valueChanged="updateAlert"></events-card>
     </div>
 </template>
@@ -36,6 +36,8 @@ export default defineComponent({
     created() {
         if (this.id) {
             this.loadAlert()
+        } else {
+            this.selectedAlert = { id: null, singleExecution: false }
         }
         this.loadListener()
     },
@@ -49,7 +51,7 @@ export default defineComponent({
     },
     validations() {
         return {
-            alert: createValidations('alert', alertValidationDescriptor.validations.alert)
+            selectedAlert: createValidations('alert', alertValidationDescriptor.validations.alert)
         }
     },
     methods: {
