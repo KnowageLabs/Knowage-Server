@@ -182,12 +182,14 @@
     },
     "kpi": {
         "alert": {
+            "addAction": "Add new action",
             "execution": "Single Execution",
             "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "kpiListener": "Listener",
             "name": "Name",
             "noOfEvents": "Number of events before triggering actions",
-            "title": "Alert"
+            "title": "Alert",
+            "type": "Type"
         }
     },
     "language": {

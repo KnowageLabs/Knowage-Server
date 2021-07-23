@@ -9,6 +9,8 @@
         <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert"></name-card>
         <events-card :selectedAlert="selectedAlert" @valueChanged="updateAlert"></events-card>
     </div>
+    <Button @click="dialogVisiable = true">Add action</Button>
+    <add-action-dialog :dialogVisible="dialogVisiable" @close="dialogVisiable = false"></add-action-dialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -19,9 +21,10 @@ import NameCard from './Cards/NameCard.vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import alertValidationDescriptor from './AlertValidationDescriptor.json'
 import EventsCard from './Cards/EventsCard.vue'
+import AddActionDialog from './AddActionDialog.vue'
 export default defineComponent({
     name: 'alert-details',
-    components: { NameCard, EventsCard },
+    components: { NameCard, EventsCard, AddActionDialog },
     props: {
         id: {
             type: String,
@@ -47,6 +50,7 @@ export default defineComponent({
             listeners: [] as iListener[],
             jsonOptions: {},
             alertValidationDescriptor: alertValidationDescriptor,
+            dialogVisiable: false,
             v$: useValidate() as any
         }
     },
