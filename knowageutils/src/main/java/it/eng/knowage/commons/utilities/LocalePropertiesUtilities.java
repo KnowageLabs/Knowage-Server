@@ -16,16 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.spagobi.commons.utilities;
+/**
+ *
+ */
+package it.eng.knowage.commons.utilities;
 
 import java.util.Locale;
+import java.util.Locale.Builder;
 
 import org.apache.commons.lang3.StringUtils;
 
 import it.eng.spago.base.SessionContainer;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 
-public class GeneralUtilities {
+/**
+ * @author albnale
+ *
+ */
+public class LocalePropertiesUtilities {
 	public static String getScriptFromLocale(SessionContainer permSess) {
 		String toReturn = "";
 		String script = (String) permSess.getAttribute(SpagoBIConstants.AF_SCRIPT);
@@ -53,5 +61,10 @@ public class GeneralUtilities {
 		sb.append(country);
 
 		return sb.toString();
+	}
+
+	public static String getAngularPropertiesFileName(String currLanguage, String currScript, String currCountry, String separator) {
+		Locale locale = new Builder().setLanguage(currLanguage).setRegion(currCountry).setScript(currScript).build();
+		return "/js/lib/angular-localization/" + getAngularPropertiesFileName(locale, separator) + ".js";
 	}
 }
