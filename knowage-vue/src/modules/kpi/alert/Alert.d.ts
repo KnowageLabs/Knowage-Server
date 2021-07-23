@@ -1,5 +1,5 @@
 export interface iAlert {
-    id: number | null
+    id?: number | null
     name?: string
     jsonOptions?: string
     singleExecution?: boolean
@@ -9,7 +9,7 @@ export interface iAlert {
     frequency?: iFrequency
 }
 export interface iListener {
-    id: number
+    id?: number
     name?: string
     className?: string
     template?: string

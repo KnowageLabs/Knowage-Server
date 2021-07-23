@@ -1,43 +1,27 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0">
         <template #right>
-            <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" />
+            <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="handleSubmit" />
             <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="closeTemplate" />
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center">
         <div class="p-col-9">
-            <Card>
-                <template #content>
-                    <form class="p-fluid p-m-5">
-                        <div class="p-d-flex p-jc-between">
-                            <div class="p-field">
-                                <span class="p-float-label">
-                                    <InputText id="name" class="kn-material-input" type="text" v-model="selectedAlert.name" />
-                                    <label for="name" class="kn-material-input-label">{{ $t('kpi.alert.name') }} * </label>
-                                </span>
-                            </div>
-                            <div class="p-field">
-                                <span class="p-float-label">
-                                    <Dropdown id="listener" class="kn-material-input" v-model="selectedAlert.alertListener" :options="listeners" optionLabel="name" />
-                                    <label for="category" class="kn-material-input-label"> {{ $t('kpi.alert.kpiListener') }} * </label>
-                                </span>
-                            </div>
-                        </div>
-                    </form>
-                </template>
-            </Card>
+            <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.alert"></name-card>
         </div>
     </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iAlert, iListener } from './Alert'
-import Dropdown from 'primevue/dropdown'
 import axios from 'axios'
+import useValidate from '@vuelidate/core'
+import NameCard from './Cards/NameCard.vue'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import alertValidationDescriptor from './AlertValidationDescriptor.json'
 export default defineComponent({
     name: 'alert-details',
-    components: { Dropdown },
+    components: { NameCard },
     props: {
         id: {
             type: String,
@@ -59,7 +43,13 @@ export default defineComponent({
         return {
             selectedAlert: {} as iAlert,
             listeners: [] as iListener[],
-            selectedListener: {} as iListener
+            alertValidationDescriptor: alertValidationDescriptor,
+            v$: useValidate() as any
+        }
+    },
+    validations() {
+        return {
+            alert: createValidations('alert', alertValidationDescriptor.validations.alert)
         }
     },
     methods: {
@@ -78,6 +68,13 @@ export default defineComponent({
                     this.listeners = response.data
                 })
                 .finally(() => console.log('selected', this.selectedAlert))
+        },
+        updateAlert(event) {
+            this.selectedAlert[event.fieldName] = event.value
+            //this.setDirty()
+        },
+        handleSubmit() {
+            console.log(this.selectedAlert)
         },
         async checkId() {
             if (this.id) {
