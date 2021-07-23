@@ -1,8 +1,8 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0">
         <template #right>
-            <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="handleSubmit" />
-            <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="closeTemplate" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center">
