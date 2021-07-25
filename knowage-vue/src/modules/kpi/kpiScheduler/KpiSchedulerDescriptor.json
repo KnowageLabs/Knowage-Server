@@ -3,7 +3,6 @@
     "iconTypesMap": {
         "ACTIVE": "fas fa-check",
         "EXPIRED": "fas fa-exclamation-triangle",
-        "RUNNING": "fa fa-play",
         "SUSPENDED": "fa fa-exclamation"
     },
     "listBox": {

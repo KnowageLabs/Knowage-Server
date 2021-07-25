@@ -4,7 +4,7 @@ export interface iKpiSchedule {
     filters: [],
     delta: Boolean,
     kpiNames: string,
-    jobStatus: "ACTIVE" | "EXPIRED" | "RUNNING" | "SUSPENDED",
+    jobStatus: "ACTIVE" | "EXPIRED" | "SUSPENDED",
     frequency: iFrequency
 }
 

@@ -7,23 +7,23 @@
     "dayOptions": [
         {
             "name": "First",
-            "value": 1
+            "value": "1"
         },
         {
             "name": "Second",
-            "value": 2
+            "value": "2"
         },
         {
             "name": "Third",
-            "value": 3
+            "value": "3"
         },
         {
             "name": "Fourth",
-            "value": 4
+            "value": "4"
         },
         {
             "name": "Last",
-            "value": 5
+            "value": "5"
         }
     ],
     "intervalInput": {
@@ -56,51 +56,51 @@
     "monthOptions": [
         {
             "name": "JAN",
-            "value": 1
+            "value": "1"
         },
         {
             "name": "FEB",
-            "value": 2
+            "value": "2"
         },
         {
             "name": "MAR",
-            "value": 3
+            "value": "3"
         },
         {
             "name": "APR",
-            "value": 4
+            "value": "4"
         },
         {
             "name": "MAY",
-            "value": 5
+            "value": "5"
         },
         {
             "name": "JUN",
-            "value": 6
+            "value": "6"
         },
         {
             "name": "JUL",
-            "value": 7
+            "value": "7"
         },
         {
             "name": "AUG",
-            "value": 8
+            "value": "8"
         },
         {
             "name": "SEP",
-            "value": 9
+            "value": "9"
         },
         {
             "name": "OCT",
-            "value": 10
+            "value": "10"
         },
         {
             "name": "NOV",
-            "value": 11
+            "value": "11"
         },
         {
             "name": "DEC",
-            "value": 12
+            "value": "12"
         }
     ],
     "weeklyOptions": [

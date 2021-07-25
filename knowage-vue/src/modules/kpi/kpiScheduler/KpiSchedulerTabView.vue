@@ -30,7 +30,7 @@
                     <span>{{ $t('kpi.kpiScheduler.frequency') }}</span>
                 </template>
 
-                <FrequencyCard :frequency="selectedSchedule.frequency" @touched="setTouched" @cronValid="setCronValid($event)"></FrequencyCard>
+                <Cron :frequency="selectedSchedule.frequency" @touched="setTouched" @cronValid="setCronValid($event)"></Cron>
             </TabPanel>
 
             <TabPanel>
@@ -59,7 +59,7 @@ import axios from 'axios'
 import Dialog from 'primevue/dialog'
 import KpiSchedulerExecuteCard from './card/KpiSchedulerExecuteCard/KpiSchedulerExecuteCard.vue'
 import KpiSchedulerFiltersCard from './card/KpiSchedulerFiltersCard/KpiSchedulerFiltersCard.vue'
-import FrequencyCard from './card/FrequencyCard/FrequencyCard.vue'
+import Cron from '../cron/Cron.vue'
 import KpiSchedulerKpiCard from './card/KpiSchedulerKpiCard/KpiSchedulerKpiCard.vue'
 import KpiSchedulerSaveDialog from './KpiSchedulerSaveDialog.vue'
 import kpiSchedulerTabViewDescriptor from './KpiSchedulerTabViewDescriptor.json'
@@ -68,7 +68,7 @@ import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'kpi-scheduler-tab-view',
-    components: { Dialog, KpiSchedulerExecuteCard, KpiSchedulerFiltersCard, FrequencyCard, KpiSchedulerKpiCard, KpiSchedulerSaveDialog, TabView, TabPanel },
+    components: { Dialog, KpiSchedulerExecuteCard, KpiSchedulerFiltersCard, Cron, KpiSchedulerKpiCard, KpiSchedulerSaveDialog, TabView, TabPanel },
     props: {
         id: { type: String },
         clone: { type: String }
@@ -148,12 +148,10 @@ export default defineComponent({
             console.log('SELECTED SCHEDULE', this.selectedSchedule)
         },
         async loadSchedule() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/loadSchedulerKPI`).then((response) => {
-                this.selectedSchedule = response.data
-                if (this.selectedSchedule.frequency.cron) {
-                    this.selectedSchedule.frequency.cron = JSON.parse(this.selectedSchedule.frequency.cron)
-                }
-            })
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/loadSchedulerKPI`).then((response) => (this.selectedSchedule = response.data))
+            if (this.selectedSchedule.frequency.cron) {
+                this.selectedSchedule.frequency.cron = JSON.parse(this.selectedSchedule.frequency.cron)
+            }
             console.log('SELECTED SCHEDULE AFTER LOAD', this.selectedSchedule)
         },
         async loadDomainsData() {
@@ -363,9 +361,10 @@ export default defineComponent({
                         title: this.$t('common.toast.' + this.operation + 'Title'),
                         msg: this.$t('common.toast.success')
                     })
-                    this.$router.push(`/kpi-scheduler/edit-kpi-schedule?id=${response.data.id}&clone=false`)
-                    this.loadPage()
                     this.$emit('inserted')
+                    this.selectedSchedule.frequency.cron = JSON.parse(this.selectedSchedule.frequency.cron)
+                    this.$router.push(`/kpi-scheduler/edit-kpi-schedule?id=${response.data.id}&clone=false`)
+                    // this.loadPage()
                 }
             })
 

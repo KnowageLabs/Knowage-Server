@@ -92,17 +92,13 @@ export default defineComponent({
     created() {
         this.loadSelectedSchedule()
         this.loadLogExecutionList()
-        // console.log('SELECTED SCHEDULE', this.selectedSchedule)
-        // console.log('LOG EXEC LIST', this.logExecutionList)
     },
     methods: {
         loadSelectedSchedule() {
             this.schedule = this.selectedSchedule as iKpiSchedule
-            // console.log('SELECTED SCH. DELTA', this.schedule.delta)
         },
         loadLogExecutionList() {
             if (this.schedule && this.schedule.id) {
-                console.log('CALLEEEEEEEEEEEEEEEEED')
                 this.loading = true
                 axios
                     .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.schedule.id}/${this.numberOfLogs}/logExecutionList`)

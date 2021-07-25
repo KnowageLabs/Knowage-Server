@@ -49,7 +49,6 @@ export default defineComponent({
             if (this.filters) {
                 this.kpiNames = Object.keys(this.filters)
             }
-            console.log('FC - Loaded filters', this.filters)
         }
     }
 })

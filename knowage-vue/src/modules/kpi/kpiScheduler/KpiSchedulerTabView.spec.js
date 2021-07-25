@@ -73,7 +73,7 @@ const factory = () => {
                 Listbox,
                 KpiSchedulerKpiCard: true,
                 KpiSchedulerFiltersCard: true,
-                FrequencyCard: true,
+                Cron: true,
                 KpiSchedulerExecuteCard: true,
                 ProgressBar,
                 RadioButton,

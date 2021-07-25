@@ -59,7 +59,7 @@
                 <div class="p-mr-4">
                     <label for="endDate" class="kn-material-input-label p-m-2"> {{ $t('cron.repeatInterval') + ':' }}</label>
                     <span>
-                        <Dropdown id="repeatInterval" class="kn-material-input" :style="frequencyCardDescriptor.intervalInput.style" optionLabel="name" optionValue="value" v-model="repeatInterval" :options="frequencyCardDescriptor.intervals" @change="updateCronInterval" />
+                        <Dropdown id="repeatInterval" class="kn-material-input" :style="cronDescriptor.intervalInput.style" optionLabel="name" optionValue="value" v-model="repeatInterval" :options="cronDescriptor.intervals" @change="updateCronInterval" />
                     </span>
                 </div>
 
@@ -70,7 +70,7 @@
                     </span>
                 </div>
                 <div v-else-if="repeatInterval === 'week'" class="p-d-flex p-m-2">
-                    <div v-for="(day, index) in frequencyCardDescriptor.weeklyOptions" :key="index">
+                    <div v-for="(day, index) in cronDescriptor.weeklyOptions" :key="index">
                         <span class="p-m-1">{{ day.name + ':' }}</span>
                         <Checkbox :value="day.value" v-model="selectedDays" @click="updateCronDays" />
                     </div>
@@ -102,9 +102,9 @@
                         </div>
                         <div v-else class="p-mt-2">
                             <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.theWeek') }}</label>
-                            <Dropdown class="kn-material-input" :style="frequencyCardDescriptor.advancedDayDropdown.style" optionLabel="name" optionValue="value" v-model="parameterDay" :options="frequencyCardDescriptor.dayOptions" @change="updateCronAdvancedDayRepetition(true)" />
+                            <Dropdown class="kn-material-input" :style="cronDescriptor.advancedDayDropdown.style" optionLabel="name" optionValue="value" v-model="parameterDay" :options="cronDescriptor.dayOptions" @change="updateCronAdvancedDayRepetition(true)" />
                             <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.inDay') }}</label>
-                            <MultiSelect class="kn-material-input" optionLabel="name" optionValue="value" v-model="selectedDays" :options="dayOptions" @change="updateCronAdvancedDayRepetition" />
+                            <MultiSelect class="kn-material-input" optionLabel="name" optionValue="value" v-model="selectedDays" :options="cronDescriptor.weeklyOptions" @change="updateCronAdvancedDayRepetition" />
                         </div>
                     </div>
                 </div>
@@ -118,18 +118,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-// import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import { iFrequency } from '../../KpiScheduler'
 import Calendar from 'primevue/calendar'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
-import frequencyCardDescriptor from './FrequencyCardDescriptor.json'
-// import frequencyCarValidationdDescriptor from './FrequencyCardValidationDescriptor.json'
-// import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import cronDescriptor from './CronDescriptor.json'
 import MultiSelect from 'primevue/multiselect'
-import useValidate from '@vuelidate/core'
 
 export default defineComponent({
     name: 'frequency-card',
@@ -150,15 +145,14 @@ export default defineComponent({
     emits: ['touched', 'cronValid'],
     data() {
         return {
-            frequencyCardDescriptor,
-            currentFrequency: {} as iFrequency,
+            cronDescriptor,
+            currentFrequency: {} as any,
             startDate: null as Date | null,
             endDate: null as Date | null,
             startTime: null as Date | null,
             endTime: null as Date | null,
             repeatInterval: null as String | null,
             parameter: null as String | null,
-            parameterWeekly: [] as any[],
             parameterOptions: [] as any[],
             simpleMonth: true,
             simpleDay: true,
@@ -167,8 +161,7 @@ export default defineComponent({
             dayOptions: [] as any[],
             selectedDays: [] as any,
             selectedMonths: [] as any,
-            simpleDayParameter: null as Number | null,
-            v$: useValidate() as any
+            simpleDayParameter: null as Number | null
         }
     },
     computed: {
@@ -190,20 +183,8 @@ export default defineComponent({
             return valid
         }
     },
-    // validations() {
-    //     const customValidators: ICustomValidatorMap = {
-    //         'custom-date': () => {
-    //             return this.validDates()
-    //         }
-    //     }
-    //     const validationObject = {
-    //         currentFrequency: createValidations('currentFrequency', frequencyCarValidationdDescriptor.validations.currentFrequency, customValidators)
-    //     }
-    //     return validationObject
-    // },
     watch: {
         repeatInterval() {
-            // console.log('REPEAT INTERVAL: ', this.repeatInterval)
             switch (this.repeatInterval) {
                 case 'minute':
                     this.fillParameterOptions(60)
@@ -231,12 +212,11 @@ export default defineComponent({
                 this.parameter = 1 as any
                 this.updateCronSimpleMonthRepetition(false)
             } else {
-                this.parameterOptions = this.frequencyCardDescriptor.monthOptions
+                this.parameterOptions = this.cronDescriptor.monthOptions
                 delete this.currentFrequency.cron.parameter.numRepetition
                 this.parameter = null
                 this.updateCronAdvancedMonthRepetition(false)
             }
-            // console.log('THIS PARAMETER EEE', this.parameter)
         },
         simpleDay(value) {
             if (value) {
@@ -245,7 +225,7 @@ export default defineComponent({
                 delete this.currentFrequency.cron.parameter.days
                 this.updateCronSimpleDayRepetition(false)
             } else {
-                this.dayOptions = this.frequencyCardDescriptor.weeklyOptions
+                this.dayOptions = this.cronDescriptor.weeklyOptions
                 delete this.currentFrequency.cron.parameter.dayRepetition
                 this.updateCronAdvancedDayRepetition(false)
             }
@@ -253,13 +233,9 @@ export default defineComponent({
     },
     async created() {
         this.loadFrequency()
-        console.log('CURRENT FEQUENCY', this.currentFrequency)
-        console.log('v$', this.v$.frequency)
     },
     methods: {
         loadFrequency() {
-            // console.log('FREQUENCY: ', this.frequency)
-
             this.currentFrequency = this.frequency as any
 
             this.startDate = new Date(this.currentFrequency.startDate)
@@ -282,32 +258,29 @@ export default defineComponent({
                 case 'minute':
                 case 'hour':
                 case 'day':
-                    this.parameter = +this.currentFrequency.cron.parameter.numRepetition as any
+                    this.parameter = this.currentFrequency.cron.parameter.numRepetition as any
                     break
                 case 'week':
                     this.selectedDays = []
-                    this.currentFrequency.cron.parameter.days.forEach((day) => this.selectedDays.push(+day))
+                    this.currentFrequency.cron.parameter.days.forEach((day) => this.selectedDays.push(day))
 
                     break
                 case 'month': {
                     if (this.currentFrequency.cron.parameter.months) {
                         this.selectedMonths = []
                         this.currentFrequency.cron.parameter.months.forEach((month) => {
-                            this.selectedMonths.push(+month)
+                            this.selectedMonths.push(month)
                         })
                         this.simpleMonth = false
                     }
                     if (this.currentFrequency.cron.parameter.weeks) {
                         this.selectedDays = []
                         this.currentFrequency.cron.parameter.days.forEach((day) => this.selectedDays.push(+day))
-                        this.parameterDay = +this.currentFrequency.cron.parameter.weeks
+                        this.parameterDay = this.currentFrequency.cron.parameter.weeks
                         this.simpleDay = false
                     }
                 }
             }
-
-            console.log('PARAMETER', this.parameter)
-            console.log('repeatInterval', this.repeatInterval)
         },
         fillParameterOptions(number: number) {
             this.parameterOptions = []
@@ -328,7 +301,6 @@ export default defineComponent({
             }
         },
         updateCronInterval() {
-            console.log('REPEAT INTERVAL', this.repeatInterval)
             this.currentFrequency.cron ? (this.currentFrequency.cron.type = this.repeatInterval) : (this.currentFrequency.cron = { type: this.repeatInterval })
             switch (this.repeatInterval) {
                 case 'minute':
@@ -343,21 +315,15 @@ export default defineComponent({
                     this.currentFrequency.cron = { type: this.currentFrequency.cron.type, parameter: { numRepetition: this.parameter, dayRepetition: this.simpleDayParameter } }
                 }
             }
-            console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
             this.$emit('touched')
         },
         updateCronNumberOfRepetition() {
-            console.log('PARAMETER AFTER CHANGE', this.parameter)
-            console.log('CROOOOOOOOOOON', this.currentFrequency.cron)
             this.currentFrequency.cron = { type: this.currentFrequency.cron.type, parameter: { numRepetition: this.parameter } }
             this.$emit('touched')
-            console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },
         updateCronDays() {
-            console.log('selectedDays AFTER CHANGE', this.selectedDays)
             this.currentFrequency.cron = { type: this.currentFrequency.cron.type, parameter: { days: this.selectedDays } }
             this.$emit('touched')
-            console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },
         updateCronSimpleMonthRepetition(touched: boolean) {
             console.log('PARAMETER AFTER CHANGE', this.parameter)
@@ -365,38 +331,30 @@ export default defineComponent({
             if (touched) {
                 this.$emit('touched')
             }
-            console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },
         updateCronSimpleDayRepetition(touched: boolean) {
-            console.log('PARAMETER AFTER CHANGE', this.simpleDayParameter)
             this.currentFrequency.cron.parameter.dayRepetition = this.simpleDayParameter
             if (touched) {
                 this.$emit('touched')
             }
-            console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },
         updateCronAdvancedMonthRepetition(touched: boolean) {
-            console.log('PARAMETER AFTER CHANGE', this.selectedMonths)
             this.currentFrequency.cron.parameter.months = this.selectedMonths
             if (touched) {
                 this.$emit('touched')
             }
-            console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },
         updateCronAdvancedDayRepetition(touched: boolean) {
-            console.log('PARAMETERS AFTER CHANGE', this.parameterDay)
-            console.log('PARAMETERS AFTER CHANGE', this.selectedDays)
             this.currentFrequency.cron.parameter.weeks = this.parameterDay
             this.currentFrequency.cron.parameter.days = this.selectedDays
             if (touched) {
                 this.$emit('touched')
             }
-            console.log('CRON AFTER CHANGE', this.currentFrequency.cron)
         },
         setDate(type: string) {
             const date = type === 'startDate' ? this.startDate?.valueOf() : this.endDate?.valueOf()
             const tempTime = type === 'startDate' ? this.startTime : this.endTime
-            console.log('DATE', date)
+
             let time = 0
             if (tempTime) {
                 console.log('TIME', tempTime.getHours() * 60 * 60 * 1000, tempTime.getMinutes() * 60 * 1000)
@@ -408,8 +366,6 @@ export default defineComponent({
             }
 
             this.$emit('touched')
-            console.log('NEW DATE', this.currentFrequency[type])
-            console.log('NEW FREQ', this.currentFrequency)
         }
     }
 })

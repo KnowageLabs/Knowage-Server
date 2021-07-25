@@ -31,8 +31,8 @@
                             {{ $t('kpi.kpiScheduler.saveKpiAssociation') }}
                         </template>
                         <template #right>
-                            <Button class="p-button-sm kn-button kn-button--primary p-m-2" :label="$t('common.close')" @click="closeKpiAssociations"></Button>
-                            <Button class="p-button-sm kn-button kn-button--primary" :label="$t('common.save')" @click="addKpiAssociations"></Button>
+                            <Button class="kn-button p-button-text p-m-2" :label="$t('common.close')" @click="closeKpiAssociations"></Button>
+                            <Button class="kn-button p-button-text" :label="$t('common.save')" @click="addKpiAssociations"></Button>
                         </template>
                     </Toolbar>
                 </template>
@@ -44,6 +44,9 @@
                                 <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
                             </span>
                         </div>
+                    </template>
+                    <template #empty>
+                        {{ $t('common.info.noDataFound') }}
                     </template>
                     <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
                     <Column class="kn-truncated" field="name" :header="$t('kpi.kpiScheduler.kpiName')" key="name" :sortable="true"> </Column>
@@ -89,13 +92,10 @@ export default defineComponent({
     created() {
         this.loadKpis()
         this.loadSelectedKpiAssociations()
-        // console.log('KPI CARD ALL KPI: ', this.allKpiList)
-        // console.log('selectedKpiAssociations: ', this.selectedKpiAssociations)
     },
     methods: {
         loadKpis() {
             this.kpisList = this.kpis as iKpi[]
-            // console.log('KpiCard KPI: ', this.kpisList)
         },
         loadSelectedKpiAssociations() {
             if (this.kpisList) {
@@ -111,7 +111,6 @@ export default defineComponent({
             })
         },
         async deleteKpiAssociation(id: number) {
-            // console.log('ASSOCIATION ID FOR DELETE: ', id)
             const index = this.kpisList.findIndex((kpi: iKpi) => kpi.id === id)
             if (index > -1) {
                 this.kpisList.splice(index, 1)
@@ -120,7 +119,6 @@ export default defineComponent({
             this.loadSelectedKpiAssociations()
         },
         addKpiAssociations() {
-            // console.log('addKpiAssociation()')
             this.kpisList = [...this.selectedKpiAssociations]
             this.addKpiAssociationVisible = false
             this.$emit('kpiAdded', this.kpisList)

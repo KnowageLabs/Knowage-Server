@@ -38,7 +38,7 @@
                             </div>
                             <Button icon="pi pi-copy" class="p-button-link" @click.stop="showForm(slotProps.option, true)" />
                             <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteScheduleConfirm(slotProps.option.id)" :data-test="'delete-button-' + slotProps.option.id" />
-                            <Button :icon="playIcon(slotProps.option.jobStatus)" class="p-button-link" @click="startSchedule(slotProps.option)" />
+                            <Button v-if="slotProps.option.jobStatus.toUpperCase() !== 'EXPIRED'" :icon="playIcon(slotProps.option.jobStatus)" class="p-button-link" @click="startSchedule(slotProps.option)" />
                         </div>
                     </template>
                 </Listbox>
@@ -119,6 +119,9 @@ export default defineComponent({
         },
         startSchedule(schedule: iKpiSchedule) {
             // console.log('SCHEDULE: ', schedule)
+            if (schedule.jobStatus.toUpperCase() === 'EXPIRED') {
+                return
+            }
             const query = '?jobGroup=KPI_SCHEDULER_GROUP&triggerGroup=KPI_SCHEDULER_GROUP&jobName=' + schedule.id + '&triggerName=' + schedule.id
             const action = schedule.jobStatus.toUpperCase() === 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger'
             axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduler/' + action + query).then((response) => {

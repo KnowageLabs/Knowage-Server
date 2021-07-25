@@ -1,9 +1,11 @@
 import { mount } from '@vue/test-utils'
+import { createRouter, createWebHistory } from 'vue-router'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Chip from 'primevue/chip'
 import FabButton from '@/components/UI/KnFabButton.vue'
+import KpiSchedulerHint from './KpiSchedulerHint.vue'
 import flushPromises from 'flush-promises'
 import Listbox from 'primevue/listbox'
 import KpiScheduler from './KpiScheduler.vue'
@@ -34,6 +36,7 @@ const mockedSchedulers = [
 jest.mock('axios')
 
 axios.get.mockImplementation(() => Promise.resolve({ data: mockedSchedulers }))
+axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
 axios.delete.mockImplementation(() => Promise.resolve())
 
 const $confirm = {
@@ -48,12 +51,38 @@ const $router = {
     push: jest.fn()
 }
 
+const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+        {
+            path: '/',
+            component: KpiSchedulerHint
+        },
+        {
+            path: '/kpi-scheduler',
+            component: KpiSchedulerHint
+        },
+        {
+            path: '/kpi-scheduler/new-kpi-schedule',
+            name: 'new-kpi-schedule',
+            component: KpiSchedulerHint
+        },
+        {
+            path: '/kpi-scheduler/edit-kpi-schedule',
+            name: 'edit-kpi-schedule',
+            props: (route) => ({ id: route.query.id, ruleVersion: route.query.ruleVersion, clone: route.query.clone }),
+            component: KpiSchedulerHint
+        }
+    ]
+})
+
 const factory = () => {
     return mount(KpiScheduler, {
         global: {
             directives: {
                 tooltip() {}
             },
+            plugins: [router],
             stubs: {
                 Button,
                 Card,
@@ -61,8 +90,7 @@ const factory = () => {
                 FabButton,
                 Listbox,
                 ProgressBar,
-                Toolbar,
-                routerView: true
+                Toolbar
             },
             mocks: {
                 $t: (msg) => msg,
@@ -129,10 +157,25 @@ describe('KPI Scheduler list', () => {
         expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/2/deleteKpiScheduler')
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
+    it('shows an hint when no item is selected', async () => {
+        router.push('/kpi-scheduler')
+
+        await router.isReady()
+
+        await flushPromises()
+
+        const wrapper = factory()
+
+        expect(wrapper.html()).toContain('kpi.kpiScheduler.hint')
+    })
     it("changes url when the when the '+' button is clicked", async () => {
+        await router.isReady()
+
         const wrapper = factory()
 
         await wrapper.find('[data-test="new-button"]').trigger('click')
+
+        await flushPromises()
 
         expect($router.push).toHaveBeenCalledWith('/kpi-scheduler/new-kpi-schedule')
     })

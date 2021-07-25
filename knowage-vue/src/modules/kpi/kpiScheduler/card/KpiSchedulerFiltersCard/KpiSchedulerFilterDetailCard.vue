@@ -82,14 +82,10 @@ export default defineComponent({
             }, 250)
         },
         setLovValue(value: iLov, filter: iFilter) {
-            // console.log('FIlter', filter)
-            // console.log('value', value)
-            // console.log('RETURNED VALUE', this.getLovValue(value.label))
             filter.value = this.getLovValue(value.label)
             this.$emit('touched')
         },
         getLovValue(value: string) {
-            // console.log('FC - Value ', value)
             const tempLov = this.lovs.find((lov: any) => lov.label === value) as iLov
             return tempLov ? tempLov.name : ''
         },
