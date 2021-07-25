@@ -1,24 +1,27 @@
 export interface iKpiSchedule {
-    id: number,
+    id?: number,
     name: string,
-    filters: [],
+    filters: iFilter[],
     delta: Boolean,
-    kpiNames: string,
-    jobStatus: "ACTIVE" | "EXPIRED" | "SUSPENDED",
+    kpiNames?: string,
+    kpis?: iKpi[],
+    jobStatus?: "ACTIVE" | "EXPIRED" | "SUSPENDED",
     frequency: iFrequency
 }
 
 export interface iFrequency {
     cron: any,
     startDate: number | Date,
-    endDate: number | Date
-    startTime: string | Date
-    endTime: string | Date
+    endDate: number | Date | null
+    startTime: number | Date
+    endTime: string | Date | null
 }
 
 export interface iFilter {
+    kpiId: number,
     kpiName: string,
     kpiVersion: number,
+    placeholderName: string,
     value: string | null,
     type: { valueId: number, valueCd: string }
 }
@@ -38,6 +41,7 @@ export interface iKpi {
     id: number,
     name: string,
     author: string,
+    version: number,
     dateCreation: string
 }
 

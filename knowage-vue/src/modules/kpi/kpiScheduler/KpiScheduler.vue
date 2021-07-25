@@ -118,12 +118,11 @@ export default defineComponent({
             }
         },
         startSchedule(schedule: iKpiSchedule) {
-            // console.log('SCHEDULE: ', schedule)
-            if (schedule.jobStatus.toUpperCase() === 'EXPIRED') {
+            if (schedule.jobStatus?.toUpperCase() === 'EXPIRED') {
                 return
             }
             const query = '?jobGroup=KPI_SCHEDULER_GROUP&triggerGroup=KPI_SCHEDULER_GROUP&jobName=' + schedule.id + '&triggerName=' + schedule.id
-            const action = schedule.jobStatus.toUpperCase() === 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger'
+            const action = schedule.jobStatus?.toUpperCase() === 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger'
             axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduler/' + action + query).then((response) => {
                 console.log('RESPONSE: ', response)
                 if (response.data.resp === 'ok') {

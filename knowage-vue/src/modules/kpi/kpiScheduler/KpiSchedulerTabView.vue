@@ -8,7 +8,7 @@
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <div class="card" v-else>
-        <TabView class="tabview-custom">
+        <TabView class="tabview-custom" lazy>
             <TabPanel>
                 <template #header>
                     <span>{{ $t('common.kpi') }}</span>
@@ -55,6 +55,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iFilter, iKpiSchedule, iKpi, iLov } from './KpiScheduler'
 import axios from 'axios'
 import Dialog from 'primevue/dialog'
 import KpiSchedulerExecuteCard from './card/KpiSchedulerExecuteCard/KpiSchedulerExecuteCard.vue'
@@ -77,13 +78,13 @@ export default defineComponent({
     data() {
         return {
             kpiSchedulerTabViewDescriptor,
-            selectedSchedule: {} as any,
+            selectedSchedule: {} as iKpiSchedule,
             domainsKpiPlaceholderType: [] as any[],
             domainsKpiPlaceholderFunction: [] as any[],
-            lovs: [] as any[],
-            kpiList: [] as any[],
+            lovs: [] as iLov[],
+            kpiList: [] as iKpi[],
             kpiIds: [] as any[],
-            filters: [] as any[],
+            filters: [] as iFilter[],
             formatedFilters: {} as any,
             loading: false,
             touched: false,
@@ -117,10 +118,11 @@ export default defineComponent({
             } else {
                 this.selectedSchedule = {
                     kpis: [],
+                    name: '',
                     delta: true,
                     filters: [],
                     frequency: {
-                        cron: { type: 'minute', parameter: { numRepetition: '1' } },
+                        cron: { type: 'minute', parameter: { numRepetition: 1 } },
                         startDate: new Date().valueOf(),
                         endDate: null,
                         startTime: new Date().valueOf(),
@@ -139,20 +141,12 @@ export default defineComponent({
             await this.loadFilters()
             this.addMissingPlaceholder()
             this.loading = false
-
-            // console.log('KPI_PLACEHOLDER_TYPE', this.domainsKpiPlaceholderType)
-            // console.log('KPI_PLACEHOLDER_FUNC', this.domainsKpiPlaceholderFunction)
-            // console.log('LOVS', this.lovs)
-            // console.log('ALL KPI LIST', this.kpiList)
-            console.log('FORMATED FILTERS', this.formatedFilters)
-            console.log('SELECTED SCHEDULE', this.selectedSchedule)
         },
         async loadSchedule() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/loadSchedulerKPI`).then((response) => (this.selectedSchedule = response.data))
             if (this.selectedSchedule.frequency.cron) {
                 this.selectedSchedule.frequency.cron = JSON.parse(this.selectedSchedule.frequency.cron)
             }
-            console.log('SELECTED SCHEDULE AFTER LOAD', this.selectedSchedule)
         },
         async loadDomainsData() {
             await this.loadDomainsByCode('KPI_PLACEHOLDER_TYPE').then((response) => (this.domainsKpiPlaceholderType = response.data))
@@ -193,133 +187,87 @@ export default defineComponent({
             this.loadKpiIds()
             await this.loadFilters()
             this.addMissingPlaceholder()
-
-            // console.log('TEST ON KPI ADDED', this.selectedSchedule.kpis)
         },
         loadKpiIds() {
             this.kpiIds = []
-            this.selectedSchedule?.kpis.forEach((kpi: any) => this.kpiIds.push({ id: kpi.id, version: kpi.version }))
-            console.log('LOADED KPI IDS', this.kpiIds)
+            if (this.selectedSchedule.kpis) {
+                this.selectedSchedule?.kpis.forEach((kpi: iKpi) => this.kpiIds.push({ id: kpi.id, version: kpi.version }))
+            }
         },
         async loadFilters() {
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listPlaceholderByKpi', this.kpiIds).then((response) => (this.filters = response.data))
-            console.log('FILTERS', this.filters)
         },
         addMissingPlaceholder() {
-            // console.log('CALLLED addMissingPlaceholder')
             this.formatedFilters = []
             const keys = Object.keys(this.filters)
             for (let i = 0; i < keys.length; i++) {
                 if (this.selectedSchedule.filters.length > 0) {
-                    const tempPlaceholders = [] as any[]
-                    // console.log('SCHEDULER FILTERS', this.selectedSchedule.filters)
-                    // Check if returned filter is in selected schedule filters
+                    const tempPlaceholders = [] as iFilter[]
                     for (let id in this.selectedSchedule.filters) {
-                        // console.log(this.scheduler.filters[id].kpiName + ' == ' + keys[i])
-
-                        // If found push to temp placeholders
-                        if (this.selectedSchedule.filters[id].kpiName == keys[i]) {
-                            // console.log('FOUND!!!!')
+                        if ((this.selectedSchedule.filters[id] as iFilter).kpiName == keys[i]) {
                             tempPlaceholders.push(this.selectedSchedule.filters[id])
                         }
                     }
 
-                    // Parse from filter
                     const array = JSON.parse(this.filters[keys[i]])
-                    // console.log('DDD - ARRRAY', array)
-                    // console.log('DDD - TEMP PLACEHOLDERS', tempPlaceholders)
+                    let temp = null as iFilter | null
 
-                    let temp = null as any
-
-                    // Remove filters from scheduler that were not returned from filters API
                     for (let tempPLaceholder in tempPlaceholders) {
                         for (let i = 0; i < array.length; i++) {
-                            // console.log('MMM -' + Object.keys(array[i])[0] + '==' + tempPlaceholders[tempPLaceholder].placeholderName + '=')
                             if (Object.keys(array[i])[0] == tempPlaceholders[tempPLaceholder].placeholderName) {
-                                // console.log('MMM - FOUND')
-                                temp = tempPLaceholder
+                                temp = tempPLaceholder as any
                                 break
                             }
                         }
-                        // console.log('TEMP', temp)
                         if (temp == null) this.selectedSchedule.filters.splice(this.indexInList(tempPlaceholders[tempPLaceholder].placeholderName, this.selectedSchedule.filters, 'placeholderName'), 1)
                     }
 
-                    // Check if filters exist in scheduler
-                    console.log('MMM - START')
                     for (let j = 0; j < array.length; j++) {
                         temp = null
                         for (let tempPLaceholder in tempPlaceholders) {
-                            // console.log('ARRAY ELEMENT KEYS: ', Object.keys(array[j]))
-                            // console.log('TEMP PLACEHOLDER: ', tempPLaceholder)
-                            // console.log(Object.keys(array[j])[0] + ' === ' + tempPlaceholders[tempPLaceholder].placeholderName)
                             if (Object.keys(array[j])[0] == tempPlaceholders[tempPLaceholder].placeholderName) {
-                                // console.log('MMM - FOUND!!!')
                                 temp = tempPlaceholders[tempPLaceholder]
                                 break
                             }
                         }
 
-                        // console.log('MMM - TEMP BEFORE PUSH', temp)
-                        // Add new filter to scheduler
                         if (temp == null) {
-                            const objType = { valueCd: 'FIXED_VALUE', valueId: 355 }
+                            const filter = this.createNewFilter(keys[i], array[j])
 
-                            const obj = {} as any
-                            obj.kpiName = keys[i]
-                            obj.placeholderName = Object.keys(array[j])[0]
-                            obj.value = array[j][obj.placeholderName]
-                            obj.type = objType
-                            const index2 = this.indexInList(keys[i], this.kpiList, 'name')
-                            obj.kpiId = (this.kpiList[index2] as any).id
-                            obj.kpiVersion = (this.kpiList[index2] as any).version
-
-                            this.selectedSchedule.filters.push(obj)
-
-                            // TODO izdvoji u metodu
-                            if (this.formatedFilters[obj.kpiName]) {
-                                this.formatedFilters[obj.kpiName].push(obj)
-                            } else {
-                                this.formatedFilters[obj.kpiName] = [obj]
-                            }
+                            this.selectedSchedule.filters.push(filter)
+                            this.addToFormatedFilters(filter)
                         } else {
-                            // console.log('BBB - TEMP', temp)
-                            if (this.formatedFilters[temp.kpiName]) {
-                                this.formatedFilters[temp.kpiName].push(temp)
-                            } else {
-                                this.formatedFilters[temp.kpiName] = [temp]
-                            }
+                            this.addToFormatedFilters(temp)
                         }
                     }
                 } else {
-                    // Scheduler doesn't have filters, add new ones
-                    // console.log('UUU - Start')
                     this.selectedSchedule['filters'] = []
-                    const objType = { valueCd: 'FIXED_VALUE', valueId: 355 }
                     const array = JSON.parse(this.filters[keys[i]])
-                    //  console.log('UUU - Array', array)
                     for (let k = 0; k < array.length; k++) {
-                        const obj = {} as any
-                        obj.kpiName = keys[i]
-                        obj.placeholderName = Object.keys(array[k])[0]
-                        obj.value = array[k][obj.placeholderName]
-                        obj.type = objType
-                        const index2 = this.indexInList(keys[i], this.kpiList, 'name')
-                        obj.kpiId = (this.kpiList[index2] as any).id
-                        obj.kpiVersion = (this.kpiList[index2] as any).version
+                        const filter = this.createNewFilter(keys[i], array[k])
 
-                        this.selectedSchedule.filters.push(obj)
-
-                        if (this.formatedFilters[obj.kpiName]) {
-                            this.formatedFilters[obj.kpiName].push(obj)
-                        } else {
-                            this.formatedFilters[obj.kpiName] = [obj]
-                        }
+                        this.selectedSchedule.filters.push(filter)
+                        this.addToFormatedFilters(filter)
                     }
                 }
             }
-            console.log('SCHEDULE AFTER FILTERS MAPPING', this.selectedSchedule)
-            console.log('FORMATED FILTERS FILTERS MAPPING', this.formatedFilters)
+        },
+        createNewFilter(kpiName: string, placeholder: iFilter) {
+            const filter = { kpiName: kpiName, placeholderName: Object.keys(placeholder)[0], type: { valueCd: 'FIXED_VALUE', valueId: 355 } } as iFilter
+            filter.value = placeholder[filter.placeholderName]
+
+            const index = this.indexInList(kpiName, this.kpiList, 'name')
+            filter.kpiId = (this.kpiList[index] as iKpi).id
+            filter.kpiVersion = (this.kpiList[index] as iKpi).version
+
+            return filter
+        },
+        addToFormatedFilters(filter: iFilter) {
+            if (this.formatedFilters[filter.kpiName]) {
+                this.formatedFilters[filter.kpiName].push(filter)
+            } else {
+                this.formatedFilters[filter.kpiName] = [filter]
+            }
         },
         indexInList(item, list, param) {
             for (let i = 0; i < list.length; i++) {
@@ -333,15 +281,13 @@ export default defineComponent({
         async saveScheduler(schedulerName: string) {
             this.saveDialogVisible = false
             this.loading = true
+
             this.selectedSchedule.name = schedulerName
-            console.log('SELECTED SCHEDULE IN SAVE', this.selectedSchedule)
-            // console.log('JSON STRINGIGY', JSON.stringify(this.selectedSchedule.frequency.cron))
             this.selectedSchedule.frequency.cron = JSON.stringify(this.selectedSchedule.frequency.cron)
 
-            this.selectedSchedule.filters.forEach((filter: any) => {
-                console.log('MAIN filter', filter)
+            this.selectedSchedule.filters.forEach((filter: iFilter) => {
                 if (filter.type.valueCd === 'LOV') {
-                    filter.value = this.getLovValue(filter.value)
+                    filter.value = this.getLovValue(filter.value as string)
                 }
             })
 
@@ -364,20 +310,16 @@ export default defineComponent({
                     this.$emit('inserted')
                     this.selectedSchedule.frequency.cron = JSON.parse(this.selectedSchedule.frequency.cron)
                     this.$router.push(`/kpi-scheduler/edit-kpi-schedule?id=${response.data.id}&clone=false`)
-                    // this.loadPage()
                 }
             })
 
             this.loading = false
-            console.log('aaaa SELECTED SCHEDULER AFTER SAVE', this.selectedSchedule)
         },
         getLovValue(value: string) {
-            // console.log('FC - Value ', value)
-            const tempLov = this.lovs.find((lov: any) => lov.name === value) as any
+            const tempLov = this.lovs.find((lov: iLov) => lov.name === value)
             return tempLov ? tempLov.label : ''
         },
         setCronValid(value: boolean) {
-            console.log('VALID CRON', value)
             this.validCron = value
         },
         schedulerInvalid() {
