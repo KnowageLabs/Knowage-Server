@@ -14,7 +14,7 @@
                     <span>{{ $t('common.kpi') }}</span>
                 </template>
 
-                <KpiSchedulerKpiCard :expired="selectedSchedule.jobStatus === 'EXPIRED'" :kpis="selectedSchedule.kpis" :allKpiList="kpiList" @touched="setTouched" @kpiAdded="onKpiAdded($event)"></KpiSchedulerKpiCard>
+                <KpiSchedulerKpiCard :expired="selectedSchedule.jobStatus === 'EXPIRED'" :kpis="selectedSchedule.kpis" :allKpiList="kpiList" @touched="setTouched" @kpiAdded="onKpiAdded($event)" @kpiDeleted="onKpiDeleted"></KpiSchedulerKpiCard>
             </TabPanel>
 
             <TabPanel :disabled="Object.keys(this.formatedFilters).length === 0">
@@ -186,6 +186,13 @@ export default defineComponent({
         async onKpiAdded(kpiList: []) {
             this.touched = true
             this.selectedSchedule = { ...this.selectedSchedule, kpis: kpiList }
+            await this.loadFormatedFilters()
+        },
+        async onKpiDeleted() {
+            this.touched = true
+            await this.loadFormatedFilters()
+        },
+        async loadFormatedFilters() {
             this.loadKpiIds()
             await this.loadFilters()
             this.addMissingPlaceholder()
@@ -205,43 +212,14 @@ export default defineComponent({
             for (let i = 0; i < keys.length; i++) {
                 if (this.selectedSchedule.filters.length > 0) {
                     const tempPlaceholders = [] as iFilter[]
-                    for (let id in this.selectedSchedule.filters) {
-                        if ((this.selectedSchedule.filters[id] as iFilter).kpiName == keys[i]) {
-                            tempPlaceholders.push(this.selectedSchedule.filters[id])
-                        }
-                    }
+
+                    this.getPlaceholders(tempPlaceholders, keys, i)
 
                     const array = JSON.parse(this.filters[keys[i]])
-                    let temp = null as iFilter | null
 
-                    for (let tempPLaceholder in tempPlaceholders) {
-                        for (let i = 0; i < array.length; i++) {
-                            if (Object.keys(array[i])[0] == tempPlaceholders[tempPLaceholder].placeholderName) {
-                                temp = tempPLaceholder as any
-                                break
-                            }
-                        }
-                        if (temp == null) this.selectedSchedule.filters.splice(this.indexInList(tempPlaceholders[tempPLaceholder].placeholderName, this.selectedSchedule.filters, 'placeholderName'), 1)
-                    }
+                    this.removeUnusedPlaceholders(tempPlaceholders, array)
 
-                    for (let j = 0; j < array.length; j++) {
-                        temp = null
-                        for (let tempPLaceholder in tempPlaceholders) {
-                            if (Object.keys(array[j])[0] == tempPlaceholders[tempPLaceholder].placeholderName) {
-                                temp = tempPlaceholders[tempPLaceholder]
-                                break
-                            }
-                        }
-
-                        if (temp == null) {
-                            const filter = this.createNewFilter(keys[i], array[j])
-
-                            this.selectedSchedule.filters.push(filter)
-                            this.addToFormatedFilters(filter)
-                        } else {
-                            this.addToFormatedFilters(temp)
-                        }
-                    }
+                    this.pushPlaceholderToFormatedFilters(tempPlaceholders, array, keys, i)
                 } else {
                     this.selectedSchedule['filters'] = []
                     const array = JSON.parse(this.filters[keys[i]])
@@ -252,6 +230,46 @@ export default defineComponent({
                         this.addToFormatedFilters(filter)
                     }
                 }
+            }
+        },
+        getPlaceholders(tempPlaceholders: iFilter[], keys: string[], index: number) {
+            for (let id in this.selectedSchedule.filters) {
+                if ((this.selectedSchedule.filters[id] as iFilter).kpiName == keys[index]) {
+                    tempPlaceholders.push(this.selectedSchedule.filters[id])
+                }
+            }
+        },
+        pushPlaceholderToFormatedFilters(tempPlaceholders: iFilter[], array: any, keys: string[], index: number) {
+            let temp = null as iFilter | null
+            for (let j = 0; j < array.length; j++) {
+                temp = null
+                for (let tempPLaceholder in tempPlaceholders) {
+                    if (Object.keys(array[j])[0] == tempPlaceholders[tempPLaceholder].placeholderName) {
+                        temp = tempPlaceholders[tempPLaceholder]
+                        break
+                    }
+                }
+
+                if (temp == null) {
+                    const filter = this.createNewFilter(keys[index], array[j])
+
+                    this.selectedSchedule.filters.push(filter)
+                    this.addToFormatedFilters(filter)
+                } else {
+                    this.addToFormatedFilters(temp)
+                }
+            }
+        },
+        removeUnusedPlaceholders(tempPlaceholders: iFilter[], array: any) {
+            let temp = null
+            for (let tempPLaceholder in tempPlaceholders) {
+                for (let i = 0; i < array.length; i++) {
+                    if (Object.keys(array[i])[0] == tempPlaceholders[tempPLaceholder].placeholderName) {
+                        temp = tempPLaceholder as any
+                        break
+                    }
+                }
+                if (temp == null) this.selectedSchedule.filters.splice(this.indexInList(tempPlaceholders[tempPLaceholder].placeholderName, this.selectedSchedule.filters, 'placeholderName'), 1)
             }
         },
         createNewFilter(kpiName: string, placeholder: iFilter) {

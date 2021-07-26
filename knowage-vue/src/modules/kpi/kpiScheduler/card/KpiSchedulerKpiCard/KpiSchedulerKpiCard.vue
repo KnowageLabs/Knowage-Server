@@ -78,7 +78,7 @@ export default defineComponent({
     name: 'kpi-scheduler-kpi-card',
     components: { Card, Column, DataTable, Dialog },
     props: { expired: { type: Boolean }, kpis: { type: Array }, allKpiList: { type: Array } },
-    emits: ['touched', 'kpiAdded'],
+    emits: ['touched', 'kpiAdded', 'kpiDeleted'],
     data() {
         return {
             kpiCardDescriptor,
@@ -115,7 +115,7 @@ export default defineComponent({
             if (index > -1) {
                 this.kpisList.splice(index, 1)
             }
-            this.$emit('touched')
+            this.$emit('kpiDeleted')
             this.loadSelectedKpiAssociations()
         },
         addKpiAssociations() {
