@@ -20,6 +20,8 @@ package it.eng.spagobi.services.common;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
@@ -151,6 +153,21 @@ public class JWTSsoService implements SsoServiceInterface {
 		return token;
 	}
 
+	public static String ldapUser2jwtToken(String userId, String distinguishName, String psw, Date expiresAt) {
+		LogMF.debug(logger, "User id in input is [{0}]", userId);
+		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
+		// @formatter:off
+		String token = JWT.create()
+				.withClaim(SsoServiceInterface.USER_ID, userId)
+				.withClaim(SsoServiceInterface.DISTINGUISH_NAME, distinguishName)
+				.withClaim(SsoServiceInterface.PASSWORD, psw)
+				.withExpiresAt(expiresAt) // token will expire at the desired expire date
+				.sign(algorithm);
+		// @formatter:on
+		LogMF.debug(logger, "JWT token is [{0}]", token);
+		return token;
+	}
+
 	public static String pythonDataset2jwtToken(String script, Date expiresAt) {
 		LogMF.debug(logger, "Python script in input is [{0}]", script);
 		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
@@ -188,6 +205,30 @@ public class JWTSsoService implements SsoServiceInterface {
 		String userId = userIdClaim.asString();
 		LogMF.debug(logger, "User id is [{0}]", userId);
 		return userId;
+	}
+
+	public static Map<String, String> jwtToken2ldapUser(String jwtToken) throws JWTVerificationException {
+		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
+		JWTVerifier verifier = JWT.require(algorithm).build();
+		DecodedJWT decodedJWT = verifier.verify(jwtToken);
+		logger.debug("JWT token verified properly");
+		Claim userIdClaim = decodedJWT.getClaim(SsoServiceInterface.USER_ID);
+		LogMF.debug(logger, "User id detected is [{0}]", userIdClaim.asString());
+		assertNotEmpty(userIdClaim, "User id information is missing!!!");
+		String userId = userIdClaim.asString();
+		LogMF.debug(logger, "User id is [{0}]", userId);
+		Claim distinguishNameClaim = decodedJWT.getClaim(SsoServiceInterface.DISTINGUISH_NAME);
+		LogMF.debug(logger, "Distinguish name detected is [{0}]", distinguishNameClaim.asString());
+		assertNotEmpty(distinguishNameClaim, "Distinguish name information is missing!!!");
+		String dn = distinguishNameClaim.asString();
+		Claim pswClaim = decodedJWT.getClaim(SsoServiceInterface.PASSWORD);
+		assertNotEmpty(pswClaim, "Password information is missing!!!");
+		String psw = pswClaim.asString();
+		Map<String, String> toReturn = new HashMap<String, String>();
+		toReturn.put("userId", userId);
+		toReturn.put("dn", dn);
+		toReturn.put("psw", psw);
+		return toReturn;
 	}
 
 }
