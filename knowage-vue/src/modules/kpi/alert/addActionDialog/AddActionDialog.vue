@@ -22,12 +22,13 @@
             </span>
         </div>
         <ExectuteEtlCard v-if="type && type.id == 63" :loading="loading" :files="data.item" :data="action"></ExectuteEtlCard>
-        <ContextBrokerCard v-if="type && type.id == 86"></ContextBrokerCard>
+        <ContextBrokerCard v-if="type && type.id == 86" :data="action"></ContextBrokerCard>
     </Dialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { iAction } from '../Alert'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import addActionDialogDescriptor from './AddActionDialogDescriptor.json'
@@ -53,14 +54,18 @@ export default defineComponent({
             loading: false,
             type: { id: null },
             data: {},
-            action: {}
+            action: {} as iAction
         }
     },
     methods: {
-        setType() {
+        async setType() {
             console.log(this.type)
+            this.action.jsonActionParameters = {}
             if (this.type.id == 63) {
-                this.loadData('2.0/documents/listDocument?includeType=ETL')
+                this.action.idAction = 63
+                await this.loadData('2.0/documents/listDocument?includeType=ETL')
+            } else if (this.type.id == 86) {
+                this.action.idAction = 86
             }
         },
         async loadData(path: string) {
