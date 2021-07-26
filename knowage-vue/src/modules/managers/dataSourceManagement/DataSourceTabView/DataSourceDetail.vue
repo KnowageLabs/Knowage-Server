@@ -118,7 +118,8 @@
                     </div>
 
                     <div class="p-field" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JNDI'">
-                        <span class="p-float-label">
+                        <span class="p-field">
+                            <label for="jndi" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.jndi') }} * </label>
                             <InputText
                                 id="jndi"
                                 class="kn-material-input"
@@ -130,10 +131,11 @@
                                 }"
                                 @blur="v$.datasource.jndi.$touch()"
                                 @input="onFieldChange"
-                                v-tooltip.top="$t('managers.dataSourceManagement.form.jndiInfo')"
                                 :disabled="readOnly"
+                                placeholder="comp/env/jdbc/example"
                             />
-                            <label for="jndi" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.jndi') }} * </label>
+
+                            <small id="jndi-help">{{ $t('managers.dataSourceManagement.form.jndiInfo') }}</small>
                         </span>
                         <KnValidationMessages :vComp="v$.datasource.jndi" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.jndi') }" />
                     </div>
