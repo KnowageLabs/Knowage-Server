@@ -19,17 +19,17 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
     (res) => {
+        if (res.data && res.data.errors) Promise.reject(res.data.errors[0])
         return res
     },
     function(error) {
         if (error.response.status) {
             if (error.response.status === 401) {
                 authHelper.logout()
-            }
-            if (error.response.status === 500) {
+            } else if (error.response.status === 500) {
                 console.log(500)
                 store.commit('setError', { title: 'Server error', msg: error.response.data.errors[0].message })
-            }
+            } else store.commit('setError', { title: 'Server error', msg: error.response.data.errors[0].message })
         }
         return Promise.reject(error)
     }
