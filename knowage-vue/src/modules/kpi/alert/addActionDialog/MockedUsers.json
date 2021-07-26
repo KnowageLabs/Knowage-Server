@@ -1,0 +1,262 @@
+[
+    {
+        "blockedByFailedLoginAttempts": false,
+        "defaultRoleId": null,
+        "dtLastAccess": null,
+        "dtPwdBegin": null,
+        "dtPwdEnd": null,
+        "failedLoginAttempts": 0,
+        "flgPwdBlocked": null,
+        "fullName": "AG_TEST",
+        "id": 167,
+        "isSuperadmin": false,
+        "sbiExtUserRoleses": [535],
+        "sbiUserAttributeses": {},
+        "userId": "AG_TEST"
+    },
+    {
+        "blockedByFailedLoginAttempts": false,
+        "defaultRoleId": null,
+        "dtLastAccess": null,
+        "dtPwdBegin": null,
+        "dtPwdEnd": null,
+        "failedLoginAttempts": 0,
+        "flgPwdBlocked": null,
+        "fullName": "Angelo Bernabei",
+        "id": 165,
+        "isSuperadmin": false,
+        "sbiExtUserRoleses": [7, 535, 8, 328, 187],
+        "sbiUserAttributeses": {},
+        "userId": "angelo.bernabei@eng.it"
+    },
+    {
+        "blockedByFailedLoginAttempts": false,
+        "defaultRoleId": 7,
+        "dtLastAccess": 1627311518974,
+        "dtPwdBegin": null,
+        "dtPwdEnd": null,
+        "failedLoginAttempts": 0,
+        "flgPwdBlocked": false,
+        "fullName": "kte ADMIN",
+        "id": 6,
+        "isSuperadmin": false,
+        "sbiExtUserRoleses": [7, 8],
+        "sbiUserAttributeses": {
+            "7": {
+                "family": "Car"
+            },
+            "14": {
+                "brand": "'Big Time','Imagine'"
+            },
+            "15": {
+                "category": "Frozen%"
+            },
+            "17": {
+                "state": "Mexico"
+            },
+            "21": {
+                "years": "2015"
+            },
+            "24": {
+                "NewMultiSimple": "'BC','CA'"
+            },
+            "30": {
+                "product": "'High Top Mixed Nuts'"
+            },
+            "32": {
+                "Product-category": "Fruit"
+            },
+            "35": {
+                "Product-subcategory": "Fresh fruit"
+            },
+            "36": {
+                "Product-family": "Car"
+            },
+            "45": {
+                "reg_hospital_name": "UPMC"
+            },
+            "46": {
+                "reg_treatment_path_name": "Acne treatments"
+            }
+        },
+        "userId": "kte_admin"
+    },
+    {
+        "blockedByFailedLoginAttempts": false,
+        "defaultRoleId": null,
+        "dtLastAccess": null,
+        "dtPwdBegin": null,
+        "dtPwdEnd": null,
+        "failedLoginAttempts": 0,
+        "flgPwdBlocked": null,
+        "fullName": "kte_admin2",
+        "id": 83,
+        "isSuperadmin": false,
+        "sbiExtUserRoleses": [7],
+        "sbiUserAttributeses": {},
+        "userId": "kte_admin2"
+    },
+    {
+        "blockedByFailedLoginAttempts": false,
+        "defaultRoleId": null,
+        "dtLastAccess": 1615474257836,
+        "dtPwdBegin": null,
+        "dtPwdEnd": null,
+        "failedLoginAttempts": 0,
+        "flgPwdBlocked": false,
+        "fullName": "kte_dev",
+        "id": 28,
+        "isSuperadmin": false,
+        "sbiExtUserRoleses": [58],
+        "sbiUserAttributeses": {
+            "7": {
+                "family": "Drink"
+            }
+        },
+        "userId": "kte_dev"
+    },
+    {
+        "blockedByFailedLoginAttempts": false,
+        "defaultRoleId": null,
+        "dtLastAccess": 1627285467388,
+        "dtPwdBegin": null,
+        "dtPwdEnd": null,
+        "failedLoginAttempts": 0,
+        "flgPwdBlocked": false,
+        "fullName": "kte_user",
+        "id": 14,
+        "isSuperadmin": false,
+        "sbiExtUserRoleses": [325],
+        "sbiUserAttributeses": {
+            "7": {
+                "family": "Car"
+            },
+            "14": {
+                "brand": "{;{Better;Pleasant}}"
+            },
+            "15": {
+                "category": "Canned%"
+            },
+            "21": {
+                "years": "40"
+            },
+            "22": {
+                "NewHidden": "Non-Consumable"
+            },
+            "23": {
+                "NewVisible": "Hardware"
+            },
+            "24": {
+                "NewMultiSimple": "'WA','DF','OR'"
+            },
+            "25": {
+                "NewMultiComplex": "{;{Mexico;USA}}"
+            },
+            "32": {
+                "Product-category": "Fruit"
+            },
+            "35": {
+                "Product-subcategory": "Fresh fruit"
+            },
+            "36": {
+                "Product-family": "Car"
+            },
+            "47": {
+                "email": null
+            }
+        },
+        "userId": "kte_user"
+    },
+    {
+        "blockedByFailedLoginAttempts": false,
+        "defaultRoleId": null,
+        "dtLastAccess": 1620317301211,
+        "dtPwdBegin": null,
+        "dtPwdEnd": null,
+        "failedLoginAttempts": 0,
+        "flgPwdBlocked": false,
+        "fullName": "kte_user2",
+        "id": 15,
+        "isSuperadmin": false,
+        "sbiExtUserRoleses": [326],
+        "sbiUserAttributeses": {
+            "7": {
+                "family": "Car"
+            },
+            "23": {
+                "NewVisible": "Hot Beverages"
+            },
+            "24": {
+                "NewMultiSimple": "'BC','CA','null'"
+            },
+            "25": {
+                "NewMultiComplex": "{;{Mexico;Canada}}"
+            },
+            "36": {
+                "Product-family": "Drink"
+            }
+        },
+        "userId": "kte_user2"
+    },
+    {
+        "blockedByFailedLoginAttempts": false,
+        "defaultRoleId": null,
+        "dtLastAccess": 1612513114290,
+        "dtPwdBegin": null,
+        "dtPwdEnd": null,
+        "failedLoginAttempts": 0,
+        "flgPwdBlocked": null,
+        "fullName": "kte_user3",
+        "id": 120,
+        "isSuperadmin": false,
+        "sbiExtUserRoleses": [8],
+        "sbiUserAttributeses": {
+            "7": {
+                "family": "Food"
+            },
+            "24": {
+                "NewMultiSimple": "'BC','CA','null'"
+            },
+            "25": {
+                "NewMultiComplex": "{;{Mexico;Canada}}"
+            },
+            "36": {
+                "Product-family": "Food"
+            },
+            "47": {
+                "email": "kte_user3@eng.it"
+            }
+        },
+        "userId": "kte_user3"
+    },
+    {
+        "blockedByFailedLoginAttempts": false,
+        "defaultRoleId": null,
+        "dtLastAccess": null,
+        "dtPwdBegin": null,
+        "dtPwdEnd": null,
+        "failedLoginAttempts": 0,
+        "flgPwdBlocked": null,
+        "fullName": "Marco Balestri",
+        "id": 164,
+        "isSuperadmin": false,
+        "sbiExtUserRoleses": [7, 535, 8, 328, 187],
+        "sbiUserAttributeses": {},
+        "userId": "marco.balestri@eng.it"
+    },
+    {
+        "blockedByFailedLoginAttempts": false,
+        "defaultRoleId": null,
+        "dtLastAccess": 1620309648234,
+        "dtPwdBegin": null,
+        "dtPwdEnd": null,
+        "failedLoginAttempts": 0,
+        "flgPwdBlocked": null,
+        "fullName": "mario_prova",
+        "id": 160,
+        "isSuperadmin": false,
+        "sbiExtUserRoleses": [325],
+        "sbiUserAttributeses": {},
+        "userId": "mario_prova"
+    }
+]

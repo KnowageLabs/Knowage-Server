@@ -1,7 +1,7 @@
 <template>
     <Card>
         <template #content>
-            <AutoComplete class="p-inputtext-sm" :multiple="true" v-model="selectedAction.mailTo" :suggestions="filteredUsers" field="name" @complete="searchUsers($event)" @input="$emit('touched')" @item-select="setUser($event.value, slotProps.data)" />
+            <AutoComplete class="p-inputtext-sm" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
         </template>
     </Card>
 </template>
@@ -34,11 +34,11 @@ export default defineComponent({
         }
     },
     created() {
-        this.loadMail()
+        this.loadAction()
         this.loadUsers()
     },
     methods: {
-        loadMail() {
+        loadAction() {
             this.selectedAction = this.action
             // MOCKED ACTION
             this.selectedAction = {
@@ -50,7 +50,10 @@ export default defineComponent({
                 },
                 thresholdValues: [147]
             }
+
+            this.selectedUsers = this.selectedAction.jsonActionParameters.mailTo
             console.log('SELECTED ACTION', this.selectedAction)
+            console.log('SELECTED USERS', this.selectedUsers)
         },
         loadUsers() {
             this.userList = this.users as any[]
@@ -62,13 +65,14 @@ export default defineComponent({
                     this.filteredUsers = [...this.userList] as any[]
                 } else {
                     this.filteredUsers = this.userList.filter((user: any) => {
-                        return user.fullName.toLowerCase().startsWith(event.query.toLowerCase())
+                        return user.name.toLowerCase().startsWith(event.query.toLowerCase())
                     })
                 }
             }, 250)
         },
-        setUser(user: any, event: any) {
-            console.log('USER', user, 'EVENT', event)
+        setUser(user: any) {
+            console.log('SELECTED USER', user)
+            console.log('SELECTED USERS AFTER CLICK', this.selectedUsers)
         }
     }
 })
