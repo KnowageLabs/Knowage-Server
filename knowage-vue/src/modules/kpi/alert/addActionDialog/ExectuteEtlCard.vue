@@ -2,8 +2,8 @@
     <Card>
         <template #content>
             <DataTable
-                v-model:selection="myData.jsonActionParameters"
-                :value="files.DOCUMENT_ID"
+                v-model:selection="myData.jsonActionParameters.listDocIdSelected"
+                :value="files"
                 :loading="loading"
                 class="p-datatable-sm kn-table"
                 dataKey="DOCUMENT_ID"

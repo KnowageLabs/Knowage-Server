@@ -16,9 +16,15 @@ export interface iListener {
 }
 
 export interface iFrequency {
-    cron: any,
-    startDate: number | Date,
+    cron: any
+    startDate: number | Date
     endDate: number | Date | null
     startTime: number | Date
     endTime: string | Date | null
+}
+
+export interface iAction {
+    idAction: Number
+    jsonActionParameters: any
+    thresholdValues: any
 }
