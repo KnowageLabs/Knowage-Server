@@ -11,8 +11,7 @@
         <KpiCard v-if="isListenerSelected" :selectedAlert="selectedAlert" :kpiList="kpiList" @showDialog="dialogVisiable = true" @kpiLoaded="updateKpi" />
     </div>
     <Button @click="dialogVisiable = true">Add action</Button>
-    <add-action-dialog :dialogVisible="dialogVisiable" :kpi="kpi" @close="dialogVisiable = false"></add-action-dialog>
-    <add-action-dialog :action="selectedAction" :dialogVisible="dialogVisiable" @close="dialogVisiable = false"></add-action-dialog>
+    <add-action-dialog :dialogVisible="dialogVisiable" :kpi="kpi" :action="selectedAction" @close="dialogVisiable = false"></add-action-dialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
