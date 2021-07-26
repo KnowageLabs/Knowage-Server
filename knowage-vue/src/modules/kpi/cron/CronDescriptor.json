@@ -106,31 +106,31 @@
     "weeklyOptions": [
         {
             "name": "SUN",
-            "value": 1
+            "value": "1"
         },
         {
             "name": "MON",
-            "value": 2
+            "value": "2"
         },
         {
             "name": "TUE",
-            "value": 3
+            "value": "3"
         },
         {
             "name": "WED",
-            "value": 4
+            "value": "4"
         },
         {
             "name": "THU",
-            "value": 5
+            "value": "5"
         },
         {
             "name": "FRI",
-            "value": 6
+            "value": "6"
         },
         {
             "name": "SAT",
-            "value": 7
+            "value": "7"
         }
     ]
 }

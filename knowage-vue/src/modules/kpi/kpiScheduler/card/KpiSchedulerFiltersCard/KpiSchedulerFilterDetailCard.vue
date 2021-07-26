@@ -9,11 +9,30 @@
         </template>
         <template #content>
             <div class="p-d-flex p-flex-row">
-                <Dropdown id="valueCd" class="kn-material-input p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" optionLabel="valueCd" optionValue="valueCd" v-model="currentFilter.type.valueCd" :options="placeholderType" @change="resetValue" />
+                <Dropdown id="valueCd" class="kn-material-input p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" v-model="currentFilter.type" :options="placeholderType" @change="resetValue">
+                    <template #value="slotProps">
+                        <div class="p-dropdown-car-value" v-if="slotProps.value">
+                            <span>{{ slotProps.value['valueCd'] }}</span>
+                        </div>
+                    </template>
+                    <template #option="slotProps">
+                        <div class="p-dropdown-car-option">
+                            <span>{{ slotProps.option.valueCd }}</span>
+                        </div>
+                    </template>
+                </Dropdown>
 
                 <div v-if="currentFilter.type.valueCd === 'FIXED_VALUE'">
                     <span class="p-float-label">
-                        <InputText class="kn-material-input" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" v-model.trim="currentFilter.value" @input="$emit('touched')" />
+                        <InputText
+                            class="kn-material-input"
+                            :class="{
+                                'p-invalid': currentFilter.value === ''
+                            }"
+                            :style="kpiSchedulerFilterDetailCardDescriptor.input.style"
+                            v-model.trim="currentFilter.value"
+                            @input="$emit('touched')"
+                        />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.value') }} * </label>
                     </span>
                 </div>

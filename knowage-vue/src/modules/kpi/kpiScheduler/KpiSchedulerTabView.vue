@@ -8,7 +8,7 @@
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
     <div class="card" v-else>
-        <TabView class="tabview-custom" lazy>
+        <TabView class="tabview-custom">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('common.kpi') }}</span>
@@ -17,7 +17,7 @@
                 <KpiSchedulerKpiCard :expired="selectedSchedule.jobStatus === 'EXPIRED'" :kpis="selectedSchedule.kpis" :allKpiList="kpiList" @touched="setTouched" @kpiAdded="onKpiAdded($event)"></KpiSchedulerKpiCard>
             </TabPanel>
 
-            <TabPanel v-if="Object.keys(this.formatedFilters).length > 0">
+            <TabPanel :disabled="Object.keys(this.formatedFilters).length === 0">
                 <template #header>
                     <span>{{ $t('kpi.kpiScheduler.filters') }}</span>
                 </template>
@@ -74,7 +74,7 @@ export default defineComponent({
         id: { type: String },
         clone: { type: String }
     },
-    emits: ['touched', 'inserted'],
+    emits: ['touched', 'inserted', 'closed'],
     data() {
         return {
             kpiSchedulerTabViewDescriptor,
@@ -96,7 +96,7 @@ export default defineComponent({
     },
     computed: {
         buttonDisabled(): Boolean {
-            return !this.selectedSchedule.delta || !this.selectedSchedule.kpis || this.selectedSchedule.kpis.length == 0 || this.validCron == false || this.loading
+            return !this.selectedSchedule.kpis || this.selectedSchedule.kpis.length == 0 || this.validCron == false || this.loading || this.emptyFilters()
         },
         errorDialogVisible(): Boolean {
             return this.errorMessage ? true : false
@@ -122,11 +122,11 @@ export default defineComponent({
                     delta: true,
                     filters: [],
                     frequency: {
-                        cron: { type: 'minute', parameter: { numRepetition: 1 } },
+                        cron: { type: 'minute', parameter: { numRepetition: '1' } },
                         startDate: new Date().valueOf(),
                         endDate: null,
                         startTime: new Date().valueOf(),
-                        endTime: null
+                        endTime: ''
                     }
                 }
             }
@@ -146,6 +146,7 @@ export default defineComponent({
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/loadSchedulerKPI`).then((response) => (this.selectedSchedule = response.data))
             if (this.selectedSchedule.frequency.cron) {
                 this.selectedSchedule.frequency.cron = JSON.parse(this.selectedSchedule.frequency.cron)
+                this.selectedSchedule.frequency.endTime = ''
             }
         },
         async loadDomainsData() {
@@ -176,6 +177,7 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.touched = false
+                        this.$emit('closed')
                         this.$router.push(path)
                     }
                 })
@@ -253,7 +255,7 @@ export default defineComponent({
             }
         },
         createNewFilter(kpiName: string, placeholder: iFilter) {
-            const filter = { kpiName: kpiName, placeholderName: Object.keys(placeholder)[0], type: { valueCd: 'FIXED_VALUE', valueId: 355 } } as iFilter
+            const filter = { kpiName: kpiName, placeholderName: Object.keys(placeholder)[0], type: { valueCd: 'FIXED_VALUE', valueId: 242 } } as iFilter
             filter.value = placeholder[filter.placeholderName]
 
             const index = this.indexInList(kpiName, this.kpiList, 'name')
@@ -299,19 +301,22 @@ export default defineComponent({
                 this.operation = 'update'
             }
 
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveSchedulerKPI', this.selectedSchedule).then((response) => {
-                if (response.data.errors) {
-                    this.errorMessage = response.data.errors[0].message
-                } else {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.' + this.operation + 'Title'),
-                        msg: this.$t('common.toast.success')
-                    })
-                    this.$emit('inserted')
-                    this.selectedSchedule.frequency.cron = JSON.parse(this.selectedSchedule.frequency.cron)
-                    this.$router.push(`/kpi-scheduler/edit-kpi-schedule?id=${response.data.id}&clone=false`)
-                }
-            })
+            await axios
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveSchedulerKPI', this.selectedSchedule)
+                .then((response) => {
+                    if (response.data.errors) {
+                        this.errorMessage = response.data.errors[0].message
+                    } else {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.' + this.operation + 'Title'),
+                            msg: this.$t('common.toast.success')
+                        })
+                        this.$emit('inserted')
+
+                        this.$router.push(`/kpi-scheduler/edit-kpi-schedule?id=${response.data.id}&clone=false`)
+                    }
+                })
+                .finally(() => (this.selectedSchedule.frequency.cron = JSON.parse(this.selectedSchedule.frequency.cron)))
 
             this.loading = false
         },
@@ -323,7 +328,7 @@ export default defineComponent({
             this.validCron = value
         },
         schedulerInvalid() {
-            if (!this.selectedSchedule.delta) {
+            if (!('delta' in this.selectedSchedule)) {
                 this.errorMessage = this.$t('kpi.kpiScheduler.missingExecuteValue')
                 return true
             }
@@ -338,6 +343,17 @@ export default defineComponent({
             }
 
             return false
+        },
+        emptyFilters() {
+            let invalid = false
+
+            this.selectedSchedule.filters.forEach((filter) => {
+                if (!filter.value) {
+                    invalid = true
+                }
+            })
+
+            return invalid
         }
     }
 })

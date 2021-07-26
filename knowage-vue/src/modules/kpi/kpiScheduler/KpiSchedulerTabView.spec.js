@@ -107,12 +107,12 @@ describe('KPI Scheduler loading', () => {
         expect(wrapper.vm.buttonDisabled).toBe(true)
         expect(wrapper.find('[data-test="submit-button"]').element.disabled).toBe(true)
     })
-    it('hides filter tab if no filters are present', async () => {
+    it('disables filter tab if no filters are present', async () => {
         const wrapper = factory()
 
         await flushPromises()
 
         expect(Object.keys(wrapper.vm.formatedFilters).length).toBe(0)
-        expect(wrapper.html()).not.toContain('kpi.kpiScheduler.filters')
+        expect(wrapper.find('.p-tabview-panel:nth-child(2)').isVisible()).toBe(false)
     })
 })
