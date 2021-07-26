@@ -1,5 +1,5 @@
 <template>
-    <Dialog :header="$t('kpi.alert.addAction')" :breakpoints="alertDescriptor.dialog.breakpoints" :style="alertDescriptor.dialog.style" :visible="dialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
+    <Dialog :header="$t('kpi.alert.addAction')" :breakpoints="addActionDialogDescriptor.dialog.breakpoints" :style="addActionDialogDescriptor.dialog.style" :visible="dialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #left>
@@ -13,7 +13,7 @@
         </template>
         <div class="p-field p-col-6">
             <span class="p-float-label">
-                <Dropdown id="type" class="kn-material-input" v-model="type" :options="alertDescriptor.actionType" @change="setType" />
+                <Dropdown id="type" class="kn-material-input" v-model="type" :options="addActionDialogDescriptor.actionType" @change="setType" />
                 <label for="type" class="kn-material-input-label"> {{ $t('kpi.alert.type') }} * </label>
             </span>
         </div>
@@ -23,7 +23,7 @@
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
-import alertDescriptor from './AlertDescriptor.json'
+import addActionDialogDescriptor from './AddActionDialogDescriptor.json'
 export default defineComponent({
     name: 'add-action-dialog',
     components: {
@@ -38,7 +38,7 @@ export default defineComponent({
     },
     data() {
         return {
-            alertDescriptor,
+            addActionDialogDescriptor,
             type: ''
         }
     }

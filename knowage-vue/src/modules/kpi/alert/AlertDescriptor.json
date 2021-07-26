@@ -1,14 +1,4 @@
 {
-    "actionType": ["Send mail", "Execute ETL Document", "Notify To Context Broker"],
-    "dialog": {
-        "breakpoints": {
-            "640px": "100vw",
-            "960px": "85vw"
-        },
-        "style": {
-            "width": "70vw"
-        }
-    },
     "filterFields": ["name"],
     "styles": {
         "basicCard": {

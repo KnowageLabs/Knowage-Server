@@ -21,7 +21,7 @@ import NameCard from './Cards/NameCard.vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import alertValidationDescriptor from './AlertValidationDescriptor.json'
 import EventsCard from './Cards/EventsCard.vue'
-import AddActionDialog from './AddActionDialog.vue'
+import AddActionDialog from './addActionDialog/AddActionDialog.vue'
 export default defineComponent({
     name: 'alert-details',
     components: { NameCard, EventsCard, AddActionDialog },
@@ -48,7 +48,8 @@ export default defineComponent({
         return {
             selectedAlert: {} as iAlert,
             listeners: [] as iListener[],
-            jsonOptions: {},
+            jsonOptions: {} as any,
+            actions: [] as any[],
             alertValidationDescriptor: alertValidationDescriptor,
             dialogVisiable: false,
             v$: useValidate() as any
@@ -66,9 +67,17 @@ export default defineComponent({
                 .then((response) => {
                     this.selectedAlert = { ...response.data }
                     this.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '')
+
+                    this.actions = this.jsonOptions.actions.map((action: any) => {
+                        return {
+                            jsonActionParameters: JSON.parse(action.jsonActionParameters),
+                            idAction: action.idAction,
+                            thresholdValues: action.thresholdValues
+                        }
+                    })
                     console.log('jsonParse', this.jsonOptions)
                 })
-                .finally(() => console.log('selected', this.selectedAlert))
+                .finally(() => console.log('actions', this.actions))
         },
         async loadListener() {
             await axios
