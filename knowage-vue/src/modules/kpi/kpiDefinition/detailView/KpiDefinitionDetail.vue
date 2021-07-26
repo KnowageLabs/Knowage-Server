@@ -119,7 +119,10 @@ export default defineComponent({
     props: { id: { type: String, required: false }, version: { type: String, required: false }, cloneKpiVersion: { type: Number }, cloneKpiId: { type: Number } },
     computed: {
         buttonDisabled(): any {
-            return this.v$.$invalid
+            if (this.formulaHasErrors === true || this.v$.$invalid) {
+                return true
+            }
+            return false
         }
     },
     emits: ['touched', 'closed', 'kpiCreated', 'kpiUpdated'],
@@ -143,7 +146,8 @@ export default defineComponent({
             thresholdTypeList: [] as any,
             kpiCategoryList: [] as any,
             filteredCategories: [] as any,
-            formulaToSave: ''
+            formulaToSave: '',
+            formulaHasErrors: false
         }
     },
     async created() {
@@ -214,8 +218,10 @@ export default defineComponent({
         ifErrorInFormula(event) {
             if (event) {
                 this.activeTab = 0
+                this.formulaHasErrors = true
             } else {
                 this.updateMeasureList = true
+                this.formulaHasErrors = false
             }
         },
 

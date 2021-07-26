@@ -5,6 +5,10 @@ let routes = [
         component: () => import('@/modules/kpi/kpiDefinition/KpiDefinition.vue'),
         children: [
             {
+                path: '',
+                component: () => import('@/modules/kpi/kpiDefinition/KpiDefinitionHint.vue')
+            },
+            {
                 path: 'new-kpi',
                 name: 'new-kpi',
                 component: () => import('@/modules/kpi/kpiDefinition/detailView/KpiDefinitionDetail.vue')

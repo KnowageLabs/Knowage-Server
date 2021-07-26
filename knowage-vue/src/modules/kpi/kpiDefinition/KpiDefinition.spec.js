@@ -90,7 +90,7 @@ describe('Kpi Definition loading', () => {
 describe('KPI Definition List', () => {
     it('shows an hint if no item is selected from the list', () => {
         const wrapper = factory()
-        expect(wrapper.vm.hintVisible).toBe(true)
+        expect(wrapper.html()).toContain('kpi.kpiDefinition.hintTitle')
     })
     it('deletes KPI when clicking on delete icon', async () => {
         const wrapper = factory()

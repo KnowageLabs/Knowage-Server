@@ -28,7 +28,6 @@
 
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
                 <router-view :cloneKpiId="cloneKpiId" :cloneKpiVersion="cloneKpiVersion" @touched="touched = true" @closed="onFormClose" @kpiUpdated="touched = false" @kpiCreated="onKpiCreated" @showDialog="displayInfoDialog" />
-                <KnHint :title="'kpi.kpiDefinition.hintTitle'" :hint="'kpi.kpiDefinition.hint'" v-if="hintVisible" />
             </div>
         </div>
     </div>
@@ -39,13 +38,11 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
-import KnHint from '@/components/UI/KnHint.vue'
 export default defineComponent({
     name: 'tenant-management',
     components: {
         FabButton,
-        Listbox,
-        KnHint
+        Listbox
     },
     data() {
         return {
