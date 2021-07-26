@@ -14,6 +14,7 @@ import mondrianSchemasManagementRoutes from '@/modules/managers/mondrianSchemasM
 import dataSourceRoutes from '@/modules/managers/dataSourceManagement/DataSourceManagement.routes.js'
 import functionalitiesManagementRoutes from '@/modules/managers/functionalitiesManagement/FunctionalitiesManagement.routes.js'
 import menuConfigurationRoutes from '@/modules/managers/menuConfigurationManagement/MenuConfigurationManagement.routes.js'
+import businessModelCatalogueRoutes from '@/modules/managers/businessModelCatalogue/BusinessModelCatalogue.routes.js'
 
 const baseRoutes = []
 
@@ -34,5 +35,6 @@ const routes = baseRoutes
     .concat(dataSourceRoutes)
     .concat(functionalitiesManagementRoutes)
     .concat(menuConfigurationRoutes)
+    .concat(businessModelCatalogueRoutes)
 
 export default routes
