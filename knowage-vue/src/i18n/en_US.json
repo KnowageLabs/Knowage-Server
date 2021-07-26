@@ -183,6 +183,8 @@
     "kpi": {
         "alert": {
             "addAction": "Add new action",
+            "brokerType": "Context Broker Type",
+            "brokerUrl": "Context Broker URL",
             "execution": "Single Execution",
             "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "kpiListener": "Listener",

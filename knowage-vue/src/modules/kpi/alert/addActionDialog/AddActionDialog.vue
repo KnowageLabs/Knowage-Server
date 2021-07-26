@@ -18,6 +18,7 @@
             </span>
         </div>
         <exectute-etl-card v-if="type && type.id == 63" :loading="loading" :files="data.item"></exectute-etl-card>
+        <context-broker-card v-if="type && type.id == 86"></context-broker-card>
     </Dialog>
 </template>
 <script lang="ts">
@@ -27,12 +28,14 @@ import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import addActionDialogDescriptor from './AddActionDialogDescriptor.json'
 import ExectuteEtlCard from './ExectuteEtlCard.vue'
+import ContextBrokerCard from './ContextBrokerCard.vue'
 export default defineComponent({
     name: 'add-action-dialog',
     components: {
         Dialog,
         Dropdown,
-        ExectuteEtlCard
+        ExectuteEtlCard,
+        ContextBrokerCard
     },
     props: {
         dialogVisible: {
