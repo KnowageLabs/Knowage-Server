@@ -16,6 +16,10 @@
                 <Dropdown id="type" class="kn-material-input" v-model="type" optionLabel="name" :options="addActionDialogDescriptor.actionType" @change="setType" />
                 <label for="type" class="kn-material-input-label"> {{ $t('kpi.alert.type') }} * </label>
             </span>
+            <span class="p-float-label">
+                <Dropdown id="threshold" class="kn-material-input" />
+                <label for="threshold" class="kn-material-input-label"> {{ $t('kpi.alert.threshold') }} * </label>
+            </span>
         </div>
         <exectute-etl-card v-if="type && type.id == 63" :loading="loading" :files="data.item"></exectute-etl-card>
         <context-broker-card v-if="type && type.id == 86"></context-broker-card>

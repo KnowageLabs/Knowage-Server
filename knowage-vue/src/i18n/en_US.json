@@ -191,6 +191,7 @@
             "label": "Label",
             "name": "Name",
             "noOfEvents": "Number of events before triggering actions",
+            "threshold": "Threshold",
             "title": "Alert",
             "type": "Type"
         }
