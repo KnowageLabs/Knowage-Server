@@ -59,6 +59,8 @@ public class FullLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier
 	private static final String ROLES_FIELD = "USER_ROLES_ATTRIBUTE_FIELD";
 	private static final String SUPERADMIN_ATTRIBUTE = "SUPERADMIN_ATTRIBUTE";
 
+	private InternalSecurityServiceSupplierImpl internalSecurityServiceSupplierImpl = new InternalSecurityServiceSupplierImpl();
+
 	private final Properties properties;
 	private boolean isSuperAdmin = false;
 
@@ -78,8 +80,11 @@ public class FullLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier
 			logger.debug("Building profile object for user [" + userId + "]");
 			SpagoBIUserProfile toReturn = getUserProfile(ldapUser);
 			return toReturn;
+		} catch (LDAPAuthenticationFailed ldapEx) {
+			logger.error("LDAP authentication failed for user [" + userId + "]. Trying to authenticate user in metadata database", ldapEx);
+			return internalSecurityServiceSupplierImpl.checkAuthentication(userId, psw);
 		} catch (Exception e) {
-			logger.error("LDAP authentication failed for user [" + userId + "]", e);
+			logger.error("Authentication failed for user [" + userId + "]", e);
 			return null;
 		}
 	}
@@ -102,8 +107,8 @@ public class FullLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier
 			SpagoBIUserProfile toReturn = getUserProfile(ldapUser);
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("Cannot build user profile for user [" + userId + "]", e);
-			return null;
+			logger.error("Error while building user profile using LDAP for user [" + userId + "]. Trying to use metadata database to create profile.", e);
+			return internalSecurityServiceSupplierImpl.createUserProfile(jwtToken);
 		}
 	}
 
