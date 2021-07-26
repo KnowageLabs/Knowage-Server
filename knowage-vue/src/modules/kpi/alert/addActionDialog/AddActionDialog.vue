@@ -82,8 +82,8 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-        handeleSave() {
-            console.log('save')
+        handleSave() {
+            console.log('SAVE', this.action)
         }
     }
 })
