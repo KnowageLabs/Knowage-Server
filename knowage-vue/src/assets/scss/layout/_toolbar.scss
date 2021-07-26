@@ -1,31 +1,37 @@
 .kn-toolbar {
-    border-radius: 0 !important;
-    height: $toolbar-height;
-    min-height: $toolbar-height;
-    font-weight: $toolbar-font-weight !important;
-    font-size: $toolbar-font-size !important;
-    border: none;
-    padding: $toolbar-padding !important;
-    background-color: $toolbar-background-color-default;
-    color: $toolbar-color-default;
-    border-top-right-radius: 0;
-    border-top-right-radius: 0;
-    text-transform: capitalize;
+	border-radius: 0 !important;
+	height: $toolbar-height;
+	min-height: $toolbar-height;
+	font-weight: $toolbar-font-weight !important;
+	font-size: $toolbar-font-size !important;
+	border: none;
+	padding: $toolbar-padding !important;
+	background-color: $toolbar-background-color-default;
+	color: $toolbar-color-default;
+	border-top-right-radius: 0;
+	border-top-right-radius: 0;
+	text-transform: capitalize;
 
-    &--primary {
-        @extend .kn-toolbar;
-        background-color: $toolbar-background-color-primary !important;
-        color: $toolbar-color-primary;
-    }
+	&--primary {
+		@extend .kn-toolbar;
+		background-color: $toolbar-background-color-primary !important;
+		color: $toolbar-color-primary;
+	}
 
-    &--secondary {
-        @extend .kn-toolbar;
-        background-color: $toolbar-background-color-secondary !important;
-        color: $toolbar-color-secondary;
-    }
+	&--secondary {
+		@extend .kn-toolbar;
+		background-color: $toolbar-background-color-secondary !important;
+		color: $toolbar-color-secondary;
+	}
 
-    &--transparent {
-        @extend .kn-toolbar;
-        background-color: transparent !important;
-    }
+	&--tertiary {
+		@extend .kn-toolbar;
+		background-color: $toolbar-background-color-tertiary !important;
+		color: $toolbar-color-tertiary;
+	}
+
+	&--transparent {
+		@extend .kn-toolbar;
+		background-color: transparent !important;
+	}
 }

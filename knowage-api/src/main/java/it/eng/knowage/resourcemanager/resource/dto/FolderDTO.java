@@ -29,10 +29,16 @@ public class FolderDTO {
 
 	private String label;
 
-	private String key;
+	private int key;
 
 	@JsonIgnore
 	private String fullPath;
+
+	private String relativePath;
+
+	private boolean modelFolder;
+
+	private int level;
 
 	@JsonInclude(Include.NON_EMPTY)
 	private List<FolderDTO> children;
@@ -68,7 +74,7 @@ public class FolderDTO {
 		return "FolderDTO [label=" + label + ", children=" + children + "]";
 	}
 
-	public String getKey() {
+	public int getKey() {
 		return key;
 	}
 
@@ -80,8 +86,86 @@ public class FolderDTO {
 		this.fullPath = fullPath;
 	}
 
-	public void setKey(String key) {
+	public void setKey(int key) {
 		this.key = key;
+	}
+
+	public String getRelativePath() {
+		return relativePath;
+	}
+
+	public void setRelativePath(String relativePath) {
+		this.relativePath = relativePath;
+	}
+
+	public boolean isModelFolder() {
+		return modelFolder;
+	}
+
+	public void setModelFolder(boolean modelFolder) {
+		this.modelFolder = modelFolder;
+	}
+
+	public int getLevel() {
+		return this.level;
+
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((children == null) ? 0 : children.hashCode());
+		result = prime * result + ((fullPath == null) ? 0 : fullPath.hashCode());
+		result = prime * result + key;
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		result = prime * result + level;
+		result = prime * result + (modelFolder ? 1231 : 1237);
+		result = prime * result + ((relativePath == null) ? 0 : relativePath.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FolderDTO other = (FolderDTO) obj;
+		if (children == null) {
+			if (other.children != null)
+				return false;
+		} else if (!children.equals(other.children))
+			return false;
+		if (fullPath == null) {
+			if (other.fullPath != null)
+				return false;
+		} else if (!fullPath.equals(other.fullPath))
+			return false;
+		if (key != other.key)
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (level != other.level)
+			return false;
+		if (modelFolder != other.modelFolder)
+			return false;
+		if (relativePath == null) {
+			if (other.relativePath != null)
+				return false;
+		} else if (!relativePath.equals(other.relativePath))
+			return false;
+		return true;
 	}
 
 }

@@ -1,4 +1,4 @@
-export interface IColumn {
+export interface ITableColumn {
 	field: string
 	header: string
 	style: {}

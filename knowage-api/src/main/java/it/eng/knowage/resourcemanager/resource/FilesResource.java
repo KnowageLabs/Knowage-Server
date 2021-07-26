@@ -17,13 +17,16 @@
  */
 package it.eng.knowage.resourcemanager.resource;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -44,12 +47,14 @@ import org.springframework.stereotype.Component;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.error.KNRM001Exception;
+import it.eng.knowage.knowageapi.error.KNRM002Exception;
 import it.eng.knowage.knowageapi.error.KNRM003Exception;
 import it.eng.knowage.knowageapi.error.KNRM008Exception;
 import it.eng.knowage.knowageapi.error.KNRM010Exception;
 import it.eng.knowage.knowageapi.error.KNRM011Exception;
 import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
+import it.eng.knowage.resourcemanager.resource.dto.DownloadFilesDTO;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
 import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
 import it.eng.knowage.resourcemanager.service.ResourceManagerAPI;
@@ -79,36 +84,49 @@ public class FilesResource {
 	 * @return list of files, one of them could be "metadata.json", it will be excluded
 	 * @throws KNRM001Exception
 	 * @throws KNRM003Exception
+	 * @throws KNRM002Exception
 	 */
 	@GET
-	@Path("/{path}")
+	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<FileDTO> getFiles(@QueryParam("path") String path) throws KNRM001Exception, KNRM003Exception {
+	public List<FileDTO> getFiles(@QueryParam("key") String key) throws KNRM001Exception, KNRM003Exception, KNRM002Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
-		List<FileDTO> files = resourceManagerAPIservice.getListOfFiles(path, profile);
+
+		List<FileDTO> files = resourceManagerAPIservice.getListOfFiles(key, profile);
 		return files;
 	}
 
 	@POST
 	@Path("/download")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response downloadFiles(List<String> listOfPaths) throws KNRM001Exception, KNRM008Exception {
+	public Response downloadFiles(DownloadFilesDTO dto) throws KNRM001Exception, KNRM008Exception, KNRM002Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
+
+		List<String> listOfPaths = new ArrayList<String>();
+		String folderPath = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
+		for (String name : dto.getSelectedFilesNames()) {
+			listOfPaths.add(folderPath + File.separator + name);
+		}
+
 		if (listOfPaths.size() == 1) {
-			java.nio.file.Path file = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, false);
+			java.nio.file.Path path = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, false);
 			try {
-				return Response.ok(file.toFile()).header("Content-length", "" + Files.size(file))
-						.header("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getFileName())).build();
+				File f = path.toFile();
+				MimetypesFileTypeMap fileTypeMap = new MimetypesFileTypeMap();
+			    String mimeType = fileTypeMap.getContentType(f.getName());
+				return Response.ok(path.toFile()).header("Content-length", "" + Files.size(path))
+						.header("Content-Disposition", String.format("attachment; filename=\"%s\"", path.getFileName()))
+						.header("Content-type", mimeType).build();
 			} catch (IOException e) {
-				throw new KnowageRuntimeException("Error calculating file size for " + file, e);
+				throw new KnowageRuntimeException("Error calculating file size for " + path, e);
 			}
 		} else {
 			java.nio.file.Path zipFile = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, true);
 			String filename = zipFile.getFileName() + ".zip";
 			try {
 				return Response.ok(zipFile.toFile()).header("Content-length", "" + Files.size(zipFile))
-						.header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename)).build();
+						.header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename))
+						.header("Content-Type", "application/zip").build();
 			} catch (IOException e) {
 				throw new KnowageRuntimeException("Error calculating file size for " + zipFile, e);
 			}
@@ -162,8 +180,9 @@ public class FilesResource {
 	@GET
 	@Path("/metadata")
 	@Produces(MediaType.APPLICATION_JSON)
-	public MetadataDTO getMetadata(@QueryParam("path") String path) throws KNRM001Exception, KNRM011Exception {
+	public MetadataDTO getMetadata(@QueryParam("key") String key) throws KNRM001Exception, KNRM011Exception, KNRM002Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
+		String path = resourceManagerAPIservice.getFolderByKey(key, profile);
 		MetadataDTO file = resourceManagerAPIservice.getMetadata(path, profile);
 		return file;
 	}
@@ -171,8 +190,10 @@ public class FilesResource {
 	@POST
 	@Path("/metadata")
 	@Produces(MediaType.APPLICATION_JSON)
-	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @QueryParam("path") String path) throws KNRM001Exception, KNRM010Exception {
+	@Consumes(MediaType.APPLICATION_JSON)
+	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @QueryParam("key") String key) throws KNRM001Exception, KNRM010Exception, KNRM002Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
+		String path = resourceManagerAPIservice.getFolderByKey(key, profile);
 		MetadataDTO file = resourceManagerAPIservice.saveMetadata(fileDTO, path, profile);
 		return file;
 	}
@@ -182,10 +203,11 @@ public class FilesResource {
 	@DELETE
 	@Path("/{path}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@QueryParam("path") String path) {
+	public Response delete(@QueryParam("key") String key) {
 		Response response = null;
 		try {
 			SpagoBIUserProfile profile = businessContext.getUserProfile();
+			String path = resourceManagerAPIservice.getFolderByKey(key, profile);
 			boolean ok = resourceManagerAPIservice.delete(path, profile);
 			if (ok)
 				response = Response.status(Response.Status.OK).build();

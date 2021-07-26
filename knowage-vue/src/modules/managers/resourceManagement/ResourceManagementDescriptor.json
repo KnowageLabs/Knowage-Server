@@ -1,0 +1,85 @@
+{
+	"column": [
+		{
+			"displayType": "date",
+			"field": "lastModified",
+			"header": "managers.resourceManagement.column.lastModified",
+			"position": 3,
+			"style": {
+				"width": "30%"
+			}
+		},
+		{
+			"field": "name",
+			"header": "managers.resourceManagement.column.name",
+			"position": 1,
+			"style": {
+				"width": "35%"
+			}
+		},
+		{
+			"field": "selectionMode",
+			"header": "",
+			"position": 0,
+			"style": {
+				"width": "5%"
+			}
+		},
+		{
+			"displayType": "fileSize",
+			"field": "size",
+			"header": "managers.resourceManagement.column.size",
+			"position": 2,
+			"style": {
+				"width": "30%"
+			}
+		}
+	],
+	"metadata": {
+		"accuracyAndPerformance": {
+			"label": "managers.resourceManagement.metadata.accuracyAndPerformance"
+		},
+		"formatOfData": {
+			"label": "managers.resourceManagement.metadata.formatOfData"
+		},
+		"openSource": {
+			"label": "managers.resourceManagement.metadata.openSource"
+		},
+		"typeOfAnalytics": {
+			"label": "managers.resourceManagement.metadata.typeOfAnalytics.label",
+			"options": {
+				"descriptive": {
+					"name": "managers.resourceManagement.metadata.typeOfAnalytics.options.descriptive",
+					"value": "descriptive"
+				},
+				"predictive": {
+					"name": "managers.resourceManagement.metadata.typeOfAnalytics.options.predictive",
+					"value": "predictive"
+				},
+				"prescriptive": {
+					"name": "managers.resourceManagement.metadata.typeOfAnalytics.options.prescriptive",
+					"value": "prescriptive"
+				}
+			}
+		},
+		"usageOfTheModel": {
+			"label": "managers.resourceManagement.metadata.usageOfTheModel"
+		},
+		"version": {
+			"label": "managers.resourceManagement.metadata.version"
+		}
+	},
+	"mock": {
+		"metadata": {
+			"accuracy": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+			"description": "descrizione lunga assai",
+			"format": null,
+			"image": null,
+			"name": "BANANA",
+			"opensource": false,
+			"type": "predictive",
+			"usage": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
+			"version": 2
+		}
+	}
+}

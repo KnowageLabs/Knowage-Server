@@ -92,6 +92,8 @@
 			<ITEM id="4011" label="menu.FunctionsCatalog"
 				requiredFunctionality="FunctionsCatalogManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=functionsCatalog" />
+			<ITEM id="4012" label="menu.ModelsMan"
+				to="/models-management" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="5000" label="menu.ToolsMenu"
@@ -205,6 +207,8 @@
 			<ITEM id="8013" label="menu.event"
 				requiredFunctionality="EventsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=eventLogsApp" />
+			<ITEM id="8015" label="menu.ResourceMan"
+				to="/resource-management" />
 
 		</GROUP_ITEM>
 

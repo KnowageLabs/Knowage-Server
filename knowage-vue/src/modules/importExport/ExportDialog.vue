@@ -33,7 +33,7 @@
 				this.$emit('update:visibility', false)
 			},
 			emitExport(): void {
-				this.$emit('export', this.fileName)
+				this.$emit('export', this.fileName + '.json')
 			}
 		}
 	})

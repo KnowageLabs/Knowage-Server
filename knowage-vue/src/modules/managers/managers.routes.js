@@ -11,22 +11,24 @@ import tenantManagementRoutes from '@/modules/managers/tenantManagement/TenantMa
 import templatePruningRoutes from '@/modules/managers/templatePruning/TemplatePruning.routes.js'
 import internationalizationManagementRoutes from '@/modules/managers/internationalizationManagement/InternationalizationManagement.routes.js'
 import mondrianSchemasManagementRoutes from '@/modules/managers/mondrianSchemasManagement/MondrianSchemasManagement.routes.js'
+import resourceManagementRoutes from '@/modules/managers/resourceManagement/ResourceManagement.routes.js'
 
 const baseRoutes = []
 
 const routes = baseRoutes
-    .concat(galleryManagementRoutes)
-    .concat(configurationManagementRoutes)
-    .concat(domainsManagementRoutes)
-    .concat(metadataManagementRoutes)
-    .concat(usersManagementRoutes)
-    .concat(profileAttributesRoutes)
-    .concat(rolesManagementRoutes)
-    .concat(cacheManagementRoutes)
-    .concat(newsManagementRoutes)
-    .concat(tenantManagementRoutes)
-    .concat(templatePruningRoutes)
-    .concat(internationalizationManagementRoutes)
-  .concat(mondrianSchemasManagementRoutes)
+	.concat(galleryManagementRoutes)
+	.concat(configurationManagementRoutes)
+	.concat(domainsManagementRoutes)
+	.concat(metadataManagementRoutes)
+	.concat(usersManagementRoutes)
+	.concat(profileAttributesRoutes)
+	.concat(rolesManagementRoutes)
+	.concat(cacheManagementRoutes)
+	.concat(newsManagementRoutes)
+	.concat(tenantManagementRoutes)
+	.concat(templatePruningRoutes)
+	.concat(internationalizationManagementRoutes)
+	.concat(mondrianSchemasManagementRoutes)
+	.concat(resourceManagementRoutes)
 
 export default routes

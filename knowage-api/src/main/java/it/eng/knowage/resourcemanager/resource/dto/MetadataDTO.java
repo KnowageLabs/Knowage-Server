@@ -23,17 +23,17 @@ public class MetadataDTO {
 
 	private String version;
 
-	private String type;
+	private String typeOfAnalytics;
 
-	private boolean opensource;
+	private boolean openSource;
 
 	private String description;
 
-	private String accuracy;
+	private String accuracyAndPerformance;
 
-	private String usage;
+	private String usageOfTheModel;
 
-	private String format;
+	private String formatOfData;
 
 	private String image;
 
@@ -53,11 +53,6 @@ public class MetadataDTO {
 		this.name = name;
 	}
 
-	@Override
-	public String toString() {
-		return "CustomFile [name=" + name + "]";
-	}
-
 	public String getVersion() {
 		return version;
 	}
@@ -66,20 +61,20 @@ public class MetadataDTO {
 		this.version = version;
 	}
 
-	public String getType() {
-		return type;
+	public String getTypeOfAnalytics() {
+		return typeOfAnalytics;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setTypeOfAnalytics(String typeOfAnalytics) {
+		this.typeOfAnalytics = typeOfAnalytics;
 	}
 
-	public boolean isOpensource() {
-		return opensource;
+	public boolean isOpenSource() {
+		return openSource;
 	}
 
-	public void setOpensource(boolean opensource) {
-		this.opensource = opensource;
+	public void setOpenSource(boolean openSource) {
+		this.openSource = openSource;
 	}
 
 	public String getDescription() {
@@ -90,28 +85,28 @@ public class MetadataDTO {
 		this.description = description;
 	}
 
-	public String getAccuracy() {
-		return accuracy;
+	public String getAccuracyAndPerformance() {
+		return accuracyAndPerformance;
 	}
 
-	public void setAccuracy(String accuracy) {
-		this.accuracy = accuracy;
+	public void setAccuracyAndPerformance(String accuracyAndPerformance) {
+		this.accuracyAndPerformance = accuracyAndPerformance;
 	}
 
-	public String getUsage() {
-		return usage;
+	public String getUsageOfTheModel() {
+		return usageOfTheModel;
 	}
 
-	public void setUsage(String usage) {
-		this.usage = usage;
+	public void setUsageOfTheModel(String usageOfTheModel) {
+		this.usageOfTheModel = usageOfTheModel;
 	}
 
-	public String getFormat() {
-		return format;
+	public String getFormatOfData() {
+		return formatOfData;
 	}
 
-	public void setFormat(String format) {
-		this.format = format;
+	public void setFormatOfData(String formatOfData) {
+		this.formatOfData = formatOfData;
 	}
 
 	public String getImage() {

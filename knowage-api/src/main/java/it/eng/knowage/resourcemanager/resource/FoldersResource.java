@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.resourcemanager.resource;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -25,7 +26,6 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -42,6 +42,8 @@ import it.eng.knowage.knowageapi.error.KNRM002Exception;
 import it.eng.knowage.knowageapi.error.KNRM005Exception;
 import it.eng.knowage.knowageapi.error.KNRM008Exception;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
+import it.eng.knowage.resourcemanager.resource.dto.CreateFolderDTO;
+import it.eng.knowage.resourcemanager.resource.dto.DownloadFolderDTO;
 import it.eng.knowage.resourcemanager.resource.dto.RootFolderDTO;
 import it.eng.knowage.resourcemanager.service.ResourceManagerAPI;
 import it.eng.spagobi.services.security.SecurityServiceService;
@@ -89,15 +91,17 @@ public class FoldersResource {
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createFolder(@QueryParam("path") String path) {
-		Response response = null;
+	public Response createFolder(CreateFolderDTO dto) {
+		Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		try {
 			SpagoBIUserProfile profile = businessContext.getUserProfile();
-			boolean create = resourceManagerAPIservice.createFolder(path, profile);
-			if (create)
-				response = Response.status(Response.Status.OK).build();
-			else {
-				response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			String path = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
+			String completePath = null;
+			if (path != null) {
+				completePath = path + File.separator + dto.getFolderName();
+				boolean create = resourceManagerAPIservice.createFolder(completePath, profile);
+				if (create)
+					response = Response.status(Response.Status.OK).build();
 			}
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e.getMessage());
@@ -106,12 +110,13 @@ public class FoldersResource {
 	}
 
 	@POST
-	@Path("/download/{path}")
+	@Path("/download")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces("application/zip")
-	public Response downloadFolder(@PathParam("path") String path) throws KNRM001Exception, KNRM008Exception, KNRM005Exception {
+	public Response downloadFolder(DownloadFolderDTO dto) throws KNRM001Exception, KNRM008Exception, KNRM005Exception, KNRM002Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
-		java.nio.file.Path exportArchive = resourceManagerAPIservice.getDownloadFolderPath(path, profile);
+		String key = dto.getKey();
+		String path = resourceManagerAPIservice.getFolderByKey(key, profile);
+		java.nio.file.Path exportArchive = resourceManagerAPIservice.getDownloadFolderPath(key, path, profile);
 		String filename = exportArchive.getFileName() + ".zip";
 		try {
 			return Response.ok(exportArchive.toFile()).header("Content-length", "" + Files.size(exportArchive))
@@ -126,10 +131,11 @@ public class FoldersResource {
 	@DELETE
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@QueryParam("path") String path) {
+	public Response delete(@QueryParam("key") String key) {
 		Response response = null;
 		try {
 			SpagoBIUserProfile profile = businessContext.getUserProfile();
+			String path = resourceManagerAPIservice.getFolderByKey(key, profile);
 			boolean create = resourceManagerAPIservice.delete(path, profile);
 			if (create)
 				response = Response.status(Response.Status.OK).build();

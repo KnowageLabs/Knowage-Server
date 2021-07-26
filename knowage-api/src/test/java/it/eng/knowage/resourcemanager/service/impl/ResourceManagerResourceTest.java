@@ -97,15 +97,15 @@ public class ResourceManagerResourceTest {
 	}
 
 	private static void setFolderLevel(FolderDTO e, int lvl, int count) {
-		e.setKey(lvl + "-" + count);
-		count = 0;
-		if (e.getChildren() != null && e.getChildren().size() > 0) {
-			lvl++;
-			for (FolderDTO emp : e.getChildren()) {
-				count++;
-				setFolderLevel(emp, lvl, count);
-			}
-		}
+//		e.setKey(lvl + "-" + count);
+//		count = 0;
+//		if (e.getChildren() != null && e.getChildren().size() > 0) {
+//			lvl++;
+//			for (FolderDTO emp : e.getChildren()) {
+//				count++;
+//				setFolderLevel(emp, lvl, count);
+//			}
+//		}
 	}
 
 	private static void clearFolders(FolderDTO e, String path) {
@@ -129,6 +129,7 @@ public class ResourceManagerResourceTest {
 				String path = node + "\\" + filename;
 				if (new File(path).isDirectory()) {
 					FolderDTO folder = new FolderDTO(path);
+					folder.setKey(Paths.get(path).hashCode());
 					parentFolder.addChildren(folder);
 					createTree(folder);
 				} else {
