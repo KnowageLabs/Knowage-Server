@@ -141,41 +141,50 @@ export default defineComponent({
                 var meas = this.kpi.definition.measures[i]
                 definition[i] = meas
             }
-            // console.log('---------- DEFINITION', definition)
-            // console.log('---------- this.kpi.cardinality.measureList: ', this.kpi.cardinality.measureList)
 
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/buildCardinalityMatrix', definition).then((response) => {
+                console.log('this.kpi.cardinality.measureList', this.kpi.cardinality.measureList)
+                console.log('response.data', response.data)
                 if (this.formulaChanged) {
                     this.kpi.cardinality.measureList = [...response.data]
                     console.log('FORMULA CHANGED')
-                }
-
-                for (var i = 0; i < response.data.length; i++) {
-                    //check if missing attribute
-                    var obj = response.data[i]
-                    for (var j = 0; j < this.kpi.cardinality.measureList.length; j++) {
-                        // console.log(obj['measureName'] + '==' + this.kpi.cardinality.measureList[j]['measureName'])
-                        if (obj['measureName'] == this.kpi.cardinality.measureList[j]['measureName']) {
-                            console.log('MATCHED, 1 IF --------------------')
-
-                            var obj2 = this.kpi.cardinality.measureList[j]['attributes']
-                            var numberKeys = Object.keys(obj2)
-
-                            if (numberKeys.length != Object.keys(obj['attributes']).length) {
-                                console.log('MATCHED, 2 IF --------------------', Object.keys(obj['attributes']).length)
-
-                                for (var k = 0; k <= Object.keys(obj['attributes']).length; k++) {
-                                    var obj3 = this.kpi.cardinality.measureList[j]['attributes']
-                                    console.log('OBJ 3 --------------------', obj3)
-                                    obj3[Object.keys(obj['attributes'])[k - 1]] = obj['attributes'][Object.keys(obj['attributes'])[k - 1]]
-                                    if (this.attributesList.indexOf(Object.keys(obj['attributes'])[k - 1]) == -1) {
-                                        this.attributesList.push(Object.keys(obj['attributes'])[k - 1])
-                                    }
-                                }
+                    this.attributesList = []
+                    for (var i = 0; i < response.data.length; i++) {
+                        for (let key of Object.keys(response.data[i]['attributes'])) {
+                            console.log(response.data[i]['attributes'][key])
+                            if (this.attributesList.indexOf(key) == -1) {
+                                this.attributesList.push(key)
                             }
                         }
                     }
                 }
+
+                // for (var i = 0; i < response.data.length; i++) {
+                //     //check if missing attribute
+                //     var obj = response.data[i]
+                //     for (var j = 0; j < this.kpi.cardinality.measureList.length; j++) {
+                //         // console.log(obj['measureName'] + '==' + this.kpi.cardinality.measureList[j]['measureName'])
+                //         if (obj['measureName'] == this.kpi.cardinality.measureList[j]['measureName']) {
+                //             console.log('MATCHED, 1 IF --------------------')
+
+                //             var obj2 = this.kpi.cardinality.measureList[j]['attributes']
+                //             var numberKeys = Object.keys(obj2)
+
+                //             if (numberKeys.length != Object.keys(obj['attributes']).length) {
+                //                 console.log('MATCHED, 2 IF --------------------', Object.keys(obj['attributes']).length)
+
+                //                 for (var k = 0; k <= Object.keys(obj['attributes']).length; k++) {
+                //                     var obj3 = this.kpi.cardinality.measureList[j]['attributes']
+                //                     console.log('OBJ 3 --------------------', obj3)
+                //                     obj3[Object.keys(obj['attributes'])[k - 1]] = obj['attributes'][Object.keys(obj['attributes'])[k - 1]]
+                //                     if (this.attributesList.indexOf(Object.keys(obj['attributes'])[k - 1]) == -1) {
+                //                         this.attributesList.push(Object.keys(obj['attributes'])[k - 1])
+                //                     }
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
                 this.$emit('measureListUpdated')
             })
         },
