@@ -10,7 +10,7 @@
         <events-card :selectedAlert="selectedAlert" @valueChanged="updateAlert"></events-card>
     </div>
     <Button @click="dialogVisiable = true">Add action</Button>
-    <add-action-dialog :dialogVisible="dialogVisiable" @close="dialogVisiable = false"></add-action-dialog>
+    <add-action-dialog :action="selectedAction" :dialogVisible="dialogVisiable" @close="dialogVisiable = false"></add-action-dialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -49,6 +49,7 @@ export default defineComponent({
             selectedAlert: {} as iAlert,
             listeners: [] as iListener[],
             jsonOptions: {} as any,
+            selectedAction: {} as any,
             actions: [] as any[],
             alertValidationDescriptor: alertValidationDescriptor,
             dialogVisiable: false,

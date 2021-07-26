@@ -23,8 +23,10 @@
         </div>
         <exectute-etl-card v-if="type && type.id == 63" :loading="loading" :files="data.item"></exectute-etl-card>
         <context-broker-card v-if="type && type.id == 86"></context-broker-card>
+        <SendMailCard v-else-if="type && type.id == 62" :action="action" :users="data"></SendMailCard>
     </Dialog>
 </template>
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
@@ -33,18 +35,24 @@ import Dropdown from 'primevue/dropdown'
 import addActionDialogDescriptor from './AddActionDialogDescriptor.json'
 import ExectuteEtlCard from './ExectuteEtlCard.vue'
 import ContextBrokerCard from './ContextBrokerCard.vue'
+import SendMailCard from './SendMailCard.vue'
+
 export default defineComponent({
     name: 'add-action-dialog',
     components: {
         Dialog,
         Dropdown,
         ExectuteEtlCard,
-        ContextBrokerCard
+        ContextBrokerCard,
+        SendMailCard
     },
     props: {
         dialogVisible: {
             type: Boolean,
             default: false
+        },
+        action: {
+            type: Object
         }
     },
     data() {
@@ -56,11 +64,14 @@ export default defineComponent({
         }
     },
     methods: {
-        setType() {
+        async setType() {
             console.log(this.type)
             if (this.type.id == 63) {
-                this.loadData('2.0/documents/listDocument?includeType=ETL')
+                await this.loadData('2.0/documents/listDocument?includeType=ETL')
+            } else if (this.type.id === 62) {
+                await this.loadData('2.0/users')
             }
+            console.log('DATA ', this.data)
         },
         async loadData(path: string) {
             this.loading = true
