@@ -66,16 +66,18 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/' + this.id + '/load')
                 .then((response) => {
                     this.selectedAlert = { ...response.data }
-                    this.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '')
+                    this.selectedAlert.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '')
 
-                    this.actions = this.jsonOptions.actions.map((action: any) => {
-                        return {
-                            jsonActionParameters: JSON.parse(action.jsonActionParameters),
-                            idAction: action.idAction,
-                            thresholdValues: action.thresholdValues
-                        }
-                    })
-                    console.log('jsonParse', this.jsonOptions)
+                    if (this.selectedAlert.jsonOptions) {
+                        this.selectedAlert.jsonOptions.actions = this.selectedAlert.jsonOptions.actions.map((action: any) => {
+                            return {
+                                jsonActionParameters: JSON.parse(action.jsonActionParameters),
+                                idAction: action.idAction,
+                                thresholdValues: action.thresholdValues
+                            }
+                        })
+                    }
+                    console.log('jsonParse', this.selectedAlert.jsonOptions)
                 })
                 .finally(() => console.log('actions', this.actions))
         },
@@ -105,7 +107,17 @@ export default defineComponent({
             if (this.id) {
                 await this.loadAlert()
             } else {
-                this.selectedAlert = { id: null, singleExecution: false }
+                this.selectedAlert = {
+                    id: null,
+                    singleExecution: false,
+                    frequency: {
+                        cron: { type: 'minute', parameter: { numRepetition: '1' } },
+                        startDate: new Date().valueOf(),
+                        endDate: null,
+                        startTime: new Date().valueOf(),
+                        endTime: ''
+                    }
+                }
             }
             this.v$.$reset()
         },

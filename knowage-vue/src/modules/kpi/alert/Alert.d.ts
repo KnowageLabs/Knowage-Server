@@ -1,7 +1,7 @@
 export interface iAlert {
     id?: number | null
     name?: string
-    jsonOptions?: string
+    jsonOptions?: any
     singleExecution?: boolean
     eventBeforeTriggerAction?: number
     alertListener?: iListener
@@ -16,9 +16,9 @@ export interface iListener {
 }
 
 export interface iFrequency {
-    cron?: string
-    startDate?: Date
-    endDate?: Date
-    startTime?: String
-    endTime?: String
+    cron: any,
+    startDate: number | Date,
+    endDate: number | Date | null
+    startTime: number | Date
+    endTime: string | Date | null
 }
