@@ -232,7 +232,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<div flex=100 ng-if="selectedMenuItem.typeId==2">
 				<md-input-container class="md-block"> <label>{{translate.load("sbi.menu.appUrl")}}</label>
 				<input data-ng-model="selectedMenu.externalApplicationUrl"
-					name="externalApplicationUrl" md-maxlength="100"
+					name="externalApplicationUrl" md-maxlength="1000"
 					ng-change="setDirty()"> </md-input-container>
 			</div>
 			<div flex=100 ng-if="selectedMenuItem.typeId==1">

@@ -567,9 +567,9 @@ myApp.directive('menuAside', ['$window', '$http', '$mdDialog', '$timeout', '$mdT
 				$scope.callExternalApp = function callExternalApp(url) {
 					if (!Sbi.config.isSSOEnabled) {
 						if (url.indexOf("?") == -1) {
-							url += '?<%= SsoServiceInterface.USER_ID %>=' + Sbi.user.userUniqueIdentifier;
+							url += '?user_id=' + Sbi.user.userUniqueIdentifier;
 						} else {
-							url += '&<%= SsoServiceInterface.USER_ID %>=' + Sbi.user.userUniqueIdentifier;
+							url += '&user_id=' + Sbi.user.userUniqueIdentifier;
 						}
 					}
 
