@@ -36,8 +36,11 @@
         </div>
         <ExectuteEtlCard v-if="type && type.id == 63" :loading="loading" :files="data.item" :data="action"></ExectuteEtlCard>
         <ContextBrokerCard v-if="type && type.id == 86" :data="action"></ContextBrokerCard>
+        <SendMailCard v-else-if="type && type.id == 62" :action="selectedAction" :users="formatedUsers"></SendMailCard>
+        =======
     </Dialog>
 </template>
+selectedAction
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
@@ -49,6 +52,9 @@ import ColorPicker from 'primevue/colorpicker'
 import addActionDialogDescriptor from './AddActionDialogDescriptor.json'
 import ExectuteEtlCard from './ExectuteEtlCard.vue'
 import ContextBrokerCard from './ContextBrokerCard.vue'
+import SendMailCard from './SendMailCard.vue'
+import mockedUsers from './MockedUsers.json'
+
 export default defineComponent({
     name: 'add-action-dialog',
     components: {
@@ -57,7 +63,8 @@ export default defineComponent({
         MultiSelect,
         ExectuteEtlCard,
         ContextBrokerCard,
-        ColorPicker
+        ColorPicker,
+        SendMailCard
     },
     props: {
         dialogVisible: {
@@ -66,6 +73,10 @@ export default defineComponent({
         },
         kpi: {
             type: Object
+        },
+        selectedAction: {
+            type: Object,
+            required: true
         }
     },
     data() {
@@ -73,9 +84,12 @@ export default defineComponent({
             addActionDialogDescriptor,
             loading: false,
             type: { id: null },
-            data: {},
+            //data: {},
             action: {} as iAction,
-            selectedThresholds: []
+            selectedThresholds: [],
+            data: [] as any[],
+            formatedUsers: [] as any[],
+            mockedUsers: mockedUsers
         }
     },
     methods: {
@@ -87,7 +101,25 @@ export default defineComponent({
                 await this.loadData('2.0/documents/listDocument?includeType=ETL')
             } else if (this.type.id == 86) {
                 this.action.idAction = 86
+            } else if (this.type.id == 62) {
+                this.action.idAction = 62
+                await this.loadData('2.0/users')
+                this.formatUsers()
             }
+
+            console.log('DATA ', this.data)
+            console.log('MOCKED USERS ', this.mockedUsers)
+        },
+        formatUsers() {
+            for (let i = 0; i < this.mockedUsers.length; i++) {
+                const attributes = this.mockedUsers[i].sbiUserAttributeses
+                for (let key in attributes) {
+                    if (attributes[key]['email']) {
+                        this.formatedUsers.push({ name: this.mockedUsers[i].fullName, userId: this.mockedUsers[i].userId, email: attributes[key].email })
+                    }
+                }
+            }
+            console.log('FORMATED USERS', this.formatedUsers)
         },
         async loadData(path: string) {
             this.loading = true
