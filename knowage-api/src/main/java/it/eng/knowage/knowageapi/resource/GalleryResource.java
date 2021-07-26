@@ -84,7 +84,7 @@ public class GalleryResource {
 			SpagoBIUserProfile profile = getUserProfile();
 			widgetGalleryDTO = widgetGalleryService.getWidgetsById(widgetId, profile);
 		} catch (Exception e) {
-			throw new KnowageRuntimeException("Error getting widget with id " + Optional.of(widgetId).orElse("null"), e);
+			throw new KnowageRuntimeException("Error getting widget with id " + Optional.ofNullable(widgetId).orElse("null"), e);
 		}
 		return widgetGalleryDTO;
 
@@ -129,7 +129,7 @@ public class GalleryResource {
 			newSbiWidgetGallery.setTemplate(template);
 			newSbiWidgetGallery = widgetGalleryService.makeNewWidget(newSbiWidgetGallery, profile, true);
 		} catch (Exception e) {
-			throw new KnowageRuntimeException("Cannot create widget " + Optional.of(newSbiWidgetGallery).map(WidgetGalleryDTO::getName).orElse("null"), e);
+			throw new KnowageRuntimeException("Cannot create widget " + Optional.ofNullable(newSbiWidgetGallery).map(WidgetGalleryDTO::getName).orElse("null"), e);
 		}
 		return newSbiWidgetGallery;
 
@@ -197,7 +197,7 @@ public class GalleryResource {
 			newSbiWidgetGallery = widgetGalleryService.importOrUpdateWidget(newSbiWidgetGallery, profile);
 
 		} catch (Exception e) {
-			throw new KnowageRuntimeException("Cannot import widget " + Optional.of(newSbiWidgetGallery).map(WidgetGalleryDTO::getName).orElse("null"), e);
+			throw new KnowageRuntimeException("Cannot import widget " + Optional.ofNullable(newSbiWidgetGallery).map(WidgetGalleryDTO::getName).orElse("null"), e);
 		}
 
 		return newSbiWidgetGallery;

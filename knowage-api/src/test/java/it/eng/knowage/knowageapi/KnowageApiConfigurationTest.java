@@ -25,17 +25,18 @@ import java.util.Map;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.transaction.ChainedTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
@@ -49,32 +50,31 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile.Attributes.Entry;
 @ComponentScan("it.eng.knowage.knowageapi")
 public class KnowageApiConfigurationTest {
 
-	@Bean
-	@Qualifier("knowage-gallery")
-	public EntityManagerFactory entityManagerFactoryForWidgetGallery() {
+	@Primary /* just to prevent Spring error */
+	@Bean("knowage-gallery")
+	public LocalEntityManagerFactoryBean entityManagerFactoryForWidgetGallery() {
 		Map<String, Object> properties = getEntityManagerFactoriesProperties();
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("knowage-gallery", properties);
-		return emf;
+		LocalEntityManagerFactoryBean factoryBean = new LocalEntityManagerFactoryBean();
+		factoryBean.setPersistenceUnitName("knowage-gallery");
+		factoryBean.setJpaPropertyMap(properties);
+		return factoryBean;
 	}
 
-	@Bean
-	@Qualifier("knowage-gallery")
-	public EntityManager entityManagerForWidgetGallery(@Qualifier("knowage-gallery") EntityManagerFactory emf) {
-		return emf.createEntityManager();
-	}
-
-	@Bean
-	@Qualifier("knowage-functioncatalog")
-	public EntityManagerFactory entityManagerFactoryForWidgetFunctionCatalog() {
+	@Bean("knowage-functioncatalog")
+	public LocalEntityManagerFactoryBean entityManagerFactoryForWidgetFunctionCatalog() {
 		Map<String, Object> properties = getEntityManagerFactoriesProperties();
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("knowage-functioncatalog", properties);
-		return emf;
+		LocalEntityManagerFactoryBean factoryBean = new LocalEntityManagerFactoryBean();
+		factoryBean.setPersistenceUnitName("knowage-functioncatalog");
+		factoryBean.setJpaPropertyMap(properties);
+		return factoryBean;
 	}
 
+	@Primary
 	@Bean
-	@Qualifier("knowage-functioncatalog")
-	public EntityManager entityManagerForWidgetFunctionCatalog(@Qualifier("knowage-functioncatalog") EntityManagerFactory emf) {
-		return emf.createEntityManager();
+	public PlatformTransactionManager mainTransactionManager() {
+		return new ChainedTransactionManager(
+				new JpaTransactionManager(entityManagerFactoryForWidgetGallery().getObject()),
+				new JpaTransactionManager(entityManagerFactoryForWidgetFunctionCatalog().getObject()));
 	}
 
 	private Map<String, Object> getEntityManagerFactoriesProperties() {

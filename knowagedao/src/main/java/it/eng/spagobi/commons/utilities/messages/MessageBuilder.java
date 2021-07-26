@@ -18,9 +18,11 @@
 package it.eng.spagobi.commons.utilities.messages;
 
 import java.util.Locale;
+import java.util.Locale.Builder;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.RequestContainer;
@@ -191,7 +193,13 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 		Locale reqLocale = request.getLocale();
 		String language = reqLocale.getLanguage();
 		String country = GeneralUtilities.getCountry(language);
-		browserLocale = new Locale(language, country);
+
+		String script = reqLocale.getScript();
+		Builder tmpLocale = new Builder().setLanguage(language).setRegion(country);
+		if (StringUtils.isNotBlank(script)) {
+			tmpLocale.setScript(script);
+		}
+		browserLocale = tmpLocale.build();
 
 		if (browserLocale == null) {
 			browserLocale = GeneralUtilities.getDefaultLocale();
@@ -208,6 +216,7 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 		if (sbiMode.equalsIgnoreCase("WEB")) {
 			String language = null;
 			String country = null;
+			String script = null;
 
 			RequestContainer reqCont = RequestContainer.getRequestContainer();
 			if (reqCont != null) {
@@ -215,6 +224,7 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 				SessionContainer permSess = sessCont.getPermanentContainer();
 				language = (String) permSess.getAttribute("AF_LANGUAGE");
 				country = (String) permSess.getAttribute("AF_COUNTRY");
+				script = (String) permSess.getAttribute("AF_SCRIPT");
 				profile = (UserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			}
 
@@ -222,21 +232,25 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 				country = "";
 			}
 
+			if (script == null) {
+				script = "";
+			}
+
 			if (profile != null && !profile.getUserId().equals(SpagoBIConstants.PUBLIC_USER_ID) && language != null) {
 				// check preference from user attributes if presents
-				try {
-					String userLocale = (String) profile.getUserAttribute("language");
-					if (userLocale != null && !("").equals(userLocale)) {
-						language = userLocale.substring(0, userLocale.indexOf("_"));
-						country = userLocale.substring(userLocale.indexOf("_") + 1);
-						logger.info("User attribute language: " + language);
-						logger.info("User attribute country: " + country);
-					}
-				} catch (Exception e) {
-					logger.debug("Error on reading user attribute language: " + e);
-				}
+//				try {
+//					String userLocale = (String) profile.getUserAttribute("language");
+//					if (StringUtils.isNotBlank(userLocale)) {
+//						language = userLocale.substring(0, userLocale.indexOf("_"));
+//						country = userLocale.substring(userLocale.indexOf("_") + 1);
+//						logger.info("User attribute language: " + language);
+//						logger.info("User attribute country: " + country);
+//					}
+//				} catch (Exception e) {
+//					logger.debug("Error on reading user attribute language: " + e);
+//				}
 
-				locale = new Locale(language, country, "");
+				locale = new Builder().setLanguage(language).setRegion(country).setScript(script).build();
 			} else if (request == null) {
 				locale = getBrowserLocaleFromSpago();
 			} else {
@@ -252,10 +266,10 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 		} else if (StringUtilities.isEmpty(locale.getCountry())) {
 			logger.warn((new StringBuilder("Request locale ")).append(locale)
 					.append(" not contain the country value. The one specified in configuration will be used").toString());
-			SingletonConfig spagobiConfig = SingletonConfig.getInstance();
-
-			String country = GeneralUtilities.getCountry(locale.getLanguage());
-			locale = new Locale(locale.getLanguage(), country);
+//			SingletonConfig spagobiConfig = SingletonConfig.getInstance();
+//
+//			String country = GeneralUtilities.getCountry(locale.getLanguage());
+			locale = GeneralUtilities.getDefaultLocale();
 		}
 		logger.debug((new StringBuilder("OUT-locale:")).append(locale == null ? "null" : locale.toString()).toString());
 		return locale;
@@ -272,12 +286,20 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 
 		try {
 			language = locale.getLanguage();
-			country = GeneralUtilities.getCountry(language);
+			country = locale.getCountry();
 
 			if (StringUtilities.isEmpty(locale.getCountry())) {
 				return true;
+			} else if (locale.getCountry().equalsIgnoreCase(country)) {
+				String script = GeneralUtilities.getScript(language);
+
+				if (!StringUtils.isBlank(script)) {
+					return locale.getScript().equalsIgnoreCase(script);
+				} else {
+					return true;
+				}
 			} else {
-				return locale.getCountry().equalsIgnoreCase(country);
+				return false;
 			}
 		} finally {
 			logger.info("OUT");

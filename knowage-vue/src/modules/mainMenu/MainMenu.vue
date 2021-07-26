@@ -5,7 +5,7 @@
         <RoleDialog v-model:visibility="roleDisplay"></RoleDialog>
         <DownloadsDialog v-model:visibility="downloadsDisplay"></DownloadsDialog>
         <NewsDialog v-model:visibility="newsDisplay"></NewsDialog>
-        <LicenseDialog v-model:visibility="licenseDisplay"></LicenseDialog>
+        <LicenseDialog v-model:visibility="licenseDisplay" v-if="user && user.isSuperadmin"></LicenseDialog>
         <div class="menu-scroll-content">
             <div>
                 <div class="profile">
@@ -97,6 +97,9 @@ export default defineComponent({
         downloadsSelection() {
             this.downloadsDisplay = !this.downloadsDisplay
         },
+        isItemToDisplay(item) {
+            return !item.conditionedView || (item.conditionedView == 'downloads' && this.downloads && this.downloads.count.total > 0) || (item.conditionedView == 'news' && this.news && this.news.count.total > 0)
+        },
         languageSelection() {
             this.languageDisplay = !this.languageDisplay
         },
@@ -146,13 +149,27 @@ export default defineComponent({
             localObject = { locale: localStorage.getItem('locale') || this.$i18n.fallbackLocale.toString() }
         }
 
+        localObject.locale = localObject.locale.replaceAll('_', '-')
+
+        // script handling
+        let splittedLocale = localObject.locale.split('-')
+        if (splittedLocale.length > 2) {
+            localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
+        }
+
         axios
-            .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale.replaceAll('_', '-')))
+            .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
             .then((response) => {
-                this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
                 this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
                 this.commonUserFunctionalities = response.data.commonUserFunctionalities
-                this.allowedUserFunctionalities = response.data.allowedUserFunctionalities
+                let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
+                for (var idx in responseAllowedUserFunctionalities) {
+                    let item = responseAllowedUserFunctionalities[idx]
+                    if (this.isItemToDisplay(item)) {
+                        this.allowedUserFunctionalities.push(item)
+                    }
+                }
+                this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities
                 this.updateNewsAndDownload()
             })
             .catch((error) => console.error(error))

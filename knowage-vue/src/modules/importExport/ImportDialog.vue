@@ -28,7 +28,7 @@
 						responsiveLayout="stack"
 						breakpoint="960px"
 						:currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-						:globalFilterFields="['name', 'type', 'tags', 'keywords']"
+						:globalFilterFields="['name', 'type', 'tags']"
 						:loading="loading"
 					>
 						<template #header>
@@ -49,11 +49,8 @@
 						<Column v-for="col in getData(functionality.type)" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" :selectionMode="col.field == 'selectionMode' ? 'multiple' : ''" :exportable="col.field == 'selectionMode' ? false : ''">
 							<template #body="{data}" v-if="col.displayType">
 								<span class="p-float-label kn-material-input">
-									<div v-if="col.displayType == 'widgetTags'">
+									<div v-if="col.displayType == 'tags'">
 										<Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
-									</div>
-									<div v-if="col.displayType == 'functionKeywords'">
-										<Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.keywords" v-bind:key="index" rounded :value="tag"> </Tag>
 									</div>
 									<div v-if="col.displayType == 'widgetGalleryType'">
 										<Tag :style="importExportDescriptor.iconTypesMap[data.type].style"> {{ data.type.toUpperCase() }} </Tag>
@@ -124,8 +121,7 @@
 				global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 				name: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
 				type: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-				tags: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
-				keywords: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
+				tags: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
 			}
 		},
 		methods: {
@@ -133,13 +129,11 @@
 				if (this.token != '') {
 					this.uploadedFiles = []
 					await axios.get(process.env.VUE_APP_API_PATH + '1.0/import/cleanup', { params: { token: this.token } }).then(
-						(response) => {
-							if (!response.data.errors) {
-								this.token = ''
-								this.packageItems = {
-									gallery: [],
-									catalogFunction: []
-								}
+						() => {
+							this.token = ''
+							this.packageItems = {
+								gallery: [],
+								catalogFunction: []
 							}
 						},
 						(error) => console.log(error)
@@ -182,15 +176,11 @@
 						})
 						.then(
 							(response) => {
-								if (response.data.errors) {
-									this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
-								} else {
-									this.packageItems = response.data.entries
-									this.token = response.data.token
-									this.step = 1
-								}
+								this.packageItems = response.data.entries
+								this.token = response.data.token
+								this.step = 1
 							},
-							(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
+							() => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
 						)
 					this.loading = false
 				} else {
@@ -241,16 +231,12 @@
 						}
 					})
 					.then(
-						(response) => {
-							if (response.data.errors) {
-								this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
-							} else {
-								this.$store.commit('setInfo', { title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
-							}
+						() => {
+							this.$store.commit('setInfo', { title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
 
 							this.$store.commit('setLoading', false)
 						},
-						(error) => this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t(error) })
+						() => this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
 					)
 				this.token = ''
 				this.resetAndClose()

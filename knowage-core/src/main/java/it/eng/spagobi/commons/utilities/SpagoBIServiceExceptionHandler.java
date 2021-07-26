@@ -19,7 +19,9 @@ package it.eng.spagobi.commons.utilities;
 
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Locale.Builder;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.RequestContainer;
@@ -50,8 +52,7 @@ public class SpagoBIServiceExceptionHandler {
 
 	/**
 	 *
-	 * @param serviceName
-	 *            <code>
+	 * @param serviceName <code>
 	 * public void service(request, response) {
 	 *
 	 * 		logger.debug("IN");
@@ -78,12 +79,21 @@ public class SpagoBIServiceExceptionHandler {
 		Locale locale = null;
 		RequestContainer requestContainer = RequestContainer.getRequestContainer();
 		if (requestContainer != null) {
-			SessionContainer permSess = requestContainer.getSessionContainer().getPermanentContainer();
-			String lang = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-			String country = (String) permSess.getAttribute(SpagoBIConstants.AF_COUNTRY);
-			if (lang != null && country != null) {
-				locale = new Locale(lang, country, "");
-			}
+			SessionContainer permanentSession = requestContainer.getSessionContainer().getPermanentContainer();
+			String currLanguage = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+			String currCountry = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+			String currScript = (String) permanentSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
+			if (currLanguage != null && currCountry != null) {
+				Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
+
+				if (StringUtils.isNotBlank(currScript)) {
+					tmpLocale.setScript(currScript);
+				}
+
+				locale = tmpLocale.build();
+			} else
+				locale = GeneralUtilities.getDefaultLocale();
+
 		} else {
 			locale = GeneralUtilities.getDefaultLocale();
 		}

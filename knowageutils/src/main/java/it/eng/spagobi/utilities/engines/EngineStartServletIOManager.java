@@ -25,12 +25,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -89,6 +91,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	public static final String COUNTRY = "SBI_COUNTRY";
 	public static final String LANGUAGE = "SBI_LANGUAGE";
+	public static final String SCRIPT = "SBI_SCRIPT";
 	public static final String ON_EDIT_MODE = "onEditMode";
 
 	private final Logger logger = Logger.getLogger(EngineStartServletIOManager.class);
@@ -332,6 +335,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	public Locale getLocale() {
 		String language;
 		String country;
+		String script;
 
 		if (locale == null) {
 
@@ -339,10 +343,15 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 			language = getParameterAsString(LANGUAGE);
 			country = getParameterAsString(COUNTRY);
+			script = getParameterAsString(SCRIPT);
 			logger.debug("Locale parameters received: language = [" + language + "] ; country = [" + country + "]");
 
 			try {
-				locale = new Locale(language, country);
+				Builder builder = new Builder().setLanguage(language).setRegion(country);
+				if (StringUtils.isNotBlank(script)) {
+					builder.setScript(script);
+				}
+				locale = builder.build();
 			} catch (Exception e) {
 				logger.debug("Error while creating Locale object from input parameters: language = [" + language + "] ; country = [" + country + "]");
 				logger.debug("Creating default locale [en,US].");
@@ -462,10 +471,8 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	/**
 	 * Copy request parameters into env.
 	 *
-	 * @param env
-	 *            the env
-	 * @param serviceRequest
-	 *            the service request
+	 * @param env            the env
+	 * @param serviceRequest the service request
 	 */
 	public void copyRequestParametersIntoEnv(Map env) {
 		Set parameterStopList = null;
@@ -519,8 +526,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	/**
 	 * Decode parameter value.
 	 *
-	 * @param parValue
-	 *            the par value
+	 * @param parValue the par value
 	 * @return the string
 	 */
 	private String decodeParameterValue(String parValue) {

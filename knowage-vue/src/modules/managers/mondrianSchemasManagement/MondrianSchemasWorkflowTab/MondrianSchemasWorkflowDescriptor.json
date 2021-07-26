@@ -1,0 +1,31 @@
+{
+    "filterFields": ["fullName"],
+    "style": {
+        "icon": {
+            "align-items": "flex-end",
+            "color": "green",
+            "display": "flex",
+            "flex-direction": "column"
+        },
+        "listItem": {
+            "align-items": "center",
+            "display": "flex",
+            "height": "35px",
+            "paddding": ".5rem",
+            "width": "100%"
+        },
+        "listItemDetail": {
+            "flex": "1 1 0"
+        },
+        "targetHeader": {
+            "color": "blue"
+        },
+        "targetIcon": {
+            "margin-left": "70%"
+        },
+        "workflowList": {
+            "height": "50vh",
+            "width": "70vh"
+        }
+    }
+}

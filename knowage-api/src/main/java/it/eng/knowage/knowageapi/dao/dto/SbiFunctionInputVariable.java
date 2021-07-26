@@ -188,8 +188,8 @@ public class SbiFunctionInputVariable extends AbstractEntity implements Comparab
 
 	@Override
 	public int compareTo(SbiFunctionInputVariable o) {
-		String thisVarName = Optional.of(this.id).map(e -> e.varName).orElse("");
-		String otheVarName = Optional.of(o).map(e -> o.id).map(e -> e.varName).orElse("");
+		String thisVarName = Optional.ofNullable(this.id).map(e -> e.varName).orElse("");
+		String otheVarName = Optional.ofNullable(o).map(e -> o.id).map(e -> e.varName).orElse("");
 
 		return thisVarName.compareTo(otheVarName);
 	}

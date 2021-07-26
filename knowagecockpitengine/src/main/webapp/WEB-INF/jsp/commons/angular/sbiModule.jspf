@@ -37,6 +37,7 @@ sbiM.factory('sbiModule_config',function(){
     	host: window.location.origin,
     	curr_country: '<%= curr_country %>',
     	curr_language: '<%= curr_language%>',
+    	curr_script: '<%= curr_script %>',
     	thous: '<%= GeneralUtilities.getGroupingSeparator(locale)%>',
         dec: '<%= GeneralUtilities.getDecimalSeparator(locale)%>',
 		clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server
@@ -824,12 +825,19 @@ sbiM.service('sbiModule_i18n', function(sbiModule_config, sbiModule_restServices
         
     	loadI18nMap : function(locale){
     		sbiModule_restServices.restToRootProject();
-    		var promise = sbiModule_restServices.promiseGet("2.0/i18nMessages","?currCountry="+sbiModule_config.curr_country+"&currLanguage="+sbiModule_config.curr_language).then(
-    				function(response){
-    					self.i18nMap = response.data;
-    			},function(response){
-    				alert("Errore "+response.data.errors[0].message);
-    			});
+			var script = angular.copy(sbiModule_config.curr_script);
+			
+    		var promise = sbiModule_restServices.promiseGet("2.0/i18nMessages",
+    				"?currCountry="+sbiModule_config.curr_country+
+    				"&currLanguage="+sbiModule_config.curr_language+
+    				"&currScript="+script.replaceAll('-','')
+    				).then(
+    					function(response){
+    						self.i18nMap = response.data;
+		    			},function(response){
+		    				alert("Errore "+response.data.errors[0].message);
+		    			}
+		    		);
     		return promise;
     	},
         
@@ -1017,6 +1025,6 @@ var isNull = function(value){
 <!-- sbiModule_jsonServices -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/tools/commons/sbiModule_services/sbiModule_jsonServices.js")%>"></script>
 
-<script type="text/javascript" src="<%=KnowageSystemConfiguration.getKnowageContext()%>/js/lib/angular-localization/<%=curr_language%>-<%=curr_country%>.js"></script>
+<script type="text/javascript" src="<%=KnowageSystemConfiguration.getKnowageContext()%><%= LocalePropertiesUtilities.getAngularPropertiesFileName(curr_language,curr_script,curr_country,"-")%>"></script>
 
 	 

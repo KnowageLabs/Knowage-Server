@@ -1,0 +1,42 @@
+{
+    "validations": {
+        "schema": [
+            {
+                "fieldName": "name",
+                "validators": [{ "key": "required" }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "description",
+                "validators": [{ "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "type",
+                "validators": [{ "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            }
+        ]
+    },
+    "columns": [
+        {
+            "field": "fileName",
+            "header": "managers.mondrianSchemasManagement.headers.fileName"
+        },
+        {
+            "field": "creationUser",
+            "header": "managers.mondrianSchemasManagement.headers.creator"
+        }
+    ],
+    "table": {
+        "column": {
+            "style": {
+                "width": "18%",
+                "word-break": "break-all"
+            }
+        },
+        "iconColumn": {
+            "style": {
+                "width": "10%",
+                "text-align": "end"
+            }
+        }
+    }
+}

@@ -945,8 +945,9 @@ $scope.setAndLoadCN = function(num) {
 		 		"&user_id=" + sbiModule_user.userId +
 		 		"&document="+sbiModule_docInfo.id +
 		 		"&ENGINE=knowagewhatifengine" +
-		 		"&SBI_LANGUAGE" + sbiModule_config.curr_country
-		 		"&SBI_COUNTRY" + sbiModule_config.curr_language
+		 		"&SBI_LANGUAGE" + sbiModule_config.curr_language
+		 		"&SBI_COUNTRY" + sbiModule_config.curr_country
+				"&SBI_SCRIPT" + sbiModule_config.curr_script
 		 		"&SBI_EXECUTION_ID=" + JSsbiExecutionID
 
 		 window.parent.location.href=url;

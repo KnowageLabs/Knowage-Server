@@ -62,6 +62,7 @@
 					DOCUMENT_LABEL: sbiModule_cockpitDocument.docLabel,
 					SBI_COUNTRY: sbiModule_config.curr_country,
 					SBI_LANGUAGE: sbiModule_config.curr_language,
+					SBI_SCRIPT: sbiModule_config.curr_script,
 					options : options
 			}
 
@@ -86,6 +87,7 @@
 
 			var drivers = formatDrivers(cockpitModule_analyticalDrivers);
 			if (widget.type == "map") {
+				var spatialAttributesToFilter = getSpatialAttributesToFilter(widget.content.layers);
 				requestUrl.COCKPIT_SELECTIONS = [];
 				for (var k=0; k<widget.datasetId.length; k++) {
 					var dsId = widget.datasetId[k];
@@ -97,10 +99,8 @@
 					else {
 						aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
 					}
-					// cleanAggregation(widget, aggregation);
-
-					var loadDomainValues = widget.type == "selector" ? true : false;
-					var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
+					aggregation = filterSpatialAttributes(aggregation, spatialAttributesToFilter);
+					var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, false);
 					var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
 					var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
 					var paramsToSend = angular.fromJson(parametersString);
@@ -123,8 +123,6 @@
 				else {
 					aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
 				}
-				// cleanAggregation(widget, aggregation);
-
 				var loadDomainValues = widget.type == "selector" ? true : false;
 				var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, loadDomainValues);
 				var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
@@ -141,6 +139,47 @@
 
 			deferred.resolve(requestUrl);
 			return deferred.promise;
+		}
+
+		var getSpatialAttributesToFilter = function (layers) {
+			toReturn = {};
+			if (layers) {
+				for (var i=0; i<layers.length; i++) {
+					var attrsToFilter = [];
+					if (layers[i].content && layers[i].content.columnSelectedOfDataset) {
+						for (var j=0; j<layers[i].content.columnSelectedOfDataset.length; j++) {
+							var dsCol = layers[i].content.columnSelectedOfDataset[j];
+							if (dsCol.fieldType == 'SPATIAL_ATTRIBUTE' && dsCol.properties.coordType != 'string') {
+								attrsToFilter.push(dsCol.name);
+							}
+						}
+					}
+					var dsName = layers[i].name;
+					toReturn[dsName] = attrsToFilter;
+				}
+			}
+			return toReturn;
+		}
+
+		var filterSpatialAttributes = function (aggregation, spatialAttributesToFilter) {
+			var toReturn = {};
+			toReturn.dataset = aggregation.dataset;
+			toReturn.measures = [];
+			toReturn.categories = [];
+			var toFilter = spatialAttributesToFilter[aggregation.dataset];
+			for (var i=0; i<aggregation.categories.length; i++) {
+				var col = aggregation.categories[i];
+				if (!toFilter.includes(col.columnName)) {
+					toReturn.categories.push(col);
+				}
+			}
+			for (var i=0; i<aggregation.measures.length; i++) {
+				var col = aggregation.measures[i];
+				if (!toFilter.includes(col.columnName)) {
+					toReturn.measures.push(col);
+				}
+			}
+			return toReturn;
 		}
 
 		var formatDrivers = function (analyticalDrivers) {

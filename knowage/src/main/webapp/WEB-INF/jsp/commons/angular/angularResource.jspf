@@ -23,6 +23,8 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
 <%@page import="it.eng.spagobi.commons.bo.AccessibilityPreferences" %>
+<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="java.util.Locale.Builder" %>
 
 <%
 	RequestContainer aRequestContainer = null;
@@ -73,10 +75,18 @@
 	// If Language is alredy defined keep it
 	String curr_language=(String)permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
 	String curr_country=(String)permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+	String sessScript = (String) permanentSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
+	String curr_script = (sessScript!=null && !sessScript.isEmpty()) ? sessScript : "";
 	Locale locale = null;
 	
 	if (curr_language != null && curr_country != null	&& !curr_language.equals("") && !curr_country.equals("")) {
-		locale = new Locale(curr_language, curr_country, "");
+		Builder tmpLocale = new Locale.Builder().setLanguage(curr_language).setRegion(curr_country);
+
+		if (StringUtils.isNotBlank(curr_script)) {
+			tmpLocale.setScript(curr_script);
+		}
+
+		locale = tmpLocale.build();
 	} else {
 		if (sbiMode.equals("PORTLET")) {
 			locale = PortletUtilities.getLocaleForMessage();

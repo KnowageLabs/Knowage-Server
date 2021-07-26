@@ -261,6 +261,9 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 
 		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, locale.getLanguage());
 		parametersMap.put(SpagoBIConstants.SBI_COUNTRY, locale.getCountry());
+		if (!StringUtils.isEmpty(locale.getScript())) {
+			parametersMap.put(SpagoBIConstants.SBI_SCRIPT, locale.getScript());
+		}
 
 		// if (!GeneralUtilities.isSSOEnabled()) {
 		UserProfile userProfile = (UserProfile) profile;

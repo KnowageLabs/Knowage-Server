@@ -2,13 +2,6 @@
 	"export": {
 		"catalogFunction": {
 			"column": {
-				"keywords": {
-					"field": "keywords",
-					"header": "importExport.catalogFunction.column.keywords",
-					"style": {
-						"width": "35%"
-					}
-				},
 				"name": {
 					"field": "name",
 					"header": "importExport.catalogFunction.column.name",
@@ -21,6 +14,13 @@
 					"header": "",
 					"style": {
 						"width": "5%"
+					}
+				},
+				"tags": {
+					"field": "tags",
+					"header": "importExport.catalogFunction.column.tags",
+					"style": {
+						"width": "35%"
 					}
 				},
 				"type": {
@@ -134,9 +134,9 @@
 					}
 				},
 				{
-					"displayType": "functionKeywords",
-					"field": "keywords",
-					"header": "importExport.catalogFunction.column.keywords",
+					"displayType": "tags",
+					"field": "tags",
+					"header": "importExport.catalogFunction.column.tags",
 					"position": 4,
 					"style": {
 						"width": "35%"
@@ -213,44 +213,44 @@
 			"catalogFunction": [
 				{
 					"id": "9c964338-9970-4499-aac1-e0348da63af4",
-					"keywords": ["df", "sdfsd", "fsdf", "sd", "2323"],
 					"label": "label 1",
 					"name": "dfsdf",
+					"tags": ["df", "sdfsd", "fsdf", "sd", "2323"],
 					"type": "Machine Learning"
 				},
 				{
 					"id": "9c964338-9970-4499-aac1-e0348AAAAAAA",
-					"keywords": ["5", "sdfsd", "3", "6", "2323"],
 					"label": "label 2",
 					"name": "dfsdf",
+					"tags": ["5", "sdfsd", "3", "6", "2323"],
 					"type": "Machine Learning"
 				},
 				{
 					"id": "9c964338-9970-4499-aac1-e0348BBBBBBB",
-					"keywords": ["5", "sdfsd", "3", "6", "2323"],
 					"label": "label 2",
 					"name": "dfsdf",
+					"tags": ["5", "sdfsd", "3", "6", "2323"],
 					"type": "Machine Learning"
 				},
 				{
 					"id": "9c964338-9970-4499-aac1-e0348CCCCCCC",
-					"keywords": ["5", "sdfsd", "3", "6", "2323"],
 					"label": "label 2",
 					"name": "dfsdf",
+					"tags": ["5", "sdfsd", "3", "6", "2323"],
 					"type": "Machine Learning"
 				},
 				{
 					"id": "9c964338-9970-4499-aac1-e0348DDDDDDDD",
-					"keywords": ["5", "sdfsd", "3", "6", "2323"],
 					"label": "label 2",
 					"name": "dfsdf",
+					"tags": ["5", "sdfsd", "3", "6", "2323"],
 					"type": "Machine Learning"
 				},
 				{
 					"id": "9c964338-9970-4499-aac1-e0348EEEEEEE",
-					"keywords": ["5", "sdfsd", "3", "6", "2323"],
 					"label": "label 2",
 					"name": "dfsdf",
+					"tags": ["5", "sdfsd", "3", "6", "2323"],
 					"type": "Machine Learning"
 				}
 			],

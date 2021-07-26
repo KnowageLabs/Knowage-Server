@@ -15,8 +15,7 @@ const messages = {
 	pt_BR: require('@/i18n/pt_BR.json'),
 	ru_RU: require('@/i18n/ru_RU.json'),
 	tr_TR: require('@/i18n/tr_TR.json'),
-	'zh_CN_#hans': require('@/i18n/zh_Hans_CN.json')
-	
+	'zh_CN_#Hans': require('@/i18n/zh_Hans_CN.json')
 }
 
 let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.local

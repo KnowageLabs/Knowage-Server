@@ -1,0 +1,130 @@
+@font-face {
+    font-family: 'icomoon';
+    src: url('~@/assets/fonts/dialects/dialects.eot');
+    src: url('~@/assets/fonts/dialects/dialects.eot') format('embedded-opentype'), url('~@/assets/fonts/dialects/dialects.ttf') format('truetype'), url('~@/assets/fonts/dialects/dialects.woff') format('woff'), url('~@/assets/fonts/dialects/dialects.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+[class^='db-'],
+[class*=' db-'] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.db-microsoft-sql:before {
+    content: '\e900';
+}
+.db-azure-synapse:before {
+    content: '\e901';
+}
+.db-apache-spark:before {
+    content: '\e902';
+}
+.db-apache-impala:before {
+    content: '\e903';
+}
+.db-apache-hive:before {
+    content: '\e904';
+}
+.db-apache-cassandra:before {
+    content: '\e905';
+}
+.db-AWS-Redshift:before {
+    content: '\e906';
+}
+.db-google-spanner:before {
+    content: '\e907';
+}
+.db-google-big-query .path1:before {
+    content: '\e908';
+    color: rgb(0, 0, 0);
+}
+.db-google-big-query .path2:before {
+    content: '\e909';
+    margin-left: -1em;
+    color: rgb(255, 255, 255);
+}
+.db-google-big-query .path3:before {
+    content: '\e90a';
+    margin-left: -1em;
+    color: rgb(255, 255, 255);
+}
+.db-google-big-query .path4:before {
+    content: '\e90b';
+    margin-left: -1em;
+    color: rgb(255, 255, 255);
+}
+.db-Teradata .path1:before {
+    content: '\e90c';
+    color: rgb(61, 73, 82);
+}
+.db-teradata .path2:before {
+    content: '\e90d';
+    margin-left: -1em;
+    color: rgb(61, 73, 82);
+}
+.db-teradata .path3:before {
+    content: '\e90e';
+    margin-left: -1em;
+    color: rgb(61, 73, 82);
+}
+.db-teradata .path4:before {
+    content: '\e90f';
+    margin-left: -1em;
+    color: rgb(61, 73, 82);
+}
+.db-teradata .path5:before {
+    content: '\e910';
+    margin-left: -1em;
+    color: rgb(61, 73, 82);
+}
+.db-teradata .path6:before {
+    content: '\e911';
+    margin-left: -1em;
+    color: rgb(61, 73, 82);
+}
+.db-teradata .path7:before {
+    content: '\e912';
+    margin-left: -1em;
+    color: rgb(61, 73, 82);
+}
+.db-teradata .path8:before {
+    content: '\e913';
+    margin-left: -1em;
+    color: rgb(61, 73, 82);
+}
+.db-teradata .path9:before {
+    content: '\e914';
+    margin-left: -1em;
+    color: rgb(240, 111, 55);
+}
+.db-vertica:before {
+    content: '\e915';
+}
+.db-orientDB:before {
+    content: '\e916';
+}
+.db-Postgresql:before {
+    content: '\e917';
+}
+.db-mariadb:before {
+    content: '\e918';
+}
+.db-oracle:before {
+    content: '\e919';
+}
+.db-database:before {
+    content: '\e964';
+}

@@ -62,6 +62,7 @@
 	Locale locale= engineInstance.getLocale();
 	String curr_language=locale.getLanguage();
 	String curr_country=locale.getCountry();
+	String curr_script=locale.getScript();
 	String template= engineInstance.getTemplate().toString();
 	String documentMode = (request.getParameter("documentMode")==null)?"VIEW":request.getParameter("documentMode");
 	Integer initialSheet = (request.getParameter("sheet")==null)?0: Integer.parseInt(request.getParameter("sheet"));

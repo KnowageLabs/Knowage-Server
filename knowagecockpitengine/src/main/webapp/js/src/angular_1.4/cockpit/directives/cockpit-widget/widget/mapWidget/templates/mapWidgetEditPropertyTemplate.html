@@ -45,7 +45,10 @@
 										<md-option ng-value="1.0">100%</md-option>
 									</md-select>
 								</md-input-container>
-								<md-switch ng-model="newModel.content.showScale" aria-label="{{translate.load('sbi.cockpit.map.showScale')}}">{{translate.load('sbi.cockpit.map.showScale')}}</md-switch>
+								<md-input-container layout="row">
+									<md-switch ng-model="newModel.content.showScale" aria-label="{{translate.load('sbi.cockpit.map.showScale')}}">{{translate.load('sbi.cockpit.map.showScale')}}</md-switch>
+									<md-switch ng-model="newModel.content.autoCentering" aria-label="{{translate.load('sbi.cockpit.map.autoCentering')}}">{{translate.load('sbi.cockpit.map.autoCentering')}}</md-switch>
+								</md-input-container>
 							</md-card-content>
 						</md-card>
 					</md-content>
@@ -105,6 +108,44 @@
 							</div>
 						</md-card-content>
 					</md-card>
+					
+					<md-card>
+						<md-toolbar class="ternaryToolbar">
+				      		<div class="md-toolbar-tools" layout="row">{{::translate.load("sbi.cockpit.map.edit.legend.format")}}</div>
+				       </md-toolbar>
+				       <md-card-content>
+				       		<div flex layout=column>
+						       <div flex layout="row" >
+									<md-input-container flex class="md-block" class="small counter">
+										<label> {{::translate.load('sbi.cockpit.style.prefix')}}</label>
+										<input class="input_class" ng-trim="false" ng-model="newModel.style.legend.format.prefix"> 
+									</md-input-container>
+									<md-input-container flex class="md-block" class="small counter">
+										<label>{{::translate.load('sbi.cockpit.style.suffix')}}</label>
+										<input class="input_class" ng-trim="false" ng-model="newModel.style.legend.format.suffix"> 
+									</md-input-container>
+									<md-input-container flex class="md-block" class="small counter"">
+										<label>{{::translate.load('sbi.cockpit.style.precision')}}</label>
+										<input class="input_class" type="number" ng-model="newModel.style.legend.format.precision" min="0""> 
+									</md-input-container>
+						   		</div>
+						   		<div flex layout="row" >
+						   			<md-input-container class="md-block" flex>
+										<label>{{::translate.load("sbi.cockpit.map.edit.legend.alignment")}}</label>
+										<md-select ng-model="newModel.style.legend.alignment">
+											<md-option ng-repeat="pos in availableLegendAlignments" ng-value="pos.value">{{pos.label}}</md-option>
+										</md-select>
+									</md-input-container>
+									<md-input-container class="md-block" flex>
+										<label>{{::translate.load("sbi.cockpit.map.edit.legend.visualizationType")}}</label>
+										<md-select ng-model="newModel.style.legend.visualizationType">
+											<md-option ng-repeat="vis in availableVisualizationTypes" ng-value="vis">{{vis}}</md-option>
+										</md-select>
+									</md-input-container>
+						   		</div>
+						   	</div>
+				       </md-card-content>
+			       	</md-card>
 				
 					<cockpit-style-configurator widget ng-model="newModel.style">
 						<cockpit-style-custom-widget-configurator label="'Padding'">

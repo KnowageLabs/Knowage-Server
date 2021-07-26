@@ -37,9 +37,9 @@ function documentViewControllerFunction($scope,sbiModule_config, sbiModule_trans
 	$scope.translate = sbiModule_translate;
 
 	$scope.i18n = sbiModule_i18n;
-//	if(!$scope.i18n.isLoaded()){
-	//		$scope.i18n.loadI18nMap();
-	//	}
+	if(!$scope.i18n.isLoaded()){
+			$scope.i18n.loadI18nMap();
+		}
 
 	$scope.sbiModule_config=sbiModule_config;
 	$scope.clickDocument=function(item){

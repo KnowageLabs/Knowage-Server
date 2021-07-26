@@ -553,7 +553,7 @@ public class DocumentResource extends AbstractDocumentResource {
 				try {
 					// hide if user is not admin or devel and visible is false
 					if (!obj.isVisible() && !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
-							&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+							&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV) || isDeprecated(obj)) {
 						continue;
 					}
 					if (ObjectsAccessVerifier.canSee(obj, profile) && (!isTypeFilterValid || obj.getBiObjectTypeCode().equals(type))) {
@@ -577,6 +577,14 @@ public class DocumentResource extends AbstractDocumentResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private boolean isDeprecated(BIObject obj) {
+		String type = obj.getBiObjectTypeCode();
+		if (type.equalsIgnoreCase("CHART") || type.equalsIgnoreCase("DATA_MINING"))
+			return true;
+		else
+			return false;
 	}
 
 	@GET
