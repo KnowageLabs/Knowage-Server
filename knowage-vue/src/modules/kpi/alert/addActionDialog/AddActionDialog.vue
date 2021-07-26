@@ -17,7 +17,20 @@
                 <label for="type" class="kn-material-input-label"> {{ $t('kpi.alert.type') }} * </label>
             </span>
             <span class="p-float-label">
-                <Dropdown id="threshold" class="kn-material-input" />
+                <MultiSelect id="threshold" class="kn-material-input" v-model="selectedThresholds" optionLabel="label" :options="kpi.threshold.thresholdValues">
+                    <template #value="slotProps">
+                        <div v-for="option of slotProps.value" :key="option.code">
+                            <ColorPicker v-model="option.color" disabled />
+                            {{ option.label }}
+                        </div>
+                    </template>
+                    <template #option="slotProps">
+                        <div class="item">
+                            <ColorPicker v-model="slotProps.option.color" disabled />
+                            {{ slotProps.option.label }}
+                        </div>
+                    </template>
+                </MultiSelect>
                 <label for="threshold" class="kn-material-input-label"> {{ $t('kpi.alert.threshold') }} * </label>
             </span>
         </div>
@@ -31,6 +44,8 @@ import axios from 'axios'
 import { iAction } from '../Alert'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
+import MultiSelect from 'primevue/multiselect'
+import ColorPicker from 'primevue/colorpicker'
 import addActionDialogDescriptor from './AddActionDialogDescriptor.json'
 import ExectuteEtlCard from './ExectuteEtlCard.vue'
 import ContextBrokerCard from './ContextBrokerCard.vue'
@@ -39,13 +54,18 @@ export default defineComponent({
     components: {
         Dialog,
         Dropdown,
+        MultiSelect,
         ExectuteEtlCard,
-        ContextBrokerCard
+        ContextBrokerCard,
+        ColorPicker
     },
     props: {
         dialogVisible: {
             type: Boolean,
             default: false
+        },
+        kpi: {
+            type: Object
         }
     },
     data() {
@@ -54,7 +74,8 @@ export default defineComponent({
             loading: false,
             type: { id: null },
             data: {},
-            action: {} as iAction
+            action: {} as iAction,
+            selectedThresholds: []
         }
     },
     methods: {
@@ -78,7 +99,11 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         handleSave() {
+            this.action.thresholdValues = this.selectedThresholds.map((threshold: any) => {
+                return threshold.id
+            })
             console.log('SAVE', this.action)
+            console.log('Thresholds', this.selectedThresholds)
         }
     }
 })
