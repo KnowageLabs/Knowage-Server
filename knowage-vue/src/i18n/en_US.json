@@ -546,6 +546,36 @@
             "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are",
             "title": "Tenant Management"
         },
+        "usersManagement": {
+            "attributes": "Attributes",
+            "blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
+            "defaultRoleInfo": "Select a role if you want to set it as the default. If no role is selected, it will be possible switch between roles from the Knowage Administration menu",
+            "detail": "Detail",
+            "form": {
+                "defaultRole": "Default role",
+                "password": "Password",
+                "passwordConfirm": "Confirm Password",
+                "userId": "User ID"
+            },
+            "fullName": "Full Name",
+            "hint": "Users management allows you to define different users roles and permissions. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "info": {
+                "createMessage": "User created",
+                "createTitle": "Create user",
+                "deleteMessage": "User deleted",
+                "deleteTitle": "Delete user",
+                "updateMessage": "User updated",
+                "updateTitle": "Update user"
+            },
+            "roles": "Roles",
+            "title": "Users Management",
+            "unlockUser": "Unlock user",
+            "userId": "User ID",
+            "validation": {
+                "sameAsPassword": "Username must be the same as password"
+            },
+            "valueDescription": "Value description"
+        },
         "widgetGallery": {
             "deleteTemplate": "Delete template",
             "downloadTemplate": "Download template",
