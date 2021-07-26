@@ -15,58 +15,42 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ *
+ */
 package it.eng.knowage.resourcemanager.resource.dto;
 
-import java.io.File;
+/**
+ * @author albnale
+ *
+ */
+public class CreateFolderDTO {
+	private String key;
+	private String folderName;
 
-public class FileDTO {
-
-	private String name;
-	private long size;
-	private long lastModified;
-
-	public FileDTO(File file) {
-		this.name = file.getName();
-		this.size = file.length();
-		this.lastModified = file.lastModified();
+	public String getKey() {
+		return key;
 	}
 
-	public String getName() {
-		return name;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public String getFolderName() {
+		return folderName;
 	}
 
-	@Override
-	public String toString() {
-		return "CustomFile [name=" + name + "]";
-	}
-
-	public long getSize() {
-		return size;
-	}
-
-	public void setSize(long size) {
-		this.size = size;
-	}
-
-	public long getLastModified() {
-		return lastModified;
-	}
-
-	public void setLastModified(long lastModified) {
-		this.lastModified = lastModified;
+	public void setFolderName(String folderName) {
+		this.folderName = folderName;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (lastModified ^ (lastModified >>> 32));
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + (int) (size ^ (size >>> 32));
+		result = prime * result + ((folderName == null) ? 0 : folderName.hashCode());
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
 		return result;
 	}
 
@@ -78,17 +62,30 @@ public class FileDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		FileDTO other = (FileDTO) obj;
-		if (lastModified != other.lastModified)
-			return false;
-		if (name == null) {
-			if (other.name != null)
+		CreateFolderDTO other = (CreateFolderDTO) obj;
+		if (folderName == null) {
+			if (other.folderName != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!folderName.equals(other.folderName))
 			return false;
-		if (size != other.size)
+		if (key == null) {
+			if (other.key != null)
+				return false;
+		} else if (!key.equals(other.key))
 			return false;
 		return true;
 	}
 
+	public CreateFolderDTO(String key, String folderName) {
+		super();
+		this.key = key;
+		this.folderName = folderName;
+	}
+
+	/**
+	 *
+	 */
+	public CreateFolderDTO() {
+		super();
+	}
 }

@@ -70,11 +70,16 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 @Component
 public class ResourceManagerAPIImpl implements ResourceManagerAPI {
+	/**
+	 *
+	 */
+	private static final String METADATA_JSON = "metadata.json";
 	private static final String MODELS = "models";
 	private static final Logger LOGGER = Logger.getLogger(ResourceManagerAPIImpl.class);
 	int count = 0;
 	private static Map<String, List<String>> foldersForDevs = new HashMap<>();
 	private PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**/*");
+	private Map<String, HashMap<String, Object>> cachedNodesInfo = new HashMap<String, HashMap<String, Object>>();
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -100,44 +105,29 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		} catch (KNRM001Exception k) {
 			throw new KNRM001Exception("");
 		}
-		FolderDTO mylist = null;
 		RootFolderDTO newRootFolder = null;
-		String fullPath = null;
-		LOGGER.debug("Starting resource path json tree testing");
+		LOGGER.debug("Starting resource path json tree");
 		try {
+			String fullPath = null;
 			if (path == null) {
 				fullPath = totalPath;
 			} else {
 				fullPath = totalPath + File.separator + path;
 			}
 			FolderDTO parentFolder = new FolderDTO(fullPath);
+			parentFolder.setRelativePath("");
 			Path fullP = Paths.get(fullPath);
-			mylist = createTree(parentFolder, profile);
-			parseFolders(mylist);
+			FolderDTO mylist = createTree(parentFolder, profile, path, 0);
 			newRootFolder = new RootFolderDTO(mylist);
 			String rootFolder = fullP.toString().replace(fullP.getParent().toString(), "");
 			rootFolder = rootFolder.substring(rootFolder.lastIndexOf(File.separator) + 1);
 			newRootFolder.getRoot().setLabel(rootFolder);
-
+			LOGGER.debug("Finished resource path json tree");
 		} catch (IOException e) {
 			LOGGER.error("[ResourceManagerAPIImpl], [getFolders], ", e);
 			throw new KnowageRuntimeException(e.getMessage());
 		}
 		return newRootFolder;
-	}
-
-	private void parseFolders(FolderDTO e) {
-		setFolderLevel(e);
-	}
-
-	private void setFolderLevel(FolderDTO e) {
-		e.setKey("" + count);
-		count++;
-		if (e.getChildren() != null && e.getChildren().size() > 0) {
-			for (FolderDTO emp : e.getChildren()) {
-				setFolderLevel(emp);
-			}
-		}
 	}
 
 	public String getWorkDirectory(SpagoBIUserProfile profile) throws KNRM001Exception {
@@ -151,7 +141,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		return totalPath;
 	}
 
-	public FolderDTO createTree(FolderDTO parentFolder, SpagoBIUserProfile profile) throws IOException, KNRM001Exception {
+	private FolderDTO createTree(FolderDTO parentFolder, SpagoBIUserProfile profile, String currentRelativePath, int level)
+			throws IOException, KNRM001Exception {
 		File node = new File(parentFolder.getFullPath());
 		Path nodePath = Paths.get(node.getAbsolutePath());
 		Path workDir = Paths.get(getWorkDirectory(profile));
@@ -166,16 +157,21 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			for (String filename : subNote) {
 				String path = node + File.separator + filename;
 				Path pathNode = Paths.get(path);
-				boolean canSeeNode = true;
 				if (pathNode.getParent().equals(workDir)) {
 					if (!canSee(pathNode, profile)) {
-						canSeeNode = false;
+						continue;
 					}
 				}
-				if (new File(path).isDirectory() && canSeeNode) {
+				if (new File(path).isDirectory()) {
 					FolderDTO folder = new FolderDTO(path);
+					folder.setKey(pathNode.hashCode());
+					String relativePath = currentRelativePath + File.separator + path.substring(path.lastIndexOf(File.separator) + 1);
+					folder.setRelativePath(relativePath);
+					int nextLevel = level + 1;
+					folder.setModelFolder(nextLevel == 1);
+					folder.setLevel(nextLevel);
 					parentFolder.addChildren(folder);
-					createTree(folder, profile);
+					createTree(folder, profile, relativePath, nextLevel);
 				} else {
 					// parentFolder.addFile(new CustomFile(path));
 				}
@@ -280,7 +276,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public Path getDownloadFolderPath(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM005Exception {
+	public Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM005Exception {
 		java.nio.file.Path workingPath = null;
 		java.nio.file.Path pathToReturn = null;
 		try {
@@ -289,7 +285,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				String workDir = getWorkDirectory(profile);
 				String directoryFullPath = workDir + File.separator + path;
 				workingPath = Paths.get(directoryFullPath);
-				pathToReturn = createZipFile(path, workingPath);
+				pathToReturn = createZipFile(key, path, workingPath);
 			}
 		} catch (Exception e) {
 			throw new KNRM005Exception(e.getMessage());
@@ -326,18 +322,61 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public List<FileDTO> getListOfFiles(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM003Exception {
+	public String getFolderByKey(String key, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM002Exception {
+		Integer integerKey = Integer.valueOf(key);
+		HashMap<String, Object> nodeInfos = cachedNodesInfo.get(key);
+		String relativePath = null;
+		if (nodeInfos != null) {
+			relativePath = (String) nodeInfos.get("relativePath");
+		}
+		if (relativePath == null) {
+			RootFolderDTO folders = getFolders(profile, MODELS);
+			FolderDTO node = findNode(folders.getRoot(), integerKey);
+			relativePath = node.getRelativePath();
+			HashMap<String, Object> m = new HashMap<String, Object>();
+			m.put("relativePath", relativePath);
+			m.put("level", node.getLevel());
+			cachedNodesInfo.put(key, m);
+		}
+		return relativePath;
+	}
+
+	private FolderDTO findNode(FolderDTO node, int key) {
+		FolderDTO toReturn = null;
+		if (node.getKey() == key)
+			return node;
+
+		List<FolderDTO> children = node.getChildren();
+		for (int i = 0; i < children.size(); i++) {
+			toReturn = findNode(children.get(i), key);
+			if (toReturn != null)
+				break;
+		}
+
+		return toReturn;
+	}
+
+	@Override
+	public List<FileDTO> getListOfFiles(String key, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM003Exception, KNRM002Exception {
+		String path = getFolderByKey(key, profile);
 		List<FileDTO> returnList = new ArrayList<FileDTO>();
 		try {
 			String totalPath = getTotalPath(path, profile);
 			File folder = new File(totalPath);
-			File[] listOfFiles = folder.listFiles();
 			String workDir = getWorkBaseDirByPath(path, profile);
 			if (canSee(Paths.get(workDir), profile)) {
-				for (int i = 0; i < listOfFiles.length; i++) {
-					if (listOfFiles[i].isFile()) {
-						LOGGER.debug("File " + listOfFiles[i].getName());
-						returnList.add(new FileDTO(listOfFiles[i].getName()));
+				File[] listOfFiles = folder.listFiles();
+				if (listOfFiles != null) {
+					int level = (int) cachedNodesInfo.get(key).get("level");
+					for (int i = 0; i < listOfFiles.length; i++) {
+						File f = listOfFiles[i];
+						if (f.isFile()) {
+							if (level == 1 && f.getName().equals(METADATA_JSON)) {
+								continue;
+							}
+							LOGGER.debug("File " + listOfFiles[i].getName());
+							returnList.add(new FileDTO(listOfFiles[i]));
+						}
 					}
 				}
 			}
@@ -387,11 +426,11 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		return totalPath;
 	}
 
-	public Path createZipFile(String fileName, java.nio.file.Path fullPath) {
+	public Path createZipFile(String key, String fileName, java.nio.file.Path fullPath) {
 
 		try {
 			Path tempDirectory = Files.createTempDirectory("knowage-zip");
-			Path tempFile = Files.createTempFile("knowage-zip", fileName);
+			Path tempFile = Files.createTempFile("knowage-zip", key);
 
 			try (ZipOutputStream ret = new ZipOutputStream(Files.newOutputStream(tempFile))) {
 
@@ -402,16 +441,18 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				for (Path currPath : files) {
 
 					Path relativize = tempDirectory.relativize(currPath);
-					if (Files.isDirectory(currPath)) {
-						ZipEntry zipEntry = new ZipEntry(relativize.toString() + "/");
-						ret.putNextEntry(zipEntry);
-					} else {
-						ZipEntry zipEntry = new ZipEntry(relativize.toString());
-						ret.putNextEntry(zipEntry);
-						InputStream currPathInputStream = Files.newInputStream(currPath);
-						copy(currPathInputStream, ret);
+					if (!relativize.toString().isEmpty()) {
+						if (Files.isDirectory(currPath)) {
+							ZipEntry zipEntry = new ZipEntry(relativize.toString() + "/");
+							ret.putNextEntry(zipEntry);
+						} else {
+							ZipEntry zipEntry = new ZipEntry(relativize.toString());
+							ret.putNextEntry(zipEntry);
+							InputStream currPathInputStream = Files.newInputStream(currPath);
+							copy(currPathInputStream, ret);
+						}
+						ret.closeEntry();
 					}
-					ret.closeEntry();
 				}
 			}
 
@@ -533,7 +574,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	private boolean isStartingFromModel(String path, SpagoBIUserProfile profile) throws KNRM001Exception {
 		Path workModelDir = Paths.get(getWorkDirectory(profile));
 		Path modelPath = Paths.get(workModelDir + File.separator + MODELS);
-		return modelPath.equals(Paths.get(path));
+		return Paths.get(path).startsWith(modelPath);
 	}
 
 	@Override
@@ -541,13 +582,22 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		MetadataDTO metadata = null;
 		try {
 			String workPath = getWorkBaseDirByPath(path, profile);
-			Path totalPath = Paths.get(getTotalPath(path, profile) + File.separator + "metadata.json");
+			Path totalPath = Paths.get(getTotalPath(path, profile) + File.separator + METADATA_JSON);
 
 			if (isStartingFromModel(workPath, profile) && canSee(Paths.get(workPath), profile)) {
-				// create object mapper instance
 				ObjectMapper mapper = new ObjectMapper();
-				metadata = mapper.readValue(totalPath.toFile(), MetadataDTO.class);
+				if (!new File(totalPath.toString()).exists()) {
+					LOGGER.debug("Metadata file not found. It will be created.");
+					new File(totalPath.toString()).createNewFile();
 
+					metadata = new MetadataDTO();
+					// convert map to JSON file
+					mapper.writeValue(totalPath.toFile(), metadata);
+
+				} else {
+					// create object mapper instance
+					metadata = mapper.readValue(totalPath.toFile(), MetadataDTO.class);
+				}
 			}
 		} catch (Exception ex) {
 			throw new KNRM011Exception(ex.getMessage());
@@ -570,7 +620,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		try {
 			String workPath = getWorkBaseDirByPath(path, profile);
 			if (isStartingFromModel(workPath, profile) && canSee(Paths.get(workPath), profile)) {
-				Path totalPath = Paths.get(getTotalPath(path, profile) + File.separator + "metadata.json");
+				Path totalPath = Paths.get(getTotalPath(path, profile) + File.separator + METADATA_JSON);
 				ObjectMapper objectMapper = new ObjectMapper();
 				objectMapper.writeValue(totalPath.toFile(), fileDTO);
 			}

@@ -46,9 +46,7 @@ public interface ResourceManagerAPI {
 
 	boolean delete(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM006Exception, KNRM007Exception;
 
-	java.nio.file.Path getDownloadFolderPath(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM008Exception, KNRM005Exception;
-
-	public List<FileDTO> getListOfFiles(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM003Exception;
+	public List<FileDTO> getListOfFiles(String key, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM003Exception, KNRM002Exception;
 
 	java.nio.file.Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws KNRM001Exception, KNRM008Exception;
 
@@ -62,4 +60,23 @@ public interface ResourceManagerAPI {
 	MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM011Exception;
 
 	MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM010Exception;
+
+	/**
+	 * @param key
+	 * @param profile
+	 * @return
+	 * @throws KNRM002Exception
+	 * @throws KNRM001Exception
+	 */
+	public String getFolderByKey(String key, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM002Exception;
+
+	/**
+	 * @param key
+	 * @param path
+	 * @param profile
+	 * @return
+	 * @throws KNRM001Exception
+	 * @throws KNRM005Exception
+	 */
+	Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM005Exception;
 }
