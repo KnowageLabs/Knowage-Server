@@ -1,5 +1,28 @@
 {
-    "actionType": ["Send mail", "Execute ETL Document", "Notify To Context Broker"],
+    "actionType": [
+        {
+            "id": 62,
+            "name": "Send mail"
+        },
+        {
+            "id": 63,
+            "name": "Execute ETL Document"
+        },
+        {
+            "id": 86,
+            "name": "Notify To Context Broker"
+        }
+    ],
+    "columnsDocument": [
+        {
+            "field": "DOCUMENT_LABEL",
+            "header": "kpi.alert.name"
+        },
+        {
+            "field": "DOCUMENT_NAME",
+            "header": "kpi.alert.label"
+        }
+    ],
     "dialog": {
         "breakpoints": {
             "640px": "100vw",
@@ -8,5 +31,6 @@
         "style": {
             "width": "70vw"
         }
-    }
+    },
+    "documentFilterFields": ["label", "name"]
 }

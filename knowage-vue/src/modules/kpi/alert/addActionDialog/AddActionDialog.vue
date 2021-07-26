@@ -6,29 +6,33 @@
                     {{ $t('kpi.alert.addAction') }}
                 </template>
                 <template #right>
-                    <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" />
+                    <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="handleSave" />
                     <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="$emit('close')" />
                 </template>
             </Toolbar>
         </template>
         <div class="p-field p-col-6">
             <span class="p-float-label">
-                <Dropdown id="type" class="kn-material-input" v-model="type" :options="addActionDialogDescriptor.actionType" @change="setType" />
+                <Dropdown id="type" class="kn-material-input" v-model="type" optionLabel="name" :options="addActionDialogDescriptor.actionType" @change="setType" />
                 <label for="type" class="kn-material-input-label"> {{ $t('kpi.alert.type') }} * </label>
             </span>
         </div>
+        <exectute-etl-card v-if="type && type.id == 63" :loading="loading" :files="data.item"></exectute-etl-card>
     </Dialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import addActionDialogDescriptor from './AddActionDialogDescriptor.json'
+import ExectuteEtlCard from './ExectuteEtlCard.vue'
 export default defineComponent({
     name: 'add-action-dialog',
     components: {
         Dialog,
-        Dropdown
+        Dropdown,
+        ExectuteEtlCard
     },
     props: {
         dialogVisible: {
@@ -39,7 +43,29 @@ export default defineComponent({
     data() {
         return {
             addActionDialogDescriptor,
-            type: ''
+            loading: false,
+            type: { id: null },
+            data: {}
+        }
+    },
+    methods: {
+        setType() {
+            console.log(this.type)
+            if (this.type.id == 63) {
+                this.loadData('2.0/documents/listDocument?includeType=ETL')
+            }
+        },
+        async loadData(path: string) {
+            this.loading = true
+            await axios
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + path)
+                .then((response) => {
+                    this.data = response.data
+                })
+                .finally(() => (this.loading = false))
+        },
+        handeleSave() {
+            console.log('save')
         }
     }
 })
