@@ -1,7 +1,17 @@
 <template>
     <Card>
         <template #content>
-            <DataTable v-model:selection="selectedFile" :value="files" :loading="loading" class="p-datatable-sm kn-table" dataKey="DOCUMENT_ID" responsiveLayout="stack" v-model:filters="filters" filterDisplay="menu" :globalFilterFields="addActionDialogDescriptor.documentFilterFields">
+            <DataTable
+                v-model:selection="myData.jsonActionParameters"
+                :value="files.DOCUMENT_ID"
+                :loading="loading"
+                class="p-datatable-sm kn-table"
+                dataKey="DOCUMENT_ID"
+                responsiveLayout="stack"
+                v-model:filters="filters"
+                filterDisplay="menu"
+                :globalFilterFields="addActionDialogDescriptor.documentFilterFields"
+            >
                 <template #header>
                     <div class="table-header">
                         <span class="p-input-icon-left">
@@ -47,12 +57,19 @@ export default defineComponent({
         },
         files: {
             type: Array
+        },
+        data: {
+            type: Object
         }
+    },
+    created() {
+        this.loadData()
     },
     data() {
         return {
             addActionDialogDescriptor,
             selectedFile: [],
+            myData: null,
             filters: {
                 global: [filterDefault],
                 label: {
@@ -64,6 +81,11 @@ export default defineComponent({
                     constraints: [filterDefault]
                 }
             } as Object
+        }
+    },
+    methods: {
+        loadData() {
+            this.myData = this.data as any
         }
     }
 })

@@ -21,8 +21,8 @@
                 <label for="threshold" class="kn-material-input-label"> {{ $t('kpi.alert.threshold') }} * </label>
             </span>
         </div>
-        <exectute-etl-card v-if="type && type.id == 63" :loading="loading" :files="data.item"></exectute-etl-card>
-        <context-broker-card v-if="type && type.id == 86"></context-broker-card>
+        <ExectuteEtlCard v-if="type && type.id == 63" :loading="loading" :files="data.item" :data="action"></ExectuteEtlCard>
+        <ContextBrokerCard v-if="type && type.id == 86"></ContextBrokerCard>
     </Dialog>
 </template>
 <script lang="ts">
@@ -52,7 +52,8 @@ export default defineComponent({
             addActionDialogDescriptor,
             loading: false,
             type: { id: null },
-            data: {}
+            data: {},
+            action: {}
         }
     },
     methods: {
@@ -71,8 +72,8 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-        handeleSave() {
-            console.log('save')
+        handleSave() {
+            console.log('SAVE', this.action)
         }
     }
 })
