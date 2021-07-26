@@ -625,19 +625,17 @@
             "fullName": "Full Name",
             "hint": "Users management allows you to define different users roles and permissions. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "info": {
-                "createMessage": "User created",
+                "createMessage": "User created successfully",
                 "createTitle": "Create user",
                 "deleteMessage": "User deleted",
-                "deleteTitle": "Delete user",
-                "updateMessage": "User updated",
-                "updateTitle": "Update user"
+                "deleteTitle": "Delete user"
             },
             "roles": "Roles",
             "title": "Users Management",
             "unlockUser": "Unlock user",
             "userId": "User ID",
             "validation": {
-                "sameAsPassword": "Username must be the same as password"
+                "sameAsPassword": "Username must not be found inside the password"
             },
             "valueDescription": "Value description"
         },
