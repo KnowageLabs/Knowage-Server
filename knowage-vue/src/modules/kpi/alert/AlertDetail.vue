@@ -8,6 +8,7 @@
     <div class="p-grid p-m-0 p-fluid p-jc-center">
         <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert"></name-card>
         <events-card :selectedAlert="selectedAlert" @valueChanged="updateAlert"></events-card>
+        <KpiCard v-if="isListenerSelected" :selectedAlert="selectedAlert" :kpiList="kpiList" @showDialog="dialogVisiable = true" @kpiLoaded="updateKpi" />
     </div>
     <Button @click="dialogVisiable = true">Add action</Button>
     <add-action-dialog :action="selectedAction" :dialogVisible="dialogVisiable" @close="dialogVisiable = false"></add-action-dialog>
@@ -15,16 +16,18 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iAlert, iListener } from './Alert'
+import { createValidations } from '@/helpers/commons/validationHelper'
 import axios from 'axios'
 import useValidate from '@vuelidate/core'
 import NameCard from './Cards/NameCard.vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
+import KpiCard from './Cards/KpiCard.vue'
 import alertValidationDescriptor from './AlertValidationDescriptor.json'
 import EventsCard from './Cards/EventsCard.vue'
 import AddActionDialog from './addActionDialog/AddActionDialog.vue'
+
 export default defineComponent({
     name: 'alert-details',
-    components: { NameCard, EventsCard, AddActionDialog },
+    components: { NameCard, EventsCard, AddActionDialog, KpiCard },
     props: {
         id: {
             type: String,
@@ -36,6 +39,14 @@ export default defineComponent({
             await this.checkId()
         }
     },
+    computed: {
+        isListenerSelected(): any {
+            if (!this.selectedAlert.alertListener || this.selectedAlert.alertListener === this.emptyObject) {
+                return false
+            }
+            return true
+        }
+    },
     created() {
         if (this.id) {
             this.loadAlert()
@@ -43,6 +54,7 @@ export default defineComponent({
             this.selectedAlert = { id: null, singleExecution: false }
         }
         this.loadListener()
+        this.loadKpiList()
     },
     data() {
         return {
@@ -51,6 +63,9 @@ export default defineComponent({
             jsonOptions: {} as any,
             selectedAction: {} as any,
             actions: [] as any[],
+            kpiList: [] as any,
+            kpi: {} as any,
+            emptyObject: {} as any,
             alertValidationDescriptor: alertValidationDescriptor,
             dialogVisiable: false,
             v$: useValidate() as any
@@ -90,6 +105,11 @@ export default defineComponent({
                 })
                 .finally(() => console.log('selected', this.selectedAlert))
         },
+        async loadKpiList() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi').then((response) => {
+                this.kpiList = [...response.data]
+            })
+        },
         updateAlert(event) {
             console.log(event)
             if (event.fieldName == 'singleExecution') {
@@ -124,6 +144,10 @@ export default defineComponent({
         },
         closeTemplate() {
             this.$emit('close')
+        },
+        updateKpi(event) {
+            console.log('KPI LOADED -------------------------------', event)
+            this.kpi = event
         }
     }
 })

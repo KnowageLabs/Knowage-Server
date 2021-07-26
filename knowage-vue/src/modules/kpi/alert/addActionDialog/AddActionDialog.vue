@@ -21,15 +21,17 @@
                 <label for="threshold" class="kn-material-input-label"> {{ $t('kpi.alert.threshold') }} * </label>
             </span>
         </div>
-        <exectute-etl-card v-if="type && type.id == 63" :loading="loading" :files="data.item"></exectute-etl-card>
-        <context-broker-card v-if="type && type.id == 86"></context-broker-card>
-        <SendMailCard v-else-if="type && type.id == 62" :action="action" :users="data"></SendMailCard>
+        <ExectuteEtlCard v-if="type && type.id == 63" :loading="loading" :files="data.item" :data="action"></ExectuteEtlCard>
+        <ContextBrokerCard v-if="type && type.id == 86" :data="action"></ContextBrokerCard>
+        <SendMailCard v-else-if="type && type.id == 62" :action="selectedAction" :users="data"></SendMailCard>
+        =======
     </Dialog>
 </template>
-
+selectedAction
 <script lang="ts">
 import { defineComponent } from 'vue'
 import axios from 'axios'
+import { iAction } from '../Alert'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import addActionDialogDescriptor from './AddActionDialogDescriptor.json'
@@ -51,8 +53,9 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        action: {
-            type: Object
+        selectedAction: {
+            type: Object,
+            required: true
         }
     },
     data() {
@@ -60,16 +63,19 @@ export default defineComponent({
             addActionDialogDescriptor,
             loading: false,
             type: { id: null },
-            data: {}
+            data: {},
+            action: {} as iAction
         }
     },
     methods: {
         async setType() {
             console.log(this.type)
+            this.action.jsonActionParameters = {}
             if (this.type.id == 63) {
+                this.action.idAction = 63
                 await this.loadData('2.0/documents/listDocument?includeType=ETL')
-            } else if (this.type.id === 62) {
-                await this.loadData('2.0/users')
+            } else if (this.type.id == 86) {
+                this.action.idAction = 86
             }
             console.log('DATA ', this.data)
         },
