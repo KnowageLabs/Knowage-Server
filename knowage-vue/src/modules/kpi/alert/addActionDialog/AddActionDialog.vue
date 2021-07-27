@@ -83,7 +83,7 @@ export default defineComponent({
         return {
             addActionDialogDescriptor,
             loading: false,
-            type: { id: null },
+            type: {} as any,
             //data: {},
             action: {} as iAction,
             selectedThresholds: [],
