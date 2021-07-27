@@ -36,9 +36,9 @@
                                     <Chip class="p-m-1" v-tooltip.top="slotProps.option.kpiNames" v-for="(kpiName, index) in slotProps.option.kpiNames.split(',')" :key="index" :label="kpiName"></Chip>
                                 </div>
                             </div>
-                            <Button icon="pi pi-copy" class="p-button-link" @click.stop="cloneSchedulerConfirm(slotProps.option, true)" />
-                            <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteScheduleConfirm(slotProps.option.id)" :data-test="'delete-button-' + slotProps.option.id" />
-                            <Button v-if="slotProps.option.jobStatus.toUpperCase() !== 'EXPIRED'" :icon="playIcon(slotProps.option.jobStatus)" class="p-button-link" @click="startSchedule(slotProps.option)" />
+                            <i class="fas fa-check" @click.stop="cloneSchedulerConfirm(slotProps.option, true)" />
+                            <i class="fas fa-check" @click.stop="deleteScheduleConfirm(slotProps.option.id)" :data-test="'delete-button-' + slotProps.option.id" />
+                            <i v-if="slotProps.option.jobStatus.toUpperCase() !== 'EXPIRED'" class="fas fa-check" @click="startSchedule(slotProps.option)" />
                         </div>
                     </template>
                 </Listbox>
