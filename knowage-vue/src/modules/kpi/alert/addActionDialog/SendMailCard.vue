@@ -1,7 +1,10 @@
 <template>
     <Card>
         <template #content>
-            <AutoComplete class="p-inputtext-sm p-m-3" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" :placeholder="$t('kpi.alert.mailTo')" @keydown.enter="test" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
+            <span class="p-float-label p-m-4">
+                <AutoComplete id="mailTo" class="p-inputtext-sm" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" @keydown.enter="test" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
+                <label for="mailTo" class="kn-material-input-label"> {{ $t('kpi.alert.mailTo') }}</label>
+            </span>
             <span class="p-float-label p-m-4">
                 <InputText id="mailSubject" class="kn-material-input" v-model.trim="selectedAction.jsonActionParameters.subject" />
                 <label for="mailSubject" class="kn-material-input-label"> {{ $t('kpi.alert.mailSubject') }}</label>
@@ -88,7 +91,9 @@ export default defineComponent({
         },
         test(event: any) {
             console.log('CALLLEEEEEEEEEEEEEEEEEED', event.target.value)
-            this.selectedUsers.push(event.target.value)
+            this.selectedUsers.push({ name: event.target.value, userId: '', email: event.target.value })
+            this.userList.push({ name: event.target.value, userId: '', email: event.target.value })
+            event.target.value = ''
             console.log('SELECTED USERS AFTER ENTER', this.selectedUsers)
         }
     }
