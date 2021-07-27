@@ -112,7 +112,7 @@
 
                 <Column header style="text-align:right">
                     <template #header>
-                        <Button label="Threshold List" class="p-button-link" @click="thresholdListVisible = true" />
+                        <Button :label="$t('kpi.kpiDefinition.thresholdsListTitle')" class="p-button-link" @click="thresholdListVisible = true" />
                     </template>
                     <template #body="slotProps">
                         <Button icon="pi pi-trash" class="p-button-link" @click="deleteThresholdItemConfirm(slotProps.index)" />
@@ -120,7 +120,7 @@
                 </Column>
 
                 <template #footer>
-                    <Button label="Add New Threshold Item" class="p-button-link" :style="tresholdTabDescriptor.styles.table.footer" @click="addNewThresholdItem" />
+                    <Button :label="$t('kpi.kpiDefinition.addNewThreshold')" class="p-button-link" :style="tresholdTabDescriptor.styles.table.footer" @click="addNewThresholdItem" />
                 </template>
             </DataTable>
         </template>
@@ -128,7 +128,7 @@
 
     <Sidebar class="mySidebar" v-model:visible="thresholdListVisible" :showCloseIcon="false" position="right">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>Threshholds List</template>
+            <template #left>{{ $t('kpi.kpiDefinition.thresholdsListTitle') }}</template>
         </Toolbar>
         <Listbox class="kn-list--column" :options="thresholdsList" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="tabViewDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')" @change="confirmToLoadThreshold">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -147,9 +147,9 @@
         <p class="p-mt-4">{{ $t('kpi.kpiDefinition.thresholdReused') }}</p>
         <template #footer>
             <div class="p-d-flex p-jc-center">
-                <Button class="kn-button kn-button--primary" label="CANCEL" @click="overrideDialogVisible = false" />
-                <Button class="kn-button kn-button--primary" label="USE IT" @click="cloneSelectedThreshold" />
-                <Button class="kn-button kn-button--primary" label="CLONE" @click="cloneSelectedThreshold" />
+                <Button class="kn-button kn-button--primary" :label="$t('common.cancel')" @click="overrideDialogVisible = false" />
+                <Button class="kn-button kn-button--primary" :label="$t('kpi.kpiDefinition.useIt')" @click="cloneSelectedThreshold('use')" />
+                <Button class="kn-button kn-button--primary" :label="$t('kpi.kpiDefinition.clone')" @click="cloneSelectedThreshold('clone')" />
             </div>
         </template>
     </Dialog>
@@ -259,14 +259,19 @@ export default defineComponent({
             this.kpi.id ? (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold?kpiId=${this.selectedKpi.id}`) : (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold`)
 
             return axios.get(url).then((response) => {
-                this.thresholdToClone = response.data
+                this.thresholdToClone = { ...response.data }
                 this.thresholdToClone.usedByKpi ? (this.overrideDialogVisible = true) : this.cloneSelectedThreshold()
             })
         },
-        cloneSelectedThreshold() {
+        cloneSelectedThreshold(operation?) {
             if (this.thresholdToClone.usedByKpi) {
-                this.thresholdToClone.name += ' (' + this.$t('kpi.kpiDefinition.clone') + ')'
-                this.thresholdToClone.id = undefined
+                if (operation === 'clone') {
+                    this.thresholdToClone.name += ' (' + this.$t('kpi.kpiDefinition.clone') + ')'
+                    this.thresholdToClone.id = undefined
+                    this.thresholdToClone.usedByKpi = false
+                } else if (operation === 'use') {
+                    this.thresholdToClone.usedByKpi = true
+                }
             }
             this.kpi.threshold = this.thresholdToClone
             this.threshold = this.kpi.threshold
@@ -282,7 +287,7 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-// vdeep not working correctly,this is a working solution for the thresholds list padding...
+// vdeep not working correctly,need to find a working solution for the thresholds list padding...
 .mySidebar.p-sidebar {
     padding: 0rem;
 }

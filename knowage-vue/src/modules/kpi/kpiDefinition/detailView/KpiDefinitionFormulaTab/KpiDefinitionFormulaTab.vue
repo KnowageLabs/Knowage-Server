@@ -42,7 +42,7 @@ import RadioButton from 'primevue/radiobutton'
 
 export default defineComponent({
     components: { VCodeMirror, Dialog, RadioButton },
-    props: { selectedKpi: Object as any, measures: { type: Array as any }, aliasToInput: { type: String }, checkFormula: { type: Boolean }, activeTab: { type: Number }, loading: Boolean },
+    props: { selectedKpi: Object as any, measures: { type: Array as any }, aliasToInput: { type: String }, checkFormula: { type: Boolean }, activeTab: { type: Number }, loading: Boolean, reloadKpi: Boolean },
     emits: ['touched', 'errorInFormula', 'updateFormulaToSave'],
 
     data() {
@@ -105,6 +105,11 @@ export default defineComponent({
                 this.checkFormulaForErrors()
             }
             this.previousTabIndex = this.activeTab
+        },
+        reloadKpi() {
+            if (this.reloadKpi === true) {
+                this.loadKPI()
+            }
         }
     },
 
@@ -498,64 +503,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss">
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword,
-span.cm-variable-2 {
-    color: #7f0055 !important;
-    font-weight: bold !important;
-}
-
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::before,
-span.cm-variable-2::before {
-    content: 'f(';
-    color: green;
-}
-
-.CodeMirrorMathematica .CodeMirror-code span.cm-keyword::after,
-span.cm-variable-2::after,
-.MAX::after,
-.MIN::after,
-.COUNT::after,
-.SUM::after {
-    content: ')';
-    color: green;
-}
-
-.MAX,
-.MIN,
-.COUNT,
-.SUM {
-    color: #80004c;
-}
-
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-max::before,
-.MAX::before {
-    content: 'MAX(';
-    color: green;
-}
-
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-min::before,
-.MIN::before {
-    content: 'min(';
-    color: green;
-}
-
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-count::before,
-.COUNT::before {
-    content: 'COUNT(';
-    color: green;
-}
-
-.CodeMirrorMathematica .CodeMirror-code span.cm-m-sum::before,
-.SUM::before {
-    content: 'Σ(';
-    color: green;
-}
-
-.error_word {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sJDw4cOCW1/KIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAHElEQVQI12NggIL/DAz/GdA5/xkY/qPKMDAwAADLZwf5rvm+LQAAAABJRU5ErkJggg==');
-    background-position: left bottom;
-    background-repeat: repeat-x;
-}
-</style>

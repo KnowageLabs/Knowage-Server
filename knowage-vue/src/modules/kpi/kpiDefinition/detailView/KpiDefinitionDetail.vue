@@ -18,7 +18,18 @@
                         <span>{{ $t('kpi.kpiDefinition.formulaTitle') }}</span>
                     </template>
 
-                    <KpiDefinitionFormulaTab :selectedKpi="selectedKpi" :measures="measureList" :loading="loading" :aliasToInput="aliasToInput" :checkFormula="checkFormula" :activeTab="activeTab" @updateFormulaToSave="onUpdateFormulaToSave" @errorInFormula="ifErrorInFormula" @touched="setTouched" />
+                    <KpiDefinitionFormulaTab
+                        :selectedKpi="selectedKpi"
+                        :measures="measureList"
+                        :loading="loading"
+                        :aliasToInput="aliasToInput"
+                        :checkFormula="checkFormula"
+                        :activeTab="activeTab"
+                        :reloadKpi="reloadKpi"
+                        @updateFormulaToSave="onUpdateFormulaToSave"
+                        @errorInFormula="ifErrorInFormula"
+                        @touched="setTouched"
+                    />
                 </TabPanel>
 
                 <TabPanel>
@@ -133,6 +144,7 @@ export default defineComponent({
             touched: false,
             loading: false,
             isAliasVisible: false,
+            reloadKpi: false,
             updateMeasureList: false,
             showSaveDialog: false,
             aliasToInput: null as string | null,
@@ -281,7 +293,6 @@ export default defineComponent({
             this.kpiToSave = { ...this.selectedKpi }
             if (typeof this.kpiToSave.definition === 'object') {
                 this.kpiToSave.definition.formula = this.formulaToSave
-
                 this.kpiToSave.definition = JSON.stringify(this.kpiToSave.definition)
             }
             if (typeof this.kpiToSave.cardinality === 'object') {
@@ -293,6 +304,10 @@ export default defineComponent({
                 } else {
                     this.$store.commit('setInfo', { msg: 'Saved Succesfuly!' })
                     this.kpiToSave.id === undefined ? this.$emit('kpiCreated', this.kpiToSave.name) : this.$emit('kpiUpdated')
+                    this.reloadKpi = true
+                    setTimeout(() => {
+                        this.reloadKpi = false
+                    }, 250)
                 }
             })
         }
