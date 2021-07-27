@@ -135,7 +135,7 @@ export default defineComponent({
                 return threshold.id
             })
             console.log('SAVE', this.action)
-            console.log('Thresholds', this.selectedThresholds)
+            this.$emit('add', this.action)
         }
     }
 })
