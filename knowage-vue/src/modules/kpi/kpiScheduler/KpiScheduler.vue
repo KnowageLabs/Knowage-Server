@@ -29,16 +29,15 @@
                         <div class="kn-list-item" data-test="list-item">
                             <div class="kn-list-item-text">
                                 <div>
-                                    <i :class="kpiSchedulerDescriptor.iconTypesMap[slotProps.option.jobStatus]"></i>
-                                    <span class="p-ml-2">{{ slotProps.option.name }}</span>
+                                    <span>{{ slotProps.option.name }}</span>
                                 </div>
                                 <div class="p-d-flex p-flex-row kn-truncated">
                                     <Chip class="p-m-1" v-tooltip.top="slotProps.option.kpiNames" v-for="(kpiName, index) in slotProps.option.kpiNames.split(',')" :key="index" :label="kpiName"></Chip>
                                 </div>
                             </div>
-                            <i class="fas fa-check" @click.stop="cloneSchedulerConfirm(slotProps.option, true)" />
-                            <i class="fas fa-check" @click.stop="deleteScheduleConfirm(slotProps.option.id)" :data-test="'delete-button-' + slotProps.option.id" />
-                            <i v-if="slotProps.option.jobStatus.toUpperCase() !== 'EXPIRED'" class="fas fa-check" @click="startSchedule(slotProps.option)" />
+                            <i v-if="slotProps.option.jobStatus.toUpperCase() !== 'EXPIRED'" :class="playIcon(slotProps.option.jobStatus)" @click="startSchedule(slotProps.option)" />
+                            <Button class="p-button-link p-button-sm" icon="fa fa-ellipsis-v" @click="toggle($event, slotProps.option)" aria-haspopup="true" aria-controls="overlay_menu" />
+                            <Menu ref="menu" :model="items" :popup="true"></Menu>
                         </div>
                     </template>
                 </Listbox>
@@ -59,14 +58,16 @@ import Chip from 'primevue/chip'
 import kpiSchedulerDescriptor from './KpiSchedulerDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
+import Menu from 'primevue/menu'
 
 export default defineComponent({
     name: 'kpi-scheduler',
-    components: { Chip, FabButton, Listbox },
+    components: { Chip, FabButton, Listbox, Menu },
     data() {
         return {
             kpiSchedulerDescriptor,
             schedulerList: [] as iKpiSchedule[],
+            items: [] as { label: String; icon: string; command: Function }[],
             loading: false,
             touched: false
         }
@@ -91,6 +92,16 @@ export default defineComponent({
             await this.loadAllSchedules()
             this.touched = false
             this.loading = false
+        },
+        toggle(event: any, scheduler: iKpiSchedule) {
+            this.createMenuItems(scheduler)
+            const menu = this.$refs.menu as any
+            menu.toggle(event)
+        },
+        createMenuItems(scheduler: iKpiSchedule) {
+            this.items = []
+            this.items.push({ label: this.$t('common.delete'), icon: 'pi pi-copy', command: () => this.cloneSchedulerConfirm(scheduler) })
+            this.items.push({ label: this.$t('common.delete'), icon: 'far fa-trash-alt', command: () => this.deleteScheduleConfirm(scheduler.id as number) })
         },
         playIcon(jobStatus: string) {
             return jobStatus.toUpperCase() === 'SUSPENDED' ? 'fa fa-play' : 'fa fa-pause'

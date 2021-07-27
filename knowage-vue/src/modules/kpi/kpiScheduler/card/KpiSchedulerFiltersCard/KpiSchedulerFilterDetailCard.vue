@@ -45,7 +45,17 @@
 
                 <div v-else-if="currentFilter.type.valueCd === 'LOV'">
                     <span class="p-float-label">
-                        <AutoComplete class="p-mr-2" :style="kpiSchedulerFilterDetailCardDescriptor.input.style" v-model="currentFilter.value" :suggestions="filteredLovs" field="name" :forceSelection="true" @complete="searchCategories($event)" @item-select="setLovValue($event.value, filter)" />
+                        <AutoComplete
+                            class="p-mr-2"
+                            :style="kpiSchedulerFilterDetailCardDescriptor.input.style"
+                            v-model="currentFilter.value"
+                            :suggestions="filteredLovs"
+                            field="name"
+                            :dropdown="true"
+                            :forceSelection="true"
+                            @complete="searchCategories($event)"
+                            @item-select="setLovValue($event.value, filter)"
+                        />
                     </span>
                 </div>
             </div>

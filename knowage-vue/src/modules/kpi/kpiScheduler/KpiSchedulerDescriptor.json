@@ -1,10 +1,5 @@
 {
     "filterFields": ["name", "jobStatus", "kpiNames"],
-    "iconTypesMap": {
-        "ACTIVE": "fas fa-check",
-        "EXPIRED": "fas fa-exclamation-triangle",
-        "SUSPENDED": "fa fa-exclamation"
-    },
     "listBox": {
         "style": {
             "max-height": "80vh"
