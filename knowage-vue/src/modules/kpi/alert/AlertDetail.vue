@@ -8,7 +8,7 @@
     <div class="p-grid p-m-0 p-fluid p-jc-center">
         <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert"></name-card>
         <events-card :selectedAlert="selectedAlert" @valueChanged="updateAlert"></events-card>
-        <KpiCard v-if="isListenerSelected" :selectedAlert="selectedAlert" :kpiList="kpiList" @showDialog="dialogVisiable = true" @kpiLoaded="updateKpi" />
+        <KpiCard v-if="isListenerSelected" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="dialogVisiable = true" @kpiLoaded="updateKpi" />
     </div>
     <Button @click="dialogVisiable = true">Add action</Button>
     <add-action-dialog :dialogVisible="dialogVisiable" :kpi="kpi" :action="selectedAction" @close="dialogVisiable = false" @add="addAction"></add-action-dialog>
@@ -56,6 +56,7 @@ export default defineComponent({
         }
         this.loadListener()
         this.loadKpiList()
+        this.loadActionList()
     },
     data() {
         return {
@@ -65,6 +66,7 @@ export default defineComponent({
             selectedAction: { idAction: '63' } as any,
             actions: [] as any[],
             kpiList: [] as any,
+            actionList: [] as any,
             kpi: {} as any,
             emptyObject: {} as any,
             alertValidationDescriptor: alertValidationDescriptor,
@@ -110,6 +112,11 @@ export default defineComponent({
         async loadKpiList() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi').then((response) => {
                 this.kpiList = [...response.data]
+            })
+        },
+        async loadActionList() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/listAction').then((response) => {
+                this.actionList = [...response.data]
             })
         },
         updateAlert(event) {
