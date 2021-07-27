@@ -36,7 +36,7 @@
                                     <Chip class="p-m-1" v-tooltip.top="slotProps.option.kpiNames" v-for="(kpiName, index) in slotProps.option.kpiNames.split(',')" :key="index" :label="kpiName"></Chip>
                                 </div>
                             </div>
-                            <Button icon="pi pi-copy" class="p-button-link" @click.stop="showForm(slotProps.option, true)" />
+                            <Button icon="pi pi-copy" class="p-button-link" @click.stop="cloneSchedulerConfirm(slotProps.option, true)" />
                             <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteScheduleConfirm(slotProps.option.id)" :data-test="'delete-button-' + slotProps.option.id" />
                             <Button v-if="slotProps.option.jobStatus.toUpperCase() !== 'EXPIRED'" :icon="playIcon(slotProps.option.jobStatus)" class="p-button-link" @click="startSchedule(slotProps.option)" />
                         </div>
@@ -98,6 +98,12 @@ export default defineComponent({
         playIcon(jobStatus: string) {
             // console.log('jobStatus: ', jobStatus)
             return jobStatus.toUpperCase() === 'SUSPENDED' ? 'fa fa-play' : 'fa fa-pause'
+        },
+        cloneSchedulerConfirm(scheduler: iKpiSchedule) {
+            this.$confirm.require({
+                header: this.$t('common.toast.cloneConfirmTitle'),
+                accept: () => this.showForm(scheduler, true)
+            })
         },
         showForm(event: any, clone: boolean) {
             clone = clone ? true : false
