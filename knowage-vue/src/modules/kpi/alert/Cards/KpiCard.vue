@@ -28,9 +28,9 @@
                         </template>
                     </Toolbar>
                     <div v-if="action">
-                        <!-- <div v-for="(threshVal, index) in getThresholdItem(action.thresholdValues)" :key="index">{{ threshVal }}</div> -->
+                        <div v-for="(threshVal, index) in getThresholdItem(action.thresholdValues)" :key="index">{{ threshVal }}</div>
                     </div>
-                    <div>{{ action }}</div>
+                    <!-- <div>{{ action }}</div> -->
                 </div>
             </div>
         </template>
@@ -118,7 +118,10 @@ export default defineComponent({
             return ''
         },
         getThresholdItem(actionThresholds) {
-            let actionThresholdsList = [] as any
+            if (!this.kpi?.threshold?.thresholdValues) {
+                return []
+            }
+            var actionThresholdsList = [] as any
             for (var i = 0; i < this.kpi.threshold.thresholdValues.length; i++) {
                 if (actionThresholds.indexOf('' + this.kpi.threshold.thresholdValues[i].id) != -1) {
                     actionThresholdsList.push(this.kpi.threshold.thresholdValues[i])
