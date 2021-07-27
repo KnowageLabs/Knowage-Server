@@ -13,7 +13,7 @@
         </template>
         <div class="p-field p-col-6">
             <span class="p-float-label">
-                <Dropdown id="type" class="kn-material-input" v-model="action.idAction" optionLabel="name" :options="addActionDialogDescriptor.actionType" @change="setType" />
+                <Dropdown id="type" class="kn-material-input" v-model="type" optionLabel="name" :options="addActionDialogDescriptor.actionType" @change="setType" />
                 <label for="type" class="kn-material-input-label"> {{ $t('kpi.alert.type') }} * </label>
             </span>
             <!-- <KnValidationMessages
