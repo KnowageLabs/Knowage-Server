@@ -1,5 +1,14 @@
 {
     "filterFields": ["name"],
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
     "styles": {
         "basicCard": {
             "width": "100%"

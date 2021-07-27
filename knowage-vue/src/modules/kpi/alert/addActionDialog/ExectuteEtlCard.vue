@@ -2,7 +2,7 @@
     <Card>
         <template #content>
             <DataTable
-                v-model:selection="myData.jsonActionParameters.listDocIdSelected"
+                v-model:selection="selectedFile"
                 :value="files"
                 :loading="loading"
                 class="p-datatable-sm kn-table"
@@ -11,6 +11,8 @@
                 v-model:filters="filters"
                 filterDisplay="menu"
                 :globalFilterFields="addActionDialogDescriptor.documentFilterFields"
+                @row-select="fileSelected"
+                @row-unselect="fileSelected"
             >
                 <template #header>
                     <div class="table-header">
@@ -69,7 +71,7 @@ export default defineComponent({
         return {
             addActionDialogDescriptor,
             selectedFile: [],
-            myData: null,
+            myData: {} as any,
             filters: {
                 global: [filterDefault],
                 label: {
@@ -86,6 +88,13 @@ export default defineComponent({
     methods: {
         loadData() {
             this.myData = this.data as any
+        },
+        fileSelected() {
+            console.log('SELECTED', this.selectedFile)
+            this.myData.jsonActionParameters.listDocIdSelected = this.selectedFile.map((doc: any) => {
+                return { DOCUMENT_ID: doc.DOCUMENT_ID }
+            })
+            console.log(this.myData.jsonActionParameters.listDocIdSelected)
         }
     }
 })

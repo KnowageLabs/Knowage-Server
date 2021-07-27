@@ -38,7 +38,7 @@
                 </Listbox>
             </div>
             <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
-                <router-view @close="closeForm" @touched="touched = true" />
+                <router-view @close="closeForm" @touched="touched = true" @saved="reloadAlert" />
             </div>
         </div>
     </div>
@@ -132,6 +132,11 @@ export default defineComponent({
         },
         handleClose() {
             this.$router.replace('/alert')
+        },
+        reloadAlert(id) {
+            this.$router.replace(`/alert/${id}`)
+            this.touched = false
+            this.loadAllAlerts()
         }
     }
 })

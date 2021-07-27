@@ -195,7 +195,8 @@
             "noOfEvents": "Number of events before triggering actions",
             "threshold": "Threshold",
             "title": "Alert",
-            "type": "Type"
+            "type": "Type",
+            "savingError": "Error while saving alert"
         }
     },
     "language": {

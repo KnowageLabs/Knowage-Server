@@ -8,10 +8,10 @@
     <div class="p-grid p-m-0 p-fluid p-jc-center">
         <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert"></name-card>
         <events-card :selectedAlert="selectedAlert" @valueChanged="updateAlert"></events-card>
-        <KpiCard v-if="isListenerSelected" :selectedAlert="selectedAlert" :kpiList="kpiList" @showDialog="dialogVisiable = true" @kpiLoaded="updateKpi" />
+        <KpiCard v-if="isListenerSelected" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="dialogVisiable = true" @kpiLoaded="updateKpi" />
     </div>
     <Button @click="dialogVisiable = true">Add action</Button>
-    <add-action-dialog :dialogVisible="dialogVisiable" :kpi="kpi" :action="selectedAction" @close="dialogVisiable = false"></add-action-dialog>
+    <add-action-dialog :dialogVisible="dialogVisiable" :kpi="kpi" :action="selectedAction" @close="dialogVisiable = false" @add="addAction"></add-action-dialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -24,6 +24,7 @@ import KpiCard from './Cards/KpiCard.vue'
 import alertValidationDescriptor from './AlertValidationDescriptor.json'
 import EventsCard from './Cards/EventsCard.vue'
 import AddActionDialog from './addActionDialog/AddActionDialog.vue'
+import alertDescriptor from './AlertDescriptor.json'
 
 export default defineComponent({
     name: 'alert-details',
@@ -55,20 +56,23 @@ export default defineComponent({
         }
         this.loadListener()
         this.loadKpiList()
+        this.loadActionList()
     },
     data() {
         return {
             selectedAlert: {} as iAlert,
             listeners: [] as iListener[],
             jsonOptions: {} as any,
-            selectedAction: {} as any,
+            selectedAction: { idAction: '63' } as any,
             actions: [] as any[],
             kpiList: [] as any,
+            actionList: [] as any,
             kpi: {} as any,
             emptyObject: {} as any,
             alertValidationDescriptor: alertValidationDescriptor,
             dialogVisiable: false,
-            v$: useValidate() as any
+            v$: useValidate() as any,
+            alertDescriptor
         }
     },
     validations() {
@@ -110,6 +114,11 @@ export default defineComponent({
                 this.kpiList = [...response.data]
             })
         },
+        async loadActionList() {
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/listAction').then((response) => {
+                this.actionList = [...response.data]
+            })
+        },
         updateAlert(event) {
             console.log(event)
             if (event.fieldName == 'singleExecution') {
@@ -120,9 +129,36 @@ export default defineComponent({
 
             //this.setDirty()
         },
-        handleSubmit() {
+        async handleSubmit() {
+            if (this.selectedAlert.jsonOptions) {
+                this.selectedAlert.jsonOptions.actions = this.selectedAlert.jsonOptions.actions.map((action: any) => {
+                    return {
+                        jsonActionParameters: JSON.stringify(action.jsonActionParameters),
+                        idAction: action.idAction,
+                        thresholdValues: action.thresholdValues
+                    }
+                })
+            }
+            this.selectedAlert.jsonOptions = JSON.stringify(this.selectedAlert.jsonOptions)
+            //delete this.selectedAlert.jobStatus
             console.log(this.selectedAlert)
-            //console.log('>>>>>', this.v$)
+
+            let operation = this.selectedAlert.id ? 'update' : 'insert'
+
+            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/save', this.selectedAlert).then((response) => {
+                if (response.data.errors != undefined && response.data.errors.length > 0) {
+                    this.$store.commit('setError', {
+                        title: this.$t('kpi.alert.savingError'),
+                        msg: response.data.errors[0].message
+                    })
+                } else {
+                    this.$store.commit('setInfo', {
+                        title: this.$t(this.alertDescriptor.operation[operation].toastTitle),
+                        msg: this.$t(this.alertDescriptor.operation.success)
+                    })
+                    this.$emit('saved', response.data.id)
+                }
+            })
         },
         async checkId() {
             if (this.id) {
@@ -148,6 +184,10 @@ export default defineComponent({
         updateKpi(event) {
             console.log('KPI LOADED -------------------------------', event)
             this.kpi = event
+        },
+        addAction(action) {
+            this.selectedAlert.jsonOptions.actions.push(action)
+            console.log('After PUSH', this.selectedAlert.jsonOptions.actions)
         }
     }
 })
