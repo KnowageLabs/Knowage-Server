@@ -92,7 +92,15 @@ export default defineComponent({
             mockedUsers: mockedUsers
         }
     },
+    created() {
+        //this.loadAction()
+    },
     methods: {
+        // loadAction() {
+        //     if (this.selectedAction.idAction) {
+        //         this.type = this.selectedAction.idAction
+        //     }
+        // },
         async setType() {
             console.log(this.type)
             this.action.jsonActionParameters = {}
@@ -131,9 +139,12 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         handleSave() {
-            this.action.thresholdValues = this.selectedThresholds.map((threshold: any) => {
-                return threshold.id
-            })
+            this.action.thresholdValues = Object.assign(
+                {},
+                this.selectedThresholds.map((threshold: any) => {
+                    return threshold.id
+                })
+            )
             console.log('SAVE', this.action)
             this.$emit('add', this.action)
         }
