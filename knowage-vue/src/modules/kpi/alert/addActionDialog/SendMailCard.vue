@@ -1,17 +1,28 @@
 <template>
     <Card>
         <template #content>
-            <AutoComplete class="p-inputtext-sm" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
+            <AutoComplete class="p-inputtext-sm p-m-3" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" :placeholder="$t('kpi.alert.mailTo')" @keydown.enter="test" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
+            <span class="p-float-label p-m-4">
+                <InputText id="mailSubject" class="kn-material-input" v-model.trim="selectedAction.jsonActionParameters.subject" />
+                <label for="mailSubject" class="kn-material-input-label"> {{ $t('kpi.alert.mailSubject') }}</label>
+            </span>
+            <div class="p-field">
+                <span>
+                    <Editor id="html" v-model="selectedAction.jsonActionParameters.body" :editorStyle="sendMailCardDescriptor.editor.style" />
+                </span>
+            </div>
         </template>
     </Card>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
+import Editor from 'primevue/editor'
+import sendMailCardDescriptor from './SendMailCardDescriptor.json'
 
 export default defineComponent({
     name: 'send-mail-card',
-    components: { AutoComplete },
+    components: { AutoComplete, Editor },
     props: {
         action: {
             type: Object
@@ -22,9 +33,10 @@ export default defineComponent({
     },
     data() {
         return {
+            sendMailCardDescriptor,
             selectedAction: {} as any,
             userList: [] as any[],
-            selectedUsers: [],
+            selectedUsers: [] as any[],
             filteredUsers: [] as any[]
         }
     },
@@ -65,7 +77,7 @@ export default defineComponent({
                     this.filteredUsers = [...this.userList] as any[]
                 } else {
                     this.filteredUsers = this.userList.filter((user: any) => {
-                        return user.name.toLowerCase().startsWith(event.query.toLowerCase())
+                        return user.name.toLowerCase().startsWith(event.query.toLowerCase()) || user.email.toLowerCase().startsWith(event.query.toLowerCase())
                     })
                 }
             }, 250)
@@ -73,6 +85,11 @@ export default defineComponent({
         setUser(user: any) {
             console.log('SELECTED USER', user)
             console.log('SELECTED USERS AFTER CLICK', this.selectedUsers)
+        },
+        test(event: any) {
+            console.log('CALLLEEEEEEEEEEEEEEEEEED', event.target.value)
+            this.selectedUsers.push(event.target.value)
+            console.log('SELECTED USERS AFTER ENTER', this.selectedUsers)
         }
     }
 })

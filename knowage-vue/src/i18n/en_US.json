@@ -182,6 +182,8 @@
     },
     "kpi": {
         "alert": {
+            "mailTo": "Mail to",
+            "mailSubject": "Mail Subject",
             "addAction": "Add new action",
             "brokerType": "Context Broker Type",
             "brokerUrl": "Context Broker URL",
