@@ -27,7 +27,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -96,9 +95,9 @@ public class FoldersResource {
 		try {
 			SpagoBIUserProfile profile = businessContext.getUserProfile();
 			String path = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
-			String completePath = null;
+			String completePath = "models";
 			if (path != null) {
-				completePath = path + File.separator + dto.getFolderName();
+				completePath += File.separator + path + File.separator + dto.getFolderName();
 				boolean create = resourceManagerAPIservice.createFolder(completePath, profile);
 				if (create)
 					response = Response.status(Response.Status.OK).build();
@@ -130,18 +129,17 @@ public class FoldersResource {
 
 	@DELETE
 	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@QueryParam("key") String key) {
-		Response response = null;
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response delete(DownloadFolderDTO dto) {
+		Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		try {
 			SpagoBIUserProfile profile = businessContext.getUserProfile();
+			String key = dto.getKey();
 			String path = resourceManagerAPIservice.getFolderByKey(key, profile);
 			boolean create = resourceManagerAPIservice.delete(path, profile);
 			if (create)
 				response = Response.status(Response.Status.OK).build();
-			else {
-				response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-			}
+
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e.getMessage());
 		}

@@ -238,12 +238,18 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			String workDir = getWorkBaseDirByPath(path, profile);
 			if (canSee(Paths.get(workDir), profile)) {
 				File file = new File(totalPath);
-				// Creating the directory
-				bool = file.mkdir();
-				if (bool) {
-					LOGGER.info("Directory created successfully");
+
+				if (file.exists()) {
+					String message = "Directory " + path.substring(path.lastIndexOf("\\")) + " is already existing.";
+					throw new KNRM004Exception(message);
 				} else {
-					LOGGER.info("Sorry couldn’t create specified directory");
+					// Creating the directory
+					bool = file.mkdir();
+					if (bool) {
+						LOGGER.info("Directory created successfully");
+					} else {
+						LOGGER.info("Sorry couldn’t create specified directory");
+					}
 				}
 			}
 		} catch (Exception e) {
