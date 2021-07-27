@@ -19,7 +19,7 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
     (res) => {
-        if (res.data && res.data.errors) Promise.reject(res.data.errors[0])
+        if (res.data && res.data.errors) return Promise.reject(res.data.errors[0])
         return res
     },
     function(error) {
