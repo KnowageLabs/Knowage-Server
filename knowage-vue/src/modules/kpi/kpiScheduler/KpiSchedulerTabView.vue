@@ -105,6 +105,9 @@ export default defineComponent({
     watch: {
         async id() {
             await this.loadPage()
+        },
+        async clone() {
+            await this.loadPage()
         }
     },
     async created() {
