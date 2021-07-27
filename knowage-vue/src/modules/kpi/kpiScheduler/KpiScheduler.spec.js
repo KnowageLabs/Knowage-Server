@@ -9,6 +9,7 @@ import KpiSchedulerHint from './KpiSchedulerHint.vue'
 import flushPromises from 'flush-promises'
 import Listbox from 'primevue/listbox'
 import KpiScheduler from './KpiScheduler.vue'
+import Menu from 'primevue/menu'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 
@@ -89,6 +90,7 @@ const factory = () => {
                 Chip,
                 FabButton,
                 Listbox,
+                Menu,
                 ProgressBar,
                 Toolbar
             },
@@ -148,7 +150,9 @@ describe('KPI Scheduler list', () => {
 
         expect(wrapper.vm.schedulerList.length).toBe(3)
 
-        await wrapper.find('[data-test="delete-button-1"]').trigger('click')
+        await wrapper.find('[data-test="menu-button"]').trigger('click')
+
+        await wrapper.vm.deleteScheduleConfirm(mockedSchedulers[0].id)
 
         expect($confirm.require).toHaveBeenCalledTimes(1)
 

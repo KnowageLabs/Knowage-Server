@@ -36,8 +36,8 @@
                                 </div>
                             </div>
                             <i v-if="slotProps.option.jobStatus.toUpperCase() !== 'EXPIRED'" :class="playIcon(slotProps.option.jobStatus)" @click="startSchedule(slotProps.option)" />
-                            <Button class="p-button-link p-button-sm" icon="fa fa-ellipsis-v" @click="toggle($event, slotProps.option)" aria-haspopup="true" aria-controls="overlay_menu" />
-                            <Menu ref="menu" :model="items" :popup="true"></Menu>
+                            <Button class="p-button-link p-button-sm" icon="fa fa-ellipsis-v" @click="toggle($event, slotProps.option)" aria-haspopup="true" aria-controls="overlay_menu" data-test="menu-button" />
+                            <Menu ref="menu" :model="items" :popup="true" data-test="menu"></Menu>
                         </div>
                     </template>
                 </Listbox>
@@ -100,7 +100,7 @@ export default defineComponent({
         },
         createMenuItems(scheduler: iKpiSchedule) {
             this.items = []
-            this.items.push({ label: this.$t('common.delete'), icon: 'pi pi-copy', command: () => this.cloneSchedulerConfirm(scheduler) })
+            this.items.push({ label: this.$t('common.clone'), icon: 'pi pi-copy', command: () => this.cloneSchedulerConfirm(scheduler) })
             this.items.push({ label: this.$t('common.delete'), icon: 'far fa-trash-alt', command: () => this.deleteScheduleConfirm(scheduler.id as number) })
         },
         playIcon(jobStatus: string) {
