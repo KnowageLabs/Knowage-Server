@@ -74,7 +74,6 @@ export default defineComponent({
 
     async created() {
         await this.loadPage()
-        // console.log('SCHEDULER LIST: ', this.schedulerList)
     },
     methods: {
         async loadAllSchedules() {
@@ -90,13 +89,10 @@ export default defineComponent({
         async loadPage() {
             this.loading = true
             await this.loadAllSchedules()
-            // const id = schedulerId ? schedulerId : this.selectedScheduler.id
-            // this.selectedScheduler = this.schedulerList.find((scheduler: iScheduler) => scheduler.id === id)
             this.touched = false
             this.loading = false
         },
         playIcon(jobStatus: string) {
-            // console.log('jobStatus: ', jobStatus)
             return jobStatus.toUpperCase() === 'SUSPENDED' ? 'fa fa-play' : 'fa fa-pause'
         },
         cloneSchedulerConfirm(scheduler: iKpiSchedule) {
@@ -107,7 +103,7 @@ export default defineComponent({
         },
         showForm(event: any, clone: boolean) {
             clone = clone ? true : false
-            // console.log('SCHEDULE: ', event)
+
             const path = event.id ? `/kpi-scheduler/edit-kpi-schedule?id=${event.id}&clone=${clone}` : '/kpi-scheduler/new-kpi-schedule'
             if (!this.touched) {
                 this.$router.push(path)
@@ -130,7 +126,6 @@ export default defineComponent({
             const query = '?jobGroup=KPI_SCHEDULER_GROUP&triggerGroup=KPI_SCHEDULER_GROUP&jobName=' + schedule.id + '&triggerName=' + schedule.id
             const action = schedule.jobStatus?.toUpperCase() === 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger'
             axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduler/' + action + query).then((response) => {
-                console.log('RESPONSE: ', response)
                 if (response.data.resp === 'ok') {
                     schedule.jobStatus = schedule.jobStatus === 'SUSPENDED' ? 'ACTIVE' : 'SUSPENDED'
                 }

@@ -32,7 +32,7 @@ import Dialog from 'primevue/dialog'
 import kpiSchedulerTabViewDescriptor from './KpiSchedulerTabViewDescriptor.json'
 
 export default defineComponent({
-    name: 'measure-definition-submit-dialog',
+    name: 'kpi-scheduler-save-dialog',
     components: { Dialog },
     props: { schedulerName: { type: String } },
     emits: ['close'],

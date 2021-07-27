@@ -288,7 +288,7 @@ export default defineComponent({
                     }
                     if (this.currentFrequency.cron.parameter.weeks) {
                         this.selectedDays = []
-                        this.currentFrequency.cron.parameter.days.forEach((day) => this.selectedDays.push(day))
+                        this.currentFrequency.cron.parameter.days.forEach((day) => this.selectedDays.push('' + day))
                         this.parameterDay = this.currentFrequency.cron.parameter.weeks
                         this.simpleDay = false
                     } else {

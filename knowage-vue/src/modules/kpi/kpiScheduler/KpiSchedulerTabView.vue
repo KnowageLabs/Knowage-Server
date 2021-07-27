@@ -191,7 +191,10 @@ export default defineComponent({
             this.selectedSchedule = { ...this.selectedSchedule, kpis: kpiList }
             await this.loadFormatedFilters()
         },
-        async onKpiDeleted() {
+        async onKpiDeleted(event: any) {
+            this.selectedSchedule.filters = this.selectedSchedule.filters.filter((filter: iFilter) => {
+                return filter.kpiId != event.id
+            })
             this.touched = true
             await this.loadFormatedFilters()
         },

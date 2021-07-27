@@ -110,12 +110,13 @@ export default defineComponent({
                 accept: () => this.deleteKpiAssociation(id)
             })
         },
-        async deleteKpiAssociation(id: number) {
+        deleteKpiAssociation(id: number) {
             const index = this.kpisList.findIndex((kpi: iKpi) => kpi.id === id)
             if (index > -1) {
+                const kpi = this.kpisList[index]
                 this.kpisList.splice(index, 1)
+                this.$emit('kpiDeleted', kpi)
             }
-            this.$emit('kpiDeleted')
             this.loadSelectedKpiAssociations()
         },
         addKpiAssociations() {
