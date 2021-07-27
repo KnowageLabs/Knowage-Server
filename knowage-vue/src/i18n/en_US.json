@@ -379,7 +379,7 @@
                 "messageCode": "Message Code"
             }
         },
-        "menuConfigurationManagement": {
+        "menuManagement": {
             "chooseIcon": "Choose Icon",
             "descrHelp": "This value will be displayed in the main menu.",
             "description": "Description",
