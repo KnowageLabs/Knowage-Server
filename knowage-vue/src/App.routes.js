@@ -31,6 +31,11 @@ const baseRoutes = [
         props: (route) => ({ url: route.fullPath })
     },
     {
+        path: '/knowage/restful-services/2.0/installconfig',
+        component: IframeRenderer,
+        props: (route) => ({ url: route.fullPath })
+    },
+    {
         path: '/knowage/themes:catchAll(.*)',
         component: IframeRenderer,
         props: (route) => ({ url: route.fullPath })
