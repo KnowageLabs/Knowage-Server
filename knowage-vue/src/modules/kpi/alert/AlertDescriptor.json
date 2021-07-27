@@ -15,6 +15,13 @@
         },
         "inputFields": {
             "width": "45%"
+        },
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "margin-bottom": "3%",
+            "text-align": "center"
         }
     }
 }

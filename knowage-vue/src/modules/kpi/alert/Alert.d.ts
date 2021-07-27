@@ -25,6 +25,6 @@ export interface iFrequency {
 
 export interface iAction {
     idAction: Number
-    jsonActionParameters: any
-    thresholdValues: any
+    jsonActionParameters?: any
+    thresholdValues?: any
 }

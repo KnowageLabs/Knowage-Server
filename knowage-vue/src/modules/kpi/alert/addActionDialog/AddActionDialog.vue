@@ -13,9 +13,16 @@
         </template>
         <div class="p-field p-col-6">
             <span class="p-float-label">
-                <Dropdown id="type" class="kn-material-input" v-model="type" optionLabel="name" :options="addActionDialogDescriptor.actionType" @change="setType" />
+                <Dropdown id="type" class="kn-material-input" v-model="action.idAction" optionLabel="name" :options="addActionDialogDescriptor.actionType" @change="setType" />
                 <label for="type" class="kn-material-input-label"> {{ $t('kpi.alert.type') }} * </label>
             </span>
+            <!-- <KnValidationMessages
+                :vComp="v$.type"
+                :additionalTranslateParams="{
+                    fieldName: $t('common.label')
+                }"
+            >
+            </KnValidationMessages> -->
             <span class="p-float-label">
                 <MultiSelect id="threshold" class="kn-material-input" v-model="selectedThresholds" optionLabel="label" :options="kpi.threshold.thresholdValues">
                     <template #value="slotProps">
@@ -42,7 +49,7 @@
 </template>
 selectedAction
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import axios from 'axios'
 import { iAction } from '../Alert'
 import Dialog from 'primevue/dialog'
@@ -54,6 +61,10 @@ import ExectuteEtlCard from './ExectuteEtlCard.vue'
 import ContextBrokerCard from './ContextBrokerCard.vue'
 import SendMailCard from './SendMailCard.vue'
 import mockedUsers from './MockedUsers.json'
+import useValidate from '@vuelidate/core'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import alertValidationDescriptor from '../AlertValidationDescriptor.json'
+//import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
 export default defineComponent({
     name: 'add-action-dialog',
@@ -65,6 +76,7 @@ export default defineComponent({
         ContextBrokerCard,
         ColorPicker,
         SendMailCard
+        //KnValidationMessages
     },
     props: {
         dialogVisible: {
@@ -75,7 +87,7 @@ export default defineComponent({
             type: Object
         },
         selectedAction: {
-            type: Object,
+            type: Object as PropType<iAction>,
             required: true
         }
     },
@@ -89,18 +101,23 @@ export default defineComponent({
             selectedThresholds: [],
             data: [] as any[],
             formatedUsers: [] as any[],
+            v$: useValidate() as any,
             mockedUsers: mockedUsers
         }
     },
     created() {
-        //this.loadAction()
+        this.loadAction()
+    },
+    validations() {
+        return {
+            action: createValidations('action', alertValidationDescriptor.validations.action)
+        }
     },
     methods: {
-        // loadAction() {
-        //     if (this.selectedAction.idAction) {
-        //         this.type = this.selectedAction.idAction
-        //     }
-        // },
+        loadAction() {
+            this.action = { ...this.selectedAction }
+            console.log('Action after copy', this.action)
+        },
         async setType() {
             console.log(this.type)
             this.action.jsonActionParameters = {}
@@ -145,6 +162,9 @@ export default defineComponent({
                     return threshold.id
                 })
             )
+            // this.action.thresholdValues = this.selectedThresholds.map((threshold: any) => {
+            //     return threshold.id
+            // })
             console.log('SAVE', this.action)
             this.$emit('add', this.action)
         }

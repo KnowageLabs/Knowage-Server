@@ -1,5 +1,23 @@
 {
     "validations": {
+        "action": [
+            {
+                "fieldName": "type",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "threshold",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ],
         "alert": [
             {
                 "fieldName": "name",

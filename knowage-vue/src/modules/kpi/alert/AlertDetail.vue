@@ -1,23 +1,27 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0">
         <template #right>
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center">
+        <Message v-if="expiredCard" severity="warn" :closable="true" :style="alertDescriptor.styles.message">
+            {{ $t('kpi.alert.expiredWarning') }}
+        </Message>
         <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert"></name-card>
         <events-card :selectedAlert="selectedAlert" @valueChanged="updateAlert"></events-card>
         <KpiCard v-if="isListenerSelected" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="dialogVisiable = true" @kpiLoaded="updateKpi" />
     </div>
     <Button @click="dialogVisiable = true">Add action</Button>
-    <add-action-dialog :dialogVisible="dialogVisiable" :kpi="kpi" :action="selectedAction" @close="dialogVisiable = false" @add="addAction"></add-action-dialog>
+    <add-action-dialog :dialogVisible="dialogVisiable" :kpi="kpi" :selectedAction="selectedAction" @close="dialogVisiable = false" @add="addAction"></add-action-dialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iAlert, iListener } from './Alert'
+import { iAction, iAlert, iListener } from './Alert'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import axios from 'axios'
+import Message from 'primevue/message'
 import useValidate from '@vuelidate/core'
 import NameCard from './Cards/NameCard.vue'
 import KpiCard from './Cards/KpiCard.vue'
@@ -28,7 +32,7 @@ import alertDescriptor from './AlertDescriptor.json'
 
 export default defineComponent({
     name: 'alert-details',
-    components: { NameCard, EventsCard, AddActionDialog, KpiCard },
+    components: { NameCard, EventsCard, AddActionDialog, KpiCard, Message },
     props: {
         id: {
             type: String,
@@ -46,6 +50,9 @@ export default defineComponent({
                 return false
             }
             return true
+        },
+        buttonDisabled(): any {
+            return this.v$.$invalid
         }
     },
     created() {
@@ -63,8 +70,8 @@ export default defineComponent({
             selectedAlert: {} as iAlert,
             listeners: [] as iListener[],
             jsonOptions: {} as any,
-            selectedAction: { idAction: '63' } as any,
             actions: [] as any[],
+            selectedAction: { idAction: 63 } as iAction,
             kpiList: [] as any,
             actionList: [] as any,
             kpi: {} as any,
@@ -72,7 +79,8 @@ export default defineComponent({
             alertValidationDescriptor: alertValidationDescriptor,
             dialogVisiable: false,
             v$: useValidate() as any,
-            alertDescriptor
+            alertDescriptor,
+            expiredCard: false
         }
     },
     validations() {
@@ -99,7 +107,7 @@ export default defineComponent({
                     }
                     console.log('jsonParse', this.selectedAlert.jsonOptions)
                 })
-                .finally(() => console.log('actions', this.actions))
+                .finally(() => (this.expiredCard = this.selectedAlert.jobStatus == 'EXPIRED'))
         },
         async loadListener() {
             await axios
@@ -186,6 +194,7 @@ export default defineComponent({
             this.kpi = event
         },
         addAction(action) {
+            this.dialogVisiable = false
             this.selectedAlert.jsonOptions.actions.push(action)
             console.log('After PUSH', this.selectedAlert.jsonOptions.actions)
         }
