@@ -425,7 +425,7 @@
                 "creator": "Creator",
                 "fileName": "File Name"
             },
-            "hint": "placeholder, please add a description",
+            "hint": "The Mondrian Schema management allows you to upload and manage your OLAP documents schema. It's possible to set an active version from the saved ones list and to set a workflow. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "hintTitle": "Mondrian Schema Management",
             "noResults": "No schemas' available for the selected filter.",
             "title": "Mondrian schemas catalogue",
