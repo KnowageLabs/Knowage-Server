@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
         <div class="kn-page-content p-grid p-m-0">
-            <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
+            <div class="p-col-4 p-sm-4 p-md-3 p-p-0 kn-page">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
                         {{ $t('managers.businessModelManager.title') }}
@@ -14,7 +14,7 @@
 
                 <Listbox
                     v-if="!loading"
-                    class="kn-list"
+                    class="kn-list--column kn-page-content"
                     :options="businessModelList"
                     listStyle="max-height:calc(100% - 62px)"
                     :filter="true"
@@ -33,13 +33,13 @@
                                 <span>{{ slotProps.option.name }}</span>
                                 <span class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option.description }}</span>
                             </div>
-                            <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteBusinessModelConfirm(slotProps.option.id)" data-test="delete-button" />
+                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteBusinessModelConfirm(slotProps.option.id)" data-test="delete-button" />
                         </div>
                     </template>
                 </Listbox>
             </div>
 
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
                 <KnHint :title="'managers.businessModelManager.title'" :hint="'managers.businessModelManager.hint'" v-if="showHint" data-test="bm-hint"></KnHint>
                 <router-view @touched="touched = true" @closed="onClose" @inserted="pageReload" />
             </div>

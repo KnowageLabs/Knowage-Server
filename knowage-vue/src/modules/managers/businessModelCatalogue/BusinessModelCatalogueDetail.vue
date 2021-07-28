@@ -7,51 +7,49 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <div class="card" v-else>
-        <TabView class="tabview-custom">
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.businessModelManager.details') }}</span>
-                </template>
+    <TabView class="tabview-custom kn-page-content" v-else>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.businessModelManager.details') }}</span>
+            </template>
 
-                <BusinessModelDetailsCard
-                    :selectedBusinessModel="selectedBusinessModel"
-                    :domainCategories="categories"
-                    :datasourcesMeta="datasources"
-                    :user="user"
-                    :toGenerate="toGenerate"
-                    @fieldChanged="onFieldChange"
-                    @fileUploaded="uploadedFile = $event"
-                    @datamartGenerated="loadPage"
-                ></BusinessModelDetailsCard>
-            </TabPanel>
+            <BusinessModelDetailsCard
+                :selectedBusinessModel="selectedBusinessModel"
+                :domainCategories="categories"
+                :datasourcesMeta="datasources"
+                :user="user"
+                :toGenerate="toGenerate"
+                @fieldChanged="onFieldChange"
+                @fileUploaded="uploadedFile = $event"
+                @datamartGenerated="loadPage"
+            ></BusinessModelDetailsCard>
+        </TabPanel>
 
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.businessModelManager.metadata') }}</span>
-                </template>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.businessModelManager.metadata') }}</span>
+            </template>
 
-                <MetadataCard v-if="businessModelVersions.length > 0" :id="selectedBusinessModel.id"></MetadataCard>
-            </TabPanel>
+            <MetadataCard v-if="businessModelVersions.length > 0" :id="selectedBusinessModel.id"></MetadataCard>
+        </TabPanel>
 
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.businessModelManager.savedVersions') }}</span>
-                </template>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.businessModelManager.savedVersions') }}</span>
+            </template>
 
-                <BusinessModelVersionsCard :id="selectedBusinessModel.id" :versions="businessModelVersions" @touched="setDirty" @deleted="loadVersions"></BusinessModelVersionsCard>
-            </TabPanel>
+            <BusinessModelVersionsCard :id="selectedBusinessModel.id" :versions="businessModelVersions" @touched="setDirty" @deleted="loadVersions"></BusinessModelVersionsCard>
+        </TabPanel>
 
-            <TabPanel>
-                <template #header v-if="id">
-                    <span>{{ $t('managers.businessModelManager.drivers') }}</span>
-                    <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
-                </template>
+        <TabPanel>
+            <template #header v-if="id">
+                <span>{{ $t('managers.businessModelManager.drivers') }}</span>
+                <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
+            </template>
 
-                <BusinessModelDriversCard v-if="id" :id="selectedBusinessModel.id" :drivers="drivers" :driversOptions="analyticalDrivers" @delete="setDriversForDelete"></BusinessModelDriversCard>
-            </TabPanel>
-        </TabView>
-    </div>
+            <BusinessModelDriversCard v-if="id" :id="selectedBusinessModel.id" :drivers="drivers" :driversOptions="analyticalDrivers" @delete="setDriversForDelete"></BusinessModelDriversCard>
+        </TabPanel>
+    </TabView>
 </template>
 
 <script lang="ts">
