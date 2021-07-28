@@ -13,7 +13,7 @@
         </template>
         <div class="p-field p-col-6">
             <span class="p-float-label">
-                <Dropdown id="type" class="kn-material-input" v-model="type" optionLabel="name" :options="addActionDialogDescriptor.actionType" @change="setType" />
+                <Dropdown id="type" class="kn-material-input" v-model="action.idAction" optionLabel="name" :options="addActionDialogDescriptor.actionType" @change="setType" />
                 <label for="type" class="kn-material-input-label"> {{ $t('kpi.alert.type') }} * </label>
             </span>
             <!-- <KnValidationMessages
@@ -24,7 +24,7 @@
             >
             </KnValidationMessages> -->
             <span class="p-float-label">
-                <MultiSelect id="threshold" class="kn-material-input" v-model="selectedThresholds" optionLabel="label" :options="kpi.threshold.thresholdValues">
+                <MultiSelect id="threshold" class="kn-material-input" v-model="action.thresholdValues" optionLabel="label" :options="kpi.threshold.thresholdValues">
                     <template #value="slotProps">
                         <div v-for="option of slotProps.value" :key="option.code">
                             <ColorPicker v-model="option.color" disabled />
@@ -41,9 +41,9 @@
                 <label for="threshold" class="kn-material-input-label"> {{ $t('kpi.alert.threshold') }} * </label>
             </span>
         </div>
-        <ExectuteEtlCard v-if="type && type.id == 63" :loading="loading" :files="data.item" :data="action"></ExectuteEtlCard>
-        <ContextBrokerCard v-if="type && type.id == 86" :data="action"></ContextBrokerCard>
-        <SendMailCard v-else-if="type && type.id == 62" :action="selectedAction" :users="formatedUsers"></SendMailCard>
+        <ExectuteEtlCard v-if="action.idAction && action.idAction.id == 63" :loading="loading" :files="data.item" :data="action"></ExectuteEtlCard>
+        <ContextBrokerCard v-if="action.idAction && action.idAction.id == 86" :data="action"></ContextBrokerCard>
+        <SendMailCard v-else-if="action.idAction && action.idAction.id == 62" :action="selectedAction" :users="formatedUsers"></SendMailCard>
         =======
     </Dialog>
 </template>
@@ -97,7 +97,7 @@ export default defineComponent({
             loading: false,
             type: {} as any,
             //data: {},
-            action: {} as iAction,
+            action: {} as any,
             selectedThresholds: [],
             data: [] as any[],
             formatedUsers: [] as any[],
@@ -106,7 +106,7 @@ export default defineComponent({
         }
     },
     created() {
-        this.loadAction()
+        //this.loadAction()
     },
     validations() {
         return {
@@ -115,19 +115,21 @@ export default defineComponent({
     },
     methods: {
         loadAction() {
-            this.action = { ...this.selectedAction }
+            if (this.action.idAction) {
+                this.action = { ...this.selectedAction }
+            }
             console.log('Action after copy', this.action)
         },
         async setType() {
-            console.log(this.type)
+            console.log(this.action.idAction)
             this.action.jsonActionParameters = {}
-            if (this.type.id == 63) {
-                this.action.idAction = 63
+            if (this.action.idAction.id == 63) {
+                //this.action.idAction = 63
                 await this.loadData('2.0/documents/listDocument?includeType=ETL')
-            } else if (this.type.id == 86) {
-                this.action.idAction = 86
-            } else if (this.type.id == 62) {
-                this.action.idAction = 62
+            } else if (this.action.idAction.id == 86) {
+                //this.action.idAction = 86
+            } else if (this.action.idAction.id == 62) {
+                //this.action.idAction = 62
                 await this.loadData('2.0/users')
                 this.formatUsers()
             }
@@ -156,17 +158,17 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         handleSave() {
-            this.action.thresholdValues = Object.assign(
-                {},
-                this.selectedThresholds.map((threshold: any) => {
-                    return threshold.id
-                })
-            )
+            // this.action.thresholdValues = Object.assign(
+            //     {},
+            //     this.selectedThresholds.map((threshold: any) => {
+            //         return threshold.id
+            //     })
+            // )
             // this.action.thresholdValues = this.selectedThresholds.map((threshold: any) => {
             //     return threshold.id
             // })
             console.log('SAVE', this.action)
-            this.$emit('add', this.action)
+            //this.$emit('add', this.action)
         }
     }
 })

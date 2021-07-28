@@ -71,7 +71,7 @@ export default defineComponent({
             listeners: [] as iListener[],
             jsonOptions: {} as any,
             actions: [] as any[],
-            selectedAction: { idAction: 63 } as iAction,
+            selectedAction: {} as iAction,
             kpiList: [] as any,
             actionList: [] as any,
             kpi: {} as any,
