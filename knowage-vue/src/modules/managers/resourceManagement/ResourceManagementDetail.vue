@@ -9,69 +9,69 @@
 	<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 	<Breadcrumb :home="home" :model="items" class="resourceManagerBreadcrumb"> </Breadcrumb>
 
-	<Toolbar v-if="selectedFiles.length > 0" class="kn-toolbar kn-toolbar--tertiary p-m-0">
+	<Toolbar v-if="selectedFiles.length > 0" class="kn-toolbar kn-toolbar--default p-m-0">
 		<template #left>{{ $t('managers.resourceManagement.selectedFiles', { num: selectedFiles.length }) }}</template>
 		<template #right>
-			<Button icon="fas fa-download" class="p-button-text p-button-rounded p-button-plain" @click="downloadFiles" :disabled="invalid" />
-			<Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain" @click="showDeleteDialog" />
+			<Button icon="fas fa-download" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="downloadFiles" :disabled="invalid" />
+			<Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="showDeleteDialog" />
 		</template>
 	</Toolbar>
 
-	<ImportFileDialog v-model:visibility="importFile" v-bind:path="getCurrentFolderKey()" @fileUploaded="loadSelectedFolder" />
-	<CreateFolderDialog v-model:visibility="folderCreation" @createFolder="createFolder" v-bind:path="getCurrentFolderPath()" />
+	<ResourceManagementImportFileDialog v-model:visibility="importFile" v-bind:path="getCurrentFolderKey()" @fileUploaded="loadSelectedFolder" />
+	<ResourceManagementCreateFolderDialog v-model:visibility="folderCreation" @createFolder="createFolder" v-bind:path="getCurrentFolderPath()" />
 
-	<div class="managerDetail">
-		<div class="p-grid p-m-0 p-fluid">
-			<div class="p-col-12">
-				<DataTable
-					ref="dt"
-					:value="files"
-					:loading="loading"
-					v-model:selection="selectedFiles"
-					v-model:filters="filters"
-					class="p-datatable-sm kn-table"
-					:paginator="true"
-					:rows="10"
-					paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-					:rowsPerPageOptions="[10, 15, 20]"
-					responsiveLayout="stack"
-					breakpoint="960px"
-					:currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-					:globalFilterFields="['name', 'type', 'tags']"
-				>
-					<template #header>
-						<div class="p-grid">
-							<div class="p-col-11">
-								<i class="pi pi-search" />
-								<InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" />
-							</div>
-							<div v-if="selectedFiles.length == 0" class="p-col">
-								<Button icon="fas fa-folder-plus" class="p-button-text p-button-rounded p-button-plain" @click="openCreateFolderDialog" :disabled="invalid" />
-								<Button icon="fas fa-upload" class="p-button-text p-button-rounded p-button-plain" @click="openImportFileDialog" />
-							</div>
+	<div class="managerDetail p-grid p-m-0 p-fluid">
+		<div class="p-col">
+			<DataTable
+				ref="dt"
+				:value="files"
+				:loading="loading"
+				v-model:selection="selectedFiles"
+				v-model:filters="filters"
+				class="p-datatable-sm kn-table"
+				:paginator="true"
+				:rows="10"
+				paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+				:rowsPerPageOptions="[10, 15, 20]"
+				responsiveLayout="stack"
+				breakpoint="960px"
+				:currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+				:globalFilterFields="['name', 'type', 'tags']"
+			>
+				<template #header>
+					<div class="p-grid p-pt-0">
+						<div class="p-col-11">
+							<span class="p-input-icon-left p-col p-p-0">
+								<i class="pi pi-search"/>
+								<InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0"
+							/></span>
 						</div>
-					</template>
-					<template #empty>
-						{{ $t('common.info.noDataFound') }}
-					</template>
-					<template #loading>
-						{{ $t('common.info.dataLoading') }}
-					</template>
+						<div v-if="selectedFiles.length == 0" class="p-col p-d-flex p-jc-center p-ai-center">
+							<Button icon="fas fa-folder-plus" class="p-button-text p-button-rounded p-button-plain" @click="openCreateFolderDialog" :disabled="invalid" />
+							<Button icon="fas fa-upload" class="p-button-text p-button-rounded p-button-plain" @click="openImportFileDialog" />
+						</div>
+					</div>
+				</template>
+				<template #empty>
+					{{ $t('common.info.noDataFound') }}
+				</template>
+				<template #loading>
+					{{ $t('common.info.dataLoading') }}
+				</template>
 
-					<Column v-for="col in getOrderedColumns()" :field="col.field" :header="$t(col.header)" :key="col.position" :style="col.style" :selectionMode="col.field == 'selectionMode' ? 'multiple' : ''" :exportable="col.field == 'selectionMode' ? false : ''">
-						<template #body="{data}" v-if="col.displayType">
-							<span class="p-float-label kn-material-input">
-								<div v-if="col.displayType == 'fileSize'">
-									{{ getDataValue(data.size) }}
-								</div>
-								<div v-if="col.displayType == 'date'">
-									{{ getDate(data.lastModified) }}
-								</div>
-							</span>
-						</template>
-					</Column>
-				</DataTable>
-			</div>
+				<Column v-for="col in getOrderedColumns()" :field="col.field" :header="$t(col.header)" :key="col.position" :style="col.style" :selectionMode="col.field == 'selectionMode' ? 'multiple' : ''" :exportable="col.field == 'selectionMode' ? false : ''">
+					<template #body="{data}" v-if="col.displayType">
+						<span class="p-float-label kn-material-input">
+							<div v-if="col.displayType == 'fileSize'">
+								{{ getDataValue(data.size) }}
+							</div>
+							<div v-if="col.displayType == 'date'">
+								{{ getDate(data.lastModified) }}
+							</div>
+						</span>
+					</template>
+				</Column>
+			</DataTable>
 		</div>
 	</div>
 </template>
@@ -88,12 +88,12 @@
 	import { ITableColumn } from '../../commons/ITableColumn'
 	import { formatDate } from '@/helpers/commons/localeHelper'
 	import Breadcrumb from 'primevue/breadcrumb'
-	import CreateFolderDialog from './CreateFolderDialog.vue'
-	import ImportFileDialog from './ImportFileDialog.vue'
+	import ResourceManagementCreateFolderDialog from './ResourceManagementCreateFolderDialog.vue'
+	import ResourceManagementImportFileDialog from './ResoruceManagementImportFileDialog.vue'
 	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
 
 	export default defineComponent({
-		components: { Breadcrumb, CreateFolderDialog, Column, DataTable, ImportFileDialog },
+		components: { Breadcrumb, Column, DataTable, ResourceManagementCreateFolderDialog, ResourceManagementImportFileDialog },
 		props: {
 			folder: Object
 		},
