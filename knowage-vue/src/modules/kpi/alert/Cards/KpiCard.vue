@@ -13,36 +13,33 @@
                 </template>
 
                 <template #right>
-                    <Button :label="$t('kpi.alert.addAction')" class="p-button-text p-button-rounded p-button-plain" @click="this.$emit('showDialog')" />
+                    <Button :label="$t('kpi.alert.addAction')" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showDialog')" />
                 </template>
             </Toolbar>
             <div class="p-grid p-mt-2">
-                <div class="p-col p-m-2 p-shadow-2" v-for="action in alert.jsonOptions.actions" :key="action.idAction">
+                <!-- {{ alert.jsonOptions.actions }} -->
+                <!-- {{ kpi.threshold.thresholdValues }} -->
+                <div class="p-m-2 p-shadow-2 action-box" v-for="action in alert.jsonOptions.actions" :key="action.idAction">
                     <Toolbar class="kn-toolbar kn-toolbar--primary">
                         <template #left>
                             <span>{{ getActionLabel(action.idAction) }}</span>
                         </template>
 
-                        <template #right>
+                        <!-- <template #right>
                             <Button icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" @click="getThresholdItem(action.thresholdValues)" />
-                        </template>
+                        </template> -->
                     </Toolbar>
-                    <div v-if="action">
-                        <div v-for="(threshVal, index) in getThresholdItem(action.thresholdValues)" :key="index">{{ threshVal }}</div>
-                    </div>
-                    <!-- <div>{{ action }}</div> -->
+                    <!-- <div class="p-d-flex p-flex-column severity-container" v-if="action">
+                        <div class="p-d-inline-flex p-m-2" v-for="(threshVal, index) in getThresholdItem(action.thresholdValues)" :key="index">
+                            <div class="color-box" :style="{ 'background-color': threshVal.color }"></div>
+                            <span flex>{{ threshVal.label }}</span>
+                            <span class="severity-box" style="text" v-if="threshVal.severityCd != undefined">({{ threshVal.severityCd }})</span>
+                        </div>
+                    </div> -->
                 </div>
             </div>
         </template>
     </Card>
-    <!-- <Card :style="alertDescriptor.styles.basicCard" class="p-m-2">
-        <template #content>
-            {{ kpi }}
-            <br />
-            <br />
-            {{ alert }}
-        </template>
-    </Card> -->
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -138,14 +135,21 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+/* these styles dont work in descriptor for some reason... */
+.color-box {
+    height: 20px;
+    width: 20px;
+    margin-right: 5px;
+}
 .action-box {
     height: 200px;
     width: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    margin: 2rem;
-    border-radius: 4px;
+}
+.severity-box {
+    position: absolute;
+    right: 5px;
+}
+.severity-container {
+    position: relative;
 }
 </style>
