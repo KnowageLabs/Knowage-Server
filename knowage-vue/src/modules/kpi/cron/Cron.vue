@@ -1,7 +1,6 @@
 <template>
     <Card>
         <template #content>
-            {{ frequency }}
             <div class="p-d-flex p-ai-center p-mt-2">
                 <div class="p-col-6">
                     <label for="startDate" class="kn-material-input-label p-m-2"> {{ $t('cron.startDate') + ':' }}</label>
@@ -245,7 +244,6 @@ export default defineComponent({
         frequency() {
             if (!this.frequency) return
             this.loadFrequency()
-            console.log('bbb ', this.currentFrequency)
         }
     },
     async created() {
@@ -254,7 +252,6 @@ export default defineComponent({
     methods: {
         loadFrequency() {
             this.currentFrequency = this.frequency as any
-            console.log('aaa Current Freq', this.currentFrequency)
 
             this.startDate = new Date(this.currentFrequency.startDate)
             this.startTime = new Date(this.currentFrequency.startDate)
