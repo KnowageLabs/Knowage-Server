@@ -11,7 +11,7 @@
         </Message>
         <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert"></name-card>
         <events-card :selectedAlert="selectedAlert" @valueChanged="updateAlert"></events-card>
-        <KpiCard v-if="isListenerSelected" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="dialogVisiable = true" @kpiLoaded="updateKpi" />
+        <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" />
     </div>
     <Button @click="dialogVisiable = true">Add action</Button>
     <add-action-dialog :dialogVisible="dialogVisiable" :kpi="kpi" :selectedAction="selectedAction" @close="dialogVisiable = false" @add="addAction"></add-action-dialog>
@@ -33,12 +33,7 @@ import alertDescriptor from './AlertDescriptor.json'
 export default defineComponent({
     name: 'alert-details',
     components: { NameCard, EventsCard, AddActionDialog, KpiCard, Message },
-    props: {
-        id: {
-            type: String,
-            required: false
-        }
-    },
+    props: { id: { type: String, required: false } },
     watch: {
         async id() {
             await this.checkId()
@@ -134,8 +129,6 @@ export default defineComponent({
             } else {
                 this.selectedAlert[event.fieldName] = event.value
             }
-
-            //this.setDirty()
         },
         async handleSubmit() {
             if (this.selectedAlert.jsonOptions) {
@@ -148,7 +141,6 @@ export default defineComponent({
                 })
             }
             this.selectedAlert.jsonOptions = JSON.stringify(this.selectedAlert.jsonOptions)
-            //delete this.selectedAlert.jobStatus
             console.log(this.selectedAlert)
 
             let operation = this.selectedAlert.id ? 'update' : 'insert'
@@ -190,13 +182,20 @@ export default defineComponent({
             this.$emit('close')
         },
         updateKpi(event) {
-            console.log('KPI LOADED -------------------------------', event)
             this.kpi = event
         },
         addAction(action) {
             this.dialogVisiable = false
-            this.selectedAlert.jsonOptions.actions.push(action)
-            console.log('After PUSH', this.selectedAlert.jsonOptions.actions)
+            const option = { ...action, idAction: +action.idAction, data: this.actionList.find((ac) => action.idAction == ac.id) }
+            option['thresholdData'] = option.thresholdValues.map((thresholdId) => {
+                return this.kpi.threshold.thresholdValues.find((threshold) => threshold.id == thresholdId)
+            })
+            this.selectedAlert.jsonOptions.actions.push(option)
+        },
+        onShowActionDialog(action) {
+            this.selectedAction = action ? { ...action, idAction: +action.idAction } : {}
+
+            this.dialogVisiable = true
         }
     }
 })

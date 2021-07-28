@@ -27,4 +27,5 @@ export interface iAction {
     idAction: Number
     jsonActionParameters?: any
     thresholdValues?: any
+    thresholdData?: any
 }

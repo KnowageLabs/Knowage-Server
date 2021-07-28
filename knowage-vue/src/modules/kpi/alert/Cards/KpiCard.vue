@@ -3,7 +3,7 @@
         <template #content>
             <div class="p-field">
                 <span class="p-float-label">
-                    <Dropdown id="kpi" class="kn-material-input" v-model="kpi" :options="kpiList" optionLabel="name" @change="confirmLoadSelectedKpi($event.value)" />
+                    <Dropdown id="kpi" class="kn-material-input" dataKey="id" v-model="kpi" :options="kpiList" optionLabel="name" @change="confirmLoadSelectedKpi($event.value)" />
                     <label for="kpi" class="kn-material-input-label"> Kpi </label>
                 </span>
             </div>
@@ -17,25 +17,23 @@
                 </template>
             </Toolbar>
             <div class="p-grid p-mt-2">
-                <!-- {{ alert.jsonOptions.actions }} -->
-                <!-- {{ kpi.threshold.thresholdValues }} -->
                 <div class="p-m-2 p-shadow-2 action-box" v-for="action in alert.jsonOptions.actions" :key="action.idAction">
                     <Toolbar class="kn-toolbar kn-toolbar--primary">
                         <template #left>
-                            <span>{{ getActionLabel(action.idAction) }}</span>
+                            <span>{{ action.data?.name }}</span>
                         </template>
 
-                        <!-- <template #right>
-                            <Button icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" @click="getThresholdItem(action.thresholdValues)" />
-                        </template> -->
+                        <template #right>
+                            <Button icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showDialog', action)" />
+                        </template>
                     </Toolbar>
-                    <!-- <div class="p-d-flex p-flex-column severity-container" v-if="action">
-                        <div class="p-d-inline-flex p-m-2" v-for="(threshVal, index) in getThresholdItem(action.thresholdValues)" :key="index">
+                    <div class="p-d-flex p-flex-column severity-container" v-if="action">
+                        <div class="p-d-inline-flex p-m-2" v-for="(threshVal, index) in action.thresholdData" :key="index">
                             <div class="color-box" :style="{ 'background-color': threshVal.color }"></div>
                             <span flex>{{ threshVal.label }}</span>
                             <span class="severity-box" style="text" v-if="threshVal.severityCd != undefined">({{ threshVal.severityCd }})</span>
                         </div>
-                    </div> -->
+                    </div>
                 </div>
             </div>
         </template>
@@ -51,17 +49,36 @@ export default defineComponent({
     components: { Dropdown },
     props: { selectedAlert: { type: Object as any }, kpiList: { type: Array as any }, actionList: { type: Array as any } },
     emits: ['showDialog', 'kpiLoaded'],
-    created() {
+
+    async created() {
         this.alert = this.selectedAlert
         if (this.alert.jsonOptions) {
-            this.loadKpi(this.alert.jsonOptions.kpiId, this.alert.jsonOptions.kpiVersion)
+            await this.loadKpi(this.alert.jsonOptions.kpiId, this.alert.jsonOptions.kpiVersion)
+            this.alert.jsonOptions.actions = this.alert.jsonOptions.actions.map((action) => {
+                const option = { ...action, data: this.actionList.find((ac) => action.idAction == ac.id) }
+                option['thresholdData'] = option.thresholdValues.map((thresholdId) => {
+                    return this.kpi.threshold.thresholdValues.find((threshold) => threshold.id == thresholdId)
+                })
+                console.log('CREATED ------', option)
+                console.log('CREATED ALIST ------', this.actionList)
+                return option
+            })
         }
     },
     watch: {
-        selectedAlert() {
+        async selectedAlert() {
             this.alert = this.selectedAlert
             if (this.alert.jsonOptions) {
-                this.loadKpi(this.alert.jsonOptions.kpiId, this.alert.jsonOptions.kpiVersion)
+                await this.loadKpi(this.alert.jsonOptions.kpiId, this.alert.jsonOptions.kpiVersion)
+                this.alert.jsonOptions.actions = this.alert.jsonOptions.actions.map((action) => {
+                    const option = { ...action, data: this.actionList.find((ac) => action.idAction == ac.id) }
+                    option['thresholdData'] = option.thresholdValues.map((thresholdId) => {
+                        return this.kpi.threshold.thresholdValues.find((threshold) => threshold.id == thresholdId)
+                    })
+                    console.log('WATCHER ------', option)
+
+                    return option
+                })
             }
         }
     },
@@ -79,7 +96,7 @@ export default defineComponent({
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response) => {
                 this.oldKpi = { ...response.data }
                 this.kpi = { ...response.data }
-                this.$emit('kpiLoaded', response.data)
+                this.$emit('kpiLoaded', this.kpi)
             })
         },
         confirmLoadSelectedKpi(kpi) {
