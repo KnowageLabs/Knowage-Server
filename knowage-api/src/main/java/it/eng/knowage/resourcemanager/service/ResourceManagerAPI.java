@@ -79,4 +79,6 @@ public interface ResourceManagerAPI {
 	 * @throws KNRM005Exception
 	 */
 	Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM005Exception;
+
+	String getBuondedBasePath();
 }

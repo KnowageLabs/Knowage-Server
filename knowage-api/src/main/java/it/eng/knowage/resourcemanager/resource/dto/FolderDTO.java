@@ -17,7 +17,7 @@
  */
 package it.eng.knowage.resourcemanager.resource.dto;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class FolderDTO {
 
 	private String label;
 
-	private int key;
+	private String key;
 
 	@JsonIgnore
 	private String fullPath;
@@ -47,10 +47,10 @@ public class FolderDTO {
 		super();
 	}
 
-	public FolderDTO(String name) {
+	public FolderDTO(Path fullPath) {
 		children = new ArrayList<>();
-		this.label = name.substring(name.lastIndexOf(File.separator) + 1);
-		this.fullPath = name;
+		this.label = fullPath.getName(fullPath.getNameCount() - 1).toString();
+		this.fullPath = fullPath.toString();
 	}
 
 	public String getLabel() {
@@ -74,7 +74,7 @@ public class FolderDTO {
 		return "FolderDTO [label=" + label + ", children=" + children + "]";
 	}
 
-	public int getKey() {
+	public String getKey() {
 		return key;
 	}
 
@@ -86,7 +86,7 @@ public class FolderDTO {
 		this.fullPath = fullPath;
 	}
 
-	public void setKey(int key) {
+	public void setKey(String key) {
 		this.key = key;
 	}
 
@@ -122,7 +122,7 @@ public class FolderDTO {
 		int result = 1;
 		result = prime * result + ((children == null) ? 0 : children.hashCode());
 		result = prime * result + ((fullPath == null) ? 0 : fullPath.hashCode());
-		result = prime * result + key;
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + level;
 		result = prime * result + (modelFolder ? 1231 : 1237);
@@ -149,7 +149,10 @@ public class FolderDTO {
 				return false;
 		} else if (!fullPath.equals(other.fullPath))
 			return false;
-		if (key != other.key)
+		if (key == null) {
+			if (other.key != null)
+				return false;
+		} else if (!key.equals(other.key))
 			return false;
 		if (label == null) {
 			if (other.label != null)
