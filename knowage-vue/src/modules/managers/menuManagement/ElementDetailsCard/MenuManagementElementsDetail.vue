@@ -11,7 +11,7 @@
 
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
 
-    <div class="p-grid p-m-0 p-fluid">
+    <div class="p-grid p-m-0 p-fluid kn-page-content">
         <div class="p-col-12">
             <Card>
                 <template #content>
@@ -154,6 +154,9 @@
                 </template>
             </Card>
         </div>
+        <div class="p-col-12">
+            <RolesCard :hidden="hideForm" :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
+        </div>
     </div>
 </template>
 
@@ -161,11 +164,13 @@
 import { defineComponent } from 'vue'
 import axios, { AxiosResponse } from 'axios'
 import { iMenuNode } from '../MenuManagement'
+import { iRole } from '../../usersManagement/UsersManagement'
 import useValidate from '@vuelidate/core'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import Dropdown from 'primevue/dropdown'
 import Dialog from 'primevue/dialog'
 import RelatedDocumentList from '../RelatedDocumentsList/MenuManagementRelatedDocumentList.vue'
+import RolesCard from '../RolesCard/MenuManagementRolesCard.vue'
 import DocumentBrowserTree from '../DocumentBrowserTree/MenuManagementDocumentBrowserTree.vue'
 import FontAwesomePicker from '../IconPicker/IconPicker.vue'
 
@@ -174,8 +179,11 @@ import MenuConfigurationDescriptor from '../MenuManagementDescriptor.json'
 import MenuConfigurationValidationDescriptor from './MenuManagementValidationDescriptor.json'
 export default defineComponent({
     name: 'profile-attributes-detail',
-    components: { Dropdown, DocumentBrowserTree, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker },
+    components: { Dropdown, DocumentBrowserTree, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker, RolesCard },
     props: {
+        roles: {
+            type: Array
+        },
         selectedMenuNode: {
             type: Object,
             required: true
@@ -257,6 +265,9 @@ export default defineComponent({
             this.selectedIcon = ''
             this.menuNode.custIcon = null
             this.menuNode.icon = null
+        },
+        setSelectedRoles(roles: iRole[]) {
+            this.menuNode.roles = roles
         },
         toggleDocument() {
             this.functionalityHidden = this.staticPageHidden = this.externalAppHidden = this.documentTreeHidden = this.workspaceInitialHidden = true
