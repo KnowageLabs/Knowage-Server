@@ -9,6 +9,9 @@
         "position": ""
     },
     "styles": {
+        "input": {
+            "width": "80%"
+        },
         "message": {
             "align-items": "center",
             "display": "flex",

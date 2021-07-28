@@ -60,13 +60,13 @@
 
                 <Column field="label" :header="$t('common.label')">
                     <template #editor="slotProps">
-                        <InputText v-model="slotProps.data['label']" @change="$emit('touched')" />
+                        <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['label']" @change="$emit('touched')" />
                     </template>
                 </Column>
 
                 <Column field="minValue" :header="$t('kpi.kpiDefinition.min')">
                     <template #editor="slotProps">
-                        <InputText v-model="slotProps.data['minValue']" type="number" @change="$emit('touched')" />
+                        <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['minValue']" type="number" @change="$emit('touched')" />
                     </template>
                 </Column>
 
@@ -78,7 +78,7 @@
 
                 <Column field="maxValue" :header="$t('kpi.kpiDefinition.max')">
                     <template #editor="slotProps">
-                        <InputText v-model="slotProps.data['maxValue']" type="number" @change="$emit('touched')" />
+                        <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['maxValue']" type="number" @change="$emit('touched')" />
                     </template>
                 </Column>
 
@@ -106,7 +106,7 @@
                     </template>
                     <template #editor="slotProps">
                         <ColorPicker v-model="slotProps.data['color']" format="hex" @change="$emit('touched')" />
-                        <InputText v-model="slotProps.data['color']" @change="$emit('touched')" />
+                        <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['color']" @change="$emit('touched')" />
                     </template>
                 </Column>
 
