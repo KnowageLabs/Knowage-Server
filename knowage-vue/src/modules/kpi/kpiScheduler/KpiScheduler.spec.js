@@ -66,13 +66,13 @@ const router = createRouter({
         {
             path: '/kpi-scheduler/new-kpi-schedule',
             name: 'new-kpi-schedule',
-            component: KpiSchedulerHint
+            component: null
         },
         {
             path: '/kpi-scheduler/edit-kpi-schedule',
             name: 'edit-kpi-schedule',
             props: (route) => ({ id: route.query.id, ruleVersion: route.query.ruleVersion, clone: route.query.clone }),
-            component: KpiSchedulerHint
+            component: null
         }
     ]
 })
