@@ -532,11 +532,10 @@ function mapWidgetEditControllerFunction(
 	//MAIN DIALOG BUTTONS
 	$scope.saveConfiguration = function(){
 
-
-
 		for(var c in $scope.newModel.content.layers){
 			$scope.hasShownDetails($scope.newModel.content.layers[c])
 			if($scope.newModel.content.layers[c].expanded) delete $scope.newModel.content.layers[c].expanded;
+			if($scope.newModel.content.layers[c].markerConf && $scope.newModel.content.layers[c].markerConf.type != 'img') delete $scope.newModel.content.layers[c].markerConf.img;
 		}
 
 		if($scope.newModel.content.layers.length == 1){ // force target if only one layer is defined

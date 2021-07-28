@@ -1,0 +1,55 @@
+{
+  "columns": [
+    { "field": "name", "header": "Name" },
+    { "field": "descr", "header": "Description" }
+  ],
+  "menuNodeContent": [
+    { "name": "Empty", "value": 0 },
+    { "name": "A static page", "value": 3 },
+    { "name": "A document", "value": 1 },
+    { "name": "An external app.", "value": 2 },
+    { "name": "A functionality", "value": 4 }
+  ],
+"menuNodeContentFunctionalies": [
+    { "name": "Document Browser", "value": "DocumentUserBrowser" },
+    { "name": "My Workspace", "value": "WorkspaceManagement" }
+  ],
+  "workspaceOptions": [
+    { "name": "Most Recent", "value": "recent" },
+    { "name": "Documents", "value": "documents" },
+    { "name": "Data sets", "value": "datasets" },
+    { "name": "Models", "value": "models" },
+    { "name": "Analysis", "value": "analysis" },
+    { "name": "Schedulation", "value": "schedulation" }
+  ],
+  "staticPageOptions": [
+    { "name": "How_to.html", "value": "How_to.html" },
+    { "name": "home.html", "value": "home.html" },
+    { "name": "homePageWithLinks.html", "value": "homePageWithLinks.html" },
+    { "name": "homePageWithLinksAndPars.html", "value": "homePageWithLinksAndPars.html" },
+    { "name": "home_cockpit.html", "value": "home_cockpit.html" },
+    { "name": "testFakeDataset.html", "value": "testFakeDataset.html" }
+  ],
+  "headers": {
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "table": {
+    "column": {
+      "style": {
+        "width": "40%"
+      }
+    },
+    "iconColumn": {
+      "style": {
+        "text-align": "end"
+      }
+    }
+  },
+  "form": {
+    "style": {
+      "width": "60vw"
+    }
+  }
+}

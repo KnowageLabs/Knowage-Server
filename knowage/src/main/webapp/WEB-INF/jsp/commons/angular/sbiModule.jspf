@@ -1169,5 +1169,5 @@ sbiM.service('messageHandlerValidatorService',function(){
 </script>
 
 
-<script type="text/javascript" src="<%=KnowageSystemConfiguration.getKnowageContext()%><%= GeneralUtilities.getAngularPropertiesFileName(curr_language,curr_script,curr_country,"-")%>"></script>
+<script type="text/javascript" src="<%=KnowageSystemConfiguration.getKnowageContext()%><%= LocalePropertiesUtilities.getAngularPropertiesFileName(curr_language,curr_script,curr_country,"-")%>"></script>
 	 
