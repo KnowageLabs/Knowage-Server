@@ -22,6 +22,7 @@
                     :filterFields="alertDescriptor.filterFields"
                     :emptyFilterMessage="$t('common.info.noDataFound')"
                     @change="showForm"
+                    data-test="target-list"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
