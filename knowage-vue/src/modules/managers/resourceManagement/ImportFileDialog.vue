@@ -6,6 +6,10 @@
 			</template>
 		</FileUpload>
 
+		<span v-if="this.uploadedFiles.length > 0">
+			<label for="active" class="kn-material-input-label p-ml-3"> {{ $t('managers.resourceManagement.extract') }}</label>
+			<InputSwitch v-model="checked" />
+		</span>
 		<template #footer>
 			<Button class="p-button-text kn-button" :label="$t('common.cancel')" @click="closeDialog" />
 			<Button class="kn-button kn-button--primary" v-t="'common.import'" :disabled="uploadedFiles && uploadedFiles.length == 0" @click="startImportFile" />
@@ -18,21 +22,18 @@
 	import { defineComponent } from 'vue'
 	import Dialog from 'primevue/dialog'
 	import FileUpload from 'primevue/fileupload'
+	import InputSwitch from 'primevue/inputswitch'
 	import resourceManagementDescriptor from './ResourceManagementDescriptor.json'
 
 	export default defineComponent({
 		name: 'import-file-dialog',
-		components: { Dialog, FileUpload },
+		components: { Dialog, FileUpload, InputSwitch },
 		props: {
 			path: String,
 			visibility: Boolean
 		},
 		data() {
-			return {
-				descriptor: resourceManagementDescriptor,
-				uploadedFiles: [],
-				loading: false
-			}
+			return { checked: false, descriptor: resourceManagementDescriptor, uploadedFiles: [], loading: false }
 		},
 		emits: ['update:visibility', 'fileUploaded'],
 		methods: {
@@ -55,6 +56,8 @@
 					var formData = new FormData()
 					formData.append('file', this.uploadedFiles[0])
 					formData.append('key', this.path)
+					let checkedAsString = this.checked ? 'true' : 'false'
+					formData.append('extract', checkedAsString)
 					await axios
 						.post(process.env.VUE_APP_API_PATH + '2.0/resources/files/uploadFile', formData, {
 							headers: {
@@ -75,6 +78,7 @@
 						.finally(() => {
 							this.loading = false
 							this.closeDialog()
+							this.uploadedFiles = []
 						})
 				} else {
 					this.$store.commit('setWarning', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
