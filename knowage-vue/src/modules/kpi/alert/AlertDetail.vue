@@ -9,26 +9,25 @@
         <Message v-if="expiredCard" severity="warn" :closable="true" :style="alertDescriptor.styles.message">
             {{ $t('kpi.alert.expiredWarning') }}
         </Message>
-        <name-card :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert"></name-card>
-        <events-card :selectedAlert="selectedAlert" @valueChanged="updateAlert"></events-card>
+        <NameCard :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert" />
+        <EventsCard :selectedAlert="selectedAlert" @valueChanged="updateAlert" />
         <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" />
     </div>
-    <Button @click="dialogVisiable = true">Add action</Button>
-    <add-action-dialog :dialogVisible="dialogVisiable" :kpi="kpi" :selectedAction="selectedAction" @close="dialogVisiable = false" @add="addAction"></add-action-dialog>
+    <AddActionDialog :dialogVisible="dialogVisiable" :kpi="kpi" :selectedAction="selectedAction" @close="dialogVisiable = false" @add="addAction" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iAction, iAlert, iListener } from './Alert'
 import { createValidations } from '@/helpers/commons/validationHelper'
+import alertValidationDescriptor from './AlertValidationDescriptor.json'
+import alertDescriptor from './AlertDescriptor.json'
 import axios from 'axios'
-import Message from 'primevue/message'
 import useValidate from '@vuelidate/core'
+import Message from 'primevue/message'
 import NameCard from './Cards/NameCard.vue'
 import KpiCard from './Cards/KpiCard.vue'
-import alertValidationDescriptor from './AlertValidationDescriptor.json'
 import EventsCard from './Cards/EventsCard.vue'
 import AddActionDialog from './addActionDialog/AddActionDialog.vue'
-import alertDescriptor from './AlertDescriptor.json'
 
 export default defineComponent({
     name: 'alert-details',
@@ -100,17 +99,13 @@ export default defineComponent({
                             }
                         })
                     }
-                    console.log('jsonParse', this.selectedAlert.jsonOptions)
                 })
                 .finally(() => (this.expiredCard = this.selectedAlert.jobStatus == 'EXPIRED'))
         },
         async loadListener() {
-            await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/listListener')
-                .then((response) => {
-                    this.listeners = response.data
-                })
-                .finally(() => console.log('selected', this.selectedAlert))
+            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/listListener').then((response) => {
+                this.listeners = response.data
+            })
         },
         async loadKpiList() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi').then((response) => {
@@ -123,7 +118,6 @@ export default defineComponent({
             })
         },
         updateAlert(event) {
-            console.log(event)
             if (event.fieldName == 'singleExecution') {
                 this.selectedAlert.singleExecution = !this.selectedAlert.singleExecution
             } else {
@@ -141,7 +135,6 @@ export default defineComponent({
                 })
             }
             this.selectedAlert.jsonOptions = JSON.stringify(this.selectedAlert.jsonOptions)
-            console.log(this.selectedAlert)
 
             let operation = this.selectedAlert.id ? 'update' : 'insert'
 

@@ -17,17 +17,19 @@
                 </template>
             </Toolbar>
             <div class="p-grid p-mt-2">
+                <!-- {{ alert.jsonOptions.actions }} -->
                 <div class="p-m-2 p-shadow-2 action-box" v-for="action in alert.jsonOptions.actions" :key="action.idAction">
-                    <Toolbar class="kn-toolbar kn-toolbar--primary">
+                    <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                         <template #left>
                             <span>{{ action.data?.name }}</span>
                         </template>
 
                         <template #right>
-                            <Button icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showDialog', action)" />
+                            <Button class="p-button-link p-button-sm" icon="fa fa-ellipsis-v" @click="toggleMenu($event, action)" aria-haspopup="true" aria-controls="overlay_menu" data-test="menu-button" />
+                            <Menu ref="menu" :model="items" :popup="true" data-test="menu"></Menu>
                         </template>
                     </Toolbar>
-                    <div class="p-d-flex p-flex-column severity-container" v-if="action">
+                    <div class="p-d-flex p-flex-column severity-container p-m-2" v-if="action">
                         <div class="p-d-inline-flex p-m-2" v-for="(threshVal, index) in action.thresholdData" :key="index">
                             <div class="color-box" :style="{ 'background-color': threshVal.color }"></div>
                             <span flex>{{ threshVal.label }}</span>
@@ -44,9 +46,10 @@ import { defineComponent } from 'vue'
 import axios from 'axios'
 import alertDescriptor from '../AlertDescriptor.json'
 import Dropdown from 'primevue/dropdown'
+import Menu from 'primevue/menu'
 
 export default defineComponent({
-    components: { Dropdown },
+    components: { Dropdown, Menu },
     props: { selectedAlert: { type: Object as any }, kpiList: { type: Array as any }, actionList: { type: Array as any } },
     emits: ['showDialog', 'kpiLoaded'],
 
@@ -59,8 +62,6 @@ export default defineComponent({
                 option['thresholdData'] = option.thresholdValues.map((thresholdId) => {
                     return this.kpi.threshold.thresholdValues.find((threshold) => threshold.id == thresholdId)
                 })
-                console.log('CREATED ------', option)
-                console.log('CREATED ALIST ------', this.actionList)
                 return option
             })
         }
@@ -75,8 +76,6 @@ export default defineComponent({
                     option['thresholdData'] = option.thresholdValues.map((thresholdId) => {
                         return this.kpi.threshold.thresholdValues.find((threshold) => threshold.id == thresholdId)
                     })
-                    console.log('WATCHER ------', option)
-
                     return option
                 })
             }
@@ -88,10 +87,36 @@ export default defineComponent({
             emptyObject: {} as any,
             alert: {} as any,
             kpi: {} as any,
-            oldKpi: null as any
+            oldKpi: null as any,
+            items: [] as { label: String; icon: string; command: Function }[]
         }
     },
     methods: {
+        toggleMenu(event: any, action: any) {
+            this.createMenuItems(action)
+            const menu = this.$refs.menu as any
+            menu.toggle(event)
+        },
+        createMenuItems(action) {
+            this.items = []
+            this.items.push({
+                label: this.$t('common.modify'),
+                icon: 'pi pi-pencil',
+                command: () => {
+                    this.$emit('showDialog', action)
+                }
+            })
+            this.items.push({
+                label: this.$t('common.delete'),
+                icon: 'far fa-trash-alt',
+                command: () => {
+                    this.deleteAction(action)
+                }
+            })
+        },
+        deleteAction(actionToDelete) {
+            this.alert.jsonOptions.actions = this.alert.jsonOptions.actions.filter((action) => action !== actionToDelete)
+        },
         async loadKpi(kpiId, kpiVersion) {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response) => {
                 this.oldKpi = { ...response.data }
@@ -141,12 +166,7 @@ export default defineComponent({
                     actionThresholdsList.push(this.kpi.threshold.thresholdValues[i])
                 }
             }
-            console.log(actionThresholdsList)
             return actionThresholdsList
-        },
-        logStuff() {
-            console.log(this.selectedAlert)
-            console.log(this.alert)
         }
     }
 })

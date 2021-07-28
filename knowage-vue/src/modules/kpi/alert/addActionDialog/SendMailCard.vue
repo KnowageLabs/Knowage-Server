@@ -1,21 +1,17 @@
 <template>
-    <Card>
-        <template #content>
-            <span class="p-float-label p-m-4">
-                <AutoComplete id="mailTo" class="p-inputtext-sm" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" @keydown.enter="test" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
-                <label for="mailTo" class="kn-material-input-label"> {{ $t('kpi.alert.mailTo') }}</label>
-            </span>
-            <span class="p-float-label p-m-4">
-                <InputText id="mailSubject" class="kn-material-input" v-model.trim="selectedAction.jsonActionParameters.subject" />
-                <label for="mailSubject" class="kn-material-input-label"> {{ $t('kpi.alert.mailSubject') }}</label>
-            </span>
-            <div class="p-field">
-                <span>
-                    <Editor id="html" v-model="selectedAction.jsonActionParameters.body" :editorStyle="sendMailCardDescriptor.editor.style" />
-                </span>
-            </div>
-        </template>
-    </Card>
+    <span class="p-float-label p-m-4">
+        <AutoComplete id="mailTo" class="p-inputtext-sm" :multiple="true" v-model="selectedUsers" :suggestions="filteredUsers" field="name" @keydown.enter="test" @complete="searchUsers($event)" @item-select="setUser($event.value)" />
+        <label for="mailTo" class="kn-material-input-label"> {{ $t('kpi.alert.mailTo') }}</label>
+    </span>
+    <span class="p-float-label p-m-4">
+        <InputText id="mailSubject" class="kn-material-input" v-model.trim="selectedAction.jsonActionParameters.subject" />
+        <label for="mailSubject" class="kn-material-input-label"> {{ $t('kpi.alert.mailSubject') }}</label>
+    </span>
+    <div class="p-field">
+        <span>
+            <Editor id="html" v-model="selectedAction.jsonActionParameters.body" :editorStyle="sendMailCardDescriptor.editor.style" />
+        </span>
+    </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'

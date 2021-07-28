@@ -1,43 +1,39 @@
 <template>
-    <Card>
-        <template #content>
-            <DataTable
-                v-model:selection="selectedFile"
-                :value="files"
-                :loading="loading"
-                class="p-datatable-sm kn-table"
-                dataKey="DOCUMENT_ID"
-                responsiveLayout="stack"
-                v-model:filters="filters"
-                filterDisplay="menu"
-                :globalFilterFields="addActionDialogDescriptor.documentFilterFields"
-                @row-select="fileSelected"
-                @row-unselect="fileSelected"
-            >
-                <template #header>
-                    <div class="table-header">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search" />
-                            <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
-                        </span>
-                    </div>
-                </template>
-                <template #empty>
-                    {{ $t('common.info.noDataFound') }}
-                </template>
-                <template #loading>
-                    {{ $t('common.info.dataLoading') }}
-                </template>
-
-                <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                <Column v-for="col of addActionDialogDescriptor.columnsDocument" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" class="kn-truncated">
-                    <template #body="slotProps">
-                        <span>{{ slotProps.data[slotProps.column.props.field] }}</span>
-                    </template>
-                </Column>
-            </DataTable>
+    <DataTable
+        v-model:selection="selectedFile"
+        :value="files"
+        :loading="loading"
+        class="p-datatable-sm kn-table"
+        dataKey="DOCUMENT_ID"
+        responsiveLayout="stack"
+        v-model:filters="filters"
+        filterDisplay="menu"
+        :globalFilterFields="addActionDialogDescriptor.documentFilterFields"
+        @row-select="fileSelected"
+        @row-unselect="fileSelected"
+    >
+        <template #header>
+            <div class="table-header">
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search" />
+                    <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                </span>
+            </div>
         </template>
-    </Card>
+        <template #empty>
+            {{ $t('common.info.noDataFound') }}
+        </template>
+        <template #loading>
+            {{ $t('common.info.dataLoading') }}
+        </template>
+
+        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+        <Column v-for="col of addActionDialogDescriptor.columnsDocument" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" class="kn-truncated">
+            <template #body="slotProps">
+                <span>{{ slotProps.data[slotProps.column.props.field] }}</span>
+            </template>
+        </Column>
+    </DataTable>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
