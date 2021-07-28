@@ -740,6 +740,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				 }
 			 }
 
+				window.addEventListener("message", (event) => {
+					if (event.data && event.data.action == 'closeDialog') {
+						$mdDialog.cancel();
+					}
+				}, false);
+
 				$mdDialog.show({
 					preserveScope: true,
 					controller: function($scope,$mdDialog,url){

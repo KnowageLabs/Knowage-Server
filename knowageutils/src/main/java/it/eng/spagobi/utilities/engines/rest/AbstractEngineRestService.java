@@ -18,6 +18,15 @@
 
 package it.eng.spagobi.utilities.engines.rest;
 
+import java.util.HashMap;
+import java.util.Locale;
+
+import javax.xml.bind.DatatypeConverter;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
@@ -44,15 +53,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.HashMap;
-import java.util.Locale;
-
-import javax.xml.bind.DatatypeConverter;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
@@ -87,6 +87,7 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 
 	public static final String COUNTRY = "SBI_COUNTRY";
 	public static final String LANGUAGE = "SBI_LANGUAGE";
+	public static final String SCRIPT = "SBI_SCIRPT";
 
 	public static final String SUBOBJ_ID = "subobjectId";
 	public static final String SUBOBJ_NAME = "nameSubObject";
@@ -251,8 +252,9 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 			if (documentId == null) {
 				SpagoBIEngineStartupException e = new SpagoBIEngineStartupException(getEngineName(), "Impossible to retrive document id");
 				e.setDescription("The engine is unable to retrive the id of the document to execute from request");
-				e.addHint("Check on SpagoBI Server if the analytical document you want to execute have a valid template associated. Maybe you have saved the analytical document without "
-						+ "uploading a valid template file");
+				e.addHint(
+						"Check on SpagoBI Server if the analytical document you want to execute have a valid template associated. Maybe you have saved the analytical document without "
+								+ "uploading a valid template file");
 				throw e;
 			}
 		} finally {
@@ -284,8 +286,9 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 			if (documentLabel == null) {
 				SpagoBIEngineStartupException e = new SpagoBIEngineStartupException(getEngineName(), "Impossible to retrive document label");
 				e.setDescription("The engine is unable to retrive the label of the document to execute from request");
-				e.addHint("Check on SpagoBI Server if the analytical document you want to execute have a valid template associated. Maybe you have saved the analytical document without "
-						+ "uploading a valid template file");
+				e.addHint(
+						"Check on SpagoBI Server if the analytical document you want to execute have a valid template associated. Maybe you have saved the analytical document without "
+								+ "uploading a valid template file");
 				throw e;
 			}
 		} finally {
@@ -406,12 +409,9 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	/**
 	 * Saves the analysis state
 	 *
-	 * @param name
-	 *            of the subobject
-	 * @param description
-	 *            of the subobject
-	 * @param scope
-	 *            of the subobject
+	 * @param name        of the subobject
+	 * @param description of the subobject
+	 * @param scope       of the subobject
 	 * @return
 	 */
 	public String saveAnalysisState(String name, String description, String scope) {
@@ -486,8 +486,8 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 		if (AbstractEngineAction.PUBLIC_SCOPE.equalsIgnoreCase(analysisMetadata.getScope()))
 			isPublic = "true";
 
-		serviceResponse = contentServiceProxy.saveSubObject(documentId, analysisMetadata.getName(), analysisMetadata.getDescription(), isPublic, new String(
-				analysisState.store()));
+		serviceResponse = contentServiceProxy.saveSubObject(documentId, analysisMetadata.getName(), analysisMetadata.getDescription(), isPublic,
+				new String(analysisState.store()));
 
 		return serviceResponse;
 	}

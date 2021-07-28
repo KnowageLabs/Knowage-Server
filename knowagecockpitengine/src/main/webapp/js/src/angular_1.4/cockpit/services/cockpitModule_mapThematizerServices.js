@@ -4,6 +4,7 @@
 	.service("cockpitModule_mapThematizerServices",CockpitModuleMapThematizerServiceController)
 		function CockpitModuleMapThematizerServiceController(
 				sbiModule_translate,
+				sbiModule_config,
 				sbiModule_messaging,
 				cockpitModule_utilstServices,
 				$q,
@@ -370,14 +371,14 @@
 		    return weight;
 		}
 
-		mts.getLegend = function (referenceId){
+		mts.getLegend = function (referenceId, visualizationType){
 			var toReturn = [];
 			for (l in mts.activeLegend){
 				var colors = "";
 				var limits = [];
 				var tmpLayerName = l.split("|");
 				if (tmpLayerName[0] == referenceId && mts.activeLegend[l] && mts.activeLegend[l].choroplet){
-					if (mts.activeLegend[l].method=="CLASSIFY_BY_RANGES") {
+					if (mts.activeLegend[l].method=="CLASSIFY_BY_RANGES" || visualizationType == 'Range') {
 						var ranges = [];
 						for (c in mts.activeLegend[l].choroplet){
 							var tmpConf = mts.activeLegend[l].choroplet[c];
@@ -400,7 +401,7 @@
 			return toReturn;
 		}
 
-		mts.updateLegend = function(layerName, data){
+		mts.updateLegend = function(layerName, data, legendStyle){
 			var config = mts.getActiveConf(layerName) || {};
 
 			if (!config.visualizationType || config.visualizationType != 'choropleth') return; //legend is created just with choropleth
@@ -430,8 +431,8 @@
 					var maxValue = mts.cacheSymbolMinMax[layerNameForMinMAx[1] + '|' + mts.getActiveIndicator()].maxValue;
 					var split = (maxValue-minValue)/(config.analysisConf.classes);
 					for(var i=0; i<config.analysisConf.classes; i++){
-						mts.activeLegend[layerName].choroplet[i].from=(minValue+(split*i)).toFixed(2);
-						mts.activeLegend[layerName].choroplet[i].to=(minValue+(split*(i+1))).toFixed(2);
+						mts.activeLegend[layerName].choroplet[i].from=formatLegendValue((minValue+(split*i)), legendStyle);
+						mts.activeLegend[layerName].choroplet[i].to=formatLegendValue((minValue+(split*(i+1))), legendStyle);
 					}
 //					console.log("Regular intervals legends: ", mts.activeLegend[layerName]);
 				}else if (config.analysisConf.method == "CLASSIFY_BY_QUANTILS"){
@@ -456,8 +457,8 @@
 						if(k>=intervals){
 							mts.activeLegend[layerName].choroplet[intervals-1].to = values[i+binSize] || values[values.length-1];
 						}else{
-							mts.activeLegend[layerName].choroplet[k].from = values[i];
-							mts.activeLegend[layerName].choroplet[k].to = values[i+binSize] || values[values.length-1];
+							mts.activeLegend[layerName].choroplet[k].from = formatLegendValue(values[i], legendStyle);
+							mts.activeLegend[layerName].choroplet[k].to = formatLegendValue(values[i+binSize] || values[values.length-1], legendStyle);
 							k++;
 						}
 					}
@@ -466,13 +467,27 @@
 					for(var i=config.analysisConf.properties.thresholds.length-1; i>=0; i--){
 						var threshold = config.analysisConf.properties.thresholds[i];
 						mts.activeLegend[layerName].choroplet[i] = {color: threshold.color, itemFeatures: []};
-						mts.activeLegend[layerName].choroplet[i].from=threshold.from;
-						mts.activeLegend[layerName].choroplet[i].to=threshold.to;
+						mts.activeLegend[layerName].choroplet[i].from=formatLegendValue(threshold.from, legendStyle);
+						mts.activeLegend[layerName].choroplet[i].to=formatLegendValue(threshold.to, legendStyle);
 					}
 				} else {
 					console.log("Temathization method [" + config.analysisConf.method + "] not supported");
 				}
 			}
+		}
+
+		var formatLegendValue = function (val, style){
+			var prefix = "";
+			var suffix = "";
+			var precision = 1;
+
+			if (style && style.format && (style.format.precision || style.format.precision==0)) precision = style.format.precision;
+			if (style && style.format && style.format.prefix) prefix = style.format.prefix;
+			if (style && style.format && style.format.suffix) suffix = style.format.suffix;
+
+			var decimalFormatted = val.toFixed(precision);
+			var localeFormatted = new Number(decimalFormatted).toLocaleString(sbiModule_config.curr_language);
+			return prefix + localeFormatted + suffix;
 		}
 
 		mts.removeLegends = function (){

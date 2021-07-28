@@ -57,8 +57,8 @@ public class PythonDataProxy extends AbstractDataProxy {
 
 	public PythonDataProxy(String address, String pythonScript, String dataframeName, String parameters, Map<String, String> requestHeaders, String offsetParam,
 			String fetchSizeParam, String maxResultsParam) {
-		Helper.checkNotNull(address, "address");
-		Helper.checkNotEmpty(address, "address");
+//		Helper.checkNotNull(address, "address");
+//		Helper.checkNotEmpty(address, "address");
 		// cab be empty
 		Helper.checkNotNull(requestHeaders, "requestHeaders");
 		// can be null, can't empty
@@ -98,7 +98,7 @@ public class PythonDataProxy extends AbstractDataProxy {
 			Calendar calendar = Calendar.getInstance();
 			calendar.add(Calendar.MINUTE, 5);
 			Date expiresAt = calendar.getTime();
-			String jwtToken = JWTSsoService.pythonDataset2jwtToken(pythonScript, expiresAt);
+			String jwtToken = JWTSsoService.pythonScript2jwtToken(pythonScript, expiresAt);
 			json.put("script", jwtToken);
 			json.put("df_name", dataframeName);
 			if (parameters != null) {

@@ -30,10 +30,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -391,6 +392,24 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		return country;
 	}
 
+	public static String getScript(String language) {
+		logger.trace("IN");
+		String script = null;
+		List locales = GeneralUtilities.getSupportedLocales();
+		Iterator iter = locales.iterator();
+		while (iter.hasNext()) {
+			Locale localeTmp = (Locale) iter.next();
+			String languageTmp = localeTmp.getLanguage();
+			if (languageTmp.equals(language)) {
+				script = localeTmp.getScript();
+				logger.trace("OUT:" + script);
+				return script;
+			}
+		}
+		logger.trace("OUT:" + script);
+		return script;
+	}
+
 	public static JSONArray getSupportedLocalesAsJSONArray() {
 		logger.trace("IN");
 		JSONArray toReturn = new JSONArray();
@@ -419,6 +438,12 @@ public class GeneralUtilities extends SpagoBIUtilities {
 				String languageTag = (String) permSession.getAttribute(SpagoBIConstants.AF_LANGUAGE_TAG);
 				if (StringUtils.isNotBlank(languageTag)) {
 					locale = Locale.forLanguageTag(languageTag);
+				} else {
+					String language = (String) permSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+					String country = (String) permSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+					String script = (String) permSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
+
+					locale = new Builder().setLanguage(language).setRegion(country).setScript(script).build();
 				}
 			}
 		}
@@ -433,6 +458,16 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		String languageTag = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE_TAG);
 		// if a particular language is specified take the corrisponding date-format
 		String format = null;
+
+		if (StringUtils.isBlank(languageTag)) {
+
+			String language = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+			String country = (String) permSess.getAttribute(SpagoBIConstants.AF_COUNTRY);
+			String script = (String) permSess.getAttribute(SpagoBIConstants.AF_SCRIPT);
+
+			Locale locale = new Builder().setLanguage(language).setRegion(country).setScript(script).build();
+			languageTag = locale.toLanguageTag();
+		}
 		if (languageTag != null) {
 			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + languageTag + ".format");
 		}
@@ -441,6 +476,18 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		}
 		logger.debug("DATE FORMAT.format:" + format);
 		return format;
+
+	}
+
+	public static String getScriptFromLocale(SessionContainer permSess) {
+		String toReturn = "";
+		String script = (String) permSess.getAttribute(SpagoBIConstants.AF_SCRIPT);
+
+		if (StringUtils.isNotBlank(script)) {
+			toReturn = script + "-";
+		}
+
+		return toReturn;
 
 	}
 
@@ -461,6 +508,16 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	public static String getLocaleDateFormatForExtJs(SessionContainer permSess) {
 		String languageTag = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE_TAG);
 		String format = null;
+
+		if (StringUtils.isBlank(languageTag)) {
+
+			String language = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+			String country = (String) permSess.getAttribute(SpagoBIConstants.AF_COUNTRY);
+			String script = (String) permSess.getAttribute(SpagoBIConstants.AF_SCRIPT);
+
+			Locale locale = new Builder().setLanguage(language).setRegion(country).setScript(script).build();
+			languageTag = locale.toLanguageTag();
+		}
 		// if a particular language is specified take the corrisponding date-format
 		if (languageTag != null) {
 			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + languageTag + ".format");
@@ -853,6 +910,28 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		return serviceURL;
+	}
+
+	public static String getAngularPropertiesFileName(Locale locale, String separator) {
+		String language = locale.getLanguage();
+		String country = locale.getCountry();
+		String script = locale.getScript();
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(language);
+		sb.append(separator);
+		if (StringUtils.isNotBlank(script)) {
+			sb.append(script);
+			sb.append(separator);
+		}
+		sb.append(country);
+
+		return sb.toString();
+	}
+
+	public static String getAngularPropertiesFileName(String currLanguage, String currScript, String currCountry, String separator) {
+		Locale locale = new Builder().setLanguage(currLanguage).setRegion(currCountry).setScript(currScript).build();
+		return "/js/lib/angular-localization/" + getAngularPropertiesFileName(locale, separator) + ".js";
 	}
 
 }

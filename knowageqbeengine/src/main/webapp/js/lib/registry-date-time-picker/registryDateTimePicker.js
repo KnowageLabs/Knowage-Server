@@ -20,55 +20,90 @@ angular.module('registry_date_time_picker', ['ngMaterial','sbiModule'])
 
 function registryDateTimePickerFunction($scope) {
 	
+		$scope.initializeModel = function(hours, minutes, seconds) {
+			if(!$scope.ngModel) {
+				$scope.ngModel = new Date();
+			}
+			if(hours!=null) {
+				$scope.ngModel.setHours(hours);
+			}
+			$scope.hours = $scope.ngModel.getHours();
+
+			if(minutes!=null) {
+				$scope.ngModel.setMinutes(minutes);
+			}
+			$scope.minutes = $scope.ngModel.getMinutes();
+
+			if(seconds!=null) {
+				$scope.ngModel.setSeconds(seconds);
+			}	
+			$scope.seconds = $scope.ngModel.getSeconds();
+			
+		}
+
+		$scope.init = function() {
+			if($scope.ngModel==="") {
+				$scope.ngModel = null;
+			}
+			if($scope.ngModel != null) {
+				$scope.hours = $scope.ngModel.getHours();
+				$scope.minutes = $scope.ngModel.getMinutes();
+				$scope.seconds = $scope.ngModel.getSeconds();
+			}
+		}
+		$scope.init();
+		
+		$scope.handleDate = function (){
+			$scope.hours = $scope.ngModel.getHours();
+			$scope.minutes = $scope.ngModel.getMinutes();
+			$scope.seconds = $scope.ngModel.getSeconds();
+		}
+		
+		$scope.focusMe = function(){
+			if($scope.ngModel==null){
+				var elements = angular.element(document.querySelectorAll('.md-datepicker-input'));
+				for(var idx in elements) {
+					if (elements[idx].value === 'Invalid date'){
+						elements[idx].value ="";
+					}
+				}
+			}
+		}
+	
+		$scope.checkHoursValid=function(){
+			if(!$scope.hours || $scope.hours<0 || $scope.hours>23){
+				$scope.hours = 0;
+			}
+			$scope.initializeModel($scope.hours, null, null);
+		}
+		$scope.checkMinuitesValid=function(){
+			if(!$scope.minutes || $scope.minutes<0 || $scope.minutes>59){
+				$scope.minutes = 0;
+			}
+			$scope.initializeModel(null, $scope.minutes, null);
+			
+		}
+		$scope.checkSecondsValid=function(){
+			if(!$scope.seconds || $scope.seconds<0 || $scope.seconds>59){
+				$scope.seconds = 0;
+			}
+			$scope.initializeModel(null, null, $scope.seconds);
+		}
+		
 		$scope.resetDatepickerInput=function(){
 			angular.element(document.querySelector('.md-datepicker-input'))[0].value =null;
 		}
-
-		$scope.checkHoursValid=function(){
-			if($scope.ngModel.hours==null){
-				angular.element(document.querySelector('registry-date-time-picker #hoursInput-'+$scope.id))[0].value=12;
-			}
-		}
-		$scope.checkMinuitesValid=function(){
-			if($scope.ngModel.minutes==null){
-				angular.element(document.querySelector('registry-date-time-picker #minInput-'+$scope.id))[0].value=00;
-			}
-		}
-		$scope.checkSecondsValid=function(){
-			if($scope.ngModel.seconds==null){
-				angular.element(document.querySelector('registry-date-time-picker #secondsInput-'+$scope.id))[0].value=00;
-			}
-		}
-		
-		$scope.getDate=function(){
-			if($scope.ngModel==null || $scope.ngModel==undefined || ($scope.ngModel!=undefined && $scope.ngModel=='')){return};
-			return $scope.ngModel;
-		}
-
-		$scope.getHours=function(){
-			if($scope.ngModel==null || $scope.ngModel==undefined || ($scope.ngModel!=undefined && $scope.ngModel=='')){return};
-			return parseInt($scope.ngModel.getHours());
-		}
-		
-		$scope.getMinutes=function(){
-			if($scope.ngModel==null || $scope.ngModel==undefined || ($scope.ngModel!=undefined && $scope.ngModel=='')){return};
-			return parseInt($scope.ngModel.getMinutes());
-		}
-		$scope.getSeconds=function(){
-			if($scope.ngModel==null || $scope.ngModel==undefined || ($scope.ngModel!=undefined && $scope.ngModel=='')){return};
-			return parseInt($scope.ngModel.getSeconds());
-		}
 		
 		$scope.reset = function(){
-			$scope.setDate(null);
-			$scope.resetDatepickerInput();
+			$scope.resetDate();
+			//$scope.resetDatepickerInput();
 		}
 
 		$scope.alterHours=function(up){
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			if(!$scope.ngModel) {
-				$scope.ngModel = new Date();
+				$scope.initializeModel(0, null, null);
 			} else {
 				var currHours = $scope.ngModel.getHours();
 				var hours = 0;
@@ -76,10 +111,11 @@ function registryDateTimePickerFunction($scope) {
 					hours=(currHours+1)%24;
 				}else{
 					hours = currHours-1;
-					if(currHours<0){hours=23;}
+					if(hours<0){hours=23;}
 				}
 				
-				$scope.ngModel.setHours(hours);
+				$scope.hours = hours;
+				$scope.ngModel.setHours($scope.hours);
 			}
 			
 		}
@@ -88,18 +124,19 @@ function registryDateTimePickerFunction($scope) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			if(!$scope.ngModel) {
-				$scope.ngModel = new Date();
+				$scope.initializeModel(null, 0, null);
 			} else {
-				var currMinutes = $scope.ngModel.getMinutes();
+				var currMinutes = $scope.minutes;
 				var minutes = 0;
 				if(up){
 					minutes=(currMinutes+1)%60;
 				}else{
 					minutes = currMinutes-1;
-					if(currMinutes<0){minutes=59;}
+					if(minutes<0){minutes=59;}
 				}
 				
-				$scope.ngModel.setMinutes(minutes);
+				$scope.minutes = minutes;
+				$scope.ngModel.setMinutes($scope.minutes);
 			}
 		}
 
@@ -107,23 +144,27 @@ function registryDateTimePickerFunction($scope) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			if(!$scope.ngModel) {
-				$scope.ngModel = new Date();
+				$scope.initializeModel(null, null, 0);
 			} else {
-				var currSeconds = $scope.ngModel.getSeconds();
+				var currSeconds = $scope.seconds;
 				var seconds = 0;
 				if(up){
-					seconds=(currSeconds+1)%40;
+					seconds=(currSeconds+1)%60;
 				}else{
 					seconds = currSeconds-1;
-					if(currSeconds<0){seconds=59;}
+					if(seconds<0){seconds=59;}
 				}
 				
-				$scope.ngModel.setSeconds(seconds);
+				$scope.seconds = seconds;
+				$scope.ngModel.setSeconds($scope.seconds);
 			}
 		}
 		
-		$scope.setDate = function(date) {
-			$scope.ngModel = date;
+		$scope.resetDate = function() {
+			$scope.ngModel = null;
+			$scope.hours = null;
+			$scope.minutes = null;
+			$scope.seconds = null;
 		}
 
 	}

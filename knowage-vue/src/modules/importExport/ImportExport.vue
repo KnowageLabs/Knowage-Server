@@ -31,7 +31,7 @@
 	import ImportDialog from './ImportDialog.vue'
 	import ProgressBar from 'primevue/progressbar'
 	import KnTabCard from '@/components/UI/KnTabCard.vue'
-	import { downloadDirect } from '@/helpers/commons/fileHelper'
+	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
 
 	export default defineComponent({
 		name: 'import-export',
@@ -84,10 +84,7 @@
 							if (response.data.errors) {
 								this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
 							} else {
-								var contentDisposition = response.headers['content-disposition']
-								var fileAndExtension = contentDisposition.match(/(?!([\b attachment;filename= \b])).*(?=)/g)[0]
-								var completeFileName = fileAndExtension.replaceAll('"', '')
-								downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
+								downloadDirectFromResponse(response)
 								this.$store.commit('setInfo', { title: this.$t('common.downloading'), msg: this.$t('importExport.export.successfullyCompleted') })
 							}
 
@@ -98,7 +95,7 @@
 							/* closing dialog */
 							this.openExportDialog()
 						},
-						(error) => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t(error) })
+						() => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
 					)
 			},
 
