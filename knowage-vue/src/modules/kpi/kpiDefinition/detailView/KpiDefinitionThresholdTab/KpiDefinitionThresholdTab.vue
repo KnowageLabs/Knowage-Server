@@ -288,7 +288,11 @@ export default defineComponent({
 </script>
 <style lang="scss">
 // vdeep not working correctly,need to find a working solution for the thresholds list padding...
-.mySidebar.p-sidebar {
-    padding: 0rem;
+.mySidebar.p-sidebar .p-sidebar-header,
+.mySidebar.p-sidebar .p-sidebar-content {
+    padding: 0 !important;
+}
+.mySidebar .p-listbox {
+    height: calc(100% - 2.5rem);
 }
 </style>

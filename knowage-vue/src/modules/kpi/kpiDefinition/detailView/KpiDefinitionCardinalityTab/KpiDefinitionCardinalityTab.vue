@@ -303,7 +303,7 @@ export default defineComponent({
     }
 })
 </script>
-<style>
+<style lang="scss" scoped>
 .cardinalityTable .measureCell {
     text-align: center;
     height: 30px;
