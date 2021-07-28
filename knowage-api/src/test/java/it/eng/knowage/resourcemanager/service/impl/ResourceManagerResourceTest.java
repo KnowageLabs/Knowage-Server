@@ -19,10 +19,13 @@ package it.eng.knowage.resourcemanager.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -59,9 +62,9 @@ public class ResourceManagerResourceTest {
 
 	@Test
 	void getTree(@Value("${test.resourcepath}") String resourcePath) {
-		FolderDTO parentFolder = new FolderDTO(resourcePath);
+		Path p = Paths.get(resourcePath);
+		FolderDTO parentFolder = new FolderDTO(p);
 		FolderDTO mylist = null;
-//		parentFolder.setKey(counter + "");
 		LOGGER.debug("Starting resource path json tree testing");
 
 		try {
@@ -126,10 +129,10 @@ public class ResourceManagerResourceTest {
 		if (node.isDirectory()) {
 			String[] subNote = node.list();
 			for (String filename : subNote) {
-				String path = node + "\\" + filename;
-				if (new File(path).isDirectory()) {
+				Path path = Paths.get(node.toString()).resolve(filename);
+				if (Files.isDirectory(path)) {
 					FolderDTO folder = new FolderDTO(path);
-					folder.setKey(Paths.get(path).hashCode());
+					folder.setKey(DatatypeConverter.printHexBinary(path.toString().getBytes()));
 					parentFolder.addChildren(folder);
 					createTree(folder);
 				} else {
