@@ -113,7 +113,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			parentFolder.setRelativePath("");
 			parentFolder.setKey(HMACUtilities.getKeyHashedValue(fullP.toString()));
 
-			FolderDTO mylist = createTree(parentFolder, profile, path, 0);
+			FolderDTO mylist = null;
+			mylist = createTree(parentFolder, profile, path, 0);
 			newRootFolder = new RootFolderDTO(mylist);
 
 			String rootFolder = fullP.toString().replace(fullP.getParent().toString(), "");
@@ -328,8 +329,9 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	@Override
 	public String getFolderByKey(String key, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM002Exception {
-		HashMap<String, Object> nodeInfos = cachedNodesInfo.get(key);
 		String relativePath = null;
+
+		HashMap<String, Object> nodeInfos = cachedNodesInfo.get(key);
 		if (nodeInfos != null) {
 			relativePath = (String) nodeInfos.get("relativePath");
 		}
@@ -341,6 +343,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			m.put("relativePath", relativePath);
 			m.put("level", node.getLevel());
 			cachedNodesInfo.put(key, m);
+
 		}
 		return relativePath;
 	}

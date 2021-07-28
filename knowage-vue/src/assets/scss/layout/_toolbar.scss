@@ -24,10 +24,10 @@
 		color: $toolbar-color-secondary;
 	}
 
-	&--tertiary {
+	&--default {
 		@extend .kn-toolbar;
-		background-color: $toolbar-background-color-tertiary !important;
-		color: $toolbar-color-tertiary;
+		background-color: $toolbar-background-color-default !important;
+		color: $toolbar-color-default;
 	}
 
 	&--transparent {

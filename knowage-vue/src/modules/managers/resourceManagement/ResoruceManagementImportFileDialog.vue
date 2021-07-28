@@ -6,7 +6,7 @@
 			</template>
 		</FileUpload>
 
-		<span v-if="this.uploadedFiles.length > 0">
+		<span class="inputFileToggle" v-if="this.uploadedFiles.length > 0">
 			<label for="active" class="kn-material-input-label p-ml-3"> {{ $t('managers.resourceManagement.extract') }}</label>
 			<InputSwitch v-model="checked" />
 		</span>
@@ -109,5 +109,11 @@
 			min-height: 400px;
 			height: 40%;
 		}
+	}
+
+	.inputFileToggle {
+		right: 20px;
+		position: absolute;
+		top: 20px;
 	}
 </style>

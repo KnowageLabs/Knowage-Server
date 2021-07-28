@@ -2,7 +2,6 @@
 $color-default: #a7a7a7;
 $color-primary: #43749e;
 $color-secondary: #bbd6ed;
-$color-tertiary: #878787;
 $color-fab: #ce0651;
 $color-disabled: #a0a0a0;
 $color-selected: lighten($color-secondary, 5%);
@@ -16,6 +15,9 @@ $font-family: Roboto, 'Helvetica Neue', Arial, sans-serif;
 // BUTTONS
 $button-text-color: #fff;
 $button-icon-color-default: $color-default;
+
+$button-dark-color: $color-primary;
+$button-light-color: #fff;
 
 // LIST
 $list-border-color: $color-borders;
@@ -51,6 +53,3 @@ $toolbar-color-primary: white;
 
 $toolbar-background-color-secondary: $color-secondary;
 $toolbar-color-secondary: white;
-
-$toolbar-background-color-tertiary: $color-tertiary;
-$toolbar-color-tertiary: white;

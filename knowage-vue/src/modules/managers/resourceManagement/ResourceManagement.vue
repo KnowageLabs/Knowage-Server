@@ -8,17 +8,27 @@
 					</template>
 				</Toolbar>
 				<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-				<MetadataDialog v-model:visibility="displayMetadataDialog" v-model:id="metadataKey"></MetadataDialog>
+				<ResoruceManagementMetadataDialog v-model:visibility="displayMetadataDialog" v-model:id="metadataKey"></ResoruceManagementMetadataDialog>
 
 				<Tree id="folders-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" :filter="true" filterMode="lenient" data-test="functionality-tree" class="kn-tree kn-flex foldersTree" @node-select="showForm($event)" v-model:selectionKeys="selectedKeys">
 					<template #default="slotProps">
-						<div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.key] = true" @mouseleave="buttonsVisible[slotProps.node.key] = false" :data-test="'tree-item-' + slotProps.node.key">
-							<span>{{ slotProps.node.label }}</span>
+						<div class="p-d-flex p-flex-row p-ai-center p-jc-between" @mouseover="buttonsVisible[slotProps.node.key] = true" @mouseleave="buttonsVisible[slotProps.node.key] = false" :data-test="'tree-item-' + slotProps.node.key">
+							<span v-if="!slotProps.node.edit" class="kn-truncated" @dblclick="toggleInput(slotProps.node)">
+								{{ slotProps.node.label }}
+							</span>
+							<InputText class="kn-material-input fileNameInputText" type="text" v-if="slotProps.node.edit" v-model="slotProps.node.label" maxlength="50" @blur="toggleInput(slotProps.node)" @keyup.enter="toggleInput(slotProps.node)" />
 
-							<div v-show="buttonsVisible[slotProps.node.key]" class="p-ml-2">
-								<Button v-if="slotProps.node.modelFolder" icon="fas fa-table" v-tooltip.top="$t('managers.resourceManagement.openMetadata')" class="p-button-link p-button-sm p-p-0" @click="openMetadataDialog(slotProps.node)" :data-test="'move-up-button-' + slotProps.node.key" />
-								<Button icon="fa fa-download " v-tooltip.top="$t('managers.resourceManagement.download ')" class="p-button-link p-button-sm p-p-0" @click="downloadDirect(slotProps.node)" :data-test="'move-down-button-' + slotProps.node.key" />
-								<Button icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-link p-button-sm p-p-0" @click="showDeleteDialog(slotProps.node)" :data-test="'delete-button-' + slotProps.node.key" />
+							<div v-show="buttonsVisible[slotProps.node.key] && !slotProps.node.edit">
+								<Button
+									v-if="slotProps.node.modelFolder"
+									icon="fas fa-table"
+									v-tooltip.top="$t('managers.resourceManagement.openMetadata')"
+									class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0"
+									@click="openMetadataDialog(slotProps.node)"
+									:data-test="'move-up-button-' + slotProps.node.key"
+								/>
+								<Button icon="fa fa-download " v-tooltip.top="$t('managers.resourceManagement.download ')" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="downloadDirect(slotProps.node)" :data-test="'move-down-button-' + slotProps.node.key" />
+								<Button icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-text p-button-sm p-button-rounded p-button-plain  p-p-0" @click="showDeleteDialog(slotProps.node)" :data-test="'delete-button-' + slotProps.node.key" />
 							</div>
 						</div>
 					</template>
@@ -39,13 +49,13 @@
 	import Tree from 'primevue/tree'
 	import { iFolderTemplate } from '@/modules/managers/resourceManagement/ResourceManagement'
 	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
-	import MetadataDialog from '@/modules/managers/resourceManagement/MetadataDialog.vue'
+	import ResoruceManagementMetadataDialog from '@/modules/managers/resourceManagement/ResoruceManagementMetadataDialog.vue'
 	import ResoruceManagementDetail from './ResourceManagementDetail.vue'
 	import ResoruceManagementHint from './ResourceManagementHint.vue'
 
 	export default defineComponent({
 		name: 'resource-management',
-		components: { MetadataDialog, ResoruceManagementDetail, ResoruceManagementHint, Tree },
+		components: { ResoruceManagementMetadataDialog, ResoruceManagementDetail, ResoruceManagementHint, Tree },
 		data() {
 			return {
 				descriptor,
@@ -67,6 +77,14 @@
 			this.loadPage()
 		},
 		methods: {
+			toggleInput(node) {
+				if (node.edit) {
+					if (node.label !== node.edit) {
+						console.log('cuccu')
+					}
+					delete node.edit
+				} else node.edit = node.label
+			},
 			getNodes(respNode) {
 				respNode.icon = this.expandedKeys[respNode.key] == true ? 'far fa-folder-open' : 'far fa-folder'
 				if (respNode.children && respNode.children.length) {
