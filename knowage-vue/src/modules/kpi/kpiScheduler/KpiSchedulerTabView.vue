@@ -325,6 +325,10 @@ export default defineComponent({
                 this.operation = 'update'
             }
 
+            if (this.clone) {
+                this.selectedSchedule.filters.forEach((filter: iFilter) => delete filter.executionId)
+            }
+
             await axios
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveSchedulerKPI', this.selectedSchedule)
                 .then((response) => {

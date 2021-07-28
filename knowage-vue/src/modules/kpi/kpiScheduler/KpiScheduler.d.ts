@@ -18,6 +18,7 @@ export interface iFrequency {
 }
 
 export interface iFilter {
+    executionId?: number,
     kpiId: number,
     kpiName: string,
     kpiVersion: number,
