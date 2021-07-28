@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { createRouter, createWebHistory } from 'vue-router'
+import TargetDefinitionHint from './TargetDefinitionHint.vue'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -82,14 +84,35 @@ const $router = {
 
     replace: jest.fn()
 }
-
+const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+        {
+            path: '/',
+            component: TargetDefinitionHint
+        },
+        {
+            path: '/target-definition',
+            component: TargetDefinitionHint
+        },
+        {
+            path: '/new-target-definition',
+            component: null
+        },
+        {
+            path: '/target-definition/edit',
+            props: (route) => ({ id: route.query.id, clone: route.query.clone }),
+            component: null
+        }
+    ]
+})
 const $store = {
     commit: jest.fn()
 }
 const factory = () => {
     return mount(TargetDefinition, {
         global: {
-            plugins: [],
+            plugins: [router],
             stubs: {
                 Button,
                 Card,
@@ -97,8 +120,7 @@ const factory = () => {
                 Listbox,
                 ProgressBar,
                 Toolbar,
-                KnHint,
-                routerView: true
+                KnHint
             },
             mocks: {
                 $t: (msg) => msg,
@@ -137,12 +159,16 @@ describe('Target Definition loading', () => {
     })
 })
 describe('Target Definition List', () => {
-    it('shows an hint when no item is selected', () => {
-        // const wrapper = factory()
+    it('shows an hint when no item is selected', async () => {
+        router.push('/target-definition')
 
-        // // expect(wrapper.vm.showHint).toBe(true)
-        // expect(wrapper.find('[data-test="target-hint"]').exists()).toBe(true)
-        expect($router.push).toHaveBeenCalledWith('/target-definition')
+        await router.isReady()
+
+        await flushPromises()
+
+        const wrapper = factory()
+
+        expect(wrapper.html()).toContain('kpi.targetDefinition.hint')
     })
     it('deletes target when clicking on delete icon', async () => {
         const wrapper = factory()
