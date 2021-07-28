@@ -11,7 +11,7 @@
         <TabView class="tabview-custom">
             <TabPanel>
                 <template #header>
-                    <span>{{ $t('managers.buisnessModelCatalogue.details') }}</span>
+                    <span>{{ $t('managers.businessModelManager.details') }}</span>
                 </template>
 
                 <BusinessModelDetailsCard
@@ -28,7 +28,7 @@
 
             <TabPanel>
                 <template #header>
-                    <span>{{ $t('managers.buisnessModelCatalogue.metadata') }}</span>
+                    <span>{{ $t('managers.businessModelManager.metadata') }}</span>
                 </template>
 
                 <MetadataCard v-if="businessModelVersions.length > 0" :id="selectedBusinessModel.id"></MetadataCard>
@@ -36,7 +36,7 @@
 
             <TabPanel>
                 <template #header>
-                    <span>{{ $t('managers.buisnessModelCatalogue.savedVersions') }}</span>
+                    <span>{{ $t('managers.businessModelManager.savedVersions') }}</span>
                 </template>
 
                 <BusinessModelVersionsCard :id="selectedBusinessModel.id" :versions="businessModelVersions" @touched="setDirty" @deleted="loadVersions"></BusinessModelVersionsCard>
@@ -44,7 +44,7 @@
 
             <TabPanel>
                 <template #header v-if="id">
-                    <span>{{ $t('managers.buisnessModelCatalogue.drivers') }}</span>
+                    <span>{{ $t('managers.businessModelManager.drivers') }}</span>
                     <Badge :value="invalidDrivers" class="p-ml-2" severity="danger" v-if="invalidDrivers > 0"></Badge>
                 </template>
 
@@ -259,9 +259,9 @@ export default defineComponent({
             formData.append('file', this.uploadedFile)
             await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.selectedBusinessModel.id}/versions`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((response) => {
                 if (response.data.errors) {
-                    this.$store.commit('setError', { title: this.$t('managers.buisnessModelCatalogue.toast.uploadFile'), msg: response.data.errors })
+                    this.$store.commit('setError', { title: this.$t('managers.businessModelManager.toast.uploadFile'), msg: response.data.errors })
                 } else {
-                    this.$store.commit('setInfo', { title: this.$t('managers.buisnessModelCatalogue.uploadFile'), msg: this.$t('managers.buisnessModelCatalogue.uploadFileSuccess') })
+                    this.$store.commit('setInfo', { title: this.$t('managers.businessModelManager.uploadFile'), msg: this.$t('managers.businessModelManager.uploadFileSuccess') })
                     this.uploadedFile = null
                 }
             })

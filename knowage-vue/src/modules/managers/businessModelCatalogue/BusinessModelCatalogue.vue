@@ -4,7 +4,7 @@
             <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
-                        {{ $t('managers.buisnessModelCatalogue.title') }}
+                        {{ $t('managers.businessModelManager.title') }}
                     </template>
                     <template #right>
                         <FabButton icon="fas fa-plus" @click="showForm" data-test="new-button" />
@@ -40,7 +40,7 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <KnHint :title="'managers.buisnessModelCatalogue.title'" :hint="'managers.buisnessModelCatalogue.hint'" v-if="showHint" data-test="bm-hint"></KnHint>
+                <KnHint :title="'managers.businessModelManager.title'" :hint="'managers.businessModelManager.hint'" v-if="showHint" data-test="bm-hint"></KnHint>
                 <router-view @touched="touched = true" @closed="onClose" @inserted="pageReload" />
             </div>
         </div>
