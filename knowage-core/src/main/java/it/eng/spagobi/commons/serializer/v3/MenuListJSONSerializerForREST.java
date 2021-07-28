@@ -713,7 +713,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private void setPropertiesForExternalAppMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
-		temp2.put(URL, StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()));
+		String externalAppUrl = childElem.getExternalApplicationUrl();
+		temp2.put(URL, StringEscapeUtils.escapeJava(externalAppUrl));
 	}
 
 	private void setPropertiesForFunctionalityMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {

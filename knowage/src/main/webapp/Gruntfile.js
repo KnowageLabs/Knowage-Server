@@ -55,7 +55,6 @@ module.exports = function(grunt) {
 	        		 'themes/sbi_default/css/angular-toastr.css',
 	        		 'js/lib/angular/color-picker/angularjs-color-picker.min.css',
 	        		 'js/lib/angular/color-picker/mdColorPickerPersonalStyle.css',
-	        		 'node_modules/ng-wysiwyg/dist/editor.min.css',
 	        		 'node_modules/angular-tree-control/css/tree-control.css'
 	        	 ],
 	        	 'dist/knowage-sources-bundle_<%= pkg.version %>.js' : [

@@ -76,7 +76,7 @@
                             <Checkbox v-model="slotProps.data.development" :binary="true" :disabled="!slotProps.data['devRoles'].checkable" />
                         </template>
                     </Column>
-                    <Column :header="$t('managers.functionalitiesManagement.test')" :style="detailDescriptor.checkboxColumns.style">
+                    <Column :header="$t('common.test')" :style="detailDescriptor.checkboxColumns.style">
                         <template #body="slotProps">
                             <Checkbox v-model="slotProps.data.test" :binary="true" :disabled="!slotProps.data['testRoles'].checkable" />
                         </template>

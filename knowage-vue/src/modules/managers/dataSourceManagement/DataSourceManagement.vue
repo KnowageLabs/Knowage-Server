@@ -150,14 +150,19 @@ export default defineComponent({
             })
         },
         async deleteDatasource(datasourceId: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/' + datasourceId).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
+            await axios
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/' + datasourceId)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.$router.push('/datasource-management')
+                    this.getAllDatasources()
                 })
-                this.$router.push('/datasource-management')
-                this.getAllDatasources()
-            })
+                .catch((error) => {
+                    this.$store.commit('setError', { title: 'Delete error', msg: error.message })
+                })
         },
 
         reloadPage() {
