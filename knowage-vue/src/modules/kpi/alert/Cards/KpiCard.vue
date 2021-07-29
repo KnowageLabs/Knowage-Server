@@ -13,7 +13,7 @@
                 </template>
 
                 <template #right>
-                    <Button :label="$t('kpi.alert.addAction')" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showDialog')" />
+                    <Button :label="$t('kpi.alert.addAction')" class="p-button-text p-button-rounded p-button-plain" :disabled="disableActionButton" @click="$emit('showDialog')" />
                 </template>
             </Toolbar>
             <div class="p-grid p-mt-2">
@@ -80,10 +80,15 @@ export default defineComponent({
             }
         }
     },
+    computed: {
+        disableActionButton() {
+            for (var i in this.kpi) return false
+            return true
+        }
+    },
     data() {
         return {
             alertDescriptor,
-            emptyObject: {} as any,
             alert: {} as any,
             kpi: {} as any,
             oldKpi: null as any,
@@ -114,11 +119,13 @@ export default defineComponent({
             })
         },
         async loadKpi(kpiId, kpiVersion) {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response) => {
-                this.oldKpi = { ...response.data }
-                this.kpi = { ...response.data }
-                this.$emit('kpiLoaded', this.kpi)
-            })
+            if (kpiId != undefined) {
+                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response) => {
+                    this.oldKpi = { ...response.data }
+                    this.kpi = { ...response.data }
+                    this.$emit('kpiLoaded', this.kpi)
+                })
+            }
         },
         confirmLoadSelectedKpi(kpi) {
             if (this.alert.jsonOptions.actions.length > 0) {

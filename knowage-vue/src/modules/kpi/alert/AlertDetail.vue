@@ -10,6 +10,7 @@
             {{ $t('kpi.alert.expiredWarning') }}
         </Message>
         <NameCard :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert" />
+        <KpiCron class="p-m-2" :style="alertDescriptor.styles.cron" v-if="selectedAlert?.frequency" :frequency="selectedAlert.frequency" />
         <EventsCard :selectedAlert="selectedAlert" @valueChanged="updateAlert" />
         <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" />
     </div>
@@ -27,16 +28,29 @@ import Message from 'primevue/message'
 import NameCard from './Cards/NameCard.vue'
 import KpiCard from './Cards/KpiCard.vue'
 import EventsCard from './Cards/EventsCard.vue'
+import KpiCron from '../kpiCron/KpiCron.vue'
 import AddActionDialog from './addActionDialog/AddActionDialog.vue'
 
 export default defineComponent({
     name: 'alert-details',
-    components: { NameCard, EventsCard, AddActionDialog, KpiCard, Message },
+    components: { NameCard, EventsCard, AddActionDialog, KpiCard, Message, KpiCron },
     props: { id: { type: String, required: false } },
     watch: {
         async id() {
             await this.checkId()
-            if (this.id == undefined) this.selectedAlert = { id: null, singleExecution: false, jsonOptions: { actions: [] } }
+            if (this.id == undefined)
+                this.selectedAlert = {
+                    id: null,
+                    singleExecution: false,
+                    jsonOptions: { actions: [] },
+                    frequency: {
+                        cron: { type: 'minute', parameter: { numRepetition: '1' } },
+                        startDate: new Date().valueOf(),
+                        endDate: null,
+                        startTime: new Date().valueOf(),
+                        endTime: ''
+                    }
+                }
         }
     },
     computed: {
@@ -54,7 +68,18 @@ export default defineComponent({
         if (this.id) {
             this.loadAlert()
         } else {
-            this.selectedAlert = { id: null, singleExecution: false, jsonOptions: { actions: [] } }
+            this.selectedAlert = {
+                id: null,
+                singleExecution: false,
+                jsonOptions: { actions: [] },
+                frequency: {
+                    cron: { type: 'minute', parameter: { numRepetition: '1' } },
+                    startDate: new Date().valueOf(),
+                    endDate: null,
+                    startTime: new Date().valueOf(),
+                    endTime: ''
+                }
+            }
         }
         this.loadListener()
         this.loadKpiList()
@@ -91,6 +116,9 @@ export default defineComponent({
                 .then((response) => {
                     this.selectedAlert = { ...response.data }
                     this.selectedAlert.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '')
+                    if (this.selectedAlert.frequency) {
+                        this.selectedAlert.frequency.cron = JSON.parse(this.selectedAlert.frequency.cron ? this.selectedAlert.frequency.cron : '')
+                    }
 
                     if (this.selectedAlert.jsonOptions) {
                         this.selectedAlert.jsonOptions.actions = this.selectedAlert.jsonOptions.actions.map((action: any) => {

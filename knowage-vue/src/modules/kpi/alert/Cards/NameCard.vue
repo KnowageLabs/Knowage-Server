@@ -1,5 +1,5 @@
 <template>
-    <Card style="width:100%" class="p-m-3">
+    <Card style="width:100%" class="p-m-2">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-6">
