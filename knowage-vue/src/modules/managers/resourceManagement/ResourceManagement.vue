@@ -10,7 +10,7 @@
 				<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
 				<ResourceManagementMetadataDialog v-model:visibility="displayMetadataDialog" v-model:id="metadataKey"></ResourceManagementMetadataDialog>
 
-				<Tree id="folders-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" :filter="true" filterMode="lenient" data-test="functionality-tree" class="kn-tree kn-flex foldersTree" @node-select="showForm($event)" v-model:selectionKeys="selectedKeys">
+				<Tree id="folders-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" :filter="true" filterMode="lenient" data-test="functionality-tree" class="kn-tree kn-flex p-flex-column foldersTree" @node-select="showForm($event)" v-model:selectionKeys="selectedKeys">
 					<template #default="slotProps">
 						<div class="p-d-flex p-flex-row p-ai-center p-jc-between" @mouseover="buttonsVisible[slotProps.node.key] = true" @mouseleave="buttonsVisible[slotProps.node.key] = false" :data-test="'tree-item-' + slotProps.node.key">
 							<span v-if="!slotProps.node.edit" class="kn-truncated" @dblclick="toggleInput(slotProps.node)">
@@ -18,25 +18,18 @@
 							</span>
 							<InputText class="kn-material-input fileNameInputText" type="text" v-if="slotProps.node.edit" v-model="slotProps.node.label" maxlength="50" @blur="toggleInput(slotProps.node)" @keyup.enter="toggleInput(slotProps.node)" />
 
-							<div v-show="buttonsVisible[slotProps.node.key] && !slotProps.node.edit">
-								<Button
-									v-if="slotProps.node.modelFolder"
-									icon="fas fa-table"
-									v-tooltip.top="$t('managers.resourceManagement.openMetadata')"
-									class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0"
-									@click="openMetadataDialog(slotProps.node)"
-									:data-test="'move-up-button-' + slotProps.node.key"
-								/>
-								<Button icon="fa fa-download " v-tooltip.top="$t('common.download')" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="downloadDirect(slotProps.node)" :data-test="'move-down-button-' + slotProps.node.key" />
-								<Button icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-text p-button-sm p-button-rounded p-button-plain  p-p-0" @click="showDeleteDialog(slotProps.node)" :data-test="'delete-button-' + slotProps.node.key" />
+							<div>
+								<Button v-if="slotProps.node.modelFolder" icon="fas fa-table" v-tooltip.top="$t('managers.resourceManagement.openMetadata')" :class="getButtonClass(slotProps.node)" @click="openMetadataDialog(slotProps.node)" :data-test="'move-up-button-' + slotProps.node.key" />
+								<Button icon="fa fa-download " v-tooltip.top="$t('common.download')" :class="getButtonClass(slotProps.node)" @click="downloadDirect(slotProps.node)" :data-test="'move-down-button-' + slotProps.node.key" />
+								<Button icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" :class="getButtonClass(slotProps.node)" @click="showDeleteDialog(slotProps.node)" :data-test="'delete-button-' + slotProps.node.key" />
 							</div>
 						</div>
 					</template>
 				</Tree>
 			</div>
-			<div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-height-full-vertical">
-				<ResourceManagementHint v-if="showHint" data-test="resourceManagement-hint"></ResourceManagementHint>
-				<ResourceManagementDetail v-if="formVisible" :folder="selectedFolder" :parentKey="folderParentKey" @touched="touched = true" @close="onClose" @inserted="loadPage($event)" @folderCreated="loadPage" @closed="switchToHint()" />
+			<div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
+				<KnHint :title="'managers.resourceManagement.title'" :hint="'managers.resourceManagement.hint'" v-if="showHint"></KnHint>
+				<ResourceManagementDetail v-if="formVisible" :folder="selectedFolder" :parentKey="folderParentKey" @touched="touched = true" @close="onClose" @inserted="loadPage($event)" @folderCreated="loadPage" @closed="switchToHint()" @fileUploaded="loadPage(false, true)" />
 			</div>
 		</div>
 	</div>
@@ -51,11 +44,11 @@
 	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
 	import ResourceManagementMetadataDialog from '@/modules/managers/resourceManagement/ResourceManagementMetadataDialog.vue'
 	import ResourceManagementDetail from './ResourceManagementDetail.vue'
-	import ResourceManagementHint from './ResourceManagementHint.vue'
+	import KnHint from '@/components/UI/KnHint.vue'
 
 	export default defineComponent({
 		name: 'resource-management',
-		components: { ResourceManagementMetadataDialog, ResourceManagementDetail, ResourceManagementHint, Tree },
+		components: { KnHint, ResourceManagementMetadataDialog, ResourceManagementDetail, Tree },
 		data() {
 			return {
 				descriptor,
@@ -77,6 +70,11 @@
 			this.loadPage()
 		},
 		methods: {
+			getButtonClass(node) {
+				let visibility = ' kn-hide'
+				if (this.buttonsVisible[node.key] && !node.edit) visibility = ''
+				return 'p-button-text p-button-sm p-button-rounded p-button-plain p-p-0' + visibility
+			},
 			async toggleInput(node) {
 				if (node.edit && node.label !== node.edit) {
 					if (this.selectedFolder) {
@@ -111,24 +109,25 @@
 					}
 				} else node.edit = node.label
 			},
-			getNodes(respNode) {
-				respNode.icon = this.expandedKeys[respNode.key] == true ? 'far fa-folder-open' : 'far fa-folder'
-				if (respNode.children && respNode.children.length) {
-					for (let child of respNode.children) {
-						this.getNodes(child)
+			addIcon(nodes) {
+				for (var idx in nodes) {
+					let node = nodes[idx]
+					node.icon = this.expandedKeys[node.key] == true ? 'far fa-folder-open' : 'far fa-folder'
+					if (node.children && node.children.length > 0) {
+						this.addIcon(node.children)
 					}
 				}
 			},
-			loadPage(): void {
+			loadPage(showHint?, formVisible?): void {
 				this.loading = true
-				this.showHint = true
-				this.formVisible = false
+				this.showHint = showHint != undefined ? showHint : true
+				this.formVisible = formVisible != undefined ? formVisible : false
 				axios
 					.get(process.env.VUE_APP_API_PATH + `2.0/resources/folders`)
 					.then((response) => {
 						let data = response.data
-						this.getNodes(data.root)
-						this.nodes = data
+						this.addIcon(data.root)
+						this.nodes = data.root
 						this.loading = false
 					})
 					.finally(() => (this.loading = false))
@@ -234,7 +233,6 @@
 		border: none;
 	}
 	.foldersTree {
-		height: 100%;
 		border-radius: 0;
 	}
 	.rightFolderIconsBar {
@@ -254,6 +252,9 @@
 	.rightFolderIcon {
 		margin-right: 0.5rem;
 	}
+	.p-treenode-content {
+		border-radius: 0 !important;
+	}
 	.p-treenode-label {
 		width: 100%;
 	}
@@ -262,11 +263,5 @@
 	}
 	.p-treenode-icon {
 		margin: 0px;
-	}
-	.p-tree-wrapper {
-		height: 100%;
-	}
-	.p-tree-container {
-		height: 100%;
 	}
 </style>

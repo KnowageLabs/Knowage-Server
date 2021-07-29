@@ -6,7 +6,7 @@
 			"header": "managers.resourceManagement.column.lastModified",
 			"position": 3,
 			"style": {
-				"width": "30%"
+				"width": "20%"
 			}
 		},
 		{
@@ -14,7 +14,7 @@
 			"header": "managers.resourceManagement.column.name",
 			"position": 1,
 			"style": {
-				"width": "35%"
+				"width": "60%"
 			}
 		},
 		{
@@ -31,7 +31,7 @@
 			"header": "managers.resourceManagement.column.size",
 			"position": 2,
 			"style": {
-				"width": "30%"
+				"width": "15%"
 			}
 		}
 	],

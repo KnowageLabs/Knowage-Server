@@ -38,7 +38,7 @@
 			}
 		},
 		mounted() {
-			this.getBreadcrumbs()
+			this.setBreadcrumbs()
 		},
 		methods: {
 			closeDialog(): void {
@@ -47,16 +47,21 @@
 			emitCreateFolder(): void {
 				this.$emit('createFolder', this.folderName)
 			},
-			getBreadcrumbs() {
+			setBreadcrumbs() {
 				this.items = []
 
 				if (this.path) {
-					let pathFolders = this.path.split('\\')
+					let pathFolders = this.path.split('\\', -1)
 					pathFolders.forEach((element) => {
 						let obj = { label: element }
 						this.items.push(obj)
 					})
 				}
+			}
+		},
+		watch: {
+			path(oldPath, newPath) {
+				if (oldPath != newPath) this.setBreadcrumbs()
 			}
 		}
 	})
@@ -80,5 +85,10 @@
 	}
 	.createFolderDialogContent {
 		padding: 16px;
+	}
+	.p-breadcrumb {
+		border: none;
+		border-radius: 0;
+		border-bottom: 1px solid $list-border-color;
 	}
 </style>

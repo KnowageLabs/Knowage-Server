@@ -1,77 +1,83 @@
 <template>
-	<Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-		<template #left>{{ folder.label }}</template>
-
-		<template #right>
-			<Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDetail()" />
-		</template>
-	</Toolbar>
-	<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-	<Breadcrumb :home="home" :model="items" class="resourceManagerBreadcrumb"> </Breadcrumb>
-
-	<Toolbar v-if="selectedFiles.length > 0" class="kn-toolbar kn-toolbar--default p-m-0">
-		<template #left>{{ $tc('managers.resourceManagement.selectedFiles', selectedFiles.length, { num: selectedFiles.length }) }}</template>
-		<template #right>
-			<Button icon="fas fa-download" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="downloadFiles" :disabled="invalid" />
-			<Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="showDeleteDialog" />
-		</template>
-	</Toolbar>
-
-	<ResourceManagementImportFileDialog v-model:visibility="importFile" v-bind:path="getCurrentFolderKey()" @fileUploaded="loadSelectedFolder" />
-	<ResourceManagementCreateFolderDialog v-model:visibility="folderCreation" @createFolder="createFolder" v-bind:path="getCurrentFolderPath()" />
-
-	<div class="managerDetail p-grid p-m-0 p-fluid">
-		<div class="p-col">
-			<DataTable
-				ref="dt"
-				:value="files"
-				:loading="loading"
-				v-model:selection="selectedFiles"
-				v-model:filters="filters"
-				class="p-datatable-sm kn-table"
-				:paginator="true"
-				:rows="10"
-				paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-				:rowsPerPageOptions="[10, 15, 20]"
-				responsiveLayout="stack"
-				breakpoint="960px"
-				:currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-				:globalFilterFields="['name', 'type', 'tags']"
+	<div class="kn-page">
+		<Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
+			<template #left
+				><span class="cleanText">{{ folder.label }}</span></template
 			>
-				<template #header>
-					<div class="p-grid p-pt-0">
-						<div class="p-col-11">
-							<span class="p-input-icon-left p-col p-p-0">
-								<i class="pi pi-search"/>
-								<InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0"
-							/></span>
-						</div>
-						<div class="p-col p-d-flex p-jc-center p-ai-center">
-							<Button icon="fas fa-folder-plus" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openCreateFolderDialog" :disabled="selectedFiles.length > 0" />
-							<Button icon="fas fa-upload" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openImportFileDialog" :disabled="selectedFiles.length > 0" />
-						</div>
-					</div>
-				</template>
-				<template #empty>
-					{{ $t('common.info.noDataFound') }}
-				</template>
-				<template #loading>
-					{{ $t('common.info.dataLoading') }}
-				</template>
 
-				<Column v-for="col in getOrderedColumns()" :field="col.field" :header="$t(col.header)" :key="col.position" :style="col.style" :selectionMode="col.field == 'selectionMode' ? 'multiple' : ''" :exportable="col.field == 'selectionMode' ? false : ''">
-					<template #body="{data}" v-if="col.displayType">
-						<span class="p-float-label kn-material-input">
-							<div v-if="col.displayType == 'fileSize'">
-								{{ getDataValue(data.size) }}
+			<template #right>
+				<Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDetail()" />
+			</template>
+		</Toolbar>
+		<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+		<Breadcrumb :home="home" :model="items"> </Breadcrumb>
+		<div class="kn-page-content">
+			<Toolbar v-if="selectedFiles.length > 0" class="kn-toolbar kn-toolbar--default p-m-0">
+				<template #left>{{ $tc('managers.resourceManagement.selectedFiles', selectedFiles.length, { num: selectedFiles.length }) }}</template>
+				<template #right>
+					<Button icon="fas fa-download" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="downloadFiles" :disabled="invalid" />
+					<Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="showDeleteDialog" />
+				</template>
+			</Toolbar>
+
+			<ResourceManagementImportFileDialog v-model:visibility="importFile" v-bind:path="folder.key" @fileUploaded="fileUploaded" />
+			<ResourceManagementCreateFolderDialog v-model:visibility="folderCreation" @createFolder="createFolder" v-bind:path="folder.relativePath" />
+
+			<div class="managerDetail p-grid p-m-0 kn-height-full">
+				<div class="p-col">
+					<DataTable
+						ref="dt"
+						:value="files"
+						:loading="loading"
+						v-model:selection="selectedFiles"
+						v-model:filters="filters"
+						class="p-datatable-sm kn-table"
+						:paginator="true"
+						:rows="10"
+						paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+						:rowsPerPageOptions="[10, 15, 20]"
+						responsiveLayout="stack"
+						breakpoint="960px"
+						:currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+						:globalFilterFields="['name', 'type', 'tags']"
+					>
+						<template #header>
+							<div class="p-grid p-pt-0">
+								<div class="p-col-11">
+									<span class="p-input-icon-left p-col p-p-0">
+										<i class="pi pi-search"/>
+										<InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0"
+									/></span>
+								</div>
+								<div class="p-col p-d-flex p-jc-center p-ai-center">
+									<Button icon="fas fa-folder-plus" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openCreateFolderDialog" :disabled="selectedFiles.length > 0" />
+									<Button icon="fas fa-upload" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openImportFileDialog" :disabled="selectedFiles.length > 0" />
+								</div>
 							</div>
-							<div v-if="col.displayType == 'date'">
-								{{ getDate(data.lastModified) }}
-							</div>
-						</span>
-					</template>
-				</Column>
-			</DataTable>
+						</template>
+						<template #empty>
+							{{ $t('common.info.noDataFound') }}
+						</template>
+						<template #loading>
+							{{ $t('common.info.dataLoading') }}
+						</template>
+
+						<Column v-for="col in getOrderedColumns()" :field="col.field" :header="$t(col.header)" class="kn-truncated" :key="col.position" :style="col.style" :selectionMode="col.field == 'selectionMode' ? 'multiple' : ''" :exportable="col.field == 'selectionMode' ? false : ''">
+							<template #body="{data}" v-if="col.field != 'selectionMode'">
+								<span v-if="col.displayType == 'fileSize'">
+									{{ getDataValue(data.size) }}
+								</span>
+								<span v-else-if="col.displayType == 'date'">
+									{{ getDate(data.lastModified) }}
+								</span>
+								<span v-else>
+									<span class="kn-truncated" :title="data[col.field]">{{ data[col.field] }}</span>
+								</span>
+							</template>
+						</Column>
+					</DataTable>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -97,7 +103,7 @@
 		props: {
 			folder: Object
 		},
-		emits: ['touched', 'closed', 'inserted', 'folderCreated'],
+		emits: ['touched', 'closed', 'inserted', 'folderCreated', 'fileUploaded'],
 		data() {
 			return {
 				descriptor,
@@ -127,6 +133,7 @@
 			this.loadSelectedFolder()
 		},
 		mounted() {},
+
 		methods: {
 			closeDetail() {
 				this.$emit('closed')
@@ -245,7 +252,7 @@
 			},
 			showDeleteDialog() {
 				this.$confirm.require({
-					message: this.$t('managers.resourceManagement.deletingFolderConfirm'),
+					message: this.$t('common.toast.deleteMessage'),
 					header: this.$t('common.toast.deleteConfirmTitle'),
 					icon: 'pi pi-exclamation-triangle',
 					accept: () => this.deleteFiles()
@@ -259,9 +266,7 @@
 						headers: {
 							'Content-Type': 'application/json'
 						},
-						data: {
-							obj: this.getKeyAndFilenamesObj()
-						}
+						data: this.getKeyAndFilenamesObj()
 					})
 					.then(() => {
 						this.selectedFiles = []
@@ -274,7 +279,7 @@
 					.catch(() => {
 						this.$store.commit('setError', {
 							title: this.$t('common.toast.deleteTitle'),
-							msg: this.$t('common.toast.deleteFailed')
+							msg: this.$t('common.error.deleting')
 						})
 					})
 					.finally(() => (this.loading = false))
@@ -282,13 +287,17 @@
 			getKeyAndFilenamesObj() {
 				let obj = {} as JSON
 				if (this.folder) {
-					obj['key'] = '' + this.folder.key
+					obj['key'] = this.folder.key
 					obj['selectedFilesNames'] = []
 					for (var idx in this.selectedFiles) {
 						obj['selectedFilesNames'].push(this.selectedFiles[idx].name)
 					}
 				}
 				return obj
+			},
+			fileUploaded() {
+				this.loadSelectedFolder()
+				this.$emit('fileUploaded')
 			}
 		},
 		watch: {
@@ -307,13 +316,12 @@
 </script>
 
 <style scoped lang="scss">
-	.resourceManagerBreadcrumb {
-		border-top: none;
-		border-left: none;
-		border-right: none;
-		border-bottom: black;
+	.p-breadcrumb {
+		border: none;
 		border-radius: 0;
-
-		border-width: 0 0 1px 0;
+		border-bottom: 1px solid $list-border-color;
+	}
+	.cleanText {
+		text-transform: none;
 	}
 </style>

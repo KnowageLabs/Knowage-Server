@@ -1,7 +1,8 @@
 <template>
 	<div class="managerDetail">
+		<Toast :baseZIndex="4000"></Toast>
 		<Dialog class="kn-dialog--toolbar--primary knMetadataDialog" v-bind:visible="visibility" footer="footer" :header="$t('managers.resourceManagement.metadata.dialog.title')" :closable="false" modal @id="loadMetadata">
-			<div class="p-grid p-m-3 p-fluid p-ai-center">
+			<div class="p-grid p-m-3 p-fluid p-ai-start">
 				<span class="p-float-label p-col-4">
 					<InputText id="name" class="kn-material-input" type="text" v-model="metadata.name" @change="setDirty" />
 					<label class="kn-material-input-label" for="name">{{ $t('common.name') }}</label>
@@ -26,34 +27,37 @@
 					<label class="kn-material-input-label p-mr-2" for="name">{{ $t(descriptor.metadata.openSource.label) }}</label>
 					<InputSwitch v-model="metadata.openSource" @change="setDirty" />
 				</span>
-				<span class="p-float-label p-col-8">
-					<Textarea v-model="metadata.description" class="kn-material-input" style="resize:none" id="description" rows="3" @change="setDirty" />
+				<span class="p-float-label p-col-8 descriptionTextArea">
+					<Textarea v-model="metadata.description" class="kn-material-input " style="resize:none" id="description" rows="5" @change="setDirty" />
 					<label class="kn-material-input-label" for="description">{{ $t('common.description') }}</label>
 				</span>
 				<span class="p-col-4 kn-height-full">
-					<input id="inputImage" type="file" @change="uploadFile" accept="image/png, image/jpeg" />
-					<label for="inputImage" v-tooltip.bottom="$t('common.upload')">
-						<i class="pi pi-upload" />
-					</label>
+					<span class="p-d-flex p-jc-end p-ai-center">
+						<input id="inputImage" type="file" @change="uploadFile" accept="image/png, image/jpeg" />
+						<label for="inputImage" v-tooltip.bottom="$t('common.upload')">
+							<i class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0 pi pi-upload" />
+						</label>
+						<i class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0 pi pi-times p-ml-2" v-if="metadata.image" @click="removeImage" v-tooltip.bottom="$t('common.delete')" />
+					</span>
 					<div class="imageContainer p-d-flex p-jc-center p-ai-center">
 						<i class="far fa-image fa-5x icon" v-if="!metadata.image" />
 						<img :src="metadata.image" v-if="metadata.image" height="100%" class="kn-no-select" />
 					</div>
 				</span>
 			</div>
-			<span class="p-col-12">
-				<Accordion>
-					<AccordionTab :header="$t(descriptor.metadata.accuracyAndPerformance.label)">
-						<Textarea v-model="metadata.accuracyAndPerformance" class="kn-material-input metadataTextArea" style="resize:none" id="accuracyAndPerformance" rows="3" @change="setDirty" />
-					</AccordionTab>
-					<AccordionTab :header="$t(descriptor.metadata.usageOfTheModel.label)">
-						<Textarea v-model="metadata.usageOfTheModel" class="kn-material-input metadataTextArea" style="resize:none" id="usageOfTheModel" rows="3" @change="setDirty" />
-					</AccordionTab>
-					<AccordionTab :header="$t(descriptor.metadata.formatOfData.label)">
-						<Textarea v-model="metadata.formatOfData" class="kn-material-input metadataTextArea" style="resize:none" id="formatOfData" rows="3" @change="setDirty" />
-					</AccordionTab>
-				</Accordion>
-			</span>
+
+			<Accordion class="p-col-12">
+				<AccordionTab :header="$t(descriptor.metadata.accuracyAndPerformance.label)">
+					<Textarea v-model="metadata.accuracyAndPerformance" class="kn-material-input metadataTextArea" style="resize:none" id="accuracyAndPerformance" rows="3" @change="setDirty" />
+				</AccordionTab>
+				<AccordionTab :header="$t(descriptor.metadata.usageOfTheModel.label)">
+					<Textarea v-model="metadata.usageOfTheModel" class="kn-material-input metadataTextArea" style="resize:none" id="usageOfTheModel" rows="3" @change="setDirty" />
+				</AccordionTab>
+				<AccordionTab :header="$t(descriptor.metadata.formatOfData.label)">
+					<Textarea v-model="metadata.formatOfData" class="kn-material-input metadataTextArea" style="resize:none" id="formatOfData" rows="3" @change="setDirty" />
+				</AccordionTab>
+			</Accordion>
+
 			<template #footer>
 				<Button class="kn-button kn-button--secondary" @click="closeDialog">{{ $t('common.close') }} </Button>
 				<Button class="kn-button kn-button--primary" @click="saveMetadata" :disabled="!dirty"> {{ $t('common.save') }}</Button>
@@ -76,9 +80,11 @@
 	import AccordionTab from 'primevue/accordiontab'
 	import { iModelMetadataTemplate } from './ResourceManagement'
 
+	import Toast from 'primevue/toast'
+
 	export default defineComponent({
 		name: 'metadata-dialog',
-		components: { Dialog, Dropdown, InputSwitch, Accordion, AccordionTab, Textarea },
+		components: { Dialog, Dropdown, InputSwitch, Accordion, AccordionTab, Textarea, Toast },
 		data() {
 			return {
 				dirty: false,
@@ -119,6 +125,10 @@
 				}
 				this.loading = false
 			},
+			removeImage() {
+				this.metadata.image = ''
+				this.setDirty()
+			},
 			saveMetadata(): void {
 				this.loading = true
 				if (this.id) {
@@ -131,9 +141,11 @@
 							}
 						})
 						.then(() => {
-							this.$store.commit('setInfo', {
-								title: this.$t('common.toast.updateTitle'),
-								msg: this.$t('common.toast.updateSuccess')
+							this.$toast.add({
+								severity: 'info',
+								summary: this.$t('common.toast.updateTitle'),
+								detail: this.$t('common.toast.updateSuccess'),
+								life: 5000
 							})
 						})
 						.catch((error) => {
@@ -213,9 +225,16 @@
 				color: $color-secondary;
 			}
 			img {
-				height: auto;
-				max-height: 100%;
-				max-width: 100%;
+				height: 150px;
+				max-width: 300px;
+			}
+		}
+
+		.descriptionTextArea {
+			height: 200px;
+
+			&:deep(.p-inputtextarea) {
+				height: 200px;
 			}
 		}
 	}
