@@ -1,54 +1,52 @@
 <template>
     <div class="kn-page">
-        <div class="kn-page-content p-grid p-m-0">
-            <div class="p-col p-p-0">
-                <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
-                        {{ $t('kpi.measureDefinition.title') }}
+        <Toolbar class="kn-toolbar kn-toolbar--primary">
+            <template #left>
+                {{ $t('kpi.measureDefinition.title') }}
+            </template>
+            <template #right>
+                <KnFabButton icon="fas fa-plus" @click="showForm(null, false)" data-test="new-button" />
+            </template>
+        </Toolbar>
+        <div class="kn-page-content">
+            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+            <KnHint v-if="measuresList.length === 0 && !loading" :title="'kpi.measureDefinition.title'" :hint="'kpi.measureDefinition.hint'" data-test="measure-hint"></KnHint>
+            <DataTable
+                v-else
+                :value="measuresList"
+                rowGroupMode="rowspan"
+                groupRowsBy="rule"
+                :paginator="true"
+                :rows="15"
+                :loading="loading"
+                class="p-datatable-sm kn-table"
+                dataKey="id"
+                v-model:filters="filters"
+                :globalFilterFields="measureDefinitionDescriptor.globalFilterFields"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                @rowClick="showForm($event.data, false)"
+                data-test="measures-table"
+            >
+                <template #loading>
+                    {{ $t('common.info.dataLoading') }}
+                </template>
+                <template #header>
+                    <div class="table-header p-d-flex">
+                        <span class="p-input-icon-left p-mr-3">
+                            <i class="pi pi-search" />
+                            <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
+                        </span>
+                    </div>
+                </template>
+                <Column class="kn-truncated" :style="col.style" v-for="col of measureDefinitionDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>
+                <Column :style="measureDefinitionDescriptor.table.iconColumn.style">
+                    <template #body="slotProps">
+                        <Button icon="pi pi-copy" class="p-button-link" @click="cloneKpiConfirm(slotProps.data)" data-test="clone-button" />
+                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteMeasureConfirm(slotProps.data)" :data-test="'delete-button-' + slotProps.data.id" />
                     </template>
-                    <template #right>
-                        <KnFabButton icon="fas fa-plus" @click="showForm(null, false)" data-test="new-button" />
-                    </template>
-                </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <KnHint v-if="measuresList.length === 0 && !loading" :title="'kpi.measureDefinition.title'" :hint="'kpi.measureDefinition.hint'" data-test="measure-hint"></KnHint>
-                <DataTable
-                    v-else
-                    :value="measuresList"
-                    rowGroupMode="rowspan"
-                    groupRowsBy="rule"
-                    :paginator="true"
-                    :rows="15"
-                    :loading="loading"
-                    class="p-datatable-sm kn-table"
-                    dataKey="id"
-                    v-model:filters="filters"
-                    :globalFilterFields="measureDefinitionDescriptor.globalFilterFields"
-                    responsiveLayout="stack"
-                    breakpoint="960px"
-                    @rowClick="showForm($event.data, false)"
-                    data-test="measures-table"
-                >
-                    <template #loading>
-                        {{ $t('common.info.dataLoading') }}
-                    </template>
-                    <template #header>
-                        <div class="table-header p-d-flex">
-                            <span class="p-input-icon-left p-mr-3">
-                                <i class="pi pi-search" />
-                                <InputText class="kn-material-input" v-model="filters['global'].value" type="text" :placeholder="$t('common.search')" data-test="filterInput" />
-                            </span>
-                        </div>
-                    </template>
-                    <Column class="kn-truncated" :style="col.style" v-for="col of measureDefinitionDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true"> </Column>
-                    <Column :style="measureDefinitionDescriptor.table.iconColumn.style">
-                        <template #body="slotProps">
-                            <Button icon="pi pi-copy" class="p-button-link" @click="cloneKpiConfirm(slotProps.data)" data-test="clone-button" />
-                            <Button icon="pi pi-trash" class="p-button-link" @click="deleteMeasureConfirm(slotProps.data)" :data-test="'delete-button-' + slotProps.data.id" />
-                        </template>
-                    </Column>
-                </DataTable>
-            </div>
+                </Column>
+            </DataTable>
         </div>
     </div>
 </template>

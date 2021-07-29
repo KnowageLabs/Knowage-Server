@@ -6,7 +6,7 @@
         </template>
     </Toolbar>
     <Listbox
-        class="kn-list"
+        class="kn-list kn-flex"
         :options="filters"
         :listStyle="metadataDefinitionTabViewDescriptor.listBox.style"
         :filter="true"
@@ -74,3 +74,8 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss" scoped>
+.kn-list {
+    border-left: 1px solid $color-borders !important;
+}
+</style>

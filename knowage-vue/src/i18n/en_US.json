@@ -194,7 +194,7 @@
             "category": "Category",
             "dataSource": "Data Source",
             "filters": "Filters",
-            "hint": "No measures found",
+            "hint": "Measure management allows you to create the rules and the measures that will be used in the KPI workflow. Click on one existing item from the table list, or press the \"+\" button to add one.",
             "measureName": "Measure name",
             "metadata": "Metadata",
             "metadataChangedMessage": "Please note that metadata have been automatically modified due to query changing. Do you want to continue?",
@@ -215,7 +215,7 @@
             "saveInProgress": "Save in progress",
             "temporalAttributePlaceholder": "Select Temporal attribute",
             "tipology": "Tipology",
-            "title": "Measure list",
+            "title": "Measure Management",
             "wrongQuery": "Wrong query"
         }
     },

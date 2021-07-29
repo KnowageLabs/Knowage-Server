@@ -1,50 +1,52 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-        <template #left>{{ title }} </template>
-        <template #right>
-            <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.alias')" @click="aliasesVisible = !aliasesVisible" data-test="submit-button" />
-            <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.placeholder')" @click="placeholderVisible = !placeholderVisible" data-test="submit-button" />
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="metadataDisabled" @click="submitConfirm" data-test="submit-button" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
-        </template>
-    </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <div class="p-d-flex p-flex-row">
-        <div class="card kn-flex" v-if="!loading">
-            <TabView v-model:activeIndex="activeTab" @tab-change="setTabChanged($event.index)">
-                <TabPanel>
-                    <template #header>
-                        <span>{{ $t('kpi.measureDefinition.query') }}</span>
-                    </template>
+    <div class="kn-page">
+        <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
+            <template #left>{{ title }} </template>
+            <template #right>
+                <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.alias')" @click="aliasesVisible = !aliasesVisible" data-test="submit-button" />
+                <Button class="p-button-text p-button-rounded kn-button" :label="$t('kpi.measureDefinition.placeholder')" @click="placeholderVisible = !placeholderVisible" data-test="submit-button" />
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="metadataDisabled" @click="submitConfirm" data-test="submit-button" />
+                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
+            </template>
+        </Toolbar>
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <div class="p-d-flex p-flex-row kn-page-content">
+            <div class="card kn-flex" v-if="!loading">
+                <TabView v-model:activeIndex="activeTab" @tab-change="setTabChanged($event.index)">
+                    <TabPanel>
+                        <template #header>
+                            <span>{{ $t('kpi.measureDefinition.query') }}</span>
+                        </template>
 
-                    <MeasureDefinitionQueryCard
-                        :rule="rule"
-                        :datasourcesList="datasourcesList"
-                        :aliases="availableAliasList"
-                        :placeholders="placeholdersList"
-                        :columns="columns"
-                        :rows="rows"
-                        :codeInput="codeInput"
-                        :preview="preview"
-                        @queryChanged="queryChanged = true"
-                        @loadPreview="previewQuery(false, true)"
-                    ></MeasureDefinitionQueryCard>
-                </TabPanel>
+                        <MeasureDefinitionQueryCard
+                            :rule="rule"
+                            :datasourcesList="datasourcesList"
+                            :aliases="availableAliasList"
+                            :placeholders="placeholdersList"
+                            :columns="columns"
+                            :rows="rows"
+                            :codeInput="codeInput"
+                            :preview="preview"
+                            @queryChanged="queryChanged = true"
+                            @loadPreview="previewQuery(false, true)"
+                        ></MeasureDefinitionQueryCard>
+                    </TabPanel>
 
-                <TabPanel :disabled="metadataDisabled">
-                    <template #header>
-                        <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
-                    </template>
+                    <TabPanel :disabled="metadataDisabled">
+                        <template #header>
+                            <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
+                        </template>
 
-                    <MeasureDefinitionMetadataCard :currentRule="rule" :tipologiesType="domainsKpiRuleoutput" :domainsTemporalLevel="domainsTemporalLevel" :categories="domainsKpiMeasures" @touched="setTouched"></MeasureDefinitionMetadataCard>
-                </TabPanel>
-            </TabView>
-        </div>
-        <div v-if="aliasesVisible" class="listbox">
-            <MeasureDefinitionFilterList :header="$t('kpi.measureDefinition.alias')" :list="availableAliasList" listType="alias" @selected="setCodeInput($event)"></MeasureDefinitionFilterList>
-        </div>
-        <div v-if="placeholderVisible" class="listbox">
-            <MeasureDefinitionFilterList :header="$t('kpi.measureDefinition.placeholder')" :list="placeholdersList" listType="placeholder" @selected="setCodeInput($event)"></MeasureDefinitionFilterList>
+                        <MeasureDefinitionMetadataCard :currentRule="rule" :tipologiesType="domainsKpiRuleoutput" :domainsTemporalLevel="domainsTemporalLevel" :categories="domainsKpiMeasures" @touched="setTouched"></MeasureDefinitionMetadataCard>
+                    </TabPanel>
+                </TabView>
+            </div>
+            <div v-if="aliasesVisible" class="listbox p-d-flex p-flex-column">
+                <MeasureDefinitionFilterList :header="$t('kpi.measureDefinition.alias')" :list="availableAliasList" listType="alias" @selected="setCodeInput($event)"></MeasureDefinitionFilterList>
+            </div>
+            <div v-if="placeholderVisible" class="listbox p-d-flex p-flex-column">
+                <MeasureDefinitionFilterList :header="$t('kpi.measureDefinition.placeholder')" :list="placeholdersList" listType="placeholder" @selected="setCodeInput($event)"></MeasureDefinitionFilterList>
+            </div>
         </div>
     </div>
 
