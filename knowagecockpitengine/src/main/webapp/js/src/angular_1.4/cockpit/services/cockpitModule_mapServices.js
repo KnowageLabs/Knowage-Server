@@ -313,6 +313,7 @@
 			}
 
 			var currView = map.getView();
+			if (model.content.autoCentering) {
 				var extent = ol.extent.createEmpty();
 
 				// TODO : we do this every time for every layer: this is not the right position
