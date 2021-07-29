@@ -103,6 +103,11 @@ describe('Alert Definition kpi action', () => {
     it('shows a form if context broker is selected', async () => {
         const wrapper = factory()
         await wrapper.setProps({ selectedAction: { idAction: 86, thresholdValues: [] } })
+        expect(wrapper.vm.componentToShow).toBe('ContextBrokerCard')
     })
-    it('shows a selectable table if etl document is selected', () => {})
+    it('shows a selectable table if etl document is selected', async () => {
+        const wrapper = factory()
+        await wrapper.setProps({ selectedAction: { idAction: 63, thresholdValues: [] } })
+        expect(wrapper.vm.componentToShow).toBe('ExectuteEtlCard')
+    })
 })

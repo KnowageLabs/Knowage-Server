@@ -77,11 +77,6 @@ const mockedActionList = [
     }
 ]
 
-// jest.mock('axios', () => ({
-//     get: jest.fn(() => Promise.resolve({ selectedAlert: mockedAlert }, { actionList: mockedActionList })),
-//     delete: jest.fn(() => Promise.resolve())
-// }))
-
 jest.mock('axios')
 
 axios.get.mockImplementation((url) => {
