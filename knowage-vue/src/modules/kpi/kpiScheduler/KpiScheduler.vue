@@ -26,7 +26,7 @@
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
-                        <div class="kn-list-item" data-test="list-item">
+                        <div class="kn-list-item" :class="getBordersClass(slotProps.option.jobStatus)" data-test="list-item">
                             <div class="kn-list-item-text">
                                 <div>
                                     <span>{{ slotProps.option.name }}</span>
@@ -159,6 +159,16 @@ export default defineComponent({
                 this.$router.push('/kpi-scheduler')
                 this.loadPage()
             })
+        },
+        getBordersClass(jobStatus: string) {
+            switch (jobStatus) {
+                case 'SUSPENDED':
+                    return 'kn-list-item-warning'
+                case 'ACTIVE':
+                    return 'kn-list-item-success'
+                case 'EXPIRED':
+                    return 'kn-list-item-error'
+            }
         }
     }
 })
