@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,16 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.initializers.metadata;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.metadata.SbiTenant;
-import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -28,9 +23,14 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 /**
  * @author Salvo Lupo (salvatore.lupo@eng.it)
- * 
+ *
  */
 public class AlertActionInitializer extends SpagoBIInitializer {
 
@@ -88,7 +88,7 @@ public class AlertActionInitializer extends SpagoBIInitializer {
 		SbiAlertAction aAction = new SbiAlertAction();
 		aAction.setName((String) aActionSB.getAttribute("name"));
 		aAction.setClassName((String) aActionSB.getAttribute("className"));
-		aAction.setTemplate((String) aActionSB.getAttribute("template"));
+//		aAction.setTemplate((String) aActionSB.getAttribute("template"));
 		return aAction;
 	}
 

@@ -201,7 +201,12 @@ export default defineComponent({
                 { label: 'SPAGOBI.CACHE.HAZELCAST.LEASETIME', value: this.settings.hazelcastLeaseTime }
             ]
 
-            await axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/conf', { configurations }).then(() => {})
+            await axios
+                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/conf', { configurations: configurations })
+                .then()
+                .catch((error) => {
+                    console.log(error)
+                })
         },
         async saveDatasource() {
             await axios.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources', { ...this.datasource, writeDefault: true })
