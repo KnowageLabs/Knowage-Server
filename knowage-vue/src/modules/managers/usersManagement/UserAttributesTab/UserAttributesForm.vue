@@ -14,9 +14,10 @@
                         <div class="p-field" v-for="attribute in attributes" :key="attribute.attributeId">
                             <div class="p-inputgroup" v-if="modelValue[attribute.attributeId]">
                                 <span class="p-float-label">
-                                    <InputText class="p-inputtext p-component kn-material-input" :id="attribute.attributeId" @input="onInputChange(attribute, $event.target.value)" type="text" v-model="userAttributesForm[attribute.attributeId][attribute.attributeName]" />
+                                    <InputText :disabled="attribute.lovId" class="p-inputtext p-component kn-material-input" :id="attribute.attributeId" @input="onInputChange(attribute, $event.target.value)" type="text" v-model="userAttributesForm[attribute.attributeId][attribute.attributeName]" />
                                     <label :for="attribute.attributeName">{{ attribute.attributeName }}</label>
                                 </span>
+                                <Button v-if="attribute.lovId" icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click="openLovValuesDialog(attribute)" />
                                 <Button icon="pi pi-times-circle" class="p-button-text p-button-rounded p-button-plain" @click="eraseAttribute(attribute)" />
                             </div>
                         </div>
@@ -25,12 +26,15 @@
             </Card>
         </div>
     </div>
+    <UserAttributesLovValueDialog :attribute="selectedAttribute" :selection="initialSelection" :dialogVisible="lovDialogVisible" @saveLovValues="onSaveLovValues" @closeDialog=";(lovDialogVisible = false), (selectedAttribute = null)"> </UserAttributesLovValueDialog>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iAttribute } from '../UsersManagement'
+import UserAttributesLovValueDialog from './UserAttributesLovValueDialog.vue'
 
 export default defineComponent({
+    components: { UserAttributesLovValueDialog },
     props: {
         attributes: {
             type: Object as PropType<iAttribute[]>,
@@ -43,7 +47,10 @@ export default defineComponent({
     },
     data() {
         return {
-            userAttributesForm: {}
+            selectedAttribute: null as iAttribute | null,
+            lovDialogVisible: false,
+            userAttributesForm: {},
+            initialSelection: null as any
         }
     },
     watch: {
@@ -62,6 +69,35 @@ export default defineComponent({
         },
         eraseAttribute(attr: iAttribute) {
             this.onInputChange(attr, '')
+        },
+        openLovValuesDialog(attribute: iAttribute) {
+            this.selectedAttribute = attribute
+            let value: any = null
+            value = this.userAttributesForm[attribute.attributeId][attribute.attributeName]
+            if (value && attribute.multivalue) {
+                value = value.split(',')
+            }
+            this.initialSelection = value
+            this.lovDialogVisible = true
+        },
+        onSaveLovValues(selectedLovValues) {
+            console.log('selectedLovValues', selectedLovValues)
+            let newValue = ''
+            if (Array.isArray(selectedLovValues)) {
+                newValue = selectedLovValues.reduce((prev, curr, ind) => {
+                    prev += ind > 0 ? ',' : ''
+                    prev += curr.value
+                    return prev
+                }, '')
+                console.log('newValue', newValue)
+            } else {
+                newValue = selectedLovValues.value
+            }
+            if (this.selectedAttribute) {
+                this.onInputChange(this.selectedAttribute, newValue)
+            }
+            this.lovDialogVisible = false
+            this.selectedAttribute = null
         }
     }
 })

@@ -172,11 +172,15 @@ export default defineComponent({
         },
         getRoleId() {
             let defaultRoleId: any
-            this.selectedRoles.length == 1 ? (defaultRoleId = this.selectedRoles[0]) : (defaultRoleId = this.defaultRole)
-
-            if (typeof defaultRoleId === 'object') {
-                defaultRoleId = defaultRoleId.id
+            if (this.selectedRoles.length == 1) {
+                defaultRoleId = this.selectedRoles[0].id
+            } else {
+                defaultRoleId = null
             }
+
+            // if (typeof defaultRoleId === 'object') {
+            //     defaultRoleId = defaultRoleId.id
+            // }
             return defaultRoleId
         },
         formatUserObject() {
@@ -194,22 +198,31 @@ export default defineComponent({
         },
         async saveUser() {
             this.loading = true
-            this.formatUserObject()
-            this.saveOrUpdateUser(this.userDetailsForm)
-                .then(() => {
-                    this.dirty = false
-                    this.loadAllUsers()
-                    this.$store.commit('setInfo', {
-                        title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
-                        msg: this.userDetailsForm.id ? this.$t('common.toast.updateSuccess') : this.$t('managers.usersManagement.info.createMessage')
+            if (this.selectedRoles?.length > 1 && !this.defaultRole) {
+                this.$store.commit('setError', {
+                    title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
+                    msg: this.$t('managers.usersManagement.error.missingDefaultRole')
+                })
+                this.loading = false
+            } else {
+                this.formatUserObject()
+                console.log('SAVE OR UPDATE')
+                this.saveOrUpdateUser(this.userDetailsForm)
+                    .then(() => {
+                        this.dirty = false
+                        this.loadAllUsers()
+                        this.$store.commit('setInfo', {
+                            title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
+                            msg: this.userDetailsForm.id ? this.$t('common.toast.updateSuccess') : this.$t('managers.usersManagement.info.createMessage')
+                        })
                     })
-                })
-                .catch((error) => {
-                    console.log(error.response)
-                })
-                .finally(() => {
-                    this.loading = false
-                })
+                    .catch((error) => {
+                        console.log(error.response)
+                    })
+                    .finally(() => {
+                        this.loading = false
+                    })
+            }
         },
         onUserDelete(id: number) {
             this.loading = true

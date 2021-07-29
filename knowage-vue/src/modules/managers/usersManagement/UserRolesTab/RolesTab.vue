@@ -21,7 +21,20 @@
                     <p>
                         <Message severity="info">{{ $t('managers.usersManagement.defaultRoleInfo') }}</Message>
                     </p>
-                    <DataTable :value="rolesList" v-model:selection="selectedRoles" class="p-datatable-sm kn-table" dataKey="id" :paginator="true" :rows="20" responsiveLayout="stack" breakpoint="960px" @rowSelect="onRowSelect" @rowUnselect="onRowUnselect">
+                    <DataTable
+                        :value="rolesList"
+                        @row-select-all="onRowSelect"
+                        @row-unselect-all="onRowUnselect"
+                        v-model:selection="selectedRoles"
+                        class="p-datatable-sm kn-table"
+                        dataKey="id"
+                        :paginator="true"
+                        :rows="20"
+                        responsiveLayout="stack"
+                        breakpoint="960px"
+                        @rowSelect="onRowSelect"
+                        @rowUnselect="onRowUnselect"
+                    >
                         <template #empty>
                             {{ $t('common.info.noDataFound') }}
                         </template>
@@ -80,13 +93,26 @@ export default defineComponent({
     },
     methods: {
         onRowSelect() {
+            console.log('selectttttttttt')
             this.$emit('changed', this.selectedRoles)
         },
         onRowUnselect() {
+            console.log('unselectt')
             this.$emit('changed', this.selectedRoles)
+            if (this.selectedRoles?.length <= 1) {
+                this.defaultRole = null
+                this.onSelectDefaultRole()
+            }
         },
         onSelectDefaultRole() {
             this.$emit('setDefaultRole', this.defaultRole)
+        },
+        onSelectAll() {
+            this.$emit('changed', this.selectedRoles)
+            if (this.selectedRoles?.length <= 1) {
+                this.defaultRole = null
+                this.onSelectDefaultRole()
+            }
         }
     }
 })
