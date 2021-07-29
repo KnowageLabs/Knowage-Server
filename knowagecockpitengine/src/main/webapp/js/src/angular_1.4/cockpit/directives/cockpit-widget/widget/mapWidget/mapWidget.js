@@ -429,6 +429,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				tmpLayer.isHeatmap = false;
 			}
 			$scope.createLayerWithData(layerName, $scope.values[layerName], tmpLayer.isCluster, tmpLayer.isHeatmap);
+			$scope.thematizeMeasure(layerName, null);
 		}
 
 	    $scope.getOptions =function(){
@@ -1133,7 +1134,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    $scope.refreshStyle = function (layer, measure, config, configColumns, values, geoColumn){
 			//prepare object for thematization
 	    	var layerID = $scope.ngModel.id + "|" + config.name;
-	    	var elem = cockpitModule_mapServices.getColumnConfigByProp(configColumns, 'aliasToShow', measure);
+	    	var elem = null;
+
+			if (measure == null) {
+				elem = cockpitModule_mapServices.getColumnConfigByProp(configColumns, 'aliasToShow', measure);
+			} else {
+				var activeIndicator = cockpitModule_mapThematizerServices.getActiveIndicator();
+				elem = cockpitModule_mapServices.getColumnConfigByProp(configColumns, 'name', activeIndicator);
+			}
+
 	    	if (elem){
 		    	cockpitModule_mapThematizerServices.setActiveIndicator(elem.name);
 		    	config.defaultIndicator = elem.name;
