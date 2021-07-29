@@ -1081,9 +1081,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 	    }
 
-	    $scope.toggleLayerExpanse = function(layer){
-	    	layer.expandedNav = !layer.expandedNav;
-	    }
+		$scope.toggleLayerExpanse = function(layer){
+			if ($scope.hasMeasures(layer)) {
+				layer.expandedNav = !layer.expandedNav;
+			} else {
+				layer.expandedNav = false;
+			}
+		}
 
 	    $scope.getLayerVisibility = function(n){
 	    	var l = $scope.getLayerByName(n);
@@ -1743,6 +1747,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		window.addEventListener('resize', function(){
 			setTimeout( function() { if ($scope.map) { $scope.map.updateSize(); } }, 200);
 		});
+
+		$scope.hasMeasures = function(layer) {
+			return layer.content.columnSelectedOfDataset.some(function(e) { return e.properties && e.properties.showMap == true; });
+		}
 
 	}
 
