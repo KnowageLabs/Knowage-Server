@@ -32,7 +32,7 @@ public class KNRM004Exception extends KnowageBusinessException {
 	 * User oriented description of the exception. It is usually prompted to the user. Instead the message passed to the constructor is developer oriented and
 	 * it should be just logged.
 	 */
-	private String description = "Impossible to create e new folder";
+	private String description = "Impossible to create a new folder";
 
 	/*
 	 * A list of possible solutions to the problem that have caused the exception

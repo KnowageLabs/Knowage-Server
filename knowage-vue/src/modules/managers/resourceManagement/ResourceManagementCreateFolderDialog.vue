@@ -1,10 +1,10 @@
 <template>
-	<Dialog class="kn-dialog--toolbar--primary createFolderDialog" v-bind:visible="visibility" footer="footer" :header="$t('language.languageSelection')" :closable="false" modal>
+	<Dialog class="kn-dialog--toolbar--primary createFolderDialog" v-bind:visible="visibility" footer="footer" :header="$t('managers.resourceManagement.createFolder')" :closable="false" modal>
 		<Breadcrumb :home="home" :model="items"> </Breadcrumb>
 		<div class="createFolderDialogContent">
 			<span class="p-float-label">
 				<InputText class="folderNameInputText" type="text" v-model="folderName" />
-				<label class="kn-material-input-label" for="label">{{ $t('importExport.foldernamePlaceholder') }}</label>
+				<label class="kn-material-input-label" for="label">{{ $t('managers.resourceManagement.foldernamePlaceholder') }}</label>
 			</span>
 		</div>
 		<template #footer>

@@ -627,4 +627,21 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		return MODELS;
 	}
 
+	@Override
+	public boolean updateFolder(Path path, String folderName, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM004Exception {
+		boolean updated = false;
+
+		File fromDirectory = getWorkBaseDirByPath(path.toString(), profile).toFile();
+		File toDirectory = getWorkBaseDirByPath(path.getParent().resolve(folderName).toString(), profile).toFile();
+
+		if (toDirectory.exists()) {
+			String message = "Destination folder already existing";
+			throw new KNRM004Exception(message);
+		}
+
+		updated = fromDirectory.renameTo(toDirectory);
+
+		return updated;
+	}
+
 }
