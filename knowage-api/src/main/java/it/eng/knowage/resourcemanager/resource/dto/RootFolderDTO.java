@@ -17,25 +17,26 @@
  */
 package it.eng.knowage.resourcemanager.resource.dto;
 
+import java.util.ArrayList;
+
 public class RootFolderDTO {
 
-	private FolderDTO root;
+	private ArrayList<FolderDTO> root;
 
 	public RootFolderDTO() {
 		super();
 	}
 
-	public RootFolderDTO(FolderDTO subfolder) {
+	public RootFolderDTO(ArrayList<FolderDTO> root) {
 		super();
-		this.root = subfolder;
-
+		this.root = root;
 	}
 
-	public FolderDTO getRoot() {
+	public ArrayList<FolderDTO> getRoot() {
 		return root;
 	}
 
-	public void setRoot(FolderDTO root) {
+	public void setRoot(ArrayList<FolderDTO> root) {
 		this.root = root;
 	}
 

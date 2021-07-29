@@ -113,13 +113,11 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			parentFolder.setRelativePath("");
 			parentFolder.setKey(HMACUtilities.getKeyHashedValue(fullP.toString()));
 
-			FolderDTO mylist = null;
-			mylist = createTree(parentFolder, profile, path, 0);
-			newRootFolder = new RootFolderDTO(mylist);
+			FolderDTO mylist = createTree(parentFolder, profile, path, 0);
+			ArrayList<FolderDTO> nodes = new ArrayList<FolderDTO>();
+			nodes.add(mylist);
+			newRootFolder = new RootFolderDTO(nodes);
 
-			String rootFolder = fullP.toString().replace(fullP.getParent().toString(), "");
-			rootFolder = rootFolder.substring(rootFolder.lastIndexOf(File.separator) + 1);
-			newRootFolder.getRoot().setLabel(rootFolder);
 			LOGGER.debug("Finished resource path json tree");
 		} catch (IOException e) {
 			LOGGER.error("[ResourceManagerAPIImpl], [getFolders], ", e);
@@ -166,7 +164,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 					Path modelsPath = getWorkDirectory(profile).resolve(MODELS);
 
 					boolean modelFolder = path.relativize(modelsPath).getNameCount() == 1;
-					String relativePath = currentRelativePath + File.separator + fileName;
+					String relativePath = Paths.get(currentRelativePath).resolve(fileName).toString();
 					folder.setRelativePath(relativePath);
 
 					int nextLevel = level + 1;
@@ -337,12 +335,15 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		}
 		if (relativePath == null) {
 			RootFolderDTO folders = getFolders(profile, getBuondedBasePath());
-			FolderDTO node = findNode(folders.getRoot(), key);
-			relativePath = node.getRelativePath();
-			HashMap<String, Object> m = new HashMap<String, Object>();
-			m.put("relativePath", relativePath);
-			m.put("level", node.getLevel());
-			cachedNodesInfo.put(key, m);
+			for (FolderDTO folder : folders.getRoot()) {
+
+				FolderDTO node = findNode(folder, key);
+				relativePath = node.getRelativePath();
+				HashMap<String, Object> m = new HashMap<String, Object>();
+				m.put("relativePath", relativePath);
+				m.put("level", node.getLevel());
+				cachedNodesInfo.put(key, m);
+			}
 
 		}
 		return relativePath;
@@ -564,7 +565,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	private boolean isStartingFromModel(Path path, SpagoBIUserProfile profile) throws KNRM001Exception {
 		Path workModelDir = getWorkDirectory(profile);
-		Path modelPath = Paths.get(workModelDir + File.separator + getBuondedBasePath());
+		Path modelPath = workModelDir.resolve(getBuondedBasePath());
 		return path.startsWith(modelPath);
 	}
 
@@ -573,7 +574,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		MetadataDTO metadata = null;
 		try {
 			Path workPath = getWorkBaseDirByPath(path, profile);
-			Path totalPath = Paths.get(getTotalPath(path, profile) + File.separator + METADATA_JSON);
+			Path totalPath = getTotalPath(path, profile).resolve(METADATA_JSON);
 
 			if (isStartingFromModel(workPath, profile) && canSee(workPath, profile)) {
 				ObjectMapper mapper = new ObjectMapper();

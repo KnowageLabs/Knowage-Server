@@ -6,8 +6,8 @@
 			</template>
 		</FileUpload>
 
-		<span class="inputFileToggle" v-if="this.uploadedFiles.length > 0">
-			<label for="active" class="kn-material-input-label p-ml-3"> {{ $t('managers.resourceManagement.extract') }}</label>
+		<span class="inputFileToggle" v-if="this.uploadedFiles.length == 1 && (this.uploadedFiles[0].type == 'application/zip' || this.uploadedFiles[0].type == 'application/x-zip-compressed')">
+			<label for="active" class="kn-material-input-label p-mr-3"> {{ $t('managers.resourceManagement.extract') }}</label>
 			<InputSwitch v-model="checked" />
 		</span>
 		<template #footer>
@@ -39,7 +39,7 @@
 		methods: {
 			closeDialog(): void {
 				this.$emit('update:visibility', false)
-				this.$emit('fileUploaded', true)
+				this.$emit('fileUploaded')
 			},
 			onDelete(idx) {
 				this.uploadedFiles.splice(idx)
@@ -69,7 +69,7 @@
 								if (response.data.errors) {
 									this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('managers.resourceManagement.upload.completedWithErrors') })
 								} else {
-									this.$store.commit('setInfo', { title: this.$t('common.error.uploading'), msg: this.$t('managers.resourceManagement.upload.completedWithErrors') })
+									this.$store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('common.toast.uploadSuccess') })
 								}
 							},
 							(error) => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })

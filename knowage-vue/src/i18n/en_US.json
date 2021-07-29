@@ -22,7 +22,8 @@
 			"tags": {
 				"tagIsNotValid": "Tag ({tag}) is not valid'"
 			},
-			"uploading": "Error uploading "
+			"uploading": "Error uploading ",
+			"deleting": "Error deleting"
 		},
 		"export": "export",
 		"image": "image",
@@ -57,7 +58,8 @@
 			"unsavedChangesHeader": "Unsaved changes",
 			"unsavedChangesMessage": "You have not saved your recent changes. Continue without saving ?",
 			"updateSuccess": "Item was updated successfully",
-			"updateTitle": "Updated"
+			"updateTitle": "Updated",
+			"uploadSuccess": "Item was uploaded successfully"
 		},
 		"type": "type",
 		"upload": "upload",
@@ -346,6 +348,7 @@
 			},
 			"createFolder": "Create folder",
 			"detailTitle": "Deta",
+			"extract": "Extract files",
 			"folderRenamedSuccessfully": "Folder successfully renamed",
 			"foldernamePlaceholder": "Enter foldername here",
 			"hint": "Click on a folder to navigate its content.<br>Click on <i class=\"fas fa-table\"></i> if you want to edit metadata.<br>Click on <i class=\"fa fa-download\"></i> to download folder and its content.<br>Click on <i class=\"fas fa-folder-plus\"></i> to create a new folder inside your current path.<br>Click on <i class=\"fas fa-upload\"></i> to upload file inside your current path.",

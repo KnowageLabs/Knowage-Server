@@ -1,5 +1,4 @@
 export interface iFolderTemplate {
-	root?: iFolderTemplate
 	key: String
 	label: String
 	icon?: String

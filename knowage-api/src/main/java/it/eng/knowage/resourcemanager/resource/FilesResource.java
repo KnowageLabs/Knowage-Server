@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,7 +94,6 @@ public class FilesResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<FileDTO> getFiles(@QueryParam("key") String key) throws KNRM001Exception, KNRM003Exception, KNRM002Exception {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
-
 		List<FileDTO> files = resourceManagerAPIservice.getListOfFiles(key, profile);
 		return files;
 	}
@@ -107,7 +107,7 @@ public class FilesResource {
 		List<String> listOfPaths = new ArrayList<String>();
 		String folderPath = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
 		for (String name : dto.getSelectedFilesNames()) {
-			listOfPaths.add(folderPath + File.separator + name);
+			listOfPaths.add(Paths.get(folderPath).resolve(name).toString());
 		}
 
 		if (listOfPaths.size() == 1) {
@@ -175,7 +175,7 @@ public class FilesResource {
 
 			if (null != fileName && !"".equalsIgnoreCase(fileName)) {
 
-				String path = resourceManagerAPIservice.getFolderByKey(key, profile) + File.separator + fileName;
+				String path = Paths.get(resourceManagerAPIservice.getFolderByKey(key, profile)).resolve(fileName).toString();
 
 				if (!Arrays.asList("application/x-zip-compressed", "application/zip").contains(mediaType.toString())) {
 					try (InputStream is = inputPart.getBody(InputStream.class, null)) {
@@ -191,7 +191,6 @@ public class FilesResource {
 
 						if (extract) {
 							resourceManagerAPIservice.importFileAndExtract(is, path, profile);
-
 						} else {
 							resourceManagerAPIservice.importFile(is, path, profile);
 						}
@@ -237,7 +236,7 @@ public class FilesResource {
 	// Common methods
 
 	@DELETE
-	@Path("/{path}")
+	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response delete(DownloadFilesDTO dto) {
 		Response response = null;
@@ -245,9 +244,9 @@ public class FilesResource {
 			SpagoBIUserProfile profile = businessContext.getUserProfile();
 			String path = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
 			for (String fileName : dto.getSelectedFilesNames()) {
-				String completePath = path + File.separator + fileName;
+				java.nio.file.Path completePath = java.nio.file.Paths.get(path).resolve(fileName);
 
-				boolean ok = resourceManagerAPIservice.delete(completePath, profile);
+				boolean ok = resourceManagerAPIservice.delete(completePath.toString(), profile);
 				if (ok)
 					response = Response.status(Response.Status.OK).build();
 				else {
