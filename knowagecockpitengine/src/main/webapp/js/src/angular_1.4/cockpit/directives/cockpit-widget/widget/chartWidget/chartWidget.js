@@ -895,7 +895,7 @@ function cockpitChartWidgetControllerFunction(
 			  		function aggregationRenderer(params) {
 			  			var aggregation = '<i class="fa fa-edit"></i> <i>'+params.value+'</i>';
 			  			changeAggregationOnSerie(params.data.alias, params.value);
-			  	        return params.data.fieldType == "MEASURE"  && !params.data.isCalculated ? aggregation : '';
+			  			return (params.data.fieldType == "MEASURE" && !params.data.isCalculated && !params.data.isFunction) ? aggregation : '';
 
 			  		}
 			  		function changeAggregationOnSerie(alias, aggFunc) {
@@ -1024,7 +1024,11 @@ function cockpitChartWidgetControllerFunction(
 			  				return '<calculated-field ng-model="localModel"  callback-update-grid="updateGrid()" callback-update-alias="updateAliasOnSerie(newAlias, oldAlias)" selected-item="'+params.rowIndex+'" additional-info="datasetAdditionalInfos"></calculated-field>' +
 			  				'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.alias+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
 			  			}
+			  			if(params.data.isFunction){
 
+			  				return '<catalog-function ng-model="localModel"  callback-update-grid="updateGrid()" callback-update-alias="updateAliasOnSerie(newAlias, oldAlias)" selected-item="'+params.rowIndex+'" additional-info="datasetAdditionalInfos"></catalog-function>' +
+			  				'<md-button class="md-icon-button" ng-click="deleteColumn(\''+params.data.alias+'\',$event)"><md-icon md-font-icon="fa fa-trash"></md-icon><md-tooltip md-delay="500">{{::translate.load("sbi.cockpit.widgets.table.column.delete")}}</md-tooltip></md-button>';
+			  			}
 			  		}
 
 			  		$scope.deleteColumn = function(rowName,event) {
@@ -1038,13 +1042,31 @@ function cockpitChartWidgetControllerFunction(
 		  				for(var k in $scope.localModel.columnSelectedOfDatasetAggregations){
 							if($scope.localModel.columnSelectedOfDatasetAggregations[k].alias == rowName) {
 								var item = $scope.localModel.columnSelectedOfDatasetAggregations[k];
-								var index=$scope.localModel.columnSelectedOfDatasetAggregations.indexOf(item);
-								$scope.localModel.columnSelectedOfDatasetAggregations.splice(index,1);
 							}
 						}
-						if($scope.localModel.settings && $scope.localModel.settings.sortingColumn && $scope.localModel.settings.sortingColumn == item.aliasToShow){
-							$scope.localModel.settings.sortingColumn = null;
-						}
+		  				if (!item.isFunction) {
+							var index=$scope.localModel.columnSelectedOfDatasetAggregations.indexOf(item);
+							$scope.localModel.columnSelectedOfDatasetAggregations.splice(index,1);
+							if($scope.localModel.settings && $scope.localModel.settings.sortingColumn && $scope.localModel.settings.sortingColumn == item.aliasToShow){
+								$scope.localModel.settings.sortingColumn = null;
+							}
+		  				} else {
+		  					//if column to be deleted belongs to a function, we must delete all the other columns belonging to that function as well
+		  					var id = item.boundFunction.id;
+			  				colsToRemove = [];
+			  				for (var i=0; i<$scope.localModel.columnSelectedOfDatasetAggregations.length; i++) {
+			  					var col = $scope.localModel.columnSelectedOfDatasetAggregations[i];
+			  					if (col.isFunction && col.boundFunction.id == id)
+			  						colsToRemove.push(col);
+			  				}
+			  				for (var j=0; j<colsToRemove.length; j++) {
+			  					var index=$scope.localModel.columnSelectedOfDatasetAggregations.indexOf(colsToRemove[j]);
+			  					$scope.localModel.columnSelectedOfDatasetAggregations.splice(index,1);
+			  					if($scope.localModel.settings && $scope.localModel.settings.sortingColumn && $scope.localModel.settings.sortingColumn == colsToRemove[j].aliasToShow){
+									$scope.localModel.settings.sortingColumn = null;
+								}
+			  				}
+		  				}
 		  			}
 
 			  		$scope.$watchCollection('localModel.columnSelectedOfDatasetAggregations',function(newValue,oldValue){
