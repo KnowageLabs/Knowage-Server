@@ -1,6 +1,6 @@
 <template>
 	<div class="managerDetail">
-		<Dialog class="kn-dialog--toolbar--primary knMetadataDialog" v-bind:visible="visibility" footer="footer" :header="$t('metadataDialog.title')" :closable="false" modal @id="loadMetadata">
+		<Dialog class="kn-dialog--toolbar--primary knMetadataDialog" v-bind:visible="visibility" footer="footer" :header="$t('managers.resourceManagement.metadata.dialog.title')" :closable="false" modal @id="loadMetadata">
 			<div class="p-grid p-m-3 p-fluid p-ai-center">
 				<span class="p-float-label p-col-4">
 					<InputText id="name" class="kn-material-input" type="text" v-model="metadata.name" @change="setDirty" />
@@ -41,24 +41,22 @@
 					</div>
 				</span>
 			</div>
-			<div class="p-col-12">
-				<Accordion @change="resetSearchFilter">
+			<span class="p-col-12">
+				<Accordion>
 					<AccordionTab :header="$t(descriptor.metadata.accuracyAndPerformance.label)">
-						<Textarea v-model="metadata.accuracyAndPerformance" class="kn-material-input metadataTextArea" style="resize:none" id="description" rows="3" @change="setDirty" />
+						<Textarea v-model="metadata.accuracyAndPerformance" class="kn-material-input metadataTextArea" style="resize:none" id="accuracyAndPerformance" rows="3" @change="setDirty" />
 					</AccordionTab>
 					<AccordionTab :header="$t(descriptor.metadata.usageOfTheModel.label)">
-						<Textarea v-model="metadata.usageOfTheModel" class="kn-material-input metadataTextArea" style="resize:none" id="description" rows="3" @change="setDirty" />
+						<Textarea v-model="metadata.usageOfTheModel" class="kn-material-input metadataTextArea" style="resize:none" id="usageOfTheModel" rows="3" @change="setDirty" />
 					</AccordionTab>
 					<AccordionTab :header="$t(descriptor.metadata.formatOfData.label)">
-						<Textarea v-model="metadata.formatOfData" class="kn-material-input metadataTextArea" style="resize:none" id="description" rows="3" @change="setDirty" />
+						<Textarea v-model="metadata.formatOfData" class="kn-material-input metadataTextArea" style="resize:none" id="formatOfData" rows="3" @change="setDirty" />
 					</AccordionTab>
 				</Accordion>
-			</div>
+			</span>
 			<template #footer>
+				<Button class="kn-button kn-button--secondary" @click="closeDialog">{{ $t('common.close') }} </Button>
 				<Button class="kn-button kn-button--primary" @click="saveMetadata" :disabled="!dirty"> {{ $t('common.save') }}</Button>
-				<Button class="kn-button kn-button--secondary" @click="closeDialog">
-					{{ $t('common.close') }}
-				</Button>
 			</template>
 		</Dialog>
 	</div>
@@ -76,6 +74,7 @@
 
 	import Accordion from 'primevue/accordion'
 	import AccordionTab from 'primevue/accordiontab'
+	import { iModelMetadataTemplate } from './ResourceManagement'
 
 	export default defineComponent({
 		name: 'metadata-dialog',
@@ -84,7 +83,7 @@
 			return {
 				dirty: false,
 				loading: true,
-				metadata: {},
+				metadata: {} as iModelMetadataTemplate,
 				checked: false,
 				descriptor: resourceManagementDescriptor
 			}
@@ -133,14 +132,14 @@
 						})
 						.then(() => {
 							this.$store.commit('setInfo', {
-								title: this.$t('common.toast.metadataTitle'),
-								msg: this.$t('common.toast.metadataUpdatedSuccessfully')
+								title: this.$t('common.toast.updateTitle'),
+								msg: this.$t('common.toast.updateSuccess')
 							})
 						})
-						.catch(() => {
+						.catch((error) => {
 							this.$store.commit('setError', {
-								title: this.$t('common.toast.metadataTitle'),
-								msg: this.$t('common.toast.metadataLoadingFailed')
+								title: this.$t('common.toast.updateTitle'),
+								msg: this.$t(error)
 							})
 						})
 				}
@@ -148,6 +147,21 @@
 			},
 			setDirty(): void {
 				this.dirty = true
+			},
+			uploadFile(event): void {
+				const reader = new FileReader()
+				let self = this
+				reader.addEventListener(
+					'load',
+					function() {
+						self.metadata.image = reader.result || ''
+					},
+					false
+				)
+				if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
+					reader.readAsDataURL(event.srcElement.files[0])
+					this.setDirty()
+				} else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
 			}
 		},
 		computed: {
@@ -168,18 +182,14 @@
 		display: none;
 	}
 	.knMetadataDialog {
-		min-width: 600px;
-		width: 600px;
-		max-width: 1200px;
-		min-height: 600px;
-		height: 600px;
-
 		&:deep(.p-dialog-content) {
-			min-width: 600px;
 			width: 600px;
+			min-width: 600px;
 			max-width: 1200px;
-			min-height: 600px;
+
 			height: 600px;
+			min-height: 600px;
+			max-height: 900px;
 		}
 
 		.p-fileupload-buttonbar {
@@ -196,6 +206,17 @@
 
 		.metadataTextArea {
 			width: 100%;
+		}
+		.imageContainer {
+			height: 100%;
+			.icon {
+				color: $color-secondary;
+			}
+			img {
+				height: auto;
+				max-height: 100%;
+				max-width: 100%;
+			}
 		}
 	}
 </style>

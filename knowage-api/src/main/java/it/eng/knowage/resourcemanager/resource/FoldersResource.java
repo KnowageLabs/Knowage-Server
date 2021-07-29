@@ -17,9 +17,9 @@
  */
 package it.eng.knowage.resourcemanager.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.error.KNRM001Exception;
 import it.eng.knowage.knowageapi.error.KNRM002Exception;
+import it.eng.knowage.knowageapi.error.KNRM004Exception;
 import it.eng.knowage.knowageapi.error.KNRM005Exception;
 import it.eng.knowage.knowageapi.error.KNRM008Exception;
 import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
@@ -92,16 +93,17 @@ public class FoldersResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createFolder(CreateFolderDTO dto) {
 		Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		try {
-			SpagoBIUserProfile profile = businessContext.getUserProfile();
 			String path = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
-			String completePath = "models";
 			if (path != null) {
-				completePath += File.separator + path + File.separator + dto.getFolderName();
-				boolean create = resourceManagerAPIservice.createFolder(completePath, profile);
+				java.nio.file.Path completePath = Paths.get(path).resolve(dto.getFolderName());
+				boolean create = resourceManagerAPIservice.createFolder(completePath.toString(), profile);
 				if (create)
 					response = Response.status(Response.Status.OK).build();
 			}
+		} catch (KNRM004Exception e) {
+			return Response.status(Response.Status.NOT_MODIFIED).entity(e.getMessage()).build();
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e.getMessage());
 		}
@@ -123,6 +125,28 @@ public class FoldersResource {
 		} catch (IOException e) {
 			throw new KnowageRuntimeException("Error calculating file size for " + exportArchive, e);
 		}
+	}
+
+	@POST
+	@Path("/update")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateName(CreateFolderDTO dto) {
+		Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		SpagoBIUserProfile profile = businessContext.getUserProfile();
+		try {
+			String path = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
+			if (path != null) {
+				java.nio.file.Path completePath = Paths.get(path);
+				boolean create = resourceManagerAPIservice.updateFolder(completePath, dto.getFolderName(), profile);
+				if (create)
+					response = Response.status(Response.Status.OK).build();
+			}
+		} catch (KNRM004Exception ex) {
+			response = Response.status(Response.Status.NOT_MODIFIED).entity(ex).build();
+		} catch (Exception e) {
+			throw new KnowageRuntimeException(e.getMessage());
+		}
+		return response;
 	}
 
 	// Common methods

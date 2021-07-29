@@ -8,7 +8,7 @@
 					</template>
 				</Toolbar>
 				<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-				<ResoruceManagementMetadataDialog v-model:visibility="displayMetadataDialog" v-model:id="metadataKey"></ResoruceManagementMetadataDialog>
+				<ResourceManagementMetadataDialog v-model:visibility="displayMetadataDialog" v-model:id="metadataKey"></ResourceManagementMetadataDialog>
 
 				<Tree id="folders-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" :filter="true" filterMode="lenient" data-test="functionality-tree" class="kn-tree kn-flex foldersTree" @node-select="showForm($event)" v-model:selectionKeys="selectedKeys">
 					<template #default="slotProps">
@@ -27,7 +27,7 @@
 									@click="openMetadataDialog(slotProps.node)"
 									:data-test="'move-up-button-' + slotProps.node.key"
 								/>
-								<Button icon="fa fa-download " v-tooltip.top="$t('managers.resourceManagement.download ')" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="downloadDirect(slotProps.node)" :data-test="'move-down-button-' + slotProps.node.key" />
+								<Button icon="fa fa-download " v-tooltip.top="$t('common.download')" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="downloadDirect(slotProps.node)" :data-test="'move-down-button-' + slotProps.node.key" />
 								<Button icon="far fa-trash-alt" v-tooltip.top="$t('common.delete')" class="p-button-text p-button-sm p-button-rounded p-button-plain  p-p-0" @click="showDeleteDialog(slotProps.node)" :data-test="'delete-button-' + slotProps.node.key" />
 							</div>
 						</div>
@@ -35,8 +35,8 @@
 				</Tree>
 			</div>
 			<div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-height-full-vertical">
-				<ResoruceManagementHint v-if="showHint" data-test="resourceManagement-hint"></ResoruceManagementHint>
-				<ResoruceManagementDetail v-if="formVisible" :folder="selectedFolder" :parentKey="folderParentKey" @touched="touched = true" @close="onClose" @inserted="loadPage($event)" @folderCreated="loadPage" @closed="switchToHint()" />
+				<ResourceManagementHint v-if="showHint" data-test="resourceManagement-hint"></ResourceManagementHint>
+				<ResourceManagementDetail v-if="formVisible" :folder="selectedFolder" :parentKey="folderParentKey" @touched="touched = true" @close="onClose" @inserted="loadPage($event)" @folderCreated="loadPage" @closed="switchToHint()" />
 			</div>
 		</div>
 	</div>
@@ -49,13 +49,13 @@
 	import Tree from 'primevue/tree'
 	import { iFolderTemplate } from '@/modules/managers/resourceManagement/ResourceManagement'
 	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
-	import ResoruceManagementMetadataDialog from '@/modules/managers/resourceManagement/ResoruceManagementMetadataDialog.vue'
-	import ResoruceManagementDetail from './ResourceManagementDetail.vue'
-	import ResoruceManagementHint from './ResourceManagementHint.vue'
+	import ResourceManagementMetadataDialog from '@/modules/managers/resourceManagement/ResourceManagementMetadataDialog.vue'
+	import ResourceManagementDetail from './ResourceManagementDetail.vue'
+	import ResourceManagementHint from './ResourceManagementHint.vue'
 
 	export default defineComponent({
 		name: 'resource-management',
-		components: { ResoruceManagementMetadataDialog, ResoruceManagementDetail, ResoruceManagementHint, Tree },
+		components: { ResourceManagementMetadataDialog, ResourceManagementDetail, ResourceManagementHint, Tree },
 		data() {
 			return {
 				descriptor,
@@ -69,7 +69,7 @@
 				buttonsVisible: [],
 				showHint: true,
 				touched: false,
-				selectedFolder: {},
+				selectedFolder: {} as iFolderTemplate,
 				formVisible: false
 			}
 		},
@@ -77,12 +77,38 @@
 			this.loadPage()
 		},
 		methods: {
-			toggleInput(node) {
-				if (node.edit) {
-					if (node.label !== node.edit) {
-						console.log('cuccu')
+			async toggleInput(node) {
+				if (node.edit && node.label !== node.edit) {
+					if (this.selectedFolder) {
+						let obj = {} as JSON
+						obj['key'] = this.selectedFolder.key
+						obj['folderName'] = node.label
+						this.loading = true
+						await axios
+							.post(process.env.VUE_APP_API_PATH + `2.0/resources/folders/update`, obj, {
+								responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
+
+								headers: {
+									'Content-Type': 'application/json'
+								}
+							})
+							.then(() => {
+								delete node.edit
+								this.$store.commit('setInfo', {
+									title: this.$t('managers.resoruceManagement.renameFolder'),
+									msg: this.$t('managers.resoruceManagement.folderRenamedSuccessfully')
+								})
+							})
+							.catch((error) => {
+								this.$store.commit('setError', {
+									title: this.$t('managers.resoruceManagement.renameFolder'),
+									msg: this.$t(error)
+								})
+							})
+							.finally(() => {
+								this.loading = false
+							})
 					}
-					delete node.edit
 				} else node.edit = node.label
 			},
 			getNodes(respNode) {
@@ -155,7 +181,6 @@
 					})
 					.finally(() => (this.loading = false))
 			},
-
 			setDirty(): void {
 				this.dirty = true
 			},
@@ -198,7 +223,7 @@
 				this.dirty = false
 
 				this.touched = false
-				this.selectedFolder = {}
+				this.selectedFolder = {} as iFolderTemplate
 			}
 		}
 	})

@@ -60,6 +60,7 @@
 			"updateTitle": "Updated"
 		},
 		"type": "type",
+		"upload": "upload",
 		"uploading": "Uploading",
 		"validation": {
 			"maximumCharacters": "The maximum length allowed is {max}",
@@ -343,8 +344,16 @@
 				"name": "Name",
 				"size": "Size"
 			},
+			"createFolder": "Create folder",
+			"detailTitle": "Deta",
+			"folderRenamedSuccessfully": "Folder successfully renamed",
+			"foldernamePlaceholder": "Enter foldername here",
+			"hint": "Click on a folder to navigate its content.<br>Click on <i class=\"fas fa-table\"></i> if you want to edit metadata.<br>Click on <i class=\"fa fa-download\"></i> to download folder and its content.<br>Click on <i class=\"fas fa-folder-plus\"></i> to create a new folder inside your current path.<br>Click on <i class=\"fas fa-upload\"></i> to upload file inside your current path.",
 			"metadata": {
 				"accuracyAndPerformance": "Accuracy and performance",
+				"dialog": {
+					"title": "Metadata"
+				},
 				"formatOfData": "Format of data input and related output",
 				"openSource": "Is open source",
 				"typeOfAnalytics": {
@@ -357,7 +366,11 @@
 				},
 				"usageOfTheModel": "Usage of the model",
 				"version": "Version"
-			}
+			},
+			"openMetadata": "Open metadata",
+			"renameFolder": "Rename folder",
+			"selectedFiles": "One file selected | {num} files selected",
+			"title": "Resource management"
 		},
 		"rolesManagement": {
 			"authorizations": {

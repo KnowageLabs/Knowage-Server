@@ -1,6 +1,6 @@
 <template>
 	<Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-		<template #left>{{ $t('managers.resourceManagement.detailTitle') }}</template>
+		<template #left>{{ folder.label }}</template>
 
 		<template #right>
 			<Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDetail()" />
@@ -10,7 +10,7 @@
 	<Breadcrumb :home="home" :model="items" class="resourceManagerBreadcrumb"> </Breadcrumb>
 
 	<Toolbar v-if="selectedFiles.length > 0" class="kn-toolbar kn-toolbar--default p-m-0">
-		<template #left>{{ $t('managers.resourceManagement.selectedFiles', { num: selectedFiles.length }) }}</template>
+		<template #left>{{ $tc('managers.resourceManagement.selectedFiles', selectedFiles.length, { num: selectedFiles.length }) }}</template>
 		<template #right>
 			<Button icon="fas fa-download" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="downloadFiles" :disabled="invalid" />
 			<Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="showDeleteDialog" />
@@ -46,9 +46,9 @@
 								<InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0"
 							/></span>
 						</div>
-						<div v-if="selectedFiles.length == 0" class="p-col p-d-flex p-jc-center p-ai-center">
-							<Button icon="fas fa-folder-plus" class="p-button-text p-button-rounded p-button-plain" @click="openCreateFolderDialog" :disabled="invalid" />
-							<Button icon="fas fa-upload" class="p-button-text p-button-rounded p-button-plain" @click="openImportFileDialog" />
+						<div class="p-col p-d-flex p-jc-center p-ai-center">
+							<Button icon="fas fa-folder-plus" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openCreateFolderDialog" :disabled="selectedFiles.length > 0" />
+							<Button icon="fas fa-upload" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openImportFileDialog" :disabled="selectedFiles.length > 0" />
 						</div>
 					</div>
 				</template>
@@ -89,7 +89,7 @@
 	import { formatDate } from '@/helpers/commons/localeHelper'
 	import Breadcrumb from 'primevue/breadcrumb'
 	import ResourceManagementCreateFolderDialog from './ResourceManagementCreateFolderDialog.vue'
-	import ResourceManagementImportFileDialog from './ResoruceManagementImportFileDialog.vue'
+	import ResourceManagementImportFileDialog from './ResourceManagementImportFileDialog.vue'
 	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
 
 	export default defineComponent({
@@ -216,6 +216,7 @@
 			loadSelectedFolder() {
 				this.loading = true
 				this.files = []
+				this.selectedFiles = []
 				if (this.folder) {
 					axios
 						.get(process.env.VUE_APP_API_PATH + `2.0/resources/files` + '?key=' + this.folder.key)
@@ -307,7 +308,12 @@
 
 <style scoped lang="scss">
 	.resourceManagerBreadcrumb {
-		border: none;
+		border-top: none;
+		border-left: none;
+		border-right: none;
+		border-bottom: black;
 		border-radius: 0;
+
+		border-width: 0 0 1px 0;
 	}
 </style>

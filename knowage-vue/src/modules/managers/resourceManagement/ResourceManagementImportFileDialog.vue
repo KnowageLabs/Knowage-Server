@@ -89,6 +89,7 @@
 </script>
 <style lang="scss">
 	.importFileDialog {
+		position: relative;
 		min-width: 600px;
 		width: 60%;
 		max-width: 1200px;
@@ -103,6 +104,10 @@
 			.p-fileupload-choose {
 				@extend .kn-button--primary;
 			}
+		}
+
+		.p-dialog-content {
+			position: relative;
 		}
 
 		.functionalityTable {
