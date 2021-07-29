@@ -10,21 +10,70 @@ import Dialog from 'primevue/dialog'
 import MultiSelect from 'primevue/multiselect'
 import ColorPicker from 'primevue/colorpicker'
 import Chip from 'primevue/chip'
+import PrimeVue from 'primevue/config'
 
-const mockedAction = {
-    jsonActionParameters: {},
-    idAction: null,
-    thresholdData: null
+const mocedKpi = {
+    threshold: {
+        id: 49,
+        description: 'Threshold_1',
+        name: 'Threshold_1 (Clone)',
+        typeId: 75,
+        type: 'Range',
+        thresholdValues: [
+            {
+                id: 153,
+                position: 1,
+                label: 'OK',
+                color: '#007AFF',
+                severityId: 78,
+                severityCd: 'URGENT',
+                minValue: 0.0,
+                includeMin: false,
+                maxValue: 30.0,
+                includeMax: true
+            },
+            {
+                id: 154,
+                position: 2,
+                label: 'Medium',
+                color: '#FFFF00',
+                severityId: 80,
+                severityCd: 'MEDIUM',
+                minValue: 30.0,
+                includeMin: false,
+                maxValue: 80.0,
+                includeMax: true
+            },
+            {
+                id: 155,
+                position: 3,
+                label: 'KO',
+                color: '#FF0000',
+                severityId: 81,
+                severityCd: 'LOW',
+                minValue: 80.0,
+                includeMin: false,
+                maxValue: 100.0,
+                includeMax: true
+            }
+        ]
+    }
 }
 
-const factory = (selectedAction, dialogVisible) => {
+jest.mock('axios', () => ({
+    get: jest.fn(() => Promise.resolve({ data: [] })),
+    delete: jest.fn(() => Promise.resolve())
+}))
+
+const factory = () => {
     return mount(AddActionDialog, {
         props: {
-            selectedAction,
-            dialogVisible
+            selectedAction: { idAction: 62, thresholdValues: [] },
+            dialogVisible: true,
+            kpi: mocedKpi
         },
         global: {
-            plugins: [],
+            plugins: [PrimeVue],
             stubs: {
                 Button,
                 Card,
@@ -35,7 +84,10 @@ const factory = (selectedAction, dialogVisible) => {
                 Dialog,
                 MultiSelect,
                 ColorPicker,
-                Chip
+                Chip,
+                ExectuteEtlCard: true,
+                ContextBrokerCard: true,
+                SendMailCard: true
             },
             mocks: {
                 $t: (msg) => msg
@@ -45,9 +97,12 @@ const factory = (selectedAction, dialogVisible) => {
 }
 describe('Alert Definition kpi action', () => {
     it('shows a wysiwyg editor if send mail is selected', () => {
-        const wrapper = factory(mockedAction, true)
-        console.log(wrapper.html())
+        const wrapper = factory()
+        expect(wrapper.vm.componentToShow).toBe('SendMailCard')
     })
-    it('shows a form if context broker is selected', () => {})
+    it('shows a form if context broker is selected', async () => {
+        const wrapper = factory()
+        await wrapper.setProps({ selectedAction: { idAction: 86, thresholdValues: [] } })
+    })
     it('shows a selectable table if etl document is selected', () => {})
 })

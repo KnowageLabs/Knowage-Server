@@ -13,7 +13,7 @@
                 </template>
 
                 <template #right>
-                    <Button :label="$t('kpi.alert.addAction')" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showDialog')" />
+                    <Button :label="$t('kpi.alert.addAction')" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showDialog')" data-test="add-action-button" />
                 </template>
             </Toolbar>
             <div class="p-grid p-mt-2">

@@ -80,6 +80,23 @@ export default defineComponent({
             loading: false
         }
     },
+    computed: {
+        componentToShow(): string {
+            switch (this.action.idAction) {
+                case 63: {
+                    return 'ExectuteEtlCard'
+                }
+                case 86: {
+                    return 'ContextBrokerCard'
+                }
+                case 62: {
+                    return 'SendMailCard'
+                }
+                default:
+                    return ''
+            }
+        }
+    },
     created() {
         this.loadAction()
         this.loadEtlDocuments()
