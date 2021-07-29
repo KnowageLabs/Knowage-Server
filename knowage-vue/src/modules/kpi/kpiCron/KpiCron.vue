@@ -67,7 +67,7 @@
                 <div class="p-mr-4">
                     <label for="endDate" class="kn-material-input-label p-m-2"> {{ $t('cron.repeatInterval') + ':' }}</label>
                     <span>
-                        <Dropdown id="repeatInterval" class="kn-material-input" :style="cronDescriptor.intervalInput.style" optionLabel="name" optionValue="value" v-model="repeatInterval" :options="cronDescriptor.intervals" @change="updateCronInterval" />
+                        <Dropdown id="repeatInterval" class="kn-material-input" :style="kpiCronDescriptor.intervalInput.style" optionLabel="name" optionValue="value" v-model="repeatInterval" :options="kpiCronDescriptor.intervals" @change="updateCronInterval" />
                     </span>
                 </div>
 
@@ -78,7 +78,7 @@
                     </span>
                 </div>
                 <div v-else-if="repeatInterval === 'week'" class="p-d-flex p-m-2">
-                    <div v-for="(day, index) in cronDescriptor.weeklyOptions" :key="index">
+                    <div v-for="(day, index) in kpiCronDescriptor.weeklyOptions" :key="index">
                         <span class="p-m-1">{{ day.name + ':' }}</span>
                         <Checkbox :value="day.value" v-model="selectedDays" @click="updateCronDays" />
                     </div>
@@ -110,9 +110,9 @@
                         </div>
                         <div v-else class="p-mt-2">
                             <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.theWeek') }}</label>
-                            <Dropdown class="kn-material-input" :style="cronDescriptor.advancedDayDropdown.style" optionLabel="name" optionValue="value" v-model="parameterDay" :options="cronDescriptor.dayOptions" @change="updateCronAdvancedDayRepetition(true)" />
+                            <Dropdown class="kn-material-input" :style="kpiCronDescriptor.advancedDayDropdown.style" optionLabel="name" optionValue="value" v-model="parameterDay" :options="kpiCronDescriptor.dayOptions" @change="updateCronAdvancedDayRepetition(true)" />
                             <label for="parameterDay" class="kn-material-input-label p-m-2"> {{ $t('cron.inDay') }}</label>
-                            <MultiSelect class="kn-material-input" optionLabel="name" optionValue="value" v-model="selectedDays" :options="cronDescriptor.weeklyOptions" @change="updateCronAdvancedDayRepetition" />
+                            <MultiSelect class="kn-material-input" optionLabel="name" optionValue="value" v-model="selectedDays" :options="kpiCronDescriptor.weeklyOptions" @change="updateCronAdvancedDayRepetition" />
                         </div>
                     </div>
                 </div>
@@ -131,7 +131,7 @@ import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
-import cronDescriptor from './CronDescriptor.json'
+import kpiCronDescriptor from './KpiCronDescriptor.json'
 import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
@@ -153,7 +153,7 @@ export default defineComponent({
     emits: ['touched', 'cronValid'],
     data() {
         return {
-            cronDescriptor,
+            kpiCronDescriptor,
             currentFrequency: {} as any,
             startDate: null as Date | null,
             endDate: null as Date | null,
@@ -223,7 +223,7 @@ export default defineComponent({
                 this.parameter = '1' as any
                 this.updateCronSimpleMonthRepetition(false)
             } else {
-                this.parameterOptions = this.cronDescriptor.monthOptions
+                this.parameterOptions = this.kpiCronDescriptor.monthOptions
                 delete this.currentFrequency.cron.parameter.numRepetition
                 this.parameter = null
                 this.updateCronAdvancedMonthRepetition(false)
@@ -236,7 +236,7 @@ export default defineComponent({
                 delete this.currentFrequency.cron.parameter.days
                 this.updateCronSimpleDayRepetition(false)
             } else {
-                this.dayOptions = this.cronDescriptor.weeklyOptions
+                this.dayOptions = this.kpiCronDescriptor.weeklyOptions
                 delete this.currentFrequency.cron.parameter.dayRepetition
                 this.updateCronAdvancedDayRepetition(false)
             }
