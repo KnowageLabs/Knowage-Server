@@ -22,7 +22,7 @@ const store = createStore({
             state.error = { title: error.title, msg: error.msg }
         },
         setInfo(state, info) {
-            state.info = { title: info.title, msg: info.msg, duration: info.duration || 5000 }
+            state.info = info
         },
         setLoading(state, loading) {
             state.loading = loading
