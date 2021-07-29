@@ -200,8 +200,8 @@ export default defineComponent({
                     this.dirty = false
                     this.loadAllUsers()
                     this.$store.commit('setInfo', {
-                        title: this.$t('managers.usersManagement.info.createTitle'),
-                        msg: this.$t('managers.usersManagement.info.createMessage')
+                        title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
+                        msg: this.userDetailsForm.id ? this.$t('common.toast.updateSuccess') : this.$t('managers.usersManagement.info.createMessage')
                     })
                 })
                 .catch((error) => {

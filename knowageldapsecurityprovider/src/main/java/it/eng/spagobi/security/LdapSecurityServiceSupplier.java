@@ -141,7 +141,7 @@ public class LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 		return propertiesAreValid;
 	}
 
-	protected SpagoBIUserProfile getUserProfile(String userId) {
+	private SpagoBIUserProfile getUserProfile(String userId) {
 
 		Assert.assertNotNull(userId, "User id in input cannot be null");
 

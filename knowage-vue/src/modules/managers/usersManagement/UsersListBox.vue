@@ -70,10 +70,10 @@ export default defineComponent({
         },
         async onUserDelete(id: number) {
             this.$confirm.require({
-                message: this.$t('managers.usersManagement.confirmDeleteMessage', {
+                message: this.$t('common.toast.deleteMessage', {
                     item: 'user'
                 }),
-                header: this.$t('common.confirmation'),
+                header: this.$t('common.toast.deleteConfirmTitle'),
                 icon: 'pi pi-exclamation-triangle',
                 accept: async () => {
                     this.$emit('deleteUser', id)

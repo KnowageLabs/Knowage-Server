@@ -39,6 +39,8 @@ public interface SsoServiceInterface {
 	public static final String PASSWORD_MODE_ENCRYPTED = "ENC";
 	public static final String SILENT_LOGIN = "SILENT_LOGIN";
 	public static final String PYTHON_SCRIPT = "script";
+	public static final String DISTINGUISH_NAME = "DISTINGUISH_NAME";
+	public static final String PASSWORD = "PASSWORD";
 
 	/**
 	 *

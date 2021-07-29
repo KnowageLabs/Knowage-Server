@@ -1,13 +1,14 @@
 <template>
-    <TabView @tab-click="switchTabConfirm($event.index)" v-model:activeIndex="activeTab" lazy data-test="tab-view" class="internationalization-management kn-tab">
-        <TabPanel v-for="language in languages" :key="language">
-            <template #header>
-                {{ language.language }}
-                <span v-if="language.defaultLanguage">{{ $t('managers.internationalizationManagement.defaultLanguage') }}</span>
-            </template>
-            <div class="p-fluid card">
+    <div class="kn-page">
+        <TabView @tab-click="switchTabConfirm($event.index)" v-model:activeIndex="activeTab" lazy data-test="tab-view" class="internationalization-management kn-tab kn-page-content">
+            <TabPanel v-for="language in languages" :key="language">
+                <template #header>
+                    {{ language.language }}
+                    <span v-if="language.defaultLanguage">{{ $t('managers.internationalizationManagement.defaultLanguage') }}</span>
+                </template>
+
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <DataTable v-if="!loading" editMode="cell" :value="messages" :loading="loading" class="p-datatable kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
+                <DataTable v-if="!loading" editMode="cell" :value="messages" :loading="loading" class="p-datatable kn-table" dataKey="id" responsiveLayout="stack" :scrollable="true" scrollHeight="flex" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
                     <template #header>
                         <div class="table-header p-d-flex">
                             <span class="p-input-icon-left p-mr-3" :style="intDescriptor.headerStyles.searchBoxStyle">
@@ -56,9 +57,9 @@
                         </template>
                     </Column>
                 </DataTable>
-            </div>
-        </TabPanel>
-    </TabView>
+            </TabPanel>
+        </TabView>
+    </div>
 </template>
 
 <script lang="ts">
@@ -159,6 +160,7 @@ export default defineComponent({
 
         switchTabConfirm(index) {
             if (!this.dirty) {
+                this.showOnlyEmptyFields = false
                 this.activeTab = index
                 this.previousActiveTab = this.activeTab
                 this.selectLanguage(index)
@@ -168,6 +170,7 @@ export default defineComponent({
                     header: this.$t('common.toast.unsavedChangesHeader'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
+                        this.showOnlyEmptyFields = false
                         this.dirty = false
                         this.activeTab = index
                         this.selectLanguage(index)

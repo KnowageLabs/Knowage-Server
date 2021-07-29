@@ -13,5 +13,6 @@ export interface iNode {
     parentId?: number,
     label: string,
     children?: iNode[],
+    selectable?: Boolean,
     data: string | any
 }
