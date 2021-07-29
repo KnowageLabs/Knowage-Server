@@ -35,6 +35,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { VCodeMirror } from 'vue3-code-mirror'
+import { setMathematicaModified } from '@/helpers/commons/codeMirrorMathematicaModifiedHelper'
 import tabViewDescriptor from '../KpiDefinitionDetailDescriptor.json'
 import CodeMirror from 'codemirror'
 import Dialog from 'primevue/dialog'
@@ -78,7 +79,9 @@ export default defineComponent({
             cursorPosition: null
         }
     },
-
+    created() {
+        setMathematicaModified()
+    },
     mounted() {
         if (this.selectedKpi) {
             this.kpi = this.selectedKpi as any
