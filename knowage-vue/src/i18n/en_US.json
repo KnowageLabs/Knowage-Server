@@ -1,8 +1,12 @@
 {
     "common": {
+        "apply": "Apply",
+        "author": "Author",
         "back": "back",
         "cancel": "cancel",
+        "category": "Category",
         "choose": "choose",
+        "clone": "Clone",
         "close": "close",
         "codingLanguages": {
             "css": "css",
@@ -11,6 +15,7 @@
             "python": "python"
         },
         "collapse": "collapse",
+        "copyOf": "Copy of",
         "delete": "delete",
         "deleteAll": "delete all",
         "description": "description",
@@ -37,13 +42,17 @@
             "noElementSelected": "No element selected"
         },
         "information": "information",
+        "kpi": "KPI",
         "label": "label",
         "loggedUser": "logged user",
         "name": "name",
         "new": "new",
         "next": "next",
+        "reused": "Reused",
+        "run": "Run",
         "save": "save",
         "search": "search",
+        "sort": "sort",
         "table": {
             "footer": {
                 "paginated": "Showing {first} to {last} of {totalRecords}"
@@ -53,6 +62,7 @@
         "tenant": "tenant",
         "test": "test",
         "toast": {
+            "cloneConfirmTitle": "Confirm item clone?",
             "createTitle": "Created",
             "deleteConfirmTitle": "Confirm Delete?",
             "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
@@ -74,6 +84,50 @@
         },
         "version": "version",
         "warning": {}
+    },
+    "cron": {
+        "april": "April",
+        "august": "August",
+        "day": "Day",
+        "days": "Days",
+        "december": "December",
+        "endDate": "End date",
+        "everyHour": "Every Hour",
+        "everyMinute": "Every Minute",
+        "everyMonth": "Every Month",
+        "everyWeekday": "Every Weekday",
+        "everyday": "Every Day",
+        "february": "February",
+        "friday": "Friday",
+        "hour": "Hour",
+        "hours": "Hours",
+        "january": "January",
+        "july": "July",
+        "june": "June",
+        "march": "March",
+        "may": "May",
+        "minute": "Minute",
+        "minutes": "Minutes",
+        "monday": "Monday",
+        "month": "Month",
+        "months": "Months",
+        "nextExecution": "Next execution",
+        "november": "November",
+        "october": "October",
+        "saturday": "Saturday",
+        "selectDays": "Select day(s)",
+        "selectHours": "Select hour(s)",
+        "selectMinutes": "Select minute(s)",
+        "selectMonths": "Select month(s)",
+        "selectWeekdays": "Select weekday(s)",
+        "september": "September",
+        "startDate": "Start date",
+        "sunday": "Sunday",
+        "thursday": "Thursday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "weekday": "Weekday",
+        "weekdays": "Weekdays"
     },
     "downloadsDialog": {
         "columns": {
@@ -132,6 +186,7 @@
         "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
     },
+    "kpi": {},
     "language": {
         "en_GB": "english (GB)",
         "en_US": "english (US)",
