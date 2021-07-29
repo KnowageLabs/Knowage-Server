@@ -1,0 +1,84 @@
+{
+    "conditionDialog": {
+        "style": {
+            "min-width": "60%"
+        }
+    },
+    "input": {
+        "filterOperation": {
+            "style": {
+                "margin": "0.5rem",
+                "width": "50%"
+            }
+        },
+        "logicOperator": {
+            "style": {
+                "margin": "0.5rem",
+                "width": "20%"
+            }
+        },
+        "parFather": {
+            "style": {
+                "margin": "0.5rem",
+                "width": "30%"
+            }
+        }
+    },
+    "logicOperator": [
+        {
+            "name": "AND",
+            "value": "AND"
+        },
+        {
+            "name": "OR",
+            "value": "OR"
+        }
+    ],
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "operations": [
+        {
+            "name": "equal",
+            "value": "equal"
+        },
+        {
+            "name": "greater",
+            "value": "greater"
+        },
+        {
+            "name": "greaterequal",
+            "value": "greaterequal"
+        },
+        {
+            "name": "less",
+            "value": "less"
+        },
+        {
+            "name": "lessequal",
+            "value": "lessequal"
+        },
+        {
+            "name": "contains",
+            "value": "contains"
+        },
+        {
+            "name": "not contains",
+            "value": "not contains"
+        },
+        {
+            "name": "starts with",
+            "value": "starts with"
+        },
+        {
+            "name": "ends with",
+            "value": "ends with"
+        }
+    ]
+}

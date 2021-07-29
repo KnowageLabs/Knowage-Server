@@ -13,6 +13,9 @@
         "basicCard": {
             "width": "100%"
         },
+        "cron": {
+            "width": "100%"
+        },
         "inputFields": {
             "width": "45%"
         },

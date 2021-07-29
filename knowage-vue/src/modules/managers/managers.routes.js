@@ -13,7 +13,8 @@ import internationalizationManagementRoutes from '@/modules/managers/internation
 import mondrianSchemasManagementRoutes from '@/modules/managers/mondrianSchemasManagement/MondrianSchemasManagement.routes.js'
 import dataSourceRoutes from '@/modules/managers/dataSourceManagement/DataSourceManagement.routes.js'
 import functionalitiesManagementRoutes from '@/modules/managers/functionalitiesManagement/FunctionalitiesManagement.routes.js'
-
+import menuConfigurationRoutes from '@/modules/managers/menuManagement/MenuManagement.routes.js'
+import businessModelCatalogueRoutes from '@/modules/managers/businessModelCatalogue/BusinessModelCatalogue.routes.js'
 
 const baseRoutes = []
 
@@ -33,5 +34,7 @@ const routes = baseRoutes
     .concat(mondrianSchemasManagementRoutes)
     .concat(dataSourceRoutes)
     .concat(functionalitiesManagementRoutes)
+    .concat(menuConfigurationRoutes)
+    .concat(businessModelCatalogueRoutes)
 
 export default routes

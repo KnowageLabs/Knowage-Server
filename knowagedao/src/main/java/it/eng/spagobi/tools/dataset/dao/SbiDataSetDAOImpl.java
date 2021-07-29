@@ -397,7 +397,8 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 	}
 
 	@Override
-	public List<SbiDataSet> list(int offset, int fetchSize, String owner, String sortByColumn, boolean reverse, List<Integer> tagIds, List<SbiDataSetFilter> filter) {
+	public List<SbiDataSet> list(int offset, int fetchSize, String owner, String sortByColumn, boolean reverse, List<Integer> tagIds,
+			List<SbiDataSetFilter> filter) {
 
 		Session session = null;
 		List<SbiDataSet> ret = Collections.emptyList();
@@ -417,9 +418,10 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 			ret = cr.list();
 
-		} catch(Exception ex) {
-			LogMF.error(logger, "Error getting list of dataset with offset {0}, limit {1}, owner {2}, sorting column {3}, reverse {4} and tags {5}", new Object[] { offset, fetchSize, owner, sortByColumn, reverse, tagIds });
-		}finally {
+		} catch (Exception ex) {
+			LogMF.error(logger, "Error getting list of dataset with offset {0}, limit {1}, owner {2}, sorting column {3}, reverse {4} and tags {5}",
+					new Object[] { offset, fetchSize, owner, sortByColumn, reverse, tagIds });
+		} finally {
 			if (session != null) {
 				session.close();
 			}
@@ -429,7 +431,8 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 	}
 
 	@Override
-	public List<SbiDataSet> workspaceList(int offset, int fetchSize, String owner, boolean includeOwned, boolean includePublic, String scope, String type, Set<Domain> categoryList, String implementation, boolean showDerivedDatasets) {
+	public List<SbiDataSet> workspaceList(int offset, int fetchSize, String owner, boolean includeOwned, boolean includePublic, String scope, String type,
+			Set<Domain> categoryList, String implementation, boolean showDerivedDatasets) {
 
 		List<SbiDataSet> results = Collections.emptyList();
 		Session session = null;
@@ -505,15 +508,13 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			statement.append("from SbiDataSet ds where ds.active = :active and (ds.owner = :owner or (");
 			session = getSession();
 			categoryList = UserUtilities.getDataSetCategoriesByUser(userProfile);
-			if (categoryList.isEmpty()) {
-				statement.append("ds.category.valueId is null ");
-			} else {
+			if (!categoryList.isEmpty()) {
 				categoryIds = extractCategoryIds(categoryList);
-				statement.append("(ds.category.valueId is null or ds.category.valueId in (:categories)) ");
+				statement.append("ds.category.valueId in (:categories) and ");
 			}
 
 			statement.append(
-					"and ds.scope.valueId in (select dom.valueId from SbiDomains dom where dom.valueCd in ('USER', 'ENTERPRISE') and dom.domainCd = 'DS_SCOPE')))");
+					"ds.scope.valueId in (select dom.valueId from SbiDomains dom where dom.valueCd in ('USER', 'ENTERPRISE') and dom.domainCd = 'DS_SCOPE')))");
 
 			Query query = session.createQuery(statement.toString());
 			query.setBoolean("active", true);
@@ -546,7 +547,6 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 		return toReturn;
 	}
 
-
 	private void withImplementation(Criteria cr, String implementation) {
 		if (StringUtils.isNotEmpty(implementation)) {
 			cr.add(Restrictions.eq("type", implementation));
@@ -574,8 +574,8 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 	private void withTags(Criteria cr, List<Integer> tagIds) {
 		if (!tagIds.isEmpty()) {
-			cr.createAlias("tag.dsTagId", "tag");
-			cr.add(Restrictions.in("tag.tagId", tagIds));
+			cr.createAlias("tags", "tags");
+			cr.add(Restrictions.in("tags.tagId", tagIds));
 		}
 	}
 
@@ -655,8 +655,6 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 		}
 	}
 
-
-
 	private Criterion onlyActiveRestriction() {
 		return Restrictions.eq("active", true);
 	}
@@ -673,6 +671,5 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 		String owner = userProfile.getUserUniqueIdentifier().toString();
 		return Restrictions.eq("owner", owner);
 	}
-
 
 }

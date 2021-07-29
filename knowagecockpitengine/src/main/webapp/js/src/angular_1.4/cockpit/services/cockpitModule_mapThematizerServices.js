@@ -481,12 +481,12 @@
 			var suffix = "";
 			var precision = 1;
 
-			if (style && style.format && style.format.precision) precision = style.format.precision;
+			if (style && style.format && (style.format.precision || style.format.precision==0)) precision = style.format.precision;
 			if (style && style.format && style.format.prefix) prefix = style.format.prefix;
 			if (style && style.format && style.format.suffix) suffix = style.format.suffix;
 
 			var decimalFormatted = val.toFixed(precision);
-			var localeFormatted = decimalFormatted.toLocaleString(sbiModule_config.curr_language);
+			var localeFormatted = new Number(decimalFormatted).toLocaleString(sbiModule_config.curr_language);
 			return prefix + localeFormatted + suffix;
 		}
 

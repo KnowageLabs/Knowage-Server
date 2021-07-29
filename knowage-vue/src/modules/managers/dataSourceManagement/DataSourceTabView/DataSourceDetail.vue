@@ -2,9 +2,9 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #left>{{ datasource.label }}</template>
         <template #right>
-            <Button icon="pi pi-info" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly" @click="testDataSource" />
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly || buttonDisabled" @click="handleSubmit" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
+            <Button icon="pi pi-check-circle" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly" @click="testDataSource" v-tooltip.bottom="$t('common.test')" />
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly || buttonDisabled" @click="handleSubmit" v-tooltip.bottom="$t('common.save')" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" v-tooltip.bottom="$t('common.close')" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
@@ -118,7 +118,8 @@
                     </div>
 
                     <div class="p-field" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JNDI'">
-                        <span class="p-float-label">
+                        <span class="p-field">
+                            <label for="jndi" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.jndi') }} * </label>
                             <InputText
                                 id="jndi"
                                 class="kn-material-input"
@@ -130,10 +131,11 @@
                                 }"
                                 @blur="v$.datasource.jndi.$touch()"
                                 @input="onFieldChange"
-                                v-tooltip.top="$t('managers.dataSourceManagement.form.jndiInfo')"
                                 :disabled="readOnly"
+                                placeholder="comp/env/jdbc/example"
                             />
-                            <label for="jndi" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.jndi') }} * </label>
+
+                            <small id="jndi-help">{{ $t('managers.dataSourceManagement.form.jndiInfo') }}</small>
                         </span>
                         <KnValidationMessages :vComp="v$.datasource.jndi" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.jndi') }" />
                     </div>
@@ -433,6 +435,7 @@ export default defineComponent({
             }
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/'
             let dsToSave = {} as any
+            if (!this.datasource.multischema && this.datasource.schemaAttribute) delete this.datasource.schemaAttribute
             dsToSave = { ...this.datasource }
 
             if (dsToSave.hasOwnProperty('jdbcPoolConfiguration')) {
