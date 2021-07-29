@@ -144,6 +144,7 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         setDefaultRoleValue(defaultRole: any) {
+            console.log('defaultRole', defaultRole)
             this.defaultRole = defaultRole
         },
         setSelectedRoles(roles: iRole[]) {
@@ -175,17 +176,15 @@ export default defineComponent({
             if (this.selectedRoles.length == 1) {
                 defaultRoleId = this.selectedRoles[0].id
             } else {
-                defaultRoleId = null
+                defaultRoleId = this.defaultRole
             }
-
-            // if (typeof defaultRoleId === 'object') {
-            //     defaultRoleId = defaultRoleId.id
-            // }
             return defaultRoleId
         },
         formatUserObject() {
             delete this.userDetailsForm.passwordConfirm
             this.userDetailsForm['defaultRoleId'] = this.getRoleId()
+            console.log('this.userDetailsForm:', this.userDetailsForm['defaultRoleId'])
+
             this.userDetailsForm['sbiUserAttributeses'] = { ...this.attributesForm }
             this.userDetailsForm['sbiExtUserRoleses'] = this.selectedRoles ? [...this.selectedRoles.map((selRole) => selRole.id)] : []
         },

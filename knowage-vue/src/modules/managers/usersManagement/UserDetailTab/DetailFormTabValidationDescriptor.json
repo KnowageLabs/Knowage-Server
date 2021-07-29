@@ -15,6 +15,12 @@
                     },
                     {
                         "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
                     }
                 ]
             },
@@ -32,6 +38,12 @@
                     },
                     {
                         "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
                     }
                 ]
             },
