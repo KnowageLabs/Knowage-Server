@@ -14,11 +14,9 @@
                 <MenuNodesTree :elements="menuNodes" :loading="loading" @deleteMenuNode="onNodeDelete" @selectedMenuNode="onNodeSelect" @unselectedMenuNode="onNodeUnselect" @changeWithFather="onChangeWithFather" @moveUp="onMoveUp" @moveDown="onMoveDown" data-test="menu-nodes-tree"></MenuNodesTree>
             </div>
 
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
                 <KnHint :title="'managers.menuManagement.title'" :hint="'managers.menuManagement.hint'" v-if="hideForm"></KnHint>
-                <MenuElementsDetail v-if="!hideForm" :selectedRoles="selectedMenuNode.roles" :selectedMenuNode="selectedMenuNode" @refreshRecordSet="loadMenuNodes" @closesForm="closeForm" @dataChanged="dirty = true" :hidden="hideForm"></MenuElementsDetail>
-
-                <RolesCard :hidden="hideForm" :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
+                <MenuElementsDetail v-if="!hideForm" :selectedRoles="selectedMenuNode.roles" :roles="roles" :selectedMenuNode="selectedMenuNode" @refreshRecordSet="loadMenuNodes" @closesForm="closeForm" @dataChanged="dirty = true" :hidden="hideForm"></MenuElementsDetail>
             </div>
         </div>
     </div>
@@ -32,7 +30,6 @@ import KnHint from '@/components/UI/KnHint.vue'
 import { iMenuNode } from './MenuManagement'
 import MenuNodesTree from './MenuNodesTree/MenuManagementNodesTree.vue'
 import MenuElementsDetail from './ElementDetailsCard/MenuManagementElementsDetail.vue'
-import RolesCard from './RolesCard/MenuManagementRolesCard.vue'
 import { iRole } from '../usersManagement/UsersManagement'
 export default defineComponent({
     name: 'menu-management',
@@ -40,8 +37,7 @@ export default defineComponent({
         MenuNodesTree,
         MenuElementsDetail,
         KnFabButton,
-        KnHint,
-        RolesCard
+        KnHint
     },
     data() {
         return {
@@ -167,9 +163,6 @@ export default defineComponent({
                 .finally(() => {
                     this.loading = false
                 })
-        },
-        setSelectedRoles(roles: iRole[]) {
-            this.selectedMenuNode.roles = roles
         },
         async deleteNode(id: number) {
             this.$confirm.require({
