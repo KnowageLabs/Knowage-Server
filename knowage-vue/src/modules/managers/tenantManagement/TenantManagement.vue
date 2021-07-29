@@ -38,14 +38,6 @@
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0">
-                <Dialog header="INFO" v-model:visible="displayModal" :modal="true">
-                    <p class="p-m-0">
-                        {{ $t('managers.tenantManagement.tenantSaved') + ' "' + this.savedTenantName + '_admin"' }}
-                    </p>
-                    <template #footer>
-                        <Button label="OK" icon="pi pi-check" @click="displayModal = false" autofocus />
-                    </template>
-                </Dialog>
                 <router-view :selectedTenant="selTenant" :licenses="listOfavailableLicenses" @touched="touched = true" @closed="onFormClose" @inserted="pageReload" @showDialog="displayInfoDialog" />
                 <KnHint :title="'managers.tenantManagement.hintTitle'" :hint="'managers.tenantManagement.hint'" v-if="hintVisible" />
             </div>
@@ -60,7 +52,6 @@ import axios from 'axios'
 import tenantsDescriptor from './TenantManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
-import Dialog from 'primevue/dialog'
 import KnHint from '@/components/UI/KnHint.vue'
 
 export default defineComponent({
@@ -68,7 +59,6 @@ export default defineComponent({
     components: {
         FabButton,
         Listbox,
-        Dialog,
         KnHint
     },
     data() {
@@ -79,11 +69,9 @@ export default defineComponent({
             listOfDataSources: [] as any,
             listOfProductTypes: [] as any,
             listOfavailableLicenses: [] as any,
-            savedTenantName: '',
             tenantsDescriptor,
             loading: false,
             touched: false,
-            displayModal: false,
             hintVisible: true
         }
     },

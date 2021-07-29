@@ -695,7 +695,7 @@
             "productTypes": {
                 "title": "Product Types"
             },
-            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are",
+            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created with username {username} and password {password}",
             "title": "Tenant Management"
         },
         "usersManagement": {
