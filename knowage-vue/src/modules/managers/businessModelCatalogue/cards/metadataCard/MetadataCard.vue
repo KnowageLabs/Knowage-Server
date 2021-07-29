@@ -3,19 +3,19 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
-                    {{ $t('managers.buisnessModelCatalogue.metadata') }}
+                    {{ $t('managers.businessModelManager.metadata') }}
                 </template>
             </Toolbar>
         </template>
         <template #content>
             <div class="p-m-5">
-                <Button id="metadata-button" class="p-jc-center" @click="confirmImport">{{ $t('managers.buisnessModelCatalogue.importMetadata') }}</Button>
+                <Button id="metadata-button" class="p-jc-center" @click="confirmImport">{{ $t('managers.businessModelManager.importMetadata') }}</Button>
                 <div v-if="importing" class="p-mt-5">
                     <div id="import-metadata-spinner">
                         <ProgressSpinner />
                     </div>
                     <ProgressBar mode="indeterminate" class="kn-progress-bar" />
-                    <div id="import-progress-message" class="p-d-flex p-jc-center p-ai-center">{{ $t('managers.buisnessModelCatalogue.importProgress') }}</div>
+                    <div id="import-progress-message" class="p-d-flex p-jc-center p-ai-center">{{ $t('managers.businessModelManager.importProgress') }}</div>
                 </div>
             </div>
         </template>
@@ -48,8 +48,8 @@ export default defineComponent({
     methods: {
         confirmImport() {
             this.$confirm.require({
-                message: this.$t('managers.buisnessModelCatalogue.importConfirm'),
-                header: this.$t('managers.buisnessModelCatalogue.importMetadata'),
+                message: this.$t('managers.businessModelManager.importConfirm'),
+                header: this.$t('managers.businessModelManager.importMetadata'),
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => this.importMetadata()
             })

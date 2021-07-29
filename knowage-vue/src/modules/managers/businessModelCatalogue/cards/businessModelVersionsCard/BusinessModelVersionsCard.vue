@@ -3,13 +3,13 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
-                    {{ $t('managers.buisnessModelCatalogue.savedVersions') }}
+                    {{ $t('managers.businessModelManager.savedVersions') }}
                 </template>
             </Toolbar>
         </template>
         <template #content>
             <Listbox class="kn-list" :options="businessModelVersions" data-test="versions-list">
-                <template #empty>{{ $t('managers.buisnessModelCatalogue.noSavedVersions') }}</template>
+                <template #empty>{{ $t('managers.businessModelManager.noSavedVersions') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" :data-test="'version-' + slotProps.option.id">
                         <RadioButton name="active" :value="slotProps.option" v-model="activeVersion" @change="setActive"></RadioButton>
@@ -98,13 +98,13 @@ export default defineComponent({
         createMenuItems(version: iBusinessModelVersion) {
             this.items = []
             if (version.hasContent && !version.hasLog) {
-                this.items.push({ label: this.$t('managers.buisnessModelCatalogue.downloadJar'), icon: 'fa fa-file-archive-o', command: () => this.downloadFile(version.id, 'JAR') })
+                this.items.push({ label: this.$t('managers.businessModelManager.downloadJar'), icon: 'fa fa-file-archive-o', command: () => this.downloadFile(version.id, 'JAR') })
             }
             if (version.hasLog) {
-                this.items.push({ label: this.$t('managers.buisnessModelCatalogue.downloadLog'), icon: 'fa fa-file-text-o', command: () => this.downloadFile(version.id, 'LOG') })
+                this.items.push({ label: this.$t('managers.businessModelManager.downloadLog'), icon: 'fa fa-file-text-o', command: () => this.downloadFile(version.id, 'LOG') })
             }
             if (version.hasFileModel) {
-                this.items.push({ label: this.$t('managers.buisnessModelCatalogue.downloadModel'), icon: 'fa fa-file-code-o', command: () => this.downloadFile(version.id, 'SBIMODEL') })
+                this.items.push({ label: this.$t('managers.businessModelManager.downloadModel'), icon: 'fa fa-file-code-o', command: () => this.downloadFile(version.id, 'SBIMODEL') })
             }
             this.items.push({ label: this.$t('common.delete'), icon: 'far fa-trash-alt', command: () => this.deleteVersionConfirm(version.id) })
         },
