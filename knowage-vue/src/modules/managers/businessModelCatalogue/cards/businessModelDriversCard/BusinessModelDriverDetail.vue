@@ -3,12 +3,12 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
-                    {{ $t('managers.buisnessModelCatalogue.driversDetails') }}
+                    {{ $t('managers.businessModelManager.driversDetails') }}
                 </template>
             </Toolbar>
         </template>
         <template #content>
-            <KnHint :title="'managers.buisnessModelCatalogue.drivers'" :hint="'managers.buisnessModelCatalogue.noDriverSelected'" v-if="!selectedDriver" data-test="driver-hint"></KnHint>
+            <KnHint :title="'managers.businessModelManager.drivers'" :hint="'managers.businessModelManager.noDriverSelected'" v-if="!selectedDriver" data-test="driver-hint"></KnHint>
             <form class="p-fluid p-m-5" v-else>
                 <div class="p-field">
                     <span class="p-float-label">
@@ -25,19 +25,19 @@
                             @input="setChanged"
                             data-test="label-input"
                         />
-                        <label for="label" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.driverTitle') }} * </label>
+                        <label for="label" class="kn-material-input-label"> {{ $t('managers.businessModelManager.driverTitle') }} * </label>
                     </span>
                     <KnValidationMessages
                         :vComp="v$.driver.label"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.buisnessModelCatalogue.driverTitle')
+                            fieldName: $t('managers.businessModelManager.driverTitle')
                         }"
                     />
                 </div>
 
                 <div class="p-field">
                     <span>
-                        <label for="parameter" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.analyticalDriver') }} * </label>
+                        <label for="parameter" class="kn-material-input-label">{{ $t('managers.businessModelManager.analyticalDriver') }} * </label>
                         <Dropdown
                             id="parameter"
                             class="kn-material-input"
@@ -46,7 +46,7 @@
                             }"
                             v-model="v$.driver.parameter.$model"
                             :options="analyticalDrivers"
-                            :placeholder="$t('managers.buisnessModelCatalogue.analyticalDriverPlaceholder')"
+                            :placeholder="$t('managers.businessModelManager.analyticalDriverPlaceholder')"
                             :filter="true"
                             @before-show="v$.driver.parameter.$touch()"
                             @change="showAnalyticalDropdownConfirm"
@@ -67,7 +67,7 @@
                     <KnValidationMessages
                         :vComp="v$.driver.parameter"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.buisnessModelCatalogue.analyticalDriver')
+                            fieldName: $t('managers.businessModelManager.analyticalDriver')
                         }"
                     >
                     </KnValidationMessages>
@@ -88,21 +88,21 @@
                             @input="setChanged"
                             data-test="parameterUrlName-input"
                         />
-                        <label for="parameterUrlName" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.driversUrl') }} * </label>
+                        <label for="parameterUrlName" class="kn-material-input-label"> {{ $t('managers.businessModelManager.driversUrl') }} * </label>
                     </span>
                     <KnValidationMessages
                         :vComp="v$.driver.parameterUrlName"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.buisnessModelCatalogue.driversUrl')
+                            fieldName: $t('managers.businessModelManager.driversUrl')
                         }"
-                        :specificTranslateKeys="{ custom_unique: 'managers.buisnessModelCatalogue.driversUrlNotUnique' }"
+                        :specificTranslateKeys="{ custom_unique: 'managers.businessModelManager.driversUrlNotUnique' }"
                     />
                 </div>
 
                 <div class="p-field p-mt-2">
                     <InputSwitch id="driver-multivalue " class="p-mr-2" v-model="driver.multivalue" @change="setChanged" />
                     <i class="fa fa-list p-mr-2" />
-                    <label for="driver-multivalue " class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.multivalue') }}</label>
+                    <label for="driver-multivalue " class="kn-material-input-label"> {{ $t('managers.businessModelManager.multivalue') }}</label>
                 </div>
             </form>
         </template>
@@ -112,10 +112,10 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
-                    {{ $t('managers.buisnessModelCatalogue.driverDataConditions') }}
+                    {{ $t('managers.businessModelManager.driverDataConditions') }}
                 </template>
                 <template #right>
-                    <Button class="kn-button p-button-text" @click="showForm" :disabled="modes.length === 0">{{ $t('managers.buisnessModelCatalogue.addCondition') }}</Button>
+                    <Button class="kn-button p-button-text" @click="showForm" :disabled="modes.length === 0">{{ $t('managers.businessModelManager.addCondition') }}</Button>
                 </template>
             </Toolbar>
         </template>
@@ -127,7 +127,7 @@
                         <template #option="slotProps">
                             <div class="kn-list-item">
                                 <div class="kn-list-item-text">
-                                    <span>{{ slotProps.option.filterOperation + ' ' + $t('managers.buisnessModelCatalogue.value') + ' ' + slotProps.option.parFatherUrlName }}</span>
+                                    <span>{{ slotProps.option.filterOperation + ' ' + $t('managers.businessModelManager.value') + ' ' + slotProps.option.parFatherUrlName }}</span>
                                 </div>
                                 <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="showConditionDeleteDialog(slotProps.option)" />
                             </div>
@@ -139,9 +139,9 @@
     </Card>
 
     <div v-if="conditionFormVisible">
-        <Dialog class="p-fluid kn-dialog--toolbar--primary" :style="businessModelDriverDetailDescriptor.conditionDialog.style" :visible="true" :modal="true" :header="$t('managers.buisnessModelCatalogue.driverDataConditions')" :closable="false">
+        <Dialog class="p-fluid kn-dialog--toolbar--primary" :style="businessModelDriverDetailDescriptor.conditionDialog.style" :visible="true" :modal="true" :header="$t('managers.businessModelManager.driverDataConditions')" :closable="false">
             <div id="operationInfo">
-                <p>{{ $t('managers.buisnessModelCatalogue.operationInfo', { driver: driver.label }) }}</p>
+                <p>{{ $t('managers.businessModelManager.operationInfo', { driver: driver.label }) }}</p>
             </div>
             <form class="p-fluid p-m-5">
                 <div class="p-field p-d-flex">
@@ -159,35 +159,35 @@
                                     </div>
                                 </template>
                             </Dropdown>
-                            <label for="parFather" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.driverDepends') }}</label>
+                            <label for="parFather" class="kn-material-input-label">{{ $t('managers.businessModelManager.driverDepends') }}</label>
                         </span>
                     </div>
 
                     <div :style="businessModelDriverDetailDescriptor.input.filterOperation.style">
                         <span class="p-float-label">
                             <Dropdown id="filterOperation" class="kn-material-input" v-model="condition.filterOperation" :options="businessModelDriverDetailDescriptor.operations" optionLabel="name" optionValue="value" />
-                            <label for="filterOperation" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.filterOperator') }}</label>
+                            <label for="filterOperation" class="kn-material-input-label">{{ $t('managers.businessModelManager.filterOperator') }}</label>
                         </span>
                     </div>
 
                     <div :style="businessModelDriverDetailDescriptor.input.logicOperator.style">
                         <span class="p-float-label">
                             <Dropdown id="logicOperator" class="kn-material-input" v-model="condition.logicOperator" :options="businessModelDriverDetailDescriptor.logicOperator" optionLabel="name" optionValue="value" />
-                            <label for="logicOperator" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.logicOperator') }}</label>
+                            <label for="logicOperator" class="kn-material-input-label">{{ $t('managers.businessModelManager.logicOperator') }}</label>
                         </span>
                     </div>
                 </div>
                 <div v-for="mode in modes" :key="mode.useID">
                     <hr />
-                    <p>{{ $t('managers.buisnessModelCatalogue.modality') + ': ' + mode.name }}</p>
+                    <p>{{ $t('managers.businessModelManager.modality') + ': ' + mode.name }}</p>
                     <div class="p-d-flex p-ai-center">
                         <div class="mode-inputs">
                             <Checkbox class="p-mr-2" :value="mode.useID" v-model="selectedModes" />
-                            <label>{{ $t('managers.buisnessModelCatalogue.check') }}</label>
+                            <label>{{ $t('managers.businessModelManager.check') }}</label>
                         </div>
                         <div class="mode-inputs">
-                            <label class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.lovsColumn') }}</label>
-                            <Dropdown id="parFather" class="kn-material-input" v-model="modalities[mode.useID]" :options="getLovs(mode.idLov)" :placeholder="$t('managers.buisnessModelCatalogue.lovsColumnSelect')" :disabled="isModeActive(mode.useID)">
+                            <label class="kn-material-input-label">{{ $t('managers.businessModelManager.lovsColumn') }}</label>
+                            <Dropdown id="parFather" class="kn-material-input" v-model="modalities[mode.useID]" :options="getLovs(mode.idLov)" :placeholder="$t('managers.businessModelManager.lovsColumnSelect')" :disabled="isModeActive(mode.useID)">
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value">
                                         <span>{{ slotProps.value }}</span>
@@ -397,7 +397,7 @@ export default defineComponent({
         showAnalyticalDropdownConfirm() {
             if (this.oldDropdownValue) {
                 this.$confirm.require({
-                    message: this.$t('managers.buisnessModelCatalogue.analyticalDropdownConfirm'),
+                    message: this.$t('managers.businessModelManager.analyticalDropdownConfirm'),
                     header: this.$t('common.toast.deleteTitle'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => this.deleteAllConditions(),

@@ -4,10 +4,10 @@ span<template>
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
                     <template #left>
-                        {{ $t('managers.buisnessModelCatalogue.drivers') }}
+                        {{ $t('managers.businessModelManager.drivers') }}
                     </template>
                     <template #right>
-                        <Button class="kn-button p-button-text" @click="showForm">{{ $t('managers.buisnessModelCatalogue.add') }}</Button>
+                        <Button class="kn-button p-button-text" @click="showForm">{{ $t('managers.businessModelManager.add') }}</Button>
                     </template>
                 </Toolbar>
             </template>

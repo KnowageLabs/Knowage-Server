@@ -3,7 +3,7 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #left>
-                    {{ $t('managers.buisnessModelCatalogue.driversDetails') }}
+                    {{ $t('managers.businessModelManager.driversDetails') }}
                 </template>
             </Toolbar>
         </template>
@@ -49,19 +49,19 @@
                             @input="onFieldChange('description', $event.target.value)"
                             data-test="description-input"
                         />
-                        <label for="description" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.description') }}</label>
+                        <label for="description" class="kn-material-input-label"> {{ $t('managers.businessModelManager.description') }}</label>
                     </span>
                     <KnValidationMessages
                         :vComp="v$.businessModel.description"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.buisnessModelCatalogue.description')
+                            fieldName: $t('managers.businessModelManager.description')
                         }"
                     />
                 </div>
 
                 <div class="p-field">
                     <span>
-                        <label for="category" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.analyticalDriver') }} * </label>
+                        <label for="category" class="kn-material-input-label">{{ $t('managers.businessModelManager.analyticalDriver') }} * </label>
                         <Dropdown
                             id="category"
                             class="kn-material-input"
@@ -70,7 +70,7 @@
                             }"
                             v-model="v$.businessModel.category.$model"
                             :options="categories"
-                            :placeholder="$t('managers.buisnessModelCatalogue.analyticalDriverPlaceholder')"
+                            :placeholder="$t('managers.businessModelManager.analyticalDriverPlaceholder')"
                             @before-show="v$.businessModel.category.$touch()"
                             @change="onFieldChange('category', $event.value.VALUE_ID)"
                         >
@@ -89,14 +89,14 @@
                     <KnValidationMessages
                         :vComp="v$.businessModel.category"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.buisnessModelCatalogue.analyticalDriver')
+                            fieldName: $t('managers.businessModelManager.analyticalDriver')
                         }"
                     />
                 </div>
 
                 <div class="p-field">
                     <span>
-                        <label for="dataSourceLabel" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.dataSource') }} * </label>
+                        <label for="dataSourceLabel" class="kn-material-input-label">{{ $t('managers.businessModelManager.dataSource') }} * </label>
                         <Dropdown
                             id="dataSourceLabel"
                             class="kn-material-input"
@@ -105,7 +105,7 @@
                             }"
                             v-model="v$.businessModel.dataSourceLabel.$model"
                             :options="datasources"
-                            :placeholder="$t('managers.buisnessModelCatalogue.dataSourceLabelPlaceholder')"
+                            :placeholder="$t('managers.businessModelManager.dataSourceLabelPlaceholder')"
                             @before-show="v$.businessModel.dataSourceLabel.$touch()"
                             @change="onFieldChange('dataSourceLabel', $event.value)"
                         >
@@ -124,22 +124,22 @@
                     <KnValidationMessages
                         :vComp="v$.businessModel.dataSourceLabel"
                         :additionalTranslateParams="{
-                            fieldName: $t('managers.buisnessModelCatalogue.dataSource')
+                            fieldName: $t('managers.businessModelManager.dataSource')
                         }"
                     />
                 </div>
 
                 <div class="p-d-flex p-flex-row">
                     <div class="input-container" v-if="!metaWebVisible">
-                        <label for="upload" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.uploadFile') }}:</label>
+                        <label for="upload" class="kn-material-input-label">{{ $t('managers.businessModelManager.uploadFile') }}:</label>
                         <KnInputFile :changeFunction="uploadFile" :visibility="true" />
                     </div>
                     <div class="input-container p-d-flex p-flex-row" v-else>
                         <div class="p-m-2">
-                            <Button class="kn-button kn-button--primary" :label="$t('managers.buisnessModelCatalogue.metaWeb')" @click="goToMetaWeb" data-test="metaweb-button"></Button>
+                            <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.metaWeb')" @click="goToMetaWeb" data-test="metaweb-button"></Button>
                         </div>
                         <div class="p-m-2" v-if="toGenerate">
-                            <Button class="kn-button kn-button--primary" :label="$t('managers.buisnessModelCatalogue.generate')" @click="generateDatamartVisible = true"></Button>
+                            <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.generate')" @click="generateDatamartVisible = true"></Button>
                         </div>
                     </div>
 
@@ -147,16 +147,16 @@
                         <div class="p-d-flex p-flex-row">
                             <div v-if="selectedBusinessModel.id" class="p-mr-2">
                                 <InputSwitch id="enable-metadata" class="p-mr-2" v-model="metaWebVisible" data-test="metaweb-switch" />
-                                <label for="enable-metadata" class="kn-material-input-label">{{ $t('managers.buisnessModelCatalogue.enableMetaweb') }}</label>
+                                <label for="enable-metadata" class="kn-material-input-label">{{ $t('managers.businessModelManager.enableMetaweb') }}</label>
                             </div>
                             <div>
                                 <InputSwitch id="model-lock" class="p-mr-2" v-model="businessModel.modelLocked" @change="onLockedChange" />
-                                <label for="model-lock" class="kn-material-input-label">{{ businessModel.modelLocked ? $t('managers.buisnessModelCatalogue.unlockModel') : $t('managers.buisnessModelCatalogue.lockModel') }}</label>
+                                <label for="model-lock" class="kn-material-input-label">{{ businessModel.modelLocked ? $t('managers.businessModelManager.unlockModel') : $t('managers.businessModelManager.lockModel') }}</label>
                             </div>
                         </div>
                         <div class="p-mt-2">
                             <InputSwitch id="smart-view" class="p-mr-2" v-model="businessModel.smartView" @change="onSmartViewChange" />
-                            <label for="smart-view" class="kn-material-input-label" v-tooltip.bottom="$t('managers.buisnessModelCatalogue.smartViewTooltip')">{{ businessModel.smartView ? $t('managers.buisnessModelCatalogue.smartView') : $t('managers.buisnessModelCatalogue.advancedView') }}</label>
+                            <label for="smart-view" class="kn-material-input-label" v-tooltip.bottom="$t('managers.businessModelManager.smartViewTooltip')">{{ businessModel.smartView ? $t('managers.businessModelManager.smartView') : $t('managers.businessModelManager.advancedView') }}</label>
                         </div>
                     </div>
                 </div>
@@ -164,10 +164,10 @@
                 <div class="p-mt-5" v-if="metaWebVisible">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
                         <template #left>
-                            {{ $t('managers.buisnessModelCatalogue.configurationTablePrefixTitle') }}
+                            {{ $t('managers.businessModelManager.configurationTablePrefixTitle') }}
                         </template>
                         <template #right>
-                            <i class="fa fa-info-circle" v-tooltip.bottom="$t('managers.buisnessModelCatalogue.prefixTooltip')"></i>
+                            <i class="fa fa-info-circle" v-tooltip.bottom="$t('managers.businessModelManager.prefixTooltip')"></i>
                         </template>
                     </Toolbar>
                     <div class="p-fluid p-m-5">
@@ -183,17 +183,17 @@
                                             'p-invalid': v$.businessModel.tablePrefixLike.$invalid && v$.businessModel.tablePrefixLike.$dirty
                                         }"
                                         maxLength="500"
-                                        v-tooltip.bottom="$t('managers.buisnessModelCatalogue.tablePrefixLikeExampleTooltip')"
+                                        v-tooltip.bottom="$t('managers.businessModelManager.tablePrefixLikeExampleTooltip')"
                                         @blur="v$.businessModel.tablePrefixLike.$touch()"
                                         @input="onFieldChange('tablePrefixLike', $event.target.value)"
                                         data-test="prefix-input"
                                     />
-                                    <label for="label" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.tablePrefixLike') }}</label>
+                                    <label for="label" class="kn-material-input-label"> {{ $t('managers.businessModelManager.tablePrefixLike') }}</label>
                                 </span>
                                 <KnValidationMessages
                                     :vComp="v$.businessModel.tablePrefixLike"
                                     :additionalTranslateParams="{
-                                        fieldName: $t('managers.buisnessModelCatalogue.tablePrefixLike')
+                                        fieldName: $t('managers.businessModelManager.tablePrefixLike')
                                     }"
                                 />
                             </div>
@@ -208,17 +208,17 @@
                                             'p-invalid': v$.businessModel.tablePrefixNotLike.$invalid && v$.businessModel.tablePrefixNotLike.$dirty
                                         }"
                                         maxLength="500"
-                                        v-tooltip.bottom="$t('managers.buisnessModelCatalogue.tablePrefixNotLikeExampleTooltip')"
+                                        v-tooltip.bottom="$t('managers.businessModelManager.tablePrefixNotLikeExampleTooltip')"
                                         @blur="v$.businessModel.tablePrefixNotLike.$touch()"
                                         @input="onFieldChange('tablePrefixNotLike', $event.target.value)"
                                         data-test="prefix-not-like-input"
                                     />
-                                    <label for="label" class="kn-material-input-label"> {{ $t('managers.buisnessModelCatalogue.tablePrefixNotLike') }}</label>
+                                    <label for="label" class="kn-material-input-label"> {{ $t('managers.businessModelManager.tablePrefixNotLike') }}</label>
                                 </span>
                                 <KnValidationMessages
                                     :vComp="v$.businessModel.tablePrefixNotLike"
                                     :additionalTranslateParams="{
-                                        fieldName: $t('managers.buisnessModelCatalogue.tablePrefixNotLike')
+                                        fieldName: $t('managers.businessModelManager.tablePrefixNotLike')
                                     }"
                                 />
                             </div>
