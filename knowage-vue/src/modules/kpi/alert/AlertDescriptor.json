@@ -16,6 +16,10 @@
         "inputFields": {
             "width": "45%"
         },
+        "menuButton": {
+            "height": "24px",
+            "width": "24px"
+        },
         "message": {
             "align-items": "center",
             "display": "flex",

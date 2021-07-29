@@ -17,10 +17,9 @@
                 <label for="type" class="kn-material-input-label"> {{ $t('kpi.alert.type') }} * </label>
             </span>
             <span class="p-field p-col-6 p-mt-4 p-float-label">
-                <MultiSelect id="threshold" class="kn-material-input" v-model="selectedThresholds" optionLabel="label" :options="kpi.threshold.thresholdValues">
+                <MultiSelect id="threshold" class="kn-material-input" v-model="selectedThresholds" optionLabel="label" :options="kpi.threshold?.thresholdValues">
                     <template #value="slotProps">
                         <div class="selected-options-container" v-for="option of slotProps.value" :key="option.code">
-                            <!-- color picker ne moze da se smanji vise od 15px, ako se ne smanji poremeti se visina dropdowna, zato stoji chip za sada -->
                             <Chip :style="{ height: 18 + 'px', 'background-color': option.color }" :label="option.label" />
                         </div>
                     </template>
@@ -34,10 +33,8 @@
                 <label for="threshold" class="kn-material-input-label"> {{ $t('kpi.alert.threshold') }} * </label>
             </span>
         </div>
-        <!-- iz card komponenata izbacena je sama karta, i prikazuje se template radi lakseg stilizovanja -->
         <Card style="height:37rem">
             <template #content>
-                <!-- za etl card prosledjujem sada etlDocumentList umesto onog data.item -->
                 <ExectuteEtlCard v-if="action && action.idAction == 63" :loading="loading" :files="etlDocumentList" :data="action" />
                 <ContextBrokerCard v-if="action && action.idAction == 86" :data="action" />
                 <SendMailCard v-else-if="action && action.idAction == 62" :action="selectedAction" :users="formatedUsers" />
@@ -67,10 +64,11 @@ export default defineComponent({
     name: 'add-action-dialog',
     components: { Dialog, Dropdown, MultiSelect, ExectuteEtlCard, ContextBrokerCard, ColorPicker, SendMailCard, Chip },
     props: { dialogVisible: { type: Boolean, default: false }, kpi: { type: Object }, selectedAction: { type: Object as PropType<iAction>, required: true } },
+    emits: ['save'],
     data() {
         return {
+            v$: useValidate() as any,
             addActionDialogDescriptor,
-            loading: false,
             type: {} as any,
             action: {} as iAction,
             selectedThresholds: [],
@@ -78,8 +76,8 @@ export default defineComponent({
             etlDocumentList: [] as any[],
             usersList: [] as any[],
             formatedUsers: [] as any[],
-            v$: useValidate() as any,
-            mockedUsers: mockedUsers
+            mockedUsers: mockedUsers,
+            loading: false
         }
     },
     created() {
@@ -103,18 +101,14 @@ export default defineComponent({
             this.type = this.action.idAction
             this.selectedThresholds = this.selectedAction.thresholdData ? this.selectedAction.thresholdData : []
         },
-        // da li ce uvek da postoje samo ove 3 akcije: Send Mail, ETL Doc, Context Broker, ako da mozemo da izmestimo u deskriptor
-        //mako sam loadData() za ETL dokumente
         async setType() {
             this.action.jsonActionParameters = {}
             if (this.action.idAction == 62) {
                 this.action.idAction = 62
-                // sta se dogadja sa userima ovde, ne kapiram
-                await this.loadData('2.0/users')
                 this.formatUsers()
             }
         },
-        // zasto su ovi useri mokovani? dal treba da ostane tako
+        // PROMENITI MOKOVANE USERE U OVE IZ APIJA KADA SE PUSHUJE
         formatUsers() {
             for (let i = 0; i < this.mockedUsers.length; i++) {
                 const attributes = this.mockedUsers[i].sbiUserAttributeses
@@ -128,30 +122,18 @@ export default defineComponent({
         async loadEtlDocuments() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument?includeType=ETL').then((response) => {
                 this.etlDocumentList = [...response.data.item]
-                console.log('etlDocumentList ---------------------', this.etlDocumentList)
             })
         },
         async loadUsers() {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/users').then((response) => {
                 this.usersList = [...response.data]
-                console.log('usersList ---------------------', this.usersList)
             })
-        },
-        async loadData(path: string) {
-            this.loading = true
-            await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + path)
-                .then((response) => {
-                    this.data = response.data
-                    console.log(path, response.data)
-                })
-                .finally(() => (this.loading = false))
         },
         handleSave() {
             this.action.thresholdValues = this.selectedThresholds.map((threshold: any) => {
                 return threshold.id
             })
-            this.$emit('add', this.action)
+            this.$emit('save', this.action)
         }
     }
 })

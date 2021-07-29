@@ -38,7 +38,7 @@
                     </template>
                 </Listbox>
             </div>
-            <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
                 <router-view @close="closeForm" @touched="touched = true" @saved="reloadAlert" />
             </div>
         </div>
@@ -57,7 +57,7 @@ export default defineComponent({
     components: { KnFabButton, Listbox },
     data() {
         return {
-            alertDescriptor: alertDescriptor,
+            alertDescriptor,
             alertList: [] as iAlert[],
             loading: false,
             touched: false
@@ -84,7 +84,6 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         showForm(alert: any) {
-            console.log(alert)
             const path = alert.value ? `/alert/${alert.value.id}` : `/alert/new-alert`
             this.$router.push(path)
         },
@@ -106,12 +105,8 @@ export default defineComponent({
             })
         },
         async handleStatus(alert) {
-            if (alert.status == 'EXPIRED') {
-                console.log('EXPIRED')
-            } else {
+            if (alert.status !== 'EXPIRED') {
                 var data = 'scheduler/' + (alert.status == 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger') + '?jobGroup=ALERT_JOB_GROUP&triggerGroup=ALERT_JOB_GROUP&jobName=' + alert.id + '&triggerName=' + alert.id
-
-                console.log('data:', data)
                 await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + data)
                 this.loadAllAlerts()
             }

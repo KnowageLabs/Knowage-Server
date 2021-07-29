@@ -17,16 +17,15 @@
                 </template>
             </Toolbar>
             <div class="p-grid p-mt-2">
-                <!-- {{ alert.jsonOptions.actions }} -->
-                <div class="p-m-2 p-shadow-2 action-box" v-for="action in alert.jsonOptions.actions" :key="action.idAction">
+                <div class="p-m-2 p-shadow-2 action-box" v-for="(action, index) in alert.jsonOptions?.actions" :key="index">
                     <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                         <template #left>
                             <span>{{ action.data?.name }}</span>
                         </template>
 
                         <template #right>
-                            <Button class="p-button-link p-button-sm" icon="fa fa-ellipsis-v" @click="toggleMenu($event, action)" aria-haspopup="true" aria-controls="overlay_menu" data-test="menu-button" />
-                            <Menu ref="menu" :model="items" :popup="true" data-test="menu"></Menu>
+                            <Button class="p-button-link p-button-sm" :style="alertDescriptor.styles.menuButton" icon="fa fa-ellipsis-v" @click="toggleMenu($event, { action, index })" aria-haspopup="true" aria-controls="overlay_menu" data-test="menu-button" />
+                            <Menu ref="menu" :model="items" :popup="true" data-test="menu" />
                         </template>
                     </Toolbar>
                     <div class="p-d-flex p-flex-column severity-container p-m-2" v-if="action">
@@ -92,30 +91,27 @@ export default defineComponent({
         }
     },
     methods: {
-        toggleMenu(event: any, action: any) {
-            this.createMenuItems(action)
+        toggleMenu(event: any, payload: any) {
+            this.createMenuItems(payload)
             const menu = this.$refs.menu as any
             menu.toggle(event)
         },
-        createMenuItems(action) {
+        createMenuItems(payload) {
             this.items = []
             this.items.push({
                 label: this.$t('common.modify'),
                 icon: 'pi pi-pencil',
                 command: () => {
-                    this.$emit('showDialog', action)
+                    this.$emit('showDialog', payload)
                 }
             })
             this.items.push({
                 label: this.$t('common.delete'),
                 icon: 'far fa-trash-alt',
                 command: () => {
-                    this.deleteAction(action)
+                    this.alert.jsonOptions.actions.splice(payload.index, 1)
                 }
             })
-        },
-        deleteAction(actionToDelete) {
-            this.alert.jsonOptions.actions = this.alert.jsonOptions.actions.filter((action) => action !== actionToDelete)
         },
         async loadKpi(kpiId, kpiVersion) {
             await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response) => {

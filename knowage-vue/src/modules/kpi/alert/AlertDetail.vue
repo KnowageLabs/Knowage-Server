@@ -13,7 +13,7 @@
         <EventsCard :selectedAlert="selectedAlert" @valueChanged="updateAlert" />
         <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" />
     </div>
-    <AddActionDialog :dialogVisible="dialogVisiable" :kpi="kpi" :selectedAction="selectedAction" @close="dialogVisiable = false" @add="addAction" />
+    <AddActionDialog :dialogVisible="isActionDialogVisible" :kpi="kpi" :selectedAction="selectedAction" @close="isActionDialogVisible = false" @save="onActionSave" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -36,6 +36,7 @@ export default defineComponent({
     watch: {
         async id() {
             await this.checkId()
+            if (this.id == undefined) this.selectedAlert = { id: null, singleExecution: false, jsonOptions: { actions: [] } }
         }
     },
     computed: {
@@ -53,7 +54,7 @@ export default defineComponent({
         if (this.id) {
             this.loadAlert()
         } else {
-            this.selectedAlert = { id: null, singleExecution: false }
+            this.selectedAlert = { id: null, singleExecution: false, jsonOptions: { actions: [] } }
         }
         this.loadListener()
         this.loadKpiList()
@@ -61,20 +62,21 @@ export default defineComponent({
     },
     data() {
         return {
-            selectedAlert: {} as iAlert,
-            listeners: [] as iListener[],
-            jsonOptions: {} as any,
-            actions: [] as any[],
-            selectedAction: {} as iAction,
-            kpiList: [] as any,
-            actionList: [] as any,
+            v$: useValidate() as any,
+            alertValidationDescriptor,
+            alertDescriptor,
             kpi: {} as any,
             emptyObject: {} as any,
-            alertValidationDescriptor: alertValidationDescriptor,
-            dialogVisiable: false,
-            v$: useValidate() as any,
-            alertDescriptor,
-            expiredCard: false
+            jsonOptions: {} as any,
+            selectedAlert: {} as iAlert,
+            selectedAction: {} as iAction,
+            listeners: [] as iListener[],
+            actionList: [] as any,
+            actions: [] as any[],
+            kpiList: [] as any,
+            isActionDialogVisible: false,
+            expiredCard: false,
+            actionIndexToEdit: -1
         }
     },
     validations() {
@@ -177,18 +179,22 @@ export default defineComponent({
         updateKpi(event) {
             this.kpi = event
         },
-        addAction(action) {
-            this.dialogVisiable = false
-            const option = { ...action, idAction: +action.idAction, data: this.actionList.find((ac) => action.idAction == ac.id) }
-            option['thresholdData'] = option.thresholdValues.map((thresholdId) => {
+        onActionSave(action) {
+            this.isActionDialogVisible = false
+            const actionToSave = { ...action, idAction: +action.idAction, data: this.actionList.find((ac) => action.idAction == ac.id) }
+            actionToSave['thresholdData'] = actionToSave.thresholdValues.map((thresholdId) => {
                 return this.kpi.threshold.thresholdValues.find((threshold) => threshold.id == thresholdId)
             })
-            this.selectedAlert.jsonOptions.actions.push(option)
+            if (this.actionIndexToEdit === -1) {
+                this.selectedAlert.jsonOptions.actions.push(actionToSave)
+            } else {
+                this.selectedAlert.jsonOptions.actions[this.actionIndexToEdit] = actionToSave
+            }
         },
-        onShowActionDialog(action) {
-            this.selectedAction = action ? { ...action, idAction: +action.idAction } : {}
-
-            this.dialogVisiable = true
+        onShowActionDialog(payload) {
+            this.selectedAction = payload && payload.action ? { ...payload.action, idAction: +payload.action.idAction } : {}
+            this.actionIndexToEdit = payload ? payload.index : -1
+            this.isActionDialogVisible = true
         }
     }
 })
