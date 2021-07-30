@@ -71,25 +71,49 @@ export default defineComponent({
             this.onInputChange(attr, '')
         },
         openLovValuesDialog(attribute: iAttribute) {
+            // const path_matcher = /\{;\{[A-Za-z0-9;_]*\}*/g
+
             this.selectedAttribute = attribute
             let value: any = null
-            value = this.userAttributesForm[attribute.attributeId][attribute.attributeName]
-            if (value && attribute.multivalue) {
-                value = value.split(',')
+            value = this.userAttributesForm[attribute.attributeId][attribute.attributeName] as String
+
+            this.initialSelection = []
+            if (value) {
+                if (this.selectedAttribute.multivalue) {
+                    if (this.selectedAttribute.syntax) {
+                        const match = /(?<=\{;\{)[A-Za-z0-9;_]*(?!\}\})/
+                        if (match.test(value)) {
+                            const ind = value.indexOf('{;{')
+                            const indEnd = value.indexOf('}}')
+                            this.initialSelection = value.substring(ind + 3, indEnd).split(';')
+                        }
+                    } else {
+                        this.initialSelection = value.split(',')?.map((val) => val.substring(1, val.length - 1))
+                    }
+                }
             }
-            this.initialSelection = value
+
             this.lovDialogVisible = true
         },
         onSaveLovValues(selectedLovValues) {
-            console.log('selectedLovValues', selectedLovValues)
+            console.log('selectedLovValues', this.selectedAttribute?.value)
             let newValue = ''
-            if (Array.isArray(selectedLovValues)) {
-                newValue = selectedLovValues.reduce((prev, curr, ind) => {
-                    prev += ind > 0 ? ',' : ''
-                    prev += curr.value
-                    return prev
-                }, '')
-                console.log('newValue', newValue)
+            if (this.selectedAttribute && Array.isArray(selectedLovValues)) {
+                if (this.selectedAttribute.syntax) {
+                    newValue = selectedLovValues.reduce((prev, curr, ind) => {
+                        prev += ind > 0 ? ';' : ''
+                        prev += curr.value
+                        return prev
+                    }, '')
+                    newValue = `{;{${newValue}}}`
+                    console.log('newValue', newValue)
+                } else {
+                    newValue = selectedLovValues.reduce((prev, curr, ind) => {
+                        prev += ind > 0 ? ',' : ''
+                        prev += `'${curr.value}'`
+                        return prev
+                    }, '')
+                }
             } else {
                 newValue = selectedLovValues.value
             }
