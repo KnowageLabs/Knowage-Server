@@ -79,7 +79,7 @@ public class FoldersResource {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		RootFolderDTO folders = null;
 		try {
-			folders = resourceManagerAPIservice.getFolders(profile, "models");
+			folders = resourceManagerAPIservice.getFolders(profile);
 		} catch (KNRM001Exception k) {
 			throw new KNRM001Exception(""); // TODO: We have to understand how to handle technical messages inside business errors, how can we show them?
 		} catch (KNRM002Exception e) {
@@ -99,11 +99,12 @@ public class FoldersResource {
 			if (path != null) {
 				java.nio.file.Path completePath = Paths.get(path).resolve(dto.getFolderName());
 				boolean create = resourceManagerAPIservice.createFolder(completePath.toString(), profile);
-				if (create)
+				if (create) {
 					response = Response.status(Response.Status.OK).build();
+				}
 			}
 		} catch (KNRM004Exception e) {
-			return Response.status(Response.Status.NOT_MODIFIED).entity(e.getMessage()).build();
+			return Response.notModified(e.getMessage()).build();
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e.getMessage());
 		}

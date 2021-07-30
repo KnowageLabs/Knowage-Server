@@ -15,13 +15,12 @@
 			<Toolbar v-if="selectedFiles.length > 0" class="kn-toolbar kn-toolbar--default p-m-0">
 				<template #left>{{ $tc('managers.resourceManagement.selectedFiles', selectedFiles.length, { num: selectedFiles.length }) }}</template>
 				<template #right>
-					<Button icon="fas fa-download" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="downloadFiles" :disabled="invalid" />
+					<Button icon="fas fa-download" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="downloadFiles" />
 					<Button icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="showDeleteDialog" />
 				</template>
 			</Toolbar>
 
-			<ResourceManagementImportFileDialog v-model:visibility="importFile" v-bind:path="folder.key" @fileUploaded="fileUploaded" />
-			<ResourceManagementCreateFolderDialog v-model:visibility="folderCreation" @createFolder="createFolder" v-bind:path="folder.relativePath" />
+			<ResourceManagementImportFileDialog v-model:visibility="importFile" v-bind:path="folder.key" @fileUploaded="fileUploaded" v-bind:existingFiles="files" />
 
 			<div class="managerDetail p-grid p-m-0 kn-height-full">
 				<div class="p-col">
@@ -43,14 +42,14 @@
 					>
 						<template #header>
 							<div class="p-grid p-pt-0">
-								<div class="p-col-11">
+								<div class="p-col-10">
 									<span class="p-input-icon-left p-col p-p-0">
 										<i class="pi pi-search"/>
 										<InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0"
 									/></span>
 								</div>
-								<div class="p-col p-d-flex p-jc-center p-ai-center">
-									<Button icon="fas fa-folder-plus" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openCreateFolderDialog" :disabled="selectedFiles.length > 0" />
+								<div class="p-col p-d-flex p-jc-end p-ai-center">
+									<Button icon="fas fa-sync-alt" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="loadSelectedFolder()" :disabled="selectedFiles.length > 0" />
 									<Button icon="fas fa-upload" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openImportFileDialog" :disabled="selectedFiles.length > 0" />
 								</div>
 							</div>
@@ -94,12 +93,11 @@
 	import { ITableColumn } from '../../commons/ITableColumn'
 	import { formatDate } from '@/helpers/commons/localeHelper'
 	import Breadcrumb from 'primevue/breadcrumb'
-	import ResourceManagementCreateFolderDialog from './ResourceManagementCreateFolderDialog.vue'
 	import ResourceManagementImportFileDialog from './ResourceManagementImportFileDialog.vue'
 	import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
 
 	export default defineComponent({
-		components: { Breadcrumb, Column, DataTable, ResourceManagementCreateFolderDialog, ResourceManagementImportFileDialog },
+		components: { Breadcrumb, Column, DataTable, ResourceManagementImportFileDialog },
 		props: {
 			folder: Object
 		},
@@ -119,7 +117,6 @@
 				},
 				home: { icon: 'pi pi-home' },
 				items: [] as Array<{ label: String }>,
-				folderCreation: false,
 				folderName: '',
 				importFile: false,
 				selectedFolder: {} as any
@@ -137,34 +134,6 @@
 		methods: {
 			closeDetail() {
 				this.$emit('closed')
-			},
-			createFolder(folderName: string) {
-				if (folderName && this.folder) {
-					let obj = {} as JSON
-					obj['key'] = '' + this.folder.key
-					obj['folderName'] = folderName
-					axios
-						.post(process.env.VUE_APP_API_PATH + `2.0/resources/folders`, obj, {
-							responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
-
-							headers: {
-								'Content-Type': 'application/json'
-							}
-						})
-						.then(() => {
-							this.$emit('folderCreated', true)
-						})
-						.catch((error) => {
-							this.$store.commit('setError', {
-								title: this.$t('common.error.downloading'),
-								msg: this.$t(error)
-							})
-						})
-						.finally(() => {
-							this.loading = false
-							this.openCreateFolderDialog()
-						})
-				}
 			},
 			downloadFiles() {
 				axios
@@ -220,12 +189,12 @@
 			getDate(date) {
 				return formatDate(date, 'LLL')
 			},
-			loadSelectedFolder() {
+			async loadSelectedFolder() {
 				this.loading = true
 				this.files = []
 				this.selectedFiles = []
 				if (this.folder) {
-					axios
+					await axios
 						.get(process.env.VUE_APP_API_PATH + `2.0/resources/files` + '?key=' + this.folder.key)
 						.then((response) => {
 							this.files = response.data
@@ -237,14 +206,11 @@
 								msg: this.$t(error)
 							})
 						})
+						.finally(() => (this.loading = false))
 				}
-				this.loading = false
 			},
 			openImportFileDialog() {
 				this.importFile = !this.importFile
-			},
-			openCreateFolderDialog() {
-				this.folderCreation = !this.folderCreation
 			},
 			setDirty() {
 				this.touched = true

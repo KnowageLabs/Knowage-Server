@@ -65,6 +65,7 @@ import it.eng.knowage.resourcemanager.resource.dto.FolderDTO;
 import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
 import it.eng.knowage.resourcemanager.resource.dto.RootFolderDTO;
 import it.eng.knowage.resourcemanager.service.ResourceManagerAPI;
+import it.eng.knowage.resourcemanager.utilities.ResourceManagerUtilities;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 @Component
@@ -95,7 +96,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	}
 
 	@Override
-	public RootFolderDTO getFolders(SpagoBIUserProfile profile, String path) throws KNRM001Exception, KNRM002Exception {
+	public RootFolderDTO getFolders(SpagoBIUserProfile profile) throws KNRM001Exception, KNRM002Exception {
 
 		Path fullP = null;
 		try {
@@ -106,17 +107,14 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		RootFolderDTO newRootFolder = null;
 		LOGGER.debug("Starting resource path json tree");
 		try {
-			if (path != null) {
-				fullP = fullP.resolve(path);
-			}
+			String buondedBasePath = ResourceManagerUtilities.getBuondedBasePath();
+			fullP = fullP.resolve(buondedBasePath);
 			FolderDTO parentFolder = new FolderDTO(fullP);
 			parentFolder.setRelativePath("");
 			parentFolder.setKey(HMACUtilities.getKeyHashedValue(fullP.toString()));
 
-			FolderDTO mylist = createTree(parentFolder, profile, path, 0);
-			ArrayList<FolderDTO> nodes = new ArrayList<FolderDTO>();
-			nodes.add(mylist);
-			newRootFolder = new RootFolderDTO(nodes);
+			FolderDTO mylist = createTree(parentFolder, profile, buondedBasePath, 0);
+			newRootFolder = new RootFolderDTO(mylist.getChildren());
 
 			LOGGER.debug("Finished resource path json tree");
 		} catch (IOException e) {
@@ -240,7 +238,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				File file = totalPath.toFile();
 
 				if (file.exists()) {
-					String message = "Directory " + path.substring(path.lastIndexOf("\\")) + " is already existing.";
+					String message = String.format("Directory %s is already existing.", path.substring(path.lastIndexOf(File.separator)));
 					throw new KNRM004Exception(message);
 				} else {
 					// Creating the directory
@@ -248,7 +246,9 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 					if (bool) {
 						LOGGER.info("Directory created successfully");
 					} else {
-						LOGGER.info("Sorry couldn’t create specified directory");
+						String message = "Sorry couldn't create specified directory";
+						LOGGER.info(message);
+						throw new KNRM004Exception(message);
 					}
 				}
 			}
@@ -334,10 +334,13 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			relativePath = (String) nodeInfos.get("relativePath");
 		}
 		if (relativePath == null) {
-			RootFolderDTO folders = getFolders(profile, getBuondedBasePath());
+			RootFolderDTO folders = getFolders(profile);
 			for (FolderDTO folder : folders.getRoot()) {
 
 				FolderDTO node = findNode(folder, key);
+				if (node == null) {
+					continue;
+				}
 				relativePath = node.getRelativePath();
 				HashMap<String, Object> m = new HashMap<String, Object>();
 				m.put("relativePath", relativePath);
@@ -345,6 +348,11 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				cachedNodesInfo.put(key, m);
 			}
 
+		}
+		if (relativePath == null) {
+			String message = String.format("No matching node for key [%s]", key);
+			LOGGER.debug(message);
+			throw new KNRM002Exception(message);
 		}
 		return relativePath;
 	}
@@ -565,7 +573,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	private boolean isStartingFromModel(Path path, SpagoBIUserProfile profile) throws KNRM001Exception {
 		Path workModelDir = getWorkDirectory(profile);
-		Path modelPath = workModelDir.resolve(getBuondedBasePath());
+		Path modelPath = workModelDir.resolve(ResourceManagerUtilities.getBuondedBasePath());
 		return path.startsWith(modelPath);
 	}
 
@@ -621,11 +629,6 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 		}
 		return fileDTO;
-	}
-
-	@Override
-	public String getBuondedBasePath() {
-		return MODELS;
 	}
 
 	@Override

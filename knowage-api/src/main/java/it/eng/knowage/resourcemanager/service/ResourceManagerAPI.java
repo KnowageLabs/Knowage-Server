@@ -40,7 +40,7 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 public interface ResourceManagerAPI {
 
-	public RootFolderDTO getFolders(SpagoBIUserProfile profile, String path) throws KNRM001Exception, KNRM002Exception;
+	public RootFolderDTO getFolders(SpagoBIUserProfile profile) throws KNRM001Exception, KNRM002Exception;
 
 	boolean createFolder(String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM004Exception;
 
@@ -79,8 +79,6 @@ public interface ResourceManagerAPI {
 	 * @throws KNRM005Exception
 	 */
 	Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws KNRM001Exception, KNRM005Exception;
-
-	String getBuondedBasePath();
 
 	/**
 	 * @param completePath

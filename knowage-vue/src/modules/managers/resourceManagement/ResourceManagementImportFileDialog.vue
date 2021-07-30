@@ -1,12 +1,18 @@
 <template>
 	<Dialog class="kn-dialog--toolbar--primary importFileDialog" v-bind:visible="visibility" footer="footer" :header="$t('common.import')" :closable="false" modal>
+		<span v-if="checkExistingFile()">
+			<Message severity="warn">{{ $t('managers.resourceManagement.uploadFile.fileWillBeOverwritten') }}</Message>
+		</span>
+		<span v-if="notifyExtractionWarning()">
+			<Message severity="warn">{{ $t('managers.resourceManagement.uploadFile.fileAndFoldersContentWillBeOverwritten') }}</Message>
+		</span>
 		<FileUpload name="demo[]" :chooseLabel="$t('common.choose')" :customUpload="true" @uploader="onUpload" @remove="onDelete" auto="true" :maxFileSize="10000000" :multiple="false" :fileLimit="1">
 			<template #empty>
 				<p>{{ $t('common.dragAndDropFileHere') }}</p>
 			</template>
 		</FileUpload>
 
-		<span class="inputFileToggle" v-if="this.uploadedFiles.length == 1 && (this.uploadedFiles[0].type == 'application/zip' || this.uploadedFiles[0].type == 'application/x-zip-compressed')">
+		<span :class="notifyExtractionWarning() ? 'inputFileToggleWithToolbar' : 'inputFileToggle'" v-if="isArchive()">
 			<label for="active" class="kn-material-input-label p-mr-3"> {{ $t('managers.resourceManagement.extract') }}</label>
 			<InputSwitch v-model="checked" />
 		</span>
@@ -24,22 +30,31 @@
 	import FileUpload from 'primevue/fileupload'
 	import InputSwitch from 'primevue/inputswitch'
 	import resourceManagementDescriptor from './ResourceManagementDescriptor.json'
+	import { PropType } from 'vue'
+	import { IFileTemplate } from './ResourceManagement'
+	import Message from 'primevue/message'
 
 	export default defineComponent({
 		name: 'import-file-dialog',
-		components: { Dialog, FileUpload, InputSwitch },
+		components: { Dialog, FileUpload, InputSwitch, Message },
 		props: {
 			path: String,
-			visibility: Boolean
+			visibility: Boolean,
+			existingFiles: Array as PropType<Array<IFileTemplate>>
 		},
 		data() {
 			return { checked: false, descriptor: resourceManagementDescriptor, uploadedFiles: [], loading: false }
 		},
 		emits: ['update:visibility', 'fileUploaded'],
 		methods: {
+			isArchive() {
+				// eslint-disable-next-line
+				// @ts-ignore
+				return this.uploadedFiles.length == 1 && (this.uploadedFiles[0].type == 'application/zip' || this.uploadedFiles[0].type == 'application/x-zip-compressed')
+			},
 			closeDialog(): void {
+				this.uploadedFiles = []
 				this.$emit('update:visibility', false)
-				this.$emit('fileUploaded')
 			},
 			onDelete(idx) {
 				this.uploadedFiles.splice(idx)
@@ -48,6 +63,25 @@
 				// eslint-disable-next-line
 				// @ts-ignore
 				this.uploadedFiles[0] = data.files[0]
+			},
+			checkExistingFile() {
+				let found = false
+				if (this.existingFiles && this.uploadedFiles[0]) {
+					for (var idx in this.existingFiles) {
+						let element = this.existingFiles[idx]
+						// eslint-disable-next-line
+						// @ts-ignore
+						if (element.name === this.uploadedFiles[0].name) {
+							found = true
+							break
+						}
+					}
+				}
+
+				return found
+			},
+			notifyExtractionWarning() {
+				return this.isArchive() && this.checked
 			},
 			async startImportFile() {
 				if (this.uploadedFiles[0] && this.path) {
@@ -79,6 +113,7 @@
 							this.loading = false
 							this.closeDialog()
 							this.uploadedFiles = []
+							this.$emit('fileUploaded')
 						})
 				} else {
 					this.$store.commit('setWarning', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
@@ -120,5 +155,10 @@
 		right: 20px;
 		position: absolute;
 		top: 20px;
+	}
+	.inputFileToggleWithToolbar {
+		@extend .inputFileToggle;
+
+		top: 100px;
 	}
 </style>
