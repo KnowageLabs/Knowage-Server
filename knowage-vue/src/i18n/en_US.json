@@ -568,6 +568,9 @@
         },
         "profileAttributesManagement": {
             "description": "Description",
+            "error": {
+                "profileAttributeDeletion": "Attribute is not deleted."
+            },
             "form": {
                 "allowUser": "Allow user to see field",
                 "dataType": "Data type",
