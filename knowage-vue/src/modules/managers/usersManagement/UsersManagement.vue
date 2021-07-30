@@ -144,7 +144,6 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         setDefaultRoleValue(defaultRole: any) {
-            console.log('defaultRole', defaultRole)
             this.defaultRole = defaultRole
         },
         setSelectedRoles(roles: iRole[]) {
@@ -183,7 +182,6 @@ export default defineComponent({
         formatUserObject() {
             delete this.userDetailsForm.passwordConfirm
             this.userDetailsForm['defaultRoleId'] = this.getRoleId()
-            console.log('this.userDetailsForm:', this.userDetailsForm['defaultRoleId'])
 
             this.userDetailsForm['sbiUserAttributeses'] = { ...this.attributesForm }
             this.userDetailsForm['sbiExtUserRoleses'] = this.selectedRoles ? [...this.selectedRoles.map((selRole) => selRole.id)] : []
@@ -205,7 +203,6 @@ export default defineComponent({
                 this.loading = false
             } else {
                 this.formatUserObject()
-                console.log('SAVE OR UPDATE')
                 this.saveOrUpdateUser(this.userDetailsForm)
                     .then(() => {
                         this.dirty = false
@@ -216,7 +213,10 @@ export default defineComponent({
                         })
                     })
                     .catch((error) => {
-                        console.log(error.response)
+                        this.$store.commit('setError', {
+                            title: error.title,
+                            msg: error.msg
+                        })
                     })
                     .finally(() => {
                         this.loading = false
@@ -235,7 +235,10 @@ export default defineComponent({
                     })
                 })
                 .catch((error) => {
-                    console.log(error.response)
+                    this.$store.commit('setError', {
+                        title: error.title,
+                        msg: error.msg
+                    })
                 })
                 .finally(() => {
                     this.hiddenForm = true

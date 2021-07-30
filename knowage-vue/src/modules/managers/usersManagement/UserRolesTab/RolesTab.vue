@@ -93,11 +93,9 @@ export default defineComponent({
     },
     methods: {
         onRowSelect() {
-            console.log('selectttttttttt')
             this.$emit('changed', this.selectedRoles)
         },
         onRowUnselect() {
-            console.log('unselectt')
             this.$emit('changed', this.selectedRoles)
             if (this.selectedRoles?.length <= 1) {
                 this.defaultRole = null
