@@ -1,0 +1,32 @@
+{
+    "columns": [
+        {
+            "field": "rule",
+            "header": "kpi.measureDefinition.rulesName",
+            "style": {}
+        },
+        {
+            "field": "alias",
+            "header": "kpi.measureDefinition.measureName",
+            "style": {}
+        },
+        {
+            "field": "category.valueCd",
+            "header": "kpi.measureDefinition.category",
+            "style": {}
+        },
+        {
+            "field": "author",
+            "header": "common.author",
+            "style": {}
+        }
+    ],
+    "globalFilterFields": ["alias", "rule", "category.valueCd", "author"],
+    "table": {
+        "iconColumn": {
+            "style": {
+                "text-align": "end"
+            }
+        }
+    }
+}

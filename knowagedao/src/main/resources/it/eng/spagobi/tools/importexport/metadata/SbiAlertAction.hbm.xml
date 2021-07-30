@@ -14,6 +14,6 @@
         
         <property name="name" column="NAME" type="string" length="40" />
         <property name="className" column="CLASS_NAME" type="string" length="200" />
-        <property name="template" column="TEMPLATE" type="string" length="200" />
+
 	</class>
 </hibernate-mapping>

@@ -49,7 +49,7 @@
                 <DomainCategoryTab :title="$t('managers.rolesManagement.kpiCategories')" :categoryList="kpiCategoriesList" :selected="selectedKPICategories" @changed="setSelectedKPICategories($event)"></DomainCategoryTab>
             </TabPanel>
         </TabView>
-        </div>
+    </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -136,7 +136,7 @@ export default defineComponent({
                     msg: this.$t(this.rolesManagementTabViewDescriptor.operation.success)
                 })
                 this.$emit('inserted')
-                this.$router.replace('/roles')
+                this.$router.replace('/roles-management')
             })
         },
         loadCategories(id: string) {
@@ -294,6 +294,6 @@ export default defineComponent({
     overflow: auto;
     flex: 1;
     display: flex;
-    flex-direction:column;
+    flex-direction: column;
 }
 </style>

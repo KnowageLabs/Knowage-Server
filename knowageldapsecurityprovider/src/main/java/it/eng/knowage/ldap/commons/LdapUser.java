@@ -25,13 +25,15 @@ public class LdapUser {
 
 	String distinguishName;
 	String userId;
+	String password;
 	Attributes attributes;
 
-	public LdapUser(String distinguishName, String userId, Attributes attributes) {
+	public LdapUser(String distinguishName, String userId, String psw, Attributes attributes) {
 		super();
 		this.distinguishName = distinguishName;
 		this.userId = userId;
 		this.attributes = attributes;
+		this.password = psw;
 	}
 
 	public String getDistinguishName() {
@@ -40,6 +42,10 @@ public class LdapUser {
 
 	public String getUserId() {
 		return userId;
+	}
+
+	public String getPassword() {
+		return password;
 	}
 
 	public Attributes getAttributes() {
