@@ -434,6 +434,10 @@
 						mts.activeLegend[layerName].choroplet[i].from=formatLegendValue((minValue+(split*i)), legendStyle);
 						mts.activeLegend[layerName].choroplet[i].to=formatLegendValue((minValue+(split*(i+1))), legendStyle);
 					}
+
+					if (legendStyle.visualizationType == 'Range') {
+						updateLegendForRangeMode(layerName);
+					}
 //					console.log("Regular intervals legends: ", mts.activeLegend[layerName]);
 				}else if (config.analysisConf.method == "CLASSIFY_BY_QUANTILS"){
 					//classify by quantils
@@ -476,7 +480,26 @@
 			}
 		}
 
+		var updateLegendForRangeMode = function (layerName){
+			var from = mts.activeLegend[layerName].choroplet[0].from;
+			var to = mts.activeLegend[layerName].choroplet[0].to;
+			var onlyOneRange = true;
+			for (var i=0; i<mts.activeLegend[layerName].choroplet.length; i++) {
+				if (mts.activeLegend[layerName].choroplet[i].from != from || mts.activeLegend[layerName].choroplet[i].to != to) {
+					onlyOneRange = false;
+					break;
+				}
+			}
+			if (onlyOneRange) {
+				var choropletToKeep = mts.activeLegend[layerName].choroplet[0];
+				mts.activeLegend[layerName].choroplet = []; // reset choroplets
+				mts.activeLegend[layerName].choroplet[0] = choropletToKeep;
+			}
+		}
+
 		var formatLegendValue = function (val, style){
+			if (val == null) return null;
+
 			var prefix = "";
 			var suffix = "";
 			var precision = 1;
