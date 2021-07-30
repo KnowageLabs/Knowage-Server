@@ -2,7 +2,7 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0">
         <template #right>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
     <div class="p-grid p-m-0 p-fluid p-jc-center">
@@ -10,9 +10,9 @@
             {{ $t('kpi.alert.expiredWarning') }}
         </Message>
         <NameCard :selectedAlert="selectedAlert" :listeners="listeners" @valueChanged="updateAlert" :vcomp="v$.selectedAlert" />
-        <KpiCron class="p-m-2" :style="alertDescriptor.styles.cron" v-if="selectedAlert?.frequency" :frequency="selectedAlert.frequency" />
+        <KpiCron class="p-m-2" :style="alertDescriptor.styles.cron" v-if="selectedAlert?.frequency" :frequency="selectedAlert.frequency" @touched="touched = true" />
         <EventsCard :selectedAlert="selectedAlert" @valueChanged="updateAlert" />
-        <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" />
+        <KpiCard v-if="isListenerSelected && actionList?.length > 0" :selectedAlert="selectedAlert" :kpiList="kpiList" :actionList="actionList" @showDialog="onShowActionDialog($event)" @kpiLoaded="updateKpi" @touched="touched = true" />
     </div>
     <AddActionDialog :dialogVisible="isActionDialogVisible" :kpi="kpi" :selectedAction="selectedAction" @close="isActionDialogVisible = false" @save="onActionSave" />
 </template>
@@ -61,7 +61,8 @@ export default defineComponent({
             return true
         },
         buttonDisabled(): any {
-            return this.v$.$invalid
+            if (this.selectedAlert.jsonOptions?.actions.length === 0 || !this.selectedAlert.name || !this.selectedAlert.alertListener) return true
+            return false
         }
     },
     created() {
@@ -101,6 +102,7 @@ export default defineComponent({
             kpiList: [] as any,
             isActionDialogVisible: false,
             expiredCard: false,
+            touched: false,
             actionIndexToEdit: -1
         }
     },
@@ -148,6 +150,7 @@ export default defineComponent({
             })
         },
         updateAlert(event) {
+            this.touched = true
             if (event.fieldName == 'singleExecution') {
                 this.selectedAlert.singleExecution = !this.selectedAlert.singleExecution
             } else {
@@ -201,6 +204,21 @@ export default defineComponent({
             }
             this.v$.$reset()
         },
+        closeTemplateConfirm() {
+            if (!this.touched) {
+                this.closeTemplate()
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.closeTemplate()
+                    }
+                })
+            }
+        },
         closeTemplate() {
             this.$emit('close')
         },
@@ -209,6 +227,7 @@ export default defineComponent({
         },
         onActionSave(action) {
             this.isActionDialogVisible = false
+            this.touched = true
             const actionToSave = { ...action, idAction: +action.idAction, data: this.actionList.find((ac) => action.idAction == ac.id) }
             actionToSave['thresholdData'] = actionToSave.thresholdValues.map((thresholdId) => {
                 return this.kpi.threshold.thresholdValues.find((threshold) => threshold.id == thresholdId)

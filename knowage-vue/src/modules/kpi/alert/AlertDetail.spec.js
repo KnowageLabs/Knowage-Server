@@ -7,7 +7,6 @@ import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import Menu from 'primevue/menu'
 import InputText from 'primevue/inputtext'
-import flushPromises from 'flush-promises'
 
 // const MockedAction = [
 //     {
@@ -126,17 +125,8 @@ describe('Alert Definition Detail', () => {
     })
     // it('disables the save button if no kpi is selected', () => {})
 })
-describe('Alert Definition kpi action', () => {
-    it('shows a dialog when kpi action is clicked', async () => {
-        const wrapper = factory()
-        // wrapper.vm.actionList = MockedAction
-        // wrapper.vm.selectedAlert.alertListener = mockedListener
-        await flushPromises()
-        expect(wrapper.vm.isListenerSelected).toBe(true)
-        expect(wrapper.vm.actionList.length).toBe(1)
-
-        console.log(wrapper.html())
-        await wrapper.find('[data-test="add-action-button"]').trigger('click')
-        expect(wrapper.vm.dialogVisiable).toBe(true)
-    })
-})
+// describe('Alert Definition kpi action', () => {
+//     it('shows a dialog when kpi action is clicked', async () => {
+//         const formWrapper = factory()
+//     })
+// })

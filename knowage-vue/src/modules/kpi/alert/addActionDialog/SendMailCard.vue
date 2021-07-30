@@ -63,12 +63,9 @@ export default defineComponent({
             }
 
             this.selectedUsers = this.selectedAction.jsonActionParameters.mailTo
-            console.log('SELECTED ACTION', this.selectedAction)
-            console.log('SELECTED USERS', this.selectedUsers)
         },
         loadUsers() {
             this.userList = this.users as any[]
-            console.log('USERS', this.users)
         },
         searchUsers(event) {
             setTimeout(() => {
@@ -81,16 +78,10 @@ export default defineComponent({
                 }
             }, 250)
         },
-        setUser(user: any) {
-            console.log('SELECTED USER', user)
-            console.log('SELECTED USERS AFTER CLICK', this.selectedUsers)
-        },
         test(event: any) {
-            console.log('CALLLEEEEEEEEEEEEEEEEEED', event.target.value)
             this.selectedUsers.push({ name: event.target.value, userId: '', email: event.target.value })
             this.userList.push({ name: event.target.value, userId: '', email: event.target.value })
             event.target.value = ''
-            console.log('SELECTED USERS AFTER ENTER', this.selectedUsers)
         }
     }
 })

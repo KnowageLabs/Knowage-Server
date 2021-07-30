@@ -11,6 +11,8 @@
         :globalFilterFields="addActionDialogDescriptor.documentFilterFields"
         @row-select="fileSelected"
         @row-unselect="fileSelected"
+        @row-select-all="fileSelected"
+        @row-unselect-all="fileSelected"
     >
         <template #header>
             <div class="table-header">
@@ -86,11 +88,9 @@ export default defineComponent({
             this.myData = this.data as any
         },
         fileSelected() {
-            console.log('SELECTED', this.selectedFile)
             this.myData.jsonActionParameters.listDocIdSelected = this.selectedFile.map((doc: any) => {
                 return { DOCUMENT_ID: doc.DOCUMENT_ID }
             })
-            console.log(this.myData.jsonActionParameters.listDocIdSelected)
         }
     }
 })

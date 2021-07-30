@@ -1,12 +1,12 @@
 <template>
-    <Dialog :header="$t('kpi.alert.addAction')" :breakpoints="addActionDialogDescriptor.dialog.breakpoints" :style="addActionDialogDescriptor.dialog.style" :visible="dialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
+    <Dialog :header="$t('kpi.alert.addAction')" :breakpoints="addActionDialogDescriptor.dialog.breakpoints" :style="addActionDialogDescriptor.dialog.style" :visible="dialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary" data-test="add-action-dialog">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
                 <template #left>
                     {{ $t('kpi.alert.addAction') }}
                 </template>
                 <template #right>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSave" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="actionSaveButtonDisabled" @click="handleSave" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
                 </template>
             </Toolbar>
@@ -95,8 +95,17 @@ export default defineComponent({
                 default:
                     return ''
             }
+        },
+        actionSaveButtonDisabled(): any {
+            if (!this.action.idAction || this.selectedThresholds.length == 0) {
+                return true
+            } else if (this.action.idAction != 62 && this.isObjectEmpty(this.action.jsonActionParameters)) {
+                return true
+            }
+            return false
         }
     },
+
     created() {
         this.loadAction()
         this.loadEtlDocuments()
@@ -113,6 +122,10 @@ export default defineComponent({
         }
     },
     methods: {
+        isObjectEmpty(objectToCheck) {
+            for (var i in objectToCheck) return false
+            return true
+        },
         loadAction() {
             this.action = { ...this.selectedAction }
             this.type = this.action.idAction

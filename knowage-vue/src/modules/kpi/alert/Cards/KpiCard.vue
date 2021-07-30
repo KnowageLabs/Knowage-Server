@@ -4,7 +4,7 @@
             <div class="p-field">
                 <span class="p-float-label">
                     <Dropdown id="kpi" class="kn-material-input" dataKey="id" v-model="kpi" :options="kpiList" optionLabel="name" @change="confirmLoadSelectedKpi($event.value)" />
-                    <label for="kpi" class="kn-material-input-label"> Kpi </label>
+                    <label for="kpi" class="kn-material-input-label"> Kpi *</label>
                 </span>
             </div>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
@@ -50,7 +50,7 @@ import Menu from 'primevue/menu'
 export default defineComponent({
     components: { Dropdown, Menu },
     props: { selectedAlert: { type: Object as any }, kpiList: { type: Array as any }, actionList: { type: Array as any } },
-    emits: ['showDialog', 'kpiLoaded'],
+    emits: ['showDialog', 'kpiLoaded', 'touched'],
 
     async created() {
         this.alert = this.selectedAlert
@@ -114,6 +114,7 @@ export default defineComponent({
                 label: this.$t('common.delete'),
                 icon: 'far fa-trash-alt',
                 command: () => {
+                    this.$emit('touched')
                     this.alert.jsonOptions.actions.splice(payload.index, 1)
                 }
             })
@@ -139,6 +140,7 @@ export default defineComponent({
                         this.alert.jsonOptions.kpiId = kpi.id
                         this.alert.jsonOptions.kpiVersion = kpi.version
                         this.oldKpi = this.kpi
+                        this.$emit('touched')
                     },
                     reject: () => {
                         this.kpi = this.oldKpi
