@@ -17,13 +17,14 @@
 		"downloading": "Downloading",
 		"dragAndDropFileHere": "Drag and drop file here.",
 		"error": {
+			"deleting": "Error deleting",
 			"downloading": "Error downloading ",
 			"exceededSize": "Uploaded file exceedes max size {size}",
+			"saving": "Error saving",
 			"tags": {
 				"tagIsNotValid": "Tag ({tag}) is not valid'"
 			},
-			"uploading": "Error uploading ",
-			"deleting": "Error deleting"
+			"uploading": "Error uploading "
 		},
 		"export": "export",
 		"image": "image",
@@ -351,7 +352,7 @@
 			"extract": "Extract files",
 			"folderRenamedSuccessfully": "Folder successfully renamed",
 			"foldernamePlaceholder": "Enter foldername here",
-			"hint": "Click on a folder to navigate its content.<br>Click on <i class=\"fas fa-table\"></i> if you want to edit metadata.<br>Click on <i class=\"fa fa-download\"></i> to download folder and its content.<br>Click on <i class=\"fas fa-folder-plus\"></i> to create a new folder inside your current path.<br>Click on <i class=\"fas fa-upload\"></i> to upload file inside your current path.",
+			"hint": "Click on a folder to navigate its content.<br>Click on <i class=\"fas fa-table\"></i> if you want to edit metadata.<br>Click on <i class=\"fa fa-download\"></i> to download folder and its content.<br>Click on <i class=\"fas fa-folder-plus\"></i> to create a new folder inside your current path.<br>Click on <i class=\"fas fa-upload\"></i> to upload file inside your current path.<br>Click on <i class=\"fas fa-sync-alt\"></i> to refresh view items",
 			"metadata": {
 				"accuracyAndPerformance": "Accuracy and performance",
 				"dialog": {
@@ -373,7 +374,11 @@
 			"openMetadata": "Open metadata",
 			"renameFolder": "Rename folder",
 			"selectedFiles": "One file selected | {num} files selected",
-			"title": "Resource management"
+			"title": "Resource management",
+			"uploadFile": {
+				"fileAndFoldersContentWillBeOverwritten": "You chose to unzip the archive. Existing files and folders will be overwritten",
+				"fileWillBeOverwritten": "A file with the same name was found. It will be overwritten"
+			}
 		},
 		"rolesManagement": {
 			"authorizations": {
@@ -503,7 +508,9 @@
 	"menu": {
 		"admin": {
 			"importExport": "Import/Export"
-		}
+		},
+		"modelsCatalogResourceManagement": "Models Catalog Resource Management",
+		"resourceManagement": "Resource Management"
 	},
 	"newsDialog": {
 		"description": "Description",

@@ -6,9 +6,14 @@
 					<template #left>
 						{{ $t('managers.resourceManagement.title') }}
 					</template>
+					<template #right>
+						<Button icon="fas fa-sync-alt" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="loadPage(showHint, formVisible)"/>
+						<Button icon="fas fa-folder-plus" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openCreateFolderDialog"
+					/></template>
 				</Toolbar>
 				<ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
 				<ResourceManagementMetadataDialog v-model:visibility="displayMetadataDialog" v-model:id="metadataKey"></ResourceManagementMetadataDialog>
+				<ResourceManagementCreateFolderDialog v-model:visibility="folderCreation" @createFolder="createFolder" v-bind:path="folder ? folder.relativePath : ''" />
 
 				<Tree id="folders-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" :filter="true" filterMode="lenient" data-test="functionality-tree" class="kn-tree kn-flex p-flex-column foldersTree" @node-select="showForm($event)" v-model:selectionKeys="selectedKeys">
 					<template #default="slotProps">
@@ -45,10 +50,11 @@
 	import ResourceManagementMetadataDialog from '@/modules/managers/resourceManagement/ResourceManagementMetadataDialog.vue'
 	import ResourceManagementDetail from './ResourceManagementDetail.vue'
 	import KnHint from '@/components/UI/KnHint.vue'
+	import ResourceManagementCreateFolderDialog from './ResourceManagementCreateFolderDialog.vue'
 
 	export default defineComponent({
 		name: 'resource-management',
-		components: { KnHint, ResourceManagementMetadataDialog, ResourceManagementDetail, Tree },
+		components: { KnHint, ResourceManagementMetadataDialog, ResourceManagementCreateFolderDialog, ResourceManagementDetail, Tree },
 		data() {
 			return {
 				descriptor,
@@ -63,6 +69,7 @@
 				showHint: true,
 				touched: false,
 				selectedFolder: {} as iFolderTemplate,
+				folderCreation: false,
 				formVisible: false
 			}
 		},
@@ -70,10 +77,62 @@
 			this.loadPage()
 		},
 		methods: {
+			createFolder(folderName: string) {
+				if (folderName && this.selectedFolder) {
+					let found = false
+					if (this.selectedFolder.children) {
+						this.selectedFolder.children.forEach((element) => {
+							if (element.label === folderName) {
+								found = true
+								this.$store.commit('setError', {
+									title: this.$t('common.error.saving'),
+									msg: this.$t('common.warning.folderNameAlreadyInUse')
+								})
+							}
+						})
+					}
+					if (!found) {
+						let obj = {} as JSON
+						obj['key'] = '' + this.selectedFolder.key
+						obj['folderName'] = folderName
+						axios
+							.post(process.env.VUE_APP_API_PATH + `2.0/resources/folders`, obj, {
+								responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
+
+								headers: {
+									'Content-Type': 'application/json'
+								}
+							})
+							.then(() => {
+								this.$emit('folderCreated', true)
+							})
+							.catch((error) => {
+								this.$store.commit('setError', {
+									title: this.$t('common.error.saving'),
+									msg: this.$t(error)
+								})
+							})
+							.finally(() => {
+								this.loading = false
+								this.openCreateFolderDialog()
+								this.loadPage(this.showHint, this.formVisible)
+							})
+					}
+				}
+			},
+			getCurrentFolderPath() {
+				return this.selectedFolder ? this.selectedFolder.relativePath : undefined
+			},
+			getCurrentFolderKey() {
+				return this.selectedFolder ? '' + this.selectedFolder.key : undefined
+			},
 			getButtonClass(node) {
 				let visibility = ' kn-hide'
 				if (this.buttonsVisible[node.key] && !node.edit) visibility = ''
 				return 'p-button-text p-button-sm p-button-rounded p-button-plain p-p-0' + visibility
+			},
+			openCreateFolderDialog() {
+				this.folderCreation = !this.folderCreation
 			},
 			async toggleInput(node) {
 				if (node.edit && node.label !== node.edit) {
@@ -206,7 +265,7 @@
 			},
 			showDeleteDialog(node) {
 				this.$confirm.require({
-					message: this.$t('managers.resourceManagement.deletingFolderConfirm'),
+					message: this.$t('common.toast.deleteMessage'),
 					header: this.$t('common.toast.deleteConfirmTitle'),
 					icon: 'pi pi-exclamation-triangle',
 					accept: () => this.deleteFolder(node)
