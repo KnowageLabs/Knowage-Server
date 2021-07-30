@@ -1,0 +1,22 @@
+{
+    "validations": {
+        "selectedFolder": [
+            {
+                "fieldName": "code",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ]
+    }
+}

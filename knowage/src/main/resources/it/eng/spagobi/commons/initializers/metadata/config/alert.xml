@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ALERT>
-	<ACTION name="Send mail" className="it.eng.knowage.enterprise.tools.alert.action.SendMail"
-		template="angular_1.4/tools/alert/actions/sendMail/templates/sendMail.html" />
-	<ACTION name="Execute ETL Document" className="it.eng.knowage.enterprise.tools.alert.action.ExecuteETLDocument"
-		template="angular_1.4/tools/alert/actions/executeETL/templates/executeETL.html" />
-	<ACTION name="Context Broker" className="it.eng.spagobi.tools.alert.action.NotifyContextBroker"
-        template="angular_1.4/tools/alert/actions/contextBroker/templates/contextBroker.html" />
-	<LISTENER name="KPI Listener" className="it.eng.spagobi.tools.alert.listener.KpiListener"
-		template="angular_1.4/tools/alert/listeners/kpiListener/templates/kpiListener.html" />
+	<ACTION name="Send mail" className="it.eng.knowage.enterprise.tools.alert.action.SendMail" />
+	<ACTION name="Execute ETL Document" className="it.eng.knowage.enterprise.tools.alert.action.ExecuteETLDocument" />
+	<ACTION name="Context Broker" className="it.eng.spagobi.tools.alert.action.NotifyContextBroker" />
+	<LISTENER name="KPI Listener" className="it.eng.spagobi.tools.alert.listener.KpiListener" />
 </ALERT>

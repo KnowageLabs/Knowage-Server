@@ -7,7 +7,7 @@ public class SbiAlertAction extends SbiHibernateModel {
 	private Integer id;
 	private String name;
 	private String className;
-	private String template;
+//	private String template;
 
 	/**
 	 * @return the id
@@ -17,8 +17,7 @@ public class SbiAlertAction extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -32,8 +31,7 @@ public class SbiAlertAction extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -47,26 +45,24 @@ public class SbiAlertAction extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param className
-	 *            the className to set
+	 * @param className the className to set
 	 */
 	public void setClassName(String className) {
 		this.className = className;
 	}
-
-	/**
-	 * @return the template
-	 */
-	public String getTemplate() {
-		return template;
-	}
-
-	/**
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(String template) {
-		this.template = template;
-	}
+//
+//	/**
+//	 * @return the template
+//	 */
+//	public String getTemplate() {
+//		return template;
+//	}
+//
+//	/**
+//	 * @param template the template to set
+//	 */
+//	public void setTemplate(String template) {
+//		this.template = template;
+//	}
 
 }

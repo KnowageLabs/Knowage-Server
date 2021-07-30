@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext,"/js/lib/messageResource/messageResourceKnowageCustom.js")%>"></script>
 
-	
+<%@page import="it.eng.knowage.commons.utilities.LocalePropertiesUtilities"%>
 	
 
 <script type="text/javascript">
@@ -49,9 +49,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	//Load of default file (en_US): it can be used if a message of the current locale is missing
     messageResource.load('messages', function(){});
     
-    messageResource.setCurrentLocale('<%=locale.getLanguage()%>_<%=locale.getCountry()%>');
+    messageResource.setCurrentLocale('<%=LocalePropertiesUtilities.getAngularPropertiesFileName(locale, "_")%>');
     
-    if ('<%=locale.getLanguage()%>_<%=locale.getCountry()%>'!='en_US')
+    //en_US has already been loaded: if current locale is en_US it is not necessary to load it again
+    if ('<%=LocalePropertiesUtilities.getAngularPropertiesFileName(locale, "_")%>'!='en_US')
     {
         messageResource.load('messages', function(){});
     }

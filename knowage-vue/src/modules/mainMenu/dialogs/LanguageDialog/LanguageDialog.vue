@@ -44,18 +44,19 @@
 		props: {
 			visibility: Boolean
 		},
-		emits: ['update:visibility'],
+		emits: ['update:visibility', 'update:loading'],
 		methods: {
 			changeLanguage(language) {
-
 				let splittedLanguage = language.locale.split('_')
 
-				let url = '/knowage/servlet/AdapterHTTP?';
+				let url = '/knowage/servlet/AdapterHTTP?'
 				url += 'ACTION_NAME=CHANGE_LANGUAGE'
 				url += '&LANGUAGE_ID=' + splittedLanguage[0]
 				url += '&COUNTRY_ID=' + splittedLanguage[1].toUpperCase()
+				url += '&SCRIPT_ID=' + (splittedLanguage.length > 2 ? splittedLanguage[2].replaceAll('#', '') : '')
 				url += '&THEME_NAME=sbi_default'
 
+				this.$emit('update:loading', true)
 				axios.get(url).then(
 					() => {
 						store.commit('setLocale', language.locale)
@@ -66,8 +67,9 @@
 						this.$router.go(0)
 						this.$forceUpdate()
 					},
-						(error) => console.error(error)
-					)
+					(error) => console.error(error)
+				)
+				this.$emit('update:loading', false)
 			},
 			closeDialog() {
 				this.$emit('update:visibility', false)

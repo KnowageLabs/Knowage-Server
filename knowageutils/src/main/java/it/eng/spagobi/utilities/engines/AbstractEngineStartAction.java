@@ -22,11 +22,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -96,6 +98,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 	public static final String COUNTRY = "SBI_COUNTRY";
 	public static final String LANGUAGE = "SBI_LANGUAGE";
+	public static final String SCRIPT = "SBI_SCRIPT";
 
 	public static final String SUBOBJ_ID = "subobjectId";
 	public static final String SUBOBJ_NAME = "nameSubObject";
@@ -360,6 +363,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	public Locale getLocale() {
 		String language;
 		String country;
+		String script;
 
 		if (locale == null) {
 
@@ -369,8 +373,13 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 			country = getAttributeAsString(COUNTRY);
 			logger.debug("Locale parameters received: language = [" + language + "] ; country = [" + country + "]");
 
+			Builder builder = new Builder().setLanguage(language).setRegion(country);
+			script = getAttributeAsString(SCRIPT);
+			if (StringUtils.isNotBlank(script)) {
+				builder.setScript(script);
+			}
 			try {
-				locale = new Locale(language, country);
+				locale = builder.build();
 			} catch (Exception e) {
 				logger.debug("Error while creating Locale object from input parameters: language = [" + language + "] ; country = [" + country + "]");
 				logger.debug("Creating default locale [en,US].");
@@ -529,10 +538,8 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	/**
 	 * Copy request parameters into env.
 	 *
-	 * @param env
-	 *            the env
-	 * @param serviceRequest
-	 *            the service request
+	 * @param env            the env
+	 * @param serviceRequest the service request
 	 */
 	public void copyRequestParametersIntoEnv(Map env, IContainer request) {
 		Set parameterStopList = null;
@@ -572,8 +579,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	/**
 	 * Decode parameter value.
 	 *
-	 * @param parValue
-	 *            the par value
+	 * @param parValue the par value
 	 *
 	 * @return the string
 	 */

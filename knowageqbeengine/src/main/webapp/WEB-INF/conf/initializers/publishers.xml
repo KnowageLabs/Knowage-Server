@@ -115,6 +115,7 @@
         		<PARAMETER name="document" type="RELATIVE" scope="SERVICE_REQUEST" value="document" />
         		<PARAMETER name="SBI_LANGUAGE" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_LANGUAGE" />
         		<PARAMETER name="SBI_COUNTRY" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_COUNTRY" />
+        		<PARAMETER name="SBI_SCRIPT" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_SCRIPT" />
       		</RESOURCES>
    	 	</RENDERING>   	
 	</PUBLISHER>
@@ -127,6 +128,7 @@
         		<PARAMETER name="document" type="RELATIVE" scope="SERVICE_REQUEST" value="document" />
         		<PARAMETER name="SBI_LANGUAGE" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_LANGUAGE" />
         		<PARAMETER name="SBI_COUNTRY" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_COUNTRY" />
+        		<PARAMETER name="SBI_SCRIPT" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_SCRIPT" />
         		<PARAMETER name="dataset_label" type="RELATIVE" scope="SERVICE_REQUEST" value="dataset_label" />
       		</RESOURCES>
    	 	</RENDERING>   	

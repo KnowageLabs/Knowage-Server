@@ -11,6 +11,10 @@ import tenantManagementRoutes from '@/modules/managers/tenantManagement/TenantMa
 import templatePruningRoutes from '@/modules/managers/templatePruning/TemplatePruning.routes.js'
 import internationalizationManagementRoutes from '@/modules/managers/internationalizationManagement/InternationalizationManagement.routes.js'
 import mondrianSchemasManagementRoutes from '@/modules/managers/mondrianSchemasManagement/MondrianSchemasManagement.routes.js'
+import dataSourceRoutes from '@/modules/managers/dataSourceManagement/DataSourceManagement.routes.js'
+import functionalitiesManagementRoutes from '@/modules/managers/functionalitiesManagement/FunctionalitiesManagement.routes.js'
+import menuConfigurationRoutes from '@/modules/managers/menuConfigurationManagement/MenuConfigurationManagement.routes.js'
+import businessModelCatalogueRoutes from '@/modules/managers/businessModelCatalogue/BusinessModelCatalogue.routes.js'
 import resourceManagementRoutes from '@/modules/managers/resourceManagement/ResourceManagement.routes.js'
 
 const baseRoutes = []
@@ -29,6 +33,10 @@ const routes = baseRoutes
 	.concat(templatePruningRoutes)
 	.concat(internationalizationManagementRoutes)
 	.concat(mondrianSchemasManagementRoutes)
+    .concat(dataSourceRoutes)
+    .concat(functionalitiesManagementRoutes)
+    .concat(menuConfigurationRoutes)
+    .concat(businessModelCatalogueRoutes)
 	.concat(resourceManagementRoutes)
 
 export default routes

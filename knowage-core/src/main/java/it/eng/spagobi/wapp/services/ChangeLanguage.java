@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,19 +11,19 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.wapp.services;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -62,20 +62,20 @@ import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.util.MenuUtilities;
 
 /**
- * 
+ *
  * SpagoBI - The Business Intelligence Free Platform
- * 
+ *
  * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
  * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- * 
+ *
  **/
 
 public class ChangeLanguage extends AbstractHttpAction {
@@ -97,10 +97,11 @@ public class ChangeLanguage extends AbstractHttpAction {
 
 		Locale locale = MessageBuilder.getBrowserLocaleFromSpago();
 
-		String language = (String) serviceRequest.getAttribute("language_id");
-		String country = (String) serviceRequest.getAttribute("country_id");
+		String srLanguage = (String) serviceRequest.getAttribute("language_id");
+		String srCountry = (String) serviceRequest.getAttribute("country_id");
+		String srScript = (String) serviceRequest.getAttribute("script_id");
 		String isPublicUser = (String) serviceRequest.getAttribute("IS_PUBLIC_USER");
-		logger.debug("language selected: " + language);
+		logger.debug("language selected: " + srLanguage);
 		String currTheme = (String) serviceRequest.getAttribute(ChangeTheme.THEME_NAME);
 		if (currTheme == null)
 			ThemesManager.getDefaultTheme();
@@ -113,34 +114,71 @@ public class ChangeLanguage extends AbstractHttpAction {
 			userProfile = (UserProfile) profile;
 		}
 
-		List<Locale> languages = GeneralUtilities.getSupportedLocales();
+		List<Locale> supportedLocales = GeneralUtilities.getSupportedLocales();
 
-		if (language == null) {
+		if (srLanguage == null) {
 			logger.error("language not specified");
 		} else {
-			Iterator<Locale> iter = languages.iterator();
-			boolean found = false;
-			while (iter.hasNext() && found == false) {
-				Locale localeTmp = iter.next();
-				String lang_supported = localeTmp.getLanguage();
-				String country_supported = localeTmp.getCountry();
 
-				if (language.equalsIgnoreCase(lang_supported) && (country == null || country.equalsIgnoreCase(country_supported))) {
+			Locale currLocale = null;
+			for (Locale supportedLocale : supportedLocales) {
+				boolean found = false;
+				String language = supportedLocale.getLanguage();
+				String country = supportedLocale.getCountry();
+				String script = supportedLocale.getScript();
 
-					locale = new Locale(language, country, "");
-					permSess.setAttribute("AF_LANGUAGE", locale.getLanguage());
-					permSess.setAttribute("AF_COUNTRY", locale.getCountry());
+				found = language.equals(srLanguage) && country.equals(srCountry);
 
-					if (userProfile != null) {
-						userProfile.setAttributeValue(SpagoBIConstants.LANGUAGE, language);
-						userProfile.setAttributeValue(SpagoBIConstants.COUNTRY, country);
-						logger.debug("modified profile attribute to " + lang);
-					} else {
-						logger.error("profile attribute not modified to " + lang);
-					}
-					found = true;
+				if (StringUtils.isNotBlank(srScript)) {
+					found &= script.equals(srScript);
+				}
+
+				if (found) {
+					currLocale = supportedLocale;
+					break;
 				}
 			}
+
+			if (currLocale == null) {
+
+			} else {
+				String scriptForSession = StringUtils.isNotBlank(currLocale.getScript()) ? currLocale.getScript() : "";
+				permSess.setAttribute("AF_LANGUAGE", currLocale.getLanguage());
+				permSess.setAttribute("AF_COUNTRY", currLocale.getCountry());
+				permSess.setAttribute("AF_SCRIPT", scriptForSession);
+
+				if (userProfile != null) {
+					userProfile.setAttributeValue(SpagoBIConstants.LANGUAGE, currLocale.getLanguage());
+					userProfile.setAttributeValue(SpagoBIConstants.COUNTRY, currLocale.getCountry());
+					userProfile.setAttributeValue(SpagoBIConstants.SCRIPT, scriptForSession);
+					logger.debug("modified profile attribute to " + lang);
+				} else {
+					logger.error("profile attribute not modified to " + lang);
+				}
+			}
+
+//			boolean found = false;
+//			while (iter.hasNext() && found == false) {
+//				Locale localeTmp = iter.next();
+//				String lang_supported = localeTmp.getLanguage();
+//				String country_supported = localeTmp.getCountry();
+//
+//				if (language.equalsIgnoreCase(lang_supported) && (country == null || country.equalsIgnoreCase(country_supported))) {
+//
+//					locale = new Locale(language, country, "");
+//					permSess.setAttribute("AF_LANGUAGE", locale.getLanguage());
+//					permSess.setAttribute("AF_COUNTRY", locale.getCountry());
+//
+//					if (userProfile != null) {
+//						userProfile.setAttributeValue(SpagoBIConstants.LANGUAGE, language);
+//						userProfile.setAttributeValue(SpagoBIConstants.COUNTRY, country);
+//						logger.debug("modified profile attribute to " + lang);
+//					} else {
+//						logger.error("profile attribute not modified to " + lang);
+//					}
+//					found = true;
+//				}
+//			}
 		}
 
 //		MenuUtilities.getMenuItems(serviceRequest, serviceResponse, profile);

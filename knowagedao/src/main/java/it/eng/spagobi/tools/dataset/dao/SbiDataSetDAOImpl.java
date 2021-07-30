@@ -574,8 +574,8 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 	private void withTags(Criteria cr, List<Integer> tagIds) {
 		if (!tagIds.isEmpty()) {
-			cr.createAlias("tag.dsTagId", "tag");
-			cr.add(Restrictions.in("tag.tagId", tagIds));
+			cr.createAlias("tags", "tags");
+			cr.add(Restrictions.in("tags.tagId", tagIds));
 		}
 	}
 

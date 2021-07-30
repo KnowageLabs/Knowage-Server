@@ -26,7 +26,7 @@
                     {{ $t('common.info.noDataFound') }}
                 </template>
                 <Column selectionMode="multiple" :style="tabViewDescriptor.column.style" dataKey="ID"></Column>
-                <Column field="LABEL" :header="$t('common.name')" :style="tabViewDescriptor.column.header.style"></Column>
+                <Column field="LABEL" :header="$t('common.name')"></Column>
             </DataTable>
         </template>
     </Card>

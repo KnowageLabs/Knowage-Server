@@ -31,7 +31,7 @@
                                 <span>{{ slotProps.option.MULTITENANT_NAME }}</span>
                                 <span class="kn-list-item-text-secondary">{{ slotProps.option.MULTITENANT_THEME }}</span>
                             </div>
-                            <Button icon="far fa-trash-alt" class="p-button-link p-button-sm" @click.stop="deleteTenantConfirm(slotProps.option)" data-test="delete-button" />
+                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteTenantConfirm(slotProps.option)" data-test="delete-button" />
                         </div>
                     </template>
                 </Listbox>

@@ -1,4 +1,10 @@
 {
+    "card": {
+        "style": {
+            "margin-bottom": "2em",
+            "width": "100%"
+        }
+    },
     "column": {
         "header": {
             "style": {
@@ -7,27 +13,21 @@
             }
         },
         "style": {
-            "width": "50%"
-        }
-    },
-    "card": {
-        "style": {
-            "width": "100%",
-            "margin-bottom": "2em"
-        }
-    },
-    "pField": {
-        "style": {
-            "margin-bottom": "40px"
+            "max-width": "50px"
         }
     },
     "operation": {
         "insert": {
             "toastTitle": "common.toast.createTitle"
         },
+        "success": "common.toast.success",
         "update": {
             "toastTitle": "common.toast.updateTitle"
-        },
-        "success": "common.toast.success"
+        }
+    },
+    "pField": {
+        "style": {
+            "margin-bottom": "40px"
+        }
     }
 }

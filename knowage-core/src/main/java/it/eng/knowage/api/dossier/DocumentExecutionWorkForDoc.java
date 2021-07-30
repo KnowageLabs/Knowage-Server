@@ -237,6 +237,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 					serviceUrlBuilder.append("&SBI_LANGUAGE=" + locale.getLanguage());
 					serviceUrlBuilder.append("&SBI_COUNTRY=" + locale.getCountry());
+					serviceUrlBuilder.append("&SBI_SCRIPT=" + locale.getScript());
 
 					RenderOptions renderOptions = RenderOptions.defaultOptions();
 					if (reportToUse.getSheetHeight() != null && !reportToUse.getSheetHeight().isEmpty() && reportToUse.getSheetWidth() != null

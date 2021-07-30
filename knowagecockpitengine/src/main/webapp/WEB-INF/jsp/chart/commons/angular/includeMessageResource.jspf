@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript"
 	src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/lib/messageResource/messageResource.min.js")%>"></script>
 	
+<%@page import="it.eng.knowage.commons.utilities.LocalePropertiesUtilities"%>
 
 <script type="text/javascript">
 	//Function that gets the properties file's content in an synchronous way
@@ -47,10 +48,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	//Load of default file (en_US): it can be used if a message of the current locale is missing
     messageResource.load('messages', function(){});
-    messageResource.setCurrentLocale('<%=locale.getLanguage()%>_<%=locale.getCountry()%>');
+    messageResource.setCurrentLocale('<%=LocalePropertiesUtilities.getAngularPropertiesFileName(locale, "_")%>');
     
     //en_US has already been loaded: if current locale is en_US it is not necessary to load it again
-    if ('<%=locale.getLanguage()%>_<%=locale.getCountry()%>'!='en_US'){
+    if ('<%=LocalePropertiesUtilities.getAngularPropertiesFileName(locale, "_")%>'!='en_US') {
     	messageResource.load('messages', function(){});
     }
 </script>

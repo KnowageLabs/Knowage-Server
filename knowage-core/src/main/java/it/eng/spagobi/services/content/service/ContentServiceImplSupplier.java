@@ -21,9 +21,10 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 
@@ -132,8 +133,12 @@ public class ContentServiceImplSupplier {
 						logger.debug("Not locale informations found in parameters... Not setted it at this time.");
 					} else {
 						logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
-						Locale locale = new Locale(language, country);
-						aEngineDriver.applyLocale(locale);
+						Builder builder = new Builder().setLanguage(language).setRegion(country);
+						String script = (String) parameters.get(SpagoBIConstants.SBI_SCRIPT);
+						if (StringUtils.isNotBlank(script)) {
+							builder.setScript(script);
+						}
+						aEngineDriver.applyLocale(builder.build());
 					}
 					logger.warn("Calling elaborateTemplate method defined into the driver ... ");
 
@@ -230,8 +235,12 @@ public class ContentServiceImplSupplier {
 						logger.debug("Not locale informations found in parameters... Not setted it at this time.");
 					} else {
 						logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
-						Locale locale = new Locale(language, country);
-						aEngineDriver.applyLocale(locale);
+						Builder builder = new Builder().setLanguage(language).setRegion(country);
+						String script = (String) parameters.get(SpagoBIConstants.SBI_SCRIPT);
+						if (StringUtils.isNotBlank(script)) {
+							builder.setScript(script);
+						}
+						aEngineDriver.applyLocale(builder.build());
 					}
 					logger.warn("Calling elaborateTemplate method defined into the driver ... ");
 					byte[] elabTemplate = aEngineDriver.ElaborateTemplate(template);

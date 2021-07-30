@@ -32,10 +32,10 @@
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
                                     <InputText id="fullName" type="text" v-model.trim="userDetailsForm.fullName" @input="onDataChange(vobj.userDetailsForm.fullName)" class="p-inputtext p-component kn-material-input" />
-                                    <label for="fullName">{{ $t('managers.usersManagement.form.fullName') }} *</label>
+                                    <label for="fullName">{{ $t('managers.usersManagement.fullName') }} *</label>
                                 </span>
                             </div>
-                            <KnValidationMessages :vComp="vobj.userDetailsForm.fullName" :additionalTranslateParams="{ fieldName: $t('managers.usersManagement.form.fullName') }"></KnValidationMessages>
+                            <KnValidationMessages :vComp="vobj.userDetailsForm.fullName" :additionalTranslateParams="{ fieldName: $t('managers.usersManagement.fullName') }"></KnValidationMessages>
                         </div>
 
                         <div class="p-field">

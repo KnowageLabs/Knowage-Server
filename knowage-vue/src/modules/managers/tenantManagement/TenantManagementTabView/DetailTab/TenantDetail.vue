@@ -105,8 +105,11 @@ export default defineComponent({
         }
     },
     async created() {
-        if (this.selectedTenant) {
+        if (this.selectedTenant && Object.keys(this.selectedTenant).length > 0) {
             this.tenant = { ...this.selectedTenant } as any
+        } else {
+            this.tenant = {} as iMultitenant
+            this.tenant.MULTITENANT_THEME = 'sbi_default'
         }
         this.themes = [...this.listOfThemes] as any
     },

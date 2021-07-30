@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Locale.Builder;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -46,6 +47,7 @@ import java.util.zip.ZipEntry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
@@ -329,8 +331,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 	/**
 	 * Build a classpath variable appending all the jar files founded into the specified directory.
 	 *
-	 * @param libDir
-	 *            JR lib-dir to scan for find jar files to include into the classpath variable
+	 * @param libDir JR lib-dir to scan for find jar files to include into the classpath variable
 	 * @return the classpath used by JasperReprorts Engine (by default equals to WEB-INF/lib)
 	 */
 	private String buildJRClasspathValue() {
@@ -373,7 +374,12 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		if (language != null && country != null) {
 
 			logger.debug("Internazionalization in " + language);
-			locale = new Locale(language, country, "");
+			Builder builder = new Builder().setLanguage(language).setRegion(country);
+			String script = (String) getEnv().get("SBI_SCRIPT");
+			if (org.apache.commons.lang.StringUtils.isNotBlank(script)) {
+				builder.setScript(script);
+			}
+			locale = builder.build();
 			getEnv().put("REPORT_LOCALE", locale);
 
 			if (!template.isPropertiesLoaded()) {
@@ -400,10 +406,12 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		Locale locale;
 		String language;
 		String country;
+		String script;
 		ResourceBundle resourceBoundle;
 
 		language = (String) getEnv().get("SBI_LANGUAGE");
 		country = (String) getEnv().get("SBI_COUNTRY");
+		script = (String) getEnv().get("SBI_SCRIPT");
 
 		if (language != null && country != null) {
 
@@ -411,9 +419,16 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			locale = new Locale(language, country, "");
 
 			File resourceDir = JasperReportEngine.getConfig().getEngineResourceDir();
-			File source = new File(resourceDir + System.getProperty("file.separator") + "messages_" + language + "_" + country + ".properties");
+			String messagePropertiesName = "messages_" + language;
+			if (StringUtils.isNotBlank(script)) {
+				messagePropertiesName += "_" + script;
+			}
+
+			messagePropertiesName += "_" + country;
+
+			File source = new File(resourceDir + System.getProperty("file.separator") + messagePropertiesName + ".properties");
 			if (source.exists() && !source.isDirectory() && source.length() != 0) {
-				File target = new File(pathMasterID + System.getProperty("file.separator") + "messages_" + language + "_" + country + ".properties");
+				File target = new File(pathMasterID + System.getProperty("file.separator") + messagePropertiesName + ".properties");
 				try {
 					Files.copy(source.toPath(), target.toPath(), REPLACE_EXISTING);
 				} catch (IOException e) {
