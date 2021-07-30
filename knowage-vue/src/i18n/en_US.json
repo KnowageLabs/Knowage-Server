@@ -187,7 +187,39 @@
         "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
     },
-    "kpi": {},
+    "kpi": {
+        "measureDefinition": {
+            "alias": "Alias",
+            "aliasMissing": "The alias doesn't exist and will be added",
+            "aliasUsed": "The alias is already used",
+            "category": "Category",
+            "dataSource": "Data Source",
+            "filters": "Filters",
+            "hint": "Measure management allows you to create the rules and the measures that will be used in the KPI workflow. Click on one existing item from the table list, or press the \"+\" button to add one.",
+            "measureName": "Measure name",
+            "metadata": "Metadata",
+            "metadataChangedMessage": "Please note that metadata have been automatically modified due to query changing. Do you want to continue?",
+            "metadataChangedTitle": "Metadata changed",
+            "metadataError": "Errors while attempting to load the metadata.",
+            "newMeasure": "New Measure",
+            "placeholder": "Placeholder",
+            "presaveErrors": {
+                "metadataMissing": "Missing metadata",
+                "metadataMissingText": "Manage them in the metadata tab.",
+                "missingTemporalattributText": "Set a Hierarchy Level",
+                "noMeasureSet": "No measure set",
+                "noTemporalattributSet": "Missing value temporal Attribute"
+            },
+            "preview": "Preview",
+            "query": "Query",
+            "rulesName": "Rules name",
+            "saveInProgress": "Save in progress",
+            "temporalAttributePlaceholder": "Select Temporal attribute",
+            "tipology": "Tipology",
+            "title": "Measure Management",
+            "wrongQuery": "Wrong query"
+        }
+    },
     "language": {
         "en_GB": "english (GB)",
         "en_US": "english (US)",
@@ -664,7 +696,7 @@
             "productTypes": {
                 "title": "Product Types"
             },
-            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created too and his username and password are",
+            "tenantSaved": "Tenant correctly saved. The administrator of the tenant has been created with username {username} and password {password}",
             "title": "Tenant Management"
         },
         "usersManagement": {

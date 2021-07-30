@@ -11,10 +11,15 @@ interceptor()
 
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/monokai.css'
+import 'codemirror/theme/eclipse.css'
+import 'codemirror/addon/hint/show-hint.css'
+import 'codemirror/addon/hint/show-hint.js'
+import 'codemirror/addon/hint/sql-hint.js'
 import 'codemirror/mode/htmlmixed/htmlmixed.js'
 import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/mode/python/python.js'
 import 'codemirror/mode/xml/xml.js'
+import 'codemirror/mode/sql/sql.js'
 
 import 'primevue/resources/themes/mdc-light-indigo/theme.css'
 import 'primevue/resources/primevue.min.css'

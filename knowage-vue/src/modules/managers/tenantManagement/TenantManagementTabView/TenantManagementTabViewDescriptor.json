@@ -20,7 +20,7 @@
         "insert": {
             "toastTitle": "common.toast.createTitle"
         },
-        "success": "common.toast.success",
+        "success": "managers.tenantManagement.tenantSaved",
         "update": {
             "toastTitle": "common.toast.updateTitle"
         }
