@@ -8,31 +8,6 @@ import Dropdown from 'primevue/dropdown'
 import Menu from 'primevue/menu'
 import InputText from 'primevue/inputtext'
 
-// const MockedAction = [
-//     {
-//         idAction: '62',
-//         jsonActionParameters: {
-//             body: 'Body',
-//             mailTo: [
-//                 {
-//                     name: 'demo_admin',
-//                     userId: '',
-//                     email: 'demo_admin'
-//                 }
-//             ],
-//             subject: 'Subject'
-//         },
-//         thresholdValues: [147]
-//     }
-// ]
-
-// const mockedListener = {
-//     id: 33,
-//     name: 'KPI Listener',
-//     className: 'it.eng.spagobi.tools.alert.listener.KpiListener',
-//     template: 'angular_1.4/tools/alert/listeners/kpiListener/templates/kpiListener.html'
-// }
-
 const mockedAlert = {
     id: 25,
     name: 'test crone',
@@ -123,10 +98,4 @@ describe('Alert Definition Detail', () => {
         expect(formWrapper.vm.selectedAlert.alertListener).toStrictEqual(undefined)
         expect(formWrapper.vm.buttonDisabled).toBe(true)
     })
-    // it('disables the save button if no kpi is selected', () => {})
 })
-// describe('Alert Definition kpi action', () => {
-//     it('shows a dialog when kpi action is clicked', async () => {
-//         const formWrapper = factory()
-//     })
-// })
