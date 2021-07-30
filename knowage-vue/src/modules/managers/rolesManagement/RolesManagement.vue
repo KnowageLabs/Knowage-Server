@@ -11,30 +11,30 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                    <Listbox
-                        v-if="!loading"
-                        class="kn-list--column"
-                        :options="roles"
-                        :filter="true"
-                        :filterPlaceholder="$t('common.search')"
-                        optionLabel="name"
-                        filterMatchMode="contains"
-                        :filterFields="rolesDecriptor.filterFields"
-                        :emptyFilterMessage="$t('managers.rolesManagement.noResults')"
-                        @change="showForm"
-                        data-test="roles-list"
-                    >
-                        <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                        <template #option="slotProps">
-                            <div class="kn-list-item" data-test="list-item">
-                                <div class="kn-list-item-text">
-                                    <span>{{ slotProps.option.name }}</span>
-                                    <span class="kn-list-item-text-secondary">{{ slotProps.option.roleTypeCD }}</span>
-                                </div>
-                                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteRoleConfirm(slotProps.option.id)" data-test="delete-button" />
+                <Listbox
+                    v-if="!loading"
+                    class="kn-list--column"
+                    :options="roles"
+                    :filter="true"
+                    :filterPlaceholder="$t('common.search')"
+                    optionLabel="name"
+                    filterMatchMode="contains"
+                    :filterFields="rolesDecriptor.filterFields"
+                    :emptyFilterMessage="$t('managers.rolesManagement.noResults')"
+                    @change="showForm"
+                    data-test="roles-list"
+                >
+                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                    <template #option="slotProps">
+                        <div class="kn-list-item" data-test="list-item">
+                            <div class="kn-list-item-text">
+                                <span>{{ slotProps.option.name }}</span>
+                                <span class="kn-list-item-text-secondary">{{ slotProps.option.roleTypeCD }}</span>
                             </div>
-                        </template>
-                    </Listbox>
+                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteRoleConfirm(slotProps.option.id)" data-test="delete-button" />
+                        </div>
+                    </template>
+                </Listbox>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
@@ -107,14 +107,23 @@ export default defineComponent({
             })
         },
         async deleteRole(roleId: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
+            await axios
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.$router.push('/roles-management')
+                    this.loadAllRoles()
                 })
-                this.$router.push('/roles-management')
-                this.loadAllRoles()
-            })
+                .catch((error) => {
+                    if (error) {
+                        this.$store.commit('setError', {
+                            msg: error.message
+                        })
+                    }
+                })
         },
         pageReload() {
             this.touched = false

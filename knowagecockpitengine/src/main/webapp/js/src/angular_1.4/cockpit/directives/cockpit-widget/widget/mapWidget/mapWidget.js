@@ -1732,7 +1732,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.getPerWidgetDatasetIds = function() {
-			return $scope.ngModel.content.layers.map(function(e) { return e.dataset.id.dsId; });
+			return $scope.ngModel.content.layers
+				&& $scope.ngModel.content.layers.map(function(e) { return e.dataset.id.dsId; })
+				|| [];
 		}
 
 		$scope.hideLegend = function() {

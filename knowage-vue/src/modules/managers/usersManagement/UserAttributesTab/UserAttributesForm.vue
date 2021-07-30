@@ -1,5 +1,5 @@
 <template>
-    <div class="p-grid p-fluid p-jc-center kn-height-full">
+    <div class="p-fluid p-jc-center kn-height-full">
         <div class="p-col-12">
             <Card style="width: 100%; margin-bottom: 2em">
                 <template #header>

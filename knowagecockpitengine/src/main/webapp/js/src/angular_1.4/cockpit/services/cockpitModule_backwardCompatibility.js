@@ -340,6 +340,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 
+			if(!self.compareVersion("7.4.8",version)){
+				if(model.type=='map'){
+					if (!model.style.legend) model.style.legend = {};
+				}
+			}
+
 			if(model.content.name.match(/new[a-zA-Z\s\-]*Widget/g)) model.content.name = model.type + '_' + model.id;
 
 			return model;

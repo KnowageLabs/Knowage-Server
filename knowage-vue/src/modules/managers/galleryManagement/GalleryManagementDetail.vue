@@ -87,6 +87,7 @@
                     <i :class="['icon', galleryDescriptor.editor[allowedEditor].icon]"></i>
                     {{ $t('common.codingLanguages.' + allowedEditor) }}
                 </h4>
+
                 <VCodeMirror class="flex" v-model:value="template.code[allowedEditor]" :options="galleryDescriptor.options[allowedEditor]" @update:value="onCmCodeChange" />
             </div>
         </div>
@@ -138,6 +139,7 @@ export default defineComponent({
     created() {
         this.loadTemplate(this.id)
         window.addEventListener('resize', this.resizeHandler)
+        console.log('OPTIONS: ', this.galleryDescriptor.options['html'])
     },
     methods: {
         downloadTemplate(): void {
