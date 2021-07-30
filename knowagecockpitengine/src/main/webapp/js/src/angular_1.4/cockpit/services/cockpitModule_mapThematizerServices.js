@@ -386,7 +386,7 @@
 							if (tmpConf.to == null) tmpConf.to = "max";
 							ranges.push({"color": tmpConf.color, "from": tmpConf.from, "to":tmpConf.to});
 						}
-						toReturn.push({"layer": tmpLayerName[1], "alias": mts.activeLegend[l].alias, "method": mts.activeLegend[l].method, "ranges": ranges});
+						toReturn.push({"layer": tmpLayerName[1], "alias": mts.activeLegend[l].alias, "method": mts.activeLegend[l].method, "dataNotAvailable": mts.activeLegend[l].dataNotAvailable, "ranges": ranges});
 					} else {
 						for (c in mts.activeLegend[l].choroplet){
 							var tmpConf = mts.activeLegend[l].choroplet[c];
@@ -495,6 +495,16 @@
 				mts.activeLegend[layerName].choroplet = []; // reset choroplets
 				mts.activeLegend[layerName].choroplet[0] = choropletToKeep;
 			}
+
+			var dataNotAvailable = true;
+			for (var i=0; i<mts.activeLegend[layerName].choroplet.length; i++) {
+				if (!isNaN(mts.activeLegend[layerName].choroplet[i].from) || !isNaN(mts.activeLegend[layerName].choroplet[i].to)) {
+					dataNotAvailable = false;
+					break;
+				}
+			}
+			if (dataNotAvailable) mts.activeLegend[layerName].dataNotAvailable = true;
+			else mts.activeLegend[layerName].dataNotAvailable = false;
 		}
 
 		var formatLegendValue = function (val, style){
