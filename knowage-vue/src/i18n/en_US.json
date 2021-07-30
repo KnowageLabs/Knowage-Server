@@ -77,6 +77,7 @@
         "type": "type",
         "uploading": "Uploading",
         "validation": {
+            "maxLength": "This field must have less then {max} characters",
             "maximumCharacters": "The maximum length allowed is {max}",
             "minLength": "This field should have at least {min} characters",
             "regex": "Invalid format",
@@ -703,6 +704,9 @@
             "blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
             "defaultRoleInfo": "Select a role if you want to set it as the default. If no role is selected, it will be possible switch between roles from the Knowage Administration menu",
             "detail": "Detail",
+            "error": {
+                "missingDefaultRole": "Default role is not selected"
+            },
             "form": {
                 "defaultRole": "Default role",
                 "password": "Password",
