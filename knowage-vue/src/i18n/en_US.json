@@ -218,6 +218,28 @@
             "tipology": "Tipology",
             "title": "Measure Management",
             "wrongQuery": "Wrong query"
+        },
+        "targetDefinition": {
+            "addKpiBtn": "Add KPI association",
+            "applyTargetonKPI": "Apply Target on Kpi",
+            "endDate": "End validity date",
+            "endDateBeforeStart": "End validity date must be after Start validity date",
+            "hint": "Click on one existing item from the list on the side, or press the \"+\" button to add one",
+            "kpiAddedMessage": "Click the value to change it",
+            "kpiAddedTitile": "KPI Added",
+            "kpiAuthor": "Author",
+            "kpiCategory": "Category",
+            "kpiDate": "Date",
+            "kpiName": "KPI name",
+            "kpiValue": "Value",
+            "name": "Name",
+            "noKpi": "No KPI selected",
+            "noKpiMessage": "At least one KPI must be associated",
+            "saveTarget": "Save target",
+            "savingError": "Errors occurred while saving Target",
+            "startDate": "Start validity date",
+            "title": "Target definition",
+            "titleAddAssociations": "Add KPI associations"
         }
     },
     "language": {
@@ -568,9 +590,6 @@
         },
         "profileAttributesManagement": {
             "description": "Description",
-            "error": {
-                "profileAttributeDeletion": "Attribute is not deleted."
-            },
             "form": {
                 "allowUser": "Allow user to see field",
                 "dataType": "Data type",
